@@ -7,7 +7,8 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "test": "next dev & jest --coverage -i --verbose false tests/ALL.spec.ts"
+    "test": "next dev & jest --coverage -i --verbose false tests/ALL.spec.ts",
+    "deploy": "NODE_ENV=production && serverless"
   },
   "dependencies": {
     "@headlessui/react": "^1.4.0",
