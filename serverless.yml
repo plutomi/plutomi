@@ -1,0 +1,15 @@
+plutomi:
+  component: "@sls-next/serverless-component@3.1.0"
+  inputs:
+    name: # This should be set as the component will create hundreds of lambdas
+      defaultLambda: Plutomi-default-lambda
+      apiLambda: Plutomi-api-lambda
+      imageLambda: Plutomi-image-lambda
+    memory:
+      defaultLambda: 256
+      apiLambda: 256
+      imageLambda: 1512
+    domain: "plutomi.com"
+    bucketName: ${env.WEBSITE_BUCKET_NAME}
+    cloudfront:
+      distributionId: ${env.CLOUDFRONT_ID} # This must be set or we get downtime on subsequent deploys
