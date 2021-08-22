@@ -57,8 +57,8 @@ export default function Domains() {
         </h2>
         <p className="text-md font-normal text-gray-500">
           We will reach out immediately after purchase to confirm the details on
-          where you'd like your domain to be transferred to. (Google Domains,
-          GoDaddy, Route53, etc.)
+          where you&apos;d like your domain to be transferred to. (Google
+          Domains, GoDaddy, Route53, etc.)
         </p>
         <div className="mt-6 grid grid-cols-1 gap-x-8 gap-y-8 sm:grid-cols-2 sm:gap-y-10 lg:grid-cols-4">
           {products.map((product) => (
