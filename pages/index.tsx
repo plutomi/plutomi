@@ -15,6 +15,7 @@ import {
   SupportIcon,
   ViewGridIcon,
   CodeIcon,
+  SparklesIcon,
   BookOpenIcon,
   XIcon,
 } from "@heroicons/react/outline";
@@ -47,6 +48,14 @@ const features = [
     description:
       "Request features and vote on which ones should be implemented next",
     icon: MapIcon,
+  },
+  {
+    name: "Domains for sale",
+    subHeading: null,
+    newTab: false,
+    href: "/domains",
+    description: "See if your next abandoned project is here ;)",
+    icon: SparklesIcon,
   },
   // {
   //   name: "Integrations",
@@ -169,33 +178,35 @@ export default function Example() {
                       <Popover.Panel className="absolute -ml-4  mt-3 transform z-10 px-2 w-screen max-w-md sm:px-0 lg:ml-0 lg:left-1/2 lg:-translate-x-1/2">
                         <div className=" rounded-lg shadow-lg ring-1 ring-black ring-opacity-5 overflow-hidden">
                           <div className=" grid gap-6 bg-white px-5 py-6 sm:gap-8 sm:p-8">
-                            {features.map((item) => (
-                              <a
-                                key={item.name}
-                                href={item.href}
-                                target={item.newTab ? "_blank" : null}
-                                rel="noreferrer"
-                                className="-m-3 p-3 flex items-start rounded-lg transition duration-200 ease-in-out hover:bg-gray-100"
-                              >
-                                <item.icon
-                                  className="flex-shrink-0 h-6 w-6 text-emerald-400"
-                                  aria-hidden="true"
-                                />
-                                <div className="ml-4">
-                                  <p className="text-base font-medium text-gray-900">
-                                    {item.name}{" "}
-                                    {item.subHeading ? (
-                                      <span className="text-gray-400 text-xs">
-                                        - {item.subHeading}
-                                      </span>
-                                    ) : null}
-                                  </p>
-                                  <p className="mt-1 text-sm text-gray-500">
-                                    {item.description}
-                                  </p>
-                                </div>
-                              </a>
-                            ))}
+                            {features.map((item) =>
+                              item.name === "Domains for sale" ? null : (
+                                <a
+                                  key={item.name}
+                                  href={item.href}
+                                  target={item.newTab ? "_blank" : null}
+                                  rel="noreferrer"
+                                  className="-m-3 p-3 flex items-start rounded-lg transition duration-200 ease-in-out hover:bg-gray-100"
+                                >
+                                  <item.icon
+                                    className="flex-shrink-0 h-6 w-6 text-emerald-400"
+                                    aria-hidden="true"
+                                  />
+                                  <div className="ml-4">
+                                    <p className="text-base font-medium text-gray-900">
+                                      {item.name}{" "}
+                                      {item.subHeading ? (
+                                        <span className="text-gray-400 text-xs">
+                                          - {item.subHeading}
+                                        </span>
+                                      ) : null}
+                                    </p>
+                                    <p className="mt-1 text-sm text-gray-500">
+                                      {item.description}
+                                    </p>
+                                  </div>
+                                </a>
+                              )
+                            )}
                           </div>
                           <div className="px-2 py-5 border-t bg-white space-y-6 sm:flex sm:space-y-0 sm:space-x-10 sm:px-2  flex justify-center bg-gray-100">
                             <p className=" text-gray-900  rounded-md text-base font-medium">
