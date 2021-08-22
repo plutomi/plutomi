@@ -208,7 +208,7 @@ export default function Example() {
                               )
                             )}
                           </div>
-                          <div className="px-2 py-5 border-t bg-white space-y-6 sm:flex sm:space-y-0 sm:space-x-10 sm:px-2  flex justify-center bg-gray-100">
+                          <div className="px-2 py-5 border-tspace-y-6 sm:flex sm:space-y-0 sm:space-x-10 sm:px-2  flex justify-center bg-gray-100">
                             <p className=" text-gray-900  rounded-md text-base font-medium">
                               Also follow{" "}
                               <a
