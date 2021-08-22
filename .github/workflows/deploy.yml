@@ -1,0 +1,37 @@
+name: Deploy Website
+
+# Only trigger, when the test workflow succeeded
+# https://stackoverflow.com/questions/62750603/github-actions-trigger-another-action-after-one-action-is-completed
+on:
+  # Temp commented out
+  # workflow_run:
+  #   workflows: ["Run Jest Tests"]
+  #   types:
+  #     - completed
+  push:
+    branches: [main]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    env:
+      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      AWS_ACCOUNT_ID: ${{ secrets.AWS_ACCOUNT_ID }}
+
+    strategy:
+      matrix:
+        node-version: [14.x]
+
+    steps:
+      - uses: actions/checkout@v2
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v2
+        with:
+          node-version: ${{ matrix.node-version }}
+
+      - name: Installing dependencies
+        run: npm i
+
+      - name: Deploying...
+        run: npm run deploy
