@@ -2,9 +2,9 @@ plutomi:
   component: "@sls-next/serverless-component@3.1.0"
   inputs:
     name: # This should be set as the component will create hundreds of lambdas
-      defaultLambda: Plutomi-default-lambda
-      apiLambda: Plutomi-api-lambda
-      imageLambda: Plutomi-image-lambda
+      defaultLambda: ${env.DEFAULT_LAMBDA_NAME}
+      apiLambda: ${env.API_LAMBDA_NAME}
+      imageLambda: ${env.IMAGE_LAMBDA_NAME}
     memory:
       defaultLambda: 256
       apiLambda: 256
