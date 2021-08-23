@@ -9,7 +9,8 @@ on:
   #   types:
   #     - completed
   push:
-    branches: [main]
+    branches:
+      - main
 
 jobs:
   deploy:
