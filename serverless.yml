@@ -9,7 +9,10 @@ plutomi:
       defaultLambda: 256
       apiLambda: 256
       imageLambda: 1512
-    domain: "plutomi.com"
+    domain: ${env.DOMAIN_NAME}
     bucketName: ${env.WEBSITE_BUCKET_NAME}
+
+    # This must be set or we get downtime on subsequent deploys :(
+    # You will have to deploy once to get your first ID
     cloudfront:
-      distributionId: ${env.CLOUDFRONT_ID} # This must be set or we get downtime on subsequent deploys
+      distributionId: ${env.CLOUDFRONT_ID}
