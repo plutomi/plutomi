@@ -16,7 +16,7 @@ const { DYNAMO_TABLE_NAME, ID_LENGTH } = process.env;
  * @param email
  * @param name
  */
-export async function CreateUser(email: string, name: string) {
+export async function CreateUser(name: string, email: string) {
   const now = dayjs().toISOString();
   const user_id = nanoid(parseInt(ID_LENGTH));
   const params: PutCommandInput = {
@@ -43,6 +43,6 @@ export async function CreateUser(email: string, name: string) {
     await Dynamo.send(new PutCommand(params));
     return params.Item;
   } catch (error) {
-    throw new Error("An error ocurred creating your user");
+    throw new Error(error);
   }
 }
