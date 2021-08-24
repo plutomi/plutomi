@@ -18,7 +18,6 @@ export default async function GetParameter(parameter_name: string) {
     return Parameter?.Value;
   } catch (error) {
     const message = `Unable to retrieve parameter ${parameter_name} - ${error}`;
-    console.error(message);
     throw new Error(message);
   }
 }

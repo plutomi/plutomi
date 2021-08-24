@@ -7,7 +7,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "test": "next dev & jest --coverage -i --verbose false tests/ALL.spec.ts",
+    "test": "next dev & jest --coverage -i --silent=false tests/ALL.spec.ts ",
     "deploy": "NODE_ENV=production && serverless"
   },
   "dependencies": {
@@ -15,6 +15,9 @@
     "@heroicons/react": "^1.0.4",
     "@tailwindcss/aspect-ratio": "^0.2.1",
     "@tailwindcss/forms": "^0.3.3",
+    "argon2": "^0.28.2",
+    "dayjs": "^1.10.6",
+    "nanoid": "^3.1.25",
     "next": "11.1.0",
     "react": "17.0.2",
     "react-dom": "17.0.2"
@@ -24,13 +27,19 @@
     "@aws-sdk/client-ses": "^3.27.0",
     "@aws-sdk/client-ssm": "^3.27.0",
     "@aws-sdk/lib-dynamodb": "^3.27.0",
+    "@aws-sdk/util-dynamodb": "^3.27.0",
+    "@types/jest": "^27.0.1",
     "@types/react": "^17.0.18",
     "autoprefixer": "^10.3.1",
+    "dotenv": "^10.0.0",
     "eslint": "7.32.0",
     "eslint-config-next": "11.1.0",
+    "faker": "^5.5.3",
+    "jest": "^27.0.6",
     "postcss": "^8.3.6",
     "serverless": "^2.54.0",
     "tailwindcss": "^2.2.7",
+    "ts-jest": "^27.0.5",
     "typescript": "^4.3.5"
   }
 }
