@@ -3,23 +3,28 @@ name: Deploy Website
 # Only trigger, when the test workflow succeeded
 # https://stackoverflow.com/questions/62750603/github-actions-trigger-another-action-after-one-action-is-completed
 on:
-  # Temp commented out
-  # workflow_run:
-  #   workflows: ["Run Jest Tests"]
-  #   types:
-  #     - completed
-  push:
-    branches: [main]
+  workflow_run:
+    workflows: ["Run Jest Tests"]
+    types:
+      - completed
+  # push:
+  #   branches: [main]
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
-    env:
+    env: # TODO YUCK!!! There has to be a better way for this lol
       AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
       AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
       AWS_ACCOUNT_ID: ${{ secrets.AWS_ACCOUNT_ID }}
       WEBSITE_BUCKET_NAME: ${{ secrets.WEBSITE_BUCKET_NAME }}
       CLOUDFRONT_ID: ${{ secrets.CLOUDFRONT_ID }}
+      DEFAULT_LAMBDA_NAME: ${{ secrets.DEFAULT_LAMBDA_NAME }}
+      API_LAMBDA_NAME: ${{ secrets.API_LAMBDA_NAME }}
+      IMAGE_LAMBDA_NAME: ${{ secrets.IMAGE_LAMBDA_NAME }}
+      DOMAIN_NAME: ${{ secrets.DOMAIN_NAME }}
+      ID_LENGTH: ${{ secrets.ID_LENGTH }}
+      DYNAMO_TABLE_NAME: ${{ secrets.DYNAMO_TABLE_NAME }}
 
     strategy:
       matrix:

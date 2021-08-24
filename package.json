@@ -28,6 +28,8 @@
     "@aws-sdk/client-ssm": "^3.27.0",
     "@aws-sdk/lib-dynamodb": "^3.27.0",
     "@aws-sdk/util-dynamodb": "^3.27.0",
+    "@commitlint/cli": "^13.1.0",
+    "@commitlint/config-conventional": "^13.1.0",
     "@types/jest": "^27.0.1",
     "@types/react": "^17.0.18",
     "autoprefixer": "^10.3.1",
