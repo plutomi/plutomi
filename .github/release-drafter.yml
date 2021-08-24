@@ -1,0 +1,47 @@
+name-template: "v$RESOLVED_VERSION"
+tag-template: "v$RESOLVED_VERSION"
+template: |
+  # What's Changed
+  $CHANGES
+autolabeler:
+  - label: "chore"
+    title:
+      - "/chore/i"
+
+  - label: "bug"
+    title:
+      - "/fix/i"
+
+  - label: "feature"
+    title:
+      - "/feat/i"
+
+  - label: "docs"
+    title:
+      - "/docs/i"
+
+  - label: "test"
+    title:
+      - "/test/i"
+
+categories:
+  - title: "🚀 Features"
+    label: "feature"
+
+  - title: "🐛 Bug Fixes"
+    labell: "bug"
+
+  - title: "🧰 Maintenance"
+    label: "chore"
+
+  - title: "📝 Documentation"
+    label: "docs"
+
+  - title: "🧪 Tests"
+    label: "test"
+
+  - title: "Breaking"
+    label: "breaking"
+
+exclude-labels:
+  - "skip-changelog"
