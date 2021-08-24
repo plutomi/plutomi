@@ -1,12 +1,5 @@
 import { Dynamo } from "../../libs/ddbDocClient";
-import {
-  PutCommand,
-  PutCommandInput,
-  UpdateCommandInput,
-  GetCommand,
-  GetCommandInput,
-  UpdateCommand,
-} from "@aws-sdk/lib-dynamodb";
+import { PutCommand, PutCommandInput } from "@aws-sdk/lib-dynamodb";
 import { nanoid } from "nanoid";
 import dayjs from "dayjs";
 
@@ -43,7 +36,6 @@ export async function CreateUser(name: string, email: string) {
     await Dynamo.send(new PutCommand(params));
     return params.Item;
   } catch (error) {
-    console.error(error, "in  util");
     throw new Error(error);
   }
 }

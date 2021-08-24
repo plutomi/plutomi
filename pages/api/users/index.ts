@@ -7,10 +7,10 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 
   if (method === "POST") {
     try {
-      const created_user = await CreateUser(name, email);
-      return res.status(201).json({ message: "received", created_user });
+      const user = await CreateUser(name, email);
+      return res.status(201).json({ message: "User created!", user });
     } catch (error) {
-      console.error(error);
+      // TODO add error logger
       return res
         .status(400) // TODO change #
         .json({ message: `Unable to create user: ${error}` });

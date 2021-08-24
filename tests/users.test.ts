@@ -2,10 +2,10 @@ import axios from "axios";
 import dayjs from "dayjs";
 import { nanoid } from "nanoid";
 axios.defaults.baseURL = "http://localhost:3000/api";
+require("dotenv").config();
 
 export default function Users() {
   const ID_LENGTH = parseInt(process.env.ID_LENGTH);
-
   const new_user: NewUserInput = {
     name: `${nanoid(5)} ${nanoid(5)}`,
     email: `${nanoid(50)}@plutomi.com`,
@@ -17,6 +17,9 @@ export default function Users() {
 
     console.log(status, data);
     expect(status).toBe(201);
+    expect(data).toHaveProperty("message");
+    expect(data).toHaveProperty("user");
+
     expect(data.message).toBe("User created!");
 
     const {
@@ -28,23 +31,22 @@ export default function Users() {
       entity_type,
       created_at,
       org,
-      role,
+      user_role,
       user_id,
       is_sub_user,
     } = data.user;
 
     expect(PK).toMatch(`USER#`);
     expect(PK).toHaveLength(ID_LENGTH + 5); // Accounting for USER#
-    expect(SK).toMatch(`USER#`);
-    expect(SK).toHaveLength(ID_LENGTH + 5); // Accounting for USER#
+    expect(SK).toBe(PK);
     expect(name).toBe(new_user.name);
     expect(email).toBe(new_user.email);
     expect(entity_type).toBe("USER");
     expect(created_at).toContain(dayjs().toISOString().slice(0, 9)); // Today's date, YYYY-MM-DD
     expect(org).toBe("NO_ORG_ASSIGNED");
-    expect(role).toBe("BASIC");
+    expect(user_role).toBe("BASIC");
     expect(user_id).toHaveLength(ID_LENGTH);
     expect(is_sub_user).toBe(false);
-    expect(password).not.toBe(new_user.password);
+    expect(password).toBe(undefined)
   });
 }
