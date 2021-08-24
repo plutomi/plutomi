@@ -22,15 +22,13 @@ To make a contribution, submit a pull request into the `dev` branch. You will be
 
 Your PR _branch name_ should have the format `type:` Whatever you worked on
 
-Example: `test: Added tests for org creation`. Different types listed below:
-
-| Type   | Description                                                           |
-| ------ | --------------------------------------------------------------------- |
-| feat:  | Added a new feature or enhancement                                    |
-| fix:   | Anything related to bugfixes                                          |
-| docs:  | Documentation updates (Readme, website copy, etc.)                    |
-| test:  | Anything related to testing                                           |
-| chore: | Basic maintenance and things that don't fit into the above categories |
+| ExampleDescription |
+| ------------------ | --------------------------------------------------------------------- |
+| feat:              | Added a new feature or enhancement                                    |
+| fix:               | Anything related to bugfixes                                          |
+| docs:              | Documentation updates (Readme, website copy, etc.)                    |
+| test:              | Anything related to testing                                           |
+| chore:             | Basic maintenance and things that don't fit into the above categories |
 
 ---
 
