@@ -18,9 +18,9 @@ It is our belief that transparency and direct input into the development process
 
 ## Contributing
 
-To make a contribution, submit a pull request into the `main` branch. You will be asked to sign a [Contributor License Agreement](https://en.wikipedia.org/wiki/Contributor_License_Agreement) for your PR. You'll only have to do this once.
+To make a contribution, submit a pull request into the `dev` branch. You will be asked to sign a [Contributor License Agreement](https://en.wikipedia.org/wiki/Contributor_License_Agreement) for your PR. You'll only have to do this once.
 
-Your PR _branch name_ should have the format `type:` Whatever you worked on
+Your PR _title_ should have the format `type:` Whatever you worked on
 
 Example: `test: Added tests for org creation`. Different types listed below:
 

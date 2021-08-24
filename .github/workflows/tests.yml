@@ -1,19 +1,16 @@
-name: Deploy Website
+name: Run Jest Tests
 
-# Only trigger, when the test workflow succeeded
-# https://stackoverflow.com/questions/62750603/github-actions-trigger-another-action-after-one-action-is-completed
 on:
-  workflow_run:
-    workflows: ["Run Jest Tests"]
-    types:
-      - completed
-  # push:
-  #   branches: [main]
+  push:
+    branches: [master, dev]
+  pull_request:
+    branches: [master, dev]
 
 jobs:
-  deploy:
+  tests:
     runs-on: ubuntu-latest
     env: # TODO YUCK!!! There has to be a better way for this lol
+      node-version: 14.x
       AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
       AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
       AWS_ACCOUNT_ID: ${{ secrets.AWS_ACCOUNT_ID }}
@@ -26,22 +23,15 @@ jobs:
       ID_LENGTH: ${{ secrets.ID_LENGTH }}
       DYNAMO_TABLE_NAME: ${{ secrets.DYNAMO_TABLE_NAME }}
 
-    strategy:
-      matrix:
-        node-version: [14.x]
-
     steps:
       - uses: actions/checkout@v2
-      - name: Use Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@v2
+      - name: Setting up Node Node.js ${{ env.node-version }}
+        uses: actions/setup-node@v1
         with:
-          node-version: ${{ matrix.node-version }}
-      - name: Turnstyle # Actions concurrency limit
-        uses: softprops/turnstyle@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          node-version: ${{ env.node-version }}
+
       - name: Installing dependencies
         run: npm i
 
-      - name: Deploying...
-        run: npm run deploy
+      - name: Running tests
+        run: npm t
