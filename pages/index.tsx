@@ -4,16 +4,12 @@ import { Popover, Transition } from "@headlessui/react";
 import {
   BookmarkAltIcon,
   CalendarIcon,
-  ChartBarIcon,
-  CursorClickIcon,
   MenuIcon,
   PhoneIcon,
   PlayIcon,
-  RefreshIcon,
   MapIcon,
   ShieldCheckIcon,
   SupportIcon,
-  ViewGridIcon,
   CodeIcon,
   SparklesIcon,
   BookOpenIcon,
@@ -57,19 +53,6 @@ const features = [
     description: "See if your next abandoned project is here ;)",
     icon: SparklesIcon,
   },
-  // {
-  //   name: "Integrations",
-  //   href: "#",
-  //   description: "Connect with third-party tools that you're already using.",
-  //   icon: ViewGridIcon,
-  // },
-  // {
-  //   name: "Automations",
-  //   href: "#",
-  //   description:
-  //     "Build strategic funnels that will drive your customers to convert",
-  //   icon: RefreshIcon,
-  // },
 ];
 const callsToAction = [
   { name: "Watch Demo", href: "#", icon: PlayIcon },
@@ -142,7 +125,7 @@ export default function Example() {
               </Popover.Button>
             </div>
 
-            {/* Navbar. Set to hidden by default, md:flex to show */}
+            {/* Navbar*/}
             <Popover.Group as="nav" className="hidden md:flex space-x-10">
               {" "}
               <Popover className="relative">
@@ -247,13 +230,6 @@ export default function Example() {
                   Domains for sale
                 </a>
               </Link>
-              {/* 
-              <a
-                href="#"
-                className="text-base font-medium text-gray-500 hover:text-gray-900"
-              >
-                Docs
-              </a> */}
               {/* <Popover className="relative">
                 {({ open }) => (
                   <>
@@ -362,7 +338,6 @@ export default function Example() {
           </div>
         </div>
 
-        {/* Unused below this line */}
         <Transition
           as={Fragment}
           enter="duration-200 ease-out"
