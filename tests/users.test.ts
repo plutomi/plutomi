@@ -19,7 +19,6 @@ export default function Users() {
     expect(status).toBe(201);
     expect(data).toHaveProperty("message");
     expect(data).toHaveProperty("user");
-
     expect(data.message).toBe("User created!");
 
     const {
@@ -42,7 +41,6 @@ export default function Users() {
     expect(PK).toMatch(`USER#`);
     expect(PK).toHaveLength(ID_LENGTH + 5); // Accounting for USER#
     expect(SK).toBe(PK);
-
     expect(GSI1PK).toBe(`ORG#NO_ORG_ASSIGNED`);
     expect(GSI1SK).toBe(`USER#${name}`); // Allows for 'Get all users in an org sorted by name
     expect(name).toBe(new_user.name);
@@ -54,6 +52,6 @@ export default function Users() {
     expect(user_role).toBe("BASIC");
     expect(user_id).toHaveLength(ID_LENGTH);
     expect(is_sub_user).toBe(false);
-    expect(password).toBe(undefined);
+    expect(password).toBe(new_user.password);
   });
 }

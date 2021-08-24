@@ -3,13 +3,22 @@ import { PutCommand, PutCommandInput } from "@aws-sdk/lib-dynamodb";
 import { nanoid } from "nanoid";
 import dayjs from "dayjs";
 
+const argon2 = require("argon2");
+
 const { DYNAMO_TABLE_NAME, ID_LENGTH } = process.env;
 /**
  *
  * @param email - Email of user
  * @param name - Name of user
+ * @param password - User's desired password
  */
-export async function CreateUser(name: string, email: string) {
+export async function CreateUser(
+  name: string,
+  email: string,
+  password: string
+) {
+  const hashed_password = await argon2.hash(password);
+
   const now = dayjs().toISOString();
   const user_id = nanoid(parseInt(ID_LENGTH));
   const new_user: NewUserOutput = {
@@ -17,7 +26,7 @@ export async function CreateUser(name: string, email: string) {
     SK: `USER#${user_id}`,
     email: email,
     name: name,
-    password: nanoid(10), // TODO add option to choose your own password
+    password: hashed_password,
     entity_type: "USER",
     created_at: now,
     org: "NO_ORG_ASSIGNED",
@@ -36,7 +45,7 @@ export async function CreateUser(name: string, email: string) {
 
   try {
     await Dynamo.send(new PutCommand(params));
-    return params.Item;
+    return new_user;
   } catch (error) {
     throw new Error(error);
   }

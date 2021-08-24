@@ -3,11 +3,11 @@ import { CreateUser } from "../../../utils/users/createUser";
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   const { body, method } = req;
-  const { name, email } = body;
+  const { name, email, password } = body;
 
   if (method === "POST") {
     try {
-      const user = await CreateUser(name, email);
+      const user = await CreateUser(name, email, password);
       return res.status(201).json({ message: "User created!", user });
     } catch (error) {
       // TODO add error logger
