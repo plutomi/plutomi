@@ -1,0 +1,26 @@
+name: Run Jest Tests
+
+on:
+  push:
+    branches: [master, dev]
+  pull_request:
+    branches: [master, dev]
+
+jobs:
+  tests:
+    runs-on: ubuntu-latest
+    env:
+      node-version: 14.x
+
+    steps:
+      - uses: actions/checkout@v2
+      - name: Setting up Node Node.js ${{ env.node-version }}
+        uses: actions/setup-node@v1
+        with:
+          node-version: ${{ env.node-version }}
+
+      - name: Installing dependencies
+        run: npm i
+
+      - name: Running tests
+        run: npm t
