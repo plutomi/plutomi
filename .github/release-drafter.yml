@@ -40,8 +40,5 @@ categories:
   - title: "🧪 Tests"
     label: "test"
 
-  - title: "Breaking"
-    label: "breaking"
-
 exclude-labels:
   - "skip-changelog"
