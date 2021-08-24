@@ -25,7 +25,7 @@ export async function CreateUser(name: string, email: string) {
     user_role: "BASIC",
     user_id: user_id,
     GSI1PK: "ORG#NO_ORG_ASSIGNED",
-    GSI1SK: `USER#${email}`,
+    GSI1SK: `USER#${name}`,
     is_sub_user: false,
   };
 
