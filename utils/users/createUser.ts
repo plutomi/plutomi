@@ -2,8 +2,7 @@ import { Dynamo } from "../../libs/ddbDocClient";
 import { PutCommand, PutCommandInput } from "@aws-sdk/lib-dynamodb";
 import { nanoid } from "nanoid";
 import dayjs from "dayjs";
-
-const argon2 = require("argon2");
+import argon2 from "argon2";
 
 const { DYNAMO_TABLE_NAME, ID_LENGTH } = process.env;
 /**
@@ -45,7 +44,8 @@ export async function CreateUser(
 
   try {
     await Dynamo.send(new PutCommand(params));
-    return new_user;
+    const { password, ...returned_user } = new_user;
+    return returned_user;
   } catch (error) {
     throw new Error(error);
   }

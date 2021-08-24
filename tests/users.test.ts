@@ -1,5 +1,6 @@
 import axios from "axios";
 import dayjs from "dayjs";
+const faker = require("faker");
 import { nanoid } from "nanoid";
 axios.defaults.baseURL = "http://localhost:3000/api";
 require("dotenv").config();
@@ -7,7 +8,7 @@ require("dotenv").config();
 export default function Users() {
   const ID_LENGTH = parseInt(process.env.ID_LENGTH);
   const new_user: NewUserInput = {
-    name: `${nanoid(5)} ${nanoid(5)}`,
+    name: `TEST_USER_${faker.name.findName()}`,
     email: `${nanoid(50)}@plutomi.com`,
     password: nanoid(10),
   };
@@ -52,6 +53,6 @@ export default function Users() {
     expect(user_role).toBe("BASIC");
     expect(user_id).toHaveLength(ID_LENGTH);
     expect(is_sub_user).toBe(false);
-    expect(password).toBe(new_user.password);
+    expect(password).toBe(undefined);
   });
 }
