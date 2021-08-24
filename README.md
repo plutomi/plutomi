@@ -20,15 +20,17 @@ It is our belief that transparency and direct input into the development process
 
 To make a contribution, submit a pull request into the `main` branch. You will be asked to sign a [Contributor License Agreement](https://en.wikipedia.org/wiki/Contributor_License_Agreement) for your PR. You'll only have to do this once.
 
-Your PR `title` should have the format `type:` description of what you changed.
+Your PR _branch name_ should have the format `type/`whatever-you're-working-on.
+
+Example: `test/org-creation`. Different types listed below:
 
 | Type   | Description                                                           |
 | ------ | --------------------------------------------------------------------- |
-| feat:  | Added a new feature or enhancement                                    |
-| fix:   | Anything related to bugfixes                                          |
-| docs:  | Documentation updates (Readme, website copy, etc.)                    |
-| test:  | Anything related to testing                                           |
-| chore: | Basic maintenance and things that don't fit into the above categories |
+| feat/  | Added a new feature or enhancement                                    |
+| fix/   | Anything related to bugfixes                                          |
+| docs/  | Documentation updates (Readme, website copy, etc.)                    |
+| test/  | Anything related to testing                                           |
+| chore/ | Basic maintenance and things that don't fit into the above categories |
 
 ---
 

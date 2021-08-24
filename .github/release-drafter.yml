@@ -4,25 +4,36 @@ template: |
   # What's Changed
   $CHANGES
 autolabeler:
+  # Adds a GitHub label to the PR
+  # The branch name of the PR must start with 'type/'
+  # This makes a cleaner changelog with the release-drafter github action
+  # As the titles can be just the commit message / whatever title
+
   - label: "chore"
-    title:
-      - "/chore/i"
+    branch:
+      - '/chore\/.+/'
 
   - label: "bug"
-    title:
-      - "/fix/i"
+    branch:
+      - '/fix\/.+/'
+      - '/bug\/.+/'
+      - '/bugfix\/.+/'
 
   - label: "feature"
-    title:
-      - "/feat/i"
+    branch:
+      - '/feat\/.+/'
+      - '/feature\/.+/'
 
   - label: "docs"
-    title:
-      - "/docs/i"
+    branch:
+      - '/docs\/.+/'
+      - '/documentation\/.+/'
 
   - label: "test"
-    title:
-      - "/test/i"
+    branch:
+      - '/test\/.+/'
+      - '/tests\/.+/'
+      - '/testing\/.+/'
 
 categories:
   - title: "🚀 Features"
