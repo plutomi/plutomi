@@ -1,6 +1,6 @@
 #### Plutomi Inc. Individual Contributor License Agreement ("Agreement"), v1.0
 
-You accept and agree to the following terms and conditions for Your present and future Contributions submitted to Plutomi, Inc. ("Plutomi"). Except for the license granted herein to Plutomi and recipients of software distributed by Plutomi, You reserve all right, title, and interest in and to Your Contributions.
+You accept and agree to the following terms and conditions for Your present and future Contributions submitted to Plutomi Inc. ("Plutomi"). Except for the license granted herein to Plutomi and recipients of software distributed by Plutomi, You reserve all right, title, and interest in and to Your Contributions.
 
 1\. Definitions.
 
