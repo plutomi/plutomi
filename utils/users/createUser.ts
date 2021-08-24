@@ -12,24 +12,26 @@ const { DYNAMO_TABLE_NAME, ID_LENGTH } = process.env;
 export async function CreateUser(name: string, email: string) {
   const now = dayjs().toISOString();
   const user_id = nanoid(parseInt(ID_LENGTH));
+  const new_user: NewUserOutput = {
+    PK: `USER#${user_id}`,
+    SK: `USER#${user_id}`,
+    email: email,
+    name: name,
+    password: nanoid(10), // TODO add option to choose your own password
+    entity_type: "USER",
+    created_at: now,
+    org: "NO_ORG_ASSIGNED",
+    org_join_date: "NO_ORG_ASSIGNED",
+    user_role: "BASIC",
+    user_id: user_id,
+    GSI1PK: "ORG#NO_ORG_ASSIGNED",
+    GSI1SK: `USER#${email}`,
+    is_sub_user: false,
+  };
+
   const params: PutCommandInput = {
     TableName: DYNAMO_TABLE_NAME,
-    Item: {
-      PK: `USER#${user_id}`,
-      SK: `USER#${user_id}`,
-      email: email,
-      name: name,
-      entity_type: "USER",
-      created_at: now,
-      org: "NO_ORG_ASSIGNED",
-      org_name: "NO_ORG_ASSIGNED",
-      org_join_date: "NO_ORG_ASSIGNED",
-      user_role: "BASIC",
-      user_id: user_id,
-      GSI1PK: "ORG#NO_ORG_ASSIGNED",
-      GSI1SK: `USER#${email}`,
-      is_sub_user: false,
-    },
+    Item: new_user,
   };
 
   try {

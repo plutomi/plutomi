@@ -34,7 +34,7 @@ export default function Users() {
       user_role,
       user_id,
       is_sub_user,
-    } = data.user;
+    }: NewUserOutput = data.user;
 
     expect(PK).toMatch(`USER#`);
     expect(PK).toHaveLength(ID_LENGTH + 5); // Accounting for USER#
@@ -47,6 +47,6 @@ export default function Users() {
     expect(user_role).toBe("BASIC");
     expect(user_id).toHaveLength(ID_LENGTH);
     expect(is_sub_user).toBe(false);
-    expect(password).toBe(undefined)
+    expect(password).toBe(undefined);
   });
 }

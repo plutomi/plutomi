@@ -8,6 +8,7 @@ interface NewUserOutput {
   SK: string;
   name: string;
   email: string;
+  password: string;
   entity_type: string;
   created_at: string;
   org: string;
