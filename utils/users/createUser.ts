@@ -13,14 +13,14 @@ import dayjs from "dayjs";
 const { DYNAMO_TABLE_NAME, ID_LENGTH } = process.env;
 /**
  *
- * @param email
- * @param name
+ * @param email - Email of user
+ * @param name - Name of user
  */
 export async function CreateUser(name: string, email: string) {
   const now = dayjs().toISOString();
   const user_id = nanoid(parseInt(ID_LENGTH));
   const params: PutCommandInput = {
-    TableName: process.env.DYNAMO_TABLE_NAME,
+    TableName: DYNAMO_TABLE_NAME,
     Item: {
       PK: `USER#${user_id}`,
       SK: `USER#${user_id}`,
@@ -43,6 +43,7 @@ export async function CreateUser(name: string, email: string) {
     await Dynamo.send(new PutCommand(params));
     return params.Item;
   } catch (error) {
+    console.error(error, "in  util");
     throw new Error(error);
   }
 }

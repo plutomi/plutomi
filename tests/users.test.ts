@@ -4,17 +4,18 @@ import { nanoid } from "nanoid";
 axios.defaults.baseURL = "http://localhost:3000/api";
 
 export default function Users() {
+  const ID_LENGTH = parseInt(process.env.ID_LENGTH);
+
   const new_user: NewUserInput = {
     name: `${nanoid(5)} ${nanoid(5)}`,
     email: `${nanoid(50)}@plutomi.com`,
     password: nanoid(10),
   };
 
-  const ID_LENGTH = parseInt(process.env.ID_LENGTH);
-
   test("Creates a user", async () => {
     const { status, data } = await axios.post("/users", new_user);
 
+    console.log(status, data);
     expect(status).toBe(201);
     expect(data.message).toBe("User created!");
 

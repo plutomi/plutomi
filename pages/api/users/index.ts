@@ -3,16 +3,16 @@ import { CreateUser } from "../../../utils/users/createUser";
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   const { body, method } = req;
-  const { new_user } = body;
-  const { name, email } = new_user;
+  const { name, email } = body;
 
   if (method === "POST") {
     try {
       const created_user = await CreateUser(name, email);
       return res.status(201).json({ message: "received", created_user });
     } catch (error) {
+      console.error(error);
       return res
-        .status(500)
+        .status(400) // TODO change #
         .json({ message: `Unable to create user: ${error}` });
     }
   }

@@ -7,7 +7,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "test": "next dev & jest --coverage -i --verbose false tests/ALL.spec.ts",
+    "test": "next dev & jest --coverage -i --silent=false tests/ALL.spec.ts ",
     "deploy": "NODE_ENV=production && serverless"
   },
   "dependencies": {
@@ -26,6 +26,7 @@
     "@aws-sdk/client-ses": "^3.27.0",
     "@aws-sdk/client-ssm": "^3.27.0",
     "@aws-sdk/lib-dynamodb": "^3.27.0",
+    "@aws-sdk/util-dynamodb": "^3.27.0",
     "@types/jest": "^27.0.1",
     "@types/react": "^17.0.18",
     "autoprefixer": "^10.3.1",
