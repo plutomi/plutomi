@@ -1,4 +1,4 @@
-const bcrypt = require("bcrypt");
+const bcrypt = require("bcryptjs");
 import crypto from "crypto";
 const hash_algo = "sha512";
 const digest = "hex";
