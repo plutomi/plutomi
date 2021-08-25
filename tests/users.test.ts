@@ -4,7 +4,9 @@ const faker = require("faker");
 import { nanoid } from "nanoid";
 axios.defaults.baseURL = "http://localhost:3000/api";
 require("dotenv").config();
-
+let created_user = {
+  email: "",
+};
 export default function Users() {
   const ID_LENGTH = parseInt(process.env.ID_LENGTH);
   const new_user: NewUserInput = {
@@ -22,6 +24,8 @@ export default function Users() {
     expect(data).toHaveProperty("user");
     expect(data.message).toBe("User created!");
 
+    // Global var for next test
+    created_user = data.user;
     const {
       PK,
       SK,
@@ -58,5 +62,17 @@ export default function Users() {
     expect(password).toBe(undefined);
     expect(GSI2PK).toBe(new_user.email);
     expect(GSI2SK).toBe(GSI2PK);
+  });
+
+  test("Retrieve a user by email", async () => {
+    const body = {
+      email: created_user.email,
+    };
+    const { status, data } = await axios.post("/users/email", body);
+    console.log(status, data);
+
+    expect(status).toBe(201);
+    expect(data.message).toBe("User found!");
+    expect(data.user).toStrictEqual(created_user);
   });
 }
