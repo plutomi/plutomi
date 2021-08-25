@@ -21,15 +21,16 @@ It is our belief that transparency and direct input into the development process
 To make a contribution, submit a pull request into the `main` branch. You will be asked to sign a [Contributor License Agreement](https://en.wikipedia.org/wiki/Contributor_License_Agreement) for your PR. You'll only have to do this once.
 
 Your PR _title_ should have the format `type:` whatever-you-worked-on.
+
 Example: `fix: Removed the double modals popping up on login`.
 
 Your `type` can be any of the following:
 
-| Type   | Description                                                                  |
-| ------ | ---------------------------------------------------------------------------- |
-| feat:  | Added a new feature or enhancement                                           |
-| fix:   | Squashed some bugs!                                                          |
-| chore: | Maintenance, tests, refactoring, etc. If it doesn't fit above, it goes here. |
+| Type   | Description                                                                 |
+| ------ | --------------------------------------------------------------------------- |
+| feat:  | Added a new feature or enhancement                                          |
+| fix:   | Squashed some bugs!                                                         |
+| chore: | Maintenance, tests, refactoring, etc. If it doesn't fit above, it goes here |
 
 ---
 
