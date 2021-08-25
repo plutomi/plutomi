@@ -1,0 +1,35 @@
+name-template: "v$RESOLVED_VERSION"
+tag-template: "v$RESOLVED_VERSION"
+template: |
+  # What's Changed
+  $CHANGES
+
+autolabeler:
+  - label: "chore"
+    title:
+      - "/chore/i"
+      - "/docs/i"
+      - "/maintenance/i"
+      - "/upkeep/i"
+
+  - label: "bug"
+    title:
+      - "/fix/i"
+      - "/bug/i"
+      - "/bugfix/i"
+
+  - label: "enhancement"
+    title:
+      - "/feat/i"
+      - "/feature/i"
+      - "/enhancement/i"
+
+categories:
+  - title: "🚀 Features"
+    label: "enhancement"
+
+  - title: "🐛 Bug Fixes"
+    label: "bug"
+
+  - title: "🧰 Maintenance"
+    label: "chore"
