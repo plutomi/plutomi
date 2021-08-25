@@ -5,7 +5,7 @@ name: Deploy Website
 on:
   workflow_run:
     workflows: ["Run Jest Tests"]
-    branches: [master]
+    branches: [main]
     types:
       - completed
   # push:
