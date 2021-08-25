@@ -3,6 +3,7 @@ import { PutCommand, PutCommandInput } from "@aws-sdk/lib-dynamodb";
 import { nanoid } from "nanoid";
 import dayjs from "dayjs";
 import { CreatePassword } from "../passwords";
+import { Clean } from "../clean";
 const { DYNAMO_TABLE_NAME, ID_LENGTH } = process.env;
 /**
  *
@@ -44,8 +45,8 @@ export async function CreateUser(
 
   try {
     await Dynamo.send(new PutCommand(params));
-    const { password, ...returned_user } = new_user;
-    return returned_user;
+    Clean(new_user);
+    return new_user;
   } catch (error) {
     throw new Error(error);
   }

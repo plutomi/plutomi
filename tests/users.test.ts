@@ -71,7 +71,7 @@ export default function Users() {
     const { status, data } = await axios.post("/users/email", body);
     console.log(status, data);
 
-    expect(status).toBe(201);
+    expect(status).toBe(200);
     expect(data.message).toBe("User found!");
     expect(data.user).toStrictEqual(created_user);
   });
