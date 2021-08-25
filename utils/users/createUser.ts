@@ -44,8 +44,7 @@ export async function CreateUser(
 
   try {
     await Dynamo.send(new PutCommand(params));
-    const { password, ...returned_user } = new_user;
-    return returned_user;
+    return new_user;
   } catch (error) {
     throw new Error(error);
   }
