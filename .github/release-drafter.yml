@@ -33,3 +33,6 @@ categories:
 
   - title: "🧰 Maintenance"
     label: "chore"
+
+exclude-labels:
+  - "skip-changelog"
