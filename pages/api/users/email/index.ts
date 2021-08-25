@@ -1,16 +1,15 @@
 import { NextApiRequest, NextApiResponse } from "next";
-import { CreateUser } from "../../../utils/users/createUser";
-import { Clean } from "../../../utils/clean";
-
+import { GetUserByEmail } from "../../../../utils/users/getUserByEmail";
+import { Clean } from "../../../../utils/clean";
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   const { body, method } = req;
-  const { name, email, password } = body;
+  const { email } = body;
 
   if (method === "POST") {
     try {
-      const user = await CreateUser(name, email, password);
+      const user = await GetUserByEmail(email);
       Clean(user);
-      return res.status(201).json({ message: "User created!", user });
+      return res.status(200).json({ message: "User found!", user });
     } catch (error) {
       // TODO add error logger
       return res
