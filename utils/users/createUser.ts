@@ -2,8 +2,7 @@ import { Dynamo } from "../../libs/ddbDocClient";
 import { PutCommand, PutCommandInput } from "@aws-sdk/lib-dynamodb";
 import { nanoid } from "nanoid";
 import dayjs from "dayjs";
-import argon2 from "argon2";
-
+import { CreatePassword } from "../passwords";
 const { DYNAMO_TABLE_NAME, ID_LENGTH } = process.env;
 /**
  *
@@ -16,8 +15,7 @@ export async function CreateUser(
   email: string,
   password: string
 ) {
-  const hashed_password = await argon2.hash(password);
-
+  const hashed_password = await CreatePassword(password);
   const now = dayjs().toISOString();
   const user_id = nanoid(parseInt(ID_LENGTH));
   const new_user: NewUserOutput = {
@@ -34,6 +32,8 @@ export async function CreateUser(
     user_id: user_id,
     GSI1PK: "ORG#NO_ORG_ASSIGNED",
     GSI1SK: `USER#${name}`,
+    GSI2PK: email, // Get users by email (invites, passwords)
+    GSI2SK: email,
     is_sub_user: false,
   };
 

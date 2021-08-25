@@ -17,5 +17,7 @@ interface NewUserOutput {
   user_id: string;
   GSI1PK: string;
   GSI1SK: string;
+  GSI2PK: string;
+  GSI2SK: string;
   is_sub_user: boolean;
 }

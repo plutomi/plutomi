@@ -37,6 +37,8 @@ export default function Users() {
       org_join_date,
       GSI1PK,
       GSI1SK,
+      GSI2PK,
+      GSI2SK,
     }: NewUserOutput = data.user;
 
     expect(PK).toMatch(`USER#`);
@@ -54,5 +56,7 @@ export default function Users() {
     expect(user_id).toHaveLength(ID_LENGTH);
     expect(is_sub_user).toBe(false);
     expect(password).toBe(undefined);
+    expect(GSI2PK).toBe(new_user.email)
+    expect(GSI2SK).toBe(GSI1PK)
   });
 }

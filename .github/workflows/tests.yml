@@ -22,6 +22,8 @@ jobs:
       DOMAIN_NAME: ${{ secrets.DOMAIN_NAME }}
       ID_LENGTH: ${{ secrets.ID_LENGTH }}
       DYNAMO_TABLE_NAME: ${{ secrets.DYNAMO_TABLE_NAME }}
+      GSI1_INDEX: ${{ secrets.GSI1_INDEX }}
+      GSI2_INDEX: ${{ secrets.GSI2_INDEX }}
 
     steps:
       - uses: actions/checkout@v2
