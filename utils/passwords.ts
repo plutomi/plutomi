@@ -3,7 +3,7 @@ import crypto from "crypto";
 const hash_algo = "sha512";
 const digest = "hex";
 
-// Create a hash of the user's password
+// Create a hash of the user's password using above algo
 export async function CreateSHA(user_password: string) {
   const hash = crypto
     .createHash(hash_algo)
@@ -12,7 +12,7 @@ export async function CreateSHA(user_password: string) {
   return hash;
 }
 
-// Create the password with bcrypt
+// Create the main hash with bcrypt
 export async function CreatePassword(user_password: string) {
   const SHA = await CreateSHA(user_password);
 

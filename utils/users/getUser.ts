@@ -6,6 +6,10 @@ const { DYNAMO_TABLE_NAME } = process.env;
  * @param user_id - The email of the user base64url encoded
  */
 export async function GetUser(user_id: string) {
+  /**
+   * TODO: Permissions
+   * When checking sessions, see if the org matches the user. If not, return a 403
+   */
   const params: GetCommandInput = {
     TableName: DYNAMO_TABLE_NAME,
     Key: {

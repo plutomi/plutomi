@@ -1,14 +1,13 @@
 import { Dynamo } from "../../libs/ddbDocClient";
 import { PutCommand, PutCommandInput } from "@aws-sdk/lib-dynamodb";
-import { nanoid } from "nanoid";
 import dayjs from "dayjs";
 import base64url from "base64url";
 import { CreatePassword } from "../passwords";
-const { DYNAMO_TABLE_NAME, ID_LENGTH } = process.env;
+const { DYNAMO_TABLE_NAME } = process.env;
 /**
  *
  * @param email - Email of user
- * @param name - Name of user
+ * @param name - Name of user as string, NOT base64url. Conversion happens in the function
  * @param password - User's desired password
  */
 export async function CreateUser(

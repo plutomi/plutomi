@@ -2,7 +2,7 @@ import { NextApiRequest, NextApiResponse } from "next";
 import { GetUser } from "../../../utils/users/getUser";
 import { Clean } from "../../../utils/clean";
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
-  const { body, method, query } = req;
+  const { method, query } = req;
   const { user_id } = query;
 
   if (method === "GET") {
