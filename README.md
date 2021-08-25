@@ -22,8 +22,6 @@ To make a contribution, submit a pull request into the `main` branch. You will b
 
 Your PR _title_ should have the format `type:` whatever-you-worked-on.
 
-Example: `fix: Removed the double modals popping up on login`.
-
 Your `type` can be any of the following:
 
 | Type   | Description                                                                 |
@@ -31,6 +29,8 @@ Your `type` can be any of the following:
 | feat:  | Added a new feature or enhancement                                          |
 | fix:   | Squashed some bugs!                                                         |
 | chore: | Maintenance, tests, refactoring, etc. If it doesn't fit above, it goes here |
+
+Example: `fix: Removed the double modals popping up on login`
 
 ---
 
