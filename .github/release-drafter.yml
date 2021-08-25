@@ -25,11 +25,14 @@ autolabeler:
       - "/enhancement/i"
 
 categories:
-  - title: "🚀 Features"
+  - title: "✨ Enhancements"
     label: "enhancement"
 
-  - title: "🐛 Bug Fixes"
+  - title: "🐛 Fixes"
     label: "bug"
 
   - title: "🧰 Maintenance"
     label: "chore"
+
+exclude-labels:
+  - "skip-changelog"
