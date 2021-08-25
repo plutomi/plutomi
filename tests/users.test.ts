@@ -56,7 +56,7 @@ export default function Users() {
     expect(user_id).toHaveLength(ID_LENGTH);
     expect(is_sub_user).toBe(false);
     expect(password).toBe(undefined);
-    expect(GSI2PK).toBe(new_user.email)
-    expect(GSI2SK).toBe(GSI1PK)
+    expect(GSI2PK).toBe(new_user.email);
+    expect(GSI2SK).toBe(GSI2PK);
   });
 }
