@@ -1,15 +1,18 @@
 import { NextApiRequest, NextApiResponse } from "next";
-import { GetUserByEmail } from "../../../../utils/users/getUserByEmail";
-import { Clean } from "../../../../utils/clean";
+import { GetUser } from "../../../utils/users/getUser";
+import { Clean } from "../../../utils/clean";
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
-  const { body, method } = req;
-  const { email } = body;
+  const { body, method, query } = req;
+  const { user_id } = query;
 
-  if (method === "POST") {
+  if (method === "GET") {
     try {
-      const user = await GetUserByEmail(email);
+      const user = await GetUser(user_id as string);
+      if (!user) {
+        return res.status(404).json({ message: "User not found" });
+      }
       Clean(user);
-      return res.status(200).json({ message: "User found!", user });
+      return res.status(200).json(user);
     } catch (error) {
       // TODO add error logger
       return res

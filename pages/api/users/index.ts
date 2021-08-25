@@ -10,7 +10,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     try {
       const user = await CreateUser(name, email, password);
       Clean(user);
-      return res.status(201).json({ message: "User created!", user });
+      return res.status(201).json(user);
     } catch (error) {
       // TODO add error logger
       return res
