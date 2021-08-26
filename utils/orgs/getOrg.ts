@@ -3,9 +3,9 @@ import { GetCommand, GetCommandInput } from "@aws-sdk/lib-dynamodb";
 const { DYNAMO_TABLE_NAME } = process.env;
 /**
  *
- * @param user_id - The email of the user base64url encoded
+ * @param org_id - The email of the org
  */
-export async function GetUser(user_id: string) {
+export async function GetOrg(org_id: string) {
   /**
    * TODO: Permissions
    * When checking sessions, see if the org matches the user. If not, return a 403
@@ -13,8 +13,8 @@ export async function GetUser(user_id: string) {
   const params: GetCommandInput = {
     TableName: DYNAMO_TABLE_NAME,
     Key: {
-      PK: `USER#${user_id}`,
-      SK: `USER`,
+      PK: `ORG#${org_id}`,
+      SK: `ORG`,
     },
   };
 

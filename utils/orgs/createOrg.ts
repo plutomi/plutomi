@@ -7,12 +7,13 @@ const { DYNAMO_TABLE_NAME } = process.env;
  *
  * @param org_name
  */
-export async function CreateStageRule(org_name: string) {
+export async function CreateOrg(org_name: string) {
   const now = dayjs().toISOString();
   const org_id = nanoid(30);
   const new_org = {
     PK: `ORG#${org_id}`,
     SK: `ORG`,
+    org_name: org_name,
     entity_type: "ORG",
     created_at: now,
     GSI1PK: `ORG`, // No need to add an extra index, can query from here to get all orgs!
