@@ -6,21 +6,21 @@ import { nanoid } from "nanoid";
 const { DYNAMO_TABLE_NAME } = process.env;
 /**
  *
- * @param name - Name of the funnel (NYC, Miami, Houston)
+ * @param funnel_name - Name of the funnel (NYC, Miami, Houston)
  * @param org_id - ID of org
  */
-export async function CreateFunnel(org_id: string, name: string) {
+export async function CreateFunnel(org_id: string, funnel_name: string) {
   const now = dayjs().toISOString();
   const funnel_id = nanoid(30);
   const new_user = {
     PK: `ORG#${org_id}#FUNNEL#${funnel_id}`,
     SK: `FUNNEL`,
-    name: name,
+    funnel_name: funnel_name,
     entity_type: "FUNNEL",
     created_at: now,
     funnel_id: funnel_id,
     GSI1PK: `ORG#${org_id}#FUNNELS`,
-    GSI1SK: name,
+    GSI1SK: funnel_name,
   };
 
   const params: PutCommandInput = {

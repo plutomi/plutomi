@@ -5,21 +5,26 @@ import { nanoid } from "nanoid";
 const { DYNAMO_TABLE_NAME } = process.env;
 /**
  *
- * @param name - Name of the stage (Questionnaire, Interviewing, Hired)
+ * @param stage_name - Name of the stage (Questionnaire, Interviewing, Hired)
+ * @param funnel_id - Where should this stage go
  * @param org_id - ID of org
  */
-export async function CreateStage(org_id: string, name: string) {
+export async function CreateStage(
+  org_id: string,
+  stage_name: string,
+  funnel_id: string
+) {
   const now = dayjs().toISOString();
   const stage_id = nanoid(30);
   const new_stage = {
     PK: `ORG#${org_id}#STAGE#${stage_id}`,
     SK: `STAGE`,
-    name: name,
+    stage_name: stage_name,
     entity_type: "STAGE",
     created_at: now,
     stage_id: stage_id,
     GSI1PK: `ORG#${org_id}#STAGES`,
-    GSI1SK: name,
+    GSI1SK: stage_name,
   };
 
   const params: PutCommandInput = {

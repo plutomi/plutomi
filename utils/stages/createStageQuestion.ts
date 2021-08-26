@@ -5,25 +5,25 @@ import { nanoid } from "nanoid";
 const { DYNAMO_TABLE_NAME } = process.env;
 /**
  *
- * @param title - title of the question (How are you?, How old are you?)
+ * @param question_title - Title of the question (How are you?, How old are you?)
  * @param org_id - ID of org
  * @param stage_id - ID of stage where question should be created
  */
 export async function CreateStageQuestion(
   org_id: string,
   stage_id: string,
-  title: string
+  question_title: string
 ) {
   const now = dayjs().toISOString();
   const stage_question_id = nanoid(30);
   const new_stage_question = {
     PK: `ORG#${org_id}#STAGE#${stage_id}`,
     SK: `STAGE_QUESTION#${stage_question_id}`,
-    title: title,
+    question_title: question_title,
     entity_type: "STAGE_QUESTION",
     created_at: now,
     GSI1PK: `ORG#${org_id}#QUESTIONS`,
-    GSI1SK: title, // TODO filter by funnel by stage?
+    GSI1SK: question_title, // TODO filter by funnel by stage?
   };
 
   const params: PutCommandInput = {
