@@ -11,38 +11,29 @@ const { DYNAMO_TABLE_NAME } = process.env;
  * @param name - Name of user as string, NOT base64url. Conversion happens in the function
  * @param password - User's desired password
  */
-export async function CreateUser(
-  name: string,
-  email: string,
-  password: string
-) {
-  const hashed_password = await CreatePassword(password);
+export async function CreateSession(user_id: string, email: string) {
   const now = dayjs().toISOString();
-  const user_id = nanoid(30);
-  const new_user = {
+  const session_id = nanoid(50);
+  const new_session = {
     PK: `USER#${user_id}`,
-    SK: `USER`,
-    name: name,
+    SK: `USER_LOGIN#${now}`,
     email: email,
-    password: hashed_password,
-    entity_type: "USER",
+    entity_type: "LOGIN",
     created_at: now,
-    org_join_date: "NO_ORG_ASSIGNED",
     user_id: user_id,
-    GSI1PK: "ORG#NO_ORG_ASSIGNED#USERS",
-    GSI1SK: name,
-    GSI2PK: email,
-    GSI2SK: "USER",
+    session_status: `ACTIVE`,
+    GSI1PK: `SESSION#${session_id}`,
+    GSI1SK: `SESSION#${session_id}`,
   };
 
   const params: PutCommandInput = {
     TableName: DYNAMO_TABLE_NAME,
-    Item: new_user,
+    Item: new_session,
   };
 
   try {
     await Dynamo.send(new PutCommand(params));
-    return new_user;
+    return new_session;
   } catch (error) {
     throw new Error(error);
   }
