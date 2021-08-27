@@ -1,7 +1,6 @@
 import { Dynamo } from "../../libs/ddbDocClient";
 import { PutCommand, PutCommandInput } from "@aws-sdk/lib-dynamodb";
 import dayjs from "dayjs";
-import { CreatePassword } from "../passwords";
 import { nanoid } from "nanoid";
 const { DYNAMO_TABLE_NAME } = process.env;
 /**

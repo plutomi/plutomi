@@ -23,6 +23,7 @@ export async function CreateStage(
     entity_type: "STAGE",
     created_at: now,
     stage_id: stage_id,
+    funnel_id: funnel_id,
     GSI1PK: `ORG#${org_id}#STAGES`,
     GSI1SK: stage_name,
   };

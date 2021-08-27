@@ -1,10 +1,12 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import { CreateStage } from "../../../utils/stages/createStage";
 import { Clean } from "../../../utils/clean";
+import { GetAllStagesInOrg } from "../../../utils/stages/getAllStagesInOrg";
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
-  const { body, method } = req;
+  const { body, method, query } = req;
   const { org_id, funnel_id, stage_name } = body;
+  const query_org_id = query.org_id; // TODO fix, use session
 
   if (method === "POST") {
     try {
@@ -15,6 +17,18 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       return res
         .status(400) // TODO change #
         .json({ message: `Unable to create stage: ${error}` });
+    }
+  }
+
+  if (method === "GET") {
+    try {
+      const all_funnels = await GetAllStagesInOrg(query_org_id as string);
+      return res.status(200).json(all_funnels);
+    } catch (error) {
+      // TODO add error logger
+      return res
+        .status(400) // TODO change #
+        .json({ message: `Unable to retrieve funnels: ${error}` });
     }
   }
 
