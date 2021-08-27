@@ -1,5 +1,5 @@
 import { NextApiRequest, NextApiResponse } from "next";
-import { GetUser } from "../../../utils/users/getUser";
+import { GetUserById } from "../../../utils/users/getUserById";
 import { Clean } from "../../../utils/clean";
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   const { method, query } = req;
@@ -7,7 +7,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 
   if (method === "GET") {
     try {
-      const user = await GetUser(user_id as string);
+      const user = await GetUserById(user_id as string);
       if (!user) {
         return res.status(404).json({ message: "User not found" });
       }
