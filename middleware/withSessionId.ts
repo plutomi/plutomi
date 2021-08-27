@@ -9,10 +9,9 @@ import { GetUserById } from "../utils/users/getUserById";
 export default function withSessionId(handler: any) {
   return async (req: NextApiRequest, res: NextApiResponse) => {
     let cookies = new Cookies(req, res, { keys: keys });
-    console.log(req.headers);
     let session_id = cookies.get("session_id", { signed: true });
-    console.log(" SESSION ID in req!", session_id);
     if (!session_id) {
+      cookies.set("session_id");
       return res
         .status(401)
         .json({ message: "You have been logged out, please sign in again." });
@@ -21,7 +20,7 @@ export default function withSessionId(handler: any) {
 
     try {
       const session = await GetSessionById(session_id);
-      console.log("SESSION!", session);
+      cookies.set("session_id");
       if (!session) {
         return res
           .status(401)
@@ -37,10 +36,8 @@ export default function withSessionId(handler: any) {
           return res.status(400).json({ message: "User does not exist" });
         }
 
-        const { org_id } = user;
-
-        req.headers.user_id = user_id;
-        req.headers.user_org_id = org_id; // Prevents cross-org resources from becoming available
+        // Can be accessed from any API call afterwards
+        req.body.user_session = user;
 
         return handler(req, res); // Essentially next()
       } catch (error) {

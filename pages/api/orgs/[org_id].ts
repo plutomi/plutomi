@@ -17,7 +17,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       // TODO add error logger
       return res
         .status(400) // TODO change #
-        .json({ message: `Unable to create org: ${error}` });
+        .json({ message: `Unable to retrieve org: ${error}` });
     }
   }
 

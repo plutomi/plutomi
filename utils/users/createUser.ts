@@ -1,10 +1,10 @@
 import { Dynamo } from "../../libs/ddbDocClient";
 import { PutCommand, PutCommandInput } from "@aws-sdk/lib-dynamodb";
 import dayjs from "dayjs";
-import base64url from "base64url";
 import { CreatePassword } from "../passwords";
 import { nanoid } from "nanoid";
 const { DYNAMO_TABLE_NAME } = process.env;
+import { GetUserByEmail } from "./getUserByEmail";
 /**
  *
  * @param email - Email of user
@@ -16,6 +16,12 @@ export async function CreateUser(
   email: string,
   password: string
 ) {
+  const userExists = await GetUserByEmail(email);
+  if (userExists) {
+    throw new Error(
+      "A user already exists with this email, please log in instead"
+    );
+  }
   const hashed_password = await CreatePassword(password);
   const now = dayjs().toISOString();
   const user_id = nanoid(30);
@@ -24,11 +30,12 @@ export async function CreateUser(
     SK: `USER`,
     name: name,
     email: email,
+    user_id: user_id,
     password: hashed_password,
     entity_type: "USER",
     created_at: now,
+    org_id: "NO_ORG_ASSIGNED",
     org_join_date: "NO_ORG_ASSIGNED",
-    user_id: user_id,
     GSI1PK: "ORG#NO_ORG_ASSIGNED#USERS",
     GSI1SK: name,
     GSI2PK: email,

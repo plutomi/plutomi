@@ -5,17 +5,17 @@ import withSessionId from "../../../middleware/withSessionId";
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   const { body, method } = req;
-  const { org_name } = body;
+  const { org_name, user_session } = body;
 
   if (method === "POST") {
     try {
-      const org = await CreateOrg(org_name);
+      const org = await CreateOrg(org_name, user_session);
       return res.status(201).json(org);
     } catch (error) {
       // TODO add error logger
       return res
         .status(400) // TODO change #
-        .json({ message: `Unable to create org: ${error}` });
+        .json({ message: `${error}` });
     }
   }
 

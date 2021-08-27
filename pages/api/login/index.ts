@@ -1,5 +1,5 @@
 import { NextApiRequest, NextApiResponse } from "next";
-import { CreateSession } from "../../../utils/sessions/createSession";
+import { CreateSession } from "../../../utils/sessions/login";
 import { VerifyPassword } from "../../../utils/passwords";
 const Cookies = require("cookies");
 import withSessionId from "../../../middleware/withSessionId";

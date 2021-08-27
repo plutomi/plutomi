@@ -1,13 +1,13 @@
 import { Dynamo } from "../../libs/ddbDocClient";
-import { GetCommand, GetCommandInput } from "@aws-sdk/lib-dynamodb";
+import { DeleteCommand, DeleteCommandInput } from "@aws-sdk/lib-dynamodb";
 const { DYNAMO_TABLE_NAME } = process.env;
 /**
  *
  * @param session_id
  */
 
-export async function GetSessionById(session_id: string) {
-  const params: GetCommandInput = {
+export async function DeleteSessionById(session_id: string) {
+  const params: DeleteCommandInput = {
     TableName: DYNAMO_TABLE_NAME,
     Key: {
       PK: `SESSION#${session_id}`,
@@ -16,8 +16,8 @@ export async function GetSessionById(session_id: string) {
   };
 
   try {
-    const response = await Dynamo.send(new GetCommand(params));
-    return response.Item;
+    await Dynamo.send(new DeleteCommand(params));
+    return;
   } catch (error) {
     throw new Error(error);
   }
