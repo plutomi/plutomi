@@ -1,9 +1,6 @@
 import { Dynamo } from "../../libs/ddbDocClient";
 import {
-  PutCommand,
-  PutCommandInput,
   TransactWriteCommand,
-  TransactGetCommandInput,
   TransactWriteCommandInput,
 } from "@aws-sdk/lib-dynamodb";
 import dayjs from "dayjs";
@@ -14,7 +11,7 @@ const { DYNAMO_TABLE_NAME } = process.env;
  *
  * @param user_email - Email of user
  */
-export async function CreateSession(user_email: string) {
+export async function Login(user_email: string) {
   const user = await GetUserByEmail(user_email);
 
   if (!user) {
@@ -42,6 +39,7 @@ export async function CreateSession(user_email: string) {
             created_at: current_time,
             user_id: user_id,
           },
+          ConditionExpression: "attribute_not_exists(PK)", // Shouldn't be needed
         },
       },
       {
@@ -54,6 +52,7 @@ export async function CreateSession(user_email: string) {
             GSI1PK: `USER#${user_id}#SESSIONS`,
             GSI1SK: `created_at#${current_time}`,
             ttl_expiry: session_duration,
+            user_id: user_id,
           },
           ConditionExpression: "attribute_not_exists(PK)",
         },

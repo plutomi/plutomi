@@ -1,5 +1,5 @@
 import { NextApiRequest, NextApiResponse } from "next";
-import { CreateSession } from "../../../utils/sessions/login";
+import { Login } from "../../../utils/sessions/login";
 import { VerifyPassword } from "../../../utils/passwords";
 const Cookies = require("cookies");
 import withSessionId from "../../../middleware/withSessionId";
@@ -16,13 +16,13 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
         return res.status(400).json({ message: "Password is incorrect" });
       }
       try {
-        const session = await CreateSession(user_email);
+        const session = await Login(user_email);
         let cookies = new Cookies(req, res, { keys: keys });
         cookies.set("session_id", session, { signed: true });
         // https://www.rdegges.com/2018/please-stop-using-local-storage/
 
         // TODO set secure true and samesite
-        return res.status(201).json({ message: "Logged in succesfully!" });
+        return res.status(200).json({ message: "Log in succesfull!" });
       } catch (error) {
         // TODO add error logger
         return res
