@@ -1,6 +1,6 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import { CreateStage } from "../../../utils/stages/createStage";
-import { Clean } from "../../../utils/clean";
+import { SanitizeResponse } from "../../../utils/sanitizeResponse";
 import { GetAllStagesInOrg } from "../../../utils/stages/getAllStagesInOrg";
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {

@@ -1,6 +1,6 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import { CreateFunnel } from "../../../utils/funnels/createFunnel";
-import { Clean } from "../../../utils/clean";
+import { SanitizeResponse } from "../../../utils/sanitizeResponse";
 import { GetAllFunnelsInOrg } from "../../../utils/funnels/getAllFunnelsInOrg";
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {

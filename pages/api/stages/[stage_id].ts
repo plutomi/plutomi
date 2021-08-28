@@ -1,5 +1,5 @@
 import { NextApiRequest, NextApiResponse } from "next";
-import { Clean } from "../../../utils/clean";
+import { SanitizeResponse } from "../../../utils/sanitizeResponse";
 import { GetStage } from "../../../utils/stages/getStageById";
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   const { method, query } = req;

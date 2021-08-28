@@ -1,6 +1,6 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import { GetUserById } from "../../../utils/users/getUserById";
-import { Clean } from "../../../utils/clean";
+import { SanitizeResponse } from "../../../utils/sanitizeResponse";
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   const { method, query } = req;
   const { user_id } = query;
@@ -11,7 +11,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       if (!user) {
         return res.status(404).json({ message: "User not found" });
       }
-      Clean(user);
+      SanitizeResponse(user);
       return res.status(200).json(user);
     } catch (error) {
       // TODO add error logger

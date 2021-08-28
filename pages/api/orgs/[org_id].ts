@@ -1,5 +1,5 @@
 import { NextApiRequest, NextApiResponse } from "next";
-import { Clean } from "../../../utils/clean";
+import { SanitizeResponse } from "../../../utils/sanitizeResponse";
 import { GetOrg } from "../../../utils/orgs/getOrg";
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   const { method, query } = req;
@@ -11,7 +11,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       if (!org) {
         return res.status(404).json({ message: "Org not found" });
       }
-      Clean(org);
+      SanitizeResponse(org);
       return res.status(200).json(org);
     } catch (error) {
       // TODO add error logger
