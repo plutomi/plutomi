@@ -8,7 +8,7 @@ const { DYNAMO_TABLE_NAME } = process.env;
  * @param user_email
  */
 
-const wrong_login_limit = 1;
+const max_password_attempts = 2;
 export async function GetLatestFailedLogins(user_email: string) {
   const time_barrier = GetPastOrFutureTime("past", 1, "hours", "iso");
   const params: QueryCommandInput = {
@@ -19,12 +19,12 @@ export async function GetLatestFailedLogins(user_email: string) {
       ":GSI1PK": user_email,
       ":GSI1SK": `USER_LOGIN_ATTEMPT#${time_barrier}`,
     },
-    Limit: wrong_login_limit,
+    Limit: max_password_attempts,
   };
 
   try {
     const response = await Dynamo.send(new QueryCommand(params));
-    if (response.Items.length > 0) {
+    if (response.Items.length >= max_password_attempts) {
       await BlockedLoginAttempt(user_email);
       throw new Error("You are doing that too much, please try again later");
     }
