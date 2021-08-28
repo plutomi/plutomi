@@ -3,7 +3,7 @@ import {
   TransactWriteCommand,
   TransactWriteCommandInput,
 } from "@aws-sdk/lib-dynamodb";
-import dayjs from "dayjs";
+import { GetCurrentTime, GetPastOrFutureTime } from "../time";
 import { nanoid } from "nanoid";
 import { GetUserByEmail } from "../users/getUserByEmail";
 const { DYNAMO_TABLE_NAME } = process.env;
@@ -18,10 +18,9 @@ export async function Login(user_email: string) {
     throw new Error("User does not exist, unable to create session");
   }
 
-  const now = dayjs();
   const { user_id } = user;
-  const current_time = now.toISOString();
-  const session_duration = now.add(7, "days").unix();
+  const current_time = GetCurrentTime("iso");
+  const session_duration = GetPastOrFutureTime("future", 7, "days", "unix"); // Dynamo TTL
   const session_id = nanoid(50);
 
   // Create a session and create a LOGIN event on the user
@@ -50,6 +49,7 @@ export async function Login(user_email: string) {
             SK: `SESSION#${session_id}`,
             GSI1PK: `USER#${user_id}#SESSIONS`,
             GSI1SK: `created_at#${current_time}`,
+            entity_type: "SESSION",
             ttl_expiry: session_duration,
             user_id: user_id,
           },

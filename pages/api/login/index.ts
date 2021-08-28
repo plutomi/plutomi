@@ -24,7 +24,15 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       try {
         const session = await Login(user_email);
         let cookies = new Cookies(req, res, { keys: keys });
-        cookies.set("session_id", session, { signed: true });
+        let cookieDuration = 5; // (seconds)
+        cookies.set("session_id", session, {
+          maxAge: cookieDuration * 1000,
+          signed: true,
+          sameSite: "strict",
+          secure: process.env.NODE_ENV === "production", // Set to true if site is live
+          domain:
+            process.env.NODE_ENV === "production" ? "plutomi.com" : undefined,
+        });
         // https://www.rdegges.com/2018/please-stop-using-local-storage/
 
         // TODO set secure true and samesite

@@ -6,8 +6,8 @@ import {
   PutCommandInput,
 } from "@aws-sdk/lib-dynamodb";
 import { GetAllSessionsByUserId } from "./getAllSessionsByUserId";
+import { GetCurrentTime } from "../time";
 const { DYNAMO_TABLE_NAME } = process.env;
-import dayjs, { Dayjs } from "dayjs";
 /**
  *
  * @param session_id
@@ -16,14 +16,13 @@ export async function Logout(user_id: string) {
   // Deletes all session id's for a given user
   const allSessions = await GetAllSessionsByUserId(user_id);
 
-  const now = dayjs();
-  const current_time = now.toISOString();
+  const current_time = GetCurrentTime("iso");
   const logout_params: PutCommandInput = {
     TableName: DYNAMO_TABLE_NAME,
     Item: {
       PK: `USER#${user_id}`,
       SK: `USER_LOGOUT#${current_time}`, // TODO add TTL expiry???
-      entity_type: "LOGIN",
+      entity_type: "LOGOUT",
       created_at: current_time,
       user_id: user_id,
     },

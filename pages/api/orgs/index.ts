@@ -1,6 +1,5 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import { CreateOrg } from "../../../utils/orgs/createOrg";
-import { SanitizeResponse } from "../../../utils/sanitizeResponse";
 import withSessionId from "../../../middleware/withSessionId";
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {

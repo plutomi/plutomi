@@ -1,7 +1,7 @@
 import { Dynamo } from "../../libs/ddbDocClient";
 import { PutCommand, PutCommandInput } from "@aws-sdk/lib-dynamodb";
-import dayjs from "dayjs";
 import { nanoid } from "nanoid";
+import { GetCurrentTime } from "../time";
 const { DYNAMO_TABLE_NAME } = process.env;
 /**
  *
@@ -14,7 +14,7 @@ export async function CreateStageQuestion(
   stage_id: string,
   question_title: string
 ) {
-  const now = dayjs().toISOString();
+  const now = GetCurrentTime("iso");
   const stage_question_id = nanoid(30);
   const new_stage_question = {
     PK: `ORG#${org_id}#STAGE#${stage_id}`,

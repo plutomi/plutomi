@@ -1,7 +1,7 @@
 import { Dynamo } from "../../libs/ddbDocClient";
 import { PutCommand, PutCommandInput } from "@aws-sdk/lib-dynamodb";
-import dayjs from "dayjs";
 import { nanoid } from "nanoid";
+import { GetCurrentTime } from "../time";
 const { DYNAMO_TABLE_NAME } = process.env;
 /**
  *
@@ -16,7 +16,7 @@ export async function CreateStage(
   email: string,
   applicant_id: string
 ) {
-  const now = dayjs().toISOString();
+  const now = GetCurrentTime("iso");
   const file_id = nanoid(30);
   const new_applicant = {
     PK: `ORG#${org_id}#APPLICANT#${applicant_id}`,

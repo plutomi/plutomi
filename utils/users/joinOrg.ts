@@ -1,9 +1,9 @@
 import { Dynamo } from "../../libs/ddbDocClient";
 import { UpdateCommand, UpdateCommandInput } from "@aws-sdk/lib-dynamodb";
 const { DYNAMO_TABLE_NAME } = process.env;
-import dayjs from "dayjs";
+import { GetCurrentTime } from "../time";
 export async function JoinOrg(user_id: string, org_id: string) {
-  const now = dayjs().toISOString();
+  const now = GetCurrentTime("iso");
 
   const params: UpdateCommandInput = {
     TableName: DYNAMO_TABLE_NAME,

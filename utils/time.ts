@@ -5,7 +5,7 @@ import dayjs from "dayjs";
  * @param format
  * @returns The current timestamp in the format provided
  */
-export function GetCurrentTime(format: "unix" | "iso") {
+export function GetCurrentTime(format: "unix" | "iso" | "plain") {
   const now = dayjs();
 
   if (format === "unix") {
@@ -14,6 +14,10 @@ export function GetCurrentTime(format: "unix" | "iso") {
 
   if (format === "iso") {
     return now.toISOString();
+  }
+
+  if (format === "plain") {
+    return dayjs();
   }
 }
 

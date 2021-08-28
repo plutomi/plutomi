@@ -1,5 +1,4 @@
 import { NextApiRequest, NextApiResponse } from "next";
-import { SanitizeResponse } from "../../../utils/sanitizeResponse";
 import { GetStage } from "../../../utils/stages/getStageById";
 import withSessionId from "../../../middleware/withSessionId";
 import withUserInOrg from "../../../middleware/withUserInOrg";

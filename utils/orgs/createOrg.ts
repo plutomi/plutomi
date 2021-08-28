@@ -1,7 +1,7 @@
 import { Dynamo } from "../../libs/ddbDocClient";
 import { PutCommand, PutCommandInput } from "@aws-sdk/lib-dynamodb";
-import dayjs from "dayjs";
 import { nanoid } from "nanoid";
+import { GetCurrentTime } from "../time";
 import { JoinOrg } from "../users/joinOrg";
 const { DYNAMO_TABLE_NAME } = process.env;
 /**
@@ -16,7 +16,7 @@ export async function CreateOrg(org_name: string, user_info: UserSession) {
   }
 
   // TODO check if user belongs to an org already
-  const now = dayjs().toISOString();
+  const now = GetCurrentTime("iso");
   const org_id = nanoid(30);
   const new_org = {
     PK: `ORG#${org_id}`,

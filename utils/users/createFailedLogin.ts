@@ -1,7 +1,7 @@
 import { Dynamo } from "../../libs/ddbDocClient";
 import { PutCommand, PutCommandInput } from "@aws-sdk/lib-dynamodb";
-import dayjs from "dayjs";
 import { GetUserByEmail } from "./getUserByEmail";
+import { GetCurrentTime } from "../time";
 const { DYNAMO_TABLE_NAME } = process.env;
 /**
  *
@@ -14,9 +14,8 @@ export async function FailedLoginAttempt(user_email: string) {
     throw new Error("User does not exist, unable to create login attempt");
   }
 
-  const now = dayjs();
   const { user_id } = user;
-  const current_time = now.toISOString();
+  const current_time = GetCurrentTime("iso");
 
   // Create a session and create a LOGIN event on the user
   const params: PutCommandInput = {

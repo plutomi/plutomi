@@ -1,7 +1,7 @@
 import { Dynamo } from "../../libs/ddbDocClient";
 import { PutCommand, PutCommandInput } from "@aws-sdk/lib-dynamodb";
-import dayjs from "dayjs";
 import { nanoid } from "nanoid";
+import { GetCurrentTime } from "../time";
 const { DYNAMO_TABLE_NAME } = process.env;
 /**
  *
@@ -9,7 +9,8 @@ const { DYNAMO_TABLE_NAME } = process.env;
  * @param org_id - ID of org
  */
 export async function CreateFunnel(org_id: string, funnel_name: string) {
-  const now = dayjs().toISOString();
+  const now = GetCurrentTime("iso");
+
   const funnel_id = nanoid(30);
   const new_user = {
     PK: `ORG#${org_id}#FUNNEL#${funnel_id}`,

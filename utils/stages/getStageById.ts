@@ -7,10 +7,6 @@ const { DYNAMO_TABLE_NAME } = process.env;
  * @param stage_id
  */
 export async function GetStage(org_id: string, stage_id: string) {
-  /**
-   * TODO: Permissions
-   * When checking sessions, see if the org matches the user. If not, return a 403
-   */
   const params: GetCommandInput = {
     TableName: DYNAMO_TABLE_NAME,
     Key: {

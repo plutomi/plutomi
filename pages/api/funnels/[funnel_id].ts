@@ -1,5 +1,4 @@
 import { NextApiRequest, NextApiResponse } from "next";
-import { SanitizeResponse } from "../../../utils/sanitizeResponse";
 import { GetFunnel } from "../../../utils/funnels/getFunnelById";
 import withSessionId from "../../../middleware/withSessionId";
 import withUserInOrg from "../../../middleware/withUserInOrg";

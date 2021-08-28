@@ -1,6 +1,5 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import { CreateFunnel } from "../../../utils/funnels/createFunnel";
-import { SanitizeResponse } from "../../../utils/sanitizeResponse";
 import { GetAllFunnelsInOrg } from "../../../utils/funnels/getAllFunnelsInOrg";
 import withSessionId from "../../../middleware/withSessionId";
 import withUserInOrg from "../../../middleware/withUserInOrg";

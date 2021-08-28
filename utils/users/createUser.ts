@@ -1,10 +1,10 @@
 import { Dynamo } from "../../libs/ddbDocClient";
 import { PutCommand, PutCommandInput } from "@aws-sdk/lib-dynamodb";
-import dayjs from "dayjs";
 import { CreatePassword } from "../passwords";
 import { nanoid } from "nanoid";
 const { DYNAMO_TABLE_NAME } = process.env;
 import { GetUserByEmail } from "./getUserByEmail";
+import { GetCurrentTime } from "../time";
 /**
  *
  * @param email - Email of user
@@ -23,7 +23,7 @@ export async function CreateUser(
     );
   }
   const hashed_password = await CreatePassword(password);
-  const now = dayjs().toISOString();
+  const now = GetCurrentTime("iso");
   const user_id = nanoid(30);
   const new_user = {
     PK: `USER#${user_id}`,
