@@ -1,16 +1,15 @@
 import { NextApiRequest, NextApiResponse } from "next";
-import { CreateUser } from "../../../utils/users/createUser";
-import { SanitizeResponse } from "../../../utils/sanitizeResponse";
+import { CreateOrg } from "../../../utils/orgs/createOrg";
+import withSessionId from "../../../middleware/withSessionId";
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   const { body, method } = req;
-  const { name, email, password } = body;
+  const { org_name, user_info } = body;
 
   if (method === "POST") {
     try {
-      const user = await CreateUser(name, email, password);
-      SanitizeResponse(user);
-      return res.status(201).json(user);
+      const org = await CreateOrg(org_name, user_info);
+      return res.status(201).json(org);
     } catch (error) {
       // TODO add error logger
       return res
@@ -22,4 +21,4 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   return res.status(405).json({ message: "Not Allowed" });
 };
 
-export default handler;
+export default withSessionId(handler);

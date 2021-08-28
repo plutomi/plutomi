@@ -1,27 +1,29 @@
 import { NextApiRequest, NextApiResponse } from "next";
-import { GetUser } from "../../../utils/users/getUser";
-import { Clean } from "../../../utils/clean";
+import { GetUserById } from "../../../utils/users/getUserById";
+import { SanitizeResponse } from "../../../utils/sanitizeResponse";
+import withSessionId from "../../../middleware/withSessionId";
+import withUserId from "../../../middleware/withUserId";
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   const { method, query } = req;
   const { user_id } = query;
 
   if (method === "GET") {
     try {
-      const user = await GetUser(user_id as string);
+      const user = await GetUserById(user_id as string);
       if (!user) {
         return res.status(404).json({ message: "User not found" });
       }
-      Clean(user);
+      SanitizeResponse(user);
       return res.status(200).json(user);
     } catch (error) {
       // TODO add error logger
       return res
         .status(400) // TODO change #
-        .json({ message: `Unable to create user: ${error}` });
+        .json({ message: `${error}` });
     }
   }
 
   return res.status(405).json({ message: "Not Allowed" });
 };
 
-export default handler;
+export default withSessionId(withUserId(handler));
