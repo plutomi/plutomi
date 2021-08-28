@@ -36,7 +36,6 @@ export async function Logout(user_id: string) {
   // Delete all sessions
   await Promise.all(
     allSessions.map(async (session) => {
-      console.log("SESSION!", session);
       let params: DeleteCommandInput = {
         TableName: DYNAMO_TABLE_NAME,
         Key: {
@@ -45,17 +44,14 @@ export async function Logout(user_id: string) {
         },
       };
 
-      console.log("PARAMS", params.Key);
       try {
-        const response = await Dynamo.send(new DeleteCommand(params));
-        console.log(response);
+        await Dynamo.send(new DeleteCommand(params));
         return;
       } catch (error) {
         throw new Error(error);
       }
     })
   );
-  console.log("Done mapping");
 
   return;
 }

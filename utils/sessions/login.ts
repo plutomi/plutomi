@@ -24,7 +24,6 @@ export async function Login(user_email: string) {
   const session_duration = now.add(7, "days").unix();
   const session_id = nanoid(50);
 
-  console.log("Expires", session_duration);
   // Create a session and create a LOGIN event on the user
   const params: TransactWriteCommandInput = {
     TransactItems: [
