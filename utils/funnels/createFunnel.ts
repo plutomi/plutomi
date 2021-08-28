@@ -5,8 +5,8 @@ import { GetCurrentTime } from "../time";
 const { DYNAMO_TABLE_NAME } = process.env;
 /**
  *
- * @param funnel_name - Name of the funnel (NYC, Miami, Houston)
- * @param org_id - ID of org
+ * @param funnel_name - Name of the funnel (NYC, Miami, Houston, Job's Program, After School (Address Here))
+ * @param org_id
  */
 export async function CreateFunnel(org_id: string, funnel_name: string) {
   const now = GetCurrentTime("iso");

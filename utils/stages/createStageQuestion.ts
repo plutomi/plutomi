@@ -5,9 +5,9 @@ import { GetCurrentTime } from "../time";
 const { DYNAMO_TABLE_NAME } = process.env;
 /**
  *
- * @param question_title - Title of the question (How are you?, How old are you?)
- * @param org_id - ID of org
- * @param stage_id - ID of stage where question should be created
+ * @param question_title
+ * @param org_id
+ * @param stage_id
  */
 export async function CreateStageQuestion(
   org_id: string,

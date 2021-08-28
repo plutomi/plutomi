@@ -5,9 +5,9 @@ import { nanoid } from "nanoid";
 const { DYNAMO_TABLE_NAME } = process.env;
 /**
  *
- * @param stage_name - Name of the stage (Questionnaire, Interviewing, Hired)
- * @param funnel_id - Where should this stage go
- * @param org_id - ID of org
+ * @param stage_name
+ * @param funnel_id
+ * @param org_id
  */
 export async function CreateStage(
   org_id: string,

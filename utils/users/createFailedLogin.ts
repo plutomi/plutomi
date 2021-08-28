@@ -4,15 +4,13 @@ import { GetUserByEmail } from "./getUserByEmail";
 import { GetCurrentTime } from "../time";
 const { DYNAMO_TABLE_NAME } = process.env;
 /**
- *
- * @param user_email - Email of user
+ * @param user_email
  */
 export async function FailedLoginAttempt(user_email: string) {
   const user = await GetUserByEmail(user_email);
 
-  if (!user) {
+  if (!user)
     throw new Error("User does not exist, unable to create login attempt");
-  }
 
   const { user_id } = user;
   const current_time = GetCurrentTime("iso");

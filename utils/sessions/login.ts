@@ -9,14 +9,12 @@ import { GetUserByEmail } from "../users/getUserByEmail";
 const { DYNAMO_TABLE_NAME } = process.env;
 /**
  *
- * @param user_email - Email of user
+ * @param user_email
  */
 export async function Login(user_email: string) {
   const user = await GetUserByEmail(user_email);
 
-  if (!user) {
-    throw new Error("User does not exist, unable to create session");
-  }
+  if (!user) throw new Error("User does not exist, unable to create session");
 
   const { user_id } = user;
   const current_time = GetCurrentTime("iso");

@@ -11,11 +11,9 @@ const { DYNAMO_TABLE_NAME } = process.env;
  */
 
 export async function CreateOrg(org_name: string, user_info: UserSession) {
-  if (user_info.org_join_date != "NO_ORG_ASSIGNED") {
+  if (user_info.org_join_date != "NO_ORG_ASSIGNED")
     throw new Error(`You already belong to an org`);
-  }
 
-  // TODO check if user belongs to an org already
   const now = GetCurrentTime("iso");
   const org_id = nanoid(30);
   const new_org = {
@@ -39,6 +37,9 @@ export async function CreateOrg(org_name: string, user_info: UserSession) {
     try {
       await JoinOrg(user_info.user_id, org_id);
     } catch (error) {
+      // TODO handle re-trying to join if possible
+      // Delete the org and try again, or do a transacrt write
+      // Create & Join org
       throw new Error(
         `We were able to create your organization, however you were unable to be added to it. ${error}`
       );

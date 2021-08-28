@@ -5,9 +5,9 @@ import { GetCurrentTime } from "../time";
 const { DYNAMO_TABLE_NAME } = process.env;
 /**
  *
- * @param org_id - ID of org
- * @param stage_id - ID of stage where rule should be created
- * @param validation - What the rule is and what not
+ * @param org_id
+ * @param stage_id - Which stage should the rule be created in
+ * @param validation - What the rule is and what not // TODO
  */
 export async function CreateStageRule(
   org_id: string,

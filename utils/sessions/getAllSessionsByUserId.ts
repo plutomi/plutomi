@@ -1,13 +1,13 @@
 import { Dynamo } from "../../libs/ddbDocClient";
 import { QueryCommand, QueryCommandInput } from "@aws-sdk/lib-dynamodb";
 const { DYNAMO_TABLE_NAME } = process.env;
+
 /**
- *
  * @param user_id
  */
-
 export async function GetAllSessionsByUserId(user_id: string) {
   // TODO loop until all items returned OR limit the number of concurrent sessions
+  // TODO to make sure they can be retrieved in one request
   const params: QueryCommandInput = {
     TableName: DYNAMO_TABLE_NAME,
     IndexName: "GSI1",

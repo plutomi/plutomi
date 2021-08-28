@@ -7,10 +7,6 @@ const { DYNAMO_TABLE_NAME } = process.env;
  * @param funnel_id
  */
 export async function GetFunnel(org_id: string, funnel_id: string) {
-  /**
-   * TODO: Permissions
-   * When checking sessions, see if the org matches the user. If not, return a 403
-   */
   const params: GetCommandInput = {
     TableName: DYNAMO_TABLE_NAME,
     Key: {
@@ -21,7 +17,6 @@ export async function GetFunnel(org_id: string, funnel_id: string) {
 
   try {
     const response = await Dynamo.send(new GetCommand(params));
-
     return response.Item;
   } catch (error) {
     throw new Error(error);

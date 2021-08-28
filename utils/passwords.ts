@@ -1,5 +1,6 @@
-const bcrypt = require("bcryptjs");
 import crypto from "crypto";
+
+const bcrypt = require("bcryptjs");
 const hash_algo = "sha512";
 const digest = "hex";
 
@@ -30,9 +31,8 @@ export async function VerifyPassword(
   const hash = await CreateSHA(user_password);
   const user = await GetUserByEmail(user_email);
 
-  if (!user) {
-    throw new Error("User not found");
-  }
+  if (!user) throw new Error("User not found");
+
   const match = await bcrypt.compareSync(hash, user.password);
 
   return match; // true or false

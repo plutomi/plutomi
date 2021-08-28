@@ -5,26 +5,24 @@ import { GetCurrentTime } from "../time";
 const { DYNAMO_TABLE_NAME } = process.env;
 /**
  *
- * @param name - Name of the stage (Questionnaire, Interviewing, Hired)
- * @param org_id - ID of org
- * @param funnel_id - Current funnel of the applicant
- * @param stage_id - Current stage of the applicant
+ * @param applicant_name
+ * @param applicant_email
+ * @param org_id
  */
-export async function CreateStage(
+export async function CreateApplicantFile(
   org_id: string,
-  name: string,
-  email: string,
+  applicant_name: string,
+  applicant_email: string,
   applicant_id: string
 ) {
-  const now = GetCurrentTime("iso");
   const file_id = nanoid(30);
   const new_applicant = {
     PK: `ORG#${org_id}#APPLICANT#${applicant_id}`,
     SK: `APPLICANT_FILE#${applicant_id}`,
     entity_type: "FILE",
-    name: name,
-    email: email,
-    created_at: now,
+    applicant_name: applicant_name,
+    email: applicant_email,
+    created_at: GetCurrentTime("iso"),
     file_id: file_id,
     GSI1PK: `ORG#${org_id}#FILES`,
     GSI1SK: `TODO some timestamp ${nanoid(10)}`,

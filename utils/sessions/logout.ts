@@ -8,13 +8,12 @@ import {
 import { GetAllSessionsByUserId } from "./getAllSessionsByUserId";
 import { GetCurrentTime } from "../time";
 const { DYNAMO_TABLE_NAME } = process.env;
+
 /**
- *
- * @param session_id
+ * @param user_id
  */
 export async function Logout(user_id: string) {
-  // Deletes all session id's for a given user
-  const allSessions = await GetAllSessionsByUserId(user_id);
+  const all_user_sessions = await GetAllSessionsByUserId(user_id);
 
   const current_time = GetCurrentTime("iso");
   const logout_params: PutCommandInput = {
@@ -32,9 +31,9 @@ export async function Logout(user_id: string) {
   // Mark the logout
   await Dynamo.send(new PutCommand(logout_params));
 
-  // Delete all sessions
+  // Delete all sessions for a given user
   await Promise.all(
-    allSessions.map(async (session) => {
+    all_user_sessions.map(async (session) => {
       let params: DeleteCommandInput = {
         TableName: DYNAMO_TABLE_NAME,
         Key: {

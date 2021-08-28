@@ -5,15 +5,16 @@ import { nanoid } from "nanoid";
 const { DYNAMO_TABLE_NAME } = process.env;
 /**
  *
- * @param name - Name of the stage (Questionnaire, Interviewing, Hired)
- * @param org_id - ID of org
+ * @param applicant_name
+ * @param org_id
+ * @param applicant_email
  * @param funnel_id - Current funnel of the applicant
  * @param stage_id - Current stage of the applicant
  */
-export async function CreateStage(
+export async function CreateApplicant(
   org_id: string,
-  name: string,
-  email: string,
+  applicant_name: string,
+  applicant_email: string,
   funnel_id: string,
   stage_id: string
 ) {
@@ -22,11 +23,11 @@ export async function CreateStage(
   const new_applicant = {
     PK: `ORG#${org_id}#APPLICANT#${applicant_id}`,
     SK: `APPLICANT`,
-    name: name,
-    email: email,
+    applicant_name: applicant_name,
+    applicant_email: applicant_email,
+    applicant_id: applicant_id,
     entity_type: "APPLICANT",
     created_at: now,
-    applicant_id: applicant_id,
     GSI1PK: `ORG#${org_id}#APPLICANTS`,
     GSI1SK: `FUNNEL#${funnel_id}#STAGE#${stage_id}`, // Essetially their current stage AND funnel
   };

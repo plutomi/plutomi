@@ -11,7 +11,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 
   if (method === "GET") {
     try {
-      const org = await GetOrg(org_id as string, user_info);
+      const org = await GetOrg(org_id as string);
       if (!org) {
         return res.status(404).json({ message: "Org not found" });
       }

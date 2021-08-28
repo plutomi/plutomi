@@ -3,15 +3,18 @@ import { QueryCommand, QueryCommandInput } from "@aws-sdk/lib-dynamodb";
 import { GetPastOrFutureTime } from "../time";
 import { BlockedLoginAttempt } from "./createBlockedLogin";
 const { DYNAMO_TABLE_NAME } = process.env;
+
 /**
- *
  * @param user_email
  */
-
-const max_password_attempts = 3;
-
 export async function GetLatestFailedLogins(user_email: string) {
-  const time_barrier = GetPastOrFutureTime("past", 30, "minutes", "iso"); // Account lockout period
+  const max_password_attempts = 3;
+
+  /**
+   * time_barrier is the account lockup period if the password is incorrect
+   * after max_password_attempts is reached
+   */
+  const time_barrier = GetPastOrFutureTime("past", 30, "minutes", "iso");
   const params: QueryCommandInput = {
     TableName: DYNAMO_TABLE_NAME,
     IndexName: "GSI1",

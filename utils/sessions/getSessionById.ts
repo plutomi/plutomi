@@ -2,7 +2,6 @@ import { Dynamo } from "../../libs/ddbDocClient";
 import { GetCommand, GetCommandInput } from "@aws-sdk/lib-dynamodb";
 const { DYNAMO_TABLE_NAME } = process.env;
 /**
- *
  * @param session_id
  */
 
