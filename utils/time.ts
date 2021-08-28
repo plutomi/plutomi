@@ -24,7 +24,8 @@ export function GetCurrentTime(format: "unix" | "iso") {
  * @param format - ISO or UNIX
  * @returns A timestamp `in the future` in the format provided
  */
-export function GetFutureTime(
+export function GetPastOrFutureTime(
+  when: "past" | "future",
   amount: number,
   type:
     | "milliseconds"
@@ -39,11 +40,19 @@ export function GetFutureTime(
 ) {
   const now = dayjs();
 
-  if (format === "iso") {
-    return now.add(amount, type).toISOString();
+  if (when === "future") {
+    if (format === "iso") {
+      return now.add(amount, type).toISOString();
+    }
+    if (format === "unix") {
+      return now.add(amount, type).unix();
+    }
   }
 
+  if (format === "iso") {
+    return now.subtract(amount, type).toISOString();
+  }
   if (format === "unix") {
-    return now.add(amount, type).unix();
+    return now.subtract(amount, type).unix();
   }
 }

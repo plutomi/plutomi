@@ -1,18 +1,24 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import { Login } from "../../../utils/sessions/login";
 import { VerifyPassword } from "../../../utils/passwords";
+import { FailedLoginAttempt } from "../../../utils/users/createFailedLogin";
+import withLoginAbuse from "../../../middleware/withLoginAbuse";
+
 const Cookies = require("cookies");
-import withSessionId from "../../../middleware/withSessionId";
+const Keygrip = require("keygrip");
+const { KEYGRIP_1, KEYGRIP_2 } = process.env;
+const keys = new Keygrip([KEYGRIP_1, KEYGRIP_2]);
+
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   const { body, method } = req;
   const { user_email, user_password } = body;
-  const keys = ["keyboard cat"];
 
+  // Attempt to log the user in
   if (method === "POST") {
     try {
       const password_match = await VerifyPassword(user_email, user_password);
       if (!password_match) {
-        // TODO add login attempt here, mark it down and check for 3 req < 1 min
+        await FailedLoginAttempt(user_email);
         return res.status(400).json({ message: "Password is incorrect" });
       }
       try {
@@ -37,4 +43,4 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   return res.status(405).json({ message: "Not Allowed" });
 };
 
-export default handler;
+export default withLoginAbuse(handler);
