@@ -4,11 +4,11 @@ import withSessionId from "../../../middleware/withSessionId";
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   const { body, method } = req;
-  const { user_session } = body;
+  const { user_info } = body;
 
   if (method === "POST") {
     try {
-      await Logout(user_session.user_id);
+      await Logout(user_info.user_id);
       return res.status(200).json({ message: "You've been logged out" });
     } catch (error) {
       // TODO add error logger

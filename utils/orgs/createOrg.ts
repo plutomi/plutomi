@@ -7,11 +7,11 @@ const { DYNAMO_TABLE_NAME } = process.env;
 /**
  *
  * @param org_name
- * @param user_session
+ * @param user_info
  */
 
-export async function CreateOrg(org_name: string, user_session: UserSession) {
-  if (user_session.org_join_date != "NO_ORG_ASSIGNED") {
+export async function CreateOrg(org_name: string, user_info: UserSession) {
+  if (user_info.org_join_date != "NO_ORG_ASSIGNED") {
     throw new Error(`You already belong to an org`);
   }
 
@@ -37,7 +37,7 @@ export async function CreateOrg(org_name: string, user_session: UserSession) {
     await Dynamo.send(new PutCommand(params));
 
     try {
-      await JoinOrg(user_session.user_id, org_id);
+      await JoinOrg(user_info.user_id, org_id);
     } catch (error) {
       throw new Error(
         `We were able to create your organization, however you were unable to be added to it. ${error}`

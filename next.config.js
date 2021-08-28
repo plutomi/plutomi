@@ -9,5 +9,7 @@ module.exports = {
     DOMAIN_NAME: process.env.DOMAIN_NAME,
     ID_LENGTH: process.env.ID_LENGTH,
     DYNAMO_TABLE_NAME: process.env.DYNAMO_TABLE_NAME,
+    KEYGRIP_1: process.env.KEYGRIP_1,
+    KEYGRIP_1: process.env.KEYGRIP_2,
   },
 };
