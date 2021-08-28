@@ -1,5 +1,7 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import { CreateStageRule } from "../../../../utils/stages/createStageRule";
+import withSessionId from "../../../../middleware/withSessionId";
+import withUserInOrg from "../../../../middleware/withUserInOrg";
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   const { body, method } = req;
@@ -20,4 +22,4 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   return res.status(405).json({ message: "Not Allowed" });
 };
 
-export default handler;
+export default withSessionId(withUserInOrg(handler));

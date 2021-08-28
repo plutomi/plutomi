@@ -1,6 +1,9 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import { SanitizeResponse } from "../../../utils/sanitizeResponse";
 import { GetStage } from "../../../utils/stages/getStageById";
+import withSessionId from "../../../middleware/withSessionId";
+import withUserInOrg from "../../../middleware/withUserInOrg";
+
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   const { method, query } = req;
   const { stage_id, org_id } = query;
@@ -25,4 +28,4 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   return res.status(405).json({ message: "Not Allowed" });
 };
 
-export default handler;
+export default withSessionId(withUserInOrg(handler));

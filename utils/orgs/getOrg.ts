@@ -5,11 +5,11 @@ const { DYNAMO_TABLE_NAME } = process.env;
  *
  * @param org_id - The email of the org
  */
-export async function GetOrg(org_id: string) {
-  /**
-   * TODO: Permissions
-   * When checking sessions, see if the org matches the user. If not, return a 403
-   */
+export async function GetOrg(org_id: string, user_info: any) {
+  // TODO types!
+  if (user_info.org_id != org_id) {
+    throw new Error("You cannot access this org");
+  }
   const params: GetCommandInput = {
     TableName: DYNAMO_TABLE_NAME,
     Key: {

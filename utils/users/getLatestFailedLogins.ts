@@ -8,9 +8,10 @@ const { DYNAMO_TABLE_NAME } = process.env;
  * @param user_email
  */
 
-const max_password_attempts = 2;
+const max_password_attempts = 3;
+
 export async function GetLatestFailedLogins(user_email: string) {
-  const time_barrier = GetPastOrFutureTime("past", 1, "hours", "iso");
+  const time_barrier = GetPastOrFutureTime("past", 30, "minutes", "iso"); // Account lockout period
   const params: QueryCommandInput = {
     TableName: DYNAMO_TABLE_NAME,
     IndexName: "GSI1",
