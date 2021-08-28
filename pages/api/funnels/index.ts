@@ -6,12 +6,11 @@ import withUserInOrg from "../../../middleware/withUserInOrg";
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   const { body, method, query } = req;
-  const { org_id, funnel_name } = body;
-  const query_org_id = query.org_id; // TODO fix, use session
-
+  const { funnel_name } = body;
+  const { user_info } = body;
   if (method === "POST") {
     try {
-      const funnel = await CreateFunnel(org_id, funnel_name);
+      const funnel = await CreateFunnel(user_info.org_id, funnel_name);
       return res.status(201).json(funnel);
     } catch (error) {
       // TODO add error logger
@@ -23,7 +22,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 
   if (method === "GET") {
     try {
-      const all_funnels = await GetAllFunnelsInOrg(query_org_id as string);
+      const all_funnels = await GetAllFunnelsInOrg(user_info.org_id as string);
       return res.status(200).json(all_funnels);
     } catch (error) {
       // TODO add error logger

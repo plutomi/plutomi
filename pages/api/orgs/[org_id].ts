@@ -6,12 +6,11 @@ import withUserInOrg from "../../../middleware/withUserInOrg";
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   const { method, query, body } = req;
-  const { org_id } = query;
   const { user_info } = body;
 
   if (method === "GET") {
     try {
-      const org = await GetOrg(org_id as string);
+      const org = await GetOrg(user_info.org_id);
       if (!org) {
         return res.status(404).json({ message: "Org not found" });
       }

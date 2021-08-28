@@ -5,13 +5,12 @@ import withSessionId from "../../../middleware/withSessionId";
 import withUserInOrg from "../../../middleware/withUserInOrg";
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
-  const { body, method, query } = req;
-  const { org_id, funnel_id, stage_name } = body;
-  const query_org_id = query.org_id; // TODO fix, use session
+  const { body, method } = req;
+  const { user_info, funnel_id, stage_name } = body;
 
   if (method === "POST") {
     try {
-      const stage = await CreateStage(org_id, stage_name, funnel_id);
+      const stage = await CreateStage(user_info.org_id, stage_name, funnel_id);
       return res.status(201).json(stage);
     } catch (error) {
       // TODO add error logger
@@ -23,7 +22,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 
   if (method === "GET") {
     try {
-      const all_funnels = await GetAllStagesInOrg(query_org_id as string);
+      const all_funnels = await GetAllStagesInOrg(user_info.org_id);
       return res.status(200).json(all_funnels);
     } catch (error) {
       // TODO add error logger

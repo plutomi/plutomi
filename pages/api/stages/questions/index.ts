@@ -5,12 +5,12 @@ import withUserInOrg from "../../../../middleware/withUserInOrg";
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   const { body, method } = req;
-  const { org_id, stage_id, question_title } = body;
+  const { stage_id, question_title, user_info } = body;
 
   if (method === "POST") {
     try {
       const stage_question = await CreateStageQuestion(
-        org_id,
+        user_info.org_id,
         stage_id,
         question_title
       );

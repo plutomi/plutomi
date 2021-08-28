@@ -4,17 +4,16 @@ import withSessionId from "../../../middleware/withSessionId";
 import withUserInOrg from "../../../middleware/withUserInOrg";
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
-  const { method, query } = req;
-  const { funnel_id, org_id } = query;
+  const { method, query, body } = req;
+  const { funnel_id } = query;
+  const { user_info } = body;
 
   if (method === "GET") {
     try {
-      // TODO this comes from session????
-      // TODO TODO TODO !!!! FROM SESSION IF FROM API GET THE ORG ID FIRST!!!!!!
-      const funnel = await GetFunnel(org_id as string, funnel_id as string);
-      if (!funnel) {
-        return res.status(404).json({ message: "Funnel not found" });
-      }
+      const funnel = await GetFunnel(user_info.org_id, funnel_id as string);
+
+      if (!funnel) return res.status(404).json({ message: "Funnel not found" });
+
       return res.status(200).json(funnel);
     } catch (error) {
       // TODO add error logger

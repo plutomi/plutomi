@@ -5,11 +5,15 @@ import withUserInOrg from "../../../../middleware/withUserInOrg";
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   const { body, method } = req;
-  const { org_id, stage_id, validation } = body;
+  const { user_info, stage_id, validation } = body;
 
   if (method === "POST") {
     try {
-      const stage_rule = await CreateStageRule(org_id, stage_id, validation);
+      const stage_rule = await CreateStageRule(
+        user_info.org_id,
+        stage_id,
+        validation
+      );
       return res.status(201).json(stage_rule);
     } catch (error) {
       // TODO add error logger
