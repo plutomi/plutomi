@@ -34,7 +34,7 @@ export async function Login(user_email: string) {
           TableName: DYNAMO_TABLE_NAME,
           Item: {
             PK: `USER#${user_id}`,
-            SK: `USER_LOGIN#${now}`, // TODO add TTL expiry???
+            SK: `USER_LOGIN#${current_time}`, // TODO add TTL expiry???
             entity_type: "LOGIN",
             created_at: current_time,
             user_id: user_id,

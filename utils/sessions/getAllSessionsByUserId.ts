@@ -7,6 +7,7 @@ const { DYNAMO_TABLE_NAME } = process.env;
  */
 
 export async function GetAllSessionsByUserId(user_id: string) {
+  // TODO loop until all items returned OR limit the number of concurrent sessions
   const params: QueryCommandInput = {
     TableName: DYNAMO_TABLE_NAME,
     IndexName: "GSI1",
