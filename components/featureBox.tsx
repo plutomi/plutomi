@@ -19,7 +19,7 @@ const features = [
     description:
       "Full transparency. Read, inspect, and contribute to our GitHub repository.",
     icon: CodeIcon,
-    color: `bg-gradient-to-br from-amber-500 to-red-500`,
+    color: `bg-gradient-to-br from-teal-400 to-emerald-500`,
     link: `https://github.com/plutomi/plutomi`,
   },
 
@@ -55,10 +55,10 @@ export default function FeatureBox() {
                       aria-hidden="true"
                     />
                   </span>
-                  <h3 className="mt-8 text-lg font-medium text-gray-900 tracking-tight ">
+                  <h3 className="mt-8 text-xl font-medium text-gray-900 tracking-tight ">
                     {feature.name}
                   </h3>
-                  <p className="mt-5 text-center text-gray-500 max-w-full ">
+                  <p className="mt-5 text-center text-warm-gray-500 max-w-full ">
                     {feature.description}
                   </p>
                 </div>
