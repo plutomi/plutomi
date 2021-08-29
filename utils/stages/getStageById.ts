@@ -6,7 +6,7 @@ const { DYNAMO_TABLE_NAME } = process.env;
  * @param org_url_name
  * @param stage_id
  */
-export async function GetStage(org_url_name: string, stage_id: string) {
+export async function GetStage({org_url_name, stage_id}) {
   const params: GetCommandInput = {
     TableName: DYNAMO_TABLE_NAME,
     Key: {
