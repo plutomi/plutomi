@@ -1,5 +1,5 @@
 import { NextApiRequest, NextApiResponse } from "next";
-import { CreateStageRule } from "../../../../../../../../utils/stages/createStageRule";
+import { CreateStageRule } from "../../../../../../../../../utils/stages/createStageRule";
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   const { body, method, query } = req;
