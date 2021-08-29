@@ -1,8 +1,6 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import { CreateFunnel } from "../../../../../utils/funnels/createFunnel";
 import { GetAllFunnelsInOrg } from "../../../../../utils/funnels/getAllFunnelsInOrg";
-import withSessionId from "../../../../../middleware/withSessionId";
-import withUserInOrg from "../../../../../middleware/withUserInOrg";
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   const { body, method, query } = req;

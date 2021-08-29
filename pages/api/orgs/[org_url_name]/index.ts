@@ -1,6 +1,5 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import { CreateOrg } from "../../../../utils/orgs/createOrg";
-import withSessionId from "../../../../middleware/withSessionId";
 import { GetOrg } from "../../../../utils/orgs/getOrg";
 import withCleanOrgName from "../../../../middleware/withCleanOrgName";
 

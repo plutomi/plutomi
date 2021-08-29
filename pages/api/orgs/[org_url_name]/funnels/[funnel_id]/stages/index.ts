@@ -1,8 +1,6 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import { CreateStage } from "../../../../../../../utils/stages/createStage";
 import { GetAllStagesInOrg } from "../../../../../../../utils/stages/getAllStagesInOrg";
-import withSessionId from "../../../../../../../middleware/withSessionId";
-import withUserInOrg from "../../../../../../../middleware/withUserInOrg";
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   const { body, method, query } = req;
@@ -41,13 +39,13 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 
   if (method === "GET") {
     try {
-      const all_funnels = await GetAllStagesInOrg(org_url_name as string);
-      return res.status(200).json(all_funnels);
+      const all_stages = await GetAllStagesInOrg(org_url_name as string);
+      return res.status(200).json(all_stages);
     } catch (error) {
       // TODO add error logger
       return res
         .status(400) // TODO change #
-        .json({ message: `Unable to retrieve funnels: ${error}` });
+        .json({ message: `Unable to retrieve stages: ${error}` });
     }
   }
 

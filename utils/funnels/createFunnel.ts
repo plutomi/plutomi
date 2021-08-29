@@ -13,7 +13,7 @@ export async function CreateFunnel({
   funnel_name,
 }: CreateFunnelInput) {
   const now = GetCurrentTime("iso");
-  const funnel_id = nanoid(30);
+  const funnel_id = nanoid(10);
   const new_user = {
     PK: `ORG#${org_url_name}#FUNNEL#${funnel_id}`,
     SK: `FUNNEL`,

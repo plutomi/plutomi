@@ -17,7 +17,7 @@ export async function CreateStage({
   // TODO **MAJOR** Do not allow creation of stages with the same name
 
   const now = GetCurrentTime("iso");
-  const stage_id = nanoid(30);
+  const stage_id = nanoid(10);
   const new_stage = {
     PK: `ORG#${org_url_name}#FUNNEL#${funnel_id}#STAGE${stage_id}`,
     SK: `STAGE`,

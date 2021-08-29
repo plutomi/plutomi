@@ -1,10 +1,8 @@
 import { NextApiRequest, NextApiResponse } from "next";
-import { GetStage } from "../../../../../../../../utils/stages/getStageById";
-import withSessionId from "../../../../../../../../middleware/withSessionId";
-import withUserInOrg from "../../../../../../../../middleware/withUserInOrg";
+import { GetStage } from "../../../../../../../utils/stages/getStageById";
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
-  const { method, query, body } = req;
+  const { method, query } = req;
   const { org_url_name, funnel_id, stage_id } = query;
 
   const get_stage_input: GetStageInput = {
@@ -15,7 +13,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 
   if (method === "GET") {
     try {
-      const stage = await GetStage(get_stage_input);
+      const stage = await GetStage(get_stage_input); // TODO return also all rules & questions
       if (!stage) {
         return res.status(404).json({ message: "Stage not found" });
       }
@@ -31,4 +29,4 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   return res.status(405).json({ message: "Not Allowed" });
 };
 
-export default withSessionId(withUserInOrg(handler));
+export default handler;

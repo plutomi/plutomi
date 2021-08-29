@@ -207,9 +207,9 @@ export default function Example() {
             <h1 className=" p-1 text-4xl xl:inline  text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-emerald-400 via-emerald-500 tracking-tight font-extrabold sm:text-5xl md:text-6xl lg:text-6xl xl:text-6xl text-center">
               at any scale
             </h1>
-            <p className="mt-3 mx-auto text-xl text-center text-blue-gray-200 sm:text-2xl md:mt-5">
-              Plutomi is a platform designed to automate your application
-              process.
+            <p className="mt-3 mx-auto text-xl text-center text-blue-gray-100 sm:text-2xl md:mt-5">
+              Plutomi streamlines your entire application process with automated
+              workflows
             </p>
           </div>
         </div>

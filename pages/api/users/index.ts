@@ -4,7 +4,7 @@ import { SanitizeResponse } from "../../../utils/sanitizeResponse";
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   const { method, body } = req;
-  const { first_name, last_name, user_email, password }: CreateUserInput = body;
+  const { first_name, last_name, user_email }: CreateUserInput = body;
 
   // Create a user
   if (method === "POST") {
@@ -12,7 +12,6 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       first_name: first_name,
       last_name: last_name,
       user_email: user_email,
-      password: password,
     };
 
     let missing_keys = [];

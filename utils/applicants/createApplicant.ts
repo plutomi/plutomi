@@ -11,19 +11,22 @@ const { DYNAMO_TABLE_NAME } = process.env;
  * @param funnel_id - Current funnel of the applicant
  * @param stage_id - Current stage of the applicant
  */
-export async function CreateApplicant(
-  org_url_name: string,
-  applicant_name: string,
-  applicant_email: string,
-  funnel_id: string,
-  stage_id: string
-) {
+export async function CreateApplicant({
+  org_url_name,
+  applicant_email,
+  applicant_first_name,
+  applicant_last_name,
+  funnel_id,
+  stage_id,
+}: CreateApplicantInput) {
   const now = GetCurrentTime("iso");
-  const applicant_id = nanoid(30);
+  const applicant_id = nanoid(70);
   const new_applicant = {
     PK: `ORG#${org_url_name}#APPLICANT#${applicant_id}`,
     SK: `APPLICANT`,
-    applicant_name: applicant_name,
+    applicant_first_name: applicant_first_name,
+    applicant_last_name: applicant_last_name,
+    applicant_full_name: `${applicant_first_name} ${applicant_last_name}`,
     applicant_email: applicant_email,
     applicant_id: applicant_id,
     entity_type: "APPLICANT",

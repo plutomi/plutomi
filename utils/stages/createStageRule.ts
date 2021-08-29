@@ -9,15 +9,16 @@ const { DYNAMO_TABLE_NAME } = process.env;
  * @param stage_id - Which stage should the rule be created in
  * @param validation - What the rule is and what not // TODO
  */
-export async function CreateStageRule(
-  org_url_name: string,
-  stage_id: string,
-  validation: string
-) {
+export async function CreateStageRule({
+  org_url_name,
+  funnel_id,
+  stage_id,
+  validation,
+}: CreateStageRuleInput) {
   const now = GetCurrentTime("iso");
   const stage_rule_id = nanoid(30);
   const new_stage_rule = {
-    PK: `ORG#${org_url_name}#STAGE#${stage_id}`,
+    PK: `ORG#${org_url_name}#FUNNEL#${funnel_id}#STAGE${stage_id}`,
     SK: `STAGE_RULE#${stage_rule_id}`,
     entity_type: "STAGE_RULE",
     created_at: now,

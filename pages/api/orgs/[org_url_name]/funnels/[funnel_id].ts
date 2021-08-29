@@ -1,7 +1,5 @@
 import { NextApiRequest, NextApiResponse } from "next";
-import { GetFunnel } from "../../../../../../utils/funnels/getFunnelById";
-import withSessionId from "../../../../../../middleware/withSessionId";
-import withUserInOrg from "../../../../../../middleware/withUserInOrg";
+import { GetFunnel } from "../../../../../utils/funnels/getFunnelById";
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   const { method, query } = req;
@@ -21,7 +19,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       // TODO add error logger
       return res
         .status(400) // TODO change #
-        .json({ message: `Unable to create funnel: ${error}` });
+        .json({ message: `Unable to get funnel: ${error}` });
     }
   }
 

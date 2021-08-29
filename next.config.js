@@ -1,15 +1,22 @@
-module.exports = {
-  target: "serverless",
-  env: {
-    WEBSITE_BUCKET_NAME: process.env.WEBSITE_BUCKET_NAME,
-    CLOUDFRONT_ID: process.env.CLOUDFRONT_ID,
-    DEFAULT_LAMBDA_NAME: process.env.DEFAULT_LAMBDA_NAME,
-    API_LAMBDA_NAME: process.env.API_LAMBDA_NAME,
-    IMAGE_LAMBDA_NAME: process.env.IMAGE_LAMBDA_NAME,
-    DOMAIN_NAME: process.env.DOMAIN_NAME,
-    ID_LENGTH: process.env.ID_LENGTH,
-    DYNAMO_TABLE_NAME: process.env.DYNAMO_TABLE_NAME,
-    KEYGRIP_1: process.env.KEYGRIP_1,
-    KEYGRIP_1: process.env.KEYGRIP_2,
-  },
-};
+module.exports = function(...args) {
+  let original = require('./next.config.original.1630252357291.js');
+  const finalConfig = {};
+  const target = { target: 'serverless' };
+  if (typeof original === 'function' && original.constructor.name === 'AsyncFunction') {
+    // AsyncFunctions will become promises
+    original = original(...args);
+  }
+  if (original instanceof Promise) {
+    // Special case for promises, as it's currently not supported
+    // and will just error later on
+    return original
+      .then((originalConfig) => Object.assign(finalConfig, originalConfig))
+      .then((config) => Object.assign(config, target));
+  } else if (typeof original === 'function') {
+    Object.assign(finalConfig, original(...args));
+  } else if (typeof original === 'object') {
+    Object.assign(finalConfig, original);
+  }
+  Object.assign(finalConfig, target);
+  return finalConfig;
+}
