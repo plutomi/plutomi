@@ -8,15 +8,17 @@ import { GetCurrentTime } from "../time";
 const { DYNAMO_TABLE_NAME } = process.env;
 
 /**
+ * @param first_name
+ * @param last_name
  * @param user_email
- * @param name
  * @param password
  */
-export async function CreateUser(
-  name: string,
-  user_email: string,
-  password: string
-) {
+export async function CreateUser({
+  first_name,
+  last_name,
+  user_email,
+  password,
+}: CreateUserInput) {
   const userExists = await GetUserByEmail(user_email);
   if (userExists)
     throw new Error(
@@ -26,10 +28,11 @@ export async function CreateUser(
   const hashed_password = await CreatePassword(password);
   const now = GetCurrentTime("iso");
   const user_id = nanoid(30);
-  const new_user: UserInfo = {
+  const new_user = {
     PK: `USER#${user_id}`,
     SK: `USER`,
-    name: name,
+    first_name: first_name,
+    last_name: last_name,
     user_email: user_email,
     user_id: user_id,
     password: hashed_password,
@@ -38,7 +41,7 @@ export async function CreateUser(
     org_url_name: "NO_ORG_ASSIGNED",
     org_join_date: "NO_ORG_ASSIGNED",
     GSI1PK: "ORG#NO_ORG_ASSIGNED#USERS",
-    GSI1SK: name,
+    GSI1SK: `${first_name} ${last_name}`,
     GSI2PK: user_email,
     GSI2SK: "USER",
   };
