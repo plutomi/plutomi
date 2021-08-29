@@ -23,7 +23,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     }
     if (missing_keys.length > 0)
       return res.status(400).json({
-        message: `Bad request: ${missing_keys.join(", ")} are missing`,
+        message: `Bad request: ${missing_keys.join(", ")} missing`,
       });
 
     try {

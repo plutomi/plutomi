@@ -1,12 +1,11 @@
 import { NextApiRequest, NextApiResponse } from "next";
-import { GetFunnel } from "../../../../../utils/funnels/getFunnelById";
-import withSessionId from "../../../../../middleware/withSessionId";
-import withUserInOrg from "../../../../../middleware/withUserInOrg";
+import { GetFunnel } from "../../../../../../utils/funnels/getFunnelById";
+import withSessionId from "../../../../../../middleware/withSessionId";
+import withUserInOrg from "../../../../../../middleware/withUserInOrg";
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
-  const { method, query, body } = req;
+  const { method, query } = req;
   const { funnel_id, org_url_name } = query;
-  const { user_info } = body;
 
   const get_funnel_input: GetFunnelInput = {
     org_url_name: org_url_name as string,
@@ -15,7 +14,6 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   if (method === "GET") {
     try {
       const funnel = await GetFunnel(get_funnel_input);
-
       if (!funnel) return res.status(404).json({ message: "Funnel not found" });
 
       return res.status(200).json(funnel);
@@ -30,4 +28,4 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   return res.status(405).json({ message: "Not Allowed" });
 };
 
-export default withSessionId(withUserInOrg(handler));
+export default handler;

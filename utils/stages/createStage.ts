@@ -9,11 +9,13 @@ const { DYNAMO_TABLE_NAME } = process.env;
  * @param funnel_id
  * @param org_url_name
  */
-export async function CreateStage(
-  org_url_name: string,
-  stage_name: string,
-  funnel_id: string
-) {
+export async function CreateStage({
+  org_url_name,
+  stage_name,
+  funnel_id,
+}: CreateStageInput) {
+  // TODO **MAJOR** Do not allow creation of stages with the same name
+
   const now = GetCurrentTime("iso");
   const stage_id = nanoid(30);
   const new_stage = {
