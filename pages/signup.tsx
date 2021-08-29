@@ -8,7 +8,7 @@ export default function SignUp() {
   const submitForm = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    const body = {
+    const body: CreateUserAPIInput = {
       name: name,
       user_email: email,
       password: password,

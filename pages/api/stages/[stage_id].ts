@@ -10,8 +10,6 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 
   if (method === "GET") {
     try {
-      // TODO this comes from session????
-      // TODO TODO TODO !!!! FROM SESSION IF FROM API GET THE ORG ID FIRST!!!!!!
       const org = await GetStage(user_info.org_id, stage_id as string);
       if (!org) {
         return res.status(404).json({ message: "Org not found" });

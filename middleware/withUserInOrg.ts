@@ -5,7 +5,7 @@ import { NextApiRequest, NextApiResponse } from "next";
  */
 export default function withUserInOrg(handler: any) {
   return async (req: NextApiRequest, res: NextApiResponse) => {
-    const { user_info } = req.body;
+    const { user_info } = req.body; // Comes from the session_id, is added in the middleware before this middleware runs
 
     const query_org_id = req.query["org_id"];
     const body_org_id = req.body.org_id;

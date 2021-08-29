@@ -6,7 +6,7 @@ import withUserInOrg from "../../../middleware/withUserInOrg";
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   const { body, method } = req;
-  const { user_info, funnel_id, stage_name } = body;
+  const { user_info, funnel_id, stage_name }: CreateStageAPIInput = body;
 
   if (method === "POST") {
     try {

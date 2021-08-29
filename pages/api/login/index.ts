@@ -32,9 +32,6 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
           domain:
             process.env.NODE_ENV === "production" ? "plutomi.com" : undefined,
         });
-        // https://www.rdegges.com/2018/please-stop-using-local-storage/
-
-        // TODO set secure true and samesite
         return res.status(200).json({ message: "Log in succesfull!" });
       } catch (error) {
         // TODO add error logger

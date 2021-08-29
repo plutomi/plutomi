@@ -26,11 +26,11 @@ export async function CreateUser(
   const hashed_password = await CreatePassword(password);
   const now = GetCurrentTime("iso");
   const user_id = nanoid(30);
-  const new_user = {
+  const new_user: UserInfo = {
     PK: `USER#${user_id}`,
     SK: `USER`,
     name: name,
-    email: user_email,
+    user_email: user_email,
     user_id: user_id,
     password: hashed_password,
     entity_type: "USER",

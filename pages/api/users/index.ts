@@ -3,8 +3,8 @@ import { CreateUser } from "../../../utils/users/createUser";
 import { SanitizeResponse } from "../../../utils/sanitizeResponse";
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
-  const { body, method } = req;
-  const { name, user_email, password } = body;
+  const { method, body } = req;
+  const { name, user_email, password }: CreateUserAPIInput = body;
 
   if (method === "POST") {
     try {
