@@ -4,11 +4,11 @@ import { SanitizeResponse } from "../../../utils/sanitizeResponse";
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   const { body, method } = req;
-  const { name, email, password } = body;
+  const { name, user_email, password } = body;
 
   if (method === "POST") {
     try {
-      const user = await CreateUser(name, email, password);
+      const user = await CreateUser(name, user_email, password);
       SanitizeResponse(user);
       return res.status(201).json(user);
     } catch (error) {
