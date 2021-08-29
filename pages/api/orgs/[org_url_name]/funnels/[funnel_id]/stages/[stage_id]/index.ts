@@ -1,5 +1,5 @@
 import { NextApiRequest, NextApiResponse } from "next";
-import { GetStage } from "../../../../../../../utils/stages/getStageById";
+import { GetStage } from "../../../../../../../../utils/stages/getStageById";
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   const { method, query } = req;

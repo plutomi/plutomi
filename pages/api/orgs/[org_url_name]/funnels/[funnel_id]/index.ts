@@ -1,5 +1,5 @@
 import { NextApiRequest, NextApiResponse } from "next";
-import { GetFunnel } from "../../../../../utils/funnels/getFunnelById";
+import { GetFunnel } from "../../../../../../utils/funnels/getFunnelById";
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   const { method, query } = req;

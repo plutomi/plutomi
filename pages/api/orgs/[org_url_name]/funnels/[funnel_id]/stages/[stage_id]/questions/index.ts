@@ -1,5 +1,5 @@
 import { NextApiRequest, NextApiResponse } from "next";
-import { CreateStageQuestion } from "../../../../../../../../utils/stages/createStageQuestion";
+import { CreateStageQuestion } from "../../../../../../../../../utils/stages/createStageQuestion";
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   const { body, method, query } = req;
