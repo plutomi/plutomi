@@ -1,7 +1,7 @@
 import { NextApiRequest, NextApiResponse } from "next";
-import { CreateStageQuestion } from "../../../../utils/stages/createStageQuestion";
-import withSessionId from "../../../../middleware/withSessionId";
-import withUserInOrg from "../../../../middleware/withUserInOrg";
+import { CreateStageQuestion } from "../../../../../utils/stages/createStageQuestion";
+import withSessionId from "../../../../../middleware/withSessionId";
+import withUserInOrg from "../../../../../middleware/withUserInOrg";
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   const { body, method } = req;
@@ -10,7 +10,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   if (method === "POST") {
     try {
       const stage_question = await CreateStageQuestion(
-        user_info.org_id,
+        user_info.org_url_name,
         stage_id,
         question_title
       );

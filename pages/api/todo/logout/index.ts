@@ -1,6 +1,6 @@
 import { NextApiRequest, NextApiResponse } from "next";
-import { Logout } from "../../../utils/sessions/logout";
-import withSessionId from "../../../middleware/withSessionId";
+import { Logout } from "../../../../utils/sessions/logout";
+import withSessionId from "../../../../middleware/withSessionId";
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   const { body, method } = req;

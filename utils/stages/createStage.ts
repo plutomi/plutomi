@@ -7,24 +7,24 @@ const { DYNAMO_TABLE_NAME } = process.env;
  *
  * @param stage_name
  * @param funnel_id
- * @param org_id
+ * @param org_url_name
  */
 export async function CreateStage(
-  org_id: string,
+  org_url_name: string,
   stage_name: string,
   funnel_id: string
 ) {
   const now = GetCurrentTime("iso");
   const stage_id = nanoid(30);
   const new_stage = {
-    PK: `ORG#${org_id}#STAGE#${stage_id}`,
+    PK: `ORG#${org_url_name}#STAGE#${stage_id}`,
     SK: `STAGE`,
     stage_name: stage_name,
     entity_type: "STAGE",
     created_at: now,
     stage_id: stage_id,
     funnel_id: funnel_id,
-    GSI1PK: `ORG#${org_id}#STAGES`,
+    GSI1PK: `ORG#${org_url_name}#STAGES`,
     GSI1SK: stage_name,
   };
 

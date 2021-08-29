@@ -7,11 +7,11 @@ export default function withUserInOrg(handler: any) {
   return async (req: NextApiRequest, res: NextApiResponse) => {
     const { user_info } = req.body; // Comes from the session_id, is added in the middleware before this middleware runs
 
-    const query_org_id = req.query["org_id"];
-    const body_org_id = req.body.org_id;
+    const query_org_url_name = req.query["org_url_name"];
+    const body_org_url_name = req.body.org_url_name;
 
-    if (query_org_id) {
-      if (user_info.org_id != query_org_id) {
+    if (query_org_url_name) {
+      if (user_info.org_url_name != query_org_url_name) {
         return res
           .status(403)
           .json({ message: "You cannot modify this resource" });
@@ -19,8 +19,8 @@ export default function withUserInOrg(handler: any) {
       return handler(req, res);
     }
 
-    if (body_org_id) {
-      if (user_info.org_id != body_org_id) {
+    if (body_org_url_name) {
+      if (user_info.org_url_name != body_org_url_name) {
         return res
           .status(403)
           .json({ message: "You cannot modify this resource" });

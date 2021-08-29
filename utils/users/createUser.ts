@@ -35,7 +35,7 @@ export async function CreateUser(
     password: hashed_password,
     entity_type: "USER",
     created_at: now,
-    org_id: "NO_ORG_ASSIGNED",
+    org_url_name: "NO_ORG_ASSIGNED",
     org_join_date: "NO_ORG_ASSIGNED",
     GSI1PK: "ORG#NO_ORG_ASSIGNED#USERS",
     GSI1SK: name,
