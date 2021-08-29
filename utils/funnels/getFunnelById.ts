@@ -3,7 +3,7 @@ import { GetCommand, GetCommandInput } from "@aws-sdk/lib-dynamodb";
 const { DYNAMO_TABLE_NAME } = process.env;
 /**
  *
- * @param org_id - The email of the org
+ * @param org_id
  * @param funnel_id
  */
 export async function GetFunnel(org_id: string, funnel_id: string) {

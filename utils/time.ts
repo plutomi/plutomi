@@ -13,7 +13,7 @@ export function GetCurrentTime(format: "iso" | "unix" | "plain") {
  *
  * @param amount - How long in the future? This is the actual number value
  * @param type - What time measure? seconds, minutes, hours, days, etc
- * @param format - iso or unix
+ * @param format - iso, unix or plain date object
  */
 export function GetPastOrFutureTime(
   when: "past" | "future",
@@ -27,14 +27,20 @@ export function GetPastOrFutureTime(
     | "weeks"
     | "months"
     | "years",
-  format: "iso" | "unix"
+  format: "iso" | "unix" | "plain"
 ) {
   if (when === "future") {
-    if (format === "iso") return dayjs().add(amount, type).toISOString();
-    if (format === "unix") return dayjs().add(amount, type).unix();
+    const new_time = dayjs().add(amount, type);
+    if (format === "iso") return new_time.toISOString();
+    if (format === "unix") return new_time.unix();
+    if (format === "plain") return new_time.toDate();
   }
 
   // In the past
-  if (format === "iso") return dayjs().subtract(amount, type).toISOString();
-  if (format === "unix") return dayjs().subtract(amount, type).unix();
+  if (when === "past") {
+    const new_time = dayjs().subtract(amount, type);
+    if (format === "iso") return new_time.toISOString();
+    if (format === "unix") return new_time.unix();
+    if (format === "plain") return new_time.toDate();
+  }
 }

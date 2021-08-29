@@ -1,5 +1,7 @@
 import { NextApiRequest, NextApiResponse } from "next";
+import { DeleteSessionById } from "../utils/sessions/deleteSessionById";
 import { GetSessionById } from "../utils/sessions/getSessionById";
+import { GetCurrentTime } from "../utils/time";
 import { GetUserById } from "../utils/users/getUserById";
 
 const Cookies = require("cookies");
@@ -8,10 +10,7 @@ const { KEYGRIP_1, KEYGRIP_2 } = process.env;
 const keys = new Keygrip([KEYGRIP_1, KEYGRIP_2]);
 
 /**
- *
  * @param handler - Middleware to check cookies and pass the user info along to the next API call
- *
- *
  */
 export default function withSessionId(handler: any) {
   return async (req: NextApiRequest, res: NextApiResponse) => {
@@ -35,38 +34,46 @@ export default function withSessionId(handler: any) {
       const session = await GetSessionById(session_id);
 
       /**
-       * 3. If there is no session by that session ID, deny access
+       * 3. If there is no session, deny access and force relogin
        */
       if (!session) {
         cookies.set("session_id");
         cookies.set("session_id.sig");
         return res
           .status(401)
-          .json({ message: "Invalid session, please sign in again" });
+          .json({ message: "Your session has expired, please sign in again" });
       }
 
-      /**
-       * 4. If a session exists, get the user ID from the session
-       */
+      // If there is a session but it is expired, log the user out and delete the session
+
+      if (session.expires_at <= GetCurrentTime("iso")) {
+        cookies.set("session_id");
+        cookies.set("session_id.sig");
+        await DeleteSessionById(session_id); // TODO trycatch
+        return res
+          .status(401)
+          .json({ message: "Your session has expired, please sign in again" });
+      }
+
       const { user_id }: any = session; // TODO types!!
 
       try {
         /**
-         * 5. Get the user's latest info
-         * The reason we want to do this is because if an admin changes this user's role (as an example)
+         * 4. Get the user's latest info
+         * The reason we want to do this is because if an admin changes this user's role
          * We don't want them to still have 'MANAGER' privilages when they are now just a 'SPECIALIST'
          */
         const user = await GetUserById(user_id);
 
         /**
-         * 6. If no user exists by that ID (not sure how this would be possible) - deny access
+         * 5. If no user exists by that ID (not sure how this would be possible) - deny access
          */
         if (!user) {
           return res.status(401).json({ message: "User does not exist" });
         }
 
         /**
-         * 7. Set a user_info variable in the request body
+         * 6. Set a user_info variable in the request body
          * This can be accessed from any API call down the line
          */
 

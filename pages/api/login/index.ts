@@ -3,6 +3,7 @@ import { Login } from "../../../utils/sessions/login";
 import { VerifyPassword } from "../../../utils/passwords";
 import { FailedLoginAttempt } from "../../../utils/users/createFailedLogin";
 import withLoginAbuse from "../../../middleware/withLoginAbuse";
+import { GetPastOrFutureTime } from "../../../utils/time";
 
 const Cookies = require("cookies");
 const Keygrip = require("keygrip");
@@ -11,12 +12,12 @@ const keys = new Keygrip([KEYGRIP_1, KEYGRIP_2]);
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   const { body, method } = req;
-  const { user_email, user_password } = body;
+  const { user_email, password } = body;
 
   // Attempt to log the user in
   if (method === "POST") {
     try {
-      const password_match = await VerifyPassword(user_email, user_password);
+      const password_match = await VerifyPassword(user_email, password);
       if (!password_match) {
         await FailedLoginAttempt(user_email);
         return res.status(400).json({ message: "Password is incorrect" });
@@ -24,18 +25,13 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       try {
         const session = await Login(user_email);
         let cookies = new Cookies(req, res, { keys: keys });
-        let cookieDuration = 5; // (seconds)
         cookies.set("session_id", session, {
-          maxAge: cookieDuration * 1000,
           signed: true,
           sameSite: "strict",
           secure: process.env.NODE_ENV === "production", // Set to true if site is live
           domain:
             process.env.NODE_ENV === "production" ? "plutomi.com" : undefined,
         });
-        // https://www.rdegges.com/2018/please-stop-using-local-storage/
-
-        // TODO set secure true and samesite
         return res.status(200).json({ message: "Log in succesfull!" });
       } catch (error) {
         // TODO add error logger

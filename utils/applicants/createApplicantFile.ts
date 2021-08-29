@@ -21,7 +21,7 @@ export async function CreateApplicantFile(
     SK: `APPLICANT_FILE#${applicant_id}`,
     entity_type: "FILE",
     applicant_name: applicant_name,
-    email: applicant_email,
+    applicant_email: applicant_email,
     created_at: GetCurrentTime("iso"),
     file_id: file_id,
     GSI1PK: `ORG#${org_id}#FILES`,

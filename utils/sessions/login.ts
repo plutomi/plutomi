@@ -18,7 +18,8 @@ export async function Login(user_email: string) {
 
   const { user_id } = user;
   const current_time = GetCurrentTime("iso");
-  const session_duration = GetPastOrFutureTime("future", 7, "days", "unix"); // Dynamo TTL
+  const max_session_duration = GetPastOrFutureTime("future", 7, "days", "unix"); // Dynamo TTL
+  const expires_at = GetPastOrFutureTime("future", 1, "days", "iso");
   const session_id = nanoid(50);
 
   // Create a session and create a LOGIN event on the user
@@ -48,7 +49,8 @@ export async function Login(user_email: string) {
             GSI1PK: `USER#${user_id}#SESSIONS`,
             GSI1SK: `created_at#${current_time}`,
             entity_type: "SESSION",
-            ttl_expiry: session_duration,
+            expires_at: expires_at,
+            ttl_expiry: max_session_duration,
             user_id: user_id,
           },
           ConditionExpression: "attribute_not_exists(PK)",

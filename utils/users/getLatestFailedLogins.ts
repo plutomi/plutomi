@@ -8,7 +8,7 @@ const { DYNAMO_TABLE_NAME } = process.env;
  * @param user_email
  */
 export async function GetLatestFailedLogins(user_email: string) {
-  const max_password_attempts = 3;
+  const max_password_attempts = 3; // TODO BUG - The current implementation locks accounts
 
   /**
    * time_barrier is the account lockup period if the password is incorrect

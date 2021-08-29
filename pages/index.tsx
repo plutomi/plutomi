@@ -208,8 +208,8 @@ export default function Example() {
               at any scale
             </h1>
             <p className="mt-3 mx-auto text-xl text-center text-blue-gray-200 sm:text-2xl md:mt-5">
-              Plutomi provides automated workflows to manage your recruiting
-              process
+              Plutomi is a platform designed to automate your application
+              process.
             </p>
           </div>
         </div>
