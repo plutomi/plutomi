@@ -1,16 +1,15 @@
 import { NextApiRequest, NextApiResponse } from "next";
-import { GetStage } from "../../../utils/stages/getStageById";
-import withSessionId from "../../../middleware/withSessionId";
-import withUserInOrg from "../../../middleware/withUserInOrg";
+import { CreateOrg } from "../../../../utils/orgs/createOrg";
+import { GetOrg } from "../../../../utils/orgs/getOrg";
+import withCleanOrgName from "../../../../middleware/withCleanOrgName";
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
-  const { method, query, body } = req;
-  const { stage_id } = query;
-  const { user_info } = body;
+  const { body, method, query } = req;
+  const { org_url_name } = query;
 
   if (method === "GET") {
     try {
-      const org = await GetStage(user_info.org_id, stage_id as string);
+      const org = await GetOrg(org_url_name as string);
       if (!org) {
         return res.status(404).json({ message: "Org not found" });
       }
@@ -19,11 +18,11 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       // TODO add error logger
       return res
         .status(400) // TODO change #
-        .json({ message: `Unable to create stage: ${error}` });
+        .json({ message: `Unable to retrieve org: ${error}` });
     }
   }
 
   return res.status(405).json({ message: "Not Allowed" });
 };
 
-export default withSessionId(withUserInOrg(handler));
+export default withCleanOrgName(handler);

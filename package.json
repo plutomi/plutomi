@@ -17,15 +17,14 @@
     "@tailwindcss/forms": "^0.3.3",
     "axios": "^0.21.1",
     "base64url": "^3.0.1",
-    "bcryptjs": "^2.4.3",
-    "cookies": "^0.8.0",
     "dayjs": "^1.10.6",
-    "keygrip": "^1.1.0",
     "nanoid": "^3.1.25",
     "next": "11.1.0",
+    "next-auth": "^3.29.0",
     "react": "17.0.2",
     "react-dom": "17.0.2",
-    "react-icons": "^4.2.0"
+    "react-icons": "^4.2.0",
+    "url-safe-string": "^1.1.0"
   },
   "devDependencies": {
     "@aws-sdk/client-dynamodb": "^3.27.0",

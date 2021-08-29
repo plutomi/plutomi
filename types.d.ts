@@ -1,55 +1,59 @@
-// TODO add user_id
-interface UserInfo {
-  PK: string;
-  SK: "USER";
-  name: string;
-  user_email: string;
-  user_id: string;
-  password: string;
-  entity_type: "USER";
-  created_at: dayjs;
-  org_id: string;
-  org_join_date: "NO_ORG_ASSIGNED" | Date;
-  GSI1PK: string;
-  GSI1SK: string;
-  GSI2PK: string;
-  GSI2SK: "USER";
-}
-interface CreateUserAPIInput {
-  name: string;
-  user_email: string;
-  password: string;
+interface CreateOrgInput {
+  org_url_name: string; // plutomi
+  org_official_name: string; // Plutomi Inc.
 }
 
-interface CreateSessionAPIInput {
+interface GetOrgInput {
+  org_url_name: string;
+}
+
+interface CreateUserInput {
+  first_name: string;
+  last_name: string;
   user_email: string;
-  password: string;
 }
 
-interface CreateOrgAPIInput {
-  org_name: string;
-}
-
-interface CreateFunnelAPIInput {
+interface CreateFunnelInput {
+  org_url_name: string;
   funnel_name: string;
 }
 
-interface CreateStageAPIInput {
-  user_info?: {
-    org_id: string;
-    user_id: string;
-    user_email: string;
-  }; // TODO
+interface GetFunnelInput {
+  org_url_name: string;
+  funnel_id: string;
+}
+interface CreateStageInput {
+  org_url_name: string;
   funnel_id: string;
   stage_name: string;
 }
 
-interface CreateStageRuleAPIInput {
-  stage_id: validation;
-  validation: string;
+interface GetStageInput {
+  org_url_name: string;
+  funnel_id: string;
+  stage_id: string;
 }
 
-interface CreateStageQuestionAPIInput {
+interface CreateStageQuestionInput {
+  org_url_name: string;
+  funnel_id: string;
   stage_id: string;
   question_title: string;
+  question_description: string;
+}
+
+interface CreateStageRuleInput {
+  org_url_name: string;
+  funnel_id: string;
+  stage_id: string;
+  validation: string; // TODO
+}
+
+interface CreateApplicantInput {
+  org_url_name: string;
+  applicant_first_name: string;
+  applicant_last_name: string;
+  applicant_email: string;
+  funnel_id: string;
+  stage_id: string;
 }

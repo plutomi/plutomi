@@ -4,7 +4,7 @@ import { GetCurrentTime } from "../time";
 
 const { DYNAMO_TABLE_NAME } = process.env;
 
-export async function JoinOrg(user_id: string, org_id: string) {
+export async function JoinOrg(user_id: string, org_url_name: string) {
   const params: UpdateCommandInput = {
     TableName: DYNAMO_TABLE_NAME,
     Key: {
@@ -12,11 +12,11 @@ export async function JoinOrg(user_id: string, org_id: string) {
       SK: `USER`,
     },
     UpdateExpression:
-      "SET org_id = :org_id, org_join_date = :org_join_date, GSI1PK = :GSI1PK",
+      "SET org_url_name = :org_url_name, org_join_date = :org_join_date, GSI1PK = :GSI1PK",
     ExpressionAttributeValues: {
-      ":org_id": org_id,
+      ":org_url_name": org_url_name,
       ":org_join_date": GetCurrentTime("iso"),
-      ":GSI1PK": `ORG#${org_id}#USERS`,
+      ":GSI1PK": `ORG#${org_url_name}#USERS`,
     },
     ReturnValues: "ALL_NEW",
   };
