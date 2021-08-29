@@ -15,13 +15,16 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       password: password,
     };
 
+    let missing_keys = [];
     for (const [key, value] of Object.entries(create_user_input)) {
       if (value == undefined) {
-        return res
-          .status(400)
-          .json({ message: `Bad request: '${key}' is missing` });
+        missing_keys.push(`'${key}'`);
       }
     }
+    if (missing_keys.length > 0)
+      return res.status(400).json({
+        message: `Bad request: ${missing_keys.join(", ")} are missing`,
+      });
 
     try {
       const user = await CreateUser(create_user_input);

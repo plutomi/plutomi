@@ -1,19 +1,20 @@
 import { NextApiRequest, NextApiResponse } from "next";
-import { GetFunnel } from "../../../../utils/funnels/getFunnelById";
-import withSessionId from "../../../../middleware/withSessionId";
-import withUserInOrg from "../../../../middleware/withUserInOrg";
+import { GetFunnel } from "../../../../../utils/funnels/getFunnelById";
+import withSessionId from "../../../../../middleware/withSessionId";
+import withUserInOrg from "../../../../../middleware/withUserInOrg";
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   const { method, query, body } = req;
-  const { funnel_id } = query;
+  const { funnel_id, org_url_name } = query;
   const { user_info } = body;
 
+  const get_funnel_input: GetFunnelInput = {
+    org_url_name: org_url_name as string,
+    funnel_id: funnel_id as string,
+  };
   if (method === "GET") {
     try {
-      const funnel = await GetFunnel(
-        user_info.org_url_name,
-        funnel_id as string
-      );
+      const funnel = await GetFunnel(get_funnel_input);
 
       if (!funnel) return res.status(404).json({ message: "Funnel not found" });
 

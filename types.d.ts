@@ -4,7 +4,7 @@ interface CreateOrgInput {
 }
 
 interface GetOrgInput {
-  org_url_name: string; // plutomi
+  org_url_name: string;
 }
 
 interface CreateUserInput {
@@ -12,4 +12,14 @@ interface CreateUserInput {
   last_name: string;
   user_email: string;
   password: string;
+}
+
+interface CreateFunnelInput {
+  org_url_name: string;
+  funnel_name: string;
+}
+
+interface GetFunnelInput {
+  org_url_name: string;
+  funnel_id: string;
 }

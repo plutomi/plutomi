@@ -6,7 +6,7 @@ const { DYNAMO_TABLE_NAME } = process.env;
  * @param org_url_name
  * @param funnel_id
  */
-export async function GetFunnel(org_url_name: string, funnel_id: string) {
+export async function GetFunnel({ org_url_name, funnel_id }: GetFunnelInput) {
   const params: GetCommandInput = {
     TableName: DYNAMO_TABLE_NAME,
     Key: {

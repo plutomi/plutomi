@@ -1,8 +1,8 @@
 import { NextApiRequest, NextApiResponse } from "next";
-import { CreateOrg } from "../../../utils/orgs/createOrg";
-import withSessionId from "../../../middleware/withSessionId";
-import { GetOrg } from "../../../utils/orgs/getOrg";
-import withCleanOrgName from "../../../middleware/withCleanOrgName";
+import { CreateOrg } from "../../../../utils/orgs/createOrg";
+import withSessionId from "../../../../middleware/withSessionId";
+import { GetOrg } from "../../../../utils/orgs/getOrg";
+import withCleanOrgName from "../../../../middleware/withCleanOrgName";
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   const { body, method, query } = req;
@@ -16,13 +16,16 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       org_url_name: org_url_name as string,
     };
 
+    let missing_keys = [];
     for (const [key, value] of Object.entries(create_org_input)) {
       if (value == undefined) {
-        return res
-          .status(400)
-          .json({ message: `Bad request: '${key}' is missing` });
+        missing_keys.push(`'${key}'`);
       }
     }
+    if (missing_keys.length > 0)
+      return res.status(400).json({
+        message: `Bad request: ${missing_keys.join(", ")} are missing`,
+      });
 
     try {
       const org = await CreateOrg(create_org_input);
