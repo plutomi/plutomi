@@ -24,6 +24,7 @@
     "react": "17.0.2",
     "react-dom": "17.0.2",
     "react-icons": "^4.2.0",
+    "react-number-format": "^4.7.3",
     "url-safe-string": "^1.1.0"
   },
   "devDependencies": {
