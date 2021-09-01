@@ -4,7 +4,7 @@ import { GetCurrentTime } from "../time";
 
 const { DYNAMO_TABLE_NAME } = process.env;
 
-export async function JoinOrg(user_id: string, org_url_name: string) {
+export async function JoinOrg({ user_id, org_url_name }: JoinOrgInput) {
   const params: UpdateCommandInput = {
     TableName: DYNAMO_TABLE_NAME,
     Key: {

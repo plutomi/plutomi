@@ -95,8 +95,27 @@ how to remove the virtical space around the range input in IE*/
     /*Edge starts the margin from the thumb, not the track as other browsers do*/
   }
 }
+.custom-shape-divider-top-1630498878 {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  overflow: hidden;
+  line-height: 0;
+}
 
-.custom-shape-divider-bottom-1630375669 {
+.custom-shape-divider-top-1630498878 svg {
+  position: relative;
+  display: block;
+  width: calc(143% + 1.3px);
+  height: 162px;
+}
+
+.custom-shape-divider-top-1630498878 .shape-fill {
+  fill: white;
+}
+
+.custom-shape-divider-bottom-1630499594 {
   position: absolute;
   bottom: 0;
   left: 0;
@@ -106,13 +125,13 @@ how to remove the virtical space around the range input in IE*/
   transform: rotate(180deg);
 }
 
-.custom-shape-divider-bottom-1630375669 svg {
+.custom-shape-divider-bottom-1630499594 svg {
   position: relative;
   display: block;
-  width: calc(113% + 1.3px);
-  height: 170px;
+  width: calc(143% + 1.3px);
+  height: 162px;
 }
 
-.custom-shape-divider-bottom-1630375669 .shape-fill {
+.custom-shape-divider-bottom-1630499594 .shape-fill {
   fill: #ffffff;
 }

@@ -57,3 +57,8 @@ interface CreateApplicantInput {
   funnel_id: string;
   stage_id: string;
 }
+
+interface JoinOrgInput {
+  org_url_name: string;
+  user_id: string;
+}
