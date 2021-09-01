@@ -1,17 +1,8 @@
-/* This example requires Tailwind CSS v2.0+ */
 import {
-  AnnotationIcon,
-  GlobeAltIcon,
-  LightningBoltIcon,
-  ScaleIcon,
   ArrowsExpandIcon,
-  IdentificationIcon,
   CodeIcon,
   LockClosedIcon,
-  ChatIcon,
   ViewGridAddIcon,
-  DocumentIcon,
-  DocumentTextIcon,
 } from "@heroicons/react/outline";
 
 const features = [
@@ -44,31 +35,6 @@ const features = [
     color: `bg-gradient-to-br from-purple-300 to-violet-500`,
     description: "Role based access to all of your resources + MFA & SSO",
   },
-  // {
-  //   name: "Messaging",
-  //   icon: ChatIcon,
-  //   color: `bg-gradient-to-br from-cyan-400 to-blue-500`,
-  //   description: "Connect with applicants directly for a personal touch",
-  // },
-  // {
-  //   name: "Trust but verify",
-  //   icon: IdentificationIcon,
-  //   color: `bg-gradient-to-br from-red-400 to-red-500`,
-  //   description: "Background checks & ID verification",
-  // },
-  // {
-  //   name: "E-Signatures",
-  //   icon: DocumentTextIcon,
-  //   color: `bg-gradient-to-br from-blue-gray-600 to-blue-gray-800`,
-  //   description: "Have your applicants sign documents and contracts",
-  // },
-
-  // {
-  //   name: "E-Signatures",
-  //   icon: DocumentTextIcon,
-  //   color: `bg-gradient-to-br from-emerald-50 to-teal-100`,
-  //   description: "Have your applicants sign documents and contracts",
-  // },
 ];
 export default function Features() {
   return (

@@ -1,13 +1,7 @@
-/* This example requires Tailwind CSS v2.0+ */
-import { ArrowSmDownIcon, ArrowSmUpIcon } from "@heroicons/react/solid";
 import NumberFormat from "react-number-format";
 
 import {
-  CursorClickIcon,
-  MailOpenIcon,
   SparklesIcon,
-  ShieldExclamationIcon,
-  UsersIcon,
   QuestionMarkCircleIcon,
   SearchIcon,
   UserGroupIcon,
@@ -121,7 +115,7 @@ export default function Example() {
                 thousandSeparator={true}
                 displayType={"text"}
               />{" "}
-              *{" "}
+              x{" "}
               {item.stageType.includes("Active") ? (
                 <NumberFormat
                   value={item.price / 100}

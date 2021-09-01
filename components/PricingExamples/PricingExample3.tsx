@@ -1,16 +1,9 @@
-/* This example requires Tailwind CSS v2.0+ */
-import { ArrowSmDownIcon, ArrowSmUpIcon } from "@heroicons/react/solid";
 import NumberFormat from "react-number-format";
 
 import {
-  CursorClickIcon,
-  MailOpenIcon,
   SparklesIcon,
-  ShieldExclamationIcon,
-  UsersIcon,
   UserGroupIcon,
   QuestionMarkCircleIcon,
-  SearchIcon,
   ClockIcon,
   IdentificationIcon,
 } from "@heroicons/react/outline";
@@ -31,7 +24,7 @@ const stages = [
   {
     id: 2,
     name: "Set Up Profile",
-    applicants: 2942,
+    applicants: 2642,
     price: 50,
     icon: QuestionMarkCircleIcon,
     change: "5.4%",
@@ -123,7 +116,7 @@ export default function Example() {
                 thousandSeparator={true}
                 displayType={"text"}
               />{" "}
-              *{" "}
+              x{" "}
               {item.stageType.includes("Active") ? (
                 <NumberFormat
                   value={item.price / 100}

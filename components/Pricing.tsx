@@ -1,5 +1,3 @@
-/* This example requires Tailwind CSS v2.0+ */
-import { CheckIcon } from "@heroicons/react/outline";
 import PricingExample1 from "./PricingExamples/PricingExample1";
 import PricingExample2 from "./PricingExamples/PricingExample2";
 import PricingExample3 from "./PricingExamples/PricingExample3";
@@ -54,7 +52,7 @@ export default function Example() {
       </div>
       <div className="mt-8 pb-12 bg-white sm:mt-12 sm:pb-16 lg:mt-16 lg:pb-24">
         <div className="relative ">
-          <div className="absolute inset-0 h-3/4 bg-blue-gray-900" />
+          <div className="absolute inset-0 h-2/3 bg-blue-gray-900" />
           <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 ">
             <div className="max-w-md mx-auto space-y-4 lg:max-w-5xl lg:grid lg:grid-cols-2 lg:gap-5 lg:space-y-0">
               {tiers.map((tier) => (
@@ -86,7 +84,7 @@ export default function Example() {
               ))}
             </div>
           </div>
-          <p className="text-sm my-8 text-blue-gray-400  mx-auto px-12 md:px-4 text-center">
+          <p className="text-sm my-4 text-blue-gray-400  mx-auto px-12 md:px-4 text-center">
             Background checks, ID verifications, and e-signatures are charged
             per event
           </p>
