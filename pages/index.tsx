@@ -9,7 +9,7 @@ export default function Main() {
       <main className="bg-gradient-to-b from-blue-gray-50 to-white">
         <Navbar />
 
-        <div className="mx-auto max-w-7xl w-full py-24  text-center lg:py-28  lg:text-left">
+        <div className="mx-auto max-w-7xl w-full py-6  text-center lg:py-12  lg:text-left">
           <div className="px-4 w-full  flex flex-col justify-center items-center">
             <span className="px-3 py-1 text-blue-gray-50 text-sm font-semibold leading-4 uppercase tracking-wide bg-gradient-to-b from-yellow-400 to-amber-500 rounded-full">
               Coming soon!
