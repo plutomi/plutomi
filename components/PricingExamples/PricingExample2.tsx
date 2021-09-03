@@ -11,8 +11,8 @@ const stages = [
   {
     id: 1,
     name: "Questionnaire",
-    applicants: 489,
-    price: 50, // Cents
+    applicants: 429,
+    price: 25, // Cents
     icon: QuestionMarkCircleIcon,
     change: "122",
     changeType: "increase",
@@ -23,8 +23,8 @@ const stages = [
   {
     id: 2,
     name: "Final Review",
-    applicants: 47,
-    price: 1,
+    applicants: 157,
+    price: 5,
     icon: SearchIcon,
     change: "5.4%",
     changeType: "increase",
@@ -34,33 +34,29 @@ const stages = [
   },
   {
     id: 3,
-    name: "Admitted",
-    applicants: 7219,
-    price: 1,
+    name: "Approved",
+    applicants: 19,
+    price: 100,
     icon: SparklesIcon,
     change: "3.2%",
     changeType: "decrease",
-    stageType: "Idle Stage",
-    bgColor: `bg-blue-gray-100`,
-    textColor: `text-blue-gray-600`,
+    stageType: "Frozen Stage",
+    bgColor: `bg-cyan-100`,
+    textColor: `text-cyan-600`,
   },
   {
-    id: 3,
+    id: 4,
     name: "Rejected",
-    applicants: 843,
-    price: 1,
+    applicants: 83,
+    price: 100,
     icon: SparklesIcon,
     change: "3.2%",
     changeType: "decrease",
-    stageType: "Idle Stage",
-    bgColor: `bg-blue-gray-100`,
-    textColor: `text-blue-gray-600`,
+    stageType: "Frozen Stage",
+    bgColor: `bg-cyan-100`,
+    textColor: `text-cyan-600`,
   },
 ];
-
-function classNames(...classes) {
-  return classes.filter(Boolean).join(" ");
-}
 
 export default function Example() {
   const totalPrice = () => {
@@ -71,7 +67,7 @@ export default function Example() {
     return price / 100;
   };
   return (
-    <div>
+    <div className="">
       <h3 className="text-xl leading-6 font-medium text-blue-gray-900">
         Example 2{" "}
       </h3>
@@ -116,52 +112,30 @@ export default function Example() {
                 displayType={"text"}
               />{" "}
               x{" "}
-              {item.stageType.includes("Active") ? (
-                <NumberFormat
-                  value={item.price / 100}
-                  thousandSeparator={true}
-                  displayType={"text"}
-                  decimalScale={2}
-                  fixedDecimalScale
-                  prefix={"$"}
-                />
-              ) : (
-                <NumberFormat
-                  value={item.price / 100}
-                  thousandSeparator={true}
-                  displayType={"text"}
-                  decimalScale={2}
-                  fixedDecimalScale
-                  prefix={"$"}
-                />
-              )}{" "}
+              <NumberFormat
+                value={item.price / 100}
+                thousandSeparator={true}
+                displayType={"text"}
+                decimalScale={2}
+                fixedDecimalScale
+                prefix={"$"}
+              />{" "}
               ={" "}
-              {item.stageType.includes("Active") ? (
-                <NumberFormat
-                  value={(item.applicants * item.price) / 100}
-                  thousandSeparator={true}
-                  displayType={"text"}
-                  decimalScale={2}
-                  fixedDecimalScale
-                  prefix={"$"}
-                />
-              ) : (
-                <NumberFormat
-                  value={(item.applicants * 1) / 100}
-                  displayType={"text"}
-                  decimalScale={2}
-                  thousandSeparator={true}
-                  fixedDecimalScale
-                  prefix={"$"}
-                />
-              )}
+              <NumberFormat
+                value={(item.applicants * item.price) / 100}
+                thousandSeparator={true}
+                displayType={"text"}
+                decimalScale={2}
+                fixedDecimalScale
+                prefix={"$"}
+              />
             </p>
           </div>
         ))}
       </dl>
 
       <h3 className="mt-6 text-lg leading-6 font-medium text-blue-gray-900 text-center lg:text-left">
-        Monthly bill:{" "}
+        Total:{" "}
         <NumberFormat
           className="font-bold"
           value={totalPrice()}

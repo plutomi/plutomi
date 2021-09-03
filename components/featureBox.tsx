@@ -4,7 +4,7 @@ import {
   LockClosedIcon,
   ViewGridAddIcon,
 } from "@heroicons/react/outline";
-
+import CustomLink from "./CustomLink";
 const features = [
   {
     name: "Open Source",
@@ -16,7 +16,7 @@ const features = [
   {
     name: "Never settle",
     icon: ArrowsExpandIcon,
-    description: "Unlimited users, applicants, and funnels",
+    description: "Unlimited users, applicants, funnels, and stages",
     color: `bg-gradient-to-br from-green-400 to-emerald-500`,
   },
 
@@ -25,8 +25,7 @@ const features = [
     icon: ViewGridAddIcon,
     color: `bg-gradient-to-br from-rose-400 to-red-500`,
 
-    description:
-      "Seamless integrations with tools like Slack, Zendesk, and Zapier",
+    description: "Easy integrations with tools like Slack, Zendesk, and Zapier",
   },
 
   {
@@ -58,14 +57,10 @@ export default function Features() {
                   {feature.isGithub ? (
                     <p>
                       Read, inspect, and contribute to{" "}
-                      <a
-                        href="https://github.com/plutomi/plutomi"
-                        target="_blank"
-                        rel="noreferrer"
-                        className="underline text-blue-gray-900 font-medium hover:text-blue-500 transition ease-in-out duration-300"
-                      >
-                        our GitHub repository
-                      </a>
+                      <CustomLink
+                        url="https://github.com/plutomi/plutomi"
+                        text="our Github repository"
+                      />
                     </p>
                   ) : (
                     feature.description
