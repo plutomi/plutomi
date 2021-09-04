@@ -74,3 +74,9 @@ interface SendLoginCodeEmailInput {
   login_code: string;
   login_code_relative_expiry: string;
 }
+
+interface ClaimLoginCodeInput {
+  user_id: string;
+  timestamp: string; // SK
+  claimed_at: string;
+}
