@@ -4,6 +4,9 @@ import { SanitizeResponse } from "../../../../utils/sanitizeResponse";
 import { withIronSession, Session } from "next-iron-session";
 type NextIronRequest = NextApiRequest & { session: Session };
 import { session_options } from "../../../../Config";
+
+
+// This is really only for getting your own data when signed in
 const handler = async (req: NextIronRequest, res: NextApiResponse) => {
   const { method, query } = req;
 

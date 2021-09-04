@@ -1,5 +1,6 @@
 /* This example requires Tailwind CSS v2.0+ */
 import { Fragment } from "react";
+import { useState } from "react";
 import { Disclosure, Menu, Transition } from "@headlessui/react";
 import { BellIcon, MenuIcon, XIcon } from "@heroicons/react/outline";
 import axios from "axios";
@@ -27,8 +28,31 @@ function classNames(...classes) {
   return classes.filter(Boolean).join(" ");
 }
 import useUser from "../utils/SWR/useUser";
-export default function Example() {
+export default function Dashboard() {
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
   const router = useRouter();
+
+  const updateUser = async (e) => {
+    e.preventDefault();
+
+    const body = {
+      first_name: firstName,
+      last_name: lastName,
+      full_name: `${firstName} ${lastName}`,
+    };
+
+    try {
+      const { status, data } = await axios.put(
+        `/api/users/${user.user_id}`,
+        body
+      );
+
+      alert(data.message);
+    } catch (error) {
+      alert(error.response.data.message);
+    }
+  };
   const { user, isLoading, isError } = useUser();
 
   const logout = async () => {
@@ -235,7 +259,10 @@ export default function Example() {
                       type="text"
                       name="first-name"
                       id="first-name"
+                      required
                       autoComplete="given-name"
+                      value={firstName}
+                      onChange={(e) => setFirstName(e.target.value)}
                       className="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border-gray-300 rounded-md"
                     />
                   </div>
@@ -252,7 +279,10 @@ export default function Example() {
                       type="text"
                       name="last-name"
                       id="last-name"
+                      required
                       autoComplete="family-name"
+                      value={lastName}
+                      onChange={(e) => setLastName(e.target.value)}
                       className="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border-gray-300 rounded-md"
                     />
                   </div>
@@ -260,6 +290,7 @@ export default function Example() {
               </div>
               <button
                 type="button"
+                onClick={(e) => updateUser(e)}
                 className="mt-8 justify-self-end inline-flex items-center px-4 py-2 border border-transparent text-base font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
               >
                 Update name
