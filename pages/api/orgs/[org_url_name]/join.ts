@@ -1,5 +1,6 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import { JoinOrg } from "../../../../utils/users/joinOrg";
+import InputValidation from "../../../../utils/inputValidation";
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   const { method, query, body } = req;
   const { user_id } = body;
@@ -9,6 +10,13 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     user_id: user_id,
     org_url_name: org_url_name as string,
   };
+
+  try {
+    InputValidation(join_org_input);
+  } catch (error) {
+    return res.status(400).json({ message: `${error.message}` });
+  }
+
   if (method === "POST") {
     try {
       await JoinOrg(join_org_input);

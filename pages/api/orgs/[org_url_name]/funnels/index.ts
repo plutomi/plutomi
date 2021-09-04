@@ -1,6 +1,7 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import { CreateFunnel } from "../../../../../utils/funnels/createFunnel";
 import { GetAllFunnelsInOrg } from "../../../../../utils/funnels/getAllFunnelsInOrg";
+import InputValidation from "../../../../../utils/inputValidation";
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   const { body, method, query } = req;
@@ -14,17 +15,12 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
         funnel_name: funnel_name,
       };
 
-      let missing_keys = [];
-      for (const [key, value] of Object.entries(create_funnel_input)) {
-        if (value == undefined) {
-          missing_keys.push(`'${key}'`);
-        }
+      try {
+        InputValidation(create_funnel_input);
+      } catch (error) {
+        return res.status(400).json({ message: `${error.message}` });
       }
-      if (missing_keys.length > 0)
-        return res.status(400).json({
-          message: `Bad request: ${missing_keys.join(", ")} missing`,
-        });
-
+      
       const funnel = await CreateFunnel(create_funnel_input);
       return res.status(201).json(funnel);
     } catch (error) {

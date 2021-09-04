@@ -2,9 +2,9 @@ import { NextApiRequest, NextApiResponse } from "next";
 import { CreateOrg } from "../../../../utils/orgs/createOrg";
 import { GetOrg } from "../../../../utils/orgs/getOrg";
 import withCleanOrgName from "../../../../middleware/withCleanOrgName";
-
+import InputValidation from "../../../../utils/inputValidation";
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
-  const { body, method, query } = req;
+  const { method, query } = req;
   const { org_url_name } = query;
 
   if (method === "GET") {

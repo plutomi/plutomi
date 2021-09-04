@@ -5,10 +5,17 @@ import { GetPastOrFutureTime, GetRelativeTime } from "../../../utils/time";
 import CreateLoginCode from "../../../utils/users/createLoginCode";
 const alphabet = "023456789ABCDEFGHJKLMNOPQRSTUVWXYZ"; // Removes some characters for clarity
 const nanoid = customAlphabet(alphabet, 10);
-
+import InputValidation from "../../../utils/inputValidation";
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   const { body } = req;
   const { user_email } = body;
+
+  try {
+    InputValidation({ user_email });
+  } catch (error) {
+    return res.status(400).json({ message: `${error.message}` });
+  }
+
   const login_code = await nanoid();
 
   const login_code_expiry = GetPastOrFutureTime("future", 15, "minutes", "iso");

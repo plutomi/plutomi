@@ -1,5 +1,4 @@
-import SendLoginCode from "../../../utils/email/sendLoginCode";
-import CreateLoginAttempt from "../../../utils/users/createLoginCode";
+import InputValidation from "../../../utils/inputValidation";
 import { NextApiRequest, NextApiResponse } from "next";
 import { GetLatestLoginCode } from "../../../utils/users/getLatestLoginCode";
 import { GetCurrentTime } from "../../../utils/time";
@@ -8,7 +7,10 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   const { user_email, login_code } = body;
 
   try {
-  } catch (error) {}
+    InputValidation({ user_email, login_code });
+  } catch (error) {
+    return res.status(400).json({ message: `${error.message}` });
+  }
 
   try {
     const latest_login_code = await GetLatestLoginCode(user_email);
