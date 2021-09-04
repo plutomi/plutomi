@@ -33,9 +33,12 @@ export default async function CreateLoginCode({
       PK: `USER#${user.user_id}`,
       SK: `LOGIN_CODE#${now}`,
       login_code: login_code,
+      user_id: user.user_id,
       entity_type: "LOGIN_CODE",
       created_at: now,
       expires_at: login_code_expiry,
+      is_claimed: false,
+      claimed_at: "",
       GSI1PK: user.user_email,
       GSI1SK: `LOGIN_CODE#${now}`,
       ttl_expiry: GetPastOrFutureTime("future", 30, "days", "unix"),
@@ -44,6 +47,7 @@ export default async function CreateLoginCode({
     const params: PutCommandInput = {
       TableName: DYNAMO_TABLE_NAME,
       Item: new_LOGIN_CODE,
+      ConditionExpression: "attribute_not_exists(PK)",
     };
 
     await Dynamo.send(new PutCommand(params));
