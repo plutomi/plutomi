@@ -80,3 +80,8 @@ interface ClaimLoginCodeInput {
   timestamp: string; // SK
   claimed_at: string;
 }
+
+interface UpdateUserInput {
+  body: Object;
+  user_id: string;
+}
