@@ -19,7 +19,7 @@ export default async function SendLoginCode({
       },
       Body: {
         Html: {
-          Data: `<h1>${login_code}</h1><br>It will expire in ${login_code_relative_expiry} so enter it soon.`,
+          Data: `<h1>${login_code}</h1><br>It will expire ${login_code_relative_expiry} so enter it soon.`,
         },
       },
     },

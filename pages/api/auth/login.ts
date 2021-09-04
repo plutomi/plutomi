@@ -1,17 +1,26 @@
 import InputValidation from "../../../utils/inputValidation";
 import { NextApiRequest, NextApiResponse } from "next";
 import { GetLatestLoginCode } from "../../../utils/users/getLatestLoginCode";
-import { GetCurrentTime, GetPastOrFutureTime } from "../../../utils/time";
+import { GetCurrentTime } from "../../../utils/time";
 import { ClaimLoginCode } from "../../../utils/users/claimLoginCode";
+import { serialize } from "cookie";
 import { withIronSession, Session } from "next-iron-session";
-import { unix } from "dayjs";
 type NextIronRequest = NextApiRequest & { session: Session };
+import { session_options } from "../../../Config";
 
 const handler = async (req: NextIronRequest, res: NextApiResponse) => {
   const { body, method } = req;
   const { user_email, login_code } = body;
 
   if (method === "POST") {
+    req.session.destroy();
+    res.setHeader("Set-Cookie", [
+      serialize("is_logged_in", "", {
+        maxAge: -1,
+        path: "/",
+      }),
+    ]);
+
     try {
       InputValidation({ user_email, login_code });
     } catch (error) {
@@ -26,7 +35,7 @@ const handler = async (req: NextIronRequest, res: NextApiResponse) => {
       }
 
       if (latest_login_code.expires_at <= GetCurrentTime("iso")) {
-        return res.status(401).json({ message: "Code has expired" });
+        return res.status(403).json({ message: "Code has expired" });
       }
 
       if (latest_login_code.is_claimed) {
@@ -61,12 +70,4 @@ const handler = async (req: NextIronRequest, res: NextApiResponse) => {
   return res.status(405).json({ message: "Not Allowed" });
 };
 
-export default withIronSession(handler, {
-  password: process.env.SESSION_PASSWORD,
-  cookieName: "next_iron_session",
-  // if your localhost is served on http:// then disable the secure flag
-  cookieOptions: {
-    maxAge: 86400,
-    secure: process.env.NODE_ENV === "production",
-  },
-});
+export default withIronSession(handler, session_options);
