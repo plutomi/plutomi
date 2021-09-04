@@ -1,4 +1,6 @@
 import dayjs from "dayjs";
+import relativeTime from "dayjs/plugin/relativeTime";
+dayjs.extend(relativeTime);
 
 /**
  * @param format - `iso`, `unix`, or `plain` date object
@@ -43,4 +45,8 @@ export function GetPastOrFutureTime(
     if (format === "unix") return new_time.unix();
     if (format === "plain") return new_time.toDate();
   }
+}
+
+export function GetRelativeTime(timestamp: string) {
+  return dayjs().to(timestamp);
 }

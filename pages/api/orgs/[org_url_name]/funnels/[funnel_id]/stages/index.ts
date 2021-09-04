@@ -1,6 +1,7 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import { CreateStage } from "../../../../../../../utils/stages/createStage";
 import { GetAllStagesInOrg } from "../../../../../../../utils/stages/getAllStagesInOrg";
+import InputValidation from "../../../../../../../utils/inputValidation";
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   const { body, method, query } = req;
@@ -12,6 +13,12 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     funnel_id: funnel_id as string,
     stage_name: stage_name,
   };
+
+  try {
+    InputValidation(create_stage_input);
+  } catch (error) {
+    return res.status(400).json({ message: `${error.message}` });
+  }
 
   if (method === "POST") {
     let missing_keys = [];

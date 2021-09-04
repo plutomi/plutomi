@@ -16,11 +16,8 @@ export async function CreateUser({
   last_name,
   user_email,
 }: CreateUserInput) {
-  const userExists = await GetUserByEmail(user_email);
-  if (userExists)
-    throw new Error(
-      "A user already exists with this email, please log in instead" // TODO maybe login the user if the password is correct?
-    );
+  const existing_user = await GetUserByEmail(user_email);
+  if (existing_user) return existing_user;
 
   const now = GetCurrentTime("iso");
   const user_id = nanoid(30);

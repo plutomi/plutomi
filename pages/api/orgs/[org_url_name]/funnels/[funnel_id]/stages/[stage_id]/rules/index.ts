@@ -1,5 +1,6 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import { CreateStageRule } from "../../../../../../../../../utils/stages/createStageRule";
+import InputValidation from "../../../../../../../../../utils/inputValidation";
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   const { body, method, query } = req;
@@ -14,17 +15,11 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       validation: validation,
     };
 
-    let missing_keys = [];
-    for (const [key, value] of Object.entries(create_stage_rule_input)) {
-      if (value == undefined) {
-        missing_keys.push(`'${key}'`);
-      }
+    try {
+      InputValidation(create_stage_rule_input);
+    } catch (error) {
+      return res.status(400).json({ message: `${error.message}` });
     }
-    if (missing_keys.length > 0)
-      return res.status(400).json({
-        message: `Bad request: ${missing_keys.join(", ")} missing`,
-      });
-
     try {
       const stage_question = await CreateStageRule(create_stage_rule_input);
       return res.status(201).json(stage_question);
