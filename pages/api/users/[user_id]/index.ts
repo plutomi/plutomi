@@ -1,7 +1,6 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import { GetUserById } from "../../../../utils/users/getUserById";
 import { SanitizeResponse } from "../../../../utils/sanitizeResponse";
-import withUserId from "../../../../middleware/withUserId";
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   const { method, query } = req;
   const { user_id } = query;

@@ -1,7 +1,4 @@
 import { NextApiRequest, NextApiResponse } from "next";
-import { GetUserById } from "../../../../utils/users/getUserById";
-import { SanitizeResponse } from "../../../../utils/sanitizeResponse";
-import withUserId from "../../../../middleware/withUserId";
 import { JoinOrg } from "../../../../utils/users/joinOrg";
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   const { method, query, body } = req;

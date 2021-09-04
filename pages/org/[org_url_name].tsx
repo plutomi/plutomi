@@ -7,7 +7,7 @@ export default function NotFound() {
   const { org_url_name } = router.query;
   return (
     <div>
-      <h1>Welcome to {org_url_name}&apos;s job board</h1>
+      <h1>Welcome to {org_url_name}&apos;s profile</h1>
     </div>
   );
 }

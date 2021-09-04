@@ -62,3 +62,15 @@ interface JoinOrgInput {
   org_url_name: string;
   user_id: string;
 }
+
+interface CreateLoginCodeInput {
+  user_email: string;
+  login_code: string;
+  login_code_expiry: string; // Timestamp in the future
+}
+
+interface SendLoginCodeEmailInput {
+  recipient: string;
+  login_code: string;
+  login_code_relative_expiry: string;
+}

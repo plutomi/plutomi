@@ -99,9 +99,9 @@ export default function Example() {
                     stages, applicants in this stage are not completing tasks.
                     Applicants in{" "}
                     <span className="text-cyan-600 font-bold">frozen</span>{" "}
-                    stages are billed at a flat rate each time an applicant
-                    lands on them. It is recommended to have your final stage be
-                    of this type.
+                    stages do not incur monthly charges but are instead billed
+                    at a flat rate each time an applicant lands on them. It is
+                    recommended to have your final stage be of this type
                   </p>
                 </div>
               </div>
