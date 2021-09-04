@@ -3,6 +3,7 @@ import { Fragment } from "react";
 import { Disclosure, Menu, Transition } from "@headlessui/react";
 import { BellIcon, MenuIcon, XIcon } from "@heroicons/react/outline";
 import axios from "axios";
+import { useRouter } from "next/router";
 
 const user = {
   name: "Tom Cook",
@@ -13,8 +14,8 @@ const user = {
 const navigation = [
   { name: "Dashboard", href: "#", current: true },
   { name: "Team", href: "#", current: false },
-  { name: "Projects", href: "#", current: false },
-  { name: "Calendar", href: "#", current: false },
+  { name: "Funnels", href: "#", current: false },
+  // { name: "Calendar", href: "#", current: false },
 ];
 const userNavigation = [
   { name: "Your Profile", href: "#" },
@@ -25,18 +26,22 @@ const userNavigation = [
 function classNames(...classes) {
   return classes.filter(Boolean).join(" ");
 }
-
+import useUser from "../utils/SWR/useUser";
 export default function Example() {
+  const router = useRouter();
+  const { user, isLoading, isError } = useUser();
+
   const logout = async () => {
     try {
       const { status, data } = await axios.post("/api/auth/logout");
+      router.push("/");
       alert(data.message);
     } catch (error) {
       alert(error.response.data.message);
     }
   };
   return (
-    <div className="min-h-screen bg-gray-100">
+    <div className="min-h-screen bg-white">
       <Disclosure as="nav" className="bg-white shadow-sm">
         {({ open }) => (
           <>
@@ -44,7 +49,7 @@ export default function Example() {
               <div className="flex justify-between h-16">
                 <div className="flex">
                   <div className="flex-shrink-0 flex items-center">
-                    <img
+                    {/* <img
                       className="block lg:hidden h-8 w-auto"
                       src="https://tailwindui.com/img/logos/workflow-mark-indigo-600.svg"
                       alt="Workflow"
@@ -53,7 +58,7 @@ export default function Example() {
                       className="hidden lg:block h-8 w-auto"
                       src="https://tailwindui.com/img/logos/workflow-logo-indigo-600-mark-gray-800-text.svg"
                       alt="Workflow"
-                    />
+                    /> */}
                   </div>
                   <div className="hidden sm:-my-px sm:ml-6 sm:flex sm:space-x-8">
                     {navigation.map((item) => (
@@ -84,15 +89,16 @@ export default function Example() {
 
                   <button onClick={() => logout()}>LOGOUT</button>
                   {/* Profile dropdown */}
+
                   <Menu as="div" className="ml-3 relative">
                     <div>
                       <Menu.Button className="bg-white flex text-sm rounded-full focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
                         <span className="sr-only">Open user menu</span>
-                        <img
+                        {/* <img
                           className="h-8 w-8 rounded-full"
                           src={user.imageUrl}
                           alt=""
-                        />
+                        /> */}
                       </Menu.Button>
                     </div>
                     <Transition
@@ -159,19 +165,19 @@ export default function Example() {
               <div className="pt-4 pb-3 border-t border-gray-200">
                 <div className="flex items-center px-4">
                   <div className="flex-shrink-0">
-                    <img
+                    {/* <img
                       className="h-10 w-10 rounded-full"
                       src={user.imageUrl}
                       alt=""
-                    />
+                    /> */}
                   </div>
                   <div className="ml-3">
-                    <div className="text-base font-medium text-gray-800">
+                    {/* <div className="text-base font-medium text-gray-800">
                       {user.name}
                     </div>
                     <div className="text-sm font-medium text-gray-500">
                       {user.email}
-                    </div>
+                    </div> */}
                   </div>
                   <button
                     type="button"
@@ -207,13 +213,62 @@ export default function Example() {
           </div>
         </header>
         <main>
-          <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">
+          <div className="mt-10 max-w-7xl mx-auto sm:px-6 lg:px-8">
             {/* Replace with your content */}
-            <div className="px-4 py-8 sm:px-0">
-              <div className="border-4 border-dashed border-gray-200 rounded-lg h-96" />
+            <div className="p-8 border rounded-md">
+              <div>
+                <h3 className="text-xl leading-6 font-medium text-gray-900">
+                  We need some basic info to get started
+                </h3>
+              </div>
+              <div></div>
+              <div className="mt-6 grid grid-cols-1 gap-y-6 gap-x-4 sm:grid-cols-6">
+                <div className="sm:col-span-3">
+                  <label
+                    htmlFor="first-name"
+                    className="block text-sm font-medium text-gray-700"
+                  >
+                    First name
+                  </label>
+                  <div className="mt-1">
+                    <input
+                      type="text"
+                      name="first-name"
+                      id="first-name"
+                      autoComplete="given-name"
+                      className="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border-gray-300 rounded-md"
+                    />
+                  </div>
+                </div>
+                <div className="sm:col-span-3">
+                  <label
+                    htmlFor="last-name"
+                    className="block text-sm font-medium text-gray-700"
+                  >
+                    Last name
+                  </label>
+                  <div className="mt-1">
+                    <input
+                      type="text"
+                      name="last-name"
+                      id="last-name"
+                      autoComplete="family-name"
+                      className="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border-gray-300 rounded-md"
+                    />
+                  </div>
+                </div>
+              </div>
+              <button
+                type="button"
+                className="mt-8 justify-self-end inline-flex items-center px-4 py-2 border border-transparent text-base font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+              >
+                Update name
+              </button>
             </div>
+
             {/* /End replace */}
           </div>
+          <h1 className="text-lg">{JSON.stringify(user)}</h1>
         </main>
       </div>
     </div>

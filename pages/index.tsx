@@ -43,8 +43,9 @@ export default function Main() {
 
     try {
       const { status, data } = await axios.post("/api/auth/login", body);
-      setCookie("is_logged_in", true);
       router.push("/dashboard");
+
+      setCookie("is_logged_in", true);
     } catch (error) {
       alert(error.response.data.message);
     }
