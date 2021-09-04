@@ -5,6 +5,9 @@ plutomi:
       defaultLambda: ${env.DEFAULT_LAMBDA_NAME}
       apiLambda: ${env.API_LAMBDA_NAME}
       imageLambda: ${env.IMAGE_LAMBDA_NAME}
+
+    roleArn: ${env.LAMBDA_ROLE_ARN}
+
     memory:
       defaultLambda: 256
       apiLambda: 256

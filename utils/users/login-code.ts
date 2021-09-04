@@ -1,11 +1,11 @@
-import SendLoginCode from "../../../utils/email/sendLoginCode";
+import SendLoginCode from "../../utils/email/sendLoginCode";
 import { NextApiRequest, NextApiResponse } from "next";
 import { customAlphabet } from "nanoid/async";
-import { GetPastOrFutureTime, GetRelativeTime } from "../../../utils/time";
-import CreateLoginCode from "../../../utils/users/createLoginCode";
+import { GetPastOrFutureTime, GetRelativeTime } from "../../utils/time";
+import CreateLoginCode from "../../utils/users/createLoginCode";
 const alphabet = "023456789ABCDEFGHJKLMNOPQRSTUVWXYZ"; // Removes some characters for clarity
 const nanoid = customAlphabet(alphabet, 10);
-import InputValidation from "../../../utils/inputValidation";
+import InputValidation from "../../utils/inputValidation";
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   const { body } = req;
   const { user_email } = body;
@@ -43,9 +43,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
         .status(201)
         .json({ message: `A login code has been sent to your email` });
     } catch (error) {
-      return res
-        .status(500)
-        .json({ message: `${error}` });
+      return res.status(500).json({ message: `${error}` });
     }
   } catch (error) {
     return res.status(500).json({ message: `${error}` });
