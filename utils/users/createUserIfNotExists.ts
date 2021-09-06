@@ -11,11 +11,13 @@ const { DYNAMO_TABLE_NAME } = process.env;
  * @param last_name
  * @param user_email
  */
-export async function CreateUser({
+export async function CreateUserIfNotExists({
   first_name,
   last_name,
   user_email,
 }: CreateUserInput) {
+
+  // Return the existing user if already created // TODO split this up?
   const existing_user = await GetUserByEmail(user_email);
   if (existing_user) return existing_user;
 

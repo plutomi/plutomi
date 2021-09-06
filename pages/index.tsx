@@ -1,8 +1,10 @@
 /* This example requires Tailwind CSS v2.0+ */
 import NewPricing from "../components/Pricing";
+import { signOut, useSession, signIn } from "next-auth/client";
+import { useRouter } from "next/router";
+
 import Contact from "../components/ContactUs";
 import FeatureBox from "../components/featureBox";
-import { useRouter } from "next/router";
 import Navbar from "../components/navbar";
 import axios from "axios";
 import Link from "next/dist/client/link";
@@ -44,12 +46,14 @@ export default function Main() {
     try {
       const { status, data } = await axios.post("/api/auth/login", body);
       router.push("/dashboard");
-
-      setCookie("is_logged_in", true);
     } catch (error) {
       alert(error.response.data.message);
     }
   };
+
+  const [session, loading] = useSession();
+  const { error } = useRouter().query;
+
   return (
     <div className="">
       <main className="bg-gradient-to-b from-blue-gray-50 to-white">
@@ -72,6 +76,42 @@ export default function Main() {
             </p>
           </div>
         </div>
+
+        <section id="login2">
+          <>
+            {!session && (
+              <>
+                Not signed in <br />
+                <button
+                  className="px-4 py-2 bg-blue-300"
+                  onClick={() => signIn("google")}
+                >
+                  Sign in with google
+                </button>
+                <button
+                  className="px-4 py-2 bg-red-300"
+                  onClick={() =>
+                    signIn("credentials", {
+                      user_email: user_email,
+                      login_code: login_code,
+                    })
+                  }
+                >
+                  Sign in with login code
+                </button>
+              </>
+            )}
+            {error && <p>An error ocurred logging you in. Please try again.</p>}
+
+            {session && (
+              <>
+                Signed in as {session?.user?.email} <br />
+                <p>SESSION {JSON.stringify(session)}</p>
+                <button onClick={() => signOut()}>Sign out</button>
+              </>
+            )}
+          </>
+        </section>
         {/* // TODO - Hide this if user is already logged in via sessions */}
 
         {/* // TODO - Split this up into their own components */}

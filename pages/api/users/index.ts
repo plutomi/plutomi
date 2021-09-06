@@ -1,5 +1,5 @@
 import { NextApiRequest, NextApiResponse } from "next";
-import { CreateUser } from "../../../utils/users/createUser";
+import { CreateUser } from "../../../utils/users/createUserIfNotExists";
 import { SanitizeResponse } from "../../../utils/sanitizeResponse";
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
