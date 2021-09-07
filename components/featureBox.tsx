@@ -37,39 +37,37 @@ const features = [
 ];
 export default function Features() {
   return (
-    <div className="  ">
+    <div className=" py-14 ">
       <div className="max-w-7xl mx-auto px-4  flex justify-center sm:px-6 lg:px-8">
-        <div className="">
-          <dl className="space-y-10 md:space-y-0 md:grid md:grid-cols-2 md:gap-x-8 md:gap-y-10">
-            {features.map((feature) => (
-              <div key={feature.name} className=" relative">
-                <dt>
-                  <div
-                    className={`absolute flex items-center text-black  justify-center h-12 w-12 rounded-md ${feature.color} text-white`}
-                  >
-                    <feature.icon className="h-6 w-6 " aria-hidden="true" />
-                  </div>
-                  <p className="ml-16 text-xl leading-6 font-bold text-gray-900">
-                    {feature.name}
+        <dl className="space-y-10 md:space-y-0 md:grid md:grid-cols-2 md:gap-x-8 md:gap-y-10">
+          {features.map((feature) => (
+            <div key={feature.name} className=" relative">
+              <dt>
+                <div
+                  className={`absolute flex items-center text-black  justify-center h-12 w-12 rounded-md ${feature.color} text-white`}
+                >
+                  <feature.icon className="h-6 w-6 " aria-hidden="true" />
+                </div>
+                <p className="ml-16 text-xl leading-6 font-bold text-gray-900">
+                  {feature.name}
+                </p>
+              </dt>
+              <dd className="mt-2 ml-16 text-lg text-blue-gray-600">
+                {feature.isGithub ? (
+                  <p>
+                    Read, inspect, and contribute to{" "}
+                    <CustomLink
+                      url="https://github.com/plutomi/plutomi"
+                      text="our Github repository"
+                    />
                   </p>
-                </dt>
-                <dd className="mt-2 ml-16 text-lg text-blue-gray-600">
-                  {feature.isGithub ? (
-                    <p>
-                      Read, inspect, and contribute to{" "}
-                      <CustomLink
-                        url="https://github.com/plutomi/plutomi"
-                        text="our Github repository"
-                      />
-                    </p>
-                  ) : (
-                    feature.description
-                  )}
-                </dd>
-              </div>
-            ))}
-          </dl>
-        </div>
+                ) : (
+                  feature.description
+                )}
+              </dd>
+            </div>
+          ))}
+        </dl>
       </div>
     </div>
   );

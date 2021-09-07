@@ -1,11 +1,10 @@
-/* This example requires Tailwind CSS v2.0+ */
 import { Fragment } from "react";
 import { Popover, Transition } from "@headlessui/react";
 import { MenuIcon, XIcon } from "@heroicons/react/outline";
 
 const navigation = [{ name: "Pricing", href: "#pricing" }];
 
-export default function Example() {
+export default function Navbar() {
   return (
     <div className="relative bg-gray-50 overflow-hidden ">
       <div

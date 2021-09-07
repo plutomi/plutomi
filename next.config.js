@@ -12,5 +12,8 @@ module.exports = {
     LAMBDA_ROLE_ARN: process.env.LAMBDA_ROLE_ARN,
     JWT_SECRET: process.env.JWT_SECRET,
     SESSION_PASSWORD: process.env.SESSION_PASSWORD,
+    GOOGLE_CLIENT_ID: process.env.GOOGLE_CLIENT_ID,
+    GOOGLE_CLIENT_SECRET: process.env.GOOGLE_CLIENT_SECRET,
+    NEXTAUTH_URL: process.env.NEXTAUTH_URL,
   },
 };

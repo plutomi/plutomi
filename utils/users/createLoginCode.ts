@@ -2,7 +2,7 @@ import { GetUserByEmail } from "./getUserByEmail";
 import { Dynamo } from "../../libs/ddbDocClient";
 import { PutCommand, PutCommandInput } from "@aws-sdk/lib-dynamodb";
 import { GetCurrentTime, GetPastOrFutureTime, GetRelativeTime } from "../time";
-import { CreateUser } from "./createUser";
+import { CreateUserIfNotExists } from "./createUserIfNotExists";
 const { DYNAMO_TABLE_NAME } = process.env;
 
 export default async function CreateLoginCode({
@@ -22,8 +22,9 @@ export default async function CreateLoginCode({
           user_email: user_email,
         };
 
-        user = await CreateUser(new_user);
+        user = await CreateUserIfNotExists(new_user);
       } catch (error) {
+        console.error(error);
         throw new Error("Unable to create first time user");
       }
     }
