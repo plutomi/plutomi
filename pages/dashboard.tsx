@@ -1,4 +1,4 @@
-import DefaultSignin from "./DefaultSignin";
+import DefaultSignin from "../components/SignIn";
 export default function Dashboard() {
   return <DefaultSignin />;
 }

@@ -1,14 +1,16 @@
 /* This example requires Tailwind CSS v2.0+ */
-import { useEffect } from "react";
-import { signOut, useSession, signIn, getSession } from "next-auth/client";
+import { signOut, useSession, signIn } from "next-auth/client";
 import { useRouter } from "next/router";
-import GoogleButton from "../components/GoogleButton";
+import GoogleButton from "./GoogleButton";
 import axios from "axios";
-import LoginCode from "../components/LoginCode";
-import LoginEmail from "../components/LoginEmail";
+import LoginCode from "./LoginCode";
+import LoginEmail from "./LoginEmail";
 import Link from "next/dist/client/link";
 import { useState } from "react";
-export default function Main() {
+interface CallbackUrl {
+  callbackUrl?: string;
+}
+export default function SignIn({ callbackUrl }: CallbackUrl) {
   const [user_email, setUserEmail] = useState("");
   const [login_code, setLoginCode] = useState("");
   const [formSubmitted, setFormSubmitted] = useState(false);
@@ -42,7 +44,7 @@ export default function Main() {
     signIn("credentials", {
       user_email: user_email,
       login_code: login_code,
-      callbackUrl: "http://localhost:3000/dashboard",
+      callbackUrl: callbackUrl,
     });
   };
 
@@ -61,10 +63,16 @@ export default function Main() {
   if (!session) {
     return (
       <div className="flex justify-center flex-col w-full items-center ">
-        <GoogleButton />
+        <GoogleButton callbackUrl={callbackUrl}/>
         <p className="my-4 text-lg text-blue-gray-600 text-center sm:max-w-8xl max-w-sm">
           Or we can email you a magic code for a password-free sign in.
         </p>
+        <h1>Router query: {JSON.stringify(router.query)}</h1>
+        <h1>Router as path: {JSON.stringify(router.asPath)}</h1>
+        <h1>Router basepath: {JSON.stringify(router.basePath)}</h1>
+        <h1>Router route: {JSON.stringify(router.route)}</h1>
+        <h1>Router pathname: {JSON.stringify(router.pathname)}</h1>
+
         {formSubmitted ? (
           <LoginCode
             onChange={handleLoginCodeChange}

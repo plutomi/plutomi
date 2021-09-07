@@ -1,27 +1,18 @@
 /* This example requires Tailwind CSS v2.0+ */
-import NewPricing from "../components/Pricing";
-import { signOut, useSession, signIn } from "next-auth/client";
-import { useRouter } from "next/router";
-import GoogleButton from "../components/GoogleButton";
+import Pricing from "../components/Pricing";
 import Contact from "../components/ContactUs";
-import DefaultSignin from "./DefaultSignin";
+import SignIn from "../components/SignIn";
 import FeatureBox from "../components/featureBox";
-import Navbar from "../components/navbar";
-import axios from "axios";
-import LoginCode from "../components/LoginCode";
+import Navbar from "../components/Navbar";
 import Hero from "../components/Hero";
-import LoginEmail from "../components/LoginEmail";
-import Link from "next/dist/client/link";
-import { ReactEventHandler, useState } from "react";
-import { ArrowRightIcon } from "@heroicons/react/outline";
+
 export default function Main() {
   return (
     <div className="">
       <main className="bg-gradient-to-b from-blue-gray-50 to-white">
         <Navbar />
-
         <Hero />
-        <DefaultSignin />
+        <SignIn callbackUrl={`${process.env.NEXTAUTH_URL}/dashboard`} />
         <FeatureBox />
       </main>
       <section className="relative border-0 ">
@@ -39,14 +30,8 @@ export default function Main() {
           </svg>
         </div>
       </section>
-
-      <section id="pricing">
-        <NewPricing />
-      </section>
-
-      <section id="contact">
-        <Contact />
-      </section>
+      <Pricing />
+      <Contact />
     </div>
   );
 }
