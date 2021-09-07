@@ -8,7 +8,6 @@ import FeatureBox from "../components/featureBox";
 import Navbar from "../components/navbar";
 import axios from "axios";
 import Link from "next/dist/client/link";
-import { useCookies } from "react-cookie";
 import { ReactEventHandler, useState } from "react";
 import { ArrowRightIcon } from "@heroicons/react/outline";
 export default function Main() {
@@ -16,11 +15,7 @@ export default function Main() {
   const [user_email, setUserEmail] = useState("");
   const [login_code, setLoginCode] = useState("");
   const [formSubmitted, setFormSubmitted] = useState(false);
-  const [cookies, setCookie, removeCookie] = useCookies([
-    "is_logged_in",
-    "next_iron_session",
-  ]);
-
+  const [buttonText, setButtonText] = useState("Send code");
   const sendCode = async (e) => {
     e.preventDefault();
     const body = {
@@ -36,19 +31,14 @@ export default function Main() {
     }
   };
 
-  const login = async (e) => {
+  const signInWithCode = (e) => {
     e.preventDefault();
-    const body = {
+
+    signIn("credentials", {
       user_email: user_email,
       login_code: login_code,
-    };
-
-    try {
-      const { status, data } = await axios.post("/api/auth/login", body);
-      router.push("/dashboard");
-    } catch (error) {
-      alert(error.response.data.message);
-    }
+      callbackUrl: "http://localhost:3000/dashboard",
+    });
   };
 
   const [session, loading] = useSession();
@@ -84,20 +74,13 @@ export default function Main() {
                 Not signed in <br />
                 <button
                   className="px-4 py-2 bg-blue-300"
-                  onClick={() => signIn("google")}
-                >
-                  Sign in with google
-                </button>
-                <button
-                  className="px-4 py-2 bg-red-300"
                   onClick={() =>
-                    signIn("credentials", {
-                      user_email: user_email,
-                      login_code: login_code,
+                    signIn("google", {
+                      callbackUrl: `${process.env.NEXTAUTH_URL}/dashboard`,
                     })
                   }
                 >
-                  Sign in with login code
+                  Sign in with google
                 </button>
               </>
             )}
@@ -117,78 +100,64 @@ export default function Main() {
         {/* // TODO - Split this up into their own components */}
 
         <section className="flex justify-center  px-12" id="login">
-          {cookies["is_logged_in"] ? (
-            <>
-              {" "}
-              <Link href="/dashboard">
-                <button
-                  type="button"
-                  className="inline-flex items-center px-6 py-3 border border-transparent shadow-sm text-base font-medium rounded-md text-white bg-blue-gray-600 hover:bg-blue-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-gray-500"
-                >
-                  Click here to go to your dashboard
-                  <ArrowRightIcon
-                    className="ml-3 -mr-1 h-5 w-5"
-                    aria-hidden="true"
-                  />
-                </button>
-              </Link>
-            </>
-          ) : (
-            <div className="mt-2 sm:max-w-lg sm:mx-auto sm:text-center lg:text-left lg:mx-0">
-              {/* <p className="text-base font-medium text-gray-900">
+          <div className="mt-2 sm:max-w-lg sm:mx-auto sm:text-center lg:text-left lg:mx-0">
+            {/* <p className="text-base font-medium text-gray-900">
               Sign in to get started!
             </p> */}
-              {formSubmitted ? (
-                <form className="mt-3 sm:flex" onSubmit={(e) => login(e)}>
-                  <label htmlFor="login_code" className="sr-only">
-                    Login code
-                  </label>
-                  <input
-                    type="text"
-                    name="login_code"
-                    id="login_code"
-                    value={login_code}
-                    onChange={(e) => setLoginCode(e.target.value)}
-                    className="block w-full py-3 text-base rounded-md placeholder-gray-500 shadow-sm focus:ring-blue-gray-500 focus:border-blue-gray-500 sm:flex-1 border-gray-300"
-                    placeholder="Enter your login code"
-                  />
-                  <button
-                    type="submit"
-                    className="mt-3 w-full px-6 py-3 border border-transparent text-base font-medium rounded-md text-white bg-gray-800 shadow-sm hover:bg-gray-900 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-gray-500 sm:mt-0 sm:ml-3 sm:flex-shrink-0 sm:inline-flex sm:items-center sm:w-auto"
-                  >
-                    Submit
-                  </button>
-                </form>
-              ) : (
-                <form className="mt-3 sm:flex" onSubmit={(e) => sendCode(e)}>
-                  <label htmlFor="email" className="sr-only">
-                    Email
-                  </label>
-                  <input
-                    type="email"
-                    name="email"
-                    id="email"
-                    value={user_email}
-                    onChange={(e) => setUserEmail(e.target.value)}
-                    className="block w-full py-3 text-base rounded-md placeholder-gray-500 shadow-sm focus:ring-blue-gray-500 focus:border-blue-gray-500 sm:flex-1 border-gray-300"
-                    placeholder="Enter your email"
-                  />
-                  <button
-                    type="submit"
-                    className="mt-3 w-full px-6 py-3 border border-transparent text-base font-medium rounded-md text-white bg-gray-800 shadow-sm hover:bg-gray-900 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-gray-500 sm:mt-0 sm:ml-3 sm:flex-shrink-0 sm:inline-flex sm:items-center sm:w-auto"
-                  >
-                    Sign In
-                  </button>
-                </form>
-              )}
+            {formSubmitted ? (
+              <form
+                className="mt-3 sm:flex"
+                onSubmit={(e) => signInWithCode(e)}
+              >
+                <label htmlFor="login_code" className="sr-only">
+                  Login code
+                </label>
+                <input
+                  type="text"
+                  name="login_code"
+                  id="login_code"
+                  value={login_code}
+                  onChange={(e) => setLoginCode(e.target.value)}
+                  className="block w-full py-3 text-base rounded-md placeholder-gray-500 shadow-sm focus:ring-blue-gray-500 focus:border-blue-gray-500 sm:flex-1 border-gray-300"
+                  placeholder="Enter your login code"
+                />
+                <button
+                  type="submit"
+                  className="mt-3 w-full px-6 py-3 border border-transparent text-base font-medium rounded-md text-white bg-gray-800 shadow-sm hover:bg-gray-900 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-gray-500 sm:mt-0 sm:ml-3 sm:flex-shrink-0 sm:inline-flex sm:items-center sm:w-auto"
+                >
+                Submit
+                </button>
+              </form>
+            ) : (
+              <form className="mt-3 sm:flex" onSubmit={(e) => sendCode(e)}>
+                <label htmlFor="email" className="sr-only">
+                  Email
+                </label>
+                <input
+                  type="email"
+                  name="email"
+                  id="email"
+                  value={user_email}
+                  onChange={(e) => setUserEmail(e.target.value)}
+                  className="block w-full py-3 text-base rounded-md placeholder-gray-500 shadow-sm focus:ring-blue-gray-500 focus:border-blue-gray-500 sm:flex-1 border-gray-300"
+                  placeholder="Enter your email"
+                />
+                <button
+                  type="submit"
+                  onClick={(e) => setButtonText("Sending...")}
+                  className="mt-3 w-full px-6 py-3 border border-transparent text-base font-medium rounded-md text-white bg-gray-800 shadow-sm hover:bg-gray-900 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-gray-500 sm:mt-0 sm:ml-3 sm:flex-shrink-0 sm:inline-flex sm:items-center sm:w-auto"
+                >
+                  {buttonText}
+                </button>
+              </form>
+            )}
 
-              <p className="mt-3 text-sm text-gray-500">
-                {formSubmitted
-                  ? `Your code expires shortly so please enter it soon.`
-                  : `We’ll email you a magic code for a password-free sign in.`}
-              </p>
-            </div>
-          )}
+            <p className="mt-3 text-sm text-gray-500">
+              {formSubmitted
+                ? `Your code expires shortly so please enter it soon.`
+                : `We’ll email you a magic code for a password-free sign in.`}
+            </p>
+          </div>
         </section>
 
         <section className="py-14">

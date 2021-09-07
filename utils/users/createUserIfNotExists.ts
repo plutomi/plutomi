@@ -16,7 +16,6 @@ export async function CreateUserIfNotExists({
   last_name,
   user_email,
 }: CreateUserInput) {
-
   // Return the existing user if already created // TODO split this up?
   const existing_user = await GetUserByEmail(user_email);
   if (existing_user) return existing_user;
@@ -26,8 +25,8 @@ export async function CreateUserIfNotExists({
   const new_user = {
     PK: `USER#${user_id}`,
     SK: `USER`,
-    first_name: first_name,
-    last_name: last_name,
+    first_name: first_name || "NO FIRST NAME",
+    last_name: last_name || "NO LAST NAME",
     user_email: user_email,
     user_id: user_id,
     entity_type: "USER",

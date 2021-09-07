@@ -1,5 +1,5 @@
 import { NextApiRequest, NextApiResponse } from "next";
-import { CreateUser } from "../../../utils/users/createUserIfNotExists";
+import { CreateUserIfNotExists } from "../../../utils/users/createUserIfNotExists";
 import { SanitizeResponse } from "../../../utils/sanitizeResponse";
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
@@ -26,7 +26,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       });
 
     try {
-      const user = await CreateUser(create_user_input);
+      const user = await CreateUserIfNotExists(create_user_input);
       SanitizeResponse(user);
       return res.status(201).json(user);
     } catch (error) {

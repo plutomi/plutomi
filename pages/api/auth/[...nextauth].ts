@@ -1,4 +1,4 @@
-import NextAuth from "next-auth";
+import NextAuth, { Session, User } from "next-auth";
 import Providers from "next-auth/providers";
 import { CreateUserIfNotExists } from "../../../utils/users/createUserIfNotExists";
 import InputValidation from "../../../utils/inputValidation";
@@ -6,6 +6,7 @@ import { GetLatestLoginCode } from "../../../utils/users/getLatestLoginCode";
 import { GetCurrentTime } from "../../../utils/time";
 import { ClaimLoginCode } from "../../../utils/users/claimLoginCode";
 import { GetUserByEmail } from "../../../utils/users/getUserByEmail";
+import { JWT } from "next-auth/jwt";
 export default NextAuth({
   // Configure one or more authentication providers
   // Configure one or more authentication providers
@@ -56,7 +57,7 @@ export default NextAuth({
         }
 
         if (latest_login_code.is_claimed) {
-          console.log("code is lcaimed ");
+          console.log("code has been claimed ");
 
           throw new Error("Code has already been claimed"); // TODO or invalid code msg?
         }
@@ -74,13 +75,13 @@ export default NextAuth({
         const user = await GetUserByEmail(user_email);
         console.log("Got user", user);
 
-        return user;
-        // Add logic here to look up the user from the credentials supplied
-
         if (user) {
+          console.log("Returning user", user);
           // Any object returned will be saved in `user` property of the JWT
           return user;
         } else {
+          console.log("Returning null");
+
           // If you return null or false then the credentials will be rejected
           return null;
           // You can also Reject this callback with an Error or with a URL:
@@ -92,18 +93,39 @@ export default NextAuth({
   ],
 
   callbacks: {
-    async signIn({ user, account, profile, email, credentials }) {
-      const create_user_input: CreateUserInput = {
-        first_name: "NO_FIRST_NAME",
-        last_name: "NO_LAST_NAME",
-        user_email: email,
-      };
-
-      const signed_in_user = await CreateUserIfNotExists(create_user_input);
-      user = signed_in_user;
-      console.log(signed_in_user);
-      return true;
+    async session(session: Session, user) {
+      // Send the user to the client
+      session.user = user.user;
+      return session;
     },
+    async jwt(
+      token: any,
+      user: any,
+      account: any,
+      profile: any,
+      isNewUser: any
+    ) {
+      if (user) {
+        console.log("USER IN JWT", user); // TODO user.email exists on google sign in
+
+        /**
+         * When signing in with Google, the email value is of the Google account at user.email
+         * We could save a call here by only checking if `user.email` exists (AKA Google sign in)
+         */
+
+        const signed_in_user = await GetUserByEmail(
+          user.email || user.user_email
+        );
+        token.user = signed_in_user;
+      }
+      return token;
+    },
+  },
+
+  debug: true,
+  session: {
+    jwt: true,
+    maxAge: 1 * 24 * 60 * 60, // 1 day
   },
 
   jwt: {
