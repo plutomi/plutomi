@@ -63,16 +63,10 @@ export default function SignIn({ callbackUrl }: CallbackUrl) {
   if (!session) {
     return (
       <div className="flex justify-center flex-col w-full items-center ">
-        <GoogleButton callbackUrl={callbackUrl}/>
+        <GoogleButton callbackUrl={callbackUrl} />
         <p className="my-4 text-lg text-blue-gray-600 text-center sm:max-w-8xl max-w-sm">
           Or we can email you a magic code for a password-free sign in.
         </p>
-        <h1>Router query: {JSON.stringify(router.query)}</h1>
-        <h1>Router as path: {JSON.stringify(router.asPath)}</h1>
-        <h1>Router basepath: {JSON.stringify(router.basePath)}</h1>
-        <h1>Router route: {JSON.stringify(router.route)}</h1>
-        <h1>Router pathname: {JSON.stringify(router.pathname)}</h1>
-
         {formSubmitted ? (
           <LoginCode
             onChange={handleLoginCodeChange}
