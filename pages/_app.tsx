@@ -1,13 +1,13 @@
 // import "tailwindcss/tailwind.css";
 import "../styles/globals.css";
-import { CookiesProvider } from "react-cookie";
+import { Provider } from "next-auth/client";
 
-function MyApp({ Component, pageProps }) {
+import { AppProps } from "next/app";
+
+export default function App({ Component, pageProps }: AppProps) {
   return (
-    <CookiesProvider>
+    <Provider session={pageProps.session}>
       <Component {...pageProps} />
-    </CookiesProvider>
+    </Provider>
   );
 }
-
-export default MyApp;

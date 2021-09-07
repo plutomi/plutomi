@@ -37,7 +37,7 @@ const features = [
 ];
 export default function Features() {
   return (
-    <div className="  ">
+    <div className=" py-14 ">
       <div className="max-w-7xl mx-auto px-4  flex justify-center sm:px-6 lg:px-8">
         <div className="">
           <dl className="space-y-10 md:space-y-0 md:grid md:grid-cols-2 md:gap-x-8 md:gap-y-10">
