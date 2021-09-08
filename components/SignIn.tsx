@@ -52,9 +52,9 @@ export default function SignIn({ callbackUrl }: CallbackUrl) {
   const { error } = useRouter().query;
   const router = useRouter();
 
-  if (loading) {
-    return <h1>Loading...</h1>;
-  }
+  // if (loading) {
+  //   return <h1>Loading...</h1>;
+  // }
 
   if (error) {
     return <p>An error ocurred logging you in. Please try again.</p>;

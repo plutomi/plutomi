@@ -4,7 +4,7 @@ export default function LoginCode({ login_code, onChange, signInWithCode }) {
   const [buttonText, setButtonText] = useState("Submit");
 
   return (
-    <form className=" sm:flex" onSubmit={(e) => signInWithCode(e)}>
+    <form className=" sm:flex px-8 sm:px-0" onSubmit={(e) => signInWithCode(e)}>
       <label htmlFor="email" className="sr-only">
         Email
       </label>
