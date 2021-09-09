@@ -3,8 +3,9 @@ import { CreateOrg } from "../../../utils/orgs/createOrg";
 import { GetOrg } from "../../../utils/orgs/getOrg";
 import withCleanOrgName from "../../../middleware/withCleanOrgName";
 import InputValidation from "../../../utils/inputValidation";
-const handler = async (req: NextApiRequest, res: NextApiResponse) => {
-  const { body, method } = req;
+import withAuthorizer from "../../../middleware/withAuthorizer";
+const handler = async (req: CustomRequest, res: NextApiResponse) => {
+  const { body, method, user } = req;
   const { org_name, org_id } = body;
   // Create an org
   if (method === "POST") {
@@ -32,4 +33,4 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   return res.status(405).json({ message: "Not Allowed" });
 };
 
-export default handler;
+export default withAuthorizer(handler);

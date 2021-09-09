@@ -1,5 +1,5 @@
 import { NextApiRequest, NextApiResponse } from "next";
-import { CreateApplicant } from "../../../../../utils/applicants/createApplicant";
+import { CreateApplicant } from "../../../utils/applicants/createApplicant";
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   const { body, method, query } = req;

@@ -19,7 +19,7 @@ export async function CreateStageQuestion({
   const now = GetCurrentTime("iso");
   const stage_question_id = nanoid(10);
   const new_stage_question = {
-    PK: `ORG#${org_id}#FUNNEL#${funnel_id}#STAGE${stage_id}`,
+    PK: `ORG#${org_id}#STAGE${stage_id}`,
     SK: `STAGE_QUESTION#${stage_question_id}`,
     question_title: question_title,
     question_description: question_description,
@@ -32,6 +32,7 @@ export async function CreateStageQuestion({
   const params: PutCommandInput = {
     TableName: DYNAMO_TABLE_NAME,
     Item: new_stage_question,
+    ConditionExpression: "attribute_not_exists(PK)",
   };
 
   try {

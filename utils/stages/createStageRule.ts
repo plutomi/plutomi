@@ -18,7 +18,7 @@ export async function CreateStageRule({
   const now = GetCurrentTime("iso");
   const stage_rule_id = nanoid(30);
   const new_stage_rule = {
-    PK: `ORG#${org_id}#FUNNEL#${funnel_id}#STAGE${stage_id}`,
+    PK: `ORG#${org_id}#STAGE${stage_id}`,
     SK: `STAGE_RULE#${stage_rule_id}`,
     entity_type: "STAGE_RULE",
     created_at: now,
@@ -30,6 +30,7 @@ export async function CreateStageRule({
   const params: PutCommandInput = {
     TableName: DYNAMO_TABLE_NAME,
     Item: new_stage_rule,
+    ConditionExpression: "attribute_not_exists(PK)",
   };
 
   try {

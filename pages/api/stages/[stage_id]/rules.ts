@@ -1,16 +1,21 @@
 import { NextApiRequest, NextApiResponse } from "next";
-import { CreateStageRule } from "../../../../../../../../../utils/stages/createStageRule";
-import InputValidation from "../../../../../../../../../utils/inputValidation";
-
-const handler = async (req: NextApiRequest, res: NextApiResponse) => {
-  const { body, method, query } = req;
+import { CreateStageRule } from "../../../../utils/stages/createStageRule";
+import InputValidation from "../../../../utils/inputValidation";
+import withAuthorizer from "../../../../middleware/withAuthorizer";
+import { GetStageById } from "../../../../utils/stages/getStageById";
+const handler = async (req: CustomRequest, res: NextApiResponse) => {
+  const { body, method, query, user } = req;
   const { validation } = body;
-  const { org_id, funnel_id, stage_id } = query;
+  const { funnel_id, stage_id } = query;
 
   if (method === "POST") {
+    const stage = await GetStageById(stage_id);
+    if (!stage) {
+      return res.status(400).json({ message: "That stage does not exist" });
+    }
     const create_stage_rule_input: CreateStageRuleInput = {
-      org_id: org_id as string,
-      funnel_id: funnel_id as string,
+      org_id: user.org_id,
+      funnel_id: stage.funnel_id,
       stage_id: stage_id as string,
       validation: validation,
     };
@@ -34,4 +39,4 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   return res.status(405).json({ message: "Not Allowed" });
 };
 
-export default handler;
+export default withAuthorizer(handler);

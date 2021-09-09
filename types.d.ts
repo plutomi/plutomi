@@ -28,9 +28,8 @@ interface CreateStageInput {
   stage_name: string;
 }
 
-interface GetStageInput {
+interface GetStageByIdInput {
   org_id: string;
-  funnel_id: string;
   stage_id: string;
 }
 

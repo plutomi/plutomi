@@ -1,12 +1,13 @@
 import { NextApiRequest, NextApiResponse } from "next";
-import { GetFunnel } from "../../../../../../utils/funnels/getFunnelById";
+import { GetFunnel } from "../../../../utils/funnels/getFunnelById";
+import withAuthorizer from "../../../../middleware/withAuthorizer";
 
-const handler = async (req: NextApiRequest, res: NextApiResponse) => {
-  const { method, query } = req;
-  const { funnel_id, org_id } = query;
+const handler = async (req: CustomRequest, res: NextApiResponse) => {
+  const { method, query, user } = req;
+  const { funnel_id } = query;
 
   const get_funnel_input: GetFunnelInput = {
-    org_id: org_id as string,
+    org_id: user.org_id,
     funnel_id: funnel_id as string,
   };
   if (method === "GET") {
@@ -26,4 +27,4 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   return res.status(405).json({ message: "Not Allowed" });
 };
 
-export default handler;
+export default withAuthorizer(handler);

@@ -19,20 +19,21 @@ export async function CreateStage({
   const now = GetCurrentTime("iso");
   const stage_id = nanoid(10);
   const new_stage = {
-    PK: `ORG#${org_id}#FUNNEL#${funnel_id}#STAGE${stage_id}`,
+    PK: `ORG#${org_id}#STAGE${stage_id}`,
     SK: `STAGE`,
     stage_name: stage_name,
     entity_type: "STAGE",
     created_at: now,
     stage_id: stage_id,
     funnel_id: funnel_id,
-    GSI1PK: `ORG#${org_id}#STAGES`,
+    GSI1PK: `ORG#${org_id}#FUNNEL#${funnel_id}#STAGES`, // Get all stages in a funnel
     GSI1SK: stage_name,
   };
 
   const params: PutCommandInput = {
     TableName: DYNAMO_TABLE_NAME,
     Item: new_stage,
+    ConditionExpression: "attribute_not_exists(PK)",
   };
 
   try {

@@ -1,13 +1,13 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import { JoinOrg } from "../../../../utils/users/joinOrg";
 import InputValidation from "../../../../utils/inputValidation";
-const handler = async (req: NextApiRequest, res: NextApiResponse) => {
-  const { method, query, body } = req;
-  const { user_id } = body;
+import withAuthorizer from "../../../../middleware/withAuthorizer";
+const handler = async (req: CustomRequest, res: NextApiResponse) => {
+  const { method, query, user } = req;
   const { org_id } = query;
 
   const join_org_input: JoinOrgInput = {
-    user_id: user_id,
+    user_id: user.user_id,
     org_id: org_id as string,
   };
 
@@ -34,4 +34,4 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   return res.status(405).json({ message: "Not Allowed" });
 };
 
-export default handler;
+export default withAuthorizer(handler);
