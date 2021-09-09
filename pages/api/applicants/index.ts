@@ -1,7 +1,7 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import { CreateApplicant } from "../../../utils/applicants/createApplicant";
-
-const handler = async (req: NextApiRequest, res: NextApiResponse) => {
+import withAuthorizer from "../../../middleware/withAuthorizer";
+const handler = async (req: CustomRequest, res: NextApiResponse) => {
   const { body, method, query } = req;
   const {
     applicant_email,
@@ -57,4 +57,4 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   return res.status(405).json({ message: "Not Allowed" });
 };
 
-export default handler;
+export default withAuthorizer(handler);
