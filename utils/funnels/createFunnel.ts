@@ -6,22 +6,19 @@ const { DYNAMO_TABLE_NAME } = process.env;
 /**
  *
  * @param funnel_name - Name of the funnel (NYC, Miami, Houston, Job's Program, After School)
- * @param org_url_name
+ * @param org_id
  */
-export async function CreateFunnel({
-  org_url_name,
-  funnel_name,
-}: CreateFunnelInput) {
+export async function CreateFunnel({ org_id, funnel_name }: CreateFunnelInput) {
   const now = GetCurrentTime("iso");
   const funnel_id = nanoid(10);
   const new_user = {
-    PK: `ORG#${org_url_name}#FUNNEL#${funnel_id}`,
+    PK: `ORG#${org_id}#FUNNEL#${funnel_id}`,
     SK: `FUNNEL`,
     funnel_name: funnel_name,
     entity_type: "FUNNEL",
     created_at: now,
     funnel_id: funnel_id,
-    GSI1PK: `ORG#${org_url_name}#FUNNELS`,
+    GSI1PK: `ORG#${org_id}#FUNNELS`,
     GSI1SK: funnel_name,
   };
 

@@ -7,24 +7,24 @@ const { DYNAMO_TABLE_NAME } = process.env;
  *
  * @param applicant_name
  * @param applicant_email
- * @param org_url_name
+ * @param org_id
  */
 export async function CreateApplicantFile(
-  org_url_name: string,
+  org_id: string,
   applicant_name: string,
   applicant_email: string,
   applicant_id: string
 ) {
   const file_id = nanoid(30);
   const new_applicant = {
-    PK: `ORG#${org_url_name}#APPLICANT#${applicant_id}`,
+    PK: `ORG#${org_id}#APPLICANT#${applicant_id}`,
     SK: `APPLICANT_FILE#${applicant_id}`,
     entity_type: "FILE",
     applicant_name: applicant_name,
     applicant_email: applicant_email,
     created_at: GetCurrentTime("iso"),
     file_id: file_id,
-    GSI1PK: `ORG#${org_url_name}#FILES`,
+    GSI1PK: `ORG#${org_id}#FILES`,
     GSI1SK: `TODO some timestamp ${nanoid(10)}`,
   };
 

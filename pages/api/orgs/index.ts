@@ -5,12 +5,12 @@ import withCleanOrgName from "../../../middleware/withCleanOrgName";
 import InputValidation from "../../../utils/inputValidation";
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   const { body, method } = req;
-  const { org_official_name, org_url_name } = body;
+  const { org_name, org_id } = body;
   // Create an org
   if (method === "POST") {
     const create_org_input: CreateOrgInput = {
-      org_official_name: org_official_name,
-      org_url_name: org_url_name,
+      org_name: org_name,
+      org_id: org_id,
     };
 
     try {

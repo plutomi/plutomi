@@ -1,11 +1,11 @@
-import { getToken } from "next-auth/jwt";
-
+import { NextApiRequest, NextApiResponse } from "next";
+import withAuthorizer from "../../middleware/withAuthorizer";
 const secret = process.env.JWT_SECRET;
 
-const handler = async (req, res) => {
-  const token = await getToken({ req, secret });
-  console.log("JSON Web Token", token);
-  return res.status(200).json(token);
+const handler = async (req: CustomRequest, res: NextApiResponse) => {
+  const { body, user } = req;
+
+  return res.status(200).json({ message: "All clear!", user: user });
 };
 
-export default handler;
+export default withAuthorizer(handler);

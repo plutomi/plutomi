@@ -3,10 +3,10 @@ import { GetStage } from "../../../../../../../../utils/stages/getStageById";
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   const { method, query } = req;
-  const { org_url_name, funnel_id, stage_id } = query;
+  const { org_id, funnel_id, stage_id } = query;
 
   const get_stage_input: GetStageInput = {
-    org_url_name: org_url_name as string,
+    org_id: org_id as string,
     funnel_id: funnel_id as string,
     stage_id: stage_id as string,
   };

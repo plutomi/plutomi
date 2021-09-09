@@ -2,13 +2,13 @@ import { Dynamo } from "../../libs/ddbDocClient";
 import { GetCommand, GetCommandInput } from "@aws-sdk/lib-dynamodb";
 const { DYNAMO_TABLE_NAME } = process.env;
 /**
- * @param org_url_name
+ * @param org_id
  */
-export async function GetOrg(org_url_name: string) {
+export async function GetOrg(org_id: string) {
   const params: GetCommandInput = {
     TableName: DYNAMO_TABLE_NAME,
     Key: {
-      PK: `ORG#${org_url_name}`,
+      PK: `ORG#${org_id}`,
       SK: `ORG`,
     },
   };

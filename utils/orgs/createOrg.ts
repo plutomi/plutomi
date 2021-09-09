@@ -6,27 +6,24 @@ import { JoinOrg } from "../users/joinOrg";
 const { DYNAMO_TABLE_NAME } = process.env;
 /**
  *
- * @param org_url_name
+ * @param org_id
  * @param user_info
  */
 
-export async function CreateOrg({
-  org_url_name,
-  org_official_name,
-}: CreateOrgInput) {
+export async function CreateOrg({ org_id, org_name }: CreateOrgInput) {
   // if (user_info.org_join_date != "NO_ORG_ASSIGNED")
   //   throw new Error(`You already belong to an org`);
 
   const now = GetCurrentTime("iso");
   const new_org = {
-    PK: `ORG#${org_url_name}`,
+    PK: `ORG#${org_id}`,
     SK: `ORG`,
-    org_url_name: org_url_name, // plutomi
-    org_official_name: org_official_name, // Plutomi Inc.
+    org_id: org_id, // plutomi
+    org_name: org_name, // Plutomi Inc.
     entity_type: "ORG",
     created_at: now,
     GSI1PK: `ORG`, // Allows for 'get all orgs' query
-    GSI1SK: `ORG#${org_url_name}`,
+    GSI1SK: `ORG#${org_id}`,
   };
 
   const params: PutCommandInput = {
@@ -40,7 +37,7 @@ export async function CreateOrg({
   //   await Dynamo.send(new PutCommand(params));
 
   //   try {
-  //     await JoinOrg(user_info.user_id, org_url_name);
+  //     await JoinOrg(user_info.user_id, org_id);
   //   } catch (error) {
   //     // TODO handle re-trying to join if possible
   //     // Delete the org and try again, or do a transacrt write
@@ -60,7 +57,7 @@ export async function CreateOrg({
   } catch (error) {
     if (error.name == "ConditionalCheckFailedException") {
       throw new Error(
-        `The organization name '${org_url_name}' has already been taken :(`
+        `The organization name '${org_id}' has already been taken :(`
       );
     }
     throw new Error(error);

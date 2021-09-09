@@ -6,12 +6,12 @@ import InputValidation from "../../../../../utils/inputValidation";
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   const { body, method, query } = req;
   const { funnel_name } = body;
-  const { org_url_name } = query;
+  const { org_id } = query;
 
   if (method === "POST") {
     try {
       const create_funnel_input: CreateFunnelInput = {
-        org_url_name: org_url_name as string,
+        org_id: org_id as string,
         funnel_name: funnel_name,
       };
 
@@ -20,7 +20,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       } catch (error) {
         return res.status(400).json({ message: `${error.message}` });
       }
-      
+
       const funnel = await CreateFunnel(create_funnel_input);
       return res.status(201).json(funnel);
     } catch (error) {
@@ -33,7 +33,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 
   if (method === "GET") {
     try {
-      const all_funnels = await GetAllFunnelsInOrg(org_url_name as string);
+      const all_funnels = await GetAllFunnelsInOrg(org_id as string);
       return res.status(200).json(all_funnels);
     } catch (error) {
       // TODO add error logger

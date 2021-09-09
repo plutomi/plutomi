@@ -4,10 +4,10 @@ export default function NotFound() {
   const router = useRouter();
 
   // TODO get props client side and return 404 if org not found
-  const { org_url_name } = router.query;
+  const { org_id } = router.query;
   return (
     <div>
-      <h1>Welcome to {org_url_name}&apos;s profile</h1>
+      <h1>Welcome to {org_id}&apos;s profile</h1>
     </div>
   );
 }

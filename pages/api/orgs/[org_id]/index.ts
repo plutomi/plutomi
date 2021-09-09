@@ -5,11 +5,11 @@ import withCleanOrgName from "../../../../middleware/withCleanOrgName";
 import InputValidation from "../../../../utils/inputValidation";
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   const { method, query } = req;
-  const { org_url_name } = query;
+  const { org_id } = query;
 
   if (method === "GET") {
     try {
-      const org = await GetOrg(org_url_name as string);
+      const org = await GetOrg(org_id as string);
       if (!org) {
         return res.status(404).json({ message: "Org not found" });
       }

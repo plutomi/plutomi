@@ -1,10 +1,10 @@
 interface CreateOrgInput {
-  org_url_name: string; // plutomi
-  org_official_name: string; // Plutomi Inc.
+  org_id: string; // plutomi
+  org_name: string; // Plutomi Inc.
 }
 
 interface GetOrgInput {
-  org_url_name: string;
+  org_id: string;
 }
 
 interface CreateUserInput {
@@ -14,28 +14,28 @@ interface CreateUserInput {
 }
 
 interface CreateFunnelInput {
-  org_url_name: string;
+  org_id: string;
   funnel_name: string;
 }
 
 interface GetFunnelInput {
-  org_url_name: string;
+  org_id: string;
   funnel_id: string;
 }
 interface CreateStageInput {
-  org_url_name: string;
+  org_id: string;
   funnel_id: string;
   stage_name: string;
 }
 
 interface GetStageInput {
-  org_url_name: string;
+  org_id: string;
   funnel_id: string;
   stage_id: string;
 }
 
 interface CreateStageQuestionInput {
-  org_url_name: string;
+  org_id: string;
   funnel_id: string;
   stage_id: string;
   question_title: string;
@@ -43,14 +43,14 @@ interface CreateStageQuestionInput {
 }
 
 interface CreateStageRuleInput {
-  org_url_name: string;
+  org_id: string;
   funnel_id: string;
   stage_id: string;
   validation: string; // TODO
 }
 
 interface CreateApplicantInput {
-  org_url_name: string;
+  org_id: string;
   applicant_first_name: string;
   applicant_last_name: string;
   applicant_email: string;
@@ -59,7 +59,7 @@ interface CreateApplicantInput {
 }
 
 interface JoinOrgInput {
-  org_url_name: string;
+  org_id: string;
   user_id: string;
 }
 
@@ -85,3 +85,38 @@ interface UpdateUserInput {
   body: Object;
   user_id: string;
 }
+
+interface Pokemon {
+  id: number;
+  name: string;
+}
+interface NewSate {
+  pokemons: Pokemon[];
+  removePokemon: Function;
+  setCreateOrgModalOpen: Function;
+  createOrgModalIsOpen: boolean;
+}
+
+interface DynamoUser {
+  created_at?: string; // "2021-09-04T15:12:42.646Z";
+  entity_type?: string; // "USER";
+  user_email?: string; // "joseyvalerio@gmail.com";
+  org_id?: string; // "NO_ORG_ASSIGNED";
+  full_name?: string; // "JoseV2 valerio";
+  GSI1SK?: string; // "NO_FIRST_NAME NO_LAST_NAME";
+  GSI2SK?: string; // "USER";
+  GSI2PK?: string; // "joseyvalerio@gmail.com";
+  GSI1PK?: string; // "ORG#NO_ORG_ASSIGNED#USERS";
+  user_id?: string; // "VFQg-GZJvxICh5Y7JBanZCehc22p03";
+  last_name?: string; // "valerio";
+  org_join_date?: string; // "NO_ORG_ASSIGNED";
+  first_name?: string; // "JoseV2";
+  SK?: string; // "USER";
+  PK?: string; // "USER#VFQg-GZJvxICh5Y7JBanZCehc22p03";
+}
+
+type CustomSession = Session & { user_id: string };
+
+type CustomRequest = NextApiRequest & { user: DynamoUser };
+
+type CustomJWT = JWT & { user_id: string };

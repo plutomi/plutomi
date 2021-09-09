@@ -34,31 +34,22 @@ export default NextAuth({
         try {
           InputValidation({ user_email, login_code });
         } catch (error) {
-          console.log("Error validating input", error);
           throw new Error(error);
         }
 
-        console.log("getting latest code");
-
         const latest_login_code = await GetLatestLoginCode(user_email);
-        console.log("latest code", latest_login_code);
 
         if (latest_login_code.login_code != login_code) {
           // TODO mark this as a bad attempt and delete the code
-          console.log("error invalid code");
 
           throw new Error("Invalid Code");
         }
 
         if (latest_login_code.expires_at <= GetCurrentTime("iso")) {
-          console.log("expired code ");
-
           throw new Error("Code has expired");
         }
 
         if (latest_login_code.is_claimed) {
-          console.log("code has been claimed ");
-
           throw new Error("Code has already been claimed"); // TODO or invalid code msg?
         }
 
@@ -67,21 +58,20 @@ export default NextAuth({
           timestamp: latest_login_code.created_at,
           claimed_at: GetCurrentTime("iso") as string,
         };
-        console.log("Claiming  code ");
 
         await ClaimLoginCode(claim_code_input);
-        console.log("Code claimed, getting user");
 
-        const user = await GetUserByEmail(user_email);
-        console.log("Got user", user);
+        const signed_in_user = await GetUserByEmail(user_email);
 
-        if (user) {
-          console.log("Returning user", user);
+        /**
+         * TODO *thoroughly* limit what is returned to the client here.
+         * Limit to name, ID, email, and org, etc.
+         **/
+
+        if (signed_in_user) {
           // Any object returned will be saved in `user` property of the JWT
-          return user;
+          return signed_in_user;
         } else {
-          console.log("Returning null");
-
           // If you return null or false then the credentials will be rejected
           return null;
           // You can also Reject this callback with an Error or with a URL:
@@ -93,9 +83,9 @@ export default NextAuth({
   ],
 
   callbacks: {
-    async session(session: Session, user) {
-      // Send the user to the client
-      session.user = user.user;
+    async session(session: CustomSession, user) {
+      // Sets values to be accessed by the client to make api calls
+      session.user_id = user.user_id;
       return session;
     },
     async jwt(
@@ -106,8 +96,6 @@ export default NextAuth({
       isNewUser: any
     ) {
       if (user) {
-        console.log("USER IN JWT", user); // TODO user.email exists on google sign in
-
         /**
          * When signing in with Google, the email value is of the Google account at user.email
          * We could save a call here by only checking if `user.email` exists (AKA Google sign in)
@@ -116,7 +104,8 @@ export default NextAuth({
         const signed_in_user = await GetUserByEmail(
           user.email || user.user_email
         );
-        token.user = signed_in_user;
+        // Sets id in the token so that it can be accessed in withAuthorizer
+        token.user_id = signed_in_user.user_id;
       }
       return token;
     },

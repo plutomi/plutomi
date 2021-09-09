@@ -5,11 +5,11 @@ import InputValidation from "../../../../../../../utils/inputValidation";
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   const { body, method, query } = req;
-  const { funnel_id, org_url_name } = query;
+  const { funnel_id, org_id } = query;
   const { stage_name } = body;
 
   const create_stage_input: CreateStageInput = {
-    org_url_name: org_url_name as string,
+    org_id: org_id as string,
     funnel_id: funnel_id as string,
     stage_name: stage_name,
   };
@@ -46,7 +46,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 
   if (method === "GET") {
     try {
-      const all_stages = await GetAllStagesInOrg(org_url_name as string);
+      const all_stages = await GetAllStagesInOrg(org_id as string);
       return res.status(200).json(all_stages);
     } catch (error) {
       // TODO add error logger

@@ -3,10 +3,10 @@ import { GetFunnel } from "../../../../../../utils/funnels/getFunnelById";
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   const { method, query } = req;
-  const { funnel_id, org_url_name } = query;
+  const { funnel_id, org_id } = query;
 
   const get_funnel_input: GetFunnelInput = {
-    org_url_name: org_url_name as string,
+    org_id: org_id as string,
     funnel_id: funnel_id as string,
   };
   if (method === "GET") {

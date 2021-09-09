@@ -5,14 +5,32 @@ import SignIn from "../components/SignIn";
 import FeatureBox from "../components/featureBox";
 import Navbar from "../components/Navbar";
 import Hero from "../components/Hero";
-
+import { useSession } from "next-auth/client";
+import { useRouter } from "next/router";
+import AlreadySignedIn from "../components/AlreadySignedIn";
 export default function Main() {
+  const [session, loading] = useSession();
+  const { error } = useRouter().query;
+  const router = useRouter();
+
+  // if (loading) {
+  //   return <h1>Loading...</h1>;
+  // }
+
   return (
     <div className="">
       <main className="bg-gradient-to-b from-blue-gray-50 to-white">
         <Navbar />
         <Hero />
-        <SignIn callbackUrl={`${process.env.NEXTAUTH_URL}/dashboard`} />
+
+        {error ? (
+          <p>An error ocurred logging you in. Please try again.</p>
+        ) : session ? (
+          <AlreadySignedIn />
+        ) : (
+          <SignIn callbackUrl={`${process.env.NEXTAUTH_URL}/dashboard`} />
+        )}
+
         <FeatureBox />
       </main>
       <section className="relative border-0 ">
