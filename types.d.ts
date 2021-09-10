@@ -1,6 +1,7 @@
 interface CreateOrgInput {
   org_id: string; // plutomi
   org_name: string; // Plutomi Inc.
+  user: DynamoUser; // User creating the org - Optional on client
 }
 
 interface GetOrgInput {

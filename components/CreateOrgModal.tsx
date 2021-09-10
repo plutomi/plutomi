@@ -7,7 +7,8 @@ import {
   PlusSmIcon,
   QuestionMarkCircleIcon,
 } from "@heroicons/react/solid";
-
+const UrlSafeString = require("url-safe-string"),
+  tagGenerator = new UrlSafeString();
 const team = [
   {
     name: "Tom Cook",
@@ -56,12 +57,13 @@ export default function CreateOrgModal() {
     const body: CreateOrgInput = {
       org_name: org_name,
       org_id: org_id,
+      user: {}, // Will get filled in by the authorizer middleware
     };
     try {
       const { status, data } = await axios.post("/api/orgs", body);
       console.log(data);
       alert(data.message);
-      // TODO close modal here
+      setCreateOrgModalOpen(false);
     } catch (error) {
       alert(error.response.data.message);
     }
@@ -176,15 +178,24 @@ export default function CreateOrgModal() {
                                 name="org-id"
                                 id="org-id"
                                 required
+                                maxLength={30}
                                 onChange={(e) => setOrgId(e.target.value)}
                                 value={org_id}
                                 className="flex-1 min-w-0 block w-full px-3 py-2 rounded-none rounded-r-md focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm border-gray-300"
                                 placeholder="your-company-name"
                               />
                             </div>
-                            <p className="text-red-400">
-                              This <span className="font-bold">cannot</span> be
-                              changed, please choose carefully
+                            {org_id ? (
+                              <p className="mt-2 text-blue-gray-500 text-md">
+                                Your ID will be:{" "}
+                                <span className="font-bold text-blue-gray-900">
+                                  {tagGenerator.generate(org_id)}
+                                </span>
+                              </p>
+                            ) : null}
+                            <p className="text-red-400 mt-2 text-md">
+                              Your ID <span className="font-bold">cannot</span>{" "}
+                              be changed, please choose carefully.
                             </p>
                           </div>
                           {/* <div>

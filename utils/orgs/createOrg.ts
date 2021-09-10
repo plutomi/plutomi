@@ -10,9 +10,9 @@ const { DYNAMO_TABLE_NAME } = process.env;
  * @param user_info
  */
 
-export async function CreateOrg({ org_id, org_name }: CreateOrgInput) {
-  // if (user_info.org_join_date != "NO_ORG_ASSIGNED")
-  //   throw new Error(`You already belong to an org`);
+export async function CreateOrg({ org_id, org_name, user }: CreateOrgInput) {
+  if (user.org_join_date != "NO_ORG_ASSIGNED")
+    throw new Error(`You already belong to an org`);
 
   const now = GetCurrentTime("iso");
   const new_org = {

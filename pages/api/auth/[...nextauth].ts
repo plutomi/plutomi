@@ -28,7 +28,6 @@ export default NextAuth({
         user_email: { label: "Email", type: "email" },
       },
       async authorize(credentials, req) {
-        console.log(credentials, req.body);
         const { user_email, login_code } = credentials;
 
         try {
@@ -40,7 +39,7 @@ export default NextAuth({
         const latest_login_code = await GetLatestLoginCode(user_email);
 
         if (latest_login_code.login_code != login_code) {
-          // TODO mark this as a bad attempt and delete the code
+          // TODO mark this as a bad attempt and delete the code after a few tries
 
           throw new Error("Invalid Code");
         }
@@ -85,7 +84,7 @@ export default NextAuth({
   callbacks: {
     async session(session: CustomSession, user) {
       // Sets values to be accessed by the client to make api calls
-      session.user_id = user.user_id;
+      session.user_id = user?.user_id;
       return session;
     },
     async jwt(
@@ -101,9 +100,14 @@ export default NextAuth({
          * We could save a call here by only checking if `user.email` exists (AKA Google sign in)
          */
 
-        const signed_in_user = await GetUserByEmail(
-          user.email || user.user_email
-        );
+        const create_user_input: CreateUserInput = {
+          first_name: "NO_FIRST_NAME",
+          last_name: "NO_LAST_NAME",
+          user_email: user.email || user.user_email,
+        };
+
+        const signed_in_user = await CreateUserIfNotExists(create_user_input);
+
         // Sets id in the token so that it can be accessed in withAuthorizer
         token.user_id = signed_in_user.user_id;
       }
@@ -114,7 +118,7 @@ export default NextAuth({
   debug: true,
   session: {
     jwt: true,
-    maxAge: 1 * 24 * 60 * 60, // 1 day
+    maxAge: 1 * 24 * 60 * 60, // 1 day // TODO lower this
   },
 
   jwt: {

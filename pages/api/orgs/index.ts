@@ -4,6 +4,7 @@ import { GetOrg } from "../../../utils/orgs/getOrg";
 import withCleanOrgName from "../../../middleware/withCleanOrgName";
 import InputValidation from "../../../utils/inputValidation";
 import withAuthorizer from "../../../middleware/withAuthorizer";
+import { JoinOrg } from "../../../utils/users/joinOrg";
 const handler = async (req: CustomRequest, res: NextApiResponse) => {
   const { body, method, user } = req;
   const { org_name, org_id } = body;
@@ -12,6 +13,7 @@ const handler = async (req: CustomRequest, res: NextApiResponse) => {
     const create_org_input: CreateOrgInput = {
       org_name: org_name,
       org_id: org_id,
+      user: user,
     };
 
     try {
@@ -21,7 +23,21 @@ const handler = async (req: CustomRequest, res: NextApiResponse) => {
     }
     try {
       const org = await CreateOrg(create_org_input);
-      return res.status(201).json({ message: "Org created!", org: org });
+
+      try {
+        const join_org_input: JoinOrgInput = {
+          user_id: user.user_id,
+          org_id: org_id,
+        };
+        await JoinOrg(join_org_input);
+        return res.status(201).json({ message: "Org created!", org: org });
+      } catch (error) {
+        // TODO retry this
+        return res.status(500).json({
+          message:
+            "We were able to create your org, however you were not able to join it",
+        });
+      }
     } catch (error) {
       // TODO add error logger
       return res
@@ -33,4 +49,4 @@ const handler = async (req: CustomRequest, res: NextApiResponse) => {
   return res.status(405).json({ message: "Not Allowed" });
 };
 
-export default withAuthorizer(handler);
+export default withAuthorizer(withCleanOrgName(handler));
