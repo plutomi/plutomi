@@ -13,6 +13,7 @@ const handler = async (req: CustomRequest, res: NextApiResponse) => {
     const create_org_input: CreateOrgInput = {
       org_name: org_name,
       org_id: org_id,
+      user: user,
     };
 
     try {
@@ -30,13 +31,12 @@ const handler = async (req: CustomRequest, res: NextApiResponse) => {
         };
         await JoinOrg(join_org_input);
         return res.status(201).json({ message: "Org created!", org: org });
-      } catch (error) { // TODO retry this
-        return res
-          .status(500)
-          .json({
-            message:
-              "We were able to create your org, however you were not able to join it",
-          });
+      } catch (error) {
+        // TODO retry this
+        return res.status(500).json({
+          message:
+            "We were able to create your org, however you were not able to join it",
+        });
       }
     } catch (error) {
       // TODO add error logger
