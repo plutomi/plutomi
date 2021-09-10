@@ -1,15 +1,15 @@
 import { NextApiRequest, NextApiResponse } from "next";
-import { CreateStage } from "../../../../../../../utils/stages/createStage";
-import { GetAllStagesInOrg } from "../../../../../../../utils/stages/getAllStagesInOrg";
-import InputValidation from "../../../../../../../utils/inputValidation";
-
-const handler = async (req: NextApiRequest, res: NextApiResponse) => {
-  const { body, method, query } = req;
-  const { funnel_id, org_url_name } = query;
-  const { stage_name } = body;
+import { CreateStage } from "../../../../../utils/stages/createStage";
+import { GetAllStagesInFunnel } from "../../../../../utils/stages/getAllStagesInFunnel";
+import InputValidation from "../../../../../utils/inputValidation";
+import withAuthorizer from "../../../../../middleware/withAuthorizer";
+// Create stage in a funnel
+const handler = async (req: CustomRequest, res: NextApiResponse) => {
+  const { body, method, user } = req;
+  const { stage_name, funnel_id } = body;
 
   const create_stage_input: CreateStageInput = {
-    org_url_name: org_url_name as string,
+    org_id: user.org_id,
     funnel_id: funnel_id as string,
     stage_name: stage_name,
   };
@@ -44,9 +44,11 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     }
   }
 
+  // Get all stages in a funnel // TODO
+
   if (method === "GET") {
     try {
-      const all_stages = await GetAllStagesInOrg(org_url_name as string);
+      const all_stages = await GetAllStagesInFunnel(funnel_id, user.org_id);
       return res.status(200).json(all_stages);
     } catch (error) {
       // TODO add error logger
@@ -59,4 +61,4 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   return res.status(405).json({ message: "Not Allowed" });
 };
 
-export default handler;
+export default withAuthorizer(handler);

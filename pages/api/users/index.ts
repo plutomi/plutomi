@@ -1,16 +1,18 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import { CreateUserIfNotExists } from "../../../utils/users/createUserIfNotExists";
 import { SanitizeResponse } from "../../../utils/sanitizeResponse";
+import withAuthorizer from "../../../middleware/withAuthorizer";
 
+// TODO this isn't being used at the moment
+// Maybe use it for org invites / create a user if not doing invite links
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   const { method, body } = req;
   const { first_name, last_name, user_email }: CreateUserInput = body;
-
   // Create a user
   if (method === "POST") {
     const create_user_input: CreateUserInput = {
-      first_name: first_name ,
-      last_name: last_name ,
+      first_name: first_name,
+      last_name: last_name,
       user_email: user_email,
     };
 
@@ -40,4 +42,4 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   return res.status(405).json({ message: "Not Allowed" });
 };
 
-export default handler;
+export default withAuthorizer(handler);

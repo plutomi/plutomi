@@ -1,17 +1,23 @@
-import { NextApiRequest, NextApiResponse } from "next";
-import { CreateOrg } from "../../../../utils/orgs/createOrg";
+import { NextApiResponse } from "next";
 import { GetOrg } from "../../../../utils/orgs/getOrg";
 import withCleanOrgName from "../../../../middleware/withCleanOrgName";
-import InputValidation from "../../../../utils/inputValidation";
-const handler = async (req: NextApiRequest, res: NextApiResponse) => {
-  const { method, query } = req;
-  const { org_url_name } = query;
+import withAuthorizer from "../../../../middleware/withAuthorizer";
+const handler = async (req: CustomRequest, res: NextApiResponse) => {
+  const { method, query, user } = req;
+  const { org_id } = query;
 
   if (method === "GET") {
     try {
-      const org = await GetOrg(org_url_name as string);
+      const org = await GetOrg(org_id as string);
+
       if (!org) {
         return res.status(404).json({ message: "Org not found" });
+      }
+
+      if (org.org_id != user.org_id) {
+        return res
+          .status(403)
+          .json({ message: "You are not authorized to view this org" });
       }
       return res.status(200).json(org);
     } catch (error) {
@@ -25,4 +31,4 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   return res.status(405).json({ message: "Not Allowed" });
 };
 
-export default withCleanOrgName(handler);
+export default withAuthorizer(withCleanOrgName(handler));

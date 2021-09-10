@@ -2,10 +2,10 @@ const banned_keys = [
   "password",
   "PK",
   "SK",
-  "GSI1PK",
-  "GSI1SK",
-  "GSI2PK",
-  "GSI2SK",
+  // "GSI1PK",
+  // "GSI1SK",
+  // "GSI2PK",
+  // "GSI2SK",
 ];
 
 /**

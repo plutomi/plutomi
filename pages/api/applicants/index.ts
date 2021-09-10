@@ -1,7 +1,7 @@
 import { NextApiRequest, NextApiResponse } from "next";
-import { CreateApplicant } from "../../../../../utils/applicants/createApplicant";
-
-const handler = async (req: NextApiRequest, res: NextApiResponse) => {
+import { CreateApplicant } from "../../../utils/applicants/createApplicant";
+import withAuthorizer from "../../../middleware/withAuthorizer";
+const handler = async (req: CustomRequest, res: NextApiResponse) => {
   const { body, method, query } = req;
   const {
     applicant_email,
@@ -10,12 +10,12 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     funnel_id,
     stage_id,
   } = body;
-  const { org_url_name } = query;
+  const { org_id } = query;
 
   if (method === "POST") {
     try {
       const create_applicant_input: CreateApplicantInput = {
-        org_url_name: org_url_name as string,
+        org_id: org_id as string,
         applicant_email: applicant_email,
         applicant_first_name: applicant_first_name,
         applicant_last_name: applicant_last_name,
@@ -45,7 +45,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 
   //   if (method === "GET") { // TODO Enable get all applicants?
   //     try {
-  //       const all_funnels = await GetAllFunnelsInOrg(org_url_name as string);
+  //       const all_funnels = await GetAllFunnelsInOrg(org_id as string);
   //       return res.status(200).json(all_funnels);
   //     } catch (error) {
   //       // TODO add error logger
@@ -57,4 +57,4 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   return res.status(405).json({ message: "Not Allowed" });
 };
 
-export default handler;
+export default withAuthorizer(handler);

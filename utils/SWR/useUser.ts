@@ -3,10 +3,8 @@ import useSWR from "swr";
 
 const fetcher = (url) => axios.get(url).then((res) => res.data);
 
-function useUser() {
-  const { data, error } = useSWR(`/api/users/self`, fetcher, {
-    errorRetryCount: 3,
-  });
+function useUser(id: string) {
+  const { data, error } = useSWR(`/api/users/${id}`, fetcher);
 
   return {
     user: data,

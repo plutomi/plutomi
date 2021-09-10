@@ -27,7 +27,8 @@
     "react-icons": "^4.2.0",
     "react-number-format": "^4.7.3",
     "swr": "^1.0.0",
-    "url-safe-string": "^1.1.0"
+    "url-safe-string": "^1.1.0",
+    "zustand": "^3.5.10"
   },
   "devDependencies": {
     "@aws-sdk/client-dynamodb": "^3.27.0",

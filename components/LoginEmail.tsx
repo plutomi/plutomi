@@ -4,7 +4,10 @@ export default function LoginEmail({ user_email, onChange, sendEmail }) {
   const [buttonText, setButtonText] = useState("Send Code");
 
   return (
-    <form className=" sm:flex  px-8 sm:px-0 " onSubmit={(e) => sendEmail(e)}>
+    <form
+      className=" sm:flex  w-full max-w-sm md:max-w-md px-4 sm:px-0 "
+      onSubmit={(e) => sendEmail(e)}
+    >
       <label htmlFor="email" className="sr-only">
         Email
       </label>
