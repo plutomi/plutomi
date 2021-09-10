@@ -45,7 +45,7 @@ export default function Example() {
                     Applicants in{" "}
                     <span className="text-orange-600 font-bold">active</span>{" "}
                     stages are completing tasks such as answering questions,
-                    signing documents, or uploading files
+                    signing documents, or uploading files.
                   </p>
                 </div>
               </div>
@@ -72,7 +72,7 @@ export default function Example() {
                     <span className="text-blue-gray-600 font-bold">idle</span>{" "}
                     stages are <i>waiting for a future event</i> like a
                     background check to finish, a manual review to be completed,
-                    or a waitlist to open
+                    or a waitlist to open.
                   </p>
                 </div>
               </div>
@@ -94,14 +94,14 @@ export default function Example() {
                     </div>
                   </h3>
                   <p className="mt-6 text-lg text-blue-gray-600 text-left">
-                    Similar to{" "}
-                    <span className="text-blue-gray-600 font-bold">idle</span>{" "}
-                    stages, applicants in this stage are not completing tasks.
                     Applicants in{" "}
                     <span className="text-cyan-600 font-bold">frozen</span>{" "}
-                    stages do not incur monthly charges but are instead billed
-                    at a flat rate each time an applicant lands on them. It is
-                    recommended to have your final stage be of this type
+                    stages, similar to{" "}
+                    <span className="text-blue-gray-600 font-bold">idle</span>{" "}
+                    stages, are not completing tasks. Applicants in this stage
+                    do not incur monthly charges but are instead billed at a
+                    flat rate each time an applicant lands on them. It is
+                    recommended to have your final stage be of this type.
                   </p>
                 </div>
               </div>

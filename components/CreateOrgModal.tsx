@@ -60,7 +60,7 @@ export default function CreateOrgModal() {
     try {
       const { status, data } = await axios.post("/api/orgs", body);
       console.log(data);
-      alert(data);
+      alert(data.message);
       // TODO close modal here
     } catch (error) {
       alert(error.response.data.message);
@@ -153,6 +153,7 @@ export default function CreateOrgModal() {
                                 type="text"
                                 name="org-name"
                                 id="org-name"
+                                required
                                 onChange={(e) => setOrgName(e.target.value)}
                                 value={org_name}
                                 className="block w-full shadow-sm sm:text-sm focus:ring-indigo-500 focus:border-indigo-500 border-gray-300 rounded-md"
@@ -174,6 +175,7 @@ export default function CreateOrgModal() {
                                 type="text"
                                 name="org-id"
                                 id="org-id"
+                                required
                                 onChange={(e) => setOrgId(e.target.value)}
                                 value={org_id}
                                 className="flex-1 min-w-0 block w-full px-3 py-2 rounded-none rounded-r-md focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm border-gray-300"

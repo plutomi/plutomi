@@ -21,7 +21,7 @@ const handler = async (req: CustomRequest, res: NextApiResponse) => {
     }
     try {
       const org = await CreateOrg(create_org_input);
-      return res.status(201).json(org);
+      return res.status(201).json({ message: "Org created!", org: org });
     } catch (error) {
       // TODO add error logger
       return res
