@@ -57,6 +57,7 @@ export default function CreateOrgModal() {
     const body: CreateOrgInput = {
       org_name: org_name,
       org_id: org_id,
+      user: {}, // Will get filled in by the authorizer middleware
     };
     try {
       const { status, data } = await axios.post("/api/orgs", body);
