@@ -31,7 +31,7 @@ const people = [
   },
 ];
 import { useSession } from "next-auth/client";
-import useUser from "../utils/SWR/useUser";
+import useUser from "../SWR/useUser";
 
 export default function Team() {
   const [session, loading]: [CustomSession, boolean] = useSession();

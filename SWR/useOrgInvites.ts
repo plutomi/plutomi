@@ -7,9 +7,9 @@ function useOrgInvites(user_id: string) {
   const { data, error } = useSWR(`/api/users/${user_id}/invites`, fetcher);
 
   return {
-    user: data,
-    isLoading: !error && !data,
-    isError: error,
+    invites: data,
+    isInvitesLoading: !error && !data,
+    isInvitesError: error,
   };
 }
 

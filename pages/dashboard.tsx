@@ -1,9 +1,8 @@
-import DefaultSignin from "../components/SignIn";
 import { useSession } from "next-auth/client";
 import SignIn from "../components/SignIn";
 import AlreadySignedIn from "../components/AlreadySignedIn";
 import Dash from "../components/Dash";
-import useUser from "../utils/SWR/useUser";
+import useUser from "../SWR/useUser";
 import UserProfileCard from "../components/UserProfileCard";
 export default function Dashboard() {
   const [session]: CustomSession = useSession();

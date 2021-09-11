@@ -8,8 +8,8 @@ function useUser(id: string) {
 
   return {
     user: data,
-    isLoading: !error && !data,
-    isError: error,
+    isUserLoading: !error && !data,
+    isUserError: error,
   };
 }
 

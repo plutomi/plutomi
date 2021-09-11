@@ -17,7 +17,6 @@ const handler = async (req: CustomRequest, res: NextApiResponse) => {
     "iso"
   );
 
-  console.log("In api call", user);
   const new_org_invite: CreateOrgInviteInput = {
     claimed: false,
     invited_by: user,
@@ -32,6 +31,13 @@ const handler = async (req: CustomRequest, res: NextApiResponse) => {
       return res.status(400).json({ message: `${error.message}` });
     }
 
+    if (user.org_id === "NO_ORG_ASSIGNED") {
+      return res
+        .status(400)
+        .json({
+          message: `You must create an organization before inviting users`,
+        });
+    }
     const new_org_invite_email: SendOrgInviteInput = {
       invited_by: user,
       org_id: user.org_id,
@@ -44,7 +50,7 @@ const handler = async (req: CustomRequest, res: NextApiResponse) => {
         return res.status(201).json({ message: `Your user has been invited!` });
       } catch (error) {
         return res.status(500).json({
-          message: `The invite was created, but we were not able to send an email to the user. They can accept their invite at https://plutomi.com/${user.org_id}/join - ${error}`,
+          message: `The invite was created, but we were not able to send an email to the user. They log in and accept their invite at https://plutomi.com/invites - ${error}`,
         });
       }
     } catch (error) {
