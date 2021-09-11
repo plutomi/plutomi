@@ -1,5 +1,6 @@
 import { PlusSmIcon } from "@heroicons/react/solid";
-
+import axios from "axios";
+import { FormEvent, useState } from "react";
 const people = [
   {
     name: "Lindsay Walton",
@@ -29,8 +30,32 @@ const people = [
       "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80",
   },
 ];
+import { useSession } from "next-auth/client";
+import useUser from "../utils/SWR/useUser";
 
 export default function Team() {
+  const [session, loading]: [CustomSession, boolean] = useSession();
+  const { user, isLoading, isError } = useUser(session?.user_id);
+  const [recipient, setRecipient] = useState("");
+
+  const sendInvite = async (e: FormEvent) => {
+    e.preventDefault();
+
+    try {
+      // TODO add custom expiry - Defaults to 3 days
+      const body = {
+        recipient: recipient,
+      };
+      const { status, data } = await axios.post(
+        `/api/orgs/${user.org_id}/invite`,
+        body
+      );
+      alert(data.message);
+    } catch (error) {
+      console.error(error);
+      alert(error.response.data.message);
+    }
+  };
   return (
     <div className="max-w-lg mx-auto">
       <div>
@@ -52,12 +77,12 @@ export default function Team() {
           <h2 className="mt-2 text-lg font-medium text-gray-900">
             Add team members
           </h2>
-          <p className="mt-1 text-sm text-gray-500">
-            You haven’t added any team members to your project yet. As the owner
-            of this project, you can manage team member permissions.
+          <p className="mt-1 text-sm text-blue-gray-500">
+            An email will be sent to the user, they&apos;ll have{" "}
+            <span className="font-bold">3</span> days to accept.
           </p>
         </div>
-        <form action="#" className="mt-6 flex">
+        <form className="mt-6 flex" onSubmit={(e) => sendInvite(e)}>
           <label htmlFor="email" className="sr-only">
             Email address
           </label>
@@ -65,6 +90,9 @@ export default function Team() {
             type="text"
             name="email"
             id="email"
+            required
+            value={recipient}
+            onChange={(e) => setRecipient(e.target.value)}
             className="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border-gray-300 rounded-md"
             placeholder="Enter an email"
           />
@@ -76,7 +104,7 @@ export default function Team() {
           </button>
         </form>
       </div>
-      <div className="mt-10">
+      {/* <div className="mt-10">
         <h3 className="text-xs font-semibold text-gray-500 uppercase tracking-wide">
           Team members previously added to projects
         </h3>
@@ -95,7 +123,7 @@ export default function Team() {
                     className="h-10 w-10 rounded-full"
                     src={person.imageUrl}
                     alt=""
-                  /> */}
+                  /> 
                 </div>
                 <div className="min-w-0 flex-1">
                   <p className="text-sm font-medium text-gray-900 truncate">
@@ -124,7 +152,7 @@ export default function Team() {
             </li>
           ))}
         </ul>
-      </div>
+      </div> */}
     </div>
   );
 }

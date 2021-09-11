@@ -15,11 +15,11 @@ export default async function SendOrgInvite({
     },
     Message: {
       Subject: {
-        Data: `${invited_by.full_name} has sent you an invite!`,
+        Data: `${invited_by.first_name} ${invited_by.last_name} has invited you to their organization!`,
       },
       Body: {
         Html: {
-          Data: `<h1>You can join their organization at this link: <a href="https://plutomi.com/${org_id}/join">https://plutomi.com/${org_id}/join</a></h1>`,
+          Data: `<h4>To join their organization, sign in at this link: <a href="https://plutomi.com/invites">https://plutomi.com/invites</a></h4><br></br><p>If you believe this email was received in error, you can safely ignore it.</p>`,
         },
       },
     },
