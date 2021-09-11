@@ -29,6 +29,9 @@ export default async function CreateOrgInvite({
       }
     }
 
+    if (user.org_id === org_id) {
+      throw new Error("User is already in your org");
+    }
     const invite_id = nanoid(3);
     const now = GetCurrentTime("iso");
     const new_org_invite = {
@@ -56,6 +59,6 @@ export default async function CreateOrgInvite({
     await Dynamo.send(new PutCommand(params));
     return;
   } catch (error) {
-    throw new Error(`Unable to retrieve user ${error}`);
+    throw new Error(error);
   }
 }

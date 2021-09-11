@@ -7,7 +7,7 @@ import UserProfileCard from "../components/UserProfileCard";
 export default function Dashboard() {
   const [session]: CustomSession = useSession();
 
-  const { user, isLoading, isError } = useUser(session?.user_id);
+  const { user, isUserLoading, isUserError } = useUser(session?.user_id);
   return (
     <div>
       {session ? (

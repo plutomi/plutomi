@@ -1,5 +1,6 @@
 import { PlusSmIcon } from "@heroicons/react/solid";
 import axios from "axios";
+import { GetRelativeTime } from "../utils/time";
 import { FormEvent, useState } from "react";
 const people = [
   {
@@ -32,10 +33,14 @@ const people = [
 ];
 import { useSession } from "next-auth/client";
 import useUser from "../SWR/useUser";
+import useOrgUsers from "../SWR/useOrgUsers";
 
 export default function Team() {
   const [session, loading]: [CustomSession, boolean] = useSession();
-  const { user, isLoading, isError } = useUser(session?.user_id);
+  const { user, isUserLoading, isUserError } = useUser(session?.user_id);
+  const { orgUsers, isOrgUsersLoading, isOrgUsersError } = useOrgUsers(
+    user?.org_id
+  );
   const [recipient, setRecipient] = useState("");
 
   const sendInvite = async (e: FormEvent) => {
@@ -103,6 +108,31 @@ export default function Team() {
             Send invite
           </button>
         </form>
+      </div>
+      <div className="mx-auto p-4">
+        <h1 className="text-xl font-bold text-blue-gray-900">
+          Your current team
+        </h1>
+
+        {/* {isOrgUsersLoading ? <h1>Org users loading</h1> : null}
+        {isOrgUsersError ? <h1>Org users ERROR</h1> : null} */}
+
+        <ul className="border p-4">
+          {orgUsers?.map((user: DynamoUser) => {
+            return (
+              <li
+                className="shadow-md p-4 my-2 border rounded-md"
+                key={user?.user_id}
+              >
+                <h4>
+                  {user?.first_name} {user?.last_name}
+                </h4>
+                <p>{user?.user_email}</p>
+                <p>Joined {GetRelativeTime(user?.org_join_date)}</p>
+              </li>
+            );
+          })}
+        </ul>
       </div>
       {/* <div className="mt-10">
         <h3 className="text-xs font-semibold text-gray-500 uppercase tracking-wide">

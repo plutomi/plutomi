@@ -31,12 +31,14 @@ const handler = async (req: CustomRequest, res: NextApiResponse) => {
       return res.status(400).json({ message: `${error.message}` });
     }
 
+    if (user.user_email == recipient) {
+      return res.status(400).json({ message: "You can't invite yourself" });
+    }
+    
     if (user.org_id === "NO_ORG_ASSIGNED") {
-      return res
-        .status(400)
-        .json({
-          message: `You must create an organization before inviting users`,
-        });
+      return res.status(400).json({
+        message: `You must create an organization before inviting users`,
+      });
     }
     const new_org_invite_email: SendOrgInviteInput = {
       invited_by: user,

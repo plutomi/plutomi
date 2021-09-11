@@ -33,7 +33,9 @@ const handler = async (req: CustomRequest, res: NextApiResponse) => {
 
     try {
       await AcceptOrgInvite(accept_org_invite);
-
+      // TODO delete the accepted invite
+      // TODO if user is already in org, delete invite
+      // TODO add TTL to invite
       try {
         await JoinOrg(join_org_input);
         return res
