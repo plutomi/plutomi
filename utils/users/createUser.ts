@@ -11,14 +11,14 @@ const { DYNAMO_TABLE_NAME } = process.env;
  * @param last_name
  * @param user_email
  */
-export async function CreateUserIfNotExists({
+export async function CreateUser({
   first_name,
   last_name,
   user_email,
 }: CreateUserInput) {
   // Return the existing user if already created // TODO split this up?
-  const existing_user = await GetUserByEmail(user_email);
-  if (existing_user) return existing_user;
+  // const existing_user = await GetUserByEmail(user_email);
+  // if (existing_user) return existing_user;
 
   const now = GetCurrentTime("iso");
   const user_id = nanoid(30);
