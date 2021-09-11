@@ -15,7 +15,7 @@ export default async function SendOrgInvite({
     },
     Message: {
       Subject: {
-        Data: `${invited_by.first_name} ${invited_by.last_name} has invited you to their organization!`,
+        Data: `${invited_by.first_name} ${invited_by.last_name}  has invited you to their organization!`,
       },
       Body: {
         Html: {

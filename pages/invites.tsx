@@ -5,6 +5,7 @@ import Dash from "../components/Dash";
 import useUser from "../SWR/useUser";
 import useOrgInvites from "../SWR/useOrgInvites";
 import { GetRelativeTime } from "../utils/time";
+import axios from "axios";
 export default function Invites() {
   const [session]: CustomSession = useSession();
 
@@ -16,6 +17,25 @@ export default function Invites() {
   if (!session) {
     return <SignIn />;
   }
+
+  const acceptInvite = async (invite) => {
+    try {
+      const body: GetOrgInviteInput = {
+        user_id: user.user_id,
+        timestamp: invite.created_at,
+        invite_id: invite.invite_id,
+      };
+
+      const { status, data } = await axios.post(
+        `/api/orgs/${invite.org_id}/join`,
+        body
+      );
+      alert(data.message);
+    } catch (error) {
+      console.error(error);
+      alert(error.response.data.message);
+    }
+  };
 
   return (
     <ul
@@ -38,8 +58,14 @@ export default function Invites() {
               <p className="text-sm text-blue-gray-500">
                 Expires {GetRelativeTime(invite.expires_at)}
               </p>
+              <p className="text-sm text-blue-gray-500">
+                Org ID: {invite.org_id}
+              </p>
             </div>
-            <button className="px-4 py-3 border border-transparent bg-blue-gray-900 text-white rounded-md m-4">
+            <button
+              onClick={() => acceptInvite(invite)}
+              className="px-4 py-3 border border-transparent bg-blue-gray-900 text-white rounded-md m-4"
+            >
               Accept
             </button>
           </li>

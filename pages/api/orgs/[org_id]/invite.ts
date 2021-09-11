@@ -47,7 +47,7 @@ const handler = async (req: CustomRequest, res: NextApiResponse) => {
       await CreateOrgInvite(new_org_invite);
       try {
         await SendOrgInvite(new_org_invite_email);
-        return res.status(201).json({ message: `Your user has been invited!` });
+        return res.status(201).json({ message: `User invited!` });
       } catch (error) {
         return res.status(500).json({
           message: `The invite was created, but we were not able to send an email to the user. They log in and accept their invite at https://plutomi.com/invites - ${error}`,

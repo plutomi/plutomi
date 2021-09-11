@@ -4,6 +4,7 @@ import { PutCommand, PutCommandInput } from "@aws-sdk/lib-dynamodb";
 import { GetCurrentTime, GetPastOrFutureTime, GetRelativeTime } from "../time";
 const { DYNAMO_TABLE_NAME } = process.env;
 import { CreateUser } from "./createUser";
+import { nanoid } from "nanoid";
 export default async function CreateOrgInvite({
   org_id,
   expires_at,
@@ -28,16 +29,19 @@ export default async function CreateOrgInvite({
       }
     }
 
+    const invite_id = nanoid(3);
     const now = GetCurrentTime("iso");
     const new_org_invite = {
       PK: `USER#${user.user_id}`,
-      SK: `ORG_INVITE#${now}`,
+      SK: `ORG_INVITE#${now}#INVITE_ID#${invite_id}`, // Allows sorting, and incase two get created in the same millisecond
       org_id: org_id,
       invited_by: invited_by,
       entity_type: "ORG_INVITE",
       created_at: now,
       expires_at: expires_at,
       is_claimed: false,
+      invite_id: invite_id,
+      org_invite_id: invite_id,
       claimed_at: "",
       GSI1PK: `ORG#${org_id}#ORG_INVITES`,
       GSI1SK: now,

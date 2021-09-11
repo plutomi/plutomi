@@ -132,6 +132,12 @@ interface CreateOrgInviteInput {
   claimed: boolean;
 }
 
+interface GetOrgInviteInput {
+  user_id: string;
+  timestamp: string;
+  invite_id: string;
+}
+
 interface SendOrgInviteInput {
   invited_by: DynamoUser;
   org_id: string;
