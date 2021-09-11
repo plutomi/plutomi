@@ -1,6 +1,6 @@
 import NextAuth, { Session, User } from "next-auth";
 import Providers from "next-auth/providers";
-import { CreateUserIfNotExists } from "../../../utils/users/createUserIfNotExists";
+import { CreateUser } from "../../../utils/users/createUser";
 import InputValidation from "../../../utils/inputValidation";
 import { GetLatestLoginCode } from "../../../utils/users/getLatestLoginCode";
 import { GetCurrentTime } from "../../../utils/time";
@@ -106,10 +106,14 @@ export default NextAuth({
           user_email: user.email || user.user_email,
         };
 
-        const signed_in_user = await CreateUserIfNotExists(create_user_input);
+        let existing_user = await GetUserByEmail(user.email || user.user_email);
+
+        if (!existing_user) {
+          existing_user = await CreateUser(create_user_input);
+        }
 
         // Sets id in the token so that it can be accessed in withAuthorizer
-        token.user_id = signed_in_user.user_id;
+        token.user_id = existing_user.user_id;
       }
       return token;
     },

@@ -120,3 +120,26 @@ type CustomSession = Session & { user_id: string };
 type CustomRequest = NextApiRequest & { user: DynamoUser };
 
 type CustomJWT = JWT & { user_id: string };
+
+/**
+ * @param org_id - test
+ */
+interface CreateOrgInviteInput {
+  org_id: string;
+  invited_by: DynamoUser;
+  recipient: string; // Email of person getting invited
+  expires_at: string; // TODO Maybe Dynamo TTL or just ISO
+  claimed: boolean;
+}
+
+interface GetOrgInviteInput {
+  user_id: string;
+  timestamp: string;
+  invite_id: string;
+}
+
+interface SendOrgInviteInput {
+  invited_by: DynamoUser;
+  org_id: string;
+  recipient: string;
+}

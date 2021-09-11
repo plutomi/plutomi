@@ -10,6 +10,14 @@ const handler = async (req: CustomRequest, res: NextApiResponse) => {
   const { org_name, org_id } = body;
   // Create an org
   if (method === "POST") {
+    if (user.org_id != "NO_ORG_ASSIGNED") {
+      return res
+        .status(400)
+        .json({
+          message: `You already belong to an org. Deleting an org is not available at this time`,
+        });
+    }
+
     const create_org_input: CreateOrgInput = {
       org_name: org_name,
       org_id: org_id,
