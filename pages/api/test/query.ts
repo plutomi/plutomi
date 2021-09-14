@@ -8,8 +8,9 @@ const handler = async (req: CustomRequest, res: NextApiResponse) => {
 
   const entity_type = query["entity_type"];
 
-  if (!entity_type)
+  if (!entity_type) {
     return res.status(400).json({ message: "Missing entity type" });
+  }
   try {
     const response = await AllByType(entity_type);
     return res.status(200).json({ response });
