@@ -1,7 +1,5 @@
 import { useSession } from "next-auth/client";
-import SignIn from "../components/SignIn";
-import AlreadySignedIn from "../components/AlreadySignedIn";
-import Dash from "../components/Dash";
+import SignIn from "../components/SignInHomepage";
 import useUser from "../SWR/useUser";
 import useOrgInvites from "../SWR/useOrgInvites";
 import { GetRelativeTime } from "../utils/time";

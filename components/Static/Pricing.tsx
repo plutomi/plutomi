@@ -1,7 +1,7 @@
-import PricingExample1 from "./PricingExamples/PricingExample1";
-import PricingExample2 from "./PricingExamples/PricingExample2";
-import PricingExample3 from "./PricingExamples/PricingExample3";
-import CustomLink from "./CustomLink";
+import PricingExample1 from "../PricingExamples/PricingExample1";
+import PricingExample2 from "../PricingExamples/PricingExample2";
+import PricingExample3 from "../PricingExamples/PricingExample3";
+import CustomLink from "../CustomLink";
 export default function Example() {
   return (
     <div className="bg-blue-gray-900" id="pricing">

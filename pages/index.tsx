@@ -1,10 +1,10 @@
 /* This example requires Tailwind CSS v2.0+ */
-import Pricing from "../components/Pricing";
-import Contact from "../components/ContactUs";
-import SignIn from "../components/SignIn";
-import FeatureBox from "../components/featureBox";
-import Navbar from "../components/Navbar";
-import Hero from "../components/Hero";
+import Pricing from "../components/Static/Pricing";
+import Contact from "../components/Static/ContactUs";
+import SignIn from "../components/SignInHomepage";
+import FeatureBox from "../components/Static/featureBox";
+import Navbar from "../components/Navbar/HomepageNavbar";
+import Hero from "../components/Static/Hero";
 import { useSession } from "next-auth/client";
 import useUser from "../SWR/useUser";
 import AlreadySignedIn from "../components/AlreadySignedIn";

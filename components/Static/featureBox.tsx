@@ -4,7 +4,7 @@ import {
   LockClosedIcon,
   ViewGridAddIcon,
 } from "@heroicons/react/outline";
-import CustomLink from "./CustomLink";
+import CustomLink from "../CustomLink";
 const features = [
   {
     name: "Open Source",
