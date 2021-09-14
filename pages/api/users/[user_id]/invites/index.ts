@@ -7,9 +7,10 @@ const handler = async (req: CustomRequest, res: NextApiResponse) => {
   if (method === "GET") {
     try {
       const invites = await GetOrgInvites(user.user_id);
-
-      console.log("Invites", invites);
-      return res.status(200).json(invites);
+      const not_claimed = invites.filter((invite) => {
+        return !invite.is_claimed;
+      });
+      return res.status(200).json(not_claimed);
     } catch (error) {
       // TODO add error logger
       return res

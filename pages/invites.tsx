@@ -8,8 +8,10 @@ import { useSWRConfig } from "swr";
 
 import UserProfileCard from "../components/UserProfileCard";
 import SignedInNav from "../components/Navbar/SignedInNav";
+import { useRouter } from "next/router";
 
 export default function Invites() {
+  const router = useRouter();
   const { mutate } = useSWRConfig();
   const [session]: CustomSession = useSession();
   const { user, isUserLoading, isUserError } = useUser(session?.user_id);
@@ -30,12 +32,13 @@ export default function Invites() {
         body
       );
       alert(data.message);
+      router.push("/dashboard");
     } catch (error) {
       console.error(error);
       alert(error.response.data.message);
     }
-
     mutate(`/api/users/${user.user_id}/invites`);
+
   };
 
   return (
@@ -46,12 +49,12 @@ export default function Invites() {
         </p>
       ) : !session || isUserError ? (
         <SignIn
-          callbackUrl={`${process.env.NEXTAUTH_URL}/invites`} // Actual URL
-          desiredPage={"your invites"} // 'your dashboard' // 'your settings'
+          callbackUrl={`${process.env.NEXTAUTH_URL}/invites`}
+          desiredPage={"your invites"}
         />
       ) : (
         <div className="min-h-screen bg-white">
-          <SignedInNav current={"PLACEHOLDER"} user={user}/>
+          <SignedInNav current={"PLACEHOLDER"} user={user} />
           <div className="py-10">
             <header>
               <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -66,7 +69,7 @@ export default function Invites() {
                   role="list"
                   className="divide-y divide-gray-200 mx-auto max-w-xl flex-col space-y-4 p-20 border rounded-md shadow-md"
                 >
-                  {invites?.length > 0 && user ? (
+                  {invites?.length > 0 ? (
                     invites.map((invite: CreateOrgInviteInput) => (
                       <li
                         key={invite.expires_at}
