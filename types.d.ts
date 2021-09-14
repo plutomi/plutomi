@@ -138,6 +138,17 @@ interface GetOrgInviteInput {
   invite_id: string;
 }
 
+interface AcceptOrgInviteInput {
+  user_id: string;
+  timestamp: string;
+  invite_id: string;
+}
+
+interface DeleteOrgInviteInput {
+  user_id: string;
+  timestamp: string;
+  invite_id: string;
+}
 interface SendOrgInviteInput {
   invited_by: DynamoUser;
   org_id: string;

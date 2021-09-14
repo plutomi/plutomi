@@ -2,23 +2,15 @@ import { GetUserByEmail } from "./getUserByEmail";
 import { Dynamo } from "../../libs/ddbDocClient";
 import { GetOrgInvite } from "./getOrgInvite";
 import { PutCommand, PutCommandInput } from "@aws-sdk/lib-dynamodb";
-import { GetCurrentTime, GetPastOrFutureTime, GetRelativeTime } from "../time";
+import { GetCurrentTime } from "../time";
+import DeleteOrgInvite from "./DeleteOrgInvite";
 const { DYNAMO_TABLE_NAME } = process.env;
-import { CreateUser } from "./createUser";
-import { nanoid } from "nanoid";
-import { GetUserById } from "./getUserById";
 export default async function AcceptOrgInvite({
   user_id,
   invite_id,
   timestamp,
 }: GetOrgInviteInput) {
   try {
-    let user = await GetUserById(user_id);
-
-    if (!user) {
-      throw new Error("Unable to claim invite, user does not exist");
-    }
-
     let invite = await GetOrgInvite({ user_id, invite_id, timestamp });
 
     if (!invite) {
@@ -26,11 +18,13 @@ export default async function AcceptOrgInvite({
     }
 
     if (invite.is_claimed) {
+      await DeleteOrgInvite({ user_id, invite_id, timestamp });
       throw new Error("Invite has already been claimed");
     }
 
     if (invite.expires_at <= GetCurrentTime("iso")) {
-      throw new Error("Invite has expired"); // TODO delete this invite
+      await DeleteOrgInvite({ user_id, invite_id, timestamp });
+      throw new Error("Invite has expired");
     }
 
     const now = GetCurrentTime("iso");
@@ -48,6 +42,6 @@ export default async function AcceptOrgInvite({
     await Dynamo.send(new PutCommand(params));
     return;
   } catch (error) {
-    throw new Error(`Unable to retrieve user ${error}`);
+    throw new Error(`Unable to accept invite ${error}`);
   }
 }

@@ -36,7 +36,7 @@ export default function SignedInNav({ current, user }: ValidNavigation) {
 
   return (
     <>
-      {invites ? (
+      {invites?.length > 0 ? (
         <Banner
           msgSmall={"You've been invited!"}
           msgLarge={"You've been invited to join an organization!"}
@@ -101,6 +101,7 @@ export default function SignedInNav({ current, user }: ValidNavigation) {
                         src={user.imageUrl}
                         alt=""
                       /> */}
+                      <button>Settings</button>
                       </Menu.Button>
                     </div>
                     <Transition

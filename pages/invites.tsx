@@ -4,9 +4,10 @@ import useUser from "../SWR/useUser";
 import useOrgInvites from "../SWR/useOrgInvites";
 import { GetRelativeTime } from "../utils/time";
 import axios from "axios";
+import { useSWRConfig } from "swr";
 export default function Invites() {
+  const { mutate } = useSWRConfig();
   const [session]: CustomSession = useSession();
-
   const { user, isUserLoading, isUserError } = useUser(session?.user_id);
   const { invites, isInvitesLoading, isInvitesError } = useOrgInvites(
     session?.user_id
@@ -33,6 +34,8 @@ export default function Invites() {
       console.error(error);
       alert(error.response.data.message);
     }
+
+    mutate(`/api/users/${user.user_id}/invites`);
   };
 
   return (

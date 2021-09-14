@@ -3,11 +3,18 @@ import { JoinOrg } from "../../../../utils/users/joinOrg";
 import InputValidation from "../../../../utils/inputValidation";
 import withAuthorizer from "../../../../middleware/withAuthorizer";
 import AcceptOrgInvite from "../../../../utils/users/acceptOrgInvite";
+import DeleteOrgInvite from "../../../../utils/users/DeleteOrgInvite";
 const handler = async (req: CustomRequest, res: NextApiResponse) => {
   const { method, query, user, body } = req;
   const { org_id } = query;
 
-  const accept_org_invite: GetOrgInviteInput = {
+  const accept_org_invite: AcceptOrgInviteInput = {
+    user_id: user.user_id,
+    timestamp: body.timestamp,
+    invite_id: body.invite_id,
+  };
+
+  const delete_org_invite: DeleteOrgInviteInput = {
     user_id: user.user_id,
     timestamp: body.timestamp,
     invite_id: body.invite_id,
@@ -26,6 +33,7 @@ const handler = async (req: CustomRequest, res: NextApiResponse) => {
 
   if (method === "POST") {
     if (user.org_id != "NO_ORG_ASSIGNED") {
+      await DeleteOrgInvite(delete_org_invite);
       return res
         .status(400)
         .json({ message: `You already belong to an org: ${user.org_id}` });
