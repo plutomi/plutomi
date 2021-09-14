@@ -12,7 +12,6 @@ export default function Dashboard() {
     <div>
       {session ? (
         <div>
-          <AlreadySignedIn />
           <UserProfileCard user={user} />
           <Dash name={user?.GSI1SK} />
         </div>

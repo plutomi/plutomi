@@ -1,10 +1,8 @@
-import { signOut, useSession, signIn } from "next-auth/client";
-import { useRouter } from "next/router";
+import { signIn } from "next-auth/client";
 import GoogleButton from "./GoogleButton";
 import axios from "axios";
 import LoginCode from "./LoginCode";
 import LoginEmail from "./LoginEmail";
-import Link from "next/dist/client/link";
 import { useState } from "react";
 interface CallbackUrl {
   callbackUrl?: string;
@@ -46,7 +44,6 @@ export default function SignIn({ callbackUrl }: CallbackUrl) {
       callbackUrl: callbackUrl,
     });
   };
-
 
   return (
     <div className="flex justify-center flex-col w-full items-center ">

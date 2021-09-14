@@ -6,31 +6,27 @@ import FeatureBox from "../components/featureBox";
 import Navbar from "../components/Navbar";
 import Hero from "../components/Hero";
 import { useSession } from "next-auth/client";
-import { useRouter } from "next/router";
+import useUser from "../SWR/useUser";
 import AlreadySignedIn from "../components/AlreadySignedIn";
 export default function Main() {
-  const [session, loading] = useSession();
-  const { error } = useRouter().query;
-  const router = useRouter();
-
-  // if (loading) {
-  //   return <h1>Loading...</h1>;
-  // }
+  const [session, loading]: [CustomSession, boolean] = useSession();
+  const { user, isUserLoading, isUserError } = useUser(session?.user_id);
 
   return (
     <div className="">
       <main className="bg-gradient-to-b from-blue-gray-50 to-white">
         <Navbar />
         <Hero />
-
-        {error ? (
-          <p>An error ocurred logging you in. Please try again.</p>
-        ) : session ? (
-          <AlreadySignedIn />
-        ) : (
+        {!session || isUserError ? (
           <SignIn callbackUrl={`${process.env.NEXTAUTH_URL}/dashboard`} />
-        )}
-
+        ) : session && isUserLoading ? (
+          <p className="mx-auto text-center text-blue-gray-600 text-lg">
+            Loading user...
+          </p>
+        ) : session && user ? (
+          <AlreadySignedIn user={user} />
+        ) : null}
+        ))
         <FeatureBox />
       </main>
       <section className="relative border-0 ">

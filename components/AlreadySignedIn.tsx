@@ -2,10 +2,8 @@ import { useRouter } from "next/router";
 import { signOut, useSession, signIn } from "next-auth/client";
 import Link from "next/link";
 import useUser from "../SWR/useUser";
-export default function AlreadySignedIn() {
+export default function AlreadySignedIn({ user }) {
   const router = useRouter();
-  const [session, loading]: [CustomSession, boolean] = useSession();
-  const { user, isLoading, isError } = useUser(session?.user_id);
 
   return (
     <section id="login" className="flex  justify-center mx-auto ">
@@ -20,8 +18,7 @@ export default function AlreadySignedIn() {
               Go to Dashboard &rarr;
             </a>
           </Link>
-        ) : null}
-
+        ) : null}{" "}
         <button
           className="inline-flex items-center px-4 py-2 border border-gray-300 shadow-sm text-base font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
           onClick={() => signOut()}
