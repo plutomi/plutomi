@@ -1,6 +1,11 @@
 import { Fragment } from "react";
 import { Disclosure, Menu, Transition } from "@headlessui/react";
-import { BellIcon, MenuIcon, XIcon } from "@heroicons/react/outline";
+import {
+  BellIcon,
+  DotsHorizontalIcon,
+  MenuIcon,
+  XIcon,
+} from "@heroicons/react/outline";
 import Link from "next/dist/client/link";
 import { signOut } from "next-auth/client";
 import useOrgInvites from "../../SWR/useOrgInvites";
@@ -17,8 +22,8 @@ const navigation = [
   { name: "Team", href: "/team" },
 ];
 const userNavigation = [
-  { name: "Your Profile", href: "#" },
-  { name: "Settings", href: "#" },
+  // { name: "Your Profile", href: "#" },
+  // { name: "Settings", href: "#" },
   { name: "Sign out", event: () => signOut(), href: "#" },
 ];
 
@@ -101,7 +106,12 @@ export default function SignedInNav({ current, user }: ValidNavigation) {
                         src={user.imageUrl}
                         alt=""
                       /> */}
-                      <button>Settings</button>
+                        <button>
+                          <DotsHorizontalIcon
+                            className="block h-6 w-6"
+                            aria-hidden="true"
+                          />
+                        </button>
                       </Menu.Button>
                     </div>
                     <Transition
