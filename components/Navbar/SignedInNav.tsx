@@ -6,6 +6,7 @@ import { useState } from "react";
 import useStore from "../../utils/store";
 import Link from "next/dist/client/link";
 import axios from "axios";
+import { signOut } from "next-auth/client";
 const user = {
   name: "Tom Cook",
   email: "tom@example.com",
@@ -20,14 +21,17 @@ const navigation = [
 const userNavigation = [
   { name: "Your Profile", href: "#" },
   { name: "Settings", href: "#" },
-  { name: "Sign out", href: "#" },
+  { name: "Sign out", event: () => signOut(), href: "#" },
 ];
 
 function classNames(...classes) {
   return classes.filter(Boolean).join(" ");
 }
 
-export default function SignedInNav({ current }) {
+interface ValidNavigation {
+  current: "Dashboard" | "Funnels" | "Team" | "PLACEHOLDER";
+}
+export default function SignedInNav({ current }: ValidNavigation) {
   return (
     <Disclosure as="nav" className="bg-white border-b border-gray-200">
       {({ open }) => (
@@ -103,6 +107,7 @@ export default function SignedInNav({ current }) {
                           {({ active }) => (
                             <a
                               href={item.href}
+                              onClick={item.event ? item.event : null}
                               className={classNames(
                                 active ? "bg-gray-100" : "",
                                 "block px-4 py-2 text-sm text-gray-700"
@@ -179,6 +184,7 @@ export default function SignedInNav({ current }) {
                   <a
                     key={item.name}
                     href={item.href}
+                    onClick={item.event ? item.event : null}
                     className="block px-4 py-2 text-base font-medium text-gray-500 hover:text-gray-800 hover:bg-gray-100"
                   >
                     {item.name}
