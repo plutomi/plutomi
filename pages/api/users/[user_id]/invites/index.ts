@@ -1,6 +1,6 @@
 import { NextApiResponse } from "next";
 import withAuthorizer from "../../../../../middleware/withAuthorizer";
-import { GetOrgInvites } from "../../../../../utils/users/getOrgInvites";
+import { GetOrgInvites } from "../../../../../utils/invites/getAllOrgInvites";
 const handler = async (req: CustomRequest, res: NextApiResponse) => {
   const { method, user } = req;
 

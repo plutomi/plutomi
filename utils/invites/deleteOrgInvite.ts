@@ -8,11 +8,6 @@ export default async function DeleteOrgInvite({
   timestamp,
 }: GetOrgInviteInput) {
   try {
-    let invite = await GetOrgInvite({ user_id, invite_id, timestamp });
-    if (!invite) {
-      throw new Error("Invite no longer exists");
-    }
-
     const params: DeleteCommandInput = {
       TableName: DYNAMO_TABLE_NAME,
       Key: {
