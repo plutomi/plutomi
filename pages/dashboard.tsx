@@ -31,7 +31,7 @@ export default function Dashboard() {
         />
       ) : (
         <div className="min-h-screen bg-white">
-          <SignedInNav current="Dashboard" />
+          <SignedInNav current="Dashboard" user={user}/>
           <div className="py-10">
             <header>
               <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
