@@ -3,16 +3,8 @@ import SignIn from "../components/SignIn";
 import useUser from "../SWR/useUser";
 import UserProfileCard from "../components/UserProfileCard";
 import SignedInNav from "../components/Navbar/SignedInNav";
-
-import { Fragment } from "react";
-import { Disclosure, Menu, Transition } from "@headlessui/react";
-import { BellIcon, MenuIcon, XIcon } from "@heroicons/react/outline";
 import useStore from "../utils/store";
 import CreateOrgModal from "../components/CreateOrgModal";
-
-function classNames(...classes) {
-  return classes.filter(Boolean).join(" ");
-}
 
 export default function Dashboard() {
   const setCreateOrgModalOpen = useStore(
@@ -39,7 +31,7 @@ export default function Dashboard() {
         />
       ) : (
         <div className="min-h-screen bg-white">
-          <SignedInNav />
+          <SignedInNav current="Dashboard" />
           <div className="py-10">
             <header>
               <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -79,11 +71,4 @@ export default function Dashboard() {
       )}
     </>
   );
-}
-
-{
-  /* <div>
-<UserProfileCard user={user} />
-<Dash name={user?.GSI1SK} />
-</div> */
 }

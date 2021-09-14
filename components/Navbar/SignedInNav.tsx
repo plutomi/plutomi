@@ -13,10 +13,9 @@ const user = {
     "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80",
 };
 const navigation = [
-  { name: "Dashboard", href: "", current: true },
-  { name: "Funnels", href: "/funnels", current: false },
-  { name: "Team", href: "/team", current: false },
-  // { name: "Calendar", href: "#", current: false },
+  { name: "Dashboard", href: "/dashboard" },
+  { name: "Funnels", href: "/funnels" },
+  { name: "Team", href: "/team" },
 ];
 const userNavigation = [
   { name: "Your Profile", href: "#" },
@@ -28,15 +27,7 @@ function classNames(...classes) {
   return classes.filter(Boolean).join(" ");
 }
 
-export default function SignedInNav() {
-  const setCreateOrgModalOpen = useStore(
-    (state: NewSate) => state.setCreateOrgModalOpen
-  );
-
-  const isCreateOrgModalOpen = useStore(
-    (state: NewSate) => state.createOrgModalIsOpen
-  );
-
+export default function SignedInNav({ current }) {
   return (
     <Disclosure as="nav" className="bg-white border-b border-gray-200">
       {({ open }) => (
@@ -61,12 +52,14 @@ export default function SignedInNav() {
                     <Link key={item.name} href={item.href}>
                       <a
                         className={classNames(
-                          item.current
+                          current === item.name
                             ? "border-indigo-500 text-gray-900"
                             : "border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700",
                           "inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium"
                         )}
-                        aria-current={item.current ? "page" : undefined}
+                        aria-current={
+                          current === item.name ? "page" : undefined
+                        }
                       >
                         {item.name}
                       </a>
@@ -145,12 +138,12 @@ export default function SignedInNav() {
                   key={item.name}
                   href={item.href}
                   className={classNames(
-                    item.current
+                    current === item.name
                       ? "bg-indigo-50 border-indigo-500 text-indigo-700"
                       : "border-transparent text-gray-600 hover:bg-gray-50 hover:border-gray-300 hover:text-gray-800",
                     "block pl-3 pr-4 py-2 border-l-4 text-base font-medium"
                   )}
-                  aria-current={item.current ? "page" : undefined}
+                  aria-current={current === item.name ? "page" : undefined}
                 >
                   {item.name}
                 </a>

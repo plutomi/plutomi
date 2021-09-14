@@ -13,16 +13,16 @@ export default function NewPage() {
     <>
       {isUserLoading ? (
         <p className="mx-auto text-center text-blue-gray-600 text-lg">
-          Loading user...
+          Loading user... {/* Loading skeleton PLACEHOLDER */}
         </p>
       ) : !session || isUserError ? (
         <SignIn
-          callbackUrl={`${process.env.NEXTAUTH_URL}/funnels`}
-          desiredPage={"your funnels"}
+          callbackUrl={`${process.env.NEXTAUTH_URL}/PLACEHOLDER`} // Actual URL
+          desiredPage={"PLACEHOLDER"} // 'your dashboard' // 'your settings'
         />
       ) : (
         <div className="min-h-screen bg-white">
-          <SignedInNav current="Funnels" />
+          <SignedInNav current={"PLACEHOLDER - Name of navigation item"} />
           <div className="py-10">
             <header>
               <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -33,6 +33,7 @@ export default function NewPage() {
             <main>
               <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">
                 {/* Content */}
+
                 <button
                   type="button"
                   className="relative block w-full border-2 border-gray-300 border-dashed rounded-lg p-12 text-center hover:border-gray-400 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
