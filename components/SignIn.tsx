@@ -8,7 +8,7 @@ import { useState } from "react";
 export default function SignIn({ callbackUrl, desiredPage }) {
   const [user_email, setUserEmail] = useState("");
   const [login_code, setLoginCode] = useState("");
-  const [emailSubmitted, setemailSubmitted] = useState(false);
+  const [emailSubmitted, setEmailSubmitted] = useState(false);
 
   const handleEmailChange = (newEmail) => {
     setUserEmail(newEmail);
@@ -26,7 +26,7 @@ export default function SignIn({ callbackUrl, desiredPage }) {
 
     try {
       const { status, data } = await axios.post("/api/auth/login-code", body);
-      setemailSubmitted(true);
+      setEmailSubmitted(true);
       alert(data.message);
     } catch (error) {
       alert(error.response.data.message);

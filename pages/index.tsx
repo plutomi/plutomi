@@ -26,7 +26,6 @@ export default function Main() {
         ) : session && user ? (
           <AlreadySignedIn user={user} />
         ) : null}
-        ))
         <FeatureBox />
       </main>
       <section className="relative border-0 ">
