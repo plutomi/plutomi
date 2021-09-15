@@ -26,12 +26,12 @@ export default function Dashboard() {
         </p>
       ) : !session || isUserError ? (
         <SignIn
-          callbackUrl={`${process.env.NEXTAUTH_URL}/dashboard`}
+          callbackUrl={`${process.env.NEXT_PUBLIC_NEXTAUTH_URL}/dashboard`}
           desiredPage={"your dashboard"}
         />
       ) : (
         <div className="min-h-screen bg-white">
-          <SignedInNav current="Dashboard" user={user}/>
+          <SignedInNav current="Dashboard" user={user} />
           <div className="py-10">
             <header>
               <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">

@@ -38,7 +38,6 @@ export default function Invites() {
       alert(error.response.data.message);
     }
     mutate(`/api/users/${user.user_id}/invites`);
-
   };
 
   return (
@@ -49,7 +48,7 @@ export default function Invites() {
         </p>
       ) : !session || isUserError ? (
         <SignIn
-          callbackUrl={`${process.env.NEXTAUTH_URL}/invites`}
+          callbackUrl={`${process.env.NEXT_PUBLIC_NEXTAUTH_URL}/invites`}
           desiredPage={"your invites"}
         />
       ) : (

@@ -48,7 +48,7 @@ export default function Team() {
         </p>
       ) : !session || isUserError ? (
         <SignIn
-          callbackUrl={`${process.env.NEXTAUTH_URL}/team`} // Actual URL
+          callbackUrl={`${process.env.NEXT_PUBLIC_NEXTAUTH_URL}/team`} // Actual URL
           desiredPage={"your team"} // 'your dashboard' // 'your settings'
         />
       ) : (

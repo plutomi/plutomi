@@ -19,7 +19,9 @@ export default function Main() {
         <Hero />
         <h1>HERE: {process.env.NEXT_PUBLIC_NEXTAUTH_URL}</h1>
         {!session || isUserError ? (
-          <SignIn callbackUrl={`${process.env.NEXTAUTH_URL}/dashboard`} />
+          <SignIn
+            callbackUrl={`${process.env.NEXT_PUBLIC_NEXTAUTH_URL}/dashboard`}
+          />
         ) : session && isUserLoading ? (
           <p className="mx-auto text-center text-blue-gray-600 text-lg">
             Loading user...

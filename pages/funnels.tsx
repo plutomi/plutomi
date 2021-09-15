@@ -17,7 +17,7 @@ export default function NewPage() {
         </p>
       ) : !session || isUserError ? (
         <SignIn
-          callbackUrl={`${process.env.NEXTAUTH_URL}/funnels`}
+          callbackUrl={`${process.env.NEXT_PUBLIC_NEXTAUTH_URL}/funnels`}
           desiredPage={"your funnels"}
         />
       ) : (

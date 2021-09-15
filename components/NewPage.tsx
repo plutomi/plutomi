@@ -17,12 +17,12 @@ export default function NewPage() {
         </p>
       ) : !session || isUserError ? (
         <SignIn
-          callbackUrl={`${process.env.NEXTAUTH_URL}/PLACEHOLDER`} // Actual URL
+          callbackUrl={`${process.env.NEXT_PUBLIC_NEXTAUTH_URL}/PLACEHOLDER`} // Actual URL
           desiredPage={"PLACEHOLDER"} // 'your dashboard' // 'your settings'
         />
       ) : (
         <div className="min-h-screen bg-white">
-          <SignedInNav current={"PLACEHOLDER"} user={user}/>
+          <SignedInNav current={"PLACEHOLDER"} user={user} />
           <div className="py-10">
             <header>
               <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
