@@ -4,7 +4,10 @@ import { AllByType } from "../../../utils/entityType";
 const secret = process.env.JWT_SECRET;
 
 const handler = async (req: CustomRequest, res: NextApiResponse) => {
-  const { body, user, query } = req;
+  const { body, user, query, params } = req;
+
+  console.log("query", query);
+  console.log("params", params.twoo);
 
   try {
     const response = await AllByType("USER");
