@@ -1,4 +1,5 @@
 module.exports = {
+  // reactStrictMode: true,
   target: "serverless",
   env: {
     WEBSITE_BUCKET_NAME: process.env.WEBSITE_BUCKET_NAME,
