@@ -19,3 +19,18 @@ plutomi:
     # You will have to deploy once to get your first ID
     cloudfront:
       distributionId: ${env.CLOUDFRONT_ID}
+
+      # APP RUNNER SPECIFIC
+      # This forwards our api requests to app runner
+      # Lambda@Edge too expensive at more than a few million req / month :(
+      # origins:
+      #   - url: ${env.APP_RUNNER_URL}
+      #     pathPatterns:
+      #       # You might receive an error trying to deploy with 'api/*' for the first time
+      #       # This is due to the duplicate Lambda api behavior pattern on cloudfront
+      #       # If so, deploy with '/api/*' first and then redeploy with 'api/*'
+      #       api/*:
+      #         # Don't cache
+      #         minTTL: 0
+      #         maxTTL: 0
+      #         defaultTTL: 0

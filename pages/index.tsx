@@ -1,5 +1,5 @@
 /* This example requires Tailwind CSS v2.0+ */
-import Pricing from "../components/Static/Pricing";
+import Pricing from "../components/Pricing/Pricing";
 import Contact from "../components/Static/ContactUs";
 import SignIn from "../components/SignInHomepage";
 import FeatureBox from "../components/Static/featureBox";
@@ -17,7 +17,7 @@ export default function Main() {
       <main className="bg-gradient-to-b from-blue-gray-50 to-white">
         <Navbar />
         <Hero />
-        <h1>HERE: {process.env.NEXT_PUBLIC_NEXTAUTH_URL}</h1>
+        {/* <h1>HERE: {process.env.NEXT_PUBLIC_NEXTAUTH_URL}</h1> */}
         {!session || isUserError ? (
           <SignIn
             callbackUrl={`${process.env.NEXT_PUBLIC_NEXTAUTH_URL}/dashboard`}

@@ -8,7 +8,6 @@ module.exports = {
     API_LAMBDA_NAME: process.env.API_LAMBDA_NAME,
     IMAGE_LAMBDA_NAME: process.env.IMAGE_LAMBDA_NAME,
     DOMAIN_NAME: process.env.DOMAIN_NAME,
-    ID_LENGTH: process.env.ID_LENGTH,
     DYNAMO_TABLE_NAME: process.env.DYNAMO_TABLE_NAME,
     LAMBDA_ROLE_ARN: process.env.LAMBDA_ROLE_ARN,
     JWT_SECRET: process.env.JWT_SECRET,
@@ -16,5 +15,7 @@ module.exports = {
     GOOGLE_CLIENT_ID: process.env.GOOGLE_CLIENT_ID,
     GOOGLE_CLIENT_SECRET: process.env.GOOGLE_CLIENT_SECRET,
     NEXTAUTH_URL: process.env.NEXTAUTH_URL,
+    NEXT_PUBLIC_NEXTAUTH_URL: process.env.NEXT_PUBLIC_NEXTAUTH_URL,
+    // APP_RUNNER_URL: process.env.APP_RUNNER_URL,
   },
 };

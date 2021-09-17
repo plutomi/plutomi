@@ -6,12 +6,12 @@ const secret = process.env.JWT_SECRET;
 const handler = async (req: CustomRequest, res: NextApiResponse) => {
   const { body, user, query, params } = req;
 
-  console.log("query", query);
-  console.log("params", params.twoo);
-
   try {
-    const response = await AllByType("USER");
-    return res.status(200).json({ response });
+    console.log("Returning users");
+    const users = await AllByType("USER");
+    console.log("Users", users);
+
+    return res.status(200).json(users);
   } catch (error) {
     return res
       .status(500)

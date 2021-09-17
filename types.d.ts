@@ -154,3 +154,11 @@ interface SendOrgInviteInput {
   org_id: string;
   recipient: string;
 }
+
+type StageTypes = "idle" | "active" | "frozen" | "deletion";
+
+interface PricingExampleBoxInput {
+  stage_type: StageTypes;
+  stage_title: string;
+  num_applicants: number;
+}
