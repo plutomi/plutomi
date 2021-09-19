@@ -111,7 +111,7 @@ export default function Team() {
                   </form>
                 </div>
                 <div className="mx-auto p-4">
-                  <h1 className="text-xl font-bold text-blue-gray-900">
+                  <h1 className="text-xl font-bold text-normal">
                     Your current team
                   </h1>
 

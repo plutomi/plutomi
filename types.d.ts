@@ -158,7 +158,7 @@ interface SendOrgInviteInput {
 type StageTypes = "idle" | "active" | "frozen" | "deletion";
 
 interface PricingExampleBoxInput {
-  stage_type: StageTypes;
+  applicant_type: StageTypes;
   stage_title: string;
   num_applicants: number;
 }

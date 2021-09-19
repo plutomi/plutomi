@@ -45,7 +45,7 @@ export default function SignIn({ callbackUrl, desiredPage }) {
 
   return (
     <div className="flex justify-center flex-col p-10 max-w-2xl mx-auto items-center mt-20 border rounded-lg">
-      <h1 className="text-4xl font-bold text-center text-blue-gray-900">
+      <h1 className="text-4xl font-bold text-center text-normal">
         Sign in to view {desiredPage}
       </h1>
 

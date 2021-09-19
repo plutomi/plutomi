@@ -75,7 +75,7 @@ export default function Invites() {
                         className="py-4 flex border rounded-md w-full"
                       >
                         <div className="ml-3">
-                          <p className="text-sm font-medium text-blue-gray-900">
+                          <p className="text-sm font-medium text-normal">
                             {invite.invited_by.first_name}{" "}
                             {invite.invited_by.last_name}
                           </p>
