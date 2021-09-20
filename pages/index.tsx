@@ -17,7 +17,6 @@ export default function Main() {
       <main className="bg-gradient-to-b from-blue-gray-50 to-white">
         <Navbar />
         <Hero />
-        {/* <h1>HERE: {process.env.NEXT_PUBLIC_NEXTAUTH_URL}</h1> */}
         {!session || isUserError ? (
           <SignIn
             callbackUrl={`${process.env.NEXT_PUBLIC_NEXTAUTH_URL}/dashboard`}

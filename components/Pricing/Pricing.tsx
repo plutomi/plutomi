@@ -1,24 +1,26 @@
+import Calculator from "./Calculator";
 import PricingCard from "./PricingCards";
 const PricingCards = [
-  {
-    id: 1,
-    applicant_type: "Active",
-    description: (
-      <p className={`mt-6 text-lg text-left text-normal`}>
-        Applicants are considered{" "}
-        <span className=" font-bold text-active-dark">active</span> if they were
-        updated <span className="italic">in the last 30 days</span>.
-      </p>
-    ),
-  },
   {
     id: 2,
     applicant_type: "Idle",
     description: (
-      <p className={`mt-6 text-lg text-left text-normal`}>
+      <p className={`mt-6 text-xl text-left text-normal`}>
         Applicants are considered{" "}
-        <span className=" font-bold text-idle-dark">idle</span> if they were
-        last updated <span className="italic">more than 30 days ago</span>.
+        <span className=" font-bold text-idle-dark">idle</span> if they&apos;ve
+        had updates <span className="italic">in the last 6 months</span>.
+      </p>
+    ),
+  },
+  {
+    id: 1,
+    applicant_type: "Active",
+    description: (
+      <p className={`mt-6 text-xl text-left text-normal`}>
+        Applicants are considered{" "}
+        <span className=" font-bold text-active-dark">active</span> if
+        they&apos;ve had updates{" "}
+        <span className="italic">in the last 30 days</span>.
       </p>
     ),
   },
@@ -30,7 +32,7 @@ export default function Pricing() {
       <div className="pt-12 sm:pt-16 lg:pt-24">
         <div className="max-w-7xl mx-auto text-center px-4 sm:px-6 lg:px-8">
           <div className="max-w-3xl mx-auto space-y-2 lg:max-w-none lg:mt-16 mt-32">
-            <p className="text-3xl font-extrabold text-white sm:text-4xl lg:text-5xl">
+            <p className="text-5xl font-extrabold text-white sm:text-4xl lg:text-5xl">
               Pricing that scales with you
             </p>
             <p className="text-xl text-blue-gray-300">
@@ -61,7 +63,7 @@ export default function Pricing() {
           </p> */}
         </div>
 
-        <section className="space-y-10 md:space-y-14  mt-4 p-4  max-w-lg lg:max-w-7xl mx-auto px-12 sm:px-6 "></section>
+        <Calculator />
 
         {/* <div className="mt-4 relative max-w-7xl mx-auto px-6 lg:mt-5">
           <div className="max-w-md mx-auto lg:max-w-5xl">

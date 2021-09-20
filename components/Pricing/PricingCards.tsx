@@ -24,17 +24,17 @@ export default function PricingCard({ applicant_type, description }) {
             <span className="w-full">
               {" "}
               <NumberFormat
-                className="font-bold text-blue-gray-600"
+                className="font-bold text-idle-dark"
                 value={ApplicantPrices[applicant_type.toLowerCase()] / 100}
                 displayType={"text"}
-                decimalScale={applicant_type === "Idle" ? 3 : 2}
+                decimalScale={2}
                 thousandSeparator={true}
                 fixedDecimalScale
                 prefix={"$"}
               />
             </span>
-            <span className="text-base md:text-lg  mt-2 font-normal text-blue-gray-600">
-              / applicant / month
+            <span className="text-base md:text-lg  mt-2 font-normal text-idle-dark">
+              / per applicant / per month
             </span>
           </div>
         </h3>

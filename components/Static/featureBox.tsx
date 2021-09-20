@@ -37,7 +37,7 @@ const features = [
 ];
 export default function Features() {
   return (
-    <div className=" py-14 ">
+    <div className="py-14">
       <div className="max-w-7xl mx-auto px-4  flex justify-center sm:px-6 lg:px-8">
         <dl className="space-y-10 md:space-y-0 md:grid md:grid-cols-2 md:gap-x-8 md:gap-y-10">
           {features.map((feature) => (
@@ -48,11 +48,11 @@ export default function Features() {
                 >
                   <feature.icon className="h-6 w-6 " aria-hidden="true" />
                 </div>
-                <p className="ml-16 text-xl leading-6 font-bold text-gray-900">
+                <p className="ml-16 text-xl leading-6 font-bold text-blue-gray-900">
                   {feature.name}
                 </p>
               </dt>
-              <dd className="mt-2 ml-16 text-lg text-blue-gray-600">
+              <dd className="mt-2 ml-16 text-xl text-blue-gray-600">
                 {feature.isGithub ? (
                   <p>
                     Read, inspect, and contribute to{" "}
