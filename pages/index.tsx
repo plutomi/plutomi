@@ -17,17 +17,13 @@ export default function Main() {
       <main className="bg-gradient-to-b from-blue-gray-50 to-white">
         <Navbar />
         <Hero />
-        {!session || isUserError ? (
+        {session && user ? (
+          <AlreadySignedIn user={user} />
+        ) : (
           <SignIn
             callbackUrl={`${process.env.NEXT_PUBLIC_NEXTAUTH_URL}/dashboard`}
           />
-        ) : (isUserLoading && session) || loading ? (
-          <p className="mx-auto text-center text-blue-gray-600 text-lg">
-            Loading user...
-          </p>
-        ) : session && user ? (
-          <AlreadySignedIn user={user} />
-        ) : null}
+        )}
         <FeatureBox />
       </main>
       <section className="relative border-0 ">

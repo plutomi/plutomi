@@ -3,12 +3,14 @@ import GoogleButton from "./Buttons/GoogleButton";
 import axios from "axios";
 import LoginCode from "./EmailSigninCode";
 import LoginEmail from "./EmailSigninInput";
-import { useState } from "react";
+import { FormEvent, useState } from "react";
+import router from "next/router";
 
 export default function SignIn({ callbackUrl, desiredPage }) {
   const [user_email, setUserEmail] = useState("");
   const [login_code, setLoginCode] = useState("");
   const [emailSubmitted, setEmailSubmitted] = useState(false);
+  const [button_text, setButtonText] = useState("Send Code");
 
   const handleEmailChange = (newEmail) => {
     setUserEmail(newEmail);
@@ -19,6 +21,7 @@ export default function SignIn({ callbackUrl, desiredPage }) {
   };
 
   const sendEmail = async (e) => {
+    setButtonText("Sending...");
     e.preventDefault();
     const body = {
       user_email: user_email,
@@ -28,19 +31,31 @@ export default function SignIn({ callbackUrl, desiredPage }) {
       const { status, data } = await axios.post("/api/auth/login-code", body);
       setEmailSubmitted(true);
       alert(data.message);
+      setButtonText("Submit");
     } catch (error) {
       alert(error.response.data.message);
     }
   };
 
-  const signInWithCode = (e) => {
+  const signInWithCode = async (e: FormEvent) => {
+    setButtonText("Signing in...");
     e.preventDefault();
 
-    signIn("credentials", {
+    // https://next-auth.js.org/v3/getting-started/client#using-the-redirect-false-option
+    const { error } = await signIn("credentials", {
+      redirect: false,
       user_email: user_email,
       login_code: login_code,
       callbackUrl: callbackUrl,
     });
+
+    if (error) {
+      alert(error); // TODO limit attempts
+      setButtonText("Submit");
+      return;
+    }
+
+    router.push(callbackUrl);
   };
 
   return (
@@ -59,12 +74,14 @@ export default function SignIn({ callbackUrl, desiredPage }) {
           <LoginCode
             onChange={handleLoginCodeChange}
             login_code={login_code}
+            button_text={button_text}
             signInWithCode={signInWithCode}
           />
         ) : (
           <LoginEmail
             onChange={handleEmailChange}
             user_email={user_email}
+            button_text={button_text}
             sendEmail={sendEmail}
           />
         )}

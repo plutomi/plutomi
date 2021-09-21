@@ -7,9 +7,7 @@ const handler = async (req: CustomRequest, res: NextApiResponse) => {
   const { body, user, query, params } = req;
 
   try {
-    console.log("Returning users");
     const users = await AllByType("USER");
-    console.log("Users", users);
 
     return res.status(200).json(users);
   } catch (error) {
