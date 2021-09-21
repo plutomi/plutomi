@@ -21,7 +21,7 @@ export default function Main() {
           <SignIn
             callbackUrl={`${process.env.NEXT_PUBLIC_NEXTAUTH_URL}/dashboard`}
           />
-        ) : session && isUserLoading ? (
+        ) : (isUserLoading && session) || loading ? (
           <p className="mx-auto text-center text-blue-gray-600 text-lg">
             Loading user...
           </p>

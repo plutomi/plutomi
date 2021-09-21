@@ -36,7 +36,7 @@ interface ValidNavigation {
 }
 export default function SignedInNav({ current, user }: ValidNavigation) {
   const { invites, isInvitesLoading, isInvitesError } = useOrgInvites(
-    user.user_id
+    user?.user_id
   );
 
   return (
