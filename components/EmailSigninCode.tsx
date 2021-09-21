@@ -3,10 +3,15 @@ import { useState } from "react";
 export default function LoginCode({ login_code, onChange, signInWithCode }) {
   const [buttonText, setButtonText] = useState("Submit");
 
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    setButtonText("Logging in..."); // TODO replace with loader
+    signInWithCode(e);
+  };
   return (
     <form
       className=" sm:flex  w-full max-w-sm md:max-w-md px-4 sm:px-0 "
-      onSubmit={(e) => signInWithCode(e)}
+      onSubmit={(e) => handleSubmit(e)}
     >
       <label htmlFor="email" className="sr-only">
         Email

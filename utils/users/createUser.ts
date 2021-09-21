@@ -16,9 +16,6 @@ export async function CreateUser({
   last_name,
   user_email,
 }: CreateUserInput) {
-  // Return the existing user if already created // TODO split this up?
-  // const existing_user = await GetUserByEmail(user_email);
-  // if (existing_user) return existing_user;
 
   const now = GetCurrentTime("iso");
   const user_id = nanoid(30);
