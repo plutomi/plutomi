@@ -5,16 +5,26 @@ import withCleanOrgName from "../../../middleware/withCleanOrgName";
 import InputValidation from "../../../utils/inputValidation";
 import withAuthorizer from "../../../middleware/withAuthorizer";
 import { JoinOrg } from "../../../utils/users/joinOrg";
+import { GetAllOrgInvites } from "../../../utils/invites/getAllOrgInvites";
 const handler = async (req: CustomRequest, res: NextApiResponse) => {
   const { body, method, user } = req;
   const { org_name, org_id } = body;
   // Create an org
   if (method === "POST") {
     if (user.org_id != "NO_ORG_ASSIGNED") {
+      return res.status(400).json({
+        message: `You already belong to an org. Deleting an org is not available at this time`,
+      });
+    }
+
+    const pending_invites = await GetAllOrgInvites(user.user_id);
+
+    if (pending_invites.length > 0) {
       return res
-        .status(400)
+        .status(403)
         .json({
-          message: `You already belong to an org. Deleting an org is not available at this time`,
+          message:
+            "You seem to have pending invites, please accept or reject them before creating an org :)",
         });
     }
 

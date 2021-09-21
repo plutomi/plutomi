@@ -1,16 +1,17 @@
-const session_options = {
-  password: [
-    {
-      id: 1,
-      password: process.env.SESSION_PASSWORD_1,
-    },
-  ],
-  cookieName: "next_iron_session",
-  // if your localhost is served on http:// then disable the secure flag
-  cookieOptions: {
-    maxAge: 86400,
-    secure: process.env.NODE_ENV === "production",
-  },
+// In cents, per applicant
+export const ApplicantPrices = {
+  idle: 5, // per month
+  active: 50, // Per month
 };
 
-export { session_options };
+// TODO move this to tailwind
+export const Colors = {
+  background: {
+    active: "bg-orange-100",
+    idle: "bg-blue-gray-100",
+  },
+  text: {
+    active: "text-orange-100",
+    idle: "text-blue-gray-100",
+  },
+};

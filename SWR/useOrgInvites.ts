@@ -4,7 +4,12 @@ import useSWR from "swr";
 const fetcher = (url) => axios.get(url).then((res) => res.data);
 
 function useOrgInvites(user_id: string) {
-  const { data, error } = useSWR(`/api/users/${user_id}/invites`, fetcher);
+  const shouldFetch = user_id ? true : false;
+
+  const { data, error } = useSWR(
+    shouldFetch ? `/api/users/${user_id}/invites` : null,
+    fetcher
+  );
 
   return {
     invites: data,

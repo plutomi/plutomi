@@ -138,8 +138,27 @@ interface GetOrgInviteInput {
   invite_id: string;
 }
 
+interface AcceptOrgInviteInput {
+  user_id: string;
+  timestamp: string;
+  invite_id: string;
+}
+
+interface DeleteOrgInviteInput {
+  user_id: string;
+  timestamp: string;
+  invite_id: string;
+}
 interface SendOrgInviteInput {
   invited_by: DynamoUser;
   org_id: string;
   recipient: string;
+}
+
+type StageTypes = "idle" | "active" | "frozen" | "deletion";
+
+interface PricingExampleBoxInput {
+  applicant_type: StageTypes;
+  stage_title: string;
+  num_applicants: number;
 }

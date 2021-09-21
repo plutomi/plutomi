@@ -31,8 +31,9 @@ export async function CreateApplicant({
     applicant_id: applicant_id,
     entity_type: "APPLICANT",
     created_at: now,
-    GSI1PK: `ORG#${org_id}#APPLICANTS`,
+    GSI1PK: `ORG#${org_id}#APPLICANTS`, 
     GSI1SK: `FUNNEL#${funnel_id}#STAGE#${stage_id}`, // Essetially their current stage AND funnel
+  
   };
 
   const params: PutCommandInput = {

@@ -79,7 +79,7 @@ export default function Navbar() {
         </div> */}
       </div>
 
-      <div className="relative pt-6 pb-16 sm:pb-4">
+      <div className="relative pt-6 pb-12 sm:pb-4">
         <Popover>
           <div className="max-w-7xl mx-auto px-4 sm:px-6">
             <nav

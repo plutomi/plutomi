@@ -8,7 +8,7 @@
     "start": "next start",
     "lint": "next lint",
     "test": "next dev & jest --coverage -i --silent=false tests/ALL.spec.ts ",
-    "deploy": "export AWS_PROFILE=plutomi && NODE_ENV=production && serverless "
+    "deploy": "export AWS_PROFILE=plutomi && NODE_ENV=production && serverless --debug"
   },
   "dependencies": {
     "@headlessui/react": "^1.4.0",
@@ -18,6 +18,8 @@
     "axios": "^0.21.1",
     "base64url": "^3.0.1",
     "dayjs": "^1.10.6",
+    "loadtest": "^5.1.2",
+    "lodash": "^4.17.21",
     "nanoid": "^3.1.25",
     "next": "11.1.0",
     "next-auth": "^3.29.0",
@@ -27,6 +29,7 @@
     "react-icons": "^4.2.0",
     "react-number-format": "^4.7.3",
     "swr": "^1.0.0",
+    "tailwindcss": "^2.2.15",
     "url-safe-string": "^1.1.0",
     "zustand": "^3.5.10"
   },
@@ -48,7 +51,6 @@
     "ngrok": "^4.1.0",
     "postcss": "^8.3.6",
     "serverless": "^2.54.0",
-    "tailwindcss": "^2.2.7",
     "ts-jest": "^27.0.5",
     "typescript": "^4.3.5"
   }

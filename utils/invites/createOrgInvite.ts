@@ -1,9 +1,9 @@
-import { GetUserByEmail } from "./getUserByEmail";
+import { GetUserByEmail } from "../users/getUserByEmail";
 import { Dynamo } from "../../libs/ddbDocClient";
 import { PutCommand, PutCommandInput } from "@aws-sdk/lib-dynamodb";
 import { GetCurrentTime, GetPastOrFutureTime, GetRelativeTime } from "../time";
 const { DYNAMO_TABLE_NAME } = process.env;
-import { CreateUser } from "./createUser";
+import { CreateUser } from "../users/createUser";
 import { nanoid } from "nanoid";
 export default async function CreateOrgInvite({
   org_id,
@@ -42,10 +42,7 @@ export default async function CreateOrgInvite({
       entity_type: "ORG_INVITE",
       created_at: now,
       expires_at: expires_at,
-      is_claimed: false,
       invite_id: invite_id,
-      org_invite_id: invite_id,
-      claimed_at: "",
       GSI1PK: `ORG#${org_id}#ORG_INVITES`,
       GSI1SK: now,
     };

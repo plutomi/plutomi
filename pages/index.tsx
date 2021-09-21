@@ -1,36 +1,29 @@
 /* This example requires Tailwind CSS v2.0+ */
-import Pricing from "../components/Pricing";
-import Contact from "../components/ContactUs";
-import SignIn from "../components/SignIn";
-import FeatureBox from "../components/featureBox";
-import Navbar from "../components/Navbar";
-import Hero from "../components/Hero";
+import Pricing from "../components/Pricing/Pricing";
+import Contact from "../components/Static/ContactUs";
+import SignIn from "../components/SignInHomepage";
+import FeatureBox from "../components/Static/featureBox";
+import Navbar from "../components/Navbar/HomepageNavbar";
+import Hero from "../components/Static/Hero";
 import { useSession } from "next-auth/client";
-import { useRouter } from "next/router";
+import useUser from "../SWR/useUser";
 import AlreadySignedIn from "../components/AlreadySignedIn";
 export default function Main() {
-  const [session, loading] = useSession();
-  const { error } = useRouter().query;
-  const router = useRouter();
-
-  // if (loading) {
-  //   return <h1>Loading...</h1>;
-  // }
+  const [session, loading]: [CustomSession, boolean] = useSession();
+  const { user, isUserLoading, isUserError } = useUser(session?.user_id);
 
   return (
     <div className="">
       <main className="bg-gradient-to-b from-blue-gray-50 to-white">
         <Navbar />
         <Hero />
-
-        {error ? (
-          <p>An error ocurred logging you in. Please try again.</p>
-        ) : session ? (
-          <AlreadySignedIn />
+        {session && user ? (
+          <AlreadySignedIn user={user} />
         ) : (
-          <SignIn callbackUrl={`${process.env.NEXTAUTH_URL}/dashboard`} />
+          <SignIn
+            callbackUrl={`${process.env.NEXT_PUBLIC_NEXTAUTH_URL}/dashboard`}
+          />
         )}
-
         <FeatureBox />
       </main>
       <section className="relative border-0 ">

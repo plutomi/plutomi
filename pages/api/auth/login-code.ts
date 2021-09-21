@@ -2,7 +2,7 @@ import SendLoginCode from "../../../utils/email/sendLoginCode";
 import { NextApiRequest, NextApiResponse } from "next";
 import { customAlphabet } from "nanoid/async";
 import { GetPastOrFutureTime, GetRelativeTime } from "../../../utils/time";
-import CreateLoginCode from "../../../utils/users/createLoginCode";
+import CreateLoginCode from "../../../utils/loginCodes/createLoginCode";
 const alphabet = "23456789ABCDEFGHJKLMNPQRSTUVWXYZ"; // Removes some characters for clarity
 const nanoid = customAlphabet(alphabet, 10);
 import InputValidation from "../../../utils/inputValidation";

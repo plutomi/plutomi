@@ -1,12 +1,20 @@
+// This is the same as the SignIn.tsx component
+// but with different styling so it fits in the home page
+// TODO probably better to refactor this
+
 import { signIn } from "next-auth/client";
 import GoogleButton from "./Buttons/GoogleButton";
 import axios from "axios";
 import LoginCode from "./EmailSigninCode";
 import LoginEmail from "./EmailSigninInput";
 import { FormEvent, useState } from "react";
-import router from "next/router";
+interface CallbackUrl {
+  callbackUrl?: string;
+}
 
-export default function SignIn({ callbackUrl, desiredPage }) {
+import router from "next/router";
+// Identical to SignIn, but with less margin/padding to fit in the homepage
+export default function SignInHomepage({ callbackUrl }: CallbackUrl) {
   const [user_email, setUserEmail] = useState("");
   const [login_code, setLoginCode] = useState("");
   const [emailSubmitted, setEmailSubmitted] = useState(false);
@@ -57,35 +65,27 @@ export default function SignIn({ callbackUrl, desiredPage }) {
 
     router.push(callbackUrl);
   };
-
   return (
-    <div className="flex justify-center flex-col p-10 max-w-2xl mx-auto items-center mt-20 border rounded-lg">
-      <h1 className="text-4xl font-bold text-center text-normal">
-        Sign in to view {desiredPage}
-      </h1>
-
-      <div className="mt-8 flex flex-col justify-center items-center">
-        <GoogleButton callbackUrl={callbackUrl} />
-
-        <p className="my-4 text-lg text-normal text-center sm:max-w-8xl max-w-sm">
-          Or we can email you a magic code for a password-free sign in.
-        </p>
-        {emailSubmitted ? (
-          <LoginCode
-            onChange={handleLoginCodeChange}
-            login_code={login_code}
-            button_text={button_text}
-            signInWithCode={signInWithCode}
-          />
-        ) : (
-          <LoginEmail
-            onChange={handleEmailChange}
-            user_email={user_email}
-            button_text={button_text}
-            sendEmail={sendEmail}
-          />
-        )}
-      </div>
+    <div className="flex justify-center flex-col w-full items-center ">
+      <GoogleButton callbackUrl={callbackUrl} />
+      <p className="my-4 text-lg text-normal text-center sm:max-w-8xl max-w-sm">
+        Or we can email you a magic code for a password-free sign in.
+      </p>
+      {emailSubmitted ? (
+        <LoginCode
+          onChange={handleLoginCodeChange}
+          login_code={login_code}
+          button_text={button_text}
+          signInWithCode={signInWithCode}
+        />
+      ) : (
+        <LoginEmail
+          onChange={handleEmailChange}
+          user_email={user_email}
+          button_text={button_text}
+          sendEmail={sendEmail}
+        />
+      )}
     </div>
   );
 }

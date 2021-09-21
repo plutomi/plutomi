@@ -1,8 +1,6 @@
 import { FcGoogle } from "react-icons/fc";
 import { signIn } from "next-auth/client";
-import { useRouter } from "next/router";
 export default function GoogleButton({ callbackUrl }) {
-  console.log("CALLBACK URL", callbackUrl);
   return (
     <button
       type="button"

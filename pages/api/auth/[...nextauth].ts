@@ -2,9 +2,9 @@ import NextAuth, { Session, User } from "next-auth";
 import Providers from "next-auth/providers";
 import { CreateUser } from "../../../utils/users/createUser";
 import InputValidation from "../../../utils/inputValidation";
-import { GetLatestLoginCode } from "../../../utils/users/getLatestLoginCode";
+import { GetLatestLoginCode } from "../../../utils/loginCodes/getLatestLoginCode";
 import { GetCurrentTime } from "../../../utils/time";
-import { ClaimLoginCode } from "../../../utils/users/claimLoginCode";
+import { ClaimLoginCode } from "../../../utils/loginCodes/claimLoginCode";
 import { GetUserByEmail } from "../../../utils/users/getUserByEmail";
 import { JWT } from "next-auth/jwt";
 export default NextAuth({

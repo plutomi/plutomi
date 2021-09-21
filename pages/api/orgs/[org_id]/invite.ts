@@ -1,7 +1,7 @@
 import { NextApiResponse } from "next";
 import { GetPastOrFutureTime, GetRelativeTime } from "../../../../utils/time";
 import InputValidation from "../../../../utils/inputValidation";
-import CreateOrgInvite from "../../../../utils/users/createOrgInvite";
+import CreateOrgInvite from "../../../../utils/invites/createOrgInvite";
 import SendOrgInvite from "../../../../utils/email/sendOrgInvite";
 import withAuthorizer from "../../../../middleware/withAuthorizer";
 const handler = async (req: CustomRequest, res: NextApiResponse) => {

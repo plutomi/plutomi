@@ -1,14 +1,12 @@
 import { NextApiResponse } from "next";
 import withAuthorizer from "../../../../../middleware/withAuthorizer";
-import { GetOrgInvites } from "../../../../../utils/users/getOrgInvites";
+import { GetAllOrgInvites } from "../../../../../utils/invites/getAllOrgInvites";
 const handler = async (req: CustomRequest, res: NextApiResponse) => {
   const { method, user } = req;
 
   if (method === "GET") {
     try {
-      const invites = await GetOrgInvites(user.user_id);
-
-      console.log("Invites", invites);
+      const invites = await GetAllOrgInvites(user.user_id);
       return res.status(200).json(invites);
     } catch (error) {
       // TODO add error logger
