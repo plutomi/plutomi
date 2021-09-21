@@ -5,6 +5,7 @@ import { GetUserByEmail } from "../users/getUserByEmail";
 import { GetCurrentTime } from "../time";
 
 export async function GetLatestLoginCode(user_email: string) {
+  const user = await GetUserByEmail(user_email);
   const params: QueryCommandInput = {
     TableName: DYNAMO_TABLE_NAME,
     KeyConditionExpression: "PK = :pk AND begins_with(SK, :sk)",
