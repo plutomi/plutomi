@@ -48,11 +48,11 @@ export default function Features() {
                 >
                   <feature.icon className="h-6 w-6 " aria-hidden="true" />
                 </div>
-                <p className="ml-16 text-xl leading-6 font-bold text-blue-gray-900">
+                <p className="ml-16 text-xl leading-6 font-bold text-normal">
                   {feature.name}
                 </p>
               </dt>
-              <dd className="mt-2 ml-16 text-xl text-blue-gray-600">
+              <dd className="mt-2 ml-16 text-xl text-normal">
                 {feature.isGithub ? (
                   <p>
                     Read, inspect, and contribute to{" "}

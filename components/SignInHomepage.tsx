@@ -49,7 +49,7 @@ export default function SignInHomepage({ callbackUrl }: CallbackUrl) {
   return (
     <div className="flex justify-center flex-col w-full items-center ">
       <GoogleButton callbackUrl={callbackUrl} />
-      <p className="my-4 text-lg text-blue-gray-600 text-center sm:max-w-8xl max-w-sm">
+      <p className="my-4 text-lg text-normal text-center sm:max-w-8xl max-w-sm">
         Or we can email you a magic code for a password-free sign in.
       </p>
       {emailSubmitted ? (

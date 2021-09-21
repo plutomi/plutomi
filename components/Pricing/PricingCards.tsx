@@ -24,7 +24,7 @@ export default function PricingCard({ applicant_type, description }) {
             <span className="w-full">
               {" "}
               <NumberFormat
-                className="font-bold text-idle-dark"
+                className="font-bold text-dark"
                 value={ApplicantPrices[applicant_type.toLowerCase()] / 100}
                 displayType={"text"}
                 decimalScale={2}

@@ -42,7 +42,7 @@ export default function Invites() {
 
   return (
     <>
-      {isUserLoading ? (
+      {isUserLoading && session ? (
         <p className="mx-auto text-center text-blue-gray-600 text-lg">
           Loading user... {/* Loading skeleton PLACEHOLDER */}
         </p>

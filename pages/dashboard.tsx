@@ -20,7 +20,7 @@ export default function Dashboard() {
   const name = user?.GSI1SK;
   return (
     <>
-      {isUserLoading ? (
+      {isUserLoading && session ? (
         <p className="mx-auto text-center text-blue-gray-600 text-lg">
           Loading user...
         </p>

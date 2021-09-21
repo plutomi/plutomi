@@ -11,7 +11,7 @@ export default function Hero() {
         <h1 className=" p-1  xl:inline text-normal text-emerald tracking-tight font-extrabold text-5xl md:text-6xl xl:text-7xl  text-center">
           at any scale
         </h1>
-        <p className="mt-3 mx-auto text-xl text-center text-blue-gray-700 sm:text-2xl md:mt-5">
+        <p className="mt-3 mx-auto text-xl text-center text-normal sm:text-2xl md:mt-5">
           Plutomi automates your entire application process with streamlined
           workflows
         </p>
