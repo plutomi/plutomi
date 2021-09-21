@@ -50,12 +50,12 @@ export default function Calculator() {
   return (
     <div className="mt-14 px-8 lg:px-4  rounded-md grid lg:grid-cols-2 grid-cols-1 w-full justify-items-center   max-w-7xl mx-auto ">
       <div className=" col-span-1  my-2 justify-start w-full space-y-5">
-        <h1 className=" text-4xl font-bold text-normal  block w-full">
+        <h1 className=" text-4xl font-bold text-dark  block w-full">
           Pricing Estimate
         </h1>
 
         <div className=" w-full flex-wrap block">
-          <h4 className=" text-xl text-normal block w-full">
+          <h4 className=" text-xl text-dark block w-full">
             How many applicants do you process each month?
           </h4>
         </div>
@@ -63,14 +63,14 @@ export default function Calculator() {
         <div className="w-1/3 relative border border-gray-300 rounded-md px-3 py-2 shadow-sm focus-within:ring-1 focus-within:ring-blue-gray-600 focus-within:border-blue-gray-600">
           <label
             htmlFor="name"
-            className="absolute -top-3 left-2 -mt-px inline-block px-1 bg-white text-md font-medium text-normal"
+            className="absolute -top-3 left-2 -mt-px inline-block px-1 bg-white text-md font-medium text-dark"
           >
             Low end:
           </label>
 
           <NumberFormat
             allowNegative={false}
-            className="block w-full border-0 p-0 py-2 text-normal placeholder-gray-500 focus:ring-0 sm:text-lg"
+            className="block w-full border-0 p-0 py-2 text-dark placeholder-gray-500 focus:ring-0 sm:text-lg"
             value={lowEnd}
             placeholder={lowEnd}
             decimalScale={0}
@@ -83,14 +83,14 @@ export default function Calculator() {
         <div className="w-1/3 relative border border-gray-300 rounded-md px-3 py-2 shadow-sm focus-within:ring-1 focus-within:ring-blue-gray-600 focus-within:border-blue-gray-600">
           <label
             htmlFor="name"
-            className="absolute -top-3 left-2 -mt-px inline-block px-1 bg-white text-md font-medium text-normal"
+            className="absolute -top-3 left-2 -mt-px inline-block px-1 bg-white text-md font-medium text-dark"
           >
             High end:
           </label>
 
           <NumberFormat
             allowNegative={false}
-            className="block w-full border-0 p-0 py-2 text-normal placeholder-gray-500 focus:ring-0 sm:text-lg"
+            className="block w-full border-0 p-0 py-2 text-dark placeholder-gray-500 focus:ring-0 sm:text-lg"
             value={highEnd}
             placeholder={highEnd}
             decimalScale={0}
@@ -110,7 +110,7 @@ export default function Calculator() {
       <div className=" border rounded-lg  col-span-1 w-full">
         <div className="grid grid-cols-3 rounded-lg">
           <div className="col-span-1 rounded-lg">
-            <h1 className=" text-center py-4 text-sm lg:text-lg font-bold text-normal   bg-blue-gray-100 border-b  border-blue-gray-400 rounded-tl-lg">
+            <h1 className=" text-center py-4 text-sm lg:text-lg font-bold text-dark   bg-blue-gray-100 border-b  border-blue-gray-400 rounded-tl-lg">
               New Applicants
             </h1>
             {months.map((month, index) => (
@@ -120,7 +120,7 @@ export default function Calculator() {
               >
                 <div className="   text-center  lg:px-6  whitespace-nowrap text-sm  text-blue-gray-500">
                   <NumberFormat
-                    className=" mx-auto flex-1 min-w-0 block w-full px-3 py-2 rounded-none rounded-r-md focus:ring-idle-dark focus:border-idle-dark text-lg border-gray-300"
+                    className=" mx-auto flex-1 min-w-0 block w-full px-3 py-2 rounded-none rounded-r-md focus:ring-light focus:border-light text-lg border-gray-300"
                     value={month.newApplicants}
                     thousandSeparator={true}
                     displayType={"text"}
@@ -131,7 +131,7 @@ export default function Calculator() {
             ))}
           </div>
           <div className="col-span-1">
-            <h1 className=" text-center py-4 text-sm lg:text-lg font-bold text-normal   bg-blue-gray-100 border-b border-l border-blue-gray-400">
+            <h1 className=" text-center py-4 text-sm lg:text-lg font-bold text-dark   bg-blue-gray-100 border-b border-l border-blue-gray-400">
               Total Applicants
             </h1>
             {months.map((month, index) => (
@@ -141,7 +141,7 @@ export default function Calculator() {
               >
                 <div className="   text-center  lg:px-6  whitespace-nowrap text-sm  text-blue-gray-500">
                   <NumberFormat
-                    className=" mx-auto flex-1 min-w-0 block w-full px-3 py-2 rounded-none rounded-r-md focus:ring-idle-dark focus:border-idle-dark text-lg border-gray-300"
+                    className=" mx-auto flex-1 min-w-0 block w-full px-3 py-2 rounded-none rounded-r-md focus:ring-light focus:border-light text-lg border-gray-300"
                     value={month.totalApplicants}
                     thousandSeparator={true}
                     displayType={"text"}
@@ -152,7 +152,7 @@ export default function Calculator() {
             ))}
           </div>
           <div className="col-span-1">
-            <h1 className="text-center py-4 text-sm lg:text-lg font-bold text-normal   bg-blue-gray-100 border-b border-l border-blue-gray-400 rounded-tr-lg">
+            <h1 className="text-center py-4 text-sm lg:text-lg font-bold text-dark   bg-blue-gray-100 border-b border-l border-blue-gray-400 rounded-tr-lg">
               Estimated Price
             </h1>
             {months.map((month, index) => (
@@ -163,7 +163,7 @@ export default function Calculator() {
                 <div className="   text-center  lg:px-6  whitespace-nowrap text-sm  text-blue-gray-500">
                   <NumberFormat
                     allowNegative={false}
-                    className=" text-normal font-semibold mx-auto flex-1 min-w-0 block w-full px-3 py-2 rounded-none rounded-r-md focus:ring-idle-dark focus:border-idle-dark text-lg border-gray-300"
+                    className=" text-dark font-semibold mx-auto flex-1 min-w-0 block w-full px-3 py-2 rounded-none rounded-r-md focus:ring-light focus:border-light text-lg border-gray-300"
                     value={month.idleFees + month.activeFees}
                     decimalScale={2}
                     thousandSeparator={true}

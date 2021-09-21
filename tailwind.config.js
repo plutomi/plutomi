@@ -15,11 +15,8 @@ module.exports = {
         light: colors.orange[100],
         dark: colors.orange[600],
       },
-      idle: {
-        light: colors.blueGray[200],
-        dark: colors.blueGray[600],
-      },
-      normal: colors.blueGray[900],
+      light: colors.blueGray[600],
+      dark: colors.blueGray[900],
       transparent: "transparent",
       current: "currentColor",
       "blue-gray": colors.blueGray,

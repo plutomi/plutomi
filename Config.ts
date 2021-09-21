@@ -1,7 +1,7 @@
 // In cents, per applicant
 export const ApplicantPrices = {
   idle: 5, // per month
-  active: 50, // Per month
+  active: 100, // Per month
 };
 
 // TODO move this to tailwind

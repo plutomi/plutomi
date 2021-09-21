@@ -60,14 +60,14 @@ export default function SignIn({ callbackUrl, desiredPage }) {
 
   return (
     <div className="flex justify-center flex-col p-10 max-w-2xl mx-auto items-center mt-20 border rounded-lg">
-      <h1 className="text-4xl font-bold text-center text-normal">
+      <h1 className="text-4xl font-bold text-center text-dark">
         Sign in to view {desiredPage}
       </h1>
 
       <div className="mt-8 flex flex-col justify-center items-center">
         <GoogleButton callbackUrl={callbackUrl} />
 
-        <p className="my-4 text-lg text-normal text-center sm:max-w-8xl max-w-sm">
+        <p className="my-4 text-lg text-light text-center sm:max-w-8xl max-w-sm">
           Or we can email you a magic code for a password-free sign in.
         </p>
         {emailSubmitted ? (

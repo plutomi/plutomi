@@ -25,14 +25,14 @@ const features = [
     icon: ViewGridAddIcon,
     color: `bg-gradient-to-br from-rose-400 to-red-500`,
 
-    description: "Easy integrations with tools like Slack, Zendesk, and Zapier",
+    description: "Easy integrations with tools like Slack and Zendesk",
   },
 
   {
     name: "Stay in control",
     icon: LockClosedIcon,
     color: `bg-gradient-to-br from-purple-300 to-violet-500`,
-    description: "Role based access to all of your resources + MFA & SSO",
+    description: "Role based access to all of your resources + MFA",
   },
 ];
 export default function Features() {
@@ -48,11 +48,11 @@ export default function Features() {
                 >
                   <feature.icon className="h-6 w-6 " aria-hidden="true" />
                 </div>
-                <p className="ml-16 text-xl leading-6 font-bold text-normal">
+                <p className="ml-16 text-xl leading-6 font-bold text-dark">
                   {feature.name}
                 </p>
               </dt>
-              <dd className="mt-2 ml-16 text-xl text-normal">
+              <dd className="mt-2 ml-16 text-xl text-light">
                 {feature.isGithub ? (
                   <p>
                     Read, inspect, and contribute to{" "}
