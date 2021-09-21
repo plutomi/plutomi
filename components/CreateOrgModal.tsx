@@ -61,7 +61,6 @@ export default function CreateOrgModal() {
     };
     try {
       const { status, data } = await axios.post("/api/orgs", body);
-      console.log(data);
       alert(data.message);
       setCreateOrgModalOpen(false);
     } catch (error) {

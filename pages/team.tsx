@@ -45,8 +45,8 @@ export default function Team() {
     return null;
   }
 
-  // If no session exists, display sign in
-  if (!session) {
+  // If no session or bad userid
+  if (!session || isUserError) {
     return (
       <SignIn
         callbackUrl={`${process.env.NEXT_PUBLIC_NEXTAUTH_URL}/team`}
@@ -124,7 +124,7 @@ export default function Team() {
             </div>
             <div className="mx-auto p-4">
               <h1 className="text-xl font-bold text-normal">
-                Your current team
+                Your team
               </h1>
 
               {/* {isOrgUsersLoading ? <h1>Org users loading</h1> : null}

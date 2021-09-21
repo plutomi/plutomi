@@ -24,8 +24,8 @@ export default function Dashboard() {
     return null;
   }
 
-  // If no session exists, display sign in
-  if (!session) {
+  // If no session or bad userid
+  if (!session || isUserError) {
     return (
       <SignIn
         callbackUrl={`${process.env.NEXT_PUBLIC_NEXTAUTH_URL}/dashboard`}

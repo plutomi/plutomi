@@ -4,7 +4,7 @@ import useUser from "../SWR/useUser";
 import UserProfileCard from "../components/UserProfileCard";
 import SignedInNav from "../components/Navbar/SignedInNav";
 
-export default function NewPage() {
+export default function Funnels() {
   const [session, loading]: [CustomSession, boolean] = useSession();
   const { user, isUserLoading, isUserError } = useUser(session?.user_id);
 
@@ -15,8 +15,8 @@ export default function NewPage() {
     return null;
   }
 
-  // If no session exists, display sign in
-  if (!session) {
+  // If no session or bad userid
+  if (!session || isUserError) {
     return (
       <SignIn
         callbackUrl={`${process.env.NEXT_PUBLIC_NEXTAUTH_URL}/funnels`}

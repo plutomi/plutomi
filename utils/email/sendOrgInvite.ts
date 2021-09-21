@@ -4,7 +4,6 @@ import { SendEmailCommand, SendEmailCommandInput } from "@aws-sdk/client-ses";
 export default async function SendOrgInvite({
   recipient,
   invited_by,
-  org_id,
 }: SendOrgInviteInput) {
   const new_email: SendEmailCommandInput = {
     Source: `Plutomi <join@plutomi.com>`,
@@ -19,7 +18,7 @@ export default async function SendOrgInvite({
       },
       Body: {
         Html: {
-          Data: `<h4>To join their organization, sign in at this link: <a href="https://plutomi.com/invites">https://plutomi.com/invites</a></h4><br></br><p>If you believe this email was received in error, you can safely ignore it.</p>`,
+          Data: `<h4>You can accept their invite at this link: <a href="https://plutomi.com/invites">https://plutomi.com/invites</a></h4><br></br><p>If you believe this email was received in error, you can safely ignore it.</p>`,
         },
       },
     },

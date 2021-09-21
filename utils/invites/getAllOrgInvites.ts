@@ -2,9 +2,8 @@ import { Dynamo } from "../../libs/ddbDocClient";
 import { QueryCommand, QueryCommandInput } from "@aws-sdk/lib-dynamodb";
 const { DYNAMO_TABLE_NAME } = process.env;
 
-import { GetUserById } from "../users/getUserById";
 
-export async function GetOrgInvites(user_id: string) {
+export async function GetAllOrgInvites(user_id: string) {
 
   const params: QueryCommandInput = {
     TableName: DYNAMO_TABLE_NAME,

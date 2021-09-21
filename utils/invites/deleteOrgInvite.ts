@@ -6,7 +6,7 @@ export default async function DeleteOrgInvite({
   user_id,
   invite_id,
   timestamp,
-}: GetOrgInviteInput) {
+}) {
   try {
     const params: DeleteCommandInput = {
       TableName: DYNAMO_TABLE_NAME,

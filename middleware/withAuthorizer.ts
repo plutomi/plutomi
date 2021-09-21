@@ -16,10 +16,11 @@ export default function withAuthorizer(handler: any) {
       const token: CustomJWT = await getToken({ req, secret });
 
       if (token) {
-        console.log(token);
         try {
-          const user = await GetUserById(token.user_id); // TODO fix tyeps
-          console.log(user);
+          const user = await GetUserById(token.user_id); // TODO fix types
+          if (!user) {
+            return res.status(400).json({ message: "Please login again" });
+          }
           req.user = user;
           return handler(req, res);
         } catch (error) {

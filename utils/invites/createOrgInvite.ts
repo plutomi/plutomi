@@ -42,10 +42,7 @@ export default async function CreateOrgInvite({
       entity_type: "ORG_INVITE",
       created_at: now,
       expires_at: expires_at,
-      is_claimed: false,
       invite_id: invite_id,
-      org_invite_id: invite_id,
-      claimed_at: "",
       GSI1PK: `ORG#${org_id}#ORG_INVITES`,
       GSI1SK: now,
     };
