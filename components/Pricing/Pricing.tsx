@@ -1,26 +1,15 @@
 import Calculator from "./Calculator";
+import FAQ from "../FAQ";
 import PricingCard from "./PricingCards";
 const PricingCards = [
-  {
-    id: 2,
-    applicant_type: "Idle",
-    description: (
-      <p className={`mt-6 text-xl text-left text-normal`}>
-        Applicants are considered{" "}
-        <span className=" font-bold text-idle-dark">idle</span> if they&apos;ve
-        had updates <span className="italic">in the last 6 months</span>.
-      </p>
-    ),
-  },
   {
     id: 1,
     applicant_type: "Active",
     description: (
-      <p className={`mt-6 text-xl text-left text-normal`}>
+      <p className={`mt-6 text-xl text-center text-dark`}>
         Applicants are considered{" "}
         <span className=" font-bold text-active-dark">active</span> if
-        they&apos;ve had updates{" "}
-        <span className="italic">in the last 30 days</span>.
+        they&apos;ve made updates to their application in the past 30 days.
       </p>
     ),
   },
@@ -45,8 +34,8 @@ export default function Pricing() {
       <div className="mt-8 pb-12 bg-white sm:mt-12 sm:pb-16 lg:mt-16 lg:pb-24">
         <div className="relative ">
           <div className="absolute inset-0 h-2/3 bg-blue-gray-900" />
-          <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 ">
-            <div className="max-w-md mx-auto space-y-4 lg:max-w-5xl lg:grid lg:grid-cols-2 lg:gap-5 lg:space-y-0 ">
+          <div className=" relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 ">
+            <div className="max-w-md  mx-auto space-y-4 lg:max-w-xl lg:grid lg:grid-cols-1 lg:gap-5 lg:space-y-0 ">
               {PricingCards.map((card) => {
                 return (
                   <PricingCard
@@ -62,8 +51,7 @@ export default function Pricing() {
             If you hav
           </p> */}
         </div>
-
-        <Calculator />
+        <FAQ />
 
         {/* <div className="mt-4 relative max-w-7xl mx-auto px-6 lg:mt-5">
           <div className="max-w-md mx-auto lg:max-w-5xl">
@@ -76,7 +64,7 @@ export default function Pricing() {
                 </div>
                 <div className="mt-4 text-lg text-blue-gray-600">
                   If you&apos;
-                  <span className="font-semibold text-normal">$29</span>.
+                  <span className="font-semibold text-dark">$29</span>.
                 </div>
               </div>
               <div className="mt-6 rounded-md shadow lg:mt-0 lg:ml-10 lg:flex-shrink-0">

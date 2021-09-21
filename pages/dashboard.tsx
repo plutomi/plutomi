@@ -37,7 +37,7 @@ export default function Dashboard() {
   if (isUserLoading) {
     return (
       <div className="mx-auto p-20 flex justify-center items-center">
-        <h1 className="text-4xl text-normal font-medium">Loading...</h1>
+        <h1 className="text-4xl text-dark font-medium">Loading...</h1>
       </div>
     );
   }

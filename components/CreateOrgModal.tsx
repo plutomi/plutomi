@@ -187,7 +187,7 @@ export default function CreateOrgModal() {
                             {org_id ? (
                               <p className="mt-2 text-blue-gray-500 text-md">
                                 Your ID will be:{" "}
-                                <span className="font-bold text-normal">
+                                <span className="font-bold text-dark">
                                   {tagGenerator.generate(org_id)}
                                 </span>
                               </p>

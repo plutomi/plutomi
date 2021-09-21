@@ -1,4 +1,3 @@
-import { PlusSmIcon } from "@heroicons/react/solid";
 import axios from "axios";
 import { GetRelativeTime } from "../utils/time";
 import { FormEvent, useState } from "react";
@@ -58,7 +57,7 @@ export default function Team() {
   if (isUserLoading) {
     return (
       <div className="mx-auto p-20 flex justify-center items-center">
-        <h1 className="text-4xl text-normal font-medium">Loading...</h1>
+        <h1 className="text-4xl text-dark font-medium">Loading...</h1>
       </div>
     );
   }
@@ -123,9 +122,7 @@ export default function Team() {
               </form>
             </div>
             <div className="mx-auto p-4">
-              <h1 className="text-xl font-bold text-normal">
-                Your team
-              </h1>
+              <h1 className="text-xl font-bold text-dark">Your team</h1>
 
               {/* {isOrgUsersLoading ? <h1>Org users loading</h1> : null}
         {isOrgUsersError ? <h1>Org users ERROR</h1> : null} */}

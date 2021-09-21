@@ -7,9 +7,7 @@ export default function PricingCard({ applicant_type, description }) {
       ? "bg-idle-light"
       : "bg-active-light";
   const textColor =
-    applicant_type.toLowerCase() === "idle"
-      ? "text-idle-dark"
-      : "text-active-dark";
+    applicant_type.toLowerCase() === "idle" ? "text-light" : "text-active-dark";
 
   return (
     <div className="shadow-md  block md:flex w-auto rounded-md  flex-col">
@@ -18,9 +16,9 @@ export default function PricingCard({ applicant_type, description }) {
           {applicant_type} Applicants
         </p>
       </div>
-      <div className="bg-white p-8  text-center rounded-b-md ">
-        <h3 className=" text-2xl font-extrabold text-normal sm:text-3xl">
-          <div className=" space-x-4 flex flex-wrap items-center justify-center text-3xl lg:text-5xl font-extrabold text-normal">
+      <div className="bg-white p-6  text-center rounded-b-md max-w-full">
+        <h3 className=" text-2xl font-extrabold text-dark sm:text-3xl">
+          <div className=" space-x-4 flex flex-wrap items-center justify-center text-5xl  font-extrabold text-dark">
             <span className="w-full">
               {" "}
               <NumberFormat
@@ -33,7 +31,7 @@ export default function PricingCard({ applicant_type, description }) {
                 prefix={"$"}
               />
             </span>
-            <span className="text-base md:text-lg  mt-2 font-normal text-idle-dark">
+            <span className="text-lg  mt-2 font-normal text-light">
               / per applicant / per month
             </span>
           </div>

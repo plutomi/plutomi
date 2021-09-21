@@ -77,7 +77,7 @@ export default function Invites() {
   if (isUserLoading) {
     return (
       <div className="mx-auto p-20 flex justify-center items-center">
-        <h1 className="text-4xl text-normal font-medium">Loading...</h1>
+        <h1 className="text-4xl text-dark font-medium">Loading...</h1>
       </div>
     );
   }
@@ -106,7 +106,7 @@ export default function Invites() {
                     className="py-4 flex border rounded-md w-full"
                   >
                     <div className="ml-3">
-                      <p className="text-sm font-medium text-normal">
+                      <p className="text-sm font-medium text-dark">
                         {invite.invited_by.first_name}{" "}
                         {invite.invited_by.last_name}
                       </p>
