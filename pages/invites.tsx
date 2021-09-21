@@ -40,6 +40,25 @@ export default function Invites() {
     mutate(`/api/users/${user.user_id}/invites`);
   };
 
+  const rejectInvite = async (invite) => {
+    try {
+      const body: GetOrgInviteInput = {
+        user_id: user.user_id,
+        timestamp: invite.created_at,
+        invite_id: invite.invite_id,
+      };
+
+      const { status, data } = await axios.post(
+        `/api/orgs/${invite.org_id}/reject`,
+        body
+      );
+      alert(data.message);
+    } catch (error) {
+      console.error(error);
+      alert(error.response.data.message);
+    }
+    mutate(`/api/users/${user.user_id}/invites`);
+  };
   // When rendering client side don't display anything until loading is complete
   if (typeof window !== "undefined" && loading) {
     return null;
@@ -106,6 +125,12 @@ export default function Invites() {
                       className="px-4 py-3 border border-transparent bg-blue-gray-900 text-white rounded-md m-4"
                     >
                       Accept
+                    </button>
+                    <button
+                      onClick={() => rejectInvite(invite)}
+                      className="px-4 py-3 border border-transparent bg-red-500 text-white rounded-md m-4"
+                    >
+                      Reject
                     </button>
                   </li>
                 ))

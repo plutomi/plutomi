@@ -32,11 +32,13 @@ const handler = async (req: CustomRequest, res: NextApiResponse) => {
   }
 
   if (method === "POST") {
-    // if (user.org_id != "NO_ORG_ASSIGNED") {
-    //   return res
-    //     .status(400)
-    //     .json({ message: `You already belong to an org: ${user.org_id}` });
-    // }
+    // While this isn't really an issue as far as I can tell
+    // I am keeping it here just in case
+    if (user.org_id != "NO_ORG_ASSIGNED") {
+      return res
+        .status(400)
+        .json({ message: `You already belong to an org: ${user.org_id}` });
+    }
 
     try {
       await AcceptOrgInvite(accept_org_invite);
