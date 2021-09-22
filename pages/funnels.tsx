@@ -3,11 +3,15 @@ import SignIn from "../components/SignIn";
 import useUser from "../SWR/useUser";
 import UserProfileCard from "../components/UserProfileCard";
 import SignedInNav from "../components/Navbar/SignedInNav";
-
+import useStore from "../utils/store";
+import CreateFunnelModal from "../components/CreateFunnelModal";
 export default function Funnels() {
   const [session, loading]: [CustomSession, boolean] = useSession();
   const { user, isUserLoading, isUserError } = useUser(session?.user_id);
 
+  const setCreateFunnelModalOpen = useStore(
+    (state: NewSate) => state.setCreateFunnelModalOpen
+  );
   const name = user?.GSI1SK;
 
   // When rendering client side don't display anything until loading is complete
@@ -42,12 +46,13 @@ export default function Funnels() {
             {/* Content */}
           </div>
         </header>
-        <UserProfileCard user={user} /> {/* Debugging */}
+        <UserProfileCard user={user} />
         <main>
+          <CreateFunnelModal />
           <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">
-            {/* Content */}
             <button
               type="button"
+              onClick={() => setCreateFunnelModalOpen(true)}
               className="relative block w-full border-2 border-gray-300 border-dashed rounded-lg p-12 text-center hover:border-gray-400 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
             >
               <svg

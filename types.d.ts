@@ -17,6 +17,7 @@ interface CreateUserInput {
 interface CreateFunnelInput {
   org_id: string;
   funnel_name: string;
+  user?: DynamoUser; // User creating the funnel - Optional on client
 }
 
 interface GetFunnelInput {
@@ -95,6 +96,8 @@ interface NewSate {
   removePokemon: Function;
   setCreateOrgModalOpen: Function;
   createOrgModalIsOpen: boolean;
+  createFunnelModalIsOpen: boolean;
+  setCreateFunnelModalOpen: Function;
 }
 
 interface DynamoUser {

@@ -7,30 +7,28 @@ const UrlSafeString = require("url-safe-string"),
   tagGenerator = new UrlSafeString();
 
 import useStore from "../utils/store";
-export default function CreateOrgModal() {
-  const [org_name, setOrgName] = useState("");
-  const [org_id, setOrgId] = useState("");
+export default function CreateFunnelModal() {
+  const [funnel_name, setFunnelName] = useState("");
 
-  const createOrg = async (e: FormEvent) => {
+  const createFunnel = async (e: FormEvent) => {
     e.preventDefault();
-    const body: CreateOrgInput = {
-      org_name: org_name,
-      org_id: org_id,
+    const body = {
+      funnel_name: funnel_name,
       user: {}, // Will get filled in by the authorizer middleware
     };
     try {
-      const { status, data } = await axios.post("/api/orgs", body);
+      const { status, data } = await axios.post("/api/funnels", body);
       alert(data.message);
-      setCreateOrgModalOpen(false);
+      setCreateFunnelModalOpen(false);
     } catch (error) {
       alert(error.response.data.message);
     }
   };
 
-  const open = useStore((state: NewSate) => state.createOrgModalIsOpen);
+  const open = useStore((state: NewSate) => state.createFunnelModalIsOpen);
 
-  const setCreateOrgModalOpen = useStore(
-    (state: NewSate) => state.setCreateOrgModalOpen
+  const setCreateFunnelModalOpen = useStore(
+    (state: NewSate) => state.setCreateFunnelModalOpen
   );
 
   return (
@@ -38,7 +36,7 @@ export default function CreateOrgModal() {
       <Dialog
         as="div"
         className="fixed inset-0 overflow-hidden "
-        onClose={() => setCreateOrgModalOpen(false)}
+        onClose={() => setCreateFunnelModalOpen(false)}
       >
         <div className="absolute inset-0 overflow-hidden">
           <Transition.Child
@@ -66,19 +64,19 @@ export default function CreateOrgModal() {
               <div className="w-screen max-w-md">
                 <form
                   className="h-full divide-y divide-gray-200 flex flex-col bg-white shadow-xl"
-                  onSubmit={(e) => createOrg(e)}
+                  onSubmit={(e) => createFunnel(e)}
                 >
                   <div className="flex-1 h-0 overflow-y-auto">
                     <div className="py-6 px-4 bg-indigo-700 sm:px-6">
                       <div className="flex items-center justify-between">
                         <Dialog.Title className="text-lg font-medium text-white">
-                          New Organization
+                          New Funnel
                         </Dialog.Title>
                         <div className="ml-3 h-7 flex items-center">
                           <button
                             type="button"
                             className="bg-indigo-700 rounded-md text-indigo-200 hover:text-white focus:outline-none focus:ring-2 focus:ring-white"
-                            onClick={() => setCreateOrgModalOpen(false)}
+                            onClick={() => setCreateFunnelModalOpen(false)}
                           >
                             <span className="sr-only">Close panel</span>
                             <XIcon className="h-6 w-6" aria-hidden="true" />
@@ -87,8 +85,10 @@ export default function CreateOrgModal() {
                       </div>
                       <div className="mt-1">
                         <p className="text-sm text-indigo-300">
-                          Get started by creating an organization which will
-                          contain your funnels and users
+                          A funnel is what you need applicants for. It could be
+                          a job like &apos;Engineer&apos;, a location like
+                          &apos;New York&apos; or &apos;Chicago&apos;, or a
+                          program like &apos;Summer Camp&apos;.
                         </p>
                       </div>
                     </div>
@@ -97,59 +97,24 @@ export default function CreateOrgModal() {
                         <div className="space-y-6 pt-6 pb-5">
                           <div>
                             <label
-                              htmlFor="org-name"
+                              htmlFor="funnel-name"
                               className="block text-sm font-medium text-gray-900"
                             >
-                              Organization name
+                              Funnel name
                             </label>
                             <div className="mt-1">
                               <input
                                 type="text"
-                                name="org-name"
-                                id="org-name"
+                                name="funnel-name"
+                                id="funnel-name"
                                 required
-                                onChange={(e) => setOrgName(e.target.value)}
-                                value={org_name}
+                                onChange={(e) => setFunnelName(e.target.value)}
+                                value={funnel_name}
                                 className="block w-full shadow-sm sm:text-sm focus:ring-indigo-500 focus:border-indigo-500 border-gray-300 rounded-md"
                               />
                             </div>
                           </div>
-                          <div>
-                            <label
-                              htmlFor="org-id"
-                              className="block text-sm font-medium text-gray-900"
-                            >
-                              Custom ID
-                            </label>
-                            <div className="mt-1 flex rounded-md shadow-sm">
-                              <span className="inline-flex items-center px-3 rounded-l-md border border-r-0 border-gray-300 bg-gray-50 text-gray-500 sm:text-sm">
-                                plutomi.com/
-                              </span>
-                              <input
-                                type="text"
-                                name="org-id"
-                                id="org-id"
-                                required
-                                maxLength={30}
-                                onChange={(e) => setOrgId(e.target.value)}
-                                value={org_id}
-                                className="flex-1 min-w-0 block w-full px-3 py-2 rounded-none rounded-r-md focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm border-gray-300"
-                                placeholder="your-company-name"
-                              />
-                            </div>
-                            {org_id ? (
-                              <p className="mt-2 text-blue-gray-500 text-md">
-                                Your ID will be:{" "}
-                                <span className="font-bold text-dark">
-                                  {tagGenerator.generate(org_id)}
-                                </span>
-                              </p>
-                            ) : null}
-                            <p className="text-red-400 mt-2 text-md">
-                              Your ID <span className="font-bold">cannot</span>{" "}
-                              be changed, please choose carefully.
-                            </p>
-                          </div>
+
                           {/* <div>
                             <label
                               htmlFor="description"
@@ -327,7 +292,7 @@ export default function CreateOrgModal() {
                     <button
                       type="button"
                       className="bg-white py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-                      onClick={() => setCreateOrgModalOpen(false)}
+                      onClick={() => setCreateFunnelModalOpen(false)}
                     >
                       Cancel
                     </button>
@@ -335,7 +300,7 @@ export default function CreateOrgModal() {
                       type="submit"
                       className="ml-4 inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
                     >
-                      Create Org
+                      Create Funnel
                     </button>
                   </div>
                 </form>
