@@ -3,9 +3,13 @@ import Link from "../components/CustomLink";
 /* This example requires Tailwind CSS v2.0+ */
 const faqs = [
   {
-    question: "If I manually update an applicant, will I be billed for that?",
-    answer:
-      "No, you are only billed when an applicant updates their application themselves.",
+    question: "If I manually update an applicant, will they count as active?",
+    answer: (
+      <p>
+        No, an applicant only becomes active when they make an update to their
+        own application.
+      </p>
+    ),
   },
   {
     question: "How many users / applicants / funnels / stages  can I have?",
@@ -50,10 +54,7 @@ export default function FAQ() {
           <div className="px-auto mx-auto mt-12 lg:mt-0 lg:col-span-2  text-end">
             <dl className=" space-y-12 flex flex-col  ">
               {faqs.map((faq) => (
-                <div
-                  key={faq.question}
-                  className=" my-auto"
-                >
+                <div key={faq.question} className=" my-auto">
                   <dt className="text-xl leading-6 font-medium text-dark">
                     {faq.question}
                   </dt>
