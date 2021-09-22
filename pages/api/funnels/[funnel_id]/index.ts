@@ -11,6 +11,7 @@ const handler = async (req: CustomRequest, res: NextApiResponse) => {
     funnel_id: funnel_id as string,
   };
   if (method === "GET") {
+    console.log("Getting funnel id", funnel_id)
     try {
       const funnel = await GetFunnel(get_funnel_input);
       if (!funnel) return res.status(404).json({ message: "Funnel not found" });
