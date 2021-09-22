@@ -41,14 +41,14 @@ export default function FAQ() {
             <h2 className="text-4xl font-extrabold text-dark ">
               Frequently Asked Questions
             </h2>
-            <p className="mt-4 text-lg text-light">
+            {/* <p className="mt-4 text-lg text-light">
               Can’t find the answer you’re looking for? Please{" "}
               <CustomLink
                 url={"mailto:contact@plutomi.com?subject=Question"}
                 text={"contact us"}
               />
               !
-            </p>
+            </p> */}
           </div>
 
           <div className="px-auto mx-auto mt-12 lg:mt-0 lg:col-span-2  text-end">
