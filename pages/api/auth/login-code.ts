@@ -4,8 +4,8 @@ import { customAlphabet } from "nanoid/async";
 import { GetPastOrFutureTime, GetRelativeTime } from "../../../utils/time";
 import CreateLoginCode from "../../../utils/loginCodes/createLoginCode";
 const alphabet = "23456789ABCDEFGHJKLMNPQRSTUVWXYZ"; // Removes some characters for clarity
-
-const nanoid = customAlphabet(alphabet, 10);
+import { random } from "lodash";
+const nanoid = customAlphabet(alphabet, random(8, 12));
 import InputValidation from "../../../utils/inputValidation";
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   const { body, method } = req;
