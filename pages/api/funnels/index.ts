@@ -21,8 +21,8 @@ const handler = async (req: CustomRequest, res: NextApiResponse) => {
         return res.status(400).json({ message: `${error.message}` });
       }
 
-      const funnel = await CreateFunnel(create_funnel_input);
-      return res.status(201).json(funnel);
+      await CreateFunnel(create_funnel_input);
+      return res.status(201).json({ message: "Funnel created!" });
     } catch (error) {
       // TODO add error logger
       return res
