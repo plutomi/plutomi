@@ -1,7 +1,7 @@
-/* This example requires Tailwind CSS v2.0+ */
 import Pricing from "../components/Pricing/Pricing";
 import Contact from "../components/Static/ContactUs";
 import SignIn from "../components/SignInHomepage";
+import UseCases from "../components/UseCases";
 import FeatureBox from "../components/Static/featureBox";
 import Navbar from "../components/Navbar/HomepageNavbar";
 import Hero from "../components/Static/Hero";
@@ -14,7 +14,7 @@ export default function Main() {
 
   return (
     <div className="">
-      <main className="bg-gradient-to-b from-blue-gray-50 to-white">
+      <main className="bg-gradient-to-b from-blue-gray-50 to-white via-homepageGradient">
         <Navbar />
         <Hero />
         {session && user ? (
@@ -25,9 +25,11 @@ export default function Main() {
           />
         )}
         <FeatureBox />
+      <UseCases />
       </main>
+
       <section className="relative border-0 ">
-        <div className="custom-shape-divider-top-1630498878">
+        <div className="custom-shape-divider-top-1630498878 ">
           <svg
             data-name="Layer 1"
             xmlns="http://www.w3.org/2000/svg"
@@ -41,6 +43,7 @@ export default function Main() {
           </svg>
         </div>
       </section>
+
       <Pricing />
       <Contact />
     </div>

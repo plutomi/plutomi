@@ -1,6 +1,8 @@
 import Calculator from "./Calculator";
 import FAQ from "../FAQ";
 import PricingCard from "./PricingCards";
+import CustomLink from "../CustomLink";
+
 const PricingCards = [
   {
     id: 1,
@@ -22,11 +24,11 @@ export default function Pricing() {
         <div className="max-w-7xl mx-auto text-center px-4 sm:px-6 lg:px-8">
           <div className="max-w-3xl mx-auto space-y-2 lg:max-w-none lg:mt-16 mt-32">
             <p className="text-5xl font-extrabold text-white sm:text-4xl lg:text-5xl">
-              Pricing that scales with you
+              Only pay for what you use
             </p>
             <p className="text-xl text-blue-gray-300">
-              No long term contracts or predatory sales calls. Only pay for what
-              you use.
+              No long term contracts. No predatory sales calls. The way it
+              should be!
             </p>
           </div>
         </div>
@@ -47,10 +49,15 @@ export default function Pricing() {
               })}
             </div>
           </div>
-          {/* <p className="text-sm my-4 text-blue-gray-400  mx-auto px-12 md:px-4 text-center">
-            If you hav
-          </p> */}
-        </div>
+          {/* <p className="text-sm my-4 text-light mx-auto px-12 md:px-4 text-center">
+            If you&apos;d like to discuss custom pricing for your organization,
+            please{" "}
+            <CustomLink
+              text={"contact us"}
+              url={"mailto:contact@plutomi.com?subject=Custom%20Pricing"}
+            />
+            !
+          </p> */}s        </div>
         <FAQ />
 
         {/* <div className="mt-4 relative max-w-7xl mx-auto px-6 lg:mt-5">

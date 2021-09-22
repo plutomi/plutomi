@@ -11,7 +11,7 @@ export default function PricingCard({ applicant_type, description }) {
 
   return (
     <div className="shadow-md  block md:flex w-auto rounded-md  flex-col">
-      <div className={`py-4 ${bgColor} rounded-t-md`}>
+      <div className={`py-4 bg-orange-100 rounded-t-md`}>
         <p className={`text-2xl text-center font-semibold ${textColor}`}>
           {applicant_type} Applicants
         </p>

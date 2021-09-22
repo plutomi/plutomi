@@ -6,7 +6,7 @@ const navigation = [{ name: "Pricing", href: "#pricing" }];
 
 export default function Navbar() {
   return (
-    <div className="relative bg-gray-50 overflow-hidden ">
+    <div className="relative  overflow-hidden ">
       <div
         className="hidden sm:block sm:absolute sm:inset-y-0 sm:h-full sm:w-full"
         aria-hidden="true"

@@ -9,12 +9,16 @@ module.exports = {
       fontFamily: {
         sans: ["Inter", "sans-serif"],
       },
+      borderWidth: {
+        oneFive: "1.5px",
+      },
     },
     colors: {
       active: {
-        light: colors.orange[100],
-        dark: colors.orange[600],
+        light: colors.blueGray[50],
+        dark: colors.orange[500],
       },
+      homepageGradient: "#fffdfa",
       light: colors.blueGray[600],
       dark: colors.blueGray[900],
       transparent: "transparent",
