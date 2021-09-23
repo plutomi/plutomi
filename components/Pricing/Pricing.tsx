@@ -1,7 +1,5 @@
-import Calculator from "./Calculator";
 import FAQ from "../FAQ";
 import PricingCard from "./PricingCards";
-import CustomLink from "../CustomLink";
 
 const PricingCards = [
   {
@@ -57,7 +55,9 @@ export default function Pricing() {
               url={"mailto:contact@plutomi.com?subject=Custom%20Pricing"}
             />
             !
-          </p> */}s        </div>
+          </p> */}
+          s{" "}
+        </div>
         <FAQ />
 
         {/* <div className="mt-4 relative max-w-7xl mx-auto px-6 lg:mt-5">
