@@ -174,17 +174,12 @@ interface useUserOutput {
   isUserLoading: boolean;
   isUserError: boolean;
 }
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
->>>>>>> chore: Added types to dynamo funnels
 
 interface useFunnelsOutput {
   funnels: DynamoFunnel[];
   isFunnelsLoading: boolean;
   isFunnelsError: boolean;
 }
-<<<<<<< HEAD
 
 interface useOrgUsersOutput {
   orgUsers: DynamoUser[];
@@ -203,7 +198,3 @@ interface useStageByIdOutput {
   isStagesLoading: boolean;
   isStagesError: boolean;
 }
-=======
->>>>>>> chore: Added dynamo user and interface for useUser SWR
-=======
->>>>>>> chore: Added types to dynamo funnels
