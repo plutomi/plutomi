@@ -3,7 +3,11 @@ import useSWR from "swr";
 
 const fetcher = (url) => axios.get(url).then((res) => res.data);
 
-function useFunnelById(user_id: string, funnel_id: string, stage_id: string) {
+function useStagesByFunnelId(
+  user_id: string,
+  funnel_id: string,
+  stage_id: string
+) {
   const shouldFetch = user_id && funnel_id && stage_id ? true : false;
 
   const { data, error } = useSWR(
@@ -18,4 +22,4 @@ function useFunnelById(user_id: string, funnel_id: string, stage_id: string) {
   };
 }
 
-export default useFunnelById;
+export default useStagesByFunnelId;

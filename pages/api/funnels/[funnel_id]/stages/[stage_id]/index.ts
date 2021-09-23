@@ -15,12 +15,13 @@ const handler = async (req: CustomRequest, res: NextApiResponse) => {
     stage_id: stage_id as string,
   };
 
+  console.log("Getting single stage", get_stage_input);
   // Get a single stage in a funnel
   if (method === "GET") {
     try {
-      const all_stages = await GetStageById(get_stage_input);
-
-      return res.status(200).json(all_stages);
+      const stage = await GetStageById(get_stage_input);
+      console.log("All stages", stage);
+      return res.status(200).json(stage);
     } catch (error) {
       // TODO add error logger
       return res

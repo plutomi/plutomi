@@ -17,7 +17,10 @@ export default function CreateStageModal({ funnel_id }) {
       funnel_id: funnel_id,
     };
     try {
-      const { status, data } = await axios.post("/api/stages", body);
+      const { status, data } = await axios.post(
+        `/api/funnels/${funnel_id}/stages`,
+        body
+      );
       alert(data.message);
       setCreateStageModalOpen(false);
     } catch (error) {
