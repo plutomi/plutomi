@@ -6,11 +6,17 @@ import { NextApiResponse } from "next";
 
 // Create stage in a funnel
 const handler = async (req: CustomRequest, res: NextApiResponse) => {
-  const { body, method, user, query } = req;
+  const { body, method, query } = req;
   const { stage_name } = body;
   const { funnel_id } = query;
+  const user: DynamoUser = req.user;
 
   if (method === "POST") {
+    if (user.org_id === "NO_ORG_ASSIGNED") {
+      return res.status(403).json({
+        message: "Please create an organization before creating a stage",
+      });
+    }
     const create_stage_input: CreateStageInput = {
       org_id: user.org_id,
       funnel_id: funnel_id as string,
