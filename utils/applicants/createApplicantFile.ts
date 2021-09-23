@@ -1,14 +1,10 @@
-import { Dynamo } from "../../libs/ddbDocClient";
 import { PutCommand, PutCommandInput } from "@aws-sdk/lib-dynamodb";
-import { nanoid } from "nanoid";
+import { Dynamo } from "../../libs/ddbDocClient";
 import { GetCurrentTime } from "../time";
+import { nanoid } from "nanoid";
+
 const { DYNAMO_TABLE_NAME } = process.env;
-/**
- *
- * @param applicant_name
- * @param applicant_email
- * @param org_id
- */
+
 export async function CreateApplicantFile(
   org_id: string,
   applicant_name: string,

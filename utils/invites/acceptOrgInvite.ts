@@ -1,7 +1,8 @@
+import { GetAllOrgInvites } from "./getAllOrgInvites";
+import DeleteOrgInvite from "./deleteOrgInvite";
 import { GetOrgInvite } from "./getOrgInvite";
 import { GetCurrentTime } from "../time";
-import DeleteOrgInvite from "./deleteOrgInvite";
-import { GetAllOrgInvites } from "./getAllOrgInvites";
+
 // This is really a misnomer. There is no 'accept' per say.
 // We just check that the invite is valid and then delete it
 export default async function AcceptOrgInvite({

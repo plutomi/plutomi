@@ -1,9 +1,8 @@
-import { Dynamo } from "../../libs/ddbDocClient";
 import { QueryCommand, QueryCommandInput } from "@aws-sdk/lib-dynamodb";
-const { DYNAMO_TABLE_NAME } = process.env;
 import { GetUserByEmail } from "../users/getUserByEmail";
-import { GetCurrentTime } from "../time";
+import { Dynamo } from "../../libs/ddbDocClient";
 
+const { DYNAMO_TABLE_NAME } = process.env;
 export async function GetLatestLoginCode(user_email: string) {
   const user = await GetUserByEmail(user_email);
   const params: QueryCommandInput = {

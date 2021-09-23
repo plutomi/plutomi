@@ -1,11 +1,8 @@
-import { Dynamo } from "../../libs/ddbDocClient";
 import { GetCommand, GetCommandInput } from "@aws-sdk/lib-dynamodb";
+import { Dynamo } from "../../libs/ddbDocClient";
+
 const { DYNAMO_TABLE_NAME } = process.env;
-/**
- *
- * @param org_id
- * @param stage_id
- */
+
 export async function GetStageById({
   org_id,
   funnel_id,

@@ -1,16 +1,10 @@
-import { Dynamo } from "../../libs/ddbDocClient";
 import { PutCommand, PutCommandInput } from "@aws-sdk/lib-dynamodb";
+import { Dynamo } from "../../libs/ddbDocClient";
 import { GetCurrentTime } from "../time";
 import { nanoid } from "nanoid";
+
 const { DYNAMO_TABLE_NAME } = process.env;
-/**
- *
- * @param applicant_name
- * @param org_id
- * @param applicant_email
- * @param funnel_id - Current funnel of the applicant
- * @param stage_id - Current stage of the applicant
- */
+
 export async function CreateApplicant({
   org_id,
   applicant_email,
@@ -31,9 +25,8 @@ export async function CreateApplicant({
     applicant_id: applicant_id,
     entity_type: "APPLICANT",
     created_at: now,
-    GSI1PK: `ORG#${org_id}#APPLICANTS`, 
+    GSI1PK: `ORG#${org_id}#APPLICANTS`,
     GSI1SK: `FUNNEL#${funnel_id}#STAGE#${stage_id}`, // Essetially their current stage AND funnel
-  
   };
 
   const params: PutCommandInput = {

@@ -1,5 +1,5 @@
-import { Dynamo } from "../../libs/ddbDocClient";
 import { UpdateCommand, UpdateCommandInput } from "@aws-sdk/lib-dynamodb";
+import { Dynamo } from "../../libs/ddbDocClient";
 import { GetCurrentTime } from "../time";
 
 const { DYNAMO_TABLE_NAME } = process.env;

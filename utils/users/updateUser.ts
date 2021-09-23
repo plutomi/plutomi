@@ -1,8 +1,8 @@
-import { Dynamo } from "../../libs/ddbDocClient";
-const { DYNAMO_TABLE_NAME } = process.env;
 import { UpdateCommand, UpdateCommandInput } from "@aws-sdk/lib-dynamodb";
+import { Dynamo } from "../../libs/ddbDocClient";
 
-const forbidden_keys = ["TODO","email", "user_id", "org_id"];
+const { DYNAMO_TABLE_NAME } = process.env;
+const forbidden_keys = ["TODO", "email", "user_id", "org_id"];
 
 export async function UpdateUser({ body, user_id }: UpdateUserInput) {
   try {

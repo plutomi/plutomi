@@ -1,13 +1,10 @@
-import { Dynamo } from "../../libs/ddbDocClient";
 import { PutCommand, PutCommandInput } from "@aws-sdk/lib-dynamodb";
-import { nanoid } from "nanoid";
+import { Dynamo } from "../../libs/ddbDocClient";
 import { GetCurrentTime } from "../time";
+import { nanoid } from "nanoid";
+
 const { DYNAMO_TABLE_NAME } = process.env;
-/**
- *
- * @param funnel_name - Name of the funnel (NYC, Miami, Houston, Job's Program, After School)
- * @param org_id
- */
+
 export async function CreateFunnel({ org_id, funnel_name }: CreateFunnelInput) {
   const now = GetCurrentTime("iso");
   const funnel_id = nanoid(10);

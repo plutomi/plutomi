@@ -1,14 +1,10 @@
-import { Dynamo } from "../../libs/ddbDocClient";
 import { PutCommand, PutCommandInput } from "@aws-sdk/lib-dynamodb";
-import { nanoid } from "nanoid";
+import { Dynamo } from "../../libs/ddbDocClient";
 import { GetCurrentTime } from "../time";
+import { nanoid } from "nanoid";
+
 const { DYNAMO_TABLE_NAME } = process.env;
-/**
- *
- * @param org_id
- * @param stage_id - Which stage should the rule be created in
- * @param validation - What the rule is and what not // TODO
- */
+
 export async function CreateStageRule({
   org_id,
   funnel_id,
