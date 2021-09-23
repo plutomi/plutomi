@@ -4,7 +4,7 @@
 
 We were not satisfied with the current landscape of applicant tracking systems, especially for large scale, high volume hiring. We've struggled in the past with vendors that had performance issues, feature requests that never saw the light of day, limited customizability, and tedious manual labor was required to propagate changes across hundreds of job postings.
 
-This limited our ability to innovate in our recruiting funnels which had serious material consequences when we couldn't meet our staffing needs.
+This limited our ability to innovate in our recruiting pipelines which had serious material consequences when we couldn't meet our staffing needs.
 
 We also noticed that there are a lot of organizations _still_ using handwritten forms to intake applicants into their programs. This is slow and monotonous; there has to be a better way!
 

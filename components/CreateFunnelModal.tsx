@@ -7,27 +7,29 @@ const UrlSafeString = require("url-safe-string"),
   tagGenerator = new UrlSafeString();
 
 import useStore from "../utils/store";
-export default function CreateFunnelModal() {
-  const [funnel_name, setFunnelName] = useState("");
+export default function CreateOpeningModal() {
+  const [opening_name, setOpeningName] = useState("");
 
-  const createFunnel = async (e: FormEvent) => {
+  const createOpening = async (e: FormEvent) => {
     e.preventDefault();
-    const body: APICreateFunnelInput = {
-      funnel_name: funnel_name,
+    const body: APICreateOpeningInput = {
+      opening_name: opening_name,
     };
     try {
-      const { status, data } = await axios.post("/api/funnels", body);
+      const { status, data } = await axios.post("/api/openings", body);
       alert(data.message);
-      setCreateFunnelModalOpen(false);
+      setCreateOpeningModalOpen(false);
     } catch (error) {
       alert(error.response.data.message);
     }
   };
 
-  const open = useStore((state: PlutomiState) => state.createFunnelModalIsOpen);
+  const open = useStore(
+    (state: PlutomiState) => state.createOpeningModalIsOpen
+  );
 
-  const setCreateFunnelModalOpen = useStore(
-    (state: PlutomiState) => state.setCreateFunnelModalOpen
+  const setCreateOpeningModalOpen = useStore(
+    (state: PlutomiState) => state.setCreateOpeningModalOpen
   );
 
   return (
@@ -35,7 +37,7 @@ export default function CreateFunnelModal() {
       <Dialog
         as="div"
         className="fixed inset-0 overflow-hidden "
-        onClose={() => setCreateFunnelModalOpen(false)}
+        onClose={() => setCreateOpeningModalOpen(false)}
       >
         <div className="absolute inset-0 overflow-hidden">
           <Transition.Child
@@ -63,19 +65,19 @@ export default function CreateFunnelModal() {
               <div className="w-screen max-w-md">
                 <form
                   className="h-full divide-y divide-gray-200 flex flex-col bg-white shadow-xl"
-                  onSubmit={(e) => createFunnel(e)}
+                  onSubmit={(e) => createOpening(e)}
                 >
                   <div className="flex-1 h-0 overflow-y-auto">
                     <div className="py-6 px-4 bg-indigo-700 sm:px-6">
                       <div className="flex items-center justify-between">
                         <Dialog.Title className="text-lg font-medium text-white">
-                          New Funnel
+                          New Opening
                         </Dialog.Title>
                         <div className="ml-3 h-7 flex items-center">
                           <button
                             type="button"
                             className="bg-indigo-700 rounded-md text-indigo-200 hover:text-white focus:outline-none focus:ring-2 focus:ring-white"
-                            onClick={() => setCreateFunnelModalOpen(false)}
+                            onClick={() => setCreateOpeningModalOpen(false)}
                           >
                             <span className="sr-only">Close panel</span>
                             <XIcon className="h-6 w-6" aria-hidden="true" />
@@ -84,8 +86,8 @@ export default function CreateFunnelModal() {
                       </div>
                       <div className="mt-1">
                         <p className="text-sm text-indigo-300">
-                          A funnel is what you need applicants for. It could be
-                          a job like &apos;Engineer&apos;, a location like
+                          An opening is what you need applicants for. It could
+                          be a job like &apos;Engineer&apos;, a location like
                           &apos;New York&apos; or &apos;Chicago&apos;, or a
                           program like &apos;Summer Camp&apos;.
                         </p>
@@ -96,19 +98,19 @@ export default function CreateFunnelModal() {
                         <div className="space-y-6 pt-6 pb-5">
                           <div>
                             <label
-                              htmlFor="funnel-name"
+                              htmlFor="opening-name"
                               className="block text-sm font-medium text-gray-900"
                             >
-                              Funnel name
+                              Opening name
                             </label>
                             <div className="mt-1">
                               <input
                                 type="text"
-                                name="funnel-name"
-                                id="funnel-name"
+                                name="opening-name"
+                                id="opening-name"
                                 required
-                                onChange={(e) => setFunnelName(e.target.value)}
-                                value={funnel_name}
+                                onChange={(e) => setOpeningName(e.target.value)}
+                                value={opening_name}
                                 className="block w-full shadow-sm sm:text-sm focus:ring-indigo-500 focus:border-indigo-500 border-gray-300 rounded-md"
                               />
                             </div>
@@ -291,7 +293,7 @@ export default function CreateFunnelModal() {
                     <button
                       type="button"
                       className="bg-white py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-                      onClick={() => setCreateFunnelModalOpen(false)}
+                      onClick={() => setCreateOpeningModalOpen(false)}
                     >
                       Cancel
                     </button>
@@ -299,7 +301,7 @@ export default function CreateFunnelModal() {
                       type="submit"
                       className="ml-4 inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
                     >
-                      Create Funnel
+                      Create Opening
                     </button>
                   </div>
                 </form>
