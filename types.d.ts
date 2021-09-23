@@ -219,3 +219,23 @@ interface APICreateQuestionInput {
 interface APICreateRuleInput {
   validation: string; // I believe this will be a template string combination.
 }
+
+interface APICreateOrgInput {
+  org_name: string;
+  org_id: string;
+}
+
+interface APICreateOrgInviteInput {
+  recipient: string;
+  expiry_time_days: number;
+}
+
+interface APIAcceptOrgInvite {
+  timestamp: string;
+  invite_id: string;
+}
+
+interface APIRejectOrgInvite {
+  timestamp: string;
+  invite_id: string;
+}

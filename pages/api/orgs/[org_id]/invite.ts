@@ -6,8 +6,10 @@ import { GetPastOrFutureTime } from "../../../../utils/time";
 import { NextApiResponse } from "next";
 
 const handler = async (req: CustomRequest, res: NextApiResponse) => {
-  const { body, method, user } = req;
-  const { recipient, expiry_time_days } = body;
+  const { body, method } = req;
+  const user: DynamoUser = req.user;
+
+  const { recipient, expiry_time_days }: APICreateOrgInviteInput = body;
 
   const default_expiry_time = 3;
   const default_expiry_value = "days";
