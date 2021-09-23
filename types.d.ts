@@ -174,3 +174,9 @@ interface useUserOutput {
   isUserLoading: boolean;
   isUserError: boolean;
 }
+
+interface useFunnelsOutput {
+  funnels: DynamoFunnel[];
+  isFunnelsLoading: boolean;
+  isFunnelsError: boolean;
+}
