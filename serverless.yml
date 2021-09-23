@@ -1,5 +1,5 @@
 plutomi:
-  component: "@sls-next/serverless-component@3.1.0"
+  component: "@sls-next/serverless-component@3.3.0"
   inputs:
     name: # This should be set as the component will create hundreds of lambdas
       defaultLambda: ${env.DEFAULT_LAMBDA_NAME}

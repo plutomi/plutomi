@@ -6,6 +6,7 @@ export default function UserProfileCard({ user }) {
         <h4>Email: {user.user_email}</h4>
         <h4>ID: {user.user_id}</h4>
         <h4>ORG: {user.org_id}</h4>
+        {JSON.stringify(user)}
         <h4>Created: {user.created_at}</h4>
       </div>
     );
