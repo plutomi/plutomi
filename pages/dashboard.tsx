@@ -1,10 +1,10 @@
+import UserProfileCard from "../components/UserProfileCard";
+import SignedInNav from "../components/Navbar/SignedInNav";
+import CreateOrgModal from "../components/CreateOrgModal";
 import { useSession } from "next-auth/client";
 import SignIn from "../components/SignIn";
 import useUser from "../SWR/useUser";
-import UserProfileCard from "../components/UserProfileCard";
-import SignedInNav from "../components/Navbar/SignedInNav";
 import useStore from "../utils/store";
-import CreateOrgModal from "../components/CreateOrgModal";
 
 export default function Dashboard() {
   const setCreateOrgModalOpen = useStore(

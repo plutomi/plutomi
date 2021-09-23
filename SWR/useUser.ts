@@ -1,8 +1,7 @@
 import axios from "axios";
 import useSWR from "swr";
-import { signOut, useSession, signIn } from "next-auth/client";
 
-const fetcher = (url) => axios.get(url).then((res) => res.data);
+const fetcher = (url: string) => axios.get(url).then((res) => res.data);
 
 function useUser(id: string): useUserOutput {
   const shouldFetch = id ? true : false;

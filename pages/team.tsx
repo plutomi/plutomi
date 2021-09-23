@@ -1,12 +1,12 @@
-import axios from "axios";
-import { GetRelativeTime } from "../utils/time";
-import { FormEvent, useState } from "react";
-import { useSession } from "next-auth/client";
-import SignIn from "../components/SignIn";
-import useUser from "../SWR/useUser";
 import UserProfileCard from "../components/UserProfileCard";
 import SignedInNav from "../components/Navbar/SignedInNav";
+import { GetRelativeTime } from "../utils/time";
+import { useSession } from "next-auth/client";
 import useOrgUsers from "../SWR/useOrgUsers";
+import { FormEvent, useState } from "react";
+import SignIn from "../components/SignIn";
+import useUser from "../SWR/useUser";
+import axios from "axios";
 
 export default function Team() {
   const [session, loading]: [CustomSession, boolean] = useSession();

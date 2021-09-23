@@ -1,11 +1,9 @@
-import { useState } from "react";
+import SignedInNav from "../../../../components/Navbar/SignedInNav";
+import useStagesByFunnelId from "../../../../SWR/useStageById";
+import SignIn from "../../../../components/SignIn";
 import useUser from "../../../../SWR/useUser";
 import { useSession } from "next-auth/client";
 import { useRouter } from "next/router";
-import SignedInNav from "../../../../components/Navbar/SignedInNav";
-import SignIn from "../../../../components/SignIn";
-import funnels from "../../../api/funnels";
-import useStageById from "../../../../SWR/useStageById";
 export default function Stage() {
   const router = useRouter();
   const { stage_id, funnel_id } = router.query;
@@ -13,7 +11,7 @@ export default function Stage() {
   const [session, loading]: [CustomSession, boolean] = useSession();
   const { user, isUserLoading, isUserError } = useUser(session?.user_id);
 
-  const { stage, isStageLoading, isStageError } = useStageById(
+  const { stage, isStageLoading, isStageError } = useStagesByFunnelId(
     session?.user_id,
     funnel_id as string,
     stage_id as string
