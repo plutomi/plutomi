@@ -31,7 +31,7 @@ const useStore = create((set) => ({
     })),
   setCreateOpeningModalOpen: (open: Boolean) =>
     set((state: PlutomiState) => ({
-      createOpeninglModalIsOpen: open,
+      createOpeningModalIsOpen: open,
     })),
   setCreateStageModalOpen: (open: Boolean) =>
     set((state: PlutomiState) => ({
