@@ -47,7 +47,6 @@ export default NextAuth({
           throw new Error("Code has expired");
         }
 
-
         const claim_code_input: ClaimLoginCodeInput = {
           user_id: latest_login_code.user_id,
           timestamp: latest_login_code.created_at,
