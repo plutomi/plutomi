@@ -43,6 +43,7 @@ const handler = async (req: CustomRequest, res: NextApiResponse) => {
         message: `You must create an organization before inviting users`,
       });
     }
+
     const new_org_invite_email: SendOrgInviteInput = {
       invited_by: user,
       org_id: user.org_id,
@@ -59,9 +60,7 @@ const handler = async (req: CustomRequest, res: NextApiResponse) => {
         });
       }
     } catch (error) {
-      return res
-        .status(500)
-        .json({ message: `Unable to create invite - ${error}` });
+      return res.status(500).json({ message: `${error}` });
     }
   }
   return res.status(405).json({ message: "Not Allowed" });
