@@ -1,9 +1,10 @@
-import { NextApiResponse } from "next";
-import { GetPastOrFutureTime, GetRelativeTime } from "../../../../utils/time";
-import InputValidation from "../../../../utils/inputValidation";
 import CreateOrgInvite from "../../../../utils/invites/createOrgInvite";
-import SendOrgInvite from "../../../../utils/email/sendOrgInvite";
 import withAuthorizer from "../../../../middleware/withAuthorizer";
+import SendOrgInvite from "../../../../utils/email/sendOrgInvite";
+import InputValidation from "../../../../utils/inputValidation";
+import { GetPastOrFutureTime } from "../../../../utils/time";
+import { NextApiResponse } from "next";
+
 const handler = async (req: CustomRequest, res: NextApiResponse) => {
   const { body, method, user } = req;
   const { recipient, expiry_time_days } = body;
@@ -34,7 +35,7 @@ const handler = async (req: CustomRequest, res: NextApiResponse) => {
     if (user.user_email == recipient) {
       return res.status(400).json({ message: "You can't invite yourself" });
     }
-    
+
     if (user.org_id === "NO_ORG_ASSIGNED") {
       return res.status(400).json({
         message: `You must create an organization before inviting users`,

@@ -1,3 +1,6 @@
+// Types for the actual items that go into Dynamo DB
+// Makes it easier to reference all variables in the front end
+
 interface DynamoUser {
   // PK: `USER#${user_id}`,
   // SK: `USER`,

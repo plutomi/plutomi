@@ -1,8 +1,9 @@
-import { NextApiRequest, NextApiResponse } from "next";
-import { CreateStage } from "../../../../../utils/stages/createStage";
 import { GetAllStagesInFunnel } from "../../../../../utils/stages/getAllStagesInFunnel";
-import InputValidation from "../../../../../utils/inputValidation";
 import withAuthorizer from "../../../../../middleware/withAuthorizer";
+import { CreateStage } from "../../../../../utils/stages/createStage";
+import InputValidation from "../../../../../utils/inputValidation";
+import { NextApiResponse } from "next";
+
 // Create stage in a funnel
 const handler = async (req: CustomRequest, res: NextApiResponse) => {
   const { body, method, user, query } = req;

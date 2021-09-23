@@ -1,6 +1,5 @@
-import { NextApiRequest, NextApiResponse } from "next";
+import { NextApiResponse } from "next";
 import { CreateOrg } from "../../../utils/orgs/createOrg";
-import { GetOrg } from "../../../utils/orgs/getOrg";
 import withCleanOrgName from "../../../middleware/withCleanOrgName";
 import InputValidation from "../../../utils/inputValidation";
 import withAuthorizer from "../../../middleware/withAuthorizer";
@@ -20,12 +19,10 @@ const handler = async (req: CustomRequest, res: NextApiResponse) => {
     const pending_invites = await GetAllOrgInvites(user.user_id);
 
     if (pending_invites.length > 0) {
-      return res
-        .status(403)
-        .json({
-          message:
-            "You seem to have pending invites, please accept or reject them before creating an org :)",
-        });
+      return res.status(403).json({
+        message:
+          "You seem to have pending invites, please accept or reject them before creating an org :)",
+      });
     }
 
     const create_org_input: CreateOrgInput = {

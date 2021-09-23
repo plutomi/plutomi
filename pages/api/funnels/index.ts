@@ -1,8 +1,8 @@
-import { NextApiRequest, NextApiResponse } from "next";
-import { CreateFunnel } from "../../../utils/funnels/createFunnel";
 import { GetAllFunnelsInOrg } from "../../../utils/funnels/getAllFunnelsInOrg";
-import InputValidation from "../../../utils/inputValidation";
+import { CreateFunnel } from "../../../utils/funnels/createFunnel";
 import withAuthorizer from "../../../middleware/withAuthorizer";
+import InputValidation from "../../../utils/inputValidation";
+import { NextApiRequest, NextApiResponse } from "next";
 
 const handler = async (req: CustomRequest, res: NextApiResponse) => {
   const { body, method, user } = req;

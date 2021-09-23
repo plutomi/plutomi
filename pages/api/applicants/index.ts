@@ -1,6 +1,6 @@
-import { NextApiRequest, NextApiResponse } from "next";
 import { CreateApplicant } from "../../../utils/applicants/createApplicant";
 import withAuthorizer from "../../../middleware/withAuthorizer";
+import { NextApiRequest, NextApiResponse } from "next";
 const handler = async (req: CustomRequest, res: NextApiResponse) => {
   const { body, method, query } = req;
   const {

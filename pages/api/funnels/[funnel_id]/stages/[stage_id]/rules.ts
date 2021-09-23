@@ -1,8 +1,9 @@
-import { NextApiRequest, NextApiResponse } from "next";
 import { CreateStageRule } from "../../../../../../utils/stages/createStageRule";
-import InputValidation from "../../../../../../utils/inputValidation";
-import withAuthorizer from "../../../../../../middleware/withAuthorizer";
 import { GetStageById } from "../../../../../../utils/stages/getStageById";
+import withAuthorizer from "../../../../../../middleware/withAuthorizer";
+import InputValidation from "../../../../../../utils/inputValidation";
+import { NextApiResponse } from "next";
+
 const handler = async (req: CustomRequest, res: NextApiResponse) => {
   const { body, method, query, user } = req;
   const { validation } = body;
