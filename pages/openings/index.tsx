@@ -117,7 +117,7 @@ export default function Openings() {
                       key={opening.opening_id}
                       className="border my-4 p-4 hover:bg-blue-gray-100 rounded-lg border-blue-gray-400"
                     >
-                      <Link href={`/openings/${opening.opening_id}`}>
+                      <Link href={`/openings/${opening.opening_id}/stages`}>
                         <a>
                           <h1 className="font-bold text-xl text-normal my-2">
                             {opening.opening_name}

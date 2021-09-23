@@ -1,12 +1,12 @@
-import CreateStageModal from "../../../components/CreateStageModal";
-import SignedInNav from "../../../components/Navbar/SignedInNav";
-import useAllStagesInOpening from "../../../SWR/useAllStagesInOpening";
-import useOpeningById from "../../../SWR/useOpeningById";
-import { GetRelativeTime } from "../../../utils/time";
-import SignIn from "../../../components/SignIn";
+import CreateStageModal from "../../../../components/CreateStageModal";
+import SignedInNav from "../../../../components/Navbar/SignedInNav";
+import useAllStagesInOpening from "../../../../SWR/useAllStagesInOpening";
+import useOpeningById from "../../../../SWR/useOpeningById";
+import { GetRelativeTime } from "../../../../utils/time";
+import SignIn from "../../../../components/SignIn";
 import { useSession } from "next-auth/client";
-import useStore from "../../../utils/store";
-import useUser from "../../../SWR/useUser";
+import useStore from "../../../../utils/store";
+import useUser from "../../../../SWR/useUser";
 import Link from "next/dist/client/link";
 import { useRouter } from "next/router";
 export default function ViewOpening() {
@@ -84,7 +84,7 @@ export default function ViewOpening() {
                       className="border my-4 p-4 hover:bg-blue-gray-100 rounded-lg border-blue-gray-400"
                     >
                       <Link
-                        href={`/openings/${opening_id}/stage/${stage.stage_id}`}
+                        href={`/openings/${opening_id}/stages/${stage.stage_id}`}
                       >
                         <a>
                           <h1 className="font-bold text-xl text-normal my-2">
