@@ -8,9 +8,10 @@ import { random } from "lodash";
 
 const alphabet = "23456789ABCDEFGHJKLMNPQRSTUVWXYZ"; // Removes some characters for clarity
 const nanoid = customAlphabet(alphabet, random(8, 12));
+
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   const { body, method } = req;
-  const { user_email } = body;
+  const { user_email }: APICreateLoginCodeInput = body;
 
   if (method === "POST") {
     try {
@@ -37,15 +38,14 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       login_code_expiry: login_code_expiry as string,
     };
 
-    const login_code_email: SendLoginCodeEmailInput = {
-      recipient: user_email,
-      login_code: login_code,
-      login_code_relative_expiry: login_code_expiry_relative_time,
-    };
-
     try {
       await CreateLoginCode(new_login_code);
       try {
+        const login_code_email: SendLoginCodeEmailInput = {
+          recipient: user_email,
+          login_code: login_code,
+          login_code_relative_expiry: login_code_expiry_relative_time,
+        };
         await SendLoginCode(login_code_email);
         return res
           .status(201)

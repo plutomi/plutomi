@@ -3,13 +3,15 @@ import withAuthorizer from "../../../../middleware/withAuthorizer";
 import { NextApiResponse } from "next";
 
 const handler = async (req: CustomRequest, res: NextApiResponse) => {
-  const { method, query, user } = req;
+  const user: DynamoUser = req.user;
+  const { method, query } = req;
   const { funnel_id } = query;
 
   const get_funnel_input: GetFunnelInput = {
     org_id: user.org_id,
     funnel_id: funnel_id as string,
   };
+  
   if (method === "GET") {
     console.log("Getting funnel id", funnel_id);
     try {

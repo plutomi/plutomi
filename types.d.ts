@@ -198,3 +198,24 @@ interface useStageByIdOutput {
   isStagesLoading: boolean;
   isStagesError: boolean;
 }
+
+interface APICreateLoginCodeInput {
+  user_email: string;
+}
+
+interface APICreateFunnelInput {
+  funnel_name: string;
+}
+
+interface APICreateStageInput {
+  stage_name: string;
+}
+
+interface APICreateQuestionInput {
+  question_title: string;
+  question_description: string;
+}
+
+interface APICreateRuleInput {
+  validation: string; // I believe this will be a template string combination.
+}

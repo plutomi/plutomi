@@ -5,10 +5,10 @@ import { GetRelativeTime } from "../../utils/time";
 import { useSession } from "next-auth/client";
 import SignIn from "../../components/SignIn";
 import useFunnels from "../../SWR/useFunnels";
-import { useState } from "react";
 import useStore from "../../utils/store";
 import Link from "next/dist/client/link";
 import useUser from "../../SWR/useUser";
+import { useState } from "react";
 
 export default function Funnels() {
   const [search, setSearch] = useState("");

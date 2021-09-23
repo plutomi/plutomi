@@ -9,7 +9,6 @@ import NextAuth from "next-auth";
 
 export default NextAuth({
   // Configure one or more authentication providers
-  // Configure one or more authentication providers
   providers: [
     Providers.Google({
       clientId: process.env.GOOGLE_CLIENT_ID,
@@ -27,7 +26,7 @@ export default NextAuth({
         login_code: { label: "Code", type: "text", placeholder: "J8S73SOEL1" },
         user_email: { label: "Email", type: "email" },
       },
-      async authorize(credentials, req) {
+      async authorize(credentials) {
         const { user_email, login_code } = credentials;
 
         try {
@@ -48,9 +47,6 @@ export default NextAuth({
           throw new Error("Code has expired");
         }
 
-        if (latest_login_code.is_claimed) {
-          throw new Error("Code has already been claimed"); // TODO or invalid code msg?
-        }
 
         const claim_code_input: ClaimLoginCodeInput = {
           user_id: latest_login_code.user_id,

@@ -7,7 +7,7 @@ import { NextApiResponse } from "next";
 // Create stage in a funnel
 const handler = async (req: CustomRequest, res: NextApiResponse) => {
   const { body, method, query } = req;
-  const { stage_name } = body;
+  const { stage_name }: APICreateStageInput = body;
   const { funnel_id } = query;
   const user: DynamoUser = req.user;
 
