@@ -52,7 +52,7 @@ export default function Dashboard() {
             {name.includes("NO_FIRST_NAME") ||
             name.includes("NO_FIRST_NAME") ? (
               <h1 className="text-4xl font-bold leading-tight text-gray-900">
-                Welcome! OrgID: {JSON.stringify(user.org_id)}
+                Welcome!
               </h1>
             ) : (
               <h1 className="text-4xl font-bold leading-tight text-gray-900">

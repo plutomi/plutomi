@@ -101,15 +101,11 @@ export default NextAuth({
           user_email: user.email || user.user_email,
         };
 
-        console.log("Checking for exisiting user");
         let existing_user = await GetUserByEmail(user.email || user.user_email);
 
         if (!existing_user) {
-          console.log("Existing user not found");
-
           existing_user = await CreateUser(create_user_input);
         }
-        console.log("Found!");
 
         // Sets id in the token so that it can be accessed in withAuthorizer
         token.user_id = existing_user.user_id;
