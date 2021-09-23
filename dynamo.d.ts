@@ -71,3 +71,27 @@ interface DynamoStage {
   GSI1PK: string;
   GSI1SK: string;
 }
+
+interface DynamoOrgInvite {
+  // PK: `USER#${user.user_id}`;
+  // SK: `ORG_INVITE#${now}#INVITE_ID#${invite_id}`; // Allows sorting, and incase two get created in the same millisecond
+  // org_id: org_id;
+  // invited_by: invited_by;
+  // entity_type: "ORG_INVITE";
+  // created_at: now;
+  // expires_at: expires_at;
+  // invite_id: invite_id;
+  // GSI1PK: `ORG#${org_id}#ORG_INVITES`;
+  // GSI1SK: now;
+
+  PK: string;
+  SK: string;
+  org_id: string;
+  invited_by: string;
+  entity_type: "ORG_INVITE";
+  created_at: string;
+  expires_at: string;
+  invite_id: string;
+  GSI1PK: string;
+  GSI1SK: string;
+}

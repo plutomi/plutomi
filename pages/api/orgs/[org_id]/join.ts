@@ -5,19 +5,22 @@ import { JoinOrg } from "../../../../utils/users/joinOrg";
 import { NextApiResponse } from "next";
 
 const handler = async (req: CustomRequest, res: NextApiResponse) => {
-  const { method, query, user, body } = req;
+  const { method, query, body } = req;
+  const user: DynamoUser = req.user;
+  const { timestamp, invite_id }: APIAcceptOrgInvite = body;
   const { org_id } = query;
 
   const accept_org_invite: AcceptOrgInviteInput = {
     user_id: user.user_id,
-    timestamp: body.timestamp,
-    invite_id: body.invite_id,
+    timestamp: timestamp,
+    invite_id: invite_id,
   };
 
+  // TODO not implemented yet
   const delete_org_invite: DeleteOrgInviteInput = {
     user_id: user.user_id,
-    timestamp: body.timestamp,
-    invite_id: body.invite_id,
+    timestamp: timestamp,
+    invite_id: invite_id,
   };
   const join_org_input: JoinOrgInput = {
     user_id: user.user_id,

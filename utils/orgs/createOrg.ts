@@ -1,14 +1,8 @@
-import { Dynamo } from "../../libs/ddbDocClient";
 import { PutCommand, PutCommandInput } from "@aws-sdk/lib-dynamodb";
-import { nanoid } from "nanoid";
+import { Dynamo } from "../../libs/ddbDocClient";
 import { GetCurrentTime } from "../time";
-import { JoinOrg } from "../users/joinOrg";
+
 const { DYNAMO_TABLE_NAME } = process.env;
-/**
- *
- * @param org_id
- * @param user_info
- */
 
 export async function CreateOrg({ org_id, org_name, user }: CreateOrgInput) {
   const now = GetCurrentTime("iso");

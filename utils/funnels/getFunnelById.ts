@@ -1,11 +1,7 @@
-import { Dynamo } from "../../libs/ddbDocClient";
 import { GetCommand, GetCommandInput } from "@aws-sdk/lib-dynamodb";
+import { Dynamo } from "../../libs/ddbDocClient";
 const { DYNAMO_TABLE_NAME } = process.env;
-/**
- *
- * @param org_id
- * @param funnel_id
- */
+
 export async function GetFunnel({ org_id, funnel_id }: GetFunnelInput) {
   const params: GetCommandInput = {
     TableName: DYNAMO_TABLE_NAME,

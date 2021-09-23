@@ -7,7 +7,7 @@ import { NextApiRequest, NextApiResponse } from "next";
 const handler = async (req: CustomRequest, res: NextApiResponse) => {
   const { body, method } = req;
   const user: DynamoUser = req.user;
-  const { funnel_name } = body;
+  const { funnel_name }: APICreateFunnelInput = body;
 
   if (method === "POST") {
     if (user.org_id === "NO_ORG_ASSIGNED") {

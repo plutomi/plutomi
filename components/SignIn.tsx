@@ -23,7 +23,7 @@ export default function SignIn({ callbackUrl, desiredPage }) {
   const sendEmail = async (e) => {
     setButtonText("Sending...");
     e.preventDefault();
-    const body = {
+    const body: APICreateLoginCodeInput = {
       user_email: user_email,
     };
 

@@ -7,7 +7,7 @@ import { JoinOrg } from "../../../utils/users/joinOrg";
 import { GetAllOrgInvites } from "../../../utils/invites/getAllOrgInvites";
 const handler = async (req: CustomRequest, res: NextApiResponse) => {
   const { body, method } = req;
-  const { org_name, org_id } = body;
+  const { org_name, org_id }: APICreateOrgInput = body;
 
   const user: DynamoUser = req.user;
 

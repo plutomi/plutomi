@@ -4,7 +4,8 @@ import { GetOrg } from "../../../../utils/orgs/getOrg";
 import { NextApiResponse } from "next";
 
 const handler = async (req: CustomRequest, res: NextApiResponse) => {
-  const { method, query, user } = req;
+  const { method, query } = req;
+  const user: DynamoUser = req.user;
   const { org_id } = query;
 
   if (method === "GET") {

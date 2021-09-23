@@ -21,8 +21,7 @@ export default function Invites() {
 
   const acceptInvite = async (invite) => {
     try {
-      const body: GetOrgInviteInput = {
-        user_id: user.user_id,
+      const body: APIAcceptOrgInvite = {
         timestamp: invite.created_at,
         invite_id: invite.invite_id,
       };
@@ -42,8 +41,7 @@ export default function Invites() {
 
   const rejectInvite = async (invite) => {
     try {
-      const body: GetOrgInviteInput = {
-        user_id: user.user_id,
+      const body: APIRejectOrgInvite = {
         timestamp: invite.created_at,
         invite_id: invite.invite_id,
       };

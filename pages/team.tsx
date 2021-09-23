@@ -1,12 +1,12 @@
-import axios from "axios";
-import { GetRelativeTime } from "../utils/time";
-import { FormEvent, useState } from "react";
-import { useSession } from "next-auth/client";
-import SignIn from "../components/SignIn";
-import useUser from "../SWR/useUser";
 import UserProfileCard from "../components/UserProfileCard";
 import SignedInNav from "../components/Navbar/SignedInNav";
+import { GetRelativeTime } from "../utils/time";
+import { useSession } from "next-auth/client";
 import useOrgUsers from "../SWR/useOrgUsers";
+import { FormEvent, useState } from "react";
+import SignIn from "../components/SignIn";
+import useUser from "../SWR/useUser";
+import axios from "axios";
 
 export default function Team() {
   const [session, loading]: [CustomSession, boolean] = useSession();
@@ -23,7 +23,7 @@ export default function Team() {
 
     try {
       // TODO add custom expiry - Defaults to 3 days
-      const body = {
+      const body: APICreateOrgInviteInput = {
         recipient: recipient,
       };
       const { status, data } = await axios.post(

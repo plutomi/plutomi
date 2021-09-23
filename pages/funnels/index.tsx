@@ -1,14 +1,15 @@
-import { useSession } from "next-auth/client";
-import SignIn from "../../components/SignIn";
-import useUser from "../../SWR/useUser";
+import CreateFunnelModal from "../../components/CreateFunnelModal";
 import UserProfileCard from "../../components/UserProfileCard";
 import SignedInNav from "../../components/Navbar/SignedInNav";
+import { GetRelativeTime } from "../../utils/time";
+import { useSession } from "next-auth/client";
+import SignIn from "../../components/SignIn";
+import useFunnels from "../../SWR/useFunnels";
 import useStore from "../../utils/store";
 import Link from "next/dist/client/link";
-import CreateFunnelModal from "../../components/CreateFunnelModal";
-import useFunnels from "../../SWR/useFunnels";
-import { GetRelativeTime } from "../../utils/time";
-import { useState, useEffect } from "react";
+import useUser from "../../SWR/useUser";
+import { useState } from "react";
+
 export default function Funnels() {
   const [search, setSearch] = useState("");
   const [session, loading]: [CustomSession, boolean] = useSession();
@@ -23,7 +24,7 @@ export default function Funnels() {
   );
 
   const setCreateFunnelModalOpen = useStore(
-    (state: NewSate) => state.setCreateFunnelModalOpen
+    (state: PlutomiState) => state.setCreateFunnelModalOpen
   );
 
   // When rendering client side don't display anything until loading is complete

@@ -1,7 +1,7 @@
 import axios from "axios";
 import useSWR from "swr";
 
-const fetcher = (url) => axios.get(url).then((res) => res.data);
+const fetcher = (url: string) => axios.get(url).then((res) => res.data);
 
 function useFunnels(user_id: string): useFunnelsOutput {
   const shouldFetch = user_id ? true : false;

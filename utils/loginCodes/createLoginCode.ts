@@ -1,8 +1,9 @@
+import { PutCommand, PutCommandInput } from "@aws-sdk/lib-dynamodb";
+import { GetCurrentTime, GetPastOrFutureTime } from "../time";
 import { GetUserByEmail } from "../users/getUserByEmail";
 import { Dynamo } from "../../libs/ddbDocClient";
-import { PutCommand, PutCommandInput } from "@aws-sdk/lib-dynamodb";
-import { GetCurrentTime, GetPastOrFutureTime, GetRelativeTime } from "../time";
 import { CreateUser } from "../users/createUser";
+
 const { DYNAMO_TABLE_NAME } = process.env;
 
 export default async function CreateLoginCode({

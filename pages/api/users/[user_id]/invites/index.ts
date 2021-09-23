@@ -3,7 +3,8 @@ import withAuthorizer from "../../../../../middleware/withAuthorizer";
 import { NextApiResponse } from "next";
 
 const handler = async (req: CustomRequest, res: NextApiResponse) => {
-  const { method, user } = req;
+  const { method } = req;
+  const user: DynamoUser = req.user;
 
   if (method === "GET") {
     try {

@@ -12,9 +12,8 @@ export default function CreateStageModal({ funnel_id }) {
 
   const createStage = async (e: FormEvent) => {
     e.preventDefault();
-    const body = {
+    const body: APICreateStageInput = {
       stage_name: stage_name,
-      funnel_id: funnel_id,
     };
     try {
       const { status, data } = await axios.post(
@@ -28,10 +27,10 @@ export default function CreateStageModal({ funnel_id }) {
     }
   };
 
-  const open = useStore((state: NewSate) => state.createStageModalIsOpen);
+  const open = useStore((state: PlutomiState) => state.createStageModalIsOpen);
 
   const setCreateStageModalOpen = useStore(
-    (state: NewSate) => state.setCreateStageModalOpen
+    (state: PlutomiState) => state.setCreateStageModalOpen
   );
 
   return (

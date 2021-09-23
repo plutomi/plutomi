@@ -1,6 +1,6 @@
-import { Dynamo } from "../../libs/ddbDocClient";
-import { GetOrgInvite } from "./getOrgInvite";
 import { DeleteCommand, DeleteCommandInput } from "@aws-sdk/lib-dynamodb";
+import { Dynamo } from "../../libs/ddbDocClient";
+
 const { DYNAMO_TABLE_NAME } = process.env;
 export default async function DeleteOrgInvite({
   user_id,

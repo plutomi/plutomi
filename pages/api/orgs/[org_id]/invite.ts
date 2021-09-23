@@ -6,8 +6,10 @@ import { GetPastOrFutureTime } from "../../../../utils/time";
 import { NextApiResponse } from "next";
 
 const handler = async (req: CustomRequest, res: NextApiResponse) => {
-  const { body, method, user } = req;
-  const { recipient, expiry_time_days } = body;
+  const { body, method } = req;
+  const user: DynamoUser = req.user;
+
+  const { recipient, expiry_time_days }: APICreateOrgInviteInput = body;
 
   const default_expiry_time = 3;
   const default_expiry_value = "days";
@@ -20,7 +22,7 @@ const handler = async (req: CustomRequest, res: NextApiResponse) => {
 
   const new_org_invite: CreateOrgInviteInput = {
     claimed: false,
-    invited_by: user,
+    invited_by: user, // TODO reduce this to just name & email
     org_id: user.org_id,
     recipient: recipient,
     expires_at: expires_at as string,

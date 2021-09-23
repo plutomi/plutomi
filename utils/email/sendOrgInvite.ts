@@ -1,5 +1,5 @@
-import SES from "../../libs/sesClient";
 import { SendEmailCommand, SendEmailCommandInput } from "@aws-sdk/client-ses";
+import SES from "../../libs/sesClient";
 
 export default async function SendOrgInvite({
   recipient,

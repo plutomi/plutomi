@@ -13,10 +13,9 @@ export default function CreateOrgModal() {
 
   const createOrg = async (e: FormEvent) => {
     e.preventDefault();
-    const body: CreateOrgInput = {
+    const body: APICreateOrgInput = {
       org_name: org_name,
       org_id: org_id,
-      user: {}, // Will get filled in by the authorizer middleware
     };
     try {
       const { status, data } = await axios.post("/api/orgs", body);
@@ -27,10 +26,10 @@ export default function CreateOrgModal() {
     }
   };
 
-  const open = useStore((state: NewSate) => state.createOrgModalIsOpen);
+  const open = useStore((state: PlutomiState) => state.createOrgModalIsOpen);
 
   const setCreateOrgModalOpen = useStore(
-    (state: NewSate) => state.setCreateOrgModalOpen
+    (state: PlutomiState) => state.setCreateOrgModalOpen
   );
 
   return (

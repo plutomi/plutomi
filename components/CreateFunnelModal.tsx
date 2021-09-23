@@ -12,9 +12,8 @@ export default function CreateFunnelModal() {
 
   const createFunnel = async (e: FormEvent) => {
     e.preventDefault();
-    const body = {
+    const body: APICreateFunnelInput = {
       funnel_name: funnel_name,
-      user: {}, // Will get filled in by the authorizer middleware
     };
     try {
       const { status, data } = await axios.post("/api/funnels", body);
@@ -25,10 +24,10 @@ export default function CreateFunnelModal() {
     }
   };
 
-  const open = useStore((state: NewSate) => state.createFunnelModalIsOpen);
+  const open = useStore((state: PlutomiState) => state.createFunnelModalIsOpen);
 
   const setCreateFunnelModalOpen = useStore(
-    (state: NewSate) => state.setCreateFunnelModalOpen
+    (state: PlutomiState) => state.setCreateFunnelModalOpen
   );
 
   return (

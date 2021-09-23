@@ -1,10 +1,12 @@
+import { PutCommand, PutCommandInput } from "@aws-sdk/lib-dynamodb";
 import { GetUserByEmail } from "../users/getUserByEmail";
 import { Dynamo } from "../../libs/ddbDocClient";
-import { PutCommand, PutCommandInput } from "@aws-sdk/lib-dynamodb";
-import { GetCurrentTime, GetPastOrFutureTime, GetRelativeTime } from "../time";
-const { DYNAMO_TABLE_NAME } = process.env;
 import { CreateUser } from "../users/createUser";
+import { GetCurrentTime } from "../time";
 import { nanoid } from "nanoid";
+
+const { DYNAMO_TABLE_NAME } = process.env;
+
 export default async function CreateOrgInvite({
   org_id,
   expires_at,

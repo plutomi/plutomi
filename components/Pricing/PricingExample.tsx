@@ -1,5 +1,3 @@
-import NumberFormat from "react-number-format";
-import { ApplicantPrices } from "./../../Config";
 import PricingExampleBox from "./PricingExampleBox";
 export default function Example({ stages, name }) {
   return (

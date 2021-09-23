@@ -1,13 +1,13 @@
-import Pricing from "../components/Pricing/Pricing";
-import Contact from "../components/Static/ContactUs";
-import SignIn from "../components/SignInHomepage";
-import UseCases from "../components/UseCases";
+import AlreadySignedIn from "../components/AlreadySignedIn";
 import FeatureBox from "../components/Static/featureBox";
 import Navbar from "../components/Navbar/HomepageNavbar";
-import Hero from "../components/Static/Hero";
+import Contact from "../components/Static/ContactUs";
+import Pricing from "../components/Pricing/Pricing";
+import SignIn from "../components/SignInHomepage";
+import UseCases from "../components/UseCases";
 import { useSession } from "next-auth/client";
+import Hero from "../components/Static/Hero";
 import useUser from "../SWR/useUser";
-import AlreadySignedIn from "../components/AlreadySignedIn";
 export default function Main() {
   const [session, loading]: [CustomSession, boolean] = useSession();
   const { user, isUserLoading, isUserError } = useUser(session?.user_id);

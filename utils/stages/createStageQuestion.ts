@@ -1,14 +1,10 @@
-import { Dynamo } from "../../libs/ddbDocClient";
 import { PutCommand, PutCommandInput } from "@aws-sdk/lib-dynamodb";
-import { nanoid } from "nanoid";
+import { Dynamo } from "../../libs/ddbDocClient";
 import { GetCurrentTime } from "../time";
+import { nanoid } from "nanoid";
+
 const { DYNAMO_TABLE_NAME } = process.env;
-/**
- *
- * @param question_title
- * @param org_id
- * @param stage_id
- */
+
 export async function CreateStageQuestion({
   org_id,
   funnel_id,

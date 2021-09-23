@@ -5,9 +5,10 @@ import InputValidation from "../../../../../../utils/inputValidation";
 import { NextApiResponse } from "next";
 
 const handler = async (req: CustomRequest, res: NextApiResponse) => {
-  const { body, method, query, user } = req;
-  const { validation } = body;
-  const { funnel_id, stage_id } = query;
+  const { body, method, query } = req;
+  const user: DynamoUser = req.user;
+  const { validation }: APICreateRuleInput = body;
+  const { stage_id } = query;
 
   if (method === "POST") {
     const stage = await GetStageById(stage_id); // TODO this needs to be updated
