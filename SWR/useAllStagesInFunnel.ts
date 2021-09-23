@@ -6,7 +6,7 @@ const fetcher = (url: string) => axios.get(url).then((res) => res.data);
 function useStagesByFunnelId(
   user_id: string,
   funnel_id: string
-): useStagesInFunnelOutput {
+): useAllStagesInFunnelOutput {
   const shouldFetch = user_id && funnel_id ? true : false;
 
   console.log("Getting stages by funnel", funnel_id);

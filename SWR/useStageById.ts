@@ -7,7 +7,7 @@ function useStagesByFunnelId(
   user_id: string,
   funnel_id: string,
   stage_id: string
-) {
+): useStageByIdOutput {
   const shouldFetch = user_id && funnel_id && stage_id ? true : false;
 
   const { data, error } = useSWR(

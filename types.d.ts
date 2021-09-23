@@ -175,6 +175,29 @@ interface useUserOutput {
   isUserError: boolean;
 }
 
+interface useOrgInvitesOutput {
+  invites: DynamoOrgInvite[];
+  isInvitesLoading: boolean;
+  isInvitesError: boolean;
+}
+
+interface useOrgUsersOutput {
+  orgUsers: DynamoUser[];
+  isOrgUsersLoading: boolean;
+  isOrgUsersError: boolean;
+}
+
+interface useStageByIdOutput {
+  stage: DynamoStage;
+  isStageLoading: boolean;
+  isStageError: boolean;
+}
+
+interface useFunnelByIdOutput {
+  funnel: DynamoFunnel;
+  isFunnelLoading: boolean;
+  isFunnelError: boolean;
+}
 interface useFunnelsOutput {
   funnels: DynamoFunnel[];
   isFunnelsLoading: boolean;
@@ -187,14 +210,8 @@ interface useOrgUsersOutput {
   isOrgUsersError: boolean;
 }
 
-interface useStagesInFunnelOutput {
+interface useAllStagesInFunnelOutput {
   stages: DynamoStage[];
-  isStagesLoading: boolean;
-  isStagesError: boolean;
-}
-
-interface useStageByIdOutput {
-  stages: DynamoStage;
   isStagesLoading: boolean;
   isStagesError: boolean;
 }
@@ -227,7 +244,7 @@ interface APICreateOrgInput {
 
 interface APICreateOrgInviteInput {
   recipient: string;
-  expiry_time_days: number;
+  expiry_time_days?: number;
 }
 
 interface APIAcceptOrgInvite {

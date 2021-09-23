@@ -1,6 +1,6 @@
 import CreateStageModal from "../../../components/CreateStageModal";
 import SignedInNav from "../../../components/Navbar/SignedInNav";
-import useStagesInFunnel from "../../../SWR/useStagesInFunnel";
+import useAllStagesInFunnel from "../../../SWR/useAllStagesInFunnel";
 import useFunnelById from "../../../SWR/useFunnelById";
 import { GetRelativeTime } from "../../../utils/time";
 import SignIn from "../../../components/SignIn";
@@ -10,7 +10,6 @@ import useUser from "../../../SWR/useUser";
 import Link from "next/dist/client/link";
 import { useRouter } from "next/router";
 export default function ViewFunnel() {
-
   const router = useRouter();
   const { funnel_id } = router.query;
   console.log("FUNNEL ID", funnel_id);
@@ -26,7 +25,7 @@ export default function ViewFunnel() {
     funnel_id as string
   );
 
-  const { stages, isStagesLoading, isStagesError } = useStagesInFunnel(
+  const { stages, isStagesLoading, isStagesError } = useAllStagesInFunnel(
     session?.user_id,
     funnel_id as string
   );

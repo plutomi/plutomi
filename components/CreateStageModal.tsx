@@ -12,9 +12,8 @@ export default function CreateStageModal({ funnel_id }) {
 
   const createStage = async (e: FormEvent) => {
     e.preventDefault();
-    const body = {
+    const body: APICreateStageInput = {
       stage_name: stage_name,
-      funnel_id: funnel_id,
     };
     try {
       const { status, data } = await axios.post(

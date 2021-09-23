@@ -1,5 +1,5 @@
 import SignedInNav from "../../../../components/Navbar/SignedInNav";
-import useStagesByFunnelId from "../../../../SWR/useStageById";
+import useStageById from "../../../../SWR/useStageById";
 import SignIn from "../../../../components/SignIn";
 import useUser from "../../../../SWR/useUser";
 import { useSession } from "next-auth/client";
@@ -11,7 +11,7 @@ export default function Stage() {
   const [session, loading]: [CustomSession, boolean] = useSession();
   const { user, isUserLoading, isUserError } = useUser(session?.user_id);
 
-  const { stage, isStageLoading, isStageError } = useStagesByFunnelId(
+  const { stage, isStageLoading, isStageError } = useStageById(
     session?.user_id,
     funnel_id as string,
     stage_id as string

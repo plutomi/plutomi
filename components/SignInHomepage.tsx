@@ -31,7 +31,7 @@ export default function SignInHomepage({ callbackUrl }: CallbackUrl) {
   const sendEmail = async (e) => {
     setButtonText("Sending...");
     e.preventDefault();
-    const body = {
+    const body: APICreateLoginCodeInput = {
       user_email: user_email,
     };
 

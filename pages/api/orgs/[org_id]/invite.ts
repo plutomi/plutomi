@@ -22,7 +22,7 @@ const handler = async (req: CustomRequest, res: NextApiResponse) => {
 
   const new_org_invite: CreateOrgInviteInput = {
     claimed: false,
-    invited_by: user,
+    invited_by: user, // TODO reduce this to just name & email
     org_id: user.org_id,
     recipient: recipient,
     expires_at: expires_at as string,

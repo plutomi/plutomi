@@ -23,7 +23,7 @@ export default function Team() {
 
     try {
       // TODO add custom expiry - Defaults to 3 days
-      const body = {
+      const body: APICreateOrgInviteInput = {
         recipient: recipient,
       };
       const { status, data } = await axios.post(
