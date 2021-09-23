@@ -12,7 +12,7 @@ const handler = async (req: CustomRequest, res: NextApiResponse) => {
   const user: DynamoUser = req.user;
 
   if (org_name === "NO_ORG_ASSIGNED") {
-    return res.status(403).json({
+    return res.status(400).json({
       message: `You cannot create an org with this name: ${org_name}`,
     });
   }
