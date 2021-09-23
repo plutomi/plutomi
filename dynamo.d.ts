@@ -47,3 +47,24 @@ interface DynamoFunnel {
   GSI1PK: string;
   GSI1SK: string;
 }
+
+interface DynamoStage {
+  // PK: `ORG#${org_id}#FUNNEL#${funnel_id}#STAGE#${stage_id}`;
+  // SK: `STAGE`;
+  // stage_name: stage_name;
+  // entity_type: "STAGE";
+  // created_at: now;
+  // stage_id: stage_id;
+  // funnel_id: funnel_id;
+  // GSI1PK: `ORG#${org_id}#FUNNEL#${funnel_id}#STAGES`; // Get all stages in a funnel
+  // GSI1SK: stage_name;
+  PK: string;
+  SK: `STAGE`;
+  stage_name: string;
+  entity_type: "STAGE";
+  created_at: string;
+  stage_id: string;
+  funnel_id: string;
+  GSI1PK: string;
+  GSI1SK: string;
+}

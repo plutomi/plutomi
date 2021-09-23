@@ -186,3 +186,15 @@ interface useOrgUsersOutput {
   isOrgUsersLoading: boolean;
   isOrgUsersError: boolean;
 }
+
+interface useStagesInFunnelOutput {
+  stages: DynamoStage[];
+  isStagesLoading: boolean;
+  isStagesError: boolean;
+}
+
+interface useStageByIdOutput {
+  stages: DynamoStage;
+  isStagesLoading: boolean;
+  isStagesError: boolean;
+}
