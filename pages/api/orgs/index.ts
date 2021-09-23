@@ -6,10 +6,18 @@ import withAuthorizer from "../../../middleware/withAuthorizer";
 import { JoinOrg } from "../../../utils/users/joinOrg";
 import { GetAllOrgInvites } from "../../../utils/invites/getAllOrgInvites";
 const handler = async (req: CustomRequest, res: NextApiResponse) => {
-  const { body, method, user } = req;
+  const { body, method } = req;
   const { org_name, org_id } = body;
+
+  const user: DynamoUser = req.user;
+
   // Create an org
   if (method === "POST") {
+    if (org_name === "NO_ORG_ASSIGNED") {
+      return res.status(400).json({
+        message: `You cannot create an org with this name: ${org_name}`,
+      });
+    }
     if (user.org_id != "NO_ORG_ASSIGNED") {
       return res.status(400).json({
         message: `You already belong to an org. Deleting an org is not available at this time`,
