@@ -1,4 +1,4 @@
-import { GetAllStagesInFunnel } from "../../../../../utils/stages/getAllStagesInFunnel";
+import { GetAllStagesInOpening } from "../../../../../utils/stages/getAllStagesInOpening";
 import withAuthorizer from "../../../../../middleware/withAuthorizer";
 import { CreateStage } from "../../../../../utils/stages/createStage";
 import InputValidation from "../../../../../utils/inputValidation";

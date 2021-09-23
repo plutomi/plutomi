@@ -1,4 +1,4 @@
-import { GetOpening } from "../../../../utils/funnels/getFunnelById";
+import { GetOpening } from "../../../../utils/openings/getOpeningById";
 import withAuthorizer from "../../../../middleware/withAuthorizer";
 import { NextApiResponse } from "next";
 

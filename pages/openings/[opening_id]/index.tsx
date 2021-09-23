@@ -1,7 +1,7 @@
 import CreateStageModal from "../../../components/CreateStageModal";
 import SignedInNav from "../../../components/Navbar/SignedInNav";
-import useAllStagesInFunnel from "../../../SWR/useAllStagesInFunnel";
-import useFunnelById from "../../../SWR/useFunnelById";
+import useAllStagesInOpening from "../../../SWR/useAllStagesInOpening";
+import useOpeningById from "../../../SWR/useOpeningById";
 import { GetRelativeTime } from "../../../utils/time";
 import SignIn from "../../../components/SignIn";
 import { useSession } from "next-auth/client";
@@ -9,10 +9,9 @@ import useStore from "../../../utils/store";
 import useUser from "../../../SWR/useUser";
 import Link from "next/dist/client/link";
 import { useRouter } from "next/router";
-export default function ViewFunnel() {
+export default function ViewOpening() {
   const router = useRouter();
-  const { funnel_id } = router.query;
-  console.log("FUNNEL ID", funnel_id);
+  const { opening_id } = router.query;
   const [session, loading]: [CustomSession, boolean] = useSession();
   const { user, isUserLoading, isUserError } = useUser(session?.user_id);
 
@@ -20,14 +19,14 @@ export default function ViewFunnel() {
     (state: PlutomiState) => state.setCreateStageModalOpen
   );
 
-  let { funnel, isFunnelLoading, isFunnelError } = useFunnelById(
+  let { opening, isOpeningLoading, isOpeningError } = useOpeningById(
     session?.user_id,
-    funnel_id as string
+    opening_id as string
   );
 
-  const { stages, isStagesLoading, isStagesError } = useAllStagesInFunnel(
+  const { stages, isStagesLoading, isStagesError } = useAllStagesInOpening(
     session?.user_id,
-    funnel_id as string
+    opening_id as string
   );
   // When rendering client side don't display anything until loading is complete
   if (typeof window !== "undefined" && loading) {
@@ -38,8 +37,8 @@ export default function ViewFunnel() {
   if (!session || isUserError) {
     return (
       <SignIn
-        callbackUrl={`${process.env.NEXT_PUBLIC_NEXTAUTH_URL}/funnels`}
-        desiredPage={"your funnels"}
+        callbackUrl={`${process.env.NEXT_PUBLIC_NEXTAUTH_URL}/openings`}
+        desiredPage={"your openings"}
       />
     );
   }
@@ -54,11 +53,13 @@ export default function ViewFunnel() {
 
   return (
     <div>
-      <SignedInNav user={user} current={"Funnels"} />
+      <SignedInNav user={user} current={"Openings"} />
       <div className="mx-auto max-w-md p-20 ">
-        <h1 className="text-xl font-bold text-normal">{funnel?.funnel_name}</h1>
+        <h1 className="text-xl font-bold text-normal">
+          {opening?.opening_name}
+        </h1>
         <p className="text-light text-lg">
-          Created {GetRelativeTime(funnel?.created_at)}
+          Created {GetRelativeTime(opening?.created_at)}
         </p>
       </div>
       <button
@@ -67,10 +68,10 @@ export default function ViewFunnel() {
       >
         + Add stage
       </button>
-      <CreateStageModal funnel_id={funnel_id as string} />
-      {funnel ? (
+      <CreateStageModal opening_id={opening_id as string} />
+      {opening ? (
         <div>
-          <h1 className="">{JSON.stringify(funnel)}</h1>
+          <h1 className="">{JSON.stringify(opening)}</h1>
           <div className="mx-auto max-w-7xl p-20">
             <h1>Stages will go here</h1>
 
@@ -83,7 +84,7 @@ export default function ViewFunnel() {
                       className="border my-4 p-4 hover:bg-blue-gray-100 rounded-lg border-blue-gray-400"
                     >
                       <Link
-                        href={`/funnels/${funnel_id}/stage/${stage.stage_id}`}
+                        href={`/openings/${opening_id}/stage/${stage.stage_id}`}
                       >
                         <a>
                           <h1 className="font-bold text-xl text-normal my-2">
@@ -95,7 +96,7 @@ export default function ViewFunnel() {
                           {/* <p className="text-light text-lg ">
                             {" "}
                             Apply link:{" "}
-                            {`https://${process.env.NEXT_PUBLIC_NEXTAUTH_URL}/${user.org_id}/${funnel.funnel_id}/apply`}
+                            {`https://${process.env.NEXT_PUBLIC_NEXTAUTH_URL}/${user.org_id}/${opening.opening_id}/apply`}
                           </p> */}
                         </a>
                       </Link>
@@ -111,7 +112,7 @@ export default function ViewFunnel() {
           </div>
         </div>
       ) : (
-        <h1>No funnel found by that ID</h1>
+        <h1>No opening found by that ID</h1>
       )}
     </div>
   );

@@ -7,7 +7,7 @@ const { DYNAMO_TABLE_NAME } = process.env;
 
 export async function CreateStageQuestion({
   org_id,
-  funnel_id,
+  opening_id,
   stage_id,
   question_title,
   question_description,
@@ -15,14 +15,14 @@ export async function CreateStageQuestion({
   const now = GetCurrentTime("iso");
   const stage_question_id = nanoid(10);
   const new_stage_question = {
-    PK: `ORG#${org_id}#FUNNEL#${funnel_id}#STAGE#${stage_id}`,
+    PK: `ORG#${org_id}#OPENING#${opening_id}#STAGE#${stage_id}`,
     SK: `STAGE_QUESTION#${stage_question_id}`,
     question_title: question_title,
     question_description: question_description,
     entity_type: "STAGE_QUESTION",
     created_at: now,
     GSI1PK: `ORG#${org_id}#QUESTIONS`,
-    GSI1SK: question_title, // TODO filter by funnel by stage?
+    GSI1SK: question_title, // TODO filter by opening by stage?
   };
 
   const params: PutCommandInput = {

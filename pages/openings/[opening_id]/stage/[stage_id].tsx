@@ -6,14 +6,14 @@ import { useSession } from "next-auth/client";
 import { useRouter } from "next/router";
 export default function Stage() {
   const router = useRouter();
-  const { stage_id, funnel_id } = router.query;
+  const { stage_id, opening_id } = router.query;
 
   const [session, loading]: [CustomSession, boolean] = useSession();
   const { user, isUserLoading, isUserError } = useUser(session?.user_id);
 
   const { stage, isStageLoading, isStageError } = useStageById(
     session?.user_id,
-    funnel_id as string,
+    opening_id as string,
     stage_id as string
   );
 
@@ -26,8 +26,8 @@ export default function Stage() {
   if (!session || isUserError) {
     return (
       <SignIn
-        callbackUrl={`${process.env.NEXT_PUBLIC_NEXTAUTH_URL}/funnels`}
-        desiredPage={"your funnels"}
+        callbackUrl={`${process.env.NEXT_PUBLIC_NEXTAUTH_URL}/openings`}
+        desiredPage={"your openings"}
       />
     );
   }
@@ -42,7 +42,7 @@ export default function Stage() {
 
   return (
     <div>
-      <SignedInNav user={user} current={"Funnels"} />
+      <SignedInNav user={user} current={"Openings"} />
       <div className="mx-auto p-20">
         <h1 className="text-norm text-xl">
           Viewing individual stage - {stage_id}

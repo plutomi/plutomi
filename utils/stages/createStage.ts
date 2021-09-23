@@ -7,21 +7,21 @@ const { DYNAMO_TABLE_NAME } = process.env;
 export async function CreateStage({
   org_id,
   stage_name,
-  funnel_id,
+  opening_id,
 }: CreateStageInput) {
   // TODO **MAJOR** Do not allow creation of stages with the same name
 
   const now = GetCurrentTime("iso");
   const stage_id = nanoid(10);
   const new_stage = {
-    PK: `ORG#${org_id}#FUNNEL#${funnel_id}#STAGE#${stage_id}`,
+    PK: `ORG#${org_id}#OPENING#${opening_id}#STAGE#${stage_id}`,
     SK: `STAGE`,
     stage_name: stage_name,
     entity_type: "STAGE",
     created_at: now,
     stage_id: stage_id,
-    funnel_id: funnel_id,
-    GSI1PK: `ORG#${org_id}#FUNNEL#${funnel_id}#STAGES`, // Get all stages in a funnel
+    opening_id: opening_id,
+    GSI1PK: `ORG#${org_id}#OPENING#${opening_id}#STAGES`, // Get all stages in an opening
     GSI1SK: stage_name,
   };
 

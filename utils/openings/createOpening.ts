@@ -5,28 +5,31 @@ import { nanoid } from "nanoid";
 
 const { DYNAMO_TABLE_NAME } = process.env;
 
-export async function CreateFunnel({ org_id, funnel_name }: CreateFunnelInput) {
+export async function CreateOpening({
+  org_id,
+  opening_name,
+}: CreateOpeningInput) {
   const now = GetCurrentTime("iso");
-  const funnel_id = nanoid(10);
-  const new_funnel = {
-    PK: `ORG#${org_id}#FUNNEL#${funnel_id}`,
-    SK: `FUNNEL`,
-    funnel_name: funnel_name,
-    entity_type: "FUNNEL",
+  const opening_id = nanoid(10);
+  const new_opening = {
+    PK: `ORG#${org_id}#OPENING#${opening_id}`,
+    SK: `OPENING`,
+    opening_name: opening_name,
+    entity_type: "OPENING",
     created_at: now,
-    funnel_id: funnel_id,
-    GSI1PK: `ORG#${org_id}#FUNNELS`,
-    GSI1SK: funnel_name,
+    opening_id: opening_id,
+    GSI1PK: `ORG#${org_id}#OPENINGS`,
+    GSI1SK: opening_name,
   };
 
   const params: PutCommandInput = {
     TableName: DYNAMO_TABLE_NAME,
-    Item: new_funnel,
+    Item: new_opening,
   };
 
   try {
     await Dynamo.send(new PutCommand(params));
-    return new_funnel;
+    return new_opening;
   } catch (error) {
     throw new Error(error);
   }

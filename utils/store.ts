@@ -2,7 +2,7 @@ import create from "zustand";
 
 const useStore = create((set) => ({
   createOrgModalIsOpen: false,
-  createFunnelModalIsOpen: false,
+  createOpeningModalIsOpen: false,
   createStageModalIsOpen: false,
 
   // Example
@@ -29,9 +29,9 @@ const useStore = create((set) => ({
     set((state: PlutomiState) => ({
       createOrgModalIsOpen: open,
     })),
-  setCreateFunnelModalOpen: (open: Boolean) =>
+  setCreateOpeningModalOpen: (open: Boolean) =>
     set((state: PlutomiState) => ({
-      createFunnelModalIsOpen: open,
+      createOpeninglModalIsOpen: open,
     })),
   setCreateStageModalOpen: (open: Boolean) =>
     set((state: PlutomiState) => ({
