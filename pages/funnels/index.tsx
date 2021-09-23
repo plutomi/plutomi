@@ -127,7 +127,7 @@ export default function Funnels() {
                           <p className="text-light text-lg ">
                             {" "}
                             Apply link:{" "}
-                            {`https://${process.env.NEXT_PUBLIC_NEXTAUTH_URL}/${user.org_id}/${funnel.funnel_id}/apply`}
+                            {`${process.env.NEXT_PUBLIC_NEXTAUTH_URL}/${user.org_id}/${funnel.funnel_id}/apply`}
                           </p>
                         </a>
                       </Link>
