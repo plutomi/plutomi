@@ -3,7 +3,7 @@ import useSWR from "swr";
 
 const fetcher = (url) => axios.get(url).then((res) => res.data);
 
-function useOrgUsers(org_id: string) {
+function useOrgUsers(org_id: string): useOrgUsersOutput {
   const shouldFetch = org_id ? true : false;
 
   const { data, error } = useSWR(

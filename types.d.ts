@@ -180,3 +180,9 @@ interface useFunnelsOutput {
   isFunnelsLoading: boolean;
   isFunnelsError: boolean;
 }
+
+interface useOrgUsersOutput {
+  orgUsers: DynamoUser[];
+  isOrgUsersLoading: boolean;
+  isOrgUsersError: boolean;
+}
