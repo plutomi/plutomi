@@ -31,6 +31,7 @@ export default function Funnels() {
     return null;
   }
 
+  
   // If no session or bad userid
   if (!session || isUserError) {
     return (
@@ -137,7 +138,7 @@ export default function Funnels() {
               ) : isFunnelsLoading ? (
                 <h1>Loading...</h1>
               ) : (
-                <h1>You don&apos;t have any funnels</h1>
+                <h1>No funnels found</h1>
               )}
             </div>
           </div>

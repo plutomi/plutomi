@@ -3,6 +3,8 @@ import create from "zustand";
 const useStore = create((set) => ({
   createOrgModalIsOpen: false,
   createFunnelModalIsOpen: false,
+  createStageModalIsOpen: false,
+
   pokemons: [
     { id: 1, name: "Bulbasaur" },
     { id: 2, name: "Ivysaur" },
@@ -29,6 +31,10 @@ const useStore = create((set) => ({
   setCreateFunnelModalOpen: (open: Boolean) =>
     set((state: NewSate) => ({
       createFunnelModalIsOpen: open,
+    })),
+    setCreateStageModalOpen: (open: Boolean) =>
+    set((state: NewSate) => ({
+      createStageModalIsOpen: open,
     })),
 }));
 export default useStore;

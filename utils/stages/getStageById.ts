@@ -6,11 +6,11 @@ const { DYNAMO_TABLE_NAME } = process.env;
  * @param org_id
  * @param stage_id
  */
-export async function GetStageById({ org_id, stage_id }: GetStageByIdInput) {
+export async function GetStageById({ org_id, funnel_id, stage_id }: GetStageByIdInput) {
   const params: GetCommandInput = {
     TableName: DYNAMO_TABLE_NAME,
     Key: {
-      PK: `ORG#${org_id}#STAGE${stage_id}`,
+      PK: `ORG#${org_id}#FUNNEL#${funnel_id}#STAGE#${stage_id}`,
       SK: `STAGE`,
     },
   };
