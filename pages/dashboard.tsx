@@ -8,11 +8,11 @@ import CreateOrgModal from "../components/CreateOrgModal";
 
 export default function Dashboard() {
   const setCreateOrgModalOpen = useStore(
-    (state: NewSate) => state.setCreateOrgModalOpen
+    (state: PlutomiState) => state.setCreateOrgModalOpen
   );
 
   const isCreateOrgModalOpen = useStore(
-    (state: NewSate) => state.createOrgModalIsOpen
+    (state: PlutomiState) => state.createOrgModalIsOpen
   );
   const [session, loading]: [CustomSession, boolean] = useSession();
 

@@ -1,7 +1,7 @@
 import useStore from "../utils/store";
 function List() {
-  const pokemons = useStore((state: NewSate) => state.pokemons);
-  const removePokemon = useStore((state: NewSate) => state.removePokemon);
+  const pokemons = useStore((state: PlutomiState) => state.pokemons);
+  const removePokemon = useStore((state: PlutomiState) => state.removePokemon);
   return (
     <div className="row">
       <div className="col-md-4"></div>

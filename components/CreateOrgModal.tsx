@@ -27,10 +27,10 @@ export default function CreateOrgModal() {
     }
   };
 
-  const open = useStore((state: NewSate) => state.createOrgModalIsOpen);
+  const open = useStore((state: PlutomiState) => state.createOrgModalIsOpen);
 
   const setCreateOrgModalOpen = useStore(
-    (state: NewSate) => state.setCreateOrgModalOpen
+    (state: PlutomiState) => state.setCreateOrgModalOpen
   );
 
   return (

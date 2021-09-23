@@ -92,7 +92,7 @@ interface Pokemon {
   id: number;
   name: string;
 }
-interface NewSate {
+interface PlutomiState {
   pokemons: Pokemon[];
   removePokemon: Function;
   setCreateOrgModalOpen: Function;

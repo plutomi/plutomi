@@ -28,10 +28,10 @@ export default function CreateStageModal({ funnel_id }) {
     }
   };
 
-  const open = useStore((state: NewSate) => state.createStageModalIsOpen);
+  const open = useStore((state: PlutomiState) => state.createStageModalIsOpen);
 
   const setCreateStageModalOpen = useStore(
-    (state: NewSate) => state.setCreateStageModalOpen
+    (state: PlutomiState) => state.setCreateStageModalOpen
   );
 
   return (

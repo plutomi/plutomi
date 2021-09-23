@@ -18,7 +18,7 @@ export default function ViewFunnel() {
   const { user, isUserLoading, isUserError } = useUser(session?.user_id);
 
   const setCreateStageModalOpen = useStore(
-    (state: NewSate) => state.setCreateStageModalOpen
+    (state: PlutomiState) => state.setCreateStageModalOpen
   );
 
   let { funnel, isFunnelLoading, isFunnelError } = useFunnelById(

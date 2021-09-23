@@ -23,7 +23,7 @@ export default function Funnels() {
   );
 
   const setCreateFunnelModalOpen = useStore(
-    (state: NewSate) => state.setCreateFunnelModalOpen
+    (state: PlutomiState) => state.setCreateFunnelModalOpen
   );
 
   // When rendering client side don't display anything until loading is complete

@@ -25,10 +25,10 @@ export default function CreateFunnelModal() {
     }
   };
 
-  const open = useStore((state: NewSate) => state.createFunnelModalIsOpen);
+  const open = useStore((state: PlutomiState) => state.createFunnelModalIsOpen);
 
   const setCreateFunnelModalOpen = useStore(
-    (state: NewSate) => state.setCreateFunnelModalOpen
+    (state: PlutomiState) => state.setCreateFunnelModalOpen
   );
 
   return (
