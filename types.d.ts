@@ -168,3 +168,9 @@ interface PricingExampleBoxInput {
   stage_title: string;
   num_applicants: number;
 }
+
+interface useUserOutput {
+  user: DynamoUser;
+  isUserLoading: boolean;
+  isUserError: boolean;
+}

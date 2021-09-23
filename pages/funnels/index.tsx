@@ -31,7 +31,6 @@ export default function Funnels() {
     return null;
   }
 
-  
   // If no session or bad userid
   if (!session || isUserError) {
     return (
