@@ -174,6 +174,7 @@ interface useUserOutput {
   isUserLoading: boolean;
   isUserError: boolean;
 }
+<<<<<<< HEAD
 
 interface useFunnelsOutput {
   funnels: DynamoFunnel[];
@@ -198,3 +199,5 @@ interface useStageByIdOutput {
   isStagesLoading: boolean;
   isStagesError: boolean;
 }
+=======
+>>>>>>> chore: Added dynamo user and interface for useUser SWR
