@@ -1,6 +1,6 @@
-import { NextApiRequest, NextApiResponse } from "next";
 import { GetFunnel } from "../../../../utils/funnels/getFunnelById";
 import withAuthorizer from "../../../../middleware/withAuthorizer";
+import { NextApiResponse } from "next";
 
 const handler = async (req: CustomRequest, res: NextApiResponse) => {
   const { method, query, user } = req;
@@ -11,7 +11,7 @@ const handler = async (req: CustomRequest, res: NextApiResponse) => {
     funnel_id: funnel_id as string,
   };
   if (method === "GET") {
-    console.log("Getting funnel id", funnel_id)
+    console.log("Getting funnel id", funnel_id);
     try {
       const funnel = await GetFunnel(get_funnel_input);
       if (!funnel) return res.status(404).json({ message: "Funnel not found" });

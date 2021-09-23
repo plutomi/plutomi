@@ -1,7 +1,8 @@
-import { NextApiResponse } from "next";
+import { GetAllUsersInOrg } from "../../../../utils/orgs/getAllUsersInOrg";
 import withCleanOrgName from "../../../../middleware/withCleanOrgName";
 import withAuthorizer from "../../../../middleware/withAuthorizer";
-import { GetAllUsersInOrg } from "../../../../utils/orgs/getAllUsersInOrg";
+import { NextApiResponse } from "next";
+
 const handler = async (req: CustomRequest, res: NextApiResponse) => {
   const { method, query, user } = req;
   const { org_id } = query;

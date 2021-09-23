@@ -15,6 +15,7 @@ export default function Dashboard() {
     (state: NewSate) => state.createOrgModalIsOpen
   );
   const [session, loading]: [CustomSession, boolean] = useSession();
+
   const { user, isUserLoading, isUserError } = useUser(session?.user_id);
 
   const name = user?.GSI1SK;

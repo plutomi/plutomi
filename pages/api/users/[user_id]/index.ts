@@ -1,9 +1,8 @@
-import { NextApiRequest, NextApiResponse } from "next";
-import { GetUserById } from "../../../../utils/users/getUserById";
 import { SanitizeResponse } from "../../../../utils/sanitizeResponse";
-import { Update } from "@aws-sdk/client-dynamodb";
-import { UpdateUser } from "../../../../utils/users/updateUser";
 import withAuthorizer from "../../../../middleware/withAuthorizer";
+import { GetUserById } from "../../../../utils/users/getUserById";
+import { NextApiResponse } from "next";
+
 const handler = async (req: CustomRequest, res: NextApiResponse) => {
   const { method, query } = req;
   const { user_id } = query;

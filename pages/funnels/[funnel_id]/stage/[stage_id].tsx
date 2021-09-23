@@ -12,6 +12,7 @@ export default function Stage() {
 
   const [session, loading]: [CustomSession, boolean] = useSession();
   const { user, isUserLoading, isUserError } = useUser(session?.user_id);
+
   const { stage, isStageLoading, isStageError } = useStageById(
     session?.user_id,
     funnel_id as string,
@@ -50,11 +51,12 @@ export default function Stage() {
         </h1>
         <div>
           {stage ? (
-            <div><div>
-              {JSON.stringify(stage)}</div>
+            <div>
+              <div>{JSON.stringify(stage)}</div>
               <div className="mx-auto p-20 border rounded-md">
                 <h1>Applicants will go here </h1>
-                </div></div>
+              </div>
+            </div>
           ) : isStageLoading ? (
             <h1> Loading stage</h1>
           ) : (

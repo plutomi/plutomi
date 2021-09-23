@@ -6,7 +6,9 @@ import SignedInNav from "../components/Navbar/SignedInNav";
 
 export default function NewPage() {
   const [session, loading]: [CustomSession, boolean] = useSession();
-  const { user, isUserLoading, isUserError } = useUser(session?.user_id);
+  const { user, isUserLoading, isUserError } = useUser(
+    session?.user_id
+  );
 
   const name = user?.GSI1SK;
   return (

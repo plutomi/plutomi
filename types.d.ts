@@ -168,3 +168,33 @@ interface PricingExampleBoxInput {
   stage_title: string;
   num_applicants: number;
 }
+
+interface useUserOutput {
+  user: DynamoUser;
+  isUserLoading: boolean;
+  isUserError: boolean;
+}
+
+interface useFunnelsOutput {
+  funnels: DynamoFunnel[];
+  isFunnelsLoading: boolean;
+  isFunnelsError: boolean;
+}
+
+interface useOrgUsersOutput {
+  orgUsers: DynamoUser[];
+  isOrgUsersLoading: boolean;
+  isOrgUsersError: boolean;
+}
+
+interface useStagesInFunnelOutput {
+  stages: DynamoStage[];
+  isStagesLoading: boolean;
+  isStagesError: boolean;
+}
+
+interface useStageByIdOutput {
+  stages: DynamoStage;
+  isStagesLoading: boolean;
+  isStagesError: boolean;
+}

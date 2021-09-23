@@ -1,7 +1,6 @@
 import { useRouter } from "next/router";
 import { signOut, useSession, signIn } from "next-auth/client";
 import Link from "next/link";
-import useUser from "../SWR/useUser";
 export default function AlreadySignedIn({ user }) {
   const router = useRouter();
 

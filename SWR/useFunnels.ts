@@ -3,7 +3,7 @@ import useSWR from "swr";
 
 const fetcher = (url) => axios.get(url).then((res) => res.data);
 
-function useFunnels(user_id: string) {
+function useFunnels(user_id: string): useFunnelsOutput {
   const shouldFetch = user_id ? true : false;
 
   const { data, error } = useSWR(shouldFetch ? `/api/funnels` : null, fetcher);

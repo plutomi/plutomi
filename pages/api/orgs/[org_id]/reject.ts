@@ -1,9 +1,8 @@
-import { NextApiRequest, NextApiResponse } from "next";
-import { JoinOrg } from "../../../../utils/users/joinOrg";
-import InputValidation from "../../../../utils/inputValidation";
-import withAuthorizer from "../../../../middleware/withAuthorizer";
-import AcceptOrgInvite from "../../../../utils/invites/acceptOrgInvite";
 import DeleteOrgInvite from "../../../../utils/invites/deleteOrgInvite";
+import withAuthorizer from "../../../../middleware/withAuthorizer";
+import InputValidation from "../../../../utils/inputValidation";
+import { NextApiResponse } from "next";
+
 const handler = async (req: CustomRequest, res: NextApiResponse) => {
   const { method, query, user, body } = req;
   const { org_id } = query;

@@ -25,7 +25,7 @@ export default function Main() {
           />
         )}
         <FeatureBox />
-      <UseCases />
+        <UseCases />
       </main>
 
       <section className="relative border-0 ">

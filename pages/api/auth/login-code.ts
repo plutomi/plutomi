@@ -1,12 +1,13 @@
-import SendLoginCode from "../../../utils/email/sendLoginCode";
-import { NextApiRequest, NextApiResponse } from "next";
-import { customAlphabet } from "nanoid/async";
 import { GetPastOrFutureTime, GetRelativeTime } from "../../../utils/time";
 import CreateLoginCode from "../../../utils/loginCodes/createLoginCode";
-const alphabet = "23456789ABCDEFGHJKLMNPQRSTUVWXYZ"; // Removes some characters for clarity
-import { random } from "lodash";
-const nanoid = customAlphabet(alphabet, random(8, 12));
+import SendLoginCode from "../../../utils/email/sendLoginCode";
 import InputValidation from "../../../utils/inputValidation";
+import { NextApiRequest, NextApiResponse } from "next";
+import { customAlphabet } from "nanoid/async";
+import { random } from "lodash";
+
+const alphabet = "23456789ABCDEFGHJKLMNPQRSTUVWXYZ"; // Removes some characters for clarity
+const nanoid = customAlphabet(alphabet, random(8, 12));
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   const { body, method } = req;
   const { user_email } = body;
