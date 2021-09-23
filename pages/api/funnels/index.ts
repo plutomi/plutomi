@@ -5,10 +5,16 @@ import InputValidation from "../../../utils/inputValidation";
 import { NextApiRequest, NextApiResponse } from "next";
 
 const handler = async (req: CustomRequest, res: NextApiResponse) => {
-  const { body, method, user } = req;
+  const { body, method } = req;
+  const user: DynamoUser = req.user;
   const { funnel_name } = body;
 
   if (method === "POST") {
+    if (user.org_id === "NO_ORG_ASSIGNED") {
+      return res.status(403).json({
+        message: "Please create an organization before creating a funnel",
+      });
+    }
     try {
       const create_funnel_input: CreateFunnelInput = {
         org_id: user.org_id,
