@@ -1,5 +1,4 @@
 import NumberFormat from "react-number-format";
-import { ApplicantPrices } from "../../Config";
 
 export default function PricingCard({ applicant_type, description }) {
   const bgColor =
@@ -23,7 +22,7 @@ export default function PricingCard({ applicant_type, description }) {
               {" "}
               <NumberFormat
                 className="font-bold text-dark"
-                value={ApplicantPrices[applicant_type.toLowerCase()] / 100}
+                value={100}
                 displayType={"text"}
                 decimalScale={2}
                 thousandSeparator={true}

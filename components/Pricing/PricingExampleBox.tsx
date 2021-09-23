@@ -1,6 +1,5 @@
 import { UserGroupIcon } from "@heroicons/react/outline";
 import NumberFormat from "react-number-format";
-import { ApplicantPrices } from "../../Config";
 
 export default function Box({ stage_title, num_applicants }) {
   return (
