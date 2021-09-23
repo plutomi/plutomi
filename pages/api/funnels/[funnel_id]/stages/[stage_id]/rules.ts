@@ -1,15 +1,15 @@
 import { NextApiRequest, NextApiResponse } from "next";
-import { CreateStageRule } from "../../../../utils/stages/createStageRule";
-import InputValidation from "../../../../utils/inputValidation";
-import withAuthorizer from "../../../../middleware/withAuthorizer";
-import { GetStageById } from "../../../../utils/stages/getStageById";
+import { CreateStageRule } from "../../../../../../utils/stages/createStageRule";
+import InputValidation from "../../../../../../utils/inputValidation";
+import withAuthorizer from "../../../../../../middleware/withAuthorizer";
+import { GetStageById } from "../../../../../../utils/stages/getStageById";
 const handler = async (req: CustomRequest, res: NextApiResponse) => {
   const { body, method, query, user } = req;
   const { validation } = body;
   const { funnel_id, stage_id } = query;
 
   if (method === "POST") {
-    const stage = await GetStageById(stage_id);
+    const stage = await GetStageById(stage_id); // TODO this needs to be updated
     if (!stage) {
       return res.status(400).json({ message: "That stage does not exist" });
     }

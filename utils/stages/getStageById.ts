@@ -6,7 +6,11 @@ const { DYNAMO_TABLE_NAME } = process.env;
  * @param org_id
  * @param stage_id
  */
-export async function GetStageById({ org_id, funnel_id, stage_id }: GetStageByIdInput) {
+export async function GetStageById({
+  org_id,
+  funnel_id,
+  stage_id,
+}: GetStageByIdInput) {
   const params: GetCommandInput = {
     TableName: DYNAMO_TABLE_NAME,
     Key: {
@@ -17,6 +21,7 @@ export async function GetStageById({ org_id, funnel_id, stage_id }: GetStageById
 
   try {
     const response = await Dynamo.send(new GetCommand(params));
+    console.log("called dynamo", response);
     return response.Item;
   } catch (error) {
     throw new Error(error);

@@ -64,7 +64,7 @@ export default function ViewFunnel() {
       </div>
       <button
         onClick={() => setCreateStageModalOpen(true)}
-        className="px-4 py-2 bg-blue-700 m-2 rounded-lg text-white"
+        className="mx-auto flex justify-center items-center px-4 py-2 bg-blue-700 m-2 rounded-lg text-white"
       >
         + Add stage
       </button>
