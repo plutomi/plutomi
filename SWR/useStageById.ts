@@ -3,15 +3,15 @@ import useSWR from "swr";
 
 const fetcher = (url: string) => axios.get(url).then((res) => res.data);
 
-function useStagesByFunnelId(
+function useStagesByOpeningId(
   user_id: string,
-  funnel_id: string,
+  opening_id: string,
   stage_id: string
 ): useStageByIdOutput {
-  const shouldFetch = user_id && funnel_id && stage_id ? true : false;
+  const shouldFetch = user_id && opening_id && stage_id ? true : false;
 
   const { data, error } = useSWR(
-    shouldFetch ? `/api/funnels/${funnel_id}/stages/${stage_id}` : null,
+    shouldFetch ? `/api/openings/${opening_id}/stages/${stage_id}` : null,
     fetcher
   );
 
@@ -22,4 +22,4 @@ function useStagesByFunnelId(
   };
 }
 
-export default useStagesByFunnelId;
+export default useStagesByOpeningId;

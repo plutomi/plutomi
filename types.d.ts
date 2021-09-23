@@ -14,31 +14,31 @@ interface CreateUserInput {
   user_email: string;
 }
 
-interface CreateFunnelInput {
+interface CreateOpeningInput {
   org_id: string;
-  funnel_name: string;
-  user?: DynamoUser; // User creating the funnel - Optional on client
+  opening_name: string;
+  user?: DynamoUser; // User creating the opening - Optional on client
 }
 
-interface GetFunnelInput {
+interface GetOpeningInput {
   org_id: string;
-  funnel_id: string;
+  opening_id: string;
 }
 interface CreateStageInput {
   org_id: string;
-  funnel_id: string;
+  opening_id: string;
   stage_name: string;
 }
 
 interface GetStageByIdInput {
   org_id: string;
-  funnel_id: string;
+  opening_id: string;
   stage_id: string;
 }
 
 interface CreateStageQuestionInput {
   org_id: string;
-  funnel_id: string;
+  opening_id: string;
   stage_id: string;
   question_title: string;
   question_description: string;
@@ -46,7 +46,7 @@ interface CreateStageQuestionInput {
 
 interface CreateStageRuleInput {
   org_id: string;
-  funnel_id: string;
+  opening_id: string;
   stage_id: string;
   validation: string; // TODO
 }
@@ -56,7 +56,7 @@ interface CreateApplicantInput {
   applicant_first_name: string;
   applicant_last_name: string;
   applicant_email: string;
-  funnel_id: string;
+  opening_id: string;
   stage_id: string;
 }
 
@@ -97,8 +97,8 @@ interface PlutomiState {
   removePokemon: Function;
   setCreateOrgModalOpen: Function;
   createOrgModalIsOpen: boolean;
-  createFunnelModalIsOpen: boolean;
-  setCreateFunnelModalOpen: Function;
+  createOpeningModalIsOpen: boolean;
+  setCreateOpeningModalOpen: Function;
   createStageModalIsOpen: boolean;
   setCreateStageModalOpen: Function;
 }
@@ -193,15 +193,15 @@ interface useStageByIdOutput {
   isStageError: boolean;
 }
 
-interface useFunnelByIdOutput {
-  funnel: DynamoFunnel;
-  isFunnelLoading: boolean;
-  isFunnelError: boolean;
+interface useOpeningByIdOutput {
+  opening: DynamoOpening;
+  isOpeningLoading: boolean;
+  isOpeningError: boolean;
 }
-interface useFunnelsOutput {
-  funnels: DynamoFunnel[];
-  isFunnelsLoading: boolean;
-  isFunnelsError: boolean;
+interface useOpeningsOutput {
+  openings: DynamoOpenings[];
+  isOpeningsLoading: boolean;
+  isOpeningsError: boolean;
 }
 
 interface useOrgUsersOutput {
@@ -210,7 +210,7 @@ interface useOrgUsersOutput {
   isOrgUsersError: boolean;
 }
 
-interface useAllStagesInFunnelOutput {
+interface useAllStagesInOpeningOutput {
   stages: DynamoStage[];
   isStagesLoading: boolean;
   isStagesError: boolean;
@@ -220,8 +220,8 @@ interface APICreateLoginCodeInput {
   user_email: string;
 }
 
-interface APICreateFunnelInput {
-  funnel_name: string;
+interface APICreateOpeningInput {
+  opening_name: string;
 }
 
 interface APICreateStageInput {

@@ -87,7 +87,7 @@ export default function CreateOrgModal() {
                       <div className="mt-1">
                         <p className="text-sm text-indigo-300">
                           Get started by creating an organization which will
-                          contain your funnels and users
+                          contain your openings and users
                         </p>
                       </div>
                     </div>

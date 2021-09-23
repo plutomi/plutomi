@@ -18,7 +18,7 @@ const user = {
 };
 const navigation = [
   { name: "Dashboard", href: "/dashboard" },
-  { name: "Funnels", href: "/funnels" },
+  { name: "Openings", href: "/openings" },
   { name: "Team", href: "/team" },
 ];
 const userNavigation = [
@@ -31,7 +31,7 @@ function classNames(...classes) {
   return classes.filter(Boolean).join(" ");
 }
 interface ValidNavigation {
-  current: "Dashboard" | "Funnels" | "Team" | "PLACEHOLDER";
+  current: "Dashboard" | "Openings" | "Team" | "PLACEHOLDER";
   user: DynamoUser;
 }
 export default function SignedInNav({ current, user }: ValidNavigation) {

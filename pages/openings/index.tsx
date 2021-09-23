@@ -1,30 +1,30 @@
-import CreateFunnelModal from "../../components/CreateFunnelModal";
+import CreateOpeningModal from "../../components/CreateOpeningModal";
 import UserProfileCard from "../../components/UserProfileCard";
 import SignedInNav from "../../components/Navbar/SignedInNav";
 import { GetRelativeTime } from "../../utils/time";
 import { useSession } from "next-auth/client";
 import SignIn from "../../components/SignIn";
-import useFunnels from "../../SWR/useFunnels";
+import useOpenings from "../../SWR/useOpenings";
 import useStore from "../../utils/store";
 import Link from "next/dist/client/link";
 import useUser from "../../SWR/useUser";
 import { useState } from "react";
 
-export default function Funnels() {
+export default function Openings() {
   const [search, setSearch] = useState("");
   const [session, loading]: [CustomSession, boolean] = useSession();
   const { user, isUserLoading, isUserError } = useUser(session?.user_id);
 
-  let { funnels, isFunnelsLoading, isFunnelsError } = useFunnels(
+  let { openings, isOpeningsLoading, isOpeningsError } = useOpenings(
     session?.user_id
   );
 
-  let filteredFunnels = funnels?.filter((funnel) =>
-    funnel.funnel_name.toLowerCase().includes(search.toLowerCase().trim())
+  let filteredOpenings = openings?.filter((opening) =>
+    opening.opening_name.toLowerCase().includes(search.toLowerCase().trim())
   );
 
-  const setCreateFunnelModalOpen = useStore(
-    (state: PlutomiState) => state.setCreateFunnelModalOpen
+  const setCreateOpeningModalOpen = useStore(
+    (state: PlutomiState) => state.setCreateOpeningModalOpen
   );
 
   // When rendering client side don't display anything until loading is complete
@@ -36,8 +36,8 @@ export default function Funnels() {
   if (!session || isUserError) {
     return (
       <SignIn
-        callbackUrl={`${process.env.NEXT_PUBLIC_NEXTAUTH_URL}/funnels`}
-        desiredPage={"your funnels"}
+        callbackUrl={`${process.env.NEXT_PUBLIC_NEXTAUTH_URL}/openings`}
+        desiredPage={"your openings"}
       />
     );
   }
@@ -52,7 +52,7 @@ export default function Funnels() {
 
   return (
     <div className="min-h-screen bg-white">
-      <SignedInNav current="Funnels" user={user} />
+      <SignedInNav current="Openings" user={user} />
       <div className="py-10">
         <header>
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -62,12 +62,12 @@ export default function Funnels() {
         <UserProfileCard user={user} />
 
         <main>
-          <CreateFunnelModal />
+          <CreateOpeningModal />
 
           <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">
             <button
               type="button"
-              onClick={() => setCreateFunnelModalOpen(true)}
+              onClick={() => setCreateOpeningModalOpen(true)}
               className="relative block w-full border-2 border-gray-300 border-dashed rounded-lg p-12 text-center hover:border-gray-400 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-gray-500"
             >
               <svg
@@ -86,12 +86,12 @@ export default function Funnels() {
                 />
               </svg>
               <span className="mt-2 block text-sm font-medium text-gray-900">
-                Create a new funnel
+                Create a new opening
               </span>
             </button>
             <div className="max-w-xl my-2 mx-auto">
               <label
-                htmlFor="funnel"
+                htmlFor="opening"
                 className="block text-sm font-medium text-gray-700"
               >
                 Search
@@ -99,8 +99,8 @@ export default function Funnels() {
               <div className="mt-1">
                 <input
                   type="text"
-                  name="funnel"
-                  id="funnel"
+                  name="opening"
+                  id="opening"
                   value={search}
                   onChange={(e) => setSearch(e.target.value)}
                   className="shadow-sm focus:ring-blue-gray-500 focus:border-blue-gray-500 block w-full sm:text-sm border-gray-300 rounded-md"
@@ -110,35 +110,35 @@ export default function Funnels() {
             </div>
 
             <div>
-              {filteredFunnels?.length > 0 ? (
-                filteredFunnels.map((funnel) => {
+              {filteredOpenings?.length > 0 ? (
+                filteredOpenings.map((opening) => {
                   return (
                     <div
-                      key={funnel.funnel_id}
+                      key={opening.opening_id}
                       className="border my-4 p-4 hover:bg-blue-gray-100 rounded-lg border-blue-gray-400"
                     >
-                      <Link href={`/funnels/${funnel.funnel_id}`}>
+                      <Link href={`/openings/${opening.opening_id}/stages`}>
                         <a>
                           <h1 className="font-bold text-xl text-normal my-2">
-                            {funnel.funnel_name}
+                            {opening.opening_name}
                           </h1>
                           <p className="text-normal text-lg ">
-                            Created {GetRelativeTime(funnel.created_at)}
+                            Created {GetRelativeTime(opening.created_at)}
                           </p>
                           <p className="text-light text-lg ">
                             {" "}
                             Apply link:{" "}
-                            {`${process.env.NEXT_PUBLIC_NEXTAUTH_URL}/${user.org_id}/${funnel.funnel_id}/apply`}
+                            {`${process.env.NEXT_PUBLIC_NEXTAUTH_URL}/${user.org_id}/${opening.opening_id}/apply`}
                           </p>
                         </a>
                       </Link>
                     </div>
                   );
                 })
-              ) : isFunnelsLoading ? (
+              ) : isOpeningsLoading ? (
                 <h1>Loading...</h1>
               ) : (
-                <h1>No funnels found</h1>
+                <h1>No openings found</h1>
               )}
             </div>
           </div>

@@ -7,7 +7,7 @@ const UrlSafeString = require("url-safe-string"),
   tagGenerator = new UrlSafeString();
 
 import useStore from "../utils/store";
-export default function CreateStageModal({ funnel_id }) {
+export default function CreateStageModal({ opening_id }) {
   const [stage_name, setStageName] = useState("");
 
   const createStage = async (e: FormEvent) => {
@@ -17,7 +17,7 @@ export default function CreateStageModal({ funnel_id }) {
     };
     try {
       const { status, data } = await axios.post(
-        `/api/funnels/${funnel_id}/stages`,
+        `/api/openings/${opening_id}/stages`,
         body
       );
       alert(data.message);
@@ -97,7 +97,7 @@ export default function CreateStageModal({ funnel_id }) {
                         <div className="space-y-6 pt-6 pb-5">
                           <div>
                             <label
-                              htmlFor="funnel-name"
+                              htmlFor="opening-name"
                               className="block text-sm font-medium text-gray-900"
                             >
                               Stage name
@@ -105,8 +105,8 @@ export default function CreateStageModal({ funnel_id }) {
                             <div className="mt-1">
                               <input
                                 type="text"
-                                name="funnel-name"
-                                id="funnel-name"
+                                name="opening-name"
+                                id="opening-name"
                                 required
                                 onChange={(e) => setStageName(e.target.value)}
                                 value={stage_name}

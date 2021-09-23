@@ -1,29 +1,29 @@
-import { GetFunnel } from "../../../../utils/funnels/getFunnelById";
+import { GetOpening } from "../../../../utils/openings/getOpeningById";
 import withAuthorizer from "../../../../middleware/withAuthorizer";
 import { NextApiResponse } from "next";
 
 const handler = async (req: CustomRequest, res: NextApiResponse) => {
   const user: DynamoUser = req.user;
   const { method, query } = req;
-  const { funnel_id } = query;
+  const { opening_id } = query;
 
-  const get_funnel_input: GetFunnelInput = {
+  const get_opening_input: GetOpeningInput = {
     org_id: user.org_id,
-    funnel_id: funnel_id as string,
+    opening_id: opening_id as string,
   };
-  
-  if (method === "GET") {
-    console.log("Getting funnel id", funnel_id);
-    try {
-      const funnel = await GetFunnel(get_funnel_input);
-      if (!funnel) return res.status(404).json({ message: "Funnel not found" });
 
-      return res.status(200).json(funnel);
+  if (method === "GET") {
+    try {
+      const opening = await GetOpening(get_opening_input);
+      if (!opening)
+        return res.status(404).json({ message: "Opening not found" });
+
+      return res.status(200).json(opening);
     } catch (error) {
       // TODO add error logger
       return res
         .status(400) // TODO change #
-        .json({ message: `Unable to get funnel: ${error}` });
+        .json({ message: `Unable to get opening: ${error}` });
     }
   }
 

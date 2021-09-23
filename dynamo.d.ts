@@ -32,34 +32,34 @@ interface DynamoUser {
   GSI2SK: "USER";
 }
 
-interface DynamoFunnel {
-  // PK: `ORG#${org_id}#FUNNEL#${funnel_id}`,
-  // SK: `FUNNEL`,
-  // funnel_name: funnel_name,
-  // entity_type: "FUNNEL",
+interface DynamoOpening {
+  // PK: `ORG#${org_id}#OPENING#${opening_id}`,
+  // SK: `OPENING`,
+  // opening_name: opening_name,
+  // entity_type: "OPENING",
   // created_at: now,
-  // funnel_id: funnel_id,
-  // GSI1PK: `ORG#${org_id}#FUNNELS`,
-  // GSI1SK: funnel_name,
+  // opening_id: opening_id,
+  // GSI1PK: `ORG#${org_id}#OPENINGS`,
+  // GSI1SK: opening_name,
   PK: string;
-  SK: "FUNNEL";
-  funnel_name: string;
-  entity_type: "FUNNEL";
+  SK: "OPENING";
+  opening_name: string;
+  entity_type: "OPENING";
   created_at: string; // ISO
-  funnel_id: string;
+  opening_id: string;
   GSI1PK: string;
   GSI1SK: string;
 }
 
 interface DynamoStage {
-  // PK: `ORG#${org_id}#FUNNEL#${funnel_id}#STAGE#${stage_id}`;
+  // PK: `ORG#${org_id}#OPENING#${opening_id}#STAGE#${stage_id}`;
   // SK: `STAGE`;
   // stage_name: stage_name;
   // entity_type: "STAGE";
   // created_at: now;
   // stage_id: stage_id;
-  // funnel_id: funnel_id;
-  // GSI1PK: `ORG#${org_id}#FUNNEL#${funnel_id}#STAGES`; // Get all stages in a funnel
+  // opening_id: opening_id;
+  // GSI1PK: `ORG#${org_id}#OPENING#${opening_id}#STAGES`; // Get all stages in an opening
   // GSI1SK: stage_name;
   PK: string;
   SK: `STAGE`;
@@ -67,7 +67,7 @@ interface DynamoStage {
   entity_type: "STAGE";
   created_at: string;
   stage_id: string;
-  funnel_id: string;
+  opening_id: string;
   GSI1PK: string;
   GSI1SK: string;
 }

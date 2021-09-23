@@ -17,7 +17,7 @@ const handler = async (req: CustomRequest, res: NextApiResponse) => {
     }
     const create_stage_question_input: CreateStageQuestionInput = {
       org_id: user.org_id,
-      funnel_id: stage.funnel_id,
+      opening_id: stage.opening_id,
       stage_id: stage_id,
       question_title: question_title,
       question_description: question_description,

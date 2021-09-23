@@ -1,14 +1,14 @@
-import { GetAllStagesInFunnel } from "../../../../../utils/stages/getAllStagesInFunnel";
+import { GetAllStagesInOpening } from "../../../../../utils/stages/getAllStagesInOpening";
 import withAuthorizer from "../../../../../middleware/withAuthorizer";
 import { CreateStage } from "../../../../../utils/stages/createStage";
 import InputValidation from "../../../../../utils/inputValidation";
 import { NextApiResponse } from "next";
 
-// Create stage in a funnel
+// Create stage in an opening
 const handler = async (req: CustomRequest, res: NextApiResponse) => {
   const { body, method, query } = req;
   const { stage_name }: APICreateStageInput = body;
-  const { funnel_id } = query;
+  const { opening_id } = query;
   const user: DynamoUser = req.user;
 
   if (method === "POST") {
@@ -19,7 +19,7 @@ const handler = async (req: CustomRequest, res: NextApiResponse) => {
     }
     const create_stage_input: CreateStageInput = {
       org_id: user.org_id,
-      funnel_id: funnel_id as string,
+      opening_id: opening_id as string,
       stage_name: stage_name as string,
     };
 
@@ -51,12 +51,10 @@ const handler = async (req: CustomRequest, res: NextApiResponse) => {
     }
   }
 
-  // Get all stages in a funnel // TODO
-
+  // Get all stages in an opening // TODO
   if (method === "GET") {
     try {
-      const all_stages = await GetAllStagesInFunnel(user.org_id, funnel_id);
-      console.log("ALL STAGES");
+      const all_stages = await GetAllStagesInOpening(user.org_id, opening_id);
       return res.status(200).json(all_stages);
     } catch (error) {
       // TODO add error logger

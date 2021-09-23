@@ -2,12 +2,12 @@ import { GetCommand, GetCommandInput } from "@aws-sdk/lib-dynamodb";
 import { Dynamo } from "../../libs/ddbDocClient";
 const { DYNAMO_TABLE_NAME } = process.env;
 
-export async function GetFunnel({ org_id, funnel_id }: GetFunnelInput) {
+export async function GetOpening({ org_id, opening_id }: GetOpeningInput) {
   const params: GetCommandInput = {
     TableName: DYNAMO_TABLE_NAME,
     Key: {
-      PK: `ORG#${org_id}#FUNNEL#${funnel_id}`,
-      SK: `FUNNEL`,
+      PK: `ORG#${org_id}#OPENING#${opening_id}`,
+      SK: `OPENING`,
     },
   };
 

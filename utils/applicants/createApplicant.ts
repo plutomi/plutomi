@@ -10,7 +10,7 @@ export async function CreateApplicant({
   applicant_email,
   applicant_first_name,
   applicant_last_name,
-  funnel_id,
+  opening_id,
   stage_id,
 }: CreateApplicantInput) {
   const now = GetCurrentTime("iso");
@@ -26,7 +26,7 @@ export async function CreateApplicant({
     entity_type: "APPLICANT",
     created_at: now,
     GSI1PK: `ORG#${org_id}#APPLICANTS`,
-    GSI1SK: `FUNNEL#${funnel_id}#STAGE#${stage_id}`, // Essetially their current stage AND funnel
+    GSI1SK: `OPENING#${opening_id}#STAGE#${stage_id}`, // Essetially their current stage AND opening
   };
 
   const params: PutCommandInput = {
