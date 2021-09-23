@@ -7,7 +7,7 @@ const handler = async (req: CustomRequest, res: NextApiResponse) => {
     applicant_email,
     applicant_first_name,
     applicant_last_name,
-    funnel_id,
+    opening_id,
     stage_id,
   } = body;
   const { org_id } = query;
@@ -19,7 +19,7 @@ const handler = async (req: CustomRequest, res: NextApiResponse) => {
         applicant_email: applicant_email,
         applicant_first_name: applicant_first_name,
         applicant_last_name: applicant_last_name,
-        funnel_id: funnel_id,
+        opening_id: opening_id,
         stage_id: stage_id,
       };
       let missing_keys = [];
@@ -45,13 +45,13 @@ const handler = async (req: CustomRequest, res: NextApiResponse) => {
 
   //   if (method === "GET") { // TODO Enable get all applicants?
   //     try {
-  //       const all_funnels = await GetAllFunnelsInOrg(org_id as string);
-  //       return res.status(200).json(all_funnels);
+  //       const all_openings = await GetAllOpeningsInOrg(org_id as string);
+  //       return res.status(200).json(all_openings);
   //     } catch (error) {
   //       // TODO add error logger
   //       return res
   //         .status(400) // TODO change #
-  //         .json({ message: `Unable to retrieve funnels: ${error}` });
+  //         .json({ message: `Unable to retrieve openings: ${error}` });
   //     }
   //   }
   return res.status(405).json({ message: "Not Allowed" });

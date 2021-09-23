@@ -2,20 +2,20 @@ import { GetStageById } from "../../../../../../utils/stages/getStageById";
 import withAuthorizer from "../../../../../../middleware/withAuthorizer";
 import { NextApiResponse } from "next";
 
-// Create stage in a funnel
+// Create stage in a opening
 const handler = async (req: CustomRequest, res: NextApiResponse) => {
   const { method, query } = req;
   const user: DynamoUser = req.user;
-  const { funnel_id, stage_id } = query;
+  const { opening_id, stage_id } = query;
 
   const get_stage_input: GetStageByIdInput = {
     org_id: user.org_id,
-    funnel_id: funnel_id as string,
+    opening_id: opening_id as string,
     stage_id: stage_id as string,
   };
 
   console.log("Getting single stage", get_stage_input);
-  // Get a single stage in a funnel
+  // Get a single stage in an opening
   if (method === "GET") {
     try {
       const stage = await GetStageById(get_stage_input);

@@ -5,7 +5,7 @@ import {
   UsersIcon,
 } from "@heroicons/react/solid";
 
-const funnels = [
+const openings = [
   {
     id: 1,
     title: "Back End Developer",
@@ -35,11 +35,11 @@ const funnels = [
   },
 ];
 
-export default function FunnelList({funnels}) {
+export default function OpeningList({openings}) {
   return (
     <div className="bg-white shadow overflow-hidden sm:rounded-md">
       <ul role="list" className="divide-y divide-gray-200">
-        {funnels.map((position) => (
+        {openings.map((position) => (
           <li key={position.id}>
             <a href="#" className="block hover:bg-gray-50">
               <div className="px-4 py-4 sm:px-6">
