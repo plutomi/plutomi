@@ -1,39 +1,39 @@
-name: Run Jest Tests
+# name: Run Jest Tests
 
-on:
-  push:
-    branches: [main]
-  pull_request:
-    branches: [main]
+# on:
+#   push:
+#     branches: [main]
+#   pull_request:
+#     branches: [main]
 
-jobs:
-  tests:
-    runs-on: ubuntu-latest
-    env: # TODO YUCK!!! There has to be a better way for this lol
-      node-version: 14.x
-      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-      AWS_ACCOUNT_ID: ${{ secrets.AWS_ACCOUNT_ID }}
-      WEBSITE_BUCKET_NAME: ${{ secrets.WEBSITE_BUCKET_NAME }}
-      CLOUDFRONT_ID: ${{ secrets.CLOUDFRONT_ID }}
-      DEFAULT_LAMBDA_NAME: ${{ secrets.DEFAULT_LAMBDA_NAME }}
-      API_LAMBDA_NAME: ${{ secrets.API_LAMBDA_NAME }}
-      IMAGE_LAMBDA_NAME: ${{ secrets.IMAGE_LAMBDA_NAME }}
-      DOMAIN_NAME: ${{ secrets.DOMAIN_NAME }}
-      ID_LENGTH: ${{ secrets.ID_LENGTH }}
-      DYNAMO_TABLE_NAME: ${{ secrets.DYNAMO_TABLE_NAME }}
-      GSI1_INDEX: ${{ secrets.GSI1_INDEX }}
-      GSI2_INDEX: ${{ secrets.GSI2_INDEX }}
+# jobs:
+#   tests:
+#     runs-on: ubuntu-latest
+#     env: # TODO YUCK!!! There has to be a better way for this lol
+#       node-version: 14.x
+#       AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+#       AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+#       AWS_ACCOUNT_ID: ${{ secrets.AWS_ACCOUNT_ID }}
+#       WEBSITE_BUCKET_NAME: ${{ secrets.WEBSITE_BUCKET_NAME }}
+#       CLOUDFRONT_ID: ${{ secrets.CLOUDFRONT_ID }}
+#       DEFAULT_LAMBDA_NAME: ${{ secrets.DEFAULT_LAMBDA_NAME }}
+#       API_LAMBDA_NAME: ${{ secrets.API_LAMBDA_NAME }}
+#       IMAGE_LAMBDA_NAME: ${{ secrets.IMAGE_LAMBDA_NAME }}
+#       DOMAIN_NAME: ${{ secrets.DOMAIN_NAME }}
+#       ID_LENGTH: ${{ secrets.ID_LENGTH }}
+#       DYNAMO_TABLE_NAME: ${{ secrets.DYNAMO_TABLE_NAME }}
+#       GSI1_INDEX: ${{ secrets.GSI1_INDEX }}
+#       GSI2_INDEX: ${{ secrets.GSI2_INDEX }}
 
-    steps:
-      - uses: actions/checkout@v2
-      - name: Setting up Node Node.js ${{ env.node-version }}
-        uses: actions/setup-node@v1
-        with:
-          node-version: ${{ env.node-version }}
+#     steps:
+#       - uses: actions/checkout@v2
+#       - name: Setting up Node Node.js ${{ env.node-version }}
+#         uses: actions/setup-node@v1
+#         with:
+#           node-version: ${{ env.node-version }}
 
-      - name: Installing dependencies
-        run: npm i
+#       - name: Installing dependencies
+#         run: npm i
 
-      - name: Running tests
-        run: npm t
+#       - name: Running tests
+#         run: npm t
