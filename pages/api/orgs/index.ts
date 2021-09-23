@@ -6,8 +6,17 @@ import withAuthorizer from "../../../middleware/withAuthorizer";
 import { JoinOrg } from "../../../utils/users/joinOrg";
 import { GetAllOrgInvites } from "../../../utils/invites/getAllOrgInvites";
 const handler = async (req: CustomRequest, res: NextApiResponse) => {
-  const { body, method, user } = req;
+  const { body, method } = req;
   const { org_name, org_id } = body;
+
+  const user: DynamoUser = req.user;
+
+  if (org_name === "NO_ORG_ASSIGNED") {
+    return res.status(403).json({
+      message: `You cannot create an org with this name: ${org_name}`,
+    });
+  }
+
   // Create an org
   if (method === "POST") {
     if (user.org_id != "NO_ORG_ASSIGNED") {
