@@ -32,6 +32,7 @@ interface CreateStageInput {
 
 interface GetStageByIdInput {
   org_id: string;
+  funnel_id: string;
   stage_id: string;
 }
 
@@ -98,6 +99,8 @@ interface NewSate {
   createOrgModalIsOpen: boolean;
   createFunnelModalIsOpen: boolean;
   setCreateFunnelModalOpen: Function;
+  createStageModalIsOpen: boolean;
+  setCreateStageModalOpen: Function;
 }
 
 interface DynamoUser {
