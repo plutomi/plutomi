@@ -126,7 +126,6 @@ export default function Openings() {
                             Created {GetRelativeTime(opening.created_at)}
                           </p>
                           <p> {opening.is_public ? "Public" : "Private"}</p>
-
                           <p className="text-light text-lg ">
                             {" "}
                             Apply link:{" "}
