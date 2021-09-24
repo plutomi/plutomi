@@ -8,18 +8,20 @@ const { DYNAMO_TABLE_NAME } = process.env;
 export async function CreateOpening({
   org_id,
   opening_name,
+  is_public,
 }: CreateOpeningInput) {
   const now = GetCurrentTime("iso");
   const opening_id = nanoid(10);
-  const new_opening = {
+  const new_opening: DynamoOpening = {
     PK: `ORG#${org_id}#OPENING#${opening_id}`,
     SK: `OPENING`,
     opening_name: opening_name,
     entity_type: "OPENING",
-    created_at: now,
+    created_at: now as string,
     opening_id: opening_id,
     GSI1PK: `ORG#${org_id}#OPENINGS`,
     GSI1SK: opening_name,
+    is_public: is_public,
   };
 
   const params: PutCommandInput = {

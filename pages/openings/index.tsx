@@ -111,7 +111,7 @@ export default function Openings() {
 
             <div>
               {filteredOpenings?.length > 0 ? (
-                filteredOpenings.map((opening) => {
+                filteredOpenings.map((opening: DynamoOpening) => {
                   return (
                     <div
                       key={opening.opening_id}
@@ -125,6 +125,8 @@ export default function Openings() {
                           <p className="text-normal text-lg ">
                             Created {GetRelativeTime(opening.created_at)}
                           </p>
+                          <p> {opening.is_public ? "Public" : "Private"}</p>
+
                           <p className="text-light text-lg ">
                             {" "}
                             Apply link:{" "}
