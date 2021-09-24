@@ -22,7 +22,7 @@ export default function PricingCard({ applicant_type, description }) {
               {" "}
               <NumberFormat
                 className="font-bold text-dark"
-                value={100}
+                value={1}
                 displayType={"text"}
                 decimalScale={2}
                 thousandSeparator={true}

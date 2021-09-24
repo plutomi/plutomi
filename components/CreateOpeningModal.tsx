@@ -2,6 +2,7 @@ import { FormEvent, Fragment, useState } from "react";
 import { Dialog, Transition } from "@headlessui/react";
 import { XIcon } from "@heroicons/react/outline";
 import axios from "axios";
+import CreateOpeningOptions from "./CreateOpeningOptions";
 
 const UrlSafeString = require("url-safe-string"),
   tagGenerator = new UrlSafeString();
@@ -9,11 +10,12 @@ const UrlSafeString = require("url-safe-string"),
 import useStore from "../utils/store";
 export default function CreateOpeningModal() {
   const [opening_name, setOpeningName] = useState("");
-
+  const [is_public, setIsPublic] = useState(false);
   const createOpening = async (e: FormEvent) => {
     e.preventDefault();
     const body: APICreateOpeningInput = {
       opening_name: opening_name,
+      is_public: is_public,
     };
     try {
       const { status, data } = await axios.post("/api/openings", body);
@@ -113,6 +115,34 @@ export default function CreateOpeningModal() {
                                 value={opening_name}
                                 className="block w-full shadow-sm sm:text-sm focus:ring-indigo-500 focus:border-indigo-500 border-gray-300 rounded-md"
                               />
+                            </div>
+                          </div>
+                          <div className="relative flex items-start">
+                            <div className="flex items-center h-5">
+                              <input
+                                id="comments"
+                                aria-describedby="comments-description"
+                                name="comments"
+                                type="checkbox"
+                                checked={is_public}
+                                onChange={(e) => setIsPublic(e.target.checked)}
+                                className="focus:ring-indigo-500 h-4 w-4 text-indigo-600 border-gray-300 rounded"
+                              />
+                            </div>
+                            <div className="ml-3 text-sm">
+                              <label
+                                htmlFor="comments"
+                                className="font-medium text-gray-700"
+                              >
+                                Public
+                              </label>
+                              <p
+                                id="comments-description"
+                                className="text-gray-500"
+                              >
+                                Make this opening available to everyone once
+                                created
+                              </p>
                             </div>
                           </div>
 

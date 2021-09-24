@@ -17,6 +17,7 @@ interface CreateUserInput {
 interface CreateOpeningInput {
   org_id: string;
   opening_name: string;
+  is_public: boolean;
   user?: DynamoUser; // User creating the opening - Optional on client
 }
 
@@ -204,6 +205,12 @@ interface useOpeningsOutput {
   isOpeningsError: boolean;
 }
 
+interface usePublicOpeningsOutput {
+  publicOpenings: DynamoOpenings[];
+  isPublicOpeningsLoading: boolean;
+  isPublicOpeningsError: boolean;
+}
+
 interface useOrgUsersOutput {
   orgUsers: DynamoUser[];
   isOrgUsersLoading: boolean;
@@ -222,6 +229,7 @@ interface APICreateLoginCodeInput {
 
 interface APICreateOpeningInput {
   opening_name: string;
+  is_public: boolean;
 }
 
 interface APICreateStageInput {
