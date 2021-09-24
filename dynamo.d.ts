@@ -42,6 +42,7 @@ interface DynamoOpening {
   // GSI1PK: `ORG#${org_id}#OPENINGS`,
   // GSI1SK: opening_name,
   // is_public: false,
+  // stage_order: [stage_id_1, stage_id_2]
   PK: string;
   SK: "OPENING";
   opening_name: string;
@@ -51,6 +52,7 @@ interface DynamoOpening {
   GSI1PK: string;
   GSI1SK: string;
   is_public: boolean;
+  stage_order: string[];
 }
 
 interface DynamoStage {

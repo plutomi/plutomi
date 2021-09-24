@@ -264,3 +264,9 @@ interface APIRejectOrgInvite {
   timestamp: string;
   invite_id: string;
 }
+
+interface AddNewStageToOpeningInput {
+  org_id: string;
+  opening_id: string;
+  stage_id: string;
+}

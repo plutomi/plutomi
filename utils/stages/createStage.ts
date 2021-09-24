@@ -2,6 +2,8 @@ import { PutCommand, PutCommandInput } from "@aws-sdk/lib-dynamodb";
 import { Dynamo } from "../../libs/ddbDocClient";
 import { GetCurrentTime } from "../time";
 import { nanoid } from "nanoid";
+import { AddNewStageToOpening } from "../openings/addNewStageToOpening";
+
 const { DYNAMO_TABLE_NAME } = process.env;
 
 export async function CreateStage({
@@ -10,7 +12,6 @@ export async function CreateStage({
   opening_id,
 }: CreateStageInput) {
   // TODO **MAJOR** Do not allow creation of stages with the same name
-
   const now = GetCurrentTime("iso");
   const stage_id = nanoid(10);
   const new_stage = {
@@ -33,6 +34,11 @@ export async function CreateStage({
 
   try {
     await Dynamo.send(new PutCommand(params));
+    const added_stage = await AddNewStageToOpening({
+      org_id,
+      opening_id,
+      stage_id,
+    }); // TODO convert to transaction
     return new_stage;
   } catch (error) {
     throw new Error(error);
