@@ -22,6 +22,7 @@ export async function CreateOpening({
     GSI1PK: `ORG#${org_id}#OPENINGS`,
     GSI1SK: opening_name,
     is_public: is_public,
+    stage_order: [],
   };
 
   const params: PutCommandInput = {
