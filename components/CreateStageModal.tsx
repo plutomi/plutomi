@@ -2,7 +2,7 @@ import { FormEvent, Fragment, useState } from "react";
 import { Dialog, Transition } from "@headlessui/react";
 import { XIcon } from "@heroicons/react/outline";
 import axios from "axios";
-
+import mutate from "swr";
 const UrlSafeString = require("url-safe-string"),
   tagGenerator = new UrlSafeString();
 
@@ -20,9 +20,12 @@ export default function CreateStageModal({ opening_id }) {
         `/api/openings/${opening_id}/stages`,
         body
       );
+      mutate(`/api/openings/${opening_id}/stages`);
+
       alert(data.message);
       setCreateStageModalOpen(false);
     } catch (error) {
+      console.log("Error creating stage", error, "in modal");
       alert(error.response.data.message);
     }
   };

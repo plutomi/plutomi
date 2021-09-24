@@ -4,6 +4,8 @@ import SignIn from "../../../../components/SignIn";
 import useUser from "../../../../SWR/useUser";
 import { useSession } from "next-auth/client";
 import { useRouter } from "next/router";
+import axios from "axios";
+import { mutate } from "swr";
 export default function Stage() {
   const router = useRouter();
   const { stage_id, opening_id } = router.query;
@@ -16,6 +18,17 @@ export default function Stage() {
     opening_id as string,
     stage_id as string
   );
+
+  const DeleteStage = async (stage_id: string) => {
+    try {
+      await axios.delete(`/api/openings/${opening_id}/stages/${stage_id}`);
+      alert("Deleted atage");
+      router.push(`/openings/${opening_id}/stages`);
+      mutate(`/api/openings/${opening_id}/stages`);
+    } catch (error) {
+      alert(`Error deleting stage ${error.response.data.message}`);
+    }
+  };
 
   // When rendering client side don't display anything until loading is complete
   if (typeof window !== "undefined" && loading) {
@@ -53,6 +66,12 @@ export default function Stage() {
               <div>{JSON.stringify(stage)}</div>
               <div className="mx-auto p-20 border rounded-md">
                 <h1>Applicants will go here </h1>
+                <button
+                  onClick={(e) => DeleteStage(stage.stage_id)}
+                  className="bg-red-500 px-5 py-3 text-white"
+                >
+                  Delete Stage
+                </button>
               </div>
             </div>
           ) : isStageLoading ? (

@@ -6,9 +6,11 @@ import { GetRelativeTime } from "../../../../utils/time";
 import SignIn from "../../../../components/SignIn";
 import { useSession } from "next-auth/client";
 import useStore from "../../../../utils/store";
+import { mutate } from "swr";
 import useUser from "../../../../SWR/useUser";
 import Link from "next/dist/client/link";
 import { useRouter } from "next/router";
+import axios from "axios";
 export default function ViewOpening() {
   const router = useRouter();
   const { opening_id } = router.query;
@@ -28,6 +30,17 @@ export default function ViewOpening() {
     session?.user_id,
     opening_id as string
   );
+
+  const DeleteStage = async (stage_id: string) => {
+    try {
+      await axios.delete(`/api/openings/${opening_id}/stages/${stage_id}`);
+      alert("Deleted atage");
+      mutate(`/api/openings/${opening_id}/stages`);
+    } catch (error) {
+      alert(`Error deleting stage ${error.response.data.message}`);
+    }
+  };
+
   // When rendering client side don't display anything until loading is complete
   if (typeof window !== "undefined" && loading) {
     return null;
@@ -79,27 +92,33 @@ export default function ViewOpening() {
               {stages?.length > 0 ? (
                 stages.map((stage) => {
                   return (
-                    <div
-                      key={stage.stage_id}
-                      className="border my-4 p-4 hover:bg-blue-gray-100 rounded-lg border-blue-gray-400"
-                    >
-                      <Link
-                        href={`/openings/${opening_id}/stages/${stage.stage_id}`}
-                      >
-                        <a>
-                          <h1 className="font-bold text-xl text-normal my-2">
-                            {stage.stage_name}
-                          </h1>
-                          <p className="text-normal text-lg ">
-                            Created {GetRelativeTime(stage.created_at)}
-                          </p>
-                          {/* <p className="text-light text-lg ">
+                    <div key={stage.stage_id} className="flex justify-center items-center">
+                      <div className="border w-2/3 my-4 p-4 hover:bg-blue-gray-100 rounded-lg border-blue-gray-400">
+                        <Link
+                          href={`/openings/${opening_id}/stages/${stage.stage_id}`}
+                        >
+                          <a>
+                            <h1 className="font-bold text-xl text-normal my-2">
+                              {stage.stage_name}
+                            </h1>
+                            <p className="text-normal text-lg ">
+                              Created {GetRelativeTime(stage.created_at)}
+                            </p>
+
+                            {/* <p className="text-light text-lg ">
                             {" "}
                             Apply link:{" "}
                             {`https://${process.env.NEXT_PUBLIC_NEXTAUTH_URL}/${user.org_id}/${opening.opening_id}/apply`}
                           </p> */}
-                        </a>
-                      </Link>
+                          </a>
+                        </Link>
+                      </div>
+                      <button
+                        onClick={(e) => DeleteStage(stage.stage_id)}
+                        className="bg-red-500 px-5 py-3 text-white m-8 rounded-lg p-4"
+                      >
+                        Delete Stage
+                      </button>
                     </div>
                   );
                 })
