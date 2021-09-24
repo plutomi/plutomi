@@ -205,6 +205,12 @@ interface useOpeningsOutput {
   isOpeningsError: boolean;
 }
 
+interface usePublicOpeningsOutput {
+  publicOpenings: DynamoOpenings[];
+  isPublicOpeningsLoading: boolean;
+  isPublicOpeningsError: boolean;
+}
+
 interface useOrgUsersOutput {
   orgUsers: DynamoUser[];
   isOrgUsersLoading: boolean;
