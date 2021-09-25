@@ -270,3 +270,9 @@ interface AddNewStageToOpeningInput {
   opening_id: string;
   stage_id: string;
 }
+
+interface DeleteStageInput {
+  org_id: string;
+  opening_id: string;
+  stage_id: string;
+}
