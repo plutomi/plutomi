@@ -3,6 +3,8 @@ import { Dynamo } from "../../libs/ddbDocClient";
 
 const { DYNAMO_TABLE_NAME } = process.env;
 
+// TODO check if stage is empt of appliants first
+// TODO delete stage from the funnels sort order
 export async function DeleteStage({
   org_id,
   opening_id,
@@ -16,6 +18,7 @@ export async function DeleteStage({
     },
   };
 
+  console.log("PK", params.Key.PK);
   try {
     await Dynamo.send(new DeleteCommand(params));
   } catch (error) {

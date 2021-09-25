@@ -3,7 +3,7 @@ import withAuthorizer from "../../../../../middleware/withAuthorizer";
 import { CreateStage } from "../../../../../utils/stages/createStage";
 import InputValidation from "../../../../../utils/inputValidation";
 import { NextApiResponse } from "next";
-
+import { AddNewStageToOpening } from "../../../../../utils/openings/addNewStageToOpening";
 // Create stage in an opening
 const handler = async (req: CustomRequest, res: NextApiResponse) => {
   const { body, method, query } = req;
@@ -40,11 +40,13 @@ const handler = async (req: CustomRequest, res: NextApiResponse) => {
       });
 
     try {
-      // TODO **MAJOR** Do not allow creation of stages with the same name
-      const stage = await CreateStage(create_stage_input);
-      return res.status(201).json({ message: "Stage created!" });
+      console.log("calling create stage");
+      await CreateStage(create_stage_input);
+      console.log("API stage created");
+      return res.status(201).json({ message: "Stage created" });
     } catch (error) {
       // TODO add error logger
+      console.log("API stage creation error", error);
       return res
         .status(400) // TODO change #
         .json({ message: `Unable to create stage: ${error}` });

@@ -20,12 +20,12 @@ export default function ViewOpening() {
   const setCreateStageModalOpen = useStore(
     (state: PlutomiState) => state.setCreateStageModalOpen
   );
-
   let { opening, isOpeningLoading, isOpeningError } = useOpeningById(
     session?.user_id,
     opening_id as string
   );
 
+  console.log("Opening component id", opening_id);
   const { stages, isStagesLoading, isStagesError } = useAllStagesInOpening(
     session?.user_id,
     opening_id as string
@@ -34,7 +34,7 @@ export default function ViewOpening() {
   const DeleteStage = async (stage_id: string) => {
     try {
       await axios.delete(`/api/openings/${opening_id}/stages/${stage_id}`);
-      alert("Deleted atage");
+      alert("SSStage deleted");
       mutate(`/api/openings/${opening_id}/stages`);
     } catch (error) {
       alert(`Error deleting stage ${error.response.data.message}`);
@@ -92,7 +92,10 @@ export default function ViewOpening() {
               {stages?.length > 0 ? (
                 stages.map((stage) => {
                   return (
-                    <div key={stage.stage_id} className="flex justify-center items-center">
+                    <div
+                      key={stage.stage_id}
+                      className="flex justify-center items-center"
+                    >
                       <div className="border w-2/3 my-4 p-4 hover:bg-blue-gray-100 rounded-lg border-blue-gray-400">
                         <Link
                           href={`/openings/${opening_id}/stages/${stage.stage_id}`}

@@ -11,7 +11,6 @@ export async function CreateStage({
   stage_name,
   opening_id,
 }: CreateStageInput) {
-  // TODO **MAJOR** Do not allow creation of stages with the same name
   const now = GetCurrentTime("iso");
   const stage_id = nanoid(10);
   const new_stage = {
@@ -33,13 +32,22 @@ export async function CreateStage({
   };
 
   try {
+    console.log("Creating new stage");
     await Dynamo.send(new PutCommand(params));
-    const added_stage = await AddNewStageToOpening({
-      org_id,
-      opening_id,
-      stage_id,
-    }); // TODO convert to transaction
-    return new_stage;
+    console.log("stage created");
+
+    const AddNewStageToOpeningInput = {
+      org_id: org_id,
+      opening_id: opening_id,
+      stage_id: stage_id,
+    };
+
+    const updated_opening = await AddNewStageToOpening(
+      AddNewStageToOpeningInput
+    );
+    console.log(`Adding this ID ${stage_id} to opening`, updated_opening);
+
+    return;
   } catch (error) {
     throw new Error(error);
   }

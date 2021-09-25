@@ -9,6 +9,11 @@ const UrlSafeString = require("url-safe-string"),
 import useStore from "../utils/store";
 export default function CreateStageModal({ opening_id }) {
   const [stage_name, setStageName] = useState("");
+  const open = useStore((state: PlutomiState) => state.createStageModalIsOpen);
+
+  const setCreateStageModalOpen = useStore(
+    (state: PlutomiState) => state.setCreateStageModalOpen
+  );
 
   const createStage = async (e: FormEvent) => {
     e.preventDefault();
@@ -20,21 +25,16 @@ export default function CreateStageModal({ opening_id }) {
         `/api/openings/${opening_id}/stages`,
         body
       );
-      mutate(`/api/openings/${opening_id}/stages`);
-
+      console.log("In modal", data.message, opening_id);
       alert(data.message);
+      // TODO an error occurs when calling the mutate here
+      // mutate(`/api/openings/${opening_id}/stages`);
       setCreateStageModalOpen(false);
     } catch (error) {
-      console.log("Error creating stage", error, "in modal");
+      console.error("Error creating stage", error);
       alert(error.response.data.message);
     }
   };
-
-  const open = useStore((state: PlutomiState) => state.createStageModalIsOpen);
-
-  const setCreateStageModalOpen = useStore(
-    (state: PlutomiState) => state.setCreateStageModalOpen
-  );
 
   return (
     <Transition.Root show={open} as={Fragment}>

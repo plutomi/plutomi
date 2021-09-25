@@ -75,7 +75,7 @@ export default function Stage() {
               </div>
             </div>
           ) : isStageLoading ? (
-            <h1> Loading stage</h1>
+            <h1> Loading stage</h1> // TODO now this is stuck
           ) : (
             <h1>No stage found</h1>
           )}

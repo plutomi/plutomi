@@ -39,7 +39,7 @@ const handler = async (req: CustomRequest, res: NextApiResponse) => {
         stage_id: stage_id,
       };
 
-      await DeleteStage(delete_stage_input);
+      await DeleteStage(delete_stage_input); // TODO now this isnt working
       console.log("DELETED! stage");
 
       return res.status(200).json({ message: "Stage deleted!" });
