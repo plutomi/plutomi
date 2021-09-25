@@ -3,10 +3,11 @@ import { Dialog, Transition } from "@headlessui/react";
 import { XIcon } from "@heroicons/react/outline";
 import axios from "axios";
 import mutate from "swr";
+import useStore from "../utils/store";
+
 const UrlSafeString = require("url-safe-string"),
   tagGenerator = new UrlSafeString();
 
-import useStore from "../utils/store";
 export default function CreateStageModal({ opening_id }) {
   const [stage_name, setStageName] = useState("");
   const open = useStore((state: PlutomiState) => state.createStageModalIsOpen);
@@ -27,13 +28,15 @@ export default function CreateStageModal({ opening_id }) {
       );
       console.log("In modal", data.message, opening_id);
       alert(data.message);
-      // TODO an error occurs when calling the mutate here
-      // mutate(`/api/openings/${opening_id}/stages`);
+      // TODO calling mutate here  breaks, we do not clal mutate in the other modals
       setCreateStageModalOpen(false);
     } catch (error) {
       console.error("Error creating stage", error);
       alert(error.response.data.message);
     }
+    // TODO calling mutate here also breaks, we do not clal mutate in the other modals
+    // console.log(`Calling muatte`, `/api/openings/${opening_id}/stages`);
+    // mutate(`/api/openings/${opening_id}/stages`);
   };
 
   return (

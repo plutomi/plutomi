@@ -14,6 +14,9 @@ import axios from "axios";
 export default function ViewOpening() {
   const router = useRouter();
   const { opening_id } = router.query;
+  console.log("ROUTER", router);
+  console.log("Opening ID");
+  console.log(opening_id);
   const [session, loading]: [CustomSession, boolean] = useSession();
   const { user, isUserLoading, isUserError } = useUser(session?.user_id);
 
