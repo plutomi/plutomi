@@ -15,6 +15,8 @@ export default async function UpdateOpening({
   updated_opening,
 }: UpdateOpeningInput) {
   const FORBIDDEN_KEYS = [
+    "PK",
+    "SK",
     "org_id",
     "entity_type",
     "created_at",
@@ -32,11 +34,14 @@ export default async function UpdateOpening({
   let newAttributes: any = {};
 
   newKeys.forEach((key) => {
-    newUpdateExpression.push(`SET ${key} = :${key}`);
+    newUpdateExpression.push(`${key} = :${key}`);
     newAttributes[`:${key}`] = updated_opening[key];
   });
 
-  const UpdatedExpression = newUpdateExpression.join(", ").toString();
+  const UpdatedExpression = `SET ${newUpdateExpression.join(", ").toString()}`;
+
+  console.log("Expression", UpdatedExpression);
+  console.log("Attributes", newAttributes);
 
   const params = {
     Key: {
