@@ -11,6 +11,8 @@ import useUser from "../../../../SWR/useUser";
 import Link from "next/dist/client/link";
 import { useRouter } from "next/router";
 import axios from "axios";
+import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
+
 import { FormEvent } from "react";
 import { create } from "lodash";
 export default function ViewOpening() {
@@ -71,6 +73,10 @@ export default function ViewOpening() {
     mutate(`/api/openings/${opening_id}/stages`);
   };
 
+  const handleDragEnd = () => {
+    // TODO update drag
+    alert("Moved stage");
+  };
   // When rendering client side don't display anything until loading is complete
   if (typeof window !== "undefined" && loading) {
     return null;
@@ -129,52 +135,70 @@ export default function ViewOpening() {
                 ))}
               </ul>
             </div>
-            <div>
-              {stages?.length > 0 ? (
-                stages.map((stage) => {
-                  return (
-                    <div
-                      key={stage.stage_id}
-                      className="flex justify-center items-center"
-                    >
-                      <div className="border w-2/3 my-4 p-4 hover:bg-blue-gray-100 rounded-lg border-blue-gray-400">
-                        <Link
-                          href={`/openings/${opening_id}/stages/${stage.stage_id}`}
-                        >
-                          <a>
-                            <h1 className="font-bold text-xl text-normal my-2">
-                              {stage.stage_name}
-                            </h1>
-                            <p className="text-lg text-normal">
-                              ID: {stage.stage_id}
-                            </p>
-                            <p className="text-normal text-lg ">
-                              Created {GetRelativeTime(stage.created_at)}
-                            </p>
 
-                            {/* <p className="text-light text-lg ">
-                            {" "}
-                            Apply link:{" "}
-                            {`https://${process.env.NEXT_PUBLIC_NEXTAUTH_URL}/${user.org_id}/${opening.opening_id}/apply`}
-                          </p> */}
-                          </a>
-                        </Link>
-                      </div>
-                      <button
-                        onClick={(e) => DeleteStage(stage.stage_id)}
-                        className="bg-red-500 px-5 py-3 text-white m-8 rounded-lg p-4"
-                      >
-                        Delete Stage
-                      </button>
-                    </div>
-                  );
-                })
-              ) : isStagesLoading ? (
-                <h1>Loading...</h1>
-              ) : (
-                <h1>No stages found</h1>
-              )}
-            </div>
+            {/** STAGES START HERE */}
+            <DragDropContext
+              onDragEnd={handleDragEnd}
+              onDragStart={() => console.log("Start")}
+            >
+              <Droppable droppableId={opening.opening_id}>
+                {(provided) => (
+                  <div {...provided.droppableProps} ref={provided.innerRef}>
+                    {stages?.length > 0 ? (
+                      stages.map((stage, index) => {
+                        return (
+                          <Draggable
+                            key={stage.stage_id}
+                            draggableId={stage.stage_id}
+                            index={index}
+                            {...provided.droppableProps}
+                          >
+                            {(provided) => (
+                              <div
+                                className="flex justify-center items-center"
+                                {...provided.draggableProps}
+                                {...provided.dragHandleProps}
+                                ref={provided.innerRef}
+                              >
+                                <div className="border w-2/3 my-4 p-4 hover:bg-blue-gray-100 rounded-lg border-blue-gray-400">
+                                  <a
+                                    href={`/openings/${opening_id}/stages/${stage.stage_id}`}
+                                  >
+                                    <a>
+                                      <h1 className="font-bold text-xl text-normal my-2">
+                                        {stage.stage_name}
+                                      </h1>
+                                      <p className="text-lg text-normal">
+                                        ID: {stage.stage_id}
+                                      </p>
+                                      <p className="text-normal text-lg ">
+                                        Created{" "}
+                                        {GetRelativeTime(stage.created_at)}
+                                      </p>
+                                    </a>
+                                  </a>
+                                </div>
+                                <button
+                                  onClick={(e) => DeleteStage(stage.stage_id)}
+                                  className="bg-red-500 px-5 py-3 text-white m-8 rounded-lg p-4"
+                                >
+                                  Delete Stage
+                                </button>
+                              </div>
+                            )}
+                          </Draggable>
+                        );
+                      })
+                    ) : isStagesLoading ? (
+                      <h1>Loading...</h1>
+                    ) : (
+                      <h1>No stages found</h1>
+                    )}
+                    {provided.placeholder}
+                  </div>
+                )}
+              </Droppable>
+            </DragDropContext>
           </div>
         </div>
       ) : (
