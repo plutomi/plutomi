@@ -73,7 +73,7 @@ export default function ViewOpening() {
     mutate(`/api/openings/${opening_id}/stages`);
   };
 
-  const handleDragEnd = (result) => {
+  const handleDragEnd = async (result) => {
     // TODO update drag
     alert("Moved stage");
 
@@ -103,6 +103,22 @@ export default function ViewOpening() {
     // TODO update stage order
 
     console.log("FinAl stage order", new_stage_order);
+
+    try {
+      const body: APIReorderStagesInput = {
+        new_stage_order: new_stage_order,
+      };
+
+      const { status, data } = await axios.patch(
+        `/api/openings/${opening_id}`,
+        body
+      );
+      alert(data.message);
+    } catch (error) {
+      console.error(error.response.data.message);
+    }
+
+    mutate(`/api/openings/${opening_id}`);
   };
   // When rendering client side don't display anything until loading is complete
   if (typeof window !== "undefined" && loading) {

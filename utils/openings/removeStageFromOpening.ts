@@ -1,5 +1,4 @@
 import { UpdateCommand, UpdateCommandInput } from "@aws-sdk/lib-dynamodb";
-import { update } from "lodash";
 import { Dynamo } from "../../libs/ddbDocClient";
 const { DYNAMO_TABLE_NAME } = process.env;
 import { GetOpening } from "./getOpeningById";

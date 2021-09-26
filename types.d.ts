@@ -276,3 +276,13 @@ interface DeleteStageInput {
   opening_id: string;
   stage_id: string;
 }
+
+interface APIReorderStagesInput {
+  new_stage_order: string[];
+}
+
+interface ReorderStagesInput {
+  org_id: string;
+  opening_id: string;
+  new_stage_order: string[];
+}
