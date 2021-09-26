@@ -73,9 +73,36 @@ export default function ViewOpening() {
     mutate(`/api/openings/${opening_id}/stages`);
   };
 
-  const handleDragEnd = () => {
+  const handleDragEnd = (result) => {
     // TODO update drag
     alert("Moved stage");
+
+    const { destination, source, draggableId } = result;
+
+    // No change
+    if (!destination) {
+      return;
+    }
+
+    // If dropped in the same place
+    if (
+      destination.droppableId === source.droppableId &&
+      destination.index === source.index
+    ) {
+      return;
+    }
+
+    // TODO update stage order
+    console.log(`RESULT`, result);
+
+    console.log("current order", opening.stage_order);
+    let new_stage_order = Array.from(opening.stage_order);
+    console.log("New stage order", new_stage_order);
+    new_stage_order.splice(source.index, 1);
+    new_stage_order.splice(destination.index, 0, draggableId);
+    // TODO update stage order
+
+    console.log("FinAl stage order", new_stage_order);
   };
   // When rendering client side don't display anything until loading is complete
   if (typeof window !== "undefined" && loading) {
