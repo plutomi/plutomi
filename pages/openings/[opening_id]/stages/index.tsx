@@ -41,8 +41,10 @@ export default function ViewOpening() {
 
   const DeleteStage = async (stage_id: string) => {
     try {
-      await axios.delete(`/api/openings/${opening_id}/stages/${stage_id}`);
-      alert("SSStage deleted");
+      const { status, data } = await axios.delete(
+        `/api/openings/${opening_id}/stages/${stage_id}`
+      );
+      alert(data.message);
     } catch (error) {
       alert(`Error deleting stage ${error.response.data.message}`);
     }
@@ -133,6 +135,26 @@ export default function ViewOpening() {
     mutate(`/api/openings/${opening_id}`); // Refresh the stage order
     setIsUpdating(false);
   };
+
+  const UpdateOpening = async () => {
+    const body: APIUpdateOpeningInput = {
+      updated_opening: { ...opening, opening_name: "Beans" }, // TODO add custom name
+    };
+    try {
+      const { status, data } = await axios.put(
+        `/api/openings/${opening_id}`,
+        body
+      );
+      console.log(data);
+      alert(data.message);
+    } catch (error) {
+      console.log(error);
+      alert(error.response.data.message);
+    }
+
+    mutate(`/api/openings/${opening_id}`); // Get new opening info
+  };
+
   // When rendering client side don't display anything until loading is complete
   if (typeof window !== "undefined" && loading) {
     return null;
@@ -173,6 +195,13 @@ export default function ViewOpening() {
       >
         + Add stage
       </button>
+
+      <button
+        onClick={() => UpdateOpening()}
+        className="mx-auto flex justify-center items-center px-4 py-2 bg-red-700 m-2 rounded-lg text-white"
+      >
+        Update Name to Beans
+      </button>
       <CreateStageModal createStage={createStage} />
 
       {opening ? (
@@ -187,8 +216,7 @@ export default function ViewOpening() {
                 {" "}
                 {opening.stage_order.map((id) => (
                   <li key={id}>
-                    {opening.stage_order.indexOf(id) + 1}. {id} -{" "}
-                    {new_stages ? new_stages[opening.stage_order.indexOf(id)].stage_name : null}
+                    {opening.stage_order.indexOf(id) + 1}. {id}
                   </li>
                 ))}
               </ul>
