@@ -2,7 +2,6 @@ import { PutCommand, PutCommandInput } from "@aws-sdk/lib-dynamodb";
 import { Dynamo } from "../../libs/ddbDocClient";
 import { GetCurrentTime } from "../time";
 import { nanoid } from "nanoid";
-import { AddNewStageToOpening } from "../openings/addNewStageToOpening";
 import UpdateOpening from "../openings/updateOpening";
 import { GetOpening } from "../openings/getOpeningById";
 

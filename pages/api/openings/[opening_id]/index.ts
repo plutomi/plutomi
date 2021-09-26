@@ -1,7 +1,6 @@
 import { GetOpening } from "../../../../utils/openings/getOpeningById";
 import withAuthorizer from "../../../../middleware/withAuthorizer";
 import { NextApiResponse } from "next";
-import ReorderStages from "../../../../utils/openings/reorderStagesInOpening";
 import InputValidation from "../../../../utils/inputValidation";
 import UpdateOpening from "../../../../utils/openings/updateOpening";
 const handler = async (req: CustomRequest, res: NextApiResponse) => {
