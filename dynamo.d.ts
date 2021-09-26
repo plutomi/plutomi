@@ -56,7 +56,6 @@ interface DynamoOpening {
 interface DynamoStage {
   // PK: `ORG#${org_id}#OPENING#${opening_id}#STAGE#${stage_id}`;
   // SK: `STAGE`;
-  // stage_name: stage_name;
   // entity_type: "STAGE";
   // created_at: now;
   // stage_id: stage_id;
@@ -65,7 +64,6 @@ interface DynamoStage {
   // GSI1SK: stage_name;
   PK: string;
   SK: `STAGE`;
-  stage_name: string;
   entity_type: "STAGE";
   created_at: string;
   stage_id: string;
