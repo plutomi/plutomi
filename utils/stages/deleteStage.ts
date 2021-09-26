@@ -18,19 +18,15 @@ export async function DeleteStage({
     },
   };
 
-  console.log("PK", params.Key.PK);
   try {
-    // TODO change this to a transaction!!!
     await Dynamo.send(new DeleteCommand(params));
 
     let opening = await GetOpening({ org_id, opening_id });
-    console.log("Previous opening", opening);
 
     let new_stage_order = opening.stage_order.filter(
       (id: string) => id !== stage_id
     );
     opening.stage_order = new_stage_order;
-    console.log("Changed opening", opening);
 
     const update_opening_input = {
       org_id: org_id,

@@ -180,16 +180,22 @@ export default function ViewOpening() {
       {opening ? (
         <div>
           <div className="mx-auto max-w-7xl p-20">
-            <h1>Stages will go here</h1>
+            <h1>
+              Stages will go here, when you click on one the applicants will
+              come up. Change orientation to horizontal
+            </h1>
             <div className="m-4 border rounded-md p-4">
               <h1 className="text-lg">Stage Order</h1>
               <p>Total stages: {opening.stage_order.length}</p>
 
               <ul className="p-4">
                 {" "}
-                {opening.stage_order.map((id) => (
+                {opening?.stage_order.map((id) => (
                   <li key={id}>
-                    {opening.stage_order.indexOf(id) + 1}. {id}
+                    {opening.stage_order.indexOf(id) + 1}.{" "}
+                    {new_stages
+                      ? new_stages[opening?.stage_order.indexOf(id)]?.GSI1SK
+                      : null}
                   </li>
                 ))}
               </ul>
@@ -209,7 +215,7 @@ export default function ViewOpening() {
                   <div
                     {...provided.droppableProps}
                     ref={provided.innerRef}
-                    className="space-y-4 "
+                    className="space-y-4 flex flex-col  max-w-full mx-auto p-auto"
                   >
                     {new_stages?.length > 0 ? (
                       new_stages?.map((stage, index) => {
@@ -222,7 +228,7 @@ export default function ViewOpening() {
                           >
                             {(provided) => (
                               <div
-                                className="p-6 rounded-lg flex max-w-lg justify-center items-center bg-white shadow-lg"
+                                className="p-6 rounded-lg flex max-w-lg border justify-center items-center bg-white shadow-lg"
                                 {...provided.draggableProps}
                                 {...provided.dragHandleProps}
                                 ref={provided.innerRef}
