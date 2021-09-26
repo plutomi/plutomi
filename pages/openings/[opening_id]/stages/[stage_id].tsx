@@ -25,8 +25,9 @@ export default function Stage() {
       alert("Deleted atage");
       router.push(`/openings/${opening_id}/stages`);
     } catch (error) {
-      alert(`Error deleting stage ${error.response.data.message}`);
+      alert(error.response.data.message);
     }
+    mutate(`/api/openings/${opening_id}`);
     mutate(`/api/openings/${opening_id}/stages`);
   };
 

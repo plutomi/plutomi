@@ -17,7 +17,7 @@ export async function CreateStageQuestion({
   const new_stage_question = {
     PK: `ORG#${org_id}#OPENING#${opening_id}#STAGE#${stage_id}`,
     SK: `STAGE_QUESTION#${stage_question_id}`,
-    question_title: question_title,
+    question_title: question_title, // TODO remove like we did with the opening
     question_description: question_description,
     entity_type: "STAGE_QUESTION",
     created_at: now,

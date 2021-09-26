@@ -38,7 +38,7 @@ export default function Openings() {
       is_public: is_public,
     };
     try {
-      const { status, data } = await axios.post("/api/openings", body);
+      const { data } = await axios.post("/api/openings", body);
       alert(data.message);
       setCreateOpeningModalOpen(false);
     } catch (error) {

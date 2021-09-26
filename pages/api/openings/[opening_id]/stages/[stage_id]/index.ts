@@ -16,7 +16,6 @@ const handler = async (req: CustomRequest, res: NextApiResponse) => {
       opening_id: opening_id as string,
       stage_id: stage_id as string,
     };
-    console.log("Getting single stage", get_stage_input);
 
     try {
       const stage = await GetStageById(get_stage_input);

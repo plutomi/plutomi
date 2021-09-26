@@ -17,7 +17,6 @@ export async function CreateStage({
   const new_stage = {
     PK: `ORG#${org_id}#OPENING#${opening_id}#STAGE#${stage_id}`,
     SK: `STAGE`,
-    stage_name: stage_name,
     entity_type: "STAGE",
     created_at: now,
     stage_id: stage_id,
@@ -33,8 +32,6 @@ export async function CreateStage({
   };
 
   try {
-    console.log("Creating new stage");
-    // TODO make this a transact
     await Dynamo.send(new PutCommand(params));
 
     let opening = await GetOpening({ org_id, opening_id });

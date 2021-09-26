@@ -8,7 +8,6 @@ import { Dynamo } from "../../libs/ddbDocClient";
 import { GetOpening } from "./getOpeningById";
 const { DYNAMO_TABLE_NAME } = process.env;
 
-// TODO update all properties of the opening
 export default async function UpdateOpening({
   org_id,
   opening_id,
@@ -22,12 +21,12 @@ export default async function UpdateOpening({
     "created_at",
     "opening_id",
     "GSI1PK",
-    // TODO if updating opening_name or GSI1SK, update the other  as well
   ];
 
   const incomingKeys = Object.keys(updated_opening);
   // TODO should this throw an error and
   // let the user know we can't update that key?
+  // Maybe just return in the message that we weren't able to update those keys
   const newKeys = incomingKeys.filter((key) => !FORBIDDEN_KEYS.includes(key));
 
   // Build update expression
@@ -41,8 +40,6 @@ export default async function UpdateOpening({
 
   const UpdatedExpression = `SET ${newUpdateExpression.join(", ").toString()}`;
 
-  console.log("Expression", UpdatedExpression);
-  console.log("Attributes", newAttributes);
 
   const params = {
     Key: {

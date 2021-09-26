@@ -8,7 +8,6 @@ import { useSession } from "next-auth/client";
 import useStore from "../../../../utils/store";
 import { mutate } from "swr";
 import useUser from "../../../../SWR/useUser";
-import Link from "next/dist/client/link";
 import { useRouter } from "next/router";
 import axios from "axios";
 import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
@@ -41,15 +40,17 @@ export default function ViewOpening() {
 
   const DeleteStage = async (stage_id: string) => {
     try {
-      const { status, data } = await axios.delete(
+      const { data } = await axios.delete(
         `/api/openings/${opening_id}/stages/${stage_id}`
       );
       alert(data.message);
     } catch (error) {
-      alert(`Error deleting stage ${error.response.data.message}`);
+      alert(error.response.data.message);
     }
-    mutate(`/api/openings/${opening_id}`); // Refresh the stage order
-    mutate(`/api/openings/${opening_id}/stages`); // Refresh the actual stages
+
+    // Get all stages & get the new opening order
+    mutate(`/api/openings/${opening_id}`);
+    mutate(`/api/openings/${opening_id}/stages`);
   };
 
   const createStage = async (stage_name: string) => {
@@ -57,7 +58,7 @@ export default function ViewOpening() {
       stage_name: stage_name,
     };
     try {
-      const { status, data } = await axios.post(
+      const { data } = await axios.post(
         `/api/openings/${opening_id}/stages`,
         body
       );
@@ -69,10 +70,8 @@ export default function ViewOpening() {
       console.error("Error creating stage", error);
       alert(error.response.data.message);
     }
-    // TODO add mutate for getting opening here as well
-    // TODO is this neede with the new drag n drop
-    // Refresh all stages &
-    // Refresh opening (stage order)
+
+    // Get all stages & get the new opening order
     mutate(`/api/openings/${opening_id}`);
     mutate(`/api/openings/${opening_id}/stages`);
   };
@@ -94,40 +93,22 @@ export default function ViewOpening() {
     }
 
     setIsUpdating(true);
-    // TODO update stage order
-    console.log(`RESULT`, result);
 
-    console.log("current order", opening.stage_order);
     let new_stage_order = Array.from(opening.stage_order);
     new_stage_order.splice(source.index, 1);
     new_stage_order.splice(destination.index, 0, draggableId);
-
-    console.log("New stage order", new_stage_order);
-    console.log("Current stages", stages);
     let new_order = new_stage_order.map((i) =>
       stages.find((j) => j.stage_id === i)
     );
 
-    console.log("New order stages", new_order);
-
     setNewStages(new_order);
-    // console.log("New stages", stages);
 
     try {
       const body: APIReorderStagesInput = {
         new_stage_order: new_stage_order,
       };
 
-      const { status, data } = await axios.patch(
-        `/api/openings/${opening_id}`,
-        body
-      );
-      // TODO
-      // The issue is that once we let go of the stage
-      // It is still using the old stage order to .map & list them
-      // Until the new stage order is populated
-      // So for a very short time, the stages revert back to their previous
-      // Sort order before being updated in the getStages  call
+      await axios.patch(`/api/openings/${opening_id}`, body);
     } catch (error) {
       console.error(error.response.data.message);
     }
@@ -141,10 +122,7 @@ export default function ViewOpening() {
       updated_opening: { ...opening, GSI1SK: "Beans" }, // TODO add custom name
     };
     try {
-      const { status, data } = await axios.put(
-        `/api/openings/${opening_id}`,
-        body
-      );
+      const { data } = await axios.put(`/api/openings/${opening_id}`, body);
       console.log(data);
       alert(data.message);
     } catch (error) {
@@ -182,9 +160,7 @@ export default function ViewOpening() {
     <div>
       <SignedInNav user={user} current={"Openings"} />
       <div className="mx-auto max-w-md p-20 ">
-        <h1 className="text-xl font-bold text-normal">
-          {opening?.GSI1SK}
-        </h1>
+        <h1 className="text-xl font-bold text-normal">{opening?.GSI1SK}</h1>
         <p className="text-light text-lg">
           Created {GetRelativeTime(opening?.created_at)}
         </p>
@@ -256,7 +232,7 @@ export default function ViewOpening() {
                                   >
                                     <a>
                                       <h1 className="font-bold text-xl text-normal my-2">
-                                        {stage.stage_name}
+                                        {stage.GSI1SK}
                                       </h1>
                                       <p className="text-lg text-normal">
                                         ID: {stage.stage_id}
