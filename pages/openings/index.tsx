@@ -9,6 +9,8 @@ import useStore from "../../utils/store";
 import Link from "next/dist/client/link";
 import useUser from "../../SWR/useUser";
 import { useState } from "react";
+import axios from "axios";
+import { mutate } from "swr";
 
 export default function Openings() {
   const [search, setSearch] = useState("");
@@ -26,6 +28,25 @@ export default function Openings() {
   const setCreateOpeningModalOpen = useStore(
     (state: PlutomiState) => state.setCreateOpeningModalOpen
   );
+
+  const createOpening = async ({
+    opening_name,
+    is_public,
+  }: APICreateOpeningInput) => {
+    const body: APICreateOpeningInput = {
+      opening_name: opening_name,
+      is_public: is_public,
+    };
+    try {
+      const { status, data } = await axios.post("/api/openings", body);
+      alert(data.message);
+      setCreateOpeningModalOpen(false);
+    } catch (error) {
+      alert(error.response.data.message);
+    }
+
+    mutate(`/api/openings/`); // Get all openings
+  };
 
   // When rendering client side don't display anything until loading is complete
   if (typeof window !== "undefined" && loading) {
@@ -62,7 +83,7 @@ export default function Openings() {
         <UserProfileCard user={user} />
 
         <main>
-          <CreateOpeningModal />
+          <CreateOpeningModal createOpening={createOpening} />
 
           <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">
             <button
@@ -121,18 +142,23 @@ export default function Openings() {
                         <a>
                           <h1 className="font-bold text-xl text-normal my-2">
                             {opening.opening_name}
+                            <p className="text-normal text-sm font-medium">
+                              {" "}
+                              {opening.is_public ? "Public" : "Private"}
+                            </p>
                           </h1>
                           <p className="text-normal text-lg ">
                             Created {GetRelativeTime(opening.created_at)}
                           </p>
-                          <p> {opening.is_public ? "Public" : "Private"}</p>
-                          <p className="text-light text-lg ">
-                            {" "}
-                            Apply link:{" "}
-                            {`${process.env.NEXT_PUBLIC_NEXTAUTH_URL}/${user.org_id}/${opening.opening_id}/apply`}
-                          </p>
+                          {opening.stage_order.length > 0 ? (
+                            <p>Stage Order: {opening.stage_order.join(", ")}</p>
+                          ) : (
+                            <p>No stages in this opening</p>
+                          )}
+                          <p className="text-light text-lg "> Apply link: </p>
                         </a>
                       </Link>
+                      {`${process.env.NEXT_PUBLIC_NEXTAUTH_URL}/${user.org_id}/${opening.opening_id}/apply`}
                     </div>
                   );
                 })

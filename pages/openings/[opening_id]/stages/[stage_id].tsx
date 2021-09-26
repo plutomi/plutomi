@@ -24,10 +24,10 @@ export default function Stage() {
       await axios.delete(`/api/openings/${opening_id}/stages/${stage_id}`);
       alert("Deleted atage");
       router.push(`/openings/${opening_id}/stages`);
-      mutate(`/api/openings/${opening_id}/stages`);
     } catch (error) {
       alert(`Error deleting stage ${error.response.data.message}`);
     }
+    mutate(`/api/openings/${opening_id}/stages`);
   };
 
   // When rendering client side don't display anything until loading is complete
