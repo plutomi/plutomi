@@ -22,7 +22,7 @@ export default function Openings() {
   );
 
   let filteredOpenings = openings?.filter((opening) =>
-    opening.opening_name.toLowerCase().includes(search.toLowerCase().trim())
+    opening.GSI1SK.toLowerCase().includes(search.toLowerCase().trim())
   );
 
   const setCreateOpeningModalOpen = useStore(
@@ -141,7 +141,7 @@ export default function Openings() {
                       <Link href={`/openings/${opening.opening_id}/stages`}>
                         <a>
                           <h1 className="font-bold text-xl text-normal my-2">
-                            {opening.opening_name}
+                            {opening.GSI1SK}
                             <p className="text-normal text-sm font-medium">
                               {" "}
                               {opening.is_public ? "Public" : "Private"}

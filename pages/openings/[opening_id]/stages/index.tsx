@@ -138,7 +138,7 @@ export default function ViewOpening() {
 
   const UpdateOpening = async () => {
     const body: APIUpdateOpeningInput = {
-      updated_opening: { ...opening, opening_name: "Beans" }, // TODO add custom name
+      updated_opening: { ...opening, GSI1SK: "Beans" }, // TODO add custom name
     };
     try {
       const { status, data } = await axios.put(
@@ -183,7 +183,7 @@ export default function ViewOpening() {
       <SignedInNav user={user} current={"Openings"} />
       <div className="mx-auto max-w-md p-20 ">
         <h1 className="text-xl font-bold text-normal">
-          {opening?.opening_name}
+          {opening?.GSI1SK}
         </h1>
         <p className="text-light text-lg">
           Created {GetRelativeTime(opening?.created_at)}

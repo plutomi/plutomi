@@ -35,7 +35,6 @@ interface DynamoUser {
 interface DynamoOpening {
   // PK: `ORG#${org_id}#OPENING#${opening_id}`,
   // SK: `OPENING`,
-  // opening_name: opening_name,
   // entity_type: "OPENING",
   // created_at: now,
   // opening_id: opening_id,
@@ -45,7 +44,6 @@ interface DynamoOpening {
   // stage_order: [stage_id_1, stage_id_2]
   PK: string;
   SK: "OPENING";
-  opening_name: string;
   entity_type: "OPENING";
   created_at: string; // ISO
   opening_id: string;
