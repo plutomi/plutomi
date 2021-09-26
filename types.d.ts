@@ -286,3 +286,9 @@ interface ReorderStagesInput {
   opening_id: string;
   new_stage_order: string[];
 }
+
+interface UpdateOpeningInput {
+  org_id: string;
+  opening_id: string;
+  updated_opening: DynamoOpening;
+}
