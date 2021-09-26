@@ -29,18 +29,12 @@ const handler = async (req: CustomRequest, res: NextApiResponse) => {
     }
   }
 
+  // TODO add other attributes to be updated here
   if (method === "PATCH") {
     const { new_stage_order } = body;
-
     if (!new_stage_order || new_stage_order.length == 0) {
       return res.status(400).json({ message: "Missing new stage order" });
     }
-
-    const reorder_stages_input: ReorderStagesInput = {
-      org_id: user.org_id,
-      opening_id: opening_id,
-      new_stage_order: body.new_stage_order,
-    };
 
     try {
       const get_opening_input: GetOpeningInput = {

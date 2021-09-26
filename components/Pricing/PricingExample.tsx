@@ -1,4 +1,4 @@
-import PricingExampleBox from "./PricingExampleBox";
+import StageCard from "./StageCard";
 export default function Example({ stages, name }) {
   return (
     <div className="relative my-8 mx-auto text-center lg:max-w-full max-w-sm ">
@@ -8,7 +8,8 @@ export default function Example({ stages, name }) {
 
       <div className="my-4 grid grid-cols-1 gap-4 lg:grid-cols-5 mx-12 lg:mx-auto">
         {stages.map((stage) => (
-          <PricingExampleBox
+          <StageCard
+            className={null}
             key={stage.id}
             stage_title={stage.name}
             num_applicants={stage.applicants}

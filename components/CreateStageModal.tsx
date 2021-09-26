@@ -14,9 +14,10 @@ export default function CreateStageModal({ createStage }) {
     (state: PlutomiState) => state.setCreateStageModalOpen
   );
 
-  const handleSubmit = (e: FormEvent) => {
+  const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
-    createStage(stage_name);
+    await createStage(stage_name);
+    setStageName("");
   };
   return (
     <Transition.Root show={open} as={Fragment}>
