@@ -11,17 +11,14 @@ import useUser from "../../../../SWR/useUser";
 import Link from "next/dist/client/link";
 import { useRouter } from "next/router";
 import axios from "axios";
-import { FormEvent } from "react";
-import { create } from "lodash";
+import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
+import { useState } from "react";
+import { useEffect } from "react";
 export default function ViewOpening() {
   const router = useRouter();
   const { opening_id } = router.query;
-  console.log("ROUTER", router);
-  console.log("Opening ID");
-  console.log(opening_id);
   const [session, loading]: [CustomSession, boolean] = useSession();
   const { user, isUserLoading, isUserError } = useUser(session?.user_id);
-
   const setCreateStageModalOpen = useStore(
     (state: PlutomiState) => state.setCreateStageModalOpen
   );
@@ -30,11 +27,17 @@ export default function ViewOpening() {
     opening_id as string
   );
 
-  console.log("Opening component id", opening_id);
-  const { stages, isStagesLoading, isStagesError } = useAllStagesInOpening(
+  let { stages, isStagesLoading, isStagesError } = useAllStagesInOpening(
     session?.user_id,
     opening_id as string
   );
+
+  const [new_stages, setNewStages] = useState(stages);
+  const [isUpdating, setIsUpdating] = useState(false);
+
+  useEffect(() => {
+    setNewStages(stages);
+  }, [stages]);
 
   const DeleteStage = async (stage_id: string) => {
     try {
@@ -65,12 +68,71 @@ export default function ViewOpening() {
       alert(error.response.data.message);
     }
     // TODO add mutate for getting opening here as well
+    // TODO is this neede with the new drag n drop
     // Refresh all stages &
     // Refresh opening (stage order)
     mutate(`/api/openings/${opening_id}`);
     mutate(`/api/openings/${opening_id}/stages`);
   };
 
+  const handleDragEnd = async (result) => {
+    const { destination, source, draggableId } = result;
+
+    // No change
+    if (!destination) {
+      return;
+    }
+
+    // If dropped in the same place
+    if (
+      destination.droppableId === source.droppableId &&
+      destination.index === source.index
+    ) {
+      return;
+    }
+
+    setIsUpdating(true);
+    // TODO update stage order
+    console.log(`RESULT`, result);
+
+    console.log("current order", opening.stage_order);
+    let new_stage_order = Array.from(opening.stage_order);
+    new_stage_order.splice(source.index, 1);
+    new_stage_order.splice(destination.index, 0, draggableId);
+
+    console.log("New stage order", new_stage_order);
+    console.log("Current stages", stages);
+    let new_order = new_stage_order.map((i) =>
+      stages.find((j) => j.stage_id === i)
+    );
+
+    console.log("New order stages", new_order);
+
+    setNewStages(new_order);
+    // console.log("New stages", stages);
+
+    try {
+      const body: APIReorderStagesInput = {
+        new_stage_order: new_stage_order,
+      };
+
+      const { status, data } = await axios.patch(
+        `/api/openings/${opening_id}`,
+        body
+      );
+      // TODO
+      // The issue is that once we let go of the stage
+      // It is still using the old stage order to .map & list them
+      // Until the new stage order is populated
+      // So for a very short time, the stages revert back to their previous
+      // Sort order before being updated in the getStages  call
+    } catch (error) {
+      console.error(error.response.data.message);
+    }
+
+    mutate(`/api/openings/${opening_id}`); // Refresh the stage order
+    setIsUpdating(false);
+  };
   // When rendering client side don't display anything until loading is complete
   if (typeof window !== "undefined" && loading) {
     return null;
@@ -112,6 +174,7 @@ export default function ViewOpening() {
         + Add stage
       </button>
       <CreateStageModal createStage={createStage} />
+
       {opening ? (
         <div>
           <div className="mx-auto max-w-7xl p-20">
@@ -124,57 +187,80 @@ export default function ViewOpening() {
                 {" "}
                 {opening.stage_order.map((id) => (
                   <li key={id}>
-                    {opening.stage_order.indexOf(id) + 1}. {id}
+                    {opening.stage_order.indexOf(id) + 1}. {id} -{" "}
+                    {new_stages ? new_stages[opening.stage_order.indexOf(id)].stage_name : null}
                   </li>
                 ))}
               </ul>
             </div>
-            <div>
-              {stages?.length > 0 ? (
-                stages.map((stage) => {
-                  return (
-                    <div
-                      key={stage.stage_id}
-                      className="flex justify-center items-center"
-                    >
-                      <div className="border w-2/3 my-4 p-4 hover:bg-blue-gray-100 rounded-lg border-blue-gray-400">
-                        <Link
-                          href={`/openings/${opening_id}/stages/${stage.stage_id}`}
-                        >
-                          <a>
-                            <h1 className="font-bold text-xl text-normal my-2">
-                              {stage.stage_name}
-                            </h1>
-                            <p className="text-lg text-normal">
-                              ID: {stage.stage_id}
-                            </p>
-                            <p className="text-normal text-lg ">
-                              Created {GetRelativeTime(stage.created_at)}
-                            </p>
 
-                            {/* <p className="text-light text-lg ">
-                            {" "}
-                            Apply link:{" "}
-                            {`https://${process.env.NEXT_PUBLIC_NEXTAUTH_URL}/${user.org_id}/${opening.opening_id}/apply`}
-                          </p> */}
-                          </a>
-                        </Link>
-                      </div>
-                      <button
-                        onClick={(e) => DeleteStage(stage.stage_id)}
-                        className="bg-red-500 px-5 py-3 text-white m-8 rounded-lg p-4"
-                      >
-                        Delete Stage
-                      </button>
-                    </div>
-                  );
-                })
-              ) : isStagesLoading ? (
-                <h1>Loading...</h1>
-              ) : (
-                <h1>No stages found</h1>
-              )}
-            </div>
+            {/** STAGES START HERE */}
+            {isUpdating ? (
+              <h1 className="text-6xl font-bold m-8">Updating...</h1>
+            ) : null}
+
+            <DragDropContext
+              onDragEnd={handleDragEnd}
+              onDragStart={() => console.log("Start")}
+            >
+              <Droppable droppableId={opening.opening_id}>
+                {(provided) => (
+                  <div {...provided.droppableProps} ref={provided.innerRef}>
+                    {new_stages?.length > 0 ? (
+                      new_stages?.map((stage, index) => {
+                        return (
+                          <Draggable
+                            key={stage.stage_id}
+                            draggableId={stage.stage_id}
+                            index={index}
+                            {...provided.droppableProps}
+                          >
+                            {(provided) => (
+                              <div
+                                className="flex justify-center items-center"
+                                {...provided.draggableProps}
+                                {...provided.dragHandleProps}
+                                ref={provided.innerRef}
+                              >
+                                <div className="border w-2/3 my-4 p-4 hover:bg-blue-gray-100 rounded-lg border-blue-gray-400">
+                                  <a
+                                    href={`/openings/${opening_id}/stages/${stage.stage_id}`}
+                                  >
+                                    <a>
+                                      <h1 className="font-bold text-xl text-normal my-2">
+                                        {stage.stage_name}
+                                      </h1>
+                                      <p className="text-lg text-normal">
+                                        ID: {stage.stage_id}
+                                      </p>
+                                      <p className="text-normal text-lg ">
+                                        Created{" "}
+                                        {GetRelativeTime(stage.created_at)}
+                                      </p>
+                                    </a>
+                                  </a>
+                                </div>
+                                <button
+                                  onClick={(e) => DeleteStage(stage.stage_id)}
+                                  className="bg-red-500 px-5 py-3 text-white m-8 rounded-lg p-4"
+                                >
+                                  Delete Stage
+                                </button>
+                              </div>
+                            )}
+                          </Draggable>
+                        );
+                      })
+                    ) : isStagesLoading ? (
+                      <h1>Loading...</h1>
+                    ) : (
+                      <h1>No stages found</h1>
+                    )}
+                    {provided.placeholder}
+                  </div>
+                )}
+              </Droppable>
+            </DragDropContext>
           </div>
         </div>
       ) : (

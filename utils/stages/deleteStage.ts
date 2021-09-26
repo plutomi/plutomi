@@ -1,6 +1,6 @@
 import { DeleteCommand, DeleteCommandInput } from "@aws-sdk/lib-dynamodb";
 import { Dynamo } from "../../libs/ddbDocClient";
-import { RemoveStageFromStageOrder } from "../../utils/openings/updateOpening";
+import { RemoveStageFromStageOrder } from "../openings/removeStageFromOpening";
 const { DYNAMO_TABLE_NAME } = process.env;
 
 // TODO check if stage is empt of appliants first
