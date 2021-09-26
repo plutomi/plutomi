@@ -13,7 +13,7 @@ export default async function UpdateOpening({
   org_id,
   opening_id,
   updated_opening,
-}: UpdateOpeningInput) {
+}) {
   const FORBIDDEN_KEYS = [
     "PK",
     "SK",
@@ -23,7 +23,7 @@ export default async function UpdateOpening({
     "opening_id",
     "GSI1PK",
     // TODO if updating opening_name or GSI1SK, update the other  as well
-  ]; 
+  ];
 
   const incomingKeys = Object.keys(updated_opening);
   // TODO should this throw an error and

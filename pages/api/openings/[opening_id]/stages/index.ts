@@ -3,7 +3,6 @@ import withAuthorizer from "../../../../../middleware/withAuthorizer";
 import { CreateStage } from "../../../../../utils/stages/createStage";
 import InputValidation from "../../../../../utils/inputValidation";
 import { NextApiResponse } from "next";
-import { AddNewStageToOpening } from "../../../../../utils/openings/addNewStageToOpening";
 // Create stage in an opening
 const handler = async (req: CustomRequest, res: NextApiResponse) => {
   const { body, method, query } = req;

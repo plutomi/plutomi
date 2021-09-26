@@ -1,8 +1,8 @@
 import { DeleteCommand, DeleteCommandInput } from "@aws-sdk/lib-dynamodb";
 import { Dynamo } from "../../libs/ddbDocClient";
-import { RemoveStageFromStageOrder } from "../openings/removeStageFromOpening";
+import { GetOpening } from "../openings/getOpeningById";
 const { DYNAMO_TABLE_NAME } = process.env;
-
+import UpdateOpening from "../openings/updateOpening";
 // TODO check if stage is empt of appliants first
 // TODO delete stage from the funnels sort order
 export async function DeleteStage({
@@ -22,7 +22,24 @@ export async function DeleteStage({
   try {
     // TODO change this to a transaction!!!
     await Dynamo.send(new DeleteCommand(params));
-    await RemoveStageFromStageOrder({ org_id, opening_id, stage_id });
+
+    let opening = await GetOpening({ org_id, opening_id });
+    console.log("Previous opening", opening);
+
+    let new_stage_order = opening.stage_order.filter(
+      (id: string) => id !== stage_id
+    );
+    opening.stage_order = new_stage_order;
+    console.log("Changed opening", opening);
+
+    const update_opening_input = {
+      org_id: org_id,
+      opening_id: opening_id,
+      updated_opening: opening,
+    };
+
+    await UpdateOpening(update_opening_input);
+    return;
   } catch (error) {
     throw new Error(error);
   }

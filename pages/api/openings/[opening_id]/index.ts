@@ -44,7 +44,19 @@ const handler = async (req: CustomRequest, res: NextApiResponse) => {
     };
 
     try {
-      await ReorderStages(reorder_stages_input);
+      const get_opening_input: GetOpeningInput = {
+        org_id: user.org_id,
+        opening_id: opening_id,
+      };
+      let opening = await GetOpening(get_opening_input);
+      opening.stage_order = body.new_stage_order;
+
+      const update_opening_input = {
+        org_id: user.org_id,
+        opening_id: opening_id,
+        updated_opening: opening,
+      };
+      await UpdateOpening(update_opening_input);
       return res.status(200).json({ message: "Stage order updated!" });
     } catch (error) {
       console.error(error);

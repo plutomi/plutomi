@@ -3,6 +3,8 @@ import { Dynamo } from "../../libs/ddbDocClient";
 import { GetCurrentTime } from "../time";
 import { nanoid } from "nanoid";
 import { AddNewStageToOpening } from "../openings/addNewStageToOpening";
+import UpdateOpening from "../openings/updateOpening";
+import { GetOpening } from "../openings/getOpeningById";
 
 const { DYNAMO_TABLE_NAME } = process.env;
 
@@ -33,19 +35,18 @@ export async function CreateStage({
 
   try {
     console.log("Creating new stage");
+    // TODO make this a transact
     await Dynamo.send(new PutCommand(params));
-    console.log("stage created");
 
-    const AddNewStageToOpeningInput = {
+    let opening = await GetOpening({ org_id, opening_id });
+    opening.stage_order.push(stage_id);
+    const update_opening_input = {
       org_id: org_id,
       opening_id: opening_id,
-      stage_id: stage_id,
+      updated_opening: opening,
     };
 
-    const updated_opening = await AddNewStageToOpening(
-      AddNewStageToOpeningInput
-    );
-    console.log(`Adding this ID ${stage_id} to opening`, updated_opening);
+    await UpdateOpening(update_opening_input);
 
     return;
   } catch (error) {

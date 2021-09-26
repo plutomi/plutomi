@@ -41,8 +41,10 @@ export default function ViewOpening() {
 
   const DeleteStage = async (stage_id: string) => {
     try {
-      await axios.delete(`/api/openings/${opening_id}/stages/${stage_id}`);
-      alert("SSStage deleted");
+      const { status, data } = await axios.delete(
+        `/api/openings/${opening_id}/stages/${stage_id}`
+      );
+      alert(data.message);
     } catch (error) {
       alert(`Error deleting stage ${error.response.data.message}`);
     }
@@ -214,10 +216,7 @@ export default function ViewOpening() {
                 {" "}
                 {opening.stage_order.map((id) => (
                   <li key={id}>
-                    {opening.stage_order.indexOf(id) + 1}. {id} -{" "}
-                    {new_stages
-                      ? new_stages[opening.stage_order.indexOf(id)].stage_name
-                      : null}
+                    {opening.stage_order.indexOf(id) + 1}. {id}
                   </li>
                 ))}
               </ul>
