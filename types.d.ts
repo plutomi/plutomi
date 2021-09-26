@@ -292,3 +292,7 @@ interface UpdateOpeningInput {
   opening_id: string;
   updated_opening: DynamoOpening;
 }
+
+interface APIUpdateOpeningInput {
+  updated_opening: DynamoOpening;
+}

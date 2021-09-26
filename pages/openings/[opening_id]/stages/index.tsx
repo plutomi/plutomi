@@ -135,9 +135,7 @@ export default function ViewOpening() {
   };
 
   const UpdateOpening = async () => {
-    const body: UpdateOpeningInput = {
-      org_id: "", // Filled in by authorizer function
-      opening_id: opening_id as string,
+    const body: APIUpdateOpeningInput = {
       updated_opening: { ...opening, opening_name: "Beans" }, // TODO add custom name
     };
     try {

@@ -22,7 +22,8 @@ export default async function UpdateOpening({
     "created_at",
     "opening_id",
     "GSI1PK",
-  ]; // GSI1SK is the opening name btw
+    // TODO if updating opening_name or GSI1SK, update the other  as well
+  ]; 
 
   const incomingKeys = Object.keys(updated_opening);
   // TODO should this throw an error and
