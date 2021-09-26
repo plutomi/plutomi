@@ -8,23 +8,9 @@ const UrlSafeString = require("url-safe-string"),
   tagGenerator = new UrlSafeString();
 
 import useStore from "../utils/store";
-export default function CreateOpeningModal() {
+export default function CreateOpeningModal({ createOpening }) {
   const [opening_name, setOpeningName] = useState("");
   const [is_public, setIsPublic] = useState(false);
-  const createOpening = async (e: FormEvent) => {
-    e.preventDefault();
-    const body: APICreateOpeningInput = {
-      opening_name: opening_name,
-      is_public: is_public,
-    };
-    try {
-      const { status, data } = await axios.post("/api/openings", body);
-      alert(data.message);
-      setCreateOpeningModalOpen(false);
-    } catch (error) {
-      alert(error.response.data.message);
-    }
-  };
 
   const open = useStore(
     (state: PlutomiState) => state.createOpeningModalIsOpen
@@ -34,6 +20,11 @@ export default function CreateOpeningModal() {
     (state: PlutomiState) => state.setCreateOpeningModalOpen
   );
 
+  const handleSubmit = (e: FormEvent) => {
+    e.preventDefault();
+
+    createOpening({ opening_name, is_public });
+  };
   return (
     <Transition.Root show={open} as={Fragment}>
       <Dialog
@@ -67,7 +58,7 @@ export default function CreateOpeningModal() {
               <div className="w-screen max-w-md">
                 <form
                   className="h-full divide-y divide-gray-200 flex flex-col bg-white shadow-xl"
-                  onSubmit={(e) => createOpening(e)}
+                  onSubmit={(e) => handleSubmit(e)}
                 >
                   <div className="flex-1 h-0 overflow-y-auto">
                     <div className="py-6 px-4 bg-indigo-700 sm:px-6">
