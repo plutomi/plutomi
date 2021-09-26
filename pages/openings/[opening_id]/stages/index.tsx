@@ -12,18 +12,13 @@ import Link from "next/dist/client/link";
 import { useRouter } from "next/router";
 import axios from "axios";
 import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
-
-import { FormEvent } from "react";
-import { create } from "lodash";
+import { useState } from "react";
+import { useEffect } from "react";
 export default function ViewOpening() {
   const router = useRouter();
   const { opening_id } = router.query;
-  console.log("ROUTER", router);
-  console.log("Opening ID");
-  console.log(opening_id);
   const [session, loading]: [CustomSession, boolean] = useSession();
   const { user, isUserLoading, isUserError } = useUser(session?.user_id);
-
   const setCreateStageModalOpen = useStore(
     (state: PlutomiState) => state.setCreateStageModalOpen
   );
@@ -32,11 +27,17 @@ export default function ViewOpening() {
     opening_id as string
   );
 
-  console.log("Opening component id", opening_id);
-  const { stages, isStagesLoading, isStagesError } = useAllStagesInOpening(
+  let { stages, isStagesLoading, isStagesError } = useAllStagesInOpening(
     session?.user_id,
     opening_id as string
   );
+
+  const [new_stages, setNewStages] = useState(stages);
+  const [isUpdating, setIsUpdating] = useState(false);
+
+  useEffect(() => {
+    setNewStages(stages);
+  }, [stages]);
 
   const DeleteStage = async (stage_id: string) => {
     try {
@@ -67,6 +68,7 @@ export default function ViewOpening() {
       alert(error.response.data.message);
     }
     // TODO add mutate for getting opening here as well
+    // TODO is this neede with the new drag n drop
     // Refresh all stages &
     // Refresh opening (stage order)
     mutate(`/api/openings/${opening_id}`);
@@ -74,8 +76,6 @@ export default function ViewOpening() {
   };
 
   const handleDragEnd = async (result) => {
-    // TODO update drag
-
     const { destination, source, draggableId } = result;
 
     // No change
@@ -91,17 +91,25 @@ export default function ViewOpening() {
       return;
     }
 
+    setIsUpdating(true);
     // TODO update stage order
     console.log(`RESULT`, result);
 
     console.log("current order", opening.stage_order);
     let new_stage_order = Array.from(opening.stage_order);
-    console.log("New stage order", new_stage_order);
     new_stage_order.splice(source.index, 1);
     new_stage_order.splice(destination.index, 0, draggableId);
-    // TODO update stage order
 
-    console.log("FinAl stage order", new_stage_order);
+    console.log("New stage order", new_stage_order);
+    console.log("Current stages", stages);
+    let new_order = new_stage_order.map((i) =>
+      stages.find((j) => j.stage_id === i)
+    );
+
+    console.log("New order stages", new_order);
+
+    setNewStages(new_order);
+    // console.log("New stages", stages);
 
     try {
       const body: APIReorderStagesInput = {
@@ -112,12 +120,18 @@ export default function ViewOpening() {
         `/api/openings/${opening_id}`,
         body
       );
-      alert(data.message);
+      // TODO
+      // The issue is that once we let go of the stage
+      // It is still using the old stage order to .map & list them
+      // Until the new stage order is populated
+      // So for a very short time, the stages revert back to their previous
+      // Sort order before being updated in the getStages  call
     } catch (error) {
       console.error(error.response.data.message);
     }
 
-    mutate(`/api/openings/${opening_id}`); // Update stage order
+    mutate(`/api/openings/${opening_id}`); // Refresh the stage order
+    setIsUpdating(false);
   };
   // When rendering client side don't display anything until loading is complete
   if (typeof window !== "undefined" && loading) {
@@ -160,6 +174,7 @@ export default function ViewOpening() {
         + Add stage
       </button>
       <CreateStageModal createStage={createStage} />
+
       {opening ? (
         <div>
           <div className="mx-auto max-w-7xl p-20">
@@ -172,13 +187,18 @@ export default function ViewOpening() {
                 {" "}
                 {opening.stage_order.map((id) => (
                   <li key={id}>
-                    {opening.stage_order.indexOf(id) + 1}. {id}
+                    {opening.stage_order.indexOf(id) + 1}. {id} -{" "}
+                    {new_stages ? new_stages[opening.stage_order.indexOf(id)].stage_name : null}
                   </li>
                 ))}
               </ul>
             </div>
 
             {/** STAGES START HERE */}
+            {isUpdating ? (
+              <h1 className="text-6xl font-bold m-8">Updating...</h1>
+            ) : null}
+
             <DragDropContext
               onDragEnd={handleDragEnd}
               onDragStart={() => console.log("Start")}
@@ -186,8 +206,8 @@ export default function ViewOpening() {
               <Droppable droppableId={opening.opening_id}>
                 {(provided) => (
                   <div {...provided.droppableProps} ref={provided.innerRef}>
-                    {stages?.length > 0 ? (
-                      stages.map((stage, index) => {
+                    {new_stages?.length > 0 ? (
+                      new_stages?.map((stage, index) => {
                         return (
                           <Draggable
                             key={stage.stage_id}
