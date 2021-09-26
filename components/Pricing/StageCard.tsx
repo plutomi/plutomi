@@ -1,9 +1,9 @@
 import { UserGroupIcon } from "@heroicons/react/outline";
 import NumberFormat from "react-number-format";
 
-export default function Box({ stage_title, num_applicants }) {
+export default function Box({ stage_title, num_applicants, className }) {
   return (
-    <div>
+    <div className={className}>
       <div className="relative text-center bg-white  py-5   sm:py-6 sm:px-3 shadow-md rounded-xl overflow-hidden">
         <dt>
           <p className=" text-lg font-medium text-dark">{stage_title}</p>

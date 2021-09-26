@@ -7,6 +7,8 @@ import SignIn from "../../../../components/SignIn";
 import { useSession } from "next-auth/client";
 import useStore from "../../../../utils/store";
 import { mutate } from "swr";
+import Link from "next/dist/client/link";
+import StageCard from "./../../../../components/Pricing/StageCard";
 import useUser from "../../../../SWR/useUser";
 import { useRouter } from "next/router";
 import axios from "axios";
@@ -204,7 +206,11 @@ export default function ViewOpening() {
             >
               <Droppable droppableId={opening.opening_id}>
                 {(provided) => (
-                  <div {...provided.droppableProps} ref={provided.innerRef}>
+                  <div
+                    {...provided.droppableProps}
+                    ref={provided.innerRef}
+                    className="space-y-4 "
+                  >
                     {new_stages?.length > 0 ? (
                       new_stages?.map((stage, index) => {
                         return (
@@ -216,32 +222,25 @@ export default function ViewOpening() {
                           >
                             {(provided) => (
                               <div
-                                className="flex bg-white justify-center items-center"
+                                className="p-6 rounded-lg flex max-w-lg justify-center items-center bg-white shadow-lg"
                                 {...provided.draggableProps}
                                 {...provided.dragHandleProps}
                                 ref={provided.innerRef}
                               >
-                                <div className="border w-2/3 my-4 p-4 hover:bg-blue-gray-100 rounded-lg border-blue-gray-400">
-                                  <a
-                                    href={`/openings/${opening_id}/stages/${stage.stage_id}`}
-                                  >
-                                    <a>
-                                      <h1 className="font-bold text-xl text-normal my-2">
-                                        {stage.GSI1SK}
-                                      </h1>
-                                      <p className="text-lg text-normal">
-                                        ID: {stage.stage_id}
-                                      </p>
-                                      <p className="text-normal text-lg ">
-                                        Created{" "}
-                                        {GetRelativeTime(stage.created_at)}
-                                      </p>
-                                    </a>
+                                <Link
+                                  href={`/openings/${opening_id}/stages/${stage.stage_id}`}
+                                >
+                                  <a>
+                                    <StageCard
+                                      className="w-full border-0 hover:border-2 rounded-xl"
+                                      stage_title={`${stage.GSI1SK} - ${stage.stage_id}`}
+                                      num_applicants={10}
+                                    />
                                   </a>
-                                </div>
+                                </Link>
                                 <button
                                   onClick={(e) => DeleteStage(stage.stage_id)}
-                                  className="bg-red-500 px-5 py-3 text-white m-8 rounded-lg p-4"
+                                  className=" bg-red-500 hover:bg-red-800 px-5 py-3 text-white m-8 rounded-lg p-4"
                                 >
                                   Delete Stage
                                 </button>
