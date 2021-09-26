@@ -39,13 +39,10 @@ const handler = async (req: CustomRequest, res: NextApiResponse) => {
       });
 
     try {
-      console.log("calling create stage");
       await CreateStage(create_stage_input);
-      console.log("API stage created");
       return res.status(201).json({ message: "Stage created" });
     } catch (error) {
       // TODO add error logger
-      console.log("API stage creation error", error);
       return res
         .status(400) // TODO change #
         .json({ message: `Unable to create stage: ${error}` });

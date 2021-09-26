@@ -162,7 +162,8 @@ export default function ViewOpening() {
       <div className="mx-auto max-w-md p-20 ">
         <h1 className="text-xl font-bold text-normal">{opening?.GSI1SK}</h1>
         <p className="text-light text-lg">
-          Created {GetRelativeTime(opening?.created_at)}
+          Created {GetRelativeTime(opening?.created_at)} -{" "}
+          {opening?.is_public ? "Public" : "Private"}
         </p>
       </div>
       <button
@@ -172,12 +173,6 @@ export default function ViewOpening() {
         + Add stage
       </button>
 
-      <button
-        onClick={() => UpdateOpening()}
-        className="mx-auto flex justify-center items-center px-4 py-2 bg-red-700 m-2 rounded-lg text-white"
-      >
-        Update Name to Beans
-      </button>
       <CreateStageModal createStage={createStage} />
 
       {opening ? (
@@ -221,7 +216,7 @@ export default function ViewOpening() {
                           >
                             {(provided) => (
                               <div
-                                className="flex justify-center items-center"
+                                className="flex bg-white justify-center items-center"
                                 {...provided.draggableProps}
                                 {...provided.dragHandleProps}
                                 ref={provided.innerRef}
