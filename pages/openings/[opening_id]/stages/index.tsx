@@ -75,7 +75,6 @@ export default function ViewOpening() {
 
   const handleDragEnd = async (result) => {
     // TODO update drag
-    alert("Moved stage");
 
     const { destination, source, draggableId } = result;
 
@@ -118,7 +117,7 @@ export default function ViewOpening() {
       console.error(error.response.data.message);
     }
 
-    mutate(`/api/openings/${opening_id}`);
+    mutate(`/api/openings/${opening_id}`); // Update stage order
   };
   // When rendering client side don't display anything until loading is complete
   if (typeof window !== "undefined" && loading) {
