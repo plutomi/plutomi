@@ -8,7 +8,6 @@ const handler = async (req: CustomRequest, res: NextApiResponse) => {
   const user: DynamoUser = req.user;
   const { opening_id, stage_id } = query;
 
-  console.log("Incoming method", method);
   // Get a single stage in an opening
   if (method === "GET") {
     const get_stage_input: GetStageByIdInput = {
@@ -16,11 +15,9 @@ const handler = async (req: CustomRequest, res: NextApiResponse) => {
       opening_id: opening_id as string,
       stage_id: stage_id as string,
     };
-    console.log("Getting single stage", get_stage_input);
 
     try {
       const stage = await GetStageById(get_stage_input);
-      console.log("All stages", stage);
       return res.status(200).json(stage);
     } catch (error) {
       // TODO add error logger

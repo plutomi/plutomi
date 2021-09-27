@@ -20,10 +20,11 @@ export default function CreateOpeningModal({ createOpening }) {
     (state: PlutomiState) => state.setCreateOpeningModalOpen
   );
 
-  const handleSubmit = (e: FormEvent) => {
+  const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
 
-    createOpening({ opening_name, is_public });
+    await createOpening({ opening_name, is_public });
+    setOpeningName("");
   };
   return (
     <Transition.Root show={open} as={Fragment}>

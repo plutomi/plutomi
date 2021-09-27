@@ -35,7 +35,6 @@ interface DynamoUser {
 interface DynamoOpening {
   // PK: `ORG#${org_id}#OPENING#${opening_id}`,
   // SK: `OPENING`,
-  // opening_name: opening_name,
   // entity_type: "OPENING",
   // created_at: now,
   // opening_id: opening_id,
@@ -45,7 +44,6 @@ interface DynamoOpening {
   // stage_order: [stage_id_1, stage_id_2]
   PK: string;
   SK: "OPENING";
-  opening_name: string;
   entity_type: "OPENING";
   created_at: string; // ISO
   opening_id: string;
@@ -58,7 +56,6 @@ interface DynamoOpening {
 interface DynamoStage {
   // PK: `ORG#${org_id}#OPENING#${opening_id}#STAGE#${stage_id}`;
   // SK: `STAGE`;
-  // stage_name: stage_name;
   // entity_type: "STAGE";
   // created_at: now;
   // stage_id: stage_id;
@@ -67,7 +64,6 @@ interface DynamoStage {
   // GSI1SK: stage_name;
   PK: string;
   SK: `STAGE`;
-  stage_name: string;
   entity_type: "STAGE";
   created_at: string;
   stage_id: string;

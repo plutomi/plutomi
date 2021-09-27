@@ -21,7 +21,7 @@ export default function Apply() {
                 <div>
                   {publicOpenings.map((opening: DynamoOpening) => {
                     return (
-                      <h1 key={opening?.opening_id}>{opening.opening_name}</h1>
+                      <h1 key={opening?.opening_id}>{opening.GSI1SK}</h1>
                     );
                   })}
                 </div>

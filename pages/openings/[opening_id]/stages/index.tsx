@@ -7,8 +7,9 @@ import SignIn from "../../../../components/SignIn";
 import { useSession } from "next-auth/client";
 import useStore from "../../../../utils/store";
 import { mutate } from "swr";
-import useUser from "../../../../SWR/useUser";
 import Link from "next/dist/client/link";
+import StageCard from "./../../../../components/Pricing/StageCard";
+import useUser from "../../../../SWR/useUser";
 import { useRouter } from "next/router";
 import axios from "axios";
 import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
@@ -41,15 +42,17 @@ export default function ViewOpening() {
 
   const DeleteStage = async (stage_id: string) => {
     try {
-      const { status, data } = await axios.delete(
+      const { data } = await axios.delete(
         `/api/openings/${opening_id}/stages/${stage_id}`
       );
       alert(data.message);
     } catch (error) {
-      alert(`Error deleting stage ${error.response.data.message}`);
+      alert(error.response.data.message);
     }
-    mutate(`/api/openings/${opening_id}`); // Refresh the stage order
-    mutate(`/api/openings/${opening_id}/stages`); // Refresh the actual stages
+
+    // Get all stages & get the new opening order
+    mutate(`/api/openings/${opening_id}`);
+    mutate(`/api/openings/${opening_id}/stages`);
   };
 
   const createStage = async (stage_name: string) => {
@@ -57,7 +60,7 @@ export default function ViewOpening() {
       stage_name: stage_name,
     };
     try {
-      const { status, data } = await axios.post(
+      const { data } = await axios.post(
         `/api/openings/${opening_id}/stages`,
         body
       );
@@ -69,10 +72,8 @@ export default function ViewOpening() {
       console.error("Error creating stage", error);
       alert(error.response.data.message);
     }
-    // TODO add mutate for getting opening here as well
-    // TODO is this neede with the new drag n drop
-    // Refresh all stages &
-    // Refresh opening (stage order)
+
+    // Get all stages & get the new opening order
     mutate(`/api/openings/${opening_id}`);
     mutate(`/api/openings/${opening_id}/stages`);
   };
@@ -94,65 +95,31 @@ export default function ViewOpening() {
     }
 
     setIsUpdating(true);
-    // TODO update stage order
-    console.log(`RESULT`, result);
 
-    console.log("current order", opening.stage_order);
     let new_stage_order = Array.from(opening.stage_order);
     new_stage_order.splice(source.index, 1);
     new_stage_order.splice(destination.index, 0, draggableId);
-
-    console.log("New stage order", new_stage_order);
-    console.log("Current stages", stages);
     let new_order = new_stage_order.map((i) =>
       stages.find((j) => j.stage_id === i)
     );
 
-    console.log("New order stages", new_order);
-
     setNewStages(new_order);
-    // console.log("New stages", stages);
+
+    console.log(`New order`, new_order);
+    console.log(`New StaGe order`, new_stage_order);
 
     try {
-      const body: APIReorderStagesInput = {
-        new_stage_order: new_stage_order,
+      const body = {
+        updated_opening: { ...opening, stage_order: new_stage_order },
       };
 
-      const { status, data } = await axios.patch(
-        `/api/openings/${opening_id}`,
-        body
-      );
-      // TODO
-      // The issue is that once we let go of the stage
-      // It is still using the old stage order to .map & list them
-      // Until the new stage order is populated
-      // So for a very short time, the stages revert back to their previous
-      // Sort order before being updated in the getStages  call
+      await axios.put(`/api/openings/${opening_id}`, body);
     } catch (error) {
       console.error(error.response.data.message);
     }
 
     mutate(`/api/openings/${opening_id}`); // Refresh the stage order
     setIsUpdating(false);
-  };
-
-  const UpdateOpening = async () => {
-    const body: APIUpdateOpeningInput = {
-      updated_opening: { ...opening, opening_name: "Beans" }, // TODO add custom name
-    };
-    try {
-      const { status, data } = await axios.put(
-        `/api/openings/${opening_id}`,
-        body
-      );
-      console.log(data);
-      alert(data.message);
-    } catch (error) {
-      console.log(error);
-      alert(error.response.data.message);
-    }
-
-    mutate(`/api/openings/${opening_id}`); // Get new opening info
   };
 
   // When rendering client side don't display anything until loading is complete
@@ -182,11 +149,10 @@ export default function ViewOpening() {
     <div>
       <SignedInNav user={user} current={"Openings"} />
       <div className="mx-auto max-w-md p-20 ">
-        <h1 className="text-xl font-bold text-normal">
-          {opening?.opening_name}
-        </h1>
+        <h1 className="text-xl font-bold text-normal">{opening?.GSI1SK}</h1>
         <p className="text-light text-lg">
-          Created {GetRelativeTime(opening?.created_at)}
+          Created {GetRelativeTime(opening?.created_at)} -{" "}
+          {opening?.is_public ? "Public" : "Private"}
         </p>
       </div>
       <button
@@ -196,27 +162,27 @@ export default function ViewOpening() {
         + Add stage
       </button>
 
-      <button
-        onClick={() => UpdateOpening()}
-        className="mx-auto flex justify-center items-center px-4 py-2 bg-red-700 m-2 rounded-lg text-white"
-      >
-        Update Name to Beans
-      </button>
       <CreateStageModal createStage={createStage} />
 
       {opening ? (
         <div>
           <div className="mx-auto max-w-7xl p-20">
-            <h1>Stages will go here</h1>
+            <h1>
+              Stages will go here, when you click on one the applicants will
+              come up. Change orientation to horizontal
+            </h1>
             <div className="m-4 border rounded-md p-4">
               <h1 className="text-lg">Stage Order</h1>
               <p>Total stages: {opening.stage_order.length}</p>
 
               <ul className="p-4">
                 {" "}
-                {opening.stage_order.map((id) => (
+                {opening?.stage_order.map((id) => (
                   <li key={id}>
-                    {opening.stage_order.indexOf(id) + 1}. {id}
+                    {opening.stage_order.indexOf(id) + 1}.{" "}
+                    {new_stages
+                      ? new_stages[opening?.stage_order.indexOf(id)]?.GSI1SK
+                      : null}
                   </li>
                 ))}
               </ul>
@@ -233,7 +199,11 @@ export default function ViewOpening() {
             >
               <Droppable droppableId={opening.opening_id}>
                 {(provided) => (
-                  <div {...provided.droppableProps} ref={provided.innerRef}>
+                  <div
+                    {...provided.droppableProps}
+                    ref={provided.innerRef}
+                    className="space-y-4 flex flex-col  max-w-full mx-auto p-auto"
+                  >
                     {new_stages?.length > 0 ? (
                       new_stages?.map((stage, index) => {
                         return (
@@ -245,32 +215,25 @@ export default function ViewOpening() {
                           >
                             {(provided) => (
                               <div
-                                className="flex justify-center items-center"
+                                className="p-6 rounded-lg flex max-w-lg border justify-center items-center bg-white shadow-lg"
                                 {...provided.draggableProps}
                                 {...provided.dragHandleProps}
                                 ref={provided.innerRef}
                               >
-                                <div className="border w-2/3 my-4 p-4 hover:bg-blue-gray-100 rounded-lg border-blue-gray-400">
-                                  <a
-                                    href={`/openings/${opening_id}/stages/${stage.stage_id}`}
-                                  >
-                                    <a>
-                                      <h1 className="font-bold text-xl text-normal my-2">
-                                        {stage.stage_name}
-                                      </h1>
-                                      <p className="text-lg text-normal">
-                                        ID: {stage.stage_id}
-                                      </p>
-                                      <p className="text-normal text-lg ">
-                                        Created{" "}
-                                        {GetRelativeTime(stage.created_at)}
-                                      </p>
-                                    </a>
+                                <Link
+                                  href={`/openings/${opening_id}/stages/${stage.stage_id}`}
+                                >
+                                  <a>
+                                    <StageCard
+                                      className="w-full border-0 hover:border-2 rounded-xl"
+                                      stage_title={`${stage.GSI1SK} - ${stage.stage_id}`}
+                                      num_applicants={10}
+                                    />
                                   </a>
-                                </div>
+                                </Link>
                                 <button
                                   onClick={(e) => DeleteStage(stage.stage_id)}
-                                  className="bg-red-500 px-5 py-3 text-white m-8 rounded-lg p-4"
+                                  className=" bg-red-500 hover:bg-red-800 px-5 py-3 text-white m-8 rounded-lg p-4"
                                 >
                                   Delete Stage
                                 </button>

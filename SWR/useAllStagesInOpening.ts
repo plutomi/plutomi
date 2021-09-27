@@ -9,7 +9,6 @@ function useStagesByOpeningId(
 ): useAllStagesInOpeningOutput {
   const shouldFetch = user_id && opening_id ? true : false;
 
-  console.log("Getting stages by opening", opening_id);
   const { data, error } = useSWR(
     shouldFetch ? `/api/openings/${opening_id}/stages` : null,
     fetcher
