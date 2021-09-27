@@ -22,15 +22,19 @@ export async function DeleteOpening({ org_id, opening_id }) {
 
   try {
     // Delete
-    all_stages.map(async (stage) => {
-      const input = {
-        org_id: org_id,
-        opening_id: opening_id,
-        stage_id: stage.stage_id,
-      };
-      console.log("Deleting stage", stage.GSI1SK, stage.stage_id);
-      await DeleteStage(input);
-    });
+    if (all_stages.length > 0) {
+      console.log(`Deleting ${all_stages.length} stages`);
+      all_stages.map(async (stage: DynamoStage) => {
+        const input = {
+          org_id: org_id,
+          opening_id: opening_id,
+          stage_id: stage.stage_id,
+        };
+        console.log("Deleting stage", stage.GSI1SK, stage.stage_id);
+        await DeleteStage(input);
+      });
+    }
+
     console.log("Deleting funnel");
     await Dynamo.send(new DeleteCommand(params));
     return;

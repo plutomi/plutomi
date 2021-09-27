@@ -16,6 +16,8 @@ export default function Openings() {
   const [search, setSearch] = useState("");
   const [session, loading]: [CustomSession, boolean] = useSession();
   const { user, isUserLoading, isUserError } = useUser(session?.user_id);
+  const [isEditing, setIsEditing] = useState(false);
+  const [newName, setNewName] = useState("");
 
   let { openings, isOpeningsLoading, isOpeningsError } = useOpenings(
     session?.user_id
@@ -58,6 +60,26 @@ export default function Openings() {
       alert(error.response.data.message);
     }
     mutate(`/api/openings`);
+  };
+
+  const updateOpening = async (opening_id: string) => {
+    console.log(`Function called`, isEditing);
+    console.log(newName);
+    try {
+      const current_opening = openings.filter(
+        (opening) => opening.opening_id == opening_id
+      );
+      const body = {
+        updated_opening: { ...current_opening[0], GSI1SK: newName },
+      };
+
+      const { data } = await axios.put(`/api/openings/${opening_id}`, body);
+      alert(data.message);
+    } catch (error) {
+      alert(error.response.data.message);
+    }
+    mutate(`/api/openings`);
+    setIsEditing(false);
   };
 
   // When rendering client side don't display anything until loading is complete
@@ -172,13 +194,47 @@ export default function Openings() {
                           <p className="text-light text-lg "> Apply link: </p>
                         </a>
                       </Link>
+
+                      {`${process.env.NEXT_PUBLIC_NEXTAUTH_URL}/${user.org_id}/${opening.opening_id}/apply`}
                       <button
                         className="px-4 py-3 bg-red-500 m-4 text-white text-xl hover:bg-red-800"
                         onClick={() => deleteOpening(opening.opening_id)}
                       >
                         Delete{" "}
                       </button>
-                      {`${process.env.NEXT_PUBLIC_NEXTAUTH_URL}/${user.org_id}/${opening.opening_id}/apply`}
+                      <button
+                        className="px-4 py-3 bg-sky-500 m-4 text-white text-xl hover:bg-sky-800"
+                        onClick={() => setIsEditing(!isEditing)}
+                      >
+                        Edit{" "}
+                      </button>
+                      {isEditing ? (
+                        <div className="max-w-xl my-2 mx-auto">
+                          <label
+                            htmlFor="newName"
+                            className="block text-sm font-medium text-gray-700"
+                          >
+                            Change name
+                          </label>
+                          <div className="mt-1">
+                            <input
+                              type="text"
+                              name="newName"
+                              id="newName"
+                              value={newName}
+                              onChange={(e) => setNewName(e.target.value)}
+                              className="shadow-sm focus:ring-blue-gray-500 focus:border-blue-gray-500 block w-full sm:text-sm border-gray-300 rounded-md"
+                              placeholder="Enter your new name here"
+                            />
+                          </div>
+                          <button
+                            onClick={() => updateOpening(opening.opening_id)}
+                            className=" px-4 py-3 text-white bg-green-500 rounded-lg"
+                          >
+                            Submit
+                          </button>
+                        </div>
+                      ) : null}
                     </div>
                   );
                 })
