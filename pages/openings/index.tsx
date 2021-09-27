@@ -67,6 +67,7 @@ export default function Openings() {
     console.log(newName);
     try {
       const current_opening = openings.filter(
+        // Change this to find instead of filter
         (opening) => opening.opening_id == opening_id
       );
       const body = {

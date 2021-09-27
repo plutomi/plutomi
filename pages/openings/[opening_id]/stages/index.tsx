@@ -105,12 +105,15 @@ export default function ViewOpening() {
 
     setNewStages(new_order);
 
+    console.log(`New order`, new_order);
+    console.log(`New StaGe order`, new_stage_order);
+
     try {
-      const body: APIReorderStagesInput = {
-        new_stage_order: new_stage_order,
+      const body = {
+        updated_opening: { ...opening, stage_order: new_stage_order },
       };
 
-      await axios.patch(`/api/openings/${opening_id}`, body);
+      await axios.put(`/api/openings/${opening_id}`, body);
     } catch (error) {
       console.error(error.response.data.message);
     }
