@@ -5,6 +5,7 @@ import useOpeningById from "../../../../SWR/useOpeningById";
 import { GetRelativeTime } from "../../../../utils/time";
 import SignIn from "../../../../components/SignIn";
 import { useSession } from "next-auth/client";
+import Breadcrumbs from "../../../../components/Breadcrumbs";
 import useStore from "../../../../utils/store";
 import { mutate } from "swr";
 import Link from "next/dist/client/link";
@@ -15,8 +16,11 @@ import axios from "axios";
 import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
 import { useState } from "react";
 import { useEffect } from "react";
+
 export default function ViewOpening() {
+  const [isEditing, setIsEditing] = useState(false);
   const router = useRouter();
+  const [isPublic, setIsPublic] = useState(false);
   const { opening_id } = router.query;
   const [session, loading]: [CustomSession, boolean] = useSession();
   const { user, isUserLoading, isUserError } = useUser(session?.user_id);
@@ -28,6 +32,7 @@ export default function ViewOpening() {
     opening_id as string
   );
 
+  const [newName, setNewName] = useState("");
   let { stages, isStagesLoading, isStagesError } = useAllStagesInOpening(
     session?.user_id,
     opening_id as string
@@ -105,9 +110,6 @@ export default function ViewOpening() {
 
     setNewStages(new_order);
 
-    console.log(`New order`, new_order);
-    console.log(`New StaGe order`, new_stage_order);
-
     try {
       const body = {
         updated_opening: { ...opening, stage_order: new_stage_order },
@@ -121,6 +123,58 @@ export default function ViewOpening() {
     mutate(`/api/openings/${opening_id}`); // Refresh the stage order
     setIsUpdating(false);
   };
+
+  const updateOpening = async (opening_id: string) => {
+    try {
+      const body = {
+        updated_opening: {
+          ...opening,
+          GSI1SK: newName,
+          is_public: isPublic,
+        },
+      };
+
+      const { data } = await axios.put(`/api/openings/${opening_id}`, body);
+      alert(data.message);
+    } catch (error) {
+      alert(error.response.data.message);
+    }
+    mutate(`/api/openings/${opening_id}`);
+    setIsEditing(false);
+  };
+
+  const deleteOpening = async (opening_id: string) => {
+    if (
+      !confirm(
+        "Are you sure you want to delete this opening? THIS WILL ALSO DELETE ALL STAGES INSIDE OF IT!!!"
+      )
+    )
+      return;
+
+    try {
+      const { status, data } = await axios.delete(
+        `/api/openings/${opening_id}`
+      );
+      alert(data.message);
+      router.push(`/openings`);
+    } catch (error) {
+      alert(error.response.data.message);
+    }
+    mutate(`/api/openings`);
+  };
+
+  const pages = [
+    {
+      name: "Openings",
+      href: `${process.env.NEXT_PUBLIC_NEXTAUTH_URL}/openings`,
+      current: false,
+    },
+    {
+      name: opening?.GSI1SK || "loading...",
+      href: `${process.env.NEXT_PUBLIC_NEXTAUTH_URL}/openings/${opening_id}/stages`,
+      current: true,
+    },
+  ];
 
   // When rendering client side don't display anything until loading is complete
   if (typeof window !== "undefined" && loading) {
@@ -148,16 +202,85 @@ export default function ViewOpening() {
   return (
     <div>
       <SignedInNav user={user} current={"Openings"} />
-      <div className="mx-auto max-w-md p-20 ">
+
+      <div className="px-20 ">
+        <Breadcrumbs pages={pages} />
+      </div>
+
+      <div className="mx-auto max-w-4xl pt-20 flex flex-col justify-center items-center ">
         <h1 className="text-xl font-bold text-normal">{opening?.GSI1SK}</h1>
         <p className="text-light text-lg">
           Created {GetRelativeTime(opening?.created_at)} -{" "}
           {opening?.is_public ? "Public" : "Private"}
         </p>
+        <div className="m-4  flex flex-wrap max-w-full">
+          <button
+            className="px-4 py-3 bg-red-500 m-4 text-white text-xl hover:bg-red-800"
+            onClick={() => deleteOpening(opening.opening_id)}
+          >
+            Delete{" "}
+          </button>
+          <button
+            className="px-4 py-3 bg-sky-500 m-4 text-white text-xl hover:bg-sky-800"
+            onClick={() => setIsEditing(!isEditing)}
+          >
+            Edit{" "}
+          </button>
+        </div>
+        {isEditing ? (
+          <div className="max-w-xl my-2 mx-auto">
+            <label
+              htmlFor="newName"
+              className="block text-sm font-medium text-gray-700"
+            >
+              Change name
+            </label>
+            <div className="mt-1">
+              <input
+                type="text"
+                name="newName"
+                id="newName"
+                defaultValue={opening.GSI1SK}
+                // value={newName}
+                onChange={(e) => setNewName(e.target.value)}
+                className="shadow-sm focus:ring-blue-gray-500 focus:border-blue-gray-500 block w-full sm:text-sm border-gray-300 rounded-md"
+                placeholder="Enter your new name here"
+              />
+            </div>
+            <div className="relative flex items-start my-4">
+              <div className="flex items-center h-5">
+                <input
+                  id="comments"
+                  aria-describedby="comments-description"
+                  name="comments"
+                  type="checkbox"
+                  defaultChecked={opening.is_public}
+                  onChange={(e) => setIsPublic(e.target.checked)}
+                  className="focus:ring-indigo-500 h-4 w-4 text-indigo-600 border-gray-300 rounded"
+                />
+              </div>
+              <div className="ml-3 text-sm">
+                <label htmlFor="comments" className="font-medium text-gray-700">
+                  Public
+                </label>
+                <p id="comments-description" className="text-gray-500">
+                  Make this opening available for people to apply
+                </p>
+              </div>
+            </div>
+            <button
+              onClick={() => updateOpening(opening.opening_id)}
+              className=" px-4 py-3 text-white bg-green-500 rounded-lg"
+            >
+              Submit
+            </button>
+          </div>
+        ) : null}
       </div>
+
       <button
         onClick={() => setCreateStageModalOpen(true)}
-        className="mx-auto flex justify-center items-center px-4 py-2 bg-blue-700 m-2 rounded-lg text-white"
+        className="mx-auto flex justify-center items-center px-4 py-2 bg-blue-700  rounded-lg text-white"
       >
         + Add stage
       </button>
@@ -190,7 +313,9 @@ export default function ViewOpening() {
 
             {/** STAGES START HERE */}
             {isUpdating ? (
-              <h1 className="text-6xl font-bold m-8">Updating...</h1>
+              <h1 className="text-6xl font-bold m-8 text-center">
+                Updating...
+              </h1>
             ) : null}
 
             <DragDropContext
@@ -202,7 +327,7 @@ export default function ViewOpening() {
                   <div
                     {...provided.droppableProps}
                     ref={provided.innerRef}
-                    className="space-y-4 flex flex-col  max-w-full mx-auto p-auto"
+                    className="space-y-4 flex rounded-md flex-col  mx-4 max-w-full border justify-center items-center"
                   >
                     {new_stages?.length > 0 ? (
                       new_stages?.map((stage, index) => {
@@ -215,7 +340,7 @@ export default function ViewOpening() {
                           >
                             {(provided) => (
                               <div
-                                className="p-6 rounded-lg flex max-w-lg border justify-center items-center bg-white shadow-lg"
+                                className="m-2 w-full max-w-xl"
                                 {...provided.draggableProps}
                                 {...provided.dragHandleProps}
                                 ref={provided.innerRef}
@@ -225,18 +350,12 @@ export default function ViewOpening() {
                                 >
                                   <a>
                                     <StageCard
-                                      className="w-full border-0 hover:border-2 rounded-xl"
+                                      className="w-full border-0 hover:shadow-lg rounded-xl"
                                       stage_title={`${stage.GSI1SK} - ${stage.stage_id}`}
                                       num_applicants={10}
                                     />
                                   </a>
                                 </Link>
-                                <button
-                                  onClick={(e) => DeleteStage(stage.stage_id)}
-                                  className=" bg-red-500 hover:bg-red-800 px-5 py-3 text-white m-8 rounded-lg p-4"
-                                >
-                                  Delete Stage
-                                </button>
                               </div>
                             )}
                           </Draggable>

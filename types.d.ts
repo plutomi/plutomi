@@ -287,6 +287,12 @@ interface UpdateOpeningInput {
   updated_opening: DynamoOpening;
 }
 
+interface UpdateStageInput {
+  org_id: string;
+  opening_id: string;
+  stage_id: string;
+  updated_stage: DynamoStage;
+}
 interface APIUpdateOpeningInput {
   updated_opening: DynamoOpening;
 }
