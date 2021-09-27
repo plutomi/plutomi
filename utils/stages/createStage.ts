@@ -32,11 +32,6 @@ export async function CreateStage({
   };
 
   try {
-<<<<<<< HEAD
-    console.log("Creating new stage");
-    // TODO make this a transact
-=======
->>>>>>> stage-reorder-patch
     await Dynamo.send(new PutCommand(params));
 
     let opening = await GetOpening({ org_id, opening_id });
