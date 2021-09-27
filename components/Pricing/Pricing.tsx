@@ -9,7 +9,7 @@ const PricingCards = [
       <p className={`mt-6 text-xl text-center text-dark`}>
         Applicants are considered{" "}
         <span className=" font-bold text-active-dark">active</span> if
-        they&apos;ve made updates to their application in the past 30 days.
+        they&apos;ve made updates to their application in the last 30 days.
       </p>
     ),
   },
@@ -56,7 +56,6 @@ export default function Pricing() {
             />
             !
           </p> */}
-          s{" "}
         </div>
         <FAQ />
 

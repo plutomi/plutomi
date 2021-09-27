@@ -16,6 +16,9 @@ export default function Openings() {
   const [search, setSearch] = useState("");
   const [session, loading]: [CustomSession, boolean] = useSession();
   const { user, isUserLoading, isUserError } = useUser(session?.user_id);
+  const [isEditing, setIsEditing] = useState(false);
+  const [isPublic, setIsPublic] = useState(false);
+  const [newName, setNewName] = useState("");
 
   let { openings, isOpeningsLoading, isOpeningsError } = useOpenings(
     session?.user_id
@@ -46,6 +49,41 @@ export default function Openings() {
     }
 
     mutate(`/api/openings/`); // Get all openings
+  };
+
+  const deleteOpening = async (opening_id: string) => {
+    try {
+      const { status, data } = await axios.delete(
+        `/api/openings/${opening_id}`
+      );
+      alert(data.message);
+    } catch (error) {
+      alert(error.response.data.message);
+    }
+    mutate(`/api/openings`);
+  };
+
+  const updateOpening = async (opening_id: string) => {
+    try {
+      const current_opening = openings.filter(
+        // Change this to find instead of filter
+        (opening) => opening.opening_id == opening_id
+      );
+      const body = {
+        updated_opening: {
+          ...current_opening[0],
+          GSI1SK: newName ? newName : current_opening[0].GSI1SK,
+          is_public: isPublic,
+        },
+      };
+
+      const { data } = await axios.put(`/api/openings/${opening_id}`, body);
+      alert(data.message);
+    } catch (error) {
+      alert(error.response.data.message);
+    }
+    mutate(`/api/openings`);
+    setIsEditing(false);
   };
 
   // When rendering client side don't display anything until loading is complete
@@ -150,15 +188,84 @@ export default function Openings() {
                           <p className="text-normal text-lg ">
                             Created {GetRelativeTime(opening.created_at)}
                           </p>
-                          {opening.stage_order.length > 0 ? (
-                            <p>Stage Order: {opening.stage_order.join(", ")}</p>
+                          {opening?.stage_order.length > 0 ? (
+                            <p>
+                              Stage Order: {opening?.stage_order.join(", ")}
+                            </p>
                           ) : (
                             <p>No stages in this opening</p>
                           )}
                           <p className="text-light text-lg "> Apply link: </p>
                         </a>
                       </Link>
+
                       {`${process.env.NEXT_PUBLIC_NEXTAUTH_URL}/${user.org_id}/${opening.opening_id}/apply`}
+                      <button
+                        className="px-4 py-3 bg-red-500 m-4 text-white text-xl hover:bg-red-800"
+                        onClick={() => deleteOpening(opening.opening_id)}
+                      >
+                        Delete{" "}
+                      </button>
+                      <button
+                        className="px-4 py-3 bg-sky-500 m-4 text-white text-xl hover:bg-sky-800"
+                        onClick={() => setIsEditing(!isEditing)}
+                      >
+                        Edit{" "}
+                      </button>
+                      {isEditing ? (
+                        <div className="max-w-xl my-2 mx-auto">
+                          <label
+                            htmlFor="newName"
+                            className="block text-sm font-medium text-gray-700"
+                          >
+                            Change name
+                          </label>
+                          <div className="mt-1">
+                            <input
+                              type="text"
+                              name="newName"
+                              id="newName"
+                              value={newName}
+                              onChange={(e) => setNewName(e.target.value)}
+                              className="shadow-sm focus:ring-blue-gray-500 focus:border-blue-gray-500 block w-full sm:text-sm border-gray-300 rounded-md"
+                              placeholder="Enter your new name here"
+                            />
+                          </div>
+                          <div className="relative flex items-start">
+                            <div className="flex items-center h-5">
+                              <input
+                                id="comments"
+                                aria-describedby="comments-description"
+                                name="comments"
+                                type="checkbox"
+                                defaultChecked={opening.is_public}
+                                onChange={(e) => setIsPublic(e.target.checked)}
+                                className="focus:ring-indigo-500 h-4 w-4 text-indigo-600 border-gray-300 rounded"
+                              />
+                            </div>
+                            <div className="ml-3 text-sm">
+                              <label
+                                htmlFor="comments"
+                                className="font-medium text-gray-700"
+                              >
+                                Public
+                              </label>
+                              <p
+                                id="comments-description"
+                                className="text-gray-500"
+                              >
+                                Make this opening available for people to apply
+                              </p>
+                            </div>
+                          </div>
+                          <button
+                            onClick={() => updateOpening(opening.opening_id)}
+                            className=" px-4 py-3 text-white bg-green-500 rounded-lg"
+                          >
+                            Submit
+                          </button>
+                        </div>
+                      ) : null}
                     </div>
                   );
                 })
