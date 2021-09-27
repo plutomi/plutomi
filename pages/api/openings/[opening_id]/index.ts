@@ -3,6 +3,7 @@ import withAuthorizer from "../../../../middleware/withAuthorizer";
 import { NextApiResponse } from "next";
 import InputValidation from "../../../../utils/inputValidation";
 import UpdateOpening from "../../../../utils/openings/updateOpening";
+import { DeleteOpening } from "../../../../utils/openings/deleteOpening";
 const handler = async (req: CustomRequest, res: NextApiResponse) => {
   const user: DynamoUser = req.user;
   const { method, query, body } = req;
@@ -79,6 +80,21 @@ const handler = async (req: CustomRequest, res: NextApiResponse) => {
       return res
         .status(500)
         .json({ message: `Unable to update opening - ${error}` });
+    }
+  }
+
+  if (method === "DELETE") {
+    try {
+      const delete_opening_input = {
+        org_id: user.org_id,
+        opening_id: opening_id,
+      };
+      await DeleteOpening(delete_opening_input);
+      return res.status(200).json({ message: "Opening deleted" });
+    } catch (error) {
+      return res
+        .status(500)
+        .json({ message: `Unable to delete your opening ${error}` });
     }
   }
   return res.status(405).json({ message: "Not Allowed" });

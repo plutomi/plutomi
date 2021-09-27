@@ -48,6 +48,18 @@ export default function Openings() {
     mutate(`/api/openings/`); // Get all openings
   };
 
+  const deleteOpening = async (opening_id: string) => {
+    try {
+      const { status, data } = await axios.delete(
+        `/api/openings/${opening_id}`
+      );
+      alert(data.message);
+    } catch (error) {
+      alert(error.response.data.message);
+    }
+    mutate(`/api/openings`);
+  };
+
   // When rendering client side don't display anything until loading is complete
   if (typeof window !== "undefined" && loading) {
     return null;
@@ -150,14 +162,22 @@ export default function Openings() {
                           <p className="text-normal text-lg ">
                             Created {GetRelativeTime(opening.created_at)}
                           </p>
-                          {opening.stage_order.length > 0 ? (
-                            <p>Stage Order: {opening.stage_order.join(", ")}</p>
+                          {opening?.stage_order.length > 0 ? (
+                            <p>
+                              Stage Order: {opening?.stage_order.join(", ")}
+                            </p>
                           ) : (
                             <p>No stages in this opening</p>
                           )}
                           <p className="text-light text-lg "> Apply link: </p>
                         </a>
                       </Link>
+                      <button
+                        className="px-4 py-3 bg-red-500 m-4 text-white text-xl hover:bg-red-800"
+                        onClick={() => deleteOpening(opening.opening_id)}
+                      >
+                        Delete{" "}
+                      </button>
                       {`${process.env.NEXT_PUBLIC_NEXTAUTH_URL}/${user.org_id}/${opening.opening_id}/apply`}
                     </div>
                   );
