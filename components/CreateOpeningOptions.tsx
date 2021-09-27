@@ -18,7 +18,7 @@ export default function CreateOpeningOptions() {
             Public
           </label>
           <p id="comments-description" className="text-gray-500">
-            Make this opening available to everyone once creaeted
+            Make this opening available to everyone once created
           </p>
         </div>
       </div>
