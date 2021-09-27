@@ -46,6 +46,12 @@ export default function Stage() {
   };
 
   const DeleteStage = async (stage_id: string) => {
+    if (
+      !confirm(
+        "Are you sure you want to delete this stage? THIS IS IRREVERSABLE!!!"
+      )
+    )
+      return;
     try {
       await axios.delete(`/api/openings/${opening_id}/stages/${stage_id}`);
       alert("Deleted atage");

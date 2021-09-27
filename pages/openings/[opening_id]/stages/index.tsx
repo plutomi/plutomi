@@ -20,7 +20,6 @@ export default function ViewOpening() {
   const [isEditing, setIsEditing] = useState(false);
   const router = useRouter();
   const [isPublic, setIsPublic] = useState(false);
-  const [newName, setNewName] = useState("");
   const { opening_id } = router.query;
   const [session, loading]: [CustomSession, boolean] = useSession();
   const { user, isUserLoading, isUserError } = useUser(session?.user_id);
@@ -31,6 +30,8 @@ export default function ViewOpening() {
     session?.user_id,
     opening_id as string
   );
+
+  const [newName, setNewName] = useState("");
 
   let { stages, isStagesLoading, isStagesError } = useAllStagesInOpening(
     session?.user_id,
@@ -191,7 +192,7 @@ export default function ViewOpening() {
   return (
     <div>
       <SignedInNav user={user} current={"Openings"} />
-      <div className="mx-auto max-w-4xl p-20 flex flex-col justify-center items-center ">
+      <div className="mx-auto max-w-4xl pt-20 flex flex-col justify-center items-center ">
         <h1 className="text-xl font-bold text-normal">{opening?.GSI1SK}</h1>
         <p className="text-light text-lg">
           Created {GetRelativeTime(opening?.created_at)} -{" "}
@@ -224,7 +225,8 @@ export default function ViewOpening() {
                 type="text"
                 name="newName"
                 id="newName"
-                value={newName}
+                defaultValue={opening.GSI1SK}
+                // value={newName}
                 onChange={(e) => setNewName(e.target.value)}
                 className="shadow-sm focus:ring-blue-gray-500 focus:border-blue-gray-500 block w-full sm:text-sm border-gray-300 rounded-md"
                 placeholder="Enter your new name here"
@@ -263,7 +265,7 @@ export default function ViewOpening() {
 
       <button
         onClick={() => setCreateStageModalOpen(true)}
-        className="mx-auto flex justify-center items-center px-4 py-2 bg-blue-700 m-2 rounded-lg text-white"
+        className="mx-auto flex justify-center items-center px-4 py-2 bg-blue-700  rounded-lg text-white"
       >
         + Add stage
       </button>
@@ -296,8 +298,8 @@ export default function ViewOpening() {
 
             {/** STAGES START HERE */}
             {isUpdating ? (
-              <h1 className="text-6xl font-bold m-8">Updating...</h1>
-            ) : null}
+                      <h1 className="text-6xl font-bold m-8 text-center">Updating...</h1>
+                    ) : null}
 
             <DragDropContext
               onDragEnd={handleDragEnd}
@@ -308,8 +310,9 @@ export default function ViewOpening() {
                   <div
                     {...provided.droppableProps}
                     ref={provided.innerRef}
-                    className="space-y-4 flex flex-col  max-w-full mx-auto p-auto"
+                    className="space-y-4 flex rounded-md flex-col  mx-4 max-w-full border justify-center items-center"
                   >
+               
                     {new_stages?.length > 0 ? (
                       new_stages?.map((stage, index) => {
                         return (
@@ -321,7 +324,7 @@ export default function ViewOpening() {
                           >
                             {(provided) => (
                               <div
-                                className="p-6 rounded-lg flex max-w-lg border justify-center items-center bg-white shadow-lg"
+                                className="m-2 w-full max-w-xl"
                                 {...provided.draggableProps}
                                 {...provided.dragHandleProps}
                                 ref={provided.innerRef}
@@ -331,18 +334,12 @@ export default function ViewOpening() {
                                 >
                                   <a>
                                     <StageCard
-                                      className="w-full border-0 hover:border-2 rounded-xl"
+                                      className="w-full border-0 hover:shadow-lg rounded-xl"
                                       stage_title={`${stage.GSI1SK} - ${stage.stage_id}`}
                                       num_applicants={10}
                                     />
                                   </a>
                                 </Link>
-                                <button
-                                  onClick={(e) => DeleteStage(stage.stage_id)}
-                                  className=" bg-red-500 hover:bg-red-800 px-5 py-3 text-white m-8 rounded-lg p-4"
-                                >
-                                  Delete Stage
-                                </button>
                               </div>
                             )}
                           </Draggable>
