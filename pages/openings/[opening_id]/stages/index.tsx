@@ -32,7 +32,6 @@ export default function ViewOpening() {
   );
 
   const [newName, setNewName] = useState("");
-
   let { stages, isStagesLoading, isStagesError } = useAllStagesInOpening(
     session?.user_id,
     opening_id as string
@@ -132,7 +131,7 @@ export default function ViewOpening() {
       const body = {
         updated_opening: {
           ...opening,
-          GSI1SK: newName ? newName : opening.GSI1SK,
+          GSI1SK: newName,
           is_public: isPublic,
         },
       };
@@ -142,7 +141,7 @@ export default function ViewOpening() {
     } catch (error) {
       alert(error.response.data.message);
     }
-    mutate(`/api/openings`);
+    mutate(`/api/openings/${opening_id}`);
     setIsEditing(false);
   };
 
@@ -298,8 +297,10 @@ export default function ViewOpening() {
 
             {/** STAGES START HERE */}
             {isUpdating ? (
-                      <h1 className="text-6xl font-bold m-8 text-center">Updating...</h1>
-                    ) : null}
+              <h1 className="text-6xl font-bold m-8 text-center">
+                Updating...
+              </h1>
+            ) : null}
 
             <DragDropContext
               onDragEnd={handleDragEnd}
@@ -312,7 +313,6 @@ export default function ViewOpening() {
                     ref={provided.innerRef}
                     className="space-y-4 flex rounded-md flex-col  mx-4 max-w-full border justify-center items-center"
                   >
-               
                     {new_stages?.length > 0 ? (
                       new_stages?.map((stage, index) => {
                         return (

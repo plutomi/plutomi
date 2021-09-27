@@ -45,11 +45,11 @@ const handler = async (req: CustomRequest, res: NextApiResponse) => {
       }
 
       await UpdateStage(update_stage_input);
-      return res.status(200).json({ message: "Opening updated!" });
+      return res.status(200).json({ message: "Stage updated!" });
     } catch (error) {
       return res
         .status(500)
-        .json({ message: `Unable to update opening - ${error}` });
+        .json({ message: `Unable to update stage - ${error}` });
     }
   }
 
