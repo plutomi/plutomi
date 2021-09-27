@@ -35,7 +35,7 @@ const handler = async (req: CustomRequest, res: NextApiResponse) => {
         org_id: user.org_id,
         opening_id: opening_id as string,
         stage_id: stage_id as string,
-        updated_stage: body.updated_opening,
+        updated_stage: body.updated_stage,
       };
 
       try {

@@ -15,8 +15,12 @@ import axios from "axios";
 import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
 import { useState } from "react";
 import { useEffect } from "react";
+
 export default function ViewOpening() {
+  const [isEditing, setIsEditing] = useState(false);
   const router = useRouter();
+  const [isPublic, setIsPublic] = useState(false);
+  const [newName, setNewName] = useState("");
   const { opening_id } = router.query;
   const [session, loading]: [CustomSession, boolean] = useSession();
   const { user, isUserLoading, isUserError } = useUser(session?.user_id);
@@ -122,6 +126,45 @@ export default function ViewOpening() {
     setIsUpdating(false);
   };
 
+  const updateOpening = async (opening_id: string) => {
+    try {
+      const body = {
+        updated_opening: {
+          ...opening,
+          GSI1SK: newName ? newName : opening.GSI1SK,
+          is_public: isPublic,
+        },
+      };
+
+      const { data } = await axios.put(`/api/openings/${opening_id}`, body);
+      alert(data.message);
+    } catch (error) {
+      alert(error.response.data.message);
+    }
+    mutate(`/api/openings`);
+    setIsEditing(false);
+  };
+
+  const deleteOpening = async (opening_id: string) => {
+    if (
+      !confirm(
+        "Are you sure you want to delete this opening? THIS WILL ALSO DELETE ALL STAGES INSIDE OF IT!!!"
+      )
+    )
+      return;
+
+    try {
+      const { status, data } = await axios.delete(
+        `/api/openings/${opening_id}`
+      );
+      alert(data.message);
+      router.push(`/openings`);
+    } catch (error) {
+      alert(error.response.data.message);
+    }
+    mutate(`/api/openings`);
+  };
+
   // When rendering client side don't display anything until loading is complete
   if (typeof window !== "undefined" && loading) {
     return null;
@@ -148,13 +191,76 @@ export default function ViewOpening() {
   return (
     <div>
       <SignedInNav user={user} current={"Openings"} />
-      <div className="mx-auto max-w-md p-20 ">
+      <div className="mx-auto max-w-4xl p-20 flex flex-col justify-center items-center ">
         <h1 className="text-xl font-bold text-normal">{opening?.GSI1SK}</h1>
         <p className="text-light text-lg">
           Created {GetRelativeTime(opening?.created_at)} -{" "}
           {opening?.is_public ? "Public" : "Private"}
         </p>
+        <div className="m-4  flex flex-wrap max-w-full">
+          <button
+            className="px-4 py-3 bg-red-500 m-4 text-white text-xl hover:bg-red-800"
+            onClick={() => deleteOpening(opening.opening_id)}
+          >
+            Delete{" "}
+          </button>
+          <button
+            className="px-4 py-3 bg-sky-500 m-4 text-white text-xl hover:bg-sky-800"
+            onClick={() => setIsEditing(!isEditing)}
+          >
+            Edit{" "}
+          </button>
+        </div>
+        {isEditing ? (
+          <div className="max-w-xl my-2 mx-auto">
+            <label
+              htmlFor="newName"
+              className="block text-sm font-medium text-gray-700"
+            >
+              Change name
+            </label>
+            <div className="mt-1">
+              <input
+                type="text"
+                name="newName"
+                id="newName"
+                value={newName}
+                onChange={(e) => setNewName(e.target.value)}
+                className="shadow-sm focus:ring-blue-gray-500 focus:border-blue-gray-500 block w-full sm:text-sm border-gray-300 rounded-md"
+                placeholder="Enter your new name here"
+              />
+            </div>
+            <div className="relative flex items-start my-4">
+              <div className="flex items-center h-5">
+                <input
+                  id="comments"
+                  aria-describedby="comments-description"
+                  name="comments"
+                  type="checkbox"
+                  defaultChecked={opening.is_public}
+                  onChange={(e) => setIsPublic(e.target.checked)}
+                  className="focus:ring-indigo-500 h-4 w-4 text-indigo-600 border-gray-300 rounded"
+                />
+              </div>
+              <div className="ml-3 text-sm">
+                <label htmlFor="comments" className="font-medium text-gray-700">
+                  Public
+                </label>
+                <p id="comments-description" className="text-gray-500">
+                  Make this opening available for people to apply
+                </p>
+              </div>
+            </div>
+            <button
+              onClick={() => updateOpening(opening.opening_id)}
+              className=" px-4 py-3 text-white bg-green-500 rounded-lg"
+            >
+              Submit
+            </button>
+          </div>
+        ) : null}
       </div>
+
       <button
         onClick={() => setCreateStageModalOpen(true)}
         className="mx-auto flex justify-center items-center px-4 py-2 bg-blue-700 m-2 rounded-lg text-white"

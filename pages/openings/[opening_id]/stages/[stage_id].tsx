@@ -6,6 +6,7 @@ import { useSession } from "next-auth/client";
 import { useRouter } from "next/router";
 import axios from "axios";
 import { mutate } from "swr";
+
 export default function Stage() {
   const router = useRouter();
   const { stage_id, opening_id } = router.query;
@@ -18,6 +19,31 @@ export default function Stage() {
     opening_id as string,
     stage_id as string
   );
+
+  // TODO call this
+  const save = async (value, property) => {
+    try {
+      const body = {
+        org_id: user.org_id,
+        opening_id: opening_id,
+        stage_id: stage_id,
+        updated_stage: {
+          ...stage,
+          property: "beans",
+        },
+      };
+
+      const { status, data } = await axios.put(
+        `/api/openings/${opening_id}/stages/${stage_id}`,
+        body
+      );
+      alert(data.message);
+    } catch (error) {
+      alert(error.response.data.message);
+    }
+
+    mutate(`/api/openings/${opening_id}/stages/${stage_id}`);
+  };
 
   const DeleteStage = async (stage_id: string) => {
     try {
@@ -58,13 +84,10 @@ export default function Stage() {
     <div>
       <SignedInNav user={user} current={"Openings"} />
       <div className="mx-auto p-20">
-        <h1 className="text-norm text-xl">
-          Viewing individual stage - {stage_id}
-        </h1>
         <div>
           {stage ? (
             <div>
-              <div>{JSON.stringify(stage)}</div>
+              <h1 className="text-2xl font-bold">{stage.GSI1SK}</h1>
               <div className="mx-auto p-20 border rounded-md">
                 <h1>Applicants will go here </h1>
                 <button
