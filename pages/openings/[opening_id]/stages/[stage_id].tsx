@@ -54,7 +54,7 @@ export default function Stage() {
       const body = {
         updated_stage: {
           ...stage,
-          GSI1SK: newName,
+          GSI1SK: newName ? newName : opening.GSI1SK, // If not blank
         },
       };
 
@@ -68,6 +68,7 @@ export default function Stage() {
     }
     mutate(`/api/openings/${opening_id}/stages/${stage_id}`);
     setIsEditing(false);
+    setNewName("");
   };
 
   const DeleteStage = async (stage_id: string) => {
@@ -140,7 +141,12 @@ export default function Stage() {
                     htmlFor="newName"
                     className="block text-sm font-medium text-gray-700"
                   >
-                    Change name
+                    Change name{" "}
+                    {!newName || newName === stage.GSI1SK ? (
+                      <span className="text-sm text-blue-gray-500">
+                        - Name will stay the same
+                      </span>
+                    ) : null}
                   </label>
                   <div className="mt-1 space-y-4">
                     <input
@@ -153,6 +159,7 @@ export default function Stage() {
                       className="shadow-sm focus:ring-blue-gray-500 focus:border-blue-gray-500 block w-full sm:text-sm border-gray-300 rounded-md"
                       placeholder="Enter your new name here"
                     />
+
                     <button
                       onClick={() => updateStage(stage.stage_id)}
                       className=" px-4 py-3 text-white bg-green-500 rounded-lg"

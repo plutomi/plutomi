@@ -129,7 +129,7 @@ export default function ViewOpening() {
       const body = {
         updated_opening: {
           ...opening,
-          GSI1SK: newName,
+          GSI1SK: newName ? newName : opening.GSI1SK, // If not blank
           is_public: isPublic,
         },
       };
@@ -141,6 +141,7 @@ export default function ViewOpening() {
     }
     mutate(`/api/openings/${opening_id}`);
     setIsEditing(false);
+    setNewName("");
   };
 
   const deleteOpening = async (opening_id: string) => {
@@ -233,7 +234,12 @@ export default function ViewOpening() {
               htmlFor="newName"
               className="block text-sm font-medium text-gray-700"
             >
-              Change name
+              Change name{" "}
+              {!newName || newName === opening.GSI1SK ? (
+                <span className="text-sm text-blue-gray-500">
+                  - Name will stay the same
+                </span>
+              ) : null}
             </label>
             <div className="mt-1">
               <input
