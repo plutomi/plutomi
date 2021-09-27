@@ -3,10 +3,13 @@ import useStageById from "../../../../SWR/useStageById";
 import SignIn from "../../../../components/SignIn";
 import useUser from "../../../../SWR/useUser";
 import { useSession } from "next-auth/client";
+import Breadcrumbs from "../../../../components/Breadcrumbs";
 import { useRouter } from "next/router";
 import axios from "axios";
 import { mutate } from "swr";
 import { useState } from "react";
+import useOpenings from "../../../../SWR/useOpenings";
+import useOpeningById from "../../../../SWR/useOpeningById";
 export default function Stage() {
   const router = useRouter();
   const { stage_id, opening_id } = router.query;
@@ -16,11 +19,34 @@ export default function Stage() {
   const [session, loading]: [CustomSession, boolean] = useSession();
   const { user, isUserLoading, isUserError } = useUser(session?.user_id);
 
+  const { opening, isOpeningLoading, isOpeningError } = useOpeningById(
+    session?.user_id,
+    opening_id as string
+  );
+
   const { stage, isStageLoading, isStageError } = useStageById(
     session?.user_id,
     opening_id as string,
     stage_id as string
   );
+
+  const pages = [
+    {
+      name: "Openings",
+      href: `${process.env.NEXT_PUBLIC_NEXTAUTH_URL}/openings`,
+      current: false,
+    },
+    {
+      name: opening?.GSI1SK || "loading...",
+      href: `${process.env.NEXT_PUBLIC_NEXTAUTH_URL}/openings/${opening_id}/stages`,
+      current: false,
+    },
+    {
+      name: stage?.GSI1SK || "loading...",
+      href: `${process.env.NEXT_PUBLIC_NEXTAUTH_URL}/openings/${opening_id}/${stage?.stage_id}`,
+      current: true,
+    },
+  ];
 
   // TODO call this
   const updateStage = async (stage_id: string) => {
@@ -88,10 +114,11 @@ export default function Stage() {
   return (
     <div>
       <SignedInNav user={user} current={"Openings"} />
-      <div className="mx-auto p-20">
+      <div className="mx-auto px-20 py-8">
         <div>
+          <Breadcrumbs pages={pages} />
           {stage ? (
-            <div>
+            <div className="p-10">
               <h1 className="text-2xl font-bold">{stage.GSI1SK}</h1>
               <div className="m-4  flex flex-wrap max-w-full">
                 <button
