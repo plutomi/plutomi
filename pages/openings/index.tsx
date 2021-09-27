@@ -7,6 +7,7 @@ import SignIn from "../../components/SignIn";
 import useOpenings from "../../SWR/useOpenings";
 import useStore from "../../utils/store";
 import Link from "next/dist/client/link";
+import Breadcrumbs from "../../components/Breadcrumbs";
 import useUser from "../../SWR/useUser";
 import { useState } from "react";
 import axios from "axios";
@@ -48,6 +49,14 @@ export default function Openings() {
     mutate(`/api/openings/`); // Get all openings
   };
 
+  const pages = [
+    {
+      name: "Openings",
+      href: `${process.env.NEXT_PUBLIC_NEXTAUTH_URL}/openings`,
+      current: true,
+    },
+  ];
+
   // When rendering client side don't display anything until loading is complete
   if (typeof window !== "undefined" && loading) {
     return null;
@@ -75,6 +84,9 @@ export default function Openings() {
     <div className="min-h-screen bg-white">
       <SignedInNav current="Openings" user={user} />
       <div className="py-10">
+        <div className="px-20 py-8">
+          <Breadcrumbs pages={pages} />
+        </div>
         <header>
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             {/* Content */}

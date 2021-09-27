@@ -5,6 +5,7 @@ import useOpeningById from "../../../../SWR/useOpeningById";
 import { GetRelativeTime } from "../../../../utils/time";
 import SignIn from "../../../../components/SignIn";
 import { useSession } from "next-auth/client";
+import Breadcrumbs from "../../../../components/Breadcrumbs";
 import useStore from "../../../../utils/store";
 import { mutate } from "swr";
 import Link from "next/dist/client/link";
@@ -109,9 +110,6 @@ export default function ViewOpening() {
 
     setNewStages(new_order);
 
-    console.log(`New order`, new_order);
-    console.log(`New StaGe order`, new_stage_order);
-
     try {
       const body = {
         updated_opening: { ...opening, stage_order: new_stage_order },
@@ -165,6 +163,19 @@ export default function ViewOpening() {
     mutate(`/api/openings`);
   };
 
+  const pages = [
+    {
+      name: "Openings",
+      href: `${process.env.NEXT_PUBLIC_NEXTAUTH_URL}/openings`,
+      current: false,
+    },
+    {
+      name: opening?.GSI1SK || "loading...",
+      href: `${process.env.NEXT_PUBLIC_NEXTAUTH_URL}/openings/${opening_id}/stages`,
+      current: true,
+    },
+  ];
+
   // When rendering client side don't display anything until loading is complete
   if (typeof window !== "undefined" && loading) {
     return null;
@@ -191,6 +202,11 @@ export default function ViewOpening() {
   return (
     <div>
       <SignedInNav user={user} current={"Openings"} />
+
+      <div className="px-20 ">
+        <Breadcrumbs pages={pages} />
+      </div>
+
       <div className="mx-auto max-w-4xl pt-20 flex flex-col justify-center items-center ">
         <h1 className="text-xl font-bold text-normal">{opening?.GSI1SK}</h1>
         <p className="text-light text-lg">
