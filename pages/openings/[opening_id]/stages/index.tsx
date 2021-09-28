@@ -14,16 +14,21 @@ import StagesHeader from "../../../../components/Stages/StagesHeader";
 import useAllStagesInOpening from "../../../../SWR/useAllStagesInOpening";
 import EmptyOpeningsState from "../../../../components/Openings/EmptyOpeningsState";
 import StageCarousel from "../../../../components/Stages/StagesCarousel";
-
+import useOpeningById from "../../../../SWR/useOpeningById";
 export default function Openings() {
   const router = useRouter();
   const { opening_id } = router.query;
   const [session, loading]: [CustomSession, boolean] = useSession();
   const { user, isUserLoading, isUserError } = useUser(session?.user_id);
 
-  let { stages, isStagesLoading, isStagesError } = useAllStagesInOpening(
+  let { opening, isOpeningLoading, isOpeningError } = useOpeningById(
     session?.user_id,
     opening_id as string
+  );
+
+  let { stages, isStagesLoading, isStagesError } = useAllStagesInOpening(
+    session?.user_id,
+    opening?.opening_id
   );
 
   const setCreateStageModalOpen = useStore(
@@ -49,10 +54,20 @@ export default function Openings() {
     return <Loader text="Loading user..." />;
   }
 
+  if (isOpeningLoading) {
+    return <Loader text="Loading opening..." />;
+  }
   if (isStagesLoading) {
     return <Loader text="Loading stages..." />;
   }
 
+  // Redirect to the first stage
+  if (stages && stages.length > 0) {
+    router.push(
+      `${process.env.NEXT_PUBLIC_NEXTAUTH_URL}/openings/${opening_id}/stages/${stages[0].stage_id}`
+    );
+    return <Loader text="Loading stages..." />;
+  }
   const createStage = async (stage_name: string) => {
     const body: APICreateStageInput = {
       stage_name: stage_name,
@@ -88,13 +103,7 @@ export default function Openings() {
           <StagesHeader />
         </header>
 
-        <main className="mt-5">
-          {stages?.length == 0 ? (
-            <EmptyStagesState />
-          ) : (
-            <StageCarousel stages={stages} />
-          )}
-        </main>
+        <main className="mt-5">{stages ? <EmptyStagesState /> : null}</main>
       </div>
     </>
   );

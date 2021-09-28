@@ -3,6 +3,8 @@ import useUser from "../../SWR/useUser";
 import { PlusIcon } from "@heroicons/react/outline";
 import useStore from "../../utils/store";
 import { useState } from "react";
+import Link from "next/dist/client/link";
+import { AdjustmentsIcon } from "@heroicons/react/outline";
 import OpeningsDropdown from "../Openings/DropDown";
 import useOpeningById from "../../SWR/useOpeningById";
 import { useRouter } from "next/router";
@@ -31,7 +33,7 @@ export default function StagesHeader() {
 
   return (
     <div className="md:flex md:items-center md:justify-between  ">
-      <div className=" min-w-0 w-1/3">
+      <div className=" min-w-0 w-2/5 inline-flex justify-center items-center">
         {openings ? (
           <OpeningsDropdown
             openings={openings}
@@ -42,6 +44,11 @@ export default function StagesHeader() {
         ) : (
           <h1>Loading...</h1>
         )}
+        <Link
+          href={`${process.env.NEXT_PUBLIC_NEXTAUTH_URL}/openings/${opening_id}/settings`}
+        >
+          <AdjustmentsIcon className="w-10 h-10 ml-6 hover:text-blue-500 text-light cursor-pointer transition duration-300 ease-in-out" />
+        </Link>
       </div>
 
       {/* An empty state with an action button will show if the user doesn't have stages*/}
