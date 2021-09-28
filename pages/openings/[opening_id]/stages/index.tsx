@@ -190,7 +190,7 @@ export default function ViewOpening() {
    */
   return (
     <div>
-      <SignedInNav user={user} current={"Openings"} />
+      <SignedInNav current={"Openings"} />
 
       <GoBack />
 
