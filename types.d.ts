@@ -108,6 +108,8 @@ interface PlutomiState {
   setCreateStageModalOpen: Function;
   createQuestionModalIsOpen: boolean;
   setCreateQuestionModalOpen: Function;
+  openingsSearchInput: string;
+  setOpeningsSearchInput: Function;
 }
 
 interface DynamoUser {

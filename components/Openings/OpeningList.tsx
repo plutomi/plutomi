@@ -9,17 +9,24 @@ import { useSession } from "next-auth/client";
 import useOpenings from "../../SWR/useOpenings";
 import useUser from "../../SWR/useUser";
 import _ from "lodash";
-
+import useStore from "../../utils/store";
 export default function OpeningList() {
   const [session, loading]: [CustomSession, boolean] = useSession();
   const { user, isUserLoading, isUserError } = useUser(session?.user_id);
   let { openings, isOpeningsLoading, isOpeningsError } = useOpenings(
     user?.user_id
   );
+
+  const search = useStore((state: PlutomiState) => state.openingsSearchInput);
+
+  const filtered_openings = openings.filter((opening: DynamoOpening) =>
+    opening.GSI1SK.toLowerCase().trim().includes(search.toLowerCase().trim())
+  );
+
   return (
     <div className="bg-white shadow overflow-hidden sm:rounded-md">
       <ul role="list" className="divide-y divide-gray-200">
-        {openings?.map((opening: DynamoOpening) => (
+        {filtered_openings?.map((opening: DynamoOpening) => (
           <li key={opening.opening_id}>
             <Link
               href={`${process.env.NEXT_PUBLIC_NEXTAUTH_URL}/openings/${opening.opening_id}/stages`}

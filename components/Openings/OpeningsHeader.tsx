@@ -3,26 +3,48 @@ import useOpenings from "../../SWR/useOpenings";
 import useUser from "../../SWR/useUser";
 import { PlusIcon } from "@heroicons/react/outline";
 import useStore from "../../utils/store";
+import { useState } from "react";
 export default function OpeningsHeader() {
   const [session, loading]: [CustomSession, boolean] = useSession();
   const { user, isUserLoading, isUserError } = useUser(session?.user_id);
   let { openings, isOpeningsLoading, isOpeningsError } = useOpenings(
     user?.user_id
   );
+
+  const [localSearch, setLocalSearch] = useState("");
   const setCreateOpeningModalOpen = useStore(
     (state: PlutomiState) => state.setCreateOpeningModalOpen
   );
+  const setOpeningsSearch = useStore(
+    (state: PlutomiState) => state.setOpeningsSearchInput
+  );
+  const search = useStore((state: PlutomiState) => state.openingsSearchInput);
 
+  const handleSearchChange = (e) => {
+    setLocalSearch(e.target.value);
+    setOpeningsSearch(e.target.value);
+  };
   return (
-    <div className="md:flex md:items-center md:justify-between">
-      <div className="flex-1 min-w-0">
+    <div className="md:flex md:items-center md:justify-between ">
+      <div className=" min-w-0 ">
         <h2 className="text-2xl font-bold leading-7 text-gray-900 sm:text-3xl sm:truncate">
           Openings
         </h2>
       </div>
+      <div className="flex-1 mt-4 flex md:mt-0  items-center  md:flex-grow justify-center">
+        <input
+          type="text"
+          name="search"
+          id="search"
+          value={localSearch}
+          onChange={(e) => handleSearchChange(e)}
+          placeholder={"Search for an opening..."}
+          className="w-1/2 shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block  border sm:text-sm border-gray-300 rounded-md"
+        />
+      </div>
       {/* An empty state will show if the user doesn't have openings*/}
       {openings.length > 0 ? (
-        <div className="mt-4 flex md:mt-0 md:ml-4">
+        <div className="mt-4 flex md:mt-0 md:ml-4 ">
           <button
             onClick={() => setCreateOpeningModalOpen(true)}
             type="button"

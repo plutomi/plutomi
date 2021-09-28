@@ -96,7 +96,6 @@ export default function Openings() {
             {/* Content */}
           </div>
         </header>
-        <UserProfileCard user={user} />
 
         <main>
           <CreateOpeningModal createOpening={createOpening} />
