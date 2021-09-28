@@ -33,8 +33,8 @@ export default function Team() {
   if (!session || isUserError) {
     return (
       <SignIn
-        callbackUrl={`${process.env.NEXT_PUBLIC_NEXTAUTH_URL}/openings`} // TODO set this
-        desiredPage={"your openings"} // TODO set this
+        callbackUrl={`${process.env.NEXT_PUBLIC_NEXTAUTH_URL}/team`} // TODO set this
+        desiredPage={"your team"} // TODO set this
       />
     );
   }
@@ -70,7 +70,7 @@ export default function Team() {
   return (
     <>
       <CreateInviteModal createInvite={createInvite} />
-      <SignedInNav current="Openings" />
+      <SignedInNav current="Team" />
       <div className="max-w-7xl mx-auto p-4 my-12 rounded-lg min-h-screen ">
         <header>
           <TeamHeader />
