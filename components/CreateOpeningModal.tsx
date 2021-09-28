@@ -3,10 +3,6 @@ import { Dialog, Transition } from "@headlessui/react";
 import { XIcon } from "@heroicons/react/outline";
 import axios from "axios";
 import CreateOpeningOptions from "./CreateOpeningOptions";
-
-const UrlSafeString = require("url-safe-string"),
-  tagGenerator = new UrlSafeString();
-
 import useStore from "../utils/store";
 export default function CreateOpeningModal({ createOpening }) {
   const [opening_name, setOpeningName] = useState("");

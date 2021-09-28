@@ -88,7 +88,7 @@ export default function Openings() {
 
   return (
     <div className="min-h-screen bg-white">
-      <SignedInNav current="Openings" user={user} />
+      <SignedInNav current="Openings" />
       <GoBack />
       <div className="py-10">
         <header>

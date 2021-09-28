@@ -31,6 +31,10 @@ interface CreateStageInput {
   stage_name: string;
 }
 
+interface ValidNavigation {
+  current: "Dashboard" | "Openings" | "Team" | "PLACEHOLDER";
+}
+
 interface GetStageByIdInput {
   org_id: string;
   opening_id: string;

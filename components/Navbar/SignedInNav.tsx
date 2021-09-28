@@ -1,4 +1,6 @@
 import { Fragment } from "react";
+import { useSession } from "next-auth/client";
+import useUser from "../../SWR/useUser";
 import { Disclosure, Menu, Transition } from "@headlessui/react";
 import {
   BellIcon,
@@ -30,11 +32,10 @@ const userNavigation = [
 function classNames(...classes) {
   return classes.filter(Boolean).join(" ");
 }
-interface ValidNavigation {
-  current: "Dashboard" | "Openings" | "Team" | "PLACEHOLDER";
-  user: DynamoUser;
-}
-export default function SignedInNav({ current, user }: ValidNavigation) {
+
+export default function SignedInNav({ current }: ValidNavigation) {
+  const [session, loading]: [CustomSession, boolean] = useSession();
+  const { user, isUserLoading, isUserError } = useUser(session?.user_id);
   const { invites, isInvitesLoading, isInvitesError } = useOrgInvites(
     user?.user_id
   );

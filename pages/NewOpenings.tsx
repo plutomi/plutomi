@@ -1,12 +1,16 @@
-import Layout from "../components/Layout";
-import GoBack from "../components/GoBackButton";
 import SignedInNav from "../components/Navbar/SignedInNav";
-import { useSession } from "next-auth/client";
 import OpeningsHeader from "../components/Openings/OpeningsHeader";
-import useUser from "../SWR/useUser";
-import SignIn from "../components/SignIn";
-import OpeningsContent from "../components/Openings/OpeningsContent";
+import { useSession } from "next-auth/client";
 import useOpenings from "../SWR/useOpenings";
+import useUser from "../SWR/useUser";
+import Loader from "../components/Loader";
+import SignIn from "../components/SignIn";
+import axios from "axios";
+import { mutate } from "swr";
+import useStore from "../utils/store";
+import CreateOpeningModal from "../components/CreateOpeningModal";
+import OpeningsContent from "../components/Openings/OpeningsContent";
+import EmptyOpeningsState from "../components/Openings/EmptyOpeningsState";
 export default function Openings() {
   const [session, loading]: [CustomSession, boolean] = useSession();
   const { user, isUserLoading, isUserError } = useUser(session?.user_id);
@@ -14,16 +18,13 @@ export default function Openings() {
     user?.user_id
   );
 
-  /** ~~~~~~~~~~~~~~~~~~~~~~~
-   * ~~~~~~~~~~~~~~~~~~~~~~~~
-   * ~~LOADING STATES START~~
-   * ~~~~~~~~~~~~~~~~~~~~~~~~
-   * ~~~~~~~~~~~~~~~~~~~~~~~~
-   */
+  const setCreateOpeningModalOpen = useStore(
+    (state: PlutomiState) => state.setCreateOpeningModalOpen
+  );
 
   // When rendering client side don't display anything until loading is complete
   if (typeof window !== "undefined" && loading) {
-    return null;
+    return <Loader text="Loading..." />;
   }
 
   // If no session or bad userid
@@ -37,40 +38,45 @@ export default function Openings() {
   }
 
   if (isUserLoading) {
-    // TODO set this
-    return (
-      <div className="mx-auto p-20 flex justify-center items-center">
-        <h1 className="text-4xl text-dark font-medium">Loading...</h1>
-      </div>
-    );
+    return <Loader text="Loading user..." />;
   }
 
   if (isOpeningsLoading) {
-    // TODO set this
-    return (
-      <div className="mx-auto p-20 flex justify-center items-center">
-        <h1 className="text-4xl text-dark font-medium">Loading openings...</h1>
-      </div>
-    );
+    return <Loader text="Loading openings..." />;
   }
 
-  /** ~~~~~~~~~~~~~~~~~~~~~~~
-   * ~~~~~~~~~~~~~~~~~~~~~~~~
-   * ~~~LOADING STATES END~~~
-   * ~~~~~~~~~~~~~~~~~~~~~~~~
-   * ~~~~~~~~~~~~~~~~~~~~~~~~
-   */
+  const createOpening = async ({
+    opening_name,
+    is_public,
+  }: APICreateOpeningInput) => {
+    const body: APICreateOpeningInput = {
+      opening_name: opening_name,
+      is_public: is_public,
+    };
+    try {
+      const { data } = await axios.post("/api/openings", body);
+      alert(data.message);
+      setCreateOpeningModalOpen(false);
+    } catch (error) {
+      alert(error.response.data.message);
+    }
 
-  // TODO add openings loading state
+    mutate(`/api/openings/`); // Get all openings
+  };
 
   return (
     <>
-      <SignedInNav current="Openings" user={user ? user : null} />
-      <Layout
-        header={<OpeningsHeader openings={openings} />}
-        main={<OpeningsContent user={user} openings={openings} />}
-        footer={null}
-      />
+      <CreateOpeningModal createOpening={createOpening} />
+      <SignedInNav current="Openings" />
+      <div className="max-w-7xl mx-auto p-4 my-12 rounded-lg min-h-screen ">
+        <header>
+          <OpeningsHeader />
+        </header>
+
+        <main className="mt-32">
+          {openings.length === 0 ? <EmptyOpeningsState /> : <OpeningsContent />}
+        </main>
+      </div>
     </>
   );
 }

@@ -1,14 +1,15 @@
 import EmptyOpeningsState from "./EmptyOpeningsState";
-export default function OpeningsContent({ user, openings }) {
-  //   if (org_id === "NO_ORG_ASSIGNED") {
-  //     return <EmptyOpeningsState />;
-  //   }
-
-  //   return <div>You&apos;re already in an org!</div>;
-
-  if (openings.length === 0) {
-    return <EmptyOpeningsState />;
-  }
+import axios from "axios";
+import { mutate } from "swr";
+import { useSession } from "next-auth/client";
+import useOpenings from "../../SWR/useOpenings";
+import useUser from "../../SWR/useUser";
+export default function OpeningsContent() {
+  const [session, loading]: [CustomSession, boolean] = useSession();
+  const { user, isUserLoading, isUserError } = useUser(session?.user_id);
+  let { openings, isOpeningsLoading, isOpeningsError } = useOpenings(
+    user?.user_id
+  );
 
   return (
     <>
