@@ -303,12 +303,7 @@ export default function ViewOpening() {
               </ul>
             </div>
 
-            {/** STAGES START HERE */}
-            {isUpdating ? (
-              <h1 className="text-6xl font-bold m-8 text-center">
-                Updating...
-              </h1>
-            ) : null}
+   
 
             <DragDropContext
               onDragEnd={handleDragEnd}
