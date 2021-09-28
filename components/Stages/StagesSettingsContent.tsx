@@ -3,8 +3,10 @@ import { useRouter } from "next/router";
 import { mutate } from "swr";
 import Link from "next/dist/client/link";
 import StageCard from "../Stages/StageCard";
+import QuestionList from "../Questions/QuestionList";
 import { useEffect } from "react";
 import axios from "axios";
+import useAllStageQuestions from "../../SWR/useAllStageQuestions";
 import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
 import DraggableStageCard from "../../components/Stages/DraggableStageCard";
 import Loader from "../Loader";
@@ -33,6 +35,9 @@ export default function StageSettingsContent() {
     stage_id as string
   );
 
+  const { questions, isQuestionsLoading, isQuestionsError } =
+    useAllStageQuestions(user?.org_id, opening?.opening_id, stage?.stage_id);
+
   const [new_stages, setNewStages] = useState(stages);
   const [isStageOrderUpdating, setIsStageOrderUpdating] = useState(false);
   const [isQuestionOrderUpdating, setIsQuestionOrderUpdating] = useState(false);
@@ -51,6 +56,10 @@ export default function StageSettingsContent() {
 
   if (isStageLoading) {
     return <Loader text="Loading stage info..." />;
+  }
+
+  if (isQuestionsLoading) {
+    return <Loader text="Loading questions..." />;
   }
 
   const handleDragEnd = async (result) => {
@@ -174,6 +183,8 @@ export default function StageSettingsContent() {
                   <h1 className="text-center text-lg font-semibold mb-4">
                     {stage?.GSI1SK} Settings
                   </h1>
+
+                  <QuestionList questions={questions} />
                 </div>
               </div>
               {/* End main area */}
