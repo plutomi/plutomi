@@ -14,7 +14,8 @@ export default function Team() {
   const name = user?.GSI1SK;
 
   const { orgUsers, isOrgUsersLoading, isOrgUsersError } = useOrgUsers(
-    user?.org_id
+    user?.org_id,
+    user?.user_id
   );
   const [recipient, setRecipient] = useState("");
 

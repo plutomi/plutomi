@@ -113,7 +113,7 @@ export default function Invites() {
               className="divide-y divide-gray-200 mx-auto max-w-xl flex-col space-y-4 p-20 border rounded-md shadow-md"
             >
               {invites?.length > 0 ? (
-                invites.map((invite: CreateOrgInviteInput) => (
+                invites.map((invite: DynamoOrgInvite) => (
                   <li
                     key={invite.expires_at}
                     className="py-4 flex border rounded-md w-full"

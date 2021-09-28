@@ -225,6 +225,11 @@ interface useAllStagesInOpeningOutput {
   isStagesLoading: boolean;
   isStagesError: boolean;
 }
+interface useAllStageQuestionsOutput {
+  questions: DynamoStageQuestion[];
+  isQuestionsLoading: boolean;
+  isQuestionsError: boolean;
+}
 
 interface APICreateLoginCodeInput {
   user_email: string;
