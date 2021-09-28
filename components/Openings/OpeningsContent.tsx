@@ -1,6 +1,4 @@
-import EmptyOpeningsState from "./EmptyOpeningsState";
-import axios from "axios";
-import { mutate } from "swr";
+import OpeningList from "./OpeningList";
 import { useSession } from "next-auth/client";
 import useOpenings from "../../SWR/useOpenings";
 import useUser from "../../SWR/useUser";
@@ -11,11 +9,5 @@ export default function OpeningsContent() {
     user?.user_id
   );
 
-  return (
-    <>
-      {openings.map((opening: DynamoOpening) => {
-        return <h1 key={opening.opening_id}>{opening.GSI1SK}</h1>;
-      })}
-    </>
-  );
+  return <OpeningList />;
 }

@@ -77,14 +77,13 @@ export default function Team() {
 
   return (
     <div className="min-h-screen bg-white">
-      <SignedInNav current={"Team"} user={user} />
+      <SignedInNav current={"Team"} />
       <div className="py-10">
         <header>
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             {/* Content */}
           </div>
         </header>
-        <UserProfileCard user={user} /> {/* Debugging */}
         <main>
           <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">
             {/* Content */}
