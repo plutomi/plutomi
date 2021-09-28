@@ -1,12 +1,25 @@
 import { useSession } from "next-auth/client";
-import useOpenings from "../../SWR/useOpenings";
 import useUser from "../../SWR/useUser";
+import useOrgUsers from "../../SWR/useOrgUsers";
+import UserCard from "./UserCard";
+import Loader from "../Loader";
 export default function OpeningsContent() {
   const [session, loading]: [CustomSession, boolean] = useSession();
   const { user, isUserLoading, isUserError } = useUser(session?.user_id);
-  let { openings, isOpeningsLoading, isOpeningsError } = useOpenings(
+
+  const { orgUsers, isOrgUsersLoading, isOrgUsersError } = useOrgUsers(
+    user?.org_id,
     user?.user_id
   );
 
-  return <h1>Team membr</h1>;
+  if (isOrgUsersLoading) {
+    return <Loader text="Loading team..." />;
+  }
+  return (
+    <>
+      {orgUsers.map((user: DynamoUser) => (
+        <UserCard key={user.user_id} user={user} />
+      ))}
+    </>
+  );
 }
