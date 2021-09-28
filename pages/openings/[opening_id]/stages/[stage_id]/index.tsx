@@ -11,11 +11,10 @@ import { useRouter } from "next/router";
 import CreateStageModal from "../../../../../components/CreateStageModal";
 import useStore from "../../../../../utils/store";
 import StagesHeader from "../../../../../components/Stages/StagesHeader";
-import EmptyOpeningsState from "../../../../../components/Openings/EmptyOpeningsState";
 import StageCarousel from "../../../../../components/Stages/StagesCarousel";
 import useStageById from "../../../../../SWR/useStageById";
 import useAllStagesInOpening from "../../../../../SWR/useAllStagesInOpening";
-export default function Openings() {
+export default function StageID() {
   const router = useRouter();
   const { opening_id, stage_id } = router.query;
   const [session, loading]: [CustomSession, boolean] = useSession();
@@ -54,8 +53,10 @@ export default function Openings() {
     return <Loader text="Loading user..." />;
   }
 
-  if (isStageLoading) {
-    return <Loader text="Loading stage..." />;
+  // TODO LOADER BUG!!
+  // If calling `isStageLoading`, the loader component styles do not run...
+  if (isStagesLoading) {
+    return <Loader text="Loading stages..." />;
   }
 
   const createStage = async (stage_name: string) => {

@@ -103,7 +103,13 @@ export default function Openings() {
           <StagesHeader />
         </header>
 
-        <main className="mt-5">{stages ? <EmptyStagesState /> : null}</main>
+        <main className="mt-5">
+          {stages?.length > 0 ? (
+            <Loader text="Loading stages..." /> // Not this one (loader bug)
+          ) : (
+            <EmptyStagesState />
+          )}
+        </main>
       </div>
     </>
   );
