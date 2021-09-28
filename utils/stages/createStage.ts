@@ -19,6 +19,7 @@ export async function CreateStage({
     SK: `STAGE`,
     entity_type: "STAGE",
     created_at: now,
+    question_order: [],
     stage_id: stage_id,
     opening_id: opening_id,
     GSI1PK: `ORG#${org_id}#OPENING#${opening_id}#STAGES`, // Get all stages in an opening

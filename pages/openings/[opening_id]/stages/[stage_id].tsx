@@ -2,9 +2,11 @@ import SignedInNav from "../../../../components/Navbar/SignedInNav";
 import useStageById from "../../../../SWR/useStageById";
 import SignIn from "../../../../components/SignIn";
 import useUser from "../../../../SWR/useUser";
+import { useEffect } from "react";
 import { useSession } from "next-auth/client";
 import Breadcrumbs from "../../../../components/Breadcrumbs";
 import { useRouter } from "next/router";
+import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
 import axios from "axios";
 import { mutate } from "swr";
 import useStore from "../../../../utils/store";
@@ -42,6 +44,9 @@ export default function Stage() {
       stage_id as string
     );
 
+  const [new_questions, setNewQuestions] = useState(questions);
+  const [isUpdating, setIsUpdating] = useState(false);
+
   const pages = [
     {
       name: "Openings",
@@ -60,7 +65,47 @@ export default function Stage() {
     },
   ];
 
-  // TODO call this
+  const handleDragEnd = async (result) => {
+    const { destination, source, draggableId } = result;
+
+    // No change
+    if (!destination) {
+      return;
+    }
+
+    // If dropped in the same place
+    if (
+      destination.droppableId === source.droppableId &&
+      destination.index === source.index
+    ) {
+      return;
+    }
+
+    setIsUpdating(true);
+
+    let new_question_order = Array.from(opening.stage_order);
+    new_question_order.splice(source.index, 1);
+    new_question_order.splice(destination.index, 0, draggableId);
+    let new_order = new_question_order.map((i) =>
+      questions.find((j) => j.question_id === i)
+    );
+
+    setNewQuestions(new_order);
+
+    try {
+      const body = {
+        updated_stage: { ...stage, question_order: new_question_order },
+      };
+
+      await axios.put(`/api/openings/${opening_id}/stages/${stage_id}`, body);
+    } catch (error) {
+      console.error(error.response.data.message);
+    }
+
+    mutate(`/api/openings/${opening_id}`); // Refresh the stage order
+    setIsUpdating(false);
+  };
+
   const updateStage = async (stage_id: string) => {
     try {
       const body = {
@@ -118,6 +163,10 @@ export default function Stage() {
     }
   };
 
+  useEffect(() => {
+    setNewQuestions(questions);
+  }, [questions]);
+
   // When rendering client side don't display anything until loading is complete
   if (typeof window !== "undefined" && loading) {
     return null;
@@ -172,6 +221,24 @@ export default function Stage() {
                   + Add question
                 </button>
               </div>
+
+              <div className="m-4 border rounded-md p-4">
+                <h1 className="text-lg">Stage Order</h1>
+                <p>Total questions: {stage?.question_order?.length}</p>
+
+                <ul className="p-4">
+                  {" "}
+                  {stage?.question_order?.map((id) => (
+                    <li key={id}>
+                      {stage?.question_order?.indexOf(id) + 1}.{" "}
+                      {new_questions
+                        ? new_questions[stage?.question_order?.indexOf(id)]
+                            ?.GSI1SK
+                        : null}
+                    </li>
+                  ))}
+                </ul>
+              </div>
               {isEditing ? (
                 <div className="max-w-xl my-2 mx-auto ">
                   <label
@@ -206,11 +273,19 @@ export default function Stage() {
                   </div>
                 </div>
               ) : null}
-              <div className="mt-4 border">
+              <div className="mt-4 border p-8 space-y-8">
                 {questions ? (
                   questions.map((question: DynamoStageQuestion) => {
                     return (
-                      <h1 key={question.question_id}>{question.GSI1SK}</h1>
+                      <div
+                        key={question.question_id}
+                        className="p-4 border rounded-md shadow-md max-w-md"
+                      >
+                        <h1 className="font-bold text-lg">{question.GSI1SK}</h1>
+                        <p className="text-sm text-blue-gray-500">
+                          {question.question_description}
+                        </p>
+                      </div>
                     );
                   })
                 ) : (

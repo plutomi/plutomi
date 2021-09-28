@@ -2,6 +2,8 @@ import { PutCommand, PutCommandInput } from "@aws-sdk/lib-dynamodb";
 import { Dynamo } from "../../libs/ddbDocClient";
 import { GetCurrentTime } from "../time";
 import { nanoid } from "nanoid";
+import { GetStageById } from "./getStageById";
+import UpdateStage from "./updateStage";
 
 const { DYNAMO_TABLE_NAME } = process.env;
 
@@ -33,6 +35,18 @@ export async function CreateStageQuestion({
 
   try {
     await Dynamo.send(new PutCommand(params));
+
+    let stage = await GetStageById({ org_id, opening_id, stage_id });
+    stage.question_order.push(stage_question_id);
+    const update_stage_input = {
+      org_id: org_id,
+      opening_id: opening_id,
+      stage_id: stage_id,
+      updated_stage: stage,
+    };
+
+    await UpdateStage(update_stage_input);
+
     return new_stage_question;
   } catch (error) {
     throw new Error(error);
