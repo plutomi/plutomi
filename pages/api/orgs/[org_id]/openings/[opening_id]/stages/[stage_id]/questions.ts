@@ -15,6 +15,10 @@ const handler = async (req: CustomRequest, res: NextApiResponse) => {
         stage_id,
       });
 
+      // TODO i think the issue is we need to sort before sending like we do for stages
+      console.log(`Queried questions`);
+      console.log(questions);
+
       return res.status(200).json(questions);
     } catch (error) {
       return res.status(500).json({ message: "Unable to retrieve questions" });

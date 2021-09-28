@@ -2,6 +2,7 @@ import SignedInNav from "../../../../components/Navbar/SignedInNav";
 import useStageById from "../../../../SWR/useStageById";
 import SignIn from "../../../../components/SignIn";
 import useUser from "../../../../SWR/useUser";
+import Link from "next/dist/client/link";
 import { useEffect } from "react";
 import { useSession } from "next-auth/client";
 import Breadcrumbs from "../../../../components/Breadcrumbs";
@@ -83,12 +84,27 @@ export default function Stage() {
 
     setIsUpdating(true);
 
-    let new_question_order = Array.from(opening.stage_order);
+    console.log(`Destination`, destination);
+    console.log(`Source`, source);
+    console.log(`Draggable id`, draggableId);
+
+    console.log(`Current question order`, stage.question_order);
+    let new_question_order = Array.from(stage.question_order);
+
+    console.log(`Array from question order`, new_question_order);
+
     new_question_order.splice(source.index, 1);
+    console.log(`Halfway spliced`, new_question_order);
+
     new_question_order.splice(destination.index, 0, draggableId);
+
+    console.log(`Fuly spliced order`, new_question_order);
+
     let new_order = new_question_order.map((i) =>
       questions.find((j) => j.question_id === i)
     );
+
+    console.log(`New order`, new_order);
 
     setNewQuestions(new_order);
 
@@ -99,10 +115,11 @@ export default function Stage() {
 
       await axios.put(`/api/openings/${opening_id}/stages/${stage_id}`, body);
     } catch (error) {
+      alert(error.response.data.message);
       console.error(error.response.data.message);
     }
 
-    mutate(`/api/openings/${opening_id}`); // Refresh the stage order
+    mutate(`/api/openings/${opening_id}/stages/${stage_id}`); // Refresh the question order
     setIsUpdating(false);
   };
 
@@ -161,6 +178,14 @@ export default function Stage() {
     } catch (error) {
       alert(error.response.data.message);
     }
+
+    // Get new question order
+    mutate(`/api/openings/${opening_id}/stages/${stage_id}`);
+
+    // Get new questions in list
+    mutate(
+      `/api/orgs/${user.org_id}/openings/${opening_id}/stages/${stage_id}/questions`
+    );
   };
 
   useEffect(() => {
@@ -223,17 +248,24 @@ export default function Stage() {
               </div>
 
               <div className="m-4 border rounded-md p-4">
-                <h1 className="text-lg">Stage Order</h1>
+                <h1 className="text-lg">Question order Order</h1>
                 <p>Total questions: {stage?.question_order?.length}</p>
+
+                <p>Correct order: {JSON.stringify(stage?.question_order)}</p>
 
                 <ul className="p-4">
                   {" "}
                   {stage?.question_order?.map((id) => (
                     <li key={id}>
-                      {stage?.question_order?.indexOf(id) + 1}.{" "}
+                      {stage?.question_order?.indexOf(id) + 1}.
                       {new_questions
                         ? new_questions[stage?.question_order?.indexOf(id)]
                             ?.GSI1SK
+                        : null}{" "}
+                      -{" "}
+                      {new_questions
+                        ? new_questions[stage?.question_order?.indexOf(id)]
+                            ?.question_id
                         : null}
                     </li>
                   ))}
@@ -273,28 +305,73 @@ export default function Stage() {
                   </div>
                 </div>
               ) : null}
-              <div className="mt-4 border p-8 space-y-8">
-                {questions ? (
-                  questions.map((question: DynamoStageQuestion) => {
-                    return (
-                      <div
-                        key={question.question_id}
-                        className="p-4 border rounded-md shadow-md max-w-md"
-                      >
-                        <h1 className="font-bold text-lg">{question.GSI1SK}</h1>
-                        <p className="text-sm text-blue-gray-500">
-                          {question.question_description}
-                        </p>
-                      </div>
-                    );
-                  })
-                ) : (
-                  <h1>Loading questions...</h1>
-                )}
-              </div>
+
+              {/** STAGES START HERE */}
+              {isUpdating ? (
+                <h1 className="text-6xl font-bold m-8 text-center">
+                  Updating...
+                </h1>
+              ) : null}
+
+              <DragDropContext
+                onDragEnd={handleDragEnd}
+                onDragStart={() => console.log("Start")}
+              >
+                <Droppable droppableId={stage.stage_id}>
+                  {(provided) => (
+                    <div
+                      {...provided.droppableProps}
+                      ref={provided.innerRef}
+                      className="space-y-12 flex rounded-md flex-col  mx-4 max-w-full border justify-center items-center"
+                    >
+                      {new_questions?.length > 0 ? (
+                        new_questions?.map(
+                          (question: DynamoStageQuestion, index: number) => {
+                            return (
+                              <Draggable
+                                className="m-6 p-4 w-full max-w-xl bg-white"
+                                key={question.question_id}
+                                draggableId={question.question_id}
+                                index={index}
+                                {...provided.droppableProps}
+                              >
+                                {(provided) => (
+                                  <div
+                                    {...provided.draggableProps}
+                                    {...provided.dragHandleProps}
+                                    ref={provided.innerRef}
+                                  >
+                                    <div
+                                      key={question.question_id}
+                                      className="p-4 border rounded-md shadow-md max-w-xl bg-white"
+                                    >
+                                      <h1 className="font-bold text-lg">
+                                        {question.GSI1SK} -{" "}
+                                        {question.question_id}
+                                      </h1>
+                                      <p className="text-sm text-blue-gray-500">
+                                        {question.question_description}
+                                      </p>
+                                    </div>
+                                  </div>
+                                )}
+                              </Draggable>
+                            );
+                          }
+                        )
+                      ) : isQuestionsLoading ? (
+                        <h1>Loading...</h1>
+                      ) : (
+                        <h1>No questions found</h1>
+                      )}
+                      {provided.placeholder}
+                    </div>
+                  )}
+                </Droppable>
+              </DragDropContext>
             </div>
           ) : isStageLoading ? (
-            <h1> Loading stage</h1> // TODO now this is stuck
+            <h1> Loading stage</h1>
           ) : (
             <h1>No stage found</h1>
           )}

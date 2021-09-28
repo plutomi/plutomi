@@ -60,7 +60,7 @@ export default function CreateQuestionModal({ createQuestion }) {
                     <div className="py-6 px-4 bg-indigo-700 sm:px-6">
                       <div className="flex items-center justify-between">
                         <Dialog.Title className="text-lg font-medium text-white">
-                          New Organization
+                          New Question
                         </Dialog.Title>
                         <div className="ml-3 h-7 flex items-center">
                           <button

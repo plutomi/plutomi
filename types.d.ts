@@ -201,6 +201,7 @@ interface useOpeningByIdOutput {
   isOpeningLoading: boolean;
   isOpeningError: boolean;
 }
+
 interface useOpeningsOutput {
   openings: DynamoOpenings[];
   isOpeningsLoading: boolean;

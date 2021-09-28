@@ -68,7 +68,7 @@ interface DynamoStage {
   entity_type: "STAGE";
   created_at: string;
   stage_id: string;
-  question_order: [],
+  question_order: string[];
   opening_id: string;
   GSI1PK: string;
   GSI1SK: string;
