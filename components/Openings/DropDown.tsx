@@ -1,16 +1,28 @@
 import { Fragment, useState } from "react";
 import { Listbox, Transition } from "@headlessui/react";
 import { CheckIcon, SelectorIcon } from "@heroicons/react/solid";
-
+import { useRouter } from "next/router";
 function classNames(...classes) {
   return classes.filter(Boolean).join(" ");
 }
 
 export default function OpeningsDropdown({ openings, index }) {
+  const router = useRouter();
   const [selected, setSelected] = useState(openings[index]);
 
+  const handleChange = (new_value: DynamoOpening) => {
+    if (selected == new_value) {
+      return;
+    }
+    setSelected(new_value);
+    router.push(
+      `${process.env.NEXT_PUBLIC_NEXTAUTH_URL}/openings/${
+        new_value.opening_id
+      }/stages${new_value.stage_order[0] ? `/${new_value.stage_order[0]}` : ""}`
+    );
+  };
   return (
-    <Listbox value={selected} onChange={setSelected}>
+    <Listbox value={selected} onChange={handleChange}>
       {/* <Listbox.Label className="block text-lg font-medium text-gray-700">
         Assigned to
       </Listbox.Label> */}
