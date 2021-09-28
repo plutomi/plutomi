@@ -10,7 +10,7 @@ const items = [
   { id: 1, name: "Waitlist" },
   { id: 2, name: "Questionnaire" },
   { id: 3, name: "Set Up Profile" },
-  { id: 4, name: "Driver's License Upload" },
+  { id: 4, name: "Driver's License Upload And checking if things exist" },
   { id: 5, name: "Insurance Upload" },
   { id: 6, name: "Background Check" },
   { id: 7, name: "Contract Signing" },
@@ -35,13 +35,13 @@ export default function StageCarousel() {
         gutter={0}
         chevronWidth={chevronWidth}
         leftChevron={
-          <button className="inline-flex border rounded-l-xl hover:bg-sky-800  w-full justify-center items-center h-full bg-sky-400 text-white">
-            <ArrowLeftIcon className="-ml-1 mr-2 h-5 w-5" aria-hidden="true" />
+          <button className="inline-flex  border rounded-l-xl bg-blue-gray-500  hover:bg-blue-gray-800 transition ease-in-out duration-200 w-full justify-center items-center h-full text-white">
+            <ArrowLeftIcon className="h-10 w-10" aria-hidden="true" />
           </button>
         }
         rightChevron={
-          <button className="inline-flex border rounded-r-xl hover:bg-sky-800  w-full justify-center items-center h-full bg-sky-400 text-white">
-            <ArrowRightIcon className="-ml-1 mr-2 h-5 w-5" aria-hidden="true" />
+          <button className="inline-flex border rounded-r-xl bg-blue-gray-500 hover:bg-blue-gray-800 transition ease-in-out duration-200 w-full justify-center items-center h-full  text-white">
+            <ArrowRightIcon className="h-10 w-10" aria-hidden="true" />
           </button>
         }
         outsideChevron
@@ -52,7 +52,7 @@ export default function StageCarousel() {
             <Link href={`#${item.id}`}>
               <a>
                 <div className=" my-8   py-4 text-center bg-white   shadow-md hover:shadow-xl transition ease-in-out duration-300 rounded-xl overflow-hidden">
-                  <h5 className=" text-lg font-medium text-dark">
+                  <h5 className="px-8 text-lg font-medium text-dark truncate">
                     {item.name}
                   </h5>
 
