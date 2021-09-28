@@ -88,8 +88,8 @@ export default function Openings() {
           <StagesHeader />
         </header>
 
-        <main className="mt-32">
-          {stages.length == 0 ? (
+        <main className="mt-5">
+          {stages?.length == 0 ? (
             <EmptyStagesState />
           ) : (
             <StageCarousel stages={stages} />

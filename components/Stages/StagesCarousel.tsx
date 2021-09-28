@@ -11,12 +11,13 @@ export default function StageCarousel({ stages }) {
   const [activeItemIndex, setActiveItemIndex] = useState(0);
   const chevronWidth = 60;
   return (
-    <div className=" max-w-8xl border rounded-xl py-4 mx-24">
+    <div className="max-w-8xl border rounded-xl py-4 ">
       <ItemsCarousel
         requestToChangeActive={setActiveItemIndex}
         activeItemIndex={activeItemIndex}
         numberOfCards={6}
         slidesToScroll={3}
+        responsive={false}
         gutter={-60}
         chevronWidth={chevronWidth}
         leftChevron={

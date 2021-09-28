@@ -77,7 +77,7 @@ export default function Dashboard() {
           <DashboardHeader />
         </header>
 
-        <main className="mt-32">
+        <main className="mt-5">
           {user?.org_id === "NO_ORG_ASSIGNED" ? (
             <EmptyOrgState />
           ) : (

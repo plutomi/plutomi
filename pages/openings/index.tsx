@@ -73,7 +73,7 @@ export default function Openings() {
           <OpeningsHeader />
         </header>
 
-        <main className="mt-32">
+        <main className="mt-5">
           {openings.length === 0 ? <EmptyOpeningsState /> : <OpeningsContent />}
         </main>
       </div>

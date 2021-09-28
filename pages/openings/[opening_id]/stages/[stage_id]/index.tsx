@@ -90,10 +90,12 @@ export default function Openings() {
           <StagesHeader />
         </header>
 
-        <main className="mt-32">
-          {/* {stages.length == 0 ? <EmptyStagesState /> : <StageCarousel />} */}
-          <h1 className="text-xl font-bold">{stage.GSI1SK}</h1>
-          <StageCarousel stages={stages} />
+        <main className="mt-5">
+          {stages?.length == 0 ? (
+            <EmptyStagesState />
+          ) : (
+            <StageCarousel stages={stages} />
+          )}
         </main>
       </div>
     </>

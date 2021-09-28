@@ -58,7 +58,7 @@ export default function CreateOpeningModal({ createOpening }) {
                   onSubmit={(e) => handleSubmit(e)}
                 >
                   <div className="flex-1 h-0 overflow-y-auto">
-                    <div className="py-6 px-4 bg-indigo-700 sm:px-6">
+                    <div className="py-6 px-4 bg-blue-700 sm:px-6">
                       <div className="flex items-center justify-between">
                         <Dialog.Title className="text-lg font-medium text-white">
                           New Opening
@@ -66,7 +66,7 @@ export default function CreateOpeningModal({ createOpening }) {
                         <div className="ml-3 h-7 flex items-center">
                           <button
                             type="button"
-                            className="bg-indigo-700 rounded-md text-indigo-200 hover:text-white focus:outline-none focus:ring-2 focus:ring-white"
+                            className="bg-blue-700 rounded-md text-blue-200 hover:text-white focus:outline-none focus:ring-2 focus:ring-white"
                             onClick={() => setCreateOpeningModalOpen(false)}
                           >
                             <span className="sr-only">Close panel</span>
@@ -75,7 +75,7 @@ export default function CreateOpeningModal({ createOpening }) {
                         </div>
                       </div>
                       <div className="mt-1">
-                        <p className="text-sm text-indigo-300">
+                        <p className="text-sm text-blue-300">
                           An opening is what you need applicants for. It could
                           be a job like &apos;Engineer&apos;, a location like
                           &apos;New York&apos; or &apos;Chicago&apos;, or a
@@ -101,7 +101,7 @@ export default function CreateOpeningModal({ createOpening }) {
                                 required
                                 onChange={(e) => setOpeningName(e.target.value)}
                                 value={opening_name}
-                                className="block w-full shadow-sm sm:text-sm focus:ring-indigo-500 focus:border-indigo-500 border-gray-300 rounded-md"
+                                className="block w-full shadow-sm sm:text-sm focus:ring-blue-500 focus:border-blue-500 border-gray-300 rounded-md"
                               />
                             </div>
                           </div>
@@ -114,7 +114,7 @@ export default function CreateOpeningModal({ createOpening }) {
                                 type="checkbox"
                                 checked={is_public}
                                 onChange={(e) => setIsPublic(e.target.checked)}
-                                className="focus:ring-indigo-500 h-4 w-4 text-indigo-600 border-gray-300 rounded"
+                                className="focus:ring-blue-500 h-4 w-4 text-blue-600 border-gray-300 rounded"
                               />
                             </div>
                             <div className="ml-3 text-sm">
@@ -146,7 +146,7 @@ export default function CreateOpeningModal({ createOpening }) {
                                 id="description"
                                 name="description"
                                 rows={4}
-                                className="block w-full shadow-sm sm:text-sm focus:ring-indigo-500 focus:border-indigo-500 border border-gray-300 rounded-md"
+                                className="block w-full shadow-sm sm:text-sm focus:ring-blue-500 focus:border-blue-500 border border-gray-300 rounded-md"
                                 defaultValue={""}
                               />
                             </div>
@@ -172,7 +172,7 @@ export default function CreateOpeningModal({ createOpening }) {
                                 ))}
                                 <button
                                   type="button"
-                                  className="flex-shrink-0 bg-white inline-flex h-8 w-8 items-center justify-center rounded-full border-2 border-dashed border-gray-200 text-gray-400 hover:text-gray-500 hover:border-gray-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                                  className="flex-shrink-0 bg-white inline-flex h-8 w-8 items-center justify-center rounded-full border-2 border-dashed border-gray-200 text-gray-400 hover:text-gray-500 hover:border-gray-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
                                 >
                                   <span className="sr-only">
                                     Add team member
@@ -197,7 +197,7 @@ export default function CreateOpeningModal({ createOpening }) {
                                     name="privacy"
                                     aria-describedby="privacy-public-description"
                                     type="radio"
-                                    className="focus:ring-indigo-500 h-4 w-4 text-indigo-600 border-gray-300"
+                                    className="focus:ring-blue-500 h-4 w-4 text-blue-600 border-gray-300"
                                     defaultChecked
                                   />
                                 </div>
@@ -225,7 +225,7 @@ export default function CreateOpeningModal({ createOpening }) {
                                       name="privacy"
                                       aria-describedby="privacy-private-to-project-description"
                                       type="radio"
-                                      className="focus:ring-indigo-500 h-4 w-4 text-indigo-600 border-gray-300"
+                                      className="focus:ring-blue-500 h-4 w-4 text-blue-600 border-gray-300"
                                     />
                                   </div>
                                   <div className="pl-7 text-sm">
@@ -253,7 +253,7 @@ export default function CreateOpeningModal({ createOpening }) {
                                       name="privacy"
                                       aria-describedby="privacy-private-to-project-description"
                                       type="radio"
-                                      className="focus:ring-indigo-500 h-4 w-4 text-indigo-600 border-gray-300"
+                                      className="focus:ring-blue-500 h-4 w-4 text-blue-600 border-gray-300"
                                     />
                                   </div>
                                   <div className="pl-7 text-sm">
@@ -280,10 +280,10 @@ export default function CreateOpeningModal({ createOpening }) {
                           <div className="flex text-sm">
                             <a
                               href="#"
-                              className="group inline-flex items-center font-medium text-indigo-600 hover:text-indigo-900"
+                              className="group inline-flex items-center font-medium text-blue-600 hover:text-blue-900"
                             >
                               <LinkIcon
-                                className="h-5 w-5 text-indigo-500 group-hover:text-indigo-900"
+                                className="h-5 w-5 text-blue-500 group-hover:text-blue-900"
                                 aria-hidden="true"
                               />
                               <span className="ml-2">Copy link</span>
@@ -310,14 +310,14 @@ export default function CreateOpeningModal({ createOpening }) {
                   <div className="flex-shrink-0 px-4 py-4 flex justify-end">
                     <button
                       type="button"
-                      className="bg-white py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                      className="bg-white py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
                       onClick={() => setCreateOpeningModalOpen(false)}
                     >
                       Cancel
                     </button>
                     <button
                       type="submit"
-                      className="ml-4 inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                      className="ml-4 inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
                     >
                       Create Opening
                     </button>

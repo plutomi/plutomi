@@ -248,7 +248,7 @@ export default function ViewOpening() {
                   type="checkbox"
                   defaultChecked={opening.is_public}
                   onChange={(e) => setIsPublic(e.target.checked)}
-                  className="focus:ring-indigo-500 h-4 w-4 text-indigo-600 border-gray-300 rounded"
+                  className="focus:ring-blue-500 h-4 w-4 text-blue-600 border-gray-300 rounded"
                 />
               </div>
               <div className="ml-3 text-sm">
