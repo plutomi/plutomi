@@ -110,6 +110,8 @@ interface PlutomiState {
   setCreateQuestionModalOpen: Function;
   openingsSearchInput: string;
   setOpeningsSearchInput: Function;
+  createInviteModalIsOpen: boolean;
+  setCreateInviteModalOpen: Function;
 }
 
 interface DynamoUser {

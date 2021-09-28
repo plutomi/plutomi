@@ -6,6 +6,7 @@ const useStore = create((set) => ({
   createStageModalIsOpen: false,
   createQuestionModalIsOpen: false,
   openingsSearchInput: "",
+  createInviteModalIsOpen: false,
 
   // Example
   pokemons: [
@@ -46,6 +47,10 @@ const useStore = create((set) => ({
   setOpeningsSearchInput: (input: string) =>
     set((state: PlutomiState) => ({
       openingsSearchInput: input,
+    })),
+  setCreateInviteModalOpen: (open: Boolean) =>
+    set((state: PlutomiState) => ({
+      createInviteModalIsOpen: open,
     })),
 }));
 export default useStore;
