@@ -9,7 +9,7 @@ const fetcher = (url: string) => axios.get(url).then((res) => res.data);
  * @param user_id - Requires a logged in user_id to view all stages in an opening
  * @param opening_id - The ID of the opening that you want to look up
  */
-function useStagesByOpeningId(
+function useAllStagesInOpening(
   user_id: string,
   opening_id: string
 ): useAllStagesInOpeningOutput {
@@ -27,4 +27,4 @@ function useStagesByOpeningId(
   };
 }
 
-export default useStagesByOpeningId;
+export default useAllStagesInOpening;
