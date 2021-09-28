@@ -13,7 +13,7 @@ export default function Main() {
   const { user, isUserLoading, isUserError } = useUser(session?.user_id);
 
   return (
-    <div className="">
+    <>
       <main className="bg-gradient-to-b from-blue-gray-50 to-white via-homepageGradient">
         <Navbar />
         <Hero />
@@ -46,6 +46,6 @@ export default function Main() {
 
       <Pricing />
       <Contact />
-    </div>
+    </>
   );
 }

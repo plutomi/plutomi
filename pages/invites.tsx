@@ -5,7 +5,7 @@ import useOrgInvites from "../SWR/useOrgInvites";
 import { GetRelativeTime } from "../utils/time";
 import axios from "axios";
 import { useSWRConfig } from "swr";
-
+import GoBack from "../components/GoBackButton";
 import UserProfileCard from "../components/UserProfileCard";
 import SignedInNav from "../components/Navbar/SignedInNav";
 import { useRouter } from "next/router";
@@ -96,8 +96,10 @@ export default function Invites() {
    */
 
   return (
-    <div className="min-h-screen bg-white">
+    <>
       <SignedInNav current={"PLACEHOLDER"} user={user} />
+      <GoBack />
+
       <div className="py-10">
         <header>
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -156,6 +158,6 @@ export default function Invites() {
           </div>
         </main>
       </div>
-    </div>
+    </>
   );
 }
