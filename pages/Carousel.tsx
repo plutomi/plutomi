@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import ItemsCarousel from "react-items-carousel";
-
+import { ArrowLeftIcon } from "@heroicons/react/outline";
+import { ArrowRightIcon } from "@heroicons/react/outline";
 import Link from "next/dist/client/link";
 import { UserGroupIcon } from "@heroicons/react/outline";
 import NumberFormat from "react-number-format";
@@ -25,49 +26,52 @@ export default function StageCarousel() {
   const [activeItemIndex, setActiveItemIndex] = useState(0);
   const chevronWidth = 60;
   return (
-    <div className="mx-auto max-w-7xl py-12 border">
+    <div className="mx-auto max-w-7xl border rounded-xl py-4">
       <ItemsCarousel
-      wrapperStyle={"my-24 border border-red-400"}
         requestToChangeActive={setActiveItemIndex}
         activeItemIndex={activeItemIndex}
         numberOfCards={4}
         slidesToScroll={4}
-        gutter={20}
+        gutter={0}
         chevronWidth={chevronWidth}
         leftChevron={
-          <button className="rounded-full hover:bg-sky-800 px-4 py-2 bg-sky-400 text-white">
-            {"<"}
+          <button className="inline-flex border rounded-l-xl hover:bg-sky-800  w-full justify-center items-center h-full bg-sky-400 text-white">
+            <ArrowLeftIcon className="-ml-1 mr-2 h-5 w-5" aria-hidden="true" />
           </button>
         }
         rightChevron={
-          <button className="rounded-full px-4 py-2  hover:bg-sky-800 bg-sky-400 text-white">
-            {">"}
+          <button className="inline-flex border rounded-r-xl hover:bg-sky-800  w-full justify-center items-center h-full bg-sky-400 text-white">
+            <ArrowRightIcon className="-ml-1 mr-2 h-5 w-5" aria-hidden="true" />
           </button>
         }
         outsideChevron
         firstAndLastGutter={false}
       >
         {items.map((item) => (
-          <Link key={item.id} href={`#${item.id}`}>
-            <a className="my-12 border border-red-400">
-              <div className=" border  py-4 text-center bg-white   shadow-md hover:shadow-xl transition ease-in-out duration-300 rounded-xl overflow-hidden">
-                <h5 className=" text-lg font-medium text-dark">{item.name}</h5>
+          <div key={item.id} className="px-4">
+            <Link href={`#${item.id}`}>
+              <a>
+                <div className=" my-8   py-4 text-center bg-white   shadow-md hover:shadow-xl transition ease-in-out duration-300 rounded-xl overflow-hidden">
+                  <h5 className=" text-lg font-medium text-dark">
+                    {item.name}
+                  </h5>
 
-                <dd className="flex items-center  justify-center">
-                  <div className="space-x-2 flex  mt-1 items-center text-blue-gray-500">
-                    <UserGroupIcon className="w-5 h-5 0" />
-                    <p className="text-xl font-semibold ">
-                      <NumberFormat
-                        value={100}
-                        thousandSeparator={true}
-                        displayType={"text"}
-                      />
-                    </p>
-                  </div>
-                </dd>
-              </div>
-            </a>
-          </Link>
+                  <dd className="flex items-center  justify-center">
+                    <div className="space-x-2 flex  mt-1 items-center text-blue-gray-500">
+                      <UserGroupIcon className="w-5 h-5 0" />
+                      <p className="text-xl font-semibold ">
+                        <NumberFormat
+                          value={100}
+                          thousandSeparator={true}
+                          displayType={"text"}
+                        />
+                      </p>
+                    </div>
+                  </dd>
+                </div>
+              </a>
+            </Link>
+          </div>
         ))}
       </ItemsCarousel>
     </div>
