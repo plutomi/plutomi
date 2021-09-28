@@ -95,3 +95,23 @@ interface DynamoOrgInvite {
   GSI1PK: string;
   GSI1SK: string;
 }
+
+interface DynamoStageQuestion {
+  // PK: `ORG#${org_id}#OPENING#${opening_id}#STAGE#${stage_id}`,
+  // SK: `STAGE_QUESTION#${stage_question_id}`,
+  // question_description: question_description,
+  //     question_id: stage_question_id,
+  // entity_type: "STAGE_QUESTION",
+  // created_at: now,
+  // GSI1PK: `ORG#${org_id}#QUESTIONS`,
+  // GSI1SK: question_title, // TODO filter by opening by stage?
+
+  PK: string;
+  SK: string;
+  question_description: string;
+  question_id: string;
+  entity_type: string;
+  created_at: string;
+  GSI1PK: string;
+  GSI1SK: string;
+}

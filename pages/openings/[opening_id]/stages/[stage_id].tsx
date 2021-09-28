@@ -7,17 +7,22 @@ import Breadcrumbs from "../../../../components/Breadcrumbs";
 import { useRouter } from "next/router";
 import axios from "axios";
 import { mutate } from "swr";
+import useStore from "../../../../utils/store";
 import { useState } from "react";
-import useOpenings from "../../../../SWR/useOpenings";
 import useOpeningById from "../../../../SWR/useOpeningById";
+import useAllStageQuestions from "../../../../SWR/useAllStageQuestions";
+import CreateQuestionModal from "../../../../components/CreateQuestionModal";
 export default function Stage() {
   const router = useRouter();
   const { stage_id, opening_id } = router.query;
   const [newName, setNewName] = useState("");
-  const [isUpdating, setIsUpdating] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [session, loading]: [CustomSession, boolean] = useSession();
   const { user, isUserLoading, isUserError } = useUser(session?.user_id);
+
+  const setCreateQuestionModalOpen = useStore(
+    (state: PlutomiState) => state.setCreateQuestionModalOpen
+  );
 
   const { opening, isOpeningLoading, isOpeningError } = useOpeningById(
     session?.user_id,
@@ -25,10 +30,17 @@ export default function Stage() {
   );
 
   const { stage, isStageLoading, isStageError } = useStageById(
-    session?.user_id,
+    user?.user_id,
     opening_id as string,
     stage_id as string
   );
+
+  const { questions, isQuestionsLoading, isQuestionsError } =
+    useAllStageQuestions(
+      user?.org_id,
+      opening_id as string,
+      stage_id as string
+    );
 
   const pages = [
     {
@@ -89,6 +101,23 @@ export default function Stage() {
     mutate(`/api/openings/${opening_id}/stages`);
   };
 
+  const createQuestion = async ({ question_title, question_description }) => {
+    const body: APICreateQuestionInput = {
+      question_title: question_title,
+      question_description: question_description,
+    };
+    try {
+      const { status, data } = await axios.post(
+        `/api/openings/${opening_id}/stages/${stage_id}/questions`,
+        body
+      );
+      alert(data.message);
+      setCreateQuestionModalOpen(false);
+    } catch (error) {
+      alert(error.response.data.message);
+    }
+  };
+
   // When rendering client side don't display anything until loading is complete
   if (typeof window !== "undefined" && loading) {
     return null;
@@ -118,6 +147,7 @@ export default function Stage() {
       <div className="mx-auto px-20 py-8">
         <div>
           <Breadcrumbs pages={pages} />
+          <CreateQuestionModal createQuestion={createQuestion} />
           {stage ? (
             <div className="p-10">
               <h1 className="text-2xl font-bold">{stage.GSI1SK}</h1>
@@ -133,6 +163,13 @@ export default function Stage() {
                   onClick={() => setIsEditing(!isEditing)}
                 >
                   Edit{" "}
+                </button>
+
+                <button
+                  onClick={() => setCreateQuestionModalOpen(true)}
+                  className="mx-auto flex justify-center items-center px-4 py-2 bg-green-700  rounded-lg text-white"
+                >
+                  + Add question
                 </button>
               </div>
               {isEditing ? (
@@ -169,6 +206,17 @@ export default function Stage() {
                   </div>
                 </div>
               ) : null}
+              <div className="mt-4 border">
+                {questions ? (
+                  questions.map((question: DynamoStageQuestion) => {
+                    return (
+                      <h1 key={question.question_id}>{question.GSI1SK}</h1>
+                    );
+                  })
+                ) : (
+                  <h1>Loading questions...</h1>
+                )}
+              </div>
             </div>
           ) : isStageLoading ? (
             <h1> Loading stage</h1> // TODO now this is stuck

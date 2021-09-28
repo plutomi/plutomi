@@ -102,6 +102,8 @@ interface PlutomiState {
   setCreateOpeningModalOpen: Function;
   createStageModalIsOpen: boolean;
   setCreateStageModalOpen: Function;
+  createQuestionModalIsOpen: boolean;
+  setCreateQuestionModalOpen: Function;
 }
 
 interface DynamoUser {
@@ -295,4 +297,15 @@ interface UpdateStageInput {
 }
 interface APIUpdateOpeningInput {
   updated_opening: DynamoOpening;
+}
+
+interface APICreateQuestionInput {
+  question_title: string;
+  question_description: string;
+}
+
+interface AllQuestionsByStageIDInput {
+  opening_id: string;
+  stage_id: string;
+  org_id: string;
 }
