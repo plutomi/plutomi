@@ -37,6 +37,13 @@ export default function Team() {
     }
   };
 
+  /** ~~~~~~~~~~~~~~~~~~~~~~~
+   * ~~~~~~~~~~~~~~~~~~~~~~~~
+   * ~~LOADING STATES START~~
+   * ~~~~~~~~~~~~~~~~~~~~~~~~
+   * ~~~~~~~~~~~~~~~~~~~~~~~~
+   */
+
   // When rendering client side don't display anything until loading is complete
   if (typeof window !== "undefined" && loading) {
     return null;
@@ -59,6 +66,13 @@ export default function Team() {
       </div>
     );
   }
+
+  /** ~~~~~~~~~~~~~~~~~~~~~~~
+   * ~~~~~~~~~~~~~~~~~~~~~~~~
+   * ~~~LOADING STATES END~~~
+   * ~~~~~~~~~~~~~~~~~~~~~~~~
+   * ~~~~~~~~~~~~~~~~~~~~~~~~
+   */
 
   return (
     <div className="min-h-screen bg-white">

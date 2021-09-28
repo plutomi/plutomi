@@ -57,6 +57,13 @@ export default function Openings() {
     },
   ];
 
+  /** ~~~~~~~~~~~~~~~~~~~~~~~
+   * ~~~~~~~~~~~~~~~~~~~~~~~~
+   * ~~LOADING STATES START~~
+   * ~~~~~~~~~~~~~~~~~~~~~~~~
+   * ~~~~~~~~~~~~~~~~~~~~~~~~
+   */
+
   // When rendering client side don't display anything until loading is complete
   if (typeof window !== "undefined" && loading) {
     return null;
@@ -79,6 +86,13 @@ export default function Openings() {
       </div>
     );
   }
+
+  /** ~~~~~~~~~~~~~~~~~~~~~~~
+   * ~~~~~~~~~~~~~~~~~~~~~~~~
+   * ~~~LOADING STATES END~~~
+   * ~~~~~~~~~~~~~~~~~~~~~~~~
+   * ~~~~~~~~~~~~~~~~~~~~~~~~
+   */
 
   return (
     <div className="min-h-screen bg-white">

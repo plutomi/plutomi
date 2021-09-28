@@ -20,6 +20,13 @@ export default function Dashboard() {
 
   const name = user?.GSI1SK;
 
+  /** ~~~~~~~~~~~~~~~~~~~~~~~
+   * ~~~~~~~~~~~~~~~~~~~~~~~~
+   * ~~LOADING STATES START~~
+   * ~~~~~~~~~~~~~~~~~~~~~~~~
+   * ~~~~~~~~~~~~~~~~~~~~~~~~
+   */
+
   // When rendering client side don't display anything until loading is complete
   if (typeof window !== "undefined" && loading) {
     return null;
@@ -42,6 +49,13 @@ export default function Dashboard() {
       </div>
     );
   }
+
+  /** ~~~~~~~~~~~~~~~~~~~~~~~
+   * ~~~~~~~~~~~~~~~~~~~~~~~~
+   * ~~~LOADING STATES END~~~
+   * ~~~~~~~~~~~~~~~~~~~~~~~~
+   * ~~~~~~~~~~~~~~~~~~~~~~~~
+   */
 
   return (
     <div className="min-h-screen bg-white">

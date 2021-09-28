@@ -2,7 +2,6 @@ import SignedInNav from "../../../../components/Navbar/SignedInNav";
 import useStageById from "../../../../SWR/useStageById";
 import SignIn from "../../../../components/SignIn";
 import useUser from "../../../../SWR/useUser";
-import Link from "next/dist/client/link";
 import { useEffect } from "react";
 import { useSession } from "next-auth/client";
 import Breadcrumbs from "../../../../components/Breadcrumbs";
@@ -84,27 +83,12 @@ export default function Stage() {
 
     setIsUpdating(true);
 
-    console.log(`Destination`, destination);
-    console.log(`Source`, source);
-    console.log(`Draggable id`, draggableId);
-
-    console.log(`Current question order`, stage.question_order);
     let new_question_order = Array.from(stage.question_order);
-
-    console.log(`Array from question order`, new_question_order);
-
     new_question_order.splice(source.index, 1);
-    console.log(`Halfway spliced`, new_question_order);
-
     new_question_order.splice(destination.index, 0, draggableId);
-
-    console.log(`Fuly spliced order`, new_question_order);
-
     let new_order = new_question_order.map((i) =>
       questions.find((j) => j.question_id === i)
     );
-
-    console.log(`New order`, new_order);
 
     setNewQuestions(new_order);
 
@@ -153,13 +137,19 @@ export default function Stage() {
     )
       return;
     try {
-      await axios.delete(`/api/openings/${opening_id}/stages/${stage_id}`);
-      alert("Deleted stage");
+      const { data } = await axios.delete(
+        `/api/openings/${opening_id}/stages/${stage_id}`
+      );
+      alert(data.message);
       router.push(`/openings/${opening_id}/stages`);
     } catch (error) {
       alert(error.response.data.message);
     }
+
+    // Refresh the stage_order
     mutate(`/api/openings/${opening_id}`);
+
+    // Refresh the stage list
     mutate(`/api/openings/${opening_id}/stages`);
   };
 
@@ -169,7 +159,7 @@ export default function Stage() {
       question_description: question_description,
     };
     try {
-      const { status, data } = await axios.post(
+      const { data } = await axios.post(
         `/api/openings/${opening_id}/stages/${stage_id}/questions`,
         body
       );
@@ -179,10 +169,10 @@ export default function Stage() {
       alert(error.response.data.message);
     }
 
-    // Get new question order
+    // Refresh the question_order
     mutate(`/api/openings/${opening_id}/stages/${stage_id}`);
 
-    // Get new questions in list
+    // Refresh the question list
     mutate(
       `/api/orgs/${user.org_id}/openings/${opening_id}/stages/${stage_id}/questions`
     );
@@ -191,6 +181,13 @@ export default function Stage() {
   useEffect(() => {
     setNewQuestions(questions);
   }, [questions]);
+
+  /** ~~~~~~~~~~~~~~~~~~~~~~~
+   * ~~~~~~~~~~~~~~~~~~~~~~~~
+   * ~~LOADING STATES START~~
+   * ~~~~~~~~~~~~~~~~~~~~~~~~
+   * ~~~~~~~~~~~~~~~~~~~~~~~~
+   */
 
   // When rendering client side don't display anything until loading is complete
   if (typeof window !== "undefined" && loading) {
@@ -214,6 +211,13 @@ export default function Stage() {
       </div>
     );
   }
+
+  /** ~~~~~~~~~~~~~~~~~~~~~~~
+   * ~~~~~~~~~~~~~~~~~~~~~~~~
+   * ~~~LOADING STATES END~~~
+   * ~~~~~~~~~~~~~~~~~~~~~~~~
+   * ~~~~~~~~~~~~~~~~~~~~~~~~
+   */
 
   return (
     <div>
@@ -306,7 +310,7 @@ export default function Stage() {
                 </div>
               ) : null}
 
-              {/** STAGES START HERE */}
+              {/** QUESTIONS START HERE */}
               {isUpdating ? (
                 <h1 className="text-6xl font-bold m-8 text-center">
                   Updating...

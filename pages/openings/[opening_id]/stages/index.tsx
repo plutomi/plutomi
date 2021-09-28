@@ -19,10 +19,11 @@ import { useEffect } from "react";
 
 export default function ViewOpening() {
   const [isEditing, setIsEditing] = useState(false);
-  const router = useRouter();
   const [isPublic, setIsPublic] = useState(false);
-  const { opening_id } = router.query;
   const [session, loading]: [CustomSession, boolean] = useSession();
+
+  const router = useRouter();
+  const { opening_id } = router.query;
   const { user, isUserLoading, isUserError } = useUser(session?.user_id);
   const setCreateStageModalOpen = useStore(
     (state: PlutomiState) => state.setCreateStageModalOpen
@@ -54,17 +55,17 @@ export default function ViewOpening() {
         `/api/openings/${opening_id}/stages`,
         body
       );
-      console.log("In modal", data.message, opening_id);
       alert(data.message);
-      // TODO calling mutate here  breaks, we do not call mutate in the other modals
       setCreateStageModalOpen(false);
     } catch (error) {
       console.error("Error creating stage", error);
       alert(error.response.data.message);
     }
 
-    // Get all stages & get the new opening order
+    // Refresh stage order
     mutate(`/api/openings/${opening_id}`);
+
+    // Refresh stage list
     mutate(`/api/openings/${opening_id}/stages`);
   };
 
@@ -124,6 +125,8 @@ export default function ViewOpening() {
     } catch (error) {
       alert(error.response.data.message);
     }
+
+    // Refresh opening data
     mutate(`/api/openings/${opening_id}`);
     setIsEditing(false);
     setNewName("");
@@ -138,14 +141,14 @@ export default function ViewOpening() {
       return;
 
     try {
-      const { status, data } = await axios.delete(
-        `/api/openings/${opening_id}`
-      );
+      const { data } = await axios.delete(`/api/openings/${opening_id}`);
       alert(data.message);
       router.push(`/openings`);
     } catch (error) {
       alert(error.response.data.message);
     }
+
+    // Refresh openings
     mutate(`/api/openings`);
   };
 
@@ -161,6 +164,13 @@ export default function ViewOpening() {
       current: true,
     },
   ];
+
+  /** ~~~~~~~~~~~~~~~~~~~~~~~
+   * ~~~~~~~~~~~~~~~~~~~~~~~~
+   * ~~LOADING STATES START~~
+   * ~~~~~~~~~~~~~~~~~~~~~~~~
+   * ~~~~~~~~~~~~~~~~~~~~~~~~
+   */
 
   // When rendering client side don't display anything until loading is complete
   if (typeof window !== "undefined" && loading) {
@@ -185,6 +195,12 @@ export default function ViewOpening() {
     );
   }
 
+  /** ~~~~~~~~~~~~~~~~~~~~~~~
+   * ~~~~~~~~~~~~~~~~~~~~~~~~
+   * ~~~LOADING STATES END~~~
+   * ~~~~~~~~~~~~~~~~~~~~~~~~
+   * ~~~~~~~~~~~~~~~~~~~~~~~~
+   */
   return (
     <div>
       <SignedInNav user={user} current={"Openings"} />
