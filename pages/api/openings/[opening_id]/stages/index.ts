@@ -27,20 +27,12 @@ const handler = async (req: CustomRequest, res: NextApiResponse) => {
     } catch (error) {
       return res.status(400).json({ message: `${error.message}` });
     }
-    let missing_keys = [];
-    for (const [key, value] of Object.entries(create_stage_input)) {
-      if (value == undefined) {
-        missing_keys.push(`'${key}'`);
-      }
-    }
-    if (missing_keys.length > 0)
-      return res.status(400).json({
-        message: `Bad request: ${missing_keys.join(", ")} missing`,
-      });
 
     try {
-      await CreateStage(create_stage_input);
-      return res.status(201).json({ message: "Stage created" });
+      const created_stage = await CreateStage(create_stage_input);
+      return res
+        .status(201)
+        .json({ message: "Stage created", stage: created_stage });
     } catch (error) {
       // TODO add error logger
       return res

@@ -203,7 +203,7 @@ export default function Stage() {
 
   return (
     <div>
-      <SignedInNav user={user} current={"Openings"} />
+      <SignedInNav current={"Openings"} />
       <div className="mx-auto px-20 py-8">
         <div>
           <GoBack />

@@ -1,29 +1,30 @@
-import SignedInNav from "../../../../components/Navbar/SignedInNav";
+import SignedInNav from "../../../../../components/Navbar/SignedInNav";
 import { useSession } from "next-auth/client";
-import useOpenings from "../../../../SWR/useOpenings";
-import useUser from "../../../../SWR/useUser";
-import Loader from "../../../../components/Loader";
-import EmptyStagesState from "../../../../components/Stages/EmptyStagesState";
-import SignIn from "../../../../components/SignIn";
+import useOpenings from "../../../../../SWR/useOpenings";
+import useUser from "../../../../../SWR/useUser";
+import Loader from "../../../../../components/Loader";
+import EmptyStagesState from "../../../../../components/Stages/EmptyStagesState";
+import SignIn from "../../../../../components/SignIn";
 import axios from "axios";
 import { mutate } from "swr";
 import { useRouter } from "next/router";
-import CreateStageModal from "../../../../components/CreateStageModal";
-import useStore from "../../../../utils/store";
-import StagesHeader from "../../../../components/Stages/StagesHeader";
-import useAllStagesInOpening from "../../../../SWR/useAllStagesInOpening";
-import EmptyOpeningsState from "../../../../components/Openings/EmptyOpeningsState";
-import StageCarousel from "../../../../components/Stages/StagesCarousel";
-
+import CreateStageModal from "../../../../../components/CreateStageModal";
+import useStore from "../../../../../utils/store";
+import StagesHeader from "../../../../../components/Stages/StagesHeader";
+import useAllStagesInOpening from "../../../../../SWR/useAllStagesInOpening";
+import EmptyOpeningsState from "../../../../../components/Openings/EmptyOpeningsState";
+import StageCarousel from "../../../../../components/Stages/StagesCarousel";
+import useStageByid from "../../../../../SWR/useStageById";
+import useStageById from "../../../../../SWR/useStageById";
 export default function Openings() {
   const router = useRouter();
-  const { opening_id } = router.query;
+  const { opening_id, stage_id } = router.query;
   const [session, loading]: [CustomSession, boolean] = useSession();
   const { user, isUserLoading, isUserError } = useUser(session?.user_id);
-
-  let { stages, isStagesLoading, isStagesError } = useAllStagesInOpening(
-    session?.user_id,
-    opening_id as string
+  const { stage, isStageLoading, isStageError } = useStageById(
+    user?.user_id,
+    opening_id as string,
+    stage_id as string
   );
 
   const setCreateStageModalOpen = useStore(
@@ -49,8 +50,8 @@ export default function Openings() {
     return <Loader text="Loading user..." />;
   }
 
-  if (isStagesLoading) {
-    return <Loader text="Loading stages..." />;
+  if (isStageLoading) {
+    return <Loader text="Loading stage..." />;
   }
 
   const createStage = async (stage_name: string) => {
@@ -64,9 +65,6 @@ export default function Openings() {
       );
       alert(data.message);
       setCreateStageModalOpen(false);
-      router.push(
-        `${process.env.NEXT_PUBLIC_NEXTAUTH_URL}/openings/${opening_id}/stages/${data.stage.stage_id}`
-      );
     } catch (error) {
       console.error("Error creating stage", error);
       alert(error.response.data.message);
@@ -86,10 +84,15 @@ export default function Openings() {
       <div className="max-w-7xl mx-auto p-4 my-12 rounded-lg min-h-screen ">
         <header>
           <StagesHeader />
+          <h1>IDK wher ewe are</h1>
         </header>
 
         <main className="mt-32">
-          {stages.length == 0 ? <EmptyStagesState /> : <StageCarousel />}
+          {/* {stages.length == 0 ? <EmptyStagesState /> : <StageCarousel />} */}
+          <h1>
+            {opening_id} - {stage_id} - {stage.GSI1SK}
+          </h1>
+          <h1>Here we want to show the carousel with the stage selected</h1>
         </main>
       </div>
     </>

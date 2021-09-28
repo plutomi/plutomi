@@ -45,7 +45,7 @@ export async function CreateStage({
 
     await UpdateOpening(update_opening_input);
 
-    return;
+    return new_stage;
   } catch (error) {
     throw new Error(error);
   }

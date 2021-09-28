@@ -10,7 +10,7 @@ const fetcher = (url: string) => axios.get(url).then((res) => res.data);
  * @param opening_id - The opening that you want to look in
  * @param stage_id - The stage which you want to retrieve
  */
-function useStagesByOpeningId(
+function useStageById(
   user_id: string,
   opening_id: string,
   stage_id: string
@@ -29,4 +29,4 @@ function useStagesByOpeningId(
   };
 }
 
-export default useStagesByOpeningId;
+export default useStageById;
