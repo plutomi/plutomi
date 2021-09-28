@@ -97,7 +97,7 @@ export default function OpeningSettingsContent() {
               {/* Start left column area */}
               <div className="h-full relative" style={{ minHeight: "12rem" }}>
                 <div className=" inset-0  border-gray-200 rounded-lg ">
-                  <h1 className="text-center text-lg font-semibold my-4">
+                  <h1 className="text-center text-lg font-semibold mb-4">
                     {isUpdating ? "Updating..." : "Stage Order"}
                   </h1>
 
@@ -126,12 +126,12 @@ export default function OpeningSettingsContent() {
                                     ref={provided.innerRef}
                                   >
                                     <Link
-                                      href={`/openings/${opening_id}/stages/${stage.stage_id}`}
+                                      href={`${process.env.NEXT_PUBLIC_NEXTAUTH_URL}/openings/${opening_id}/stages/${stage.stage_id}/settings`}
                                     >
                                       <a>
                                         <DraggableStageCard
                                           opening_id={stage.opening_id}
-                                          name={`${stage.GSI1SK} - ${stage.stage_id}`}
+                                          name={`${stage.GSI1SK}`}
                                           current_stage_id={stage.stage_id}
                                         />
                                       </a>
@@ -166,16 +166,6 @@ export default function OpeningSettingsContent() {
               </div>
               {/* End main area */}
             </div>
-          </div>
-        </div>
-
-        <div className="bg-gray-50 pr-4 sm:pr-6 lg:pr-8 lg:flex-shrink-0 lg:border-l lg:border-gray-200 xl:pr-0">
-          <div className="h-full pl-6 py-6 lg:w-80">
-            {/* Start right column area */}
-            <div className="h-full relative" style={{ minHeight: "16rem" }}>
-              <div className="absolute inset-0 border-2 border-gray-200 border-dashed rounded-lg" />
-            </div>
-            {/* End right column area */}
           </div>
         </div>
       </div>
