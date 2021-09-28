@@ -164,7 +164,7 @@ export default function OpeningSettingsContent() {
               <div className="relative h-full" style={{ minHeight: "36rem" }}>
                 <div className=" inset-0  border-gray-200 rounded-lg">
                   <h1 className="text-center text-lg font-semibold mb-4">
-                    {isQuestionOrderUpdating ? "Updating..." : "Questions"}
+                    Opening Settings
                   </h1>
                 </div>
               </div>
