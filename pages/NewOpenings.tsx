@@ -1,13 +1,18 @@
-// Template for creating new pages
 import Layout from "../components/Layout";
 import GoBack from "../components/GoBackButton";
 import SignedInNav from "../components/Navbar/SignedInNav";
 import { useSession } from "next-auth/client";
+import OpeningsHeader from "../components/Openings/OpeningsHeader";
 import useUser from "../SWR/useUser";
 import SignIn from "../components/SignIn";
-export default function NewPage() {
+import OpeningsContent from "../components/Openings/OpeningsContent";
+import useOpenings from "../SWR/useOpenings";
+export default function Openings() {
   const [session, loading]: [CustomSession, boolean] = useSession();
   const { user, isUserLoading, isUserError } = useUser(session?.user_id);
+  let { openings, isOpeningsLoading, isOpeningsError } = useOpenings(
+    user?.user_id
+  );
 
   /** ~~~~~~~~~~~~~~~~~~~~~~~
    * ~~~~~~~~~~~~~~~~~~~~~~~~
@@ -25,7 +30,7 @@ export default function NewPage() {
   if (!session || isUserError) {
     return (
       <SignIn
-        callbackUrl={`${process.env.NEXT_PUBLIC_NEXTAUTH_URL}/dashboard`} // TODO set this
+        callbackUrl={`${process.env.NEXT_PUBLIC_NEXTAUTH_URL}/openings`} // TODO set this
         desiredPage={"your openings"} // TODO set this
       />
     );
@@ -40,6 +45,15 @@ export default function NewPage() {
     );
   }
 
+  if (isOpeningsLoading) {
+    // TODO set this
+    return (
+      <div className="mx-auto p-20 flex justify-center items-center">
+        <h1 className="text-4xl text-dark font-medium">Loading openings...</h1>
+      </div>
+    );
+  }
+
   /** ~~~~~~~~~~~~~~~~~~~~~~~
    * ~~~~~~~~~~~~~~~~~~~~~~~~
    * ~~~LOADING STATES END~~~
@@ -47,16 +61,15 @@ export default function NewPage() {
    * ~~~~~~~~~~~~~~~~~~~~~~~~
    */
 
+  // TODO add openings loading state
+
   return (
     <>
-      {" "}
-      {/* SET THIS */}
-      <SignedInNav current="PLACEHOLDER" user={user ? user : null} />
-      <GoBack />
+      <SignedInNav current="Openings" user={user ? user : null} />
       <Layout
-        headerText={"New Page"}
-        main={<div>Testing</div>}
-        footer={<h1>Footer</h1>}
+        header={<OpeningsHeader openings={openings} />}
+        main={<OpeningsContent user={user} openings={openings} />}
+        footer={null}
       />
     </>
   );

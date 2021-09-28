@@ -1,21 +1,14 @@
-import UserProfileCard from "../components/UserProfileCard";
+import Layout from "../components/Layout";
+import GoBack from "../components/GoBackButton";
 import SignedInNav from "../components/Navbar/SignedInNav";
-import CreateOrgModal from "../components/CreateOrgModal";
 import { useSession } from "next-auth/client";
-import SignIn from "../components/SignIn";
 import useUser from "../SWR/useUser";
-import useStore from "../utils/store";
-
+import SignIn from "../components/SignIn";
+import DashboardContent from "../components/Dashboard/DashboardContent";
+import DashboardHeader from "../components/Dashboard/DashboardHeader";
 export default function Dashboard() {
-  const setCreateOrgModalOpen = useStore(
-    (state: PlutomiState) => state.setCreateOrgModalOpen
-  );
-
   const [session, loading]: [CustomSession, boolean] = useSession();
-
   const { user, isUserLoading, isUserError } = useUser(session?.user_id);
-
-  const name = user?.GSI1SK;
 
   /** ~~~~~~~~~~~~~~~~~~~~~~~
    * ~~~~~~~~~~~~~~~~~~~~~~~~
@@ -33,13 +26,14 @@ export default function Dashboard() {
   if (!session || isUserError) {
     return (
       <SignIn
-        callbackUrl={`${process.env.NEXT_PUBLIC_NEXTAUTH_URL}/dashboard`}
-        desiredPage={"your dashboard"}
+        callbackUrl={`${process.env.NEXT_PUBLIC_NEXTAUTH_URL}/dashboard`} // TODO set this
+        desiredPage={"your dashboard"} // TODO set this
       />
     );
   }
 
   if (isUserLoading) {
+    // TODO set this
     return (
       <div className="mx-auto p-20 flex justify-center items-center">
         <h1 className="text-4xl text-dark font-medium">Loading...</h1>
@@ -56,42 +50,12 @@ export default function Dashboard() {
 
   return (
     <>
-      <SignedInNav current="Dashboard" user={user} />
-      <div className="py-10">
-        <header>
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            {name.includes("NO_FIRST_NAME") ||
-            name.includes("NO_FIRST_NAME") ? (
-              <h1 className="text-4xl font-bold leading-tight text-gray-900">
-                Welcome!
-              </h1>
-            ) : (
-              <h1 className="text-4xl font-bold leading-tight text-gray-900">
-                Hello {name}!
-              </h1>
-            )}
-          </div>
-        </header>
-        <UserProfileCard user={user} />
-        <main>
-          <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">
-            <CreateOrgModal />
-            {user.org_id === "NO_ORG_ASSIGNED" && (
-              <button
-                onClick={() => setCreateOrgModalOpen(true)}
-                className="border px-4 py-3 text-lg bg-blue-gray-200"
-              >
-                Create an org
-              </button>
-            )}
-
-            <div className="px-4 py-8 sm:px-0">
-              <div className="border-4 border-dashed border-gray-200 rounded-lg h-96" />
-            </div>
-            {/* /End replace */}
-          </div>
-        </main>
-      </div>
+      <SignedInNav current="Dashboard" user={user ? user : null} />
+      <Layout
+        header={<DashboardHeader name={user.first_name} />}
+        main={<DashboardContent user={user} />}
+        footer={null}
+      />
     </>
   );
 }
