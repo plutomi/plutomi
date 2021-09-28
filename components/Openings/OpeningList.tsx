@@ -28,8 +28,15 @@ export default function OpeningList() {
       <ul role="list" className="divide-y divide-gray-200">
         {filtered_openings?.map((opening: DynamoOpening) => (
           <li key={opening.opening_id}>
+            {/* This looks complicated, but all it's doing is checking if there
+            are stages in the opening. If not, redirect the user to create a
+        stage first */}
             <Link
-              href={`${process.env.NEXT_PUBLIC_NEXTAUTH_URL}/openings/${opening.opening_id}/stages`}
+              href={`${process.env.NEXT_PUBLIC_NEXTAUTH_URL}/openings/${
+                opening.opening_id
+              }/stages${
+                opening.stage_order[0] ? `/${opening.stage_order[0]}` : ""
+              }`}
             >
               <a className="block hover:bg-gray-50">
                 <div className="px-4 py-4 sm:px-6">
