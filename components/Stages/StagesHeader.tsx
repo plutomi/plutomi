@@ -4,11 +4,17 @@ import useUser from "../../SWR/useUser";
 import { PlusIcon } from "@heroicons/react/outline";
 import useStore from "../../utils/store";
 import { useState } from "react";
+import { useRouter } from "next/router";
+import useAllStagesInOpening from "../../SWR/useAllStagesInOpening";
 export default function StagesHeader() {
+  const router = useRouter();
+  const { opening_id } = router.query;
   const [session, loading]: [CustomSession, boolean] = useSession();
   const { user, isUserLoading, isUserError } = useUser(session?.user_id);
-  let { openings, isOpeningsLoading, isOpeningsError } = useOpenings(
-    user?.user_id
+
+  let { stages, isStagesLoading, isStagesError } = useAllStagesInOpening(
+    session?.user_id,
+    opening_id as string
   );
 
   const setCreateStageModalOpen = useStore(
@@ -23,8 +29,8 @@ export default function StagesHeader() {
         </h2>
       </div>
 
-      {/* An empty state will show if the user doesn't have stages*/}
-      {openings.length > 0 ? (
+      {/* An empty state with an action button will show if the user doesn't have stages*/}
+      {stages.length > 0 ? (
         <div className="mt-4 flex md:mt-0 md:ml-4 ">
           <button
             onClick={() => setCreateStageModalOpen(true)}

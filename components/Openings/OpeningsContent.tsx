@@ -1,4 +1,4 @@
-import OpeningList from "./OpeningList";
+import OpeningList from "./OpeningsList";
 import { useSession } from "next-auth/client";
 import useOpenings from "../../SWR/useOpenings";
 import useUser from "../../SWR/useUser";

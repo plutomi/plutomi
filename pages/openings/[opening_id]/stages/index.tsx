@@ -13,7 +13,7 @@ import useStore from "../../../../utils/store";
 import StagesHeader from "../../../../components/Stages/StagesHeader";
 import useAllStagesInOpening from "../../../../SWR/useAllStagesInOpening";
 import EmptyOpeningsState from "../../../../components/Openings/EmptyOpeningsState";
-import StageCarousel from "../../../../components/Stages/StageCarousel";
+import StageCarousel from "../../../../components/Stages/StagesCarousel";
 
 export default function Openings() {
   const router = useRouter();
@@ -50,7 +50,7 @@ export default function Openings() {
   }
 
   if (isStagesLoading) {
-    return <Loader text="Loading openings..." />;
+    return <Loader text="Loading stages..." />;
   }
 
   const createStage = async (stage_name: string) => {

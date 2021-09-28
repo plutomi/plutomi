@@ -42,7 +42,7 @@ export default function OpeningsHeader() {
           className="w-1/2 shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block  border sm:text-sm border-gray-300 rounded-md"
         />
       </div>
-      {/* An empty state will show if the user doesn't have openings*/}
+      {/* An empty state with an action button will show if the user doesn't have openings*/}
       {openings.length > 0 ? (
         <div className="mt-4 flex md:mt-0 md:ml-4 ">
           <button
