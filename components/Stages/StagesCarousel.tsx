@@ -21,12 +21,12 @@ export default function StageCarousel({ stages }) {
         gutter={-60}
         chevronWidth={chevronWidth}
         leftChevron={
-          <button className="inline-flex  border rounded-l-xl bg-blue-gray-500  hover:bg-blue-gray-800 transition ease-in-out duration-200 w-full justify-center items-center h-full text-white">
+          <button className="inline-flex  border rounded-l-xl bg-blue-300   hover:bg-blue-500  transition ease-in-out duration-200 w-full justify-center items-center h-full text-white">
             <ArrowLeftIcon className="h-10 w-10" aria-hidden="true" />
           </button>
         }
         rightChevron={
-          <button className="inline-flex border rounded-r-xl bg-blue-gray-500 hover:bg-blue-gray-800 transition ease-in-out duration-200 w-full justify-center items-center h-full  text-white">
+          <button className="inline-flex  border rounded-r-xl bg-blue-300   hover:bg-blue-500  transition ease-in-out duration-200 w-full justify-center items-center h-full text-white">
             <ArrowRightIcon className="h-10 w-10" aria-hidden="true" />
           </button>
         }

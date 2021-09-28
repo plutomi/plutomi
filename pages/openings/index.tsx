@@ -41,6 +41,8 @@ export default function Openings() {
     return <Loader text="Loading user..." />;
   }
 
+  // TODO loader bug again, styles not being applied when going from dashboard to here
+  // I think its because it's trying to get the  path but it's not there for a fraction of a second
   if (isOpeningsLoading) {
     return <Loader text="Loading openings..." />;
   }
