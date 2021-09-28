@@ -1,30 +1,32 @@
 import { FormEvent, Fragment, useState } from "react";
 import { Dialog, Transition } from "@headlessui/react";
 import { XIcon } from "@heroicons/react/outline";
+import axios from "axios";
+
 import useStore from "../utils/store";
-
-const UrlSafeString = require("url-safe-string"),
-  tagGenerator = new UrlSafeString();
-
-export default function CreateStageModal({ createStage }) {
-  const [stage_name, setStageName] = useState("");
-  const open = useStore((state: PlutomiState) => state.createStageModalIsOpen);
-
-  const setCreateStageModalOpen = useStore(
-    (state: PlutomiState) => state.setCreateStageModalOpen
-  );
+export default function CreateQuestionModal({ createQuestion }) {
+  const [question_title, setQuestionTitle] = useState("");
+  const [question_description, setQuestionDescription] = useState("");
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
-    await createStage(stage_name);
-    setStageName("");
+    await createQuestion({ question_title, question_description });
   };
+
+  const open = useStore(
+    (state: PlutomiState) => state.createQuestionModalIsOpen
+  );
+
+  const setCreateQuestionModalOpen = useStore(
+    (state: PlutomiState) => state.setCreateQuestionModalOpen
+  );
+
   return (
     <Transition.Root show={open} as={Fragment}>
       <Dialog
         as="div"
         className="fixed inset-0 overflow-hidden "
-        onClose={() => setCreateStageModalOpen(false)}
+        onClose={() => setCreateQuestionModalOpen(false)}
       >
         <div className="absolute inset-0 overflow-hidden">
           <Transition.Child
@@ -58,13 +60,13 @@ export default function CreateStageModal({ createStage }) {
                     <div className="py-6 px-4 bg-indigo-700 sm:px-6">
                       <div className="flex items-center justify-between">
                         <Dialog.Title className="text-lg font-medium text-white">
-                          New Stage
+                          New Question
                         </Dialog.Title>
                         <div className="ml-3 h-7 flex items-center">
                           <button
                             type="button"
                             className="bg-indigo-700 rounded-md text-indigo-200 hover:text-white focus:outline-none focus:ring-2 focus:ring-white"
-                            onClick={() => setCreateStageModalOpen(false)}
+                            onClick={() => setCreateQuestionModalOpen(false)}
                           >
                             <span className="sr-only">Close panel</span>
                             <XIcon className="h-6 w-6" aria-hidden="true" />
@@ -73,8 +75,8 @@ export default function CreateStageModal({ createStage }) {
                       </div>
                       <div className="mt-1">
                         <p className="text-sm text-indigo-300">
-                          Stages are like Questionnaire, Set Up Profile, hired,
-                          or ready to drive.
+                          Create a question that will be shown to applicants in
+                          this stage
                         </p>
                       </div>
                     </div>
@@ -83,24 +85,45 @@ export default function CreateStageModal({ createStage }) {
                         <div className="space-y-6 pt-6 pb-5">
                           <div>
                             <label
-                              htmlFor="opening-name"
+                              htmlFor="title"
                               className="block text-sm font-medium text-gray-900"
                             >
-                              Stage name
+                              Question Title
                             </label>
                             <div className="mt-1">
                               <input
                                 type="text"
-                                name="opening-name"
-                                id="opening-name"
+                                name="title"
+                                id="title"
                                 required
-                                onChange={(e) => setStageName(e.target.value)}
-                                value={stage_name}
+                                onChange={(e) =>
+                                  setQuestionTitle(e.target.value)
+                                }
+                                value={question_title}
                                 className="block w-full shadow-sm sm:text-sm focus:ring-indigo-500 focus:border-indigo-500 border-gray-300 rounded-md"
                               />
                             </div>
                           </div>
-
+                          <div>
+                            <label
+                              htmlFor="description"
+                              className="block text-sm font-medium text-gray-900"
+                            >
+                              Description
+                            </label>
+                            <div className="mt-1 flex rounded-md shadow-sm">
+                              <textarea
+                                name="description"
+                                id="description"
+                                placeholder="Some helper text for your applicants - Optional"
+                                className="p-5 resize border rounded-md"
+                                maxLength={300}
+                                onChange={(e) =>
+                                  setQuestionDescription(e.target.value)
+                                }
+                              ></textarea>
+                            </div>
+                          </div>
                           {/* <div>
                             <label
                               htmlFor="description"
@@ -278,7 +301,7 @@ export default function CreateStageModal({ createStage }) {
                     <button
                       type="button"
                       className="bg-white py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-                      onClick={() => setCreateStageModalOpen(false)}
+                      onClick={() => setCreateQuestionModalOpen(false)}
                     >
                       Cancel
                     </button>
@@ -286,7 +309,7 @@ export default function CreateStageModal({ createStage }) {
                       type="submit"
                       className="ml-4 inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
                     >
-                      Create Stage
+                      Create Question
                     </button>
                   </div>
                 </form>

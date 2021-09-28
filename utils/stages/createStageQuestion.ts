@@ -2,6 +2,8 @@ import { PutCommand, PutCommandInput } from "@aws-sdk/lib-dynamodb";
 import { Dynamo } from "../../libs/ddbDocClient";
 import { GetCurrentTime } from "../time";
 import { nanoid } from "nanoid";
+import { GetStageById } from "./getStageById";
+import UpdateStage from "./updateStage";
 
 const { DYNAMO_TABLE_NAME } = process.env;
 
@@ -17,8 +19,8 @@ export async function CreateStageQuestion({
   const new_stage_question = {
     PK: `ORG#${org_id}#OPENING#${opening_id}#STAGE#${stage_id}`,
     SK: `STAGE_QUESTION#${stage_question_id}`,
-    question_title: question_title, // TODO remove like we did with the opening
     question_description: question_description,
+    question_id: stage_question_id,
     entity_type: "STAGE_QUESTION",
     created_at: now,
     GSI1PK: `ORG#${org_id}#QUESTIONS`,
@@ -33,6 +35,22 @@ export async function CreateStageQuestion({
 
   try {
     await Dynamo.send(new PutCommand(params));
+
+    let stage = await GetStageById({ org_id, opening_id, stage_id });
+    console.log(`In dynamo, current stage`, stage, stage.question_order);
+    stage.question_order.push(stage_question_id);
+
+    console.log(`In dynamo, new question`, stage, stage.question_order);
+
+    const update_stage_input = {
+      org_id: org_id,
+      opening_id: opening_id,
+      stage_id: stage_id,
+      updated_stage: stage,
+    };
+
+    await UpdateStage(update_stage_input);
+
     return new_stage_question;
   } catch (error) {
     throw new Error(error);

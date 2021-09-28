@@ -45,21 +45,6 @@ export default function ViewOpening() {
     setNewStages(stages);
   }, [stages]);
 
-  const DeleteStage = async (stage_id: string) => {
-    try {
-      const { data } = await axios.delete(
-        `/api/openings/${opening_id}/stages/${stage_id}`
-      );
-      alert(data.message);
-    } catch (error) {
-      alert(error.response.data.message);
-    }
-
-    // Get all stages & get the new opening order
-    mutate(`/api/openings/${opening_id}`);
-    mutate(`/api/openings/${opening_id}/stages`);
-  };
-
   const createStage = async (stage_name: string) => {
     const body: APICreateStageInput = {
       stage_name: stage_name,

@@ -36,7 +36,6 @@ export default async function UpdateStage({
   const UpdatedExpression = `SET ${newUpdateExpression.join(", ").toString()}`;
 
   console.log("Expression", UpdatedExpression);
-  console.log("Attributes", newAttributes);
 
   const params = {
     Key: {

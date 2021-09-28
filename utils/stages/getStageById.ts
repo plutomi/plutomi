@@ -18,7 +18,6 @@ export async function GetStageById({
 
   try {
     const response = await Dynamo.send(new GetCommand(params));
-    console.log("called dynamo", response);
     return response.Item;
   } catch (error) {
     throw new Error(error);

@@ -4,6 +4,7 @@ const useStore = create((set) => ({
   createOrgModalIsOpen: false,
   createOpeningModalIsOpen: false,
   createStageModalIsOpen: false,
+  createQuestionModalIsOpen: false,
 
   // Example
   pokemons: [
@@ -36,6 +37,10 @@ const useStore = create((set) => ({
   setCreateStageModalOpen: (open: Boolean) =>
     set((state: PlutomiState) => ({
       createStageModalIsOpen: open,
+    })),
+  setCreateQuestionModalOpen: (open: Boolean) =>
+    set((state: PlutomiState) => ({
+      createQuestionModalIsOpen: open,
     })),
 }));
 export default useStore;
