@@ -3,26 +3,30 @@ import ItemsCarousel from "react-items-carousel";
 import { ArrowLeftIcon } from "@heroicons/react/outline";
 import { ArrowRightIcon } from "@heroicons/react/outline";
 import Link from "next/dist/client/link";
+import { useRouter } from "next/router";
 import { UserGroupIcon } from "@heroicons/react/outline";
 import NumberFormat from "react-number-format";
 
+const selectedClass = "px-4 bg-blue-gray-400 border";
 const items = [
-  { id: 1, name: "Waitlist" },
-  { id: 2, name: "Questionnaire" },
-  { id: 3, name: "Set Up Profile" },
-  { id: 4, name: "Driver's License Upload And checking if things exist" },
-  { id: 5, name: "Insurance Upload" },
-  { id: 6, name: "Background Check" },
-  { id: 7, name: "Contract Signing" },
-  { id: 8, name: "Final Review" },
-  { id: 9, name: "Onboarding" },
-  { id: 10, name: "Set Up Direct Despoit" },
-  { id: 11, name: "Ready to Drive" },
-  { id: 12, name: "On Hold" },
-  { id: 13, name: "Rejected" },
+  { id: "j2938e", name: "Waitlist" },
+  { id: "dn29u", name: "Questionnaire" },
+  { id: "ni23", name: "Set Up Profile" },
+  { id: "nsicu", name: "Driver's License Upload And checking if things exist" },
+  { id: "ndi2", name: "Insurance Upload" },
+  { id: "ndo3u2", name: "Background Check" },
+  { id: "dno2i", name: "Contract Signing" },
+  { id: "m1o", name: "Final Review" },
+  { id: "dnou2", name: "Onboarding" },
+  { id: "ndu1", name: "Set Up Direct Despoit" },
+  { id: "nd1iu3", name: "Ready to Drive" },
+  { id: "jd8s0a", name: "On Hold" },
+  { id: "n1j", name: "Rejected" },
 ];
 
 export default function StageCarousel() {
+  const router = useRouter();
+  const { stage_id } = router.query;
   const [activeItemIndex, setActiveItemIndex] = useState(0);
   const chevronWidth = 60;
   return (
@@ -48,8 +52,13 @@ export default function StageCarousel() {
         firstAndLastGutter={false}
       >
         {items.map((item) => (
-          <div key={item.id} className="px-4">
-            <Link href={`#${item.id}`}>
+          <div
+            key={item.id}
+            className={item.id == (stage_id as string) ? selectedClass : "px-4"}
+          >
+            <Link
+              href={`${process.env.NEXT_PUBLIC_NEXTAUTH_URL}/openings/THISOPENINGIDSHOULDBECHANGED/stages/${item.id}`}
+            >
               <a>
                 <div className=" my-8   py-4 text-center bg-white   shadow-md hover:shadow-xl transition ease-in-out duration-300 rounded-xl overflow-hidden">
                   <h5 className="px-8 text-lg font-medium text-dark truncate">
