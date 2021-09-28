@@ -1,15 +1,13 @@
 import { PlusIcon } from "@heroicons/react/solid";
 import { OfficeBuildingIcon } from "@heroicons/react/outline";
-import CreateOrgModal from "../../components/CreateOrgModal";
 import useStore from "../../utils/store";
 export default function EmptyOrgState() {
   const setCreateOrgModalOpen = useStore(
     (state: PlutomiState) => state.setCreateOrgModalOpen
   );
   return (
-    <div className="text-center border border-red-400 w-full h-full flex flex-col justify-center items-center">
+    <div className="text-center w-full h-full flex flex-col justify-center items-center">
       <OfficeBuildingIcon className="mx-auto h-12 w-12 text-gray-400" />
-      <CreateOrgModal />
       <h3 className="mt-2 text-lg font-medium text-gray-900">
         You don&apos;t belong to an organization.
       </h3>

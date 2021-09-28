@@ -7,23 +7,14 @@ const UrlSafeString = require("url-safe-string"),
   tagGenerator = new UrlSafeString();
 
 import useStore from "../utils/store";
-export default function CreateOrgModal() {
+export default function CreateOrgModal({ createOrg }) {
   const [org_name, setOrgName] = useState("");
   const [org_id, setOrgId] = useState("");
 
-  const createOrg = async (e: FormEvent) => {
+  const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
-    const body: APICreateOrgInput = {
-      org_name: org_name,
-      org_id: org_id,
-    };
-    try {
-      const { status, data } = await axios.post("/api/orgs", body);
-      alert(data.message);
-      setCreateOrgModalOpen(false);
-    } catch (error) {
-      alert(error.response.data.message);
-    }
+    await createOrg({ org_name, org_id });
+    setCreateOrgModalOpen(false);
   };
 
   const open = useStore((state: PlutomiState) => state.createOrgModalIsOpen);
@@ -65,7 +56,7 @@ export default function CreateOrgModal() {
               <div className="w-screen max-w-md">
                 <form
                   className="h-full divide-y divide-gray-200 flex flex-col bg-white shadow-xl"
-                  onSubmit={(e) => createOrg(e)}
+                  onSubmit={(e) => handleSubmit(e)}
                 >
                   <div className="flex-1 h-0 overflow-y-auto">
                     <div className="py-6 px-4 bg-indigo-700 sm:px-6">

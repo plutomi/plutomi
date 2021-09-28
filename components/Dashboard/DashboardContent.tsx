@@ -1,8 +1,12 @@
 import EmptyOrgState from "./EmptyOrgState";
-export default function DashboardContent({ user }) {
-  if (user.org_id === "NO_ORG_ASSIGNED") {
-    return <EmptyOrgState />;
-  }
+import { useSession } from "next-auth/client";
+import useUser from "../../SWR/useUser";
 
-  return <div>You&apos;re already in an org!</div>;
+export default function DashboardContent() {
+  const [session, loading]: [CustomSession, boolean] = useSession();
+  const { user, isUserLoading, isUserError } = useUser(session?.user_id);
+
+  return (
+    <div>You&apos;re in the {user?.org_id} org. Feel free to click around!</div>
+  );
 }

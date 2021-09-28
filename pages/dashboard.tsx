@@ -1,14 +1,22 @@
-import Layout from "../components/Layout";
-import GoBack from "../components/GoBackButton";
+import Loader from "../components/Loader";
+import DashboardContent from "../components/Dashboard/DashboardContent";
+import DashboardHeader from "../components/Dashboard/DashboardHeader";
 import SignedInNav from "../components/Navbar/SignedInNav";
 import { useSession } from "next-auth/client";
 import useUser from "../SWR/useUser";
 import SignIn from "../components/SignIn";
-import DashboardContent from "../components/Dashboard/DashboardContent";
-import DashboardHeader from "../components/Dashboard/DashboardHeader";
+import axios from "axios";
+import { mutate } from "swr";
+import useStore from "../utils/store";
+import CreateOrgModal from "../components/CreateOrgModal";
+import EmptyOrgState from "../components/Dashboard/EmptyOrgState";
+
 export default function Dashboard() {
   const [session, loading]: [CustomSession, boolean] = useSession();
   const { user, isUserLoading, isUserError } = useUser(session?.user_id);
+  const setCreateOrgModalOpen = useStore(
+    (state: PlutomiState) => state.setCreateOrgModalOpen
+  );
 
   /** ~~~~~~~~~~~~~~~~~~~~~~~
    * ~~~~~~~~~~~~~~~~~~~~~~~~
@@ -19,7 +27,7 @@ export default function Dashboard() {
 
   // When rendering client side don't display anything until loading is complete
   if (typeof window !== "undefined" && loading) {
-    return null;
+    <Loader text="Loading ..." />;
   }
 
   // If no session or bad userid
@@ -34,11 +42,7 @@ export default function Dashboard() {
 
   if (isUserLoading) {
     // TODO set this
-    return (
-      <div className="mx-auto p-20 flex justify-center items-center">
-        <h1 className="text-4xl text-dark font-medium">Loading...</h1>
-      </div>
-    );
+    return <Loader text="Loading user..." />;
   }
 
   /** ~~~~~~~~~~~~~~~~~~~~~~~
@@ -48,14 +52,39 @@ export default function Dashboard() {
    * ~~~~~~~~~~~~~~~~~~~~~~~~
    */
 
+  const createOrg = async ({ org_name, org_id }) => {
+    const body: APICreateOrgInput = {
+      org_name: org_name,
+      org_id: org_id,
+    };
+    try {
+      const { data } = await axios.post("/api/orgs", body);
+      alert(data.message);
+      setCreateOrgModalOpen(false);
+    } catch (error) {
+      alert(error.response.data.message);
+    }
+
+    mutate(`/api/users/${user?.user_id}`);
+  };
+
   return (
     <>
-      <SignedInNav current="Dashboard" user={user ? user : null} />
-      <Layout
-        header={<DashboardHeader name={user.first_name} />}
-        main={<DashboardContent user={user} />}
-        footer={null}
-      />
+      <CreateOrgModal createOrg={createOrg} />
+      <SignedInNav current="Dashboard" />
+      <div className="max-w-7xl mx-auto p-4 my-12 rounded-lg min-h-screen ">
+        <header>
+          <DashboardHeader />
+        </header>
+
+        <main className="mt-32">
+          {user?.org_id === "NO_ORG_ASSIGNED" ? (
+            <EmptyOrgState />
+          ) : (
+            <DashboardContent />
+          )}
+        </main>
+      </div>
     </>
   );
 }
