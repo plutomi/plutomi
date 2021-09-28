@@ -33,15 +33,10 @@ export default function StageCarousel({ stages }) {
         firstAndLastGutter={false}
       >
         {stages?.map((stage: DynamoStage) => (
-          <div
-            key={stage.stage_id}
-            className={
-              stage.stage_id == (stage_id as string) ? "mx-9" : "mx-9  "
-            }
-          >
+          <div key={stage.stage_id} className={"mx-9"}>
             <StageCard
               name={stage.GSI1SK}
-              stage_id={stage.stage_id}
+              current_stage_id={stage.stage_id}
               opening_id={stage.opening_id}
             />
           </div>
