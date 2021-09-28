@@ -5,6 +5,7 @@ import { useSession } from "next-auth/client";
 import SignIn from "../components/SignIn";
 import useUser from "../SWR/useUser";
 import useStore from "../utils/store";
+import GoBack from "../components/GoBackButton";
 
 export default function Dashboard() {
   const setCreateOrgModalOpen = useStore(
@@ -77,6 +78,7 @@ export default function Dashboard() {
         </header>
         <UserProfileCard user={user} />
         <main>
+          <GoBack />
           <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">
             <CreateOrgModal />
             {user.org_id === "NO_ORG_ASSIGNED" && (
