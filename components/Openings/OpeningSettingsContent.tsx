@@ -30,8 +30,8 @@ export default function OpeningSettingsContent() {
   );
 
   const [new_stages, setNewStages] = useState(stages);
-  const [isUpdating, setIsUpdating] = useState(false);
-
+  const [isStageOrderUpdating, setIsStageOrderUpdating] = useState(false);
+  const [isQuestionOrderUpdating, setIsQuestionOrderUpdating] = useState(false);
   useEffect(() => {
     console.log("new stages", stages);
     setNewStages(stages);
@@ -61,7 +61,7 @@ export default function OpeningSettingsContent() {
       return;
     }
 
-    setIsUpdating(true);
+    setIsStageOrderUpdating(true);
 
     let new_stage_order = Array.from(opening.stage_order);
     new_stage_order.splice(source.index, 1);
@@ -83,7 +83,7 @@ export default function OpeningSettingsContent() {
     }
 
     mutate(`/api/openings/${opening_id}`); // Refresh the stage order
-    setIsUpdating(false);
+    setIsStageOrderUpdating(false);
   };
 
   return (
@@ -98,7 +98,7 @@ export default function OpeningSettingsContent() {
               <div className="h-full relative" style={{ minHeight: "12rem" }}>
                 <div className=" inset-0  border-gray-200 rounded-lg ">
                   <h1 className="text-center text-lg font-semibold mb-4">
-                    {isUpdating ? "Updating..." : "Stage Order"}
+                    {isStageOrderUpdating ? "Updating..." : "Stage Order"}
                   </h1>
 
                   <DragDropContext
@@ -162,7 +162,11 @@ export default function OpeningSettingsContent() {
             <div className="h-full py-6 px-4 sm:px-6 lg:px-8">
               {/* Start main area*/}
               <div className="relative h-full" style={{ minHeight: "36rem" }}>
-                <div className="absolute inset-0 border-2 border-gray-200 border-dashed rounded-lg" />
+                <div className=" inset-0  border-gray-200 rounded-lg">
+                  <h1 className="text-center text-lg font-semibold mb-4">
+                    {isQuestionOrderUpdating ? "Updating..." : "Questions"}
+                  </h1>
+                </div>
               </div>
               {/* End main area */}
             </div>
