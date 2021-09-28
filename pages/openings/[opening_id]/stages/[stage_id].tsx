@@ -3,8 +3,8 @@ import useStageById from "../../../../SWR/useStageById";
 import SignIn from "../../../../components/SignIn";
 import useUser from "../../../../SWR/useUser";
 import { useEffect } from "react";
+import GoBack from "../../../../components/GoBackButton";
 import { useSession } from "next-auth/client";
-import Breadcrumbs from "../../../../components/Breadcrumbs";
 import { useRouter } from "next/router";
 import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
 import axios from "axios";
@@ -46,24 +46,6 @@ export default function Stage() {
 
   const [new_questions, setNewQuestions] = useState(questions);
   const [isUpdating, setIsUpdating] = useState(false);
-
-  const pages = [
-    {
-      name: "Openings",
-      href: `${process.env.NEXT_PUBLIC_NEXTAUTH_URL}/openings`,
-      current: false,
-    },
-    {
-      name: opening?.GSI1SK || "loading...",
-      href: `${process.env.NEXT_PUBLIC_NEXTAUTH_URL}/openings/${opening_id}/stages`,
-      current: false,
-    },
-    {
-      name: stage?.GSI1SK || "loading...",
-      href: `${process.env.NEXT_PUBLIC_NEXTAUTH_URL}/openings/${opening_id}/${stage?.stage_id}`,
-      current: true,
-    },
-  ];
 
   const handleDragEnd = async (result) => {
     const { destination, source, draggableId } = result;
@@ -224,7 +206,7 @@ export default function Stage() {
       <SignedInNav user={user} current={"Openings"} />
       <div className="mx-auto px-20 py-8">
         <div>
-          <Breadcrumbs pages={pages} />
+          <GoBack />
           <CreateQuestionModal createQuestion={createQuestion} />
           {stage ? (
             <div className="p-10">

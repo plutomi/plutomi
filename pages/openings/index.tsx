@@ -7,7 +7,7 @@ import SignIn from "../../components/SignIn";
 import useOpenings from "../../SWR/useOpenings";
 import useStore from "../../utils/store";
 import Link from "next/dist/client/link";
-import Breadcrumbs from "../../components/Breadcrumbs";
+import GoBack from "../../components/GoBackButton";
 import useUser from "../../SWR/useUser";
 import { useState } from "react";
 import axios from "axios";
@@ -49,14 +49,6 @@ export default function Openings() {
     mutate(`/api/openings/`); // Get all openings
   };
 
-  const pages = [
-    {
-      name: "Openings",
-      href: `${process.env.NEXT_PUBLIC_NEXTAUTH_URL}/openings`,
-      current: true,
-    },
-  ];
-
   /** ~~~~~~~~~~~~~~~~~~~~~~~
    * ~~~~~~~~~~~~~~~~~~~~~~~~
    * ~~LOADING STATES START~~
@@ -97,10 +89,8 @@ export default function Openings() {
   return (
     <div className="min-h-screen bg-white">
       <SignedInNav current="Openings" user={user} />
+      <GoBack />
       <div className="py-10">
-        <div className="px-20 py-8">
-          <Breadcrumbs pages={pages} />
-        </div>
         <header>
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             {/* Content */}

@@ -5,7 +5,7 @@ import useOpeningById from "../../../../SWR/useOpeningById";
 import { GetRelativeTime } from "../../../../utils/time";
 import SignIn from "../../../../components/SignIn";
 import { useSession } from "next-auth/client";
-import Breadcrumbs from "../../../../components/Breadcrumbs";
+import GoBack from "../../../../components/GoBackButton";
 import useStore from "../../../../utils/store";
 import { mutate } from "swr";
 import Link from "next/dist/client/link";
@@ -152,19 +152,6 @@ export default function ViewOpening() {
     mutate(`/api/openings`);
   };
 
-  const pages = [
-    {
-      name: "Openings",
-      href: `${process.env.NEXT_PUBLIC_NEXTAUTH_URL}/openings`,
-      current: false,
-    },
-    {
-      name: opening?.GSI1SK || "loading...",
-      href: `${process.env.NEXT_PUBLIC_NEXTAUTH_URL}/openings/${opening_id}/stages`,
-      current: true,
-    },
-  ];
-
   /** ~~~~~~~~~~~~~~~~~~~~~~~
    * ~~~~~~~~~~~~~~~~~~~~~~~~
    * ~~LOADING STATES START~~
@@ -205,9 +192,7 @@ export default function ViewOpening() {
     <div>
       <SignedInNav user={user} current={"Openings"} />
 
-      <div className="px-20 ">
-        <Breadcrumbs pages={pages} />
-      </div>
+      <GoBack />
 
       <div className="mx-auto max-w-4xl pt-20 flex flex-col justify-center items-center ">
         <h1 className="text-xl font-bold text-normal">{opening?.GSI1SK}</h1>
