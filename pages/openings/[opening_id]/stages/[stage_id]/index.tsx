@@ -26,6 +26,11 @@ export default function Openings() {
     stage_id as string
   );
 
+  let { stages, isStagesLoading, isStagesError } = useAllStagesInOpening(
+    session?.user_id,
+    opening_id as string
+  );
+
   const setCreateStageModalOpen = useStore(
     (state: PlutomiState) => state.setCreateStageModalOpen
   );
@@ -88,9 +93,10 @@ export default function Openings() {
         <main className="mt-32">
           {/* {stages.length == 0 ? <EmptyStagesState /> : <StageCarousel />} */}
           <h1>
-            {opening_id} - {stage_id} - {stage.GSI1SK}
+            Opening id:{opening_id} - StageId: {stage_id} - Stage name:
+            {stage.GSI1SK}
           </h1>
-          <StageCarousel />
+          <StageCarousel stages={stages} />
         </main>
       </div>
     </>

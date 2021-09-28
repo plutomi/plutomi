@@ -5,23 +5,7 @@ import { ArrowRightIcon } from "@heroicons/react/outline";
 import { useRouter } from "next/router";
 import StageCard from "./StageCard";
 
-const items = [
-  { id: "j2938e", name: "Waitlist" },
-  { id: "dn29u", name: "Questionnaire" },
-  { id: "ni23", name: "Set Up Profile" },
-  { id: "nsicu", name: "Driver's License Upload And checking if things exist" },
-  { id: "ndi2", name: "Insurance Upload" },
-  { id: "ndo3u2", name: "Background Check" },
-  { id: "dno2i", name: "Contract Signing" },
-  { id: "m1o", name: "Final Review" },
-  { id: "dnou2", name: "Onboarding" },
-  { id: "ndu1", name: "Set Up Direct Despoit" },
-  { id: "nd1iu3", name: "Ready to Drive" },
-  { id: "jd8s0a", name: "On Hold" },
-  { id: "n1j", name: "Rejected" },
-];
-
-export default function StageCarousel() {
+export default function StageCarousel({ stages }) {
   const router = useRouter();
   const { stage_id } = router.query;
   const [activeItemIndex, setActiveItemIndex] = useState(0);
@@ -48,12 +32,18 @@ export default function StageCarousel() {
         outsideChevron
         firstAndLastGutter={false}
       >
-        {items.map((item) => (
+        {stages?.map((stage: DynamoStage) => (
           <div
-            key={item.id}
-            className={item.id == (stage_id as string) ? "mx-9" : "mx-9  "}
+            key={stage.stage_id}
+            className={
+              stage.stage_id == (stage_id as string) ? "mx-9" : "mx-9  "
+            }
           >
-            <StageCard name={item.name} stage_id={item.id} />
+            <StageCard
+              name={stage.GSI1SK}
+              stage_id={stage.stage_id}
+              opening_id={stage.opening_id}
+            />
           </div>
         ))}
       </ItemsCarousel>

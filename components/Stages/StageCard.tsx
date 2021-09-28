@@ -4,10 +4,10 @@ import Link from "next/dist/client/link";
 import { UserGroupIcon } from "@heroicons/react/outline";
 import NumberFormat from "react-number-format";
 
-export default function StageCard({ name, stage_id }) {
+export default function StageCard({ name, stage_id, opening_id }) {
   return (
     <Link
-      href={`${process.env.NEXT_PUBLIC_NEXTAUTH_URL}/openings/THISOPENINGIDSHOULDBECHANGED/stages/${stage_id}`}
+      href={`${process.env.NEXT_PUBLIC_NEXTAUTH_URL}/openings/${opening_id}/stages/${stage_id}`}
     >
       <a>
         <div className=" border  my-8   py-4 text-center bg-white   shadow-md hover:shadow-xl transition ease-in-out duration-300 rounded-xl overflow-hidden">
