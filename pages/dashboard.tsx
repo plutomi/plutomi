@@ -11,9 +11,6 @@ export default function Dashboard() {
     (state: PlutomiState) => state.setCreateOrgModalOpen
   );
 
-  const isCreateOrgModalOpen = useStore(
-    (state: PlutomiState) => state.createOrgModalIsOpen
-  );
   const [session, loading]: [CustomSession, boolean] = useSession();
 
   const { user, isUserLoading, isUserError } = useUser(session?.user_id);
