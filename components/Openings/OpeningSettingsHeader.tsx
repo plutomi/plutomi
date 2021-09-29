@@ -27,7 +27,7 @@ export default function OpeningSettingsHeader() {
         <GoBack
           url={`${process.env.NEXT_PUBLIC_NEXTAUTH_URL}/openings/${opening?.opening_id}/stages/${opening?.stage_order[0]}`}
         />
-        <h2 className="text-2xl border font-bold text-dark sm:text-3xl sm:truncate">
+        <h2 className="text-2xl font-bold text-dark sm:text-3xl sm:truncate">
           {opening?.GSI1SK}
         </h2>
       </div>

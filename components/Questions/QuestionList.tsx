@@ -5,6 +5,7 @@ import useAllStagesInOpening from "../../SWR/useAllStagesInOpening";
 import useOpeningById from "../../SWR/useOpeningById";
 import useStageById from "../../SWR/useStageById";
 import axios from "axios";
+import { PencilAltIcon, TrashIcon } from "@heroicons/react/outline";
 import { useState } from "react";
 import { mutate } from "swr";
 import { useEffect } from "react";
@@ -80,7 +81,7 @@ export default function QuestionList() {
   };
 
   if (isQuestionsLoading) {
-    return <Loader text={"Loading questions..."} />;
+    return <Loader text={"Loading stage..."} />;
   }
   return (
     <div>
@@ -116,7 +117,7 @@ export default function QuestionList() {
                           >
                             <li
                               key={question.question_id}
-                              className="px-4 py-5 bg-white hover:bg-sky-50 transition ease-in-out duration-300"
+                              className="px-4 py-5 bg-white hover:bg-sky-50 transition ease-in-out duration-300 flex justify-between"
                             >
                               <div className="relative focus-within:ring-2 focus-within:ring-blue-500">
                                 <h3 className="text-sm font-semibold text-gray-800">
@@ -135,6 +136,21 @@ export default function QuestionList() {
                                     {question.question_description}
                                   </p>
                                 ) : null}
+                              </div>
+
+                              <div className="flex justify-center items-center space-x-2">
+                                <button
+                                  onClick={() => alert("delete")}
+                                  className="rounded-full hover:bg-white text-red-500 transition ease-in-out duration-200 px-3 py-3 text-md"
+                                >
+                                  <TrashIcon className="w-6 h-6" />
+                                </button>
+                                <button
+                                  onClick={() => alert("edit")}
+                                  className="rounded-full hover:bg-white text-blue-500 transition ease-in-out duration-200 px-3 py-3 text-md"
+                                >
+                                  <PencilAltIcon className="w-6 h-6" />
+                                </button>
                               </div>
                             </li>
                           </div>

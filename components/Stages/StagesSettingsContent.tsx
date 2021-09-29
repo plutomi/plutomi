@@ -65,7 +65,7 @@ export default function StageSettingsContent() {
   }
 
   if (isQuestionsLoading) {
-    return <Loader text="Loading questions..." />;
+    return <Loader text="Loading stage..." />;
   }
 
   const handleDragEnd = async (result) => {
