@@ -11,6 +11,8 @@ export default function CreateQuestionModal({ createQuestion }) {
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     await createQuestion({ question_title, question_description });
+    setQuestionTitle("");
+    setQuestionDescription("");
   };
 
   const open = useStore(

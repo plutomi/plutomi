@@ -6,6 +6,8 @@ import StageCard from "../Stages/StageCard";
 import QuestionList from "../Questions/QuestionList";
 import { useEffect } from "react";
 import axios from "axios";
+import useStore from "../../utils/store";
+import CreateQuestionModal from "../CreateQuestionModal";
 import useAllStageQuestions from "../../SWR/useAllStageQuestions";
 import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
 import DraggableStageCard from "../../components/Stages/DraggableStageCard";
@@ -46,6 +48,10 @@ export default function StageSettingsContent() {
     setNewStages(stages);
   }, [stages]);
 
+  const setCreateQuestionModalOpen = useStore(
+    (state: PlutomiState) => state.setCreateQuestionModalOpen
+  );
+
   if (isOpeningLoading) {
     return <Loader text="Loading opening..." />;
   }
@@ -64,12 +70,10 @@ export default function StageSettingsContent() {
 
   const handleDragEnd = async (result) => {
     const { destination, source, draggableId } = result;
-
     // No change
     if (!destination) {
       return;
     }
-
     // If dropped in the same place
     if (
       destination.droppableId === source.droppableId &&
@@ -103,8 +107,34 @@ export default function StageSettingsContent() {
     setIsStageOrderUpdating(false);
   };
 
+  const createQuestion = async ({ question_title, question_description }) => {
+    const body: APICreateQuestionInput = {
+      question_title: question_title,
+      question_description: question_description,
+    };
+    try {
+      const { data } = await axios.post(
+        `/api/openings/${opening_id}/stages/${stage_id}/questions`,
+        body
+      );
+      alert(data.message);
+      setCreateQuestionModalOpen(false);
+    } catch (error) {
+      alert(error.response.data.message);
+    }
+
+    // Refresh the question_order
+    mutate(`/api/openings/${opening_id}/stages/${stage_id}`);
+
+    // Refresh the question list
+    mutate(
+      `/api/orgs/${user.org_id}/openings/${opening_id}/stages/${stage_id}/questions`
+    );
+  };
+
   return (
     <>
+      <CreateQuestionModal createQuestion={createQuestion} />
       {/* 3 column wrapper */}
       <div className="flex-grow w-full max-w-7xl mx-auto xl:px-8 lg:flex">
         {/* Left sidebar & main wrapper */}
@@ -164,11 +194,6 @@ export default function StageSettingsContent() {
                       )}
                     </Droppable>
                   </DragDropContext>
-                  {/* {stages.map((stage) => (
-                    <div key={stage.stage_id} className="my-2 py-2 px-1 border">
-                      <h1>{stage.GSI1SK}</h1>
-                    </div>
-                  ))} */}
                 </div>
               </div>
               {/* End left column area */}
@@ -183,9 +208,29 @@ export default function StageSettingsContent() {
                   <h1 className="text-center text-lg font-semibold mb-4">
                     {stage?.GSI1SK} Settings
                   </h1>
-
-                  <QuestionList questions={questions} />
                 </div>
+                <span className="relative z-0 inline-flex shadow-sm rounded-md">
+                  <button
+                    type="button"
+                    onClick={() => setCreateQuestionModalOpen(true)}
+                    className="relative inline-flex items-center px-4 py-2 rounded-l-md border border-gray-300 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50 focus:z-10 focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500"
+                  >
+                    Add a question
+                  </button>
+                  {/* <button
+                    type="button"
+                    className="-ml-px relative inline-flex items-center px-4 py-2 border border-gray-300 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50 focus:z-10 focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500"
+                  >
+                    Add a rule
+                  </button>
+                  <button
+                    type="button"
+                    className="-ml-px relative inline-flex items-center px-4 py-2 rounded-r-md border border-gray-300 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50 focus:z-10 focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500"
+                  >
+                    Add a
+                  </button> */}
+                </span>
+                <QuestionList />
               </div>
               {/* End main area */}
             </div>
