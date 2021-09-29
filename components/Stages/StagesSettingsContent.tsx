@@ -145,7 +145,7 @@ export default function StageSettingsContent() {
               <div className="h-full relative" style={{ minHeight: "12rem" }}>
                 <div className=" inset-0  border-gray-200 rounded-lg ">
                   <h1 className="text-center text-lg font-semibold mb-4">
-                    {isStageOrderUpdating ? "Updating..." : "Stage Order"}
+                    Stage Order
                   </h1>
 
                   <DragDropContext
@@ -213,7 +213,7 @@ export default function StageSettingsContent() {
                   <button
                     type="button"
                     onClick={() => setCreateQuestionModalOpen(true)}
-                    className="relative inline-flex items-center px-4 py-2 rounded-l-md border border-gray-300 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50 focus:z-10 focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500"
+                    className="relative inline-flex items-center px-4 py-2 rounded-md border border-gray-300 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50 focus:z-10 focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500"
                   >
                     Add a question
                   </button>

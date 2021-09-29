@@ -98,7 +98,7 @@ export default function OpeningSettingsContent() {
               <div className="h-full relative" style={{ minHeight: "12rem" }}>
                 <div className=" inset-0  border-gray-200 rounded-lg ">
                   <h1 className="text-center text-lg font-semibold mb-4">
-                    {isStageOrderUpdating ? "Updating..." : "Stage Order"}
+                    Stage Order
                   </h1>
 
                   <DragDropContext
