@@ -36,28 +36,6 @@ export default function ViewOpening() {
     opening_id as string
   );
 
-  const updateOpening = async (opening_id: string) => {
-    try {
-      const body = {
-        updated_opening: {
-          ...opening,
-          GSI1SK: newName ? newName : opening.GSI1SK, // If not blank
-          is_public: isPublic,
-        },
-      };
-
-      const { data } = await axios.put(`/api/openings/${opening_id}`, body);
-      alert(data.message);
-    } catch (error) {
-      alert(error.response.data.message);
-    }
-
-    // Refresh opening data
-    mutate(`/api/openings/${opening_id}`);
-    setIsEditing(false);
-    setNewName("");
-  };
-
   const deleteOpening = async (opening_id: string) => {
     if (
       !confirm(
@@ -130,7 +108,7 @@ export default function ViewOpening() {
               </div>
             </div>
             <button
-              onClick={() => updateOpening(opening.opening_id)}
+              onClick={() => console.log("old")}
               className=" px-4 py-3 text-white bg-green-500 rounded-lg"
             >
               Submit

@@ -21,30 +21,24 @@ const useStore = create((set) => ({
     }));
   },
 
-  // Example
-  pokemons: [
-    { id: 1, name: "Bulbasaur" },
-    { id: 2, name: "Ivysaur" },
-    { id: 3, name: "Venusaur" },
-    { id: 4, name: "Charmander" },
-    { id: 5, name: "Charmeleon" },
-  ],
-  addPokemons: (pokemon: Pokemon) =>
-    set((state: PlutomiState) => ({
-      pokemons: [
-        { name: pokemon.name, id: Math.random() * 100 },
-        ...state.pokemons,
-      ],
-    })),
-  removePokemon: (id: number) =>
-    set((state: PlutomiState) => ({
-      pokemons: state.pokemons.filter((pokemon) => pokemon.id !== id),
-    })),
+  openingModal: {
+    is_open: false, // False by default
+    modal_mode: "CREATE", // Will render text differently
+    opening_id: "",
+    opening_name: "",
+    is_public: false,
+  },
+  setOpeningModal: (openingModal: OpeningModalInput) => {
+    set((state) => ({
+      openingModal: openingModal,
+    }));
+  },
 
   setCreateOrgModalOpen: (open: Boolean) =>
     set((state: PlutomiState) => ({
       createOrgModalIsOpen: open,
     })),
+
   setCreateOpeningModalOpen: (open: Boolean) =>
     set((state: PlutomiState) => ({
       createOpeningModalIsOpen: open,

@@ -1,33 +1,31 @@
 import { FormEvent, Fragment, useState } from "react";
 import { Dialog, Transition } from "@headlessui/react";
 import { XIcon } from "@heroicons/react/outline";
-import axios from "axios";
 import useStore from "../../utils/store";
-export default function CreateOpeningModal({ createOpening }) {
-  const [opening_name, setOpeningName] = useState("");
-  const [is_public, setIsPublic] = useState(false);
-
-  const open = useStore(
-    (state: PlutomiState) => state.createOpeningModalIsOpen
-  );
-
-  const setCreateOpeningModalOpen = useStore(
-    (state: PlutomiState) => state.setCreateOpeningModalOpen
+export default function OpeningModal({ createOpening, updateOpening }) {
+  const openingModal = useStore((state: PlutomiState) => state.openingModal);
+  const setOpeningModal = useStore(
+    (state: PlutomiState) => state.setOpeningModal
   );
 
   const handleSubmit = async (e: FormEvent) => {
-    e.preventDefault();
+    if (openingModal.modal_mode === "CREATE") {
+      e.preventDefault();
+      await createOpening();
+    }
 
-    await createOpening({ opening_name, is_public });
-    setOpeningName("");
-    setIsPublic(false)
+    if (openingModal.modal_mode === "EDIT") {
+      e.preventDefault();
+      await updateOpening();
+    }
   };
+
   return (
-    <Transition.Root show={open} as={Fragment}>
+    <Transition.Root show={openingModal.is_open} as={Fragment}>
       <Dialog
         as="div"
         className="fixed inset-0 overflow-hidden "
-        onClose={() => setCreateOpeningModalOpen(false)}
+        onClose={() => setOpeningModal({ ...openingModal, is_open: false })}
       >
         <div className="absolute inset-0 overflow-hidden">
           <Transition.Child
@@ -67,7 +65,12 @@ export default function CreateOpeningModal({ createOpening }) {
                           <button
                             type="button"
                             className="bg-blue-700 rounded-md text-blue-200 hover:text-white focus:outline-none focus:ring-2 focus:ring-white"
-                            onClick={() => setCreateOpeningModalOpen(false)}
+                            onClick={() =>
+                              setOpeningModal({
+                                ...openingModal,
+                                is_open: false,
+                              })
+                            }
                           >
                             <span className="sr-only">Close panel</span>
                             <XIcon className="h-6 w-6" aria-hidden="true" />
@@ -99,8 +102,13 @@ export default function CreateOpeningModal({ createOpening }) {
                                 name="opening-name"
                                 id="opening-name"
                                 required
-                                onChange={(e) => setOpeningName(e.target.value)}
-                                value={opening_name}
+                                onChange={(e) =>
+                                  setOpeningModal({
+                                    ...openingModal,
+                                    opening_name: e.target.value,
+                                  })
+                                }
+                                value={openingModal.opening_name}
                                 className="block w-full shadow-sm sm:text-sm focus:ring-blue-500 focus:border-blue-500 border-gray-300 rounded-md"
                               />
                             </div>
@@ -112,8 +120,13 @@ export default function CreateOpeningModal({ createOpening }) {
                                 aria-describedby="comments-description"
                                 name="comments"
                                 type="checkbox"
-                                checked={is_public}
-                                onChange={(e) => setIsPublic(e.target.checked)}
+                                checked={openingModal.is_public}
+                                onChange={(e) =>
+                                  setOpeningModal({
+                                    ...openingModal,
+                                    is_public: e.target.value,
+                                  })
+                                }
                                 className="focus:ring-blue-500 h-4 w-4 text-blue-600 border-gray-300 rounded"
                               />
                             </div>
@@ -311,7 +324,9 @@ export default function CreateOpeningModal({ createOpening }) {
                     <button
                       type="button"
                       className="bg-white py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
-                      onClick={() => setCreateOpeningModalOpen(false)}
+                      onClick={() =>
+                        setOpeningModal({ ...openingModal, is_open: false })
+                      }
                     >
                       Cancel
                     </button>

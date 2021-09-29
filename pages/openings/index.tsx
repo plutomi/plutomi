@@ -8,9 +8,10 @@ import SignIn from "../../components/SignIn";
 import axios from "axios";
 import { mutate } from "swr";
 import useStore from "../../utils/store";
-import CreateOpeningModal from "../../components/Openings/CreateOpeningModal";
+import CreateOpeningModal from "../../components/Openings/OpeningModal";
 import OpeningsContent from "../../components/Openings/OpeningsContent";
 import EmptyOpeningsState from "../../components/Openings/EmptyOpeningsState";
+import UpdateOpening from "../../utils/openings/updateOpening";
 export default function Openings() {
   const [session, loading]: [CustomSession, boolean] = useSession();
   const { user, isUserLoading, isUserError } = useUser(session?.user_id);
@@ -18,8 +19,9 @@ export default function Openings() {
     user?.user_id
   );
 
-  const setCreateOpeningModalOpen = useStore(
-    (state: PlutomiState) => state.setCreateOpeningModalOpen
+  const openingModal = useStore((state: PlutomiState) => state.openingModal);
+  const setOpeningModal = useStore(
+    (state: PlutomiState) => state.setOpeningModal
   );
 
   // When rendering client side don't display anything until loading is complete
@@ -47,18 +49,21 @@ export default function Openings() {
     return <Loader text="Loading openings..." />;
   }
 
-  const createOpening = async ({
-    opening_name,
-    is_public,
-  }: APICreateOpeningInput) => {
+  const createOpening = async () => {
     const body: APICreateOpeningInput = {
-      opening_name: opening_name,
-      is_public: is_public,
+      opening_name: openingModal.opening_name,
+      is_public: openingModal.is_open,
     };
     try {
       const { data } = await axios.post("/api/openings", body);
       alert(data.message);
-      setCreateOpeningModalOpen(false);
+      setOpeningModal({
+        is_open: true,
+        modal_mode: "CREATE",
+        is_public: false,
+        opening_id: "",
+        opening_name: "",
+      });
     } catch (error) {
       alert(error.response.data.message);
     }
@@ -66,9 +71,41 @@ export default function Openings() {
     mutate(`/api/openings/`); // Get all openings
   };
 
+  const updateOpening = async (opening_id: string) => {
+    try {
+      const opening = openings.find(
+        (opening) => opening.opening_id == openingModal.opening_id
+      );
+      const body = {
+        updated_opening: {
+          ...opening, // TODO fix this
+          GSI1SK: openingModal.opening_name, // If not blank
+          is_public: openingModal.is_public,
+        },
+      };
+
+      const { data } = await axios.put(`/api/openings/${opening_id}`, body);
+      alert(data.message);
+      setOpeningModal({
+        is_open: true,
+        modal_mode: "CREATE",
+        is_public: false,
+        opening_id: "",
+        opening_name: "",
+      });
+    } catch (error) {
+      alert(error.response.data.message);
+    }
+    // Refresh opening data
+    mutate(`/api/openings/${opening_id}`);
+  };
+
   return (
     <>
-      <CreateOpeningModal createOpening={createOpening} />
+      <CreateOpeningModal
+        createOpening={createOpening}
+        updateOpening={updateOpening}
+      />
       <SignedInNav current="Openings" />
       <div className="max-w-7xl mx-auto p-4 my-6 rounded-lg min-h-screen ">
         <header>

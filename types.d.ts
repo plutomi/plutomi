@@ -98,17 +98,19 @@ interface Pokemon {
   name: string;
 }
 interface PlutomiState {
+  // Create / edit questions in a stage
   questionModal: QuestionModalInput;
   setQuestionModal: Function;
-  pokemons: Pokemon[];
-  removePokemon: Function;
+
+  // Create / edit openings
+  openingModal: OpeningModalInput;
+  setOpeningModal: Function;
+
+  // TODO
   setCreateOrgModalOpen: Function;
   createOrgModalIsOpen: boolean;
-  createOpeningModalIsOpen: boolean;
-  setCreateOpeningModalOpen: Function;
   createStageModalIsOpen: boolean;
   setCreateStageModalOpen: Function;
-  questionModalIsOpen: boolean;
   openingsSearchInput: string;
   setOpeningsSearchInput: Function;
   createInviteModalIsOpen: boolean;
@@ -351,4 +353,12 @@ interface QuestionModalInput {
   question_id: "";
   question_title: "";
   question_description: "";
+}
+
+interface OpeningModalInput {
+  is_open: boolean;
+  modal_mode: "EDIT" | "CREATE"; // Will render text differently
+  opening_id: "";
+  opening_name: "";
+  is_public: boolean;
 }

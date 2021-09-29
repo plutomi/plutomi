@@ -12,6 +12,7 @@ import DraggableStageCard from "../../components/Stages/DraggableStageCard";
 import Loader from "../Loader";
 import useUser from "../../SWR/useUser";
 import { useState } from "react";
+import useStore from "../../utils/store";
 import useAllStagesInOpening from "../../SWR/useAllStagesInOpening";
 import useOpeningById from "../../SWR/useOpeningById";
 export default function OpeningSettingsContent() {
@@ -29,6 +30,10 @@ export default function OpeningSettingsContent() {
     opening?.opening_id
   );
 
+  const openingModal = useStore((state: PlutomiState) => state.openingModal);
+  const setOpeningModal = useStore(
+    (state: PlutomiState) => state.setOpeningModal
+  );
   const [new_stages, setNewStages] = useState(stages);
   const [isStageOrderUpdating, setIsStageOrderUpdating] = useState(false);
   const [isQuestionOrderUpdating, setIsQuestionOrderUpdating] = useState(false);
@@ -161,6 +166,24 @@ export default function OpeningSettingsContent() {
                     {opening?.GSI1SK} Settings
                   </h1>
                 </div>
+
+                <span className="relative z-0 inline-flex shadow-sm rounded-md">
+                  <button
+                    type="button"
+                    onClick={() =>
+                      setOpeningModal({
+                        is_open: true,
+                        modal_mode: "CREATE",
+                        opening_id: openingModal.opening_id,
+                        opening_name: openingModal.opening_name,
+                        is_public: openingModal.is_public,
+                      })
+                    }
+                    className="relative inline-flex items-center px-4 py-2 rounded-md border border-gray-300 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50 focus:z-10 focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500"
+                  >
+                    Edit Opening
+                  </button>
+                </span>
               </div>
               {/* End main area */}
             </div>
