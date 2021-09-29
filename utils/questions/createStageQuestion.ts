@@ -2,8 +2,8 @@ import { PutCommand, PutCommandInput } from "@aws-sdk/lib-dynamodb";
 import { Dynamo } from "../../libs/ddbDocClient";
 import { GetCurrentTime } from "../time";
 import { nanoid } from "nanoid";
-import { GetStageById } from "./getStageById";
-import UpdateStage from "./updateStage";
+import { GetStageById } from "../stages/getStageById";
+import UpdateStage from "../stages/updateStage";
 
 const { DYNAMO_TABLE_NAME } = process.env;
 

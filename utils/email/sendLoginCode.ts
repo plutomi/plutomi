@@ -9,7 +9,7 @@ export default async function SendLoginCode({
   const new_email: SendEmailCommandInput = {
     Source: `Plutomi <login@plutomi.com>`,
     Destination: {
-      ToAddresses: [recipient],
+      ToAddresses: [recipient.toLowerCase()],
       CcAddresses: null,
       BccAddresses: null,
     },

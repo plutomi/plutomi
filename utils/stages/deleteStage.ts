@@ -19,6 +19,7 @@ export async function DeleteStage({
   };
 
   try {
+    // TODO this should be a transact
     await Dynamo.send(new DeleteCommand(params));
 
     let opening = await GetOpening({ org_id, opening_id });

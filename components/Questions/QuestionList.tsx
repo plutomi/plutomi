@@ -81,6 +81,26 @@ export default function QuestionList() {
     setIsUpdating(false);
   };
 
+  const deleteQuestion = async (stage_question_id) => {
+    try {
+      console.log("In delete question", stage_question_id);
+      const { data } = await axios.delete(
+        `/api/openings/${opening_id}/stages/${stage_id}/questions/${stage_question_id}`
+      );
+      alert(data.message);
+    } catch (error) {
+      alert(error.response.data);
+    }
+
+    // Refresh question order
+    mutate(`/api/openings/${opening_id}/stages/${stage_id}`);
+
+    // Refresh questions
+    mutate(
+      `/api/orgs/${user?.org_id}/openings/${opening_id}/stages/${stage_id}/questions`
+    );
+  };
+
   if (isQuestionsLoading) {
     return <Loader text={"Loading stage..."} />;
   }
@@ -119,6 +139,7 @@ export default function QuestionList() {
                             <QuestionItem
                               question={question}
                               new_questions={new_questions}
+                              deleteQuestion={deleteQuestion}
                             />
                           </div>
                         )}

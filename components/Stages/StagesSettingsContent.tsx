@@ -132,9 +132,7 @@ export default function StageSettingsContent() {
     );
   };
 
-  const deleteQuestion = (question_id: string) => {
-
-  }
+  const deleteQuestion = (question_id: string) => {};
 
   return (
     <>
@@ -212,6 +210,8 @@ export default function StageSettingsContent() {
                   <h1 className="text-center text-lg font-semibold mb-4">
                     {stage?.GSI1SK} Settings
                   </h1>
+                  <p>Question order</p>
+                  <p>{JSON.stringify(stage?.question_order)}</p>
                 </div>
                 <span className="relative z-0 inline-flex shadow-sm rounded-md">
                   <button

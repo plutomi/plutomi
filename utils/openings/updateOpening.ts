@@ -40,10 +40,6 @@ export default async function UpdateOpening({
 
   const UpdatedExpression = `SET ${newUpdateExpression.join(", ").toString()}`;
 
-  console.log("Updated opening", updated_opening);
-  console.log("Expression", UpdatedExpression);
-  console.log("Attributes", newAttributes);
-
   const params = {
     Key: {
       PK: `ORG#${org_id}#OPENING#${opening_id}`,
