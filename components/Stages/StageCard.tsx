@@ -14,8 +14,10 @@ export default function StageCard({ name, current_stage_id, opening_id }) {
     >
       <a>
         <div
-          className={`border my-8   py-4 text-center  ${
-            stage_id === current_stage_id ? "bg-sky-50 border-t-4 border-t-blue-500" : "bg-white"
+          className={`border my-6  py-4 text-center  ${
+            stage_id === current_stage_id
+              ? "bg-sky-50 border-t-4 border-t-blue-500 "
+              : "bg-white" // Highlighted stage settings
           }  shadow-md hover:shadow-xl transition ease-in-out duration-300 rounded-xl overflow-hidden`}
         >
           <h5 className=" px-2 text-md font-medium text-dark truncate">
