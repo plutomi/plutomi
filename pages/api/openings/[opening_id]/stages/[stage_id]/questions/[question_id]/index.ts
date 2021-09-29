@@ -44,7 +44,7 @@ const handler = async (req: CustomRequest, res: NextApiResponse) => {
       }
 
       await UpdateQuestion(update_question_input);
-      return res.status(200).json({ message: "Opening updated!" });
+      return res.status(200).json({ message: "Question updated!" });
     } catch (error) {
       return res
         .status(500)

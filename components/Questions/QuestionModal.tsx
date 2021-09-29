@@ -2,6 +2,7 @@ import { FormEvent, Fragment } from "react";
 import { Dialog, Transition } from "@headlessui/react";
 import { XIcon } from "@heroicons/react/outline";
 import useStore from "../../utils/store";
+
 export default function QuestionModal({ createQuestion, updateQuestion }) {
   const questionModal: QuestionModalInput = useStore(
     (state: PlutomiState) => state.questionModal
@@ -96,7 +97,9 @@ export default function QuestionModal({ createQuestion, updateQuestion }) {
                               htmlFor="title"
                               className="block text-sm font-medium text-gray-900"
                             >
-                              Question Title
+                              {questionModal.modal_mode === "CREATE"
+                                ? "Question Title"
+                                : "New Question Title"}
                             </label>
                             <div className="mt-1">
                               <input
@@ -107,12 +110,13 @@ export default function QuestionModal({ createQuestion, updateQuestion }) {
                                 placeholder={
                                   "Something like... 'What is your name?'"
                                 }
-                                onChange={(e) => () =>
+                                value={questionModal.question_title}
+                                onChange={(e) =>
                                   setQuestionModal({
                                     ...questionModal,
                                     question_title: e.target.value,
-                                  })}
-                                value={questionModal.question_title}
+                                  })
+                                }
                                 className="block w-full shadow-sm text-sm focus:ring-blue-500 focus:border-blue-500 border-gray-300 rounded-md"
                               />
                             </div>
@@ -122,7 +126,9 @@ export default function QuestionModal({ createQuestion, updateQuestion }) {
                               htmlFor="description"
                               className="block text-sm font-medium text-gray-900"
                             >
-                              Description
+                              {questionModal.modal_mode === "CREATE"
+                                ? "Description"
+                                : "New Description"}
                             </label>
                             <div className="mt-1 flex rounded-md shadow-sm w-full">
                               <textarea

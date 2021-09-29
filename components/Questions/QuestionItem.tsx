@@ -29,9 +29,7 @@ export default function QuestionItem({
           {/* <a href="#" className="hover:underline focus:outline-none"> */}
           {/* Extend touch target to entire panel */}
           <span className="absolute inset-0" aria-hidden="true" />
-          {new_questions.indexOf(question) + 1}. {question.GSI1SK} -{" "}
-          {question.question_id}
-          {/* </a> */}
+          {new_questions.indexOf(question) + 1}. {question.GSI1SK}
         </h3>
         {question.question_description ? (
           <p className="text-sm text-gray-600 line-clamp-2">
@@ -53,7 +51,7 @@ export default function QuestionItem({
               setQuestionModal({
                 is_open: true,
                 modal_mode: "EDIT",
-                question_title: question.question_title,
+                question_title: question.GSI1SK,
                 question_description: question.question_description,
                 question_id: question.question_id,
               })

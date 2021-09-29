@@ -33,7 +33,6 @@ export default function OpeningSettingsContent() {
   const [isStageOrderUpdating, setIsStageOrderUpdating] = useState(false);
   const [isQuestionOrderUpdating, setIsQuestionOrderUpdating] = useState(false);
   useEffect(() => {
-    console.log("new stages", stages);
     setNewStages(stages);
   }, [stages]);
 

@@ -50,7 +50,6 @@ export default function StageSettingsContent() {
   const [isQuestionOrderUpdating, setIsQuestionOrderUpdating] = useState(false);
 
   useEffect(() => {
-    console.log("new stages", stages);
     setNewStages(stages);
   }, [stages]);
 
@@ -141,13 +140,10 @@ export default function StageSettingsContent() {
   // TODO this should be updateQuestion
   const updateQuestion = async () => {
     try {
-      console.log(`Questions`, questions);
-      console.log(`Looking for`, questionModal.question_id);
       const question = questions.find(
         (question) => question.question_id == questionModal.question_id
       );
 
-      console.log(`Question to update`, question);
       const body = {
         updated_question: {
           ...question,
@@ -161,6 +157,13 @@ export default function StageSettingsContent() {
         body
       );
       alert(data.message);
+      setQuestionModal({
+        is_open: false,
+        modal_mode: "CREATE",
+        question_id: "",
+        question_description: "",
+        question_title: "",
+      });
     } catch (error) {
       alert(error.response.data.message);
     }
