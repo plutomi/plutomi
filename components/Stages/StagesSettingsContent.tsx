@@ -40,19 +40,15 @@ export default function StageSettingsContent() {
   const { questions, isQuestionsLoading, isQuestionsError } =
     useAllStageQuestions(user?.org_id, opening?.opening_id, stage?.stage_id);
 
-  const setQuestionModalMode = useStore(
-    (state: PlutomiState) => state.setQuestionModalMode
-  );
-  const setQuestionModalTitle = useStore(
-    (state: PlutomiState) => state.setQuestionModalTitle
-  );
-  const setQuestionModalDescription = useStore(
-    (state: PlutomiState) => state.setQuestionModalDescription
+  const questionModal = useStore((state: PlutomiState) => state.questionModal);
+  const setQuestionModal = useStore(
+    (state: PlutomiState) => state.setQuestionModal
   );
 
   const [new_stages, setNewStages] = useState(stages);
   const [isStageOrderUpdating, setIsStageOrderUpdating] = useState(false);
   const [isQuestionOrderUpdating, setIsQuestionOrderUpdating] = useState(false);
+
   useEffect(() => {
     console.log("new stages", stages);
     setNewStages(stages);
@@ -117,10 +113,10 @@ export default function StageSettingsContent() {
     setIsStageOrderUpdating(false);
   };
 
-  const createQuestion = async ({ question_title, question_description }) => {
+  const createQuestion = async () => {
     const body: APICreateQuestionInput = {
-      question_title: question_title,
-      question_description: question_description,
+      question_title: questionModal.question_title,
+      question_description: questionModal.question_description,
     };
     try {
       const { data } = await axios.post(
@@ -142,20 +138,47 @@ export default function StageSettingsContent() {
     );
   };
 
-  const handleAddQuestion = () => {
-    setQuestionModalMode("CREATE");
-    setQuestionModalTitle("");
-    setQuestionModalDescription("");
-    setQuestionModalOpen(true);
+  // TODO this should be updateQuestion
+  const updateQuestion = async () => {
+    try {
+      console.log(`Questions`, questions);
+      console.log(`Looking for`, questionModal.question_id);
+      const question = questions.find(
+        (question) => question.question_id == questionModal.question_id
+      );
+
+      console.log(`Question to update`, question);
+      const body = {
+        updated_question: {
+          ...question,
+          GSI1SK: questionModal.question_title, // If not blank
+          question_description: questionModal.question_description,
+        },
+      };
+
+      const { data } = await axios.put(
+        `/api/openings/${opening_id}/stages/${stage_id}/questions/${questionModal.question_id}`,
+        body
+      );
+      alert(data.message);
+    } catch (error) {
+      alert(error.response.data.message);
+    }
+
+    // Refresh the question_order
+    mutate(`/api/openings/${opening_id}/stages/${stage_id}`);
+
+    // Refresh the question list
+    mutate(
+      `/api/orgs/${user.org_id}/openings/${opening_id}/stages/${stage_id}/questions`
+    );
   };
 
   return (
     <>
       <QuestionModal
         createQuestion={createQuestion}
-        questionTitle={null}
-        mode={"EDIT"}
-        questionDescription={null}
+        updateQuestion={updateQuestion}
       />
       {/* 3 column wrapper */}
       <div className="flex-grow w-full max-w-7xl mx-auto xl:px-8 lg:flex">
@@ -234,23 +257,19 @@ export default function StageSettingsContent() {
                 <span className="relative z-0 inline-flex shadow-sm rounded-md">
                   <button
                     type="button"
-                    onClick={() => handleAddQuestion()}
+                    onClick={() =>
+                      setQuestionModal({
+                        is_open: false,
+                        modal_mode: "CREATE",
+                        question_id: "",
+                        question_description: "",
+                        question_title: "",
+                      })
+                    }
                     className="relative inline-flex items-center px-4 py-2 rounded-md border border-gray-300 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50 focus:z-10 focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500"
                   >
                     Add a question
                   </button>
-                  {/* <button
-                    type="button"
-                    className="-ml-px relative inline-flex items-center px-4 py-2 border border-gray-300 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50 focus:z-10 focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500"
-                  >
-                    Add a rule
-                  </button>
-                  <button
-                    type="button"
-                    className="-ml-px relative inline-flex items-center px-4 py-2 rounded-r-md border border-gray-300 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50 focus:z-10 focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500"
-                  >
-                    Add a
-                  </button> */}
                 </span>
                 <QuestionList />
               </div>

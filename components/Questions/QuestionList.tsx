@@ -5,6 +5,7 @@ import useAllStagesInOpening from "../../SWR/useAllStagesInOpening";
 import useOpeningById from "../../SWR/useOpeningById";
 import useStageById from "../../SWR/useStageById";
 import axios from "axios";
+import useStore from "../../utils/store";
 import QuestionItem from "./QuestionItem";
 import { PencilAltIcon, TrashIcon } from "@heroicons/react/outline";
 import { useState } from "react";
@@ -80,6 +81,8 @@ export default function QuestionList() {
     mutate(`/api/openings/${opening_id}/stages/${stage_id}`); // Refresh the question order
     setIsUpdating(false);
   };
+
+
 
   const deleteQuestion = async (stage_question_id: string) => {
     if (

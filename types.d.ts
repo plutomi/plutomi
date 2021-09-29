@@ -98,6 +98,8 @@ interface Pokemon {
   name: string;
 }
 interface PlutomiState {
+  questionModal: QuestionModalInput;
+  setQuestionModal: Function;
   pokemons: Pokemon[];
   removePokemon: Function;
   setCreateOrgModalOpen: Function;
@@ -115,11 +117,14 @@ interface PlutomiState {
 
   // Question Modal
   questionModalMode: "CREATE" | "EDIT";
-  questionModalTitle: string;
+  questionModalTitle: string; // TODO this is stupidly gross
   questionModalDescription: string;
+  questionModalId: string;
+  setQuestionModalId: Function;
   setQuestionModalTitle: Function;
   setQuestionModalDescription: Function;
   setQuestionModalMode: Function;
+  setQuestionmodalId: string;
 }
 
 interface DynamoUser {
@@ -311,6 +316,13 @@ interface UpdateOpeningInput {
   updated_opening: DynamoOpening;
 }
 
+interface UpdateQuestionInput {
+  org_id: string;
+  opening_id: string;
+  stage_id: string;
+  updated_question: DynamoStageQuestion;
+}
+
 interface UpdateStageInput {
   org_id: string;
   opening_id: string;
@@ -339,13 +351,10 @@ interface DeleteQuestionInput {
   question_id: string;
 }
 
-// Modals are reused to update the same element
-// If mode is set to "UPDATE", you should pass down the
-// item's props so it can render accordingly
 interface QuestionModalInput {
-  mode: "EDIT" | "CREATE";
-  createQuestion?: Function;
-  editQuestion?: Function;
-  questionTitle: string;
-  questionDescription: string;
+  is_open: boolean;
+  modal_mode: "EDIT" | "CREATE"; // Will render text differently
+  question_id: "";
+  question_title: "";
+  question_description: "";
 }

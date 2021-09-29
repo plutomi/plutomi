@@ -2,53 +2,33 @@ import { FormEvent, Fragment } from "react";
 import { Dialog, Transition } from "@headlessui/react";
 import { XIcon } from "@heroicons/react/outline";
 import useStore from "../../utils/store";
-export default function QuestionModal({ createQuestion }: QuestionModalInput) {
-  const mode = useStore((state: PlutomiState) => state.questionModalMode);
+export default function QuestionModal({ createQuestion, updateQuestion }) {
+  const questionModal: QuestionModalInput = useStore(
+    (state: PlutomiState) => state.questionModal
+  );
+
+  const setQuestionModal = useStore(
+    (state: PlutomiState) => state.setQuestionModal
+  );
 
   const handleSubmit = async (e: FormEvent) => {
-    if (mode === "CREATE") {
+    if (questionModal.modal_mode === "CREATE") {
       e.preventDefault();
-      await createQuestion({ question_title, question_description });
-      setQuestionTitle("");
-      setQuestionDescription("");
+      await createQuestion();
     }
 
-    if (mode === "EDIT") {
+    if (questionModal.modal_mode === "EDIT") {
       e.preventDefault();
-
-      alert("In edit mode");
-      // TODO edit question here
-      setQuestionTitle("");
-      setQuestionDescription("");
+      await updateQuestion();
     }
   };
 
-  const setQuestionModalOpen = useStore(
-    (state: PlutomiState) => state.setQuestionModalOpen
-  );
-
-  const open = useStore((state: PlutomiState) => state.questionModalIsOpen);
-
-  const question_title = useStore(
-    (state: PlutomiState) => state.questionModalTitle
-  );
-  const question_description = useStore(
-    (state: PlutomiState) => state.questionModalDescription
-  );
-  const setQuestionTitle = useStore(
-    (state: PlutomiState) => state.setQuestionModalTitle
-  );
-  const setQuestionDescription = useStore(
-    (state: PlutomiState) => state.setQuestionModalDescription
-  );
-
-  console.log(`From state`, question_title, question_description);
   return (
-    <Transition.Root show={open} as={Fragment}>
+    <Transition.Root show={questionModal.is_open} as={Fragment}>
       <Dialog
         as="div"
         className="fixed inset-0 overflow-hidden "
-        onClose={() => setQuestionModalOpen(false)}
+        onClose={() => setQuestionModal({ ...questionModal, is_open: false })}
       >
         <div className="absolute inset-0 overflow-hidden">
           <Transition.Child
@@ -82,7 +62,7 @@ export default function QuestionModal({ createQuestion }: QuestionModalInput) {
                     <div className="py-6 px-4 bg-blue-700 sm:px-6">
                       <div className="flex items-center justify-between">
                         <Dialog.Title className="text-lg font-medium text-white">
-                          {mode === "CREATE"
+                          {questionModal.modal_mode === "CREATE"
                             ? "New Question"
                             : "Updating Question"}
                         </Dialog.Title>
@@ -90,7 +70,12 @@ export default function QuestionModal({ createQuestion }: QuestionModalInput) {
                           <button
                             type="button"
                             className="bg-blue-700 rounded-md text-blue-200 hover:text-white focus:outline-none focus:ring-2 focus:ring-white"
-                            onClick={() => setQuestionModalOpen(false)}
+                            onClick={() =>
+                              setQuestionModal({
+                                ...questionModal,
+                                is_open: false,
+                              })
+                            }
                           >
                             <span className="sr-only">Close panel</span>
                             <XIcon className="h-6 w-6" aria-hidden="true" />
@@ -122,10 +107,12 @@ export default function QuestionModal({ createQuestion }: QuestionModalInput) {
                                 placeholder={
                                   "Something like... 'What is your name?'"
                                 }
-                                onChange={(e) =>
-                                  setQuestionTitle(e.target.value)
-                                }
-                                value={question_title}
+                                onChange={(e) => () =>
+                                  setQuestionModal({
+                                    ...questionModal,
+                                    question_title: e.target.value,
+                                  })}
+                                value={questionModal.question_title}
                                 className="block w-full shadow-sm text-sm focus:ring-blue-500 focus:border-blue-500 border-gray-300 rounded-md"
                               />
                             </div>
@@ -145,9 +132,12 @@ export default function QuestionModal({ createQuestion }: QuestionModalInput) {
                                 className="p-2 text-sm focus:ring-blue-500 focus:border-blue-500 border-gray-300 rounded-md w-full block resize"
                                 maxLength={300}
                                 rows={5}
-                                value={question_description}
+                                value={questionModal.question_description}
                                 onChange={(e) =>
-                                  setQuestionDescription(e.target.value)
+                                  setQuestionModal({
+                                    ...questionModal,
+                                    question_description: e.target.value,
+                                  })
                                 }
                               ></textarea>
                             </div>
@@ -329,7 +319,9 @@ export default function QuestionModal({ createQuestion }: QuestionModalInput) {
                     <button
                       type="button"
                       className="bg-white py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
-                      onClick={() => setQuestionModalOpen(false)}
+                      onClick={() =>
+                        setQuestionModal({ ...questionModal, is_open: false })
+                      }
                     >
                       Cancel
                     </button>
@@ -337,7 +329,10 @@ export default function QuestionModal({ createQuestion }: QuestionModalInput) {
                       type="submit"
                       className="ml-4 inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
                     >
-                      {mode === "CREATE" ? "Create" : "Update"} Queston
+                      {questionModal.modal_mode === "CREATE"
+                        ? "Create"
+                        : "Update"}{" "}
+                      Queston
                     </button>
                   </div>
                 </form>

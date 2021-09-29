@@ -1,15 +1,25 @@
 import create from "zustand";
 
 const useStore = create((set) => ({
+  // TODO this is stupidly gross!!!
   createOrgModalIsOpen: false,
   createOpeningModalIsOpen: false,
   createStageModalIsOpen: false,
-  questionModalIsOpen: false,
-  questionModalTitle: "",
-  questionModalMode: "EDIT" || "CREATE",
-  questionmodalDescription: "",
   openingsSearchInput: "",
   createInviteModalIsOpen: false,
+
+  questionModal: {
+    is_open: true || false,
+    modal_mode: "EDIT" || "CREATE", // Will render text differently
+    question_id: "",
+    question_title: "",
+    question_description: "",
+  },
+  setQuestionModal: (questionModal: QuestionModalInput) => {
+    set((state) => ({
+      questionModal: questionModal,
+    }));
+  },
 
   // Example
   pokemons: [
@@ -43,10 +53,6 @@ const useStore = create((set) => ({
     set((state: PlutomiState) => ({
       createStageModalIsOpen: open,
     })),
-  setQuestionModalOpen: (open: Boolean) =>
-    set((state: PlutomiState) => ({
-      questionModalIsOpen: open,
-    })),
   setOpeningsSearchInput: (input: string) =>
     set((state: PlutomiState) => ({
       openingsSearchInput: input,
@@ -54,20 +60,6 @@ const useStore = create((set) => ({
   setCreateInviteModalOpen: (open: Boolean) =>
     set((state: PlutomiState) => ({
       createInviteModalIsOpen: open,
-    })),
-
-  setQuestionModalTitle: (input: string) =>
-    set((state: PlutomiState) => ({
-      questionModalTitle: input,
-    })),
-  setQuestionModalDescription: (input: string) =>
-    set((state: PlutomiState) => ({
-      questionModalDescription: input,
-    })),
-
-  setQuestionModalMode: (input: string) =>
-    set((state: PlutomiState) => ({
-      questionModalMode: input,
     })),
 }));
 export default useStore;

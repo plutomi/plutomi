@@ -7,39 +7,16 @@ export default function QuestionItem({
   new_questions,
   deleteQuestion,
 }) {
-  const setQuestionModalMode = useStore(
-    (state: PlutomiState) => state.setQuestionModalMode
+  const setQuestionModal = useStore(
+    (state: PlutomiState) => state.setQuestionModal
   );
-  const setQuestionModalOpen = useStore(
-    (state: PlutomiState) => state.setQuestionModalOpen
-  );
-  const setQuestionModalTitle = useStore(
-    (state: PlutomiState) => state.setQuestionModalTitle
-  );
-  const setQuestionModalDescription = useStore(
-    (state: PlutomiState) => state.setQuestionModalDescription
-  );
-
   const [isHovering, setIsHovering] = useState(false);
 
   const handleDelete = (question_id: string) => {
-    console.log("Deleting question", question_id);
-    console.log(JSON.stringify(question));
     deleteQuestion(question_id);
   };
 
   // Essentially fill in all the details of the modal and then open it
-  const handleEdit = (question_title: string, question_description: string) => {
-    console.log(
-      `Handling edit from q item`,
-      question_title,
-      question_description
-    );
-    setQuestionModalMode("EDIT");
-    setQuestionModalTitle(question_title);
-    setQuestionModalDescription(question_description);
-    setQuestionModalOpen(true);
-  };
 
   return (
     <li
@@ -73,7 +50,13 @@ export default function QuestionItem({
           </button>
           <button
             onClick={() =>
-              handleEdit(question.GSI1SK, question.question_description)
+              setQuestionModal({
+                is_open: true,
+                modal_mode: "EDIT",
+                question_title: question.question_title,
+                question_description: question.question_description,
+                question_id: question.question_id,
+              })
             }
             className="rounded-full hover:bg-white text-blue-500 transition ease-in-out duration-200 px-3 py-3 text-md"
           >
