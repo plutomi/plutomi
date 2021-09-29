@@ -132,6 +132,10 @@ export default function StageSettingsContent() {
     );
   };
 
+  const deleteQuestion = (question_id: string) => {
+
+  }
+
   return (
     <>
       <CreateQuestionModal createQuestion={createQuestion} />

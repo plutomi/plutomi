@@ -37,10 +37,7 @@ export async function CreateStageQuestion({
     await Dynamo.send(new PutCommand(params));
 
     let stage = await GetStageById({ org_id, opening_id, stage_id });
-    console.log(`In dynamo, current stage`, stage, stage.question_order);
     stage.question_order.push(stage_question_id);
-
-    console.log(`In dynamo, new question`, stage, stage.question_order);
 
     const update_stage_input = {
       org_id: org_id,

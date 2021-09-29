@@ -323,3 +323,14 @@ interface AllQuestionsByStageIDInput {
   stage_id: string;
   org_id: string;
 }
+
+interface DeleteQuestionInput {
+  org_id: string;
+  opening_id: string;
+  stage_id: string;
+  stage_question_id: string;
+}
+
+interface APIDeleteQuestionInput {
+  stage_question_id: string;
+}
