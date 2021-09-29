@@ -53,7 +53,8 @@ export default function Team() {
 
   if (isOrgUsersError) {
     alert(
-      "You must create an org or join one before adding or viewing team members"
+      // TODO this is not returning the error message from the API call due to the way SWR handles errors. Fix !
+      `You must create an org or join one before adding or viewing team members. If you have pending invites, you can view them at ${process.env.NEXT_PUBLIC_NEXTAUTH_URL}/invites`
     );
     router.push(`${process.env.NEXT_PUBLIC_NEXTAUTH_URL}/dashboard`);
     return null;
