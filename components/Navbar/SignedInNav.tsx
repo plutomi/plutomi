@@ -70,21 +70,26 @@ export default function SignedInNav({ current }: ValidNavigation) {
                   </div>
                   <div className="hidden sm:-my-px sm:ml-6 sm:flex sm:space-x-8">
                     {navigation.map((item) => (
-                      <Link key={item.name} href={item.href}>
-                        <a
-                          className={classNames(
-                            current === item.name
-                              ? "border-blue-500 text-gray-900"
-                              : "border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700",
-                            "inline-flex items-center px-1 pt-1 border-b-2 text-md font-medium"
-                          )}
-                          aria-current={
-                            current === item.name ? "page" : undefined
-                          }
-                        >
-                          {item.name}
-                        </a>
-                      </Link>
+                      <>
+                        {item.name === "Team" &&
+                        user.org_id === "NO_ORG_ASSIGNED" ? null : (
+                          <Link key={item.name} href={item.href}>
+                            <a
+                              className={classNames(
+                                current === item.name
+                                  ? "border-blue-500 text-gray-900"
+                                  : "border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700",
+                                "inline-flex items-center px-1 pt-1 border-b-2 text-md font-medium"
+                              )}
+                              aria-current={
+                                current === item.name ? "page" : undefined
+                              }
+                            >
+                              {item.name}
+                            </a>
+                          </Link>
+                        )}
+                      </>
                     ))}
                   </div>
                 </div>

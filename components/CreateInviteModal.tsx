@@ -83,7 +83,7 @@ export default function CreateInviteModal({ createInvite }) {
                               htmlFor="new-user-email"
                               className="block text-sm font-medium text-gray-900"
                             >
-                              New user email
+                              What is their email?
                             </label>
                             <div className="mt-1">
                               <input

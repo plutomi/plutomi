@@ -12,7 +12,7 @@ export default function EmptyTeamState() {
         You don&apos;t have any team members
       </h3>
       <p className="mt-1 text-lg text-gray-500">
-        Get started by creating adding your first one!
+        Get started by adding your first one!
       </p>
       <div className="mt-6">
         <button
