@@ -12,7 +12,9 @@ import CreateInviteModal from "../components/CreateInviteModal";
 import useOrgUsers from "../SWR/useOrgUsers";
 import useStore from "../utils/store";
 import TeamHeader from "../components/Team/TeamHeader";
+import { useRouter } from "next/router";
 export default function Team() {
+  const router = useRouter();
   const [session, loading]: [CustomSession, boolean] = useSession();
   const { user, isUserLoading, isUserError } = useUser(session?.user_id);
   const { orgUsers, isOrgUsersLoading, isOrgUsersError } = useOrgUsers(
@@ -49,6 +51,14 @@ export default function Team() {
     return <Loader text="Loading team..." />;
   }
 
+  if (isOrgUsersError) {
+    alert(
+      "You must create an org or join one before adding or viewing team members"
+    );
+    router.push(`${process.env.NEXT_PUBLIC_NEXTAUTH_URL}/dashboard`);
+    return null;
+  }
+
   const createInvite = async (recipient: string) => {
     try {
       // TODO add custom expiry - Defaults to 3 days
@@ -77,7 +87,7 @@ export default function Team() {
         </header>
 
         <main className="mt-5">
-          {orgUsers.length <= 1 ? <EmptyTeamState /> : <TeamContent />}
+          {orgUsers?.length <= 1 ? <EmptyTeamState /> : <TeamContent />}
         </main>
       </div>
     </>
