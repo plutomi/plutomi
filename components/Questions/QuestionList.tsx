@@ -5,6 +5,7 @@ import useAllStagesInOpening from "../../SWR/useAllStagesInOpening";
 import useOpeningById from "../../SWR/useOpeningById";
 import useStageById from "../../SWR/useStageById";
 import axios from "axios";
+import QuestionItem from "./QuestionItem";
 import { PencilAltIcon, TrashIcon } from "@heroicons/react/outline";
 import { useState } from "react";
 import { mutate } from "swr";
@@ -115,44 +116,10 @@ export default function QuestionList() {
                             {...provided.dragHandleProps}
                             ref={provided.innerRef}
                           >
-                            <li
-                              key={question.question_id}
-                              className="px-4 py-5 bg-white hover:bg-sky-50 transition ease-in-out duration-300 flex justify-between"
-                            >
-                              <div className="relative focus-within:ring-2 focus-within:ring-blue-500">
-                                <h3 className="text-sm font-semibold text-gray-800">
-                                  {/* <a href="#" className="hover:underline focus:outline-none"> */}
-                                  {/* Extend touch target to entire panel */}
-                                  <span
-                                    className="absolute inset-0"
-                                    aria-hidden="true"
-                                  />
-                                  {new_questions.indexOf(question) + 1}.{" "}
-                                  {question.GSI1SK}
-                                  {/* </a> */}
-                                </h3>
-                                {question.question_description ? (
-                                  <p className="mt-1 text-sm text-gray-600 line-clamp-2">
-                                    {question.question_description}
-                                  </p>
-                                ) : null}
-                              </div>
-
-                              <div className="flex justify-center items-center space-x-2">
-                                <button
-                                  onClick={() => alert("delete")}
-                                  className="rounded-full hover:bg-white text-red-500 transition ease-in-out duration-200 px-3 py-3 text-md"
-                                >
-                                  <TrashIcon className="w-6 h-6" />
-                                </button>
-                                <button
-                                  onClick={() => alert("edit")}
-                                  className="rounded-full hover:bg-white text-blue-500 transition ease-in-out duration-200 px-3 py-3 text-md"
-                                >
-                                  <PencilAltIcon className="w-6 h-6" />
-                                </button>
-                              </div>
-                            </li>
+                            <QuestionItem
+                              question={question}
+                              new_questions={new_questions}
+                            />
                           </div>
                         )}
                       </Draggable>

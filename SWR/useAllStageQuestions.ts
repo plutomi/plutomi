@@ -25,8 +25,6 @@ function useAllStageQuestions(
     fetcher
   );
 
-  console.log(`Incoming questions`, data);
-
   return {
     questions: data,
     isQuestionsLoading: !error && !data,
