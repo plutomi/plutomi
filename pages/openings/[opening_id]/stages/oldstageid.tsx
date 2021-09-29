@@ -3,7 +3,7 @@ import useStageById from "../../../../SWR/useStageById";
 import SignIn from "../../../../components/SignIn";
 import useUser from "../../../../SWR/useUser";
 import { useEffect } from "react";
-import GoBack from "../../../../components/GoBackButton";
+import GoBack from "../../../../components/Buttons/GoBackButton";
 import { useSession } from "next-auth/client";
 import { useRouter } from "next/router";
 import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
@@ -12,8 +12,6 @@ import { mutate } from "swr";
 import useStore from "../../../../utils/store";
 import { useState } from "react";
 import useOpeningById from "../../../../SWR/useOpeningById";
-import useAllStageQuestions from "../../../../SWR/useAllStageQuestions";
-import CreateQuestionModal from "../../../../components/CreateQuestionModal";
 export default function Stage() {
   const router = useRouter();
   const { stage_id, opening_id } = router.query;
@@ -22,8 +20,8 @@ export default function Stage() {
   const [session, loading]: [CustomSession, boolean] = useSession();
   const { user, isUserLoading, isUserError } = useUser(session?.user_id);
 
-  const setCreateQuestionModalOpen = useStore(
-    (state: PlutomiState) => state.setCreateQuestionModalOpen
+  const setQuestionModalOpen = useStore(
+    (state: PlutomiState) => state.setQuestionModalOpen
   );
 
   const { opening, isOpeningLoading, isOpeningError } = useOpeningById(

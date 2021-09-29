@@ -8,7 +8,7 @@ import SignIn from "../../components/SignIn";
 import axios from "axios";
 import { mutate } from "swr";
 import useStore from "../../utils/store";
-import CreateOpeningModal from "../../components/CreateOpeningModal";
+import CreateOpeningModal from "../../components/Openings/CreateOpeningModal";
 import OpeningsContent from "../../components/Openings/OpeningsContent";
 import EmptyOpeningsState from "../../components/Openings/EmptyOpeningsState";
 export default function Openings() {

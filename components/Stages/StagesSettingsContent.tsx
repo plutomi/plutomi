@@ -7,7 +7,7 @@ import QuestionList from "../Questions/QuestionList";
 import { useEffect } from "react";
 import axios from "axios";
 import useStore from "../../utils/store";
-import CreateQuestionModal from "../CreateQuestionModal";
+import QuestionModal from "../Questions/QuestionModal";
 import useAllStageQuestions from "../../SWR/useAllStageQuestions";
 import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
 import DraggableStageCard from "../../components/Stages/DraggableStageCard";
@@ -48,8 +48,8 @@ export default function StageSettingsContent() {
     setNewStages(stages);
   }, [stages]);
 
-  const setCreateQuestionModalOpen = useStore(
-    (state: PlutomiState) => state.setCreateQuestionModalOpen
+  const setQuestionModalOpen = useStore(
+    (state: PlutomiState) => state.setQuestionModalOpen
   );
 
   if (isOpeningLoading) {
@@ -118,7 +118,7 @@ export default function StageSettingsContent() {
         body
       );
       alert(data.message);
-      setCreateQuestionModalOpen(false);
+      setQuestionModalOpen(false);
     } catch (error) {
       alert(error.response.data.message);
     }
@@ -136,7 +136,12 @@ export default function StageSettingsContent() {
 
   return (
     <>
-      <CreateQuestionModal createQuestion={createQuestion} />
+      <QuestionModal
+        createQuestion={createQuestion}
+        questionTitle={null}
+        mode={"EDIT"}
+        questionDescription={null}
+      />
       {/* 3 column wrapper */}
       <div className="flex-grow w-full max-w-7xl mx-auto xl:px-8 lg:flex">
         {/* Left sidebar & main wrapper */}
@@ -210,13 +215,11 @@ export default function StageSettingsContent() {
                   <h1 className="text-center text-lg font-semibold mb-4">
                     {stage?.GSI1SK} Settings
                   </h1>
-                  <p>Question order</p>
-                  <p>{JSON.stringify(stage?.question_order)}</p>
                 </div>
                 <span className="relative z-0 inline-flex shadow-sm rounded-md">
                   <button
                     type="button"
-                    onClick={() => setCreateQuestionModalOpen(true)}
+                    onClick={() => setQuestionModalOpen(true)}
                     className="relative inline-flex items-center px-4 py-2 rounded-md border border-gray-300 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50 focus:z-10 focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500"
                   >
                     Add a question

@@ -5,7 +5,7 @@ import useOrgInvites from "../SWR/useOrgInvites";
 import { GetRelativeTime } from "../utils/time";
 import axios from "axios";
 import { useSWRConfig } from "swr";
-import GoBack from "../components/GoBackButton";
+import GoBack from "../components/Buttons/GoBackButton";
 import UserProfileCard from "../components/UserProfileCard";
 import SignedInNav from "../components/Navbar/SignedInNav";
 import { useRouter } from "next/router";

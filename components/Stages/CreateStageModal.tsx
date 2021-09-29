@@ -1,13 +1,14 @@
 import { FormEvent, Fragment, useState } from "react";
 import { Dialog, Transition } from "@headlessui/react";
 import { XIcon } from "@heroicons/react/outline";
-import useStore from "../utils/store";
+import useStore from "../../utils/store";
 
 const UrlSafeString = require("url-safe-string"),
   tagGenerator = new UrlSafeString();
 
 export default function CreateStageModal({ createStage }) {
   const [stage_name, setStageName] = useState("");
+  
   const open = useStore((state: PlutomiState) => state.createStageModalIsOpen);
 
   const setCreateStageModalOpen = useStore(

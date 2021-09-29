@@ -5,7 +5,7 @@ import { PlusIcon } from "@heroicons/react/outline";
 import useStore from "../../utils/store";
 import useOpeningById from "../../SWR/useOpeningById";
 import { useState } from "react";
-import GoBack from "../GoBackButton";
+import GoBack from "../Buttons/GoBackButton";
 import { useRouter } from "next/router";
 import Loader from "../Loader";
 export default function OpeningSettingsHeader() {

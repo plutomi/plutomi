@@ -1,11 +1,11 @@
-import CreateStageModal from "../../../../components/CreateStageModal";
+import CreateStageModal from "../../../../components/Stages/CreateStageModal";
 import SignedInNav from "../../../../components/Navbar/SignedInNav";
 import useAllStagesInOpening from "../../../../SWR/useAllStagesInOpening";
 import useOpeningById from "../../../../SWR/useOpeningById";
 import { GetRelativeTime } from "../../../../utils/time";
 import SignIn from "../../../../components/SignIn";
 import { useSession } from "next-auth/client";
-import GoBack from "../../../../components/GoBackButton";
+import GoBack from "../../../../components/Buttons/GoBackButton";
 import useStore from "../../../../utils/store";
 import { mutate } from "swr";
 import Link from "next/dist/client/link";

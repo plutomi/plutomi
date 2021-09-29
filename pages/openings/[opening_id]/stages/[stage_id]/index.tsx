@@ -8,7 +8,7 @@ import SignIn from "../../../../../components/SignIn";
 import axios from "axios";
 import { mutate } from "swr";
 import { useRouter } from "next/router";
-import CreateStageModal from "../../../../../components/CreateStageModal";
+import CreateStageModal from "../../../../../components/Stages/CreateStageModal";
 import useStore from "../../../../../utils/store";
 import StagesHeader from "../../../../../components/Stages/StagesHeader";
 import StageCarousel from "../../../../../components/Stages/StagesCarousel";

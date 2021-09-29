@@ -4,7 +4,7 @@ const useStore = create((set) => ({
   createOrgModalIsOpen: false,
   createOpeningModalIsOpen: false,
   createStageModalIsOpen: false,
-  createQuestionModalIsOpen: false,
+  questionModalIsOpen: false,
   openingsSearchInput: "",
   createInviteModalIsOpen: false,
 
@@ -40,9 +40,9 @@ const useStore = create((set) => ({
     set((state: PlutomiState) => ({
       createStageModalIsOpen: open,
     })),
-  setCreateQuestionModalOpen: (open: Boolean) =>
+  setQuestionModalOpen: (open: Boolean) =>
     set((state: PlutomiState) => ({
-      createQuestionModalIsOpen: open,
+      questionModalIsOpen: open,
     })),
   setOpeningsSearchInput: (input: string) =>
     set((state: PlutomiState) => ({

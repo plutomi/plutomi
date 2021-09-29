@@ -2,33 +2,38 @@ import { FormEvent, Fragment, useState } from "react";
 import { Dialog, Transition } from "@headlessui/react";
 import { XIcon } from "@heroicons/react/outline";
 import axios from "axios";
-import CreateOpeningOptions from "./CreateOpeningOptions";
-import useStore from "../utils/store";
-export default function CreateOpeningModal({ createOpening }) {
-  const [opening_name, setOpeningName] = useState("");
-  const [is_public, setIsPublic] = useState(false);
-
-  const open = useStore(
-    (state: PlutomiState) => state.createOpeningModalIsOpen
-  );
-
-  const setCreateOpeningModalOpen = useStore(
-    (state: PlutomiState) => state.setCreateOpeningModalOpen
+//
+import useStore from "../../utils/store";
+export default function QuestionModal({
+  mode,
+  createQuestion,
+  questionTitle,
+  questionDescription,
+}) {
+  const [question_title, setQuestionTitle] = useState(questionTitle || "");
+  const [question_description, setQuestionDescription] = useState(
+    questionDescription || ""
   );
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
-
-    await createOpening({ opening_name, is_public });
-    setOpeningName("");
-    setIsPublic(false)
+    await createQuestion({ question_title, question_description });
+    setQuestionTitle("");
+    setQuestionDescription("");
   };
+
+  const open = useStore((state: PlutomiState) => state.questionModalIsOpen);
+
+  const setQuestionModalOpen = useStore(
+    (state: PlutomiState) => state.setQuestionModalOpen
+  );
+
   return (
     <Transition.Root show={open} as={Fragment}>
       <Dialog
         as="div"
         className="fixed inset-0 overflow-hidden "
-        onClose={() => setCreateOpeningModalOpen(false)}
+        onClose={() => setQuestionModalOpen(false)}
       >
         <div className="absolute inset-0 overflow-hidden">
           <Transition.Child
@@ -62,13 +67,13 @@ export default function CreateOpeningModal({ createOpening }) {
                     <div className="py-6 px-4 bg-blue-700 sm:px-6">
                       <div className="flex items-center justify-between">
                         <Dialog.Title className="text-lg font-medium text-white">
-                          New Opening
+                          New Question
                         </Dialog.Title>
                         <div className="ml-3 h-7 flex items-center">
                           <button
                             type="button"
                             className="bg-blue-700 rounded-md text-blue-200 hover:text-white focus:outline-none focus:ring-2 focus:ring-white"
-                            onClick={() => setCreateOpeningModalOpen(false)}
+                            onClick={() => setQuestionModalOpen(false)}
                           >
                             <span className="sr-only">Close panel</span>
                             <XIcon className="h-6 w-6" aria-hidden="true" />
@@ -77,10 +82,7 @@ export default function CreateOpeningModal({ createOpening }) {
                       </div>
                       <div className="mt-1">
                         <p className="text-sm text-blue-300">
-                          An opening is what you need applicants for. It could
-                          be a job like &apos;Engineer&apos;, a location like
-                          &apos;New York&apos; or &apos;Chicago&apos;, or a
-                          program like &apos;Summer Camp&apos;.
+                          Questions will be shown to applicants in this stage
                         </p>
                       </div>
                     </div>
@@ -89,52 +91,49 @@ export default function CreateOpeningModal({ createOpening }) {
                         <div className="space-y-6 pt-6 pb-5">
                           <div>
                             <label
-                              htmlFor="opening-name"
+                              htmlFor="title"
                               className="block text-sm font-medium text-gray-900"
                             >
-                              Opening name
+                              Question Title
                             </label>
                             <div className="mt-1">
                               <input
                                 type="text"
-                                name="opening-name"
-                                id="opening-name"
+                                name="title"
+                                id="title"
                                 required
-                                onChange={(e) => setOpeningName(e.target.value)}
-                                value={opening_name}
-                                className="block w-full shadow-sm sm:text-sm focus:ring-blue-500 focus:border-blue-500 border-gray-300 rounded-md"
+                                placeholder={
+                                  "Something like... 'What is your name?'"
+                                }
+                                onChange={(e) =>
+                                  setQuestionTitle(e.target.value)
+                                }
+                                value={question_title}
+                                className="block w-full shadow-sm text-sm focus:ring-blue-500 focus:border-blue-500 border-gray-300 rounded-md"
                               />
                             </div>
                           </div>
-                          <div className="relative flex items-start">
-                            <div className="flex items-center h-5">
-                              <input
-                                id="comments"
-                                aria-describedby="comments-description"
-                                name="comments"
-                                type="checkbox"
-                                checked={is_public}
-                                onChange={(e) => setIsPublic(e.target.checked)}
-                                className="focus:ring-blue-500 h-4 w-4 text-blue-600 border-gray-300 rounded"
-                              />
-                            </div>
-                            <div className="ml-3 text-sm">
-                              <label
-                                htmlFor="comments"
-                                className="font-medium text-gray-700"
-                              >
-                                Public
-                              </label>
-                              <p
-                                id="comments-description"
-                                className="text-gray-500"
-                              >
-                                Make this opening available to everyone once
-                                created
-                              </p>
+                          <div>
+                            <label
+                              htmlFor="description"
+                              className="block text-sm font-medium text-gray-900"
+                            >
+                              Description
+                            </label>
+                            <div className="mt-1 flex rounded-md shadow-sm w-full">
+                              <textarea
+                                name="description"
+                                id="description"
+                                placeholder="Optional helper text for your applicants"
+                                className="p-2 text-sm focus:ring-blue-500 focus:border-blue-500 border-gray-300 rounded-md w-full block resize"
+                                maxLength={300}
+                                rows={5}
+                                onChange={(e) =>
+                                  setQuestionDescription(e.target.value)
+                                }
+                              ></textarea>
                             </div>
                           </div>
-
                           {/* <div>
                             <label
                               htmlFor="description"
@@ -312,7 +311,7 @@ export default function CreateOpeningModal({ createOpening }) {
                     <button
                       type="button"
                       className="bg-white py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
-                      onClick={() => setCreateOpeningModalOpen(false)}
+                      onClick={() => setQuestionModalOpen(false)}
                     >
                       Cancel
                     </button>
@@ -320,7 +319,7 @@ export default function CreateOpeningModal({ createOpening }) {
                       type="submit"
                       className="ml-4 inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
                     >
-                      Create Opening
+                      Create Question
                     </button>
                   </div>
                 </form>

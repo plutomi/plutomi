@@ -106,8 +106,8 @@ interface PlutomiState {
   setCreateOpeningModalOpen: Function;
   createStageModalIsOpen: boolean;
   setCreateStageModalOpen: Function;
-  createQuestionModalIsOpen: boolean;
-  setCreateQuestionModalOpen: Function;
+  questionModalIsOpen: boolean;
+  setQuestionModalOpen: Function;
   openingsSearchInput: string;
   setOpeningsSearchInput: Function;
   createInviteModalIsOpen: boolean;
