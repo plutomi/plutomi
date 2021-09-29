@@ -1,6 +1,5 @@
 import SignedInNav from "../../../../components/Navbar/SignedInNav";
 import { useSession } from "next-auth/client";
-import useOpenings from "../../../../SWR/useOpenings";
 import useUser from "../../../../SWR/useUser";
 import Loader from "../../../../components/Loader";
 import EmptyStagesState from "../../../../components/Stages/EmptyStagesState";
@@ -12,8 +11,6 @@ import CreateStageModal from "../../../../components/CreateStageModal";
 import useStore from "../../../../utils/store";
 import StagesHeader from "../../../../components/Stages/StagesHeader";
 import useAllStagesInOpening from "../../../../SWR/useAllStagesInOpening";
-import EmptyOpeningsState from "../../../../components/Openings/EmptyOpeningsState";
-import StageCarousel from "../../../../components/Stages/StagesCarousel";
 import useOpeningById from "../../../../SWR/useOpeningById";
 export default function Openings() {
   const router = useRouter();

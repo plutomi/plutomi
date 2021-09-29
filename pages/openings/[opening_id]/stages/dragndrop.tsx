@@ -24,10 +24,7 @@ export default function ViewOpening() {
 
   const router = useRouter();
   const { opening_id } = router.query;
-  const { user, isUserLoading, isUserError } = useUser(session?.user_id);
-  const setCreateStageModalOpen = useStore(
-    (state: PlutomiState) => state.setCreateStageModalOpen
-  );
+
   let { opening, isOpeningLoading, isOpeningError } = useOpeningById(
     session?.user_id,
     opening_id as string
@@ -38,77 +35,6 @@ export default function ViewOpening() {
     session?.user_id,
     opening_id as string
   );
-
-  const [new_stages, setNewStages] = useState(stages);
-  const [isUpdating, setIsUpdating] = useState(false);
-
-  useEffect(() => {
-    setNewStages(stages);
-  }, [stages]);
-
-  const createStage = async (stage_name: string) => {
-    const body: APICreateStageInput = {
-      stage_name: stage_name,
-    };
-    try {
-      const { data } = await axios.post(
-        `/api/openings/${opening_id}/stages`,
-        body
-      );
-      alert(data.message);
-      setCreateStageModalOpen(false);
-    } catch (error) {
-      console.error("Error creating stage", error);
-      alert(error.response.data.message);
-    }
-
-    // Refresh stage order
-    mutate(`/api/openings/${opening_id}`);
-
-    // Refresh stage list
-    mutate(`/api/openings/${opening_id}/stages`);
-  };
-
-  const handleDragEnd = async (result) => {
-    const { destination, source, draggableId } = result;
-
-    // No change
-    if (!destination) {
-      return;
-    }
-
-    // If dropped in the same place
-    if (
-      destination.droppableId === source.droppableId &&
-      destination.index === source.index
-    ) {
-      return;
-    }
-
-    setIsUpdating(true);
-
-    let new_stage_order = Array.from(opening.stage_order);
-    new_stage_order.splice(source.index, 1);
-    new_stage_order.splice(destination.index, 0, draggableId);
-    let new_order = new_stage_order.map((i) =>
-      stages.find((j) => j.stage_id === i)
-    );
-
-    setNewStages(new_order);
-
-    try {
-      const body = {
-        updated_opening: { ...opening, stage_order: new_stage_order },
-      };
-
-      await axios.put(`/api/openings/${opening_id}`, body);
-    } catch (error) {
-      console.error(error.response.data.message);
-    }
-
-    mutate(`/api/openings/${opening_id}`); // Refresh the stage order
-    setIsUpdating(false);
-  };
 
   const updateOpening = async (opening_id: string) => {
     try {
@@ -152,68 +78,10 @@ export default function ViewOpening() {
     mutate(`/api/openings`);
   };
 
-  /** ~~~~~~~~~~~~~~~~~~~~~~~
-   * ~~~~~~~~~~~~~~~~~~~~~~~~
-   * ~~LOADING STATES START~~
-   * ~~~~~~~~~~~~~~~~~~~~~~~~
-   * ~~~~~~~~~~~~~~~~~~~~~~~~
-   */
-
-  // When rendering client side don't display anything until loading is complete
-  if (typeof window !== "undefined" && loading) {
-    return null;
-  }
-
-  // If no session or bad userid
-  if (!session || isUserError) {
-    return (
-      <SignIn
-        callbackUrl={`${process.env.NEXT_PUBLIC_NEXTAUTH_URL}/openings`}
-        desiredPage={"your openings"}
-      />
-    );
-  }
-
-  if (isUserLoading) {
-    return (
-      <div className="mx-auto p-20 flex justify-center items-center">
-        <h1 className="text-4xl text-dark font-medium">Loading...</h1>
-      </div>
-    );
-  }
-
-  /** ~~~~~~~~~~~~~~~~~~~~~~~
-   * ~~~~~~~~~~~~~~~~~~~~~~~~
-   * ~~~LOADING STATES END~~~
-   * ~~~~~~~~~~~~~~~~~~~~~~~~
-   * ~~~~~~~~~~~~~~~~~~~~~~~~
-   */
   return (
     <div>
-      <SignedInNav current={"Openings"} />
-
-      <GoBack />
-
       <div className="mx-auto max-w-4xl pt-20 flex flex-col justify-center items-center ">
-        <h1 className="text-xl font-bold text-normal">{opening?.GSI1SK}</h1>
-        <p className="text-light text-lg">
-          Created {GetRelativeTime(opening?.created_at)} -{" "}
-          {opening?.is_public ? "Public" : "Private"}
-        </p>
-        <div className="m-4  flex flex-wrap max-w-full">
-          <button
-            className="px-4 py-3 bg-red-500 m-4 text-white text-xl hover:bg-red-800"
-            onClick={() => deleteOpening(opening.opening_id)}
-          >
-            Delete{" "}
-          </button>
-          <button
-            className="px-4 py-3 bg-sky-500 m-4 text-white text-xl hover:bg-sky-800"
-            onClick={() => setIsEditing(!isEditing)}
-          >
-            Edit{" "}
-          </button>
-        </div>
+        <div className="m-4  flex flex-wrap max-w-full"></div>
         {isEditing ? (
           <div className="max-w-xl my-2 mx-auto">
             <label
@@ -269,100 +137,6 @@ export default function ViewOpening() {
           </div>
         ) : null}
       </div>
-
-      <button
-        onClick={() => setCreateStageModalOpen(true)}
-        className="mx-auto flex justify-center items-center px-4 py-2 bg-blue-700  rounded-lg text-white"
-      >
-        + Add stage
-      </button>
-
-      <CreateStageModal createStage={createStage} />
-
-      {opening ? (
-        <div>
-          <div className="mx-auto max-w-7xl p-20">
-            <h1>
-              Stages will go here, when you click on one the applicants will
-              come up. Change orientation to horizontal
-            </h1>
-            <div className="m-4 border rounded-md p-4">
-              <h1 className="text-lg">Stage Order</h1>
-              <p>Total stages: {opening.stage_order.length}</p>
-
-              <ul className="p-4">
-                {" "}
-                {opening?.stage_order.map((id) => (
-                  <li key={id}>
-                    {opening.stage_order.indexOf(id) + 1}.{" "}
-                    {new_stages
-                      ? new_stages[opening?.stage_order.indexOf(id)]?.GSI1SK
-                      : null}
-                  </li>
-                ))}
-              </ul>
-            </div>
-
-   
-
-            <DragDropContext
-              onDragEnd={handleDragEnd}
-              onDragStart={() => console.log("Start")}
-            >
-              <Droppable droppableId={opening.opening_id}>
-                {(provided) => (
-                  <div
-                    {...provided.droppableProps}
-                    ref={provided.innerRef}
-                    className="space-y-4 flex rounded-md flex-col  mx-4 max-w-full border justify-center items-center"
-                  >
-                    {new_stages?.length > 0 ? (
-                      new_stages?.map((stage, index) => {
-                        return (
-                          <Draggable
-                            key={stage.stage_id}
-                            draggableId={stage.stage_id}
-                            index={index}
-                            {...provided.droppableProps}
-                          >
-                            {(provided) => (
-                              <div
-                                className="m-2 w-full max-w-xl"
-                                {...provided.draggableProps}
-                                {...provided.dragHandleProps}
-                                ref={provided.innerRef}
-                              >
-                                <Link
-                                  href={`/openings/${opening_id}/stages/${stage.stage_id}`}
-                                >
-                                  <a>
-                                    <StageCard
-                                      className="w-full border-0 hover:shadow-lg rounded-xl"
-                                      stage_title={`${stage.GSI1SK} - ${stage.stage_id}`}
-                                      num_applicants={10}
-                                    />
-                                  </a>
-                                </Link>
-                              </div>
-                            )}
-                          </Draggable>
-                        );
-                      })
-                    ) : isStagesLoading ? (
-                      <h1>Loading...</h1>
-                    ) : (
-                      <h1>No stages found</h1>
-                    )}
-                    {provided.placeholder}
-                  </div>
-                )}
-              </Droppable>
-            </DragDropContext>
-          </div>
-        </div>
-      ) : (
-        <h1>No opening found by that ID</h1>
-      )}
     </div>
   );
 }
