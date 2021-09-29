@@ -85,82 +85,70 @@ export default function QuestionList() {
   return (
     <div>
       <div className="flow-root mt-6">
-        <ul role="list" className="-my-5 divide-y divide-gray-200">
-          {/* BELOW THIS LINE */}
+        {/* Left Column Stage Order on /openings/-opening_id-/settings */}
 
-          {questions?.map((question: DynamoStageQuestion) => (
-            <li key={question.question_id} className="py-5">
-              <div className="relative focus-within:ring-2 focus-within:ring-blue-500">
-                <h3 className="text-sm font-semibold text-gray-800">
-                  {/* <a href="#" className="hover:underline focus:outline-none"> */}
-                  {/* Extend touch target to entire panel */}
-                  <span className="absolute inset-0" aria-hidden="true" />
-                  {question.GSI1SK}
-                  {/* </a> */}
-                </h3>
-                {question.question_description ? (
-                  <p className="mt-1 text-sm text-gray-600 line-clamp-2">
-                    {question.question_description}
-                  </p>
-                ) : null}
-              </div>
-            </li>
-          ))}
-          {/* ABOVE THIS LINE */}
-
-          {/* Left Column Stage Order on /openings/-opening_id-/settings */}
-
-          <DragDropContext
-            onDragEnd={handleDragEnd}
-            onDragStart={() => console.log("Start")}
-          >
-            <Droppable droppableId={stage.stage_id}>
-              {(provided) => (
-                <div
-                  {...provided.droppableProps}
-                  ref={provided.innerRef}
-                  className="space-y-12 flex rounded-md flex-col  mx-4 max-w-full border justify-center items-center"
-                >
-                  {new_questions?.map(
-                    (question: DynamoStageQuestion, index: number) => {
-                      return (
-                        <Draggable
-                          className="m-6 p-4 w-full max-w-xl bg-white"
-                          key={question.question_id}
-                          draggableId={question.question_id}
-                          index={index}
-                          {...provided.droppableProps}
-                        >
-                          {(provided) => (
-                            <div
-                              {...provided.draggableProps}
-                              {...provided.dragHandleProps}
-                              ref={provided.innerRef}
+        <DragDropContext
+          onDragEnd={handleDragEnd}
+          onDragStart={() => console.log("Start")}
+        >
+          <Droppable droppableId={stage.stage_id}>
+            {(provided) => (
+              <ul
+                role="list"
+                className="my-4 divide-y divide-gray-200"
+                {...provided.droppableProps}
+                ref={provided.innerRef}
+              >
+                {new_questions?.map(
+                  (question: DynamoStageQuestion, index: number) => {
+                    return (
+                      <Draggable
+                        key={question.question_id}
+                        draggableId={question.question_id}
+                        index={index}
+                        {...provided.droppableProps}
+                      >
+                        {(provided) => (
+                          <div
+                            {...provided.draggableProps}
+                            {...provided.dragHandleProps}
+                            ref={provided.innerRef}
+                          >
+                            <li
+                              key={question.question_id}
+                              className="px-4 py-5 bg-white hover:bg-sky-50 transition ease-in-out duration-300"
                             >
-                              <div
-                                key={question.question_id}
-                                className="p-4 border rounded-md shadow-md max-w-xl bg-white"
-                              >
-                                <h1 className="font-bold text-lg">
-                                  {question.GSI1SK} - {question.question_id}
-                                </h1>
-                                <p className="text-sm text-blue-gray-500">
-                                  {question.question_description}
-                                </p>
+                              <div className="relative focus-within:ring-2 focus-within:ring-blue-500">
+                                <h3 className="text-sm font-semibold text-gray-800">
+                                  {/* <a href="#" className="hover:underline focus:outline-none"> */}
+                                  {/* Extend touch target to entire panel */}
+                                  <span
+                                    className="absolute inset-0"
+                                    aria-hidden="true"
+                                  />
+                                  {new_questions.indexOf(question) + 1}.{" "}
+                                  {question.GSI1SK}
+                                  {/* </a> */}
+                                </h3>
+                                {question.question_description ? (
+                                  <p className="mt-1 text-sm text-gray-600 line-clamp-2">
+                                    {question.question_description}
+                                  </p>
+                                ) : null}
                               </div>
-                            </div>
-                          )}
-                        </Draggable>
-                      );
-                    }
-                  )}
+                            </li>
+                          </div>
+                        )}
+                      </Draggable>
+                    );
+                  }
+                )}
 
-                  {provided.placeholder}
-                </div>
-              )}
-            </Droppable>
-          </DragDropContext>
-        </ul>
+                {provided.placeholder}
+              </ul>
+            )}
+          </Droppable>
+        </DragDropContext>
       </div>
     </div>
   );
