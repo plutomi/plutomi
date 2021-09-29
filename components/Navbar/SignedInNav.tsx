@@ -12,12 +12,7 @@ import Link from "next/dist/client/link";
 import { signOut } from "next-auth/client";
 import useOrgInvites from "../../SWR/useOrgInvites";
 import Banner from "../BannerTop";
-const user = {
-  name: "Tom Cook",
-  email: "tom@example.com",
-  imageUrl:
-    "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80",
-};
+
 const navigation = [
   { name: "Dashboard", href: "/dashboard" },
   { name: "Openings", href: "/openings" },
@@ -25,7 +20,7 @@ const navigation = [
 ];
 const userNavigation = [
   // { name: "Your Profile", href: "#" },
-  // { name: "Settings", href: "#" },
+  // { name: "Invites", href: `${process.env.NEXT_PUBLIC_NEXTAUTH_URL}/invites` },
   { name: "Sign out", event: () => signOut(), href: "#" },
 ];
 
@@ -69,28 +64,31 @@ export default function SignedInNav({ current }: ValidNavigation) {
                   /> */}
                   </div>
                   <div className="hidden sm:-my-px sm:ml-6 sm:flex sm:space-x-8">
-                    {navigation.map((item) => (
-                      <>
-                        {item.name === "Team" &&
-                        user.org_id === "NO_ORG_ASSIGNED" ? null : (
-                          <Link key={item.name} href={item.href}>
-                            <a
-                              className={classNames(
-                                current === item.name
-                                  ? "border-blue-500 text-gray-900"
-                                  : "border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700",
-                                "inline-flex items-center px-1 pt-1 border-b-2 text-md font-medium"
-                              )}
-                              aria-current={
-                                current === item.name ? "page" : undefined
-                              }
-                            >
-                              {item.name}
-                            </a>
-                          </Link>
-                        )}
-                      </>
-                    ))}
+                    {navigation.map((item) => {
+                      if (
+                        item.name === "Team" &&
+                        user.org_id === "NO_ORG_ASSIGNED"
+                      ) {
+                        return null;
+                      }
+                      return (
+                        <Link key={item.name} href={item.href}>
+                          <a
+                            className={classNames(
+                              current === item.name
+                                ? "border-blue-500 text-dark"
+                                : "border-transparent text-light hover:border-blue-gray-300 hover:text-gray-700",
+                              "inline-flex items-center px-1 pt-1 border-b-2 text-md font-medium"
+                            )}
+                            aria-current={
+                              current === item.name ? "page" : undefined
+                            }
+                          >
+                            {item.name}
+                          </a>
+                        </Link>
+                      );
+                    })}
                   </div>
                 </div>
                 <div className="hidden sm:ml-6 sm:flex sm:items-center">

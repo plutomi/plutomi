@@ -21,6 +21,7 @@ export default function CreateOpeningModal({ createOpening }) {
 
     await createOpening({ opening_name, is_public });
     setOpeningName("");
+    setIsPublic(false)
   };
   return (
     <Transition.Root show={open} as={Fragment}>

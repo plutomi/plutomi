@@ -52,7 +52,7 @@ export default function Features() {
                   {feature.name}
                 </p>
               </dt>
-              <dd className="mt-2 ml-16 text-xl text-light">
+              <dd className="mt-2 ml-16 text-xl text-normal">
                 {feature.isGithub ? (
                   <p>
                     Read, inspect, and contribute to{" "}

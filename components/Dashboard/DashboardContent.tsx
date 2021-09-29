@@ -7,6 +7,9 @@ export default function DashboardContent() {
   const { user, isUserLoading, isUserError } = useUser(session?.user_id);
 
   return (
-    <div>You&apos;re in the {user?.org_id} org. Feel free to click around!</div>
+    <div>
+      You&apos;re in the <strong>{user?.org_id}</strong> org. Feel free to click
+      around!
+    </div>
   );
 }

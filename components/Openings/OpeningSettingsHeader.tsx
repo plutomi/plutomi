@@ -5,6 +5,7 @@ import { PlusIcon } from "@heroicons/react/outline";
 import useStore from "../../utils/store";
 import useOpeningById from "../../SWR/useOpeningById";
 import { useState } from "react";
+import GoBack from "../GoBackButton";
 import { useRouter } from "next/router";
 import Loader from "../Loader";
 export default function OpeningSettingsHeader() {
@@ -22,8 +23,12 @@ export default function OpeningSettingsHeader() {
   }
   return (
     <div className="md:flex md:items-center md:justify-between ">
-      <div className=" min-w-0 ">
+      <div className=" min-w-0 flex flex-col items-start ">
+        <GoBack
+          url={`${process.env.NEXT_PUBLIC_NEXTAUTH_URL}/openings/${opening?.opening_id}/stages/${opening?.stage_order[0]}`}
+        />
         <h2 className="text-2xl font-bold leading-7 text-gray-900 sm:text-3xl sm:truncate">
+          {" "}
           {opening?.GSI1SK}
         </h2>
       </div>

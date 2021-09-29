@@ -14,7 +14,6 @@ export default function CreateOrgModal({ createOrg }) {
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     await createOrg({ org_name, org_id });
-    setCreateOrgModalOpen(false);
   };
 
   const open = useStore((state: PlutomiState) => state.createOrgModalIsOpen);
@@ -121,7 +120,9 @@ export default function CreateOrgModal({ createOrg }) {
                                 id="org-id"
                                 required
                                 maxLength={30}
-                                onChange={(e) => setOrgId(e.target.value)}
+                                onChange={(e) =>
+                                  setOrgId(e.target.value.trim())
+                                }
                                 value={org_id}
                                 className="flex-1 min-w-0 block w-full px-3 py-2 rounded-none rounded-r-md focus:ring-blue-500 focus:border-blue-500 sm:text-sm border-gray-300"
                                 placeholder="your-company-name"

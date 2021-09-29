@@ -98,7 +98,6 @@ export default function Invites() {
   return (
     <>
       <SignedInNav current={"PLACEHOLDER"} />
-      <GoBack />
 
       <div className="py-10">
         <header>

@@ -1,6 +1,6 @@
 import { useSession } from "next-auth/client";
 import useUser from "../../SWR/useUser";
-import { PlusIcon } from "@heroicons/react/outline";
+import { CogIcon, PlusIcon } from "@heroicons/react/outline";
 import useStore from "../../utils/store";
 import { useState } from "react";
 import Link from "next/dist/client/link";
@@ -47,7 +47,7 @@ export default function StagesHeader() {
         <Link
           href={`${process.env.NEXT_PUBLIC_NEXTAUTH_URL}/openings/${opening_id}/settings`}
         >
-          <AdjustmentsIcon className="w-10 h-10 ml-6 hover:text-blue-500 text-light cursor-pointer transition duration-300 ease-in-out" />
+          <CogIcon className="w-10 h-10 ml-6 hover:text-dark text-light cursor-pointer transition duration-300 ease-in-out" />
         </Link>
       </div>
 

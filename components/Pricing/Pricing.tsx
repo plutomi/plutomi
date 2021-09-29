@@ -47,7 +47,7 @@ export default function Pricing() {
               })}
             </div>
           </div>
-          {/* <p className="text-sm my-4 text-light mx-auto px-12 md:px-4 text-center">
+          {/* <p className="text-sm my-4 text-normal mx-auto px-12 md:px-4 text-center">
             If you&apos;d like to discuss custom pricing for your organization,
             please{" "}
             <CustomLink
