@@ -6,6 +6,7 @@ import useStore from "../../utils/store";
 import { useState } from "react";
 import useOrgUsers from "../../SWR/useOrgUsers";
 import CreateInviteModal from "../CreateInviteModal";
+import Loader from "../Loader";
 export default function TeamHeader() {
   const [session, loading]: [CustomSession, boolean] = useSession();
   const { user, isUserLoading, isUserError } = useUser(session?.user_id);
@@ -18,6 +19,9 @@ export default function TeamHeader() {
     (state: PlutomiState) => state.setCreateInviteModalOpen
   );
 
+  if (isOrgUsersLoading) {
+    return <Loader text="Loading users..." />;
+  }
   return (
     <div className="md:flex md:items-center md:justify-between ">
       <div className=" min-w-0 ">
@@ -27,7 +31,8 @@ export default function TeamHeader() {
       </div>
 
       {/* An empty state with an action button will show if the user doesn't have any team members*/}
-      {orgUsers.length > 1 ? (
+      {/* A user is a member of their own org, so unless they have someone else this wont show*/}
+      {orgUsers?.length > 1 ? (
         <div className="mt-4 flex md:mt-0 md:ml-4 ">
           <button
             onClick={() => setCreateInviteModalOpen(true)}
