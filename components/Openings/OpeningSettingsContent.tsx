@@ -6,6 +6,7 @@ import { mutate } from "swr";
 import Link from "next/dist/client/link";
 import StageCard from "../Stages/StageCard";
 import { useEffect } from "react";
+import OpeningModal from "./OpeningModal";
 import axios from "axios";
 import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
 import DraggableStageCard from "../../components/Stages/DraggableStageCard";
@@ -90,11 +91,68 @@ export default function OpeningSettingsContent() {
     setIsStageOrderUpdating(false);
   };
 
+  const createOpening = async () => {
+    const body: APICreateOpeningInput = {
+      opening_name: openingModal.opening_name,
+      is_public: openingModal.is_open,
+    };
+    try {
+      const { data } = await axios.post("/api/openings", body);
+      alert(data.message);
+      setOpeningModal({
+        is_open: true,
+        modal_mode: "CREATE",
+        is_public: false,
+        opening_id: "",
+        opening_name: "",
+      });
+    } catch (error) {
+      alert(error.response.data.message);
+    }
+
+    mutate(`/api/openings/`); // Get all openings
+  };
+
+  const updateOpening = async () => {
+    try {
+      const body = {
+        updated_opening: {
+          ...opening, // TODO fix this
+          GSI1SK: openingModal.opening_name,
+          is_public: openingModal.is_public,
+        },
+      };
+
+      console.log("Outgoing body", body);
+
+      const { data } = await axios.put(
+        `/api/openings/${openingModal.opening_id}`,
+        body
+      );
+      alert(data.message);
+      setOpeningModal({
+        is_open: false,
+        modal_mode: "CREATE",
+        is_public: false,
+        opening_id: "",
+        opening_name: "",
+      });
+    } catch (error) {
+      alert(error.response.data.message);
+    }
+    // Refresh opening data
+    mutate(`/api/openings/${openingModal.opening_id}`);
+  };
+
   return (
     <>
       {/* 3 column wrapper */}
       <div className="flex-grow w-full max-w-7xl mx-auto xl:px-8 lg:flex">
         {/* Left sidebar & main wrapper */}
+        <OpeningModal
+          createOpening={createOpening}
+          updateOpening={updateOpening}
+        />
         <div className="flex-1 min-w-0 bg-white xl:flex">
           <div className="border-b border-gray-200 xl:border-b-0 xl:flex-shrink-0 xl:w-64 xl:border-r xl:border-gray-200 bg-white">
             <div className="h-full pl-4 pr-6 py-6 sm:pl-6 lg:pl-8 xl:pl-0">
@@ -173,10 +231,10 @@ export default function OpeningSettingsContent() {
                     onClick={() =>
                       setOpeningModal({
                         is_open: true,
-                        modal_mode: "CREATE",
-                        opening_id: openingModal.opening_id,
-                        opening_name: openingModal.opening_name,
-                        is_public: openingModal.is_public,
+                        modal_mode: "EDIT",
+                        opening_id: opening.opening_id,
+                        opening_name: opening.GSI1SK,
+                        is_public: opening.is_public,
                       })
                     }
                     className="relative inline-flex items-center px-4 py-2 rounded-md border border-gray-300 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50 focus:z-10 focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500"

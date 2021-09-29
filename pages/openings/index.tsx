@@ -71,23 +71,23 @@ export default function Openings() {
     mutate(`/api/openings/`); // Get all openings
   };
 
-  const updateOpening = async (opening_id: string) => {
+  const updateOpening = async () => {
     try {
-      const opening = openings.find(
-        (opening) => opening.opening_id == openingModal.opening_id
-      );
       const body = {
         updated_opening: {
-          ...opening, // TODO fix this
-          GSI1SK: openingModal.opening_name, // If not blank
+          ...openingModal, // TODO fix this
+          GSI1SK: openingModal.opening_name,
           is_public: openingModal.is_public,
         },
       };
 
-      const { data } = await axios.put(`/api/openings/${opening_id}`, body);
+      const { data } = await axios.put(
+        `/api/openings/${openingModal.opening_id}`,
+        body
+      );
       alert(data.message);
-      setOpeningModal({
-        is_open: true,
+        setOpeningModal({
+        is_open: false,
         modal_mode: "CREATE",
         is_public: false,
         opening_id: "",
@@ -97,7 +97,7 @@ export default function Openings() {
       alert(error.response.data.message);
     }
     // Refresh opening data
-    mutate(`/api/openings/${opening_id}`);
+    mutate(`/api/openings/${openingModal.opening_id}`);
   };
 
   return (

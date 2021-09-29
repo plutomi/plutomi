@@ -124,7 +124,7 @@ export default function OpeningModal({ createOpening, updateOpening }) {
                                 onChange={(e) =>
                                   setOpeningModal({
                                     ...openingModal,
-                                    is_public: e.target.value,
+                                    is_public: e.target.checked,
                                   })
                                 }
                                 className="focus:ring-blue-500 h-4 w-4 text-blue-600 border-gray-300 rounded"
