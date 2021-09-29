@@ -330,3 +330,14 @@ interface DeleteQuestionInput {
   stage_id: string;
   question_id: string;
 }
+
+// Modals are reused to update the same element
+// If mode is set to "UPDATE", you should pass down the
+// item's props so it can render accordingly
+interface QuestionModalInput {
+  mode: "EDIT" | "UPDATE";
+  createQuestion?: Function;
+  updateQuestion?: Function;
+  questionTitle: string;
+  questionDescription: string;
+}

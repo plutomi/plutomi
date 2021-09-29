@@ -3,7 +3,6 @@ import useStageById from "../../../../SWR/useStageById";
 import SignIn from "../../../../components/SignIn";
 import useUser from "../../../../SWR/useUser";
 import { useEffect } from "react";
-import GoBack from "../../../../components/Buttons/GoBackButton";
 import { useSession } from "next-auth/client";
 import { useRouter } from "next/router";
 import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";

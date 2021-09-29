@@ -1,15 +1,14 @@
 import { FormEvent, Fragment, useState } from "react";
 import { Dialog, Transition } from "@headlessui/react";
 import { XIcon } from "@heroicons/react/outline";
-import axios from "axios";
-//
 import useStore from "../../utils/store";
+
 export default function QuestionModal({
   mode,
   createQuestion,
   questionTitle,
   questionDescription,
-}) {
+}: QuestionModalInput) {
   const [question_title, setQuestionTitle] = useState(questionTitle || "");
   const [question_description, setQuestionDescription] = useState(
     questionDescription || ""
