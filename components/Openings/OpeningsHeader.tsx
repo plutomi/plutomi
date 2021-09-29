@@ -31,17 +31,20 @@ export default function OpeningsHeader() {
           Openings
         </h2>
       </div>
-      <div className="flex-1 mt-4 flex md:mt-0  items-center  md:flex-grow justify-center">
-        <input
-          type="text"
-          name="search"
-          id="search"
-          value={localSearch}
-          onChange={(e) => handleSearchChange(e)}
-          placeholder={"Search for an opening..."}
-          className="w-1/2 shadow-sm focus:ring-blue-500 focus:border-blue-500 block  border sm:text-sm border-gray-300 rounded-md"
-        />
-      </div>
+      {openings.length === 0 ? null : (
+        <div className="flex-1 mt-4 flex md:mt-0  items-center  md:flex-grow justify-center">
+          <input
+            type="text"
+            name="search"
+            id="search"
+            value={localSearch}
+            onChange={(e) => handleSearchChange(e)}
+            placeholder={"Search for an opening..."}
+            className="w-1/2 shadow-sm focus:ring-blue-500 focus:border-blue-500 block  border sm:text-sm border-gray-300 rounded-md"
+          />
+        </div>
+      )}
+
       {/* An empty state with an action button will show if the user doesn't have openings*/}
       {openings.length > 0 ? (
         <div className="mt-4 flex md:mt-0 md:ml-4 ">
