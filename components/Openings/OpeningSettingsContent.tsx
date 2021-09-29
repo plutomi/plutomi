@@ -101,6 +101,7 @@ export default function OpeningSettingsContent() {
                     Stage Order
                   </h1>
 
+                  {/* Left Column Stage Order on /openings/-opening_id-/settings */}
                   <DragDropContext
                     onDragEnd={handleDragEnd}
                     onDragStart={() => console.log("Start")}
@@ -141,17 +142,11 @@ export default function OpeningSettingsContent() {
                               </Draggable>
                             );
                           })}
-
                           {provided.placeholder}
                         </div>
                       )}
                     </Droppable>
                   </DragDropContext>
-                  {/* {stages.map((stage) => (
-                    <div key={stage.stage_id} className="my-2 py-2 px-1 border">
-                      <h1>{stage.GSI1SK}</h1>
-                    </div>
-                  ))} */}
                 </div>
               </div>
               {/* End left column area */}
