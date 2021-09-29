@@ -12,7 +12,7 @@ function useOrgInvites(user_id: string): useOrgInvitesOutput {
   const shouldFetch = user_id ? true : false;
 
   const { data, error } = useSWR(
-    shouldFetch ? `/api/users/${user_id}/invites` : null,
+    shouldFetch && `/api/users/${user_id}/invites`,
     fetcher
   );
 

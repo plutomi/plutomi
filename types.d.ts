@@ -109,7 +109,6 @@ interface PlutomiState {
   createStageModalIsOpen: boolean;
   setCreateStageModalOpen: Function;
   questionModalIsOpen: boolean;
-  setQuestionModalOpen: Function;
   openingsSearchInput: string;
   setOpeningsSearchInput: Function;
   createInviteModalIsOpen: boolean;
@@ -120,11 +119,6 @@ interface PlutomiState {
   questionModalTitle: string; // TODO this is stupidly gross
   questionModalDescription: string;
   questionModalId: string;
-  setQuestionModalId: Function;
-  setQuestionModalTitle: Function;
-  setQuestionModalDescription: Function;
-  setQuestionModalMode: Function;
-  setQuestionmodalId: string;
 }
 
 interface DynamoUser {

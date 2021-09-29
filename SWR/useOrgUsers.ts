@@ -14,7 +14,7 @@ function useOrgUsers(org_id: string, user_id: string): useOrgUsersOutput {
   const shouldFetch = org_id && user_id ? true : false;
 
   const { data, error } = useSWR(
-    shouldFetch ? `/api/orgs/${org_id}/users` : null,
+    shouldFetch && `/api/orgs/${org_id}/users`,
     fetcher
   );
 

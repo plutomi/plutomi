@@ -19,9 +19,6 @@ export default function Stage() {
   const [session, loading]: [CustomSession, boolean] = useSession();
   const { user, isUserLoading, isUserError } = useUser(session?.user_id);
 
-  const setQuestionModalOpen = useStore(
-    (state: PlutomiState) => state.setQuestionModalOpen
-  );
 
   const { opening, isOpeningLoading, isOpeningError } = useOpeningById(
     session?.user_id,

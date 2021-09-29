@@ -9,8 +9,8 @@ const useStore = create((set) => ({
   createInviteModalIsOpen: false,
 
   questionModal: {
-    is_open: true || false,
-    modal_mode: "EDIT" || "CREATE", // Will render text differently
+    is_open: false || true, // False by default
+    modal_mode: "CREATE" || "EDIT", // Will render text differently
     question_id: "",
     question_title: "",
     question_description: "",

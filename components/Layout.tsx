@@ -1,8 +1,8 @@
 export default function Layout({ header, main, footer }) {
   return (
     <div className="max-w-7xl mx-auto px-4 my-12">
-      {header ? <header>{header}</header> : null}
-      {main ? (
+      {header && <header>{header}</header>}
+      {main && (
         <main>
           {" "}
           <div className="py-8">
@@ -11,9 +11,9 @@ export default function Layout({ header, main, footer }) {
             </div>
           </div>
         </main>
-      ) : null}
+      )}
 
-      {footer ? <footer>{footer}</footer> : null}
+      {footer && <footer>{footer}</footer>}
     </div>
   );
 }

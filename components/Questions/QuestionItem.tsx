@@ -31,21 +31,15 @@ export default function QuestionItem({
           <span className="absolute inset-0" aria-hidden="true" />
           {new_questions.indexOf(question) + 1}. {question.GSI1SK}
         </h3>
-        {question.question_description ? (
+        {question.question_description && (
           <p className="text-sm text-gray-600 line-clamp-2">
             {question.question_description}
           </p>
-        ) : null}
+        )}
       </div>
 
-      {isHovering ? (
+      {isHovering && (
         <div className="flex justify-center items-center ">
-          <button
-            onClick={() => handleDelete(question.question_id)}
-            className="rounded-full hover:bg-white text-red-500 transition ease-in-out duration-200 px-3 py-3 text-md"
-          >
-            <TrashIcon className="w-6 h-6" />
-          </button>
           <button
             onClick={() =>
               setQuestionModal({
@@ -60,8 +54,14 @@ export default function QuestionItem({
           >
             <PencilAltIcon className="w-6 h-6" />
           </button>
+          <button
+            onClick={() => handleDelete(question.question_id)}
+            className="rounded-full hover:bg-white text-red-500 transition ease-in-out duration-200 px-3 py-3 text-md"
+          >
+            <TrashIcon className="w-6 h-6" />
+          </button>
         </div>
-      ) : null}
+      )}
     </li>
   );
 }

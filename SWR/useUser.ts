@@ -12,7 +12,7 @@ function useUser(user_id: string): useUserOutput {
   const shouldFetch = user_id ? true : false;
 
   const { data, error } = useSWR(
-    shouldFetch ? `/api/users/${user_id}` : null,
+    shouldFetch && `/api/users/${user_id}`,
     fetcher
   );
 

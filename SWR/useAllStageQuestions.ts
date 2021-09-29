@@ -19,9 +19,8 @@ function useAllStageQuestions(
   const shouldFetch = org_id && opening_id && stage_id ? true : false;
 
   const { data, error } = useSWR(
-    shouldFetch
-      ? `/api/orgs/${org_id}/openings/${opening_id}/stages/${stage_id}/questions`
-      : null,
+    shouldFetch &&
+      `/api/orgs/${org_id}/openings/${opening_id}/stages/${stage_id}/questions`,
     fetcher
   );
 

@@ -52,7 +52,7 @@ export default function StagesHeader() {
       </div>
 
       {/* An empty state with an action button will show if the user doesn't have stages*/}
-      {stages?.length > 0 ? (
+      {stages?.length > 0 && (
         <div className="mt-4 flex md:mt-0 md:ml-4 ">
           <button
             onClick={() => setCreateStageModalOpen(true)}
@@ -63,7 +63,7 @@ export default function StagesHeader() {
             New Stage
           </button>
         </div>
-      ) : null}
+      )}
     </div>
   );
 }

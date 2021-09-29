@@ -11,7 +11,7 @@ const fetcher = (url: string) => axios.get(url).then((res) => res.data);
 function useOpenings(user_id: string): useOpeningsOutput {
   const shouldFetch = user_id ? true : false;
 
-  const { data, error } = useSWR(shouldFetch ? `/api/openings` : null, fetcher);
+  const { data, error } = useSWR(shouldFetch && `/api/openings`, fetcher);
 
   return {
     openings: data,

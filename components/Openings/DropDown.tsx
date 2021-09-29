@@ -88,7 +88,7 @@ export default function OpeningsDropdown({ openings, index }) {
                       </span>
                     </div>
 
-                    {selected ? (
+                    {selected && (
                       <span
                         className={classNames(
                           active ? "text-white" : "text-blue-600",
@@ -97,7 +97,7 @@ export default function OpeningsDropdown({ openings, index }) {
                       >
                         <CheckIcon className="h-5 w-5" aria-hidden="true" />
                       </span>
-                    ) : null}
+                    )}
                   </>
                 )}
               </Listbox.Option>

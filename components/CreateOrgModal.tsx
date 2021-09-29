@@ -128,14 +128,14 @@ export default function CreateOrgModal({ createOrg }) {
                                 placeholder="your-company-name"
                               />
                             </div>
-                            {org_id ? (
+                            {org_id && (
                               <p className="mt-2 text-blue-gray-500 text-md">
                                 Your ID will be:{" "}
                                 <span className="font-bold text-dark">
                                   {tagGenerator.generate(org_id)}
                                 </span>
                               </p>
-                            ) : null}
+                            )}
                             <p className="text-red-400 mt-2 text-md">
                               Your ID <span className="font-bold">cannot</span>{" "}
                               be changed, please choose carefully.

@@ -46,7 +46,7 @@ export default function OpeningsHeader() {
       )}
 
       {/* An empty state with an action button will show if the user doesn't have openings*/}
-      {openings.length > 0 ? (
+      {openings.length > 0 && (
         <div className="mt-4 flex md:mt-0 md:ml-4 ">
           <button
             onClick={() => setCreateOpeningModalOpen(true)}
@@ -57,7 +57,7 @@ export default function OpeningsHeader() {
             New Opening
           </button>
         </div>
-      ) : null}
+      )}
     </div>
   );
 }

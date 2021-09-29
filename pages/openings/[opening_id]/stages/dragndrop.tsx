@@ -82,18 +82,19 @@ export default function ViewOpening() {
     <div>
       <div className="mx-auto max-w-4xl pt-20 flex flex-col justify-center items-center ">
         <div className="m-4  flex flex-wrap max-w-full"></div>
-        {isEditing ? (
+        {isEditing && (
           <div className="max-w-xl my-2 mx-auto">
             <label
               htmlFor="newName"
               className="block text-sm font-medium text-gray-700"
             >
               Change name{" "}
-              {!newName || newName === opening.GSI1SK ? (
-                <span className="text-sm text-blue-gray-500">
-                  - Name will stay the same
-                </span>
-              ) : null}
+              {!newName ||
+                (newName === opening.GSI1SK && (
+                  <span className="text-sm text-blue-gray-500">
+                    - Name will stay the same
+                  </span>
+                ))}
             </label>
             <div className="mt-1">
               <input
@@ -135,7 +136,7 @@ export default function ViewOpening() {
               Submit
             </button>
           </div>
-        ) : null}
+        )}
       </div>
     </div>
   );

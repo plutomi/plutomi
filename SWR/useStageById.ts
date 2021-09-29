@@ -18,7 +18,7 @@ function useStageById(
   const shouldFetch = user_id && opening_id && stage_id ? true : false;
 
   const { data, error } = useSWR(
-    shouldFetch ? `/api/openings/${opening_id}/stages/${stage_id}` : null,
+    shouldFetch && `/api/openings/${opening_id}/stages/${stage_id}`,
     fetcher
   );
 

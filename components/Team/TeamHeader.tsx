@@ -32,7 +32,7 @@ export default function TeamHeader() {
 
       {/* An empty state with an action button will show if the user doesn't have any team members*/}
       {/* A user is a member of their own org, so unless they have someone else this wont show*/}
-      {orgUsers?.length > 1 ? (
+      {orgUsers?.length > 1 && (
         <div className="mt-4 flex md:mt-0 md:ml-4 ">
           <button
             onClick={() => setCreateInviteModalOpen(true)}
@@ -43,7 +43,7 @@ export default function TeamHeader() {
             Add Team member
           </button>
         </div>
-      ) : null}
+      )}
     </div>
   );
 }

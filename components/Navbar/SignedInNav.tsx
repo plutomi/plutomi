@@ -37,14 +37,14 @@ export default function SignedInNav({ current }: ValidNavigation) {
 
   return (
     <>
-      {invites?.length > 0 ? (
+      {invites?.length > 0 && (
         <Banner
           msgSmall={"You've been invited!"}
           msgLarge={"You've been invited to join an organization!"}
           btnText={"View invites"}
           href={"/invites"}
         />
-      ) : null}
+      )}
       <Disclosure as="nav" className="bg-white border-b border-gray-200">
         {({ open }) => (
           <>
@@ -133,7 +133,7 @@ export default function SignedInNav({ current }: ValidNavigation) {
                             {({ active }) => (
                               <a
                                 href={item.href}
-                                onClick={item.event ? item.event : null}
+                                onClick={item.event && item.event}
                                 className={classNames(
                                   active ? "bg-gray-100" : "",
                                   "block px-4 py-2 text-md text-gray-700"
@@ -210,7 +210,7 @@ export default function SignedInNav({ current }: ValidNavigation) {
                     <a
                       key={item.name}
                       href={item.href}
-                      onClick={item.event ? item.event : null}
+                      onClick={item.event && item.event}
                       className="block px-4 py-2 text-base font-medium text-gray-500 hover:text-gray-800 hover:bg-gray-100"
                     >
                       {item.name}

@@ -53,10 +53,6 @@ export default function StageSettingsContent() {
     setNewStages(stages);
   }, [stages]);
 
-  const setQuestionModalOpen = useStore(
-    (state: PlutomiState) => state.setQuestionModalOpen
-  );
-
   if (isOpeningLoading) {
     return <Loader text="Loading opening..." />;
   }
@@ -123,8 +119,15 @@ export default function StageSettingsContent() {
         body
       );
       alert(data.message);
-      setQuestionModalOpen(false);
+      setQuestionModal({
+        is_open: false,
+        modal_mode: "CREATE",
+        question_id: "",
+        question_description: "",
+        question_title: "",
+      });
     } catch (error) {
+      console.error(`Error creating`, error);
       alert(error.response.data.message);
     }
 
@@ -262,7 +265,7 @@ export default function StageSettingsContent() {
                     type="button"
                     onClick={() =>
                       setQuestionModal({
-                        is_open: false,
+                        is_open: true,
                         modal_mode: "CREATE",
                         question_id: "",
                         question_description: "",
