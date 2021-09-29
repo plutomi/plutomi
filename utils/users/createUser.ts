@@ -17,7 +17,7 @@ export async function CreateUser({
     SK: `USER`,
     first_name: first_name || "NO FIRST NAME",
     last_name: last_name || "NO LAST NAME",
-    user_email: user_email,
+    user_email: user_email.toLowerCase(),
     user_id: user_id,
     entity_type: "USER",
     created_at: now,
@@ -25,7 +25,7 @@ export async function CreateUser({
     org_join_date: "NO_ORG_ASSIGNED",
     GSI1PK: "ORG#NO_ORG_ASSIGNED#USERS",
     GSI1SK: `${first_name} ${last_name}`,
-    GSI2PK: user_email,
+    GSI2PK: user_email.toLowerCase(),
     GSI2SK: "USER",
   };
 
