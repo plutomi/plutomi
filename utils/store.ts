@@ -5,6 +5,9 @@ const useStore = create((set) => ({
   createOpeningModalIsOpen: false,
   createStageModalIsOpen: false,
   questionModalIsOpen: false,
+  questionModalTitle: "",
+  questionModalMode: "EDIT" || "CREATE",
+  questionmodalDescription: "",
   openingsSearchInput: "",
   createInviteModalIsOpen: false,
 
@@ -51,6 +54,20 @@ const useStore = create((set) => ({
   setCreateInviteModalOpen: (open: Boolean) =>
     set((state: PlutomiState) => ({
       createInviteModalIsOpen: open,
+    })),
+
+  setQuestionModalTitle: (input: string) =>
+    set((state: PlutomiState) => ({
+      questionModalTitle: input,
+    })),
+  setQuestionModalDescription: (input: string) =>
+    set((state: PlutomiState) => ({
+      questionModalDescription: input,
+    })),
+
+  setQuestionModalMode: (input: string) =>
+    set((state: PlutomiState) => ({
+      questionModalMode: input,
     })),
 }));
 export default useStore;

@@ -112,6 +112,14 @@ interface PlutomiState {
   setOpeningsSearchInput: Function;
   createInviteModalIsOpen: boolean;
   setCreateInviteModalOpen: Function;
+
+  // Question Modal
+  questionModalMode: "CREATE" | "EDIT";
+  questionModalTitle: string;
+  questionModalDescription: string;
+  setQuestionModalTitle: Function;
+  setQuestionModalDescription: Function;
+  setQuestionModalMode: Function;
 }
 
 interface DynamoUser {
@@ -335,9 +343,9 @@ interface DeleteQuestionInput {
 // If mode is set to "UPDATE", you should pass down the
 // item's props so it can render accordingly
 interface QuestionModalInput {
-  mode: "EDIT" | "UPDATE";
+  mode: "EDIT" | "CREATE";
   createQuestion?: Function;
-  updateQuestion?: Function;
+  editQuestion?: Function;
   questionTitle: string;
   questionDescription: string;
 }

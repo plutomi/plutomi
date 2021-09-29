@@ -1,32 +1,48 @@
-import { FormEvent, Fragment, useState } from "react";
+import { FormEvent, Fragment } from "react";
 import { Dialog, Transition } from "@headlessui/react";
 import { XIcon } from "@heroicons/react/outline";
 import useStore from "../../utils/store";
-
-export default function QuestionModal({
-  mode,
-  createQuestion,
-  questionTitle,
-  questionDescription,
-}: QuestionModalInput) {
-  const [question_title, setQuestionTitle] = useState(questionTitle || "");
-  const [question_description, setQuestionDescription] = useState(
-    questionDescription || ""
-  );
+export default function QuestionModal({ createQuestion }: QuestionModalInput) {
+  const mode = useStore((state: PlutomiState) => state.questionModalMode);
 
   const handleSubmit = async (e: FormEvent) => {
-    e.preventDefault();
-    await createQuestion({ question_title, question_description });
-    setQuestionTitle("");
-    setQuestionDescription("");
-  };
+    if (mode === "CREATE") {
+      e.preventDefault();
+      await createQuestion({ question_title, question_description });
+      setQuestionTitle("");
+      setQuestionDescription("");
+    }
 
-  const open = useStore((state: PlutomiState) => state.questionModalIsOpen);
+    if (mode === "EDIT") {
+      e.preventDefault();
+
+      alert("In edit mode");
+      // TODO edit question here
+      setQuestionTitle("");
+      setQuestionDescription("");
+    }
+  };
 
   const setQuestionModalOpen = useStore(
     (state: PlutomiState) => state.setQuestionModalOpen
   );
 
+  const open = useStore((state: PlutomiState) => state.questionModalIsOpen);
+
+  const question_title = useStore(
+    (state: PlutomiState) => state.questionModalTitle
+  );
+  const question_description = useStore(
+    (state: PlutomiState) => state.questionModalDescription
+  );
+  const setQuestionTitle = useStore(
+    (state: PlutomiState) => state.setQuestionModalTitle
+  );
+  const setQuestionDescription = useStore(
+    (state: PlutomiState) => state.setQuestionModalDescription
+  );
+
+  console.log(`From state`, question_title, question_description);
   return (
     <Transition.Root show={open} as={Fragment}>
       <Dialog
@@ -66,7 +82,9 @@ export default function QuestionModal({
                     <div className="py-6 px-4 bg-blue-700 sm:px-6">
                       <div className="flex items-center justify-between">
                         <Dialog.Title className="text-lg font-medium text-white">
-                          New Question
+                          {mode === "CREATE"
+                            ? "New Question"
+                            : "Updating Question"}
                         </Dialog.Title>
                         <div className="ml-3 h-7 flex items-center">
                           <button
@@ -127,6 +145,7 @@ export default function QuestionModal({
                                 className="p-2 text-sm focus:ring-blue-500 focus:border-blue-500 border-gray-300 rounded-md w-full block resize"
                                 maxLength={300}
                                 rows={5}
+                                value={question_description}
                                 onChange={(e) =>
                                   setQuestionDescription(e.target.value)
                                 }
@@ -318,7 +337,7 @@ export default function QuestionModal({
                       type="submit"
                       className="ml-4 inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
                     >
-                      Create Question
+                      {mode === "CREATE" ? "Create" : "Update"} Queston
                     </button>
                   </div>
                 </form>
@@ -329,4 +348,8 @@ export default function QuestionModal({
       </Dialog>
     </Transition.Root>
   );
+
+  {
+    /* EDIT QUESTION */
+  }
 }

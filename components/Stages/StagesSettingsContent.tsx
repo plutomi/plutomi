@@ -40,6 +40,16 @@ export default function StageSettingsContent() {
   const { questions, isQuestionsLoading, isQuestionsError } =
     useAllStageQuestions(user?.org_id, opening?.opening_id, stage?.stage_id);
 
+  const setQuestionModalMode = useStore(
+    (state: PlutomiState) => state.setQuestionModalMode
+  );
+  const setQuestionModalTitle = useStore(
+    (state: PlutomiState) => state.setQuestionModalTitle
+  );
+  const setQuestionModalDescription = useStore(
+    (state: PlutomiState) => state.setQuestionModalDescription
+  );
+
   const [new_stages, setNewStages] = useState(stages);
   const [isStageOrderUpdating, setIsStageOrderUpdating] = useState(false);
   const [isQuestionOrderUpdating, setIsQuestionOrderUpdating] = useState(false);
@@ -132,6 +142,12 @@ export default function StageSettingsContent() {
     );
   };
 
+  const handleAddQuestion = () => {
+    setQuestionModalMode("CREATE");
+    setQuestionModalTitle("");
+    setQuestionModalDescription("");
+    setQuestionModalOpen(true);
+  };
 
   return (
     <>
@@ -218,7 +234,7 @@ export default function StageSettingsContent() {
                 <span className="relative z-0 inline-flex shadow-sm rounded-md">
                   <button
                     type="button"
-                    onClick={() => setQuestionModalOpen(true)}
+                    onClick={() => handleAddQuestion()}
                     className="relative inline-flex items-center px-4 py-2 rounded-md border border-gray-300 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50 focus:z-10 focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500"
                   >
                     Add a question
