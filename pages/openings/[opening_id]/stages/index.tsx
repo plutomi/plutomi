@@ -91,6 +91,13 @@ export default function Openings() {
     mutate(`/api/openings/${opening_id}/stages`);
   };
 
+  // !!!!!!!!!!!!!!!
+  // !!!!!!!!!!!!!!!
+  // !!!!!!!!!!!!!!!
+  // !!!!!!!!!!!!!!!
+  // !!!!!!!!!!!!!!!
+  // !!!!!!!!!!!!!!!
+  // Users will get redirected to the first stage, this shouldn't be used
   return (
     <>
       <CreateStageModal createStage={createStage} />

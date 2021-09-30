@@ -2,6 +2,8 @@ import SignedInNav from "../../../../../components/Navbar/SignedInNav";
 import { useSession } from "next-auth/client";
 import useUser from "../../../../../SWR/useUser";
 import Loader from "../../../../../components/Loader";
+import axios from "axios";
+import { mutate } from "swr";
 import OpeningSettingsHeader from "../../../../../components/Openings/OpeningSettingsHeader";
 import SignIn from "../../../../../components/SignIn";
 import useOpeningById from "../../../../../SWR/useOpeningById";
@@ -52,12 +54,67 @@ export default function OpeningsSettings() {
     return <Loader text="Loading stage info..." />;
   }
 
+  const deleteStage = async () => {
+    if (
+      !confirm(
+        "Are you sure you want to delete this stage? This cannot be reversed!"
+      )
+    )
+      return;
+    try {
+      const { data } = await axios.delete(
+        `/api/openings/${opening_id}/stages/${stage_id}`
+      );
+      alert(data.message);
+
+      /** Total Stages
+       * 1. Questionnaire <-- Gets deleted
+       */
+      const remaining_stages_before_delete = opening.stage_order;
+
+      if (remaining_stages_before_delete.length == 1) {
+        // If the stage we just deleted was the last one
+        // Redirect to empty stage page
+        router.push(
+          `${process.env.NEXT_PUBLIC_NEXTAUTH_URL}/openings/${opening_id}/stages`
+        );
+      }
+
+      /** Total Stages
+       * 1. Questionnaire
+       * 2. Set Up Profile  <-- Gets deleted
+       */
+      // Else, remove the deleted stage id from the stage order
+      const index_of_deleted = remaining_stages_before_delete.indexOf(
+        stage_id as string
+      );
+      remaining_stages_before_delete.splice(index_of_deleted, 1);
+
+      /** Current State
+       * 1. Questionnaire
+       */
+
+      // Then redirect to that stage's page
+      router.push(
+        `${process.env.NEXT_PUBLIC_NEXTAUTH_URL}/openings/${opening_id}/stages/${remaining_stages_before_delete[0]}/settings`
+      );
+    } catch (error) {
+      alert(error.response.data.message);
+    }
+
+    // Refresh the stage_order
+    mutate(`/api/openings/${opening_id}`);
+
+    // Refresh the stage list
+    mutate(`/api/openings/${opening_id}/stages`);
+  };
+
   return (
     <>
       <SignedInNav current="Openings" />
       <div className="max-w-7xl mx-auto p-4 my-6 rounded-lg min-h-screen ">
         <header>
-          <StageSettingsHeader />
+          <StageSettingsHeader deleteStage={deleteStage} />
         </header>
 
         <main className="mt-5">

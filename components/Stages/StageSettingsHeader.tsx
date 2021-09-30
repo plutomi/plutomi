@@ -1,14 +1,14 @@
 import { useSession } from "next-auth/client";
 import useOpenings from "../../SWR/useOpenings";
 import useUser from "../../SWR/useUser";
-import { PlusIcon } from "@heroicons/react/outline";
+import { PlusIcon, TrashIcon } from "@heroicons/react/outline";
 import useStore from "../../utils/store";
 import useOpeningById from "../../SWR/useOpeningById";
 import { useState } from "react";
 import { useRouter } from "next/router";
 import Loader from "../Loader";
 import useStageById from "../../SWR/useStageById";
-export default function StageSettingsHeader() {
+export default function StageSettingsHeader({ deleteStage }) {
   const router = useRouter();
   const { opening_id, stage_id } = router.query;
   const [session, loading]: [CustomSession, boolean] = useSession();
@@ -36,6 +36,16 @@ export default function StageSettingsHeader() {
         <h2 className="text-2xl font-bold leading-7 text-dark sm:text-3xl sm:truncate">
           {opening?.GSI1SK}
         </h2>
+      </div>
+      <div>
+        <button
+          type="button"
+          onClick={() => deleteStage()}
+          className="inline-flex items-center px-4 py-2 border  shadow-sm text-base font-medium rounded-md border-red-500 text-red-500 bg-white hover:bg-red-500 hover:text-white  transition ease-in-out duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
+        >
+          <TrashIcon className="-ml-1 mr-3 h-5 w-5" aria-hidden="true" />
+          Delete Stage
+        </button>
       </div>
     </div>
   );

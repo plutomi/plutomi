@@ -53,29 +53,7 @@ export default function Stage() {
     setNewName("");
   };
 
-  const DeleteStage = async (stage_id: string) => {
-    if (
-      !confirm(
-        "Are you sure you want to delete this stage? THIS IS IRREVERSABLE!!!"
-      )
-    )
-      return;
-    try {
-      const { data } = await axios.delete(
-        `/api/openings/${opening_id}/stages/${stage_id}`
-      );
-      alert(data.message);
-      router.push(`/openings/${opening_id}/stages`);
-    } catch (error) {
-      alert(error.response.data.message);
-    }
-
-    // Refresh the stage_order
-    mutate(`/api/openings/${opening_id}`);
-
-    // Refresh the stage list
-    mutate(`/api/openings/${opening_id}/stages`);
-  };
+ 
 
   return <div></div>;
 }
