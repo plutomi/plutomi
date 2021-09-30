@@ -1,5 +1,6 @@
 import { useSession } from "next-auth/client";
 import useOpenings from "../../SWR/useOpenings";
+import Breadcrumbs from "../Breadcrumbs";
 import useUser from "../../SWR/useUser";
 import { PencilAltIcon, PlusIcon } from "@heroicons/react/outline";
 import useStore from "../../utils/store";
@@ -31,22 +32,24 @@ export default function OpeningSettingsHeader() {
     return <Loader text={"Loading opening..."} />;
   }
 
+  const crumbs = [
+    { name: "Openings", href: `/openings`, current: false },
+    {
+      name: "Applicants",
+      href: `/openings/${opening_id}/stages/${opening?.stage_order[0]}`,
+      current: false,
+    },
+    {
+      name: "Settings",
+      href: `/openings/${opening_id}/settings`,
+      current: true,
+    },
+  ];
+
   return (
     <div className="md:flex md:items-center md:justify-between ">
       <div className=" min-w-0 flex flex-col items-start ">
-        <h2 className="text-2xl font-bold text-dark sm:text-3xl sm:truncate">
-          {opening?.GSI1SK}
-        </h2>
-        <span className="mt-2 inline-flex items-center px-2.5 py-0.5 rounded-md text-sm font-medium bg-indigo-100 text-indigo-800">
-          <svg
-            className="-ml-0.5 mr-1.5 h-2 w-2 text-indigo-400"
-            fill="currentColor"
-            viewBox="0 0 8 8"
-          >
-            <circle cx={4} cy={4} r={3} />
-          </svg>
-          {opening?.is_public ? "Public" : "Private"}
-        </span>
+        <Breadcrumbs crumbs={crumbs} />
       </div>
 
       <div className="space-x-4">

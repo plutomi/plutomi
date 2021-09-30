@@ -233,9 +233,29 @@ export default function OpeningSettingsContent() {
               {/* Start main area*/}
               <div className="relative h-full" style={{ minHeight: "36rem" }}>
                 <div className=" inset-0  border-gray-200 rounded-lg">
-                  <h1 className="text-center text-lg font-semibold mb-4">
+                  <h1 className="text-center text-2xl font-semibold mb-4">
                     {opening?.GSI1SK} Settings
                   </h1>
+                  <span
+                    className={`mt-2 inline-flex items-center px-2.5 py-0.5 rounded-md text-sm font-medium ${
+                      opening?.is_public
+                        ? "bg-green-100"
+                        : "bg-blue-gray-100"
+                    }`}
+                  >
+                    <svg
+                      className={`-ml-0.5 mr-1.5 h-2 w-2 ${
+                        opening?.is_public
+                          ? "text-green-800"
+                          : "text-blue-gray-800"
+                      }`}
+                      fill="currentColor"
+                      viewBox="0 0 8 8"
+                    >
+                      <circle cx={4} cy={4} r={3} />
+                    </svg>
+                    {opening?.is_public ? "Public" : "Private"}
+                  </span>
                 </div>
               </div>
               {/* End main area */}
