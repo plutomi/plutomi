@@ -15,8 +15,8 @@ export async function DeleteStage({
   opening_id,
   stage_id,
 }: DeleteStageInput) {
+  // TODO Qeuery all items that start with PK: stage_id & SK: STAGE
   // Get the opening we need to update
-
   try {
     let opening = await GetOpening({ org_id, opening_id });
 
@@ -58,9 +58,9 @@ export async function DeleteStage({
     };
 
     try {
-      // TODO this should be a transact
       await Dynamo.send(new TransactWriteCommand(transactParams));
-
+      // TODO Qeuery all items that start with PK: stage_id & SK: STAGE
+      // Maybe background processes can handle this instead
       return;
     } catch (error) {
       throw new Error(error);
