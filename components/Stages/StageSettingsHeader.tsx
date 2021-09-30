@@ -32,12 +32,6 @@ export default function StageSettingsHeader({ deleteStage }) {
 
   const setStageModal = useStore((state: PlutomiState) => state.setStageModal);
 
-  if (isOpeningLoading) {
-    return <Loader text={"Loading opening..."} />;
-  }
-  if (isStageLoading) {
-    return <Loader text={"Loading stage..."} />;
-  }
   // return (
   //   <div className="md:flex md:items-center md:justify-between ">
   //     <div className=" min-w-0 ">

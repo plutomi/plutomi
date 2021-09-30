@@ -161,7 +161,7 @@ export default function StageSettingsContent() {
               <div className="relative h-full" style={{ minHeight: "36rem" }}>
                 <div className=" inset-0  border-gray-200 rounded-lg">
                   <h1 className="text-center text-lg font-semibold mb-4">
-                    {isStageLoading ? "loading..." : stage?.GSI1SK} Settings
+                    {!isStageLoading && stage?.GSI1SK} Settings
                   </h1>
                 </div>
 
