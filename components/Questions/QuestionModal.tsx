@@ -97,7 +97,7 @@ export default function QuestionModal({ createQuestion, updateQuestion }) {
                           <div>
                             <label
                               htmlFor="title"
-                              className="block text-sm font-medium text-gray-900"
+                              className="block text-sm font-medium text-dark"
                             >
                               {questionModal.modal_mode === "CREATE"
                                 ? "Question Title"
@@ -126,7 +126,7 @@ export default function QuestionModal({ createQuestion, updateQuestion }) {
                           <div>
                             <label
                               htmlFor="description"
-                              className="block text-sm font-medium text-gray-900"
+                              className="block text-sm font-medium text-dark"
                             >
                               {questionModal.modal_mode === "CREATE"
                                 ? "Description"
@@ -153,7 +153,7 @@ export default function QuestionModal({ createQuestion, updateQuestion }) {
                           {/* <div>
                             <label
                               htmlFor="description"
-                              className="block text-sm font-medium text-gray-900"
+                              className="block text-sm font-medium text-dark"
                             >
                               Description
                             </label>
@@ -168,7 +168,7 @@ export default function QuestionModal({ createQuestion, updateQuestion }) {
                             </div>
                           </div> */}
                           {/* <div>
-                           <h3 className="text-sm font-medium text-gray-900">
+                           <h3 className="text-sm font-medium text-dark">
                               Team Members
                             </h3> */}
                           {/* <div className="mt-2">
@@ -188,7 +188,7 @@ export default function QuestionModal({ createQuestion, updateQuestion }) {
                                 ))}
                                 <button
                                   type="button"
-                                  className="flex-shrink-0 bg-white inline-flex h-8 w-8 items-center justify-center rounded-full border-2 border-dashed border-gray-200 text-gray-400 hover:text-gray-500 hover:border-gray-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+                                  className="flex-shrink-0 bg-white inline-flex h-8 w-8 items-center justify-center rounded-full border-2 border-dashed border-gray-200 text-light hover:text-normal hover:border-gray-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
                                 >
                                   <span className="sr-only">
                                     Add team member
@@ -202,7 +202,7 @@ export default function QuestionModal({ createQuestion, updateQuestion }) {
                             </div>
                           </div> */}
                           {/* <fieldset>
-                            <legend className="text-sm font-medium text-gray-900">
+                            <legend className="text-sm font-medium text-dark">
                               Privacy
                             </legend>
                             <div className="mt-2 space-y-5">
@@ -220,13 +220,13 @@ export default function QuestionModal({ createQuestion, updateQuestion }) {
                                 <div className="pl-7 text-sm">
                                   <label
                                     htmlFor="privacy-public"
-                                    className="font-medium text-gray-900"
+                                    className="font-medium text-dark"
                                   >
                                     Public access
                                   </label>
                                   <p
                                     id="privacy-public-description"
-                                    className="text-gray-500"
+                                    className="text-normal"
                                   >
                                     Everyone with the link will see this
                                     project.
@@ -247,13 +247,13 @@ export default function QuestionModal({ createQuestion, updateQuestion }) {
                                   <div className="pl-7 text-sm">
                                     <label
                                       htmlFor="privacy-private-to-project"
-                                      className="font-medium text-gray-900"
+                                      className="font-medium text-dark"
                                     >
                                       Private to project members
                                     </label>
                                     <p
                                       id="privacy-private-to-project-description"
-                                      className="text-gray-500"
+                                      className="text-normal"
                                     >
                                       Only members of this project would be able
                                       to access.
@@ -275,13 +275,13 @@ export default function QuestionModal({ createQuestion, updateQuestion }) {
                                   <div className="pl-7 text-sm">
                                     <label
                                       htmlFor="privacy-private"
-                                      className="font-medium text-gray-900"
+                                      className="font-medium text-dark"
                                     >
                                       Private to you
                                     </label>
                                     <p
                                       id="privacy-private-description"
-                                      className="text-gray-500"
+                                      className="text-normal"
                                     >
                                       You are the only one able to access this
                                       project.
@@ -308,10 +308,10 @@ export default function QuestionModal({ createQuestion, updateQuestion }) {
                           <div className="mt-4 flex text-sm">
                             <a
                               href="#"
-                              className="group inline-flex items-center text-gray-500 hover:text-gray-900"
+                              className="group inline-flex items-center text-normal hover:text-dark"
                             >
                               <QuestionMarkCircleIcon
-                                className="h-5 w-5 text-gray-400 group-hover:text-gray-500"
+                                className="h-5 w-5 text-light group-hover:text-normal"
                                 aria-hidden="true"
                               />
                               <span className="ml-2">

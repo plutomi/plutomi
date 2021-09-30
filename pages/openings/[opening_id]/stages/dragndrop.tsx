@@ -102,7 +102,7 @@ export default function ViewOpening() {
                 <label htmlFor="comments" className="font-medium text-gray-700">
                   Public
                 </label>
-                <p id="comments-description" className="text-gray-500">
+                <p id="comments-description" className="text-normal">
                   Make this opening available for people to apply
                 </p>
               </div>

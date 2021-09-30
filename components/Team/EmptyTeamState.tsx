@@ -7,11 +7,11 @@ export default function EmptyTeamState() {
   );
   return (
     <div className="text-center">
-      <BriefcaseIcon className="mx-auto h-12 w-12 text-gray-400" />
-      <h3 className="mt-2 text-lg font-medium text-gray-900">
+      <BriefcaseIcon className="mx-auto h-12 w-12 text-light" />
+      <h3 className="mt-2 text-lg font-medium text-dark">
         You don&apos;t have any team members
       </h3>
-      <p className="mt-1 text-lg text-gray-500">
+      <p className="mt-1 text-lg text-normal">
         Get started by adding your first one!
       </p>
       <div className="mt-6">

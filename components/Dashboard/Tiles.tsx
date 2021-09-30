@@ -93,13 +93,13 @@ export default function Example() {
                 {action.title}
               </a>
             </h3>
-            <p className="mt-2 text-sm text-gray-500">
+            <p className="mt-2 text-sm text-normal">
               Doloribus dolores nostrum quia qui natus officia quod et dolorem.
               Sit repellendus qui ut at blanditiis et quo et molestiae.
             </p>
           </div>
           <span
-            className="pointer-events-none absolute top-6 right-6 text-gray-300 group-hover:text-gray-400"
+            className="pointer-events-none absolute top-6 right-6 text-light group-hover:text-light"
             aria-hidden="true"
           >
             <svg

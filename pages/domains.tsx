@@ -52,10 +52,10 @@ export default function Domains() {
             Go back home{" "}
           </button>
         </Link>
-        <h2 className="text-lg font-medium text-gray-900 block">
+        <h2 className="text-lg font-medium text-dark block">
           Domains for sale by Plutomi Inc.
         </h2>
-        <p className="text-md font-normal text-gray-500">
+        <p className="text-md font-normal text-normal">
           We will reach out immediately after purchase to confirm the details on
           where you&apos;d like your domain to be transferred to. (Google
           Domains, GoDaddy, Route53, etc.)
@@ -66,7 +66,7 @@ export default function Domains() {
               key={product.id}
               className="relative group shadow-md p-4 rounded-md hover:shadow-xl transition ease-in-out duration-300"
             >
-              <div className=" flex items-center justify-between text-base font-medium text-gray-900 space-x-8">
+              <div className=" flex items-center justify-between text-base font-medium text-dark space-x-8">
                 <h3>
                   <a href={product.href} target="_blank" rel="noreferrer">
                     <span aria-hidden="true" className="absolute inset-0" />
@@ -75,7 +75,7 @@ export default function Domains() {
                 </h3>
                 <p className="text-lg font-bold">{product.price}</p>
               </div>
-              <p className="mt-1 text-sm text-gray-500">{product.category}</p>
+              <p className="mt-1 text-sm text-normal">{product.category}</p>
             </div>
           ))}
         </div>

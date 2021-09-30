@@ -94,7 +94,7 @@ export default function SignedInNav({ current }: ValidNavigation) {
                 <div className="hidden sm:ml-6 sm:flex sm:items-center">
                   {/* <button
                     type="button"
-                    className="bg-white p-1 rounded-full text-gray-400 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+                    className="bg-white p-1 rounded-full text-light hover:text-normal focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
                   >
                     <span className="sr-only">View notifications</span>
                     <BellIcon className="h-6 w-6" aria-hidden="true" />
@@ -150,7 +150,7 @@ export default function SignedInNav({ current }: ValidNavigation) {
                 </div>
                 <div className="-mr-2 flex items-center sm:hidden">
                   {/* Mobile menu button */}
-                  <Disclosure.Button className="bg-white inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                  <Disclosure.Button className="bg-white inline-flex items-center justify-center p-2 rounded-md text-light hover:text-normal hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
                     <span className="sr-only">Open main menu</span>
                     {open ? (
                       <XIcon className="block h-6 w-6" aria-hidden="true" />
@@ -193,13 +193,13 @@ export default function SignedInNav({ current }: ValidNavigation) {
                     <div className="text-base font-medium text-gray-800">
                       {user.first_name}
                     </div>
-                    <div className="text-md font-medium text-gray-500">
+                    <div className="text-md font-medium text-normal">
                       {user.user_email}
                     </div>
                   </div>
                   {/* <button
                     type="button"
-                    className="ml-auto bg-white flex-shrink-0 p-1 rounded-full text-gray-400 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+                    className="ml-auto bg-white flex-shrink-0 p-1 rounded-full text-light hover:text-normal focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
                   >
                     <span className="sr-only">View notifications</span>
                     <BellIcon className="h-6 w-6" aria-hidden="true" />
@@ -211,7 +211,7 @@ export default function SignedInNav({ current }: ValidNavigation) {
                       key={item.name}
                       href={item.href}
                       onClick={item.event && item.event}
-                      className="block px-4 py-2 text-base font-medium text-gray-500 hover:text-gray-800 hover:bg-gray-100"
+                      className="block px-4 py-2 text-base font-medium text-normal hover:text-gray-800 hover:bg-gray-100"
                     >
                       {item.name}
                     </a>

@@ -58,24 +58,24 @@ export default function OpeningList() {
                   </div>
                   <div className="mt-2 sm:flex sm:justify-between">
                     <div className="sm:flex">
-                      <p className="flex items-center text-lg text-gray-500">
+                      <p className="flex items-center text-lg text-normal">
                         <UsersIcon
-                          className="flex-shrink-0 mr-1.5 h-5 w-5 text-gray-400"
+                          className="flex-shrink-0 mr-1.5 h-5 w-5 text-light"
                           aria-hidden="true"
                         />
                         {_.random(10, 500)}
                       </p>
-                      <p className="mt-2 flex items-center text-lg text-gray-500 sm:mt-0 sm:ml-6">
+                      <p className="mt-2 flex items-center text-lg text-normal sm:mt-0 sm:ml-6">
                         <LocationMarkerIcon
-                          className="flex-shrink-0 mr-1.5 h-5 w-5 text-gray-400"
+                          className="flex-shrink-0 mr-1.5 h-5 w-5 text-light"
                           aria-hidden="true"
                         />
                         Location
                       </p>
                     </div>
-                    <div className="mt-2 flex items-center text-md text-gray-500 sm:mt-0">
+                    <div className="mt-2 flex items-center text-md text-normal sm:mt-0">
                       <CalendarIcon
-                        className="flex-shrink-0 mr-1.5 h-5 w-5 text-gray-400"
+                        className="flex-shrink-0 mr-1.5 h-5 w-5 text-light"
                         aria-hidden="true"
                       />
                       <p>

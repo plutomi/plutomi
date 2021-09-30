@@ -39,10 +39,7 @@ export default function OpeningsDropdown({ openings, index }) {
             <span className="ml-3 block truncate">{selected.GSI1SK}</span>
           </div>
           <span className="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none">
-            <SelectorIcon
-              className="h-5 w-5 text-gray-400"
-              aria-hidden="true"
-            />
+            <SelectorIcon className="h-5 w-5 text-light" aria-hidden="true" />
           </span>
         </Listbox.Button>
 
@@ -58,7 +55,7 @@ export default function OpeningsDropdown({ openings, index }) {
                 key={opening.opening_id}
                 className={({ active }) =>
                   classNames(
-                    active ? "text-white bg-blue-600" : "text-gray-900",
+                    active ? "text-white bg-blue-600" : "text-dark",
                     "cursor-default select-none relative py-2 pl-3 pr-9"
                   )
                 }
