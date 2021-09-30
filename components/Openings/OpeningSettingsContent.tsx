@@ -126,12 +126,13 @@ export default function OpeningSettingsContent() {
     // Refresh opening data
     mutate(`/api/openings/${openingModal.opening_id}`);
   };
-
+  // TODO create stage modal needs to be updated
   return (
     <>
       {/* 3 column wrapper */}
       <div className="flex-grow w-full max-w-7xl mx-auto xl:px-8 lg:flex">
         {/* Left sidebar & main wrapper */}
+        <StageModal createStage={null} />
         <OpeningModal updateOpening={updateOpening} />
         <div className="flex-1 min-w-0 bg-white xl:flex">
           <div className="border-b border-gray-200 xl:border-b-0 xl:flex-shrink-0 xl:w-64 xl:border-r xl:border-gray-200 bg-white">

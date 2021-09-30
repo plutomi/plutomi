@@ -8,7 +8,7 @@ import SignIn from "../../../../../components/SignIn";
 import axios from "axios";
 import { mutate } from "swr";
 import { useRouter } from "next/router";
-import CreateStageModal from "../../../../../components/Stages/CreateStageModal";
+import StageModal from "../../../../../components/Stages/StageModal";
 import useStore from "../../../../../utils/store";
 import StagesHeader from "../../../../../components/Stages/StagesHeader";
 import StageCarousel from "../../../../../components/Stages/StagesCarousel";
@@ -30,8 +30,8 @@ export default function StageID() {
     opening_id as string
   );
 
-  const setCreateStageModalOpen = useStore(
-    (state: PlutomiState) => state.setCreateStageModalOpen
+  const setStageModalOpen = useStore(
+    (state: PlutomiState) => state.setStageModalOpen
   );
 
   // When rendering client side don't display anything until loading is complete
@@ -69,7 +69,7 @@ export default function StageID() {
         body
       );
       alert(data.message);
-      setCreateStageModalOpen(false);
+      setStageModalOpen(false);
     } catch (error) {
       console.error("Error creating stage", error);
       alert(error.response.data.message);
@@ -84,7 +84,7 @@ export default function StageID() {
 
   return (
     <>
-      <CreateStageModal createStage={createStage} />
+      <StageModal createStage={createStage} />
       <SignedInNav current="Openings" />
       <div className="max-w-7xl mx-auto p-4 my-6 rounded-lg min-h-screen ">
         <header>

@@ -1,4 +1,4 @@
-import CreateStageModal from "../../../../components/Stages/CreateStageModal";
+import StageModal from "../../../../components/Stages/StageModal";
 import SignedInNav from "../../../../components/Navbar/SignedInNav";
 import useAllStagesInOpening from "../../../../SWR/useAllStagesInOpening";
 import useOpeningById from "../../../../SWR/useOpeningById";

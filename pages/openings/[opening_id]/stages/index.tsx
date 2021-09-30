@@ -7,7 +7,7 @@ import SignIn from "../../../../components/SignIn";
 import axios from "axios";
 import { mutate } from "swr";
 import { useRouter } from "next/router";
-import CreateStageModal from "../../../../components/Stages/CreateStageModal";
+import StageModal from "../../../../components/Stages/StageModal";
 import useStore from "../../../../utils/store";
 import StagesHeader from "../../../../components/Stages/StagesHeader";
 import useAllStagesInOpening from "../../../../SWR/useAllStagesInOpening";
@@ -28,8 +28,8 @@ export default function Openings() {
     opening?.opening_id
   );
 
-  const setCreateStageModalOpen = useStore(
-    (state: PlutomiState) => state.setCreateStageModalOpen
+  const setStageModalOpen = useStore(
+    (state: PlutomiState) => state.setStageModalOpen
   );
 
   // When rendering client side don't display anything until loading is complete
@@ -75,7 +75,7 @@ export default function Openings() {
         body
       );
       alert(data.message);
-      setCreateStageModalOpen(false);
+      setStageModalOpen(false);
       router.push(
         `${process.env.NEXT_PUBLIC_NEXTAUTH_URL}/openings/${opening_id}/stages/${data.stage.stage_id}`
       );
@@ -100,7 +100,7 @@ export default function Openings() {
   // Users will get redirected to the first stage, this shouldn't be used
   return (
     <>
-      <CreateStageModal createStage={createStage} />
+      <StageModal createStage={createStage} />
       <SignedInNav current="Openings" />
       <div className="max-w-7xl mx-auto p-4 my-6 rounded-lg min-h-screen ">
         <header>

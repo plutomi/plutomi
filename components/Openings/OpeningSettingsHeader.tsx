@@ -8,6 +8,7 @@ import { useState } from "react";
 import GoBack from "../Buttons/GoBackButton";
 import { useRouter } from "next/router";
 import Loader from "../Loader";
+import StageModal from "../Stages/StageModal";
 export default function OpeningSettingsHeader() {
   const router = useRouter();
   const { opening_id } = router.query;
@@ -17,10 +18,14 @@ export default function OpeningSettingsHeader() {
     user?.user_id,
     opening_id as string
   );
+  const setStageModalOpen = useStore(
+    (state: PlutomiState) => state.setStageModalOpen
+  );
 
   if (isOpeningLoading) {
     return <Loader text={"Loading opening..."} />;
   }
+
   return (
     <div className="md:flex md:items-center md:justify-between ">
       <div className=" min-w-0 flex flex-col items-start ">
@@ -45,6 +50,16 @@ export default function OpeningSettingsHeader() {
             Private
           </p>
         )}
+      </div>
+      <div>
+        <button
+          type="button"
+          onClick={() => setStageModalOpen(true)}
+          className="inline-flex items-center px-4 py-2 border  shadow-sm text-base font-medium rounded-md border-blue-500 text-blue-500 bg-white hover:bg-blue-500 hover:text-white  transition ease-in-out duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+        >
+          <PlusIcon className="-ml-1 mr-3 h-5 w-5" aria-hidden="true" />
+          Create Stage
+        </button>
       </div>
     </div>
   );

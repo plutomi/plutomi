@@ -4,9 +4,21 @@ const useStore = create((set) => ({
   // TODO this is stupidly gross!!!
   createOrgModalIsOpen: false,
   createOpeningModalIsOpen: false,
-  createStageModalIsOpen: false,
+  StageModalIsOpen: false,
   openingsSearchInput: "",
   createInviteModalIsOpen: false,
+
+  stageModal: {
+    is_modal_open: false, // False by default
+    modal_mode: "CREATE", // Will render text differently
+    stage_id: "",
+    GSI1SK: "", // Stage title
+  },
+  setStageModal: (stageModal: StageModalInput) => {
+    set((state) => ({
+      stageModal: stageModal,
+    }));
+  },
 
   questionModal: {
     is_modal_open: false, // False by default
@@ -43,9 +55,9 @@ const useStore = create((set) => ({
     set((state: PlutomiState) => ({
       createOpeningModalIsOpen: open,
     })),
-  setCreateStageModalOpen: (open: Boolean) =>
+  setStageModalOpen: (open: Boolean) =>
     set((state: PlutomiState) => ({
-      createStageModalIsOpen: open,
+      StageModalIsOpen: open,
     })),
   setOpeningsSearchInput: (input: string) =>
     set((state: PlutomiState) => ({

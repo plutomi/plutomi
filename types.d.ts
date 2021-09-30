@@ -106,21 +106,17 @@ interface PlutomiState {
   openingModal: OpeningModalInput;
   setOpeningModal: Function;
 
+  // Create / edit stages
+  stageModal: StageModalInput;
+  setStageModal: Function;
+
   // TODO
   setCreateOrgModalOpen: Function;
   createOrgModalIsOpen: boolean;
-  createStageModalIsOpen: boolean;
-  setCreateStageModalOpen: Function;
   openingsSearchInput: string;
   setOpeningsSearchInput: Function;
   createInviteModalIsOpen: boolean;
   setCreateInviteModalOpen: Function;
-
-  // Question Modal
-  questionModalMode: "CREATE" | "EDIT";
-  questionModalTitle: string; // TODO this is stupidly gross
-  questionModalDescription: string;
-  questionModalId: string;
 }
 
 interface DynamoUser {
@@ -354,6 +350,13 @@ interface QuestionModalInput {
   question_id: "";
   GSI1SK: "";
   question_description: "";
+}
+
+interface StageModalInput {
+  is_modal_open: boolean;
+  modal_mode: "EDIT" | "CREATE"; // Will render text differently
+  stage_id: "";
+  GSI1SK: "";
 }
 
 interface OpeningModalInput {

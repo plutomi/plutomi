@@ -6,26 +6,31 @@ import useStore from "../../utils/store";
 const UrlSafeString = require("url-safe-string"),
   tagGenerator = new UrlSafeString();
 
-export default function CreateStageModal({ createStage }) {
-  const [stage_name, setStageName] = useState("");
-
-  const open = useStore((state: PlutomiState) => state.createStageModalIsOpen);
-
-  const setCreateStageModalOpen = useStore(
-    (state: PlutomiState) => state.setCreateStageModalOpen
+export default function StageModal({ createStage, updateStage }) {
+  const stageModal: StageModalInput = useStore(
+    (state: PlutomiState) => state.stageModal
   );
 
+  const setStageModal = useStore((state: PlutomiState) => state.setStageModal);
+
   const handleSubmit = async (e: FormEvent) => {
-    e.preventDefault();
-    await createStage(stage_name);
-    setStageName("");
+    if (stageModal.modal_mode === "CREATE") {
+      e.preventDefault();
+      await createStage();
+    }
+
+    if (stageModal.modal_mode === "EDIT") {
+      e.preventDefault();
+      await updateStage();
+    }
   };
+
   return (
-    <Transition.Root show={open} as={Fragment}>
+    <Transition.Root show={stageModal.is_modal_open} as={Fragment}>
       <Dialog
         as="div"
         className="fixed inset-0 overflow-hidden "
-        onClose={() => setCreateStageModalOpen(false)}
+        onClose={() => setStageModal({ ...stageModal, is_modal_open: true })}
       >
         <div className="absolute inset-0 overflow-hidden">
           <Transition.Child
@@ -65,7 +70,12 @@ export default function CreateStageModal({ createStage }) {
                           <button
                             type="button"
                             className="bg-blue-700 rounded-md text-blue-200 hover:text-white focus:outline-none focus:ring-2 focus:ring-white"
-                            onClick={() => setCreateStageModalOpen(false)}
+                            onClick={() =>
+                              setStageModal({
+                                ...stageModal,
+                                is_modal_open: false,
+                              })
+                            }
                           >
                             <span className="sr-only">Close panel</span>
                             <XIcon className="h-6 w-6" aria-hidden="true" />
@@ -95,8 +105,13 @@ export default function CreateStageModal({ createStage }) {
                                 name="opening-name"
                                 id="opening-name"
                                 required
-                                onChange={(e) => setStageName(e.target.value)}
-                                value={stage_name}
+                                onChange={(e) =>
+                                  setStageModal({
+                                    ...stageModal,
+                                    GSI1SK: e.target.value,
+                                  })
+                                }
+                                value={stageModal.GSI1SK}
                                 className="block w-full shadow-sm sm:text-sm focus:ring-blue-500 focus:border-blue-500 border-gray-300 rounded-md"
                               />
                             </div>
@@ -279,7 +294,9 @@ export default function CreateStageModal({ createStage }) {
                     <button
                       type="button"
                       className="bg-white py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
-                      onClick={() => setCreateStageModalOpen(false)}
+                      onClick={() =>
+                        setStageModal({ ...stageModal, is_modal_open: false })
+                      }
                     >
                       Cancel
                     </button>
