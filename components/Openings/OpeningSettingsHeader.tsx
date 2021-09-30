@@ -33,10 +33,8 @@ export default function OpeningSettingsHeader() {
   }
 
   const crumbs = [
-    { name: "Openings", href: `/openings`, current: false },
-
     {
-      name: "Settings",
+      name: "Opening Settings",
       href: `/openings/${opening_id}/settings`,
       current: true,
     },
@@ -44,8 +42,8 @@ export default function OpeningSettingsHeader() {
 
   // Hide applicant crumb if opening has no stages
   if (opening?.stage_order.length > 0) {
-    crumbs.splice(1, 0, {
-      name: "Applicants",
+    crumbs.unshift({
+      name: "Opening Applicants",
       href: `/openings/${opening_id}/stages/${opening?.stage_order[0]}`,
       current: false,
     });

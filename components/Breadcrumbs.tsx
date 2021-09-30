@@ -31,8 +31,8 @@ export default function Breadcrumbs({ crumbs }) {
               </svg>
               <Link href={crumb.href}>
                 <a
-                  className={`ml-4 text-lg  text-normal hover:text-dark transition ease-in-out duration-200 ${
-                    crumb.current ? "font-bold" : "font-normal"
+                  className={`ml-4 text-md  text-normal hover:text-dark transition ease-in-out duration-200 ${
+                    crumb.current ? "font-semibold" : "font-normal"
                   }`}
                 >
                   {crumb.name}
