@@ -41,7 +41,7 @@ export default function FAQ() {
             <h2 className="text-4xl font-extrabold text-dark ">
               Frequently Asked Questions
             </h2>
-            {/* <p className="mt-4 text-lg text-light">
+            {/* <p className="mt-4 text-lg text-normal">
               Can’t find the answer you’re looking for? Please{" "}
               <CustomLink
                 url={"mailto:contact@plutomi.com?subject=Question"}
@@ -58,7 +58,7 @@ export default function FAQ() {
                   <dt className="text-xl leading-6 font-medium text-dark">
                     {faq.question}
                   </dt>
-                  <dd className="mt-2 text-lg text-light ">{faq.answer}</dd>
+                  <dd className="mt-2 text-lg text-normal ">{faq.answer}</dd>
                 </div>
               ))}
             </dl>

@@ -1,4 +1,6 @@
 import { Fragment } from "react";
+import { useSession } from "next-auth/client";
+import useUser from "../../SWR/useUser";
 import { Disclosure, Menu, Transition } from "@headlessui/react";
 import {
   BellIcon,
@@ -10,45 +12,39 @@ import Link from "next/dist/client/link";
 import { signOut } from "next-auth/client";
 import useOrgInvites from "../../SWR/useOrgInvites";
 import Banner from "../BannerTop";
-const user = {
-  name: "Tom Cook",
-  email: "tom@example.com",
-  imageUrl:
-    "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80",
-};
+
 const navigation = [
-  { name: "Dashboard", href: "/dashboard" },
-  { name: "Openings", href: "/openings" },
-  { name: "Team", href: "/team" },
+  { name: "Dashboard", href: "/dashboard", hidden_if_no_org: false },
+  { name: "Openings", href: "/openings", hidden_if_no_org: true },
+  { name: "Team", href: "/team", hidden_if_no_org: true },
 ];
 const userNavigation = [
   // { name: "Your Profile", href: "#" },
-  // { name: "Settings", href: "#" },
+  // { name: "Invites", href: `${process.env.NEXT_PUBLIC_NEXTAUTH_URL}/invites` },
   { name: "Sign out", event: () => signOut(), href: "#" },
 ];
 
 function classNames(...classes) {
   return classes.filter(Boolean).join(" ");
 }
-interface ValidNavigation {
-  current: "Dashboard" | "Openings" | "Team" | "PLACEHOLDER";
-  user: DynamoUser;
-}
-export default function SignedInNav({ current, user }: ValidNavigation) {
+
+export default function SignedInNav({ current }: ValidNavigation) {
+  const [session, loading]: [CustomSession, boolean] = useSession();
+  const { user, isUserLoading, isUserError } = useUser(session?.user_id);
   const { invites, isInvitesLoading, isInvitesError } = useOrgInvites(
     user?.user_id
   );
 
   return (
     <>
-      {invites?.length > 0 ? (
+      {invites?.length > 0 && (
         <Banner
           msgSmall={"You've been invited!"}
           msgLarge={"You've been invited to join an organization!"}
           btnText={"View invites"}
           href={"/invites"}
         />
-      ) : null}
+      )}
       <Disclosure as="nav" className="bg-white border-b border-gray-200">
         {({ open }) => (
           <>
@@ -58,39 +54,47 @@ export default function SignedInNav({ current, user }: ValidNavigation) {
                   <div className="flex-shrink-0 flex items-center">
                     {/* <img
                     className="block lg:hidden h-8 w-auto"
-                    src="https://tailwindui.com/img/logos/workflow-mark-indigo-600.svg"
+                    src="https://tailwindui.com/img/logos/workflow-mark-blue-600.svg"
                     alt="Workflow"
                   />
                   <img
                     className="hidden lg:block h-8 w-auto"
-                    src="https://tailwindui.com/img/logos/workflow-logo-indigo-600-mark-gray-800-text.svg"
+                    src="https://tailwindui.com/img/logos/workflow-logo-blue-600-mark-gray-800-text.svg"
                     alt="Workflow"
                   /> */}
                   </div>
                   <div className="hidden sm:-my-px sm:ml-6 sm:flex sm:space-x-8">
-                    {navigation.map((item) => (
-                      <Link key={item.name} href={item.href}>
-                        <a
-                          className={classNames(
-                            current === item.name
-                              ? "border-indigo-500 text-gray-900"
-                              : "border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700",
-                            "inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium"
-                          )}
-                          aria-current={
-                            current === item.name ? "page" : undefined
-                          }
-                        >
-                          {item.name}
-                        </a>
-                      </Link>
-                    ))}
+                    {navigation.map((item) => {
+                      if (
+                        user?.org_id === "NO_ORG_ASSIGNED" &&
+                        item.hidden_if_no_org
+                      ) {
+                        return null;
+                      }
+                      return (
+                        <Link key={item.name} href={item.href}>
+                          <a
+                            className={classNames(
+                              current === item.name
+                                ? "border-blue-500 text-dark"
+                                : "border-transparent text-light hover:border-blue-gray-300 hover:text-gray-700",
+                              "inline-flex items-center px-1 pt-1 border-b-2 text-md font-medium"
+                            )}
+                            aria-current={
+                              current === item.name ? "page" : undefined
+                            }
+                          >
+                            {item.name}
+                          </a>
+                        </Link>
+                      );
+                    })}
                   </div>
                 </div>
                 <div className="hidden sm:ml-6 sm:flex sm:items-center">
                   {/* <button
                     type="button"
-                    className="bg-white p-1 rounded-full text-gray-400 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                    className="bg-white p-1 rounded-full text-light hover:text-normal focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
                   >
                     <span className="sr-only">View notifications</span>
                     <BellIcon className="h-6 w-6" aria-hidden="true" />
@@ -99,7 +103,7 @@ export default function SignedInNav({ current, user }: ValidNavigation) {
                   {/* Profile dropdown */}
                   <Menu as="div" className="ml-3 relative">
                     <div>
-                      <Menu.Button className="max-w-xs bg-white flex items-center text-sm rounded-full focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                      <Menu.Button className="max-w-xs bg-white flex items-center text-md rounded-full focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
                         <span className="sr-only">Open user menu</span>
                         {/* <img
                         className="h-8 w-8 rounded-full"
@@ -129,10 +133,10 @@ export default function SignedInNav({ current, user }: ValidNavigation) {
                             {({ active }) => (
                               <a
                                 href={item.href}
-                                onClick={item.event ? item.event : null}
+                                onClick={item.event && item.event}
                                 className={classNames(
                                   active ? "bg-gray-100" : "",
-                                  "block px-4 py-2 text-sm text-gray-700"
+                                  "block px-4 py-2 text-md text-gray-700"
                                 )}
                               >
                                 {item.name}
@@ -146,7 +150,7 @@ export default function SignedInNav({ current, user }: ValidNavigation) {
                 </div>
                 <div className="-mr-2 flex items-center sm:hidden">
                   {/* Mobile menu button */}
-                  <Disclosure.Button className="bg-white inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                  <Disclosure.Button className="bg-white inline-flex items-center justify-center p-2 rounded-md text-light hover:text-normal hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
                     <span className="sr-only">Open main menu</span>
                     {open ? (
                       <XIcon className="block h-6 w-6" aria-hidden="true" />
@@ -166,7 +170,7 @@ export default function SignedInNav({ current, user }: ValidNavigation) {
                     href={item.href}
                     className={classNames(
                       current === item.name
-                        ? "bg-indigo-50 border-indigo-500 text-indigo-700"
+                        ? "bg-blue-50 border-blue-500 text-blue-700"
                         : "border-transparent text-gray-600 hover:bg-gray-50 hover:border-gray-300 hover:text-gray-800",
                       "block pl-3 pr-4 py-2 border-l-4 text-base font-medium"
                     )}
@@ -189,13 +193,13 @@ export default function SignedInNav({ current, user }: ValidNavigation) {
                     <div className="text-base font-medium text-gray-800">
                       {user.first_name}
                     </div>
-                    <div className="text-sm font-medium text-gray-500">
+                    <div className="text-md font-medium text-normal">
                       {user.user_email}
                     </div>
                   </div>
                   {/* <button
                     type="button"
-                    className="ml-auto bg-white flex-shrink-0 p-1 rounded-full text-gray-400 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                    className="ml-auto bg-white flex-shrink-0 p-1 rounded-full text-light hover:text-normal focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
                   >
                     <span className="sr-only">View notifications</span>
                     <BellIcon className="h-6 w-6" aria-hidden="true" />
@@ -206,8 +210,8 @@ export default function SignedInNav({ current, user }: ValidNavigation) {
                     <a
                       key={item.name}
                       href={item.href}
-                      onClick={item.event ? item.event : null}
-                      className="block px-4 py-2 text-base font-medium text-gray-500 hover:text-gray-800 hover:bg-gray-100"
+                      onClick={item.event && item.event}
+                      className="block px-4 py-2 text-base font-medium text-normal hover:text-gray-800 hover:bg-gray-100"
                     >
                       {item.name}
                     </a>

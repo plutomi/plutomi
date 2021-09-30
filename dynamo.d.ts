@@ -39,7 +39,7 @@ interface DynamoOpening {
   // created_at: now,
   // opening_id: opening_id,
   // GSI1PK: `ORG#${org_id}#OPENINGS`,
-  // GSI1SK: opening_name,
+  // GSI1SK: GSI1SK,
   // is_public: false,
   // stage_order: [stage_id_1, stage_id_2]
   PK: string;
@@ -62,7 +62,7 @@ interface DynamoStage {
   // question_order: [],
   // opening_id: opening_id;
   // GSI1PK: `ORG#${org_id}#OPENING#${opening_id}#STAGES`; // Get all stages in an opening
-  // GSI1SK: stage_name;
+  // GSI1SK: GSI1SK;
   PK: string;
   SK: `STAGE`;
   entity_type: "STAGE";
@@ -89,7 +89,7 @@ interface DynamoOrgInvite {
   PK: string;
   SK: string;
   org_id: string;
-  invited_by: string;
+  invited_by: DynamoUser;
   entity_type: "ORG_INVITE";
   created_at: string;
   expires_at: string;
@@ -106,7 +106,7 @@ interface DynamoStageQuestion {
   // entity_type: "STAGE_QUESTION",
   // created_at: now,
   // GSI1PK: `ORG#${org_id}#QUESTIONS`,
-  // GSI1SK: question_title, // TODO filter by opening by stage?
+  // GSI1SK: GSI1SK, // TODO filter by opening by stage?
 
   PK: string;
   SK: string;

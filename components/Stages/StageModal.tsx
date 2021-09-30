@@ -1,30 +1,49 @@
 import { FormEvent, Fragment, useState } from "react";
 import { Dialog, Transition } from "@headlessui/react";
 import { XIcon } from "@heroicons/react/outline";
-import useStore from "../utils/store";
+import useStore from "../../utils/store";
 
 const UrlSafeString = require("url-safe-string"),
   tagGenerator = new UrlSafeString();
 
-export default function CreateStageModal({ createStage }) {
-  const [stage_name, setStageName] = useState("");
-  const open = useStore((state: PlutomiState) => state.createStageModalIsOpen);
+// The reason these aer optional is that we need to call
+// createStage in the opening settings page &
+// updateStage in the stage settings page
 
-  const setCreateStageModalOpen = useStore(
-    (state: PlutomiState) => state.setCreateStageModalOpen
+// This prevents having multiple *business logic* functions in our components
+// At the tradeoff of having two of the same components with different props
+interface StageModalFunctionInputs {
+  createStage?: Function;
+  updateStage?: Function;
+}
+export default function StageModal({
+  createStage,
+  updateStage,
+}: StageModalFunctionInputs) {
+  const stageModal: StageModalInput = useStore(
+    (state: PlutomiState) => state.stageModal
   );
 
+  const setStageModal = useStore((state: PlutomiState) => state.setStageModal);
+
   const handleSubmit = async (e: FormEvent) => {
-    e.preventDefault();
-    await createStage(stage_name);
-    setStageName("");
+    if (stageModal.modal_mode === "CREATE") {
+      e.preventDefault();
+      await createStage();
+    }
+
+    if (stageModal.modal_mode === "EDIT") {
+      e.preventDefault();
+      await updateStage();
+    }
   };
+
   return (
-    <Transition.Root show={open} as={Fragment}>
+    <Transition.Root show={stageModal.is_modal_open} as={Fragment}>
       <Dialog
         as="div"
         className="fixed inset-0 overflow-hidden "
-        onClose={() => setCreateStageModalOpen(false)}
+        onClose={() => setStageModal({ ...stageModal, is_modal_open: false })}
       >
         <div className="absolute inset-0 overflow-hidden">
           <Transition.Child
@@ -55,7 +74,7 @@ export default function CreateStageModal({ createStage }) {
                   onSubmit={(e) => handleSubmit(e)}
                 >
                   <div className="flex-1 h-0 overflow-y-auto">
-                    <div className="py-6 px-4 bg-indigo-700 sm:px-6">
+                    <div className="py-6 px-4 bg-blue-700 sm:px-6">
                       <div className="flex items-center justify-between">
                         <Dialog.Title className="text-lg font-medium text-white">
                           New Stage
@@ -63,8 +82,13 @@ export default function CreateStageModal({ createStage }) {
                         <div className="ml-3 h-7 flex items-center">
                           <button
                             type="button"
-                            className="bg-indigo-700 rounded-md text-indigo-200 hover:text-white focus:outline-none focus:ring-2 focus:ring-white"
-                            onClick={() => setCreateStageModalOpen(false)}
+                            className="bg-blue-700 rounded-md text-blue-200 hover:text-white focus:outline-none focus:ring-2 focus:ring-white"
+                            onClick={() =>
+                              setStageModal({
+                                ...stageModal,
+                                is_modal_open: false,
+                              })
+                            }
                           >
                             <span className="sr-only">Close panel</span>
                             <XIcon className="h-6 w-6" aria-hidden="true" />
@@ -72,7 +96,7 @@ export default function CreateStageModal({ createStage }) {
                         </div>
                       </div>
                       <div className="mt-1">
-                        <p className="text-sm text-indigo-300">
+                        <p className="text-sm text-blue-300">
                           Stages are like Questionnaire, Set Up Profile, hired,
                           or ready to drive.
                         </p>
@@ -84,7 +108,7 @@ export default function CreateStageModal({ createStage }) {
                           <div>
                             <label
                               htmlFor="opening-name"
-                              className="block text-sm font-medium text-gray-900"
+                              className="block text-sm font-medium text-dark"
                             >
                               Stage name
                             </label>
@@ -93,10 +117,16 @@ export default function CreateStageModal({ createStage }) {
                                 type="text"
                                 name="opening-name"
                                 id="opening-name"
+                                placeholder={`Something like 'Questionnaire' or 'Set Up Profile'`}
                                 required
-                                onChange={(e) => setStageName(e.target.value)}
-                                value={stage_name}
-                                className="block w-full shadow-sm sm:text-sm focus:ring-indigo-500 focus:border-indigo-500 border-gray-300 rounded-md"
+                                onChange={(e) =>
+                                  setStageModal({
+                                    ...stageModal,
+                                    GSI1SK: e.target.value,
+                                  })
+                                }
+                                value={stageModal.GSI1SK}
+                                className="block w-full shadow-sm sm:text-sm focus:ring-blue-500 focus:border-blue-500 border-gray-300 rounded-md"
                               />
                             </div>
                           </div>
@@ -104,7 +134,7 @@ export default function CreateStageModal({ createStage }) {
                           {/* <div>
                             <label
                               htmlFor="description"
-                              className="block text-sm font-medium text-gray-900"
+                              className="block text-sm font-medium text-dark"
                             >
                               Description
                             </label>
@@ -113,13 +143,13 @@ export default function CreateStageModal({ createStage }) {
                                 id="description"
                                 name="description"
                                 rows={4}
-                                className="block w-full shadow-sm sm:text-sm focus:ring-indigo-500 focus:border-indigo-500 border border-gray-300 rounded-md"
+                                className="block w-full shadow-sm sm:text-sm focus:ring-blue-500 focus:border-blue-500 border border-gray-300 rounded-md"
                                 defaultValue={""}
                               />
                             </div>
                           </div> */}
                           {/* <div>
-                           <h3 className="text-sm font-medium text-gray-900">
+                           <h3 className="text-sm font-medium text-dark">
                               Team Members
                             </h3> */}
                           {/* <div className="mt-2">
@@ -139,7 +169,7 @@ export default function CreateStageModal({ createStage }) {
                                 ))}
                                 <button
                                   type="button"
-                                  className="flex-shrink-0 bg-white inline-flex h-8 w-8 items-center justify-center rounded-full border-2 border-dashed border-gray-200 text-gray-400 hover:text-gray-500 hover:border-gray-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                                  className="flex-shrink-0 bg-white inline-flex h-8 w-8 items-center justify-center rounded-full border-2 border-dashed border-gray-200 text-light hover:text-normal hover:border-gray-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
                                 >
                                   <span className="sr-only">
                                     Add team member
@@ -153,7 +183,7 @@ export default function CreateStageModal({ createStage }) {
                             </div>
                           </div> */}
                           {/* <fieldset>
-                            <legend className="text-sm font-medium text-gray-900">
+                            <legend className="text-sm font-medium text-dark">
                               Privacy
                             </legend>
                             <div className="mt-2 space-y-5">
@@ -164,20 +194,20 @@ export default function CreateStageModal({ createStage }) {
                                     name="privacy"
                                     aria-describedby="privacy-public-description"
                                     type="radio"
-                                    className="focus:ring-indigo-500 h-4 w-4 text-indigo-600 border-gray-300"
+                                    className="focus:ring-blue-500 h-4 w-4 text-blue-600 border-gray-300"
                                     defaultChecked
                                   />
                                 </div>
                                 <div className="pl-7 text-sm">
                                   <label
                                     htmlFor="privacy-public"
-                                    className="font-medium text-gray-900"
+                                    className="font-medium text-dark"
                                   >
                                     Public access
                                   </label>
                                   <p
                                     id="privacy-public-description"
-                                    className="text-gray-500"
+                                    className="text-normal"
                                   >
                                     Everyone with the link will see this
                                     project.
@@ -192,19 +222,19 @@ export default function CreateStageModal({ createStage }) {
                                       name="privacy"
                                       aria-describedby="privacy-private-to-project-description"
                                       type="radio"
-                                      className="focus:ring-indigo-500 h-4 w-4 text-indigo-600 border-gray-300"
+                                      className="focus:ring-blue-500 h-4 w-4 text-blue-600 border-gray-300"
                                     />
                                   </div>
                                   <div className="pl-7 text-sm">
                                     <label
                                       htmlFor="privacy-private-to-project"
-                                      className="font-medium text-gray-900"
+                                      className="font-medium text-dark"
                                     >
                                       Private to project members
                                     </label>
                                     <p
                                       id="privacy-private-to-project-description"
-                                      className="text-gray-500"
+                                      className="text-normal"
                                     >
                                       Only members of this project would be able
                                       to access.
@@ -220,19 +250,19 @@ export default function CreateStageModal({ createStage }) {
                                       name="privacy"
                                       aria-describedby="privacy-private-to-project-description"
                                       type="radio"
-                                      className="focus:ring-indigo-500 h-4 w-4 text-indigo-600 border-gray-300"
+                                      className="focus:ring-blue-500 h-4 w-4 text-blue-600 border-gray-300"
                                     />
                                   </div>
                                   <div className="pl-7 text-sm">
                                     <label
                                       htmlFor="privacy-private"
-                                      className="font-medium text-gray-900"
+                                      className="font-medium text-dark"
                                     >
                                       Private to you
                                     </label>
                                     <p
                                       id="privacy-private-description"
-                                      className="text-gray-500"
+                                      className="text-normal"
                                     >
                                       You are the only one able to access this
                                       project.
@@ -247,10 +277,10 @@ export default function CreateStageModal({ createStage }) {
                           <div className="flex text-sm">
                             <a
                               href="#"
-                              className="group inline-flex items-center font-medium text-indigo-600 hover:text-indigo-900"
+                              className="group inline-flex items-center font-medium text-blue-600 hover:text-blue-900"
                             >
                               <LinkIcon
-                                className="h-5 w-5 text-indigo-500 group-hover:text-indigo-900"
+                                className="h-5 w-5 text-blue-500 group-hover:text-blue-900"
                                 aria-hidden="true"
                               />
                               <span className="ml-2">Copy link</span>
@@ -259,10 +289,10 @@ export default function CreateStageModal({ createStage }) {
                           <div className="mt-4 flex text-sm">
                             <a
                               href="#"
-                              className="group inline-flex items-center text-gray-500 hover:text-gray-900"
+                              className="group inline-flex items-center text-normal hover:text-dark"
                             >
                               <QuestionMarkCircleIcon
-                                className="h-5 w-5 text-gray-400 group-hover:text-gray-500"
+                                className="h-5 w-5 text-light group-hover:text-normal"
                                 aria-hidden="true"
                               />
                               <span className="ml-2">
@@ -277,14 +307,16 @@ export default function CreateStageModal({ createStage }) {
                   <div className="flex-shrink-0 px-4 py-4 flex justify-end">
                     <button
                       type="button"
-                      className="bg-white py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-                      onClick={() => setCreateStageModalOpen(false)}
+                      className="bg-white py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+                      onClick={() =>
+                        setStageModal({ ...stageModal, is_modal_open: false })
+                      }
                     >
                       Cancel
                     </button>
                     <button
                       type="submit"
-                      className="ml-4 inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                      className="ml-4 inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
                     >
                       Create Stage
                     </button>

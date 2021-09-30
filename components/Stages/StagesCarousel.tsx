@@ -1,0 +1,70 @@
+import React, { useState } from "react";
+import ItemsCarousel from "react-items-carousel";
+import { ArrowLeftIcon } from "@heroicons/react/outline";
+import { ArrowRightIcon } from "@heroicons/react/outline";
+import { useRouter } from "next/router";
+import useAllStagesInOpening from "../../SWR/useAllStagesInOpening";
+import useUser from "../../SWR/useUser";
+import useStageById from "../../SWR/useStageById";
+import StageCard from "./StageCard";
+import Loader from "../Loader";
+import useOpeningById from "../../SWR/useOpeningById";
+import { useSession } from "next-auth/client";
+export default function StageCarousel() {
+  const router = useRouter();
+  const [activeItemIndex, setActiveItemIndex] = useState(0);
+  const chevronWidth = 60;
+
+  const { opening_id, stage_id } = router.query;
+  const [session, loading]: [CustomSession, boolean] = useSession();
+  const { user, isUserLoading, isUserError } = useUser(session?.user_id);
+
+  let { opening, isOpeningLoading, isOpeningError } = useOpeningById(
+    user?.user_id,
+    opening_id as string
+  );
+
+  let { stages, isStagesLoading, isStagesError } = useAllStagesInOpening(
+    session?.user_id,
+    opening?.opening_id
+  );
+
+  if (isStagesLoading) {
+    return <Loader text="Loading stages..." />;
+  }
+  return (
+    <div className="max-w-8xl border rounded-xl -py-4 ">
+      <ItemsCarousel
+        requestToChangeActive={setActiveItemIndex}
+        activeItemIndex={activeItemIndex}
+        numberOfCards={6}
+        slidesToScroll={3}
+        responsive={false}
+        gutter={-60}
+        chevronWidth={chevronWidth}
+        leftChevron={
+          <button className="inline-flex  border rounded-l-xl bg-blue-300   hover:bg-blue-500  transition ease-in-out duration-200 w-full justify-center items-center h-full text-white">
+            <ArrowLeftIcon className="h-10 w-10" aria-hidden="true" />
+          </button>
+        }
+        rightChevron={
+          <button className="inline-flex  border rounded-r-xl bg-blue-300   hover:bg-blue-500  transition ease-in-out duration-200 w-full justify-center items-center h-full text-white">
+            <ArrowRightIcon className="h-10 w-10" aria-hidden="true" />
+          </button>
+        }
+        outsideChevron
+        firstAndLastGutter={false}
+      >
+        {stages?.map((stage: DynamoStage) => (
+          <div key={stage.stage_id} className={"mx-9 "}>
+            <StageCard
+              name={stage.GSI1SK}
+              current_stage_id={stage.stage_id}
+              opening_id={stage.opening_id}
+            />
+          </div>
+        ))}
+      </ItemsCarousel>
+    </div>
+  );
+}

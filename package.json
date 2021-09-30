@@ -28,6 +28,7 @@
     "react-cookie": "^4.1.1",
     "react-dom": "17.0.2",
     "react-icons": "^4.2.0",
+    "react-items-carousel": "^2.8.0",
     "react-number-format": "^4.7.3",
     "swr": "^1.0.0",
     "tailwindcss": "^2.2.15",

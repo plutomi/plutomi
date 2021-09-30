@@ -1,32 +1,37 @@
-import { FormEvent, Fragment, useState } from "react";
+import { FormEvent, Fragment } from "react";
 import { Dialog, Transition } from "@headlessui/react";
 import { XIcon } from "@heroicons/react/outline";
-import axios from "axios";
+import useStore from "../../utils/store";
 
-import useStore from "../utils/store";
-export default function CreateQuestionModal({ createQuestion }) {
-  const [question_title, setQuestionTitle] = useState("");
-  const [question_description, setQuestionDescription] = useState("");
+export default function QuestionModal({ createQuestion, updateQuestion }) {
+  const questionModal: QuestionModalInput = useStore(
+    (state: PlutomiState) => state.questionModal
+  );
+
+  const setQuestionModal = useStore(
+    (state: PlutomiState) => state.setQuestionModal
+  );
 
   const handleSubmit = async (e: FormEvent) => {
-    e.preventDefault();
-    await createQuestion({ question_title, question_description });
+    if (questionModal.modal_mode === "CREATE") {
+      e.preventDefault();
+      await createQuestion();
+    }
+
+    if (questionModal.modal_mode === "EDIT") {
+      e.preventDefault();
+      await updateQuestion();
+    }
   };
 
-  const open = useStore(
-    (state: PlutomiState) => state.createQuestionModalIsOpen
-  );
-
-  const setCreateQuestionModalOpen = useStore(
-    (state: PlutomiState) => state.setCreateQuestionModalOpen
-  );
-
   return (
-    <Transition.Root show={open} as={Fragment}>
+    <Transition.Root show={questionModal.is_modal_open} as={Fragment}>
       <Dialog
         as="div"
         className="fixed inset-0 overflow-hidden "
-        onClose={() => setCreateQuestionModalOpen(false)}
+        onClose={() =>
+          setQuestionModal({ ...questionModal, is_modal_open: false })
+        }
       >
         <div className="absolute inset-0 overflow-hidden">
           <Transition.Child
@@ -57,16 +62,23 @@ export default function CreateQuestionModal({ createQuestion }) {
                   onSubmit={(e) => handleSubmit(e)}
                 >
                   <div className="flex-1 h-0 overflow-y-auto">
-                    <div className="py-6 px-4 bg-indigo-700 sm:px-6">
+                    <div className="py-6 px-4 bg-blue-700 sm:px-6">
                       <div className="flex items-center justify-between">
                         <Dialog.Title className="text-lg font-medium text-white">
-                          New Question
+                          {questionModal.modal_mode === "CREATE"
+                            ? "New Question"
+                            : "Updating Question"}
                         </Dialog.Title>
                         <div className="ml-3 h-7 flex items-center">
                           <button
                             type="button"
-                            className="bg-indigo-700 rounded-md text-indigo-200 hover:text-white focus:outline-none focus:ring-2 focus:ring-white"
-                            onClick={() => setCreateQuestionModalOpen(false)}
+                            className="bg-blue-700 rounded-md text-blue-200 hover:text-white focus:outline-none focus:ring-2 focus:ring-white"
+                            onClick={() =>
+                              setQuestionModal({
+                                ...questionModal,
+                                is_modal_open: false,
+                              })
+                            }
                           >
                             <span className="sr-only">Close panel</span>
                             <XIcon className="h-6 w-6" aria-hidden="true" />
@@ -74,9 +86,8 @@ export default function CreateQuestionModal({ createQuestion }) {
                         </div>
                       </div>
                       <div className="mt-1">
-                        <p className="text-sm text-indigo-300">
-                          Create a question that will be shown to applicants in
-                          this stage
+                        <p className="text-sm text-blue-300">
+                          Questions will be shown to applicants in this stage
                         </p>
                       </div>
                     </div>
@@ -86,9 +97,11 @@ export default function CreateQuestionModal({ createQuestion }) {
                           <div>
                             <label
                               htmlFor="title"
-                              className="block text-sm font-medium text-gray-900"
+                              className="block text-sm font-medium text-dark"
                             >
-                              Question Title
+                              {questionModal.modal_mode === "CREATE"
+                                ? "Question Title"
+                                : "New Title"}
                             </label>
                             <div className="mt-1">
                               <input
@@ -96,30 +109,43 @@ export default function CreateQuestionModal({ createQuestion }) {
                                 name="title"
                                 id="title"
                                 required
-                                onChange={(e) =>
-                                  setQuestionTitle(e.target.value)
+                                placeholder={
+                                  "Something like... 'What is your name?'"
                                 }
-                                value={question_title}
-                                className="block w-full shadow-sm sm:text-sm focus:ring-indigo-500 focus:border-indigo-500 border-gray-300 rounded-md"
+                                value={questionModal.GSI1SK}
+                                onChange={(e) =>
+                                  setQuestionModal({
+                                    ...questionModal,
+                                    GSI1SK: e.target.value,
+                                  })
+                                }
+                                className="block w-full shadow-sm text-sm focus:ring-blue-500 focus:border-blue-500 border-gray-300 rounded-md"
                               />
                             </div>
                           </div>
                           <div>
                             <label
                               htmlFor="description"
-                              className="block text-sm font-medium text-gray-900"
+                              className="block text-sm font-medium text-dark"
                             >
-                              Description
+                              {questionModal.modal_mode === "CREATE"
+                                ? "Description"
+                                : "New Description"}
                             </label>
-                            <div className="mt-1 flex rounded-md shadow-sm">
+                            <div className="mt-1 flex rounded-md shadow-sm w-full">
                               <textarea
                                 name="description"
                                 id="description"
-                                placeholder="Some helper text for your applicants - Optional"
-                                className="p-5 resize border rounded-md"
+                                placeholder="Optional helper text for your applicants"
+                                className="p-2 text-sm focus:ring-blue-500 focus:border-blue-500 border-gray-300 rounded-md w-full block resize"
                                 maxLength={300}
+                                rows={5}
+                                value={questionModal.question_description}
                                 onChange={(e) =>
-                                  setQuestionDescription(e.target.value)
+                                  setQuestionModal({
+                                    ...questionModal,
+                                    question_description: e.target.value,
+                                  })
                                 }
                               ></textarea>
                             </div>
@@ -127,7 +153,7 @@ export default function CreateQuestionModal({ createQuestion }) {
                           {/* <div>
                             <label
                               htmlFor="description"
-                              className="block text-sm font-medium text-gray-900"
+                              className="block text-sm font-medium text-dark"
                             >
                               Description
                             </label>
@@ -136,13 +162,13 @@ export default function CreateQuestionModal({ createQuestion }) {
                                 id="description"
                                 name="description"
                                 rows={4}
-                                className="block w-full shadow-sm sm:text-sm focus:ring-indigo-500 focus:border-indigo-500 border border-gray-300 rounded-md"
+                                className="block w-full shadow-sm sm:text-sm focus:ring-blue-500 focus:border-blue-500 border border-gray-300 rounded-md"
                                 defaultValue={""}
                               />
                             </div>
                           </div> */}
                           {/* <div>
-                           <h3 className="text-sm font-medium text-gray-900">
+                           <h3 className="text-sm font-medium text-dark">
                               Team Members
                             </h3> */}
                           {/* <div className="mt-2">
@@ -162,7 +188,7 @@ export default function CreateQuestionModal({ createQuestion }) {
                                 ))}
                                 <button
                                   type="button"
-                                  className="flex-shrink-0 bg-white inline-flex h-8 w-8 items-center justify-center rounded-full border-2 border-dashed border-gray-200 text-gray-400 hover:text-gray-500 hover:border-gray-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                                  className="flex-shrink-0 bg-white inline-flex h-8 w-8 items-center justify-center rounded-full border-2 border-dashed border-gray-200 text-light hover:text-normal hover:border-gray-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
                                 >
                                   <span className="sr-only">
                                     Add team member
@@ -176,7 +202,7 @@ export default function CreateQuestionModal({ createQuestion }) {
                             </div>
                           </div> */}
                           {/* <fieldset>
-                            <legend className="text-sm font-medium text-gray-900">
+                            <legend className="text-sm font-medium text-dark">
                               Privacy
                             </legend>
                             <div className="mt-2 space-y-5">
@@ -187,20 +213,20 @@ export default function CreateQuestionModal({ createQuestion }) {
                                     name="privacy"
                                     aria-describedby="privacy-public-description"
                                     type="radio"
-                                    className="focus:ring-indigo-500 h-4 w-4 text-indigo-600 border-gray-300"
+                                    className="focus:ring-blue-500 h-4 w-4 text-blue-600 border-gray-300"
                                     defaultChecked
                                   />
                                 </div>
                                 <div className="pl-7 text-sm">
                                   <label
                                     htmlFor="privacy-public"
-                                    className="font-medium text-gray-900"
+                                    className="font-medium text-dark"
                                   >
                                     Public access
                                   </label>
                                   <p
                                     id="privacy-public-description"
-                                    className="text-gray-500"
+                                    className="text-normal"
                                   >
                                     Everyone with the link will see this
                                     project.
@@ -215,19 +241,19 @@ export default function CreateQuestionModal({ createQuestion }) {
                                       name="privacy"
                                       aria-describedby="privacy-private-to-project-description"
                                       type="radio"
-                                      className="focus:ring-indigo-500 h-4 w-4 text-indigo-600 border-gray-300"
+                                      className="focus:ring-blue-500 h-4 w-4 text-blue-600 border-gray-300"
                                     />
                                   </div>
                                   <div className="pl-7 text-sm">
                                     <label
                                       htmlFor="privacy-private-to-project"
-                                      className="font-medium text-gray-900"
+                                      className="font-medium text-dark"
                                     >
                                       Private to project members
                                     </label>
                                     <p
                                       id="privacy-private-to-project-description"
-                                      className="text-gray-500"
+                                      className="text-normal"
                                     >
                                       Only members of this project would be able
                                       to access.
@@ -243,19 +269,19 @@ export default function CreateQuestionModal({ createQuestion }) {
                                       name="privacy"
                                       aria-describedby="privacy-private-to-project-description"
                                       type="radio"
-                                      className="focus:ring-indigo-500 h-4 w-4 text-indigo-600 border-gray-300"
+                                      className="focus:ring-blue-500 h-4 w-4 text-blue-600 border-gray-300"
                                     />
                                   </div>
                                   <div className="pl-7 text-sm">
                                     <label
                                       htmlFor="privacy-private"
-                                      className="font-medium text-gray-900"
+                                      className="font-medium text-dark"
                                     >
                                       Private to you
                                     </label>
                                     <p
                                       id="privacy-private-description"
-                                      className="text-gray-500"
+                                      className="text-normal"
                                     >
                                       You are the only one able to access this
                                       project.
@@ -270,10 +296,10 @@ export default function CreateQuestionModal({ createQuestion }) {
                           <div className="flex text-sm">
                             <a
                               href="#"
-                              className="group inline-flex items-center font-medium text-indigo-600 hover:text-indigo-900"
+                              className="group inline-flex items-center font-medium text-blue-600 hover:text-blue-900"
                             >
                               <LinkIcon
-                                className="h-5 w-5 text-indigo-500 group-hover:text-indigo-900"
+                                className="h-5 w-5 text-blue-500 group-hover:text-blue-900"
                                 aria-hidden="true"
                               />
                               <span className="ml-2">Copy link</span>
@@ -282,10 +308,10 @@ export default function CreateQuestionModal({ createQuestion }) {
                           <div className="mt-4 flex text-sm">
                             <a
                               href="#"
-                              className="group inline-flex items-center text-gray-500 hover:text-gray-900"
+                              className="group inline-flex items-center text-normal hover:text-dark"
                             >
                               <QuestionMarkCircleIcon
-                                className="h-5 w-5 text-gray-400 group-hover:text-gray-500"
+                                className="h-5 w-5 text-light group-hover:text-normal"
                                 aria-hidden="true"
                               />
                               <span className="ml-2">
@@ -300,16 +326,24 @@ export default function CreateQuestionModal({ createQuestion }) {
                   <div className="flex-shrink-0 px-4 py-4 flex justify-end">
                     <button
                       type="button"
-                      className="bg-white py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-                      onClick={() => setCreateQuestionModalOpen(false)}
+                      className="bg-white py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+                      onClick={() =>
+                        setQuestionModal({
+                          ...questionModal,
+                          is_modal_open: false,
+                        })
+                      }
                     >
                       Cancel
                     </button>
                     <button
                       type="submit"
-                      className="ml-4 inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                      className="ml-4 inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
                     >
-                      Create Question
+                      {questionModal.modal_mode === "CREATE"
+                        ? "Create"
+                        : "Update"}{" "}
+                      Question
                     </button>
                   </div>
                 </form>
@@ -320,4 +354,8 @@ export default function CreateQuestionModal({ createQuestion }) {
       </Dialog>
     </Transition.Root>
   );
+
+  {
+    /* EDIT QUESTION */
+  }
 }

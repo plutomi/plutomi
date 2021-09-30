@@ -97,7 +97,7 @@ export default function Navbar() {
                     />
                   </a> */}
                   <div className="-mr-2 flex items-center md:hidden">
-                    <Popover.Button className="bg-gray-50 rounded-md p-2 inline-flex items-center justify-center text-blue-gray-400 hover:text-light hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-bg-blue-gray-500">
+                    <Popover.Button className="bg-gray-50 rounded-md p-2 inline-flex items-center justify-center text-blue-gray-400 hover:text-normal hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-bg-blue-gray-500">
                       <span className="sr-only">Open main menu</span>
                       <MenuIcon className="h-6 w-6" aria-hidden="true" />
                     </Popover.Button>
@@ -109,7 +109,7 @@ export default function Navbar() {
                   <a
                     key={item.name}
                     href={item.href}
-                    className="font-medium text-light hover:text-dark"
+                    className="font-medium text-normal hover:text-dark"
                   >
                     {item.name}
                   </a>
@@ -151,7 +151,7 @@ export default function Navbar() {
                     /> */}
                   </div>
                   <div className="-mr-2">
-                    <Popover.Button className="bg-white rounded-md p-2 inline-flex items-center justify-center text-blue-gray-400 hover:text-light hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-bg-blue-gray-500">
+                    <Popover.Button className="bg-white rounded-md p-2 inline-flex items-center justify-center text-blue-gray-400 hover:text-normal hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-bg-blue-gray-500">
                       <span className="sr-only">Close menu</span>
                       <XIcon className="h-6 w-6" aria-hidden="true" />
                     </Popover.Button>
@@ -162,7 +162,7 @@ export default function Navbar() {
                     <a
                       key={item.name}
                       href={item.href}
-                      className="block px-3 py-2 rounded-md text-base font-medium text-light hover:text-dark hover:bg-gray-50"
+                      className="block px-3 py-2 rounded-md text-base font-medium text-normal hover:text-dark hover:bg-gray-50"
                     >
                       {item.name}
                     </a>
@@ -181,13 +181,13 @@ export default function Navbar() {
 
         {/* <main className="mt-16 mx-auto max-w-7xl px-4 sm:mt-24">
           <div className="text-center">
-            <h1 className="text-4xl tracking-tight font-extrabold text-gray-900 sm:text-5xl md:text-6xl">
+            <h1 className="text-4xl tracking-tight font-extrabold text-dark sm:text-5xl md:text-6xl">
               <span className="block xl:inline">Data to enrich your</span>{" "}
               <span className="block text-bg-blue-gray-600 xl:inline">
                 online business
               </span>
             </h1>
-            <p className="mt-3 max-w-md mx-auto text-base text-gray-500 sm:text-lg md:mt-5 md:text-xl md:max-w-3xl">
+            <p className="mt-3 max-w-md mx-auto text-base text-normal sm:text-lg md:mt-5 md:text-xl md:max-w-3xl">
               Anim aute id magna aliqua ad ad non deserunt sunt. Qui irure qui
               lorem cupidatat commodo. Elit sunt amet fugiat veniam occaecat
               fugiat aliqua.

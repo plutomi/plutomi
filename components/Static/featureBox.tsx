@@ -32,7 +32,7 @@ const features = [
     name: "Stay in control",
     icon: LockClosedIcon,
     color: `bg-gradient-to-br from-purple-300 to-violet-500`,
-    description: "Role based access to all of your resources + MFA",
+    description: "Role based access to all of your resources",
   },
 ];
 export default function Features() {
@@ -52,7 +52,7 @@ export default function Features() {
                   {feature.name}
                 </p>
               </dt>
-              <dd className="mt-2 ml-16 text-xl text-light">
+              <dd className="mt-2 ml-16 text-xl text-normal">
                 {feature.isGithub ? (
                   <p>
                     Read, inspect, and contribute to{" "}

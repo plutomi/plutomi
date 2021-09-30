@@ -1,7 +1,7 @@
-import { CreateStageQuestion } from "../../../../../../../../utils/stages/createStageQuestion";
+import { CreateStageQuestion } from "../../../../../../../../utils/questions/createStageQuestion";
 import withAuthorizer from "../../../../../../../../middleware/withAuthorizer";
 import { NextApiResponse } from "next";
-import { GetAllQuestionsInStage } from "../../../../../../../../utils/stages/getAllQuestionsInStage";
+import { GetAllQuestionsInStage } from "../../../../../../../../utils/questions/getAllQuestionsInStage";
 
 const handler = async (req: CustomRequest, res: NextApiResponse) => {
   const { method, query } = req;
@@ -14,10 +14,6 @@ const handler = async (req: CustomRequest, res: NextApiResponse) => {
         opening_id,
         stage_id,
       });
-
-      // TODO i think the issue is we need to sort before sending like we do for stages
-      console.log(`Queried questions`);
-      console.log(questions);
 
       return res.status(200).json(questions);
     } catch (error) {

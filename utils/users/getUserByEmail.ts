@@ -9,7 +9,7 @@ export async function GetUserByEmail(user_email: string) {
     IndexName: "GSI2",
     KeyConditionExpression: "GSI2PK = :GSI2PK AND GSI2SK = :GSI2SK",
     ExpressionAttributeValues: {
-      ":GSI2PK": user_email,
+      ":GSI2PK": user_email.toLowerCase(),
       ":GSI2SK": "USER",
     },
   };

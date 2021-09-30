@@ -35,8 +35,6 @@ export default async function UpdateStage({
 
   const UpdatedExpression = `SET ${newUpdateExpression.join(", ").toString()}`;
 
-  console.log("Expression", UpdatedExpression);
-
   const params = {
     Key: {
       PK: `ORG#${org_id}#OPENING#${opening_id}#STAGE#${stage_id}`,

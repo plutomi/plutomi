@@ -1,86 +1,97 @@
-import UserProfileCard from "../components/UserProfileCard";
+import Loader from "../components/Loader";
+import DashboardContent from "../components/Dashboard/DashboardContent";
+import DashboardHeader from "../components/Dashboard/DashboardHeader";
 import SignedInNav from "../components/Navbar/SignedInNav";
-import CreateOrgModal from "../components/CreateOrgModal";
 import { useSession } from "next-auth/client";
-import SignIn from "../components/SignIn";
 import useUser from "../SWR/useUser";
+import SignIn from "../components/SignIn";
+import axios from "axios";
+import { mutate } from "swr";
 import useStore from "../utils/store";
+import CreateOrgModal from "../components/CreateOrgModal";
+import EmptyOrgState from "../components/Dashboard/EmptyOrgState";
 
 export default function Dashboard() {
+  const [session, loading]: [CustomSession, boolean] = useSession();
+  const { user, isUserLoading, isUserError } = useUser(session?.user_id);
   const setCreateOrgModalOpen = useStore(
     (state: PlutomiState) => state.setCreateOrgModalOpen
   );
 
-  const isCreateOrgModalOpen = useStore(
-    (state: PlutomiState) => state.createOrgModalIsOpen
-  );
-  const [session, loading]: [CustomSession, boolean] = useSession();
-
-  const { user, isUserLoading, isUserError } = useUser(session?.user_id);
-
-  const name = user?.GSI1SK;
+  /** ~~~~~~~~~~~~~~~~~~~~~~~
+   * ~~~~~~~~~~~~~~~~~~~~~~~~
+   * ~~LOADING STATES START~~
+   * ~~~~~~~~~~~~~~~~~~~~~~~~
+   * ~~~~~~~~~~~~~~~~~~~~~~~~
+   */
 
   // When rendering client side don't display anything until loading is complete
   if (typeof window !== "undefined" && loading) {
-    return null;
+    <Loader text="Loading ..." />;
   }
 
   // If no session or bad userid
   if (!session || isUserError) {
     return (
       <SignIn
-        callbackUrl={`${process.env.NEXT_PUBLIC_NEXTAUTH_URL}/dashboard`}
-        desiredPage={"your dashboard"}
+        callbackUrl={`${process.env.NEXT_PUBLIC_NEXTAUTH_URL}/dashboard`} // TODO set this
+        desiredPage={"your dashboard"} // TODO set this
       />
     );
   }
 
   if (isUserLoading) {
-    return (
-      <div className="mx-auto p-20 flex justify-center items-center">
-        <h1 className="text-4xl text-dark font-medium">Loading...</h1>
-      </div>
-    );
+    // TODO set this
+    return <Loader text="Loading user..." />;
   }
 
-  return (
-    <div className="min-h-screen bg-white">
-      <SignedInNav current="Dashboard" user={user} />
-      <div className="py-10">
-        <header>
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            {name.includes("NO_FIRST_NAME") ||
-            name.includes("NO_FIRST_NAME") ? (
-              <h1 className="text-4xl font-bold leading-tight text-gray-900">
-                Welcome!
-              </h1>
-            ) : (
-              <h1 className="text-4xl font-bold leading-tight text-gray-900">
-                Hello {name}!
-              </h1>
-            )}
-          </div>
-        </header>
-        <UserProfileCard user={user} />
-        <main>
-          <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">
-            <CreateOrgModal />
-            {user.org_id === "NO_ORG_ASSIGNED" && (
-              <button
-                onClick={() => setCreateOrgModalOpen(true)}
-                className="border px-4 py-3 text-lg bg-blue-gray-200"
-              >
-                Create an org
-              </button>
-            )}
+  /** ~~~~~~~~~~~~~~~~~~~~~~~
+   * ~~~~~~~~~~~~~~~~~~~~~~~~
+   * ~~~LOADING STATES END~~~
+   * ~~~~~~~~~~~~~~~~~~~~~~~~
+   * ~~~~~~~~~~~~~~~~~~~~~~~~
+   */
 
-            <div className="px-4 py-8 sm:px-0">
-              <div className="border-4 border-dashed border-gray-200 rounded-lg h-96" />
-            </div>
-            {/* /End replace */}
-          </div>
+  const createOrg = async ({ org_name, org_id }) => {
+    if (
+      !confirm(
+        `Your org id will be '${org_id}', this CANNOT be changed. Do you want to continue?`
+      )
+    ) {
+      return;
+    }
+    const body: APICreateOrgInput = {
+      org_name: org_name,
+      org_id: org_id,
+    };
+    try {
+      const { data } = await axios.post("/api/orgs", body);
+      alert(data.message);
+      setCreateOrgModalOpen(false);
+    } catch (error) {
+      alert(error.response.data.message);
+    }
+
+    mutate(`/api/users/${user?.user_id}`);
+  };
+
+  return (
+    <>
+      <CreateOrgModal createOrg={createOrg} />
+      <SignedInNav current="Dashboard" />
+      <div className="max-w-7xl mx-auto p-4 my-12 rounded-lg min-h-screen ">
+        <header>
+          <DashboardHeader />
+        </header>
+
+        <main className="mt-5">
+          {user?.org_id === "NO_ORG_ASSIGNED" ? (
+            <EmptyOrgState />
+          ) : (
+            <DashboardContent />
+          )}
         </main>
       </div>
-    </div>
+    </>
   );
 }

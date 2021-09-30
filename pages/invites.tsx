@@ -5,7 +5,7 @@ import useOrgInvites from "../SWR/useOrgInvites";
 import { GetRelativeTime } from "../utils/time";
 import axios from "axios";
 import { useSWRConfig } from "swr";
-
+import GoBack from "../components/Buttons/GoBackButton";
 import UserProfileCard from "../components/UserProfileCard";
 import SignedInNav from "../components/Navbar/SignedInNav";
 import { useRouter } from "next/router";
@@ -57,6 +57,14 @@ export default function Invites() {
     }
     mutate(`/api/users/${user.user_id}/invites`);
   };
+
+  /** ~~~~~~~~~~~~~~~~~~~~~~~
+   * ~~~~~~~~~~~~~~~~~~~~~~~~
+   * ~~LOADING STATES START~~
+   * ~~~~~~~~~~~~~~~~~~~~~~~~
+   * ~~~~~~~~~~~~~~~~~~~~~~~~
+   */
+
   // When rendering client side don't display anything until loading is complete
   if (typeof window !== "undefined" && loading) {
     return null;
@@ -80,9 +88,17 @@ export default function Invites() {
     );
   }
 
+  /** ~~~~~~~~~~~~~~~~~~~~~~~
+   * ~~~~~~~~~~~~~~~~~~~~~~~~
+   * ~~~LOADING STATES END~~~
+   * ~~~~~~~~~~~~~~~~~~~~~~~~
+   * ~~~~~~~~~~~~~~~~~~~~~~~~
+   */
+
   return (
-    <div className="min-h-screen bg-white">
-      <SignedInNav current={"PLACEHOLDER"} user={user} />
+    <>
+      <SignedInNav current={"PLACEHOLDER"} />
+
       <div className="py-10">
         <header>
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -98,7 +114,7 @@ export default function Invites() {
               className="divide-y divide-gray-200 mx-auto max-w-xl flex-col space-y-4 p-20 border rounded-md shadow-md"
             >
               {invites?.length > 0 ? (
-                invites.map((invite: CreateOrgInviteInput) => (
+                invites.map((invite: DynamoOrgInvite) => (
                   <li
                     key={invite.expires_at}
                     className="py-4 flex border rounded-md w-full"
@@ -141,6 +157,6 @@ export default function Invites() {
           </div>
         </main>
       </div>
-    </div>
+    </>
   );
 }

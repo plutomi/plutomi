@@ -44,6 +44,11 @@ const handler = async (req: CustomRequest, res: NextApiResponse) => {
     } catch (error) {
       return res.status(400).json({ message: `${error.message}` });
     }
+
+    // Abundance of caution, TODO add joi
+    if (org_name.length == 0) {
+      return res.status(400).json({ message: "Org name cannot be empty" });
+    }
     try {
       const org = await CreateOrg(create_org_input);
 

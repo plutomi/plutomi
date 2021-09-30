@@ -1,47 +1,63 @@
-import CreateOpeningModal from "../../components/CreateOpeningModal";
-import UserProfileCard from "../../components/UserProfileCard";
 import SignedInNav from "../../components/Navbar/SignedInNav";
-import { GetRelativeTime } from "../../utils/time";
+import OpeningsHeader from "../../components/Openings/OpeningsHeader";
 import { useSession } from "next-auth/client";
-import SignIn from "../../components/SignIn";
 import useOpenings from "../../SWR/useOpenings";
-import useStore from "../../utils/store";
-import Link from "next/dist/client/link";
-import Breadcrumbs from "../../components/Breadcrumbs";
 import useUser from "../../SWR/useUser";
-import { useState } from "react";
+import Loader from "../../components/Loader";
+import SignIn from "../../components/SignIn";
 import axios from "axios";
 import { mutate } from "swr";
-
+import useStore from "../../utils/store";
+import CreateOpeningModal from "../../components/Openings/OpeningModal";
+import OpeningsContent from "../../components/Openings/OpeningsContent";
+import EmptyOpeningsState from "../../components/Openings/EmptyOpeningsState";
+import UpdateOpening from "../../utils/openings/updateOpening";
 export default function Openings() {
-  const [search, setSearch] = useState("");
   const [session, loading]: [CustomSession, boolean] = useSession();
   const { user, isUserLoading, isUserError } = useUser(session?.user_id);
-
   let { openings, isOpeningsLoading, isOpeningsError } = useOpenings(
-    session?.user_id
+    user?.user_id
   );
 
-  let filteredOpenings = openings?.filter((opening) =>
-    opening.GSI1SK.toLowerCase().includes(search.toLowerCase().trim())
+  const openingModal = useStore((state: PlutomiState) => state.openingModal);
+  const setOpeningModal = useStore(
+    (state: PlutomiState) => state.setOpeningModal
   );
 
-  const setCreateOpeningModalOpen = useStore(
-    (state: PlutomiState) => state.setCreateOpeningModalOpen
-  );
+  // When rendering client side don't display anything until loading is complete
+  if (typeof window !== "undefined" && loading) {
+    return <Loader text="Loading..." />;
+  }
 
-  const createOpening = async ({
-    opening_name,
-    is_public,
-  }: APICreateOpeningInput) => {
+  // If no session or bad userid
+  if (!session || isUserError) {
+    return (
+      <SignIn
+        callbackUrl={`${process.env.NEXT_PUBLIC_NEXTAUTH_URL}/openings`} // TODO set this
+        desiredPage={"your openings"} // TODO set this
+      />
+    );
+  }
+
+  if (isUserLoading) {
+    return <Loader text="Loading user..." />;
+  }
+
+  const createOpening = async () => {
     const body: APICreateOpeningInput = {
-      opening_name: opening_name,
-      is_public: is_public,
+      GSI1SK: openingModal.GSI1SK,
+      is_public: openingModal.is_public,
     };
     try {
       const { data } = await axios.post("/api/openings", body);
       alert(data.message);
-      setCreateOpeningModalOpen(false);
+      setOpeningModal({
+        is_modal_open: false,
+        modal_mode: "CREATE",
+        is_public: false,
+        opening_id: "",
+        GSI1SK: "",
+      });
     } catch (error) {
       alert(error.response.data.message);
     }
@@ -49,143 +65,19 @@ export default function Openings() {
     mutate(`/api/openings/`); // Get all openings
   };
 
-  const pages = [
-    {
-      name: "Openings",
-      href: `${process.env.NEXT_PUBLIC_NEXTAUTH_URL}/openings`,
-      current: true,
-    },
-  ];
-
-  // When rendering client side don't display anything until loading is complete
-  if (typeof window !== "undefined" && loading) {
-    return null;
-  }
-
-  // If no session or bad userid
-  if (!session || isUserError) {
-    return (
-      <SignIn
-        callbackUrl={`${process.env.NEXT_PUBLIC_NEXTAUTH_URL}/openings`}
-        desiredPage={"your openings"}
-      />
-    );
-  }
-
-  if (isUserLoading) {
-    return (
-      <div className="mx-auto p-20 flex justify-center items-center">
-        <h1 className="text-4xl text-dark font-medium">Loading...</h1>
-      </div>
-    );
-  }
-
   return (
-    <div className="min-h-screen bg-white">
-      <SignedInNav current="Openings" user={user} />
-      <div className="py-10">
-        <div className="px-20 py-8">
-          <Breadcrumbs pages={pages} />
-        </div>
+    <>
+      <CreateOpeningModal createOpening={createOpening} />
+      <SignedInNav current="Openings" />
+      <div className="max-w-7xl mx-auto p-4 my-6 rounded-lg min-h-screen ">
         <header>
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            {/* Content */}
-          </div>
+          <OpeningsHeader />
         </header>
-        <UserProfileCard user={user} />
 
-        <main>
-          <CreateOpeningModal createOpening={createOpening} />
-
-          <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">
-            <button
-              type="button"
-              onClick={() => setCreateOpeningModalOpen(true)}
-              className="relative block w-full border-2 border-gray-300 border-dashed rounded-lg p-12 text-center hover:border-gray-400 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-gray-500"
-            >
-              <svg
-                className="mx-auto h-12 w-12 text-gray-400"
-                xmlns="http://www.w3.org/2000/svg"
-                stroke="currentColor"
-                fill="none"
-                viewBox="0 0 48 48"
-                aria-hidden="true"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M8 14v20c0 4.418 7.163 8 16 8 1.381 0 2.721-.087 4-.252M8 14c0 4.418 7.163 8 16 8s16-3.582 16-8M8 14c0-4.418 7.163-8 16-8s16 3.582 16 8m0 0v14m0-4c0 4.418-7.163 8-16 8S8 28.418 8 24m32 10v6m0 0v6m0-6h6m-6 0h-6"
-                />
-              </svg>
-              <span className="mt-2 block text-sm font-medium text-gray-900">
-                Create a new opening
-              </span>
-            </button>
-            <div className="max-w-xl my-2 mx-auto">
-              <label
-                htmlFor="opening"
-                className="block text-sm font-medium text-gray-700"
-              >
-                Search
-              </label>
-              <div className="mt-1">
-                <input
-                  type="text"
-                  name="opening"
-                  id="opening"
-                  value={search}
-                  onChange={(e) => setSearch(e.target.value)}
-                  className="shadow-sm focus:ring-blue-gray-500 focus:border-blue-gray-500 block w-full sm:text-sm border-gray-300 rounded-md"
-                  placeholder="'Engineer' or 'New York'"
-                />
-              </div>
-            </div>
-
-            <div>
-              {filteredOpenings?.length > 0 ? (
-                filteredOpenings.map((opening: DynamoOpening) => {
-                  return (
-                    <div
-                      key={opening.opening_id}
-                      className="border my-4 p-4 hover:bg-blue-gray-100 rounded-lg border-blue-gray-400"
-                    >
-                      <Link href={`/openings/${opening.opening_id}/stages`}>
-                        <a>
-                          <h1 className="font-bold text-xl text-normal my-2">
-                            {opening.GSI1SK}
-                            <p className="text-normal text-sm font-medium">
-                              {" "}
-                              {opening.is_public ? "Public" : "Private"}
-                            </p>
-                          </h1>
-                          <p className="text-normal text-lg ">
-                            Created {GetRelativeTime(opening.created_at)}
-                          </p>
-                          {opening?.stage_order.length > 0 ? (
-                            <p>
-                              Stage Order: {opening?.stage_order.join(", ")}
-                            </p>
-                          ) : (
-                            <p>No stages in this opening</p>
-                          )}
-                          <p className="text-light text-lg "> Apply link: </p>
-                        </a>
-                      </Link>
-
-                      {`${process.env.NEXT_PUBLIC_NEXTAUTH_URL}/${user.org_id}/${opening.opening_id}/apply`}
-                    </div>
-                  );
-                })
-              ) : isOpeningsLoading ? (
-                <h1>Loading...</h1>
-              ) : (
-                <h1>No openings found</h1>
-              )}
-            </div>
-          </div>
+        <main className="mt-5">
+          {openings?.length == 0 ? <EmptyOpeningsState /> : <OpeningsContent />}
         </main>
       </div>
-    </div>
+    </>
   );
 }

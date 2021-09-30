@@ -7,7 +7,7 @@ export default function Example({ stages, name }) {
       </h3>
 
       <div className="my-4 grid grid-cols-1 gap-4 lg:grid-cols-5 mx-12 lg:mx-auto">
-        {stages.map((stage) => (
+        {stages?.map((stage) => (
           <StageCard
             className={null}
             key={stage.id}

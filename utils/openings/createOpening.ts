@@ -7,7 +7,7 @@ const { DYNAMO_TABLE_NAME } = process.env;
 
 export async function CreateOpening({
   org_id,
-  opening_name,
+  GSI1SK,
   is_public,
 }: CreateOpeningInput) {
   const now = GetCurrentTime("iso");
@@ -19,7 +19,7 @@ export async function CreateOpening({
     created_at: now as string,
     opening_id: opening_id,
     GSI1PK: `ORG#${org_id}#OPENINGS`,
-    GSI1SK: opening_name,
+    GSI1SK: GSI1SK,
     is_public: is_public,
     stage_order: [],
   };

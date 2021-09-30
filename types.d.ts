@@ -16,7 +16,7 @@ interface CreateUserInput {
 
 interface CreateOpeningInput {
   org_id: string;
-  opening_name: string;
+  GSI1SK: string;
   is_public: boolean;
   user?: DynamoUser; // User creating the opening - Optional on client
 }
@@ -28,7 +28,11 @@ interface GetOpeningInput {
 interface CreateStageInput {
   org_id: string;
   opening_id: string;
-  stage_name: string;
+  GSI1SK: string;
+}
+
+interface ValidNavigation {
+  current: "Dashboard" | "Openings" | "Team" | "PLACEHOLDER";
 }
 
 interface GetStageByIdInput {
@@ -41,7 +45,7 @@ interface CreateStageQuestionInput {
   org_id: string;
   opening_id: string;
   stage_id: string;
-  question_title: string;
+  GSI1SK: string;
   question_description: string;
 }
 
@@ -94,16 +98,25 @@ interface Pokemon {
   name: string;
 }
 interface PlutomiState {
-  pokemons: Pokemon[];
-  removePokemon: Function;
+  // Create / edit questions in a stage
+  questionModal: QuestionModalInput;
+  setQuestionModal: Function;
+
+  // Create / edit openings
+  openingModal: OpeningModalInput;
+  setOpeningModal: Function;
+
+  // Create / edit stages
+  stageModal: StageModalInput;
+  setStageModal: Function;
+
+  // TODO
   setCreateOrgModalOpen: Function;
   createOrgModalIsOpen: boolean;
-  createOpeningModalIsOpen: boolean;
-  setCreateOpeningModalOpen: Function;
-  createStageModalIsOpen: boolean;
-  setCreateStageModalOpen: Function;
-  createQuestionModalIsOpen: boolean;
-  setCreateQuestionModalOpen: Function;
+  openingsSearchInput: string;
+  setOpeningsSearchInput: Function;
+  createInviteModalIsOpen: boolean;
+  setCreateInviteModalOpen: Function;
 }
 
 interface DynamoUser {
@@ -225,22 +238,27 @@ interface useAllStagesInOpeningOutput {
   isStagesLoading: boolean;
   isStagesError: boolean;
 }
+interface useAllStageQuestionsOutput {
+  questions: DynamoStageQuestion[];
+  isQuestionsLoading: boolean;
+  isQuestionsError: boolean;
+}
 
 interface APICreateLoginCodeInput {
   user_email: string;
 }
 
 interface APICreateOpeningInput {
-  opening_name: string;
+  GSI1SK: string;
   is_public: boolean;
 }
 
 interface APICreateStageInput {
-  stage_name: string;
+  GSI1SK: string;
 }
 
 interface APICreateQuestionInput {
-  question_title: string;
+  GSI1SK: string;
   question_description: string;
 }
 
@@ -290,6 +308,14 @@ interface UpdateOpeningInput {
   updated_opening: DynamoOpening;
 }
 
+interface UpdateQuestionInput {
+  org_id: string;
+  opening_id: string;
+  stage_id: string;
+  question_id: string;
+  updated_question: DynamoStageQuestion;
+}
+
 interface UpdateStageInput {
   org_id: string;
   opening_id: string;
@@ -301,7 +327,7 @@ interface APIUpdateOpeningInput {
 }
 
 interface APICreateQuestionInput {
-  question_title: string;
+  GSI1SK: string;
   question_description: string;
 }
 
@@ -309,4 +335,34 @@ interface AllQuestionsByStageIDInput {
   opening_id: string;
   stage_id: string;
   org_id: string;
+}
+
+interface DeleteQuestionInput {
+  org_id: string;
+  opening_id: string;
+  stage_id: string;
+  question_id: string;
+}
+
+interface QuestionModalInput {
+  is_modal_open: boolean;
+  modal_mode: "EDIT" | "CREATE"; // Will render text differently
+  question_id: "";
+  GSI1SK: "";
+  question_description: "";
+}
+
+interface StageModalInput {
+  is_modal_open: boolean;
+  modal_mode: "EDIT" | "CREATE"; // Will render text differently
+  stage_id: "";
+  GSI1SK: "";
+}
+
+interface OpeningModalInput {
+  is_modal_open: boolean;
+  modal_mode: "EDIT" | "CREATE"; // Will render text differently
+  opening_id: "";
+  GSI1SK: "";
+  is_public: boolean;
 }

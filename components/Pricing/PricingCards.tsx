@@ -3,10 +3,12 @@ import NumberFormat from "react-number-format";
 export default function PricingCard({ applicant_type, description }) {
   const bgColor =
     applicant_type.toLowerCase() === "idle"
-      ? "bg-idle-light"
-      : "bg-active-light";
+      ? "bg-idle-normal"
+      : "bg-active-normal";
   const textColor =
-    applicant_type.toLowerCase() === "idle" ? "text-light" : "text-active-dark";
+    applicant_type.toLowerCase() === "idle"
+      ? "text-normal"
+      : "text-active-dark";
 
   return (
     <div className="shadow-md  block md:flex w-auto rounded-md  flex-col">
@@ -30,7 +32,7 @@ export default function PricingCard({ applicant_type, description }) {
                 prefix={"$"}
               />
             </span>
-            <span className="text-lg  mt-2 font-normal text-light">
+            <span className="text-lg  mt-2 font-normal text-normal">
               / per applicant / per month
             </span>
           </div>

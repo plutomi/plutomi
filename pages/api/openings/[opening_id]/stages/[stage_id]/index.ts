@@ -54,7 +54,6 @@ const handler = async (req: CustomRequest, res: NextApiResponse) => {
   }
 
   if (method === "DELETE") {
-    console.log("Deleting stage");
     try {
       const delete_stage_input = {
         org_id: user.org_id,

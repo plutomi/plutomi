@@ -1,13 +1,18 @@
+// Retrieves a specific user by ID
 import axios from "axios";
 import useSWR from "swr";
 
 const fetcher = (url: string) => axios.get(url).then((res) => res.data);
 
-function useUser(id: string): useUserOutput {
-  const shouldFetch = id ? true : false;
+/**
+ *
+ * @param user_id - The ID of the logged in user
+ */
+function useUser(user_id: string): useUserOutput {
+  const shouldFetch = user_id ? true : false;
 
   const { data, error } = useSWR(
-    shouldFetch ? `/api/users/${id}` : null,
+    shouldFetch && `/api/users/${user_id}`,
     fetcher
   );
 

@@ -26,7 +26,16 @@ export async function CreateApplicant({
     entity_type: "APPLICANT",
     created_at: now,
     GSI1PK: `ORG#${org_id}#APPLICANTS`,
-    GSI1SK: `OPENING#${opening_id}#STAGE#${stage_id}`, // Essetially their current stage AND opening
+    GSI1SK: `OPENING#${opening_id}#STAGE#${stage_id}`, // TODO ADD TIMESTAMP!!!!!
+
+    // TODO ADD TIMESTAMP ABOVE ^
+    // With just one index, we can get
+    // 1. All applicants in an org
+    // 2. All applicants in an opening
+    // 3. All applicants in an opening in a specific stage
+
+    // TODO Add another GSI2 with the timestamp they were created for easy filtering
+    // of applicants who applied < x date
   };
 
   const params: PutCommandInput = {
