@@ -6,7 +6,20 @@ import useStore from "../../utils/store";
 const UrlSafeString = require("url-safe-string"),
   tagGenerator = new UrlSafeString();
 
-export default function StageModal({ createStage, updateStage }) {
+// The reason these aer optional is that we need to call
+// createStage in the opening settings page &
+// updateStage in the stage settings page
+
+// This prevents having multiple *business logic* functions in our components
+// At the tradeoff of having two of the same components with different props
+interface StageModalFunctionInputs {
+  createStage?: Function;
+  updateStage?: Function;
+}
+export default function StageModal({
+  createStage,
+  updateStage,
+}: StageModalFunctionInputs) {
   const stageModal: StageModalInput = useStore(
     (state: PlutomiState) => state.stageModal
   );

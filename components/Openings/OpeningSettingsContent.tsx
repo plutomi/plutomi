@@ -17,6 +17,7 @@ import { useState } from "react";
 import useStore from "../../utils/store";
 import useAllStagesInOpening from "../../SWR/useAllStagesInOpening";
 import useOpeningById from "../../SWR/useOpeningById";
+import StageModal from "../Stages/StageModal";
 export default function OpeningSettingsContent() {
   const router = useRouter();
   const { opening_id } = router.query;
@@ -31,6 +32,9 @@ export default function OpeningSettingsContent() {
     session?.user_id,
     opening?.opening_id
   );
+
+  const stageModal = useStore((state: PlutomiState) => state.stageModal);
+  const setStageModal = useStore((state: PlutomiState) => state.setStageModal);
 
   const openingModal = useStore((state: PlutomiState) => state.openingModal);
   const setOpeningModal = useStore(
@@ -126,13 +130,38 @@ export default function OpeningSettingsContent() {
     // Refresh opening data
     mutate(`/api/openings/${openingModal.opening_id}`);
   };
-  // TODO create stage modal needs to be updated
+
+  const createStage = async (stage_name: string) => {
+    const body: APICreateStageInput = {
+      stage_name: stage_name,
+    };
+    try {
+      const { data } = await axios.post(
+        `/api/openings/${opening_id}/stages`,
+        body
+      );
+      alert(data.message);
+      setStageModal({ ...stageModal, is_modal_open: false });
+      router.push(
+        `${process.env.NEXT_PUBLIC_NEXTAUTH_URL}/openings/${opening_id}/stages/${data.stage.stage_id}`
+      );
+    } catch (error) {
+      console.error("Error creating stage", error);
+      alert(error.response.data.message);
+    }
+    // Refresh stage order
+    mutate(`/api/openings/${opening_id}`);
+
+    // Refresh stage list
+    mutate(`/api/openings/${opening_id}/stages`);
+  };
+
   return (
     <>
       {/* 3 column wrapper */}
       <div className="flex-grow w-full max-w-7xl mx-auto xl:px-8 lg:flex">
         {/* Left sidebar & main wrapper */}
-        <StageModal createStage={null} />
+        <StageModal createStage={createStage} />
         <OpeningModal updateOpening={updateOpening} />
         <div className="flex-1 min-w-0 bg-white xl:flex">
           <div className="border-b border-gray-200 xl:border-b-0 xl:flex-shrink-0 xl:w-64 xl:border-r xl:border-gray-200 bg-white">

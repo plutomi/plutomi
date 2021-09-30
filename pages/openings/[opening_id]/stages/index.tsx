@@ -28,9 +28,8 @@ export default function Openings() {
     opening?.opening_id
   );
 
-  const setStageModalOpen = useStore(
-    (state: PlutomiState) => state.setStageModalOpen
-  );
+  const stageModal = useStore((state: PlutomiState) => state.stageModal);
+  const setStageModal = useStore((state: PlutomiState) => state.setStageModal);
 
   // When rendering client side don't display anything until loading is complete
   if (typeof window !== "undefined" && loading) {
@@ -65,31 +64,6 @@ export default function Openings() {
     );
     return <Loader text="Loading stages..." />;
   }
-  const createStage = async (stage_name: string) => {
-    const body: APICreateStageInput = {
-      stage_name: stage_name,
-    };
-    try {
-      const { data } = await axios.post(
-        `/api/openings/${opening_id}/stages`,
-        body
-      );
-      alert(data.message);
-      setStageModalOpen(false);
-      router.push(
-        `${process.env.NEXT_PUBLIC_NEXTAUTH_URL}/openings/${opening_id}/stages/${data.stage.stage_id}`
-      );
-    } catch (error) {
-      console.error("Error creating stage", error);
-      alert(error.response.data.message);
-    }
-
-    // Refresh stage order
-    mutate(`/api/openings/${opening_id}`);
-
-    // Refresh stage list
-    mutate(`/api/openings/${opening_id}/stages`);
-  };
 
   // !!!!!!!!!!!!!!!
   // !!!!!!!!!!!!!!!
@@ -100,7 +74,6 @@ export default function Openings() {
   // Users will get redirected to the first stage, this shouldn't be used
   return (
     <>
-      <StageModal createStage={createStage} />
       <SignedInNav current="Openings" />
       <div className="max-w-7xl mx-auto p-4 my-6 rounded-lg min-h-screen ">
         <header>

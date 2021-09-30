@@ -19,7 +19,6 @@ export default function Stage() {
   const [session, loading]: [CustomSession, boolean] = useSession();
   const { user, isUserLoading, isUserError } = useUser(session?.user_id);
 
-
   const { opening, isOpeningLoading, isOpeningError } = useOpeningById(
     session?.user_id,
     opening_id as string
@@ -30,30 +29,6 @@ export default function Stage() {
     opening_id as string,
     stage_id as string
   );
-
-  const updateStage = async (stage_id: string) => {
-    try {
-      const body = {
-        updated_stage: {
-          ...stage,
-          GSI1SK: newName ? newName : opening.GSI1SK, // If not blank
-        },
-      };
-
-      const { data } = await axios.put(
-        `/api/openings/${opening_id}/stages/${stage_id}`,
-        body
-      );
-      alert(data.message);
-    } catch (error) {
-      alert(error.response.data.message);
-    }
-    mutate(`/api/openings/${opening_id}/stages/${stage_id}`);
-    setIsEditing(false);
-    setNewName("");
-  };
-
- 
 
   return <div></div>;
 }

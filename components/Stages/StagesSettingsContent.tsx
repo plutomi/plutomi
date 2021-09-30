@@ -3,7 +3,7 @@ import { useRouter } from "next/router";
 import { mutate } from "swr";
 import difference from "../../utils/getObjectDifference";
 import Link from "next/dist/client/link";
-import StageCard from "../Stages/StageCard";
+import StageModal from "./StageModal";
 import QuestionList from "../Questions/QuestionList";
 import { useEffect } from "react";
 import axios from "axios";
@@ -186,12 +186,34 @@ export default function StageSettingsContent() {
     );
   };
 
+  const updateStage = async (stage_id: string) => {
+    try {
+      const body = {
+        updated_stage: {
+          ...stage,
+        },
+      };
+
+      const { data } = await axios.put(
+        `/api/openings/${opening_id}/stages/${stage_id}`,
+        body
+      );
+      alert(data.message);
+    } catch (error) {
+      alert(error.response.data.message);
+    }
+    mutate(`/api/openings/${opening_id}/stages/${stage_id}`);
+  };
+
   return (
     <>
       <QuestionModal
         createQuestion={createQuestion}
         updateQuestion={updateQuestion}
       />
+
+      <StageModal updateStage={updateStage} />
+
       {/* 3 column wrapper */}
       <div className="flex-grow w-full max-w-7xl mx-auto xl:px-8 lg:flex">
         {/* Left sidebar & main wrapper */}
