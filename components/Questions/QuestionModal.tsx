@@ -101,7 +101,7 @@ export default function QuestionModal({ createQuestion, updateQuestion }) {
                             >
                               {questionModal.modal_mode === "CREATE"
                                 ? "Question Title"
-                                : "New Question Title"}
+                                : "New Title"}
                             </label>
                             <div className="mt-1">
                               <input

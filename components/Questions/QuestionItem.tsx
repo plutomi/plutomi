@@ -24,15 +24,15 @@ export default function QuestionItem({
       onMouseLeave={() => setIsHovering(false)}
       className="px-4    bg-white hover:bg-sky-50 transition ease-in-out duration-300 flex justify-between"
     >
-      <div className=" py-6 border-red-400 h-full relative focus-within:ring-2 focus-within:ring-blue-500">
-        <h3 className="text-sm font-semibold text-gray-800">
+      <div className=" py-6  h-full relative focus-within:ring-2 focus-within:ring-blue-500">
+        <h3 className="text-lg font-semibold text-dark">
           {/* <a href="#" className="hover:underline focus:outline-none"> */}
           {/* Extend touch target to entire panel */}
           <span className="absolute inset-0" aria-hidden="true" />
           {new_questions.indexOf(question) + 1}. {question.GSI1SK}
         </h3>
         {question.question_description && (
-          <p className="text-sm text-gray-600 line-clamp-2">
+          <p className="text-md text-light line-clamp-2">
             {question.question_description}
           </p>
         )}
