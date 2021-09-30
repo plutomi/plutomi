@@ -2,7 +2,15 @@ import { FormEvent, Fragment, useState } from "react";
 import { Dialog, Transition } from "@headlessui/react";
 import { XIcon } from "@heroicons/react/outline";
 import useStore from "../../utils/store";
-export default function OpeningModal({ createOpening, updateOpening }) {
+
+interface OpeningModalInputs {
+  createOpening?: Function;
+  updateOpening?: Function;
+}
+export default function OpeningModal({
+  createOpening,
+  updateOpening,
+}: OpeningModalInputs) {
   const openingModal = useStore((state: PlutomiState) => state.openingModal);
   const setOpeningModal = useStore(
     (state: PlutomiState) => state.setOpeningModal
@@ -59,7 +67,9 @@ export default function OpeningModal({ createOpening, updateOpening }) {
                     <div className="py-6 px-4 bg-blue-700 sm:px-6">
                       <div className="flex items-center justify-between">
                         <Dialog.Title className="text-lg font-medium text-white">
-                          New Opening
+                          {openingModal.modal_mode === "CREATE"
+                            ? "New Opening"
+                            : "Edit Opening"}
                         </Dialog.Title>
                         <div className="ml-3 h-7 flex items-center">
                           <button
@@ -94,7 +104,9 @@ export default function OpeningModal({ createOpening, updateOpening }) {
                               htmlFor="opening-name"
                               className="block text-sm font-medium text-gray-900"
                             >
-                              Opening name
+                              {openingModal.modal_mode === "CREATE"
+                                ? "Opening name"
+                                : "Edit name"}
                             </label>
                             <div className="mt-1">
                               <input
@@ -141,8 +153,10 @@ export default function OpeningModal({ createOpening, updateOpening }) {
                                 id="comments-description"
                                 className="text-gray-500"
                               >
-                                Make this opening available to everyone once
-                                created
+                                Make this opening available to everyone once{" "}
+                                {openingModal.modal_mode === "CREATE"
+                                  ? "created"
+                                  : "updated"}
                               </p>
                             </div>
                           </div>
@@ -334,7 +348,10 @@ export default function OpeningModal({ createOpening, updateOpening }) {
                       type="submit"
                       className="ml-4 inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
                     >
-                      Create Opening
+                      {openingModal.modal_mode === "CREATE"
+                        ? "Create"
+                        : "Update"}{" "}
+                      opening
                     </button>
                   </div>
                 </form>

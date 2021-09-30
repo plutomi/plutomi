@@ -30,6 +30,16 @@ export default function OpeningSettingsHeader() {
         <h2 className="text-2xl font-bold text-dark sm:text-3xl sm:truncate">
           {opening?.GSI1SK}
         </h2>
+
+        {opening?.is_public ? (
+          <p className="px-2 inline-flex text-sm leading-5 font-semibold rounded-full bg-green-100 text-green-800">
+            Public
+          </p>
+        ) : (
+          <p className="px-2 inline-flex text-sm leading-5 font-semibold rounded-full bg-blue-gray-100 text-blue-gray-800">
+            Private
+          </p>
+        )}
       </div>
     </div>
   );

@@ -91,28 +91,6 @@ export default function OpeningSettingsContent() {
     setIsStageOrderUpdating(false);
   };
 
-  const createOpening = async () => {
-    const body: APICreateOpeningInput = {
-      opening_name: openingModal.opening_name,
-      is_public: openingModal.is_open,
-    };
-    try {
-      const { data } = await axios.post("/api/openings", body);
-      alert(data.message);
-      setOpeningModal({
-        is_open: true,
-        modal_mode: "CREATE",
-        is_public: false,
-        opening_id: "",
-        opening_name: "",
-      });
-    } catch (error) {
-      alert(error.response.data.message);
-    }
-
-    mutate(`/api/openings/`); // Get all openings
-  };
-
   const updateOpening = async () => {
     try {
       const body = {
@@ -149,10 +127,7 @@ export default function OpeningSettingsContent() {
       {/* 3 column wrapper */}
       <div className="flex-grow w-full max-w-7xl mx-auto xl:px-8 lg:flex">
         {/* Left sidebar & main wrapper */}
-        <OpeningModal
-          createOpening={createOpening}
-          updateOpening={updateOpening}
-        />
+        <OpeningModal updateOpening={updateOpening} />
         <div className="flex-1 min-w-0 bg-white xl:flex">
           <div className="border-b border-gray-200 xl:border-b-0 xl:flex-shrink-0 xl:w-64 xl:border-r xl:border-gray-200 bg-white">
             <div className="h-full pl-4 pr-6 py-6 sm:pl-6 lg:pl-8 xl:pl-0">
