@@ -45,7 +45,7 @@ interface CreateStageQuestionInput {
   org_id: string;
   opening_id: string;
   stage_id: string;
-  question_title: string;
+  GSI1SK: string;
   question_description: string;
 }
 
@@ -262,7 +262,7 @@ interface APICreateStageInput {
 }
 
 interface APICreateQuestionInput {
-  question_title: string;
+  GSI1SK: string;
   question_description: string;
 }
 
@@ -316,6 +316,7 @@ interface UpdateQuestionInput {
   org_id: string;
   opening_id: string;
   stage_id: string;
+  question_id: string;
   updated_question: DynamoStageQuestion;
 }
 
@@ -330,7 +331,7 @@ interface APIUpdateOpeningInput {
 }
 
 interface APICreateQuestionInput {
-  question_title: string;
+  GSI1SK: string;
   question_description: string;
 }
 
@@ -348,15 +349,15 @@ interface DeleteQuestionInput {
 }
 
 interface QuestionModalInput {
-  is_open: boolean;
+  is_modal_open: boolean;
   modal_mode: "EDIT" | "CREATE"; // Will render text differently
   question_id: "";
-  question_title: "";
+  GSI1SK: "";
   question_description: "";
 }
 
 interface OpeningModalInput {
-  is_open: boolean;
+  is_modal_open: boolean;
   modal_mode: "EDIT" | "CREATE"; // Will render text differently
   opening_id: "";
   opening_name: "";

@@ -25,11 +25,13 @@ export default function QuestionModal({ createQuestion, updateQuestion }) {
   };
 
   return (
-    <Transition.Root show={questionModal.is_open} as={Fragment}>
+    <Transition.Root show={questionModal.is_modal_open} as={Fragment}>
       <Dialog
         as="div"
         className="fixed inset-0 overflow-hidden "
-        onClose={() => setQuestionModal({ ...questionModal, is_open: false })}
+        onClose={() =>
+          setQuestionModal({ ...questionModal, is_modal_open: false })
+        }
       >
         <div className="absolute inset-0 overflow-hidden">
           <Transition.Child
@@ -74,7 +76,7 @@ export default function QuestionModal({ createQuestion, updateQuestion }) {
                             onClick={() =>
                               setQuestionModal({
                                 ...questionModal,
-                                is_open: false,
+                                is_modal_open: false,
                               })
                             }
                           >
@@ -110,11 +112,11 @@ export default function QuestionModal({ createQuestion, updateQuestion }) {
                                 placeholder={
                                   "Something like... 'What is your name?'"
                                 }
-                                value={questionModal.question_title}
+                                value={questionModal.GSI1SK}
                                 onChange={(e) =>
                                   setQuestionModal({
                                     ...questionModal,
-                                    question_title: e.target.value,
+                                    GSI1SK: e.target.value,
                                   })
                                 }
                                 className="block w-full shadow-sm text-sm focus:ring-blue-500 focus:border-blue-500 border-gray-300 rounded-md"
@@ -326,7 +328,10 @@ export default function QuestionModal({ createQuestion, updateQuestion }) {
                       type="button"
                       className="bg-white py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
                       onClick={() =>
-                        setQuestionModal({ ...questionModal, is_open: false })
+                        setQuestionModal({
+                          ...questionModal,
+                          is_modal_open: false,
+                        })
                       }
                     >
                       Cancel
@@ -338,7 +343,7 @@ export default function QuestionModal({ createQuestion, updateQuestion }) {
                       {questionModal.modal_mode === "CREATE"
                         ? "Create"
                         : "Update"}{" "}
-                      Queston
+                      Question
                     </button>
                   </div>
                 </form>

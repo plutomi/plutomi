@@ -52,13 +52,13 @@ export default function Openings() {
   const createOpening = async () => {
     const body: APICreateOpeningInput = {
       opening_name: openingModal.opening_name,
-      is_public: openingModal.is_open,
+      is_public: openingModal.is_modal_open,
     };
     try {
       const { data } = await axios.post("/api/openings", body);
       alert(data.message);
       setOpeningModal({
-        is_open: false,
+        is_modal_open: false,
         modal_mode: "CREATE",
         is_public: false,
         opening_id: "",

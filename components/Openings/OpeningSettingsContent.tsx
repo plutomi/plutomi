@@ -3,6 +3,7 @@ import { useSession } from "next-auth/client";
 import useOpenings from "../../SWR/useOpenings";
 import { useRouter } from "next/router";
 import { mutate } from "swr";
+import difference from "../../utils/getObjectDifference";
 import Link from "next/dist/client/link";
 import StageCard from "../Stages/StageCard";
 import { useEffect } from "react";
@@ -79,11 +80,12 @@ export default function OpeningSettingsContent() {
 
     try {
       const body = {
-        updated_opening: { ...opening, stage_order: new_stage_order },
+        updated_opening: { stage_order: new_stage_order },
       };
 
       await axios.put(`/api/openings/${opening_id}`, body);
     } catch (error) {
+      alert(error.response.data.message);
       console.error(error.response.data.message);
     }
 
@@ -93,9 +95,15 @@ export default function OpeningSettingsContent() {
 
   const updateOpening = async () => {
     try {
+      // Get the difference between the opening returned from SWR
+      // And the opening modal inputs / edits
+      const diff = difference(opening, openingModal);
+
+      // Delete the two modal controlling keys
+      delete diff["is_modal_open"];
+      delete diff["modal_mode"];
       const body = {
         updated_opening: {
-          ...opening, // TODO fix this
           GSI1SK: openingModal.opening_name,
           is_public: openingModal.is_public,
         },
@@ -109,7 +117,7 @@ export default function OpeningSettingsContent() {
       );
       alert(data.message);
       setOpeningModal({
-        is_open: false,
+        is_modal_open: false,
         modal_mode: "CREATE",
         is_public: false,
         opening_id: "",
@@ -205,7 +213,7 @@ export default function OpeningSettingsContent() {
                     type="button"
                     onClick={() =>
                       setOpeningModal({
-                        is_open: true,
+                        is_modal_open: true,
                         modal_mode: "EDIT",
                         opening_id: opening.opening_id,
                         opening_name: opening.GSI1SK,

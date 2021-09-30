@@ -11,7 +11,7 @@ export async function CreateStageQuestion({
   org_id,
   opening_id,
   stage_id,
-  question_title,
+  GSI1SK,
   question_description,
 }: CreateStageQuestionInput) {
   const now = GetCurrentTime("iso");
@@ -24,7 +24,7 @@ export async function CreateStageQuestion({
     entity_type: "STAGE_QUESTION",
     created_at: now,
     GSI1PK: `ORG#${org_id}#QUESTIONS`,
-    GSI1SK: question_title, // TODO filter by opening by stage?
+    GSI1SK: GSI1SK, // TODO filter by opening by stage?
   };
 
   const params: PutCommandInput = {

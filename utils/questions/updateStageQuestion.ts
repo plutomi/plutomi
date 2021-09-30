@@ -6,6 +6,7 @@ export default async function UpdateQuestion({
   org_id,
   opening_id,
   stage_id,
+  question_id,
   updated_question,
 }) {
   const FORBIDDEN_KEYS = [
@@ -18,6 +19,7 @@ export default async function UpdateQuestion({
     "GSI1PK",
   ];
 
+  console.log("Incoming updated question", updated_question);
   const incomingKeys = Object.keys(updated_question);
   // TODO should this throw an error and
   // let the user know we can't update that key?
@@ -35,15 +37,19 @@ export default async function UpdateQuestion({
 
   const UpdatedExpression = `SET ${newUpdateExpression.join(", ").toString()}`;
 
+  console.log(`Updated expression`, UpdatedExpression);
+
+  console.log(`Attributes expression`, newAttributes);
+
   const params = {
     Key: {
       PK: `ORG#${org_id}#OPENING#${opening_id}#STAGE#${stage_id}`,
-      SK: `STAGE_QUESTION#${updated_question.question_id}`,
+      SK: `STAGE_QUESTION#${question_id}`,
     },
     UpdateExpression: UpdatedExpression,
     ExpressionAttributeValues: newAttributes,
     TableName: DYNAMO_TABLE_NAME,
-    ConditionExpression: "attribute_exists(PK)",
+    ConditionExpression: "attribute_exists(PK)", // This is throwing an error
   };
 
   try {

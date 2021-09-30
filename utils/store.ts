@@ -9,10 +9,10 @@ const useStore = create((set) => ({
   createInviteModalIsOpen: false,
 
   questionModal: {
-    is_open: false, // False by default
+    is_modal_open: false, // False by default
     modal_mode: "CREATE", // Will render text differently
     question_id: "",
-    question_title: "",
+    GSI1SK: "", // Question title
     question_description: "",
   },
   setQuestionModal: (questionModal: QuestionModalInput) => {
@@ -22,7 +22,7 @@ const useStore = create((set) => ({
   },
 
   openingModal: {
-    is_open: false, // False by default
+    is_modal_open: false, // False by default
     modal_mode: "CREATE", // Will render text differently
     opening_id: "",
     opening_name: "",

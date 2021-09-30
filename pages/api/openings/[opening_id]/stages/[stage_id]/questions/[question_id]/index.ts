@@ -7,7 +7,7 @@ import UpdateQuestion from "../../../../../../../../utils/questions/updateStageQ
 const handler = async (req: CustomRequest, res: NextApiResponse) => {
   const { body, method, query } = req;
   const user: DynamoUser = req.user;
-  const { question_title, question_description }: APICreateQuestionInput = body;
+  const { GSI1SK, question_description }: APICreateQuestionInput = body;
   const { stage_id, opening_id, question_id } = query;
 
   if (method === "DELETE") {
@@ -34,7 +34,8 @@ const handler = async (req: CustomRequest, res: NextApiResponse) => {
         org_id: user.org_id,
         opening_id: opening_id as string,
         stage_id: stage_id as string,
-        updated_question: body.updated_question,
+        question_id: question_id as string,
+        updated_question: body.updated_question, // Just the keys that are passed down
       };
 
       try {
@@ -46,9 +47,10 @@ const handler = async (req: CustomRequest, res: NextApiResponse) => {
       await UpdateQuestion(update_question_input);
       return res.status(200).json({ message: "Question updated!" });
     } catch (error) {
+      console.error(error);
       return res
         .status(500)
-        .json({ message: `Unable to update opening - ${error}` });
+        .json({ message: `Unable to update question - ${error}` });
     }
   }
 

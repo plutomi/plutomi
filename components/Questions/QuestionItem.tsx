@@ -43,9 +43,9 @@ export default function QuestionItem({
           <button
             onClick={() =>
               setQuestionModal({
-                is_open: true,
+                is_modal_open: true,
                 modal_mode: "EDIT",
-                question_title: question.GSI1SK,
+                GSI1SK: question.GSI1SK,
                 question_description: question.question_description,
                 question_id: question.question_id,
               })

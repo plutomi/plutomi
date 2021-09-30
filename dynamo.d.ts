@@ -106,7 +106,7 @@ interface DynamoStageQuestion {
   // entity_type: "STAGE_QUESTION",
   // created_at: now,
   // GSI1PK: `ORG#${org_id}#QUESTIONS`,
-  // GSI1SK: question_title, // TODO filter by opening by stage?
+  // GSI1SK: GSI1SK, // TODO filter by opening by stage?
 
   PK: string;
   SK: string;

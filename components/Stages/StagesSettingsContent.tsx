@@ -1,6 +1,7 @@
 import { useSession } from "next-auth/client";
 import { useRouter } from "next/router";
 import { mutate } from "swr";
+import difference from "../../utils/getObjectDifference";
 import Link from "next/dist/client/link";
 import StageCard from "../Stages/StageCard";
 import QuestionList from "../Questions/QuestionList";
@@ -110,7 +111,7 @@ export default function StageSettingsContent() {
 
   const createQuestion = async () => {
     const body: APICreateQuestionInput = {
-      question_title: questionModal.question_title,
+      GSI1SK: questionModal.GSI1SK,
       question_description: questionModal.question_description,
     };
     try {
@@ -120,11 +121,11 @@ export default function StageSettingsContent() {
       );
       alert(data.message);
       setQuestionModal({
-        is_open: false,
+        is_modal_open: false,
         modal_mode: "CREATE",
         question_id: "",
         question_description: "",
-        question_title: "",
+        GSI1SK: "",
       });
     } catch (error) {
       console.error(`Error creating`, error);
@@ -147,12 +148,17 @@ export default function StageSettingsContent() {
         (question) => question.question_id == questionModal.question_id
       );
 
+      // Get the difference between the question returned from SWR
+      // And the updated question in the modal
+      const diff = difference(question, questionModal);
+
+      // Delete the two modal controlling keys
+      delete diff["is_modal_open"];
+      delete diff["modal_mode"];
+
+      console.log(`Difference between the two objects`, diff);
       const body = {
-        updated_question: {
-          ...question,
-          GSI1SK: questionModal.question_title, // If not blank
-          question_description: questionModal.question_description,
-        },
+        updated_question: diff,
       };
 
       const { data } = await axios.put(
@@ -161,11 +167,11 @@ export default function StageSettingsContent() {
       );
       alert(data.message);
       setQuestionModal({
-        is_open: false,
+        is_modal_open: false,
         modal_mode: "CREATE",
         question_id: "",
         question_description: "",
-        question_title: "",
+        GSI1SK: "",
       });
     } catch (error) {
       alert(error.response.data.message);
@@ -265,11 +271,11 @@ export default function StageSettingsContent() {
                     type="button"
                     onClick={() =>
                       setQuestionModal({
-                        is_open: true,
+                        is_modal_open: true,
                         modal_mode: "CREATE",
                         question_id: "",
                         question_description: "",
-                        question_title: "",
+                        GSI1SK: "",
                       })
                     }
                     className="relative inline-flex items-center px-4 py-2 rounded-md border border-gray-300 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50 focus:z-10 focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500"
