@@ -25,7 +25,7 @@ const useStore = create((set) => ({
     is_modal_open: false, // False by default
     modal_mode: "CREATE", // Will render text differently
     opening_id: "",
-    opening_name: "",
+    GSI1SK: "",
     is_public: false,
   },
   setOpeningModal: (openingModal: OpeningModalInput) => {

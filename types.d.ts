@@ -16,7 +16,7 @@ interface CreateUserInput {
 
 interface CreateOpeningInput {
   org_id: string;
-  opening_name: string;
+  GSI1SK: string;
   is_public: boolean;
   user?: DynamoUser; // User creating the opening - Optional on client
 }
@@ -253,7 +253,7 @@ interface APICreateLoginCodeInput {
 }
 
 interface APICreateOpeningInput {
-  opening_name: string;
+  GSI1SK: string;
   is_public: boolean;
 }
 
@@ -360,6 +360,6 @@ interface OpeningModalInput {
   is_modal_open: boolean;
   modal_mode: "EDIT" | "CREATE"; // Will render text differently
   opening_id: "";
-  opening_name: "";
+  GSI1SK: "";
   is_public: boolean;
 }

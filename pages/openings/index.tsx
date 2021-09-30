@@ -51,7 +51,7 @@ export default function Openings() {
 
   const createOpening = async () => {
     const body: APICreateOpeningInput = {
-      opening_name: openingModal.opening_name,
+      GSI1SK: openingModal.GSI1SK,
       is_public: openingModal.is_modal_open,
     };
     try {
@@ -62,7 +62,7 @@ export default function Openings() {
         modal_mode: "CREATE",
         is_public: false,
         opening_id: "",
-        opening_name: "",
+        GSI1SK: "",
       });
     } catch (error) {
       alert(error.response.data.message);

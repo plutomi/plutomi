@@ -55,7 +55,7 @@ export default function OpeningsHeader() {
                 modal_mode: "CREATE",
                 is_public: false,
                 opening_id: "",
-                opening_name: "",
+                GSI1SK: "",
               })
             }
             type="button"

@@ -119,10 +119,10 @@ export default function OpeningModal({
                                 onChange={(e) =>
                                   setOpeningModal({
                                     ...openingModal,
-                                    opening_name: e.target.value,
+                                    GSI1SK: e.target.value,
                                   })
                                 }
-                                value={openingModal.opening_name}
+                                value={openingModal.GSI1SK}
                                 className="block w-full shadow-sm sm:text-sm focus:ring-blue-500 focus:border-blue-500 border-gray-300 rounded-md"
                               />
                             </div>

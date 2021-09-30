@@ -103,10 +103,7 @@ export default function OpeningSettingsContent() {
       delete diff["is_modal_open"];
       delete diff["modal_mode"];
       const body = {
-        updated_opening: {
-          GSI1SK: openingModal.opening_name,
-          is_public: openingModal.is_public,
-        },
+        updated_opening: diff,
       };
 
       console.log("Outgoing body", body);
@@ -121,7 +118,7 @@ export default function OpeningSettingsContent() {
         modal_mode: "CREATE",
         is_public: false,
         opening_id: "",
-        opening_name: "",
+        GSI1SK: "",
       });
     } catch (error) {
       alert(error.response.data.message);
@@ -216,7 +213,7 @@ export default function OpeningSettingsContent() {
                         is_modal_open: true,
                         modal_mode: "EDIT",
                         opening_id: opening.opening_id,
-                        opening_name: opening.GSI1SK,
+                        GSI1SK: opening.GSI1SK,
                         is_public: opening.is_public,
                       })
                     }
