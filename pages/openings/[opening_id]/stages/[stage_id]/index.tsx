@@ -55,12 +55,6 @@ export default function StageID() {
     return <Loader text="Loading user..." />;
   }
 
-  // TODO LOADER BUG!!
-  // If calling `isStageLoading`, the loader component styles do not run...
-  if (isStagesLoading) {
-    return <Loader text="Loading stages..." />;
-  }
-
   return (
     <>
       <SignedInNav current="Openings" />
@@ -73,7 +67,7 @@ export default function StageID() {
           {stages?.length == 0 ? (
             <EmptyStagesState />
           ) : (
-            <StageCarousel stages={stages} />
+            <StageCarousel  />
           )}
         </main>
       </div>

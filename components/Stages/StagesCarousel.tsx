@@ -3,13 +3,35 @@ import ItemsCarousel from "react-items-carousel";
 import { ArrowLeftIcon } from "@heroicons/react/outline";
 import { ArrowRightIcon } from "@heroicons/react/outline";
 import { useRouter } from "next/router";
+import useAllStagesInOpening from "../../SWR/useAllStagesInOpening";
+import useUser from "../../SWR/useUser";
+import useStageById from "../../SWR/useStageById";
 import StageCard from "./StageCard";
-
-export default function StageCarousel({ stages }) {
+import Loader from "../Loader";
+import useOpeningById from "../../SWR/useOpeningById";
+import { useSession } from "next-auth/client";
+export default function StageCarousel() {
   const router = useRouter();
-  const { stage_id } = router.query;
   const [activeItemIndex, setActiveItemIndex] = useState(0);
   const chevronWidth = 60;
+
+  const { opening_id, stage_id } = router.query;
+  const [session, loading]: [CustomSession, boolean] = useSession();
+  const { user, isUserLoading, isUserError } = useUser(session?.user_id);
+
+  let { opening, isOpeningLoading, isOpeningError } = useOpeningById(
+    user?.user_id,
+    opening_id as string
+  );
+
+  let { stages, isStagesLoading, isStagesError } = useAllStagesInOpening(
+    session?.user_id,
+    opening?.opening_id
+  );
+
+  if (isStagesLoading) {
+    return <Loader text="Loading stages..." />;
+  }
   return (
     <div className="max-w-8xl border rounded-xl -py-4 ">
       <ItemsCarousel
