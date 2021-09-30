@@ -32,6 +32,9 @@ export default function StageSettingsContent() {
     session?.user_id,
     opening?.opening_id
   );
+  const stageModal = useStore((state: PlutomiState) => state.stageModal);
+  const setStageModal = useStore((state: PlutomiState) => state.setStageModal);
+
   const { stage, isStageLoading, isStageError } = useStageById(
     user?.user_id,
     opening?.opening_id,
@@ -186,12 +189,19 @@ export default function StageSettingsContent() {
     );
   };
 
-  const updateStage = async (stage_id: string) => {
+  const updateStage = async () => {
     try {
+      // Get the difference between the question returned from SWR
+      // And the updated question in the modal
+      const diff = difference(stage, stageModal);
+
+      // Delete the two modal controlling keys
+      delete diff["is_modal_open"];
+      delete diff["modal_mode"];
+
+      console.log(`Difference between the two objects`, diff);
       const body = {
-        updated_stage: {
-          ...stage,
-        },
+        updated_stage: diff,
       };
 
       const { data } = await axios.put(
@@ -199,6 +209,12 @@ export default function StageSettingsContent() {
         body
       );
       alert(data.message);
+      setStageModal({
+        is_modal_open: false,
+        modal_mode: "CREATE",
+        stage_id: "",
+        GSI1SK: "",
+      });
     } catch (error) {
       alert(error.response.data.message);
     }
