@@ -49,20 +49,13 @@ export default function Openings() {
     return <Loader text="Loading openings..." />;
   }
 
-  const updateOpening = async () => {
+  const createOpening = async () => {
+    const body: APICreateOpeningInput = {
+      opening_name: openingModal.opening_name,
+      is_public: openingModal.is_open,
+    };
     try {
-      const body = {
-        updated_opening: {
-          ...openingModal, // TODO fix this
-          GSI1SK: openingModal.opening_name,
-          is_public: openingModal.is_public,
-        },
-      };
-
-      const { data } = await axios.put(
-        `/api/openings/${openingModal.opening_id}`,
-        body
-      );
+      const { data } = await axios.post("/api/openings", body);
       alert(data.message);
       setOpeningModal({
         is_open: false,
@@ -74,13 +67,13 @@ export default function Openings() {
     } catch (error) {
       alert(error.response.data.message);
     }
-    // Refresh opening data
-    mutate(`/api/openings/${openingModal.opening_id}`);
+
+    mutate(`/api/openings/`); // Get all openings
   };
 
   return (
     <>
-      <CreateOpeningModal updateOpening={updateOpening} />
+      <CreateOpeningModal createOpening={createOpening} />
       <SignedInNav current="Openings" />
       <div className="max-w-7xl mx-auto p-4 my-6 rounded-lg min-h-screen ">
         <header>
