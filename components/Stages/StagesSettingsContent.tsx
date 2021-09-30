@@ -4,8 +4,10 @@ import { mutate } from "swr";
 import difference from "../../utils/getObjectDifference";
 import Link from "next/dist/client/link";
 import StageModal from "./StageModal";
+import StageReorderColumn from "../StageReorderColumn";
 import QuestionList from "../Questions/QuestionList";
 import { useEffect } from "react";
+import { PlusIcon } from "@heroicons/react/outline";
 import axios from "axios";
 import useStore from "../../utils/store";
 import QuestionModal from "../Questions/QuestionModal";
@@ -72,45 +74,6 @@ export default function StageSettingsContent() {
   if (isQuestionsLoading) {
     return <Loader text="Loading stage..." />;
   }
-
-  const handleDragEnd = async (result) => {
-    const { destination, source, draggableId } = result;
-    // No change
-    if (!destination) {
-      return;
-    }
-    // If dropped in the same place
-    if (
-      destination.droppableId === source.droppableId &&
-      destination.index === source.index
-    ) {
-      return;
-    }
-
-    setIsStageOrderUpdating(true);
-
-    let new_stage_order = Array.from(opening.stage_order);
-    new_stage_order.splice(source.index, 1);
-    new_stage_order.splice(destination.index, 0, draggableId);
-    let new_order = new_stage_order.map((i) =>
-      stages.find((j) => j.stage_id === i)
-    );
-
-    setNewStages(new_order);
-
-    try {
-      const body = {
-        updated_opening: { ...opening, stage_order: new_stage_order },
-      };
-
-      await axios.put(`/api/openings/${opening_id}`, body);
-    } catch (error) {
-      console.error(error.response.data.message);
-    }
-
-    mutate(`/api/openings/${opening_id}`); // Refresh the stage order
-    setIsStageOrderUpdating(false);
-  };
 
   const createQuestion = async () => {
     const body: APICreateQuestionInput = {
@@ -237,60 +200,7 @@ export default function StageSettingsContent() {
           <div className="border-b border-gray-200 xl:border-b-0 xl:flex-shrink-0 xl:w-64 xl:border-r xl:border-gray-200 bg-white">
             <div className="h-full pl-4 pr-6 py-6 sm:pl-6 lg:pl-8 xl:pl-0">
               {/* Start left column area */}
-              <div className="h-full relative" style={{ minHeight: "12rem" }}>
-                <div className=" inset-0  border-gray-200 rounded-lg ">
-                  <h1 className="text-center text-lg font-semibold mb-4">
-                    Stage Order
-                  </h1>
-
-                  <DragDropContext
-                    onDragEnd={handleDragEnd}
-                    onDragStart={() => console.log("Start")}
-                  >
-                    <Droppable droppableId={opening.opening_id}>
-                      {(provided) => (
-                        <div
-                          {...provided.droppableProps}
-                          ref={provided.innerRef}
-                        >
-                          {new_stages?.map((stage, index) => {
-                            return (
-                              <Draggable
-                                key={stage.stage_id}
-                                draggableId={stage.stage_id}
-                                index={index}
-                                {...provided.droppableProps}
-                              >
-                                {(provided) => (
-                                  <div
-                                    {...provided.draggableProps}
-                                    {...provided.dragHandleProps}
-                                    ref={provided.innerRef}
-                                  >
-                                    <Link
-                                      href={`${process.env.NEXT_PUBLIC_NEXTAUTH_URL}/openings/${opening_id}/stages/${stage.stage_id}/settings`}
-                                    >
-                                      <a>
-                                        <DraggableStageCard
-                                          opening_id={stage.opening_id}
-                                          name={`${stage.GSI1SK}`}
-                                          current_stage_id={stage.stage_id}
-                                        />
-                                      </a>
-                                    </Link>
-                                  </div>
-                                )}
-                              </Draggable>
-                            );
-                          })}
-
-                          {provided.placeholder}
-                        </div>
-                      )}
-                    </Droppable>
-                  </DragDropContext>
-                </div>
-              </div>
+              <StageReorderColumn/>
               {/* End left column area */}
             </div>
           </div>
