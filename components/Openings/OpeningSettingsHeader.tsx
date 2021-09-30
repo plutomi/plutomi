@@ -4,6 +4,9 @@ import Breadcrumbs from "../Breadcrumbs";
 import useUser from "../../SWR/useUser";
 import { PencilAltIcon, PlusIcon } from "@heroicons/react/outline";
 import useStore from "../../utils/store";
+import { mutate } from "swr";
+import axios from "axios";
+import { TrashIcon } from "@heroicons/react/outline";
 import useOpeningById from "../../SWR/useOpeningById";
 import { useState } from "react";
 import GoBack from "../Buttons/GoBackButton";
@@ -49,13 +52,37 @@ export default function OpeningSettingsHeader() {
     });
   }
 
+  const deleteOpening = async () => {
+    if (
+      !confirm(
+        "Are you sure you want to delete this opening? All stages inside of it will also be deleted. This action cannot be reversed!"
+      )
+    ) {
+      return;
+    }
+
+    if (!confirm("Are you sure?")) {
+      return;
+    }
+
+    try {
+      const { data } = await axios.delete(`/api/openings/${opening_id}`);
+      router.push(`${process.env.NEXT_PUBLIC_NEXTAUTH_URL}/openings`);
+    } catch (error) {
+      alert(error.response.data.message);
+    }
+
+    // Refresh openings
+    mutate(`/api/openings`);
+  };
+
   return (
     <div className="md:flex md:items-center md:justify-between ">
       <div className=" min-w-0 flex flex-col items-start ">
         <Breadcrumbs crumbs={crumbs} />
       </div>
 
-      <div className="space-x-4">
+      <div className="space-x-4 flex items-center">
         <button
           type="button"
           onClick={() =>
@@ -71,6 +98,12 @@ export default function OpeningSettingsHeader() {
         >
           <PencilAltIcon className="-ml-1 mr-3 h-5 w-5" aria-hidden="true" />
           Edit Opening
+        </button>
+        <button
+          onClick={() => deleteOpening()}
+          className="rounded-full hover:bg-red-500 hover:text-white border border-red-500 text-red-500 transition ease-in-out duration-200 px-2 py-2 text-md"
+        >
+          <TrashIcon className="h-6 w-6" />
         </button>
       </div>
     </div>

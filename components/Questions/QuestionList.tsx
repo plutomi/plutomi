@@ -81,11 +81,12 @@ export default function QuestionList() {
   const deleteQuestion = async (stage_question_id: string) => {
     if (
       !confirm(
-        "Are you sure you want to delete this question? This cannot be undone!"
+        "Are you sure you want to delete this question? This action cannot be reversed!"
       )
     ) {
       return;
     }
+
     try {
       const { data } = await axios.delete(
         `/api/openings/${opening_id}/stages/${stage_id}/questions/${stage_question_id}`

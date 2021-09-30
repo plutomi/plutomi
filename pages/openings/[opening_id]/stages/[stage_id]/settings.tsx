@@ -54,10 +54,15 @@ export default function OpeningsSettings() {
   const deleteStage = async () => {
     if (
       !confirm(
-        "Are you sure you want to delete this stage? This cannot be reversed!"
+        "Are you sure you want to delete this stage? This action cannot be reversed!"
       )
-    )
+    ) {
       return;
+    }
+
+    if (!confirm("Are you sure?")) {
+      return;
+    }
     try {
       const { data } = await axios.delete(
         `/api/openings/${opening_id}/stages/${stage_id}`

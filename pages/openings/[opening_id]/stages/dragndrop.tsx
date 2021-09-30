@@ -36,26 +36,6 @@ export default function ViewOpening() {
     opening_id as string
   );
 
-  const deleteOpening = async (opening_id: string) => {
-    if (
-      !confirm(
-        "Are you sure you want to delete this opening? THIS WILL ALSO DELETE ALL STAGES INSIDE OF IT!!!"
-      )
-    )
-      return;
-
-    try {
-      const { data } = await axios.delete(`/api/openings/${opening_id}`);
-      alert(data.message);
-      router.push(`/openings`);
-    } catch (error) {
-      alert(error.response.data.message);
-    }
-
-    // Refresh openings
-    mutate(`/api/openings`);
-  };
-
   return (
     <div>
       <div className="mx-auto max-w-4xl pt-20 flex flex-col justify-center items-center ">
