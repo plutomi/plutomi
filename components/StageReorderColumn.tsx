@@ -134,7 +134,7 @@ export default function StageReorderColumn() {
     mutate(`/api/openings/${opening_id}`);
 
     // Refresh the stages
-    mutate(`/api/openings/${opening_id}/stags`);
+    mutate(`/api/openings/${opening_id}/stages`);
   };
 
   return (
