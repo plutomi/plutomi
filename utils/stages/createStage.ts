@@ -1,4 +1,9 @@
-import { PutCommand, PutCommandInput } from "@aws-sdk/lib-dynamodb";
+import {
+  PutCommand,
+  PutCommandInput,
+  TransactWriteCommand,
+  TransactWriteCommandInput,
+} from "@aws-sdk/lib-dynamodb";
 import { Dynamo } from "../../libs/ddbDocClient";
 import { GetCurrentTime } from "../time";
 import { nanoid } from "nanoid";
@@ -26,27 +31,46 @@ export async function CreateStage({
     GSI1SK: GSI1SK,
   };
 
-  const params: PutCommandInput = {
-    TableName: DYNAMO_TABLE_NAME,
-    Item: new_stage,
-    ConditionExpression: "attribute_not_exists(PK)",
-  };
-
   try {
-    await Dynamo.send(new PutCommand(params));
-
     let opening = await GetOpening({ org_id, opening_id });
-    opening.stage_order.push(stage_id);
-    const update_opening_input = {
-      org_id: org_id,
-      opening_id: opening_id,
-      updated_opening: opening,
-    };
 
-    await UpdateOpening(update_opening_input);
+    try {
+      // Get current opening
+      opening.stage_order.push(stage_id);
 
-    return new_stage;
+      const transactParams: TransactWriteCommandInput = {
+        TransactItems: [
+          {
+            // Add a stage item
+            Put: {
+              Item: new_stage,
+              TableName: DYNAMO_TABLE_NAME,
+            },
+          },
+          {
+            // Add stage to the opening
+            Update: {
+              Key: {
+                PK: `ORG#${org_id}#OPENING#${opening_id}`,
+                SK: `OPENING`,
+              },
+              TableName: DYNAMO_TABLE_NAME,
+              UpdateExpression: "SET stage_order = :stage_order",
+              ExpressionAttributeValues: {
+                ":stage_order": opening.stage_order,
+              },
+            },
+          },
+        ],
+      };
+
+      await Dynamo.send(new TransactWriteCommand(transactParams));
+    } catch (error) {
+      throw new Error(error);
+    }
   } catch (error) {
-    throw new Error(error);
+    throw new Error(
+      `Unable to retrieve opening where stage should be added ${error}`
+    );
   }
 }
