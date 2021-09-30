@@ -130,7 +130,11 @@ export default function StageReorderColumn() {
       console.error(error.response.data.message);
     }
 
-    mutate(`/api/openings/${opening_id}`); // Refresh the stage order
+    // Refresh the stage order
+    mutate(`/api/openings/${opening_id}`);
+
+    // Refresh the stages
+    mutate(`/api/openings/${opening_id}/stags`);
   };
 
   return (

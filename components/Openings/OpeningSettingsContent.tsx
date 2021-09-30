@@ -59,48 +59,6 @@ export default function OpeningSettingsContent() {
     return <Loader text="Loading stages..." />;
   }
 
-  const handleDragEnd = async (result) => {
-    const { destination, source, draggableId } = result;
-
-    // No change
-    if (!destination) {
-      return;
-    }
-
-    // If dropped in the same place
-    if (
-      destination.droppableId === source.droppableId &&
-      destination.index === source.index
-    ) {
-      return;
-    }
-
-    setIsStageOrderUpdating(true);
-
-    let new_stage_order = Array.from(opening.stage_order);
-    new_stage_order.splice(source.index, 1);
-    new_stage_order.splice(destination.index, 0, draggableId);
-    let new_order = new_stage_order.map((i) =>
-      stages.find((j) => j.stage_id === i)
-    );
-
-    setNewStages(new_order);
-
-    try {
-      const body = {
-        updated_opening: { stage_order: new_stage_order },
-      };
-
-      await axios.put(`/api/openings/${opening_id}`, body);
-    } catch (error) {
-      alert(error.response.data.message);
-      console.error(error.response.data.message);
-    }
-
-    mutate(`/api/openings/${opening_id}`); // Refresh the stage order
-    setIsStageOrderUpdating(false);
-  };
-
   const updateOpening = async () => {
     try {
       // Get the difference between the opening returned from SWR
@@ -135,8 +93,6 @@ export default function OpeningSettingsContent() {
     mutate(`/api/openings/${openingModal.opening_id}`);
   };
 
-
-
   return (
     <>
       {/* 3 column wrapper */}
@@ -147,7 +103,7 @@ export default function OpeningSettingsContent() {
           <div className="border-b border-gray-200 xl:border-b-0 xl:flex-shrink-0 xl:w-64 xl:border-r xl:border-gray-200 bg-white">
             <div className="h-full pl-4 pr-6 py-6 sm:pl-6 lg:pl-8 xl:pl-0">
               {/* Start left column area */}
-              <StageReorderColumn/>
+              <StageReorderColumn />
               {/* End left column area */}
             </div>
           </div>

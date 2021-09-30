@@ -4,6 +4,7 @@ import { mutate } from "swr";
 import difference from "../../utils/getObjectDifference";
 import Link from "next/dist/client/link";
 import StageModal from "./StageModal";
+import { GetRelativeTime } from "../../utils/time";
 import StageReorderColumn from "../StageReorderColumn";
 import QuestionList from "../Questions/QuestionList";
 import { useEffect } from "react";
@@ -160,9 +161,16 @@ export default function StageSettingsContent() {
               {/* Start main area*/}
               <div className="relative h-full" style={{ minHeight: "36rem" }}>
                 <div className=" inset-0  border-gray-200 rounded-lg">
-                  <h1 className="text-center text-lg font-semibold mb-4">
-                    {!isStageLoading && stage?.GSI1SK} Settings
-                  </h1>
+                  <div className="flex flex-col justify-center items-center">
+                    <h1 className="text-center text-2xl font-semibold mb-4">
+                      {stage?.GSI1SK} Settings
+                    </h1>
+                    <div className="flex justify-center space-x-4 py-2 items-center">
+                      <p className="text-md text-light text-center">
+                        Created {GetRelativeTime(stage?.created_at)}
+                      </p>
+                    </div>
+                  </div>
                 </div>
 
                 <QuestionList />

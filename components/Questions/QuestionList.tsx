@@ -34,7 +34,6 @@ export default function QuestionList() {
     useAllStageQuestions(user?.org_id, opening?.opening_id, stage?.stage_id);
 
   const [new_questions, setNewQuestions] = useState(questions);
-  const [isUpdating, setIsUpdating] = useState(false);
 
   useEffect(() => {
     setNewQuestions(questions);
@@ -55,8 +54,6 @@ export default function QuestionList() {
     ) {
       return;
     }
-
-    setIsUpdating(true);
 
     let new_question_order = Array.from(stage.question_order);
     new_question_order.splice(source.index, 1);
@@ -79,10 +76,7 @@ export default function QuestionList() {
     }
 
     mutate(`/api/openings/${opening_id}/stages/${stage_id}`); // Refresh the question order
-    setIsUpdating(false);
   };
-
-
 
   const deleteQuestion = async (stage_question_id: string) => {
     if (
@@ -111,7 +105,7 @@ export default function QuestionList() {
   };
 
   if (isQuestionsLoading) {
-    return <Loader text={"Loading stage..."} />;
+    return <Loader text={"Loading questions..."} />;
   }
   return (
     <div>
