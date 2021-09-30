@@ -43,7 +43,7 @@ export default function StageModal({
       <Dialog
         as="div"
         className="fixed inset-0 overflow-hidden "
-        onClose={() => setStageModal({ ...stageModal, is_modal_open: true })}
+        onClose={() => setStageModal({ ...stageModal, is_modal_open: false })}
       >
         <div className="absolute inset-0 overflow-hidden">
           <Transition.Child

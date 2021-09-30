@@ -4,7 +4,6 @@ const useStore = create((set) => ({
   // TODO this is stupidly gross!!!
   createOrgModalIsOpen: false,
   createOpeningModalIsOpen: false,
-  StageModalIsOpen: false,
   openingsSearchInput: "",
   createInviteModalIsOpen: false,
 
@@ -55,10 +54,7 @@ const useStore = create((set) => ({
     set((state: PlutomiState) => ({
       createOpeningModalIsOpen: open,
     })),
-  setStageModalOpen: (open: Boolean) =>
-    set((state: PlutomiState) => ({
-      StageModalIsOpen: open,
-    })),
+
   setOpeningsSearchInput: (input: string) =>
     set((state: PlutomiState) => ({
       openingsSearchInput: input,
