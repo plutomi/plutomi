@@ -14,9 +14,9 @@ import useOrgInvites from "../../SWR/useOrgInvites";
 import Banner from "../BannerTop";
 
 const navigation = [
-  { name: "Dashboard", href: "/dashboard" },
-  { name: "Openings", href: "/openings" },
-  { name: "Team", href: "/team" },
+  { name: "Dashboard", href: "/dashboard", hidden_if_no_org: false },
+  { name: "Openings", href: "/openings", hidden_if_no_org: true },
+  { name: "Team", href: "/team", hidden_if_no_org: true },
 ];
 const userNavigation = [
   // { name: "Your Profile", href: "#" },
@@ -66,8 +66,8 @@ export default function SignedInNav({ current }: ValidNavigation) {
                   <div className="hidden sm:-my-px sm:ml-6 sm:flex sm:space-x-8">
                     {navigation.map((item) => {
                       if (
-                        item.name === "Team" &&
-                        user.org_id === "NO_ORG_ASSIGNED"
+                        user?.org_id === "NO_ORG_ASSIGNED" &&
+                        item.hidden_if_no_org
                       ) {
                         return null;
                       }
