@@ -140,55 +140,61 @@ export default function OpeningSettingsContent() {
               <div className="h-full relative" style={{ minHeight: "12rem" }}>
                 <div className=" inset-0  border-gray-200 rounded-lg ">
                   <h1 className="text-center text-lg font-semibold mb-4">
-                    Stage Order
+                    {opening?.stage_order.length == 0
+                      ? "No stages found"
+                      : "Stage Order"}
                   </h1>
 
+                  {/* Add button here to create a stage, opens modal */}
                   {/* Left Column Stage Order on /openings/-opening_id-/settings */}
-                  <DragDropContext
-                    onDragEnd={handleDragEnd}
-                    onDragStart={() => console.log("Start")}
-                  >
-                    <Droppable droppableId={opening.opening_id}>
-                      {(provided) => (
-                        <div
-                          {...provided.droppableProps}
-                          ref={provided.innerRef}
-                        >
-                          {new_stages?.map((stage, index) => {
-                            return (
-                              <Draggable
-                                key={stage.stage_id}
-                                draggableId={stage.stage_id}
-                                index={index}
-                                {...provided.droppableProps}
-                              >
-                                {(provided) => (
-                                  <div
-                                    {...provided.draggableProps}
-                                    {...provided.dragHandleProps}
-                                    ref={provided.innerRef}
-                                  >
-                                    <Link
-                                      href={`${process.env.NEXT_PUBLIC_NEXTAUTH_URL}/openings/${opening_id}/stages/${stage.stage_id}/settings`}
+
+                  {opening?.stage_order.length > 0 && (
+                    <DragDropContext
+                      onDragEnd={handleDragEnd}
+                      onDragStart={() => console.log("Start")}
+                    >
+                      <Droppable droppableId={opening.opening_id}>
+                        {(provided) => (
+                          <div
+                            {...provided.droppableProps}
+                            ref={provided.innerRef}
+                          >
+                            {new_stages?.map((stage, index) => {
+                              return (
+                                <Draggable
+                                  key={stage.stage_id}
+                                  draggableId={stage.stage_id}
+                                  index={index}
+                                  {...provided.droppableProps}
+                                >
+                                  {(provided) => (
+                                    <div
+                                      {...provided.draggableProps}
+                                      {...provided.dragHandleProps}
+                                      ref={provided.innerRef}
                                     >
-                                      <a>
-                                        <DraggableStageCard
-                                          opening_id={stage.opening_id}
-                                          name={`${stage.GSI1SK}`}
-                                          current_stage_id={stage.stage_id}
-                                        />
-                                      </a>
-                                    </Link>
-                                  </div>
-                                )}
-                              </Draggable>
-                            );
-                          })}
-                          {provided.placeholder}
-                        </div>
-                      )}
-                    </Droppable>
-                  </DragDropContext>
+                                      <Link
+                                        href={`${process.env.NEXT_PUBLIC_NEXTAUTH_URL}/openings/${opening_id}/stages/${stage.stage_id}/settings`}
+                                      >
+                                        <a>
+                                          <DraggableStageCard
+                                            opening_id={stage.opening_id}
+                                            name={`${stage.GSI1SK}`}
+                                            current_stage_id={stage.stage_id}
+                                          />
+                                        </a>
+                                      </Link>
+                                    </div>
+                                  )}
+                                </Draggable>
+                              );
+                            })}
+                            {provided.placeholder}
+                          </div>
+                        )}
+                      </Droppable>
+                    </DragDropContext>
+                  )}
                 </div>
               </div>
               {/* End left column area */}

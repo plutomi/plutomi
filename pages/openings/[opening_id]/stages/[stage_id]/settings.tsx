@@ -67,14 +67,13 @@ export default function OpeningsSettings() {
       );
       alert(data.message);
 
-      /** Total Stages
+      /** Scenario 1 - Stage deleted is the only stage
        * 1. Questionnaire <-- Gets deleted
+       * We want to redirect to the create a stage page of the opening
        */
       const remaining_stages_before_delete = opening.stage_order;
 
       if (remaining_stages_before_delete.length == 1) {
-        // If the stage we just deleted was the last one
-        // Redirect to empty stage page
         router.push(
           `${process.env.NEXT_PUBLIC_NEXTAUTH_URL}/openings/${opening_id}/stages`
         );
@@ -94,7 +93,7 @@ export default function OpeningsSettings() {
        * 1. Questionnaire
        */
 
-      // Then redirect to that stage's page
+      // Then redirect to that stage's settings page
       router.push(
         `${process.env.NEXT_PUBLIC_NEXTAUTH_URL}/openings/${opening_id}/stages/${remaining_stages_before_delete[0]}/settings`
       );

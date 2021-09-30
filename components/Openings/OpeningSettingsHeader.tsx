@@ -24,8 +24,13 @@ export default function OpeningSettingsHeader() {
   return (
     <div className="md:flex md:items-center md:justify-between ">
       <div className=" min-w-0 flex flex-col items-start ">
+        {/* If an opening has stages, this button should go to the stages. If not, go back to the openings main page */}
         <GoBack
-          url={`${process.env.NEXT_PUBLIC_NEXTAUTH_URL}/openings/${opening?.opening_id}/stages/${opening?.stage_order[0]}`}
+          url={`${process.env.NEXT_PUBLIC_NEXTAUTH_URL}/openings ${
+            opening?.stage_order.length == 0
+              ? ""
+              : `/stages/${opening?.stage_order[0]}`
+          }`}
         />
         <h2 className="text-2xl font-bold text-dark sm:text-3xl sm:truncate">
           {opening?.GSI1SK}

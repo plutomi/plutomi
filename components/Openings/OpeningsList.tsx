@@ -28,15 +28,16 @@ export default function OpeningList() {
       <ul role="list" className="divide-y divide-gray-200">
         {filtered_openings?.map((opening: DynamoOpening) => (
           <li key={opening.opening_id}>
-            {/* This looks complicated, but all it's doing is checking if there
-            are stages in the opening. If not, redirect the user to create a
-        stage first */}
+            {/* If the opening has stages, go to the first stage and view aplicants. Otherwise, go to the settings page for the opening */}
             <Link
               href={`${process.env.NEXT_PUBLIC_NEXTAUTH_URL}/openings/${
                 opening.opening_id
-              }/stages${
-                opening.stage_order[0] ? `/${opening.stage_order[0]}` : ""
-              }`}
+              }/${
+                opening.stage_order.length > 0
+                  ? `/stages/${opening.stage_order[0]}`
+                  : `settings`
+              }
+              `}
             >
               <a className="block hover:bg-gray-50">
                 <div className="px-4 py-4 sm:px-6">
