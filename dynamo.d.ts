@@ -62,7 +62,7 @@ interface DynamoStage {
   // question_order: [],
   // opening_id: opening_id;
   // GSI1PK: `ORG#${org_id}#OPENING#${opening_id}#STAGES`; // Get all stages in an opening
-  // GSI1SK: stage_name;
+  // GSI1SK: GSI1SK;
   PK: string;
   SK: `STAGE`;
   entity_type: "STAGE";

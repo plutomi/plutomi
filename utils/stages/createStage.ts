@@ -9,7 +9,7 @@ const { DYNAMO_TABLE_NAME } = process.env;
 
 export async function CreateStage({
   org_id,
-  stage_name,
+  GSI1SK,
   opening_id,
 }: CreateStageInput) {
   const now = GetCurrentTime("iso");
@@ -23,7 +23,7 @@ export async function CreateStage({
     stage_id: stage_id,
     opening_id: opening_id,
     GSI1PK: `ORG#${org_id}#OPENING#${opening_id}#STAGES`, // Get all stages in an opening
-    GSI1SK: stage_name,
+    GSI1SK: GSI1SK,
   };
 
   const params: PutCommandInput = {

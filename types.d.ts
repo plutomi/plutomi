@@ -28,7 +28,7 @@ interface GetOpeningInput {
 interface CreateStageInput {
   org_id: string;
   opening_id: string;
-  stage_name: string;
+  GSI1SK: string;
 }
 
 interface ValidNavigation {
@@ -254,7 +254,7 @@ interface APICreateOpeningInput {
 }
 
 interface APICreateStageInput {
-  stage_name: string;
+  GSI1SK: string;
 }
 
 interface APICreateQuestionInput {

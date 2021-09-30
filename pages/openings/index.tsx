@@ -52,7 +52,7 @@ export default function Openings() {
   const createOpening = async () => {
     const body: APICreateOpeningInput = {
       GSI1SK: openingModal.GSI1SK,
-      is_public: openingModal.is_modal_open,
+      is_public: openingModal.is_public,
     };
     try {
       const { data } = await axios.post("/api/openings", body);

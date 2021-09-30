@@ -6,7 +6,7 @@ import { NextApiResponse } from "next";
 // Create stage in an opening
 const handler = async (req: CustomRequest, res: NextApiResponse) => {
   const { body, method, query } = req;
-  const { stage_name }: APICreateStageInput = body;
+  const { GSI1SK }: APICreateStageInput = body;
   const { opening_id } = query;
   const user: DynamoUser = req.user;
 
@@ -19,7 +19,7 @@ const handler = async (req: CustomRequest, res: NextApiResponse) => {
     const create_stage_input: CreateStageInput = {
       org_id: user.org_id,
       opening_id: opening_id as string,
-      stage_name: stage_name as string,
+      GSI1SK: GSI1SK as string,
     };
 
     try {

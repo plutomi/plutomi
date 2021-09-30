@@ -69,36 +69,8 @@ export default function OpeningsSettings() {
         `/api/openings/${opening_id}/stages/${stage_id}`
       );
       alert(data.message);
-
-      /** Scenario 1 - Stage deleted is the only stage
-       * 1. Questionnaire <-- Gets deleted
-       * We want to redirect to the create a stage page of the opening
-       */
-      const remaining_stages_before_delete = opening.stage_order;
-
-      if (remaining_stages_before_delete.length == 1) {
-        router.push(
-          `${process.env.NEXT_PUBLIC_NEXTAUTH_URL}/openings/${opening_id}/stages`
-        );
-      }
-
-      /** Total Stages
-       * 1. Questionnaire
-       * 2. Set Up Profile  <-- Gets deleted
-       */
-      // Else, remove the deleted stage id from the stage order
-      const index_of_deleted = remaining_stages_before_delete.indexOf(
-        stage_id as string
-      );
-      remaining_stages_before_delete.splice(index_of_deleted, 1);
-
-      /** Current State
-       * 1. Questionnaire
-       */
-
-      // Then redirect to that stage's settings page
       router.push(
-        `${process.env.NEXT_PUBLIC_NEXTAUTH_URL}/openings/${opening_id}/stages/${remaining_stages_before_delete[0]}/settings`
+        `${process.env.NEXT_PUBLIC_NEXTAUTH_URL}/openings/${opening_id}/settings`
       );
     } catch (error) {
       alert(error.response.data.message);

@@ -131,9 +131,9 @@ export default function OpeningSettingsContent() {
     mutate(`/api/openings/${openingModal.opening_id}`);
   };
 
-  const createStage = async (stage_name: string) => {
+  const createStage = async () => {
     const body: APICreateStageInput = {
-      stage_name: stage_name,
+      GSI1SK: stageModal.GSI1SK,
     };
     try {
       const { data } = await axios.post(
@@ -141,10 +141,7 @@ export default function OpeningSettingsContent() {
         body
       );
       alert(data.message);
-      setStageModal({ ...stageModal, is_modal_open: false });
-      router.push(
-        `${process.env.NEXT_PUBLIC_NEXTAUTH_URL}/openings/${opening_id}/stages/${data.stage.stage_id}`
-      );
+      setStageModal({ ...stageModal, GSI1SK: "", is_modal_open: false });
     } catch (error) {
       console.error("Error creating stage", error);
       alert(error.response.data.message);
@@ -240,24 +237,6 @@ export default function OpeningSettingsContent() {
                     {opening?.GSI1SK} Settings
                   </h1>
                 </div>
-
-                <span className="relative z-0 inline-flex shadow-sm rounded-md">
-                  <button
-                    type="button"
-                    onClick={() =>
-                      setOpeningModal({
-                        is_modal_open: true,
-                        modal_mode: "EDIT",
-                        opening_id: opening.opening_id,
-                        GSI1SK: opening.GSI1SK,
-                        is_public: opening.is_public,
-                      })
-                    }
-                    className="relative inline-flex items-center px-4 py-2 rounded-md border border-gray-300 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50 focus:z-10 focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500"
-                  >
-                    Edit Opening
-                  </button>
-                </span>
               </div>
               {/* End main area */}
             </div>

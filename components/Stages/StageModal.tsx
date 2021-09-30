@@ -117,6 +117,7 @@ export default function StageModal({
                                 type="text"
                                 name="opening-name"
                                 id="opening-name"
+                                placeholder={`Something like 'Questionnaire' or 'Set Up Profile'`}
                                 required
                                 onChange={(e) =>
                                   setStageModal({
