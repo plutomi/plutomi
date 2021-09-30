@@ -50,13 +50,7 @@ export default function OpeningsSettings() {
     return <Loader text="Loading opening..." />;
   }
 
-  if (isStageLoading) {
-    return <Loader text="Loading stage info..." />;
-  }
-
-  // TODO MAJOR MAJOR MAJOR
   // Update this to use the new update syntax with diff
-
   const deleteStage = async () => {
     if (
       !confirm(

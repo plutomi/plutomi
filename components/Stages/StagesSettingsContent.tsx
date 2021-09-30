@@ -21,60 +21,6 @@ import useAllStagesInOpening from "../../SWR/useAllStagesInOpening";
 import useOpeningById from "../../SWR/useOpeningById";
 import useStageById from "../../SWR/useStageById";
 export default function StageSettingsContent() {
-  const router = useRouter();
-  const { opening_id, stage_id } = router.query;
-  const [session, loading]: [CustomSession, boolean] = useSession();
-  const { user, isUserLoading, isUserError } = useUser(session?.user_id);
-  let { opening, isOpeningLoading, isOpeningError } = useOpeningById(
-    user?.user_id,
-    opening_id as string
-  );
-
-  let { stages, isStagesLoading, isStagesError } = useAllStagesInOpening(
-    session?.user_id,
-    opening?.opening_id
-  );
-  const stageModal = useStore((state: PlutomiState) => state.stageModal);
-  const setStageModal = useStore((state: PlutomiState) => state.setStageModal);
-
-  const { stage, isStageLoading, isStageError } = useStageById(
-    user?.user_id,
-    opening?.opening_id,
-    stage_id as string
-  );
-
-  const { questions, isQuestionsLoading, isQuestionsError } =
-    useAllStageQuestions(user?.org_id, opening?.opening_id, stage?.stage_id);
-
-  const questionModal = useStore((state: PlutomiState) => state.questionModal);
-  const setQuestionModal = useStore(
-    (state: PlutomiState) => state.setQuestionModal
-  );
-
-  const [new_stages, setNewStages] = useState(stages);
-  const [isStageOrderUpdating, setIsStageOrderUpdating] = useState(false);
-  const [isQuestionOrderUpdating, setIsQuestionOrderUpdating] = useState(false);
-
-  useEffect(() => {
-    setNewStages(stages);
-  }, [stages]);
-
-  if (isOpeningLoading) {
-    return <Loader text="Loading opening..." />;
-  }
-
-  if (isStagesLoading) {
-    return <Loader text="Loading stages..." />;
-  }
-
-  if (isStageLoading) {
-    return <Loader text="Loading stage info..." />;
-  }
-
-  if (isQuestionsLoading) {
-    return <Loader text="Loading stage..." />;
-  }
-
   const createQuestion = async () => {
     const body: APICreateQuestionInput = {
       GSI1SK: questionModal.GSI1SK,
@@ -107,7 +53,6 @@ export default function StageSettingsContent() {
     );
   };
 
-  // TODO this should be updateQuestion
   const updateQuestion = async () => {
     try {
       const question = questions.find(
@@ -152,37 +97,44 @@ export default function StageSettingsContent() {
     );
   };
 
-  const updateStage = async () => {
-    try {
-      // Get the difference between the question returned from SWR
-      // And the updated question in the modal
-      const diff = difference(stage, stageModal);
+  const router = useRouter();
+  const { opening_id, stage_id } = router.query;
+  const [session, loading]: [CustomSession, boolean] = useSession();
+  const { user, isUserLoading, isUserError } = useUser(session?.user_id);
+  let { opening, isOpeningLoading, isOpeningError } = useOpeningById(
+    user?.user_id,
+    opening_id as string
+  );
 
-      // Delete the two modal controlling keys
-      delete diff["is_modal_open"];
-      delete diff["modal_mode"];
+  let { stages, isStagesLoading, isStagesError } = useAllStagesInOpening(
+    session?.user_id,
+    opening?.opening_id
+  );
+  const stageModal = useStore((state: PlutomiState) => state.stageModal);
+  const setStageModal = useStore((state: PlutomiState) => state.setStageModal);
 
-      console.log(`Difference between the two objects`, diff);
-      const body = {
-        updated_stage: diff,
-      };
+  const { stage, isStageLoading, isStageError } = useStageById(
+    user?.user_id,
+    opening?.opening_id,
+    stage_id as string
+  );
 
-      const { data } = await axios.put(
-        `/api/openings/${opening_id}/stages/${stage_id}`,
-        body
-      );
-      alert(data.message);
-      setStageModal({
-        is_modal_open: false,
-        modal_mode: "CREATE",
-        stage_id: "",
-        GSI1SK: "",
-      });
-    } catch (error) {
-      alert(error.response.data.message);
-    }
-    mutate(`/api/openings/${opening_id}/stages/${stage_id}`);
-  };
+  const { questions, isQuestionsLoading, isQuestionsError } =
+    useAllStageQuestions(user?.org_id, opening?.opening_id, stage?.stage_id);
+
+  const questionModal = useStore((state: PlutomiState) => state.questionModal);
+  const setQuestionModal = useStore(
+    (state: PlutomiState) => state.setQuestionModal
+  );
+
+  if (isOpeningLoading) {
+    return <Loader text="Loading opening..." />;
+  }
+
+  if (isStagesLoading) {
+    // TODO i think here we should render the column
+    return <Loader text="Loading stages..." />;
+  }
 
   return (
     <>
@@ -191,8 +143,6 @@ export default function StageSettingsContent() {
         updateQuestion={updateQuestion}
       />
 
-      <StageModal updateStage={updateStage} />
-
       {/* 3 column wrapper */}
       <div className="flex-grow w-full max-w-7xl mx-auto xl:px-8 lg:flex">
         {/* Left sidebar & main wrapper */}
@@ -200,7 +150,7 @@ export default function StageSettingsContent() {
           <div className="border-b border-gray-200 xl:border-b-0 xl:flex-shrink-0 xl:w-64 xl:border-r xl:border-gray-200 bg-white">
             <div className="h-full pl-4 pr-6 py-6 sm:pl-6 lg:pl-8 xl:pl-0">
               {/* Start left column area */}
-              <StageReorderColumn/>
+              <StageReorderColumn />
               {/* End left column area */}
             </div>
           </div>
@@ -211,7 +161,7 @@ export default function StageSettingsContent() {
               <div className="relative h-full" style={{ minHeight: "36rem" }}>
                 <div className=" inset-0  border-gray-200 rounded-lg">
                   <h1 className="text-center text-lg font-semibold mb-4">
-                    {stage?.GSI1SK} Settings
+                    {isStageLoading ? "loading..." : stage?.GSI1SK} Settings
                   </h1>
                 </div>
 

@@ -135,34 +135,13 @@ export default function OpeningSettingsContent() {
     mutate(`/api/openings/${openingModal.opening_id}`);
   };
 
-  const createStage = async () => {
-    const body: APICreateStageInput = {
-      GSI1SK: stageModal.GSI1SK,
-    };
-    try {
-      const { data } = await axios.post(
-        `/api/openings/${opening_id}/stages`,
-        body
-      );
-      alert(data.message);
-      setStageModal({ ...stageModal, GSI1SK: "", is_modal_open: false });
-    } catch (error) {
-      console.error("Error creating stage", error);
-      alert(error.response.data.message);
-    }
-    // Refresh stage order
-    mutate(`/api/openings/${opening_id}`);
 
-    // Refresh stage list
-    mutate(`/api/openings/${opening_id}/stages`);
-  };
 
   return (
     <>
       {/* 3 column wrapper */}
       <div className="flex-grow w-full max-w-7xl mx-auto xl:px-8 lg:flex">
         {/* Left sidebar & main wrapper */}
-        <StageModal createStage={createStage} />
         <OpeningModal updateOpening={updateOpening} />
         <div className="flex-1 min-w-0 bg-white xl:flex">
           <div className="border-b border-gray-200 xl:border-b-0 xl:flex-shrink-0 xl:w-64 xl:border-r xl:border-gray-200 bg-white">

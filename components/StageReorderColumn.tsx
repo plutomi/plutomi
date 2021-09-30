@@ -4,6 +4,8 @@ import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
 import { mutate } from "swr";
 import { useState } from "react";
 import { useRouter } from "next/router";
+import difference from "../utils/getObjectDifference";
+import StageModal from "./Stages/StageModal";
 import Link from "next/dist/client/link";
 import { useSession } from "next-auth/client";
 import axios from "axios";
@@ -12,7 +14,62 @@ import { useEffect } from "react";
 import DraggableStageCard from "./Stages/DraggableStageCard";
 import useOpeningById from "../SWR/useOpeningById";
 import useAllStagesInOpening from "../SWR/useAllStagesInOpening";
+import useStageById from "../SWR/useStageById";
 export default function StageReorderColumn() {
+  const createStage = async () => {
+    const body: APICreateStageInput = {
+      GSI1SK: stageModal.GSI1SK,
+    };
+    try {
+      const { data } = await axios.post(
+        `/api/openings/${opening_id}/stages`,
+        body
+      );
+      alert(data.message);
+      setStageModal({ ...stageModal, GSI1SK: "", is_modal_open: false });
+    } catch (error) {
+      console.error("Error creating stage", error);
+      alert(error.response.data.message);
+    }
+    // Refresh stage order
+    mutate(`/api/openings/${opening_id}`);
+
+    // Refresh stage list
+    mutate(`/api/openings/${opening_id}/stages`);
+  };
+
+  const updateStage = async () => {
+    try {
+      // Get the difference between the question returned from SWR
+      // And the updated question in the modal
+      const diff = difference(stage, stageModal);
+
+      // Delete the two modal controlling keys
+      delete diff["is_modal_open"];
+      delete diff["modal_mode"];
+
+      console.log(`Difference between the two objects`, diff);
+      const body = {
+        updated_stage: diff,
+      };
+
+      const { data } = await axios.put(
+        `/api/openings/${opening_id}/stages/${stage_id}`,
+        body
+      );
+      alert(data.message);
+      setStageModal({
+        is_modal_open: false,
+        modal_mode: "CREATE",
+        stage_id: "",
+        GSI1SK: "",
+      });
+    } catch (error) {
+      alert(error.response.data.message);
+    }
+    mutate(`/api/openings/${opening_id}/stages/${stage_id}`);
+  };
+
   const router = useRouter();
   const { opening_id, stage_id } = router.query;
   const [session, loading]: [CustomSession, boolean] = useSession();
@@ -25,6 +82,11 @@ export default function StageReorderColumn() {
   let { stages, isStagesLoading, isStagesError } = useAllStagesInOpening(
     session?.user_id,
     opening?.opening_id
+  );
+  const { stage, isStageLoading, isStageError } = useStageById(
+    user?.user_id,
+    opening?.opening_id,
+    stage_id as string
   );
 
   const [new_stages, setNewStages] = useState(stages);
@@ -73,6 +135,8 @@ export default function StageReorderColumn() {
 
   return (
     <div className="h-full relative" style={{ minHeight: "12rem" }}>
+      <StageModal updateStage={updateStage} createStage={createStage} />
+
       <div className=" inset-0  border-gray-200 rounded-lg  ">
         <div className="flex flex-col justify-center items-center space-y-2">
           <button

@@ -46,17 +46,6 @@ export default function Openings() {
     );
   }
 
-  if (isUserLoading) {
-    return <Loader text="Loading user..." />;
-  }
-
-  if (isOpeningLoading) {
-    return <Loader text="Loading opening..." />;
-  }
-  if (isStagesLoading) {
-    return <Loader text="Loading stages..." />;
-  }
-
   // Redirect to the first stage
   if (stages && stages.length > 0) {
     router.push(
