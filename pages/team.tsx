@@ -45,11 +45,7 @@ export default function Team() {
     return <Loader text="Loading user..." />;
   }
 
-  // TODO loader bug again, styles not being applied when going from dashboard to here
-  // I think its because it's trying to get the  path but it's not there for a fraction of a second
-  if (isOrgUsersLoading) {
-    return <Loader text="Loading team..." />;
-  }
+
 
   if (isOrgUsersError) {
     alert(

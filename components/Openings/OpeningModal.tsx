@@ -93,8 +93,8 @@ export default function OpeningModal({
                         <p className="text-sm text-blue-300">
                           An opening is what you need applicants for. It could
                           be a job like &apos;Engineer&apos;, a location like
-                          &apos;New York&apos; or &apos;Chicago&apos;, or a
-                          program like &apos;Summer Camp&apos;.
+                          &apos;New York&apos; or &apos;Miami&apos;, or a even
+                          the name of your social service program.
                         </p>
                       </div>
                     </div>

@@ -1,5 +1,5 @@
 import { PlusIcon } from "@heroicons/react/solid";
-import { BriefcaseIcon } from "@heroicons/react/outline";
+import { BriefcaseIcon, UserGroupIcon } from "@heroicons/react/outline";
 import useStore from "../../utils/store";
 export default function EmptyTeamState() {
   const setCreateInviteModalOpen = useStore(
@@ -7,7 +7,7 @@ export default function EmptyTeamState() {
   );
   return (
     <div className="text-center">
-      <BriefcaseIcon className="mx-auto h-12 w-12 text-light" />
+      <UserGroupIcon className="mx-auto h-12 w-12 text-light" />
       <h3 className="mt-2 text-lg font-medium text-dark">
         You don&apos;t have any team members
       </h3>

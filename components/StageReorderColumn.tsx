@@ -142,7 +142,7 @@ export default function StageReorderColumn() {
       <StageModal updateStage={updateStage} createStage={createStage} />
 
       <div className=" inset-0  border-gray-200 rounded-lg  ">
-        <div className="flex flex-col justify-center items-center space-y-2">
+        <div className="flex flex-col justify-center items-center space-y-4 ">
           <button
             type="button"
             onClick={() =>
@@ -158,12 +158,10 @@ export default function StageReorderColumn() {
             <PlusIcon className="-ml-1 mr-1  h-5 w-5" aria-hidden="true" />
             Add Stage
           </button>
-          <h1 className="text-center text-lg font-semibold mb-4">
-            {opening?.stage_order.length == 0
-              ? "No stages found"
-              : "Stage Order"}
-          </h1>
         </div>
+        <h1 className="text-center text-xl font-semibold my-4">
+          {opening?.stage_order.length == 0 ? "No stages found" : "Stage Order"}
+        </h1>
 
         {opening?.stage_order.length > 0 && (
           <DragDropContext

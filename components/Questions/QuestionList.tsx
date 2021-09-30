@@ -90,7 +90,6 @@ export default function QuestionList() {
       const { data } = await axios.delete(
         `/api/openings/${opening_id}/stages/${stage_id}/questions/${stage_question_id}`
       );
-      alert(data.message);
     } catch (error) {
       alert(error.response.data);
     }

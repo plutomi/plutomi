@@ -71,7 +71,7 @@ export default function CreateInviteModal({ createInvite }) {
                       </div>
                       <div className="mt-1">
                         <p className="text-sm text-blue-300">
-                          Enter the email of the person you want to invite
+                          You can add unlimited users to your organization.
                         </p>
                       </div>
                     </div>
