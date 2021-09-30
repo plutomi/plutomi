@@ -1,4 +1,9 @@
-import { PutCommand, PutCommandInput } from "@aws-sdk/lib-dynamodb";
+import {
+  PutCommand,
+  PutCommandInput,
+  TransactWriteCommand,
+  TransactWriteCommandInput,
+} from "@aws-sdk/lib-dynamodb";
 import { Dynamo } from "../../libs/ddbDocClient";
 import { GetCurrentTime } from "../time";
 import { nanoid } from "nanoid";
@@ -27,29 +32,46 @@ export async function CreateStageQuestion({
     GSI1SK: GSI1SK, // TODO filter by opening by stage?
   };
 
-  const params: PutCommandInput = {
-    TableName: DYNAMO_TABLE_NAME,
-    Item: new_stage_question,
-    ConditionExpression: "attribute_not_exists(PK)",
-  };
-
   try {
-    await Dynamo.send(new PutCommand(params));
-
     let stage = await GetStageById({ org_id, opening_id, stage_id });
-    stage.question_order.push(stage_question_id);
 
-    const update_stage_input = {
-      org_id: org_id,
-      opening_id: opening_id,
-      stage_id: stage_id,
-      updated_stage: stage,
-    };
+    try {
+      stage.question_order.push(stage_question_id);
 
-    await UpdateStage(update_stage_input);
+      const transactParams: TransactWriteCommandInput = {
+        TransactItems: [
+          {
+            // Add question
+            Put: {
+              Item: new_stage_question,
+              TableName: DYNAMO_TABLE_NAME,
+            },
+          },
+          {
+            // Add question to question order
+            Update: {
+              Key: {
+                PK: `ORG#${org_id}#OPENING#${opening_id}#STAGE#${stage_id}`,
+                SK: `STAGE`,
+              },
+              TableName: DYNAMO_TABLE_NAME,
+              UpdateExpression: "SET question_order = :question_order",
+              ExpressionAttributeValues: {
+                ":question_order": stage.question_order,
+              },
+            },
+          },
+        ],
+      };
 
-    return new_stage_question;
+      await Dynamo.send(new TransactWriteCommand(transactParams));
+      return;
+    } catch (error) {
+      throw new Error(error);
+    }
   } catch (error) {
-    throw new Error(error);
+    throw new Error(
+      `Unable to retrieve stage where question should be added ${error}`
+    );
   }
 }

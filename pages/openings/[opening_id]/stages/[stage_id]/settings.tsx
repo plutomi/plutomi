@@ -64,10 +64,7 @@ export default function OpeningsSettings() {
       return;
     }
     try {
-      const { data } = await axios.delete(
-        `/api/openings/${opening_id}/stages/${stage_id}`
-      );
-      alert(data.message);
+      await axios.delete(`/api/openings/${opening_id}/stages/${stage_id}`);
       router.push(
         `${process.env.NEXT_PUBLIC_NEXTAUTH_URL}/openings/${opening_id}/settings`
       );
