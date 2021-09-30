@@ -34,17 +34,22 @@ export default function OpeningSettingsHeader() {
 
   const crumbs = [
     { name: "Openings", href: `/openings`, current: false },
-    {
-      name: "Applicants",
-      href: `/openings/${opening_id}/stages/${opening?.stage_order[0]}`,
-      current: false,
-    },
+
     {
       name: "Settings",
       href: `/openings/${opening_id}/settings`,
       current: true,
     },
   ];
+
+  // Hide applicant crumb if opening has no stages
+  if (opening?.stage_order.length > 0) {
+    crumbs.splice(1, 0, {
+      name: "Applicants",
+      href: `/openings/${opening_id}/stages/${opening?.stage_order[0]}`,
+      current: false,
+    });
+  }
 
   return (
     <div className="md:flex md:items-center md:justify-between ">
@@ -68,21 +73,6 @@ export default function OpeningSettingsHeader() {
         >
           <PencilAltIcon className="-ml-1 mr-3 h-5 w-5" aria-hidden="true" />
           Edit Opening
-        </button>
-        <button
-          type="button"
-          onClick={() =>
-            setStageModal({
-              ...stageModal,
-              GSI1SK: "",
-              stage_mode: "CREATE",
-              is_modal_open: true,
-            })
-          }
-          className="inline-flex items-center px-4 py-2 border  shadow-sm text-base font-medium rounded-md border-blue-500 text-blue-500 bg-white hover:bg-blue-500 hover:text-white  transition ease-in-out duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
-        >
-          <PlusIcon className="-ml-1 mr-3 h-5 w-5" aria-hidden="true" />
-          Add Stage
         </button>
       </div>
     </div>
