@@ -1,4 +1,9 @@
-import { DeleteCommand, DeleteCommandInput } from "@aws-sdk/lib-dynamodb";
+import {
+  DeleteCommand,
+  DeleteCommandInput,
+  TransactWriteCommand,
+  TransactWriteCommandInput,
+} from "@aws-sdk/lib-dynamodb";
 import { Dynamo } from "../../libs/ddbDocClient";
 import { GetOpening } from "../openings/getOpeningById";
 const { DYNAMO_TABLE_NAME } = process.env;
@@ -10,34 +15,58 @@ export async function DeleteStage({
   opening_id,
   stage_id,
 }: DeleteStageInput) {
-  const params: DeleteCommandInput = {
-    TableName: DYNAMO_TABLE_NAME,
-    Key: {
-      PK: `ORG#${org_id}#OPENING#${opening_id}#STAGE#${stage_id}`,
-      SK: `STAGE`,
-    },
-  };
+  // Get the opening we need to update
 
   try {
-    // TODO this should be a transact
-    await Dynamo.send(new DeleteCommand(params));
-
     let opening = await GetOpening({ org_id, opening_id });
 
+    // Set the new stage order
     let new_stage_order = opening.stage_order.filter(
       (id: string) => id !== stage_id
     );
     opening.stage_order = new_stage_order;
 
-    const update_opening_input = {
-      org_id: org_id,
-      opening_id: opening_id,
-      updated_opening: opening,
+    // Delete the stage item & update the stage order on the opening
+    const transactParams: TransactWriteCommandInput = {
+      TransactItems: [
+        {
+          // Delete stage
+          Delete: {
+            Key: {
+              PK: `ORG#${org_id}#OPENING#${opening_id}#STAGE#${stage_id}`,
+              SK: `STAGE`,
+            },
+            TableName: DYNAMO_TABLE_NAME,
+          },
+        },
+        {
+          // Update Stage Order
+          Update: {
+            Key: {
+              PK: `ORG#${org_id}#OPENING#${opening_id}`,
+              SK: `OPENING`,
+            },
+            TableName: DYNAMO_TABLE_NAME,
+            ConditionExpression: "attribute_exists(PK)",
+            UpdateExpression: "SET stage_order = :stage_order",
+            ExpressionAttributeValues: {
+              ":stage_order": opening.stage_order,
+            },
+          },
+        },
+      ],
     };
 
-    await UpdateOpening(update_opening_input);
-    return;
+    try {
+      // TODO this should be a transact
+      await Dynamo.send(new TransactWriteCommand(transactParams));
+
+      return;
+    } catch (error) {
+      throw new Error(error);
+    }
   } catch (error) {
-    throw new Error(error);
+    console.error(error);
+    throw Error(`Unable to retrieve opening to delete ${error}`);
   }
 }

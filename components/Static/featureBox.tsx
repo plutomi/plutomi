@@ -32,7 +32,7 @@ const features = [
     name: "Stay in control",
     icon: LockClosedIcon,
     color: `bg-gradient-to-br from-purple-300 to-violet-500`,
-    description: "Role based access to all of your resources + MFA",
+    description: "Role based access to all of your resources",
   },
 ];
 export default function Features() {
