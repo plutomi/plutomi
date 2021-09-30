@@ -67,6 +67,6 @@ export async function DeleteStage({
     }
   } catch (error) {
     console.error(error);
-    throw Error(`Unable to retrieve opening to delete ${error}`);
+    throw Error(`Unable to retrieve opening to delete stage ${error}`);
   }
 }
