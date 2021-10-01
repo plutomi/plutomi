@@ -11,7 +11,7 @@ export default function DashboardHeader() {
         <h2 className="text-2xl font-bold leading-7 text-dark sm:text-3xl sm:truncate">
           {user?.first_name === "NO_FIRST_NAME"
             ? "Hello!"
-            : `Hello ${user?.first_name}`}
+            : `Hello ${user?.first_name}!`}
         </h2>
       </div>
       {/* <div className="mt-4 flex md:mt-0 md:ml-4">

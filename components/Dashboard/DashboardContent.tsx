@@ -2,9 +2,12 @@ import EmptyOrgState from "./EmptyOrgState";
 import { useSession } from "next-auth/client";
 import useUser from "../../SWR/useUser";
 import { useState } from "react";
+import UpdateName from "./UpdateName";
 import Loader from "../Loader";
 import ClickToCopy from "../ClickToCopy";
 import usePrivateOrgById from "../../SWR/usePrivateOrgById";
+import axios from "axios";
+import { mutate } from "swr";
 export default function DashboardContent() {
   const [session, loading]: [CustomSession, boolean] = useSession();
   const { user, isUserLoading, isUserError } = useUser(session?.user_id);
@@ -14,6 +17,20 @@ export default function DashboardContent() {
   if (isUserLoading || isOrgLoading) {
     return <Loader text={"Loading..."} />;
   }
+
+  const updateName = async (body) => {
+    try {
+      const { status, data } = await axios.put(
+        `/api/users/${user?.user_id}`,
+        body
+      );
+      alert(data.message);
+    } catch (error) {
+      alert(error.response.message);
+    }
+
+    mutate(`/api/users/${user?.user_id}`);
+  };
 
   return (
     <div>
@@ -26,6 +43,12 @@ export default function DashboardContent() {
           showText={"Copy Application Link"}
           copyText={custom_apply_link}
         />
+      </div>
+      <div className="flex justify-center mx-auto">
+        {user?.first_name === "NO_FIRST_NAME" ||
+        user?.first_name === "NO_FIRST_NAME" ? (
+          <UpdateName updateName={updateName} />
+        ) : null}
       </div>
     </div>
   );
