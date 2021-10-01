@@ -34,6 +34,8 @@ const handler = async (req: CustomRequest, res: NextApiResponse) => {
   }
 
   if (method === "PUT") {
+    // TODO I think this route is only being used for the name thing now
+    // Update it to take any input
     const update_user_input: UpdateUserInput = {
       body: {
         first_name: body.first_name,
