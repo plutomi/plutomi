@@ -14,22 +14,30 @@ export async function CreateApplicant({
   stage_id,
 }: CreateApplicantInput) {
   const now = GetCurrentTime("iso");
-  const applicant_id = nanoid(70);
+  // Applicant ID has to be pretty high as the apply link will be the user ID
+  // This is per org btw
+  // https://zelark.github.io/nano-id-cc/
+  const applicant_id = nanoid(42);
   const new_applicant = {
     PK: `ORG#${org_id}#APPLICANT#${applicant_id}`,
     SK: `APPLICANT`,
-    applicant_first_name: applicant_first_name,
-    applicant_last_name: applicant_last_name,
-    applicant_full_name: `${applicant_first_name} ${applicant_last_name}`,
-    applicant_email: applicant_email,
+    first_name: applicant_first_name,
+    last_name: applicant_last_name,
+    full_name: `${applicant_first_name} ${applicant_last_name}`,
+    email: applicant_email,
     applicant_id: applicant_id,
     entity_type: "APPLICANT",
     created_at: now,
+    // Is this needed? - Just makes it easier to grab than GSI1SK
+    current_opening_id: opening_id,
+    current_stage_id: stage_id,
+    // Is this needed? - Just makes it easier to grab than GSI1SK
+
     GSI1PK: `ORG#${org_id}#APPLICANTS`,
     GSI1SK: `OPENING#${opening_id}#STAGE#${stage_id}`, // TODO ADD TIMESTAMP!!!!!
 
     // TODO ADD TIMESTAMP ABOVE ^
-    // With just one index, we can get
+    // With just one index, i think we can get
     // 1. All applicants in an org
     // 2. All applicants in an opening
     // 3. All applicants in an opening in a specific stage
@@ -41,6 +49,7 @@ export async function CreateApplicant({
   const params: PutCommandInput = {
     TableName: DYNAMO_TABLE_NAME,
     Item: new_applicant,
+    ConditionExpression: "attribute_not_exists(PK)",
   };
 
   try {

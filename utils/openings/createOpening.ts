@@ -11,7 +11,7 @@ export async function CreateOpening({
   is_public,
 }: CreateOpeningInput) {
   const now = GetCurrentTime("iso");
-  const opening_id = nanoid(10);
+  const opening_id = nanoid(16);
   const new_opening: DynamoOpening = {
     PK: `ORG#${org_id}#OPENING#${opening_id}`,
     SK: `OPENING`,

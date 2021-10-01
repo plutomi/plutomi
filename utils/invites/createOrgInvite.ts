@@ -13,6 +13,7 @@ export default async function CreateOrgInvite({
   expires_at,
   invited_by,
   recipient,
+  org_name,
 }: CreateOrgInviteInput) {
   try {
     let user = await GetUserByEmail(recipient);
@@ -53,6 +54,7 @@ export default async function CreateOrgInvite({
       PK: `USER#${user.user_id}`,
       SK: `ORG_INVITE#${now}#INVITE_ID#${invite_id}`, // Allows sorting, and incase two get created in the same millisecond
       org_id: org_id,
+      org_name: org_name, // using org_name here because GSI1SK is taken obv
       invited_by: invited_by,
       entity_type: "ORG_INVITE",
       created_at: now,

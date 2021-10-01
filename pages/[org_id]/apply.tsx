@@ -1,37 +1,39 @@
 import { useRouter } from "next/router";
 import useAllPublicOpenings from "../../SWR/useAllPublicOpenings";
-
+import SignIn from "../../components/SignIn";
+import axios from "axios";
+import Loader from "../../components/Loader";
+import { mutate } from "swr";
+import usePublicOrgById from "../../SWR/usePublicOrgById";
+import OrgApplyPageHeader from "../../components/Org/Public/OrgApplyPageHeader";
+import OrgApplyPageContent from "../../components/Org/Public/OrgApplyPageContent";
 export default function Apply() {
   const router = useRouter();
   const { org_id } = router.query;
-  const { publicOpenings, isPublicOpeningsLoading, isPublicOpeningsError } =
-    useAllPublicOpenings(org_id as string);
+  const { org, isOrgLoading, isOrgError } = usePublicOrgById(org_id as string);
 
-  return (
-    <div>
-      <h1>Viewing the {org_id} page</h1>
-      <div>
-        <h1>All openings</h1>
-        <div>
-          {isPublicOpeningsLoading ? (
-            <h1>Loading</h1>
-          ) : (
-            <div>
-              {publicOpenings.length > 0 ? (
-                <div>
-                  {publicOpenings.map((opening: DynamoOpening) => {
-                    return (
-                      <h1 key={opening?.opening_id}>{opening.GSI1SK}</h1>
-                    );
-                  })}
-                </div>
-              ) : (
-                <h1>No opeinings found</h1>
-              )}
-            </div>
-          )}
-        </div>
+  if (isOrgLoading) {
+    return <Loader text="Loading..." />;
+  }
+
+  if (!org) {
+    return (
+      <div className="max-w-7xl mx-auto p-4 my-12 rounded-lg min-h-screen ">
+        <h1 className="text-2xl text-center font-bold">
+          This org does not exist :(
+        </h1>
       </div>
+    );
+  }
+  return (
+    <div className="max-w-7xl mx-auto p-4 my-12 rounded-lg min-h-screen ">
+      <header>
+        <OrgApplyPageHeader />
+      </header>
+
+      <main className="mt-5">
+        <OrgApplyPageContent />
+      </main>
     </div>
   );
 }

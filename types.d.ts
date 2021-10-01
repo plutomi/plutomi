@@ -1,6 +1,6 @@
 interface CreateOrgInput {
   org_id: string; // plutomi
-  org_name: string; // Plutomi Inc.
+  GSI1SK: string; // Plutomi Inc.
   user: DynamoUser; // User creating the org - Optional on client
 }
 
@@ -32,7 +32,7 @@ interface CreateStageInput {
 }
 
 interface ValidNavigation {
-  current: "Dashboard" | "Openings" | "Team" | "PLACEHOLDER";
+  current: "Dashboard" | "Openings" | "Team" | "Invites" | "PLACEHOLDER";
 }
 
 interface GetStageByIdInput {
@@ -148,6 +148,7 @@ type CustomJWT = JWT & { user_id: string };
  */
 interface CreateOrgInviteInput {
   org_id: string;
+  org_name: string;
   invited_by: DynamoUser;
   recipient: string; // Email of person getting invited
   expires_at: string; // TODO Maybe Dynamo TTL or just ISO
@@ -173,7 +174,7 @@ interface DeleteOrgInviteInput {
 }
 interface SendOrgInviteInput {
   invited_by: DynamoUser;
-  org_id: string;
+  org_name: string;
   recipient: string;
 }
 
@@ -267,7 +268,7 @@ interface APICreateRuleInput {
 }
 
 interface APICreateOrgInput {
-  org_name: string;
+  GSI1SK: string;
   org_id: string;
 }
 
@@ -365,4 +366,16 @@ interface OpeningModalInput {
   opening_id: "";
   GSI1SK: "";
   is_public: boolean;
+}
+
+interface useOrgOutput {
+  org: DynamoOrg;
+  isOrgLoading: boolean;
+  isOrgError: boolean;
+}
+
+interface APICreateApplicantInput {
+  first_name: string;
+  last_name: string;
+  email: string;
 }

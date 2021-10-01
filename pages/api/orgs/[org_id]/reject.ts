@@ -8,7 +8,6 @@ const handler = async (req: CustomRequest, res: NextApiResponse) => {
   const user: DynamoUser = req.user;
   const { timestamp, invite_id }: APIRejectOrgInvite = body;
 
-
   const delete_org_invite: DeleteOrgInviteInput = {
     user_id: user.user_id,
     timestamp: timestamp,
@@ -24,7 +23,7 @@ const handler = async (req: CustomRequest, res: NextApiResponse) => {
   if (method === "POST") {
     try {
       await DeleteOrgInvite(delete_org_invite);
-      return res.status(200).json({ message: "Invite deleted!" });
+      return res.status(200).json({ message: "Invite rejected!" });
     } catch (error) {
       return res
         .status(500)

@@ -117,3 +117,20 @@ interface DynamoStageQuestion {
   GSI1PK: string;
   GSI1SK: string;
 }
+
+interface DynamoOrg {
+  // PK: `ORG#${org_id}`,
+  // SK: `ORG`,
+  // org_id: org_id, // plutomi - Cannot be changed
+  // entity_type: "ORG",
+  // created_at: now,
+  // GSI1PK: `ORG`, // Allows for 'get all orgs' query
+  // GSI1SK: `ORG#${GSI1SK}`, // Actual org name ie: Plutomi Inc - Can be changed!
+  PK: string;
+  SK: `ORG`;
+  org_id: string; // plutomi - Cannot be changed
+  entity_type: "ORG";
+  created_at: string;
+  GSI1PK: `ORG`; // Allows for 'get all orgs' query
+  GSI1SK: string; // Actual org name ie: Plutomi Inc - Can be changed!
+}

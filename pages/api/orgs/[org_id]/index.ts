@@ -3,6 +3,10 @@ import withAuthorizer from "../../../../middleware/withAuthorizer";
 import { GetOrg } from "../../../../utils/orgs/getOrg";
 import { NextApiResponse } from "next";
 
+// When signed in, this returns all data for an org
+// For public org data such as basic info or openings, please use the
+// /api/orgs/[org_id]/public route
+
 const handler = async (req: CustomRequest, res: NextApiResponse) => {
   const { method, query } = req;
   const user: DynamoUser = req.user;

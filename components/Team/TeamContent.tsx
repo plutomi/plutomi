@@ -17,7 +17,7 @@ export default function OpeningsContent() {
   }
   return (
     <>
-      {orgUsers.map((user: DynamoUser) => (
+      {orgUsers?.map((user: DynamoUser) => (
         <UserCard key={user.user_id} user={user} />
       ))}
     </>

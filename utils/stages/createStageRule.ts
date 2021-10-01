@@ -12,7 +12,7 @@ export async function CreateStageRule({
   validation,
 }: CreateStageRuleInput) {
   const now = GetCurrentTime("iso");
-  const stage_rule_id = nanoid(30);
+  const stage_rule_id = nanoid(16);
   const new_stage_rule = {
     PK: `ORG#${org_id}#OPENING#${opening_id}#STAGE#${stage_id}`,
     SK: `STAGE_RULE#${stage_rule_id}`,

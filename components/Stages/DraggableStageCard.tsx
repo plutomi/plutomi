@@ -4,6 +4,7 @@ import Link from "next/dist/client/link";
 import { UserGroupIcon } from "@heroicons/react/outline";
 import NumberFormat from "react-number-format";
 import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
+import _ from "lodash";
 
 export default function DraggableStageCard({
   name,
@@ -28,7 +29,7 @@ export default function DraggableStageCard({
           <UserGroupIcon className="w-5 h-5 0" />
           <p className="text-md font-semibold ">
             <NumberFormat
-              value={100}
+              value={_.random(10, 999)}
               thousandSeparator={true}
               displayType={"text"}
             />

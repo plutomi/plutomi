@@ -9,7 +9,9 @@ export default function DashboardHeader() {
     <div className="md:flex md:items-center md:justify-between">
       <div className="flex-1 min-w-0">
         <h2 className="text-2xl font-bold leading-7 text-dark sm:text-3xl sm:truncate">
-          Hello {user?.first_name}!
+          {user?.first_name === "NO_FIRST_NAME"
+            ? "Hello!"
+            : `Hello ${user?.first_name}`}
         </h2>
       </div>
       {/* <div className="mt-4 flex md:mt-0 md:ml-4">

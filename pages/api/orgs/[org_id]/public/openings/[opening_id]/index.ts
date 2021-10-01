@@ -1,0 +1,36 @@
+// Returns some public info about an opening
+// Such as the opening name, description, and stage order
+import withCleanOrgName from "../../../../../../../middleware/withCleanOrgName";
+import { NextApiResponse } from "next";
+import CleanOpening from "../../../../../../../utils/clean/cleanOpening";
+import { GetOpening } from "../../../../../../../utils/openings/getOpeningById";
+const handler = async (req: CustomRequest, res: NextApiResponse) => {
+  const { method, query } = req;
+  const { org_id, opening_id } = query;
+
+  const get_opening_input: GetOpeningInput = {
+    org_id: org_id as string,
+    opening_id: opening_id as string,
+  };
+
+  if (method === "GET") {
+    try {
+      const opening = await GetOpening(get_opening_input);
+      if (!opening) {
+        return res.status(404).json({ message: "Opening not found" });
+      }
+
+      const cleanOpening = CleanOpening(opening as DynamoOpening);
+      return res.status(200).json(cleanOpening);
+    } catch (error) {
+      // TODO add error logger
+      return res
+        .status(400) // TODO change #
+        .json({ message: `Unable to get opening: ${error}` });
+    }
+  }
+
+  return res.status(405).json({ message: "Not Allowed" });
+};
+
+export default withCleanOrgName(handler);

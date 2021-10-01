@@ -7,7 +7,7 @@ import { customAlphabet } from "nanoid/async";
 import { random } from "lodash";
 
 const alphabet = "23456789ABCDEFGHJKLMNPQRSTUVWXYZ"; // Removes some characters for clarity
-const nanoid = customAlphabet(alphabet, random(8, 12));
+const nanoid = customAlphabet(alphabet, 16);
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   const { body, method } = req;

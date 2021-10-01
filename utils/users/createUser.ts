@@ -11,7 +11,7 @@ export async function CreateUser({
   user_email,
 }: CreateUserInput) {
   const now = GetCurrentTime("iso");
-  const user_id = nanoid(30);
+  const user_id = nanoid(42);
   const new_user = {
     PK: `USER#${user_id}`,
     SK: `USER`,
@@ -32,6 +32,7 @@ export async function CreateUser({
   const params: PutCommandInput = {
     TableName: DYNAMO_TABLE_NAME,
     Item: new_user,
+    ConditionExpression: "attribute_not_exists(PK)",
   };
 
   try {

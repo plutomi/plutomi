@@ -4,17 +4,18 @@ import { GetCurrentTime } from "../time";
 
 const { DYNAMO_TABLE_NAME } = process.env;
 
-export async function CreateOrg({ org_id, org_name, user }: CreateOrgInput) {
+export async function CreateOrg({ org_id, GSI1SK, user }: CreateOrgInput) {
   const now = GetCurrentTime("iso");
+  // TODO add created by with user
   const new_org = {
     PK: `ORG#${org_id}`,
     SK: `ORG`,
-    org_id: org_id, // plutomi
-    org_name: org_name, // Plutomi Inc.
+    org_id: org_id, // plutomi - Cannot be changed
     entity_type: "ORG",
     created_at: now,
     GSI1PK: `ORG`, // Allows for 'get all orgs' query
-    GSI1SK: `ORG#${org_id}`,
+    // but cannot do get org by specific name as there might be duplicates
+    GSI1SK: GSI1SK, // Actual org name ie: Plutomi Inc - Can be changed!
   };
 
   const params: PutCommandInput = {
@@ -23,7 +24,7 @@ export async function CreateOrg({ org_id, org_name, user }: CreateOrgInput) {
     ConditionExpression: "attribute_not_exists(PK)",
   };
 
-  // TODO convert this into a transact?
+  // TODO JOIN ORG AS A TRANSACTION!!!
   // try {
   //   await Dynamo.send(new PutCommand(params));
 

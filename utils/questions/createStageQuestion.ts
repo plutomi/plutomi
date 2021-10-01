@@ -20,7 +20,7 @@ export async function CreateStageQuestion({
   question_description,
 }: CreateStageQuestionInput) {
   const now = GetCurrentTime("iso");
-  const stage_question_id = nanoid(10);
+  const stage_question_id = nanoid(16);
   const new_stage_question = {
     PK: `ORG#${org_id}#OPENING#${opening_id}#STAGE#${stage_id}`,
     SK: `STAGE_QUESTION#${stage_question_id}`,

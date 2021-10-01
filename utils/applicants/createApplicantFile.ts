@@ -11,7 +11,7 @@ export async function CreateApplicantFile(
   applicant_email: string,
   applicant_id: string
 ) {
-  const file_id = nanoid(30);
+  const file_id = nanoid(16);
   const new_applicant = {
     PK: `ORG#${org_id}#APPLICANT#${applicant_id}`,
     SK: `APPLICANT_FILE#${applicant_id}`,
@@ -27,6 +27,7 @@ export async function CreateApplicantFile(
   const params: PutCommandInput = {
     TableName: DYNAMO_TABLE_NAME,
     Item: new_applicant,
+    ConditionExpression: "attribute_not_exists(PK)",
   };
 
   try {

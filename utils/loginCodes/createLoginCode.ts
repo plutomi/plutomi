@@ -15,6 +15,7 @@ export default async function CreateLoginCode({
     let user = await GetUserByEmail(user_email);
 
     // Create a user if it does not exist // TODO is this ideal?
+    // TODO if no user, use a transact to create the user and login code at the sametime
     if (!user) {
       try {
         const new_user: CreateUserInput = {

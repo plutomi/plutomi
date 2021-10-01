@@ -33,36 +33,35 @@ export default function StageCarousel() {
     return <Loader text="Loading stages..." />;
   }
   return (
-    <div className="max-w-8xl border rounded-xl -py-4 ">
+    <div className="max-w-8xl border -py-4 rounded-xl">
       <ItemsCarousel
         requestToChangeActive={setActiveItemIndex}
         activeItemIndex={activeItemIndex}
         numberOfCards={6}
         slidesToScroll={3}
         responsive={false}
-        gutter={-60}
+        gutter={10}
         chevronWidth={chevronWidth}
         leftChevron={
-          <button className="inline-flex  border rounded-l-xl bg-blue-300   hover:bg-blue-500  transition ease-in-out duration-200 w-full justify-center items-center h-full text-white">
+          <button className="inline-flex  border rounded-l-xl bg-blue-300   hover:bg-blue-500  transition ease-in-out duration-200 w-full mx-1 px-2 justify-center items-center h-4/5 text-white">
             <ArrowLeftIcon className="h-10 w-10" aria-hidden="true" />
           </button>
         }
         rightChevron={
-          <button className="inline-flex  border rounded-r-xl bg-blue-300   hover:bg-blue-500  transition ease-in-out duration-200 w-full justify-center items-center h-full text-white">
+          <button className="inline-flex  border rounded-r-xl  bg-gradient-to-r  bg-blue-300 hover:bg-blue-500  transition ease-in-out duration-200 w-full mx-1 px-2 justify-center items-center h-4/5 text-white">
             <ArrowRightIcon className="h-10 w-10" aria-hidden="true" />
           </button>
         }
         outsideChevron
-        firstAndLastGutter={false}
+        firstAndLastGutter={true}
       >
         {stages?.map((stage: DynamoStage) => (
-          <div key={stage.stage_id} className={"mx-9 "}>
-            <StageCard
-              name={stage.GSI1SK}
-              current_stage_id={stage.stage_id}
-              opening_id={stage.opening_id}
-            />
-          </div>
+          <StageCard
+            key={stage.stage_id}
+            name={stage.GSI1SK}
+            current_stage_id={stage.stage_id}
+            opening_id={stage.opening_id}
+          />
         ))}
       </ItemsCarousel>
     </div>

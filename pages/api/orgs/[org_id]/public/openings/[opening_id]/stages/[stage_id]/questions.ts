@@ -1,7 +1,7 @@
-import { CreateStageQuestion } from "../../../../../../../../utils/questions/createStageQuestion";
-import withAuthorizer from "../../../../../../../../middleware/withAuthorizer";
+import { CreateStageQuestion } from "../../../../../../../../../utils/questions/createStageQuestion";
+import withAuthorizer from "../../../../../../../../../middleware/withAuthorizer";
 import { NextApiResponse } from "next";
-import { GetAllQuestionsInStage } from "../../../../../../../../utils/questions/getAllQuestionsInStage";
+import { GetAllQuestionsInStage } from "../../../../../../../../../utils/questions/getAllQuestionsInStage";
 
 const handler = async (req: CustomRequest, res: NextApiResponse) => {
   const { method, query } = req;
@@ -14,6 +14,8 @@ const handler = async (req: CustomRequest, res: NextApiResponse) => {
         opening_id,
         stage_id,
       });
+
+  
 
       return res.status(200).json(questions);
     } catch (error) {

@@ -8,12 +8,12 @@ const UrlSafeString = require("url-safe-string"),
 
 import useStore from "../utils/store";
 export default function CreateOrgModal({ createOrg }) {
-  const [org_name, setOrgName] = useState("");
+  const [GSI1SK, setOrgName] = useState("");
   const [org_id, setOrgId] = useState("");
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
-    await createOrg({ org_name, org_id });
+    await createOrg({ GSI1SK, org_id });
   };
 
   const open = useStore((state: PlutomiState) => state.createOrgModalIsOpen);
@@ -98,7 +98,7 @@ export default function CreateOrgModal({ createOrg }) {
                                 id="org-name"
                                 required
                                 onChange={(e) => setOrgName(e.target.value)}
-                                value={org_name}
+                                value={GSI1SK}
                                 className="block w-full shadow-sm sm:text-sm focus:ring-blue-500 focus:border-blue-500 border-gray-300 rounded-md"
                               />
                             </div>
