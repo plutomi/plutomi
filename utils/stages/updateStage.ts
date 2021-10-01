@@ -8,6 +8,7 @@ export default async function UpdateStage({
   stage_id,
   updated_stage,
 }) {
+  // TODO user the cleaning functions instead
   const FORBIDDEN_KEYS = [
     "PK",
     "SK",

@@ -19,9 +19,8 @@ const navigation = [
   { name: "Team", href: "/team", hidden_if_no_org: true },
 ];
 const userNavigation = [
-  // { name: "Your Profile", href: "#" },
-  // { name: "Invites", href: `${process.env.NEXT_PUBLIC_NEXTAUTH_URL}/invites` },
-  { name: "Sign out", event: () => signOut(), href: "#" },
+  { name: "Your Profile", event: null, href: "/profile" },
+  { name: "Sign out", event: () => signOut(), href: null },
 ];
 
 function classNames(...classes) {
@@ -131,18 +130,31 @@ export default function SignedInNav({ current }: ValidNavigation) {
                       <Menu.Items className="origin-top-right absolute right-0 mt-2 w-48 rounded-md shadow-lg py-1 bg-white ring-1 ring-black ring-opacity-5 focus:outline-none">
                         {userNavigation.map((item) => (
                           <Menu.Item key={item.name}>
-                            {({ active }) => (
-                              <a
-                                href={item.href}
-                                onClick={item.event && item.event}
-                                className={classNames(
-                                  active ? "bg-gray-100" : "",
-                                  "block px-4 py-2 text-md text-gray-700"
-                                )}
-                              >
-                                {item.name}
-                              </a>
-                            )}
+                            {({ active }) =>
+                              item.event ? (
+                                <a
+                                  href={item.href}
+                                  onClick={item.event}
+                                  className={classNames(
+                                    active ? "bg-gray-100" : "",
+                                    "cursor-pointer block px-4 py-2 text-md text-gray-700"
+                                  )}
+                                >
+                                  {item.name}
+                                </a>
+                              ) : (
+                                <Link href={item.href}>
+                                  <a
+                                    className={classNames(
+                                      active ? "bg-gray-100" : "",
+                                      "cursor-pointer block px-4 py-2 text-md text-gray-700"
+                                    )}
+                                  >
+                                    {item.name}
+                                  </a>
+                                </Link>
+                              )
+                            }
                           </Menu.Item>
                         ))}
                       </Menu.Items>
@@ -192,7 +204,7 @@ export default function SignedInNav({ current }: ValidNavigation) {
                   </div>
                   <div className="ml-3">
                     <div className="text-base font-medium text-gray-800">
-                      {user.first_name}
+                      {user.GSI1SK}
                     </div>
                     <div className="text-md font-medium text-normal">
                       {user.user_email}
@@ -207,16 +219,26 @@ export default function SignedInNav({ current }: ValidNavigation) {
                   </button> */}
                 </div>
                 <div className="mt-3 space-y-1">
-                  {userNavigation.map((item) => (
-                    <a
-                      key={item.name}
-                      href={item.href}
-                      onClick={item.event && item.event}
-                      className="block px-4 py-2 text-base font-medium text-normal hover:text-gray-800 hover:bg-gray-100"
-                    >
-                      {item.name}
-                    </a>
-                  ))}
+                  {userNavigation.map((item) => {
+                    {
+                      item.event ? (
+                        <a
+                          key={item.name}
+                          href={item.href}
+                          onClick={item.event}
+                          className="block px-4 py-2 text-base font-medium text-normal hover:text-gray-800 hover:bg-gray-100"
+                        >
+                          {item.name}
+                        </a>
+                      ) : (
+                        <Link href={item.href}>
+                          <a className="block px-4 py-2 text-base font-medium text-normal hover:text-gray-800 hover:bg-gray-100">
+                            {item.name}
+                          </a>
+                        </Link>
+                      );
+                    }
+                  })}
                 </div>
               </div>
             </Disclosure.Panel>

@@ -7,6 +7,7 @@ import { UpdateUser } from "../../../../utils/users/updateUser";
 const handler = async (req: CustomRequest, res: NextApiResponse) => {
   const { method, query, body } = req;
   const { user_id } = query;
+  const { updated_user } = body;
   const user: DynamoUser = req.user;
 
   if (method === "GET") {
@@ -34,13 +35,8 @@ const handler = async (req: CustomRequest, res: NextApiResponse) => {
   }
 
   if (method === "PUT") {
-    // TODO I think this route is only being used for the name thing now
-    // Update it to take any input
     const update_user_input: UpdateUserInput = {
-      body: {
-        first_name: body.first_name,
-        last_name: body.last_name,
-      },
+      updated_user: updated_user,
       user_id: user.user_id,
     };
 

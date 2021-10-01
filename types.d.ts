@@ -89,10 +89,13 @@ interface ClaimLoginCodeInput {
 }
 
 interface UpdateUserInput {
-  body: Object;
+  updated_user: DynamoUser;
   user_id: string;
 }
 
+interface APIUpdateUserInput {
+  updated_user: DynamoUser;
+}
 interface Pokemon {
   id: number;
   name: string;
