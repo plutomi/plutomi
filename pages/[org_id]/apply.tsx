@@ -5,8 +5,8 @@ import axios from "axios";
 import Loader from "../../components/Loader";
 import { mutate } from "swr";
 import usePublicOrgById from "../../SWR/usePublicOrgById";
-import ApplyPageHeader from "../../components/Public/OrgApplyPage/OrgApplyPageHeader";
-import ApplyPageContent from "../../components/Org/Public/OrgApplyPageContent";
+import OrgApplyPageHeader from "../../components/Org/Public/OrgApplyPageHeader";
+import OrgApplyPageContent from "../../components/Org/Public/OrgApplyPageContent";
 export default function Apply() {
   const router = useRouter();
   const { org_id } = router.query;
@@ -28,11 +28,11 @@ export default function Apply() {
   return (
     <div className="max-w-7xl mx-auto p-4 my-12 rounded-lg min-h-screen ">
       <header>
-        <ApplyPageHeader />
+        <OrgApplyPageHeader />
       </header>
 
       <main className="mt-5">
-        <ApplyPageContent />
+        <OrgApplyPageContent />
       </main>
     </div>
   );

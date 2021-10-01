@@ -7,7 +7,7 @@ import { mutate } from "swr";
 import useOpeningById from "../../../SWR/useOpeningById";
 import usePublicOrgById from "../../../SWR/usePublicOrgById";
 import OpeningApplyPageContent from "../../../components/Openings/Public/OpeningApplyPageContent";
-import OpeningApplyPageHeader from "../../../components/Public/OpeningApplyPage/OpeningApplyPageHeader";
+import OpeningApplyPageHeader from "../../../components/Openings/Public/OpeningApplyPageHeader";
 export default function Apply() {
   const router = useRouter();
   const { org_id, opening_id } = router.query;

@@ -1,5 +1,6 @@
 import { FormEvent, useState } from "react";
 import { Switch } from "@headlessui/react";
+import { first } from "lodash";
 
 function classNames(...classes) {
   return classes.filter(Boolean).join(" ");
@@ -7,8 +8,8 @@ function classNames(...classes) {
 
 export default function ApplicantInfoForm({ applyForOpening }) {
   const [agreed, setAgreed] = useState(false);
-  const [firstName, setFirstName] = useState("");
-  const [lastName, setLastName] = useState("");
+  const [first_name, setfirst_name] = useState("");
+  const [last_name, setlast_name] = useState("");
   const [email, setEmail] = useState("");
 
   const handleSubmit = (e: FormEvent) => {
@@ -18,7 +19,12 @@ export default function ApplicantInfoForm({ applyForOpening }) {
       return;
     }
 
-    applyForOpening();
+    const body: APICreateApplicantInput = {
+      first_name: first_name,
+      last_name: last_name,
+      email: email,
+    };
+    applyForOpening(body);
   };
   return (
     <div className="bg-white py-16 px-4 overflow-hidden sm:px-6 lg:px-8 lg:py-24">
@@ -90,11 +96,17 @@ export default function ApplicantInfoForm({ applyForOpening }) {
           />
         </svg>
         <div className="text-center">
-          <h2 className="text-3xl font-extrabold tracking-tight text-gray-900 sm:text-4xl">
+          <h2 className="text-2xl font-bold tracking-tight text-dark sm:text-4xl">
             Apply for this opening
           </h2>
-          <p className="mt-4 text-lg leading-6 text-gray-500">
-            Descriptions will go here
+          <p className="mt-4 text-lg leading-6 text-normal">
+            Descriptions will go here. Will need to verify email with a login
+            code / link as anyone can technically sign up. I prefer the link
+            method as it will take them from this page, and once we receive a
+            GET request at the email link, we can redirect to
+            /org_id/applications/applicant_id. We can even set a 1 day limit on
+            that application link being valid? Don&apos;t know what use case
+            that would serve. TODO add captcha.
           </p>
         </div>
         <div className="mt-12">
@@ -105,7 +117,7 @@ export default function ApplicantInfoForm({ applyForOpening }) {
             <div>
               <label
                 htmlFor="first-name"
-                className="block text-sm font-medium text-gray-700"
+                className="block text-sm font-medium text-normal"
               >
                 First name
               </label>
@@ -114,8 +126,8 @@ export default function ApplicantInfoForm({ applyForOpening }) {
                   type="text"
                   name="first-name"
                   id="first-name"
-                  value={firstName}
-                  onChange={(e) => setFirstName(e.target.value)}
+                  value={first_name}
+                  onChange={(e) => setfirst_name(e.target.value)}
                   autoComplete="given-name"
                   className="py-3 px-4 block w-full shadow-sm focus:ring-blue-500 focus:border-blue-500 border-gray-300 rounded-md"
                 />
@@ -124,7 +136,7 @@ export default function ApplicantInfoForm({ applyForOpening }) {
             <div>
               <label
                 htmlFor="last-name"
-                className="block text-sm font-medium text-gray-700"
+                className="block text-sm font-medium text-normal"
               >
                 Last name
               </label>
@@ -133,17 +145,17 @@ export default function ApplicantInfoForm({ applyForOpening }) {
                   type="text"
                   name="last-name"
                   id="last-name"
-                  value={lastName}
-                  onChange={(e) => setLastName(e.target.value)}
+                  value={last_name}
+                  onChange={(e) => setlast_name(e.target.value)}
                   autoComplete="family-name"
                   className="py-3 px-4 block w-full shadow-sm focus:ring-blue-500 focus:border-blue-500 border-gray-300 rounded-md"
                 />
               </div>
             </div>
-            <div className="sm:col-span-2">
+            {/* <div className="sm:col-span-2">
               <label
                 htmlFor="company"
-                className="block text-sm font-medium text-gray-700"
+                className="block text-sm font-medium text-normal"
               >
                 Company
               </label>
@@ -156,11 +168,11 @@ export default function ApplicantInfoForm({ applyForOpening }) {
                   className="py-3 px-4 block w-full shadow-sm focus:ring-blue-500 focus:border-blue-500 border-gray-300 rounded-md"
                 />
               </div>
-            </div>
+            </div> */}
             <div className="sm:col-span-2">
               <label
                 htmlFor="email"
-                className="block text-sm font-medium text-gray-700"
+                className="block text-sm font-medium text-normal"
               >
                 Email
               </label>
@@ -179,7 +191,7 @@ export default function ApplicantInfoForm({ applyForOpening }) {
             {/* <div className="sm:col-span-2">
               <label
                 htmlFor="phone-number"
-                className="block text-sm font-medium text-gray-700"
+                className="block text-sm font-medium text-normal"
               >
                 Phone Number
               </label>
@@ -191,7 +203,7 @@ export default function ApplicantInfoForm({ applyForOpening }) {
                   <select
                     id="country"
                     name="country"
-                    className="h-full py-0 pl-4 pr-8 border-transparent bg-transparent text-gray-500 focus:ring-blue-500 focus:border-blue-500 rounded-md"
+                    className="h-full py-0 pl-4 pr-8 border-transparent bg-transparent text-light focus:ring-blue-500 focus:border-blue-500 rounded-md"
                   >
                     <option>US</option>
                     <option>CA</option>
@@ -211,7 +223,7 @@ export default function ApplicantInfoForm({ applyForOpening }) {
             {/* <div className="sm:col-span-2">
               <label
                 htmlFor="message"
-                className="block text-sm font-medium text-gray-700"
+                className="block text-sm font-medium text-normal"
               >
                 Message
               </label>
@@ -248,13 +260,19 @@ export default function ApplicantInfoForm({ applyForOpening }) {
                 </div>
                 <div className="ml-3">
                   {/* TODO add these links */}
-                  <p className="text-base text-gray-500">
+                  <p className="text-base text-light">
                     By selecting this, you agree to the Plutomi Inc.{" "}
-                    <a href="#" className="font-medium text-gray-700 underline">
+                    <a
+                      href="#"
+                      className="font-medium text-normal underline hover:text-dark transition ease-in-out duration-200"
+                    >
                       Privacy Policy
                     </a>{" "}
                     and{" "}
-                    <a href="#" className="font-medium text-gray-700 underline">
+                    <a
+                      href="#"
+                      className="font-medium text-normal underline hover:text-dark transition ease-in-out duration-200"
+                    >
                       Cookie Policy
                     </a>
                     .

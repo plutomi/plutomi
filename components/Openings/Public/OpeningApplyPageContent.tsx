@@ -6,7 +6,6 @@ import ApplicantInfoForm from "./ApplicantInfoForm";
 export default function OpeningApplyPageContent() {
   const router = useRouter();
   const { org_id, opening_id } = router.query;
-  const { org, isOrgLoading, isOrgError } = usePublicOrgById(org_id as string);
   const { opening, isOpeningLoading, isOpeningError } = usePublicOpeningById(
     org_id as string,
     opening_id as string
@@ -16,15 +15,16 @@ export default function OpeningApplyPageContent() {
     return <Loader text={"Loading..."} />;
   }
 
-  const applyForOpening = async () => {
+  const applyForOpening = async (body: APICreateApplicantInput) => {
     alert("Applied");
+    console.log(body);
   };
   return (
     <div className="mt-6">
-      <h2 className="text-2xl font-bold leading-7 text-dark sm:text-3xl sm:truncate">
+      {/* <h2 className="text-2xl font-bold leading-7 text-dark sm:text-3xl sm:truncate">
         Opening details will go here
-      </h2>
-      <div className="p-10">
+      </h2> */}
+      <div className="">
         <ApplicantInfoForm applyForOpening={applyForOpening} />
       </div>
     </div>
