@@ -14,7 +14,8 @@ export async function CreateOrg({ org_id, GSI1SK, user }: CreateOrgInput) {
     entity_type: "ORG",
     created_at: now,
     GSI1PK: `ORG`, // Allows for 'get all orgs' query
-    GSI1SK: `ORG#${GSI1SK}`, // Actual org name ie: Plutomi Inc - Can be changed!
+    // but cannot do get org by specific name as there might be duplicates
+    GSI1SK: GSI1SK, // Actual org name ie: Plutomi Inc - Can be changed!
   };
 
   const params: PutCommandInput = {
