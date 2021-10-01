@@ -77,7 +77,9 @@ export default function StageModal({
                     <div className="py-6 px-4 bg-blue-700 sm:px-6">
                       <div className="flex items-center justify-between">
                         <Dialog.Title className="text-lg font-medium text-white">
-                          New Stage
+                          {stageModal.modal_mode === "CREATE"
+                            ? "New Stage"
+                            : "Editing Stage"}
                         </Dialog.Title>
                         <div className="ml-3 h-7 flex items-center">
                           <button
@@ -97,8 +99,9 @@ export default function StageModal({
                       </div>
                       <div className="mt-1">
                         <p className="text-sm text-blue-300">
-                          Stages are like Questionnaire, Set Up Profile, hired,
-                          or ready to drive.
+                          Stages are individual steps in your application
+                          process such as &apos;Questionnaire&apos;, &apos;Under
+                          Review&apos;, or &apos;Ready to Drive&apos;.
                         </p>
                       </div>
                     </div>
@@ -110,14 +113,16 @@ export default function StageModal({
                               htmlFor="opening-name"
                               className="block text-sm font-medium text-dark"
                             >
-                              Stage name
+                              {stageModal.modal_mode === "CREATE"
+                                ? "Stage Name"
+                                : "New Name"}
                             </label>
                             <div className="mt-1">
                               <input
                                 type="text"
                                 name="opening-name"
                                 id="opening-name"
-                                placeholder={`Something like 'Questionnaire' or 'Set Up Profile'`}
+                                placeholder={`What is the overall purpose of this stage?`}
                                 required
                                 onChange={(e) =>
                                   setStageModal({
@@ -318,7 +323,9 @@ export default function StageModal({
                       type="submit"
                       className="ml-4 inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
                     >
-                      Create Stage
+                      {stageModal.modal_mode === "CREATE"
+                        ? "Create Stage"
+                        : "Edit Stage"}
                     </button>
                   </div>
                 </form>

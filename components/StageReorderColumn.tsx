@@ -149,7 +149,7 @@ export default function StageReorderColumn() {
               setStageModal({
                 ...stageModal,
                 GSI1SK: "",
-                stage_mode: "CREATE",
+                modal_mode: "CREATE",
                 is_modal_open: true,
               })
             }

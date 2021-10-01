@@ -19,9 +19,6 @@ export default function TeamHeader() {
     (state: PlutomiState) => state.setCreateInviteModalOpen
   );
 
-  if (isOrgUsersLoading) {
-    return <Loader text="Loading users..." />;
-  }
   return (
     <div className="md:flex md:items-center md:justify-between ">
       <div className=" min-w-0 ">
