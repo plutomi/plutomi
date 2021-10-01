@@ -7,6 +7,19 @@ const useStore = create((set) => ({
   openingsSearchInput: "",
   createInviteModalIsOpen: false,
 
+  userProfileModal: {
+    is_modal_open: true,
+    modal_mode: "EDIT",
+    first_name: "",
+    last_name: "",
+  },
+
+  setUserProfileModal: (userProfileModal: UserProfileModalInput) => {
+    set((state) => ({
+      userProfileModal: userProfileModal,
+    }));
+  },
+
   stageModal: {
     is_modal_open: false, // False by default
     modal_mode: "CREATE", // Will render text differently

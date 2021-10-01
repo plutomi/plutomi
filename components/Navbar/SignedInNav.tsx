@@ -20,7 +20,7 @@ const navigation = [
 ];
 const userNavigation = [
   { name: "Your Profile", event: null, href: "/profile" },
-  { name: "Sign out", event: () => signOut(), href: null },
+  { name: "Sign out", event: () => signOut(), href: "#" },
 ];
 
 function classNames(...classes) {
@@ -77,7 +77,7 @@ export default function SignedInNav({ current }: ValidNavigation) {
                             className={classNames(
                               current === item.name
                                 ? "border-blue-500 text-dark"
-                                : "border-transparent text-light hover:border-blue-gray-300 hover:text-gray-700",
+                                : "border-transparent text-light hover:border-blue-gray-300 hover:text-dark",
                               "inline-flex items-center px-1 pt-1 border-b-2 text-md font-medium"
                             )}
                             aria-current={
@@ -106,10 +106,10 @@ export default function SignedInNav({ current }: ValidNavigation) {
                       <Menu.Button className="max-w-xs bg-white flex items-center text-md rounded-full focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
                         <span className="sr-only">Open user menu</span>
                         {/* <img
-                        className="h-8 w-8 rounded-full"
-                        src={user.imageUrl}
-                        alt=""
-                      /> */}
+                          className="h-8 w-8 rounded-full"
+                          src={user.imageUrl}
+                          alt=""
+                        /> */}
                         <button>
                           <DotsHorizontalIcon
                             className="block h-6 w-6"
@@ -127,32 +127,38 @@ export default function SignedInNav({ current }: ValidNavigation) {
                       leaveFrom="transform opacity-100 scale-100"
                       leaveTo="transform opacity-0 scale-95"
                     >
-                      <Menu.Items className="origin-top-right absolute right-0 mt-2 w-48 rounded-md shadow-lg py-1 bg-white ring-1 ring-black ring-opacity-5 focus:outline-none">
+                      <Menu.Items className="origin-top-right absolute right-0 mt-2 w-96 rounded-md shadow-lg py-1 bg-white ring-1 ring-black ring-opacity-5 focus:outline-none">
+                        <div className="px-4 py-2 text-md border-dashed border-b-2">
+                          <div className="   text-dark ">
+                            Signed in as {user?.GSI1SK}
+                          </div>
+                          <div className=" text-light">{user.user_email}</div>
+                        </div>
                         {userNavigation.map((item) => (
                           <Menu.Item key={item.name}>
                             {({ active }) =>
-                              item.event ? (
+                              item.name === "Sign Out" ? (
                                 <a
                                   href={item.href}
                                   onClick={item.event}
                                   className={classNames(
-                                    active ? "bg-gray-100" : "",
-                                    "cursor-pointer block px-4 py-2 text-md text-gray-700"
+                                    active ? "bg-blue-gray-100" : "",
+                                    "block px-4 py-2 text-md text-dark"
                                   )}
                                 >
                                   {item.name}
                                 </a>
                               ) : (
-                                <Link href={item.href}>
-                                  <a
-                                    className={classNames(
-                                      active ? "bg-gray-100" : "",
-                                      "cursor-pointer block px-4 py-2 text-md text-gray-700"
-                                    )}
-                                  >
-                                    {item.name}
-                                  </a>
-                                </Link>
+                                <a
+                                  key={item.name}
+                                  href={item.href}
+                                  className={classNames(
+                                    active ? "bg-blue-gray-100" : "",
+                                    "block px-4 py-2 text-md text-dark"
+                                  )}
+                                >
+                                  {item.name}
+                                </a>
                               )
                             }
                           </Menu.Item>
@@ -210,18 +216,19 @@ export default function SignedInNav({ current }: ValidNavigation) {
                       {user.user_email}
                     </div>
                   </div>
-                  {/* <button
+                  <button
                     type="button"
+                    onClick={() => signOut()}
                     className="ml-auto bg-white flex-shrink-0 p-1 rounded-full text-light hover:text-normal focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
                   >
-                    <span className="sr-only">View notifications</span>
+                    <span className="sr-only">Sign Out</span>
                     <BellIcon className="h-6 w-6" aria-hidden="true" />
-                  </button> */}
+                  </button>
                 </div>
                 <div className="mt-3 space-y-1">
                   {userNavigation.map((item) => {
                     {
-                      item.event ? (
+                      item.name === "Sign Out" ? (
                         <a
                           key={item.name}
                           href={item.href}
@@ -231,7 +238,7 @@ export default function SignedInNav({ current }: ValidNavigation) {
                           {item.name}
                         </a>
                       ) : (
-                        <Link href={item.href}>
+                        <Link key={item.name} href={item.href}>
                           <a className="block px-4 py-2 text-base font-medium text-normal hover:text-gray-800 hover:bg-gray-100">
                             {item.name}
                           </a>
