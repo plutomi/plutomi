@@ -1,5 +1,5 @@
 import { useRouter } from "next/router";
-import useAllPublicOpenings from "../../SWR/useAllPublicOpenings";
+import useAllPublicOpenings from "../../../SWR/useAllPublicOpenings";
 import PublicOpeningsList from "./PublicOpeningsList";
 export default function ApplyPageContent() {
   const router = useRouter();

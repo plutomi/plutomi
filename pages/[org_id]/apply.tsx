@@ -5,8 +5,8 @@ import axios from "axios";
 import Loader from "../../components/Loader";
 import { mutate } from "swr";
 import usePublicOrgById from "../../SWR/usePublicOrgById";
-import ApplyPageHeader from "../../components/OrgApplyPage/OrgApplyPageHeader";
-import ApplyPageContent from "../../components/OrgApplyPage/OrgApplyPageContent";
+import ApplyPageHeader from "../../components/Public/OrgApplyPage/OrgApplyPageHeader";
+import ApplyPageContent from "../../components/Public/OrgApplyPage/OrgApplyPageContent";
 export default function Apply() {
   const router = useRouter();
   const { org_id } = router.query;
