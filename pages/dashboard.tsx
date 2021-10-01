@@ -52,7 +52,7 @@ export default function Dashboard() {
    * ~~~~~~~~~~~~~~~~~~~~~~~~
    */
 
-  const createOrg = async ({ org_name, org_id }) => {
+  const createOrg = async ({ GSI1SK, org_id }) => {
     if (
       !confirm(
         `Your org id will be '${org_id}', this CANNOT be changed. Do you want to continue?`
@@ -61,7 +61,7 @@ export default function Dashboard() {
       return;
     }
     const body: APICreateOrgInput = {
-      org_name: org_name,
+      GSI1SK: GSI1SK,
       org_id: org_id,
     };
     try {

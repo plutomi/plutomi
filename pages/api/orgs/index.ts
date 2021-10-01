@@ -7,15 +7,15 @@ import { JoinOrg } from "../../../utils/users/joinOrg";
 import { GetAllOrgInvites } from "../../../utils/invites/getAllOrgInvites";
 const handler = async (req: CustomRequest, res: NextApiResponse) => {
   const { body, method } = req;
-  const { org_name, org_id }: APICreateOrgInput = body;
+  const { GSI1SK, org_id }: APICreateOrgInput = body;
 
   const user: DynamoUser = req.user;
 
   // Create an org
   if (method === "POST") {
-    if (org_name === "NO_ORG_ASSIGNED") {
+    if (GSI1SK === "NO_ORG_ASSIGNED") {
       return res.status(400).json({
-        message: `You cannot create an org with this name: ${org_name}`,
+        message: `You cannot create an org with this name: ${GSI1SK}`,
       });
     }
     if (user.org_id != "NO_ORG_ASSIGNED") {
@@ -34,7 +34,7 @@ const handler = async (req: CustomRequest, res: NextApiResponse) => {
     }
 
     const create_org_input: CreateOrgInput = {
-      org_name: org_name,
+      GSI1SK: GSI1SK,
       org_id: org_id,
       user: user,
     };
@@ -46,7 +46,7 @@ const handler = async (req: CustomRequest, res: NextApiResponse) => {
     }
 
     // Abundance of caution, TODO add joi
-    if (org_name.length == 0) {
+    if (GSI1SK.length == 0) {
       return res.status(400).json({ message: "Org name cannot be empty" });
     }
     try {

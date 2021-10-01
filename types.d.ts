@@ -1,6 +1,6 @@
 interface CreateOrgInput {
   org_id: string; // plutomi
-  org_name: string; // Plutomi Inc.
+  GSI1SK: string; // Plutomi Inc.
   user: DynamoUser; // User creating the org - Optional on client
 }
 
@@ -267,7 +267,7 @@ interface APICreateRuleInput {
 }
 
 interface APICreateOrgInput {
-  org_name: string;
+  GSI1SK: string;
   org_id: string;
 }
 
@@ -365,4 +365,10 @@ interface OpeningModalInput {
   opening_id: "";
   GSI1SK: "";
   is_public: boolean;
+}
+
+interface useOrgOutput {
+  org: DynamoOrg;
+  isOrgLoading: boolean;
+  isOrgError: boolean;
 }
