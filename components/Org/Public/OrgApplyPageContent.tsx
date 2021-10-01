@@ -1,6 +1,6 @@
 import { useRouter } from "next/router";
 import useAllPublicOpenings from "../../../SWR/useAllPublicOpenings";
-import PublicOpeningsList from "./PublicOpeningsList";
+import PublicOpeningsList from "../../Openings/Public/PublicOpeningsList";
 export default function OrgApplyPageContent() {
   const router = useRouter();
   const { org_id } = router.query;

@@ -6,7 +6,7 @@ import Loader from "../../components/Loader";
 import { mutate } from "swr";
 import usePublicOrgById from "../../SWR/usePublicOrgById";
 import ApplyPageHeader from "../../components/Public/OrgApplyPage/OrgApplyPageHeader";
-import ApplyPageContent from "../../components/Public/OrgApplyPage/OrgApplyPageContent";
+import ApplyPageContent from "../../components/Org/Public/OrgApplyPageContent";
 export default function Apply() {
   const router = useRouter();
   const { org_id } = router.query;

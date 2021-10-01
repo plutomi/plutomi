@@ -6,7 +6,7 @@ import Loader from "../../../components/Loader";
 import { mutate } from "swr";
 import useOpeningById from "../../../SWR/useOpeningById";
 import usePublicOrgById from "../../../SWR/usePublicOrgById";
-import OpeningApplyPageContent from "../../../components/Public/OpeningApplyPage/OpeningApplyPageContent";
+import OpeningApplyPageContent from "../../../components/Openings/Public/OpeningApplyPageContent";
 import OpeningApplyPageHeader from "../../../components/Public/OpeningApplyPage/OpeningApplyPageHeader";
 export default function Apply() {
   const router = useRouter();
