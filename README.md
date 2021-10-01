@@ -1,14 +1,28 @@
-[Website](https://plutomi.com)
+# Plutomi - [Website](https://plutomi.com)
+
+**Plutomi is an applicant tracking system**.
+
+You can create `openings`, which people can apply to. An opening can be anything from a job, a location for a delivery company, or a program like a summer camp.
+
+In these openings, you can create `stages` which are individual steps for your application. You can add questions which applicants can answer, and setup automatic move rules that determine where applicants go next depending on their answers or after a certain time period.
+
+An _opening_ for a delivery company might look like this:
+
+Opening name: **New York City**
+
+Stage order:
+
+1. **Questionnaire** - Collect basic information of an applicant. If an applicant does not complete this stage in 30 days, move them to the _Waiting List_.
+2. **Waiting List** - An idle pool of applicants
+3. **Document Upload** - Collect an applicant's license
+4. **Final Review** - Manually review an applicant's license for compliance
+5. **Ready to Drive** - Applicants that have completed your application
 
 ## Motivation
 
-We were not satisfied with the current landscape of applicant tracking systems, especially for large scale, high volume hiring. We've struggled in the past with vendors that had performance issues, feature requests that never saw the light of day, limited customizability, and tedious manual labor was required to propagate changes across hundreds of job postings.
+We were not satisfied with the current landscape of applicant tracking systems, especially for large scale, high volume hiring. It would have benefited us to have an open source platform that we could contribute to and make changes ourselves instead of waiting for the vendor to (maybe) implement changes many months down the line.
 
-This limited our ability to innovate in our recruiting pipelines which had serious material consequences when we couldn't meet our staffing needs.
-
-We also noticed that there are a lot of organizations _still_ using handwritten forms to intake applicants into their programs. This is slow and monotonous; there has to be a better way!
-
-This project is our attempt to address the issues mentioned above and also provide a platform for others to improve upon.
+This project is our attempt to address some of the issues we encountered and to provide a platform for others to improve upon.
 
 ## License and Open Source
 
@@ -34,4 +48,4 @@ Example: `fix: Removed the double modals popping up on login`
 
 ---
 
-More information will be added here in the days to come - stay tuned!
+For any questions, please submit an issue or email contact@plutomi.com!
