@@ -20,13 +20,10 @@ export default function DashboardContent() {
 
   const updateName = async (body) => {
     try {
-      const { status, data } = await axios.put(
-        `/api/users/${user?.user_id}`,
-        body
-      );
+      const { data } = await axios.put(`/api/users/${user?.user_id}`, body);
       alert(data.message);
     } catch (error) {
-      alert(error.response.message);
+      alert(error.response.data.message);
     }
 
     mutate(`/api/users/${user?.user_id}`);

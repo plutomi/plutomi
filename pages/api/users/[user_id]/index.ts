@@ -34,6 +34,8 @@ const handler = async (req: CustomRequest, res: NextApiResponse) => {
   }
 
   if (method === "PUT") {
+    // TODO I think this route is only being used for the name thing now
+    // Update it to take any input
     const update_user_input: UpdateUserInput = {
       body: {
         first_name: body.first_name,
@@ -41,8 +43,17 @@ const handler = async (req: CustomRequest, res: NextApiResponse) => {
       },
       user_id: user.user_id,
     };
-    await UpdateUser(update_user_input);
-    return res.status(200).json({ message: "Updated!" });
+
+    try {
+      await UpdateUser(update_user_input);
+      return res.status(200).json({ message: "Updated!" });
+    } catch (error) {
+      // TODO add error logger
+      // TODO get correct status code
+      return res
+        .status(500)
+        .json({ message: `Unable to update user ${error}` });
+    }
   }
 
   return res.status(405).json({ message: "Not Allowed" });
