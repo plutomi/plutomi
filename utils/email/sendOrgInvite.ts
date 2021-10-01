@@ -19,7 +19,7 @@ export default async function SendOrgInvite({
       },
       Body: {
         Html: {
-          Data: `<h4>${invited_by.first_name} ${invited_by.last_name} wants you to join their organization.</h4><br><p>You can accept their invite at this link: <a href="https://plutomi.com/invites">https://plutomi.com/invites</a></p><br></br><p>If you believe this email was received in error, you can safely ignore it.</p>`,
+          Data: `<h4>${invited_by.first_name} ${invited_by.last_name} wants you to join their organization!</h4><p>You can accept their invite at this link: <a href="https://plutomi.com/invites">https://plutomi.com/invites</a></p><br></br><p>If you believe this email was received in error, you can safely ignore it.</p>`,
         },
       },
     },

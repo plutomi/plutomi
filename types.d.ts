@@ -148,6 +148,7 @@ type CustomJWT = JWT & { user_id: string };
  */
 interface CreateOrgInviteInput {
   org_id: string;
+  org_name: string;
   invited_by: DynamoUser;
   recipient: string; // Email of person getting invited
   expires_at: string; // TODO Maybe Dynamo TTL or just ISO

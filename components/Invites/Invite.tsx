@@ -9,15 +9,14 @@ export default function Invite({ invite, acceptInvite, rejectInvite }) {
       <div className="w-full flex items-center justify-between px-6 py-3 space-x-6">
         <div className="flex-1 truncate">
           <div className="flex items-center space-x-3 justify-between">
-            <h3 className="text-dark text-sm font-semibold truncate">
-              <span className="text-normal"> Org ID: </span>
-              {invite.org_id}
+            <h3 className="text-dark text-lg font-semibold truncate">
+              {invite.org_name}
             </h3>
             <span className="flex-shrink-0 inline-block px-2 py-0.5 text-blue-gray-800 text-xs font-medium bg-blue-gray-100 rounded-full">
               Expires {GetRelativeTime(invite.expires_at)}
             </span>
           </div>
-          <p className="mt-3 text-normal text-sm truncate">
+          <p className="mt-2 text-normal text-sm truncate">
             {" "}
             Invited by{" "}
             <span className=" text-darkfont-semibold">

@@ -21,7 +21,7 @@ export default function OpeningApplyPageHeader() {
         <h2 className="text-3xl  font-extrabold leading-7 text-dark  sm:truncate">
           {org?.GSI1SK}
         </h2>
-        <h2 className=" text-2xl font-bold leading-7 text-dark  sm:truncate">
+        <h2 className=" text-2xl font-semibold leading-7 text-light  sm:truncate">
           {isOpeningLoading ? null : `${opening?.GSI1SK}`}
         </h2>
       </div>

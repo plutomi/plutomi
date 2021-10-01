@@ -21,8 +21,12 @@ const handler = async (req: CustomRequest, res: NextApiResponse) => {
     "iso"
   );
 
+  const org = await GetOrg(user.org_id);
+
+
   const new_org_invite: CreateOrgInviteInput = {
     claimed: false,
+    org_name: org.GSI1SK, // For the client they can see the name instead of ID
     invited_by: user, // TODO reduce this to just name & email
     org_id: user.org_id,
     recipient: recipient,
@@ -44,8 +48,6 @@ const handler = async (req: CustomRequest, res: NextApiResponse) => {
         message: `You must create an organization before inviting users`,
       });
     }
-
-    const org = await GetOrg(user.org_id);
 
     const new_org_invite_email: SendOrgInviteInput = {
       invited_by: user,
