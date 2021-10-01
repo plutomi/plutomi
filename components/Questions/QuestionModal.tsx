@@ -139,7 +139,7 @@ export default function QuestionModal({ createQuestion, updateQuestion }) {
                                 id="description"
                                 placeholder="Optional helper text for your applicants."
                                 className="p-2 text-sm focus:ring-blue-500 focus:border-blue-500 border-gray-300 rounded-md w-full block resize"
-                                maxLength={description_max_length}
+                                maxLength={description_max_length} // TODO add counter
                                 rows={5}
                                 value={questionModal.question_description}
                                 onChange={(e) =>
@@ -148,9 +148,7 @@ export default function QuestionModal({ createQuestion, updateQuestion }) {
                                     question_description: e.target.value,
                                   })
                                 }
-                              >
-                                <p>test</p>
-                              </textarea>
+                              ></textarea>
                             </div>
                           </div>
                           {/* <div>
