@@ -100,7 +100,7 @@ export default function QuestionList() {
 
     // Refresh questions
     mutate(
-      `/api/orgs/${user?.org_id}/openings/${opening_id}/stages/${stage_id}/questions`
+      `/api/orgs/${user?.org_id}/public/openings/${opening_id}/stages/${stage_id}/questions`
     );
   };
 
@@ -111,7 +111,6 @@ export default function QuestionList() {
     <div>
       <div className="flow-root mt-6">
         {/* Left Column Stage Order on /openings/-opening_id-/settings */}
-
         <DragDropContext
           onDragEnd={handleDragEnd}
           onDragStart={() => console.log("Start")}

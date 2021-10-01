@@ -32,7 +32,7 @@ export default function QuestionItem({
           {new_questions.indexOf(question) + 1}. {question.GSI1SK}
         </h3>
         {question.question_description && (
-          <p className="text-md text-light line-clamp-2">
+          <p className="text-md text-light line-clamp-2 mt-1">
             {question.question_description}
           </p>
         )}

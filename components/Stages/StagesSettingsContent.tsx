@@ -50,7 +50,7 @@ export default function StageSettingsContent() {
 
     // Refresh the question list
     mutate(
-      `/api/orgs/${user.org_id}/openings/${opening_id}/stages/${stage_id}/questions`
+      `/api/orgs/${user.org_id}/public/openings/${opening_id}/stages/${stage_id}/questions`
     );
   };
 
@@ -94,7 +94,7 @@ export default function StageSettingsContent() {
 
     // Refresh the question list
     mutate(
-      `/api/orgs/${user.org_id}/openings/${opening_id}/stages/${stage_id}/questions`
+      `/api/orgs/${user.org_id}/public/openings/${opening_id}/stages/${stage_id}/questions`
     );
   };
 

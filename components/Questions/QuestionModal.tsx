@@ -111,7 +111,7 @@ export default function QuestionModal({ createQuestion, updateQuestion }) {
                                 id="title"
                                 required
                                 placeholder={
-                                  "'What is your name?' or 'Tell us about yourslef'"
+                                  "'What is your name?' or 'Tell us about yourself'"
                                 }
                                 value={questionModal.GSI1SK}
                                 onChange={(e) =>
