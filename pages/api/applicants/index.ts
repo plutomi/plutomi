@@ -1,6 +1,6 @@
 import { CreateApplicant } from "../../../utils/applicants/createApplicant";
 import withAuthorizer from "../../../middleware/withAuthorizer";
-import { NextApiRequest, NextApiResponse } from "next";
+import {  NextApiResponse } from "next";
 const handler = async (req: CustomRequest, res: NextApiResponse) => {
   const { body, method, query } = req;
   const {
@@ -20,7 +20,7 @@ const handler = async (req: CustomRequest, res: NextApiResponse) => {
         applicant_first_name: applicant_first_name,
         applicant_last_name: applicant_last_name,
         opening_id: opening_id,
-        stage_id: stage_id,
+        stage_id: stage_id, // First stage of the opening
       };
       let missing_keys = [];
       for (const [key, value] of Object.entries(create_applicant_input)) {

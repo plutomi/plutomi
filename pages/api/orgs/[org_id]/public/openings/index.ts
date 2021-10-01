@@ -4,6 +4,7 @@ import withCleanOrgName from "../../../../../../middleware/withCleanOrgName";
 import { GetOrg } from "../../../../../../utils/orgs/getOrg";
 import { NextApiResponse } from "next";
 import { GetAllOpeningsInOrg } from "../../../../../../utils/openings/getAllOpeningsInOrg";
+import CleanOpening from "../../../../../../utils/clean/cleanOpening";
 
 const handler = async (req: CustomRequest, res: NextApiResponse) => {
   const { method, query } = req;
@@ -16,16 +17,7 @@ const handler = async (req: CustomRequest, res: NextApiResponse) => {
         (opening): DynamoOpening => opening.is_public
       );
 
-      // Determine which keys should be allowed to be sent back
-      // Since these are public openings, we should only send back basic info
-      // ie: NOT how many applicants there are
-
-      const safeKeys = ["GSI1SK", "opening_id", "created_at", "stage_order"];
-      only_public.forEach((opening) => {
-        Object.keys(opening).forEach(
-          (key) => safeKeys.includes(key) || delete opening[key]
-        );
-      });
+      only_public.forEach((opening) => CleanOpening(opening as DynamoOpening));
 
       return res.status(200).json(only_public);
     } catch (error) {

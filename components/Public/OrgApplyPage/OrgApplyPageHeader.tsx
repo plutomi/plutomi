@@ -1,7 +1,7 @@
 import { useRouter } from "next/router";
 import useAllPublicOpenings from "../../../SWR/useAllPublicOpenings";
 import usePublicOrgById from "../../../SWR/usePublicOrgById";
-export default function DashboardHeader() {
+export default function OrgApplyPageHeader() {
   const router = useRouter();
   const { org_id } = router.query;
   const { org, isOrgLoading, isOrgError } = usePublicOrgById(org_id as string);
