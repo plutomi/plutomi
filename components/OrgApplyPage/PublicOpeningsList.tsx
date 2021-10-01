@@ -1,16 +1,10 @@
 // Very similar to OpeningsList, but removes some elements
 // Such as filtering of openings, their public / private status,
 // And how many applicants there are
-import {
-  CalendarIcon,
-  LocationMarkerIcon,
-  UsersIcon,
-} from "@heroicons/react/solid";
+import { CalendarIcon, LocationMarkerIcon } from "@heroicons/react/solid";
 import { GetRelativeTime } from "../../utils/time";
 import Link from "next/dist/client/link";
-import { useSession } from "next-auth/client";
-import useOpenings from "../../SWR/useOpenings";
-import useUser from "../../SWR/useUser";
+
 import _ from "lodash";
 import { useRouter } from "next/router";
 import useStore from "../../utils/store";
@@ -26,16 +20,9 @@ export default function PublicOpeningsList() {
       <ul role="list" className="divide-y divide-gray-200">
         {publicOpenings?.map((opening: DynamoOpening) => (
           <li key={opening.opening_id}>
-            {/* If the opening has stages, go to the first stage and view aplicants. Otherwise, go to the settings page for the opening to create one*/}
+            {/* Take applicant to opening info page */}
             <Link
-              href={`${process.env.NEXT_PUBLIC_NEXTAUTH_URL}/openings/${
-                opening.opening_id
-              }/${
-                opening.stage_order.length > 0
-                  ? `/stages/${opening.stage_order[0]}`
-                  : `settings`
-              }
-                `}
+              href={`${process.env.NEXT_PUBLIC_NEXTAUTH_URL}/${org_id}/${opening?.opening_id}/apply`}
             >
               <a className="block hover:bg-gray-50">
                 <div className="px-4 py-4 sm:px-6">
