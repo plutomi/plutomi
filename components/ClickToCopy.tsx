@@ -1,11 +1,13 @@
 import { useState } from "react";
 import { CheckIcon, ClipboardCopyIcon } from "@heroicons/react/outline";
 
-export default function ClickToCopy({ text }) {
+export default function ClickToCopy({ showText, copyText }) {
   const [copied, setCopied] = useState(false);
 
-  const handleCopy = () => {
-    navigator.clipboard.writeText(text);
+  const handleCopy = (e) => {
+    e.preventDefault();
+    e.stopPropagation(); // just incase its inside another div
+    navigator.clipboard.writeText(copyText);
     setCopied(true);
   };
 
@@ -20,10 +22,11 @@ export default function ClickToCopy({ text }) {
         </p>
       ) : (
         <button
-          className="inline-flex items-center rounded-full text-blue-500 hover:text-blue-800 transition ease-in duration-200"
-          onClick={handleCopy}
+          className="underline inline-flex items-center rounded-full text-blue-500 hover:text-blue-800 transition ease-in duration-200"
+          onClick={(e) => handleCopy(e)}
         >
-          <ClipboardCopyIcon className="h-5 w-5 " />
+          <span className=""> {showText}</span>
+          <ClipboardCopyIcon className="h-5 w-5 ml-3" />
         </button>
       )}
     </div>

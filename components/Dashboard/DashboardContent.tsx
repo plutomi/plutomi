@@ -17,10 +17,10 @@ export default function DashboardContent() {
         click around!
       </h1>
       <div className="flex items-center mt-4 text-md">
-        <p className="text-normal ">
-          Your custom apply link is {custom_apply_link}{" "}
-        </p>
-        <ClickToCopy text={custom_apply_link} />
+        <ClickToCopy
+          showText={"Copy Application Link"}
+          copyText={custom_apply_link}
+        />
       </div>
     </div>
   );
