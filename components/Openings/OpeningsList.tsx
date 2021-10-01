@@ -77,7 +77,7 @@ export default function OpeningList() {
                       <p className="mt-2 flex items-center text-lg text-normal sm:mt-0 sm:ml-6">
                         <ClickToCopy
                           showText={"Application Link"}
-                          copyText={`${process.env.NEXT_PUBLIC_NEXTAUTH_URL}/${user?.org_id}/openings/${opening?.opening_id}/apply`}
+                          copyText={`${process.env.NEXT_PUBLIC_NEXTAUTH_URL}/${user?.org_id}/${opening?.opening_id}/apply`}
                         />
                       </p>
                     </div>
