@@ -32,7 +32,7 @@ export default function Apply() {
         <OpeningApplyPageHeader />
       </header>
 
-      <main className="mt-5">
+      <main className="">
         <OpeningApplyPageContent />
       </main>
     </div>

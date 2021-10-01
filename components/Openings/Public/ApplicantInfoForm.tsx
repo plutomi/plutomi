@@ -27,7 +27,7 @@ export default function ApplicantInfoForm({ applyForOpening }) {
     applyForOpening(body);
   };
   return (
-    <div className="bg-white py-16 px-4 overflow-hidden sm:px-6 lg:px-8 lg:py-24">
+    <div className="bg-white py-8 px-4 overflow-hidden sm:px-6 lg:px-8 ">
       <div className="relative max-w-xl mx-auto">
         <svg
           className="absolute left-full transform translate-x-1/2"
@@ -96,10 +96,10 @@ export default function ApplicantInfoForm({ applyForOpening }) {
           />
         </svg>
         <div className="text-center">
-          <h2 className="text-2xl font-bold tracking-tight text-dark sm:text-4xl">
+          {/* <h2 className="text-2xl font-semibold tracking-tight text-dark">
             Apply for this opening
-          </h2>
-          <p className="mt-4 text-lg leading-6 text-normal">
+          </h2> */}
+          <p className=" text-md leading-6 text-normal">
             Descriptions will go here. Will need to verify email with a login
             code / link as you can put anyones email there. I prefer the link
             method as it will take them away from this page, and once we receive

@@ -20,13 +20,8 @@ export default function OpeningApplyPageContent() {
     console.log(body);
   };
   return (
-    <div className="mt-6">
-      {/* <h2 className="text-2xl font-bold leading-7 text-dark sm:text-3xl sm:truncate">
-        Opening details will go here
-      </h2> */}
-      <div className="">
-        <ApplicantInfoForm applyForOpening={applyForOpening} />
-      </div>
+    <div className="">
+      <ApplicantInfoForm applyForOpening={applyForOpening} />
     </div>
   );
 }
