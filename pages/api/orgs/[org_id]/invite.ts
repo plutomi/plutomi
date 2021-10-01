@@ -4,6 +4,7 @@ import SendOrgInvite from "../../../../utils/email/sendOrgInvite";
 import InputValidation from "../../../../utils/inputValidation";
 import { GetPastOrFutureTime } from "../../../../utils/time";
 import { NextApiResponse } from "next";
+import { GetOrg } from "../../../../utils/orgs/getOrg";
 
 const handler = async (req: CustomRequest, res: NextApiResponse) => {
   const { body, method } = req;
@@ -44,9 +45,11 @@ const handler = async (req: CustomRequest, res: NextApiResponse) => {
       });
     }
 
+    const org = await GetOrg(user.org_id);
+
     const new_org_invite_email: SendOrgInviteInput = {
       invited_by: user,
-      org_id: user.org_id,
+      org_name: org.GSI1SK,
       recipient: recipient,
     };
     try {

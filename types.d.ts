@@ -32,7 +32,7 @@ interface CreateStageInput {
 }
 
 interface ValidNavigation {
-  current: "Dashboard" | "Openings" | "Team" | "PLACEHOLDER";
+  current: "Dashboard" | "Openings" | "Team" | "Invites" | "PLACEHOLDER";
 }
 
 interface GetStageByIdInput {
@@ -173,7 +173,7 @@ interface DeleteOrgInviteInput {
 }
 interface SendOrgInviteInput {
   invited_by: DynamoUser;
-  org_id: string;
+  org_name: string;
   recipient: string;
 }
 

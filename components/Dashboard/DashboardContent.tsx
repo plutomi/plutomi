@@ -16,7 +16,7 @@ export default function DashboardContent() {
         You&apos;re in the <strong>{org?.GSI1SK}</strong> org. Feel free to
         click around!
       </h1>
-      <div className="flex items-center mt-4 text-md">
+      <div className="flex items-center mt-4 -ml-3 text-md">
         <ClickToCopy
           showText={"Copy Application Link"}
           copyText={custom_apply_link}
