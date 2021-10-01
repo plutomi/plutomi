@@ -3,6 +3,7 @@ import { Dialog, Transition } from "@headlessui/react";
 import { XIcon } from "@heroicons/react/outline";
 import useStore from "../../utils/store";
 
+const description_max_length = 300;
 export default function QuestionModal({ createQuestion, updateQuestion }) {
   const questionModal: QuestionModalInput = useStore(
     (state: PlutomiState) => state.questionModal
@@ -110,7 +111,7 @@ export default function QuestionModal({ createQuestion, updateQuestion }) {
                                 id="title"
                                 required
                                 placeholder={
-                                  "Something like... 'What is your name?'"
+                                  "'What is your name?' or 'Tell us about yourslef'"
                                 }
                                 value={questionModal.GSI1SK}
                                 onChange={(e) =>
@@ -136,9 +137,9 @@ export default function QuestionModal({ createQuestion, updateQuestion }) {
                               <textarea
                                 name="description"
                                 id="description"
-                                placeholder="Optional helper text for your applicants"
+                                placeholder="Optional helper text for your applicants."
                                 className="p-2 text-sm focus:ring-blue-500 focus:border-blue-500 border-gray-300 rounded-md w-full block resize"
-                                maxLength={300}
+                                maxLength={description_max_length}
                                 rows={5}
                                 value={questionModal.question_description}
                                 onChange={(e) =>
@@ -147,7 +148,9 @@ export default function QuestionModal({ createQuestion, updateQuestion }) {
                                     question_description: e.target.value,
                                   })
                                 }
-                              ></textarea>
+                              >
+                                <p>test</p>
+                              </textarea>
                             </div>
                           </div>
                           {/* <div>
