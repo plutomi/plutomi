@@ -2,19 +2,29 @@ import { UpdateCommand, UpdateCommandInput } from "@aws-sdk/lib-dynamodb";
 import { Dynamo } from "../../libs/ddbDocClient";
 
 const { DYNAMO_TABLE_NAME } = process.env;
-const forbidden_keys = ["TODO", "email", "user_id", "org_id"];
 
-export async function UpdateUser({ body, user_id }: UpdateUserInput) {
+export async function UpdateUser({ updated_user, user_id }: UpdateUserInput) {
   try {
-    const incomingKeys = Object.keys(body);
-    const newKeys = incomingKeys.filter((key) => !forbidden_keys.includes(key));
+    // TODO user the cleaning functions instead
+    const FORBIDDEN_KEYS = [
+      "PK",
+      "SK",
+      "org_id",
+      "entity_type",
+      "created_at",
+      "opening_id",
+      "GSI1PK",
+    ];
+
+    const incomingKeys = Object.keys(updated_user);
+    const newKeys = incomingKeys.filter((key) => !FORBIDDEN_KEYS.includes(key));
 
     let newUpdateExpression: string[] = [];
     let newAttributes: any = {};
 
     newKeys.forEach((key) => {
       newUpdateExpression.push(`${key} = :${key}`);
-      newAttributes[`:${key}`] = body[key];
+      newAttributes[`:${key}`] = updated_user[key];
     });
 
     const NewUpdateExpression = `SET ${newUpdateExpression.join(", ")}`;

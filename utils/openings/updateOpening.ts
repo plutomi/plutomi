@@ -13,6 +13,7 @@ export default async function UpdateOpening({
   opening_id,
   updated_opening,
 }) {
+  // TODO user the cleaning functions instead
   const FORBIDDEN_KEYS = [
     "PK",
     "SK",

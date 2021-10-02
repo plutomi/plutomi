@@ -18,8 +18,17 @@ export default function DashboardContent() {
     return <Loader text={"Loading..."} />;
   }
 
-  const updateName = async (body) => {
+  // TODO fix types
+  const updateName = async ({ first_name, last_name }) => {
     try {
+      const body = {
+        updated_user: {
+          ...user,
+          first_name: first_name,
+          last_name: last_name,
+          GSI1SK: `${first_name} ${last_name}`,
+        },
+      };
       const { data } = await axios.put(`/api/users/${user?.user_id}`, body);
       alert(data.message);
     } catch (error) {

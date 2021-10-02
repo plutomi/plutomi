@@ -9,6 +9,8 @@ export default async function UpdateQuestion({
   question_id,
   updated_question,
 }) {
+      // TODO user the cleaning functions instead
+
   const FORBIDDEN_KEYS = [
     "PK",
     "SK",

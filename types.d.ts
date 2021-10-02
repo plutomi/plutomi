@@ -32,7 +32,13 @@ interface CreateStageInput {
 }
 
 interface ValidNavigation {
-  current: "Dashboard" | "Openings" | "Team" | "Invites" | "PLACEHOLDER";
+  current:
+    | "Dashboard"
+    | "Openings"
+    | "Team"
+    | "Invites"
+    | "Profile"
+    | "PLACEHOLDER";
 }
 
 interface GetStageByIdInput {
@@ -89,10 +95,13 @@ interface ClaimLoginCodeInput {
 }
 
 interface UpdateUserInput {
-  body: Object;
+  updated_user: DynamoUser;
   user_id: string;
 }
 
+interface APIUpdateUserInput {
+  updated_user: DynamoUser;
+}
 interface Pokemon {
   id: number;
   name: string;
@@ -109,6 +118,10 @@ interface PlutomiState {
   // Create / edit stages
   stageModal: StageModalInput;
   setStageModal: Function;
+
+  // Edit user
+  userProfileModal: UserProfileModalInput;
+  setUserProfileModal: Function;
 
   // TODO
   setCreateOrgModalOpen: Function;
@@ -358,6 +371,12 @@ interface StageModalInput {
   modal_mode: "EDIT" | "CREATE"; // Will render text differently
   stage_id: "";
   GSI1SK: "";
+}
+interface UserProfileModalInput {
+  is_modal_open: boolean;
+  modal_mode: "EDIT" | "CREATE"; // Will render text differently
+  first_name: "";
+  last_name: "";
 }
 
 interface OpeningModalInput {
