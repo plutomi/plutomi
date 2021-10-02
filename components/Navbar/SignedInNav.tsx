@@ -20,7 +20,7 @@ const navigation = [
 ];
 const userNavigation = [
   { name: "Your Profile", event: null, href: "/profile" },
-  { name: "Sign out", event: () => signOut(), href: "#" },
+  { name: "Sign Out", event: () => signOut(), href: "#" },
 ];
 
 function classNames(...classes) {
@@ -134,35 +134,46 @@ export default function SignedInNav({ current }: ValidNavigation) {
                           </div>
                           <div className=" text-light">{user.user_email}</div>
                         </div>
-                        {userNavigation.map((item) => (
-                          <Menu.Item key={item.name}>
-                            {({ active }) =>
-                              item.name === "Sign Out" ? (
-                                <a
-                                  href={item.href}
-                                  onClick={item.event}
-                                  className={classNames(
-                                    active ? "bg-blue-gray-100" : "",
-                                    "block px-4 py-2 text-md text-dark"
+
+                        {userNavigation.map((item) =>
+                          item.name == "Sign Out" ? (
+                            <div
+                              className="cursor-pointer"
+                              key={item.name}
+                              onClick={() => item.event()}
+                            >
+                              <Menu.Item>
+                                {({ active }) => (
+                                  <a
+                                    className={classNames(
+                                      active ? "bg-blue-gray-100" : "",
+                                      "block px-4 py-2 text-md text-dark"
+                                    )}
+                                  >
+                                    {item.name}
+                                  </a>
+                                )}
+                              </Menu.Item>
+                            </div>
+                          ) : (
+                            <Link href={item.href}>
+                              <div className="cursor-pointer" key={item.name}>
+                                <Menu.Item>
+                                  {({ active }) => (
+                                    <a
+                                      className={classNames(
+                                        active ? "bg-blue-gray-100" : "",
+                                        "cusror-auto block px-4 py-2 text-md text-dark"
+                                      )}
+                                    >
+                                      {item.name}
+                                    </a>
                                   )}
-                                >
-                                  {item.name}
-                                </a>
-                              ) : (
-                                <a
-                                  key={item.name}
-                                  href={item.href}
-                                  className={classNames(
-                                    active ? "bg-blue-gray-100" : "",
-                                    "block px-4 py-2 text-md text-dark"
-                                  )}
-                                >
-                                  {item.name}
-                                </a>
-                              )
-                            }
-                          </Menu.Item>
-                        ))}
+                                </Menu.Item>
+                              </div>
+                            </Link>
+                          )
+                        )}
                       </Menu.Items>
                     </Transition>
                   </Menu>
@@ -226,26 +237,45 @@ export default function SignedInNav({ current }: ValidNavigation) {
                   </button>
                 </div>
                 <div className="mt-3 space-y-1">
-                  {userNavigation.map((item) => {
-                    {
-                      item.name === "Sign Out" ? (
-                        <a
-                          key={item.name}
-                          href={item.href}
-                          onClick={item.event}
-                          className="block px-4 py-2 text-base font-medium text-normal hover:text-gray-800 hover:bg-gray-100"
-                        >
-                          {item.name}
-                        </a>
-                      ) : (
-                        <Link key={item.name} href={item.href}>
-                          <a className="block px-4 py-2 text-base font-medium text-normal hover:text-gray-800 hover:bg-gray-100">
-                            {item.name}
-                          </a>
-                        </Link>
-                      );
-                    }
-                  })}
+                  {userNavigation.map((item) =>
+                    item.name == "Sign Out" ? (
+                      <div
+                        className="cursor-pointer"
+                        key={item.name}
+                        onClick={() => item.event()}
+                      >
+                        <Menu.Item>
+                          {({ active }) => (
+                            <a
+                              className={classNames(
+                                active ? "bg-blue-gray-100" : "",
+                                "block px-4 py-2 text-md text-dark"
+                              )}
+                            >
+                              {item.name}
+                            </a>
+                          )}
+                        </Menu.Item>
+                      </div>
+                    ) : (
+                      <Link href={item.href}>
+                        <div className="cursor-pointer" key={item.name}>
+                          <Menu.Item>
+                            {({ active }) => (
+                              <a
+                                className={classNames(
+                                  active ? "bg-blue-gray-100" : "",
+                                  "cusror-auto block px-4 py-2 text-md text-dark"
+                                )}
+                              >
+                                {item.name}
+                              </a>
+                            )}
+                          </Menu.Item>
+                        </div>
+                      </Link>
+                    )
+                  )}
                 </div>
               </div>
             </Disclosure.Panel>
