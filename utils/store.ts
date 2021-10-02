@@ -8,14 +8,14 @@ const useStore = create((set) => ({
   createInviteModalIsOpen: false,
 
   userProfileModal: {
-    is_modal_open: true,
+    is_modal_open: false,
     modal_mode: "EDIT",
     first_name: "",
     last_name: "",
   },
 
   setUserProfileModal: (userProfileModal: UserProfileModalInput) => {
-    set((state) => ({
+    set((state: PlutomiState) => ({
       userProfileModal: userProfileModal,
     }));
   },

@@ -62,9 +62,7 @@ export default function UserProfileModal({
                     <div className="py-6 px-4 bg-blue-700 sm:px-6">
                       <div className="flex items-center justify-between">
                         <Dialog.Title className="text-lg font-medium text-white">
-                          {userProfileModal.modal_mode === "CREATE"
-                            ? "New Opening"
-                            : "Edit Opening"}
+                          Edit User
                         </Dialog.Title>
                         <div className="ml-3 h-7 flex items-center">
                           <button
@@ -84,10 +82,7 @@ export default function UserProfileModal({
                       </div>
                       <div className="mt-1">
                         <p className="text-sm text-blue-300">
-                          An opening is what you need applicants for. It could
-                          be a job like &apos;Engineer&apos;, a location like
-                          &apos;New York&apos; or &apos;Miami&apos;, or just the
-                          name of your program.
+                          You can edit some basic info about yourself here.
                         </p>
                       </div>
                     </div>
@@ -96,29 +91,51 @@ export default function UserProfileModal({
                         <div className="space-y-6 pt-6 pb-5">
                           <div>
                             <label
-                              htmlFor="opening-name"
+                              htmlFor="first-name"
                               className="block text-sm font-medium text-dark"
                             >
-                              {userProfileModal.modal_mode === "CREATE"
-                                ? "Opening name"
-                                : "Edit name"}
+                              First name
                             </label>
-                            {/* <div className="mt-1">
+                            <div className="mt-1">
                               <input
                                 type="text"
-                                name="opening-name"
-                                id="opening-name"
+                                name="first-name"
+                                id="first-name"
                                 required
                                 onChange={(e) =>
                                   setUserProfileModal({
                                     ...userProfileModal,
-                                    GSI1SK: e.target.value,
+                                    first_name: e.target.value,
                                   })
                                 }
-                                value={userProfileModal.GSI1SK}
+                                value={userProfileModal.first_name}
                                 className="block w-full shadow-sm sm:text-sm focus:ring-blue-500 focus:border-blue-500 border-gray-300 rounded-md"
                               />
-                            </div> */}
+                            </div>
+                          </div>
+                          <div>
+                            <label
+                              htmlFor="last-name"
+                              className="block text-sm font-medium text-dark"
+                            >
+                              Last name
+                            </label>
+                            <div className="mt-1">
+                              <input
+                                type="text"
+                                name="last-name"
+                                id="last-name"
+                                required
+                                onChange={(e) =>
+                                  setUserProfileModal({
+                                    ...userProfileModal,
+                                    last_name: e.target.value,
+                                  })
+                                }
+                                value={userProfileModal.last_name}
+                                className="block w-full shadow-sm sm:text-sm focus:ring-blue-500 focus:border-blue-500 border-gray-300 rounded-md"
+                              />
+                            </div>
                           </div>
                           <div className="relative flex items-start">
                             {/* <div className="flex items-center h-5">
@@ -137,7 +154,7 @@ export default function UserProfileModal({
                                 className="focus:ring-blue-500 h-4 w-4 text-blue-600 border-gray-300 rounded"
                               />
                             </div> */}
-                            <div className="ml-3 text-sm">
+                            {/* <div className="ml-3 text-sm">
                               <label
                                 htmlFor="comments"
                                 className="font-medium text-gray-700"
@@ -153,7 +170,7 @@ export default function UserProfileModal({
                                   ? "created"
                                   : "updated"}
                               </p>
-                            </div>
+                            </div>*/}
                           </div>
 
                           {/* <div>
@@ -346,10 +363,7 @@ export default function UserProfileModal({
                       type="submit"
                       className="ml-4 inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
                     >
-                      {userProfileModal.modal_mode === "CREATE"
-                        ? "Create"
-                        : "Update"}{" "}
-                      opening
+                      Update user
                     </button>
                   </div>
                 </form>

@@ -32,7 +32,13 @@ interface CreateStageInput {
 }
 
 interface ValidNavigation {
-  current: "Dashboard" | "Openings" | "Team" | "Invites" | "PLACEHOLDER";
+  current:
+    | "Dashboard"
+    | "Openings"
+    | "Team"
+    | "Invites"
+    | "Profile"
+    | "PLACEHOLDER";
 }
 
 interface GetStageByIdInput {

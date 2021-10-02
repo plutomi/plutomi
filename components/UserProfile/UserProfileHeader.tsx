@@ -5,7 +5,7 @@ import { PencilAltIcon, PlusIcon } from "@heroicons/react/outline";
 import { useState } from "react";
 import Loader from "../Loader";
 import useStore from "../../utils/store";
-export default function OpeningsHeader() {
+export default function UserProfileHeader() {
   const [session, loading]: [CustomSession, boolean] = useSession();
   const { user, isUserLoading, isUserError } = useUser(session?.user_id);
   const setUserProfileModal = useStore(
