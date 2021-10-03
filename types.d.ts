@@ -123,6 +123,10 @@ interface PlutomiState {
   userProfileModal: UserProfileModalInput;
   setUserProfileModal: Function;
 
+  // Edit applicant
+  applicantProfileModal: UserProfileModalInput;
+  setApplicantProfileModal: Function;
+
   // TODO
   setCreateOrgModalOpen: Function;
   createOrgModalIsOpen: boolean;
@@ -375,6 +379,12 @@ interface StageModalInput {
 interface UserProfileModalInput {
   is_modal_open: boolean;
   modal_mode: "EDIT" | "CREATE"; // Will render text differently
+  first_name: "";
+  last_name: "";
+}
+
+interface ApplicantProfileModalInput {
+  is_modal_open: boolean;
   first_name: "";
   last_name: "";
 }

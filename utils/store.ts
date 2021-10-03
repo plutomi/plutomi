@@ -7,6 +7,19 @@ const useStore = create((set) => ({
   openingsSearchInput: "",
   createInviteModalIsOpen: false,
 
+  applicantProfileModal: {
+    is_modal_open: false,
+    applicant_id: "",
+  },
+
+  setApplicantProfileModal: (
+    applicantProfileModal: ApplicantProfileModalInput
+  ) => {
+    set((state: PlutomiState) => ({
+      applicantProfileModal: applicantProfileModal,
+    }));
+  },
+
   userProfileModal: {
     is_modal_open: false,
     modal_mode: "EDIT",
