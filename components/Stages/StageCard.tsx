@@ -11,7 +11,7 @@ export default function StageCard({ name, current_stage_id, opening_id }) {
 
   return (
     <Link
-      href={`${process.env.NEXT_PUBLIC_NEXTAUTH_URL}/openings/${opening_id}/stages/${current_stage_id}`}
+      href={`${process.env.NEXT_PUBLIC_NEXTAUTH_URL}/openings/${opening_id}/stages/${current_stage_id}/applicants`} // TODO should this end with applicants?
     >
       <a>
         <div

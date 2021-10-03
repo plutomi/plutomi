@@ -49,7 +49,7 @@ export default function Openings() {
   // Redirect to the first stage
   if (stages && stages.length > 0) {
     router.push(
-      `${process.env.NEXT_PUBLIC_NEXTAUTH_URL}/openings/${opening_id}/stages/${stages[0].stage_id}`
+      `${process.env.NEXT_PUBLIC_NEXTAUTH_URL}/openings/${opening_id}/stages/${stages[0].stage_id}/applicants` // TODO should this end with applicants?
     );
     return <Loader text="Loading stages..." />;
   }

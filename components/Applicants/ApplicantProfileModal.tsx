@@ -4,6 +4,7 @@ import { Dialog, Menu, Transition } from "@headlessui/react";
 import { XIcon } from "@heroicons/react/outline";
 import useStore from "../../utils/store";
 import { useRouter } from "next/router";
+import { useEffect } from "react";
 import useApplicantById from "../../SWR/useApplicantById";
 const tabs = [
   { id: 1, name: "Details" },
@@ -30,6 +31,7 @@ function classNames(...classes) {
 export default function ApplicantProfileModal() {
   const [currentActive, setCurrentActive] = useState(1); // Id of item
   const router = useRouter();
+  const { applicant_id, opening_id, stage_id } = router.query;
 
   const setApplicantProfileModal = useStore(
     (store: PlutomiState) => store.setApplicantProfileModal
@@ -40,24 +42,35 @@ export default function ApplicantProfileModal() {
   );
 
   const { applicant, isApplicantLoading, isApplicantError } = useApplicantById(
-    applicantProfileModal.applicant_id
+    applicant_id as string // TODO THIS CAN BE REPLACED WITH QUERY STRING
   );
 
   const handleNavClick = (e, tabId: number) => {
     e.preventDefault();
     setCurrentActive(tabId);
   };
+
+  const handleModalClose = () => {
+    // TODO use router push here
+    router.push(
+      {
+        pathname: `/openings/${opening_id}/stages/${stage_id}/applicants`,
+      },
+      undefined,
+      { shallow: true }
+    );
+    setApplicantProfileModal({
+      ...applicantProfileModal,
+      is_modal_open: false,
+    });
+  };
+
   return (
     <Transition.Root show={applicantProfileModal.is_modal_open} as={Fragment}>
       <Dialog
         as="div"
         className="fixed inset-0 overflow-hidden "
-        onClose={() =>
-          setApplicantProfileModal({
-            ...applicantProfileModal,
-            is_modal_open: false,
-          })
-        }
+        onClose={handleModalClose}
       >
         <div className="absolute inset-0 overflow-hidden ">
           <Transition.Child
@@ -86,20 +99,15 @@ export default function ApplicantProfileModal() {
                   <div className="p-6">
                     <div className="flex items-start justify-between">
                       <Dialog.Title className="text-lg font-medium text-gray-900">
-                        {isApplicantLoading
-                          ? "Loading..."
-                          : applicant.full_name}
+                        {isApplicantError && "An error ocurred"}
+                        {isApplicantLoading && "Loading..."}
+                        {applicant?.full_name}
                       </Dialog.Title>
                       <div className="ml-3 h-7 flex items-center">
                         <button
                           type="button"
                           className="bg-white rounded-md text-gray-400 hover:text-gray-500 focus:ring-2 focus:ring-blue-500"
-                          onClick={() =>
-                            setApplicantProfileModal({
-                              ...applicantProfileModal,
-                              is_modal_open: false,
-                            })
-                          }
+                          onClick={handleModalClose}
                         >
                           <span className="sr-only">Close panel</span>
                           <XIcon className="h-6 w-6" aria-hidden="true" />
@@ -107,7 +115,9 @@ export default function ApplicantProfileModal() {
                       </div>
                     </div>
                     <p className="text-md text-light mt-1">
-                      {isApplicantLoading ? "Loading..." : applicant.email}
+                      {isApplicantError && "An error ocurred"}
+                      {isApplicantLoading && "Loading..."}
+                      {applicant?.email}
                     </p>
                   </div>
                   <div className="border-b border-gray-200  ">

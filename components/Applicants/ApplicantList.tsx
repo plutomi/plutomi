@@ -3,6 +3,8 @@ import {
   LocationMarkerIcon,
   UsersIcon,
 } from "@heroicons/react/solid";
+import { useEffect } from "react";
+
 import ClickToCopy from "../ClickToCopy";
 import { GetRelativeTime } from "../../utils/time";
 import ApplicantListItem from "./ApplicantListItem";
@@ -14,7 +16,7 @@ import useStore from "../../utils/store";
 import useAllApplicantsInStage from "../../SWR/useAllApplicantsInStage";
 export default function ApplicantList() {
   const router = useRouter();
-  const { opening_id, stage_id } = router.query;
+  const { opening_id, stage_id, applicant_id } = router.query;
   const { applicants, isApplicantsLoading, isApplicantsError } =
     useAllApplicantsInStage(opening_id as string, stage_id as string);
 
@@ -39,15 +41,23 @@ export default function ApplicantList() {
   }
 
   const handleApplicantClick = (applicant_id: string) => {
+    router.push(
+      {
+        pathname: `/openings/${opening_id}/stages/${stage_id}/applicants`,
+        query: { applicant_id: applicant_id },
+      },
+      undefined,
+      { shallow: true }
+    );
     setApplicantProfileModal({
       ...applicantProfileModal,
       is_modal_open: true,
       applicant_id: applicant_id,
     });
   };
+
   return (
     <div className="bg-white shadow overflow-hidden sm:rounded-md">
-      <ApplicantProfileModal />
       <ul role="list" className="divide-y divide-gray-200">
         {applicants?.map((applicant: DynamoApplicant) => (
           <ApplicantListItem
