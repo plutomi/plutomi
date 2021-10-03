@@ -398,3 +398,15 @@ interface APICreateApplicantInput {
   last_name: string;
   email: string;
 }
+
+interface GetAllApplicantsInStageInput {
+  org_id: string;
+  opening_id: string;
+  stage_id: string;
+}
+
+interface useAllApplicantsInStageOutput {
+  applicants: DynamoApplicant[];
+  isApplicantsLoading: boolean;
+  isApplicantsError: boolean;
+}
