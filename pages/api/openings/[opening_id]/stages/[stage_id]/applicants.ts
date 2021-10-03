@@ -13,7 +13,6 @@ const handler = async (req: CustomRequest, res: NextApiResponse) => {
 
   // Get all applicants in a stage
   if (method === "GET") {
-    console.log("IN get", body, user, query);
     const get_applicants_in_stage_input: GetAllApplicantsInStageInput = {
       org_id: user.org_id,
       opening_id: opening_id as string,

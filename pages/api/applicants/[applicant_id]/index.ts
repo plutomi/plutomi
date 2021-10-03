@@ -26,7 +26,7 @@ const handler = async (req: CustomRequest, res: NextApiResponse) => {
       // TODO add error logger
       return res
         .status(400) // TODO change #
-        .json({ message: `Unable to get opening: ${error}` });
+        .json({ message: `Unable to get applicant: ${error}` });
     }
   }
 
