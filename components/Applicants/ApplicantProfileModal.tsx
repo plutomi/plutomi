@@ -44,22 +44,6 @@ export default function ApplicantProfileModal() {
   const { applicant, isApplicantLoading, isApplicantError } = useApplicantById(
     applicant_id as string // TODO THIS CAN BE REPLACED WITH QUERY STRING
   );
-  // Allows for copying the URL of the applicant directly directly
-  useEffect(() => {
-    if (!router.isReady) return;
-    const { applicant_id } = router.query;
-
-    if (
-      applicant_id &&
-      typeof applicant_id === "string" &&
-      applicant_id !== ""
-    ) {
-      setApplicantProfileModal({
-        ...applicantProfileModal,
-        is_modal_open: true,
-      });
-    }
-  }, [router.isReady]);
 
   const handleNavClick = (e, tabId: number) => {
     e.preventDefault();
@@ -80,6 +64,7 @@ export default function ApplicantProfileModal() {
       is_modal_open: false,
     });
   };
+
   return (
     <Transition.Root show={applicantProfileModal.is_modal_open} as={Fragment}>
       <Dialog
@@ -114,9 +99,9 @@ export default function ApplicantProfileModal() {
                   <div className="p-6">
                     <div className="flex items-start justify-between">
                       <Dialog.Title className="text-lg font-medium text-gray-900">
-                        {isApplicantLoading
-                          ? "Loading..."
-                          : applicant.full_name}
+                        {isApplicantError && "An error ocurred"}
+                        {isApplicantLoading && "Loading..."}
+                        {applicant?.full_name}
                       </Dialog.Title>
                       <div className="ml-3 h-7 flex items-center">
                         <button
@@ -130,7 +115,9 @@ export default function ApplicantProfileModal() {
                       </div>
                     </div>
                     <p className="text-md text-light mt-1">
-                      {isApplicantLoading ? "Loading..." : applicant.email}
+                      {isApplicantError && "An error ocurred"}
+                      {isApplicantLoading && "Loading..."}
+                      {applicant?.email}
                     </p>
                   </div>
                   <div className="border-b border-gray-200  ">
