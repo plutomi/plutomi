@@ -4,6 +4,7 @@ import { Dialog, Menu, Transition } from "@headlessui/react";
 import { XIcon } from "@heroicons/react/outline";
 import useStore from "../../utils/store";
 import { useRouter } from "next/router";
+import { useEffect } from "react";
 import useApplicantById from "../../SWR/useApplicantById";
 const tabs = [
   { id: 1, name: "Details" },
@@ -43,6 +44,22 @@ export default function ApplicantProfileModal() {
   const { applicant, isApplicantLoading, isApplicantError } = useApplicantById(
     applicant_id as string // TODO THIS CAN BE REPLACED WITH QUERY STRING
   );
+  // Allows for copying the URL of the applicant directly directly
+  useEffect(() => {
+    if (!router.isReady) return;
+    const { applicant_id } = router.query;
+
+    if (
+      applicant_id &&
+      typeof applicant_id === "string" &&
+      applicant_id !== ""
+    ) {
+      setApplicantProfileModal({
+        ...applicantProfileModal,
+        is_modal_open: true,
+      });
+    }
+  }, [router.isReady]);
 
   const handleNavClick = (e, tabId: number) => {
     e.preventDefault();

@@ -397,9 +397,6 @@ interface UserProfileModalInput {
 
 interface ApplicantProfileModalInput {
   is_modal_open: boolean;
-  applicant_id: string;
-  first_name: "";
-  last_name: "";
 }
 
 interface OpeningModalInput {

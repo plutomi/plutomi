@@ -9,7 +9,6 @@ const useStore = create((set) => ({
 
   applicantProfileModal: {
     is_modal_open: false,
-    applicant_id: "",
   },
 
   setApplicantProfileModal: (
