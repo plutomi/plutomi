@@ -41,7 +41,7 @@ export default function Openings() {
     return (
       <SignIn
         callbackUrl={`${process.env.NEXT_PUBLIC_NEXTAUTH_URL}/openings`} // TODO set this
-        desiredPage={"your openings"} // TODO set this
+        desiredPage={"your stages"} // TODO set this
       />
     );
   }
