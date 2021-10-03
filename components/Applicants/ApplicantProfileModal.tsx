@@ -2,15 +2,15 @@
 import { Fragment, useState } from "react";
 import { Dialog, Menu, Transition } from "@headlessui/react";
 import { XIcon } from "@heroicons/react/outline";
-import { DotsVerticalIcon } from "@heroicons/react/solid";
 import useStore from "../../utils/store";
+import { useRouter } from "next/router";
 import useApplicantById from "../../SWR/useApplicantById";
 const tabs = [
-  { name: "Details", href: "#", current: true },
-  { name: "History", href: "#", current: false },
-  { name: "Messages", href: "#", current: false },
-  { name: "Files", href: "#", current: false },
+  { id: 1, name: "Details" },
+  { id: 3, name: "History" }, // TODO add get history SWR
+  { id: 4, name: "Messages" }, // TODO add get messages (Twilio)
 ];
+
 const team = [
   {
     name: "Leslie Alexander",
@@ -28,6 +28,9 @@ function classNames(...classes) {
 }
 
 export default function ApplicantProfileModal() {
+  const [currentActive, setCurrentActive] = useState(1); // Id of item
+  const router = useRouter();
+
   const setApplicantProfileModal = useStore(
     (store: PlutomiState) => store.setApplicantProfileModal
   );
@@ -40,6 +43,10 @@ export default function ApplicantProfileModal() {
     applicantProfileModal.applicant_id
   );
 
+  const handleNavClick = (e, tabId: number) => {
+    e.preventDefault();
+    setCurrentActive(tabId);
+  };
   return (
     <Transition.Root show={applicantProfileModal.is_modal_open} as={Fragment}>
       <Dialog
@@ -106,18 +113,19 @@ export default function ApplicantProfileModal() {
                   <div className="border-b border-gray-200  ">
                     <div className="px-6">
                       <nav
-                        className="-mb-px flex space-x-24 justify-center"
+                        className="-mb-px flex justify-around "
                         x-descriptions="Tab component"
                       >
                         {tabs.map((tab) => (
                           <a
+                            onClick={(e) => handleNavClick(e, tab.id)}
                             key={tab.name}
-                            href={tab.href}
+                            href={null}
                             className={classNames(
-                              tab.current
+                              tab.id == currentActive
                                 ? "border-blue-500 text-blue-600"
                                 : "border-transparent text-normal hover:text-dark hover:border-blue-gray-300 transition ease-in-out duration-200",
-                              "whitespace-nowrap pb-4 px-1 border-b-2 font-medium text-sm"
+                              "cursor-pointer whitespace-nowrap pb-4 px-1 border-b-2 font-medium text-sm"
                             )}
                           >
                             {tab.name}
