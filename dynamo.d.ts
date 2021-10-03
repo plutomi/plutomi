@@ -134,3 +134,35 @@ interface DynamoOrg {
   GSI1PK: `ORG`; // Allows for 'get all orgs' query
   GSI1SK: string; // Actual org name ie: Plutomi Inc - Can be changed!
 }
+
+interface DynamoApplicant {
+  PK: string;
+  SK: `APPLICANT`;
+  first_name: string;
+  last_name: string;
+  full_name: string;
+  email: string;
+  email_verified: boolean;
+  applicant_id: string;
+  entity_type: "APPLICANT";
+  created_at: string;
+  current_opening_id: string;
+  current_stage_id: string;
+  GSI1PK: string;
+  GSI1SK: string;
+
+  // PK: `ORG#${org_id}#APPLICANT#${applicant_id}`;
+  // SK: `APPLICANT`;
+  // first_name: first_name;
+  // last_name: last_name;
+  // full_name: `${first_name} ${last_name}`;
+  // email: email;
+  // email_verified: false;
+  // applicant_id: applicant_id;
+  // entity_type: "APPLICANT";
+  // created_at: now;
+  // current_opening_id: opening_id;
+  // current_stage_id: stage_id;
+  // GSI1PK: `ORG#${org_id}#APPLICANTS`;
+  // GSI1SK: `OPENING#${opening_id}#STAGE#${stage_id}`;
+}

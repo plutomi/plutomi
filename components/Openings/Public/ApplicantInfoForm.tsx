@@ -8,8 +8,8 @@ function classNames(...classes) {
 
 export default function ApplicantInfoForm({ applyForOpening }) {
   const [agreed, setAgreed] = useState(false);
-  const [first_name, setfirst_name] = useState("");
-  const [last_name, setlast_name] = useState("");
+  const [first_name, setFirstName] = useState("");
+  const [last_name, setLastName] = useState("");
   const [email, setEmail] = useState("");
 
   const handleSubmit = (e: FormEvent) => {
@@ -127,7 +127,7 @@ export default function ApplicantInfoForm({ applyForOpening }) {
                   name="first-name"
                   id="first-name"
                   value={first_name}
-                  onChange={(e) => setfirst_name(e.target.value)}
+                  onChange={(e) => setFirstName(e.target.value)}
                   autoComplete="given-name"
                   className="py-3 px-4 block w-full shadow-sm focus:ring-blue-500 focus:border-blue-500 border-gray-300 rounded-md"
                 />
@@ -146,7 +146,7 @@ export default function ApplicantInfoForm({ applyForOpening }) {
                   name="last-name"
                   id="last-name"
                   value={last_name}
-                  onChange={(e) => setlast_name(e.target.value)}
+                  onChange={(e) => setLastName(e.target.value)}
                   autoComplete="family-name"
                   className="py-3 px-4 block w-full shadow-sm focus:ring-blue-500 focus:border-blue-500 border-gray-300 rounded-md"
                 />

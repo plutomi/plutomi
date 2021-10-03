@@ -13,6 +13,7 @@ import useStore from "../../../../../utils/store";
 import StagesHeader from "../../../../../components/Stages/StagesHeader";
 import StageCarousel from "../../../../../components/Stages/StagesCarousel";
 import useStageById from "../../../../../SWR/useStageById";
+import useAllApplicantsInStage from "../../../../../SWR/useAllApplicantsInStage";
 import useAllStagesInOpening from "../../../../../SWR/useAllStagesInOpening";
 export default function StageID() {
   const router = useRouter();
@@ -29,6 +30,9 @@ export default function StageID() {
     session?.user_id,
     opening_id as string
   );
+
+  const { applicants, isApplicantsLoading, isApplicantsError } =
+    useAllApplicantsInStage(opening_id as string, stage_id as string);
 
   const stageModal: StageModalInput = useStore(
     (state: PlutomiState) => state.stageModal
@@ -64,12 +68,28 @@ export default function StageID() {
         </header>
 
         <main className="mt-5">
-          {stages?.length == 0 ? (
-            <EmptyStagesState />
-          ) : (
-            <StageCarousel  />
-          )}
+          {stages?.length == 0 ? <EmptyStagesState /> : <StageCarousel />}
         </main>
+
+        <div>
+          {isApplicantsError ? (
+            <h1>{JSON.stringify(isApplicantsError)}</h1>
+          ) : null}
+
+          {isApplicantsLoading ? (
+            <h1>Loading applicants</h1>
+          ) : applicants?.length == 0 ? (
+            <h1>No applicants found</h1>
+          ) : (
+            <ul>
+              {applicants?.map((applicant) => (
+                <li key={applicant.applicant_id}>
+                  {applicants.indexOf(applicant) + 1}. {applicant.full_name}
+                </li>
+              ))}
+            </ul>
+          )}
+        </div>
       </div>
     </>
   );

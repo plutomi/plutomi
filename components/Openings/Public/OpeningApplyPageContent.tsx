@@ -3,6 +3,7 @@ import usePublicOrgById from "../../../SWR/usePublicOrgById";
 import usePublicOpeningById from "../../../SWR/usePublicOpeningById";
 import Loader from "../../Loader";
 import ApplicantInfoForm from "./ApplicantInfoForm";
+import axios from "axios";
 export default function OpeningApplyPageContent() {
   const router = useRouter();
   const { org_id, opening_id } = router.query;
@@ -16,8 +17,15 @@ export default function OpeningApplyPageContent() {
   }
 
   const applyForOpening = async (body: APICreateApplicantInput) => {
-    alert("Applied");
-    console.log(body);
+    try {
+      const { data } = await axios.post(
+        `/api/orgs/${org_id}/public/openings/${opening_id}/applicants`,
+        body
+      );
+      alert(data.message);
+    } catch (error) {
+      alert(error.response.data.message);
+    }
   };
   return (
     <div className="">
