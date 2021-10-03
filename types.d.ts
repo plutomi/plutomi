@@ -64,9 +64,9 @@ interface CreateStageRuleInput {
 
 interface CreateApplicantInput {
   org_id: string;
-  applicant_first_name: string;
-  applicant_last_name: string;
-  applicant_email: string;
+  first_name: string;
+  last_name: string;
+  email: string;
   opening_id: string;
   stage_id: string;
 }

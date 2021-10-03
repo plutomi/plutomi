@@ -7,9 +7,9 @@ const { DYNAMO_TABLE_NAME } = process.env;
 
 export async function CreateApplicant({
   org_id,
-  applicant_email,
-  applicant_first_name,
-  applicant_last_name,
+  email,
+  first_name,
+  last_name,
   opening_id,
   stage_id,
 }: CreateApplicantInput) {
@@ -21,13 +21,15 @@ export async function CreateApplicant({
   const new_applicant = {
     PK: `ORG#${org_id}#APPLICANT#${applicant_id}`,
     SK: `APPLICANT`,
-    first_name: applicant_first_name,
-    last_name: applicant_last_name,
-    full_name: `${applicant_first_name} ${applicant_last_name}`,
-    email: applicant_email,
+    first_name: first_name,
+    last_name: last_name,
+    full_name: `${first_name} ${last_name}`,
+    email: email,
+    email_verified: false,
     applicant_id: applicant_id,
     entity_type: "APPLICANT",
     created_at: now,
+    // TODO add phone number
     // Is this needed? - Just makes it easier to grab than GSI1SK
     current_opening_id: opening_id,
     current_stage_id: stage_id,
