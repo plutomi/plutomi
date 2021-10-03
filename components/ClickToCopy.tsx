@@ -12,9 +12,9 @@ export default function ClickToCopy({ showText, copyText }) {
   };
 
   return (
-    <div className="ml-3 inline-flex items-center">
+    <div className="ml-3 inline-flex items-center ">
       {copied ? (
-        <p className="  text-light inline-flex space-x-3  items-center  ">
+        <p className="  text-light inline-flex space-x-3  items-center px-2 ">
           Copied{" "}
           <span className="text-emerald-500 ">
             <CheckIcon className="h-5 w-5 " />
@@ -22,11 +22,11 @@ export default function ClickToCopy({ showText, copyText }) {
         </p>
       ) : (
         <button
-          className="underline inline-flex items-center rounded-full text-blue-500 hover:text-blue-800 transition ease-in duration-200"
+          className="underline inline-flex items-center rounded-full text-blue-500 hover:text-blue-800 transition ease-in duration-200 hover:bg-blue-100 px-2"
           onClick={(e) => handleCopy(e)}
         >
           <span className=""> {showText}</span>
-          <ClipboardCopyIcon className="h-5 w-5 ml-3" />
+          <ClipboardCopyIcon className="h-5 w-5 ml-2" />
         </button>
       )}
     </div>
