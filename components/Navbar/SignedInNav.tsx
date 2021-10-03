@@ -1,6 +1,7 @@
 import { Fragment } from "react";
 import { useSession } from "next-auth/client";
 import useUser from "../../SWR/useUser";
+import NavbarSearch from "./NavbarSearch";
 import { Disclosure, Menu, Transition } from "@headlessui/react";
 import {
   BellIcon,
@@ -49,10 +50,10 @@ export default function SignedInNav({ current }: ValidNavigation) {
         {({ open }) => (
           <>
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-              <div className="flex justify-between h-16">
-                <div className="flex">
-                  <div className="flex-shrink-0 flex items-center">
-                    {/* <img
+              <div className="flex justify-between h-16 ">
+                <div className="flex justify-between  w-2/3">
+                  {/*<div className="flex-shrink-0 flex items-center">
+                  <img
                     className="block lg:hidden h-8 w-auto"
                     src="https://tailwindui.com/img/logos/workflow-mark-blue-600.svg"
                     alt="Workflow"
@@ -61,8 +62,8 @@ export default function SignedInNav({ current }: ValidNavigation) {
                     className="hidden lg:block h-8 w-auto"
                     src="https://tailwindui.com/img/logos/workflow-logo-blue-600-mark-gray-800-text.svg"
                     alt="Workflow"
-                  /> */}
-                  </div>
+                  /> 
+                  </div>*/}
                   <div className="hidden sm:-my-px sm:ml-6 sm:flex sm:space-x-8">
                     {navigation.map((item) => {
                       if (
@@ -91,7 +92,10 @@ export default function SignedInNav({ current }: ValidNavigation) {
                     })}
                   </div>
                 </div>
-                <div className="hidden sm:ml-6 sm:flex sm:items-center">
+                <div className="  w-1/2  justify-center mx-2 flex items-center">
+                  <NavbarSearch />
+                </div>
+                <div className="hidden sm:ml-6 sm:flex sm:items-center ">
                   {/* <button
                     type="button"
                     className="bg-white p-1 rounded-full text-light hover:text-normal focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
@@ -101,6 +105,7 @@ export default function SignedInNav({ current }: ValidNavigation) {
                   </button> */}
 
                   {/* Profile dropdown */}
+
                   <Menu as="div" className="ml-3 relative">
                     <div>
                       <Menu.Button className="max-w-xs bg-white flex items-center text-md rounded-full focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">

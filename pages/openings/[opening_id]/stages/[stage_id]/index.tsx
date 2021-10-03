@@ -15,6 +15,7 @@ import StageCarousel from "../../../../../components/Stages/StagesCarousel";
 import useStageById from "../../../../../SWR/useStageById";
 import useAllApplicantsInStage from "../../../../../SWR/useAllApplicantsInStage";
 import useAllStagesInOpening from "../../../../../SWR/useAllStagesInOpening";
+import ApplicantList from "../../../../../components/Applicants/ApplicantList";
 export default function StageID() {
   const router = useRouter();
   const { opening_id, stage_id } = router.query;
@@ -50,7 +51,7 @@ export default function StageID() {
     return (
       <SignIn
         callbackUrl={`${process.env.NEXT_PUBLIC_NEXTAUTH_URL}/openings`} // TODO set this
-        desiredPage={"your openings"} // TODO set this
+        desiredPage={"your applicants"} // TODO set this
       />
     );
   }
@@ -68,28 +69,15 @@ export default function StageID() {
         </header>
 
         <main className="mt-5">
-          {stages?.length == 0 ? <EmptyStagesState /> : <StageCarousel />}
-        </main>
-
-        <div>
-          {isApplicantsError ? (
-            <h1>{JSON.stringify(isApplicantsError)}</h1>
-          ) : null}
-
-          {isApplicantsLoading ? (
-            <h1>Loading applicants</h1>
-          ) : applicants?.length == 0 ? (
-            <h1>No applicants found</h1>
+          {stages?.length == 0 ? (
+            <EmptyStagesState />
           ) : (
-            <ul>
-              {applicants?.map((applicant) => (
-                <li key={applicant.applicant_id}>
-                  {applicants.indexOf(applicant) + 1}. {applicant.full_name}
-                </li>
-              ))}
-            </ul>
+            <div className="space-y-10">
+              <StageCarousel />
+              <ApplicantList />
+            </div>
           )}
-        </div>
+        </main>
       </div>
     </>
   );
