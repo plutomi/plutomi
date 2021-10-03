@@ -233,6 +233,14 @@ interface useOpeningByIdOutput {
   isOpeningError: boolean;
 }
 
+interface useApplicantByIdOutput {
+  applicant: DynamoApplicant; // TODO - This will not be a dynamo applicant
+  // But instead it wll be an applicant object with properties inside such as
+  // .details, .files, .history, .messages, etc. We're going to do a query
+  // To return all items in the future. For now, this is ok
+  isApplicantLoading: boolean;
+  isApplicantError: boolean;
+}
 interface useOpeningsOutput {
   openings: DynamoOpenings[];
   isOpeningsLoading: boolean;
