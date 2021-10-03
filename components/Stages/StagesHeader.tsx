@@ -44,11 +44,13 @@ export default function StagesHeader() {
         ) : (
           <h1>Loading...</h1>
         )}
-        <Link
-          href={`${process.env.NEXT_PUBLIC_NEXTAUTH_URL}/openings/${opening_id}/settings`}
-        >
-          <CogIcon className="w-10 h-10 ml-6 hover:text-dark text-light cursor-pointer transition duration-300 ease-in-out" />
-        </Link>
+        <div className="">
+          <Link
+            href={`${process.env.NEXT_PUBLIC_NEXTAUTH_URL}/openings/${opening_id}/settings`}
+          >
+            <CogIcon className="w-10 h-10 ml-6 hover:text-dark text-light cursor-pointer transition duration-300 ease-in-out" />
+          </Link>
+        </div>
       </div>
     </div>
   );

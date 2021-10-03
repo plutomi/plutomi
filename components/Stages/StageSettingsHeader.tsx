@@ -72,7 +72,8 @@ export default function StageSettingsHeader({ deleteStage }) {
   const crumbs = [
     {
       name: "Applicants",
-      href: `/openings/${opening_id}/stages/${opening?.stage_order[0]}`,
+      // Go to the CURRENT STAGE in the opening to view the applicants
+      href: `/openings/${opening_id}/stages/${stage_id}/applicants`, // TODO should this end with applicants?
       current: false,
     },
     {

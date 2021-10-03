@@ -146,6 +146,13 @@ interface DynamoApplicant {
   applicant_id: string;
   entity_type: "APPLICANT";
   created_at: string;
+  // TODO - Originally, I wanted to make these into their own items...
+  // Unsure on final decision. It will definitely be easier to keep everything
+  // on the applicant, but Dynamo has a hard limit of 400kb which is gigantic but. something to keep in mind.
+  responses: [];
+  files: [];
+  notes: [];
+  labels: [];
   current_opening_id: string;
   current_stage_id: string;
   GSI1PK: string;

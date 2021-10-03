@@ -39,6 +39,14 @@ export default function ApplicantList() {
   }
 
   const handleApplicantClick = (applicant_id: string) => {
+    router.push(
+      {
+        pathname: `/openings/${opening_id}/stages/${stage_id}/applicants`,
+        query: { applicant_id: applicant_id },
+      },
+      undefined,
+      { shallow: true }
+    );
     setApplicantProfileModal({
       ...applicantProfileModal,
       is_modal_open: true,

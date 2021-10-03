@@ -47,7 +47,7 @@ export default function OpeningSettingsHeader() {
   if (opening?.stage_order.length > 0) {
     crumbs.unshift({
       name: "Applicants",
-      href: `/openings/${opening_id}/stages/${opening?.stage_order[0]}`,
+      href: `/openings/${opening_id}/stages/${opening?.stage_order[0]}/applicants`, // TODO should this end with /applicants?
       current: false,
     });
   }
