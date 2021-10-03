@@ -74,7 +74,7 @@ export default function ApplicantProfileModal() {
               leaveFrom=" translate-x-0"
               leaveTo="translate-x-full"
             >
-              <div className="w-screen max-w-md">
+              <div className="w-screen max-w-3xl">
                 <div className="h-full flex flex-col bg-white shadow-xl overflow-y-scroll">
                   <div className="p-6">
                     <div className="flex items-start justify-between">
@@ -86,7 +86,7 @@ export default function ApplicantProfileModal() {
                       <div className="ml-3 h-7 flex items-center">
                         <button
                           type="button"
-                          className="bg-white rounded-md text-gray-400 hover:text-gray-500 focus:ring-2 focus:ring-indigo-500"
+                          className="bg-white rounded-md text-gray-400 hover:text-gray-500 focus:ring-2 focus:ring-blue-500"
                           onClick={() =>
                             setApplicantProfileModal({
                               ...applicantProfileModal,
@@ -99,11 +99,14 @@ export default function ApplicantProfileModal() {
                         </button>
                       </div>
                     </div>
+                    <p className="text-md text-light mt-1">
+                      {isApplicantLoading ? "Loading..." : applicant.email}
+                    </p>
                   </div>
-                  <div className="border-b border-gray-200">
+                  <div className="border-b border-gray-200  ">
                     <div className="px-6">
                       <nav
-                        className="-mb-px flex space-x-6"
+                        className="-mb-px flex space-x-24 justify-center"
                         x-descriptions="Tab component"
                       >
                         {tabs.map((tab) => (
@@ -112,8 +115,8 @@ export default function ApplicantProfileModal() {
                             href={tab.href}
                             className={classNames(
                               tab.current
-                                ? "border-indigo-500 text-indigo-600"
-                                : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300",
+                                ? "border-blue-500 text-blue-600"
+                                : "border-transparent text-normal hover:text-dark hover:border-blue-gray-300 transition ease-in-out duration-200",
                               "whitespace-nowrap pb-4 px-1 border-b-2 font-medium text-sm"
                             )}
                           >
@@ -169,7 +172,7 @@ export default function ApplicantProfileModal() {
                             as="div"
                             className="ml-2 flex-shrink-0 relative inline-block text-left"
                           >
-                            <Menu.Button className="group relative w-8 h-8 bg-white rounded-full inline-flex items-center justify-center focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                            <Menu.Button className="group relative w-8 h-8 bg-white rounded-full inline-flex items-center justify-center focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
                               <span className="sr-only">Open options menu</span>
                               <span className="flex items-center justify-center h-full w-full rounded-full">
                                 <DotsVerticalIcon
