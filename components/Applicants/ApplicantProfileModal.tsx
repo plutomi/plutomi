@@ -4,6 +4,7 @@ import { Dialog, Menu, Transition } from "@headlessui/react";
 import { XIcon } from "@heroicons/react/outline";
 import { DotsVerticalIcon } from "@heroicons/react/solid";
 import useStore from "../../utils/store";
+import useApplicantById from "../../SWR/useApplicantById";
 const tabs = [
   { name: "Details", href: "#", current: true },
   { name: "History", href: "#", current: false },
@@ -33,6 +34,10 @@ export default function ApplicantProfileModal() {
 
   const applicantProfileModal = useStore(
     (store: PlutomiState) => store.applicantProfileModal
+  );
+
+  const { applicant, isApplicantLoading, isApplicantError } = useApplicantById(
+    applicantProfileModal.applicant_id
   );
 
   return (
@@ -74,7 +79,9 @@ export default function ApplicantProfileModal() {
                   <div className="p-6">
                     <div className="flex items-start justify-between">
                       <Dialog.Title className="text-lg font-medium text-gray-900">
-                        Team
+                        {isApplicantLoading
+                          ? "Loading..."
+                          : applicant.full_name}
                       </Dialog.Title>
                       <div className="ml-3 h-7 flex items-center">
                         <button
@@ -116,7 +123,7 @@ export default function ApplicantProfileModal() {
                       </nav>
                     </div>
                   </div>
-                  <ul
+                  {/* <ul
                     role="list"
                     className="flex-1 divide-y divide-gray-200 overflow-y-auto"
                   >
@@ -219,7 +226,7 @@ export default function ApplicantProfileModal() {
                         </div>
                       </li>
                     ))}
-                  </ul>
+                  </ul> */}
                 </div>
               </div>
             </Transition.Child>

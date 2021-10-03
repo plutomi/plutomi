@@ -4,12 +4,7 @@ import useSWR from "swr";
 
 const fetcher = (url: string) => axios.get(url).then((res) => res.data);
 
-/**
- *
- * @param user_id - The ID of the logged in user
- * @param opening_id - The opening ID that you want to look up
- */
-function useOpeningById(applicant_id: string): useApplicantByIdOutput {
+function useApplicantById(applicant_id: string): useApplicantByIdOutput {
   const shouldFetch = applicant_id ? true : false;
 
   const { data, error } = useSWR(
@@ -24,4 +19,4 @@ function useOpeningById(applicant_id: string): useApplicantByIdOutput {
   };
 }
 
-export default useOpeningById;
+export default useApplicantById;

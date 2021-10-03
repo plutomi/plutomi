@@ -25,6 +25,10 @@ interface GetOpeningInput {
   org_id: string;
   opening_id: string;
 }
+interface GetApplicantInput {
+  org_id: string;
+  applicant_id: string;
+}
 interface CreateStageInput {
   org_id: string;
   opening_id: string;
@@ -124,7 +128,7 @@ interface PlutomiState {
   setUserProfileModal: Function;
 
   // Edit applicant
-  applicantProfileModal: UserProfileModalInput;
+  applicantProfileModal: ApplicantProfileModalInput;
   setApplicantProfileModal: Function;
 
   // TODO
@@ -393,6 +397,7 @@ interface UserProfileModalInput {
 
 interface ApplicantProfileModalInput {
   is_modal_open: boolean;
+  applicant_id: string;
   first_name: "";
   last_name: "";
 }
