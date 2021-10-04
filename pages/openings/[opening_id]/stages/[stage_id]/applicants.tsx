@@ -1,15 +1,11 @@
 import SignedInNav from "../../../../../components/Navbar/SignedInNav";
 import { useSession } from "next-auth/client";
-import useOpenings from "../../../../../SWR/useOpenings";
 import useUser from "../../../../../SWR/useUser";
 import Loader from "../../../../../components/Loader";
 import EmptyStagesState from "../../../../../components/Stages/EmptyStagesState";
 import SignIn from "../../../../../components/SignIn";
-import axios from "axios";
-import { mutate } from "swr";
 import { useEffect } from "react";
 import { useRouter } from "next/router";
-import StageModal from "../../../../../components/Stages/StageModal";
 import useStore from "../../../../../utils/store";
 import StagesHeader from "../../../../../components/Stages/StagesHeader";
 import StageCarousel from "../../../../../components/Stages/StagesCarousel";
@@ -66,6 +62,7 @@ export default function StageID() {
         is_modal_open: true,
       });
     }
+    console.log("Router is reayd", router.isReady);
   }, [router.isReady]);
 
   // When rendering client side don't display anything until loading is complete
