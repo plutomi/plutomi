@@ -34,13 +34,13 @@ export default function OpeningsDropdown({ openings, index }) {
         <Listbox.Button className="relative w-full bg-white border border-gray-300 rounded-md shadow-sm pl-3 pr-10 py-2 text-left cursor-default focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500 sm:text-lg">
           <div className="flex items-center">
             <span
-              aria-label={selected.is_public ? "Online" : "Offline"}
+              aria-label={selected?.is_public ? "Online" : "Offline"}
               className={classNames(
-                selected.is_public ? "bg-green-400" : "bg-gray-200",
+                selected?.is_public ? "bg-green-400" : "bg-gray-200",
                 "flex-shrink-0 inline-block h-2 w-2 rounded-full"
               )}
             />
-            <span className="ml-3 block truncate">{selected.GSI1SK}</span>
+            <span className="ml-3 block truncate">{selected?.GSI1SK}</span>
           </div>
           <span className="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none">
             <SelectorIcon className="h-5 w-5 text-light" aria-hidden="true" />

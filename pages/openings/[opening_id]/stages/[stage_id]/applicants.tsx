@@ -62,7 +62,6 @@ export default function StageID() {
         is_modal_open: true,
       });
     }
-    console.log("Router is reayd", router.isReady);
   }, [router.isReady]);
 
   // When rendering client side don't display anything until loading is complete
