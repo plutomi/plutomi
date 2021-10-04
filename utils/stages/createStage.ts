@@ -1,13 +1,10 @@
 import {
-  PutCommand,
-  PutCommandInput,
   TransactWriteCommand,
   TransactWriteCommandInput,
 } from "@aws-sdk/lib-dynamodb";
 import { Dynamo } from "../../libs/ddbDocClient";
 import { GetCurrentTime } from "../time";
 import { nanoid } from "nanoid";
-import UpdateOpening from "../openings/updateOpening";
 import { GetOpening } from "../openings/getOpeningById";
 
 const { DYNAMO_TABLE_NAME } = process.env;

@@ -1,7 +1,5 @@
 // All public openings for the org
 import withCleanOrgName from "../../../../../../middleware/withCleanOrgName";
-
-import { GetOrg } from "../../../../../../utils/orgs/getOrg";
 import { NextApiResponse } from "next";
 import { GetAllOpeningsInOrg } from "../../../../../../utils/openings/getAllOpeningsInOrg";
 import CleanOpening from "../../../../../../utils/clean/cleanOpening";

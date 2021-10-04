@@ -1,13 +1,10 @@
 import { useRouter } from "next/router";
 import { useSession } from "next-auth/client";
 import useUser from "../../SWR/useUser";
-import useAllStagesInOpening from "../../SWR/useAllStagesInOpening";
 import useOpeningById from "../../SWR/useOpeningById";
 import useStageById from "../../SWR/useStageById";
 import axios from "axios";
-import useStore from "../../utils/store";
 import QuestionItem from "./QuestionItem";
-import { PencilAltIcon, TrashIcon } from "@heroicons/react/outline";
 import { useState } from "react";
 import { mutate } from "swr";
 import { useEffect } from "react";

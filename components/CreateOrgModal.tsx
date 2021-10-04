@@ -1,7 +1,6 @@
 import { FormEvent, Fragment, useState } from "react";
 import { Dialog, Transition } from "@headlessui/react";
 import { XIcon } from "@heroicons/react/outline";
-import axios from "axios";
 
 const UrlSafeString = require("url-safe-string"),
   tagGenerator = new UrlSafeString();

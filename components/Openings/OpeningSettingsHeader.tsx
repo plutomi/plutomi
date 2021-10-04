@@ -1,5 +1,4 @@
 import { useSession } from "next-auth/client";
-import useOpenings from "../../SWR/useOpenings";
 import Breadcrumbs from "../Breadcrumbs";
 import useUser from "../../SWR/useUser";
 import { PencilAltIcon, PlusIcon } from "@heroicons/react/outline";
@@ -8,11 +7,8 @@ import { mutate } from "swr";
 import axios from "axios";
 import { TrashIcon } from "@heroicons/react/outline";
 import useOpeningById from "../../SWR/useOpeningById";
-import { useState } from "react";
-import GoBack from "../Buttons/GoBackButton";
 import { useRouter } from "next/router";
 import Loader from "../Loader";
-import StageModal from "../Stages/StageModal";
 export default function OpeningSettingsHeader() {
   const router = useRouter();
   const { opening_id } = router.query;

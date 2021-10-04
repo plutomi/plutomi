@@ -1,6 +1,4 @@
-import CustomLink from "./CustomLink";
 import Link from "../components/CustomLink";
-/* This example requires Tailwind CSS v2.0+ */
 const faqs = [
   {
     question: "If I manually update an applicant, will they count as active?",

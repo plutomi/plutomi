@@ -1,11 +1,5 @@
-import {
-  UpdateCommand,
-  UpdateCommandInput,
-  PutCommand,
-  PutCommandInput,
-} from "@aws-sdk/lib-dynamodb";
+import { UpdateCommand, UpdateCommandInput } from "@aws-sdk/lib-dynamodb";
 import { Dynamo } from "../../libs/ddbDocClient";
-import { GetOpening } from "./getOpeningById";
 const { DYNAMO_TABLE_NAME } = process.env;
 
 export default async function UpdateOpening({
@@ -41,7 +35,7 @@ export default async function UpdateOpening({
 
   const UpdatedExpression = `SET ${newUpdateExpression.join(", ").toString()}`;
 
-  const params = {
+  const params: UpdateCommandInput = {
     Key: {
       PK: `ORG#${org_id}#OPENING#${opening_id}`,
       SK: `OPENING`,

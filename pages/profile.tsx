@@ -1,20 +1,14 @@
 import SignedInNav from "../components/Navbar/SignedInNav";
-import OpeningsHeader from "../components/Openings/OpeningsHeader";
 import { useSession } from "next-auth/client";
-import useOpenings from "../SWR/useOpenings";
 import useUser from "../SWR/useUser";
-import EmptyTeamState from "../components/Team/EmptyTeamState";
 import axios from "axios";
 import UserProfileHeader from "../components/UserProfile/UserProfileHeader";
 import { mutate } from "swr";
 import UserProfileModal from "../components/UserProfile/UserProfileModal";
-import TeamContent from "../components/Team/TeamContent";
 import Loader from "../components/Loader";
 import SignIn from "../components/SignIn";
-import CreateInviteModal from "../components/CreateInviteModal";
 import useOrgUsers from "../SWR/useOrgUsers";
 import useStore from "../utils/store";
-import TeamHeader from "../components/Team/TeamHeader";
 import { useRouter } from "next/router";
 export default function Team() {
   const router = useRouter();

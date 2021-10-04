@@ -1,6 +1,3 @@
-import withCleanOrgName from "../../middleware/withCleanOrgName";
-import withAuthorizer from "../../middleware/withAuthorizer";
-import { GetOrg } from "../../utils/orgs/getOrg";
 import { NextApiResponse } from "next";
 import { GetAllStagesInOpening } from "../../utils/stages/getAllStagesInOpening";
 

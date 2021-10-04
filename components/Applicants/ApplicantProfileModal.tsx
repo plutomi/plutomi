@@ -77,9 +77,6 @@ export default function ApplicantProfileModal() {
       undefined,
       { shallow: true }
     );
-
-    // On close update list
-    mutate(`/api/openings/${opening_id}/stages/${stage_id}/applicants`);
   };
 
   const updateApplicant = async (applicant_id: string, changes: {}) => {

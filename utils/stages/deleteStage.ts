@@ -1,13 +1,10 @@
 import {
-  DeleteCommand,
-  DeleteCommandInput,
   TransactWriteCommand,
   TransactWriteCommandInput,
 } from "@aws-sdk/lib-dynamodb";
 import { Dynamo } from "../../libs/ddbDocClient";
 import { GetOpening } from "../openings/getOpeningById";
 const { DYNAMO_TABLE_NAME } = process.env;
-import UpdateOpening from "../openings/updateOpening";
 // TODO check if stage is empt of appliants first
 // TODO delete stage from the funnels sort order
 export async function DeleteStage({

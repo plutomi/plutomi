@@ -1,5 +1,5 @@
 import { useRouter } from "next/router";
-import { signOut, useSession, signIn } from "next-auth/client";
+import { signOut } from "next-auth/client";
 import Link from "next/link";
 export default function AlreadySignedIn({ user }) {
   const router = useRouter();

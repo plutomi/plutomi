@@ -1,7 +1,5 @@
-import EmptyOrgState from "./EmptyOrgState";
 import { useSession } from "next-auth/client";
 import useUser from "../../SWR/useUser";
-import { useState } from "react";
 import UpdateName from "./UpdateName";
 import Loader from "../Loader";
 import ClickToCopy from "../ClickToCopy";

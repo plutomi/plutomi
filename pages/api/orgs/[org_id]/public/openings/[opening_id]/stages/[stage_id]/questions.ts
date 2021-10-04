@@ -1,4 +1,3 @@
-import { CreateStageQuestion } from "../../../../../../../../../utils/questions/createStageQuestion";
 import withAuthorizer from "../../../../../../../../../middleware/withAuthorizer";
 import { NextApiResponse } from "next";
 import { GetAllQuestionsInStage } from "../../../../../../../../../utils/questions/getAllQuestionsInStage";

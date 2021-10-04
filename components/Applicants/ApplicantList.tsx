@@ -1,23 +1,9 @@
-import {
-  CalendarIcon,
-  LocationMarkerIcon,
-  UsersIcon,
-} from "@heroicons/react/solid";
-import { useEffect } from "react";
-
-import ClickToCopy from "../ClickToCopy";
-import { GetRelativeTime } from "../../utils/time";
 import ApplicantListItem from "./ApplicantListItem";
 import _ from "lodash";
 import { useRouter } from "next/router";
 import Loader from "../Loader";
-import ApplicantProfileModal from "./ApplicantProfileModal";
 import useStore from "../../utils/store";
 import useAllApplicantsInStage from "../../SWR/useAllApplicantsInStage";
-import axios from "axios";
-import { nanoid } from "nanoid/async";
-import { mutate } from "swr";
-import useApplicantById from "../../SWR/useApplicantById";
 export default function ApplicantList() {
   const router = useRouter();
   const { opening_id, stage_id, applicant_id } = router.query;

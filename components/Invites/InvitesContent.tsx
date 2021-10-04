@@ -1,11 +1,9 @@
 import { useSession } from "next-auth/client";
-import useOpenings from "../../SWR/useOpenings";
 import useUser from "../../SWR/useUser";
 import Loader from "../Loader";
 import Invite from "./Invite";
 import { mutate } from "swr";
 import axios from "axios";
-import { GetRelativeTime } from "../../utils/time";
 import { useRouter } from "next/router";
 import useOrgInvites from "../../SWR/useOrgInvites";
 export default function InvitesContent() {

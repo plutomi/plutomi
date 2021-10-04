@@ -1,9 +1,7 @@
-import { SanitizeResponse } from "../../../../utils/sanitizeResponse";
 import withAuthorizer from "../../../../middleware/withAuthorizer";
 import { GetUserById } from "../../../../utils/users/getUserById";
 import { NextApiResponse } from "next";
 import { UpdateUser } from "../../../../utils/users/updateUser";
-
 const handler = async (req: CustomRequest, res: NextApiResponse) => {
   const { method, query, body } = req;
   const { user_id } = query;
@@ -24,7 +22,6 @@ const handler = async (req: CustomRequest, res: NextApiResponse) => {
           .json({ message: "You are not authorized to view this user" });
       }
 
-      SanitizeResponse(user); // TODO i think theres a new method for this
       return res.status(200).json(user);
     } catch (error) {
       // TODO add error logger

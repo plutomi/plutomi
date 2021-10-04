@@ -1,7 +1,5 @@
 import SignedInNav from "../components/Navbar/SignedInNav";
-import OpeningsHeader from "../components/Openings/OpeningsHeader";
 import { useSession } from "next-auth/client";
-import useOpenings from "../SWR/useOpenings";
 import useUser from "../SWR/useUser";
 import EmptyTeamState from "../components/Team/EmptyTeamState";
 import axios from "axios";
