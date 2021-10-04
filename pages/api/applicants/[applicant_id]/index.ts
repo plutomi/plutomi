@@ -5,6 +5,7 @@ import { GetApplicantById } from "../../../../utils/applicants/getApplicantById"
 import InputValidation from "../../../../utils/inputValidation";
 import UpdateOpening from "../../../../utils/openings/updateOpening";
 import { DeleteOpening } from "../../../../utils/openings/deleteOpening";
+import UpdateApplicant from "../../../../utils/applicants/updateApplicant";
 const handler = async (req: CustomRequest, res: NextApiResponse) => {
   const user: DynamoUser = req.user;
   const { method, query, body } = req;
@@ -30,28 +31,28 @@ const handler = async (req: CustomRequest, res: NextApiResponse) => {
     }
   }
 
-  //   if (method === "PUT") {
-  //     try {
-  //       const update_opening_input: UpdateOpeningInput = {
-  //         org_id: user.org_id,
-  //         opening_id: opening_id as string,
-  //         updated_opening: body.updated_opening,
-  //       };
+  if (method === "PUT") {
+    try {
+      const update_applicant_input: UpdateApplicantInput = {
+        org_id: user.org_id,
+        applicant_id: applicant_id as string,
+        updated_applicant: body.updated_applicant,
+      };
 
-  //       try {
-  //         InputValidation(update_opening_input);
-  //       } catch (error) {
-  //         return res.status(400).json({ message: `${error.message}` });
-  //       }
+      try {
+        InputValidation(update_applicant_input);
+      } catch (error) {
+        return res.status(400).json({ message: `${error.message}` });
+      }
 
-  //       await UpdateOpening(update_opening_input);
-  //       return res.status(200).json({ message: "Opening updated!" });
-  //     } catch (error) {
-  //       return res
-  //         .status(500)
-  //         .json({ message: `Unable to update opening - ${error}` });
-  //     }
-  //   }
+      await UpdateApplicant(update_applicant_input);
+      return res.status(200).json({ message: "Applicant updated!" });
+    } catch (error) {
+      return res
+        .status(500)
+        .json({ message: `Unable to update applicant - ${error}` });
+    }
+  }
 
   //   if (method === "DELETE") {
   //     try {

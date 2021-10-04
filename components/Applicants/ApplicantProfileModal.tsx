@@ -66,7 +66,7 @@ export default function ApplicantProfileModal() {
         pathname: `/openings/${opening_id}/stages/${stage_id}/applicants`,
       },
       undefined,
-      { shallow: false }
+      { shallow: true }
     );
   };
 
