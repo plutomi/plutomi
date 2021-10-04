@@ -1,10 +1,18 @@
-/* This example requires Tailwind CSS v2.0+ */
 import { Fragment, useState } from "react";
+import EasyEdit, { Types } from "react-easy-edit";
+import CustomEditableInput from "./CustomEditableInput";
 import { Dialog, Menu, Transition } from "@headlessui/react";
-import { XIcon } from "@heroicons/react/outline";
+import {
+  CheckCircleIcon,
+  PencilAltIcon,
+  XIcon,
+} from "@heroicons/react/outline";
+import CustomEditableAction from "./CustomEditableSave";
 import useStore from "../../utils/store";
 import { useRouter } from "next/router";
-import { useEffect } from "react";
+import { nanoid } from "nanoid";
+import { mutate } from "swr";
+import axios from "axios";
 import delay from "delay";
 import useApplicantById from "../../SWR/useApplicantById";
 const tabs = [
@@ -30,6 +38,7 @@ function classNames(...classes) {
 }
 
 export default function ApplicantProfileModal() {
+  const [isEditing, setIsEditing] = useState(false);
   const [currentActive, setCurrentActive] = useState(1); // Id of item
   const router = useRouter();
   const { applicant_id, opening_id, stage_id } = router.query;
@@ -70,6 +79,33 @@ export default function ApplicantProfileModal() {
     );
   };
 
+  const updateApplicant = async (applicant_id: string) => {
+    try {
+      const first = await nanoid(10);
+      const last = await nanoid(10);
+      const new_applicant = {
+        first_name: first,
+        last_name: last,
+        beans: true,
+        full_name: `${first} ${last}`,
+      };
+      console.log(new_applicant);
+      const body = {
+        updated_applicant: new_applicant,
+      };
+      const { status, data } = await axios.put(
+        `/api/applicants/${applicant_id}`,
+        body
+      );
+      alert(data.message);
+    } catch (error) {
+      alert(error.response.data.message);
+    }
+
+    // TODO NOTE updating that single applicant wont update the applicant list since the list is rendering old data
+    mutate(`/api/applicants/${applicant_id}`);
+  };
+
   return (
     <Transition.Root show={applicantProfileModal.is_modal_open} as={Fragment}>
       <Dialog
@@ -103,10 +139,49 @@ export default function ApplicantProfileModal() {
                 <div className="h-full flex flex-col bg-white shadow-xl overflow-y-scroll">
                   <div className="p-6">
                     <div className="flex items-start justify-between">
-                      <Dialog.Title className="text-lg font-medium text-gray-900">
+                      <Dialog.Title className="text-lg font-medium text-dark flex items-center space-x-4">
                         {isApplicantError && "An error ocurred"}
                         {isApplicantLoading && "Loading..."}
-                        {applicant?.full_name}
+                        <EasyEdit
+                          type={Types.TEXT}
+                          value={applicant?.first_name}
+                          onSave={() => alert("saved")}
+                          onCancel={() => alert("Cancelled")}
+                          editComponent={
+                            <CustomEditableInput
+                              label={"First name"}
+                              placeholder={"Enter a new name"}
+                              initialValue={applicant?.first_name}
+                            />
+                          }
+                          saveButtonLabel={
+                            <CustomEditableAction action="SAVE" />
+                          }
+                          cancelButtonLabel={
+                            <CustomEditableAction action="CANCEL" />
+                          }
+                          attributes={{ name: "awesome-input", id: 1 }}
+                        />
+                        <EasyEdit
+                          type={Types.TEXT}
+                          value={applicant?.last_name}
+                          onSave={() => alert("saved")}
+                          onCancel={() => alert("Cancelled")}
+                          editComponent={
+                            <CustomEditableInput
+                              label={"Last name"}
+                              placeholder={"Enter a new name"}
+                              initialValue={applicant?.last_name}
+                            />
+                          }
+                          saveButtonLabel={
+                            <CustomEditableAction action="SAVE" />
+                          }
+                          cancelButtonLabel={
+                            <CustomEditableAction action="CANCEL" />
+                          }
+                          attributes={{ name: "awesome-input", id: 1 }}
+                        />
                       </Dialog.Title>
                       <div className="ml-3 h-7 flex items-center">
                         <button
@@ -122,13 +197,30 @@ export default function ApplicantProfileModal() {
                     <p className="text-md text-light mt-1">
                       {isApplicantError && "An error ocurred"}
                       {isApplicantLoading && "Loading..."}
-                      {applicant?.email}
+                      <EasyEdit
+                        type={Types.TEXT}
+                        value={applicant?.email}
+                        onSave={() => alert("saved")}
+                        onCancel={() => alert("Cancelled")}
+                        editComponent={
+                          <CustomEditableInput
+                            label={"Email"}
+                            placeholder={"Enter a new email"}
+                            initialValue={applicant?.email}
+                          />
+                        }
+                        saveButtonLabel={<CustomEditableAction action="SAVE" />}
+                        cancelButtonLabel={
+                          <CustomEditableAction action="CANCEL" />
+                        }
+                        attributes={{ name: "awesome-input", id: 1 }}
+                      />
                     </p>
                   </div>
                   <div className="border-b border-gray-200  ">
-                    <div className="px-6">
+                    <div className="">
                       <nav
-                        className="-mb-px flex justify-around "
+                        className="-mb-px flex w-full "
                         x-descriptions="Tab component"
                       >
                         {tabs.map((tab) => (
@@ -140,7 +232,7 @@ export default function ApplicantProfileModal() {
                               tab.id == currentActive
                                 ? "border-blue-500 text-blue-600"
                                 : "border-transparent text-normal hover:text-dark hover:border-blue-gray-300 transition ease-in-out duration-200",
-                              "cursor-pointer whitespace-nowrap pb-4 px-1 border-b-2 font-medium text-sm"
+                              "text-center w-full cursor-pointer whitespace-nowrap pb-4 px-1 border-b-2 font-medium text-lg"
                             )}
                           >
                             {tab.name}

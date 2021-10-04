@@ -60,48 +60,9 @@ export default function ApplicantList() {
     });
   };
 
-  const randomUpdate = async (applicant_id: string) => {
-    try {
-      const first = await nanoid(10);
-      const last = await nanoid(10);
-      const new_applicant = {
-        first_name: first,
-        last_name: last,
-        beans: true,
-        full_name: `${first} ${last}`,
-      };
-      console.log(new_applicant);
-      const body = {
-        updated_applicant: new_applicant,
-      };
-      const { status, data } = await axios.put(
-        `/api/applicants/${applicant_id}`,
-        body
-      );
-      alert(data.message);
-    } catch (error) {
-      alert(error.response.data.message);
-    }
-
-    // NOTE updating that single applicant wont work since the list is rendering old data
-    // mutate(`/api/applicants/${applicant_id}`);
-    // TODO In the future, might want to change this to only return the updated applicant
-    mutate(`/api/openings/${opening_id}/stages/${stage_id}/applicants`);
-  };
-
   return (
     <div className="bg-white shadow overflow-hidden sm:rounded-md">
-      <div className="p-4 border rounded-md">
-        {/* <button className="px-4 py-3 rounded-md bg-indigo-300 hover:bg-indigo-600 transition ease-in-out duration-200">
-          Create Random Applicant
-        </button> */}
-        <button
-          onClick={() => randomUpdate(applicants[0].applicant_id)}
-          className="px-4 py-3 rounded-md bg-orange-300 hover:bg-orange-600 transition ease-in-out duration-200"
-        >
-          Update First Applicant
-        </button>
-      </div>
+      <div className="p-4 border rounded-md"></div>
       <ul role="list" className="divide-y divide-gray-200">
         {applicants?.map((applicant: DynamoApplicant) => (
           <ApplicantListItem
