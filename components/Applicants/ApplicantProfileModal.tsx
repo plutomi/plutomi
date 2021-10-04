@@ -77,21 +77,15 @@ export default function ApplicantProfileModal() {
       undefined,
       { shallow: true }
     );
+
+    // On close update list
+    mutate(`/api/openings/${opening_id}/stages/${stage_id}/applicants`);
   };
 
-  const updateApplicant = async (applicant_id: string) => {
+  const updateApplicant = async (applicant_id: string, changes: {}) => {
     try {
-      const first = await nanoid(10);
-      const last = await nanoid(10);
-      const new_applicant = {
-        first_name: first,
-        last_name: last,
-        beans: true,
-        full_name: `${first} ${last}`,
-      };
-      console.log(new_applicant);
       const body = {
-        updated_applicant: new_applicant,
+        updated_applicant: changes,
       };
       const { status, data } = await axios.put(
         `/api/applicants/${applicant_id}`,
@@ -143,10 +137,18 @@ export default function ApplicantProfileModal() {
                         {isApplicantError && "An error ocurred"}
                         {isApplicantLoading && "Loading..."}
                         <EasyEdit
+                          placeholder={null}
                           type={Types.TEXT}
                           value={applicant?.first_name}
-                          onSave={() => alert("saved")}
-                          onCancel={() => alert("Cancelled")}
+                          onSave={(
+                            value // Only update if there's been a change
+                          ) =>
+                            value !== applicant?.first_name &&
+                            updateApplicant(applicant?.applicant_id, {
+                              first_name: value,
+                              full_name: `${value} ${applicant.last_name}`,
+                            })
+                          }
                           editComponent={
                             <CustomEditableInput
                               label={"First name"}
@@ -163,10 +165,16 @@ export default function ApplicantProfileModal() {
                           attributes={{ name: "awesome-input", id: 1 }}
                         />
                         <EasyEdit
+                          placeholder={null}
                           type={Types.TEXT}
                           value={applicant?.last_name}
-                          onSave={() => alert("saved")}
-                          onCancel={() => alert("Cancelled")}
+                          onSave={(value) =>
+                            value !== applicant?.last_name &&
+                            updateApplicant(applicant?.applicant_id, {
+                              last_name: value,
+                              full_name: `${applicant.last_name} ${value}`,
+                            })
+                          }
                           editComponent={
                             <CustomEditableInput
                               label={"Last name"}
@@ -194,14 +202,19 @@ export default function ApplicantProfileModal() {
                         </button>
                       </div>
                     </div>
-                    <p className="text-md text-light mt-1">
+                    <p className="text-md text-light mt-2">
                       {isApplicantError && "An error ocurred"}
                       {isApplicantLoading && "Loading..."}
                       <EasyEdit
+                        placeholder={null}
                         type={Types.TEXT}
                         value={applicant?.email}
-                        onSave={() => alert("saved")}
-                        onCancel={() => alert("Cancelled")}
+                        onSave={(value) =>
+                          value !== applicant?.email &&
+                          updateApplicant(applicant?.applicant_id, {
+                            email: value,
+                          })
+                        }
                         editComponent={
                           <CustomEditableInput
                             label={"Email"}
