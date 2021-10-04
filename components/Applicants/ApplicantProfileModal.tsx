@@ -5,6 +5,7 @@ import { XIcon } from "@heroicons/react/outline";
 import useStore from "../../utils/store";
 import { useRouter } from "next/router";
 import { useEffect } from "react";
+import delay from "delay";
 import useApplicantById from "../../SWR/useApplicantById";
 const tabs = [
   { id: 1, name: "Details" },
@@ -42,7 +43,7 @@ export default function ApplicantProfileModal() {
   );
 
   const { applicant, isApplicantLoading, isApplicantError } = useApplicantById(
-    applicant_id as string // TODO THIS CAN BE REPLACED WITH QUERY STRING
+    applicant_id as string
   );
 
   const handleNavClick = (e, tabId: number) => {
@@ -50,19 +51,23 @@ export default function ApplicantProfileModal() {
     setCurrentActive(tabId);
   };
 
-  const handleModalClose = () => {
-    // TODO use router push here
+  const handleModalClose = async () => {
+    setApplicantProfileModal({
+      ...applicantProfileModal,
+      is_modal_open: false,
+    });
+    await delay(700); // This is dumb
+    // The SWR hook still runs despite the query string being stripped away from the URL
+    // This is essentially a hack to not show a loading state for the user As the modal retracts.
+    // TODO refactor this garbage
+
     router.push(
       {
         pathname: `/openings/${opening_id}/stages/${stage_id}/applicants`,
       },
       undefined,
-      { shallow: true }
+      { shallow: false }
     );
-    setApplicantProfileModal({
-      ...applicantProfileModal,
-      is_modal_open: false,
-    });
   };
 
   return (
