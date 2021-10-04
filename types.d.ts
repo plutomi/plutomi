@@ -338,6 +338,12 @@ interface UpdateOpeningInput {
   updated_opening: DynamoOpening;
 }
 
+interface UpdateApplicantInput {
+  org_id: string;
+  applicant_id: string;
+  updated_applicant: DynamoApplicant;
+}
+
 interface UpdateQuestionInput {
   org_id: string;
   opening_id: string;

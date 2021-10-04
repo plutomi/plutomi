@@ -35,7 +35,7 @@ export default function OpeningList() {
                 opening.opening_id
               }/${
                 opening.stage_order.length > 0
-                  ? `/stages/${opening.stage_order[0]}/applicants` // TODO should this end with applicants?
+                  ? `stages/${opening.stage_order[0]}/applicants` // TODO should this end with applicants?
                   : `settings`
               }
               `}

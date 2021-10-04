@@ -1,10 +1,18 @@
-/* This example requires Tailwind CSS v2.0+ */
 import { Fragment, useState } from "react";
+import EasyEdit, { Types } from "react-easy-edit";
+import CustomEditableInput from "./CustomEditableInput";
 import { Dialog, Menu, Transition } from "@headlessui/react";
-import { XIcon } from "@heroicons/react/outline";
+import {
+  CheckCircleIcon,
+  PencilAltIcon,
+  XIcon,
+} from "@heroicons/react/outline";
+import CustomEditableAction from "./CustomEditableSave";
 import useStore from "../../utils/store";
 import { useRouter } from "next/router";
-import { useEffect } from "react";
+import { nanoid } from "nanoid";
+import { mutate } from "swr";
+import axios from "axios";
 import delay from "delay";
 import useApplicantById from "../../SWR/useApplicantById";
 const tabs = [
@@ -30,6 +38,7 @@ function classNames(...classes) {
 }
 
 export default function ApplicantProfileModal() {
+  const [isEditing, setIsEditing] = useState(false);
   const [currentActive, setCurrentActive] = useState(1); // Id of item
   const router = useRouter();
   const { applicant_id, opening_id, stage_id } = router.query;
@@ -66,8 +75,29 @@ export default function ApplicantProfileModal() {
         pathname: `/openings/${opening_id}/stages/${stage_id}/applicants`,
       },
       undefined,
-      { shallow: false }
+      { shallow: true }
     );
+
+    // On close update list
+    mutate(`/api/openings/${opening_id}/stages/${stage_id}/applicants`);
+  };
+
+  const updateApplicant = async (applicant_id: string, changes: {}) => {
+    try {
+      const body = {
+        updated_applicant: changes,
+      };
+      const { status, data } = await axios.put(
+        `/api/applicants/${applicant_id}`,
+        body
+      );
+      alert(data.message);
+    } catch (error) {
+      alert(error.response.data.message);
+    }
+
+    // TODO NOTE updating that single applicant wont update the applicant list since the list is rendering old data
+    mutate(`/api/applicants/${applicant_id}`);
   };
 
   return (
@@ -103,10 +133,63 @@ export default function ApplicantProfileModal() {
                 <div className="h-full flex flex-col bg-white shadow-xl overflow-y-scroll">
                   <div className="p-6">
                     <div className="flex items-start justify-between">
-                      <Dialog.Title className="text-lg font-medium text-gray-900">
+                      <Dialog.Title className="text-lg font-medium text-dark flex items-center space-x-4">
                         {isApplicantError && "An error ocurred"}
                         {isApplicantLoading && "Loading..."}
-                        {applicant?.full_name}
+                        <EasyEdit
+                          placeholder={null}
+                          type={Types.TEXT}
+                          value={applicant?.first_name}
+                          onSave={(
+                            value // Only update if there's been a change
+                          ) =>
+                            value !== applicant?.first_name &&
+                            updateApplicant(applicant?.applicant_id, {
+                              first_name: value,
+                              full_name: `${value} ${applicant.last_name}`,
+                            })
+                          }
+                          editComponent={
+                            <CustomEditableInput
+                              label={"First name"}
+                              placeholder={"Enter a new name"}
+                              initialValue={applicant?.first_name}
+                            />
+                          }
+                          saveButtonLabel={
+                            <CustomEditableAction action="SAVE" />
+                          }
+                          cancelButtonLabel={
+                            <CustomEditableAction action="CANCEL" />
+                          }
+                          attributes={{ name: "awesome-input", id: 1 }}
+                        />
+                        <EasyEdit
+                          placeholder={null}
+                          type={Types.TEXT}
+                          value={applicant?.last_name}
+                          onSave={(value) =>
+                            value !== applicant?.last_name &&
+                            updateApplicant(applicant?.applicant_id, {
+                              last_name: value,
+                              full_name: `${applicant.last_name} ${value}`,
+                            })
+                          }
+                          editComponent={
+                            <CustomEditableInput
+                              label={"Last name"}
+                              placeholder={"Enter a new name"}
+                              initialValue={applicant?.last_name}
+                            />
+                          }
+                          saveButtonLabel={
+                            <CustomEditableAction action="SAVE" />
+                          }
+                          cancelButtonLabel={
+                            <CustomEditableAction action="CANCEL" />
+                          }
+                          attributes={{ name: "awesome-input", id: 1 }}
+                        />
                       </Dialog.Title>
                       <div className="ml-3 h-7 flex items-center">
                         <button
@@ -119,16 +202,38 @@ export default function ApplicantProfileModal() {
                         </button>
                       </div>
                     </div>
-                    <p className="text-md text-light mt-1">
+                    <p className="text-md text-light mt-2">
                       {isApplicantError && "An error ocurred"}
                       {isApplicantLoading && "Loading..."}
-                      {applicant?.email}
+                      <EasyEdit
+                        placeholder={null}
+                        type={Types.TEXT}
+                        value={applicant?.email}
+                        onSave={(value) =>
+                          value !== applicant?.email &&
+                          updateApplicant(applicant?.applicant_id, {
+                            email: value,
+                          })
+                        }
+                        editComponent={
+                          <CustomEditableInput
+                            label={"Email"}
+                            placeholder={"Enter a new email"}
+                            initialValue={applicant?.email}
+                          />
+                        }
+                        saveButtonLabel={<CustomEditableAction action="SAVE" />}
+                        cancelButtonLabel={
+                          <CustomEditableAction action="CANCEL" />
+                        }
+                        attributes={{ name: "awesome-input", id: 1 }}
+                      />
                     </p>
                   </div>
                   <div className="border-b border-gray-200  ">
-                    <div className="px-6">
+                    <div className="">
                       <nav
-                        className="-mb-px flex justify-around "
+                        className="-mb-px flex w-full "
                         x-descriptions="Tab component"
                       >
                         {tabs.map((tab) => (
@@ -140,7 +245,7 @@ export default function ApplicantProfileModal() {
                               tab.id == currentActive
                                 ? "border-blue-500 text-blue-600"
                                 : "border-transparent text-normal hover:text-dark hover:border-blue-gray-300 transition ease-in-out duration-200",
-                              "cursor-pointer whitespace-nowrap pb-4 px-1 border-b-2 font-medium text-sm"
+                              "text-center w-full cursor-pointer whitespace-nowrap pb-4 px-1 border-b-2 font-medium text-lg"
                             )}
                           >
                             {tab.name}

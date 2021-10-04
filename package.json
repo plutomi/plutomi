@@ -29,6 +29,7 @@
     "react-beautiful-dnd": "^13.1.0",
     "react-cookie": "^4.1.1",
     "react-dom": "17.0.2",
+    "react-easy-edit": "^1.15.0",
     "react-icons": "^4.2.0",
     "react-items-carousel": "^2.8.0",
     "react-number-format": "^4.7.3",

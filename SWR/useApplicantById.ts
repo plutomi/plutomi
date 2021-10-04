@@ -5,13 +5,11 @@ import useSWR from "swr";
 const fetcher = (url: string) => axios.get(url).then((res) => res.data);
 
 function useApplicantById(applicant_id: string): useApplicantByIdOutput {
-  console.log("Applicant id", applicant_id);
-
+  // Despite removing the query string (applicant id) from the URl, this still runs before changing to null
   const shouldFetch =
     applicant_id && applicant_id !== "" && typeof applicant_id === "string"
       ? true
       : false;
-  console.log("Should fetch", shouldFetch);
 
   const { data, error } = useSWR(
     shouldFetch && `/api/applicants/${applicant_id}`,
