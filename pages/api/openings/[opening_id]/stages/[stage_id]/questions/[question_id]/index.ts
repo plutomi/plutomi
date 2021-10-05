@@ -6,7 +6,6 @@ import UpdateQuestion from "../../../../../../../../utils/questions/updateStageQ
 const handler = async (req: CustomRequest, res: NextApiResponse) => {
   const { body, method, query } = req;
   const user: DynamoUser = req.user;
-  const { GSI1SK, question_description }: APICreateQuestionInput = body;
   const { stage_id, opening_id, question_id } = query;
 
   if (method === "DELETE") {

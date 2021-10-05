@@ -3,7 +3,7 @@ import { NextApiResponse } from "next";
 import { GetAllApplicantsInStage } from "../../../../../../utils/applicants/getAllApplicantsInStage";
 
 const handler = async (req: CustomRequest, res: NextApiResponse) => {
-  const { method, query, body } = req;
+  const { method, query } = req;
   const user: DynamoUser = req.user;
   const { opening_id, stage_id } = query;
 

@@ -11,13 +11,9 @@ import useOrgUsers from "../SWR/useOrgUsers";
 import useStore from "../utils/store";
 import { useRouter } from "next/router";
 export default function Team() {
-  const router = useRouter();
   const [session, loading]: [CustomSession, boolean] = useSession();
   const { user, isUserLoading, isUserError } = useUser(session?.user_id);
-  const { orgUsers, isOrgUsersLoading, isOrgUsersError } = useOrgUsers(
-    user?.org_id,
-    user?.user_id
-  );
+
   const userProfileModal = useStore(
     (state: PlutomiState) => state.userProfileModal
   );

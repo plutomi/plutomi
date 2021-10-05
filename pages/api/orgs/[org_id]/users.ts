@@ -8,15 +8,13 @@ const handler = async (req: CustomRequest, res: NextApiResponse) => {
   const user: DynamoUser = req.user;
   const { org_id } = query;
 
-  if (method === "GET") { 
-    // if (user.org_id != org_id) { // TODO team site bug returning 403
-    //   return res
-    //     .status(403)
-    //     .json({ message: "You cannot view the users of this org" });
-    // }
-
-    // Above ism't needed since we're searching for the user's own org_id
-    // i believe this was added before the auth function
+  if (method === "GET") {
+    if (user.org_id != org_id) {
+      // TODO team site bug returning 403 -- TODO I think this is fixed
+      return res
+        .status(403)
+        .json({ message: "You cannot view the users of this org" });
+    }
 
     if (user.org_id === "NO_ORG_ASSIGNED") {
       return res.status(400).json({

@@ -8,6 +8,7 @@ const fetcher = (url: string) => axios.get(url).then((res) => res.data);
 function usePrivateOrgById(org_id: string): useOrgOutput {
   const shouldFetch = org_id ? true : false;
 
+  // TODO make sure this org ID is being passed by the user
   const { data, error } = useSWR(shouldFetch && `/api/orgs/${org_id}`, fetcher);
 
   return {
