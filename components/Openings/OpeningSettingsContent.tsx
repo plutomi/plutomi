@@ -37,8 +37,7 @@ export default function OpeningSettingsContent() {
     (state: PlutomiState) => state.setOpeningModal
   );
   const [new_stages, setNewStages] = useState(stages);
-  const [isStageOrderUpdating, setIsStageOrderUpdating] = useState(false);
-  const [isQuestionOrderUpdating, setIsQuestionOrderUpdating] = useState(false);
+
   useEffect(() => {
     setNewStages(stages);
   }, [stages]);

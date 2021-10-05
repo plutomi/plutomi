@@ -1,6 +1,9 @@
 import { FormEvent, Fragment, useState } from "react";
 import { Dialog, Transition } from "@headlessui/react";
+import useOpeningById from "../../SWR/useOpeningById";
 import { XIcon } from "@heroicons/react/outline";
+import { useSession } from "../../node_modules/next-auth/client";
+import useUser from "../../SWR/useUser";
 import useStore from "../../utils/store";
 
 interface OpeningModalInputs {
@@ -11,11 +14,17 @@ export default function OpeningModal({
   createOpening,
   updateOpening,
 }: OpeningModalInputs) {
+  const [session, loading]: [CustomSession, boolean] = useSession();
+  const { user, isUserLoading, isUserError } = useUser(session?.user_id);
   const openingModal = useStore((state: PlutomiState) => state.openingModal);
   const setOpeningModal = useStore(
     (state: PlutomiState) => state.setOpeningModal
   );
 
+  const { opening, isOpeningLoading, isOpeningError } = useOpeningById(
+    user?.user_id,
+    openingModal.opening_id
+  );
   const handleSubmit = async (e: FormEvent) => {
     if (openingModal.modal_mode === "CREATE") {
       e.preventDefault();
@@ -128,39 +137,47 @@ export default function OpeningModal({
                             </div>
                           </div>
                           <div className="relative flex items-start">
-                            <div className="flex items-center h-5">
-                              <input
-                                id="comments"
-                                aria-describedby="comments-description"
-                                name="comments"
-                                type="checkbox"
-                                checked={openingModal.is_public}
-                                onChange={(e) =>
-                                  setOpeningModal({
-                                    ...openingModal,
-                                    is_public: e.target.checked,
-                                  })
-                                }
-                                className="focus:ring-blue-500 h-4 w-4 text-blue-600 border-gray-300 rounded"
-                              />
-                            </div>
-                            <div className="ml-3 text-sm">
-                              <label
-                                htmlFor="comments"
-                                className="font-medium text-gray-700"
-                              >
-                                Public
-                              </label>
-                              <p
-                                id="comments-description"
-                                className="text-normal"
-                              >
-                                Make this opening available to everyone once{" "}
-                                {openingModal.modal_mode === "CREATE"
-                                  ? "created"
-                                  : "updated"}
+                            {openingModal.modal_mode === "CREATE" ||
+                            opening.stage_order.length == 0 ? (
+                              <p className="text-light text-sm ">
+                                You will be able to make this opening public
+                                after adding a stage.
                               </p>
-                            </div>
+                            ) : (
+                              <div>
+                                {" "}
+                                <div className="flex items-center h-5">
+                                  <input
+                                    id="comments"
+                                    aria-describedby="comments-description"
+                                    name="comments"
+                                    type="checkbox"
+                                    checked={openingModal.is_public}
+                                    onChange={(e) =>
+                                      setOpeningModal({
+                                        ...openingModal,
+                                        is_public: e.target.checked,
+                                      })
+                                    }
+                                    className="focus:ring-blue-500 h-4 w-4 text-blue-600 border-gray-300 rounded"
+                                  />
+                                  <div className="ml-3 text-sm">
+                                    <label
+                                      htmlFor="comments"
+                                      className="font-medium text-gray-700"
+                                    >
+                                      Public
+                                    </label>
+                                    <p
+                                      id="comments-description"
+                                      className="text-normal"
+                                    >
+                                      Make this opening available to everyone
+                                    </p>
+                                  </div>{" "}
+                                </div>{" "}
+                              </div>
+                            )}
                           </div>
 
                           {/* <div>
