@@ -1,16 +1,11 @@
 import { Fragment, useState } from "react";
 import EasyEdit, { Types } from "react-easy-edit";
 import CustomEditableInput from "./CustomEditableInput";
-import { Dialog, Menu, Transition } from "@headlessui/react";
-import {
-  CheckCircleIcon,
-  PencilAltIcon,
-  XIcon,
-} from "@heroicons/react/outline";
+import { Dialog, Transition } from "@headlessui/react";
+import { XIcon } from "@heroicons/react/outline";
 import CustomEditableAction from "./CustomEditableSave";
 import useStore from "../../utils/store";
 import { useRouter } from "next/router";
-import { nanoid } from "nanoid";
 import { mutate } from "swr";
 import axios from "axios";
 import delay from "delay";
@@ -169,7 +164,7 @@ export default function ApplicantProfileModal() {
                             value !== applicant?.last_name &&
                             updateApplicant(applicant?.applicant_id, {
                               last_name: value,
-                              full_name: `${applicant.last_name} ${value}`,
+                              full_name: `${applicant.first_name} ${value}`,
                             })
                           }
                           editComponent={
