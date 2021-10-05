@@ -1,9 +1,5 @@
 import { useRouter } from "next/router";
-import useAllPublicOpenings from "../../SWR/useAllPublicOpenings";
-import SignIn from "../../components/SignIn";
-import axios from "axios";
 import Loader from "../../components/Loader";
-import { mutate } from "swr";
 import usePublicOrgById from "../../SWR/usePublicOrgById";
 import OrgApplyPageHeader from "../../components/Org/Public/OrgApplyPageHeader";
 import OrgApplyPageContent from "../../components/Org/Public/OrgApplyPageContent";

@@ -4,12 +4,10 @@ import useUser from "../../../../../SWR/useUser";
 import Loader from "../../../../../components/Loader";
 import axios from "axios";
 import { mutate } from "swr";
-import OpeningSettingsHeader from "../../../../../components/Openings/OpeningSettingsHeader";
 import SignIn from "../../../../../components/SignIn";
 import useOpeningById from "../../../../../SWR/useOpeningById";
 import { useRouter } from "next/router";
 import useStageById from "../../../../../SWR/useStageById";
-import OpeningSettingsContent from "../../../../../components/Openings/OpeningSettingsContent";
 import StageSettingsHeader from "../../../../../components/Stages/StageSettingsHeader";
 import StageSettingsContent from "../../../../../components/Stages/StagesSettingsContent";
 export default function OpeningsSettings() {

@@ -1,10 +1,6 @@
-// This should delete the opening as well as all stages within it
-
 import { DeleteCommand, DeleteCommandInput } from "@aws-sdk/lib-dynamodb";
 import { Dynamo } from "../../libs/ddbDocClient";
-import { GetOpening } from "../openings/getOpeningById";
 const { DYNAMO_TABLE_NAME } = process.env;
-import UpdateOpening from "../openings/updateOpening";
 import { DeleteStage } from "../stages/deleteStage";
 import { GetAllStagesInOpening } from "../stages/getAllStagesInOpening";
 // TODO check if stage is empt of appliants first

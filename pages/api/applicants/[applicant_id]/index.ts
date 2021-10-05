@@ -1,10 +1,7 @@
-import { GetOpening } from "../../../../utils/openings/getOpeningById";
 import withAuthorizer from "../../../../middleware/withAuthorizer";
 import { NextApiResponse } from "next";
 import { GetApplicantById } from "../../../../utils/applicants/getApplicantById";
 import InputValidation from "../../../../utils/inputValidation";
-import UpdateOpening from "../../../../utils/openings/updateOpening";
-import { DeleteOpening } from "../../../../utils/openings/deleteOpening";
 import UpdateApplicant from "../../../../utils/applicants/updateApplicant";
 const handler = async (req: CustomRequest, res: NextApiResponse) => {
   const user: DynamoUser = req.user;

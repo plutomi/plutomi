@@ -4,7 +4,6 @@ import SendLoginCode from "../../../utils/email/sendLoginCode";
 import InputValidation from "../../../utils/inputValidation";
 import { NextApiRequest, NextApiResponse } from "next";
 import { customAlphabet } from "nanoid/async";
-import { random } from "lodash";
 
 const alphabet = "23456789ABCDEFGHJKLMNPQRSTUVWXYZ"; // Removes some characters for clarity
 const nanoid = customAlphabet(alphabet, 16);

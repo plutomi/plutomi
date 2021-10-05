@@ -1,14 +1,10 @@
 import { useSession } from "next-auth/client";
-import useOpenings from "../../SWR/useOpenings";
 import useUser from "../../SWR/useUser";
-import { QuestionMarkCircleIcon } from "@heroicons/react/outline";
 import { PlusIcon, TrashIcon } from "@heroicons/react/outline";
 import useStore from "../../utils/store";
 import useOpeningById from "../../SWR/useOpeningById";
-import { useState } from "react";
 import Breadcrumbs from "../Breadcrumbs";
 import { useRouter } from "next/router";
-import Loader from "../Loader";
 import { PencilAltIcon } from "@heroicons/react/outline";
 import useStageById from "../../SWR/useStageById";
 export default function StageSettingsHeader({ deleteStage }) {

@@ -1,8 +1,4 @@
-import {
-  GetCommand,
-  GetCommandInput,
-  GetCommandOutput,
-} from "@aws-sdk/lib-dynamodb";
+import { GetCommand, GetCommandInput } from "@aws-sdk/lib-dynamodb";
 import { Dynamo } from "../../libs/ddbDocClient";
 const { DYNAMO_TABLE_NAME } = process.env;
 

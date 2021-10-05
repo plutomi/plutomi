@@ -1,4 +1,3 @@
-import { CreateStageQuestion } from "../../../../../../../../utils/questions/createStageQuestion";
 import withAuthorizer from "../../../../../../../../middleware/withAuthorizer";
 import { NextApiResponse } from "next";
 import { DeleteQuestionInStage } from "../../../../../../../../utils/questions/deleteQuestionInStage";
@@ -7,7 +6,6 @@ import UpdateQuestion from "../../../../../../../../utils/questions/updateStageQ
 const handler = async (req: CustomRequest, res: NextApiResponse) => {
   const { body, method, query } = req;
   const user: DynamoUser = req.user;
-  const { GSI1SK, question_description }: APICreateQuestionInput = body;
   const { stage_id, opening_id, question_id } = query;
 
   if (method === "DELETE") {

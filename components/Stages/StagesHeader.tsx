@@ -1,8 +1,7 @@
 import { useSession } from "next-auth/client";
 import useUser from "../../SWR/useUser";
-import { CogIcon, PlusIcon } from "@heroicons/react/outline";
+import { CogIcon } from "@heroicons/react/outline";
 import useStore from "../../utils/store";
-import { useState } from "react";
 import Link from "next/dist/client/link";
 import { AdjustmentsIcon } from "@heroicons/react/outline";
 import OpeningsDropdown from "../Openings/DropDown";

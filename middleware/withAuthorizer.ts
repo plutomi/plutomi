@@ -1,5 +1,5 @@
 import { NextApiRequest, NextApiResponse } from "next";
-import { getToken, JWT } from "next-auth/jwt";
+import { getToken } from "next-auth/jwt";
 import { GetUserById } from "../utils/users/getUserById";
 type CustomRequest = NextApiRequest & { user: DynamoUser };
 

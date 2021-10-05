@@ -10,15 +10,14 @@ import Hero from "../components/Static/Hero";
 import useUser from "../SWR/useUser";
 export default function Main() {
   const [session, loading]: [CustomSession, boolean] = useSession();
-  const { user, isUserLoading, isUserError } = useUser(session?.user_id);
 
   return (
     <>
       <main className="bg-gradient-to-b from-blue-gray-50 to-white via-homepageGradient">
         <Navbar />
         <Hero />
-        {session && user ? (
-          <AlreadySignedIn user={user} />
+        {session ? (
+          <AlreadySignedIn email={session.user.email} /> // Note, this isnt the actual user since the delay for lambda might a full 1-2 seconds
         ) : (
           <SignIn
             callbackUrl={`${process.env.NEXT_PUBLIC_NEXTAUTH_URL}/dashboard`}

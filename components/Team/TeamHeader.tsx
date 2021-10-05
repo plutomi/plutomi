@@ -1,12 +1,9 @@
 import { useSession } from "next-auth/client";
-import useOpenings from "../../SWR/useOpenings";
 import useUser from "../../SWR/useUser";
 import { PlusIcon } from "@heroicons/react/outline";
 import useStore from "../../utils/store";
-import { useState } from "react";
 import useOrgUsers from "../../SWR/useOrgUsers";
-import CreateInviteModal from "../CreateInviteModal";
-import Loader from "../Loader";
+
 export default function TeamHeader() {
   const [session, loading]: [CustomSession, boolean] = useSession();
   const { user, isUserLoading, isUserError } = useUser(session?.user_id);

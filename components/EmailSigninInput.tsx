@@ -1,5 +1,3 @@
-import { FormEvent, useState } from "react";
-
 export default function LoginEmail({
   user_email,
   onChange,

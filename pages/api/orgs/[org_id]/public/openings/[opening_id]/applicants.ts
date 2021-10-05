@@ -1,5 +1,4 @@
 import { CreateApplicant } from "../../../../../../../utils/applicants/createApplicant";
-import withAuthorizer from "../../../../../../../middleware/withAuthorizer";
 import { NextApiResponse } from "next";
 import InputValidation from "../../../../../../../utils/inputValidation";
 import { GetOpening } from "../../../../../../../utils/openings/getOpeningById";

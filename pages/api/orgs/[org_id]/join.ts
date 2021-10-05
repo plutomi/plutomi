@@ -52,19 +52,11 @@ const handler = async (req: CustomRequest, res: NextApiResponse) => {
           .json({ message: `You've joined the ${org_id} org!` });
       } catch (error) {
         // TODO add error logger
-        // TODO handle retry better
-        try {
-          await JoinOrg(join_org_input);
-          return res
-            .status(200)
-            .json({ message: `You've joined the ${org_id} org!` });
-        } catch (error) {
-          return res
-            .status(500) // TODO change #
-            .json({
-              message: `The invite was accepted, but we were not able to add you to the org - ${error}`,
-            });
-        }
+        return res
+          .status(500) // TODO change #
+          .json({
+            message: `The invite was accepted, but we were not able to add you to the org - ${error}`,
+          });
       }
     } catch (error) {
       return res

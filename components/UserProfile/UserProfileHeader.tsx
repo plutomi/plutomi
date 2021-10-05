@@ -1,8 +1,6 @@
 import { useSession } from "next-auth/client";
-import useOpenings from "../../SWR/useOpenings";
 import useUser from "../../SWR/useUser";
 import { PencilAltIcon, PlusIcon } from "@heroicons/react/outline";
-import { useState } from "react";
 import Loader from "../Loader";
 import useStore from "../../utils/store";
 export default function UserProfileHeader() {

@@ -45,7 +45,7 @@ const handler = async (req: CustomRequest, res: NextApiResponse) => {
       return res.status(400).json({ message: `${error.message}` });
     }
 
-    // Abundance of caution, TODO add joi
+    // TODO add joi
     if (GSI1SK.length == 0) {
       return res.status(400).json({ message: "Org name cannot be empty" });
     }

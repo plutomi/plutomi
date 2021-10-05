@@ -35,7 +35,7 @@ export default async function UpdateApplicant({
 
   const UpdatedExpression = `SET ${newUpdateExpression.join(", ").toString()}`;
 
-  const params = {
+  const params: UpdateCommandInput = {
     Key: {
       PK: `ORG#${org_id}#APPLICANT#${applicant_id}`,
       SK: `APPLICANT`,

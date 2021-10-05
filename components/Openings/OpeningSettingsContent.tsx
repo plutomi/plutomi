@@ -1,27 +1,19 @@
-import OpeningList from "./OpeningsList";
 import { useSession } from "next-auth/client";
-import useOpenings from "../../SWR/useOpenings";
-import { PlusIcon } from "@heroicons/react/outline";
 import { useRouter } from "next/router";
 import { mutate } from "swr";
 import StageReorderColumn from "../StageReorderColumn";
 
 import { GetRelativeTime } from "../../utils/time";
 import difference from "../../utils/getObjectDifference";
-import Link from "next/dist/client/link";
-import StageCard from "../Stages/StageCard";
 import { useEffect } from "react";
 import OpeningModal from "./OpeningModal";
 import axios from "axios";
-import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
-import DraggableStageCard from "../../components/Stages/DraggableStageCard";
 import Loader from "../Loader";
 import useUser from "../../SWR/useUser";
 import { useState } from "react";
 import useStore from "../../utils/store";
 import useAllStagesInOpening from "../../SWR/useAllStagesInOpening";
 import useOpeningById from "../../SWR/useOpeningById";
-import StageModal from "../Stages/StageModal";
 export default function OpeningSettingsContent() {
   const router = useRouter();
   const { opening_id } = router.query;
@@ -45,8 +37,7 @@ export default function OpeningSettingsContent() {
     (state: PlutomiState) => state.setOpeningModal
   );
   const [new_stages, setNewStages] = useState(stages);
-  const [isStageOrderUpdating, setIsStageOrderUpdating] = useState(false);
-  const [isQuestionOrderUpdating, setIsQuestionOrderUpdating] = useState(false);
+
   useEffect(() => {
     setNewStages(stages);
   }, [stages]);

@@ -1,4 +1,4 @@
-import { BellIcon, XIcon } from "@heroicons/react/outline";
+import { BellIcon } from "@heroicons/react/outline";
 import Link from "next/dist/client/link";
 export default function Banner({ msgSmall, msgLarge, btnText, href }) {
   return (

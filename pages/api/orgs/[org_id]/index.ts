@@ -13,6 +13,12 @@ const handler = async (req: CustomRequest, res: NextApiResponse) => {
   const { org_id } = query;
 
   if (method === "GET") {
+    if (org_id != user.org_id) {
+      return res
+        .status(403)
+        .json({ message: "You are not authorized to view this org" });
+    }
+
     try {
       const org = await GetOrg(org_id as string);
 
@@ -20,11 +26,6 @@ const handler = async (req: CustomRequest, res: NextApiResponse) => {
         return res.status(404).json({ message: "Org not found" });
       }
 
-      if (org.org_id != user.org_id) {
-        return res
-          .status(403)
-          .json({ message: "You are not authorized to view this org" });
-      }
       return res.status(200).json(org);
     } catch (error) {
       // TODO add error logger
