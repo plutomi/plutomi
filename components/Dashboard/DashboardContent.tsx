@@ -36,6 +36,28 @@ export default function DashboardContent() {
     mutate(`/api/users/${user?.user_id}`);
   };
 
+  const deleteOrg = async () => {
+    if (
+      !confirm(
+        "Deleting an org is irreversible and will delete all openings, stages, questions, rules, etc. inside of it. Do you wish to continue?"
+      )
+    ) {
+      return;
+    }
+
+    if (!confirm("Are you sure?")) {
+      return;
+    }
+
+    try {
+      const { data } = await axios.delete(`/api/orgs/${user?.org_id}`);
+
+      alert(data.message);
+    } catch (error) {
+      alert(error.response.data.message);
+    }
+  };
+
   return (
     <div>
       <h1 className="text-2xl">
@@ -53,6 +75,15 @@ export default function DashboardContent() {
         user?.first_name === "NO_FIRST_NAME" ? (
           <UpdateName updateName={updateName} />
         ) : null}
+      </div>
+      <div className="py-48">
+        <button
+          onClick={() => deleteOrg()}
+          type="button"
+          className="inline-flex items-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-red-500 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
+        >
+          Delete Org
+        </button>
       </div>
     </div>
   );

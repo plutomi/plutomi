@@ -59,9 +59,7 @@ const handler = async (req: CustomRequest, res: NextApiResponse) => {
           });
       }
     } catch (error) {
-      return res
-        .status(500)
-        .json({ message: `Unable to accept invite - ${error}` });
+      return res.status(500).json({ message: ` ${error}` });
     }
   }
 
