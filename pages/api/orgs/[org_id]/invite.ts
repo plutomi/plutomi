@@ -3,6 +3,7 @@ import withAuthorizer from "../../../../middleware/withAuthorizer";
 import SendOrgInvite from "../../../../utils/email/sendOrgInvite";
 import InputValidation from "../../../../utils/inputValidation";
 import { GetPastOrFutureTime } from "../../../../utils/time";
+import withCleanOrgName from "../../../../middleware/withCleanOrgName"
 import { NextApiResponse } from "next";
 import { GetOrg } from "../../../../utils/orgs/getOrg";
 
@@ -71,4 +72,4 @@ const handler = async (req: CustomRequest, res: NextApiResponse) => {
   return res.status(405).json({ message: "Not Allowed" });
 };
 
-export default withAuthorizer(handler);
+export default withAuthorizer(withCleanOrgName(handler));
