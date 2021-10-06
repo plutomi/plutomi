@@ -42,6 +42,6 @@ export default async function AcceptOrgInvite({
 
     return;
   } catch (error) {
-    throw new Error(`Unable to accept invite ${error}`);
+    throw new Error(`${error}`);
   }
 }
