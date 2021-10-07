@@ -3,7 +3,7 @@ import FeatureBox from "../components/Static/featureBox";
 import Navbar from "../components/Navbar/HomepageNavbar";
 import Contact from "../components/Static/ContactUs";
 import Pricing from "../components/Pricing/Pricing";
-import SignIn from "../components/SignInHomepage";
+import SignInHomepage from "../components/SignInHomepage";
 import UseCases from "../components/UseCases";
 import { useSession } from "next-auth/client";
 import Hero from "../components/Static/Hero";
@@ -17,9 +17,9 @@ export default function Main() {
         <Navbar />
         <Hero />
         {session ? (
-          <AlreadySignedIn email={session.user.email} /> // Note, this isnt the actual user since the delay for lambda might a full 1-2 seconds
+          <AlreadySignedIn email={session?.user?.user_email} /> // Note, this isnt the actual user since the delay for lambda might a full 1-2 seconds
         ) : (
-          <SignIn
+          <SignInHomepage
             callbackUrl={`${process.env.NEXT_PUBLIC_NEXTAUTH_URL}/dashboard`}
           />
         )}

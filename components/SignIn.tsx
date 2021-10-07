@@ -8,6 +8,9 @@ import router from "next/router";
 
 export default function SignIn({ callbackUrl, desiredPage }) {
   const [user_email, setUserEmail] = useState("");
+  const [submittedText, setSubmittedText] = useState(
+    `We've sent a magic login link to your email!`
+  );
   const [emailSubmitted, setEmailSubmitted] = useState(false);
   const [button_text, setButtonText] = useState("Send Link");
 
@@ -24,7 +27,8 @@ export default function SignIn({ callbackUrl, desiredPage }) {
     };
 
     try {
-      const { status, data } = await axios.post("/api/auth/login-link", body);
+      const { data } = await axios.post("/api/auth/login-link", body);
+      setSubmittedText(data.message);
       setEmailSubmitted(true);
     } catch (error) {
       alert(error.response.data.message);
@@ -42,9 +46,7 @@ export default function SignIn({ callbackUrl, desiredPage }) {
 
         {emailSubmitted ? (
           <div className="text-center">
-            <h1 className=" text-dark text-2xl">
-              We&apos;ve sent a magic login link to your email!
-            </h1>
+            <h1 className=" text-dark text-2xl">{submittedText}</h1>
             <p className="text-light text-lg">{user_email}</p>
           </div>
         ) : (

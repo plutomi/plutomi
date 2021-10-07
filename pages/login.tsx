@@ -42,8 +42,8 @@ export default function Login() {
 
     if (error) {
       alert(error);
-      router.push(`${process.env.NEXT_PUBLIC_NEXTAUTH_URL}`);
     }
+
     router.push(callback_url as string);
   };
 
