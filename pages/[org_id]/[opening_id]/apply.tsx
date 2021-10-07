@@ -31,28 +31,30 @@ export default function Apply() {
   if (isOpeningLoading) {
     <Loader text="Loading opening info..." />;
   }
+
+  if (!opening) {
+    return (
+      <div className="flex flex-col justify-center items-center mx-auto">
+        <h1 className="text-2xl text-center font-bold">
+          Unfortunately, you cannot apply to this opening.
+        </h1>
+        <GoBack
+          url={`${process.env.NEXT_PUBLIC_NEXTAUTH_URL}/${org_id}/apply`}
+        />
+      </div>
+    );
+  }
   return (
     <div className="max-w-7xl mx-auto p-4 my-12 rounded-lg min-h-screen ">
-      {opening ? (
-        <div>
-          <header>
-            <OpeningApplyPageHeader />
-          </header>
+      <div>
+        <header>
+          <OpeningApplyPageHeader />
+        </header>
 
-          <main className="">
-            <OpeningApplyPageContent />
-          </main>
-        </div>
-      ) : (
-        <div className="flex flex-col justify-center items-center mx-auto">
-          <h1 className="text-2xl text-center font-bold">
-            Unfortunately, you cannot apply to this opening.
-          </h1>
-          <GoBack
-            url={`${process.env.NEXT_PUBLIC_NEXTAUTH_URL}/${org_id}/apply`}
-          />
-        </div>
-      )}
+        <main className="">
+          <OpeningApplyPageContent />
+        </main>
+      </div>
     </div>
   );
 }
