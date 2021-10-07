@@ -4,8 +4,8 @@
 interface DynamoUser {
   // PK: `USER#${user_id}`,
   // SK: `USER`,
-  // first_name: first_name || "NO FIRST NAME",
-  // last_name: last_name || "NO LAST NAME",
+  // first_name: first_name || "NO_FIRST_NAME",
+  // last_name: last_name || "NO_LAST_NAME",
   // user_email: user_email,
   // user_id: user_id,
   // entity_type: "USER",
