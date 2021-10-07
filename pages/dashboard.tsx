@@ -55,7 +55,7 @@ export default function Dashboard() {
   const createOrg = async ({ GSI1SK, org_id }) => {
     if (
       !confirm(
-        `Your org id will be '${org_id}', this CANNOT be changed. Do you want to continue?`
+        `Your org id will be '${org_id.toLowerCase()}', this CANNOT be changed. Do you want to continue?`
       )
     ) {
       return;
