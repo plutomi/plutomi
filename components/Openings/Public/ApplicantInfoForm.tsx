@@ -100,10 +100,10 @@ export default function ApplicantInfoForm({ applyForOpening }) {
             Apply for this opening
           </h2> */}
           <p className=" text-md leading-6 text-normal">
-            Descriptions will go here. Will need to verify email with a login
-            code / link as you can put anyones email there. I prefer the link
-            method as it will take them away from this page, and once we receive
-            a GET request at the email link, we can redirect to
+            Descriptions will go here. Will need to verify email with an
+            application link as you can put anyones email there. I prefer the
+            link method as it will take them away from this page, and once we
+            receive a GET request at the email link, we can redirect to
             /org_id/applications/applicant_id. We can even set a 1 day limit on
             that application link being valid? Don&apos;t know what use case
             that would serve. TODO add captcha.

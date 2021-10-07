@@ -80,22 +80,13 @@ interface JoinOrgInput {
   user_id: string;
 }
 
-interface CreateLoginCodeInput {
-  user_email: string;
-  login_code: string;
-  login_code_expiry: string; // Timestamp in the future
-}
+
 interface CreateLoginLinkInput {
   user_email: string;
   login_link_hash: string;
   login_link_expiry: string; // Timestamp in the future
 }
 
-interface SendLoginCodeEmailInput {
-  recipient: string;
-  login_code: string;
-  login_code_relative_expiry: string;
-}
 interface SendLoginLinkEmailInput {
   recipient: string;
   login_link: string;
@@ -107,11 +98,7 @@ interface SendLoginLinkEmailInput {
   login_link: string;
   login_link_relative_expiry: string;
 }
-interface ClaimLoginCodeInput {
-  user_id: string;
-  timestamp: string; // SK
-  claimed_at: string;
-}
+
 
 interface UpdateUserInput {
   updated_user: DynamoUser;
