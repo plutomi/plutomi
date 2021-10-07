@@ -53,9 +53,9 @@ export default function Login() {
         <button
           type="button"
           onClick={handleSignin}
-          className="inline-flex items-center px-6 py-3 border border-gray-300 shadow-sm text-4xl font-medium rounded-lg text-dark bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition ease-in-out duration-200"
+          className="inline-flex items-center px-6 py-3 border border-gray-300 shadow-sm text-4xl font-medium rounded-lg text-dark bg-white hover:bg-blue-gray-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition ease-in-out duration-200"
         >
-          Click me to sign in!
+          Click me to log in!
         </button>
       </main>
     </div>
