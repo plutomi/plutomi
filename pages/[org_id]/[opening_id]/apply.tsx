@@ -28,6 +28,9 @@ export default function Apply() {
     );
   }
 
+  if (isOpeningLoading) {
+    <Loader text="Loading opening info..." />;
+  }
   return (
     <div className="max-w-7xl mx-auto p-4 my-12 rounded-lg min-h-screen ">
       {opening ? (

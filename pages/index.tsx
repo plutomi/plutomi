@@ -10,13 +10,13 @@ import Hero from "../components/Static/Hero";
 import useUser from "../SWR/useUser";
 export default function Main() {
   const [session, loading]: [CustomSession, boolean] = useSession();
-
+  const {user, isUserLoading, isUserError} = useUser(session?.user_id)
   return (
     <>
       <main className="bg-gradient-to-b from-blue-gray-50 to-white via-homepageGradient">
         <Navbar />
         <Hero />
-        {session ? (
+        {user ? (
           <AlreadySignedIn /> 
         ) : (
           <SignInHomepage

@@ -80,7 +80,6 @@ interface JoinOrgInput {
   user_id: string;
 }
 
-
 interface CreateLoginLinkInput {
   user_email: string;
   login_link_hash: string;
@@ -93,13 +92,12 @@ interface SendLoginLinkEmailInput {
   login_link_relative_expiry: string;
 }
 
-interface SendLoginLinkEmailInput {
-  recipient: string;
-  login_link: string;
-  login_link_relative_expiry: string;
+interface SendApplicantLinkInput {
+  org_id: string;
+  org_name: string;
+  applicant_id: string;
+  applicant_email: string;
 }
-
-
 interface UpdateUserInput {
   updated_user: DynamoUser;
   user_id: string;
