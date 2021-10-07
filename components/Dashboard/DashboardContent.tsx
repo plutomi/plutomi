@@ -56,6 +56,8 @@ export default function DashboardContent() {
     } catch (error) {
       alert(error.response.data.message);
     }
+
+    mutate(`/api/users/${user?.user_id}`);
   };
 
   return (

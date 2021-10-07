@@ -8,7 +8,7 @@ export async function CreateOrg({ org_id, GSI1SK, user }: CreateOrgInput) {
   const now = GetCurrentTime("iso");
   // TODO add created by with user
   const new_org = {
-    PK: `ORG#${org_id}`,
+    PK: `ORG#${org_id.toLowerCase()}`,
     SK: `ORG`,
     org_id: org_id, // plutomi - Cannot be changed
     entity_type: "ORG",
