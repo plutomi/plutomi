@@ -31,7 +31,7 @@ export default function SignInHomepage({ callbackUrl }: CallbackUrl) {
   const sendEmail = async (e) => {
     setButtonText("Sending...");
     e.preventDefault();
-    const body: APICreateLoginCodeInput = {
+    const body: APICreateLoginLinkInput = {
       user_email: user_email,
     };
 
@@ -69,7 +69,7 @@ export default function SignInHomepage({ callbackUrl }: CallbackUrl) {
     <div className="flex justify-center flex-col w-full items-center ">
       <GoogleButton callbackUrl={callbackUrl} />
       <p className="my-4 text-lg text-normal text-center sm:max-w-8xl max-w-sm">
-        Or we can email you a magic code for a password-free sign in.
+        Or we can email you a magic link for a password-free sign in.
       </p>
       {emailSubmitted ? (
         <LoginCode

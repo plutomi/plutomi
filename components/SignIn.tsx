@@ -8,54 +8,27 @@ import router from "next/router";
 
 export default function SignIn({ callbackUrl, desiredPage }) {
   const [user_email, setUserEmail] = useState("");
-  const [login_code, setLoginCode] = useState("");
   const [emailSubmitted, setEmailSubmitted] = useState(false);
-  const [button_text, setButtonText] = useState("Send Code");
+  const [button_text, setButtonText] = useState("Send Link");
 
   const handleEmailChange = (newEmail) => {
     setUserEmail(newEmail);
   };
 
-  const handleLoginCodeChange = (newCode) => {
-    setLoginCode(newCode);
-  };
-
   const sendEmail = async (e) => {
     setButtonText("Sending...");
     e.preventDefault();
-    const body: APICreateLoginCodeInput = {
+    const body: APICreateLoginLinkInput = {
       user_email: user_email,
+      callback_url: `${process.env.NEXT_PUBLIC_NEXTAUTH_URL + router.pathname}`,
     };
 
     try {
-      const { status, data } = await axios.post("/api/auth/login-code", body);
+      const { status, data } = await axios.post("/api/auth/login-link", body);
       setEmailSubmitted(true);
-      alert(data.message);
-      setButtonText("Submit");
     } catch (error) {
       alert(error.response.data.message);
     }
-  };
-
-  const signInWithCode = async (e: FormEvent) => {
-    setButtonText("Signing in...");
-    e.preventDefault();
-
-    // https://next-auth.js.org/v3/getting-started/client#using-the-redirect-false-option
-    const { error } = await signIn("credentials", {
-      redirect: false,
-      user_email: user_email,
-      login_code: login_code,
-      callbackUrl: callbackUrl,
-    });
-
-    if (error) {
-      alert(error); // TODO limit attempts
-      setButtonText("Submit");
-      return;
-    }
-
-    router.push(callbackUrl);
   };
 
   return (
@@ -64,26 +37,28 @@ export default function SignIn({ callbackUrl, desiredPage }) {
         Sign in to view {desiredPage}
       </h1>
 
-      <div className="mt-8 flex flex-col justify-center items-center">
+      <div className="mt-8 space-y-4 flex flex-col justify-center items-center">
         <GoogleButton callbackUrl={callbackUrl} />
 
-        <p className="my-4 text-lg text-normal text-center sm:max-w-8xl max-w-sm">
-          Or we can email you a magic code for a password-free sign in.
-        </p>
         {emailSubmitted ? (
-          <LoginCode
-            onChange={handleLoginCodeChange}
-            login_code={login_code}
-            button_text={button_text}
-            signInWithCode={signInWithCode}
-          />
+          <div className="text-center">
+            <h1 className=" text-dark text-2xl">
+              We&apos;ve sent a magic login link to your email!
+            </h1>
+            <p className="text-light text-lg">{user_email}</p>
+          </div>
         ) : (
-          <LoginEmail
-            onChange={handleEmailChange}
-            user_email={user_email}
-            button_text={button_text}
-            sendEmail={sendEmail}
-          />
+          <div className="space-y-4">
+            <p className=" text-lg text-normal text-center sm:max-w-8xl max-w-sm">
+              Or we can email you a magic link for a password-free sign in.
+            </p>
+            <LoginEmail
+              onChange={handleEmailChange}
+              user_email={user_email}
+              button_text={button_text}
+              sendEmail={sendEmail}
+            />
+          </div>
         )}
       </div>
     </div>
