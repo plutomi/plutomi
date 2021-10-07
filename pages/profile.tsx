@@ -31,8 +31,8 @@ export default function Team() {
   if (!session || isUserError) {
     return (
       <SignIn
-        callbackUrl={`${process.env.NEXT_PUBLIC_NEXTAUTH_URL}/team`} // TODO set this
-        desiredPage={"your team"} // TODO set this
+        callbackUrl={`${process.env.NEXT_PUBLIC_NEXTAUTH_URL}/profile`} // TODO set this
+        desiredPage={"your profile"} // TODO set this
       />
     );
   }
