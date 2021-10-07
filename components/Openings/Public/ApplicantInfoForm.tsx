@@ -11,8 +11,9 @@ export default function ApplicantInfoForm({ applyForOpening }) {
   const [first_name, setFirstName] = useState("");
   const [last_name, setLastName] = useState("");
   const [email, setEmail] = useState("");
-
-  const handleSubmit = (e: FormEvent) => {
+  const [buttonText, setButtonText] = useState("Apply");
+  const handleSubmit = async (e: FormEvent) => {
+    setButtonText("Submitting...");
     e.preventDefault();
     if (!agreed) {
       alert(`You must agree to the privacy and cookie policy`);
@@ -24,7 +25,8 @@ export default function ApplicantInfoForm({ applyForOpening }) {
       last_name: last_name,
       email: email,
     };
-    applyForOpening(body);
+    await applyForOpening(body);
+    setButtonText("Apply");
   };
   return (
     <div className="bg-white py-8 px-4 overflow-hidden sm:px-6 lg:px-8 ">
@@ -126,6 +128,7 @@ export default function ApplicantInfoForm({ applyForOpening }) {
                   type="text"
                   name="first-name"
                   id="first-name"
+                  placeholder="John"
                   value={first_name}
                   onChange={(e) => setFirstName(e.target.value)}
                   autoComplete="given-name"
@@ -145,6 +148,7 @@ export default function ApplicantInfoForm({ applyForOpening }) {
                   type="text"
                   name="last-name"
                   id="last-name"
+                  placeholder="Smith"
                   value={last_name}
                   onChange={(e) => setLastName(e.target.value)}
                   autoComplete="family-name"
@@ -180,6 +184,7 @@ export default function ApplicantInfoForm({ applyForOpening }) {
                 <input
                   id="email"
                   name="email"
+                  placeholder="johnsmith@gmail.com"
                   type="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
@@ -285,7 +290,7 @@ export default function ApplicantInfoForm({ applyForOpening }) {
                 type="submit"
                 className="w-full inline-flex items-center justify-center px-6 py-3 border border-transparent rounded-md shadow-sm text-base font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
               >
-                Apply
+                {buttonText}
               </button>
             </div>
           </form>

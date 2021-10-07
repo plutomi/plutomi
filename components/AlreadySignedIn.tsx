@@ -2,15 +2,17 @@ import { useRouter } from "next/router";
 import { signOut } from "next-auth/client";
 import Link from "next/link";
 import { useSession } from "next-auth/client";
+import useUser from "../SWR/useUser";
 export default function AlreadySignedIn() {
   const [session, loading]: [CustomSession, boolean] = useSession();
+  const { user, isUserLoading, isUserError } = useUser(session?.user_id);
 
   const router = useRouter();
 
   return (
     <section id="login" className="flex  justify-center mx-auto ">
       <div className="mx-auto  flex-col md:flex-wrap text-center space-y-2 md:space-y-0  justify-center space-x-2  items-center text-lg text-blue-gray-600 ">
-        <p className="px-2 py-2"> Signed in as {session?.user_email}</p>
+        <p className="px-2 py-2"> Signed in as {user?.user_email}</p>
         {router.route === "/" && (
           <Link href="/dashboard">
             <a

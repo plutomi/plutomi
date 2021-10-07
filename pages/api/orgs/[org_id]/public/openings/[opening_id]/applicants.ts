@@ -2,6 +2,8 @@ import { CreateApplicant } from "../../../../../../../utils/applicants/createApp
 import { NextApiResponse } from "next";
 import InputValidation from "../../../../../../../utils/inputValidation";
 import { GetOpening } from "../../../../../../../utils/openings/getOpeningById";
+import { GetOrg } from "../../../../../../../utils/orgs/getOrg";
+import SendApplicantLink from "../../../../../../../utils/email/sendApplicantLink";
 const handler = async (req: CustomRequest, res: NextApiResponse) => {
   const { body, method, query } = req;
   const { email, first_name, last_name, stage_id } = body;
@@ -30,9 +32,20 @@ const handler = async (req: CustomRequest, res: NextApiResponse) => {
         return res.status(400).json({ message: `${error.message}` });
       }
 
-      // TODO send email link here
-      await CreateApplicant(create_applicant_input);
-      return res.status(201).json({ message: "Applicant created!" });
+      const new_applicant = await CreateApplicant(create_applicant_input);
+      const org = await GetOrg(org_id);
+
+      const send_applicant_link_input: SendApplicantLinkInput = {
+        applicant_email: new_applicant.email,
+        org_id: org_id,
+        org_name: org.GSI1SK,
+        applicant_id: new_applicant.applicant_id,
+      };
+      await SendApplicantLink(send_applicant_link_input);
+
+      return res.status(201).json({
+        message: `We've sent a link to your email to complete your application!`,
+      });
     } catch (error) {
       // TODO add error logger
       return res
