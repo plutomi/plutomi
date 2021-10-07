@@ -3,6 +3,7 @@ import { Dynamo } from "../../libs/ddbDocClient";
 import { GetCurrentTime } from "../time";
 import { nanoid } from "nanoid";
 import SendNewUserEmail from "../email/sendNewUser";
+import { GetUserByEmail } from "./getUserByEmail";
 const { DYNAMO_TABLE_NAME } = process.env;
 
 export async function CreateUser({
@@ -10,6 +11,11 @@ export async function CreateUser({
   last_name,
   user_email,
 }: CreateUserInput) {
+  const user = await GetUserByEmail(user_email);
+
+  if (user) {
+    return user;
+  }
   const now = GetCurrentTime("iso");
   const user_id = nanoid(42);
   const new_user: DynamoUser = {
