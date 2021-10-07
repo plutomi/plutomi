@@ -7,6 +7,7 @@ import { nanoid } from "nanoid";
 import { createHash } from "crypto";
 import { GetLatestLoginLink } from "../../../utils/loginLinks/getLatestLoginLink";
 import { GetUserByEmail } from "../../../utils/users/getUserByEmail";
+import { CreateUser } from "../../../utils/users/createUser";
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   const { body, method } = req; // TODO get from body
   const { user_email, callback_url } = body;
@@ -28,7 +29,9 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     }
 
     try {
-      const user = await GetUserByEmail(user_email);
+      // Returns the user if already there
+      const user = await CreateUser({ user_email });
+
       const latest_link = await GetLatestLoginLink(user.user_id);
 
       // Limit the amount of links sent in a certain period of time
