@@ -1,9 +1,8 @@
 import { signIn } from "next-auth/client";
 import GoogleButton from "./Buttons/GoogleButton";
 import axios from "axios";
-import LoginCode from "./EmailSigninCode";
 import LoginEmail from "./EmailSigninInput";
-import { FormEvent, useState } from "react";
+import { useState } from "react";
 import router from "next/router";
 
 export default function SignIn({ callbackUrl, desiredPage }) {

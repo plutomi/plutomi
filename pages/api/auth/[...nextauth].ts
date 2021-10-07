@@ -1,14 +1,15 @@
-import { GetLatestLoginCode } from "../../../utils/loginCodes/getLatestLoginCode";
-import { ClaimLoginCode } from "../../../utils/loginCodes/claimLoginCode";
 import { GetUserByEmail } from "../../../utils/users/getUserByEmail";
 import { CreateUser } from "../../../utils/users/createUser";
+import DeleteLoginLink from "../../../utils/loginLinks/deleteLoginLink";
+import CreateLoginEvent from "../../../utils/users/createLoginEvent";
 import InputValidation from "../../../utils/inputValidation";
 import { GetCurrentTime } from "../../../utils/time";
 import Providers from "next-auth/providers";
 import { createHash } from "crypto";
-import NextAuth from "next-auth";
+import NextAuth, { User } from "next-auth";
 import { GetLatestLoginLink } from "../../../utils/loginLinks/getLatestLoginLink";
 import { GetUserById } from "../../../utils/users/getUserById";
+import { JWT } from "../../../node_modules/next-auth/jwt";
 
 export default NextAuth({
   // Configure one or more authentication providers
@@ -55,11 +56,15 @@ export default NextAuth({
         }
 
         // TODO delete link
-        const signed_in_user = await GetUserById(user_id);
+        const user = await GetUserById(user_id);
 
-        if (signed_in_user) {
+        if (user) {
+          await CreateLoginEvent(user_id);
+          // Invalidates the last login link while allowing the user to login again
+          await DeleteLoginLink(user_id, latest_login_link.created_at);
+
           // Any object returned will be saved in `user` property of the JWT
-          return signed_in_user;
+          return user;
         } else {
           // If you return null or false then the credentials will be rejected
           return null;
@@ -72,11 +77,6 @@ export default NextAuth({
   ],
 
   callbacks: {
-    async session(session: CustomSession, user) {
-      // Sets values to be accessed by the client to make api calls
-      session.user_id = user?.user_id;
-      return session;
-    },
     async jwt(
       token: any,
       user: any,
@@ -104,8 +104,17 @@ export default NextAuth({
 
         // Sets id in the token so that it can be accessed in withAuthorizer
         token.user_id = existing_user.user_id;
+        token.user_email = existing_user.user_email;
+        await CreateLoginEvent(existing_user.user_id);
       }
+
       return token;
+    },
+    async session(session: CustomSession, user) {
+      // Sets values to be accessed by the client to make api calls
+      session.user_id = user?.user_id;
+      session.user_email = user?.user_email;
+      return session;
     },
   },
 

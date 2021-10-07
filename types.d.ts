@@ -173,7 +173,7 @@ interface DynamoUser {
   PK?: string; // "USER#VFQg-GZJvxICh5Y7JBanZCehc22p03";
 }
 
-type CustomSession = Session & { user_id: string };
+type CustomSession = Session & { user_id: string; user_email: string };
 
 type CustomRequest = NextApiRequest & { user: DynamoUser };
 

@@ -52,6 +52,6 @@ export default async function CreateLoginLink({
     await Dynamo.send(new PutCommand(params));
     return user;
   } catch (error) {
-    throw new Error(`Unable to retrieve user ${error}`);
+    throw new Error(`Unable to create login link${error}`);
   }
 }

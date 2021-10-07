@@ -17,7 +17,7 @@ export default function Main() {
         <Navbar />
         <Hero />
         {session ? (
-          <AlreadySignedIn email={session?.user?.user_email} /> // Note, this isnt the actual user since the delay for lambda might a full 1-2 seconds
+          <AlreadySignedIn /> 
         ) : (
           <SignInHomepage
             callbackUrl={`${process.env.NEXT_PUBLIC_NEXTAUTH_URL}/dashboard`}
