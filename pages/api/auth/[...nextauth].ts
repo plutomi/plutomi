@@ -9,7 +9,7 @@ import { createHash } from "crypto";
 import NextAuth, { User } from "next-auth";
 import { GetLatestLoginLink } from "../../../utils/loginLinks/getLatestLoginLink";
 import { GetUserById } from "../../../utils/users/getUserById";
-import { JWT } from "../../../node_modules/next-auth/jwt";
+import UpdateLoginLink from "../../../utils/loginLinks/updateLoginLink";
 
 export default NextAuth({
   // Configure one or more authentication providers
@@ -48,7 +48,35 @@ export default NextAuth({
         const hash = createHash("sha512").update(key).digest("hex");
 
         if (hash != latest_login_link.login_link_hash) {
-          throw new Error("Invalid link");
+          /**
+           * Someone could theoretically try to guess a user ID and the 1500 char long key lol
+           * If they do get someone's ID correct in that 15 minute window to sign in AND they key is wrong...
+           * Suspend the key so it cant' be used.
+           */
+          // TODO - They can theoretically just make another one after 15 minutes or whatever the timer is
+          // However, one attempt at 1500 characters every 15 minutes... good luck!
+          
+          const login_link_timestamp = latest_login_link.created_at;
+          const updated_login_link = {
+            ...latest_login_link,
+            link_status: "SUSPENDED",
+          };
+
+          await UpdateLoginLink({
+            user_id,
+            login_link_timestamp,
+            updated_login_link,
+          });
+          throw new Error(
+            "Your login link has been suspended. Please try again later."
+          );
+        }
+
+        // Lock account if already suspended
+        if (latest_login_link.link_status === "SUSPENDED") {
+          throw new Error(
+            "Your account has been locked due to suspicous activity. Please try again later or email support@plutomi.com"
+          );
         }
 
         if (latest_login_link.expires_at <= GetCurrentTime("iso")) {
@@ -58,7 +86,7 @@ export default NextAuth({
         // TODO delete link
         const user = await GetUserById(user_id);
 
-        if (user) {
+        if (user && latest_login_link) {
           await CreateLoginEvent(user_id);
           // Invalidates the last login link while allowing the user to login again
           await DeleteLoginLink(user_id, latest_login_link.created_at);
