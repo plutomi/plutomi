@@ -80,23 +80,25 @@ interface JoinOrgInput {
   user_id: string;
 }
 
-interface CreateLoginCodeInput {
+
+interface CreateLoginLinkInput {
   user_email: string;
-  login_code: string;
-  login_code_expiry: string; // Timestamp in the future
+  login_link_hash: string;
+  login_link_expiry: string; // Timestamp in the future
 }
 
-interface SendLoginCodeEmailInput {
+interface SendLoginLinkEmailInput {
   recipient: string;
-  login_code: string;
-  login_code_relative_expiry: string;
+  login_link: string;
+  login_link_relative_expiry: string;
 }
 
-interface ClaimLoginCodeInput {
-  user_id: string;
-  timestamp: string; // SK
-  claimed_at: string;
+interface SendLoginLinkEmailInput {
+  recipient: string;
+  login_link: string;
+  login_link_relative_expiry: string;
 }
+
 
 interface UpdateUserInput {
   updated_user: DynamoUser;
@@ -158,7 +160,7 @@ interface DynamoUser {
   PK?: string; // "USER#VFQg-GZJvxICh5Y7JBanZCehc22p03";
 }
 
-type CustomSession = Session & { user_id: string };
+type CustomSession = Session & { user_id: string; user_email: string };
 
 type CustomRequest = NextApiRequest & { user: DynamoUser };
 
@@ -274,8 +276,9 @@ interface useAllStageQuestionsOutput {
   isQuestionsError: boolean;
 }
 
-interface APICreateLoginCodeInput {
+interface APICreateLoginLinkInput {
   user_email: string;
+  callback_url?: string;
 }
 
 interface APICreateOpeningInput {

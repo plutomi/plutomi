@@ -1,11 +1,11 @@
 import { SendEmailCommand, SendEmailCommandInput } from "@aws-sdk/client-ses";
 import SES from "../../libs/sesClient";
 
-export default async function SendLoginCode({
+export default async function SendLoginLink({
   recipient,
-  login_code,
-  login_code_relative_expiry,
-}: SendLoginCodeEmailInput) {
+  login_link,
+  login_link_relative_expiry,
+}: SendLoginLinkEmailInput) {
   const new_email: SendEmailCommandInput = {
     Source: `Plutomi <login@plutomi.com>`,
     Destination: {
@@ -15,11 +15,11 @@ export default async function SendLoginCode({
     },
     Message: {
       Subject: {
-        Data: `Your login code is ${login_code}`,
+        Data: `Your magic login link is here!`,
       },
       Body: {
         Html: {
-          Data: `<h1>${login_code}</h1><br>It will expire ${login_code_relative_expiry} so enter it soon.`,
+          Data: `<h1><a href="${login_link}" noreferrer target="_blank" >Click this link to log in</a></h1><p>It will expire ${login_link_relative_expiry}. <strong>DO NOT SHARE THIS LINK WITH ANYONE!!!</strong></p><p>If you did not request this link, you can safely ignore it.</p>`,
         },
       },
     },
@@ -28,6 +28,6 @@ export default async function SendLoginCode({
     await SES.send(new SendEmailCommand(new_email));
   } catch (error) {
     console.error(error);
-    throw new Error(`Unable to send login code - ${error}`);
+    throw new Error(`Unable to send login link - ${error}`);
   }
 }

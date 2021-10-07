@@ -6,11 +6,11 @@ import { CreateUser } from "../users/createUser";
 
 const { DYNAMO_TABLE_NAME } = process.env;
 
-export default async function CreateLoginCode({
+export default async function CreateLoginLink({
   user_email,
-  login_code,
-  login_code_expiry,
-}: CreateLoginCodeInput) {
+  login_link_hash,
+  login_link_expiry,
+}: CreateLoginLinkInput) {
   try {
     let user = await GetUserByEmail(user_email);
 
@@ -32,32 +32,26 @@ export default async function CreateLoginCode({
     }
 
     const now = GetCurrentTime("iso");
-    const new_login_code = {
+    const new_login_link = {
       PK: `USER#${user.user_id}`,
-      SK: `LOGIN_CODE#${now}`,
-      login_code: login_code,
+      SK: `LOGIN_LINK#${now}`,
+      login_link_hash: login_link_hash,
       user_id: user.user_id,
-      entity_type: "LOGIN_CODE",
+      entity_type: "LOGIN_LINK",
       created_at: now,
-      expires_at: login_code_expiry,
-      is_claimed: false,
-      claimed_at: "",
-      GSI1PK: user.user_email,
-      GSI1SK: `LOGIN_CODE#${now}`,
-      ttl_expiry: GetPastOrFutureTime("future", 30, "days", "unix"),
+      expires_at: login_link_expiry,
+      ttl_expiry: GetPastOrFutureTime("future", 1, "days", "unix"),
     };
 
     const params: PutCommandInput = {
       TableName: DYNAMO_TABLE_NAME,
-      Item: new_login_code,
+      Item: new_login_link,
       ConditionExpression: "attribute_not_exists(PK)",
     };
 
     await Dynamo.send(new PutCommand(params));
-    return;
+    return user;
   } catch (error) {
-    throw new Error(`Unable to retrieve user ${error}`);
+    throw new Error(`Unable to create login link${error}`);
   }
-  // If user exists, create login code
-  // Send login code email
 }

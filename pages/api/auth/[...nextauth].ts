@@ -1,11 +1,15 @@
-import { GetLatestLoginCode } from "../../../utils/loginCodes/getLatestLoginCode";
-import { ClaimLoginCode } from "../../../utils/loginCodes/claimLoginCode";
 import { GetUserByEmail } from "../../../utils/users/getUserByEmail";
 import { CreateUser } from "../../../utils/users/createUser";
+import DeleteLoginLink from "../../../utils/loginLinks/deleteLoginLink";
+import CreateLoginEvent from "../../../utils/users/createLoginEvent";
 import InputValidation from "../../../utils/inputValidation";
 import { GetCurrentTime } from "../../../utils/time";
 import Providers from "next-auth/providers";
-import NextAuth from "next-auth";
+import { createHash } from "crypto";
+import NextAuth, { User } from "next-auth";
+import { GetLatestLoginLink } from "../../../utils/loginLinks/getLatestLoginLink";
+import { GetUserById } from "../../../utils/users/getUserById";
+import { JWT } from "../../../node_modules/next-auth/jwt";
 
 export default NextAuth({
   // Configure one or more authentication providers
@@ -18,53 +22,49 @@ export default NextAuth({
     }),
     Providers.Credentials({
       // The name to display on the sign in form (e.g. 'Sign in with...')
-      name: "Login Code",
+      name: "Login Link",
       // The credentials is used to generate a suitable form on the sign in page.
       // You can specify whatever fields you are expecting to be submitted.
       // e.g. domain, username, password, 2FA token, etc.
       credentials: {
-        login_code: { label: "Code", type: "text", placeholder: "J8S73SOEL1" },
-        user_email: { label: "Email", type: "email" },
+        user_id: { label: "ID", type: "text", placeholder: "J8S73SOEL1" },
+        key: { label: "Key", type: "text" },
       },
       async authorize(credentials) {
-        const { user_email, login_code } = credentials;
+        const { user_id, key } = credentials;
 
         try {
-          InputValidation({ user_email, login_code });
+          InputValidation({ user_id, key });
         } catch (error) {
           throw new Error(error);
         }
 
-        const latest_login_code = await GetLatestLoginCode(user_email);
+        const latest_login_link = await GetLatestLoginLink(user_id);
 
-        if (latest_login_code.login_code != login_code) {
-          // TODO mark this as a bad attempt and delete the code after a few tries
-
-          throw new Error("Invalid Code");
+        if (!latest_login_link) {
+          throw new Error("Invalid link");
         }
 
-        if (latest_login_code.expires_at <= GetCurrentTime("iso")) {
-          throw new Error("Code has expired");
+        const hash = createHash("sha512").update(key).digest("hex");
+
+        if (hash != latest_login_link.login_link_hash) {
+          throw new Error("Invalid link");
         }
 
-        const claim_code_input: ClaimLoginCodeInput = {
-          user_id: latest_login_code.user_id,
-          timestamp: latest_login_code.created_at,
-          claimed_at: GetCurrentTime("iso") as string,
-        };
+        if (latest_login_link.expires_at <= GetCurrentTime("iso")) {
+          throw new Error("This link has expired");
+        }
 
-        await ClaimLoginCode(claim_code_input);
+        // TODO delete link
+        const user = await GetUserById(user_id);
 
-        const signed_in_user = await GetUserByEmail(user_email);
+        if (user) {
+          await CreateLoginEvent(user_id);
+          // Invalidates the last login link while allowing the user to login again
+          await DeleteLoginLink(user_id, latest_login_link.created_at);
 
-        /**
-         * TODO *thoroughly* limit what is returned to the client here.
-         * Limit to name, ID, email, and org, etc.
-         **/
-
-        if (signed_in_user) {
           // Any object returned will be saved in `user` property of the JWT
-          return signed_in_user;
+          return user;
         } else {
           // If you return null or false then the credentials will be rejected
           return null;
@@ -77,11 +77,6 @@ export default NextAuth({
   ],
 
   callbacks: {
-    async session(session: CustomSession, user) {
-      // Sets values to be accessed by the client to make api calls
-      session.user_id = user?.user_id;
-      return session;
-    },
     async jwt(
       token: any,
       user: any,
@@ -109,8 +104,17 @@ export default NextAuth({
 
         // Sets id in the token so that it can be accessed in withAuthorizer
         token.user_id = existing_user.user_id;
+        token.user_email = existing_user.user_email;
+        await CreateLoginEvent(existing_user.user_id);
       }
+
       return token;
+    },
+    async session(session: CustomSession, user) {
+      // Sets values to be accessed by the client to make api calls
+      session.user_id = user?.user_id;
+      session.user_email = user?.user_email;
+      return session;
     },
   },
 
