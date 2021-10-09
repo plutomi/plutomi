@@ -14,6 +14,7 @@ export default async function CreateLoginEvent(user_id: string) {
       SK: `LOGIN_EVENT#${now}`,
       // TODO in the future, get all the info about the login event
       // Such as IP, headers, device, etc.
+      created_at: now,
       ttl_expiry: GetPastOrFutureTime("future", 30, "days", "unix"),
     };
 
