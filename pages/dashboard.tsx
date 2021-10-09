@@ -17,14 +17,6 @@ export default function Dashboard() {
   const setCreateOrgModalOpen = useStore(
     (state: PlutomiState) => state.setCreateOrgModalOpen
   );
-
-  /** ~~~~~~~~~~~~~~~~~~~~~~~
-   * ~~~~~~~~~~~~~~~~~~~~~~~~
-   * ~~LOADING STATES START~~
-   * ~~~~~~~~~~~~~~~~~~~~~~~~
-   * ~~~~~~~~~~~~~~~~~~~~~~~~
-   */
-
   // When rendering client side don't display anything until loading is complete
   if (typeof window !== "undefined" && loading) {
     <Loader text="Loading ..." />;
@@ -44,14 +36,6 @@ export default function Dashboard() {
     // TODO set this
     return <Loader text="Loading user..." />;
   }
-
-  /** ~~~~~~~~~~~~~~~~~~~~~~~
-   * ~~~~~~~~~~~~~~~~~~~~~~~~
-   * ~~~LOADING STATES END~~~
-   * ~~~~~~~~~~~~~~~~~~~~~~~~
-   * ~~~~~~~~~~~~~~~~~~~~~~~~
-   */
-
   const createOrg = async ({ GSI1SK, org_id }) => {
     if (
       !confirm(
