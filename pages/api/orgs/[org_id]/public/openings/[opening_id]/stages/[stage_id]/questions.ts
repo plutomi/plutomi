@@ -1,7 +1,7 @@
 import withAuthorizer from "../../../../../../../../../middleware/withAuthorizer";
 import { NextApiResponse } from "next";
 import { GetAllQuestionsInStage } from "../../../../../../../../../utils/questions/getAllQuestionsInStage";
-
+import withCleanOrgName from "../../../../../../../../../middleware/withCleanOrgName";
 const handler = async (req: CustomRequest, res: NextApiResponse) => {
   const { method, query } = req;
   const { org_id, opening_id, stage_id } = query;
@@ -14,8 +14,6 @@ const handler = async (req: CustomRequest, res: NextApiResponse) => {
         stage_id,
       });
 
-  
-
       return res.status(200).json(questions);
     } catch (error) {
       return res.status(500).json({ message: "Unable to retrieve questions" });
@@ -24,4 +22,4 @@ const handler = async (req: CustomRequest, res: NextApiResponse) => {
   return res.status(405).json({ message: "Not Allowed" });
 };
 
-export default withAuthorizer(handler);
+export default withAuthorizer(withCleanOrgName(handler));

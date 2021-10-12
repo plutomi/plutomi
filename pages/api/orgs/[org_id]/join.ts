@@ -3,7 +3,7 @@ import withAuthorizer from "../../../../middleware/withAuthorizer";
 import InputValidation from "../../../../utils/inputValidation";
 import { JoinOrg } from "../../../../utils/users/joinOrg";
 import { NextApiResponse } from "next";
-
+import withCleanOrgName from "../../../../middleware/withCleanOrgName";
 const handler = async (req: CustomRequest, res: NextApiResponse) => {
   const { method, query, body } = req;
   const user: DynamoUser = req.user;
@@ -16,12 +16,6 @@ const handler = async (req: CustomRequest, res: NextApiResponse) => {
     invite_id: invite_id,
   };
 
-  // TODO not implemented yet
-  const delete_org_invite: DeleteOrgInviteInput = {
-    user_id: user.user_id,
-    timestamp: timestamp,
-    invite_id: invite_id,
-  };
   const join_org_input: JoinOrgInput = {
     user_id: user.user_id,
     org_id: org_id as string,
@@ -66,4 +60,4 @@ const handler = async (req: CustomRequest, res: NextApiResponse) => {
   return res.status(405).json({ message: "Not Allowed" });
 };
 
-export default withAuthorizer(handler);
+export default withAuthorizer(withCleanOrgName(handler));
