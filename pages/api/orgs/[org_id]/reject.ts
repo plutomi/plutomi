@@ -1,6 +1,7 @@
 import DeleteOrgInvite from "../../../../utils/invites/deleteOrgInvite";
 import withAuthorizer from "../../../../middleware/withAuthorizer";
 import InputValidation from "../../../../utils/inputValidation";
+import withCleanOrgName from "../../../../middleware/withCleanOrgName";
 import { NextApiResponse } from "next";
 
 const handler = async (req: CustomRequest, res: NextApiResponse) => {
@@ -34,4 +35,4 @@ const handler = async (req: CustomRequest, res: NextApiResponse) => {
   return res.status(405).json({ message: "Not Allowed" });
 };
 
-export default withAuthorizer(handler);
+export default withAuthorizer(withCleanOrgName(handler));

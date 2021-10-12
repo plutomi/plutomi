@@ -3,6 +3,7 @@ import { NextApiResponse } from "next";
 import InputValidation from "../../../../../../../utils/inputValidation";
 import { GetOpening } from "../../../../../../../utils/openings/getOpeningById";
 import { GetOrg } from "../../../../../../../utils/orgs/getOrg";
+import withCleanOrgName from "../../../../../../../middleware/withCleanOrgName";
 import SendApplicantLink from "../../../../../../../utils/email/sendApplicantLink";
 const handler = async (req: CustomRequest, res: NextApiResponse) => {
   const { body, method, query } = req;
@@ -57,4 +58,4 @@ const handler = async (req: CustomRequest, res: NextApiResponse) => {
   return res.status(405).json({ message: "Not Allowed" });
 };
 
-export default handler;
+export default withCleanOrgName(handler);
