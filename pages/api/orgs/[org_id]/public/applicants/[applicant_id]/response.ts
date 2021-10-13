@@ -33,7 +33,6 @@ const handler = async (req: CustomRequest, res: NextApiResponse) => {
     try {
       await Promise.all(
         responses.map(async (response: DynamoApplicantResponse) => {
-          // TODO change this to promise all
           const { question_title, question_description, question_response } =
             response;
 
@@ -59,7 +58,6 @@ const handler = async (req: CustomRequest, res: NextApiResponse) => {
       });
     }
 
-    return res.status(200).json({ message: "Answered succesfully!" });
   }
 
   return res.status(405).json({ message: "Not Allowed" });
