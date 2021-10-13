@@ -39,7 +39,6 @@ const handler = async (req: CustomRequest, res: NextApiResponse) => {
   }
 
   if (method === "GET") {
-    console.log("USER", user);
 
     try {
       const all_openings = await GetAllOpeningsInOrg(user.org_id);

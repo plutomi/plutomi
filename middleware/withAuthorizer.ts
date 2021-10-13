@@ -14,7 +14,6 @@ export default function withAuthorizer(handler: any) {
   return async (req: CustomRequest, res: NextApiResponse) => {
     try {
       const token: CustomJWT = await getToken({ req, secret });
-      console.log("TOKEN", token)
 
       if (token) {
         try {
