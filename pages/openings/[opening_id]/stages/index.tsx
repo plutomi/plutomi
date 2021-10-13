@@ -16,12 +16,12 @@ export default function Openings() {
   const { user, isUserLoading, isUserError } = useUser(session?.user_id);
 
   let { opening, isOpeningLoading, isOpeningError } = useOpeningById(
-    session?.user_id,
+    user?.user_id,
     opening_id as string
   );
 
   let { stages, isStagesLoading, isStagesError } = useAllStagesInOpening(
-    session?.user_id,
+    user?.user_id,
     opening?.opening_id
   );
 

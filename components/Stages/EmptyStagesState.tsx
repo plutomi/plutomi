@@ -12,7 +12,7 @@ export default function EmptyStagesState() {
   const { user, isUserLoading, isUserError } = useUser(session?.user_id);
 
   let { stages, isStagesLoading, isStagesError } = useAllStagesInOpening(
-    session?.user_id,
+    user?.user_id,
     opening_id as string
   );
 

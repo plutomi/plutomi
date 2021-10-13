@@ -19,14 +19,10 @@ export default function StageID() {
   const { opening_id, stage_id, applicant_id } = router.query;
   const [session, loading]: [CustomSession, boolean] = useSession();
   const { user, isUserLoading, isUserError } = useUser(session?.user_id);
-  const { stage, isStageLoading, isStageError } = useStageById(
-    user?.user_id,
-    opening_id as string,
-    stage_id as string
-  );
+
 
   let { stages, isStagesLoading, isStagesError } = useAllStagesInOpening(
-    session?.user_id,
+    user?.user_id,
     opening_id as string
   );
 

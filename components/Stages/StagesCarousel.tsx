@@ -24,7 +24,7 @@ export default function StageCarousel() {
   );
 
   let { stages, isStagesLoading, isStagesError } = useAllStagesInOpening(
-    session?.user_id,
+    user?.user_id,
     opening?.opening_id
   );
 

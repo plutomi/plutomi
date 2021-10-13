@@ -101,7 +101,7 @@ export default function StageSettingsContent() {
   );
 
   let { stages, isStagesLoading, isStagesError } = useAllStagesInOpening(
-    session?.user_id,
+    user?.user_id,
     opening?.opening_id
   );
   const stageModal = useStore((state: PlutomiState) => state.stageModal);

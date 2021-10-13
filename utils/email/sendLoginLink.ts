@@ -24,6 +24,8 @@ export default async function SendLoginLink({
       },
     },
   };
+
+  console.log(JSON.stringify(new_email));
   try {
     await SES.send(new SendEmailCommand(new_email));
   } catch (error) {

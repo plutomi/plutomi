@@ -39,6 +39,8 @@ const handler = async (req: CustomRequest, res: NextApiResponse) => {
   }
 
   if (method === "GET") {
+    console.log("USER", user);
+
     try {
       const all_openings = await GetAllOpeningsInOrg(user.org_id);
       return res.status(200).json(all_openings);
