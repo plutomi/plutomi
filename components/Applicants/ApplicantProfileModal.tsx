@@ -8,6 +8,7 @@ import useStore from "../../utils/store";
 import { useRouter } from "next/router";
 import { mutate } from "swr";
 import axios from "axios";
+import ClickToCopy from "../ClickToCopy";
 import delay from "delay";
 import useApplicantById from "../../SWR/useApplicantById";
 const tabs = [
@@ -183,10 +184,14 @@ export default function ApplicantProfileModal() {
                           attributes={{ name: "awesome-input", id: 1 }}
                         />
                       </Dialog.Title>
-                      <div className="ml-3 h-7 flex items-center">
+                      <div className="ml-3 h-7 flex items-center space-x-4">
+                        <ClickToCopy
+                          showText={"Copy Application Link"}
+                          copyText={`${process.env.NEXT_PUBLIC_NEXTAUTH_URL}/${applicant?.org_id}/applications/${applicant?.applicant_id}`}
+                        />
                         <button
                           type="button"
-                          className="bg-white rounded-md text-gray-400 hover:text-gray-500 focus:ring-2 focus:ring-blue-500"
+                          className="bg-white rounded-md text-red-400 hover:text-red-500 transition ease-in-out duration-200 focus:ring-2 focus:ring-blue-500"
                           onClick={handleModalClose}
                         >
                           <span className="sr-only">Close panel</span>
@@ -222,6 +227,7 @@ export default function ApplicantProfileModal() {
                       />
                     </p>
                   </div>
+
                   <div className="border-b border-gray-200  ">
                     <div className="">
                       <nav
