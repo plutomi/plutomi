@@ -1,11 +1,4 @@
-// Where appllicants can view their applicationimport Loader from "../../../../components/Loader";
-import DashboardContent from "../../../../components/Dashboard/DashboardContent";
-import DashboardHeader from "../../../../components/Dashboard/DashboardHeader";
-import SignedInNav from "../../../../components/Navbar/SignedInNav";
-import { useSession } from "next-auth/client";
-import useUser from "../../../../SWR/useUser";
-import SignIn from "../../../../components/SignIn";
-import axios from "axios";
+
 import ApplicationContent from "../../../../components/Applicants/ApplicationContent";
 import { mutate } from "swr";
 import useStore from "../../../../utils/store";

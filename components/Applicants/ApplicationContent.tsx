@@ -21,11 +21,25 @@ export default function ApplicationContent() {
 
   return (
     <div>
-      <ul className="my-4">
+      <ul className="my-4 space-y-8">
         {questions.map((question: DynamoStageQuestion) => (
           <li key={question.question_id} className="space-y-1 mb-4">
-            <h4 className="text-lg text-dark">{question?.GSI1SK}</h4>
-            <p className="text-sm text-light">
+            <label
+              htmlFor="email"
+              className="block text-lg font-medium text-dark"
+            >
+              {question?.GSI1SK}
+            </label>
+            <div className="mt-1">
+              <input
+                type="text"
+                name="email"
+                id="email"
+                className="shadow-sm focus:ring-blue-500 focus:border-blue-500 block w-full sm:text-sm border-gray-300 rounded-md"
+                aria-describedby="email-description"
+              />
+            </div>
+            <p className="mt-2 text-sm text-light" id="email-description">
               {question?.question_description}
             </p>
           </li>
