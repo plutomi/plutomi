@@ -19,6 +19,9 @@ export default function ApplicationContent() {
     return <Loader text="Loading questions..." />;
   }
 
+  if (questions.length == 0) {
+    return <h1>There are no questions in this stage :T</h1>;
+  }
   return (
     <div>
       <ul className="my-4 space-y-8">
