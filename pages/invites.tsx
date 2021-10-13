@@ -7,6 +7,7 @@ import SignedInNav from "../components/Navbar/SignedInNav";
 import { useRouter } from "next/router";
 import InvitesHeader from "../components/Invites/InvitesHeader";
 import InvitesContent from "../components/Invites/InvitesContent";
+import Loader from "../components/Loader";
 
 export default function Invites() {
   const router = useRouter();
@@ -33,11 +34,7 @@ export default function Invites() {
   }
 
   if (isUserLoading) {
-    return (
-      <div className="mx-auto p-20 flex justify-center items-center">
-        <h1 className="text-4xl text-dark font-medium">Loading...</h1>
-      </div>
-    );
+    return <Loader text="Loading user..." />;
   }
 
   return (
@@ -49,7 +46,6 @@ export default function Invites() {
         </header>
 
         <main className="mt-5 ">
-          {/* {openings?.length == 0 ? <EmptyOpeningsState /> : <OpeningsContent />} */}
           <InvitesContent />
         </main>
       </div>

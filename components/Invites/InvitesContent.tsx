@@ -12,7 +12,7 @@ export default function InvitesContent() {
   const { user, isUserLoading, isUserError } = useUser(session?.user_id);
 
   const { invites, isInvitesLoading, isInvitesError } = useOrgInvites(
-    session?.user_id
+    user?.user_id
   );
 
   const acceptInvite = async (invite) => {
