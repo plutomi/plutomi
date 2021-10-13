@@ -6,6 +6,7 @@ import EmptyOrgState from "../../../../components/Dashboard/EmptyOrgState";
 import Loader from "../../../../components/Loader";
 import useApplicantById from "../../../../SWR/useApplicantById";
 import { useRouter } from "next/router";
+import useStageById from "../../../../SWR/useStageById";
 import ApplicationHeader from "../../../../components/Applicants/ApplicationHeader";
 export default function Application() {
   const router = useRouter();
@@ -13,6 +14,13 @@ export default function Application() {
   const { applicant, isApplicantLoading, isApplicantError } = useApplicantById(
     applicant_id as string
   );
+
+  const { stage, isStageLoading, isStageError } = useStageById(
+    applicant?.applicant_id,
+    applicant?.current_opening_id,
+    applicant?.current_stage_id
+  );
+
   // When rendering client side don't display anything until loading is complete
   if (typeof window !== "undefined") {
     <Loader text="Loading ..." />;
@@ -22,12 +30,13 @@ export default function Application() {
     return <Loader text="Loading info..." />;
   }
 
-
   return (
     <>
       <div className="max-w-7xl mx-auto p-4 my-12 rounded-lg min-h-screen ">
         {!applicant ? (
-          <h1 className="text-4xl mx-auto p-20">Hmm... That link doesn&apos;t seem right.. check it again!</h1>
+          <h1 className="text-4xl mx-auto p-20">
+            Hmm... That link doesn&apos;t seem right.. check it again!
+          </h1>
         ) : (
           <>
             <header>
