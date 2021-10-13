@@ -147,9 +147,6 @@ interface DynamoApplicant {
   org_id: string;
   entity_type: "APPLICANT";
   created_at: string;
-  // TODO - Originally, I wanted to make these into their own items...
-  // Unsure on final decision. It will definitely be easier to keep everything
-  // on the applicant, but Dynamo has a hard limit of 400kb which is gigantic but. something to keep in mind.  current_opening_id: string;
   current_opening_id: string;
   current_stage_id: string;
   GSI1PK: string;
@@ -169,4 +166,16 @@ interface DynamoApplicant {
   // current_stage_id: stage_id;
   // GSI1PK: `ORG#${org_id}#APPLICANTS`;
   // GSI1SK: `OPENING#${opening_id}#STAGE#${stage_id}`;
+}
+
+interface DynamoApplicantResponse {
+  PK: string;
+  SK: `APPLICANT_RESPONSE`;
+  org_id: string;
+  applicant_id: string;
+  entity_type: "APPLICANT_RESPONSE";
+  question_title: string;
+  question_description: string;
+  question_response: any;
+  created_at: string;
 }

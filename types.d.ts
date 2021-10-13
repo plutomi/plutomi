@@ -75,6 +75,13 @@ interface CreateApplicantInput {
   stage_id: string;
 }
 
+interface CreateApplicantResponseInput {
+  org_id: string;
+  applicant_id: string;
+  question_title: string;
+  question_description: string;
+  question_response: string;
+}
 interface JoinOrgInput {
   org_id: string;
   user_id: string;
