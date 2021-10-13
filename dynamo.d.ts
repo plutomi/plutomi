@@ -178,4 +178,6 @@ interface DynamoApplicantResponse {
   question_description: string;
   question_response: any;
   created_at: string;
+  GSI1PK: string;
+  GSI1SK: APPLICANT_RESPONSE;
 }

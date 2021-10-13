@@ -1,6 +1,5 @@
 import { NextApiResponse } from "next";
 import InputValidation from "../../../../../../../utils/inputValidation";
-import UpdateApplicant from "../../../../../../../utils/applicants/updateApplicant";
 import withCleanOrgName from "../../../../../../../middleware/withCleanOrgName";
 import { CreateApplicantResponse } from "../../../../../../../utils/applicants/createApplicantResponse";
 const handler = async (req: CustomRequest, res: NextApiResponse) => {
@@ -10,47 +9,57 @@ const handler = async (req: CustomRequest, res: NextApiResponse) => {
 
   // Public route to update limited applicant information, ie: questions & answers
   if (method === "POST") {
-    if (responses.length == 0) {
+    if (!responses || responses.length == 0) {
       return res.status(400).json({ message: "Empty responses" });
     }
 
-    let counter = 0;
-    let error_messages = [];
-    responses.map(async (response: DynamoApplicantResponse) => {
-      const { question_title, question_description, question_response } =
-        response;
-
+    try {
       // Validate all answers
-      try {
+      responses.every((response: DynamoApplicantResponse) => {
+        // TODO while this validates, it does not return what went wrong!
         const create_applicant_response_input: CreateApplicantResponseInput = {
           org_id: org_id as string,
           applicant_id: applicant_id as string,
-          question_title: question_title,
-          question_description: question_description,
-          question_response: question_response,
+          question_title: response.question_title,
+          question_description: response.question_description,
+          question_response: response.question_response,
         };
+        InputValidation(create_applicant_response_input);
+      });
+    } catch (error) {
+      return res.status(400).json({ message: `Invalid response(s)` });
+    }
 
-        try {
-          InputValidation(create_applicant_response_input);
-        } catch (error) {
-          return res.status(400).json({ message: `${error.message}` });
-        }
+    try {
+      await Promise.all(
+        responses.map(async (response: DynamoApplicantResponse) => {
+          // TODO change this to promise all
+          const { question_title, question_description, question_response } =
+            response;
 
-        await CreateApplicantResponse(create_applicant_response_input);
-        counter++;
-      } catch (error) {
-        console.error(`Unable to answer question`, error);
-        error_messages.push(error);
-      }
+          const create_applicant_response_input: CreateApplicantResponseInput =
+            {
+              org_id: org_id as string,
+              applicant_id: applicant_id as string,
+              question_title: question_title,
+              question_description: question_description,
+              question_response: question_response,
+            };
 
-      if (counter != responses.length) {
-        return res.status(500).json({
-          message: `Unable to answer questions, please try again - ${error_messages}`,
-        });
-      }
+          await CreateApplicantResponse(create_applicant_response_input);
+        })
+      );
 
-      return res.status(200).json({ message: "Answered succesfully!" });
-    });
+      return res
+        .status(201)
+        .json({ message: `Questions answered succesfully!` });
+    } catch (error) {
+      return res.status(500).json({
+        message: `Unable to answer questions, please try again`,
+      });
+    }
+
+    return res.status(200).json({ message: "Answered succesfully!" });
   }
 
   return res.status(405).json({ message: "Not Allowed" });
