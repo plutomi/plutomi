@@ -27,6 +27,7 @@ const handler = async (req: CustomRequest, res: NextApiResponse) => {
         InputValidation(create_applicant_response_input);
       });
     } catch (error) {
+      console.error(error);
       return res.status(400).json({ message: `Invalid response(s)` });
     }
 
@@ -57,7 +58,6 @@ const handler = async (req: CustomRequest, res: NextApiResponse) => {
         message: `Unable to answer questions, please try again`,
       });
     }
-
   }
 
   return res.status(405).json({ message: "Not Allowed" });

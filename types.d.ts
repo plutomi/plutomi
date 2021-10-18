@@ -429,8 +429,8 @@ interface useAllApplicantsInStageOutput {
 
 // TODO this should be updated with question / answer type for multiple choice, radio, etc.
 interface ApplicantAnswer {
-  question_id: string,
+  question_id?: string; // ID needed for client side sorting
   question_title: string;
   question_description: string;
-  answer: string;
+  question_response: string;
 }

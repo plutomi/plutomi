@@ -4,8 +4,9 @@ import Loader from "../Loader";
 import { useState } from "react";
 import useAllStageQuestions from "../../SWR/useAllStageQuestions";
 import { nanoid } from "nanoid";
+import axios from "axios";
 export default function ApplicationContent() {
-  const [answers, setAnswers] = useState([]);
+  const [responses, setResponses] = useState([]);
 
   const router = useRouter();
   const { org_id, applicant_id } = router.query;
@@ -31,38 +32,54 @@ export default function ApplicationContent() {
     question_id: string,
     question_title: string,
     question_description: string,
-    answer: string
+    response: string
   ) => {
-    const incoming = {
+    const incoming: ApplicantAnswer = {
       question_id: question_id,
       question_title: question_title,
       question_description: question_description,
-      answer: answer,
+      question_response: response,
     };
     const question_order = questions.map((a) => a.question_id);
     const question_index = question_order.indexOf(question_id);
 
-    let found = answers.find((answer) => answer.question_id === question_id);
-    let new_answers = [...answers];
+    let found = responses.find((answer) => answer.question_id === question_id);
+    let new_responses = [...responses];
 
     // Add answer
     if (!found) {
-      new_answers.splice(question_index, 0, incoming);
-      setAnswers(new_answers);
+      new_responses.splice(question_index, 0, incoming);
+      setResponses(new_responses);
     }
 
-    const answer_index = answers.indexOf(found);
+    const response_index = responses.indexOf(found);
 
     // Delete answer
-    if (!answer || answer.length == 0) {
-      new_answers.splice(answer_index, 1);
-      setAnswers(new_answers);
+    if (!response || response.length == 0) {
+      new_responses.splice(response_index, 1);
+      setResponses(new_responses);
       return;
     }
 
     // Replace answer
-    new_answers.splice(question_index, 1, incoming);
-    setAnswers(new_answers);
+    new_responses.splice(question_index, 1, incoming);
+    setResponses(new_responses);
+  };
+
+  const handleSubmit = async () => {
+    const body = {
+      responses: responses,
+    };
+
+    try {
+      const { status, data } = await axios.post(
+        `/api/orgs/${org_id}/public/applicants/${applicant_id}/response`,
+        body
+      );
+      alert(data.message);
+    } catch (error) {
+      alert(error.response.data.message);
+    }
   };
 
   return (
@@ -98,6 +115,14 @@ export default function ApplicationContent() {
           </li>
         ))}
       </ul>
+
+      <button
+        type="button"
+        onClick={() => handleSubmit()}
+        className="inline-flex items-center px-4 py-2 border border-transparent text-base font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition ease-in-out duration-200"
+      >
+        Submit
+      </button>
     </div>
   );
 }
