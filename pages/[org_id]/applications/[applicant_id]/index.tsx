@@ -6,6 +6,7 @@ import EmptyOrgState from "../../../../components/Dashboard/EmptyOrgState";
 import Loader from "../../../../components/Loader";
 import useApplicantById from "../../../../SWR/useApplicantById";
 import { useRouter } from "next/router";
+import { useState } from "react";
 import useStageById from "../../../../SWR/useStageById";
 import ApplicationHeader from "../../../../components/Applicants/ApplicationHeader";
 export default function Application() {

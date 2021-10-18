@@ -108,9 +108,6 @@ export default NextAuth({
     async jwt(
       token: any,
       user: any,
-      account: any,
-      profile: any,
-      isNewUser: any
     ) {
       if (user) {
         /**

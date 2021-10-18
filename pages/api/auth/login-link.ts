@@ -6,7 +6,6 @@ import CreateLoginLink from "../../../utils/loginLinks/createLoginLink";
 import { nanoid } from "nanoid";
 import { createHash } from "crypto";
 import { GetLatestLoginLink } from "../../../utils/loginLinks/getLatestLoginLink";
-import { GetUserByEmail } from "../../../utils/users/getUserByEmail";
 import { CreateUser } from "../../../utils/users/createUser";
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   const { body, method } = req; // TODO get from body
