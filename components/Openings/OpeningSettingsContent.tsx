@@ -60,7 +60,7 @@ export default function OpeningSettingsContent() {
       delete diff["is_modal_open"];
       delete diff["modal_mode"];
       const body = {
-        updated_opening: diff,
+        new_opening_values: diff,
       };
 
       console.log("Outgoing body", body);

@@ -267,20 +267,6 @@ interface APICreateLoginLinkInput {
   callback_url?: string;
 }
 
-/**
- * @param GSI1SK - Name of the opening you want to create
- */
-interface APICreateOpeningInput {
-  GSI1SK: string;
-}
-
-/**
- * @param opening_id - ID of the opening you want to retrieve
- */
-interface APIGetOpeningByIdInput {
-  opening_id: string;
-}
-
 interface APICreateStageInput {
   GSI1SK: string;
 }
@@ -333,7 +319,7 @@ interface ReorderStagesInput {
 interface UpdateOpeningInput {
   org_id: string;
   opening_id: string;
-  updated_opening: DynamoOpening;
+  new_opening_values: DynamoOpening;
 }
 
 interface UpdateApplicantInput {
@@ -355,9 +341,6 @@ interface UpdateStageInput {
   opening_id: string;
   stage_id: string;
   updated_stage: DynamoStage;
-}
-interface APIUpdateOpeningInput {
-  updated_opening: DynamoOpening;
 }
 
 interface APICreateQuestionInput {

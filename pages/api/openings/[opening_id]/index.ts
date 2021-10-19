@@ -35,7 +35,7 @@ const handler = async (req: CustomRequest, res: NextApiResponse) => {
       const update_opening_input: UpdateOpeningInput = {
         org_id: user.org_id,
         opening_id: opening_id as string,
-        updated_opening: body.updated_opening,
+        new_opening_values: body.new_opening_values,
       };
 
       try {

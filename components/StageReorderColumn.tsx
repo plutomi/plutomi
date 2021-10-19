@@ -122,7 +122,8 @@ export default function StageReorderColumn() {
 
     try {
       const body = {
-        updated_opening: { ...opening, stage_order: new_stage_order },
+        // TODO this should use the difference like the openingsettingscontent
+        new_opening_values: { stage_order: new_stage_order },
       };
 
       await axios.put(`/api/openings/${opening_id}`, body);
