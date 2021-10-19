@@ -106,7 +106,7 @@ export default function ApplicantInfoForm({ applyForOpening }) {
             application link as you can put anyones email there. I prefer the
             link method as it will take them away from this page, and once we
             receive a GET request at the email link, we can redirect to
-            /org_id/applications/applicant_id. We can even set a 1 day limit on
+            /org_id/applicant/applicant_id. We can even set a 1 day limit on
             that application link being valid? Don&apos;t know what use case
             that would serve. TODO add captcha.
           </p>
