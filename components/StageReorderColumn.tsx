@@ -80,7 +80,7 @@ export default function StageReorderColumn() {
   );
 
   let { stages, isStagesLoading, isStagesError } = useAllStagesInOpening(
-    session?.user_id,
+    user?.user_id,
     opening?.opening_id
   );
   const { stage, isStageLoading, isStageError } = useStageById(

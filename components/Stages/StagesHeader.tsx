@@ -15,20 +15,13 @@ export default function StagesHeader() {
   const [session, loading]: [CustomSession, boolean] = useSession();
   const { user, isUserLoading, isUserError } = useUser(session?.user_id);
   let { opening, isOpeningLoading, isOpeningError } = useOpeningById(
-    session?.user_id,
+    user?.user_id,
     opening_id as string
   );
-  let { stages, isStagesLoading, isStagesError } = useAllStagesInOpening(
-    session?.user_id,
-    opening_id as string
-  );
+
   let { openings, isOpeningsLoading, isOpeningsError } = useOpenings(
     user?.user_id
   );
-
-  const stageModal = useStore((state: PlutomiState) => state.stageModal);
-
-  const setStageModal = useStore((state: PlutomiState) => state.setStageModal);
 
   return (
     <div className="md:flex md:items-center md:justify-between  ">

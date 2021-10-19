@@ -22,4 +22,4 @@ const handler = async (req: CustomRequest, res: NextApiResponse) => {
   return res.status(405).json({ message: "Not Allowed" });
 };
 
-export default withAuthorizer(withCleanOrgName(handler));
+export default withCleanOrgName(handler);

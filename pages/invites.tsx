@@ -14,9 +14,7 @@ export default function Invites() {
   const { mutate } = useSWRConfig();
   const [session, loading]: CustomSession = useSession();
   const { user, isUserLoading, isUserError } = useUser(session?.user_id);
-  const { invites, isInvitesLoading, isInvitesError } = useOrgInvites(
-    session?.user_id
-  );
+ 
 
   // When rendering client side don't display anything until loading is complete
   if (typeof window !== "undefined" && loading) {

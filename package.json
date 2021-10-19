@@ -3,12 +3,12 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "setx AWS_PROFILE plutomi && next dev",
+    "dev": "next dev",
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
     "test": "next dev & jest --coverage -i --silent=false tests/ALL.spec.ts ",
-    "deploy": "setx AWS_PROFILE plutomi && NODE_ENV=production && serverless --debug"
+    "deploy": "NODE_ENV=production && serverless --debug"
   },
   "dependencies": {
     "@headlessui/react": "^1.4.0",

@@ -19,11 +19,6 @@ export default function OpeningsSettings() {
     user?.user_id,
     opening_id as string
   );
-  const { stage, isStageLoading, isStageError } = useStageById(
-    user?.user_id,
-    opening?.opening_id,
-    stage_id as string
-  );
 
   // When rendering client side don't display anything until loading is complete
   if (typeof window !== "undefined" && loading) {

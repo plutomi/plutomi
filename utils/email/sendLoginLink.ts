@@ -24,6 +24,7 @@ export default async function SendLoginLink({
       },
     },
   };
+
   try {
     await SES.send(new SendEmailCommand(new_email));
   } catch (error) {

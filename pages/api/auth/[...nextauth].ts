@@ -55,7 +55,7 @@ export default NextAuth({
            */
           // TODO - They can theoretically just make another one after 15 minutes or whatever the timer is
           // However, one attempt at 1500 characters every 15 minutes... good luck!
-          
+
           const login_link_timestamp = latest_login_link.created_at;
           const updated_login_link = {
             ...latest_login_link,
@@ -108,13 +108,10 @@ export default NextAuth({
     async jwt(
       token: any,
       user: any,
-      account: any,
-      profile: any,
-      isNewUser: any
     ) {
       if (user) {
         /**
-         * When signing in with Google, the email value is of the Google account at user.email
+         * When signing in with Google, the email value is of the Google account is at user.email
          * We could save a call here by only checking if `user.email` exists (AKA Google sign in)
          */
 
@@ -125,7 +122,7 @@ export default NextAuth({
         };
 
         let existing_user = await GetUserByEmail(user.email || user.user_email);
-
+        
         if (!existing_user) {
           existing_user = await CreateUser(create_user_input);
         }

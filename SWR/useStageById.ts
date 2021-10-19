@@ -11,11 +11,11 @@ const fetcher = (url: string) => axios.get(url).then((res) => res.data);
  * @param stage_id - The stage which you want to retrieve
  */
 function useStageById(
-  user_id: string,
+  applicant_id: string,
   opening_id: string,
   stage_id: string
 ): useStageByIdOutput {
-  const shouldFetch = user_id && opening_id && stage_id ? true : false;
+  const shouldFetch = applicant_id && opening_id && stage_id ? true : false;
 
   const { data, error } = useSWR(
     shouldFetch && `/api/openings/${opening_id}/stages/${stage_id}`,

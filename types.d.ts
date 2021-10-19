@@ -75,6 +75,13 @@ interface CreateApplicantInput {
   stage_id: string;
 }
 
+interface CreateApplicantResponseInput {
+  org_id: string;
+  applicant_id: string;
+  question_title: string;
+  question_description: string;
+  question_response: string;
+}
 interface JoinOrgInput {
   org_id: string;
   user_id: string;
@@ -138,24 +145,6 @@ interface PlutomiState {
   setOpeningsSearchInput: Function;
   createInviteModalIsOpen: boolean;
   setCreateInviteModalOpen: Function;
-}
-
-interface DynamoUser {
-  created_at?: string; // "2021-09-04T15:12:42.646Z";
-  entity_type?: string; // "USER";
-  user_email?: string; // "joseyvalerio@gmail.com";
-  org_id?: string; // "NO_ORG_ASSIGNED";
-  full_name?: string; // "JoseV2 valerio";
-  GSI1SK?: string; // "NO_FIRST_NAME NO_LAST_NAME";
-  GSI2SK?: string; // "USER";
-  GSI2PK?: string; // "joseyvalerio@gmail.com";
-  GSI1PK?: string; // "ORG#NO_ORG_ASSIGNED#USERS";
-  user_id?: string; // "VFQg-GZJvxICh5Y7JBanZCehc22p03";
-  last_name?: string; // "valerio";
-  org_join_date?: string; // "NO_ORG_ASSIGNED";
-  first_name?: string; // "JoseV2";
-  SK?: string; // "USER";
-  PK?: string; // "USER#VFQg-GZJvxICh5Y7JBanZCehc22p03";
 }
 
 type CustomSession = Session & { user_id: string; user_email: string };
@@ -436,4 +425,12 @@ interface useAllApplicantsInStageOutput {
   applicants: DynamoApplicant[];
   isApplicantsLoading: boolean;
   isApplicantsError: boolean;
+}
+
+// TODO this should be updated with question / answer type for multiple choice, radio, etc.
+interface ApplicantAnswer {
+  question_id?: string; // ID needed for client side sorting
+  question_title: string;
+  question_description: string;
+  question_response: string;
 }

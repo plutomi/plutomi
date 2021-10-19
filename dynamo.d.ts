@@ -2,34 +2,21 @@
 // Makes it easier to reference all variables in the front end
 
 interface DynamoUser {
-  // PK: `USER#${user_id}`,
-  // SK: `USER`,
-  // first_name: first_name || "NO_FIRST_NAME",
-  // last_name: last_name || "NO_LAST_NAME",
-  // user_email: user_email,
-  // user_id: user_id,
-  // entity_type: "USER",
-  // created_at: now,
-  // org_id: "NO_ORG_ASSIGNED",
-  // org_join_date: "NO_ORG_ASSIGNED",
-  // GSI1PK: "ORG#NO_ORG_ASSIGNED#USERS",
-  // GSI1SK: `${first_name} ${last_name}`,
-  // GSI2PK: user_email,
-  // GSI2SK: "USER",
-  PK: string;
-  SK: "USER";
-  first_name: string;
-  last_name: string;
-  user_email: string;
-  user_id: string;
-  entity_type: "USER";
-  created_at: string;
-  org_id: string;
-  org_join_date: string;
-  GSI1PK: string;
-  GSI1SK: string;
-  GSI2PK: string;
-  GSI2SK: "USER";
+  created_at?: string; // "2021-09-04T15:12:42.646Z";
+  entity_type?: string; // "USER";
+  user_email?: string; // "joseyvalerio@gmail.com";
+  org_id?: string; // "NO_ORG_ASSIGNED";
+  full_name?: string; // "JoseV2 valerio";
+  GSI1SK?: string; // "NO_FIRST_NAME NO_LAST_NAME";
+  GSI2SK?: string; // "USER";
+  GSI2PK?: string; // "joseyvalerio@gmail.com";
+  GSI1PK?: string; // "ORG#NO_ORG_ASSIGNED#USERS";
+  user_id?: string; // "VFQg-GZJvxICh5Y7JBanZCehc22p03";
+  last_name?: string; // "valerio";
+  org_join_date?: string; // "NO_ORG_ASSIGNED";
+  first_name?: string; // "JoseV2";
+  SK?: string; // "USER";
+  PK?: string; // "USER#VFQg-GZJvxICh5Y7JBanZCehc22p03";
 }
 
 interface DynamoOpening {
@@ -144,15 +131,9 @@ interface DynamoApplicant {
   email: string;
   email_verified: boolean;
   applicant_id: string;
+  org_id: string;
   entity_type: "APPLICANT";
   created_at: string;
-  // TODO - Originally, I wanted to make these into their own items...
-  // Unsure on final decision. It will definitely be easier to keep everything
-  // on the applicant, but Dynamo has a hard limit of 400kb which is gigantic but. something to keep in mind.
-  responses: [];
-  files: [];
-  notes: [];
-  labels: [];
   current_opening_id: string;
   current_stage_id: string;
   GSI1PK: string;
@@ -172,4 +153,18 @@ interface DynamoApplicant {
   // current_stage_id: stage_id;
   // GSI1PK: `ORG#${org_id}#APPLICANTS`;
   // GSI1SK: `OPENING#${opening_id}#STAGE#${stage_id}`;
+}
+
+interface DynamoApplicantResponse {
+  PK: string;
+  SK: `APPLICANT_RESPONSE`;
+  org_id: string;
+  applicant_id: string;
+  entity_type: "APPLICANT_RESPONSE";
+  question_title: string;
+  question_description: string;
+  question_response: any;
+  created_at: string;
+  GSI1PK: string;
+  GSI1SK: APPLICANT_RESPONSE;
 }

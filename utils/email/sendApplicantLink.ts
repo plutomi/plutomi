@@ -30,6 +30,6 @@ export default async function SendApplicantLink({
     await SES.send(new SendEmailCommand(new_email));
   } catch (error) {
     console.error(error);
-    throw new Error(`Unable to send login link - ${error}`);
+    throw new Error(`Unable to send applicant link - ${error}`);
   }
 }

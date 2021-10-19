@@ -19,7 +19,7 @@ export async function CreateApplicant({
   // This is per org btw
   // https://zelark.github.io/nano-id-cc/
   const applicant_id = nanoid(50); // TODO - Also since applications are public, it should not be easily guessed - #165
-  const new_applicant = {
+  const new_applicant: DynamoApplicant = {
     PK: `ORG#${org_id}#APPLICANT#${applicant_id}`,
     SK: `APPLICANT`,
     first_name: first_name,
@@ -27,9 +27,10 @@ export async function CreateApplicant({
     full_name: `${first_name} ${last_name}`,
     email: email.toLowerCase(),
     email_verified: false,
+    org_id: org_id,
     applicant_id: applicant_id,
     entity_type: "APPLICANT",
-    created_at: now,
+    created_at: now as string,
     // TODO add phone number
     // Is this needed? - Just makes it easier to grab than GSI1SK
     current_opening_id: opening_id,
@@ -37,7 +38,7 @@ export async function CreateApplicant({
     // Is this needed? - Just makes it easier to grab than GSI1SK
 
     GSI1PK: `ORG#${org_id}#APPLICANTS`,
-    GSI1SK: `OPENING#${opening_id}#STAGE#${stage_id}`, // TODO ADD TIMESTAMP!!!!!
+    GSI1SK: `OPENING#${opening_id}#STAGE#${stage_id}`,
 
     // TODO ADD TIMESTAMP ABOVE ^
     // With just one index, i think we can get
