@@ -15,7 +15,9 @@ const handler = async (req: CustomRequest, res: NextApiResponse) => {
 
   if (method === "GET") {
     try {
+      // TODO gather applicant responses here
       const applicant = await GetApplicantById(get_applicant_input);
+      // const responses = await GetApplicant
       if (!applicant) {
         return res.status(404).json({ message: "Applicant not found" });
       }

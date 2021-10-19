@@ -22,6 +22,7 @@ export async function CreateApplicantResponse({
     applicant_id: applicant_id,
     entity_type: "APPLICANT_RESPONSE",
     created_at: now as string,
+    response_id: response_id,
     question_title: question_title,
     question_description: question_description,
     question_response: question_response,

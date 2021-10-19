@@ -13,8 +13,8 @@ import delay from "delay";
 import useApplicantById from "../../SWR/useApplicantById";
 const tabs = [
   { id: 1, name: "Details" },
-  { id: 2, name: "History" }, // TODO add get history SWR
-  { id: 3, name: "Messages" }, // TODO add get messages (Twilio)
+  { id: 2, name: "History (todo)" },
+  // { id: 3, name: "Messages" }, // TODO add get messages (Twilio)
 ];
 
 const team = [
@@ -61,7 +61,7 @@ export default function ApplicantProfileModal() {
       ...applicantProfileModal,
       is_modal_open: false,
     });
-    await delay(700); // This is dumb
+    await delay(700); // TODO This is dumb
     // The SWR hook still runs despite the query string being stripped away from the URL
     // This is essentially a hack to not show a loading state for the user As the modal retracts.
     // TODO refactor this garbage
@@ -255,7 +255,16 @@ export default function ApplicantProfileModal() {
 
                   <div className="p-4">
                     {currentActive == 1 ? (
-                      <h1>Viewing details</h1>
+                     <>
+                     
+                     <h1>Viewing details</h1>
+                     {/* TODO refactor this to its own component */}
+                     <ul className="py-4 border rounded-md mx-auto ">
+            {applicant?.responses.map((response: DynamoApplicantResponse) => {
+              return <h1 key={response.}>{JSON.stringify(response)}</h1>
+            })}
+                     </ul>
+                     </>
                     ) : currentActive == 2 ? (
                       <h1>Viewing History</h1>
                     ) : currentActive == 3 ? (
