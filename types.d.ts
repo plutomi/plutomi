@@ -268,11 +268,17 @@ interface APICreateLoginLinkInput {
 }
 
 /**
- * @param GSI1SK - Name of opening
- * @param is_public - If the opening should be public
+ * @param GSI1SK - Name of the opening you want to create
  */
 interface APICreateOpeningInput {
   GSI1SK: string;
+}
+
+/**
+ * @param opening_id - ID of the opening you want to retrieve
+ */
+interface APIGetOpeningByIdInput {
+  opening_id: string;
 }
 
 interface APICreateStageInput {
