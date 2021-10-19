@@ -9,6 +9,7 @@ import { TrashIcon } from "@heroicons/react/outline";
 import useOpeningById from "../../SWR/useOpeningById";
 import { useRouter } from "next/router";
 import Loader from "../Loader";
+import OpeningsService from "../../Services/OpeningsService";
 export default function OpeningSettingsHeader() {
   const router = useRouter();
   const { opening_id } = router.query;
@@ -62,7 +63,7 @@ export default function OpeningSettingsHeader() {
     }
 
     try {
-      const { data } = await axios.delete(`/api/openings/${opening_id}`);
+      await OpeningsService.deleteOpening({ opening_id: opening_id as string });
       router.push(`${process.env.NEXT_PUBLIC_NEXTAUTH_URL}/openings`);
     } catch (error) {
       alert(error.response.data.message);

@@ -3,7 +3,7 @@ import axios from "axios";
 import useSWR from "swr";
 
 const fetcher = (url: string) => axios.get(url).then((res) => res.data);
-
+import OpeningsService from "../Services/OpeningsService";
 /**
  *
  * @param user_id - The ID of the logged in user
@@ -16,7 +16,8 @@ function useOpeningById(
   const shouldFetch = user_id && opening_id ? true : false;
 
   const { data, error } = useSWR(
-    shouldFetch && `/api/openings/${opening_id}`,
+    shouldFetch &&
+      OpeningsService.getOpeningURL({ opening_id: opening_id as string }),
     fetcher
   );
 

@@ -15,6 +15,8 @@ import DraggableStageCard from "./Stages/DraggableStageCard";
 import useOpeningById from "../SWR/useOpeningById";
 import useAllStagesInOpening from "../SWR/useAllStagesInOpening";
 import useStageById from "../SWR/useStageById";
+import OpeningsService from "../Services/OpeningsService";
+
 export default function StageReorderColumn() {
   const createStage = async () => {
     const body: APICreateStageInput = {
@@ -32,7 +34,7 @@ export default function StageReorderColumn() {
       alert(error.response.data.message);
     }
     // Refresh stage order
-    mutate(`/api/openings/${opening_id}`);
+    mutate(OpeningsService.getOpeningURL({ opening_id }));
 
     // Refresh stage list
     mutate(`/api/openings/${opening_id}/stages`);
@@ -121,18 +123,18 @@ export default function StageReorderColumn() {
     setNewStages(new_order);
 
     try {
-      const body = {
-        // TODO this should use the difference like the openingsettingscontent
-        new_opening_values: { stage_order: new_stage_order },
-      };
-
-      await axios.put(`/api/openings/${opening_id}`, body);
+      await OpeningsService.updateOpening({
+        opening_id: opening_id as string,
+        new_opening_values: {
+          stage_order: new_stage_order,
+        },
+      });
     } catch (error) {
       console.error(error.response.data.message);
     }
 
     // Refresh the stage order
-    mutate(`/api/openings/${opening_id}`);
+    mutate(OpeningsService.getOpeningURL({ opening_id }));
 
     // Refresh the stages
     mutate(`/api/openings/${opening_id}/stages`);

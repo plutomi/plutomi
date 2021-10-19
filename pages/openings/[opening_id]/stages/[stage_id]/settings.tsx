@@ -8,6 +8,7 @@ import SignIn from "../../../../../components/SignIn";
 import useOpeningById from "../../../../../SWR/useOpeningById";
 import { useRouter } from "next/router";
 import useStageById from "../../../../../SWR/useStageById";
+import OpeningsService from "../../../../../Services/OpeningsService";
 import StageSettingsHeader from "../../../../../components/Stages/StageSettingsHeader";
 import StageSettingsContent from "../../../../../components/Stages/StagesSettingsContent";
 export default function OpeningsSettings() {
@@ -66,7 +67,7 @@ export default function OpeningsSettings() {
     }
 
     // Refresh the stage_order
-    mutate(`/api/openings/${opening_id}`);
+    mutate(OpeningsService.getOpeningURL({ opening_id }));
 
     // Refresh the stage list
     mutate(`/api/openings/${opening_id}/stages`);
