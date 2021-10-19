@@ -2,7 +2,7 @@ import { Fragment, useState } from "react";
 import EasyEdit, { Types } from "react-easy-edit";
 import CustomEditableInput from "./CustomEditableInput";
 import { Dialog, Transition } from "@headlessui/react";
-import { XIcon } from "@heroicons/react/outline";
+import { XIcon, ChevronDoubleRightIcon } from "@heroicons/react/outline";
 import CustomEditableAction from "./CustomEditableSave";
 import useStore from "../../utils/store";
 import { useRouter } from "next/router";
@@ -253,18 +253,42 @@ export default function ApplicantProfileModal() {
                     </div>
                   </div>
 
-                  <div className="p-4">
+                  <div className="p-4 ">
                     {currentActive == 1 ? (
-                     <>
-                     
-                     <h1>Viewing details</h1>
-                     {/* TODO refactor this to its own component */}
-                     <ul className="py-4 border rounded-md mx-auto ">
-            {applicant?.responses.map((response: DynamoApplicantResponse) => {
-              return <h1 key={response.}>{JSON.stringify(response)}</h1>
-            })}
-                     </ul>
-                     </>
+                      <>
+                        {/* TODO refactor this to its own component */}
+                        <ul className="py-4  space-y-8">
+                          {applicant?.responses.map(
+                            (response: DynamoApplicantResponse) => {
+                              return (
+                                <div
+                                  key={response?.response_id}
+                                  className="pl-3 mt-1 h-full relative focus-within:ring-2 focus-within:ring-blue-500"
+                                >
+                                  <h3 className="text-lg font-semibold text-dark">
+                                    <span
+                                      className="absolute inset-0"
+                                      aria-hidden="true"
+                                    />
+                                    {response?.question_title}
+                                  </h3>
+                                  {response?.question_description && (
+                                    <p className="text-md text-light">
+                                      {response?.question_description}
+                                    </p>
+                                  )}
+                                  <span className=" inline-flex justify-center items-center space-x-1">
+                                    <ChevronDoubleRightIcon className="h-3 w-3" />
+                                    <p className="text-lg text-normal font-bold line-clamp-2 ">
+                                      {response?.question_response}
+                                    </p>
+                                  </span>
+                                </div>
+                              );
+                            }
+                          )}
+                        </ul>
+                      </>
                     ) : currentActive == 2 ? (
                       <h1>Viewing History</h1>
                     ) : currentActive == 3 ? (
