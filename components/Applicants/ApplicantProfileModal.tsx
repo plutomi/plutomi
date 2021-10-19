@@ -2,7 +2,7 @@ import { Fragment, useState } from "react";
 import EasyEdit, { Types } from "react-easy-edit";
 import CustomEditableInput from "./CustomEditableInput";
 import { Dialog, Transition } from "@headlessui/react";
-import { XIcon } from "@heroicons/react/outline";
+import { XIcon, ChevronDoubleRightIcon } from "@heroicons/react/outline";
 import CustomEditableAction from "./CustomEditableSave";
 import useStore from "../../utils/store";
 import { useRouter } from "next/router";
@@ -13,8 +13,8 @@ import delay from "delay";
 import useApplicantById from "../../SWR/useApplicantById";
 const tabs = [
   { id: 1, name: "Details" },
-  { id: 2, name: "History" }, // TODO add get history SWR
-  { id: 3, name: "Messages" }, // TODO add get messages (Twilio)
+  { id: 2, name: "History (todo)" },
+  // { id: 3, name: "Messages" }, // TODO add get messages (Twilio)
 ];
 
 const team = [
@@ -61,7 +61,7 @@ export default function ApplicantProfileModal() {
       ...applicantProfileModal,
       is_modal_open: false,
     });
-    await delay(700); // This is dumb
+    await delay(700); // TODO This is dumb
     // The SWR hook still runs despite the query string being stripped away from the URL
     // This is essentially a hack to not show a loading state for the user As the modal retracts.
     // TODO refactor this garbage
@@ -253,9 +253,42 @@ export default function ApplicantProfileModal() {
                     </div>
                   </div>
 
-                  <div className="p-4">
+                  <div className="p-4 ">
                     {currentActive == 1 ? (
-                      <h1>Viewing details</h1>
+                      <>
+                        {/* TODO refactor this to its own component */}
+                        <ul className="py-4  space-y-8">
+                          {applicant?.responses.map(
+                            (response: DynamoApplicantResponse) => {
+                              return (
+                                <div
+                                  key={response?.response_id}
+                                  className="pl-3 mt-1 h-full relative focus-within:ring-2 focus-within:ring-blue-500"
+                                >
+                                  <h3 className="text-lg font-semibold text-dark">
+                                    <span
+                                      className="absolute inset-0"
+                                      aria-hidden="true"
+                                    />
+                                    {response?.question_title}
+                                  </h3>
+                                  {response?.question_description && (
+                                    <p className="text-md text-light">
+                                      {response?.question_description}
+                                    </p>
+                                  )}
+                                  <span className=" inline-flex justify-center items-center space-x-1">
+                                    <ChevronDoubleRightIcon className="h-3 w-3" />
+                                    <p className="text-lg text-normal font-bold line-clamp-2 ">
+                                      {response?.question_response}
+                                    </p>
+                                  </span>
+                                </div>
+                              );
+                            }
+                          )}
+                        </ul>
+                      </>
                     ) : currentActive == 2 ? (
                       <h1>Viewing History</h1>
                     ) : currentActive == 3 ? (
