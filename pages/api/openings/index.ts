@@ -7,7 +7,7 @@ import { NextApiResponse } from "next";
 const handler = async (req: CustomRequest, res: NextApiResponse) => {
   const { body, method } = req;
   const user: DynamoUser = req.user;
-  const { GSI1SK, is_public }: APICreateOpeningInput = body;
+  const { GSI1SK }: APICreateOpeningInput = body;
 
   if (method === "POST") {
     if (user.org_id === "NO_ORG_ASSIGNED") {
@@ -19,7 +19,6 @@ const handler = async (req: CustomRequest, res: NextApiResponse) => {
       const create_opening_input: CreateOpeningInput = {
         org_id: user.org_id,
         GSI1SK: GSI1SK,
-        is_public: is_public,
       };
 
       try {

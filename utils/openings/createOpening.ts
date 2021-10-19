@@ -5,11 +5,7 @@ import { nanoid } from "nanoid";
 
 const { DYNAMO_TABLE_NAME } = process.env;
 
-export async function CreateOpening({
-  org_id,
-  GSI1SK,
-  is_public,
-}: CreateOpeningInput) {
+export async function CreateOpening({ org_id, GSI1SK }: CreateOpeningInput) {
   const now = GetCurrentTime("iso");
   const opening_id = nanoid(16);
   const new_opening: DynamoOpening = {
@@ -20,7 +16,7 @@ export async function CreateOpening({
     opening_id: opening_id,
     GSI1PK: `ORG#${org_id}#OPENINGS`,
     GSI1SK: GSI1SK,
-    is_public: is_public,
+    is_public: false,
     stage_order: [],
   };
 

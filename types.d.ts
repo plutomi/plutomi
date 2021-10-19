@@ -17,7 +17,6 @@ interface CreateUserInput {
 interface CreateOpeningInput {
   org_id: string;
   GSI1SK: string;
-  is_public: boolean;
   user?: DynamoUser; // User creating the opening - Optional on client
 }
 
@@ -268,9 +267,12 @@ interface APICreateLoginLinkInput {
   callback_url?: string;
 }
 
+/**
+ * @param GSI1SK - Name of opening
+ * @param is_public - If the opening should be public
+ */
 interface APICreateOpeningInput {
   GSI1SK: string;
-  is_public: boolean;
 }
 
 interface APICreateStageInput {

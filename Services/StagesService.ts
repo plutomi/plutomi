@@ -1,6 +1,4 @@
-import axios from "axios";
-
-const URL = process.env.NEXT_PUBLIC_NEXTAUTH_URL;
+import axios from "../axios/axios";
 
 export default class StagesService {
   static async createStage() {
