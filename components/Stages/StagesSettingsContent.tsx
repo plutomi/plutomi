@@ -14,6 +14,7 @@ import useUser from "../../SWR/useUser";
 import useAllStagesInOpening from "../../SWR/useAllStagesInOpening";
 import useOpeningById from "../../SWR/useOpeningById";
 import useStageById from "../../SWR/useStageById";
+import StagesService from "../../Services/StagesService";
 export default function StageSettingsContent() {
   const createQuestion = async () => {
     const body: APICreateQuestionInput = {
@@ -39,7 +40,12 @@ export default function StageSettingsContent() {
     }
 
     // Refresh the question_order
-    mutate(`/api/openings/${opening_id}/stages/${stage_id}`);
+    mutate(
+      StagesService.getStageURL({
+        opening_id: opening_id as string,
+        stage_id: stage_id as string,
+      })
+    );
 
     // Refresh the question list
     mutate(
@@ -83,7 +89,12 @@ export default function StageSettingsContent() {
     }
 
     // Refresh the question_order
-    mutate(`/api/openings/${opening_id}/stages/${stage_id}`);
+    mutate(
+      StagesService.getStageURL({
+        opening_id: opening_id as string,
+        stage_id: stage_id as string,
+      })
+    );
 
     // Refresh the question list
     mutate(

@@ -11,6 +11,7 @@ import { useEffect } from "react";
 import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
 import useAllStageQuestions from "../../SWR/useAllStageQuestions";
 import Loader from "../Loader";
+import StagesService from "../../Services/StagesService";
 export default function QuestionList() {
   const router = useRouter();
   const { opening_id, stage_id } = router.query;
@@ -62,17 +63,24 @@ export default function QuestionList() {
     setNewQuestions(new_order);
 
     try {
-      const body = {
-        updated_stage: { ...stage, question_order: new_question_order },
-      };
-
-      await axios.put(`/api/openings/${opening_id}/stages/${stage_id}`, body);
+      await StagesService.updateStage({
+        opening_id: opening_id as string,
+        stage_id: stage_id as string,
+        new_stage_values: {
+          question_order: new_question_order,
+        },
+      });
     } catch (error) {
       alert(error.response.data.message);
       console.error(error.response.data.message);
     }
 
-    mutate(`/api/openings/${opening_id}/stages/${stage_id}`); // Refresh the question order
+    mutate(
+      StagesService.getStageURL({
+        opening_id: opening_id as string,
+        stage_id: stage_id as string,
+      })
+    );
   };
 
   const deleteQuestion = async (stage_question_id: string) => {
@@ -92,8 +100,13 @@ export default function QuestionList() {
       alert(error.response.data);
     }
 
-    // Refresh question order
-    mutate(`/api/openings/${opening_id}/stages/${stage_id}`);
+    // Refresh the stage (which returns the question order)
+    mutate(
+      StagesService.getStageURL({
+        opening_id: opening_id as string,
+        stage_id: stage_id as string,
+      })
+    );
 
     // Refresh questions
     mutate(

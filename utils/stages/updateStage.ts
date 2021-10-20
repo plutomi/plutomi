@@ -6,7 +6,7 @@ export default async function UpdateStage({
   org_id,
   opening_id,
   stage_id,
-  updated_stage,
+  new_stage_values,
 }) {
   // TODO user the cleaning functions instead
   const FORBIDDEN_KEYS = [
@@ -19,7 +19,7 @@ export default async function UpdateStage({
     "GSI1PK",
   ];
 
-  const incomingKeys = Object.keys(updated_stage);
+  const incomingKeys = Object.keys(new_stage_values);
   // TODO should this throw an error and
   // let the user know we can't update that key?
   // Maybe just return in the message that we weren't able to update those keys
@@ -31,7 +31,7 @@ export default async function UpdateStage({
 
   newKeys.forEach((key) => {
     newUpdateExpression.push(`${key} = :${key}`);
-    newAttributes[`:${key}`] = updated_stage[key];
+    newAttributes[`:${key}`] = new_stage_values[key];
   });
 
   const UpdatedExpression = `SET ${newUpdateExpression.join(", ").toString()}`;

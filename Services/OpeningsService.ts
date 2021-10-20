@@ -2,11 +2,11 @@ import axios from "../axios/axios";
 
 export default class OpeningsService {
   static async createOpening({ GSI1SK }: APICreateOpeningInput) {
-    const body: APICreateOpeningInput = {
+    const body = {
       GSI1SK: GSI1SK,
     };
 
-    const { data } = await axios.post(`/openings`, body);
+    const { data } = await axios.post(`/api/openings`, body);
     return data;
   }
 
@@ -15,6 +15,15 @@ export default class OpeningsService {
   }
   static async getOpening({ opening_id }: APIGetOpeningInput) {
     const { data } = await axios.get(this.getOpeningURL({ opening_id }));
+    return data;
+  }
+
+  static getAllOpeningsURL() {
+    return `/api/openings`;
+  }
+
+  static async getAllOpenings() {
+    const { data } = await axios.get(this.getAllOpeningsURL());
     return data;
   }
 
@@ -27,8 +36,7 @@ export default class OpeningsService {
     opening_id,
     new_opening_values,
   }: APIUpdateOpeningInput) {
-    const body: APIUpdateOpeningInput = {
-      opening_id: opening_id,
+    const body = {
       new_opening_values: new_opening_values,
     };
     const { data } = await axios.put(this.getOpeningURL({ opening_id }), body);

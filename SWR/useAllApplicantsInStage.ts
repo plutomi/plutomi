@@ -1,6 +1,5 @@
 // Retrieves all applicants in a stage
 import axios from "axios";
-import { StringNullableChain } from "lodash";
 import useSWR from "swr";
 
 const fetcher = (url: string) => axios.get(url).then((res) => res.data);

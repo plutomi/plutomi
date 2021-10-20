@@ -11,6 +11,7 @@ import useStageById from "../../../../../SWR/useStageById";
 import OpeningsService from "../../../../../Services/OpeningsService";
 import StageSettingsHeader from "../../../../../components/Stages/StageSettingsHeader";
 import StageSettingsContent from "../../../../../components/Stages/StagesSettingsContent";
+import StagesService from "../../../../../Services/StagesService";
 export default function OpeningsSettings() {
   const router = useRouter();
   const { opening_id, stage_id } = router.query;
@@ -67,10 +68,14 @@ export default function OpeningsSettings() {
     }
 
     // Refresh the stage_order
-    mutate(OpeningsService.getOpeningURL({ opening_id }));
+    mutate(OpeningsService.getOpeningURL({ opening_id: opening_id as string }));
 
     // Refresh the stage list
-    mutate(`/api/openings/${opening_id}/stages`);
+    mutate(
+      StagesService.getAllStagesInOpeningURL({
+        opening_id: opening_id as string,
+      })
+    );
   };
 
   return (

@@ -267,10 +267,6 @@ interface APICreateLoginLinkInput {
   callback_url?: string;
 }
 
-interface APICreateStageInput {
-  GSI1SK: string;
-}
-
 interface APICreateQuestionInput {
   GSI1SK: string;
   question_description: string;
@@ -340,7 +336,7 @@ interface UpdateStageInput {
   org_id: string;
   opening_id: string;
   stage_id: string;
-  updated_stage: DynamoStage;
+  new_stage_values: DynamoStage;
 }
 
 interface APICreateQuestionInput {

@@ -1,7 +1,7 @@
 // Retrieve a specific stage by ID
 import axios from "axios";
 import useSWR from "swr";
-
+import StagesService from "../Services/StagesService";
 const fetcher = (url: string) => axios.get(url).then((res) => res.data);
 
 /**
@@ -18,7 +18,11 @@ function useStageById(
   const shouldFetch = applicant_id && opening_id && stage_id ? true : false;
 
   const { data, error } = useSWR(
-    shouldFetch && `/api/openings/${opening_id}/stages/${stage_id}`,
+    shouldFetch &&
+      StagesService.getStageURL({
+        opening_id: opening_id as string,
+        stage_id: stage_id as string,
+      }),
     fetcher
   );
 
