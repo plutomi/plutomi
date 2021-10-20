@@ -1,13 +1,13 @@
-import DeleteOrgInvite from "../../../../utils/invites/deleteOrgInvite";
-import withAuthorizer from "../../../../middleware/withAuthorizer";
-import InputValidation from "../../../../utils/inputValidation";
-import withCleanOrgName from "../../../../middleware/withCleanOrgName";
+import DeleteOrgInvite from "../../../utils/invites/deleteOrgInvite";
+import withAuthorizer from "../../../middleware/withAuthorizer";
+import InputValidation from "../../../utils/inputValidation";
+import withCleanOrgName from "../../../middleware/withCleanOrgName";
 import { NextApiResponse } from "next";
 
 const handler = async (req: CustomRequest, res: NextApiResponse) => {
-  const { method, query, body } = req;
+  const { method,  body } = req;
   const user: DynamoUser = req.user;
-  const { timestamp, invite_id }: APIRejectOrgInvite = body;
+  const { timestamp, invite_id }: APIRejectInviteInput = body;
 
   const delete_org_invite: DeleteOrgInviteInput = {
     user_id: user.user_id,

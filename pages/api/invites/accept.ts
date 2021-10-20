@@ -1,15 +1,13 @@
-import AcceptOrgInvite from "../../../../utils/invites/acceptOrgInvite";
-import withAuthorizer from "../../../../middleware/withAuthorizer";
-import InputValidation from "../../../../utils/inputValidation";
-import { JoinOrg } from "../../../../utils/users/joinOrg";
+import AcceptOrgInvite from "../../../utils/invites/acceptOrgInvite";
+import withAuthorizer from "../../../middleware/withAuthorizer";
+import InputValidation from "../../../utils/inputValidation";
+import { JoinOrg } from "../../../utils/users/joinOrg";
 import { NextApiResponse } from "next";
-import withCleanOrgName from "../../../../middleware/withCleanOrgName";
+import withCleanOrgName from "../../../middleware/withCleanOrgName";
 const handler = async (req: CustomRequest, res: NextApiResponse) => {
-  const { method, query, body } = req;
+  const { method, body } = req;
   const user: DynamoUser = req.user;
-  const { timestamp, invite_id }: APIAcceptOrgInvite = body;
-  const { org_id } = query;
-
+  const { timestamp, invite_id, org_id }: APIAcceptInviteInput = body;
   const accept_org_invite: AcceptOrgInviteInput = {
     user_id: user.user_id,
     timestamp: timestamp,
@@ -29,8 +27,7 @@ const handler = async (req: CustomRequest, res: NextApiResponse) => {
   }
 
   if (method === "POST") {
-    // While this isn't really an issue as far as I can tell
-    // I am keeping it here just in case
+    // TODO disallow org_id's by this name
     if (user.org_id != "NO_ORG_ASSIGNED") {
       return res
         .status(400)
@@ -38,6 +35,7 @@ const handler = async (req: CustomRequest, res: NextApiResponse) => {
     }
 
     try {
+      // TODO promise all
       await AcceptOrgInvite(accept_org_invite);
       try {
         await JoinOrg(join_org_input);

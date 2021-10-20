@@ -1,11 +1,11 @@
-import CreateOrgInvite from "../../../../utils/invites/createOrgInvite";
-import withAuthorizer from "../../../../middleware/withAuthorizer";
-import SendOrgInvite from "../../../../utils/email/sendOrgInvite";
-import InputValidation from "../../../../utils/inputValidation";
-import { GetPastOrFutureTime } from "../../../../utils/time";
+import CreateOrgInvite from "../../../utils/invites/createOrgInvite";
+import withAuthorizer from "../../../middleware/withAuthorizer";
+import SendOrgInvite from "../../../utils/email/sendOrgInvite";
+import InputValidation from "../../../utils/inputValidation";
+import { GetPastOrFutureTime } from "../../../utils/time";
 import { NextApiResponse } from "next";
-import withCleanOrgName from "../../../../middleware/withCleanOrgName";
-import { GetOrg } from "../../../../utils/orgs/getOrg";
+import withCleanOrgName from "../../../middleware/withCleanOrgName";
+import { GetOrg } from "../../../utils/orgs/getOrg";
 
 const handler = async (req: CustomRequest, res: NextApiResponse) => {
   const { body, method } = req;

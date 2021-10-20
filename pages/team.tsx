@@ -11,6 +11,7 @@ import useOrgUsers from "../SWR/useOrgUsers";
 import useStore from "../utils/store";
 import TeamHeader from "../components/Team/TeamHeader";
 import { useRouter } from "next/router";
+import InvitesService from "../Adapters/InvitesService";
 export default function Team() {
   const router = useRouter();
   const [session, loading]: [CustomSession, boolean] = useSession();
@@ -55,14 +56,10 @@ export default function Team() {
   const createInvite = async (recipient_email: string) => {
     try {
       // TODO add custom expiry - Defaults to 3 days
-      const body: APICreateOrgInviteInput = {
+      const { message } = await InvitesService.createInvite({
         recipient_email: recipient_email,
-      };
-      const { status, data } = await axios.post(
-        `/api/orgs/${user.org_id}/invite`,
-        body
-      );
-      alert(data.message);
+      });
+      alert(message);
       setCreateInviteModalOpen(false);
     } catch (error) {
       console.error(error);

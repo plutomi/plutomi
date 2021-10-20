@@ -19,37 +19,31 @@ export default function InvitesContent() {
 
   const acceptInvite = async (invite) => {
     try {
-      const body: APIAcceptOrgInvite = {
-        timestamp: invite.created_at,
+      const { message } = await InvitesService.acceptInvite({
         invite_id: invite.invite_id,
-      };
-
-      const { status, data } = await axios.post(
-        `/api/orgs/${invite.org_id}/join`,
-        body
-      );
-      alert(data.message);
+        timestamp: invite.created_at,
+        org_id: invite.org_id,
+      });
+      alert(message);
       router.push("/dashboard");
     } catch (error) {
       console.error(error);
       alert(error.response.data.message);
     }
 
+    // Refresh the user's org
+    mutate(UsersService.getUserURL({ user_id: user?.user_id }));
     mutate(InvitesService.getInvitesURL({ user_id: user?.user_id }));
   };
 
   const rejectInvite = async (invite) => {
     try {
-      const body: APIRejectOrgInvite = {
-        timestamp: invite.created_at,
+      const { message } = await InvitesService.rejectInvite({
         invite_id: invite.invite_id,
-      };
+        timestamp: invite.created_at,
+      });
 
-      const { status, data } = await axios.post(
-        `/api/orgs/${invite.org_id}/reject`,
-        body
-      );
-      alert(data.message);
+      alert(message);
     } catch (error) {
       console.error(error);
       alert(error.response.data.message);

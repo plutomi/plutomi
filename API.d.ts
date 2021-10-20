@@ -120,6 +120,16 @@ interface APIGetInvites {
 }
 
 interface APICreateInviteInput {
-  org_id: string;
   recipient_email: string;
+}
+
+interface APIRejectInviteInput {
+  timestamp: string;
+  invite_id: string;
+}
+
+interface APIAcceptInviteInput {
+  timestamp: string;
+  invite_id: string;
+  org_id: string;
 }
