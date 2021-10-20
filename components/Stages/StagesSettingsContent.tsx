@@ -14,7 +14,7 @@ import useUser from "../../SWR/useUser";
 import useAllStagesInOpening from "../../SWR/useAllStagesInOpening";
 import useOpeningById from "../../SWR/useOpeningById";
 import useStageById from "../../SWR/useStageById";
-import StagesService from "../../Services/StagesService";
+import StagesService from "../../Adapters/StagesService";
 export default function StageSettingsContent() {
   const createQuestion = async () => {
     const body: APICreateQuestionInput = {

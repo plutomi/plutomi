@@ -9,7 +9,7 @@ import { TrashIcon } from "@heroicons/react/outline";
 import useOpeningById from "../../SWR/useOpeningById";
 import { useRouter } from "next/router";
 import Loader from "../Loader";
-import OpeningsService from "../../Services/OpeningsService";
+import OpeningsService from "../../Adapters/OpeningsService";
 export default function OpeningSettingsHeader() {
   const router = useRouter();
   const { opening_id } = router.query;

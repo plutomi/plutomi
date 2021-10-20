@@ -11,7 +11,7 @@ import useStore from "../../utils/store";
 import CreateOpeningModal from "../../components/Openings/OpeningModal";
 import OpeningsContent from "../../components/Openings/OpeningsContent";
 import EmptyOpeningsState from "../../components/Openings/EmptyOpeningsState";
-import OpeningsService from "../../Services/OpeningsService";
+import OpeningsService from "../../Adapters/OpeningsService";
 export default function Openings() {
   const [session, loading]: [CustomSession, boolean] = useSession();
   const { user, isUserLoading, isUserError } = useUser(session?.user_id);

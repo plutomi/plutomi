@@ -1,7 +1,7 @@
 // Retrieves all stages in an opening
 import axios from "axios";
 import useSWR from "swr";
-import StagesService from "../Services/StagesService";
+import StagesService from "../Adapters/StagesService";
 const fetcher = (url: string) => axios.get(url).then((res) => res.data);
 
 /**

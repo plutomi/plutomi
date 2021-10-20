@@ -8,10 +8,10 @@ import SignIn from "../../../../../components/SignIn";
 import useOpeningById from "../../../../../SWR/useOpeningById";
 import { useRouter } from "next/router";
 import useStageById from "../../../../../SWR/useStageById";
-import OpeningsService from "../../../../../Services/OpeningsService";
+import OpeningsService from "../../../../../Adapters/OpeningsService";
 import StageSettingsHeader from "../../../../../components/Stages/StageSettingsHeader";
 import StageSettingsContent from "../../../../../components/Stages/StagesSettingsContent";
-import StagesService from "../../../../../Services/StagesService";
+import StagesService from "../../../../../Adapters/StagesService";
 export default function OpeningsSettings() {
   const router = useRouter();
   const { opening_id, stage_id } = router.query;
@@ -59,7 +59,10 @@ export default function OpeningsSettings() {
       return;
     }
     try {
-      await axios.delete(`/api/openings/${opening_id}/stages/${stage_id}`);
+      await StagesService.deleteStage({
+        opening_id: opening_id as string,
+        stage_id: stage_id as string,
+      });
       router.push(
         `${process.env.NEXT_PUBLIC_NEXTAUTH_URL}/openings/${opening_id}/settings`
       );

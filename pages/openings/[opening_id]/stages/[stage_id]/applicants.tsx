@@ -9,7 +9,6 @@ import { useRouter } from "next/router";
 import useStore from "../../../../../utils/store";
 import StagesHeader from "../../../../../components/Stages/StagesHeader";
 import StageCarousel from "../../../../../components/Stages/StagesCarousel";
-import useStageById from "../../../../../SWR/useStageById";
 import useAllApplicantsInStage from "../../../../../SWR/useAllApplicantsInStage";
 import useAllStagesInOpening from "../../../../../SWR/useAllStagesInOpening";
 import ApplicantList from "../../../../../components/Applicants/ApplicantList";
