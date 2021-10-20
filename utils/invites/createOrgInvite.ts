@@ -12,18 +12,18 @@ export default async function CreateOrgInvite({
   org_id,
   expires_at,
   invited_by,
-  recipient,
+  recipient_email,
   org_name,
 }: CreateOrgInviteInput) {
   try {
-    let user = await GetUserByEmail(recipient);
+    let user = await GetUserByEmail(recipient_email);
 
     if (!user) {
       try {
         const new_user: CreateUserInput = {
           first_name: "NO_FIRST_NAME",
           last_name: "NO_LAST_NAME",
-          user_email: recipient,
+          user_email: recipient_email,
         };
 
         user = await CreateUser(new_user);

@@ -26,12 +26,5 @@ export default class UsersService {
     return data;
   }
 
-  static getInvitesURL({ user_id }: APIGetInvitesURL) {
-    return `/api/users/${user_id}/invites`;
-  }
 
-  static async getAllInvites({ user_id }: APIGetInvites) {
-    const { data } = await axios.get(this.getInvitesURL({ user_id }));
-    return data;
-  }
 }

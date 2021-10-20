@@ -93,7 +93,7 @@ interface CreateLoginLinkInput {
 }
 
 interface SendLoginLinkEmailInput {
-  recipient: string;
+  recipient_email: string;
   login_link: string;
   login_link_relative_expiry: string;
 }
@@ -159,7 +159,7 @@ interface CreateOrgInviteInput {
   org_id: string;
   org_name: string;
   invited_by: DynamoUser;
-  recipient: string; // Email of person getting invited
+  recipient_email: string; // Email of person getting invited
   expires_at: string; // TODO Maybe Dynamo TTL or just ISO
   claimed: boolean;
 }
@@ -184,7 +184,7 @@ interface DeleteOrgInviteInput {
 interface SendOrgInviteInput {
   invited_by: DynamoUser;
   org_name: string;
-  recipient: string;
+  recipient_email: string;
 }
 
 type StageTypes = "idle" | "active" | "frozen" | "deletion";
@@ -282,7 +282,7 @@ interface APICreateOrgInput {
 }
 
 interface APICreateOrgInviteInput {
-  recipient: string;
+  recipient_email: string;
   expiry_time_days?: number;
 }
 

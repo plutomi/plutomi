@@ -118,3 +118,8 @@ interface APIGetInvitesURL {
 interface APIGetInvites {
   user_id: string;
 }
+
+interface APICreateInviteInput {
+  org_id: string;
+  recipient_email: string;
+}

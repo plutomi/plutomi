@@ -11,26 +11,25 @@ const handler = async (req: CustomRequest, res: NextApiResponse) => {
   const { body, method } = req;
   const user: DynamoUser = req.user;
 
-  const { recipient, expiry_time_days }: APICreateOrgInviteInput = body;
+  const { recipient_email }: APICreateOrgInviteInput = body;
 
   const default_expiry_time = 3;
   const default_expiry_value = "days";
   const expires_at = GetPastOrFutureTime(
     "future",
-    expiry_time_days || default_expiry_time,
+    default_expiry_time,
     "days" || default_expiry_value, // TODO add days input
     "iso"
   );
 
   const org = await GetOrg(user.org_id);
 
-
   const new_org_invite: CreateOrgInviteInput = {
     claimed: false,
     org_name: org.GSI1SK, // For the client they can see the name instead of ID
     invited_by: user, // TODO reduce this to just name & email
     org_id: user.org_id,
-    recipient: recipient,
+    recipient_email: recipient_email,
     expires_at: expires_at as string,
   };
   if (method === "POST") {
@@ -40,7 +39,7 @@ const handler = async (req: CustomRequest, res: NextApiResponse) => {
       return res.status(400).json({ message: `${error.message}` });
     }
 
-    if (user.user_email == recipient) {
+    if (user.user_email == recipient_email) {
       return res.status(400).json({ message: "You can't invite yourself" });
     }
 
@@ -53,7 +52,7 @@ const handler = async (req: CustomRequest, res: NextApiResponse) => {
     const new_org_invite_email: SendOrgInviteInput = {
       invited_by: user,
       org_name: org.GSI1SK,
-      recipient: recipient,
+      recipient_email: recipient_email,
     };
     try {
       await CreateOrgInvite(new_org_invite);

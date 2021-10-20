@@ -43,8 +43,6 @@ export default function Team() {
     return <Loader text="Loading user..." />;
   }
 
-
-
   if (isOrgUsersError) {
     alert(
       // TODO this is not returning the error message from the API call due to the way SWR handles errors. Fix !
@@ -54,11 +52,11 @@ export default function Team() {
     return null;
   }
 
-  const createInvite = async (recipient: string) => {
+  const createInvite = async (recipient_email: string) => {
     try {
       // TODO add custom expiry - Defaults to 3 days
       const body: APICreateOrgInviteInput = {
-        recipient: recipient,
+        recipient_email: recipient_email,
       };
       const { status, data } = await axios.post(
         `/api/orgs/${user.org_id}/invite`,
