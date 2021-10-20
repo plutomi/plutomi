@@ -4,6 +4,7 @@ import Loader from "../Loader";
 import Invite from "./Invite";
 import { mutate } from "swr";
 import axios from "axios";
+import UsersService from "../../Adapters/UsersService";
 import { useRouter } from "next/router";
 import useOrgInvites from "../../SWR/useOrgInvites";
 export default function InvitesContent() {
@@ -32,7 +33,8 @@ export default function InvitesContent() {
       console.error(error);
       alert(error.response.data.message);
     }
-    mutate(`/api/users/${user.user_id}/invites`);
+
+    mutate(UsersService.getInvitesURL({ user_id: user?.user_id }));
   };
 
   const rejectInvite = async (invite) => {
@@ -51,7 +53,8 @@ export default function InvitesContent() {
       console.error(error);
       alert(error.response.data.message);
     }
-    mutate(`/api/users/${user.user_id}/invites`);
+
+    mutate(UsersService.getInvitesURL({ user_id: user?.user_id }));
   };
 
   if (isInvitesLoading) {

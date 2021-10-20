@@ -10,6 +10,7 @@ import SignIn from "../components/SignIn";
 import useOrgUsers from "../SWR/useOrgUsers";
 import useStore from "../utils/store";
 import { useRouter } from "next/router";
+import UsersService from "../Adapters/UsersService";
 export default function Team() {
   const [session, loading]: [CustomSession, boolean] = useSession();
   const { user, isUserLoading, isUserError } = useUser(session?.user_id);
@@ -62,7 +63,7 @@ export default function Team() {
       alert(error.response.data.message);
     }
 
-    mutate(`/api/users/${user?.user_id}`);
+    mutate(UsersService.getUserURL({ user_id: user?.user_id }));
   };
 
   return (

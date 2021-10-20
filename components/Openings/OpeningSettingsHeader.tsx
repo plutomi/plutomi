@@ -70,7 +70,7 @@ export default function OpeningSettingsHeader() {
     }
 
     // Refresh openings
-    mutate(`/api/openings`);
+    mutate(OpeningsService.getAllOpeningsURL());
   };
 
   return (

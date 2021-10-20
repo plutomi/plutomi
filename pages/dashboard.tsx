@@ -10,6 +10,7 @@ import { mutate } from "swr";
 import useStore from "../utils/store";
 import CreateOrgModal from "../components/CreateOrgModal";
 import EmptyOrgState from "../components/Dashboard/EmptyOrgState";
+import UsersService from "../Adapters/UsersService";
 
 export default function Dashboard() {
   const [session, loading]: [CustomSession, boolean] = useSession();
@@ -56,7 +57,7 @@ export default function Dashboard() {
       alert(error.response.data.message);
     }
 
-    mutate(`/api/users/${user?.user_id}`);
+    mutate(UsersService.getUserURL({ user_id: user?.user_id }));
   };
 
   return (

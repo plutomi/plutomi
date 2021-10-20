@@ -6,6 +6,7 @@ import ClickToCopy from "../ClickToCopy";
 import usePrivateOrgById from "../../SWR/usePrivateOrgById";
 import axios from "axios";
 import { mutate } from "swr";
+import UsersService from "../../Adapters/UsersService";
 export default function DashboardContent() {
   const [session, loading]: [CustomSession, boolean] = useSession();
   const { user, isUserLoading, isUserError } = useUser(session?.user_id);
@@ -33,7 +34,7 @@ export default function DashboardContent() {
       alert(error.response.data.message);
     }
 
-    mutate(`/api/users/${user?.user_id}`);
+    mutate(UsersService.getUserURL({ user_id: user?.user_id }));
   };
 
   const deleteOrg = async () => {
@@ -57,7 +58,7 @@ export default function DashboardContent() {
       alert(error.response.data.message);
     }
 
-    mutate(`/api/users/${user?.user_id}`);
+    mutate(UsersService.getUserURL({ user_id: user?.user_id }));
   };
 
   return (
