@@ -105,12 +105,12 @@ interface SendApplicantLinkInput {
   applicant_email: string;
 }
 interface UpdateUserInput {
-  updated_user: DynamoUser;
+  new_user_values: DynamoUser;
   user_id: string;
 }
 
 interface APIUpdateUserInput {
-  updated_user: DynamoUser;
+  new_user_values: DynamoUser;
 }
 interface Pokemon {
   id: number;

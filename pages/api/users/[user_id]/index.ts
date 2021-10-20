@@ -5,7 +5,7 @@ import { UpdateUser } from "../../../../utils/users/updateUser";
 const handler = async (req: CustomRequest, res: NextApiResponse) => {
   const { method, query, body } = req;
   const { user_id } = query;
-  const { updated_user } = body;
+  const { new_user_values } = body;
   const user: DynamoUser = req.user;
 
   if (method === "GET") {
@@ -33,7 +33,7 @@ const handler = async (req: CustomRequest, res: NextApiResponse) => {
 
   if (method === "PUT") {
     const update_user_input: UpdateUserInput = {
-      updated_user: updated_user,
+      new_user_values: new_user_values,
       user_id: user.user_id,
     };
 

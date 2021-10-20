@@ -3,7 +3,10 @@ import { Dynamo } from "../../libs/ddbDocClient";
 
 const { DYNAMO_TABLE_NAME } = process.env;
 
-export async function UpdateUser({ updated_user, user_id }: UpdateUserInput) {
+export async function UpdateUser({
+  new_user_values,
+  user_id,
+}: UpdateUserInput) {
   try {
     // TODO user the cleaning functions instead
     const FORBIDDEN_KEYS = [
@@ -16,7 +19,7 @@ export async function UpdateUser({ updated_user, user_id }: UpdateUserInput) {
       "GSI1PK",
     ];
 
-    const incomingKeys = Object.keys(updated_user);
+    const incomingKeys = Object.keys(new_user_values);
     const newKeys = incomingKeys.filter((key) => !FORBIDDEN_KEYS.includes(key));
 
     let newUpdateExpression: string[] = [];
@@ -24,7 +27,7 @@ export async function UpdateUser({ updated_user, user_id }: UpdateUserInput) {
 
     newKeys.forEach((key) => {
       newUpdateExpression.push(`${key} = :${key}`);
-      newAttributes[`:${key}`] = updated_user[key];
+      newAttributes[`:${key}`] = new_user_values[key];
     });
 
     const NewUpdateExpression = `SET ${newUpdateExpression.join(", ")}`;

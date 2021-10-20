@@ -76,3 +76,45 @@ interface APIUpdateStageInput {
   stage_id: string;
   new_stage_values: Any;
 }
+
+/**
+ * @param user_id - For mutate calls, to refresh the user
+ */
+interface APIGetUserURL {
+  user_id: string;
+}
+
+/**
+ * @param user_id - ID of the user you want to retrieve
+ */
+interface APIGetUserInput {
+  user_id: string;
+}
+
+/**
+ * @param org_id - The ID of the org you want to retrieve the users for
+ */
+interface APIGetAllUsersInOrgURL {
+  org_id: string;
+}
+
+interface APIGetAllUsersInOrg {
+  org_id: string;
+}
+
+/**
+ * @param user_id - ID of the user you want to update
+ * @param new_user_values - Properties you want to update on the user
+ */
+interface APIUpdateUserInput {
+  user_id: string;
+  new_user_values: Any;
+}
+
+interface APIGetInvitesURL {
+  user_id: string;
+}
+
+interface APIGetInvites {
+  user_id: string;
+}

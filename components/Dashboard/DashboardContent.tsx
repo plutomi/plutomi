@@ -20,7 +20,7 @@ export default function DashboardContent() {
   const updateName = async ({ first_name, last_name }) => {
     try {
       const body = {
-        updated_user: {
+        new_user_values: {
           ...user,
           first_name: first_name,
           last_name: last_name,

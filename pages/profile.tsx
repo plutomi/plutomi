@@ -45,7 +45,7 @@ export default function Team() {
   const updateUser = async () => {
     try {
       const body = {
-        updated_user: {
+        new_user_values: {
           ...user,
           first_name: userProfileModal.first_name,
           last_name: userProfileModal.last_name,
