@@ -11,6 +11,7 @@ import axios from "axios";
 import ClickToCopy from "../ClickToCopy";
 import delay from "delay";
 import useApplicantById from "../../SWR/useApplicantById";
+import ApplicantsService from "../../adapters/ApplicantsService";
 const tabs = [
   { id: 1, name: "Details" },
   { id: 2, name: "History (todo)" },
@@ -77,20 +78,18 @@ export default function ApplicantProfileModal() {
 
   const updateApplicant = async (applicant_id: string, changes: {}) => {
     try {
-      const body = {
+      const { message } = await ApplicantsService.updateApplicant({
+        applicant_id,
         new_applicant_values: changes,
-      };
-      const { status, data } = await axios.put(
-        `/api/applicants/${applicant_id}`,
-        body
-      );
-      alert(data.message);
+      });
+
+      alert(message);
     } catch (error) {
       alert(error.response.data.message);
     }
 
     // TODO NOTE updating that single applicant wont update the applicant list since the list is rendering old data
-    mutate(`/api/applicants/${applicant_id}`);
+    mutate(ApplicantsService.getApplicantURL({ applicant_id }));
   };
 
   return (

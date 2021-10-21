@@ -5,7 +5,6 @@ import {
 import { Dynamo } from "../../libs/ddbDocClient";
 const { DYNAMO_TABLE_NAME } = process.env;
 import { GetStage } from "../stages/GetStage";
-import UpdateStage from "../stages/updateStage";
 import { GetQuestion } from "./getQuestionById";
 export async function DeleteQuestion({ org_id, question_id }) {
   // Delete the question item & update the question order on the stage

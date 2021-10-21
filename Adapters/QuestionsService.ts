@@ -15,23 +15,10 @@ export default class QuestionsService {
   static getQuestionURL({ question_id }) {
     return `/api/questions/${question_id}`;
   }
-  //   static async getStage({ stage_id }: APIGetStageInput) {
-  //     const { data } = await axios.get(this.getStageURL({ stage_id }));
-  //     return data;
-  //   }
-
-  //   static getAllApplicantsInStageURL({ stage_id }) {
-  //     // TODO should this be under applicants?
-  //     return `/api/stages/${stage_id}/applicants`;
-  //   }
-
-  //   static async getAllApplicantsInStage({ stage_id }) {
-  //     // TODO should this be under applicants?
-  //     const { data } = await axios.get(
-  //       this.getAllApplicantsInStageURL({ stage_id })
-  //     );
-  //     return data;
-  //   }
+  static async getQuestion({ question_id }) {
+    const { data } = await axios.get(this.getQuestionURL({ question_id }));
+    return data;
+  }
 
   static async deleteQuestion({ question_id }) {
     const { data } = await axios.delete(this.getQuestionURL({ question_id }));

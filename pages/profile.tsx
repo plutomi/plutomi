@@ -45,20 +45,20 @@ export default function Team() {
   // TODO fix types
   const updateUser = async () => {
     try {
-      const body = {
-        new_user_values: {
-          ...user,
-          first_name: userProfileModal.first_name,
-          last_name: userProfileModal.last_name,
-          GSI1SK: `${userProfileModal.first_name} ${userProfileModal.last_name}`,
-        },
-      };
       setUserProfileModal({
         ...userProfileModal,
         is_modal_open: false,
       });
-      const { data } = await axios.put(`/api/users/${user?.user_id}`, body);
-      alert(data.message);
+
+      const { message } = await UsersService.updateUser({
+        user_id: user?.user_id,
+        new_user_values: {
+          first_name: userProfileModal.first_name,
+          last_name: userProfileModal.last_name,
+          GSI1SK: `${userProfileModal.first_name} ${userProfileModal.last_name}`,
+        },
+      });
+      alert(message);
     } catch (error) {
       alert(error.response.data.message);
     }

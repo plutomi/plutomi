@@ -48,7 +48,7 @@ export default async function CreateOrgInvite({
         "This user already has a pending invite to your org! They can sign in at plutomi.com/invites to claim it!"
       );
     }
-    const invite_id = nanoid(3);
+    const invite_id = nanoid(50);
     const now = GetCurrentTime("iso");
     const new_org_invite = {
       PK: `USER#${user.user_id}`,

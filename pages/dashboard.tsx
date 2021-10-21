@@ -7,6 +7,7 @@ import useUser from "../SWR/useUser";
 import SignIn from "../components/SignIn";
 import axios from "axios";
 import { mutate } from "swr";
+import OrgsService from "../adapters/OrgsService";
 import useStore from "../utils/store";
 import CreateOrgModal from "../components/CreateOrgModal";
 import EmptyOrgState from "../components/Dashboard/EmptyOrgState";
@@ -45,13 +46,13 @@ export default function Dashboard() {
     ) {
       return;
     }
-    const body: APICreateOrgInput = {
-      GSI1SK: GSI1SK,
-      org_id: org_id,
-    };
+
     try {
-      const { data } = await axios.post("/api/orgs", body);
-      alert(data.message);
+      const { message } = await OrgsService.createOrg({
+        org_name: GSI1SK,
+        org_id: org_id,
+      });
+      alert(message);
       setCreateOrgModalOpen(false);
     } catch (error) {
       alert(error.response.data.message);
