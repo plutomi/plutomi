@@ -6,10 +6,9 @@ dayjs.extend(relativeTime);
 /**
  * @param format - `iso`, `unix`, or `plain` date object
  */
-export function GetCurrentTime(format: "iso" | "unix" | "plain") {
+export function GetCurrentTime(format: "iso" | "unix"): CustomDateFormat {
   if (format === "iso") return dayjs().toISOString();
   if (format === "unix") return dayjs().unix();
-  if (format === "plain") return dayjs();
 }
 
 /**
@@ -30,20 +29,18 @@ export function GetPastOrFutureTime(
     | "weeks"
     | "months"
     | "years",
-  format: "iso" | "unix" | "plain"
-) {
+  format: "iso" | "unix"
+): CustomDateFormat {
   if (when === "future") {
     const new_time = dayjs().add(amount, type);
     if (format === "iso") return new_time.toISOString();
     if (format === "unix") return new_time.unix();
-    if (format === "plain") return new_time.toDate();
   }
 
   if (when === "past") {
     const new_time = dayjs().subtract(amount, type);
     if (format === "iso") return new_time.toISOString();
     if (format === "unix") return new_time.unix();
-    if (format === "plain") return new_time.toDate();
   }
 }
 

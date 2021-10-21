@@ -415,7 +415,7 @@ interface ApplicantAnswer {
   question_response: string;
 }
 type NextIronRequest = NextApiRequest & { session: Session };
-
+type CustomDateFormat = string | number;
 type CustomQuery = {
   org_id?: string;
   opening_id: string;
