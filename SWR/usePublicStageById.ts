@@ -15,7 +15,7 @@ function usePublicStageById(
 
   const { data, error } = useSWR(
     shouldFetch &&
-      `/api/orgs/${org_id}/public/openings/${opening_id}/stages/${stage_id}`,
+      `/api/public/orgs/${org_id}/openings/${opening_id}/stages/${stage_id}`,
     fetcher
   );
 

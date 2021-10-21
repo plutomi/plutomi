@@ -77,7 +77,6 @@ export default function QuestionList() {
 
     mutate(
       StagesService.getStageURL({
-        opening_id: opening_id as string,
         stage_id: stage_id as string,
       })
     );
@@ -103,14 +102,13 @@ export default function QuestionList() {
     // Refresh the stage (which returns the question order)
     mutate(
       StagesService.getStageURL({
-        opening_id: opening_id as string,
         stage_id: stage_id as string,
       })
     );
 
     // Refresh questions
     mutate(
-      `/api/orgs/${user?.org_id}/public/openings/${opening_id}/stages/${stage_id}/questions`
+      `/api/public/orgs/${user?.org_id}/openings/${opening_id}/stages/${stage_id}/questions`
     );
   };
 

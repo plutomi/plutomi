@@ -13,7 +13,7 @@ const handler = async (req: CustomRequest, res: NextApiResponse) => {
   if (method === "GET") {
     // When signed in, this returns all data for an org
     // For public org data such as basic info or openings, please use the
-    // /api/orgs/[org_id]/public route
+    // /api/public/orgs/[org_id] route
 
     if (org_id != user.org_id) {
       return res

@@ -19,7 +19,7 @@ export default function OpeningApplyPageContent() {
   const applyForOpening = async (body: APICreateApplicantInput) => {
     try {
       const { data } = await axios.post(
-        `/api/orgs/${org_id}/public/openings/${opening_id}/applicants`,
+        `/api/public/orgs/${org_id}/openings/${opening_id}/applicants`,
         body
       );
       alert(data.message);

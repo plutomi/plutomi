@@ -12,7 +12,7 @@ function useAllPublicOpenings(org_id: string): usePublicOpeningsOutput {
   const shouldFetch = org_id ? true : false;
 
   const { data, error } = useSWR(
-    shouldFetch && `/api/orgs/${org_id}/public/openings`,
+    shouldFetch && `/api/public/orgs/${org_id}/openings`,
     fetcher
   );
 

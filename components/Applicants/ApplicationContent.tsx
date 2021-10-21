@@ -73,7 +73,7 @@ export default function ApplicationContent() {
 
     try {
       const { status, data } = await axios.post(
-        `/api/orgs/${org_id}/public/applicants/${applicant_id}/response`,
+        `/api/public/orgs/${org_id}/applicants/${applicant_id}/response`,
         body
       );
       alert(data.message);
