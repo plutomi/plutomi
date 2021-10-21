@@ -15,9 +15,9 @@ export async function CreateApplicantResponse({
 }: CreateApplicantResponseInput) {
   const now = GetCurrentTime("iso");
   const response_id = nanoid(30);
-  const new_applicant_response: DynamoApplicantResponse = {
-    PK: `ORG#${org_id}#APPLICANT#${applicant_id}#RESPONSE#${response_id}`,
-    SK: `APPLICANT_RESPONSE`,
+  const new_applicant_response = {
+    PK: `ORG#${org_id}#APPLICANT#${applicant_id}`,
+    SK: `APPLICANT_RESPONSE#${response_id}`,
     org_id: org_id,
     applicant_id: applicant_id,
     entity_type: "APPLICANT_RESPONSE",

@@ -19,6 +19,7 @@ const handler = async (req: CustomRequest, res: NextApiResponse) => {
       const all_applicants = await GetAllApplicantsInStage(
         get_applicants_in_stage_input
       );
+      console.log("All applicants", all_applicants);
       return res.status(200).json(all_applicants);
     } catch (error) {
       // TODO add error logger

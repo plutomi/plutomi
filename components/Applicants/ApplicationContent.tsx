@@ -1,4 +1,4 @@
-import useApplicantById from "../../SWR/useApplicantById";
+import usePublicApplicant from "../../SWR/usePublicApplicant";
 import { useRouter } from "next/router";
 import Loader from "../Loader";
 import { useState } from "react";
@@ -11,9 +11,8 @@ export default function ApplicationContent() {
 
   const router = useRouter();
   const { org_id, applicant_id } = router.query;
-  const { applicant, isApplicantLoading, isApplicantError } = useApplicantById(
-    applicant_id as string
-  );
+  const { applicant, isApplicantLoading, isApplicantError } =
+    usePublicApplicant(applicant_id as string);
 
   const { questions, isQuestionsLoading, isQuestionsError } =
     useAllStageQuestions(org_id as string, applicant?.current_stage_id);
