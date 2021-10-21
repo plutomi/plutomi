@@ -35,10 +35,9 @@ export async function GetApplicantById({
   };
 
   try {
-    // TODO refactor for promise all
+    // TODO refactor for promise all / transact
     const metadata = await Dynamo.send(new GetCommand(params));
     const responses = await Dynamo.send(new QueryCommand(responsesParams));
-
     const response = {
       ...metadata.Item,
       responses: responses.Items,

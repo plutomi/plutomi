@@ -256,37 +256,43 @@ export default function ApplicantProfileModal() {
                     {currentActive == 1 ? (
                       <>
                         {/* TODO refactor this to its own component */}
-                        <ul className="py-4  space-y-8">
-                          {applicant?.responses.map(
-                            (response: DynamoApplicantResponse) => {
-                              return (
-                                <div
-                                  key={response?.response_id}
-                                  className="pl-3 mt-1 h-full relative focus-within:ring-2 focus-within:ring-blue-500"
-                                >
-                                  <h3 className="text-lg font-semibold text-dark">
-                                    <span
-                                      className="absolute inset-0"
-                                      aria-hidden="true"
-                                    />
-                                    {response?.question_title}
-                                  </h3>
-                                  {response?.question_description && (
-                                    <p className="text-md text-light">
-                                      {response?.question_description}
-                                    </p>
-                                  )}
-                                  <span className=" inline-flex justify-center items-center space-x-1">
-                                    <ChevronDoubleRightIcon className="h-3 w-3" />
-                                    <p className="text-lg text-normal font-bold line-clamp-2 ">
-                                      {response?.question_response}
-                                    </p>
-                                  </span>
-                                </div>
-                              );
-                            }
-                          )}
-                        </ul>
+                        {applicant?.responses.length > 0 ? (
+                          <ul className="py-4  space-y-8">
+                            {applicant?.responses.map(
+                              (response: DynamoApplicantResponse) => {
+                                return (
+                                  <div
+                                    key={response?.response_id}
+                                    className="pl-3 mt-1 h-full relative focus-within:ring-2 focus-within:ring-blue-500"
+                                  >
+                                    <h3 className="text-lg font-semibold text-dark">
+                                      <span
+                                        className="absolute inset-0"
+                                        aria-hidden="true"
+                                      />
+                                      {response?.question_title}
+                                    </h3>
+                                    {response?.question_description && (
+                                      <p className="text-md text-light">
+                                        {response?.question_description}
+                                      </p>
+                                    )}
+                                    <span className=" inline-flex justify-center items-center space-x-1">
+                                      <ChevronDoubleRightIcon className="h-3 w-3" />
+                                      <p className="text-lg text-normal font-bold line-clamp-2 ">
+                                        {response?.question_response}
+                                      </p>
+                                    </span>
+                                  </div>
+                                );
+                              }
+                            )}
+                          </ul>
+                        ) : (
+                          <h1 className="py-4 text-lg text-dark">
+                            This applicant has not answered any questions yet!
+                          </h1>
+                        )}
                       </>
                     ) : currentActive == 2 ? (
                       <h1>Viewing History</h1>
