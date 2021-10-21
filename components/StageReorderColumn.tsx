@@ -8,14 +8,14 @@ import difference from "../utils/getObjectDifference";
 import StageModal from "./Stages/StageModal";
 import Link from "next/dist/client/link";
 import { useSession } from "next-auth/client";
-import StagesService from "../Adapters/StagesService";
+import StagesService from "../adapters/StagesService";
 import useUser from "../SWR/useUser";
 import { useEffect } from "react";
 import DraggableStageCard from "./Stages/DraggableStageCard";
 import useOpeningById from "../SWR/useOpeningById";
 import useAllStagesInOpening from "../SWR/useAllStagesInOpening";
 import useStageById from "../SWR/useStageById";
-import OpeningsService from "../Adapters/OpeningsService";
+import OpeningsService from "../adapters/OpeningsService";
 
 export default function StageReorderColumn() {
   const createStage = async () => {

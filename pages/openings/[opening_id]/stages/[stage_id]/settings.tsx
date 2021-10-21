@@ -8,10 +8,10 @@ import SignIn from "../../../../../components/SignIn";
 import useOpeningById from "../../../../../SWR/useOpeningById";
 import { useRouter } from "next/router";
 import useStageById from "../../../../../SWR/useStageById";
-import OpeningsService from "../../../../../Adapters/OpeningsService";
+import OpeningsService from "../../../../../adapters/OpeningsService";
 import StageSettingsHeader from "../../../../../components/Stages/StageSettingsHeader";
 import StageSettingsContent from "../../../../../components/Stages/StagesSettingsContent";
-import StagesService from "../../../../../Adapters/StagesService";
+import StagesService from "../../../../../adapters/StagesService";
 export default function StageSettings() {
   const router = useRouter();
   const { opening_id, stage_id } = router.query;

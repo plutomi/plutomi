@@ -4,9 +4,9 @@ import Loader from "../Loader";
 import Invite from "./Invite";
 import { mutate } from "swr";
 import axios from "axios";
-import UsersService from "../../Adapters/UsersService";
+import UsersService from "../../adapters/UsersService";
 import { useRouter } from "next/router";
-import InvitesService from "../../Adapters/InvitesService";
+import InvitesService from "../../adapters/InvitesService";
 import useOrgInvites from "../../SWR/useOrgInvites";
 export default function InvitesContent() {
   const router = useRouter();

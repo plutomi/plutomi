@@ -1,7 +1,7 @@
 import { NextApiResponse } from "next";
-import InputValidation from "../../../../../../utils/inputValidation";
-import withCleanOrgName from "../../../../../../middleware/withCleanOrgName";
-import { CreateApplicantResponse } from "../../../../../../utils/applicants/createApplicantResponse";
+import InputValidation from "../../../../../../../utils/inputValidation";
+import withCleanOrgName from "../../../../../../../middleware/withCleanOrgName";
+import { CreateApplicantResponse } from "../../../../../../../utils/applicants/createApplicantResponse";
 const handler = async (req: CustomRequest, res: NextApiResponse) => {
   const { method, query, body } = req;
   const { org_id, applicant_id } = query;

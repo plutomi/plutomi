@@ -10,7 +10,7 @@ import { mutate } from "swr";
 import useStore from "../utils/store";
 import CreateOrgModal from "../components/CreateOrgModal";
 import EmptyOrgState from "../components/Dashboard/EmptyOrgState";
-import UsersService from "../Adapters/UsersService";
+import UsersService from "../adapters/UsersService";
 
 export default function Dashboard() {
   const [session, loading]: [CustomSession, boolean] = useSession();

@@ -1,7 +1,7 @@
 // Retrieves all openings in an org, public or private
 import axios from "axios";
 import useSWR from "swr";
-import OpeningsService from "../Adapters/OpeningsService";
+import OpeningsService from "../adapters/OpeningsService";
 const fetcher = (url: string) => axios.get(url).then((res) => res.data);
 
 /**

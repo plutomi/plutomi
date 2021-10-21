@@ -14,7 +14,7 @@ import { useState } from "react";
 import useStore from "../../utils/store";
 import useAllStagesInOpening from "../../SWR/useAllStagesInOpening";
 import useOpeningById from "../../SWR/useOpeningById";
-import OpeningsService from "../../Adapters/OpeningsService";
+import OpeningsService from "../../adapters/OpeningsService";
 export default function OpeningSettingsContent() {
   const router = useRouter();
   const { opening_id } = router.query;

@@ -18,15 +18,6 @@ export default function Apply() {
     return <Loader text="Loading..." />;
   }
 
-  if (!org) {
-    return (
-      <div className="max-w-7xl mx-auto p-4 my-12 rounded-lg min-h-screen ">
-        <h1 className="text-2xl text-center font-bold">
-          This org does not exist :(
-        </h1>
-      </div>
-    );
-  }
 
   if (isOpeningLoading) {
     <Loader text="Loading opening info..." />;

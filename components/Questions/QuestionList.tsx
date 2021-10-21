@@ -11,7 +11,7 @@ import { useEffect } from "react";
 import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
 import useAllStageQuestions from "../../SWR/useAllStageQuestions";
 import Loader from "../Loader";
-import StagesService from "../../Adapters/StagesService";
+import StagesService from "../../adapters/StagesService";
 export default function QuestionList() {
   const router = useRouter();
   const { opening_id, stage_id } = router.query;

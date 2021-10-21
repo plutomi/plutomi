@@ -6,7 +6,7 @@ import ClickToCopy from "../ClickToCopy";
 import usePrivateOrgById from "../../SWR/usePrivateOrgById";
 import axios from "axios";
 import { mutate } from "swr";
-import UsersService from "../../Adapters/UsersService";
+import UsersService from "../../adapters/UsersService";
 export default function DashboardContent() {
   const [session, loading]: [CustomSession, boolean] = useSession();
   const { user, isUserLoading, isUserError } = useUser(session?.user_id);

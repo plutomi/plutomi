@@ -11,7 +11,7 @@ import useOrgUsers from "../SWR/useOrgUsers";
 import useStore from "../utils/store";
 import TeamHeader from "../components/Team/TeamHeader";
 import { useRouter } from "next/router";
-import InvitesService from "../Adapters/InvitesService";
+import InvitesService from "../adapters/InvitesService";
 export default function Team() {
   const router = useRouter();
   const [session, loading]: [CustomSession, boolean] = useSession();

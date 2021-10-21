@@ -10,7 +10,7 @@ import SignIn from "../components/SignIn";
 import useOrgUsers from "../SWR/useOrgUsers";
 import useStore from "../utils/store";
 import { useRouter } from "next/router";
-import UsersService from "../Adapters/UsersService";
+import UsersService from "../adapters/UsersService";
 export default function Team() {
   const [session, loading]: [CustomSession, boolean] = useSession();
   const { user, isUserLoading, isUserError } = useUser(session?.user_id);

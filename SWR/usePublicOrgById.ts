@@ -10,7 +10,7 @@ function usePublicOrgById(org_id: string): useOrgOutput {
   const shouldFetch = org_id ? true : false;
 
   const { data, error } = useSWR(
-    shouldFetch && `/api/orgs/${org_id}/public`,
+    shouldFetch && `/api/public/orgs/${org_id}`,
     fetcher
   );
 

@@ -1,8 +1,8 @@
 // All public openings for the org
-import withCleanOrgName from "../../../../../middleware/withCleanOrgName";
+import withCleanOrgName from "../../../../../../middleware/withCleanOrgName";
 import { NextApiResponse } from "next";
-import { GetAllOpeningsInOrg } from "../../../../../utils/openings/getAllOpeningsInOrg";
-import CleanOpening from "../../../../../utils/clean/cleanOpening";
+import { GetAllOpeningsInOrg } from "../../../../../../utils/openings/getAllOpeningsInOrg";
+import CleanOpening from "../../../../../../utils/clean/cleanOpening";
 
 const handler = async (req: CustomRequest, res: NextApiResponse) => {
   const { method, query } = req;
