@@ -1,10 +1,10 @@
-import { CreateApplicant } from "../../../../../../../utils/applicants/createApplicant";
+import { CreateApplicant } from "../../../../../../utils/applicants/createApplicant";
 import { NextApiResponse } from "next";
-import InputValidation from "../../../../../../../utils/inputValidation";
-import { GetOpening } from "../../../../../../../utils/openings/getOpeningById";
-import { GetOrg } from "../../../../../../../utils/orgs/getOrg";
-import withCleanOrgName from "../../../../../../../middleware/withCleanOrgName";
-import SendApplicantLink from "../../../../../../../utils/email/sendApplicantLink";
+import InputValidation from "../../../../../../utils/inputValidation";
+import { GetOpening } from "../../../../../../utils/openings/getOpeningById";
+import { GetOrg } from "../../../../../../utils/orgs/getOrg";
+import withCleanOrgName from "../../../../../../middleware/withCleanOrgName";
+import SendApplicantLink from "../../../../../../utils/email/sendApplicantLink";
 const handler = async (req: CustomRequest, res: NextApiResponse) => {
   const { body, method, query } = req;
   const { email, first_name, last_name, stage_id } = body;

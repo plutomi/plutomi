@@ -1,7 +1,6 @@
-import withAuthorizer from "../../../../../../../../../middleware/withAuthorizer";
 import { NextApiResponse } from "next";
-import { GetAllQuestionsInStage } from "../../../../../../../../../utils/questions/getAllQuestionsInStage";
-import withCleanOrgName from "../../../../../../../../../middleware/withCleanOrgName";
+import { GetAllQuestionsInStage } from "../../../../../../../../utils/questions/getAllQuestionsInStage";
+import withCleanOrgName from "../../../../../../../../middleware/withCleanOrgName";
 const handler = async (req: CustomRequest, res: NextApiResponse) => {
   const { method, query } = req;
   const { org_id, opening_id, stage_id } = query;

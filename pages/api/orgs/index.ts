@@ -4,7 +4,7 @@ import withCleanOrgName from "../../../middleware/withCleanOrgName";
 import InputValidation from "../../../utils/inputValidation";
 import withAuthorizer from "../../../middleware/withAuthorizer";
 import { JoinOrg } from "../../../utils/users/joinOrg";
-import { GetAllUserInvites } from "../../../utils/invites/GetAllUserInvites";
+import { GetAllUserInvites } from "../../../utils/invites/getAllUserInvites";
 const handler = async (req: CustomRequest, res: NextApiResponse) => {
   const { body, method } = req;
   const { GSI1SK, org_id }: APICreateOrgInput = body;

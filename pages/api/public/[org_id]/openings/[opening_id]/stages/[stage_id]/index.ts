@@ -1,10 +1,9 @@
 // Returns some public info about an opening
 // Such as the opening name, description, and stage order
-import withCleanOrgName from "../../../../../../../../../middleware/withCleanOrgName";
+import withCleanOrgName from "../../../../../../../../middleware/withCleanOrgName";
 import { NextApiResponse } from "next";
-import CleanStage from "../../../../../../../../../utils/clean/cleanStage";
-import { GetOpening } from "../../../../../../../../../utils/openings/getOpeningById";
-import { GetStageById } from "../../../../../../../../../utils/stages/getStageById";
+import CleanStage from "../../../../../../../../utils/clean/cleanStage";
+import { GetStageById } from "../../../../../../../../utils/stages/getStageById";
 const handler = async (req: CustomRequest, res: NextApiResponse) => {
   const { method, query } = req;
   const { org_id, opening_id, stage_id } = query;
