@@ -5,36 +5,37 @@ import {
 import { Dynamo } from "../../libs/ddbDocClient";
 import { GetCurrentTime } from "../time";
 import { nanoid } from "nanoid";
-import { GetStageById } from "../stages/getStageById";
+import { GetStage } from "../stages/GetStage";
 import UpdateStage from "../stages/updateStage";
 
 const { DYNAMO_TABLE_NAME } = process.env;
 
 export async function CreateStageQuestion({
   org_id,
-  opening_id,
   stage_id,
   GSI1SK,
   question_description,
 }: CreateStageQuestionInput) {
   const now = GetCurrentTime("iso");
-  const stage_question_id = nanoid(16);
+  const question_id = nanoid(70);
   const new_stage_question = {
-    PK: `ORG#${org_id}#OPENING#${opening_id}#STAGE#${stage_id}`,
-    SK: `STAGE_QUESTION#${stage_question_id}`,
+    PK: `ORG#${org_id}#QUESTION#${question_id}`,
+    SK: `STAGE_QUESTION`,
     question_description: question_description,
-    question_id: stage_question_id,
+    question_id: question_id,
     entity_type: "STAGE_QUESTION",
     created_at: now,
-    GSI1PK: `ORG#${org_id}#QUESTIONS`,
-    GSI1SK: GSI1SK, // TODO filter by opening by stage?
+    GSI1PK: `ORG#${org_id}#STAGE#${stage_id}#QUESTIONS`,
+    GSI1SK: GSI1SK,
+    org_id: org_id,
+    stage_id: stage_id,
   };
 
   try {
-    let stage = await GetStageById({ org_id, opening_id, stage_id });
+    let stage = await GetStage({ org_id, stage_id });
 
     try {
-      stage.question_order.push(stage_question_id);
+      stage.question_order.push(question_id);
 
       const transactParams: TransactWriteCommandInput = {
         TransactItems: [
@@ -49,7 +50,7 @@ export async function CreateStageQuestion({
             // Add question to question order
             Update: {
               Key: {
-                PK: `ORG#${org_id}#OPENING#${opening_id}#STAGE#${stage_id}`,
+                PK: `ORG#${org_id}#STAGE#${stage_id}`,
                 SK: `STAGE`,
               },
               TableName: DYNAMO_TABLE_NAME,

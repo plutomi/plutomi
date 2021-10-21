@@ -11,6 +11,8 @@ import { useEffect } from "react";
 import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
 import useAllStageQuestions from "../../SWR/useAllStageQuestions";
 import Loader from "../Loader";
+import StagesService from "../../adapters/StagesService";
+import QuestionsService from "../../adapters/QuestionsService";
 export default function QuestionList() {
   const router = useRouter();
   const { opening_id, stage_id } = router.query;
@@ -28,7 +30,7 @@ export default function QuestionList() {
   );
 
   const { questions, isQuestionsLoading, isQuestionsError } =
-    useAllStageQuestions(user?.org_id, opening?.opening_id, stage?.stage_id);
+    useAllStageQuestions(user?.org_id, stage?.stage_id);
 
   const [new_questions, setNewQuestions] = useState(questions);
 
@@ -62,20 +64,26 @@ export default function QuestionList() {
     setNewQuestions(new_order);
 
     try {
-      const body = {
-        updated_stage: { ...stage, question_order: new_question_order },
-      };
-
-      await axios.put(`/api/openings/${opening_id}/stages/${stage_id}`, body);
+      await StagesService.updateStage({
+        opening_id: opening_id as string,
+        stage_id: stage_id as string,
+        new_stage_values: {
+          question_order: new_question_order,
+        },
+      });
     } catch (error) {
       alert(error.response.data.message);
       console.error(error.response.data.message);
     }
 
-    mutate(`/api/openings/${opening_id}/stages/${stage_id}`); // Refresh the question order
+    mutate(
+      StagesService.getStageURL({
+        stage_id: stage_id as string,
+      })
+    );
   };
 
-  const deleteQuestion = async (stage_question_id: string) => {
+  const deleteQuestion = async (question_id: string) => {
     if (
       !confirm(
         "Are you sure you want to delete this question? This action cannot be reversed!"
@@ -85,20 +93,23 @@ export default function QuestionList() {
     }
 
     try {
-      const { data } = await axios.delete(
-        `/api/openings/${opening_id}/stages/${stage_id}/questions/${stage_question_id}`
-      );
+      const { message } = await QuestionsService.deleteQuestion({
+        question_id,
+      });
+      alert(message);
     } catch (error) {
       alert(error.response.data);
     }
 
-    // Refresh question order
-    mutate(`/api/openings/${opening_id}/stages/${stage_id}`);
+    // Refresh the stage (which returns the question order)
+    mutate(
+      StagesService.getStageURL({
+        stage_id: stage_id as string,
+      })
+    );
 
     // Refresh questions
-    mutate(
-      `/api/orgs/${user?.org_id}/public/openings/${opening_id}/stages/${stage_id}/questions`
-    );
+    mutate(StagesService.getAllQuestionsInStageURL({ stage_id }));
   };
 
   if (isQuestionsLoading) {
@@ -124,8 +135,8 @@ export default function QuestionList() {
                   (question: DynamoStageQuestion, index: number) => {
                     return (
                       <Draggable
-                        key={question.question_id}
-                        draggableId={question.question_id}
+                        key={question?.question_id}
+                        draggableId={question?.question_id}
                         index={index}
                         {...provided.droppableProps}
                       >

@@ -47,7 +47,7 @@ export default function QuestionItem({
                 modal_mode: "EDIT",
                 GSI1SK: question.GSI1SK,
                 question_description: question.question_description,
-                question_id: question.question_id,
+                question_id: question?.question_id,
               })
             }
             className="rounded-full hover:bg-white text-blue-500 transition ease-in-out duration-200 px-3 py-3 text-md"
@@ -55,7 +55,7 @@ export default function QuestionItem({
             <PencilAltIcon className="w-6 h-6" />
           </button>
           <button
-            onClick={() => handleDelete(question.question_id)}
+            onClick={() => handleDelete(question?.question_id)}
             className="rounded-full hover:bg-white text-red-500 transition ease-in-out duration-200 px-3 py-3 text-md"
           >
             <TrashIcon className="w-6 h-6" />

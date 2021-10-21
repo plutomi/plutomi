@@ -4,6 +4,7 @@ import axios from "axios";
 import LoginEmail from "./EmailSigninInput";
 import { useState } from "react";
 import router from "next/router";
+import AuthService from "../adapters/AuthService";
 
 export default function SignIn({ callbackUrl, desiredPage }) {
   const [user_email, setUserEmail] = useState("");
@@ -20,14 +21,16 @@ export default function SignIn({ callbackUrl, desiredPage }) {
   const sendEmail = async (e) => {
     setButtonText("Sending...");
     e.preventDefault();
-    const body: APICreateLoginLinkInput = {
-      user_email: user_email,
-      callback_url: `${process.env.NEXT_PUBLIC_NEXTAUTH_URL + router.pathname}`,
-    };
 
     try {
-      const { data } = await axios.post("/api/auth/login-link", body);
-      setSubmittedText(data.message);
+      const { message } = await AuthService.createLoginLink({
+        user_email: user_email,
+        callback_url: `${
+          process.env.NEXT_PUBLIC_NEXTAUTH_URL + router.pathname
+        }`,
+      });
+
+      setSubmittedText(message);
       setEmailSubmitted(true);
     } catch (error) {
       alert(error.response.data.message);

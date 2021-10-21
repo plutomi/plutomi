@@ -1,7 +1,7 @@
 // This is the same as the SignIn.tsx component
 // but with different styling so it fits in the home page
 // TODO probably better to refactor this as this is bad practice
-
+import AuthService from "../adapters/AuthService";
 import GoogleButton from "./Buttons/GoogleButton";
 import axios from "axios";
 import LoginEmail from "./EmailSigninInput";
@@ -26,14 +26,14 @@ export default function SignInHomepage({ callbackUrl }: CallbackUrl) {
   const sendEmail = async (e) => {
     setButtonText("Sending...");
     e.preventDefault();
-    const body: APICreateLoginLinkInput = {
-      user_email: user_email,
-      callback_url: callbackUrl,
-    };
 
     try {
-      const { data } = await axios.post("/api/auth/login-link", body);
-      setSubmittedText(data.message);
+      const { message } = await AuthService.createLoginLink({
+        user_email: user_email,
+        callback_url: callbackUrl,
+      });
+
+      setSubmittedText(message);
       setEmailSubmitted(true);
     } catch (error) {
       alert(error.response.data.message);

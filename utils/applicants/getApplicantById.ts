@@ -27,19 +27,17 @@ export async function GetApplicantById({
 
   const responsesParams: QueryCommandInput = {
     TableName: DYNAMO_TABLE_NAME,
-    IndexName: "GSI1",
-    KeyConditionExpression: "GSI1PK = :GSI1PK AND GSI1SK = :GSI1SK",
+    KeyConditionExpression: "PK = :PK AND begins_with(SK, :SK)",
     ExpressionAttributeValues: {
-      ":GSI1PK": `ORG#${org_id}#APPLICANT#${applicant_id}`,
-      ":GSI1SK": `APPLICANT_RESPONSE`,
+      ":PK": `ORG#${org_id}#APPLICANT#${applicant_id}`,
+      ":SK": `APPLICANT_RESPONSE`,
     },
   };
 
   try {
-    // TODO refactor for promise all
+    // TODO refactor for promise all / transact
     const metadata = await Dynamo.send(new GetCommand(params));
     const responses = await Dynamo.send(new QueryCommand(responsesParams));
-
     const response = {
       ...metadata.Item,
       responses: responses.Items,

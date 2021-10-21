@@ -1,25 +1,21 @@
-import useApplicantById from "../../SWR/useApplicantById";
+import usePublicApplicant from "../../SWR/usePublicApplicant";
 import { useRouter } from "next/router";
 import Loader from "../Loader";
 import { useState } from "react";
 import useAllStageQuestions from "../../SWR/useAllStageQuestions";
 import { nanoid } from "nanoid";
 import axios from "axios";
+import ApplicantsService from "../../adapters/ApplicantsService";
 export default function ApplicationContent() {
   const [responses, setResponses] = useState([]);
 
   const router = useRouter();
   const { org_id, applicant_id } = router.query;
-  const { applicant, isApplicantLoading, isApplicantError } = useApplicantById(
-    applicant_id as string
-  );
+  const { applicant, isApplicantLoading, isApplicantError } =
+    usePublicApplicant(applicant_id as string);
 
   const { questions, isQuestionsLoading, isQuestionsError } =
-    useAllStageQuestions(
-      org_id as string,
-      applicant?.current_opening_id,
-      applicant?.current_stage_id
-    );
+    useAllStageQuestions(org_id as string, applicant?.current_stage_id);
   if (isQuestionsLoading) {
     return <Loader text="Loading questions..." />;
   }
@@ -67,16 +63,13 @@ export default function ApplicationContent() {
   };
 
   const handleSubmit = async () => {
-    const body = {
-      responses: responses,
-    };
-
     try {
-      const { status, data } = await axios.post(
-        `/api/orgs/${org_id}/public/applicants/${applicant_id}/response`,
-        body
-      );
-      alert(data.message);
+      const { message } = await ApplicantsService.answerQuestions({
+        org_id,
+        applicant_id,
+        responses,
+      });
+      alert(message);
     } catch (error) {
       alert(error.response.data.message);
     }
@@ -86,7 +79,7 @@ export default function ApplicationContent() {
     <div>
       <ul className="my-4 space-y-8">
         {questions.map((question: DynamoStageQuestion) => (
-          <li key={question.question_id} className="space-y-1 mb-4">
+          <li key={question?.question_id} className="space-y-1 mb-4">
             <label
               htmlFor="email"
               className="block text-lg font-medium text-dark"

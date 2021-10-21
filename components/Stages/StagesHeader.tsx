@@ -2,6 +2,7 @@ import { useSession } from "next-auth/client";
 import useUser from "../../SWR/useUser";
 import { CogIcon } from "@heroicons/react/outline";
 import useStore from "../../utils/store";
+import ClickToCopy from "../ClickToCopy";
 import Link from "next/dist/client/link";
 import { AdjustmentsIcon } from "@heroicons/react/outline";
 import OpeningsDropdown from "../Openings/DropDown";
@@ -25,7 +26,7 @@ export default function StagesHeader() {
 
   return (
     <div className="md:flex md:items-center md:justify-between  ">
-      <div className=" min-w-0 w-2/5 inline-flex justify-center items-center">
+      <div className=" min-w-0 w-2/3 inline-flex justify-between items-center ">
         {openings ? (
           <OpeningsDropdown
             openings={openings}
@@ -36,13 +37,19 @@ export default function StagesHeader() {
         ) : (
           <h1>Loading...</h1>
         )}
-        <div className="">
-          <Link
-            href={`${process.env.NEXT_PUBLIC_NEXTAUTH_URL}/openings/${opening_id}/settings`}
-          >
-            <CogIcon className="w-10 h-10 ml-6 hover:text-dark text-light cursor-pointer transition duration-300 ease-in-out" />
-          </Link>
-        </div>
+      </div>
+      <p className="mt-2 text-md text-normal sm:mt-0 ">
+        <ClickToCopy
+          showText={"Application Link"}
+          copyText={`${process.env.NEXT_PUBLIC_NEXTAUTH_URL}/${user?.org_id}/${opening?.opening_id}/apply`}
+        />
+      </p>
+      <div className=" flex justify-center">
+        <Link
+          href={`${process.env.NEXT_PUBLIC_NEXTAUTH_URL}/openings/${opening_id}/settings`}
+        >
+          <CogIcon className="w-10 h-10  hover:text-dark text-light cursor-pointer transition duration-300 ease-in-out" />
+        </Link>
       </div>
     </div>
   );

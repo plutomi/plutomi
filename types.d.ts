@@ -17,7 +17,6 @@ interface CreateUserInput {
 interface CreateOpeningInput {
   org_id: string;
   GSI1SK: string;
-  is_public: boolean;
   user?: DynamoUser; // User creating the opening - Optional on client
 }
 
@@ -29,7 +28,7 @@ interface GetApplicantInput {
   org_id: string;
   applicant_id: string;
 }
-interface CreateStageInput {
+interface DynamoCreateStageInput {
   org_id: string;
   opening_id: string;
   GSI1SK: string;
@@ -45,15 +44,13 @@ interface ValidNavigation {
     | "PLACEHOLDER";
 }
 
-interface GetStageByIdInput {
+interface GetStageInput {
   org_id: string;
-  opening_id: string;
   stage_id: string;
 }
 
 interface CreateStageQuestionInput {
   org_id: string;
-  opening_id: string;
   stage_id: string;
   GSI1SK: string;
   question_description: string;
@@ -94,7 +91,7 @@ interface CreateLoginLinkInput {
 }
 
 interface SendLoginLinkEmailInput {
-  recipient: string;
+  recipient_email: string;
   login_link: string;
   login_link_relative_expiry: string;
 }
@@ -106,12 +103,12 @@ interface SendApplicantLinkInput {
   applicant_email: string;
 }
 interface UpdateUserInput {
-  updated_user: DynamoUser;
+  new_user_values: DynamoUser;
   user_id: string;
 }
 
 interface APIUpdateUserInput {
-  updated_user: DynamoUser;
+  new_user_values: DynamoUser;
 }
 interface Pokemon {
   id: number;
@@ -159,8 +156,8 @@ type CustomJWT = JWT & { user_id: string };
 interface CreateOrgInviteInput {
   org_id: string;
   org_name: string;
-  invited_by: DynamoUser;
-  recipient: string; // Email of person getting invited
+  created_by: DynamoUser;
+  recipient_email: string; // Email of person getting invited
   expires_at: string; // TODO Maybe Dynamo TTL or just ISO
   claimed: boolean;
 }
@@ -183,9 +180,9 @@ interface DeleteOrgInviteInput {
   invite_id: string;
 }
 interface SendOrgInviteInput {
-  invited_by: DynamoUser;
+  created_by: DynamoUser;
   org_name: string;
-  recipient: string;
+  recipient_email: string;
 }
 
 type StageTypes = "idle" | "active" | "frozen" | "deletion";
@@ -268,15 +265,6 @@ interface APICreateLoginLinkInput {
   callback_url?: string;
 }
 
-interface APICreateOpeningInput {
-  GSI1SK: string;
-  is_public: boolean;
-}
-
-interface APICreateStageInput {
-  GSI1SK: string;
-}
-
 interface APICreateQuestionInput {
   GSI1SK: string;
   question_description: string;
@@ -292,7 +280,7 @@ interface APICreateOrgInput {
 }
 
 interface APICreateOrgInviteInput {
-  recipient: string;
+  recipient_email: string;
   expiry_time_days?: number;
 }
 
@@ -308,7 +296,6 @@ interface APIRejectOrgInvite {
 
 interface DeleteStageInput {
   org_id: string;
-  opening_id: string;
   stage_id: string;
 }
 
@@ -325,31 +312,25 @@ interface ReorderStagesInput {
 interface UpdateOpeningInput {
   org_id: string;
   opening_id: string;
-  updated_opening: DynamoOpening;
+  new_opening_values: DynamoOpening;
 }
 
 interface UpdateApplicantInput {
   org_id: string;
   applicant_id: string;
-  updated_applicant: DynamoApplicant;
+  new_applicant_values: DynamoApplicant;
 }
 
 interface UpdateQuestionInput {
   org_id: string;
-  opening_id: string;
-  stage_id: string;
   question_id: string;
-  updated_question: DynamoStageQuestion;
+  new_question_values: DynamoStageQuestion;
 }
 
 interface UpdateStageInput {
   org_id: string;
-  opening_id: string;
   stage_id: string;
-  updated_stage: DynamoStage;
-}
-interface APIUpdateOpeningInput {
-  updated_opening: DynamoOpening;
+  new_stage_values: DynamoStage;
 }
 
 interface APICreateQuestionInput {
@@ -365,7 +346,6 @@ interface AllQuestionsByStageIDInput {
 
 interface DeleteQuestionInput {
   org_id: string;
-  opening_id: string;
   stage_id: string;
   question_id: string;
 }

@@ -13,11 +13,11 @@ export async function CreateStage({
   org_id,
   GSI1SK,
   opening_id,
-}: CreateStageInput) {
+}: DynamoCreateStageInput) {
   const now = GetCurrentTime("iso");
-  const stage_id = nanoid(16);
+  const stage_id = nanoid(50);
   const new_stage = {
-    PK: `ORG#${org_id}#OPENING#${opening_id}#STAGE#${stage_id}`,
+    PK: `ORG#${org_id}#STAGE#${stage_id}`,
     SK: `STAGE`,
     entity_type: "STAGE",
     created_at: now,

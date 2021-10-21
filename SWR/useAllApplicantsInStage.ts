@@ -1,7 +1,7 @@
-// Retrieves all applicants in a stage
 import axios from "axios";
-import { StringNullableChain } from "lodash";
 import useSWR from "swr";
+import ApplicantsService from "../adapters/ApplicantsService";
+import StagesService from "../adapters/StagesService";
 
 const fetcher = (url: string) => axios.get(url).then((res) => res.data);
 
@@ -12,7 +12,8 @@ function useAllApplicantsInStage(
   const shouldFetch = opening_id && stage_id ? true : false;
 
   const { data, error } = useSWR(
-    shouldFetch && `/api/openings/${opening_id}/stages/${stage_id}/applicants`,
+    shouldFetch &&
+      ApplicantsService.getAllApplicantsInStageURL({ opening_id, stage_id }),
     fetcher
   );
 

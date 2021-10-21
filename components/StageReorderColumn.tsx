@@ -8,34 +8,37 @@ import difference from "../utils/getObjectDifference";
 import StageModal from "./Stages/StageModal";
 import Link from "next/dist/client/link";
 import { useSession } from "next-auth/client";
-import axios from "axios";
+import StagesService from "../adapters/StagesService";
 import useUser from "../SWR/useUser";
 import { useEffect } from "react";
 import DraggableStageCard from "./Stages/DraggableStageCard";
 import useOpeningById from "../SWR/useOpeningById";
 import useAllStagesInOpening from "../SWR/useAllStagesInOpening";
 import useStageById from "../SWR/useStageById";
+import OpeningsService from "../adapters/OpeningsService";
+
 export default function StageReorderColumn() {
   const createStage = async () => {
-    const body: APICreateStageInput = {
-      GSI1SK: stageModal.GSI1SK,
-    };
     try {
-      const { data } = await axios.post(
-        `/api/openings/${opening_id}/stages`,
-        body
-      );
-      alert(data.message);
+      const { message } = await StagesService.createStage({
+        GSI1SK: stageModal.GSI1SK,
+        opening_id: opening_id as string,
+      });
+      alert(message);
       setStageModal({ ...stageModal, GSI1SK: "", is_modal_open: false });
     } catch (error) {
       console.error("Error creating stage", error);
       alert(error.response.data.message);
     }
     // Refresh stage order
-    mutate(`/api/openings/${opening_id}`);
+    mutate(OpeningsService.getOpeningURL({ opening_id }));
 
     // Refresh stage list
-    mutate(`/api/openings/${opening_id}/stages`);
+    mutate(
+      OpeningsService.getAllStagesInOpeningURL({
+        opening_id: opening_id as string,
+      })
+    );
   };
 
   const updateStage = async () => {
@@ -48,16 +51,12 @@ export default function StageReorderColumn() {
       delete diff["is_modal_open"];
       delete diff["modal_mode"];
 
-      console.log(`Difference between the two objects`, diff);
-      const body = {
-        updated_stage: diff,
-      };
-
-      const { data } = await axios.put(
-        `/api/openings/${opening_id}/stages/${stage_id}`,
-        body
-      );
-      alert(data.message);
+      const { message } = await StagesService.updateStage({
+        opening_id: opening_id as string,
+        stage_id: stage_id as string,
+        new_stage_values: diff,
+      });
+      alert(message);
       setStageModal({
         is_modal_open: false,
         modal_mode: "CREATE",
@@ -67,7 +66,12 @@ export default function StageReorderColumn() {
     } catch (error) {
       alert(error.response.data.message);
     }
-    mutate(`/api/openings/${opening_id}/stages/${stage_id}`);
+
+    mutate(
+      StagesService.getStageURL({
+        stage_id: stage_id as string,
+      })
+    );
   };
 
   const router = useRouter();
@@ -121,20 +125,26 @@ export default function StageReorderColumn() {
     setNewStages(new_order);
 
     try {
-      const body = {
-        updated_opening: { ...opening, stage_order: new_stage_order },
-      };
-
-      await axios.put(`/api/openings/${opening_id}`, body);
+      await OpeningsService.updateOpening({
+        opening_id: opening_id as string,
+        new_opening_values: {
+          stage_order: new_stage_order,
+        },
+      });
     } catch (error) {
       console.error(error.response.data.message);
+      alert(error.response.data.message);
     }
 
     // Refresh the stage order
-    mutate(`/api/openings/${opening_id}`);
+    mutate(OpeningsService.getOpeningURL({ opening_id }));
 
     // Refresh the stages
-    mutate(`/api/openings/${opening_id}/stages`);
+    mutate(
+      OpeningsService.getAllStagesInOpeningURL({
+        opening_id: opening_id as string,
+      })
+    );
   };
 
   return (

@@ -4,7 +4,7 @@ import withCleanOrgName from "../../../middleware/withCleanOrgName";
 import InputValidation from "../../../utils/inputValidation";
 import withAuthorizer from "../../../middleware/withAuthorizer";
 import { JoinOrg } from "../../../utils/users/joinOrg";
-import { GetAllOrgInvites } from "../../../utils/invites/getAllOrgInvites";
+import { GetAllUserInvites } from "../../../utils/invites/getAllOrgInvites";
 const handler = async (req: CustomRequest, res: NextApiResponse) => {
   const { body, method } = req;
   const { GSI1SK, org_id }: APICreateOrgInput = body;
@@ -20,13 +20,13 @@ const handler = async (req: CustomRequest, res: NextApiResponse) => {
     }
     if (user.org_id != "NO_ORG_ASSIGNED") {
       return res.status(400).json({
-        message: `You already belong to an org. Deleting an org is not available at this time`,
+        message: `You already belong to an org!`,
       });
     }
 
-    const pending_invites = await GetAllOrgInvites(user.user_id);
+    const pending_invites = await GetAllUserInvites(user.user_id);
 
-    if (pending_invites.length > 0) {
+    if (pending_invites && pending_invites.length > 0) {
       return res.status(403).json({
         message:
           "You seem to have pending invites, please accept or reject them before creating an org :)",
@@ -50,6 +50,7 @@ const handler = async (req: CustomRequest, res: NextApiResponse) => {
       return res.status(400).json({ message: "Org name cannot be empty" });
     }
     try {
+      // TODO promise all create and join
       const org = await CreateOrg(create_org_input);
 
       try {
@@ -57,6 +58,8 @@ const handler = async (req: CustomRequest, res: NextApiResponse) => {
           user_id: user.user_id,
           org_id: org_id,
         };
+        console.log("Join or ginput", join_org_input);
+
         await JoinOrg(join_org_input);
         return res.status(201).json({ message: "Org created!", org: org });
       } catch (error) {

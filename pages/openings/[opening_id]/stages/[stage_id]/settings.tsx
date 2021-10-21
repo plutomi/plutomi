@@ -8,9 +8,11 @@ import SignIn from "../../../../../components/SignIn";
 import useOpeningById from "../../../../../SWR/useOpeningById";
 import { useRouter } from "next/router";
 import useStageById from "../../../../../SWR/useStageById";
+import OpeningsService from "../../../../../adapters/OpeningsService";
 import StageSettingsHeader from "../../../../../components/Stages/StageSettingsHeader";
 import StageSettingsContent from "../../../../../components/Stages/StagesSettingsContent";
-export default function OpeningsSettings() {
+import StagesService from "../../../../../adapters/StagesService";
+export default function StageSettings() {
   const router = useRouter();
   const { opening_id, stage_id } = router.query;
   const [session, loading]: [CustomSession, boolean] = useSession();
@@ -57,7 +59,10 @@ export default function OpeningsSettings() {
       return;
     }
     try {
-      await axios.delete(`/api/openings/${opening_id}/stages/${stage_id}`);
+      await StagesService.deleteStage({
+        opening_id: opening_id as string,
+        stage_id: stage_id as string,
+      });
       router.push(
         `${process.env.NEXT_PUBLIC_NEXTAUTH_URL}/openings/${opening_id}/settings`
       );
@@ -66,10 +71,14 @@ export default function OpeningsSettings() {
     }
 
     // Refresh the stage_order
-    mutate(`/api/openings/${opening_id}`);
+    mutate(OpeningsService.getOpeningURL({ opening_id: opening_id as string }));
 
     // Refresh the stage list
-    mutate(`/api/openings/${opening_id}/stages`);
+    mutate(
+      OpeningsService.getAllStagesInOpeningURL({
+        opening_id: opening_id as string,
+      })
+    );
   };
 
   return (

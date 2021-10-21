@@ -7,9 +7,11 @@ import useUser from "../SWR/useUser";
 import SignIn from "../components/SignIn";
 import axios from "axios";
 import { mutate } from "swr";
+import OrgsService from "../adapters/OrgsService";
 import useStore from "../utils/store";
 import CreateOrgModal from "../components/CreateOrgModal";
 import EmptyOrgState from "../components/Dashboard/EmptyOrgState";
+import UsersService from "../adapters/UsersService";
 
 export default function Dashboard() {
   const [session, loading]: [CustomSession, boolean] = useSession();
@@ -44,19 +46,19 @@ export default function Dashboard() {
     ) {
       return;
     }
-    const body: APICreateOrgInput = {
-      GSI1SK: GSI1SK,
-      org_id: org_id,
-    };
+
     try {
-      const { data } = await axios.post("/api/orgs", body);
-      alert(data.message);
+      const { message } = await OrgsService.createOrg({
+        GSI1SK: GSI1SK,
+        org_id: org_id,
+      });
+      alert(message);
       setCreateOrgModalOpen(false);
     } catch (error) {
       alert(error.response.data.message);
     }
 
-    mutate(`/api/users/${user?.user_id}`);
+    mutate(UsersService.getUserURL({ user_id: user?.user_id }));
   };
 
   return (

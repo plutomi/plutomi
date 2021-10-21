@@ -11,6 +11,7 @@ import useStore from "../../utils/store";
 import CreateOpeningModal from "../../components/Openings/OpeningModal";
 import OpeningsContent from "../../components/Openings/OpeningsContent";
 import EmptyOpeningsState from "../../components/Openings/EmptyOpeningsState";
+import OpeningsService from "../../adapters/OpeningsService";
 export default function Openings() {
   const [session, loading]: [CustomSession, boolean] = useSession();
   const { user, isUserLoading, isUserError } = useUser(session?.user_id);
@@ -43,13 +44,13 @@ export default function Openings() {
   }
 
   const createOpening = async () => {
-    const body: APICreateOpeningInput = {
-      GSI1SK: openingModal.GSI1SK,
-      is_public: openingModal.is_public,
-    };
     try {
-      const { data } = await axios.post("/api/openings", body);
-      alert(data.message);
+      const { message } = await OpeningsService.createOpening({
+        GSI1SK: openingModal.GSI1SK,
+      });
+
+      alert(message);
+
       setOpeningModal({
         is_modal_open: false,
         modal_mode: "CREATE",
@@ -58,10 +59,11 @@ export default function Openings() {
         GSI1SK: "",
       });
     } catch (error) {
+      console.error(error);
       alert(error.response.data.message);
     }
 
-    mutate(`/api/openings/`); // Get all openings
+    mutate(OpeningsService.getAllOpeningsURL()); // Get all openings
   };
 
   return (

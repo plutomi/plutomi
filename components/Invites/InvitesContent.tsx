@@ -4,7 +4,9 @@ import Loader from "../Loader";
 import Invite from "./Invite";
 import { mutate } from "swr";
 import axios from "axios";
+import UsersService from "../../adapters/UsersService";
 import { useRouter } from "next/router";
+import InvitesService from "../../adapters/InvitesService";
 import useOrgInvites from "../../SWR/useOrgInvites";
 export default function InvitesContent() {
   const router = useRouter();
@@ -17,41 +19,34 @@ export default function InvitesContent() {
 
   const acceptInvite = async (invite) => {
     try {
-      const body: APIAcceptOrgInvite = {
-        timestamp: invite.created_at,
+      const { message } = await InvitesService.acceptInvite({
         invite_id: invite.invite_id,
-      };
-
-      const { status, data } = await axios.post(
-        `/api/orgs/${invite.org_id}/join`,
-        body
-      );
-      alert(data.message);
+      });
+      alert(message);
       router.push("/dashboard");
     } catch (error) {
       console.error(error);
       alert(error.response.data.message);
     }
-    mutate(`/api/users/${user.user_id}/invites`);
+
+    // Refresh the user's org
+    mutate(UsersService.getUserURL({ user_id: user?.user_id }));
+    mutate(InvitesService.getInvitesURL({ user_id: user?.user_id }));
   };
 
   const rejectInvite = async (invite) => {
     try {
-      const body: APIRejectOrgInvite = {
-        timestamp: invite.created_at,
+      const { message } = await InvitesService.rejectInvite({
         invite_id: invite.invite_id,
-      };
+      });
 
-      const { status, data } = await axios.post(
-        `/api/orgs/${invite.org_id}/reject`,
-        body
-      );
-      alert(data.message);
+      alert(message);
     } catch (error) {
       console.error(error);
       alert(error.response.data.message);
     }
-    mutate(`/api/users/${user.user_id}/invites`);
+
+    mutate(InvitesService.getInvitesURL({ user_id: user?.user_id }));
   };
 
   if (isInvitesLoading) {

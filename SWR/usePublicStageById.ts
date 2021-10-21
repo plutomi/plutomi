@@ -1,7 +1,7 @@
 // Retrieves a specific user by ID
 import axios from "axios";
 import useSWR from "swr";
-
+import PublicInfoService from "../adapters/PublicInfoService";
 const fetcher = (url: string) => axios.get(url).then((res) => res.data);
 
 // Returns very limited details an org's public opening
@@ -15,7 +15,7 @@ function usePublicStageById(
 
   const { data, error } = useSWR(
     shouldFetch &&
-      `/api/orgs/${org_id}/public/openings/${opening_id}/stages/${stage_id}`,
+      PublicInfoService.getPublicStageURL({ org_id, opening_id, stage_id }),
     fetcher
   );
 

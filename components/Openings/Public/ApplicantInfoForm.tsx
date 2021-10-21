@@ -1,12 +1,14 @@
 import { FormEvent, useState } from "react";
 import { Switch } from "@headlessui/react";
-import { first } from "lodash";
+import ApplicantsService from "../../../adapters/ApplicantsService";
 
 function classNames(...classes) {
   return classes.filter(Boolean).join(" ");
 }
-
-export default function ApplicantInfoForm({ applyForOpening }) {
+import { useRouter } from "next/router";
+export default function ApplicantInfoForm() {
+  const router = useRouter();
+  const { org_id, opening_id } = router.query;
   const [agreed, setAgreed] = useState(false);
   const [first_name, setFirstName] = useState("");
   const [last_name, setLastName] = useState("");
@@ -20,12 +22,18 @@ export default function ApplicantInfoForm({ applyForOpening }) {
       return;
     }
 
-    const body: APICreateApplicantInput = {
-      first_name: first_name,
-      last_name: last_name,
-      email: email,
-    };
-    await applyForOpening(body);
+    try {
+      const { message } = await ApplicantsService.createApplicant({
+        org_id: org_id as string,
+        opening_id: opening_id as string,
+        first_name: first_name,
+        last_name: last_name,
+        email: email,
+      });
+      alert(message);
+    } catch (error) {
+      alert(error.response.data.message);
+    }
     setButtonText("Apply");
   };
   return (
@@ -106,7 +114,7 @@ export default function ApplicantInfoForm({ applyForOpening }) {
             application link as you can put anyones email there. I prefer the
             link method as it will take them away from this page, and once we
             receive a GET request at the email link, we can redirect to
-            /org_id/applications/applicant_id. We can even set a 1 day limit on
+            /org_id/applicants/applicant_id. We can even set a 1 day limit on
             that application link being valid? Don&apos;t know what use case
             that would serve. TODO add captcha.
           </p>

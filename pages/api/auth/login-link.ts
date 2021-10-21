@@ -72,7 +72,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 
         try {
           const login_link_email_input: SendLoginLinkEmailInput = {
-            recipient: user_email,
+            recipient_email: user_email,
             login_link: clickable_link,
             login_link_relative_expiry: GetRelativeTime(
               login_link_expiry as string

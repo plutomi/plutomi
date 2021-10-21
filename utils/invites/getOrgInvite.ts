@@ -3,16 +3,12 @@ import { Dynamo } from "../../libs/ddbDocClient";
 
 const { DYNAMO_TABLE_NAME } = process.env;
 
-export async function GetOrgInvite({
-  user_id,
-  invite_id,
-  timestamp,
-}: GetOrgInviteInput) {
+export async function GetOrgInvite({ user_id, invite_id }) {
   const params: GetCommandInput = {
     TableName: DYNAMO_TABLE_NAME,
     Key: {
       PK: `USER#${user_id}`,
-      SK: `ORG_INVITE#${timestamp}#INVITE_ID#${invite_id}`,
+      SK: `ORG_INVITE#${invite_id}`,
     },
   };
 

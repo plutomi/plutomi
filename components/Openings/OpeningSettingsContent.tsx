@@ -14,6 +14,7 @@ import { useState } from "react";
 import useStore from "../../utils/store";
 import useAllStagesInOpening from "../../SWR/useAllStagesInOpening";
 import useOpeningById from "../../SWR/useOpeningById";
+import OpeningsService from "../../adapters/OpeningsService";
 export default function OpeningSettingsContent() {
   const router = useRouter();
   const { opening_id } = router.query;
@@ -59,17 +60,14 @@ export default function OpeningSettingsContent() {
       // Delete the two modal controlling keys
       delete diff["is_modal_open"];
       delete diff["modal_mode"];
-      const body = {
-        updated_opening: diff,
-      };
 
-      console.log("Outgoing body", body);
+      console.log("Outgoing body", diff);
 
-      const { data } = await axios.put(
-        `/api/openings/${openingModal.opening_id}`,
-        body
-      );
-      alert(data.message);
+      const { message } = await OpeningsService.updateOpening({
+        opening_id: opening_id as string,
+        new_opening_values: diff,
+      });
+      alert(message);
       setOpeningModal({
         is_modal_open: false,
         modal_mode: "CREATE",
@@ -81,7 +79,7 @@ export default function OpeningSettingsContent() {
       alert(error.response.data.message);
     }
     // Refresh opening data
-    mutate(`/api/openings/${openingModal.opening_id}`);
+    mutate(OpeningsService.getOpeningURL({ opening_id: opening_id as string }));
   };
 
   return (

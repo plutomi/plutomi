@@ -6,6 +6,8 @@ import ClickToCopy from "../ClickToCopy";
 import usePrivateOrgById from "../../SWR/usePrivateOrgById";
 import axios from "axios";
 import { mutate } from "swr";
+import UsersService from "../../adapters/UsersService";
+import OrgsService from "../../adapters/OrgsService";
 export default function DashboardContent() {
   const [session, loading]: [CustomSession, boolean] = useSession();
   const { user, isUserLoading, isUserError } = useUser(session?.user_id);
@@ -19,21 +21,20 @@ export default function DashboardContent() {
   // TODO fix types
   const updateName = async ({ first_name, last_name }) => {
     try {
-      const body = {
-        updated_user: {
-          ...user,
+      const { message } = await UsersService.updateUser({
+        user_id: user?.user_id,
+        new_user_values: {
           first_name: first_name,
           last_name: last_name,
           GSI1SK: `${first_name} ${last_name}`,
         },
-      };
-      const { data } = await axios.put(`/api/users/${user?.user_id}`, body);
-      alert(data.message);
+      });
+      alert(message);
     } catch (error) {
       alert(error.response.data.message);
     }
 
-    mutate(`/api/users/${user?.user_id}`);
+    mutate(UsersService.getUserURL({ user_id: user?.user_id }));
   };
 
   const deleteOrg = async () => {
@@ -50,14 +51,13 @@ export default function DashboardContent() {
     }
 
     try {
-      const { data } = await axios.delete(`/api/orgs/${user?.org_id}`);
-
-      alert(data.message);
+      const { message } = await OrgsService.deleteOrg({ org_id: user?.org_id });
+      alert(message);
     } catch (error) {
       alert(error.response.data.message);
     }
 
-    mutate(`/api/users/${user?.user_id}`);
+    mutate(UsersService.getUserURL({ user_id: user?.user_id }));
   };
 
   return (
