@@ -9,7 +9,7 @@ export async function GetAllUserInvites(user_id: string) {
     KeyConditionExpression: "PK = :pk AND begins_with(SK, :sk)",
     ExpressionAttributeValues: {
       ":pk": `USER#${user_id}`,
-      ":sk": "ORG_INVITE#",
+      ":sk": "ORG_INVITE",
     },
     ScanIndexForward: false,
   };

@@ -1,22 +1,23 @@
-import AcceptOrgInvite from "../../../utils/invites/acceptOrgInvite";
-import withAuthorizer from "../../../middleware/withAuthorizer";
-import InputValidation from "../../../utils/inputValidation";
-import { JoinOrg } from "../../../utils/users/joinOrg";
+import AcceptOrgInvite from "../../../../utils/invites/acceptOrgInvite";
+import withAuthorizer from "../../../../middleware/withAuthorizer";
+import InputValidation from "../../../../utils/inputValidation";
+import { JoinOrg } from "../../../../utils/users/joinOrg";
 import { NextApiResponse } from "next";
-import withCleanOrgName from "../../../middleware/withCleanOrgName";
+import DeleteOrgInvite from "../../../../utils/invites/deleteOrgInvite";
+import withCleanOrgName from "../../../../middleware/withCleanOrgName";
 const handler = async (req: CustomRequest, res: NextApiResponse) => {
-  const { method, body } = req;
+  const { method, query } = req;
   const user: DynamoUser = req.user;
-  const { timestamp, invite_id, org_id }: APIAcceptInviteInput = body;
-  const accept_org_invite: AcceptOrgInviteInput = {
+  const { invite_id } = query;
+
+  const accept_org_invite = {
     user_id: user.user_id,
-    timestamp: timestamp,
-    invite_id: invite_id,
+    invite_id: invite_id as string,
   };
 
   const join_org_input: JoinOrgInput = {
     user_id: user.user_id,
-    org_id: org_id as string,
+    org_id: user?.org_id,
   };
 
   try {
@@ -38,10 +39,10 @@ const handler = async (req: CustomRequest, res: NextApiResponse) => {
       // TODO promise all
       await AcceptOrgInvite(accept_org_invite);
       try {
-        await JoinOrg(join_org_input);
+        const org = await JoinOrg(join_org_input);
         return res
           .status(200)
-          .json({ message: `You've joined the ${org_id} org!` });
+          .json({ message: `You've joined the ${org.GSI1SK} org!` });
       } catch (error) {
         // TODO add error logger
         return res
@@ -52,6 +53,28 @@ const handler = async (req: CustomRequest, res: NextApiResponse) => {
       }
     } catch (error) {
       return res.status(500).json({ message: ` ${error}` });
+    }
+  }
+
+  if (method === "DELETE") {
+    const delete_org_invite = {
+      user_id: user.user_id,
+      invite_id: invite_id as string,
+    };
+
+    try {
+      InputValidation(delete_org_invite);
+    } catch (error) {
+      return res.status(400).json({ message: `${error.message}` });
+    }
+
+    try {
+      await DeleteOrgInvite(delete_org_invite);
+      return res.status(200).json({ message: "Invite rejected!" });
+    } catch (error) {
+      return res
+        .status(500)
+        .json({ message: `Unable to reject invite - ${error}` });
     }
   }
 

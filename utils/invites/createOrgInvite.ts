@@ -1,7 +1,7 @@
 import { PutCommand, PutCommandInput } from "@aws-sdk/lib-dynamodb";
 import { GetUserByEmail } from "../users/getUserByEmail";
 import { Dynamo } from "../../libs/ddbDocClient";
-import { GetAllUserInvites } from "./GetAllUserInvites";
+import { GetAllUserInvites } from "./getAllUserInvites";
 import { CreateUser } from "../users/createUser";
 import { GetCurrentTime } from "../time";
 import { nanoid } from "nanoid";
@@ -52,7 +52,7 @@ export default async function CreateOrgInvite({
     const now = GetCurrentTime("iso");
     const new_org_invite = {
       PK: `USER#${user.user_id}`,
-      SK: `ORG_INVITE#${now}#INVITE_ID#${invite_id}`, // Allows sorting, and incase two get created in the same millisecond
+      SK: `ORG_INVITE#${invite_id}`, // Allows sorting, and incase two get created in the same millisecond
       org_id: org_id,
       org_name: org_name, // using org_name here because GSI1SK is taken obv
       invited_by: invited_by,
