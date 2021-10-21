@@ -1,25 +1,28 @@
-import { GetStageById } from "../../../../../../utils/stages/getStageById";
-import withAuthorizer from "../../../../../../middleware/withAuthorizer";
+import { GetStageById } from "../.././../../utils/stages/getStageById";
+import withAuthorizer from "../.././../../middleware/withAuthorizer";
 import { NextApiResponse } from "next";
-import InputValidation from "../../../../../../utils/inputValidation";
-import { DeleteStage } from "../.././../../../../utils/stages/deleteStage";
-import UpdateStage from "../../../../../../utils/stages/updateStage";
+import InputValidation from "../.././../../utils/inputValidation";
+import { DeleteStage } from "../.././../../utils/stages/deleteStage";
+import UpdateStage from "../../../../utils/stages/updateStage";
 // Create stage in a opening
 const handler = async (req: CustomRequest, res: NextApiResponse) => {
   const { method, query, body } = req;
   const user: DynamoUser = req.user;
-  const { opening_id, stage_id } = query;
-
+  const { stage_id } = query;
+  const { opening_id } = body;
   // Get a single stage in an opening
   if (method === "GET") {
     const get_stage_input: GetStageByIdInput = {
       org_id: user.org_id,
-      opening_id: opening_id as string,
       stage_id: stage_id as string,
     };
 
     try {
       const stage = await GetStageById(get_stage_input);
+      if (!stage) {
+        return res.status(404).json({ message: "Stage not found" });
+      }
+
       return res.status(200).json(stage);
     } catch (error) {
       // TODO add error logger
@@ -33,7 +36,6 @@ const handler = async (req: CustomRequest, res: NextApiResponse) => {
     try {
       const update_stage_input: UpdateStageInput = {
         org_id: user.org_id,
-        opening_id: opening_id as string,
         stage_id: stage_id as string,
         new_stage_values: body.new_stage_values,
       };
@@ -57,7 +59,6 @@ const handler = async (req: CustomRequest, res: NextApiResponse) => {
     try {
       const delete_stage_input = {
         org_id: user.org_id,
-        opening_id: opening_id,
         stage_id: stage_id,
       };
 

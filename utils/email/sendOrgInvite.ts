@@ -15,7 +15,7 @@ export default async function SendOrgInvite({
     },
     Message: {
       Subject: {
-        Data: `${invited_by.first_name} ${invited_by.last_name} has invited to join ${org_name} on Plutomi!`,
+        Data: `${invited_by.first_name} ${invited_by.last_name} has invited you to join ${org_name} on Plutomi!`,
       },
       Body: {
         Html: {

@@ -12,7 +12,7 @@ export default class StagesService {
   }
 
   static getStageURL({ opening_id, stage_id }: APIGetStageURLInput) {
-    return `/api/openings/${opening_id}/stages/${stage_id}`;
+    return `/api/stages/${stage_id}`;
   }
   static async getStage({ opening_id, stage_id }: APIGetStageInput) {
     const { data } = await axios.get(

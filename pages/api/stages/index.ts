@@ -4,7 +4,7 @@ import InputValidation from "../../../utils/inputValidation";
 import { NextApiResponse } from "next";
 // Create stage in an opening
 const handler = async (req: CustomRequest, res: NextApiResponse) => {
-  const { body, method, query } = req;
+  const { body, method } = req;
   const { GSI1SK, opening_id }: APICreateStageInput = body;
   const user: DynamoUser = req.user;
 
@@ -14,10 +14,10 @@ const handler = async (req: CustomRequest, res: NextApiResponse) => {
         message: "Please create an organization before creating a stage",
       });
     }
-    const create_stage_input: CreateStageInput = {
+    const create_stage_input: DynamoCreateStageInput = {
       org_id: user.org_id,
       opening_id: opening_id,
-      GSI1SK: GSI1SK as string,
+      GSI1SK: GSI1SK,
     };
 
     try {
@@ -27,10 +27,8 @@ const handler = async (req: CustomRequest, res: NextApiResponse) => {
     }
 
     try {
-      const created_stage = await CreateStage(create_stage_input);
-      return res
-        .status(201)
-        .json({ message: "Stage created", stage: created_stage });
+      await CreateStage(create_stage_input);
+      return res.status(201).json({ message: "Stage created" });
     } catch (error) {
       // TODO add error logger
       return res

@@ -11,7 +11,7 @@ function useAllApplicantsInStage(
   const shouldFetch = opening_id && stage_id ? true : false;
 
   const { data, error } = useSWR(
-    shouldFetch && `/api/openings/${opening_id}/stages/${stage_id}/applicants`,
+    shouldFetch && `/api/stages/${stage_id}/applicants`,
     fetcher
   );
 

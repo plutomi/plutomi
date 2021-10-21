@@ -12,7 +12,6 @@ const handler = async (req: CustomRequest, res: NextApiResponse) => {
   const get_stage_input: GetStageByIdInput = {
     org_id: org_id as string,
     stage_id: stage_id as string,
-    opening_id: opening_id as string,
   };
 
   if (method === "GET") {

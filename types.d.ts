@@ -28,7 +28,7 @@ interface GetApplicantInput {
   org_id: string;
   applicant_id: string;
 }
-interface CreateStageInput {
+interface DynamoCreateStageInput {
   org_id: string;
   opening_id: string;
   GSI1SK: string;
@@ -46,9 +46,9 @@ interface ValidNavigation {
 
 interface GetStageByIdInput {
   org_id: string;
-  opening_id: string;
   stage_id: string;
 }
+
 
 interface CreateStageQuestionInput {
   org_id: string;
@@ -298,7 +298,6 @@ interface APIRejectOrgInvite {
 
 interface DeleteStageInput {
   org_id: string;
-  opening_id: string;
   stage_id: string;
 }
 
@@ -334,7 +333,6 @@ interface UpdateQuestionInput {
 
 interface UpdateStageInput {
   org_id: string;
-  opening_id: string;
   stage_id: string;
   new_stage_values: DynamoStage;
 }

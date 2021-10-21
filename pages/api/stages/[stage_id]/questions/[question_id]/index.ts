@@ -1,8 +1,8 @@
-import withAuthorizer from "../../../../../../../../middleware/withAuthorizer";
+import withAuthorizer from "../../../../../../middleware/withAuthorizer";
 import { NextApiResponse } from "next";
-import { DeleteQuestionInStage } from "../../../../../../../../utils/questions/deleteQuestionInStage";
-import InputValidation from "../../../../../../../../utils/inputValidation";
-import UpdateQuestion from "../../../../../../../../utils/questions/updateStageQuestion";
+import { DeleteQuestionInStage } from "../../../../../../utils/questions/deleteQuestionInStage";
+import InputValidation from "../../../../../../utils/inputValidation";
+import UpdateQuestion from "../../../../../../utils/questions/updateStageQuestion";
 const handler = async (req: CustomRequest, res: NextApiResponse) => {
   const { body, method, query } = req;
   const user: DynamoUser = req.user;

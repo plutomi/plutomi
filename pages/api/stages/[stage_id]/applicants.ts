@@ -1,6 +1,6 @@
-import withAuthorizer from "../../../../../../middleware/withAuthorizer";
+import withAuthorizer from "../../../../middleware/withAuthorizer";
 import { NextApiResponse } from "next";
-import { GetAllApplicantsInStage } from "../../../../../../utils/applicants/getAllApplicantsInStage";
+import { GetAllApplicantsInStage } from "../../../../utils/applicants/getAllApplicantsInStage";
 
 const handler = async (req: CustomRequest, res: NextApiResponse) => {
   const { method, query } = req;

@@ -1,5 +1,5 @@
-import { CreateStageQuestion } from "../../../../../../../utils/questions/createStageQuestion";
-import withAuthorizer from "../../../../../../../middleware/withAuthorizer";
+import { CreateStageQuestion } from "../../../../../utils/questions/createStageQuestion";
+import withAuthorizer from "../../../../../middleware/withAuthorizer";
 import { NextApiResponse } from "next";
 
 const handler = async (req: CustomRequest, res: NextApiResponse) => {
