@@ -78,7 +78,7 @@ export default function ApplicantProfileModal() {
   const updateApplicant = async (applicant_id: string, changes: {}) => {
     try {
       const body = {
-        updated_applicant: changes,
+        new_applicant_values: changes,
       };
       const { status, data } = await axios.put(
         `/api/applicants/${applicant_id}`,

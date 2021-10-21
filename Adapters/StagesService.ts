@@ -11,13 +11,40 @@ export default class StagesService {
     return data;
   }
 
-  static getStageURL({ opening_id, stage_id }: APIGetStageURLInput) {
+  static getStageURL({ stage_id }: APIGetStageURLInput) {
     return `/api/stages/${stage_id}`;
   }
-  static async getStage({ opening_id, stage_id }: APIGetStageInput) {
+  static async getStage({ stage_id }: APIGetStageInput) {
+    const { data } = await axios.get(this.getStageURL({ stage_id }));
+    return data;
+  }
+
+  static getAllApplicantsInStageURL({ stage_id }) {
+    // TODO should this be under applicants?
+    return `/api/stages/${stage_id}/applicants`;
+  }
+
+  static async getAllApplicantsInStage({ stage_id }) {
+    // TODO should this be under applicants?
     const { data } = await axios.get(
-      this.getStageURL({ opening_id, stage_id })
+      this.getAllApplicantsInStageURL({ stage_id })
     );
+    return data;
+  }
+
+  static async deleteStage({ stage_id }: APIDeleteStageInput) {
+    const { data } = await axios.delete(this.getStageURL({ stage_id }));
+    return data;
+  }
+
+  static async updateStage({
+    stage_id,
+    new_stage_values,
+  }: APIUpdateStageInput) {
+    const body = {
+      new_stage_values: new_stage_values,
+    };
+    const { data } = await axios.put(this.getStageURL({ stage_id }), body);
     return data;
   }
 
@@ -30,28 +57,6 @@ export default class StagesService {
   }: APIGetAllStagesInOpeningInput) {
     const { data } = await axios.get(
       this.getAllStagesInOpeningURL({ opening_id })
-    );
-    return data;
-  }
-
-  static async deleteStage({ opening_id, stage_id }: APIDeleteStageInput) {
-    const { data } = await axios.delete(
-      this.getStageURL({ opening_id, stage_id })
-    );
-    return data;
-  }
-
-  static async updateStage({
-    opening_id,
-    stage_id,
-    new_stage_values,
-  }: APIUpdateStageInput) {
-    const body = {
-      new_stage_values: new_stage_values,
-    };
-    const { data } = await axios.put(
-      this.getStageURL({ opening_id, stage_id }),
-      body
     );
     return data;
   }

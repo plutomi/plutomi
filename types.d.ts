@@ -49,7 +49,6 @@ interface GetStageByIdInput {
   stage_id: string;
 }
 
-
 interface CreateStageQuestionInput {
   org_id: string;
   opening_id: string;
@@ -320,7 +319,7 @@ interface UpdateOpeningInput {
 interface UpdateApplicantInput {
   org_id: string;
   applicant_id: string;
-  updated_applicant: DynamoApplicant;
+  new_applicant_values: DynamoApplicant;
 }
 
 interface UpdateQuestionInput {

@@ -1,4 +1,4 @@
-import { GetAllOrgInvites } from "./getAllOrgInvites";
+import { GetAllUserInvites } from "./GetAllUserInvites";
 import DeleteOrgInvite from "./deleteOrgInvite";
 import { GetOrgInvite } from "./getOrgInvite";
 import { GetCurrentTime } from "../time";
@@ -23,7 +23,7 @@ export default async function AcceptOrgInvite({
     }
 
     // Delete all invites for that org
-    const all_invites = await GetAllOrgInvites(user_id);
+    const all_invites = await GetAllUserInvites(user_id);
 
     const filtered_invites = all_invites.filter(
       (invitation) => invite.org_id == invitation.org_id

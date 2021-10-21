@@ -12,7 +12,7 @@ import OpeningsService from "../../../../../Adapters/OpeningsService";
 import StageSettingsHeader from "../../../../../components/Stages/StageSettingsHeader";
 import StageSettingsContent from "../../../../../components/Stages/StagesSettingsContent";
 import StagesService from "../../../../../Adapters/StagesService";
-export default function OpeningsSettings() {
+export default function StageSettings() {
   const router = useRouter();
   const { opening_id, stage_id } = router.query;
   const [session, loading]: [CustomSession, boolean] = useSession();

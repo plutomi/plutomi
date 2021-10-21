@@ -2,6 +2,7 @@ import withAuthorizer from "../../../../middleware/withAuthorizer";
 import { NextApiResponse } from "next";
 import { GetApplicantById } from "../../../../utils/applicants/getApplicantById";
 import InputValidation from "../../../../utils/inputValidation";
+import DeleteApplicant from "../../../../utils/applicants/deleteApplicant";
 import UpdateApplicant from "../../../../utils/applicants/updateApplicant";
 const handler = async (req: CustomRequest, res: NextApiResponse) => {
   const user: DynamoUser = req.user;
@@ -35,7 +36,7 @@ const handler = async (req: CustomRequest, res: NextApiResponse) => {
       const update_applicant_input: UpdateApplicantInput = {
         org_id: user.org_id,
         applicant_id: applicant_id as string,
-        updated_applicant: body.updated_applicant,
+        new_applicant_values: body.new_applicant_values,
       };
 
       try {
@@ -53,20 +54,19 @@ const handler = async (req: CustomRequest, res: NextApiResponse) => {
     }
   }
 
-  //   if (method === "DELETE") {
-  //     try {
-  //       const delete_opening_input = {
-  //         org_id: user.org_id,
-  //         opening_id: opening_id,
-  //       };
-  //       await DeleteOpening(delete_opening_input);
-  //       return res.status(200).json({ message: "Opening deleted" });
-  //     } catch (error) {
-  //       return res
-  //         .status(500)
-  //         .json({ message: `Unable to delete your opening ${error}` });
-  //     }
-  //   }
+  if (method === "DELETE") {
+    try {
+      await DeleteApplicant({
+        org_id: user.org_id,
+        applicant_id: applicant_id as string,
+      });
+      return res.status(200).json({ message: "Applicant deleted!" });
+    } catch (error) {
+      return res
+        .status(500)
+        .json({ message: `Unable to delete applicant - ${error}` });
+    }
+  }
   return res.status(405).json({ message: "Not Allowed" });
 };
 

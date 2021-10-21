@@ -43,12 +43,10 @@ interface APICreateStageInput {
  * @param stage_id - ID of the stage you want to return
  */
 interface APIGetStageInput {
-  opening_id: string;
   stage_id: string;
 }
 
 interface APIGetStageURLInput {
-  opening_id: string;
   stage_id: string;
 }
 /**

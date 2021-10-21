@@ -6,13 +6,13 @@ const { DYNAMO_TABLE_NAME } = process.env;
 
 export async function CreateOrg({ org_id, GSI1SK, user }: CreateOrgInput) {
   const now = GetCurrentTime("iso");
-  // TODO add created by with user
   const new_org = {
     PK: `ORG#${org_id.toLowerCase()}`,
     SK: `ORG`,
     org_id: org_id, // plutomi - Cannot be changed
     entity_type: "ORG",
     created_at: now,
+    created_by: user,
     GSI1PK: `ORG`, // Allows for 'get all orgs' query
     // but cannot do get org by specific name as there might be duplicates
     GSI1SK: GSI1SK, // Actual org name ie: Plutomi Inc - Can be changed!
@@ -24,24 +24,7 @@ export async function CreateOrg({ org_id, GSI1SK, user }: CreateOrgInput) {
     ConditionExpression: "attribute_not_exists(PK)",
   };
 
-  // TODO JOIN ORG AS A TRANSACTION!!!
-  // try {
-  //   await Dynamo.send(new PutCommand(params));
 
-  //   try {
-  //     await JoinOrg(user_info.user_id, org_id);
-  //   } catch (error) {
-  //     // TODO handle re-trying to join if possible
-  //     // Delete the org and try again, or do a transacrt write
-  //     // Create & Join org
-  //     throw new Error(
-  //       `We were able to create your organization, however you were unable to be added to it. ${error}`
-  //     );
-  //   }
-  //   return new_org;
-  // } catch (error) {
-  //   throw new Error(error);
-  // }
 
   try {
     await Dynamo.send(new PutCommand(params));
