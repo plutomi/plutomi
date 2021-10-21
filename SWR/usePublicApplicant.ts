@@ -1,7 +1,6 @@
 // Retrieves a specific opening by ID
 import axios from "axios";
 import useSWR from "swr";
-import ApplicantsService from "../adapters/ApplicantsService";
 import PublicInfoService from "../adapters/PublicInfoService";
 const fetcher = (url: string) => axios.get(url).then((res) => res.data);
 

@@ -3,7 +3,7 @@
 import withCleanOrgName from "../../../../../../../middleware/withCleanOrgName";
 import { NextApiResponse } from "next";
 import CleanStage from "../../../../../../../utils/clean/cleanStage";
-import { GetStage } from "../../../../../../../utils/stages/GetStage";
+import { GetStage } from "../../../../../../../utils/stages/getStage";
 const handler = async (req: CustomRequest, res: NextApiResponse) => {
   const { method, query } = req;
   const { org_id, opening_id, stage_id } = query;

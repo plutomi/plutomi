@@ -8,7 +8,7 @@
     "start": "next start",
     "lint": "next lint",
     "test": "next dev & jest --coverage -i --silent=false tests/ALL.spec.ts ",
-    "deploy": "NODE_ENV=production && serverless --debug"
+    "deploy": "set NODE_ENV=production && serverless --debug"
   },
   "dependencies": {
     "@headlessui/react": "^1.4.0",

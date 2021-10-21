@@ -5,7 +5,7 @@ import {
 import { Dynamo } from "../../libs/ddbDocClient";
 import { GetCurrentTime } from "../time";
 import { nanoid } from "nanoid";
-import { GetStage } from "../stages/GetStage";
+import { GetStage } from "../stages/getStage";
 import UpdateStage from "../stages/updateStage";
 
 const { DYNAMO_TABLE_NAME } = process.env;

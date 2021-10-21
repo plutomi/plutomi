@@ -1,4 +1,4 @@
-import { GetStage } from "../.././../../utils/stages/GetStage";
+import { GetStage } from "../.././../../utils/stages/getStage";
 import withAuthorizer from "../.././../../middleware/withAuthorizer";
 import { NextApiResponse } from "next";
 import InputValidation from "../.././../../utils/inputValidation";

@@ -7,7 +7,6 @@ import CustomEditableAction from "./CustomEditableSave";
 import useStore from "../../utils/store";
 import { useRouter } from "next/router";
 import { mutate } from "swr";
-import axios from "axios";
 import ClickToCopy from "../ClickToCopy";
 import delay from "delay";
 import useApplicantById from "../../SWR/useApplicantById";
