@@ -74,12 +74,14 @@ export default function OpeningList() {
                         />
                         Location
                       </p>
-                      <p className="mt-2 flex items-center text-lg text-normal sm:mt-0 sm:ml-6">
-                        <ClickToCopy
-                          showText={"Application Link"}
-                          copyText={`${process.env.NEXT_PUBLIC_NEXTAUTH_URL}/${user?.org_id}/${opening?.opening_id}/apply`}
-                        />
-                      </p>
+                      {opening?.is_public ? (
+                        <p className="mt-2 flex items-center text-lg text-normal sm:mt-0 sm:ml-6">
+                          <ClickToCopy
+                            showText={"Application Link"}
+                            copyText={`${process.env.NEXT_PUBLIC_NEXTAUTH_URL}/${user?.org_id}/${opening?.opening_id}/apply`}
+                          />
+                        </p>
+                      ) : null}
                     </div>
                     <div className="mt-2 flex items-center text-md text-normal sm:mt-0">
                       <CalendarIcon
