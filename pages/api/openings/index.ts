@@ -10,7 +10,10 @@ const handler = async (req: CustomRequest, res: NextApiResponse) => {
   const { GSI1SK }: APICreateOpeningInput = body;
 
   if (method === "POST") {
+    console.log("In post");
     if (user.org_id === "NO_ORG_ASSIGNED") {
+      console.log("no org");
+
       return res.status(403).json({
         message: "Please create an organization before creating an opening",
       });
@@ -24,7 +27,9 @@ const handler = async (req: CustomRequest, res: NextApiResponse) => {
       try {
         InputValidation(create_opening_input);
       } catch (error) {
-        return res.status(400).json({ message: `${error.message}` });
+        return res
+          .status(400)
+          .json({ message: `An error occurred: ${error.message}` });
       }
 
       await CreateOpening(create_opening_input);
@@ -38,7 +43,6 @@ const handler = async (req: CustomRequest, res: NextApiResponse) => {
   }
 
   if (method === "GET") {
-
     try {
       const all_openings = await GetAllOpeningsInOrg(user.org_id);
       return res.status(200).json(all_openings);

@@ -9,20 +9,14 @@ export default class InvitesService {
     return data;
   }
 
-  static async acceptInvite({ invite_id, org_id }) {
-    const body = {
-      org_id: org_id,
-    };
-    const { data } = await axios.post(`/api/invites/${invite_id}`, body);
+  static async acceptInvite({ invite_id }) {
+    const { data } = await axios.post(`/api/invites/${invite_id}`);
 
     return data;
   }
 
   static async rejectInvite({ invite_id }) {
-    const body = {
-      invite_id: invite_id,
-    };
-    const { data } = await axios.post(`/api/invites/reject`, body);
+    const { data } = await axios.delete(`/api/invites/${invite_id}`);
     return data;
   }
 

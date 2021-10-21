@@ -49,7 +49,7 @@ export default function Dashboard() {
 
     try {
       const { message } = await OrgsService.createOrg({
-        org_name: GSI1SK,
+        GSI1SK: GSI1SK,
         org_id: org_id,
       });
       alert(message);

@@ -11,13 +11,13 @@ export async function GetAllUserInvites(user_id: string) {
       ":pk": `USER#${user_id}`,
       ":sk": "ORG_INVITE",
     },
-    ScanIndexForward: false,
   };
 
   try {
     const response = await Dynamo.send(new QueryCommand(params));
     return response.Items;
   } catch (error) {
+    console.error(error);
     throw new Error(error);
   }
 }

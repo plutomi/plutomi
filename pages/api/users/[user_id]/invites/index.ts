@@ -1,4 +1,4 @@
-import { GetAllUserInvites } from "../../../../../utils/invites/getAllUserInvites";
+import { GetAllUserInvites } from "../../../../../utils/invites/getAllOrgInvites";
 import withAuthorizer from "../../../../../middleware/withAuthorizer";
 import { NextApiResponse } from "next";
 

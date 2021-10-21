@@ -1,4 +1,4 @@
-import { GetAllUserInvites } from "./getAllUserInvites";
+import { GetAllUserInvites } from "./getAllOrgInvites";
 import DeleteOrgInvite from "./deleteOrgInvite";
 import { GetOrgInvite } from "./getOrgInvite";
 import { GetCurrentTime } from "../time";
@@ -17,6 +17,7 @@ export default async function AcceptOrgInvite({ user_id, invite_id }) {
       DeleteOrgInvite({ user_id, invite_id });
       throw new Error("Invite has expired");
     }
+    DeleteOrgInvite({ user_id, invite_id });
 
     return;
   } catch (error) {

@@ -1,7 +1,7 @@
 import { PutCommand, PutCommandInput } from "@aws-sdk/lib-dynamodb";
 import { GetUserByEmail } from "../users/getUserByEmail";
 import { Dynamo } from "../../libs/ddbDocClient";
-import { GetAllUserInvites } from "./getAllUserInvites";
+import { GetAllUserInvites } from "./getAllOrgInvites";
 import { CreateUser } from "../users/createUser";
 import { GetCurrentTime } from "../time";
 import { nanoid } from "nanoid";
@@ -11,7 +11,7 @@ const { DYNAMO_TABLE_NAME } = process.env;
 export default async function CreateOrgInvite({
   org_id,
   expires_at,
-  invited_by,
+  created_by,
   recipient_email,
   org_name,
 }: CreateOrgInviteInput) {
@@ -55,7 +55,7 @@ export default async function CreateOrgInvite({
       SK: `ORG_INVITE#${invite_id}`, // Allows sorting, and incase two get created in the same millisecond
       org_id: org_id,
       org_name: org_name, // using org_name here because GSI1SK is taken obv
-      invited_by: invited_by,
+      created_by: created_by,
       entity_type: "ORG_INVITE",
       created_at: now,
       expires_at: expires_at,

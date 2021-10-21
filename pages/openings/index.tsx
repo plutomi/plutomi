@@ -60,7 +60,7 @@ export default function Openings() {
       });
     } catch (error) {
       console.error(error);
-      alert(error.response);
+      alert(error.response.data.message);
     }
 
     mutate(OpeningsService.getAllOpeningsURL()); // Get all openings

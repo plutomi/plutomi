@@ -1,13 +1,14 @@
 import axios from "../axios/axios";
 
 export default class OrgsService {
-  static async createOrg({ org_name, org_id }) {
+  static async createOrg({ GSI1SK, org_id }) {
     const body = {
-      org_name: org_name,
+      GSI1SK: GSI1SK,
       org_id: org_id,
     };
 
     const { data } = await axios.post(`/api/orgs`, body);
+    console.log("Data", data);
     return data;
   }
 

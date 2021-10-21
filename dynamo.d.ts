@@ -65,7 +65,7 @@ interface DynamoOrgInvite {
   // PK: `USER#${user.user_id}`;
   // SK: `ORG_INVITE#${now}#INVITE_ID#${invite_id}`; // Allows sorting, and incase two get created in the same millisecond
   // org_id: org_id;
-  // invited_by: invited_by;
+  // created_by: created_by;
   // entity_type: "ORG_INVITE";
   // created_at: now;
   // expires_at: expires_at;
@@ -76,7 +76,7 @@ interface DynamoOrgInvite {
   PK: string;
   SK: string;
   org_id: string;
-  invited_by: DynamoUser;
+  created_by: DynamoUser;
   entity_type: "ORG_INVITE";
   created_at: string;
   expires_at: string;

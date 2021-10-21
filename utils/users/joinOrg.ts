@@ -24,8 +24,7 @@ export async function JoinOrg({ user_id, org_id }: JoinOrgInput) {
 
   try {
     await Dynamo.send(new UpdateCommand(params));
-    const org = await GetOrg(org_id);
-    return org;
+    return;
   } catch (error) {
     throw new Error(error);
   }

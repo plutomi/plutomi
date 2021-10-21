@@ -21,8 +21,6 @@ export default function InvitesContent() {
     try {
       const { message } = await InvitesService.acceptInvite({
         invite_id: invite.invite_id,
-        timestamp: invite.created_at,
-        org_id: invite.org_id,
       });
       alert(message);
       router.push("/dashboard");
@@ -40,7 +38,6 @@ export default function InvitesContent() {
     try {
       const { message } = await InvitesService.rejectInvite({
         invite_id: invite.invite_id,
-        timestamp: invite.created_at,
       });
 
       alert(message);

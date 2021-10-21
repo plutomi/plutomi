@@ -4,7 +4,7 @@ import withCleanOrgName from "../../../middleware/withCleanOrgName";
 import InputValidation from "../../../utils/inputValidation";
 import withAuthorizer from "../../../middleware/withAuthorizer";
 import { JoinOrg } from "../../../utils/users/joinOrg";
-import { GetAllUserInvites } from "../../../utils/invites/getAllUserInvites";
+import { GetAllUserInvites } from "../../../utils/invites/getAllOrgInvites";
 const handler = async (req: CustomRequest, res: NextApiResponse) => {
   const { body, method } = req;
   const { GSI1SK, org_id }: APICreateOrgInput = body;
@@ -58,6 +58,8 @@ const handler = async (req: CustomRequest, res: NextApiResponse) => {
           user_id: user.user_id,
           org_id: org_id,
         };
+        console.log("Join or ginput", join_org_input);
+
         await JoinOrg(join_org_input);
         return res.status(201).json({ message: "Org created!", org: org });
       } catch (error) {

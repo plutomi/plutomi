@@ -8,7 +8,7 @@ export default async function DeleteOrgInvite({ user_id, invite_id }) {
       TableName: DYNAMO_TABLE_NAME,
       Key: {
         PK: `USER#${user_id}`,
-        SK: `ORG_INVITE#${invite_id}`, // Allows sorting, and incase two get created in the same millisecond
+        SK: `ORG_INVITE#${invite_id}`,
       },
     };
 

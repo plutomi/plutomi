@@ -5,23 +5,30 @@ import { JoinOrg } from "../../../../utils/users/joinOrg";
 import { NextApiResponse } from "next";
 import DeleteOrgInvite from "../../../../utils/invites/deleteOrgInvite";
 import withCleanOrgName from "../../../../middleware/withCleanOrgName";
+import { GetOrgInvite } from "../../../../utils/invites/getOrgInvite";
 const handler = async (req: CustomRequest, res: NextApiResponse) => {
   const { method, query } = req;
   const user: DynamoUser = req.user;
   const { invite_id } = query;
 
-  const accept_org_invite = {
+  // TODO trycatch
+  const invite = await GetOrgInvite({
     user_id: user.user_id,
     invite_id: invite_id as string,
+  });
+
+  const accept_org_invite_input = {
+    user_id: user.user_id,
+    invite_id: invite.invite_id,
   };
 
   const join_org_input: JoinOrgInput = {
     user_id: user.user_id,
-    org_id: user?.org_id,
+    org_id: invite.org_id,
   };
 
   try {
-    InputValidation(accept_org_invite);
+    InputValidation(accept_org_invite_input);
     InputValidation(join_org_input);
   } catch (error) {
     return res.status(400).json({ message: `${error.message}` });
@@ -37,12 +44,12 @@ const handler = async (req: CustomRequest, res: NextApiResponse) => {
 
     try {
       // TODO promise all
-      await AcceptOrgInvite(accept_org_invite);
+      await AcceptOrgInvite(accept_org_invite_input);
       try {
-        const org = await JoinOrg(join_org_input);
+        await JoinOrg(join_org_input);
         return res
           .status(200)
-          .json({ message: `You've joined the ${org.GSI1SK} org!` });
+          .json({ message: `You've joined the ${invite.org_name} org!` });
       } catch (error) {
         // TODO add error logger
         return res
@@ -57,19 +64,19 @@ const handler = async (req: CustomRequest, res: NextApiResponse) => {
   }
 
   if (method === "DELETE") {
-    const delete_org_invite = {
+    const delete_org_invite_input = {
       user_id: user.user_id,
       invite_id: invite_id as string,
     };
 
     try {
-      InputValidation(delete_org_invite);
+      InputValidation(delete_org_invite_input);
     } catch (error) {
       return res.status(400).json({ message: `${error.message}` });
     }
 
     try {
-      await DeleteOrgInvite(delete_org_invite);
+      await DeleteOrgInvite(delete_org_invite_input);
       return res.status(200).json({ message: "Invite rejected!" });
     } catch (error) {
       return res

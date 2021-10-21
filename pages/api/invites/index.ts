@@ -27,7 +27,7 @@ const handler = async (req: CustomRequest, res: NextApiResponse) => {
   const new_org_invite: CreateOrgInviteInput = {
     claimed: false,
     org_name: org.GSI1SK, // For the client they can see the name instead of ID
-    invited_by: user, // TODO reduce this to just name & email
+    created_by: user, // TODO reduce this to just name & email
     org_id: user.org_id,
     recipient_email: recipient_email,
     expires_at: expires_at as string,
@@ -50,7 +50,7 @@ const handler = async (req: CustomRequest, res: NextApiResponse) => {
     }
 
     const new_org_invite_email: SendOrgInviteInput = {
-      invited_by: user,
+      created_by: user,
       org_name: org.GSI1SK,
       recipient_email: recipient_email,
     };
@@ -58,7 +58,9 @@ const handler = async (req: CustomRequest, res: NextApiResponse) => {
       await CreateOrgInvite(new_org_invite);
       try {
         await SendOrgInvite(new_org_invite_email);
-        return res.status(201).json({ message: `User invited!` });
+        return res
+          .status(201)
+          .json({ message: `Invite sent to '${recipient_email}'` });
       } catch (error) {
         return res.status(500).json({
           message: `The invite was created, but we were not able to send an email to the user. They log in and accept their invite at https://plutomi.com/invites - ${error}`,
