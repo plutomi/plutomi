@@ -35,7 +35,7 @@ export default function StageReorderColumn() {
 
     // Refresh stage list
     mutate(
-      StagesService.getAllStagesInOpeningURL({
+      OpeningsService.getAllStagesInOpeningURL({
         opening_id: opening_id as string,
       })
     );
@@ -69,7 +69,6 @@ export default function StageReorderColumn() {
 
     mutate(
       StagesService.getStageURL({
-        opening_id: opening_id as string,
         stage_id: stage_id as string,
       })
     );
@@ -142,7 +141,7 @@ export default function StageReorderColumn() {
 
     // Refresh the stages
     mutate(
-      StagesService.getAllStagesInOpeningURL({
+      OpeningsService.getAllStagesInOpeningURL({
         opening_id: opening_id as string,
       })
     );

@@ -1,18 +1,16 @@
-import { CreateStageQuestion } from "../../../../../utils/questions/createStageQuestion";
-import withAuthorizer from "../../../../../middleware/withAuthorizer";
+import { CreateStageQuestion } from "../../../utils/questions/createStageQuestion";
+import withAuthorizer from "../../../middleware/withAuthorizer";
 import { NextApiResponse } from "next";
 
 const handler = async (req: CustomRequest, res: NextApiResponse) => {
-  const { body, method, query } = req;
+  const { body, method } = req;
   const user: DynamoUser = req.user;
-  const { GSI1SK, question_description }: APICreateQuestionInput = body;
-  const { stage_id, opening_id } = query;
+  const { GSI1SK, question_description, stage_id } = body;
 
   if (method === "POST") {
-    const create_stage_question_input: CreateStageQuestionInput = {
+    const create_stage_question_input = {
       org_id: user.org_id,
-      opening_id: opening_id as string,
-      stage_id: stage_id as string,
+      stage_id: stage_id,
       GSI1SK: GSI1SK,
       question_description: question_description,
     };

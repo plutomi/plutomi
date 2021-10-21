@@ -17,7 +17,6 @@ export default function ApplicationContent() {
   const { questions, isQuestionsLoading, isQuestionsError } =
     useAllStageQuestions(
       org_id as string,
-      applicant?.current_opening_id,
       applicant?.current_stage_id
     );
   if (isQuestionsLoading) {
@@ -86,7 +85,7 @@ export default function ApplicationContent() {
     <div>
       <ul className="my-4 space-y-8">
         {questions.map((question: DynamoStageQuestion) => (
-          <li key={question.question_id} className="space-y-1 mb-4">
+          <li key={question?.question_id} className="space-y-1 mb-4">
             <label
               htmlFor="email"
               className="block text-lg font-medium text-dark"

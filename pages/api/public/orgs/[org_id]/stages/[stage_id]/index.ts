@@ -1,21 +1,21 @@
 // Returns some public info about an opening
 // Such as the opening name, description, and stage order
-import withCleanOrgName from "../../../../../../../../../middleware/withCleanOrgName";
+import withCleanOrgName from "../../../../../../../middleware/withCleanOrgName";
 import { NextApiResponse } from "next";
-import CleanStage from "../../../../../../../../../utils/clean/cleanStage";
-import { GetStageById } from "../../../../../../../../../utils/stages/getStageById";
+import CleanStage from "../../../../../../../utils/clean/cleanStage";
+import { GetStage } from "../../../../../../../utils/stages/GetStage";
 const handler = async (req: CustomRequest, res: NextApiResponse) => {
   const { method, query } = req;
   const { org_id, opening_id, stage_id } = query;
 
-  const get_stage_input: GetStageByIdInput = {
+  const get_stage_input: GetStageInput = {
     org_id: org_id as string,
     stage_id: stage_id as string,
   };
 
   if (method === "GET") {
     try {
-      const stage = await GetStageById(get_stage_input);
+      const stage = await GetStage(get_stage_input);
       if (!stage) {
         return res.status(404).json({ message: "Stage not found" });
       }

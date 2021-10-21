@@ -42,4 +42,18 @@ export default class OpeningsService {
     const { data } = await axios.put(this.getOpeningURL({ opening_id }), body);
     return data;
   }
+
+  // TODO should this be moved to openings?
+  static getAllStagesInOpeningURL({ opening_id }: APIGetAllStagesInOpeningURL) {
+    return `/api/openings/${opening_id}/stages`;
+  }
+
+  static async getAllStagesInOpening({
+    opening_id,
+  }: APIGetAllStagesInOpeningInput) {
+    const { data } = await axios.get(
+      this.getAllStagesInOpeningURL({ opening_id })
+    );
+    return data;
+  }
 }

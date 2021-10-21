@@ -1,20 +1,20 @@
 import { QueryCommand, QueryCommandInput } from "@aws-sdk/lib-dynamodb";
 import { Dynamo } from "../../libs/ddbDocClient";
-import { GetStageById } from "../stages/getStageById";
+import { GetStage } from "../stages/GetStage";
 
 const { DYNAMO_TABLE_NAME } = process.env;
 
-export async function GetAllQuestionsInStage({ org_id, opening_id, stage_id }) {
-  const stage = await GetStageById({ org_id, opening_id, stage_id });
+export async function GetAllQuestionsInStage({ org_id, stage_id }) {
+  const stage = await GetStage({ org_id, stage_id });
   const { question_order } = stage;
+
   const params: QueryCommandInput = {
+    IndexName: "GSI1",
     TableName: DYNAMO_TABLE_NAME,
-    KeyConditionExpression: "PK = :pk AND begins_with(SK, :sk)",
+    KeyConditionExpression: "GSI1PK = :GSI1PK",
     ExpressionAttributeValues: {
-      ":pk": `ORG#${org_id}#OPENING#${opening_id}#STAGE#${stage_id}`,
-      ":sk": "STAGE_QUESTION#",
+      ":GSI1PK": `ORG#${org_id}#STAGE#${stage_id}#QUESTIONS`,
     },
-    ScanIndexForward: false,
   };
 
   try {
@@ -27,6 +27,7 @@ export async function GetAllQuestionsInStage({ org_id, opening_id, stage_id }) {
 
     return result;
   } catch (error) {
+    console.error(error);
     throw new Error(error);
   }
 }

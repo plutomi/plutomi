@@ -75,7 +75,7 @@ export default function StageSettings() {
 
     // Refresh the stage list
     mutate(
-      StagesService.getAllStagesInOpeningURL({
+      OpeningsService.getAllStagesInOpeningURL({
         opening_id: opening_id as string,
       })
     );

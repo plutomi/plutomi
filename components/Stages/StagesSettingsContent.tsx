@@ -15,18 +15,17 @@ import useAllStagesInOpening from "../../SWR/useAllStagesInOpening";
 import useOpeningById from "../../SWR/useOpeningById";
 import useStageById from "../../SWR/useStageById";
 import StagesService from "../../adapters/StagesService";
+import QuestionsService from "../../adapters/QuestionsService";
 export default function StageSettingsContent() {
   const createQuestion = async () => {
-    const body: APICreateQuestionInput = {
-      GSI1SK: questionModal.GSI1SK,
-      question_description: questionModal.question_description,
-    };
     try {
-      const { data } = await axios.post(
-        `/api/openings/${opening_id}/stages/${stage_id}/questions`,
-        body
-      );
-      alert(data.message);
+      const { message } = await QuestionsService.createQuestion({
+        GSI1SK: questionModal.GSI1SK,
+        stage_id: stage_id,
+        question_description: questionModal.question_description,
+      });
+
+      alert(message);
       setQuestionModal({
         is_modal_open: false,
         modal_mode: "CREATE",
@@ -47,15 +46,13 @@ export default function StageSettingsContent() {
     );
 
     // Refresh the question list
-    mutate(
-      `/api/public/orgs/${user.org_id}/openings/${opening_id}/stages/${stage_id}/questions`
-    );
+    mutate(StagesService.getAllQuestionsInStageURL({ stage_id }));
   };
 
   const updateQuestion = async () => {
     try {
       const question = questions.find(
-        (question) => question.question_id == questionModal.question_id
+        (question) => question?.question_id == questionModal.question_id
       );
 
       // Get the difference between the question returned from SWR
@@ -67,15 +64,11 @@ export default function StageSettingsContent() {
       delete diff["modal_mode"];
 
       console.log(`Difference between the two objects`, diff);
-      const body = {
-        updated_question: diff,
-      };
 
-      const { data } = await axios.put(
-        `/api/openings/${opening_id}/stages/${stage_id}/questions/${questionModal.question_id}`,
-        body
-      );
-      alert(data.message);
+      const { message } = await QuestionsService.updateQuestion({
+        question_id: questionModal.question_id,
+        new_question_values: diff,
+      });
       setQuestionModal({
         is_modal_open: false,
         modal_mode: "CREATE",
@@ -83,6 +76,8 @@ export default function StageSettingsContent() {
         question_description: "",
         GSI1SK: "",
       });
+
+      alert(message);
     } catch (error) {
       alert(error.response.data.message);
     }
@@ -95,9 +90,7 @@ export default function StageSettingsContent() {
     );
 
     // Refresh the question list
-    mutate(
-      `/api/public/orgs/${user.org_id}/openings/${opening_id}/stages/${stage_id}/questions`
-    );
+    mutate(StagesService.getAllQuestionsInStageURL({ stage_id }));
   };
 
   const router = useRouter();
@@ -123,7 +116,7 @@ export default function StageSettingsContent() {
   );
 
   const { questions, isQuestionsLoading, isQuestionsError } =
-    useAllStageQuestions(user?.org_id, opening?.opening_id, stage?.stage_id);
+    useAllStageQuestions(user?.org_id, stage?.stage_id);
 
   const questionModal = useStore((state: PlutomiState) => state.questionModal);
   const setQuestionModal = useStore(

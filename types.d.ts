@@ -44,14 +44,13 @@ interface ValidNavigation {
     | "PLACEHOLDER";
 }
 
-interface GetStageByIdInput {
+interface GetStageInput {
   org_id: string;
   stage_id: string;
 }
 
 interface CreateStageQuestionInput {
   org_id: string;
-  opening_id: string;
   stage_id: string;
   GSI1SK: string;
   question_description: string;
@@ -324,10 +323,8 @@ interface UpdateApplicantInput {
 
 interface UpdateQuestionInput {
   org_id: string;
-  opening_id: string;
-  stage_id: string;
   question_id: string;
-  updated_question: DynamoStageQuestion;
+  new_question_values: DynamoStageQuestion;
 }
 
 interface UpdateStageInput {
@@ -349,7 +346,6 @@ interface AllQuestionsByStageIDInput {
 
 interface DeleteQuestionInput {
   org_id: string;
-  opening_id: string;
   stage_id: string;
   question_id: string;
 }

@@ -2,6 +2,7 @@
 import axios from "axios";
 import useSWR from "swr";
 import StagesService from "../adapters/StagesService";
+import OpeningsService from "../adapters/OpeningsService";
 const fetcher = (url: string) => axios.get(url).then((res) => res.data);
 
 /**
@@ -17,7 +18,7 @@ function useAllStagesInOpening(
 
   const { data, error } = useSWR(
     shouldFetch &&
-      StagesService.getAllStagesInOpeningURL({
+      OpeningsService.getAllStagesInOpeningURL({
         opening_id: opening_id as string,
       }),
     fetcher

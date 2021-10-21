@@ -87,9 +87,9 @@ interface DynamoOrgInvite {
 
 interface DynamoStageQuestion {
   // PK: `ORG#${org_id}#OPENING#${opening_id}#STAGE#${stage_id}`,
-  // SK: `STAGE_QUESTION#${stage_question_id}`,
+  // SK: `STAGE_QUESTION#${question_id}`,
   // question_description: question_description,
-  //     question_id: stage_question_id,
+  //     question_id: question_id,
   // entity_type: "STAGE_QUESTION",
   // created_at: now,
   // GSI1PK: `ORG#${org_id}#QUESTIONS`,

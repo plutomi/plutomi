@@ -1,4 +1,4 @@
-import { GetStageById } from "../.././../../utils/stages/getStageById";
+import { GetStage } from "../.././../../utils/stages/GetStage";
 import withAuthorizer from "../.././../../middleware/withAuthorizer";
 import { NextApiResponse } from "next";
 import InputValidation from "../.././../../utils/inputValidation";
@@ -12,13 +12,13 @@ const handler = async (req: CustomRequest, res: NextApiResponse) => {
   const { opening_id } = body;
   // Get a single stage in an opening
   if (method === "GET") {
-    const get_stage_input: GetStageByIdInput = {
+    const get_stage_input: GetStageInput = {
       org_id: user.org_id,
       stage_id: stage_id as string,
     };
 
     try {
-      const stage = await GetStageById(get_stage_input);
+      const stage = await GetStage(get_stage_input);
       if (!stage) {
         return res.status(404).json({ message: "Stage not found" });
       }

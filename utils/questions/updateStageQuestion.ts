@@ -4,12 +4,10 @@ const { DYNAMO_TABLE_NAME } = process.env;
 
 export default async function UpdateQuestion({
   org_id,
-  opening_id,
-  stage_id,
   question_id,
-  updated_question,
+  new_question_values,
 }) {
-      // TODO user the cleaning functions instead
+  // TODO user the cleaning functions instead
 
   const FORBIDDEN_KEYS = [
     "PK",
@@ -21,8 +19,7 @@ export default async function UpdateQuestion({
     "GSI1PK",
   ];
 
-  console.log("Incoming updated question", updated_question);
-  const incomingKeys = Object.keys(updated_question);
+  const incomingKeys = Object.keys(new_question_values);
   // TODO should this throw an error and
   // let the user know we can't update that key?
   // Maybe just return in the message that we weren't able to update those keys
@@ -34,19 +31,15 @@ export default async function UpdateQuestion({
 
   newKeys.forEach((key) => {
     newUpdateExpression.push(`${key} = :${key}`);
-    newAttributes[`:${key}`] = updated_question[key];
+    newAttributes[`:${key}`] = new_question_values[key];
   });
 
   const UpdatedExpression = `SET ${newUpdateExpression.join(", ").toString()}`;
 
-  console.log(`Updated expression`, UpdatedExpression);
-
-  console.log(`Attributes expression`, newAttributes);
-
   const params = {
     Key: {
-      PK: `ORG#${org_id}#OPENING#${opening_id}#STAGE#${stage_id}`,
-      SK: `STAGE_QUESTION#${question_id}`,
+      PK: `ORG#${org_id}#QUESTION#${question_id}`,
+      SK: `STAGE_QUESTION`,
     },
     UpdateExpression: UpdatedExpression,
     ExpressionAttributeValues: newAttributes,

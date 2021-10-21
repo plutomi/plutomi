@@ -137,7 +137,7 @@ export default function SignedInNav({ current }: ValidNavigation) {
                           <div className="   text-dark ">
                             Signed in as {user?.GSI1SK}
                           </div>
-                          <div className=" text-light">{user.user_email}</div>
+                          <div className=" text-light">{user?.user_email}</div>
                         </div>
 
                         {userNavigation.map((item) =>

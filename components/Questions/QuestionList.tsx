@@ -12,6 +12,7 @@ import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
 import useAllStageQuestions from "../../SWR/useAllStageQuestions";
 import Loader from "../Loader";
 import StagesService from "../../adapters/StagesService";
+import QuestionsService from "../../adapters/QuestionsService";
 export default function QuestionList() {
   const router = useRouter();
   const { opening_id, stage_id } = router.query;
@@ -29,7 +30,7 @@ export default function QuestionList() {
   );
 
   const { questions, isQuestionsLoading, isQuestionsError } =
-    useAllStageQuestions(user?.org_id, opening?.opening_id, stage?.stage_id);
+    useAllStageQuestions(user?.org_id, stage?.stage_id);
 
   const [new_questions, setNewQuestions] = useState(questions);
 
@@ -82,7 +83,7 @@ export default function QuestionList() {
     );
   };
 
-  const deleteQuestion = async (stage_question_id: string) => {
+  const deleteQuestion = async (question_id: string) => {
     if (
       !confirm(
         "Are you sure you want to delete this question? This action cannot be reversed!"
@@ -92,9 +93,10 @@ export default function QuestionList() {
     }
 
     try {
-      const { data } = await axios.delete(
-        `/api/openings/${opening_id}/stages/${stage_id}/questions/${stage_question_id}`
-      );
+      const { message } = await QuestionsService.deleteQuestion({
+        question_id,
+      });
+      alert(message);
     } catch (error) {
       alert(error.response.data);
     }
@@ -107,9 +109,7 @@ export default function QuestionList() {
     );
 
     // Refresh questions
-    mutate(
-      `/api/public/orgs/${user?.org_id}/openings/${opening_id}/stages/${stage_id}/questions`
-    );
+    mutate(StagesService.getAllQuestionsInStageURL({ stage_id }));
   };
 
   if (isQuestionsLoading) {
@@ -135,8 +135,8 @@ export default function QuestionList() {
                   (question: DynamoStageQuestion, index: number) => {
                     return (
                       <Draggable
-                        key={question.question_id}
-                        draggableId={question.question_id}
+                        key={question?.question_id}
+                        draggableId={question?.question_id}
                         index={index}
                         {...provided.droppableProps}
                       >

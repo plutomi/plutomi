@@ -20,7 +20,6 @@ function useStageById(
   const { data, error } = useSWR(
     shouldFetch &&
       StagesService.getStageURL({
-        opening_id: opening_id as string,
         stage_id: stage_id as string,
       }),
     fetcher

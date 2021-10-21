@@ -1,15 +1,16 @@
 import { NextApiResponse } from "next";
-import { GetAllQuestionsInStage } from "../../../../../../../../utils/questions/getAllQuestionsInStage";
-import withCleanOrgName from "../../../../../../../../middleware/withCleanOrgName";
+import { GetAllQuestionsInStage } from "../../../../utils/questions/getAllQuestionsInStage";
+import withCleanOrgName from "../../../../middleware/withCleanOrgName";
+import withAuthorizer from "../../../../middleware/withAuthorizer";
 const handler = async (req: CustomRequest, res: NextApiResponse) => {
   const { method, query } = req;
-  const { org_id, opening_id, stage_id } = query;
+  const user: DynamoUser = req.user;
+  const { stage_id } = query;
 
   if (method === "GET") {
     try {
       const questions = await GetAllQuestionsInStage({
-        org_id,
-        opening_id,
+        org_id: user.org_id,
         stage_id,
       });
 
@@ -21,4 +22,4 @@ const handler = async (req: CustomRequest, res: NextApiResponse) => {
   return res.status(405).json({ message: "Not Allowed" });
 };
 
-export default withCleanOrgName(handler);
+export default withAuthorizer(withCleanOrgName(handler));

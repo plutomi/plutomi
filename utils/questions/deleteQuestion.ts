@@ -4,18 +4,14 @@ import {
 } from "@aws-sdk/lib-dynamodb";
 import { Dynamo } from "../../libs/ddbDocClient";
 const { DYNAMO_TABLE_NAME } = process.env;
-import { GetStageById } from "../stages/getStageById";
+import { GetStage } from "../stages/GetStage";
 import UpdateStage from "../stages/updateStage";
-
-export async function DeleteQuestionInStage({
-  org_id,
-  opening_id,
-  stage_id,
-  question_id,
-}: DeleteQuestionInput) {
+import { GetQuestion } from "./getQuestionById";
+export async function DeleteQuestion({ org_id, question_id }) {
   // Delete the question item & update the question order on the stage
   try {
-    let stage = await GetStageById({ org_id, opening_id, stage_id });
+    let question = await GetQuestion({ org_id, question_id });
+    let stage = await GetStage({ org_id, stage_id: question.stage_id });
     const deleted_question_index = stage.question_order.indexOf(question_id);
 
     // Update question order
@@ -27,8 +23,8 @@ export async function DeleteQuestionInStage({
           // Delete question
           Delete: {
             Key: {
-              PK: `ORG#${org_id}#OPENING#${opening_id}#STAGE#${stage_id}`,
-              SK: `STAGE_QUESTION#${question_id}`,
+              PK: `ORG#${org_id}#QUESTION#${question_id}`,
+              SK: `STAGE_QUESTION`,
             },
             TableName: DYNAMO_TABLE_NAME,
           },
@@ -37,7 +33,7 @@ export async function DeleteQuestionInStage({
           // Update Question Order
           Update: {
             Key: {
-              PK: `ORG#${org_id}#OPENING#${opening_id}#STAGE#${stage_id}`,
+              PK: `ORG#${org_id}#STAGE#${stage.stage_id}`,
               SK: `STAGE`,
             },
             TableName: DYNAMO_TABLE_NAME,
@@ -55,6 +51,7 @@ export async function DeleteQuestionInStage({
 
       return;
     } catch (error) {
+      console.error(error);
       throw new Error(error);
     }
   } catch (error) {
