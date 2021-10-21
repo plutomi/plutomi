@@ -40,5 +40,18 @@ export default class ApplicantsService {
     return data;
   }
 
-
+  static answerQuestionsURL({ org_id, applicant_id }) {
+    return `/api/public/orgs/${org_id}/applicants/${applicant_id}/answer`;
+  }
+  static async answerQuestions({ org_id, applicant_id, responses }) {
+    const body = {
+      applicant_id: applicant_id,
+      responses: responses,
+    };
+    const { data } = await axios.post(
+      this.answerQuestionsURL({ org_id, applicant_id }),
+      body
+    );
+    return data;
+  }
 }

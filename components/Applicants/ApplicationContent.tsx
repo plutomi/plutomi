@@ -5,6 +5,7 @@ import { useState } from "react";
 import useAllStageQuestions from "../../SWR/useAllStageQuestions";
 import { nanoid } from "nanoid";
 import axios from "axios";
+import ApplicantsService from "../../adapters/ApplicantsService";
 export default function ApplicationContent() {
   const [responses, setResponses] = useState([]);
 
@@ -15,10 +16,7 @@ export default function ApplicationContent() {
   );
 
   const { questions, isQuestionsLoading, isQuestionsError } =
-    useAllStageQuestions(
-      org_id as string,
-      applicant?.current_stage_id
-    );
+    useAllStageQuestions(org_id as string, applicant?.current_stage_id);
   if (isQuestionsLoading) {
     return <Loader text="Loading questions..." />;
   }
@@ -66,16 +64,13 @@ export default function ApplicationContent() {
   };
 
   const handleSubmit = async () => {
-    const body = {
-      responses: responses,
-    };
-
     try {
-      const { status, data } = await axios.post(
-        `/api/public/orgs/${org_id}/applicants/${applicant_id}/response`,
-        body
-      );
-      alert(data.message);
+      const { message } = await ApplicantsService.answerQuestions({
+        org_id,
+        applicant_id,
+        responses,
+      });
+      alert(message);
     } catch (error) {
       alert(error.response.data.message);
     }

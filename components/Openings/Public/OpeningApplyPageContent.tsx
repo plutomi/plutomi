@@ -4,6 +4,7 @@ import usePublicOpeningById from "../../../SWR/usePublicOpeningById";
 import Loader from "../../Loader";
 import ApplicantInfoForm from "./ApplicantInfoForm";
 import axios from "axios";
+import ApplicantsService from "../../../adapters/ApplicantsService";
 export default function OpeningApplyPageContent() {
   const router = useRouter();
   const { org_id, opening_id } = router.query;
@@ -16,20 +17,9 @@ export default function OpeningApplyPageContent() {
     return <Loader text={"Loading..."} />;
   }
 
-  const applyForOpening = async (body: APICreateApplicantInput) => {
-    try {
-      const { data } = await axios.post(
-        `/api/public/orgs/${org_id}/openings/${opening_id}/applicants`,
-        body
-      );
-      alert(data.message);
-    } catch (error) {
-      alert(error.response.data.message);
-    }
-  };
   return (
     <div className="">
-      <ApplicantInfoForm applyForOpening={applyForOpening} />
+      <ApplicantInfoForm  />
     </div>
   );
 }

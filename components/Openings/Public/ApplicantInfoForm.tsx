@@ -1,12 +1,12 @@
 import { FormEvent, useState } from "react";
 import { Switch } from "@headlessui/react";
-import { first } from "lodash";
+import ApplicantsService from "../../../adapters/ApplicantsService";
 
 function classNames(...classes) {
   return classes.filter(Boolean).join(" ");
 }
 
-export default function ApplicantInfoForm({ applyForOpening }) {
+export default function ApplicantInfoForm() {
   const [agreed, setAgreed] = useState(false);
   const [first_name, setFirstName] = useState("");
   const [last_name, setLastName] = useState("");
@@ -20,12 +20,16 @@ export default function ApplicantInfoForm({ applyForOpening }) {
       return;
     }
 
-    const body: APICreateApplicantInput = {
-      first_name: first_name,
-      last_name: last_name,
-      email: email,
-    };
-    await applyForOpening(body);
+    try {
+      const { message } = await ApplicantsService.createApplicant({
+        first_name: first_name,
+        last_name: last_name,
+        email: email,
+      });
+      alert(message);
+    } catch (error) {
+      alert(error.response.data.message);
+    }
     setButtonText("Apply");
   };
   return (
