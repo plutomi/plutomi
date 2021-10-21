@@ -1,17 +1,14 @@
-import { CreateApplicant } from "../../../../../../../utils/applicants/createApplicant";
 import { NextApiResponse } from "next";
-import InputValidation from "../../../../../../../utils/inputValidation";
-import { GetOpening } from "../../../../../../../utils/openings/getOpeningById";
-import { GetOrg } from "../../../../../../../utils/orgs/getOrg";
-import withCleanOrgName from "../../../../../../../middleware/withCleanOrgName";
-import SendApplicantLink from "../../../../../../../utils/email/sendApplicantLink";
+import { GetOpening } from "../../../utils/openings/getOpeningById";
+import InputValidation from "../../../utils/inputValidation";
+import { CreateApplicant } from "../../../utils/applicants/createApplicant";
+import { GetOrg } from "../../../utils/orgs/getOrg";
+import SendApplicantLink from "../../../utils/email/sendApplicantLink";
 const handler = async (req: CustomRequest, res: NextApiResponse) => {
-  const { body, method, query } = req;
-  const { email, first_name, last_name, stage_id } = body;
+  const { method, body } = req;
+  const { org_id, opening_id, first_name, last_name, email } = body;
 
-  const { org_id, opening_id } = query;
-
-  // Create an applicant
+  // Creates an applicant
   if (method === "POST") {
     const opening = await GetOpening({ org_id, opening_id });
 
@@ -20,7 +17,7 @@ const handler = async (req: CustomRequest, res: NextApiResponse) => {
     }
     try {
       const create_applicant_input: CreateApplicantInput = {
-        org_id: org_id as string,
+        org_id: org_id,
         email: email,
         first_name: first_name,
         last_name: last_name,
@@ -58,4 +55,4 @@ const handler = async (req: CustomRequest, res: NextApiResponse) => {
   return res.status(405).json({ message: "Not Allowed" });
 };
 
-export default withCleanOrgName(handler);
+export default handler;

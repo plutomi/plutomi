@@ -5,8 +5,10 @@ import ApplicantsService from "../../../adapters/ApplicantsService";
 function classNames(...classes) {
   return classes.filter(Boolean).join(" ");
 }
-
+import { useRouter } from "next/router";
 export default function ApplicantInfoForm() {
+  const router = useRouter();
+  const { org_id, opening_id } = router.query;
   const [agreed, setAgreed] = useState(false);
   const [first_name, setFirstName] = useState("");
   const [last_name, setLastName] = useState("");
@@ -22,6 +24,8 @@ export default function ApplicantInfoForm() {
 
     try {
       const { message } = await ApplicantsService.createApplicant({
+        org_id: org_id as string,
+        opening_id: opening_id as string,
         first_name: first_name,
         last_name: last_name,
         email: email,
