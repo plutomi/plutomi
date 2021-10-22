@@ -1,10 +1,10 @@
 // pages/api/login.ts
-import { NextApiRequest, NextApiResponse } from "next";
-import { withIronSession, Session } from "next-iron-session";
+import { NextApiResponse } from "next";
+import { withIronSession } from "next-iron-session";
 import { GetUserByEmail } from "../../utils/users/getUserByEmail";
 import CleanUser from "../../utils/clean/cleanUser";
 import ironConfig from "../../middleware/iron-session-config";
-type NextIronRequest = NextApiRequest & { session: Session };
+import withSession from "../../middleware/withSession";
 
 async function handler(
   req: NextIronRequest,
@@ -15,4 +15,4 @@ async function handler(
   return res.status(200).json({ user: user });
 }
 
-export default withIronSession(handler, ironConfig);
+export default withSession(handler);

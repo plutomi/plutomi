@@ -1,10 +1,13 @@
 import { CreateStageQuestion } from "../../../utils/questions/createStageQuestion";
-import withAuthorizer from "../../../middleware/withAuthorizer";
 import { NextApiResponse } from "next";
+import withSession from "../../../middleware/withSession";
 
-const handler = async (req: CustomRequest, res: NextApiResponse) => {
+async function handler(
+  req: NextIronRequest,
+  res: NextApiResponse
+): Promise<void> {
+  const user = req.session.get("user");
   const { body, method } = req;
-  const user: DynamoUser = req.user;
   const { GSI1SK, question_description, stage_id } = body;
 
   if (method === "POST") {
@@ -27,6 +30,6 @@ const handler = async (req: CustomRequest, res: NextApiResponse) => {
   }
 
   return res.status(405).json({ message: "Not Allowed" });
-};
+}
 
-export default withAuthorizer(handler);
+export default withSession(handler);

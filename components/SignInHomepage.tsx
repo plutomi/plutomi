@@ -1,7 +1,7 @@
 // This is the same as the SignIn.tsx component
 // but with different styling so it fits in the home page
 // TODO probably better to refactor this as this is bad practice
-import AuthService from "../Adapters/AuthService";
+import AuthService from "../adapters/AuthService";
 import GoogleButton from "./Buttons/GoogleButton";
 import axios from "axios";
 import LoginEmail from "./EmailSigninInput";
@@ -49,15 +49,15 @@ export default function SignInHomepage({ callbackUrl }: CallbackUrl) {
         </div>
       ) : (
         <div className="space-y-4">
-          <p className=" text-lg text-normal text-center sm:max-w-8xl max-w-sm">
-            We can email you a magic link for a password-free sign in.
-          </p>
           <LoginEmail
             onChange={handleEmailChange}
             user_email={user_email}
             button_text={button_text}
             sendEmail={sendEmail}
-          />
+          />{" "}
+          <p className=" text-lg text-normal text-center sm:max-w-8xl max-w-sm">
+            We can email you a magic link for a password-free sign in.
+          </p>
         </div>
       )}
     </div>

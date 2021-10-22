@@ -414,3 +414,4 @@ interface ApplicantAnswer {
   question_description: string;
   question_response: string;
 }
+type NextIronRequest = NextApiRequest & { session: Session };

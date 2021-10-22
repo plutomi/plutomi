@@ -1,12 +1,16 @@
 import { GetAllOpeningsInOrg } from "../../../utils/openings/getAllOpeningsInOrg";
 import { CreateOpening } from "../../../utils/openings/createOpening";
-import withAuthorizer from "../../../middleware/withAuthorizer";
 import InputValidation from "../../../utils/inputValidation";
 import { NextApiResponse } from "next";
 
-const handler = async (req: CustomRequest, res: NextApiResponse) => {
+import withSession from "../../../middleware/withSession";
+
+async function handler(
+  req: NextIronRequest,
+  res: NextApiResponse
+): Promise<void> {
+  const user = req.session.get("user");
   const { body, method } = req;
-  const user: DynamoUser = req.user;
   const { GSI1SK }: APICreateOpeningInput = body;
 
   if (method === "POST") {
@@ -54,6 +58,6 @@ const handler = async (req: CustomRequest, res: NextApiResponse) => {
     }
   }
   return res.status(405).json({ message: "Not Allowed" });
-};
+}
 
-export default withAuthorizer(handler);
+export default withSession(handler);

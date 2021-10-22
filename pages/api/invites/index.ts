@@ -1,5 +1,4 @@
 import CreateOrgInvite from "../../../utils/invites/createOrgInvite";
-import withAuthorizer from "../../../middleware/withAuthorizer";
 import SendOrgInvite from "../../../utils/email/sendOrgInvite";
 import InputValidation from "../../../utils/inputValidation";
 import { GetPastOrFutureTime } from "../../../utils/time";
@@ -7,9 +6,14 @@ import { NextApiResponse } from "next";
 import withCleanOrgName from "../../../middleware/withCleanOrgName";
 import { GetOrg } from "../../../utils/orgs/getOrg";
 
-const handler = async (req: CustomRequest, res: NextApiResponse) => {
+import withSession from "../../../middleware/withSession";
+
+async function handler(
+  req: NextIronRequest,
+  res: NextApiResponse
+): Promise<void> {
+  const user = req.session.get("user");
   const { body, method } = req;
-  const user: DynamoUser = req.user;
 
   const { recipient_email }: APICreateOrgInviteInput = body;
 
@@ -71,6 +75,6 @@ const handler = async (req: CustomRequest, res: NextApiResponse) => {
     }
   }
   return res.status(405).json({ message: "Not Allowed" });
-};
+}
 
-export default withAuthorizer(withCleanOrgName(handler));
+export default withSession(withCleanOrgName(handler));

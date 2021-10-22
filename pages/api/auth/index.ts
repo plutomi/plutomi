@@ -9,6 +9,7 @@ import SendLoginLink from "../../../utils/email/sendLoginLink";
 import CreateLoginLink from "../../../utils/loginLinks/createLoginLink";
 import { nanoid } from "nanoid";
 import withSession from "../../../middleware/withSession";
+import { Session } from "next-iron-session";
 import { createHash } from "crypto";
 import { GetLatestLoginLink } from "../../../utils/loginLinks/getLatestLoginLink";
 import { CreateUser } from "../../../utils/users/createUser";
@@ -17,9 +18,7 @@ import DeleteLoginLink from "../../../utils/loginLinks/deleteLoginLink";
 import CleanUser from "../../../utils/clean/cleanUser";
 import { GetUserById } from "../../../utils/users/getUserById";
 import UpdateLoginLink from "../../../utils/loginLinks/updateLoginLink";
-import { Session } from "next-iron-session";
 
-type NextIronRequest = NextApiRequest & { session: Session };
 
 async function handler(
   req: NextIronRequest,

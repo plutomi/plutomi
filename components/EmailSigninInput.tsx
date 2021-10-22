@@ -20,7 +20,7 @@ export default function LoginEmail({
         value={user_email}
         onChange={(e) => onChange(e.target.value)}
         className="block w-full py-3 text-base rounded-md placeholder-normal shadow-sm focus:ring-normal focus:border-normal sm:flex-1 border-blue-gray-300"
-        placeholder="Enter your email"
+        placeholder="Sign in with your email"
       />
       <button
         type="submit"

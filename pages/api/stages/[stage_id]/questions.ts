@@ -1,10 +1,14 @@
 import { NextApiResponse } from "next";
 import { GetAllQuestionsInStage } from "../../../../utils/questions/getAllQuestionsInStage";
 import withCleanOrgName from "../../../../middleware/withCleanOrgName";
-import withAuthorizer from "../../../../middleware/withAuthorizer";
-const handler = async (req: CustomRequest, res: NextApiResponse) => {
+import withSession from "../../../../middleware/withSession";
+
+async function handler(
+  req: NextIronRequest,
+  res: NextApiResponse
+): Promise<void> {
+  const user = req.session.get("user");
   const { method, query } = req;
-  const user: DynamoUser = req.user;
   const { stage_id } = query;
 
   if (method === "GET") {
@@ -20,6 +24,6 @@ const handler = async (req: CustomRequest, res: NextApiResponse) => {
     }
   }
   return res.status(405).json({ message: "Not Allowed" });
-};
+}
 
-export default withAuthorizer(withCleanOrgName(handler));
+export default withSession(withCleanOrgName(handler));

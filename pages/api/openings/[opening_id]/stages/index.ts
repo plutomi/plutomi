@@ -1,15 +1,18 @@
 import { GetAllStagesInOpening } from "../../../../../utils/stages/getAllStagesInOpening";
-import withAuthorizer from "../../../../../middleware/withAuthorizer";
 import { CreateStage } from "../../../../../utils/stages/createStage";
 import InputValidation from "../../../../../utils/inputValidation";
 import { NextApiResponse } from "next";
-// Create stage in an opening
-const handler = async (req: CustomRequest, res: NextApiResponse) => {
+import withSession from "../../../../../middleware/withSession";
+
+async function handler(
+  req: NextIronRequest,
+  res: NextApiResponse
+): Promise<void> {
+  const user = req.session.get("user");
   const { body, method, query } = req;
   const { opening_id } = query;
-  const user: DynamoUser = req.user;
 
-  // Get all stages in an opening 
+  // Get all stages in an opening
   if (method === "GET") {
     try {
       const all_stages = await GetAllStagesInOpening(user.org_id, opening_id);
@@ -23,6 +26,6 @@ const handler = async (req: CustomRequest, res: NextApiResponse) => {
   }
 
   return res.status(405).json({ message: "Not Allowed" });
-};
+}
 
-export default withAuthorizer(handler);
+export default withSession(handler);

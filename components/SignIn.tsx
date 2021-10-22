@@ -1,10 +1,7 @@
-import { signIn } from "next-auth/client";
-import GoogleButton from "./Buttons/GoogleButton";
-import axios from "axios";
 import LoginEmail from "./EmailSigninInput";
 import { useState } from "react";
 import router from "next/router";
-import AuthService from "../Adapters/AuthService";
+import AuthService from "../adapters/AuthService";
 export default function SignIn({ callbackUrl, desiredPage }) {
   const [user_email, setUserEmail] = useState("");
   const [submittedText, setSubmittedText] = useState(
@@ -50,15 +47,15 @@ export default function SignIn({ callbackUrl, desiredPage }) {
           </div>
         ) : (
           <div className="space-y-4">
-            <p className=" text-lg text-normal text-center sm:max-w-8xl max-w-sm">
-              We will email you a magic link for a password-free sign in.
-            </p>
             <LoginEmail
               onChange={handleEmailChange}
               user_email={user_email}
               button_text={button_text}
               sendEmail={sendEmail}
-            />
+            />{" "}
+            <p className=" text-lg text-normal text-center sm:max-w-8xl max-w-sm">
+              We will email you a magic link for a password-free sign in.
+            </p>
           </div>
         )}
       </div>

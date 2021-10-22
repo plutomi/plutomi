@@ -1,12 +1,16 @@
-import withAuthorizer from "../../../middleware/withAuthorizer";
 import { CreateStage } from "../../../utils/stages/createStage";
 import InputValidation from "../../../utils/inputValidation";
 import { NextApiResponse } from "next";
 // Create stage in an opening
-const handler = async (req: CustomRequest, res: NextApiResponse) => {
+import withSession from "../../../middleware/withSession";
+
+async function handler(
+  req: NextIronRequest,
+  res: NextApiResponse
+): Promise<void> {
+  const user = req.session.get("user");
   const { body, method } = req;
   const { GSI1SK, opening_id }: APICreateStageInput = body;
-  const user: DynamoUser = req.user;
 
   if (method === "POST") {
     if (user.org_id === "NO_ORG_ASSIGNED") {
@@ -38,6 +42,6 @@ const handler = async (req: CustomRequest, res: NextApiResponse) => {
   }
 
   return res.status(405).json({ message: "Not Allowed" });
-};
+}
 
-export default withAuthorizer(handler);
+export default withSession(handler);
