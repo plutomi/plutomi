@@ -3,7 +3,7 @@ import { useSession } from "next-auth/client";
 import useSelf from "../../../SWR/useSelf";
 import Loader from "../../../components/Loader";
 import OpeningSettingsHeader from "../../../components/Openings/OpeningSettingsHeader";
-import SignIn from "../../../components/SignIn";
+import Login from "../../../components/Login";
 import useOpeningById from "../../../SWR/useOpeningById";
 import { useRouter } from "next/router";
 import OpeningSettingsContent from "../../../components/Openings/OpeningSettingsContent";
@@ -23,14 +23,7 @@ export default function OpeningsSettings() {
   }
 
   if (isUserError) {
-    return (
-      <SignIn
-        callbackUrl={`${process.env.PLUTOMI_URL}/openings/${
-          opening_id as string
-        }/settings`} // TODO set this
-        desiredPage={"your opening settings"}
-      />
-    );
+    return <Login desiredPageText={"your opening settings"} />;
   }
 
   if (isUserLoading) {

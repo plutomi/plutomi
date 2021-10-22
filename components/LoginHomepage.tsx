@@ -11,7 +11,7 @@ interface CallbackUrl {
 }
 
 // Identical to SignIn, but with less margin/padding to fit in the homepage
-export default function SignInHomepage({ callbackUrl }: CallbackUrl) {
+export default function LoginHomepage({ callbackUrl }: CallbackUrl) {
   const [user_email, setUserEmail] = useState("");
   const [submittedText, setSubmittedText] = useState(
     `We've sent a magic login link to your email!`

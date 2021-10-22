@@ -4,7 +4,7 @@ import useSelf from "../../../../../SWR/useSelf";
 import Loader from "../../../../../components/Loader";
 import axios from "axios";
 import { mutate } from "swr";
-import SignIn from "../../../../../components/SignIn";
+import Login from "../../../../../components/Login";
 import useOpeningById from "../../../../../SWR/useOpeningById";
 import { useRouter } from "next/router";
 import useStageById from "../../../../../SWR/useStageById";
@@ -29,9 +29,8 @@ export default function StageSettings() {
 
   if (isUserError) {
     return (
-      <SignIn
-        callbackUrl={`${process.env.PLUTOMI_URL}/openings/${opening_id as string}/settings`} // TODO set this
-        desiredPage={"your stage settings"} // TODO set this
+      <Login
+        desiredPageText={"your stage settings"} // TODO set this
       />
     );
   }

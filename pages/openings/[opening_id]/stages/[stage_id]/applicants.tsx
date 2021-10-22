@@ -3,7 +3,7 @@ import { useSession } from "next-auth/client";
 import useSelf from "../../../../../SWR/useSelf";
 import Loader from "../../../../../components/Loader";
 import EmptyStagesState from "../../../../../components/Stages/EmptyStagesState";
-import SignIn from "../../../../../components/SignIn";
+import Login from "../../../../../components/Login";
 import { useEffect } from "react";
 import { useRouter } from "next/router";
 import useStore from "../../../../../utils/store";
@@ -64,12 +64,7 @@ export default function StageID() {
   }
 
   if (isUserError) {
-    return (
-      <SignIn
-        callbackUrl={`${process.env.PLUTOMI_URL}/openings`} 
-        desiredPage={"your applicants"} 
-      />
-    );
+    return <Login desiredPageText={"your applicants"} />;
   }
 
   if (isUserLoading) {

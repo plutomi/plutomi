@@ -6,7 +6,7 @@ import UserProfileHeader from "../components/UserProfile/UserProfileHeader";
 import { mutate } from "swr";
 import UserProfileModal from "../components/UserProfile/UserProfileModal";
 import Loader from "../components/Loader";
-import SignIn from "../components/SignIn";
+import Login from "../components/Login";
 import useOrgUsers from "../SWR/useOrgUsers";
 import useStore from "../utils/store";
 import { useRouter } from "next/router";
@@ -29,9 +29,8 @@ export default function Team() {
 
   if (isUserError) {
     return (
-      <SignIn
-        callbackUrl={`${process.env.PLUTOMI_URL}/profile`} // TODO set this
-        desiredPage={"your profile"} // TODO set this
+      <Login
+        desiredPageText={"your profile"} // TODO set this
       />
     );
   }

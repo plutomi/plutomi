@@ -3,7 +3,7 @@ import { useSession } from "next-auth/client";
 import useSelf from "../../../../SWR/useSelf";
 import Loader from "../../../../components/Loader";
 import EmptyStagesState from "../../../../components/Stages/EmptyStagesState";
-import SignIn from "../../../../components/SignIn";
+import Login from "../../../../components/Login";
 import { useRouter } from "next/router";
 import useStore from "../../../../utils/store";
 import StagesHeader from "../../../../components/Stages/StagesHeader";
@@ -35,9 +35,8 @@ export default function Openings() {
 
   if (isUserError) {
     return (
-      <SignIn
-        callbackUrl={`${process.env.PLUTOMI_URL}/openings`} // TODO set this
-        desiredPage={"your stages"} // TODO set this
+      <Login
+        desiredPageText={"your stages"} // TODO set this
       />
     );
   }
@@ -45,7 +44,9 @@ export default function Openings() {
   // Redirect to the first stage
   if (stages && stages.length > 0) {
     router.push(
-      `${process.env.PLUTOMI_URL}/openings/${opening_id as string}/stages/${stages[0].stage_id as string}/applicants` // TODO should this end with applicants?
+      `${process.env.PLUTOMI_URL}/openings/${opening_id as string}/stages/${
+        stages[0].stage_id as string
+      }/applicants` // TODO should this end with applicants?
     );
     return <Loader text="Loading stages..." />;
   }

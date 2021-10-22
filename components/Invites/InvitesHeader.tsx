@@ -1,5 +1,5 @@
 import { useSession } from "next-auth/client";
-import SignIn from "../../components/SignIn";
+import Login from "../Login";
 import useSelf from "../../SWR/useSelf";
 import useOrgInvites from "../../SWR/useOrgInvites";
 import { useSWRConfig } from "swr";

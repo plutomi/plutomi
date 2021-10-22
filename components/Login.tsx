@@ -2,7 +2,7 @@ import LoginEmail from "./EmailSigninInput";
 import { useState } from "react";
 import router from "next/router";
 import AuthService from "../adapters/AuthService";
-export default function SignIn({ callbackUrl, desiredPage }) {
+export default function Login({ desiredPageText }) {
   const [user_email, setUserEmail] = useState("");
   const [submittedText, setSubmittedText] = useState(
     `We've sent a magic login link to your email!`
@@ -34,7 +34,7 @@ export default function SignIn({ callbackUrl, desiredPage }) {
   return (
     <div className="flex justify-center flex-col p-10 max-w-2xl mx-auto items-center mt-20 border rounded-lg">
       <h1 className="text-4xl font-bold text-center text-dark">
-        Sign in to view {desiredPage}
+        Sign in to view {desiredPageText}
       </h1>
 
       <div className="mt-8 space-y-4 flex flex-col justify-center items-center">

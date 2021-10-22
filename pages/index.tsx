@@ -3,7 +3,7 @@ import FeatureBox from "../components/Static/featureBox";
 import Navbar from "../components/Navbar/HomepageNavbar";
 import Contact from "../components/Static/ContactUs";
 import Pricing from "../components/Pricing/Pricing";
-import SignInHomepage from "../components/SignInHomepage";
+import LoginHomepage from "../components/LoginHomepage";
 import UseCases from "../components/UseCases";
 import { useSession } from "next-auth/client";
 import Hero from "../components/Static/Hero";
@@ -18,9 +18,7 @@ export default function Main() {
         {user ? (
           <AlreadySignedIn />
         ) : (
-          <SignInHomepage
-            callbackUrl={`${process.env.PLUTOMI_URL}/dashboard`}
-          />
+          <LoginHomepage callbackUrl={`${process.env.PLUTOMI_URL}/dashboard`} />
         )}
         <FeatureBox />
         <UseCases />

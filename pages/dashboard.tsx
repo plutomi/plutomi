@@ -4,7 +4,7 @@ import DashboardHeader from "../components/Dashboard/DashboardHeader";
 import SignedInNav from "../components/Navbar/SignedInNav";
 import { useSession } from "next-auth/client";
 import useSelf from "../SWR/useSelf";
-import SignIn from "../components/SignIn";
+import Login from "../components/Login";
 import axios from "axios";
 import { mutate } from "swr";
 import OrgsService from "../adapters/OrgsService";
@@ -24,12 +24,7 @@ export default function Dashboard() {
   }
 
   if (isUserError) {
-    return (
-      <SignIn
-        callbackUrl={`${process.env.PLUTOMI_URL}/dashboard`}
-        desiredPage={"your dashboard"}
-      />
-    );
+    return <Login desiredPageText={"your dashboard"} />;
   }
 
   if (isUserLoading) {

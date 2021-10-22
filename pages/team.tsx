@@ -5,7 +5,7 @@ import EmptyTeamState from "../components/Team/EmptyTeamState";
 import axios from "axios";
 import TeamContent from "../components/Team/TeamContent";
 import Loader from "../components/Loader";
-import SignIn from "../components/SignIn";
+import Login from "../components/Login";
 import CreateInviteModal from "../components/CreateInviteModal";
 import useOrgUsers from "../SWR/useOrgUsers";
 import useStore from "../utils/store";
@@ -32,9 +32,9 @@ export default function Team() {
 
   if (isUserError) {
     return (
-      <SignIn
+      <Login
         callbackUrl={`${process.env.PLUTOMI_URL}/team`} // TODO set this
-        desiredPage={"your team"} // TODO set this
+        desiredPageText={"your team"} // TODO set this
       />
     );
   }

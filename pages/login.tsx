@@ -1,7 +1,7 @@
 import { signIn, useSession } from "next-auth/client";
 import useSelf from "../SWR/useSelf";
 import Loader from "../components/Loader";
-import SignIn from "../components/SignIn";
+import Login from "../components/Login";
 import { useRouter } from "next/router";
 import { useState } from "react";
 export default function Login() {
@@ -56,5 +56,5 @@ export default function Login() {
     );
   }
 
-  return <SignIn callbackUrl={callbackUrl} desiredPage={"your account"} />;
+  return <Login callbackUrl={callbackUrl} desiredPageText={"your account"} />;
 }

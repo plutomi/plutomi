@@ -4,7 +4,7 @@ import { useSession } from "next-auth/client";
 import useOpenings from "../../SWR/useOpenings";
 import useSelf from "../../SWR/useSelf";
 import Loader from "../../components/Loader";
-import SignIn from "../../components/SignIn";
+import Login from "../../components/Login";
 import axios from "axios";
 import { mutate } from "swr";
 import useStore from "../../utils/store";
@@ -30,9 +30,8 @@ export default function Openings() {
 
   if (isUserError) {
     return (
-      <SignIn
-        callbackUrl={`${process.env.PLUTOMI_URL}/openings`} // TODO set this
-        desiredPage={"your openings"} // TODO set this
+      <Login
+        desiredPageText={"your openings"} // TODO set this
       />
     );
   }
