@@ -23,8 +23,12 @@ async function handler(
 =======
 >>>>>>> dd45c08 (replaced next-auth with next-iron-session)
   const { method, query } = req;
+<<<<<<< HEAD
   const { stage_id } = query;
 >>>>>>> 12d77e0 (Replaced withauthorizer with withSession)
+=======
+  const { stage_id } = query as CustomQuery;
+>>>>>>> ce0b1d8 (fix: Removed all 'as string' - #196)
 
   if (method === "GET") {
     try {

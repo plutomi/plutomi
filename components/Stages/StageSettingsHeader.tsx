@@ -13,10 +13,14 @@ import useStageById from "../../SWR/useStageById";
 export default function StageSettingsHeader({ deleteStage }) {
   const router = useRouter();
 <<<<<<< HEAD
+<<<<<<< HEAD
   const { opening_id, stage_id } = router.query as CustomQuery;
 =======
   const { opening_id, stage_id } = router.query;
 >>>>>>> dd45c08 (replaced next-auth with next-iron-session)
+=======
+  const { opening_id, stage_id } = router.query as CustomQuery;
+>>>>>>> ce0b1d8 (fix: Removed all 'as string' - #196)
 
   const { user, isUserLoading, isUserError } = useSelf();
   let { opening, isOpeningLoading, isOpeningError } = useOpeningById(
@@ -76,7 +80,7 @@ export default function StageSettingsHeader({ deleteStage }) {
     {
       name: "Applicants",
       // Go to the CURRENT STAGE in the opening to view the applicants
-      href: `/openings/${opening_id as string}/stages/${stage_id as string}/applicants`, // TODO should this end with applicants?
+      href: `/openings/${opening_id}/stages/${stage_id}/applicants`, // TODO should this end with applicants?
       current: false,
     },
     {

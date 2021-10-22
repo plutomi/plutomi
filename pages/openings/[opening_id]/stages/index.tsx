@@ -15,10 +15,14 @@ import useOpeningById from "../../../../SWR/useOpeningById";
 export default function Openings() {
   const router = useRouter();
 <<<<<<< HEAD
+<<<<<<< HEAD
   const { opening_id } = router.query as CustomQuery;
 =======
   const { opening_id } = router.query;
 >>>>>>> dd45c08 (replaced next-auth with next-iron-session)
+=======
+  const { opening_id } = router.query as CustomQuery;
+>>>>>>> ce0b1d8 (fix: Removed all 'as string' - #196)
 
   const { user, isUserLoading, isUserError } = useSelf();
 
@@ -64,6 +68,7 @@ export default function Openings() {
     router.push(
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
       `${process.env.PLUTOMI_URL}/openings/${opening_id}/stages/${stages[0].stage_id}/applicants` // TODO should this end with applicants?
 =======
       `${process.env.PLUTOMI_URL}/openings/${opening_id as string}/stages/${stages[0].stage_id as string}/applicants` // TODO should this end with applicants?
@@ -73,6 +78,9 @@ export default function Openings() {
         stages[0].stage_id as string
       }/applicants` // TODO should this end with applicants?
 >>>>>>> d64c806 (Got rid of callback url on login component)
+=======
+      `${process.env.PLUTOMI_URL}/openings/${opening_id}/stages/${stages[0].stage_id}/applicants` // TODO should this end with applicants?
+>>>>>>> ce0b1d8 (fix: Removed all 'as string' - #196)
     );
     return <Loader text="Loading stages..." />;
   }

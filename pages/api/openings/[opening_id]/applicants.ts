@@ -28,6 +28,7 @@ async function handler(
 =======
 >>>>>>> dd45c08 (replaced next-auth with next-iron-session)
   const { method, query } = req;
+<<<<<<< HEAD
   const { stage_id, opening_id } = query;
 >>>>>>> 12d77e0 (Replaced withauthorizer with withSession)
 
@@ -36,6 +37,17 @@ async function handler(
       org_id: user.org_id,
       opening_id: opening_id,
     };
+=======
+  const { stage_id, opening_id } = query as CustomQuery;
+
+  // Get all applicants in a stage
+  //   if (method === "GET") { // TODO TODO TODO GET ALL APPLICANTS IN OPENING -- THIS IS WRONG
+  //     const get_all_applicants_in_stage_input: GetAllApplicantsInStageInput = {
+  //       org_id: user.org_id,
+  //       opening_id: opening_id ,
+  //       stage_id: stage_id ,
+  //     };
+>>>>>>> ce0b1d8 (fix: Removed all 'as string' - #196)
 
     try {
       InputValidation(get_all_applicants_in_opening_input);

@@ -26,8 +26,12 @@ async function handler(
 =======
 >>>>>>> dd45c08 (replaced next-auth with next-iron-session)
   const { method, query } = req;
+<<<<<<< HEAD
   const { org_id } = query;
 >>>>>>> 12d77e0 (Replaced withauthorizer with withSession)
+=======
+  const { org_id } = query as CustomQuery;
+>>>>>>> ce0b1d8 (fix: Removed all 'as string' - #196)
 
   if (method === "GET") {
     // When signed in, this returns all data for an org

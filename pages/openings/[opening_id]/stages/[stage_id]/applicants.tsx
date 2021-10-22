@@ -19,10 +19,14 @@ import ApplicantProfileModal from "../../../../../components/Applicants/Applican
 export default function StageID() {
   const router = useRouter();
 <<<<<<< HEAD
+<<<<<<< HEAD
   const { opening_id, stage_id, applicant_id } = router.query as CustomQuery;
 =======
   const { opening_id, stage_id, applicant_id } = router.query;
 >>>>>>> dd45c08 (replaced next-auth with next-iron-session)
+=======
+  const { opening_id, stage_id, applicant_id } = router.query as CustomQuery;
+>>>>>>> ce0b1d8 (fix: Removed all 'as string' - #196)
 
   const { user, isUserLoading, isUserError } = useSelf();
 

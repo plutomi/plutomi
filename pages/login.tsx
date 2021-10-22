@@ -7,7 +7,7 @@ import { useState } from "react";
 export default function Login() {
   const defaultButtonText = `Click me to log in!`;
   const router = useRouter();
-  let { user_id, key, callback_url } = router.query;
+  let { user_id, key, callback_url } = router.query as CustomQuery;
 
   const { user, isUserLoading, isUserError } = useSelf();
   const [button_text, setButtonText] = useState(defaultButtonText);
@@ -27,7 +27,7 @@ export default function Login() {
         redirect: false,
         user_id: user_id,
         key: key,
-        callbackUrl: callback_url as string,
+        callbackUrl: callback_url,
       });
 
       if (error) {
@@ -37,7 +37,7 @@ export default function Login() {
 
       if (!error) {
         // This is dumb
-        router.push((callback_url as string) || callbackUrl);
+        router.push(callback_url || callbackUrl);
       }
     };
 

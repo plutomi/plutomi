@@ -27,8 +27,12 @@ async function handler(
 =======
 >>>>>>> dd45c08 (replaced next-auth with next-iron-session)
   const { method, query } = req;
+<<<<<<< HEAD
   const { invite_id } = query;
 >>>>>>> 12d77e0 (Replaced withauthorizer with withSession)
+=======
+  const { invite_id } = query as CustomQuery;
+>>>>>>> ce0b1d8 (fix: Removed all 'as string' - #196)
 
   // TODO trycatch
   const invite = await GetOrgInvite({

@@ -6,7 +6,11 @@ import CleanStage from "../../../../../../../utils/clean/cleanStage";
 import { GetStage } from "../../../../../../../utils/stages/getStage";
 const handler = async (req: CustomRequest, res: NextApiResponse) => {
   const { method, query } = req;
+<<<<<<< HEAD
   const { org_id, stage_id } = query as CustomQuery;
+=======
+  const { org_id, opening_id, stage_id } = query as CustomQuery;
+>>>>>>> ce0b1d8 (fix: Removed all 'as string' - #196)
 
   const get_stage_input: GetStageInput = {
     org_id: org_id,

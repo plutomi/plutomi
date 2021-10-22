@@ -7,10 +7,14 @@ import useAllApplicantsInStage from "../../SWR/useAllApplicantsInStage";
 export default function ApplicantList() {
   const router = useRouter();
 <<<<<<< HEAD
+<<<<<<< HEAD
   const { opening_id, stage_id } = router.query as CustomQuery;
 =======
   const { opening_id, stage_id } = router.query;
 >>>>>>> 73b8a24 (fixed wrong callback url on signin)
+=======
+  const { opening_id, stage_id } = router.query as CustomQuery;
+>>>>>>> ce0b1d8 (fix: Removed all 'as string' - #196)
   const { applicants, isApplicantsLoading, isApplicantsError } =
     useAllApplicantsInStage(opening_id, stage_id);
 
@@ -37,9 +41,7 @@ export default function ApplicantList() {
   const handleApplicantClick = (applicant_id: string) => {
     router.push(
       {
-        pathname: `/openings/${opening_id as string}/stages/${
-          stage_id as string
-        }/applicants`,
+        pathname: `/openings/${opening_id}/stages/${stage_id}/applicants`,
         query: { applicant_id: applicant_id },
       },
       undefined,

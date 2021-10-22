@@ -15,10 +15,14 @@ import OpeningsService from "../../adapters/OpeningsService";
 export default function OpeningSettingsHeader() {
   const router = useRouter();
 <<<<<<< HEAD
+<<<<<<< HEAD
   const { opening_id } = router.query as CustomQuery;
 =======
   const { opening_id } = router.query;
 >>>>>>> dd45c08 (replaced next-auth with next-iron-session)
+=======
+  const { opening_id } = router.query as CustomQuery;
+>>>>>>> ce0b1d8 (fix: Removed all 'as string' - #196)
 
   const { user, isUserLoading, isUserError } = useSelf();
   let { opening, isOpeningLoading, isOpeningError } = useOpeningById(
@@ -50,7 +54,7 @@ export default function OpeningSettingsHeader() {
   if (opening?.stage_order.length > 0) {
     crumbs.unshift({
       name: "Applicants",
-      href: `/openings/${opening_id as string}/stages/${opening?.stage_order[0] as string}/applicants`, // TODO should this end with /applicants?
+      href: `/openings/${opening_id}/stages/${opening?.stage_order[0]}/applicants`, // TODO should this end with /applicants?
       current: false,
     });
   }
@@ -70,10 +74,14 @@ export default function OpeningSettingsHeader() {
 
     try {
 <<<<<<< HEAD
+<<<<<<< HEAD
       await OpeningsService.deleteOpening({ opening_id: opening_id });
 =======
       await OpeningsService.deleteOpening({ opening_id: opening_id as string });
 >>>>>>> 73b8a24 (fixed wrong callback url on signin)
+=======
+      await OpeningsService.deleteOpening({ opening_id: opening_id });
+>>>>>>> ce0b1d8 (fix: Removed all 'as string' - #196)
       router.push(`${process.env.PLUTOMI_URL}/openings`);
     } catch (error) {
       alert(error.response.data.message);

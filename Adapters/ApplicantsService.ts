@@ -61,9 +61,7 @@ export default class ApplicantsService {
 
   static getAllApplicantsInStageURL({ opening_id, stage_id }) {
     // TODO should this be under applicants?
-    return `/api/openings/${opening_id as string}/stages/${
-      stage_id as string
-    }/applicants`;
+    return `/api/openings/${opening_id}/stages/${stage_id}/applicants`;
   }
 
   static async getAllApplicantsInStage({ opening_id, stage_id }) {
