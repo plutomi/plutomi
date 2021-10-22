@@ -1,3 +1,7 @@
+<<<<<<< HEAD
+=======
+import { useSession } from "next-auth/client";
+>>>>>>> dd45c08 (replaced next-auth with next-iron-session)
 import useSelf from "../../SWR/useSelf";
 import { CogIcon } from "@heroicons/react/outline";
 import useStore from "../../utils/store";
@@ -9,7 +13,11 @@ import { useRouter } from "next/router";
 import useOpenings from "../../SWR/useOpenings";
 export default function StagesHeader() {
   const router = useRouter();
+<<<<<<< HEAD
   const { opening_id } = router.query as CustomQuery;
+=======
+  const { opening_id } = router.query;
+>>>>>>> dd45c08 (replaced next-auth with next-iron-session)
 
   const { user, isUserLoading, isUserError } = useSelf();
   let { opening, isOpeningLoading, isOpeningError } = useOpeningById(

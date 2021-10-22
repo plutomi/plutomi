@@ -1,4 +1,8 @@
 import SignedInNav from "../components/Navbar/SignedInNav";
+<<<<<<< HEAD
+=======
+import { useSession } from "next-auth/client";
+>>>>>>> dd45c08 (replaced next-auth with next-iron-session)
 import useSelf from "../SWR/useSelf";
 import axios from "axios";
 import UserProfileHeader from "../components/UserProfile/UserProfileHeader";

@@ -74,7 +74,11 @@ export default function StageReorderColumn() {
   };
 
   const router = useRouter();
+<<<<<<< HEAD
   const { opening_id, stage_id } = router.query as CustomQuery;
+=======
+  const { opening_id, stage_id } = router.query;
+>>>>>>> dd45c08 (replaced next-auth with next-iron-session)
 
   const { user, isUserLoading, isUserError } = useSelf();
   let { opening, isOpeningLoading, isOpeningError } = useOpeningById(

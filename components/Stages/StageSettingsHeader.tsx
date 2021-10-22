@@ -1,3 +1,7 @@
+<<<<<<< HEAD
+=======
+import { useSession } from "next-auth/client";
+>>>>>>> dd45c08 (replaced next-auth with next-iron-session)
 import useSelf from "../../SWR/useSelf";
 import { PlusIcon, TrashIcon } from "@heroicons/react/outline";
 import useStore from "../../utils/store";
@@ -8,7 +12,11 @@ import { PencilAltIcon } from "@heroicons/react/outline";
 import useStageById from "../../SWR/useStageById";
 export default function StageSettingsHeader({ deleteStage }) {
   const router = useRouter();
+<<<<<<< HEAD
   const { opening_id, stage_id } = router.query as CustomQuery;
+=======
+  const { opening_id, stage_id } = router.query;
+>>>>>>> dd45c08 (replaced next-auth with next-iron-session)
 
   const { user, isUserLoading, isUserError } = useSelf();
   let { opening, isOpeningLoading, isOpeningError } = useOpeningById(

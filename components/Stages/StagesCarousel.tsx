@@ -13,7 +13,11 @@ export default function StageCarousel() {
   const [activeItemIndex, setActiveItemIndex] = useState(0);
   const chevronWidth = 60;
 
+<<<<<<< HEAD
   const { opening_id, stage_id } = router.query as CustomQuery;
+=======
+  const { opening_id, stage_id } = router.query;
+>>>>>>> dd45c08 (replaced next-auth with next-iron-session)
 
   const { user, isUserLoading, isUserError } = useSelf();
 

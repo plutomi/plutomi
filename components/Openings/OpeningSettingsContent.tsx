@@ -15,7 +15,11 @@ import useOpeningById from "../../SWR/useOpeningById";
 import OpeningsService from "../../adapters/OpeningsService";
 export default function OpeningSettingsContent() {
   const router = useRouter();
+<<<<<<< HEAD
   const { opening_id } = router.query as CustomQuery;
+=======
+  const { opening_id } = router.query;
+>>>>>>> dd45c08 (replaced next-auth with next-iron-session)
 
   const { user, isUserLoading, isUserError } = useSelf();
   let { opening, isOpeningLoading, isOpeningError } = useOpeningById(

@@ -1,4 +1,8 @@
 import SignedInNav from "../../../../../components/Navbar/SignedInNav";
+<<<<<<< HEAD
+=======
+import { useSession } from "next-auth/client";
+>>>>>>> dd45c08 (replaced next-auth with next-iron-session)
 import useSelf from "../../../../../SWR/useSelf";
 import Loader from "../../../../../components/Loader";
 import { mutate } from "swr";
@@ -11,7 +15,11 @@ import StageSettingsContent from "../../../../../components/Stages/StagesSetting
 import StagesService from "../../../../../adapters/StagesService";
 export default function StageSettings() {
   const router = useRouter();
+<<<<<<< HEAD
   const { opening_id, stage_id } = router.query as CustomQuery;
+=======
+  const { opening_id, stage_id } = router.query;
+>>>>>>> dd45c08 (replaced next-auth with next-iron-session)
 
   const { user, isUserLoading, isUserError } = useSelf();
   let { opening, isOpeningLoading, isOpeningError } = useOpeningById(

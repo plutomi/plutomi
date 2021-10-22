@@ -1,3 +1,8 @@
+<<<<<<< HEAD
+=======
+import { useSession } from "next-auth/client";
+import SignIn from "../../components/SignIn";
+>>>>>>> dd45c08 (replaced next-auth with next-iron-session)
 import useSelf from "../../SWR/useSelf";
 import useOrgInvites from "../../SWR/useOrgInvites";
 import { useSWRConfig } from "swr";
@@ -6,6 +11,10 @@ import { useRouter } from "next/router";
 export default function InvitesHeader() {
   const router = useRouter();
   const { mutate } = useSWRConfig();
+<<<<<<< HEAD
+=======
+  const [session, loading]: CustomSession = useSession();
+>>>>>>> dd45c08 (replaced next-auth with next-iron-session)
   const { user, isUserLoading, isUserError } = useSelf();
   const { invites, isInvitesLoading, isInvitesError } = useOrgInvites(
     user?.user_id

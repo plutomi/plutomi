@@ -1,4 +1,8 @@
 import { Fragment } from "react";
+<<<<<<< HEAD
+=======
+import { useSession } from "next-auth/client";
+>>>>>>> dd45c08 (replaced next-auth with next-iron-session)
 import useSelf from "../../SWR/useSelf";
 import NavbarSearch from "./NavbarSearch";
 import AuthService from "../../adapters/AuthService";

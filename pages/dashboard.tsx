@@ -2,8 +2,15 @@ import Loader from "../components/Loader";
 import DashboardContent from "../components/Dashboard/DashboardContent";
 import DashboardHeader from "../components/Dashboard/DashboardHeader";
 import SignedInNav from "../components/Navbar/SignedInNav";
+<<<<<<< HEAD
 import useSelf from "../SWR/useSelf";
 import Login from "../components/Login";
+=======
+import { useSession } from "next-auth/client";
+import useSelf from "../SWR/useSelf";
+import SignIn from "../components/SignIn";
+import axios from "axios";
+>>>>>>> dd45c08 (replaced next-auth with next-iron-session)
 import { mutate } from "swr";
 import OrgsService from "../adapters/OrgsService";
 import useStore from "../utils/store";
@@ -22,7 +29,16 @@ export default function Dashboard() {
   }
 
   if (isUserError) {
+<<<<<<< HEAD
     return <Login desiredPageText={"your dashboard"} />;
+=======
+    return (
+      <SignIn
+        callbackUrl={`${process.env.NEXT_PUBLIC_NEXTAUTH_URL}/dashboard`} 
+        desiredPage={"your dashboard"} 
+      />
+    );
+>>>>>>> dd45c08 (replaced next-auth with next-iron-session)
   }
 
   if (isUserLoading) {
@@ -30,8 +46,12 @@ export default function Dashboard() {
   }
   const createOrg = async ({ GSI1SK, org_id }) => {
     if (
+<<<<<<< HEAD
       !confirm(
         // TODO add clean org name here
+=======
+      !confirm( // TODO add clean org name here
+>>>>>>> dd45c08 (replaced next-auth with next-iron-session)
         `Your org id will be '${org_id.toLowerCase()}', this CANNOT be changed. Do you want to continue?`
       )
     ) {

@@ -1,6 +1,10 @@
 import Breadcrumbs from "../Breadcrumbs";
 import useSelf from "../../SWR/useSelf";
+<<<<<<< HEAD
 import { PencilAltIcon } from "@heroicons/react/outline";
+=======
+import { PencilAltIcon, PlusIcon } from "@heroicons/react/outline";
+>>>>>>> dd45c08 (replaced next-auth with next-iron-session)
 import useStore from "../../utils/store";
 import { mutate } from "swr";
 import { TrashIcon } from "@heroicons/react/outline";
@@ -10,7 +14,11 @@ import Loader from "../Loader";
 import OpeningsService from "../../adapters/OpeningsService";
 export default function OpeningSettingsHeader() {
   const router = useRouter();
+<<<<<<< HEAD
   const { opening_id } = router.query as CustomQuery;
+=======
+  const { opening_id } = router.query;
+>>>>>>> dd45c08 (replaced next-auth with next-iron-session)
 
   const { user, isUserLoading, isUserError } = useSelf();
   let { opening, isOpeningLoading, isOpeningError } = useOpeningById(

@@ -17,13 +17,21 @@ async function handler(
 
   if (method === "GET") {
     try {
+<<<<<<< HEAD
       const requested_user = await GetUserById(user.user_id);
+=======
+      const requested_user = await GetUserById(user.user_id as string);
+>>>>>>> dd45c08 (replaced next-auth with next-iron-session)
 
       if (!requested_user) {
         req.session.destroy();
         return res.status(401).json({ message: "Please sign in again" }); // TODO middleware
       }
+<<<<<<< HEAD
 
+=======
+      
+>>>>>>> dd45c08 (replaced next-auth with next-iron-session)
       return res.status(200).json(requested_user);
     } catch (error) {
       // TODO add error logger

@@ -1,4 +1,8 @@
 import SignedInNav from "../../../../components/Navbar/SignedInNav";
+<<<<<<< HEAD
+=======
+import { useSession } from "next-auth/client";
+>>>>>>> dd45c08 (replaced next-auth with next-iron-session)
 import useSelf from "../../../../SWR/useSelf";
 import Loader from "../../../../components/Loader";
 import EmptyStagesState from "../../../../components/Stages/EmptyStagesState";
@@ -10,7 +14,11 @@ import useAllStagesInOpening from "../../../../SWR/useAllStagesInOpening";
 import useOpeningById from "../../../../SWR/useOpeningById";
 export default function Openings() {
   const router = useRouter();
+<<<<<<< HEAD
   const { opening_id } = router.query as CustomQuery;
+=======
+  const { opening_id } = router.query;
+>>>>>>> dd45c08 (replaced next-auth with next-iron-session)
 
   const { user, isUserLoading, isUserError } = useSelf();
 

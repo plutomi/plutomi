@@ -1,4 +1,8 @@
 import SignedInNav from "../../../components/Navbar/SignedInNav";
+<<<<<<< HEAD
+=======
+import { useSession } from "next-auth/client";
+>>>>>>> dd45c08 (replaced next-auth with next-iron-session)
 import useSelf from "../../../SWR/useSelf";
 import Loader from "../../../components/Loader";
 import OpeningSettingsHeader from "../../../components/Openings/OpeningSettingsHeader";
@@ -8,7 +12,11 @@ import { useRouter } from "next/router";
 import OpeningSettingsContent from "../../../components/Openings/OpeningSettingsContent";
 export default function OpeningsSettings() {
   const router = useRouter();
+<<<<<<< HEAD
   const { opening_id } = router.query as CustomQuery;
+=======
+  const { opening_id } = router.query;
+>>>>>>> dd45c08 (replaced next-auth with next-iron-session)
 
   const { user, isUserLoading, isUserError } = useSelf();
   let { opening, isOpeningLoading, isOpeningError } = useOpeningById(
@@ -22,7 +30,16 @@ export default function OpeningsSettings() {
   }
 
   if (isUserError) {
+<<<<<<< HEAD
     return <Login desiredPageText={"your opening settings"} />;
+=======
+    return (
+      <SignIn
+        callbackUrl={`${process.env.NEXT_PUBLIC_NEXTAUTH_URL}/openings/${opening_id}/settings`} // TODO set this
+        desiredPage={"your opening settings"} // TODO set this
+      />
+    );
+>>>>>>> dd45c08 (replaced next-auth with next-iron-session)
   }
 
   if (isUserLoading) {

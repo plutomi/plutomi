@@ -9,12 +9,18 @@ async function handler(
 ): Promise<void> {
   const user = req.session.get("user");
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> dd45c08 (replaced next-auth with next-iron-session)
   if (!user) {
     req.session.destroy();
     return res.status(401).json({ message: "Please sign in again" });
   }
+<<<<<<< HEAD
 =======
 >>>>>>> 12d77e0 (Replaced withauthorizer with withSession)
+=======
+>>>>>>> dd45c08 (replaced next-auth with next-iron-session)
   const { method } = req;
 
   if (method === "GET") {

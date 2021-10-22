@@ -1,3 +1,7 @@
+<<<<<<< HEAD
+=======
+import { useSession } from "next-auth/client";
+>>>>>>> dd45c08 (replaced next-auth with next-iron-session)
 import useSelf from "../../SWR/useSelf";
 import { PlusIcon } from "@heroicons/react/outline";
 import useStore from "../../utils/store";

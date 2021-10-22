@@ -10,13 +10,19 @@ async function handler(
 ): Promise<void> {
   const user = req.session.get("user");
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> dd45c08 (replaced next-auth with next-iron-session)
   if (!user) {
     req.session.destroy();
     return res.status(401).json({ message: "Please sign in again" });
   }
+<<<<<<< HEAD
   const { body, method, query } = req;
   const { opening_id } = query as CustomQuery;
 =======
+=======
+>>>>>>> dd45c08 (replaced next-auth with next-iron-session)
   const { body, method, query } = req;
   const { opening_id } = query;
 >>>>>>> 12d77e0 (Replaced withauthorizer with withSession)
