@@ -22,7 +22,7 @@ export default function StageReorderColumn() {
     try {
       const { message } = await StagesService.createStage({
         GSI1SK: stageModal.GSI1SK,
-        opening_id: opening_id as string,
+        opening_id: opening_id,
       });
       alert(message);
       setStageModal({ ...stageModal, GSI1SK: "", is_modal_open: false });
@@ -36,7 +36,7 @@ export default function StageReorderColumn() {
     // Refresh stage list
     mutate(
       OpeningsService.getAllStagesInOpeningURL({
-        opening_id: opening_id as string,
+        opening_id: opening_id,
       })
     );
   };
@@ -52,8 +52,8 @@ export default function StageReorderColumn() {
       delete diff["modal_mode"];
 
       const { message } = await StagesService.updateStage({
-        opening_id: opening_id as string,
-        stage_id: stage_id as string,
+        opening_id: opening_id,
+        stage_id: stage_id,
         new_stage_values: diff,
       });
       alert(message);
@@ -69,18 +69,18 @@ export default function StageReorderColumn() {
 
     mutate(
       StagesService.getStageURL({
-        stage_id: stage_id as string,
+        stage_id: stage_id,
       })
     );
   };
 
   const router = useRouter();
-  const { opening_id, stage_id } = router.query;
+  const { opening_id, stage_id } = router.query as CustomQuery;
 
   const { user, isUserLoading, isUserError } = useSelf();
   let { opening, isOpeningLoading, isOpeningError } = useOpeningById(
     user?.user_id,
-    opening_id as string
+    opening_id
   );
 
   let { stages, isStagesLoading, isStagesError } = useAllStagesInOpening(
@@ -90,7 +90,7 @@ export default function StageReorderColumn() {
   const { stage, isStageLoading, isStageError } = useStageById(
     user?.user_id,
     opening?.opening_id,
-    stage_id as string
+    stage_id
   );
 
   const [new_stages, setNewStages] = useState(stages);
@@ -126,7 +126,7 @@ export default function StageReorderColumn() {
 
     try {
       await OpeningsService.updateOpening({
-        opening_id: opening_id as string,
+        opening_id: opening_id,
         new_opening_values: {
           stage_order: new_stage_order,
         },
@@ -142,7 +142,7 @@ export default function StageReorderColumn() {
     // Refresh the stages
     mutate(
       OpeningsService.getAllStagesInOpeningURL({
-        opening_id: opening_id as string,
+        opening_id: opening_id,
       })
     );
   };

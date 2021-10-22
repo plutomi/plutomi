@@ -25,7 +25,7 @@ async function handler(
 ): Promise<void> {
   const { body, method, query } = req; // TODO get from body
   const { user_email } = body;
-  const { user_id, key, callback_url } = query;
+  const { user_id, key, callback_url } = query as CustomQuery;
   const login_link_length = 1500;
   const login_link_max_delay_minutes = 10;
   const time_threshold = GetPastOrFutureTime(
@@ -73,25 +73,23 @@ async function handler(
       const new_login_link_input: CreateLoginLinkInput = {
         user_email: user_email,
         login_link_hash: hash,
-        login_link_expiry: login_link_expiry as string,
+        login_link_expiry: login_link_expiry,
       };
 
       try {
         const user = await CreateLoginLink(new_login_link_input);
         const default_redirect = `${process.env.PLUTOMI_URL}/dashboard`;
         const login_link = `${process.env.PLUTOMI_URL}/api/auth/login?user_id=${
-          user.user_id as string
+          user.user_id
         }&key=${secret}&callback_url=${
-          (callback_url as string) ? (callback_url as string) : default_redirect
+          callback_url ? callback_url : default_redirect
         }`;
 
         try {
           const login_link_email_input: SendLoginLinkEmailInput = {
             recipient_email: user_email,
             login_link: login_link,
-            login_link_relative_expiry: GetRelativeTime(
-              login_link_expiry as string
-            ),
+            login_link_relative_expiry: GetRelativeTime(login_link_expiry),
           };
           await SendLoginLink(login_link_email_input);
           return res
@@ -113,8 +111,8 @@ async function handler(
   // Validates the login key
   if (method === "GET") {
     const validate_login_link_input = {
-      user_id: user_id as string,
-      key: key as string,
+      user_id: user_id,
+      key: key,
     };
     try {
       InputValidation(validate_login_link_input);
@@ -122,15 +120,13 @@ async function handler(
       return res.status(400).json({ message: `${error.message}` });
     }
 
-    const latest_login_link = await GetLatestLoginLink(user_id as string);
+    const latest_login_link = await GetLatestLoginLink(user_id);
 
     if (!latest_login_link) {
       return res.status(400).json({ message: "Invalid link" });
     }
 
-    const hash = createHash("sha512")
-      .update(key as string)
-      .digest("hex");
+    const hash = createHash("sha512").update(key).digest("hex");
 
     if (hash != latest_login_link.login_link_hash) {
       /**
@@ -168,18 +164,18 @@ async function handler(
     }
 
     // TODO delete link
-    const user = await GetUserById(user_id as string);
+    const user = await GetUserById(user_id);
 
     if (user && latest_login_link) {
-      CreateLoginEvent(user_id as string);
+      CreateLoginEvent(user_id);
 
       // Invalidates the last login link while allowing the user to login again if needed
-      DeleteLoginLink(user_id as string, latest_login_link.created_at);
+      DeleteLoginLink(user_id, latest_login_link.created_at);
 
       const clean_user = CleanUser(user as DynamoUser);
       req.session.set("user", clean_user);
       await req.session.save();
-      res.redirect(callback_url as string);
+      res.redirect(callback_url);
       return;
     }
   }

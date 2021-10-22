@@ -13,12 +13,12 @@ async function handler(
     return res.status(401).json({ message: "Please sign in again" });
   }
   const { method, query, body } = req;
-  const { user_id } = query;
+  const { user_id } = query as CustomQuery;
   const { new_user_values } = body;
 
   if (method === "GET") {
     try {
-      const requested_user = await GetUserById(user_id as string);
+      const requested_user = await GetUserById(user_id);
 
       if (!user) {
         return res.status(404).json({ message: "User not found" });

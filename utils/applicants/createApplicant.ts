@@ -30,7 +30,7 @@ export async function CreateApplicant({
     org_id: org_id,
     applicant_id: applicant_id,
     entity_type: "APPLICANT",
-    created_at: now as string,
+    created_at: now,
     // TODO add phone number
     // Is this needed? - Just makes it easier to grab than GSI1SK
     current_opening_id: opening_id,

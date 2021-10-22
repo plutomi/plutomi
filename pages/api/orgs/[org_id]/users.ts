@@ -14,7 +14,7 @@ async function handler(
     return res.status(401).json({ message: "Please sign in again" });
   }
   const { method, query } = req;
-  const { org_id } = query;
+  const { org_id } = query as CustomQuery;
 
   if (method === "GET") {
     if (user.org_id != org_id) {

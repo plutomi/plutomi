@@ -26,7 +26,7 @@ async function handler(
   const expires_at = GetPastOrFutureTime(
     "future",
     default_expiry_time,
-    "days" || default_expiry_value, // TODO add days input
+    "days" || default_expiry_value,
     "iso"
   );
 
@@ -38,7 +38,7 @@ async function handler(
     created_by: user, // TODO reduce this to just name & email
     org_id: user.org_id,
     recipient_email: recipient_email,
-    expires_at: expires_at as string,
+    expires_at: expires_at,
   };
   if (method === "POST") {
     try {

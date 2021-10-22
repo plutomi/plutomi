@@ -17,12 +17,12 @@ async function handler(
     return res.status(401).json({ message: "Please sign in again" });
   }
   const { method, query } = req;
-  const { invite_id } = query;
+  const { invite_id } = query as CustomQuery;
 
   // TODO trycatch
   const invite = await GetOrgInvite({
     user_id: user.user_id,
-    invite_id: invite_id as string,
+    invite_id: invite_id,
   });
 
   const accept_org_invite_input = {
@@ -74,7 +74,7 @@ async function handler(
   if (method === "DELETE") {
     const delete_org_invite_input = {
       user_id: user.user_id,
-      invite_id: invite_id as string,
+      invite_id: invite_id,
     };
 
     try {

@@ -3,9 +3,9 @@ import useAllPublicOpenings from "../../../SWR/useAllPublicOpenings";
 import PublicOpeningsList from "../../Openings/Public/PublicOpeningsList";
 export default function OrgApplyPageContent() {
   const router = useRouter();
-  const { org_id } = router.query;
+  const { org_id } = router.query as CustomQuery;
   let { publicOpenings, isPublicOpeningsLoading, isPublicOpeningsError } =
-    useAllPublicOpenings(org_id as string);
+    useAllPublicOpenings(org_id);
 
   return (
     <div className="mt-6">

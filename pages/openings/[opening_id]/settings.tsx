@@ -9,12 +9,12 @@ import { useRouter } from "next/router";
 import OpeningSettingsContent from "../../../components/Openings/OpeningSettingsContent";
 export default function OpeningsSettings() {
   const router = useRouter();
-  const { opening_id } = router.query;
+  const { opening_id } = router.query as CustomQuery;
 
   const { user, isUserLoading, isUserError } = useSelf();
   let { opening, isOpeningLoading, isOpeningError } = useOpeningById(
     user?.user_id,
-    opening_id as string
+    opening_id
   );
 
   // When rendering client side don't display anything until loading is complete

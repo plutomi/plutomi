@@ -19,7 +19,7 @@ function useAllStagesInOpening(
   const { data, error } = useSWR(
     shouldFetch &&
       OpeningsService.getAllStagesInOpeningURL({
-        opening_id: opening_id as string,
+        opening_id: opening_id,
       }),
     fetcher
   );

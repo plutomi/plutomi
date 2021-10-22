@@ -17,13 +17,13 @@ async function handler(
 
   if (method === "GET") {
     try {
-      const requested_user = await GetUserById(user.user_id as string);
+      const requested_user = await GetUserById(user.user_id);
 
       if (!requested_user) {
         req.session.destroy();
         return res.status(401).json({ message: "Please sign in again" }); // TODO middleware
       }
-      
+
       return res.status(200).json(requested_user);
     } catch (error) {
       // TODO add error logger

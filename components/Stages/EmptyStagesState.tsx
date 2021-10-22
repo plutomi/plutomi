@@ -7,13 +7,13 @@ import useSelf from "../../SWR/useSelf";
 import useAllStagesInOpening from "../../SWR/useAllStagesInOpening";
 export default function EmptyStagesState() {
   const router = useRouter();
-  const { opening_id } = router.query;
+  const { opening_id } = router.query as CustomQuery;
 
   const { user, isUserLoading, isUserError } = useSelf();
 
   let { stages, isStagesLoading, isStagesError } = useAllStagesInOpening(
     user?.user_id,
-    opening_id as string
+    opening_id
   );
 
   const stageModal = useStore((state: PlutomiState) => state.stageModal);

@@ -12,14 +12,14 @@ async function handler(
     return res.status(401).json({ message: "Please sign in again" });
   }
   const { method, query } = req;
-  const { stage_id, opening_id } = query;
+  const { stage_id, opening_id } = query as CustomQuery;
 
   // Get all applicants in a stage
   if (method === "GET") {
     const get_all_applicants_in_stage_input: GetAllApplicantsInStageInput = {
       org_id: user.org_id,
-      opening_id: opening_id as string,
-      stage_id: stage_id as string,
+      opening_id: opening_id,
+      stage_id: stage_id,
     };
 
     try {

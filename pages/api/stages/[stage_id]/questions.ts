@@ -13,7 +13,7 @@ async function handler(
     return res.status(401).json({ message: "Please sign in again" });
   }
   const { method, query } = req;
-  const { stage_id } = query;
+  const { stage_id } = query as CustomQuery;
 
   if (method === "GET") {
     try {

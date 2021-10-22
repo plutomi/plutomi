@@ -15,17 +15,17 @@ import ApplicantList from "../../../../../components/Applicants/ApplicantList";
 import ApplicantProfileModal from "../../../../../components/Applicants/ApplicantProfileModal";
 export default function StageID() {
   const router = useRouter();
-  const { opening_id, stage_id, applicant_id } = router.query;
+  const { opening_id, stage_id, applicant_id } = router.query as CustomQuery;
 
   const { user, isUserLoading, isUserError } = useSelf();
 
   let { stages, isStagesLoading, isStagesError } = useAllStagesInOpening(
     user?.user_id,
-    opening_id as string
+    opening_id
   );
 
   const { applicants, isApplicantsLoading, isApplicantsError } =
-    useAllApplicantsInStage(opening_id as string, stage_id as string);
+    useAllApplicantsInStage(opening_id, stage_id);
 
   const stageModal: StageModalInput = useStore(
     (state: PlutomiState) => state.stageModal
@@ -44,7 +44,7 @@ export default function StageID() {
   // Allows for copying the URL of the applicant directly directly
   useEffect(() => {
     if (!router.isReady) return;
-    const { applicant_id } = router.query;
+    const { applicant_id } = router.query as CustomQuery;
 
     if (
       applicant_id &&

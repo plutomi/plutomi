@@ -11,13 +11,13 @@ import useAllStagesInOpening from "../../../../SWR/useAllStagesInOpening";
 import useOpeningById from "../../../../SWR/useOpeningById";
 export default function Openings() {
   const router = useRouter();
-  const { opening_id } = router.query;
+  const { opening_id } = router.query as CustomQuery;
 
   const { user, isUserLoading, isUserError } = useSelf();
 
   let { opening, isOpeningLoading, isOpeningError } = useOpeningById(
     user?.user_id,
-    opening_id as string
+    opening_id
   );
 
   let { stages, isStagesLoading, isStagesError } = useAllStagesInOpening(
@@ -44,9 +44,7 @@ export default function Openings() {
   // Redirect to the first stage
   if (stages && stages.length > 0) {
     router.push(
-      `${process.env.PLUTOMI_URL}/openings/${opening_id as string}/stages/${
-        stages[0].stage_id as string
-      }/applicants` // TODO should this end with applicants?
+      `${process.env.PLUTOMI_URL}/openings/${opening_id}/stages/${stages[0].stage_id}/applicants` // TODO should this end with applicants?
     );
     return <Loader text="Loading stages..." />;
   }

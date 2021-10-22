@@ -16,13 +16,13 @@ async function handler(
     return res.status(401).json({ message: "Please sign in again" });
   }
   const { method, query, body } = req;
-  const { stage_id } = query;
+  const { stage_id } = query as CustomQuery;
   const { opening_id } = body;
   // Get a single stage in an opening
   if (method === "GET") {
     const get_stage_input: GetStageInput = {
       org_id: user.org_id,
-      stage_id: stage_id as string,
+      stage_id: stage_id,
     };
 
     try {
@@ -44,7 +44,7 @@ async function handler(
     try {
       const update_stage_input: UpdateStageInput = {
         org_id: user.org_id,
-        stage_id: stage_id as string,
+        stage_id: stage_id,
         new_stage_values: body.new_stage_values,
       };
 

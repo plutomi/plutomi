@@ -87,13 +87,13 @@ interface JoinOrgInput {
 interface CreateLoginLinkInput {
   user_email: string;
   login_link_hash: string;
-  login_link_expiry: string; // Timestamp in the future
+  login_link_expiry: string | number | date; // Timestamp in the future
 }
 
 interface SendLoginLinkEmailInput {
   recipient_email: string;
   login_link: string;
-  login_link_relative_expiry: string;
+  login_link_relative_expiry: string | number | date;
 }
 
 interface SendApplicantLinkInput {
@@ -415,3 +415,15 @@ interface ApplicantAnswer {
   question_response: string;
 }
 type NextIronRequest = NextApiRequest & { session: Session };
+
+type CustomQuery = {
+  org_id?: string;
+  opening_id: string;
+  user_id?: string;
+  stage_id?: string;
+  applicant_id?: string;
+  key?: string;
+  callback_url: string;
+  question_id: string;
+  invite_id: string;
+};

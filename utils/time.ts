@@ -39,7 +39,6 @@ export function GetPastOrFutureTime(
     if (format === "plain") return new_time.toDate();
   }
 
-  // In the past
   if (when === "past") {
     const new_time = dayjs().subtract(amount, type);
     if (format === "iso") return new_time.toISOString();
@@ -48,6 +47,6 @@ export function GetPastOrFutureTime(
   }
 }
 
-export function GetRelativeTime(timestamp: string) {
+export function GetRelativeTime(timestamp) {
   return dayjs().to(timestamp);
 }

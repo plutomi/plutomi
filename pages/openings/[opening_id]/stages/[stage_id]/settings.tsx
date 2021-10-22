@@ -14,12 +14,12 @@ import StageSettingsContent from "../../../../../components/Stages/StagesSetting
 import StagesService from "../../../../../adapters/StagesService";
 export default function StageSettings() {
   const router = useRouter();
-  const { opening_id, stage_id } = router.query;
+  const { opening_id, stage_id } = router.query as CustomQuery;
 
   const { user, isUserLoading, isUserError } = useSelf();
   let { opening, isOpeningLoading, isOpeningError } = useOpeningById(
     user?.user_id,
-    opening_id as string
+    opening_id
   );
 
   // When rendering client side don't display anything until loading is complete
@@ -58,8 +58,8 @@ export default function StageSettings() {
     }
     try {
       await StagesService.deleteStage({
-        opening_id: opening_id as string,
-        stage_id: stage_id as string,
+        opening_id: opening_id,
+        stage_id: stage_id,
       });
       router.push(`${process.env.PLUTOMI_URL}/openings/${opening_id}/settings`);
     } catch (error) {
@@ -67,12 +67,12 @@ export default function StageSettings() {
     }
 
     // Refresh the stage_order
-    mutate(OpeningsService.getOpeningURL({ opening_id: opening_id as string }));
+    mutate(OpeningsService.getOpeningURL({ opening_id: opening_id }));
 
     // Refresh the stage list
     mutate(
       OpeningsService.getAllStagesInOpeningURL({
-        opening_id: opening_id as string,
+        opening_id: opening_id,
       })
     );
   };

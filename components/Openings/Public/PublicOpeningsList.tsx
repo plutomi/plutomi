@@ -11,9 +11,9 @@ import useStore from "../../../utils/store";
 import useAllPublicOpenings from "../../../SWR/useAllPublicOpenings";
 export default function PublicOpeningsList() {
   const router = useRouter();
-  const { org_id } = router.query;
+  const { org_id } = router.query as CustomQuery;
   let { publicOpenings, isPublicOpeningsLoading, isPublicOpeningsError } =
-    useAllPublicOpenings(org_id as string);
+    useAllPublicOpenings(org_id);
 
   return (
     <div className="bg-white shadow overflow-hidden sm:rounded-md">

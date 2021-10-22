@@ -10,7 +10,7 @@ export default function DraggableStageCard({
   opening_id,
 }) {
   const router = useRouter();
-  const { stage_id } = router.query;
+  const { stage_id } = router.query as CustomQuery;
 
   return (
     <div

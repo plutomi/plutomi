@@ -17,12 +17,12 @@ import useOpeningById from "../../SWR/useOpeningById";
 import OpeningsService from "../../adapters/OpeningsService";
 export default function OpeningSettingsContent() {
   const router = useRouter();
-  const { opening_id } = router.query;
+  const { opening_id } = router.query as CustomQuery;
 
   const { user, isUserLoading, isUserError } = useSelf();
   let { opening, isOpeningLoading, isOpeningError } = useOpeningById(
     user?.user_id,
-    opening_id as string
+    opening_id
   );
 
   let { stages, isStagesLoading, isStagesError } = useAllStagesInOpening(
@@ -64,7 +64,7 @@ export default function OpeningSettingsContent() {
       console.log("Outgoing body", diff);
 
       const { message } = await OpeningsService.updateOpening({
-        opening_id: opening_id as string,
+        opening_id: opening_id,
         new_opening_values: diff,
       });
       alert(message);
@@ -79,7 +79,7 @@ export default function OpeningSettingsContent() {
       alert(error.response.data.message);
     }
     // Refresh opening data
-    mutate(OpeningsService.getOpeningURL({ opening_id: opening_id as string }));
+    mutate(OpeningsService.getOpeningURL({ opening_id: opening_id }));
   };
 
   return (

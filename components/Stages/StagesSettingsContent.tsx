@@ -41,7 +41,7 @@ export default function StageSettingsContent() {
     // Refresh the question_order
     mutate(
       StagesService.getStageURL({
-        stage_id: stage_id as string,
+        stage_id: stage_id,
       })
     );
 
@@ -85,7 +85,7 @@ export default function StageSettingsContent() {
     // Refresh the question_order
     mutate(
       StagesService.getStageURL({
-        stage_id: stage_id as string,
+        stage_id: stage_id,
       })
     );
 
@@ -94,12 +94,12 @@ export default function StageSettingsContent() {
   };
 
   const router = useRouter();
-  const { opening_id, stage_id } = router.query;
+  const { opening_id, stage_id } = router.query as CustomQuery;
 
   const { user, isUserLoading, isUserError } = useSelf();
   let { opening, isOpeningLoading, isOpeningError } = useOpeningById(
     user?.user_id,
-    opening_id as string
+    opening_id
   );
 
   let { stages, isStagesLoading, isStagesError } = useAllStagesInOpening(
@@ -112,7 +112,7 @@ export default function StageSettingsContent() {
   const { stage, isStageLoading, isStageError } = useStageById(
     user?.user_id,
     opening?.opening_id,
-    stage_id as string
+    stage_id
   );
 
   const { questions, isQuestionsLoading, isQuestionsError } =

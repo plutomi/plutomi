@@ -37,7 +37,7 @@ export default function ApplicantProfileModal() {
   const [isEditing, setIsEditing] = useState(false);
   const [currentActive, setCurrentActive] = useState(1); // Id of item
   const router = useRouter();
-  const { applicant_id, opening_id, stage_id } = router.query;
+  const { applicant_id, opening_id, stage_id } = router.query as CustomQuery;
 
   const setApplicantProfileModal = useStore(
     (store: PlutomiState) => store.setApplicantProfileModal
@@ -47,9 +47,8 @@ export default function ApplicantProfileModal() {
     (store: PlutomiState) => store.applicantProfileModal
   );
 
-  const { applicant, isApplicantLoading, isApplicantError } = useApplicantById(
-    applicant_id as string
-  );
+  const { applicant, isApplicantLoading, isApplicantError } =
+    useApplicantById(applicant_id);
 
   const handleNavClick = (e, tabId: number) => {
     e.preventDefault();
@@ -68,7 +67,7 @@ export default function ApplicantProfileModal() {
 
     router.push(
       {
-        pathname: `/openings/${opening_id as string}/stages/${stage_id as string}/applicants`,
+        pathname: `/openings/${opening_id}/stages/${stage_id}/applicants`,
       },
       undefined,
       { shallow: true }
@@ -185,7 +184,7 @@ export default function ApplicantProfileModal() {
                       <div className="ml-3 h-7 flex items-center space-x-4">
                         <ClickToCopy
                           showText={"Copy Application Link"}
-                          copyText={`${process.env.PLUTOMI_URL}/${applicant?.org_id as string}/applicants/${applicant?.applicant_id as string}`}
+                          copyText={`${process.env.PLUTOMI_URL}/${applicant?.org_id}/applicants/${applicant?.applicant_id}`}
                         />
                         <button
                           type="button"

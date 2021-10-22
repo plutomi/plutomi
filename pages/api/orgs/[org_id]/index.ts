@@ -16,7 +16,7 @@ async function handler(
     return res.status(401).json({ message: "Please sign in again" });
   }
   const { method, query } = req;
-  const { org_id } = query;
+  const { org_id } = query as CustomQuery;
 
   if (method === "GET") {
     // When signed in, this returns all data for an org
@@ -30,7 +30,7 @@ async function handler(
     }
 
     try {
-      const org = await GetOrg(org_id as string);
+      const org = await GetOrg(org_id);
 
       if (!org) {
         return res.status(404).json({ message: "Org not found" });

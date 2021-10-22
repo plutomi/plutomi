@@ -5,11 +5,11 @@ import CleanOrg from "../../../../../utils/clean/cleanOrg";
 // This returns limited public information about an org
 const handler = async (req: CustomRequest, res: NextApiResponse) => {
   const { method, query } = req;
-  const { org_id } = query;
+  const { org_id } = query as CustomQuery;
 
   if (method === "GET") {
     try {
-      const org = await GetOrg(org_id as string);
+      const org = await GetOrg(org_id);
 
       if (!org) {
         return res.status(404).json({ message: "Org not found" });

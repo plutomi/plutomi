@@ -15,11 +15,11 @@ async function handler(
     return res.status(401).json({ message: "Please sign in again" });
   }
   const { method, query, body } = req;
-  const { opening_id } = query;
+  const { opening_id } = query as CustomQuery;
 
   const get_opening_input: GetOpeningInput = {
     org_id: user.org_id,
-    opening_id: opening_id as string,
+    opening_id: opening_id,
   };
 
   if (method === "GET") {
@@ -42,7 +42,7 @@ async function handler(
     try {
       const update_opening_input: UpdateOpeningInput = {
         org_id: user.org_id,
-        opening_id: opening_id as string,
+        opening_id: opening_id,
         new_opening_values: body.new_opening_values,
       };
 

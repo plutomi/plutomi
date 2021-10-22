@@ -12,12 +12,12 @@ import useOpenings from "../../SWR/useOpenings";
 import useAllStagesInOpening from "../../SWR/useAllStagesInOpening";
 export default function StagesHeader() {
   const router = useRouter();
-  const { opening_id } = router.query;
+  const { opening_id } = router.query as CustomQuery;
 
   const { user, isUserLoading, isUserError } = useSelf();
   let { opening, isOpeningLoading, isOpeningError } = useOpeningById(
     user?.user_id,
-    opening_id as string
+    opening_id
   );
 
   let { openings, isOpeningsLoading, isOpeningsError } = useOpenings(

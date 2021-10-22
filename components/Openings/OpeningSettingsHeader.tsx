@@ -12,12 +12,12 @@ import Loader from "../Loader";
 import OpeningsService from "../../adapters/OpeningsService";
 export default function OpeningSettingsHeader() {
   const router = useRouter();
-  const { opening_id } = router.query;
+  const { opening_id } = router.query as CustomQuery;
 
   const { user, isUserLoading, isUserError } = useSelf();
   let { opening, isOpeningLoading, isOpeningError } = useOpeningById(
     user?.user_id,
-    opening_id as string
+    opening_id
   );
 
   const stageModal = useStore((state: PlutomiState) => state.stageModal);
@@ -44,7 +44,7 @@ export default function OpeningSettingsHeader() {
   if (opening?.stage_order.length > 0) {
     crumbs.unshift({
       name: "Applicants",
-      href: `/openings/${opening_id as string}/stages/${opening?.stage_order[0] as string}/applicants`, // TODO should this end with /applicants?
+      href: `/openings/${opening_id}/stages/${opening?.stage_order[0]}/applicants`, // TODO should this end with /applicants?
       current: false,
     });
   }
@@ -63,7 +63,7 @@ export default function OpeningSettingsHeader() {
     }
 
     try {
-      await OpeningsService.deleteOpening({ opening_id: opening_id as string });
+      await OpeningsService.deleteOpening({ opening_id: opening_id });
       router.push(`${process.env.PLUTOMI_URL}/openings`);
     } catch (error) {
       alert(error.response.data.message);

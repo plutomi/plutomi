@@ -7,11 +7,11 @@ import _ from "lodash";
 
 export default function StageCard({ name, current_stage_id, opening_id }) {
   const router = useRouter();
-  const { stage_id } = router.query;
+  const { stage_id } = router.query as CustomQuery;
 
   return (
     <Link
-      href={`${process.env.PLUTOMI_URL}/openings/${opening_id as string}/stages/${current_stage_id as string}/applicants`} // TODO should this end with applicants?
+      href={`${process.env.PLUTOMI_URL}/openings/${opening_id}/stages/${current_stage_id}/applicants`} // TODO should this end with applicants?
     >
       <a>
         <div

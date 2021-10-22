@@ -9,18 +9,18 @@ import { PencilAltIcon } from "@heroicons/react/outline";
 import useStageById from "../../SWR/useStageById";
 export default function StageSettingsHeader({ deleteStage }) {
   const router = useRouter();
-  const { opening_id, stage_id } = router.query;
+  const { opening_id, stage_id } = router.query as CustomQuery;
 
   const { user, isUserLoading, isUserError } = useSelf();
   let { opening, isOpeningLoading, isOpeningError } = useOpeningById(
     user?.user_id,
-    opening_id as string
+    opening_id
   );
 
   const { stage, isStageLoading, isStageError } = useStageById(
     user?.user_id,
     opening?.opening_id,
-    stage_id as string
+    stage_id
   );
 
   const setQuestionModal = useStore(
@@ -69,7 +69,7 @@ export default function StageSettingsHeader({ deleteStage }) {
     {
       name: "Applicants",
       // Go to the CURRENT STAGE in the opening to view the applicants
-      href: `/openings/${opening_id as string}/stages/${stage_id as string}/applicants`, // TODO should this end with applicants?
+      href: `/openings/${opening_id}/stages/${stage_id}/applicants`, // TODO should this end with applicants?
       current: false,
     },
     {
