@@ -8,7 +8,6 @@ import useSelf from "../../SWR/useSelf";
 import StageCard from "./StageCard";
 import Loader from "../Loader";
 import useOpeningById from "../../SWR/useOpeningById";
-import { useSession } from "next-auth/client";
 export default function StageCarousel() {
   const router = useRouter();
   const [activeItemIndex, setActiveItemIndex] = useState(0);

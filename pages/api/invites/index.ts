@@ -5,7 +5,6 @@ import { GetPastOrFutureTime } from "../../../utils/time";
 import { NextApiResponse } from "next";
 import withCleanOrgName from "../../../middleware/withCleanOrgName";
 import { GetOrg } from "../../../utils/orgs/getOrg";
-
 import withSession from "../../../middleware/withSession";
 
 async function handler(

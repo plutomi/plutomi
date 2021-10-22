@@ -1,4 +1,3 @@
-import { useSession } from "next-auth/client";
 import useSelf from "../../SWR/useSelf";
 import { PlusIcon } from "@heroicons/react/outline";
 import useStore from "../../utils/store";

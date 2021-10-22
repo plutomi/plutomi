@@ -1,10 +1,8 @@
-import { useSession } from "next-auth/client";
 import Breadcrumbs from "../Breadcrumbs";
 import useSelf from "../../SWR/useSelf";
-import { PencilAltIcon, PlusIcon } from "@heroicons/react/outline";
+import { PencilAltIcon } from "@heroicons/react/outline";
 import useStore from "../../utils/store";
 import { mutate } from "swr";
-import axios from "axios";
 import { TrashIcon } from "@heroicons/react/outline";
 import useOpeningById from "../../SWR/useOpeningById";
 import { useRouter } from "next/router";

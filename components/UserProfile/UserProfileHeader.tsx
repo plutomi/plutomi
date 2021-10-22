@@ -1,4 +1,3 @@
-import { useSession } from "next-auth/client";
 import useSelf from "../../SWR/useSelf";
 import { PencilAltIcon, PlusIcon } from "@heroicons/react/outline";
 import Loader from "../Loader";

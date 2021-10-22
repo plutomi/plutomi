@@ -1,5 +1,4 @@
 import SignedInNav from "../components/Navbar/SignedInNav";
-import { useSession } from "next-auth/client";
 import useSelf from "../SWR/useSelf";
 import axios from "axios";
 import UserProfileHeader from "../components/UserProfile/UserProfileHeader";
@@ -30,7 +29,7 @@ export default function Team() {
   if (isUserError) {
     return (
       <Login
-        desiredPageText={"your profile"} // TODO set this
+        desiredPageText={"your profile"} 
       />
     );
   }

@@ -1,9 +1,7 @@
-import { useSession } from "next-auth/client";
 import useSelf from "../../SWR/useSelf";
 import Loader from "../Loader";
 import Invite from "./Invite";
 import { mutate } from "swr";
-import axios from "axios";
 import UsersService from "../../adapters/UsersService";
 import { useRouter } from "next/router";
 import InvitesService from "../../adapters/InvitesService";

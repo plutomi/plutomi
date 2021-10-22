@@ -1,8 +1,6 @@
 import SignedInNav from "../components/Navbar/SignedInNav";
-import { useSession } from "next-auth/client";
 import useSelf from "../SWR/useSelf";
 import EmptyTeamState from "../components/Team/EmptyTeamState";
-import axios from "axios";
 import TeamContent from "../components/Team/TeamContent";
 import Loader from "../components/Loader";
 import Login from "../components/Login";
@@ -33,7 +31,6 @@ export default function Team() {
   if (isUserError) {
     return (
       <Login
-        callbackUrl={`${process.env.PLUTOMI_URL}/team`} // TODO set this
         desiredPageText={"your team"} // TODO set this
       />
     );

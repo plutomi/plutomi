@@ -1,4 +1,3 @@
-import { useSession } from "next-auth/client";
 import useSelf from "../../SWR/useSelf";
 import useOrgUsers from "../../SWR/useOrgUsers";
 import UserCard from "./UserCard";

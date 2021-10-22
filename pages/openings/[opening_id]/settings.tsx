@@ -1,5 +1,4 @@
 import SignedInNav from "../../../components/Navbar/SignedInNav";
-import { useSession } from "next-auth/client";
 import useSelf from "../../../SWR/useSelf";
 import Loader from "../../../components/Loader";
 import OpeningSettingsHeader from "../../../components/Openings/OpeningSettingsHeader";

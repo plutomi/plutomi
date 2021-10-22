@@ -4,12 +4,11 @@ import {
   GetRelativeTime,
 } from "../../../utils/time";
 import InputValidation from "../../../utils/inputValidation";
-import { NextApiRequest, NextApiResponse } from "next";
+import {  NextApiResponse } from "next";
 import SendLoginLink from "../../../utils/email/sendLoginLink";
 import CreateLoginLink from "../../../utils/loginLinks/createLoginLink";
 import { nanoid } from "nanoid";
 import withSession from "../../../middleware/withSession";
-import { Session } from "next-iron-session";
 import { createHash } from "crypto";
 import { GetLatestLoginLink } from "../../../utils/loginLinks/getLatestLoginLink";
 import { CreateUser } from "../../../utils/users/createUser";

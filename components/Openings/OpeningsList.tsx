@@ -6,7 +6,6 @@ import {
 import ClickToCopy from "../ClickToCopy";
 import { GetRelativeTime } from "../../utils/time";
 import Link from "next/dist/client/link";
-import { useSession } from "next-auth/client";
 import useOpenings from "../../SWR/useOpenings";
 import useSelf from "../../SWR/useSelf";
 import _ from "lodash";

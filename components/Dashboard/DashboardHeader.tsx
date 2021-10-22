@@ -1,4 +1,3 @@
-import { useSession } from "next-auth/client";
 import useSelf from "../../SWR/useSelf";
 
 export default function DashboardHeader() {

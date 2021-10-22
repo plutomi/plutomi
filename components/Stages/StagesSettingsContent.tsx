@@ -1,11 +1,9 @@
-import { useSession } from "next-auth/client";
 import { useRouter } from "next/router";
 import { mutate } from "swr";
 import difference from "../../utils/getObjectDifference";
 import { GetRelativeTime } from "../../utils/time";
 import StageReorderColumn from "../StageReorderColumn";
 import QuestionList from "../Questions/QuestionList";
-import axios from "axios";
 import useStore from "../../utils/store";
 import QuestionModal from "../Questions/QuestionModal";
 import useAllStageQuestions from "../../SWR/useAllStageQuestions";

@@ -1,15 +1,12 @@
-import { useSession } from "next-auth/client";
 import useSelf from "../../SWR/useSelf";
 import { CogIcon } from "@heroicons/react/outline";
 import useStore from "../../utils/store";
 import ClickToCopy from "../ClickToCopy";
 import Link from "next/dist/client/link";
-import { AdjustmentsIcon } from "@heroicons/react/outline";
 import OpeningsDropdown from "../Openings/DropDown";
 import useOpeningById from "../../SWR/useOpeningById";
 import { useRouter } from "next/router";
 import useOpenings from "../../SWR/useOpenings";
-import useAllStagesInOpening from "../../SWR/useAllStagesInOpening";
 export default function StagesHeader() {
   const router = useRouter();
   const { opening_id } = router.query as CustomQuery;

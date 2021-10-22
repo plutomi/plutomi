@@ -5,7 +5,6 @@ import Contact from "../components/Static/ContactUs";
 import Pricing from "../components/Pricing/Pricing";
 import LoginHomepage from "../components/LoginHomepage";
 import UseCases from "../components/UseCases";
-import { useSession } from "next-auth/client";
 import Hero from "../components/Static/Hero";
 import useSelf from "../SWR/useSelf";
 export default function Main() {

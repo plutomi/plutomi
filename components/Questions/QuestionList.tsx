@@ -1,5 +1,4 @@
 import { useRouter } from "next/router";
-import { useSession } from "next-auth/client";
 import useSelf from "../../SWR/useSelf";
 import useOpeningById from "../../SWR/useOpeningById";
 import useStageById from "../../SWR/useStageById";

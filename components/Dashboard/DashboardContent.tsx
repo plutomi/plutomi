@@ -1,10 +1,8 @@
-import { useSession } from "next-auth/client";
 import useSelf from "../../SWR/useSelf";
 import UpdateName from "./UpdateName";
 import Loader from "../Loader";
 import ClickToCopy from "../ClickToCopy";
 import usePrivateOrgById from "../../SWR/usePrivateOrgById";
-import axios from "axios";
 import { mutate } from "swr";
 import UsersService from "../../adapters/UsersService";
 import OrgsService from "../../adapters/OrgsService";

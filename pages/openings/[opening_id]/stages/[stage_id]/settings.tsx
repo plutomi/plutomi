@@ -1,13 +1,10 @@
 import SignedInNav from "../../../../../components/Navbar/SignedInNav";
-import { useSession } from "next-auth/client";
 import useSelf from "../../../../../SWR/useSelf";
 import Loader from "../../../../../components/Loader";
-import axios from "axios";
 import { mutate } from "swr";
 import Login from "../../../../../components/Login";
 import useOpeningById from "../../../../../SWR/useOpeningById";
 import { useRouter } from "next/router";
-import useStageById from "../../../../../SWR/useStageById";
 import OpeningsService from "../../../../../adapters/OpeningsService";
 import StageSettingsHeader from "../../../../../components/Stages/StageSettingsHeader";
 import StageSettingsContent from "../../../../../components/Stages/StagesSettingsContent";

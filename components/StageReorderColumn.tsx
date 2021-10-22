@@ -7,7 +7,6 @@ import { useRouter } from "next/router";
 import difference from "../utils/getObjectDifference";
 import StageModal from "./Stages/StageModal";
 import Link from "next/dist/client/link";
-import { useSession } from "next-auth/client";
 import StagesService from "../adapters/StagesService";
 import useSelf from "../SWR/useSelf";
 import { useEffect } from "react";

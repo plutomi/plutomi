@@ -1,7 +1,5 @@
-import { useSession } from "next-auth/client";
 import Login from "../components/Login";
 import useSelf from "../SWR/useSelf";
-import useOrgInvites from "../SWR/useOrgInvites";
 import { useSWRConfig } from "swr";
 import SignedInNav from "../components/Navbar/SignedInNav";
 import { useRouter } from "next/router";
@@ -12,7 +10,6 @@ import Loader from "../components/Loader";
 export default function Invites() {
   const router = useRouter();
   const { mutate } = useSWRConfig();
-  const [session, loading]: CustomSession = useSession();
   const { user, isUserLoading, isUserError } = useSelf();
 
   // When rendering client side don't display anything until loading is complete
@@ -21,12 +18,7 @@ export default function Invites() {
   }
 
   if (isUserError) {
-    return (
-      <Login
-        callbackUrl={`${process.env.PLUTOMI_URL}/invites`}
-        desiredPageText={"your invites"}
-      />
-    );
+    return <Login desiredPageText={"your invites"} />;
   }
 
   if (isUserLoading) {

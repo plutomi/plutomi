@@ -4,7 +4,6 @@ import InputValidation from "../../../../utils/inputValidation";
 import DeleteApplicant from "../../../../utils/applicants/deleteApplicant";
 import UpdateApplicant from "../../../../utils/applicants/updateApplicant";
 import withSession from "../../../../middleware/withSession";
-import { Session } from "next-iron-session";
 
 async function handler(
   req: NextIronRequest,

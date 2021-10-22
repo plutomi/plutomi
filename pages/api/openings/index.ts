@@ -2,7 +2,6 @@ import { GetAllOpeningsInOrg } from "../../../utils/openings/getAllOpeningsInOrg
 import { CreateOpening } from "../../../utils/openings/createOpening";
 import InputValidation from "../../../utils/inputValidation";
 import { NextApiResponse } from "next";
-
 import withSession from "../../../middleware/withSession";
 
 async function handler(

@@ -2,7 +2,6 @@ import { PlusIcon } from "@heroicons/react/solid";
 import { BriefcaseIcon } from "@heroicons/react/outline";
 import useStore from "../../utils/store";
 import { useRouter } from "next/router";
-import { useSession } from "next-auth/client";
 import useSelf from "../../SWR/useSelf";
 import useAllStagesInOpening from "../../SWR/useAllStagesInOpening";
 export default function EmptyStagesState() {

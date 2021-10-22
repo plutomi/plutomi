@@ -158,7 +158,7 @@ interface CreateOrgInviteInput {
   org_name: string;
   created_by: DynamoUser;
   recipient_email: string; // Email of person getting invited
-  expires_at: string; // TODO Maybe Dynamo TTL or just ISO
+  expires_at: string | number | Date; // TODO Maybe Dynamo TTL or just ISO
   claimed: boolean;
 }
 
