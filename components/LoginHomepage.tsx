@@ -1,9 +1,7 @@
 // This is the same as the SignIn.tsx component
 // but with different styling so it fits in the home page
 // TODO probably better to refactor this as this is bad practice
-import AuthService from "../adapters/AuthService";
-import GoogleButton from "./Buttons/GoogleButton";
-import axios from "axios";
+import AuthService from "../Adapters/AuthService";
 import LoginEmail from "./EmailSigninInput";
 import { useState } from "react";
 interface CallbackUrl {

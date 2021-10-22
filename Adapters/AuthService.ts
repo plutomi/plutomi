@@ -7,6 +7,7 @@ export default class AuthService {
     };
 
     const { data } = await axios.post(
+<<<<<<< HEAD
       `/api/auth/login?callback_url=${callback_url}`,
       body
     );
@@ -15,6 +16,11 @@ export default class AuthService {
 
   static async logout() {
     const { data } = await axios.post(`/api/auth/logout`);
+=======
+      `/api/auth?callback_url=${callback_url}`,
+      body
+    );
+>>>>>>> 2f22d4b (Added logging in with links / cookies)
     return data;
   }
 }
