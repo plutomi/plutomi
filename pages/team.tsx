@@ -1,8 +1,11 @@
 import SignedInNav from "../components/Navbar/SignedInNav";
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 import { useSession } from "next-auth/client";
 >>>>>>> dd45c08 (replaced next-auth with next-iron-session)
+=======
+>>>>>>> 35ce39a (feat: Added ability to get all applicants by opening)
 import useSelf from "../SWR/useSelf";
 import EmptyTeamState from "../components/Team/EmptyTeamState";
 import TeamContent from "../components/Team/TeamContent";
@@ -45,7 +48,6 @@ export default function Team() {
 >>>>>>> 73b8a24 (fixed wrong callback url on signin)
 =======
       <Login
-        callbackUrl={`${process.env.PLUTOMI_URL}/team`} // TODO set this
         desiredPageText={"your team"} // TODO set this
 >>>>>>> d64c806 (Got rid of callback url on login component)
       />

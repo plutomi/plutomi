@@ -5,9 +5,12 @@ import DeleteApplicant from "../../../../utils/applicants/deleteApplicant";
 import UpdateApplicant from "../../../../utils/applicants/updateApplicant";
 import withSession from "../../../../middleware/withSession";
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 import { Session } from "next-iron-session";
 >>>>>>> 12d77e0 (Replaced withauthorizer with withSession)
+=======
+>>>>>>> 35ce39a (feat: Added ability to get all applicants by opening)
 
 async function handler(
   req: NextIronRequest,

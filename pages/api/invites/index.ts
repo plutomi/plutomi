@@ -5,10 +5,13 @@ import { GetPastOrFutureTime } from "../../../utils/time";
 import { NextApiResponse } from "next";
 import withCleanOrgName from "../../../middleware/withCleanOrgName";
 import { GetOrg } from "../../../utils/orgs/getOrg";
+<<<<<<< HEAD
 import withSession from "../../../middleware/withSession";
 
 <<<<<<< HEAD
 =======
+=======
+>>>>>>> 35ce39a (feat: Added ability to get all applicants by opening)
 import withSession from "../../../middleware/withSession";
 
 >>>>>>> 12d77e0 (Replaced withauthorizer with withSession)

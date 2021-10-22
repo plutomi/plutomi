@@ -3,6 +3,7 @@ import DashboardContent from "../components/Dashboard/DashboardContent";
 import DashboardHeader from "../components/Dashboard/DashboardHeader";
 import SignedInNav from "../components/Navbar/SignedInNav";
 <<<<<<< HEAD
+<<<<<<< HEAD
 import useSelf from "../SWR/useSelf";
 import Login from "../components/Login";
 =======
@@ -11,6 +12,10 @@ import useSelf from "../SWR/useSelf";
 import Login from "../components/Login";
 import axios from "axios";
 >>>>>>> dd45c08 (replaced next-auth with next-iron-session)
+=======
+import useSelf from "../SWR/useSelf";
+import Login from "../components/Login";
+>>>>>>> 35ce39a (feat: Added ability to get all applicants by opening)
 import { mutate } from "swr";
 import OrgsService from "../adapters/OrgsService";
 import useStore from "../utils/store";

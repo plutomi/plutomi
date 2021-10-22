@@ -1,4 +1,5 @@
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 import { useSession } from "next-auth/client";
 <<<<<<< HEAD
@@ -7,6 +8,8 @@ import SignIn from "../../components/SignIn";
 =======
 import Login from "../Login";
 >>>>>>> d64c806 (Got rid of callback url on login component)
+=======
+>>>>>>> 35ce39a (feat: Added ability to get all applicants by opening)
 import useSelf from "../../SWR/useSelf";
 import useOrgInvites from "../../SWR/useOrgInvites";
 import { useSWRConfig } from "swr";
@@ -16,9 +19,12 @@ export default function InvitesHeader() {
   const router = useRouter();
   const { mutate } = useSWRConfig();
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
   const [session, loading]: CustomSession = useSession();
 >>>>>>> dd45c08 (replaced next-auth with next-iron-session)
+=======
+>>>>>>> 35ce39a (feat: Added ability to get all applicants by opening)
   const { user, isUserLoading, isUserError } = useSelf();
   const { invites, isInvitesLoading, isInvitesError } = useOrgInvites(
     user?.user_id

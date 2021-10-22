@@ -1,10 +1,14 @@
 import Breadcrumbs from "../Breadcrumbs";
 import useSelf from "../../SWR/useSelf";
 <<<<<<< HEAD
+<<<<<<< HEAD
 import { PencilAltIcon } from "@heroicons/react/outline";
 =======
 import { PencilAltIcon, PlusIcon } from "@heroicons/react/outline";
 >>>>>>> dd45c08 (replaced next-auth with next-iron-session)
+=======
+import { PencilAltIcon } from "@heroicons/react/outline";
+>>>>>>> 35ce39a (feat: Added ability to get all applicants by opening)
 import useStore from "../../utils/store";
 import { mutate } from "swr";
 import { TrashIcon } from "@heroicons/react/outline";

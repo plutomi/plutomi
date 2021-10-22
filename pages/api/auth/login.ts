@@ -5,18 +5,25 @@ import {
 } from "../../../utils/time";
 import InputValidation from "../../../utils/inputValidation";
 <<<<<<< HEAD
+<<<<<<< HEAD
 import {  NextApiResponse } from "next";
 =======
 import { NextApiRequest, NextApiResponse } from "next";
 >>>>>>> 73b8a24 (fixed wrong callback url on signin)
+=======
+import {  NextApiResponse } from "next";
+>>>>>>> 35ce39a (feat: Added ability to get all applicants by opening)
 import SendLoginLink from "../../../utils/email/sendLoginLink";
 import CreateLoginLink from "../../../utils/loginLinks/createLoginLink";
 import { nanoid } from "nanoid";
 import withSession from "../../../middleware/withSession";
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 import { Session } from "next-iron-session";
 >>>>>>> 73b8a24 (fixed wrong callback url on signin)
+=======
+>>>>>>> 35ce39a (feat: Added ability to get all applicants by opening)
 import { createHash } from "crypto";
 import { GetLatestLoginLink } from "../../../utils/loginLinks/getLatestLoginLink";
 import { CreateUser } from "../../../utils/users/createUser";

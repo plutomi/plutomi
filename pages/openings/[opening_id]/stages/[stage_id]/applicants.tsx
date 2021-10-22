@@ -1,8 +1,11 @@
 import SignedInNav from "../../../../../components/Navbar/SignedInNav";
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 import { useSession } from "next-auth/client";
 >>>>>>> dd45c08 (replaced next-auth with next-iron-session)
+=======
+>>>>>>> 35ce39a (feat: Added ability to get all applicants by opening)
 import useSelf from "../../../../../SWR/useSelf";
 import Loader from "../../../../../components/Loader";
 import EmptyStagesState from "../../../../../components/Stages/EmptyStagesState";

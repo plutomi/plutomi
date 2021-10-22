@@ -2,10 +2,13 @@ import { GetAllOpeningsInOrg } from "../../../utils/openings/getAllOpeningsInOrg
 import { CreateOpening } from "../../../utils/openings/createOpening";
 import InputValidation from "../../../utils/inputValidation";
 import { NextApiResponse } from "next";
+<<<<<<< HEAD
 import withSession from "../../../middleware/withSession";
 
 <<<<<<< HEAD
 =======
+=======
+>>>>>>> 35ce39a (feat: Added ability to get all applicants by opening)
 import withSession from "../../../middleware/withSession";
 
 >>>>>>> 12d77e0 (Replaced withauthorizer with withSession)

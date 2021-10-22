@@ -25,9 +25,12 @@
     "nanoid": "^3.1.25",
     "next": "11.1.0",
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
     "next-auth": "^3.29.0",
 >>>>>>> 2f22d4b (Added logging in with links / cookies)
+=======
+>>>>>>> 35ce39a (feat: Added ability to get all applicants by opening)
     "next-iron-session": "^4.2.0",
     "react": "17.0.2",
     "react-beautiful-dnd": "^13.1.0",
