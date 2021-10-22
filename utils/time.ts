@@ -6,8 +6,13 @@ dayjs.extend(relativeTime);
 /**
  * @param format - `iso`, `unix`, or `plain` date object
  */
+<<<<<<< HEAD
 export function GetCurrentTime(format: "iso" | "unix"): CustomDateFormat {
   if (format === "iso") return dayjs().toISOString();
+=======
+export function GetCurrentTime(format: "iso" | "unix" | "plain") {
+  if (format === "iso") return dayjs().toISOString() as string;
+>>>>>>> 569ceb2 (Finished removing unused imports)
   if (format === "unix") return dayjs().unix();
 }
 

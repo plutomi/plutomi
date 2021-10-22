@@ -1,6 +1,5 @@
 import { GetUserById } from "../../../utils/users/getUserById";
 import { NextApiResponse } from "next";
-import { UpdateUser } from "../../../utils/users/updateUser";
 import withSession from "../../../middleware/withSession";
 
 async function handler(

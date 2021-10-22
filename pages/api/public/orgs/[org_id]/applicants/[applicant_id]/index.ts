@@ -1,4 +1,5 @@
 import { NextApiResponse } from "next";
+import withCleanOrgName from "../../../../../../../middleware/withCleanOrgName";
 import { GetApplicantById } from "../../../../../../../utils/applicants/getApplicantById";
 import CleanApplicant from "../../../../../../../utils/clean/cleanApplicant";
 const handler = async (req: CustomRequest, res: NextApiResponse) => {
@@ -33,4 +34,8 @@ const handler = async (req: CustomRequest, res: NextApiResponse) => {
   return res.status(405).json({ message: "Not Allowed" });
 };
 
+<<<<<<< HEAD
 export default handler
+=======
+export default withCleanOrgName(handler);
+>>>>>>> 569ceb2 (Finished removing unused imports)

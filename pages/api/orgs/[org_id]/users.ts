@@ -1,7 +1,6 @@
 import { GetAllUsersInOrg } from "../../../../utils/orgs/getAllUsersInOrg";
 import withCleanOrgName from "../../../../middleware/withCleanOrgName";
 import { NextApiResponse } from "next";
-
 import withSession from "../../../../middleware/withSession";
 
 async function handler(

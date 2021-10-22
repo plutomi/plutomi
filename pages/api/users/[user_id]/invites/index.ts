@@ -1,6 +1,5 @@
 import { GetAllUserInvites } from "../../../../../utils/invites/getAllOrgInvites";
 import { NextApiResponse } from "next";
-
 import withSession from "../../../../../middleware/withSession";
 
 async function handler(
