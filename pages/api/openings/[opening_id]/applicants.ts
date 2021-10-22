@@ -3,17 +3,27 @@ import { GetAllApplicantsInOpening } from "../../../../utils/applicants/getAllAp
 import withSession from "../../../../middleware/withSession";
 import InputValidation from "../../../../utils/inputValidation";
 
+<<<<<<< HEAD
+=======
+import withSession from "../../../../middleware/withSession";
+
+>>>>>>> 12d77e0 (Replaced withauthorizer with withSession)
 async function handler(
   req: NextIronRequest,
   res: NextApiResponse
 ): Promise<void> {
   const user = req.session.get("user");
+<<<<<<< HEAD
   if (!user) {
     req.session.destroy();
     return res.status(401).json({ message: "Please sign in again" });
   }
   const { method, query } = req;
   const { stage_id, opening_id } = query as CustomQuery;
+=======
+  const { method, query } = req;
+  const { stage_id, opening_id } = query;
+>>>>>>> 12d77e0 (Replaced withauthorizer with withSession)
 
   if (method === "GET") {
     const get_all_applicants_in_opening_input = {

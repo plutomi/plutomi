@@ -7,15 +7,23 @@ import withCleanOrgName from "../../../middleware/withCleanOrgName";
 import { GetOrg } from "../../../utils/orgs/getOrg";
 import withSession from "../../../middleware/withSession";
 
+<<<<<<< HEAD
+=======
+import withSession from "../../../middleware/withSession";
+
+>>>>>>> 12d77e0 (Replaced withauthorizer with withSession)
 async function handler(
   req: NextIronRequest,
   res: NextApiResponse
 ): Promise<void> {
   const user = req.session.get("user");
+<<<<<<< HEAD
   if (!user) {
     req.session.destroy();
     return res.status(401).json({ message: "Please sign in again" });
   }
+=======
+>>>>>>> 12d77e0 (Replaced withauthorizer with withSession)
   const { body, method } = req;
 
   const { recipient_email }: APICreateOrgInviteInput = body;

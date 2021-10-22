@@ -11,12 +11,17 @@ async function handler(
   res: NextApiResponse
 ): Promise<void> {
   const user = req.session.get("user");
+<<<<<<< HEAD
   if (!user) {
     req.session.destroy();
     return res.status(401).json({ message: "Please sign in again" });
   }
   const { method, query, body } = req;
   const { stage_id } = query as CustomQuery;
+=======
+  const { method, query, body } = req;
+  const { stage_id } = query;
+>>>>>>> 12d77e0 (Replaced withauthorizer with withSession)
   const { opening_id } = body;
   // Get a single stage in an opening
   if (method === "GET") {

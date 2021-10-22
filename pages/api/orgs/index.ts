@@ -11,10 +11,13 @@ async function handler(
   res: NextApiResponse
 ): Promise<void> {
   const user = req.session.get("user");
+<<<<<<< HEAD
   if (!user) {
     req.session.destroy();
     return res.status(401).json({ message: "Please sign in again" });
   }
+=======
+>>>>>>> 12d77e0 (Replaced withauthorizer with withSession)
   const { body, method } = req;
   const { GSI1SK, org_id }: APICreateOrgInput = body;
 

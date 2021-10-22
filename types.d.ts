@@ -415,6 +415,7 @@ interface ApplicantAnswer {
   question_response: string;
 }
 type NextIronRequest = NextApiRequest & { session: Session };
+<<<<<<< HEAD
 type CustomDateFormat = string | number;
 type CustomQuery = {
   org_id?: string;
@@ -427,3 +428,5 @@ type CustomQuery = {
   question_id: string;
   invite_id: string;
 };
+=======
+>>>>>>> 12d77e0 (Replaced withauthorizer with withSession)
