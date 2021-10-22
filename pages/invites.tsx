@@ -3,7 +3,7 @@ import Login from "../components/Login";
 import useSelf from "../SWR/useSelf";
 =======
 import { useSession } from "next-auth/client";
-import SignIn from "../components/SignIn";
+import Login from "../components/Login";
 import useSelf from "../SWR/useSelf";
 import useOrgInvites from "../SWR/useOrgInvites";
 >>>>>>> dd45c08 (replaced next-auth with next-iron-session)
@@ -33,9 +33,9 @@ export default function Invites() {
     return <Login desiredPageText={"your invites"} />;
 =======
     return (
-      <SignIn
+      <Login
         callbackUrl={`${process.env.PLUTOMI_URL}/invites`}
-        desiredPage={"your invites"}
+        desiredPageText={"your invites"}
       />
     );
 >>>>>>> dd45c08 (replaced next-auth with next-iron-session)

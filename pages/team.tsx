@@ -35,6 +35,7 @@ export default function Team() {
   if (isUserError) {
     return (
 <<<<<<< HEAD
+<<<<<<< HEAD
       <Login
         desiredPageText={"your team"} // TODO set this
 =======
@@ -42,6 +43,11 @@ export default function Team() {
         callbackUrl={`${process.env.PLUTOMI_URL}/team`} // TODO set this
         desiredPage={"your team"} // TODO set this
 >>>>>>> 73b8a24 (fixed wrong callback url on signin)
+=======
+      <Login
+        callbackUrl={`${process.env.PLUTOMI_URL}/team`} // TODO set this
+        desiredPageText={"your team"} // TODO set this
+>>>>>>> d64c806 (Got rid of callback url on login component)
       />
     );
   }

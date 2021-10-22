@@ -31,6 +31,7 @@ export default function OpeningsSettings() {
 
   if (isUserError) {
 <<<<<<< HEAD
+<<<<<<< HEAD
     return <Login desiredPageText={"your opening settings"} />;
 =======
     return (
@@ -42,6 +43,9 @@ export default function OpeningsSettings() {
       />
     );
 >>>>>>> dd45c08 (replaced next-auth with next-iron-session)
+=======
+    return <Login desiredPageText={"your opening settings"} />;
+>>>>>>> d64c806 (Got rid of callback url on login component)
   }
 
   if (isUserLoading) {

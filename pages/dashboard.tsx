@@ -8,7 +8,7 @@ import Login from "../components/Login";
 =======
 import { useSession } from "next-auth/client";
 import useSelf from "../SWR/useSelf";
-import SignIn from "../components/SignIn";
+import Login from "../components/Login";
 import axios from "axios";
 >>>>>>> dd45c08 (replaced next-auth with next-iron-session)
 import { mutate } from "swr";
@@ -30,6 +30,7 @@ export default function Dashboard() {
 
   if (isUserError) {
 <<<<<<< HEAD
+<<<<<<< HEAD
     return <Login desiredPageText={"your dashboard"} />;
 =======
     return (
@@ -39,6 +40,9 @@ export default function Dashboard() {
       />
     );
 >>>>>>> dd45c08 (replaced next-auth with next-iron-session)
+=======
+    return <Login desiredPageText={"your dashboard"} />;
+>>>>>>> d64c806 (Got rid of callback url on login component)
   }
 
   if (isUserLoading) {

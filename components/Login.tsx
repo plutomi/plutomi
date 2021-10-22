@@ -5,6 +5,7 @@ import router from "next/router";
 <<<<<<< HEAD:components/Login.tsx
 import AuthService from "../adapters/AuthService";
 export default function Login({ desiredPageText }) {
+<<<<<<< HEAD:components/Login.tsx
 =======
 import AuthService from "../Adapters/AuthService";
 =======
@@ -12,6 +13,8 @@ import AuthService from "../adapters/AuthService";
 >>>>>>> 12d77e0 (Replaced withauthorizer with withSession):components/SignIn.tsx
 export default function SignIn({ callbackUrl, desiredPage }) {
 >>>>>>> 2f22d4b (Added logging in with links / cookies):components/SignIn.tsx
+=======
+>>>>>>> d64c806 (Got rid of callback url on login component):components/SignIn.tsx
   const [user_email, setUserEmail] = useState("");
   const [submittedText, setSubmittedText] = useState(
     `We've sent a magic login link to your email!`

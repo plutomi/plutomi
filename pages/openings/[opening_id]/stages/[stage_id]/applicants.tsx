@@ -72,6 +72,7 @@ export default function StageID() {
 
   if (isUserError) {
 <<<<<<< HEAD
+<<<<<<< HEAD
     return <Login desiredPageText={"your applicants"} />;
 =======
     return (
@@ -81,6 +82,9 @@ export default function StageID() {
       />
     );
 >>>>>>> dd45c08 (replaced next-auth with next-iron-session)
+=======
+    return <Login desiredPageText={"your applicants"} />;
+>>>>>>> d64c806 (Got rid of callback url on login component)
   }
 
   if (isUserLoading) {

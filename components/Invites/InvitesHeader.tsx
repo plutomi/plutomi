@@ -1,8 +1,12 @@
 <<<<<<< HEAD
 =======
 import { useSession } from "next-auth/client";
+<<<<<<< HEAD
 import SignIn from "../../components/SignIn";
 >>>>>>> dd45c08 (replaced next-auth with next-iron-session)
+=======
+import Login from "../Login";
+>>>>>>> d64c806 (Got rid of callback url on login component)
 import useSelf from "../../SWR/useSelf";
 import useOrgInvites from "../../SWR/useOrgInvites";
 import { useSWRConfig } from "swr";

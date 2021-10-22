@@ -43,6 +43,7 @@ export default function Openings() {
   if (isUserError) {
     return (
 <<<<<<< HEAD
+<<<<<<< HEAD
       <Login
         desiredPageText={"your stages"} // TODO set this
 =======
@@ -50,6 +51,10 @@ export default function Openings() {
         callbackUrl={`${process.env.PLUTOMI_URL}/openings`} // TODO set this
         desiredPage={"your stages"} // TODO set this
 >>>>>>> 73b8a24 (fixed wrong callback url on signin)
+=======
+      <Login
+        desiredPageText={"your stages"} // TODO set this
+>>>>>>> d64c806 (Got rid of callback url on login component)
       />
     );
   }
@@ -58,10 +63,16 @@ export default function Openings() {
   if (stages && stages.length > 0) {
     router.push(
 <<<<<<< HEAD
+<<<<<<< HEAD
       `${process.env.PLUTOMI_URL}/openings/${opening_id}/stages/${stages[0].stage_id}/applicants` // TODO should this end with applicants?
 =======
       `${process.env.PLUTOMI_URL}/openings/${opening_id as string}/stages/${stages[0].stage_id as string}/applicants` // TODO should this end with applicants?
 >>>>>>> 73b8a24 (fixed wrong callback url on signin)
+=======
+      `${process.env.PLUTOMI_URL}/openings/${opening_id as string}/stages/${
+        stages[0].stage_id as string
+      }/applicants` // TODO should this end with applicants?
+>>>>>>> d64c806 (Got rid of callback url on login component)
     );
     return <Loader text="Loading stages..." />;
   }

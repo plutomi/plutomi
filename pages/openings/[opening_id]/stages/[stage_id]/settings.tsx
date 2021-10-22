@@ -35,6 +35,7 @@ export default function StageSettings() {
   if (isUserError) {
     return (
 <<<<<<< HEAD
+<<<<<<< HEAD
       <Login
         desiredPageText={"your stage settings"} // TODO set this
 =======
@@ -42,6 +43,10 @@ export default function StageSettings() {
         callbackUrl={`${process.env.PLUTOMI_URL}/openings/${opening_id as string}/settings`} // TODO set this
         desiredPage={"your stage settings"} // TODO set this
 >>>>>>> 73b8a24 (fixed wrong callback url on signin)
+=======
+      <Login
+        desiredPageText={"your stage settings"} // TODO set this
+>>>>>>> d64c806 (Got rid of callback url on login component)
       />
     );
   }
