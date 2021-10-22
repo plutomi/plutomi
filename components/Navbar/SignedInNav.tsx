@@ -1,6 +1,6 @@
 import { Fragment } from "react";
 import { useSession } from "next-auth/client";
-import useUser from "../../SWR/useUser";
+import useSelf from "../../SWR/useSelf";
 import NavbarSearch from "./NavbarSearch";
 import { Disclosure, Menu, Transition } from "@headlessui/react";
 import {
@@ -29,8 +29,7 @@ function classNames(...classes) {
 }
 
 export default function SignedInNav({ current }: ValidNavigation) {
-  const [session, loading]: [CustomSession, boolean] = useSession();
-  const { user, isUserLoading, isUserError } = useUser(session?.user_id);
+  const { user, isUserLoading, isUserError } = useSelf();
   const { invites, isInvitesLoading, isInvitesError } = useOrgInvites(
     user?.user_id
   );

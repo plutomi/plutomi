@@ -9,7 +9,7 @@ import { useEffect } from "react";
 import OpeningModal from "./OpeningModal";
 import axios from "axios";
 import Loader from "../Loader";
-import useUser from "../../SWR/useUser";
+import useSelf from "../../SWR/useSelf";
 import { useState } from "react";
 import useStore from "../../utils/store";
 import useAllStagesInOpening from "../../SWR/useAllStagesInOpening";
@@ -18,8 +18,8 @@ import OpeningsService from "../../adapters/OpeningsService";
 export default function OpeningSettingsContent() {
   const router = useRouter();
   const { opening_id } = router.query;
-  const [session, loading]: [CustomSession, boolean] = useSession();
-  const { user, isUserLoading, isUserError } = useUser(session?.user_id);
+
+  const { user, isUserLoading, isUserError } = useSelf();
   let { opening, isOpeningLoading, isOpeningError } = useOpeningById(
     user?.user_id,
     opening_id as string

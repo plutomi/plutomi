@@ -1,12 +1,11 @@
 import { useSession } from "next-auth/client";
 import useOpenings from "../../SWR/useOpenings";
-import useUser from "../../SWR/useUser";
+import useSelf from "../../SWR/useSelf";
 import { PlusIcon } from "@heroicons/react/outline";
 import useStore from "../../utils/store";
 import { useState } from "react";
 export default function OpeningsHeader() {
-  const [session, loading]: [CustomSession, boolean] = useSession();
-  const { user, isUserLoading, isUserError } = useUser(session?.user_id);
+  const { user, isUserLoading, isUserError } = useSelf();
   let { openings, isOpeningsLoading, isOpeningsError } = useOpenings(
     user?.user_id
   );

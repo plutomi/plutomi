@@ -1,11 +1,11 @@
 import axios from "../axios/axios";
 
 export default class UsersService {
-  static getUserURL({ user_id }: APIGetUserURL) {
-    return `/api/users/${user_id}`;
+  static getSelfURL() {
+    return `/api/users/self`;
   }
-  static async getUser({ user_id }: APIGetUserInput) {
-    const { data } = await axios.get(this.getUserURL({ user_id }));
+  static async getUser() {
+    const { data } = await axios.get(this.getSelfURL());
     return data;
   }
 
@@ -18,13 +18,21 @@ export default class UsersService {
     return data;
   }
 
+  static getSpecificUserURL({ user_id }: APIGetUserURL) {
+    return `/api/users/${user_id}`;
+  }
+  static async getSpecificUser({ user_id }: APIGetUserInput) {
+    const { data } = await axios.get(this.getSpecificUserURL({ user_id }));
+    return data;
+  }
   static async updateUser({ user_id, new_user_values }: APIUpdateUserInput) {
     const body = {
       new_user_values: new_user_values,
     };
-    const { data } = await axios.put(this.getUserURL({ user_id }), body);
+    const { data } = await axios.put(
+      this.getSpecificUserURL({ user_id }),
+      body
+    );
     return data;
   }
-
-
 }

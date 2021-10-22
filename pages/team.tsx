@@ -1,6 +1,6 @@
 import SignedInNav from "../components/Navbar/SignedInNav";
 import { useSession } from "next-auth/client";
-import useUser from "../SWR/useUser";
+import useSelf from "../SWR/useSelf";
 import EmptyTeamState from "../components/Team/EmptyTeamState";
 import axios from "axios";
 import TeamContent from "../components/Team/TeamContent";
@@ -14,8 +14,8 @@ import { useRouter } from "next/router";
 import InvitesService from "../adapters/InvitesService";
 export default function Team() {
   const router = useRouter();
-  const [session, loading]: [CustomSession, boolean] = useSession();
-  const { user, isUserLoading, isUserError } = useUser(session?.user_id);
+
+  const { user, isUserLoading, isUserError } = useSelf();
   const { orgUsers, isOrgUsersLoading, isOrgUsersError } = useOrgUsers(
     user?.org_id,
     user?.user_id
@@ -26,12 +26,11 @@ export default function Team() {
   );
 
   // When rendering client side don't display anything until loading is complete
-  if (typeof window !== "undefined" && loading) {
+  if (typeof window !== "undefined" && isUserLoading) {
     return <Loader text="Loading..." />;
   }
 
-  // If no session or bad userid
-  if (!session || isUserError) {
+  if (isUserError) {
     return (
       <SignIn
         callbackUrl={`${process.env.NEXT_PUBLIC_NEXTAUTH_URL}/team`} // TODO set this

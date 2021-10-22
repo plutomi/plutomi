@@ -2,10 +2,9 @@ import { useRouter } from "next/router";
 import { signOut } from "next-auth/client";
 import Link from "next/link";
 import { useSession } from "next-auth/client";
-import useUser from "../SWR/useUser";
+import useSelf from "../SWR/useSelf";
 export default function AlreadySignedIn() {
-  const [session, loading]: [CustomSession, boolean] = useSession();
-  const { user, isUserLoading, isUserError } = useUser(session?.user_id);
+  const { user, isUserLoading, isUserError } = useSelf();
 
   const router = useRouter();
 

@@ -1,7 +1,13 @@
 import withSession from "../../middleware/withSession";
-import ironConfig from "../../middleware/iron-session-config";
+import { NextApiResponse } from "next";
+export default withSession(
+  async (req: NextIronRequest, res: NextApiResponse): Promise<void> => {
+    const { method } = req;
+    if (method === "POST") {
+      req.session.destroy();
+      return res.status(200).json({ message: "You've been logged out" });
+    }
 
-export default withSession(async (req, res) => {
-  req.session.destroy();
-  res.json({ isLoggedIn: false });
-});
+    return res.status(405).json({ message: "Not Allowed" });
+  }
+);

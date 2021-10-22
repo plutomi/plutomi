@@ -13,6 +13,10 @@ async function handler(
   res: NextApiResponse
 ): Promise<void> {
   const user = req.session.get("user");
+  if (!user) {
+    req.session.destroy();
+    return res.status(401).json({ message: "Please sign in again" });
+  }
   const { body, method } = req;
 
   const { recipient_email }: APICreateOrgInviteInput = body;

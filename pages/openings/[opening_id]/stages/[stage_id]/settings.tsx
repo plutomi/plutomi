@@ -1,6 +1,6 @@
 import SignedInNav from "../../../../../components/Navbar/SignedInNav";
 import { useSession } from "next-auth/client";
-import useUser from "../../../../../SWR/useUser";
+import useSelf from "../../../../../SWR/useSelf";
 import Loader from "../../../../../components/Loader";
 import axios from "axios";
 import { mutate } from "swr";
@@ -15,20 +15,19 @@ import StagesService from "../../../../../adapters/StagesService";
 export default function StageSettings() {
   const router = useRouter();
   const { opening_id, stage_id } = router.query;
-  const [session, loading]: [CustomSession, boolean] = useSession();
-  const { user, isUserLoading, isUserError } = useUser(session?.user_id);
+
+  const { user, isUserLoading, isUserError } = useSelf();
   let { opening, isOpeningLoading, isOpeningError } = useOpeningById(
     user?.user_id,
     opening_id as string
   );
 
   // When rendering client side don't display anything until loading is complete
-  if (typeof window !== "undefined" && loading) {
+  if (typeof window !== "undefined" && isUserLoading) {
     return <Loader text="Loading..." />;
   }
 
-  // If no session or bad userid
-  if (!session || isUserError) {
+  if (isUserError) {
     return (
       <SignIn
         callbackUrl={`${process.env.NEXT_PUBLIC_NEXTAUTH_URL}/openings/${opening_id}/settings`} // TODO set this

@@ -1,6 +1,6 @@
 import { useSession } from "next-auth/client";
 import SignIn from "../components/SignIn";
-import useUser from "../SWR/useUser";
+import useSelf from "../SWR/useSelf";
 import useOrgInvites from "../SWR/useOrgInvites";
 import { useSWRConfig } from "swr";
 import SignedInNav from "../components/Navbar/SignedInNav";
@@ -13,16 +13,14 @@ export default function Invites() {
   const router = useRouter();
   const { mutate } = useSWRConfig();
   const [session, loading]: CustomSession = useSession();
-  const { user, isUserLoading, isUserError } = useUser(session?.user_id);
- 
+  const { user, isUserLoading, isUserError } = useSelf();
 
   // When rendering client side don't display anything until loading is complete
-  if (typeof window !== "undefined" && loading) {
+  if (typeof window !== "undefined" && isUserLoading) {
     return null;
   }
 
-  // If no session or bad userid
-  if (!session || isUserError) {
+  if (isUserError) {
     return (
       <SignIn
         callbackUrl={`${process.env.NEXT_PUBLIC_NEXTAUTH_URL}/invites`}

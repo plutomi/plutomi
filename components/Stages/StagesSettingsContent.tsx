@@ -10,7 +10,7 @@ import useStore from "../../utils/store";
 import QuestionModal from "../Questions/QuestionModal";
 import useAllStageQuestions from "../../SWR/useAllStageQuestions";
 import Loader from "../Loader";
-import useUser from "../../SWR/useUser";
+import useSelf from "../../SWR/useSelf";
 import useAllStagesInOpening from "../../SWR/useAllStagesInOpening";
 import useOpeningById from "../../SWR/useOpeningById";
 import useStageById from "../../SWR/useStageById";
@@ -95,8 +95,8 @@ export default function StageSettingsContent() {
 
   const router = useRouter();
   const { opening_id, stage_id } = router.query;
-  const [session, loading]: [CustomSession, boolean] = useSession();
-  const { user, isUserLoading, isUserError } = useUser(session?.user_id);
+
+  const { user, isUserLoading, isUserError } = useSelf();
   let { opening, isOpeningLoading, isOpeningError } = useOpeningById(
     user?.user_id,
     opening_id as string

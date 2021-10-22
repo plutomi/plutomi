@@ -8,6 +8,10 @@ async function handler(
   res: NextApiResponse
 ): Promise<void> {
   const user = req.session.get("user");
+  if (!user) {
+    req.session.destroy();
+    return res.status(401).json({ message: "Please sign in again" });
+  }
   const { method, query, body } = req;
   const { user_id } = query;
   const { new_user_values } = body;

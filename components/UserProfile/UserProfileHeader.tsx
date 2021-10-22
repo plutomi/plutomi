@@ -1,11 +1,10 @@
 import { useSession } from "next-auth/client";
-import useUser from "../../SWR/useUser";
+import useSelf from "../../SWR/useSelf";
 import { PencilAltIcon, PlusIcon } from "@heroicons/react/outline";
 import Loader from "../Loader";
 import useStore from "../../utils/store";
 export default function UserProfileHeader() {
-  const [session, loading]: [CustomSession, boolean] = useSession();
-  const { user, isUserLoading, isUserError } = useUser(session?.user_id);
+  const { user, isUserLoading, isUserError } = useSelf();
   const setUserProfileModal = useStore(
     (state: PlutomiState) => state.setUserProfileModal
   );

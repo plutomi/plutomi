@@ -6,15 +6,9 @@ const fetcher = (url: string) => axios.get(url).then((res) => res.data);
 
 /**
  *
- * @param user_id - The ID of the logged in user
  */
-function useUser(user_id: string): useUserOutput {
-  const shouldFetch = user_id ? true : false;
-
-  const { data, error } = useSWR(
-    shouldFetch && UsersService.getUserURL({ user_id }),
-    fetcher
-  );
+function useSelf(): useSelfOutput {
+  const { data, error } = useSWR(UsersService.getSelfURL(), fetcher);
 
   return {
     user: data,
@@ -23,4 +17,4 @@ function useUser(user_id: string): useUserOutput {
   };
 }
 
-export default useUser;
+export default useSelf;

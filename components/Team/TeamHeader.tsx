@@ -1,12 +1,11 @@
 import { useSession } from "next-auth/client";
-import useUser from "../../SWR/useUser";
+import useSelf from "../../SWR/useSelf";
 import { PlusIcon } from "@heroicons/react/outline";
 import useStore from "../../utils/store";
 import useOrgUsers from "../../SWR/useOrgUsers";
 
 export default function TeamHeader() {
-  const [session, loading]: [CustomSession, boolean] = useSession();
-  const { user, isUserLoading, isUserError } = useUser(session?.user_id);
+  const { user, isUserLoading, isUserError } = useSelf();
   const { orgUsers, isOrgUsersLoading, isOrgUsersError } = useOrgUsers(
     user?.org_id,
     user?.user_id

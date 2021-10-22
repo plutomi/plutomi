@@ -3,7 +3,7 @@ import { Dialog, Transition } from "@headlessui/react";
 import useOpeningById from "../../SWR/useOpeningById";
 import { XIcon } from "@heroicons/react/outline";
 import { useSession } from "../../node_modules/next-auth/client";
-import useUser from "../../SWR/useUser";
+import useSelf from "../../SWR/useSelf";
 import useStore from "../../utils/store";
 
 interface OpeningModalInputs {
@@ -14,8 +14,7 @@ export default function OpeningModal({
   createOpening,
   updateOpening,
 }: OpeningModalInputs) {
-  const [session, loading]: [CustomSession, boolean] = useSession();
-  const { user, isUserLoading, isUserError } = useUser(session?.user_id);
+  const { user, isUserLoading, isUserError } = useSelf();
   const openingModal = useStore((state: PlutomiState) => state.openingModal);
   const setOpeningModal = useStore(
     (state: PlutomiState) => state.setOpeningModal

@@ -1,5 +1,5 @@
 import { signIn, useSession } from "next-auth/client";
-import useUser from "../SWR/useUser";
+import useSelf from "../SWR/useSelf";
 import Loader from "../components/Loader";
 import SignIn from "../components/SignIn";
 import { useRouter } from "next/router";
@@ -9,15 +9,14 @@ export default function Login() {
   const router = useRouter();
   let { user_id, key, callback_url } = router.query;
 
-  const [session, loading]: [CustomSession, boolean] = useSession();
-  const { user, isUserLoading, isUserError } = useUser(session?.user_id);
+  const { user, isUserLoading, isUserError } = useSelf();
   const [button_text, setButtonText] = useState(defaultButtonText);
   const callbackUrl = `${process.env.NEXT_PUBLIC_NEXTAUTH_URL}/dashboard`; // TODO bad names / confusing
   if (callback_url?.includes(`${process.env.NEXT_PUBLIC_NEXTAUTH_URL}/login`)) {
     callback_url = callbackUrl;
   }
   // When rendering client side don't display anything until loading is complete
-  if (typeof window !== "undefined" && loading) {
+  if (typeof window !== "undefined" && isUserLoading) {
     return <Loader text="Loading..." />;
   }
 
@@ -36,7 +35,8 @@ export default function Login() {
         setButtonText(defaultButtonText);
       }
 
-      if (!error) { // This is dumb 
+      if (!error) {
+        // This is dumb
         router.push((callback_url as string) || callbackUrl);
       }
     };

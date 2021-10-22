@@ -1,5 +1,5 @@
 import { useSession } from "next-auth/client";
-import useUser from "../../SWR/useUser";
+import useSelf from "../../SWR/useSelf";
 import UpdateName from "./UpdateName";
 import Loader from "../Loader";
 import ClickToCopy from "../ClickToCopy";
@@ -9,8 +9,7 @@ import { mutate } from "swr";
 import UsersService from "../../adapters/UsersService";
 import OrgsService from "../../adapters/OrgsService";
 export default function DashboardContent() {
-  const [session, loading]: [CustomSession, boolean] = useSession();
-  const { user, isUserLoading, isUserError } = useUser(session?.user_id);
+  const { user, isUserLoading, isUserError } = useSelf();
   const { org, isOrgLoading, isOrgError } = usePrivateOrgById(user?.org_id);
   const custom_apply_link = `${process.env.NEXT_PUBLIC_NEXTAUTH_URL}/${org?.org_id}/apply`;
 
@@ -34,7 +33,7 @@ export default function DashboardContent() {
       alert(error.response.data.message);
     }
 
-    mutate(UsersService.getUserURL({ user_id: user?.user_id }));
+    mutate(UsersService.getSelfURL());
   };
 
   const deleteOrg = async () => {
@@ -57,7 +56,7 @@ export default function DashboardContent() {
       alert(error.response.data.message);
     }
 
-    mutate(UsersService.getUserURL({ user_id: user?.user_id }));
+    mutate(UsersService.getSelfURL());
   };
 
   return (

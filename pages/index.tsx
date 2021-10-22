@@ -7,17 +7,16 @@ import SignInHomepage from "../components/SignInHomepage";
 import UseCases from "../components/UseCases";
 import { useSession } from "next-auth/client";
 import Hero from "../components/Static/Hero";
-import useUser from "../SWR/useUser";
+import useSelf from "../SWR/useSelf";
 export default function Main() {
-  const [session, loading]: [CustomSession, boolean] = useSession();
-  const {user, isUserLoading, isUserError} = useUser(session?.user_id)
+  const { user, isUserLoading, isUserError } = useSelf();
   return (
     <>
       <main className="bg-gradient-to-b from-blue-gray-50 to-white via-homepageGradient">
         <Navbar />
         <Hero />
         {user ? (
-          <AlreadySignedIn /> 
+          <AlreadySignedIn />
         ) : (
           <SignInHomepage
             callbackUrl={`${process.env.NEXT_PUBLIC_NEXTAUTH_URL}/dashboard`}

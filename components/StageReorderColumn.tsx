@@ -9,7 +9,7 @@ import StageModal from "./Stages/StageModal";
 import Link from "next/dist/client/link";
 import { useSession } from "next-auth/client";
 import StagesService from "../adapters/StagesService";
-import useUser from "../SWR/useUser";
+import useSelf from "../SWR/useSelf";
 import { useEffect } from "react";
 import DraggableStageCard from "./Stages/DraggableStageCard";
 import useOpeningById from "../SWR/useOpeningById";
@@ -76,8 +76,8 @@ export default function StageReorderColumn() {
 
   const router = useRouter();
   const { opening_id, stage_id } = router.query;
-  const [session, loading]: [CustomSession, boolean] = useSession();
-  const { user, isUserLoading, isUserError } = useUser(session?.user_id);
+
+  const { user, isUserLoading, isUserError } = useSelf();
   let { opening, isOpeningLoading, isOpeningError } = useOpeningById(
     user?.user_id,
     opening_id as string

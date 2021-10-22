@@ -3,7 +3,7 @@ import DashboardContent from "../components/Dashboard/DashboardContent";
 import DashboardHeader from "../components/Dashboard/DashboardHeader";
 import SignedInNav from "../components/Navbar/SignedInNav";
 import { useSession } from "next-auth/client";
-import useUser from "../SWR/useUser";
+import useSelf from "../SWR/useSelf";
 import SignIn from "../components/SignIn";
 import axios from "axios";
 import { mutate } from "swr";
@@ -14,33 +14,30 @@ import EmptyOrgState from "../components/Dashboard/EmptyOrgState";
 import UsersService from "../adapters/UsersService";
 
 export default function Dashboard() {
-  const [session, loading]: [CustomSession, boolean] = useSession();
-  const { user, isUserLoading, isUserError } = useUser(session?.user_id);
+  const { user, isUserLoading, isUserError } = useSelf();
   const setCreateOrgModalOpen = useStore(
     (state: PlutomiState) => state.setCreateOrgModalOpen
   );
   // When rendering client side don't display anything until loading is complete
-  if (typeof window !== "undefined" && loading) {
+  if (typeof window !== "undefined" && isUserLoading) {
     <Loader text="Loading ..." />;
   }
 
-  // If no session or bad userid
-  if (!session || isUserError) {
+  if (isUserError) {
     return (
       <SignIn
-        callbackUrl={`${process.env.NEXT_PUBLIC_NEXTAUTH_URL}/dashboard`} // TODO set this
-        desiredPage={"your dashboard"} // TODO set this
+        callbackUrl={`${process.env.NEXT_PUBLIC_NEXTAUTH_URL}/dashboard`} 
+        desiredPage={"your dashboard"} 
       />
     );
   }
 
   if (isUserLoading) {
-    // TODO set this
     return <Loader text="Loading user..." />;
   }
   const createOrg = async ({ GSI1SK, org_id }) => {
     if (
-      !confirm(
+      !confirm( // TODO add clean org name here
         `Your org id will be '${org_id.toLowerCase()}', this CANNOT be changed. Do you want to continue?`
       )
     ) {
@@ -58,7 +55,7 @@ export default function Dashboard() {
       alert(error.response.data.message);
     }
 
-    mutate(UsersService.getUserURL({ user_id: user?.user_id }));
+    mutate(UsersService.getSelfURL());
   };
 
   return (

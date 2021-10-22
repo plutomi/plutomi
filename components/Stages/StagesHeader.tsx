@@ -1,5 +1,5 @@
 import { useSession } from "next-auth/client";
-import useUser from "../../SWR/useUser";
+import useSelf from "../../SWR/useSelf";
 import { CogIcon } from "@heroicons/react/outline";
 import useStore from "../../utils/store";
 import ClickToCopy from "../ClickToCopy";
@@ -13,8 +13,8 @@ import useAllStagesInOpening from "../../SWR/useAllStagesInOpening";
 export default function StagesHeader() {
   const router = useRouter();
   const { opening_id } = router.query;
-  const [session, loading]: [CustomSession, boolean] = useSession();
-  const { user, isUserLoading, isUserError } = useUser(session?.user_id);
+
+  const { user, isUserLoading, isUserError } = useSelf();
   let { opening, isOpeningLoading, isOpeningError } = useOpeningById(
     user?.user_id,
     opening_id as string

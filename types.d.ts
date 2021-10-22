@@ -193,7 +193,7 @@ interface StageCardInput {
   num_applicants: number;
 }
 
-interface useUserOutput {
+interface useSelfOutput {
   user: DynamoUser;
   isUserLoading: boolean;
   isUserError: boolean;

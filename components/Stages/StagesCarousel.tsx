@@ -4,7 +4,7 @@ import { ArrowLeftIcon } from "@heroicons/react/outline";
 import { ArrowRightIcon } from "@heroicons/react/outline";
 import { useRouter } from "next/router";
 import useAllStagesInOpening from "../../SWR/useAllStagesInOpening";
-import useUser from "../../SWR/useUser";
+import useSelf from "../../SWR/useSelf";
 import StageCard from "./StageCard";
 import Loader from "../Loader";
 import useOpeningById from "../../SWR/useOpeningById";
@@ -15,8 +15,8 @@ export default function StageCarousel() {
   const chevronWidth = 60;
 
   const { opening_id, stage_id } = router.query;
-  const [session, loading]: [CustomSession, boolean] = useSession();
-  const { user, isUserLoading, isUserError } = useUser(session?.user_id);
+
+  const { user, isUserLoading, isUserError } = useSelf();
 
   let { opening, isOpeningLoading, isOpeningError } = useOpeningById(
     user?.user_id,

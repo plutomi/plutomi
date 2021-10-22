@@ -1,6 +1,6 @@
 import { useSession } from "next-auth/client";
 import Breadcrumbs from "../Breadcrumbs";
-import useUser from "../../SWR/useUser";
+import useSelf from "../../SWR/useSelf";
 import { PencilAltIcon, PlusIcon } from "@heroicons/react/outline";
 import useStore from "../../utils/store";
 import { mutate } from "swr";
@@ -13,8 +13,8 @@ import OpeningsService from "../../adapters/OpeningsService";
 export default function OpeningSettingsHeader() {
   const router = useRouter();
   const { opening_id } = router.query;
-  const [session, loading]: [CustomSession, boolean] = useSession();
-  const { user, isUserLoading, isUserError } = useUser(session?.user_id);
+
+  const { user, isUserLoading, isUserError } = useSelf();
   let { opening, isOpeningLoading, isOpeningError } = useOpeningById(
     user?.user_id,
     opening_id as string

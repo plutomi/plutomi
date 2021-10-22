@@ -1,6 +1,6 @@
 import SignedInNav from "../../../../components/Navbar/SignedInNav";
 import { useSession } from "next-auth/client";
-import useUser from "../../../../SWR/useUser";
+import useSelf from "../../../../SWR/useSelf";
 import Loader from "../../../../components/Loader";
 import EmptyStagesState from "../../../../components/Stages/EmptyStagesState";
 import SignIn from "../../../../components/SignIn";
@@ -12,8 +12,8 @@ import useOpeningById from "../../../../SWR/useOpeningById";
 export default function Openings() {
   const router = useRouter();
   const { opening_id } = router.query;
-  const [session, loading]: [CustomSession, boolean] = useSession();
-  const { user, isUserLoading, isUserError } = useUser(session?.user_id);
+
+  const { user, isUserLoading, isUserError } = useSelf();
 
   let { opening, isOpeningLoading, isOpeningError } = useOpeningById(
     user?.user_id,
@@ -29,12 +29,11 @@ export default function Openings() {
   const setStageModal = useStore((state: PlutomiState) => state.setStageModal);
 
   // When rendering client side don't display anything until loading is complete
-  if (typeof window !== "undefined" && loading) {
+  if (typeof window !== "undefined" && isUserLoading) {
     return <Loader text="Loading..." />;
   }
 
-  // If no session or bad userid
-  if (!session || isUserError) {
+  if (isUserError) {
     return (
       <SignIn
         callbackUrl={`${process.env.NEXT_PUBLIC_NEXTAUTH_URL}/openings`} // TODO set this

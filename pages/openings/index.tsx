@@ -2,7 +2,7 @@ import SignedInNav from "../../components/Navbar/SignedInNav";
 import OpeningsHeader from "../../components/Openings/OpeningsHeader";
 import { useSession } from "next-auth/client";
 import useOpenings from "../../SWR/useOpenings";
-import useUser from "../../SWR/useUser";
+import useSelf from "../../SWR/useSelf";
 import Loader from "../../components/Loader";
 import SignIn from "../../components/SignIn";
 import axios from "axios";
@@ -13,8 +13,7 @@ import OpeningsContent from "../../components/Openings/OpeningsContent";
 import EmptyOpeningsState from "../../components/Openings/EmptyOpeningsState";
 import OpeningsService from "../../adapters/OpeningsService";
 export default function Openings() {
-  const [session, loading]: [CustomSession, boolean] = useSession();
-  const { user, isUserLoading, isUserError } = useUser(session?.user_id);
+  const { user, isUserLoading, isUserError } = useSelf();
   let { openings, isOpeningsLoading, isOpeningsError } = useOpenings(
     user?.user_id
   );
@@ -25,12 +24,11 @@ export default function Openings() {
   );
 
   // When rendering client side don't display anything until loading is complete
-  if (typeof window !== "undefined" && loading) {
+  if (typeof window !== "undefined" && isUserLoading) {
     return <Loader text="Loading..." />;
   }
 
-  // If no session or bad userid
-  if (!session || isUserError) {
+  if (isUserError) {
     return (
       <SignIn
         callbackUrl={`${process.env.NEXT_PUBLIC_NEXTAUTH_URL}/openings`} // TODO set this
