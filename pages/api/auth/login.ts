@@ -19,7 +19,6 @@ import CleanUser from "../../../utils/clean/cleanUser";
 import { GetUserById } from "../../../utils/users/getUserById";
 import UpdateLoginLink from "../../../utils/loginLinks/updateLoginLink";
 
-
 async function handler(
   req: NextIronRequest,
   res: NextApiResponse
@@ -79,10 +78,8 @@ async function handler(
 
       try {
         const user = await CreateLoginLink(new_login_link_input);
-        const default_redirect = `${process.env.NEXT_PUBLIC_NEXTAUTH_URL}/dashboard`;
-        const login_link = `${
-          process.env.NEXT_PUBLIC_NEXTAUTH_URL
-        }/api/auth?user_id=${
+        const default_redirect = `${process.env.PLUTOMI_URL}/dashboard`;
+        const login_link = `${process.env.PLUTOMI_URL}/api/auth/login?user_id=${
           user.user_id as string
         }&key=${secret}&callback_url=${
           (callback_url as string) ? (callback_url as string) : default_redirect

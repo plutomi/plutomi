@@ -31,7 +31,7 @@ export default function Openings() {
   if (isUserError) {
     return (
       <SignIn
-        callbackUrl={`${process.env.NEXT_PUBLIC_NEXTAUTH_URL}/openings`} // TODO set this
+        callbackUrl={`${process.env.PLUTOMI_URL}/openings`} // TODO set this
         desiredPage={"your openings"} // TODO set this
       />
     );

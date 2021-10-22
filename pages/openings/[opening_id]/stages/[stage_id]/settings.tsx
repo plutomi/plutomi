@@ -30,7 +30,7 @@ export default function StageSettings() {
   if (isUserError) {
     return (
       <SignIn
-        callbackUrl={`${process.env.NEXT_PUBLIC_NEXTAUTH_URL}/openings/${opening_id}/settings`} // TODO set this
+        callbackUrl={`${process.env.PLUTOMI_URL}/openings/${opening_id as string}/settings`} // TODO set this
         desiredPage={"your stage settings"} // TODO set this
       />
     );
@@ -62,9 +62,7 @@ export default function StageSettings() {
         opening_id: opening_id as string,
         stage_id: stage_id as string,
       });
-      router.push(
-        `${process.env.NEXT_PUBLIC_NEXTAUTH_URL}/openings/${opening_id}/settings`
-      );
+      router.push(`${process.env.PLUTOMI_URL}/openings/${opening_id}/settings`);
     } catch (error) {
       alert(error.response.data.message);
     }

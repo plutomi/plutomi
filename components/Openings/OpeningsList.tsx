@@ -30,11 +30,11 @@ export default function OpeningList() {
           <li key={opening.opening_id}>
             {/* If the opening has stages, go to the first stage and view aplicants. Otherwise, go to the settings page for the opening to create one*/}
             <Link
-              href={`${process.env.NEXT_PUBLIC_NEXTAUTH_URL}/openings/${
-                opening.opening_id
+              href={`${process.env.PLUTOMI_URL}/openings/${
+                opening.opening_id as string
               }/${
                 opening.stage_order.length > 0
-                  ? `stages/${opening.stage_order[0]}/applicants` // TODO should this end with applicants?
+                  ? `stages/${opening.stage_order[0] as string}/applicants` // TODO should this end with applicants?
                   : `settings`
               }
               `}
@@ -77,7 +77,7 @@ export default function OpeningList() {
                         <p className="mt-2 flex items-center text-lg text-normal sm:mt-0 sm:ml-6">
                           <ClickToCopy
                             showText={"Application Link"}
-                            copyText={`${process.env.NEXT_PUBLIC_NEXTAUTH_URL}/${user?.org_id}/${opening?.opening_id}/apply`}
+                            copyText={`${process.env.PLUTOMI_URL}/${user?.org_id}/${opening?.opening_id}/apply`}
                           />
                         </p>
                       ) : null}

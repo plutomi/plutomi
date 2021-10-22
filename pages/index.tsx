@@ -19,7 +19,7 @@ export default function Main() {
           <AlreadySignedIn />
         ) : (
           <SignInHomepage
-            callbackUrl={`${process.env.NEXT_PUBLIC_NEXTAUTH_URL}/dashboard`}
+            callbackUrl={`${process.env.PLUTOMI_URL}/dashboard`}
           />
         )}
         <FeatureBox />

@@ -7,9 +7,14 @@ export default class AuthService {
     };
 
     const { data } = await axios.post(
-      `/api/auth?callback_url=${callback_url}`,
+      `/api/auth/login?callback_url=${callback_url}`,
       body
     );
+    return data;
+  }
+
+  static async logout() {
+    const { data } = await axios.post(`/api/auth/logout`);
     return data;
   }
 }

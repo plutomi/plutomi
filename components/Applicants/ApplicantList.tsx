@@ -6,7 +6,7 @@ import useStore from "../../utils/store";
 import useAllApplicantsInStage from "../../SWR/useAllApplicantsInStage";
 export default function ApplicantList() {
   const router = useRouter();
-  const { opening_id, stage_id, applicant_id } = router.query;
+  const { opening_id, stage_id } = router.query;
   const { applicants, isApplicantsLoading, isApplicantsError } =
     useAllApplicantsInStage(opening_id as string, stage_id as string);
 
@@ -33,7 +33,9 @@ export default function ApplicantList() {
   const handleApplicantClick = (applicant_id: string) => {
     router.push(
       {
-        pathname: `/openings/${opening_id}/stages/${stage_id}/applicants`,
+        pathname: `/openings/${opening_id as string}/stages/${
+          stage_id as string
+        }/applicants`,
         query: { applicant_id: applicant_id },
       },
       undefined,

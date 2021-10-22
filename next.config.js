@@ -11,6 +11,6 @@ module.exports = {
     DYNAMO_TABLE_NAME: process.env.DYNAMO_TABLE_NAME,
     LAMBDA_ROLE_ARN: process.env.LAMBDA_ROLE_ARN,
     JWT_SECRET: process.env.JWT_SECRET,
-    NEXT_PUBLIC_NEXTAUTH_URL: process.env.NEXT_PUBLIC_NEXTAUTH_URL,
+    PLUTOMI_URL: process.env.PLUTOMI_URL,
   },
 };

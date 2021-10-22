@@ -18,7 +18,6 @@ export default function Apply() {
     return <Loader text="Loading..." />;
   }
 
-
   if (isOpeningLoading) {
     <Loader text="Loading opening info..." />;
   }
@@ -29,9 +28,7 @@ export default function Apply() {
         <h1 className="text-2xl text-center font-bold">
           Unfortunately, you cannot apply to this opening.
         </h1>
-        <GoBack
-          url={`${process.env.NEXT_PUBLIC_NEXTAUTH_URL}/${org_id}/apply`}
-        />
+        <GoBack url={`${process.env.PLUTOMI_URL}/${org_id}/apply`} />
       </div>
     );
   }

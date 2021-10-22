@@ -26,8 +26,8 @@ export default function Dashboard() {
   if (isUserError) {
     return (
       <SignIn
-        callbackUrl={`${process.env.NEXT_PUBLIC_NEXTAUTH_URL}/dashboard`} 
-        desiredPage={"your dashboard"} 
+        callbackUrl={`${process.env.PLUTOMI_URL}/dashboard`}
+        desiredPage={"your dashboard"}
       />
     );
   }
@@ -37,7 +37,8 @@ export default function Dashboard() {
   }
   const createOrg = async ({ GSI1SK, org_id }) => {
     if (
-      !confirm( // TODO add clean org name here
+      !confirm(
+        // TODO add clean org name here
         `Your org id will be '${org_id.toLowerCase()}', this CANNOT be changed. Do you want to continue?`
       )
     ) {

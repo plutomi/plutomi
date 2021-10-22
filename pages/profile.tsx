@@ -30,7 +30,7 @@ export default function Team() {
   if (isUserError) {
     return (
       <SignIn
-        callbackUrl={`${process.env.NEXT_PUBLIC_NEXTAUTH_URL}/profile`} // TODO set this
+        callbackUrl={`${process.env.PLUTOMI_URL}/profile`} // TODO set this
         desiredPage={"your profile"} // TODO set this
       />
     );

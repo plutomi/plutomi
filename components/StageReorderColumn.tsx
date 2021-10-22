@@ -196,7 +196,7 @@ export default function StageReorderColumn() {
                             ref={provided.innerRef}
                           >
                             <Link
-                              href={`${process.env.NEXT_PUBLIC_NEXTAUTH_URL}/openings/${opening_id}/stages/${stage.stage_id}/settings`}
+                              href={`${process.env.PLUTOMI_URL}/openings/${opening_id}/stages/${stage.stage_id}/settings`}
                             >
                               <a>
                                 <DraggableStageCard

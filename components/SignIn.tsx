@@ -21,9 +21,7 @@ export default function SignIn({ callbackUrl, desiredPage }) {
     try {
       const { message } = await AuthService.createLoginLink({
         user_email: user_email,
-        callback_url: `${
-          process.env.NEXT_PUBLIC_NEXTAUTH_URL + router.pathname
-        }`,
+        callback_url: `${process.env.PLUTOMI_URL + router.asPath}`,
       });
 
       setSubmittedText(message);

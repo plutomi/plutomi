@@ -36,7 +36,7 @@ export default function Openings() {
   if (isUserError) {
     return (
       <SignIn
-        callbackUrl={`${process.env.NEXT_PUBLIC_NEXTAUTH_URL}/openings`} // TODO set this
+        callbackUrl={`${process.env.PLUTOMI_URL}/openings`} // TODO set this
         desiredPage={"your stages"} // TODO set this
       />
     );
@@ -45,7 +45,7 @@ export default function Openings() {
   // Redirect to the first stage
   if (stages && stages.length > 0) {
     router.push(
-      `${process.env.NEXT_PUBLIC_NEXTAUTH_URL}/openings/${opening_id}/stages/${stages[0].stage_id}/applicants` // TODO should this end with applicants?
+      `${process.env.PLUTOMI_URL}/openings/${opening_id as string}/stages/${stages[0].stage_id as string}/applicants` // TODO should this end with applicants?
     );
     return <Loader text="Loading stages..." />;
   }

@@ -11,7 +11,7 @@ import OrgsService from "../../adapters/OrgsService";
 export default function DashboardContent() {
   const { user, isUserLoading, isUserError } = useSelf();
   const { org, isOrgLoading, isOrgError } = usePrivateOrgById(user?.org_id);
-  const custom_apply_link = `${process.env.NEXT_PUBLIC_NEXTAUTH_URL}/${org?.org_id}/apply`;
+  const custom_apply_link = `${process.env.PLUTOMI_URL}/${org?.org_id}/apply`;
 
   if (isUserLoading || isOrgLoading) {
     return <Loader text={"Loading..."} />;
