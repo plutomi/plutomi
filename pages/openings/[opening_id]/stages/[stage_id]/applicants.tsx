@@ -76,8 +76,8 @@ export default function StageID() {
 =======
     return (
       <SignIn
-        callbackUrl={`${process.env.NEXT_PUBLIC_NEXTAUTH_URL}/openings`} // TODO set this
-        desiredPage={"your applicants"} // TODO set this
+        callbackUrl={`${process.env.PLUTOMI_URL}/openings`} 
+        desiredPage={"your applicants"} 
       />
     );
 >>>>>>> dd45c08 (replaced next-auth with next-iron-session)

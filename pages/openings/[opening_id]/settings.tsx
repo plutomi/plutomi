@@ -35,8 +35,10 @@ export default function OpeningsSettings() {
 =======
     return (
       <SignIn
-        callbackUrl={`${process.env.NEXT_PUBLIC_NEXTAUTH_URL}/openings/${opening_id}/settings`} // TODO set this
-        desiredPage={"your opening settings"} // TODO set this
+        callbackUrl={`${process.env.PLUTOMI_URL}/openings/${
+          opening_id as string
+        }/settings`} // TODO set this
+        desiredPage={"your opening settings"}
       />
     );
 >>>>>>> dd45c08 (replaced next-auth with next-iron-session)

@@ -11,7 +11,11 @@ export default function StageCard({ name, current_stage_id, opening_id }) {
 
   return (
     <Link
+<<<<<<< HEAD
       href={`${process.env.PLUTOMI_URL}/openings/${opening_id}/stages/${current_stage_id}/applicants`} // TODO should this end with applicants?
+=======
+      href={`${process.env.PLUTOMI_URL}/openings/${opening_id as string}/stages/${current_stage_id as string}/applicants`} // TODO should this end with applicants?
+>>>>>>> 73b8a24 (fixed wrong callback url on signin)
     >
       <a>
         <div

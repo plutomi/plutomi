@@ -50,7 +50,7 @@ export default function OpeningSettingsHeader() {
   if (opening?.stage_order.length > 0) {
     crumbs.unshift({
       name: "Applicants",
-      href: `/openings/${opening_id}/stages/${opening?.stage_order[0]}/applicants`, // TODO should this end with /applicants?
+      href: `/openings/${opening_id as string}/stages/${opening?.stage_order[0] as string}/applicants`, // TODO should this end with /applicants?
       current: false,
     });
   }
@@ -69,7 +69,11 @@ export default function OpeningSettingsHeader() {
     }
 
     try {
+<<<<<<< HEAD
       await OpeningsService.deleteOpening({ opening_id: opening_id });
+=======
+      await OpeningsService.deleteOpening({ opening_id: opening_id as string });
+>>>>>>> 73b8a24 (fixed wrong callback url on signin)
       router.push(`${process.env.PLUTOMI_URL}/openings`);
     } catch (error) {
       alert(error.response.data.message);

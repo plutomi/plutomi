@@ -34,7 +34,7 @@ export default function Invites() {
 =======
     return (
       <SignIn
-        callbackUrl={`${process.env.NEXT_PUBLIC_NEXTAUTH_URL}/invites`}
+        callbackUrl={`${process.env.PLUTOMI_URL}/invites`}
         desiredPage={"your invites"}
       />
     );

@@ -11,8 +11,8 @@ export default function Login() {
 
   const { user, isUserLoading, isUserError } = useSelf();
   const [button_text, setButtonText] = useState(defaultButtonText);
-  const callbackUrl = `${process.env.NEXT_PUBLIC_NEXTAUTH_URL}/dashboard`; // TODO bad names / confusing
-  if (callback_url?.includes(`${process.env.NEXT_PUBLIC_NEXTAUTH_URL}/login`)) {
+  const callbackUrl = `${process.env.PLUTOMI_URL}/dashboard`; // TODO bad names / confusing
+  if (callback_url?.includes(`${process.env.PLUTOMI_URL}/login`)) {
     callback_url = callbackUrl;
   }
   // When rendering client side don't display anything until loading is complete

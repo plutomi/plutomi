@@ -7,7 +7,13 @@ export default async function SendApplicantLink({
   applicant_id,
   applicant_email,
 }: SendApplicantLinkInput) {
+<<<<<<< HEAD
   const application_link = `${process.env.PLUTOMI_URL}/${org_id}/applicants/${applicant_id}`;
+=======
+  const application_link = `${process.env.PLUTOMI_URL}/${
+    org_id as string
+  }/applicants/${applicant_id as string}`;
+>>>>>>> 73b8a24 (fixed wrong callback url on signin)
   const new_email: SendEmailCommandInput = {
     Source: `${org_name} <applications@plutomi.com>`,
     Destination: {

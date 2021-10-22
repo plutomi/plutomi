@@ -34,8 +34,8 @@ export default function Dashboard() {
 =======
     return (
       <SignIn
-        callbackUrl={`${process.env.NEXT_PUBLIC_NEXTAUTH_URL}/dashboard`} 
-        desiredPage={"your dashboard"} 
+        callbackUrl={`${process.env.PLUTOMI_URL}/dashboard`}
+        desiredPage={"your dashboard"}
       />
     );
 >>>>>>> dd45c08 (replaced next-auth with next-iron-session)
@@ -47,11 +47,16 @@ export default function Dashboard() {
   const createOrg = async ({ GSI1SK, org_id }) => {
     if (
 <<<<<<< HEAD
+<<<<<<< HEAD
       !confirm(
         // TODO add clean org name here
 =======
       !confirm( // TODO add clean org name here
 >>>>>>> dd45c08 (replaced next-auth with next-iron-session)
+=======
+      !confirm(
+        // TODO add clean org name here
+>>>>>>> 73b8a24 (fixed wrong callback url on signin)
         `Your org id will be '${org_id.toLowerCase()}', this CANNOT be changed. Do you want to continue?`
       )
     ) {

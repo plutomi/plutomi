@@ -28,8 +28,14 @@ export default function Openings() {
 
   if (isUserError) {
     return (
+<<<<<<< HEAD
       <Login
         desiredPageText={"your openings"} // TODO set this
+=======
+      <SignIn
+        callbackUrl={`${process.env.PLUTOMI_URL}/openings`} // TODO set this
+        desiredPage={"your openings"} // TODO set this
+>>>>>>> 73b8a24 (fixed wrong callback url on signin)
       />
     );
   }

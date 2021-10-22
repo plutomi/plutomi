@@ -76,7 +76,7 @@ export default function StageSettingsHeader({ deleteStage }) {
     {
       name: "Applicants",
       // Go to the CURRENT STAGE in the opening to view the applicants
-      href: `/openings/${opening_id}/stages/${stage_id}/applicants`, // TODO should this end with applicants?
+      href: `/openings/${opening_id as string}/stages/${stage_id as string}/applicants`, // TODO should this end with applicants?
       current: false,
     },
     {

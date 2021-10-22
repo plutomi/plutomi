@@ -67,7 +67,7 @@ export default function ApplicantProfileModal() {
 
     router.push(
       {
-        pathname: `/openings/${opening_id}/stages/${stage_id}/applicants`,
+        pathname: `/openings/${opening_id as string}/stages/${stage_id as string}/applicants`,
       },
       undefined,
       { shallow: true }
@@ -184,7 +184,11 @@ export default function ApplicantProfileModal() {
                       <div className="ml-3 h-7 flex items-center space-x-4">
                         <ClickToCopy
                           showText={"Copy Application Link"}
+<<<<<<< HEAD
                           copyText={`${process.env.PLUTOMI_URL}/${applicant?.org_id}/applicants/${applicant?.applicant_id}`}
+=======
+                          copyText={`${process.env.PLUTOMI_URL}/${applicant?.org_id as string}/applicants/${applicant?.applicant_id as string}`}
+>>>>>>> 73b8a24 (fixed wrong callback url on signin)
                         />
                         <button
                           type="button"

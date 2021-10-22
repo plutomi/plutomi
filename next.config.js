@@ -14,7 +14,11 @@ module.exports = {
     PLUTOMI_URL: process.env.PLUTOMI_URL,
 =======
     JWT_SECRET: process.env.JWT_SECRET,
+<<<<<<< HEAD
     NEXT_PUBLIC_NEXTAUTH_URL: process.env.NEXT_PUBLIC_NEXTAUTH_URL,
 >>>>>>> 2f22d4b (Added logging in with links / cookies)
+=======
+    PLUTOMI_URL: process.env.PLUTOMI_URL,
+>>>>>>> 73b8a24 (fixed wrong callback url on signin)
   },
 };

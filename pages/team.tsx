@@ -34,8 +34,14 @@ export default function Team() {
 
   if (isUserError) {
     return (
+<<<<<<< HEAD
       <Login
         desiredPageText={"your team"} // TODO set this
+=======
+      <SignIn
+        callbackUrl={`${process.env.PLUTOMI_URL}/team`} // TODO set this
+        desiredPage={"your team"} // TODO set this
+>>>>>>> 73b8a24 (fixed wrong callback url on signin)
       />
     );
   }

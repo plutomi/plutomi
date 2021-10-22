@@ -42,8 +42,14 @@ export default function Openings() {
 
   if (isUserError) {
     return (
+<<<<<<< HEAD
       <Login
         desiredPageText={"your stages"} // TODO set this
+=======
+      <SignIn
+        callbackUrl={`${process.env.PLUTOMI_URL}/openings`} // TODO set this
+        desiredPage={"your stages"} // TODO set this
+>>>>>>> 73b8a24 (fixed wrong callback url on signin)
       />
     );
   }
@@ -51,7 +57,11 @@ export default function Openings() {
   // Redirect to the first stage
   if (stages && stages.length > 0) {
     router.push(
+<<<<<<< HEAD
       `${process.env.PLUTOMI_URL}/openings/${opening_id}/stages/${stages[0].stage_id}/applicants` // TODO should this end with applicants?
+=======
+      `${process.env.PLUTOMI_URL}/openings/${opening_id as string}/stages/${stages[0].stage_id as string}/applicants` // TODO should this end with applicants?
+>>>>>>> 73b8a24 (fixed wrong callback url on signin)
     );
     return <Loader text="Loading stages..." />;
   }

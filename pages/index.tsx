@@ -17,7 +17,13 @@ export default function Main() {
         {user ? (
           <AlreadySignedIn />
         ) : (
+<<<<<<< HEAD
           <LoginHomepage callbackUrl={`${process.env.PLUTOMI_URL}/dashboard`} />
+=======
+          <SignInHomepage
+            callbackUrl={`${process.env.PLUTOMI_URL}/dashboard`}
+          />
+>>>>>>> 73b8a24 (fixed wrong callback url on signin)
         )}
         <FeatureBox />
         <UseCases />
