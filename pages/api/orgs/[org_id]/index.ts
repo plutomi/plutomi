@@ -11,12 +11,27 @@ async function handler(
   res: NextApiResponse
 ): Promise<void> {
   const user = req.session.get("user");
+<<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> dd45c08 (replaced next-auth with next-iron-session)
   if (!user) {
     req.session.destroy();
     return res.status(401).json({ message: "Please sign in again" });
   }
+<<<<<<< HEAD
   const { method, query } = req;
   const { org_id } = query as CustomQuery;
+=======
+=======
+>>>>>>> dd45c08 (replaced next-auth with next-iron-session)
+  const { method, query } = req;
+<<<<<<< HEAD
+  const { org_id } = query;
+>>>>>>> 12d77e0 (Replaced withauthorizer with withSession)
+=======
+  const { org_id } = query as CustomQuery;
+>>>>>>> ce0b1d8 (fix: Removed all 'as string' - #196)
 
   if (method === "GET") {
     // When signed in, this returns all data for an org

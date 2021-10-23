@@ -4,6 +4,13 @@ import useOpenings from "../../SWR/useOpenings";
 import useSelf from "../../SWR/useSelf";
 import Loader from "../../components/Loader";
 import Login from "../../components/Login";
+<<<<<<< HEAD
+<<<<<<< HEAD
+=======
+import axios from "axios";
+>>>>>>> d64c806 (Got rid of callback url on login component)
+=======
+>>>>>>> 35ce39a (feat: Added ability to get all applicants by opening)
 import { mutate } from "swr";
 import useStore from "../../utils/store";
 import CreateOpeningModal from "../../components/Openings/OpeningModal";
@@ -28,8 +35,19 @@ export default function Openings() {
 
   if (isUserError) {
     return (
+<<<<<<< HEAD
+<<<<<<< HEAD
       <Login
         desiredPageText={"your openings"} // TODO set this
+=======
+      <SignIn
+        callbackUrl={`${process.env.PLUTOMI_URL}/openings`} // TODO set this
+        desiredPage={"your openings"} // TODO set this
+>>>>>>> 73b8a24 (fixed wrong callback url on signin)
+=======
+      <Login
+        desiredPageText={"your openings"} // TODO set this
+>>>>>>> d64c806 (Got rid of callback url on login component)
       />
     );
   }

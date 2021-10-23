@@ -6,7 +6,15 @@ import useStore from "../../utils/store";
 import useAllApplicantsInStage from "../../SWR/useAllApplicantsInStage";
 export default function ApplicantList() {
   const router = useRouter();
+<<<<<<< HEAD
+<<<<<<< HEAD
   const { opening_id, stage_id } = router.query as CustomQuery;
+=======
+  const { opening_id, stage_id } = router.query;
+>>>>>>> 73b8a24 (fixed wrong callback url on signin)
+=======
+  const { opening_id, stage_id } = router.query as CustomQuery;
+>>>>>>> ce0b1d8 (fix: Removed all 'as string' - #196)
   const { applicants, isApplicantsLoading, isApplicantsError } =
     useAllApplicantsInStage(opening_id, stage_id);
 

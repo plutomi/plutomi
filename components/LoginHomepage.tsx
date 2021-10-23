@@ -1,9 +1,13 @@
 // This is the same as the SignIn.tsx component
 // but with different styling so it fits in the home page
 // TODO probably better to refactor this as this is bad practice
+<<<<<<< HEAD:components/LoginHomepage.tsx
+import AuthService from "../Adapters/AuthService";
+=======
 import AuthService from "../adapters/AuthService";
 import GoogleButton from "./Buttons/GoogleButton";
 import axios from "axios";
+>>>>>>> 12d77e0 (Replaced withauthorizer with withSession):components/SignInHomepage.tsx
 import LoginEmail from "./EmailSigninInput";
 import { useState } from "react";
 interface CallbackUrl {

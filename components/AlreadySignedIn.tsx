@@ -1,5 +1,7 @@
 import { useRouter } from "next/router";
 import Link from "next/link";
+<<<<<<< HEAD
+<<<<<<< HEAD
 import useSelf from "../SWR/useSelf";
 import AuthService from "../adapters/AuthService";
 const handleLogout = async () => {
@@ -11,6 +13,23 @@ const handleLogout = async () => {
     alert(error.response.message);
   }
 };
+=======
+import { useSession } from "next-auth/client";
+import useSelf from "../SWR/useSelf";
+>>>>>>> dd45c08 (replaced next-auth with next-iron-session)
+=======
+import useSelf from "../SWR/useSelf";
+import AuthService from "../adapters/AuthService";
+const handleLogout = async () => {
+  try {
+    const { message } = await AuthService.logout(); // TODO logout to same page
+    alert(message);
+    // TODO reroute to homepage
+  } catch (error) {
+    alert(error.response.message);
+  }
+};
+>>>>>>> 73b8a24 (fixed wrong callback url on signin)
 export default function AlreadySignedIn() {
   const { user, isUserLoading, isUserError } = useSelf();
 

@@ -4,11 +4,26 @@ import {
   GetRelativeTime,
 } from "../../../utils/time";
 import InputValidation from "../../../utils/inputValidation";
+<<<<<<< HEAD
+<<<<<<< HEAD
 import {  NextApiResponse } from "next";
+=======
+import { NextApiRequest, NextApiResponse } from "next";
+>>>>>>> 73b8a24 (fixed wrong callback url on signin)
+=======
+import {  NextApiResponse } from "next";
+>>>>>>> 35ce39a (feat: Added ability to get all applicants by opening)
 import SendLoginLink from "../../../utils/email/sendLoginLink";
 import CreateLoginLink from "../../../utils/loginLinks/createLoginLink";
 import { nanoid } from "nanoid";
 import withSession from "../../../middleware/withSession";
+<<<<<<< HEAD
+<<<<<<< HEAD
+=======
+import { Session } from "next-iron-session";
+>>>>>>> 73b8a24 (fixed wrong callback url on signin)
+=======
+>>>>>>> 35ce39a (feat: Added ability to get all applicants by opening)
 import { createHash } from "crypto";
 import { GetLatestLoginLink } from "../../../utils/loginLinks/getLatestLoginLink";
 import { CreateUser } from "../../../utils/users/createUser";
@@ -24,7 +39,15 @@ async function handler(
 ): Promise<void> {
   const { body, method, query } = req; // TODO get from body
   const { user_email } = body;
+<<<<<<< HEAD
+<<<<<<< HEAD
   const { user_id, key, callback_url } = query as CustomQuery;
+=======
+  const { user_id, key, callback_url } = query;
+>>>>>>> 73b8a24 (fixed wrong callback url on signin)
+=======
+  const { user_id, key, callback_url } = query as CustomQuery;
+>>>>>>> ce0b1d8 (fix: Removed all 'as string' - #196)
   const login_link_length = 1500;
   const login_link_max_delay_minutes = 10;
   const time_threshold = GetPastOrFutureTime(
@@ -72,23 +95,53 @@ async function handler(
       const new_login_link_input: CreateLoginLinkInput = {
         user_email: user_email,
         login_link_hash: hash,
+<<<<<<< HEAD
+<<<<<<< HEAD
         login_link_expiry: login_link_expiry,
+=======
+        login_link_expiry: login_link_expiry as string,
+>>>>>>> 73b8a24 (fixed wrong callback url on signin)
+=======
+        login_link_expiry: login_link_expiry,
+>>>>>>> ce0b1d8 (fix: Removed all 'as string' - #196)
       };
 
       try {
         const user = await CreateLoginLink(new_login_link_input);
         const default_redirect = `${process.env.PLUTOMI_URL}/dashboard`;
         const login_link = `${process.env.PLUTOMI_URL}/api/auth/login?user_id=${
+<<<<<<< HEAD
+<<<<<<< HEAD
           user.user_id
         }&key=${secret}&callback_url=${
           callback_url ? callback_url : default_redirect
+=======
+          user.user_id as string
+        }&key=${secret}&callback_url=${
+          (callback_url as string) ? (callback_url as string) : default_redirect
+>>>>>>> 73b8a24 (fixed wrong callback url on signin)
+=======
+          user.user_id
+        }&key=${secret}&callback_url=${
+          callback_url ? callback_url : default_redirect
+>>>>>>> ce0b1d8 (fix: Removed all 'as string' - #196)
         }`;
 
         try {
           const login_link_email_input: SendLoginLinkEmailInput = {
             recipient_email: user_email,
             login_link: login_link,
+<<<<<<< HEAD
+<<<<<<< HEAD
             login_link_relative_expiry: GetRelativeTime(login_link_expiry),
+=======
+            login_link_relative_expiry: GetRelativeTime(
+              login_link_expiry as string
+            ),
+>>>>>>> 73b8a24 (fixed wrong callback url on signin)
+=======
+            login_link_relative_expiry: GetRelativeTime(login_link_expiry),
+>>>>>>> ce0b1d8 (fix: Removed all 'as string' - #196)
           };
           await SendLoginLink(login_link_email_input);
           return res
@@ -110,8 +163,18 @@ async function handler(
   // Validates the login key
   if (method === "GET") {
     const validate_login_link_input = {
+<<<<<<< HEAD
+<<<<<<< HEAD
       user_id: user_id,
       key: key,
+=======
+      user_id: user_id as string,
+      key: key as string,
+>>>>>>> 73b8a24 (fixed wrong callback url on signin)
+=======
+      user_id: user_id,
+      key: key,
+>>>>>>> ce0b1d8 (fix: Removed all 'as string' - #196)
     };
     try {
       InputValidation(validate_login_link_input);
@@ -119,13 +182,31 @@ async function handler(
       return res.status(400).json({ message: `${error.message}` });
     }
 
+<<<<<<< HEAD
+<<<<<<< HEAD
     const latest_login_link = await GetLatestLoginLink(user_id);
+=======
+    const latest_login_link = await GetLatestLoginLink(user_id as string);
+>>>>>>> 73b8a24 (fixed wrong callback url on signin)
+=======
+    const latest_login_link = await GetLatestLoginLink(user_id);
+>>>>>>> ce0b1d8 (fix: Removed all 'as string' - #196)
 
     if (!latest_login_link) {
       return res.status(400).json({ message: "Invalid link" });
     }
 
+<<<<<<< HEAD
+<<<<<<< HEAD
     const hash = createHash("sha512").update(key).digest("hex");
+=======
+    const hash = createHash("sha512")
+      .update(key as string)
+      .digest("hex");
+>>>>>>> 73b8a24 (fixed wrong callback url on signin)
+=======
+    const hash = createHash("sha512").update(key).digest("hex");
+>>>>>>> ce0b1d8 (fix: Removed all 'as string' - #196)
 
     if (hash != latest_login_link.login_link_hash) {
       /**
@@ -163,6 +244,8 @@ async function handler(
     }
 
     // TODO delete link
+<<<<<<< HEAD
+<<<<<<< HEAD
     const user = await GetUserById(user_id);
 
     if (user && latest_login_link) {
@@ -170,11 +253,35 @@ async function handler(
 
       // Invalidates the last login link while allowing the user to login again if needed
       DeleteLoginLink(user_id, latest_login_link.created_at);
+=======
+    const user = await GetUserById(user_id as string);
+=======
+    const user = await GetUserById(user_id);
+>>>>>>> ce0b1d8 (fix: Removed all 'as string' - #196)
+
+    if (user && latest_login_link) {
+      CreateLoginEvent(user_id);
+
+      // Invalidates the last login link while allowing the user to login again if needed
+<<<<<<< HEAD
+      DeleteLoginLink(user_id as string, latest_login_link.created_at);
+>>>>>>> 73b8a24 (fixed wrong callback url on signin)
+=======
+      DeleteLoginLink(user_id, latest_login_link.created_at);
+>>>>>>> ce0b1d8 (fix: Removed all 'as string' - #196)
 
       const clean_user = CleanUser(user as DynamoUser);
       req.session.set("user", clean_user);
       await req.session.save();
+<<<<<<< HEAD
+<<<<<<< HEAD
       res.redirect(callback_url);
+=======
+      res.redirect(callback_url as string);
+>>>>>>> 73b8a24 (fixed wrong callback url on signin)
+=======
+      res.redirect(callback_url);
+>>>>>>> ce0b1d8 (fix: Removed all 'as string' - #196)
       return;
     }
   }

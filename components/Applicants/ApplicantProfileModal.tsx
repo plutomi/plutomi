@@ -184,7 +184,15 @@ export default function ApplicantProfileModal() {
                       <div className="ml-3 h-7 flex items-center space-x-4">
                         <ClickToCopy
                           showText={"Copy Application Link"}
+<<<<<<< HEAD
+<<<<<<< HEAD
                           copyText={`${process.env.PLUTOMI_URL}/${applicant?.org_id}/applicants/${applicant?.applicant_id}`}
+=======
+                          copyText={`${process.env.PLUTOMI_URL}/${applicant?.org_id as string}/applicants/${applicant?.applicant_id as string}`}
+>>>>>>> 73b8a24 (fixed wrong callback url on signin)
+=======
+                          copyText={`${process.env.PLUTOMI_URL}/${applicant?.org_id}/applicants/${applicant?.applicant_id}`}
+>>>>>>> ce0b1d8 (fix: Removed all 'as string' - #196)
                         />
                         <button
                           type="button"

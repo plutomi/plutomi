@@ -1,4 +1,11 @@
 import SignedInNav from "../../../../../components/Navbar/SignedInNav";
+<<<<<<< HEAD
+<<<<<<< HEAD
+=======
+import { useSession } from "next-auth/client";
+>>>>>>> dd45c08 (replaced next-auth with next-iron-session)
+=======
+>>>>>>> 35ce39a (feat: Added ability to get all applicants by opening)
 import useSelf from "../../../../../SWR/useSelf";
 import Loader from "../../../../../components/Loader";
 import EmptyStagesState from "../../../../../components/Stages/EmptyStagesState";
@@ -14,7 +21,15 @@ import ApplicantList from "../../../../../components/Applicants/ApplicantList";
 import ApplicantProfileModal from "../../../../../components/Applicants/ApplicantProfileModal";
 export default function StageID() {
   const router = useRouter();
+<<<<<<< HEAD
+<<<<<<< HEAD
   const { opening_id, stage_id, applicant_id } = router.query as CustomQuery;
+=======
+  const { opening_id, stage_id, applicant_id } = router.query;
+>>>>>>> dd45c08 (replaced next-auth with next-iron-session)
+=======
+  const { opening_id, stage_id, applicant_id } = router.query as CustomQuery;
+>>>>>>> ce0b1d8 (fix: Removed all 'as string' - #196)
 
   const { user, isUserLoading, isUserError } = useSelf();
 
@@ -63,7 +78,20 @@ export default function StageID() {
   }
 
   if (isUserError) {
+<<<<<<< HEAD
+<<<<<<< HEAD
     return <Login desiredPageText={"your applicants"} />;
+=======
+    return (
+      <SignIn
+        callbackUrl={`${process.env.PLUTOMI_URL}/openings`} 
+        desiredPage={"your applicants"} 
+      />
+    );
+>>>>>>> dd45c08 (replaced next-auth with next-iron-session)
+=======
+    return <Login desiredPageText={"your applicants"} />;
+>>>>>>> d64c806 (Got rid of callback url on login component)
   }
 
   if (isUserLoading) {

@@ -1,3 +1,10 @@
+<<<<<<< HEAD
+<<<<<<< HEAD
+=======
+import { useSession } from "next-auth/client";
+>>>>>>> dd45c08 (replaced next-auth with next-iron-session)
+=======
+>>>>>>> 35ce39a (feat: Added ability to get all applicants by opening)
 import useSelf from "../../SWR/useSelf";
 import { PencilAltIcon, PlusIcon } from "@heroicons/react/outline";
 import Loader from "../Loader";

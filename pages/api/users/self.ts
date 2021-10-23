@@ -1,6 +1,5 @@
 import { GetUserById } from "../../../utils/users/getUserById";
 import { NextApiResponse } from "next";
-import { UpdateUser } from "../../../utils/users/updateUser";
 import withSession from "../../../middleware/withSession";
 
 async function handler(
@@ -17,13 +16,29 @@ async function handler(
 
   if (method === "GET") {
     try {
+<<<<<<< HEAD
+<<<<<<< HEAD
       const requested_user = await GetUserById(user.user_id);
+=======
+      const requested_user = await GetUserById(user.user_id as string);
+>>>>>>> dd45c08 (replaced next-auth with next-iron-session)
+=======
+      const requested_user = await GetUserById(user.user_id);
+>>>>>>> ce0b1d8 (fix: Removed all 'as string' - #196)
 
       if (!requested_user) {
         req.session.destroy();
         return res.status(401).json({ message: "Please sign in again" }); // TODO middleware
       }
+<<<<<<< HEAD
+<<<<<<< HEAD
 
+=======
+      
+>>>>>>> dd45c08 (replaced next-auth with next-iron-session)
+=======
+
+>>>>>>> ce0b1d8 (fix: Removed all 'as string' - #196)
       return res.status(200).json(requested_user);
     } catch (error) {
       // TODO add error logger

@@ -43,6 +43,7 @@ interface ValidNavigation {
     | "Profile"
     | "PLACEHOLDER";
 }
+01;
 
 interface GetStageInput {
   org_id: string;
@@ -415,7 +416,16 @@ interface ApplicantAnswer {
   question_response: string;
 }
 type NextIronRequest = NextApiRequest & { session: Session };
+<<<<<<< HEAD
+<<<<<<< HEAD
+<<<<<<< HEAD
+type CustomDateFormat = string | number;
+=======
+=======
+type CustomDateFormat = string | number;
+>>>>>>> cb159a5 (Removed as string)
 
+>>>>>>> ce0b1d8 (fix: Removed all 'as string' - #196)
 type CustomQuery = {
   org_id?: string;
   opening_id: string;
@@ -427,3 +437,8 @@ type CustomQuery = {
   question_id: string;
   invite_id: string;
 };
+<<<<<<< HEAD
+=======
+>>>>>>> 12d77e0 (Replaced withauthorizer with withSession)
+=======
+>>>>>>> ce0b1d8 (fix: Removed all 'as string' - #196)
