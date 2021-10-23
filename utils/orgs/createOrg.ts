@@ -5,7 +5,7 @@ import { GetCurrentTime } from "../time";
 const { DYNAMO_TABLE_NAME } = process.env;
 
 export async function CreateOrg({ org_id, GSI1SK, user }: CreateOrgInput) {
-  const now = GetCurrentTime("iso");
+  const now = GetCurrentTime("iso") as string;
   const new_org = {
     PK: `ORG#${org_id.toLowerCase()}`,
     SK: `ORG`,
@@ -23,8 +23,6 @@ export async function CreateOrg({ org_id, GSI1SK, user }: CreateOrgInput) {
     Item: new_org,
     ConditionExpression: "attribute_not_exists(PK)",
   };
-
-
 
   try {
     await Dynamo.send(new PutCommand(params));

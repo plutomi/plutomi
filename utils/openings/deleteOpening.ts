@@ -26,7 +26,6 @@ export async function DeleteOpening({ org_id, opening_id }) {
           opening_id: opening_id,
           stage_id: stage.stage_id,
         };
-        console.log("Deleting stage", stage.GSI1SK, stage.stage_id);
         await DeleteStage(input);
       });
     }

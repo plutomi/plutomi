@@ -420,12 +420,12 @@ type CustomDateFormat = string | number;
 
 type CustomQuery = {
   org_id?: string;
-  opening_id: string;
+  opening_id?: string;
   user_id?: string;
   stage_id?: string;
   applicant_id?: string;
   key?: string;
-  callback_url: string;
-  question_id: string;
-  invite_id: string;
+  callback_url?: string;
+  question_id?: string;
+  invite_id?: string;
 };

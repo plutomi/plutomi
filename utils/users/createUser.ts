@@ -16,7 +16,7 @@ export async function CreateUser({
   if (user) {
     return user;
   }
-  const now = GetCurrentTime("iso");
+  const now = GetCurrentTime("iso") as string;
   const user_id = nanoid(42);
   const new_user: DynamoUser = {
     PK: `USER#${user_id}`,
