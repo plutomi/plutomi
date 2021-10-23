@@ -43,7 +43,6 @@ interface ValidNavigation {
     | "Profile"
     | "PLACEHOLDER";
 }
-01;
 
 interface GetStageInput {
   org_id: string;
@@ -88,13 +87,13 @@ interface JoinOrgInput {
 interface CreateLoginLinkInput {
   user_email: string;
   login_link_hash: string;
-  login_link_expiry: string | number | date; // Timestamp in the future
+  login_link_expiry: CustomDateFormat; // Timestamp in the future
 }
 
 interface SendLoginLinkEmailInput {
   recipient_email: string;
   login_link: string;
-  login_link_relative_expiry: string | number | date;
+  login_link_relative_expiry: CustomDateFormat;
 }
 
 interface SendApplicantLinkInput {
@@ -159,7 +158,7 @@ interface CreateOrgInviteInput {
   org_name: string;
   created_by: DynamoUser;
   recipient_email: string; // Email of person getting invited
-  expires_at: string | number | Date; // TODO Maybe Dynamo TTL or just ISO
+  expires_at: CustomDateFormat; // TODO Maybe Dynamo TTL or just ISO
   claimed: boolean;
 }
 
@@ -416,29 +415,17 @@ interface ApplicantAnswer {
   question_response: string;
 }
 type NextIronRequest = NextApiRequest & { session: Session };
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-type CustomDateFormat = string | number;
-=======
-=======
-type CustomDateFormat = string | number;
->>>>>>> cb159a5 (Removed as string)
 
->>>>>>> ce0b1d8 (fix: Removed all 'as string' - #196)
+type CustomDateFormat = string | number;
+
 type CustomQuery = {
   org_id?: string;
-  opening_id: string;
+  opening_id?: string;
   user_id?: string;
   stage_id?: string;
   applicant_id?: string;
   key?: string;
-  callback_url: string;
-  question_id: string;
-  invite_id: string;
+  callback_url?: string;
+  question_id?: string;
+  invite_id?: string;
 };
-<<<<<<< HEAD
-=======
->>>>>>> 12d77e0 (Replaced withauthorizer with withSession)
-=======
->>>>>>> ce0b1d8 (fix: Removed all 'as string' - #196)

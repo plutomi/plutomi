@@ -2,7 +2,6 @@ import { FormEvent, Fragment, useState } from "react";
 import { Dialog, Transition } from "@headlessui/react";
 import useOpeningById from "../../SWR/useOpeningById";
 import { XIcon } from "@heroicons/react/outline";
-import { useSession } from "../../node_modules/next-auth/client";
 import useSelf from "../../SWR/useSelf";
 import useStore from "../../utils/store";
 

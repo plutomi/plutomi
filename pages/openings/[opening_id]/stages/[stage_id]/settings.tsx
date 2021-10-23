@@ -1,11 +1,4 @@
 import SignedInNav from "../../../../../components/Navbar/SignedInNav";
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
-import { useSession } from "next-auth/client";
->>>>>>> dd45c08 (replaced next-auth with next-iron-session)
-=======
->>>>>>> 35ce39a (feat: Added ability to get all applicants by opening)
 import useSelf from "../../../../../SWR/useSelf";
 import Loader from "../../../../../components/Loader";
 import { mutate } from "swr";
@@ -18,15 +11,7 @@ import StageSettingsContent from "../../../../../components/Stages/StagesSetting
 import StagesService from "../../../../../adapters/StagesService";
 export default function StageSettings() {
   const router = useRouter();
-<<<<<<< HEAD
-<<<<<<< HEAD
   const { opening_id, stage_id } = router.query as CustomQuery;
-=======
-  const { opening_id, stage_id } = router.query;
->>>>>>> dd45c08 (replaced next-auth with next-iron-session)
-=======
-  const { opening_id, stage_id } = router.query as CustomQuery;
->>>>>>> ce0b1d8 (fix: Removed all 'as string' - #196)
 
   const { user, isUserLoading, isUserError } = useSelf();
   let { opening, isOpeningLoading, isOpeningError } = useOpeningById(
@@ -41,19 +26,8 @@ export default function StageSettings() {
 
   if (isUserError) {
     return (
-<<<<<<< HEAD
-<<<<<<< HEAD
       <Login
         desiredPageText={"your stage settings"} // TODO set this
-=======
-      <SignIn
-        callbackUrl={`${process.env.PLUTOMI_URL}/openings/${opening_id as string}/settings`} // TODO set this
-        desiredPage={"your stage settings"} // TODO set this
->>>>>>> 73b8a24 (fixed wrong callback url on signin)
-=======
-      <Login
-        desiredPageText={"your stage settings"} // TODO set this
->>>>>>> d64c806 (Got rid of callback url on login component)
       />
     );
   }

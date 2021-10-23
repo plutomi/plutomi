@@ -1,11 +1,4 @@
 import { useRouter } from "next/router";
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
-import { useSession } from "next-auth/client";
->>>>>>> dd45c08 (replaced next-auth with next-iron-session)
-=======
->>>>>>> 35ce39a (feat: Added ability to get all applicants by opening)
 import useSelf from "../../SWR/useSelf";
 import useOpeningById from "../../SWR/useOpeningById";
 import useStageById from "../../SWR/useStageById";
@@ -21,15 +14,7 @@ import StagesService from "../../adapters/StagesService";
 import QuestionsService from "../../adapters/QuestionsService";
 export default function QuestionList() {
   const router = useRouter();
-<<<<<<< HEAD
-<<<<<<< HEAD
   const { opening_id, stage_id } = router.query as CustomQuery;
-=======
-  const { opening_id, stage_id } = router.query;
->>>>>>> dd45c08 (replaced next-auth with next-iron-session)
-=======
-  const { opening_id, stage_id } = router.query as CustomQuery;
->>>>>>> ce0b1d8 (fix: Removed all 'as string' - #196)
 
   const { user, isUserLoading, isUserError } = useSelf();
   let { opening, isOpeningLoading, isOpeningError } = useOpeningById(

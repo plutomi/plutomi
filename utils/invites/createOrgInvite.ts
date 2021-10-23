@@ -49,7 +49,7 @@ export default async function CreateOrgInvite({
       );
     }
     const invite_id = nanoid(50);
-    const now = GetCurrentTime("iso");
+    const now = GetCurrentTime("iso") as string;
     const new_org_invite = {
       PK: `USER#${user.user_id}`,
       SK: `ORG_INVITE#${invite_id}`, // Allows sorting, and incase two get created in the same millisecond

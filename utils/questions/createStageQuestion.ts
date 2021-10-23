@@ -16,7 +16,7 @@ export async function CreateStageQuestion({
   GSI1SK,
   question_description,
 }: CreateStageQuestionInput) {
-  const now = GetCurrentTime("iso");
+  const now = GetCurrentTime("iso") as string;
   const question_id = nanoid(70);
   const new_stage_question = {
     PK: `ORG#${org_id}#QUESTION#${question_id}`,

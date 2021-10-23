@@ -1,11 +1,4 @@
 import { Fragment } from "react";
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
-import { useSession } from "next-auth/client";
->>>>>>> dd45c08 (replaced next-auth with next-iron-session)
-=======
->>>>>>> 73b8a24 (fixed wrong callback url on signin)
 import useSelf from "../../SWR/useSelf";
 import NavbarSearch from "./NavbarSearch";
 import AuthService from "../../adapters/AuthService";

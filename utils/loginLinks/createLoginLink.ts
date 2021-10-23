@@ -31,7 +31,7 @@ export default async function CreateLoginLink({
       }
     }
 
-    const now = GetCurrentTime("iso");
+    const now = GetCurrentTime("iso") as string;
     const new_login_link = {
       PK: `USER#${user.user_id}`,
       SK: `LOGIN_LINK#${now}`,

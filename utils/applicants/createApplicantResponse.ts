@@ -13,7 +13,7 @@ export async function CreateApplicantResponse({
   question_description,
   question_response,
 }: CreateApplicantResponseInput) {
-  const now = GetCurrentTime("iso");
+  const now = GetCurrentTime("iso") as string;
   const response_id = nanoid(30);
   const new_applicant_response = {
     PK: `ORG#${org_id}#APPLICANT#${applicant_id}`,

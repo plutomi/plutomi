@@ -2,20 +2,8 @@ import Loader from "../components/Loader";
 import DashboardContent from "../components/Dashboard/DashboardContent";
 import DashboardHeader from "../components/Dashboard/DashboardHeader";
 import SignedInNav from "../components/Navbar/SignedInNav";
-<<<<<<< HEAD
-<<<<<<< HEAD
 import useSelf from "../SWR/useSelf";
 import Login from "../components/Login";
-=======
-import { useSession } from "next-auth/client";
-import useSelf from "../SWR/useSelf";
-import Login from "../components/Login";
-import axios from "axios";
->>>>>>> dd45c08 (replaced next-auth with next-iron-session)
-=======
-import useSelf from "../SWR/useSelf";
-import Login from "../components/Login";
->>>>>>> 35ce39a (feat: Added ability to get all applicants by opening)
 import { mutate } from "swr";
 import OrgsService from "../adapters/OrgsService";
 import useStore from "../utils/store";
@@ -34,20 +22,7 @@ export default function Dashboard() {
   }
 
   if (isUserError) {
-<<<<<<< HEAD
-<<<<<<< HEAD
     return <Login desiredPageText={"your dashboard"} />;
-=======
-    return (
-      <SignIn
-        callbackUrl={`${process.env.PLUTOMI_URL}/dashboard`}
-        desiredPage={"your dashboard"}
-      />
-    );
->>>>>>> dd45c08 (replaced next-auth with next-iron-session)
-=======
-    return <Login desiredPageText={"your dashboard"} />;
->>>>>>> d64c806 (Got rid of callback url on login component)
   }
 
   if (isUserLoading) {
@@ -55,17 +30,8 @@ export default function Dashboard() {
   }
   const createOrg = async ({ GSI1SK, org_id }) => {
     if (
-<<<<<<< HEAD
-<<<<<<< HEAD
       !confirm(
         // TODO add clean org name here
-=======
-      !confirm( // TODO add clean org name here
->>>>>>> dd45c08 (replaced next-auth with next-iron-session)
-=======
-      !confirm(
-        // TODO add clean org name here
->>>>>>> 73b8a24 (fixed wrong callback url on signin)
         `Your org id will be '${org_id.toLowerCase()}', this CANNOT be changed. Do you want to continue?`
       )
     ) {

@@ -1,7 +1,7 @@
 import { NextApiResponse } from "next";
-import withCleanOrgName from "../../../../../../../middleware/withCleanOrgName";
 import { GetApplicantById } from "../../../../../../../utils/applicants/getApplicantById";
 import CleanApplicant from "../../../../../../../utils/clean/cleanApplicant";
+import withCleanOrgName from "../../../../../../../middleware/withCleanOrgName";
 const handler = async (req: CustomRequest, res: NextApiResponse) => {
   const user: DynamoUser = req.user;
   const { method, query, body } = req;
@@ -34,8 +34,4 @@ const handler = async (req: CustomRequest, res: NextApiResponse) => {
   return res.status(405).json({ message: "Not Allowed" });
 };
 
-<<<<<<< HEAD
-export default handler
-=======
 export default withCleanOrgName(handler);
->>>>>>> 569ceb2 (Finished removing unused imports)

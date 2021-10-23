@@ -4,32 +4,16 @@ import InputValidation from "../../../../utils/inputValidation";
 import DeleteApplicant from "../../../../utils/applicants/deleteApplicant";
 import UpdateApplicant from "../../../../utils/applicants/updateApplicant";
 import withSession from "../../../../middleware/withSession";
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
-import { Session } from "next-iron-session";
->>>>>>> 12d77e0 (Replaced withauthorizer with withSession)
-=======
->>>>>>> 35ce39a (feat: Added ability to get all applicants by opening)
 
 async function handler(
   req: NextIronRequest,
   res: NextApiResponse
 ): Promise<void> {
   const user = req.session.get("user");
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
->>>>>>> dd45c08 (replaced next-auth with next-iron-session)
   if (!user) {
     req.session.destroy();
     return res.status(401).json({ message: "Please sign in again" });
   }
-<<<<<<< HEAD
-=======
->>>>>>> 12d77e0 (Replaced withauthorizer with withSession)
-=======
->>>>>>> dd45c08 (replaced next-auth with next-iron-session)
   const { method, query, body } = req;
   const { applicant_id } = query as CustomQuery;
 

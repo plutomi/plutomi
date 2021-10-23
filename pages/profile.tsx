@@ -1,11 +1,4 @@
 import SignedInNav from "../components/Navbar/SignedInNav";
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
-import { useSession } from "next-auth/client";
->>>>>>> dd45c08 (replaced next-auth with next-iron-session)
-=======
->>>>>>> 35ce39a (feat: Added ability to get all applicants by opening)
 import useSelf from "../SWR/useSelf";
 import axios from "axios";
 import UserProfileHeader from "../components/UserProfile/UserProfileHeader";
@@ -35,23 +28,8 @@ export default function Team() {
 
   if (isUserError) {
     return (
-<<<<<<< HEAD
-<<<<<<< HEAD
       <Login
         desiredPageText={"your profile"} 
-=======
-      <SignIn
-        callbackUrl={`${process.env.PLUTOMI_URL}/profile`} // TODO set this
-        desiredPage={"your profile"} // TODO set this
->>>>>>> 73b8a24 (fixed wrong callback url on signin)
-=======
-      <Login
-<<<<<<< HEAD
-        desiredPageText={"your profile"} // TODO set this
->>>>>>> d64c806 (Got rid of callback url on login component)
-=======
-        desiredPageText={"your profile"} 
->>>>>>> 35ce39a (feat: Added ability to get all applicants by opening)
       />
     );
   }

@@ -30,15 +30,7 @@ export default function OpeningList() {
             {/* If the opening has stages, go to the first stage and view aplicants. Otherwise, go to the settings page for the opening to create one*/}
             <Link
               href={`${process.env.PLUTOMI_URL}/openings/${
-<<<<<<< HEAD
-<<<<<<< HEAD
                 opening.opening_id
-=======
-                opening.opening_id as string
->>>>>>> 73b8a24 (fixed wrong callback url on signin)
-=======
-                opening.opening_id
->>>>>>> ce0b1d8 (fix: Removed all 'as string' - #196)
               }/${
                 opening.stage_order.length > 0
                   ? `stages/${opening.stage_order[0]}/applicants` // TODO should this end with applicants?

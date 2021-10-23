@@ -14,20 +14,10 @@ export default function Main() {
       <main className="bg-gradient-to-b from-blue-gray-50 to-white via-homepageGradient">
         <Navbar />
         <Hero />
-        {user ? (
-          <AlreadySignedIn />
+        {!user || isUserError ? (
+          <LoginHomepage callbackUrl={`${process.env.PLUTOMI_URL}/dashboard`} />
         ) : (
-<<<<<<< HEAD
-<<<<<<< HEAD
-          <LoginHomepage callbackUrl={`${process.env.PLUTOMI_URL}/dashboard`} />
-=======
-          <SignInHomepage
-            callbackUrl={`${process.env.PLUTOMI_URL}/dashboard`}
-          />
->>>>>>> 73b8a24 (fixed wrong callback url on signin)
-=======
-          <LoginHomepage callbackUrl={`${process.env.PLUTOMI_URL}/dashboard`} />
->>>>>>> d64c806 (Got rid of callback url on login component)
+          <AlreadySignedIn />
         )}
         <FeatureBox />
         <UseCases />

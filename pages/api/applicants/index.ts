@@ -4,14 +4,6 @@ import InputValidation from "../../../utils/inputValidation";
 import { CreateApplicant } from "../../../utils/applicants/createApplicant";
 import { GetOrg } from "../../../utils/orgs/getOrg";
 import SendApplicantLink from "../../../utils/email/sendApplicantLink";
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
-import withSession from "../../../middleware/withSession";
-import { Session } from "next-iron-session";
->>>>>>> 12d77e0 (Replaced withauthorizer with withSession)
-=======
->>>>>>> 35ce39a (feat: Added ability to get all applicants by opening)
 
 async function handler(
   req: NextIronRequest,
