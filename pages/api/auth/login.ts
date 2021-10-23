@@ -4,7 +4,7 @@ import {
   GetRelativeTime,
 } from "../../../utils/time";
 import InputValidation from "../../../utils/inputValidation";
-import {  NextApiResponse } from "next";
+import { NextApiResponse } from "next";
 import SendLoginLink from "../../../utils/email/sendLoginLink";
 import CreateLoginLink from "../../../utils/loginLinks/createLoginLink";
 import { nanoid } from "nanoid";
@@ -18,10 +18,10 @@ import CleanUser from "../../../utils/clean/cleanUser";
 import { GetUserById } from "../../../utils/users/getUserById";
 import UpdateLoginLink from "../../../utils/loginLinks/updateLoginLink";
 
-async function handler(
+const handler = async (
   req: NextIronRequest,
   res: NextApiResponse
-): Promise<void> {
+): Promise<void> => {
   const { body, method, query } = req; // TODO get from body
   const { user_email } = body;
   const { user_id, key, callback_url } = query as CustomQuery;
@@ -180,6 +180,6 @@ async function handler(
   }
 
   return res.status(405).json({ message: "Not Allowed" });
-}
+};
 
 export default withSession(handler);

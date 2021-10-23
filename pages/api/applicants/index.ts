@@ -5,10 +5,10 @@ import { CreateApplicant } from "../../../utils/applicants/createApplicant";
 import { GetOrg } from "../../../utils/orgs/getOrg";
 import SendApplicantLink from "../../../utils/email/sendApplicantLink";
 
-async function handler(
+const handler = async (
   req: NextIronRequest,
   res: NextApiResponse
-): Promise<void> {
+): Promise<void> => {
   const { method, body } = req;
   const { org_id, opening_id, first_name, last_name, email } = body;
 
@@ -57,6 +57,6 @@ async function handler(
   }
 
   return res.status(405).json({ message: "Not Allowed" });
-}
+};
 
 export default handler;

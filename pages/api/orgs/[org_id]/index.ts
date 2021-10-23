@@ -6,10 +6,10 @@ import { LeaveOrg } from "../../../../utils/users/leaveOrg";
 
 import withSession from "../../../../middleware/withSession";
 
-async function handler(
+const handler = async (
   req: NextIronRequest,
   res: NextApiResponse
-): Promise<void> {
+): Promise<void> => {
   const user = req.session.get("user");
   if (!user) {
     req.session.destroy();
@@ -70,6 +70,6 @@ async function handler(
     }
   }
   return res.status(405).json({ message: "Not Allowed" });
-}
+};
 
 export default withSession(withCleanOrgName(handler));
