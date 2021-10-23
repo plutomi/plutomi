@@ -1,9 +1,8 @@
 import SignedInNav from "../../../../../components/Navbar/SignedInNav";
-import { useSession } from "next-auth/client";
-import useUser from "../../../../../SWR/useUser";
+import useSelf from "../../../../../SWR/useSelf";
 import Loader from "../../../../../components/Loader";
 import EmptyStagesState from "../../../../../components/Stages/EmptyStagesState";
-import SignIn from "../../../../../components/SignIn";
+import Login from "../../../../../components/Login";
 import { useEffect } from "react";
 import { useRouter } from "next/router";
 import useStore from "../../../../../utils/store";
@@ -15,18 +14,17 @@ import ApplicantList from "../../../../../components/Applicants/ApplicantList";
 import ApplicantProfileModal from "../../../../../components/Applicants/ApplicantProfileModal";
 export default function StageID() {
   const router = useRouter();
-  const { opening_id, stage_id, applicant_id } = router.query;
-  const [session, loading]: [CustomSession, boolean] = useSession();
-  const { user, isUserLoading, isUserError } = useUser(session?.user_id);
+  const { opening_id, stage_id, applicant_id } = router.query as CustomQuery;
 
+  const { user, isUserLoading, isUserError } = useSelf();
 
   let { stages, isStagesLoading, isStagesError } = useAllStagesInOpening(
     user?.user_id,
-    opening_id as string
+    opening_id
   );
 
   const { applicants, isApplicantsLoading, isApplicantsError } =
-    useAllApplicantsInStage(opening_id as string, stage_id as string);
+    useAllApplicantsInStage(opening_id, stage_id);
 
   const stageModal: StageModalInput = useStore(
     (state: PlutomiState) => state.stageModal
@@ -45,7 +43,7 @@ export default function StageID() {
   // Allows for copying the URL of the applicant directly directly
   useEffect(() => {
     if (!router.isReady) return;
-    const { applicant_id } = router.query;
+    const { applicant_id } = router.query as CustomQuery;
 
     if (
       applicant_id &&
@@ -60,18 +58,12 @@ export default function StageID() {
   }, [router.isReady]);
 
   // When rendering client side don't display anything until loading is complete
-  if (typeof window !== "undefined" && loading) {
+  if (typeof window !== "undefined" && isUserLoading) {
     return <Loader text="Loading..." />;
   }
 
-  // If no session or bad userid
-  if (!session || isUserError) {
-    return (
-      <SignIn
-        callbackUrl={`${process.env.NEXT_PUBLIC_NEXTAUTH_URL}/openings`} // TODO set this
-        desiredPage={"your applicants"} // TODO set this
-      />
-    );
+  if (isUserError) {
+    return <Login desiredPageText={"your applicants"} />;
   }
 
   if (isUserLoading) {

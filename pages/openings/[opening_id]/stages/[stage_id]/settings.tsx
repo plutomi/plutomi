@@ -1,38 +1,33 @@
 import SignedInNav from "../../../../../components/Navbar/SignedInNav";
-import { useSession } from "next-auth/client";
-import useUser from "../../../../../SWR/useUser";
+import useSelf from "../../../../../SWR/useSelf";
 import Loader from "../../../../../components/Loader";
-import axios from "axios";
 import { mutate } from "swr";
-import SignIn from "../../../../../components/SignIn";
+import Login from "../../../../../components/Login";
 import useOpeningById from "../../../../../SWR/useOpeningById";
 import { useRouter } from "next/router";
-import useStageById from "../../../../../SWR/useStageById";
 import OpeningsService from "../../../../../adapters/OpeningsService";
 import StageSettingsHeader from "../../../../../components/Stages/StageSettingsHeader";
 import StageSettingsContent from "../../../../../components/Stages/StagesSettingsContent";
 import StagesService from "../../../../../adapters/StagesService";
 export default function StageSettings() {
   const router = useRouter();
-  const { opening_id, stage_id } = router.query;
-  const [session, loading]: [CustomSession, boolean] = useSession();
-  const { user, isUserLoading, isUserError } = useUser(session?.user_id);
+  const { opening_id, stage_id } = router.query as CustomQuery;
+
+  const { user, isUserLoading, isUserError } = useSelf();
   let { opening, isOpeningLoading, isOpeningError } = useOpeningById(
     user?.user_id,
-    opening_id as string
+    opening_id
   );
 
   // When rendering client side don't display anything until loading is complete
-  if (typeof window !== "undefined" && loading) {
+  if (typeof window !== "undefined" && isUserLoading) {
     return <Loader text="Loading..." />;
   }
 
-  // If no session or bad userid
-  if (!session || isUserError) {
+  if (isUserError) {
     return (
-      <SignIn
-        callbackUrl={`${process.env.NEXT_PUBLIC_NEXTAUTH_URL}/openings/${opening_id}/settings`} // TODO set this
-        desiredPage={"your stage settings"} // TODO set this
+      <Login
+        desiredPageText={"your stage settings"} // TODO set this
       />
     );
   }
@@ -60,23 +55,21 @@ export default function StageSettings() {
     }
     try {
       await StagesService.deleteStage({
-        opening_id: opening_id as string,
-        stage_id: stage_id as string,
+        opening_id: opening_id,
+        stage_id: stage_id,
       });
-      router.push(
-        `${process.env.NEXT_PUBLIC_NEXTAUTH_URL}/openings/${opening_id}/settings`
-      );
+      router.push(`${process.env.PLUTOMI_URL}/openings/${opening_id}/settings`);
     } catch (error) {
       alert(error.response.data.message);
     }
 
     // Refresh the stage_order
-    mutate(OpeningsService.getOpeningURL({ opening_id: opening_id as string }));
+    mutate(OpeningsService.getOpeningURL({ opening_id: opening_id }));
 
     // Refresh the stage list
     mutate(
       OpeningsService.getAllStagesInOpeningURL({
-        opening_id: opening_id as string,
+        opening_id: opening_id,
       })
     );
   };

@@ -1,7 +1,7 @@
 import { Fragment } from "react";
-import { useSession } from "next-auth/client";
-import useUser from "../../SWR/useUser";
+import useSelf from "../../SWR/useSelf";
 import NavbarSearch from "./NavbarSearch";
+import AuthService from "../../adapters/AuthService";
 import { Disclosure, Menu, Transition } from "@headlessui/react";
 import {
   BellIcon,
@@ -10,7 +10,6 @@ import {
   XIcon,
 } from "@heroicons/react/outline";
 import Link from "next/dist/client/link";
-import { signOut } from "next-auth/client";
 import useOrgInvites from "../../SWR/useOrgInvites";
 import Banner from "../BannerTop";
 
@@ -21,16 +20,25 @@ const navigation = [
 ];
 const userNavigation = [
   { name: "Your Profile", event: null, href: "/profile" },
-  { name: "Sign Out", event: () => signOut(), href: "#" },
+  { name: "Sign Out", event: () => handleLogout(), href: "#" },
 ];
 
 function classNames(...classes) {
   return classes.filter(Boolean).join(" ");
 }
 
+const handleLogout = async () => {
+  try {
+    const { message } = await AuthService.logout(); // TODO logout to same page
+    alert(message);
+    // TODO reroute to homepage
+  } catch (error) {
+    alert(error.response.message);
+  }
+};
+
 export default function SignedInNav({ current }: ValidNavigation) {
-  const [session, loading]: [CustomSession, boolean] = useSession();
-  const { user, isUserLoading, isUserError } = useUser(session?.user_id);
+  const { user, isUserLoading, isUserError } = useSelf();
   const { invites, isInvitesLoading, isInvitesError } = useOrgInvites(
     user?.user_id
   );
@@ -234,7 +242,7 @@ export default function SignedInNav({ current }: ValidNavigation) {
                   </div>
                   <button
                     type="button"
-                    onClick={() => signOut()}
+                    onClick={() => handleLogout()}
                     className="ml-auto bg-white flex-shrink-0 p-1 rounded-full text-light hover:text-normal focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
                   >
                     <span className="sr-only">Sign Out</span>

@@ -11,9 +11,9 @@ import useStore from "../../../utils/store";
 import useAllPublicOpenings from "../../../SWR/useAllPublicOpenings";
 export default function PublicOpeningsList() {
   const router = useRouter();
-  const { org_id } = router.query;
+  const { org_id } = router.query as CustomQuery;
   let { publicOpenings, isPublicOpeningsLoading, isPublicOpeningsError } =
-    useAllPublicOpenings(org_id as string);
+    useAllPublicOpenings(org_id);
 
   return (
     <div className="bg-white shadow overflow-hidden sm:rounded-md">
@@ -22,7 +22,7 @@ export default function PublicOpeningsList() {
           <li key={opening.opening_id}>
             {/* Take applicant to opening info page */}
             <Link
-              href={`${process.env.NEXT_PUBLIC_NEXTAUTH_URL}/${org_id}/${opening?.opening_id}/apply`}
+              href={`${process.env.PLUTOMI_URL}/${org_id}/${opening?.opening_id}/apply`}
             >
               <a className="block hover:bg-gray-50">
                 <div className="px-4 py-4 sm:px-6">

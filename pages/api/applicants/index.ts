@@ -4,7 +4,11 @@ import InputValidation from "../../../utils/inputValidation";
 import { CreateApplicant } from "../../../utils/applicants/createApplicant";
 import { GetOrg } from "../../../utils/orgs/getOrg";
 import SendApplicantLink from "../../../utils/email/sendApplicantLink";
-const handler = async (req: CustomRequest, res: NextApiResponse) => {
+
+async function handler(
+  req: NextIronRequest,
+  res: NextApiResponse
+): Promise<void> {
   const { method, body } = req;
   const { org_id, opening_id, first_name, last_name, email } = body;
 
@@ -53,6 +57,6 @@ const handler = async (req: CustomRequest, res: NextApiResponse) => {
   }
 
   return res.status(405).json({ message: "Not Allowed" });
-};
+}
 
 export default handler;

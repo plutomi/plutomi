@@ -7,17 +7,16 @@ import OpeningApplyPageContent from "../../../components/Openings/Public/Opening
 import OpeningApplyPageHeader from "../../../components/Openings/Public/OpeningApplyPageHeader";
 export default function Apply() {
   const router = useRouter();
-  const { org_id, opening_id } = router.query;
-  const { org, isOrgLoading, isOrgError } = usePublicOrgById(org_id as string);
+  const { org_id, opening_id } = router.query as CustomQuery;
+  const { org, isOrgLoading, isOrgError } = usePublicOrgById(org_id);
   const { opening, isOpeningLoading, isOpeningError } = usePublicOpeningById(
-    org_id as string,
-    opening_id as string
+    org_id,
+    opening_id
   );
 
   if (isOrgLoading) {
     return <Loader text="Loading..." />;
   }
-
 
   if (isOpeningLoading) {
     <Loader text="Loading opening info..." />;
@@ -29,9 +28,7 @@ export default function Apply() {
         <h1 className="text-2xl text-center font-bold">
           Unfortunately, you cannot apply to this opening.
         </h1>
-        <GoBack
-          url={`${process.env.NEXT_PUBLIC_NEXTAUTH_URL}/${org_id}/apply`}
-        />
+        <GoBack url={`${process.env.PLUTOMI_URL}/${org_id}/apply`} />
       </div>
     );
   }

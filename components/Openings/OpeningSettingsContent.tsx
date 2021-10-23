@@ -1,4 +1,3 @@
-import { useSession } from "next-auth/client";
 import { useRouter } from "next/router";
 import { mutate } from "swr";
 import StageReorderColumn from "../StageReorderColumn";
@@ -7,9 +6,8 @@ import { GetRelativeTime } from "../../utils/time";
 import difference from "../../utils/getObjectDifference";
 import { useEffect } from "react";
 import OpeningModal from "./OpeningModal";
-import axios from "axios";
 import Loader from "../Loader";
-import useUser from "../../SWR/useUser";
+import useSelf from "../../SWR/useSelf";
 import { useState } from "react";
 import useStore from "../../utils/store";
 import useAllStagesInOpening from "../../SWR/useAllStagesInOpening";
@@ -17,12 +15,12 @@ import useOpeningById from "../../SWR/useOpeningById";
 import OpeningsService from "../../adapters/OpeningsService";
 export default function OpeningSettingsContent() {
   const router = useRouter();
-  const { opening_id } = router.query;
-  const [session, loading]: [CustomSession, boolean] = useSession();
-  const { user, isUserLoading, isUserError } = useUser(session?.user_id);
+  const { opening_id } = router.query as CustomQuery;
+
+  const { user, isUserLoading, isUserError } = useSelf();
   let { opening, isOpeningLoading, isOpeningError } = useOpeningById(
     user?.user_id,
-    opening_id as string
+    opening_id
   );
 
   let { stages, isStagesLoading, isStagesError } = useAllStagesInOpening(
@@ -64,7 +62,7 @@ export default function OpeningSettingsContent() {
       console.log("Outgoing body", diff);
 
       const { message } = await OpeningsService.updateOpening({
-        opening_id: opening_id as string,
+        opening_id: opening_id,
         new_opening_values: diff,
       });
       alert(message);
@@ -79,7 +77,7 @@ export default function OpeningSettingsContent() {
       alert(error.response.data.message);
     }
     // Refresh opening data
-    mutate(OpeningsService.getOpeningURL({ opening_id: opening_id as string }));
+    mutate(OpeningsService.getOpeningURL({ opening_id: opening_id }));
   };
 
   return (

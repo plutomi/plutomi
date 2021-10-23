@@ -6,9 +6,9 @@ import useStore from "../../utils/store";
 import useAllApplicantsInStage from "../../SWR/useAllApplicantsInStage";
 export default function ApplicantList() {
   const router = useRouter();
-  const { opening_id, stage_id, applicant_id } = router.query;
+  const { opening_id, stage_id } = router.query as CustomQuery;
   const { applicants, isApplicantsLoading, isApplicantsError } =
-    useAllApplicantsInStage(opening_id as string, stage_id as string);
+    useAllApplicantsInStage(opening_id, stage_id);
 
   const setApplicantProfileModal = useStore(
     (store: PlutomiState) => store.setApplicantProfileModal

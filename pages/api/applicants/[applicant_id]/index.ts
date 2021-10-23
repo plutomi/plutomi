@@ -1,17 +1,25 @@
-import withAuthorizer from "../../../../middleware/withAuthorizer";
 import { NextApiResponse } from "next";
 import { GetApplicantById } from "../../../../utils/applicants/getApplicantById";
 import InputValidation from "../../../../utils/inputValidation";
 import DeleteApplicant from "../../../../utils/applicants/deleteApplicant";
 import UpdateApplicant from "../../../../utils/applicants/updateApplicant";
-const handler = async (req: CustomRequest, res: NextApiResponse) => {
-  const user: DynamoUser = req.user;
+import withSession from "../../../../middleware/withSession";
+
+async function handler(
+  req: NextIronRequest,
+  res: NextApiResponse
+): Promise<void> {
+  const user = req.session.get("user");
+  if (!user) {
+    req.session.destroy();
+    return res.status(401).json({ message: "Please sign in again" });
+  }
   const { method, query, body } = req;
-  const { applicant_id } = query;
+  const { applicant_id } = query as CustomQuery;
 
   const get_applicant_input: GetApplicantInput = {
     org_id: user.org_id,
-    applicant_id: applicant_id as string,
+    applicant_id: applicant_id,
   };
 
   if (method === "GET") {
@@ -35,7 +43,7 @@ const handler = async (req: CustomRequest, res: NextApiResponse) => {
     try {
       const update_applicant_input: UpdateApplicantInput = {
         org_id: user.org_id,
-        applicant_id: applicant_id as string,
+        applicant_id: applicant_id,
         new_applicant_values: body.new_applicant_values,
       };
 
@@ -58,7 +66,7 @@ const handler = async (req: CustomRequest, res: NextApiResponse) => {
     try {
       await DeleteApplicant({
         org_id: user.org_id,
-        applicant_id: applicant_id as string,
+        applicant_id: applicant_id,
       });
       return res.status(200).json({ message: "Applicant deleted!" });
     } catch (error) {
@@ -68,6 +76,6 @@ const handler = async (req: CustomRequest, res: NextApiResponse) => {
     }
   }
   return res.status(405).json({ message: "Not Allowed" });
-};
+}
 
-export default withAuthorizer(handler);
+export default withSession(handler);

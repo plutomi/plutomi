@@ -87,13 +87,13 @@ interface JoinOrgInput {
 interface CreateLoginLinkInput {
   user_email: string;
   login_link_hash: string;
-  login_link_expiry: string; // Timestamp in the future
+  login_link_expiry: string | number | date; // Timestamp in the future
 }
 
 interface SendLoginLinkEmailInput {
   recipient_email: string;
   login_link: string;
-  login_link_relative_expiry: string;
+  login_link_relative_expiry: string | number | date;
 }
 
 interface SendApplicantLinkInput {
@@ -158,7 +158,7 @@ interface CreateOrgInviteInput {
   org_name: string;
   created_by: DynamoUser;
   recipient_email: string; // Email of person getting invited
-  expires_at: string; // TODO Maybe Dynamo TTL or just ISO
+  expires_at: string | number | Date; // TODO Maybe Dynamo TTL or just ISO
   claimed: boolean;
 }
 
@@ -193,7 +193,7 @@ interface StageCardInput {
   num_applicants: number;
 }
 
-interface useUserOutput {
+interface useSelfOutput {
   user: DynamoUser;
   isUserLoading: boolean;
   isUserError: boolean;
@@ -414,3 +414,16 @@ interface ApplicantAnswer {
   question_description: string;
   question_response: string;
 }
+type NextIronRequest = NextApiRequest & { session: Session };
+
+type CustomQuery = {
+  org_id?: string;
+  opening_id: string;
+  user_id?: string;
+  stage_id?: string;
+  applicant_id?: string;
+  key?: string;
+  callback_url: string;
+  question_id: string;
+  invite_id: string;
+};

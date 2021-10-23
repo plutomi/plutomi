@@ -1,16 +1,24 @@
-import withAuthorizer from "../../../../middleware/withAuthorizer";
 import { GetUserById } from "../../../../utils/users/getUserById";
 import { NextApiResponse } from "next";
 import { UpdateUser } from "../../../../utils/users/updateUser";
-const handler = async (req: CustomRequest, res: NextApiResponse) => {
+import withSession from "../../../../middleware/withSession";
+
+async function handler(
+  req: NextIronRequest,
+  res: NextApiResponse
+): Promise<void> {
+  const user = req.session.get("user");
+  if (!user) {
+    req.session.destroy();
+    return res.status(401).json({ message: "Please sign in again" });
+  }
   const { method, query, body } = req;
-  const { user_id } = query;
+  const { user_id } = query as CustomQuery;
   const { new_user_values } = body;
-  const user: DynamoUser = req.user;
 
   if (method === "GET") {
     try {
-      const requested_user = await GetUserById(user_id as string);
+      const requested_user = await GetUserById(user_id);
 
       if (!user) {
         return res.status(404).json({ message: "User not found" });
@@ -50,6 +58,6 @@ const handler = async (req: CustomRequest, res: NextApiResponse) => {
   }
 
   return res.status(405).json({ message: "Not Allowed" });
-};
+}
 
-export default withAuthorizer(handler);
+export default withSession(handler);

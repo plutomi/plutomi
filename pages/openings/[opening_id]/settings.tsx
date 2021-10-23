@@ -1,35 +1,28 @@
 import SignedInNav from "../../../components/Navbar/SignedInNav";
-import { useSession } from "next-auth/client";
-import useUser from "../../../SWR/useUser";
+import useSelf from "../../../SWR/useSelf";
 import Loader from "../../../components/Loader";
 import OpeningSettingsHeader from "../../../components/Openings/OpeningSettingsHeader";
-import SignIn from "../../../components/SignIn";
+import Login from "../../../components/Login";
 import useOpeningById from "../../../SWR/useOpeningById";
 import { useRouter } from "next/router";
 import OpeningSettingsContent from "../../../components/Openings/OpeningSettingsContent";
 export default function OpeningsSettings() {
   const router = useRouter();
-  const { opening_id } = router.query;
-  const [session, loading]: [CustomSession, boolean] = useSession();
-  const { user, isUserLoading, isUserError } = useUser(session?.user_id);
+  const { opening_id } = router.query as CustomQuery;
+
+  const { user, isUserLoading, isUserError } = useSelf();
   let { opening, isOpeningLoading, isOpeningError } = useOpeningById(
     user?.user_id,
-    opening_id as string
+    opening_id
   );
 
   // When rendering client side don't display anything until loading is complete
-  if (typeof window !== "undefined" && loading) {
+  if (typeof window !== "undefined" && isUserLoading) {
     return <Loader text="Loading..." />;
   }
 
-  // If no session or bad userid
-  if (!session || isUserError) {
-    return (
-      <SignIn
-        callbackUrl={`${process.env.NEXT_PUBLIC_NEXTAUTH_URL}/openings/${opening_id}/settings`} // TODO set this
-        desiredPage={"your opening settings"} // TODO set this
-      />
-    );
+  if (isUserError) {
+    return <Login desiredPageText={"your opening settings"} />;
   }
 
   if (isUserLoading) {

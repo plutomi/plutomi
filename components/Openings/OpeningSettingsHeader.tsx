@@ -1,10 +1,8 @@
-import { useSession } from "next-auth/client";
 import Breadcrumbs from "../Breadcrumbs";
-import useUser from "../../SWR/useUser";
-import { PencilAltIcon, PlusIcon } from "@heroicons/react/outline";
+import useSelf from "../../SWR/useSelf";
+import { PencilAltIcon } from "@heroicons/react/outline";
 import useStore from "../../utils/store";
 import { mutate } from "swr";
-import axios from "axios";
 import { TrashIcon } from "@heroicons/react/outline";
 import useOpeningById from "../../SWR/useOpeningById";
 import { useRouter } from "next/router";
@@ -12,12 +10,12 @@ import Loader from "../Loader";
 import OpeningsService from "../../adapters/OpeningsService";
 export default function OpeningSettingsHeader() {
   const router = useRouter();
-  const { opening_id } = router.query;
-  const [session, loading]: [CustomSession, boolean] = useSession();
-  const { user, isUserLoading, isUserError } = useUser(session?.user_id);
+  const { opening_id } = router.query as CustomQuery;
+
+  const { user, isUserLoading, isUserError } = useSelf();
   let { opening, isOpeningLoading, isOpeningError } = useOpeningById(
     user?.user_id,
-    opening_id as string
+    opening_id
   );
 
   const stageModal = useStore((state: PlutomiState) => state.stageModal);
@@ -63,8 +61,8 @@ export default function OpeningSettingsHeader() {
     }
 
     try {
-      await OpeningsService.deleteOpening({ opening_id: opening_id as string });
-      router.push(`${process.env.NEXT_PUBLIC_NEXTAUTH_URL}/openings`);
+      await OpeningsService.deleteOpening({ opening_id: opening_id });
+      router.push(`${process.env.PLUTOMI_URL}/openings`);
     } catch (error) {
       alert(error.response.data.message);
     }

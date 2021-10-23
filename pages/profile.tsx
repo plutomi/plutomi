@@ -1,19 +1,17 @@
 import SignedInNav from "../components/Navbar/SignedInNav";
-import { useSession } from "next-auth/client";
-import useUser from "../SWR/useUser";
+import useSelf from "../SWR/useSelf";
 import axios from "axios";
 import UserProfileHeader from "../components/UserProfile/UserProfileHeader";
 import { mutate } from "swr";
 import UserProfileModal from "../components/UserProfile/UserProfileModal";
 import Loader from "../components/Loader";
-import SignIn from "../components/SignIn";
+import Login from "../components/Login";
 import useOrgUsers from "../SWR/useOrgUsers";
 import useStore from "../utils/store";
 import { useRouter } from "next/router";
 import UsersService from "../adapters/UsersService";
 export default function Team() {
-  const [session, loading]: [CustomSession, boolean] = useSession();
-  const { user, isUserLoading, isUserError } = useUser(session?.user_id);
+  const { user, isUserLoading, isUserError } = useSelf();
 
   const userProfileModal = useStore(
     (state: PlutomiState) => state.userProfileModal
@@ -24,16 +22,14 @@ export default function Team() {
   );
 
   // When rendering client side don't display anything until loading is complete
-  if (typeof window !== "undefined" && loading) {
+  if (typeof window !== "undefined" && isUserLoading) {
     return <Loader text="Loading..." />;
   }
 
-  // If no session or bad userid
-  if (!session || isUserError) {
+  if (isUserError) {
     return (
-      <SignIn
-        callbackUrl={`${process.env.NEXT_PUBLIC_NEXTAUTH_URL}/profile`} // TODO set this
-        desiredPage={"your profile"} // TODO set this
+      <Login
+        desiredPageText={"your profile"} 
       />
     );
   }
@@ -63,7 +59,7 @@ export default function Team() {
       alert(error.response.data.message);
     }
 
-    mutate(UsersService.getUserURL({ user_id: user?.user_id }));
+    mutate(UsersService.getSelfURL());
   };
 
   return (

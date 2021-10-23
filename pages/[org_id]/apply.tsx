@@ -3,10 +3,12 @@ import Loader from "../../components/Loader";
 import usePublicOrgById from "../../SWR/usePublicOrgById";
 import OrgApplyPageHeader from "../../components/Org/Public/OrgApplyPageHeader";
 import OrgApplyPageContent from "../../components/Org/Public/OrgApplyPageContent";
+
 export default function Apply() {
   const router = useRouter();
-  const { org_id } = router.query;
-  const { org, isOrgLoading, isOrgError } = usePublicOrgById(org_id as string);
+  const { org_id } = router.query as CustomQuery as CustomQuery;
+
+  const { org, isOrgLoading, isOrgError } = usePublicOrgById(org_id);
 
   if (isOrgLoading) {
     return <Loader text="Loading..." />;

@@ -1,11 +1,18 @@
 import { useRouter } from "next/router";
-import { signOut } from "next-auth/client";
 import Link from "next/link";
-import { useSession } from "next-auth/client";
-import useUser from "../SWR/useUser";
+import useSelf from "../SWR/useSelf";
+import AuthService from "../adapters/AuthService";
+const handleLogout = async () => {
+  try {
+    const { message } = await AuthService.logout(); // TODO logout to same page
+    alert(message);
+    // TODO reroute to homepage
+  } catch (error) {
+    alert(error.response.message);
+  }
+};
 export default function AlreadySignedIn() {
-  const [session, loading]: [CustomSession, boolean] = useSession();
-  const { user, isUserLoading, isUserError } = useUser(session?.user_id);
+  const { user, isUserLoading, isUserError } = useSelf();
 
   const router = useRouter();
 
@@ -25,7 +32,7 @@ export default function AlreadySignedIn() {
         )}
         <button
           className=" items-center px-4 py-2 border border-gray-300 shadow-sm text-base font-medium rounded-md text-dark bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
-          onClick={() => signOut()}
+          onClick={() => handleLogout()}
         >
           Sign out
         </button>

@@ -1,11 +1,9 @@
 import SignedInNav from "../components/Navbar/SignedInNav";
-import { useSession } from "next-auth/client";
-import useUser from "../SWR/useUser";
+import useSelf from "../SWR/useSelf";
 import EmptyTeamState from "../components/Team/EmptyTeamState";
-import axios from "axios";
 import TeamContent from "../components/Team/TeamContent";
 import Loader from "../components/Loader";
-import SignIn from "../components/SignIn";
+import Login from "../components/Login";
 import CreateInviteModal from "../components/CreateInviteModal";
 import useOrgUsers from "../SWR/useOrgUsers";
 import useStore from "../utils/store";
@@ -14,8 +12,8 @@ import { useRouter } from "next/router";
 import InvitesService from "../adapters/InvitesService";
 export default function Team() {
   const router = useRouter();
-  const [session, loading]: [CustomSession, boolean] = useSession();
-  const { user, isUserLoading, isUserError } = useUser(session?.user_id);
+
+  const { user, isUserLoading, isUserError } = useSelf();
   const { orgUsers, isOrgUsersLoading, isOrgUsersError } = useOrgUsers(
     user?.org_id,
     user?.user_id
@@ -26,16 +24,14 @@ export default function Team() {
   );
 
   // When rendering client side don't display anything until loading is complete
-  if (typeof window !== "undefined" && loading) {
+  if (typeof window !== "undefined" && isUserLoading) {
     return <Loader text="Loading..." />;
   }
 
-  // If no session or bad userid
-  if (!session || isUserError) {
+  if (isUserError) {
     return (
-      <SignIn
-        callbackUrl={`${process.env.NEXT_PUBLIC_NEXTAUTH_URL}/team`} // TODO set this
-        desiredPage={"your team"} // TODO set this
+      <Login
+        desiredPageText={"your team"} // TODO set this
       />
     );
   }
@@ -47,9 +43,9 @@ export default function Team() {
   if (isOrgUsersError) {
     alert(
       // TODO this is not returning the error message from the API call due to the way SWR handles errors. Fix !
-      `You must create an org or join one before adding or viewing team members. If you have pending invites, you can view them at ${process.env.NEXT_PUBLIC_NEXTAUTH_URL}/invites`
+      `You must create an org or join one before adding or viewing team members. If you have pending invites, you can view them at ${process.env.PLUTOMI_URL}/invites`
     );
-    router.push(`${process.env.NEXT_PUBLIC_NEXTAUTH_URL}/dashboard`);
+    router.push(`${process.env.PLUTOMI_URL}/dashboard`);
     return null;
   }
 

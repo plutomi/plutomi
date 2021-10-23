@@ -1,10 +1,18 @@
 import { GetAllUserInvites } from "../../../../../utils/invites/getAllOrgInvites";
-import withAuthorizer from "../../../../../middleware/withAuthorizer";
 import { NextApiResponse } from "next";
 
-const handler = async (req: CustomRequest, res: NextApiResponse) => {
+import withSession from "../../../../../middleware/withSession";
+
+async function handler(
+  req: NextIronRequest,
+  res: NextApiResponse
+): Promise<void> {
+  const user = req.session.get("user");
+  if (!user) {
+    req.session.destroy();
+    return res.status(401).json({ message: "Please sign in again" });
+  }
   const { method } = req;
-  const user: DynamoUser = req.user;
 
   if (method === "GET") {
     try {
@@ -19,6 +27,6 @@ const handler = async (req: CustomRequest, res: NextApiResponse) => {
   }
 
   return res.status(405).json({ message: "Not Allowed" });
-};
+}
 
-export default withAuthorizer(handler);
+export default withSession(handler);

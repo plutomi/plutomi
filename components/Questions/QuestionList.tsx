@@ -1,6 +1,5 @@
 import { useRouter } from "next/router";
-import { useSession } from "next-auth/client";
-import useUser from "../../SWR/useUser";
+import useSelf from "../../SWR/useSelf";
 import useOpeningById from "../../SWR/useOpeningById";
 import useStageById from "../../SWR/useStageById";
 import axios from "axios";
@@ -15,18 +14,18 @@ import StagesService from "../../adapters/StagesService";
 import QuestionsService from "../../adapters/QuestionsService";
 export default function QuestionList() {
   const router = useRouter();
-  const { opening_id, stage_id } = router.query;
-  const [session, loading]: [CustomSession, boolean] = useSession();
-  const { user, isUserLoading, isUserError } = useUser(session?.user_id);
+  const { opening_id, stage_id } = router.query as CustomQuery;
+
+  const { user, isUserLoading, isUserError } = useSelf();
   let { opening, isOpeningLoading, isOpeningError } = useOpeningById(
     user?.user_id,
-    opening_id as string
+    opening_id
   );
 
   const { stage, isStageLoading, isStageError } = useStageById(
     user?.user_id,
     opening?.opening_id,
-    stage_id as string
+    stage_id
   );
 
   const { questions, isQuestionsLoading, isQuestionsError } =
@@ -65,8 +64,8 @@ export default function QuestionList() {
 
     try {
       await StagesService.updateStage({
-        opening_id: opening_id as string,
-        stage_id: stage_id as string,
+        opening_id: opening_id,
+        stage_id: stage_id,
         new_stage_values: {
           question_order: new_question_order,
         },
@@ -78,7 +77,7 @@ export default function QuestionList() {
 
     mutate(
       StagesService.getStageURL({
-        stage_id: stage_id as string,
+        stage_id: stage_id,
       })
     );
   };
@@ -104,7 +103,7 @@ export default function QuestionList() {
     // Refresh the stage (which returns the question order)
     mutate(
       StagesService.getStageURL({
-        stage_id: stage_id as string,
+        stage_id: stage_id,
       })
     );
 

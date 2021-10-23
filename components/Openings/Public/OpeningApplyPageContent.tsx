@@ -4,13 +4,12 @@ import usePublicOpeningById from "../../../SWR/usePublicOpeningById";
 import Loader from "../../Loader";
 import ApplicantInfoForm from "./ApplicantInfoForm";
 import axios from "axios";
-import ApplicantsService from "../../../adapters/ApplicantsService";
 export default function OpeningApplyPageContent() {
   const router = useRouter();
-  const { org_id, opening_id } = router.query;
+  const { org_id, opening_id } = router.query as CustomQuery;
   const { opening, isOpeningLoading, isOpeningError } = usePublicOpeningById(
-    org_id as string,
-    opening_id as string
+    org_id,
+    opening_id
   );
 
   if (isOpeningLoading) {
@@ -19,7 +18,7 @@ export default function OpeningApplyPageContent() {
 
   return (
     <div className="">
-      <ApplicantInfoForm  />
+      <ApplicantInfoForm />
     </div>
   );
 }

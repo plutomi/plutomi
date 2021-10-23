@@ -2,8 +2,8 @@ import { useRouter } from "next/router";
 import usePublicOrgById from "../../../SWR/usePublicOrgById";
 export default function OrgApplyPageHeader() {
   const router = useRouter();
-  const { org_id } = router.query;
-  const { org, isOrgLoading, isOrgError } = usePublicOrgById(org_id as string);
+  const { org_id } = router.query as CustomQuery;
+  const { org, isOrgLoading, isOrgError } = usePublicOrgById(org_id);
 
   return (
     <div className="md:flex md:items-center md:justify-between">

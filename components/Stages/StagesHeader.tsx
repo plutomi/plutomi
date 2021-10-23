@@ -1,23 +1,20 @@
-import { useSession } from "next-auth/client";
-import useUser from "../../SWR/useUser";
+import useSelf from "../../SWR/useSelf";
 import { CogIcon } from "@heroicons/react/outline";
 import useStore from "../../utils/store";
 import ClickToCopy from "../ClickToCopy";
 import Link from "next/dist/client/link";
-import { AdjustmentsIcon } from "@heroicons/react/outline";
 import OpeningsDropdown from "../Openings/DropDown";
 import useOpeningById from "../../SWR/useOpeningById";
 import { useRouter } from "next/router";
 import useOpenings from "../../SWR/useOpenings";
-import useAllStagesInOpening from "../../SWR/useAllStagesInOpening";
 export default function StagesHeader() {
   const router = useRouter();
-  const { opening_id } = router.query;
-  const [session, loading]: [CustomSession, boolean] = useSession();
-  const { user, isUserLoading, isUserError } = useUser(session?.user_id);
+  const { opening_id } = router.query as CustomQuery;
+
+  const { user, isUserLoading, isUserError } = useSelf();
   let { opening, isOpeningLoading, isOpeningError } = useOpeningById(
     user?.user_id,
-    opening_id as string
+    opening_id
   );
 
   let { openings, isOpeningsLoading, isOpeningsError } = useOpenings(
@@ -41,12 +38,12 @@ export default function StagesHeader() {
       <p className="mt-2 text-md text-normal sm:mt-0 ">
         <ClickToCopy
           showText={"Application Link"}
-          copyText={`${process.env.NEXT_PUBLIC_NEXTAUTH_URL}/${user?.org_id}/${opening?.opening_id}/apply`}
+          copyText={`${process.env.PLUTOMI_URL}/${user?.org_id}/${opening?.opening_id}/apply`}
         />
       </p>
       <div className=" flex justify-center">
         <Link
-          href={`${process.env.NEXT_PUBLIC_NEXTAUTH_URL}/openings/${opening_id}/settings`}
+          href={`${process.env.PLUTOMI_URL}/openings/${opening_id}/settings`}
         >
           <CogIcon className="w-10 h-10  hover:text-dark text-light cursor-pointer transition duration-300 ease-in-out" />
         </Link>

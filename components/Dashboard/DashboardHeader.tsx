@@ -1,9 +1,7 @@
-import { useSession } from "next-auth/client";
-import useUser from "../../SWR/useUser";
+import useSelf from "../../SWR/useSelf";
 
 export default function DashboardHeader() {
-  const [session, loading]: [CustomSession, boolean] = useSession();
-  const { user, isUserLoading, isUserError } = useUser(session?.user_id);
+  const { user, isUserLoading, isUserError } = useSelf();
 
   return (
     <div className="md:flex md:items-center md:justify-between">

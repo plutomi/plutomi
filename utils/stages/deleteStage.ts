@@ -4,7 +4,7 @@ import {
 } from "@aws-sdk/lib-dynamodb";
 import { Dynamo } from "../../libs/ddbDocClient";
 import { GetOpening } from "../openings/getOpeningById";
-import { GetStage } from "./GetStage";
+import { GetStage } from "./getStage";
 const { DYNAMO_TABLE_NAME } = process.env;
 // TODO check if stage is empt of appliants first
 // TODO delete stage from the funnels sort order

@@ -11,10 +11,9 @@ import useStageById from "../../../../SWR/useStageById";
 import ApplicationHeader from "../../../../components/Applicants/ApplicationHeader";
 export default function Application() {
   const router = useRouter();
-  const { applicant_id } = router.query;
-  const { applicant, isApplicantLoading, isApplicantError } = useApplicantById(
-    applicant_id as string
-  );
+  const { applicant_id } = router.query as CustomQuery;
+  const { applicant, isApplicantLoading, isApplicantError } =
+    useApplicantById(applicant_id);
 
   const { stage, isStageLoading, isStageError } = useStageById(
     applicant?.applicant_id,

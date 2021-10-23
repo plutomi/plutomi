@@ -1,15 +1,22 @@
 import CreateOrgInvite from "../../../utils/invites/createOrgInvite";
-import withAuthorizer from "../../../middleware/withAuthorizer";
 import SendOrgInvite from "../../../utils/email/sendOrgInvite";
 import InputValidation from "../../../utils/inputValidation";
 import { GetPastOrFutureTime } from "../../../utils/time";
 import { NextApiResponse } from "next";
 import withCleanOrgName from "../../../middleware/withCleanOrgName";
 import { GetOrg } from "../../../utils/orgs/getOrg";
+import withSession from "../../../middleware/withSession";
 
-const handler = async (req: CustomRequest, res: NextApiResponse) => {
+async function handler(
+  req: NextIronRequest,
+  res: NextApiResponse
+): Promise<void> {
+  const user = req.session.get("user");
+  if (!user) {
+    req.session.destroy();
+    return res.status(401).json({ message: "Please sign in again" });
+  }
   const { body, method } = req;
-  const user: DynamoUser = req.user;
 
   const { recipient_email }: APICreateOrgInviteInput = body;
 
@@ -18,7 +25,7 @@ const handler = async (req: CustomRequest, res: NextApiResponse) => {
   const expires_at = GetPastOrFutureTime(
     "future",
     default_expiry_time,
-    "days" || default_expiry_value, // TODO add days input
+    "days" || default_expiry_value,
     "iso"
   );
 
@@ -30,7 +37,7 @@ const handler = async (req: CustomRequest, res: NextApiResponse) => {
     created_by: user, // TODO reduce this to just name & email
     org_id: user.org_id,
     recipient_email: recipient_email,
-    expires_at: expires_at as string,
+    expires_at: expires_at,
   };
   if (method === "POST") {
     try {
@@ -71,6 +78,6 @@ const handler = async (req: CustomRequest, res: NextApiResponse) => {
     }
   }
   return res.status(405).json({ message: "Not Allowed" });
-};
+}
 
-export default withAuthorizer(withCleanOrgName(handler));
+export default withSession(withCleanOrgName(handler));

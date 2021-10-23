@@ -7,7 +7,6 @@ import CustomEditableAction from "./CustomEditableSave";
 import useStore from "../../utils/store";
 import { useRouter } from "next/router";
 import { mutate } from "swr";
-import axios from "axios";
 import ClickToCopy from "../ClickToCopy";
 import delay from "delay";
 import useApplicantById from "../../SWR/useApplicantById";
@@ -38,7 +37,7 @@ export default function ApplicantProfileModal() {
   const [isEditing, setIsEditing] = useState(false);
   const [currentActive, setCurrentActive] = useState(1); // Id of item
   const router = useRouter();
-  const { applicant_id, opening_id, stage_id } = router.query;
+  const { applicant_id, opening_id, stage_id } = router.query as CustomQuery;
 
   const setApplicantProfileModal = useStore(
     (store: PlutomiState) => store.setApplicantProfileModal
@@ -48,9 +47,8 @@ export default function ApplicantProfileModal() {
     (store: PlutomiState) => store.applicantProfileModal
   );
 
-  const { applicant, isApplicantLoading, isApplicantError } = useApplicantById(
-    applicant_id as string
-  );
+  const { applicant, isApplicantLoading, isApplicantError } =
+    useApplicantById(applicant_id);
 
   const handleNavClick = (e, tabId: number) => {
     e.preventDefault();
@@ -186,7 +184,7 @@ export default function ApplicantProfileModal() {
                       <div className="ml-3 h-7 flex items-center space-x-4">
                         <ClickToCopy
                           showText={"Copy Application Link"}
-                          copyText={`${process.env.NEXT_PUBLIC_NEXTAUTH_URL}/${applicant?.org_id}/applicants/${applicant?.applicant_id}`}
+                          copyText={`${process.env.PLUTOMI_URL}/${applicant?.org_id}/applicants/${applicant?.applicant_id}`}
                         />
                         <button
                           type="button"

@@ -1,12 +1,8 @@
-import { signIn } from "next-auth/client";
-import GoogleButton from "./Buttons/GoogleButton";
-import axios from "axios";
 import LoginEmail from "./EmailSigninInput";
 import { useState } from "react";
 import router from "next/router";
 import AuthService from "../adapters/AuthService";
-
-export default function SignIn({ callbackUrl, desiredPage }) {
+export default function Login({ desiredPageText }) {
   const [user_email, setUserEmail] = useState("");
   const [submittedText, setSubmittedText] = useState(
     `We've sent a magic login link to your email!`
@@ -25,9 +21,7 @@ export default function SignIn({ callbackUrl, desiredPage }) {
     try {
       const { message } = await AuthService.createLoginLink({
         user_email: user_email,
-        callback_url: `${
-          process.env.NEXT_PUBLIC_NEXTAUTH_URL + router.pathname
-        }`,
+        callback_url: `${process.env.PLUTOMI_URL + router.asPath}`,
       });
 
       setSubmittedText(message);
@@ -40,12 +34,10 @@ export default function SignIn({ callbackUrl, desiredPage }) {
   return (
     <div className="flex justify-center flex-col p-10 max-w-2xl mx-auto items-center mt-20 border rounded-lg">
       <h1 className="text-4xl font-bold text-center text-dark">
-        Sign in to view {desiredPage}
+        Sign in to view {desiredPageText}
       </h1>
 
       <div className="mt-8 space-y-4 flex flex-col justify-center items-center">
-        <GoogleButton callbackUrl={callbackUrl} />
-
         {emailSubmitted ? (
           <div className="text-center">
             <h1 className=" text-dark text-2xl">{submittedText}</h1>
@@ -53,15 +45,15 @@ export default function SignIn({ callbackUrl, desiredPage }) {
           </div>
         ) : (
           <div className="space-y-4">
-            <p className=" text-lg text-normal text-center sm:max-w-8xl max-w-sm">
-              Or we can email you a magic link for a password-free sign in.
-            </p>
             <LoginEmail
               onChange={handleEmailChange}
               user_email={user_email}
               button_text={button_text}
               sendEmail={sendEmail}
-            />
+            />{" "}
+            <p className=" text-lg text-normal text-center sm:max-w-8xl max-w-sm">
+              We will email you a magic link for a password-free sign in.
+            </p>
           </div>
         )}
       </div>

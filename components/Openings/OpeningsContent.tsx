@@ -1,14 +1,13 @@
 import OpeningList from "./OpeningsList";
-import { useSession } from "next-auth/client";
 import useOpenings from "../../SWR/useOpenings";
-import useUser from "../../SWR/useUser";
+import useSelf from "../../SWR/useSelf";
 import Loader from "../Loader";
 import { useRouter } from "next/router";
 export default function OpeningsContent() {
   const router = useRouter();
-  const { applicant_id } = router.query;
-  const [session, loading]: [CustomSession, boolean] = useSession();
-  const { user, isUserLoading, isUserError } = useUser(session?.user_id);
+  const { applicant_id } = router.query as CustomQuery;
+
+  const { user, isUserLoading, isUserError } = useSelf();
   let { openings, isOpeningsLoading, isOpeningsError } = useOpenings(
     user?.user_id
   );

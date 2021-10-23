@@ -1,17 +1,14 @@
-import { useSession } from "next-auth/client";
-import useUser from "../../SWR/useUser";
+import useSelf from "../../SWR/useSelf";
 import Loader from "../Loader";
 import Invite from "./Invite";
 import { mutate } from "swr";
-import axios from "axios";
 import UsersService from "../../adapters/UsersService";
 import { useRouter } from "next/router";
 import InvitesService from "../../adapters/InvitesService";
 import useOrgInvites from "../../SWR/useOrgInvites";
 export default function InvitesContent() {
   const router = useRouter();
-  const [session, loading]: [CustomSession, boolean] = useSession();
-  const { user, isUserLoading, isUserError } = useUser(session?.user_id);
+  const { user, isUserLoading, isUserError } = useSelf();
 
   const { invites, isInvitesLoading, isInvitesError } = useOrgInvites(
     user?.user_id
@@ -30,7 +27,7 @@ export default function InvitesContent() {
     }
 
     // Refresh the user's org
-    mutate(UsersService.getUserURL({ user_id: user?.user_id }));
+    mutate(UsersService.getSelfURL());
     mutate(InvitesService.getInvitesURL({ user_id: user?.user_id }));
   };
 

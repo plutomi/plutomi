@@ -3,14 +3,14 @@
 import withCleanOrgName from "../../../../../../../middleware/withCleanOrgName";
 import { NextApiResponse } from "next";
 import CleanStage from "../../../../../../../utils/clean/cleanStage";
-import { GetStage } from "../../../../../../../utils/stages/GetStage";
+import { GetStage } from "../../../../../../../utils/stages/getStage";
 const handler = async (req: CustomRequest, res: NextApiResponse) => {
   const { method, query } = req;
-  const { org_id, opening_id, stage_id } = query;
+  const { org_id, opening_id, stage_id } = query as CustomQuery;
 
   const get_stage_input: GetStageInput = {
-    org_id: org_id as string,
-    stage_id: stage_id as string,
+    org_id: org_id,
+    stage_id: stage_id,
   };
 
   if (method === "GET") {

@@ -1,17 +1,25 @@
 import { GetOpening } from "../../../../utils/openings/getOpeningById";
-import withAuthorizer from "../../../../middleware/withAuthorizer";
 import { NextApiResponse } from "next";
 import InputValidation from "../../../../utils/inputValidation";
 import UpdateOpening from "../../../../utils/openings/updateOpening";
 import { DeleteOpening } from "../../../../utils/openings/deleteOpening";
-const handler = async (req: CustomRequest, res: NextApiResponse) => {
-  const user: DynamoUser = req.user;
+import withSession from "../../../../middleware/withSession";
+
+async function handler(
+  req: NextIronRequest,
+  res: NextApiResponse
+): Promise<void> {
+  const user = req.session.get("user");
+  if (!user) {
+    req.session.destroy();
+    return res.status(401).json({ message: "Please sign in again" });
+  }
   const { method, query, body } = req;
-  const { opening_id } = query;
+  const { opening_id } = query as CustomQuery;
 
   const get_opening_input: GetOpeningInput = {
     org_id: user.org_id,
-    opening_id: opening_id as string,
+    opening_id: opening_id,
   };
 
   if (method === "GET") {
@@ -34,7 +42,7 @@ const handler = async (req: CustomRequest, res: NextApiResponse) => {
     try {
       const update_opening_input: UpdateOpeningInput = {
         org_id: user.org_id,
-        opening_id: opening_id as string,
+        opening_id: opening_id,
         new_opening_values: body.new_opening_values,
       };
 
@@ -68,6 +76,6 @@ const handler = async (req: CustomRequest, res: NextApiResponse) => {
     }
   }
   return res.status(405).json({ message: "Not Allowed" });
-};
+}
 
-export default withAuthorizer(handler);
+export default withSession(handler);

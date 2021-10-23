@@ -1,20 +1,14 @@
-import { useSession } from "next-auth/client";
-import SignIn from "../../components/SignIn";
-import useUser from "../../SWR/useUser";
+import useSelf from "../../SWR/useSelf";
 import useOrgInvites from "../../SWR/useOrgInvites";
 import { useSWRConfig } from "swr";
-import SignedInNav from "../../components/Navbar/SignedInNav";
 import { useRouter } from "next/router";
-import Loader from "../Loader";
-import InvitesContent from "../../components/Invites/InvitesContent";
 
 export default function InvitesHeader() {
   const router = useRouter();
   const { mutate } = useSWRConfig();
-  const [session, loading]: CustomSession = useSession();
-  const { user, isUserLoading, isUserError } = useUser(session?.user_id);
+  const { user, isUserLoading, isUserError } = useSelf();
   const { invites, isInvitesLoading, isInvitesError } = useOrgInvites(
-    session?.user_id
+    user?.user_id
   );
 
   return (

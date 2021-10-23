@@ -2,18 +2,17 @@ import { PlusIcon } from "@heroicons/react/solid";
 import { BriefcaseIcon } from "@heroicons/react/outline";
 import useStore from "../../utils/store";
 import { useRouter } from "next/router";
-import { useSession } from "next-auth/client";
-import useUser from "../../SWR/useUser";
+import useSelf from "../../SWR/useSelf";
 import useAllStagesInOpening from "../../SWR/useAllStagesInOpening";
 export default function EmptyStagesState() {
   const router = useRouter();
-  const { opening_id } = router.query;
-  const [session, loading]: [CustomSession, boolean] = useSession();
-  const { user, isUserLoading, isUserError } = useUser(session?.user_id);
+  const { opening_id } = router.query as CustomQuery;
+
+  const { user, isUserLoading, isUserError } = useSelf();
 
   let { stages, isStagesLoading, isStagesError } = useAllStagesInOpening(
     user?.user_id,
-    opening_id as string
+    opening_id
   );
 
   const stageModal = useStore((state: PlutomiState) => state.stageModal);

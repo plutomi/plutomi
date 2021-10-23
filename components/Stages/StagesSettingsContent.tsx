@@ -1,16 +1,14 @@
-import { useSession } from "next-auth/client";
 import { useRouter } from "next/router";
 import { mutate } from "swr";
 import difference from "../../utils/getObjectDifference";
 import { GetRelativeTime } from "../../utils/time";
 import StageReorderColumn from "../StageReorderColumn";
 import QuestionList from "../Questions/QuestionList";
-import axios from "axios";
 import useStore from "../../utils/store";
 import QuestionModal from "../Questions/QuestionModal";
 import useAllStageQuestions from "../../SWR/useAllStageQuestions";
 import Loader from "../Loader";
-import useUser from "../../SWR/useUser";
+import useSelf from "../../SWR/useSelf";
 import useAllStagesInOpening from "../../SWR/useAllStagesInOpening";
 import useOpeningById from "../../SWR/useOpeningById";
 import useStageById from "../../SWR/useStageById";
@@ -41,7 +39,7 @@ export default function StageSettingsContent() {
     // Refresh the question_order
     mutate(
       StagesService.getStageURL({
-        stage_id: stage_id as string,
+        stage_id: stage_id,
       })
     );
 
@@ -85,7 +83,7 @@ export default function StageSettingsContent() {
     // Refresh the question_order
     mutate(
       StagesService.getStageURL({
-        stage_id: stage_id as string,
+        stage_id: stage_id,
       })
     );
 
@@ -94,12 +92,12 @@ export default function StageSettingsContent() {
   };
 
   const router = useRouter();
-  const { opening_id, stage_id } = router.query;
-  const [session, loading]: [CustomSession, boolean] = useSession();
-  const { user, isUserLoading, isUserError } = useUser(session?.user_id);
+  const { opening_id, stage_id } = router.query as CustomQuery;
+
+  const { user, isUserLoading, isUserError } = useSelf();
   let { opening, isOpeningLoading, isOpeningError } = useOpeningById(
     user?.user_id,
-    opening_id as string
+    opening_id
   );
 
   let { stages, isStagesLoading, isStagesError } = useAllStagesInOpening(
@@ -112,7 +110,7 @@ export default function StageSettingsContent() {
   const { stage, isStageLoading, isStageError } = useStageById(
     user?.user_id,
     opening?.opening_id,
-    stage_id as string
+    stage_id
   );
 
   const { questions, isQuestionsLoading, isQuestionsError } =

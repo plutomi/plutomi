@@ -1,20 +1,28 @@
 import AcceptOrgInvite from "../../../../utils/invites/acceptOrgInvite";
-import withAuthorizer from "../../../../middleware/withAuthorizer";
 import InputValidation from "../../../../utils/inputValidation";
 import { JoinOrg } from "../../../../utils/users/joinOrg";
 import { NextApiResponse } from "next";
 import DeleteOrgInvite from "../../../../utils/invites/deleteOrgInvite";
 import withCleanOrgName from "../../../../middleware/withCleanOrgName";
 import { GetOrgInvite } from "../../../../utils/invites/getOrgInvite";
-const handler = async (req: CustomRequest, res: NextApiResponse) => {
+import withSession from "../../../../middleware/withSession";
+
+async function handler(
+  req: NextIronRequest,
+  res: NextApiResponse
+): Promise<void> {
+  const user = req.session.get("user");
+  if (!user) {
+    req.session.destroy();
+    return res.status(401).json({ message: "Please sign in again" });
+  }
   const { method, query } = req;
-  const user: DynamoUser = req.user;
-  const { invite_id } = query;
+  const { invite_id } = query as CustomQuery;
 
   // TODO trycatch
   const invite = await GetOrgInvite({
     user_id: user.user_id,
-    invite_id: invite_id as string,
+    invite_id: invite_id,
   });
 
   const accept_org_invite_input = {
@@ -66,7 +74,7 @@ const handler = async (req: CustomRequest, res: NextApiResponse) => {
   if (method === "DELETE") {
     const delete_org_invite_input = {
       user_id: user.user_id,
-      invite_id: invite_id as string,
+      invite_id: invite_id,
     };
 
     try {
@@ -86,6 +94,6 @@ const handler = async (req: CustomRequest, res: NextApiResponse) => {
   }
 
   return res.status(405).json({ message: "Not Allowed" });
-};
+}
 
-export default withAuthorizer(withCleanOrgName(handler));
+export default withSession(withCleanOrgName(handler));

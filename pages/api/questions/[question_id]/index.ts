@@ -1,18 +1,26 @@
-import withAuthorizer from "../../../../middleware/withAuthorizer";
 import { NextApiResponse } from "next";
 import { DeleteQuestion } from "../../../../utils/questions/deleteQuestion";
 import InputValidation from "../../../../utils/inputValidation";
 import UpdateQuestion from "../../../../utils/questions/updateStageQuestion";
-const handler = async (req: CustomRequest, res: NextApiResponse) => {
+import withSession from "../../../../middleware/withSession";
+
+async function handler(
+  req: NextIronRequest,
+  res: NextApiResponse
+): Promise<void> {
+  const user = req.session.get("user");
+  if (!user) {
+    req.session.destroy();
+    return res.status(401).json({ message: "Please sign in again" });
+  }
   const { body, method, query } = req;
-  const user: DynamoUser = req.user;
-  const { question_id } = query;
+  const { question_id } = query as CustomQuery;
 
   if (method === "DELETE") {
     try {
       const delete_question_input = {
         org_id: user.org_id,
-        question_id: question_id as string,
+        question_id: question_id,
       };
       await DeleteQuestion(delete_question_input);
       return res.status(200).json({ message: "Question deleted!" });
@@ -28,7 +36,7 @@ const handler = async (req: CustomRequest, res: NextApiResponse) => {
     try {
       const update_question_input: UpdateQuestionInput = {
         org_id: user.org_id,
-        question_id: question_id as string,
+        question_id: question_id,
         new_question_values: body.new_question_values, // Just the keys that are passed down
       };
 
@@ -49,6 +57,6 @@ const handler = async (req: CustomRequest, res: NextApiResponse) => {
   }
 
   return res.status(405).json({ message: "Not Allowed" });
-};
+}
 
-export default withAuthorizer(handler);
+export default withSession(handler);

@@ -1,9 +1,8 @@
 import SignedInNav from "../../../../components/Navbar/SignedInNav";
-import { useSession } from "next-auth/client";
-import useUser from "../../../../SWR/useUser";
+import useSelf from "../../../../SWR/useSelf";
 import Loader from "../../../../components/Loader";
 import EmptyStagesState from "../../../../components/Stages/EmptyStagesState";
-import SignIn from "../../../../components/SignIn";
+import Login from "../../../../components/Login";
 import { useRouter } from "next/router";
 import useStore from "../../../../utils/store";
 import StagesHeader from "../../../../components/Stages/StagesHeader";
@@ -11,13 +10,13 @@ import useAllStagesInOpening from "../../../../SWR/useAllStagesInOpening";
 import useOpeningById from "../../../../SWR/useOpeningById";
 export default function Openings() {
   const router = useRouter();
-  const { opening_id } = router.query;
-  const [session, loading]: [CustomSession, boolean] = useSession();
-  const { user, isUserLoading, isUserError } = useUser(session?.user_id);
+  const { opening_id } = router.query as CustomQuery;
+
+  const { user, isUserLoading, isUserError } = useSelf();
 
   let { opening, isOpeningLoading, isOpeningError } = useOpeningById(
     user?.user_id,
-    opening_id as string
+    opening_id
   );
 
   let { stages, isStagesLoading, isStagesError } = useAllStagesInOpening(
@@ -29,16 +28,14 @@ export default function Openings() {
   const setStageModal = useStore((state: PlutomiState) => state.setStageModal);
 
   // When rendering client side don't display anything until loading is complete
-  if (typeof window !== "undefined" && loading) {
+  if (typeof window !== "undefined" && isUserLoading) {
     return <Loader text="Loading..." />;
   }
 
-  // If no session or bad userid
-  if (!session || isUserError) {
+  if (isUserError) {
     return (
-      <SignIn
-        callbackUrl={`${process.env.NEXT_PUBLIC_NEXTAUTH_URL}/openings`} // TODO set this
-        desiredPage={"your stages"} // TODO set this
+      <Login
+        desiredPageText={"your stages"} // TODO set this
       />
     );
   }
@@ -46,7 +43,7 @@ export default function Openings() {
   // Redirect to the first stage
   if (stages && stages.length > 0) {
     router.push(
-      `${process.env.NEXT_PUBLIC_NEXTAUTH_URL}/openings/${opening_id}/stages/${stages[0].stage_id}/applicants` // TODO should this end with applicants?
+      `${process.env.PLUTOMI_URL}/openings/${opening_id}/stages/${stages[0].stage_id}/applicants` // TODO should this end with applicants?
     );
     return <Loader text="Loading stages..." />;
   }

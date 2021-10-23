@@ -1,5 +1,4 @@
-import { useSession } from "next-auth/client";
-import useUser from "../../SWR/useUser";
+import useSelf from "../../SWR/useSelf";
 import { PlusIcon, TrashIcon } from "@heroicons/react/outline";
 import useStore from "../../utils/store";
 import useOpeningById from "../../SWR/useOpeningById";
@@ -9,18 +8,18 @@ import { PencilAltIcon } from "@heroicons/react/outline";
 import useStageById from "../../SWR/useStageById";
 export default function StageSettingsHeader({ deleteStage }) {
   const router = useRouter();
-  const { opening_id, stage_id } = router.query;
-  const [session, loading]: [CustomSession, boolean] = useSession();
-  const { user, isUserLoading, isUserError } = useUser(session?.user_id);
+  const { opening_id, stage_id } = router.query as CustomQuery;
+
+  const { user, isUserLoading, isUserError } = useSelf();
   let { opening, isOpeningLoading, isOpeningError } = useOpeningById(
     user?.user_id,
-    opening_id as string
+    opening_id
   );
 
   const { stage, isStageLoading, isStageError } = useStageById(
     user?.user_id,
     opening?.opening_id,
-    stage_id as string
+    stage_id
   );
 
   const setQuestionModal = useStore(

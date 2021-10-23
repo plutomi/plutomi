@@ -2,10 +2,7 @@ import { NextApiRequest, NextApiResponse } from "next";
 const UrlSafeString = require("url-safe-string"),
   tagGenerator = new UrlSafeString();
 
-/**
- * Cleans up the org name to be URL safe
- * @param handler
- */
+// Cleans up the org name (or ID technically) to be URL safe
 export default function withCleanOrgName(handler: any) {
   return async (req: NextApiRequest, res: NextApiResponse) => {
     if (req.body.org_id) {

@@ -1,14 +1,22 @@
 import withCleanOrgName from "../../../../middleware/withCleanOrgName";
-import withAuthorizer from "../../../../middleware/withAuthorizer";
 import { GetOrg } from "../../../../utils/orgs/getOrg";
 import { NextApiResponse } from "next";
 import { GetAllUsersInOrg } from "../../../../utils/orgs/getAllUsersInOrg";
 import { LeaveOrg } from "../../../../utils/users/leaveOrg";
 
-const handler = async (req: CustomRequest, res: NextApiResponse) => {
+import withSession from "../../../../middleware/withSession";
+
+async function handler(
+  req: NextIronRequest,
+  res: NextApiResponse
+): Promise<void> {
+  const user = req.session.get("user");
+  if (!user) {
+    req.session.destroy();
+    return res.status(401).json({ message: "Please sign in again" });
+  }
   const { method, query } = req;
-  const user: DynamoUser = req.user;
-  const { org_id } = query;
+  const { org_id } = query as CustomQuery;
 
   if (method === "GET") {
     // When signed in, this returns all data for an org
@@ -22,7 +30,7 @@ const handler = async (req: CustomRequest, res: NextApiResponse) => {
     }
 
     try {
-      const org = await GetOrg(org_id as string);
+      const org = await GetOrg(org_id);
 
       if (!org) {
         return res.status(404).json({ message: "Org not found" });
@@ -62,6 +70,6 @@ const handler = async (req: CustomRequest, res: NextApiResponse) => {
     }
   }
   return res.status(405).json({ message: "Not Allowed" });
-};
+}
 
-export default withAuthorizer(withCleanOrgName(handler));
+export default withSession(withCleanOrgName(handler));

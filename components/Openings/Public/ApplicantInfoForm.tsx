@@ -8,13 +8,19 @@ function classNames(...classes) {
 import { useRouter } from "next/router";
 export default function ApplicantInfoForm() {
   const router = useRouter();
-  const { org_id, opening_id } = router.query;
+  const { org_id, opening_id } = router.query as CustomQuery;
   const [agreed, setAgreed] = useState(false);
   const [first_name, setFirstName] = useState("");
   const [last_name, setLastName] = useState("");
   const [email, setEmail] = useState("");
   const [buttonText, setButtonText] = useState("Apply");
   const handleSubmit = async (e: FormEvent) => {
+    alert(JSON.stringify(org_id));
+    alert(JSON.stringify(opening_id));
+
+    alert(JSON.stringify(router.query));
+    alert(JSON.stringify(router));
+
     setButtonText("Submitting...");
     e.preventDefault();
     if (!agreed) {
@@ -24,8 +30,8 @@ export default function ApplicantInfoForm() {
 
     try {
       const { message } = await ApplicantsService.createApplicant({
-        org_id: org_id as string,
-        opening_id: opening_id as string,
+        org_id: org_id,
+        opening_id: opening_id,
         first_name: first_name,
         last_name: last_name,
         email: email,

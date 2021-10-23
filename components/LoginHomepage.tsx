@@ -11,7 +11,7 @@ interface CallbackUrl {
 }
 
 // Identical to SignIn, but with less margin/padding to fit in the homepage
-export default function SignInHomepage({ callbackUrl }: CallbackUrl) {
+export default function LoginHomepage({ callbackUrl }: CallbackUrl) {
   const [user_email, setUserEmail] = useState("");
   const [submittedText, setSubmittedText] = useState(
     `We've sent a magic login link to your email!`
@@ -42,8 +42,6 @@ export default function SignInHomepage({ callbackUrl }: CallbackUrl) {
 
   return (
     <div className="space-y-4 flex justify-center flex-col w-full items-center ">
-      <GoogleButton callbackUrl={callbackUrl} />
-
       {emailSubmitted ? (
         <div className="text-center">
           <h1 className=" text-dark text-2xl">{submittedText}</h1>
@@ -51,15 +49,15 @@ export default function SignInHomepage({ callbackUrl }: CallbackUrl) {
         </div>
       ) : (
         <div className="space-y-4">
-          <p className=" text-lg text-normal text-center sm:max-w-8xl max-w-sm">
-            Or we can email you a magic link for a password-free sign in.
-          </p>
           <LoginEmail
             onChange={handleEmailChange}
             user_email={user_email}
             button_text={button_text}
             sendEmail={sendEmail}
-          />
+          />{" "}
+          <p className=" text-lg text-normal text-center sm:max-w-8xl max-w-sm">
+            We can email you a magic link for a password-free sign in.
+          </p>
         </div>
       )}
     </div>
