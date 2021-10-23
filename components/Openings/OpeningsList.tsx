@@ -96,7 +96,7 @@ export default function OpeningList() {
                       />
                       <p>
                         Created{" "}
-                        <time dateTime={opening.created_at}>
+                        <time dateTime={opening.created_at as string}>
                           {GetRelativeTime(opening.created_at)}
                         </time>
                       </p>

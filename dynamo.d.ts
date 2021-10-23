@@ -32,7 +32,7 @@ interface DynamoOpening {
   PK: string;
   SK: "OPENING";
   entity_type: "OPENING";
-  created_at: string | number | Date; // ISO
+  created_at: CustomDateFormat; // ISO
   opening_id: string;
   GSI1PK: string;
   GSI1SK: string;
@@ -53,7 +53,7 @@ interface DynamoStage {
   PK: string;
   SK: `STAGE`;
   entity_type: "STAGE";
-  created_at: string | number | Date;
+  created_at: CustomDateFormat;
   stage_id: string;
   question_order: string[];
   opening_id: string;
@@ -78,7 +78,7 @@ interface DynamoOrgInvite {
   org_id: string;
   created_by: DynamoUser;
   entity_type: "ORG_INVITE";
-  created_at: string | number | Date;
+  created_at: CustomDateFormat;
   expires_at: string;
   invite_id: string;
   GSI1PK: string;
@@ -100,7 +100,7 @@ interface DynamoStageQuestion {
   question_description: string;
   question_id: string;
   entity_type: string;
-  created_at: string | number | Date;
+  created_at: CustomDateFormat;
   GSI1PK: string;
   GSI1SK: string;
 }
@@ -117,7 +117,7 @@ interface DynamoOrg {
   SK: `ORG`;
   org_id: string; // plutomi - Cannot be changed
   entity_type: "ORG";
-  created_at: string | number | Date;
+  created_at: CustomDateFormat;
   GSI1PK: `ORG`; // Allows for 'get all orgs' query
   GSI1SK: string; // Actual org name ie: Plutomi Inc - Can be changed!
 }
@@ -133,7 +133,7 @@ interface DynamoApplicant {
   applicant_id: string;
   org_id: string;
   entity_type: "APPLICANT";
-  created_at: string | number | Date;
+  created_at: CustomDateFormat;
   current_opening_id: string;
   current_stage_id: string;
   GSI1PK: string;
@@ -165,7 +165,7 @@ interface DynamoApplicantResponse {
   question_title: string;
   question_description: string;
   question_response: any;
-  created_at: string | number | Date;
+  created_at: CustomDateFormat;
   response_id: string;
   GSI1PK: string;
   GSI1SK: APPLICANT_RESPONSE;

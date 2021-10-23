@@ -43,6 +43,7 @@ interface ValidNavigation {
     | "Profile"
     | "PLACEHOLDER";
 }
+01;
 
 interface GetStageInput {
   org_id: string;
@@ -417,8 +418,12 @@ interface ApplicantAnswer {
 type NextIronRequest = NextApiRequest & { session: Session };
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 type CustomDateFormat = string | number;
 =======
+=======
+type CustomDateFormat = string | number;
+>>>>>>> cb159a5 (Removed as string)
 
 >>>>>>> ce0b1d8 (fix: Removed all 'as string' - #196)
 type CustomQuery = {
