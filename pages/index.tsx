@@ -14,10 +14,10 @@ export default function Main() {
       <main className="bg-gradient-to-b from-blue-gray-50 to-white via-homepageGradient">
         <Navbar />
         <Hero />
-        {user ? (
-          <AlreadySignedIn />
-        ) : (
+        {!user || isUserError ? (
           <LoginHomepage callbackUrl={`${process.env.PLUTOMI_URL}/dashboard`} />
+        ) : (
+          <AlreadySignedIn />
         )}
         <FeatureBox />
         <UseCases />

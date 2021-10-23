@@ -2,6 +2,8 @@ import { useRouter } from "next/router";
 import Link from "next/link";
 import useSelf from "../SWR/useSelf";
 import AuthService from "../adapters/AuthService";
+import { mutate } from "swr";
+import UsersService from "../adapters/UsersService";
 const handleLogout = async () => {
   try {
     const { message } = await AuthService.logout(); // TODO logout to same page
@@ -10,6 +12,8 @@ const handleLogout = async () => {
   } catch (error) {
     alert(error.response.message);
   }
+
+  mutate(UsersService.getSelfURL()); // Refresh the login state
 };
 export default function AlreadySignedIn() {
   const { user, isUserLoading, isUserError } = useSelf();

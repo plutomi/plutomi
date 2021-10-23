@@ -133,7 +133,7 @@ interface DynamoApplicant {
   applicant_id: string;
   org_id: string;
   entity_type: "APPLICANT";
-  created_at: string | number | Date;
+  created_at: CustomDateFormat;
   current_opening_id: string;
   current_stage_id: string;
   GSI1PK: string;
