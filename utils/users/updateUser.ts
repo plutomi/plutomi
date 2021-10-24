@@ -17,7 +17,9 @@ export async function UpdateUser({
       "created_at",
       "opening_id",
       "GSI1PK",
+      "GSI2PK",
       "user_role",
+      "org_join_date",
     ];
 
     const incomingKeys = Object.keys(new_user_values);
@@ -54,8 +56,8 @@ export async function UpdateUser({
       ConditionExpression: "attribute_exists(PK)",
     };
 
-    await Dynamo.send(new UpdateCommand(params));
-    return;
+    const updated_user = await Dynamo.send(new UpdateCommand(params));
+    return updated_user as DynamoUser;
   } catch (error) {
     throw new Error(error);
   }

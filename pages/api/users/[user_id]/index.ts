@@ -2,6 +2,7 @@ import { GetUserById } from "../../../../utils/users/getUserById";
 import { NextApiResponse } from "next";
 import { UpdateUser } from "../../../../utils/users/updateUser";
 import withSession from "../../../../middleware/withSession";
+import CleanUser from "../../../../utils/clean/cleanUser";
 
 const handler = async (
   req: NextIronRequest,
@@ -23,7 +24,7 @@ const handler = async (
       if (!requested_user) {
         return res.status(404).json({ message: "User not found" });
       }
-      // Check that the query.user_id is in the same org as the signed in user
+      // Check that the user who made this call is in the same org as the requested user
       if (user_session.org_id != requested_user.org_id) {
         return res
           .status(401)
@@ -53,7 +54,13 @@ const handler = async (
           .json({ message: "You cannot update another user" });
       }
 
-      await UpdateUser(update_user_input);
+      const updated_user = await UpdateUser(update_user_input);
+
+      // If a signed in user is updating themselves, update the session state
+      if (updated_user.user_id === user_session.user_id) {
+        req.session.set("user", CleanUser(updated_user));
+        await req.session.save();
+      }
       return res.status(200).json({ message: "Updated!" });
     } catch (error) {
       // TODO add error logger

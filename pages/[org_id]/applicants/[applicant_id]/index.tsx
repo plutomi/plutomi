@@ -1,12 +1,7 @@
 import ApplicationContent from "../../../../components/Applicants/ApplicationContent";
-import { mutate } from "swr";
-import useStore from "../../../../utils/store";
-import CreateOrgModal from "../../../../components/CreateOrgModal";
-import EmptyOrgState from "../../../../components/Dashboard/EmptyOrgState";
 import Loader from "../../../../components/Loader";
 import useApplicantById from "../../../../SWR/useApplicantById";
 import { useRouter } from "next/router";
-import { useState } from "react";
 import useStageById from "../../../../SWR/useStageById";
 import ApplicationHeader from "../../../../components/Applicants/ApplicationHeader";
 export default function Application() {

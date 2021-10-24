@@ -150,9 +150,13 @@ export default function SignedInNav({ current }: ValidNavigation) {
                             "Loading user info..."
                           ) : (
                             <>
-                              <div className="   text-dark ">
-                                Signed in as ${user?.GSI1SK}
-                              </div>
+                              {!user?.GSI1SK.includes("NO_FIRST_NAME") ||
+                                (!user?.GSI1SK.includes("NO_LAST_NAME") && (
+                                  <div className="   text-dark ">
+                                    Signed in as ${user?.GSI1SK}
+                                  </div>
+                                ))}
+
                               <div className=" text-light">
                                 {user?.user_email}
                               </div>

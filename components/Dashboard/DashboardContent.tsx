@@ -6,18 +6,48 @@ import usePrivateOrgById from "../../SWR/usePrivateOrgById";
 import { mutate } from "swr";
 import UsersService from "../../adapters/UsersService";
 import OrgsService from "../../adapters/OrgsService";
+import useStore from "../../utils/store";
+import { OfficeBuildingIcon, PlusIcon } from "@heroicons/react/outline";
+import CreateOrgModal from "../CreateOrgModal";
 export default function DashboardContent() {
   const { user, isUserLoading, isUserError } = useSelf();
   const { org, isOrgLoading, isOrgError } = usePrivateOrgById(user?.org_id);
   const custom_apply_link = `${process.env.PLUTOMI_URL}/${org?.org_id}/apply`;
 
+  const setCreateOrgModalOpen = useStore(
+    (state: PlutomiState) => state.setCreateOrgModalOpen
+  );
+
   if (isUserLoading) {
     return <Loader text={"Loading user..."} />;
   }
 
-  if (isOrgLoading) {
+  if (user.org_id != "NO_ORG_ASSIGNED" && isOrgLoading) {
     return <Loader text={"Loading org info..."} />;
   }
+
+  const createOrg = async ({ GSI1SK, org_id }) => {
+    if (
+      !confirm(
+        `Your org id will be '${org_id.toLowerCase()}', this CANNOT be changed. Do you want to continue?`
+      )
+    ) {
+      return;
+    }
+
+    try {
+      const { message } = await OrgsService.createOrg({
+        GSI1SK: GSI1SK,
+        org_id: org_id,
+      });
+      alert(message);
+      setCreateOrgModalOpen(false);
+    } catch (error) {
+      alert(error.response.data.message);
+    }
+
+    mutate(UsersService.getSelfURL());
+  };
 
   const updateName = async ({ first_name, last_name }) => {
     try {
@@ -60,31 +90,57 @@ export default function DashboardContent() {
 
   return (
     <div>
-      <h1 className="text-2xl">
-        You&apos;re in the <strong>{org?.GSI1SK}</strong> org. Feel free to
-        click around!
-      </h1>
-      <div className="flex items-center mt-4 -ml-3 text-md">
-        <ClickToCopy
-          showText={"Copy Application Link"}
-          copyText={custom_apply_link}
-        />
-      </div>
-      <div className="flex justify-center mx-auto">
-        {(user?.first_name === "NO_FIRST_NAME" ||
-          user?.last_name === "NO_LAST_NAME") && (
-          <UpdateName updateName={updateName} />
-        )}
-      </div>
-      <div className="py-24">
-        <button
-          onClick={() => deleteOrg()}
-          type="button"
-          className="inline-flex items-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-red-500 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
-        >
-          Delete Org
-        </button>
-      </div>
+      <CreateOrgModal createOrg={createOrg} />
+
+      {user?.org_id === "NO_ORG_ASSIGNED" ? (
+        <div className="text-center w-full h-full flex flex-col justify-center items-center">
+          <OfficeBuildingIcon className="mx-auto h-12 w-12 text-light" />
+          <h3 className="mt-2 text-lg font-medium text-dark">
+            You don&apos;t belong to an organization.
+          </h3>
+          <p className="mt-1 text-lg text-normal">
+            Get started by creating a new one!
+          </p>
+          <div className="mt-6">
+            <button
+              type="button"
+              onClick={() => setCreateOrgModalOpen(true)}
+              className="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-lg font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+            >
+              <PlusIcon className="-ml-1 mr-2 h-5 w-5" aria-hidden="true" />
+              New Org
+            </button>
+          </div>
+        </div>
+      ) : (
+        <>
+          <h1 className="text-2xl">
+            You&apos;re in the <strong>{org?.GSI1SK}</strong> org. Feel free to
+            click around!
+          </h1>
+          <div className="flex items-center mt-4 -ml-3 text-md">
+            <ClickToCopy
+              showText={"Copy Application Link"}
+              copyText={custom_apply_link}
+            />
+          </div>
+          <div className="flex justify-center mx-auto">
+            {(user?.first_name === "NO_FIRST_NAME" ||
+              user?.last_name === "NO_LAST_NAME") && (
+              <UpdateName updateName={updateName} />
+            )}
+          </div>
+          <div className="py-24">
+            <button
+              onClick={() => deleteOrg()}
+              type="button"
+              className="inline-flex items-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-red-500 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
+            >
+              Delete Org
+            </button>
+          </div>
+        </>
+      )}
     </div>
   );
 }

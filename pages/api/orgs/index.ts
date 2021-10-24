@@ -5,6 +5,7 @@ import InputValidation from "../../../utils/inputValidation";
 import { JoinOrg } from "../../../utils/users/joinOrg";
 import { GetAllUserInvites } from "../../../utils/invites/getAllOrgInvites";
 import withSession from "../../../middleware/withSession";
+import CleanUser from "../../../utils/clean/cleanUser";
 
 const handler = async (
   req: NextIronRequest,
@@ -21,6 +22,7 @@ const handler = async (
   // Create an org
   if (method === "POST") {
     if (GSI1SK === "NO_ORG_ASSIGNED") {
+      // TODO major, this isn't using the withcleanorgname
       return res.status(400).json({
         message: `You cannot create an org with this name: ${GSI1SK}`,
       });
@@ -65,9 +67,13 @@ const handler = async (
           user_id: user_session.user_id,
           org_id: org_id,
         };
-        console.log("Join or ginput", join_org_input);
 
         await JoinOrg(join_org_input);
+
+        // Update the logged in user session with the new org id
+        req.session.set("user", CleanUser({ ...user_session, org_id: org_id }));
+        await req.session.save();
+
         return res.status(201).json({ message: "Org created!", org: org });
       } catch (error) {
         // TODO retry this
