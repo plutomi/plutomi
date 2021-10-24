@@ -8,7 +8,6 @@ import { mutate } from "swr";
 import OrgsService from "../adapters/OrgsService";
 import useStore from "../utils/store";
 import CreateOrgModal from "../components/CreateOrgModal";
-import EmptyOrgState from "../components/Dashboard/EmptyOrgState";
 import UsersService from "../adapters/UsersService";
 
 export default function Dashboard() {
@@ -63,7 +62,7 @@ export default function Dashboard() {
 
         <main className="mt-5">
           {user?.org_id === "NO_ORG_ASSIGNED" ? (
-            <EmptyOrgState />
+            <h1>Empty</h1>
           ) : (
             <DashboardContent />
           )}

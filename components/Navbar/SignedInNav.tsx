@@ -12,6 +12,8 @@ import {
 import Link from "next/dist/client/link";
 import useOrgInvites from "../../SWR/useOrgInvites";
 import Banner from "../BannerTop";
+import { mutate } from "swr";
+import UsersService from "../../adapters/UsersService";
 
 const navigation = [
   { name: "Dashboard", href: "/dashboard", hidden_if_no_org: false },
@@ -29,12 +31,14 @@ function classNames(...classes) {
 
 const handleLogout = async () => {
   try {
-    const { message } = await AuthService.logout(); // TODO logout to same page
+    const { message } = await AuthService.logout();
     alert(message);
     // TODO reroute to homepage
   } catch (error) {
     alert(error.response.message);
   }
+
+  mutate(UsersService.getSelfURL()); // Refresh login state - shows login page
 };
 
 export default function SignedInNav({ current }: ValidNavigation) {

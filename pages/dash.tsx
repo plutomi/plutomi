@@ -1,4 +1,5 @@
 import NewPage from "../components/Templates/NewPage";
+import DashboardContent from "../components/Dashboard/DashboardContent";
 export default function NewDash() {
   return (
     <NewPage
@@ -6,7 +7,7 @@ export default function NewDash() {
       currentNavbarItem={"Dashboard"}
       headerText={"Dashboard"}
     >
-      <h1>Content Goes Here</h1>
+      <DashboardContent />
     </NewPage>
   );
 }
