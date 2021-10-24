@@ -27,7 +27,7 @@ export default async function CreateLoginLink({
         user = await CreateUser(new_user);
       } catch (error) {
         console.error(error);
-        throw new Error("Unable to create first time user");
+        throw "Unable to create first time user"
       }
     }
 

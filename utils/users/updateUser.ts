@@ -17,6 +17,7 @@ export async function UpdateUser({
       "created_at",
       "opening_id",
       "GSI1PK",
+      "user_role",
     ];
 
     const incomingKeys = Object.keys(new_user_values);
@@ -30,6 +31,15 @@ export async function UpdateUser({
       newAttributes[`:${key}`] = new_user_values[key];
     });
 
+    if (
+      // TODO reformat this to a function that checks for invalid names
+      newAttributes[":first_name"] === "NO_FIRST_NAME" ||
+      newAttributes[":last_name"] === "NO_LAST_NAME" ||
+      newAttributes[":GSI1SK"].includes("NO_FIRST_NAME") ||
+      newAttributes[":GSI1SK"].includes("NO_LAST_NAME")
+    ) {
+      throw `Invalid name, cannot include 'NO_FIRST_NAME' or 'NO_LAST_NAME'`;
+    }
     const NewUpdateExpression = `SET ${newUpdateExpression.join(", ")}`;
 
     const params: UpdateCommandInput = {
@@ -44,9 +54,9 @@ export async function UpdateUser({
       ConditionExpression: "attribute_exists(PK)",
     };
 
-    const response = await Dynamo.send(new UpdateCommand(params));
-    return response.Attributes;
+    await Dynamo.send(new UpdateCommand(params));
+    return;
   } catch (error) {
-    throw new Error(`Unable to update user: ${error}`);
+    throw new Error(error);
   }
 }

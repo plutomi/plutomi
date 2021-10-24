@@ -58,9 +58,7 @@ const handler = async (
     } catch (error) {
       // TODO add error logger
       // TODO get correct status code
-      return res
-        .status(500)
-        .json({ message: `Unable to update user ${error}` });
+      return res.status(500).json({ message: `${error}` });
     }
   }
 
