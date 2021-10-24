@@ -18,7 +18,7 @@ export default function Invites() {
   }
 
   if (isUserError) {
-    return <Login desiredPageText={"your invites"} />;
+    return <Login loggedOutPageText={"Log in to view your invites"} />;
   }
 
   if (isUserLoading) {

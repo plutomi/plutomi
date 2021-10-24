@@ -27,11 +27,7 @@ export default function Team() {
   }
 
   if (isUserError) {
-    return (
-      <Login
-        desiredPageText={"your profile"} 
-      />
-    );
+    return <Login loggedOutPageText={"Log in to view your profile"} />;
   }
 
   if (isUserLoading) {

@@ -31,7 +31,7 @@ export default function Team() {
   if (isUserError) {
     return (
       <Login
-        desiredPageText={"your team"} // TODO set this
+        loggedOutPageText={"Log in to view your team"} 
       />
     );
   }

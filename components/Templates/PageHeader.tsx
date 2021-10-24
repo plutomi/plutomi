@@ -1,5 +1,3 @@
-import useSelf from "../../SWR/useSelf";
-import { useState } from "react";
 export default function PageHeader({ headerText }) {
   return (
     <div className="md:flex md:items-center md:justify-between border">

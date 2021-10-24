@@ -63,7 +63,7 @@ export default function StageID() {
   }
 
   if (isUserError) {
-    return <Login desiredPageText={"your applicants"} />;
+    return <Login loggedOutPageText={"Log in to view your applicants"} />;
   }
 
   if (isUserLoading) {

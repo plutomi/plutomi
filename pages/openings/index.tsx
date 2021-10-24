@@ -29,7 +29,7 @@ export default function Openings() {
   if (isUserError) {
     return (
       <Login
-        desiredPageText={"your openings"} // TODO set this
+        loggedOutPageText={"Log in to view your openings"} // TODO set this
       />
     );
   }

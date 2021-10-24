@@ -11,11 +11,14 @@ export default function DashboardContent() {
   const { org, isOrgLoading, isOrgError } = usePrivateOrgById(user?.org_id);
   const custom_apply_link = `${process.env.PLUTOMI_URL}/${org?.org_id}/apply`;
 
-  if (isUserLoading || isOrgLoading) {
-    return <Loader text={"Loading..."} />;
+  if (isUserLoading) {
+    return <Loader text={"Loading user..."} />;
   }
 
-  // TODO fix types
+  if (isOrgLoading) {
+    return <Loader text={"Loading org info..."} />;
+  }
+
   const updateName = async ({ first_name, last_name }) => {
     try {
       const { message } = await UsersService.updateUser({
@@ -30,7 +33,6 @@ export default function DashboardContent() {
     } catch (error) {
       alert(error.response.data.message);
     }
-
     mutate(UsersService.getSelfURL());
   };
 
@@ -53,8 +55,7 @@ export default function DashboardContent() {
     } catch (error) {
       alert(error.response.data.message);
     }
-
-    mutate(UsersService.getSelfURL());
+    mutate(UsersService.getSelfURL()); // Refresh user state
   };
 
   return (
@@ -75,7 +76,7 @@ export default function DashboardContent() {
           <UpdateName updateName={updateName} />
         ) : null}
       </div>
-      <div className="py-48">
+      <div className="py-24">
         <button
           onClick={() => deleteOrg()}
           type="button"

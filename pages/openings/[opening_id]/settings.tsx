@@ -22,7 +22,7 @@ export default function OpeningsSettings() {
   }
 
   if (isUserError) {
-    return <Login desiredPageText={"your opening settings"} />;
+    return <Login loggedOutPageText={"Log in to view your opening settings"} />;
   }
 
   if (isUserLoading) {

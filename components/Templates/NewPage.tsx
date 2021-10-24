@@ -6,7 +6,7 @@ import Login from "../../components/Login";
 import PageHeader from "./PageHeader";
 export default function NewPage({
   headerText,
-  desiredPageText,
+  loggedOutPageText,
   currentNavbarItem,
   children,
 }) {
@@ -17,11 +17,8 @@ export default function NewPage({
     return <Loader text="Loading..." />;
   }
 
-  if (isUserLoading) {
-    return <Loader text="Loading user..." />;
-  }
-  if (isUserError || !user) {
-    return <Login desiredPageText={desiredPageText} />;
+  if (isUserError) {
+    return <Login loggedOutPageText={loggedOutPageText} />;
   }
 
   return (

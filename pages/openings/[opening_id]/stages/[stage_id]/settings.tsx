@@ -25,11 +25,7 @@ export default function StageSettings() {
   }
 
   if (isUserError) {
-    return (
-      <Login
-        desiredPageText={"your stage settings"} // TODO set this
-      />
-    );
+    return <Login loggedOutPageText={"Log in to view your stage settings"} />;
   }
 
   if (isUserLoading) {
