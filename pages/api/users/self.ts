@@ -7,8 +7,8 @@ const handler = async (
   req: NextIronRequest,
   res: NextApiResponse
 ): Promise<void> => {
-  const user = req.session.get("user");
-  if (!user) {
+  const user_session = req.session.get("user");
+  if (!user_session) {
     req.session.destroy();
     return res.status(401).json({ message: "Please sign in again" }); // TODO middleware
   }
@@ -17,7 +17,7 @@ const handler = async (
 
   if (method === "GET") {
     try {
-      const requested_user = await GetUserById(user.user_id);
+      const requested_user = await GetUserById(user_session.user_id);
 
       if (!requested_user) {
         req.session.destroy();

@@ -10,8 +10,8 @@ const handler = async (
   req: NextIronRequest,
   res: NextApiResponse
 ): Promise<void> => {
-  const user = req.session.get("user");
-  if (!user) {
+  const user_session = req.session.get("user");
+  if (!user_session) {
     req.session.destroy();
     return res.status(401).json({ message: "Please sign in again" });
   }
@@ -23,7 +23,7 @@ const handler = async (
     // For public org data such as basic info or openings, please use the
     // /api/public/orgs/[org_id] route
 
-    if (org_id != user.org_id) {
+    if (org_id != user_session.org_id) {
       return res
         .status(403)
         .json({ message: "You are not authorized to view this org" });
@@ -48,7 +48,7 @@ const handler = async (
   if (method === "DELETE") {
     try {
       // TODO add a limit to this so we can just check if 2 are returned
-      const all_org_users = await GetAllUsersInOrg(user?.org_id);
+      const all_org_users = await GetAllUsersInOrg(user_session.org_id);
 
       if (all_org_users.length > 1) {
         return res.status(400).json({
@@ -56,7 +56,7 @@ const handler = async (
         });
       }
 
-      await LeaveOrg(user.user_id);
+      await LeaveOrg(user_session.user_id);
       return res
         .status(200)
         .json({ message: `You've deleted the ${org_id} org :(` });

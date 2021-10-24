@@ -10,8 +10,8 @@ const handler = async (
   req: NextIronRequest,
   res: NextApiResponse
 ): Promise<void> => {
-  const user = req.session.get("user");
-  if (!user) {
+  const user_session = req.session.get("user");
+  if (!user_session) {
     req.session.destroy();
     return res.status(401).json({ message: "Please sign in again" });
   }
@@ -21,7 +21,7 @@ const handler = async (
   // Get a single stage in an opening
   if (method === "GET") {
     const get_stage_input: GetStageInput = {
-      org_id: user.org_id,
+      org_id: user_session.org_id,
       stage_id: stage_id,
     };
 
@@ -43,7 +43,7 @@ const handler = async (
   if (method === "PUT") {
     try {
       const update_stage_input: UpdateStageInput = {
-        org_id: user.org_id,
+        org_id: user_session.org_id,
         stage_id: stage_id,
         new_stage_values: body.new_stage_values,
       };
@@ -66,7 +66,7 @@ const handler = async (
   if (method === "DELETE") {
     try {
       const delete_stage_input = {
-        org_id: user.org_id,
+        org_id: user_session.org_id,
         stage_id: stage_id,
       };
 

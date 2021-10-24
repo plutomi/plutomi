@@ -10,8 +10,8 @@ const handler = async (
   req: NextIronRequest,
   res: NextApiResponse
 ): Promise<void> => {
-  const user = req.session.get("user");
-  if (!user) {
+  const user_session = req.session.get("user");
+  if (!user_session) {
     req.session.destroy();
     return res.status(401).json({ message: "Please sign in again" });
   }
@@ -25,13 +25,13 @@ const handler = async (
         message: `You cannot create an org with this name: ${GSI1SK}`,
       });
     }
-    if (user.org_id != "NO_ORG_ASSIGNED") {
+    if (user_session.org_id != "NO_ORG_ASSIGNED") {
       return res.status(400).json({
         message: `You already belong to an org!`,
       });
     }
 
-    const pending_invites = await GetAllUserInvites(user.user_id);
+    const pending_invites = await GetAllUserInvites(user_session.user_id);
 
     if (pending_invites && pending_invites.length > 0) {
       return res.status(403).json({
@@ -43,7 +43,7 @@ const handler = async (
     const create_org_input: CreateOrgInput = {
       GSI1SK: GSI1SK,
       org_id: org_id,
-      user: user,
+      user: user_session,
     };
 
     try {
@@ -62,7 +62,7 @@ const handler = async (
 
       try {
         const join_org_input: JoinOrgInput = {
-          user_id: user.user_id,
+          user_id: user_session.user_id,
           org_id: org_id,
         };
         console.log("Join or ginput", join_org_input);

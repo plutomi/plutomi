@@ -71,10 +71,10 @@ export default function DashboardContent() {
         />
       </div>
       <div className="flex justify-center mx-auto">
-        {user?.first_name === "NO_FIRST_NAME" ||
-        user?.first_name === "NO_FIRST_NAME" ? (
+        {(user?.first_name === "NO_FIRST_NAME" ||
+          user?.last_name === "NO_LAST_NAME") && (
           <UpdateName updateName={updateName} />
-        ) : null}
+        )}
       </div>
       <div className="py-24">
         <button

@@ -11,8 +11,8 @@ const handler = async (
   req: NextIronRequest,
   res: NextApiResponse
 ): Promise<void> => {
-  const user = req.session.get("user");
-  if (!user) {
+  const user_session = req.session.get("user");
+  if (!user_session) {
     req.session.destroy();
     return res.status(401).json({ message: "Please sign in again" });
   }
@@ -21,17 +21,17 @@ const handler = async (
 
   // TODO trycatch
   const invite = await GetOrgInvite({
-    user_id: user.user_id,
+    user_id: user_session.user_id,
     invite_id: invite_id,
   });
 
   const accept_org_invite_input = {
-    user_id: user.user_id,
+    user_id: user_session.user_id,
     invite_id: invite.invite_id,
   };
 
   const join_org_input: JoinOrgInput = {
-    user_id: user.user_id,
+    user_id: user_session.user_id,
     org_id: invite.org_id,
   };
 
@@ -44,10 +44,10 @@ const handler = async (
 
   if (method === "POST") {
     // TODO disallow org_id's by this name
-    if (user.org_id != "NO_ORG_ASSIGNED") {
+    if (user_session.org_id != "NO_ORG_ASSIGNED") {
       return res
         .status(400)
-        .json({ message: `You already belong to an org: ${user.org_id}` });
+        .json({ message: `You already belong to an org: ${user_session.org_id}` });
     }
 
     try {
@@ -73,7 +73,7 @@ const handler = async (
 
   if (method === "DELETE") {
     const delete_org_invite_input = {
-      user_id: user.user_id,
+      user_id: user_session.user_id,
       invite_id: invite_id,
     };
 
