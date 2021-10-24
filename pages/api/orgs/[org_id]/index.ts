@@ -5,6 +5,7 @@ import { GetAllUsersInOrg } from "../../../../utils/orgs/getAllUsersInOrg";
 import { LeaveOrg } from "../../../../utils/users/leaveOrg";
 
 import withSession from "../../../../middleware/withSession";
+import CleanUser from "../../../../utils/clean/cleanUser";
 
 const handler = async (
   req: NextIronRequest,
@@ -56,7 +57,9 @@ const handler = async (
         });
       }
 
-      await LeaveOrg(user_session.user_id);
+      const updated_user = await LeaveOrg(user_session.user_id);
+      req.session.set("user", CleanUser(updated_user)); // Update the session with the new org value
+      await req.session.save();
       return res
         .status(200)
         .json({ message: `You've deleted the ${org_id} org :(` });

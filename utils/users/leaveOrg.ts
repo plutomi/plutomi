@@ -31,8 +31,8 @@ export async function LeaveOrg(user_id: string) {
   };
 
   try {
-    await Dynamo.send(new UpdateCommand(params));
-    return;
+    const updated_user = await Dynamo.send(new UpdateCommand(params));
+    return updated_user.Attributes as DynamoUser;
   } catch (error) {
     throw new Error(error);
   }
