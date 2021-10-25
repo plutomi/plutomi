@@ -6,6 +6,8 @@ import DeleteOrgInvite from "../../../../utils/invites/deleteOrgInvite";
 import withCleanOrgName from "../../../../middleware/withCleanOrgName";
 import { GetOrgInvite } from "../../../../utils/invites/getOrgInvite";
 import withSession from "../../../../middleware/withSession";
+import { UpdateUser } from "../../../../utils/users/updateUser";
+import { GetCurrentTime } from "../../../../utils/time";
 
 const handler = async (
   req: NextIronRequest,
@@ -30,7 +32,7 @@ const handler = async (
     invite_id: invite.invite_id,
   };
 
-  const join_org_input: JoinOrgInput = {
+  const join_org_input = {
     user_id: user_session.user_id,
     org_id: invite.org_id,
   };
@@ -45,15 +47,24 @@ const handler = async (
   if (method === "POST") {
     // TODO disallow org_id's by this name
     if (user_session.org_id != "NO_ORG_ASSIGNED") {
-      return res
-        .status(400)
-        .json({ message: `You already belong to an org: ${user_session.org_id}` });
+      return res.status(400).json({
+        message: `You already belong to an org: ${user_session.org_id}`,
+      });
     }
 
     try {
       // TODO promise all
       await AcceptOrgInvite(accept_org_invite_input);
       try {
+        await UpdateUser({
+          user_id: user_session.user_id,
+          new_user_values: {
+            org_id: invite.org_id,
+            org_join_date: GetCurrentTime("iso"),
+            GSI1PK: `ORG#${invite.org_id}#USERS`,
+          },
+          ALLOW_FORBIDDEN_KEYS: true,
+        });
         await JoinOrg(join_org_input);
         return res
           .status(200)
