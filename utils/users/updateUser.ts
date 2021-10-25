@@ -6,7 +6,12 @@ const { DYNAMO_TABLE_NAME } = process.env;
 export async function UpdateUser({
   new_user_values,
   user_id,
-}: UpdateUserInput) {
+  ALLOW_FORBIDDEN_KEYS,
+}: {
+  new_user_values: any;
+  user_id: string;
+  ALLOW_FORBIDDEN_KEYS?: boolean;
+}) {
   try {
     // TODO user the cleaning functions instead
     const FORBIDDEN_KEYS = [
@@ -23,7 +28,9 @@ export async function UpdateUser({
     ];
 
     const incomingKeys = Object.keys(new_user_values);
-    const newKeys = incomingKeys.filter((key) => !FORBIDDEN_KEYS.includes(key));
+    let newKeys = ALLOW_FORBIDDEN_KEYS
+      ? incomingKeys
+      : incomingKeys.filter((key) => !FORBIDDEN_KEYS.includes(key));
 
     let newUpdateExpression: string[] = [];
     let newAttributes: any = {};

@@ -44,6 +44,7 @@ const handler = async (
     const update_user_input: UpdateUserInput = {
       new_user_values: new_user_values,
       user_id: user_session.user_id,
+      ALLOW_FORBIDDEN_KEYS: false,
     };
 
     try {
