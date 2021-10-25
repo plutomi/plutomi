@@ -1,6 +1,5 @@
 import { UpdateCommand, UpdateCommandInput } from "@aws-sdk/lib-dynamodb";
 import { Dynamo } from "../../libs/ddbDocClient";
-import ValidNameCheck from "./ValidNameCheck";
 
 const { DYNAMO_TABLE_NAME } = process.env;
 
@@ -41,15 +40,17 @@ export async function UpdateUser({
       newAttributes[`:${key}`] = new_user_values[key];
     });
 
-    try {
-      ValidNameCheck(newAttributes);
-    } catch (error) {
-      console.error(error);
-      throw error;
+    // TODO refactor this into its own function, easy way to have banned values
+    const banned_values = ["NO_FIRST_NAME", "NO_LAST_NAME"];
+    const checker = (value) =>
+      banned_values.some((element) => value.includes(element));
+
+    const matching = Object.values(newAttributes).filter(checker);
+    if (matching.length > 0) {
+      throw `Invalid values: ${matching}`;
     }
 
     const NewUpdateExpression = `SET ${newUpdateExpression.join(", ")}`;
-
     const params: UpdateCommandInput = {
       Key: {
         PK: `USER#${user_id}`,
