@@ -1,5 +1,6 @@
 import { UpdateCommand, UpdateCommandInput } from "@aws-sdk/lib-dynamodb";
 import { Dynamo } from "../../libs/ddbDocClient";
+import ValidNameCheck from "./ValidNameCheck";
 
 const { DYNAMO_TABLE_NAME } = process.env;
 
@@ -40,15 +41,13 @@ export async function UpdateUser({
       newAttributes[`:${key}`] = new_user_values[key];
     });
 
-    if (
-      // TODO reformat this to a function that checks for invalid names
-      newAttributes[":first_name"] === "NO_FIRST_NAME" ||
-      newAttributes[":last_name"] === "NO_LAST_NAME" ||
-      newAttributes[":GSI1SK"].includes("NO_FIRST_NAME") ||
-      newAttributes[":GSI1SK"].includes("NO_LAST_NAME")
-    ) {
-      throw `Invalid name, cannot include 'NO_FIRST_NAME' or 'NO_LAST_NAME'`;
+    try {
+      ValidNameCheck(newAttributes);
+    } catch (error) {
+      console.error(error);
+      throw error;
     }
+
     const NewUpdateExpression = `SET ${newUpdateExpression.join(", ")}`;
 
     const params: UpdateCommandInput = {

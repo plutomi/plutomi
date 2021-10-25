@@ -65,7 +65,6 @@ const handler = async (
           },
           ALLOW_FORBIDDEN_KEYS: true,
         });
-        await JoinOrg(join_org_input);
         return res
           .status(200)
           .json({ message: `You've joined the ${invite.org_name} org!` });
