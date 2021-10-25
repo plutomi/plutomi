@@ -64,9 +64,7 @@ const handler = async (
       const org = await CreateOrg(create_org_input);
 
       try {
-
-
-        await UpdateUser({
+        const updated_user = await UpdateUser({
           user_id: user_session.user_id,
           new_user_values: {
             org_id: org_id,
@@ -77,7 +75,7 @@ const handler = async (
         });
 
         // Update the logged in user session with the new org id
-        req.session.set("user", CleanUser({ ...user_session, org_id: org_id }));
+        req.session.set("user", CleanUser(updated_user));
         await req.session.save();
 
         return res.status(201).json({ message: "Org created!", org: org });

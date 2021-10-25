@@ -2,10 +2,10 @@ import withCleanOrgName from "../../../../middleware/withCleanOrgName";
 import { GetOrg } from "../../../../utils/orgs/getOrg";
 import { NextApiResponse } from "next";
 import { GetAllUsersInOrg } from "../../../../utils/orgs/getAllUsersInOrg";
-import { LeaveOrg } from "../../../../utils/users/leaveOrg";
 
 import withSession from "../../../../middleware/withSession";
 import CleanUser from "../../../../utils/clean/cleanUser";
+import { UpdateUser } from "../../../../utils/users/updateUser";
 
 const handler = async (
   req: NextIronRequest,
@@ -59,7 +59,16 @@ const handler = async (
         });
       }
 
-      const updated_user = await LeaveOrg(user_session.user_id);
+      const updated_user = await UpdateUser({
+        user_id: user_session.user_id,
+        new_user_values: {
+          org_id: "NO_ORG_ASSIGNED",
+          org_join_date: "NO_ORG_ASSIGNED",
+          GSI1PK: "NO_ORG_ASSIGNED",
+        },
+
+        ALLOW_FORBIDDEN_KEYS: true,
+      });
       req.session.set("user", CleanUser(updated_user)); // Update the session with the new org value
       await req.session.save();
       return res
