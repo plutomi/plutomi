@@ -3,7 +3,13 @@ import { Dynamo } from "../../libs/ddbDocClient";
 
 const { DYNAMO_TABLE_NAME } = process.env;
 
-export async function GetAllUsersInOrg(org_id: string) {
+export async function GetAllUsersInOrg({
+  org_id,
+  limit,
+}: {
+  org_id: string;
+  limit?: number;
+}) {
   const params: QueryCommandInput = {
     TableName: DYNAMO_TABLE_NAME,
     IndexName: "GSI1",
@@ -12,6 +18,8 @@ export async function GetAllUsersInOrg(org_id: string) {
       ":GSI1PK": `ORG#${org_id}#USERS`,
     },
   }; // TODO query until all results are returned
+
+  limit && (params.Limit = limit);
 
   try {
     const response = await Dynamo.send(new QueryCommand(params));

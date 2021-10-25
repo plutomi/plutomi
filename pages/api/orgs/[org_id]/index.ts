@@ -48,8 +48,10 @@ const handler = async (
 
   if (method === "DELETE") {
     try {
-      // TODO add a limit to this so we can just check if 2 are returned
-      const all_org_users = await GetAllUsersInOrg(user_session.org_id);
+      const all_org_users = await GetAllUsersInOrg({
+        org_id: user_session.org_id,
+        limit: 2,
+      });
 
       if (all_org_users.length > 1) {
         return res.status(400).json({
