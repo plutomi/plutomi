@@ -2,7 +2,6 @@ import { NextApiResponse } from "next";
 import { CreateOrg } from "../../../utils/orgs/createOrg";
 import withCleanOrgName from "../../../middleware/withCleanOrgName";
 import InputValidation from "../../../utils/inputValidation";
-import { JoinOrg } from "../../../utils/users/joinOrg";
 import { GetAllUserInvites } from "../../../utils/invites/getAllOrgInvites";
 import withSession from "../../../middleware/withSession";
 import CleanUser from "../../../utils/clean/cleanUser";
@@ -65,10 +64,7 @@ const handler = async (
       const org = await CreateOrg(create_org_input);
 
       try {
-        const join_org_input: JoinOrgInput = {
-          user_id: user_session.user_id,
-          org_id: org_id,
-        };
+
 
         await UpdateUser({
           user_id: user_session.user_id,

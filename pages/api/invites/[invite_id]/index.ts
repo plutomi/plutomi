@@ -1,6 +1,5 @@
 import AcceptOrgInvite from "../../../../utils/invites/acceptOrgInvite";
 import InputValidation from "../../../../utils/inputValidation";
-import { JoinOrg } from "../../../../utils/users/joinOrg";
 import { NextApiResponse } from "next";
 import DeleteOrgInvite from "../../../../utils/invites/deleteOrgInvite";
 import withCleanOrgName from "../../../../middleware/withCleanOrgName";
