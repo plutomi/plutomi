@@ -6,6 +6,8 @@ import { JoinOrg } from "../../../utils/users/joinOrg";
 import { GetAllUserInvites } from "../../../utils/invites/getAllOrgInvites";
 import withSession from "../../../middleware/withSession";
 import CleanUser from "../../../utils/clean/cleanUser";
+import { UpdateUser } from "../../../utils/users/updateUser";
+import { GetCurrentTime } from "../../../utils/time";
 
 const handler = async (
   req: NextIronRequest,
@@ -68,7 +70,15 @@ const handler = async (
           org_id: org_id,
         };
 
-        await JoinOrg(join_org_input);
+        await UpdateUser({
+          user_id: user_session.user_id,
+          new_user_values: {
+            org_id: org_id,
+            org_join_date: GetCurrentTime("iso"),
+            GSI1PK: `ORG#${org_id}#USERS`,
+          },
+          ALLOW_FORBIDDEN_KEYS: true,
+        });
 
         // Update the logged in user session with the new org id
         req.session.set("user", CleanUser({ ...user_session, org_id: org_id }));
