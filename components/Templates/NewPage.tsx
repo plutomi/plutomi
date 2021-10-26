@@ -23,11 +23,11 @@ export default function NewPage({
   return (
     <>
       <SignedInNav current={currentNavbarItem} />
-      <header className="max-w-7xl border border-red-400 mx-auto  p-4 my-6 rounded-lg ">
+      <header className="max-w-7xl mx-auto  p-4 my-6 rounded-lg ">
         <PageHeader headerText={headerText} />
       </header>
 
-      <main className="max-w-7xl border border-blue-400 mx-auto  p-4 my-6 rounded-lg min-h-screen bg-white">
+      <main className="max-w-7xl  mx-auto  p-4 my-6 rounded-lg min-h-screen bg-white">
         {children}
       </main>
     </>

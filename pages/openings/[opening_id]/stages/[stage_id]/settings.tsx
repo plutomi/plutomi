@@ -19,7 +19,7 @@ export default function StageSettings() {
     user?.user_id,
     opening_id
   );
-
+  let { stage, isStageLoading, isStageError } = useStageById(stage_id);
 
   // Update this to use the new update syntax with diff
   const deleteStage = async () => {
@@ -60,7 +60,9 @@ export default function StageSettings() {
       loggedOutPageText={"Log in to view your stage settings"}
       currentNavbarItem={"Openings"}
       headerText={
-        isOpeningLoading ? "Settings" : `${opening.GSI1SK} >  - Applicants`
+        isOpeningLoading
+          ? "Settings"
+          : `${opening?.GSI1SK} > ${stage?.GSI1SK} - Settings`
       }
     >
       <>

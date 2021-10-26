@@ -15,12 +15,6 @@ export default function ApplicantInfoForm() {
   const [email, setEmail] = useState("");
   const [buttonText, setButtonText] = useState("Apply");
   const handleSubmit = async (e: FormEvent) => {
-    alert(JSON.stringify(org_id));
-    alert(JSON.stringify(opening_id));
-
-    alert(JSON.stringify(router.query));
-    alert(JSON.stringify(router));
-
     setButtonText("Submitting...");
     e.preventDefault();
     if (!agreed) {

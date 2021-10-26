@@ -6,6 +6,7 @@ import Breadcrumbs from "../Breadcrumbs";
 import { useRouter } from "next/router";
 import { PencilAltIcon } from "@heroicons/react/outline";
 import useStageById from "../../SWR/useStageById";
+import { GetRelativeTime } from "../../utils/time";
 export default function StageSettingsHeader({ deleteStage }) {
   const router = useRouter();
   const { opening_id, stage_id } = router.query as CustomQuery;
@@ -85,6 +86,9 @@ export default function StageSettingsHeader({ deleteStage }) {
         <Breadcrumbs crumbs={crumbs} />
       </div>
 
+      <p className="text-md text-light text-center">
+        Created {GetRelativeTime(stage?.created_at)}
+      </p>
       <div className="space-x-4 flex items-center">
         <button
           type="button"
