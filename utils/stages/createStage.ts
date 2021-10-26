@@ -24,6 +24,7 @@ export async function CreateStage({
     created_at: now,
     question_order: [],
     stage_id: stage_id,
+    total_applicants: 0,
     opening_id: opening_id,
     GSI1PK: `ORG#${org_id}#OPENING#${opening_id}#STAGES`, // Get all stages in an opening
     GSI1SK: GSI1SK,
@@ -50,6 +51,7 @@ export async function CreateStage({
               ConditionExpression: "attribute_not_exists(PK)",
             },
           },
+
           {
             // Add stage to the opening
             Update: {
@@ -58,9 +60,11 @@ export async function CreateStage({
                 SK: `OPENING`,
               },
               TableName: DYNAMO_TABLE_NAME,
-              UpdateExpression: "SET stage_order = :stage_order",
+              UpdateExpression:
+                "SET stage_order = :stage_order, SET total_stages = total_stages + :value",
               ExpressionAttributeValues: {
                 ":stage_order": opening.stage_order,
+                ":value": 1,
               },
             },
           },
