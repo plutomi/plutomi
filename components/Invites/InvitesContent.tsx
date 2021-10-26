@@ -26,8 +26,10 @@ export default function InvitesContent() {
       alert(error.response.data.message);
     }
 
-    // Refresh the user's org
+    // Refresh the user's org_id
     mutate(UsersService.getSelfURL());
+
+    // Refresh the user's invites
     mutate(InvitesService.getInvitesURL({ user_id: user?.user_id }));
   };
 

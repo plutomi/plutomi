@@ -8,6 +8,7 @@ import useOpeningById from "../../SWR/useOpeningById";
 import { useRouter } from "next/router";
 import Loader from "../Loader";
 import OpeningsService from "../../adapters/OpeningsService";
+import { GetRelativeTime } from "../../utils/time";
 export default function OpeningSettingsHeader() {
   const router = useRouter();
   const { opening_id } = router.query as CustomQuery;
@@ -77,6 +78,27 @@ export default function OpeningSettingsHeader() {
         <Breadcrumbs crumbs={crumbs} />
       </div>
 
+      <div className="flex justify-center space-x-4 py-2 items-center">
+        <span
+          className={` inline-flex items-center px-2.5 py-0.5 rounded-md text-sm font-medium ${
+            opening?.is_public ? "bg-green-100" : "bg-blue-gray-100"
+          }`}
+        >
+          <svg
+            className={`-ml-0.5 mr-1.5 h-2 w-2 ${
+              opening?.is_public ? "text-green-800" : "text-blue-gray-800"
+            }`}
+            fill="currentColor"
+            viewBox="0 0 8 8"
+          >
+            <circle cx={4} cy={4} r={3} />
+          </svg>
+          {opening?.is_public ? "Public" : "Private"}
+        </span>
+        <p className="text-md text-light text-center">
+          Created {GetRelativeTime(opening?.created_at)}
+        </p>
+      </div>
       <div className="space-x-4 flex items-center">
         <button
           type="button"

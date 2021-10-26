@@ -8,8 +8,8 @@ const handler = async (
   req: NextIronRequest,
   res: NextApiResponse
 ): Promise<void> => {
-  const user = req.session.get("user");
-  if (!user) {
+  const user_session = req.session.get("user");
+  if (!user_session) {
     req.session.destroy();
     return res.status(401).json({ message: "Please sign in again" });
   }
@@ -17,9 +17,7 @@ const handler = async (
   const { GSI1SK }: APICreateOpeningInput = body;
 
   if (method === "POST") {
-    console.log("In post");
-    if (user.org_id === "NO_ORG_ASSIGNED") {
-      console.log("no org");
+    if (user_session.org_id === "NO_ORG_ASSIGNED") {
 
       return res.status(403).json({
         message: "Please create an organization before creating an opening",
@@ -27,7 +25,7 @@ const handler = async (
     }
     try {
       const create_opening_input: CreateOpeningInput = {
-        org_id: user.org_id,
+        org_id: user_session.org_id,
         GSI1SK: GSI1SK,
       };
 
@@ -51,7 +49,7 @@ const handler = async (
 
   if (method === "GET") {
     try {
-      const all_openings = await GetAllOpeningsInOrg(user.org_id);
+      const all_openings = await GetAllOpeningsInOrg(user_session.org_id);
       return res.status(200).json(all_openings);
     } catch (error) {
       // TODO add error logger

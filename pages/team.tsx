@@ -7,9 +7,11 @@ import Login from "../components/Login";
 import CreateInviteModal from "../components/CreateInviteModal";
 import useOrgUsers from "../SWR/useOrgUsers";
 import useStore from "../utils/store";
-import TeamHeader from "../components/Team/TeamHeader";
 import { useRouter } from "next/router";
 import InvitesService from "../adapters/InvitesService";
+
+import NewPage from "../components/Templates/NewPage";
+import InvitesContent from "../components/Invites/InvitesContent";
 export default function Team() {
   const router = useRouter();
 
@@ -22,23 +24,6 @@ export default function Team() {
   const setCreateInviteModalOpen = useStore(
     (state: PlutomiState) => state.setCreateInviteModalOpen
   );
-
-  // When rendering client side don't display anything until loading is complete
-  if (typeof window !== "undefined" && isUserLoading) {
-    return <Loader text="Loading..." />;
-  }
-
-  if (isUserError) {
-    return (
-      <Login
-        desiredPageText={"your team"} // TODO set this
-      />
-    );
-  }
-
-  if (isUserLoading) {
-    return <Loader text="Loading user..." />;
-  }
 
   if (isOrgUsersError) {
     alert(
@@ -64,18 +49,14 @@ export default function Team() {
   };
 
   return (
-    <>
+    <NewPage
+      loggedOutPageText={"Log in to view your team"}
+      currentNavbarItem={"Team"}
+      headerText={"Team"}
+    >
       <CreateInviteModal createInvite={createInvite} />
-      <SignedInNav current="Team" />
-      <div className="max-w-7xl mx-auto p-4 my-12 rounded-lg min-h-screen ">
-        <header>
-          <TeamHeader />
-        </header>
 
-        <main className="mt-5">
-          {orgUsers?.length <= 1 ? <EmptyTeamState /> : <TeamContent />}
-        </main>
-      </div>
-    </>
+      {orgUsers?.length <= 1 ? <EmptyTeamState /> : <TeamContent />}
+    </NewPage>
   );
 }

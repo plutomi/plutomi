@@ -8,8 +8,6 @@ export default function ApplicationHeader() {
     useApplicantById(applicant_id);
 
   const { stage, isStageLoading, isStageError } = useStageById(
-    applicant?.applicant_id,
-    applicant?.current_opening_id,
     applicant?.current_stage_id
   );
   return (

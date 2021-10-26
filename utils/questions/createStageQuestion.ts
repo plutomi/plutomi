@@ -35,7 +35,7 @@ export async function CreateStageQuestion({
     let stage = await GetStage({ org_id, stage_id });
 
     if (stage.question_order.length >= MAX_ITEM_LIMIT) {
-      throw new Error(MAX_ITEM_LIMIT_ERROR_MESSAGE);
+      throw MAX_ITEM_LIMIT_ERROR_MESSAGE;
     }
 
     try {

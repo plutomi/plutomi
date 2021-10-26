@@ -37,7 +37,7 @@ export async function CreateStage({
       opening.stage_order.push(stage_id);
 
       if (opening.stage_order.length >= MAX_ITEM_LIMIT) {
-        throw new Error(MAX_ITEM_LIMIT_ERROR_MESSAGE);
+        throw MAX_ITEM_LIMIT_ERROR_MESSAGE
       }
 
       const transactParams: TransactWriteCommandInput = {

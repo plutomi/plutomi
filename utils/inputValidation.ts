@@ -6,5 +6,5 @@ export default function InputValidation(input: Object) {
     }
   }
   if (missing_keys.length > 0)
-    throw new Error(`Bad request: ${missing_keys.join(", ")} missing`);
+    throw `Bad request: ${missing_keys.join(", ")} missing`;
 }

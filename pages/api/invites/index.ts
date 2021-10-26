@@ -10,8 +10,8 @@ const handler = async (
   req: NextIronRequest,
   res: NextApiResponse
 ): Promise<void> => {
-  const user = req.session.get("user");
-  if (!user) {
+  const user_session = req.session.get("user");
+  if (!user_session) {
     req.session.destroy();
     return res.status(401).json({ message: "Please sign in again" });
   }
@@ -28,13 +28,13 @@ const handler = async (
     "iso"
   );
 
-  const org = await GetOrg(user.org_id);
+  const org = await GetOrg(user_session.org_id);
 
   const new_org_invite: CreateOrgInviteInput = {
     claimed: false,
     org_name: org.GSI1SK, // For the client they can see the name instead of ID
-    created_by: user, // TODO reduce this to just name & email
-    org_id: user.org_id,
+    created_by: user_session, // TODO reduce this to just name & email
+    org_id: user_session.org_id,
     recipient_email: recipient_email,
     expires_at: expires_at,
   };
@@ -45,18 +45,18 @@ const handler = async (
       return res.status(400).json({ message: `${error.message}` });
     }
 
-    if (user.user_email == recipient_email) {
+    if (user_session.user_email == recipient_email) {
       return res.status(400).json({ message: "You can't invite yourself" });
     }
 
-    if (user.org_id === "NO_ORG_ASSIGNED") {
+    if (user_session.org_id === "NO_ORG_ASSIGNED") {
       return res.status(400).json({
         message: `You must create an organization before inviting users`,
       });
     }
 
     const new_org_invite_email: SendOrgInviteInput = {
-      created_by: user,
+      created_by: user_session,
       org_name: org.GSI1SK,
       recipient_email: recipient_email,
     };

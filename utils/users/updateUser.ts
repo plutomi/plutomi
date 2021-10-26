@@ -6,7 +6,12 @@ const { DYNAMO_TABLE_NAME } = process.env;
 export async function UpdateUser({
   new_user_values,
   user_id,
-}: UpdateUserInput) {
+  ALLOW_FORBIDDEN_KEYS,
+}: {
+  new_user_values: any;
+  user_id: string;
+  ALLOW_FORBIDDEN_KEYS?: boolean;
+}) {
   try {
     // TODO user the cleaning functions instead
     const FORBIDDEN_KEYS = [
@@ -17,10 +22,15 @@ export async function UpdateUser({
       "created_at",
       "opening_id",
       "GSI1PK",
+      "GSI2PK",
+      "user_role",
+      "org_join_date",
     ];
 
     const incomingKeys = Object.keys(new_user_values);
-    const newKeys = incomingKeys.filter((key) => !FORBIDDEN_KEYS.includes(key));
+    let newKeys = ALLOW_FORBIDDEN_KEYS
+      ? incomingKeys
+      : incomingKeys.filter((key) => !FORBIDDEN_KEYS.includes(key));
 
     let newUpdateExpression: string[] = [];
     let newAttributes: any = {};
@@ -30,8 +40,17 @@ export async function UpdateUser({
       newAttributes[`:${key}`] = new_user_values[key];
     });
 
-    const NewUpdateExpression = `SET ${newUpdateExpression.join(", ")}`;
+    // TODO refactor this into its own function, easy way to have banned values
+    const banned_values = ["NO_FIRST_NAME", "NO_LAST_NAME"];
+    const checker = (value) =>
+      banned_values.some((element) => value.includes(element));
 
+    const matching = Object.values(newAttributes).filter(checker);
+    if (matching.length > 0) {
+      throw `Invalid values: ${matching}`;
+    }
+
+    const NewUpdateExpression = `SET ${newUpdateExpression.join(", ")}`;
     const params: UpdateCommandInput = {
       Key: {
         PK: `USER#${user_id}`,
@@ -44,9 +63,9 @@ export async function UpdateUser({
       ConditionExpression: "attribute_exists(PK)",
     };
 
-    const response = await Dynamo.send(new UpdateCommand(params));
-    return response.Attributes;
+    const updated_user = await Dynamo.send(new UpdateCommand(params));
+    return updated_user.Attributes as DynamoUser;
   } catch (error) {
-    throw new Error(`Unable to update user: ${error}`);
+    throw new Error(error);
   }
 }

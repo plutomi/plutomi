@@ -12,6 +12,8 @@ import {
 import Link from "next/dist/client/link";
 import useOrgInvites from "../../SWR/useOrgInvites";
 import Banner from "../BannerTop";
+import { mutate } from "swr";
+import UsersService from "../../adapters/UsersService";
 
 const navigation = [
   { name: "Dashboard", href: "/dashboard", hidden_if_no_org: false },
@@ -29,12 +31,14 @@ function classNames(...classes) {
 
 const handleLogout = async () => {
   try {
-    const { message } = await AuthService.logout(); // TODO logout to same page
+    const { message } = await AuthService.logout();
     alert(message);
     // TODO reroute to homepage
   } catch (error) {
     alert(error.response.message);
   }
+
+  mutate(UsersService.getSelfURL()); // Refresh login state - shows login page
 };
 
 export default function SignedInNav({ current }: ValidNavigation) {
@@ -120,7 +124,7 @@ export default function SignedInNav({ current }: ValidNavigation) {
                         <span className="sr-only">Open user menu</span>
                         {/* <img
                           className="h-8 w-8 rounded-full"
-                          src={user.imageUrl}
+                          src={user?.imageUrl}
                           alt=""
                         /> */}
                         <button>
@@ -142,10 +146,22 @@ export default function SignedInNav({ current }: ValidNavigation) {
                     >
                       <Menu.Items className="origin-top-right absolute right-0 mt-2 w-96 rounded-md shadow-lg py-1 bg-white ring-1 ring-black ring-opacity-5 focus:outline-none">
                         <div className="px-4 py-2 text-md border-dashed border-b-2">
-                          <div className="   text-dark ">
-                            Signed in as {user?.GSI1SK}
-                          </div>
-                          <div className=" text-light">{user?.user_email}</div>
+                          {isUserLoading ? (
+                            "Loading user info..."
+                          ) : (
+                            <>
+                              {!user?.GSI1SK.includes("NO_FIRST_NAME") ||
+                                (!user?.GSI1SK.includes("NO_LAST_NAME") && (
+                                  <div className="   text-dark ">
+                                    Signed in as ${user?.GSI1SK}
+                                  </div>
+                                ))}
+
+                              <div className=" text-light">
+                                {user?.user_email}
+                              </div>
+                            </>
+                          )}
                         </div>
 
                         {userNavigation.map((item) =>
@@ -228,18 +244,26 @@ export default function SignedInNav({ current }: ValidNavigation) {
                   <div className="flex-shrink-0">
                     {/* <img
                     className="h-10 w-10 rounded-full"
-                    src={user.imageUrl}
+                    src={user?.imageUrl}
                     alt=""
                   /> */}
                   </div>
-                  <div className="ml-3">
-                    <div className="text-base font-medium text-gray-800">
-                      {user.GSI1SK}
-                    </div>
-                    <div className="text-md font-medium text-normal">
-                      {user.user_email}
-                    </div>
-                  </div>
+
+                  {isUserLoading ? (
+                    "Loading user info..."
+                  ) : (
+                    <>
+                      <div className="ml-3">
+                        <div className="text-base font-medium text-gray-800">
+                          {user?.GSI1SK}
+                        </div>
+                        <div className="text-md font-medium text-normal">
+                          {user?.user_email}
+                        </div>
+                      </div>
+                    </>
+                  )}
+
                   <button
                     type="button"
                     onClick={() => handleLogout()}

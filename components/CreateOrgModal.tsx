@@ -120,7 +120,9 @@ export default function CreateOrgModal({ createOrg }) {
                                 required
                                 maxLength={30}
                                 onChange={(e) =>
-                                  setOrgId(e.target.value.trim())
+                                  setOrgId(
+                                    tagGenerator.generate(e.target.value.trim())
+                                  )
                                 }
                                 value={org_id}
                                 className="flex-1 min-w-0 block w-full px-3 py-2 rounded-none rounded-r-md focus:ring-blue-500 focus:border-blue-500 sm:text-sm border-gray-300"
@@ -131,7 +133,7 @@ export default function CreateOrgModal({ createOrg }) {
                               <p className="mt-2 text-blue-gray-500 text-md">
                                 Your ID will be:{" "}
                                 <span className="font-bold text-dark">
-                                  {tagGenerator.generate(org_id)}
+                                  {org_id}
                                 </span>
                               </p>
                             )}

@@ -107,11 +107,7 @@ export default function StageSettingsContent() {
   const stageModal = useStore((state: PlutomiState) => state.stageModal);
   const setStageModal = useStore((state: PlutomiState) => state.setStageModal);
 
-  const { stage, isStageLoading, isStageError } = useStageById(
-    user?.user_id,
-    opening?.opening_id,
-    stage_id
-  );
+  const { stage, isStageLoading, isStageError } = useStageById(stage_id);
 
   const { questions, isQuestionsLoading, isQuestionsError } =
     useAllStageQuestions(user?.org_id, stage?.stage_id);
@@ -155,14 +151,7 @@ export default function StageSettingsContent() {
               <div className="relative h-full" style={{ minHeight: "36rem" }}>
                 <div className=" inset-0  border-gray-200 rounded-lg">
                   <div className="flex flex-col justify-center items-center">
-                    <h1 className="text-center text-2xl font-semibold mb-4">
-                      {stage?.GSI1SK} Settings
-                    </h1>
-                    <div className="flex justify-center space-x-4 py-2 items-center">
-                      <p className="text-md text-light text-center">
-                        Created {GetRelativeTime(stage?.created_at)}
-                      </p>
-                    </div>
+                    <div className="flex justify-center space-x-4 py-2 items-center"></div>
                   </div>
                 </div>
 

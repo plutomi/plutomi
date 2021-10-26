@@ -105,6 +105,7 @@ interface SendApplicantLinkInput {
 interface UpdateUserInput {
   new_user_values: DynamoUser;
   user_id: string;
+  ALLOW_FORBIDDEN_KEYS: boolean;
 }
 
 interface APIUpdateUserInput {

@@ -1,15 +1,14 @@
-import SignedInNav from "../../components/Navbar/SignedInNav";
-import OpeningsHeader from "../../components/Openings/OpeningsHeader";
 import useOpenings from "../../SWR/useOpenings";
 import useSelf from "../../SWR/useSelf";
-import Loader from "../../components/Loader";
-import Login from "../../components/Login";
 import { mutate } from "swr";
 import useStore from "../../utils/store";
 import CreateOpeningModal from "../../components/Openings/OpeningModal";
-import OpeningsContent from "../../components/Openings/OpeningsContent";
 import EmptyOpeningsState from "../../components/Openings/EmptyOpeningsState";
 import OpeningsService from "../../adapters/OpeningsService";
+import NewPage from "../../components/Templates/NewPage";
+import { useState } from "react";
+import { PlusIcon } from "@heroicons/react/outline";
+import OpeningList from "../../components/Openings/OpeningsList";
 export default function Openings() {
   const { user, isUserLoading, isUserError } = useSelf();
   let { openings, isOpeningsLoading, isOpeningsError } = useOpenings(
@@ -21,22 +20,17 @@ export default function Openings() {
     (state: PlutomiState) => state.setOpeningModal
   );
 
-  // When rendering client side don't display anything until loading is complete
-  if (typeof window !== "undefined" && isUserLoading) {
-    return <Loader text="Loading..." />;
-  }
+  const [localSearch, setLocalSearch] = useState("");
 
-  if (isUserError) {
-    return (
-      <Login
-        desiredPageText={"your openings"} // TODO set this
-      />
-    );
-  }
+  const setOpeningsSearch = useStore(
+    (state: PlutomiState) => state.setOpeningsSearchInput
+  );
+  const search = useStore((state: PlutomiState) => state.openingsSearchInput);
 
-  if (isUserLoading) {
-    return <Loader text="Loading user..." />;
-  }
+  const handleSearchChange = (e) => {
+    setLocalSearch(e.target.value);
+    setOpeningsSearch(e.target.value);
+  };
 
   const createOpening = async () => {
     try {
@@ -58,22 +52,54 @@ export default function Openings() {
       alert(error.response.data.message);
     }
 
+    console.log("Getting alll openings");
     mutate(OpeningsService.getAllOpeningsURL()); // Get all openings
   };
 
   return (
-    <>
-      <CreateOpeningModal createOpening={createOpening} />
-      <SignedInNav current="Openings" />
-      <div className="max-w-7xl mx-auto p-4 my-6 rounded-lg min-h-screen ">
-        <header>
-          <OpeningsHeader />
-        </header>
+    <NewPage
+      loggedOutPageText={"Log in to view your openings"}
+      currentNavbarItem={"Openings"}
+      headerText={"Openings"}
+    >
+      <>
+        <CreateOpeningModal createOpening={createOpening} />
+        {openings?.length == 0 ? (
+          <EmptyOpeningsState />
+        ) : (
+          <div className="flex-1 my-4 flex md:mt-0  items-center  md:flex-grow justify-center">
+            <input
+              type="text"
+              name="search"
+              id="search"
+              value={localSearch}
+              onChange={(e) => handleSearchChange(e)}
+              placeholder={"Search for an opening..."}
+              className="w-1/2 shadow-sm focus:ring-blue-500 focus:border-blue-500 block  border sm:text-sm border-gray-300 rounded-md"
+            />
+            <button
+              onClick={() =>
+                setOpeningModal({
+                  is_modal_open: true,
+                  modal_mode: "CREATE",
+                  is_public: false,
+                  opening_id: "",
+                  GSI1SK: "",
+                })
+              }
+              type="button"
+              className="ml-3 inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+            >
+              <PlusIcon className="-ml-1 mr-2 h-5 w-5" aria-hidden="true" />
+              New Opening
+            </button>
+          </div>
+        )}
 
-        <main className="mt-5">
-          {openings?.length == 0 ? <EmptyOpeningsState /> : <OpeningsContent />}
-        </main>
-      </div>
-    </>
+        {/* An empty state with an action button will show if the user doesn't have openings*/}
+
+        <OpeningList />
+      </>
+    </NewPage>
   );
 }

@@ -29,12 +29,12 @@ export default async function CreateOrgInvite({
         user = await CreateUser(new_user);
       } catch (error) {
         console.error(error);
-        throw new Error("Unable to create user being invited");
+        throw "Unable to create user being invited";
       }
     }
 
     if (user.org_id === org_id) {
-      throw new Error("User is already in your org");
+      throw "User is already in your org";
     }
 
     // Check if the user we are inviting already has pending invites for the current org
@@ -44,9 +44,7 @@ export default async function CreateOrgInvite({
     );
 
     if (unclaimed_invites.length > 0) {
-      throw new Error(
-        "This user already has a pending invite to your org! They can sign in at plutomi.com/invites to claim it!"
-      );
+      throw "This user already has a pending invite to your org! They can sign in at plutomi.com/invites to claim it!";
     }
     const invite_id = nanoid(50);
     const now = GetCurrentTime("iso") as string;

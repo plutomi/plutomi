@@ -6,8 +6,8 @@ const handler = async (
   req: NextIronRequest,
   res: NextApiResponse
 ): Promise<void> => {
-  const user = req.session.get("user");
-  if (!user) {
+  const user_session = req.session.get("user");
+  if (!user_session) {
     req.session.destroy();
     return res.status(401).json({ message: "Please sign in again" });
   }
@@ -17,7 +17,7 @@ const handler = async (
   // Get all applicants in a stage
   if (method === "GET") {
     const get_all_applicants_in_stage_input: GetAllApplicantsInStageInput = {
-      org_id: user.org_id,
+      org_id: user_session.org_id,
       opening_id: opening_id,
       stage_id: stage_id,
     };

@@ -1,18 +1,19 @@
 import AcceptOrgInvite from "../../../../utils/invites/acceptOrgInvite";
 import InputValidation from "../../../../utils/inputValidation";
-import { JoinOrg } from "../../../../utils/users/joinOrg";
 import { NextApiResponse } from "next";
 import DeleteOrgInvite from "../../../../utils/invites/deleteOrgInvite";
 import withCleanOrgName from "../../../../middleware/withCleanOrgName";
 import { GetOrgInvite } from "../../../../utils/invites/getOrgInvite";
 import withSession from "../../../../middleware/withSession";
+import { UpdateUser } from "../../../../utils/users/updateUser";
+import { GetCurrentTime } from "../../../../utils/time";
 
 const handler = async (
   req: NextIronRequest,
   res: NextApiResponse
 ): Promise<void> => {
-  const user = req.session.get("user");
-  if (!user) {
+  const user_session = req.session.get("user");
+  if (!user_session) {
     req.session.destroy();
     return res.status(401).json({ message: "Please sign in again" });
   }
@@ -21,17 +22,17 @@ const handler = async (
 
   // TODO trycatch
   const invite = await GetOrgInvite({
-    user_id: user.user_id,
+    user_id: user_session.user_id,
     invite_id: invite_id,
   });
 
   const accept_org_invite_input = {
-    user_id: user.user_id,
+    user_id: user_session.user_id,
     invite_id: invite.invite_id,
   };
 
-  const join_org_input: JoinOrgInput = {
-    user_id: user.user_id,
+  const join_org_input = {
+    user_id: user_session.user_id,
     org_id: invite.org_id,
   };
 
@@ -44,17 +45,25 @@ const handler = async (
 
   if (method === "POST") {
     // TODO disallow org_id's by this name
-    if (user.org_id != "NO_ORG_ASSIGNED") {
-      return res
-        .status(400)
-        .json({ message: `You already belong to an org: ${user.org_id}` });
+    if (user_session.org_id != "NO_ORG_ASSIGNED") {
+      return res.status(400).json({
+        message: `You already belong to an org: ${user_session.org_id}`,
+      });
     }
 
     try {
       // TODO promise all
       await AcceptOrgInvite(accept_org_invite_input);
       try {
-        await JoinOrg(join_org_input);
+        await UpdateUser({
+          user_id: user_session.user_id,
+          new_user_values: {
+            org_id: invite.org_id,
+            org_join_date: GetCurrentTime("iso"),
+            GSI1PK: `ORG#${invite.org_id}#USERS`,
+          },
+          ALLOW_FORBIDDEN_KEYS: true,
+        });
         return res
           .status(200)
           .json({ message: `You've joined the ${invite.org_name} org!` });
@@ -73,7 +82,7 @@ const handler = async (
 
   if (method === "DELETE") {
     const delete_org_invite_input = {
-      user_id: user.user_id,
+      user_id: user_session.user_id,
       invite_id: invite_id,
     };
 

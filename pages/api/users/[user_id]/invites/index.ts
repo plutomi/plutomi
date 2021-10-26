@@ -7,8 +7,8 @@ const handler = async (
   req: NextIronRequest,
   res: NextApiResponse
 ): Promise<void> => {
-  const user = req.session.get("user");
-  if (!user) {
+  const user_session = req.session.get("user");
+  if (!user_session) {
     req.session.destroy();
     return res.status(401).json({ message: "Please sign in again" });
   }
@@ -16,7 +16,7 @@ const handler = async (
 
   if (method === "GET") {
     try {
-      const invites = await GetAllUserInvites(user.user_id);
+      const invites = await GetAllUserInvites(user_session.user_id);
       return res.status(200).json(invites);
     } catch (error) {
       // TODO add error logger

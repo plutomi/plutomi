@@ -10,17 +10,17 @@ export default async function AcceptOrgInvite({ user_id, invite_id }) {
     let invite = await GetOrgInvite({ user_id, invite_id });
 
     if (!invite) {
-      throw new Error("Invite no longer exists");
+      throw "Invite no longer exists";
     }
 
     if (invite.expires_at <= GetCurrentTime("iso")) {
       DeleteOrgInvite({ user_id, invite_id });
-      throw new Error("Invite has expired");
+      throw "Invite has expired";
     }
     DeleteOrgInvite({ user_id, invite_id });
 
     return;
   } catch (error) {
-    throw new Error(`${error}`);
+    throw new Error(error);
   }
 }

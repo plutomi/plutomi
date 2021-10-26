@@ -1,8 +1,6 @@
 import SignedInNav from "../../../../../components/Navbar/SignedInNav";
 import useSelf from "../../../../../SWR/useSelf";
-import Loader from "../../../../../components/Loader";
 import EmptyStagesState from "../../../../../components/Stages/EmptyStagesState";
-import Login from "../../../../../components/Login";
 import { useEffect } from "react";
 import { useRouter } from "next/router";
 import useStore from "../../../../../utils/store";
@@ -12,16 +10,37 @@ import useAllApplicantsInStage from "../../../../../SWR/useAllApplicantsInStage"
 import useAllStagesInOpening from "../../../../../SWR/useAllStagesInOpening";
 import ApplicantList from "../../../../../components/Applicants/ApplicantList";
 import ApplicantProfileModal from "../../../../../components/Applicants/ApplicantProfileModal";
-export default function StageID() {
+import NewPage from "../../../../../components/Templates/NewPage";
+import useOpeningById from "../../../../../SWR/useOpeningById";
+export default function StageApplicants() {
   const router = useRouter();
   const { opening_id, stage_id, applicant_id } = router.query as CustomQuery;
-
   const { user, isUserLoading, isUserError } = useSelf();
-
-  let { stages, isStagesLoading, isStagesError } = useAllStagesInOpening(
+  let { opening, isOpeningLoading, isOpeningError } = useOpeningById(
     user?.user_id,
     opening_id
   );
+
+  const { stages, isStagesLoading, isStagesError } = useAllStagesInOpening(
+    user?.user_id,
+    opening?.opening_id
+  );
+  // Allows for copying the URL of the applicant directly directly
+  useEffect(() => {
+    if (!router.isReady) return;
+    const { applicant_id } = router.query as CustomQuery;
+
+    if (
+      applicant_id &&
+      typeof applicant_id === "string" &&
+      applicant_id !== ""
+    ) {
+      setApplicantProfileModal({
+        ...applicantProfileModal,
+        is_modal_open: true,
+      });
+    }
+  }, [router.isReady]);
 
   const { applicants, isApplicantsLoading, isApplicantsError } =
     useAllApplicantsInStage(opening_id, stage_id);
@@ -40,46 +59,19 @@ export default function StageID() {
     (store: PlutomiState) => store.applicantProfileModal
   );
 
-  // Allows for copying the URL of the applicant directly directly
-  useEffect(() => {
-    if (!router.isReady) return;
-    const { applicant_id } = router.query as CustomQuery;
-
-    if (
-      applicant_id &&
-      typeof applicant_id === "string" &&
-      applicant_id !== ""
-    ) {
-      setApplicantProfileModal({
-        ...applicantProfileModal,
-        is_modal_open: true,
-      });
-    }
-  }, [router.isReady]);
-
-  // When rendering client side don't display anything until loading is complete
-  if (typeof window !== "undefined" && isUserLoading) {
-    return <Loader text="Loading..." />;
-  }
-
-  if (isUserError) {
-    return <Login desiredPageText={"your applicants"} />;
-  }
-
-  if (isUserLoading) {
-    return <Loader text="Loading user..." />;
-  }
-
   return (
-    <>
-      <ApplicantProfileModal />
-      <SignedInNav current="Openings" />
-      <div className="max-w-7xl mx-auto p-4 my-6 rounded-lg min-h-screen ">
-        <header>
-          <StagesHeader />
-        </header>
+    <NewPage
+      loggedOutPageText={"Log in to view your opening settings"}
+      currentNavbarItem={"Openings"}
+      headerText={
+        isOpeningLoading ? "Applicants" : `${opening.GSI1SK} - Applicants`
+      }
+    >
+      <>
+        <ApplicantProfileModal />
 
-        <main className="mt-5">
+        <div className="space-y-10">
+          <StagesHeader />
           {stages?.length == 0 ? (
             <EmptyStagesState />
           ) : (
@@ -88,8 +80,8 @@ export default function StageID() {
               <ApplicantList />
             </div>
           )}
-        </main>
-      </div>
-    </>
+        </div>
+      </>
+    </NewPage>
   );
 }

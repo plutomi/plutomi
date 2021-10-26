@@ -14,7 +14,10 @@ export default function UserProfileHeader() {
     <div className="md:flex md:items-center md:justify-between ">
       <div className=" min-w-0 ">
         <h2 className="text-2xl font-bold leading-7 text-dark sm:text-3xl sm:truncate">
-          Welcome to your profile, {user?.first_name}!
+          Welcome to your profile
+          {user?.first_name === "NO_FIRST_NAME"
+            ? "!"
+            : `, ${user?.first_name}!`}
         </h2>
       </div>
 

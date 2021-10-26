@@ -1,7 +1,5 @@
 import { QueryCommand, QueryCommandInput } from "@aws-sdk/lib-dynamodb";
-import { GetUserByEmail } from "../users/getUserByEmail";
 import { Dynamo } from "../../libs/ddbDocClient";
-import { GetUserById } from "../users/getUserById";
 
 const { DYNAMO_TABLE_NAME } = process.env;
 export async function GetLatestLoginLink(user_id: string) {
