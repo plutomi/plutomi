@@ -18,7 +18,7 @@ export default function OpeningList() {
 
   const search = useStore((state: PlutomiState) => state.openingsSearchInput);
 
-  const filtered_openings = openings.filter((opening: DynamoOpening) =>
+  const filtered_openings = openings?.filter((opening: DynamoOpening) =>
     opening.GSI1SK.toLowerCase().trim().includes(search.toLowerCase().trim())
   );
 

@@ -1,5 +1,4 @@
 import SignedInNav from "../../components/Navbar/SignedInNav";
-import OpeningsHeader from "../../components/Openings/OpeningsHeader";
 import useSelf from "../../SWR/useSelf";
 import Loader from "../../components/Loader";
 import Login from "../../components/Login";
