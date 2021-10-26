@@ -6,7 +6,7 @@ import { Dynamo } from "../../libs/ddbDocClient";
 import { GetCurrentTime } from "../time";
 import { nanoid } from "nanoid";
 import { GetOpening } from "../openings/getOpeningById";
-import { MAX_ITEM_LIMIT, MAX_ITEM_LIMIT_ERROR_MESSAGE } from "../../Config";
+import { MAX_CHILD_ITEM_LIMIT, MAX_ITEM_LIMIT_ERROR } from "../../Config";
 
 const { DYNAMO_TABLE_NAME } = process.env;
 
@@ -36,8 +36,8 @@ export async function CreateStage({
       // Get current opening
       opening.stage_order.push(stage_id);
 
-      if (opening.stage_order.length >= MAX_ITEM_LIMIT) {
-        throw MAX_ITEM_LIMIT_ERROR_MESSAGE
+      if (opening.stage_order.length >= MAX_CHILD_ITEM_LIMIT) {
+        throw MAX_ITEM_LIMIT_ERROR;
       }
 
       const transactParams: TransactWriteCommandInput = {
