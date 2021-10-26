@@ -16,11 +16,7 @@ export default function StageSettingsHeader({ deleteStage }) {
     opening_id
   );
 
-  const { stage, isStageLoading, isStageError } = useStageById(
-    user?.user_id,
-    opening?.opening_id,
-    stage_id
-  );
+  const { stage, isStageLoading, isStageError } = useStageById(stage_id);
 
   const setQuestionModal = useStore(
     (state: PlutomiState) => state.setQuestionModal

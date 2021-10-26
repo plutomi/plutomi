@@ -22,11 +22,7 @@ export default function QuestionList() {
     opening_id
   );
 
-  const { stage, isStageLoading, isStageError } = useStageById(
-    user?.user_id,
-    opening?.opening_id,
-    stage_id
-  );
+  const { stage, isStageLoading, isStageError } = useStageById(stage_id);
 
   const { questions, isQuestionsLoading, isQuestionsError } =
     useAllStageQuestions(user?.org_id, stage?.stage_id);

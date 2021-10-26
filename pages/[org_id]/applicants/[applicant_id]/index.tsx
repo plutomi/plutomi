@@ -2,7 +2,6 @@ import ApplicationContent from "../../../../components/Applicants/ApplicationCon
 import Loader from "../../../../components/Loader";
 import useApplicantById from "../../../../SWR/useApplicantById";
 import { useRouter } from "next/router";
-import useStageById from "../../../../SWR/useStageById";
 import ApplicationHeader from "../../../../components/Applicants/ApplicationHeader";
 export default function Application() {
   const router = useRouter();
@@ -10,11 +9,7 @@ export default function Application() {
   const { applicant, isApplicantLoading, isApplicantError } =
     useApplicantById(applicant_id);
 
-  const { stage, isStageLoading, isStageError } = useStageById(
-    applicant?.applicant_id,
-    applicant?.current_opening_id,
-    applicant?.current_stage_id
-  );
+
 
   // When rendering client side don't display anything until loading is complete
   if (typeof window !== "undefined") {

@@ -87,8 +87,6 @@ export default function StageReorderColumn() {
     opening?.opening_id
   );
   const { stage, isStageLoading, isStageError } = useStageById(
-    user?.user_id,
-    opening?.opening_id,
     stage_id
   );
 

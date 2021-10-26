@@ -6,7 +6,7 @@ const fetcher = (url: string) => axios.get(url).then((res) => res.data);
 
 // Returns very limited details an org's public opening
 // User does not need to be signed in
-function usePublicStageById(
+function usePublicStageById( // TODO i think this can be refactored since we no longer need th eopening ID
   org_id: string,
   opening_id: string,
   stage_id: string

@@ -2,13 +2,14 @@ import SignedInNav from "../../../../../components/Navbar/SignedInNav";
 import useSelf from "../../../../../SWR/useSelf";
 import Loader from "../../../../../components/Loader";
 import { mutate } from "swr";
-import Login from "../../../../../components/Login";
 import useOpeningById from "../../../../../SWR/useOpeningById";
 import { useRouter } from "next/router";
 import OpeningsService from "../../../../../adapters/OpeningsService";
 import StageSettingsHeader from "../../../../../components/Stages/StageSettingsHeader";
 import StageSettingsContent from "../../../../../components/Stages/StagesSettingsContent";
 import StagesService from "../../../../../adapters/StagesService";
+import NewPage from "../../../../../components/Templates/NewPage";
+import useStageById from "../../../../../SWR/useStageById";
 export default function StageSettings() {
   const router = useRouter();
   const { opening_id, stage_id } = router.query as CustomQuery;
@@ -19,22 +20,6 @@ export default function StageSettings() {
     opening_id
   );
 
-  // When rendering client side don't display anything until loading is complete
-  if (typeof window !== "undefined" && isUserLoading) {
-    return <Loader text="Loading..." />;
-  }
-
-  if (isUserError) {
-    return <Login loggedOutPageText={"Log in to view your stage settings"} />;
-  }
-
-  if (isUserLoading) {
-    return <Loader text="Loading user..." />;
-  }
-
-  if (isOpeningLoading) {
-    return <Loader text="Loading opening..." />;
-  }
 
   // Update this to use the new update syntax with diff
   const deleteStage = async () => {
@@ -71,17 +56,18 @@ export default function StageSettings() {
   };
 
   return (
-    <>
-      <SignedInNav current="Openings" />
-      <div className="max-w-7xl mx-auto p-4 my-6 rounded-lg min-h-screen ">
-        <header>
-          <StageSettingsHeader deleteStage={deleteStage} />
-        </header>
+    <NewPage
+      loggedOutPageText={"Log in to view your stage settings"}
+      currentNavbarItem={"Openings"}
+      headerText={
+        isOpeningLoading ? "Settings" : `${opening.GSI1SK} >  - Applicants`
+      }
+    >
+      <>
+        <StageSettingsHeader deleteStage={deleteStage} />
 
-        <main className="mt-5">
-          <StageSettingsContent />
-        </main>
-      </div>
-    </>
+        <StageSettingsContent />
+      </>
+    </NewPage>
   );
 }

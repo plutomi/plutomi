@@ -107,11 +107,7 @@ export default function StageSettingsContent() {
   const stageModal = useStore((state: PlutomiState) => state.stageModal);
   const setStageModal = useStore((state: PlutomiState) => state.setStageModal);
 
-  const { stage, isStageLoading, isStageError } = useStageById(
-    user?.user_id,
-    opening?.opening_id,
-    stage_id
-  );
+  const { stage, isStageLoading, isStageError } = useStageById(stage_id);
 
   const { questions, isQuestionsLoading, isQuestionsError } =
     useAllStageQuestions(user?.org_id, stage?.stage_id);
