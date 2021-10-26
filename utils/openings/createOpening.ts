@@ -16,6 +16,7 @@ export async function CreateOpening({ org_id, GSI1SK }: CreateOpeningInput) {
     opening_id: opening_id,
     GSI1PK: `ORG#${org_id}#OPENINGS`,
     GSI1SK: GSI1SK,
+    total_stages: 0,
     total_openings: 0,
     total_applicants: 0,
     is_public: false,

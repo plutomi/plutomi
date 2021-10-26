@@ -60,7 +60,6 @@ export default function QuestionList() {
 
     try {
       await StagesService.updateStage({
-        opening_id: opening_id,
         stage_id: stage_id,
         new_stage_values: {
           question_order: new_question_order,

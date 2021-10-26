@@ -61,7 +61,7 @@ export async function CreateStage({
               },
               TableName: DYNAMO_TABLE_NAME,
               UpdateExpression:
-                "SET stage_order = :stage_order, SET total_stages = total_stages + :value",
+                "SET stage_order = :stage_order, total_stages = total_stages + :value",
               ExpressionAttributeValues: {
                 ":stage_order": opening.stage_order,
                 ":value": 1,
@@ -73,6 +73,7 @@ export async function CreateStage({
 
       await Dynamo.send(new TransactWriteCommand(transactParams));
     } catch (error) {
+      console.error(error);
       throw new Error(error);
     }
   } catch (error) {

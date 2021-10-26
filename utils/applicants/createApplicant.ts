@@ -37,10 +37,8 @@ export async function CreateApplicant({
     entity_type: "APPLICANT",
     created_at: now,
     // TODO add phone number
-    // Is this needed? - Just makes it easier to grab than GSI1SK
     current_opening_id: opening_id,
     current_stage_id: stage_id,
-    // Is this needed? - Just makes it easier to grab than GSI1SK
     GSI1PK: `ORG#${org_id}#APPLICANTS`,
     GSI1SK: `OPENING#${opening_id}#STAGE#${stage_id}`,
   };

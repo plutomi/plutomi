@@ -36,6 +36,7 @@ interface DynamoOpening {
   opening_id: string;
   GSI1PK: string;
   GSI1SK: string;
+  total_applicants: number;
   is_public: boolean;
   stage_order: string[];
 }
@@ -55,6 +56,7 @@ interface DynamoStage {
   entity_type: "STAGE";
   created_at: string;
   stage_id: string;
+  total_applicants: number;
   question_order: string[];
   opening_id: string;
   GSI1PK: string;

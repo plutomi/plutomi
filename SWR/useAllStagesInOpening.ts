@@ -11,10 +11,9 @@ const fetcher = (url: string) => axios.get(url).then((res) => res.data);
  * @param opening_id - The ID of the opening that you want to look up
  */
 function useAllStagesInOpening(
-  user_id: string,
   opening_id: string
 ): useAllStagesInOpeningOutput {
-  const shouldFetch = user_id && opening_id ? true : false;
+  const shouldFetch =  opening_id ? true : false;
 
   const { data, error } = useSWR(
     shouldFetch &&

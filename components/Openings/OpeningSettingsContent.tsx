@@ -24,7 +24,6 @@ export default function OpeningSettingsContent() {
   );
 
   let { stages, isStagesLoading, isStagesError } = useAllStagesInOpening(
-    user?.user_id,
     opening?.opening_id
   );
 
@@ -48,6 +47,7 @@ export default function OpeningSettingsContent() {
   if (isStagesLoading) {
     return <Loader text="Loading stages..." />;
   }
+
 
   const updateOpening = async () => {
     try {
@@ -100,7 +100,8 @@ export default function OpeningSettingsContent() {
               {/* Start main area*/}
               <div className="relative h-full" style={{ minHeight: "36rem" }}>
                 <div className=" inset-0  border-gray-200 rounded-lg">
-                  <div className="flex flex-col justify-center items-center"></div>
+                  <div className="flex flex-col justify-center items-center">
+                  </div>
                 </div>
               </div>
               {/* End main area */}

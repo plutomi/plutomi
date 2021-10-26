@@ -16,7 +16,6 @@ export default function Openings() {
   );
 
   let { stages, isStagesLoading, isStagesError } = useAllStagesInOpening(
-    user?.user_id,
     opening?.opening_id
   );
 

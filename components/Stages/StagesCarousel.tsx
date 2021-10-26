@@ -23,7 +23,6 @@ export default function StageCarousel() {
   );
 
   let { stages, isStagesLoading, isStagesError } = useAllStagesInOpening(
-    user?.user_id,
     opening?.opening_id
   );
 
@@ -59,6 +58,7 @@ export default function StageCarousel() {
             name={stage.GSI1SK}
             current_stage_id={stage.stage_id}
             opening_id={stage.opening_id}
+            total_applicants={stage.total_applicants}
           />
         ))}
       </ItemsCarousel>

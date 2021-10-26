@@ -191,7 +191,7 @@ type StageTypes = "idle" | "active" | "frozen" | "deletion";
 interface StageCardInput {
   applicant_type: StageTypes;
   stage_title: string;
-  num_applicants: number;
+  total_applicants: number;
 }
 
 interface useSelfOutput {

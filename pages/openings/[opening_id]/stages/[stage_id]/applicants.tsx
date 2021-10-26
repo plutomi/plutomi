@@ -12,6 +12,7 @@ import ApplicantList from "../../../../../components/Applicants/ApplicantList";
 import ApplicantProfileModal from "../../../../../components/Applicants/ApplicantProfileModal";
 import NewPage from "../../../../../components/Templates/NewPage";
 import useOpeningById from "../../../../../SWR/useOpeningById";
+import NumberFormat from "react-number-format";
 export default function StageApplicants() {
   const router = useRouter();
   const { opening_id, stage_id, applicant_id } = router.query as CustomQuery;
@@ -22,7 +23,6 @@ export default function StageApplicants() {
   );
 
   const { stages, isStagesLoading, isStagesError } = useAllStagesInOpening(
-    user?.user_id,
     opening?.opening_id
   );
   // Allows for copying the URL of the applicant directly directly
@@ -64,7 +64,19 @@ export default function StageApplicants() {
       loggedOutPageText={"Log in to view your opening settings"}
       currentNavbarItem={"Openings"}
       headerText={
-        isOpeningLoading ? "Applicants" : `${opening.GSI1SK} - Applicants`
+        isOpeningLoading ? (
+          "Applicants"
+        ) : (
+          <span>
+            {opening.GSI1SK} - Applicants (
+            <NumberFormat
+              value={opening.total_applicants}
+              thousandSeparator={true}
+              displayType={"text"}
+            />
+            )
+          </span>
+        )
       }
     >
       <>

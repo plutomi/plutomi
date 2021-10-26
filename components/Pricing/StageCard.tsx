@@ -1,7 +1,7 @@
 import { UserGroupIcon } from "@heroicons/react/outline";
 import NumberFormat from "react-number-format";
 
-export default function Box({ stage_title, num_applicants, className }) {
+export default function Box({ stage_title, total_applicants, className }) {
   return (
     <div className={className}>
       <div className="relative text-center bg-white  py-5   sm:py-6 sm:px-3 shadow-md rounded-xl overflow-hidden">
@@ -13,7 +13,7 @@ export default function Box({ stage_title, num_applicants, className }) {
             <UserGroupIcon className="w-5 h-5 0" />
             <p className="text-xl font-semibold ">
               <NumberFormat
-                value={num_applicants}
+                value={total_applicants}
                 thousandSeparator={true}
                 displayType={"text"}
               />

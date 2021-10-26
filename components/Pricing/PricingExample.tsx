@@ -12,7 +12,7 @@ export default function Example({ stages, name }) {
             className={null}
             key={stage.id}
             stage_title={stage.name}
-            num_applicants={stage.applicants}
+            total_applicants={stage.total_applicants}
           />
         ))}
       </div>

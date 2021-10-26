@@ -27,6 +27,7 @@ export async function GetAllStagesInOpening(
       all_stages.find((j) => j.stage_id === i)
     );
 
+    console.log("Stages", result);
     return result;
   } catch (error) {
     throw new Error(error);
