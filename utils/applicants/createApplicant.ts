@@ -85,6 +85,21 @@ export async function CreateApplicant({
             },
           },
         },
+        {
+          // Add applicant to the orgs total_applicants
+          Update: {
+            Key: {
+              PK: `ORG#${org_id}`,
+              SK: `ORG`,
+            },
+            TableName: DYNAMO_TABLE_NAME,
+            UpdateExpression:
+              "SET total_applicants = total_applicants + :value",
+            ExpressionAttributeValues: {
+              ":value": 1,
+            },
+          },
+        },
       ],
     };
 
