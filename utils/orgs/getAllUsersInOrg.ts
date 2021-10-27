@@ -17,6 +17,7 @@ export async function GetAllUsersInOrg({
     ExpressionAttributeValues: {
       ":GSI1PK": `ORG#${org_id}#USERS`,
     },
+    Limit: limit || null,
   }; // TODO query until all results are returned
 
   limit && (params.Limit = limit);

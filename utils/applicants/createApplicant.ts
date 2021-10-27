@@ -1,4 +1,9 @@
-import { PutCommand, PutCommandInput } from "@aws-sdk/lib-dynamodb";
+import {
+  PutCommand,
+  PutCommandInput,
+  TransactWriteCommand,
+  TransactWriteCommandInput,
+} from "@aws-sdk/lib-dynamodb";
 import { Dynamo } from "../../libs/ddbDocClient";
 import { GetCurrentTime } from "../time";
 import { nanoid } from "nanoid";
@@ -32,33 +37,76 @@ export async function CreateApplicant({
     entity_type: "APPLICANT",
     created_at: now,
     // TODO add phone number
-    // Is this needed? - Just makes it easier to grab than GSI1SK
     current_opening_id: opening_id,
     current_stage_id: stage_id,
-    // Is this needed? - Just makes it easier to grab than GSI1SK
-
     GSI1PK: `ORG#${org_id}#APPLICANTS`,
     GSI1SK: `OPENING#${opening_id}#STAGE#${stage_id}`,
-
-    // TODO ADD TIMESTAMP ABOVE ^
-    // With just one index, i think we can get
-    // 1. All applicants in an org
-    // 2. All applicants in an opening
-    // 3. All applicants in an opening in a specific stage
-
-    // TODO Add another GSI2 with the timestamp they were created for easy filtering
-    // of applicants who applied < x date
-  };
-
-  const params: PutCommandInput = {
-    TableName: DYNAMO_TABLE_NAME,
-    Item: new_applicant,
-    ConditionExpression: "attribute_not_exists(PK)",
   };
 
   try {
-    await Dynamo.send(new PutCommand(params));
+    const transactParams: TransactWriteCommandInput = {
+      TransactItems: [
+        {
+          // Add an applicant item
+          Put: {
+            Item: new_applicant,
+            TableName: DYNAMO_TABLE_NAME,
+            ConditionExpression: "attribute_not_exists(PK)",
+          },
+        },
 
+        {
+          // Increment the opening's total_applicants
+          Update: {
+            Key: {
+              PK: `ORG#${org_id}#OPENING#${opening_id}`,
+              SK: `OPENING`,
+            },
+            TableName: DYNAMO_TABLE_NAME,
+            UpdateExpression:
+              "SET total_applicants = if_not_exists(total_applicants, :zero) + :value",
+            ExpressionAttributeValues: {
+              ":zero": 0,
+              ":value": 1,
+            },
+          },
+        },
+        {
+          // Increment the stage's total applicants
+          Update: {
+            Key: {
+              PK: `ORG#${org_id}#STAGE#${stage_id}`,
+              SK: `STAGE`,
+            },
+            TableName: DYNAMO_TABLE_NAME,
+            UpdateExpression:
+              "SET total_applicants = if_not_exists(total_applicants, :zero) + :value",
+            ExpressionAttributeValues: {
+              ":zero": 0,
+              ":value": 1,
+            },
+          },
+        },
+        {
+          // Increment the org's total applicants
+          Update: {
+            Key: {
+              PK: `ORG#${org_id}`,
+              SK: `ORG`,
+            },
+            TableName: DYNAMO_TABLE_NAME,
+            UpdateExpression:
+              "SET total_applicants = if_not_exists(total_applicants, :zero) + :value",
+            ExpressionAttributeValues: {
+              ":zero": 0,
+              ":value": 1,
+            },
+          },
+        },
+      ],
+    };
+
+    await Dynamo.send(new TransactWriteCommand(transactParams));
     return new_applicant;
   } catch (error) {
     throw new Error(error);

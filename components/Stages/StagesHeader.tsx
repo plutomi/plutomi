@@ -38,12 +38,12 @@ export default function StagesHeader() {
       <p className="mt-2 text-md text-normal sm:mt-0 ">
         <ClickToCopy
           showText={"Application Link"}
-          copyText={`${process.env.PLUTOMI_URL}/${user?.org_id}/${opening?.opening_id}/apply`}
+          copyText={`${process.env.WEBSITE_URL}/${user?.org_id}/${opening?.opening_id}/apply`}
         />
       </p>
       <div className=" flex justify-center">
         <Link
-          href={`${process.env.PLUTOMI_URL}/openings/${opening_id}/settings`}
+          href={`${process.env.WEBSITE_URL}/openings/${opening_id}/settings`}
         >
           <CogIcon className="w-10 h-10  hover:text-dark text-light cursor-pointer transition duration-300 ease-in-out" />
         </Link>

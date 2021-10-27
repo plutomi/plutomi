@@ -1,4 +1,9 @@
-import { PutCommand, PutCommandInput } from "@aws-sdk/lib-dynamodb";
+import {
+  PutCommand,
+  PutCommandInput,
+  TransactWriteCommand,
+  TransactWriteCommandInput,
+} from "@aws-sdk/lib-dynamodb";
 import { GetUserByEmail } from "../users/getUserByEmail";
 import { Dynamo } from "../../libs/ddbDocClient";
 import { GetAllUserInvites } from "./getAllOrgInvites";
@@ -44,7 +49,7 @@ export default async function CreateOrgInvite({
     );
 
     if (unclaimed_invites.length > 0) {
-      throw "This user already has a pending invite to your org! They can sign in at plutomi.com/invites to claim it!";
+      throw `This user already has a pending invite to your org! They can log in at ${process.env.WEBSITE_URL}/invites to claim it!`;
     }
     const invite_id = nanoid(50);
     const now = GetCurrentTime("iso") as string;
@@ -62,15 +67,41 @@ export default async function CreateOrgInvite({
       GSI1SK: now,
     };
 
-    const params: PutCommandInput = {
-      TableName: DYNAMO_TABLE_NAME,
-      Item: new_org_invite,
-      ConditionExpression: "attribute_not_exists(PK)",
+    const transactParams: TransactWriteCommandInput = {
+      TransactItems: [
+        {
+          // Add a new invite
+          Put: {
+            Item: new_org_invite,
+            TableName: DYNAMO_TABLE_NAME,
+            ConditionExpression: "attribute_not_exists(PK)",
+          },
+        },
+
+        {
+          // Increment the user's total invites
+          Update: {
+            Key: {
+              PK: `USER#${user.user_id}`,
+              SK: `USER`,
+            },
+            TableName: DYNAMO_TABLE_NAME,
+            UpdateExpression:
+              "SET total_invites = if_not_exists(total_invites, :zero) + :value",
+            ExpressionAttributeValues: {
+              ":zero": 0,
+              ":value": 1,
+            },
+          },
+        },
+      ],
     };
 
-    await Dynamo.send(new PutCommand(params));
+    await Dynamo.send(new TransactWriteCommand(transactParams));
+
     return;
   } catch (error) {
+    console.error(error);
     throw new Error(error);
   }
 }

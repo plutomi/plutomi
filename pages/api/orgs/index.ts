@@ -7,6 +7,8 @@ import withSession from "../../../middleware/withSession";
 import CleanUser from "../../../utils/clean/cleanUser";
 import { UpdateUser } from "../../../utils/users/updateUser";
 import { GetCurrentTime } from "../../../utils/time";
+import { GetUserById } from "../../../utils/users/getUserById";
+import { CreateAndJoinOrg } from "../../../utils/orgs/createAndJoinOrg";
 
 const handler = async (
   req: NextIronRequest,
@@ -59,33 +61,21 @@ const handler = async (
     if (GSI1SK.length == 0) {
       return res.status(400).json({ message: "Org name cannot be empty" });
     }
+
     try {
-      // TODO promise all create and join
-      const org = await CreateOrg(create_org_input);
+      const response = await CreateAndJoinOrg({
+        user_id: user_session.user_id,
+        org_id: org_id,
+        GSI1SK: GSI1SK,
+      });
+      console.log("Response!", response);
+      const updated_user = await GetUserById(user_session.user_id); // TODO remove this, wait for transact
 
-      try {
-        const updated_user = await UpdateUser({
-          user_id: user_session.user_id,
-          new_user_values: {
-            org_id: org_id,
-            org_join_date: GetCurrentTime("iso"),
-            GSI1PK: `ORG#${org_id}#USERS`,
-          },
-          ALLOW_FORBIDDEN_KEYS: true,
-        });
+      // Update the logged in user session with the new org id
+      req.session.set("user", CleanUser(updated_user));
+      await req.session.save();
 
-        // Update the logged in user session with the new org id
-        req.session.set("user", CleanUser(updated_user));
-        await req.session.save();
-
-        return res.status(201).json({ message: "Org created!", org: org });
-      } catch (error) {
-        // TODO retry this
-        return res.status(500).json({
-          message:
-            "We were able to create your org, however you were not able to join it",
-        });
-      }
+      return res.status(201).json({ message: "Org created!", org: org_id });
     } catch (error) {
       // TODO add error logger
       return res

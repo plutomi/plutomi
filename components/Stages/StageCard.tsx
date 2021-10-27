@@ -5,13 +5,18 @@ import { UserGroupIcon } from "@heroicons/react/outline";
 import NumberFormat from "react-number-format";
 import _ from "lodash";
 
-export default function StageCard({ name, current_stage_id, opening_id }) {
+export default function StageCard({
+  name,
+  current_stage_id,
+  opening_id,
+  total_applicants,
+}) {
   const router = useRouter();
   const { stage_id } = router.query as CustomQuery;
 
   return (
     <Link
-      href={`${process.env.PLUTOMI_URL}/openings/${opening_id}/stages/${current_stage_id}/applicants`} // TODO should this end with applicants?
+      href={`${process.env.WEBSITE_URL}/openings/${opening_id}/stages/${current_stage_id}/applicants`} // TODO should this end with applicants?
     >
       <a>
         <div
@@ -30,7 +35,7 @@ export default function StageCard({ name, current_stage_id, opening_id }) {
               <UserGroupIcon className="w-5 h-5 0" />
               <p className="text-md font-semibold ">
                 <NumberFormat
-                  value={_.random(10, 999)}
+                  value={total_applicants}
                   thousandSeparator={true}
                   displayType={"text"}
                 />

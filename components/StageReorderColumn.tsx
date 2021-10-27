@@ -51,7 +51,6 @@ export default function StageReorderColumn() {
       delete diff["modal_mode"];
 
       const { message } = await StagesService.updateStage({
-        opening_id: opening_id,
         stage_id: stage_id,
         new_stage_values: diff,
       });
@@ -83,12 +82,9 @@ export default function StageReorderColumn() {
   );
 
   let { stages, isStagesLoading, isStagesError } = useAllStagesInOpening(
-    user?.user_id,
     opening?.opening_id
   );
-  const { stage, isStageLoading, isStageError } = useStageById(
-    stage_id
-  );
+  const { stage, isStageLoading, isStageError } = useStageById(stage_id);
 
   const [new_stages, setNewStages] = useState(stages);
   useEffect(() => {
@@ -193,11 +189,11 @@ export default function StageReorderColumn() {
                             ref={provided.innerRef}
                           >
                             <Link
-                              href={`${process.env.PLUTOMI_URL}/openings/${opening_id}/stages/${stage.stage_id}/settings`}
+                              href={`${process.env.WEBSITE_URL}/openings/${opening_id}/stages/${stage.stage_id}/settings`}
                             >
                               <a>
                                 <DraggableStageCard
-                                  opening_id={stage.opening_id}
+                                  total_applicants={stage.total_applicants}
                                   name={`${stage.GSI1SK}`}
                                   current_stage_id={stage.stage_id}
                                 />

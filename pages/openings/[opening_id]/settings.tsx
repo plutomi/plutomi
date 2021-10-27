@@ -23,7 +23,6 @@ export default function OpeningSettings() {
     >
       <>
         <OpeningSettingsHeader />
-
         <OpeningSettingsContent />
       </>
     </NewPage>

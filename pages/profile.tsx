@@ -71,6 +71,7 @@ export default function Team() {
           <h1 className="text-2xl font-bold text-dark">
             There&apos;s not much here... yet!
           </h1>
+          <h1>Total invites: {user?.total_invites}</h1>
         </main>
       </div>
     </>

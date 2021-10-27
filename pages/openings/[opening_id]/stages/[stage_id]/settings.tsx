@@ -39,7 +39,7 @@ export default function StageSettings() {
         opening_id: opening_id,
         stage_id: stage_id,
       });
-      router.push(`${process.env.PLUTOMI_URL}/openings/${opening_id}/settings`);
+      router.push(`${process.env.WEBSITE_URL}/openings/${opening_id}/settings`);
     } catch (error) {
       alert(error.response.data.message);
     }

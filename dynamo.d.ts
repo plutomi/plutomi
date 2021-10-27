@@ -16,6 +16,7 @@ interface DynamoUser {
   org_join_date?: string; // "NO_ORG_ASSIGNED";
   first_name?: string; // "JoseV2";
   SK?: string; // "USER";
+  total_invites;
   PK?: string; // "USER#VFQg-GZJvxICh5Y7JBanZCehc22p03";
 }
 
@@ -36,6 +37,7 @@ interface DynamoOpening {
   opening_id: string;
   GSI1PK: string;
   GSI1SK: string;
+  total_applicants: number;
   is_public: boolean;
   stage_order: string[];
 }
@@ -55,6 +57,7 @@ interface DynamoStage {
   entity_type: "STAGE";
   created_at: string;
   stage_id: string;
+  total_applicants: number;
   question_order: string[];
   opening_id: string;
   GSI1PK: string;
@@ -120,6 +123,10 @@ interface DynamoOrg {
   created_at: string;
   GSI1PK: `ORG`; // Allows for 'get all orgs' query
   GSI1SK: string; // Actual org name ie: Plutomi Inc - Can be changed!
+  total_users: number;
+  total_openings: number;
+  total_stages: number;
+  total_applicants: number;
 }
 
 interface DynamoApplicant {

@@ -6,7 +6,7 @@ import { Dynamo } from "../../libs/ddbDocClient";
 import { GetCurrentTime } from "../time";
 import { nanoid } from "nanoid";
 import { GetStage } from "../stages/getStage";
-import { MAX_ITEM_LIMIT, MAX_ITEM_LIMIT_ERROR_MESSAGE } from "../../Config";
+import { MAX_CHILD_ITEM_LIMIT, MAX_ITEM_LIMIT_ERROR } from "../../Config";
 
 const { DYNAMO_TABLE_NAME } = process.env;
 
@@ -34,8 +34,8 @@ export async function CreateStageQuestion({
   try {
     let stage = await GetStage({ org_id, stage_id });
 
-    if (stage.question_order.length >= MAX_ITEM_LIMIT) {
-      throw MAX_ITEM_LIMIT_ERROR_MESSAGE;
+    if (stage.question_order.length >= MAX_CHILD_ITEM_LIMIT) {
+      throw MAX_ITEM_LIMIT_ERROR;
     }
 
     try {

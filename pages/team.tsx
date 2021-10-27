@@ -28,9 +28,9 @@ export default function Team() {
   if (isOrgUsersError) {
     alert(
       // TODO this is not returning the error message from the API call due to the way SWR handles errors. Fix !
-      `You must create an org or join one before adding or viewing team members. If you have pending invites, you can view them at ${process.env.PLUTOMI_URL}/invites`
+      `You must create an org or join one before adding or viewing team members. If you have pending invites, you can view them at ${process.env.WEBSITE_URL}/invites`
     );
-    router.push(`${process.env.PLUTOMI_URL}/dashboard`);
+    router.push(`${process.env.WEBSITE_URL}/dashboard`);
     return null;
   }
 

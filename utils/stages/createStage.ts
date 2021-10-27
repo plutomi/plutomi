@@ -6,7 +6,7 @@ import { Dynamo } from "../../libs/ddbDocClient";
 import { GetCurrentTime } from "../time";
 import { nanoid } from "nanoid";
 import { GetOpening } from "../openings/getOpeningById";
-import { MAX_ITEM_LIMIT, MAX_ITEM_LIMIT_ERROR_MESSAGE } from "../../Config";
+import { MAX_CHILD_ITEM_LIMIT, MAX_ITEM_LIMIT_ERROR } from "../../Config";
 
 const { DYNAMO_TABLE_NAME } = process.env;
 
@@ -24,6 +24,7 @@ export async function CreateStage({
     created_at: now,
     question_order: [],
     stage_id: stage_id,
+    total_applicants: 0,
     opening_id: opening_id,
     GSI1PK: `ORG#${org_id}#OPENING#${opening_id}#STAGES`, // Get all stages in an opening
     GSI1SK: GSI1SK,
@@ -36,8 +37,8 @@ export async function CreateStage({
       // Get current opening
       opening.stage_order.push(stage_id);
 
-      if (opening.stage_order.length >= MAX_ITEM_LIMIT) {
-        throw MAX_ITEM_LIMIT_ERROR_MESSAGE
+      if (opening.stage_order.length >= MAX_CHILD_ITEM_LIMIT) {
+        throw MAX_ITEM_LIMIT_ERROR;
       }
 
       const transactParams: TransactWriteCommandInput = {
@@ -50,17 +51,38 @@ export async function CreateStage({
               ConditionExpression: "attribute_not_exists(PK)",
             },
           },
+
           {
-            // Add stage to the opening
+            // Add stage to the opening + increment stage count on opening
             Update: {
               Key: {
                 PK: `ORG#${org_id}#OPENING#${opening_id}`,
                 SK: `OPENING`,
               },
               TableName: DYNAMO_TABLE_NAME,
-              UpdateExpression: "SET stage_order = :stage_order",
+
+              UpdateExpression:
+                "SET stage_order = :stage_order, total_stages = if_not_exists(total_stages, :zero) + :value",
               ExpressionAttributeValues: {
                 ":stage_order": opening.stage_order,
+                ":zero": 0,
+                ":value": 1,
+              },
+            },
+          },
+          {
+            // Increment stage count on org
+            Update: {
+              Key: {
+                PK: `ORG#${org_id}`,
+                SK: `ORG`,
+              },
+              TableName: DYNAMO_TABLE_NAME,
+              UpdateExpression:
+                "SET total_stages = if_not_exists(total_stages, :zero) + :value",
+              ExpressionAttributeValues: {
+                ":zero": 0,
+                ":value": 1,
               },
             },
           },
@@ -69,6 +91,7 @@ export async function CreateStage({
 
       await Dynamo.send(new TransactWriteCommand(transactParams));
     } catch (error) {
+      console.error(error);
       throw new Error(error);
     }
   } catch (error) {

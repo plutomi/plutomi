@@ -79,10 +79,6 @@ interface CreateApplicantResponseInput {
   question_description: string;
   question_response: string;
 }
-interface JoinOrgInput {
-  org_id: string;
-  user_id: string;
-}
 
 interface CreateLoginLinkInput {
   user_email: string;
@@ -191,7 +187,7 @@ type StageTypes = "idle" | "active" | "frozen" | "deletion";
 interface StageCardInput {
   applicant_type: StageTypes;
   stage_title: string;
-  num_applicants: number;
+  total_applicants: number;
 }
 
 interface useSelfOutput {
