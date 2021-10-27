@@ -24,7 +24,7 @@ export async function JoinOrgFromInvite({ user_id, invite }) {
         },
 
         {
-          // Update user with the new org
+          // Update user with the new org and decrement their total invites
           Update: {
             Key: {
               PK: `USER#${user_id}`,
@@ -32,11 +32,12 @@ export async function JoinOrgFromInvite({ user_id, invite }) {
             },
             TableName: DYNAMO_TABLE_NAME,
             UpdateExpression:
-              "SET org_id = :org_id, org_join_date = :org_join_date, GSI1PK = :GSI1PK",
+              "SET org_id = :org_id, org_join_date = :org_join_date, GSI1PK = :GSI1PK, total_invites = total_invites - :value",
             ExpressionAttributeValues: {
               ":org_id": invite.org_id,
               ":org_join_date": now,
               ":GSI1PK": `ORG#${invite.org_id}#USERS`,
+              ":value": 1,
             },
           },
         },

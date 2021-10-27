@@ -13,7 +13,7 @@ const { DYNAMO_TABLE_NAME } = process.env;
 export async function CreateOpening({ org_id, GSI1SK }: CreateOpeningInput) {
   const now = GetCurrentTime("iso") as string;
   const opening_id = nanoid(16);
-  const new_opening = {
+  const new_opening: DynamoOpening = {
     PK: `ORG#${org_id}#OPENING#${opening_id}`,
     SK: `OPENING`,
     entity_type: "OPENING",
