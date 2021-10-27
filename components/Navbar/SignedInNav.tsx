@@ -40,7 +40,7 @@ const handleLogout = async () => {
   mutate(UsersService.getSelfURL()); // Refresh login state - shows login page
 };
 
-export default function SignedInNav({ current }: ValidNavigation) {
+export default function SignedInNav({ current }) {
   const { user, isUserLoading, isUserError } = useSelf();
 
   return (

@@ -34,15 +34,6 @@ interface DynamoCreateStageInput {
   GSI1SK: string;
 }
 
-interface ValidNavigation {
-  current:
-    | "Dashboard"
-    | "Openings"
-    | "Team"
-    | "Invites"
-    | "Profile"
-    | "PLACEHOLDER";
-}
 
 interface GetStageInput {
   org_id: string;
