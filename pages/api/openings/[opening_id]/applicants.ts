@@ -1,5 +1,5 @@
 import { NextApiResponse } from "next";
-import { GetAllApplicantsInOpening } from "../../../../utils/applicants/getAllApplicantsInOpening";
+import { GetAllApplicantsInOpening } from "../../../../utils/openings/getAllApplicantsInOpening";
 import withSession from "../../../../middleware/withSession";
 import InputValidation from "../../../../utils/inputValidation";
 
@@ -13,7 +13,7 @@ const handler = async (
     return res.status(401).json({ message: "Please sign in again" });
   }
   const { method, query } = req;
-  const { stage_id, opening_id } = query as CustomQuery;
+  const { opening_id } = query as CustomQuery;
 
   if (method === "GET") {
     const get_all_applicants_in_opening_input = {

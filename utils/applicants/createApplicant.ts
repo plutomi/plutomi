@@ -39,8 +39,13 @@ export async function CreateApplicant({
     // TODO add phone number
     current_opening_id: opening_id,
     current_stage_id: stage_id,
+
+    // The reason for the below is so we can get applicants in an org, in an opening, or in a specific stagejust by the ID of each.
+    // Before we had `OPENING#${opening_id}#STAGE#{stage_id}` for the SK which required the opening when getting applicants in specific stage
     GSI1PK: `ORG#${org_id}#APPLICANTS`,
-    GSI1SK: `OPENING#${opening_id}#STAGE#${stage_id}`,
+    GSI1SK: `OPENING#${opening_id}#DATE_LANDED#${now}`,
+    GSI2PK: `ORG#${org_id}#APPLICANTS`,
+    GSI2SK: `STAGE#${stage_id}#DATE_LANDED#${now}`,
   };
 
   try {
