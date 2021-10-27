@@ -9,7 +9,7 @@ import useOrgInvites from "../../SWR/useOrgInvites";
 export default function InvitesContent() {
   const router = useRouter();
   const { user, isUserLoading, isUserError } = useSelf();
-
+  // TODO we don't have to make this call ehre if a user doesn't have invites
   const { invites, isInvitesLoading, isInvitesError } = useOrgInvites(
     user?.user_id
   );

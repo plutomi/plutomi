@@ -10,10 +10,8 @@ export default function Openings() {
 
   const { user, isUserLoading, isUserError } = useSelf();
 
-  let { opening, isOpeningLoading, isOpeningError } = useOpeningById(
-    user?.user_id,
-    opening_id
-  );
+  let { opening, isOpeningLoading, isOpeningError } =
+    useOpeningById(opening_id);
 
   let { stages, isStagesLoading, isStagesError } = useAllStagesInOpening(
     opening?.opening_id
@@ -25,7 +23,7 @@ export default function Openings() {
     if (!router.isReady) return;
 
     // Redirect to the first stage
-    if (stages && stages.length > 0) {
+    if (opening.total_stages > 0) {
       router.push(
         `${process.env.WEBSITE_URL}/openings/${opening_id}/stages/${stages[0].stage_id}/applicants` // TODO should this end with applicants?
       );

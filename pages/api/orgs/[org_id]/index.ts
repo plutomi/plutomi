@@ -18,6 +18,7 @@ const handler = async (
   }
   const { method, query } = req;
   const { org_id } = query as CustomQuery;
+  const org = await GetOrg(org_id);
 
   if (method === "GET") {
     // When signed in, this returns all data for an org
@@ -31,8 +32,6 @@ const handler = async (
     }
 
     try {
-      const org = await GetOrg(org_id);
-
       if (!org) {
         return res.status(404).json({ message: "Org not found" });
       }
@@ -48,12 +47,7 @@ const handler = async (
 
   if (method === "DELETE") {
     try {
-      const all_org_users = await GetAllUsersInOrg({
-        org_id: user_session.org_id,
-        limit: 2,
-      });
-
-      if (all_org_users.length > 1) {
+      if (org.total_users > 1) {
         return res.status(400).json({
           message: "You cannot delete this org as there are other users in it",
         });

@@ -12,10 +12,8 @@ export default function StageSettingsHeader({ deleteStage }) {
   const { opening_id, stage_id } = router.query as CustomQuery;
 
   const { user, isUserLoading, isUserError } = useSelf();
-  let { opening, isOpeningLoading, isOpeningError } = useOpeningById(
-    user?.user_id,
-    opening_id
-  );
+  let { opening, isOpeningLoading, isOpeningError } =
+    useOpeningById(opening_id);
 
   const { stage, isStageLoading, isStageError } = useStageById(stage_id);
 

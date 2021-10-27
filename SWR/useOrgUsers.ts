@@ -11,8 +11,8 @@ const fetcher = (url: string) => axios.get(url).then((res) => res.data);
  * @param user_id - The ID of the logged in user
  * @returns
  */
-function useOrgUsers(org_id: string, user_id: string): useOrgUsersOutput {
-  const shouldFetch = org_id && user_id ? true : false;
+function useOrgUsers(org_id: string): useOrgUsersOutput {
+  const shouldFetch = org_id ? true : false;
 
   const { data, error } = useSWR(
     shouldFetch && OrgsService.getAllUsersInOrgURL({ org_id }),

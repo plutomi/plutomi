@@ -7,12 +7,8 @@ import useOpeningById from "../../../SWR/useOpeningById";
 export default function OpeningSettings() {
   const router = useRouter();
   const { opening_id } = router.query as CustomQuery;
-
-  const { user, isUserLoading, isUserError } = useSelf();
-  let { opening, isOpeningLoading, isOpeningError } = useOpeningById(
-    user?.user_id,
-    opening_id
-  );
+  let { opening, isOpeningLoading, isOpeningError } =
+    useOpeningById(opening_id);
   return (
     <NewPage
       loggedOutPageText={"Log in to view your opening settings"}

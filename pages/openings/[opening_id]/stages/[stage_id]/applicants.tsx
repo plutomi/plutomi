@@ -1,4 +1,3 @@
-import SignedInNav from "../../../../../components/Navbar/SignedInNav";
 import useSelf from "../../../../../SWR/useSelf";
 import EmptyStagesState from "../../../../../components/Stages/EmptyStagesState";
 import { useEffect } from "react";
@@ -17,10 +16,8 @@ export default function StageApplicants() {
   const router = useRouter();
   const { opening_id, stage_id, applicant_id } = router.query as CustomQuery;
   const { user, isUserLoading, isUserError } = useSelf();
-  let { opening, isOpeningLoading, isOpeningError } = useOpeningById(
-    user?.user_id,
-    opening_id
-  );
+  let { opening, isOpeningLoading, isOpeningError } =
+    useOpeningById(opening_id);
 
   const { stages, isStagesLoading, isStagesError } = useAllStagesInOpening(
     opening?.opening_id
@@ -44,12 +41,6 @@ export default function StageApplicants() {
 
   const { applicants, isApplicantsLoading, isApplicantsError } =
     useAllApplicantsInStage(opening_id, stage_id);
-
-  const stageModal: StageModalInput = useStore(
-    (state: PlutomiState) => state.stageModal
-  );
-
-  const setStageModal = useStore((state: PlutomiState) => state.setStageModal);
 
   const setApplicantProfileModal = useStore(
     (store: PlutomiState) => store.setApplicantProfileModal

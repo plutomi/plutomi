@@ -10,11 +10,10 @@ import useOpenings from "../../SWR/useOpenings";
 import useSelf from "../../SWR/useSelf";
 import _ from "lodash";
 import useStore from "../../utils/store";
+import { ViewBoardsIcon } from "@heroicons/react/outline";
 export default function OpeningList() {
   const { user, isUserLoading, isUserError } = useSelf();
-  let { openings, isOpeningsLoading, isOpeningsError } = useOpenings(
-    user?.user_id
-  );
+  let { openings, isOpeningsLoading, isOpeningsError } = useOpenings();
 
   const search = useStore((state: PlutomiState) => state.openingsSearchInput);
 
@@ -32,7 +31,7 @@ export default function OpeningList() {
               href={`${process.env.WEBSITE_URL}/openings/${
                 opening.opening_id
               }/${
-                opening.stage_order.length > 0
+                opening.total_stages > 0
                   ? `stages/${opening.stage_order[0]}/applicants` // TODO should this end with applicants?
                   : `settings`
               }
@@ -63,14 +62,14 @@ export default function OpeningList() {
                           className="flex-shrink-0 mr-1.5 h-5 w-5 text-light"
                           aria-hidden="true"
                         />
-                        {_.random(10, 500)}
+                        {opening.total_applicants}
                       </p>
                       <p className="mt-2 flex items-center text-lg text-normal sm:mt-0 sm:ml-6">
-                        <LocationMarkerIcon
+                        <ViewBoardsIcon
                           className="flex-shrink-0 mr-1.5 h-5 w-5 text-light"
                           aria-hidden="true"
                         />
-                        Location
+                        {opening.total_stages}
                       </p>
                       {opening?.is_public ? (
                         <p className="mt-2 flex items-center text-lg text-normal sm:mt-0 sm:ml-6">

@@ -24,7 +24,7 @@ export default function Apply() {
 
   if (!opening) {
     return (
-      <div className="flex flex-col justify-center items-center mx-auto">
+      <div className="mt-8 flex flex-col justify-center items-center mx-auto">
         <h1 className="text-2xl text-center font-bold">
           Unfortunately, you cannot apply to this opening.
         </h1>

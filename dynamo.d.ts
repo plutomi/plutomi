@@ -21,15 +21,6 @@ interface DynamoUser {
 }
 
 interface DynamoOpening {
-  // PK: `ORG#${org_id}#OPENING#${opening_id}`,
-  // SK: `OPENING`,
-  // entity_type: "OPENING",
-  // created_at: now,
-  // opening_id: opening_id,
-  // GSI1PK: `ORG#${org_id}#OPENINGS`,
-  // GSI1SK: GSI1SK,
-  // is_public: false,
-  // stage_order: [stage_id_1, stage_id_2]
   PK: string;
   SK: "OPENING";
   entity_type: "OPENING";
@@ -40,6 +31,10 @@ interface DynamoOpening {
   total_applicants: number;
   is_public: boolean;
   stage_order: string[];
+  total_stages: 0,
+  total_openings: 0,
+  total_applicants: 0,
+
 }
 
 interface DynamoStage {

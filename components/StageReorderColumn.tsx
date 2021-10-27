@@ -76,10 +76,8 @@ export default function StageReorderColumn() {
   const { opening_id, stage_id } = router.query as CustomQuery;
 
   const { user, isUserLoading, isUserError } = useSelf();
-  let { opening, isOpeningLoading, isOpeningError } = useOpeningById(
-    user?.user_id,
-    opening_id
-  );
+  let { opening, isOpeningLoading, isOpeningError } =
+    useOpeningById(opening_id);
 
   let { stages, isStagesLoading, isStagesError } = useAllStagesInOpening(
     opening?.opening_id
@@ -163,10 +161,10 @@ export default function StageReorderColumn() {
           </button>
         </div>
         <h1 className="text-center text-xl font-semibold my-4">
-          {opening?.stage_order.length == 0 ? "No stages found" : "Stage Order"}
+          {opening?.total_stages == 0 ? "No stages found" : "Stage Order"}
         </h1>
 
-        {opening?.stage_order.length > 0 && (
+        {opening?.total_stages > 0 && (
           <DragDropContext
             onDragEnd={handleDragEnd}
             onDragStart={() => console.log("Start")}

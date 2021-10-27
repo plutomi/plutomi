@@ -9,7 +9,7 @@ interface OpeningModalInputs {
   createOpening?: Function;
   updateOpening?: Function;
 }
-export default function OpeningModal({
+export default function CreateOpeningModal({
   createOpening,
   updateOpening,
 }: OpeningModalInputs) {
@@ -20,7 +20,6 @@ export default function OpeningModal({
   );
 
   const { opening, isOpeningLoading, isOpeningError } = useOpeningById(
-    user?.user_id,
     openingModal.opening_id
   );
   const handleSubmit = async (e: FormEvent) => {
@@ -136,7 +135,7 @@ export default function OpeningModal({
                           </div>
                           <div className="relative flex items-start">
                             {openingModal.modal_mode === "CREATE" ||
-                            opening.stage_order.length == 0 ? (
+                            opening.total_stages == 0 ? (
                               <p className="text-light text-sm ">
                                 You will be able to make this opening public
                                 after adding a stage.

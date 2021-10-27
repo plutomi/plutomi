@@ -96,7 +96,6 @@ export default function StageSettingsContent() {
 
   const { user, isUserLoading, isUserError } = useSelf();
   let { opening, isOpeningLoading, isOpeningError } = useOpeningById(
-    user?.user_id,
     opening_id
   );
 
