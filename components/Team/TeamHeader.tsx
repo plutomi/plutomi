@@ -7,8 +7,7 @@ export default function TeamHeader() {
   const { user, isUserLoading, isUserError } = useSelf();
 
   const { orgUsers, isOrgUsersLoading, isOrgUsersError } = useOrgUsers(
-    user?.org_id,
-    user?.user_id
+    user?.org_id
   );
 
   const setCreateInviteModalOpen = useStore(
