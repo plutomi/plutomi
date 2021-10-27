@@ -60,12 +60,11 @@ const handler = async (
     }
 
     try {
-      const response = await CreateAndJoinOrg({
+      await CreateAndJoinOrg({
         user_id: user_session.user_id,
         org_id: org_id,
         GSI1SK: GSI1SK,
       });
-      console.log("Response!", response);
       const updated_user = await GetUserById(user_session.user_id); // TODO remove this, wait for transact
 
       // Update the logged in user session with the new org id

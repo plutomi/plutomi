@@ -73,6 +73,13 @@ export default function SignedInNav({ current }) {
                       ) {
                         return null;
                       }
+
+                      if (
+                        user?.org_id !== "NO_ORG_ASSIGNED" &&
+                        item.hidden_if_org
+                      ) {
+                        return null;
+                      }
                       return (
                         <Link key={item.name} href={item.href}>
                           <a
