@@ -3,7 +3,7 @@ import useSelf from "../../SWR/useSelf";
 import Loader from "../../components/Loader";
 import Login from "../../components/Login";
 import PageHeader from "./PageHeader";
-import router from "next/router";
+
 export default function NewPage({
   headerText,
   loggedOutPageText,
@@ -18,7 +18,9 @@ export default function NewPage({
   }
 
   if (isUserError) {
-    return <Login loggedOutPageText={loggedOutPageText} />;
+    return (
+      <Login loggedOutPageText={loggedOutPageText}  />
+    );
   }
   return (
     <>

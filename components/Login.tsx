@@ -2,6 +2,7 @@ import LoginEmail from "./EmailSigninInput";
 import { useState } from "react";
 import router from "next/router";
 import AuthService from "../adapters/AuthService";
+
 export default function Login({ loggedOutPageText }) {
   const [user_email, setUserEmail] = useState("");
   const [submittedText, setSubmittedText] = useState(
