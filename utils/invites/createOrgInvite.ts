@@ -1,4 +1,9 @@
-import { PutCommand, PutCommandInput } from "@aws-sdk/lib-dynamodb";
+import {
+  PutCommand,
+  PutCommandInput,
+  TransactWriteCommand,
+  TransactWriteCommandInput,
+} from "@aws-sdk/lib-dynamodb";
 import { GetUserByEmail } from "../users/getUserByEmail";
 import { Dynamo } from "../../libs/ddbDocClient";
 import { GetAllUserInvites } from "./getAllOrgInvites";
@@ -62,13 +67,36 @@ export default async function CreateOrgInvite({
       GSI1SK: now,
     };
 
-    const params: PutCommandInput = {
-      TableName: DYNAMO_TABLE_NAME,
-      Item: new_org_invite,
-      ConditionExpression: "attribute_not_exists(PK)",
+    const transactParams: TransactWriteCommandInput = {
+      TransactItems: [
+        {
+          // Add a new invite
+          Put: {
+            Item: new_org_invite,
+            TableName: DYNAMO_TABLE_NAME,
+            ConditionExpression: "attribute_not_exists(PK)",
+          },
+        },
+
+        {
+          // Increment the user's total invites
+          Update: {
+            Key: {
+              PK: `USER#${user.user_id}`,
+              SK: `USER`,
+            },
+            TableName: DYNAMO_TABLE_NAME,
+            UpdateExpression: "SET total_invites = :total_invites + :value",
+            ExpressionAttributeValues: {
+              ":value": 1,
+            },
+          },
+        },
+      ],
     };
 
-    await Dynamo.send(new PutCommand(params));
+    await Dynamo.send(new TransactWriteCommand(transactParams));
+
     return;
   } catch (error) {
     throw new Error(error);
