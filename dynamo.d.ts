@@ -145,6 +145,8 @@ interface DynamoApplicant {
   current_stage_id: string;
   GSI1PK: string;
   GSI1SK: string;
+  GSI2PK: string;
+  GSI2SK: string;
   responses?: DynamoApplicantResponse[]; // Now is returned when getting applicant by ID
 
   // PK: `ORG#${org_id}#APPLICANT#${applicant_id}`;

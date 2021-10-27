@@ -1,5 +1,5 @@
 import { NextApiResponse } from "next";
-import { GetAllApplicantsInStage } from "../../../../utils/applicants/getAllApplicantsInStage";
+import { GetAllApplicantsInStage } from "../../../../utils/stages/getAllApplicantsInStage";
 import withSession from "../../../../middleware/withSession";
 import { GetStage } from "../../../../utils/stages/getStage";
 
@@ -15,19 +15,9 @@ const handler = async (
   const { method, query } = req;
   const { stage_id } = query as CustomQuery;
 
-  // Get all applicants in a stage - NOTE - To query this, you must get the opening ID as well.
-  // TODO note v
-  // Before, we had this call under the openings/opening_id/stages/stage_id/applicants and found that was a bit.. annoying.
-  // It made more sense to make an extra DB call here to be able to get applicants in a stage with just the stage ID
-  // TODO note ^
   if (method === "GET") {
-    const stage = await GetStage({
+    const get_all_applicants_in_stage_input = {
       org_id: user_session.org_id,
-      stage_id: stage_id,
-    });
-    const get_all_applicants_in_stage_input: GetAllApplicantsInStageInput = {
-      org_id: user_session.org_id,
-      opening_id: stage.opening_id,
       stage_id: stage_id,
     };
 
