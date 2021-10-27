@@ -5,12 +5,6 @@ import QuestionsService from "../adapters/QuestionsService";
 import StagesService from "../adapters/StagesService";
 const fetcher = (url: string) => axios.get(url).then((res) => res.data);
 
-/**
- *
- * @param org_id - The org in which the stage resides in
- * @param stage_id - The stage ID
- *
- */
 function useAllStageQuestions(
   org_id: string,
   stage_id: string
