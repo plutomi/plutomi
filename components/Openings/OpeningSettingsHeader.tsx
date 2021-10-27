@@ -1,5 +1,4 @@
 import Breadcrumbs from "../Breadcrumbs";
-import useSelf from "../../SWR/useSelf";
 import { PencilAltIcon } from "@heroicons/react/outline";
 import useStore from "../../utils/store";
 import { mutate } from "swr";
@@ -13,14 +12,9 @@ export default function OpeningSettingsHeader() {
   const router = useRouter();
   const { opening_id } = router.query as CustomQuery;
 
-  const { user, isUserLoading, isUserError } = useSelf();
   let { opening, isOpeningLoading, isOpeningError } =
     useOpeningById(opening_id);
 
-  const stageModal = useStore((state: PlutomiState) => state.stageModal);
-  const setStageModal = useStore((state: PlutomiState) => state.setStageModal);
-
-  const openingModal = useStore((state: PlutomiState) => state.openingModal);
   const setOpeningModal = useStore(
     (state: PlutomiState) => state.setOpeningModal
   );
@@ -38,7 +32,7 @@ export default function OpeningSettingsHeader() {
   ];
 
   // Hide applicant crumb if opening has no stages
-  if (opening?.total_stages > 0) {
+  if (opening.total_stages > 0) {
     crumbs.unshift({
       name: "Applicants",
       href: `/openings/${opening_id}/stages/${opening?.stage_order[0]}/applicants`, // TODO should this end with /applicants?
