@@ -1,6 +1,6 @@
 // Returns some public info about an opening
 // Such as the opening name, description, and stage order
-import withCleanOrgName from "../../../../../../../middleware/withCleanOrgName";
+import withCleanOrgId from "../../../../../../../middleware/withCleanOrgId";
 import { NextApiResponse } from "next";
 import CleanStage from "../../../../../../../utils/clean/cleanStage";
 import { GetStage } from "../../../../../../../utils/stages/getStage";
@@ -38,4 +38,4 @@ const handler = async (req: CustomRequest, res: NextApiResponse) => {
   return res.status(405).json({ message: "Not Allowed" });
 };
 
-export default withCleanOrgName(handler);
+export default withCleanOrgId(handler);

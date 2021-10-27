@@ -1,6 +1,6 @@
 import { NextApiResponse } from "next";
 import InputValidation from "../../../../../../../utils/inputValidation";
-import withCleanOrgName from "../../../../../../../middleware/withCleanOrgName";
+import withCleanOrgId from "../../../../../../../middleware/withCleanOrgId";
 import { CreateApplicantResponse } from "../../../../../../../utils/applicants/createApplicantResponse";
 const handler = async (req: CustomRequest, res: NextApiResponse) => {
   const { method, query, body } = req;
@@ -63,4 +63,4 @@ const handler = async (req: CustomRequest, res: NextApiResponse) => {
   return res.status(405).json({ message: "Not Allowed" });
 };
 
-export default withCleanOrgName(handler);
+export default withCleanOrgId(handler);

@@ -1,4 +1,4 @@
-import withCleanOrgName from "../../../../../middleware/withCleanOrgName";
+import withCleanOrgId from "../../../../../middleware/withCleanOrgId";
 import { GetOrg } from "../../../../../utils/orgs/getOrg";
 import { NextApiResponse } from "next";
 import CleanOrg from "../../../../../utils/clean/cleanOrg";
@@ -29,4 +29,4 @@ const handler = async (req: CustomRequest, res: NextApiResponse) => {
   return res.status(405).json({ message: "Not Allowed" });
 };
 
-export default withCleanOrgName(handler);
+export default withCleanOrgId(handler);

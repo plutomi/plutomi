@@ -2,7 +2,7 @@ import AcceptOrgInvite from "../../../../utils/invites/acceptOrgInvite";
 import InputValidation from "../../../../utils/inputValidation";
 import { NextApiResponse } from "next";
 import DeleteOrgInvite from "../../../../utils/invites/deleteOrgInvite";
-import withCleanOrgName from "../../../../middleware/withCleanOrgName";
+import withCleanOrgId from "../../../../middleware/withCleanOrgId";
 import { GetOrgInvite } from "../../../../utils/invites/getOrgInvite";
 import withSession from "../../../../middleware/withSession";
 import { UpdateUser } from "../../../../utils/users/updateUser";
@@ -91,4 +91,4 @@ const handler = async (
   return res.status(405).json({ message: "Not Allowed" });
 };
 
-export default withSession(withCleanOrgName(handler));
+export default withSession(withCleanOrgId(handler));

@@ -1,5 +1,5 @@
 // All public openings for the org
-import withCleanOrgName from "../../../../../../middleware/withCleanOrgName";
+import withCleanOrgId from "../../../../../../middleware/withCleanOrgId";
 import { NextApiResponse } from "next";
 import { GetAllOpeningsInOrg } from "../../../../../../utils/openings/getAllOpeningsInOrg";
 import CleanOpening from "../../../../../../utils/clean/cleanOpening";
@@ -29,4 +29,4 @@ const handler = async (req: CustomRequest, res: NextApiResponse) => {
   return res.status(405).json({ message: "Not Allowed" });
 };
 
-export default withCleanOrgName(handler);
+export default withCleanOrgId(handler);
