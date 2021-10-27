@@ -163,10 +163,10 @@ export default function StageReorderColumn() {
           </button>
         </div>
         <h1 className="text-center text-xl font-semibold my-4">
-          {opening?.stage_order.length == 0 ? "No stages found" : "Stage Order"}
+          {opening?.total_stages == 0 ? "No stages found" : "Stage Order"}
         </h1>
 
-        {opening?.stage_order.length > 0 && (
+        {opening?.total_stages > 0 && (
           <DragDropContext
             onDragEnd={handleDragEnd}
             onDragStart={() => console.log("Start")}

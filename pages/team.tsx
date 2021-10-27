@@ -2,8 +2,6 @@ import SignedInNav from "../components/Navbar/SignedInNav";
 import useSelf from "../SWR/useSelf";
 import EmptyTeamState from "../components/Team/EmptyTeamState";
 import TeamContent from "../components/Team/TeamContent";
-import Loader from "../components/Loader";
-import Login from "../components/Login";
 import CreateInviteModal from "../components/CreateInviteModal";
 import useOrgUsers from "../SWR/useOrgUsers";
 import useStore from "../utils/store";
@@ -11,7 +9,6 @@ import { useRouter } from "next/router";
 import InvitesService from "../adapters/InvitesService";
 
 import NewPage from "../components/Templates/NewPage";
-import InvitesContent from "../components/Invites/InvitesContent";
 export default function Team() {
   const router = useRouter();
 

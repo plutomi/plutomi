@@ -40,7 +40,7 @@ export default function OpeningSettingsHeader() {
   ];
 
   // Hide applicant crumb if opening has no stages
-  if (opening?.stage_order.length > 0) {
+  if (opening?.total_stages > 0) {
     crumbs.unshift({
       name: "Applicants",
       href: `/openings/${opening_id}/stages/${opening?.stage_order[0]}/applicants`, // TODO should this end with /applicants?

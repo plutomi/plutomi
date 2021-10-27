@@ -33,7 +33,7 @@ export default function OpeningList() {
               href={`${process.env.WEBSITE_URL}/openings/${
                 opening.opening_id
               }/${
-                opening.stage_order.length > 0
+                opening.total_stages > 0
                   ? `stages/${opening.stage_order[0]}/applicants` // TODO should this end with applicants?
                   : `settings`
               }
