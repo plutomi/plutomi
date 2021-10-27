@@ -1,6 +1,6 @@
 import { NextApiResponse } from "next";
 import { GetAllQuestionsInStage } from "../../../../../../../utils/questions/getAllQuestionsInStage";
-import withCleanOrgName from "../../../../../../../middleware/withCleanOrgName";
+import withCleanOrgId from "../../../../../../../middleware/withCleanOrgId";
 const handler = async (req: CustomRequest, res: NextApiResponse) => {
   const { method, query } = req;
   const { org_id, stage_id } = query as CustomQuery;
@@ -21,4 +21,4 @@ const handler = async (req: CustomRequest, res: NextApiResponse) => {
   return res.status(405).json({ message: "Not Allowed" });
 };
 
-export default withCleanOrgName(handler);
+export default withCleanOrgId(handler);

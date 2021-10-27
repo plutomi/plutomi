@@ -3,7 +3,7 @@ import SendOrgInvite from "../../../utils/email/sendOrgInvite";
 import InputValidation from "../../../utils/inputValidation";
 import { GetPastOrFutureTime } from "../../../utils/time";
 import { NextApiResponse } from "next";
-import withCleanOrgName from "../../../middleware/withCleanOrgName";
+import withCleanOrgId from "../../../middleware/withCleanOrgId";
 import { GetOrg } from "../../../utils/orgs/getOrg";
 import withSession from "../../../middleware/withSession";
 const handler = async (
@@ -79,4 +79,4 @@ const handler = async (
   return res.status(405).json({ message: "Not Allowed" });
 };
 
-export default withSession(withCleanOrgName(handler));
+export default withSession(withCleanOrgId(handler));

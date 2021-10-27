@@ -1,4 +1,4 @@
-import withCleanOrgName from "../../../../middleware/withCleanOrgName";
+import withCleanOrgId from "../../../../middleware/withCleanOrgId";
 import { GetOrg } from "../../../../utils/orgs/getOrg";
 import { NextApiResponse } from "next";
 import { GetAllUsersInOrg } from "../../../../utils/orgs/getAllUsersInOrg";
@@ -86,4 +86,4 @@ const handler = async (
   return res.status(405).json({ message: "Not Allowed" });
 };
 
-export default withSession(withCleanOrgName(handler));
+export default withSession(withCleanOrgId(handler));

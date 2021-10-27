@@ -1,6 +1,6 @@
 import { NextApiResponse } from "next";
 import { GetAllQuestionsInStage } from "../../../../utils/questions/getAllQuestionsInStage";
-import withCleanOrgName from "../../../../middleware/withCleanOrgName";
+import withCleanOrgId from "../../../../middleware/withCleanOrgId";
 import withSession from "../../../../middleware/withSession";
 
 const handler = async (
@@ -30,4 +30,4 @@ const handler = async (
   return res.status(405).json({ message: "Not Allowed" });
 };
 
-export default withSession(withCleanOrgName(handler));
+export default withSession(withCleanOrgId(handler));

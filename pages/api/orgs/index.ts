@@ -1,6 +1,6 @@
 import { NextApiResponse } from "next";
 import { CreateOrg } from "../../../utils/orgs/createOrg";
-import withCleanOrgName from "../../../middleware/withCleanOrgName";
+import withCleanOrgId from "../../../middleware/withCleanOrgId";
 import InputValidation from "../../../utils/inputValidation";
 import { GetAllUserInvites } from "../../../utils/invites/getAllOrgInvites";
 import withSession from "../../../middleware/withSession";
@@ -25,7 +25,7 @@ const handler = async (
   // Create an org
   if (method === "POST") {
     if (GSI1SK === "NO_ORG_ASSIGNED") {
-      // TODO major, this isn't using the withcleanorgname
+      // TODO major, this isn't using the withCleanOrgId
       return res.status(400).json({
         message: `You cannot create an org with this name: ${GSI1SK}`,
       });
@@ -87,4 +87,4 @@ const handler = async (
   return res.status(405).json({ message: "Not Allowed" });
 };
 
-export default withSession(withCleanOrgName(handler));
+export default withSession(withCleanOrgId(handler));

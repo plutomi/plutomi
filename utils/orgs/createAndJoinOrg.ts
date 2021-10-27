@@ -11,7 +11,7 @@ export async function CreateAndJoinOrg({ user_id, org_id, GSI1SK }) {
   const now = GetCurrentTime("iso") as string;
 
   const new_org = {
-    PK: `ORG#${org_id.toLowerCase()}`, // TODO add the org name filter here, or add it in middleware
+    PK: `ORG#${org_id}`, 
     SK: `ORG`,
     org_id: org_id, // plutomi - Cannot be changed
     entity_type: "ORG",
