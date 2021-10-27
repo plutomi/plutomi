@@ -10,7 +10,7 @@ const handler = async (
   const user_session = req.session.get("user");
   if (!user_session) {
     req.session.destroy();
-    return res.status(401).json({ message: "Please sign in again" }); // TODO middleware
+    return res.status(401).json({ message: "Please log in again" }); // TODO middleware
   }
 
   const { method } = req;
@@ -20,7 +20,7 @@ const handler = async (
       const requested_user = await GetUserById(user_session.user_id);
       if (!requested_user) {
         req.session.destroy();
-        return res.status(401).json({ message: "Please sign in again" }); // TODO middleware
+        return res.status(401).json({ message: "Please log in again" }); // TODO middleware
       }
 
       return res.status(200).json(requested_user);

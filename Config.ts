@@ -1,3 +1,7 @@
+import AuthService from "./adapters/AuthService";
+import UsersService from "./adapters/UsersService";
+import { mutate } from "swr";
+
 /**
  * ONLY FOR ENTITIES THAT CAN HAVE THEIR ORDER REARRANGED - Stages, questions, rules, etc.
  * We are storing the order in an array in the parent component.
@@ -14,4 +18,19 @@ const MAX_CHILD_ITEM_LIMIT = 200;
 const MAX_ITEM_LIMIT_ERROR =
   "MAX_CHILD_ITEM_LIMIT reached, please contact support@plutomi.com for assistance";
 
-export { MAX_CHILD_ITEM_LIMIT, MAX_ITEM_LIMIT_ERROR };
+const NAVBAR_NAVIGATION = [
+  { name: "Dashboard", href: "/dashboard", hidden_if_no_org: false },
+  { name: "Openings", href: "/openings", hidden_if_no_org: true },
+  { name: "Team", href: "/team", hidden_if_no_org: true },
+];
+const DROPDOWN_NAVIGATION = [
+  { name: "Your Profile", href: "/profile" },
+  { name: "Log Out", href: "#" },
+];
+
+export {
+  MAX_CHILD_ITEM_LIMIT,
+  MAX_ITEM_LIMIT_ERROR,
+  NAVBAR_NAVIGATION,
+  DROPDOWN_NAVIGATION,
+};

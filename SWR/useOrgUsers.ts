@@ -2,15 +2,8 @@
 import axios from "axios";
 import useSWR from "swr";
 import OrgsService from "../adapters/OrgsService";
-import UsersService from "../adapters/UsersService";
 const fetcher = (url: string) => axios.get(url).then((res) => res.data);
 
-/**
- *
- * @param org_id The org which you want to look up the users for
- * @param user_id - The ID of the logged in user
- * @returns
- */
 function useOrgUsers(org_id: string): useOrgUsersOutput {
   const shouldFetch = org_id ? true : false;
 

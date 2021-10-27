@@ -11,7 +11,7 @@ const handler = async (
   const user_session = req.session.get("user");
   if (!user_session) {
     req.session.destroy();
-    return res.status(401).json({ message: "Please sign in again" });
+    return res.status(401).json({ message: "Please log in again" });
   }
   const { body, method, query } = req;
   const { question_id } = query as CustomQuery;

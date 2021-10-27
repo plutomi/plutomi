@@ -1,4 +1,4 @@
-// Deletes the login link the user used to sign in
+// Deletes the login link the user used to log in
 import { DeleteCommand, DeleteCommandInput } from "@aws-sdk/lib-dynamodb";
 import { Dynamo } from "../../libs/ddbDocClient";
 
