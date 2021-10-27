@@ -56,4 +56,15 @@ export default class OpeningsService {
     );
     return data;
   }
+
+  // static getAllApplicantsInOpeningURL({ opening_id }) { // TODO expensive call if there are a lot of applicants - should this be enabled?
+  //   return `/api/openings/${opening_id}/applicants`;
+  // }
+
+  // static async getAllApplicantsInOpening({ opening_id }) {
+  //   const { data } = await axios.get(
+  //     this.getAllApplicantsInOpeningURL({ opening_id })
+  //   );
+  //   return data;
+  // }
 }

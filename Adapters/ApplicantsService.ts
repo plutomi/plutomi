@@ -58,17 +58,4 @@ export default class ApplicantsService {
     );
     return data;
   }
-
-  static getAllApplicantsInOpeningURL({ opening_id }) {
-    // TODO should this be under applicants?
-    return `/api/openings/${opening_id}/applicants`;
-  }
-
-  static async getAllApplicantsInOpening({ opening_id }) {
-    // TODO should this be under applicants?
-    const { data } = await axios.get(
-      this.getAllApplicantsInOpeningURL({ opening_id })
-    );
-    return data;
-  }
 }
