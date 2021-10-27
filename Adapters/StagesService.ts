@@ -46,13 +46,13 @@ export default class StagesService {
     return data;
   }
 
-  static getAllApplicantsInStageURL({ opening_id, stage_id }) {
-    return `/api/openings/${opening_id}/stages/${stage_id}/applicants`;
+  static getAllApplicantsInStageURL({ stage_id }) {
+    return `/api/stages/${stage_id}/applicants`;
   }
 
-  static async getAllApplicantsInStage({ opening_id, stage_id }) {
+  static async getAllApplicantsInStage({ stage_id }) {
     const { data } = await axios.get(
-      this.getAllApplicantsInStageURL({ opening_id, stage_id })
+      this.getAllApplicantsInStageURL({ stage_id })
     );
     return data;
   }
