@@ -1,6 +1,6 @@
 import { NextApiResponse } from "next";
-import { GetAllApplicantsInStage } from "../../../../../../utils/applicants/getAllApplicantsInStage";
-import withSession from "../../../../../../middleware/withSession";
+import { GetAllApplicantsInStage } from "../../../../../utils/applicants/getAllApplicantsInStage";
+import withSession from "../../../../../middleware/withSession";
 
 const handler = async (
   req: NextIronRequest,
