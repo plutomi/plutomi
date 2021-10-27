@@ -69,12 +69,6 @@ interface APIDeleteStageInput {
   stage_id: string;
 }
 
-interface APIUpdateStageInput {
-  opening_id: string;
-  stage_id: string;
-  new_stage_values: Any;
-}
-
 /**
  * @param user_id - For mutate calls, to refresh the user
  */
