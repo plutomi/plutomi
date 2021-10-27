@@ -19,18 +19,38 @@ const MAX_ITEM_LIMIT_ERROR =
   "MAX_CHILD_ITEM_LIMIT reached, please contact support@plutomi.com for assistance";
 
 const NAVBAR_NAVIGATION = [
-  { name: "Dashboard", href: "/dashboard", hidden_if_no_org: false },
-  { name: "Openings", href: "/openings", hidden_if_no_org: true },
-  { name: "Team", href: "/team", hidden_if_no_org: true },
+  {
+    name: "Dashboard",
+    href: "/dashboard",
+    hidden_if_no_org: false,
+    hidden_if_org: false,
+  },
+  {
+    name: "Openings",
+    href: "/openings",
+    hidden_if_no_org: true,
+    hidden_if_org: false,
+  },
+  { name: "Team", href: "/team", hidden_if_no_org: true, hidden_if_org: false },
+  {
+    name: "Invites",
+    href: "/invites",
+    hidden_if_no_org: false,
+    hidden_if_org: true,
+  },
 ];
 const DROPDOWN_NAVIGATION = [
   { name: "Your Profile", href: "/profile" },
   { name: "Log Out", href: "#" },
 ];
 
+// How often we should poll for invites while on the /invites page
+const INVITES_REFRESH_INTERVAL = 10000;
+
 export {
   MAX_CHILD_ITEM_LIMIT,
   MAX_ITEM_LIMIT_ERROR,
   NAVBAR_NAVIGATION,
   DROPDOWN_NAVIGATION,
+  INVITES_REFRESH_INTERVAL,
 };

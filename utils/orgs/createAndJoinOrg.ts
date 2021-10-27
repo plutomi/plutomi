@@ -11,7 +11,7 @@ export async function CreateAndJoinOrg({ user_id, org_id, GSI1SK }) {
   const now = GetCurrentTime("iso") as string;
 
   const new_org = {
-    PK: `ORG#${org_id}`, 
+    PK: `ORG#${org_id}`,
     SK: `ORG`,
     org_id: org_id, // plutomi - Cannot be changed
     entity_type: "ORG",
@@ -59,8 +59,7 @@ export async function CreateAndJoinOrg({ user_id, org_id, GSI1SK }) {
     const response = await Dynamo.send(
       new TransactWriteCommand(transactParams)
     );
-    console.log("Create and join org response");
-    console.log(response);
+
     return;
   } catch (error) {
     console.error(error);
