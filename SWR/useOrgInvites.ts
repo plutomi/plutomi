@@ -13,7 +13,8 @@ function useOrgInvites(user_id: string): useOrgInvitesOutput {
 
   const { data, error } = useSWR(
     shouldFetch && InvitesService.getInvitesURL({ user_id }),
-    fetcher
+    fetcher,
+    { refreshInterval: 10000 }
   );
 
   return {
