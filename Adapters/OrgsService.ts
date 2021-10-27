@@ -24,4 +24,13 @@ export default class OrgsService {
     const { data } = await axios.delete(this.getOrgURL({ org_id }));
     return data;
   }
+
+  static getAllUsersInOrgURL({ org_id }: APIGetAllUsersInOrgURL) {
+    return `/api/orgs/${org_id}/users`;
+  }
+
+  static async getAllUsersInOrg({ org_id }: APIGetAllUsersInOrg) {
+    const { data } = await axios.get(this.getAllUsersInOrgURL({ org_id }));
+    return data;
+  }
 }
