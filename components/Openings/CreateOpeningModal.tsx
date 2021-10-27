@@ -9,7 +9,7 @@ interface OpeningModalInputs {
   createOpening?: Function;
   updateOpening?: Function;
 }
-export default function OpeningModal({
+export default function CreateOpeningModal({
   createOpening,
   updateOpening,
 }: OpeningModalInputs) {
@@ -20,7 +20,6 @@ export default function OpeningModal({
   );
 
   const { opening, isOpeningLoading, isOpeningError } = useOpeningById(
-    user?.user_id,
     openingModal.opening_id
   );
   const handleSubmit = async (e: FormEvent) => {

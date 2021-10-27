@@ -10,10 +10,8 @@ export default function Openings() {
 
   const { user, isUserLoading, isUserError } = useSelf();
 
-  let { opening, isOpeningLoading, isOpeningError } = useOpeningById(
-    user?.user_id,
-    opening_id
-  );
+  let { opening, isOpeningLoading, isOpeningError } =
+    useOpeningById(opening_id);
 
   let { stages, isStagesLoading, isStagesError } = useAllStagesInOpening(
     opening?.opening_id

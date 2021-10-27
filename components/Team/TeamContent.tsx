@@ -8,7 +8,7 @@ import CreateInviteModal from "../CreateInviteModal";
 import { useRouter } from "next/router";
 import InvitesService from "../../adapters/InvitesService";
 import EmptyTeamState from "./EmptyTeamState";
-export default function OpeningsContent() {
+export default function TeamContent() {
   const router = useRouter();
   const { user, isUserLoading, isUserError } = useSelf();
   const { orgUsers, isOrgUsersLoading, isOrgUsersError } = useOrgUsers(

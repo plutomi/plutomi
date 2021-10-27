@@ -5,7 +5,7 @@ import StageReorderColumn from "../StageReorderColumn";
 import { GetRelativeTime } from "../../utils/time";
 import difference from "../../utils/getObjectDifference";
 import { useEffect } from "react";
-import OpeningModal from "./OpeningModal";
+import OpeningModal from "./CreateOpeningModal";
 import Loader from "../Loader";
 import useSelf from "../../SWR/useSelf";
 import { useState } from "react";
