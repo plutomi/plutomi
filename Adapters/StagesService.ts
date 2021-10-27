@@ -19,8 +19,6 @@ export default class StagesService {
     return data;
   }
 
-
-
   static async deleteStage({ stage_id }: APIDeleteStageInput) {
     const { data } = await axios.delete(this.getStageURL({ stage_id }));
     return data;
@@ -44,6 +42,17 @@ export default class StagesService {
   static async getAllQuestionsInStage({ stage_id }) {
     const { data } = await axios.get(
       this.getAllQuestionsInStageURL({ stage_id })
+    );
+    return data;
+  }
+
+  static getAllApplicantsInStageURL({ stage_id }) {
+    return `/api/stages/${stage_id}/applicants`;
+  }
+
+  static async getAllApplicantsInStage({ stage_id }) {
+    const { data } = await axios.get(
+      this.getAllApplicantsInStageURL({ stage_id })
     );
     return data;
   }

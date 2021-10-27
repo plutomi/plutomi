@@ -9,15 +9,6 @@ export default class UsersService {
     return data;
   }
 
-  static getAllUsersInOrgURL({ org_id }: APIGetAllUsersInOrgURL) {
-    return `/api/orgs/${org_id}/users`;
-  }
-
-  static async getAllUsersInOrg({ org_id }: APIGetAllUsersInOrg) {
-    const { data } = await axios.get(this.getAllUsersInOrgURL({ org_id }));
-    return data;
-  }
-
   static getSpecificUserURL({ user_id }: APIGetUserURL) {
     return `/api/users/${user_id}`;
   }
