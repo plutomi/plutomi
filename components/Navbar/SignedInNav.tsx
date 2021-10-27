@@ -10,7 +10,6 @@ import {
   XIcon,
 } from "@heroicons/react/outline";
 import Link from "next/dist/client/link";
-import useOrgInvites from "../../SWR/useOrgInvites";
 import Banner from "../BannerTop";
 import { mutate } from "swr";
 import UsersService from "../../adapters/UsersService";
@@ -43,13 +42,10 @@ const handleLogout = async () => {
 
 export default function SignedInNav({ current }: ValidNavigation) {
   const { user, isUserLoading, isUserError } = useSelf();
-  const { invites, isInvitesLoading, isInvitesError } = useOrgInvites(
-    user?.user_id
-  );
 
   return (
     <>
-      {invites?.length > 0 && current !== "Invites" && (
+      {user?.total_invites > 0 && current !== "Invites" && (
         <Banner
           msgSmall={"You've been invited!"}
           msgLarge={"You've been invited to join an organization!"}

@@ -162,10 +162,11 @@ const handler = async (
       });
     }
 
-    // TODO delete link
     const user = await GetUserById(user_id);
 
     if (user && latest_login_link) {
+      // TODO should this be a transaction?
+
       CreateLoginEvent(user_id);
 
       // Invalidates the last login link while allowing the user to login again if needed
@@ -174,6 +175,10 @@ const handler = async (
       const clean_user = CleanUser(user as DynamoUser);
       req.session.set("user", clean_user);
       await req.session.save();
+      if (clean_user.total_invites > 0) {
+        res.redirect(`${process.env.WEBSITE_URL}/invites`);
+        return;
+      }
       res.redirect(callback_url);
       return;
     }

@@ -64,7 +64,7 @@ export default function InvitesContent() {
         {invites.map((invite: DynamoOrgInvite) => (
           <Invite
             invite={invite}
-            key={invite.expires_at}
+            key={invite.invite_id}
             rejectInvite={rejectInvite}
             acceptInvite={acceptInvite}
           />

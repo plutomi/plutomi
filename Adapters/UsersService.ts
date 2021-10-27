@@ -4,7 +4,7 @@ export default class UsersService {
   static getSelfURL() {
     return `/api/users/self`;
   }
-  static async getUser() {
+  static async getSelf() {
     const { data } = await axios.get(this.getSelfURL());
     return data;
   }
