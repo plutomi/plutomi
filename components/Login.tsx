@@ -53,7 +53,7 @@ export default function Login({ loggedOutPageText }) {
               sendEmail={sendEmail}
             />{" "}
             <p className=" text-lg text-normal text-center sm:max-w-8xl max-w-sm">
-              We will email you a magic link for a password-free sign in.
+              We will email you a magic link for a password-free log in.
             </p>
           </div>
         )}

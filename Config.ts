@@ -25,7 +25,7 @@ const NAVBAR_NAVIGATION = [
 ];
 const DROPDOWN_NAVIGATION = [
   { name: "Your Profile", href: "/profile" },
-  { name: "Sign Out", href: "#" },
+  { name: "Log Out", href: "#" },
 ];
 
 export {

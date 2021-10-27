@@ -11,7 +11,7 @@ const handler = async (
   const user_session = req.session.get("user");
   if (!user_session) {
     req.session.destroy();
-    return res.status(401).json({ message: "Please sign in again" });
+    return res.status(401).json({ message: "Please log in again" });
   }
   const { body, method, query } = req;
   const { opening_id } = query as CustomQuery;
@@ -19,7 +19,10 @@ const handler = async (
   // Get all stages in an opening
   if (method === "GET") {
     try {
-      const all_stages = await GetAllStagesInOpening(user_session.org_id, opening_id);
+      const all_stages = await GetAllStagesInOpening(
+        user_session.org_id,
+        opening_id
+      );
       return res.status(200).json(all_stages);
     } catch (error) {
       // TODO add error logger

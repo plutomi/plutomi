@@ -130,7 +130,7 @@ const handler = async (
     if (hash != latest_login_link.login_link_hash) {
       /**
        * Someone could try to guess a user ID and the 1500 char long key
-       * If they do get someone's ID correct in that 15 minute window to sign in AND they key is wrong...
+       * If they do get someone's ID correct in that 15 minute window to log in AND they key is wrong...
        * Their account will be suspended for 15 minutes until they can generate a new key
        */
 
