@@ -3,13 +3,15 @@ import useSelf from "../../SWR/useSelf";
 import Loader from "../../components/Loader";
 import Login from "../../components/Login";
 import PageHeader from "./PageHeader";
-
+import { useRouter } from "next/router";
+import { NAVBAR_NAVIGATION } from "../../Config";
 export default function NewPage({
   headerText,
   loggedOutPageText,
   currentNavbarItem,
   children,
 }) {
+  const router = useRouter();
   const { user, isUserLoading, isUserError } = useSelf();
 
   // When rendering client side don't display anything until loading is complete
@@ -18,10 +20,34 @@ export default function NewPage({
   }
 
   if (isUserError) {
-    return (
-      <Login loggedOutPageText={loggedOutPageText}  />
-    );
+    return <Login loggedOutPageText={loggedOutPageText} />;
   }
+
+  const current_nav_item = NAVBAR_NAVIGATION.find(
+    (nav_item) => nav_item.name === currentNavbarItem
+  );
+
+  // Redirect on no org
+  if (current_nav_item.hidden_if_no_org && user?.org_id === "NO_ORG_ASSIGNED") {
+    if (current_nav_item.name === "Openings") {
+      alert(
+        `You must create an org or join one before adding or viewing openings. If you have pending invites, you can view them at ${process.env.WEBSITE_URL}/invites`
+      );
+      router.push(`${process.env.WEBSITE_URL}/dashboard`);
+
+      return null;
+    }
+
+    if (current_nav_item.name === "Team") {
+      alert(
+        `You must create an org or join one before adding or viewing team members. If you have pending invites, you can view them at ${process.env.WEBSITE_URL}/invites`
+      );
+      router.push(`${process.env.WEBSITE_URL}/dashboard`);
+
+      return null;
+    }
+  }
+
   return (
     <>
       <SignedInNav current={currentNavbarItem} />

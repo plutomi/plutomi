@@ -3,6 +3,8 @@ import useSelf from "../../SWR/useSelf";
 import NavbarSearch from "./NavbarSearch";
 import AuthService from "../../adapters/AuthService";
 import { Disclosure, Menu, Transition } from "@headlessui/react";
+import { NAVBAR_NAVIGATION, DROPDOWN_NAVIGATION } from "../../Config";
+import { useRouter } from "next/router";
 import {
   BellIcon,
   DotsHorizontalIcon,
@@ -14,34 +16,25 @@ import Banner from "../BannerTop";
 import { mutate } from "swr";
 import UsersService from "../../adapters/UsersService";
 
-const navigation = [
-  { name: "Dashboard", href: "/dashboard", hidden_if_no_org: false },
-  { name: "Openings", href: "/openings", hidden_if_no_org: true },
-  { name: "Team", href: "/team", hidden_if_no_org: true },
-];
-const userNavigation = [
-  { name: "Your Profile", event: null, href: "/profile" },
-  { name: "Sign Out", event: () => handleLogout(), href: "#" },
-];
-
 function classNames(...classes) {
   return classes.filter(Boolean).join(" ");
 }
 
-const handleLogout = async () => {
-  try {
-    const { message } = await AuthService.logout();
-    alert(message);
-    // TODO reroute to homepage
-  } catch (error) {
-    alert(error.response.message);
-  }
-
-  mutate(UsersService.getSelfURL()); // Refresh login state - shows login page
-};
-
 export default function SignedInNav({ current }) {
+  const router = useRouter();
   const { user, isUserLoading, isUserError } = useSelf();
+
+  const handleLogout = async () => {
+    try {
+      const { message } = await AuthService.logout();
+      alert(message);
+      // TODO reroute to homepage
+    } catch (error) {
+      alert(error.response.message);
+    }
+
+    mutate(UsersService.getSelfURL()); // Refresh login state - shows login page
+  };
 
   return (
     <>
@@ -73,7 +66,7 @@ export default function SignedInNav({ current }) {
                   /> 
                   </div>*/}
                   <div className="hidden sm:-my-px sm:ml-6 sm:flex sm:space-x-8">
-                    {navigation.map((item) => {
+                    {NAVBAR_NAVIGATION.map((item) => {
                       if (
                         user?.org_id === "NO_ORG_ASSIGNED" &&
                         item.hidden_if_no_org
@@ -160,12 +153,12 @@ export default function SignedInNav({ current }) {
                           )}
                         </div>
 
-                        {userNavigation.map((item) =>
-                          item.name == "Sign Out" ? (
+                        {DROPDOWN_NAVIGATION.map((item) =>
+                          item.name == "Log Out" ? (
                             <div
                               className="cursor-pointer"
                               key={item.name}
-                              onClick={() => item.event()}
+                              onClick={() => handleLogout()}
                             >
                               <Menu.Item>
                                 {({ active }) => (
@@ -219,7 +212,7 @@ export default function SignedInNav({ current }) {
 
             <Disclosure.Panel className="sm:hidden">
               <div className="pt-2 pb-3 space-y-1">
-                {navigation.map((item) => (
+                {NAVBAR_NAVIGATION.map((item) => (
                   <a
                     key={item.name}
                     href={item.href}
@@ -265,18 +258,18 @@ export default function SignedInNav({ current }) {
                     onClick={() => handleLogout()}
                     className="ml-auto bg-white flex-shrink-0 p-1 rounded-full text-light hover:text-normal focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
                   >
-                    <span className="sr-only">Sign Out</span>
+                    <span className="sr-only">Log Out</span>
                     <BellIcon className="h-6 w-6" aria-hidden="true" />
                   </button>
                 </div>
                 <div className="mt-3 space-y-1">
-                  {userNavigation.map((item) => {
+                  {DROPDOWN_NAVIGATION.map((item) => {
                     {
-                      item.name === "Sign Out" ? (
+                      item.name === "Log Out" ? (
                         <a
                           key={item.name}
                           href={item.href}
-                          onClick={item.event}
+                          onClick={() => handleLogout()}
                           className="block px-4 py-2 text-base font-medium text-normal hover:text-gray-800 hover:bg-gray-100"
                         >
                           {item.name}
