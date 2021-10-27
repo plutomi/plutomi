@@ -1,12 +1,9 @@
 import { NextApiResponse } from "next";
-import { CreateOrg } from "../../../utils/orgs/createOrg";
 import withCleanOrgId from "../../../middleware/withCleanOrgId";
 import InputValidation from "../../../utils/inputValidation";
 import { GetAllUserInvites } from "../../../utils/invites/getAllOrgInvites";
 import withSession from "../../../middleware/withSession";
 import CleanUser from "../../../utils/clean/cleanUser";
-import { UpdateUser } from "../../../utils/users/updateUser";
-import { GetCurrentTime } from "../../../utils/time";
 import { GetUserById } from "../../../utils/users/getUserById";
 import { CreateAndJoinOrg } from "../../../utils/orgs/createAndJoinOrg";
 
@@ -72,7 +69,7 @@ const handler = async (
       const updated_user = await GetUserById(user_session.user_id); // TODO remove this, wait for transact
 
       // Update the logged in user session with the new org id
-      req.session.set("user", CleanUser(updated_user));
+      req.session.set("user", CleanUser(updated_user as DynamoUser));
       await req.session.save();
 
       return res.status(201).json({ message: "Org created!", org: org_id });

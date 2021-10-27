@@ -5,11 +5,9 @@ import DeleteOrgInvite from "../../../../utils/invites/deleteOrgInvite";
 import withCleanOrgId from "../../../../middleware/withCleanOrgId";
 import { GetOrgInvite } from "../../../../utils/invites/getOrgInvite";
 import withSession from "../../../../middleware/withSession";
-import { UpdateUser } from "../../../../utils/users/updateUser";
-import { GetCurrentTime } from "../../../../utils/time";
-import { JoinOrgFromInvite } from "../../../../utils/orgs/joinOrgFromInvite";
 import CleanUser from "../../../../utils/clean/cleanUser";
 import { GetUserById } from "../../../../utils/users/getUserById";
+import { JoinOrgFromInvite } from "../../../../utils/orgs/joinOrgFromInvite";
 
 const handler = async (
   req: NextIronRequest,
@@ -52,7 +50,7 @@ const handler = async (
       await JoinOrgFromInvite({ user_id: user_session.user_id, invite });
 
       const updated_user = await GetUserById(user_session.user_id);
-      req.session.set("user", CleanUser(updated_user));
+      req.session.set("user", CleanUser(updated_user as DynamoUser));
       await req.session.save();
       return res
         .status(200)

@@ -24,10 +24,7 @@ export default class StagesService {
     return data;
   }
 
-  static async updateStage({
-    stage_id,
-    new_stage_values,
-  }: APIUpdateStageInput) {
+  static async updateStage({ stage_id, new_stage_values }) {
     const body = {
       new_stage_values: new_stage_values,
     };

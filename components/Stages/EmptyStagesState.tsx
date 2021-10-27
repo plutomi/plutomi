@@ -11,7 +11,6 @@ export default function EmptyStagesState() {
   const { user, isUserLoading, isUserError } = useSelf();
 
   let { stages, isStagesLoading, isStagesError } = useAllStagesInOpening(
-    user?.user_id,
     opening_id
   );
 

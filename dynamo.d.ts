@@ -65,17 +65,6 @@ interface DynamoStage {
 }
 
 interface DynamoOrgInvite {
-  // PK: `USER#${user.user_id}`;
-  // SK: `ORG_INVITE#${now}#INVITE_ID#${invite_id}`; // Allows sorting, and incase two get created in the same millisecond
-  // org_id: org_id;
-  // created_by: created_by;
-  // entity_type: "ORG_INVITE";
-  // created_at: now;
-  // expires_at: expires_at;
-  // invite_id: invite_id;
-  // GSI1PK: `ORG#${org_id}#ORG_INVITES`;
-  // GSI1SK: now;
-
   PK: string;
   SK: string;
   org_id: string;
@@ -89,15 +78,6 @@ interface DynamoOrgInvite {
 }
 
 interface DynamoStageQuestion {
-  // PK: `ORG#${org_id}#OPENING#${opening_id}#STAGE#${stage_id}`,
-  // SK: `STAGE_QUESTION#${question_id}`,
-  // question_description: question_description,
-  //     question_id: question_id,
-  // entity_type: "STAGE_QUESTION",
-  // created_at: now,
-  // GSI1PK: `ORG#${org_id}#QUESTIONS`,
-  // GSI1SK: GSI1SK, // TODO filter by opening by stage?
-
   PK: string;
   SK: string;
   question_description: string;
@@ -109,13 +89,6 @@ interface DynamoStageQuestion {
 }
 
 interface DynamoOrg {
-  // PK: `ORG#${org_id}`,
-  // SK: `ORG`,
-  // org_id: org_id, // plutomi - Cannot be changed
-  // entity_type: "ORG",
-  // created_at: now,
-  // GSI1PK: `ORG`, // Allows for 'get all orgs' query
-  // GSI1SK: `ORG#${GSI1SK}`, // Actual org name ie: Plutomi Inc - Can be changed!
   PK: string;
   SK: `ORG`;
   org_id: string; // plutomi - Cannot be changed

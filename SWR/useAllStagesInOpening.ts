@@ -13,7 +13,7 @@ const fetcher = (url: string) => axios.get(url).then((res) => res.data);
 function useAllStagesInOpening(
   opening_id: string
 ): useAllStagesInOpeningOutput {
-  const shouldFetch =  opening_id ? true : false;
+  const shouldFetch = opening_id ? true : false;
 
   const { data, error } = useSWR(
     shouldFetch &&
