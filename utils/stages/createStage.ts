@@ -53,7 +53,7 @@ export async function CreateStage({
           },
 
           {
-            // Add stage to the opening
+            // Add stage to the opening + increment stage count on opening
             Update: {
               Key: {
                 PK: `ORG#${org_id}#OPENING#${opening_id}`,
@@ -64,6 +64,20 @@ export async function CreateStage({
                 "SET stage_order = :stage_order, total_stages = total_stages + :value",
               ExpressionAttributeValues: {
                 ":stage_order": opening.stage_order,
+                ":value": 1,
+              },
+            },
+          },
+          {
+            // Increment stage count on org
+            Update: {
+              Key: {
+                PK: `ORG#${org_id}`,
+                SK: `ORG`,
+              },
+              TableName: DYNAMO_TABLE_NAME,
+              UpdateExpression: "SET total_stages = total_stages + :value",
+              ExpressionAttributeValues: {
                 ":value": 1,
               },
             },

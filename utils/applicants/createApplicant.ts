@@ -47,7 +47,7 @@ export async function CreateApplicant({
     const transactParams: TransactWriteCommandInput = {
       TransactItems: [
         {
-          // Add a stage item
+          // Add an applicant item
           Put: {
             Item: new_applicant,
             TableName: DYNAMO_TABLE_NAME,
@@ -56,7 +56,7 @@ export async function CreateApplicant({
         },
 
         {
-          // Add applicant to opening's total_applicants
+          // Increment the opening's total_applicants
           Update: {
             Key: {
               PK: `ORG#${org_id}#OPENING#${opening_id}`,
@@ -71,7 +71,7 @@ export async function CreateApplicant({
           },
         },
         {
-          // Add applicant to the stage total_applicants
+          // Increment the stage's total applicants
           Update: {
             Key: {
               PK: `ORG#${org_id}#STAGE#${stage_id}`,
@@ -86,7 +86,7 @@ export async function CreateApplicant({
           },
         },
         {
-          // Add applicant to the orgs total_applicants
+          // Increment the org's total applicants
           Update: {
             Key: {
               PK: `ORG#${org_id}`,

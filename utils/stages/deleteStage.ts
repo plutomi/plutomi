@@ -52,6 +52,21 @@ export async function DeleteStage({ org_id, stage_id }: DeleteStageInput) {
             },
           },
         },
+
+        {
+          // Decrement stage count on org
+          Update: {
+            Key: {
+              PK: `ORG#${org_id}`,
+              SK: `ORG`,
+            },
+            TableName: DYNAMO_TABLE_NAME,
+            UpdateExpression: "SET total_stages = total_stages - :value",
+            ExpressionAttributeValues: {
+              ":value": 1,
+            },
+          },
+        },
       ],
     };
 

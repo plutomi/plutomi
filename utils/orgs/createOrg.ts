@@ -13,6 +13,9 @@ export async function CreateOrg({ org_id, GSI1SK }: CreateOrgInput) {
     entity_type: "ORG",
     created_at: now,
     total_applicants: 0,
+    total_openings: 0,
+    total_stages: 0,
+    total_users: 0,
     GSI1PK: `ORG`, // Allows for 'get all orgs' query
     // but cannot do get org by specific name as there might be duplicates
     GSI1SK: GSI1SK, // Actual org name ie: Plutomi Inc - Can be changed!

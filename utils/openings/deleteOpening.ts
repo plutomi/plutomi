@@ -1,4 +1,9 @@
-import { DeleteCommand, DeleteCommandInput } from "@aws-sdk/lib-dynamodb";
+import {
+  DeleteCommand,
+  DeleteCommandInput,
+  TransactWriteCommand,
+  TransactWriteCommandInput,
+} from "@aws-sdk/lib-dynamodb";
 import { Dynamo } from "../../libs/ddbDocClient";
 const { DYNAMO_TABLE_NAME } = process.env;
 import { DeleteStage } from "../stages/deleteStage";
@@ -8,19 +13,12 @@ import { GetAllStagesInOpening } from "../stages/getAllStagesInOpening";
 export async function DeleteOpening({ org_id, opening_id }) {
   const all_stages = await GetAllStagesInOpening(org_id, opening_id);
 
-  const params = {
-    TableName: DYNAMO_TABLE_NAME,
-    Key: {
-      PK: `ORG#${org_id}#OPENING#${opening_id}`,
-      SK: `OPENING`,
-    },
-  };
-
   try {
-    // Delete
+    // Delete stages first
     if (all_stages.length > 0) {
-      console.log(`Deleting ${all_stages.length} stages`);
+      console.log("Deleting stages");
       all_stages.map(async (stage: DynamoStage) => {
+        // TODO add to SQS & delete applicants, rules, questions, etc.
         const input = {
           org_id: org_id,
           opening_id: opening_id,
@@ -31,7 +29,38 @@ export async function DeleteOpening({ org_id, opening_id }) {
     }
 
     console.log("Deleting funnel");
-    await Dynamo.send(new DeleteCommand(params));
+
+    const transactParams: TransactWriteCommandInput = {
+      TransactItems: [
+        {
+          // Delete the opening
+          Delete: {
+            Key: {
+              PK: `ORG#${org_id}#OPENING#${opening_id}`,
+              SK: `OPENING`,
+            },
+            TableName: DYNAMO_TABLE_NAME,
+            ConditionExpression: "attribute_exists(PK)",
+          },
+        },
+        {
+          // Decrement the org's total openings
+          Update: {
+            Key: {
+              PK: `ORG#${org_id}`,
+              SK: `ORG`,
+            },
+            TableName: DYNAMO_TABLE_NAME,
+            UpdateExpression: "SET total_openings = total_openings - :value",
+            ExpressionAttributeValues: {
+              ":value": 1,
+            },
+          },
+        },
+      ],
+    };
+
+    await Dynamo.send(new TransactWriteCommand(transactParams));
     return;
   } catch (error) {
     throw new Error(error);

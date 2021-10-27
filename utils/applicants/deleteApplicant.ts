@@ -27,7 +27,7 @@ export default async function DeleteApplicant({ org_id, applicant_id }) {
         },
 
         {
-          // Remove applicant from opening's total_applicants
+          // Decrement opening's total_applicants
           Update: {
             Key: {
               PK: `ORG#${org_id}#OPENING#${applicant.current_opening_id}`, // todo fix types
@@ -42,7 +42,7 @@ export default async function DeleteApplicant({ org_id, applicant_id }) {
           },
         },
         {
-          // Remove applicant from stage's total_applicants
+          // Decrement stage's total_applicants
           Update: {
             Key: {
               PK: `ORG#${org_id}#STAGE#${applicant.current_stage_id}`, // todo fix types
@@ -57,7 +57,7 @@ export default async function DeleteApplicant({ org_id, applicant_id }) {
           },
         },
         {
-          // Remove applicant to the orgs total_applicants
+          // Decrement the org's total applicants
           Update: {
             Key: {
               PK: `ORG#${org_id}`,

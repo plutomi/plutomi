@@ -79,10 +79,6 @@ interface CreateApplicantResponseInput {
   question_description: string;
   question_response: string;
 }
-interface JoinOrgInput {
-  org_id: string;
-  user_id: string;
-}
 
 interface CreateLoginLinkInput {
   user_email: string;

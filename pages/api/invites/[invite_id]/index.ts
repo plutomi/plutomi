@@ -7,6 +7,7 @@ import { GetOrgInvite } from "../../../../utils/invites/getOrgInvite";
 import withSession from "../../../../middleware/withSession";
 import { UpdateUser } from "../../../../utils/users/updateUser";
 import { GetCurrentTime } from "../../../../utils/time";
+import { JoinOrg } from "../../../../utils/orgs/joinOrg";
 
 const handler = async (
   req: NextIronRequest,
@@ -52,31 +53,16 @@ const handler = async (
     }
 
     try {
-      // TODO promise all
-      await AcceptOrgInvite(accept_org_invite_input);
-      try {
-        await UpdateUser({
-          user_id: user_session.user_id,
-          new_user_values: {
-            org_id: invite.org_id,
-            org_join_date: GetCurrentTime("iso"),
-            GSI1PK: `ORG#${invite.org_id}#USERS`,
-          },
-          ALLOW_FORBIDDEN_KEYS: true,
-        });
-        return res
-          .status(200)
-          .json({ message: `You've joined the ${invite.org_name} org!` });
-      } catch (error) {
-        // TODO add error logger
-        return res
-          .status(500) // TODO change #
-          .json({
-            message: `The invite was accepted, but we were not able to add you to the org - ${error}`,
-          });
-      }
+      await JoinOrg({ user_id: user_session.user_id, invite });
+      return res
+        .status(200)
+        .json({ message: `You've joined the ${invite.org_name} org!` });
     } catch (error) {
-      return res.status(500).json({ message: ` ${error}` });
+      return res
+        .status(500) // TODO change #
+        .json({
+          message: `The invite was accepted, but we were not able to add you to the org - ${error}`,
+        });
     }
   }
 
