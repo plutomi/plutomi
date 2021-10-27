@@ -118,10 +118,15 @@ export default function DashboardContent() {
             You&apos;re in the <strong>{org?.GSI1SK}</strong> org. Feel free to
             click around!
           </h1>
-          <h1>You have {org?.total_users} users</h1>
-          <h1>You have {org?.total_openings} openings</h1>
-          <h1>You have {org?.total_stages} total stages</h1>
-          <h1>You have {org?.total_applicants} total applicants</h1>
+          <h1>
+            There are <strong>{org?.total_users}</strong> users in this org.
+          </h1>
+
+          <h1>
+            Also, there are <strong>{org?.total_applicants}</strong> applicants
+            across <strong>{org?.total_openings}</strong> openings and{" "}
+            <strong>{org?.total_stages}</strong> stages.{" "}
+          </h1>
 
           <div className="flex items-center mt-4 -ml-3 text-md">
             <ClickToCopy
