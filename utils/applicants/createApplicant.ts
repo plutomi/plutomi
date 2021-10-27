@@ -64,8 +64,9 @@ export async function CreateApplicant({
             },
             TableName: DYNAMO_TABLE_NAME,
             UpdateExpression:
-              "SET total_applicants = total_applicants + :value",
+              "SET total_applicants = if_not_exists(total_applicants, :zero) + :value",
             ExpressionAttributeValues: {
+              ":zero": 0,
               ":value": 1,
             },
           },
@@ -79,8 +80,9 @@ export async function CreateApplicant({
             },
             TableName: DYNAMO_TABLE_NAME,
             UpdateExpression:
-              "SET total_applicants = total_applicants + :value",
+              "SET total_applicants = if_not_exists(total_applicants, :zero) + :value",
             ExpressionAttributeValues: {
+              ":zero": 0,
               ":value": 1,
             },
           },
@@ -94,8 +96,9 @@ export async function CreateApplicant({
             },
             TableName: DYNAMO_TABLE_NAME,
             UpdateExpression:
-              "SET total_applicants = total_applicants + :value",
+              "SET total_applicants = if_not_exists(total_applicants, :zero) + :value",
             ExpressionAttributeValues: {
+              ":zero": 0,
               ":value": 1,
             },
           },

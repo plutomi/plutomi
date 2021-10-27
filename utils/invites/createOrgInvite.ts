@@ -86,8 +86,10 @@ export default async function CreateOrgInvite({
               SK: `USER`,
             },
             TableName: DYNAMO_TABLE_NAME,
-            UpdateExpression: "SET total_invites = :total_invites + :value",
+            UpdateExpression:
+              "SET total_invites = if_not_exists(total_invites, :zero) + :value",
             ExpressionAttributeValues: {
+              ":zero": 0,
               ":value": 1,
             },
           },
@@ -99,6 +101,7 @@ export default async function CreateOrgInvite({
 
     return;
   } catch (error) {
+    console.error(error);
     throw new Error(error);
   }
 }

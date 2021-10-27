@@ -25,7 +25,7 @@ export async function CreateUser({ user_email }) {
     created_at: now,
     org_id: "NO_ORG_ASSIGNED",
     org_join_date: "NO_ORG_ASSIGNED",
-    org_invites: 0,
+    //-- total_invites: 0,
     GSI1PK: "ORG#NO_ORG_ASSIGNED#USERS",
     GSI1SK: `NO_FIRST_NAME NO_LAST_NAME`,
     GSI2PK: user_email.toLowerCase(),

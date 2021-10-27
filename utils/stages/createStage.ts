@@ -60,10 +60,12 @@ export async function CreateStage({
                 SK: `OPENING`,
               },
               TableName: DYNAMO_TABLE_NAME,
+
               UpdateExpression:
-                "SET stage_order = :stage_order, total_stages = total_stages + :value",
+                "SET stage_order = :stage_order, total_stages = if_not_exists(total_stages, :zero) + :value",
               ExpressionAttributeValues: {
                 ":stage_order": opening.stage_order,
+                ":zero": 0,
                 ":value": 1,
               },
             },
@@ -76,8 +78,10 @@ export async function CreateStage({
                 SK: `ORG`,
               },
               TableName: DYNAMO_TABLE_NAME,
-              UpdateExpression: "SET total_stages = total_stages + :value",
+              UpdateExpression:
+                "SET total_stages = if_not_exists(total_stages, :zero) + :value",
               ExpressionAttributeValues: {
+                ":zero": 0,
                 ":value": 1,
               },
             },

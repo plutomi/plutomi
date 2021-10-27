@@ -16,7 +16,7 @@ interface DynamoUser {
   org_join_date?: string; // "NO_ORG_ASSIGNED";
   first_name?: string; // "JoseV2";
   SK?: string; // "USER";
-  org_invites;
+  total_invites;
   PK?: string; // "USER#VFQg-GZJvxICh5Y7JBanZCehc22p03";
 }
 

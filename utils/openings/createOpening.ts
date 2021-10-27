@@ -46,8 +46,10 @@ export async function CreateOpening({ org_id, GSI1SK }: CreateOpeningInput) {
             SK: `ORG`,
           },
           TableName: DYNAMO_TABLE_NAME,
-          UpdateExpression: "SET total_openings = total_openings + :value",
+          UpdateExpression:
+            "SET total_openings = if_not_exists(total_openings, :zero) + :value",
           ExpressionAttributeValues: {
+            ":zero": 0,
             ":value": 1,
           },
         },
