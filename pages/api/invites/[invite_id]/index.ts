@@ -7,7 +7,9 @@ import { GetOrgInvite } from "../../../../utils/invites/getOrgInvite";
 import withSession from "../../../../middleware/withSession";
 import { UpdateUser } from "../../../../utils/users/updateUser";
 import { GetCurrentTime } from "../../../../utils/time";
-import { JoinOrg } from "../../../../utils/orgs/joinOrg";
+import { JoinOrgFromInvite } from "../../../../utils/orgs/joinOrgFromInvite";
+import CleanUser from "../../../../utils/clean/cleanUser";
+import { GetUserById } from "../../../../utils/users/getUserById";
 
 const handler = async (
   req: NextIronRequest,
@@ -27,18 +29,12 @@ const handler = async (
     invite_id: invite_id,
   });
 
-  const accept_org_invite_input = {
-    user_id: user_session.user_id,
-    invite_id: invite.invite_id,
-  };
-
   const join_org_input = {
     user_id: user_session.user_id,
-    org_id: invite.org_id,
+    invite: invite,
   };
 
   try {
-    InputValidation(accept_org_invite_input);
     InputValidation(join_org_input);
   } catch (error) {
     return res.status(400).json({ message: `${error.message}` });
@@ -53,7 +49,11 @@ const handler = async (
     }
 
     try {
-      await JoinOrg({ user_id: user_session.user_id, invite });
+      await JoinOrgFromInvite({ user_id: user_session.user_id, invite });
+
+      const updated_user = await GetUserById(user_session.user_id);
+      req.session.set("user", CleanUser(updated_user));
+      await req.session.save();
       return res
         .status(200)
         .json({ message: `You've joined the ${invite.org_name} org!` });
@@ -61,7 +61,7 @@ const handler = async (
       return res
         .status(500) // TODO change #
         .json({
-          message: `The invite was accepted, but we were not able to add you to the org - ${error}`,
+          message: `We were unable to  ${error}`,
         });
     }
   }

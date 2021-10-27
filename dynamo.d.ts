@@ -122,6 +122,10 @@ interface DynamoOrg {
   created_at: string;
   GSI1PK: `ORG`; // Allows for 'get all orgs' query
   GSI1SK: string; // Actual org name ie: Plutomi Inc - Can be changed!
+  total_users: number;
+  total_openings: number;
+  total_stages: number;
+  total_applicants: number;
 }
 
 interface DynamoApplicant {

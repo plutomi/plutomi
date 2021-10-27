@@ -63,7 +63,7 @@ export default function OpeningSettingsHeader() {
 
     try {
       await OpeningsService.deleteOpening({ opening_id: opening_id });
-      router.push(`${process.env.PLUTOMI_URL}/openings`);
+      router.push(`${process.env.WEBSITE_URL}/openings`);
     } catch (error) {
       alert(error.response.data.message);
     }

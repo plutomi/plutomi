@@ -27,11 +27,11 @@ export default function Openings() {
     // Redirect to the first stage
     if (stages && stages.length > 0) {
       router.push(
-        `${process.env.PLUTOMI_URL}/openings/${opening_id}/stages/${stages[0].stage_id}/applicants` // TODO should this end with applicants?
+        `${process.env.WEBSITE_URL}/openings/${opening_id}/stages/${stages[0].stage_id}/applicants` // TODO should this end with applicants?
       );
     } else {
       // Redirect to opening settings if no stages
-      router.push(`${process.env.PLUTOMI_URL}/openings/${opening_id}/settings`);
+      router.push(`${process.env.WEBSITE_URL}/openings/${opening_id}/settings`);
     }
   }, [router.isReady]);
 

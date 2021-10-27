@@ -31,7 +31,7 @@ const handler = async (
     }
 
     try {
-      const all_users = await GetAllUsersInOrg(user_session.org_id);
+      const all_users = await GetAllUsersInOrg({ org_id: user_session.org_id });
       return res.status(200).json(all_users);
     } catch (error) {
       return res

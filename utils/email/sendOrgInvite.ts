@@ -19,7 +19,7 @@ export default async function SendOrgInvite({
       },
       Body: {
         Html: {
-          Data: `<h4>You can accept their invite at this link: <a href="${process.env.PLUTOMI_URL}/invites">${process.env.PLUTOMI_URL}/invites</a></h4><p>If you believe this email was received in error, you can safely ignore it.</p>`,
+          Data: `<h4>You can accept their invite at this link: <a href="${process.env.WEBSITE_URL}/invites">${process.env.WEBSITE_URL}/invites</a></h4><p>If you believe this email was received in error, you can safely ignore it.</p>`,
         },
       },
     },

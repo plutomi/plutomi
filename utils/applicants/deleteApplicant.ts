@@ -22,7 +22,6 @@ export default async function DeleteApplicant({ org_id, applicant_id }) {
               SK: `APPLICANT`,
             },
             TableName: DYNAMO_TABLE_NAME,
-            ConditionExpression: "attribute_exists(PK)",
           },
         },
 

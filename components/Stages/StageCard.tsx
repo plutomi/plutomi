@@ -16,7 +16,7 @@ export default function StageCard({
 
   return (
     <Link
-      href={`${process.env.PLUTOMI_URL}/openings/${opening_id}/stages/${current_stage_id}/applicants`} // TODO should this end with applicants?
+      href={`${process.env.WEBSITE_URL}/openings/${opening_id}/stages/${current_stage_id}/applicants`} // TODO should this end with applicants?
     >
       <a>
         <div

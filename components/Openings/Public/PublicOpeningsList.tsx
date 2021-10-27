@@ -22,7 +22,7 @@ export default function PublicOpeningsList() {
           <li key={opening.opening_id}>
             {/* Take applicant to opening info page */}
             <Link
-              href={`${process.env.PLUTOMI_URL}/${org_id}/${opening?.opening_id}/apply`}
+              href={`${process.env.WEBSITE_URL}/${org_id}/${opening?.opening_id}/apply`}
             >
               <a className="block hover:bg-gray-50">
                 <div className="px-4 py-4 sm:px-6">

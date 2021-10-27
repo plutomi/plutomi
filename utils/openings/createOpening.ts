@@ -35,7 +35,7 @@ export async function CreateOpening({ org_id, GSI1SK }: CreateOpeningInput) {
         Put: {
           Item: new_opening,
           TableName: DYNAMO_TABLE_NAME,
-          ConditionExpression: "attribute_exists(PK)",
+          ConditionExpression: "attribute_not_exists(PK)",
         },
       },
       {

@@ -21,7 +21,7 @@ export default function Login({ loggedOutPageText }) {
     try {
       const { message } = await AuthService.createLoginLink({
         user_email: user_email,
-        callback_url: `${process.env.PLUTOMI_URL + router.asPath}`,
+        callback_url: `${process.env.WEBSITE_URL + router.asPath}`,
       });
 
       setSubmittedText(message);

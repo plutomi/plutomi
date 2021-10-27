@@ -12,7 +12,7 @@ import CreateOrgModal from "../CreateOrgModal";
 export default function DashboardContent() {
   const { user, isUserLoading, isUserError } = useSelf();
   const { org, isOrgLoading, isOrgError } = usePrivateOrgById(user?.org_id);
-  const custom_apply_link = `${process.env.PLUTOMI_URL}/${org?.org_id}/apply`;
+  const custom_apply_link = `${process.env.WEBSITE_URL}/${org?.org_id}/apply`;
 
   const setCreateOrgModalOpen = useStore(
     (state: PlutomiState) => state.setCreateOrgModalOpen
@@ -118,6 +118,11 @@ export default function DashboardContent() {
             You&apos;re in the <strong>{org?.GSI1SK}</strong> org. Feel free to
             click around!
           </h1>
+          <h1>You have {org?.total_users} users</h1>
+          <h1>You have {org?.total_openings} openings</h1>
+          <h1>You have {org?.total_stages} total stages</h1>
+          <h1>You have {org?.total_applicants} total applicants</h1>
+
           <div className="flex items-center mt-4 -ml-3 text-md">
             <ClickToCopy
               showText={"Copy Application Link"}

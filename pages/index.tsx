@@ -15,7 +15,7 @@ export default function Main() {
         <Navbar />
         <Hero />
         {!user || isUserError ? (
-          <LoginHomepage callbackUrl={`${process.env.PLUTOMI_URL}/dashboard`} />
+          <LoginHomepage callbackUrl={`${process.env.WEBSITE_URL}/dashboard`} />
         ) : (
           <AlreadySignedIn />
         )}

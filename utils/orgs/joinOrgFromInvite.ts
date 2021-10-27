@@ -7,7 +7,7 @@ import { GetCurrentTime } from "../time";
 
 const { DYNAMO_TABLE_NAME } = process.env;
 
-export async function JoinOrg({ user_id, invite }) {
+export async function JoinOrgFromInvite({ user_id, invite }) {
   const now = GetCurrentTime("iso") as string;
   try {
     const transactParams: TransactWriteCommandInput = {
@@ -20,7 +20,6 @@ export async function JoinOrg({ user_id, invite }) {
               SK: `ORG_INVITE#${invite.invite_id}`,
             },
             TableName: DYNAMO_TABLE_NAME,
-            ConditionExpression: "attribute_not_exists(PK)",
           },
         },
 
@@ -28,7 +27,7 @@ export async function JoinOrg({ user_id, invite }) {
           // Update user with the new org
           Update: {
             Key: {
-              PK: `USERS#${user_id}`,
+              PK: `USER#${user_id}`,
               SK: `USER`,
             },
             TableName: DYNAMO_TABLE_NAME,
@@ -42,10 +41,10 @@ export async function JoinOrg({ user_id, invite }) {
           },
         },
         {
-          // Increment the org with the new user // TODO might have to do this asynchronously
+          // Increment the org with the new user
           Update: {
             Key: {
-              PK: `ORGS#${invite.org_id}`,
+              PK: `ORG#${invite.org_id}`,
               SK: `ORG`,
             },
             TableName: DYNAMO_TABLE_NAME,

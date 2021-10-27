@@ -40,7 +40,6 @@ export async function DeleteOpening({ org_id, opening_id }) {
               SK: `OPENING`,
             },
             TableName: DYNAMO_TABLE_NAME,
-            ConditionExpression: "attribute_exists(PK)",
           },
         },
         {

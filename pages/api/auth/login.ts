@@ -77,8 +77,8 @@ const handler = async (
 
       try {
         const user = await CreateLoginLink(new_login_link_input);
-        const default_redirect = `${process.env.PLUTOMI_URL}/dashboard`;
-        const login_link = `${process.env.PLUTOMI_URL}/api/auth/login?user_id=${
+        const default_redirect = `${process.env.WEBSITE_URL}/dashboard`;
+        const login_link = `${process.env.WEBSITE_URL}/api/auth/login?user_id=${
           user.user_id
         }&key=${secret}&callback_url=${
           callback_url ? callback_url : default_redirect
