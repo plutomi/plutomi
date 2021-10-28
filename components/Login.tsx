@@ -2,6 +2,8 @@ import LoginEmail from "./EmailSigninInput";
 import { useState } from "react";
 import router from "next/router";
 import AuthService from "../adapters/AuthService";
+import GoogleLoginButton from "./GoogleLoginButton";
+import axios from "axios";
 
 export default function Login({ loggedOutPageText }) {
   const [user_email, setUserEmail] = useState("");
@@ -23,6 +25,7 @@ export default function Login({ loggedOutPageText }) {
       const { message } = await AuthService.createLoginLink({
         user_email: user_email,
         callback_url: `${process.env.WEBSITE_URL + router.asPath}`,
+        login_method: "LINK",
       });
 
       setSubmittedText(message);
@@ -30,6 +33,26 @@ export default function Login({ loggedOutPageText }) {
     } catch (error) {
       alert(error.response.data.message);
     }
+  };
+
+  const successfulLogin = async (response) => {
+    console.log(response);
+    const user_email = response.profileObj.email;
+
+    const { message } = await AuthService.createLoginLink({
+      user_email: user_email,
+      callback_url: `${process.env.WEBSITE_URL + router.asPath}`,
+      login_method: "GOOGLE",
+    });
+
+    await axios.get(message);
+  };
+
+  const failedLogin = (response) => {
+    console.log(response);
+    alert(
+      `An error ocurred logging you in, please try again or log in through the magic links`
+    );
   };
 
   return (
@@ -46,6 +69,10 @@ export default function Login({ loggedOutPageText }) {
           </div>
         ) : (
           <div className="space-y-4">
+            <GoogleLoginButton
+              successfulLogin={successfulLogin}
+              failedLogin={failedLogin}
+            />
             <LoginEmail
               onChange={handleEmailChange}
               user_email={user_email}

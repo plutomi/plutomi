@@ -111,6 +111,7 @@ const handler = async (
 
   // Validates the login link when clicked
   if (method === "GET") {
+    console.log("Incoming request", req);
     const validate_login_link_input = {
       user_id: user_id,
       key: key,

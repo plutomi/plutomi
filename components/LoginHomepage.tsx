@@ -29,6 +29,7 @@ export default function LoginHomepage({ callbackUrl }: CallbackUrl) {
       const { message } = await AuthService.createLoginLink({
         user_email: user_email,
         callback_url: callbackUrl,
+        login_method: "LINK",
       });
 
       setSubmittedText(message);
