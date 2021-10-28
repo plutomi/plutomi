@@ -10,7 +10,7 @@ const faqs = [
     ),
   },
   {
-    question: "How many openings / users / applicants can I have?",
+    question: "How many users / applicants / openings can I have?",
     answer: "As many as you want!",
   },
   {
