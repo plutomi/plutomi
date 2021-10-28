@@ -22,7 +22,7 @@ export default function Login({ loggedOutPageText }) {
     e.preventDefault();
 
     try {
-      const { message } = await AuthService.createLoginLink({
+      const { message } = await AuthService.login({
         user_email: user_email,
         callback_url: `${process.env.WEBSITE_URL + router.asPath}`,
         login_method: "LINK",
@@ -45,11 +45,9 @@ export default function Login({ loggedOutPageText }) {
       login_method: "GOOGLE",
     };
     console.log(input);
-    const { message } = await AuthService.createLoginLink(input);
+    const { message } = await AuthService.login(input);
 
-    console.log("Received response, going to link", message);
     window.location.replace(message);
-    console.log("visited");
   };
 
   const failedLogin = (response) => {

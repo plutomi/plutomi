@@ -26,7 +26,7 @@ export default function LoginHomepage({ callbackUrl }: CallbackUrl) {
     e.preventDefault();
 
     try {
-      const { message } = await AuthService.createLoginLink({
+      const { message } = await AuthService.login({
         user_email: user_email,
         callback_url: callbackUrl,
         login_method: "LINK",
