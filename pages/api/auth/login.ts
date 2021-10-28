@@ -34,25 +34,24 @@ const handler = async (
     "iso"
   );
 
-  // Creates a login key
+  // Creates a login link
   if (method === "POST") {
     try {
       InputValidation({ user_email });
     } catch (error) {
       return res.status(400).json({ message: `${error.message}` });
     }
+    // Creates a user, returns it if already created
+    const user = await CreateUser({ user_email });
 
     try {
-      // Returns the user if already there
-      const user = await CreateUser({ user_email });
-
       const latest_link = await GetLatestLoginLink(user.user_id);
 
       // Limit the amount of links sent in a certain period of time
       if (
         latest_link &&
         latest_link.created_at >= time_threshold &&
-        !user_email.endsWith("@plutomi.com")
+        !user.user_email.endsWith("@plutomi.com")
       ) {
         return res.status(400).json({
           message: "You're doing that too much, please try again later",
@@ -69,14 +68,12 @@ const handler = async (
         "iso"
       );
 
-      const new_login_link_input: CreateLoginLinkInput = {
-        user_email: user_email,
-        login_link_hash: hash,
-        login_link_expiry: login_link_expiry,
-      };
-
       try {
-        const user = await CreateLoginLink(new_login_link_input);
+        await CreateLoginLink({
+          user: user,
+          login_link_hash: hash,
+          login_link_expiry: login_link_expiry,
+        });
         const default_redirect = `${process.env.WEBSITE_URL}/dashboard`;
         const login_link = `${process.env.WEBSITE_URL}/api/auth/login?user_id=${
           user.user_id
@@ -85,29 +82,30 @@ const handler = async (
         }`;
 
         try {
-          const login_link_email_input: SendLoginLinkEmailInput = {
-            recipient_email: user_email,
+          await SendLoginLink({
+            recipient_email: user.user_email,
             login_link: login_link,
             login_link_relative_expiry: GetRelativeTime(login_link_expiry),
-          };
-          await SendLoginLink(login_link_email_input);
+          });
           return res
             .status(201)
             .json({ message: `We've sent a magic login link to your email!` });
         } catch (error) {
-          return res.status(500).json({ message: `${error}` });
+          return res.status(500).json({ message: `${error}` }); // TODO error #
         }
       } catch (error) {
+        // TODO error #
         return res.status(500).json({ message: `${error}` });
       }
     } catch (error) {
       return res.status(500).json({
+        // TODO error #
         message: "An error ocurred getting your info, please try again",
       });
     }
   }
 
-  // Validates the login key
+  // Validates the login link when clicked
   if (method === "GET") {
     const validate_login_link_input = {
       user_id: user_id,
@@ -166,19 +164,23 @@ const handler = async (
 
     if (user && latest_login_link) {
       // TODO should this be a transaction?
-
+      // Simple timestamp when the user actually logged in
       CreateLoginEvent(user_id);
 
       // Invalidates the last login link while allowing the user to login again if needed
       DeleteLoginLink(user_id, latest_login_link.created_at);
 
       const clean_user = CleanUser(user as DynamoUser);
+
       req.session.set("user", clean_user);
       await req.session.save();
+
+      // If a user has invites, redirect them to that page automatically
       if (clean_user.total_invites > 0) {
         res.redirect(`${process.env.WEBSITE_URL}/invites`);
         return;
       }
+
       res.redirect(callback_url);
       return;
     }

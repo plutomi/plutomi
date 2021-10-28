@@ -19,7 +19,7 @@ export async function CreateUser({ user_email }) {
     SK: `USER`,
     first_name: "NO_FIRST_NAME",
     last_name: "NO_LAST_NAME",
-    user_email: user_email.toLowerCase(),
+    user_email: user_email.toLowerCase().trim(),
     user_id: user_id,
     entity_type: "USER",
     created_at: now,
@@ -28,7 +28,7 @@ export async function CreateUser({ user_email }) {
     total_invites: 0,
     GSI1PK: "ORG#NO_ORG_ASSIGNED#USERS",
     GSI1SK: `NO_FIRST_NAME NO_LAST_NAME`,
-    GSI2PK: user_email.toLowerCase(),
+    GSI2PK: user_email.toLowerCase().trim(),
     GSI2SK: "USER",
   };
 
@@ -40,7 +40,7 @@ export async function CreateUser({ user_email }) {
 
   try {
     await Dynamo.send(new PutCommand(params));
-    SendNewUserEmail(new_user);
+    SendNewUserEmail(new_user); // TODO async with streams
     return new_user;
   } catch (error) {
     throw new Error(error);

@@ -6,6 +6,7 @@ import { NextApiResponse } from "next";
 import withCleanOrgId from "../../../middleware/withCleanOrgId";
 import { GetOrg } from "../../../utils/orgs/getOrg";
 import withSession from "../../../middleware/withSession";
+import { CreateUser } from "../../../utils/users/createUser";
 const handler = async (
   req: NextIronRequest,
   res: NextApiResponse
@@ -32,9 +33,9 @@ const handler = async (
 
   const new_org_invite: CreateOrgInviteInput = {
     claimed: false,
-    org_name: org.GSI1SK, // For the client they can see the name instead of ID
+    org_name: org.GSI1SK, // For the recipient they can see the name of the org instead of the org_id, much neater
     created_by: user_session, // TODO reduce this to just name & email
-    org_id: user_session.org_id,
+    org_id: org.org_id,
     recipient_email: recipient_email,
     expires_at: expires_at,
   };
@@ -55,18 +56,27 @@ const handler = async (
       });
     }
 
+    // Creates the user
+    const recipient = await CreateUser({ user_email: recipient_email });
+
     const new_org_invite_email: SendOrgInviteInput = {
       created_by: user_session,
       org_name: org.GSI1SK,
-      recipient_email: recipient_email,
+      recipient_email: recipient.user_email, // Will be lowercase & .trim()'d by createUser
     };
     try {
-      await CreateOrgInvite(new_org_invite);
+      await CreateOrgInvite({
+        org_id: org.org_id,
+        user: recipient,
+        org_name: org.GSI1SK,
+        expires_at: expires_at,
+        created_by: user_session,
+      });
       try {
-        await SendOrgInvite(new_org_invite_email);
+        await SendOrgInvite(new_org_invite_email); // TODO async with streams
         return res
           .status(201)
-          .json({ message: `Invite sent to '${recipient_email}'` });
+          .json({ message: `Invite sent to '${recipient.user_email}'` });
       } catch (error) {
         return res.status(500).json({
           message: `The invite was created, but we were not able to send an email to the user. They log in and accept their invite at https://plutomi.com/invites - ${error}`,

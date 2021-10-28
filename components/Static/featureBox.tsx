@@ -16,7 +16,7 @@ const features = [
   {
     name: "Never settle",
     icon: ArrowsExpandIcon,
-    description: "Unlimited users, applicants, openings, and stages",
+    description: "Unlimited users, applicants, and openings",
     color: `bg-gradient-to-br from-green-400 to-emerald-500`,
   },
 

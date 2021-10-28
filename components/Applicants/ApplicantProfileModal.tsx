@@ -254,7 +254,7 @@ export default function ApplicantProfileModal() {
                     {currentActive == 1 ? (
                       <>
                         {/* TODO refactor this to its own component */}
-                        {applicant?.responses.length > 0 ? (
+                        {applicant?.responses?.length > 0 ? (
                           <ul className="py-4  space-y-8">
                             {applicant?.responses.map(
                               (response: DynamoApplicantResponse) => {
