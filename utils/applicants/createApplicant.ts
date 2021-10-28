@@ -1,13 +1,10 @@
 import {
-  PutCommand,
-  PutCommandInput,
   TransactWriteCommand,
   TransactWriteCommandInput,
 } from "@aws-sdk/lib-dynamodb";
 import { Dynamo } from "../../libs/ddbDocClient";
 import { GetCurrentTime } from "../time";
 import { nanoid } from "nanoid";
-import SendApplicantLink from "../email/sendApplicantLink";
 
 const { DYNAMO_TABLE_NAME } = process.env;
 
@@ -30,7 +27,7 @@ export async function CreateApplicant({
     first_name: first_name,
     last_name: last_name,
     full_name: `${first_name} ${last_name}`,
-    email: email.toLowerCase(),
+    email: email.toLowerCase().trim(),
     email_verified: false,
     org_id: org_id,
     applicant_id: applicant_id,

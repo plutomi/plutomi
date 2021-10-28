@@ -1,13 +1,9 @@
 import {
-  PutCommand,
-  PutCommandInput,
   TransactWriteCommand,
   TransactWriteCommandInput,
 } from "@aws-sdk/lib-dynamodb";
-import { GetUserByEmail } from "../users/getUserByEmail";
 import { Dynamo } from "../../libs/ddbDocClient";
 import { GetAllUserInvites } from "./getAllOrgInvites";
-import { CreateUser } from "../users/createUser";
 import { GetCurrentTime } from "../time";
 import { nanoid } from "nanoid";
 
@@ -17,27 +13,10 @@ export default async function CreateOrgInvite({
   org_id,
   expires_at,
   created_by,
-  recipient_email,
+  user,
   org_name,
-}: CreateOrgInviteInput) {
+}) {
   try {
-    let user = await GetUserByEmail(recipient_email);
-
-    if (!user) {
-      try {
-        const new_user: CreateUserInput = {
-          first_name: "NO_FIRST_NAME",
-          last_name: "NO_LAST_NAME",
-          user_email: recipient_email,
-        };
-
-        user = await CreateUser(new_user);
-      } catch (error) {
-        console.error(error);
-        throw "Unable to create user being invited";
-      }
-    }
-
     if (user.org_id === org_id) {
       throw "User is already in your org";
     }

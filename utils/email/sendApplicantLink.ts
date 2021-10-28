@@ -11,7 +11,7 @@ export default async function SendApplicantLink({
   const new_email: SendEmailCommandInput = {
     Source: `${org_name} <applications@plutomi.com>`,
     Destination: {
-      ToAddresses: [applicant_email.toLowerCase()],
+      ToAddresses: [applicant_email],
       CcAddresses: null,
       BccAddresses: null,
     },
