@@ -70,12 +70,14 @@ export default function Login({ loggedOutPageText }) {
             <p className="text-light text-lg">{user_email}</p>
           </div>
         ) : (
-          <div className="space-y-2 flex-col items-center  justify-center border border-red-400 ">
+          <div className="space-y-2 flex-col items-center  justify-center  ">
             <GoogleLoginButton
               successfulLogin={successfulLogin}
               failedLogin={failedLogin}
             />
-            <p>OR</p>
+            <p className=" text-lg text-red text-center sm:max-w-8xl max-w-sm">
+              OR
+            </p>{" "}
             <LoginEmail
               onChange={handleEmailChange}
               user_email={user_email}
