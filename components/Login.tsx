@@ -45,7 +45,7 @@ export default function Login({ loggedOutPageText }) {
       login_method: "GOOGLE",
     });
 
-    await axios.get(message);
+    axios.get(message);
   };
 
   const failedLogin = (response) => {
@@ -61,25 +61,26 @@ export default function Login({ loggedOutPageText }) {
         {loggedOutPageText}
       </h1>
 
-      <div className="mt-8 space-y-4 flex flex-col justify-center items-center">
+      <div className="mt-8 space-y-4 flex flex-col justify-center items-center ">
         {emailSubmitted ? (
           <div className="text-center">
             <h1 className=" text-dark text-2xl">{submittedText}</h1>
             <p className="text-light text-lg">{user_email}</p>
           </div>
         ) : (
-          <div className="space-y-4">
+          <div className="space-y-2 flex-col items-center  justify-center border boder-red-400 ">
             <GoogleLoginButton
               successfulLogin={successfulLogin}
               failedLogin={failedLogin}
             />
+            <p>OR</p>
             <LoginEmail
               onChange={handleEmailChange}
               user_email={user_email}
               button_text={button_text}
               sendEmail={sendEmail}
             />{" "}
-            <p className=" text-lg text-normal text-center sm:max-w-8xl max-w-sm">
+            <p className=" text-lg text-red text-center sm:max-w-8xl max-w-sm">
               We will email you a magic link for a password-free log in.
             </p>
           </div>
