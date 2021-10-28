@@ -39,6 +39,7 @@ const handler = async (
     try {
       InputValidation({ user_email });
     } catch (error) {
+      console.error(error);
       return res.status(400).json({ message: `${error.message}` });
     }
     // Creates a user, returns it if already created
@@ -82,7 +83,6 @@ const handler = async (
         }`;
 
         if (login_method === "GOOGLE") {
-          console.log("Redirecting, google login", login_link);
           return res.status(200).json({ message: login_link });
         }
         try {

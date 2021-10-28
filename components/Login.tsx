@@ -39,13 +39,17 @@ export default function Login({ loggedOutPageText }) {
     console.log(response);
     const user_email = response.profileObj.email;
 
-    const { message } = await AuthService.createLoginLink({
+    const input = {
       user_email: user_email,
       callback_url: `${process.env.WEBSITE_URL + router.asPath}`,
       login_method: "GOOGLE",
-    });
+    };
+    console.log(input);
+    const { message } = await AuthService.createLoginLink(input);
 
-    axios.get(message);
+    console.log("Received response, going to link", message);
+    window.location.replace(message);
+    console.log("visited");
   };
 
   const failedLogin = (response) => {
@@ -68,7 +72,7 @@ export default function Login({ loggedOutPageText }) {
             <p className="text-light text-lg">{user_email}</p>
           </div>
         ) : (
-          <div className="space-y-2 flex-col items-center  justify-center border boder-red-400 ">
+          <div className="space-y-2 flex-col items-center  justify-center border border-red-400 ">
             <GoogleLoginButton
               successfulLogin={successfulLogin}
               failedLogin={failedLogin}
