@@ -1,9 +1,6 @@
 import { GoogleLogin } from "react-google-login";
-import { useRouter } from "next/router";
 import { FcGoogle } from "react-icons/fc";
 export default function GoogleLoginButton({ successfulLogin, failedLogin }) {
-  const router = useRouter();
-  FcGoogle;
   return (
     <div className="my-4 text-xl  justify-center flex items-center">
       <GoogleLogin
