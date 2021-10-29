@@ -23,7 +23,7 @@ const handler = async (
   res: NextApiResponse
 ): Promise<void> => {
   const { body, method, query } = req; // TODO get from body
-  const { user_email } = body;
+  const { user_email, login_method } = body;
   const { user_id, key, callback_url } = query as CustomQuery;
   const login_link_length = 1500;
   const login_link_max_delay_minutes = 10;
@@ -39,6 +39,7 @@ const handler = async (
     try {
       InputValidation({ user_email });
     } catch (error) {
+      console.error(error);
       return res.status(400).json({ message: `${error.message}` });
     }
     // Creates a user, returns it if already created
@@ -81,6 +82,9 @@ const handler = async (
           callback_url ? callback_url : default_redirect
         }`;
 
+        if (login_method === "GOOGLE") {
+          return res.status(200).json({ message: login_link });
+        }
         try {
           await SendLoginLink({
             recipient_email: user.user_email,

@@ -1,8 +1,9 @@
 import axios from "../axios/axios";
 
 export default class AuthService {
-  static async createLoginLink({ user_email, callback_url }) {
-    const body: APICreateLoginLinkInput = {
+  static async login({ user_email, callback_url, login_method }) {
+    const body = {
+      login_method: login_method,
       user_email: user_email,
     };
 
