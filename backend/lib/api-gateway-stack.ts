@@ -1,18 +1,55 @@
-import { CorsHttpMethod, HttpApi, HttpMethod } from "@aws-cdk/aws-apigatewayv2";
-import { LambdaProxyIntegration } from "@aws-cdk/aws-apigatewayv2-integrations";
-import * as lambda from "@aws-cdk/aws-lambda";
+import { CorsHttpMethod, HttpApi } from "@aws-cdk/aws-apigatewayv2";
 import * as cdk from "@aws-cdk/core";
-import * as path from "path";
-import { NodejsFunction } from "@aws-cdk/aws-lambda-nodejs";
+import { DomainName } from "@aws-cdk/aws-apigatewayv2";
+import * as acm from "@aws-cdk/aws-certificatemanager";
+import { HostedZone, CnameRecord } from "@aws-cdk/aws-route53";
 
 export class ApiGatewayStack extends cdk.Stack {
+  // Make the API accessible to other stacks so we can add routes
+  public API: HttpApi;
+
   constructor(scope: cdk.App, id: string, props?: cdk.StackProps) {
     super(scope, id, props);
-    // Create a DynamoDB table
 
-    // Create HTTP Api
-    const apigw = new HttpApi(this, "http-api-example", {
-      description: "HTTP API example",
+    /**
+     * We need to create an API & a custom domain for it so it doesn't change on each redeploy
+     *
+     * Parts from: https://stackoverflow.com/a/61573642
+     * and https://docs.aws.amazon.com/cdk/api/latest/docs/@aws-cdk_aws-apigatewayv2.DomainName.html
+     *
+     */
+
+    console.log(
+      "Certificate ARN BLAH BLAH BLAH BLAH BLAH BLAH BLAH BLAH BLAH BLAH BLAH BLAH ",
+      process.env.DOMAIN_CERTIFICATE_ARN as string
+    );
+    const domain = new DomainName(this, "DN", {
+      domainName: process.env.API_URL as string,
+      certificate: acm.Certificate.fromCertificateArn(
+        this,
+        "DomainCertificate",
+        process.env.DOMAIN_CERTIFICATE_ARN as string
+      ),
+    });
+
+    // Get a reference to AN EXISTING hosted zone
+    const hostedZone = HostedZone.fromHostedZoneAttributes(this, "HostedZone", {
+      hostedZoneId: process.env.HOSTED_ZONE_ID as string,
+      zoneName: process.env.HOSTED_ZONE_NAME as string,
+    });
+
+    // Finally, add a CName record in the hosted zone with a value of the new custom domain that was created
+    new CnameRecord(this, "ApiGatewayRecordSet", {
+      zone: hostedZone,
+      recordName: "api",
+      domainName: domain.regionalDomainName,
+    });
+
+    // Create the API
+    const apigw = new HttpApi(this, "plutomi-api", {
+      description: `Main API for the ${
+        process.env.HOSTED_ZONE_NAME as string
+      } website`,
       corsPreflight: {
         allowHeaders: [
           "Content-Type",
@@ -28,36 +65,13 @@ export class ApiGatewayStack extends cdk.Stack {
           CorsHttpMethod.PATCH,
           CorsHttpMethod.DELETE,
         ],
-        allowCredentials: true,
-        // allowOrigins: ["http://localhost:3000"],
+      },
+      defaultDomainMapping: {
+        domainName: domain,
       },
     });
 
-    const getPublicOpeningsByOrgFunction = new NodejsFunction(
-      this,
-      "get-public-openings-by-org",
-      {
-        memorySize: 1024,
-        timeout: cdk.Duration.seconds(5),
-        runtime: lambda.Runtime.NODEJS_14_X,
-        handler: "main",
-        entry: path.join(
-          __dirname,
-          `/../functions/get-public-openings-by-org.ts`
-        ),
-      }
-    );
-
-    // 👇 add route for GET /todos
-    apigw.addRoutes({
-      path: "/api/cdk",
-      methods: [HttpMethod.GET],
-      integration: new LambdaProxyIntegration({
-        handler: getPublicOpeningsByOrgFunction,
-      }),
-    });
-
-    // 👇 create an Output for the API URL
-    new cdk.CfnOutput(this, "apiUrl", { value: apigw.url as string }); // ?
+    // Export the API so we can reference it in other stacks
+    this.API = apigw;
   }
 }

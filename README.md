@@ -26,7 +26,9 @@ This project is our attempt to address some of the issues we encountered and to 
 
 ## Architecture
 
-At the time of this writing, this project uses the [Serverless-Nextjs component](https://github.com/serverless-nextjs/serverless-next.js). I am in the process of migrating the backend from Lambda@Edge to a regular APIGW/Lambda setup using the AWS CDK. Some of the reasons for migrating off of Edge are listed [here](https://github.com/plutomi/plutomi/issues/172). Once this migration is finished, we will have Lambda@Edge routing all `/api/` routes to the APIGW, and each function will have a single responsability (no monolambda / lambda per service). All pages are rendered using SSG and data fetching is done client side.
+At the time of this writing, this project uses the [Serverless-Nextjs component](https://github.com/serverless-nextjs/serverless-next.js). All pages are rendered using SSG and data fetching is done client side. I am in the process of migrating the backend from Lambda@Edge to a regular APIGW/Lambda setup using the AWS CDK. Some of the reasons for migrating off of Edge are listed [here](https://github.com/plutomi/plutomi/issues/172). Once this migration is finished, the API will be completely separate from the front end at `api.plutomi.com` (_which means regular NextJS API routes will not work!_).
+
+Each function will be responsible for ONE (1) thing (no monolambda / lambda per service). However, lambdas that have common paths will be grouped together in each stack. As an example, the routes that deal with `authentication` (creating login links, logging in, & logging out) will be a single stack with a total of three functions.
 
 In the future, I also plan to move the front end to CDK using the [CDK construct](https://serverless-nextjs.com/docs/cdkconstruct/) for the Serverless Nextjs component. This would allow just one tool to build and deploy all infastructure.
 

@@ -1,7 +1,3 @@
-import AuthService from "./adapters/AuthService";
-import UsersService from "./adapters/UsersService";
-import { mutate } from "swr";
-
 /**
  * ONLY FOR ENTITIES THAT CAN HAVE THEIR ORDER REARRANGED - Stages, questions, rules, etc.
  * We are storing the order in an array in the parent component.

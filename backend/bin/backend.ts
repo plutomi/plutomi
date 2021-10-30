@@ -2,11 +2,11 @@
 import "source-map-support/register";
 import * as cdk from "@aws-cdk/core";
 import { ApiGatewayStack } from "../lib/api-gateway-stack";
-
+import { PublicInfoServiceStack } from "../lib/public-info-service-stack";
 const app = new cdk.App();
-new ApiGatewayStack(app, "ApiGatewayStack", {
-  /**
-   * Uncomment the next line to specialize this stack for the AWS Account
-   * env: { account: process.env.CDK_DEFAULT_ACCOUNT, region: process.env.CDK_DEFAULT_REGION }
-   */
+
+const API_GATEWAY = new ApiGatewayStack(app, "ApiGatewayStack");
+
+new PublicInfoServiceStack(app, "PublicInfoServiceStack", {
+  API: API_GATEWAY.API,
 });
