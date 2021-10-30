@@ -3,7 +3,7 @@ import create from "zustand";
 const useStore = create((set) => ({
   // TODO this is stupidly gross!!!
   createOrgModalIsOpen: false,
-  createOpeningModalIsOpen: false,
+  OpeningModalIsOpen: false,
   openingsSearchInput: "",
   createInviteModalIsOpen: false,
 
@@ -11,10 +11,8 @@ const useStore = create((set) => ({
     is_modal_open: false,
   },
 
-  setApplicantProfileModal: (
-    applicantProfileModal: ApplicantProfileModalInput
-  ) => {
-    set((state: PlutomiState) => ({
+  setApplicantProfileModal: (applicantProfileModal) => {
+    set((s) => ({
       applicantProfileModal: applicantProfileModal,
     }));
   },
@@ -26,8 +24,8 @@ const useStore = create((set) => ({
     last_name: "",
   },
 
-  setUserProfileModal: (userProfileModal: UserProfileModalInput) => {
-    set((state: PlutomiState) => ({
+  setUserProfileModal: (userProfileModal) => {
+    set((state) => ({
       userProfileModal: userProfileModal,
     }));
   },
@@ -38,7 +36,7 @@ const useStore = create((set) => ({
     stage_id: "",
     GSI1SK: "", // Stage title
   },
-  setStageModal: (stageModal: StageModalInput) => {
+  setStageModal: (stageModal) => {
     set((state) => ({
       stageModal: stageModal,
     }));
@@ -51,7 +49,7 @@ const useStore = create((set) => ({
     GSI1SK: "", // Question title
     question_description: "",
   },
-  setQuestionModal: (questionModal: QuestionModalInput) => {
+  setQuestionModal: (questionModal) => {
     set((state) => ({
       questionModal: questionModal,
     }));
@@ -64,28 +62,28 @@ const useStore = create((set) => ({
     GSI1SK: "",
     is_public: false,
   },
-  setOpeningModal: (openingModal: OpeningModalInput) => {
+  setOpeningModal: (openingModal) => {
     set((state) => ({
       openingModal: openingModal,
     }));
   },
 
   setCreateOrgModalOpen: (open: Boolean) =>
-    set((state: PlutomiState) => ({
+    set((state) => ({
       createOrgModalIsOpen: open,
     })),
 
-  setCreateOpeningModalOpen: (open: Boolean) =>
-    set((state: PlutomiState) => ({
-      createOpeningModalIsOpen: open,
+  setOpeningModalOpen: (open: Boolean) =>
+    set((state) => ({
+      OpeningModalIsOpen: open,
     })),
 
   setOpeningsSearchInput: (input: string) =>
-    set((state: PlutomiState) => ({
+    set((state) => ({
       openingsSearchInput: input,
     })),
   setCreateInviteModalOpen: (open: Boolean) =>
-    set((state: PlutomiState) => ({
+    set((state) => ({
       createInviteModalIsOpen: open,
     })),
 }));

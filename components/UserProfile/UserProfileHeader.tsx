@@ -4,9 +4,7 @@ import Loader from "../Loader";
 import useStore from "../../utils/store";
 export default function UserProfileHeader() {
   const { user, isUserLoading, isUserError } = useSelf();
-  const setUserProfileModal = useStore(
-    (state: PlutomiState) => state.setUserProfileModal
-  );
+  const setUserProfileModal = useStore((state) => state.setUserProfileModal);
   if (isUserLoading) {
     return <Loader text="Loading profile..." />;
   }

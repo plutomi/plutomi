@@ -24,6 +24,12 @@ We were not satisfied with the current landscape of applicant tracking systems, 
 
 This project is our attempt to address some of the issues we encountered and to provide a platform for others to improve upon.
 
+## Architecture
+
+At the time of this writing, this project uses the [Serverless-Nextjs component](https://github.com/serverless-nextjs/serverless-next.js). I am in the process of migrating the backend from Lambda@Edge to a regular APIGW/Lambda setup using the AWS CDK. Some of the reasons for migrating off of Edge are listed [here](https://github.com/plutomi/plutomi/issues/172). Once this migration is finished, we will have Lambda@Edge routing all `/api/` routes to the APIGW, and each function will have a single responsability (no monolambda / lambda per service). All pages are rendered using SSG and data fetching is done client side.
+
+In the future, I also plan to move the front end to CDK using the [CDK construct](https://serverless-nextjs.com/docs/cdkconstruct/) for the Serverless Nextjs component. This would allow just one tool to build and deploy all infastructure.
+
 ## License and Open Source
 
 **We are committed to keeping this project open source.**

@@ -15,7 +15,7 @@ export default function OpeningList() {
   const { user, isUserLoading, isUserError } = useSelf();
   let { openings, isOpeningsLoading, isOpeningsError } = useOpenings();
 
-  const search = useStore((state: PlutomiState) => state.openingsSearchInput);
+  const search = useStore((state) => state.openingsSearchInput);
 
   const filtered_openings = openings?.filter((opening: DynamoOpening) =>
     opening.GSI1SK.toLowerCase().trim().includes(search.toLowerCase().trim())

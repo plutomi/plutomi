@@ -5,7 +5,7 @@ export default async function SendLoginLink({
   recipient_email,
   login_link,
   login_link_relative_expiry,
-}: SendLoginLinkEmailInput) {
+}) {
   const new_email: SendEmailCommandInput = {
     Source: `Plutomi <login@plutomi.com>`,
     Destination: {

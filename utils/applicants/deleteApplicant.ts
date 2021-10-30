@@ -10,7 +10,7 @@ export default async function DeleteApplicant({ org_id, applicant_id }) {
   const applicant = (await GetApplicantById({
     org_id,
     applicant_id,
-  })) as DynamoApplicant;
+  })) as unknown as DynamoApplicant; // TODO fix this shit :(
   try {
     const transactParams: TransactWriteCommandInput = {
       TransactItems: [

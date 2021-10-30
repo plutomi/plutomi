@@ -40,11 +40,11 @@ export default function ApplicantProfileModal() {
   const { applicant_id, opening_id, stage_id } = router.query as CustomQuery;
 
   const setApplicantProfileModal = useStore(
-    (store: PlutomiState) => store.setApplicantProfileModal
+    (store) => store.setApplicantProfileModal
   );
 
   const applicantProfileModal = useStore(
-    (store: PlutomiState) => store.applicantProfileModal
+    (store) => store.applicantProfileModal
   );
 
   const { applicant, isApplicantLoading, isApplicantError } =

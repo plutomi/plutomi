@@ -3,18 +3,9 @@ import { Dialog, Transition } from "@headlessui/react";
 import { XIcon } from "@heroicons/react/outline";
 import useStore from "../../utils/store";
 
-interface UserProfileModalInputs {
-  updateUser: Function;
-}
-export default function UserProfileModal({
-  updateUser,
-}: UserProfileModalInputs) {
-  const userProfileModal = useStore(
-    (state: PlutomiState) => state.userProfileModal
-  );
-  const setUserProfileModal = useStore(
-    (state: PlutomiState) => state.setUserProfileModal
-  );
+export default function UserProfileModal({ updateUser }) {
+  const userProfileModal = useStore((state) => state.userProfileModal);
+  const setUserProfileModal = useStore((state) => state.setUserProfileModal);
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();

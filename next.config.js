@@ -12,5 +12,40 @@ module.exports = {
     LAMBDA_ROLE_ARN: process.env.LAMBDA_ROLE_ARN,
     WEBSITE_URL: process.env.WEBSITE_URL,
     NEXT_PUBLIC_GOOGLE_CLIENT_ID: process.env.GOOGLE_CLIENT_ID,
+    APIGW_URL: process.env.APIGW_URL,
+  },
+  async redirects() {
+    return [
+      {
+        source: "/openings/:any*",
+        destination: "/",
+        permanent: false,
+      },
+      {
+        source: "/stages/:any*",
+        destination: "/",
+        permanent: false,
+      },
+      {
+        source: "/profile/:any*",
+        destination: "/",
+        permanent: false,
+      },
+      {
+        source: "/team/:any*",
+        destination: "/",
+        permanent: false,
+      },
+      {
+        source: "/domains/:any*",
+        destination: "/",
+        permanent: false,
+      },
+      {
+        source: "/dashboard/:any*",
+        destination: "/",
+        permanent: false,
+      },
+    ];
   },
 };

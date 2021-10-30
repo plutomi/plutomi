@@ -41,7 +41,7 @@ const handler = async (
   }
 
   if (method === "PUT") {
-    const update_user_input: UpdateUserInput = {
+    const update_user_input = {
       new_user_values: new_user_values,
       user_id: user_session.user_id,
       ALLOW_FORBIDDEN_KEYS: false,

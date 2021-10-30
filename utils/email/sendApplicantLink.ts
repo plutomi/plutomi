@@ -6,7 +6,7 @@ export default async function SendApplicantLink({
   org_name,
   applicant_id,
   applicant_email,
-}: SendApplicantLinkInput) {
+}) {
   const application_link = `${process.env.WEBSITE_URL}/${org_id}/applicants/${applicant_id}`;
   const new_email: SendEmailCommandInput = {
     Source: `${org_name} <applications@plutomi.com>`,

@@ -21,7 +21,9 @@ const handler = async (req: CustomRequest, res: NextApiResponse) => {
         return res.status(404).json({ message: "Applicant not found" });
       }
 
-      const clean_applicant = CleanApplicant(applicant as DynamoApplicant);
+      const clean_applicant = CleanApplicant(
+        applicant as unknown as DynamoApplicant // TODO fix this crap
+      );
       return res.status(200).json(clean_applicant);
     } catch (error) {
       // TODO add error logger

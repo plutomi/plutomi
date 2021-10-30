@@ -2,7 +2,7 @@ import { useRouter } from "next/router";
 import { mutate } from "swr";
 import StageReorderColumn from "../StageReorderColumn";
 import difference from "../../utils/getObjectDifference";
-import CreateOpeningModal from "./CreateOpeningModal";
+import OpeningModal from "./OpeningModal";
 import Loader from "../Loader";
 import useStore from "../../utils/store";
 import useOpeningById from "../../SWR/useOpeningById";
@@ -13,10 +13,8 @@ export default function OpeningSettingsContent() {
   let { opening, isOpeningLoading, isOpeningError } =
     useOpeningById(opening_id);
 
-  const openingModal = useStore((state: PlutomiState) => state.openingModal);
-  const setOpeningModal = useStore(
-    (state: PlutomiState) => state.setOpeningModal
-  );
+  const openingModal = useStore((state) => state.openingModal);
+  const setOpeningModal = useStore((state) => state.setOpeningModal);
 
   if (isOpeningLoading) {
     return <Loader text="Loading opening settings..." />;
@@ -55,7 +53,7 @@ export default function OpeningSettingsContent() {
 
   return (
     <>
-      <CreateOpeningModal updateOpening={updateOpening} />
+      <OpeningModal updateOpening={updateOpening} />
 
       {/* 3 column wrapper */}
       <div className="flex-grow w-full max-w-7xl mx-auto xl:px-8 lg:flex">

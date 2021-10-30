@@ -17,11 +17,9 @@ export default function StageSettingsHeader({ deleteStage }) {
 
   const { stage, isStageLoading, isStageError } = useStageById(stage_id);
 
-  const setQuestionModal = useStore(
-    (state: PlutomiState) => state.setQuestionModal
-  );
+  const setQuestionModal = useStore((state) => state.setQuestionModal);
 
-  const setStageModal = useStore((state: PlutomiState) => state.setStageModal);
+  const setStageModal = useStore((state) => state.setStageModal);
 
   // return (
   //   <div className="md:flex md:items-center md:justify-between ">

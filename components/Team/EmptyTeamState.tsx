@@ -3,7 +3,7 @@ import { UserGroupIcon } from "@heroicons/react/outline";
 import useStore from "../../utils/store";
 export default function EmptyTeamState() {
   const setCreateInviteModalOpen = useStore(
-    (state: PlutomiState) => state.setCreateInviteModalOpen
+    (state) => state.setCreateInviteModalOpen
   );
   return (
     <div className="text-center">

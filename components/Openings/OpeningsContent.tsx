@@ -7,21 +7,17 @@ import OpeningList from "./OpeningsList";
 import { PlusIcon } from "@heroicons/react/outline";
 import useStore from "../../utils/store";
 import EmptyOpeningsState from "./EmptyOpeningsState";
-import CreateOpeningModal from "./CreateOpeningModal";
+import OpeningModal from "./OpeningModal";
 import useOpenings from "../../SWR/useOpenings";
 export default function OpeningsContent() {
   let { openings, isOpeningsLoading, isOpeningsError } = useOpenings();
-  const openingModal = useStore((state: PlutomiState) => state.openingModal);
-  const setOpeningModal = useStore(
-    (state: PlutomiState) => state.setOpeningModal
-  );
+  const openingModal = useStore((state) => state.openingModal);
+  const setOpeningModal = useStore((state) => state.setOpeningModal);
 
   const [localSearch, setLocalSearch] = useState("");
 
-  const setOpeningsSearch = useStore(
-    (state: PlutomiState) => state.setOpeningsSearchInput
-  );
-  const search = useStore((state: PlutomiState) => state.openingsSearchInput);
+  const setOpeningsSearch = useStore((state) => state.setOpeningsSearchInput);
+  const search = useStore((state) => state.openingsSearchInput);
 
   if (isOpeningsLoading) {
     return <Loader text="Loading openings..." />;
@@ -57,7 +53,7 @@ export default function OpeningsContent() {
 
   return (
     <>
-      <CreateOpeningModal createOpening={createOpening} />
+      <OpeningModal createOpening={createOpening} />
 
       {openings.length == 0 ? (
         <EmptyOpeningsState />

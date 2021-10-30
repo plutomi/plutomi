@@ -15,10 +15,10 @@ export default function CreateOrgModal({ createOrg }) {
     await createOrg({ GSI1SK, org_id });
   };
 
-  const open = useStore((state: PlutomiState) => state.createOrgModalIsOpen);
+  const open = useStore((state) => state.createOrgModalIsOpen);
 
   const setCreateOrgModalOpen = useStore(
-    (state: PlutomiState) => state.setCreateOrgModalOpen
+    (state) => state.setCreateOrgModalOpen
   );
 
   return (

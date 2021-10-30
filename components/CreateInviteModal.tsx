@@ -5,10 +5,10 @@ import useStore from "../utils/store";
 export default function CreateInviteModal({ createInvite }) {
   const [recipient_email, setrecipient_email] = useState("");
 
-  const open = useStore((state: PlutomiState) => state.createInviteModalIsOpen);
+  const open = useStore((state) => state.createInviteModalIsOpen);
 
   const setCreateInviteModalOpen = useStore(
-    (state: PlutomiState) => state.setCreateInviteModalOpen
+    (state) => state.setCreateInviteModalOpen
   );
 
   const handleSubmit = async (e: FormEvent) => {

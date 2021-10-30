@@ -7,9 +7,7 @@ export default function QuestionItem({
   new_questions,
   deleteQuestion,
 }) {
-  const setQuestionModal = useStore(
-    (state: PlutomiState) => state.setQuestionModal
-  );
+  const setQuestionModal = useStore((state) => state.setQuestionModal);
   const [isHovering, setIsHovering] = useState(false);
 
   const handleDelete = (question_id: string) => {
