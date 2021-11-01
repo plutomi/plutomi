@@ -13,6 +13,8 @@
   "dependencies": {
     "@aws-cdk/aws-apigatewayv2": "^1.130.0",
     "@aws-cdk/aws-certificatemanager": "^1.130.0",
+    "@aws-cdk/aws-ecs": "^1.130.0",
+    "@aws-cdk/aws-ecs-patterns": "^1.130.0",
     "@aws-cdk/aws-route53": "^1.130.0",
     "@aws-cdk/core": "^1.130.0",
     "@headlessui/react": "^1.4.1",
