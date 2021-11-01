@@ -1,6 +1,5 @@
-import { CorsHttpMethod, HttpApi } from "@aws-cdk/aws-apigatewayv2";
+import { CorsHttpMethod, HttpApi, DomainName } from "@aws-cdk/aws-apigatewayv2";
 import * as cdk from "@aws-cdk/core";
-import { DomainName } from "@aws-cdk/aws-apigatewayv2";
 import * as acm from "@aws-cdk/aws-certificatemanager";
 import { HostedZone, CnameRecord } from "@aws-cdk/aws-route53";
 
@@ -19,10 +18,6 @@ export class ApiGatewayStack extends cdk.Stack {
      *
      */
 
-    console.log(
-      "Certificate ARN BLAH BLAH BLAH BLAH BLAH BLAH BLAH BLAH BLAH BLAH BLAH BLAH ",
-      process.env.DOMAIN_CERTIFICATE_ARN as string
-    );
     const domain = new DomainName(this, "DN", {
       domainName: process.env.API_URL as string,
       certificate: acm.Certificate.fromCertificateArn(

@@ -11,6 +11,9 @@
     "deploy": "set NODE_ENV=production && serverless --debug"
   },
   "dependencies": {
+    "@aws-cdk/aws-apigatewayv2": "^1.130.0",
+    "@aws-cdk/aws-certificatemanager": "^1.130.0",
+    "@aws-cdk/aws-route53": "^1.130.0",
     "@aws-cdk/core": "^1.130.0",
     "@headlessui/react": "^1.4.1",
     "@heroicons/react": "^1.0.5",
