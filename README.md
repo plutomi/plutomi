@@ -1,4 +1,6 @@
-# Plutomi - [Website](https://plutomi.com)
+# Plutomi
+
+### [Website](https://plutomi.com)
 
 **Plutomi is an applicant tracking system**.
 
@@ -18,19 +20,27 @@ Stage order:
 4. **Final Review** - Manually review an applicant's license for compliance
 5. **Ready to Drive** - Applicants that have completed your application
 
-## Motivation
-
-We were not satisfied with the current landscape of applicant tracking systems, especially for large scale, high volume hiring. It would have benefited us to have an open source platform that we could contribute to and make changes ourselves instead of waiting for the vendor to (maybe) implement changes many months down the line.
-
-This project is our attempt to address some of the issues we encountered and to provide a platform for others to improve upon.
-
 ## Architecture
 
-At the time of this writing, this project uses the [Serverless-Nextjs component](https://github.com/serverless-nextjs/serverless-next.js). All pages are rendered using SSG and data fetching is done client side. I am in the process of migrating the backend from Lambda@Edge to a regular APIGW/Lambda setup using the AWS CDK. Some of the reasons for migrating off of Edge are listed [here](https://github.com/plutomi/plutomi/issues/172). Once this migration is finished, the API will be completely separate from the front end at `api.plutomi.com` (_which means regular NextJS API routes will not work!_).
+**All infastructure will be managed by AWS CDK.**
 
-Each function will be responsible for ONE (1) thing (no monolambda / lambda per service). However, lambdas that have common paths will be grouped together in each stack. As an example, the routes that deal with `authentication` (creating login links, logging in, & logging out) will be a single stack with a total of three functions.
+We believe CDK to be the future and it's nice to have 'first-class' tooling directly from AWS.
 
-In the future, I also plan to move the front end to CDK using the [CDK construct](https://serverless-nextjs.com/docs/cdkconstruct/) for the Serverless Nextjs component. This would allow just one tool to build and deploy all infastructure.
+Some useful repos:
+
+- [AWS ECS Patterns](https://github.com/aws/aws-cdk/tree/master/packages/%40aws-cdk/aws-ecs-patterns)
+- [Serverless CDK Patterns](https://github.com/cdk-patterns/serverless)
+
+The frontend is deployed with the [Serverless-Nextjs component](https://github.com/serverless-nextjs/serverless-next.js). It's your typical S3 + Cloudfront setup for a React app but leverages Lambda@Edge for Next's file based routing. It also uses Lambda@Edge for API routes but there are several downsides to this listed [here](https://github.com/plutomi/plutomi/issues/172), so we will not be using them.
+Eventually, we will move the frontend to CDK with the [CDK construct](https://serverless-nextjs.com/docs/cdkconstruct/).
+
+The API is built with CDK and runs on AWS Fargate.
+
+> Why not API Gateway + regular Lambda?
+
+The choice ultimately came down to local development / testing.
+We would prefer to have one tool to do all infastructure (CDK). The only real way to test lambda functions locally is to use [AWS SAM with CDK](https://aws.amazon.com/blogs/compute/better-together-aws-sam-and-aws-cdk/) which just seems like a hack :/. This would also require running two local dev servers: one for Nextjs & one for the lambdas with SAM.
+With CDK, we can run Nextjs in Docker and use the native Nextjs dev environment, tooling, & file based routing and not have to change anything. [This comment](https://news.ycombinator.com/item?id=28841292) on Hacker News also adds some insight. We will still use lambdas for background jobs such as queues, DynamoDB streams, email sending, etc. If things do change and the local lambda development becomes easier (with CDK), we wouldn't mind switching back.
 
 ## License and Open Source
 
