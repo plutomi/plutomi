@@ -4,7 +4,7 @@ import * as ecs from "@aws-cdk/aws-ecs";
 import * as ecs_patterns from "@aws-cdk/aws-ecs-patterns";
 
 // TODO make these variables env vars
-export default class CdkStack extends cdk.Stack {
+export default class APIStack extends cdk.Stack {
   /**
    *
    * @param {cdk.Construct} scope
