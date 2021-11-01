@@ -1,6 +1,8 @@
 import * as cdk from "@aws-cdk/core";
 import * as iam from "@aws-cdk/aws-iam";
 import * as ecs from "@aws-cdk/aws-ecs";
+import * as ec2 from "@aws-cdk/aws-ec2";
+import * as ecr from "@aws-cdk/aws-ecr";
 import * as ecs_patterns from "@aws-cdk/aws-ecs-patterns";
 
 // TODO make these variables env vars
@@ -19,6 +21,11 @@ export default class APIStack extends cdk.Stack {
       assumedBy: new iam.ServicePrincipal("ecs-tasks.amazonaws.com"),
     });
 
+    // Add policies
+    taskRole.addManagedPolicy(
+      iam.ManagedPolicy.fromAwsManagedPolicyName("AmazonDynamoDBFullAccess") // TODO FIX THIS!!!!
+    );
+
     // Define a fargate task with the newly created execution and task roles
     const taskDefinition = new ecs.FargateTaskDefinition(
       this,
@@ -29,13 +36,22 @@ export default class APIStack extends cdk.Stack {
       }
     );
 
-    // Import a local docker image and set up logger
+    // For private ECR repositories, you must set this or you'll receive this error
+    const repository = ecr.Repository.fromRepositoryName(
+      this,
+      "plutomi-fargate-api-repository",
+      "plutomi" 
+    );
+
+    const image = ecs.ContainerImage.fromEcrRepository(
+      repository,
+      "latest" 
+    );
+
     const container = taskDefinition.addContainer(
       "plutomi-fargate-api-container",
       {
-        image: ecs.ContainerImage.fromRegistry(
-          "public.ecr.aws/w5f2q5z8/nextjs-on-fargate:latest"
-        ),
+        image: image,
         logging: new ecs.AwsLogDriver({
           streamPrefix: "plutomi-fargate-api-log-prefix",
         }),
@@ -48,8 +64,16 @@ export default class APIStack extends cdk.Stack {
       protocol: ecs.Protocol.TCP,
     });
 
+    const vpc = new ec2.Vpc(this, "plutomi-fargate-api-vpc", {
+      maxAzs: 2,
+      natGateways: 1,
+      gatewayEndpoints: {},
+    });
+
     // Create the cluster
-    const cluster = new ecs.Cluster(this, "plutomi-fargate-api-cluster");
+    const cluster = new ecs.Cluster(this, "plutomi-fargate-api-cluster", {
+      vpc,
+    });
 
     // Create a load-balanced Fargate service and make it public
     new ecs_patterns.ApplicationLoadBalancedFargateService(

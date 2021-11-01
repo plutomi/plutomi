@@ -5,4 +5,4 @@ import APIStack from "../lib/APIStack";
 
 const app = new cdk.App();
 
-new APIStack(app, "PlutmiApiStack");
+new APIStack(app, "PlutomiApiStack"); // TODO fix this name lol
