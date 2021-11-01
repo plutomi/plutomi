@@ -10,12 +10,11 @@ export default function EmptyStagesState() {
 
   const { user, isUserLoading, isUserError } = useSelf();
 
-  let { stages, isStagesLoading, isStagesError } = useAllStagesInOpening(
-    opening_id
-  );
+  let { stages, isStagesLoading, isStagesError } =
+    useAllStagesInOpening(opening_id);
 
-  const stageModal = useStore((state: PlutomiState) => state.stageModal);
-  const setStageModal = useStore((state: PlutomiState) => state.setStageModal);
+  const stageModal = useStore((state) => state.stageModal);
+  const setStageModal = useStore((state) => state.setStageModal);
 
   return (
     <div className="text-center">

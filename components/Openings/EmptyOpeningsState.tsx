@@ -2,9 +2,7 @@ import { PlusIcon } from "@heroicons/react/solid";
 import { BriefcaseIcon } from "@heroicons/react/outline";
 import useStore from "../../utils/store";
 export default function EmptyOpeningsState() {
-  const setOpeningModal = useStore(
-    (state: PlutomiState) => state.setOpeningModal
-  );
+  const setOpeningModal = useStore((state) => state.setOpeningModal);
   return (
     <div className="text-center">
       <BriefcaseIcon className="mx-auto h-12 w-12 text-light" />

@@ -15,7 +15,7 @@ export default function DashboardContent() {
   const custom_apply_link = `${process.env.WEBSITE_URL}/${org?.org_id}/apply`;
 
   const setCreateOrgModalOpen = useStore(
-    (state: PlutomiState) => state.setCreateOrgModalOpen
+    (state) => state.setCreateOrgModalOpen
   );
 
   if (isUserLoading) {

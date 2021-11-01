@@ -15,9 +15,7 @@ export default function OpeningSettingsHeader() {
   let { opening, isOpeningLoading, isOpeningError } =
     useOpeningById(opening_id);
 
-  const setOpeningModal = useStore(
-    (state: PlutomiState) => state.setOpeningModal
-  );
+  const setOpeningModal = useStore((state) => state.setOpeningModal);
 
   if (isOpeningLoading) {
     return <Loader text={"Loading opening..."} />;

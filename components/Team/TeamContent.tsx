@@ -16,7 +16,7 @@ export default function TeamContent() {
   );
 
   const setCreateInviteModalOpen = useStore(
-    (state: PlutomiState) => state.setCreateInviteModalOpen
+    (state) => state.setCreateInviteModalOpen
   );
 
   if (isOrgUsersLoading) {

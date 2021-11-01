@@ -13,13 +13,9 @@ import UsersService from "../adapters/UsersService";
 export default function Team() {
   const { user, isUserLoading, isUserError } = useSelf();
 
-  const userProfileModal = useStore(
-    (state: PlutomiState) => state.userProfileModal
-  );
+  const userProfileModal = useStore((state) => state.userProfileModal);
 
-  const setUserProfileModal = useStore(
-    (state: PlutomiState) => state.setUserProfileModal
-  );
+  const setUserProfileModal = useStore((state) => state.setUserProfileModal);
 
   // When rendering client side don't display anything until loading is complete
   if (typeof window !== "undefined" && isUserLoading) {

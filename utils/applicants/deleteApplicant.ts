@@ -2,7 +2,7 @@ import {
   TransactWriteCommand,
   TransactWriteCommandInput,
 } from "@aws-sdk/lib-dynamodb";
-import { Dynamo } from "../../libs/ddbDocClient";
+import { Dynamo } from "../../lib/awsClients/ddbDocClient";
 import { GetApplicantById } from "./getApplicantById";
 const { DYNAMO_TABLE_NAME } = process.env;
 
@@ -10,7 +10,7 @@ export default async function DeleteApplicant({ org_id, applicant_id }) {
   const applicant = (await GetApplicantById({
     org_id,
     applicant_id,
-  })) as DynamoApplicant;
+  })) as unknown as DynamoApplicant; // TODO fix this shit :(
   try {
     const transactParams: TransactWriteCommandInput = {
       TransactItems: [

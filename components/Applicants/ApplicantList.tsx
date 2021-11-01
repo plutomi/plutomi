@@ -11,11 +11,11 @@ export default function ApplicantList() {
     useAllApplicantsInStage(opening_id, stage_id);
 
   const setApplicantProfileModal = useStore(
-    (store: PlutomiState) => store.setApplicantProfileModal
+    (store) => store.setApplicantProfileModal
   );
 
   const applicantProfileModal = useStore(
-    (store: PlutomiState) => store.applicantProfileModal
+    (store) => store.applicantProfileModal
   );
 
   if (isApplicantsLoading) {

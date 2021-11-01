@@ -2,22 +2,20 @@ import { FormEvent, Fragment, useState } from "react";
 import { Dialog, Transition } from "@headlessui/react";
 import useOpeningById from "../../SWR/useOpeningById";
 import { XIcon } from "@heroicons/react/outline";
-import useSelf from "../../SWR/useSelf";
 import useStore from "../../utils/store";
 
-interface OpeningModalInputs {
+interface OpeningModalInput {
   createOpening?: Function;
   updateOpening?: Function;
 }
-export default function CreateOpeningModal({
+
+// Todo rename this to opening modal
+export default function OpeningModal({
   createOpening,
   updateOpening,
-}: OpeningModalInputs) {
-  const { user, isUserLoading, isUserError } = useSelf();
-  const openingModal = useStore((state: PlutomiState) => state.openingModal);
-  const setOpeningModal = useStore(
-    (state: PlutomiState) => state.setOpeningModal
-  );
+}: OpeningModalInput) {
+  const openingModal = useStore((state) => state.openingModal);
+  const setOpeningModal = useStore((state) => state.setOpeningModal);
 
   const { opening, isOpeningLoading, isOpeningError } = useOpeningById(
     openingModal.opening_id

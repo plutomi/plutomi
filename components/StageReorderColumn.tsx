@@ -89,8 +89,8 @@ export default function StageReorderColumn() {
     setNewStages(stages);
   }, [stages]);
 
-  const stageModal = useStore((state: PlutomiState) => state.stageModal);
-  const setStageModal = useStore((state: PlutomiState) => state.setStageModal);
+  const stageModal = useStore((state) => state.stageModal);
+  const setStageModal = useStore((state) => state.setStageModal);
 
   const handleDragEnd = async (result) => {
     const { destination, source, draggableId } = result;

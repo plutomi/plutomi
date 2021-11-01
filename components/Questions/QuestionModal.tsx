@@ -5,13 +5,9 @@ import useStore from "../../utils/store";
 
 const description_max_length = 300;
 export default function QuestionModal({ createQuestion, updateQuestion }) {
-  const questionModal: QuestionModalInput = useStore(
-    (state: PlutomiState) => state.questionModal
-  );
+  const questionModal = useStore((state) => state.questionModal);
 
-  const setQuestionModal = useStore(
-    (state: PlutomiState) => state.setQuestionModal
-  );
+  const setQuestionModal = useStore((state) => state.setQuestionModal);
 
   const handleSubmit = async (e: FormEvent) => {
     if (questionModal.modal_mode === "CREATE") {

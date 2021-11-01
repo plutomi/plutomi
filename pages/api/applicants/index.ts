@@ -37,7 +37,7 @@ const handler = async (
       const new_applicant = await CreateApplicant(create_applicant_input);
       const org = await GetOrg(org_id);
 
-      const send_applicant_link_input: SendApplicantLinkInput = {
+      const send_applicant_link_input = {
         applicant_email: new_applicant.email,
         org_id: org_id,
         org_name: org.GSI1SK,

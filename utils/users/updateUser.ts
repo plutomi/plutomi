@@ -1,5 +1,5 @@
 import { UpdateCommand, UpdateCommandInput } from "@aws-sdk/lib-dynamodb";
-import { Dynamo } from "../../libs/ddbDocClient";
+import { Dynamo } from "../../lib/awsClients/ddbDocClient";
 
 const { DYNAMO_TABLE_NAME } = process.env;
 
@@ -42,6 +42,8 @@ export async function UpdateUser({
 
     // TODO refactor this into its own function, easy way to have banned values
     const banned_values = ["NO_FIRST_NAME", "NO_LAST_NAME"];
+
+    // @ts-ignore TODO fix types
     const checker = (value) =>
       banned_values.some((element) => value.includes(element));
 

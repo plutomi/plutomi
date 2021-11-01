@@ -95,25 +95,22 @@ export default function StageSettingsContent() {
   const { opening_id, stage_id } = router.query as CustomQuery;
 
   const { user, isUserLoading, isUserError } = useSelf();
-  let { opening, isOpeningLoading, isOpeningError } = useOpeningById(
-    opening_id
-  );
+  let { opening, isOpeningLoading, isOpeningError } =
+    useOpeningById(opening_id);
 
   let { stages, isStagesLoading, isStagesError } = useAllStagesInOpening(
     opening?.opening_id
   );
-  const stageModal = useStore((state: PlutomiState) => state.stageModal);
-  const setStageModal = useStore((state: PlutomiState) => state.setStageModal);
+  const stageModal = useStore((state) => state.stageModal);
+  const setStageModal = useStore((state) => state.setStageModal);
 
   const { stage, isStageLoading, isStageError } = useStageById(stage_id);
 
   const { questions, isQuestionsLoading, isQuestionsError } =
     useAllStageQuestions(user?.org_id, stage?.stage_id);
 
-  const questionModal = useStore((state: PlutomiState) => state.questionModal);
-  const setQuestionModal = useStore(
-    (state: PlutomiState) => state.setQuestionModal
-  );
+  const questionModal = useStore((state) => state.questionModal);
+  const setQuestionModal = useStore((state) => state.setQuestionModal);
 
   if (isOpeningLoading) {
     return <Loader text="Loading opening..." />;

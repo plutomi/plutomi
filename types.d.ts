@@ -34,7 +34,6 @@ interface DynamoCreateStageInput {
   GSI1SK: string;
 }
 
-
 interface GetStageInput {
   org_id: string;
   stage_id: string;
@@ -71,76 +70,12 @@ interface CreateApplicantResponseInput {
   question_response: string;
 }
 
-interface CreateLoginLinkInput {
-  user_email: string;
-  login_link_hash: string;
-  login_link_expiry: CustomDateFormat; // Timestamp in the future
-}
-
-interface SendLoginLinkEmailInput {
-  recipient_email: string;
-  login_link: string;
-  login_link_relative_expiry: CustomDateFormat;
-}
-
-interface SendApplicantLinkInput {
-  org_id: string;
-  org_name: string;
-  applicant_id: string;
-  applicant_email: string;
-}
-interface UpdateUserInput {
-  new_user_values: DynamoUser;
-  user_id: string;
-  ALLOW_FORBIDDEN_KEYS: boolean;
-}
-
-interface APIUpdateUserInput {
-  new_user_values: DynamoUser;
-}
-interface Pokemon {
-  id: number;
-  name: string;
-}
-interface PlutomiState {
-  // Create / edit questions in a stage
-  questionModal: QuestionModalInput;
-  setQuestionModal: Function;
-
-  // Create / edit openings
-  openingModal: OpeningModalInput;
-  setOpeningModal: Function;
-
-  // Create / edit stages
-  stageModal: StageModalInput;
-  setStageModal: Function;
-
-  // Edit user
-  userProfileModal: UserProfileModalInput;
-  setUserProfileModal: Function;
-
-  // Edit applicant
-  applicantProfileModal: ApplicantProfileModalInput;
-  setApplicantProfileModal: Function;
-
-  // TODO
-  setCreateOrgModalOpen: Function;
-  createOrgModalIsOpen: boolean;
-  openingsSearchInput: string;
-  setOpeningsSearchInput: Function;
-  createInviteModalIsOpen: boolean;
-  setCreateInviteModalOpen: Function;
-}
-
 type CustomSession = Session & { user_id: string; user_email: string };
 
 type CustomRequest = NextApiRequest & { user: DynamoUser };
 
 type CustomJWT = JWT & { user_id: string };
 
-/**
- * @param org_id - test
- */
 interface CreateOrgInviteInput {
   org_id: string;
   org_name: string;
@@ -336,39 +271,6 @@ interface DeleteQuestionInput {
   org_id: string;
   stage_id: string;
   question_id: string;
-}
-
-interface QuestionModalInput {
-  is_modal_open: boolean;
-  modal_mode: "EDIT" | "CREATE"; // Will render text differently
-  question_id: "";
-  GSI1SK: "";
-  question_description: "";
-}
-
-interface StageModalInput {
-  is_modal_open: boolean;
-  modal_mode: "EDIT" | "CREATE"; // Will render text differently
-  stage_id: "";
-  GSI1SK: "";
-}
-interface UserProfileModalInput {
-  is_modal_open: boolean;
-  modal_mode: "EDIT" | "CREATE"; // Will render text differently
-  first_name: "";
-  last_name: "";
-}
-
-interface ApplicantProfileModalInput {
-  is_modal_open: boolean;
-}
-
-interface OpeningModalInput {
-  is_modal_open: boolean;
-  modal_mode: "EDIT" | "CREATE"; // Will render text differently
-  opening_id: "";
-  GSI1SK: "";
-  is_public: boolean;
 }
 
 interface useOrgOutput {

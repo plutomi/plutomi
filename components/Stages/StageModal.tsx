@@ -20,11 +20,9 @@ export default function StageModal({
   createStage,
   updateStage,
 }: StageModalFunctionInputs) {
-  const stageModal: StageModalInput = useStore(
-    (state: PlutomiState) => state.stageModal
-  );
+  const stageModal = useStore((state) => state.stageModal);
 
-  const setStageModal = useStore((state: PlutomiState) => state.setStageModal);
+  const setStageModal = useStore((state) => state.setStageModal);
 
   const handleSubmit = async (e: FormEvent) => {
     if (stageModal.modal_mode === "CREATE") {
