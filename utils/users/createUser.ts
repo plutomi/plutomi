@@ -1,5 +1,5 @@
 import { PutCommand, PutCommandInput } from "@aws-sdk/lib-dynamodb";
-import { Dynamo } from "../../libs/ddbDocClient";
+import { Dynamo } from "../../lib/awsClients/ddbDocClient";
 import { GetCurrentTime } from "../time";
 import { nanoid } from "nanoid";
 import SendNewUserEmail from "../email/sendNewUser";

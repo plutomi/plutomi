@@ -1,5 +1,5 @@
 import { GetCommand, GetCommandInput } from "@aws-sdk/lib-dynamodb";
-import { Dynamo } from "../../libs/ddbDocClient";
+import { Dynamo } from "../../lib/awsClients/ddbDocClient";
 const { DYNAMO_TABLE_NAME } = process.env;
 
 export async function GetOpening({ org_id, opening_id }: GetOpeningInput) {

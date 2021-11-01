@@ -2,7 +2,7 @@ import {
   TransactWriteCommand,
   TransactWriteCommandInput,
 } from "@aws-sdk/lib-dynamodb";
-import { Dynamo } from "../../libs/ddbDocClient";
+import { Dynamo } from "../../lib/awsClients/ddbDocClient";
 import { GetOpening } from "../openings/getOpeningById";
 import { GetStage } from "./getStage";
 const { DYNAMO_TABLE_NAME } = process.env;
