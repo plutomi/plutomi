@@ -21,14 +21,14 @@ plutomi:
 
       # API Routing
       # This forwards our API requests to Fargate
-      origins:
-        - url: ${env.FARGATE_URL}
-          pathPatterns:
-            # You might receive an error trying to deploy with 'api/*' for the first time
-            # This is due to the duplicate Lambda api behavior pattern on cloudfront that gets created on first deploy
-            # If so, deploy with '/api/*' first and then redeploy with 'api/*'
-            api/*:
-              # Don't cache
-              minTTL: 0
-              maxTTL: 0
-              defaultTTL: 0
+      # origins:
+      #   - url: ${env.FARGATE_URL}
+      #     pathPatterns:
+      #       # You might receive an error trying to deploy with 'api/*' for the first time
+      #       # This is due to the duplicate Lambda api behavior pattern on cloudfront that gets created on first deploy
+      #       # If so, deploy with '/api/*' first and then redeploy with 'api/*'
+      #       api/*:
+      #         # Don't cache
+      #         minTTL: 0
+      #         maxTTL: 0
+      #         defaultTTL: 0
