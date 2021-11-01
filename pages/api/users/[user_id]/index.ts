@@ -27,7 +27,7 @@ const handler = async (
       // Check that the user who made this call is in the same org as the requested user
       if (user_session.org_id != requested_user.org_id) {
         return res
-          .status(401)
+          .status(403)
           .json({ message: "You are not authorized to view this user" });
       }
 
