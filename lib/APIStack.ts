@@ -23,7 +23,11 @@ export default class APIStack extends cdk.Stack {
 
     // Add policies
     taskRole.addManagedPolicy(
-      iam.ManagedPolicy.fromAwsManagedPolicyName("AmazonDynamoDBFullAccess") // TODO FIX THIS!!!!
+      iam.ManagedPolicy.fromAwsManagedPolicyName("DynamoSimpleCrud")
+    );
+
+    taskRole.addManagedPolicy(
+      iam.ManagedPolicy.fromAwsManagedPolicyName("SendBasicEmail")
     );
 
     // Define a fargate task with the newly created execution and task roles
@@ -40,13 +44,10 @@ export default class APIStack extends cdk.Stack {
     const repository = ecr.Repository.fromRepositoryName(
       this,
       "plutomi-fargate-api-repository",
-      "plutomi" 
+      "plutomi"
     );
 
-    const image = ecs.ContainerImage.fromEcrRepository(
-      repository,
-      "latest" 
-    );
+    const image = ecs.ContainerImage.fromEcrRepository(repository, "latest");
 
     const container = taskDefinition.addContainer(
       "plutomi-fargate-api-container",
