@@ -4,7 +4,8 @@ import * as ecs from "@aws-cdk/aws-ecs";
 import * as ec2 from "@aws-cdk/aws-ec2";
 import * as ecr from "@aws-cdk/aws-ecr";
 import * as ecs_patterns from "@aws-cdk/aws-ecs-patterns";
-
+import * as route53 from "@aws-cdk/aws-route53";
+import * as ALB from "@aws-cdk/aws-elasticloadbalancingv2";
 // TODO make these variables env vars
 export default class APIStack extends cdk.Stack {
   /**
@@ -76,6 +77,13 @@ export default class APIStack extends cdk.Stack {
       vpc,
     });
 
+    // Get a reference to AN EXISTING hosted zone
+    const hostedZone = route53.HostedZone.fromHostedZoneAttributes(
+      this,
+      "HostedZone",
+      {}
+    );
+
     // Create a load-balanced Fargate service and make it public
     new ecs_patterns.ApplicationLoadBalancedFargateService(
       this,
@@ -87,6 +95,10 @@ export default class APIStack extends cdk.Stack {
         taskDefinition: taskDefinition,
         memoryLimitMiB: 512, // Default is 512
         publicLoadBalancer: true, // Default is false
+        domainName: "api.plutomi.com",
+        domainZone: hostedZone,
+        redirectHTTP: true,
+        targetProtocol: ALB.ApplicationProtocol.HTTPS,
       }
     );
   }

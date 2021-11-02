@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 import * as cdk from "@aws-cdk/core";
 import "source-map-support";
-import APIStack from "../lib/APIStack";
+import APIStack from "../lib/FargateAPIStack";
 
 const app = new cdk.App();
 
