@@ -1,8 +1,9 @@
 #!/usr/bin/env node
 import * as cdk from "@aws-cdk/core";
 import "source-map-support";
-import APIStack from "../lib/FargateAPIStack";
+
+import PlutomiWebsiteStack from "../lib/PlutomiWebsiteStack";
 
 const app = new cdk.App();
 
-new APIStack(app, "PlutomiApiStack"); // TODO fix this name lol
+new PlutomiWebsiteStack(app, "PlutomiWebsiteStack");
