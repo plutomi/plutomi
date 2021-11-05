@@ -24,7 +24,7 @@ export default function MaintenanceList({ commits }) {
         {commits.map((commit) => (
           <li key={commit.sha}>
             <a
-              href={"https://github.com/plutomi/plutomi/tree/add-cdk"}
+              href={commit.html_url}
               className="block hover:bg-blue-gray-50 transition ease-in-out duration-200"
               target={"_blank"}
               rel="noreferrer"
