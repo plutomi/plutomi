@@ -15,17 +15,7 @@ const handler = async (req: CustomRequest, res: NextApiResponse) => {
 
   if (method === "GET") {
     try {
-      const opening = await GetOpening(get_opening_input);
-      if (!opening) {
-        return res.status(404).json({ message: "Opening not found" });
-      }
 
-      if (!opening.is_public) {
-        return res
-          .status(400)
-          .json({ message: "You cannot apply here just yet" });
-      }
-      const cleanOpening = CleanOpening(opening as DynamoOpening);
       return res.status(200).json(cleanOpening);
     } catch (error) {
       // TODO add error logger

@@ -64,5 +64,39 @@ export class PublicInfoServiceStack extends cdk.Stack {
       path: "/public/orgs/{org_id}/openings",
       methods: [HttpMethod.GET],
     });
+
+    const getPublicOpeningByIdFunction = new NodejsFunction(
+      this,
+      "public-info-service-get-public-opening-by-id",
+      {
+        functionName: `public-info-service-get-public-opening-by-id`,
+        description: "Returns public information about an opening.",
+        memorySize: 256,
+        role: executionRole,
+        timeout: cdk.Duration.seconds(5),
+        runtime: lambda.Runtime.NODEJS_14_X,
+        handler: "main",
+        entry: path.join(
+          __dirname,
+          `/../functions/PublicInfoService/get-public-opening-by-id.ts`
+        ),
+        architecture: lambda.Architecture.ARM_64,
+        bundling: {
+          minify: true,
+          externalModules: ["aws-sdk"],
+        },
+        environment: {
+          DYNAMO_TABLE_NAME: DYNAMO_TABLE_NAME,
+        },
+      }
+    );
+
+    props.API.addRoutes({
+      integration: new LambdaProxyIntegration({
+        handler: getPublicOpeningByIdFunction,
+      }),
+      path: "/public/orgs/{org_id}/openings/{opening_id}",
+      methods: [HttpMethod.GET],
+    });
   }
 }
