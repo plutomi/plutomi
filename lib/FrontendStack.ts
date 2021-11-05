@@ -4,7 +4,7 @@ import * as ssm from "@aws-cdk/aws-ssm";
 import * as route53 from "@aws-cdk/aws-route53";
 import * as acm from "@aws-cdk/aws-certificatemanager";
 
-export class PlutomiFrontendStack extends cdk.Stack {
+export class FrontendStack extends cdk.Stack {
   constructor(scope: cdk.Construct, id: string, props?: cdk.StackProps) {
     super(scope, id, props);
 
