@@ -72,14 +72,14 @@ export class PublicInfoServiceStack extends cdk.Stack {
 
     /*
     -------------------------------------------------------
-    Return a specific opening by id
+    Return public info about a public opening
     -------------------------------------------------------
     */
-    const getPublicOpeningByIdFunction = new NodejsFunction(
+    const getPublicOpeningInfoFunction = new NodejsFunction(
       this,
-      "public-info-service-get-public-opening-by-id",
+      "public-info-service-get-public-opening-info",
       {
-        functionName: `public-info-service-get-public-opening-by-id`,
+        functionName: `public-info-service-get-public-opening-info`,
         description: "Returns public information about an opening.",
         memorySize: 256,
         role: executionRole,
@@ -88,7 +88,7 @@ export class PublicInfoServiceStack extends cdk.Stack {
         handler: "main",
         entry: path.join(
           __dirname,
-          `/../functions/PublicInfoService/get-public-opening-by-id.ts`
+          `/../functions/PublicInfoService/get-public-opening-info.ts`
         ),
         architecture: lambda.Architecture.ARM_64,
         bundling: {
@@ -103,7 +103,7 @@ export class PublicInfoServiceStack extends cdk.Stack {
 
     props.API.addRoutes({
       integration: new LambdaProxyIntegration({
-        handler: getPublicOpeningByIdFunction,
+        handler: getPublicOpeningInfoFunction,
       }),
       path: "/public/orgs/{org_id}/openings/{opening_id}",
       methods: [HttpMethod.GET],
@@ -145,6 +145,45 @@ export class PublicInfoServiceStack extends cdk.Stack {
         handler: getPublicOrgInfo,
       }),
       path: "/public/orgs/{org_id}",
+      methods: [HttpMethod.GET],
+    });
+
+    /*
+    -------------------------------------------------------
+    Return public info about a stage
+    -------------------------------------------------------
+    */
+    const getPublicStageInfo = new NodejsFunction(
+      this,
+      "public-info-service-get-public-stage-info",
+      {
+        functionName: `public-info-service-get-public-stage-info`,
+        description: "Returns public information about a stage.",
+        memorySize: 256,
+        role: executionRole,
+        timeout: cdk.Duration.seconds(5),
+        runtime: lambda.Runtime.NODEJS_14_X,
+        handler: "main",
+        entry: path.join(
+          __dirname,
+          `/../functions/PublicInfoService/get-public-stage-info.ts`
+        ),
+        architecture: lambda.Architecture.ARM_64,
+        bundling: {
+          minify: true,
+          externalModules: ["aws-sdk"],
+        },
+        environment: {
+          DYNAMO_TABLE_NAME: DYNAMO_TABLE_NAME,
+        },
+      }
+    );
+
+    props.API.addRoutes({
+      integration: new LambdaProxyIntegration({
+        handler: getPublicStageInfo,
+      }),
+      path: "/public/orgs/{org_id}/stages/{stage_id}",
       methods: [HttpMethod.GET],
     });
   }
