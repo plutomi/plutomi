@@ -41,6 +41,10 @@ export class PublicInfoServiceStack extends cdk.Stack {
           `/../functions/PublicInfoService/get-public-openings.ts`
         ),
         architecture: lambda.Architecture.ARM_64,
+        bundling: {
+          minify: true,
+          externalModules: ["aws-sdk"],
+        },
       }
     );
 
