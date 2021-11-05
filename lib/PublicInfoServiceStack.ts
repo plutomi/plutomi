@@ -13,6 +13,20 @@ export class PublicInfoServiceStack extends cdk.Stack {
   constructor(scope: cdk.App, id: string, props: PublicInfoServiceStackProps) {
     super(scope, id, props);
 
+    // const getPublicOpeningsFunction = new NodejsFunction(
+    //   this,
+    //   "public-info-service-get-public-openings",
+    //   {
+    //     memorySize: 256,
+    //     functionName: `public-info-service-get-public-openings`,
+    //     timeout: cdk.Duration.seconds(5),
+    //     runtime: lambda.Runtime.NODEJS_14_X,
+    //     handler: "main",
+    //     entry: path.join(__dirname, `/../functions/get-public-openings.ts`),
+    //     architecture: lambda.Architecture.ARM_64,
+    //   }
+    // );
+
     const getPublicOpeningsFunction = new NodejsFunction(
       this,
       "public-info-service-get-public-openings",
@@ -22,7 +36,10 @@ export class PublicInfoServiceStack extends cdk.Stack {
         timeout: cdk.Duration.seconds(5),
         runtime: lambda.Runtime.NODEJS_14_X,
         handler: "main",
-        entry: path.join(__dirname, `/../functions/get-public-openings.ts`),
+        entry: path.join(
+          __dirname,
+          `/../functions/PublicInfoService/get-public-openings.ts`
+        ),
         architecture: lambda.Architecture.ARM_64,
       }
     );
