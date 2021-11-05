@@ -1,7 +1,9 @@
 import { APIGatewayProxyEventV2, APIGatewayProxyResultV2 } from "aws-lambda";
-import { GetAllOpeningsInOrg } from "../../utils/openings/getAllOpeningsInOrg";
+import { GetOrg } from "../../utils/orgs/getOrg";
 import CleanOpening from "../../utils/clean/cleanOpening";
 import FormattedResponse from "../../utils/formatResponse";
+import CleanOrg from "../../utils/clean/cleanOrg";
+
 export async function main(
   event: APIGatewayProxyEventV2
 ): Promise<APIGatewayProxyResultV2> {
@@ -12,12 +14,17 @@ export async function main(
   }
 
   try {
-    const allOpenings = await GetAllOpeningsInOrg(org_id);
-    const publicOpenings = allOpenings.filter((opening) => opening.is_public);
+    const org = await GetOrg(org_id);
 
-    publicOpenings.forEach((opening) => CleanOpening(opening));
+    if (!org) {
+      return FormattedResponse(404, {
+        message: `Org '${org_id}' not found`,
+      });
+    }
 
-    return FormattedResponse(200, publicOpenings);
+    const cleanOrg = CleanOrg(org);
+
+    return FormattedResponse(200, cleanOrg);
   } catch (error) {
     // TODO error logger
     // TODO status code
