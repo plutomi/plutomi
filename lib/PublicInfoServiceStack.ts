@@ -31,6 +31,11 @@ export class PublicInfoServiceStack extends cdk.Stack {
       ],
     });
 
+    /*
+    -------------------------------------------------------
+    Return all public openings for an org
+    -------------------------------------------------------
+    */
     const getPublicOpeningsFunction = new NodejsFunction(
       this,
       "public-info-service-get-public-openings",
@@ -65,6 +70,11 @@ export class PublicInfoServiceStack extends cdk.Stack {
       methods: [HttpMethod.GET],
     });
 
+    /*
+    -------------------------------------------------------
+    Return a specific opening by id
+    -------------------------------------------------------
+    */
     const getPublicOpeningByIdFunction = new NodejsFunction(
       this,
       "public-info-service-get-public-opening-by-id",
@@ -96,6 +106,45 @@ export class PublicInfoServiceStack extends cdk.Stack {
         handler: getPublicOpeningByIdFunction,
       }),
       path: "/public/orgs/{org_id}/openings/{opening_id}",
+      methods: [HttpMethod.GET],
+    });
+
+    /*
+    -------------------------------------------------------
+    Return public info about an org
+    -------------------------------------------------------
+    */
+    const getPublicOrgInfo = new NodejsFunction(
+      this,
+      "public-info-service-get-public-org-info",
+      {
+        functionName: `public-info-service-get-public-org-info`,
+        description: "Returns public information about an org.",
+        memorySize: 256,
+        role: executionRole,
+        timeout: cdk.Duration.seconds(5),
+        runtime: lambda.Runtime.NODEJS_14_X,
+        handler: "main",
+        entry: path.join(
+          __dirname,
+          `/../functions/PublicInfoService/get-public-org-info.ts`
+        ),
+        architecture: lambda.Architecture.ARM_64,
+        bundling: {
+          minify: true,
+          externalModules: ["aws-sdk"],
+        },
+        environment: {
+          DYNAMO_TABLE_NAME: DYNAMO_TABLE_NAME,
+        },
+      }
+    );
+
+    props.API.addRoutes({
+      integration: new LambdaProxyIntegration({
+        handler: getPublicOrgInfo,
+      }),
+      path: "/public/orgs/{org_id}",
       methods: [HttpMethod.GET],
     });
   }
