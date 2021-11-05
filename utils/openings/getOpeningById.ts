@@ -2,7 +2,7 @@ import { GetCommand, GetCommandInput } from "@aws-sdk/lib-dynamodb";
 import { Dynamo } from "../../lib/awsClients/ddbDocClient";
 const { DYNAMO_TABLE_NAME } = process.env;
 
-export async function GetOpening({ org_id, opening_id }: GetOpeningInput) {
+export async function GetOpening(org_id: string, opening_id: string) {
   const params: GetCommandInput = {
     TableName: DYNAMO_TABLE_NAME,
     Key: {
