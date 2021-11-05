@@ -8,7 +8,7 @@ export async function main(
   const { org_id } = event.pathParameters;
 
   if (!org_id) {
-    return FormattedResponse(404, { message: "`org_id` is missing" });
+    return FormattedResponse(400, { message: "`org_id` is missing" });
   }
 
   try {
