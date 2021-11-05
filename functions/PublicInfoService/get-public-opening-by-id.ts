@@ -9,11 +9,11 @@ export async function main(
   const { org_id, opening_id } = event.pathParameters;
 
   if (!org_id) {
-    return FormattedResponse(400, { message: "`org_id` is missing" });
+    return FormattedResponse(400, { message: `'org_id' is missing` });
   }
 
   if (!opening_id) {
-    return FormattedResponse(400, { message: "`opening_id` is missing" });
+    return FormattedResponse(400, { message: `'opening_id' is missing` });
   }
   try {
     const opening = await GetOpening(org_id, opening_id);
