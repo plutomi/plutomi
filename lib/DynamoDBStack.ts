@@ -1,16 +1,17 @@
 import * as cdk from "@aws-cdk/core";
-import lambda = require("@aws-cdk/aws-lambda");
 import dynamodb = require("@aws-cdk/aws-dynamodb");
-import apigw = require("@aws-cdk/aws-apigatewayv2");
-import integrations = require("@aws-cdk/aws-apigatewayv2-integrations");
 
+/**
+ * Creates a DynamoDB table with two GSIs
+ */
 export class DynamoDBStack extends cdk.Stack {
   constructor(scope: cdk.Construct, id: string, props?: cdk.StackProps) {
     super(scope, id, props);
 
     const TABLE_NAME = "Plutomi";
-    // DynamoDB Table
-    const table = new dynamodb.Table(this, TABLE_NAME, {
+
+    const table = new dynamodb.Table(this, "plutomi-dynamo-table", {
+      tableName: TABLE_NAME,
       partitionKey: { name: "PK", type: dynamodb.AttributeType.STRING },
       sortKey: { name: "SK", type: dynamodb.AttributeType.STRING },
       readCapacity: 1,
@@ -37,7 +38,7 @@ export class DynamoDBStack extends cdk.Stack {
     });
 
     new cdk.CfnOutput(this, "DynamoDB Table ARN", {
-      value: table.tableArn ?? "Something went wrong with the deploy",
+      value: table.tableArn ?? "Something went wrong with the Dynamo deploy",
     });
   }
 }
