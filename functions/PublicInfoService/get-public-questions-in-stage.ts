@@ -20,8 +20,12 @@ export async function main(
 
     return FormattedResponse(200, allQuestions);
   } catch (error) {
+    console.error(error);
+
     // TODO error logger
     // TODO status code
-    return FormattedResponse(500, { message: error });
+    return FormattedResponse(500, {
+      message: `An error ocurred retrieving questions for the stage ${stage_id}: ${error}`,
+    });
   }
 }

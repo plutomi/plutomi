@@ -9,10 +9,7 @@ import { Dynamo } from "../../lib/awsClients/ddbDocClient";
 const { DYNAMO_TABLE_NAME } = process.env;
 import _ from "lodash";
 
-export async function GetApplicantById({
-  org_id,
-  applicant_id,
-}: GetApplicantInput) {
+export async function GetApplicantById(org_id: string, applicant_id: string) {
   const responsesParams: QueryCommandInput = {
     TableName: DYNAMO_TABLE_NAME,
     KeyConditionExpression: "PK = :PK AND begins_with(SK, :SK)",
@@ -28,17 +25,21 @@ export async function GetApplicantById({
       new QueryCommand(responsesParams)
     );
 
-    const grouped = _.groupBy(all_applicant_info.Items, "entity_type");
+    if (all_applicant_info.Items.length == 0) {
+      throw `Applicant not found`;
+    }
 
-    const metadata = grouped.APPLICANT[0];
-    const responses = grouped.APPLICANT_RESPONSE;
-    // TODO files
+    const grouped = _.groupBy(all_applicant_info.Items, "entity_type");
+    const metadata = grouped.APPLICANT[0]; // An array of 1 item, always. No two applicants will have the same ID
+    // TODO there is a check here to see if grouped has property of applicant, if not applicant does not exist and we forgot to delete other children (like responses, files, etc.)
+    const responses = grouped.APPLICANT_RESPONSE; // Array of applicant responses
 
     const applicant = {
       ...metadata,
       responses: responses,
       // TODO files
     };
+
     return applicant;
   } catch (error) {
     throw new Error(error);
