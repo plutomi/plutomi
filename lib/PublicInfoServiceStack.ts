@@ -29,6 +29,9 @@ export class PublicInfoServiceStack extends cdk.Stack {
       managedPolicies: [
         //TODO lock down permissions!
         iam.ManagedPolicy.fromAwsManagedPolicyName("AmazonDynamoDBFullAccess"),
+        iam.ManagedPolicy.fromAwsManagedPolicyName("CloudWatchLogsFullAccess"), // TODO!
+        // TODO!
+        // Lambda needs permission to create cloudwatch logs!
       ],
     });
 
@@ -167,7 +170,7 @@ export class PublicInfoServiceStack extends cdk.Stack {
       {
         ...shareableConfig,
         functionName: `public-info-service-get-public-questions-in-stage`,
-        description: "Returns public information about a stage.",
+        description: "Returns public questions in a stage.",
         entry: path.join(
           __dirname,
           `/../functions/PublicInfoService/get-public-questions-in-stage.ts`
@@ -180,6 +183,33 @@ export class PublicInfoServiceStack extends cdk.Stack {
         handler: getPublicQuestionsInStage,
       }),
       path: "/public/orgs/{org_id}/stages/{stage_id}/questions",
+      methods: [HttpMethod.GET],
+    });
+
+    /*
+    -------------------------------------------------------
+    Return public info for an applicant
+    -------------------------------------------------------
+    */
+    const getPublicApplicantInfo = new NodejsFunction(
+      this,
+      "public-info-service-get-public-applicant-info",
+      {
+        ...shareableConfig,
+        functionName: `public-info-service-get-public-applicant-info`,
+        description: "Returns public information about an applicant.",
+        entry: path.join(
+          __dirname,
+          `/../functions/PublicInfoService/get-public-applicant-info.ts`
+        ),
+      }
+    );
+
+    props.API.addRoutes({
+      integration: new LambdaProxyIntegration({
+        handler: getPublicApplicantInfo,
+      }),
+      path: "/public/orgs/{org_id}/applicants/{applicant_id}",
       methods: [HttpMethod.GET],
     });
   }

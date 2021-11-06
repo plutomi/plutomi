@@ -62,7 +62,6 @@ export class FrontendStack extends cdk.Stack {
         imageLambda: 1024,
         apiLambda: 256,
       },
-
       // TODO add api route
     });
   }
