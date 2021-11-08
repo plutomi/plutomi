@@ -9,7 +9,7 @@ export default async function UpdateLoginLink({ user_id, updated_login_link }) {
     "PK",
     "SK",
     "login_link_hash",
-    "entity_type",
+    "entityType",
     "created_at",
     "user_id",
     "expires_at",

@@ -20,7 +20,7 @@ export async function CreateStage({
   const new_stage = {
     PK: `ORG#${org_id}#STAGE#${stage_id}`,
     SK: `STAGE`,
-    entity_type: "STAGE",
+    entityType: "STAGE",
     created_at: now,
     question_order: [],
     stage_id: stage_id,

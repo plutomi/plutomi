@@ -2,11 +2,17 @@ import { GetCommand, GetCommandInput } from "@aws-sdk/lib-dynamodb";
 import { Dynamo } from "../../lib/awsClients/ddbDocClient";
 const { DYNAMO_TABLE_NAME } = process.env;
 
-export async function GetOpening(org_id: string, opening_id: string) {
+/**
+ *
+ * @param orgId ID of the org the opening is in
+ * @param openingId ID of the opening you want to return
+ * @returns
+ */
+export async function GetOpening(orgId: string, openingId: string) {
   const params: GetCommandInput = {
     TableName: DYNAMO_TABLE_NAME,
     Key: {
-      PK: `ORG#${org_id}#OPENING#${opening_id}`,
+      PK: `ORG#${orgId}#OPENING#${openingId}`,
       SK: `OPENING`,
     },
   };

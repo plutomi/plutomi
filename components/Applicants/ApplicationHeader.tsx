@@ -14,7 +14,7 @@ export default function ApplicationHeader() {
     <div className="md:flex md:items-center md:justify-between">
       <div className="flex-1 min-w-0">
         <h2 className="text-2xl font-bold leading-7 text-dark sm:text-3xl sm:truncate">
-          Hello {applicant?.full_name}!
+          Hello {applicant?.fullName}!
         </h2>
         <h2 className="text-lg mt-6 leading-7 text-normal sm:text-3xl sm:truncate">
           {stage?.GSI1SK}

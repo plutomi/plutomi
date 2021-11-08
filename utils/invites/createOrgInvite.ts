@@ -38,7 +38,7 @@ export default async function CreateOrgInvite({
       org_id: org_id,
       org_name: org_name, // using org_name here because GSI1SK is taken obv
       created_by: created_by,
-      entity_type: "ORG_INVITE",
+      entityType: "ORG_INVITE",
       created_at: now,
       expires_at: expires_at,
       invite_id: invite_id,

@@ -8,7 +8,7 @@
     "start": "next start",
     "lint": "next lint",
     "test": "next dev & jest --coverage -i --silent=false tests/ALL.spec.ts ",
-    "deploy": "set NODE_ENV=production && cdk deploy && serverless --debug"
+    "deploy": "cdk deploy --all"
   },
   "dependencies": {
     "@aws-cdk/aws-apigatewayv2": "^1.130.0",
@@ -25,6 +25,7 @@
     "@aws-cdk/aws-route53": "1.130.0",
     "@aws-cdk/aws-s3-deployment": "^1.130.0",
     "@aws-cdk/core": "1.130.0",
+    "@hapi/joi": "^17.1.1",
     "@headlessui/react": "^1.4.1",
     "@heroicons/react": "^1.0.5",
     "@serverless-stack/cli": "^0.50.2",
@@ -33,6 +34,7 @@
     "@sls-next/lambda-at-edge": "^3.5.2",
     "@tailwindcss/aspect-ratio": "^0.2.2",
     "@tailwindcss/forms": "^0.3.4",
+    "@types/hapi__joi": "^17.1.7",
     "awesome-phonenumber": "^2.64.0",
     "axios": "^0.21.4",
     "base64url": "^3.0.1",
@@ -68,7 +70,7 @@
     "@aws-sdk/util-dynamodb": "^3.39.0",
     "@commitlint/cli": "^13.2.1",
     "@commitlint/config-conventional": "^13.2.0",
-    "@types/aws-lambda": "^8.10.84",
+    "@types/aws-lambda": "^8.10.85",
     "@types/jest": "^27.0.2",
     "@types/node": "^16.11.6",
     "@types/react": "^17.0.33",
