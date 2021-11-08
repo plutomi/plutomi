@@ -5,7 +5,7 @@ import { Builder } from "@sls-next/lambda-at-edge";
 import { APIGatewayStack } from "../lib/APIGatewayStack";
 import { PublicInfoServiceStack } from "../lib/PublicInfoServiceStack";
 import { FrontendStack } from "../lib/FrontendStack";
-
+import { ApplicantsServiceStack } from "../lib/ApplicantsServiceStack";
 const app = new cdk.App();
 
 // Run the serverless builder, this could be done elsewhere in your workflow
@@ -22,6 +22,12 @@ try {
 
   // Deploys the /public route lambdas
   new PublicInfoServiceStack(app, "PublicInfoServiceStack", {
+    API: API_GATEWAY.API,
+  });
+
+  // Creates the applicant service routes
+
+  new ApplicantsServiceStack(app, "ApplicantsServiceStack", {
     API: API_GATEWAY.API,
   });
 } catch (error) {

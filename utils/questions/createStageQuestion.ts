@@ -23,7 +23,7 @@ export async function CreateStageQuestion({
     SK: `STAGE_QUESTION`,
     question_description: question_description,
     question_id: question_id,
-    entity_type: "STAGE_QUESTION",
+    entityType: "STAGE_QUESTION",
     created_at: now,
     GSI1PK: `ORG#${org_id}#STAGE#${stage_id}#QUESTIONS`,
     GSI1SK: GSI1SK,

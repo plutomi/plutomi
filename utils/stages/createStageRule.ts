@@ -16,7 +16,7 @@ export async function CreateStageRule({
   const new_stage_rule = {
     PK: `ORG#${org_id}#OPENING#${opening_id}#STAGE#${stage_id}`,
     SK: `STAGE_RULE#${stage_rule_id}`,
-    entity_type: "STAGE_RULE",
+    entityType: "STAGE_RULE",
     created_at: now,
     validation: validation,
     GSI1PK: `ORG#${org_id}#RULES#STAGES`,

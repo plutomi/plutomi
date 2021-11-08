@@ -136,7 +136,7 @@ export default function ApplicantProfileModal() {
                             value !== applicant?.first_name &&
                             updateApplicant(applicant?.applicant_id, {
                               first_name: value,
-                              full_name: `${value} ${applicant.last_name}`,
+                              fullName: `${value} ${applicant.last_name}`,
                             })
                           }
                           editComponent={
@@ -162,7 +162,7 @@ export default function ApplicantProfileModal() {
                             value !== applicant?.last_name &&
                             updateApplicant(applicant?.applicant_id, {
                               last_name: value,
-                              full_name: `${applicant.first_name} ${value}`,
+                              fullName: `${applicant.first_name} ${value}`,
                             })
                           }
                           editComponent={
