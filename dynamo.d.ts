@@ -3,10 +3,10 @@
 
 interface DynamoUser {
   created_at?: string;
-  entity_type?: string;
+  entityType?: string;
   user_email?: string;
   org_id?: string;
-  full_name?: string;
+  fullName?: string;
   GSI1SK?: string;
   GSI2SK?: string;
   GSI2PK?: string;
@@ -23,7 +23,7 @@ interface DynamoUser {
 interface DynamoOpening {
   PK: string;
   SK: "OPENING";
-  entity_type: "OPENING";
+  entityType: "OPENING";
   created_at: string;
   opening_id: string;
   GSI1PK: string;
@@ -39,7 +39,7 @@ interface DynamoOpening {
 interface DynamoStage {
   PK: string;
   SK: `STAGE`;
-  entity_type: "STAGE";
+  entityType: "STAGE";
   created_at: string;
   stage_id: string;
   total_applicants: number;
@@ -54,7 +54,7 @@ interface DynamoOrgInvite {
   SK: string;
   org_id: string;
   created_by: DynamoUser;
-  entity_type: "ORG_INVITE";
+  entityType: "ORG_INVITE";
   created_at: string;
   expires_at: string;
   invite_id: string;
@@ -67,7 +67,7 @@ interface DynamoStageQuestion {
   SK: string;
   question_description: string;
   question_id: string;
-  entity_type: string;
+  entityType: string;
   created_at: string;
   GSI1PK: string;
   GSI1SK: string;
@@ -77,7 +77,7 @@ interface DynamoOrg {
   PK: string;
   SK: `ORG`;
   org_id: string;
-  entity_type: "ORG";
+  entityType: "ORG";
   created_at: string;
   GSI1PK: `ORG`;
   GSI1SK: string;
@@ -92,12 +92,12 @@ interface DynamoApplicant {
   SK: `APPLICANT`;
   first_name: string;
   last_name: string;
-  full_name: string;
+  fullName: string;
   email: string;
   email_verified: boolean;
   applicant_id: string;
   org_id: string;
-  entity_type: "APPLICANT";
+  entityType: "APPLICANT";
   created_at: CustomDateFormat;
   current_opening_id: string;
   current_stage_id: string;
@@ -114,7 +114,7 @@ interface DynamoApplicantResponse {
   SK: `APPLICANT_RESPONSE`;
   org_id: string;
   applicant_id: string;
-  entity_type: "APPLICANT_RESPONSE";
+  entityType: "APPLICANT_RESPONSE";
   question_title: string;
   question_description: string;
   question_response: any;
