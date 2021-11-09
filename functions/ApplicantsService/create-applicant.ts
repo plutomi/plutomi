@@ -4,6 +4,7 @@ import { GetOpening } from "../../utils/openings/getOpeningById";
 import { CreateApplicant } from "../../utils/applicants/createApplicant";
 import inputValidation from "../../middleware/inputValidation";
 import Joi from "@hapi/joi";
+import withSession from "../../middleware/withSession";
 
 // TODO TODO TODO set max length values in config file
 const schema = Joi.object({
@@ -14,7 +15,7 @@ const schema = Joi.object({
   email: Joi.string().email().required(),
 });
 
-const handler = async function main(
+async function handler(
   event: APIGatewayProxyEventV2
 ): Promise<APIGatewayProxyResultV2> {
   const { orgId, openingId, firstName, lastName, email } = JSON.parse(
@@ -62,7 +63,8 @@ const handler = async function main(
   //   return res.status(201).json({
   //     message: `We've sent a link to your email to complete your application!`,
   //   });
-};
+}
 
 const main = inputValidation(handler, schema);
+
 module.exports = { main };
