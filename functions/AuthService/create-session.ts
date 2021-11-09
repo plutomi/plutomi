@@ -2,7 +2,7 @@ import { APIGatewayProxyResultV2, APIGatewayProxyEventV2 } from "aws-lambda";
 import FormattedResponse from "../../utils/formatResponse";
 import { nanoid } from "nanoid";
 import Iron from "@hapi/iron";
-import { COOKIE_NAME, COOKIE_DURATION } from "../../Config";
+import { COOKIE_NAME, COOKIE_DURATION, COOKIE_PASSWORD } from "../../Config";
 const user = {
   id: nanoid(50),
   age: 12,
@@ -13,13 +13,9 @@ export async function main(
   event: APIGatewayProxyEventV2
 ): Promise<APIGatewayProxyResultV2> {
   console.log("INCOMING EVENT AUTH ROUTE", event);
-  const password =
-    "BEANS BEANS BEANSBEANS BEANS BEANSBEANS BEANS BEANSBEANS BEANS BEANSBEANS BEANS BEANSBEANS BEANS BEANSBEANS BEANS BEANSBEANS BEANS BEANSBEANS BEANS BEANSBEANS BEANS BEANSBEANS BEANS BEANSBEANS BEANS BEANSBEANS BEANS BEANSBEANS BEANS BEANSBEANS BEANS BEANSBEANS BEANS BEANSBEANS BEANS BEANSBEANS BEANS BEANSBEANS BEANS BEANSBEANS BEANS BEANSBEANS BEANS BEANSBEANS BEANS BEANSBEANS BEANS BEANSBEANS BEANS BEANSBEANS BEANS BEANSBEANS BEANS BEANSBEANS BEANS BEANSBEANS BEANS BEANSBEANS BEANS BEANSBEANS BEANS BEANS";
 
-  // TODO! major, check if user already has a session
-  // TODO!
   try {
-    const cookie = await Iron.seal(user, password, {
+    const cookie = await Iron.seal(user, COOKIE_PASSWORD, {
       ...Iron.defaults,
       ttl: COOKIE_DURATION,
     });

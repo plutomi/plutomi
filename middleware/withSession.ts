@@ -1,28 +1,33 @@
-// this file is a wrapper with defaults to be used in both API routes and `getServerSideProps` functions
-import { NextApiRequest, NextApiResponse } from "next";
-import { Session, withIronSession } from "next-iron-session";
-const IronConfig = {
-  password: [
-    {
-      id: 1,
-      password: process.env.NEXT_IRON_SESSION_PASSWORD_1,
-    },
-  ],
-  cookieName: process.env.NEXT_IRON_SESSION_COOKIE_NAME,
-  // if your localhost is served on http:// then disable the secure flag
-  cookieOptions: {
-    secure: process.env.NODE_ENV === "production",
-  },
-};
+import { COOKIE_NAME } from "../Config";
+import { EventWithUser } from "../types";
+import FormattedResponse from "../utils/formatResponse";
+import getUserFromSession from "../utils/getUserFromSession";
+// Checks if the user has a session
+export default function withSession(handler: any) {
+  return async (event: EventWithUser) => {
+    try {
+      const user = await getUserFromSession(event);
 
-export type NextIronRequest = NextApiRequest & { session: Session };
-export type NextIronHandler = (
-  req: NextIronRequest,
-  res: NextApiResponse
-) => void | Promise<void>;
+      event.user = user;
+    } catch (error) {
+      if (error.message === "Expired seal") {
+        return FormattedResponse(
+          401,
+          {
+            message: `Your session has expired, please log in again!`,
+          },
+          {
+            "Set-Cookie": `${COOKIE_NAME}=''; expires=Thu, 01 Jan 1970 00:00:00 GMT`,
+          }
+        );
+      }
 
-const withSession = (handler: NextIronHandler) =>
-  withIronSession(handler, IronConfig);
+      // TODO other error codes?
+      return FormattedResponse(403, {
+        message: `Unable to retrieve user from session: ${error.message}`,
+      });
+    }
 
-export default withSession;
-export { IronConfig };
+    return handler(event);
+  };
+}

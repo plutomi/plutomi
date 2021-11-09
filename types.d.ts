@@ -1,8 +1,4 @@
-interface CreateOrgInput {
-  org_id: string; // plutomi
-  GSI1SK: string; // Plutomi Inc.
-  user: DynamoUser; // User creating the org - Optional on client
-}
+import { APIGatewayProxyEventV2 } from "aws-lambda";
 
 interface GetOrgInput {
   org_id: string;
@@ -12,12 +8,6 @@ interface CreateUserInput {
   first_name?: string;
   last_name?: string;
   user_email: string;
-}
-
-interface CreateOpeningInput {
-  org_id: string;
-  GSI1SK: string;
-  user?: DynamoUser; // User creating the opening - Optional on client
 }
 
 interface GetOpeningInput {
@@ -70,21 +60,6 @@ interface CreateApplicantResponseInput {
   question_response: string;
 }
 
-type CustomSession = Session & { userId: string; user_email: string };
-
-type CustomRequest = NextApiRequest & { user: DynamoUser };
-
-type CustomJWT = JWT & { userId: string };
-
-interface CreateOrgInviteInput {
-  org_id: string;
-  org_name: string;
-  created_by: DynamoUser;
-  recipient_email: string; // Email of person getting invited
-  expiresAt: CustomDateFormat; // TODO Maybe Dynamo TTL or just ISO
-  claimed: boolean;
-}
-
 interface GetOrgInviteInput {
   userId: string;
   timestamp: string;
@@ -97,101 +72,7 @@ interface AcceptOrgInviteInput {
   invite_id: string;
 }
 
-interface DeleteOrgInviteInput {
-  userId: string;
-  timestamp: string;
-  invite_id: string;
-}
-interface SendOrgInviteInput {
-  created_by: DynamoUser;
-  org_name: string;
-  recipient_email: string;
-}
-
 type StageTypes = "idle" | "active" | "frozen" | "deletion";
-
-interface StageCardInput {
-  applicant_type: StageTypes;
-  stage_title: string;
-  total_applicants: number;
-}
-
-interface useSelfOutput {
-  user: DynamoUser;
-  isUserLoading: boolean;
-  isUserError: boolean;
-}
-
-interface useOrgInvitesOutput {
-  invites: DynamoOrgInvite[];
-  isInvitesLoading: boolean;
-  isInvitesError: boolean;
-}
-
-interface useOrgUsersOutput {
-  orgUsers: DynamoUser[];
-  isOrgUsersLoading: boolean;
-  isOrgUsersError: boolean;
-}
-
-interface useStageByIdOutput {
-  stage: DynamoStage;
-  isStageLoading: boolean;
-  isStageError: boolean;
-}
-
-interface useOpeningByIdOutput {
-  opening: DynamoOpening;
-  isOpeningLoading: boolean;
-  isOpeningError: boolean;
-}
-
-interface useApplicantByIdOutput {
-  applicant: DynamoApplicant; // TODO - This will not be a dynamo applicant
-  // But instead it wll be an applicant object with properties inside such as
-  // .details, .files, .history, .messages, etc. We're going to do a query
-  // To return all items in the future. For now, this is ok
-  isApplicantLoading: boolean;
-  isApplicantError: boolean;
-}
-interface useOpeningsOutput {
-  openings: DynamoOpenings[];
-  isOpeningsLoading: boolean;
-  isOpeningsError: boolean;
-}
-
-interface usePublicOpeningsOutput {
-  publicOpenings: DynamoOpenings[];
-  isPublicOpeningsLoading: boolean;
-  isPublicOpeningsError: boolean;
-}
-
-interface useOrgUsersOutput {
-  orgUsers: DynamoUser[];
-  isOrgUsersLoading: boolean;
-  isOrgUsersError: boolean;
-}
-
-interface useAllStagesInOpeningOutput {
-  stages: DynamoStage[];
-  isStagesLoading: boolean;
-  isStagesError: boolean;
-}
-interface useAllStageQuestionsOutput {
-  questions: DynamoStageQuestion[];
-  isQuestionsLoading: boolean;
-  isQuestionsError: boolean;
-}
-
-interface APICreateLoginLinkInput {
-  user_email: string;
-  callbackUrl?: string;
-}
-
-interface APICreateQuestionInput {
-  GSI1SK: string;
-  question_description: string;
-}
 
 interface APICreateRuleInput {
   validation: string; // I believe this will be a template string combination.
@@ -232,30 +113,6 @@ interface ReorderStagesInput {
   new_stage_order: string[];
 }
 
-interface UpdateOpeningInput {
-  org_id: string;
-  opening_id: string;
-  new_opening_values: DynamoOpening;
-}
-
-interface UpdateApplicantInput {
-  org_id: string;
-  applicant_id: string;
-  new_applicant_values: DynamoApplicant;
-}
-
-interface UpdateQuestionInput {
-  org_id: string;
-  question_id: string;
-  new_question_values: DynamoStageQuestion;
-}
-
-interface UpdateStageInput {
-  org_id: string;
-  stage_id: string;
-  new_stage_values: DynamoStage;
-}
-
 interface APICreateQuestionInput {
   GSI1SK: string;
   question_description: string;
@@ -273,12 +130,6 @@ interface DeleteQuestionInput {
   question_id: string;
 }
 
-interface useOrgOutput {
-  org: DynamoOrg;
-  isOrgLoading: boolean;
-  isOrgError: boolean;
-}
-
 interface APICreateApplicantInput {
   first_name: string;
   last_name: string;
@@ -291,12 +142,6 @@ interface GetAllApplicantsInStageInput {
   stage_id: string;
 }
 
-interface useAllApplicantsInStageOutput {
-  applicants: DynamoApplicant[];
-  isApplicantsLoading: boolean;
-  isApplicantsError: boolean;
-}
-
 // TODO this should be updated with question / answer type for multiple choice, radio, etc.
 interface ApplicantAnswer {
   question_id?: string; // ID needed for client side sorting
@@ -304,7 +149,6 @@ interface ApplicantAnswer {
   question_description: string;
   question_response: string;
 }
-type NextIronRequest = NextApiRequest & { session: Session };
 
 type CustomDateFormat = string | number;
 
@@ -319,3 +163,8 @@ type CustomQuery = {
   question_id?: string;
   invite_id?: string;
 };
+// ---------------
+// NEW TYPES!!!!!!!!!!!!!
+interface EventWithUser extends APIGatewayProxyEventV2 {
+  user: {}; // TODO fix this user type
+}
