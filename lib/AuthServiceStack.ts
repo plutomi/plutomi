@@ -7,12 +7,13 @@ import * as path from "path";
 import { NodejsFunction } from "@aws-cdk/aws-lambda-nodejs";
 import * as iam from "@aws-cdk/aws-iam";
 import * as ssm from "@aws-cdk/aws-ssm";
-interface ApplicantsServiceProps extends cdk.StackProps {
+
+interface AuthServiceStackProps extends cdk.StackProps {
   API: HttpApi;
 }
 
-export class ApplicantsServiceStack extends cdk.Stack {
-  constructor(scope: cdk.App, id: string, props: ApplicantsServiceProps) {
+export class AuthServiceStack extends cdk.Stack {
+  constructor(scope: cdk.App, id: string, props: AuthServiceStackProps) {
     super(scope, id, props);
 
     const DYNAMO_TABLE_NAME = ssm.StringParameter.fromStringParameterAttributes(
@@ -28,7 +29,7 @@ export class ApplicantsServiceStack extends cdk.Stack {
       assumedBy: new iam.ServicePrincipal("lambda.amazonaws.com"),
       managedPolicies: [
         //TODO lock down permissions!
-        iam.ManagedPolicy.fromAwsManagedPolicyName("AmazonDynamoDBFullAccess"),
+        // iam.ManagedPolicy.fromAwsManagedPolicyName("AmazonDynamoDBFullAccess"),
         iam.ManagedPolicy.fromAwsManagedPolicyName("CloudWatchLogsFullAccess"), // TODO!
         // TODO!
         // Lambda needs permission to create cloudwatch logs!
@@ -54,30 +55,56 @@ export class ApplicantsServiceStack extends cdk.Stack {
     };
     /*
     -------------------------------------------------------
-    Creates an applicant in an opening (apply)
+    Creates a session given a userId (TODO) and the login link id (TODO)
     -------------------------------------------------------
     */
-    const createApplicantFunction = new NodejsFunction(
+    const createSessionFunction = new NodejsFunction(
       this,
-      "applicants-service-create-applicant",
+      "auth-service-create-session",
       {
         ...sharableLambdaConfig,
-        functionName: `applicants-service-create-applicant`,
-        description:
-          "Creates an applicant in the first stage of the specified opening.",
+        functionName: `auth-service-create-session`,
+        description: "Creates a session for a user",
         entry: path.join(
           __dirname,
-          `/../functions/ApplicantsService/create-applicant.ts`
+          `/../functions/AuthService/create-session.ts`
         ),
       }
     );
 
     props.API.addRoutes({
       integration: new LambdaProxyIntegration({
-        handler: createApplicantFunction,
+        handler: createSessionFunction,
       }),
-      path: "/applicants",
-      methods: [HttpMethod.POST],
+      path: "/auth",
+      methods: [HttpMethod.GET],
+    });
+
+    /*
+    -------------------------------------------------------
+   Verifies a session ID (will be the lambda authorizer in API Gateway)
+    -------------------------------------------------------
+    */
+    const verifySessionFunction = new NodejsFunction(
+      this,
+      "auth-service-verify-session",
+      {
+        ...sharableLambdaConfig,
+        functionName: `auth-service-verify-session`,
+        description: "Verifies the user's session",
+        entry: path.join(
+          __dirname,
+          `/../functions/AuthService/verify-session.ts`
+        ),
+      }
+    );
+
+    props.API.addRoutes({
+      integration: new LambdaProxyIntegration({
+        handler: verifySessionFunction,
+      }),
+      path: "/auth/verify",
+      methods: [HttpMethod.GET],
     });
   }
 }
