@@ -23,12 +23,12 @@ const handler = async (
 
   // TODO trycatch
   const invite = await GetOrgInvite({
-    user_id: user_session.user_id,
+    userId: user_session.userId,
     invite_id: invite_id,
   });
 
   const join_org_input = {
-    user_id: user_session.user_id,
+    userId: user_session.userId,
     invite: invite,
   };
 
@@ -47,9 +47,9 @@ const handler = async (
     }
 
     try {
-      await JoinOrgFromInvite({ user_id: user_session.user_id, invite });
+      await JoinOrgFromInvite({ userId: user_session.userId, invite });
 
-      const updated_user = await GetUserById(user_session.user_id);
+      const updated_user = await GetUserById(user_session.userId);
       req.session.set("user", CleanUser(updated_user as DynamoUser));
       await req.session.save();
       return res
@@ -66,7 +66,7 @@ const handler = async (
 
   if (method === "DELETE") {
     const delete_org_invite_input = {
-      user_id: user_session.user_id,
+      userId: user_session.userId,
       invite_id: invite_id,
     };
 

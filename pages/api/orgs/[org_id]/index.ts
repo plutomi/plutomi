@@ -54,7 +54,7 @@ const handler = async (
       }
 
       const updated_user = await UpdateUser({
-        user_id: user_session.user_id,
+        userId: user_session.userId,
         new_user_values: {
           org_id: "NO_ORG_ASSIGNED",
           org_join_date: "NO_ORG_ASSIGNED",

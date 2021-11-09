@@ -11,7 +11,7 @@ const { DYNAMO_TABLE_NAME } = process.env;
 
 export default async function CreateOrgInvite({
   org_id,
-  expires_at,
+  expiresAt,
   created_by,
   user,
   org_name,
@@ -22,7 +22,7 @@ export default async function CreateOrgInvite({
     }
 
     // Check if the user we are inviting already has pending invites for the current org
-    const pending_invites = await GetAllUserInvites(user.user_id);
+    const pending_invites = await GetAllUserInvites(user.userId);
     const unclaimed_invites = pending_invites.filter(
       (invite) => invite.org_id == org_id
     );
@@ -33,14 +33,14 @@ export default async function CreateOrgInvite({
     const invite_id = nanoid(50);
     const now = GetCurrentTime("iso") as string;
     const new_org_invite = {
-      PK: `USER#${user.user_id}`,
+      PK: `USER#${user.userId}`,
       SK: `ORG_INVITE#${invite_id}`, // Allows sorting, and incase two get created in the same millisecond
       org_id: org_id,
       org_name: org_name, // using org_name here because GSI1SK is taken obv
       created_by: created_by,
       entityType: "ORG_INVITE",
       created_at: now,
-      expires_at: expires_at,
+      expiresAt: expiresAt,
       invite_id: invite_id,
       GSI1PK: `ORG#${org_id}#ORG_INVITES`,
       GSI1SK: now,
@@ -61,12 +61,12 @@ export default async function CreateOrgInvite({
           // Increment the user's total invites
           Update: {
             Key: {
-              PK: `USER#${user.user_id}`,
+              PK: `USER#${user.userId}`,
               SK: `USER`,
             },
             TableName: DYNAMO_TABLE_NAME,
             UpdateExpression:
-              "SET total_invites = if_not_exists(total_invites, :zero) + :value",
+              "SET totalInvites = if_not_exists(totalInvites, :zero) + :value",
             ExpressionAttributeValues: {
               ":zero": 0,
               ":value": 1,

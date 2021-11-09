@@ -5,11 +5,11 @@ const { DYNAMO_TABLE_NAME } = process.env;
 
 export async function UpdateUser({
   new_user_values,
-  user_id,
+  userId,
   ALLOW_FORBIDDEN_KEYS,
 }: {
   new_user_values: any;
-  user_id: string;
+  userId: string;
   ALLOW_FORBIDDEN_KEYS?: boolean;
 }) {
   try {
@@ -55,7 +55,7 @@ export async function UpdateUser({
     const NewUpdateExpression = `SET ${newUpdateExpression.join(", ")}`;
     const params: UpdateCommandInput = {
       Key: {
-        PK: `USER#${user_id}`,
+        PK: `USER#${userId}`,
         SK: `USER`,
       },
       UpdateExpression: NewUpdateExpression,

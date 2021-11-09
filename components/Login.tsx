@@ -24,7 +24,7 @@ export default function Login({ loggedOutPageText }) {
     try {
       const { message } = await AuthService.login({
         user_email: user_email,
-        callback_url: `${process.env.WEBSITE_URL + router.asPath}`,
+        callbackUrl: `${process.env.WEBSITE_URL + router.asPath}`,
         login_method: "LINK",
       });
 
@@ -41,7 +41,7 @@ export default function Login({ loggedOutPageText }) {
 
     const input = {
       user_email: user_email,
-      callback_url: `${process.env.WEBSITE_URL + router.asPath}`,
+      callbackUrl: `${process.env.WEBSITE_URL + router.asPath}`,
       login_method: "GOOGLE",
     };
     console.log(input);

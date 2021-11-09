@@ -14,12 +14,12 @@ const handler = async (
     return res.status(401).json({ message: "Please log in again" });
   }
   const { method, query, body } = req;
-  const { user_id } = query as CustomQuery;
+  const { userId } = query as CustomQuery;
   const { new_user_values } = body;
 
   if (method === "GET") {
     try {
-      const requested_user = await GetUserById(user_id);
+      const requested_user = await GetUserById(userId);
 
       if (!requested_user) {
         return res.status(404).json({ message: "User not found" });
@@ -43,13 +43,13 @@ const handler = async (
   if (method === "PUT") {
     const update_user_input = {
       new_user_values: new_user_values,
-      user_id: user_session.user_id,
+      userId: user_session.userId,
       ALLOW_FORBIDDEN_KEYS: false,
     };
 
     try {
       // TODO RBAC will go here, right now you can only update yourself
-      if (user_id != user_session.user_id) {
+      if (userId != user_session.userId) {
         return res
           .status(403)
           .json({ message: "You cannot update another user" });
@@ -58,7 +58,7 @@ const handler = async (
       const updated_user = await UpdateUser(update_user_input);
 
       // If a signed in user is updating themselves, update the session state
-      if (updated_user.user_id === user_session.user_id) {
+      if (updated_user.userId === user_session.userId) {
         req.session.set("user", CleanUser(updated_user));
         await req.session.save();
       }

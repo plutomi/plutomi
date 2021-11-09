@@ -38,7 +38,7 @@ export default function SignedInNav({ current }) {
 
   return (
     <>
-      {user?.total_invites > 0 && current !== "Invites" && (
+      {user?.totalInvites > 0 && current !== "Invites" && (
         <Banner
           msgSmall={"You've been invited!"}
           msgLarge={"You've been invited to join an organization!"}

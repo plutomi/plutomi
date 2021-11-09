@@ -3,11 +3,11 @@ import { Dynamo } from "../../lib/awsClients/ddbDocClient";
 
 const { DYNAMO_TABLE_NAME } = process.env;
 
-export async function GetUserById(user_id: string) {
+export async function GetUserById(userId: string) {
   const params: GetCommandInput = {
     TableName: DYNAMO_TABLE_NAME,
     Key: {
-      PK: `USER#${user_id}`,
+      PK: `USER#${userId}`,
       SK: `USER`,
     },
   };

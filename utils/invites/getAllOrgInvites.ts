@@ -3,12 +3,12 @@ import { Dynamo } from "../../lib/awsClients/ddbDocClient";
 
 const { DYNAMO_TABLE_NAME } = process.env;
 
-export async function GetAllUserInvites(user_id: string) {
+export async function GetAllUserInvites(userId: string) {
   const params: QueryCommandInput = {
     TableName: DYNAMO_TABLE_NAME,
     KeyConditionExpression: "PK = :pk AND begins_with(SK, :sk)",
     ExpressionAttributeValues: {
-      ":pk": `USER#${user_id}`,
+      ":pk": `USER#${userId}`,
       ":sk": "ORG_INVITE",
     },
   };

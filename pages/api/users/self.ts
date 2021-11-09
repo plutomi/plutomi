@@ -17,7 +17,7 @@ const handler = async (
 
   if (method === "GET") {
     try {
-      const requested_user = await GetUserById(user_session.user_id);
+      const requested_user = await GetUserById(user_session.userId);
       if (!requested_user) {
         req.session.destroy();
         return res.status(401).json({ message: "Please log in again" }); // TODO middleware
