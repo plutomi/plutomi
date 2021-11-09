@@ -28,8 +28,9 @@ We believe CDK to be the future and it's nice to have 'first-class' tooling dire
 The website (at the moment) runs on AWS Fargate. That means frontend and API, all in one big monolith. TIL: Managed NAT Gateways = $$$
 
 We started with the [Serverless-Nextjs](https://github.com/serverless-nextjs/serverless-next.js) component which uses Lambda@Edge for API routes. There are many downsides to Edge functions, some are listed [here](https://github.com/plutomi/plutomi/issues/172).
+We're currently migrating everything to run on the [Serverless-Nextjs CDK Construct](https://serverless-nextjs.com/docs/cdkconstruct/) with an API Gateway + Lambda backend.
 
-We're currently migrating everything to run on your typical S3 + Cloudfront & APIGW / Lambda backend.
+We are using cookies for auth. TIL: APIGW does not support cookies for custom authorizers!!! ([2016](https://forums.aws.amazon.com/thread.jspa?threadID=229154) & [2020](https://forums.aws.amazon.com/thread.jspa?threadID=321664) feature requests). So we are just wrapping a `withSession` middleware to our routes that require it. Such is life.
 
 Some other useful repos:
 
