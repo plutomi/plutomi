@@ -24,7 +24,7 @@ const handler = async (
 ): Promise<void> => {
   const { body, method, query } = req; // TODO get from body
   const { user_email, login_method } = body;
-  const { user_id, key, callback_url } = query as CustomQuery;
+  const { userId, key, callbackUrl } = query as CustomQuery;
   const login_link_length = 1500;
   const login_link_max_delay_minutes = 10;
   const time_threshold = GetPastOrFutureTime(
@@ -46,7 +46,7 @@ const handler = async (
     const user = await CreateUser({ user_email });
 
     try {
-      const latest_link = await GetLatestLoginLink(user.user_id);
+      const latest_link = await GetLatestLoginLink(user.userId);
 
       // Limit the amount of links sent in a certain period of time
       if (
@@ -76,10 +76,10 @@ const handler = async (
           login_link_expiry: login_link_expiry,
         });
         const default_redirect = `${process.env.WEBSITE_URL}/dashboard`;
-        const login_link = `${process.env.WEBSITE_URL}/api/auth/login?user_id=${
-          user.user_id
-        }&key=${secret}&callback_url=${
-          callback_url ? callback_url : default_redirect
+        const login_link = `${process.env.WEBSITE_URL}/api/auth/login?userId=${
+          user.userId
+        }&key=${secret}&callbackUrl=${
+          callbackUrl ? callbackUrl : default_redirect
         }`;
 
         if (login_method === "GOOGLE") {
@@ -112,7 +112,7 @@ const handler = async (
   // Validates the login link when clicked
   if (method === "GET") {
     const validate_login_link_input = {
-      user_id: user_id,
+      userId: userId,
       key: key,
     };
     try {
@@ -121,29 +121,29 @@ const handler = async (
       return res.status(400).json({ message: `${error.message}` });
     }
 
-    const latest_login_link = await GetLatestLoginLink(user_id);
+    const latestLoginLink = await GetLatestLoginLink(userId);
 
-    if (!latest_login_link) {
+    if (!latestLoginLink) {
       return res.status(400).json({ message: "Invalid link" });
     }
 
     const hash = createHash("sha512").update(key).digest("hex");
 
-    if (hash != latest_login_link.login_link_hash) {
+    if (hash != latestLoginLink.login_link_hash) {
       /**
        * Someone could try to guess a user ID and the 1500 char long key
        * If they do get someone's ID correct in that 15 minute window to log in AND they key is wrong...
        * Their account will be suspended for 15 minutes until they can generate a new key
        */
 
-      const updated_login_link = {
-        ...latest_login_link,
-        link_status: "SUSPENDED",
+      const updatedLoginLink = {
+        ...latestLoginLink,
+        linkStatus: "SUSPENDED",
       };
 
       await UpdateLoginLink({
-        user_id,
-        updated_login_link,
+        userId,
+        updatedLoginLink,
       });
 
       return res.status(401).json({
@@ -152,40 +152,40 @@ const handler = async (
     }
 
     // Lock account if already suspended
-    if (latest_login_link.link_status === "SUSPENDED") {
+    if (latestLoginLink.linkStatus === "SUSPENDED") {
       return res.status(401).json({
         message: `Your login link has been suspended. Please try again later or email support@plutomi.com`,
       });
     }
 
-    if (latest_login_link.expires_at <= GetCurrentTime("iso")) {
+    if (latestLoginLink.expiresAt <= GetCurrentTime("iso")) {
       return res.status(401).json({
         message: `Your login link has expired.`,
       });
     }
 
-    const user = await GetUserById(user_id);
+    const user = await GetUserById(userId);
 
-    if (user && latest_login_link) {
+    if (user && latestLoginLink) {
       // TODO should this be a transaction?
       // Simple timestamp when the user actually logged in
-      CreateLoginEvent(user_id);
+      CreateLoginEvent(userId);
 
       // Invalidates the last login link while allowing the user to login again if needed
-      DeleteLoginLink(user_id, latest_login_link.created_at);
+      DeleteLoginLink(userId, latestLoginLink.created_at);
 
-      const clean_user = CleanUser(user as DynamoUser);
+      const cleanUser = CleanUser(user as DynamoUser);
 
-      req.session.set("user", clean_user);
+      req.session.set("user", cleanUser);
       await req.session.save();
 
       // If a user has invites, redirect them to that page automatically
-      if (clean_user.total_invites > 0) {
+      if (cleanUser.totalInvites > 0) {
         res.redirect(`${process.env.WEBSITE_URL}/invites`);
         return;
       }
 
-      res.redirect(callback_url);
+      res.redirect(callbackUrl);
       return;
     }
   }

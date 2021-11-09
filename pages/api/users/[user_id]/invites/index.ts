@@ -16,7 +16,7 @@ const handler = async (
 
   if (method === "GET") {
     try {
-      const invites = await GetAllUserInvites(user_session.user_id);
+      const invites = await GetAllUserInvites(user_session.userId);
       return res.status(200).json(invites);
     } catch (error) {
       // TODO add error logger

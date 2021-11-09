@@ -33,7 +33,7 @@ const handler = async (
       });
     }
 
-    const pending_invites = await GetAllUserInvites(user_session.user_id);
+    const pending_invites = await GetAllUserInvites(user_session.userId);
 
     if (pending_invites && pending_invites.length > 0) {
       return res.status(403).json({
@@ -61,11 +61,11 @@ const handler = async (
 
     try {
       await CreateAndJoinOrg({
-        user_id: user_session.user_id,
+        userId: user_session.userId,
         org_id: org_id,
         GSI1SK: GSI1SK,
       });
-      const updated_user = await GetUserById(user_session.user_id); // TODO remove this, wait for transact
+      const updated_user = await GetUserById(user_session.userId); // TODO remove this, wait for transact
 
       // Update the logged in user session with the new org id
       req.session.set("user", CleanUser(updated_user as DynamoUser));

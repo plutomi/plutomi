@@ -7,7 +7,7 @@ import { GetCurrentTime } from "../time";
 
 const { DYNAMO_TABLE_NAME } = process.env;
 
-export async function JoinOrgFromInvite({ user_id, invite }) {
+export async function JoinOrgFromInvite({ userId, invite }) {
   const now = GetCurrentTime("iso") as string;
   try {
     const transactParams: TransactWriteCommandInput = {
@@ -16,7 +16,7 @@ export async function JoinOrgFromInvite({ user_id, invite }) {
           // Delete org invite
           Delete: {
             Key: {
-              PK: `USER#${user_id}`,
+              PK: `USER#${userId}`,
               SK: `ORG_INVITE#${invite.invite_id}`,
             },
             TableName: DYNAMO_TABLE_NAME,
@@ -27,12 +27,12 @@ export async function JoinOrgFromInvite({ user_id, invite }) {
           // Update user with the new org and decrement their total invites
           Update: {
             Key: {
-              PK: `USER#${user_id}`,
+              PK: `USER#${userId}`,
               SK: `USER`,
             },
             TableName: DYNAMO_TABLE_NAME,
             UpdateExpression:
-              "SET org_id = :org_id, org_join_date = :org_join_date, GSI1PK = :GSI1PK, total_invites = total_invites - :value",
+              "SET org_id = :org_id, org_join_date = :org_join_date, GSI1PK = :GSI1PK, totalInvites = totalInvites - :value",
             ExpressionAttributeValues: {
               ":org_id": invite.org_id,
               ":org_join_date": now,

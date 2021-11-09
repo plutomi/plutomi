@@ -7,7 +7,7 @@ import { GetCurrentTime } from "../time";
 
 const { DYNAMO_TABLE_NAME } = process.env;
 
-export async function CreateAndJoinOrg({ user_id, org_id, GSI1SK }) {
+export async function CreateAndJoinOrg({ userId, org_id, GSI1SK }) {
   const now = GetCurrentTime("iso") as string;
 
   const new_org = {
@@ -32,7 +32,7 @@ export async function CreateAndJoinOrg({ user_id, org_id, GSI1SK }) {
           // Update user with the new org
           Update: {
             Key: {
-              PK: `USER#${user_id}`,
+              PK: `USER#${userId}`,
               SK: `USER`,
             },
             TableName: DYNAMO_TABLE_NAME,

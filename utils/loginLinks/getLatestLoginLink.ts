@@ -2,12 +2,12 @@ import { QueryCommand, QueryCommandInput } from "@aws-sdk/lib-dynamodb";
 import { Dynamo } from "../../lib/awsClients/ddbDocClient";
 
 const { DYNAMO_TABLE_NAME } = process.env;
-export async function GetLatestLoginLink(user_id: string) {
+export async function GetLatestLoginLink(userId: string) {
   const params: QueryCommandInput = {
     TableName: DYNAMO_TABLE_NAME,
     KeyConditionExpression: "PK = :pk AND begins_with(SK, :sk)",
     ExpressionAttributeValues: {
-      ":pk": `USER#${user_id}`,
+      ":pk": `USER#${userId}`,
       ":sk": "LOGIN_LINK",
     },
     ScanIndexForward: false,

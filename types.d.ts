@@ -70,35 +70,35 @@ interface CreateApplicantResponseInput {
   question_response: string;
 }
 
-type CustomSession = Session & { user_id: string; user_email: string };
+type CustomSession = Session & { userId: string; user_email: string };
 
 type CustomRequest = NextApiRequest & { user: DynamoUser };
 
-type CustomJWT = JWT & { user_id: string };
+type CustomJWT = JWT & { userId: string };
 
 interface CreateOrgInviteInput {
   org_id: string;
   org_name: string;
   created_by: DynamoUser;
   recipient_email: string; // Email of person getting invited
-  expires_at: CustomDateFormat; // TODO Maybe Dynamo TTL or just ISO
+  expiresAt: CustomDateFormat; // TODO Maybe Dynamo TTL or just ISO
   claimed: boolean;
 }
 
 interface GetOrgInviteInput {
-  user_id: string;
+  userId: string;
   timestamp: string;
   invite_id: string;
 }
 
 interface AcceptOrgInviteInput {
-  user_id: string;
+  userId: string;
   timestamp: string;
   invite_id: string;
 }
 
 interface DeleteOrgInviteInput {
-  user_id: string;
+  userId: string;
   timestamp: string;
   invite_id: string;
 }
@@ -185,7 +185,7 @@ interface useAllStageQuestionsOutput {
 
 interface APICreateLoginLinkInput {
   user_email: string;
-  callback_url?: string;
+  callbackUrl?: string;
 }
 
 interface APICreateQuestionInput {
@@ -311,11 +311,11 @@ type CustomDateFormat = string | number;
 type CustomQuery = {
   org_id?: string;
   opening_id?: string;
-  user_id?: string;
+  userId?: string;
   stage_id?: string;
   applicant_id?: string;
   key?: string;
-  callback_url?: string;
+  callbackUrl?: string;
   question_id?: string;
   invite_id?: string;
 };
