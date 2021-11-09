@@ -36,7 +36,8 @@ export class PublicInfoServiceStack extends cdk.Stack {
     });
 
     // Reusable defaults for each function
-    const shareableConfig = {
+    const sharableLambdaConfig = {
+      // TODO this should be extracted and passed down as props to each stack
       handler: "main",
       memorySize: 256,
       role: executionRole,
@@ -60,7 +61,7 @@ export class PublicInfoServiceStack extends cdk.Stack {
       this,
       "public-info-service-get-public-openings-in-org",
       {
-        ...shareableConfig,
+        ...sharableLambdaConfig,
         functionName: `public-info-service-get-public-openings-in-org`,
         description: "Returns all public openings for a given org_id.",
         entry: path.join(
@@ -87,7 +88,7 @@ export class PublicInfoServiceStack extends cdk.Stack {
       this,
       "public-info-service-get-public-opening-info",
       {
-        ...shareableConfig,
+        ...sharableLambdaConfig,
         functionName: `public-info-service-get-public-opening-info`,
         description: "Returns public information about an opening.",
         entry: path.join(
@@ -114,7 +115,7 @@ export class PublicInfoServiceStack extends cdk.Stack {
       this,
       "public-info-service-get-public-org-info",
       {
-        ...shareableConfig,
+        ...sharableLambdaConfig,
         functionName: `public-info-service-get-public-org-info`,
         description: "Returns public information about an org.",
         entry: path.join(
@@ -141,7 +142,7 @@ export class PublicInfoServiceStack extends cdk.Stack {
       this,
       "public-info-service-get-public-stage-info",
       {
-        ...shareableConfig,
+        ...sharableLambdaConfig,
         functionName: `public-info-service-get-public-stage-info`,
         description: "Returns public information about a stage.",
         entry: path.join(
@@ -168,7 +169,7 @@ export class PublicInfoServiceStack extends cdk.Stack {
       this,
       "public-info-service-get-public-questions-in-stage",
       {
-        ...shareableConfig,
+        ...sharableLambdaConfig,
         functionName: `public-info-service-get-public-questions-in-stage`,
         description: "Returns public questions in a stage.",
         entry: path.join(
@@ -195,7 +196,7 @@ export class PublicInfoServiceStack extends cdk.Stack {
       this,
       "public-info-service-get-public-applicant-info",
       {
-        ...shareableConfig,
+        ...sharableLambdaConfig,
         functionName: `public-info-service-get-public-applicant-info`,
         description: "Returns public information about an applicant.",
         entry: path.join(

@@ -43,10 +43,19 @@ const DROPDOWN_NAVIGATION = [
 // How often we should poll for invites while on the /invites page
 const INVITES_REFRESH_INTERVAL = 10000;
 
+// Cookie name for auth
+const COOKIE_NAME = "plutomi-session-id";
+
+// In minutes, how long should the session last. Change the last number *ONLY*
+// Default: 1 day
+const COOKIE_DURATION = 1000 * 60 * 1440;
+
 export {
   MAX_CHILD_ITEM_LIMIT,
   MAX_ITEM_LIMIT_ERROR,
   NAVBAR_NAVIGATION,
   DROPDOWN_NAVIGATION,
   INVITES_REFRESH_INTERVAL,
+  COOKIE_NAME,
+  COOKIE_DURATION,
 };

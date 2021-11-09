@@ -6,8 +6,7 @@ import { APIGatewayStack } from "../lib/APIGatewayStack";
 import { PublicInfoServiceStack } from "../lib/PublicInfoServiceStack";
 import { FrontendStack } from "../lib/FrontendStack";
 import { ApplicantsServiceStack } from "../lib/ApplicantsServiceStack";
-import { CognitoStack } from "../lib/CognitoStack";
-
+import { AuthServiceStack } from "../lib/AuthServiceStack";
 const app = new cdk.App();
 
 // Run the serverless builder, this could be done elsewhere in your workflow
@@ -33,7 +32,7 @@ try {
     API: API_GATEWAY.API,
   });
 
-  new CognitoStack(app, "CognitoStack");
+  new AuthServiceStack(app, "AuthServiceStack", { API: API_GATEWAY.API });
 } catch (error) {
   console.log(error);
   process.exit(1);

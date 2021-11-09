@@ -25,6 +25,7 @@
     "@aws-cdk/aws-route53": "1.130.0",
     "@aws-cdk/aws-s3-deployment": "^1.130.0",
     "@aws-cdk/core": "1.130.0",
+    "@hapi/iron": "^6.0.0",
     "@hapi/joi": "^17.1.1",
     "@headlessui/react": "^1.4.1",
     "@heroicons/react": "^1.0.5",
