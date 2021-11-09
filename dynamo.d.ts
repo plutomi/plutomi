@@ -11,12 +11,12 @@ interface DynamoUser {
   GSI2SK?: string;
   GSI2PK?: string;
   GSI1PK?: string;
-  user_id?: string;
+  userId?: string;
   last_name?: string;
   org_join_date?: string;
   first_name?: string;
   SK?: string;
-  total_invites;
+  totalInvites;
   PK?: string;
 }
 
@@ -56,7 +56,7 @@ interface DynamoOrgInvite {
   created_by: DynamoUser;
   entityType: "ORG_INVITE";
   created_at: string;
-  expires_at: string;
+  expiresAt: string;
   invite_id: string;
   GSI1PK: string;
   GSI1SK: string;

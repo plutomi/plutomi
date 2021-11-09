@@ -30,7 +30,7 @@ export default function LoginHomepage({ callbackUrl }: CallbackUrl) {
     try {
       const { message } = await AuthService.login({
         user_email: user_email,
-        callback_url: callbackUrl,
+        callbackUrl: callbackUrl,
         login_method: "LINK",
       });
 
@@ -47,7 +47,7 @@ export default function LoginHomepage({ callbackUrl }: CallbackUrl) {
 
     const input = {
       user_email: user_email,
-      callback_url: `${process.env.WEBSITE_URL}/dashboard`, // TODO make this a config variable as the "DEFAULT_REDIRECT_ROUTE_HOMEPAGE"
+      callbackUrl: `${process.env.WEBSITE_URL}/dashboard`, // TODO make this a config variable as the "DEFAULT_REDIRECT_ROUTE_HOMEPAGE"
       login_method: "GOOGLE",
     };
     console.log(input);

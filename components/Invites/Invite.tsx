@@ -13,7 +13,7 @@ export default function Invite({ invite, acceptInvite, rejectInvite }) {
               {invite.org_name}
             </h3>
             <span className="flex-shrink-0 inline-block px-2 py-0.5 text-blue-gray-800 text-xs font-medium bg-blue-gray-100 rounded-full">
-              Expires {GetRelativeTime(invite.expires_at)}
+              Expires {GetRelativeTime(invite.expiresAt)}
             </span>
           </div>
           <p className="mt-2 text-normal text-sm truncate">

@@ -22,7 +22,7 @@ const handler = async (
 
   const default_expiry_time = 3;
   const default_expiry_value = "days";
-  const expires_at = GetPastOrFutureTime(
+  const expiresAt = GetPastOrFutureTime(
     "future",
     default_expiry_time,
     "days" || default_expiry_value,
@@ -37,7 +37,7 @@ const handler = async (
     created_by: user_session, // TODO reduce this to just name & email
     org_id: org.org_id,
     recipient_email: recipient_email,
-    expires_at: expires_at,
+    expiresAt: expiresAt,
   };
   if (method === "POST") {
     try {
@@ -69,7 +69,7 @@ const handler = async (
         org_id: org.org_id,
         user: recipient,
         org_name: org.GSI1SK,
-        expires_at: expires_at,
+        expiresAt: expiresAt,
         created_by: user_session,
       });
       try {

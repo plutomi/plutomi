@@ -6,7 +6,7 @@ const fetcher = (url: string) => axios.get(url).then((res) => res.data);
 
 /**
  *
- * @param user_id - The ID of the logged in user
+ * @param userId - The ID of the logged in user
  * @param opening_id - The opening that you want to look in
  * @param stage_id - The stage which you want to retrieve
  */
