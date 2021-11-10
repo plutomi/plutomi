@@ -4,15 +4,15 @@ export default class ApplicantsService {
   static async createApplicant({
     orgId,
     openingId,
-    first_name,
-    last_name,
+    firstName,
+    lastName,
     email,
   }) {
     const body = {
       orgId,
       openingId,
-      first_name,
-      last_name,
+      firstName,
+      lastName,
       email,
     };
 

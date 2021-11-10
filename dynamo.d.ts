@@ -6,15 +6,15 @@ interface DynamoUser {
   entity_type?: string;
   user_email?: string;
   orgId?: string;
-  full_name?: string;
+  fullName?: string;
   GSI1SK?: string;
   GSI2SK?: string;
   GSI2PK?: string;
   GSI1PK?: string;
   userId?: string;
-  last_name?: string;
+  lastName?: string;
   org_join_date?: string;
-  first_name?: string;
+  firstName?: string;
   SK?: string;
   total_invites;
   PK?: string;
@@ -90,9 +90,9 @@ interface DynamoOrg {
 interface DynamoApplicant {
   PK: string;
   SK: `APPLICANT`;
-  first_name: string;
-  last_name: string;
-  full_name: string;
+  firstName: string;
+  lastName: string;
+  fullName: string;
   email: string;
   email_verified: boolean;
   applicantId: string;

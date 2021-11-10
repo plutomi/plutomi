@@ -146,8 +146,8 @@ export default function SignedInNav({ current }) {
                             "Loading user info..."
                           ) : (
                             <>
-                              {!user?.GSI1SK.includes("NO_FIRST_NAME") ||
-                                (!user?.GSI1SK.includes("NO_LAST_NAME") && (
+                              {!user?.GSI1SK.includes("NO_firstName") ||
+                                (!user?.GSI1SK.includes("NO_lastName") && (
                                   <div className="   text-dark ">
                                     Signed in as ${user?.GSI1SK}
                                   </div>

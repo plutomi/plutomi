@@ -10,7 +10,7 @@ const handler = async (
   res: NextApiResponse
 ): Promise<void> => {
   const { method, body } = req;
-  const { orgId, openingId, first_name, last_name, email } = body;
+  const { orgId, openingId, firstName, lastName, email } = body;
 
   // Creates an applicant
   if (method === "POST") {
@@ -23,8 +23,8 @@ const handler = async (
       const create_applicant_input: CreateApplicantInput = {
         orgId: orgId,
         email: email,
-        first_name: first_name,
-        last_name: last_name,
+        firstName: firstName,
+        lastName: lastName,
         openingId: openingId,
         stageId: opening.stage_order[0],
       };

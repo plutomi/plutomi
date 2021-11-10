@@ -1,6 +1,6 @@
 const safeKeys = [
-  "first_name",
-  "last_name",
+  "firstName",
+  "lastName",
   "created_at",
   "current_openingId",
   "current_openingId",

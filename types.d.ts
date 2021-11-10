@@ -9,8 +9,8 @@ interface GetOrgInput {
 }
 
 interface CreateUserInput {
-  first_name?: string;
-  last_name?: string;
+  firstName?: string;
+  lastName?: string;
   user_email: string;
 }
 
@@ -55,8 +55,8 @@ interface CreateStageRuleInput {
 
 interface CreateApplicantInput {
   orgId: string;
-  first_name: string;
-  last_name: string;
+  firstName: string;
+  lastName: string;
   email: string;
   openingId: string;
   stageId: string;
@@ -280,8 +280,8 @@ interface useOrgOutput {
 }
 
 interface APICreateApplicantInput {
-  first_name: string;
-  last_name: string;
+  firstName: string;
+  lastName: string;
   email: string;
 }
 

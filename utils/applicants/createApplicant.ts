@@ -11,8 +11,8 @@ const { DYNAMO_TABLE_NAME } = process.env;
 export async function CreateApplicant({
   orgId,
   email,
-  first_name,
-  last_name,
+  firstName,
+  lastName,
   openingId,
   stageId,
 }: CreateApplicantInput) {
@@ -24,9 +24,9 @@ export async function CreateApplicant({
   const new_applicant: DynamoApplicant = {
     PK: `ORG#${orgId}#APPLICANT#${applicantId}`,
     SK: `APPLICANT`,
-    first_name: first_name,
-    last_name: last_name,
-    full_name: `${first_name} ${last_name}`,
+    firstName: firstName,
+    lastName: lastName,
+    fullName: `${firstName} ${lastName}`,
     email: email.toLowerCase().trim(),
     email_verified: false,
     orgId: orgId,

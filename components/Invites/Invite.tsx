@@ -20,7 +20,7 @@ export default function Invite({ invite, acceptInvite, rejectInvite }) {
             {" "}
             Invited by{" "}
             <span className=" text-darkfont-semibold">
-              {invite.created_by.first_name} {invite.created_by.last_name}
+              {invite.created_by.firstName} {invite.created_by.lastName}
             </span>
           </p>
         </div>

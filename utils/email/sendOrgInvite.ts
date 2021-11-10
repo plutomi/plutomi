@@ -15,7 +15,7 @@ export default async function SendOrgInvite({
     },
     Message: {
       Subject: {
-        Data: `${created_by.first_name} ${created_by.last_name} has invited you to join ${org_name} on Plutomi!`, // TODO if first_name or last_name === "NO_FIRST_NAME" or NO_LAST_NAME, change this message
+        Data: `${created_by.firstName} ${created_by.lastName} has invited you to join ${org_name} on Plutomi!`, // TODO if firstName or lastName === "NO_firstName" or NO_lastName, change this message
       },
       Body: {
         Html: {

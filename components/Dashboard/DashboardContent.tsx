@@ -49,14 +49,14 @@ export default function DashboardContent() {
     mutate(UsersService.getSelfURL());
   };
 
-  const updateName = async ({ first_name, last_name }) => {
+  const updateName = async ({ firstName, lastName }) => {
     try {
       const { message } = await UsersService.updateUser({
         userId: user?.userId,
         new_user_values: {
-          first_name: first_name,
-          last_name: last_name,
-          GSI1SK: `${first_name} ${last_name}`,
+          firstName: firstName,
+          lastName: lastName,
+          GSI1SK: `${firstName} ${lastName}`,
         },
       });
       alert(message);
@@ -135,8 +135,8 @@ export default function DashboardContent() {
             />
           </div>
           <div className="flex justify-center mx-auto">
-            {(user?.first_name === "NO_FIRST_NAME" ||
-              user?.last_name === "NO_LAST_NAME") && (
+            {(user?.firstName === "NO_firstName" ||
+              user?.lastName === "NO_lastName") && (
               <UpdateName updateName={updateName} />
             )}
           </div>

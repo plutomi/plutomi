@@ -23,7 +23,7 @@ export async function GetAllApplicantsInOpening({ orgId, openingId }) {
     const all_applicants = response.Items;
 
     // Sort by full name, or whatever else, probably most recently active would be best
-    all_applicants.sort((a, b) => (a.full_name < b.full_name ? 1 : -1));
+    all_applicants.sort((a, b) => (a.fullName < b.fullName ? 1 : -1));
 
     return all_applicants;
   } catch (error) {

@@ -96,10 +96,10 @@ export default function UserProfileModal({ updateUser }) {
                                 onChange={(e) =>
                                   setUserProfileModal({
                                     ...userProfileModal,
-                                    first_name: e.target.value,
+                                    firstName: e.target.value,
                                   })
                                 }
-                                value={userProfileModal.first_name}
+                                value={userProfileModal.firstName}
                                 className="block w-full shadow-sm sm:text-sm focus:ring-blue-500 focus:border-blue-500 border-gray-300 rounded-md"
                               />
                             </div>
@@ -120,10 +120,10 @@ export default function UserProfileModal({ updateUser }) {
                                 onChange={(e) =>
                                   setUserProfileModal({
                                     ...userProfileModal,
-                                    last_name: e.target.value,
+                                    lastName: e.target.value,
                                   })
                                 }
-                                value={userProfileModal.last_name}
+                                value={userProfileModal.lastName}
                                 className="block w-full shadow-sm sm:text-sm focus:ring-blue-500 focus:border-blue-500 border-gray-300 rounded-md"
                               />
                             </div>

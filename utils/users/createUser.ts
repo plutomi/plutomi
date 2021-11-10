@@ -17,8 +17,8 @@ export async function CreateUser({ user_email }) {
   const new_user: DynamoUser = {
     PK: `USER#${userId}`,
     SK: `USER`,
-    first_name: "NO_FIRST_NAME",
-    last_name: "NO_LAST_NAME",
+    firstName: "NO_firstName",
+    lastName: "NO_lastName",
     user_email: user_email.toLowerCase().trim(),
     userId: userId,
     entity_type: "USER",
@@ -27,7 +27,7 @@ export async function CreateUser({ user_email }) {
     org_join_date: "NO_ORG_ASSIGNED",
     total_invites: 0,
     GSI1PK: "ORG#NO_ORG_ASSIGNED#USERS",
-    GSI1SK: `NO_FIRST_NAME NO_LAST_NAME`,
+    GSI1SK: `NO_firstName NO_lastName`,
     GSI2PK: user_email.toLowerCase().trim(),
     GSI2SK: "USER",
   };

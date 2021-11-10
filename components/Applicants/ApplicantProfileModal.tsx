@@ -129,21 +129,21 @@ export default function ApplicantProfileModal() {
                         <EasyEdit
                           placeholder={null}
                           type={Types.TEXT}
-                          value={applicant?.first_name}
+                          value={applicant?.firstName}
                           onSave={(
                             value // Only update if there's been a change
                           ) =>
-                            value !== applicant?.first_name &&
+                            value !== applicant?.firstName &&
                             updateApplicant(applicant?.applicantId, {
-                              first_name: value,
-                              full_name: `${value} ${applicant.last_name}`,
+                              firstName: value,
+                              fullName: `${value} ${applicant.lastName}`,
                             })
                           }
                           editComponent={
                             <CustomEditableInput
                               label={"First name"}
                               placeholder={"Enter a new name"}
-                              initialValue={applicant?.first_name}
+                              initialValue={applicant?.firstName}
                             />
                           }
                           saveButtonLabel={
@@ -157,19 +157,19 @@ export default function ApplicantProfileModal() {
                         <EasyEdit
                           placeholder={null}
                           type={Types.TEXT}
-                          value={applicant?.last_name}
+                          value={applicant?.lastName}
                           onSave={(value) =>
-                            value !== applicant?.last_name &&
+                            value !== applicant?.lastName &&
                             updateApplicant(applicant?.applicantId, {
-                              last_name: value,
-                              full_name: `${applicant.first_name} ${value}`,
+                              lastName: value,
+                              fullName: `${applicant.firstName} ${value}`,
                             })
                           }
                           editComponent={
                             <CustomEditableInput
                               label={"Last name"}
                               placeholder={"Enter a new name"}
-                              initialValue={applicant?.last_name}
+                              initialValue={applicant?.lastName}
                             />
                           }
                           saveButtonLabel={
