@@ -3,6 +3,7 @@ import * as cdk from "@aws-cdk/core";
 import * as ssm from "@aws-cdk/aws-ssm";
 import * as route53 from "@aws-cdk/aws-route53";
 import * as acm from "@aws-cdk/aws-certificatemanager";
+import * as lambda from "@aws-cdk/aws-lambda";
 
 export class FrontendStack extends cdk.Stack {
   constructor(scope: cdk.Construct, id: string, props?: cdk.StackProps) {
@@ -36,6 +37,7 @@ export class FrontendStack extends cdk.Stack {
       serverlessBuildOutDir: "./build",
       stackName: "plutomi-frontend-stack",
       withLogging: true,
+      runtime: lambda.Runtime.NODEJS_14_X,
       domain: {
         domainNames: [DOMAIN_NAME],
         hostedZone: route53.HostedZone.fromHostedZoneAttributes(
