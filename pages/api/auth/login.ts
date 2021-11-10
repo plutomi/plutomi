@@ -27,7 +27,7 @@ const handler = async (
   const { userId, key, callbackUrl } = query as CustomQuery;
   const login_link_length = 1500;
   const login_link_max_delay_minutes = 10;
-  const time_threshold = GetPastOrFutureTime(
+  const timeThreshold = GetPastOrFutureTime(
     "past",
     login_link_max_delay_minutes,
     "minutes",
@@ -51,7 +51,7 @@ const handler = async (
       // Limit the amount of links sent in a certain period of time
       if (
         latest_link &&
-        latest_link.createdAt >= time_threshold &&
+        latest_link.createdAt >= timeThreshold &&
         !user.userEmail.endsWith("@plutomi.com")
       ) {
         return res.status(400).json({
