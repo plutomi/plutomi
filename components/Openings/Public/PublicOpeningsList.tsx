@@ -2,7 +2,7 @@
 // Such as filtering of openings, their public / private status,
 // And how many applicants there are
 import { CalendarIcon, LocationMarkerIcon } from "@heroicons/react/solid";
-import { GetRelativeTime } from "../../../utils/time";
+import { getRelativeTime } from "../../../utils/time";
 import Link from "next/dist/client/link";
 
 import _ from "lodash";

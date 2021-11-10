@@ -1,5 +1,5 @@
 import { CheckIcon, XCircleIcon } from "@heroicons/react/outline";
-import { GetRelativeTime } from "../../utils/time";
+import { getRelativeTime } from "../../utils/time";
 export default function Invite({ invite, acceptInvite, rejectInvite }) {
   return (
     <li

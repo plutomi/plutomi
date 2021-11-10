@@ -1,4 +1,4 @@
-import { GetRelativeTime } from "../../utils/time";
+import { getRelativeTime } from "../../utils/time";
 import { CalendarIcon } from "@heroicons/react/outline";
 import ClickToCopy from "../ClickToCopy";
 
