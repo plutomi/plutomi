@@ -9,13 +9,13 @@ const fetcher = (url: string) => axios.get(url).then((res) => res.data);
 function usePublicStageById( // TODO i think this can be refactored since we no longer need th eopening ID
   org_id: string,
   openingId: string,
-  stage_id: string
+  stageId: string
 ): useStageByIdOutput {
-  const shouldFetch = org_id && openingId && stage_id ? true : false;
+  const shouldFetch = org_id && openingId && stageId ? true : false;
 
   const { data, error } = useSWR(
     shouldFetch &&
-      PublicInfoService.getPublicStageURL({ org_id, openingId, stage_id }),
+      PublicInfoService.getPublicStageURL({ org_id, openingId, stageId }),
     fetcher
   );
 

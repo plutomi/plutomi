@@ -37,7 +37,7 @@ export default function ApplicantProfileModal() {
   const [isEditing, setIsEditing] = useState(false);
   const [currentActive, setCurrentActive] = useState(1); // Id of item
   const router = useRouter();
-  const { applicant_id, openingId, stage_id } = router.query as CustomQuery;
+  const { applicant_id, openingId, stageId } = router.query as CustomQuery;
 
   const setApplicantProfileModal = useStore(
     (store) => store.setApplicantProfileModal
@@ -67,7 +67,7 @@ export default function ApplicantProfileModal() {
 
     router.push(
       {
-        pathname: `/openings/${openingId}/stages/${stage_id}/applicants`,
+        pathname: `/openings/${openingId}/stages/${stageId}/applicants`,
       },
       undefined,
       { shallow: true }

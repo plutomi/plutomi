@@ -12,11 +12,11 @@ import NewPage from "../../../../../components/Templates/NewPage";
 import useStageById from "../../../../../SWR/useStageById";
 export default function StageSettings() {
   const router = useRouter();
-  const { openingId, stage_id } = router.query as CustomQuery;
+  const { openingId, stageId } = router.query as CustomQuery;
 
   const { user, isUserLoading, isUserError } = useSelf();
   let { opening, isOpeningLoading, isOpeningError } = useOpeningById(openingId);
-  let { stage, isStageLoading, isStageError } = useStageById(stage_id);
+  let { stage, isStageLoading, isStageError } = useStageById(stageId);
 
   // Update this to use the new update syntax with diff
   const deleteStage = async () => {
@@ -34,7 +34,7 @@ export default function StageSettings() {
     try {
       await StagesService.deleteStage({
         openingId: openingId,
-        stage_id: stage_id,
+        stageId: stageId,
       });
       router.push(`${process.env.WEBSITE_URL}/openings/${openingId}/settings`);
     } catch (error) {

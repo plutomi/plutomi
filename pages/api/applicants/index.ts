@@ -26,7 +26,7 @@ const handler = async (
         first_name: first_name,
         last_name: last_name,
         openingId: openingId,
-        stage_id: opening.stage_order[0],
+        stageId: opening.stage_order[0],
       };
       try {
         InputValidation(create_applicant_input);

@@ -40,14 +40,14 @@ interface APICreateStageInput {
 
 /**
  * @param openingId - ID of the opening the stage is in
- * @param stage_id - ID of the stage you want to return
+ * @param stageId - ID of the stage you want to return
  */
 interface APIGetStageInput {
-  stage_id: string;
+  stageId: string;
 }
 
 interface APIGetStageURLInput {
-  stage_id: string;
+  stageId: string;
 }
 /**
  * @param openingId - ID of the opening you want to retrieve all stages for
@@ -61,12 +61,12 @@ interface APIGetAllStagesInOpeningURL {
 
 /**
  * @param openingId - ID of the opening the stage is in
- * @param stage_id - ID of the stage you want to delete
+ * @param stageId - ID of the stage you want to delete
  *
  */
 interface APIDeleteStageInput {
   openingId: string;
-  stage_id: string;
+  stageId: string;
 }
 
 /**

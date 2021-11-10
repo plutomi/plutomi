@@ -19,7 +19,7 @@ export default function StageSettingsContent() {
     try {
       const { message } = await QuestionsService.createQuestion({
         GSI1SK: questionModal.GSI1SK,
-        stage_id: stage_id,
+        stageId: stageId,
         question_description: questionModal.question_description,
       });
 
@@ -39,12 +39,12 @@ export default function StageSettingsContent() {
     // Refresh the question_order
     mutate(
       StagesService.getStageURL({
-        stage_id: stage_id,
+        stageId: stageId,
       })
     );
 
     // Refresh the question list
-    mutate(StagesService.getAllQuestionsInStageURL({ stage_id }));
+    mutate(StagesService.getAllQuestionsInStageURL({ stageId }));
   };
 
   const updateQuestion = async () => {
@@ -83,16 +83,16 @@ export default function StageSettingsContent() {
     // Refresh the question_order
     mutate(
       StagesService.getStageURL({
-        stage_id: stage_id,
+        stageId: stageId,
       })
     );
 
     // Refresh the question list
-    mutate(StagesService.getAllQuestionsInStageURL({ stage_id }));
+    mutate(StagesService.getAllQuestionsInStageURL({ stageId }));
   };
 
   const router = useRouter();
-  const { openingId, stage_id } = router.query as CustomQuery;
+  const { openingId, stageId } = router.query as CustomQuery;
 
   const { user, isUserLoading, isUserError } = useSelf();
   let { opening, isOpeningLoading, isOpeningError } = useOpeningById(openingId);
@@ -103,10 +103,10 @@ export default function StageSettingsContent() {
   const stageModal = useStore((state) => state.stageModal);
   const setStageModal = useStore((state) => state.setStageModal);
 
-  const { stage, isStageLoading, isStageError } = useStageById(stage_id);
+  const { stage, isStageLoading, isStageError } = useStageById(stageId);
 
   const { questions, isQuestionsLoading, isQuestionsError } =
-    useAllStageQuestions(user?.org_id, stage?.stage_id);
+    useAllStageQuestions(user?.org_id, stage?.stageId);
 
   const questionModal = useStore((state) => state.questionModal);
   const setQuestionModal = useStore((state) => state.setQuestionModal);

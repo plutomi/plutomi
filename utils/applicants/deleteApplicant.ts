@@ -44,7 +44,7 @@ export default async function DeleteApplicant({ org_id, applicant_id }) {
           // Decrement stage's total_applicants
           Update: {
             Key: {
-              PK: `ORG#${org_id}#STAGE#${applicant.current_stage_id}`, // todo fix types
+              PK: `ORG#${org_id}#STAGE#${applicant.current_stageId}`, // todo fix types
               SK: `STAGE`,
             },
             TableName: DYNAMO_TABLE_NAME,

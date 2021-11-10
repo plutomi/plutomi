@@ -6,9 +6,9 @@ import useStore from "../../utils/store";
 import useAllApplicantsInStage from "../../SWR/useAllApplicantsInStage";
 export default function ApplicantList() {
   const router = useRouter();
-  const { openingId, stage_id } = router.query as CustomQuery;
+  const { openingId, stageId } = router.query as CustomQuery;
   const { applicants, isApplicantsLoading, isApplicantsError } =
-    useAllApplicantsInStage(openingId, stage_id);
+    useAllApplicantsInStage(openingId, stageId);
 
   const setApplicantProfileModal = useStore(
     (store) => store.setApplicantProfileModal
@@ -33,7 +33,7 @@ export default function ApplicantList() {
   const handleApplicantClick = (applicant_id: string) => {
     router.push(
       {
-        pathname: `/openings/${openingId}/stages/${stage_id}/applicants`,
+        pathname: `/openings/${openingId}/stages/${stageId}/applicants`,
         query: { applicant_id: applicant_id },
       },
       undefined,

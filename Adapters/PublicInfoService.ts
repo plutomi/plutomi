@@ -29,13 +29,13 @@ export default class PublicInfoService {
     return data;
   }
 
-  static getPublicStageURL({ org_id, openingId, stage_id }) {
-    return `/api/public/orgs/${org_id}/openings/${openingId}/stages/${stage_id}`;
+  static getPublicStageURL({ org_id, openingId, stageId }) {
+    return `/api/public/orgs/${org_id}/openings/${openingId}/stages/${stageId}`;
   }
 
-  static async getPublicStage({ org_id, openingId, stage_id }) {
+  static async getPublicStage({ org_id, openingId, stageId }) {
     const { data } = await axios.get(
-      this.getPublicStageURL({ org_id, openingId, stage_id })
+      this.getPublicStageURL({ org_id, openingId, stageId })
     );
     return data;
   }

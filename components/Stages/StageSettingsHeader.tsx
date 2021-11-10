@@ -9,12 +9,12 @@ import useStageById from "../../SWR/useStageById";
 import { GetRelativeTime } from "../../utils/time";
 export default function StageSettingsHeader({ deleteStage }) {
   const router = useRouter();
-  const { openingId, stage_id } = router.query as CustomQuery;
+  const { openingId, stageId } = router.query as CustomQuery;
 
   const { user, isUserLoading, isUserError } = useSelf();
   let { opening, isOpeningLoading, isOpeningError } = useOpeningById(openingId);
 
-  const { stage, isStageLoading, isStageError } = useStageById(stage_id);
+  const { stage, isStageLoading, isStageError } = useStageById(stageId);
 
   const setQuestionModal = useStore((state) => state.setQuestionModal);
 
@@ -60,7 +60,7 @@ export default function StageSettingsHeader({ deleteStage }) {
     {
       name: "Applicants",
       // Go to the CURRENT STAGE in the opening to view the applicants
-      href: `/openings/${openingId}/stages/${stage_id}/applicants`, // TODO should this end with applicants?
+      href: `/openings/${openingId}/stages/${stageId}/applicants`, // TODO should this end with applicants?
       current: false,
     },
     {
@@ -70,7 +70,7 @@ export default function StageSettingsHeader({ deleteStage }) {
     },
     {
       name: "Stage Settings",
-      href: `/openings/${openingId}/stages/${stage_id}/settings`,
+      href: `/openings/${openingId}/stages/${stageId}/settings`,
       current: true,
     },
   ];
@@ -91,7 +91,7 @@ export default function StageSettingsHeader({ deleteStage }) {
             setStageModal({
               is_modal_open: true,
               modal_mode: "EDIT",
-              stage_id: stage_id,
+              stageId: stageId,
               GSI1SK: stage?.GSI1SK,
             })
           }
@@ -106,7 +106,7 @@ export default function StageSettingsHeader({ deleteStage }) {
             setQuestionModal({
               is_modal_open: true,
               modal_mode: "CREATE",
-              stage_id: stage_id,
+              stageId: stageId,
               GSI1SK: "",
               question_id: "",
               question_description: "",

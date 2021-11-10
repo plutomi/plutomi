@@ -22,7 +22,7 @@ export async function DeleteOpening({ org_id, openingId }) {
         const input = {
           org_id: org_id,
           openingId: openingId,
-          stage_id: stage.stage_id,
+          stageId: stage.stageId,
         };
         await DeleteStage(input);
       });

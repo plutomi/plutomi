@@ -4,7 +4,7 @@ const { DYNAMO_TABLE_NAME } = process.env;
 
 export default async function UpdateStage({
   org_id,
-  stage_id,
+  stageId,
   new_stage_values,
 }) {
   // TODO user the cleaning functions instead
@@ -14,7 +14,7 @@ export default async function UpdateStage({
     "org_id",
     "entity_type",
     "created_at",
-    "stage_id",
+    "stageId",
     "GSI1PK",
   ];
 
@@ -37,7 +37,7 @@ export default async function UpdateStage({
 
   const params = {
     Key: {
-      PK: `ORG#${org_id}#STAGE#${stage_id}`,
+      PK: `ORG#${org_id}#STAGE#${stageId}`,
       SK: `STAGE`,
     },
     UpdateExpression: UpdatedExpression,

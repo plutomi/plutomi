@@ -8,11 +8,11 @@ import { GetStage } from "./getStage";
 const { DYNAMO_TABLE_NAME } = process.env;
 // TODO check if stage is empt of appliants first
 // TODO delete stage from the funnels sort order
-export async function DeleteStage({ org_id, stage_id }: DeleteStageInput) {
-  // TODO Qeuery all items that start with PK: stage_id & SK: STAGE
+export async function DeleteStage({ org_id, stageId }: DeleteStageInput) {
+  // TODO Qeuery all items that start with PK: stageId & SK: STAGE
   // Get the opening we need to update
   try {
-    let stage = await GetStage({ org_id, stage_id });
+    let stage = await GetStage({ org_id, stageId });
     let opening = await GetOpening({
       org_id: org_id,
       openingId: stage.openingId,
@@ -20,7 +20,7 @@ export async function DeleteStage({ org_id, stage_id }: DeleteStageInput) {
 
     // Set the new stage order
     let new_stage_order = opening.stage_order.filter(
-      (id: string) => id !== stage_id
+      (id: string) => id !== stageId
     );
     opening.stage_order = new_stage_order;
 
@@ -31,7 +31,7 @@ export async function DeleteStage({ org_id, stage_id }: DeleteStageInput) {
           // Delete stage
           Delete: {
             Key: {
-              PK: `ORG#${org_id}#STAGE#${stage_id}`,
+              PK: `ORG#${org_id}#STAGE#${stageId}`,
               SK: `STAGE`,
             },
             TableName: DYNAMO_TABLE_NAME,
@@ -72,7 +72,7 @@ export async function DeleteStage({ org_id, stage_id }: DeleteStageInput) {
 
     try {
       await Dynamo.send(new TransactWriteCommand(transactParams));
-      // TODO Qeuery all items that start with PK: stage_id & SK: STAGE
+      // TODO Qeuery all items that start with PK: stageId & SK: STAGE
       // Maybe background processes can handle this instead
       return;
     } catch (error) {

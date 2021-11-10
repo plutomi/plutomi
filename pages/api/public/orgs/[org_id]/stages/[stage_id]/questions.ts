@@ -3,13 +3,13 @@ import { GetAllQuestionsInStage } from "../../../../../../../utils/questions/get
 import withCleanOrgId from "../../../../../../../middleware/withCleanOrgId";
 const handler = async (req: CustomRequest, res: NextApiResponse) => {
   const { method, query } = req;
-  const { org_id, stage_id } = query as CustomQuery;
+  const { org_id, stageId } = query as CustomQuery;
 
   if (method === "GET") {
     try {
       const questions = await GetAllQuestionsInStage({
         org_id,
-        stage_id,
+        stageId,
       });
 
       // TODO add filter here for public / private questions

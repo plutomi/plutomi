@@ -14,7 +14,7 @@ import useOpeningById from "../../../../../SWR/useOpeningById";
 import NumberFormat from "react-number-format";
 export default function StageApplicants() {
   const router = useRouter();
-  const { openingId, stage_id, applicant_id } = router.query as CustomQuery;
+  const { openingId, stageId, applicant_id } = router.query as CustomQuery;
   const { user, isUserLoading, isUserError } = useSelf();
   let { opening, isOpeningLoading, isOpeningError } = useOpeningById(openingId);
 
@@ -39,7 +39,7 @@ export default function StageApplicants() {
   }, [router.isReady]);
 
   const { applicants, isApplicantsLoading, isApplicantsError } =
-    useAllApplicantsInStage(openingId, stage_id);
+    useAllApplicantsInStage(openingId, stageId);
 
   const setApplicantProfileModal = useStore(
     (store) => store.setApplicantProfileModal

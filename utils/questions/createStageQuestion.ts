@@ -12,7 +12,7 @@ const { DYNAMO_TABLE_NAME } = process.env;
 
 export async function CreateStageQuestion({
   org_id,
-  stage_id,
+  stageId,
   GSI1SK,
   question_description,
 }: CreateStageQuestionInput) {
@@ -25,14 +25,14 @@ export async function CreateStageQuestion({
     question_id: question_id,
     entity_type: "STAGE_QUESTION",
     created_at: now,
-    GSI1PK: `ORG#${org_id}#STAGE#${stage_id}#QUESTIONS`,
+    GSI1PK: `ORG#${org_id}#STAGE#${stageId}#QUESTIONS`,
     GSI1SK: GSI1SK,
     org_id: org_id,
-    stage_id: stage_id,
+    stageId: stageId,
   };
 
   try {
-    let stage = await GetStage({ org_id, stage_id });
+    let stage = await GetStage({ org_id, stageId });
 
     if (stage.question_order.length >= MAX_CHILD_ITEM_LIMIT) {
       throw MAX_ITEM_LIMIT_ERROR;
@@ -54,7 +54,7 @@ export async function CreateStageQuestion({
             // Add question to question order
             Update: {
               Key: {
-                PK: `ORG#${org_id}#STAGE#${stage_id}`,
+                PK: `ORG#${org_id}#STAGE#${stageId}`,
                 SK: `STAGE`,
               },
               TableName: DYNAMO_TABLE_NAME,

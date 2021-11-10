@@ -14,7 +14,7 @@ export async function CreateApplicant({
   first_name,
   last_name,
   openingId,
-  stage_id,
+  stageId,
 }: CreateApplicantInput) {
   const now = GetCurrentTime("iso") as string;
   // Applicant ID has to be pretty high as the apply link will be the user ID
@@ -35,14 +35,14 @@ export async function CreateApplicant({
     created_at: now,
     // TODO add phone number
     current_openingId: openingId,
-    current_stage_id: stage_id,
+    current_stageId: stageId,
 
     // The reason for the below is so we can get applicants in an org, in an opening, or in a specific stagejust by the ID of each.
-    // Before we had `OPENING#${openingId}#STAGE#{stage_id}` for the SK which required the opening when getting applicants in specific stage
+    // Before we had `OPENING#${openingId}#STAGE#{stageId}` for the SK which required the opening when getting applicants in specific stage
     GSI1PK: `ORG#${org_id}#APPLICANTS`,
     GSI1SK: `OPENING#${openingId}#DATE_LANDED#${now}`,
     GSI2PK: `ORG#${org_id}#APPLICANTS`,
-    GSI2SK: `STAGE#${stage_id}#DATE_LANDED#${now}`,
+    GSI2SK: `STAGE#${stageId}#DATE_LANDED#${now}`,
   };
 
   try {
@@ -77,7 +77,7 @@ export async function CreateApplicant({
           // Increment the stage's total applicants
           Update: {
             Key: {
-              PK: `ORG#${org_id}#STAGE#${stage_id}`,
+              PK: `ORG#${org_id}#STAGE#${stageId}`,
               SK: `STAGE`,
             },
             TableName: DYNAMO_TABLE_NAME,

@@ -1,9 +1,9 @@
 import axios from "../axios/axios";
 
 export default class QuestionsService {
-  static async createQuestion({ GSI1SK, stage_id, question_description }) {
+  static async createQuestion({ GSI1SK, stageId, question_description }) {
     const body = {
-      stage_id: stage_id,
+      stageId: stageId,
       GSI1SK: GSI1SK,
       question_description: question_description,
     };

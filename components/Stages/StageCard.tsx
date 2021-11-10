@@ -7,21 +7,21 @@ import _ from "lodash";
 
 export default function StageCard({
   name,
-  current_stage_id,
+  current_stageId,
   openingId,
   total_applicants,
 }) {
   const router = useRouter();
-  const { stage_id } = router.query as CustomQuery;
+  const { stageId } = router.query as CustomQuery;
 
   return (
     <Link
-      href={`${process.env.WEBSITE_URL}/openings/${openingId}/stages/${current_stage_id}/applicants`} // TODO should this end with applicants?
+      href={`${process.env.WEBSITE_URL}/openings/${openingId}/stages/${current_stageId}/applicants`} // TODO should this end with applicants?
     >
       <a>
         <div
           className={`border my-6  py-4 text-center   ${
-            stage_id === current_stage_id
+            stageId === current_stageId
               ? "bg-sky-50 border-t-4 border-t-blue-500 "
               : "bg-white" // Highlighted stage settings
           }  shadow-md hover:shadow-xl transition ease-in-out duration-300 rounded-xl overflow-hidden`}

@@ -36,12 +36,12 @@ interface DynamoCreateStageInput {
 
 interface GetStageInput {
   org_id: string;
-  stage_id: string;
+  stageId: string;
 }
 
 interface CreateStageQuestionInput {
   org_id: string;
-  stage_id: string;
+  stageId: string;
   GSI1SK: string;
   question_description: string;
 }
@@ -49,7 +49,7 @@ interface CreateStageQuestionInput {
 interface CreateStageRuleInput {
   org_id: string;
   openingId: string;
-  stage_id: string;
+  stageId: string;
   validation: string; // TODO
 }
 
@@ -59,7 +59,7 @@ interface CreateApplicantInput {
   last_name: string;
   email: string;
   openingId: string;
-  stage_id: string;
+  stageId: string;
 }
 
 interface CreateApplicantResponseInput {
@@ -219,7 +219,7 @@ interface APIRejectOrgInvite {
 
 interface DeleteStageInput {
   org_id: string;
-  stage_id: string;
+  stageId: string;
 }
 
 interface APIReorderStagesInput {
@@ -252,7 +252,7 @@ interface UpdateQuestionInput {
 
 interface UpdateStageInput {
   org_id: string;
-  stage_id: string;
+  stageId: string;
   new_stage_values: DynamoStage;
 }
 
@@ -263,13 +263,13 @@ interface APICreateQuestionInput {
 
 interface AllQuestionsByStageIDInput {
   openingId: string;
-  stage_id: string;
+  stageId: string;
   org_id: string;
 }
 
 interface DeleteQuestionInput {
   org_id: string;
-  stage_id: string;
+  stageId: string;
   question_id: string;
 }
 
@@ -288,7 +288,7 @@ interface APICreateApplicantInput {
 interface GetAllApplicantsInStageInput {
   org_id: string;
   openingId: string;
-  stage_id: string;
+  stageId: string;
 }
 
 interface useAllApplicantsInStageOutput {
@@ -312,7 +312,7 @@ type CustomQuery = {
   org_id?: string;
   openingId?: string;
   user_id?: string;
-  stage_id?: string;
+  stageId?: string;
   applicant_id?: string;
   key?: string;
   callback_url?: string;

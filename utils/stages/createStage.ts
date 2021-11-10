@@ -16,14 +16,14 @@ export async function CreateStage({
   openingId,
 }: DynamoCreateStageInput) {
   const now = GetCurrentTime("iso") as string;
-  const stage_id = nanoid(50);
+  const stageId = nanoid(50);
   const new_stage = {
-    PK: `ORG#${org_id}#STAGE#${stage_id}`,
+    PK: `ORG#${org_id}#STAGE#${stageId}`,
     SK: `STAGE`,
     entity_type: "STAGE",
     created_at: now,
     question_order: [],
-    stage_id: stage_id,
+    stageId: stageId,
     total_applicants: 0,
     openingId: openingId,
     GSI1PK: `ORG#${org_id}#OPENING#${openingId}#STAGES`, // Get all stages in an opening
@@ -35,7 +35,7 @@ export async function CreateStage({
 
     try {
       // Get current opening
-      opening.stage_order.push(stage_id);
+      opening.stage_order.push(stageId);
 
       if (opening.stage_order.length >= MAX_CHILD_ITEM_LIMIT) {
         throw MAX_ITEM_LIMIT_ERROR;

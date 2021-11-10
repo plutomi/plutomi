@@ -21,7 +21,7 @@ export async function GetAllStagesInOpening(org_id: string, openingId: string) {
     const all_stages = response.Items;
 
     const result = stage_order.map((i) =>
-      all_stages.find((j) => j.stage_id === i)
+      all_stages.find((j) => j.stageId === i)
     );
 
     return result;

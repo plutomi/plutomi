@@ -4,8 +4,8 @@ import { GetStage } from "../stages/getStage";
 
 const { DYNAMO_TABLE_NAME } = process.env;
 
-export async function GetAllQuestionsInStage({ org_id, stage_id }) {
-  const stage = await GetStage({ org_id, stage_id });
+export async function GetAllQuestionsInStage({ org_id, stageId }) {
+  const stage = await GetStage({ org_id, stageId });
   const { question_order } = stage;
 
   const params: QueryCommandInput = {
@@ -13,7 +13,7 @@ export async function GetAllQuestionsInStage({ org_id, stage_id }) {
     TableName: DYNAMO_TABLE_NAME,
     KeyConditionExpression: "GSI1PK = :GSI1PK",
     ExpressionAttributeValues: {
-      ":GSI1PK": `ORG#${org_id}#STAGE#${stage_id}#QUESTIONS`,
+      ":GSI1PK": `ORG#${org_id}#STAGE#${stageId}#QUESTIONS`,
     },
   };
 
