@@ -14,38 +14,38 @@ module.exports = {
     NEXT_PUBLIC_GOOGLE_CLIENT_ID: process.env.GOOGLE_CLIENT_ID,
   },
 
-  // async redirects() {
-  //   return [
-  //     {
-  //       source: "/openings/:any*",
-  //       destination: "/",
-  //       permanent: false,
-  //     },
-  //     {
-  //       source: "/stages/:any*",
-  //       destination: "/",
-  //       permanent: false,
-  //     },
-  //     {
-  //       source: "/profile/:any*",
-  //       destination: "/",
-  //       permanent: false,
-  //     },
-  //     {
-  //       source: "/team/:any*",
-  //       destination: "/",
-  //       permanent: false,
-  //     },
-  //     {
-  //       source: "/domains/:any*",
-  //       destination: "/",
-  //       permanent: false,
-  //     },
-  //     {
-  //       source: "/dashboard/:any*",
-  //       destination: "/",
-  //       permanent: false,
-  //     },
-  //   ];
-  // },
+  async redirects() {
+    return [
+      {
+        source: "/openings/:any*",
+        destination: "/",
+        permanent: false,
+      },
+      {
+        source: "/stages/:any*",
+        destination: "/",
+        permanent: false,
+      },
+      {
+        source: "/profile/:any*",
+        destination: "/",
+        permanent: false,
+      },
+      {
+        source: "/team/:any*",
+        destination: "/",
+        permanent: false,
+      },
+      {
+        source: "/domains/:any*",
+        destination: "/",
+        permanent: false,
+      },
+      {
+        source: "/dashboard/:any*",
+        destination: "/",
+        permanent: false,
+      },
+    ];
+  },
 };

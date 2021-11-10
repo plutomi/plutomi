@@ -2,13 +2,14 @@ import { APIGatewayProxyEventV2, APIGatewayProxyResultV2 } from "aws-lambda";
 import { GetOrg } from "../../utils/orgs/getOrg";
 import FormattedResponse from "../../utils/formatResponse";
 import CleanOrg from "../../utils/clean/cleanOrg";
+import withCleanOrgId from "../../middleware/withCleanOrgId";
 
 const main = async (
   event: APIGatewayProxyEventV2
 ): Promise<APIGatewayProxyResultV2> => {
-  console.log("Executing event", event);
+  console.log("Executing event in public org info", event);
   const { orgId } = event.pathParameters;
-
+  console.log("In api route orgid", orgId);
   if (!orgId) {
     return FormattedResponse(400, { message: `'orgId' is missing` });
   }
@@ -36,4 +37,4 @@ const main = async (
   }
 };
 
-exports.handler = main;
+exports.handler = withCleanOrgId(main);
