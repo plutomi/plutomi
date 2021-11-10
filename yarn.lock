@@ -2,11 +2,6 @@
 # yarn lockfile v1
 
 
-"-@^0.0.1":
-  "integrity" "sha512-3HfneK3DGAm05fpyj20sT3apkNcvPpCuccOThOPdzz8sY7GgQGe0l93XH9bt+YzibcTIgUAIMoyVJI740RtgyQ=="
-  "resolved" "https://registry.npmjs.org/-/-/--0.0.1.tgz"
-  "version" "0.0.1"
-
 "@aws-cdk/assert@^1.132.0":
   "integrity" "sha512-+3OIReLtZ2EMMBDju2sZHd6JI4pc7o3ZUxUdpSmOckm2vkXsoFbaitUnes8Qak8BY3CEHBHwdBjNBHS83cCRRQ=="
   "resolved" "https://registry.npmjs.org/@aws-cdk/assert/-/assert-1.132.0.tgz"
@@ -11415,11 +11410,6 @@
   "integrity" "sha1-GwqzvVU7Kg1jmdKcDj6gslIHgyc="
   "resolved" "https://registry.npmjs.org/functional-red-black-tree/-/functional-red-black-tree-1.0.1.tgz"
   "version" "1.0.1"
-
-"g@^2.0.1":
-  "integrity" "sha1-C1lj69DKcOO8jGdmk0oCGCHIuFc="
-  "resolved" "https://registry.npmjs.org/g/-/g-2.0.1.tgz"
-  "version" "2.0.1"
 
 "gauge@^3.0.0":
   "integrity" "sha512-6STz6KdQgxO4S/ko+AbjlFGGdGcknluoqU+79GOFCDqqyYj5OanQf9AjxwN0jCidtT+ziPMmPSt9E4hfQ0CwIQ=="

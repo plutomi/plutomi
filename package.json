@@ -11,7 +11,6 @@
     "deploy": "cdk deploy --all"
   },
   "dependencies": {
-    "-": "^0.0.1",
     "@aws-cdk/aws-apigatewayv2": "^1.132.0",
     "@aws-cdk/aws-apigatewayv2-integrations": "^1.132.0",
     "@aws-cdk/aws-certificatemanager": "^1.132.0",
@@ -42,7 +41,6 @@
     "base64url": "^3.0.1",
     "dayjs": "^1.10.7",
     "delay": "^5.0.0",
-    "g": "^2.0.1",
     "loadtest": "^5.1.2",
     "lodash": "^4.17.21",
     "nanoid": "^3.1.30",
