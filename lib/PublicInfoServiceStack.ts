@@ -102,7 +102,7 @@ export class PublicInfoServiceStack extends cdk.Stack {
       integration: new LambdaProxyIntegration({
         handler: getPublicOpeningInfoFunction,
       }),
-      path: "/public/orgs/{orgId}/openings/{opening_id}",
+      path: "/public/orgs/{orgId}/openings/{openingId}",
       methods: [HttpMethod.GET],
     });
 
@@ -156,7 +156,7 @@ export class PublicInfoServiceStack extends cdk.Stack {
       integration: new LambdaProxyIntegration({
         handler: getPublicStageInfo,
       }),
-      path: "/public/orgs/{orgId}/stages/{stage_id}",
+      path: "/public/orgs/{orgId}/stages/{stageId}",
       methods: [HttpMethod.GET],
     });
 
@@ -183,7 +183,7 @@ export class PublicInfoServiceStack extends cdk.Stack {
       integration: new LambdaProxyIntegration({
         handler: getPublicQuestionsInStage,
       }),
-      path: "/public/orgs/{orgId}/stages/{stage_id}/questions",
+      path: "/public/orgs/{orgId}/stages/{stageId}/questions",
       methods: [HttpMethod.GET],
     });
 
@@ -210,7 +210,7 @@ export class PublicInfoServiceStack extends cdk.Stack {
       integration: new LambdaProxyIntegration({
         handler: getPublicApplicantInfo,
       }),
-      path: "/public/orgs/{orgId}/applicants/{applicant_id}",
+      path: "/public/orgs/{orgId}/applicants/{applicantId}",
       methods: [HttpMethod.GET],
     });
   }

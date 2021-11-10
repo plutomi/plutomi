@@ -12,34 +12,34 @@ interface CreateUserInput {
 
 interface GetOpeningInput {
   orgId: string;
-  opening_id: string;
+  openingId: string;
 }
 interface GetApplicantInput {
   orgId: string;
-  applicant_id: string;
+  applicantId: string;
 }
 interface DynamoCreateStageInput {
   orgId: string;
-  opening_id: string;
+  openingId: string;
   GSI1SK: string;
 }
 
 interface GetStageInput {
   orgId: string;
-  stage_id: string;
+  stageId: string;
 }
 
 interface CreateStageQuestionInput {
   orgId: string;
-  stage_id: string;
+  stageId: string;
   GSI1SK: string;
   question_description: string;
 }
 
 interface CreateStageRuleInput {
   orgId: string;
-  opening_id: string;
-  stage_id: string;
+  openingId: string;
+  stageId: string;
   validation: string; // TODO
 }
 
@@ -48,13 +48,13 @@ interface CreateApplicantInput {
   firstName: string;
   lastName: string;
   email: string;
-  opening_id: string;
-  stage_id: string;
+  openingId: string;
+  stageId: string;
 }
 
 interface CreateApplicantResponseInput {
   orgId: string;
-  applicant_id: string;
+  applicantId: string;
   question_title: string;
   question_description: string;
   question_response: string;
@@ -100,7 +100,7 @@ interface APIRejectOrgInvite {
 
 interface DeleteStageInput {
   orgId: string;
-  stage_id: string;
+  stageId: string;
 }
 
 interface APIReorderStagesInput {
@@ -109,7 +109,7 @@ interface APIReorderStagesInput {
 
 interface ReorderStagesInput {
   orgId: string;
-  opening_id: string;
+  openingId: string;
   new_stage_order: string[];
 }
 
@@ -119,14 +119,14 @@ interface APICreateQuestionInput {
 }
 
 interface AllQuestionsByStageIDInput {
-  opening_id: string;
-  stage_id: string;
+  openingId: string;
+  stageId: string;
   orgId: string;
 }
 
 interface DeleteQuestionInput {
   orgId: string;
-  stage_id: string;
+  stageId: string;
   question_id: string;
 }
 
@@ -138,8 +138,8 @@ interface APICreateApplicantInput {
 
 interface GetAllApplicantsInStageInput {
   orgId: string;
-  opening_id: string;
-  stage_id: string;
+  openingId: string;
+  stageId: string;
 }
 
 // TODO this should be updated with question / answer type for multiple choice, radio, etc.
@@ -154,10 +154,10 @@ type CustomDateFormat = string | number;
 
 type CustomQuery = {
   orgId?: string;
-  opening_id?: string;
+  openingId?: string;
   userId?: string;
-  stage_id?: string;
-  applicant_id?: string;
+  stageId?: string;
+  applicantId?: string;
   key?: string;
   callbackUrl?: string;
   question_id?: string;

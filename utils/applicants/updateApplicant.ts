@@ -4,7 +4,7 @@ const { DYNAMO_TABLE_NAME } = process.env;
 
 export default async function UpdateApplicant({
   orgId,
-  applicant_id,
+  applicantId,
   new_applicant_values,
 }) {
   // TODO user the cleaning functions instead
@@ -14,7 +14,7 @@ export default async function UpdateApplicant({
     "orgId",
     "entityType",
     "created_at",
-    "applicant_id",
+    "applicantId",
     "GSI1PK",
   ];
 
@@ -37,7 +37,7 @@ export default async function UpdateApplicant({
 
   const params: UpdateCommandInput = {
     Key: {
-      PK: `ORG#${orgId}#APPLICANT#${applicant_id}`,
+      PK: `ORG#${orgId}#APPLICANT#${applicantId}`,
       SK: `APPLICANT`,
     },
     UpdateExpression: UpdatedExpression,

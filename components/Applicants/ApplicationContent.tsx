@@ -10,12 +10,12 @@ export default function ApplicationContent() {
   const [responses, setResponses] = useState([]);
 
   const router = useRouter();
-  const { orgId, applicant_id } = router.query as CustomQuery;
+  const { orgId, applicantId } = router.query as CustomQuery;
   const { applicant, isApplicantLoading, isApplicantError } =
-    usePublicApplicant(applicant_id);
+    usePublicApplicant(applicantId);
 
   const { questions, isQuestionsLoading, isQuestionsError } =
-    useAllStageQuestions(orgId, applicant?.current_stage_id);
+    useAllStageQuestions(orgId, applicant?.current_stageId);
   if (isQuestionsLoading) {
     return <Loader text="Loading questions..." />;
   }
@@ -66,7 +66,7 @@ export default function ApplicationContent() {
     try {
       const { message } = await ApplicantsService.answerQuestions({
         orgId,
-        applicant_id,
+        applicantId,
         responses,
       });
       alert(message);

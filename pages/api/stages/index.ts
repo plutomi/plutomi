@@ -13,7 +13,7 @@ const handler = async (
     return res.status(401).json({ message: "Please log in again" });
   }
   const { body, method } = req;
-  const { GSI1SK, opening_id }: APICreateStageInput = body;
+  const { GSI1SK, openingId }: APICreateStageInput = body;
 
   if (method === "POST") {
     if (user_session.orgId === "NO_ORG_ASSIGNED") {
@@ -23,7 +23,7 @@ const handler = async (
     }
     const create_stage_input: DynamoCreateStageInput = {
       orgId: user_session.orgId,
-      opening_id: opening_id,
+      openingId: openingId,
       GSI1SK: GSI1SK,
     };
 

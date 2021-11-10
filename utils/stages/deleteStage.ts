@@ -8,19 +8,19 @@ import { getStage } from "./getStage";
 const { DYNAMO_TABLE_NAME } = process.env;
 // TODO check if stage is empt of appliants first
 // TODO delete stage from the funnels sort order
-export async function DeleteStage({ orgId, stage_id }: DeleteStageInput) {
-  // TODO Qeuery all items that start with PK: stage_id & SK: STAGE
+export async function DeleteStage({ orgId, stageId }: DeleteStageInput) {
+  // TODO Qeuery all items that start with PK: stageId & SK: STAGE
   // Get the opening we need to update
   try {
-    let stage = await getStage({ orgId, stage_id });
+    let stage = await getStage({ orgId, stageId });
     let opening = await GetOpening({
       orgId: orgId,
-      opening_id: stage.opening_id,
+      openingId: stage.openingId,
     });
 
     // Set the new stage order
     let new_stage_order = opening.stage_order.filter(
-      (id: string) => id !== stage_id
+      (id: string) => id !== stageId
     );
     opening.stage_order = new_stage_order;
 
@@ -31,7 +31,7 @@ export async function DeleteStage({ orgId, stage_id }: DeleteStageInput) {
           // Delete stage
           Delete: {
             Key: {
-              PK: `ORG#${orgId}#STAGE#${stage_id}`,
+              PK: `ORG#${orgId}#STAGE#${stageId}`,
               SK: `STAGE`,
             },
             TableName: DYNAMO_TABLE_NAME,
@@ -41,7 +41,7 @@ export async function DeleteStage({ orgId, stage_id }: DeleteStageInput) {
           // Update Stage Order
           Update: {
             Key: {
-              PK: `ORG#${orgId}#OPENING#${opening.opening_id}`,
+              PK: `ORG#${orgId}#OPENING#${opening.openingId}`,
               SK: `OPENING`,
             },
             TableName: DYNAMO_TABLE_NAME,
@@ -72,7 +72,7 @@ export async function DeleteStage({ orgId, stage_id }: DeleteStageInput) {
 
     try {
       await Dynamo.send(new TransactWriteCommand(transactParams));
-      // TODO Qeuery all items that start with PK: stage_id & SK: STAGE
+      // TODO Qeuery all items that start with PK: stageId & SK: STAGE
       // Maybe background processes can handle this instead
       return;
     } catch (error) {

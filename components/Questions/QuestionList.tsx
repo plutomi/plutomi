@@ -14,16 +14,15 @@ import StagesService from "../../adapters/StagesService";
 import QuestionsService from "../../adapters/QuestionsService";
 export default function QuestionList() {
   const router = useRouter();
-  const { opening_id, stage_id } = router.query as CustomQuery;
+  const { openingId, stageId } = router.query as CustomQuery;
 
   const { user, isUserLoading, isUserError } = useSelf();
-  let { opening, isOpeningLoading, isOpeningError } =
-    useOpeningById(opening_id);
+  let { opening, isOpeningLoading, isOpeningError } = useOpeningById(openingId);
 
-  const { stage, isStageLoading, isStageError } = useStageById(stage_id);
+  const { stage, isStageLoading, isStageError } = useStageById(stageId);
 
   const { questions, isQuestionsLoading, isQuestionsError } =
-    useAllStageQuestions(user?.orgId, stage?.stage_id);
+    useAllStageQuestions(user?.orgId, stage?.stageId);
 
   const [new_questions, setNewQuestions] = useState(questions);
 
@@ -58,7 +57,7 @@ export default function QuestionList() {
 
     try {
       await StagesService.updateStage({
-        stage_id: stage_id,
+        stageId: stageId,
         new_stage_values: {
           question_order: new_question_order,
         },
@@ -70,7 +69,7 @@ export default function QuestionList() {
 
     mutate(
       StagesService.getStageURL({
-        stage_id: stage_id,
+        stageId: stageId,
       })
     );
   };
@@ -96,12 +95,12 @@ export default function QuestionList() {
     // Refresh the stage (which returns the question order)
     mutate(
       StagesService.getStageURL({
-        stage_id: stage_id,
+        stageId: stageId,
       })
     );
 
     // Refresh questions
-    mutate(StagesService.getAllQuestionsInStageURL({ stage_id }));
+    mutate(StagesService.getAllQuestionsInStageURL({ stageId }));
   };
 
   if (isQuestionsLoading) {
@@ -110,12 +109,12 @@ export default function QuestionList() {
   return (
     <div>
       <div className="flow-root mt-6">
-        {/* Left Column Stage Order on /openings/-opening_id-/settings */}
+        {/* Left Column Stage Order on /openings/-openingId-/settings */}
         <DragDropContext
           onDragEnd={handleDragEnd}
           onDragStart={() => console.log("Start")}
         >
-          <Droppable droppableId={stage.stage_id}>
+          <Droppable droppableId={stage.stageId}>
             {(provided) => (
               <ul
                 role="list"

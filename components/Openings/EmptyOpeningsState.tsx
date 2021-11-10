@@ -20,7 +20,7 @@ export default function EmptyOpeningsState() {
               is_modal_open: true,
               modal_mode: "CREATE",
               is_public: false,
-              opening_id: "",
+              openingId: "",
               GSI1SK: "",
             })
           }

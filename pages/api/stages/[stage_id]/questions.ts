@@ -13,13 +13,13 @@ const handler = async (
     return res.status(401).json({ message: "Please log in again" });
   }
   const { method, query } = req;
-  const { stage_id } = query as CustomQuery;
+  const { stageId } = query as CustomQuery;
 
   if (method === "GET") {
     try {
       const questions = await GetAllQuestionsInStage({
         orgId: user_session.orgId,
-        stage_id,
+        stageId,
       });
 
       return res.status(200).json(questions);

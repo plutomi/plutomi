@@ -14,11 +14,11 @@ const handler = async (
     return res.status(401).json({ message: "Please log in again" });
   }
   const { method, query, body } = req;
-  const { applicant_id } = query as CustomQuery;
+  const { applicantId } = query as CustomQuery;
 
   const get_applicant_input: GetApplicantInput = {
     orgId: user_session.orgId,
-    applicant_id: applicant_id,
+    applicantId: applicantId,
   };
 
   if (method === "GET") {
@@ -42,7 +42,7 @@ const handler = async (
     try {
       const update_applicant_input: UpdateApplicantInput = {
         orgId: user_session.orgId,
-        applicant_id: applicant_id,
+        applicantId: applicantId,
         new_applicant_values: body.new_applicant_values,
       };
 
@@ -65,7 +65,7 @@ const handler = async (
     try {
       await DeleteApplicant({
         orgId: user_session.orgId,
-        applicant_id: applicant_id,
+        applicantId: applicantId,
       });
       return res.status(200).json({ message: "Applicant deleted!" });
     } catch (error) {

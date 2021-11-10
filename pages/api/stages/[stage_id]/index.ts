@@ -15,13 +15,13 @@ const handler = async (
     return res.status(401).json({ message: "Please log in again" });
   }
   const { method, query, body } = req;
-  const { stage_id } = query as CustomQuery;
-  const { opening_id } = body;
+  const { stageId } = query as CustomQuery;
+  const { openingId } = body;
   // Get a single stage in an opening
   if (method === "GET") {
     const get_stage_input: GetStageInput = {
       orgId: user_session.orgId,
-      stage_id: stage_id,
+      stageId: stageId,
     };
 
     try {
@@ -43,7 +43,7 @@ const handler = async (
     try {
       const update_stage_input: UpdateStageInput = {
         orgId: user_session.orgId,
-        stage_id: stage_id,
+        stageId: stageId,
         new_stage_values: body.new_stage_values,
       };
 
@@ -66,7 +66,7 @@ const handler = async (
     try {
       const delete_stage_input = {
         orgId: user_session.orgId,
-        stage_id: stage_id,
+        stageId: stageId,
       };
 
       await DeleteStage(delete_stage_input);

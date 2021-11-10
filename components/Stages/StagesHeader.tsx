@@ -9,11 +9,10 @@ import { useRouter } from "next/router";
 import useOpenings from "../../SWR/useOpenings";
 export default function StagesHeader() {
   const router = useRouter();
-  const { opening_id } = router.query as CustomQuery;
+  const { openingId } = router.query as CustomQuery;
 
   const { user, isUserLoading, isUserError } = useSelf();
-  let { opening, isOpeningLoading, isOpeningError } =
-    useOpeningById(opening_id);
+  let { opening, isOpeningLoading, isOpeningError } = useOpeningById(openingId);
 
   let { openings, isOpeningsLoading, isOpeningsError } = useOpenings();
 
@@ -24,7 +23,7 @@ export default function StagesHeader() {
           <OpeningsDropdown
             openings={openings}
             index={openings?.indexOf(
-              openings?.find((opening) => opening.opening_id === opening_id)
+              openings?.find((opening) => opening.openingId === openingId)
             )}
           />
         ) : (
@@ -34,12 +33,12 @@ export default function StagesHeader() {
       <p className="mt-2 text-md text-normal sm:mt-0 ">
         <ClickToCopy
           showText={"Application Link"}
-          copyText={`${process.env.WEBSITE_URL}/${user?.orgId}/${opening?.opening_id}/apply`}
+          copyText={`${process.env.WEBSITE_URL}/${user?.orgId}/${opening?.openingId}/apply`}
         />
       </p>
       <div className=" flex justify-center">
         <Link
-          href={`${process.env.WEBSITE_URL}/openings/${opening_id}/settings`}
+          href={`${process.env.WEBSITE_URL}/openings/${openingId}/settings`}
         >
           <CogIcon className="w-10 h-10  hover:text-dark text-light cursor-pointer transition duration-300 ease-in-out" />
         </Link>

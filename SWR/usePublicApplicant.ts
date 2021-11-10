@@ -4,15 +4,15 @@ import useSWR from "swr";
 import PublicInfoService from "../adapters/PublicInfoService";
 const fetcher = (url: string) => axios.get(url).then((res) => res.data);
 
-function usePublicApplicant(applicant_id: string) {
+function usePublicApplicant(applicantId: string) {
   // Despite removing the query string (applicant id) from the URl, this still runs before changing to null
   const shouldFetch =
-    applicant_id && applicant_id !== "" && typeof applicant_id === "string"
+    applicantId && applicantId !== "" && typeof applicantId === "string"
       ? true
       : false;
 
   const { data, error } = useSWR(
-    shouldFetch && PublicInfoService.getPublicApplicantURL({ applicant_id }),
+    shouldFetch && PublicInfoService.getPublicApplicantURL({ applicantId }),
     fetcher
   );
 

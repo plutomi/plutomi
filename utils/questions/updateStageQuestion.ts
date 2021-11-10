@@ -15,7 +15,7 @@ export default async function UpdateQuestion({
     "orgId",
     "entityType",
     "created_at",
-    "opening_id",
+    "openingId",
     "GSI1PK",
   ];
 
