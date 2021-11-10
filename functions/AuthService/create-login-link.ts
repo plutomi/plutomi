@@ -25,8 +25,7 @@ const timeThreshold = getPastOrFutureTime(
   "minutes",
   "iso"
 );
-
-const handler = async (
+const main = async (
   event: APIGatewayProxyEventV2
 ): Promise<APIGatewayProxyResultV2> => {
   const { userEmail, loginMethod, callbackUrl } = JSON.parse(event.body);
@@ -95,5 +94,4 @@ const handler = async (
     });
   }
 };
-
-export default withInputValidation(handler, schema);
+exports.handler = withInputValidation(main, schema);

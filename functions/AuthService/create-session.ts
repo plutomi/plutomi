@@ -9,7 +9,7 @@ const user = {
   orgId: "beans",
 };
 
-const handler = async (
+const main = async (
   event: APIGatewayProxyEventV2
 ): Promise<APIGatewayProxyResultV2> => {
   //
@@ -30,5 +30,4 @@ const handler = async (
     });
   }
 };
-
-export default handler;
+exports.handler = main;

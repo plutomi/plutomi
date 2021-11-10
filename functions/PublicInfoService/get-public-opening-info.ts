@@ -3,7 +3,7 @@ import { GetOpening } from "../../utils/openings/getOpeningById";
 import CleanOpening from "../../utils/clean/cleanOpening";
 import FormattedResponse from "../../utils/formatResponse";
 
-const handler = async (
+const main = async (
   event: APIGatewayProxyEventV2
 ): Promise<APIGatewayProxyResultV2> => {
   const { orgId, opening_id } = event.pathParameters;
@@ -42,4 +42,4 @@ const handler = async (
     });
   }
 };
-export default handler;
+exports.handler = main;

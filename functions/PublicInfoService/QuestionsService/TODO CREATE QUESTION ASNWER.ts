@@ -14,7 +14,7 @@ type CreateApplicantResponseRequest = APIGatewayProxyEventV2 & {
 
 /// TODO ! FIX THIS TYPE !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-const handler = async (
+const main = async (
   event: CreateApplicantResponseRequest
 ): Promise<APIGatewayProxyResultV2> => {
   const { orgId, applicant_id } = event.pathParameters;
@@ -66,5 +66,4 @@ const handler = async (
     });
   }
 };
-
-export default handler;
+exports.handler = main;

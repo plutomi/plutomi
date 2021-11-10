@@ -1,7 +1,7 @@
 import { APIGatewayProxyEventV2, APIGatewayProxyResultV2 } from "aws-lambda";
 import FormattedResponse from "../../utils/formatResponse";
 import { GetAllQuestionsInStage } from "../../utils/questions/getAllQuestionsInStage";
-const handler = async (
+const main = async (
   event: APIGatewayProxyEventV2
 ): Promise<APIGatewayProxyResultV2> => {
   const { orgId, stage_id } = event.pathParameters;
@@ -30,4 +30,4 @@ const handler = async (
   }
 };
 
-export default handler;
+exports.handler = main;
