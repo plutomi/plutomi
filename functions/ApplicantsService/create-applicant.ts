@@ -14,7 +14,7 @@ const schema = Joi.object({
   applicantEmail: Joi.string().email().required(),
 });
 
-const handler = async (
+const main = async (
   event: APIGatewayProxyEventV2
 ): Promise<APIGatewayProxyResultV2> => {
   const { orgId, openingId, firstName, lastName, email } = JSON.parse(
@@ -48,5 +48,4 @@ const handler = async (
     });
   }
 };
-
-export default withInputValidation(handler, schema);
+exports.handler = withInputValidation(main, schema);
