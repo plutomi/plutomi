@@ -1,7 +1,6 @@
 import { NextApiResponse } from "next";
 import { GetAllApplicantsInOpening } from "../../../../utils/openings/getAllApplicantsInOpening";
 import withSession from "../../../../middleware/withSession";
-import InputValidation from "../../../../utils/inputValidation";
 
 const handler = async (
   req: NextIronRequest,

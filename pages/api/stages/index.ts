@@ -1,5 +1,4 @@
 import { CreateStage } from "../../../utils/stages/createStage";
-import InputValidation from "../../../utils/inputValidation";
 import { NextApiResponse } from "next";
 // Create stage in an opening
 import withSession from "../../../middleware/withSession";

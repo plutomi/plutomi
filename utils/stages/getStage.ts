@@ -3,7 +3,7 @@ import { Dynamo } from "../../lib/awsClients/ddbDocClient";
 
 const { DYNAMO_TABLE_NAME } = process.env;
 
-export async function GetStage(orgId: string, stage_id: string) {
+export async function getStage(orgId: string, stage_id: string) {
   const params: GetCommandInput = {
     TableName: DYNAMO_TABLE_NAME,
     Key: {

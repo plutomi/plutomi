@@ -1,6 +1,5 @@
-import { GetStage } from "../.././../../utils/stages/getStage";
+import { getStage } from "../.././../../utils/stages/getStage";
 import { NextApiResponse } from "next";
-import InputValidation from "../.././../../utils/inputValidation";
 import { DeleteStage } from "../.././../../utils/stages/deleteStage";
 import UpdateStage from "../../../../utils/stages/updateStage";
 // Create stage in a opening
@@ -26,7 +25,7 @@ const handler = async (
     };
 
     try {
-      const stage = await GetStage(get_stage_input);
+      const stage = await getStage(get_stage_input);
       if (!stage) {
         return res.status(404).json({ message: "Stage not found" });
       }

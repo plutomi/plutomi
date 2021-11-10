@@ -1,6 +1,5 @@
 import { GetOpening } from "../../../../utils/openings/getOpeningById";
 import { NextApiResponse } from "next";
-import InputValidation from "../../../../utils/inputValidation";
 import UpdateOpening from "../../../../utils/openings/updateOpening";
 import { DeleteOpening } from "../../../../utils/openings/deleteOpening";
 import withSession from "../../../../middleware/withSession";
