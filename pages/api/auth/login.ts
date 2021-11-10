@@ -24,7 +24,7 @@ const handler = async (
 ): Promise<void> => {
   const { body, method, query } = req; // TODO get from body
   const { user_email, loginMethod } = body;
-  const { userId, key, callback_url } = query as CustomQuery;
+  const { userId, key, callbackUrl } = query as CustomQuery;
   const login_link_length = 1500;
   const login_link_max_delay_minutes = 10;
   const time_threshold = GetPastOrFutureTime(
@@ -78,8 +78,8 @@ const handler = async (
         const default_redirect = `${process.env.WEBSITE_URL}/dashboard`;
         const login_link = `${process.env.WEBSITE_URL}/api/auth/login?userId=${
           user.userId
-        }&key=${secret}&callback_url=${
-          callback_url ? callback_url : default_redirect
+        }&key=${secret}&callbackUrl=${
+          callbackUrl ? callbackUrl : default_redirect
         }`;
 
         if (loginMethod === "GOOGLE") {
@@ -185,7 +185,7 @@ const handler = async (
         return;
       }
 
-      res.redirect(callback_url);
+      res.redirect(callbackUrl);
       return;
     }
   }

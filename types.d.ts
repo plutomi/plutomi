@@ -185,7 +185,7 @@ interface useAllStageQuestionsOutput {
 
 interface APICreateLoginLinkInput {
   user_email: string;
-  callback_url?: string;
+  callbackUrl?: string;
 }
 
 interface APICreateQuestionInput {
@@ -315,7 +315,7 @@ type CustomQuery = {
   stageId?: string;
   applicant_id?: string;
   key?: string;
-  callback_url?: string;
+  callbackUrl?: string;
   question_id?: string;
   invite_id?: string;
 };
