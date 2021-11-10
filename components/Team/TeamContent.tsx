@@ -23,11 +23,11 @@ export default function TeamContent() {
     return <Loader text="Loading team..." />;
   }
 
-  const createInvite = async (recipient_email: string) => {
+  const createInvite = async (recipientEmail: string) => {
     try {
       // TODO add custom expiry - Defaults to 3 days
       const { message } = await InvitesService.createInvite({
-        recipient_email: recipient_email,
+        recipientEmail: recipientEmail,
       });
       alert(message);
       setCreateInviteModalOpen(false);

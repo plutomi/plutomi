@@ -3,7 +3,7 @@ import { Dialog, Transition } from "@headlessui/react";
 import { XIcon } from "@heroicons/react/outline";
 import useStore from "../utils/store";
 export default function CreateInviteModal({ createInvite }) {
-  const [recipient_email, setrecipient_email] = useState("");
+  const [recipientEmail, setrecipientEmail] = useState("");
 
   const open = useStore((state) => state.createInviteModalIsOpen);
 
@@ -14,8 +14,8 @@ export default function CreateInviteModal({ createInvite }) {
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
 
-    await createInvite(recipient_email);
-    setrecipient_email("");
+    await createInvite(recipientEmail);
+    setrecipientEmail("");
   };
   return (
     <Transition.Root show={open} as={Fragment}>
@@ -92,9 +92,9 @@ export default function CreateInviteModal({ createInvite }) {
                                 id="new-user-email"
                                 required
                                 onChange={(e) =>
-                                  setrecipient_email(e.target.value)
+                                  setrecipientEmail(e.target.value)
                                 }
-                                value={recipient_email}
+                                value={recipientEmail}
                                 className="block w-full shadow-sm sm:text-sm focus:ring-blue-500 focus:border-blue-500 border-gray-300 rounded-md"
                               />
                             </div>

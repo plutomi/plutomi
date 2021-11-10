@@ -2,14 +2,14 @@ import { SendEmailCommand, SendEmailCommandInput } from "@aws-sdk/client-ses";
 import SES from "../../lib/awsClients/sesClient";
 
 export default async function SendOrgInvite({
-  recipient_email,
+  recipientEmail,
   created_by,
   org_name,
 }: SendOrgInviteInput) {
   const new_email: SendEmailCommandInput = {
     Source: `Plutomi <join@plutomi.com>`,
     Destination: {
-      ToAddresses: [recipient_email.toLowerCase().trim()],
+      ToAddresses: [recipientEmail.toLowerCase().trim()],
       CcAddresses: null,
       BccAddresses: null,
     },

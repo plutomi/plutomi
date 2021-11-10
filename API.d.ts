@@ -112,7 +112,7 @@ interface APIGetInvites {
 }
 
 interface APICreateInviteInput {
-  recipient_email: string;
+  recipientEmail: string;
 }
 
 interface APIRejectInviteInput {

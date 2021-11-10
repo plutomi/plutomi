@@ -18,7 +18,7 @@ const handler = async (
   }
   const { body, method } = req;
 
-  const { recipient_email }: APICreateOrgInviteInput = body;
+  const { recipientEmail }: APICreateOrgInviteInput = body;
 
   const default_expiry_time = 3;
   const default_expiry_value = "days";
@@ -36,7 +36,7 @@ const handler = async (
     org_name: org.GSI1SK, // For the recipient they can see the name of the org instead of the orgId, much neater
     created_by: user_session, // TODO reduce this to just name & email
     orgId: org.orgId,
-    recipient_email: recipient_email,
+    recipientEmail: recipientEmail,
     expires_at: expires_at,
   };
   if (method === "POST") {
@@ -46,7 +46,7 @@ const handler = async (
       return res.status(400).json({ message: `${error.message}` });
     }
 
-    if (user_session.user_email == recipient_email) {
+    if (user_session.user_email == recipientEmail) {
       return res.status(400).json({ message: "You can't invite yourself" });
     }
 
@@ -57,12 +57,12 @@ const handler = async (
     }
 
     // Creates the user
-    const recipient = await CreateUser({ user_email: recipient_email });
+    const recipient = await CreateUser({ user_email: recipientEmail });
 
     const new_org_invite_email: SendOrgInviteInput = {
       created_by: user_session,
       org_name: org.GSI1SK,
-      recipient_email: recipient.user_email, // Will be lowercase & .trim()'d by createUser
+      recipientEmail: recipient.user_email, // Will be lowercase & .trim()'d by createUser
     };
     try {
       await CreateOrgInvite({

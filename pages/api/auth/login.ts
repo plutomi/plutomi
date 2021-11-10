@@ -87,7 +87,7 @@ const handler = async (
         }
         try {
           await SendLoginLink({
-            recipient_email: user.user_email,
+            recipientEmail: user.user_email,
             login_link: login_link,
             login_link_relative_expiry: GetRelativeTime(login_link_expiry),
           });

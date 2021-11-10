@@ -80,7 +80,7 @@ interface CreateOrgInviteInput {
   orgId: string;
   org_name: string;
   created_by: DynamoUser;
-  recipient_email: string; // Email of person getting invited
+  recipientEmail: string; // Email of person getting invited
   expires_at: CustomDateFormat; // TODO Maybe Dynamo TTL or just ISO
   claimed: boolean;
 }
@@ -105,7 +105,7 @@ interface DeleteOrgInviteInput {
 interface SendOrgInviteInput {
   created_by: DynamoUser;
   org_name: string;
-  recipient_email: string;
+  recipientEmail: string;
 }
 
 type StageTypes = "idle" | "active" | "frozen" | "deletion";
@@ -203,7 +203,7 @@ interface APICreateOrgInput {
 }
 
 interface APICreateOrgInviteInput {
-  recipient_email: string;
+  recipientEmail: string;
   expiry_time_days?: number;
 }
 
