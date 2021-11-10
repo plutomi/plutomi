@@ -113,6 +113,7 @@ export default class PlutomiWebsiteStack extends cdk.Stack {
     // Create a VPC with 2 AZ's (2 i sminimum)
     const vpc = new ec2.Vpc(this, "plutomi-fargate-api-vpc", {
       maxAzs: 2,
+      natGateways: 0,
     });
 
     // Create the cluster
