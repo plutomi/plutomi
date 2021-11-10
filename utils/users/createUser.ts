@@ -21,7 +21,7 @@ export async function CreateUser({ userEmail }) {
     lastName: "NO_lastName",
     userEmail: userEmail.toLowerCase().trim(),
     userId: userId,
-    entity_type: "USER",
+    entityType: "USER",
     createdAt: now,
     orgId: "NO_ORG_ASSIGNED",
     org_join_date: "NO_ORG_ASSIGNED",

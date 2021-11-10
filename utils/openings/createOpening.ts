@@ -16,7 +16,7 @@ export async function CreateOpening({ orgId, GSI1SK }: CreateOpeningInput) {
   const new_opening: DynamoOpening = {
     PK: `ORG#${orgId}#OPENING#${openingId}`,
     SK: `OPENING`,
-    entity_type: "OPENING",
+    entityType: "OPENING",
     createdAt: now,
     openingId: openingId,
     GSI1PK: `ORG#${orgId}#OPENINGS`,

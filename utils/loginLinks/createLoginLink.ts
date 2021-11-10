@@ -16,7 +16,7 @@ export default async function CreateLoginLink({
       SK: `LOGIN_LINK#${now}`,
       login_link_hash: login_link_hash,
       userId: user.userId,
-      entity_type: "LOGIN_LINK",
+      entityType: "LOGIN_LINK",
       createdAt: now,
       expires_at: login_link_expiry,
       ttl_expiry: GetPastOrFutureTime("future", 1, "days", "unix"),

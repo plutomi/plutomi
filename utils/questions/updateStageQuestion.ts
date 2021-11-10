@@ -13,7 +13,7 @@ export default async function UpdateQuestion({
     "PK",
     "SK",
     "orgId",
-    "entity_type",
+    "entityType",
     "createdAt",
     "openingId",
     "GSI1PK",

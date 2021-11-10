@@ -28,7 +28,7 @@ export async function GetApplicantById({
       new QueryCommand(responsesParams)
     );
 
-    const grouped = _.groupBy(all_applicant_info.Items, "entity_type");
+    const grouped = _.groupBy(all_applicant_info.Items, "entityType");
 
     const metadata = grouped.APPLICANT[0];
     const responses = grouped.APPLICANT_RESPONSE;

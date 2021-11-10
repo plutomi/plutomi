@@ -10,7 +10,7 @@ export async function CreateOrg({ orgId, GSI1SK }: CreateOrgInput) {
     PK: `ORG#${orgId}`,
     SK: `ORG`,
     orgId: orgId, // plutomi - Cannot be changed
-    entity_type: "ORG",
+    entityType: "ORG",
     createdAt: now,
     total_applicants: 0,
     total_openings: 0,

@@ -19,7 +19,7 @@ export async function CreateApplicantResponse({
     SK: `APPLICANT_RESPONSE#${response_id}`,
     orgId: orgId,
     applicantId: applicantId,
-    entity_type: "APPLICANT_RESPONSE",
+    entityType: "APPLICANT_RESPONSE",
     createdAt: now,
     response_id: response_id,
     question_title: question_title,

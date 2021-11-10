@@ -31,7 +31,7 @@ export async function CreateApplicant({
     email_verified: false,
     orgId: orgId,
     applicantId: applicantId,
-    entity_type: "APPLICANT",
+    entityType: "APPLICANT",
     createdAt: now,
     // TODO add phone number
     currentOpeningId: openingId,
