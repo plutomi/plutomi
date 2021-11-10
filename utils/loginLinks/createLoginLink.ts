@@ -6,7 +6,7 @@ const { DYNAMO_TABLE_NAME } = process.env;
 
 export default async function CreateLoginLink({
   user,
-  login_link_hash,
+  loginLinkHash,
   login_link_expiry,
 }) {
   try {
@@ -14,7 +14,7 @@ export default async function CreateLoginLink({
     const new_login_link = {
       PK: `USER#${user.userId}`,
       SK: `LOGIN_LINK#${now}`,
-      login_link_hash: login_link_hash,
+      loginLinkHash: loginLinkHash,
       userId: user.userId,
       entityType: "LOGIN_LINK",
       createdAt: now,

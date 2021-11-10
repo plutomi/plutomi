@@ -72,7 +72,7 @@ const handler = async (
       try {
         await CreateLoginLink({
           user: user,
-          login_link_hash: hash,
+          loginLinkHash: hash,
           login_link_expiry: login_link_expiry,
         });
         const default_redirect = `${process.env.WEBSITE_URL}/dashboard`;
@@ -121,15 +121,15 @@ const handler = async (
       return res.status(400).json({ message: `${error.message}` });
     }
 
-    const latest_login_link = await GetLatestLoginLink(userId);
+    const latestLoginLink = await GetLatestLoginLink(userId);
 
-    if (!latest_login_link) {
+    if (!latestLoginLink) {
       return res.status(400).json({ message: "Invalid link" });
     }
 
     const hash = createHash("sha512").update(key).digest("hex");
 
-    if (hash != latest_login_link.login_link_hash) {
+    if (hash != latestLoginLink.loginLinkHash) {
       /**
        * Someone could try to guess a user ID and the 1500 char long key
        * If they do get someone's ID correct in that 15 minute window to log in AND they key is wrong...
@@ -137,8 +137,8 @@ const handler = async (
        */
 
       const updated_login_link = {
-        ...latest_login_link,
-        link_status: "SUSPENDED",
+        ...latestLoginLink,
+        linkStatus: "SUSPENDED",
       };
 
       await UpdateLoginLink({
@@ -152,13 +152,13 @@ const handler = async (
     }
 
     // Lock account if already suspended
-    if (latest_login_link.link_status === "SUSPENDED") {
+    if (latestLoginLink.linkStatus === "SUSPENDED") {
       return res.status(401).json({
         message: `Your login link has been suspended. Please try again later or email support@plutomi.com`,
       });
     }
 
-    if (latest_login_link.expires_at <= GetCurrentTime("iso")) {
+    if (latestLoginLink.expires_at <= GetCurrentTime("iso")) {
       return res.status(401).json({
         message: `Your login link has expired.`,
       });
@@ -166,13 +166,13 @@ const handler = async (
 
     const user = await GetUserById(userId);
 
-    if (user && latest_login_link) {
+    if (user && latestLoginLink) {
       // TODO should this be a transaction?
       // Simple timestamp when the user actually logged in
       CreateLoginEvent(userId);
 
       // Invalidates the last login link while allowing the user to login again if needed
-      DeleteLoginLink(userId, latest_login_link.createdAt);
+      DeleteLoginLink(userId, latestLoginLink.createdAt);
 
       const clean_user = CleanUser(user as DynamoUser);
 
