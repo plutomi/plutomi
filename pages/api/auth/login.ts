@@ -23,7 +23,7 @@ const handler = async (
   res: NextApiResponse
 ): Promise<void> => {
   const { body, method, query } = req; // TODO get from body
-  const { user_email, login_method } = body;
+  const { user_email, loginMethod } = body;
   const { userId, key, callback_url } = query as CustomQuery;
   const login_link_length = 1500;
   const login_link_max_delay_minutes = 10;
@@ -82,7 +82,7 @@ const handler = async (
           callback_url ? callback_url : default_redirect
         }`;
 
-        if (login_method === "GOOGLE") {
+        if (loginMethod === "GOOGLE") {
           return res.status(200).json({ message: login_link });
         }
         try {

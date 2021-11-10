@@ -31,7 +31,7 @@ export default function LoginHomepage({ callbackUrl }: CallbackUrl) {
       const { message } = await AuthService.login({
         user_email: user_email,
         callback_url: callbackUrl,
-        login_method: "LINK",
+        loginMethod: "LINK",
       });
 
       setSubmittedText(message);
@@ -48,7 +48,7 @@ export default function LoginHomepage({ callbackUrl }: CallbackUrl) {
     const input = {
       user_email: user_email,
       callback_url: `${process.env.WEBSITE_URL}/dashboard`, // TODO make this a config variable as the "DEFAULT_REDIRECT_ROUTE_HOMEPAGE"
-      login_method: "GOOGLE",
+      loginMethod: "GOOGLE",
     };
     console.log(input);
     const { message } = await AuthService.login(input);
