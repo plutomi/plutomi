@@ -20,7 +20,6 @@ export class APIGatewayStack extends cdk.Stack {
       }
     ).stringValue;
 
-
     const HOSTED_ZONE_ID = ssm.StringParameter.fromStringParameterAttributes(
       this,
       "plutomi-hosted-zone-id",
@@ -29,7 +28,6 @@ export class APIGatewayStack extends cdk.Stack {
       }
     ).stringValue;
 
-
     const DOMAIN_NAME = ssm.StringParameter.fromStringParameterAttributes(
       this,
       "plutomi-domain-name",
@@ -37,7 +35,6 @@ export class APIGatewayStack extends cdk.Stack {
         parameterName: "/plutomi/DOMAIN_NAME",
       }
     ).stringValue;
-
 
     const domain = new DomainName(this, "DN", {
       domainName: `api.${DOMAIN_NAME}`,
@@ -53,7 +50,6 @@ export class APIGatewayStack extends cdk.Stack {
       hostedZoneId: HOSTED_ZONE_ID,
       zoneName: DOMAIN_NAME,
     });
-
 
     // Finally, add a CName record in the hosted zone with a value of the new custom domain that was created
     new CnameRecord(this, "ApiGatewayRecordSet", {

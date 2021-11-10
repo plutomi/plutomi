@@ -1,5 +1,4 @@
 import AcceptOrgInvite from "../../../../utils/invites/acceptOrgInvite";
-import InputValidation from "../../../../utils/inputValidation";
 import { NextApiResponse } from "next";
 import DeleteOrgInvite from "../../../../utils/invites/deleteOrgInvite";
 import withCleanOrgId from "../../../../middleware/withCleanOrgId";

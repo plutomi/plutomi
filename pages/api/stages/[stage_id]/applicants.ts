@@ -1,7 +1,7 @@
 import { NextApiResponse } from "next";
 import { GetAllApplicantsInStage } from "../../../../utils/stages/getAllApplicantsInStage";
 import withSession from "../../../../middleware/withSession";
-import { GetStage } from "../../../../utils/stages/getStage";
+import { getStage } from "../../../../utils/stages/getStage";
 
 const handler = async (
   req: NextIronRequest,

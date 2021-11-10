@@ -1,6 +1,5 @@
 import { NextApiResponse } from "next";
 import { GetApplicantById } from "../../../../utils/applicants/getApplicantById";
-import InputValidation from "../../../../utils/inputValidation";
 import DeleteApplicant from "../../../../utils/applicants/deleteApplicant";
 import UpdateApplicant from "../../../../utils/applicants/updateApplicant";
 import withSession from "../../../../middleware/withSession";
