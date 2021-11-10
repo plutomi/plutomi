@@ -55,7 +55,7 @@ export default function TeamContent() {
           </div>
 
           {orgUsers?.map((user: DynamoUser) => (
-            <UserCard key={user.user_id} user={user} />
+            <UserCard key={user.userId} user={user} />
           ))}
         </div>
       ) : (

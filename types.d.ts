@@ -70,11 +70,11 @@ interface CreateApplicantResponseInput {
   question_response: string;
 }
 
-type CustomSession = Session & { user_id: string; user_email: string };
+type CustomSession = Session & { userId: string; user_email: string };
 
 type CustomRequest = NextApiRequest & { user: DynamoUser };
 
-type CustomJWT = JWT & { user_id: string };
+type CustomJWT = JWT & { userId: string };
 
 interface CreateOrgInviteInput {
   org_id: string;
@@ -86,19 +86,19 @@ interface CreateOrgInviteInput {
 }
 
 interface GetOrgInviteInput {
-  user_id: string;
+  userId: string;
   timestamp: string;
   invite_id: string;
 }
 
 interface AcceptOrgInviteInput {
-  user_id: string;
+  userId: string;
   timestamp: string;
   invite_id: string;
 }
 
 interface DeleteOrgInviteInput {
-  user_id: string;
+  userId: string;
   timestamp: string;
   invite_id: string;
 }
@@ -311,7 +311,7 @@ type CustomDateFormat = string | number;
 type CustomQuery = {
   org_id?: string;
   openingId?: string;
-  user_id?: string;
+  userId?: string;
   stageId?: string;
   applicant_id?: string;
   key?: string;

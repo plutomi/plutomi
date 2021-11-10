@@ -1,6 +1,6 @@
 const safeKeys = [
   ,
-  "user_id",
+  "userId",
   "org_id",
   "user_email",
   "first_name",

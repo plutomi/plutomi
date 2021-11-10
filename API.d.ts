@@ -70,17 +70,17 @@ interface APIDeleteStageInput {
 }
 
 /**
- * @param user_id - For mutate calls, to refresh the user
+ * @param userId - For mutate calls, to refresh the user
  */
 interface APIGetUserURL {
-  user_id: string;
+  userId: string;
 }
 
 /**
- * @param user_id - ID of the user you want to retrieve
+ * @param userId - ID of the user you want to retrieve
  */
 interface APIGetUserInput {
-  user_id: string;
+  userId: string;
 }
 
 /**
@@ -95,20 +95,20 @@ interface APIGetAllUsersInOrg {
 }
 
 /**
- * @param user_id - ID of the user you want to update
+ * @param userId - ID of the user you want to update
  * @param new_user_values - Properties you want to update on the user
  */
 interface APIUpdateUserInput {
-  user_id: string;
+  userId: string;
   new_user_values: Any;
 }
 
 interface APIGetInvitesURL {
-  user_id: string;
+  userId: string;
 }
 
 interface APIGetInvites {
-  user_id: string;
+  userId: string;
 }
 
 interface APICreateInviteInput {

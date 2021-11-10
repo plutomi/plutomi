@@ -24,7 +24,7 @@ const handler = async (
 ): Promise<void> => {
   const { body, method, query } = req; // TODO get from body
   const { user_email, login_method } = body;
-  const { user_id, key, callback_url } = query as CustomQuery;
+  const { userId, key, callback_url } = query as CustomQuery;
   const login_link_length = 1500;
   const login_link_max_delay_minutes = 10;
   const time_threshold = GetPastOrFutureTime(
@@ -46,7 +46,7 @@ const handler = async (
     const user = await CreateUser({ user_email });
 
     try {
-      const latest_link = await GetLatestLoginLink(user.user_id);
+      const latest_link = await GetLatestLoginLink(user.userId);
 
       // Limit the amount of links sent in a certain period of time
       if (
@@ -76,8 +76,8 @@ const handler = async (
           login_link_expiry: login_link_expiry,
         });
         const default_redirect = `${process.env.WEBSITE_URL}/dashboard`;
-        const login_link = `${process.env.WEBSITE_URL}/api/auth/login?user_id=${
-          user.user_id
+        const login_link = `${process.env.WEBSITE_URL}/api/auth/login?userId=${
+          user.userId
         }&key=${secret}&callback_url=${
           callback_url ? callback_url : default_redirect
         }`;
@@ -112,7 +112,7 @@ const handler = async (
   // Validates the login link when clicked
   if (method === "GET") {
     const validate_login_link_input = {
-      user_id: user_id,
+      userId: userId,
       key: key,
     };
     try {
@@ -121,7 +121,7 @@ const handler = async (
       return res.status(400).json({ message: `${error.message}` });
     }
 
-    const latest_login_link = await GetLatestLoginLink(user_id);
+    const latest_login_link = await GetLatestLoginLink(userId);
 
     if (!latest_login_link) {
       return res.status(400).json({ message: "Invalid link" });
@@ -142,7 +142,7 @@ const handler = async (
       };
 
       await UpdateLoginLink({
-        user_id,
+        userId,
         updated_login_link,
       });
 
@@ -164,15 +164,15 @@ const handler = async (
       });
     }
 
-    const user = await GetUserById(user_id);
+    const user = await GetUserById(userId);
 
     if (user && latest_login_link) {
       // TODO should this be a transaction?
       // Simple timestamp when the user actually logged in
-      CreateLoginEvent(user_id);
+      CreateLoginEvent(userId);
 
       // Invalidates the last login link while allowing the user to login again if needed
-      DeleteLoginLink(user_id, latest_login_link.created_at);
+      DeleteLoginLink(userId, latest_login_link.created_at);
 
       const clean_user = CleanUser(user as DynamoUser);
 

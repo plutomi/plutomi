@@ -39,7 +39,7 @@ export default function Team() {
       });
 
       const { message } = await UsersService.updateUser({
-        user_id: user?.user_id,
+        userId: user?.userId,
         new_user_values: {
           first_name: userProfileModal.first_name,
           last_name: userProfileModal.last_name,

@@ -6,7 +6,7 @@ const fetcher = (url: string) => axios.get(url).then((res) => res.data);
 import OpeningsService from "../adapters/OpeningsService";
 /**
  *
- * @param user_id - The ID of the logged in user
+ * @param userId - The ID of the logged in user
  * @param openingId - The opening ID that you want to look up
  */
 function useOpeningById(openingId: string): useOpeningByIdOutput {

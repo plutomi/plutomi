@@ -6,11 +6,11 @@ import { CreateUser } from "../users/createUser";
 
 const { DYNAMO_TABLE_NAME } = process.env;
 
-export default async function CreateLoginEvent(user_id: string) {
+export default async function CreateLoginEvent(userId: string) {
   try {
     const now = GetCurrentTime("iso") as string;
     const new_login_event = {
-      PK: `USER#${user_id}`,
+      PK: `USER#${userId}`,
       SK: `LOGIN_EVENT#${now}`,
       // TODO in the future, get all the info about the login event
       // Such as IP, headers, device, etc.

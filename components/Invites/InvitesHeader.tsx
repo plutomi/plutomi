@@ -8,7 +8,7 @@ export default function InvitesHeader() {
   const { mutate } = useSWRConfig();
   const { user, isUserLoading, isUserError } = useSelf();
   const { invites, isInvitesLoading, isInvitesError } = useOrgInvites(
-    user?.user_id
+    user?.userId
   );
 
   return (

@@ -12,10 +12,10 @@ export default async function CreateLoginLink({
   try {
     const now = GetCurrentTime("iso") as string;
     const new_login_link = {
-      PK: `USER#${user.user_id}`,
+      PK: `USER#${user.userId}`,
       SK: `LOGIN_LINK#${now}`,
       login_link_hash: login_link_hash,
-      user_id: user.user_id,
+      userId: user.userId,
       entity_type: "LOGIN_LINK",
       created_at: now,
       expires_at: login_link_expiry,

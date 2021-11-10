@@ -13,14 +13,14 @@ export async function CreateUser({ user_email }) {
     return user;
   }
   const now = GetCurrentTime("iso") as string;
-  const user_id = nanoid(42);
+  const userId = nanoid(42);
   const new_user: DynamoUser = {
-    PK: `USER#${user_id}`,
+    PK: `USER#${userId}`,
     SK: `USER`,
     first_name: "NO_FIRST_NAME",
     last_name: "NO_LAST_NAME",
     user_email: user_email.toLowerCase().trim(),
-    user_id: user_id,
+    userId: userId,
     entity_type: "USER",
     created_at: now,
     org_id: "NO_ORG_ASSIGNED",

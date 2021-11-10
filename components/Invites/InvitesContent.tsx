@@ -11,7 +11,7 @@ export default function InvitesContent() {
   const { user, isUserLoading, isUserError } = useSelf();
   // TODO we don't have to make this call ehre if a user doesn't have invites
   const { invites, isInvitesLoading, isInvitesError } = useOrgInvites(
-    user?.user_id
+    user?.userId
   );
 
   const acceptInvite = async (invite) => {
@@ -30,7 +30,7 @@ export default function InvitesContent() {
     mutate(UsersService.getSelfURL());
 
     // Refresh the user's invites
-    mutate(InvitesService.getInvitesURL({ user_id: user?.user_id }));
+    mutate(InvitesService.getInvitesURL({ userId: user?.userId }));
   };
 
   const rejectInvite = async (invite) => {
@@ -45,7 +45,7 @@ export default function InvitesContent() {
       alert(error.response.data.message);
     }
 
-    mutate(InvitesService.getInvitesURL({ user_id: user?.user_id }));
+    mutate(InvitesService.getInvitesURL({ userId: user?.userId }));
   };
 
   if (isInvitesLoading) {
