@@ -4,9 +4,9 @@ import CleanOpening from "../../utils/clean/cleanOpening";
 import FormattedResponse from "../../utils/formatResponse";
 import CleanOrg from "../../utils/clean/cleanOrg";
 
-export async function main(
+const main = async (
   event: APIGatewayProxyEventV2
-): Promise<APIGatewayProxyResultV2> {
+): Promise<APIGatewayProxyResultV2> => {
   const { org_id } = event.pathParameters;
 
   if (!org_id) {
@@ -34,4 +34,6 @@ export async function main(
       message: `An error ocurred retrieving info for the org ${org_id}: ${error}`,
     });
   }
-}
+};
+
+exports.handler = main;

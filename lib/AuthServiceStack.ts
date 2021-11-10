@@ -39,7 +39,7 @@ export class AuthServiceStack extends cdk.Stack {
     // Reusable defaults for each function
     const sharableLambdaConfig = {
       // TODO this should be extracted and passed down as props to each stack
-      handler: "main",
+      handler: "handler",
       memorySize: 256,
       role: executionRole,
       timeout: cdk.Duration.seconds(5),
@@ -77,33 +77,6 @@ export class AuthServiceStack extends cdk.Stack {
         handler: createSessionFunction,
       }),
       path: "/auth",
-      methods: [HttpMethod.GET],
-    });
-
-    /*
-    -------------------------------------------------------
-   Verifies a session ID (will be the lambda authorizer in API Gateway)
-    -------------------------------------------------------
-    */
-    const verifySessionFunction = new NodejsFunction(
-      this,
-      "auth-service-verify-session",
-      {
-        ...sharableLambdaConfig,
-        functionName: `auth-service-verify-session`,
-        description: "Verifies the user's session",
-        entry: path.join(
-          __dirname,
-          `/../functions/AuthService/verify-session.ts`
-        ),
-      }
-    );
-
-    props.API.addRoutes({
-      integration: new LambdaProxyIntegration({
-        handler: verifySessionFunction,
-      }),
-      path: "/auth/verify",
       methods: [HttpMethod.GET],
     });
   }

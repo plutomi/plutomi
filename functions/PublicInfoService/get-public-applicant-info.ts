@@ -2,9 +2,10 @@ import { APIGatewayProxyEventV2, APIGatewayProxyResultV2 } from "aws-lambda";
 import FormattedResponse from "../../utils/formatResponse";
 import CleanApplicant from "../../utils/clean/cleanApplicant";
 import { GetApplicantById } from "../../utils/applicants/getApplicantById";
-export async function main(
+
+const main = async (
   event: APIGatewayProxyEventV2
-): Promise<APIGatewayProxyResultV2> {
+): Promise<APIGatewayProxyResultV2> => {
   const { org_id, applicant_id } = event.pathParameters;
 
   if (!org_id) {
@@ -35,4 +36,6 @@ export async function main(
       message: `An error ocurred retrieving applicant ${applicant_id} info: ${error}`,
     });
   }
-}
+};
+
+exports.handler = main;
