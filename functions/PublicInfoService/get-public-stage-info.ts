@@ -2,9 +2,9 @@ import { APIGatewayProxyEventV2, APIGatewayProxyResultV2 } from "aws-lambda";
 import FormattedResponse from "../../utils/formatResponse";
 import { GetStage } from "../../utils/stages/getStage";
 import CleanStage from "../../utils/clean/cleanStage";
-export async function main(
+const main = async (
   event: APIGatewayProxyEventV2
-): Promise<APIGatewayProxyResultV2> {
+): Promise<APIGatewayProxyResultV2> => {
   const { org_id, stage_id } = event.pathParameters;
 
   if (!org_id) {
@@ -34,4 +34,6 @@ export async function main(
       message: `An error ocurred retrieving stage ${stage_id} info: ${error}`,
     });
   }
-}
+};
+
+exports.handler = main;

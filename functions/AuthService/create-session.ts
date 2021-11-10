@@ -9,11 +9,9 @@ const user = {
   orgId: "beans",
 };
 
-export async function main(
+const main = async (
   event: APIGatewayProxyEventV2
-): Promise<APIGatewayProxyResultV2> {
-  console.log("INCOMING EVENT AUTH ROUTE", event);
-
+): Promise<APIGatewayProxyResultV2> => {
   try {
     const cookie = await Iron.seal(user, COOKIE_PASSWORD, {
       ...Iron.defaults,
@@ -30,4 +28,6 @@ export async function main(
       message: `Error creating seal - ${error}`,
     });
   }
-}
+};
+
+exports.handler = main;
