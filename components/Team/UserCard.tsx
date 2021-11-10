@@ -6,7 +6,7 @@ export default function UserCard({ user }) {
         <h1 className="font-semibold text-md">{user?.GSI1SK}</h1>
         <p className="text-md">{user?.userEmail}</p>
         <p className="text-sm text-blue-gray-400">
-          Joined {GetRelativeTime(user?.orgJoinDate)}
+          Joined {getRelativeTime(user?.orgJoinDate)}
         </p>
       </div>
     </div>

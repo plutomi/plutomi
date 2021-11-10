@@ -85,7 +85,7 @@ export default function OpeningSettingsHeader() {
           {opening?.is_public ? "Public" : "Private"}
         </span>
         <p className="text-md text-light text-center">
-          Created {GetRelativeTime(opening?.createdAt)}
+          Created {getRelativeTime(opening?.createdAt)}
         </p>
       </div>
       <div className="space-x-4 flex items-center">

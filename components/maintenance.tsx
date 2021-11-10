@@ -62,7 +62,7 @@ export default function MaintenanceList({ commits }) {
                         <p className=" mt-4 text-sm text-gray-900">
                           Committed{" "}
                           <time dateTime={commit.commit.author.date}>
-                            {GetRelativeTime(commit.commit.author.date)}
+                            {getRelativeTime(commit.commit.author.date)}
                           </time>
                         </p>
                       </div>

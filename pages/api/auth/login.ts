@@ -1,7 +1,7 @@
 import {
   GetCurrentTime,
   GetPastOrFutureTime,
-  GetRelativeTime,
+  getRelativeTime,
 } from "../../../utils/time";
 import InputValidation from "../../../utils/inputValidation";
 import { NextApiResponse } from "next";
@@ -89,7 +89,7 @@ const handler = async (
           await SendLoginLink({
             recipientEmail: user.userEmail,
             login_link: login_link,
-            login_link_relative_expiry: GetRelativeTime(login_link_expiry),
+            login_link_relative_expiry: getRelativeTime(login_link_expiry),
           });
           return res
             .status(201)

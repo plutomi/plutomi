@@ -44,6 +44,6 @@ export function GetPastOrFutureTime(
   }
 }
 
-export function GetRelativeTime(timestamp) {
+export function getRelativeTime(timestamp) {
   return dayjs().to(timestamp);
 }

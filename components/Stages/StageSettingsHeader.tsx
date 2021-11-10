@@ -82,7 +82,7 @@ export default function StageSettingsHeader({ deleteStage }) {
       </div>
 
       <p className="text-md text-light text-center">
-        Created {GetRelativeTime(stage?.createdAt)}
+        Created {getRelativeTime(stage?.createdAt)}
       </p>
       <div className="space-x-4 flex items-center">
         <button
