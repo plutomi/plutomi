@@ -14,11 +14,10 @@ import StagesService from "../../adapters/StagesService";
 import QuestionsService from "../../adapters/QuestionsService";
 export default function QuestionList() {
   const router = useRouter();
-  const { opening_id, stage_id } = router.query as CustomQuery;
+  const { openingId, stage_id } = router.query as CustomQuery;
 
   const { user, isUserLoading, isUserError } = useSelf();
-  let { opening, isOpeningLoading, isOpeningError } =
-    useOpeningById(opening_id);
+  let { opening, isOpeningLoading, isOpeningError } = useOpeningById(openingId);
 
   const { stage, isStageLoading, isStageError } = useStageById(stage_id);
 
@@ -110,7 +109,7 @@ export default function QuestionList() {
   return (
     <div>
       <div className="flow-root mt-6">
-        {/* Left Column Stage Order on /openings/-opening_id-/settings */}
+        {/* Left Column Stage Order on /openings/-openingId-/settings */}
         <DragDropContext
           onDragEnd={handleDragEnd}
           onDragStart={() => console.log("Start")}

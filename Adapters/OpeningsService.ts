@@ -10,11 +10,11 @@ export default class OpeningsService {
     return data;
   }
 
-  static getOpeningURL({ opening_id }) {
-    return `/api/openings/${opening_id}`;
+  static getOpeningURL({ openingId }) {
+    return `/api/openings/${openingId}`;
   }
-  static async getOpening({ opening_id }: APIGetOpeningInput) {
-    const { data } = await axios.get(this.getOpeningURL({ opening_id }));
+  static async getOpening({ openingId }: APIGetOpeningInput) {
+    const { data } = await axios.get(this.getOpeningURL({ openingId }));
     return data;
   }
 
@@ -27,43 +27,43 @@ export default class OpeningsService {
     return data;
   }
 
-  static async deleteOpening({ opening_id }: APIDeleteOpeningInput) {
-    const { data } = await axios.delete(this.getOpeningURL({ opening_id }));
+  static async deleteOpening({ openingId }: APIDeleteOpeningInput) {
+    const { data } = await axios.delete(this.getOpeningURL({ openingId }));
     return data;
   }
 
   static async updateOpening({
-    opening_id,
+    openingId,
     new_opening_values,
   }: APIUpdateOpeningInput) {
     const body = {
       new_opening_values: new_opening_values,
     };
-    const { data } = await axios.put(this.getOpeningURL({ opening_id }), body);
+    const { data } = await axios.put(this.getOpeningURL({ openingId }), body);
     return data;
   }
 
   // TODO should this be moved to openings?
-  static getAllStagesInOpeningURL({ opening_id }: APIGetAllStagesInOpeningURL) {
-    return `/api/openings/${opening_id}/stages`;
+  static getAllStagesInOpeningURL({ openingId }: APIGetAllStagesInOpeningURL) {
+    return `/api/openings/${openingId}/stages`;
   }
 
   static async getAllStagesInOpening({
-    opening_id,
+    openingId,
   }: APIGetAllStagesInOpeningInput) {
     const { data } = await axios.get(
-      this.getAllStagesInOpeningURL({ opening_id })
+      this.getAllStagesInOpeningURL({ openingId })
     );
     return data;
   }
 
-  // static getAllApplicantsInOpeningURL({ opening_id }) { // TODO expensive call if there are a lot of applicants - should this be enabled?
-  //   return `/api/openings/${opening_id}/applicants`;
+  // static getAllApplicantsInOpeningURL({ openingId }) { // TODO expensive call if there are a lot of applicants - should this be enabled?
+  //   return `/api/openings/${openingId}/applicants`;
   // }
 
-  // static async getAllApplicantsInOpening({ opening_id }) {
+  // static async getAllApplicantsInOpening({ openingId }) {
   //   const { data } = await axios.get(
-  //     this.getAllApplicantsInOpeningURL({ opening_id })
+  //     this.getAllApplicantsInOpeningURL({ openingId })
   //   );
   //   return data;
   // }

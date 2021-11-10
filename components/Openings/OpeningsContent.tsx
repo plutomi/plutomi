@@ -40,7 +40,7 @@ export default function OpeningsContent() {
         is_modal_open: false,
         modal_mode: "CREATE",
         is_public: false,
-        opening_id: "",
+        openingId: "",
         GSI1SK: "",
       });
     } catch (error) {
@@ -74,7 +74,7 @@ export default function OpeningsContent() {
                 is_modal_open: true,
                 modal_mode: "CREATE",
                 is_public: false,
-                opening_id: "",
+                openingId: "",
                 GSI1SK: "",
               })
             }

@@ -13,7 +13,7 @@ const { DYNAMO_TABLE_NAME } = process.env;
 export async function CreateStage({
   org_id,
   GSI1SK,
-  opening_id,
+  openingId,
 }: DynamoCreateStageInput) {
   const now = GetCurrentTime("iso") as string;
   const stage_id = nanoid(50);
@@ -25,13 +25,13 @@ export async function CreateStage({
     question_order: [],
     stage_id: stage_id,
     total_applicants: 0,
-    opening_id: opening_id,
-    GSI1PK: `ORG#${org_id}#OPENING#${opening_id}#STAGES`, // Get all stages in an opening
+    openingId: openingId,
+    GSI1PK: `ORG#${org_id}#OPENING#${openingId}#STAGES`, // Get all stages in an opening
     GSI1SK: GSI1SK,
   };
 
   try {
-    let opening = await GetOpening({ org_id, opening_id });
+    let opening = await GetOpening({ org_id, openingId });
 
     try {
       // Get current opening
@@ -56,7 +56,7 @@ export async function CreateStage({
             // Add stage to the opening + increment stage count on opening
             Update: {
               Key: {
-                PK: `ORG#${org_id}#OPENING#${opening_id}`,
+                PK: `ORG#${org_id}#OPENING#${openingId}`,
                 SK: `OPENING`,
               },
               TableName: DYNAMO_TABLE_NAME,

@@ -19,10 +19,10 @@ export default function PublicOpeningsList() {
     <div className="bg-white shadow overflow-hidden sm:rounded-md">
       <ul role="list" className="divide-y divide-gray-200">
         {publicOpenings?.map((opening: DynamoOpening) => (
-          <li key={opening.opening_id}>
+          <li key={opening.openingId}>
             {/* Take applicant to opening info page */}
             <Link
-              href={`${process.env.WEBSITE_URL}/${org_id}/${opening?.opening_id}/apply`}
+              href={`${process.env.WEBSITE_URL}/${org_id}/${opening?.openingId}/apply`}
             >
               <a className="block hover:bg-gray-50">
                 <div className="px-4 py-4 sm:px-6">

@@ -92,14 +92,13 @@ export default function StageSettingsContent() {
   };
 
   const router = useRouter();
-  const { opening_id, stage_id } = router.query as CustomQuery;
+  const { openingId, stage_id } = router.query as CustomQuery;
 
   const { user, isUserLoading, isUserError } = useSelf();
-  let { opening, isOpeningLoading, isOpeningError } =
-    useOpeningById(opening_id);
+  let { opening, isOpeningLoading, isOpeningError } = useOpeningById(openingId);
 
   let { stages, isStagesLoading, isStagesError } = useAllStagesInOpening(
-    opening?.opening_id
+    opening?.openingId
   );
   const stageModal = useStore((state) => state.stageModal);
   const setStageModal = useStore((state) => state.setStageModal);

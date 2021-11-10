@@ -58,7 +58,7 @@ const useStore = create((set) => ({
   openingModal: {
     is_modal_open: false, // False by default
     modal_mode: "CREATE", // Will render text differently
-    opening_id: "",
+    openingId: "",
     GSI1SK: "",
     is_public: false,
   },

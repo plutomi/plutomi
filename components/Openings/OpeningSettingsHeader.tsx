@@ -10,10 +10,9 @@ import OpeningsService from "../../adapters/OpeningsService";
 import { GetRelativeTime } from "../../utils/time";
 export default function OpeningSettingsHeader() {
   const router = useRouter();
-  const { opening_id } = router.query as CustomQuery;
+  const { openingId } = router.query as CustomQuery;
 
-  let { opening, isOpeningLoading, isOpeningError } =
-    useOpeningById(opening_id);
+  let { opening, isOpeningLoading, isOpeningError } = useOpeningById(openingId);
 
   const setOpeningModal = useStore((state) => state.setOpeningModal);
 
@@ -24,7 +23,7 @@ export default function OpeningSettingsHeader() {
   const crumbs = [
     {
       name: "Opening Settings",
-      href: `/openings/${opening_id}/settings`,
+      href: `/openings/${openingId}/settings`,
       current: true,
     },
   ];
@@ -33,7 +32,7 @@ export default function OpeningSettingsHeader() {
   if (opening.total_stages > 0) {
     crumbs.unshift({
       name: "Applicants",
-      href: `/openings/${opening_id}/stages/${opening?.stage_order[0]}/applicants`, // TODO should this end with /applicants?
+      href: `/openings/${openingId}/stages/${opening?.stage_order[0]}/applicants`, // TODO should this end with /applicants?
       current: false,
     });
   }
@@ -52,7 +51,7 @@ export default function OpeningSettingsHeader() {
     }
 
     try {
-      await OpeningsService.deleteOpening({ opening_id: opening_id });
+      await OpeningsService.deleteOpening({ openingId: openingId });
       router.push(`${process.env.WEBSITE_URL}/openings`);
     } catch (error) {
       alert(error.response.data.message);
@@ -96,7 +95,7 @@ export default function OpeningSettingsHeader() {
             setOpeningModal({
               is_modal_open: true,
               modal_mode: "EDIT",
-              opening_id: opening.opening_id,
+              openingId: opening.openingId,
               GSI1SK: opening.GSI1SK,
               is_public: opening.is_public,
             })

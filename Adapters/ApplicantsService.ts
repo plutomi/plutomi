@@ -3,14 +3,14 @@ import axios from "../axios/axios";
 export default class ApplicantsService {
   static async createApplicant({
     org_id,
-    opening_id,
+    openingId,
     first_name,
     last_name,
     email,
   }) {
     const body = {
       org_id,
-      opening_id,
+      openingId,
       first_name,
       last_name,
       email,

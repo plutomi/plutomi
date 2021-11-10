@@ -22,7 +22,7 @@ interface CreateOpeningInput {
 
 interface GetOpeningInput {
   org_id: string;
-  opening_id: string;
+  openingId: string;
 }
 interface GetApplicantInput {
   org_id: string;
@@ -30,7 +30,7 @@ interface GetApplicantInput {
 }
 interface DynamoCreateStageInput {
   org_id: string;
-  opening_id: string;
+  openingId: string;
   GSI1SK: string;
 }
 
@@ -48,7 +48,7 @@ interface CreateStageQuestionInput {
 
 interface CreateStageRuleInput {
   org_id: string;
-  opening_id: string;
+  openingId: string;
   stage_id: string;
   validation: string; // TODO
 }
@@ -58,7 +58,7 @@ interface CreateApplicantInput {
   first_name: string;
   last_name: string;
   email: string;
-  opening_id: string;
+  openingId: string;
   stage_id: string;
 }
 
@@ -228,13 +228,13 @@ interface APIReorderStagesInput {
 
 interface ReorderStagesInput {
   org_id: string;
-  opening_id: string;
+  openingId: string;
   new_stage_order: string[];
 }
 
 interface UpdateOpeningInput {
   org_id: string;
-  opening_id: string;
+  openingId: string;
   new_opening_values: DynamoOpening;
 }
 
@@ -262,7 +262,7 @@ interface APICreateQuestionInput {
 }
 
 interface AllQuestionsByStageIDInput {
-  opening_id: string;
+  openingId: string;
   stage_id: string;
   org_id: string;
 }
@@ -287,7 +287,7 @@ interface APICreateApplicantInput {
 
 interface GetAllApplicantsInStageInput {
   org_id: string;
-  opening_id: string;
+  openingId: string;
   stage_id: string;
 }
 
@@ -310,7 +310,7 @@ type CustomDateFormat = string | number;
 
 type CustomQuery = {
   org_id?: string;
-  opening_id?: string;
+  openingId?: string;
   user_id?: string;
   stage_id?: string;
   applicant_id?: string;

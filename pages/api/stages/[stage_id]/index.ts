@@ -17,7 +17,7 @@ const handler = async (
   }
   const { method, query, body } = req;
   const { stage_id } = query as CustomQuery;
-  const { opening_id } = body;
+  const { openingId } = body;
   // Get a single stage in an opening
   if (method === "GET") {
     const get_stage_input: GetStageInput = {

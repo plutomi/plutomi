@@ -15,7 +15,7 @@ export async function DeleteStage({ org_id, stage_id }: DeleteStageInput) {
     let stage = await GetStage({ org_id, stage_id });
     let opening = await GetOpening({
       org_id: org_id,
-      opening_id: stage.opening_id,
+      openingId: stage.openingId,
     });
 
     // Set the new stage order
@@ -41,7 +41,7 @@ export async function DeleteStage({ org_id, stage_id }: DeleteStageInput) {
           // Update Stage Order
           Update: {
             Key: {
-              PK: `ORG#${org_id}#OPENING#${opening.opening_id}`,
+              PK: `ORG#${org_id}#OPENING#${opening.openingId}`,
               SK: `OPENING`,
             },
             TableName: DYNAMO_TABLE_NAME,

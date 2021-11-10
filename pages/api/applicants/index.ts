@@ -10,11 +10,11 @@ const handler = async (
   res: NextApiResponse
 ): Promise<void> => {
   const { method, body } = req;
-  const { org_id, opening_id, first_name, last_name, email } = body;
+  const { org_id, openingId, first_name, last_name, email } = body;
 
   // Creates an applicant
   if (method === "POST") {
-    const opening = await GetOpening({ org_id, opening_id });
+    const opening = await GetOpening({ org_id, openingId });
 
     if (!opening) {
       return res.status(400).json({ message: "Bad opening ID" });
@@ -25,7 +25,7 @@ const handler = async (
         email: email,
         first_name: first_name,
         last_name: last_name,
-        opening_id: opening_id,
+        openingId: openingId,
         stage_id: opening.stage_order[0],
       };
       try {

@@ -16,7 +16,7 @@ export default function OpeningsDropdown({ openings, index }) {
     }
     setSelected(new_value);
     router.push(
-      `${process.env.WEBSITE_URL}/openings/${new_value.opening_id}/stages${
+      `${process.env.WEBSITE_URL}/openings/${new_value.openingId}/stages${
         new_value.stage_order[0]
           ? `/${new_value.stage_order[0]}/applicants`
           : ""
@@ -54,7 +54,7 @@ export default function OpeningsDropdown({ openings, index }) {
           <Listbox.Options className="absolute z-10 mt-1 w-full bg-white shadow-lg max-h-60 rounded-md py-1 text-md ring-1 ring-black ring-opacity-5 overflow-auto focus:outline-none sm:text-lg">
             {openings.map((opening: DynamoOpening) => (
               <Listbox.Option
-                key={opening.opening_id}
+                key={opening.openingId}
                 className={({ active }) =>
                   classNames(
                     active ? "text-white bg-blue-600" : "text-dark",

@@ -25,7 +25,7 @@ interface DynamoOpening {
   SK: "OPENING";
   entity_type: "OPENING";
   created_at: string;
-  opening_id: string;
+  openingId: string;
   GSI1PK: string;
   GSI1SK: string;
   total_applicants: number;
@@ -44,7 +44,7 @@ interface DynamoStage {
   stage_id: string;
   total_applicants: number;
   question_order: string[];
-  opening_id: string;
+  openingId: string;
   GSI1PK: string;
   GSI1SK: string;
 }
@@ -99,7 +99,7 @@ interface DynamoApplicant {
   org_id: string;
   entity_type: "APPLICANT";
   created_at: CustomDateFormat;
-  current_opening_id: string;
+  current_openingId: string;
   current_stage_id: string;
   GSI1PK: string;
   GSI1SK: string;

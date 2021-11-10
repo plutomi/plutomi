@@ -9,9 +9,8 @@ import useOpeningById from "../../SWR/useOpeningById";
 import OpeningsService from "../../adapters/OpeningsService";
 export default function OpeningSettingsContent() {
   const router = useRouter();
-  const { opening_id } = router.query as CustomQuery;
-  let { opening, isOpeningLoading, isOpeningError } =
-    useOpeningById(opening_id);
+  const { openingId } = router.query as CustomQuery;
+  let { opening, isOpeningLoading, isOpeningError } = useOpeningById(openingId);
 
   const openingModal = useStore((state) => state.openingModal);
   const setOpeningModal = useStore((state) => state.setOpeningModal);
@@ -33,7 +32,7 @@ export default function OpeningSettingsContent() {
       console.log("Outgoing body", diff);
 
       const { message } = await OpeningsService.updateOpening({
-        opening_id: opening_id,
+        openingId: openingId,
         new_opening_values: diff,
       });
       alert(message);
@@ -41,14 +40,14 @@ export default function OpeningSettingsContent() {
         is_modal_open: false,
         modal_mode: "CREATE",
         is_public: false,
-        opening_id: "",
+        openingId: "",
         GSI1SK: "",
       });
     } catch (error) {
       alert(error.response.data.message);
     }
     // Refresh opening data
-    mutate(OpeningsService.getOpeningURL({ opening_id: opening_id }));
+    mutate(OpeningsService.getOpeningURL({ openingId: openingId }));
   };
 
   return (

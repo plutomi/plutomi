@@ -18,24 +18,24 @@ export default class PublicInfoService {
     return data;
   }
 
-  static getPublicOpeningURL({ org_id, opening_id }) {
-    return `/api/public/orgs/${org_id}/openings/${opening_id}`;
+  static getPublicOpeningURL({ org_id, openingId }) {
+    return `/api/public/orgs/${org_id}/openings/${openingId}`;
   }
 
-  static async getPublicOpening({ org_id, opening_id }) {
+  static async getPublicOpening({ org_id, openingId }) {
     const { data } = await axios.get(
-      this.getPublicOpeningURL({ org_id, opening_id })
+      this.getPublicOpeningURL({ org_id, openingId })
     );
     return data;
   }
 
-  static getPublicStageURL({ org_id, opening_id, stage_id }) {
-    return `/api/public/orgs/${org_id}/openings/${opening_id}/stages/${stage_id}`;
+  static getPublicStageURL({ org_id, openingId, stage_id }) {
+    return `/api/public/orgs/${org_id}/openings/${openingId}/stages/${stage_id}`;
   }
 
-  static async getPublicStage({ org_id, opening_id, stage_id }) {
+  static async getPublicStage({ org_id, openingId, stage_id }) {
     const { data } = await axios.get(
-      this.getPublicStageURL({ org_id, opening_id, stage_id })
+      this.getPublicStageURL({ org_id, openingId, stage_id })
     );
     return data;
   }
@@ -45,7 +45,9 @@ export default class PublicInfoService {
     return `/api/applicants/${applicant_id}`;
   }
   static async getPublicApplicant({ applicant_id }) {
-    const { data } = await axios.get(this.getPublicApplicantURL({ applicant_id }));
+    const { data } = await axios.get(
+      this.getPublicApplicantURL({ applicant_id })
+    );
     return data;
   }
 }

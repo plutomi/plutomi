@@ -1,10 +1,10 @@
 import axios from "../axios/axios";
 
 export default class StagesService {
-  static async createStage({ GSI1SK, opening_id }: APICreateStageInput) {
+  static async createStage({ GSI1SK, openingId }: APICreateStageInput) {
     const body = {
       GSI1SK: GSI1SK,
-      opening_id: opening_id,
+      openingId: openingId,
     };
 
     const { data } = await axios.post(`/api/stages`, body);

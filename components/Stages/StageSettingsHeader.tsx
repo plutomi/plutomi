@@ -9,11 +9,10 @@ import useStageById from "../../SWR/useStageById";
 import { GetRelativeTime } from "../../utils/time";
 export default function StageSettingsHeader({ deleteStage }) {
   const router = useRouter();
-  const { opening_id, stage_id } = router.query as CustomQuery;
+  const { openingId, stage_id } = router.query as CustomQuery;
 
   const { user, isUserLoading, isUserError } = useSelf();
-  let { opening, isOpeningLoading, isOpeningError } =
-    useOpeningById(opening_id);
+  let { opening, isOpeningLoading, isOpeningError } = useOpeningById(openingId);
 
   const { stage, isStageLoading, isStageError } = useStageById(stage_id);
 
@@ -61,17 +60,17 @@ export default function StageSettingsHeader({ deleteStage }) {
     {
       name: "Applicants",
       // Go to the CURRENT STAGE in the opening to view the applicants
-      href: `/openings/${opening_id}/stages/${stage_id}/applicants`, // TODO should this end with applicants?
+      href: `/openings/${openingId}/stages/${stage_id}/applicants`, // TODO should this end with applicants?
       current: false,
     },
     {
       name: "Opening Settings",
-      href: `/openings/${opening_id}/settings`,
+      href: `/openings/${openingId}/settings`,
       current: false,
     },
     {
       name: "Stage Settings",
-      href: `/openings/${opening_id}/stages/${stage_id}/settings`,
+      href: `/openings/${openingId}/stages/${stage_id}/settings`,
       current: true,
     },
   ];

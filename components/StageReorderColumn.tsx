@@ -21,7 +21,7 @@ export default function StageReorderColumn() {
     try {
       const { message } = await StagesService.createStage({
         GSI1SK: stageModal.GSI1SK,
-        opening_id: opening_id,
+        openingId: openingId,
       });
       alert(message);
       setStageModal({ ...stageModal, GSI1SK: "", is_modal_open: false });
@@ -30,12 +30,12 @@ export default function StageReorderColumn() {
       alert(error.response.data.message);
     }
     // Refresh stage order
-    mutate(OpeningsService.getOpeningURL({ opening_id }));
+    mutate(OpeningsService.getOpeningURL({ openingId }));
 
     // Refresh stage list
     mutate(
       OpeningsService.getAllStagesInOpeningURL({
-        opening_id: opening_id,
+        openingId: openingId,
       })
     );
   };
@@ -73,14 +73,13 @@ export default function StageReorderColumn() {
   };
 
   const router = useRouter();
-  const { opening_id, stage_id } = router.query as CustomQuery;
+  const { openingId, stage_id } = router.query as CustomQuery;
 
   const { user, isUserLoading, isUserError } = useSelf();
-  let { opening, isOpeningLoading, isOpeningError } =
-    useOpeningById(opening_id);
+  let { opening, isOpeningLoading, isOpeningError } = useOpeningById(openingId);
 
   let { stages, isStagesLoading, isStagesError } = useAllStagesInOpening(
-    opening?.opening_id
+    opening?.openingId
   );
   const { stage, isStageLoading, isStageError } = useStageById(stage_id);
 
@@ -117,7 +116,7 @@ export default function StageReorderColumn() {
 
     try {
       await OpeningsService.updateOpening({
-        opening_id: opening_id,
+        openingId: openingId,
         new_opening_values: {
           stage_order: new_stage_order,
         },
@@ -128,12 +127,12 @@ export default function StageReorderColumn() {
     }
 
     // Refresh the stage order
-    mutate(OpeningsService.getOpeningURL({ opening_id }));
+    mutate(OpeningsService.getOpeningURL({ openingId }));
 
     // Refresh the stages
     mutate(
       OpeningsService.getAllStagesInOpeningURL({
-        opening_id: opening_id,
+        openingId: openingId,
       })
     );
   };
@@ -169,7 +168,7 @@ export default function StageReorderColumn() {
             onDragEnd={handleDragEnd}
             onDragStart={() => console.log("Start")}
           >
-            <Droppable droppableId={opening.opening_id}>
+            <Droppable droppableId={opening.openingId}>
               {(provided) => (
                 <div {...provided.droppableProps} ref={provided.innerRef}>
                   {new_stages?.map((stage, index) => {
@@ -187,7 +186,7 @@ export default function StageReorderColumn() {
                             ref={provided.innerRef}
                           >
                             <Link
-                              href={`${process.env.WEBSITE_URL}/openings/${opening_id}/stages/${stage.stage_id}/settings`}
+                              href={`${process.env.WEBSITE_URL}/openings/${openingId}/stages/${stage.stage_id}/settings`}
                             >
                               <a>
                                 <DraggableStageCard
