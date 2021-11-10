@@ -6,8 +6,8 @@ import SendNewUserEmail from "../email/sendNewUser";
 import { GetUserByEmail } from "./getUserByEmail";
 const { DYNAMO_TABLE_NAME } = process.env;
 
-export async function CreateUser({ user_email }) {
-  const user = await GetUserByEmail(user_email);
+export async function CreateUser({ userEmail }) {
+  const user = await GetUserByEmail(userEmail);
 
   if (user) {
     return user;
@@ -19,7 +19,7 @@ export async function CreateUser({ user_email }) {
     SK: `USER`,
     firstName: "NO_firstName",
     lastName: "NO_lastName",
-    user_email: user_email.toLowerCase().trim(),
+    userEmail: userEmail.toLowerCase().trim(),
     userId: userId,
     entity_type: "USER",
     created_at: now,
@@ -28,7 +28,7 @@ export async function CreateUser({ user_email }) {
     total_invites: 0,
     GSI1PK: "ORG#NO_ORG_ASSIGNED#USERS",
     GSI1SK: `NO_firstName NO_lastName`,
-    GSI2PK: user_email.toLowerCase().trim(),
+    GSI2PK: userEmail.toLowerCase().trim(),
     GSI2SK: "USER",
   };
 

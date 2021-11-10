@@ -154,7 +154,7 @@ export default function SignedInNav({ current }) {
                                 ))}
 
                               <div className=" text-light">
-                                {user?.user_email}
+                                {user?.userEmail}
                               </div>
                             </>
                           )}
@@ -254,7 +254,7 @@ export default function SignedInNav({ current }) {
                           {user?.GSI1SK}
                         </div>
                         <div className="text-md font-medium text-normal">
-                          {user?.user_email}
+                          {user?.userEmail}
                         </div>
                       </div>
                     </>

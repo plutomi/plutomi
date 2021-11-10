@@ -23,7 +23,7 @@ const handler = async (
   res: NextApiResponse
 ): Promise<void> => {
   const { body, method, query } = req; // TODO get from body
-  const { user_email, loginMethod } = body;
+  const { userEmail, loginMethod } = body;
   const { userId, key, callbackUrl } = query as CustomQuery;
   const login_link_length = 1500;
   const login_link_max_delay_minutes = 10;
@@ -37,13 +37,13 @@ const handler = async (
   // Creates a login link
   if (method === "POST") {
     try {
-      InputValidation({ user_email });
+      InputValidation({ userEmail });
     } catch (error) {
       console.error(error);
       return res.status(400).json({ message: `${error.message}` });
     }
     // Creates a user, returns it if already created
-    const user = await CreateUser({ user_email });
+    const user = await CreateUser({ userEmail });
 
     try {
       const latest_link = await GetLatestLoginLink(user.userId);
@@ -52,7 +52,7 @@ const handler = async (
       if (
         latest_link &&
         latest_link.created_at >= time_threshold &&
-        !user.user_email.endsWith("@plutomi.com")
+        !user.userEmail.endsWith("@plutomi.com")
       ) {
         return res.status(400).json({
           message: "You're doing that too much, please try again later",
@@ -87,7 +87,7 @@ const handler = async (
         }
         try {
           await SendLoginLink({
-            recipientEmail: user.user_email,
+            recipientEmail: user.userEmail,
             login_link: login_link,
             login_link_relative_expiry: GetRelativeTime(login_link_expiry),
           });

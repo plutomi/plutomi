@@ -11,7 +11,7 @@ interface GetOrgInput {
 interface CreateUserInput {
   firstName?: string;
   lastName?: string;
-  user_email: string;
+  userEmail: string;
 }
 
 interface CreateOpeningInput {
@@ -70,7 +70,7 @@ interface CreateApplicantResponseInput {
   question_response: string;
 }
 
-type CustomSession = Session & { userId: string; user_email: string };
+type CustomSession = Session & { userId: string; userEmail: string };
 
 type CustomRequest = NextApiRequest & { user: DynamoUser };
 
@@ -184,7 +184,7 @@ interface useAllStageQuestionsOutput {
 }
 
 interface APICreateLoginLinkInput {
-  user_email: string;
+  userEmail: string;
   callbackUrl?: string;
 }
 

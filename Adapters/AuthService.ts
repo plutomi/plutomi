@@ -1,10 +1,10 @@
 import axios from "../axios/axios";
 
 export default class AuthService {
-  static async login({ user_email, callbackUrl, loginMethod }) {
+  static async login({ userEmail, callbackUrl, loginMethod }) {
     const body = {
       loginMethod: loginMethod,
-      user_email: user_email,
+      userEmail: userEmail,
     };
 
     const { data } = await axios.post(

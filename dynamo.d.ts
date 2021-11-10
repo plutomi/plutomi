@@ -4,7 +4,7 @@
 interface DynamoUser {
   created_at?: string;
   entity_type?: string;
-  user_email?: string;
+  userEmail?: string;
   orgId?: string;
   fullName?: string;
   GSI1SK?: string;
