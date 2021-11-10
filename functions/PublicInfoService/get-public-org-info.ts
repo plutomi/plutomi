@@ -7,13 +7,7 @@ import withCleanOrgId from "../../middleware/withCleanOrgId";
 const main = async (
   event: APIGatewayProxyEventV2
 ): Promise<APIGatewayProxyResultV2> => {
-  console.log("Executing event in public org info", event);
   const { orgId } = event.pathParameters;
-  console.log("In api route orgid", orgId);
-  if (!orgId) {
-    return FormattedResponse(400, { message: `'orgId' is missing` });
-  }
-
   try {
     const org = await GetOrg(orgId);
 
