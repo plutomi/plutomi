@@ -1,34 +1,40 @@
 import { PutCommand, PutCommandInput } from "@aws-sdk/lib-dynamodb";
 import { Dynamo } from "../../lib/awsClients/ddbDocClient";
-import { GetCurrentTime } from "../time";
+import { getCurrentTime } from "../time";
 import { nanoid } from "nanoid";
 import SendNewUserEmail from "../email/sendNewUser";
-import { GetUserByEmail } from "./getUserByEmail";
+import { getUserByEmail } from "./getUserByEmail";
 const { DYNAMO_TABLE_NAME } = process.env;
 
-export async function CreateUser({ user_email }) {
-  const user = await GetUserByEmail(user_email);
-
-  if (user) {
-    return user;
-  }
-  const now = GetCurrentTime("iso") as string;
+/**
+ *
+ * @param userEmail Email of the user to create
+ * @param firstName - Optional, defaults to NO_FIRST_NAME
+ * @param lastName - Optional, defaults to NO_LAST_NAME
+ * @returns - The newly created user, or if a user exists
+ */
+export async function createUser(
+  userEmail: string,
+  firstName?: string,
+  lastName?: string
+) {
+  const now = getCurrentTime("iso") as string;
   const userId = nanoid(42);
-  const new_user: DynamoUser = {
+  const new_user = {
     PK: `USER#${userId}`,
     SK: `USER`,
-    first_name: "NO_FIRST_NAME",
-    last_name: "NO_LAST_NAME",
-    user_email: user_email.toLowerCase().trim(),
+    firstName: firstName || "NO_FIRST_NAME",
+    lastName: lastName || "NO_LAST_NAME",
+    userEmail: userEmail.toLowerCase().trim(),
     userId: userId,
     entityType: "USER",
     created_at: now,
-    org_id: "NO_ORG_ASSIGNED",
-    org_join_date: "NO_ORG_ASSIGNED",
+    orgId: "NO_ORG_ASSIGNED",
+    orgJoinDate: "NO_ORG_ASSIGNED",
     totalInvites: 0,
     GSI1PK: "ORG#NO_ORG_ASSIGNED#USERS",
     GSI1SK: `NO_FIRST_NAME NO_LAST_NAME`,
-    GSI2PK: user_email.toLowerCase().trim(),
+    GSI2PK: userEmail.toLowerCase().trim(),
     GSI2SK: "USER",
   };
 

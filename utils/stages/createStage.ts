@@ -3,7 +3,7 @@ import {
   TransactWriteCommandInput,
 } from "@aws-sdk/lib-dynamodb";
 import { Dynamo } from "../../lib/awsClients/ddbDocClient";
-import { GetCurrentTime } from "../time";
+import { getCurrentTime } from "../time";
 import { nanoid } from "nanoid";
 import { GetOpening } from "../openings/getOpeningById";
 import { MAX_CHILD_ITEM_LIMIT, MAX_ITEM_LIMIT_ERROR } from "../../Config";
@@ -11,14 +11,14 @@ import { MAX_CHILD_ITEM_LIMIT, MAX_ITEM_LIMIT_ERROR } from "../../Config";
 const { DYNAMO_TABLE_NAME } = process.env;
 
 export async function CreateStage({
-  org_id,
+  orgId,
   GSI1SK,
   opening_id,
 }: DynamoCreateStageInput) {
-  const now = GetCurrentTime("iso") as string;
+  const now = getCurrentTime("iso") as string;
   const stage_id = nanoid(50);
   const new_stage = {
-    PK: `ORG#${org_id}#STAGE#${stage_id}`,
+    PK: `ORG#${orgId}#STAGE#${stage_id}`,
     SK: `STAGE`,
     entityType: "STAGE",
     created_at: now,
@@ -26,12 +26,12 @@ export async function CreateStage({
     stage_id: stage_id,
     total_applicants: 0,
     opening_id: opening_id,
-    GSI1PK: `ORG#${org_id}#OPENING#${opening_id}#STAGES`, // Get all stages in an opening
+    GSI1PK: `ORG#${orgId}#OPENING#${opening_id}#STAGES`, // Get all stages in an opening
     GSI1SK: GSI1SK,
   };
 
   try {
-    let opening = await GetOpening({ org_id, opening_id });
+    let opening = await GetOpening({ orgId, opening_id });
 
     try {
       // Get current opening
@@ -56,7 +56,7 @@ export async function CreateStage({
             // Add stage to the opening + increment stage count on opening
             Update: {
               Key: {
-                PK: `ORG#${org_id}#OPENING#${opening_id}`,
+                PK: `ORG#${orgId}#OPENING#${opening_id}`,
                 SK: `OPENING`,
               },
               TableName: DYNAMO_TABLE_NAME,
@@ -74,7 +74,7 @@ export async function CreateStage({
             // Increment stage count on org
             Update: {
               Key: {
-                PK: `ORG#${org_id}`,
+                PK: `ORG#${orgId}`,
                 SK: `ORG`,
               },
               TableName: DYNAMO_TABLE_NAME,

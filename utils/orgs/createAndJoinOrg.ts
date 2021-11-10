@@ -3,17 +3,17 @@ import {
   TransactWriteCommandInput,
 } from "@aws-sdk/lib-dynamodb";
 import { Dynamo } from "../../lib/awsClients/ddbDocClient";
-import { GetCurrentTime } from "../time";
+import { getCurrentTime } from "../time";
 
 const { DYNAMO_TABLE_NAME } = process.env;
 
-export async function CreateAndJoinOrg({ userId, org_id, GSI1SK }) {
-  const now = GetCurrentTime("iso") as string;
+export async function CreateAndJoinOrg({ userId, orgId, GSI1SK }) {
+  const now = getCurrentTime("iso") as string;
 
   const new_org = {
-    PK: `ORG#${org_id}`,
+    PK: `ORG#${orgId}`,
     SK: `ORG`,
-    org_id: org_id, // plutomi - Cannot be changed
+    orgId: orgId, // plutomi - Cannot be changed
     entityType: "ORG",
     created_at: now,
     total_applicants: 0,
@@ -37,11 +37,11 @@ export async function CreateAndJoinOrg({ userId, org_id, GSI1SK }) {
             },
             TableName: DYNAMO_TABLE_NAME,
             UpdateExpression:
-              "SET org_id = :org_id, org_join_date = :org_join_date, GSI1PK = :GSI1PK",
+              "SET orgId = :orgId, orgJoinDate = :orgJoinDate, GSI1PK = :GSI1PK",
             ExpressionAttributeValues: {
-              ":org_id": org_id,
-              ":org_join_date": now,
-              ":GSI1PK": `ORG#${org_id}#USERS`,
+              ":orgId": orgId,
+              ":orgJoinDate": now,
+              ":GSI1PK": `ORG#${orgId}#USERS`,
             },
           },
         },

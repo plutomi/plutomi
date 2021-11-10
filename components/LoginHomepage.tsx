@@ -12,7 +12,7 @@ interface CallbackUrl {
 // TODO probably better to refactor this as this is bad practice
 export default function LoginHomepage({ callbackUrl }: CallbackUrl) {
   const router = useRouter();
-  const [user_email, setUserEmail] = useState("");
+  const [userEmail, setUserEmail] = useState("");
   const [submittedText, setSubmittedText] = useState(
     `We've sent a magic login link to your email!`
   );
@@ -29,9 +29,9 @@ export default function LoginHomepage({ callbackUrl }: CallbackUrl) {
 
     try {
       const { message } = await AuthService.login({
-        user_email: user_email,
+        userEmail: userEmail,
         callbackUrl: callbackUrl,
-        login_method: "LINK",
+        loginMethod: "LINK",
       });
 
       setSubmittedText(message);
@@ -43,12 +43,12 @@ export default function LoginHomepage({ callbackUrl }: CallbackUrl) {
 
   const successfulLogin = async (response) => {
     console.log(response);
-    const user_email = response.profileObj.email;
+    const userEmail = response.profileObj.email;
 
     const input = {
-      user_email: user_email,
+      userEmail: userEmail,
       callbackUrl: `${process.env.WEBSITE_URL}/dashboard`, // TODO make this a config variable as the "DEFAULT_REDIRECT_ROUTE_HOMEPAGE"
-      login_method: "GOOGLE",
+      loginMethod: "GOOGLE",
     };
     console.log(input);
     const { message } = await AuthService.login(input);
@@ -68,7 +68,7 @@ export default function LoginHomepage({ callbackUrl }: CallbackUrl) {
       {emailSubmitted ? (
         <div className="text-center">
           <h1 className=" text-dark text-2xl">{submittedText}</h1>
-          <p className="text-light text-lg">{user_email}</p>
+          <p className="text-light text-lg">{userEmail}</p>
         </div>
       ) : (
         <div className="space-y-2">
@@ -81,7 +81,7 @@ export default function LoginHomepage({ callbackUrl }: CallbackUrl) {
           </p>{" "}
           <LoginEmail
             onChange={handleEmailChange}
-            user_email={user_email}
+            userEmail={userEmail}
             button_text={button_text}
             sendEmail={sendEmail}
           />{" "}

@@ -4,7 +4,7 @@ import {
   UsersIcon,
 } from "@heroicons/react/solid";
 import ClickToCopy from "../ClickToCopy";
-import { GetRelativeTime } from "../../utils/time";
+import { getRelativeTime } from "../../utils/time";
 import Link from "next/dist/client/link";
 import useOpenings from "../../SWR/useOpenings";
 import useSelf from "../../SWR/useSelf";
@@ -75,7 +75,7 @@ export default function OpeningList() {
                         <p className="mt-2 flex items-center text-lg text-normal sm:mt-0 sm:ml-6">
                           <ClickToCopy
                             showText={"Application Link"}
-                            copyText={`${process.env.WEBSITE_URL}/${user?.org_id}/${opening?.opening_id}/apply`}
+                            copyText={`${process.env.WEBSITE_URL}/${user?.orgId}/${opening?.opening_id}/apply`}
                           />
                         </p>
                       ) : null}
@@ -88,7 +88,7 @@ export default function OpeningList() {
                       <p>
                         Created{" "}
                         <time dateTime={opening.created_at as string}>
-                          {GetRelativeTime(opening.created_at)}
+                          {getRelativeTime(opening.created_at)}
                         </time>
                       </p>
                     </div>

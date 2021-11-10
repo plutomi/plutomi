@@ -3,20 +3,20 @@ import { GetOpening } from "../../utils/openings/getOpeningById";
 import CleanOpening from "../../utils/clean/cleanOpening";
 import FormattedResponse from "../../utils/formatResponse";
 
-const main = async (
+const handler = async (
   event: APIGatewayProxyEventV2
 ): Promise<APIGatewayProxyResultV2> => {
-  const { org_id, opening_id } = event.pathParameters;
+  const { orgId, opening_id } = event.pathParameters;
 
-  if (!org_id) {
-    return FormattedResponse(400, { message: `'org_id' is missing` });
+  if (!orgId) {
+    return FormattedResponse(400, { message: `'orgId' is missing` });
   }
 
   if (!opening_id) {
     return FormattedResponse(400, { message: `'opening_id' is missing` });
   }
   try {
-    const opening = await GetOpening(org_id, opening_id);
+    const opening = await GetOpening(orgId, opening_id);
     if (!opening) {
       return FormattedResponse(404, {
         message: `Opening ${opening_id} not found`,
@@ -42,4 +42,4 @@ const main = async (
     });
   }
 };
-exports.handler = main;
+export default handler;

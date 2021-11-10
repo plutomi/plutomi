@@ -1,7 +1,7 @@
 import { GetAllUserInvites } from "./getAllOrgInvites";
 import DeleteOrgInvite from "./deleteOrgInvite";
 import { GetOrgInvite } from "./getOrgInvite";
-import { GetCurrentTime } from "../time";
+import { getCurrentTime } from "../time";
 
 // This is really a misnomer. There is no 'accept' per say.
 // We just check that the invite is valid and then delete it
@@ -13,7 +13,7 @@ export default async function AcceptOrgInvite({ userId, invite_id }) {
       throw "Invite no longer exists";
     }
 
-    if (invite.expiresAt <= GetCurrentTime("iso")) {
+    if (invite.expiresAt <= getCurrentTime("iso")) {
       DeleteOrgInvite({ userId, invite_id });
       throw "Invite has expired";
     }

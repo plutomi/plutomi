@@ -68,14 +68,14 @@ export default function SignedInNav({ current }) {
                   <div className="hidden sm:-my-px sm:ml-6 sm:flex sm:space-x-8">
                     {NAVBAR_NAVIGATION.map((item) => {
                       if (
-                        user?.org_id === "NO_ORG_ASSIGNED" &&
+                        user?.orgId === "NO_ORG_ASSIGNED" &&
                         item.hidden_if_no_org
                       ) {
                         return null;
                       }
 
                       if (
-                        user?.org_id !== "NO_ORG_ASSIGNED" &&
+                        user?.orgId !== "NO_ORG_ASSIGNED" &&
                         item.hidden_if_org
                       ) {
                         return null;
@@ -154,7 +154,7 @@ export default function SignedInNav({ current }) {
                                 ))}
 
                               <div className=" text-light">
-                                {user?.user_email}
+                                {user?.userEmail}
                               </div>
                             </>
                           )}
@@ -254,7 +254,7 @@ export default function SignedInNav({ current }) {
                           {user?.GSI1SK}
                         </div>
                         <div className="text-md font-medium text-normal">
-                          {user?.user_email}
+                          {user?.userEmail}
                         </div>
                       </div>
                     </>

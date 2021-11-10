@@ -8,10 +8,10 @@ function classNames(...classes) {
 import { useRouter } from "next/router";
 export default function ApplicantInfoForm() {
   const router = useRouter();
-  const { org_id, opening_id } = router.query as CustomQuery;
+  const { orgId, opening_id } = router.query as CustomQuery;
   const [agreed, setAgreed] = useState(false);
-  const [first_name, setFirstName] = useState("");
-  const [last_name, setLastName] = useState("");
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
   const [email, setEmail] = useState("");
   const [buttonText, setButtonText] = useState("Apply");
   const handleSubmit = async (e: FormEvent) => {
@@ -24,10 +24,10 @@ export default function ApplicantInfoForm() {
 
     try {
       const { message } = await ApplicantsService.createApplicant({
-        org_id: org_id,
+        orgId: orgId,
         opening_id: opening_id,
-        first_name: first_name,
-        last_name: last_name,
+        firstName: firstName,
+        lastName: lastName,
         email: email,
       });
       alert(message);
@@ -129,7 +129,7 @@ export default function ApplicantInfoForm() {
                   name="first-name"
                   id="first-name"
                   placeholder="John"
-                  value={first_name}
+                  value={firstName}
                   onChange={(e) => setFirstName(e.target.value)}
                   autoComplete="given-name"
                   className="py-3 px-4 block w-full shadow-sm focus:ring-blue-500 focus:border-blue-500 border-gray-300 rounded-md"
@@ -149,7 +149,7 @@ export default function ApplicantInfoForm() {
                   name="last-name"
                   id="last-name"
                   placeholder="Smith"
-                  value={last_name}
+                  value={lastName}
                   onChange={(e) => setLastName(e.target.value)}
                   autoComplete="family-name"
                   className="py-3 px-4 block w-full shadow-sm focus:ring-blue-500 focus:border-blue-500 border-gray-300 rounded-md"

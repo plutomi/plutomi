@@ -2,14 +2,14 @@ import { QueryCommand, QueryCommandInput } from "@aws-sdk/lib-dynamodb";
 import { Dynamo } from "../../lib/awsClients/ddbDocClient";
 const { DYNAMO_TABLE_NAME } = process.env;
 
-export async function GetAllApplicantsInOpening({ org_id, opening_id }) {
+export async function GetAllApplicantsInOpening({ orgId, opening_id }) {
   const params: QueryCommandInput = {
     TableName: DYNAMO_TABLE_NAME,
     IndexName: "GSI1",
     KeyConditionExpression:
       "GSI1PK = :GSI1PK AND  begins_with(GSI1SK, :GSI1SK)",
     ExpressionAttributeValues: {
-      ":GSI1PK": `ORG#${org_id}#APPLICANTS`,
+      ":GSI1PK": `ORG#${orgId}#APPLICANTS`,
       ":GSI1SK": `OPENING#${opening_id}`,
     },
   };

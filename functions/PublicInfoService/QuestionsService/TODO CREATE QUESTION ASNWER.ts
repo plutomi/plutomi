@@ -14,14 +14,14 @@ type CreateApplicantResponseRequest = APIGatewayProxyEventV2 & {
 
 /// TODO ! FIX THIS TYPE !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-const main = async (
+const handler = async (
   event: CreateApplicantResponseRequest
 ): Promise<APIGatewayProxyResultV2> => {
-  const { org_id, applicant_id } = event.pathParameters;
+  const { orgId, applicant_id } = event.pathParameters;
   const { responses } = event.body;
 
-  if (!org_id) {
-    return FormattedResponse(400, { message: `'org_id' is missing` });
+  if (!orgId) {
+    return FormattedResponse(400, { message: `'orgId' is missing` });
   }
 
   if (!applicant_id) {
@@ -41,7 +41,7 @@ const main = async (
           response;
 
         const create_applicant_response_input = {
-          org_id: org_id,
+          orgId: orgId,
           applicant_id: applicant_id,
           question_title: question_title,
           question_description: question_description,
@@ -67,4 +67,4 @@ const main = async (
   }
 };
 
-exports.handler = main;
+export default handler;

@@ -20,8 +20,8 @@ const useStore = create((set) => ({
   userProfileModal: {
     is_modal_open: false,
     modal_mode: "EDIT",
-    first_name: "",
-    last_name: "",
+    firstName: "",
+    lastName: "",
   },
 
   setUserProfileModal: (userProfileModal) => {

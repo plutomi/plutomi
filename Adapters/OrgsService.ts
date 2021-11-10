@@ -1,10 +1,10 @@
 import axios from "../axios/axios";
 
 export default class OrgsService {
-  static async createOrg({ GSI1SK, org_id }) {
+  static async createOrg({ GSI1SK, orgId }) {
     const body = {
       GSI1SK: GSI1SK,
-      org_id: org_id,
+      orgId: orgId,
     };
 
     const { data } = await axios.post(`/api/orgs`, body);
@@ -12,25 +12,25 @@ export default class OrgsService {
     return data;
   }
 
-  static getOrgURL({ org_id }) {
-    return `/api/orgs/${org_id}`;
+  static getOrgURL({ orgId }) {
+    return `/api/orgs/${orgId}`;
   }
-  static async getOrg({ org_id }) {
-    const { data } = await axios.get(this.getOrgURL({ org_id }));
+  static async getOrg({ orgId }) {
+    const { data } = await axios.get(this.getOrgURL({ orgId }));
     return data;
   }
 
-  static async deleteOrg({ org_id }) {
-    const { data } = await axios.delete(this.getOrgURL({ org_id }));
+  static async deleteOrg({ orgId }) {
+    const { data } = await axios.delete(this.getOrgURL({ orgId }));
     return data;
   }
 
-  static getAllUsersInOrgURL({ org_id }: APIGetAllUsersInOrgURL) {
-    return `/api/orgs/${org_id}/users`;
+  static getAllUsersInOrgURL({ orgId }: APIGetAllUsersInOrgURL) {
+    return `/api/orgs/${orgId}/users`;
   }
 
-  static async getAllUsersInOrg({ org_id }: APIGetAllUsersInOrg) {
-    const { data } = await axios.get(this.getAllUsersInOrgURL({ org_id }));
+  static async getAllUsersInOrg({ orgId }: APIGetAllUsersInOrg) {
+    const { data } = await axios.get(this.getAllUsersInOrgURL({ orgId }));
     return data;
   }
 }

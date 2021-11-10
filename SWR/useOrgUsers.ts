@@ -4,11 +4,11 @@ import useSWR from "swr";
 import OrgsService from "../adapters/OrgsService";
 const fetcher = (url: string) => axios.get(url).then((res) => res.data);
 
-function useOrgUsers(org_id: string): useOrgUsersOutput {
-  const shouldFetch = org_id ? true : false;
+function useOrgUsers(orgId: string): useOrgUsersOutput {
+  const shouldFetch = orgId ? true : false;
 
   const { data, error } = useSWR(
-    shouldFetch && OrgsService.getAllUsersInOrgURL({ org_id }),
+    shouldFetch && OrgsService.getAllUsersInOrgURL({ orgId }),
     fetcher
   );
 

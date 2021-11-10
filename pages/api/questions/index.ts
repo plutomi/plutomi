@@ -16,7 +16,7 @@ const handler = async (
 
   if (method === "POST") {
     const create_stage_question_input = {
-      org_id: user_session.org_id,
+      orgId: user_session.orgId,
       stage_id: stage_id,
       GSI1SK: GSI1SK,
       question_description: question_description,

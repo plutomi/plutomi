@@ -9,9 +9,10 @@ const user = {
   orgId: "beans",
 };
 
-const main = async (
+const handler = async (
   event: APIGatewayProxyEventV2
 ): Promise<APIGatewayProxyResultV2> => {
+  //
   try {
     const cookie = await Iron.seal(user, COOKIE_PASSWORD, {
       ...Iron.defaults,
@@ -30,4 +31,4 @@ const main = async (
   }
 };
 
-exports.handler = main;
+export default handler;

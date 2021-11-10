@@ -8,13 +8,13 @@ import { GetStage } from "./getStage";
 const { DYNAMO_TABLE_NAME } = process.env;
 // TODO check if stage is empt of appliants first
 // TODO delete stage from the funnels sort order
-export async function DeleteStage({ org_id, stage_id }: DeleteStageInput) {
+export async function DeleteStage({ orgId, stage_id }: DeleteStageInput) {
   // TODO Qeuery all items that start with PK: stage_id & SK: STAGE
   // Get the opening we need to update
   try {
-    let stage = await GetStage({ org_id, stage_id });
+    let stage = await GetStage({ orgId, stage_id });
     let opening = await GetOpening({
-      org_id: org_id,
+      orgId: orgId,
       opening_id: stage.opening_id,
     });
 
@@ -31,7 +31,7 @@ export async function DeleteStage({ org_id, stage_id }: DeleteStageInput) {
           // Delete stage
           Delete: {
             Key: {
-              PK: `ORG#${org_id}#STAGE#${stage_id}`,
+              PK: `ORG#${orgId}#STAGE#${stage_id}`,
               SK: `STAGE`,
             },
             TableName: DYNAMO_TABLE_NAME,
@@ -41,7 +41,7 @@ export async function DeleteStage({ org_id, stage_id }: DeleteStageInput) {
           // Update Stage Order
           Update: {
             Key: {
-              PK: `ORG#${org_id}#OPENING#${opening.opening_id}`,
+              PK: `ORG#${orgId}#OPENING#${opening.opening_id}`,
               SK: `OPENING`,
             },
             TableName: DYNAMO_TABLE_NAME,
@@ -57,7 +57,7 @@ export async function DeleteStage({ org_id, stage_id }: DeleteStageInput) {
           // Decrement stage count on org
           Update: {
             Key: {
-              PK: `ORG#${org_id}`,
+              PK: `ORG#${orgId}`,
               SK: `ORG`,
             },
             TableName: DYNAMO_TABLE_NAME,

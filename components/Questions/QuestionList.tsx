@@ -23,7 +23,7 @@ export default function QuestionList() {
   const { stage, isStageLoading, isStageError } = useStageById(stage_id);
 
   const { questions, isQuestionsLoading, isQuestionsError } =
-    useAllStageQuestions(user?.org_id, stage?.stage_id);
+    useAllStageQuestions(user?.orgId, stage?.stage_id);
 
   const [new_questions, setNewQuestions] = useState(questions);
 
