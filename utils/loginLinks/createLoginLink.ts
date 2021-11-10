@@ -1,6 +1,6 @@
 import { PutCommand, PutCommandInput } from "@aws-sdk/lib-dynamodb";
 import { getCurrentTime, getPastOrFutureTime } from "../time";
-import { Dynamo } from "../../lib/awsClients/ddbDocClient";
+import { Dynamo } from "../../awsClients/ddbDocClient";
 
 const { DYNAMO_TABLE_NAME } = process.env;
 

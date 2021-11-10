@@ -4,7 +4,7 @@ import {
   TransactWriteCommand,
   TransactWriteCommandInput,
 } from "@aws-sdk/lib-dynamodb";
-import { Dynamo } from "../../lib/awsClients/ddbDocClient";
+import { Dynamo } from "../../awsClients/ddbDocClient";
 import { getCurrentTime } from "../time";
 import { nanoid } from "nanoid";
 
