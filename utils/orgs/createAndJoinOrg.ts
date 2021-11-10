@@ -37,10 +37,10 @@ export async function CreateAndJoinOrg({ userId, orgId, GSI1SK }) {
             },
             TableName: DYNAMO_TABLE_NAME,
             UpdateExpression:
-              "SET orgId = :orgId, org_join_date = :org_join_date, GSI1PK = :GSI1PK",
+              "SET orgId = :orgId, orgJoinDate = :orgJoinDate, GSI1PK = :GSI1PK",
             ExpressionAttributeValues: {
               ":orgId": orgId,
-              ":org_join_date": now,
+              ":orgJoinDate": now,
               ":GSI1PK": `ORG#${orgId}#USERS`,
             },
           },

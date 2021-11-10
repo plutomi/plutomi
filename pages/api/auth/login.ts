@@ -180,7 +180,7 @@ const handler = async (
       await req.session.save();
 
       // If a user has invites, redirect them to that page automatically
-      if (clean_user.total_invites > 0) {
+      if (clean_user.totalInvites > 0) {
         res.redirect(`${process.env.WEBSITE_URL}/invites`);
         return;
       }

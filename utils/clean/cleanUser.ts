@@ -5,7 +5,7 @@ const safeKeys = [
   "userEmail",
   "firstName",
   "lastName",
-  "total_invites",
+  "totalInvites",
 ];
 
 export default function CleanUser(user: DynamoUser) {

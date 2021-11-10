@@ -32,10 +32,10 @@ export async function JoinOrgFromInvite({ userId, invite }) {
             },
             TableName: DYNAMO_TABLE_NAME,
             UpdateExpression:
-              "SET orgId = :orgId, org_join_date = :org_join_date, GSI1PK = :GSI1PK, total_invites = total_invites - :value",
+              "SET orgId = :orgId, orgJoinDate = :orgJoinDate, GSI1PK = :GSI1PK, totalInvites = totalInvites - :value",
             ExpressionAttributeValues: {
               ":orgId": invite.orgId,
-              ":org_join_date": now,
+              ":orgJoinDate": now,
               ":GSI1PK": `ORG#${invite.orgId}#USERS`,
               ":value": 1,
             },

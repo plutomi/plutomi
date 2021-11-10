@@ -13,10 +13,10 @@ interface DynamoUser {
   GSI1PK?: string;
   userId?: string;
   lastName?: string;
-  org_join_date?: string;
+  orgJoinDate?: string;
   firstName?: string;
   SK?: string;
-  total_invites;
+  totalInvites;
   PK?: string;
 }
 

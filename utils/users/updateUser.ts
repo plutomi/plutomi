@@ -24,7 +24,7 @@ export async function UpdateUser({
       "GSI1PK",
       "GSI2PK",
       "user_role",
-      "org_join_date",
+      "orgJoinDate",
     ];
 
     const incomingKeys = Object.keys(new_user_values);

@@ -66,7 +66,7 @@ export default async function CreateOrgInvite({
             },
             TableName: DYNAMO_TABLE_NAME,
             UpdateExpression:
-              "SET total_invites = if_not_exists(total_invites, :zero) + :value",
+              "SET totalInvites = if_not_exists(totalInvites, :zero) + :value",
             ExpressionAttributeValues: {
               ":zero": 0,
               ":value": 1,

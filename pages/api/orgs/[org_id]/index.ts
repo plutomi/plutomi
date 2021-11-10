@@ -57,7 +57,7 @@ const handler = async (
         userId: user_session.userId,
         new_user_values: {
           orgId: "NO_ORG_ASSIGNED",
-          org_join_date: "NO_ORG_ASSIGNED",
+          orgJoinDate: "NO_ORG_ASSIGNED",
           GSI1PK: "NO_ORG_ASSIGNED",
         },
 
