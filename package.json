@@ -55,6 +55,7 @@
     "react-icons": "^4.3.1",
     "react-items-carousel": "^2.8.0",
     "react-number-format": "^4.7.3",
+    "react-scripts": "^4.0.3",
     "sst": "^0.0.7",
     "swr": "^1.0.1",
     "tailwindcss": "^2.2.19",
