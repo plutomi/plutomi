@@ -10,7 +10,7 @@ export default async function UpdateLoginLink({ userId, updated_login_link }) {
     "SK",
     "login_link_hash",
     "entity_type",
-    "created_at",
+    "createdAt",
     "userId",
     "expires_at",
     "ttl_expiry",
@@ -33,7 +33,7 @@ export default async function UpdateLoginLink({ userId, updated_login_link }) {
   const params: UpdateCommandInput = {
     Key: {
       PK: `USER#${userId}`,
-      SK: `LOGIN_LINK#${updated_login_link.created_at}`,
+      SK: `LOGIN_LINK#${updated_login_link.createdAt}`,
     },
     UpdateExpression: UpdatedExpression,
     ExpressionAttributeValues: newAttributes,

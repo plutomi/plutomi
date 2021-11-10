@@ -17,7 +17,7 @@ export async function CreateOpening({ orgId, GSI1SK }: CreateOpeningInput) {
     PK: `ORG#${orgId}#OPENING#${openingId}`,
     SK: `OPENING`,
     entity_type: "OPENING",
-    created_at: now,
+    createdAt: now,
     openingId: openingId,
     GSI1PK: `ORG#${orgId}#OPENINGS`,
     GSI1SK: GSI1SK,

@@ -12,7 +12,7 @@ const { DYNAMO_TABLE_NAME } = process.env;
 export default async function CreateOrgInvite({
   orgId,
   expires_at,
-  created_by,
+  createdBy,
   user,
   org_name,
 }) {
@@ -37,9 +37,9 @@ export default async function CreateOrgInvite({
       SK: `ORG_INVITE#${invite_id}`, // Allows sorting, and incase two get created in the same millisecond
       orgId: orgId,
       org_name: org_name, // using org_name here because GSI1SK is taken obv
-      created_by: created_by,
+      createdBy: createdBy,
       entity_type: "ORG_INVITE",
-      created_at: now,
+      createdAt: now,
       expires_at: expires_at,
       invite_id: invite_id,
       GSI1PK: `ORG#${orgId}#ORG_INVITES`,

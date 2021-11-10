@@ -51,7 +51,7 @@ const handler = async (
       // Limit the amount of links sent in a certain period of time
       if (
         latest_link &&
-        latest_link.created_at >= time_threshold &&
+        latest_link.createdAt >= time_threshold &&
         !user.userEmail.endsWith("@plutomi.com")
       ) {
         return res.status(400).json({
@@ -172,7 +172,7 @@ const handler = async (
       CreateLoginEvent(userId);
 
       // Invalidates the last login link while allowing the user to login again if needed
-      DeleteLoginLink(userId, latest_login_link.created_at);
+      DeleteLoginLink(userId, latest_login_link.createdAt);
 
       const clean_user = CleanUser(user as DynamoUser);
 

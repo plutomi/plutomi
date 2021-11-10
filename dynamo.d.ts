@@ -2,7 +2,7 @@
 // Makes it easier to reference all variables in the front end
 
 interface DynamoUser {
-  created_at?: string;
+  createdAt?: string;
   entity_type?: string;
   userEmail?: string;
   orgId?: string;
@@ -24,7 +24,7 @@ interface DynamoOpening {
   PK: string;
   SK: "OPENING";
   entity_type: "OPENING";
-  created_at: string;
+  createdAt: string;
   openingId: string;
   GSI1PK: string;
   GSI1SK: string;
@@ -40,7 +40,7 @@ interface DynamoStage {
   PK: string;
   SK: `STAGE`;
   entity_type: "STAGE";
-  created_at: string;
+  createdAt: string;
   stageId: string;
   total_applicants: number;
   question_order: string[];
@@ -53,9 +53,9 @@ interface DynamoOrgInvite {
   PK: string;
   SK: string;
   orgId: string;
-  created_by: DynamoUser;
+  createdBy: DynamoUser;
   entity_type: "ORG_INVITE";
-  created_at: string;
+  createdAt: string;
   expires_at: string;
   invite_id: string;
   GSI1PK: string;
@@ -68,7 +68,7 @@ interface DynamoStageQuestion {
   question_description: string;
   question_id: string;
   entity_type: string;
-  created_at: string;
+  createdAt: string;
   GSI1PK: string;
   GSI1SK: string;
 }
@@ -78,7 +78,7 @@ interface DynamoOrg {
   SK: `ORG`;
   orgId: string;
   entity_type: "ORG";
-  created_at: string;
+  createdAt: string;
   GSI1PK: `ORG`;
   GSI1SK: string;
   total_users: number;
@@ -98,7 +98,7 @@ interface DynamoApplicant {
   applicantId: string;
   orgId: string;
   entity_type: "APPLICANT";
-  created_at: CustomDateFormat;
+  createdAt: CustomDateFormat;
   currentOpeningId: string;
   currentStageId: string;
   GSI1PK: string;
@@ -118,7 +118,7 @@ interface DynamoApplicantResponse {
   question_title: string;
   question_description: string;
   question_response: any;
-  created_at: string;
+  createdAt: string;
   response_id: string;
   GSI1PK: string;
   GSI1SK: APPLICANT_RESPONSE;

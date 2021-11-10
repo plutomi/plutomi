@@ -53,8 +53,8 @@ export default function ApplicantListItem({ applicant, handleApplicantClick }) {
               />
               <p>
                 Applied{" "}
-                <time dateTime={applicant.created_at}>
-                  {GetRelativeTime(applicant.created_at)}
+                <time dateTime={applicant.createdAt}>
+                  {GetRelativeTime(applicant.createdAt)}
                 </time>
               </p>
             </div>

@@ -22,7 +22,7 @@ export async function CreateUser({ userEmail }) {
     userEmail: userEmail.toLowerCase().trim(),
     userId: userId,
     entity_type: "USER",
-    created_at: now,
+    createdAt: now,
     orgId: "NO_ORG_ASSIGNED",
     org_join_date: "NO_ORG_ASSIGNED",
     total_invites: 0,

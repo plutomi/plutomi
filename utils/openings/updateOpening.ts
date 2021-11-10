@@ -13,7 +13,7 @@ export default async function UpdateOpening({
     "SK",
     "orgId",
     "entity_type",
-    "created_at",
+    "createdAt",
     "openingId",
     "GSI1PK",
   ];

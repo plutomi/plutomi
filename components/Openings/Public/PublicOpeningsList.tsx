@@ -48,8 +48,8 @@ export default function PublicOpeningsList() {
                       />
                       <p>
                         Posted{" "}
-                        <time dateTime={opening.created_at as string}>
-                          {GetRelativeTime(opening.created_at)}
+                        <time dateTime={opening.createdAt as string}>
+                          {GetRelativeTime(opening.createdAt)}
                         </time>
                       </p>
                     </div>

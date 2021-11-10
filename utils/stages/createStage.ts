@@ -21,7 +21,7 @@ export async function CreateStage({
     PK: `ORG#${orgId}#STAGE#${stageId}`,
     SK: `STAGE`,
     entity_type: "STAGE",
-    created_at: now,
+    createdAt: now,
     question_order: [],
     stageId: stageId,
     total_applicants: 0,

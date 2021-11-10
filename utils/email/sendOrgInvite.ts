@@ -3,7 +3,7 @@ import SES from "../../lib/awsClients/sesClient";
 
 export default async function SendOrgInvite({
   recipientEmail,
-  created_by,
+  createdBy,
   org_name,
 }: SendOrgInviteInput) {
   const new_email: SendEmailCommandInput = {
@@ -15,7 +15,7 @@ export default async function SendOrgInvite({
     },
     Message: {
       Subject: {
-        Data: `${created_by.firstName} ${created_by.lastName} has invited you to join ${org_name} on Plutomi!`, // TODO if firstName or lastName === "NO_firstName" or NO_lastName, change this message
+        Data: `${createdBy.firstName} ${createdBy.lastName} has invited you to join ${org_name} on Plutomi!`, // TODO if firstName or lastName === "NO_firstName" or NO_lastName, change this message
       },
       Body: {
         Html: {

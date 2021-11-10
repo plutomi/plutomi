@@ -13,7 +13,7 @@ export default async function UpdateStage({
     "SK",
     "orgId",
     "entity_type",
-    "created_at",
+    "createdAt",
     "stageId",
     "GSI1PK",
   ];

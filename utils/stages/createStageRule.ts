@@ -17,7 +17,7 @@ export async function CreateStageRule({
     PK: `ORG#${orgId}#OPENING#${openingId}#STAGE#${stageId}`,
     SK: `STAGE_RULE#${stage_rule_id}`,
     entity_type: "STAGE_RULE",
-    created_at: now,
+    createdAt: now,
     validation: validation,
     GSI1PK: `ORG#${orgId}#RULES#STAGES`,
     GSI1SK: stageId, // TODO filter by opening by stage?

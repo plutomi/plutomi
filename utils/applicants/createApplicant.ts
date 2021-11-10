@@ -32,7 +32,7 @@ export async function CreateApplicant({
     orgId: orgId,
     applicantId: applicantId,
     entity_type: "APPLICANT",
-    created_at: now,
+    createdAt: now,
     // TODO add phone number
     currentOpeningId: openingId,
     currentStageId: stageId,

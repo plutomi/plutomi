@@ -13,7 +13,7 @@ export default async function UpdateApplicant({
     "SK",
     "orgId",
     "entity_type",
-    "created_at",
+    "createdAt",
     "applicantId",
     "GSI1PK",
   ];

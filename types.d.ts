@@ -79,7 +79,7 @@ type CustomJWT = JWT & { userId: string };
 interface CreateOrgInviteInput {
   orgId: string;
   org_name: string;
-  created_by: DynamoUser;
+  createdBy: DynamoUser;
   recipientEmail: string; // Email of person getting invited
   expires_at: CustomDateFormat; // TODO Maybe Dynamo TTL or just ISO
   claimed: boolean;
@@ -103,7 +103,7 @@ interface DeleteOrgInviteInput {
   invite_id: string;
 }
 interface SendOrgInviteInput {
-  created_by: DynamoUser;
+  createdBy: DynamoUser;
   org_name: string;
   recipientEmail: string;
 }

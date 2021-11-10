@@ -15,7 +15,7 @@ export async function CreateAndJoinOrg({ userId, orgId, GSI1SK }) {
     SK: `ORG`,
     orgId: orgId, // plutomi - Cannot be changed
     entity_type: "ORG",
-    created_at: now,
+    createdAt: now,
     total_applicants: 0,
     total_openings: 0,
     total_stages: 0,

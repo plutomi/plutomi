@@ -19,7 +19,7 @@ export async function UpdateUser({
       "SK",
       "orgId",
       "entity_type",
-      "created_at",
+      "createdAt",
       "openingId",
       "GSI1PK",
       "GSI2PK",

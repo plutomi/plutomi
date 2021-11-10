@@ -34,7 +34,7 @@ const handler = async (
   const new_org_invite: CreateOrgInviteInput = {
     claimed: false,
     org_name: org.GSI1SK, // For the recipient they can see the name of the org instead of the orgId, much neater
-    created_by: user_session, // TODO reduce this to just name & email
+    createdBy: user_session, // TODO reduce this to just name & email
     orgId: org.orgId,
     recipientEmail: recipientEmail,
     expires_at: expires_at,
@@ -60,7 +60,7 @@ const handler = async (
     const recipient = await CreateUser({ userEmail: recipientEmail });
 
     const new_org_invite_email: SendOrgInviteInput = {
-      created_by: user_session,
+      createdBy: user_session,
       org_name: org.GSI1SK,
       recipientEmail: recipient.userEmail, // Will be lowercase & .trim()'d by createUser
     };
@@ -70,7 +70,7 @@ const handler = async (
         user: recipient,
         org_name: org.GSI1SK,
         expires_at: expires_at,
-        created_by: user_session,
+        createdBy: user_session,
       });
       try {
         await SendOrgInvite(new_org_invite_email); // TODO async with streams
