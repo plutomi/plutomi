@@ -3,9 +3,9 @@ import { GetOpening } from "../../utils/openings/getOpeningById";
 import CleanOpening from "../../utils/clean/cleanOpening";
 import FormattedResponse from "../../utils/formatResponse";
 
-export async function main(
+const main = async (
   event: APIGatewayProxyEventV2
-): Promise<APIGatewayProxyResultV2> {
+): Promise<APIGatewayProxyResultV2> => {
   const { org_id, opening_id } = event.pathParameters;
 
   if (!org_id) {
@@ -41,4 +41,5 @@ export async function main(
       message: `An error ocurred retrieving opening ${opening_id} info: ${error}`,
     });
   }
-}
+};
+exports.handler = main;

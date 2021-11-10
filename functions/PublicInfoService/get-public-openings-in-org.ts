@@ -2,9 +2,9 @@ import { APIGatewayProxyEventV2, APIGatewayProxyResultV2 } from "aws-lambda";
 import { GetAllOpeningsInOrg } from "../../utils/openings/getAllOpeningsInOrg";
 import CleanOpening from "../../utils/clean/cleanOpening";
 import FormattedResponse from "../../utils/formatResponse";
-export async function main(
+const main = async (
   event: APIGatewayProxyEventV2
-): Promise<APIGatewayProxyResultV2> {
+): Promise<APIGatewayProxyResultV2> => {
   const { org_id } = event.pathParameters;
 
   if (!org_id) {
@@ -27,4 +27,6 @@ export async function main(
       message: `An error ocurred retrieving openings for ${org_id}: ${error}`,
     });
   }
-}
+};
+
+exports.handler = main;

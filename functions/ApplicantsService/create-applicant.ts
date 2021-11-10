@@ -15,9 +15,9 @@ const schema = Joi.object({
   email: Joi.string().email().required(),
 });
 
-async function handler(
+const handler = async (
   event: APIGatewayProxyEventV2
-): Promise<APIGatewayProxyResultV2> {
+): Promise<APIGatewayProxyResultV2> => {
   const { orgId, openingId, firstName, lastName, email } = JSON.parse(
     event.body
   );
@@ -48,23 +48,6 @@ async function handler(
       message: `An error ocurred submitting your applciation: ${error}`,
     });
   }
+};
 
-  // TODO ASYNC with STREAMS!!!
-  //   const org = await GetOrg(orgId);
-
-  //   const send_applicant_link_input = {
-  //     applicant_email: new_applicant.email,
-  //     org_id: org_id,
-  //     org_name: org.GSI1SK,
-  //     applicant_id: new_applicant.applicant_id,
-  //   };
-  //   await SendApplicantLink(send_applicant_link_input);
-
-  //   return res.status(201).json({
-  //     message: `We've sent a link to your email to complete your application!`,
-  //   });
-}
-
-const main = inputValidation(handler, schema);
-
-module.exports = { main };
+export default inputValidation(handler, schema);

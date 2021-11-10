@@ -6,13 +6,17 @@ import { CreateApplicantResponse } from "../../../utils/applicants/createApplica
 // TODO
 type CreateApplicantResponseRequest = APIGatewayProxyEventV2 & {
   body: {
+    /// TODO ! FIX THIS TYPE !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    /// TODO ! FIX THIS TYPE !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     responses: []; // TODO Types!
-  };
-};
+  }; /// TODO ! FIX THIS TYPE !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+}; /// TODO ! FIX THIS TYPE !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-export async function main(
+/// TODO ! FIX THIS TYPE !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+const main = async (
   event: CreateApplicantResponseRequest
-): Promise<APIGatewayProxyResultV2> {
+): Promise<APIGatewayProxyResultV2> => {
   const { org_id, applicant_id } = event.pathParameters;
   const { responses } = event.body;
 
@@ -61,4 +65,6 @@ export async function main(
       message: `An error ocurred answering the questions: ${error}`,
     });
   }
-}
+};
+
+exports.handler = main;

@@ -38,7 +38,7 @@ export class ApplicantsServiceStack extends cdk.Stack {
     // Reusable defaults for each function
     const sharableLambdaConfig = {
       // TODO this should be extracted and passed down as props to each stack
-      handler: "main",
+      handler: "handler",
       memorySize: 256,
       role: executionRole,
       timeout: cdk.Duration.seconds(5),
