@@ -8,12 +8,12 @@ const fetcher = (url: string) => axios.get(url).then((res) => res.data);
 // User does not need to be signed in
 function usePublicOpeningById(
   orgId: string,
-  opening_id: string
+  openingId: string
 ): useOpeningByIdOutput {
-  const shouldFetch = orgId && opening_id ? true : false;
+  const shouldFetch = orgId && openingId ? true : false;
 
   const { data, error } = useSWR(
-    shouldFetch && PublicInfoService.getPublicOpeningURL({ orgId, opening_id }),
+    shouldFetch && PublicInfoService.getPublicOpeningURL({ orgId, openingId }),
 
     fetcher
   );

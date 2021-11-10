@@ -1,21 +1,15 @@
 import { APIGatewayProxyEventV2, APIGatewayProxyResultV2 } from "aws-lambda";
 import FormattedResponse from "../../utils/formatResponse";
 import { GetAllQuestionsInStage } from "../../utils/questions/getAllQuestionsInStage";
+import withCleanOrgId from "../../middleware/withCleanOrgId";
+
 const main = async (
   event: APIGatewayProxyEventV2
 ): Promise<APIGatewayProxyResultV2> => {
-  const { orgId, stage_id } = event.pathParameters;
-
-  if (!orgId) {
-    return FormattedResponse(400, { message: `'orgId' is missing` });
-  }
-
-  if (!stage_id) {
-    return FormattedResponse(400, { message: `'stage_id' is missing` });
-  }
+  const { orgId, stageId } = event.pathParameters;
 
   try {
-    const allQuestions = await GetAllQuestionsInStage(orgId, stage_id);
+    const allQuestions = await GetAllQuestionsInStage(orgId, stageId);
     // TODO public / private questions?
 
     return FormattedResponse(200, allQuestions);
@@ -25,9 +19,9 @@ const main = async (
     // TODO error logger
     // TODO status code
     return FormattedResponse(500, {
-      message: `An error ocurred retrieving questions for the stage ${stage_id}: ${error}`,
+      message: `An error ocurred retrieving questions for the stage ${stageId}: ${error}`,
     });
   }
 };
 
-exports.handler = main;
+exports.handler = withCleanOrgId(main);

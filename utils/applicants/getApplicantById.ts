@@ -9,12 +9,12 @@ import { Dynamo } from "../../awsClients/ddbDocClient";
 const { DYNAMO_TABLE_NAME } = process.env;
 import _ from "lodash";
 
-export async function GetApplicantById(orgId: string, applicant_id: string) {
+export async function GetApplicantById(orgId: string, applicantId: string) {
   const responsesParams: QueryCommandInput = {
     TableName: DYNAMO_TABLE_NAME,
     KeyConditionExpression: "PK = :PK AND begins_with(SK, :SK)",
     ExpressionAttributeValues: {
-      ":PK": `ORG#${orgId}#APPLICANT#${applicant_id}`,
+      ":PK": `ORG#${orgId}#APPLICANT#${applicantId}`,
       ":SK": `APPLICANT`,
     },
   };

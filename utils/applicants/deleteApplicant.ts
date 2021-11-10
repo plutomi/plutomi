@@ -6,10 +6,10 @@ import { Dynamo } from "../../awsClients/ddbDocClient";
 import { GetApplicantById } from "./getApplicantById";
 const { DYNAMO_TABLE_NAME } = process.env;
 
-export default async function DeleteApplicant({ orgId, applicant_id }) {
+export default async function DeleteApplicant({ orgId, applicantId }) {
   const applicant = (await GetApplicantById({
     orgId,
-    applicant_id,
+    applicantId,
   })) as unknown as DynamoApplicant; // TODO fix this shit :(
   try {
     const transactParams: TransactWriteCommandInput = {
@@ -18,7 +18,7 @@ export default async function DeleteApplicant({ orgId, applicant_id }) {
           // Delete the applicant
           Delete: {
             Key: {
-              PK: `ORG#${orgId}#APPLICANT#${applicant_id}`,
+              PK: `ORG#${orgId}#APPLICANT#${applicantId}`,
               SK: `APPLICANT`,
             },
             TableName: DYNAMO_TABLE_NAME,
@@ -29,7 +29,7 @@ export default async function DeleteApplicant({ orgId, applicant_id }) {
           // Decrement opening's total_applicants
           Update: {
             Key: {
-              PK: `ORG#${orgId}#OPENING#${applicant.current_opening_id}`, // todo fix types
+              PK: `ORG#${orgId}#OPENING#${applicant.current_openingId}`, // todo fix types
               SK: `OPENING`,
             },
             TableName: DYNAMO_TABLE_NAME,
@@ -44,7 +44,7 @@ export default async function DeleteApplicant({ orgId, applicant_id }) {
           // Decrement stage's total_applicants
           Update: {
             Key: {
-              PK: `ORG#${orgId}#STAGE#${applicant.current_stage_id}`, // todo fix types
+              PK: `ORG#${orgId}#STAGE#${applicant.current_stageId}`, // todo fix types
               SK: `STAGE`,
             },
             TableName: DYNAMO_TABLE_NAME,

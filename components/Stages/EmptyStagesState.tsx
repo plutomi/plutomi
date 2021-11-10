@@ -6,12 +6,12 @@ import useSelf from "../../SWR/useSelf";
 import useAllStagesInOpening from "../../SWR/useAllStagesInOpening";
 export default function EmptyStagesState() {
   const router = useRouter();
-  const { opening_id } = router.query as CustomQuery;
+  const { openingId } = router.query as CustomQuery;
 
   const { user, isUserLoading, isUserError } = useSelf();
 
   let { stages, isStagesLoading, isStagesError } =
-    useAllStagesInOpening(opening_id);
+    useAllStagesInOpening(openingId);
 
   const stageModal = useStore((state) => state.stageModal);
   const setStageModal = useStore((state) => state.setStageModal);

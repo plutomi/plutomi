@@ -4,7 +4,7 @@ const { DYNAMO_TABLE_NAME } = process.env;
 
 export default async function UpdateOpening({
   orgId,
-  opening_id,
+  openingId,
   new_opening_values,
 }) {
   // TODO user the cleaning functions instead
@@ -14,7 +14,7 @@ export default async function UpdateOpening({
     "orgId",
     "entityType",
     "created_at",
-    "opening_id",
+    "openingId",
     "GSI1PK",
   ];
 
@@ -37,7 +37,7 @@ export default async function UpdateOpening({
 
   const params: UpdateCommandInput = {
     Key: {
-      PK: `ORG#${orgId}#OPENING#${opening_id}`,
+      PK: `ORG#${orgId}#OPENING#${openingId}`,
       SK: `OPENING`,
     },
     UpdateExpression: UpdatedExpression,

@@ -12,12 +12,12 @@ const handler = async (
     return res.status(401).json({ message: "Please log in again" });
   }
   const { body, method } = req;
-  const { GSI1SK, question_description, stage_id } = body;
+  const { GSI1SK, question_description, stageId } = body;
 
   if (method === "POST") {
     const create_stage_question_input = {
       orgId: user_session.orgId,
-      stage_id: stage_id,
+      stageId: stageId,
       GSI1SK: GSI1SK,
       question_description: question_description,
     };

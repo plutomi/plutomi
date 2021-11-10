@@ -12,12 +12,12 @@ const handler = async (
     return res.status(401).json({ message: "Please log in again" });
   }
   const { method, query } = req;
-  const { opening_id } = query as CustomQuery;
+  const { openingId } = query as CustomQuery;
 
   if (method === "GET") {
     const get_all_applicants_in_opening_input = {
       orgId: user_session.orgId,
-      opening_id: opening_id,
+      openingId: openingId,
     };
 
     try {

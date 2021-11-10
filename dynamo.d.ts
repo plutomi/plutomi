@@ -25,7 +25,7 @@ interface DynamoOpening {
   SK: "OPENING";
   entityType: "OPENING";
   created_at: string;
-  opening_id: string;
+  openingId: string;
   GSI1PK: string;
   GSI1SK: string;
   total_applicants: number;
@@ -41,10 +41,10 @@ interface DynamoStage {
   SK: `STAGE`;
   entityType: "STAGE";
   created_at: string;
-  stage_id: string;
+  stageId: string;
   total_applicants: number;
   question_order: string[];
-  opening_id: string;
+  openingId: string;
   GSI1PK: string;
   GSI1SK: string;
 }
@@ -95,12 +95,12 @@ interface DynamoApplicant {
   fullName: string;
   email: string;
   email_verified: boolean;
-  applicant_id: string;
+  applicantId: string;
   orgId: string;
   entityType: "APPLICANT";
   created_at: CustomDateFormat;
-  current_opening_id: string;
-  current_stage_id: string;
+  current_openingId: string;
+  current_stageId: string;
   GSI1PK: string;
   GSI1SK: string;
   GSI2PK: string;
@@ -113,7 +113,7 @@ interface DynamoApplicantResponse {
   PK: string;
   SK: `APPLICANT_RESPONSE`;
   orgId: string;
-  applicant_id: string;
+  applicantId: string;
   entityType: "APPLICANT_RESPONSE";
   question_title: string;
   question_description: string;

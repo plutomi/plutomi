@@ -20,7 +20,7 @@ export async function UpdateUser({
       "orgId",
       "entityType",
       "created_at",
-      "opening_id",
+      "openingId",
       "GSI1PK",
       "GSI2PK",
       "user_role",

@@ -10,7 +10,7 @@ export async function DeleteQuestion({ orgId, question_id }) {
   // Delete the question item & update the question order on the stage
   try {
     let question = await GetQuestion({ orgId, question_id });
-    let stage = await getStage({ orgId, stage_id: question.stage_id });
+    let stage = await getStage({ orgId, stageId: question.stageId });
     const deleted_question_index = stage.question_order.indexOf(question_id);
 
     // Update question order
@@ -32,7 +32,7 @@ export async function DeleteQuestion({ orgId, question_id }) {
           // Update Question Order
           Update: {
             Key: {
-              PK: `ORG#${orgId}#STAGE#${stage.stage_id}`,
+              PK: `ORG#${orgId}#STAGE#${stage.stageId}`,
               SK: `STAGE`,
             },
             TableName: DYNAMO_TABLE_NAME,

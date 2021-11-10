@@ -7,16 +7,16 @@ const fetcher = (url: string) => axios.get(url).then((res) => res.data);
 /**
  *
  * @param userId - The ID of the logged in user
- * @param opening_id - The opening that you want to look in
- * @param stage_id - The stage which you want to retrieve
+ * @param openingId - The opening that you want to look in
+ * @param stageId - The stage which you want to retrieve
  */
-function useStageById(stage_id: string): useStageByIdOutput {
-  const shouldFetch = stage_id ? true : false;
+function useStageById(stageId: string): useStageByIdOutput {
+  const shouldFetch = stageId ? true : false;
 
   const { data, error } = useSWR(
     shouldFetch &&
       StagesService.getStageURL({
-        stage_id: stage_id,
+        stageId: stageId,
       }),
     fetcher
   );

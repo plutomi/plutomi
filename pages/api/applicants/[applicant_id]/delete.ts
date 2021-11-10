@@ -13,13 +13,13 @@ const handler = async (
     return res.status(401).json({ message: "Please log in again" });
   }
   const { method, query } = req;
-  const { applicant_id } = query as CustomQuery;
+  const { applicantId } = query as CustomQuery;
 
   if (method === "GET") {
     try {
       await DeleteApplicant({
         orgId: user_session.orgId,
-        applicant_id: applicant_id,
+        applicantId: applicantId,
       });
       return res.status(200).json({ message: "Applicant deleted!" });
     } catch (error) {

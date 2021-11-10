@@ -5,18 +5,10 @@ import { GetApplicantById } from "../../utils/applicants/getApplicantById";
 const main = async (
   event: APIGatewayProxyEventV2
 ): Promise<APIGatewayProxyResultV2> => {
-  const { orgId, applicant_id } = event.pathParameters;
-
-  if (!orgId) {
-    return FormattedResponse(400, { message: `'orgId' is missing` });
-  }
-
-  if (!applicant_id) {
-    return FormattedResponse(400, { message: `'applicant_id' is missing` });
-  }
+  const { orgId, applicantId } = event.pathParameters;
 
   try {
-    const applicant = await GetApplicantById(orgId, applicant_id);
+    const applicant = await GetApplicantById(orgId, applicantId);
 
     if (!applicant) {
       return FormattedResponse(404, {
@@ -32,7 +24,7 @@ const main = async (
     // TODO error logger
     // TODO status code
     return FormattedResponse(500, {
-      message: `An error ocurred retrieving applicant ${applicant_id} info: ${error}`,
+      message: `An error ocurred retrieving applicant ${applicantId} info: ${error}`,
     });
   }
 };

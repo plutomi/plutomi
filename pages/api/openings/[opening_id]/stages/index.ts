@@ -13,14 +13,14 @@ const handler = async (
     return res.status(401).json({ message: "Please log in again" });
   }
   const { body, method, query } = req;
-  const { opening_id } = query as CustomQuery;
+  const { openingId } = query as CustomQuery;
 
   // Get all stages in an opening
   if (method === "GET") {
     try {
       const all_stages = await GetAllStagesInOpening(
         user_session.orgId,
-        opening_id
+        openingId
       );
       return res.status(200).json(all_stages);
     } catch (error) {

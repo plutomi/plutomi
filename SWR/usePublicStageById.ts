@@ -8,14 +8,14 @@ const fetcher = (url: string) => axios.get(url).then((res) => res.data);
 // User does not need to be signed in
 function usePublicStageById( // TODO i think this can be refactored since we no longer need th eopening ID
   orgId: string,
-  opening_id: string,
-  stage_id: string
+  openingId: string,
+  stageId: string
 ): useStageByIdOutput {
-  const shouldFetch = orgId && opening_id && stage_id ? true : false;
+  const shouldFetch = orgId && openingId && stageId ? true : false;
 
   const { data, error } = useSWR(
     shouldFetch &&
-      PublicInfoService.getPublicStageURL({ orgId, opening_id, stage_id }),
+      PublicInfoService.getPublicStageURL({ orgId, openingId, stageId }),
     fetcher
   );
 

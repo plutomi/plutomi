@@ -13,29 +13,29 @@ const { DYNAMO_TABLE_NAME } = process.env;
 export async function CreateStage({
   orgId,
   GSI1SK,
-  opening_id,
+  openingId,
 }: DynamoCreateStageInput) {
   const now = getCurrentTime("iso") as string;
-  const stage_id = nanoid(50);
+  const stageId = nanoid(50);
   const new_stage = {
-    PK: `ORG#${orgId}#STAGE#${stage_id}`,
+    PK: `ORG#${orgId}#STAGE#${stageId}`,
     SK: `STAGE`,
     entityType: "STAGE",
     created_at: now,
     question_order: [],
-    stage_id: stage_id,
+    stageId: stageId,
     total_applicants: 0,
-    opening_id: opening_id,
-    GSI1PK: `ORG#${orgId}#OPENING#${opening_id}#STAGES`, // Get all stages in an opening
+    openingId: openingId,
+    GSI1PK: `ORG#${orgId}#OPENING#${openingId}#STAGES`, // Get all stages in an opening
     GSI1SK: GSI1SK,
   };
 
   try {
-    let opening = await GetOpening({ orgId, opening_id });
+    let opening = await GetOpening({ orgId, openingId });
 
     try {
       // Get current opening
-      opening.stage_order.push(stage_id);
+      opening.stage_order.push(stageId);
 
       if (opening.stage_order.length >= MAX_CHILD_ITEM_LIMIT) {
         throw MAX_ITEM_LIMIT_ERROR;
@@ -56,7 +56,7 @@ export async function CreateStage({
             // Add stage to the opening + increment stage count on opening
             Update: {
               Key: {
-                PK: `ORG#${orgId}#OPENING#${opening_id}`,
+                PK: `ORG#${orgId}#OPENING#${openingId}`,
                 SK: `OPENING`,
               },
               TableName: DYNAMO_TABLE_NAME,

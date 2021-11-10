@@ -2,24 +2,18 @@ import { APIGatewayProxyEventV2, APIGatewayProxyResultV2 } from "aws-lambda";
 import { GetOpening } from "../../utils/openings/getOpeningById";
 import CleanOpening from "../../utils/clean/cleanOpening";
 import FormattedResponse from "../../utils/formatResponse";
+import withCleanOrgId from "../../middleware/withCleanOrgId";
 
 const main = async (
   event: APIGatewayProxyEventV2
 ): Promise<APIGatewayProxyResultV2> => {
-  const { orgId, opening_id } = event.pathParameters;
+  const { orgId, openingId } = event.pathParameters;
 
-  if (!orgId) {
-    return FormattedResponse(400, { message: `'orgId' is missing` });
-  }
-
-  if (!opening_id) {
-    return FormattedResponse(400, { message: `'opening_id' is missing` });
-  }
   try {
-    const opening = await GetOpening(orgId, opening_id);
+    const opening = await GetOpening(orgId, openingId);
     if (!opening) {
       return FormattedResponse(404, {
-        message: `Opening ${opening_id} not found`,
+        message: `Opening ${openingId} not found`,
       });
     }
 
@@ -38,8 +32,8 @@ const main = async (
     // TODO error logger
     // TODO status code
     return FormattedResponse(500, {
-      message: `An error ocurred retrieving opening ${opening_id} info: ${error}`,
+      message: `An error ocurred retrieving opening ${openingId} info: ${error}`,
     });
   }
 };
-exports.handler = main;
+exports.handler = withCleanOrgId(main);

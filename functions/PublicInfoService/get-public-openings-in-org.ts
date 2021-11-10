@@ -2,14 +2,12 @@ import { APIGatewayProxyEventV2, APIGatewayProxyResultV2 } from "aws-lambda";
 import { GetAllOpeningsInOrg } from "../../utils/openings/getAllOpeningsInOrg";
 import CleanOpening from "../../utils/clean/cleanOpening";
 import FormattedResponse from "../../utils/formatResponse";
+import withCleanOrgId from "../../middleware/withCleanOrgId";
+
 const main = async (
   event: APIGatewayProxyEventV2
 ): Promise<APIGatewayProxyResultV2> => {
   const { orgId } = event.pathParameters;
-
-  if (!orgId) {
-    return FormattedResponse(400, { message: `'orgId' is missing` });
-  }
 
   try {
     const allOpenings = await GetAllOpeningsInOrg(orgId);
@@ -29,4 +27,4 @@ const main = async (
   }
 };
 
-exports.handler = main;
+exports.handler = withCleanOrgId(main);

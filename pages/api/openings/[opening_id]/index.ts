@@ -14,11 +14,11 @@ const handler = async (
     return res.status(401).json({ message: "Please log in again" });
   }
   const { method, query, body } = req;
-  const { opening_id } = query as CustomQuery;
+  const { openingId } = query as CustomQuery;
 
   const get_opening_input: GetOpeningInput = {
     orgId: user_session.orgId,
-    opening_id: opening_id,
+    openingId: openingId,
   };
 
   if (method === "GET") {
@@ -41,7 +41,7 @@ const handler = async (
     try {
       const update_opening_input: UpdateOpeningInput = {
         orgId: user_session.orgId,
-        opening_id: opening_id,
+        openingId: openingId,
         new_opening_values: body.new_opening_values,
       };
 
@@ -64,7 +64,7 @@ const handler = async (
     try {
       const delete_opening_input = {
         orgId: user_session.orgId,
-        opening_id: opening_id,
+        openingId: openingId,
       };
       await DeleteOpening(delete_opening_input);
       return res.status(200).json({ message: "Opening deleted" });

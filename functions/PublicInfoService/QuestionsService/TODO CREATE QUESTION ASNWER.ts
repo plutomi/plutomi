@@ -17,15 +17,15 @@ type CreateApplicantResponseRequest = APIGatewayProxyEventV2 & {
 const main = async (
   event: CreateApplicantResponseRequest
 ): Promise<APIGatewayProxyResultV2> => {
-  const { orgId, applicant_id } = event.pathParameters;
+  const { orgId, applicantId } = event.pathParameters;
   const { responses } = event.body;
 
   if (!orgId) {
     return FormattedResponse(400, { message: `'orgId' is missing` });
   }
 
-  if (!applicant_id) {
-    return FormattedResponse(400, { message: `'applicant_id' is missing` });
+  if (!applicantId) {
+    return FormattedResponse(400, { message: `'applicantId' is missing` });
   }
 
   if (!responses || responses.length == 0) {
@@ -42,7 +42,7 @@ const main = async (
 
         const create_applicant_response_input = {
           orgId: orgId,
-          applicant_id: applicant_id,
+          applicantId: applicantId,
           question_title: question_title,
           question_description: question_description,
           question_response: question_response,
