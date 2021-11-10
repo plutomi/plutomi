@@ -1,6 +1,5 @@
 import { NextApiResponse } from "next";
 import { DeleteQuestion } from "../../../../utils/questions/deleteQuestion";
-import InputValidation from "../../../../utils/inputValidation";
 import UpdateQuestion from "../../../../utils/questions/updateStageQuestion";
 import withSession from "../../../../middleware/withSession";
 

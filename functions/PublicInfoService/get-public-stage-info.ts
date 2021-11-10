@@ -1,6 +1,6 @@
 import { APIGatewayProxyEventV2, APIGatewayProxyResultV2 } from "aws-lambda";
 import FormattedResponse from "../../utils/formatResponse";
-import { GetStage } from "../../utils/stages/getStage";
+import { getStage } from "../../utils/stages/getStage";
 import CleanStage from "../../utils/clean/cleanStage";
 const handler = async (
   event: APIGatewayProxyEventV2
@@ -15,7 +15,7 @@ const handler = async (
     return FormattedResponse(400, { message: `'stage_id' is missing` });
   }
   try {
-    const stage = await GetStage(orgId, stage_id);
+    const stage = await getStage(orgId, stage_id);
     if (!stage) {
       return FormattedResponse(404, {
         message: `Stage ${stage_id} not found`,

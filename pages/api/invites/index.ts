@@ -1,7 +1,5 @@
 import CreateOrgInvite from "../../../utils/invites/createOrgInvite";
 import SendOrgInvite from "../../../utils/email/sendOrgInvite";
-import InputValidation from "../../../utils/inputValidation";
-import { getPastOrFutureTime } from "../../../utils/time";
 import { NextApiResponse } from "next";
 import withCleanOrgId from "../../../middleware/withCleanOrgId";
 import { GetOrg } from "../../../utils/orgs/getOrg";
@@ -62,7 +60,6 @@ const handler = async (
       recipient = await createUser(userEmail);
     }
 
-    const recipient = await createUser(userEmail);
 
     const new_org_invite_email: SendOrgInviteInput = {
       createdBy: user_session,

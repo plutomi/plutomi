@@ -1,6 +1,5 @@
 import { NextApiResponse } from "next";
 import withCleanOrgId from "../../../middleware/withCleanOrgId";
-import InputValidation from "../../../utils/inputValidation";
 import { GetAllUserInvites } from "../../../utils/invites/getAllOrgInvites";
 import withSession from "../../../middleware/withSession";
 import CleanUser from "../../../utils/clean/cleanUser";
