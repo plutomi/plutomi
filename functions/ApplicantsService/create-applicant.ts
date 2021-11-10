@@ -2,9 +2,8 @@ import { APIGatewayProxyResultV2, APIGatewayProxyEventV2 } from "aws-lambda";
 import FormattedResponse from "../../utils/formatResponse";
 import { GetOpening } from "../../utils/openings/getOpeningById";
 import { CreateApplicant } from "../../utils/applicants/createApplicant";
-import inputValidation from "../../middleware/inputValidation";
+import withInputValidation from "../../middleware/withInputValidation";
 import Joi from "@hapi/joi";
-import withSession from "../../middleware/withSession";
 
 // TODO TODO TODO set max length values in config file
 const schema = Joi.object({
@@ -12,7 +11,7 @@ const schema = Joi.object({
   openingId: Joi.string().required(),
   firstName: Joi.string().required(),
   lastName: Joi.string().required(),
-  email: Joi.string().email().required(),
+  applicantEmail: Joi.string().email().required(),
 });
 
 const handler = async (
@@ -30,7 +29,7 @@ const handler = async (
 
   const createApplicantInput = {
     orgId: orgId,
-    email: email,
+    applicantEmail: email,
     firstName: firstName,
     lastName: lastName,
     openingId: openingId,
@@ -50,4 +49,4 @@ const handler = async (
   }
 };
 
-export default inputValidation(handler, schema);
+export default withInputValidation(handler, schema);

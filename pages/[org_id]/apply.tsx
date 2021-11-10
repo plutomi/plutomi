@@ -6,9 +6,9 @@ import OrgApplyPageContent from "../../components/Org/Public/OrgApplyPageContent
 
 export default function Apply() {
   const router = useRouter();
-  const { org_id } = router.query as CustomQuery as CustomQuery;
+  const { orgId } = router.query as CustomQuery as CustomQuery;
 
-  const { org, isOrgLoading, isOrgError } = usePublicOrgById(org_id);
+  const { org, isOrgLoading, isOrgError } = usePublicOrgById(orgId);
 
   if (isOrgLoading) {
     return <Loader text="Loading..." />;

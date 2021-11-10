@@ -18,7 +18,7 @@ const handler = async (
   if (method === "GET") {
     try {
       await DeleteApplicant({
-        org_id: user_session.org_id,
+        orgId: user_session.orgId,
         applicant_id: applicant_id,
       });
       return res.status(200).json({ message: "Applicant deleted!" });

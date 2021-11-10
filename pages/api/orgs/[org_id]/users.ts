@@ -14,24 +14,24 @@ const handler = async (
     return res.status(401).json({ message: "Please log in again" });
   }
   const { method, query } = req;
-  const { org_id } = query as CustomQuery;
+  const { orgId } = query as CustomQuery;
 
   if (method === "GET") {
-    if (user_session.org_id != org_id) {
+    if (user_session.orgId != orgId) {
       // TODO team site bug returning 403 -- TODO I think this is fixed
       return res
         .status(403)
         .json({ message: "You cannot view the users of this org" });
     }
 
-    if (user_session.org_id === "NO_ORG_ASSIGNED") {
+    if (user_session.orgId === "NO_ORG_ASSIGNED") {
       return res.status(400).json({
         message: "You must create an org or join one to view it's users",
       });
     }
 
     try {
-      const all_users = await GetAllUsersInOrg({ org_id: user_session.org_id });
+      const all_users = await GetAllUsersInOrg({ orgId: user_session.orgId });
       return res.status(200).json(all_users);
     } catch (error) {
       return res

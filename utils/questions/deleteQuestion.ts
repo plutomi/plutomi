@@ -6,11 +6,11 @@ import { Dynamo } from "../../lib/awsClients/ddbDocClient";
 const { DYNAMO_TABLE_NAME } = process.env;
 import { GetStage } from "../stages/getStage";
 import { GetQuestion } from "./getQuestionById";
-export async function DeleteQuestion({ org_id, question_id }) {
+export async function DeleteQuestion({ orgId, question_id }) {
   // Delete the question item & update the question order on the stage
   try {
-    let question = await GetQuestion({ org_id, question_id });
-    let stage = await GetStage({ org_id, stage_id: question.stage_id });
+    let question = await GetQuestion({ orgId, question_id });
+    let stage = await GetStage({ orgId, stage_id: question.stage_id });
     const deleted_question_index = stage.question_order.indexOf(question_id);
 
     // Update question order
@@ -22,7 +22,7 @@ export async function DeleteQuestion({ org_id, question_id }) {
           // Delete question
           Delete: {
             Key: {
-              PK: `ORG#${org_id}#QUESTION#${question_id}`,
+              PK: `ORG#${orgId}#QUESTION#${question_id}`,
               SK: `STAGE_QUESTION`,
             },
             TableName: DYNAMO_TABLE_NAME,
@@ -32,7 +32,7 @@ export async function DeleteQuestion({ org_id, question_id }) {
           // Update Question Order
           Update: {
             Key: {
-              PK: `ORG#${org_id}#STAGE#${stage.stage_id}`,
+              PK: `ORG#${orgId}#STAGE#${stage.stage_id}`,
               SK: `STAGE`,
             },
             TableName: DYNAMO_TABLE_NAME,

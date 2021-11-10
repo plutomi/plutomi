@@ -19,7 +19,7 @@ const handler = async (
   if (method === "DELETE") {
     try {
       const delete_question_input = {
-        org_id: user_session.org_id,
+        orgId: user_session.orgId,
         question_id: question_id,
       };
       await DeleteQuestion(delete_question_input);
@@ -35,7 +35,7 @@ const handler = async (
   if (method === "PUT") {
     try {
       const update_question_input: UpdateQuestionInput = {
-        org_id: user_session.org_id,
+        orgId: user_session.orgId,
         question_id: question_id,
         new_question_values: body.new_question_values, // Just the keys that are passed down
       };

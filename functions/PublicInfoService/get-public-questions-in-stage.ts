@@ -1,13 +1,13 @@
 import { APIGatewayProxyEventV2, APIGatewayProxyResultV2 } from "aws-lambda";
 import FormattedResponse from "../../utils/formatResponse";
 import { GetAllQuestionsInStage } from "../../utils/questions/getAllQuestionsInStage";
-const main = async (
+const handler = async (
   event: APIGatewayProxyEventV2
 ): Promise<APIGatewayProxyResultV2> => {
-  const { org_id, stage_id } = event.pathParameters;
+  const { orgId, stage_id } = event.pathParameters;
 
-  if (!org_id) {
-    return FormattedResponse(400, { message: `'org_id' is missing` });
+  if (!orgId) {
+    return FormattedResponse(400, { message: `'orgId' is missing` });
   }
 
   if (!stage_id) {
@@ -15,7 +15,7 @@ const main = async (
   }
 
   try {
-    const allQuestions = await GetAllQuestionsInStage(org_id, stage_id);
+    const allQuestions = await GetAllQuestionsInStage(orgId, stage_id);
     // TODO public / private questions?
 
     return FormattedResponse(200, allQuestions);
@@ -30,4 +30,4 @@ const main = async (
   }
 };
 
-exports.handler = main;
+export default handler;

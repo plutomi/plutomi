@@ -15,7 +15,7 @@ export default async function SendNewUserEmail(new_user: DynamoUser) {
       },
       Body: {
         Html: {
-          Data: `<h1>Email: ${new_user.user_email}</h1><h1>ID: ${new_user.userId}</h1>`,
+          Data: `<h1>Email: ${new_user.userEmail}</h1><h1>ID: ${new_user.userId}</h1>`,
         },
       },
     },

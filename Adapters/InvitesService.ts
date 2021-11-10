@@ -1,9 +1,9 @@
 import axios from "../axios/axios";
 
 export default class InvitesService {
-  static async createInvite({ recipient_email }: APICreateInviteInput) {
+  static async createInvite({ recipientEmail }: APICreateInviteInput) {
     const body = {
-      recipient_email: recipient_email,
+      recipientEmail: recipientEmail,
     };
     const { data } = await axios.post(`/api/invites`, body);
     return data;

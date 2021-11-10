@@ -17,7 +17,7 @@ const handler = async (
     return res.status(401).json({ message: "Please log in again" });
   }
   const { body, method } = req;
-  const { GSI1SK, org_id }: APICreateOrgInput = body;
+  const { GSI1SK, orgId }: APICreateOrgInput = body;
 
   // Create an org
   if (method === "POST") {
@@ -27,7 +27,7 @@ const handler = async (
         message: `You cannot create an org with this name: ${GSI1SK}`,
       });
     }
-    if (user_session.org_id != "NO_ORG_ASSIGNED") {
+    if (user_session.orgId != "NO_ORG_ASSIGNED") {
       return res.status(400).json({
         message: `You already belong to an org!`,
       });
@@ -44,7 +44,7 @@ const handler = async (
 
     const create_org_input: CreateOrgInput = {
       GSI1SK: GSI1SK,
-      org_id: org_id,
+      orgId: orgId,
       user: user_session,
     };
 
@@ -62,7 +62,7 @@ const handler = async (
     try {
       await CreateAndJoinOrg({
         userId: user_session.userId,
-        org_id: org_id,
+        orgId: orgId,
         GSI1SK: GSI1SK,
       });
       const updated_user = await GetUserById(user_session.userId); // TODO remove this, wait for transact
@@ -71,7 +71,7 @@ const handler = async (
       req.session.set("user", CleanUser(updated_user as DynamoUser));
       await req.session.save();
 
-      return res.status(201).json({ message: "Org created!", org: org_id });
+      return res.status(201).json({ message: "Org created!", org: orgId });
     } catch (error) {
       // TODO add error logger
       return res

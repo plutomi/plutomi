@@ -1,17 +1,17 @@
 import { FormEvent, useState } from "react";
 export default function UpdateName({ updateName }) {
-  const [first_name, setFirstName] = useState("");
-  const [last_name, setLastName] = useState("");
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
 
   const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
-    if (!first_name || !last_name) {
+    if (!firstName || !lastName) {
       alert("Please enter a first and last name");
     }
 
     const body = {
-      first_name: first_name,
-      last_name: last_name,
+      firstName: firstName,
+      lastName: lastName,
     };
     updateName(body);
   };
@@ -41,7 +41,7 @@ export default function UpdateName({ updateName }) {
                 name="first-name"
                 id="first-name"
                 required
-                value={first_name}
+                value={firstName}
                 onChange={(e) => setFirstName(e.target.value)}
                 className="block w-full border-0 p-0 text-gray-900 placeholder-gray-500 focus:ring-0 sm:text-sm"
                 placeholder="Bryan"
@@ -59,7 +59,7 @@ export default function UpdateName({ updateName }) {
                 name="last-name"
                 id="last-name"
                 required
-                value={last_name}
+                value={lastName}
                 onChange={(e) => setLastName(e.target.value)}
                 className="block w-full border-0 p-0 text-gray-900 placeholder-gray-500 focus:ring-0 sm:text-sm"
                 placeholder="Danielson"

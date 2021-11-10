@@ -10,8 +10,8 @@ import { DeleteStage } from "../stages/deleteStage";
 import { GetAllStagesInOpening } from "../stages/getAllStagesInOpening";
 // TODO check if stage is empt of appliants first
 // TODO delete stage from the funnels sort order
-export async function DeleteOpening({ org_id, opening_id }) {
-  const all_stages = await GetAllStagesInOpening(org_id, opening_id);
+export async function DeleteOpening({ orgId, opening_id }) {
+  const all_stages = await GetAllStagesInOpening(orgId, opening_id);
 
   try {
     // Delete stages first
@@ -20,7 +20,7 @@ export async function DeleteOpening({ org_id, opening_id }) {
       all_stages.map(async (stage: DynamoStage) => {
         // TODO add to SQS & delete applicants, rules, questions, etc.
         const input = {
-          org_id: org_id,
+          orgId: orgId,
           opening_id: opening_id,
           stage_id: stage.stage_id,
         };
@@ -36,7 +36,7 @@ export async function DeleteOpening({ org_id, opening_id }) {
           // Delete the opening
           Delete: {
             Key: {
-              PK: `ORG#${org_id}#OPENING#${opening_id}`,
+              PK: `ORG#${orgId}#OPENING#${opening_id}`,
               SK: `OPENING`,
             },
             TableName: DYNAMO_TABLE_NAME,
@@ -46,7 +46,7 @@ export async function DeleteOpening({ org_id, opening_id }) {
           // Decrement the org's total openings
           Update: {
             Key: {
-              PK: `ORG#${org_id}`,
+              PK: `ORG#${orgId}`,
               SK: `ORG`,
             },
             TableName: DYNAMO_TABLE_NAME,

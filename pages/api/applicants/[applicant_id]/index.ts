@@ -18,7 +18,7 @@ const handler = async (
   const { applicant_id } = query as CustomQuery;
 
   const get_applicant_input: GetApplicantInput = {
-    org_id: user_session.org_id,
+    orgId: user_session.orgId,
     applicant_id: applicant_id,
   };
 
@@ -42,7 +42,7 @@ const handler = async (
   if (method === "PUT") {
     try {
       const update_applicant_input: UpdateApplicantInput = {
-        org_id: user_session.org_id,
+        orgId: user_session.orgId,
         applicant_id: applicant_id,
         new_applicant_values: body.new_applicant_values,
       };
@@ -65,7 +65,7 @@ const handler = async (
   if (method === "DELETE") {
     try {
       await DeleteApplicant({
-        org_id: user_session.org_id,
+        orgId: user_session.orgId,
         applicant_id: applicant_id,
       });
       return res.status(200).json({ message: "Applicant deleted!" });

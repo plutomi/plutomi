@@ -1,59 +1,59 @@
 import { APIGatewayProxyEventV2 } from "aws-lambda";
 
 interface GetOrgInput {
-  org_id: string;
+  orgId: string;
 }
 
 interface CreateUserInput {
-  first_name?: string;
-  last_name?: string;
-  user_email: string;
+  firstName?: string;
+  lastName?: string;
+  userEmail: string;
 }
 
 interface GetOpeningInput {
-  org_id: string;
+  orgId: string;
   opening_id: string;
 }
 interface GetApplicantInput {
-  org_id: string;
+  orgId: string;
   applicant_id: string;
 }
 interface DynamoCreateStageInput {
-  org_id: string;
+  orgId: string;
   opening_id: string;
   GSI1SK: string;
 }
 
 interface GetStageInput {
-  org_id: string;
+  orgId: string;
   stage_id: string;
 }
 
 interface CreateStageQuestionInput {
-  org_id: string;
+  orgId: string;
   stage_id: string;
   GSI1SK: string;
   question_description: string;
 }
 
 interface CreateStageRuleInput {
-  org_id: string;
+  orgId: string;
   opening_id: string;
   stage_id: string;
   validation: string; // TODO
 }
 
 interface CreateApplicantInput {
-  org_id: string;
-  first_name: string;
-  last_name: string;
+  orgId: string;
+  firstName: string;
+  lastName: string;
   email: string;
   opening_id: string;
   stage_id: string;
 }
 
 interface CreateApplicantResponseInput {
-  org_id: string;
+  orgId: string;
   applicant_id: string;
   question_title: string;
   question_description: string;
@@ -80,11 +80,11 @@ interface APICreateRuleInput {
 
 interface APICreateOrgInput {
   GSI1SK: string;
-  org_id: string;
+  orgId: string;
 }
 
 interface APICreateOrgInviteInput {
-  recipient_email: string;
+  recipientEmail: string;
   expiry_time_days?: number;
 }
 
@@ -99,7 +99,7 @@ interface APIRejectOrgInvite {
 }
 
 interface DeleteStageInput {
-  org_id: string;
+  orgId: string;
   stage_id: string;
 }
 
@@ -108,7 +108,7 @@ interface APIReorderStagesInput {
 }
 
 interface ReorderStagesInput {
-  org_id: string;
+  orgId: string;
   opening_id: string;
   new_stage_order: string[];
 }
@@ -121,23 +121,23 @@ interface APICreateQuestionInput {
 interface AllQuestionsByStageIDInput {
   opening_id: string;
   stage_id: string;
-  org_id: string;
+  orgId: string;
 }
 
 interface DeleteQuestionInput {
-  org_id: string;
+  orgId: string;
   stage_id: string;
   question_id: string;
 }
 
 interface APICreateApplicantInput {
-  first_name: string;
-  last_name: string;
+  firstName: string;
+  lastName: string;
   email: string;
 }
 
 interface GetAllApplicantsInStageInput {
-  org_id: string;
+  orgId: string;
   opening_id: string;
   stage_id: string;
 }
@@ -153,7 +153,7 @@ interface ApplicantAnswer {
 type CustomDateFormat = string | number;
 
 type CustomQuery = {
-  org_id?: string;
+  orgId?: string;
   opening_id?: string;
   userId?: string;
   stage_id?: string;

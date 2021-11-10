@@ -5,7 +5,7 @@ import {
   MailIcon,
 } from "@heroicons/react/solid";
 
-import { GetRelativeTime } from "../utils/time";
+import { getRelativeTime } from "../utils/time";
 const commits = [
   {
     applicant: {
@@ -62,7 +62,7 @@ export default function MaintenanceList({ commits }) {
                         <p className=" mt-4 text-sm text-gray-900">
                           Committed{" "}
                           <time dateTime={commit.commit.author.date}>
-                            {GetRelativeTime(commit.commit.author.date)}
+                            {getRelativeTime(commit.commit.author.date)}
                           </time>
                         </p>
                       </div>

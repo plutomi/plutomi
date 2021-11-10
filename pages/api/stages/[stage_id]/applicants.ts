@@ -17,7 +17,7 @@ const handler = async (
 
   if (method === "GET") {
     const get_all_applicants_in_stage_input = {
-      org_id: user_session.org_id,
+      orgId: user_session.orgId,
       stage_id: stage_id,
     };
 
