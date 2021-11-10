@@ -11,13 +11,13 @@ import _ from "lodash";
 
 export async function GetApplicantById({
   orgId,
-  applicant_id,
+  applicantId,
 }: GetApplicantInput) {
   const responsesParams: QueryCommandInput = {
     TableName: DYNAMO_TABLE_NAME,
     KeyConditionExpression: "PK = :PK AND begins_with(SK, :SK)",
     ExpressionAttributeValues: {
-      ":PK": `ORG#${orgId}#APPLICANT#${applicant_id}`,
+      ":PK": `ORG#${orgId}#APPLICANT#${applicantId}`,
       ":SK": `APPLICANT`,
     },
   };

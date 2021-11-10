@@ -20,40 +20,40 @@ export default class ApplicantsService {
     return data;
   }
 
-  static getApplicantURL({ applicant_id }) {
-    return `/api/applicants/${applicant_id}`;
+  static getApplicantURL({ applicantId }) {
+    return `/api/applicants/${applicantId}`;
   }
-  static async getApplicant({ applicant_id }) {
-    const { data } = await axios.get(this.getApplicantURL({ applicant_id }));
+  static async getApplicant({ applicantId }) {
+    const { data } = await axios.get(this.getApplicantURL({ applicantId }));
     return data;
   }
 
-  static async deleteApplicant({ applicant_id }) {
-    const { data } = await axios.delete(this.getApplicantURL({ applicant_id }));
+  static async deleteApplicant({ applicantId }) {
+    const { data } = await axios.delete(this.getApplicantURL({ applicantId }));
     return data;
   }
 
-  static async updateApplicant({ applicant_id, new_applicant_values }) {
+  static async updateApplicant({ applicantId, new_applicant_values }) {
     const body = {
       new_applicant_values: new_applicant_values,
     };
     const { data } = await axios.put(
-      this.getApplicantURL({ applicant_id }),
+      this.getApplicantURL({ applicantId }),
       body
     );
     return data;
   }
 
-  static answerQuestionsURL({ orgId, applicant_id }) {
-    return `/api/public/orgs/${orgId}/applicants/${applicant_id}/answer`;
+  static answerQuestionsURL({ orgId, applicantId }) {
+    return `/api/public/orgs/${orgId}/applicants/${applicantId}/answer`;
   }
-  static async answerQuestions({ orgId, applicant_id, responses }) {
+  static async answerQuestions({ orgId, applicantId, responses }) {
     const body = {
-      applicant_id: applicant_id,
+      applicantId: applicantId,
       responses: responses,
     };
     const { data } = await axios.post(
-      this.answerQuestionsURL({ orgId, applicant_id }),
+      this.answerQuestionsURL({ orgId, applicantId }),
       body
     );
     return data;

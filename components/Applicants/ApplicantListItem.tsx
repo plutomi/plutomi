@@ -6,7 +6,7 @@ export default function ApplicantListItem({ applicant, handleApplicantClick }) {
   return (
     <li
       className="cursor-pointer"
-      onClick={(e) => handleApplicantClick(applicant.applicant_id)}
+      onClick={(e) => handleApplicantClick(applicant.applicantId)}
     >
       {/* If the opening has stages, go to the first stage and view aplicants. Otherwise, go to the settings page for the opening to create one*/}
       <a className="block hover:bg-gray-50">

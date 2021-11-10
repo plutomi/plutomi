@@ -14,7 +14,7 @@ import useOpeningById from "../../../../../SWR/useOpeningById";
 import NumberFormat from "react-number-format";
 export default function StageApplicants() {
   const router = useRouter();
-  const { openingId, stageId, applicant_id } = router.query as CustomQuery;
+  const { openingId, stageId, applicantId } = router.query as CustomQuery;
   const { user, isUserLoading, isUserError } = useSelf();
   let { opening, isOpeningLoading, isOpeningError } = useOpeningById(openingId);
 
@@ -24,13 +24,9 @@ export default function StageApplicants() {
   // Allows for copying the URL of the applicant directly directly
   useEffect(() => {
     if (!router.isReady) return;
-    const { applicant_id } = router.query as CustomQuery;
+    const { applicantId } = router.query as CustomQuery;
 
-    if (
-      applicant_id &&
-      typeof applicant_id === "string" &&
-      applicant_id !== ""
-    ) {
+    if (applicantId && typeof applicantId === "string" && applicantId !== "") {
       setApplicantProfileModal({
         ...applicantProfileModal,
         is_modal_open: true,

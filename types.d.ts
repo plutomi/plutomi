@@ -26,7 +26,7 @@ interface GetOpeningInput {
 }
 interface GetApplicantInput {
   orgId: string;
-  applicant_id: string;
+  applicantId: string;
 }
 interface DynamoCreateStageInput {
   orgId: string;
@@ -64,7 +64,7 @@ interface CreateApplicantInput {
 
 interface CreateApplicantResponseInput {
   orgId: string;
-  applicant_id: string;
+  applicantId: string;
   question_title: string;
   question_description: string;
   question_response: string;
@@ -240,7 +240,7 @@ interface UpdateOpeningInput {
 
 interface UpdateApplicantInput {
   orgId: string;
-  applicant_id: string;
+  applicantId: string;
   new_applicant_values: DynamoApplicant;
 }
 
@@ -313,7 +313,7 @@ type CustomQuery = {
   openingId?: string;
   userId?: string;
   stageId?: string;
-  applicant_id?: string;
+  applicantId?: string;
   key?: string;
   callbackUrl?: string;
   question_id?: string;

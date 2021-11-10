@@ -95,7 +95,7 @@ interface DynamoApplicant {
   full_name: string;
   email: string;
   email_verified: boolean;
-  applicant_id: string;
+  applicantId: string;
   orgId: string;
   entity_type: "APPLICANT";
   created_at: CustomDateFormat;
@@ -113,7 +113,7 @@ interface DynamoApplicantResponse {
   PK: string;
   SK: `APPLICANT_RESPONSE`;
   orgId: string;
-  applicant_id: string;
+  applicantId: string;
   entity_type: "APPLICANT_RESPONSE";
   question_title: string;
   question_description: string;

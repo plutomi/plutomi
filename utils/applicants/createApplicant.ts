@@ -20,9 +20,9 @@ export async function CreateApplicant({
   // Applicant ID has to be pretty high as the apply link will be the user ID
   // This is per org btw
   // https://zelark.github.io/nano-id-cc/
-  const applicant_id = nanoid(50); // TODO - Also since applications are public, it should not be easily guessed - #165
+  const applicantId = nanoid(50); // TODO - Also since applications are public, it should not be easily guessed - #165
   const new_applicant: DynamoApplicant = {
-    PK: `ORG#${orgId}#APPLICANT#${applicant_id}`,
+    PK: `ORG#${orgId}#APPLICANT#${applicantId}`,
     SK: `APPLICANT`,
     first_name: first_name,
     last_name: last_name,
@@ -30,7 +30,7 @@ export async function CreateApplicant({
     email: email.toLowerCase().trim(),
     email_verified: false,
     orgId: orgId,
-    applicant_id: applicant_id,
+    applicantId: applicantId,
     entity_type: "APPLICANT",
     created_at: now,
     // TODO add phone number

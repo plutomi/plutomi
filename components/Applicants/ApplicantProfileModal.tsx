@@ -37,7 +37,7 @@ export default function ApplicantProfileModal() {
   const [isEditing, setIsEditing] = useState(false);
   const [currentActive, setCurrentActive] = useState(1); // Id of item
   const router = useRouter();
-  const { applicant_id, openingId, stageId } = router.query as CustomQuery;
+  const { applicantId, openingId, stageId } = router.query as CustomQuery;
 
   const setApplicantProfileModal = useStore(
     (store) => store.setApplicantProfileModal
@@ -48,7 +48,7 @@ export default function ApplicantProfileModal() {
   );
 
   const { applicant, isApplicantLoading, isApplicantError } =
-    useApplicantById(applicant_id);
+    useApplicantById(applicantId);
 
   const handleNavClick = (e, tabId: number) => {
     e.preventDefault();
@@ -74,10 +74,10 @@ export default function ApplicantProfileModal() {
     );
   };
 
-  const updateApplicant = async (applicant_id: string, changes: {}) => {
+  const updateApplicant = async (applicantId: string, changes: {}) => {
     try {
       const { message } = await ApplicantsService.updateApplicant({
-        applicant_id,
+        applicantId,
         new_applicant_values: changes,
       });
 
@@ -87,7 +87,7 @@ export default function ApplicantProfileModal() {
     }
 
     // TODO NOTE updating that single applicant wont update the applicant list since the list is rendering old data
-    mutate(ApplicantsService.getApplicantURL({ applicant_id }));
+    mutate(ApplicantsService.getApplicantURL({ applicantId }));
   };
 
   return (
@@ -134,7 +134,7 @@ export default function ApplicantProfileModal() {
                             value // Only update if there's been a change
                           ) =>
                             value !== applicant?.first_name &&
-                            updateApplicant(applicant?.applicant_id, {
+                            updateApplicant(applicant?.applicantId, {
                               first_name: value,
                               full_name: `${value} ${applicant.last_name}`,
                             })
@@ -160,7 +160,7 @@ export default function ApplicantProfileModal() {
                           value={applicant?.last_name}
                           onSave={(value) =>
                             value !== applicant?.last_name &&
-                            updateApplicant(applicant?.applicant_id, {
+                            updateApplicant(applicant?.applicantId, {
                               last_name: value,
                               full_name: `${applicant.first_name} ${value}`,
                             })
@@ -184,7 +184,7 @@ export default function ApplicantProfileModal() {
                       <div className="ml-3 h-7 flex items-center space-x-4">
                         <ClickToCopy
                           showText={"Copy Application Link"}
-                          copyText={`${process.env.WEBSITE_URL}/${applicant?.orgId}/applicants/${applicant?.applicant_id}`}
+                          copyText={`${process.env.WEBSITE_URL}/${applicant?.orgId}/applicants/${applicant?.applicantId}`}
                         />
                         <button
                           type="button"
@@ -205,7 +205,7 @@ export default function ApplicantProfileModal() {
                         value={applicant?.email}
                         onSave={(value) =>
                           value !== applicant?.email &&
-                          updateApplicant(applicant?.applicant_id, {
+                          updateApplicant(applicant?.applicantId, {
                             email: value,
                           })
                         }

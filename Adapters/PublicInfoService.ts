@@ -41,12 +41,12 @@ export default class PublicInfoService {
   }
 
   // Identical to the call in applicants service, however auth is not required
-  static getPublicApplicantURL({ applicant_id }) {
-    return `/api/applicants/${applicant_id}`;
+  static getPublicApplicantURL({ applicantId }) {
+    return `/api/applicants/${applicantId}`;
   }
-  static async getPublicApplicant({ applicant_id }) {
+  static async getPublicApplicant({ applicantId }) {
     const { data } = await axios.get(
-      this.getPublicApplicantURL({ applicant_id })
+      this.getPublicApplicantURL({ applicantId })
     );
     return data;
   }

@@ -5,11 +5,11 @@ import withCleanOrgId from "../../../../../../../middleware/withCleanOrgId";
 const handler = async (req: CustomRequest, res: NextApiResponse) => {
   const user: DynamoUser = req.user;
   const { method, query, body } = req;
-  const { applicant_id } = query as CustomQuery;
+  const { applicantId } = query as CustomQuery;
 
   const get_applicant_input: GetApplicantInput = {
     orgId: user.orgId,
-    applicant_id: applicant_id,
+    applicantId: applicantId,
   };
 
   if (method === "GET") {

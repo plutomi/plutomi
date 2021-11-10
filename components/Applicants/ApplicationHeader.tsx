@@ -3,9 +3,9 @@ import { useRouter } from "next/router";
 import useStageById from "../../SWR/useStageById";
 export default function ApplicationHeader() {
   const router = useRouter();
-  const { applicant_id } = router.query as CustomQuery;
+  const { applicantId } = router.query as CustomQuery;
   const { applicant, isApplicantLoading, isApplicantError } =
-    useApplicantById(applicant_id);
+    useApplicantById(applicantId);
 
   const { stage, isStageLoading, isStageError } = useStageById(
     applicant?.current_stageId

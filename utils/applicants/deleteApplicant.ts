@@ -6,10 +6,10 @@ import { Dynamo } from "../../lib/awsClients/ddbDocClient";
 import { GetApplicantById } from "./getApplicantById";
 const { DYNAMO_TABLE_NAME } = process.env;
 
-export default async function DeleteApplicant({ orgId, applicant_id }) {
+export default async function DeleteApplicant({ orgId, applicantId }) {
   const applicant = (await GetApplicantById({
     orgId,
-    applicant_id,
+    applicantId,
   })) as unknown as DynamoApplicant; // TODO fix this shit :(
   try {
     const transactParams: TransactWriteCommandInput = {
@@ -18,7 +18,7 @@ export default async function DeleteApplicant({ orgId, applicant_id }) {
           // Delete the applicant
           Delete: {
             Key: {
-              PK: `ORG#${orgId}#APPLICANT#${applicant_id}`,
+              PK: `ORG#${orgId}#APPLICANT#${applicantId}`,
               SK: `APPLICANT`,
             },
             TableName: DYNAMO_TABLE_NAME,

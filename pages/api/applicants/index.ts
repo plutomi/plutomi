@@ -41,7 +41,7 @@ const handler = async (
         applicant_email: new_applicant.email,
         orgId: orgId,
         org_name: org.GSI1SK,
-        applicant_id: new_applicant.applicant_id,
+        applicantId: new_applicant.applicantId,
       };
       await SendApplicantLink(send_applicant_link_input);
 

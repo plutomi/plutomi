@@ -5,11 +5,9 @@ import { useRouter } from "next/router";
 import ApplicationHeader from "../../../../components/Applicants/ApplicationHeader";
 export default function Application() {
   const router = useRouter();
-  const { applicant_id } = router.query as CustomQuery;
+  const { applicantId } = router.query as CustomQuery;
   const { applicant, isApplicantLoading, isApplicantError } =
-    useApplicantById(applicant_id);
-
-
+    useApplicantById(applicantId);
 
   // When rendering client side don't display anything until loading is complete
   if (typeof window !== "undefined") {

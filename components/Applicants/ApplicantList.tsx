@@ -30,11 +30,11 @@ export default function ApplicantList() {
     );
   }
 
-  const handleApplicantClick = (applicant_id: string) => {
+  const handleApplicantClick = (applicantId: string) => {
     router.push(
       {
         pathname: `/openings/${openingId}/stages/${stageId}/applicants`,
-        query: { applicant_id: applicant_id },
+        query: { applicantId: applicantId },
       },
       undefined,
       { shallow: true }
@@ -42,7 +42,7 @@ export default function ApplicantList() {
     setApplicantProfileModal({
       ...applicantProfileModal,
       is_modal_open: true,
-      applicant_id: applicant_id,
+      applicantId: applicantId,
     });
   };
 
@@ -51,7 +51,7 @@ export default function ApplicantList() {
       <ul role="list" className="divide-y divide-gray-200">
         {applicants?.map((applicant: DynamoApplicant) => (
           <ApplicantListItem
-            key={applicant.applicant_id}
+            key={applicant.applicantId}
             applicant={applicant}
             handleApplicantClick={handleApplicantClick}
           />

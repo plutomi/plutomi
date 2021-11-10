@@ -4,7 +4,7 @@ import withCleanOrgId from "../../../../../../../middleware/withCleanOrgId";
 import { CreateApplicantResponse } from "../../../../../../../utils/applicants/createApplicantResponse";
 const handler = async (req: CustomRequest, res: NextApiResponse) => {
   const { method, query, body } = req;
-  const { orgId, applicant_id } = query as CustomQuery;
+  const { orgId, applicantId } = query as CustomQuery;
   const responses: DynamoApplicantResponse[] = body.responses;
 
   // Public route to update limited applicant information, ie: questions & answers
@@ -19,7 +19,7 @@ const handler = async (req: CustomRequest, res: NextApiResponse) => {
         // TODO while this validates, it does not return what went wrong!
         const create_applicant_response_input: CreateApplicantResponseInput = {
           orgId: orgId,
-          applicant_id: applicant_id,
+          applicantId: applicantId,
           question_title: response.question_title,
           question_description: response.question_description,
           question_response: response.question_response,
@@ -40,7 +40,7 @@ const handler = async (req: CustomRequest, res: NextApiResponse) => {
           const create_applicant_response_input: CreateApplicantResponseInput =
             {
               orgId: orgId,
-              applicant_id: applicant_id,
+              applicantId: applicantId,
               question_title: question_title,
               question_description: question_description,
               question_response: question_response,
