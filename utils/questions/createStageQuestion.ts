@@ -5,7 +5,7 @@ import {
 import { Dynamo } from "../../lib/awsClients/ddbDocClient";
 import { GetCurrentTime } from "../time";
 import { nanoid } from "nanoid";
-import { GetStage } from "../stages/getStage";
+import { getStage } from "../stages/getStage";
 import { MAX_CHILD_ITEM_LIMIT, MAX_ITEM_LIMIT_ERROR } from "../../Config";
 
 const { DYNAMO_TABLE_NAME } = process.env;

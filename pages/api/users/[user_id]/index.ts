@@ -19,19 +19,19 @@ const handler = async (
 
   if (method === "GET") {
     try {
-      const requested_user = await GetUserById(userId);
+      const requestedUser = await GetUserById(userId);
 
-      if (!requested_user) {
+      if (!requestedUser) {
         return res.status(404).json({ message: "User not found" });
       }
       // Check that the user who made this call is in the same org as the requested user
-      if (user_session.orgId != requested_user.orgId) {
+      if (user_session.orgId != requestedUser.orgId) {
         return res
           .status(403)
           .json({ message: "You are not authorized to view this user" });
       }
 
-      return res.status(200).json(requested_user);
+      return res.status(200).json(requestedUser);
     } catch (error) {
       // TODO add error logger
       return res
