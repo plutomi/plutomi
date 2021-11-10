@@ -10,7 +10,7 @@ import CreateLoginLink from "../../../utils/loginLinks/createLoginLink";
 import { nanoid } from "nanoid";
 import withSession from "../../../middleware/withSession";
 import { createHash } from "crypto";
-import { GetLatestLoginLink } from "../../../utils/loginLinks/getLatestLoginLink";
+import { getLatestLoginLink } from "../../../utils/loginLinks/getLatestLoginLink";
 import { CreateUser } from "../../../utils/users/createUser";
 import CreateLoginEvent from "../../../utils/users/createLoginEvent";
 import DeleteLoginLink from "../../../utils/loginLinks/deleteLoginLink";
@@ -46,7 +46,7 @@ const handler = async (
     const user = await CreateUser({ userEmail });
 
     try {
-      const latest_link = await GetLatestLoginLink(user.userId);
+      const latest_link = await getLatestLoginLink(user.userId);
 
       // Limit the amount of links sent in a certain period of time
       if (
@@ -121,7 +121,7 @@ const handler = async (
       return res.status(400).json({ message: `${error.message}` });
     }
 
-    const latestLoginLink = await GetLatestLoginLink(userId);
+    const latestLoginLink = await getLatestLoginLink(userId);
 
     if (!latestLoginLink) {
       return res.status(400).json({ message: "Invalid link" });
@@ -158,7 +158,7 @@ const handler = async (
       });
     }
 
-    if (latestLoginLink.expires_at <= GetCurrentTime("iso")) {
+    if (latestLoginLink.expiresAt <= GetCurrentTime("iso")) {
       return res.status(401).json({
         message: `Your login link has expired.`,
       });
@@ -174,7 +174,7 @@ const handler = async (
       // Invalidates the last login link while allowing the user to login again if needed
       DeleteLoginLink(userId, latestLoginLink.createdAt);
 
-      const clean_user = CleanUser(user as DynamoUser);
+      const cleanUser = CleanUser(user as DynamoUser);
 
       req.session.set("user", clean_user);
       await req.session.save();

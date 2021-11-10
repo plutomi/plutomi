@@ -11,7 +11,7 @@ const { DYNAMO_TABLE_NAME } = process.env;
 
 export default async function CreateOrgInvite({
   orgId,
-  expires_at,
+  expiresAt,
   createdBy,
   user,
   org_name,
@@ -40,7 +40,7 @@ export default async function CreateOrgInvite({
       createdBy: createdBy,
       entityType: "ORG_INVITE",
       createdAt: now,
-      expires_at: expires_at,
+      expiresAt: expiresAt,
       invite_id: invite_id,
       GSI1PK: `ORG#${orgId}#ORG_INVITES`,
       GSI1SK: now,

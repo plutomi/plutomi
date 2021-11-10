@@ -12,7 +12,7 @@ export default async function UpdateLoginLink({ userId, updated_login_link }) {
     "entityType",
     "createdAt",
     "userId",
-    "expires_at",
+    "expiresAt",
     "ttl_expiry",
   ];
 

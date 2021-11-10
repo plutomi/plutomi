@@ -56,7 +56,7 @@ interface DynamoOrgInvite {
   createdBy: DynamoUser;
   entityType: "ORG_INVITE";
   createdAt: string;
-  expires_at: string;
+  expiresAt: string;
   invite_id: string;
   GSI1PK: string;
   GSI1SK: string;

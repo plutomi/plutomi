@@ -81,7 +81,7 @@ interface CreateOrgInviteInput {
   org_name: string;
   createdBy: DynamoUser;
   recipientEmail: string; // Email of person getting invited
-  expires_at: CustomDateFormat; // TODO Maybe Dynamo TTL or just ISO
+  expiresAt: CustomDateFormat; // TODO Maybe Dynamo TTL or just ISO
   claimed: boolean;
 }
 
