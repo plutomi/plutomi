@@ -1,23 +1,23 @@
 import { PutCommand, PutCommandInput } from "@aws-sdk/lib-dynamodb";
 import { Dynamo } from "../../lib/awsClients/ddbDocClient";
-import { GetCurrentTime } from "../time";
+import { getCurrentTime } from "../time";
 import { nanoid } from "nanoid";
 
 const { DYNAMO_TABLE_NAME } = process.env;
 
 export async function CreateApplicantResponse({
-  org_id,
+  orgId,
   applicant_id,
   question_title,
   question_description,
   question_response,
 }: CreateApplicantResponseInput) {
-  const now = GetCurrentTime("iso") as string;
+  const now = getCurrentTime("iso") as string;
   const response_id = nanoid(30);
   const new_applicant_response = {
-    PK: `ORG#${org_id}#APPLICANT#${applicant_id}`,
+    PK: `ORG#${orgId}#APPLICANT#${applicant_id}`,
     SK: `APPLICANT_RESPONSE#${response_id}`,
-    org_id: org_id,
+    orgId: orgId,
     applicant_id: applicant_id,
     entityType: "APPLICANT_RESPONSE",
     created_at: now,
@@ -25,7 +25,7 @@ export async function CreateApplicantResponse({
     question_title: question_title,
     question_description: question_description,
     question_response: question_response,
-    GSI1PK: `ORG#${org_id}#APPLICANT#${applicant_id}`,
+    GSI1PK: `ORG#${orgId}#APPLICANT#${applicant_id}`,
     GSI1SK: `APPLICANT_RESPONSE`, // TODO add timestmap?
   };
 

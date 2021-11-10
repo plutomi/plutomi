@@ -8,7 +8,7 @@ export default async function UpdateLoginLink({ userId, updatedLoginLink }) {
   const FORBIDDEN_KEYS = [
     "PK",
     "SK",
-    "login_link_hash",
+    "loginLinkHash",
     "entityType",
     "created_at",
     "userId",

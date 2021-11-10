@@ -26,7 +26,7 @@ export default function InvitesContent() {
       alert(error.response.data.message);
     }
 
-    // Refresh the user's org_id
+    // Refresh the user's orgId
     mutate(UsersService.getSelfURL());
 
     // Refresh the user's invites

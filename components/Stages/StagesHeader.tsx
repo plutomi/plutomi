@@ -34,7 +34,7 @@ export default function StagesHeader() {
       <p className="mt-2 text-md text-normal sm:mt-0 ">
         <ClickToCopy
           showText={"Application Link"}
-          copyText={`${process.env.WEBSITE_URL}/${user?.org_id}/${opening?.opening_id}/apply`}
+          copyText={`${process.env.WEBSITE_URL}/${user?.orgId}/${opening?.opening_id}/apply`}
         />
       </p>
       <div className=" flex justify-center">

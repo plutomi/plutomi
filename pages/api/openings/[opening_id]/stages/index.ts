@@ -20,7 +20,7 @@ const handler = async (
   if (method === "GET") {
     try {
       const all_stages = await GetAllStagesInOpening(
-        user_session.org_id,
+        user_session.orgId,
         opening_id
       );
       return res.status(200).json(all_stages);

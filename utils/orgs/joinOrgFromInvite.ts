@@ -3,12 +3,12 @@ import {
   TransactWriteCommandInput,
 } from "@aws-sdk/lib-dynamodb";
 import { Dynamo } from "../../lib/awsClients/ddbDocClient";
-import { GetCurrentTime } from "../time";
+import { getCurrentTime } from "../time";
 
 const { DYNAMO_TABLE_NAME } = process.env;
 
 export async function JoinOrgFromInvite({ userId, invite }) {
-  const now = GetCurrentTime("iso") as string;
+  const now = getCurrentTime("iso") as string;
   try {
     const transactParams: TransactWriteCommandInput = {
       TransactItems: [
@@ -32,11 +32,11 @@ export async function JoinOrgFromInvite({ userId, invite }) {
             },
             TableName: DYNAMO_TABLE_NAME,
             UpdateExpression:
-              "SET org_id = :org_id, org_join_date = :org_join_date, GSI1PK = :GSI1PK, totalInvites = totalInvites - :value",
+              "SET orgId = :orgId, orgJoinDate = :orgJoinDate, GSI1PK = :GSI1PK, totalInvites = totalInvites - :value",
             ExpressionAttributeValues: {
-              ":org_id": invite.org_id,
-              ":org_join_date": now,
-              ":GSI1PK": `ORG#${invite.org_id}#USERS`,
+              ":orgId": invite.orgId,
+              ":orgJoinDate": now,
+              ":GSI1PK": `ORG#${invite.orgId}#USERS`,
               ":value": 1,
             },
           },
@@ -45,7 +45,7 @@ export async function JoinOrgFromInvite({ userId, invite }) {
           // Increment the org with the new user
           Update: {
             Key: {
-              PK: `ORG#${invite.org_id}`,
+              PK: `ORG#${invite.orgId}`,
               SK: `ORG`,
             },
             TableName: DYNAMO_TABLE_NAME,

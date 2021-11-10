@@ -3,20 +3,20 @@ import {
   TransactWriteCommandInput,
 } from "@aws-sdk/lib-dynamodb";
 import { Dynamo } from "../../lib/awsClients/ddbDocClient";
-import { GetCurrentTime } from "../time";
+import { getCurrentTime } from "../time";
 import { nanoid } from "nanoid";
 
 const { DYNAMO_TABLE_NAME } = process.env;
 
 export async function CreateApplicant({
   orgId,
-  email,
+  applicantEmail,
   firstName,
   lastName,
   openingId,
   stageId,
 }) {
-  const now = GetCurrentTime("iso") as string;
+  const now = getCurrentTime("iso") as string;
   // Applicant ID has to be pretty high as the apply link will be the user ID
   // This is per org btw
   // https://zelark.github.io/nano-id-cc/
@@ -27,7 +27,7 @@ export async function CreateApplicant({
     firstName: firstName,
     lastName: lastName,
     fullName: `${firstName} ${lastName}`,
-    email: email.toLowerCase().trim(),
+    applicantEmail: applicantEmail.toLowerCase().trim(),
     emailVerified: false,
     orgId: orgId,
     applicantId: applicant_id,

@@ -5,21 +5,21 @@ import {
   TransactWriteCommandInput,
 } from "@aws-sdk/lib-dynamodb";
 import { Dynamo } from "../../lib/awsClients/ddbDocClient";
-import { GetCurrentTime } from "../time";
+import { getCurrentTime } from "../time";
 import { nanoid } from "nanoid";
 
 const { DYNAMO_TABLE_NAME } = process.env;
 
-export async function CreateOpening({ org_id, GSI1SK }: CreateOpeningInput) {
-  const now = GetCurrentTime("iso") as string;
+export async function CreateOpening({ orgId, GSI1SK }: CreateOpeningInput) {
+  const now = getCurrentTime("iso") as string;
   const opening_id = nanoid(16);
   const new_opening: DynamoOpening = {
-    PK: `ORG#${org_id}#OPENING#${opening_id}`,
+    PK: `ORG#${orgId}#OPENING#${opening_id}`,
     SK: `OPENING`,
     entityType: "OPENING",
     created_at: now,
     opening_id: opening_id,
-    GSI1PK: `ORG#${org_id}#OPENINGS`,
+    GSI1PK: `ORG#${orgId}#OPENINGS`,
     GSI1SK: GSI1SK,
     total_stages: 0,
     total_openings: 0,
@@ -42,7 +42,7 @@ export async function CreateOpening({ org_id, GSI1SK }: CreateOpeningInput) {
         // Increment the org's total openings
         Update: {
           Key: {
-            PK: `ORG#${org_id}`,
+            PK: `ORG#${orgId}`,
             SK: `ORG`,
           },
           TableName: DYNAMO_TABLE_NAME,

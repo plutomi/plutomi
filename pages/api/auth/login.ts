@@ -1,17 +1,9 @@
-import {
-  GetCurrentTime,
-  GetPastOrFutureTime,
-  GetRelativeTime,
-} from "../../../utils/time";
-import InputValidation from "../../../utils/inputValidation";
+import { getCurrentTime, getPastOrFutureTime } from "../../../utils/time";
 import { NextApiResponse } from "next";
-import SendLoginLink from "../../../utils/email/sendLoginLink";
-import CreateLoginLink from "../../../utils/loginLinks/createLoginLink";
-import { nanoid } from "nanoid";
+
 import withSession from "../../../middleware/withSession";
 import { createHash } from "crypto";
-import { GetLatestLoginLink } from "../../../utils/loginLinks/getLatestLoginLink";
-import { CreateUser } from "../../../utils/users/createUser";
+import { getLatestLoginLink } from "../../../utils/loginLinks/getLatestLoginLink";
 import CreateLoginEvent from "../../../utils/users/createLoginEvent";
 import DeleteLoginLink from "../../../utils/loginLinks/deleteLoginLink";
 import CleanUser from "../../../utils/clean/cleanUser";
@@ -23,91 +15,16 @@ const handler = async (
   res: NextApiResponse
 ): Promise<void> => {
   const { body, method, query } = req; // TODO get from body
-  const { user_email, login_method } = body;
+  const { userEmail, loginMethod } = body;
   const { userId, key, callbackUrl } = query as CustomQuery;
-  const login_link_length = 1500;
+  const loginLinkLength = 1500;
   const login_link_max_delay_minutes = 10;
-  const time_threshold = GetPastOrFutureTime(
+  const timeThreshold = getPastOrFutureTime(
     "past",
     login_link_max_delay_minutes,
     "minutes",
     "iso"
   );
-
-  // Creates a login link
-  if (method === "POST") {
-    try {
-      InputValidation({ user_email });
-    } catch (error) {
-      console.error(error);
-      return res.status(400).json({ message: `${error.message}` });
-    }
-    // Creates a user, returns it if already created
-    const user = await CreateUser({ user_email });
-
-    try {
-      const latest_link = await GetLatestLoginLink(user.userId);
-
-      // Limit the amount of links sent in a certain period of time
-      if (
-        latest_link &&
-        latest_link.created_at >= time_threshold &&
-        !user.user_email.endsWith("@plutomi.com")
-      ) {
-        return res.status(400).json({
-          message: "You're doing that too much, please try again later",
-        });
-      }
-
-      const secret = nanoid(login_link_length);
-      const hash = createHash("sha512").update(secret).digest("hex");
-
-      const login_link_expiry = GetPastOrFutureTime(
-        "future",
-        15,
-        "minutes",
-        "iso"
-      );
-
-      try {
-        await CreateLoginLink({
-          user: user,
-          login_link_hash: hash,
-          login_link_expiry: login_link_expiry,
-        });
-        const default_redirect = `${process.env.WEBSITE_URL}/dashboard`;
-        const login_link = `${process.env.WEBSITE_URL}/api/auth/login?userId=${
-          user.userId
-        }&key=${secret}&callbackUrl=${
-          callbackUrl ? callbackUrl : default_redirect
-        }`;
-
-        if (login_method === "GOOGLE") {
-          return res.status(200).json({ message: login_link });
-        }
-        try {
-          await SendLoginLink({
-            recipient_email: user.user_email,
-            login_link: login_link,
-            login_link_relative_expiry: GetRelativeTime(login_link_expiry),
-          });
-          return res
-            .status(201)
-            .json({ message: `We've sent a magic login link to your email!` });
-        } catch (error) {
-          return res.status(500).json({ message: `${error}` }); // TODO error #
-        }
-      } catch (error) {
-        // TODO error #
-        return res.status(500).json({ message: `${error}` });
-      }
-    } catch (error) {
-      return res.status(500).json({
-        // TODO error #
-        message: "An error ocurred getting your info, please try again",
-      });
-    }
-  }
 
   // Validates the login link when clicked
   if (method === "GET") {
@@ -115,13 +32,8 @@ const handler = async (
       userId: userId,
       key: key,
     };
-    try {
-      InputValidation(validate_login_link_input);
-    } catch (error) {
-      return res.status(400).json({ message: `${error.message}` });
-    }
 
-    const latestLoginLink = await GetLatestLoginLink(userId);
+    const latestLoginLink = await getLatestLoginLink(userId);
 
     if (!latestLoginLink) {
       return res.status(400).json({ message: "Invalid link" });
@@ -129,7 +41,7 @@ const handler = async (
 
     const hash = createHash("sha512").update(key).digest("hex");
 
-    if (hash != latestLoginLink.login_link_hash) {
+    if (hash != latestLoginLink.loginLinkHash) {
       /**
        * Someone could try to guess a user ID and the 1500 char long key
        * If they do get someone's ID correct in that 15 minute window to log in AND they key is wrong...
@@ -158,7 +70,7 @@ const handler = async (
       });
     }
 
-    if (latestLoginLink.expiresAt <= GetCurrentTime("iso")) {
+    if (latestLoginLink.expiresAt <= getCurrentTime("iso")) {
       return res.status(401).json({
         message: `Your login link has expired.`,
       });

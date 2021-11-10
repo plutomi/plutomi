@@ -6,7 +6,7 @@ dayjs.extend(relativeTime);
 /**
  * @param format - `iso`, `unix`, or `plain` date object
  */
-export function GetCurrentTime(format: "iso" | "unix") {
+export function getCurrentTime(format: "iso" | "unix") {
   if (format === "iso") return dayjs().toISOString();
   if (format === "unix") return dayjs().unix();
 }
@@ -17,7 +17,7 @@ export function GetCurrentTime(format: "iso" | "unix") {
  * @param type - What time measure? seconds, minutes, hours, days, etc
  * @param format - iso, unix or plain date object
  */
-export function GetPastOrFutureTime(
+export function getPastOrFutureTime(
   when: "past" | "future",
   amount: number,
   type:
@@ -44,6 +44,6 @@ export function GetPastOrFutureTime(
   }
 }
 
-export function GetRelativeTime(timestamp) {
+export function getRelativeTime(timestamp) {
   return dayjs().to(timestamp);
 }

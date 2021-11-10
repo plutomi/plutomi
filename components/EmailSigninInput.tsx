@@ -1,5 +1,5 @@
 export default function LoginEmail({
-  user_email,
+  userEmail,
   onChange,
   sendEmail,
   button_text,
@@ -17,7 +17,7 @@ export default function LoginEmail({
         name="email"
         id="email"
         required
-        value={user_email}
+        value={userEmail}
         onChange={(e) => onChange(e.target.value)}
         className="block w-full py-3 text-base rounded-md placeholder-normal shadow-sm focus:ring-normal focus:border-normal sm:flex-1 border-blue-gray-300"
         placeholder="Log in with your email"

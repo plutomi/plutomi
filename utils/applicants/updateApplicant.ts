@@ -3,7 +3,7 @@ import { Dynamo } from "../../lib/awsClients/ddbDocClient";
 const { DYNAMO_TABLE_NAME } = process.env;
 
 export default async function UpdateApplicant({
-  org_id,
+  orgId,
   applicant_id,
   new_applicant_values,
 }) {
@@ -11,7 +11,7 @@ export default async function UpdateApplicant({
   const FORBIDDEN_KEYS = [
     "PK",
     "SK",
-    "org_id",
+    "orgId",
     "entityType",
     "created_at",
     "applicant_id",
@@ -37,7 +37,7 @@ export default async function UpdateApplicant({
 
   const params: UpdateCommandInput = {
     Key: {
-      PK: `ORG#${org_id}#APPLICANT#${applicant_id}`,
+      PK: `ORG#${orgId}#APPLICANT#${applicant_id}`,
       SK: `APPLICANT`,
     },
     UpdateExpression: UpdatedExpression,

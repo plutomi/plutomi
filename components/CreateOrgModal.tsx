@@ -8,11 +8,11 @@ const UrlSafeString = require("url-safe-string"),
 import useStore from "../utils/store";
 export default function CreateOrgModal({ createOrg }) {
   const [GSI1SK, setOrgName] = useState("");
-  const [org_id, setOrgId] = useState("");
+  const [orgId, setOrgId] = useState("");
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
-    await createOrg({ GSI1SK, org_id });
+    await createOrg({ GSI1SK, orgId });
   };
 
   const open = useStore((state) => state.createOrgModalIsOpen);
@@ -124,16 +124,16 @@ export default function CreateOrgModal({ createOrg }) {
                                     tagGenerator.generate(e.target.value.trim())
                                   )
                                 }
-                                value={org_id}
+                                value={orgId}
                                 className="flex-1 min-w-0 block w-full px-3 py-2 rounded-none rounded-r-md focus:ring-blue-500 focus:border-blue-500 sm:text-sm border-gray-300"
                                 placeholder="your-company-name"
                               />
                             </div>
-                            {org_id && (
+                            {orgId && (
                               <p className="mt-2 text-blue-gray-500 text-md">
                                 Your ID will be:{" "}
                                 <span className="font-bold text-dark">
-                                  {org_id}
+                                  {orgId}
                                 </span>
                               </p>
                             )}

@@ -28,7 +28,7 @@ export default function NewPage({
   );
 
   // Redirect on no org
-  if (current_nav_item.hidden_if_no_org && user?.org_id === "NO_ORG_ASSIGNED") {
+  if (current_nav_item.hidden_if_no_org && user?.orgId === "NO_ORG_ASSIGNED") {
     if (current_nav_item.name === "Openings") {
       alert(
         `You must create an org or join one before adding or viewing openings. If you have pending invites, you can view them at ${process.env.WEBSITE_URL}/invites`

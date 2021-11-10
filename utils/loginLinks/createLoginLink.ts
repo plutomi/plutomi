@@ -1,25 +1,25 @@
 import { PutCommand, PutCommandInput } from "@aws-sdk/lib-dynamodb";
-import { GetCurrentTime, GetPastOrFutureTime } from "../time";
+import { getCurrentTime, getPastOrFutureTime } from "../time";
 import { Dynamo } from "../../lib/awsClients/ddbDocClient";
 
 const { DYNAMO_TABLE_NAME } = process.env;
 
-export default async function CreateLoginLink({
+export default async function createLoginLink({
   user,
-  login_link_hash,
-  login_link_expiry,
+  loginLinkHash,
+  loginLinkExpiry,
 }) {
   try {
-    const now = GetCurrentTime("iso") as string;
+    const now = getCurrentTime("iso") as string;
     const new_login_link = {
       PK: `USER#${user.userId}`,
       SK: `LOGIN_LINK#${now}`,
-      login_link_hash: login_link_hash,
+      loginLinkHash: loginLinkHash,
       userId: user.userId,
       entityType: "LOGIN_LINK",
       created_at: now,
-      expiresAt: login_link_expiry,
-      ttl_expiry: GetPastOrFutureTime("future", 1, "days", "unix"),
+      expiresAt: loginLinkExpiry,
+      ttl_expiry: getPastOrFutureTime("future", 1, "days", "unix"),
     };
 
     const params: PutCommandInput = {

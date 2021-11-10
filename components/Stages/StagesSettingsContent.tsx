@@ -1,7 +1,7 @@
 import { useRouter } from "next/router";
 import { mutate } from "swr";
 import difference from "../../utils/getObjectDifference";
-import { GetRelativeTime } from "../../utils/time";
+import { getRelativeTime } from "../../utils/time";
 import StageReorderColumn from "../StageReorderColumn";
 import QuestionList from "../Questions/QuestionList";
 import useStore from "../../utils/store";
@@ -107,7 +107,7 @@ export default function StageSettingsContent() {
   const { stage, isStageLoading, isStageError } = useStageById(stage_id);
 
   const { questions, isQuestionsLoading, isQuestionsError } =
-    useAllStageQuestions(user?.org_id, stage?.stage_id);
+    useAllStageQuestions(user?.orgId, stage?.stage_id);
 
   const questionModal = useStore((state) => state.questionModal);
   const setQuestionModal = useStore((state) => state.setQuestionModal);

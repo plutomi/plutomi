@@ -7,7 +7,7 @@ import FormattedResponse from "../utils/formatResponse";
  * @param handler The handler of your function
  * @param schema A Joi schema to validate your event.body against
  */
-export default function inputValidation(handler: any, schema: Joi.Schema) {
+export default function withInputValidation(handler: any, schema: Joi.Schema) {
   return async (event: APIGatewayProxyEventV2) => {
     if (!event.body) {
       return FormattedResponse(400, { message: "Request `body` is missing" });

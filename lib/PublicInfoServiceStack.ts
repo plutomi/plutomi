@@ -63,7 +63,7 @@ export class PublicInfoServiceStack extends cdk.Stack {
       {
         ...sharableLambdaConfig,
         functionName: `public-info-service-get-public-openings-in-org`,
-        description: "Returns all public openings for a given org_id.",
+        description: "Returns all public openings for a given orgId.",
         entry: path.join(
           __dirname,
           `/../functions/PublicInfoService/get-public-openings-in-org.ts`
@@ -75,7 +75,7 @@ export class PublicInfoServiceStack extends cdk.Stack {
       integration: new LambdaProxyIntegration({
         handler: getPublicOpeningsInOrgFunction,
       }),
-      path: "/public/orgs/{org_id}/openings",
+      path: "/public/orgs/{orgId}/openings",
       methods: [HttpMethod.GET],
     });
 
@@ -102,7 +102,7 @@ export class PublicInfoServiceStack extends cdk.Stack {
       integration: new LambdaProxyIntegration({
         handler: getPublicOpeningInfoFunction,
       }),
-      path: "/public/orgs/{org_id}/openings/{opening_id}",
+      path: "/public/orgs/{orgId}/openings/{opening_id}",
       methods: [HttpMethod.GET],
     });
 
@@ -129,7 +129,7 @@ export class PublicInfoServiceStack extends cdk.Stack {
       integration: new LambdaProxyIntegration({
         handler: getPublicOrgInfo,
       }),
-      path: "/public/orgs/{org_id}",
+      path: "/public/orgs/{orgId}",
       methods: [HttpMethod.GET],
     });
 
@@ -156,7 +156,7 @@ export class PublicInfoServiceStack extends cdk.Stack {
       integration: new LambdaProxyIntegration({
         handler: getPublicStageInfo,
       }),
-      path: "/public/orgs/{org_id}/stages/{stage_id}",
+      path: "/public/orgs/{orgId}/stages/{stage_id}",
       methods: [HttpMethod.GET],
     });
 
@@ -183,7 +183,7 @@ export class PublicInfoServiceStack extends cdk.Stack {
       integration: new LambdaProxyIntegration({
         handler: getPublicQuestionsInStage,
       }),
-      path: "/public/orgs/{org_id}/stages/{stage_id}/questions",
+      path: "/public/orgs/{orgId}/stages/{stage_id}/questions",
       methods: [HttpMethod.GET],
     });
 
@@ -210,7 +210,7 @@ export class PublicInfoServiceStack extends cdk.Stack {
       integration: new LambdaProxyIntegration({
         handler: getPublicApplicantInfo,
       }),
-      path: "/public/orgs/{org_id}/applicants/{applicant_id}",
+      path: "/public/orgs/{orgId}/applicants/{applicant_id}",
       methods: [HttpMethod.GET],
     });
   }

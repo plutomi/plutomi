@@ -4,10 +4,10 @@ import { Dynamo } from "../../lib/awsClients/ddbDocClient";
 const { DYNAMO_TABLE_NAME } = process.env;
 
 export async function GetAllUsersInOrg({
-  org_id,
+  orgId,
   limit,
 }: {
-  org_id: string;
+  orgId: string;
   limit?: number;
 }) {
   const params: QueryCommandInput = {
@@ -15,7 +15,7 @@ export async function GetAllUsersInOrg({
     IndexName: "GSI1",
     KeyConditionExpression: "GSI1PK = :GSI1PK",
     ExpressionAttributeValues: {
-      ":GSI1PK": `ORG#${org_id}#USERS`,
+      ":GSI1PK": `ORG#${orgId}#USERS`,
     },
     Limit: limit || null,
   }; // TODO query until all results are returned

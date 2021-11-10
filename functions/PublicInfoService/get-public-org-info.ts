@@ -4,21 +4,21 @@ import CleanOpening from "../../utils/clean/cleanOpening";
 import FormattedResponse from "../../utils/formatResponse";
 import CleanOrg from "../../utils/clean/cleanOrg";
 
-const main = async (
+const handler = async (
   event: APIGatewayProxyEventV2
 ): Promise<APIGatewayProxyResultV2> => {
-  const { org_id } = event.pathParameters;
+  const { orgId } = event.pathParameters;
 
-  if (!org_id) {
-    return FormattedResponse(400, { message: `'org_id' is missing` });
+  if (!orgId) {
+    return FormattedResponse(400, { message: `'orgId' is missing` });
   }
 
   try {
-    const org = await GetOrg(org_id);
+    const org = await GetOrg(orgId);
 
     if (!org) {
       return FormattedResponse(404, {
-        message: `Org '${org_id}' not found`,
+        message: `Org '${orgId}' not found`,
       });
     }
 
@@ -31,9 +31,9 @@ const main = async (
     // TODO error logger
     // TODO status code
     return FormattedResponse(500, {
-      message: `An error ocurred retrieving info for the org ${org_id}: ${error}`,
+      message: `An error ocurred retrieving info for the org ${orgId}: ${error}`,
     });
   }
 };
 
-exports.handler = main;
+export default handler;

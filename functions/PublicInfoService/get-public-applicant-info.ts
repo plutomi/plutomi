@@ -3,13 +3,13 @@ import FormattedResponse from "../../utils/formatResponse";
 import CleanApplicant from "../../utils/clean/cleanApplicant";
 import { GetApplicantById } from "../../utils/applicants/getApplicantById";
 
-const main = async (
+const handler = async (
   event: APIGatewayProxyEventV2
 ): Promise<APIGatewayProxyResultV2> => {
-  const { org_id, applicant_id } = event.pathParameters;
+  const { orgId, applicant_id } = event.pathParameters;
 
-  if (!org_id) {
-    return FormattedResponse(400, { message: `'org_id' is missing` });
+  if (!orgId) {
+    return FormattedResponse(400, { message: `'orgId' is missing` });
   }
 
   if (!applicant_id) {
@@ -17,7 +17,7 @@ const main = async (
   }
 
   try {
-    const applicant = await GetApplicantById(org_id, applicant_id);
+    const applicant = await GetApplicantById(orgId, applicant_id);
 
     if (!applicant) {
       return FormattedResponse(404, {
@@ -38,4 +38,4 @@ const main = async (
   }
 };
 
-exports.handler = main;
+export default handler;
