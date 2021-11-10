@@ -8,7 +8,7 @@ export default function ApplicationHeader() {
     useApplicantById(applicantId);
 
   const { stage, isStageLoading, isStageError } = useStageById(
-    applicant?.current_stageId
+    applicant?.currentStageId
   );
   return (
     <div className="md:flex md:items-center md:justify-between">

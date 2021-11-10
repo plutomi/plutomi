@@ -6,7 +6,7 @@ import _ from "lodash";
 
 export default function DraggableStageCard({
   name,
-  current_stageId,
+  currentStageId,
   total_applicants,
 }) {
   const router = useRouter();
@@ -15,7 +15,7 @@ export default function DraggableStageCard({
   return (
     <div
       className={`border my-2   py-4 text-center  ${
-        stageId === current_stageId
+        stageId === currentStageId
           ? "bg-sky-50 border-t-4 border-t-blue-500"
           : "bg-white"
       }  shadow-md hover:shadow-xl transition ease-in-out duration-300 rounded-xl overflow-hidden`}

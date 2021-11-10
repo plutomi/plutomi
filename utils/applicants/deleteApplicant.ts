@@ -29,7 +29,7 @@ export default async function DeleteApplicant({ orgId, applicantId }) {
           // Decrement opening's total_applicants
           Update: {
             Key: {
-              PK: `ORG#${orgId}#OPENING#${applicant.current_openingId}`, // todo fix types
+              PK: `ORG#${orgId}#OPENING#${applicant.currentOpeningId}`, // todo fix types
               SK: `OPENING`,
             },
             TableName: DYNAMO_TABLE_NAME,
@@ -44,7 +44,7 @@ export default async function DeleteApplicant({ orgId, applicantId }) {
           // Decrement stage's total_applicants
           Update: {
             Key: {
-              PK: `ORG#${orgId}#STAGE#${applicant.current_stageId}`, // todo fix types
+              PK: `ORG#${orgId}#STAGE#${applicant.currentStageId}`, // todo fix types
               SK: `STAGE`,
             },
             TableName: DYNAMO_TABLE_NAME,

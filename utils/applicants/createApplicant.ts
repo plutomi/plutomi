@@ -34,8 +34,8 @@ export async function CreateApplicant({
     entity_type: "APPLICANT",
     created_at: now,
     // TODO add phone number
-    current_openingId: openingId,
-    current_stageId: stageId,
+    currentOpeningId: openingId,
+    currentStageId: stageId,
 
     // The reason for the below is so we can get applicants in an org, in an opening, or in a specific stagejust by the ID of each.
     // Before we had `OPENING#${openingId}#STAGE#{stageId}` for the SK which required the opening when getting applicants in specific stage

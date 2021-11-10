@@ -192,7 +192,7 @@ export default function StageReorderColumn() {
                                 <DraggableStageCard
                                   total_applicants={stage.total_applicants}
                                   name={`${stage.GSI1SK}`}
-                                  current_stageId={stage.stageId}
+                                  currentStageId={stage.stageId}
                                 />
                               </a>
                             </Link>

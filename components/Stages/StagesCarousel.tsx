@@ -53,7 +53,7 @@ export default function StageCarousel() {
           <StageCard
             key={stage.stageId}
             name={stage.GSI1SK}
-            current_stageId={stage.stageId}
+            currentStageId={stage.stageId}
             openingId={stage.openingId}
             total_applicants={stage.total_applicants}
           />

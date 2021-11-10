@@ -2,8 +2,8 @@ const safeKeys = [
   "firstName",
   "lastName",
   "created_at",
-  "current_openingId",
-  "current_openingId",
+  "currentOpeningId",
+  "currentOpeningId",
 ];
 
 export default function CleanApplicant(applicant: DynamoApplicant) {

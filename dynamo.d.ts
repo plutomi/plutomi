@@ -99,8 +99,8 @@ interface DynamoApplicant {
   orgId: string;
   entity_type: "APPLICANT";
   created_at: CustomDateFormat;
-  current_openingId: string;
-  current_stageId: string;
+  currentOpeningId: string;
+  currentStageId: string;
   GSI1PK: string;
   GSI1SK: string;
   GSI2PK: string;

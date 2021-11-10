@@ -15,7 +15,7 @@ export default function ApplicationContent() {
     usePublicApplicant(applicantId);
 
   const { questions, isQuestionsLoading, isQuestionsError } =
-    useAllStageQuestions(orgId, applicant?.current_stageId);
+    useAllStageQuestions(orgId, applicant?.currentStageId);
   if (isQuestionsLoading) {
     return <Loader text="Loading questions..." />;
   }

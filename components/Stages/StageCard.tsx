@@ -7,7 +7,7 @@ import _ from "lodash";
 
 export default function StageCard({
   name,
-  current_stageId,
+  currentStageId,
   openingId,
   total_applicants,
 }) {
@@ -16,12 +16,12 @@ export default function StageCard({
 
   return (
     <Link
-      href={`${process.env.WEBSITE_URL}/openings/${openingId}/stages/${current_stageId}/applicants`} // TODO should this end with applicants?
+      href={`${process.env.WEBSITE_URL}/openings/${openingId}/stages/${currentStageId}/applicants`} // TODO should this end with applicants?
     >
       <a>
         <div
           className={`border my-6  py-4 text-center   ${
-            stageId === current_stageId
+            stageId === currentStageId
               ? "bg-sky-50 border-t-4 border-t-blue-500 "
               : "bg-white" // Highlighted stage settings
           }  shadow-md hover:shadow-xl transition ease-in-out duration-300 rounded-xl overflow-hidden`}
