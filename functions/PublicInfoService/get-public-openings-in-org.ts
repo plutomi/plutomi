@@ -2,7 +2,7 @@ import { APIGatewayProxyEventV2, APIGatewayProxyResultV2 } from "aws-lambda";
 import { GetAllOpeningsInOrg } from "../../utils/openings/getAllOpeningsInOrg";
 import CleanOpening from "../../utils/clean/cleanOpening";
 import FormattedResponse from "../../utils/formatResponse";
-const handler = async (
+const main = async (
   event: APIGatewayProxyEventV2
 ): Promise<APIGatewayProxyResultV2> => {
   const { orgId } = event.pathParameters;
@@ -29,4 +29,4 @@ const handler = async (
   }
 };
 
-export default handler;
+exports.handler = main;

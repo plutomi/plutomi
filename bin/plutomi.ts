@@ -7,33 +7,33 @@ import { PublicInfoServiceStack } from "../lib/PublicInfoServiceStack";
 import { FrontendStack } from "../lib/FrontendStack";
 import { ApplicantsServiceStack } from "../lib/ApplicantsServiceStack";
 import { AuthServiceStack } from "../lib/AuthServiceStack";
-const app = new cdk.App();
 
 // Run the serverless builder, this could be done elsewhere in your workflow
 const builder = new Builder(".", "./build", { args: ["build"] });
 
-try {
-  builder.build(); // For SLS construct
+builder
+  .build()
+  .then(() => {
+    const app = new cdk.App();
+    new FrontendStack(app, "FrontendStack");
 
-  // Deploys the website to cloudfront / S3
-  new FrontendStack(app, "FrontendStack");
+    // Creates API Gateway
+    const API_GATEWAY = new APIGatewayStack(app, "APIGatewayStack");
 
-  // Creates API Gateway
-  const API_GATEWAY = new APIGatewayStack(app, "APIGatewayStack");
+    // Deploys the /public route lambdas
+    new PublicInfoServiceStack(app, "PublicInfoServiceStack", {
+      API: API_GATEWAY.API,
+    });
 
-  // Deploys the /public route lambdas
-  new PublicInfoServiceStack(app, "PublicInfoServiceStack", {
-    API: API_GATEWAY.API,
+    // Creates the applicant service routes
+
+    new ApplicantsServiceStack(app, "ApplicantsServiceStack", {
+      API: API_GATEWAY.API,
+    });
+
+    new AuthServiceStack(app, "AuthServiceStack", { API: API_GATEWAY.API });
+  })
+  .catch((e) => {
+    console.log(e);
+    process.exit(1);
   });
-
-  // Creates the applicant service routes
-
-  new ApplicantsServiceStack(app, "ApplicantsServiceStack", {
-    API: API_GATEWAY.API,
-  });
-
-  new AuthServiceStack(app, "AuthServiceStack", { API: API_GATEWAY.API });
-} catch (error) {
-  console.log(error);
-  process.exit(1);
-}
