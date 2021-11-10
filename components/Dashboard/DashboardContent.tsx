@@ -11,8 +11,8 @@ import { OfficeBuildingIcon, PlusIcon } from "@heroicons/react/outline";
 import CreateOrgModal from "../CreateOrgModal";
 export default function DashboardContent() {
   const { user, isUserLoading, isUserError } = useSelf();
-  const { org, isOrgLoading, isOrgError } = usePrivateOrgById(user?.org_id);
-  const custom_apply_link = `${process.env.WEBSITE_URL}/${org?.org_id}/apply`;
+  const { org, isOrgLoading, isOrgError } = usePrivateOrgById(user?.orgId);
+  const custom_apply_link = `${process.env.WEBSITE_URL}/${org?.orgId}/apply`;
 
   const setCreateOrgModalOpen = useStore(
     (state) => state.setCreateOrgModalOpen
@@ -22,14 +22,14 @@ export default function DashboardContent() {
     return <Loader text={"Loading user..."} />;
   }
 
-  if (user.org_id != "NO_ORG_ASSIGNED" && isOrgLoading) {
+  if (user.orgId != "NO_ORG_ASSIGNED" && isOrgLoading) {
     return <Loader text={"Loading org info..."} />;
   }
 
-  const createOrg = async ({ GSI1SK, org_id }) => {
+  const createOrg = async ({ GSI1SK, orgId }) => {
     if (
       !confirm(
-        `Your org id will be '${org_id.toLowerCase()}', this CANNOT be changed. Do you want to continue?`
+        `Your org id will be '${orgId.toLowerCase()}', this CANNOT be changed. Do you want to continue?`
       )
     ) {
       return;
@@ -38,7 +38,7 @@ export default function DashboardContent() {
     try {
       const { message } = await OrgsService.createOrg({
         GSI1SK: GSI1SK,
-        org_id: org_id,
+        orgId: orgId,
       });
       alert(message);
       setCreateOrgModalOpen(false);
@@ -80,7 +80,7 @@ export default function DashboardContent() {
     }
 
     try {
-      const { message } = await OrgsService.deleteOrg({ org_id: user?.org_id });
+      const { message } = await OrgsService.deleteOrg({ orgId: user?.orgId });
       alert(message);
     } catch (error) {
       alert(error.response.data.message);
@@ -92,7 +92,7 @@ export default function DashboardContent() {
     <div>
       <CreateOrgModal createOrg={createOrg} />
 
-      {user?.org_id === "NO_ORG_ASSIGNED" ? (
+      {user?.orgId === "NO_ORG_ASSIGNED" ? (
         <div className="text-center w-full h-full flex flex-col justify-center items-center">
           <OfficeBuildingIcon className="mx-auto h-12 w-12 text-light" />
           <h3 className="mt-2 text-lg font-medium text-dark">

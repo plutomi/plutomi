@@ -1,41 +1,41 @@
 import axios from "../axios/axios";
 
 export default class PublicInfoService {
-  static getPublicOrgURL({ org_id }) {
-    return `/api/public/orgs/${org_id}`;
+  static getPublicOrgURL({ orgId }) {
+    return `/api/public/orgs/${orgId}`;
   }
-  static async getPublicOrg({ org_id }) {
-    const { data } = await axios.get(this.getPublicOrgURL({ org_id }));
+  static async getPublicOrg({ orgId }) {
+    const { data } = await axios.get(this.getPublicOrgURL({ orgId }));
     return data;
   }
 
-  static getAllPublicOpeningsURL({ org_id }) {
-    return `/api/public/orgs/${org_id}/openings`;
+  static getAllPublicOpeningsURL({ orgId }) {
+    return `/api/public/orgs/${orgId}/openings`;
   }
 
-  static async getAllPublicOpenings({ org_id }) {
-    const { data } = await axios.get(this.getAllPublicOpeningsURL({ org_id }));
+  static async getAllPublicOpenings({ orgId }) {
+    const { data } = await axios.get(this.getAllPublicOpeningsURL({ orgId }));
     return data;
   }
 
-  static getPublicOpeningURL({ org_id, openingId }) {
-    return `/api/public/orgs/${org_id}/openings/${openingId}`;
+  static getPublicOpeningURL({ orgId, openingId }) {
+    return `/api/public/orgs/${orgId}/openings/${openingId}`;
   }
 
-  static async getPublicOpening({ org_id, openingId }) {
+  static async getPublicOpening({ orgId, openingId }) {
     const { data } = await axios.get(
-      this.getPublicOpeningURL({ org_id, openingId })
+      this.getPublicOpeningURL({ orgId, openingId })
     );
     return data;
   }
 
-  static getPublicStageURL({ org_id, openingId, stageId }) {
-    return `/api/public/orgs/${org_id}/openings/${openingId}/stages/${stageId}`;
+  static getPublicStageURL({ orgId, openingId, stageId }) {
+    return `/api/public/orgs/${orgId}/openings/${openingId}/stages/${stageId}`;
   }
 
-  static async getPublicStage({ org_id, openingId, stageId }) {
+  static async getPublicStage({ orgId, openingId, stageId }) {
     const { data } = await axios.get(
-      this.getPublicStageURL({ org_id, openingId, stageId })
+      this.getPublicStageURL({ orgId, openingId, stageId })
     );
     return data;
   }

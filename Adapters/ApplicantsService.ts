@@ -2,14 +2,14 @@ import axios from "../axios/axios";
 
 export default class ApplicantsService {
   static async createApplicant({
-    org_id,
+    orgId,
     openingId,
     first_name,
     last_name,
     email,
   }) {
     const body = {
-      org_id,
+      orgId,
       openingId,
       first_name,
       last_name,
@@ -44,16 +44,16 @@ export default class ApplicantsService {
     return data;
   }
 
-  static answerQuestionsURL({ org_id, applicant_id }) {
-    return `/api/public/orgs/${org_id}/applicants/${applicant_id}/answer`;
+  static answerQuestionsURL({ orgId, applicant_id }) {
+    return `/api/public/orgs/${orgId}/applicants/${applicant_id}/answer`;
   }
-  static async answerQuestions({ org_id, applicant_id, responses }) {
+  static async answerQuestions({ orgId, applicant_id, responses }) {
     const body = {
       applicant_id: applicant_id,
       responses: responses,
     };
     const { data } = await axios.post(
-      this.answerQuestionsURL({ org_id, applicant_id }),
+      this.answerQuestionsURL({ orgId, applicant_id }),
       body
     );
     return data;

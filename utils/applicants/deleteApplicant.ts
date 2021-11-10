@@ -6,9 +6,9 @@ import { Dynamo } from "../../lib/awsClients/ddbDocClient";
 import { GetApplicantById } from "./getApplicantById";
 const { DYNAMO_TABLE_NAME } = process.env;
 
-export default async function DeleteApplicant({ org_id, applicant_id }) {
+export default async function DeleteApplicant({ orgId, applicant_id }) {
   const applicant = (await GetApplicantById({
-    org_id,
+    orgId,
     applicant_id,
   })) as unknown as DynamoApplicant; // TODO fix this shit :(
   try {
@@ -18,7 +18,7 @@ export default async function DeleteApplicant({ org_id, applicant_id }) {
           // Delete the applicant
           Delete: {
             Key: {
-              PK: `ORG#${org_id}#APPLICANT#${applicant_id}`,
+              PK: `ORG#${orgId}#APPLICANT#${applicant_id}`,
               SK: `APPLICANT`,
             },
             TableName: DYNAMO_TABLE_NAME,
@@ -29,7 +29,7 @@ export default async function DeleteApplicant({ org_id, applicant_id }) {
           // Decrement opening's total_applicants
           Update: {
             Key: {
-              PK: `ORG#${org_id}#OPENING#${applicant.current_openingId}`, // todo fix types
+              PK: `ORG#${orgId}#OPENING#${applicant.current_openingId}`, // todo fix types
               SK: `OPENING`,
             },
             TableName: DYNAMO_TABLE_NAME,
@@ -44,7 +44,7 @@ export default async function DeleteApplicant({ org_id, applicant_id }) {
           // Decrement stage's total_applicants
           Update: {
             Key: {
-              PK: `ORG#${org_id}#STAGE#${applicant.current_stageId}`, // todo fix types
+              PK: `ORG#${orgId}#STAGE#${applicant.current_stageId}`, // todo fix types
               SK: `STAGE`,
             },
             TableName: DYNAMO_TABLE_NAME,
@@ -59,7 +59,7 @@ export default async function DeleteApplicant({ org_id, applicant_id }) {
           // Decrement the org's total applicants
           Update: {
             Key: {
-              PK: `ORG#${org_id}`,
+              PK: `ORG#${orgId}`,
               SK: `ORG`,
             },
             TableName: DYNAMO_TABLE_NAME,

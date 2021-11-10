@@ -7,13 +7,13 @@ import { GetCurrentTime } from "../time";
 
 const { DYNAMO_TABLE_NAME } = process.env;
 
-export async function CreateAndJoinOrg({ userId, org_id, GSI1SK }) {
+export async function CreateAndJoinOrg({ userId, orgId, GSI1SK }) {
   const now = GetCurrentTime("iso") as string;
 
   const new_org = {
-    PK: `ORG#${org_id}`,
+    PK: `ORG#${orgId}`,
     SK: `ORG`,
-    org_id: org_id, // plutomi - Cannot be changed
+    orgId: orgId, // plutomi - Cannot be changed
     entity_type: "ORG",
     created_at: now,
     total_applicants: 0,
@@ -37,11 +37,11 @@ export async function CreateAndJoinOrg({ userId, org_id, GSI1SK }) {
             },
             TableName: DYNAMO_TABLE_NAME,
             UpdateExpression:
-              "SET org_id = :org_id, org_join_date = :org_join_date, GSI1PK = :GSI1PK",
+              "SET orgId = :orgId, org_join_date = :org_join_date, GSI1PK = :GSI1PK",
             ExpressionAttributeValues: {
-              ":org_id": org_id,
+              ":orgId": orgId,
               ":org_join_date": now,
-              ":GSI1PK": `ORG#${org_id}#USERS`,
+              ":GSI1PK": `ORG#${orgId}#USERS`,
             },
           },
         },

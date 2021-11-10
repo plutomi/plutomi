@@ -5,7 +5,7 @@ interface DynamoUser {
   created_at?: string;
   entity_type?: string;
   user_email?: string;
-  org_id?: string;
+  orgId?: string;
   full_name?: string;
   GSI1SK?: string;
   GSI2SK?: string;
@@ -52,7 +52,7 @@ interface DynamoStage {
 interface DynamoOrgInvite {
   PK: string;
   SK: string;
-  org_id: string;
+  orgId: string;
   created_by: DynamoUser;
   entity_type: "ORG_INVITE";
   created_at: string;
@@ -76,7 +76,7 @@ interface DynamoStageQuestion {
 interface DynamoOrg {
   PK: string;
   SK: `ORG`;
-  org_id: string;
+  orgId: string;
   entity_type: "ORG";
   created_at: string;
   GSI1PK: `ORG`;
@@ -96,7 +96,7 @@ interface DynamoApplicant {
   email: string;
   email_verified: boolean;
   applicant_id: string;
-  org_id: string;
+  orgId: string;
   entity_type: "APPLICANT";
   created_at: CustomDateFormat;
   current_openingId: string;
@@ -112,7 +112,7 @@ interface DynamoApplicant {
 interface DynamoApplicantResponse {
   PK: string;
   SK: `APPLICANT_RESPONSE`;
-  org_id: string;
+  orgId: string;
   applicant_id: string;
   entity_type: "APPLICANT_RESPONSE";
   question_title: string;

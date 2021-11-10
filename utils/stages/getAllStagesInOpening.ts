@@ -3,8 +3,8 @@ import { Dynamo } from "../../lib/awsClients/ddbDocClient";
 import { GetOpening } from "../openings/getOpeningById";
 const { DYNAMO_TABLE_NAME } = process.env;
 
-export async function GetAllStagesInOpening(org_id: string, openingId: string) {
-  const opening = await GetOpening({ org_id, openingId });
+export async function GetAllStagesInOpening(orgId: string, openingId: string) {
+  const opening = await GetOpening({ orgId, openingId });
   const { stage_order } = opening;
 
   const params: QueryCommandInput = {
@@ -12,7 +12,7 @@ export async function GetAllStagesInOpening(org_id: string, openingId: string) {
     IndexName: "GSI1",
     KeyConditionExpression: "GSI1PK = :GSI1PK",
     ExpressionAttributeValues: {
-      ":GSI1PK": `ORG#${org_id}#OPENING#${openingId}#STAGES`,
+      ":GSI1PK": `ORG#${orgId}#OPENING#${openingId}#STAGES`,
     },
   };
 

@@ -29,13 +29,13 @@ const handler = async (
     "iso"
   );
 
-  const org = await GetOrg(user_session.org_id);
+  const org = await GetOrg(user_session.orgId);
 
   const new_org_invite: CreateOrgInviteInput = {
     claimed: false,
-    org_name: org.GSI1SK, // For the recipient they can see the name of the org instead of the org_id, much neater
+    org_name: org.GSI1SK, // For the recipient they can see the name of the org instead of the orgId, much neater
     created_by: user_session, // TODO reduce this to just name & email
-    org_id: org.org_id,
+    orgId: org.orgId,
     recipient_email: recipient_email,
     expires_at: expires_at,
   };
@@ -50,7 +50,7 @@ const handler = async (
       return res.status(400).json({ message: "You can't invite yourself" });
     }
 
-    if (user_session.org_id === "NO_ORG_ASSIGNED") {
+    if (user_session.orgId === "NO_ORG_ASSIGNED") {
       return res.status(400).json({
         message: `You must create an organization before inviting users`,
       });
@@ -66,7 +66,7 @@ const handler = async (
     };
     try {
       await CreateOrgInvite({
-        org_id: org.org_id,
+        orgId: org.orgId,
         user: recipient,
         org_name: org.GSI1SK,
         expires_at: expires_at,

@@ -17,15 +17,15 @@ const handler = async (
     return res.status(401).json({ message: "Please log in again" });
   }
   const { method, query } = req;
-  const { org_id } = query as CustomQuery;
-  const org = await GetOrg(org_id);
+  const { orgId } = query as CustomQuery;
+  const org = await GetOrg(orgId);
 
   if (method === "GET") {
     // When signed in, this returns all data for an org
     // For public org data such as basic info or openings, please use the
-    // /api/public/orgs/[org_id] route
+    // /api/public/orgs/[orgId] route
 
-    if (org_id != user_session.org_id) {
+    if (orgId != user_session.orgId) {
       return res
         .status(403)
         .json({ message: "You are not authorized to view this org" });
@@ -56,7 +56,7 @@ const handler = async (
       const updated_user = await UpdateUser({
         userId: user_session.userId,
         new_user_values: {
-          org_id: "NO_ORG_ASSIGNED",
+          orgId: "NO_ORG_ASSIGNED",
           org_join_date: "NO_ORG_ASSIGNED",
           GSI1PK: "NO_ORG_ASSIGNED",
         },
@@ -67,7 +67,7 @@ const handler = async (
       await req.session.save();
       return res
         .status(200)
-        .json({ message: `You've deleted the ${org_id} org :(` });
+        .json({ message: `You've deleted the ${orgId} org :(` });
     } catch (error) {
       // TODO add error logger
       return res

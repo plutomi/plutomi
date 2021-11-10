@@ -8,7 +8,7 @@ function classNames(...classes) {
 import { useRouter } from "next/router";
 export default function ApplicantInfoForm() {
   const router = useRouter();
-  const { org_id, openingId } = router.query as CustomQuery;
+  const { orgId, openingId } = router.query as CustomQuery;
   const [agreed, setAgreed] = useState(false);
   const [first_name, setFirstName] = useState("");
   const [last_name, setLastName] = useState("");
@@ -24,7 +24,7 @@ export default function ApplicantInfoForm() {
 
     try {
       const { message } = await ApplicantsService.createApplicant({
-        org_id: org_id,
+        orgId: orgId,
         openingId: openingId,
         first_name: first_name,
         last_name: last_name,

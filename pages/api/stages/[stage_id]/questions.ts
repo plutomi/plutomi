@@ -18,7 +18,7 @@ const handler = async (
   if (method === "GET") {
     try {
       const questions = await GetAllQuestionsInStage({
-        org_id: user_session.org_id,
+        orgId: user_session.orgId,
         stageId,
       });
 

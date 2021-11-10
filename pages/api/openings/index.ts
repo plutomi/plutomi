@@ -17,14 +17,14 @@ const handler = async (
   const { GSI1SK }: APICreateOpeningInput = body;
 
   if (method === "POST") {
-    if (user_session.org_id === "NO_ORG_ASSIGNED") {
+    if (user_session.orgId === "NO_ORG_ASSIGNED") {
       return res.status(403).json({
         message: "Please create an organization before creating an opening",
       });
     }
     try {
       const create_opening_input: CreateOpeningInput = {
-        org_id: user_session.org_id,
+        orgId: user_session.orgId,
         GSI1SK: GSI1SK,
       };
 
@@ -48,7 +48,7 @@ const handler = async (
 
   if (method === "GET") {
     try {
-      const all_openings = await GetAllOpeningsInOrg(user_session.org_id);
+      const all_openings = await GetAllOpeningsInOrg(user_session.orgId);
       return res.status(200).json(all_openings);
     } catch (error) {
       // TODO add error logger

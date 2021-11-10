@@ -6,13 +6,13 @@ const fetcher = (url: string) => axios.get(url).then((res) => res.data);
 
 /**
  *
- * @param org_id - The org which you want to return the openings for
+ * @param orgId - The org which you want to return the openings for
  */
-function useAllPublicOpenings(org_id: string): usePublicOpeningsOutput {
-  const shouldFetch = org_id ? true : false;
+function useAllPublicOpenings(orgId: string): usePublicOpeningsOutput {
+  const shouldFetch = orgId ? true : false;
 
   const { data, error } = useSWR(
-    shouldFetch && PublicInfoService.getAllPublicOpeningsURL({ org_id }),
+    shouldFetch && PublicInfoService.getAllPublicOpeningsURL({ orgId }),
     fetcher
   );
 

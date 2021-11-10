@@ -5,16 +5,16 @@ const UrlSafeString = require("url-safe-string"),
 // Cleans up the org name (or ID technically) to be URL safe
 export default function withCleanOrgId(handler: any) {
   return async (req: NextApiRequest, res: NextApiResponse) => {
-    if (req.body.org_id) {
-      req.body.org_id = tagGenerator.generate(req.body.org_id);
+    if (req.body.orgId) {
+      req.body.orgId = tagGenerator.generate(req.body.orgId);
     }
 
-    if (req.query.org_id) {
-      req.query.org_id = tagGenerator.generate(req.query.org_id);
+    if (req.query.orgId) {
+      req.query.orgId = tagGenerator.generate(req.query.orgId);
     }
 
-    if (req.body.org_id) {
-      req.body.org_id = tagGenerator.generate(req.body.org_id);
+    if (req.body.orgId) {
+      req.body.orgId = tagGenerator.generate(req.body.orgId);
     }
     return handler(req, res);
   };

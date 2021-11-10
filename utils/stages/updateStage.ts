@@ -3,7 +3,7 @@ import { Dynamo } from "../../lib/awsClients/ddbDocClient";
 const { DYNAMO_TABLE_NAME } = process.env;
 
 export default async function UpdateStage({
-  org_id,
+  orgId,
   stageId,
   new_stage_values,
 }) {
@@ -11,7 +11,7 @@ export default async function UpdateStage({
   const FORBIDDEN_KEYS = [
     "PK",
     "SK",
-    "org_id",
+    "orgId",
     "entity_type",
     "created_at",
     "stageId",
@@ -37,7 +37,7 @@ export default async function UpdateStage({
 
   const params = {
     Key: {
-      PK: `ORG#${org_id}#STAGE#${stageId}`,
+      PK: `ORG#${orgId}#STAGE#${stageId}`,
       SK: `STAGE`,
     },
     UpdateExpression: UpdatedExpression,

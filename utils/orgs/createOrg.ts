@@ -4,12 +4,12 @@ import { GetCurrentTime } from "../time";
 
 const { DYNAMO_TABLE_NAME } = process.env;
 
-export async function CreateOrg({ org_id, GSI1SK }: CreateOrgInput) {
+export async function CreateOrg({ orgId, GSI1SK }: CreateOrgInput) {
   const now = GetCurrentTime("iso") as string;
   const new_org = {
-    PK: `ORG#${org_id}`,
+    PK: `ORG#${orgId}`,
     SK: `ORG`,
-    org_id: org_id, // plutomi - Cannot be changed
+    orgId: orgId, // plutomi - Cannot be changed
     entity_type: "ORG",
     created_at: now,
     total_applicants: 0,
@@ -33,7 +33,7 @@ export async function CreateOrg({ org_id, GSI1SK }: CreateOrgInput) {
   } catch (error) {
     if (error.name == "ConditionalCheckFailedException") {
       throw new Error(
-        `The organization name '${org_id}' has already been taken :(`
+        `The organization name '${orgId}' has already been taken :(`
       );
     }
     throw new Error(error);

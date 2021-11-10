@@ -12,7 +12,7 @@ export default function TeamContent() {
   const router = useRouter();
   const { user, isUserLoading, isUserError } = useSelf();
   const { orgUsers, isOrgUsersLoading, isOrgUsersError } = useOrgUsers(
-    user?.org_id
+    user?.orgId
   );
 
   const setCreateInviteModalOpen = useStore(

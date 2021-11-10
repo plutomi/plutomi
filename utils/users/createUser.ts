@@ -23,7 +23,7 @@ export async function CreateUser({ user_email }) {
     userId: userId,
     entity_type: "USER",
     created_at: now,
-    org_id: "NO_ORG_ASSIGNED",
+    orgId: "NO_ORG_ASSIGNED",
     org_join_date: "NO_ORG_ASSIGNED",
     total_invites: 0,
     GSI1PK: "ORG#NO_ORG_ASSIGNED#USERS",

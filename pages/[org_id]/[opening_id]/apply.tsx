@@ -7,10 +7,10 @@ import OpeningApplyPageContent from "../../../components/Openings/Public/Opening
 import OpeningApplyPageHeader from "../../../components/Openings/Public/OpeningApplyPageHeader";
 export default function Apply() {
   const router = useRouter();
-  const { org_id, openingId } = router.query as CustomQuery;
-  const { org, isOrgLoading, isOrgError } = usePublicOrgById(org_id);
+  const { orgId, openingId } = router.query as CustomQuery;
+  const { org, isOrgLoading, isOrgError } = usePublicOrgById(orgId);
   const { opening, isOpeningLoading, isOpeningError } = usePublicOpeningById(
-    org_id,
+    orgId,
     openingId
   );
 
@@ -28,7 +28,7 @@ export default function Apply() {
         <h1 className="text-2xl text-center font-bold">
           Unfortunately, you cannot apply to this opening.
         </h1>
-        <GoBack url={`${process.env.WEBSITE_URL}/${org_id}/apply`} />
+        <GoBack url={`${process.env.WEBSITE_URL}/${orgId}/apply`} />
       </div>
     );
   }

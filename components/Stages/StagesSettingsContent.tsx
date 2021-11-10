@@ -106,7 +106,7 @@ export default function StageSettingsContent() {
   const { stage, isStageLoading, isStageError } = useStageById(stageId);
 
   const { questions, isQuestionsLoading, isQuestionsError } =
-    useAllStageQuestions(user?.org_id, stage?.stageId);
+    useAllStageQuestions(user?.orgId, stage?.stageId);
 
   const questionModal = useStore((state) => state.questionModal);
   const setQuestionModal = useStore((state) => state.setQuestionModal);

@@ -10,16 +10,16 @@ import { nanoid } from "nanoid";
 
 const { DYNAMO_TABLE_NAME } = process.env;
 
-export async function CreateOpening({ org_id, GSI1SK }: CreateOpeningInput) {
+export async function CreateOpening({ orgId, GSI1SK }: CreateOpeningInput) {
   const now = GetCurrentTime("iso") as string;
   const openingId = nanoid(16);
   const new_opening: DynamoOpening = {
-    PK: `ORG#${org_id}#OPENING#${openingId}`,
+    PK: `ORG#${orgId}#OPENING#${openingId}`,
     SK: `OPENING`,
     entity_type: "OPENING",
     created_at: now,
     openingId: openingId,
-    GSI1PK: `ORG#${org_id}#OPENINGS`,
+    GSI1PK: `ORG#${orgId}#OPENINGS`,
     GSI1SK: GSI1SK,
     total_stages: 0,
     total_openings: 0,
@@ -42,7 +42,7 @@ export async function CreateOpening({ org_id, GSI1SK }: CreateOpeningInput) {
         // Increment the org's total openings
         Update: {
           Key: {
-            PK: `ORG#${org_id}`,
+            PK: `ORG#${orgId}`,
             SK: `ORG`,
           },
           TableName: DYNAMO_TABLE_NAME,

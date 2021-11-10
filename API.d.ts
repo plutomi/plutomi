@@ -84,14 +84,14 @@ interface APIGetUserInput {
 }
 
 /**
- * @param org_id - The ID of the org you want to retrieve the users for
+ * @param orgId - The ID of the org you want to retrieve the users for
  */
 interface APIGetAllUsersInOrgURL {
-  org_id: string;
+  orgId: string;
 }
 
 interface APIGetAllUsersInOrg {
-  org_id: string;
+  orgId: string;
 }
 
 /**
@@ -123,5 +123,5 @@ interface APIRejectInviteInput {
 interface APIAcceptInviteInput {
   timestamp: string;
   invite_id: string;
-  org_id: string;
+  orgId: string;
 }

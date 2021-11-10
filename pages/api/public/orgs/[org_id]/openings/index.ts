@@ -6,11 +6,11 @@ import CleanOpening from "../../../../../../utils/clean/cleanOpening";
 
 const handler = async (req: CustomRequest, res: NextApiResponse) => {
   const { method, query } = req;
-  const { org_id } = query as CustomQuery;
+  const { orgId } = query as CustomQuery;
 
   if (method === "GET") {
     try {
-      const all_openings = await GetAllOpeningsInOrg(org_id);
+      const all_openings = await GetAllOpeningsInOrg(orgId);
       const only_public = all_openings.filter(
         (opening): DynamoOpening => opening.is_public
       );

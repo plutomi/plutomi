@@ -6,7 +6,7 @@ import { nanoid } from "nanoid";
 const { DYNAMO_TABLE_NAME } = process.env;
 
 export async function CreateStageRule({
-  org_id,
+  orgId,
   openingId,
   stageId,
   validation,
@@ -14,12 +14,12 @@ export async function CreateStageRule({
   const now = GetCurrentTime("iso") as string;
   const stage_rule_id = nanoid(16);
   const new_stage_rule = {
-    PK: `ORG#${org_id}#OPENING#${openingId}#STAGE#${stageId}`,
+    PK: `ORG#${orgId}#OPENING#${openingId}#STAGE#${stageId}`,
     SK: `STAGE_RULE#${stage_rule_id}`,
     entity_type: "STAGE_RULE",
     created_at: now,
     validation: validation,
-    GSI1PK: `ORG#${org_id}#RULES#STAGES`,
+    GSI1PK: `ORG#${orgId}#RULES#STAGES`,
     GSI1SK: stageId, // TODO filter by opening by stage?
   };
 

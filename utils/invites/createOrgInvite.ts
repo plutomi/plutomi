@@ -10,21 +10,21 @@ import { nanoid } from "nanoid";
 const { DYNAMO_TABLE_NAME } = process.env;
 
 export default async function CreateOrgInvite({
-  org_id,
+  orgId,
   expires_at,
   created_by,
   user,
   org_name,
 }) {
   try {
-    if (user.org_id === org_id) {
+    if (user.orgId === orgId) {
       throw "User is already in your org";
     }
 
     // Check if the user we are inviting already has pending invites for the current org
     const pending_invites = await GetAllUserInvites(user.userId);
     const unclaimed_invites = pending_invites.filter(
-      (invite) => invite.org_id == org_id
+      (invite) => invite.orgId == orgId
     );
 
     if (unclaimed_invites.length > 0) {
@@ -35,14 +35,14 @@ export default async function CreateOrgInvite({
     const new_org_invite = {
       PK: `USER#${user.userId}`,
       SK: `ORG_INVITE#${invite_id}`, // Allows sorting, and incase two get created in the same millisecond
-      org_id: org_id,
+      orgId: orgId,
       org_name: org_name, // using org_name here because GSI1SK is taken obv
       created_by: created_by,
       entity_type: "ORG_INVITE",
       created_at: now,
       expires_at: expires_at,
       invite_id: invite_id,
-      GSI1PK: `ORG#${org_id}#ORG_INVITES`,
+      GSI1PK: `ORG#${orgId}#ORG_INVITES`,
       GSI1SK: now,
     };
 

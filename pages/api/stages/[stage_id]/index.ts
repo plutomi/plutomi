@@ -21,7 +21,7 @@ const handler = async (
   // Get a single stage in an opening
   if (method === "GET") {
     const get_stage_input: GetStageInput = {
-      org_id: user_session.org_id,
+      orgId: user_session.orgId,
       stageId: stageId,
     };
 
@@ -43,7 +43,7 @@ const handler = async (
   if (method === "PUT") {
     try {
       const update_stage_input: UpdateStageInput = {
-        org_id: user_session.org_id,
+        orgId: user_session.orgId,
         stageId: stageId,
         new_stage_values: body.new_stage_values,
       };
@@ -66,7 +66,7 @@ const handler = async (
   if (method === "DELETE") {
     try {
       const delete_stage_input = {
-        org_id: user_session.org_id,
+        orgId: user_session.orgId,
         stageId: stageId,
       };
 

@@ -39,10 +39,10 @@ const handler = async (
   }
 
   if (method === "POST") {
-    // TODO disallow org_id's by this name
-    if (user_session.org_id != "NO_ORG_ASSIGNED") {
+    // TODO disallow orgId's by this name
+    if (user_session.orgId != "NO_ORG_ASSIGNED") {
       return res.status(400).json({
-        message: `You already belong to an org: ${user_session.org_id}`,
+        message: `You already belong to an org: ${user_session.orgId}`,
       });
     }
 

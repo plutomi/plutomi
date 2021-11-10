@@ -17,7 +17,7 @@ export async function UpdateUser({
     const FORBIDDEN_KEYS = [
       "PK",
       "SK",
-      "org_id",
+      "orgId",
       "entity_type",
       "created_at",
       "openingId",

@@ -1,11 +1,11 @@
 interface CreateOrgInput {
-  org_id: string; // plutomi
+  orgId: string; // plutomi
   GSI1SK: string; // Plutomi Inc.
   user: DynamoUser; // User creating the org - Optional on client
 }
 
 interface GetOrgInput {
-  org_id: string;
+  orgId: string;
 }
 
 interface CreateUserInput {
@@ -15,46 +15,46 @@ interface CreateUserInput {
 }
 
 interface CreateOpeningInput {
-  org_id: string;
+  orgId: string;
   GSI1SK: string;
   user?: DynamoUser; // User creating the opening - Optional on client
 }
 
 interface GetOpeningInput {
-  org_id: string;
+  orgId: string;
   openingId: string;
 }
 interface GetApplicantInput {
-  org_id: string;
+  orgId: string;
   applicant_id: string;
 }
 interface DynamoCreateStageInput {
-  org_id: string;
+  orgId: string;
   openingId: string;
   GSI1SK: string;
 }
 
 interface GetStageInput {
-  org_id: string;
+  orgId: string;
   stageId: string;
 }
 
 interface CreateStageQuestionInput {
-  org_id: string;
+  orgId: string;
   stageId: string;
   GSI1SK: string;
   question_description: string;
 }
 
 interface CreateStageRuleInput {
-  org_id: string;
+  orgId: string;
   openingId: string;
   stageId: string;
   validation: string; // TODO
 }
 
 interface CreateApplicantInput {
-  org_id: string;
+  orgId: string;
   first_name: string;
   last_name: string;
   email: string;
@@ -63,7 +63,7 @@ interface CreateApplicantInput {
 }
 
 interface CreateApplicantResponseInput {
-  org_id: string;
+  orgId: string;
   applicant_id: string;
   question_title: string;
   question_description: string;
@@ -77,7 +77,7 @@ type CustomRequest = NextApiRequest & { user: DynamoUser };
 type CustomJWT = JWT & { userId: string };
 
 interface CreateOrgInviteInput {
-  org_id: string;
+  orgId: string;
   org_name: string;
   created_by: DynamoUser;
   recipient_email: string; // Email of person getting invited
@@ -199,7 +199,7 @@ interface APICreateRuleInput {
 
 interface APICreateOrgInput {
   GSI1SK: string;
-  org_id: string;
+  orgId: string;
 }
 
 interface APICreateOrgInviteInput {
@@ -218,7 +218,7 @@ interface APIRejectOrgInvite {
 }
 
 interface DeleteStageInput {
-  org_id: string;
+  orgId: string;
   stageId: string;
 }
 
@@ -227,31 +227,31 @@ interface APIReorderStagesInput {
 }
 
 interface ReorderStagesInput {
-  org_id: string;
+  orgId: string;
   openingId: string;
   new_stage_order: string[];
 }
 
 interface UpdateOpeningInput {
-  org_id: string;
+  orgId: string;
   openingId: string;
   new_opening_values: DynamoOpening;
 }
 
 interface UpdateApplicantInput {
-  org_id: string;
+  orgId: string;
   applicant_id: string;
   new_applicant_values: DynamoApplicant;
 }
 
 interface UpdateQuestionInput {
-  org_id: string;
+  orgId: string;
   question_id: string;
   new_question_values: DynamoStageQuestion;
 }
 
 interface UpdateStageInput {
-  org_id: string;
+  orgId: string;
   stageId: string;
   new_stage_values: DynamoStage;
 }
@@ -264,11 +264,11 @@ interface APICreateQuestionInput {
 interface AllQuestionsByStageIDInput {
   openingId: string;
   stageId: string;
-  org_id: string;
+  orgId: string;
 }
 
 interface DeleteQuestionInput {
-  org_id: string;
+  orgId: string;
   stageId: string;
   question_id: string;
 }
@@ -286,7 +286,7 @@ interface APICreateApplicantInput {
 }
 
 interface GetAllApplicantsInStageInput {
-  org_id: string;
+  orgId: string;
   openingId: string;
   stageId: string;
 }
@@ -309,7 +309,7 @@ type NextIronRequest = NextApiRequest & { session: Session };
 type CustomDateFormat = string | number;
 
 type CustomQuery = {
-  org_id?: string;
+  orgId?: string;
   openingId?: string;
   userId?: string;
   stageId?: string;

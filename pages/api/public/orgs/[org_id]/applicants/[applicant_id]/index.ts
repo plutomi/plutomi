@@ -8,7 +8,7 @@ const handler = async (req: CustomRequest, res: NextApiResponse) => {
   const { applicant_id } = query as CustomQuery;
 
   const get_applicant_input: GetApplicantInput = {
-    org_id: user.org_id,
+    orgId: user.orgId,
     applicant_id: applicant_id,
   };
 
