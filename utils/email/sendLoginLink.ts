@@ -1,5 +1,5 @@
 import { SendEmailCommand, SendEmailCommandInput } from "@aws-sdk/client-ses";
-import SES from "../../lib/awsClients/sesClient";
+import SES from "../../awsClients/sesClient";
 
 export default async function SendLoginLink({
   recipientEmail,
