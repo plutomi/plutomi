@@ -142,7 +142,7 @@ export default class PlutomiWebsiteStack extends cdk.Stack {
         taskDefinition: taskDefinition,
         memoryLimitMiB: 512, // Default is 512
         publicLoadBalancer: true, // Default is false
-        domainName: `fargate.${DOMAIN_NAME}`,
+        domainName: DOMAIN_NAME,
         domainZone: hostedZone,
         listenerPort: 443,
         protocol: protocol.ApplicationProtocol.HTTPS,
