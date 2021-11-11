@@ -42,24 +42,18 @@ Here is a fun (4 year old) bug: [Unable to change parameter name in API Gateway 
 
 Or [cold starts](https://filia-aleks.medium.com/aws-lambda-battle-2021-performance-comparison-for-all-languages-c1b441005fd1) / [performance](https://www.trek10.com/blog/fargate-vs-lambda) / cost (either way you slice this one: pure throughput or just Denial of Wallet attacks). To be clear, we will still use lambda for background tasks such as queues, DynamoDB streams, email sending, etc. just not for the main API of the site.
 
-Some other useful repos:
-
-- [AWS ECS Patterns](https://github.com/aws/aws-cdk/tree/master/packages/%40aws-cdk/aws-ecs-patterns)
-- [Serverless CDK Patterns](https://github.com/cdk-patterns/serverless)
-
 ## Useful commands
 
-> NOTE: To deploy, you must first build your docker image and publish to ECR. We will automate this via CI / CD in the future.
->
-> `docker build -t <your-username>:<your-app-name> .`
->
-> [How to push your image to ECR](https://docs.aws.amazon.com/AmazonECR/latest/userguide/docker-push-ecr-image.html)
-
 - `npm run dev` run the app locally
-- `cdk deploy` deploy the site
+- `cdk deploy` deploy the site - _Docker image is built and deployed by CDK automatically!_
 - `cdk destroy` destroy the site
 - `cdk diff` compare deployed stack with current state
 - `cdk synth` emits the synthesized CloudFormation template
+
+And other useful repos:
+
+- [AWS ECS Patterns](https://github.com/aws/aws-cdk/tree/master/packages/%40aws-cdk/aws-ecs-patterns)
+- [Serverless CDK Patterns](https://github.com/cdk-patterns/serverless)
 
 ## License and Open Source
 
