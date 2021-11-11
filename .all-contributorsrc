@@ -6,17 +6,6 @@
   "commit": false,
   "contributors": [
     {
-      "login": "mazupicua",
-      "name": "mazupicua",
-      "avatar_url": "https://avatars.githubusercontent.com/u/37680756?v=4",
-      "profile": "https://github.com/mazupicua",
-      "contributions": [
-        "projectManagement",
-        "code",
-        "maintenance"
-      ]
-    },
-    {
       "login": "joswayski",
       "name": "Jose Valerio",
       "avatar_url": "https://avatars.githubusercontent.com/u/22891173?v=4",
@@ -24,6 +13,17 @@
       "contributions": [
         "code",
         "infra",
+        "maintenance"
+      ]
+    },
+    {
+      "login": "mazupicua",
+      "name": "mazupicua",
+      "avatar_url": "https://avatars.githubusercontent.com/u/37680756?v=4",
+      "profile": "https://github.com/mazupicua",
+      "contributions": [
+        "projectManagement",
+        "code",
         "maintenance"
       ]
     }
