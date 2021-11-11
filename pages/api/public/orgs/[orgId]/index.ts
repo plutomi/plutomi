@@ -5,7 +5,6 @@ import CleanOrg from "../../../../../utils/clean/cleanOrg";
 // This returns limited public information about an org
 const handler = async (req: CustomRequest, res: NextApiResponse) => {
   const { method, query } = req;
-  console.log("In function", req.query);
   const { orgId } = query;
 
   if (method === "GET") {

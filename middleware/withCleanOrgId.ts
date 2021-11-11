@@ -2,10 +2,9 @@ import { NextApiRequest, NextApiResponse } from "next";
 const UrlSafeString = require("url-safe-string"),
   tagGenerator = new UrlSafeString();
 
-// Cleans up the org name (or ID technically) to be URL safe
+// Cleans up the orgId to be URL safe if in body or query
 export default function withCleanOrgId(handler: any) {
   return async (req: NextApiRequest, res: NextApiResponse) => {
-    console.log("In middleware", req.query, req.body);
     if (req.body.orgId) {
       req.body.orgId = tagGenerator.generate(req.body.orgId);
     }
@@ -14,9 +13,6 @@ export default function withCleanOrgId(handler: any) {
       req.query.orgId = tagGenerator.generate(req.query.orgId);
     }
 
-    if (req.body.orgId) {
-      req.body.orgId = tagGenerator.generate(req.body.orgId);
-    }
     return handler(req, res);
   };
 }
