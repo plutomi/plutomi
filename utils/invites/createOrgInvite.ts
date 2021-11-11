@@ -28,7 +28,7 @@ export default async function CreateOrgInvite({
     );
 
     if (unclaimed_invites.length > 0) {
-      throw `This user already has a pending invite to your org! They can log in at ${process.env.WEBSITE_URL}/invites to claim it!`;
+      throw `This user already has a pending invite to your org! They can log in at ${process.env.NEXT_PUBLIC_WEBSITE_URL}/invites to claim it!`;
     }
     const invite_id = nanoid(50);
     const now = GetCurrentTime("iso") as string;

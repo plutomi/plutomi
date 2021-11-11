@@ -47,7 +47,7 @@ export default function LoginHomepage({ callbackUrl }: CallbackUrl) {
 
     const input = {
       userEmail: userEmail,
-      callbackUrl: `${process.env.WEBSITE_URL}/dashboard`, // TODO make this a config variable as the "DEFAULT_REDIRECT_ROUTE_HOMEPAGE"
+      callbackUrl: `${process.env.NEXT_PUBLIC_WEBSITE_URL}/dashboard`, // TODO make this a config variable as the "DEFAULT_REDIRECT_ROUTE_HOMEPAGE"
       loginMethod: "GOOGLE",
     };
     console.log(input);

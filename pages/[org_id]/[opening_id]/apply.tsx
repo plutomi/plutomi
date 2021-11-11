@@ -28,7 +28,7 @@ export default function Apply() {
         <h1 className="text-2xl text-center font-bold">
           Unfortunately, you cannot apply to this opening.
         </h1>
-        <GoBack url={`${process.env.WEBSITE_URL}/${orgId}/apply`} />
+        <GoBack url={`${process.env.NEXT_PUBLIC_WEBSITE_URL}/${orgId}/apply`} />
       </div>
     );
   }

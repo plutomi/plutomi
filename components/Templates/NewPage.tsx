@@ -31,18 +31,18 @@ export default function NewPage({
   if (current_nav_item.hidden_if_no_org && user?.orgId === "NO_ORG_ASSIGNED") {
     if (current_nav_item.name === "Openings") {
       alert(
-        `You must create an org or join one before adding or viewing openings. If you have pending invites, you can view them at ${process.env.WEBSITE_URL}/invites`
+        `You must create an org or join one before adding or viewing openings. If you have pending invites, you can view them at ${process.env.NEXT_PUBLIC_WEBSITE_URL}/invites`
       );
-      router.push(`${process.env.WEBSITE_URL}/dashboard`);
+      router.push(`${process.env.NEXT_PUBLIC_WEBSITE_URL}/dashboard`);
 
       return null;
     }
 
     if (current_nav_item.name === "Team") {
       alert(
-        `You must create an org or join one before adding or viewing team members. If you have pending invites, you can view them at ${process.env.WEBSITE_URL}/invites`
+        `You must create an org or join one before adding or viewing team members. If you have pending invites, you can view them at ${process.env.NEXT_PUBLIC_WEBSITE_URL}/invites`
       );
-      router.push(`${process.env.WEBSITE_URL}/dashboard`);
+      router.push(`${process.env.NEXT_PUBLIC_WEBSITE_URL}/dashboard`);
 
       return null;
     }

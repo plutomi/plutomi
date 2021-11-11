@@ -24,11 +24,13 @@ export default function Openings() {
     // Redirect to the first stage
     if (opening.total_stages > 0) {
       router.push(
-        `${process.env.WEBSITE_URL}/openings/${openingId}/stages/${stages[0].stageId}/applicants` // TODO should this end with applicants?
+        `${process.env.NEXT_PUBLIC_WEBSITE_URL}/openings/${openingId}/stages/${stages[0].stageId}/applicants` // TODO should this end with applicants?
       );
     } else {
       // Redirect to opening settings if no stages
-      router.push(`${process.env.WEBSITE_URL}/openings/${openingId}/settings`);
+      router.push(
+        `${process.env.NEXT_PUBLIC_WEBSITE_URL}/openings/${openingId}/settings`
+      );
     }
   }, [router.isReady]);
 

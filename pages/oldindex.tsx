@@ -15,7 +15,9 @@ export default function Main() {
         <Navbar />
         <Hero />
         {!user || isUserError ? (
-          <LoginHomepage callbackUrl={`${process.env.WEBSITE_URL}/dashboard`} />
+          <LoginHomepage
+            callbackUrl={`${process.env.NEXT_PUBLIC_WEBSITE_URL}/dashboard`}
+          />
         ) : (
           <AlreadySignedIn />
         )}

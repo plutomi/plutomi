@@ -52,7 +52,7 @@ export default function OpeningSettingsHeader() {
 
     try {
       await OpeningsService.deleteOpening({ openingId: openingId });
-      router.push(`${process.env.WEBSITE_URL}/openings`);
+      router.push(`${process.env.NEXT_PUBLIC_WEBSITE_URL}/openings`);
     } catch (error) {
       alert(error.response.data.message);
     }

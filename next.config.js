@@ -1,17 +1,11 @@
 module.exports = {
-  // reactStrictMode: true,
-  target: "serverless",
+  reactStrictMode: true,
   env: {
-    WEBSITE_BUCKET_NAME: process.env.WEBSITE_BUCKET_NAME,
-    CLOUDFRONT_ID: process.env.CLOUDFRONT_ID,
-    DEFAULT_LAMBDA_NAME: process.env.DEFAULT_LAMBDA_NAME,
-    API_LAMBDA_NAME: process.env.API_LAMBDA_NAME,
-    IMAGE_LAMBDA_NAME: process.env.IMAGE_LAMBDA_NAME,
-    DOMAIN_NAME: process.env.DOMAIN_NAME,
-    DYNAMO_TABLE_NAME: process.env.DYNAMO_TABLE_NAME,
-    LAMBDA_ROLE_ARN: process.env.LAMBDA_ROLE_ARN,
-    WEBSITE_URL: process.env.WEBSITE_URL,
-    NEXT_PUBLIC_GOOGLE_CLIENT_ID: process.env.GOOGLE_CLIENT_ID,
+    NEXT_PUBLIC_WEBSITE_URL: process.env.WEBSITE_URL || `http://localhost:3000`, // The url of your website ie `https://plutomi.com`
+    DYNAMO_TABLE_NAME: process.env.DYNAMO_TABLE_NAME, // Name of your Dynamo table
+    NEXT_PUBLIC_GOOGLE_CLIENT_ID: process.env.GOOGLE_CLIENT_ID, // Client ID for sign in with google
+    NEXT_IRON_SESSION_COOKIE_NAME: process.env.NEXT_IRON_SESSION_COOKIE_NAME, // Name of cookie for auth
+    NEXT_IRON_SESSION_PASSWORD_1: process.env.NEXT_IRON_SESSION_PASSWORD_1, // Password #1 for encrypting auth cookie
   },
 
   async redirects() {

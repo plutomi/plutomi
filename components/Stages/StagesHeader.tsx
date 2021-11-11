@@ -33,12 +33,12 @@ export default function StagesHeader() {
       <p className="mt-2 text-md text-normal sm:mt-0 ">
         <ClickToCopy
           showText={"Application Link"}
-          copyText={`${process.env.WEBSITE_URL}/${user?.orgId}/${opening?.openingId}/apply`}
+          copyText={`${process.env.NEXT_PUBLIC_WEBSITE_URL}/${user?.orgId}/${opening?.openingId}/apply`}
         />
       </p>
       <div className=" flex justify-center">
         <Link
-          href={`${process.env.WEBSITE_URL}/openings/${openingId}/settings`}
+          href={`${process.env.NEXT_PUBLIC_WEBSITE_URL}/openings/${openingId}/settings`}
         >
           <CogIcon className="w-10 h-10  hover:text-dark text-light cursor-pointer transition duration-300 ease-in-out" />
         </Link>

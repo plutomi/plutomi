@@ -184,7 +184,7 @@ export default function ApplicantProfileModal() {
                       <div className="ml-3 h-7 flex items-center space-x-4">
                         <ClickToCopy
                           showText={"Copy Application Link"}
-                          copyText={`${process.env.WEBSITE_URL}/${applicant?.orgId}/applicants/${applicant?.applicantId}`}
+                          copyText={`${process.env.NEXT_PUBLIC_WEBSITE_URL}/${applicant?.orgId}/applicants/${applicant?.applicantId}`}
                         />
                         <button
                           type="button"

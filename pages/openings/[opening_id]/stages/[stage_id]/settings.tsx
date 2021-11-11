@@ -36,7 +36,9 @@ export default function StageSettings() {
         openingId: openingId,
         stageId: stageId,
       });
-      router.push(`${process.env.WEBSITE_URL}/openings/${openingId}/settings`);
+      router.push(
+        `${process.env.NEXT_PUBLIC_WEBSITE_URL}/openings/${openingId}/settings`
+      );
     } catch (error) {
       alert(error.response.data.message);
     }

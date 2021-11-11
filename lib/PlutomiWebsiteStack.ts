@@ -64,9 +64,9 @@ export default class PlutomiWebsiteStack extends cdk.Stack {
           "dynamodb:UpdateItem",
         ],
         resources: [
-          `arn:aws:dynamodb:*:${ACCOUNT_ID}:table/Plutomi/index/GSI1`,
-          `arn:aws:dynamodb:*:${ACCOUNT_ID}:table/Plutomi/index/GSI2`,
-          `arn:aws:dynamodb:*:${ACCOUNT_ID}:table/Plutomi`,
+          `arn:aws:dynamodb:*:${ACCOUNT_ID}:table/Plutomi/index/GSI1`, // TODO dynamic table name
+          `arn:aws:dynamodb:*:${ACCOUNT_ID}:table/Plutomi/index/GSI2`, // TODO dynamic table name
+          `arn:aws:dynamodb:*:${ACCOUNT_ID}:table/Plutomi`, // TODO dynamic table name
         ],
       })
     );
@@ -110,10 +110,10 @@ export default class PlutomiWebsiteStack extends cdk.Stack {
       protocol: ecs.Protocol.TCP,
     });
 
-    // Create a VPC with 2 AZ's (2 i sminimum)
+    // Create a VPC with 2 AZ's (2 is minimum)
     const vpc = new ec2.Vpc(this, "plutomi-fargate-api-vpc", {
       maxAzs: 2,
-      natGateways: 0,
+      natGateways: 0, // Very pricy!
     });
 
     // Create the cluster
@@ -142,11 +142,12 @@ export default class PlutomiWebsiteStack extends cdk.Stack {
         taskDefinition: taskDefinition,
         memoryLimitMiB: 512, // Default is 512
         publicLoadBalancer: true, // Default is false
-        domainName: DOMAIN_NAME,
+        domainName: `fargate.${DOMAIN_NAME}`,
         domainZone: hostedZone,
         listenerPort: 443,
         protocol: protocol.ApplicationProtocol.HTTPS,
         redirectHTTP: true,
+        assignPublicIp: true, // Allows pulling the ECR image
       }
     );
 

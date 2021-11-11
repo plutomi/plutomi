@@ -28,7 +28,9 @@ export default function OpeningList() {
           <li key={opening.openingId}>
             {/* If the opening has stages, go to the first stage and view aplicants. Otherwise, go to the settings page for the opening to create one*/}
             <Link
-              href={`${process.env.WEBSITE_URL}/openings/${opening.openingId}/${
+              href={`${process.env.NEXT_PUBLIC_WEBSITE_URL}/openings/${
+                opening.openingId
+              }/${
                 opening.total_stages > 0
                   ? `stages/${opening.stage_order[0]}/applicants` // TODO should this end with applicants?
                   : `settings`
@@ -73,7 +75,7 @@ export default function OpeningList() {
                         <p className="mt-2 flex items-center text-lg text-normal sm:mt-0 sm:ml-6">
                           <ClickToCopy
                             showText={"Application Link"}
-                            copyText={`${process.env.WEBSITE_URL}/${user?.orgId}/${opening?.openingId}/apply`}
+                            copyText={`${process.env.NEXT_PUBLIC_WEBSITE_URL}/${user?.orgId}/${opening?.openingId}/apply`}
                           />
                         </p>
                       ) : null}

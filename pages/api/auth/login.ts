@@ -75,10 +75,10 @@ const handler = async (
           loginLinkHash: hash,
           login_link_expiry: login_link_expiry,
         });
-        const default_redirect = `${process.env.WEBSITE_URL}/dashboard`;
-        const login_link = `${process.env.WEBSITE_URL}/api/auth/login?userId=${
-          user.userId
-        }&key=${secret}&callbackUrl=${
+        const default_redirect = `${process.env.NEXT_PUBLIC_WEBSITE_URL}/dashboard`;
+        const login_link = `${
+          process.env.NEXT_PUBLIC_WEBSITE_URL
+        }/api/auth/login?userId=${user.userId}&key=${secret}&callbackUrl=${
           callbackUrl ? callbackUrl : default_redirect
         }`;
 
@@ -181,7 +181,7 @@ const handler = async (
 
       // If a user has invites, redirect them to that page automatically
       if (clean_user.totalInvites > 0) {
-        res.redirect(`${process.env.WEBSITE_URL}/invites`);
+        res.redirect(`${process.env.NEXT_PUBLIC_WEBSITE_URL}/invites`);
         return;
       }
 
