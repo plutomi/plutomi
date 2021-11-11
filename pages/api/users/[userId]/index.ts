@@ -8,8 +8,8 @@ const handler = async (
   req: NextIronRequest,
   res: NextApiResponse
 ): Promise<void> => {
-  const user_session = req.session.get("user");
-  if (!user_session) {
+  const userSession = req.session.user;
+  if (!userSession) {
     req.session.destroy();
     return res.status(401).json({ message: "Please log in again" });
   }
@@ -25,7 +25,7 @@ const handler = async (
         return res.status(404).json({ message: "User not found" });
       }
       // Check that the user who made this call is in the same org as the requested user
-      if (user_session.orgId != requestedUser.orgId) {
+      if (userSession.orgId != requestedUser.orgId) {
         return res
           .status(403)
           .json({ message: "You are not authorized to view this user" });
@@ -43,23 +43,23 @@ const handler = async (
   if (method === "PUT") {
     const update_user_input = {
       new_user_values: new_user_values,
-      userId: user_session.userId,
+      userId: userSession.userId,
       ALLOW_FORBIDDEN_KEYS: false,
     };
 
     try {
       // TODO RBAC will go here, right now you can only update yourself
-      if (userId != user_session.userId) {
+      if (userId != userSession.userId) {
         return res
           .status(403)
           .json({ message: "You cannot update another user" });
       }
 
-      const updated_user = await UpdateUser(update_user_input);
+      const updatedUser = await UpdateUser(update_user_input);
 
       // If a signed in user is updating themselves, update the session state
-      if (updated_user.userId === user_session.userId) {
-        req.session.set("user", CleanUser(updated_user));
+      if (updatedUser.userId === userSession.userId) {
+        req.session.user = CleanUser(updatedUser);
         await req.session.save();
       }
       return res.status(200).json({ message: "Updated!" });

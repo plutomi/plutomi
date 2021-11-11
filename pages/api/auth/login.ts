@@ -176,11 +176,11 @@ const handler = async (
 
       const cleanUser = CleanUser(user as DynamoUser);
 
-      req.session.set("user", clean_user);
+      req.session.user = cleanUser;
       await req.session.save();
 
       // If a user has invites, redirect them to that page automatically
-      if (clean_user.totalInvites > 0) {
+      if (cleanUser.totalInvites > 0) {
         res.redirect(`${process.env.NEXT_PUBLIC_WEBSITE_URL}/invites`);
         return;
       }

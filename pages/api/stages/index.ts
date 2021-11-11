@@ -8,8 +8,8 @@ const handler = async (
   req: NextIronRequest,
   res: NextApiResponse
 ): Promise<void> => {
-  const user_session = req.session.get("user");
-  if (!user_session) {
+  const userSession = req.session.user;
+  if (!userSession) {
     req.session.destroy();
     return res.status(401).json({ message: "Please log in again" });
   }
@@ -17,13 +17,13 @@ const handler = async (
   const { GSI1SK, openingId }: APICreateStageInput = body;
 
   if (method === "POST") {
-    if (user_session.orgId === "NO_ORG_ASSIGNED") {
+    if (userSession.orgId === "NO_ORG_ASSIGNED") {
       return res.status(403).json({
         message: "Please create an organization before creating a stage",
       });
     }
     const create_stage_input: DynamoCreateStageInput = {
-      orgId: user_session.orgId,
+      orgId: userSession.orgId,
       openingId: openingId,
       GSI1SK: GSI1SK,
     };

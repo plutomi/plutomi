@@ -9,8 +9,8 @@ const handler = async (
   req: NextIronRequest,
   res: NextApiResponse
 ): Promise<void> => {
-  const user_session = req.session.get("user");
-  if (!user_session) {
+  const userSession = req.session.user;
+  if (!userSession) {
     req.session.destroy();
     return res.status(401).json({ message: "Please log in again" });
   }
@@ -18,7 +18,7 @@ const handler = async (
   const { openingId } = query as CustomQuery;
 
   const get_opening_input: GetOpeningInput = {
-    orgId: user_session.orgId,
+    orgId: userSession.orgId,
     openingId: openingId,
   };
 
@@ -41,7 +41,7 @@ const handler = async (
   if (method === "PUT") {
     try {
       const update_opening_input: UpdateOpeningInput = {
-        orgId: user_session.orgId,
+        orgId: userSession.orgId,
         openingId: openingId,
         new_opening_values: body.new_opening_values,
       };
@@ -64,7 +64,7 @@ const handler = async (
   if (method === "DELETE") {
     try {
       const delete_opening_input = {
-        orgId: user_session.orgId,
+        orgId: userSession.orgId,
         openingId: openingId,
       };
       await DeleteOpening(delete_opening_input);

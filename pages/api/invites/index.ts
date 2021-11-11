@@ -11,8 +11,8 @@ const handler = async (
   req: NextIronRequest,
   res: NextApiResponse
 ): Promise<void> => {
-  const user_session = req.session.get("user");
-  if (!user_session) {
+  const userSession = req.session.user;
+  if (!userSession) {
     req.session.destroy();
     return res.status(401).json({ message: "Please log in again" });
   }
@@ -29,12 +29,12 @@ const handler = async (
     "iso"
   );
 
-  const org = await GetOrg(user_session.orgId);
+  const org = await GetOrg(userSession.orgId);
 
   const new_org_invite: CreateOrgInviteInput = {
     claimed: false,
     org_name: org.GSI1SK, // For the recipient they can see the name of the org instead of the orgId, much neater
-    createdBy: user_session, // TODO reduce this to just name & email
+    createdBy: userSession, // TODO reduce this to just name & email
     orgId: org.orgId,
     recipientEmail: recipientEmail,
     expiresAt: expiresAt,
@@ -46,11 +46,11 @@ const handler = async (
       return res.status(400).json({ message: `${error.message}` });
     }
 
-    if (user_session.userEmail == recipientEmail) {
+    if (userSession.userEmail == recipientEmail) {
       return res.status(400).json({ message: "You can't invite yourself" });
     }
 
-    if (user_session.orgId === "NO_ORG_ASSIGNED") {
+    if (userSession.orgId === "NO_ORG_ASSIGNED") {
       return res.status(400).json({
         message: `You must create an organization before inviting users`,
       });
@@ -60,7 +60,7 @@ const handler = async (
     const recipient = await CreateUser({ userEmail: recipientEmail });
 
     const new_org_invite_email: SendOrgInviteInput = {
-      createdBy: user_session,
+      createdBy: userSession,
       org_name: org.GSI1SK,
       recipientEmail: recipient.userEmail, // Will be lowercase & .trim()'d by createUser
     };
@@ -70,7 +70,7 @@ const handler = async (
         user: recipient,
         org_name: org.GSI1SK,
         expiresAt: expiresAt,
-        createdBy: user_session,
+        createdBy: userSession,
       });
       try {
         await SendOrgInvite(new_org_invite_email); // TODO async with streams

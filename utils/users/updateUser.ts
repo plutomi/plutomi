@@ -65,8 +65,8 @@ export async function UpdateUser({
       ConditionExpression: "attribute_exists(PK)",
     };
 
-    const updated_user = await Dynamo.send(new UpdateCommand(params));
-    return updated_user.Attributes as DynamoUser;
+    const updatedUser = await Dynamo.send(new UpdateCommand(params));
+    return updatedUser.Attributes as DynamoUser;
   } catch (error) {
     throw new Error(error);
   }

@@ -9,8 +9,8 @@ const handler = async (
   req: NextIronRequest,
   res: NextApiResponse
 ): Promise<void> => {
-  const user_session = req.session.get("user");
-  if (!user_session) {
+  const userSession = req.session.user;
+  if (!userSession) {
     req.session.destroy();
     return res.status(401).json({ message: "Please log in again" });
   }
@@ -23,7 +23,7 @@ const handler = async (
     // For public org data such as basic info or openings, please use the
     // /api/public/orgs/[orgId] route
 
-    if (orgId != user_session.orgId) {
+    if (orgId != userSession.orgId) {
       return res
         .status(403)
         .json({ message: "You are not authorized to view this org" });
@@ -51,8 +51,8 @@ const handler = async (
         });
       }
 
-      const updated_user = await UpdateUser({
-        userId: user_session.userId,
+      const updatedUser = await UpdateUser({
+        userId: userSession.userId,
         new_user_values: {
           orgId: "NO_ORG_ASSIGNED",
           orgJoinDate: "NO_ORG_ASSIGNED",
@@ -61,7 +61,7 @@ const handler = async (
 
         ALLOW_FORBIDDEN_KEYS: true,
       });
-      req.session.set("user", CleanUser(updated_user)); // Update the session with the new org value
+      req.session.user = CleanUser(updatedUser);
       await req.session.save();
       return res
         .status(200)

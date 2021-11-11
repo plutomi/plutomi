@@ -1,28 +1,26 @@
-// this file is a wrapper with defaults to be used in both API routes and `getServerSideProps` functions
-import { NextApiRequest, NextApiResponse } from "next";
-import { Session, withIronSession } from "next-iron-session";
-const IronConfig = {
-  password: [
-    {
-      id: 1,
-      password: process.env.NEXT_IRON_SESSION_PASSWORD_1,
-    },
-  ],
+import { withIronSessionApiRoute, withIronSessionSsr } from "iron-session/next";
+import {
+  GetServerSidePropsContext,
+  GetServerSidePropsResult,
+  NextApiHandler,
+} from "next";
+
+const sessionOptions = {
+  password: process.env.NEXT_IRON_SESSION_PASSWORD_1,
   cookieName: process.env.NEXT_IRON_SESSION_COOKIE_NAME,
-  // if your localhost is served on http:// then disable the secure flag
-  cookieOptions: {
-    secure: process.env.NODE_ENV === "production",
-  },
 };
 
-export type NextIronRequest = NextApiRequest & { session: Session };
-export type NextIronHandler = (
-  req: NextIronRequest,
-  res: NextApiResponse
-) => void | Promise<void>;
+export function withSessionRoute(handler: NextApiHandler) {
+  return withIronSessionApiRoute(handler, sessionOptions);
+}
 
-const withSession = (handler: NextIronHandler) =>
-  withIronSession(handler, IronConfig);
-
-export default withSession;
-export { IronConfig };
+// Theses types are compatible with InferGetStaticPropsType https://nextjs.org/docs/basic-features/data-fetching#typescript-use-getstaticprops
+export function withSessionSsr<
+  P extends { [key: string]: unknown } = { [key: string]: unknown }
+>(
+  handler: (
+    context: GetServerSidePropsContext
+  ) => GetServerSidePropsResult<P> | Promise<GetServerSidePropsResult<P>>
+) {
+  return withIronSessionSsr(handler, sessionOptions);
+}

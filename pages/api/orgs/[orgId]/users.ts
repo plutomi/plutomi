@@ -8,8 +8,8 @@ const handler = async (
   req: NextIronRequest,
   res: NextApiResponse
 ): Promise<void> => {
-  const user_session = req.session.get("user");
-  if (!user_session) {
+  const userSession = req.session.user;
+  if (!userSession) {
     req.session.destroy();
     return res.status(401).json({ message: "Please log in again" });
   }
@@ -17,21 +17,21 @@ const handler = async (
   const { orgId } = query as CustomQuery;
 
   if (method === "GET") {
-    if (user_session.orgId != orgId) {
+    if (userSession.orgId != orgId) {
       // TODO team site bug returning 403 -- TODO I think this is fixed
       return res
         .status(403)
         .json({ message: "You cannot view the users of this org" });
     }
 
-    if (user_session.orgId === "NO_ORG_ASSIGNED") {
+    if (userSession.orgId === "NO_ORG_ASSIGNED") {
       return res.status(400).json({
         message: "You must create an org or join one to view it's users",
       });
     }
 
     try {
-      const all_users = await GetAllUsersInOrg({ orgId: user_session.orgId });
+      const all_users = await GetAllUsersInOrg({ orgId: userSession.orgId });
       return res.status(200).json(all_users);
     } catch (error) {
       return res

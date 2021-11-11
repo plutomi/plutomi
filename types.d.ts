@@ -1,11 +1,17 @@
 import { NextApiRequest } from "next";
 
-type CustomDateFormat = string | number;
+type CustomDateFormat = string | number; // TODO date types
 
-// For requests that require a session
-interface NextIronRequest extends NextApiRequest {
-  session: Session;
+declare module "iron-session" {
+  // TODO session types!!
+  interface IronSessionData {
+    user?: {
+      id: number;
+      admin?: boolean;
+    };
+  }
 }
+
 type CustomQuery = {
   orgId?: string;
   openingId?: string;

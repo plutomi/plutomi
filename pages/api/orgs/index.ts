@@ -11,8 +11,8 @@ const handler = async (
   req: NextIronRequest,
   res: NextApiResponse
 ): Promise<void> => {
-  const user_session = req.session.get("user");
-  if (!user_session) {
+  const userSession = req.session.user;
+  if (!userSession) {
     req.session.destroy();
     return res.status(401).json({ message: "Please log in again" });
   }
@@ -27,13 +27,13 @@ const handler = async (
         message: `You cannot create an org with this name: ${GSI1SK}`,
       });
     }
-    if (user_session.orgId != "NO_ORG_ASSIGNED") {
+    if (userSession.orgId != "NO_ORG_ASSIGNED") {
       return res.status(400).json({
         message: `You already belong to an org!`,
       });
     }
 
-    const pending_invites = await GetAllUserInvites(user_session.userId);
+    const pending_invites = await GetAllUserInvites(userSession.userId);
 
     if (pending_invites && pending_invites.length > 0) {
       return res.status(403).json({
@@ -45,7 +45,7 @@ const handler = async (
     const create_org_input: CreateOrgInput = {
       GSI1SK: GSI1SK,
       orgId: orgId,
-      user: user_session,
+      user: userSession,
     };
 
     try {
@@ -61,14 +61,14 @@ const handler = async (
 
     try {
       await CreateAndJoinOrg({
-        userId: user_session.userId,
+        userId: userSession.userId,
         orgId: orgId,
         GSI1SK: GSI1SK,
       });
-      const updated_user = await GetUserById(user_session.userId); // TODO remove this, wait for transact
+      const updatedUser = await GetUserById(userSession.userId); // TODO remove this, wait for transact
 
       // Update the logged in user session with the new org id
-      req.session.set("user", CleanUser(updated_user as DynamoUser));
+      req.session.user = CleanUser(updatedUser);
       await req.session.save();
 
       return res.status(201).json({ message: "Org created!", org: orgId });

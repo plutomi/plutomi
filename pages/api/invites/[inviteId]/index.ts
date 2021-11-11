@@ -13,8 +13,8 @@ const handler = async (
   req: NextIronRequest,
   res: NextApiResponse
 ): Promise<void> => {
-  const user_session = req.session.get("user");
-  if (!user_session) {
+  const userSession = req.session.user;
+  if (!userSession) {
     req.session.destroy();
     return res.status(401).json({ message: "Please log in again" });
   }
@@ -23,12 +23,12 @@ const handler = async (
 
   // TODO trycatch
   const invite = await GetOrgInvite({
-    userId: user_session.userId,
+    userId: userSession.userId,
     invite_id: invite_id,
   });
 
   const join_org_input = {
-    userId: user_session.userId,
+    userId: userSession.userId,
     invite: invite,
   };
 
@@ -40,17 +40,17 @@ const handler = async (
 
   if (method === "POST") {
     // TODO disallow orgId's by this name
-    if (user_session.orgId != "NO_ORG_ASSIGNED") {
+    if (userSession.orgId != "NO_ORG_ASSIGNED") {
       return res.status(400).json({
-        message: `You already belong to an org: ${user_session.orgId}`,
+        message: `You already belong to an org: ${userSession.orgId}`,
       });
     }
 
     try {
-      await JoinOrgFromInvite({ userId: user_session.userId, invite });
+      await JoinOrgFromInvite({ userId: userSession.userId, invite });
 
-      const updated_user = await GetUserById(user_session.userId);
-      req.session.set("user", CleanUser(updated_user as DynamoUser));
+      const updatedUser = await GetUserById(userSession.userId);
+      req.session.user = CleanUser(updatedUser);
       await req.session.save();
       return res
         .status(200)
@@ -66,7 +66,7 @@ const handler = async (
 
   if (method === "DELETE") {
     const delete_org_invite_input = {
-      userId: user_session.userId,
+      userId: userSession.userId,
       invite_id: invite_id,
     };
 
