@@ -42,7 +42,7 @@ export default class PlutomiWebsiteStack extends cdk.Stack {
     ).stringValue;
 
     // IAM inline role - the service principal is required
-    const taskRole = new iam.Role(this, "plutomi-fargate-api-role", {
+    const taskRole = new iam.Role(this, "plutomi-website-role", {
       assumedBy: new iam.ServicePrincipal("ecs-tasks.amazonaws.com"),
     });
 
@@ -70,23 +70,20 @@ export default class PlutomiWebsiteStack extends cdk.Stack {
     // Define a fargate task with the newly created execution and task roles
     const taskDefinition = new ecs.FargateTaskDefinition(
       this,
-      "plutomi-fargate-api-definition",
+      "plutomi-website-definition",
       {
         taskRole: taskRole,
         executionRole: taskRole,
       }
     );
 
-    // Get the local docker image, build and deploy it
-    const container = taskDefinition.addContainer(
-      "plutomi-fargate-api-container",
-      {
-        image: ecs.ContainerImage.fromAsset("."),
-        logging: new ecs.AwsLogDriver({
-          streamPrefix: "plutomi-fargate-api-log-prefix",
-        }),
-      }
-    );
+    const container = taskDefinition.addContainer("plutomi-website-container", {
+      // Get the local docker image, build and deploy it
+      image: ecs.ContainerImage.fromAsset("."),
+      logging: new ecs.AwsLogDriver({
+        streamPrefix: "plutomi-website-log-prefix",
+      }),
+    });
 
     container.addPortMappings({
       containerPort: 3000, // NextJS default!
@@ -95,13 +92,13 @@ export default class PlutomiWebsiteStack extends cdk.Stack {
     });
 
     // Create a VPC with 2 AZ's (2 is minimum)
-    const vpc = new ec2.Vpc(this, "plutomi-fargate-api-vpc", {
+    const vpc = new ec2.Vpc(this, "plutomi-website-vpc", {
       maxAzs: 2,
       natGateways: 0, // Very pricy!
     });
 
     // Create the cluster
-    const cluster = new ecs.Cluster(this, "plutomi-fargate-api-cluster", {
+    const cluster = new ecs.Cluster(this, "plutomi-website-cluster", {
       vpc,
     });
 
