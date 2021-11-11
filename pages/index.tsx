@@ -15,7 +15,7 @@ export default function Maintenance({ data }) {
                   of our backend infastructure. You can even contribute{" "}
                   <a
                     className="font-bold text-dark underline transition ease-in-out duration-300 hover:text-blue-500"
-                    href="https://github.com/plutomi/plutomi/tree/sls-transition"
+                    href="https://github.com/plutomi/plutomi/tree/fargate-cleanup"
                     target="_blank"
                     rel="noreferrer"
                   >
@@ -34,7 +34,7 @@ export default function Maintenance({ data }) {
 
 export async function getStaticProps(context) {
   const res = await fetch(
-    `https://api.github.com/repos/plutomi/plutomi/commits?sha=sls-transition&per_page=5`
+    `https://api.github.com/repos/plutomi/plutomi/commits?sha=fargate-cleanup&per_page=5`
   );
   const data = await res.json();
 
