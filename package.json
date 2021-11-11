@@ -21,8 +21,6 @@
     "@aws-cdk/core": "^1.130.0",
     "@headlessui/react": "^1.4.1",
     "@heroicons/react": "^1.0.5",
-    "@sls-next/cdk-construct": "^3.5.2",
-    "@sls-next/lambda-at-edge": "^3.5.2",
     "@tailwindcss/aspect-ratio": "^0.2.2",
     "@tailwindcss/forms": "^0.3.4",
     "awesome-phonenumber": "^2.64.0",
