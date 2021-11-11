@@ -1,7 +1,7 @@
-import { getStage } from "../.././../../utils/stages/getStage";
+import { getStage } from "../../../../utils/stages/getStage";
 import { NextApiResponse } from "next";
-import InputValidation from "../.././../../utils/inputValidation";
-import { DeleteStage } from "../.././../../utils/stages/deleteStage";
+import InputValidation from "../../../../utils/inputValidation";
+import { DeleteStage } from "../../../../utils/stages/deleteStage";
 import UpdateStage from "../../../../utils/stages/updateStage";
 // Create stage in a opening
 import withSession from "../../../../middleware/withSession";

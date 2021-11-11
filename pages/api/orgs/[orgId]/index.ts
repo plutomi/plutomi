@@ -1,8 +1,6 @@
 import withCleanOrgId from "../../../../middleware/withCleanOrgId";
 import { GetOrg } from "../../../../utils/orgs/getOrg";
 import { NextApiResponse } from "next";
-import { GetAllUsersInOrg } from "../../../../utils/orgs/getAllUsersInOrg";
-
 import withSession from "../../../../middleware/withSession";
 import CleanUser from "../../../../utils/clean/cleanUser";
 import { UpdateUser } from "../../../../utils/users/updateUser";

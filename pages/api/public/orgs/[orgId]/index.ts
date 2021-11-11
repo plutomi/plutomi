@@ -5,7 +5,8 @@ import CleanOrg from "../../../../../utils/clean/cleanOrg";
 // This returns limited public information about an org
 const handler = async (req: CustomRequest, res: NextApiResponse) => {
   const { method, query } = req;
-  const { orgId } = query as CustomQuery;
+  console.log("In function", req.query);
+  const { orgId } = query;
 
   if (method === "GET") {
     try {
@@ -15,7 +16,7 @@ const handler = async (req: CustomRequest, res: NextApiResponse) => {
         return res.status(404).json({ message: "Org not found" });
       }
 
-      const cleanOrg = CleanOrg(org as DynamoOrg);
+      const cleanOrg = CleanOrg(org);
 
       return res.status(200).json(cleanOrg);
     } catch (error) {
