@@ -1,4 +1,4 @@
-import { GetRelativeTime } from "../../utils/time";
+import { getRelativeTime } from "../../utils/time";
 import { CalendarIcon } from "@heroicons/react/outline";
 import ClickToCopy from "../ClickToCopy";
 
@@ -6,14 +6,14 @@ export default function ApplicantListItem({ applicant, handleApplicantClick }) {
   return (
     <li
       className="cursor-pointer"
-      onClick={(e) => handleApplicantClick(applicant.applicant_id)}
+      onClick={(e) => handleApplicantClick(applicant.applicantId)}
     >
       {/* If the opening has stages, go to the first stage and view aplicants. Otherwise, go to the settings page for the opening to create one*/}
       <a className="block hover:bg-gray-50">
         <div className="px-4 py-4 sm:px-6">
           <div className="flex items-center justify-between">
             <h1 className="text-lg font-medium text-blue-600 truncate">
-              {applicant.full_name}
+              {applicant.fullName}
             </h1>
             <div className="ml-2 flex-shrink-0 flex">
               {applicant.email_verified ? (
@@ -53,8 +53,8 @@ export default function ApplicantListItem({ applicant, handleApplicantClick }) {
               />
               <p>
                 Applied{" "}
-                <time dateTime={applicant.created_at}>
-                  {GetRelativeTime(applicant.created_at)}
+                <time dateTime={applicant.createdAt}>
+                  {getRelativeTime(applicant.createdAt)}
                 </time>
               </p>
             </div>

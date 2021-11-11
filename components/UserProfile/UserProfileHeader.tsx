@@ -13,9 +13,7 @@ export default function UserProfileHeader() {
       <div className=" min-w-0 ">
         <h2 className="text-2xl font-bold leading-7 text-dark sm:text-3xl sm:truncate">
           Welcome to your profile
-          {user?.first_name === "NO_FIRST_NAME"
-            ? "!"
-            : `, ${user?.first_name}!`}
+          {user?.firstName === "NO_firstName" ? "!" : `, ${user?.firstName}!`}
         </h2>
       </div>
 
@@ -25,8 +23,8 @@ export default function UserProfileHeader() {
             setUserProfileModal({
               is_modal_open: true,
               modal_mode: "EDIT",
-              first_name: user?.first_name,
-              last_name: user?.last_name,
+              firstName: user?.firstName,
+              lastName: user?.lastName,
             })
           }
           type="button"

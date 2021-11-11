@@ -1,13 +1,13 @@
 import { GetCommand, GetCommandInput } from "@aws-sdk/lib-dynamodb";
-import { Dynamo } from "../../lib/awsClients/ddbDocClient";
+import { Dynamo } from "../../awsClients/ddbDocClient";
 
 const { DYNAMO_TABLE_NAME } = process.env;
 
-export async function GetOrgInvite({ user_id, invite_id }) {
+export async function GetOrgInvite({ userId, invite_id }) {
   const params: GetCommandInput = {
     TableName: DYNAMO_TABLE_NAME,
     Key: {
-      PK: `USER#${user_id}`,
+      PK: `USER#${userId}`,
       SK: `ORG_INVITE#${invite_id}`,
     },
   };

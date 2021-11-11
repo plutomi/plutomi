@@ -5,7 +5,7 @@ import {
   MailIcon,
 } from "@heroicons/react/solid";
 
-import { GetRelativeTime } from "../utils/time";
+import { getRelativeTime } from "../utils/time";
 const commits = [
   {
     applicant: {
@@ -24,7 +24,7 @@ export default function MaintenanceList({ commits }) {
         {commits.map((commit) => (
           <li key={commit.sha}>
             <a
-              href={"https://github.com/plutomi/plutomi/tree/add-cdk"}
+              href={commit.html_url}
               className="block hover:bg-blue-gray-50 transition ease-in-out duration-200"
               target={"_blank"}
               rel="noreferrer"
@@ -62,7 +62,7 @@ export default function MaintenanceList({ commits }) {
                         <p className=" mt-4 text-sm text-gray-900">
                           Committed{" "}
                           <time dateTime={commit.commit.author.date}>
-                            {GetRelativeTime(commit.commit.author.date)}
+                            {getRelativeTime(commit.commit.author.date)}
                           </time>
                         </p>
                       </div>

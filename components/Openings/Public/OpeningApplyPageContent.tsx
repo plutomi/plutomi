@@ -6,10 +6,10 @@ import ApplicantInfoForm from "./ApplicantInfoForm";
 import axios from "axios";
 export default function OpeningApplyPageContent() {
   const router = useRouter();
-  const { org_id, opening_id } = router.query as CustomQuery;
+  const { orgId, openingId } = router.query as CustomQuery;
   const { opening, isOpeningLoading, isOpeningError } = usePublicOpeningById(
-    org_id,
-    opening_id
+    orgId,
+    openingId
   );
 
   if (isOpeningLoading) {

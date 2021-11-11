@@ -10,23 +10,23 @@ const handler = async (
   res: NextApiResponse
 ): Promise<void> => {
   const { method, body } = req;
-  const { org_id, opening_id, first_name, last_name, email } = body;
+  const { orgId, openingId, firstName, lastName, email } = body;
 
   // Creates an applicant
   if (method === "POST") {
-    const opening = await GetOpening({ org_id, opening_id });
+    const opening = await GetOpening({ orgId, openingId });
 
     if (!opening) {
       return res.status(400).json({ message: "Bad opening ID" });
     }
     try {
       const create_applicant_input: CreateApplicantInput = {
-        org_id: org_id,
+        orgId: orgId,
         email: email,
-        first_name: first_name,
-        last_name: last_name,
-        opening_id: opening_id,
-        stage_id: opening.stage_order[0],
+        firstName: firstName,
+        lastName: lastName,
+        openingId: openingId,
+        stageId: opening.stage_order[0],
       };
       try {
         InputValidation(create_applicant_input);
@@ -35,13 +35,13 @@ const handler = async (
       }
 
       const new_applicant = await CreateApplicant(create_applicant_input);
-      const org = await GetOrg(org_id);
+      const org = await GetOrg(orgId);
 
       const send_applicant_link_input = {
         applicant_email: new_applicant.email,
-        org_id: org_id,
+        orgId: orgId,
         org_name: org.GSI1SK,
-        applicant_id: new_applicant.applicant_id,
+        applicantId: new_applicant.applicantId,
       };
       await SendApplicantLink(send_applicant_link_input);
 

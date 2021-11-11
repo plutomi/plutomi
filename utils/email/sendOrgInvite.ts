@@ -1,25 +1,25 @@
 import { SendEmailCommand, SendEmailCommandInput } from "@aws-sdk/client-ses";
-import SES from "../../lib/awsClients/sesClient";
+import SES from "../../awsClients/sesClient";
 
 export default async function SendOrgInvite({
-  recipient_email,
-  created_by,
+  recipientEmail,
+  createdBy,
   org_name,
 }: SendOrgInviteInput) {
   const new_email: SendEmailCommandInput = {
     Source: `Plutomi <join@plutomi.com>`,
     Destination: {
-      ToAddresses: [recipient_email.toLowerCase().trim()],
+      ToAddresses: [recipientEmail.toLowerCase().trim()],
       CcAddresses: null,
       BccAddresses: null,
     },
     Message: {
       Subject: {
-        Data: `${created_by.first_name} ${created_by.last_name} has invited you to join ${org_name} on Plutomi!`, // TODO if first_name or last_name === "NO_FIRST_NAME" or NO_LAST_NAME, change this message
+        Data: `${createdBy.firstName} ${createdBy.lastName} has invited you to join ${org_name} on Plutomi!`, // TODO if firstName or lastName === "NO_firstName" or NO_lastName, change this message
       },
       Body: {
         Html: {
-          Data: `<h4>You can accept their invite at this link: <a href="${process.env.WEBSITE_URL}/invites">${process.env.WEBSITE_URL}/invites</a></h4><p>If you believe this email was received in error, you can safely ignore it.</p>`,
+          Data: `<h4>You can accept their invite at this link: <a href="${process.env.NEXT_PUBLIC_WEBSITE_URL}/invites">${process.env.NEXT_PUBLIC_WEBSITE_URL}/invites</a></h4><p>If you believe this email was received in error, you can safely ignore it.</p>`,
         },
       },
     },

@@ -1,20 +1,20 @@
 import { UpdateCommand, UpdateCommandInput } from "@aws-sdk/lib-dynamodb";
-import { Dynamo } from "../../lib/awsClients/ddbDocClient";
+import { Dynamo } from "../../awsClients/ddbDocClient";
 const { DYNAMO_TABLE_NAME } = process.env;
 
 export default async function UpdateOpening({
-  org_id,
-  opening_id,
+  orgId,
+  openingId,
   new_opening_values,
 }) {
   // TODO user the cleaning functions instead
   const FORBIDDEN_KEYS = [
     "PK",
     "SK",
-    "org_id",
-    "entity_type",
-    "created_at",
-    "opening_id",
+    "orgId",
+    "entityType",
+    "createdAt",
+    "openingId",
     "GSI1PK",
   ];
 
@@ -37,7 +37,7 @@ export default async function UpdateOpening({
 
   const params: UpdateCommandInput = {
     Key: {
-      PK: `ORG#${org_id}#OPENING#${opening_id}`,
+      PK: `ORG#${orgId}#OPENING#${openingId}`,
       SK: `OPENING`,
     },
     UpdateExpression: UpdatedExpression,

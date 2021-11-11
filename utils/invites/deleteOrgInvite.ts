@@ -2,10 +2,10 @@ import {
   TransactWriteCommand,
   TransactWriteCommandInput,
 } from "@aws-sdk/lib-dynamodb";
-import { Dynamo } from "../../lib/awsClients/ddbDocClient";
+import { Dynamo } from "../../awsClients/ddbDocClient";
 
 const { DYNAMO_TABLE_NAME } = process.env;
-export default async function DeleteOrgInvite({ user_id, invite_id }) {
+export default async function DeleteOrgInvite({ userId, invite_id }) {
   try {
     const transactParams: TransactWriteCommandInput = {
       TransactItems: [
@@ -13,7 +13,7 @@ export default async function DeleteOrgInvite({ user_id, invite_id }) {
           // Delete the org invite
           Delete: {
             Key: {
-              PK: `USER#${user_id}`,
+              PK: `USER#${userId}`,
               SK: `ORG_INVITE#${invite_id}`,
             },
             TableName: DYNAMO_TABLE_NAME,
@@ -24,11 +24,11 @@ export default async function DeleteOrgInvite({ user_id, invite_id }) {
           // Decrement the user's total invites
           Update: {
             Key: {
-              PK: `USER#${user_id}`,
+              PK: `USER#${userId}`,
               SK: `USER`,
             },
             TableName: DYNAMO_TABLE_NAME,
-            UpdateExpression: "SET total_invites = total_invites - :value",
+            UpdateExpression: "SET totalInvites = totalInvites - :value",
             ExpressionAttributeValues: {
               ":value": 1,
             },

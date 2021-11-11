@@ -11,33 +11,33 @@ const handler = async (
   req: NextIronRequest,
   res: NextApiResponse
 ): Promise<void> => {
-  const user_session = req.session.get("user");
-  if (!user_session) {
+  const userSession = req.session.user;
+  if (!userSession) {
     req.session.destroy();
     return res.status(401).json({ message: "Please log in again" });
   }
   const { body, method } = req;
 
-  const { recipient_email }: APICreateOrgInviteInput = body;
+  const { recipientEmail }: APICreateOrgInviteInput = body;
 
   const default_expiry_time = 3;
   const default_expiry_value = "days";
-  const expires_at = GetPastOrFutureTime(
+  const expiresAt = GetPastOrFutureTime(
     "future",
     default_expiry_time,
     "days" || default_expiry_value,
     "iso"
   );
 
-  const org = await GetOrg(user_session.org_id);
+  const org = await GetOrg(userSession.orgId);
 
   const new_org_invite: CreateOrgInviteInput = {
     claimed: false,
-    org_name: org.GSI1SK, // For the recipient they can see the name of the org instead of the org_id, much neater
-    created_by: user_session, // TODO reduce this to just name & email
-    org_id: org.org_id,
-    recipient_email: recipient_email,
-    expires_at: expires_at,
+    org_name: org.GSI1SK, // For the recipient they can see the name of the org instead of the orgId, much neater
+    createdBy: userSession, // TODO reduce this to just name & email
+    orgId: org.orgId,
+    recipientEmail: recipientEmail,
+    expiresAt: expiresAt,
   };
   if (method === "POST") {
     try {
@@ -46,37 +46,37 @@ const handler = async (
       return res.status(400).json({ message: `${error.message}` });
     }
 
-    if (user_session.user_email == recipient_email) {
+    if (userSession.userEmail == recipientEmail) {
       return res.status(400).json({ message: "You can't invite yourself" });
     }
 
-    if (user_session.org_id === "NO_ORG_ASSIGNED") {
+    if (userSession.orgId === "NO_ORG_ASSIGNED") {
       return res.status(400).json({
         message: `You must create an organization before inviting users`,
       });
     }
 
     // Creates the user
-    const recipient = await CreateUser({ user_email: recipient_email });
+    const recipient = await CreateUser({ userEmail: recipientEmail });
 
     const new_org_invite_email: SendOrgInviteInput = {
-      created_by: user_session,
+      createdBy: userSession,
       org_name: org.GSI1SK,
-      recipient_email: recipient.user_email, // Will be lowercase & .trim()'d by createUser
+      recipientEmail: recipient.userEmail, // Will be lowercase & .trim()'d by createUser
     };
     try {
       await CreateOrgInvite({
-        org_id: org.org_id,
+        orgId: org.orgId,
         user: recipient,
         org_name: org.GSI1SK,
-        expires_at: expires_at,
-        created_by: user_session,
+        expiresAt: expiresAt,
+        createdBy: userSession,
       });
       try {
         await SendOrgInvite(new_org_invite_email); // TODO async with streams
         return res
           .status(201)
-          .json({ message: `Invite sent to '${recipient.user_email}'` });
+          .json({ message: `Invite sent to '${recipient.userEmail}'` });
       } catch (error) {
         return res.status(500).json({
           message: `The invite was created, but we were not able to send an email to the user. They log in and accept their invite at https://plutomi.com/invites - ${error}`,

@@ -1,15 +1,15 @@
 import { SendEmailCommand, SendEmailCommandInput } from "@aws-sdk/client-ses";
-import SES from "../../lib/awsClients/sesClient";
+import SES from "../../awsClients/sesClient";
 
 export default async function SendLoginLink({
-  recipient_email,
+  recipientEmail,
   login_link,
   login_link_relative_expiry,
 }) {
   const new_email: SendEmailCommandInput = {
     Source: `Plutomi <login@plutomi.com>`,
     Destination: {
-      ToAddresses: [recipient_email],
+      ToAddresses: [recipientEmail],
       CcAddresses: null,
       BccAddresses: null,
     },

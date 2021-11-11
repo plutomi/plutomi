@@ -1,9 +1,9 @@
 import { UpdateCommand } from "@aws-sdk/lib-dynamodb";
-import { Dynamo } from "../../lib/awsClients/ddbDocClient";
+import { Dynamo } from "../../awsClients/ddbDocClient";
 const { DYNAMO_TABLE_NAME } = process.env;
 
 export default async function UpdateQuestion({
-  org_id,
+  orgId,
   question_id,
   new_question_values,
 }) {
@@ -12,10 +12,10 @@ export default async function UpdateQuestion({
   const FORBIDDEN_KEYS = [
     "PK",
     "SK",
-    "org_id",
-    "entity_type",
-    "created_at",
-    "opening_id",
+    "orgId",
+    "entityType",
+    "createdAt",
+    "openingId",
     "GSI1PK",
   ];
 
@@ -38,7 +38,7 @@ export default async function UpdateQuestion({
 
   const params = {
     Key: {
-      PK: `ORG#${org_id}#QUESTION#${question_id}`,
+      PK: `ORG#${orgId}#QUESTION#${question_id}`,
       SK: `STAGE_QUESTION`,
     },
     UpdateExpression: UpdatedExpression,

@@ -13,16 +13,14 @@ export default function StageCarousel() {
   const [activeItemIndex, setActiveItemIndex] = useState(0);
   const chevronWidth = 60;
 
-  const { opening_id, stage_id } = router.query as CustomQuery;
+  const { openingId, stageId } = router.query as CustomQuery;
 
   const { user, isUserLoading, isUserError } = useSelf();
 
-  let { opening, isOpeningLoading, isOpeningError } = useOpeningById(
-    opening_id
-  );
+  let { opening, isOpeningLoading, isOpeningError } = useOpeningById(openingId);
 
   let { stages, isStagesLoading, isStagesError } = useAllStagesInOpening(
-    opening?.opening_id
+    opening?.openingId
   );
 
   if (isStagesLoading) {
@@ -53,10 +51,10 @@ export default function StageCarousel() {
       >
         {stages?.map((stage: DynamoStage) => (
           <StageCard
-            key={stage.stage_id}
+            key={stage.stageId}
             name={stage.GSI1SK}
-            current_stage_id={stage.stage_id}
-            opening_id={stage.opening_id}
+            currentStageId={stage.stageId}
+            openingId={stage.openingId}
             total_applicants={stage.total_applicants}
           />
         ))}

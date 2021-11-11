@@ -1,15 +1,15 @@
 import { QueryCommand, QueryCommandInput } from "@aws-sdk/lib-dynamodb";
-import { Dynamo } from "../lib/awsClients/ddbDocClient";
+import { Dynamo } from "../awsClients/ddbDocClient";
 
 const { DYNAMO_TABLE_NAME } = process.env;
 
-export async function AllByType(entity_type: string) {
+export async function AllByType(entityType: string) {
   const params: QueryCommandInput = {
     TableName: DYNAMO_TABLE_NAME,
     IndexName: "AllByType",
-    KeyConditionExpression: "entity_type = :entity_type",
+    KeyConditionExpression: "entityType = :entityType",
     ExpressionAttributeValues: {
-      ":entity_type": entity_type,
+      ":entityType": entityType,
     },
   };
 

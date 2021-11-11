@@ -1,5 +1,5 @@
 import { SendEmailCommand, SendEmailCommandInput } from "@aws-sdk/client-ses";
-import SES from "../../lib/awsClients/sesClient";
+import SES from "../../awsClients/sesClient";
 
 export default async function SendNewUserEmail(new_user: DynamoUser) {
   const new_email: SendEmailCommandInput = {
@@ -15,7 +15,7 @@ export default async function SendNewUserEmail(new_user: DynamoUser) {
       },
       Body: {
         Html: {
-          Data: `<h1>Email: ${new_user.user_email}</h1><h1>ID: ${new_user.user_id}</h1>`,
+          Data: `<h1>Email: ${new_user.userEmail}</h1><h1>ID: ${new_user.userId}</h1>`,
         },
       },
     },

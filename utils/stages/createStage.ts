@@ -2,7 +2,7 @@ import {
   TransactWriteCommand,
   TransactWriteCommandInput,
 } from "@aws-sdk/lib-dynamodb";
-import { Dynamo } from "../../lib/awsClients/ddbDocClient";
+import { Dynamo } from "../../awsClients/ddbDocClient";
 import { GetCurrentTime } from "../time";
 import { nanoid } from "nanoid";
 import { GetOpening } from "../openings/getOpeningById";
@@ -11,31 +11,31 @@ import { MAX_CHILD_ITEM_LIMIT, MAX_ITEM_LIMIT_ERROR } from "../../Config";
 const { DYNAMO_TABLE_NAME } = process.env;
 
 export async function CreateStage({
-  org_id,
+  orgId,
   GSI1SK,
-  opening_id,
+  openingId,
 }: DynamoCreateStageInput) {
   const now = GetCurrentTime("iso") as string;
-  const stage_id = nanoid(50);
+  const stageId = nanoid(50);
   const new_stage = {
-    PK: `ORG#${org_id}#STAGE#${stage_id}`,
+    PK: `ORG#${orgId}#STAGE#${stageId}`,
     SK: `STAGE`,
-    entity_type: "STAGE",
-    created_at: now,
+    entityType: "STAGE",
+    createdAt: now,
     question_order: [],
-    stage_id: stage_id,
+    stageId: stageId,
     total_applicants: 0,
-    opening_id: opening_id,
-    GSI1PK: `ORG#${org_id}#OPENING#${opening_id}#STAGES`, // Get all stages in an opening
+    openingId: openingId,
+    GSI1PK: `ORG#${orgId}#OPENING#${openingId}#STAGES`, // Get all stages in an opening
     GSI1SK: GSI1SK,
   };
 
   try {
-    let opening = await GetOpening({ org_id, opening_id });
+    let opening = await GetOpening({ orgId, openingId });
 
     try {
       // Get current opening
-      opening.stage_order.push(stage_id);
+      opening.stage_order.push(stageId);
 
       if (opening.stage_order.length >= MAX_CHILD_ITEM_LIMIT) {
         throw MAX_ITEM_LIMIT_ERROR;
@@ -56,7 +56,7 @@ export async function CreateStage({
             // Add stage to the opening + increment stage count on opening
             Update: {
               Key: {
-                PK: `ORG#${org_id}#OPENING#${opening_id}`,
+                PK: `ORG#${orgId}#OPENING#${openingId}`,
                 SK: `OPENING`,
               },
               TableName: DYNAMO_TABLE_NAME,
@@ -74,7 +74,7 @@ export async function CreateStage({
             // Increment stage count on org
             Update: {
               Key: {
-                PK: `ORG#${org_id}`,
+                PK: `ORG#${orgId}`,
                 SK: `ORG`,
               },
               TableName: DYNAMO_TABLE_NAME,

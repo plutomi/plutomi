@@ -1,12 +1,8 @@
 import * as cdk from "@aws-cdk/core";
 import * as ecs from "@aws-cdk/aws-ecs";
 import * as ec2 from "@aws-cdk/aws-ec2";
-import * as ecr from "@aws-cdk/aws-ecr";
 import * as ecs_patterns from "@aws-cdk/aws-ecs-patterns";
 import * as route53 from "@aws-cdk/aws-route53";
-import * as cloudfront from "@aws-cdk/aws-cloudfront";
-import * as acm from "@aws-cdk/aws-certificatemanager";
-import * as origins from "@aws-cdk/aws-cloudfront-origins";
 import * as protocol from "@aws-cdk/aws-elasticloadbalancingv2";
 import * as ssm from "@aws-cdk/aws-ssm";
 import * as iam from "@aws-cdk/aws-iam";
@@ -46,7 +42,7 @@ export default class PlutomiWebsiteStack extends cdk.Stack {
     ).stringValue;
 
     // IAM inline role - the service principal is required
-    const taskRole = new iam.Role(this, "plutomi-fargate-api-role", {
+    const taskRole = new iam.Role(this, "plutomi-website-role", {
       assumedBy: new iam.ServicePrincipal("ecs-tasks.amazonaws.com"),
     });
 
@@ -64,9 +60,9 @@ export default class PlutomiWebsiteStack extends cdk.Stack {
           "dynamodb:UpdateItem",
         ],
         resources: [
-          `arn:aws:dynamodb:*:${ACCOUNT_ID}:table/Plutomi/index/GSI1`,
-          `arn:aws:dynamodb:*:${ACCOUNT_ID}:table/Plutomi/index/GSI2`,
-          `arn:aws:dynamodb:*:${ACCOUNT_ID}:table/Plutomi`,
+          `arn:aws:dynamodb:*:${ACCOUNT_ID}:table/Plutomi/index/GSI1`, // TODO dynamic table name
+          `arn:aws:dynamodb:*:${ACCOUNT_ID}:table/Plutomi/index/GSI2`, // TODO dynamic table name
+          `arn:aws:dynamodb:*:${ACCOUNT_ID}:table/Plutomi`, // TODO dynamic table name
         ],
       })
     );
@@ -74,35 +70,20 @@ export default class PlutomiWebsiteStack extends cdk.Stack {
     // Define a fargate task with the newly created execution and task roles
     const taskDefinition = new ecs.FargateTaskDefinition(
       this,
-      "plutomi-fargate-api-definition",
+      "plutomi-website-definition",
       {
         taskRole: taskRole,
         executionRole: taskRole,
       }
     );
 
-    // For private ECR repositories, you must set this or you'll receive an error
-    // TODO remove and have CDK deploy automatically
-    // https://github.com/plutomi/plutomi/issues/255
-    const repository = ecr.Repository.fromRepositoryName(
-      this,
-      "plutomi-fargate-api-repository",
-      "plutomi"
-    );
-
-    // TODO remove and have cdk build and deploy
-    // https://github.com/plutomi/plutomi/issues/255
-    const image = ecs.ContainerImage.fromEcrRepository(repository, "latest");
-
-    const container = taskDefinition.addContainer(
-      "plutomi-fargate-api-container",
-      {
-        image: image,
-        logging: new ecs.AwsLogDriver({
-          streamPrefix: "plutomi-fargate-api-log-prefix",
-        }),
-      }
-    );
+    const container = taskDefinition.addContainer("plutomi-website-container", {
+      // Get the local docker image, build and deploy it
+      image: ecs.ContainerImage.fromAsset("."),
+      logging: new ecs.AwsLogDriver({
+        streamPrefix: "plutomi-website-log-prefix",
+      }),
+    });
 
     container.addPortMappings({
       containerPort: 3000, // NextJS default!
@@ -110,13 +91,14 @@ export default class PlutomiWebsiteStack extends cdk.Stack {
       protocol: ecs.Protocol.TCP,
     });
 
-    // Create a VPC with 2 AZ's (2 i sminimum)
-    const vpc = new ec2.Vpc(this, "plutomi-fargate-api-vpc", {
+    // Create a VPC with 2 AZ's (2 is minimum)
+    const vpc = new ec2.Vpc(this, "plutomi-website-vpc", {
       maxAzs: 2,
+      natGateways: 0, // Very pricy!
     });
 
     // Create the cluster
-    const cluster = new ecs.Cluster(this, "plutomi-fargate-api-cluster", {
+    const cluster = new ecs.Cluster(this, "plutomi-website-cluster", {
       vpc,
     });
 
@@ -146,6 +128,7 @@ export default class PlutomiWebsiteStack extends cdk.Stack {
         listenerPort: 443,
         protocol: protocol.ApplicationProtocol.HTTPS,
         redirectHTTP: true,
+        assignPublicIp: true, // Allows pulling the ECR image
       }
     );
 

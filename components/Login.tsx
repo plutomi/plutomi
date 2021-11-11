@@ -6,7 +6,7 @@ import GoogleLoginButton from "./GoogleLoginButton";
 import axios from "axios";
 
 export default function Login({ loggedOutPageText }) {
-  const [user_email, setUserEmail] = useState("");
+  const [userEmail, setUserEmail] = useState("");
   const [submittedText, setSubmittedText] = useState(
     `We've sent a magic login link to your email!`
   );
@@ -23,9 +23,9 @@ export default function Login({ loggedOutPageText }) {
 
     try {
       const { message } = await AuthService.login({
-        user_email: user_email,
-        callback_url: `${process.env.WEBSITE_URL + router.asPath}`,
-        login_method: "LINK",
+        userEmail: userEmail,
+        callbackUrl: `${process.env.NEXT_PUBLIC_WEBSITE_URL + router.asPath}`,
+        loginMethod: "LINK",
       });
 
       setSubmittedText(message);
@@ -37,12 +37,12 @@ export default function Login({ loggedOutPageText }) {
 
   const successfulLogin = async (response) => {
     console.log(response);
-    const user_email = response.profileObj.email;
+    const userEmail = response.profileObj.email;
 
     const input = {
-      user_email: user_email,
-      callback_url: `${process.env.WEBSITE_URL + router.asPath}`,
-      login_method: "GOOGLE",
+      userEmail: userEmail,
+      callbackUrl: `${process.env.NEXT_PUBLIC_WEBSITE_URL + router.asPath}`,
+      loginMethod: "GOOGLE",
     };
     console.log(input);
     const { message } = await AuthService.login(input);
@@ -67,7 +67,7 @@ export default function Login({ loggedOutPageText }) {
         {emailSubmitted ? (
           <div className="text-center">
             <h1 className=" text-dark text-2xl">{submittedText}</h1>
-            <p className="text-light text-lg">{user_email}</p>
+            <p className="text-light text-lg">{userEmail}</p>
           </div>
         ) : (
           <div className="space-y-2 flex-col items-center  justify-center  ">
@@ -80,7 +80,7 @@ export default function Login({ loggedOutPageText }) {
             </p>{" "}
             <LoginEmail
               onChange={handleEmailChange}
-              user_email={user_email}
+              userEmail={userEmail}
               button_text={button_text}
               sendEmail={sendEmail}
             />{" "}

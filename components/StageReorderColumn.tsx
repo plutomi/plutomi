@@ -21,7 +21,7 @@ export default function StageReorderColumn() {
     try {
       const { message } = await StagesService.createStage({
         GSI1SK: stageModal.GSI1SK,
-        opening_id: opening_id,
+        openingId: openingId,
       });
       alert(message);
       setStageModal({ ...stageModal, GSI1SK: "", is_modal_open: false });
@@ -30,12 +30,12 @@ export default function StageReorderColumn() {
       alert(error.response.data.message);
     }
     // Refresh stage order
-    mutate(OpeningsService.getOpeningURL({ opening_id }));
+    mutate(OpeningsService.getOpeningURL({ openingId }));
 
     // Refresh stage list
     mutate(
       OpeningsService.getAllStagesInOpeningURL({
-        opening_id: opening_id,
+        openingId: openingId,
       })
     );
   };
@@ -51,14 +51,14 @@ export default function StageReorderColumn() {
       delete diff["modal_mode"];
 
       const { message } = await StagesService.updateStage({
-        stage_id: stage_id,
+        stageId: stageId,
         new_stage_values: diff,
       });
       alert(message);
       setStageModal({
         is_modal_open: false,
         modal_mode: "CREATE",
-        stage_id: "",
+        stageId: "",
         GSI1SK: "",
       });
     } catch (error) {
@@ -67,22 +67,21 @@ export default function StageReorderColumn() {
 
     mutate(
       StagesService.getStageURL({
-        stage_id: stage_id,
+        stageId: stageId,
       })
     );
   };
 
   const router = useRouter();
-  const { opening_id, stage_id } = router.query as CustomQuery;
+  const { openingId, stageId } = router.query as CustomQuery;
 
   const { user, isUserLoading, isUserError } = useSelf();
-  let { opening, isOpeningLoading, isOpeningError } =
-    useOpeningById(opening_id);
+  let { opening, isOpeningLoading, isOpeningError } = useOpeningById(openingId);
 
   let { stages, isStagesLoading, isStagesError } = useAllStagesInOpening(
-    opening?.opening_id
+    opening?.openingId
   );
-  const { stage, isStageLoading, isStageError } = useStageById(stage_id);
+  const { stage, isStageLoading, isStageError } = useStageById(stageId);
 
   const [new_stages, setNewStages] = useState(stages);
   useEffect(() => {
@@ -110,14 +109,14 @@ export default function StageReorderColumn() {
     new_stage_order.splice(source.index, 1);
     new_stage_order.splice(destination.index, 0, draggableId);
     let new_order = new_stage_order.map((i) =>
-      stages.find((j) => j.stage_id === i)
+      stages.find((j) => j.stageId === i)
     );
 
     setNewStages(new_order);
 
     try {
       await OpeningsService.updateOpening({
-        opening_id: opening_id,
+        openingId: openingId,
         new_opening_values: {
           stage_order: new_stage_order,
         },
@@ -128,12 +127,12 @@ export default function StageReorderColumn() {
     }
 
     // Refresh the stage order
-    mutate(OpeningsService.getOpeningURL({ opening_id }));
+    mutate(OpeningsService.getOpeningURL({ openingId }));
 
     // Refresh the stages
     mutate(
       OpeningsService.getAllStagesInOpeningURL({
-        opening_id: opening_id,
+        openingId: openingId,
       })
     );
   };
@@ -169,14 +168,14 @@ export default function StageReorderColumn() {
             onDragEnd={handleDragEnd}
             onDragStart={() => console.log("Start")}
           >
-            <Droppable droppableId={opening.opening_id}>
+            <Droppable droppableId={opening.openingId}>
               {(provided) => (
                 <div {...provided.droppableProps} ref={provided.innerRef}>
                   {new_stages?.map((stage, index) => {
                     return (
                       <Draggable
-                        key={stage.stage_id}
-                        draggableId={stage.stage_id}
+                        key={stage.stageId}
+                        draggableId={stage.stageId}
                         index={index}
                         {...provided.droppableProps}
                       >
@@ -187,13 +186,13 @@ export default function StageReorderColumn() {
                             ref={provided.innerRef}
                           >
                             <Link
-                              href={`${process.env.WEBSITE_URL}/openings/${opening_id}/stages/${stage.stage_id}/settings`}
+                              href={`${process.env.NEXT_PUBLIC_WEBSITE_URL}/openings/${openingId}/stages/${stage.stageId}/settings`}
                             >
                               <a>
                                 <DraggableStageCard
                                   total_applicants={stage.total_applicants}
                                   name={`${stage.GSI1SK}`}
-                                  current_stage_id={stage.stage_id}
+                                  currentStageId={stage.stageId}
                                 />
                               </a>
                             </Link>

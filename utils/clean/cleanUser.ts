@@ -1,11 +1,11 @@
 const safeKeys = [
   ,
-  "user_id",
-  "org_id",
-  "user_email",
-  "first_name",
-  "last_name",
-  "total_invites",
+  "userId",
+  "orgId",
+  "userEmail",
+  "firstName",
+  "lastName",
+  "totalInvites",
 ];
 
 export default function CleanUser(user: DynamoUser) {

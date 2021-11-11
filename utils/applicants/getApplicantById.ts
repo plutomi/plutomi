@@ -5,19 +5,19 @@ import {
   QueryCommand,
   QueryCommandInput,
 } from "@aws-sdk/lib-dynamodb";
-import { Dynamo } from "../../lib/awsClients/ddbDocClient";
+import { Dynamo } from "../../awsClients/ddbDocClient";
 const { DYNAMO_TABLE_NAME } = process.env;
 import _ from "lodash";
 
 export async function GetApplicantById({
-  org_id,
-  applicant_id,
+  orgId,
+  applicantId,
 }: GetApplicantInput) {
   const responsesParams: QueryCommandInput = {
     TableName: DYNAMO_TABLE_NAME,
     KeyConditionExpression: "PK = :PK AND begins_with(SK, :SK)",
     ExpressionAttributeValues: {
-      ":PK": `ORG#${org_id}#APPLICANT#${applicant_id}`,
+      ":PK": `ORG#${orgId}#APPLICANT#${applicantId}`,
       ":SK": `APPLICANT`,
     },
   };
@@ -28,7 +28,7 @@ export async function GetApplicantById({
       new QueryCommand(responsesParams)
     );
 
-    const grouped = _.groupBy(all_applicant_info.Items, "entity_type");
+    const grouped = _.groupBy(all_applicant_info.Items, "entityType");
 
     const metadata = grouped.APPLICANT[0];
     const responses = grouped.APPLICANT_RESPONSE;

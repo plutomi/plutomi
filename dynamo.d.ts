@@ -2,30 +2,30 @@
 // Makes it easier to reference all variables in the front end
 
 interface DynamoUser {
-  created_at?: string;
-  entity_type?: string;
-  user_email?: string;
-  org_id?: string;
-  full_name?: string;
+  createdAt?: string;
+  entityType?: string;
+  userEmail?: string;
+  orgId?: string;
+  fullName?: string;
   GSI1SK?: string;
   GSI2SK?: string;
   GSI2PK?: string;
   GSI1PK?: string;
-  user_id?: string;
-  last_name?: string;
-  org_join_date?: string;
-  first_name?: string;
+  userId?: string;
+  lastName?: string;
+  orgJoinDate?: string;
+  firstName?: string;
   SK?: string;
-  total_invites;
+  totalInvites;
   PK?: string;
 }
 
 interface DynamoOpening {
   PK: string;
   SK: "OPENING";
-  entity_type: "OPENING";
-  created_at: string;
-  opening_id: string;
+  entityType: "OPENING";
+  createdAt: string;
+  openingId: string;
   GSI1PK: string;
   GSI1SK: string;
   total_applicants: number;
@@ -39,12 +39,12 @@ interface DynamoOpening {
 interface DynamoStage {
   PK: string;
   SK: `STAGE`;
-  entity_type: "STAGE";
-  created_at: string;
-  stage_id: string;
+  entityType: "STAGE";
+  createdAt: string;
+  stageId: string;
   total_applicants: number;
   question_order: string[];
-  opening_id: string;
+  openingId: string;
   GSI1PK: string;
   GSI1SK: string;
 }
@@ -52,11 +52,11 @@ interface DynamoStage {
 interface DynamoOrgInvite {
   PK: string;
   SK: string;
-  org_id: string;
-  created_by: DynamoUser;
-  entity_type: "ORG_INVITE";
-  created_at: string;
-  expires_at: string;
+  orgId: string;
+  createdBy: DynamoUser;
+  entityType: "ORG_INVITE";
+  createdAt: string;
+  expiresAt: string;
   invite_id: string;
   GSI1PK: string;
   GSI1SK: string;
@@ -67,8 +67,8 @@ interface DynamoStageQuestion {
   SK: string;
   question_description: string;
   question_id: string;
-  entity_type: string;
-  created_at: string;
+  entityType: string;
+  createdAt: string;
   GSI1PK: string;
   GSI1SK: string;
 }
@@ -76,9 +76,9 @@ interface DynamoStageQuestion {
 interface DynamoOrg {
   PK: string;
   SK: `ORG`;
-  org_id: string;
-  entity_type: "ORG";
-  created_at: string;
+  orgId: string;
+  entityType: "ORG";
+  createdAt: string;
   GSI1PK: `ORG`;
   GSI1SK: string;
   total_users: number;
@@ -90,17 +90,17 @@ interface DynamoOrg {
 interface DynamoApplicant {
   PK: string;
   SK: `APPLICANT`;
-  first_name: string;
-  last_name: string;
-  full_name: string;
+  firstName: string;
+  lastName: string;
+  fullName: string;
   email: string;
   email_verified: boolean;
-  applicant_id: string;
-  org_id: string;
-  entity_type: "APPLICANT";
-  created_at: CustomDateFormat;
-  current_opening_id: string;
-  current_stage_id: string;
+  applicantId: string;
+  orgId: string;
+  entityType: "APPLICANT";
+  createdAt: CustomDateFormat;
+  currentOpeningId: string;
+  currentStageId: string;
   GSI1PK: string;
   GSI1SK: string;
   GSI2PK: string;
@@ -112,13 +112,13 @@ interface DynamoApplicant {
 interface DynamoApplicantResponse {
   PK: string;
   SK: `APPLICANT_RESPONSE`;
-  org_id: string;
-  applicant_id: string;
-  entity_type: "APPLICANT_RESPONSE";
+  orgId: string;
+  applicantId: string;
+  entityType: "APPLICANT_RESPONSE";
   question_title: string;
   question_description: string;
   question_response: any;
-  created_at: string;
+  createdAt: string;
   response_id: string;
   GSI1PK: string;
   GSI1SK: APPLICANT_RESPONSE;

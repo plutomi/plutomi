@@ -1,18 +1,18 @@
 import { UpdateCommand, UpdateCommandInput } from "@aws-sdk/lib-dynamodb";
-import { Dynamo } from "../../lib/awsClients/ddbDocClient";
+import { Dynamo } from "../../awsClients/ddbDocClient";
 const { DYNAMO_TABLE_NAME } = process.env;
 
 // Allows updating the login link status for suspending it incase of malicious actors
-export default async function UpdateLoginLink({ user_id, updated_login_link }) {
+export default async function UpdateLoginLink({ userId, updated_login_link }) {
   // TODO user the cleaning functions instead
   const FORBIDDEN_KEYS = [
     "PK",
     "SK",
-    "login_link_hash",
-    "entity_type",
-    "created_at",
-    "user_id",
-    "expires_at",
+    "loginLinkHash",
+    "entityType",
+    "createdAt",
+    "userId",
+    "expiresAt",
     "ttl_expiry",
   ];
 
@@ -32,8 +32,8 @@ export default async function UpdateLoginLink({ user_id, updated_login_link }) {
 
   const params: UpdateCommandInput = {
     Key: {
-      PK: `USER#${user_id}`,
-      SK: `LOGIN_LINK#${updated_login_link.created_at}`,
+      PK: `USER#${userId}`,
+      SK: `LOGIN_LINK#${updated_login_link.createdAt}`,
     },
     UpdateExpression: UpdatedExpression,
     ExpressionAttributeValues: newAttributes,

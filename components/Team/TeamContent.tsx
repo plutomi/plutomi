@@ -12,7 +12,7 @@ export default function TeamContent() {
   const router = useRouter();
   const { user, isUserLoading, isUserError } = useSelf();
   const { orgUsers, isOrgUsersLoading, isOrgUsersError } = useOrgUsers(
-    user?.org_id
+    user?.orgId
   );
 
   const setCreateInviteModalOpen = useStore(
@@ -23,11 +23,11 @@ export default function TeamContent() {
     return <Loader text="Loading team..." />;
   }
 
-  const createInvite = async (recipient_email: string) => {
+  const createInvite = async (recipientEmail: string) => {
     try {
       // TODO add custom expiry - Defaults to 3 days
       const { message } = await InvitesService.createInvite({
-        recipient_email: recipient_email,
+        recipientEmail: recipientEmail,
       });
       alert(message);
       setCreateInviteModalOpen(false);
@@ -55,7 +55,7 @@ export default function TeamContent() {
           </div>
 
           {orgUsers?.map((user: DynamoUser) => (
-            <UserCard key={user.user_id} user={user} />
+            <UserCard key={user.userId} user={user} />
           ))}
         </div>
       ) : (

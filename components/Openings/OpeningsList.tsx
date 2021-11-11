@@ -4,7 +4,7 @@ import {
   UsersIcon,
 } from "@heroicons/react/solid";
 import ClickToCopy from "../ClickToCopy";
-import { GetRelativeTime } from "../../utils/time";
+import { getRelativeTime } from "../../utils/time";
 import Link from "next/dist/client/link";
 import useOpenings from "../../SWR/useOpenings";
 import useSelf from "../../SWR/useSelf";
@@ -25,11 +25,11 @@ export default function OpeningList() {
     <div className="bg-white shadow overflow-hidden sm:rounded-md">
       <ul role="list" className="divide-y divide-gray-200">
         {filtered_openings?.map((opening: DynamoOpening) => (
-          <li key={opening.opening_id}>
+          <li key={opening.openingId}>
             {/* If the opening has stages, go to the first stage and view aplicants. Otherwise, go to the settings page for the opening to create one*/}
             <Link
-              href={`${process.env.WEBSITE_URL}/openings/${
-                opening.opening_id
+              href={`${process.env.NEXT_PUBLIC_WEBSITE_URL}/openings/${
+                opening.openingId
               }/${
                 opening.total_stages > 0
                   ? `stages/${opening.stage_order[0]}/applicants` // TODO should this end with applicants?
@@ -75,7 +75,7 @@ export default function OpeningList() {
                         <p className="mt-2 flex items-center text-lg text-normal sm:mt-0 sm:ml-6">
                           <ClickToCopy
                             showText={"Application Link"}
-                            copyText={`${process.env.WEBSITE_URL}/${user?.org_id}/${opening?.opening_id}/apply`}
+                            copyText={`${process.env.NEXT_PUBLIC_WEBSITE_URL}/${user?.orgId}/${opening?.openingId}/apply`}
                           />
                         </p>
                       ) : null}
@@ -87,8 +87,8 @@ export default function OpeningList() {
                       />
                       <p>
                         Created{" "}
-                        <time dateTime={opening.created_at as string}>
-                          {GetRelativeTime(opening.created_at)}
+                        <time dateTime={opening.createdAt as string}>
+                          {getRelativeTime(opening.createdAt)}
                         </time>
                       </p>
                     </div>

@@ -2,7 +2,7 @@
 // Such as filtering of openings, their public / private status,
 // And how many applicants there are
 import { CalendarIcon, LocationMarkerIcon } from "@heroicons/react/solid";
-import { GetRelativeTime } from "../../../utils/time";
+import { getRelativeTime } from "../../../utils/time";
 import Link from "next/dist/client/link";
 
 import _ from "lodash";
@@ -11,18 +11,18 @@ import useStore from "../../../utils/store";
 import useAllPublicOpenings from "../../../SWR/useAllPublicOpenings";
 export default function PublicOpeningsList() {
   const router = useRouter();
-  const { org_id } = router.query as CustomQuery;
+  const { orgId } = router.query as CustomQuery;
   let { publicOpenings, isPublicOpeningsLoading, isPublicOpeningsError } =
-    useAllPublicOpenings(org_id);
+    useAllPublicOpenings(orgId);
 
   return (
     <div className="bg-white shadow overflow-hidden sm:rounded-md">
       <ul role="list" className="divide-y divide-gray-200">
         {publicOpenings?.map((opening: DynamoOpening) => (
-          <li key={opening.opening_id}>
+          <li key={opening.openingId}>
             {/* Take applicant to opening info page */}
             <Link
-              href={`${process.env.WEBSITE_URL}/${org_id}/${opening?.opening_id}/apply`}
+              href={`${process.env.NEXT_PUBLIC_WEBSITE_URL}/${orgId}/${opening?.openingId}/apply`}
             >
               <a className="block hover:bg-gray-50">
                 <div className="px-4 py-4 sm:px-6">
@@ -48,8 +48,8 @@ export default function PublicOpeningsList() {
                       />
                       <p>
                         Posted{" "}
-                        <time dateTime={opening.created_at as string}>
-                          {GetRelativeTime(opening.created_at)}
+                        <time dateTime={opening.createdAt as string}>
+                          {getRelativeTime(opening.createdAt)}
                         </time>
                       </p>
                     </div>

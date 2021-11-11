@@ -1,51 +1,53 @@
 import axios from "../axios/axios";
 
 export default class PublicInfoService {
-  static getPublicOrgURL({ org_id }) {
-    return `/api/public/orgs/${org_id}`;
+  static getPublicOrgURL({ orgId }) {
+    return `/api/public/orgs/${orgId}`;
   }
-  static async getPublicOrg({ org_id }) {
-    const { data } = await axios.get(this.getPublicOrgURL({ org_id }));
+  static async getPublicOrg({ orgId }) {
+    const { data } = await axios.get(this.getPublicOrgURL({ orgId }));
     return data;
   }
 
-  static getAllPublicOpeningsURL({ org_id }) {
-    return `/api/public/orgs/${org_id}/openings`;
+  static getAllPublicOpeningsURL({ orgId }) {
+    return `/api/public/orgs/${orgId}/openings`;
   }
 
-  static async getAllPublicOpenings({ org_id }) {
-    const { data } = await axios.get(this.getAllPublicOpeningsURL({ org_id }));
+  static async getAllPublicOpenings({ orgId }) {
+    const { data } = await axios.get(this.getAllPublicOpeningsURL({ orgId }));
     return data;
   }
 
-  static getPublicOpeningURL({ org_id, opening_id }) {
-    return `/api/public/orgs/${org_id}/openings/${opening_id}`;
+  static getPublicOpeningURL({ orgId, openingId }) {
+    return `/api/public/orgs/${orgId}/openings/${openingId}`;
   }
 
-  static async getPublicOpening({ org_id, opening_id }) {
+  static async getPublicOpening({ orgId, openingId }) {
     const { data } = await axios.get(
-      this.getPublicOpeningURL({ org_id, opening_id })
+      this.getPublicOpeningURL({ orgId, openingId })
     );
     return data;
   }
 
-  static getPublicStageURL({ org_id, opening_id, stage_id }) {
-    return `/api/public/orgs/${org_id}/openings/${opening_id}/stages/${stage_id}`;
+  static getPublicStageURL({ orgId, openingId, stageId }) {
+    return `/api/public/orgs/${orgId}/openings/${openingId}/stages/${stageId}`;
   }
 
-  static async getPublicStage({ org_id, opening_id, stage_id }) {
+  static async getPublicStage({ orgId, openingId, stageId }) {
     const { data } = await axios.get(
-      this.getPublicStageURL({ org_id, opening_id, stage_id })
+      this.getPublicStageURL({ orgId, openingId, stageId })
     );
     return data;
   }
 
   // Identical to the call in applicants service, however auth is not required
-  static getPublicApplicantURL({ applicant_id }) {
-    return `/api/applicants/${applicant_id}`;
+  static getPublicApplicantURL({ applicantId }) {
+    return `/api/applicants/${applicantId}`;
   }
-  static async getPublicApplicant({ applicant_id }) {
-    const { data } = await axios.get(this.getPublicApplicantURL({ applicant_id }));
+  static async getPublicApplicant({ applicantId }) {
+    const { data } = await axios.get(
+      this.getPublicApplicantURL({ applicantId })
+    );
     return data;
   }
 }

@@ -1,34 +1,34 @@
 import { PutCommand, PutCommandInput } from "@aws-sdk/lib-dynamodb";
-import { Dynamo } from "../../lib/awsClients/ddbDocClient";
+import { Dynamo } from "../../awsClients/ddbDocClient";
 import { GetCurrentTime } from "../time";
 import { nanoid } from "nanoid";
 import SendNewUserEmail from "../email/sendNewUser";
 import { GetUserByEmail } from "./getUserByEmail";
 const { DYNAMO_TABLE_NAME } = process.env;
 
-export async function CreateUser({ user_email }) {
-  const user = await GetUserByEmail(user_email);
+export async function CreateUser({ userEmail }) {
+  const user = await GetUserByEmail(userEmail);
 
   if (user) {
     return user;
   }
   const now = GetCurrentTime("iso") as string;
-  const user_id = nanoid(42);
+  const userId = nanoid(42);
   const new_user: DynamoUser = {
-    PK: `USER#${user_id}`,
+    PK: `USER#${userId}`,
     SK: `USER`,
-    first_name: "NO_FIRST_NAME",
-    last_name: "NO_LAST_NAME",
-    user_email: user_email.toLowerCase().trim(),
-    user_id: user_id,
-    entity_type: "USER",
-    created_at: now,
-    org_id: "NO_ORG_ASSIGNED",
-    org_join_date: "NO_ORG_ASSIGNED",
-    total_invites: 0,
+    firstName: "NO_firstName",
+    lastName: "NO_lastName",
+    userEmail: userEmail.toLowerCase().trim(),
+    userId: userId,
+    entityType: "USER",
+    createdAt: now,
+    orgId: "NO_ORG_ASSIGNED",
+    orgJoinDate: "NO_ORG_ASSIGNED",
+    totalInvites: 0,
     GSI1PK: "ORG#NO_ORG_ASSIGNED#USERS",
-    GSI1SK: `NO_FIRST_NAME NO_LAST_NAME`,
-    GSI2PK: user_email.toLowerCase().trim(),
+    GSI1SK: `NO_firstName NO_lastName`,
+    GSI2PK: userEmail.toLowerCase().trim(),
     GSI2SK: "USER",
   };
 

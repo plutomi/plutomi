@@ -6,18 +6,18 @@ const handler = async (
   req: NextIronRequest,
   res: NextApiResponse
 ): Promise<void> => {
-  const user_session = req.session.get("user");
-  if (!user_session) {
+  const userSession = req.session.user;
+  if (!userSession) {
     req.session.destroy();
     return res.status(401).json({ message: "Please log in again" });
   }
   const { body, method } = req;
-  const { GSI1SK, question_description, stage_id } = body;
+  const { GSI1SK, question_description, stageId } = body;
 
   if (method === "POST") {
     const create_stage_question_input = {
-      org_id: user_session.org_id,
-      stage_id: stage_id,
+      orgId: userSession.orgId,
+      stageId: stageId,
       GSI1SK: GSI1SK,
       question_description: question_description,
     };

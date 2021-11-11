@@ -1,15 +1,15 @@
 import { QueryCommand, QueryCommandInput } from "@aws-sdk/lib-dynamodb";
-import { Dynamo } from "../../lib/awsClients/ddbDocClient";
+import { Dynamo } from "../../awsClients/ddbDocClient";
 
 const { DYNAMO_TABLE_NAME } = process.env;
 
-export async function GetUserByEmail(user_email: string) {
+export async function GetUserByEmail(userEmail: string) {
   const params: QueryCommandInput = {
     TableName: DYNAMO_TABLE_NAME,
     IndexName: "GSI2",
     KeyConditionExpression: "GSI2PK = :GSI2PK AND GSI2SK = :GSI2SK",
     ExpressionAttributeValues: {
-      ":GSI2PK": user_email.toLowerCase().trim(),
+      ":GSI2PK": userEmail.toLowerCase().trim(),
       ":GSI2SK": "USER",
     },
   };

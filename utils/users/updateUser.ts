@@ -1,15 +1,15 @@
 import { UpdateCommand, UpdateCommandInput } from "@aws-sdk/lib-dynamodb";
-import { Dynamo } from "../../lib/awsClients/ddbDocClient";
+import { Dynamo } from "../../awsClients/ddbDocClient";
 
 const { DYNAMO_TABLE_NAME } = process.env;
 
 export async function UpdateUser({
   new_user_values,
-  user_id,
+  userId,
   ALLOW_FORBIDDEN_KEYS,
 }: {
   new_user_values: any;
-  user_id: string;
+  userId: string;
   ALLOW_FORBIDDEN_KEYS?: boolean;
 }) {
   try {
@@ -17,14 +17,14 @@ export async function UpdateUser({
     const FORBIDDEN_KEYS = [
       "PK",
       "SK",
-      "org_id",
-      "entity_type",
-      "created_at",
-      "opening_id",
+      "orgId",
+      "entityType",
+      "createdAt",
+      "openingId",
       "GSI1PK",
       "GSI2PK",
       "user_role",
-      "org_join_date",
+      "orgJoinDate",
     ];
 
     const incomingKeys = Object.keys(new_user_values);
@@ -41,7 +41,7 @@ export async function UpdateUser({
     });
 
     // TODO refactor this into its own function, easy way to have banned values
-    const banned_values = ["NO_FIRST_NAME", "NO_LAST_NAME"];
+    const banned_values = ["NO_firstName", "NO_lastName"];
 
     // @ts-ignore TODO fix types
     const checker = (value) =>
@@ -55,7 +55,7 @@ export async function UpdateUser({
     const NewUpdateExpression = `SET ${newUpdateExpression.join(", ")}`;
     const params: UpdateCommandInput = {
       Key: {
-        PK: `USER#${user_id}`,
+        PK: `USER#${userId}`,
         SK: `USER`,
       },
       UpdateExpression: NewUpdateExpression,
@@ -65,8 +65,8 @@ export async function UpdateUser({
       ConditionExpression: "attribute_exists(PK)",
     };
 
-    const updated_user = await Dynamo.send(new UpdateCommand(params));
-    return updated_user.Attributes as DynamoUser;
+    const updatedUser = await Dynamo.send(new UpdateCommand(params));
+    return updatedUser.Attributes as DynamoUser;
   } catch (error) {
     throw new Error(error);
   }

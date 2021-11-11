@@ -26,35 +26,34 @@ Stage order:
 4. **Final Review** - Manually review an applicant's license for compliance
 5. **Ready to Drive** - Applicants that have completed your application
 
-## Architecture
+## Tooling
 
 We believe CDK to be the future and it's nice to have 'first-class' tooling directly from AWS. Therefore,
-**all infastructure is managed by CDK**.
+**all infrastructure is managed by CDK**.
 
-The website (at the moment) runs on AWS Fargate. That means frontend and API, all in one big monolith. TIL: Managed NAT Gateways = $$$
+## Infrastructure
 
-We started with the [Serverless-Nextjs](https://github.com/serverless-nextjs/serverless-next.js) component which uses Lambda@Edge for API routes. There are many downsides to Edge functions, some are listed [here](https://github.com/plutomi/plutomi/issues/172).
+We _started_ with the [Serverless-Nextjs](https://github.com/serverless-nextjs/serverless-next.js) component which uses Lambda@Edge for API routes. There are many downsides to Edge functions, some are listed [here](https://github.com/plutomi/plutomi/issues/172). We've since moved on to hosting entirely on AWS Fargate.
 
-We're currently migrating everything to run on your typical S3 + Cloudfront & APIGW / Lambda backend.
+As much as we love "serverless" (API Gateway + Lambda), we keep running into quirks that essentially wipe out all of the gains from "only focusing on business logic". A main complaint is local development. The only real way to test lambda functions locally is to use [AWS SAM with CDK](https://aws.amazon.com/blogs/compute/better-together-aws-sam-and-aws-cdk/) which just seems like a hack :/.
+With CDK, we can run Nextjs in Docker and use the native Nextjs dev environment, tooling, & file based routing and not have to change anything. [This comment](https://news.ycombinator.com/item?id=28841292) on Hacker News also adds some insight.
 
-Some other useful repos:
+Here is a fun (4 year old) bug: [Unable to change parameter name in API Gateway without tearing it all down and rebuilding](https://github.com/serverless/serverless/issues/3785)! Because why would you ever need to do that?
 
-- [AWS ECS Patterns](https://github.com/aws/aws-cdk/tree/master/packages/%40aws-cdk/aws-ecs-patterns)
-- [Serverless CDK Patterns](https://github.com/cdk-patterns/serverless)
+Or [cold starts](https://filia-aleks.medium.com/aws-lambda-battle-2021-performance-comparison-for-all-languages-c1b441005fd1) / [performance](https://www.trek10.com/blog/fargate-vs-lambda) / cost (either way you slice this one: pure throughput or just Denial of Wallet attacks). To be clear, we will still use lambda for background tasks such as queues, DynamoDB streams, email sending, etc. just not for the main API of the site.
 
 ## Useful commands
 
-> NOTE: To deploy, you must first build your docker image and publish to ECR. We will automate this via CI / CD in the future.
->
-> `docker build -t <your-username>/<your-app-name> .`
->
-> [How to push your image to ECR](https://docs.aws.amazon.com/AmazonECR/latest/userguide/docker-push-ecr-image.html)
-
 - `npm run dev` run the app locally
-- `cdk deploy --all` deploy the backend only, can specify a single stack
-- `cdk destroy --all` destroy the entire backend, can specify a single stack
+- `cdk deploy` deploy the site - _Docker image is built and deployed by CDK automatically!_
+- `cdk destroy` destroy the site
 - `cdk diff` compare deployed stack with current state
 - `cdk synth` emits the synthesized CloudFormation template
+
+And other useful repos:
+
+- [AWS ECS Patterns](https://github.com/aws/aws-cdk/tree/master/packages/%40aws-cdk/aws-ecs-patterns)
+- [Serverless CDK Patterns](https://github.com/cdk-patterns/serverless)
 
 ## License and Open Source
 

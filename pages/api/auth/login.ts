@@ -1,7 +1,7 @@
 import {
   GetCurrentTime,
   GetPastOrFutureTime,
-  GetRelativeTime,
+  getRelativeTime,
 } from "../../../utils/time";
 import InputValidation from "../../../utils/inputValidation";
 import { NextApiResponse } from "next";
@@ -10,7 +10,7 @@ import CreateLoginLink from "../../../utils/loginLinks/createLoginLink";
 import { nanoid } from "nanoid";
 import withSession from "../../../middleware/withSession";
 import { createHash } from "crypto";
-import { GetLatestLoginLink } from "../../../utils/loginLinks/getLatestLoginLink";
+import { getLatestLoginLink } from "../../../utils/loginLinks/getLatestLoginLink";
 import { CreateUser } from "../../../utils/users/createUser";
 import CreateLoginEvent from "../../../utils/users/createLoginEvent";
 import DeleteLoginLink from "../../../utils/loginLinks/deleteLoginLink";
@@ -23,11 +23,11 @@ const handler = async (
   res: NextApiResponse
 ): Promise<void> => {
   const { body, method, query } = req; // TODO get from body
-  const { user_email, login_method } = body;
-  const { user_id, key, callback_url } = query as CustomQuery;
+  const { userEmail, loginMethod } = body;
+  const { userId, key, callbackUrl } = query as CustomQuery;
   const login_link_length = 1500;
   const login_link_max_delay_minutes = 10;
-  const time_threshold = GetPastOrFutureTime(
+  const timeThreshold = GetPastOrFutureTime(
     "past",
     login_link_max_delay_minutes,
     "minutes",
@@ -37,22 +37,22 @@ const handler = async (
   // Creates a login link
   if (method === "POST") {
     try {
-      InputValidation({ user_email });
+      InputValidation({ userEmail });
     } catch (error) {
       console.error(error);
       return res.status(400).json({ message: `${error.message}` });
     }
     // Creates a user, returns it if already created
-    const user = await CreateUser({ user_email });
+    const user = await CreateUser({ userEmail });
 
     try {
-      const latest_link = await GetLatestLoginLink(user.user_id);
+      const latest_link = await getLatestLoginLink(user.userId);
 
       // Limit the amount of links sent in a certain period of time
       if (
         latest_link &&
-        latest_link.created_at >= time_threshold &&
-        !user.user_email.endsWith("@plutomi.com")
+        latest_link.createdAt >= timeThreshold &&
+        !user.userEmail.endsWith("@plutomi.com")
       ) {
         return res.status(400).json({
           message: "You're doing that too much, please try again later",
@@ -72,24 +72,24 @@ const handler = async (
       try {
         await CreateLoginLink({
           user: user,
-          login_link_hash: hash,
+          loginLinkHash: hash,
           login_link_expiry: login_link_expiry,
         });
-        const default_redirect = `${process.env.WEBSITE_URL}/dashboard`;
-        const login_link = `${process.env.WEBSITE_URL}/api/auth/login?user_id=${
-          user.user_id
-        }&key=${secret}&callback_url=${
-          callback_url ? callback_url : default_redirect
+        const default_redirect = `${process.env.NEXT_PUBLIC_WEBSITE_URL}/dashboard`;
+        const login_link = `${
+          process.env.NEXT_PUBLIC_WEBSITE_URL
+        }/api/auth/login?userId=${user.userId}&key=${secret}&callbackUrl=${
+          callbackUrl ? callbackUrl : default_redirect
         }`;
 
-        if (login_method === "GOOGLE") {
+        if (loginMethod === "GOOGLE") {
           return res.status(200).json({ message: login_link });
         }
         try {
           await SendLoginLink({
-            recipient_email: user.user_email,
+            recipientEmail: user.userEmail,
             login_link: login_link,
-            login_link_relative_expiry: GetRelativeTime(login_link_expiry),
+            login_link_relative_expiry: getRelativeTime(login_link_expiry),
           });
           return res
             .status(201)
@@ -112,7 +112,7 @@ const handler = async (
   // Validates the login link when clicked
   if (method === "GET") {
     const validate_login_link_input = {
-      user_id: user_id,
+      userId: userId,
       key: key,
     };
     try {
@@ -121,15 +121,15 @@ const handler = async (
       return res.status(400).json({ message: `${error.message}` });
     }
 
-    const latest_login_link = await GetLatestLoginLink(user_id);
+    const latestLoginLink = await getLatestLoginLink(userId);
 
-    if (!latest_login_link) {
+    if (!latestLoginLink) {
       return res.status(400).json({ message: "Invalid link" });
     }
 
     const hash = createHash("sha512").update(key).digest("hex");
 
-    if (hash != latest_login_link.login_link_hash) {
+    if (hash != latestLoginLink.loginLinkHash) {
       /**
        * Someone could try to guess a user ID and the 1500 char long key
        * If they do get someone's ID correct in that 15 minute window to log in AND they key is wrong...
@@ -137,12 +137,12 @@ const handler = async (
        */
 
       const updated_login_link = {
-        ...latest_login_link,
-        link_status: "SUSPENDED",
+        ...latestLoginLink,
+        linkStatus: "SUSPENDED",
       };
 
       await UpdateLoginLink({
-        user_id,
+        userId,
         updated_login_link,
       });
 
@@ -152,40 +152,40 @@ const handler = async (
     }
 
     // Lock account if already suspended
-    if (latest_login_link.link_status === "SUSPENDED") {
+    if (latestLoginLink.linkStatus === "SUSPENDED") {
       return res.status(401).json({
         message: `Your login link has been suspended. Please try again later or email support@plutomi.com`,
       });
     }
 
-    if (latest_login_link.expires_at <= GetCurrentTime("iso")) {
+    if (latestLoginLink.expiresAt <= GetCurrentTime("iso")) {
       return res.status(401).json({
         message: `Your login link has expired.`,
       });
     }
 
-    const user = await GetUserById(user_id);
+    const user = await GetUserById(userId);
 
-    if (user && latest_login_link) {
+    if (user && latestLoginLink) {
       // TODO should this be a transaction?
       // Simple timestamp when the user actually logged in
-      CreateLoginEvent(user_id);
+      CreateLoginEvent(userId);
 
       // Invalidates the last login link while allowing the user to login again if needed
-      DeleteLoginLink(user_id, latest_login_link.created_at);
+      DeleteLoginLink(userId, latestLoginLink.createdAt);
 
-      const clean_user = CleanUser(user as DynamoUser);
+      const cleanUser = CleanUser(user as DynamoUser);
 
-      req.session.set("user", clean_user);
+      req.session.user = cleanUser;
       await req.session.save();
 
       // If a user has invites, redirect them to that page automatically
-      if (clean_user.total_invites > 0) {
-        res.redirect(`${process.env.WEBSITE_URL}/invites`);
+      if (cleanUser.totalInvites > 0) {
+        res.redirect(`${process.env.NEXT_PUBLIC_WEBSITE_URL}/invites`);
         return;
       }
 
-      res.redirect(callback_url);
+      res.redirect(callbackUrl);
       return;
     }
   }

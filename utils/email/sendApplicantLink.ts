@@ -1,13 +1,13 @@
 import { SendEmailCommand, SendEmailCommandInput } from "@aws-sdk/client-ses";
-import SES from "../../lib/awsClients/sesClient";
+import SES from "../../awsClients/sesClient";
 
 export default async function SendApplicantLink({
-  org_id,
+  orgId,
   org_name,
-  applicant_id,
+  applicantId,
   applicant_email,
 }) {
-  const application_link = `${process.env.WEBSITE_URL}/${org_id}/applicants/${applicant_id}`;
+  const application_link = `${process.env.NEXT_PUBLIC_WEBSITE_URL}/${orgId}/applicants/${applicantId}`;
   const new_email: SendEmailCommandInput = {
     Source: `${org_name} <applications@plutomi.com>`,
     Destination: {

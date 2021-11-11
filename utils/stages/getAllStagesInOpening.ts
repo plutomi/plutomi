@@ -1,13 +1,10 @@
 import { QueryCommand, QueryCommandInput } from "@aws-sdk/lib-dynamodb";
-import { Dynamo } from "../../lib/awsClients/ddbDocClient";
+import { Dynamo } from "../../awsClients/ddbDocClient";
 import { GetOpening } from "../openings/getOpeningById";
 const { DYNAMO_TABLE_NAME } = process.env;
 
-export async function GetAllStagesInOpening(
-  org_id: string,
-  opening_id: string
-) {
-  const opening = await GetOpening({ org_id, opening_id });
+export async function GetAllStagesInOpening(orgId: string, openingId: string) {
+  const opening = await GetOpening({ orgId, openingId });
   const { stage_order } = opening;
 
   const params: QueryCommandInput = {
@@ -15,7 +12,7 @@ export async function GetAllStagesInOpening(
     IndexName: "GSI1",
     KeyConditionExpression: "GSI1PK = :GSI1PK",
     ExpressionAttributeValues: {
-      ":GSI1PK": `ORG#${org_id}#OPENING#${opening_id}#STAGES`,
+      ":GSI1PK": `ORG#${orgId}#OPENING#${openingId}#STAGES`,
     },
   };
 
@@ -24,7 +21,7 @@ export async function GetAllStagesInOpening(
     const all_stages = response.Items;
 
     const result = stage_order.map((i) =>
-      all_stages.find((j) => j.stage_id === i)
+      all_stages.find((j) => j.stageId === i)
     );
 
     return result;

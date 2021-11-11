@@ -1,13 +1,13 @@
 import { GetCommand, GetCommandInput } from "@aws-sdk/lib-dynamodb";
-import { Dynamo } from "../../lib/awsClients/ddbDocClient";
+import { Dynamo } from "../../awsClients/ddbDocClient";
 
 const { DYNAMO_TABLE_NAME } = process.env;
 
-export async function GetStage({ org_id, stage_id }: GetStageInput) {
+export async function getStage({ orgId, stageId }: GetStageInput) {
   const params: GetCommandInput = {
     TableName: DYNAMO_TABLE_NAME,
     Key: {
-      PK: `ORG#${org_id}#STAGE#${stage_id}`,
+      PK: `ORG#${orgId}#STAGE#${stageId}`,
       SK: `STAGE`,
     },
   };

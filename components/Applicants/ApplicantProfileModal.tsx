@@ -37,7 +37,7 @@ export default function ApplicantProfileModal() {
   const [isEditing, setIsEditing] = useState(false);
   const [currentActive, setCurrentActive] = useState(1); // Id of item
   const router = useRouter();
-  const { applicant_id, opening_id, stage_id } = router.query as CustomQuery;
+  const { applicantId, openingId, stageId } = router.query as CustomQuery;
 
   const setApplicantProfileModal = useStore(
     (store) => store.setApplicantProfileModal
@@ -48,7 +48,7 @@ export default function ApplicantProfileModal() {
   );
 
   const { applicant, isApplicantLoading, isApplicantError } =
-    useApplicantById(applicant_id);
+    useApplicantById(applicantId);
 
   const handleNavClick = (e, tabId: number) => {
     e.preventDefault();
@@ -67,17 +67,17 @@ export default function ApplicantProfileModal() {
 
     router.push(
       {
-        pathname: `/openings/${opening_id}/stages/${stage_id}/applicants`,
+        pathname: `/openings/${openingId}/stages/${stageId}/applicants`,
       },
       undefined,
       { shallow: true }
     );
   };
 
-  const updateApplicant = async (applicant_id: string, changes: {}) => {
+  const updateApplicant = async (applicantId: string, changes: {}) => {
     try {
       const { message } = await ApplicantsService.updateApplicant({
-        applicant_id,
+        applicantId,
         new_applicant_values: changes,
       });
 
@@ -87,7 +87,7 @@ export default function ApplicantProfileModal() {
     }
 
     // TODO NOTE updating that single applicant wont update the applicant list since the list is rendering old data
-    mutate(ApplicantsService.getApplicantURL({ applicant_id }));
+    mutate(ApplicantsService.getApplicantURL({ applicantId }));
   };
 
   return (
@@ -129,21 +129,21 @@ export default function ApplicantProfileModal() {
                         <EasyEdit
                           placeholder={null}
                           type={Types.TEXT}
-                          value={applicant?.first_name}
+                          value={applicant?.firstName}
                           onSave={(
                             value // Only update if there's been a change
                           ) =>
-                            value !== applicant?.first_name &&
-                            updateApplicant(applicant?.applicant_id, {
-                              first_name: value,
-                              full_name: `${value} ${applicant.last_name}`,
+                            value !== applicant?.firstName &&
+                            updateApplicant(applicant?.applicantId, {
+                              firstName: value,
+                              fullName: `${value} ${applicant.lastName}`,
                             })
                           }
                           editComponent={
                             <CustomEditableInput
                               label={"First name"}
                               placeholder={"Enter a new name"}
-                              initialValue={applicant?.first_name}
+                              initialValue={applicant?.firstName}
                             />
                           }
                           saveButtonLabel={
@@ -157,19 +157,19 @@ export default function ApplicantProfileModal() {
                         <EasyEdit
                           placeholder={null}
                           type={Types.TEXT}
-                          value={applicant?.last_name}
+                          value={applicant?.lastName}
                           onSave={(value) =>
-                            value !== applicant?.last_name &&
-                            updateApplicant(applicant?.applicant_id, {
-                              last_name: value,
-                              full_name: `${applicant.first_name} ${value}`,
+                            value !== applicant?.lastName &&
+                            updateApplicant(applicant?.applicantId, {
+                              lastName: value,
+                              fullName: `${applicant.firstName} ${value}`,
                             })
                           }
                           editComponent={
                             <CustomEditableInput
                               label={"Last name"}
                               placeholder={"Enter a new name"}
-                              initialValue={applicant?.last_name}
+                              initialValue={applicant?.lastName}
                             />
                           }
                           saveButtonLabel={
@@ -184,7 +184,7 @@ export default function ApplicantProfileModal() {
                       <div className="ml-3 h-7 flex items-center space-x-4">
                         <ClickToCopy
                           showText={"Copy Application Link"}
-                          copyText={`${process.env.WEBSITE_URL}/${applicant?.org_id}/applicants/${applicant?.applicant_id}`}
+                          copyText={`${process.env.NEXT_PUBLIC_WEBSITE_URL}/${applicant?.orgId}/applicants/${applicant?.applicantId}`}
                         />
                         <button
                           type="button"
@@ -205,7 +205,7 @@ export default function ApplicantProfileModal() {
                         value={applicant?.email}
                         onSave={(value) =>
                           value !== applicant?.email &&
-                          updateApplicant(applicant?.applicant_id, {
+                          updateApplicant(applicant?.applicantId, {
                             email: value,
                           })
                         }

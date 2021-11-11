@@ -18,7 +18,7 @@ export default function OpeningModal({
   const setOpeningModal = useStore((state) => state.setOpeningModal);
 
   const { opening, isOpeningLoading, isOpeningError } = useOpeningById(
-    openingModal.opening_id
+    openingModal.openingId
   );
   const handleSubmit = async (e: FormEvent) => {
     if (openingModal.modal_mode === "CREATE") {

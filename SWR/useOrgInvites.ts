@@ -7,13 +7,13 @@ const fetcher = (url: string) => axios.get(url).then((res) => res.data);
 
 /**
  *
- * @param user_id - The ID of the logged in user
+ * @param userId - The ID of the logged in user
  */
-function useOrgInvites(user_id: string): useOrgInvitesOutput {
-  const shouldFetch = user_id ? true : false;
+function useOrgInvites(userId: string): useOrgInvitesOutput {
+  const shouldFetch = userId ? true : false;
 
   const { data, error } = useSWR(
-    shouldFetch && InvitesService.getInvitesURL({ user_id }),
+    shouldFetch && InvitesService.getInvitesURL({ userId }),
     fetcher,
     { refreshInterval: INVITES_REFRESH_INTERVAL }
   );
