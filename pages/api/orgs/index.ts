@@ -2,7 +2,7 @@ import { NextApiResponse } from "next";
 import withCleanOrgId from "../../../middleware/withCleanOrgId";
 import InputValidation from "../../../utils/inputValidation";
 import { GetAllUserInvites } from "../../../utils/invites/getAllOrgInvites";
-import withSession from "../../../middleware/withSession";
+import { withSessionRoute } from "../../../middleware/withSession";
 import CleanUser from "../../../utils/clean/cleanUser";
 import { GetUserById } from "../../../utils/users/getUserById";
 import { CreateAndJoinOrg } from "../../../utils/orgs/createAndJoinOrg";
@@ -83,4 +83,4 @@ const handler = async (
   return res.status(405).json({ message: "Not Allowed" });
 };
 
-export default withSession(withCleanOrgId(handler));
+export default withSessionRoute(withCleanOrgId(handler));

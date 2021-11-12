@@ -30,18 +30,18 @@ export default async function CreateOrgInvite({
     if (unclaimed_invites.length > 0) {
       throw `This user already has a pending invite to your org! They can log in at ${process.env.NEXT_PUBLIC_WEBSITE_URL}/invites to claim it!`;
     }
-    const invite_id = nanoid(50);
+    const inviteId = nanoid(50);
     const now = GetCurrentTime("iso") as string;
     const new_org_invite = {
       PK: `USER#${user.userId}`,
-      SK: `ORG_INVITE#${invite_id}`, // Allows sorting, and incase two get created in the same millisecond
+      SK: `ORG_INVITE#${inviteId}`, // Allows sorting, and incase two get created in the same millisecond
       orgId: orgId,
       org_name: org_name, // using org_name here because GSI1SK is taken obv
       createdBy: createdBy,
       entityType: "ORG_INVITE",
       createdAt: now,
       expiresAt: expiresAt,
-      invite_id: invite_id,
+      inviteId: inviteId,
       GSI1PK: `ORG#${orgId}#ORG_INVITES`,
       GSI1SK: now,
     };

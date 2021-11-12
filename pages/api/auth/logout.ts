@@ -1,6 +1,6 @@
-import withSession from "../../../middleware/withSession";
+import { withSessionRoute } from "../../../middleware/withSession";
 import { NextApiResponse } from "next";
-export default withSession(
+export default withSessionRoute(
   async (req: NextIronRequest, res: NextApiResponse): Promise<void> => {
     const { method } = req;
     if (method === "POST") {

@@ -8,7 +8,7 @@ import { NextApiResponse } from "next";
 import SendLoginLink from "../../../utils/email/sendLoginLink";
 import CreateLoginLink from "../../../utils/loginLinks/createLoginLink";
 import { nanoid } from "nanoid";
-import withSession from "../../../middleware/withSession";
+import { withSessionRoute } from "../../../middleware/withSession";
 import { createHash } from "crypto";
 import { getLatestLoginLink } from "../../../utils/loginLinks/getLatestLoginLink";
 import { CreateUser } from "../../../utils/users/createUser";
@@ -193,4 +193,4 @@ const handler = async (
   return res.status(405).json({ message: "Not Allowed" });
 };
 
-export default withSession(handler);
+export default withSessionRoute(handler);

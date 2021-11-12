@@ -3,7 +3,7 @@ import { GetApplicantById } from "../../../../utils/applicants/getApplicantById"
 import InputValidation from "../../../../utils/inputValidation";
 import DeleteApplicant from "../../../../utils/applicants/deleteApplicant";
 import UpdateApplicant from "../../../../utils/applicants/updateApplicant";
-import withSession from "../../../../middleware/withSession";
+import { withSessionRoute } from "../../../../middleware/withSession";
 
 const handler = async (
   req: NextIronRequest,
@@ -78,4 +78,4 @@ const handler = async (
   return res.status(405).json({ message: "Not Allowed" });
 };
 
-export default withSession(handler);
+export default withSessionRoute(handler);

@@ -1,7 +1,7 @@
 import withCleanOrgId from "../../../../middleware/withCleanOrgId";
 import { GetOrg } from "../../../../utils/orgs/getOrg";
 import { NextApiResponse } from "next";
-import withSession from "../../../../middleware/withSession";
+import { withSessionRoute } from "../../../../middleware/withSession";
 import CleanUser from "../../../../utils/clean/cleanUser";
 import { UpdateUser } from "../../../../utils/users/updateUser";
 
@@ -78,4 +78,4 @@ const handler = async (
   return res.status(405).json({ message: "Not Allowed" });
 };
 
-export default withSession(withCleanOrgId(handler));
+export default withSessionRoute(withCleanOrgId(handler));

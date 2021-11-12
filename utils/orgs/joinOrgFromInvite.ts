@@ -17,7 +17,7 @@ export async function JoinOrgFromInvite({ userId, invite }) {
           Delete: {
             Key: {
               PK: `USER#${userId}`,
-              SK: `ORG_INVITE#${invite.invite_id}`,
+              SK: `ORG_INVITE#${invite.inviteId}`,
             },
             TableName: DYNAMO_TABLE_NAME,
           },

@@ -4,7 +4,7 @@ import InputValidation from "../../../../utils/inputValidation";
 import { DeleteStage } from "../../../../utils/stages/deleteStage";
 import UpdateStage from "../../../../utils/stages/updateStage";
 // Create stage in a opening
-import withSession from "../../../../middleware/withSession";
+import { withSessionRoute } from "../../../../middleware/withSession";
 
 const handler = async (
   req: NextIronRequest,
@@ -83,4 +83,4 @@ const handler = async (
   return res.status(405).json({ message: "Not Allowed" });
 };
 
-export default withSession(handler);
+export default withSessionRoute(handler);

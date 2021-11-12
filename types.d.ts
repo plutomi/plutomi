@@ -21,5 +21,5 @@ type CustomQuery = {
   key?: string;
   callbackUrl?: string;
   question_id?: string;
-  invite_id?: string;
+  inviteId?: string;
 };

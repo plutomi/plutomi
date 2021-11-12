@@ -3,8 +3,8 @@ import InputValidation from "../../../../utils/inputValidation";
 import { NextApiResponse } from "next";
 import DeleteOrgInvite from "../../../../utils/invites/deleteOrgInvite";
 import withCleanOrgId from "../../../../middleware/withCleanOrgId";
-import { GetOrgInvite } from "../../../../utils/invites/getOrgInvite";
-import withSession from "../../../../middleware/withSession";
+import { getOrgInvite } from "../../../../utils/invites/getOrgInvite";
+import { withSessionRoute } from "../../../../middleware/withSession";
 import CleanUser from "../../../../utils/clean/cleanUser";
 import { GetUserById } from "../../../../utils/users/getUserById";
 import { JoinOrgFromInvite } from "../../../../utils/orgs/joinOrgFromInvite";
@@ -19,13 +19,10 @@ const handler = async (
     return res.status(401).json({ message: "Please log in again" });
   }
   const { method, query } = req;
-  const { invite_id } = query as CustomQuery;
+  const { inviteId } = query as CustomQuery;
 
   // TODO trycatch
-  const invite = await GetOrgInvite({
-    userId: userSession.userId,
-    invite_id: invite_id,
-  });
+  const invite = await getOrgInvite(userSession.userId, inviteId);
 
   const join_org_input = {
     userId: userSession.userId,
@@ -35,6 +32,7 @@ const handler = async (
   try {
     InputValidation(join_org_input);
   } catch (error) {
+    console.error("Error accepting invite", error);
     return res.status(400).json({ message: `${error.message}` });
   }
 
@@ -67,7 +65,7 @@ const handler = async (
   if (method === "DELETE") {
     const delete_org_invite_input = {
       userId: userSession.userId,
-      invite_id: invite_id,
+      inviteId: inviteId,
     };
 
     try {
@@ -89,4 +87,4 @@ const handler = async (
   return res.status(405).json({ message: "Not Allowed" });
 };
 
-export default withSession(withCleanOrgId(handler));
+export default withSessionRoute(withCleanOrgId(handler));

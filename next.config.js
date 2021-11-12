@@ -8,38 +8,38 @@ module.exports = {
     NEXT_IRON_SESSION_PASSWORD_1: process.env.NEXT_IRON_SESSION_PASSWORD_1, // Password #1 for encrypting auth cookie
   },
 
-  async redirects() {
-    return [
-      {
-        source: "/openings/:any*",
-        destination: "/",
-        permanent: false,
-      },
-      {
-        source: "/stages/:any*",
-        destination: "/",
-        permanent: false,
-      },
-      {
-        source: "/profile/:any*",
-        destination: "/",
-        permanent: false,
-      },
-      {
-        source: "/team/:any*",
-        destination: "/",
-        permanent: false,
-      },
-      {
-        source: "/domains/:any*",
-        destination: "/",
-        permanent: false,
-      },
-      {
-        source: "/dashboard/:any*",
-        destination: "/",
-        permanent: false,
-      },
-    ];
-  },
+  // async redirects() {
+  //   return [
+  //     {
+  //       source: "/openings/:any*",
+  //       destination: "/",
+  //       permanent: false,
+  //     },
+  //     {
+  //       source: "/stages/:any*",
+  //       destination: "/",
+  //       permanent: false,
+  //     },
+  //     {
+  //       source: "/profile/:any*",
+  //       destination: "/",
+  //       permanent: false,
+  //     },
+  //     {
+  //       source: "/team/:any*",
+  //       destination: "/",
+  //       permanent: false,
+  //     },
+  //     {
+  //       source: "/domains/:any*",
+  //       destination: "/",
+  //       permanent: false,
+  //     },
+  //     {
+  //       source: "/dashboard/:any*",
+  //       destination: "/",
+  //       permanent: false,
+  //     },
+  //   ];
+  // },
 };

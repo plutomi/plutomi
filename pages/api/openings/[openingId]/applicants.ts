@@ -1,6 +1,6 @@
 import { NextApiResponse } from "next";
 import { GetAllApplicantsInOpening } from "../../../../utils/openings/getAllApplicantsInOpening";
-import withSession from "../../../../middleware/withSession";
+import { withSessionRoute } from "../../../../middleware/withSession";
 import InputValidation from "../../../../utils/inputValidation";
 
 const handler = async (
@@ -43,4 +43,4 @@ const handler = async (
   return res.status(405).json({ message: "Not Allowed" });
 };
 
-export default withSession(handler);
+export default withSessionRoute(handler);

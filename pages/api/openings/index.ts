@@ -2,7 +2,7 @@ import { GetAllOpeningsInOrg } from "../../../utils/openings/getAllOpeningsInOrg
 import { CreateOpening } from "../../../utils/openings/createOpening";
 import InputValidation from "../../../utils/inputValidation";
 import { NextApiResponse } from "next";
-import withSession from "../../../middleware/withSession";
+import { withSessionRoute } from "../../../middleware/withSession";
 
 const handler = async (
   req: NextIronRequest,
@@ -60,4 +60,4 @@ const handler = async (
   return res.status(405).json({ message: "Not Allowed" });
 };
 
-export default withSession(handler);
+export default withSessionRoute(handler);

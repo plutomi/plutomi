@@ -117,11 +117,11 @@ interface APICreateInviteInput {
 
 interface APIRejectInviteInput {
   timestamp: string;
-  invite_id: string;
+  inviteId: string;
 }
 
 interface APIAcceptInviteInput {
   timestamp: string;
-  invite_id: string;
+  inviteId: string;
   orgId: string;
 }
