@@ -20,16 +20,16 @@ export default class ApplicantsService {
     return data;
   }
 
-  static getApplicantURL({ applicantId }) {
+  static getApplicantURL(applicantId) {
     return `/api/applicants/${applicantId}`;
   }
   static async getApplicant({ applicantId }) {
-    const { data } = await axios.get(this.getApplicantURL({ applicantId }));
+    const { data } = await axios.get(this.getApplicantURL( applicantId ));
     return data;
   }
 
   static async deleteApplicant({ applicantId }) {
-    const { data } = await axios.delete(this.getApplicantURL({ applicantId }));
+    const { data } = await axios.delete(this.getApplicantURL(applicantId));
     return data;
   }
 
@@ -38,7 +38,7 @@ export default class ApplicantsService {
       newApplicantValues: newApplicantValues,
     };
     const { data } = await axios.put(
-      this.getApplicantURL({ applicantId }),
+      this.getApplicantURL(applicantId ),
       body
     );
     return data;

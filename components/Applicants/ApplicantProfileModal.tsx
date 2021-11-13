@@ -87,7 +87,7 @@ export default function ApplicantProfileModal() {
     }
 
     // TODO NOTE updating that single applicant wont update the applicant list since the list is rendering old data
-    mutate(ApplicantsService.getApplicantURL({ applicantId }));
+    mutate(ApplicantsService.getApplicantURL(applicantId));
   };
 
   return (
