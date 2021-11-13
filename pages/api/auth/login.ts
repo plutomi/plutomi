@@ -25,11 +25,11 @@ const handler = async (
   const { body, method, query } = req; // TODO get from body
   const { userEmail, loginMethod } = body;
   const { userId, key, callbackUrl } = query as CustomQuery;
-  const login_link_length = 1500;
-  const login_link_max_delay_minutes = 10;
+  const loginLinkLength = 1500;
+  const loginLinkMaxDelayMinutes = 10;
   const timeThreshold = GetPastOrFutureTime(
     "past",
-    login_link_max_delay_minutes,
+    loginLinkMaxDelayMinutes,
     "minutes",
     "iso"
   );
@@ -59,7 +59,7 @@ const handler = async (
         });
       }
 
-      const secret = nanoid(login_link_length);
+      const secret = nanoid(loginLinkLength);
       const hash = createHash("sha512").update(secret).digest("hex");
 
       const loginLinkExpiry = GetPastOrFutureTime(
@@ -75,20 +75,20 @@ const handler = async (
           loginLinkHash: hash,
           loginLinkExpiry: loginLinkExpiry,
         });
-        const default_redirect = `${process.env.NEXT_PUBLIC_WEBSITE_URL}/dashboard`;
-        const login_link = `${
+        const defaultRedirect = `${process.env.NEXT_PUBLIC_WEBSITE_URL}/dashboard`;
+        const loginLink = `${
           process.env.NEXT_PUBLIC_WEBSITE_URL
         }/api/auth/login?userId=${user.userId}&key=${secret}&callbackUrl=${
-          callbackUrl ? callbackUrl : default_redirect
+          callbackUrl ? callbackUrl : defaultRedirect
         }`;
 
         if (loginMethod === "GOOGLE") {
-          return res.status(200).json({ message: login_link });
+          return res.status(200).json({ message: loginLink });
         }
         try {
           await SendLoginLink({
             recipientEmail: user.userEmail,
-            login_link: login_link,
+            loginLink: loginLink,
             loginLinkRelativeExpiry: getRelativeTime(loginLinkExpiry),
           });
           return res

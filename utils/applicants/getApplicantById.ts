@@ -24,11 +24,11 @@ export async function GetApplicantById({
 
   try {
     // TODO refactor for promise all / transact
-    const all_applicant_info = await Dynamo.send(
+    const allApplicantInfo = await Dynamo.send(
       new QueryCommand(responsesParams)
     );
 
-    const grouped = _.groupBy(all_applicant_info.Items, "entityType");
+    const grouped = _.groupBy(allApplicantInfo.Items, "entityType");
 
     const metadata = grouped.APPLICANT[0];
     const responses = grouped.APPLICANT_RESPONSE;

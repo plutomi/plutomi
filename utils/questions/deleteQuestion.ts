@@ -11,10 +11,10 @@ export async function DeleteQuestion({ orgId, questionId }) {
   try {
     let question = await GetQuestion({ orgId, questionId });
     let stage = await GetStage({ orgId, stageId: question.stageId });
-    const deleted_question_index = stage.questionOrder.indexOf(questionId);
+    const deletedQuestionIndex = stage.questionOrder.indexOf(questionId);
 
     // Update question order
-    stage.questionOrder.splice(deleted_question_index, 1);
+    stage.questionOrder.splice(deletedQuestionIndex, 1);
 
     const transactParams: TransactWriteCommandInput = {
       TransactItems: [

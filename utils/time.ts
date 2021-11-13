@@ -32,15 +32,15 @@ export function GetPastOrFutureTime(
   format: "iso" | "unix"
 ) {
   if (when === "future") {
-    const new_time = dayjs().add(amount, type);
-    if (format === "iso") return new_time.toISOString();
-    if (format === "unix") return new_time.unix();
+    const newTime = dayjs().add(amount, type);
+    if (format === "iso") return newTime.toISOString();
+    if (format === "unix") return newTime.unix();
   }
 
   if (when === "past") {
-    const new_time = dayjs().subtract(amount, type);
-    if (format === "iso") return new_time.toISOString();
-    if (format === "unix") return new_time.unix();
+    const newTime = dayjs().subtract(amount, type);
+    if (format === "iso") return newTime.toISOString();
+    if (format === "unix") return newTime.unix();
   }
 }
 

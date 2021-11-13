@@ -37,28 +37,28 @@ export default function ApplicationContent() {
       questionResponse: response,
     };
     const questionOrder = questions.map((a) => a.questionId);
-    const question_index = questionOrder.indexOf(questionId);
+    const questionIndex = questionOrder.indexOf(questionId);
 
     let found = responses.find((answer) => answer.questionId === questionId);
     let newResponses = [...responses];
 
     // Add answer
     if (!found) {
-      newResponses.splice(question_index, 0, incoming);
+      newResponses.splice(questionIndex, 0, incoming);
       setResponses(newResponses);
     }
 
-    const response_index = responses.indexOf(found);
+    const responseIndex = responses.indexOf(found);
 
     // Delete answer
     if (!response || response.length == 0) {
-      newResponses.splice(response_index, 1);
+      newResponses.splice(responseIndex, 1);
       setResponses(newResponses);
       return;
     }
 
     // Replace answer
-    newResponses.splice(question_index, 1, incoming);
+    newResponses.splice(questionIndex, 1, incoming);
     setResponses(newResponses);
   };
 

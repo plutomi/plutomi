@@ -28,10 +28,10 @@ const handler = async (
     }
 
     try {
-      const all_applicants = await GetAllApplicantsInOpening(
+      const allApplicants = await GetAllApplicantsInOpening(
         getAllApplicantsInOpeningInput
       );
-      return res.status(200).json(all_applicants);
+      return res.status(200).json(allApplicants);
     } catch (error) {
       // TODO add error logger
       return res

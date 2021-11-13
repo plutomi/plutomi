@@ -10,7 +10,7 @@ const { DYNAMO_TABLE_NAME } = process.env;
 export async function CreateAndJoinOrg({ userId, orgId, GSI1SK }) {
   const now = GetCurrentTime("iso") as string;
 
-  const new_org = {
+  const newOrg = {
     PK: `ORG#${orgId}`,
     SK: `ORG`,
     orgId: orgId, // plutomi - Cannot be changed
@@ -48,7 +48,7 @@ export async function CreateAndJoinOrg({ userId, orgId, GSI1SK }) {
         {
           // Create the org
           Put: {
-            Item: new_org,
+            Item: newOrg,
             TableName: DYNAMO_TABLE_NAME,
             ConditionExpression: "attribute_not_exists(PK)",
           },

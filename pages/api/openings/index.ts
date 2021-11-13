@@ -23,20 +23,20 @@ const handler = async (
       });
     }
     try {
-      const create_opening_input: CreateOpeningInput = {
+      const createOpeningInput: CreateOpeningInput = {
         orgId: userSession.orgId,
         GSI1SK: GSI1SK,
       };
 
       try {
-        InputValidation(create_opening_input);
+        InputValidation(createOpeningInput);
       } catch (error) {
         return res
           .status(400)
           .json({ message: `An error occurred: ${error.message}` });
       }
 
-      await CreateOpening(create_opening_input);
+      await CreateOpening(createOpeningInput);
       return res.status(201).json({ message: "Opening created!" });
     } catch (error) {
       // TODO add error logger
@@ -48,8 +48,8 @@ const handler = async (
 
   if (method === "GET") {
     try {
-      const all_openings = await GetAllOpeningsInOrg(userSession.orgId);
-      return res.status(200).json(all_openings);
+      const allOpenings = await GetAllOpeningsInOrg(userSession.orgId);
+      return res.status(200).json(allOpenings);
     } catch (error) {
       // TODO add error logger
       return res

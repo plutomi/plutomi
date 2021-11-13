@@ -17,7 +17,7 @@ const handler = async (
   const { method, query, body } = req;
   const { applicantId } = query as CustomQuery;
 
-  const get_applicant_input: GetApplicantInput = {
+  const getApplicantInput: GetApplicantInput = {
     orgId: userSession.orgId,
     applicantId: applicantId,
   };
@@ -25,7 +25,7 @@ const handler = async (
   if (method === "GET") {
     try {
       // TODO gather applicant responses here
-      const applicant = await GetApplicantById(get_applicant_input);
+      const applicant = await GetApplicantById(getApplicantInput);
       // const responses = await GetApplicant
       if (!applicant) {
         return res.status(404).json({ message: "Applicant not found" });
@@ -41,19 +41,19 @@ const handler = async (
 
   if (method === "PUT") {
     try {
-      const update_applicant_input: UpdateApplicantInput = {
+      const updateApplicantInput: UpdateApplicantInput = {
         orgId: userSession.orgId,
         applicantId: applicantId,
         newApplicantValues: body.newApplicantValues,
       };
 
       try {
-        InputValidation(update_applicant_input);
+        InputValidation(updateApplicantInput);
       } catch (error) {
         return res.status(400).json({ message: `${error.message}` });
       }
 
-      await UpdateApplicant(update_applicant_input);
+      await UpdateApplicant(updateApplicantInput);
       return res.status(200).json({ message: "Applicant updated!" });
     } catch (error) {
       return res

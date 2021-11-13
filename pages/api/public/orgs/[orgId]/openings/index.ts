@@ -10,14 +10,16 @@ const handler = async (req: CustomRequest, res: NextApiResponse) => {
 
   if (method === "GET") {
     try {
-      const all_openings = await GetAllOpeningsInOrg(orgId);
-      const only_public = all_openings.filter(
+      const allOpenings = await GetAllOpeningsInOrg(orgId);
+      const publicOpenings = allOpenings.filter(
         (opening): DynamoOpening => opening.isPublic
       );
 
-      only_public.forEach((opening) => CleanOpening(opening as DynamoOpening));
+      publicOpenings.forEach((opening) =>
+        CleanOpening(opening as DynamoOpening)
+      );
 
-      return res.status(200).json(only_public);
+      return res.status(200).json(publicOpenings);
     } catch (error) {
       // TODO add error logger
       return res

@@ -1,10 +1,10 @@
 export default function InputValidation(input: Object) {
-  let missing_keys = [];
+  let missingKeys = [];
   for (const [key, value] of Object.entries(input)) {
     if (value == undefined) {
-      missing_keys.push(`'${key}'`);
+      missingKeys.push(`'${key}'`);
     }
   }
-  if (missing_keys.length > 0)
-    throw `Bad request: ${missing_keys.join(", ")} missing`;
+  if (missingKeys.length > 0)
+    throw `Bad request: ${missingKeys.join(", ")} missing`;
 }

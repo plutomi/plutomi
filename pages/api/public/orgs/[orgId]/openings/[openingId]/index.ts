@@ -8,14 +8,14 @@ const handler = async (req: CustomRequest, res: NextApiResponse) => {
   const { method, query } = req;
   const { orgId, openingId } = query as CustomQuery;
 
-  const get_opening_input: GetOpeningInput = {
+  const getOpeningInput: GetOpeningInput = {
     orgId: orgId,
     openingId: openingId,
   };
 
   if (method === "GET") {
     try {
-      const opening = await GetOpening(get_opening_input);
+      const opening = await GetOpening(getOpeningInput);
       if (!opening) {
         return res.status(404).json({ message: "Opening not found" });
       }

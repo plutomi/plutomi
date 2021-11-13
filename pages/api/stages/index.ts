@@ -22,20 +22,20 @@ const handler = async (
         message: "Please create an organization before creating a stage",
       });
     }
-    const create_stage_input: DynamoCreateStageInput = {
+    const createStageInput: DynamoCreateStageInput = {
       orgId: userSession.orgId,
       openingId: openingId,
       GSI1SK: GSI1SK,
     };
 
     try {
-      InputValidation(create_stage_input);
+      InputValidation(createStageInput);
     } catch (error) {
       return res.status(400).json({ message: `${error.message}` });
     }
 
     try {
-      await CreateStage(create_stage_input);
+      await CreateStage(createStageInput);
       return res.status(201).json({ message: "Stage created" });
     } catch (error) {
       // TODO add error logger

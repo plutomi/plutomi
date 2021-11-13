@@ -260,7 +260,7 @@ export default function ApplicantProfileModal() {
                               (response: DynamoApplicantResponse) => {
                                 return (
                                   <div
-                                    key={response?.response_id}
+                                    key={response?.responseId}
                                     className="pl-3 mt-1 h-full relative focus-within:ring-2 focus-within:ring-blue-500"
                                   >
                                     <h3 className="text-lg font-semibold text-dark">

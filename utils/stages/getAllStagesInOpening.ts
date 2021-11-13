@@ -18,10 +18,10 @@ export async function GetAllStagesInOpening(orgId: string, openingId: string) {
 
   try {
     const response = await Dynamo.send(new QueryCommand(params));
-    const all_stages = response.Items;
+    const allStages = response.Items;
 
     const result = stageOrder.map((i) =>
-      all_stages.find((j) => j.stageId === i)
+      allStages.find((j) => j.stageId === i)
     );
 
     return result;

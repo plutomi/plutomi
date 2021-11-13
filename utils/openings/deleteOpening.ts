@@ -11,13 +11,13 @@ import { GetAllStagesInOpening } from "../stages/getAllStagesInOpening";
 // TODO check if stage is empt of appliants first
 // TODO delete stage from the funnels sort order
 export async function DeleteOpening({ orgId, openingId }) {
-  const all_stages = await GetAllStagesInOpening(orgId, openingId);
+  const allStages = await GetAllStagesInOpening(orgId, openingId);
 
   try {
     // Delete stages first
-    if (all_stages.length > 0) {
+    if (allStages.length > 0) {
       console.log("Deleting stages");
-      all_stages.map(async (stage: DynamoStage) => {
+      allStages.map(async (stage: DynamoStage) => {
         // TODO add to SQS & delete applicants, rules, questions, etc.
         const input = {
           orgId: orgId,

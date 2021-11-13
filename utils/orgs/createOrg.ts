@@ -6,7 +6,7 @@ const { DYNAMO_TABLE_NAME } = process.env;
 
 export async function CreateOrg({ orgId, GSI1SK }: CreateOrgInput) {
   const now = GetCurrentTime("iso") as string;
-  const new_org = {
+  const newOrg = {
     PK: `ORG#${orgId}`,
     SK: `ORG`,
     orgId: orgId, // plutomi - Cannot be changed
@@ -23,13 +23,13 @@ export async function CreateOrg({ orgId, GSI1SK }: CreateOrgInput) {
 
   const params: PutCommandInput = {
     TableName: DYNAMO_TABLE_NAME,
-    Item: new_org,
+    Item: newOrg,
     ConditionExpression: "attribute_not_exists(PK)",
   };
 
   try {
     await Dynamo.send(new PutCommand(params));
-    return new_org;
+    return newOrg;
   } catch (error) {
     if (error.name == "ConditionalCheckFailedException") {
       throw new Error(

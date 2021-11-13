@@ -21,14 +21,14 @@ export async function CreateApplicant({
   // This is per org btw
   // https://zelark.github.io/nano-id-cc/
   const applicantId = nanoid(50); // TODO - Also since applications are public, it should not be easily guessed - #165
-  const new_applicant: DynamoApplicant = {
+  const newApplicant: DynamoApplicant = {
     PK: `ORG#${orgId}#APPLICANT#${applicantId}`,
     SK: `APPLICANT`,
     firstName: firstName,
     lastName: lastName,
     fullName: `${firstName} ${lastName}`,
     email: email.toLowerCase().trim(),
-    email_verified: false,
+    isEmailVerified: false,
     orgId: orgId,
     applicantId: applicantId,
     entityType: "APPLICANT",
@@ -51,7 +51,7 @@ export async function CreateApplicant({
         {
           // Add an applicant item
           Put: {
-            Item: new_applicant,
+            Item: newApplicant,
             TableName: DYNAMO_TABLE_NAME,
             ConditionExpression: "attribute_not_exists(PK)",
           },
@@ -109,7 +109,7 @@ export async function CreateApplicant({
     };
 
     await Dynamo.send(new TransactWriteCommand(transactParams));
-    return new_applicant;
+    return newApplicant;
   } catch (error) {
     throw new Error(error);
   }

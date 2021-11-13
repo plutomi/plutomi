@@ -12,10 +12,10 @@ export async function CreateStageRule({
   validation,
 }: CreateStageRuleInput) {
   const now = GetCurrentTime("iso") as string;
-  const stage_rule_id = nanoid(16);
-  const new_stage_rule = {
+  const stageRuleId = nanoid(16);
+  const newStageRule = {
     PK: `ORG#${orgId}#OPENING#${openingId}#STAGE#${stageId}`,
-    SK: `STAGE_RULE#${stage_rule_id}`,
+    SK: `STAGE_RULE#${stageRuleId}`,
     entityType: "STAGE_RULE",
     createdAt: now,
     validation: validation,
@@ -25,13 +25,13 @@ export async function CreateStageRule({
 
   const params: PutCommandInput = {
     TableName: DYNAMO_TABLE_NAME,
-    Item: new_stage_rule,
+    Item: newStageRule,
     ConditionExpression: "attribute_not_exists(PK)",
   };
 
   try {
     await Dynamo.send(new PutCommand(params));
-    return new_stage_rule;
+    return newStageRule;
   } catch (error) {
     throw new Error(error);
   }

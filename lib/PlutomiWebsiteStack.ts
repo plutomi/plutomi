@@ -1,7 +1,7 @@
 import * as cdk from "@aws-cdk/core";
 import * as ecs from "@aws-cdk/aws-ecs";
 import * as ec2 from "@aws-cdk/aws-ec2";
-import * as ecs_patterns from "@aws-cdk/aws-ecs-patterns";
+import * as ecsPatterns from "@aws-cdk/aws-ecs-patterns";
 import * as route53 from "@aws-cdk/aws-route53";
 import * as protocol from "@aws-cdk/aws-elasticloadbalancingv2";
 import * as ssm from "@aws-cdk/aws-ssm";
@@ -113,7 +113,7 @@ export default class PlutomiWebsiteStack extends cdk.Stack {
     );
 
     // Create a load-balanced Fargate service and make it public with HTTPS traffic only
-    const website = new ecs_patterns.ApplicationLoadBalancedFargateService(
+    const website = new ecsPatterns.ApplicationLoadBalancedFargateService(
       this,
       "PlutomiFargateWebsite",
       {

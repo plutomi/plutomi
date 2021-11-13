@@ -31,8 +31,8 @@ const handler = async (
     }
 
     try {
-      const all_users = await GetAllUsersInOrg({ orgId: userSession.orgId });
-      return res.status(200).json(all_users);
+      const allUsers = await GetAllUsersInOrg({ orgId: userSession.orgId });
+      return res.status(200).json(allUsers);
     } catch (error) {
       return res
         .status(500)

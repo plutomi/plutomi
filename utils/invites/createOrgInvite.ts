@@ -22,17 +22,17 @@ export default async function CreateOrgInvite({
     }
 
     // Check if the user we are inviting already has pending invites for the current org
-    const pending_invites = await GetAllUserInvites(user.userId);
-    const unclaimed_invites = pending_invites.filter(
+    const pendingInvites = await GetAllUserInvites(user.userId);
+    const unclaimedInvites = pendingInvites.filter(
       (invite) => invite.orgId == orgId
     );
 
-    if (unclaimed_invites.length > 0) {
+    if (unclaimedInvites.length > 0) {
       throw `This user already has a pending invite to your org! They can log in at ${process.env.NEXT_PUBLIC_WEBSITE_URL}/invites to claim it!`;
     }
     const inviteId = nanoid(50);
     const now = GetCurrentTime("iso") as string;
-    const new_org_invite = {
+    const newOrgInvite = {
       PK: `USER#${user.userId}`,
       SK: `ORG_INVITE#${inviteId}`, // Allows sorting, and incase two get created in the same millisecond
       orgId: orgId,
@@ -51,7 +51,7 @@ export default async function CreateOrgInvite({
         {
           // Add a new invite
           Put: {
-            Item: new_org_invite,
+            Item: newOrgInvite,
             TableName: DYNAMO_TABLE_NAME,
             ConditionExpression: "attribute_not_exists(PK)",
           },

@@ -65,19 +65,19 @@ const handler = async (
   }
 
   if (method === "DELETE") {
-    const delete_org_invite_input = {
+    const deleteOrgInviteInput = {
       userId: userSession.userId,
       inviteId: inviteId,
     };
 
     try {
-      InputValidation(delete_org_invite_input);
+      InputValidation(deleteOrgInviteInput);
     } catch (error) {
       return res.status(400).json({ message: `${error.message}` });
     }
 
     try {
-      await DeleteOrgInvite(delete_org_invite_input);
+      await DeleteOrgInvite(deleteOrgInviteInput);
       return res.status(200).json({ message: "Invite rejected!" });
     } catch (error) {
       return res

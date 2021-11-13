@@ -19,18 +19,6 @@ export default function Box({ stageTitle, totalApplicants, className }) {
               />
             </p>
           </div>
-
-          {/* <div
-            className={`absolute bottom-0 inset-x-0 bg-red-500 px-4 py-4 sm:px-6`}
-          >
-            <div className="text-xl md:text-base">
-              <p
-                className={`capitalize font-semibold text-red-500 text-center`}
-              >
-                {stage_type} Stage
-              </p>
-            </div>
-          </div> */}
         </dd>
       </div>
     </div>

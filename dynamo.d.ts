@@ -94,7 +94,7 @@ interface DynamoApplicant {
   lastName: string;
   fullName: string;
   email: string;
-  email_verified: boolean;
+  isEmailVerified: boolean;
   applicantId: string;
   orgId: string;
   entityType: "APPLICANT";
@@ -119,7 +119,7 @@ interface DynamoApplicantResponse {
   questionDescription: string;
   questionResponse: any;
   createdAt: string;
-  response_id: string;
+  responseId: string;
   GSI1PK: string;
   GSI1SK: APPLICANT_RESPONSE;
 }

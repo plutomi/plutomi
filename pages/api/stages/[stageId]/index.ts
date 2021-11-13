@@ -20,13 +20,13 @@ const handler = async (
   const { openingId } = body;
   // Get a single stage in an opening
   if (method === "GET") {
-    const get_stage_input: GetStageInput = {
+    const getStageInput: GetStageInput = {
       orgId: userSession.orgId,
       stageId: stageId,
     };
 
     try {
-      const stage = await GetStage(get_stage_input);
+      const stage = await GetStage(getStageInput);
       if (!stage) {
         return res.status(404).json({ message: "Stage not found" });
       }
@@ -42,19 +42,19 @@ const handler = async (
 
   if (method === "PUT") {
     try {
-      const update_stage_input: UpdateStageInput = {
+      const updateStageInput: UpdateStageInput = {
         orgId: userSession.orgId,
         stageId: stageId,
         newStageValues: body.newStageValues,
       };
 
       try {
-        InputValidation(update_stage_input);
+        InputValidation(updateStageInput);
       } catch (error) {
         return res.status(400).json({ message: `${error.message}` });
       }
 
-      await UpdateStage(update_stage_input);
+      await UpdateStage(updateStageInput);
       return res.status(200).json({ message: "Stage updated!" });
     } catch (error) {
       return res
@@ -65,12 +65,12 @@ const handler = async (
 
   if (method === "DELETE") {
     try {
-      const delete_stage_input = {
+      const deleteStageInput = {
         orgId: userSession.orgId,
         stageId: stageId,
       };
 
-      await DeleteStage(delete_stage_input);
+      await DeleteStage(deleteStageInput);
 
       return res.status(200).json({ message: "Stage deleted!" });
     } catch (error) {

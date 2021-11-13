@@ -13,7 +13,7 @@ export default async function UpdateLoginLink({ userId, updatedLoginLink }) {
     "createdAt",
     "userId",
     "expiresAt",
-    "ttl_expiry",
+    "ttlExpiry",
   ];
 
   const incomingKeys = Object.keys(updatedLoginLink);
@@ -33,7 +33,7 @@ export default async function UpdateLoginLink({ userId, updatedLoginLink }) {
   const params: UpdateCommandInput = {
     Key: {
       PK: `USER#${userId}`,
-      SK: `LOGIN_LINK#${updatedLoginLink.createdAt}`,
+      SK: `loginLink#${updatedLoginLink.createdAt}`,
     },
     UpdateExpression: UpdatedExpression,
     ExpressionAttributeValues: newAttributes,

@@ -8,7 +8,7 @@ export async function getLatestLoginLink(userId: string) {
     KeyConditionExpression: "PK = :pk AND begins_with(SK, :sk)",
     ExpressionAttributeValues: {
       ":pk": `USER#${userId}`,
-      ":sk": "LOGIN_LINK",
+      ":sk": "loginLink",
     },
     ScanIndexForward: false,
     Limit: 1,

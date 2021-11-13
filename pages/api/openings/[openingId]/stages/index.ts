@@ -19,11 +19,11 @@ const handler = async (
   // Get all stages in an opening
   if (method === "GET") {
     try {
-      const all_stages = await GetAllStagesInOpening(
+      const allStages = await GetAllStagesInOpening(
         userSession.orgId,
         openingId
       );
-      return res.status(200).json(all_stages);
+      return res.status(200).json(allStages);
     } catch (error) {
       // TODO add error logger
       return res

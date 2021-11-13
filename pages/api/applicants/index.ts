@@ -20,7 +20,7 @@ const handler = async (
       return res.status(400).json({ message: "Bad opening ID" });
     }
     try {
-      const create_applicant_input: CreateApplicantInput = {
+      const createApplicantInput: CreateApplicantInput = {
         orgId: orgId,
         email: email,
         firstName: firstName,
@@ -29,21 +29,21 @@ const handler = async (
         stageId: opening.stageOrder[0],
       };
       try {
-        InputValidation(create_applicant_input);
+        InputValidation(createApplicantInput);
       } catch (error) {
         return res.status(400).json({ message: `${error.message}` });
       }
 
-      const new_applicant = await CreateApplicant(create_applicant_input);
+      const newApplicant = await CreateApplicant(createApplicantInput);
       const org = await GetOrg(orgId);
 
-      const send_applicant_link_input = {
-        applicant_email: new_applicant.email,
+      const sendApplicantLinkInput = {
+        applicantEmail: newApplicant.email,
         orgId: orgId,
         orgName: org.GSI1SK,
-        applicantId: new_applicant.applicantId,
+        applicantId: newApplicant.applicantId,
       };
-      await SendApplicantLink(send_applicant_link_input);
+      await SendApplicantLink(sendApplicantLinkInput);
 
       return res.status(201).json({
         message: `We've sent a link to your email to complete your application!`,

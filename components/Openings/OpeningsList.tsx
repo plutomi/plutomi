@@ -17,14 +17,14 @@ export default function OpeningList() {
 
   const search = useStore((state) => state.openingsSearchInput);
 
-  const filtered_openings = openings?.filter((opening: DynamoOpening) =>
+  const filteredOpenings = openings?.filter((opening: DynamoOpening) =>
     opening.GSI1SK.toLowerCase().trim().includes(search.toLowerCase().trim())
   );
 
   return (
     <div className="bg-white shadow overflow-hidden sm:rounded-md">
       <ul role="list" className="divide-y divide-gray-200">
-        {filtered_openings?.map((opening: DynamoOpening) => (
+        {filteredOpenings?.map((opening: DynamoOpening) => (
           <li key={opening.openingId}>
             {/* If the opening has stages, go to the first stage and view aplicants. Otherwise, go to the settings page for the opening to create one*/}
             <Link

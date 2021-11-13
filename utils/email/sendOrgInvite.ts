@@ -6,7 +6,7 @@ export default async function SendOrgInvite({
   createdBy,
   orgName,
 }: SendOrgInviteInput) {
-  const new_email: SendEmailCommandInput = {
+  const newEmail: SendEmailCommandInput = {
     Source: `Plutomi <join@plutomi.com>`,
     Destination: {
       ToAddresses: [recipientEmail.toLowerCase().trim()],
@@ -25,7 +25,7 @@ export default async function SendOrgInvite({
     },
   };
   try {
-    await SES.send(new SendEmailCommand(new_email));
+    await SES.send(new SendEmailCommand(newEmail));
   } catch (error) {
     console.error(error);
     throw new Error(`Unable to send org invite - ${error}`);

@@ -21,17 +21,17 @@ const handler = async (
   const { recipientEmail }: APICreateOrgInviteInput = body;
 
   const defaultExpiryTime = 3;
-  const default_expiry_value = "days";
+  const defaultExpiryValue = "days";
   const expiresAt = GetPastOrFutureTime(
     "future",
     defaultExpiryTime,
-    "days" || default_expiry_value,
+    "days" || defaultExpiryValue,
     "iso"
   );
 
   const org = await GetOrg(userSession.orgId);
 
-  const new_org_invite: CreateOrgInviteInput = {
+  const newOrgInvite: CreateOrgInviteInput = {
     claimed: false,
     orgName: org.GSI1SK, // For the recipient they can see the name of the org instead of the orgId, much neater
     createdBy: userSession, // TODO reduce this to just name & email
@@ -41,7 +41,7 @@ const handler = async (
   };
   if (method === "POST") {
     try {
-      InputValidation(new_org_invite);
+      InputValidation(newOrgInvite);
     } catch (error) {
       return res.status(400).json({ message: `${error.message}` });
     }
@@ -59,7 +59,7 @@ const handler = async (
     // Creates the user
     const recipient = await CreateUser({ userEmail: recipientEmail });
 
-    const new_org_invite_email: SendOrgInviteInput = {
+    const newOrgInviteEmail: SendOrgInviteInput = {
       createdBy: userSession,
       orgName: org.GSI1SK,
       recipientEmail: recipient.userEmail, // Will be lowercase & .trim()'d by createUser
@@ -73,7 +73,7 @@ const handler = async (
         createdBy: userSession,
       });
       try {
-        await SendOrgInvite(new_org_invite_email); // TODO async with streams
+        await SendOrgInvite(newOrgInviteEmail); // TODO async with streams
         return res
           .status(201)
           .json({ message: `Invite sent to '${recipient.userEmail}'` });

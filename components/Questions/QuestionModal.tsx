@@ -3,7 +3,7 @@ import { Dialog, Transition } from "@headlessui/react";
 import { XIcon } from "@heroicons/react/outline";
 import useStore from "../../utils/store";
 
-const description_max_length = 300;
+const descriptionMaxLength = 300;
 export default function QuestionModal({ createQuestion, updateQuestion }) {
   const questionModal = useStore((state) => state.questionModal);
 
@@ -135,7 +135,7 @@ export default function QuestionModal({ createQuestion, updateQuestion }) {
                                 id="description"
                                 placeholder="Optional helper text for your applicants."
                                 className="p-2 text-sm focus:ring-blue-500 focus:border-blue-500 border-gray-300 rounded-md w-full block resize"
-                                maxLength={description_max_length} // TODO add counter
+                                maxLength={descriptionMaxLength} // TODO add counter
                                 rows={5}
                                 value={questionModal.questionDescription}
                                 onChange={(e) =>

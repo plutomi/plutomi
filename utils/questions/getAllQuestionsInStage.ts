@@ -18,11 +18,11 @@ export async function GetAllQuestionsInStage({ orgId, stageId }) {
   };
 
   try {
-    const all_questions = await Dynamo.send(new QueryCommand(params));
+    const allQuestions = await Dynamo.send(new QueryCommand(params));
 
     // Sort questions in the same order of the stage before sending it back
     const result = questionOrder.map((i) =>
-      all_questions.Items.find((j) => j.questionId === i)
+      allQuestions.Items.find((j) => j.questionId === i)
     );
 
     return result;

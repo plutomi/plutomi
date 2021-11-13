@@ -17,14 +17,14 @@ const handler = async (req: CustomRequest, res: NextApiResponse) => {
       // Validate all answers
       responses.every((response: DynamoApplicantResponse) => {
         // TODO while this validates, it does not return what went wrong!
-        const create_applicant_response_input: CreateApplicantResponseInput = {
+        const createApplicantResponseInput: CreateApplicantResponseInput = {
           orgId: orgId,
           applicantId: applicantId,
           questionTitle: response.questionTitle,
           questionDescription: response.questionDescription,
           questionResponse: response.questionResponse,
         };
-        InputValidation(create_applicant_response_input);
+        InputValidation(createApplicantResponseInput);
       });
     } catch (error) {
       console.error(error);
@@ -37,16 +37,15 @@ const handler = async (req: CustomRequest, res: NextApiResponse) => {
           const { questionTitle, questionDescription, questionResponse } =
             response;
 
-          const create_applicant_response_input: CreateApplicantResponseInput =
-            {
-              orgId: orgId,
-              applicantId: applicantId,
-              questionTitle: questionTitle,
-              questionDescription: questionDescription,
-              questionResponse: questionResponse,
-            };
+          const createApplicantResponseInput: CreateApplicantResponseInput = {
+            orgId: orgId,
+            applicantId: applicantId,
+            questionTitle: questionTitle,
+            questionDescription: questionDescription,
+            questionResponse: questionResponse,
+          };
 
-          await CreateApplicantResponse(create_applicant_response_input);
+          await CreateApplicantResponse(createApplicantResponseInput);
         })
       );
 

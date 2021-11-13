@@ -17,7 +17,7 @@ export async function CreateStage({
 }: DynamoCreateStageInput) {
   const now = GetCurrentTime("iso") as string;
   const stageId = nanoid(50);
-  const new_stage = {
+  const newStage = {
     PK: `ORG#${orgId}#STAGE#${stageId}`,
     SK: `STAGE`,
     entityType: "STAGE",
@@ -46,7 +46,7 @@ export async function CreateStage({
           {
             // Add a stage item
             Put: {
-              Item: new_stage,
+              Item: newStage,
               TableName: DYNAMO_TABLE_NAME,
               ConditionExpression: "attribute_not_exists(PK)",
             },

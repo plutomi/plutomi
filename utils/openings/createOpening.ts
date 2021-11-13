@@ -13,7 +13,7 @@ const { DYNAMO_TABLE_NAME } = process.env;
 export async function CreateOpening({ orgId, GSI1SK }: CreateOpeningInput) {
   const now = GetCurrentTime("iso") as string;
   const openingId = nanoid(16);
-  const new_opening: DynamoOpening = {
+  const newOpening: DynamoOpening = {
     PK: `ORG#${orgId}#OPENING#${openingId}`,
     SK: `OPENING`,
     entityType: "OPENING",
@@ -33,7 +33,7 @@ export async function CreateOpening({ orgId, GSI1SK }: CreateOpeningInput) {
       {
         // Create the opening
         Put: {
-          Item: new_opening,
+          Item: newOpening,
           TableName: DYNAMO_TABLE_NAME,
           ConditionExpression: "attribute_not_exists(PK)",
         },
@@ -59,7 +59,7 @@ export async function CreateOpening({ orgId, GSI1SK }: CreateOpeningInput) {
 
   try {
     await Dynamo.send(new TransactWriteCommand(transactParams));
-    return new_opening;
+    return newOpening;
   } catch (error) {
     throw new Error(error);
   }

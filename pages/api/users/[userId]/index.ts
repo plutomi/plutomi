@@ -41,7 +41,7 @@ const handler = async (
   }
 
   if (method === "PUT") {
-    const update_user_input = {
+    const updateStageInput = {
       newUserValues: newUserValues,
       userId: userSession.userId,
       ALLOW_FORBIDDEN_KEYS: false,
@@ -55,7 +55,7 @@ const handler = async (
           .json({ message: "You cannot update another user" });
       }
 
-      const updatedUser = await UpdateUser(update_user_input);
+      const updatedUser = await UpdateUser(updateStageInput);
 
       // If a signed in user is updating themselves, update the session state
       if (updatedUser.userId === userSession.userId) {

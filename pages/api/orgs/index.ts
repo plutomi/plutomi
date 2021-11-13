@@ -33,23 +33,23 @@ const handler = async (
       });
     }
 
-    const pending_invites = await GetAllUserInvites(userSession.userId);
+    const pendingInvites = await GetAllUserInvites(userSession.userId);
 
-    if (pending_invites && pending_invites.length > 0) {
+    if (pendingInvites && pendingInvites.length > 0) {
       return res.status(403).json({
         message:
           "You seem to have pending invites, please accept or reject them before creating an org :)",
       });
     }
 
-    const create_org_input: CreateOrgInput = {
+    const createOrgInput: CreateOrgInput = {
       GSI1SK: GSI1SK,
       orgId: orgId,
       user: userSession,
     };
 
     try {
-      InputValidation(create_org_input);
+      InputValidation(createOrgInput);
     } catch (error) {
       return res.status(400).json({ message: `${error.message}` });
     }

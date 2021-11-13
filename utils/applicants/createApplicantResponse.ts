@@ -13,15 +13,15 @@ export async function CreateApplicantResponse({
   questionResponse,
 }: CreateApplicantResponseInput) {
   const now = GetCurrentTime("iso") as string;
-  const response_id = nanoid(30);
-  const new_applicant_response = {
+  const responseId = nanoid(30);
+  const newApplicantResponse = {
     PK: `ORG#${orgId}#APPLICANT#${applicantId}`,
-    SK: `APPLICANT_RESPONSE#${response_id}`,
+    SK: `APPLICANT_RESPONSE#${responseId}`,
     orgId: orgId,
     applicantId: applicantId,
     entityType: "APPLICANT_RESPONSE",
     createdAt: now,
-    response_id: response_id,
+    responseId: responseId,
     questionTitle: questionTitle,
     questionDescription: questionDescription,
     questionResponse: questionResponse,
@@ -31,14 +31,14 @@ export async function CreateApplicantResponse({
 
   const params: PutCommandInput = {
     TableName: DYNAMO_TABLE_NAME,
-    Item: new_applicant_response,
+    Item: newApplicantResponse,
     ConditionExpression: "attribute_not_exists(PK)",
   };
 
   try {
     await Dynamo.send(new PutCommand(params));
 
-    return new_applicant_response;
+    return newApplicantResponse;
   } catch (error) {
     throw new Error(error);
   }

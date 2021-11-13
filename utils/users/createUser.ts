@@ -14,7 +14,7 @@ export async function CreateUser({ userEmail }) {
   }
   const now = GetCurrentTime("iso") as string;
   const userId = nanoid(42);
-  const new_user: DynamoUser = {
+  const newUser: DynamoUser = {
     PK: `USER#${userId}`,
     SK: `USER`,
     firstName: "NO_LAST_NAME",
@@ -34,14 +34,14 @@ export async function CreateUser({ userEmail }) {
 
   const params: PutCommandInput = {
     TableName: DYNAMO_TABLE_NAME,
-    Item: new_user,
+    Item: newUser,
     ConditionExpression: "attribute_not_exists(PK)",
   };
 
   try {
     await Dynamo.send(new PutCommand(params));
-    SendNewUserEmail(new_user); // TODO async with streams
-    return new_user;
+    SendNewUserEmail(newUser); // TODO async with streams
+    return newUser;
   } catch (error) {
     throw new Error(error);
   }

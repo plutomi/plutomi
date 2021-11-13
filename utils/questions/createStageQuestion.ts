@@ -18,7 +18,7 @@ export async function CreateStageQuestion({
 }: CreateStageQuestionInput) {
   const now = GetCurrentTime("iso") as string;
   const questionId = nanoid(70);
-  const new_stage_question = {
+  const newStageQuestion = {
     PK: `ORG#${orgId}#QUESTION#${questionId}`,
     SK: `STAGE_QUESTION`,
     questionDescription: questionDescription,
@@ -46,7 +46,7 @@ export async function CreateStageQuestion({
           {
             // Add question
             Put: {
-              Item: new_stage_question,
+              Item: newStageQuestion,
               TableName: DYNAMO_TABLE_NAME,
             },
           },

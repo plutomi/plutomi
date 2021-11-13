@@ -15,7 +15,7 @@ const handler = async (
   const { GSI1SK, questionDescription, stageId } = body;
 
   if (method === "POST") {
-    const create_stage_question_input = {
+    const createStageQuestionInput = {
       orgId: userSession.orgId,
       stageId: stageId,
       GSI1SK: GSI1SK,
@@ -23,7 +23,7 @@ const handler = async (
     };
 
     try {
-      await CreateStageQuestion(create_stage_question_input);
+      await CreateStageQuestion(createStageQuestionInput);
       return res.status(201).json({ message: "Question created!" });
     } catch (error) {
       // TODO add error logger

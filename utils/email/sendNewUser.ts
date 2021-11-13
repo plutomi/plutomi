@@ -1,8 +1,8 @@
 import { SendEmailCommand, SendEmailCommandInput } from "@aws-sdk/client-ses";
 import SES from "../../awsClients/sesClient";
 
-export default async function SendNewUserEmail(new_user: DynamoUser) {
-  const new_email: SendEmailCommandInput = {
+export default async function SendNewUserEmail(newUser: DynamoUser) {
+  const newEmail: SendEmailCommandInput = {
     Source: `Plutomi <newuser@plutomi.com>`,
     Destination: {
       ToAddresses: ["contact@plutomi.com"],
@@ -15,13 +15,13 @@ export default async function SendNewUserEmail(new_user: DynamoUser) {
       },
       Body: {
         Html: {
-          Data: `<h1>Email: ${new_user.userEmail}</h1><h1>ID: ${new_user.userId}</h1>`,
+          Data: `<h1>Email: ${newUser.userEmail}</h1><h1>ID: ${newUser.userId}</h1>`,
         },
       },
     },
   };
   try {
-    await SES.send(new SendEmailCommand(new_email));
+    await SES.send(new SendEmailCommand(newEmail));
   } catch (error) {
     console.error(error);
     throw new Error(`Unable to send new user email - ${error}`);
