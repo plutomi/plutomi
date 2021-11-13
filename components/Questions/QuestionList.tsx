@@ -110,7 +110,7 @@ export default function QuestionList() {
                 ref={provided.innerRef}
               >
                 {newQuestions?.map(
-                  (question: DynamoStageQuestion, index: number) => {
+                  (question, index: number) => {
                     return (
                       <Draggable
                         key={question?.questionId}

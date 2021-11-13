@@ -4,7 +4,7 @@ import { GetCurrentTime } from "../time";
 
 const { DYNAMO_TABLE_NAME } = process.env;
 
-export async function createOrg({ orgId, GSI1SK }: CreateOrgInput) {
+export async function createOrg({ orgId, GSI1SK }) {
   const now = GetCurrentTime("iso") as string;
   const newOrg = {
     PK: `ORG#${orgId}`,

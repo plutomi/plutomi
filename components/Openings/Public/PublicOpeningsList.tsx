@@ -18,7 +18,7 @@ export default function PublicOpeningsList() {
   return (
     <div className="bg-white shadow overflow-hidden sm:rounded-md">
       <ul role="list" className="divide-y divide-gray-200">
-        {publicOpenings?.map((opening: DynamoOpening) => (
+        {publicOpenings?.map((opening) => (
           <li key={opening.openingId}>
             {/* Take applicant to opening info page */}
             <Link

@@ -11,9 +11,7 @@ const handler = async (req: CustomRequest, res: NextApiResponse) => {
   if (method === "GET") {
     try {
       const allOpenings = await getAllOpeningsInOrg(orgId);
-      const publicOpenings = allOpenings.filter(
-        (opening): DynamoOpening => opening.isPublic
-      );
+      const publicOpenings = allOpenings.filter((opening) => opening.isPublic);
 
       publicOpenings.forEach((opening) =>
         cleanOpening(opening as DynamoOpening)

@@ -257,7 +257,7 @@ export default function ApplicantProfileModal() {
                         {applicant?.responses?.length > 0 ? (
                           <ul className="py-4  space-y-8">
                             {applicant?.responses.map(
-                              (response: DynamoApplicantResponse) => {
+                              (response) => {
                                 return (
                                   <div
                                     key={response?.responseId}

@@ -9,10 +9,7 @@ import { Dynamo } from "../../awsClients/ddbDocClient";
 const { DYNAMO_TABLE_NAME } = process.env;
 import _ from "lodash";
 
-export async function GetApplicantById({
-  orgId,
-  applicantId,
-}: GetApplicantInput) {
+export async function getApplicantById({ orgId, applicantId }) {
   const responsesParams: QueryCommandInput = {
     TableName: DYNAMO_TABLE_NAME,
     KeyConditionExpression: "PK = :PK AND begins_with(SK, :SK)",

@@ -17,7 +17,7 @@ export async function deleteOpening({ orgId, openingId }) {
     // Delete stages first
     if (allStages.length > 0) {
       console.log("Deleting stages");
-      allStages.map(async (stage: DynamoStage) => {
+      allStages.map(async (stage) => {
         // TODO add to SQS & delete applicants, rules, questions, etc.
         const input = {
           orgId: orgId,

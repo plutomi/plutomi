@@ -78,7 +78,7 @@ export default function ApplicationContent() {
   return (
     <div>
       <ul className="my-4 space-y-8">
-        {questions.map((question: DynamoStageQuestion) => (
+        {questions.map((question) => (
           <li key={question?.questionId} className="space-y-1 mb-4">
             <label
               htmlFor="email"

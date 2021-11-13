@@ -66,7 +66,7 @@ export async function updateUser({
     };
 
     const updatedUser = await Dynamo.send(new UpdateCommand(params));
-    return updatedUser.Attributes as DynamoUser;
+    return updatedUser.Attributes;
   } catch (error) {
     throw new Error(error);
   }

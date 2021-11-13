@@ -49,7 +49,7 @@ export default function StageCarousel() {
         outsideChevron
         firstAndLastGutter={true}
       >
-        {stages?.map((stage: DynamoStage) => (
+        {stages?.map((stage) => (
           <StageCard
             key={stage.stageId}
             name={stage.GSI1SK}
