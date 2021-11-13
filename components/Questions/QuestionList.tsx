@@ -67,11 +67,7 @@ export default function QuestionList() {
       console.error(error.response.data.message);
     }
 
-    mutate(
-      StagesService.getStageURL({
-        stageId: stageId,
-      })
-    );
+    mutate(StagesService.getStageURL(stageId));
   };
 
   const deleteQuestion = async (questionId: string) => {
@@ -91,11 +87,7 @@ export default function QuestionList() {
     }
 
     // Refresh the stage (which returns the question order)
-    mutate(
-      StagesService.getStageURL({
-        stageId: stageId,
-      })
-    );
+    mutate(StagesService.getStageURL(stageId));
 
     // Refresh questions
     mutate(StagesService.getAllQuestionsInStageURL({ stageId }));

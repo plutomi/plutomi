@@ -1,7 +1,7 @@
 import axios from "../axios/axios";
 
 export default class StagesService {
-  static async createStage({ GSI1SK, openingId }) {
+  static async createStage(GSI1SK, openingId) {
     const body = {
       GSI1SK: GSI1SK,
       openingId: openingId,
@@ -11,16 +11,16 @@ export default class StagesService {
     return data;
   }
 
-  static getStageURL({ stageId }) {
+  static getStageURL(stageId) {
     return `/api/stages/${stageId}`;
   }
-  static async getStage({ stageId }) {
-    const { data } = await axios.get(this.getStageURL({ stageId }));
+  static async getStage(stageId) {
+    const { data } = await axios.get(this.getStageURL(stageId));
     return data;
   }
 
-  static async deleteStage({ stageId }) {
-    const { data } = await axios.delete(this.getStageURL({ stageId }));
+  static async deleteStage(stageId) {
+    const { data } = await axios.delete(this.getStageURL(stageId));
     return data;
   }
 

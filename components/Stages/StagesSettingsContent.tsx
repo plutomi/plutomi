@@ -37,11 +37,7 @@ export default function StageSettingsContent() {
     }
 
     // Refresh the questionOrder
-    mutate(
-      StagesService.getStageURL({
-        stageId: stageId,
-      })
-    );
+    mutate(StagesService.getStageURL(stageId));
 
     // Refresh the question list
     mutate(StagesService.getAllQuestionsInStageURL({ stageId }));
@@ -81,11 +77,7 @@ export default function StageSettingsContent() {
     }
 
     // Refresh the questionOrder
-    mutate(
-      StagesService.getStageURL({
-        stageId: stageId,
-      })
-    );
+    mutate(StagesService.getStageURL(stageId));
 
     // Refresh the question list
     mutate(StagesService.getAllQuestionsInStageURL({ stageId }));

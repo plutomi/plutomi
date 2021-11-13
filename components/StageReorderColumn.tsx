@@ -19,10 +19,10 @@ import OpeningsService from "../adapters/OpeningsService";
 export default function StageReorderColumn() {
   const createStage = async () => {
     try {
-      const { message } = await StagesService.createStage({
-        GSI1SK: stageModal.GSI1SK,
-        openingId: openingId,
-      });
+      const { message } = await StagesService.createStage(
+        stageModal.GSI1SK,
+        openingId
+      );
       alert(message);
       setStageModal({ ...stageModal, GSI1SK: "", isModalOpen: false });
     } catch (error) {
@@ -61,11 +61,7 @@ export default function StageReorderColumn() {
       alert(error.response.data.message);
     }
 
-    mutate(
-      StagesService.getStageURL({
-        stageId: stageId,
-      })
-    );
+    mutate(StagesService.getStageURL(stageId));
   };
 
   const router = useRouter();

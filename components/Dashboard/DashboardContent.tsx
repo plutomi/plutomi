@@ -48,8 +48,7 @@ export default function DashboardContent() {
 
   const updateName = async ({ firstName, lastName }) => {
     try {
-      const { message } = await UsersService.updateUser({
-        userId: user?.userId,
+      const { message } = await UsersService.updateUser(user?.userId, {
         newUserValues: {
           firstName: firstName,
           lastName: lastName,

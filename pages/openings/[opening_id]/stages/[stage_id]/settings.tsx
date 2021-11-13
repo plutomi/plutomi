@@ -32,10 +32,7 @@ export default function StageSettings() {
       return;
     }
     try {
-      await StagesService.deleteStage({
-        openingId: openingId,
-        stageId: stageId,
-      });
+      await StagesService.deleteStage(stageId);
       router.push(
         `${process.env.NEXT_PUBLIC_WEBSITE_URL}/openings/${openingId}/settings`
       );
