@@ -8,7 +8,7 @@ import { GetCurrentTime } from "../time";
 const { DYNAMO_TABLE_NAME } = process.env;
 
 export async function createAndJoinOrg({ userId, orgId, GSI1SK }) {
-  const now = GetCurrentTime("iso") as string;
+  const now = Time.currentISO() as string;
 
   const newOrg = {
     PK: `ORG#${orgId}`,

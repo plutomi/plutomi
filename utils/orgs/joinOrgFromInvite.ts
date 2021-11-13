@@ -8,7 +8,7 @@ import { GetCurrentTime } from "../time";
 const { DYNAMO_TABLE_NAME } = process.env;
 
 export async function joinOrgFromInvite({ userId, invite }) {
-  const now = GetCurrentTime("iso") as string;
+  const now = Time.currentISO() as string;
   try {
     const transactParams: TransactWriteCommandInput = {
       TransactItems: [

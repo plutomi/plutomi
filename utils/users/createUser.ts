@@ -12,7 +12,7 @@ export async function createUser({ userEmail }) {
   if (user) {
     return user;
   }
-  const now = GetCurrentTime("iso") as string;
+  const now = Time.currentISO() as string;
   const userId = nanoid(42);
   const newUser = {
     PK: `USER#${userId}`,

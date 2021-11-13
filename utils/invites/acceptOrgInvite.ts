@@ -13,7 +13,7 @@ export default async function acceptOrgInvite({ userId, inviteId }) {
       throw "Invite no longer exists";
     }
 
-    if (invite.expiresAt <= GetCurrentTime("iso")) {
+    if (invite.expiresAt <= Time.currentISO()) {
       deleteOrgInvite({ userId, inviteId });
       throw "Invite has expired";
     }

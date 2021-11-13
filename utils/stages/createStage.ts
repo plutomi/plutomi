@@ -11,7 +11,7 @@ import { MAX_CHILD_ITEM_LIMIT, MAX_ITEM_LIMIT_ERROR } from "../../Config";
 const { DYNAMO_TABLE_NAME } = process.env;
 
 export async function createStage({ orgId, GSI1SK, openingId }) {
-  const now = GetCurrentTime("iso") as string;
+  const now = Time.currentISO() as string;
   const stageId = nanoid(50);
   const newStage = {
     PK: `ORG#${orgId}#STAGE#${stageId}`,

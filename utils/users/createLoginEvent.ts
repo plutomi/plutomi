@@ -1,21 +1,22 @@
 import { PutCommand, PutCommandInput } from "@aws-sdk/lib-dynamodb";
-import { GetCurrentTime, GetPastOrFutureTime } from "../time";
+import Time from "../time";
 import { getUserByEmail } from "../users/getUserByEmail";
 import { Dynamo } from "../../awsClients/ddbDocClient";
 import { createUser } from "../users/createUser";
+import { TimeUnits } from "../../types";
 
 const { DYNAMO_TABLE_NAME } = process.env;
 
 export default async function createLoginEvent(userId: string) {
   try {
-    const now = GetCurrentTime("iso") as string;
+    const now = Time.currentISO() as string;
     const newLoginEvent = {
       PK: `USER#${userId}`,
       SK: `LOGIN_EVENT#${now}`,
       // TODO in the future, get all the info about the login event
       // Such as IP, headers, device, etc.
       createdAt: now,
-      ttlExpiry: GetPastOrFutureTime("future", 30, "days", "unix"),
+      ttlExpiry: Time.futureUNIX(30, TimeUnits.DAYS),
     };
 
     const params: PutCommandInput = {

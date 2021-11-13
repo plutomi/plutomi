@@ -1,12 +1,13 @@
 import createOrgInvite from "../../../utils/invites/createOrgInvite";
 import sendOrgInvite from "../../../utils/email/sendOrgInvite";
 import InputValidation from "../../../utils/inputValidation";
-import { GetPastOrFutureTime } from "../../../utils/time";
 import { NextApiResponse } from "next";
+import Time from "../../../utils/time";
 import withCleanOrgId from "../../../middleware/withCleanOrgId";
 import { getOrg } from "../../../utils/orgs/getOrg";
 import { withSessionRoute } from "../../../middleware/withSession";
 import { createUser } from "../../../utils/users/createUser";
+import { TimeUnits } from "../../../types";
 const handler = async (
   req: NextIronRequest,
   res: NextApiResponse
@@ -18,20 +19,13 @@ const handler = async (
   }
   const { body, method } = req;
 
-  const { recipientEmail }: APICreateOrgInviteInput = body;
+  const { recipientEmail } = body;
 
-  const defaultExpiryTime = 3;
-  const defaultExpiryValue = "days";
-  const expiresAt = GetPastOrFutureTime(
-    "future",
-    defaultExpiryTime,
-    "days" || defaultExpiryValue,
-    "iso"
-  );
+  const expiresAt = Time.futureISO(3, TimeUnits.DAYS);
 
   const org = await getOrg(userSession.orgId);
 
-  const newOrgInvite: CreateOrgInviteInput = {
+  const newOrgInvite = {
     claimed: false,
     orgName: org.GSI1SK, // For the recipient they can see the name of the org instead of the orgId, much neater
     createdBy: userSession, // TODO reduce this to just name & email
@@ -59,7 +53,7 @@ const handler = async (
     // Creates the user
     const recipient = await createUser({ userEmail: recipientEmail });
 
-    const newOrgInviteEmail: SendOrgInviteInput = {
+    const newOrgInviteEmail = {
       createdBy: userSession,
       orgName: org.GSI1SK,
       recipientEmail: recipient.userEmail, // Will be lowercase & .trim()'d by createUser

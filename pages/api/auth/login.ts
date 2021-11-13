@@ -1,8 +1,4 @@
-import {
-  GetCurrentTime,
-  GetPastOrFutureTime,
-  getRelativeTime,
-} from "../../../utils/time";
+import Time from "../../../utils/time";
 import InputValidation from "../../../utils/inputValidation";
 import { NextApiResponse } from "next";
 import sendLoginLink from "../../../utils/email/sendLoginLink";
@@ -17,6 +13,7 @@ import deleteLoginLink from "../../../utils/loginLinks/deleteLoginLink";
 import cleanUser from "../../../utils/clean/cleanUser";
 import { getUserById } from "../../../utils/users/getUserById";
 import updateLoginLink from "../../../utils/loginLinks/updateLoginLink";
+import { TimeUnits } from "../../../types";
 
 const handler = async (
   req: NextIronRequest,
@@ -27,11 +24,9 @@ const handler = async (
   const { userId, key, callbackUrl } = query as CustomQuery;
   const loginLinkLength = 1500;
   const loginLinkMaxDelayMinutes = 10;
-  const timeThreshold = GetPastOrFutureTime(
-    "past",
+  const timeThreshold = Time.pastISO(
     loginLinkMaxDelayMinutes,
-    "minutes",
-    "iso"
+    TimeUnits.MINUTES
   );
 
   // Creates a login link
@@ -62,12 +57,7 @@ const handler = async (
       const secret = nanoid(loginLinkLength);
       const hash = createHash("sha512").update(secret).digest("hex");
 
-      const loginLinkExpiry = GetPastOrFutureTime(
-        "future",
-        15,
-        "minutes",
-        "iso"
-      );
+      const loginLinkExpiry = Time.futureISO(15, TimeUnits.MINUTES);
 
       try {
         await createLoginLink({
@@ -158,7 +148,7 @@ const handler = async (
       });
     }
 
-    if (latestLoginLink.expiresAt <= GetCurrentTime("iso")) {
+    if (latestLoginLink.expiresAt <= Time.currentISO()) {
       return res.status(401).json({
         message: `Your login link has expired.`,
       });

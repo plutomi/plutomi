@@ -16,7 +16,7 @@ export async function createQuestion(
   GSI1SK,
   questionDescription
 ) {
-  const now = GetCurrentTime("iso") as string;
+  const now = Time.currentISO() as string;
   const questionId = nanoid(50);
   const newStageQuestion = {
     PK: `ORG#${orgId}#QUESTION#${questionId}`,

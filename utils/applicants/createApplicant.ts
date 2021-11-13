@@ -19,7 +19,7 @@ export async function createApplicant(
   const { orgId, firstName, lastName, applicantEmail, openingId, stageId } =
     props;
 
-  const now = GetCurrentTime("iso") as string;
+  const now = Time.currentISO() as string;
   // Applicant ID has to be pretty high as the apply link will be the user ID
   // This is per org btw
   // https://zelark.github.io/nano-id-cc/

@@ -31,7 +31,7 @@ export default async function createOrgInvite({
       throw `This user already has a pending invite to your org! They can log in at ${process.env.NEXT_PUBLIC_WEBSITE_URL}/invites to claim it!`;
     }
     const inviteId = nanoid(50);
-    const now = GetCurrentTime("iso") as string;
+    const now = Time.currentISO() as string;
     const newOrgInvite = {
       PK: `USER#${user.userId}`,
       SK: `ORG_INVITE#${inviteId}`, // Allows sorting, and incase two get created in the same millisecond
