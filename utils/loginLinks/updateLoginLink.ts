@@ -3,7 +3,7 @@ import { Dynamo } from "../../awsClients/ddbDocClient";
 const { DYNAMO_TABLE_NAME } = process.env;
 
 // Allows updating the login link status for suspending it incase of malicious actors
-export default async function UpdateLoginLink({ userId, updatedLoginLink }) {
+export default async function updateLoginLink({ userId, updatedLoginLink }) {
   // TODO user the cleaning functions instead
   const FORBIDDEN_KEYS = [
     "PK",

@@ -1,5 +1,5 @@
 import { NextApiResponse } from "next";
-import { GetAllApplicantsInOpening } from "../../../../utils/openings/getAllApplicantsInOpening";
+import { getAllApplicantsInOpening } from "../../../../utils/openings/getAllApplicantsInOpening";
 import { withSessionRoute } from "../../../../middleware/withSession";
 import InputValidation from "../../../../utils/inputValidation";
 
@@ -28,7 +28,7 @@ const handler = async (
     }
 
     try {
-      const allApplicants = await GetAllApplicantsInOpening(
+      const allApplicants = await getAllApplicantsInOpening(
         getAllApplicantsInOpeningInput
       );
       return res.status(200).json(allApplicants);

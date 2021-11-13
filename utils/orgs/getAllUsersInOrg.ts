@@ -3,7 +3,7 @@ import { Dynamo } from "../../awsClients/ddbDocClient";
 
 const { DYNAMO_TABLE_NAME } = process.env;
 
-export async function GetAllUsersInOrg({
+export async function getAllUsersInOrg({
   orgId,
   limit,
 }: {

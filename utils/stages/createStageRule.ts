@@ -5,12 +5,12 @@ import { nanoid } from "nanoid";
 
 const { DYNAMO_TABLE_NAME } = process.env;
 
-export async function CreateStageRule({
+export async function createStageRule({
   orgId,
   openingId,
   stageId,
   validation,
-}: CreateStageRuleInput) {
+}) {
   const now = GetCurrentTime("iso") as string;
   const stageRuleId = nanoid(16);
   const newStageRule = {

@@ -5,7 +5,7 @@ import { getStage } from "../stages/getStage";
 const { DYNAMO_TABLE_NAME } = process.env;
 
 export async function GetAllQuestionsInStage({ orgId, stageId }) {
-  const stage = await GetStage({ orgId, stageId });
+  const stage = await getStage({ orgId, stageId });
   const { questionOrder } = stage;
 
   const params: QueryCommandInput = {

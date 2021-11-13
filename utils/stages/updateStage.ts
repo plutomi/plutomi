@@ -2,7 +2,7 @@ import { UpdateCommand, UpdateCommandInput } from "@aws-sdk/lib-dynamodb";
 import { Dynamo } from "../../awsClients/ddbDocClient";
 const { DYNAMO_TABLE_NAME } = process.env;
 
-export default async function UpdateStage({ orgId, stageId, newStageValues }) {
+export default async function updateStage({ orgId, stageId, newStageValues }) {
   // TODO user the cleaning functions instead
   const FORBIDDEN_KEYS = [
     "PK",

@@ -5,7 +5,7 @@ const { DYNAMO_TABLE_NAME } = process.env;
 /**
  * @param orgId
  */
-export async function GetOrg(orgId: string) {
+export async function getOrg(orgId: string) {
   const params: GetCommandInput = {
     TableName: DYNAMO_TABLE_NAME,
     Key: {

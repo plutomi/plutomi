@@ -5,18 +5,18 @@ import {
 } from "../../../utils/time";
 import InputValidation from "../../../utils/inputValidation";
 import { NextApiResponse } from "next";
-import SendLoginLink from "../../../utils/email/sendLoginLink";
-import CreateLoginLink from "../../../utils/loginLinks/createLoginLink";
+import sendLoginLink from "../../../utils/email/sendLoginLink";
+import createLoginLink from "../../../utils/loginLinks/createLoginLink";
 import { nanoid } from "nanoid";
 import { withSessionRoute } from "../../../middleware/withSession";
 import { createHash } from "crypto";
 import { getLatestLoginLink } from "../../../utils/loginLinks/getLatestLoginLink";
-import { CreateUser } from "../../../utils/users/createUser";
-import CreateLoginEvent from "../../../utils/users/createLoginEvent";
-import DeleteLoginLink from "../../../utils/loginLinks/deleteLoginLink";
-import CleanUser from "../../../utils/clean/cleanUser";
-import { GetUserById } from "../../../utils/users/getUserById";
-import UpdateLoginLink from "../../../utils/loginLinks/updateLoginLink";
+import { createUser } from "../../../utils/users/createUser";
+import createLoginEvent from "../../../utils/users/createLoginEvent";
+import deleteLoginLink from "../../../utils/loginLinks/deleteLoginLink";
+import cleanUser from "../../../utils/clean/cleanUser";
+import { getUserById } from "../../../utils/users/getUserById";
+import updateLoginLink from "../../../utils/loginLinks/updateLoginLink";
 
 const handler = async (
   req: NextIronRequest,
@@ -43,7 +43,7 @@ const handler = async (
       return res.status(400).json({ message: `${error.message}` });
     }
     // Creates a user, returns it if already created
-    const user = await CreateUser({ userEmail });
+    const user = await createUser({ userEmail });
 
     try {
       const latestLink = await getLatestLoginLink(user.userId);
@@ -70,7 +70,7 @@ const handler = async (
       );
 
       try {
-        await CreateLoginLink({
+        await createLoginLink({
           user: user,
           loginLinkHash: hash,
           loginLinkExpiry: loginLinkExpiry,
@@ -86,7 +86,7 @@ const handler = async (
           return res.status(200).json({ message: loginLink });
         }
         try {
-          await SendLoginLink({
+          await sendLoginLink({
             recipientEmail: user.userEmail,
             loginLink: loginLink,
             loginLinkRelativeExpiry: getRelativeTime(loginLinkExpiry),
@@ -141,7 +141,7 @@ const handler = async (
         linkStatus: "SUSPENDED",
       };
 
-      await UpdateLoginLink({
+      await updateLoginLink({
         userId,
         updatedLoginLink,
       });
@@ -164,17 +164,17 @@ const handler = async (
       });
     }
 
-    const user = await GetUserById(userId);
+    const user = await getUserById(userId);
 
     if (user && latestLoginLink) {
       // TODO should this be a transaction?
       // Simple timestamp when the user actually logged in
-      CreateLoginEvent(userId);
+      createLoginEvent(userId);
 
       // Invalidates the last login link while allowing the user to login again if needed
-      DeleteLoginLink(userId, latestLoginLink.createdAt);
+      deleteLoginLink(userId, latestLoginLink.createdAt);
 
-      const cleanUser = CleanUser(user as DynamoUser);
+      const cleanUser = cleanUser(user as DynamoUser);
 
       req.session.user = cleanUser;
       await req.session.save();

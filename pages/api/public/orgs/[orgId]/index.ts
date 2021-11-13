@@ -1,7 +1,7 @@
 import withCleanOrgId from "../../../../../middleware/withCleanOrgId";
-import { GetOrg } from "../../../../../utils/orgs/getOrg";
+import { getOrg } from "../../../../../utils/orgs/getOrg";
 import { NextApiResponse } from "next";
-import CleanOrg from "../../../../../utils/clean/cleanOrg";
+import cleanOrg from "../../../../../utils/clean/cleanOrg";
 // This returns limited public information about an org
 const handler = async (req: CustomRequest, res: NextApiResponse) => {
   const { method, query } = req;
@@ -9,13 +9,13 @@ const handler = async (req: CustomRequest, res: NextApiResponse) => {
 
   if (method === "GET") {
     try {
-      const org = await GetOrg(orgId);
+      const org = await getOrg(orgId);
 
       if (!org) {
         return res.status(404).json({ message: "Org not found" });
       }
 
-      const cleanOrg = CleanOrg(org);
+      const cleanOrg = cleanOrg(org);
 
       return res.status(200).json(cleanOrg);
     } catch (error) {

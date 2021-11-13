@@ -1,11 +1,11 @@
 import { NextApiResponse } from "next";
 import withCleanOrgId from "../../../middleware/withCleanOrgId";
 import InputValidation from "../../../utils/inputValidation";
-import { GetAllUserInvites } from "../../../utils/invites/getAllOrgInvites";
+import { getAllUserInvites } from "../../../utils/invites/getAllOrgInvites";
 import { withSessionRoute } from "../../../middleware/withSession";
-import CleanUser from "../../../utils/clean/cleanUser";
-import { GetUserById } from "../../../utils/users/getUserById";
-import { CreateAndJoinOrg } from "../../../utils/orgs/createAndJoinOrg";
+import cleanUser from "../../../utils/clean/cleanUser";
+import { getUserById } from "../../../utils/users/getUserById";
+import { createAndJoinOrg } from "../../../utils/orgs/createAndJoinOrg";
 
 const handler = async (
   req: NextIronRequest,
@@ -33,7 +33,7 @@ const handler = async (
       });
     }
 
-    const pendingInvites = await GetAllUserInvites(userSession.userId);
+    const pendingInvites = await getAllUserInvites(userSession.userId);
 
     if (pendingInvites && pendingInvites.length > 0) {
       return res.status(403).json({
@@ -60,15 +60,15 @@ const handler = async (
     }
 
     try {
-      await CreateAndJoinOrg({
+      await createAndJoinOrg({
         userId: userSession.userId,
         orgId: orgId,
         GSI1SK: GSI1SK,
       });
-      const updatedUser = await GetUserById(userSession.userId); // TODO remove this, wait for transact
+      const updatedUser = await getUserById(userSession.userId); // TODO remove this, wait for transact
 
       // Update the logged in user session with the new org id
-      req.session.user = CleanUser(updatedUser);
+      req.session.user = cleanUser(updatedUser);
       await req.session.save();
 
       return res.status(201).json({ message: "Org created!", org: orgId });

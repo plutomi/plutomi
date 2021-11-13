@@ -3,7 +3,7 @@ import { DeleteCommand, DeleteCommandInput } from "@aws-sdk/lib-dynamodb";
 import { Dynamo } from "../../awsClients/ddbDocClient";
 
 const { DYNAMO_TABLE_NAME } = process.env;
-export default async function DeleteLoginLink(
+export default async function deleteLoginLink(
   userId: string,
   loginLinkTimestmap: string
 ) {

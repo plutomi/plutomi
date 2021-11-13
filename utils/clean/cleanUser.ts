@@ -8,7 +8,7 @@ const safeKeys = [
   "totalInvites",
 ];
 
-export default function CleanUser(user: DynamoUser) {
+export default function cleanUser(user) {
   Object.keys(user).forEach(
     (key) => safeKeys.includes(key) || delete user[key]
   );

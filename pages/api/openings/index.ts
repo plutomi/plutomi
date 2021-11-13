@@ -1,5 +1,5 @@
-import { GetAllOpeningsInOrg } from "../../../utils/openings/getAllOpeningsInOrg";
-import { CreateOpening } from "../../../utils/openings/createOpening";
+import { getAllOpeningsInOrg } from "../../../utils/openings/getAllOpeningsInOrg";
+import { createOpening } from "../../../utils/openings/createOpening";
 import InputValidation from "../../../utils/inputValidation";
 import { NextApiResponse } from "next";
 import { withSessionRoute } from "../../../middleware/withSession";
@@ -36,7 +36,7 @@ const handler = async (
           .json({ message: `An error occurred: ${error.message}` });
       }
 
-      await CreateOpening(createOpeningInput);
+      await createOpening(createOpeningInput);
       return res.status(201).json({ message: "Opening created!" });
     } catch (error) {
       // TODO add error logger
@@ -48,7 +48,7 @@ const handler = async (
 
   if (method === "GET") {
     try {
-      const allOpenings = await GetAllOpeningsInOrg(userSession.orgId);
+      const allOpenings = await getAllOpeningsInOrg(userSession.orgId);
       return res.status(200).json(allOpenings);
     } catch (error) {
       // TODO add error logger

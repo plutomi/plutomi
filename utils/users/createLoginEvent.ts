@@ -1,12 +1,12 @@
 import { PutCommand, PutCommandInput } from "@aws-sdk/lib-dynamodb";
 import { GetCurrentTime, GetPastOrFutureTime } from "../time";
-import { GetUserByEmail } from "../users/getUserByEmail";
+import { getUserByEmail } from "../users/getUserByEmail";
 import { Dynamo } from "../../awsClients/ddbDocClient";
-import { CreateUser } from "../users/createUser";
+import { createUser } from "../users/createUser";
 
 const { DYNAMO_TABLE_NAME } = process.env;
 
-export default async function CreateLoginEvent(userId: string) {
+export default async function createLoginEvent(userId: string) {
   try {
     const now = GetCurrentTime("iso") as string;
     const newLoginEvent = {

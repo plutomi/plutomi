@@ -1,7 +1,7 @@
 import { SendEmailCommand, SendEmailCommandInput } from "@aws-sdk/client-ses";
 import SES from "../../awsClients/sesClient";
 
-export default async function SendApplicantLink({
+export default async function sendApplicantLink({
   orgId,
   orgName,
   applicantId,

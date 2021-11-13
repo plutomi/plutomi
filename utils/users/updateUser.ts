@@ -3,7 +3,7 @@ import { Dynamo } from "../../awsClients/ddbDocClient";
 
 const { DYNAMO_TABLE_NAME } = process.env;
 
-export async function UpdateUser({
+export async function updateUser({
   userId,
   newUserValues,
   ALLOW_FORBIDDEN_KEYS,

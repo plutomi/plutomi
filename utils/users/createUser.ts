@@ -2,19 +2,19 @@ import { PutCommand, PutCommandInput } from "@aws-sdk/lib-dynamodb";
 import { Dynamo } from "../../awsClients/ddbDocClient";
 import { GetCurrentTime } from "../time";
 import { nanoid } from "nanoid";
-import SendNewUserEmail from "../email/sendNewUser";
-import { GetUserByEmail } from "./getUserByEmail";
+import sendNewUserEmail from "../email/sendNewUser";
+import { getUserByEmail } from "./getUserByEmail";
 const { DYNAMO_TABLE_NAME } = process.env;
 
-export async function CreateUser({ userEmail }) {
-  const user = await GetUserByEmail(userEmail);
+export async function createUser({ userEmail }) {
+  const user = await getUserByEmail(userEmail);
 
   if (user) {
     return user;
   }
   const now = GetCurrentTime("iso") as string;
   const userId = nanoid(42);
-  const newUser: DynamoUser = {
+  const newUser = {
     PK: `USER#${userId}`,
     SK: `USER`,
     firstName: "NO_FIRST_NAME",
@@ -40,7 +40,7 @@ export async function CreateUser({ userEmail }) {
 
   try {
     await Dynamo.send(new PutCommand(params));
-    SendNewUserEmail(newUser); // TODO async with streams
+    sendNewUserEmail(newUser); // TODO async with streams
     return newUser;
   } catch (error) {
     throw new Error(error);

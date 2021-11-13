@@ -2,7 +2,7 @@
 // Such as the opening name, description, and stage order
 import withCleanOrgId from "../../../../../../../middleware/withCleanOrgId";
 import { NextApiResponse } from "next";
-import CleanStage from "../../../../../../../utils/clean/cleanStage";
+import cleanStage from "../../../../../../../utils/clean/cleanStage";
 import { getStage } from "../../../../../../../utils/stages/getStage";
 const handler = async (req: CustomRequest, res: NextApiResponse) => {
   const { method, query } = req;
@@ -15,7 +15,7 @@ const handler = async (req: CustomRequest, res: NextApiResponse) => {
 
   if (method === "GET") {
     try {
-      const stage = await GetStage(getStageInput);
+      const stage = await getStage(getStageInput);
       if (!stage) {
         return res.status(404).json({ message: "Stage not found" });
       }
@@ -25,7 +25,7 @@ const handler = async (req: CustomRequest, res: NextApiResponse) => {
       //       .status(400)
       //       .json({ message: "You cannot apply here just yet" });
       //   }
-      const cleanStage = CleanStage(stage as DynamoStage);
+      const cleanStage = cleanStage(stage as DynamoStage);
       return res.status(200).json(cleanStage);
     } catch (error) {
       // TODO add error logger

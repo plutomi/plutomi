@@ -3,17 +3,17 @@ import {
   TransactWriteCommandInput,
 } from "@aws-sdk/lib-dynamodb";
 import { Dynamo } from "../../awsClients/ddbDocClient";
-import { GetOpening } from "../openings/getOpeningById";
+import { getOpening } from "../openings/getOpeningById";
 import { getStage } from "./getStage";
 const { DYNAMO_TABLE_NAME } = process.env;
 // TODO check if stage is empt of appliants first
 // TODO delete stage from the funnels sort order
-export async function DeleteStage({ orgId, stageId }: DeleteStageInput) {
+export async function deleteStage({ orgId, stageId }) {
   // TODO Qeuery all items that start with PK: stageId & SK: STAGE
   // Get the opening we need to update
   try {
-    let stage = await GetStage({ orgId, stageId });
-    let opening = await GetOpening({
+    let stage = await getStage({ orgId, stageId });
+    let opening = await getOpening({
       orgId: orgId,
       openingId: stage.openingId,
     });

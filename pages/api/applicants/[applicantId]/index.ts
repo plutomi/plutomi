@@ -1,8 +1,8 @@
 import { NextApiResponse } from "next";
-import { GetApplicantById } from "../../../../utils/applicants/getApplicantById";
+import { getApplicantById } from "../../../../utils/applicants/getApplicantById";
 import InputValidation from "../../../../utils/inputValidation";
-import DeleteApplicant from "../../../../utils/applicants/deleteApplicant";
-import UpdateApplicant from "../../../../utils/applicants/updateApplicant";
+import deleteApplicant from "../../../../utils/applicants/deleteApplicant";
+import updateApplicant from "../../../../utils/applicants/updateApplicant";
 import { withSessionRoute } from "../../../../middleware/withSession";
 
 const handler = async (
@@ -25,7 +25,7 @@ const handler = async (
   if (method === "GET") {
     try {
       // TODO gather applicant responses here
-      const applicant = await GetApplicantById(getApplicantInput);
+      const applicant = await getApplicantById(getApplicantInput);
       // const responses = await GetApplicant
       if (!applicant) {
         return res.status(404).json({ message: "Applicant not found" });
@@ -53,7 +53,7 @@ const handler = async (
         return res.status(400).json({ message: `${error.message}` });
       }
 
-      await UpdateApplicant(updateApplicantInput);
+      await updateApplicant(updateApplicantInput);
       return res.status(200).json({ message: "Applicant updated!" });
     } catch (error) {
       return res
@@ -64,7 +64,7 @@ const handler = async (
 
   if (method === "DELETE") {
     try {
-      await DeleteApplicant({
+      await deleteApplicant({
         orgId: userSession.orgId,
         applicantId: applicantId,
       });

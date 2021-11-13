@@ -1,5 +1,5 @@
-import { GetAllStagesInOpening } from "../../../../../utils/stages/getAllStagesInOpening";
-import { CreateStage } from "../../../../../utils/stages/createStage";
+import { getAllStagesInOpening } from "../../../../../utils/stages/getAllStagesInOpening";
+import { createStage } from "../../../../../utils/stages/createStage";
 import InputValidation from "../../../../../utils/inputValidation";
 import { NextApiResponse } from "next";
 import { withSessionRoute } from "../../../../../middleware/withSession";
@@ -19,7 +19,7 @@ const handler = async (
   // Get all stages in an opening
   if (method === "GET") {
     try {
-      const allStages = await GetAllStagesInOpening(
+      const allStages = await getAllStagesInOpening(
         userSession.orgId,
         openingId
       );

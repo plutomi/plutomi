@@ -1,5 +1,5 @@
 import { NextApiResponse } from "next";
-import DeleteApplicant from "../../../../utils/applicants/deleteApplicant";
+import deleteApplicant from "../../../../utils/applicants/deleteApplicant";
 import { withSessionRoute } from "../../../../middleware/withSession";
 
 // TODO remove this
@@ -17,7 +17,7 @@ const handler = async (
 
   if (method === "GET") {
     try {
-      await DeleteApplicant({
+      await deleteApplicant({
         orgId: userSession.orgId,
         applicantId: applicantId,
       });

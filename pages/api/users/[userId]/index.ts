@@ -1,8 +1,8 @@
-import { GetUserById } from "../../../../utils/users/getUserById";
+import { getUserById } from "../../../../utils/users/getUserById";
 import { NextApiResponse } from "next";
-import { UpdateUser } from "../../../../utils/users/updateUser";
+import { updateUser } from "../../../../utils/users/updateUser";
 import { withSessionRoute } from "../../../../middleware/withSession";
-import CleanUser from "../../../../utils/clean/cleanUser";
+import cleanUser from "../../../../utils/clean/cleanUser";
 
 const handler = async (
   req: NextIronRequest,
@@ -19,7 +19,7 @@ const handler = async (
 
   if (method === "GET") {
     try {
-      const requestedUser = await GetUserById(userId);
+      const requestedUser = await getUserById(userId);
 
       if (!requestedUser) {
         return res.status(404).json({ message: "User not found" });
@@ -55,11 +55,11 @@ const handler = async (
           .json({ message: "You cannot update another user" });
       }
 
-      const updatedUser = await UpdateUser(updateStageInput);
+      const updatedUser = await updateUser(updateStageInput);
 
       // If a signed in user is updating themselves, update the session state
       if (updatedUser.userId === userSession.userId) {
-        req.session.user = CleanUser(updatedUser);
+        req.session.user = cleanUser(updatedUser);
         await req.session.save();
       }
       return res.status(200).json({ message: "Updated!" });

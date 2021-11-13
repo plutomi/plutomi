@@ -1,10 +1,10 @@
 import { QueryCommand, QueryCommandInput } from "@aws-sdk/lib-dynamodb";
 import { Dynamo } from "../../awsClients/ddbDocClient";
-import { GetOpening } from "../openings/getOpeningById";
+import { getOpening } from "../openings/getOpeningById";
 const { DYNAMO_TABLE_NAME } = process.env;
 
-export async function GetAllStagesInOpening(orgId: string, openingId: string) {
-  const opening = await GetOpening({ orgId, openingId });
+export async function getAllStagesInOpening(orgId: string, openingId: string) {
+  const opening = await getOpening({ orgId, openingId });
   const { stageOrder } = opening;
 
   const params: QueryCommandInput = {

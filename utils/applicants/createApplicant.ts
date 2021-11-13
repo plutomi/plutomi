@@ -8,20 +8,20 @@ import { nanoid } from "nanoid";
 
 const { DYNAMO_TABLE_NAME } = process.env;
 
-export async function CreateApplicant({
+export async function createApplicant(
   orgId,
   email,
   firstName,
   lastName,
   openingId,
-  stageId,
-}: CreateApplicantInput) {
+  stageId
+) {
   const now = GetCurrentTime("iso") as string;
   // Applicant ID has to be pretty high as the apply link will be the user ID
   // This is per org btw
   // https://zelark.github.io/nano-id-cc/
   const applicantId = nanoid(50); // TODO - Also since applications are public, it should not be easily guessed - #165
-  const newApplicant: DynamoApplicant = {
+  const newApplicant = {
     PK: `ORG#${orgId}#APPLICANT#${applicantId}`,
     SK: `APPLICANT`,
     firstName: firstName,

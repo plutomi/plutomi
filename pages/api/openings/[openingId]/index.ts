@@ -1,8 +1,8 @@
-import { GetOpening } from "../../../../utils/openings/getOpeningById";
+import { getOpening } from "../../../../utils/openings/getOpeningById";
 import { NextApiResponse } from "next";
 import InputValidation from "../../../../utils/inputValidation";
-import UpdateOpening from "../../../../utils/openings/updateOpening";
-import { DeleteOpening } from "../../../../utils/openings/deleteOpening";
+import updateOpening from "../../../../utils/openings/updateOpening";
+import { deleteOpening } from "../../../../utils/openings/deleteOpening";
 import { withSessionRoute } from "../../../../middleware/withSession";
 
 const handler = async (
@@ -24,7 +24,7 @@ const handler = async (
 
   if (method === "GET") {
     try {
-      const opening = await GetOpening(getOpeningInput);
+      const opening = await getOpening(getOpeningInput);
       if (!opening) {
         return res.status(404).json({ message: "Opening not found" });
       }
@@ -52,7 +52,7 @@ const handler = async (
         return res.status(400).json({ message: `${error.message}` });
       }
 
-      await UpdateOpening(updateOpeningInput);
+      await updateOpening(updateOpeningInput);
       return res.status(200).json({ message: "Opening updated!" });
     } catch (error) {
       return res
@@ -67,7 +67,7 @@ const handler = async (
         orgId: userSession.orgId,
         openingId: openingId,
       };
-      await DeleteOpening(deleteOpeningInput);
+      await deleteOpening(deleteOpeningInput);
       return res.status(200).json({ message: "Opening deleted" });
     } catch (error) {
       return res

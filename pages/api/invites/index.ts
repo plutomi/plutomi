@@ -1,12 +1,12 @@
-import CreateOrgInvite from "../../../utils/invites/createOrgInvite";
-import SendOrgInvite from "../../../utils/email/sendOrgInvite";
+import createOrgInvite from "../../../utils/invites/createOrgInvite";
+import sendOrgInvite from "../../../utils/email/sendOrgInvite";
 import InputValidation from "../../../utils/inputValidation";
 import { GetPastOrFutureTime } from "../../../utils/time";
 import { NextApiResponse } from "next";
 import withCleanOrgId from "../../../middleware/withCleanOrgId";
-import { GetOrg } from "../../../utils/orgs/getOrg";
+import { getOrg } from "../../../utils/orgs/getOrg";
 import { withSessionRoute } from "../../../middleware/withSession";
-import { CreateUser } from "../../../utils/users/createUser";
+import { createUser } from "../../../utils/users/createUser";
 const handler = async (
   req: NextIronRequest,
   res: NextApiResponse
@@ -29,7 +29,7 @@ const handler = async (
     "iso"
   );
 
-  const org = await GetOrg(userSession.orgId);
+  const org = await getOrg(userSession.orgId);
 
   const newOrgInvite: CreateOrgInviteInput = {
     claimed: false,
@@ -57,7 +57,7 @@ const handler = async (
     }
 
     // Creates the user
-    const recipient = await CreateUser({ userEmail: recipientEmail });
+    const recipient = await createUser({ userEmail: recipientEmail });
 
     const newOrgInviteEmail: SendOrgInviteInput = {
       createdBy: userSession,
@@ -65,7 +65,7 @@ const handler = async (
       recipientEmail: recipient.userEmail, // Will be lowercase & .trim()'d by createUser
     };
     try {
-      await CreateOrgInvite({
+      await createOrgInvite({
         orgId: org.orgId,
         user: recipient,
         orgName: org.GSI1SK,
@@ -73,7 +73,7 @@ const handler = async (
         createdBy: userSession,
       });
       try {
-        await SendOrgInvite(newOrgInviteEmail); // TODO async with streams
+        await sendOrgInvite(newOrgInviteEmail); // TODO async with streams
         return res
           .status(201)
           .json({ message: `Invite sent to '${recipient.userEmail}'` });

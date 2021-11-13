@@ -2,7 +2,7 @@ import { QueryCommand, QueryCommandInput } from "@aws-sdk/lib-dynamodb";
 import { Dynamo } from "../../awsClients/ddbDocClient";
 const { DYNAMO_TABLE_NAME } = process.env;
 
-export async function GetAllOpeningsInOrg(orgId: string) {
+export async function getAllOpeningsInOrg(orgId: string) {
   const params: QueryCommandInput = {
     TableName: DYNAMO_TABLE_NAME,
     IndexName: "GSI1",

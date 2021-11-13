@@ -2,8 +2,8 @@
 // Such as the opening name, description, and stage order
 import withCleanOrgId from "../../../../../../../middleware/withCleanOrgId";
 import { NextApiResponse } from "next";
-import CleanOpening from "../../../../../../../utils/clean/cleanOpening";
-import { GetOpening } from "../../../../../../../utils/openings/getOpeningById";
+import cleanOpening from "../../../../../../../utils/clean/cleanOpening";
+import { getOpening } from "../../../../../../../utils/openings/getOpeningById";
 const handler = async (req: CustomRequest, res: NextApiResponse) => {
   const { method, query } = req;
   const { orgId, openingId } = query as CustomQuery;
@@ -15,7 +15,7 @@ const handler = async (req: CustomRequest, res: NextApiResponse) => {
 
   if (method === "GET") {
     try {
-      const opening = await GetOpening(getOpeningInput);
+      const opening = await getOpening(getOpeningInput);
       if (!opening) {
         return res.status(404).json({ message: "Opening not found" });
       }
@@ -25,7 +25,7 @@ const handler = async (req: CustomRequest, res: NextApiResponse) => {
           .status(400)
           .json({ message: "You cannot apply here just yet" });
       }
-      const cleanOpening = CleanOpening(opening as DynamoOpening);
+      const cleanOpening = cleanOpening(opening as DynamoOpening);
       return res.status(200).json(cleanOpening);
     } catch (error) {
       // TODO add error logger

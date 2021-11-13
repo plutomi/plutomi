@@ -3,13 +3,13 @@ import {
   TransactWriteCommandInput,
 } from "@aws-sdk/lib-dynamodb";
 import { Dynamo } from "../../awsClients/ddbDocClient";
-import { GetAllUserInvites } from "./getAllOrgInvites";
+import { getAllUserInvites } from "./getAllOrgInvites";
 import { GetCurrentTime } from "../time";
 import { nanoid } from "nanoid";
 
 const { DYNAMO_TABLE_NAME } = process.env;
 
-export default async function CreateOrgInvite({
+export default async function createOrgInvite({
   orgId,
   expiresAt,
   createdBy,
@@ -22,7 +22,7 @@ export default async function CreateOrgInvite({
     }
 
     // Check if the user we are inviting already has pending invites for the current org
-    const pendingInvites = await GetAllUserInvites(user.userId);
+    const pendingInvites = await getAllUserInvites(user.userId);
     const unclaimedInvites = pendingInvites.filter(
       (invite) => invite.orgId == orgId
     );

@@ -1,9 +1,9 @@
 import { NextApiResponse } from "next";
-import { GetApplicantById } from "../../../../../../../utils/applicants/getApplicantById";
-import CleanApplicant from "../../../../../../../utils/clean/cleanApplicant";
+import { getApplicantById } from "../../../../../../../utils/applicants/getApplicantById";
+import cleanApplicant from "../../../../../../../utils/clean/cleanApplicant";
 import withCleanOrgId from "../../../../../../../middleware/withCleanOrgId";
 const handler = async (req: CustomRequest, res: NextApiResponse) => {
-  const user: DynamoUser = req.user;
+  const user = req.user;
   const { method, query, body } = req;
   const { applicantId } = query as CustomQuery;
 
@@ -15,13 +15,13 @@ const handler = async (req: CustomRequest, res: NextApiResponse) => {
   if (method === "GET") {
     try {
       // TODO gather applicant responses here
-      const applicant = await GetApplicantById(getApplicantInput);
+      const applicant = await getApplicantById(getApplicantInput);
       // const responses = await GetApplicant
       if (!applicant) {
         return res.status(404).json({ message: "Applicant not found" });
       }
 
-      const cleanApplicant = CleanApplicant(
+      const cleanApplicant = cleanApplicant(
         applicant as unknown as DynamoApplicant // TODO fix this crap
       );
       return res.status(200).json(cleanApplicant);

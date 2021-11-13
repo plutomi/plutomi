@@ -2,7 +2,7 @@ import { QueryCommand, QueryCommandInput } from "@aws-sdk/lib-dynamodb";
 import { Dynamo } from "../../awsClients/ddbDocClient";
 const { DYNAMO_TABLE_NAME } = process.env;
 
-export async function GetAllApplicantsInStage({ orgId, stageId }) {
+export async function getAllApplicantsInStage({ orgId, stageId }) {
   const params: QueryCommandInput = {
     TableName: DYNAMO_TABLE_NAME,
     IndexName: "GSI2",

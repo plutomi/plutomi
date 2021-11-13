@@ -5,13 +5,13 @@ import { nanoid } from "nanoid";
 
 const { DYNAMO_TABLE_NAME } = process.env;
 
-export async function CreateApplicantResponse({
+export async function createApplicantResponse(
   orgId,
   applicantId,
   questionTitle,
   questionDescription,
-  questionResponse,
-}: CreateApplicantResponseInput) {
+  questionResponse
+) {
   const now = GetCurrentTime("iso") as string;
   const responseId = nanoid(30);
   const newApplicantResponse = {

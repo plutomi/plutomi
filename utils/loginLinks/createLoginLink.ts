@@ -4,7 +4,7 @@ import { Dynamo } from "../../awsClients/ddbDocClient";
 
 const { DYNAMO_TABLE_NAME } = process.env;
 
-export default async function CreateLoginLink({
+export default async function createLoginLink({
   user,
   loginLinkHash,
   loginLinkExpiry,

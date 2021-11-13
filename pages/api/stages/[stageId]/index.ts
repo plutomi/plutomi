@@ -1,8 +1,8 @@
 import { getStage } from "../../../../utils/stages/getStage";
 import { NextApiResponse } from "next";
 import InputValidation from "../../../../utils/inputValidation";
-import { DeleteStage } from "../../../../utils/stages/deleteStage";
-import UpdateStage from "../../../../utils/stages/updateStage";
+import { deleteStage } from "../../../../utils/stages/deleteStage";
+import updateStage from "../../../../utils/stages/updateStage";
 // Create stage in a opening
 import { withSessionRoute } from "../../../../middleware/withSession";
 
@@ -26,7 +26,7 @@ const handler = async (
     };
 
     try {
-      const stage = await GetStage(getStageInput);
+      const stage = await getStage(getStageInput);
       if (!stage) {
         return res.status(404).json({ message: "Stage not found" });
       }
@@ -54,7 +54,7 @@ const handler = async (
         return res.status(400).json({ message: `${error.message}` });
       }
 
-      await UpdateStage(updateStageInput);
+      await updateStage(updateStageInput);
       return res.status(200).json({ message: "Stage updated!" });
     } catch (error) {
       return res
@@ -70,7 +70,7 @@ const handler = async (
         stageId: stageId,
       };
 
-      await DeleteStage(deleteStageInput);
+      await deleteStage(deleteStageInput);
 
       return res.status(200).json({ message: "Stage deleted!" });
     } catch (error) {

@@ -3,7 +3,7 @@ import { Dynamo } from "../../awsClients/ddbDocClient";
 
 const { DYNAMO_TABLE_NAME } = process.env;
 
-export async function GetUserByEmail(userEmail: string) {
+export async function getUserByEmail(userEmail: string) {
   const params: QueryCommandInput = {
     TableName: DYNAMO_TABLE_NAME,
     IndexName: "GSI2",

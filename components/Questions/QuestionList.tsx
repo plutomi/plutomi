@@ -87,7 +87,7 @@ export default function QuestionList() {
     mutate(StagesService.getStageURL(stageId));
 
     // Refresh questions
-    mutate(StagesService.getAllQuestionsInStageURL( stageId ));
+    mutate(StagesService.getAllQuestionsInStageURL(stageId));
   };
 
   if (isQuestionsLoading) {

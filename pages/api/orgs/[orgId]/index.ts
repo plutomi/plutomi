@@ -1,9 +1,9 @@
 import withCleanOrgId from "../../../../middleware/withCleanOrgId";
-import { GetOrg } from "../../../../utils/orgs/getOrg";
+import { getOrg } from "../../../../utils/orgs/getOrg";
 import { NextApiResponse } from "next";
 import { withSessionRoute } from "../../../../middleware/withSession";
-import CleanUser from "../../../../utils/clean/cleanUser";
-import { UpdateUser } from "../../../../utils/users/updateUser";
+import cleanUser from "../../../../utils/clean/cleanUser";
+import { updateUser } from "../../../../utils/users/updateUser";
 
 const handler = async (
   req: NextIronRequest,
@@ -16,7 +16,7 @@ const handler = async (
   }
   const { method, query } = req;
   const { orgId } = query as CustomQuery;
-  const org = await GetOrg(orgId);
+  const org = await getOrg(orgId);
 
   if (method === "GET") {
     // When signed in, this returns all data for an org
@@ -51,7 +51,7 @@ const handler = async (
         });
       }
 
-      const updatedUser = await UpdateUser({
+      const updatedUser = await updateUser({
         userId: userSession.userId,
         newUserValues: {
           orgId: "NO_ORG_ASSIGNED",
@@ -61,7 +61,7 @@ const handler = async (
 
         ALLOW_FORBIDDEN_KEYS: true,
       });
-      req.session.user = CleanUser(updatedUser);
+      req.session.user = cleanUser(updatedUser);
       await req.session.save();
       return res
         .status(200)

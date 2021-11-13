@@ -3,11 +3,11 @@ import {
   TransactWriteCommandInput,
 } from "@aws-sdk/lib-dynamodb";
 import { Dynamo } from "../../awsClients/ddbDocClient";
-import { GetApplicantById } from "./getApplicantById";
+import { getApplicantById } from "./getApplicantById";
 const { DYNAMO_TABLE_NAME } = process.env;
 
-export default async function DeleteApplicant({ orgId, applicantId }) {
-  const applicant = (await GetApplicantById({
+export default async function deleteApplicant({ orgId, applicantId }) {
+  const applicant = (await getApplicantById({
     orgId,
     applicantId,
   })) as unknown as DynamoApplicant; // TODO fix this shit :(

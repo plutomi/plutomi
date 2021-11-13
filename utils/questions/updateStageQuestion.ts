@@ -2,7 +2,7 @@ import { UpdateCommand } from "@aws-sdk/lib-dynamodb";
 import { Dynamo } from "../../awsClients/ddbDocClient";
 const { DYNAMO_TABLE_NAME } = process.env;
 
-export default async function UpdateQuestion({
+export default async function updateQuestion({
   orgId,
   questionId,
   newQuestionValues,

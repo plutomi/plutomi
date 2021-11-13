@@ -1,4 +1,4 @@
-import { GetAllUsersInOrg } from "../../../../utils/orgs/getAllUsersInOrg";
+import { getAllUsersInOrg } from "../../../../utils/orgs/getAllUsersInOrg";
 import withCleanOrgId from "../../../../middleware/withCleanOrgId";
 import { NextApiResponse } from "next";
 
@@ -31,7 +31,7 @@ const handler = async (
     }
 
     try {
-      const allUsers = await GetAllUsersInOrg({ orgId: userSession.orgId });
+      const allUsers = await getAllUsersInOrg({ orgId: userSession.orgId });
       return res.status(200).json(allUsers);
     } catch (error) {
       return res

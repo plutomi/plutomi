@@ -10,10 +10,10 @@ import { nanoid } from "nanoid";
 
 const { DYNAMO_TABLE_NAME } = process.env;
 
-export async function CreateOpening({ orgId, GSI1SK }: CreateOpeningInput) {
+export async function createOpening({ orgId, GSI1SK }) {
   const now = GetCurrentTime("iso") as string;
   const openingId = nanoid(16);
-  const newOpening: DynamoOpening = {
+  const newOpening = {
     PK: `ORG#${orgId}#OPENING#${openingId}`,
     SK: `OPENING`,
     entityType: "OPENING",

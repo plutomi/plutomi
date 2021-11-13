@@ -53,7 +53,7 @@ interface DynamoOrgInvite {
   PK: string;
   SK: string;
   orgId: string;
-  createdBy: DynamoUser;
+  createdBy;
   entityType: "ORG_INVITE";
   createdAt: string;
   expiresAt: string;

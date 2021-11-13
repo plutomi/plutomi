@@ -1,7 +1,7 @@
 import { NextApiResponse } from "next";
 import InputValidation from "../../../../../../../utils/inputValidation";
 import withCleanOrgId from "../../../../../../../middleware/withCleanOrgId";
-import { CreateApplicantResponse } from "../../../../../../../utils/applicants/createApplicantResponse";
+import { createApplicantResponse } from "../../../../../../../utils/applicants/createApplicantResponse";
 const handler = async (req: CustomRequest, res: NextApiResponse) => {
   const { method, query, body } = req;
   const { orgId, applicantId } = query as CustomQuery;
@@ -45,7 +45,7 @@ const handler = async (req: CustomRequest, res: NextApiResponse) => {
             questionResponse: questionResponse,
           };
 
-          await CreateApplicantResponse(createApplicantResponseInput);
+          await createApplicantResponse(createApplicantResponseInput);
         })
       );
 

@@ -1,4 +1,4 @@
-import { GetUserById } from "../../../utils/users/getUserById";
+import { getUserById } from "../../../utils/users/getUserById";
 import { NextApiResponse } from "next";
 import { withSessionRoute } from "../../../middleware/withSession";
 
@@ -16,7 +16,7 @@ const handler = async (
 
   if (method === "GET") {
     try {
-      const requestedUser = await GetUserById(userSession.userId);
+      const requestedUser = await getUserById(userSession.userId);
       if (!requestedUser) {
         req.session.destroy();
         return res.status(401).json({ message: "Please log in again" }); // TODO middleware

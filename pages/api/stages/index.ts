@@ -1,4 +1,4 @@
-import { CreateStage } from "../../../utils/stages/createStage";
+import { createStage } from "../../../utils/stages/createStage";
 import InputValidation from "../../../utils/inputValidation";
 import { NextApiResponse } from "next";
 // Create stage in an opening
@@ -35,7 +35,7 @@ const handler = async (
     }
 
     try {
-      await CreateStage(createStageInput);
+      await createStage(createStageInput);
       return res.status(201).json({ message: "Stage created" });
     } catch (error) {
       // TODO add error logger

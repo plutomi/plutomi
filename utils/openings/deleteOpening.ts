@@ -6,12 +6,12 @@ import {
 } from "@aws-sdk/lib-dynamodb";
 import { Dynamo } from "../../awsClients/ddbDocClient";
 const { DYNAMO_TABLE_NAME } = process.env;
-import { DeleteStage } from "../stages/deleteStage";
-import { GetAllStagesInOpening } from "../stages/getAllStagesInOpening";
+import { deleteStage } from "../stages/deleteStage";
+import { getAllStagesInOpening } from "../stages/getAllStagesInOpening";
 // TODO check if stage is empt of appliants first
 // TODO delete stage from the funnels sort order
-export async function DeleteOpening({ orgId, openingId }) {
-  const allStages = await GetAllStagesInOpening(orgId, openingId);
+export async function deleteOpening({ orgId, openingId }) {
+  const allStages = await getAllStagesInOpening(orgId, openingId);
 
   try {
     // Delete stages first
@@ -24,7 +24,7 @@ export async function DeleteOpening({ orgId, openingId }) {
           openingId: openingId,
           stageId: stage.stageId,
         };
-        await DeleteStage(input);
+        await deleteStage(input);
       });
     }
 

@@ -1,7 +1,7 @@
 import { NextApiResponse } from "next";
 import { DeleteQuestion } from "../../../../utils/questions/deleteQuestion";
 import InputValidation from "../../../../utils/inputValidation";
-import UpdateQuestion from "../../../../utils/questions/updateStageQuestion";
+import updateQuestion from "../../../../utils/questions/updateStageQuestion";
 import { withSessionRoute } from "../../../../middleware/withSession";
 
 const handler = async (
@@ -46,7 +46,7 @@ const handler = async (
         return res.status(400).json({ message: `${error.message}` });
       }
 
-      await UpdateQuestion(updatedQuestionInput);
+      await updateQuestion(updatedQuestionInput);
       return res.status(200).json({ message: "Question updated!" });
     } catch (error) {
       console.error(error);

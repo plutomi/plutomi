@@ -1,13 +1,13 @@
-import AcceptOrgInvite from "../../../../utils/invites/acceptOrgInvite";
+import acceptOrgInvite from "../../../../utils/invites/acceptOrgInvite";
 import InputValidation from "../../../../utils/inputValidation";
 import { NextApiResponse } from "next";
-import DeleteOrgInvite from "../../../../utils/invites/deleteOrgInvite";
+import deleteOrgInvite from "../../../../utils/invites/deleteOrgInvite";
 import withCleanOrgId from "../../../../middleware/withCleanOrgId";
 import { getOrgInvite } from "../../../../utils/invites/getOrgInvite";
 import { withSessionRoute } from "../../../../middleware/withSession";
-import CleanUser from "../../../../utils/clean/cleanUser";
-import { GetUserById } from "../../../../utils/users/getUserById";
-import { JoinOrgFromInvite } from "../../../../utils/orgs/joinOrgFromInvite";
+import cleanUser from "../../../../utils/clean/cleanUser";
+import { getUserById } from "../../../../utils/users/getUserById";
+import { joinOrgFromInvite } from "../../../../utils/orgs/joinOrgFromInvite";
 
 const handler = async (
   req: NextIronRequest,
@@ -47,10 +47,10 @@ const handler = async (
     }
 
     try {
-      await JoinOrgFromInvite({ userId: userSession.userId, invite });
+      await joinOrgFromInvite({ userId: userSession.userId, invite });
 
-      const updatedUser = await GetUserById(userSession.userId);
-      req.session.user = CleanUser(updatedUser);
+      const updatedUser = await getUserById(userSession.userId);
+      req.session.user = cleanUser(updatedUser);
       await req.session.save();
       return res
         .status(200)
@@ -77,7 +77,7 @@ const handler = async (
     }
 
     try {
-      await DeleteOrgInvite(deleteOrgInviteInput);
+      await deleteOrgInvite(deleteOrgInviteInput);
       return res.status(200).json({ message: "Invite rejected!" });
     } catch (error) {
       return res

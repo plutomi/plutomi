@@ -5,16 +5,12 @@ import {
 import { Dynamo } from "../../awsClients/ddbDocClient";
 import { GetCurrentTime } from "../time";
 import { nanoid } from "nanoid";
-import { GetOpening } from "../openings/getOpeningById";
+import { getOpening } from "../openings/getOpeningById";
 import { MAX_CHILD_ITEM_LIMIT, MAX_ITEM_LIMIT_ERROR } from "../../Config";
 
 const { DYNAMO_TABLE_NAME } = process.env;
 
-export async function CreateStage({
-  orgId,
-  GSI1SK,
-  openingId,
-}: DynamoCreateStageInput) {
+export async function createStage({ orgId, GSI1SK, openingId }) {
   const now = GetCurrentTime("iso") as string;
   const stageId = nanoid(50);
   const newStage = {
@@ -31,7 +27,7 @@ export async function CreateStage({
   };
 
   try {
-    let opening = await GetOpening({ orgId, openingId });
+    let opening = await getOpening({ orgId, openingId });
 
     try {
       // Get current opening
