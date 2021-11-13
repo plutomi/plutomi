@@ -15,7 +15,7 @@ export default class QuestionsService {
   static getQuestionURL(questionId) {
     return `/api/questions/${questionId}`;
   }
-  static async getQuestion({ questionId }) {
+  static async getQuestion(questionId) {
     const { data } = await axios.get(this.getQuestionURL(questionId));
     return data;
   }

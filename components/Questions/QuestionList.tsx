@@ -56,11 +56,8 @@ export default function QuestionList() {
     setNewQuestions(newOrder);
 
     try {
-      await StagesService.updateStage({
-        stageId: stageId,
-        newStageValues: {
-          questionOrder: newQuestionOrder,
-        },
+      await StagesService.updateStage(stageId, {
+        questionOrder: newQuestionOrder,
       });
     } catch (error) {
       alert(error.response.data.message);
@@ -90,7 +87,7 @@ export default function QuestionList() {
     mutate(StagesService.getStageURL(stageId));
 
     // Refresh questions
-    mutate(StagesService.getAllQuestionsInStageURL({ stageId }));
+    mutate(StagesService.getAllQuestionsInStageURL( stageId ));
   };
 
   if (isQuestionsLoading) {

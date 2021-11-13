@@ -39,11 +39,9 @@ export default function Team() {
       });
 
       const { message } = await UsersService.updateUser(user?.userId, {
-        newUserValues: {
-          firstName: userProfileModal.firstName,
-          lastName: userProfileModal.lastName,
-          GSI1SK: `${userProfileModal.firstName} ${userProfileModal.lastName}`,
-        },
+        firstName: userProfileModal.firstName,
+        lastName: userProfileModal.lastName,
+        GSI1SK: `${userProfileModal.firstName} ${userProfileModal.lastName}`,
       });
       alert(message);
     } catch (error) {

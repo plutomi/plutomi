@@ -31,9 +31,7 @@ export default function OpeningSettingsContent() {
 
       console.log("Outgoing body", diff);
 
-      const { message } = await OpeningsService.updateOpening(openingId, {
-        newOpeningValues: diff,
-      });
+      const { message } = await OpeningsService.updateOpening(openingId, diff);
       alert(message);
       setOpeningModal({
         isModalOpen: false,

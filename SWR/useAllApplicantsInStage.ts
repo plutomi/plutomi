@@ -11,7 +11,7 @@ function useAllApplicantsInStage(
   const shouldFetch = openingId && stageId ? true : false;
   const { data, error } = useSWR(
     // @ts-ignore TODO
-    shouldFetch && StagesService.getAllApplicantsInStageURL({ stageId }),
+    shouldFetch && StagesService.getAllApplicantsInStageURL(stageId),
     fetcher
   );
 

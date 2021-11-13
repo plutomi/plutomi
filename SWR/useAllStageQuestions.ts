@@ -12,7 +12,7 @@ function useAllStageQuestions(
   const shouldFetch = orgId && stageId ? true : false;
 
   const { data, error } = useSWR(
-    shouldFetch && StagesService.getAllQuestionsInStageURL({ stageId }),
+    shouldFetch && StagesService.getAllQuestionsInStageURL(stageId),
     fetcher
   );
 

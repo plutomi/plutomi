@@ -33,7 +33,7 @@ export default class ApplicantsService {
     return data;
   }
 
-  static async updateApplicant(applicantId, { newApplicantValues }) {
+  static async updateApplicant(applicantId, newApplicantValues) {
     const body = {
       newApplicantValues: newApplicantValues,
     };

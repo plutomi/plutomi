@@ -32,7 +32,7 @@ export default class OpeningsService {
     return data;
   }
 
-  static async updateOpening(openingId, { newOpeningValues }) {
+  static async updateOpening(openingId, newOpeningValues) {
     const body = {
       newOpeningValues: newOpeningValues,
     };

@@ -46,10 +46,7 @@ export default function StageReorderColumn() {
       delete diff["isModalOpen"];
       delete diff["modalMode"];
 
-      const { message } = await StagesService.updateStage({
-        stageId: stageId,
-        newStageValues: diff,
-      });
+      const { message } = await StagesService.updateStage(stageId, diff);
       alert(message);
       setStageModal({
         isModalOpen: false,
@@ -107,11 +104,8 @@ export default function StageReorderColumn() {
     setNewStages(newOrder);
 
     try {
-      await OpeningsService.updateOpening({
-        openingId: openingId,
-        newOpeningValues: {
-          stageOrder: newStageOrder,
-        },
+      await OpeningsService.updateOpening(openingId, {
+        stageOrder: newStageOrder,
       });
     } catch (error) {
       console.error(error.response.data.message);

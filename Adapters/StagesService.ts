@@ -24,33 +24,29 @@ export default class StagesService {
     return data;
   }
 
-  static async updateStage({ stageId, newStageValues }) {
+  static async updateStage(stageId, newStageValues) {
     const body = {
       newStageValues: newStageValues,
     };
-    const { data } = await axios.put(this.getStageURL({ stageId }), body);
+    const { data } = await axios.put(this.getStageURL(stageId), body);
     return data;
   }
 
-  static getAllQuestionsInStageURL({ stageId }) {
+  static getAllQuestionsInStageURL(stageId) {
     return `/api/stages/${stageId}/questions`;
   }
 
-  static async getAllQuestionsInStage({ stageId }) {
-    const { data } = await axios.get(
-      this.getAllQuestionsInStageURL({ stageId })
-    );
+  static async getAllQuestionsInStage(stageId) {
+    const { data } = await axios.get(this.getAllQuestionsInStageURL(stageId));
     return data;
   }
 
-  static getAllApplicantsInStageURL({ stageId }) {
+  static getAllApplicantsInStageURL(stageId) {
     return `/api/stages/${stageId}/applicants`;
   }
 
-  static async getAllApplicantsInStage({ stageId }) {
-    const { data } = await axios.get(
-      this.getAllApplicantsInStageURL({ stageId })
-    );
+  static async getAllApplicantsInStage(stageId) {
+    const { data } = await axios.get(this.getAllApplicantsInStageURL(stageId));
     return data;
   }
 }

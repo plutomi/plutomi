@@ -40,7 +40,7 @@ export default function StageSettingsContent() {
     mutate(StagesService.getStageURL(stageId));
 
     // Refresh the question list
-    mutate(StagesService.getAllQuestionsInStageURL({ stageId }));
+    mutate(StagesService.getAllQuestionsInStageURL( stageId ));
   };
 
   const updateQuestion = async () => {
@@ -80,7 +80,7 @@ export default function StageSettingsContent() {
     mutate(StagesService.getStageURL(stageId));
 
     // Refresh the question list
-    mutate(StagesService.getAllQuestionsInStageURL({ stageId }));
+    mutate(StagesService.getAllQuestionsInStageURL( stageId ));
   };
 
   const router = useRouter();
