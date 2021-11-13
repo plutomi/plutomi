@@ -1,7 +1,7 @@
 import axios from "../axios/axios";
 
 export default class OpeningsService {
-  static async createOpening({ GSI1SK }: APICreateOpeningInput) {
+  static async createOpening(GSI1SK) {
     const body = {
       GSI1SK: GSI1SK,
     };
@@ -10,11 +10,11 @@ export default class OpeningsService {
     return data;
   }
 
-  static getOpeningURL({ openingId }) {
+  static getOpeningURL(openingId) {
     return `/api/openings/${openingId}`;
   }
-  static async getOpening({ openingId }: APIGetOpeningInput) {
-    const { data } = await axios.get(this.getOpeningURL({ openingId }));
+  static async getOpening(openingId) {
+    const { data } = await axios.get(this.getOpeningURL(openingId));
     return data;
   }
 
@@ -27,33 +27,26 @@ export default class OpeningsService {
     return data;
   }
 
-  static async deleteOpening({ openingId }: APIDeleteOpeningInput) {
-    const { data } = await axios.delete(this.getOpeningURL({ openingId }));
+  static async deleteOpening(openingId) {
+    const { data } = await axios.delete(this.getOpeningURL(openingId));
     return data;
   }
 
-  static async updateOpening({
-    openingId,
-    newOpeningValues,
-  }: APIUpdateOpeningInput) {
+  static async updateOpening(openingId, { newOpeningValues }) {
     const body = {
       newOpeningValues: newOpeningValues,
     };
-    const { data } = await axios.put(this.getOpeningURL({ openingId }), body);
+    const { data } = await axios.put(this.getOpeningURL(openingId), body);
     return data;
   }
 
   // TODO should this be moved to openings?
-  static getAllStagesInOpeningURL({ openingId }: APIGetAllStagesInOpeningURL) {
+  static getAllStagesInOpeningURL(openingId) {
     return `/api/openings/${openingId}/stages`;
   }
 
-  static async getAllStagesInOpening({
-    openingId,
-  }: APIGetAllStagesInOpeningInput) {
-    const { data } = await axios.get(
-      this.getAllStagesInOpeningURL({ openingId })
-    );
+  static async getAllStagesInOpening(openingId) {
+    const { data } = await axios.get(this.getAllStagesInOpeningURL(openingId));
     return data;
   }
 

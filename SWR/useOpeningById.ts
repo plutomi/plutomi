@@ -13,7 +13,7 @@ function useOpeningById(openingId: string): useOpeningByIdOutput {
   const shouldFetch = openingId ? true : false;
 
   const { data, error } = useSWR(
-    shouldFetch && OpeningsService.getOpeningURL({ openingId }),
+    shouldFetch && OpeningsService.getOpeningURL(openingId),
     fetcher
   );
 

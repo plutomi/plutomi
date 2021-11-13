@@ -9,10 +9,7 @@ function useAllStagesInOpening(openingId: string): useAllStagesInOpeningOutput {
   const shouldFetch = openingId ? true : false;
 
   const { data, error } = useSWR(
-    shouldFetch &&
-      OpeningsService.getAllStagesInOpeningURL({
-        openingId: openingId,
-      }),
+    shouldFetch && OpeningsService.getAllStagesInOpeningURL(openingId),
     fetcher
   );
 

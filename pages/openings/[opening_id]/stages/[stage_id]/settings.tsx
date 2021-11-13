@@ -44,14 +44,10 @@ export default function StageSettings() {
     }
 
     // Refresh the stageOrder
-    mutate(OpeningsService.getOpeningURL({ openingId: openingId }));
+    mutate(OpeningsService.getOpeningURL(openingId));
 
     // Refresh the stage list
-    mutate(
-      OpeningsService.getAllStagesInOpeningURL({
-        openingId: openingId,
-      })
-    );
+    mutate(OpeningsService.getAllStagesInOpeningURL(openingId));
   };
 
   return (

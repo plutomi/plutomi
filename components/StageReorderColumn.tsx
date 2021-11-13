@@ -30,14 +30,10 @@ export default function StageReorderColumn() {
       alert(error.response.data.message);
     }
     // Refresh stage order
-    mutate(OpeningsService.getOpeningURL({ openingId }));
+    mutate(OpeningsService.getOpeningURL(openingId));
 
     // Refresh stage list
-    mutate(
-      OpeningsService.getAllStagesInOpeningURL({
-        openingId: openingId,
-      })
-    );
+    mutate(OpeningsService.getAllStagesInOpeningURL(openingId));
   };
 
   const updateStage = async () => {
@@ -127,14 +123,10 @@ export default function StageReorderColumn() {
     }
 
     // Refresh the stage order
-    mutate(OpeningsService.getOpeningURL({ openingId }));
+    mutate(OpeningsService.getOpeningURL(openingId));
 
     // Refresh the stages
-    mutate(
-      OpeningsService.getAllStagesInOpeningURL({
-        openingId: openingId,
-      })
-    );
+    mutate(OpeningsService.getAllStagesInOpeningURL(openingId));
   };
 
   return (
