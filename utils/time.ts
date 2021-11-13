@@ -1,49 +1,81 @@
 import relativeTime from "dayjs/plugin/relativeTime";
 import dayjs from "dayjs";
-
+import { TimeUnits } from "../types";
 dayjs.extend(relativeTime);
+import { INVALID_DATE_ERROR } from "../Config";
 
 /**
- * @param format - `iso`, `unix`, or `plain` date object
+ * Wrapper around dayjs for the most common use cases
  */
-export function GetCurrentTime(format: "iso" | "unix") {
-  if (format === "iso") return dayjs().toISOString();
-  if (format === "unix") return dayjs().unix();
-}
-
-/**
- *
- * @param amount - How long in the future? This is the actual number value
- * @param type - What time measure? seconds, minutes, hours, days, etc
- * @param format - iso, unix or plain date object
- */
-export function GetPastOrFutureTime(
-  when: "past" | "future",
-  amount: number,
-  type:
-    | "milliseconds"
-    | "seconds"
-    | "minutes"
-    | "hours"
-    | "days"
-    | "weeks"
-    | "months"
-    | "years",
-  format: "iso" | "unix"
-) {
-  if (when === "future") {
-    const newTime = dayjs().add(amount, type);
-    if (format === "iso") return newTime.toISOString();
-    if (format === "unix") return newTime.unix();
+export default class Time {
+  /**
+   * Gets the current ISO timestamp
+   * @returns The current ISO timestamp
+   */
+  static currentISO(): string {
+    return dayjs().toISOString();
   }
 
-  if (when === "past") {
-    const newTime = dayjs().subtract(amount, type);
-    if (format === "iso") return newTime.toISOString();
-    if (format === "unix") return newTime.unix();
-  }
-}
+  /**
+   * Gets the current UNIX timestamp
+   * @returns The current UNIX timestamp
+   */
 
-export function getRelativeTime(timestamp) {
-  return dayjs().to(timestamp);
+  static currentUNIX(): number {
+    return dayjs().unix();
+  }
+
+  /**
+   *
+   * @param timestamp  The date to get a relative time to
+   * @returns A string such as '23 days ago' relative to the passed in date
+   * @external String
+   * @see The DayJS documentation for more info https://day.js.org/docs/en/plugin/relative-time
+   */
+  static relative(timestamp: Date): string {
+    if (!dayjs(timestamp).isValid()) {
+      throw INVALID_DATE_ERROR;
+    }
+    return dayjs().to(timestamp);
+  }
+
+  /**
+   *
+   * @param amount *Amount* of {@link TimeUnits} to get in the future
+   * @param unit Which {@link TimeUnits} to retrieve
+   * @returns A future ISO timestamp
+   */
+  static futureISO(amount: number, unit: TimeUnits): string {
+    return dayjs().add(amount, unit).toISOString();
+  }
+
+  /**
+   *
+   * @param amount *Amount* of {@link TimeUnits} to get in the future
+   * @param unit Which {@link TimeUnits} to retrieve
+   * @returns A future UNIX timestamp
+   */
+  static futureUNIX(amount: number, unit: TimeUnits): number {
+    return dayjs().add(amount, unit).unix();
+  }
+
+  /**
+   *
+   * @param amount *Amount* of {@link TimeUnits} to get in the past
+   * @param unit Which {@link TimeUnits} to retrieve
+   * @returns A past ISO timestamp
+   */
+  static pastISO(amount: number, unit: TimeUnits): string {
+    return dayjs().add(amount, unit).toISOString();
+  }
+
+  /**
+   *
+   * @param amount *Amount* of {@link TimeUnits} to get in the past
+   * @param unit Which {@link TimeUnits} to retrieve
+   * @returns A past UNIX timestamp
+   */
+  static pastUNIX(amount: number, unit: TimeUnits): number {
+    return dayjs().add(amount, unit).unix();
+  }
 }

@@ -13,7 +13,7 @@
 const MAX_CHILD_ITEM_LIMIT = 200;
 const MAX_ITEM_LIMIT_ERROR =
   "MAX_CHILD_ITEM_LIMIT reached, please contact support@plutomi.com for assistance";
-
+const INVALID_DATE_ERROR = "The date you provided appears to be invalid";
 const NAVBAR_NAVIGATION = [
   {
     name: "Dashboard",
@@ -45,6 +45,7 @@ const INVITES_REFRESH_INTERVAL = 10000;
 
 export {
   MAX_CHILD_ITEM_LIMIT,
+  INVALID_DATE_ERROR,
   MAX_ITEM_LIMIT_ERROR,
   NAVBAR_NAVIGATION,
   DROPDOWN_NAVIGATION,

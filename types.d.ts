@@ -74,6 +74,18 @@ export enum EntityTypes {
    */
   LOGIN_LINK = "LOGIN_LINK",
 }
+
+export enum TimeUnits {
+  MILLISECONDS = "milliseconds",
+  SECONDS = "seconds",
+  MINUTES = "minutes",
+  HOURS = "hours",
+  DAYS = "days",
+  WEEKS = "weeks",
+  MONTHS = "months",
+  YEARS = "years",
+}
+
 export interface DynamoBase {
   /**
    * Primary key
