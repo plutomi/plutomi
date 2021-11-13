@@ -30,7 +30,7 @@ export default function ApplicantListItem({ applicant, handleApplicantClick }) {
           <div className="mt-2 sm:flex sm:justify-between">
             <div className="sm:flex">
               <p className="flex items-center text-lg text-normal">
-                {applicant.email}
+                {applicant.applicantEmail}
               </p>
               {/* <p className="mt-2 flex items-center text-lg text-normal sm:mt-0 sm:ml-6">
                   <LocationMarkerIcon
@@ -42,7 +42,7 @@ export default function ApplicantListItem({ applicant, handleApplicantClick }) {
               <p className="mt-2 flex items-center text-lg text-normal sm:mt-0 sm:ml-2 ">
                 <ClickToCopy
                   showText={"Copy Email"}
-                  copyText={applicant.email}
+                  copyText={applicant.applicantEmail}
                 />
               </p>
             </div>

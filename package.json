@@ -14,6 +14,7 @@
     "@aws-cdk/aws-apigatewayv2": "^1.130.0",
     "@aws-cdk/aws-certificatemanager": "^1.130.0",
     "@aws-cdk/aws-cloudfront-origins": "^1.130.0",
+    "@aws-cdk/aws-dynamodb": "^1.132.0",
     "@aws-cdk/aws-ecr": "^1.130.0",
     "@aws-cdk/aws-ecs": "^1.130.0",
     "@aws-cdk/aws-ecs-patterns": "^1.130.0",

@@ -5,30 +5,27 @@ import {
 import { Dynamo } from "../../awsClients/ddbDocClient";
 import { GetCurrentTime } from "../time";
 import { nanoid } from "nanoid";
+import { CreateApplicantInput } from "../../types";
 
 const { DYNAMO_TABLE_NAME } = process.env;
 
-export async function createApplicant(
-  orgId,
-  email,
-  firstName,
-  lastName,
-  openingId,
-  stageId
-) {
+export async function createApplicant(props: CreateApplicantInput) {
+  const { orgId, firstName, lastName, applicantEmail, openingId, stageId } =
+    props;
+
   const now = GetCurrentTime("iso") as string;
   // Applicant ID has to be pretty high as the apply link will be the user ID
   // This is per org btw
   // https://zelark.github.io/nano-id-cc/
-  const applicantId = nanoid(50); // TODO - Also since applications are public, it should not be easily guessed - #165
+  const applicantId = nanoid(60); // Also since applications are public, it should not be easily guessed
   const newApplicant = {
     PK: `ORG#${orgId}#APPLICANT#${applicantId}`,
     SK: `APPLICANT`,
     firstName: firstName,
     lastName: lastName,
     fullName: `${firstName} ${lastName}`,
-    email: email.toLowerCase().trim(),
-    isEmailVerified: false,
+    applicantEmail: applicantEmail.toLowerCase().trim(),
+    isapplicantEmailVerified: false,
     orgId: orgId,
     applicantId: applicantId,
     entityType: "APPLICANT",
