@@ -36,10 +36,7 @@ export default function DashboardContent() {
     }
 
     try {
-      const { message } = await OrgsService.createOrg({
-        GSI1SK: GSI1SK,
-        orgId: orgId,
-      });
+      const { message } = await OrgsService.createOrg(GSI1SK, orgId);
       alert(message);
       setCreateOrgModalOpen(false);
     } catch (error) {
@@ -80,7 +77,7 @@ export default function DashboardContent() {
     }
 
     try {
-      const { message } = await OrgsService.deleteOrg({ orgId: user?.orgId });
+      const { message } = await OrgsService.deleteOrg(user?.orgId);
       alert(message);
     } catch (error) {
       alert(error.response.data.message);

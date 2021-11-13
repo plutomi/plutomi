@@ -12,7 +12,7 @@ function usePublicApplicant(applicantId: string) {
       : false;
 
   const { data, error } = useSWR(
-    shouldFetch && PublicInfoService.getPublicApplicantURL({ applicantId }),
+    shouldFetch && PublicInfoService.getPublicApplicantURL(applicantId),
     fetcher
   );
 

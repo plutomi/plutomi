@@ -23,17 +23,17 @@ export default class ApplicantsService {
   static getApplicantURL(applicantId) {
     return `/api/applicants/${applicantId}`;
   }
-  static async getApplicant({ applicantId }) {
+  static async getApplicant(applicantId) {
     const { data } = await axios.get(this.getApplicantURL(applicantId));
     return data;
   }
 
-  static async deleteApplicant({ applicantId }) {
+  static async deleteApplicant(applicantId) {
     const { data } = await axios.delete(this.getApplicantURL(applicantId));
     return data;
   }
 
-  static async updateApplicant({ applicantId, newApplicantValues }) {
+  static async updateApplicant(applicantId, { newApplicantValues }) {
     const body = {
       newApplicantValues: newApplicantValues,
     };
@@ -42,9 +42,9 @@ export default class ApplicantsService {
   }
 
   static answerQuestionsURL(orgId, applicantId) {
-    return `/api/public/orgs/${orgId}/applicants/${applicantId}/answer`;
+    return `/api/public/orgs/${orgId}/applicants/${applicantId}/answer`; // TODO applicantId is being used in query as well as body. TODO maybe add unique question ids?
   }
-  static async answerQuestions({ orgId, applicantId, responses }) {
+  static async answerQuestions(orgId, applicantId, { responses }) {
     const body = {
       applicantId: applicantId,
       responses: responses,

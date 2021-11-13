@@ -12,7 +12,7 @@ function useAllPublicOpenings(orgId: string): usePublicOpeningsOutput {
   const shouldFetch = orgId ? true : false;
 
   const { data, error } = useSWR(
-    shouldFetch && PublicInfoService.getAllPublicOpeningsURL({ orgId }),
+    shouldFetch && PublicInfoService.getAllPublicOpeningsURL(orgId),
     fetcher
   );
 

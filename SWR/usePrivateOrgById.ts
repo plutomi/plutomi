@@ -10,7 +10,7 @@ function usePrivateOrgById(orgId: string): useOrgOutput {
 
   // TODO make sure this org ID is being passed by the user
   const { data, error } = useSWR(
-    shouldFetch && OrgsService.getOrgURL({ orgId }),
+    shouldFetch && OrgsService.getOrgURL(orgId),
     fetcher
   );
 

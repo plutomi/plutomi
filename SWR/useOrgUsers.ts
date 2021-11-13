@@ -8,7 +8,7 @@ function useOrgUsers(orgId: string): useOrgUsersOutput {
   const shouldFetch = orgId ? true : false;
 
   const { data, error } = useSWR(
-    shouldFetch && OrgsService.getAllUsersInOrgURL({ orgId }),
+    shouldFetch && OrgsService.getAllUsersInOrgURL(orgId),
     fetcher
   );
 
