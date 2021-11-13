@@ -1,7 +1,7 @@
 import axios from "../axios/axios";
 
 export default class InvitesService {
-  static async createInvite({ recipientEmail }) {
+  static async createInvite(recipientEmail) {
     const body = {
       recipientEmail: recipientEmail,
     };
@@ -9,23 +9,23 @@ export default class InvitesService {
     return data;
   }
 
-  static async acceptInvite({ inviteId }) {
+  static async acceptInvite(inviteId) {
     const { data } = await axios.post(`/api/invites/${inviteId}`);
 
     return data;
   }
 
-  static async rejectInvite({ inviteId }) {
+  static async rejectInvite(inviteId) {
     const { data } = await axios.delete(`/api/invites/${inviteId}`);
     return data;
   }
 
-  static getInvitesURL({ userId }) {
+  static getInvitesURL(userId) {
     return `/api/users/${userId}/invites`;
   }
 
-  static async getAllInvites({ userId }: APIGetInvites) {
-    const { data } = await axios.get(this.getInvitesURL({ userId }));
+  static async getAllInvites(userId) {
+    const { data } = await axios.get(this.getInvitesURL(userId));
     return data;
   }
 }

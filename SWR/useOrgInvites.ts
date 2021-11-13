@@ -13,7 +13,7 @@ function useOrgInvites(userId: string): useOrgInvitesOutput {
   const shouldFetch = userId ? true : false;
 
   const { data, error } = useSWR(
-    shouldFetch && InvitesService.getInvitesURL({ userId }),
+    shouldFetch && InvitesService.getInvitesURL(userId),
     fetcher,
     { refreshInterval: INVITES_REFRESH_INTERVAL }
   );
