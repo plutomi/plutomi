@@ -84,9 +84,7 @@ export default function QuestionList() {
     }
 
     try {
-      const { message } = await QuestionsService.deleteQuestion({
-        questionId,
-      });
+      const { message } = await QuestionsService.deleteQuestion(questionId);
       alert(message);
     } catch (error) {
       alert(error.response.data);
