@@ -7,7 +7,7 @@ const { DYNAMO_TABLE_NAME } = process.env;
 export default async function CreateLoginLink({
   user,
   loginLinkHash,
-  login_link_expiry,
+  loginLinkExpiry,
 }) {
   try {
     const now = GetCurrentTime("iso") as string;
@@ -18,7 +18,7 @@ export default async function CreateLoginLink({
       userId: user.userId,
       entityType: "LOGIN_LINK",
       createdAt: now,
-      expiresAt: login_link_expiry,
+      expiresAt: loginLinkExpiry,
       ttl_expiry: GetPastOrFutureTime("future", 1, "days", "unix"),
     };
 

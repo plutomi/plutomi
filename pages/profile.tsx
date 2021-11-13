@@ -35,12 +35,12 @@ export default function Team() {
     try {
       setUserProfileModal({
         ...userProfileModal,
-        is_modal_open: false,
+        isModalOpen: false,
       });
 
       const { message } = await UsersService.updateUser({
         userId: user?.userId,
-        new_user_values: {
+        newUserValues: {
           firstName: userProfileModal.firstName,
           lastName: userProfileModal.lastName,
           GSI1SK: `${userProfileModal.firstName} ${userProfileModal.lastName}`,

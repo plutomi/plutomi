@@ -45,7 +45,7 @@ const handler = async (
 
   if (method === "DELETE") {
     try {
-      if (org.total_users > 1) {
+      if (org.totalUsers > 1) {
         return res.status(400).json({
           message: "You cannot delete this org as there are other users in it",
         });
@@ -53,7 +53,7 @@ const handler = async (
 
       const updatedUser = await UpdateUser({
         userId: userSession.userId,
-        new_user_values: {
+        newUserValues: {
           orgId: "NO_ORG_ASSIGNED",
           orgJoinDate: "NO_ORG_ASSIGNED",
           GSI1PK: "NO_ORG_ASSIGNED",

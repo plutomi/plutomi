@@ -20,6 +20,6 @@ type CustomQuery = {
   applicantId?: string;
   key?: string;
   callbackUrl?: string;
-  question_id?: string;
+  questionId?: string;
   inviteId?: string;
 };

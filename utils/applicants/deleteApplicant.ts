@@ -26,30 +26,28 @@ export default async function DeleteApplicant({ orgId, applicantId }) {
         },
 
         {
-          // Decrement opening's total_applicants
+          // Decrement opening's totalApplicants
           Update: {
             Key: {
               PK: `ORG#${orgId}#OPENING#${applicant.currentOpeningId}`, // todo fix types
               SK: `OPENING`,
             },
             TableName: DYNAMO_TABLE_NAME,
-            UpdateExpression:
-              "SET total_applicants = total_applicants - :value",
+            UpdateExpression: "SET totalApplicants = totalApplicants - :value",
             ExpressionAttributeValues: {
               ":value": 1,
             },
           },
         },
         {
-          // Decrement stage's total_applicants
+          // Decrement stage's totalApplicants
           Update: {
             Key: {
               PK: `ORG#${orgId}#STAGE#${applicant.currentStageId}`, // todo fix types
               SK: `STAGE`,
             },
             TableName: DYNAMO_TABLE_NAME,
-            UpdateExpression:
-              "SET total_applicants = total_applicants - :value",
+            UpdateExpression: "SET totalApplicants = totalApplicants - :value",
             ExpressionAttributeValues: {
               ":value": 1,
             },
@@ -63,8 +61,7 @@ export default async function DeleteApplicant({ orgId, applicantId }) {
               SK: `ORG`,
             },
             TableName: DYNAMO_TABLE_NAME,
-            UpdateExpression:
-              "SET total_applicants = total_applicants - :value",
+            UpdateExpression: "SET totalApplicants = totalApplicants - :value",
             ExpressionAttributeValues: {
               ":value": 1,
             },

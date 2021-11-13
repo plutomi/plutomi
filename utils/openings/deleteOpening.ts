@@ -50,7 +50,7 @@ export async function DeleteOpening({ orgId, openingId }) {
               SK: `ORG`,
             },
             TableName: DYNAMO_TABLE_NAME,
-            UpdateExpression: "SET total_openings = total_openings - :value",
+            UpdateExpression: "SET totalOpenings = totalOpenings - :value",
             ExpressionAttributeValues: {
               ":value": 1,
             },

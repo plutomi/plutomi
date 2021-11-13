@@ -22,11 +22,11 @@ interface APIDeleteOpeningInput {
 
 /**
  * @param openingId - ID of the opening you want to update
- * @param new_opening_values - What properties you would like to update
+ * @param newOpeningValues - What properties you would like to update
  */
 interface APIUpdateOpeningInput {
   openingId: string;
-  new_opening_values: Any;
+  newOpeningValues: Any;
 }
 
 /**
@@ -96,11 +96,11 @@ interface APIGetAllUsersInOrg {
 
 /**
  * @param userId - ID of the user you want to update
- * @param new_user_values - Properties you want to update on the user
+ * @param newUserValues - Properties you want to update on the user
  */
 interface APIUpdateUserInput {
   userId: string;
-  new_user_values: Any;
+  newUserValues: Any;
 }
 
 interface APIGetInvitesURL {

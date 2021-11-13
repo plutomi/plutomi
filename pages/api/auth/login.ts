@@ -46,12 +46,12 @@ const handler = async (
     const user = await CreateUser({ userEmail });
 
     try {
-      const latest_link = await getLatestLoginLink(user.userId);
+      const latestLink = await getLatestLoginLink(user.userId);
 
       // Limit the amount of links sent in a certain period of time
       if (
-        latest_link &&
-        latest_link.createdAt >= timeThreshold &&
+        latestLink &&
+        latestLink.createdAt >= timeThreshold &&
         !user.userEmail.endsWith("@plutomi.com")
       ) {
         return res.status(400).json({
@@ -62,7 +62,7 @@ const handler = async (
       const secret = nanoid(login_link_length);
       const hash = createHash("sha512").update(secret).digest("hex");
 
-      const login_link_expiry = GetPastOrFutureTime(
+      const loginLinkExpiry = GetPastOrFutureTime(
         "future",
         15,
         "minutes",
@@ -73,7 +73,7 @@ const handler = async (
         await CreateLoginLink({
           user: user,
           loginLinkHash: hash,
-          login_link_expiry: login_link_expiry,
+          loginLinkExpiry: loginLinkExpiry,
         });
         const default_redirect = `${process.env.NEXT_PUBLIC_WEBSITE_URL}/dashboard`;
         const login_link = `${
@@ -89,7 +89,7 @@ const handler = async (
           await SendLoginLink({
             recipientEmail: user.userEmail,
             login_link: login_link,
-            login_link_relative_expiry: getRelativeTime(login_link_expiry),
+            loginLinkRelativeExpiry: getRelativeTime(loginLinkExpiry),
           });
           return res
             .status(201)
@@ -111,12 +111,12 @@ const handler = async (
 
   // Validates the login link when clicked
   if (method === "GET") {
-    const validate_login_link_input = {
+    const validateLoginLinkInput = {
       userId: userId,
       key: key,
     };
     try {
-      InputValidation(validate_login_link_input);
+      InputValidation(validateLoginLinkInput);
     } catch (error) {
       return res.status(400).json({ message: `${error.message}` });
     }
@@ -136,14 +136,14 @@ const handler = async (
        * Their account will be suspended for 15 minutes until they can generate a new key
        */
 
-      const updated_login_link = {
+      const updatedLoginLink = {
         ...latestLoginLink,
         linkStatus: "SUSPENDED",
       };
 
       await UpdateLoginLink({
         userId,
-        updated_login_link,
+        updatedLoginLink,
       });
 
       return res.status(401).json({

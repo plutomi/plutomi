@@ -21,11 +21,11 @@ export async function CreateOpening({ orgId, GSI1SK }: CreateOpeningInput) {
     openingId: openingId,
     GSI1PK: `ORG#${orgId}#OPENINGS`,
     GSI1SK: GSI1SK,
-    total_stages: 0,
-    total_openings: 0,
-    total_applicants: 0,
-    is_public: false,
-    stage_order: [],
+    totalStages: 0,
+    totalOpenings: 0,
+    totalApplicants: 0,
+    isPublic: false,
+    stageOrder: [],
   };
 
   const transactParams: TransactWriteCommandInput = {
@@ -47,7 +47,7 @@ export async function CreateOpening({ orgId, GSI1SK }: CreateOpeningInput) {
           },
           TableName: DYNAMO_TABLE_NAME,
           UpdateExpression:
-            "SET total_openings = if_not_exists(total_openings, :zero) + :value",
+            "SET totalOpenings = if_not_exists(totalOpenings, :zero) + :value",
           ExpressionAttributeValues: {
             ":zero": 0,
             ":value": 1,

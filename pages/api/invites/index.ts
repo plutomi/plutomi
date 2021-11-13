@@ -20,11 +20,11 @@ const handler = async (
 
   const { recipientEmail }: APICreateOrgInviteInput = body;
 
-  const default_expiry_time = 3;
+  const defaultExpiryTime = 3;
   const default_expiry_value = "days";
   const expiresAt = GetPastOrFutureTime(
     "future",
-    default_expiry_time,
+    defaultExpiryTime,
     "days" || default_expiry_value,
     "iso"
   );
@@ -33,7 +33,7 @@ const handler = async (
 
   const new_org_invite: CreateOrgInviteInput = {
     claimed: false,
-    org_name: org.GSI1SK, // For the recipient they can see the name of the org instead of the orgId, much neater
+    orgName: org.GSI1SK, // For the recipient they can see the name of the org instead of the orgId, much neater
     createdBy: userSession, // TODO reduce this to just name & email
     orgId: org.orgId,
     recipientEmail: recipientEmail,
@@ -61,14 +61,14 @@ const handler = async (
 
     const new_org_invite_email: SendOrgInviteInput = {
       createdBy: userSession,
-      org_name: org.GSI1SK,
+      orgName: org.GSI1SK,
       recipientEmail: recipient.userEmail, // Will be lowercase & .trim()'d by createUser
     };
     try {
       await CreateOrgInvite({
         orgId: org.orgId,
         user: recipient,
-        org_name: org.GSI1SK,
+        orgName: org.GSI1SK,
         expiresAt: expiresAt,
         createdBy: userSession,
       });

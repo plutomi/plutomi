@@ -10,18 +10,16 @@ export default function OpeningsDropdown({ openings, index }) {
   const router = useRouter();
   const [selected, setSelected] = useState(openings[index]);
 
-  const handleChange = (new_value: DynamoOpening) => {
-    if (selected == new_value) {
+  const handleChange = (newValue: DynamoOpening) => {
+    if (selected == newValue) {
       return;
     }
-    setSelected(new_value);
+    setSelected(newValue);
     router.push(
       `${process.env.NEXT_PUBLIC_WEBSITE_URL}/openings/${
-        new_value.openingId
+        newValue.openingId
       }/stages${
-        new_value.stage_order[0]
-          ? `/${new_value.stage_order[0]}/applicants`
-          : ""
+        newValue.stageOrder[0] ? `/${newValue.stageOrder[0]}/applicants` : ""
       }`
     );
   };
@@ -34,9 +32,9 @@ export default function OpeningsDropdown({ openings, index }) {
         <Listbox.Button className="relative w-full bg-white border border-gray-300 rounded-md shadow-sm pl-3 pr-10 py-2 text-left cursor-default focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500 sm:text-lg">
           <div className="flex items-center">
             <span
-              aria-label={selected?.is_public ? "Online" : "Offline"}
+              aria-label={selected?.isPublic ? "Online" : "Offline"}
               className={classNames(
-                selected?.is_public ? "bg-green-400" : "bg-gray-200",
+                selected?.isPublic ? "bg-green-400" : "bg-gray-200",
                 "flex-shrink-0 inline-block h-2 w-2 rounded-full"
               )}
             />
@@ -70,7 +68,7 @@ export default function OpeningsDropdown({ openings, index }) {
                     <div className="flex items-center">
                       <span
                         className={classNames(
-                          opening.is_public ? "bg-green-400" : "bg-gray-200",
+                          opening.isPublic ? "bg-green-400" : "bg-gray-200",
                           "flex-shrink-0 inline-block h-2 w-2 rounded-full"
                         )}
                         aria-hidden="true"
@@ -84,7 +82,7 @@ export default function OpeningsDropdown({ openings, index }) {
                         {opening.GSI1SK}
                         <span className="sr-only">
                           {" "}
-                          is {opening.is_public ? "online" : "offline"}
+                          is {opening.isPublic ? "online" : "offline"}
                         </span>
                       </span>
                     </div>

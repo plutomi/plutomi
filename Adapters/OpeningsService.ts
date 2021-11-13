@@ -34,10 +34,10 @@ export default class OpeningsService {
 
   static async updateOpening({
     openingId,
-    new_opening_values,
+    newOpeningValues,
   }: APIUpdateOpeningInput) {
     const body = {
-      new_opening_values: new_opening_values,
+      newOpeningValues: newOpeningValues,
     };
     const { data } = await axios.put(this.getOpeningURL({ openingId }), body);
     return data;

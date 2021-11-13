@@ -26,7 +26,7 @@ const handler = async (
         firstName: firstName,
         lastName: lastName,
         openingId: openingId,
-        stageId: opening.stage_order[0],
+        stageId: opening.stageOrder[0],
       };
       try {
         InputValidation(create_applicant_input);
@@ -40,7 +40,7 @@ const handler = async (
       const send_applicant_link_input = {
         applicant_email: new_applicant.email,
         orgId: orgId,
-        org_name: org.GSI1SK,
+        orgName: org.GSI1SK,
         applicantId: new_applicant.applicantId,
       };
       await SendApplicantLink(send_applicant_link_input);

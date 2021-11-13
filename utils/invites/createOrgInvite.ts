@@ -14,7 +14,7 @@ export default async function CreateOrgInvite({
   expiresAt,
   createdBy,
   user,
-  org_name,
+  orgName,
 }) {
   try {
     if (user.orgId === orgId) {
@@ -36,7 +36,7 @@ export default async function CreateOrgInvite({
       PK: `USER#${user.userId}`,
       SK: `ORG_INVITE#${inviteId}`, // Allows sorting, and incase two get created in the same millisecond
       orgId: orgId,
-      org_name: org_name, // using org_name here because GSI1SK is taken obv
+      orgName: orgName, // using orgName here because GSI1SK is taken obv
       createdBy: createdBy,
       entityType: "ORG_INVITE",
       createdAt: now,

@@ -32,10 +32,10 @@ export default function StageSettingsHeader({ deleteStage }) {
   //         type="button"
   //         onClick={() =>
   //           setQuestionModal({
-  //             is_modal_open: true,
-  //             modal_mode: "CREATE",
-  //             question_id: "",
-  //             question_description: "",
+  //             isModalOpen: true,
+  //             modalMode: "CREATE",
+  //             questionId: "",
+  //             questionDescription: "",
   //             GSI1SK: "",
   //           })
   //         }
@@ -89,8 +89,8 @@ export default function StageSettingsHeader({ deleteStage }) {
           type="button"
           onClick={() =>
             setStageModal({
-              is_modal_open: true,
-              modal_mode: "EDIT",
+              isModalOpen: true,
+              modalMode: "EDIT",
               stageId: stageId,
               GSI1SK: stage?.GSI1SK,
             })
@@ -104,12 +104,12 @@ export default function StageSettingsHeader({ deleteStage }) {
           type="button"
           onClick={() =>
             setQuestionModal({
-              is_modal_open: true,
-              modal_mode: "CREATE",
+              isModalOpen: true,
+              modalMode: "CREATE",
               stageId: stageId,
               GSI1SK: "",
-              question_id: "",
-              question_description: "",
+              questionId: "",
+              questionDescription: "",
             })
           }
           className="inline-flex items-center px-4 py-2 border  shadow-sm text-base font-medium rounded-md border-blue-500 text-white bg-blue-500 hover:bg-blue-800 hover:text-white  transition ease-in-out duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"

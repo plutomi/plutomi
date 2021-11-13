@@ -4,11 +4,11 @@ import { Dynamo } from "../../awsClients/ddbDocClient";
 const { DYNAMO_TABLE_NAME } = process.env;
 
 export async function UpdateUser({
-  new_user_values,
+  newUserValues,
   userId,
   ALLOW_FORBIDDEN_KEYS,
 }: {
-  new_user_values: any;
+  newUserValues: any;
   userId: string;
   ALLOW_FORBIDDEN_KEYS?: boolean;
 }) {
@@ -27,7 +27,7 @@ export async function UpdateUser({
       "orgJoinDate",
     ];
 
-    const incomingKeys = Object.keys(new_user_values);
+    const incomingKeys = Object.keys(newUserValues);
     let newKeys = ALLOW_FORBIDDEN_KEYS
       ? incomingKeys
       : incomingKeys.filter((key) => !FORBIDDEN_KEYS.includes(key));
@@ -37,11 +37,11 @@ export async function UpdateUser({
 
     newKeys.forEach((key) => {
       newUpdateExpression.push(`${key} = :${key}`);
-      newAttributes[`:${key}`] = new_user_values[key];
+      newAttributes[`:${key}`] = newUserValues[key];
     });
 
     // TODO refactor this into its own function, easy way to have banned values
-    const banned_values = ["NO_firstName", "NO_lastName"];
+    const banned_values = ["NO_LAST_NAME", "NO_LAST_NAME"];
 
     // @ts-ignore TODO fix types
     const checker = (value) =>

@@ -14,15 +14,15 @@ export async function CreateStageQuestion({
   orgId,
   stageId,
   GSI1SK,
-  question_description,
+  questionDescription,
 }: CreateStageQuestionInput) {
   const now = GetCurrentTime("iso") as string;
-  const question_id = nanoid(70);
+  const questionId = nanoid(70);
   const new_stage_question = {
-    PK: `ORG#${orgId}#QUESTION#${question_id}`,
+    PK: `ORG#${orgId}#QUESTION#${questionId}`,
     SK: `STAGE_QUESTION`,
-    question_description: question_description,
-    question_id: question_id,
+    questionDescription: questionDescription,
+    questionId: questionId,
     entityType: "STAGE_QUESTION",
     createdAt: now,
     GSI1PK: `ORG#${orgId}#STAGE#${stageId}#QUESTIONS`,
@@ -34,12 +34,12 @@ export async function CreateStageQuestion({
   try {
     let stage = await GetStage({ orgId, stageId });
 
-    if (stage.question_order.length >= MAX_CHILD_ITEM_LIMIT) {
+    if (stage.questionOrder.length >= MAX_CHILD_ITEM_LIMIT) {
       throw MAX_ITEM_LIMIT_ERROR;
     }
 
     try {
-      stage.question_order.push(question_id);
+      stage.questionOrder.push(questionId);
 
       const transactParams: TransactWriteCommandInput = {
         TransactItems: [
@@ -58,9 +58,9 @@ export async function CreateStageQuestion({
                 SK: `STAGE`,
               },
               TableName: DYNAMO_TABLE_NAME,
-              UpdateExpression: "SET question_order = :question_order",
+              UpdateExpression: "SET questionOrder = :questionOrder",
               ExpressionAttributeValues: {
-                ":question_order": stage.question_order,
+                ":questionOrder": stage.questionOrder,
               },
             },
           },

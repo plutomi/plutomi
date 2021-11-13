@@ -20,7 +20,7 @@ const handler = async (req: CustomRequest, res: NextApiResponse) => {
         return res.status(404).json({ message: "Stage not found" });
       }
 
-      //   if (!stage.is_public) { // TODO add public and private stages?
+      //   if (!stage.isPublic) { // TODO add public and private stages?
       //     return res
       //       .status(400)
       //       .json({ message: "You cannot apply here just yet" });

@@ -20,7 +20,7 @@ const handler = async (req: CustomRequest, res: NextApiResponse) => {
         return res.status(404).json({ message: "Opening not found" });
       }
 
-      if (!opening.is_public) {
+      if (!opening.isPublic) {
         return res
           .status(400)
           .json({ message: "You cannot apply here just yet" });

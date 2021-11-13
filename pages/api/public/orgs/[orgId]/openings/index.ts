@@ -12,7 +12,7 @@ const handler = async (req: CustomRequest, res: NextApiResponse) => {
     try {
       const all_openings = await GetAllOpeningsInOrg(orgId);
       const only_public = all_openings.filter(
-        (opening): DynamoOpening => opening.is_public
+        (opening): DynamoOpening => opening.isPublic
       );
 
       only_public.forEach((opening) => CleanOpening(opening as DynamoOpening));

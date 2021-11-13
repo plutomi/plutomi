@@ -20,9 +20,9 @@ const handler = async (req: CustomRequest, res: NextApiResponse) => {
         const create_applicant_response_input: CreateApplicantResponseInput = {
           orgId: orgId,
           applicantId: applicantId,
-          question_title: response.question_title,
-          question_description: response.question_description,
-          question_response: response.question_response,
+          questionTitle: response.questionTitle,
+          questionDescription: response.questionDescription,
+          questionResponse: response.questionResponse,
         };
         InputValidation(create_applicant_response_input);
       });
@@ -34,16 +34,16 @@ const handler = async (req: CustomRequest, res: NextApiResponse) => {
     try {
       await Promise.all(
         responses.map(async (response: DynamoApplicantResponse) => {
-          const { question_title, question_description, question_response } =
+          const { questionTitle, questionDescription, questionResponse } =
             response;
 
           const create_applicant_response_input: CreateApplicantResponseInput =
             {
               orgId: orgId,
               applicantId: applicantId,
-              question_title: question_title,
-              question_description: question_description,
-              question_response: question_response,
+              questionTitle: questionTitle,
+              questionDescription: questionDescription,
+              questionResponse: questionResponse,
             };
 
           await CreateApplicantResponse(create_applicant_response_input);

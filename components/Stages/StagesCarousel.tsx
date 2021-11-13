@@ -55,7 +55,7 @@ export default function StageCarousel() {
             name={stage.GSI1SK}
             currentStageId={stage.stageId}
             openingId={stage.openingId}
-            total_applicants={stage.total_applicants}
+            totalApplicants={stage.totalApplicants}
           />
         ))}
       </ItemsCarousel>

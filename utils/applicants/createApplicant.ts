@@ -58,7 +58,7 @@ export async function CreateApplicant({
         },
 
         {
-          // Increment the opening's total_applicants
+          // Increment the opening's totalApplicants
           Update: {
             Key: {
               PK: `ORG#${orgId}#OPENING#${openingId}`,
@@ -66,7 +66,7 @@ export async function CreateApplicant({
             },
             TableName: DYNAMO_TABLE_NAME,
             UpdateExpression:
-              "SET total_applicants = if_not_exists(total_applicants, :zero) + :value",
+              "SET totalApplicants = if_not_exists(totalApplicants, :zero) + :value",
             ExpressionAttributeValues: {
               ":zero": 0,
               ":value": 1,
@@ -82,7 +82,7 @@ export async function CreateApplicant({
             },
             TableName: DYNAMO_TABLE_NAME,
             UpdateExpression:
-              "SET total_applicants = if_not_exists(total_applicants, :zero) + :value",
+              "SET totalApplicants = if_not_exists(totalApplicants, :zero) + :value",
             ExpressionAttributeValues: {
               ":zero": 0,
               ":value": 1,
@@ -98,7 +98,7 @@ export async function CreateApplicant({
             },
             TableName: DYNAMO_TABLE_NAME,
             UpdateExpression:
-              "SET total_applicants = if_not_exists(total_applicants, :zero) + :value",
+              "SET totalApplicants = if_not_exists(totalApplicants, :zero) + :value",
             ExpressionAttributeValues: {
               ":zero": 0,
               ":value": 1,

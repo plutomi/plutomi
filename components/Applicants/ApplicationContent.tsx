@@ -25,41 +25,41 @@ export default function ApplicationContent() {
   }
 
   const handleAnswerChange = async (
-    question_id: string,
-    question_title: string,
-    question_description: string,
+    questionId: string,
+    questionTitle: string,
+    questionDescription: string,
     response: string
   ) => {
     const incoming: ApplicantAnswer = {
-      question_id: question_id,
-      question_title: question_title,
-      question_description: question_description,
-      question_response: response,
+      questionId: questionId,
+      questionTitle: questionTitle,
+      questionDescription: questionDescription,
+      questionResponse: response,
     };
-    const question_order = questions.map((a) => a.question_id);
-    const question_index = question_order.indexOf(question_id);
+    const questionOrder = questions.map((a) => a.questionId);
+    const question_index = questionOrder.indexOf(questionId);
 
-    let found = responses.find((answer) => answer.question_id === question_id);
-    let new_responses = [...responses];
+    let found = responses.find((answer) => answer.questionId === questionId);
+    let newResponses = [...responses];
 
     // Add answer
     if (!found) {
-      new_responses.splice(question_index, 0, incoming);
-      setResponses(new_responses);
+      newResponses.splice(question_index, 0, incoming);
+      setResponses(newResponses);
     }
 
     const response_index = responses.indexOf(found);
 
     // Delete answer
     if (!response || response.length == 0) {
-      new_responses.splice(response_index, 1);
-      setResponses(new_responses);
+      newResponses.splice(response_index, 1);
+      setResponses(newResponses);
       return;
     }
 
     // Replace answer
-    new_responses.splice(question_index, 1, incoming);
-    setResponses(new_responses);
+    newResponses.splice(question_index, 1, incoming);
+    setResponses(newResponses);
   };
 
   const handleSubmit = async () => {
@@ -79,7 +79,7 @@ export default function ApplicationContent() {
     <div>
       <ul className="my-4 space-y-8">
         {questions.map((question: DynamoStageQuestion) => (
-          <li key={question?.question_id} className="space-y-1 mb-4">
+          <li key={question?.questionId} className="space-y-1 mb-4">
             <label
               htmlFor="email"
               className="block text-lg font-medium text-dark"
@@ -93,9 +93,9 @@ export default function ApplicationContent() {
                 id="text"
                 onChange={(e) =>
                   handleAnswerChange(
-                    question?.question_id,
+                    question?.questionId,
                     question?.GSI1SK,
-                    question?.question_description,
+                    question?.questionDescription,
                     e.target.value
                   )
                 }
@@ -103,7 +103,7 @@ export default function ApplicationContent() {
               />
             </div>
             <p className="mt-2 text-sm text-light">
-              {question?.question_description}
+              {question?.questionDescription}
             </p>
           </li>
         ))}

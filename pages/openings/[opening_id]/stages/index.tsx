@@ -22,7 +22,7 @@ export default function Openings() {
     if (!router.isReady) return;
 
     // Redirect to the first stage
-    if (opening.total_stages > 0) {
+    if (opening.totalStages > 0) {
       router.push(
         `${process.env.NEXT_PUBLIC_WEBSITE_URL}/openings/${openingId}/stages/${stages[0].stageId}/applicants` // TODO should this end with applicants?
       );

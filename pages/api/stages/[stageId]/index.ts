@@ -45,7 +45,7 @@ const handler = async (
       const update_stage_input: UpdateStageInput = {
         orgId: userSession.orgId,
         stageId: stageId,
-        new_stage_values: body.new_stage_values,
+        newStageValues: body.newStageValues,
       };
 
       try {

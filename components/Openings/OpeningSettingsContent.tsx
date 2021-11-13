@@ -26,20 +26,20 @@ export default function OpeningSettingsContent() {
       const diff = difference(opening, openingModal);
 
       // Delete the two modal controlling keys
-      delete diff["is_modal_open"];
-      delete diff["modal_mode"];
+      delete diff["isModalOpen"];
+      delete diff["modalMode"];
 
       console.log("Outgoing body", diff);
 
       const { message } = await OpeningsService.updateOpening({
         openingId: openingId,
-        new_opening_values: diff,
+        newOpeningValues: diff,
       });
       alert(message);
       setOpeningModal({
-        is_modal_open: false,
-        modal_mode: "CREATE",
-        is_public: false,
+        isModalOpen: false,
+        modalMode: "CREATE",
+        isPublic: false,
         openingId: "",
         GSI1SK: "",
       });

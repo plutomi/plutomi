@@ -6,7 +6,7 @@ const { DYNAMO_TABLE_NAME } = process.env;
 
 export async function GetAllQuestionsInStage({ orgId, stageId }) {
   const stage = await GetStage({ orgId, stageId });
-  const { question_order } = stage;
+  const { questionOrder } = stage;
 
   const params: QueryCommandInput = {
     IndexName: "GSI1",
@@ -21,8 +21,8 @@ export async function GetAllQuestionsInStage({ orgId, stageId }) {
     const all_questions = await Dynamo.send(new QueryCommand(params));
 
     // Sort questions in the same order of the stage before sending it back
-    const result = question_order.map((i) =>
-      all_questions.Items.find((j) => j.question_id === i)
+    const result = questionOrder.map((i) =>
+      all_questions.Items.find((j) => j.questionId === i)
     );
 
     return result;

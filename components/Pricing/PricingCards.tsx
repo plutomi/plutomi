@@ -1,20 +1,18 @@
 import NumberFormat from "react-number-format";
 
-export default function PricingCard({ applicant_type, description }) {
+export default function PricingCard({ applicantType, description }) {
   const bgColor =
-    applicant_type.toLowerCase() === "idle"
+    applicantType.toLowerCase() === "idle"
       ? "bg-idle-normal"
       : "bg-active-normal";
   const textColor =
-    applicant_type.toLowerCase() === "idle"
-      ? "text-normal"
-      : "text-active-dark";
+    applicantType.toLowerCase() === "idle" ? "text-normal" : "text-active-dark";
 
   return (
     <div className="shadow-md  block md:flex w-auto rounded-md  flex-col">
       <div className={`py-4 bg-orange-100 rounded-t-md`}>
         <p className={`text-2xl text-center font-semibold ${textColor}`}>
-          {applicant_type} Applicants
+          {applicantType} Applicants
         </p>
       </div>
       <div className="bg-white p-6  text-center rounded-b-md max-w-full">

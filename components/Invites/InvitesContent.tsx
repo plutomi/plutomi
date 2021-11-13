@@ -14,10 +14,10 @@ export default function InvitesContent() {
     user?.userId
   );
 
-  const acceptInvite = async (invite) => {
+  const acceptInvite = async (inviteId) => {
     try {
       const { message } = await InvitesService.acceptInvite({
-        inviteId: invite.inviteId,
+        inviteId: inviteId,
       });
       alert(message);
       router.push("/dashboard");

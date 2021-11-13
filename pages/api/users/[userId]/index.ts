@@ -15,7 +15,7 @@ const handler = async (
   }
   const { method, query, body } = req;
   const { userId } = query as CustomQuery;
-  const { new_user_values } = body;
+  const { newUserValues } = body;
 
   if (method === "GET") {
     try {
@@ -42,7 +42,7 @@ const handler = async (
 
   if (method === "PUT") {
     const update_user_input = {
-      new_user_values: new_user_values,
+      newUserValues: newUserValues,
       userId: userSession.userId,
       ALLOW_FORBIDDEN_KEYS: false,
     };

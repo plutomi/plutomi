@@ -43,7 +43,7 @@ const handler = async (
       const update_opening_input: UpdateOpeningInput = {
         orgId: userSession.orgId,
         openingId: openingId,
-        new_opening_values: body.new_opening_values,
+        newOpeningValues: body.newOpeningValues,
       };
 
       try {
@@ -63,11 +63,11 @@ const handler = async (
 
   if (method === "DELETE") {
     try {
-      const delete_opening_input = {
+      const deleteOpeningInput = {
         orgId: userSession.orgId,
         openingId: openingId,
       };
-      await DeleteOpening(delete_opening_input);
+      await DeleteOpening(deleteOpeningInput);
       return res.status(200).json({ message: "Opening deleted" });
     } catch (error) {
       return res

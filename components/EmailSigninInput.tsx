@@ -2,7 +2,7 @@ export default function LoginEmail({
   userEmail,
   onChange,
   sendEmail,
-  button_text,
+  buttonText,
 }) {
   return (
     <form
@@ -26,7 +26,7 @@ export default function LoginEmail({
         type="submit"
         className="mt-3 w-full px-6 py-3 border border-transparent text-base font-medium rounded-md text-white bg-blue-gray-600 shadow-sm transition duration-200 ease-in-out hover:bg-dark focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-normal sm:mt-0 sm:ml-3 sm:flex-shrink-0 sm:inline-flex sm:items-center sm:w-auto"
       >
-        {button_text}
+        {buttonText}
       </button>
     </form>
   );

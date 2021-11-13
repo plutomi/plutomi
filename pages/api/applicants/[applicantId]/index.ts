@@ -44,7 +44,7 @@ const handler = async (
       const update_applicant_input: UpdateApplicantInput = {
         orgId: userSession.orgId,
         applicantId: applicantId,
-        new_applicant_values: body.new_applicant_values,
+        newApplicantValues: body.newApplicantValues,
       };
 
       try {

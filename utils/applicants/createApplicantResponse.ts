@@ -8,9 +8,9 @@ const { DYNAMO_TABLE_NAME } = process.env;
 export async function CreateApplicantResponse({
   orgId,
   applicantId,
-  question_title,
-  question_description,
-  question_response,
+  questionTitle,
+  questionDescription,
+  questionResponse,
 }: CreateApplicantResponseInput) {
   const now = GetCurrentTime("iso") as string;
   const response_id = nanoid(30);
@@ -22,9 +22,9 @@ export async function CreateApplicantResponse({
     entityType: "APPLICANT_RESPONSE",
     createdAt: now,
     response_id: response_id,
-    question_title: question_title,
-    question_description: question_description,
-    question_response: question_response,
+    questionTitle: questionTitle,
+    questionDescription: questionDescription,
+    questionResponse: questionResponse,
     GSI1PK: `ORG#${orgId}#APPLICANT#${applicantId}`,
     GSI1SK: `APPLICANT_RESPONSE`, // TODO add timestmap?
   };

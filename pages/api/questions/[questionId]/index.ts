@@ -14,13 +14,13 @@ const handler = async (
     return res.status(401).json({ message: "Please log in again" });
   }
   const { body, method, query } = req;
-  const { question_id } = query as CustomQuery;
+  const { questionId } = query as CustomQuery;
 
   if (method === "DELETE") {
     try {
       const delete_question_input = {
         orgId: userSession.orgId,
-        question_id: question_id,
+        questionId: questionId,
       };
       await DeleteQuestion(delete_question_input);
       return res.status(200).json({ message: "Question deleted!" });
@@ -36,8 +36,8 @@ const handler = async (
     try {
       const update_question_input: UpdateQuestionInput = {
         orgId: userSession.orgId,
-        question_id: question_id,
-        new_question_values: body.new_question_values, // Just the keys that are passed down
+        questionId: questionId,
+        newQuestionValues: body.newQuestionValues, // Just the keys that are passed down
       };
 
       try {

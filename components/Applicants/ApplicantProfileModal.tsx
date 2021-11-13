@@ -58,7 +58,7 @@ export default function ApplicantProfileModal() {
   const handleModalClose = async () => {
     setApplicantProfileModal({
       ...applicantProfileModal,
-      is_modal_open: false,
+      isModalOpen: false,
     });
     await delay(700); // TODO This is dumb
     // The SWR hook still runs despite the query string being stripped away from the URL
@@ -78,7 +78,7 @@ export default function ApplicantProfileModal() {
     try {
       const { message } = await ApplicantsService.updateApplicant({
         applicantId,
-        new_applicant_values: changes,
+        newApplicantValues: changes,
       });
 
       alert(message);
@@ -91,7 +91,7 @@ export default function ApplicantProfileModal() {
   };
 
   return (
-    <Transition.Root show={applicantProfileModal.is_modal_open} as={Fragment}>
+    <Transition.Root show={applicantProfileModal.isModalOpen} as={Fragment}>
       <Dialog
         as="div"
         className="fixed inset-0 overflow-hidden "
@@ -268,17 +268,17 @@ export default function ApplicantProfileModal() {
                                         className="absolute inset-0"
                                         aria-hidden="true"
                                       />
-                                      {response?.question_title}
+                                      {response?.questionTitle}
                                     </h3>
-                                    {response?.question_description && (
+                                    {response?.questionDescription && (
                                       <p className="text-md text-light">
-                                        {response?.question_description}
+                                        {response?.questionDescription}
                                       </p>
                                     )}
                                     <span className=" inline-flex justify-center items-center space-x-1">
                                       <ChevronDoubleRightIcon className="h-3 w-3" />
                                       <p className="text-lg text-normal font-bold line-clamp-2 ">
-                                        {response?.question_response}
+                                        {response?.questionResponse}
                                       </p>
                                     </span>
                                   </div>

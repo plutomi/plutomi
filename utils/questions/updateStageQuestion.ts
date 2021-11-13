@@ -4,8 +4,8 @@ const { DYNAMO_TABLE_NAME } = process.env;
 
 export default async function UpdateQuestion({
   orgId,
-  question_id,
-  new_question_values,
+  questionId,
+  newQuestionValues,
 }) {
   // TODO user the cleaning functions instead
 
@@ -19,7 +19,7 @@ export default async function UpdateQuestion({
     "GSI1PK",
   ];
 
-  const incomingKeys = Object.keys(new_question_values);
+  const incomingKeys = Object.keys(newQuestionValues);
   // TODO should this throw an error and
   // let the user know we can't update that key?
   // Maybe just return in the message that we weren't able to update those keys
@@ -31,14 +31,14 @@ export default async function UpdateQuestion({
 
   newKeys.forEach((key) => {
     newUpdateExpression.push(`${key} = :${key}`);
-    newAttributes[`:${key}`] = new_question_values[key];
+    newAttributes[`:${key}`] = newQuestionValues[key];
   });
 
   const UpdatedExpression = `SET ${newUpdateExpression.join(", ").toString()}`;
 
   const params = {
     Key: {
-      PK: `ORG#${orgId}#QUESTION#${question_id}`,
+      PK: `ORG#${orgId}#QUESTION#${questionId}`,
       SK: `STAGE_QUESTION`,
     },
     UpdateExpression: UpdatedExpression,

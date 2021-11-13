@@ -37,9 +37,9 @@ export default function OpeningsContent() {
       alert(message);
 
       setOpeningModal({
-        is_modal_open: false,
-        modal_mode: "CREATE",
-        is_public: false,
+        isModalOpen: false,
+        modalMode: "CREATE",
+        isPublic: false,
         openingId: "",
         GSI1SK: "",
       });
@@ -71,9 +71,9 @@ export default function OpeningsContent() {
           <button
             onClick={() =>
               setOpeningModal({
-                is_modal_open: true,
-                modal_mode: "CREATE",
-                is_public: false,
+                isModalOpen: true,
+                modalMode: "CREATE",
+                isPublic: false,
                 openingId: "",
                 GSI1SK: "",
               })

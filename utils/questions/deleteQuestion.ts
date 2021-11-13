@@ -6,15 +6,15 @@ import { Dynamo } from "../../awsClients/ddbDocClient";
 const { DYNAMO_TABLE_NAME } = process.env;
 import { getStage } from "../stages/getStage";
 import { GetQuestion } from "./getQuestionById";
-export async function DeleteQuestion({ orgId, question_id }) {
+export async function DeleteQuestion({ orgId, questionId }) {
   // Delete the question item & update the question order on the stage
   try {
-    let question = await GetQuestion({ orgId, question_id });
+    let question = await GetQuestion({ orgId, questionId });
     let stage = await GetStage({ orgId, stageId: question.stageId });
-    const deleted_question_index = stage.question_order.indexOf(question_id);
+    const deleted_question_index = stage.questionOrder.indexOf(questionId);
 
     // Update question order
-    stage.question_order.splice(deleted_question_index, 1);
+    stage.questionOrder.splice(deleted_question_index, 1);
 
     const transactParams: TransactWriteCommandInput = {
       TransactItems: [
@@ -22,7 +22,7 @@ export async function DeleteQuestion({ orgId, question_id }) {
           // Delete question
           Delete: {
             Key: {
-              PK: `ORG#${orgId}#QUESTION#${question_id}`,
+              PK: `ORG#${orgId}#QUESTION#${questionId}`,
               SK: `STAGE_QUESTION`,
             },
             TableName: DYNAMO_TABLE_NAME,
@@ -36,9 +36,9 @@ export async function DeleteQuestion({ orgId, question_id }) {
               SK: `STAGE`,
             },
             TableName: DYNAMO_TABLE_NAME,
-            UpdateExpression: "SET question_order = :question_order",
+            UpdateExpression: "SET questionOrder = :questionOrder",
             ExpressionAttributeValues: {
-              ":question_order": stage.question_order,
+              ":questionOrder": stage.questionOrder,
             },
           },
         },

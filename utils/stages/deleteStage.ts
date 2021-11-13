@@ -19,10 +19,10 @@ export async function DeleteStage({ orgId, stageId }: DeleteStageInput) {
     });
 
     // Set the new stage order
-    let new_stage_order = opening.stage_order.filter(
+    let newStageOrder = opening.stageOrder.filter(
       (id: string) => id !== stageId
     );
-    opening.stage_order = new_stage_order;
+    opening.stageOrder = newStageOrder;
 
     // Delete the stage item & update the stage order on the opening
     const transactParams: TransactWriteCommandInput = {
@@ -46,9 +46,9 @@ export async function DeleteStage({ orgId, stageId }: DeleteStageInput) {
             },
             TableName: DYNAMO_TABLE_NAME,
             ConditionExpression: "attribute_exists(PK)",
-            UpdateExpression: "SET stage_order = :stage_order",
+            UpdateExpression: "SET stageOrder = :stageOrder",
             ExpressionAttributeValues: {
-              ":stage_order": opening.stage_order,
+              ":stageOrder": opening.stageOrder,
             },
           },
         },
@@ -61,7 +61,7 @@ export async function DeleteStage({ orgId, stageId }: DeleteStageInput) {
               SK: `ORG`,
             },
             TableName: DYNAMO_TABLE_NAME,
-            UpdateExpression: "SET total_stages = total_stages - :value",
+            UpdateExpression: "SET totalStages = totalStages - :value",
             ExpressionAttributeValues: {
               ":value": 1,
             },

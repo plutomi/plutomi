@@ -11,7 +11,7 @@ export default function Login({ loggedOutPageText }) {
     `We've sent a magic login link to your email!`
   );
   const [emailSubmitted, setEmailSubmitted] = useState(false);
-  const [button_text, setButtonText] = useState("Send Link");
+  const [buttonText, setButtonText] = useState("Send Link");
 
   const handleEmailChange = (newEmail) => {
     setUserEmail(newEmail);
@@ -81,7 +81,7 @@ export default function Login({ loggedOutPageText }) {
             <LoginEmail
               onChange={handleEmailChange}
               userEmail={userEmail}
-              button_text={button_text}
+              buttonText={buttonText}
               sendEmail={sendEmail}
             />{" "}
             <p className=" text-lg text-red text-center sm:max-w-8xl max-w-sm">

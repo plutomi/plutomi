@@ -16,20 +16,20 @@ const handler = async (
   const { openingId } = query as CustomQuery;
 
   if (method === "GET") {
-    const get_all_applicants_in_opening_input = {
+    const getAllApplicantsInOpeningInput = {
       orgId: userSession.orgId,
       openingId: openingId,
     };
 
     try {
-      InputValidation(get_all_applicants_in_opening_input);
+      InputValidation(getAllApplicantsInOpeningInput);
     } catch (error) {
       return res.status(400).json({ message: `${error.message}` });
     }
 
     try {
       const all_applicants = await GetAllApplicantsInOpening(
-        get_all_applicants_in_opening_input
+        getAllApplicantsInOpeningInput
       );
       return res.status(200).json(all_applicants);
     } catch (error) {

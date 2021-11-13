@@ -22,9 +22,9 @@ export async function CreateStage({
     SK: `STAGE`,
     entityType: "STAGE",
     createdAt: now,
-    question_order: [],
+    questionOrder: [],
     stageId: stageId,
-    total_applicants: 0,
+    totalApplicants: 0,
     openingId: openingId,
     GSI1PK: `ORG#${orgId}#OPENING#${openingId}#STAGES`, // Get all stages in an opening
     GSI1SK: GSI1SK,
@@ -35,9 +35,9 @@ export async function CreateStage({
 
     try {
       // Get current opening
-      opening.stage_order.push(stageId);
+      opening.stageOrder.push(stageId);
 
-      if (opening.stage_order.length >= MAX_CHILD_ITEM_LIMIT) {
+      if (opening.stageOrder.length >= MAX_CHILD_ITEM_LIMIT) {
         throw MAX_ITEM_LIMIT_ERROR;
       }
 
@@ -62,9 +62,9 @@ export async function CreateStage({
               TableName: DYNAMO_TABLE_NAME,
 
               UpdateExpression:
-                "SET stage_order = :stage_order, total_stages = if_not_exists(total_stages, :zero) + :value",
+                "SET stageOrder = :stageOrder, totalStages = if_not_exists(totalStages, :zero) + :value",
               ExpressionAttributeValues: {
-                ":stage_order": opening.stage_order,
+                ":stageOrder": opening.stageOrder,
                 ":zero": 0,
                 ":value": 1,
               },
@@ -79,7 +79,7 @@ export async function CreateStage({
               },
               TableName: DYNAMO_TABLE_NAME,
               UpdateExpression:
-                "SET total_stages = if_not_exists(total_stages, :zero) + :value",
+                "SET totalStages = if_not_exists(totalStages, :zero) + :value",
               ExpressionAttributeValues: {
                 ":zero": 0,
                 ":value": 1,

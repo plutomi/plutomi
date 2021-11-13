@@ -5,7 +5,7 @@ const { DYNAMO_TABLE_NAME } = process.env;
 
 export async function GetAllStagesInOpening(orgId: string, openingId: string) {
   const opening = await GetOpening({ orgId, openingId });
-  const { stage_order } = opening;
+  const { stageOrder } = opening;
 
   const params: QueryCommandInput = {
     TableName: DYNAMO_TABLE_NAME,
@@ -20,7 +20,7 @@ export async function GetAllStagesInOpening(orgId: string, openingId: string) {
     const response = await Dynamo.send(new QueryCommand(params));
     const all_stages = response.Items;
 
-    const result = stage_order.map((i) =>
+    const result = stageOrder.map((i) =>
       all_stages.find((j) => j.stageId === i)
     );
 

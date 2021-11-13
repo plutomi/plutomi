@@ -31,8 +31,8 @@ export default function OpeningList() {
               href={`${process.env.NEXT_PUBLIC_WEBSITE_URL}/openings/${
                 opening.openingId
               }/${
-                opening.total_stages > 0
-                  ? `stages/${opening.stage_order[0]}/applicants` // TODO should this end with applicants?
+                opening.totalStages > 0
+                  ? `stages/${opening.stageOrder[0]}/applicants` // TODO should this end with applicants?
                   : `settings`
               }
               `}
@@ -44,7 +44,7 @@ export default function OpeningList() {
                       {opening.GSI1SK}
                     </h1>
                     <div className="ml-2 flex-shrink-0 flex">
-                      {opening.is_public ? (
+                      {opening.isPublic ? (
                         <p className="px-2 inline-flex text-sm leading-5 font-semibold rounded-full bg-green-100 text-green-800">
                           Public
                         </p>
@@ -62,16 +62,16 @@ export default function OpeningList() {
                           className="flex-shrink-0 mr-1.5 h-5 w-5 text-light"
                           aria-hidden="true"
                         />
-                        {opening.total_applicants}
+                        {opening.totalApplicants}
                       </p>
                       <p className="mt-2 flex items-center text-lg text-normal sm:mt-0 sm:ml-6">
                         <ViewBoardsIcon
                           className="flex-shrink-0 mr-1.5 h-5 w-5 text-light"
                           aria-hidden="true"
                         />
-                        {opening.total_stages}
+                        {opening.totalStages}
                       </p>
-                      {opening?.is_public ? (
+                      {opening?.isPublic ? (
                         <p className="mt-2 flex items-center text-lg text-normal sm:mt-0 sm:ml-6">
                           <ClickToCopy
                             showText={"Application Link"}

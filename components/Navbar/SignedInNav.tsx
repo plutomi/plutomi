@@ -69,14 +69,14 @@ export default function SignedInNav({ current }) {
                     {NAVBAR_NAVIGATION.map((item) => {
                       if (
                         user?.orgId === "NO_ORG_ASSIGNED" &&
-                        item.hidden_if_no_org
+                        item.hiddenIfNoOrg
                       ) {
                         return null;
                       }
 
                       if (
                         user?.orgId !== "NO_ORG_ASSIGNED" &&
-                        item.hidden_if_org
+                        item.hiddenIfOrg
                       ) {
                         return null;
                       }
@@ -146,8 +146,8 @@ export default function SignedInNav({ current }) {
                             "Loading user info..."
                           ) : (
                             <>
-                              {!user?.GSI1SK.includes("NO_firstName") ||
-                                (!user?.GSI1SK.includes("NO_lastName") && (
+                              {!user?.GSI1SK.includes("NO_LAST_NAME") ||
+                                (!user?.GSI1SK.includes("NO_LAST_NAME") && (
                                   <div className="   text-dark ">
                                     Signed in as ${user?.GSI1SK}
                                   </div>

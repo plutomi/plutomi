@@ -17,9 +17,9 @@ export default function EmptyOpeningsState() {
           type="button"
           onClick={() =>
             setOpeningModal({
-              is_modal_open: true,
-              modal_mode: "CREATE",
-              is_public: false,
+              isModalOpen: true,
+              modalMode: "CREATE",
+              isPublic: false,
               openingId: "",
               GSI1SK: "",
             })
