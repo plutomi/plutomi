@@ -36,10 +36,7 @@ export default function DashboardContent() {
     }
 
     try {
-      const { message } = await OrgsService.createOrg({
-        GSI1SK: GSI1SK,
-        orgId: orgId,
-      });
+      const { message } = await OrgsService.createOrg(GSI1SK, orgId);
       alert(message);
       setCreateOrgModalOpen(false);
     } catch (error) {
@@ -51,13 +48,10 @@ export default function DashboardContent() {
 
   const updateName = async ({ firstName, lastName }) => {
     try {
-      const { message } = await UsersService.updateUser({
-        userId: user?.userId,
-        newUserValues: {
-          firstName: firstName,
-          lastName: lastName,
-          GSI1SK: `${firstName} ${lastName}`,
-        },
+      const { message } = await UsersService.updateUser(user?.userId, {
+        firstName: firstName,
+        lastName: lastName,
+        GSI1SK: `${firstName} ${lastName}`,
       });
       alert(message);
     } catch (error) {
@@ -80,7 +74,7 @@ export default function DashboardContent() {
     }
 
     try {
-      const { message } = await OrgsService.deleteOrg({ orgId: user?.orgId });
+      const { message } = await OrgsService.deleteOrg(user?.orgId);
       alert(message);
     } catch (error) {
       alert(error.response.data.message);

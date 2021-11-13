@@ -26,9 +26,7 @@ export default function TeamContent() {
   const createInvite = async (recipientEmail: string) => {
     try {
       // TODO add custom expiry - Defaults to 3 days
-      const { message } = await InvitesService.createInvite({
-        recipientEmail: recipientEmail,
-      });
+      const { message } = await InvitesService.createInvite(recipientEmail);
       alert(message);
       setCreateInviteModalOpen(false);
     } catch (error) {

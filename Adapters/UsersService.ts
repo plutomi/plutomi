@@ -9,18 +9,18 @@ export default class UsersService {
     return data;
   }
 
-  static getSpecificUserURL({ userId }: APIGetUserURL) {
+  static getSpecificUserURL(userId) {
     return `/api/users/${userId}`;
   }
-  static async getSpecificUser({ userId }: APIGetUserInput) {
-    const { data } = await axios.get(this.getSpecificUserURL({ userId }));
+  static async getSpecificUser(userId) {
+    const { data } = await axios.get(this.getSpecificUserURL(userId));
     return data;
   }
-  static async updateUser({ userId, newUserValues }) {
+  static async updateUser(userId, newUserValues) {
     const body = {
       newUserValues: newUserValues,
     };
-    const { data } = await axios.put(this.getSpecificUserURL({ userId }), body);
+    const { data } = await axios.put(this.getSpecificUserURL(userId), body);
     return data;
   }
 }

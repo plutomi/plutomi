@@ -30,9 +30,9 @@ export default function OpeningsContent() {
 
   const createOpening = async () => {
     try {
-      const { message } = await OpeningsService.createOpening({
-        GSI1SK: openingModal.GSI1SK,
-      });
+      const { message } = await OpeningsService.createOpening(
+        openingModal.GSI1SK
+      );
 
       alert(message);
 

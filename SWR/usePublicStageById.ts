@@ -15,7 +15,7 @@ function usePublicStageById( // TODO i think this can be refactored since we no 
 
   const { data, error } = useSWR(
     shouldFetch &&
-      PublicInfoService.getPublicStageURL({ orgId, openingId, stageId }),
+      PublicInfoService.getPublicStageURL(orgId, openingId, stageId),
     fetcher
   );
 

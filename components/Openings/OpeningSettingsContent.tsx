@@ -31,10 +31,7 @@ export default function OpeningSettingsContent() {
 
       console.log("Outgoing body", diff);
 
-      const { message } = await OpeningsService.updateOpening({
-        openingId: openingId,
-        newOpeningValues: diff,
-      });
+      const { message } = await OpeningsService.updateOpening(openingId, diff);
       alert(message);
       setOpeningModal({
         isModalOpen: false,
@@ -47,7 +44,7 @@ export default function OpeningSettingsContent() {
       alert(error.response.data.message);
     }
     // Refresh opening data
-    mutate(OpeningsService.getOpeningURL({ openingId: openingId }));
+    mutate(OpeningsService.getOpeningURL(openingId));
   };
 
   return (

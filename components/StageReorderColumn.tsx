@@ -19,10 +19,10 @@ import OpeningsService from "../adapters/OpeningsService";
 export default function StageReorderColumn() {
   const createStage = async () => {
     try {
-      const { message } = await StagesService.createStage({
-        GSI1SK: stageModal.GSI1SK,
-        openingId: openingId,
-      });
+      const { message } = await StagesService.createStage(
+        stageModal.GSI1SK,
+        openingId
+      );
       alert(message);
       setStageModal({ ...stageModal, GSI1SK: "", isModalOpen: false });
     } catch (error) {
@@ -30,14 +30,10 @@ export default function StageReorderColumn() {
       alert(error.response.data.message);
     }
     // Refresh stage order
-    mutate(OpeningsService.getOpeningURL({ openingId }));
+    mutate(OpeningsService.getOpeningURL(openingId));
 
     // Refresh stage list
-    mutate(
-      OpeningsService.getAllStagesInOpeningURL({
-        openingId: openingId,
-      })
-    );
+    mutate(OpeningsService.getAllStagesInOpeningURL(openingId));
   };
 
   const updateStage = async () => {
@@ -50,10 +46,7 @@ export default function StageReorderColumn() {
       delete diff["isModalOpen"];
       delete diff["modalMode"];
 
-      const { message } = await StagesService.updateStage({
-        stageId: stageId,
-        newStageValues: diff,
-      });
+      const { message } = await StagesService.updateStage(stageId, diff);
       alert(message);
       setStageModal({
         isModalOpen: false,
@@ -65,11 +58,7 @@ export default function StageReorderColumn() {
       alert(error.response.data.message);
     }
 
-    mutate(
-      StagesService.getStageURL({
-        stageId: stageId,
-      })
-    );
+    mutate(StagesService.getStageURL(stageId));
   };
 
   const router = useRouter();
@@ -115,11 +104,8 @@ export default function StageReorderColumn() {
     setNewStages(newOrder);
 
     try {
-      await OpeningsService.updateOpening({
-        openingId: openingId,
-        newOpeningValues: {
-          stageOrder: newStageOrder,
-        },
+      await OpeningsService.updateOpening(openingId, {
+        stageOrder: newStageOrder,
       });
     } catch (error) {
       console.error(error.response.data.message);
@@ -127,14 +113,10 @@ export default function StageReorderColumn() {
     }
 
     // Refresh the stage order
-    mutate(OpeningsService.getOpeningURL({ openingId }));
+    mutate(OpeningsService.getOpeningURL(openingId));
 
     // Refresh the stages
-    mutate(
-      OpeningsService.getAllStagesInOpeningURL({
-        openingId: openingId,
-      })
-    );
+    mutate(OpeningsService.getAllStagesInOpeningURL(openingId));
   };
 
   return (

@@ -28,11 +28,11 @@ export default function LoginHomepage({ callbackUrl }: CallbackUrl) {
     e.preventDefault();
 
     try {
-      const { message } = await AuthService.login({
-        userEmail: userEmail,
-        callbackUrl: callbackUrl,
-        loginMethod: "LINK",
-      });
+      const { message } = await AuthService.login(
+        userEmail,
+        callbackUrl,
+        "LINK"
+      );
 
       setSubmittedText(message);
       setEmailSubmitted(true);
@@ -45,13 +45,11 @@ export default function LoginHomepage({ callbackUrl }: CallbackUrl) {
     console.log(response);
     const userEmail = response.profileObj.email;
 
-    const input = {
-      userEmail: userEmail,
-      callbackUrl: `${process.env.NEXT_PUBLIC_WEBSITE_URL}/dashboard`, // TODO make this a config variable as the "DEFAULT_REDIRECT_ROUTE_HOMEPAGE"
-      loginMethod: "GOOGLE",
-    };
-    console.log(input);
-    const { message } = await AuthService.login(input);
+    const { message } = await AuthService.login(
+      userEmail,
+      `${process.env.NEXT_PUBLIC_WEBSITE_URL}/dashboard`, // TODO make this a config variable as the "DEFAULT_REDIRECT_ROUTE_HOMEPAGE"
+      "GOOGLE"
+    );
 
     window.location.replace(message);
   };

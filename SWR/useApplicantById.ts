@@ -12,7 +12,7 @@ function useApplicantById(applicantId: string): useApplicantByIdOutput {
       : false;
 
   const { data, error } = useSWR(
-    shouldFetch && ApplicantsService.getApplicantURL({ applicantId }),
+    shouldFetch && ApplicantsService.getApplicantURL(applicantId),
     fetcher
   );
 

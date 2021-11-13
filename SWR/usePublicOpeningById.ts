@@ -13,7 +13,7 @@ function usePublicOpeningById(
   const shouldFetch = orgId && openingId ? true : false;
 
   const { data, error } = useSWR(
-    shouldFetch && PublicInfoService.getPublicOpeningURL({ orgId, openingId }),
+    shouldFetch && PublicInfoService.getPublicOpeningURL(orgId, openingId),
 
     fetcher
   );

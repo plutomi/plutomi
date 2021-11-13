@@ -1,7 +1,7 @@
 import axios from "../axios/axios";
 
 export default class StagesService {
-  static async createStage({ GSI1SK, openingId }) {
+  static async createStage(GSI1SK, openingId) {
     const body = {
       GSI1SK: GSI1SK,
       openingId: openingId,
@@ -11,46 +11,42 @@ export default class StagesService {
     return data;
   }
 
-  static getStageURL({ stageId }) {
+  static getStageURL(stageId) {
     return `/api/stages/${stageId}`;
   }
-  static async getStage({ stageId }) {
-    const { data } = await axios.get(this.getStageURL({ stageId }));
+  static async getStage(stageId) {
+    const { data } = await axios.get(this.getStageURL(stageId));
     return data;
   }
 
-  static async deleteStage({ stageId }) {
-    const { data } = await axios.delete(this.getStageURL({ stageId }));
+  static async deleteStage(stageId) {
+    const { data } = await axios.delete(this.getStageURL(stageId));
     return data;
   }
 
-  static async updateStage({ stageId, newStageValues }) {
+  static async updateStage(stageId, newStageValues) {
     const body = {
       newStageValues: newStageValues,
     };
-    const { data } = await axios.put(this.getStageURL({ stageId }), body);
+    const { data } = await axios.put(this.getStageURL(stageId), body);
     return data;
   }
 
-  static getAllQuestionsInStageURL({ stageId }) {
+  static getAllQuestionsInStageURL(stageId) {
     return `/api/stages/${stageId}/questions`;
   }
 
-  static async getAllQuestionsInStage({ stageId }) {
-    const { data } = await axios.get(
-      this.getAllQuestionsInStageURL({ stageId })
-    );
+  static async getAllQuestionsInStage(stageId) {
+    const { data } = await axios.get(this.getAllQuestionsInStageURL(stageId));
     return data;
   }
 
-  static getAllApplicantsInStageURL({ stageId }) {
+  static getAllApplicantsInStageURL(stageId) {
     return `/api/stages/${stageId}/applicants`;
   }
 
-  static async getAllApplicantsInStage({ stageId }) {
-    const { data } = await axios.get(
-      this.getAllApplicantsInStageURL({ stageId })
-    );
+  static async getAllApplicantsInStage(stageId) {
+    const { data } = await axios.get(this.getAllApplicantsInStageURL(stageId));
     return data;
   }
 }

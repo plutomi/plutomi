@@ -38,13 +38,10 @@ export default function Team() {
         isModalOpen: false,
       });
 
-      const { message } = await UsersService.updateUser({
-        userId: user?.userId,
-        newUserValues: {
-          firstName: userProfileModal.firstName,
-          lastName: userProfileModal.lastName,
-          GSI1SK: `${userProfileModal.firstName} ${userProfileModal.lastName}`,
-        },
+      const { message } = await UsersService.updateUser(user?.userId, {
+        firstName: userProfileModal.firstName,
+        lastName: userProfileModal.lastName,
+        GSI1SK: `${userProfileModal.firstName} ${userProfileModal.lastName}`,
       });
       alert(message);
     } catch (error) {

@@ -56,22 +56,15 @@ export default function QuestionList() {
     setNewQuestions(newOrder);
 
     try {
-      await StagesService.updateStage({
-        stageId: stageId,
-        newStageValues: {
-          questionOrder: newQuestionOrder,
-        },
+      await StagesService.updateStage(stageId, {
+        questionOrder: newQuestionOrder,
       });
     } catch (error) {
       alert(error.response.data.message);
       console.error(error.response.data.message);
     }
 
-    mutate(
-      StagesService.getStageURL({
-        stageId: stageId,
-      })
-    );
+    mutate(StagesService.getStageURL(stageId));
   };
 
   const deleteQuestion = async (questionId: string) => {
@@ -84,23 +77,17 @@ export default function QuestionList() {
     }
 
     try {
-      const { message } = await QuestionsService.deleteQuestion({
-        questionId,
-      });
+      const { message } = await QuestionsService.deleteQuestion(questionId);
       alert(message);
     } catch (error) {
       alert(error.response.data);
     }
 
     // Refresh the stage (which returns the question order)
-    mutate(
-      StagesService.getStageURL({
-        stageId: stageId,
-      })
-    );
+    mutate(StagesService.getStageURL(stageId));
 
     // Refresh questions
-    mutate(StagesService.getAllQuestionsInStageURL({ stageId }));
+    mutate(StagesService.getAllQuestionsInStageURL( stageId ));
   };
 
   if (isQuestionsLoading) {

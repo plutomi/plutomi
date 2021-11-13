@@ -10,7 +10,7 @@ function usePublicOrgById(orgId: string): useOrgOutput {
   const shouldFetch = orgId ? true : false;
 
   const { data, error } = useSWR(
-    shouldFetch && PublicInfoService.getPublicOrgURL({ orgId }),
+    shouldFetch && PublicInfoService.getPublicOrgURL(orgId),
     fetcher
   );
 

@@ -17,11 +17,11 @@ import QuestionsService from "../../adapters/QuestionsService";
 export default function StageSettingsContent() {
   const createQuestion = async () => {
     try {
-      const { message } = await QuestionsService.createQuestion({
-        GSI1SK: questionModal.GSI1SK,
-        stageId: stageId,
-        questionDescription: questionModal.questionDescription,
-      });
+      const { message } = await QuestionsService.createQuestion(
+        questionModal.GSI1SK,
+        stageId,
+        questionModal.questionDescription
+      );
 
       alert(message);
       setQuestionModal({
@@ -37,14 +37,10 @@ export default function StageSettingsContent() {
     }
 
     // Refresh the questionOrder
-    mutate(
-      StagesService.getStageURL({
-        stageId: stageId,
-      })
-    );
+    mutate(StagesService.getStageURL(stageId));
 
     // Refresh the question list
-    mutate(StagesService.getAllQuestionsInStageURL({ stageId }));
+    mutate(StagesService.getAllQuestionsInStageURL( stageId ));
   };
 
   const updateQuestion = async () => {
@@ -63,10 +59,10 @@ export default function StageSettingsContent() {
 
       console.log(`Difference between the two objects`, diff);
 
-      const { message } = await QuestionsService.updateQuestion({
-        questionId: questionModal.questionId,
-        newQuestionValues: diff,
-      });
+      const { message } = await QuestionsService.updateQuestion(
+        questionModal.questionId,
+        diff
+      );
       setQuestionModal({
         isModalOpen: false,
         modalMode: "CREATE",
@@ -81,14 +77,10 @@ export default function StageSettingsContent() {
     }
 
     // Refresh the questionOrder
-    mutate(
-      StagesService.getStageURL({
-        stageId: stageId,
-      })
-    );
+    mutate(StagesService.getStageURL(stageId));
 
     // Refresh the question list
-    mutate(StagesService.getAllQuestionsInStageURL({ stageId }));
+    mutate(StagesService.getAllQuestionsInStageURL( stageId ));
   };
 
   const router = useRouter();

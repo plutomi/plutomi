@@ -16,9 +16,7 @@ export default function InvitesContent() {
 
   const acceptInvite = async (inviteId) => {
     try {
-      const { message } = await InvitesService.acceptInvite({
-        inviteId: inviteId,
-      });
+      const { message } = await InvitesService.acceptInvite(inviteId);
       alert(message);
       router.push("/dashboard");
     } catch (error) {
@@ -30,14 +28,12 @@ export default function InvitesContent() {
     mutate(UsersService.getSelfURL());
 
     // Refresh the user's invites
-    mutate(InvitesService.getInvitesURL({ userId: user?.userId }));
+    mutate(InvitesService.getInvitesURL(user?.userId));
   };
 
   const rejectInvite = async (invite) => {
     try {
-      const { message } = await InvitesService.rejectInvite({
-        inviteId: invite.inviteId,
-      });
+      const { message } = await InvitesService.rejectInvite(invite.inviteId);
 
       alert(message);
     } catch (error) {
@@ -45,7 +41,7 @@ export default function InvitesContent() {
       alert(error.response.data.message);
     }
 
-    mutate(InvitesService.getInvitesURL({ userId: user?.userId }));
+    mutate(InvitesService.getInvitesURL(user?.userId));
   };
 
   if (isInvitesLoading) {

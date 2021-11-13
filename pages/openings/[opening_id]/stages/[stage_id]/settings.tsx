@@ -32,10 +32,7 @@ export default function StageSettings() {
       return;
     }
     try {
-      await StagesService.deleteStage({
-        openingId: openingId,
-        stageId: stageId,
-      });
+      await StagesService.deleteStage(stageId);
       router.push(
         `${process.env.NEXT_PUBLIC_WEBSITE_URL}/openings/${openingId}/settings`
       );
@@ -44,14 +41,10 @@ export default function StageSettings() {
     }
 
     // Refresh the stageOrder
-    mutate(OpeningsService.getOpeningURL({ openingId: openingId }));
+    mutate(OpeningsService.getOpeningURL(openingId));
 
     // Refresh the stage list
-    mutate(
-      OpeningsService.getAllStagesInOpeningURL({
-        openingId: openingId,
-      })
-    );
+    mutate(OpeningsService.getAllStagesInOpeningURL(openingId));
   };
 
   return (
