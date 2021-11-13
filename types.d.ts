@@ -75,17 +75,55 @@ export enum EntityTypes {
   LOGIN_LINK = "LOGIN_LINK",
 }
 export interface DynamoBase {
-  PK: string;
-  SK: string;
-  orgId: string;
-  createdAt: Date;
-  entityType: EntityTypes;
-  GSI1PK?: string;
-  GSI1SK?: string;
-  GSI2PK?: string;
-  GSI2SK?: string;
+  /**
+   * Primary key
+   */
+  readonly PK: string;
+  /**
+   * Sort key
+   */
+  readonly SK: string;
+  /**
+   * Which org this entity belongs to
+   */
+  readonly orgId: string;
+  /**
+   * When was this entity created
+   */
+  readonly createdAt: Date;
+  /**
+   * What type of entity is this
+   */
+  readonly entityType: EntityTypes;
+  /**
+   * Optional GSI1 primary key
+   */
+  readonly GSI1PK?: string;
+  /**
+   * Optional GSI1 sort key
+   */
+  readonly GSI1SK?: string;
+  /**
+   * Optional GSI2 primary key
+   */
+  readonly GSI2PK?: string;
+  /**
+   * Optional GSI2 sort key
+   */
+  readonly GSI2SK?: string;
 }
 
+export interface DynamoApplicant extends DynamoBase {
+  firstName: string;
+  lastName: string;
+  fullName: string;
+  applicantId: string;
+  applicantEmail: string;
+  isApplicantEmailVerified: boolean;
+  entityType: EntityTypes.APPLICANT;
+  currentOpeningId: string;
+  currentStageId: string;
+}
 export interface CreateApplicantInput {
   /**
    * The org this user belongs to

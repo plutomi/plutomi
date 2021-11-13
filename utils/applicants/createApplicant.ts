@@ -5,11 +5,17 @@ import {
 import { Dynamo } from "../../awsClients/ddbDocClient";
 import { GetCurrentTime } from "../time";
 import { nanoid } from "nanoid";
-import { CreateApplicantInput } from "../../types";
+import {
+  CreateApplicantInput,
+  DynamoApplicant,
+  EntityTypes,
+} from "../../types";
 
 const { DYNAMO_TABLE_NAME } = process.env;
 
-export async function createApplicant(props: CreateApplicantInput) {
+export async function createApplicant(
+  props: CreateApplicantInput
+): Promise<DynamoApplicant> {
   const { orgId, firstName, lastName, applicantEmail, openingId, stageId } =
     props;
 
@@ -18,17 +24,17 @@ export async function createApplicant(props: CreateApplicantInput) {
   // This is per org btw
   // https://zelark.github.io/nano-id-cc/
   const applicantId = nanoid(60); // Also since applications are public, it should not be easily guessed
-  const newApplicant = {
+  const newApplicant: DynamoApplicant = {
     PK: `ORG#${orgId}#APPLICANT#${applicantId}`,
     SK: `APPLICANT`,
     firstName: firstName,
     lastName: lastName,
     fullName: `${firstName} ${lastName}`,
     applicantEmail: applicantEmail.toLowerCase().trim(),
-    isapplicantEmailVerified: false,
+    isApplicantEmailVerified: false,
     orgId: orgId,
     applicantId: applicantId,
-    entityType: "APPLICANT",
+    entityType: EntityTypes.APPLICANT,
     createdAt: now,
     // TODO add phone number
     currentOpeningId: openingId,
