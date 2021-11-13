@@ -10,16 +10,16 @@ const { DYNAMO_TABLE_NAME } = process.env;
 export async function CreateAndJoinOrg({ userId, orgId, GSI1SK }) {
   const now = GetCurrentTime("iso") as string;
 
-  const new_org = {
+  const newOrg = {
     PK: `ORG#${orgId}`,
     SK: `ORG`,
     orgId: orgId, // plutomi - Cannot be changed
     entityType: "ORG",
     createdAt: now,
-    total_applicants: 0,
-    total_openings: 0,
-    total_stages: 0,
-    total_users: 1,
+    totalApplicants: 0,
+    totalOpenings: 0,
+    totalStages: 0,
+    totalUsers: 1,
     GSI1PK: `ORG`, // Allows for 'get all orgs' query
     // but cannot do get org by specific name as there might be duplicates
     GSI1SK: GSI1SK, // Actual org name ie: Plutomi Inc - Can be changed!
@@ -48,7 +48,7 @@ export async function CreateAndJoinOrg({ userId, orgId, GSI1SK }) {
         {
           // Create the org
           Put: {
-            Item: new_org,
+            Item: newOrg,
             TableName: DYNAMO_TABLE_NAME,
             ConditionExpression: "attribute_not_exists(PK)",
           },

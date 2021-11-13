@@ -13,12 +13,12 @@ export default function UserProfileModal({ updateUser }) {
   };
 
   return (
-    <Transition.Root show={userProfileModal.is_modal_open} as={Fragment}>
+    <Transition.Root show={userProfileModal.isModalOpen} as={Fragment}>
       <Dialog
         as="div"
         className="fixed inset-0 overflow-hidden "
         onClose={() =>
-          setUserProfileModal({ ...userProfileModal, is_modal_open: false })
+          setUserProfileModal({ ...userProfileModal, isModalOpen: false })
         }
       >
         <div className="absolute inset-0 overflow-hidden">
@@ -62,7 +62,7 @@ export default function UserProfileModal({ updateUser }) {
                             onClick={() =>
                               setUserProfileModal({
                                 ...userProfileModal,
-                                is_modal_open: false,
+                                isModalOpen: false,
                               })
                             }
                           >
@@ -135,11 +135,11 @@ export default function UserProfileModal({ updateUser }) {
                                 aria-describedby="comments-description"
                                 name="comments"
                                 type="checkbox"
-                                checked={userProfileModal.is_public}
+                                checked={userProfileModal.isPublic}
                                 onChange={(e) =>
                                   setUserProfileModal({
                                     ...userProfileModal,
-                                    is_public: e.target.checked,
+                                    isPublic: e.target.checked,
                                   })
                                 }
                                 className="focus:ring-blue-500 h-4 w-4 text-blue-600 border-gray-300 rounded"
@@ -157,7 +157,7 @@ export default function UserProfileModal({ updateUser }) {
                                 className="text-normal"
                               >
                                 Make this opening available to everyone once{" "}
-                                {userProfileModal.modal_mode === "CREATE"
+                                {userProfileModal.modalMode === "CREATE"
                                   ? "created"
                                   : "updated"}
                               </p>
@@ -344,7 +344,7 @@ export default function UserProfileModal({ updateUser }) {
                       onClick={() =>
                         setUserProfileModal({
                           ...userProfileModal,
-                          is_modal_open: false,
+                          isModalOpen: false,
                         })
                       }
                     >

@@ -24,7 +24,7 @@ export default function StageReorderColumn() {
         openingId: openingId,
       });
       alert(message);
-      setStageModal({ ...stageModal, GSI1SK: "", is_modal_open: false });
+      setStageModal({ ...stageModal, GSI1SK: "", isModalOpen: false });
     } catch (error) {
       console.error("Error creating stage", error);
       alert(error.response.data.message);
@@ -47,17 +47,17 @@ export default function StageReorderColumn() {
       const diff = difference(stage, stageModal);
 
       // Delete the two modal controlling keys
-      delete diff["is_modal_open"];
-      delete diff["modal_mode"];
+      delete diff["isModalOpen"];
+      delete diff["modalMode"];
 
       const { message } = await StagesService.updateStage({
         stageId: stageId,
-        new_stage_values: diff,
+        newStageValues: diff,
       });
       alert(message);
       setStageModal({
-        is_modal_open: false,
-        modal_mode: "CREATE",
+        isModalOpen: false,
+        modalMode: "CREATE",
         stageId: "",
         GSI1SK: "",
       });
@@ -83,7 +83,7 @@ export default function StageReorderColumn() {
   );
   const { stage, isStageLoading, isStageError } = useStageById(stageId);
 
-  const [new_stages, setNewStages] = useState(stages);
+  const [newStages, setNewStages] = useState(stages);
   useEffect(() => {
     setNewStages(stages);
   }, [stages]);
@@ -105,20 +105,20 @@ export default function StageReorderColumn() {
       return;
     }
 
-    let new_stage_order = Array.from(opening.stage_order);
-    new_stage_order.splice(source.index, 1);
-    new_stage_order.splice(destination.index, 0, draggableId);
-    let new_order = new_stage_order.map((i) =>
+    let newStageOrder = Array.from(opening.stageOrder);
+    newStageOrder.splice(source.index, 1);
+    newStageOrder.splice(destination.index, 0, draggableId);
+    let newOrder = newStageOrder.map((i) =>
       stages.find((j) => j.stageId === i)
     );
 
-    setNewStages(new_order);
+    setNewStages(newOrder);
 
     try {
       await OpeningsService.updateOpening({
         openingId: openingId,
-        new_opening_values: {
-          stage_order: new_stage_order,
+        newOpeningValues: {
+          stageOrder: newStageOrder,
         },
       });
     } catch (error) {
@@ -149,8 +149,8 @@ export default function StageReorderColumn() {
               setStageModal({
                 ...stageModal,
                 GSI1SK: "",
-                modal_mode: "CREATE",
-                is_modal_open: true,
+                modalMode: "CREATE",
+                isModalOpen: true,
               })
             }
             className="inline-flex items-center px-4 py-2 border  shadow-sm text-base font-medium rounded-md border-blue-500 text-white bg-blue-500 hover:bg-blue-800 hover:text-white  transition ease-in-out duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
@@ -160,10 +160,10 @@ export default function StageReorderColumn() {
           </button>
         </div>
         <h1 className="text-center text-xl font-semibold my-4">
-          {opening?.total_stages == 0 ? "No stages found" : "Stage Order"}
+          {opening?.totalStages == 0 ? "No stages found" : "Stage Order"}
         </h1>
 
-        {opening?.total_stages > 0 && (
+        {opening?.totalStages > 0 && (
           <DragDropContext
             onDragEnd={handleDragEnd}
             onDragStart={() => console.log("Start")}
@@ -171,7 +171,7 @@ export default function StageReorderColumn() {
             <Droppable droppableId={opening.openingId}>
               {(provided) => (
                 <div {...provided.droppableProps} ref={provided.innerRef}>
-                  {new_stages?.map((stage, index) => {
+                  {newStages?.map((stage, index) => {
                     return (
                       <Draggable
                         key={stage.stageId}
@@ -190,7 +190,7 @@ export default function StageReorderColumn() {
                             >
                               <a>
                                 <DraggableStageCard
-                                  total_applicants={stage.total_applicants}
+                                  totalApplicants={stage.totalApplicants}
                                   name={`${stage.GSI1SK}`}
                                   currentStageId={stage.stageId}
                                 />

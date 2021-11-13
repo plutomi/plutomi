@@ -7,7 +7,7 @@ import _ from "lodash";
 export default function DraggableStageCard({
   name,
   currentStageId,
-  total_applicants,
+  totalApplicants,
 }) {
   const router = useRouter();
   const { stageId } = router.query as CustomQuery;
@@ -27,7 +27,7 @@ export default function DraggableStageCard({
           <UserGroupIcon className="w-5 h-5 0" />
           <p className="text-md font-semibold ">
             <NumberFormat
-              value={total_applicants}
+              value={totalApplicants}
               thousandSeparator={true}
               displayType={"text"}
             />

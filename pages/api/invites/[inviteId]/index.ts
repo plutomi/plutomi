@@ -3,8 +3,8 @@ import InputValidation from "../../../../utils/inputValidation";
 import { NextApiResponse } from "next";
 import DeleteOrgInvite from "../../../../utils/invites/deleteOrgInvite";
 import withCleanOrgId from "../../../../middleware/withCleanOrgId";
-import { GetOrgInvite } from "../../../../utils/invites/getOrgInvite";
-import withSession from "../../../../middleware/withSession";
+import { getOrgInvite } from "../../../../utils/invites/getOrgInvite";
+import { withSessionRoute } from "../../../../middleware/withSession";
 import CleanUser from "../../../../utils/clean/cleanUser";
 import { GetUserById } from "../../../../utils/users/getUserById";
 import { JoinOrgFromInvite } from "../../../../utils/orgs/joinOrgFromInvite";
@@ -13,28 +13,28 @@ const handler = async (
   req: NextIronRequest,
   res: NextApiResponse
 ): Promise<void> => {
+  console.log(req.session);
   const userSession = req.session.user;
   if (!userSession) {
     req.session.destroy();
     return res.status(401).json({ message: "Please log in again" });
   }
   const { method, query } = req;
-  const { invite_id } = query as CustomQuery;
+  const { inviteId } = query as CustomQuery;
 
+  console.log("INvite id", req.query);
   // TODO trycatch
-  const invite = await GetOrgInvite({
-    userId: userSession.userId,
-    invite_id: invite_id,
-  });
-
-  const join_org_input = {
+  const invite = await getOrgInvite(userSession.userId, inviteId);
+  console.log("Got invite", invite);
+  const joinOrgInput = {
     userId: userSession.userId,
     invite: invite,
   };
 
   try {
-    InputValidation(join_org_input);
+    InputValidation(joinOrgInput);
   } catch (error) {
+    console.error("Error accepting invite", error);
     return res.status(400).json({ message: `${error.message}` });
   }
 
@@ -54,7 +54,7 @@ const handler = async (
       await req.session.save();
       return res
         .status(200)
-        .json({ message: `You've joined the ${invite.org_name} org!` });
+        .json({ message: `You've joined the ${invite.orgName} org!` });
     } catch (error) {
       return res
         .status(500) // TODO change #
@@ -65,19 +65,19 @@ const handler = async (
   }
 
   if (method === "DELETE") {
-    const delete_org_invite_input = {
+    const deleteOrgInviteInput = {
       userId: userSession.userId,
-      invite_id: invite_id,
+      inviteId: inviteId,
     };
 
     try {
-      InputValidation(delete_org_invite_input);
+      InputValidation(deleteOrgInviteInput);
     } catch (error) {
       return res.status(400).json({ message: `${error.message}` });
     }
 
     try {
-      await DeleteOrgInvite(delete_org_invite_input);
+      await DeleteOrgInvite(deleteOrgInviteInput);
       return res.status(200).json({ message: "Invite rejected!" });
     } catch (error) {
       return res
@@ -89,4 +89,4 @@ const handler = async (
   return res.status(405).json({ message: "Not Allowed" });
 };
 
-export default withSession(withCleanOrgId(handler));
+export default withSessionRoute(withCleanOrgId(handler));

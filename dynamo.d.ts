@@ -28,12 +28,12 @@ interface DynamoOpening {
   openingId: string;
   GSI1PK: string;
   GSI1SK: string;
-  total_applicants: number;
-  is_public: boolean;
-  stage_order: string[];
-  total_stages: 0;
-  total_openings: 0;
-  total_applicants: 0;
+  totalApplicants: number;
+  isPublic: boolean;
+  stageOrder: string[];
+  totalStages: 0;
+  totalOpenings: 0;
+  totalApplicants: 0;
 }
 
 interface DynamoStage {
@@ -42,8 +42,8 @@ interface DynamoStage {
   entityType: "STAGE";
   createdAt: string;
   stageId: string;
-  total_applicants: number;
-  question_order: string[];
+  totalApplicants: number;
+  questionOrder: string[];
   openingId: string;
   GSI1PK: string;
   GSI1SK: string;
@@ -57,7 +57,7 @@ interface DynamoOrgInvite {
   entityType: "ORG_INVITE";
   createdAt: string;
   expiresAt: string;
-  invite_id: string;
+  inviteId: string;
   GSI1PK: string;
   GSI1SK: string;
 }
@@ -65,8 +65,8 @@ interface DynamoOrgInvite {
 interface DynamoStageQuestion {
   PK: string;
   SK: string;
-  question_description: string;
-  question_id: string;
+  questionDescription: string;
+  questionId: string;
   entityType: string;
   createdAt: string;
   GSI1PK: string;
@@ -81,10 +81,10 @@ interface DynamoOrg {
   createdAt: string;
   GSI1PK: `ORG`;
   GSI1SK: string;
-  total_users: number;
-  total_openings: number;
-  total_stages: number;
-  total_applicants: number;
+  totalUsers: number;
+  totalOpenings: number;
+  totalStages: number;
+  totalApplicants: number;
 }
 
 interface DynamoApplicant {
@@ -94,7 +94,7 @@ interface DynamoApplicant {
   lastName: string;
   fullName: string;
   email: string;
-  email_verified: boolean;
+  isEmailVerified: boolean;
   applicantId: string;
   orgId: string;
   entityType: "APPLICANT";
@@ -115,11 +115,11 @@ interface DynamoApplicantResponse {
   orgId: string;
   applicantId: string;
   entityType: "APPLICANT_RESPONSE";
-  question_title: string;
-  question_description: string;
-  question_response: any;
+  questionTitle: string;
+  questionDescription: string;
+  questionResponse: any;
   createdAt: string;
-  response_id: string;
+  responseId: string;
   GSI1PK: string;
   GSI1SK: APPLICANT_RESPONSE;
 }

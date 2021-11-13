@@ -12,7 +12,7 @@ import CreateOrgModal from "../CreateOrgModal";
 export default function DashboardContent() {
   const { user, isUserLoading, isUserError } = useSelf();
   const { org, isOrgLoading, isOrgError } = usePrivateOrgById(user?.orgId);
-  const custom_apply_link = `${process.env.NEXT_PUBLIC_WEBSITE_URL}/${org?.orgId}/apply`;
+  const customApplyLink = `${process.env.NEXT_PUBLIC_WEBSITE_URL}/${org?.orgId}/apply`;
 
   const setCreateOrgModalOpen = useStore(
     (state) => state.setCreateOrgModalOpen
@@ -53,7 +53,7 @@ export default function DashboardContent() {
     try {
       const { message } = await UsersService.updateUser({
         userId: user?.userId,
-        new_user_values: {
+        newUserValues: {
           firstName: firstName,
           lastName: lastName,
           GSI1SK: `${firstName} ${lastName}`,
@@ -119,24 +119,24 @@ export default function DashboardContent() {
             click around!
           </h1>
           <h1>
-            There are <strong>{org?.total_users}</strong> users in this org.
+            There are <strong>{org?.totalUsers}</strong> users in this org.
           </h1>
 
           <h1>
-            Also, there are <strong>{org?.total_applicants}</strong> applicants
-            across <strong>{org?.total_openings}</strong> openings and{" "}
-            <strong>{org?.total_stages}</strong> stages.{" "}
+            Also, there are <strong>{org?.totalApplicants}</strong> applicants
+            across <strong>{org?.totalOpenings}</strong> openings and{" "}
+            <strong>{org?.totalStages}</strong> stages.{" "}
           </h1>
 
           <div className="flex items-center mt-4 -ml-3 text-md">
             <ClickToCopy
               showText={"Copy Application Link"}
-              copyText={custom_apply_link}
+              copyText={customApplyLink}
             />
           </div>
           <div className="flex justify-center mx-auto">
-            {(user?.firstName === "NO_firstName" ||
-              user?.lastName === "NO_lastName") && (
+            {(user?.firstName === "NO_FIRST_NAME" ||
+              user?.lastName === "NO_LAST_NAME") && (
               <UpdateName updateName={updateName} />
             )}
           </div>

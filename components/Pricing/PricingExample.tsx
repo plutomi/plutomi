@@ -11,8 +11,8 @@ export default function Example({ stages, name }) {
           <StageCard
             className={null}
             key={stage.id}
-            stage_title={stage.name}
-            total_applicants={stage.applicants}
+            stageTitle={stage.name}
+            totalApplicants={stage.applicants}
           />
         ))}
       </div>

@@ -17,7 +17,7 @@ export async function JoinOrgFromInvite({ userId, invite }) {
           Delete: {
             Key: {
               PK: `USER#${userId}`,
-              SK: `ORG_INVITE#${invite.invite_id}`,
+              SK: `ORG_INVITE#${invite.inviteId}`,
             },
             TableName: DYNAMO_TABLE_NAME,
           },
@@ -49,7 +49,7 @@ export async function JoinOrgFromInvite({ userId, invite }) {
               SK: `ORG`,
             },
             TableName: DYNAMO_TABLE_NAME,
-            UpdateExpression: "SET total_users = total_users + :value",
+            UpdateExpression: "SET totalUsers = totalUsers + :value",
             ExpressionAttributeValues: {
               ":value": 1,
             },

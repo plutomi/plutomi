@@ -1,7 +1,7 @@
 import withCleanOrgId from "../../../../middleware/withCleanOrgId";
 import { GetOrg } from "../../../../utils/orgs/getOrg";
 import { NextApiResponse } from "next";
-import withSession from "../../../../middleware/withSession";
+import { withSessionRoute } from "../../../../middleware/withSession";
 import CleanUser from "../../../../utils/clean/cleanUser";
 import { UpdateUser } from "../../../../utils/users/updateUser";
 
@@ -45,7 +45,7 @@ const handler = async (
 
   if (method === "DELETE") {
     try {
-      if (org.total_users > 1) {
+      if (org.totalUsers > 1) {
         return res.status(400).json({
           message: "You cannot delete this org as there are other users in it",
         });
@@ -53,7 +53,7 @@ const handler = async (
 
       const updatedUser = await UpdateUser({
         userId: userSession.userId,
-        new_user_values: {
+        newUserValues: {
           orgId: "NO_ORG_ASSIGNED",
           orgJoinDate: "NO_ORG_ASSIGNED",
           GSI1PK: "NO_ORG_ASSIGNED",
@@ -78,4 +78,4 @@ const handler = async (
   return res.status(405).json({ message: "Not Allowed" });
 };
 
-export default withSession(withCleanOrgId(handler));
+export default withSessionRoute(withCleanOrgId(handler));

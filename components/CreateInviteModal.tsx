@@ -106,7 +106,7 @@ export default function CreateInviteModal({ createInvite }) {
                                 aria-describedby="comments-description"
                                 name="comments"
                                 type="checkbox"
-                                checked={is_public}
+                                checked={isPublic}
                                 onChange={(e) => setIsPublic(e.target.checked)}
                                 className="focus:ring-blue-500 h-4 w-4 text-blue-600 border-gray-300 rounded"
                               />

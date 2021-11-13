@@ -8,7 +8,7 @@ const useStore = create((set) => ({
   createInviteModalIsOpen: false,
 
   applicantProfileModal: {
-    is_modal_open: false,
+    isModalOpen: false,
   },
 
   setApplicantProfileModal: (applicantProfileModal) => {
@@ -18,8 +18,8 @@ const useStore = create((set) => ({
   },
 
   userProfileModal: {
-    is_modal_open: false,
-    modal_mode: "EDIT",
+    isModalOpen: false,
+    modalMode: "EDIT",
     firstName: "",
     lastName: "",
   },
@@ -31,8 +31,8 @@ const useStore = create((set) => ({
   },
 
   stageModal: {
-    is_modal_open: false, // False by default
-    modal_mode: "CREATE", // Will render text differently
+    isModalOpen: false, // False by default
+    modalMode: "CREATE", // Will render text differently
     stageId: "",
     GSI1SK: "", // Stage title
   },
@@ -43,11 +43,11 @@ const useStore = create((set) => ({
   },
 
   questionModal: {
-    is_modal_open: false, // False by default
-    modal_mode: "CREATE", // Will render text differently
-    question_id: "",
+    isModalOpen: false, // False by default
+    modalMode: "CREATE", // Will render text differently
+    questionId: "",
     GSI1SK: "", // Question title
-    question_description: "",
+    questionDescription: "",
   },
   setQuestionModal: (questionModal) => {
     set((state) => ({
@@ -56,11 +56,11 @@ const useStore = create((set) => ({
   },
 
   openingModal: {
-    is_modal_open: false, // False by default
-    modal_mode: "CREATE", // Will render text differently
+    isModalOpen: false, // False by default
+    modalMode: "CREATE", // Will render text differently
     openingId: "",
     GSI1SK: "",
-    is_public: false,
+    isPublic: false,
   },
   setOpeningModal: (openingModal) => {
     set((state) => ({

@@ -3,7 +3,7 @@ import { NextApiResponse } from "next";
 import InputValidation from "../../../../utils/inputValidation";
 import UpdateOpening from "../../../../utils/openings/updateOpening";
 import { DeleteOpening } from "../../../../utils/openings/deleteOpening";
-import withSession from "../../../../middleware/withSession";
+import { withSessionRoute } from "../../../../middleware/withSession";
 
 const handler = async (
   req: NextIronRequest,
@@ -17,14 +17,14 @@ const handler = async (
   const { method, query, body } = req;
   const { openingId } = query as CustomQuery;
 
-  const get_opening_input: GetOpeningInput = {
+  const getOpeningInput: GetOpeningInput = {
     orgId: userSession.orgId,
     openingId: openingId,
   };
 
   if (method === "GET") {
     try {
-      const opening = await GetOpening(get_opening_input);
+      const opening = await GetOpening(getOpeningInput);
       if (!opening) {
         return res.status(404).json({ message: "Opening not found" });
       }
@@ -40,19 +40,19 @@ const handler = async (
 
   if (method === "PUT") {
     try {
-      const update_opening_input: UpdateOpeningInput = {
+      const updateOpeningInput: UpdateOpeningInput = {
         orgId: userSession.orgId,
         openingId: openingId,
-        new_opening_values: body.new_opening_values,
+        newOpeningValues: body.newOpeningValues,
       };
 
       try {
-        InputValidation(update_opening_input);
+        InputValidation(updateOpeningInput);
       } catch (error) {
         return res.status(400).json({ message: `${error.message}` });
       }
 
-      await UpdateOpening(update_opening_input);
+      await UpdateOpening(updateOpeningInput);
       return res.status(200).json({ message: "Opening updated!" });
     } catch (error) {
       return res
@@ -63,11 +63,11 @@ const handler = async (
 
   if (method === "DELETE") {
     try {
-      const delete_opening_input = {
+      const deleteOpeningInput = {
         orgId: userSession.orgId,
         openingId: openingId,
       };
-      await DeleteOpening(delete_opening_input);
+      await DeleteOpening(deleteOpeningInput);
       return res.status(200).json({ message: "Opening deleted" });
     } catch (error) {
       return res
@@ -78,4 +78,4 @@ const handler = async (
   return res.status(405).json({ message: "Not Allowed" });
 };
 
-export default withSession(handler);
+export default withSessionRoute(handler);

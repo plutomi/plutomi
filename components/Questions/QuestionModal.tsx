@@ -3,31 +3,31 @@ import { Dialog, Transition } from "@headlessui/react";
 import { XIcon } from "@heroicons/react/outline";
 import useStore from "../../utils/store";
 
-const description_max_length = 300;
+const descriptionMaxLength = 300;
 export default function QuestionModal({ createQuestion, updateQuestion }) {
   const questionModal = useStore((state) => state.questionModal);
 
   const setQuestionModal = useStore((state) => state.setQuestionModal);
 
   const handleSubmit = async (e: FormEvent) => {
-    if (questionModal.modal_mode === "CREATE") {
+    if (questionModal.modalMode === "CREATE") {
       e.preventDefault();
       await createQuestion();
     }
 
-    if (questionModal.modal_mode === "EDIT") {
+    if (questionModal.modalMode === "EDIT") {
       e.preventDefault();
       await updateQuestion();
     }
   };
 
   return (
-    <Transition.Root show={questionModal.is_modal_open} as={Fragment}>
+    <Transition.Root show={questionModal.isModalOpen} as={Fragment}>
       <Dialog
         as="div"
         className="fixed inset-0 overflow-hidden "
         onClose={() =>
-          setQuestionModal({ ...questionModal, is_modal_open: false })
+          setQuestionModal({ ...questionModal, isModalOpen: false })
         }
       >
         <div className="absolute inset-0 overflow-hidden">
@@ -62,7 +62,7 @@ export default function QuestionModal({ createQuestion, updateQuestion }) {
                     <div className="py-6 px-4 bg-blue-700 sm:px-6">
                       <div className="flex items-center justify-between">
                         <Dialog.Title className="text-lg font-medium text-white">
-                          {questionModal.modal_mode === "CREATE"
+                          {questionModal.modalMode === "CREATE"
                             ? "New Question"
                             : "Updating Question"}
                         </Dialog.Title>
@@ -73,7 +73,7 @@ export default function QuestionModal({ createQuestion, updateQuestion }) {
                             onClick={() =>
                               setQuestionModal({
                                 ...questionModal,
-                                is_modal_open: false,
+                                isModalOpen: false,
                               })
                             }
                           >
@@ -96,7 +96,7 @@ export default function QuestionModal({ createQuestion, updateQuestion }) {
                               htmlFor="title"
                               className="block text-sm font-medium text-dark"
                             >
-                              {questionModal.modal_mode === "CREATE"
+                              {questionModal.modalMode === "CREATE"
                                 ? "Question Title"
                                 : "New Title"}
                             </label>
@@ -125,7 +125,7 @@ export default function QuestionModal({ createQuestion, updateQuestion }) {
                               htmlFor="description"
                               className="block text-sm font-medium text-dark"
                             >
-                              {questionModal.modal_mode === "CREATE"
+                              {questionModal.modalMode === "CREATE"
                                 ? "Description"
                                 : "New Description"}
                             </label>
@@ -135,13 +135,13 @@ export default function QuestionModal({ createQuestion, updateQuestion }) {
                                 id="description"
                                 placeholder="Optional helper text for your applicants."
                                 className="p-2 text-sm focus:ring-blue-500 focus:border-blue-500 border-gray-300 rounded-md w-full block resize"
-                                maxLength={description_max_length} // TODO add counter
+                                maxLength={descriptionMaxLength} // TODO add counter
                                 rows={5}
-                                value={questionModal.question_description}
+                                value={questionModal.questionDescription}
                                 onChange={(e) =>
                                   setQuestionModal({
                                     ...questionModal,
-                                    question_description: e.target.value,
+                                    questionDescription: e.target.value,
                                   })
                                 }
                               ></textarea>
@@ -327,7 +327,7 @@ export default function QuestionModal({ createQuestion, updateQuestion }) {
                       onClick={() =>
                         setQuestionModal({
                           ...questionModal,
-                          is_modal_open: false,
+                          isModalOpen: false,
                         })
                       }
                     >
@@ -337,7 +337,7 @@ export default function QuestionModal({ createQuestion, updateQuestion }) {
                       type="submit"
                       className="ml-4 inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
                     >
-                      {questionModal.modal_mode === "CREATE"
+                      {questionModal.modalMode === "CREATE"
                         ? "Create"
                         : "Update"}{" "}
                       Question

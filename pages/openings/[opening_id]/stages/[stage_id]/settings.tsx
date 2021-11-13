@@ -43,7 +43,7 @@ export default function StageSettings() {
       alert(error.response.data.message);
     }
 
-    // Refresh the stage_order
+    // Refresh the stageOrder
     mutate(OpeningsService.getOpeningURL({ openingId: openingId }));
 
     // Refresh the stage list

@@ -1,6 +1,6 @@
 import { NextApiResponse } from "next";
 import { GetAllApplicantsInStage } from "../../../../utils/stages/getAllApplicantsInStage";
-import withSession from "../../../../middleware/withSession";
+import { withSessionRoute } from "../../../../middleware/withSession";
 import { getStage } from "../../../../utils/stages/getStage";
 
 const handler = async (
@@ -16,16 +16,16 @@ const handler = async (
   const { stageId } = query as CustomQuery;
 
   if (method === "GET") {
-    const get_all_applicants_in_stage_input = {
+    const getAllApplicantsInStageInput = {
       orgId: userSession.orgId,
       stageId: stageId,
     };
 
     try {
-      const all_applicants = await GetAllApplicantsInStage(
-        get_all_applicants_in_stage_input
+      const allApplicants = await GetAllApplicantsInStage(
+        getAllApplicantsInStageInput
       );
-      return res.status(200).json(all_applicants);
+      return res.status(200).json(allApplicants);
     } catch (error) {
       // TODO add error logger
       return res
@@ -37,4 +37,4 @@ const handler = async (
   return res.status(405).json({ message: "Not Allowed" });
 };
 
-export default withSession(handler);
+export default withSessionRoute(handler);

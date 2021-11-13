@@ -3,15 +3,15 @@ import SES from "../../awsClients/sesClient";
 
 export default async function SendApplicantLink({
   orgId,
-  org_name,
+  orgName,
   applicantId,
-  applicant_email,
+  applicantEmail,
 }) {
-  const application_link = `${process.env.NEXT_PUBLIC_WEBSITE_URL}/${orgId}/applicants/${applicantId}`;
-  const new_email: SendEmailCommandInput = {
-    Source: `${org_name} <applications@plutomi.com>`,
+  const applicantionLink = `${process.env.NEXT_PUBLIC_WEBSITE_URL}/${orgId}/applicants/${applicantId}`;
+  const newEmail: SendEmailCommandInput = {
+    Source: `${orgName} <applications@plutomi.com>`,
     Destination: {
-      ToAddresses: [applicant_email],
+      ToAddresses: [applicantEmail],
       CcAddresses: null,
       BccAddresses: null,
     },
@@ -21,13 +21,13 @@ export default async function SendApplicantLink({
       },
       Body: {
         Html: {
-          Data: `<h1><a href="${application_link}" noreferrer target="_blank" >Click this link to view your application!</a></h1><p>If you did not request this link, you can safely ignore it.</p>`,
+          Data: `<h1><a href="${applicantionLink}" noreferrer target="_blank" >Click this link to view your application!</a></h1><p>If you did not request this link, you can safely ignore it.</p>`,
         },
       },
     },
   };
   try {
-    await SES.send(new SendEmailCommand(new_email));
+    await SES.send(new SendEmailCommand(newEmail));
   } catch (error) {
     console.error(error);
     throw new Error(`Unable to send applicant link - ${error}`);

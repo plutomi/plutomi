@@ -9,7 +9,7 @@ export default function StageCard({
   name,
   currentStageId,
   openingId,
-  total_applicants,
+  totalApplicants,
 }) {
   const router = useRouter();
   const { stageId } = router.query as CustomQuery;
@@ -35,7 +35,7 @@ export default function StageCard({
               <UserGroupIcon className="w-5 h-5 0" />
               <p className="text-md font-semibold ">
                 <NumberFormat
-                  value={total_applicants}
+                  value={totalApplicants}
                   thousandSeparator={true}
                   displayType={"text"}
                 />

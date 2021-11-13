@@ -1,4 +1,4 @@
-const safeKeys = ["GSI1SK", "openingId", "createdAt", "stage_order"];
+const safeKeys = ["GSI1SK", "openingId", "createdAt", "stageOrder"];
 
 export default function CleanOpening(opening: DynamoOpening) {
   Object.keys(opening).forEach(

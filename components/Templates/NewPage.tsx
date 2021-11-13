@@ -23,13 +23,13 @@ export default function NewPage({
     return <Login loggedOutPageText={loggedOutPageText} />;
   }
 
-  const current_nav_item = NAVBAR_NAVIGATION.find(
-    (nav_item) => nav_item.name === currentNavbarItem
+  const currentNavItem = NAVBAR_NAVIGATION.find(
+    (navItem) => navItem.name === currentNavbarItem
   );
 
   // Redirect on no org
-  if (current_nav_item.hidden_if_no_org && user?.orgId === "NO_ORG_ASSIGNED") {
-    if (current_nav_item.name === "Openings") {
+  if (currentNavItem.hiddenIfNoOrg && user?.orgId === "NO_ORG_ASSIGNED") {
+    if (currentNavItem.name === "Openings") {
       alert(
         `You must create an org or join one before adding or viewing openings. If you have pending invites, you can view them at ${process.env.NEXT_PUBLIC_WEBSITE_URL}/invites`
       );
@@ -38,7 +38,7 @@ export default function NewPage({
       return null;
     }
 
-    if (current_nav_item.name === "Team") {
+    if (currentNavItem.name === "Team") {
       alert(
         `You must create an org or join one before adding or viewing team members. If you have pending invites, you can view them at ${process.env.NEXT_PUBLIC_WEBSITE_URL}/invites`
       );

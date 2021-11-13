@@ -2,7 +2,7 @@ import { GetAllStagesInOpening } from "../../../../../utils/stages/getAllStagesI
 import { CreateStage } from "../../../../../utils/stages/createStage";
 import InputValidation from "../../../../../utils/inputValidation";
 import { NextApiResponse } from "next";
-import withSession from "../../../../../middleware/withSession";
+import { withSessionRoute } from "../../../../../middleware/withSession";
 
 const handler = async (
   req: NextIronRequest,
@@ -19,11 +19,11 @@ const handler = async (
   // Get all stages in an opening
   if (method === "GET") {
     try {
-      const all_stages = await GetAllStagesInOpening(
+      const allStages = await GetAllStagesInOpening(
         userSession.orgId,
         openingId
       );
-      return res.status(200).json(all_stages);
+      return res.status(200).json(allStages);
     } catch (error) {
       // TODO add error logger
       return res
@@ -35,4 +35,4 @@ const handler = async (
   return res.status(405).json({ message: "Not Allowed" });
 };
 
-export default withSession(handler);
+export default withSessionRoute(handler);

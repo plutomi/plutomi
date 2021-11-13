@@ -1,6 +1,6 @@
 import { CreateStageQuestion } from "../../../utils/questions/createStageQuestion";
 import { NextApiResponse } from "next";
-import withSession from "../../../middleware/withSession";
+import { withSessionRoute } from "../../../middleware/withSession";
 
 const handler = async (
   req: NextIronRequest,
@@ -12,18 +12,18 @@ const handler = async (
     return res.status(401).json({ message: "Please log in again" });
   }
   const { body, method } = req;
-  const { GSI1SK, question_description, stageId } = body;
+  const { GSI1SK, questionDescription, stageId } = body;
 
   if (method === "POST") {
-    const create_stage_question_input = {
+    const createStageQuestionInput = {
       orgId: userSession.orgId,
       stageId: stageId,
       GSI1SK: GSI1SK,
-      question_description: question_description,
+      questionDescription: questionDescription,
     };
 
     try {
-      await CreateStageQuestion(create_stage_question_input);
+      await CreateStageQuestion(createStageQuestionInput);
       return res.status(201).json({ message: "Question created!" });
     } catch (error) {
       // TODO add error logger
@@ -36,4 +36,4 @@ const handler = async (
   return res.status(405).json({ message: "Not Allowed" });
 };
 
-export default withSession(handler);
+export default withSessionRoute(handler);

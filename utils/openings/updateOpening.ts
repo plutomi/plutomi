@@ -5,7 +5,7 @@ const { DYNAMO_TABLE_NAME } = process.env;
 export default async function UpdateOpening({
   orgId,
   openingId,
-  new_opening_values,
+  newOpeningValues,
 }) {
   // TODO user the cleaning functions instead
   const FORBIDDEN_KEYS = [
@@ -18,7 +18,7 @@ export default async function UpdateOpening({
     "GSI1PK",
   ];
 
-  const incomingKeys = Object.keys(new_opening_values);
+  const incomingKeys = Object.keys(newOpeningValues);
   // TODO should this throw an error and
   // let the user know we can't update that key?
   // Maybe just return in the message that we weren't able to update those keys
@@ -30,7 +30,7 @@ export default async function UpdateOpening({
 
   newKeys.forEach((key) => {
     newUpdateExpression.push(`${key} = :${key}`);
-    newAttributes[`:${key}`] = new_opening_values[key];
+    newAttributes[`:${key}`] = newOpeningValues[key];
   });
 
   const UpdatedExpression = `SET ${newUpdateExpression.join(", ").toString()}`;

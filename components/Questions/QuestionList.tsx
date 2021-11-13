@@ -24,7 +24,7 @@ export default function QuestionList() {
   const { questions, isQuestionsLoading, isQuestionsError } =
     useAllStageQuestions(user?.orgId, stage?.stageId);
 
-  const [new_questions, setNewQuestions] = useState(questions);
+  const [newQuestions, setNewQuestions] = useState(questions);
 
   useEffect(() => {
     setNewQuestions(questions);
@@ -46,20 +46,20 @@ export default function QuestionList() {
       return;
     }
 
-    let new_question_order = Array.from(stage.question_order);
-    new_question_order.splice(source.index, 1);
-    new_question_order.splice(destination.index, 0, draggableId);
-    let new_order = new_question_order.map((i) =>
-      questions.find((j) => j.question_id === i)
+    let newQuestionOrder = Array.from(stage.questionOrder);
+    newQuestionOrder.splice(source.index, 1);
+    newQuestionOrder.splice(destination.index, 0, draggableId);
+    let newOrder = newQuestionOrder.map((i) =>
+      questions.find((j) => j.questionId === i)
     );
 
-    setNewQuestions(new_order);
+    setNewQuestions(newOrder);
 
     try {
       await StagesService.updateStage({
         stageId: stageId,
-        new_stage_values: {
-          question_order: new_question_order,
+        newStageValues: {
+          questionOrder: newQuestionOrder,
         },
       });
     } catch (error) {
@@ -74,7 +74,7 @@ export default function QuestionList() {
     );
   };
 
-  const deleteQuestion = async (question_id: string) => {
+  const deleteQuestion = async (questionId: string) => {
     if (
       !confirm(
         "Are you sure you want to delete this question? This action cannot be reversed!"
@@ -85,7 +85,7 @@ export default function QuestionList() {
 
     try {
       const { message } = await QuestionsService.deleteQuestion({
-        question_id,
+        questionId,
       });
       alert(message);
     } catch (error) {
@@ -122,12 +122,12 @@ export default function QuestionList() {
                 {...provided.droppableProps}
                 ref={provided.innerRef}
               >
-                {new_questions?.map(
+                {newQuestions?.map(
                   (question: DynamoStageQuestion, index: number) => {
                     return (
                       <Draggable
-                        key={question?.question_id}
-                        draggableId={question?.question_id}
+                        key={question?.questionId}
+                        draggableId={question?.questionId}
                         index={index}
                         {...provided.droppableProps}
                       >
@@ -139,7 +139,7 @@ export default function QuestionList() {
                           >
                             <QuestionItem
                               question={question}
-                              new_questions={new_questions}
+                              newQuestions={newQuestions}
                               deleteQuestion={deleteQuestion}
                             />
                           </div>

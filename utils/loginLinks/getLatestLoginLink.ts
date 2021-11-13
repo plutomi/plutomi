@@ -8,7 +8,7 @@ export async function getLatestLoginLink(userId: string) {
     KeyConditionExpression: "PK = :pk AND begins_with(SK, :sk)",
     ExpressionAttributeValues: {
       ":pk": `USER#${userId}`,
-      ":sk": "LOGIN_LINK",
+      ":sk": "loginLink",
     },
     ScanIndexForward: false,
     Limit: 1,
@@ -16,8 +16,8 @@ export async function getLatestLoginLink(userId: string) {
 
   try {
     const response = await Dynamo.send(new QueryCommand(params));
-    const latest_link = response.Items[0];
-    return latest_link;
+    const latestLink = response.Items[0];
+    return latestLink;
   } catch (error) {
     throw new Error(error);
   }

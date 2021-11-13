@@ -16,9 +16,9 @@ export default class UsersService {
     const { data } = await axios.get(this.getSpecificUserURL({ userId }));
     return data;
   }
-  static async updateUser({ userId, new_user_values }) {
+  static async updateUser({ userId, newUserValues }) {
     const body = {
-      new_user_values: new_user_values,
+      newUserValues: newUserValues,
     };
     const { data } = await axios.put(this.getSpecificUserURL({ userId }), body);
     return data;

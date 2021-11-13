@@ -14,11 +14,11 @@ export async function CreateUser({ userEmail }) {
   }
   const now = GetCurrentTime("iso") as string;
   const userId = nanoid(42);
-  const new_user: DynamoUser = {
+  const newUser: DynamoUser = {
     PK: `USER#${userId}`,
     SK: `USER`,
-    firstName: "NO_firstName",
-    lastName: "NO_lastName",
+    firstName: "NO_FIRST_NAME",
+    lastName: "NO_LAST_NAME",
     userEmail: userEmail.toLowerCase().trim(),
     userId: userId,
     entityType: "USER",
@@ -27,21 +27,21 @@ export async function CreateUser({ userEmail }) {
     orgJoinDate: "NO_ORG_ASSIGNED",
     totalInvites: 0,
     GSI1PK: "ORG#NO_ORG_ASSIGNED#USERS",
-    GSI1SK: `NO_firstName NO_lastName`,
+    GSI1SK: `NO_FIRST_NAME NO_LAST_NAME`,
     GSI2PK: userEmail.toLowerCase().trim(),
     GSI2SK: "USER",
   };
 
   const params: PutCommandInput = {
     TableName: DYNAMO_TABLE_NAME,
-    Item: new_user,
+    Item: newUser,
     ConditionExpression: "attribute_not_exists(PK)",
   };
 
   try {
     await Dynamo.send(new PutCommand(params));
-    SendNewUserEmail(new_user); // TODO async with streams
-    return new_user;
+    SendNewUserEmail(newUser); // TODO async with streams
+    return newUser;
   } catch (error) {
     throw new Error(error);
   }

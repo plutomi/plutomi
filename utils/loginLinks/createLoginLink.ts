@@ -7,24 +7,24 @@ const { DYNAMO_TABLE_NAME } = process.env;
 export default async function CreateLoginLink({
   user,
   loginLinkHash,
-  login_link_expiry,
+  loginLinkExpiry,
 }) {
   try {
     const now = GetCurrentTime("iso") as string;
-    const new_login_link = {
+    const newLoginLink = {
       PK: `USER#${user.userId}`,
-      SK: `LOGIN_LINK#${now}`,
+      SK: `loginLink#${now}`,
       loginLinkHash: loginLinkHash,
       userId: user.userId,
-      entityType: "LOGIN_LINK",
+      entityType: "loginLink",
       createdAt: now,
-      expiresAt: login_link_expiry,
-      ttl_expiry: GetPastOrFutureTime("future", 1, "days", "unix"),
+      expiresAt: loginLinkExpiry,
+      ttlExpiry: GetPastOrFutureTime("future", 1, "days", "unix"),
     };
 
     const params: PutCommandInput = {
       TableName: DYNAMO_TABLE_NAME,
-      Item: new_login_link,
+      Item: newLoginLink,
       ConditionExpression: "attribute_not_exists(PK)",
     };
 

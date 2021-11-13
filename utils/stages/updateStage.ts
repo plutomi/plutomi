@@ -2,11 +2,7 @@ import { UpdateCommand, UpdateCommandInput } from "@aws-sdk/lib-dynamodb";
 import { Dynamo } from "../../awsClients/ddbDocClient";
 const { DYNAMO_TABLE_NAME } = process.env;
 
-export default async function UpdateStage({
-  orgId,
-  stageId,
-  new_stage_values,
-}) {
+export default async function UpdateStage({ orgId, stageId, newStageValues }) {
   // TODO user the cleaning functions instead
   const FORBIDDEN_KEYS = [
     "PK",
@@ -18,7 +14,7 @@ export default async function UpdateStage({
     "GSI1PK",
   ];
 
-  const incomingKeys = Object.keys(new_stage_values);
+  const incomingKeys = Object.keys(newStageValues);
   // TODO should this throw an error and
   // let the user know we can't update that key?
   // Maybe just return in the message that we weren't able to update those keys
@@ -30,7 +26,7 @@ export default async function UpdateStage({
 
   newKeys.forEach((key) => {
     newUpdateExpression.push(`${key} = :${key}`);
-    newAttributes[`:${key}`] = new_stage_values[key];
+    newAttributes[`:${key}`] = newStageValues[key];
   });
 
   const UpdatedExpression = `SET ${newUpdateExpression.join(", ").toString()}`;

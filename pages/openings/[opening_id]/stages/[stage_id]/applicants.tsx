@@ -29,7 +29,7 @@ export default function StageApplicants() {
     if (applicantId && typeof applicantId === "string" && applicantId !== "") {
       setApplicantProfileModal({
         ...applicantProfileModal,
-        is_modal_open: true,
+        isModalOpen: true,
       });
     }
   }, [router.isReady]);
@@ -56,7 +56,7 @@ export default function StageApplicants() {
           <span>
             {opening.GSI1SK} - Applicants (
             <NumberFormat
-              value={opening.total_applicants}
+              value={opening.totalApplicants}
               thousandSeparator={true}
               displayType={"text"}
             />

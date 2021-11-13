@@ -16,7 +16,7 @@ export default function ApplicantListItem({ applicant, handleApplicantClick }) {
               {applicant.fullName}
             </h1>
             <div className="ml-2 flex-shrink-0 flex">
-              {applicant.email_verified ? (
+              {applicant.isEmailVerified ? (
                 <p className="px-2 inline-flex text-sm leading-5 font-semibold rounded-full bg-green-100 text-green-800">
                   Email Verified
                 </p>

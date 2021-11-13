@@ -20,15 +20,15 @@ export default function StageSettingsContent() {
       const { message } = await QuestionsService.createQuestion({
         GSI1SK: questionModal.GSI1SK,
         stageId: stageId,
-        question_description: questionModal.question_description,
+        questionDescription: questionModal.questionDescription,
       });
 
       alert(message);
       setQuestionModal({
-        is_modal_open: false,
-        modal_mode: "CREATE",
-        question_id: "",
-        question_description: "",
+        isModalOpen: false,
+        modalMode: "CREATE",
+        questionId: "",
+        questionDescription: "",
         GSI1SK: "",
       });
     } catch (error) {
@@ -36,7 +36,7 @@ export default function StageSettingsContent() {
       alert(error.response.data.message);
     }
 
-    // Refresh the question_order
+    // Refresh the questionOrder
     mutate(
       StagesService.getStageURL({
         stageId: stageId,
@@ -50,7 +50,7 @@ export default function StageSettingsContent() {
   const updateQuestion = async () => {
     try {
       const question = questions.find(
-        (question) => question?.question_id == questionModal.question_id
+        (question) => question?.questionId == questionModal.questionId
       );
 
       // Get the difference between the question returned from SWR
@@ -58,20 +58,20 @@ export default function StageSettingsContent() {
       const diff = difference(question, questionModal);
 
       // Delete the two modal controlling keys
-      delete diff["is_modal_open"];
-      delete diff["modal_mode"];
+      delete diff["isModalOpen"];
+      delete diff["modalMode"];
 
       console.log(`Difference between the two objects`, diff);
 
       const { message } = await QuestionsService.updateQuestion({
-        question_id: questionModal.question_id,
-        new_question_values: diff,
+        questionId: questionModal.questionId,
+        newQuestionValues: diff,
       });
       setQuestionModal({
-        is_modal_open: false,
-        modal_mode: "CREATE",
-        question_id: "",
-        question_description: "",
+        isModalOpen: false,
+        modalMode: "CREATE",
+        questionId: "",
+        questionDescription: "",
         GSI1SK: "",
       });
 
@@ -80,7 +80,7 @@ export default function StageSettingsContent() {
       alert(error.response.data.message);
     }
 
-    // Refresh the question_order
+    // Refresh the questionOrder
     mutate(
       StagesService.getStageURL({
         stageId: stageId,

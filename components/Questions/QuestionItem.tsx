@@ -4,14 +4,14 @@ import { TrashIcon } from "@heroicons/react/outline";
 import useStore from "../../utils/store";
 export default function QuestionItem({
   question,
-  new_questions,
+  newQuestions,
   deleteQuestion,
 }) {
   const setQuestionModal = useStore((state) => state.setQuestionModal);
   const [isHovering, setIsHovering] = useState(false);
 
-  const handleDelete = (question_id: string) => {
-    deleteQuestion(question_id);
+  const handleDelete = (questionId: string) => {
+    deleteQuestion(questionId);
   };
 
   // Essentially fill in all the details of the modal and then open it
@@ -27,11 +27,11 @@ export default function QuestionItem({
           {/* <a href="#" className="hover:underline focus:outline-none"> */}
           {/* Extend touch target to entire panel */}
           <span className="absolute inset-0" aria-hidden="true" />
-          {new_questions.indexOf(question) + 1}. {question.GSI1SK}
+          {newQuestions.indexOf(question) + 1}. {question.GSI1SK}
         </h3>
-        {question.question_description && (
+        {question.questionDescription && (
           <p className="text-md text-light line-clamp-2 mt-1">
-            {question.question_description}
+            {question.questionDescription}
           </p>
         )}
       </div>
@@ -41,11 +41,11 @@ export default function QuestionItem({
           <button
             onClick={() =>
               setQuestionModal({
-                is_modal_open: true,
-                modal_mode: "EDIT",
+                isModalOpen: true,
+                modalMode: "EDIT",
                 GSI1SK: question.GSI1SK,
-                question_description: question.question_description,
-                question_id: question?.question_id,
+                questionDescription: question.questionDescription,
+                questionId: question?.questionId,
               })
             }
             className="rounded-full hover:bg-white text-blue-500 transition ease-in-out duration-200 px-3 py-3 text-md"
@@ -53,7 +53,7 @@ export default function QuestionItem({
             <PencilAltIcon className="w-6 h-6" />
           </button>
           <button
-            onClick={() => handleDelete(question?.question_id)}
+            onClick={() => handleDelete(question?.questionId)}
             className="rounded-full hover:bg-white text-red-500 transition ease-in-out duration-200 px-3 py-3 text-md"
           >
             <TrashIcon className="w-6 h-6" />

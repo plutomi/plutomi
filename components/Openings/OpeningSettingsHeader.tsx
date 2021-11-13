@@ -29,10 +29,10 @@ export default function OpeningSettingsHeader() {
   ];
 
   // Hide applicant crumb if opening has no stages
-  if (opening.total_stages > 0) {
+  if (opening.totalStages > 0) {
     crumbs.unshift({
       name: "Applicants",
-      href: `/openings/${openingId}/stages/${opening?.stage_order[0]}/applicants`, // TODO should this end with /applicants?
+      href: `/openings/${openingId}/stages/${opening?.stageOrder[0]}/applicants`, // TODO should this end with /applicants?
       current: false,
     });
   }
@@ -70,19 +70,19 @@ export default function OpeningSettingsHeader() {
       <div className="flex justify-center space-x-4 py-2 items-center">
         <span
           className={` inline-flex items-center px-2.5 py-0.5 rounded-md text-sm font-medium ${
-            opening?.is_public ? "bg-green-100" : "bg-blue-gray-100"
+            opening?.isPublic ? "bg-green-100" : "bg-blue-gray-100"
           }`}
         >
           <svg
             className={`-ml-0.5 mr-1.5 h-2 w-2 ${
-              opening?.is_public ? "text-green-800" : "text-blue-gray-800"
+              opening?.isPublic ? "text-green-800" : "text-blue-gray-800"
             }`}
             fill="currentColor"
             viewBox="0 0 8 8"
           >
             <circle cx={4} cy={4} r={3} />
           </svg>
-          {opening?.is_public ? "Public" : "Private"}
+          {opening?.isPublic ? "Public" : "Private"}
         </span>
         <p className="text-md text-light text-center">
           Created {getRelativeTime(opening?.createdAt)}
@@ -93,11 +93,11 @@ export default function OpeningSettingsHeader() {
           type="button"
           onClick={() =>
             setOpeningModal({
-              is_modal_open: true,
-              modal_mode: "EDIT",
+              isModalOpen: true,
+              modalMode: "EDIT",
               openingId: opening.openingId,
               GSI1SK: opening.GSI1SK,
-              is_public: opening.is_public,
+              isPublic: opening.isPublic,
             })
           }
           className="inline-flex items-center px-4 py-2 border  shadow-sm text-base font-medium rounded-md border-blue-500 text-blue-500 bg-white hover:bg-blue-500 hover:text-white  transition ease-in-out duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"

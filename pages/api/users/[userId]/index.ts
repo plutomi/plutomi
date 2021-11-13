@@ -1,7 +1,7 @@
 import { GetUserById } from "../../../../utils/users/getUserById";
 import { NextApiResponse } from "next";
 import { UpdateUser } from "../../../../utils/users/updateUser";
-import withSession from "../../../../middleware/withSession";
+import { withSessionRoute } from "../../../../middleware/withSession";
 import CleanUser from "../../../../utils/clean/cleanUser";
 
 const handler = async (
@@ -15,7 +15,7 @@ const handler = async (
   }
   const { method, query, body } = req;
   const { userId } = query as CustomQuery;
-  const { new_user_values } = body;
+  const { newUserValues } = body;
 
   if (method === "GET") {
     try {
@@ -41,8 +41,8 @@ const handler = async (
   }
 
   if (method === "PUT") {
-    const update_user_input = {
-      new_user_values: new_user_values,
+    const updateStageInput = {
+      newUserValues: newUserValues,
       userId: userSession.userId,
       ALLOW_FORBIDDEN_KEYS: false,
     };
@@ -55,7 +55,7 @@ const handler = async (
           .json({ message: "You cannot update another user" });
       }
 
-      const updatedUser = await UpdateUser(update_user_input);
+      const updatedUser = await UpdateUser(updateStageInput);
 
       // If a signed in user is updating themselves, update the session state
       if (updatedUser.userId === userSession.userId) {
@@ -73,4 +73,4 @@ const handler = async (
   return res.status(405).json({ message: "Not Allowed" });
 };
 
-export default withSession(handler);
+export default withSessionRoute(handler);

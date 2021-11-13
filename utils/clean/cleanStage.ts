@@ -1,4 +1,4 @@
-const safeKeys = ["GSI1SK", "stageId", "createdAt", "question_order"];
+const safeKeys = ["GSI1SK", "stageId", "createdAt", "questionOrder"];
 
 export default function CleanStage(stage: DynamoStage) {
   Object.keys(stage).forEach(

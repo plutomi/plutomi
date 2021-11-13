@@ -2,7 +2,7 @@ import { NextApiResponse } from "next";
 import { DeleteQuestion } from "../../../../utils/questions/deleteQuestion";
 import InputValidation from "../../../../utils/inputValidation";
 import UpdateQuestion from "../../../../utils/questions/updateStageQuestion";
-import withSession from "../../../../middleware/withSession";
+import { withSessionRoute } from "../../../../middleware/withSession";
 
 const handler = async (
   req: NextIronRequest,
@@ -14,15 +14,15 @@ const handler = async (
     return res.status(401).json({ message: "Please log in again" });
   }
   const { body, method, query } = req;
-  const { question_id } = query as CustomQuery;
+  const { questionId } = query as CustomQuery;
 
   if (method === "DELETE") {
     try {
-      const delete_question_input = {
+      const deleteQuestionInput = {
         orgId: userSession.orgId,
-        question_id: question_id,
+        questionId: questionId,
       };
-      await DeleteQuestion(delete_question_input);
+      await DeleteQuestion(deleteQuestionInput);
       return res.status(200).json({ message: "Question deleted!" });
     } catch (error) {
       // TODO add error logger
@@ -34,19 +34,19 @@ const handler = async (
 
   if (method === "PUT") {
     try {
-      const update_question_input: UpdateQuestionInput = {
+      const updatedQuestionInput: UpdateQuestionInput = {
         orgId: userSession.orgId,
-        question_id: question_id,
-        new_question_values: body.new_question_values, // Just the keys that are passed down
+        questionId: questionId,
+        newQuestionValues: body.newQuestionValues, // Just the keys that are passed down
       };
 
       try {
-        InputValidation(update_question_input);
+        InputValidation(updatedQuestionInput);
       } catch (error) {
         return res.status(400).json({ message: `${error.message}` });
       }
 
-      await UpdateQuestion(update_question_input);
+      await UpdateQuestion(updatedQuestionInput);
       return res.status(200).json({ message: "Question updated!" });
     } catch (error) {
       console.error(error);
@@ -59,4 +59,4 @@ const handler = async (
   return res.status(405).json({ message: "Not Allowed" });
 };
 
-export default withSession(handler);
+export default withSessionRoute(handler);

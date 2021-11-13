@@ -8,19 +8,19 @@ const handler = async (req: CustomRequest, res: NextApiResponse) => {
   const { method, query } = req;
   const { orgId, openingId, stageId } = query as CustomQuery;
 
-  const get_stage_input: GetStageInput = {
+  const getStageInput: GetStageInput = {
     orgId: orgId,
     stageId: stageId,
   };
 
   if (method === "GET") {
     try {
-      const stage = await GetStage(get_stage_input);
+      const stage = await GetStage(getStageInput);
       if (!stage) {
         return res.status(404).json({ message: "Stage not found" });
       }
 
-      //   if (!stage.is_public) { // TODO add public and private stages?
+      //   if (!stage.isPublic) { // TODO add public and private stages?
       //     return res
       //       .status(400)
       //       .json({ message: "You cannot apply here just yet" });

@@ -5,7 +5,7 @@ import { GetPastOrFutureTime } from "../../../utils/time";
 import { NextApiResponse } from "next";
 import withCleanOrgId from "../../../middleware/withCleanOrgId";
 import { GetOrg } from "../../../utils/orgs/getOrg";
-import withSession from "../../../middleware/withSession";
+import { withSessionRoute } from "../../../middleware/withSession";
 import { CreateUser } from "../../../utils/users/createUser";
 const handler = async (
   req: NextIronRequest,
@@ -20,20 +20,20 @@ const handler = async (
 
   const { recipientEmail }: APICreateOrgInviteInput = body;
 
-  const default_expiry_time = 3;
-  const default_expiry_value = "days";
+  const defaultExpiryTime = 3;
+  const defaultExpiryValue = "days";
   const expiresAt = GetPastOrFutureTime(
     "future",
-    default_expiry_time,
-    "days" || default_expiry_value,
+    defaultExpiryTime,
+    "days" || defaultExpiryValue,
     "iso"
   );
 
   const org = await GetOrg(userSession.orgId);
 
-  const new_org_invite: CreateOrgInviteInput = {
+  const newOrgInvite: CreateOrgInviteInput = {
     claimed: false,
-    org_name: org.GSI1SK, // For the recipient they can see the name of the org instead of the orgId, much neater
+    orgName: org.GSI1SK, // For the recipient they can see the name of the org instead of the orgId, much neater
     createdBy: userSession, // TODO reduce this to just name & email
     orgId: org.orgId,
     recipientEmail: recipientEmail,
@@ -41,7 +41,7 @@ const handler = async (
   };
   if (method === "POST") {
     try {
-      InputValidation(new_org_invite);
+      InputValidation(newOrgInvite);
     } catch (error) {
       return res.status(400).json({ message: `${error.message}` });
     }
@@ -59,21 +59,21 @@ const handler = async (
     // Creates the user
     const recipient = await CreateUser({ userEmail: recipientEmail });
 
-    const new_org_invite_email: SendOrgInviteInput = {
+    const newOrgInviteEmail: SendOrgInviteInput = {
       createdBy: userSession,
-      org_name: org.GSI1SK,
+      orgName: org.GSI1SK,
       recipientEmail: recipient.userEmail, // Will be lowercase & .trim()'d by createUser
     };
     try {
       await CreateOrgInvite({
         orgId: org.orgId,
         user: recipient,
-        org_name: org.GSI1SK,
+        orgName: org.GSI1SK,
         expiresAt: expiresAt,
         createdBy: userSession,
       });
       try {
-        await SendOrgInvite(new_org_invite_email); // TODO async with streams
+        await SendOrgInvite(newOrgInviteEmail); // TODO async with streams
         return res
           .status(201)
           .json({ message: `Invite sent to '${recipient.userEmail}'` });
@@ -89,4 +89,4 @@ const handler = async (
   return res.status(405).json({ message: "Not Allowed" });
 };
 
-export default withSession(withCleanOrgId(handler));
+export default withSessionRoute(withCleanOrgId(handler));

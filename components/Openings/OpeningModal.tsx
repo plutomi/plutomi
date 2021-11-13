@@ -21,25 +21,23 @@ export default function OpeningModal({
     openingModal.openingId
   );
   const handleSubmit = async (e: FormEvent) => {
-    if (openingModal.modal_mode === "CREATE") {
+    if (openingModal.modalMode === "CREATE") {
       e.preventDefault();
       await createOpening();
     }
 
-    if (openingModal.modal_mode === "EDIT") {
+    if (openingModal.modalMode === "EDIT") {
       e.preventDefault();
       await updateOpening();
     }
   };
 
   return (
-    <Transition.Root show={openingModal.is_modal_open} as={Fragment}>
+    <Transition.Root show={openingModal.isModalOpen} as={Fragment}>
       <Dialog
         as="div"
         className="fixed inset-0 overflow-hidden "
-        onClose={() =>
-          setOpeningModal({ ...openingModal, is_modal_open: false })
-        }
+        onClose={() => setOpeningModal({ ...openingModal, isModalOpen: false })}
       >
         <div className="absolute inset-0 overflow-hidden">
           <Transition.Child
@@ -73,7 +71,7 @@ export default function OpeningModal({
                     <div className="py-6 px-4 bg-blue-700 sm:px-6">
                       <div className="flex items-center justify-between">
                         <Dialog.Title className="text-lg font-medium text-white">
-                          {openingModal.modal_mode === "CREATE"
+                          {openingModal.modalMode === "CREATE"
                             ? "New Opening"
                             : "Edit Opening"}
                         </Dialog.Title>
@@ -84,7 +82,7 @@ export default function OpeningModal({
                             onClick={() =>
                               setOpeningModal({
                                 ...openingModal,
-                                is_modal_open: false,
+                                isModalOpen: false,
                               })
                             }
                           >
@@ -110,7 +108,7 @@ export default function OpeningModal({
                               htmlFor="opening-name"
                               className="block text-sm font-medium text-dark"
                             >
-                              {openingModal.modal_mode === "CREATE"
+                              {openingModal.modalMode === "CREATE"
                                 ? "Opening name"
                                 : "Edit name"}
                             </label>
@@ -132,8 +130,8 @@ export default function OpeningModal({
                             </div>
                           </div>
                           <div className="relative flex items-start">
-                            {openingModal.modal_mode === "CREATE" ||
-                            opening.total_stages == 0 ? (
+                            {openingModal.modalMode === "CREATE" ||
+                            opening.totalStages == 0 ? (
                               <p className="text-light text-sm ">
                                 You will be able to make this opening public
                                 after adding a stage.
@@ -147,11 +145,11 @@ export default function OpeningModal({
                                     aria-describedby="comments-description"
                                     name="comments"
                                     type="checkbox"
-                                    checked={openingModal.is_public}
+                                    checked={openingModal.isPublic}
                                     onChange={(e) =>
                                       setOpeningModal({
                                         ...openingModal,
-                                        is_public: e.target.checked,
+                                        isPublic: e.target.checked,
                                       })
                                     }
                                     className="focus:ring-blue-500 h-4 w-4 text-blue-600 border-gray-300 rounded"
@@ -355,7 +353,7 @@ export default function OpeningModal({
                       onClick={() =>
                         setOpeningModal({
                           ...openingModal,
-                          is_modal_open: false,
+                          isModalOpen: false,
                         })
                       }
                     >
@@ -365,7 +363,7 @@ export default function OpeningModal({
                       type="submit"
                       className="ml-4 inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
                     >
-                      {openingModal.modal_mode === "CREATE"
+                      {openingModal.modalMode === "CREATE"
                         ? "Create"
                         : "Update"}{" "}
                       opening

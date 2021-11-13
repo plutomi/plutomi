@@ -41,7 +41,7 @@ export default function ApplicantList() {
     );
     setApplicantProfileModal({
       ...applicantProfileModal,
-      is_modal_open: true,
+      isModalOpen: true,
       applicantId: applicantId,
     });
   };

@@ -3,7 +3,7 @@ import { Dynamo } from "../../awsClients/ddbDocClient";
 const { DYNAMO_TABLE_NAME } = process.env;
 
 // Allows updating the login link status for suspending it incase of malicious actors
-export default async function UpdateLoginLink({ userId, updated_login_link }) {
+export default async function UpdateLoginLink({ userId, updatedLoginLink }) {
   // TODO user the cleaning functions instead
   const FORBIDDEN_KEYS = [
     "PK",
@@ -13,10 +13,10 @@ export default async function UpdateLoginLink({ userId, updated_login_link }) {
     "createdAt",
     "userId",
     "expiresAt",
-    "ttl_expiry",
+    "ttlExpiry",
   ];
 
-  const incomingKeys = Object.keys(updated_login_link);
+  const incomingKeys = Object.keys(updatedLoginLink);
   const newKeys = incomingKeys.filter((key) => !FORBIDDEN_KEYS.includes(key));
 
   // Build update expression
@@ -25,7 +25,7 @@ export default async function UpdateLoginLink({ userId, updated_login_link }) {
 
   newKeys.forEach((key) => {
     newUpdateExpression.push(`${key} = :${key}`);
-    newAttributes[`:${key}`] = updated_login_link[key];
+    newAttributes[`:${key}`] = updatedLoginLink[key];
   });
 
   const UpdatedExpression = `SET ${newUpdateExpression.join(", ").toString()}`;
@@ -33,7 +33,7 @@ export default async function UpdateLoginLink({ userId, updated_login_link }) {
   const params: UpdateCommandInput = {
     Key: {
       PK: `USER#${userId}`,
-      SK: `LOGIN_LINK#${updated_login_link.createdAt}`,
+      SK: `loginLink#${updatedLoginLink.createdAt}`,
     },
     UpdateExpression: UpdatedExpression,
     ExpressionAttributeValues: newAttributes,

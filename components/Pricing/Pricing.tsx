@@ -4,7 +4,7 @@ import PricingCard from "./PricingCards";
 const PricingCards = [
   {
     id: 1,
-    applicant_type: "Active",
+    applicantType: "Active",
     description: (
       <p className={`mt-6 text-xl text-center text-dark`}>
         Applicants are considered{" "}
@@ -40,7 +40,7 @@ export default function Pricing() {
                 return (
                   <PricingCard
                     key={card.id}
-                    applicant_type={card.applicant_type}
+                    applicantType={card.applicantType}
                     description={card.description}
                   />
                 );

@@ -14,10 +14,10 @@ export default function InvitesContent() {
     user?.userId
   );
 
-  const acceptInvite = async (invite) => {
+  const acceptInvite = async (inviteId) => {
     try {
       const { message } = await InvitesService.acceptInvite({
-        invite_id: invite.invite_id,
+        inviteId: inviteId,
       });
       alert(message);
       router.push("/dashboard");
@@ -36,7 +36,7 @@ export default function InvitesContent() {
   const rejectInvite = async (invite) => {
     try {
       const { message } = await InvitesService.rejectInvite({
-        invite_id: invite.invite_id,
+        inviteId: invite.inviteId,
       });
 
       alert(message);
@@ -64,7 +64,7 @@ export default function InvitesContent() {
         {invites.map((invite: DynamoOrgInvite) => (
           <Invite
             invite={invite}
-            key={invite.invite_id}
+            key={invite.inviteId}
             rejectInvite={rejectInvite}
             acceptInvite={acceptInvite}
           />

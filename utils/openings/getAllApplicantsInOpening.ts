@@ -20,12 +20,12 @@ export async function GetAllApplicantsInOpening({ orgId, openingId }) {
     // That meaning, files, notes, etc are different items in Dynamo
     // The result might (and probably will!) be large enough that it might not be returned in one query
     const response = await Dynamo.send(new QueryCommand(params));
-    const all_applicants = response.Items;
+    const allApplicants = response.Items;
 
     // Sort by full name, or whatever else, probably most recently active would be best
-    all_applicants.sort((a, b) => (a.fullName < b.fullName ? 1 : -1));
+    allApplicants.sort((a, b) => (a.fullName < b.fullName ? 1 : -1));
 
-    return all_applicants;
+    return allApplicants;
   } catch (error) {
     throw new Error(error);
   }

@@ -10,7 +10,7 @@ export default function Invite({ invite, acceptInvite, rejectInvite }) {
         <div className="flex-1 truncate">
           <div className="flex items-center space-x-3 justify-between">
             <h3 className="text-dark text-lg font-semibold truncate">
-              {invite.org_name}
+              {invite.orgName}
             </h3>
             <span className="flex-shrink-0 inline-block px-2 py-0.5 text-blue-gray-800 text-xs font-medium bg-blue-gray-100 rounded-full">
               Expires {getRelativeTime(invite.expiresAt)}
@@ -29,7 +29,7 @@ export default function Invite({ invite, acceptInvite, rejectInvite }) {
         <div className="-mt-px flex divide-x divide-gray-200">
           <div className="w-0 flex-1 flex">
             <button
-              onClick={() => acceptInvite(invite)}
+              onClick={() => acceptInvite(invite.inviteId)}
               className="relative -mr-px w-0 flex-1 inline-flex items-center justify-center py-4 text-md text-emerald-600 font-semibold  hover:text-white border-emerald-200 hover:bg-emerald-500 transition ease-in-out duration-200 border  rounded-bl-lg "
             >
               <CheckIcon className="w-5 h-5 " aria-hidden="true" />

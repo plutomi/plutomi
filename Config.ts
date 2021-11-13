@@ -1,8 +1,8 @@
 /**
  * ONLY FOR ENTITIES THAT CAN HAVE THEIR ORDER REARRANGED - Stages, questions, rules, etc.
  * We are storing the order in an array in the parent component.
- * The stage_order is stored in the opening the stage belongs to..
- * The question_order is stored on the stage they belong to.. and so on.
+ * The stageOrder is stored in the opening the stage belongs to..
+ * The questionOrder is stored on the stage they belong to.. and so on.
  *
  * As more items are added, the parent item gets closer to reaching the 400kb item limit on Dynamo.
  *
@@ -18,21 +18,21 @@ const NAVBAR_NAVIGATION = [
   {
     name: "Dashboard",
     href: "/dashboard",
-    hidden_if_no_org: false,
-    hidden_if_org: false,
+    hiddenIfNoOrg: false,
+    hiddenIfOrg: false,
   },
   {
     name: "Openings",
     href: "/openings",
-    hidden_if_no_org: true,
-    hidden_if_org: false,
+    hiddenIfNoOrg: true,
+    hiddenIfOrg: false,
   },
-  { name: "Team", href: "/team", hidden_if_no_org: true, hidden_if_org: false },
+  { name: "Team", href: "/team", hiddenIfNoOrg: true, hiddenIfOrg: false },
   {
     name: "Invites",
     href: "/invites",
-    hidden_if_no_org: false,
-    hidden_if_org: true,
+    hiddenIfNoOrg: false,
+    hiddenIfOrg: true,
   },
 ];
 const DROPDOWN_NAVIGATION = [

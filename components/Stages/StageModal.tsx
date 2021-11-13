@@ -25,23 +25,23 @@ export default function StageModal({
   const setStageModal = useStore((state) => state.setStageModal);
 
   const handleSubmit = async (e: FormEvent) => {
-    if (stageModal.modal_mode === "CREATE") {
+    if (stageModal.modalMode === "CREATE") {
       e.preventDefault();
       await createStage();
     }
 
-    if (stageModal.modal_mode === "EDIT") {
+    if (stageModal.modalMode === "EDIT") {
       e.preventDefault();
       await updateStage();
     }
   };
 
   return (
-    <Transition.Root show={stageModal.is_modal_open} as={Fragment}>
+    <Transition.Root show={stageModal.isModalOpen} as={Fragment}>
       <Dialog
         as="div"
         className="fixed inset-0 overflow-hidden "
-        onClose={() => setStageModal({ ...stageModal, is_modal_open: false })}
+        onClose={() => setStageModal({ ...stageModal, isModalOpen: false })}
       >
         <div className="absolute inset-0 overflow-hidden">
           <Transition.Child
@@ -75,7 +75,7 @@ export default function StageModal({
                     <div className="py-6 px-4 bg-blue-700 sm:px-6">
                       <div className="flex items-center justify-between">
                         <Dialog.Title className="text-lg font-medium text-white">
-                          {stageModal.modal_mode === "CREATE"
+                          {stageModal.modalMode === "CREATE"
                             ? "New Stage"
                             : "Editing Stage"}
                         </Dialog.Title>
@@ -86,7 +86,7 @@ export default function StageModal({
                             onClick={() =>
                               setStageModal({
                                 ...stageModal,
-                                is_modal_open: false,
+                                isModalOpen: false,
                               })
                             }
                           >
@@ -111,7 +111,7 @@ export default function StageModal({
                               htmlFor="opening-name"
                               className="block text-sm font-medium text-dark"
                             >
-                              {stageModal.modal_mode === "CREATE"
+                              {stageModal.modalMode === "CREATE"
                                 ? "Stage Name"
                                 : "New Name"}
                             </label>
@@ -312,7 +312,7 @@ export default function StageModal({
                       type="button"
                       className="bg-white py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
                       onClick={() =>
-                        setStageModal({ ...stageModal, is_modal_open: false })
+                        setStageModal({ ...stageModal, isModalOpen: false })
                       }
                     >
                       Cancel
@@ -321,7 +321,7 @@ export default function StageModal({
                       type="submit"
                       className="ml-4 inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
                     >
-                      {stageModal.modal_mode === "CREATE"
+                      {stageModal.modalMode === "CREATE"
                         ? "Create Stage"
                         : "Edit Stage"}
                     </button>

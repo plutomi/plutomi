@@ -5,7 +5,7 @@ import {
 import { Dynamo } from "../../awsClients/ddbDocClient";
 
 const { DYNAMO_TABLE_NAME } = process.env;
-export default async function DeleteOrgInvite({ userId, invite_id }) {
+export default async function DeleteOrgInvite({ userId, inviteId }) {
   try {
     const transactParams: TransactWriteCommandInput = {
       TransactItems: [
@@ -14,7 +14,7 @@ export default async function DeleteOrgInvite({ userId, invite_id }) {
           Delete: {
             Key: {
               PK: `USER#${userId}`,
-              SK: `ORG_INVITE#${invite_id}`,
+              SK: `ORG_INVITE#${inviteId}`,
             },
             TableName: DYNAMO_TABLE_NAME,
           },
