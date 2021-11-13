@@ -22,11 +22,11 @@ export default function Login({ loggedOutPageText }) {
     e.preventDefault();
 
     try {
-      const { message } = await AuthService.login({
-        userEmail: userEmail,
-        callbackUrl: `${process.env.NEXT_PUBLIC_WEBSITE_URL + router.asPath}`,
-        loginMethod: "LINK",
-      });
+      const { message } = await AuthService.login(
+        userEmail,
+        `${process.env.NEXT_PUBLIC_WEBSITE_URL + router.asPath}`,
+        "LINK"
+      );
 
       setSubmittedText(message);
       setEmailSubmitted(true);
@@ -39,13 +39,11 @@ export default function Login({ loggedOutPageText }) {
     console.log(response);
     const userEmail = response.profileObj.email;
 
-    const input = {
-      userEmail: userEmail,
-      callbackUrl: `${process.env.NEXT_PUBLIC_WEBSITE_URL + router.asPath}`,
-      loginMethod: "GOOGLE",
-    };
-    console.log(input);
-    const { message } = await AuthService.login(input);
+    const { message } = await AuthService.login(
+      userEmail,
+      `${process.env.NEXT_PUBLIC_WEBSITE_URL + router.asPath}`,
+      "GOOGLE"
+    );
 
     window.location.replace(message);
   };

@@ -1,7 +1,8 @@
 import axios from "../axios/axios";
 
 export default class AuthService {
-  static async login({ userEmail, callbackUrl, loginMethod }) {
+  // TODO types
+  static async login(userEmail, callbackUrl, loginMethod) {
     const body = {
       loginMethod: loginMethod,
       userEmail: userEmail,

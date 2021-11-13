@@ -24,7 +24,7 @@ export default class ApplicantsService {
     return `/api/applicants/${applicantId}`;
   }
   static async getApplicant({ applicantId }) {
-    const { data } = await axios.get(this.getApplicantURL( applicantId ));
+    const { data } = await axios.get(this.getApplicantURL(applicantId));
     return data;
   }
 
@@ -37,14 +37,11 @@ export default class ApplicantsService {
     const body = {
       newApplicantValues: newApplicantValues,
     };
-    const { data } = await axios.put(
-      this.getApplicantURL(applicantId ),
-      body
-    );
+    const { data } = await axios.put(this.getApplicantURL(applicantId), body);
     return data;
   }
 
-  static answerQuestionsURL({ orgId, applicantId }) {
+  static answerQuestionsURL(orgId, applicantId) {
     return `/api/public/orgs/${orgId}/applicants/${applicantId}/answer`;
   }
   static async answerQuestions({ orgId, applicantId, responses }) {
@@ -53,7 +50,7 @@ export default class ApplicantsService {
       responses: responses,
     };
     const { data } = await axios.post(
-      this.answerQuestionsURL({ orgId, applicantId }),
+      this.answerQuestionsURL(orgId, applicantId),
       body
     );
     return data;
