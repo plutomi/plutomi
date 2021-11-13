@@ -25,7 +25,7 @@ const handler = async (
   console.log("INvite id", req.query);
   // TODO trycatch
   const invite = await getOrgInvite(userSession.userId, inviteId);
-
+  console.log("Got invite", invite);
   const joinOrgInput = {
     userId: userSession.userId,
     invite: invite,

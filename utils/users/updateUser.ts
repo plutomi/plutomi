@@ -41,7 +41,7 @@ export async function UpdateUser({
     });
 
     // TODO refactor this into its own function, easy way to have banned values
-    const bannedKeys = ["NO_LAST_NAME", "NO_LAST_NAME"];
+    const bannedKeys = ["NO_FIRST_NAME", "NO_LAST_NAME"];
 
     // @ts-ignore TODO fix types
     const checker = (value) =>
