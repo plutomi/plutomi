@@ -36,3 +36,8 @@ interface CreateStageRuleInput
   stageId: string;
 }
 type CreateStageRuleOutput = StageRuleDynamoEntry;
+
+interface UpdateStageInput
+  extends Pick<StageRuleDynamoEntry, "orgId" | "stageId"> {
+  newStageValues: { [key: string] };
+}

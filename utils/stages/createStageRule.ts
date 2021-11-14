@@ -6,7 +6,7 @@ import {
   CreateStageRuleInput,
   CreateStageRuleOutput,
   StageRuleDynamoEntry,
-} from "./types/StageRule";
+} from "./types/StageRules";
 import { EntityTypes } from "../../types/additional";
 
 const { DYNAMO_TABLE_NAME } = process.env;
