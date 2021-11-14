@@ -116,23 +116,42 @@ export enum ERRORS {
 }
 
 export enum ID_LENGTHS {
-  NEW_USER = 40,
-  // TODO @mazupicua
-  // const applicantId = nanoid(60); <-- Replace this with the format on line 119 ie APPLICANT
-  // const inviteId = nanoid(50); <-- Should be ORG_INVITE
+  USER = 42,
+  APPLICANT = 60,
+  // TODO @mazupicua issue https://github.com/plutomi/plutomi/issues/298
+  // const inviteId = nanoid(50); <-- Replace these with the formats above
   // const openingId = nanoid(16); <-- Should be OPENING
   // const questionId = nanoid(50); <-- Should be QUESTION
   // const stageId = nanoid(50); <-- STAGE
   // const stageRuleId = nanoid(16); <-- STAGE_RULE
-  // const userId = nanoid(42); <-- USER
 }
 
+// TODO @mazupicua - Same issue as above
+// We need some default values here for FIRST_NAME and FULL_NAME
+// You can reference FIRST_NAME by calling the attribute like DEFAULT_VALUES.FIRST_NAME
+// FULL_NAME should be first and last name combined with a space in the middle... look up  `template literals`!!!!
 export enum DEFAULT_VALUES {
   FIRST_NAME = "NO_FIRST_NAME",
-  // LAST_NAME = ... no last name.. 
-  // FULL_NAME = FIRST_NAME + LAST_NAME  with a space in the middle // TODO @mazupicua
-  // DEFAULT_VALUES.FIRST_NAME <--------- ALSO, you can reference the value right above it so you dont repeat yourself
-  // Look up `template literals`!!!!
+  // TODO here!
+}
+
+export enum CONTACT {
+  /**
+   * For troubleshooting issues
+   */
+  SUPPORT = "support@plutomi.com",
+  /**
+   * For general information
+   */
+  GENERAL = "contact@plutomi.com",
+  /**
+   * For investor relations
+   */
+  INVEST = "ir@plutomi.com",
+  /**
+   * For administrative / Github related
+   */
+  ADMIN = "jose@plutomi.com",
 }
 
 declare module "iron-session" {
