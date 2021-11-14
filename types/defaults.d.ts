@@ -131,7 +131,8 @@ export enum DEFAULT_VALUES {
   FIRST_NAME = "NO_FIRST_NAME",
   // LAST_NAME
   // FULL_NAME = FIRST_NAME + LAST_NAME  with a space in the middle // TODO @mazupicua
-  // Look up `template literals`
+  // DEFAULT_VALUES.FIRST_NAME <--------- ALSO, you can reference the value right above it so you dont repeat yourself
+  // Look up `template literals`!!!!
 }
 
 declare module "iron-session" {
