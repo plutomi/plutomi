@@ -80,55 +80,6 @@ export interface ApplicantDynamoEntry {
   GSI2SK: `STAGE#${string}#DATE_LANDED#${string}`;
 }
 
-interface GetApplicantByIdInput {
-  /**
-   * The orgId the applicant is in
-   */
-  orgId: string;
-  /**
-   * The applicant's id
-   */
-  applicantId: string;
-}
-
-// TODO types for files, etc.
-interface GetApplicantByIdOutput extends CreateApplicantDynamoEntry {
-  responses: Object[]; // TODO fix this type with a response type
-}
-
-interface DeleteApplicantInput {
-  /**
-   * Id of the org in which the applicant is in
-   */
-  orgId: string;
-  /**
-   * Id of the applicant
-   */
-  applicantId: string;
-}
-
-export interface CreateQuestionInput {
-  /**
-   * Which org does this question belong to
-   */
-  orgId: string;
-
-  /**
-   * Which stage does this question belong to
-   */
-  stageId: string;
-
-  /**
-   * The question title
-   */
-  GSI1SK: string;
-
-  /**
-   * The question description
-   */
-  questionDescription: questionDescription;
-}
-
 type CreateApplicantInput = Pick<
   ApplicantDynamoEntry,
   | "orgId"
@@ -140,3 +91,14 @@ type CreateApplicantInput = Pick<
 >;
 
 type CreateApplicantOutput = ApplicantDynamoEntry;
+type GetApplicantByIdInput = Pick<
+  ApplicantDynamoEntry,
+  "orgId" | "applicantId"
+>;
+
+type DeleteApplicantInput = Pick<ApplicantDynamoEntry, "orgId" | "applicantId">;
+
+// TODO types for files, etc.
+interface GetApplicantByIdOutput extends ApplicantDynamoEntry {
+  responses: Object[]; // TODO fix this type with a response type
+}
