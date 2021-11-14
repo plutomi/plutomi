@@ -1,7 +1,7 @@
 import { getAllUserInvites } from "./getAllOrgInvites";
 import deleteOrgInvite from "./deleteOrgInvite";
 import { getOrgInvite } from "./getOrgInvite";
-import { GetCurrentTime } from "../time";
+import Time from "../time";
 
 // This is really a misnomer. There is no 'accept' per say.
 // We just check that the invite is valid and then delete it

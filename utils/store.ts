@@ -1,7 +1,6 @@
 import create from "zustand";
 import Time from "./time";
 
-const now = Time.relative();
 const useStore = create((set) => ({
   // TODO this is stupidly gross!!!
   createOrgModalIsOpen: false,

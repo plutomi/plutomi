@@ -11,7 +11,7 @@ export default async function createLoginLink({
   loginLinkExpiry,
 }) {
   try {
-    const now = Time.currentISO() as string;
+    const now = Time.currentISO();
     const newLoginLink = {
       PK: `USER#${user.userId}`,
       SK: `loginLink#${now}`,

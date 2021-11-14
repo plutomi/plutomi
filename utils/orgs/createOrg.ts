@@ -1,11 +1,11 @@
 import { PutCommand, PutCommandInput } from "@aws-sdk/lib-dynamodb";
 import { Dynamo } from "../../awsClients/ddbDocClient";
-import { GetCurrentTime } from "../time";
+import Time from "../time";
 
 const { DYNAMO_TABLE_NAME } = process.env;
 
 export async function createOrg({ orgId, GSI1SK }) {
-  const now = Time.currentISO() as string;
+  const now = Time.currentISO();
   const newOrg = {
     PK: `ORG#${orgId}`,
     SK: `ORG`,

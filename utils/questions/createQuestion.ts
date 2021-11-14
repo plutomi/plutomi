@@ -3,10 +3,10 @@ import {
   TransactWriteCommandInput,
 } from "@aws-sdk/lib-dynamodb";
 import { Dynamo } from "../../awsClients/ddbDocClient";
-import { GetCurrentTime } from "../time";
+import Time from "../time";
 import { nanoid } from "nanoid";
 import { getStage } from "../stages/getStage";
-import { MAX_CHILD_ITEM_LIMIT, MAX_ITEM_LIMIT_ERROR } from "../../Config";
+import { Errors, Limits } from "../../types";
 
 const { DYNAMO_TABLE_NAME } = process.env;
 
@@ -16,7 +16,7 @@ export async function createQuestion(
   GSI1SK,
   questionDescription
 ) {
-  const now = Time.currentISO() as string;
+  const now = Time.currentISO();
   const questionId = nanoid(50);
   const newStageQuestion = {
     PK: `ORG#${orgId}#QUESTION#${questionId}`,
@@ -34,8 +34,8 @@ export async function createQuestion(
   try {
     let stage = await getStage({ orgId, stageId });
 
-    if (stage.questionOrder.length >= MAX_CHILD_ITEM_LIMIT) {
-      throw MAX_ITEM_LIMIT_ERROR;
+    if (stage.questionOrder.length >= Limits.MAX_CHILD_ITEM_LIMIT) {
+      throw Errors.MAX_CHILD_ITEM_LIMIT_ERROR_MESSAGE;
     }
 
     try {

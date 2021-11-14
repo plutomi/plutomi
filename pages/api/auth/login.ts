@@ -14,6 +14,7 @@ import cleanUser from "../../../utils/clean/cleanUser";
 import { getUserById } from "../../../utils/users/getUserById";
 import updateLoginLink from "../../../utils/loginLinks/updateLoginLink";
 import { TimeUnits } from "../../../types";
+import dayjs from "dayjs";
 
 const handler = async (
   req: NextIronRequest,
@@ -79,7 +80,7 @@ const handler = async (
           await sendLoginLink({
             recipientEmail: user.userEmail,
             loginLink: loginLink,
-            loginLinkRelativeExpiry: getRelativeTime(loginLinkExpiry),
+            loginLinkRelativeExpiry: Time.relative(new Date(loginLinkExpiry)),
           });
           return res
             .status(201)

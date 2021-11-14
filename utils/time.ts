@@ -1,8 +1,8 @@
 import relativeTime from "dayjs/plugin/relativeTime";
 import dayjs from "dayjs";
-import { TimeUnits } from "../types";
+import { Errors, TimeUnits } from "../types";
+
 dayjs.extend(relativeTime);
-import { INVALID_DATE_ERROR } from "../Config";
 
 /**
  * Wrapper around dayjs for the most common use cases
@@ -27,16 +27,19 @@ export default class Time {
 
   /**
    *
-   * @param timestamp  The date to get a relative time to
+   * @param date  The date (in any format) to get a relative time to.
    * @returns A string such as '23 days ago' relative to the passed in date
    * @external String
+   * @throws {@link Errors.INVALID_DATE_ERROR} if the date cannot be converted to a Date object
    * @see The DayJS documentation for more info https://day.js.org/docs/en/plugin/relative-time
    */
-  static relative(timestamp: Date): string {
-    if (!dayjs(timestamp).isValid()) {
-      throw INVALID_DATE_ERROR;
+  static relative(date: string | number | Date): string {
+    try {
+      let convertedDate = dayjs(date).toDate();
+      return dayjs().to(convertedDate);
+    } catch (error) {
+      throw Errors.INVALID_DATE_ERROR;
     }
-    return dayjs().to(timestamp);
   }
 
   /**

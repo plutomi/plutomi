@@ -3,15 +3,15 @@ import {
   TransactWriteCommandInput,
 } from "@aws-sdk/lib-dynamodb";
 import { Dynamo } from "../../awsClients/ddbDocClient";
-import { GetCurrentTime } from "../time";
+import Time from "../time";
 import { nanoid } from "nanoid";
 import { getOpening } from "../openings/getOpeningById";
-import { MAX_CHILD_ITEM_LIMIT, MAX_ITEM_LIMIT_ERROR } from "../../Config";
+import { Errors, Limits } from "../../types";
 
 const { DYNAMO_TABLE_NAME } = process.env;
 
 export async function createStage({ orgId, GSI1SK, openingId }) {
-  const now = Time.currentISO() as string;
+  const now = Time.currentISO();
   const stageId = nanoid(50);
   const newStage = {
     PK: `ORG#${orgId}#STAGE#${stageId}`,
@@ -33,8 +33,8 @@ export async function createStage({ orgId, GSI1SK, openingId }) {
       // Get current opening
       opening.stageOrder.push(stageId);
 
-      if (opening.stageOrder.length >= MAX_CHILD_ITEM_LIMIT) {
-        throw MAX_ITEM_LIMIT_ERROR;
+      if (opening.stageOrder.length >= Limits.MAX_CHILD_ITEM_LIMIT) {
+        throw Errors.MAX_CHILD_ITEM_LIMIT_ERROR_MESSAGE;
       }
 
       const transactParams: TransactWriteCommandInput = {

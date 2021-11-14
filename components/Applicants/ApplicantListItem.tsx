@@ -1,4 +1,4 @@
-import { getRelativeTime } from "../../utils/time";
+import Time from "../../utils/time";
 import { CalendarIcon } from "@heroicons/react/outline";
 import ClickToCopy from "../ClickToCopy";
 
@@ -54,7 +54,7 @@ export default function ApplicantListItem({ applicant, handleApplicantClick }) {
               <p>
                 Applied{" "}
                 <time dateTime={applicant.createdAt}>
-                  {getRelativeTime(applicant.createdAt)}
+                  {Time.relative(applicant.createdAt)}
                 </time>
               </p>
             </div>

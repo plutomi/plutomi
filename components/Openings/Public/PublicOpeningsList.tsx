@@ -2,7 +2,7 @@
 // Such as filtering of openings, their public / private status,
 // And how many applicants there are
 import { CalendarIcon, LocationMarkerIcon } from "@heroicons/react/solid";
-import { getRelativeTime } from "../../../utils/time";
+import Time from "../../../utils/time";
 import Link from "next/dist/client/link";
 
 import _ from "lodash";
@@ -48,8 +48,8 @@ export default function PublicOpeningsList() {
                       />
                       <p>
                         Posted{" "}
-                        <time dateTime={opening.createdAt as string}>
-                          {getRelativeTime(opening.createdAt)}
+                        <time dateTime={opening.createdAt}>
+                          {Time.relative(opening.createdAt)}
                         </time>
                       </p>
                     </div>

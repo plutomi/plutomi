@@ -9,7 +9,7 @@ const { DYNAMO_TABLE_NAME } = process.env;
 
 export default async function createLoginEvent(userId: string) {
   try {
-    const now = Time.currentISO() as string;
+    const now = Time.currentISO();
     const newLoginEvent = {
       PK: `USER#${userId}`,
       SK: `LOGIN_EVENT#${now}`,

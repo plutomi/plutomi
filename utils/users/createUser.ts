@@ -1,6 +1,6 @@
 import { PutCommand, PutCommandInput } from "@aws-sdk/lib-dynamodb";
 import { Dynamo } from "../../awsClients/ddbDocClient";
-import { GetCurrentTime } from "../time";
+import Time from "../time";
 import { nanoid } from "nanoid";
 import sendNewUserEmail from "../email/sendNewUser";
 import { getUserByEmail } from "./getUserByEmail";
@@ -12,7 +12,7 @@ export async function createUser({ userEmail }) {
   if (user) {
     return user;
   }
-  const now = Time.currentISO() as string;
+  const now = Time.currentISO();
   const userId = nanoid(42);
   const newUser = {
     PK: `USER#${userId}`,

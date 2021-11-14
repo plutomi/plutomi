@@ -1,6 +1,6 @@
 import { PutCommand, PutCommandInput } from "@aws-sdk/lib-dynamodb";
 import { Dynamo } from "../../awsClients/ddbDocClient";
-import { GetCurrentTime } from "../time";
+import Time from "../time";
 import { nanoid } from "nanoid";
 
 const { DYNAMO_TABLE_NAME } = process.env;
@@ -12,7 +12,7 @@ export async function createApplicantResponse(
   questionDescription,
   questionResponse
 ) {
-  const now = Time.currentISO() as string;
+  const now = Time.currentISO();
   const responseId = nanoid(30);
   const newApplicantResponse = {
     PK: `ORG#${orgId}#APPLICANT#${applicantId}`,

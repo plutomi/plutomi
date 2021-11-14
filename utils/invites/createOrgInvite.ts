@@ -4,7 +4,7 @@ import {
 } from "@aws-sdk/lib-dynamodb";
 import { Dynamo } from "../../awsClients/ddbDocClient";
 import { getAllUserInvites } from "./getAllOrgInvites";
-import { GetCurrentTime } from "../time";
+import Time from "../time";
 import { nanoid } from "nanoid";
 
 const { DYNAMO_TABLE_NAME } = process.env;
@@ -31,7 +31,7 @@ export default async function createOrgInvite({
       throw `This user already has a pending invite to your org! They can log in at ${process.env.NEXT_PUBLIC_WEBSITE_URL}/invites to claim it!`;
     }
     const inviteId = nanoid(50);
-    const now = Time.currentISO() as string;
+    const now = Time.currentISO();
     const newOrgInvite = {
       PK: `USER#${user.userId}`,
       SK: `ORG_INVITE#${inviteId}`, // Allows sorting, and incase two get created in the same millisecond

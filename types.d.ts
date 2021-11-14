@@ -165,3 +165,12 @@ export interface CreateApplicantInput {
    */
   readonly stageId: string;
 }
+
+export enum Limits {
+  MAX_CHILD_ITEM_LIMIT = 200,
+}
+
+export enum Errors {
+  MAX_CHILD_ITEM_LIMIT_ERROR_MESSAGE = `MAX_CHILD_ITEM_LIMIT reached, please contact support@plutomi.com for assistance`,
+  INVALID_DATE_ERROR = `The date you provided appears to be invalid`,
+}

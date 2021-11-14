@@ -5,13 +5,13 @@ import {
   TransactWriteCommandInput,
 } from "@aws-sdk/lib-dynamodb";
 import { Dynamo } from "../../awsClients/ddbDocClient";
-import { GetCurrentTime } from "../time";
+import Time from "../time";
 import { nanoid } from "nanoid";
 
 const { DYNAMO_TABLE_NAME } = process.env;
 
 export async function createOpening({ orgId, GSI1SK }) {
-  const now = Time.currentISO() as string;
+  const now = Time.currentISO();
   const openingId = nanoid(16);
   const newOpening = {
     PK: `ORG#${orgId}#OPENING#${openingId}`,

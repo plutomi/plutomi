@@ -4,7 +4,7 @@ import {
   UsersIcon,
 } from "@heroicons/react/solid";
 import ClickToCopy from "../ClickToCopy";
-import { getRelativeTime } from "../../utils/time";
+import Time from "../../utils/time";
 import Link from "next/dist/client/link";
 import useOpenings from "../../SWR/useOpenings";
 import useSelf from "../../SWR/useSelf";
@@ -87,8 +87,8 @@ export default function OpeningList() {
                       />
                       <p>
                         Created{" "}
-                        <time dateTime={opening.createdAt as string}>
-                          {getRelativeTime(opening.createdAt)}
+                        <time dateTime={opening.createdAt}>
+                          {Time.relative(opening.createdAt)}
                         </time>
                       </p>
                     </div>
