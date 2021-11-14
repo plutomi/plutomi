@@ -38,8 +38,8 @@ export default async function updateQuestion(
 
   const params = {
     Key: {
-      PK: `ORG#${orgId}#QUESTION#${questionId}`,
-      SK: `QUESTION`,
+      PK: `ORG#${orgId}#STAGE_QUESTION#${questionId}`,
+      SK: `STAGE_QUESTION`,
     },
     UpdateExpression: UpdatedExpression,
     ExpressionAttributeValues: newAttributes,

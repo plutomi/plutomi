@@ -4,11 +4,11 @@ export interface QuestionsDynamoEntry {
   /**
    * The primary key for the question. Variables are `orgId` and `questionId`
    */
-  PK: `ORG#${string}#QUESTION#${string}`;
+  PK: `ORG#${string}#STAGE_QUESTION#${string}`;
   /**
-   * Sort key for the question. In this case, it's just the {@link ENTITY_TYPES.QUESTION}
+   * Sort key for the question. In this case, it's just the {@link ENTITY_TYPES.STAGE_QUESTION}
    */
-  SK: ENTITY_TYPES.QUESTION;
+  SK: ENTITY_TYPES.STAGE_QUESTION;
   /**
    * The ID of the question
    */
@@ -24,9 +24,9 @@ export interface QuestionsDynamoEntry {
   orgId: string;
 
   /**
-   * The entityType {@link ENTITY_TYPES.QUESTION}
+   * The entityType {@link ENTITY_TYPES.STAGE_QUESTION}
    */
-  entityType: ENTITY_TYPES.QUESTION;
+  entityType: ENTITY_TYPES.STAGE_QUESTION;
   /**
    * ISO timestamp of when this question was created
    */

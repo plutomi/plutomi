@@ -11,8 +11,8 @@ export async function getQuestionById(
   const params: GetCommandInput = {
     TableName: DYNAMO_TABLE_NAME,
     Key: {
-      PK: `ORG#${orgId}#QUESTION#${questionId}`,
-      SK: `QUESTION`,
+      PK: `ORG#${orgId}#STAGE_QUESTION#${questionId}`,
+      SK: `STAGE_QUESTION`,
     },
   };
 

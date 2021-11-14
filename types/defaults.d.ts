@@ -51,7 +51,7 @@ export enum ENTITY_TYPES {
   APPLICANT = "APPLICANT",
 
   /**
-   * For applicant responses to a `QUESTION`
+   * For applicant responses to a `STAGE_QUESTION`
    */
   APPLICANT_RESPONSE = "APPLICANT_RESPONSE",
   /**
@@ -82,7 +82,7 @@ export enum ENTITY_TYPES {
   /**
    * For questions inside of a `STAGE`
    */
-  QUESTION = "QUESTION",
+  STAGE_QUESTION = "STAGE_QUESTION",
 
   /**
    * For rules inside of a `STAGE`
@@ -121,7 +121,7 @@ export enum ID_LENGTHS {
   // TODO @mazupicua issue https://github.com/plutomi/plutomi/issues/298
   // const inviteId = nanoid(50); <-- Replace these with the formats above
   // const openingId = nanoid(16); <-- Should be OPENING
-  // const questionId = nanoid(50); <-- Should be QUESTION
+  // const questionId = nanoid(50); <-- Should be STAGE_QUESTION
   // const stageId = nanoid(50); <-- STAGE
   // const stageRuleId = nanoid(16); <-- STAGE_RULE
 }

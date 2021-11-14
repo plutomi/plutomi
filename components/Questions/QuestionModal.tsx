@@ -353,6 +353,6 @@ export default function QuestionModal({ createQuestion, updateQuestion }) {
   );
 
   {
-    /* EDIT QUESTION */
+    /* EDIT STAGE_QUESTION */
   }
 }

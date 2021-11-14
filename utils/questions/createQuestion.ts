@@ -21,11 +21,11 @@ export async function createQuestion(
   const now = Time.currentISO();
   const questionId = nanoid(50);
   const newStageQuestion: QuestionsDynamoEntry = {
-    PK: `ORG#${orgId}#QUESTION#${questionId}`,
-    SK: ENTITY_TYPES.QUESTION,
+    PK: `ORG#${orgId}#STAGE_QUESTION#${questionId}`,
+    SK: ENTITY_TYPES.STAGE_QUESTION,
     questionDescription: questionDescription || "",
     questionId: questionId,
-    entityType: ENTITY_TYPES.QUESTION,
+    entityType: ENTITY_TYPES.STAGE_QUESTION,
     createdAt: now,
     GSI1PK: `ORG#${orgId}#STAGE#${stageId}#QUESTIONS`,
     GSI1SK: GSI1SK,

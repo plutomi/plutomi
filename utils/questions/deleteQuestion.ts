@@ -26,8 +26,8 @@ export async function DeleteQuestion(
           // Delete question
           Delete: {
             Key: {
-              PK: `ORG#${orgId}#QUESTION#${questionId}`,
-              SK: `QUESTION`,
+              PK: `ORG#${orgId}#STAGE_QUESTION#${questionId}`,
+              SK: `STAGE_QUESTION`,
             },
             TableName: DYNAMO_TABLE_NAME,
           },
