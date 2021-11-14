@@ -5,11 +5,15 @@ import {
 import { Dynamo } from "../../awsClients/ddbDocClient";
 const { DYNAMO_TABLE_NAME } = process.env;
 import { getStage } from "../stages/getStage";
-import { getQuestion } from "./getQuestionById";
-export async function DeleteQuestion({ orgId, questionId }) {
+import { getQuestionById } from "./getQuestionById";
+import { DeleteQuestionInput } from "./types/Questions";
+export async function DeleteQuestion(
+  props: DeleteQuestionInput
+): Promise<void> {
+  const { orgId, questionId } = props;
   // Delete the question item & update the question order on the stage
   try {
-    let question = await getQuestion({ orgId, questionId });
+    let question = await getQuestionById({ orgId, questionId });
     let stage = await getStage({ orgId, stageId: question.stageId });
     const deletedQuestionIndex = stage.questionOrder.indexOf(questionId);
 

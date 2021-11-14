@@ -1,12 +1,12 @@
 import { UpdateCommand } from "@aws-sdk/lib-dynamodb";
 import { Dynamo } from "../../awsClients/ddbDocClient";
+import { UpdateQuestionInput } from "./types/Questions";
 const { DYNAMO_TABLE_NAME } = process.env;
 
-export default async function updateQuestion({
-  orgId,
-  questionId,
-  newQuestionValues,
-}) {
+export default async function updateQuestion(
+  props: UpdateQuestionInput
+): Promise<void> {
+  const { orgId, questionId, newQuestionValues } = props;
   // TODO user the cleaning functions instead
 
   const FORBIDDEN_KEYS = [

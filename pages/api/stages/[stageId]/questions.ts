@@ -1,5 +1,5 @@
 import { NextApiResponse } from "next";
-import { GetAllQuestionsInStage } from "../../../../utils/questions/getAllQuestionsInStage";
+import { getAllQuestionsInStage } from "../../../../utils/questions/getAllQuestionsInStage";
 import withCleanOrgId from "../../../../middleware/withCleanOrgId";
 import { withSessionRoute } from "../../../../middleware/withSession";
 
@@ -17,7 +17,7 @@ const handler = async (
 
   if (method === "GET") {
     try {
-      const questions = await GetAllQuestionsInStage({
+      const questions = await getAllQuestionsInStage({
         orgId: userSession.orgId,
         stageId,
       });

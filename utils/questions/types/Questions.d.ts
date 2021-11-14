@@ -1,4 +1,4 @@
-import { EntityTypes } from "./additional";
+import { EntityTypes } from "../../../types/additional";
 
 export interface QuestionsDynamoEntry {
   /**
@@ -57,3 +57,22 @@ type CreateQuestionInput = Pick<
   QuestionsDynamoEntry,
   "orgId" | "stageId" | "GSI1SK" | "questionDescription"
 >;
+
+type orgIdAndQuestionId = "orgId" | "questionId";
+
+type DeleteQuestionInput = Pick<QuestionsDynamoEntry, orgIdAndQuestionId>;
+
+type GetQuestionInput = Pick<QuestionsDynamoEntry, orgIdAndQuestionId>;
+type GetQuestionOutput = QuestionsDynamoEntry;
+
+type GetAllQuestionsInStageInput = Pick<
+  QuestionsDynamoEntry,
+  "orgId" | "stageId"
+>;
+
+interface UpdateQuestionInput
+  extends Pick<QuestionsDynamoEntry, orgIdAndQuestionId> {
+  newQuestionValues: { [key: string] };
+}
+
+type GetAllQuestionsInStageOutput = GetQuestionOutput[];

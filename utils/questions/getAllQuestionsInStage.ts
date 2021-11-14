@@ -1,10 +1,17 @@
 import { QueryCommand, QueryCommandInput } from "@aws-sdk/lib-dynamodb";
 import { Dynamo } from "../../awsClients/ddbDocClient";
 import { getStage } from "../stages/getStage";
+import {
+  GetAllQuestionsInStageInput,
+  GetAllQuestionsInStageOutput,
+} from "./types/Questions";
 
 const { DYNAMO_TABLE_NAME } = process.env;
 
-export async function GetAllQuestionsInStage({ orgId, stageId }) {
+export async function getAllQuestionsInStage(
+  props: GetAllQuestionsInStageInput
+): Promise<GetAllQuestionsInStageOutput> {
+  const { orgId, stageId } = props;
   const stage = await getStage({ orgId, stageId });
   const { questionOrder } = stage;
 

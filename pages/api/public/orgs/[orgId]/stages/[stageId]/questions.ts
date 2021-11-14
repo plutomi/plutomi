@@ -1,5 +1,5 @@
 import { NextApiResponse } from "next";
-import { GetAllQuestionsInStage } from "../../../../../../../utils/questions/getAllQuestionsInStage";
+import { getAllQuestionsInStage } from "../../../../../../../utils/questions/getAllQuestionsInStage";
 import withCleanOrgId from "../../../../../../../middleware/withCleanOrgId";
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   const { method, query } = req;
@@ -7,7 +7,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 
   if (method === "GET") {
     try {
-      const questions = await GetAllQuestionsInStage({
+      const questions = await getAllQuestionsInStage({
         orgId,
         stageId,
       });

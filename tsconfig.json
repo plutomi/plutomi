@@ -29,9 +29,7 @@
   },
   "exclude": ["node_modules", "cdk.out"],
   "include": [
-    "additional.d.ts",
-    "Applicants.d.ts",
-    "API.d.ts",
+    "types/*",
     "next-env.d.ts",
     "**/*.ts",
     "**/*.tsx"

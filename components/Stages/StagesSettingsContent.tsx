@@ -13,7 +13,7 @@ import useOpeningById from "../../SWR/useOpeningById";
 import useStageById from "../../SWR/useStageById";
 import StagesService from "../../adapters/StagesService";
 import QuestionsService from "../../adapters/QuestionsService";
-import { CustomQuery } from "../../additional";
+import { CustomQuery } from "../../types/additional";
 CustomQuery;
 export default function StageSettingsContent() {
   const createQuestion = async () => {

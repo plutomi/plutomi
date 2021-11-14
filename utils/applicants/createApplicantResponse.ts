@@ -6,8 +6,8 @@ import {
   ApplicantResponseEntry,
   CreateApplicantResponseInput,
   CreateApplicantResponseOutput,
-} from "../../ApplicantResponses";
-import { EntityTypes } from "../../additional";
+} from "./types/ApplicantResponses";
+import { EntityTypes } from "../../types/additional";
 
 const { DYNAMO_TABLE_NAME } = process.env;
 

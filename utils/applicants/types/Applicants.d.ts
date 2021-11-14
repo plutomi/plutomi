@@ -1,4 +1,4 @@
-import { EntityTypes } from "./additional";
+import { EntityTypes } from "../../../types/additional";
 
 export interface ApplicantDynamoEntry {
   /**

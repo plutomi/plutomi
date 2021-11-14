@@ -2,7 +2,7 @@ import { NextApiRequest, NextApiResponse } from "next";
 import { getApplicantById } from "../../../../../../../utils/applicants/getApplicantById";
 import cleanApplicant from "../../../../../../../utils/clean/cleanApplicant";
 import withCleanOrgId from "../../../../../../../middleware/withCleanOrgId";
-import { CustomQuery } from "../../../../../../../additional";
+import { CustomQuery } from "../../../../../../../types/additional";
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   const user = req.user;
   const { method, query, body } = req;

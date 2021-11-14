@@ -1,6 +1,6 @@
 import relativeTime from "dayjs/plugin/relativeTime";
 import dayjs from "dayjs";
-import { Errors, TimeUnits } from "../additional";
+import { Errors, TimeUnits } from "../types/additional";
 
 dayjs.extend(relativeTime);
 

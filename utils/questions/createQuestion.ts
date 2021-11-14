@@ -6,12 +6,14 @@ import { Dynamo } from "../../awsClients/ddbDocClient";
 import Time from "../time";
 import { nanoid } from "nanoid";
 import { getStage } from "../stages/getStage";
-import { EntityTypes, Errors, Limits } from "../../additional";
-import { QuestionsDynamoEntry, CreateQuestionInput } from "../../Questions";
+import { EntityTypes, Errors, Limits } from "../../types/additional";
+import { QuestionsDynamoEntry, CreateQuestionInput } from "./types/Questions";
 
 const { DYNAMO_TABLE_NAME } = process.env;
 
-export async function createQuestion(props: CreateQuestionInput) {
+export async function createQuestion(
+  props: CreateQuestionInput
+): Promise<void> {
   const { orgId, stageId, GSI1SK, questionDescription } = props;
   const now = Time.currentISO();
   const questionId = nanoid(50);

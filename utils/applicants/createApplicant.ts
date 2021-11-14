@@ -5,7 +5,7 @@ import {
 import { Dynamo } from "../../awsClients/ddbDocClient";
 import Time from "../time";
 import { nanoid } from "nanoid";
-import { EntityTypes } from "../../additional";
+import { EntityTypes } from "../../types/additional";
 import {
   ApplicantDynamoEntry,
   CreateApplicantInput,

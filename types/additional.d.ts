@@ -1,6 +1,5 @@
 import { NextApiRequest, NextApiResponse } from "next";
-
-type CustomDateFormat = string | number; // TODO date types
+// Misc types used all over
 
 /**
  * All possible parameters in the URL

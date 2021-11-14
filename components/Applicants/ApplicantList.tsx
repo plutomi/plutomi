@@ -4,7 +4,8 @@ import { useRouter } from "next/router";
 import Loader from "../Loader";
 import useStore from "../../utils/store";
 import useAllApplicantsInStage from "../../SWR/useAllApplicantsInStage";
-import { CustomQuery } from "../../additional";
+import { CustomQuery } from "../../types/additional";
+import { ApplicantDynamoEntry } from "../../utils/applicants/types/Applicants";
 export default function ApplicantList() {
   const router = useRouter();
   const { openingId, stageId }: Partial<CustomQuery> = router.query;
@@ -51,7 +52,7 @@ export default function ApplicantList() {
   return (
     <div className="bg-white shadow overflow-hidden sm:rounded-md">
       <ul role="list" className="divide-y divide-gray-200">
-        {applicants?.map((applicant: DynamoCreatedApplicant) => (
+        {applicants?.map((applicant: ApplicantDynamoEntry) => (
           <ApplicantListItem
             key={applicant.applicantId}
             applicant={applicant}

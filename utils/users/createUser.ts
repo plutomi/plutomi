@@ -6,7 +6,8 @@ import sendNewUserEmail from "../email/sendNewUser";
 import { getUserByEmail } from "./getUserByEmail";
 const { DYNAMO_TABLE_NAME } = process.env;
 
-export async function createUser({ userEmail }) {
+export async function createUser(props) {
+  const { userEmail } = props;
   const user = await getUserByEmail(userEmail);
 
   if (user) {

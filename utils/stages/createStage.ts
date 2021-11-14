@@ -6,7 +6,7 @@ import { Dynamo } from "../../awsClients/ddbDocClient";
 import Time from "../time";
 import { nanoid } from "nanoid";
 import { getOpening } from "../openings/getOpeningById";
-import { Errors, Limits } from "../../additional";
+import { Errors, Limits } from "../../types/additional";
 
 const { DYNAMO_TABLE_NAME } = process.env;
 
