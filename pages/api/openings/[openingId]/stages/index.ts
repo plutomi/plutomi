@@ -14,7 +14,7 @@ const handler = async (
     return res.status(401).json({ message: "Please log in again" });
   }
   const { body, method, query } = req;
-  const { openingId } = query as CustomQuery;
+  const { openingId } = query as CUSTOM_QUERY;
 
   // Get all stages in an opening
   if (method === "GET") {

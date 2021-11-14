@@ -6,8 +6,8 @@ import {
   ApplicantResponseEntry,
   CreateApplicantResponseInput,
   CreateApplicantResponseOutput,
-} from "./types/ApplicantResponses";
-import { EntityTypes } from "../../types/additional";
+} from "../../types/ApplicantResponses";
+import { ENTITY_TYPES } from "../../types/defaults";
 
 const { DYNAMO_TABLE_NAME } = process.env;
 
@@ -25,17 +25,17 @@ export async function createApplicantResponse(
   const responseId = nanoid(30);
   const newApplicantResponse: ApplicantResponseEntry = {
     PK: `ORG#${orgId}#APPLICANT#${applicantId}`,
-    SK: `${EntityTypes.APPLICANT_RESPONSE}#${responseId}`,
+    SK: `${ENTITY_TYPES.APPLICANT_RESPONSE}#${responseId}`,
     orgId: orgId,
     applicantId: applicantId,
-    entityType: EntityTypes.APPLICANT_RESPONSE,
+    entityType: ENTITY_TYPES.APPLICANT_RESPONSE,
     createdAt: now,
     responseId: responseId,
     questionTitle: questionTitle,
     questionDescription: questionDescription,
     questionResponse: questionResponse,
     GSI1PK: `ORG#${orgId}#APPLICANT#${applicantId}`,
-    GSI1SK: EntityTypes.APPLICANT_RESPONSE, // TODO add timestmap?
+    GSI1SK: ENTITY_TYPES.APPLICANT_RESPONSE, // TODO add timestmap?
   };
 
   const params: PutCommandInput = {

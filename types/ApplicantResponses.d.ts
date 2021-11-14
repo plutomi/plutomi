@@ -1,4 +1,4 @@
-import { EntityTypes } from "../../../types/additional";
+import { ENTITY_TYPES } from "./defaults";
 
 export interface ApplicantResponseEntry {
   /**
@@ -8,7 +8,7 @@ export interface ApplicantResponseEntry {
   /**
    * The sort key for the response - needs `responseId`
    */
-  SK: `${EntityTypes.APPLICANT_RESPONSE}#${string}`;
+  SK: `${ENTITY_TYPES.APPLICANT_RESPONSE}#${string}`;
   /**
    * The orgId this applicant response belongs to
    */
@@ -18,9 +18,9 @@ export interface ApplicantResponseEntry {
    */
   applicantId: string;
   /**
-   * The entity of the response {@link EntityTypes.APPLICANT_RESPONSE}
+   * The entity of the response {@link ENTITY_TYPES.APPLICANT_RESPONSE}
    */
-  entityType: EntityTypes.APPLICANT_RESPONSE;
+  entityType: ENTITY_TYPES.APPLICANT_RESPONSE;
   /**
    * The ISO timestamp of when the response was created
    */
@@ -48,7 +48,7 @@ export interface ApplicantResponseEntry {
   /**
    * Sort key to retrieve all responses for an applicant
    */
-  GSI1SK: EntityTypes.APPLICANT_RESPONSE; // TODO add timestmap?
+  GSI1SK: ENTITY_TYPES.APPLICANT_RESPONSE; // TODO add timestmap?
 }
 
 type CreateApplicantResponseInput = Pick<

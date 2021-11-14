@@ -7,10 +7,10 @@ import { useRouter } from "next/router";
 import { PencilAltIcon } from "@heroicons/react/outline";
 import useStageById from "../../SWR/useStageById";
 import Time from "../../utils/time";
-import { CustomQuery } from "../../types/additional";
+import { CUSTOM_QUERY } from "../../types/defaults";
 export default function StageSettingsHeader({ deleteStage }) {
   const router = useRouter();
-  const { openingId, stageId }: Partial<CustomQuery> = router.query;
+  const { openingId, stageId }: Partial<CUSTOM_QUERY> = router.query;
 
   const { user, isUserLoading, isUserError } = useSelf();
   let { opening, isOpeningLoading, isOpeningError } = useOpeningById(openingId);

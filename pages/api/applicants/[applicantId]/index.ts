@@ -4,7 +4,7 @@ import InputValidation from "../../../../utils/inputValidation";
 import deleteApplicant from "../../../../utils/applicants/deleteApplicant";
 import updateApplicant from "../../../../utils/applicants/updateApplicant";
 import { withSessionRoute } from "../../../../middleware/withSession";
-import { CustomQuery } from "../../../../types/additional";
+import { CUSTOM_QUERY } from "../../../../types/defaults";
 
 const handler = async (
   req: NextApiRequest,
@@ -16,7 +16,7 @@ const handler = async (
     return res.status(401).json({ message: "Please log in again" });
   }
   const { method, query, body } = req;
-  const { applicantId } = query as Pick<CustomQuery, "applicantId">;
+  const { applicantId } = query as Pick<CUSTOM_QUERY, "applicantId">;
 
   if (method === "GET") {
     try {

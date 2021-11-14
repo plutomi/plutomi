@@ -3,7 +3,7 @@ import { getAllQuestionsInStage } from "../../../../../../../utils/questions/get
 import withCleanOrgId from "../../../../../../../middleware/withCleanOrgId";
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   const { method, query } = req;
-  const { orgId, stageId } = query as CustomQuery;
+  const { orgId, stageId } = query as CUSTOM_QUERY;
 
   if (method === "GET") {
     try {

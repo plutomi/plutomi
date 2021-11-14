@@ -13,7 +13,7 @@ import deleteLoginLink from "../../../utils/loginLinks/deleteLoginLink";
 import cleanUser from "../../../utils/clean/cleanUser";
 import { getUserById } from "../../../utils/users/getUserById";
 import updateLoginLink from "../../../utils/loginLinks/updateLoginLink";
-import { TimeUnits } from "../../../types/additional";
+import { TIME_UNITS } from "../../../types/defaults";
 import dayjs from "dayjs";
 
 const handler = async (
@@ -22,12 +22,12 @@ const handler = async (
 ): Promise<void> => {
   const { body, method, query } = req; // TODO get from body
   const { userEmail, loginMethod } = body;
-  const { userId, key, callbackUrl } = query as CustomQuery;
+  const { userId, key, callbackUrl } = query as CUSTOM_QUERY;
   const loginLinkLength = 1500;
   const loginLinkMaxDelayMinutes = 10;
   const timeThreshold = Time.pastISO(
     loginLinkMaxDelayMinutes,
-    TimeUnits.MINUTES
+    TIME_UNITS.MINUTES
   );
 
   // Creates a login link
@@ -58,7 +58,7 @@ const handler = async (
       const secret = nanoid(loginLinkLength);
       const hash = createHash("sha512").update(secret).digest("hex");
 
-      const loginLinkExpiry = Time.futureISO(15, TimeUnits.MINUTES);
+      const loginLinkExpiry = Time.futureISO(15, TIME_UNITS.MINUTES);
 
       try {
         await createLoginLink({

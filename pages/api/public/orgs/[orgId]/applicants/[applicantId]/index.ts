@@ -2,11 +2,11 @@ import { NextApiRequest, NextApiResponse } from "next";
 import { getApplicantById } from "../../../../../../../utils/applicants/getApplicantById";
 import cleanApplicant from "../../../../../../../utils/clean/cleanApplicant";
 import withCleanOrgId from "../../../../../../../middleware/withCleanOrgId";
-import { CustomQuery } from "../../../../../../../types/additional";
+import { CUSTOM_QUERY } from "../../../../../../../types/defaults";
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   const user = req.user;
   const { method, query, body } = req;
-  const { applicantId } = query as CustomQuery;
+  const { applicantId } = query as CUSTOM_QUERY;
 
   if (method === "GET") {
     try {

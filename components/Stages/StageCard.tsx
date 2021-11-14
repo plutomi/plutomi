@@ -12,7 +12,7 @@ export default function StageCard({
   totalApplicants,
 }) {
   const router = useRouter();
-  const { stageId }: Partial<CustomQuery> = router.query;
+  const { stageId }: Partial<CUSTOM_QUERY> = router.query;
 
   return (
     <Link

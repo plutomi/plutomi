@@ -3,7 +3,7 @@ import useAllPublicOpenings from "../../../SWR/useAllPublicOpenings";
 import PublicOpeningsList from "../../Openings/Public/PublicOpeningsList";
 export default function OrgApplyPageContent() {
   const router = useRouter();
-  const { orgId }: Partial<CustomQuery> = router.query;
+  const { orgId }: Partial<CUSTOM_QUERY> = router.query;
   let { publicOpenings, isPublicOpeningsLoading, isPublicOpeningsError } =
     useAllPublicOpenings(orgId);
 

@@ -8,10 +8,10 @@ import { useRouter } from "next/router";
 import Loader from "../Loader";
 import OpeningsService from "../../adapters/OpeningsService";
 import Time from "../../utils/time";
-import { CustomQuery } from "../../types/additional";
+import { CUSTOM_QUERY } from "../../types/defaults";
 export default function OpeningSettingsHeader() {
   const router = useRouter();
-  const { openingId }: Partial<CustomQuery> = router.query;
+  const { openingId }: Partial<CUSTOM_QUERY> = router.query;
 
   let { opening, isOpeningLoading, isOpeningError } = useOpeningById(openingId);
 

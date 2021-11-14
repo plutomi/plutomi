@@ -5,7 +5,7 @@ import { NextApiRequest, NextApiResponse } from "next";
  * All possible parameters in the URL
  */
 
-interface CustomQuery {
+interface CUSTOM_QUERY {
   /**
    * Id of the org
    */
@@ -44,14 +44,14 @@ interface CustomQuery {
   inviteId: string;
 }
 
-export enum EntityTypes {
+export enum ENTITY_TYPES {
   /**
    * For applicants
    */
   APPLICANT = "APPLICANT",
 
   /**
-   * For applicant responses to a `STAGE_QUESTION`
+   * For applicant responses to a `QUESTION`
    */
   APPLICANT_RESPONSE = "APPLICANT_RESPONSE",
   /**
@@ -82,7 +82,7 @@ export enum EntityTypes {
   /**
    * For questions inside of a `STAGE`
    */
-  STAGE_QUESTION = "STAGE_QUESTION",
+  QUESTION = "QUESTION",
 
   /**
    * For rules inside of a `STAGE`
@@ -95,7 +95,7 @@ export enum EntityTypes {
   LOGIN_LINK = "LOGIN_LINK",
 }
 
-export enum TimeUnits {
+export enum TIME_UNITS {
   MILLISECONDS = "milliseconds",
   SECONDS = "seconds",
   MINUTES = "minutes",
@@ -106,13 +106,32 @@ export enum TimeUnits {
   YEARS = "years",
 }
 
-export enum Limits {
+export enum LIMITS {
   MAX_CHILD_ITEM_LIMIT = 200,
 }
 
-export enum Errors {
+export enum ERRORS {
   MAX_CHILD_ITEM_LIMIT_ERROR_MESSAGE = `MAX_CHILD_ITEM_LIMIT reached, please contact support@plutomi.com for assistance`,
   INVALID_DATE_ERROR = `The date you provided appears to be invalid`,
+}
+
+export enum ID_LENGTHS {
+  NEW_USER = 40,
+  // TODO @mazupicua
+  // const applicantId = nanoid(60); <-- Replace this with the format on line 119 ie APPLICANT
+  // const inviteId = nanoid(50); <-- Should be ORG_INVITE
+  // const openingId = nanoid(16); <-- Should be OPENING
+  // const questionId = nanoid(50); <-- Should be QUESTION
+  // const stageId = nanoid(50); <-- STAGE
+  // const stageRuleId = nanoid(16); <-- STAGE_RULE
+  // const userId = nanoid(42); <-- USER
+}
+
+export enum DEFAULT_VALUES {
+  FIRST_NAME = "NO_FIRST_NAME",
+  // LAST_NAME
+  // FULL_NAME = FIRST_NAME + LAST_NAME  with a space in the middle // TODO @mazupicua
+  // Look up `template literals`
 }
 
 declare module "iron-session" {

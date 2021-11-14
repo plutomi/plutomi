@@ -6,7 +6,7 @@ import _ from "lodash";
 
 export default function DraggableStageCard({ name, stageId, totalApplicants }) {
   const router = useRouter();
-  const { stageId }: Partial<CustomQuery> = router.query;
+  const { stageId }: Partial<CUSTOM_QUERY> = router.query;
 
   return (
     <div

@@ -6,7 +6,7 @@ import cleanOpening from "../../../../../../../utils/clean/cleanOpening";
 import { getOpening } from "../../../../../../../utils/openings/getOpeningById";
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   const { method, query } = req;
-  const { orgId, openingId } = query as CustomQuery;
+  const { orgId, openingId } = query as CUSTOM_QUERY;
 
   const getOpeningInput: GetOpeningInput = {
     orgId: orgId,

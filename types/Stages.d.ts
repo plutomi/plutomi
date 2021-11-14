@@ -1,4 +1,4 @@
-import { EntityTypes } from "../../../types/additional";
+import { ENTITY_TYPES } from "./defaults";
 
 interface StagesDynamoEntry {
   /**
@@ -6,13 +6,13 @@ interface StagesDynamoEntry {
    */
   PK: `ORG#${string}#STAGE#${string}`;
   /**
-   * Sort key for a stage, it's just the {@link EntityTypes.STAGE}
+   * Sort key for a stage, it's just the {@link ENTITY_TYPES.STAGE}
    */
-  SK: EntityTypes.STAGE;
+  SK: ENTITY_TYPES.STAGE;
   /**
-   * The stage entity type {@link EntityTypes.STAGE}
+   * The stage entity type {@link ENTITY_TYPES.STAGE}
    */
-  entityType: EntityTypes.STAGE;
+  entityType: ENTITY_TYPES.STAGE;
   /**
    * ISO timestamp of when the stage was created
    */
@@ -56,4 +56,3 @@ type GetAllApplicantsInStageInput = Pick<
   "orgId" | "stageId"
 >;
 type GetAllApplicantsInStageOutput = ApplicantDynamoEntry[];
-

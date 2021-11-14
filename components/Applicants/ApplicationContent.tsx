@@ -10,7 +10,7 @@ export default function ApplicationContent() {
   const [responses, setResponses] = useState([]);
 
   const router = useRouter();
-  const { orgId, applicantId }: Partial<CustomQuery> = router.query;
+  const { orgId, applicantId }: Partial<CUSTOM_QUERY> = router.query;
   const { applicant, isApplicantLoading, isApplicantError } =
     usePublicApplicant(applicantId);
 

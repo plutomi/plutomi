@@ -6,8 +6,11 @@ import { Dynamo } from "../../awsClients/ddbDocClient";
 import Time from "../time";
 import { nanoid } from "nanoid";
 import { getStageById } from "../stages/getStageById";
-import { EntityTypes, Errors, Limits } from "../../types/additional";
-import { QuestionsDynamoEntry, CreateQuestionInput } from "./types/Questions";
+import { ENTITY_TYPES, Errors, Limits } from "../../types/defaults";
+import {
+  QuestionsDynamoEntry,
+  CreateQuestionInput,
+} from "../../types/Questions";
 
 const { DYNAMO_TABLE_NAME } = process.env;
 
@@ -19,10 +22,10 @@ export async function createQuestion(
   const questionId = nanoid(50);
   const newStageQuestion: QuestionsDynamoEntry = {
     PK: `ORG#${orgId}#QUESTION#${questionId}`,
-    SK: EntityTypes.STAGE_QUESTION,
+    SK: ENTITY_TYPES.QUESTION,
     questionDescription: questionDescription || "",
     questionId: questionId,
-    entityType: EntityTypes.STAGE_QUESTION,
+    entityType: ENTITY_TYPES.QUESTION,
     createdAt: now,
     GSI1PK: `ORG#${orgId}#STAGE#${stageId}#QUESTIONS`,
     GSI1SK: GSI1SK,

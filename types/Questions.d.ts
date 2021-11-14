@@ -1,4 +1,4 @@
-import { EntityTypes } from "../../../types/additional";
+import { ENTITY_TYPES } from "./defaults";
 
 export interface QuestionsDynamoEntry {
   /**
@@ -6,9 +6,9 @@ export interface QuestionsDynamoEntry {
    */
   PK: `ORG#${string}#QUESTION#${string}`;
   /**
-   * Sort key for the question. In this case, it's just the {@link EntityTypes.STAGE_QUESTION}
+   * Sort key for the question. In this case, it's just the {@link ENTITY_TYPES.QUESTION}
    */
-  SK: EntityTypes.STAGE_QUESTION;
+  SK: ENTITY_TYPES.QUESTION;
   /**
    * The ID of the question
    */
@@ -24,9 +24,9 @@ export interface QuestionsDynamoEntry {
   orgId: string;
 
   /**
-   * The entityType {@link EntityTypes.STAGE_QUESTION}
+   * The entityType {@link ENTITY_TYPES.QUESTION}
    */
-  entityType: EntityTypes.STAGE_QUESTION;
+  entityType: ENTITY_TYPES.QUESTION;
   /**
    * ISO timestamp of when this question was created
    */

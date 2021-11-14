@@ -2,7 +2,7 @@ import { useRouter } from "next/router";
 import usePublicOrgById from "../../../SWR/usePublicOrgById";
 export default function OrgApplyPageHeader() {
   const router = useRouter();
-  const { orgId }: Partial<CustomQuery> = router.query;
+  const { orgId }: Partial<CUSTOM_QUERY> = router.query;
   const { org, isOrgLoading, isOrgError } = usePublicOrgById(orgId);
 
   return (

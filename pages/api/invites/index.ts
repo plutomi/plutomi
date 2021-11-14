@@ -7,7 +7,7 @@ import withCleanOrgId from "../../../middleware/withCleanOrgId";
 import { getOrg } from "../../../utils/orgs/getOrg";
 import { withSessionRoute } from "../../../middleware/withSession";
 import { createUser } from "../../../utils/users/createUser";
-import { TimeUnits } from "../../../types/additional";
+import { TIME_UNITS } from "../../../types/defaults";
 const handler = async (
   req: NextApiRequest,
   res: NextApiResponse
@@ -21,7 +21,7 @@ const handler = async (
 
   const { recipientEmail } = body;
 
-  const expiresAt = Time.futureISO(3, TimeUnits.DAYS);
+  const expiresAt = Time.futureISO(3, TIME_UNITS.DAYS);
 
   const org = await getOrg(userSession.orgId);
 

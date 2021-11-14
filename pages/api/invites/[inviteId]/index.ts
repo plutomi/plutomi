@@ -20,7 +20,7 @@ const handler = async (
     return res.status(401).json({ message: "Please log in again" });
   }
   const { method, query } = req;
-  const { inviteId } = query as CustomQuery;
+  const { inviteId } = query as CUSTOM_QUERY;
 
   console.log("INvite id", req.query);
   // TODO trycatch

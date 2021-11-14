@@ -14,7 +14,7 @@ const handler = async (
     return res.status(401).json({ message: "Please log in again" });
   }
   const { method, query, body } = req;
-  const { userId } = query as CustomQuery;
+  const { userId } = query as CUSTOM_QUERY;
   const { newUserValues } = body;
 
   if (method === "GET") {

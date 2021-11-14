@@ -6,7 +6,7 @@ import { Dynamo } from "../../awsClients/ddbDocClient";
 const { DYNAMO_TABLE_NAME } = process.env;
 import { getStageById } from "../stages/getStageById";
 import { getQuestionById } from "./getQuestionById";
-import { DeleteQuestionInput } from "./types/Questions";
+import { DeleteQuestionInput } from "../../types/Questions";
 export async function DeleteQuestion(
   props: DeleteQuestionInput
 ): Promise<void> {
@@ -27,7 +27,7 @@ export async function DeleteQuestion(
           Delete: {
             Key: {
               PK: `ORG#${orgId}#QUESTION#${questionId}`,
-              SK: `STAGE_QUESTION`,
+              SK: `QUESTION`,
             },
             TableName: DYNAMO_TABLE_NAME,
           },

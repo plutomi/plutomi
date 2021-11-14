@@ -1,4 +1,4 @@
-import { EntityTypes } from "../../../types/additional";
+import { ENTITY_TYPES } from "./defaults";
 
 export interface ApplicantDynamoEntry {
   /**
@@ -6,9 +6,9 @@ export interface ApplicantDynamoEntry {
    */
   PK: `ORG#${string}#APPLICANT#${string}`;
   /**
-   * The {@link EntityTypes.APPLICANT}
+   * The {@link ENTITY_TYPES.APPLICANT}
    */
-  SK: EntityTypes.APPLICANT;
+  SK: ENTITY_TYPES.APPLICANT;
   /**
    * First name of the applicant
    * @default - NO_FIRST_NAME
@@ -40,7 +40,7 @@ export interface ApplicantDynamoEntry {
   /**
    * The entity type of the applicant
    */
-  entityType: EntityTypes.APPLICANT;
+  entityType: ENTITY_TYPES.APPLICANT;
   /**
    * When this applicant was created
    */

@@ -4,11 +4,11 @@ import { useRouter } from "next/router";
 import Loader from "../Loader";
 import useStore from "../../utils/store";
 import useAllApplicantsInStage from "../../SWR/useAllApplicantsInStage";
-import { CustomQuery } from "../../types/additional";
-import { ApplicantDynamoEntry } from "../../utils/applicants/types/Applicants";
+import { CUSTOM_QUERY } from "../../types/defaults";
+import { ApplicantDynamoEntry } from "../../types/Applicants";
 export default function ApplicantList() {
   const router = useRouter();
-  const { openingId, stageId }: Partial<CustomQuery> = router.query;
+  const { openingId, stageId }: Partial<CUSTOM_QUERY> = router.query;
 
   const { applicants, isApplicantsLoading, isApplicantsError } =
     useAllApplicantsInStage(openingId, stageId);

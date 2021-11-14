@@ -15,7 +15,7 @@ const handler = async (
     return res.status(401).json({ message: "Please log in again" });
   }
   const { method, query } = req;
-  const { orgId } = query as CustomQuery;
+  const { orgId } = query as CUSTOM_QUERY;
   const org = await getOrg(orgId);
 
   if (method === "GET") {

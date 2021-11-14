@@ -1,6 +1,6 @@
 import relativeTime from "dayjs/plugin/relativeTime";
 import dayjs from "dayjs";
-import { Errors, TimeUnits } from "../types/additional";
+import { Errors, TIME_UNITS } from "../types/defaults";
 
 dayjs.extend(relativeTime);
 
@@ -44,41 +44,41 @@ export default class Time {
 
   /**
    *
-   * @param amount *Amount* of {@link TimeUnits} to get in the future
-   * @param unit Which {@link TimeUnits} to retrieve
+   * @param amount *Amount* of {@link TIME_UNITS} to get in the future
+   * @param unit Which {@link TIME_UNITS} to retrieve
    * @returns A future ISO timestamp
    */
-  static futureISO(amount: number, unit: TimeUnits): string {
+  static futureISO(amount: number, unit: TIME_UNITS): string {
     return dayjs().add(amount, unit).toISOString();
   }
 
   /**
    *
-   * @param amount *Amount* of {@link TimeUnits} to get in the future
-   * @param unit Which {@link TimeUnits} to retrieve
+   * @param amount *Amount* of {@link TIME_UNITS} to get in the future
+   * @param unit Which {@link TIME_UNITS} to retrieve
    * @returns A future UNIX timestamp
    */
-  static futureUNIX(amount: number, unit: TimeUnits): number {
+  static futureUNIX(amount: number, unit: TIME_UNITS): number {
     return dayjs().add(amount, unit).unix();
   }
 
   /**
    *
-   * @param amount *Amount* of {@link TimeUnits} to get in the past
-   * @param unit Which {@link TimeUnits} to retrieve
+   * @param amount *Amount* of {@link TIME_UNITS} to get in the past
+   * @param unit Which {@link TIME_UNITS} to retrieve
    * @returns A past ISO timestamp
    */
-  static pastISO(amount: number, unit: TimeUnits): string {
+  static pastISO(amount: number, unit: TIME_UNITS): string {
     return dayjs().add(amount, unit).toISOString();
   }
 
   /**
    *
-   * @param amount *Amount* of {@link TimeUnits} to get in the past
-   * @param unit Which {@link TimeUnits} to retrieve
+   * @param amount *Amount* of {@link TIME_UNITS} to get in the past
+   * @param unit Which {@link TIME_UNITS} to retrieve
    * @returns A past UNIX timestamp
    */
-  static pastUNIX(amount: number, unit: TimeUnits): number {
+  static pastUNIX(amount: number, unit: TIME_UNITS): number {
     return dayjs().add(amount, unit).unix();
   }
 }

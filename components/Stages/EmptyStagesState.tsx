@@ -6,7 +6,7 @@ import useSelf from "../../SWR/useSelf";
 import useAllStagesInOpening from "../../SWR/useAllStagesInOpening";
 export default function EmptyStagesState() {
   const router = useRouter();
-  const { openingId }: Partial<CustomQuery> = router.query;
+  const { openingId }: Partial<CUSTOM_QUERY> = router.query;
 
   const { user, isUserLoading, isUserError } = useSelf();
 

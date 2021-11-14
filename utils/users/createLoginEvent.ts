@@ -1,7 +1,7 @@
 import { PutCommand, PutCommandInput } from "@aws-sdk/lib-dynamodb";
 import Time from "../time";
 import { Dynamo } from "../../awsClients/ddbDocClient";
-import { TimeUnits } from "../../types/additional";
+import { TIME_UNITS } from "../../types/defaults";
 
 const { DYNAMO_TABLE_NAME } = process.env;
 
@@ -14,7 +14,7 @@ export default async function createLoginEvent(userId: string) {
       // TODO in the future, get all the info about the login event
       // Such as IP, headers, device, etc.
       createdAt: now,
-      ttlExpiry: Time.futureUNIX(30, TimeUnits.DAYS),
+      ttlExpiry: Time.futureUNIX(30, TIME_UNITS.DAYS),
     };
 
     const params: PutCommandInput = {

@@ -14,7 +14,7 @@ const handler = async (
     return res.status(401).json({ message: "Please log in again" });
   }
   const { body, method, query } = req;
-  const { questionId } = query as CustomQuery;
+  const { questionId } = query as CUSTOM_QUERY;
 
   if (method === "DELETE") {
     try {

@@ -5,7 +5,7 @@ import {
 import { Dynamo } from "../../awsClients/ddbDocClient";
 import Time from "../time";
 import { nanoid } from "nanoid";
-import { EntityTypes } from "../../types/additional";
+import { ENTITY_TYPES } from "../../types/defaults";
 import {
   ApplicantDynamoEntry,
   CreateApplicantInput,
@@ -27,7 +27,7 @@ export async function createApplicant(
   const applicantId = nanoid(60);
   const newApplicant: ApplicantDynamoEntry = {
     PK: `ORG#${orgId}#APPLICANT#${applicantId}`,
-    SK: EntityTypes.APPLICANT,
+    SK: ENTITY_TYPES.APPLICANT,
     firstName: firstName,
     lastName: lastName,
     fullName: `${firstName} ${lastName}`,
@@ -35,7 +35,7 @@ export async function createApplicant(
     isApplicantEmailVerified: false,
     orgId: orgId,
     applicantId: applicantId,
-    entityType: EntityTypes.APPLICANT,
+    entityType: ENTITY_TYPES.APPLICANT,
     createdAt: now,
     // TODO add phone number
     openingId: openingId,

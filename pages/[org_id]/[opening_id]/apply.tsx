@@ -7,7 +7,7 @@ import OpeningApplyPageContent from "../../../components/Openings/Public/Opening
 import OpeningApplyPageHeader from "../../../components/Openings/Public/OpeningApplyPageHeader";
 export default function Apply() {
   const router = useRouter();
-  const { orgId, openingId }: Partial<CustomQuery> = router.query;
+  const { orgId, openingId }: Partial<CUSTOM_QUERY> = router.query;
   const { org, isOrgLoading, isOrgError } = usePublicOrgById(orgId);
   const { opening, isOpeningLoading, isOpeningError } = usePublicOpeningById(
     orgId,

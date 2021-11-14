@@ -13,7 +13,7 @@ export default function StageCarousel() {
   const [activeItemIndex, setActiveItemIndex] = useState(0);
   const chevronWidth = 60;
 
-  const { openingId, stageId }: Partial<CustomQuery> = router.query;
+  const { openingId, stageId }: Partial<CUSTOM_QUERY> = router.query;
 
   const { user, isUserLoading, isUserError } = useSelf();
 

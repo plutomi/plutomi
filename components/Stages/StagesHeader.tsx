@@ -9,7 +9,7 @@ import { useRouter } from "next/router";
 import useOpenings from "../../SWR/useOpenings";
 export default function StagesHeader() {
   const router = useRouter();
-  const { openingId }: Partial<CustomQuery> = router.query;
+  const { openingId }: Partial<CUSTOM_QUERY> = router.query;
 
   const { user, isUserLoading, isUserError } = useSelf();
   let { opening, isOpeningLoading, isOpeningError } = useOpeningById(openingId);

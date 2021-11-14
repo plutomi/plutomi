@@ -6,7 +6,7 @@ import cleanStage from "../../../../../../../utils/clean/cleanStage";
 import { getStageById } from "../../../../../../../utils/stages/getStageById";
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   const { method, query } = req;
-  const { orgId, openingId, stageId } = query as CustomQuery;
+  const { orgId, openingId, stageId } = query as CUSTOM_QUERY;
 
   const getStageInput: GetStageInput = {
     orgId: orgId,

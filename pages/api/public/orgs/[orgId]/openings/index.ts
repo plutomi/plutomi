@@ -6,7 +6,7 @@ import cleanOpening from "../../../../../../utils/clean/cleanOpening";
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   const { method, query } = req;
-  const { orgId } = query as CustomQuery;
+  const { orgId } = query as CUSTOM_QUERY;
 
   if (method === "GET") {
     try {

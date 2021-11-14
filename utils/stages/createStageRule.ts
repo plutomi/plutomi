@@ -6,8 +6,8 @@ import {
   CreateStageRuleInput,
   CreateStageRuleOutput,
   StageRuleDynamoEntry,
-} from "./types/StageRules";
-import { EntityTypes } from "../../types/additional";
+} from "../../types/StageRules";
+import { ENTITY_TYPES } from "../../types/defaults";
 
 const { DYNAMO_TABLE_NAME } = process.env;
 
@@ -20,7 +20,7 @@ export async function createStageRule(
   const newStageRule: StageRuleDynamoEntry = {
     PK: `ORG#${orgId}#OPENING#${openingId}#STAGE#${stageId}`,
     SK: `STAGE_RULE#${stageRuleId}`,
-    entityType: EntityTypes.STAGE_RULE,
+    entityType: ENTITY_TYPES.STAGE_RULE,
     createdAt: now,
     validation: validation, // TODO add validation
     GSI1PK: `ORG#${orgId}#RULES#STAGES`,

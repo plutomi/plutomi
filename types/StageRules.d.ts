@@ -1,4 +1,4 @@
-import { EntityTypes } from "../../../types/additional";
+import { ENTITY_TYPES } from "./defaults";
 
 interface StageRuleDynamoEntry {
   /**
@@ -6,13 +6,13 @@ interface StageRuleDynamoEntry {
    */
   PK: `ORG#${string}#OPENING#${string}#STAGE#${string}`;
   /**
-   * Sort key which is the {@link EntityTypes.STAGE_RULE}#`stageId`
+   * Sort key which is the {@link ENTITY_TYPES.STAGE_RULE}#`stageId`
    */
-  SK: `${EntityTypes.STAGE_RULE}#${string}`;
+  SK: `${ENTITY_TYPES.STAGE_RULE}#${string}`;
   /**
    * The entity of the stage rule
    */
-  entityType: EntityTypes.STAGE_RULE;
+  entityType: ENTITY_TYPES.STAGE_RULE;
   /**
    * ISO string timestamp of when the rule was created
    */

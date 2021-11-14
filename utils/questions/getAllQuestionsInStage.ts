@@ -4,7 +4,7 @@ import { getStageById } from "../stages/getStageById";
 import {
   GetAllQuestionsInStageInput,
   GetAllQuestionsInStageOutput,
-} from "./types/Questions";
+} from "../../types/Questions";
 
 const { DYNAMO_TABLE_NAME } = process.env;
 
