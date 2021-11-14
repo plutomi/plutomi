@@ -16,15 +16,16 @@ const handler = async (
     return res.status(401).json({ message: "Please log in again" });
   }
   const { method, query, body } = req;
-  const { applicantId }: Partial<CustomQuery> = query;
+  const { applicantId } = query as Pick<CustomQuery, "applicantId">;
 
   if (method === "GET") {
     try {
       // TODO gather applicant responses here
-      const applicant: GetApplicantByIdOutput = await getApplicantById({
-        applicantId: applicantId!,
+      const applicant = await getApplicantById({
+        applicantId: applicantId,
         orgId: userSession.orgId,
       });
+
       if (!applicant) {
         return res.status(404).json({ message: "Applicant not found" });
       }

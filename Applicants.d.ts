@@ -90,20 +90,23 @@ type CreateApplicantInput = Pick<
   | "stageId"
 >;
 
-type CreateApplicantOutput = ApplicantDynamoEntry;
-type GetApplicantByIdInput = Pick<
-  ApplicantDynamoEntry,
-  "orgId" | "applicantId"
->;
+type orgIdAndApplicantId = "orgId" | "applicantId";
 
-type DeleteApplicantInput = Pick<ApplicantDynamoEntry, "orgId" | "applicantId">;
+type CreateApplicantOutput = ApplicantDynamoEntry;
+type GetApplicantByIdInput = Pick<ApplicantDynamoEntry, orgIdAndApplicantId>;
+
+type DeleteApplicantInput = Pick<ApplicantDynamoEntry, orgIdAndApplicantId>;
 
 // TODO types for files, etc.
 interface GetApplicantByIdOutput extends ApplicantDynamoEntry {
   responses: Object[]; // TODO fix this type with a response type
 }
 
+interface UpdateApplicantInput
+  extends Pick<ApplicantDynamoEntry, orgIdAndApplicantId> {
+  newApplicantValues: { [key: string] };
+}
 
-interface UpdateApplicantInput extends Pick<ApplicantDynamoEntry, "orgId" | "applicantId"> {
-  newApplicantValues: {[key : string]}
+interface UpdateApplicantOutput extends ApplicantDynamoEntry {
+  responses: Object[]; // TODO fix this type with a response type
 }

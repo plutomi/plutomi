@@ -11,7 +11,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   if (method === "GET") {
     try {
       // TODO gather applicant responses here
-      const applicant: GetApplicantByIdOutput = await getApplicantById({
+      const applicant = await getApplicantById({
         applicantId: applicantId,
         orgId: user.orgId,
       });

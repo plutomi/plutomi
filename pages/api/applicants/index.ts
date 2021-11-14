@@ -44,8 +44,10 @@ const handler = async (
         return res.status(400).json({ message: `${error.message}` });
       }
 
-      const newApplicant: CreateApplicantOutput = await createApplicant({
+      const newApplicant = await createApplicant({
         orgId: orgId,
+        firstName: firstName,
+        lastName: lastName,
         applicantEmail: applicantEmail,
         openingId: openingId,
         stageId: firstStage,

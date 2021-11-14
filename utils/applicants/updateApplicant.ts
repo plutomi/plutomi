@@ -11,9 +11,11 @@ const FORBIDDEN_KEYS = [
   "applicantId",
   "GSI1PK",
 ];
-export default async function updateApplicant(props: UpdateApplicantInput) {
+export default async function updateApplicant(
+  props: UpdateApplicantInput
+): Promise<void> {
   const { orgId, applicantId, newApplicantValues } = props;
-  
+
   // TODO user the cleaning functions instead
   const incomingKeys = Object.keys(newApplicantValues);
   // TODO should this throw an error and
@@ -45,7 +47,6 @@ export default async function updateApplicant(props: UpdateApplicantInput) {
 
   try {
     await Dynamo.send(new UpdateCommand(params));
-    return;
   } catch (error) {
     throw new Error(error);
   }
