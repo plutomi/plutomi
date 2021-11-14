@@ -1,4 +1,5 @@
 import { NextApiRequest } from "next";
+import { ParsedUrlQuery } from "querystring";
 
 type CustomDateFormat = string | number; // TODO date types
 
@@ -12,17 +13,47 @@ declare module "iron-session" {
   }
 }
 
-type CustomQuery = {
-  orgId?: string;
-  openingId?: string;
-  userId?: string;
-  stageId?: string;
-  applicantId?: string;
-  key?: string;
-  callbackUrl?: string;
-  questionId?: string;
-  inviteId?: string;
-};
+/**
+ * Interface with possible parameters in the URL
+ */
+export interface CustomQuery extends ParsedUrlQuery {
+  /**
+   * Id of the org
+   */
+  orgId: string;
+  /**
+   * Id of the opening
+   */
+  openingId: string;
+  /**
+   * Id of the user
+   */
+  userId: string;
+  /**
+   * Id of the stage
+   */
+  stageId: string;
+  /**
+   * Id of the applicant
+   */
+  applicantId: string;
+  /**
+   * The key to for the LOGIN_LINKS that allow it to be used
+   */
+  key: string;
+  /**
+   * The callback url
+   */
+  callbackUrl: string;
+  /**
+   * Id for the question
+   */
+  questionId: string;
+  /**
+   * Id for the invite
+   */
+  inviteId: string;
+}
 
 export enum EntityTypes {
   /**
@@ -173,4 +204,18 @@ export enum Limits {
 export enum Errors {
   MAX_CHILD_ITEM_LIMIT_ERROR_MESSAGE = `MAX_CHILD_ITEM_LIMIT reached, please contact support@plutomi.com for assistance`,
   INVALID_DATE_ERROR = `The date you provided appears to be invalid`,
+}
+
+interface CustomSession {
+
+}
+declare module "iron-session" {
+    interface IronSessionData {
+    user?: {
+
+    }
+    orgId: string;
+    userId: string;
+    userEmail: string;
+  }
 }

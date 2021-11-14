@@ -5,7 +5,7 @@ import { NextApiResponse } from "next";
 import { withSessionRoute } from "../../../../middleware/withSession";
 
 const handler = async (
-  req: NextIronRequest,
+  req: NextApiRequest,
   res: NextApiResponse
 ): Promise<void> => {
   const userSession = req.session.user;
@@ -31,7 +31,7 @@ const handler = async (
     }
 
     try {
-      const allUsers = await getAllUsersInOrg({ orgId: userSession.orgId });
+      const allUsers = await getAllUsersInOrg(userSession.orgId);
       return res.status(200).json(allUsers);
     } catch (error) {
       return res

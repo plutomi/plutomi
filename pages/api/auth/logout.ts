@@ -1,7 +1,7 @@
 import { withSessionRoute } from "../../../middleware/withSession";
 import { NextApiResponse } from "next";
 export default withSessionRoute(
-  async (req: NextIronRequest, res: NextApiResponse): Promise<void> => {
+  async (req: NextApiRequest, res: NextApiResponse): Promise<void> => {
     const { method } = req;
     if (method === "POST") {
       req.session.destroy();

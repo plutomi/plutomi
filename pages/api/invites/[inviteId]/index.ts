@@ -10,7 +10,7 @@ import { getUserById } from "../../../../utils/users/getUserById";
 import { joinOrgFromInvite } from "../../../../utils/orgs/joinOrgFromInvite";
 
 const handler = async (
-  req: NextIronRequest,
+  req: NextApiRequest,
   res: NextApiResponse
 ): Promise<void> => {
   console.log(req.session);

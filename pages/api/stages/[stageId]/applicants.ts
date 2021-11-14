@@ -4,7 +4,7 @@ import { withSessionRoute } from "../../../../middleware/withSession";
 import { getStage } from "../../../../utils/stages/getStage";
 
 const handler = async (
-  req: NextIronRequest,
+  req: NextApiRequest,
   res: NextApiResponse
 ): Promise<void> => {
   const userSession = req.session.user;

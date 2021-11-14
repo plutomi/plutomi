@@ -7,11 +7,12 @@ import Link from "next/dist/client/link";
 
 import _ from "lodash";
 import { useRouter } from "next/router";
-import useStore from "../../../utils/store";
 import useAllPublicOpenings from "../../../SWR/useAllPublicOpenings";
+import { CustomQuery } from "../../../types";
 export default function PublicOpeningsList() {
   const router = useRouter();
-  const { orgId } = router.query as CustomQuery;
+  const { orgId } = router.query as Partial<CustomQuery>;
+
   let { publicOpenings, isPublicOpeningsLoading, isPublicOpeningsError } =
     useAllPublicOpenings(orgId);
 

@@ -17,7 +17,7 @@ import { TimeUnits } from "../../../types";
 import dayjs from "dayjs";
 
 const handler = async (
-  req: NextIronRequest,
+  req: NextApiRequest,
   res: NextApiResponse
 ): Promise<void> => {
   const { body, method, query } = req; // TODO get from body

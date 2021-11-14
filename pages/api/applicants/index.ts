@@ -1,4 +1,4 @@
-import { NextApiResponse } from "next";
+import { NextApiRequest, NextApiResponse } from "next";
 import { getOpening } from "../../../utils/openings/getOpeningById";
 import InputValidation from "../../../utils/inputValidation";
 import { createApplicant } from "../../../utils/applicants/createApplicant";
@@ -6,7 +6,7 @@ import { getOrg } from "../../../utils/orgs/getOrg";
 import sendApplicantLink from "../../../utils/applicantEmail/sendApplicantLink";
 
 const handler = async (
-  req: NextIronRequest,
+  req: NextApiRequest,
   res: NextApiResponse
 ): Promise<void> => {
   const { method, body } = req;
@@ -39,7 +39,6 @@ const handler = async (
         applicantEmail: applicantEmail,
         openingId: openingId,
         stageId: opening.stageOrder[0],
-        firstName: "beans"
       });
       // const newApplicant = await createApplicant(
       //   orgId,

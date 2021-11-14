@@ -9,7 +9,7 @@ import { withSessionRoute } from "../../../middleware/withSession";
 import { createUser } from "../../../utils/users/createUser";
 import { TimeUnits } from "../../../types";
 const handler = async (
-  req: NextIronRequest,
+  req: NextApiRequest,
   res: NextApiResponse
 ): Promise<void> => {
   const userSession = req.session.user;

@@ -1,16 +1,16 @@
-import { NextApiResponse } from "next";
+import { NextApiRequest, NextApiResponse } from "next";
 import { getApplicantById } from "../../../../utils/applicants/getApplicantById";
 import InputValidation from "../../../../utils/inputValidation";
 import deleteApplicant from "../../../../utils/applicants/deleteApplicant";
 import updateApplicant from "../../../../utils/applicants/updateApplicant";
 import { withSessionRoute } from "../../../../middleware/withSession";
+import { CustomQuery } from "../../../../types";
 
 const handler = async (
-  req: NextIronRequest,
+  req: NextApiRequest,
   res: NextApiResponse
 ): Promise<void> => {
-  const userSession = req.session.user;
-  if (!userSession) {
+  if (!req.session) {
     req.session.destroy();
     return res.status(401).json({ message: "Please log in again" });
   }
@@ -18,7 +18,7 @@ const handler = async (
   const { applicantId } = query as CustomQuery;
 
   const getApplicantInput: GetApplicantInput = {
-    orgId: userSession.orgId,
+    orgId: req.session.orgId,
     applicantId: applicantId,
   };
 

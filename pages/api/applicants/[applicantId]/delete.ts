@@ -1,10 +1,11 @@
-import { NextApiResponse } from "next";
+import { NextApiRequest, NextApiResponse } from "next";
 import deleteApplicant from "../../../../utils/applicants/deleteApplicant";
 import { withSessionRoute } from "../../../../middleware/withSession";
+import { CustomQuery } from "../../../../types";
 
 // TODO remove this
 const handler = async (
-  req: NextIronRequest,
+  req: NextApiRequest,
   res: NextApiResponse
 ): Promise<void> => {
   const userSession = req.session.user;

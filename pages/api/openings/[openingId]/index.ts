@@ -6,7 +6,7 @@ import { deleteOpening } from "../../../../utils/openings/deleteOpening";
 import { withSessionRoute } from "../../../../middleware/withSession";
 
 const handler = async (
-  req: NextIronRequest,
+  req: NextApiRequest,
   res: NextApiResponse
 ): Promise<void> => {
   const userSession = req.session.user;
