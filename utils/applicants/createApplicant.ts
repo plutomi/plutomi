@@ -5,28 +5,29 @@ import {
 import { Dynamo } from "../../awsClients/ddbDocClient";
 import Time from "../time";
 import { nanoid } from "nanoid";
+import { EntityTypes } from "../../additional";
 import {
+  ApplicantDynamoEntry,
   CreateApplicantInput,
-  DynamoApplicant,
-  EntityTypes,
-} from "../../types";
+  CreateApplicantOutput,
+} from "../../Applicants";
 
 const { DYNAMO_TABLE_NAME } = process.env;
 
 export async function createApplicant(
   props: CreateApplicantInput
-): Promise<DynamoApplicant> {
+): Promise<CreateApplicantOutput> {
   const { orgId, firstName, lastName, applicantEmail, openingId, stageId } =
     props;
 
   const now = Time.currentISO();
-  // Applicant ID has to be pretty high as the apply link will be the user ID
-  // This is per org btw
+
+  // Applicant ID has to be pretty high as the apply link will be their application link
   // https://zelark.github.io/nano-id-cc/
-  const applicantId = nanoid(60); // Also since applications are public, it should not be easily guessed
-  const newApplicant: DynamoApplicant = {
+  const applicantId = nanoid(60);
+  const newApplicant: ApplicantDynamoEntry = {
     PK: `ORG#${orgId}#APPLICANT#${applicantId}`,
-    SK: `APPLICANT`,
+    SK: EntityTypes.APPLICANT,
     firstName: firstName,
     lastName: lastName,
     fullName: `${firstName} ${lastName}`,
@@ -37,11 +38,12 @@ export async function createApplicant(
     entityType: EntityTypes.APPLICANT,
     createdAt: now,
     // TODO add phone number
-    currentOpeningId: openingId,
-    currentStageId: stageId,
+    openingId: openingId,
+    stageId: stageId,
 
-    // The reason for the below is so we can get applicants in an org, in an opening, or in a specific stagejust by the ID of each.
+    // The reason for the below is so we can get applicants in an org, in an opening, or in a specific stage just by the ID of each.
     // Before we had `OPENING#${openingId}#STAGE#{stageId}` for the SK which required the opening when getting applicants in specific stage
+    // TODO recheck later if this is still good
     GSI1PK: `ORG#${orgId}#APPLICANTS`,
     GSI1SK: `OPENING#${openingId}#DATE_LANDED#${now}`,
     GSI2PK: `ORG#${orgId}#APPLICANTS`,

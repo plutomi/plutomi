@@ -1,6 +1,6 @@
 import Time from "../../../utils/time";
 import InputValidation from "../../../utils/inputValidation";
-import { NextApiResponse } from "next";
+import { NextApiRequest, NextApiResponse } from "next";
 import sendLoginLink from "../../../utils/email/sendLoginLink";
 import createLoginLink from "../../../utils/loginLinks/createLoginLink";
 import { nanoid } from "nanoid";
@@ -13,7 +13,7 @@ import deleteLoginLink from "../../../utils/loginLinks/deleteLoginLink";
 import cleanUser from "../../../utils/clean/cleanUser";
 import { getUserById } from "../../../utils/users/getUserById";
 import updateLoginLink from "../../../utils/loginLinks/updateLoginLink";
-import { TimeUnits } from "../../../types";
+import { TimeUnits } from "../../../additional";
 import dayjs from "dayjs";
 
 const handler = async (

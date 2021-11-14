@@ -7,10 +7,17 @@ import sendApplicantLink from "../../../utils/applicantEmail/sendApplicantLink";
 
 const handler = async (
   req: NextApiRequest,
-  res: NextApiResponse
+  res: NextApiResponse<CreateApplicantAPIResponse>
 ): Promise<void> => {
   const { method, body } = req;
-  const { orgId, openingId, firstName, lastName, applicantEmail } = body;
+  const {
+    orgId,
+    openingId,
+    firstName,
+    lastName,
+    applicantEmail,
+    stageId,
+  }: CreateApplicantAPIBody = body;
 
   // Creates an applicant
   if (method === "POST") {
@@ -19,35 +26,31 @@ const handler = async (
     if (!opening) {
       return res.status(400).json({ message: "Bad opening ID" });
     }
+
+    const firstStage = stageId || opening.stageOrder[0];
+
     try {
-      const createApplicantInput = {
+      const CreateApplicantInput = {
         orgId: orgId,
         applicantEmail: applicantEmail,
         firstName: firstName,
         lastName: lastName,
         openingId: openingId,
-        stageId: opening.stageOrder[0],
+        stageId: firstStage,
       };
       try {
-        InputValidation(createApplicantInput);
+        InputValidation(CreateApplicantInput);
       } catch (error) {
         return res.status(400).json({ message: `${error.message}` });
       }
 
-      const newApplicant = await createApplicant({
+      const newApplicant: CreateApplicantOutput = await createApplicant({
         orgId: orgId,
         applicantEmail: applicantEmail,
         openingId: openingId,
-        stageId: opening.stageOrder[0],
+        stageId: firstStage,
       });
-      // const newApplicant = await createApplicant(
-      //   orgId,
-      //   applicantEmail,
-      //   firstName,
-      //   lastName,
-      //   openingId,
-      //   opening.stageOrder[0]
-      // );
+
       const org = await getOrg(orgId);
 
       const sendApplicantLinkInput = {

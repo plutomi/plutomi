@@ -7,7 +7,7 @@ import withCleanOrgId from "../../../middleware/withCleanOrgId";
 import { getOrg } from "../../../utils/orgs/getOrg";
 import { withSessionRoute } from "../../../middleware/withSession";
 import { createUser } from "../../../utils/users/createUser";
-import { TimeUnits } from "../../../types";
+import { TimeUnits } from "../../../additional";
 const handler = async (
   req: NextApiRequest,
   res: NextApiResponse

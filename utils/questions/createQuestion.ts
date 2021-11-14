@@ -6,19 +6,16 @@ import { Dynamo } from "../../awsClients/ddbDocClient";
 import Time from "../time";
 import { nanoid } from "nanoid";
 import { getStage } from "../stages/getStage";
-import { Errors, Limits } from "../../types";
+import { Errors, Limits } from "../../additional";
+import { CreateQuestionInput } from "../../Applicants";
 
 const { DYNAMO_TABLE_NAME } = process.env;
 
-export async function createQuestion(
-  orgId,
-  stageId,
-  GSI1SK,
-  questionDescription
-) {
+export async function createQuestion(props: CreateQuestionInput) {
+  const { orgId, stageId, GSI1SK, questionDescription } = props;
   const now = Time.currentISO();
   const questionId = nanoid(50);
-  const newStageQuestion = {
+  const newStageQuestion: CreateQuestionOutput = {
     PK: `ORG#${orgId}#QUESTION#${questionId}`,
     SK: `STAGE_QUESTION`,
     questionDescription: questionDescription,

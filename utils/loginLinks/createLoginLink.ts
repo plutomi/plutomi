@@ -1,7 +1,7 @@
 import { PutCommand, PutCommandInput } from "@aws-sdk/lib-dynamodb";
 import Time from "../time";
 import { Dynamo } from "../../awsClients/ddbDocClient";
-import { TimeUnits } from "../../types";
+import { TimeUnits } from "../../additional";
 
 const { DYNAMO_TABLE_NAME } = process.env;
 

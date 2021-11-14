@@ -4,7 +4,7 @@ import usePublicOpeningById from "../../../SWR/usePublicOpeningById";
 import Loader from "../../Loader";
 export default function OpeningApplyPageHeader() {
   const router = useRouter();
-  const { orgId, openingId } = router.query as CustomQuery;
+  const { orgId, openingId }: Partial<CustomQuery> = router.query;
   const { org, isOrgLoading, isOrgError } = usePublicOrgById(orgId);
   const { opening, isOpeningLoading, isOpeningError } = usePublicOpeningById(
     orgId,

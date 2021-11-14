@@ -37,7 +37,8 @@ export default function ApplicantProfileModal() {
   const [isEditing, setIsEditing] = useState(false);
   const [currentActive, setCurrentActive] = useState(1); // Id of item
   const router = useRouter();
-  const { applicantId, openingId, stageId } = router.query as CustomQuery;
+  const { applicantId, openingId, stageId }: Partial<CustomQuery> =
+    router.query;
 
   const setApplicantProfileModal = useStore(
     (store) => store.setApplicantProfileModal
@@ -256,35 +257,33 @@ export default function ApplicantProfileModal() {
                         {/* TODO refactor this to its own component */}
                         {applicant?.responses?.length > 0 ? (
                           <ul className="py-4  space-y-8">
-                            {applicant?.responses.map(
-                              (response) => {
-                                return (
-                                  <div
-                                    key={response?.responseId}
-                                    className="pl-3 mt-1 h-full relative focus-within:ring-2 focus-within:ring-blue-500"
-                                  >
-                                    <h3 className="text-lg font-semibold text-dark">
-                                      <span
-                                        className="absolute inset-0"
-                                        aria-hidden="true"
-                                      />
-                                      {response?.questionTitle}
-                                    </h3>
-                                    {response?.questionDescription && (
-                                      <p className="text-md text-light">
-                                        {response?.questionDescription}
-                                      </p>
-                                    )}
-                                    <span className=" inline-flex justify-center items-center space-x-1">
-                                      <ChevronDoubleRightIcon className="h-3 w-3" />
-                                      <p className="text-lg text-normal font-bold line-clamp-2 ">
-                                        {response?.questionResponse}
-                                      </p>
-                                    </span>
-                                  </div>
-                                );
-                              }
-                            )}
+                            {applicant?.responses.map((response) => {
+                              return (
+                                <div
+                                  key={response?.responseId}
+                                  className="pl-3 mt-1 h-full relative focus-within:ring-2 focus-within:ring-blue-500"
+                                >
+                                  <h3 className="text-lg font-semibold text-dark">
+                                    <span
+                                      className="absolute inset-0"
+                                      aria-hidden="true"
+                                    />
+                                    {response?.questionTitle}
+                                  </h3>
+                                  {response?.questionDescription && (
+                                    <p className="text-md text-light">
+                                      {response?.questionDescription}
+                                    </p>
+                                  )}
+                                  <span className=" inline-flex justify-center items-center space-x-1">
+                                    <ChevronDoubleRightIcon className="h-3 w-3" />
+                                    <p className="text-lg text-normal font-bold line-clamp-2 ">
+                                      {response?.questionResponse}
+                                    </p>
+                                  </span>
+                                </div>
+                              );
+                            })}
                           </ul>
                         ) : (
                           <h1 className="py-4 text-lg text-dark">

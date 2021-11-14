@@ -2,7 +2,7 @@ import { NextApiResponse } from "next";
 import InputValidation from "../../../../../../../utils/inputValidation";
 import withCleanOrgId from "../../../../../../../middleware/withCleanOrgId";
 import { createApplicantResponse } from "../../../../../../../utils/applicants/createApplicantResponse";
-const handler = async (req: CustomRequest, res: NextApiResponse) => {
+const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   const { method, query, body } = req;
   const { orgId, applicantId } = query as CustomQuery;
   const responses: DynamoApplicantResponse[] = body.responses;

@@ -1,7 +1,7 @@
 import { NextApiResponse } from "next";
 import { GetAllQuestionsInStage } from "../../../../../../../utils/questions/getAllQuestionsInStage";
 import withCleanOrgId from "../../../../../../../middleware/withCleanOrgId";
-const handler = async (req: CustomRequest, res: NextApiResponse) => {
+const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   const { method, query } = req;
   const { orgId, stageId } = query as CustomQuery;
 

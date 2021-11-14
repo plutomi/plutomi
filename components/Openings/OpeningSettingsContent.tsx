@@ -9,7 +9,7 @@ import useOpeningById from "../../SWR/useOpeningById";
 import OpeningsService from "../../adapters/OpeningsService";
 export default function OpeningSettingsContent() {
   const router = useRouter();
-  const { openingId } = router.query as CustomQuery;
+  const { openingId }: Partial<CustomQuery> = router.query;
   let { opening, isOpeningLoading, isOpeningError } = useOpeningById(openingId);
 
   const openingModal = useStore((state) => state.openingModal);

@@ -13,7 +13,7 @@ export default function StageCarousel() {
   const [activeItemIndex, setActiveItemIndex] = useState(0);
   const chevronWidth = 60;
 
-  const { openingId, stageId } = router.query as CustomQuery;
+  const { openingId, stageId }: Partial<CustomQuery> = router.query;
 
   const { user, isUserLoading, isUserError } = useSelf();
 
@@ -53,7 +53,7 @@ export default function StageCarousel() {
           <StageCard
             key={stage.stageId}
             name={stage.GSI1SK}
-            currentStageId={stage.stageId}
+            stageId={stage.stageId}
             openingId={stage.openingId}
             totalApplicants={stage.totalApplicants}
           />

@@ -3,7 +3,7 @@ import Time from "../time";
 import { getUserByEmail } from "../users/getUserByEmail";
 import { Dynamo } from "../../awsClients/ddbDocClient";
 import { createUser } from "../users/createUser";
-import { TimeUnits } from "../../types";
+import { TimeUnits } from "../../additional";
 
 const { DYNAMO_TABLE_NAME } = process.env;
 

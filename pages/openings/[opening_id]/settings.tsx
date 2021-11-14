@@ -6,7 +6,7 @@ import useSelf from "../../../SWR/useSelf";
 import useOpeningById from "../../../SWR/useOpeningById";
 export default function OpeningSettings() {
   const router = useRouter();
-  const { openingId } = router.query as CustomQuery;
+  const { openingId }: Partial<CustomQuery> = router.query;
   let { opening, isOpeningLoading, isOpeningError } = useOpeningById(openingId);
   return (
     <NewPage

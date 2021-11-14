@@ -10,12 +10,12 @@ export default function ApplicationContent() {
   const [responses, setResponses] = useState([]);
 
   const router = useRouter();
-  const { orgId, applicantId } = router.query as CustomQuery;
+  const { orgId, applicantId }: Partial<CustomQuery> = router.query;
   const { applicant, isApplicantLoading, isApplicantError } =
     usePublicApplicant(applicantId);
 
   const { questions, isQuestionsLoading, isQuestionsError } =
-    useAllStageQuestions(orgId, applicant?.currentStageId);
+    useAllStageQuestions(orgId, applicant?.stageId);
   if (isQuestionsLoading) {
     return <Loader text="Loading questions..." />;
   }

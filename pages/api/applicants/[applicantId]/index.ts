@@ -4,29 +4,27 @@ import InputValidation from "../../../../utils/inputValidation";
 import deleteApplicant from "../../../../utils/applicants/deleteApplicant";
 import updateApplicant from "../../../../utils/applicants/updateApplicant";
 import { withSessionRoute } from "../../../../middleware/withSession";
-import { CustomQuery } from "../../../../types";
+import { CustomQuery } from "../../../../additional";
 
 const handler = async (
   req: NextApiRequest,
   res: NextApiResponse
 ): Promise<void> => {
-  if (!req.session) {
+  const userSession = req.session.user;
+  if (!userSession) {
     req.session.destroy();
     return res.status(401).json({ message: "Please log in again" });
   }
   const { method, query, body } = req;
-  const { applicantId } = query as CustomQuery;
-
-  const getApplicantInput: GetApplicantInput = {
-    orgId: req.session.orgId,
-    applicantId: applicantId,
-  };
+  const { applicantId }: Partial<CustomQuery> = query;
 
   if (method === "GET") {
     try {
       // TODO gather applicant responses here
-      const applicant = await getApplicantById(getApplicantInput);
-      // const responses = await GetApplicant
+      const applicant: GetApplicantByIdOutput = await getApplicantById({
+        applicantId: applicantId!,
+        orgId: userSession.orgId,
+      });
       if (!applicant) {
         return res.status(404).json({ message: "Applicant not found" });
       }
@@ -41,7 +39,7 @@ const handler = async (
 
   if (method === "PUT") {
     try {
-      const updateApplicantInput: UpdateApplicantInput = {
+      const updateApplicantInput = {
         orgId: userSession.orgId,
         applicantId: applicantId,
         newApplicantValues: body.newApplicantValues,
@@ -66,7 +64,7 @@ const handler = async (
     try {
       await deleteApplicant({
         orgId: userSession.orgId,
-        applicantId: applicantId,
+        applicantId: applicantId!,
       });
       return res.status(200).json({ message: "Applicant deleted!" });
     } catch (error) {

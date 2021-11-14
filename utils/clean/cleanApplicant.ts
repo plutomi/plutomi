@@ -2,8 +2,8 @@ const safeKeys = [
   "firstName",
   "lastName",
   "createdAt",
-  "currentOpeningId",
-  "currentOpeningId",
+  "openingId",
+  "openingId",
 ];
 
 export default function cleanApplicant(applicant) {

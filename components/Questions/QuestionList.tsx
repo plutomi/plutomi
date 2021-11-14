@@ -14,7 +14,7 @@ import StagesService from "../../adapters/StagesService";
 import QuestionsService from "../../adapters/QuestionsService";
 export default function QuestionList() {
   const router = useRouter();
-  const { openingId, stageId } = router.query as CustomQuery;
+  const { openingId, stageId }: Partial<CustomQuery> = router.query;
 
   const { user, isUserLoading, isUserError } = useSelf();
   let { opening, isOpeningLoading, isOpeningError } = useOpeningById(openingId);
@@ -109,32 +109,30 @@ export default function QuestionList() {
                 {...provided.droppableProps}
                 ref={provided.innerRef}
               >
-                {newQuestions?.map(
-                  (question, index: number) => {
-                    return (
-                      <Draggable
-                        key={question?.questionId}
-                        draggableId={question?.questionId}
-                        index={index}
-                        {...provided.droppableProps}
-                      >
-                        {(provided) => (
-                          <div
-                            {...provided.draggableProps}
-                            {...provided.dragHandleProps}
-                            ref={provided.innerRef}
-                          >
-                            <QuestionItem
-                              question={question}
-                              newQuestions={newQuestions}
-                              deleteQuestion={deleteQuestion}
-                            />
-                          </div>
-                        )}
-                      </Draggable>
-                    );
-                  }
-                )}
+                {newQuestions?.map((question, index: number) => {
+                  return (
+                    <Draggable
+                      key={question?.questionId}
+                      draggableId={question?.questionId}
+                      index={index}
+                      {...provided.droppableProps}
+                    >
+                      {(provided) => (
+                        <div
+                          {...provided.draggableProps}
+                          {...provided.dragHandleProps}
+                          ref={provided.innerRef}
+                        >
+                          <QuestionItem
+                            question={question}
+                            newQuestions={newQuestions}
+                            deleteQuestion={deleteQuestion}
+                          />
+                        </div>
+                      )}
+                    </Draggable>
+                  );
+                })}
 
                 {provided.placeholder}
               </ul>

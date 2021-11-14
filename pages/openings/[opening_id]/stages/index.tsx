@@ -6,7 +6,7 @@ import useOpeningById from "../../../../SWR/useOpeningById";
 import { useEffect } from "react";
 export default function Openings() {
   const router = useRouter();
-  const { openingId } = router.query as CustomQuery;
+  const { openingId }: Partial<CustomQuery> = router.query;
 
   const { user, isUserLoading, isUserError } = useSelf();
 

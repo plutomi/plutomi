@@ -2,15 +2,20 @@ import {
   TransactWriteCommand,
   TransactWriteCommandInput,
 } from "@aws-sdk/lib-dynamodb";
+import { DeleteApplicantInput, GetApplicantByIdOutput } from "../../Applicants";
 import { Dynamo } from "../../awsClients/ddbDocClient";
 import { getApplicantById } from "./getApplicantById";
 const { DYNAMO_TABLE_NAME } = process.env;
 
-export default async function deleteApplicant({ orgId, applicantId }) {
-  const applicant = (await getApplicantById({
+export default async function deleteApplicant(
+  props: DeleteApplicantInput
+): Promise<void> {
+  const { orgId, applicantId } = props;
+  const applicant: GetApplicantByIdOutput = await getApplicantById({
     orgId,
     applicantId,
-  })) as unknown as DynamoApplicant; // TODO fix this shit :(
+  });
+
   try {
     const transactParams: TransactWriteCommandInput = {
       TransactItems: [
@@ -29,7 +34,7 @@ export default async function deleteApplicant({ orgId, applicantId }) {
           // Decrement opening's totalApplicants
           Update: {
             Key: {
-              PK: `ORG#${orgId}#OPENING#${applicant.currentOpeningId}`, // todo fix types
+              PK: `ORG#${orgId}#OPENING#${applicant.openingId}`, // todo fix types
               SK: `OPENING`,
             },
             TableName: DYNAMO_TABLE_NAME,
@@ -43,7 +48,7 @@ export default async function deleteApplicant({ orgId, applicantId }) {
           // Decrement stage's totalApplicants
           Update: {
             Key: {
-              PK: `ORG#${orgId}#STAGE#${applicant.currentStageId}`, // todo fix types
+              PK: `ORG#${orgId}#STAGE#${applicant.stageId}`, // todo fix types
               SK: `STAGE`,
             },
             TableName: DYNAMO_TABLE_NAME,

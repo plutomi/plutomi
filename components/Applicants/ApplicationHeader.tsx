@@ -3,12 +3,12 @@ import { useRouter } from "next/router";
 import useStageById from "../../SWR/useStageById";
 export default function ApplicationHeader() {
   const router = useRouter();
-  const { applicantId } = router.query as CustomQuery;
+  const { applicantId }: Partial<CustomQuery> = router.query;
   const { applicant, isApplicantLoading, isApplicantError } =
     useApplicantById(applicantId);
 
   const { stage, isStageLoading, isStageError } = useStageById(
-    applicant?.currentStageId
+    applicant?.stageId
   );
   return (
     <div className="md:flex md:items-center md:justify-between">

@@ -15,6 +15,7 @@ import useOpeningById from "../SWR/useOpeningById";
 import useAllStagesInOpening from "../SWR/useAllStagesInOpening";
 import useStageById from "../SWR/useStageById";
 import OpeningsService from "../adapters/OpeningsService";
+import { CustomQuery } from "../additional";
 
 export default function StageReorderColumn() {
   const createStage = async () => {
@@ -62,7 +63,7 @@ export default function StageReorderColumn() {
   };
 
   const router = useRouter();
-  const { openingId, stageId } = router.query as CustomQuery;
+  const { openingId, stageId }: Partial<CustomQuery> = router.query;
 
   const { user, isUserLoading, isUserError } = useSelf();
   let { opening, isOpeningLoading, isOpeningError } = useOpeningById(openingId);
@@ -174,7 +175,7 @@ export default function StageReorderColumn() {
                                 <DraggableStageCard
                                   totalApplicants={stage.totalApplicants}
                                   name={`${stage.GSI1SK}`}
-                                  currentStageId={stage.stageId}
+                                  stageId={stage.stageId}
                                 />
                               </a>
                             </Link>

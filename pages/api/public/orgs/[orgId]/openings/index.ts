@@ -4,7 +4,7 @@ import { NextApiResponse } from "next";
 import { getAllOpeningsInOrg } from "../../../../../../utils/openings/getAllOpeningsInOrg";
 import cleanOpening from "../../../../../../utils/clean/cleanOpening";
 
-const handler = async (req: CustomRequest, res: NextApiResponse) => {
+const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   const { method, query } = req;
   const { orgId } = query as CustomQuery;
 

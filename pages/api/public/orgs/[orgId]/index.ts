@@ -3,7 +3,7 @@ import { getOrg } from "../../../../../utils/orgs/getOrg";
 import { NextApiResponse } from "next";
 import cleanOrg from "../../../../../utils/clean/cleanOrg";
 // This returns limited public information about an org
-const handler = async (req: CustomRequest, res: NextApiResponse) => {
+const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   const { method, query } = req;
   const { orgId } = query;
 
