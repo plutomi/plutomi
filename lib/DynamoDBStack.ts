@@ -17,9 +17,13 @@ export class DynamoDBStack extends cdk.Stack {
       readCapacity: 1,
       writeCapacity: 1,
       billingMode: dynamodb.BillingMode.PAY_PER_REQUEST,
+      // TODO @mazupicua
+      // We need to enable 'streams' on our databsae
+      // https://docs.aws.amazon.com/cdk/api/latest/docs/@aws-cdk_aws-dynamodb.StreamViewType.html
+      // Add a property here of `stream` that has a value of `dynamodb.StreamViewType.NEW_AND_OLD_IMAGES`
+      // TODO!!
     });
 
-    
     table.addGlobalSecondaryIndex({
       indexName: "GSI1",
       partitionKey: { name: "GSI1PK", type: dynamodb.AttributeType.STRING },

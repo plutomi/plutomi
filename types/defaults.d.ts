@@ -129,7 +129,7 @@ export enum ID_LENGTHS {
 
 export enum DEFAULT_VALUES {
   FIRST_NAME = "NO_FIRST_NAME",
-  // LAST_NAME
+  // LAST_NAME = ... no last name.. 
   // FULL_NAME = FIRST_NAME + LAST_NAME  with a space in the middle // TODO @mazupicua
   // DEFAULT_VALUES.FIRST_NAME <--------- ALSO, you can reference the value right above it so you dont repeat yourself
   // Look up `template literals`!!!!
