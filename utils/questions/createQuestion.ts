@@ -5,7 +5,7 @@ import {
 import { Dynamo } from "../../awsClients/ddbDocClient";
 import Time from "../time";
 import { nanoid } from "nanoid";
-import { getStage } from "../stages/getStage";
+import { getStageById } from "../stages/getStageById";
 import { EntityTypes, Errors, Limits } from "../../types/additional";
 import { QuestionsDynamoEntry, CreateQuestionInput } from "./types/Questions";
 
@@ -31,7 +31,7 @@ export async function createQuestion(
   };
 
   try {
-    let stage = await getStage({ orgId, stageId });
+    let stage = await getStageById({ orgId, stageId });
 
     if (stage.questionOrder.length >= Limits.MAX_CHILD_ITEM_LIMIT) {
       throw Errors.MAX_CHILD_ITEM_LIMIT_ERROR_MESSAGE;

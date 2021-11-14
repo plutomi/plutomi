@@ -3,7 +3,7 @@
 import withCleanOrgId from "../../../../../../../middleware/withCleanOrgId";
 import { NextApiResponse } from "next";
 import cleanStage from "../../../../../../../utils/clean/cleanStage";
-import { getStage } from "../../../../../../../utils/stages/getStage";
+import { getStageById } from "../../../../../../../utils/stages/getStageById";
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   const { method, query } = req;
   const { orgId, openingId, stageId } = query as CustomQuery;
@@ -15,7 +15,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 
   if (method === "GET") {
     try {
-      const stage = await getStage(getStageInput);
+      const stage = await getStageById(getStageInput);
       if (!stage) {
         return res.status(404).json({ message: "Stage not found" });
       }

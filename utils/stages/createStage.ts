@@ -6,17 +6,19 @@ import { Dynamo } from "../../awsClients/ddbDocClient";
 import Time from "../time";
 import { nanoid } from "nanoid";
 import { getOpening } from "../openings/getOpeningById";
-import { Errors, Limits } from "../../types/additional";
+import { EntityTypes, Errors, Limits } from "../../types/additional";
+import { CreateStageInput, StagesDynamoEntry } from "./types/Stages";
 
 const { DYNAMO_TABLE_NAME } = process.env;
 
-export async function createStage({ orgId, GSI1SK, openingId }) {
+export async function createStage(props: CreateStageInput): Promise<void> {
+  const { orgId, GSI1SK, openingId } = props;
   const now = Time.currentISO();
   const stageId = nanoid(50);
-  const newStage = {
+  const newStage: StagesDynamoEntry = {
     PK: `ORG#${orgId}#STAGE#${stageId}`,
-    SK: `STAGE`,
-    entityType: "STAGE",
+    SK: EntityTypes.STAGE,
+    entityType: EntityTypes.STAGE,
     createdAt: now,
     questionOrder: [],
     stageId: stageId,
@@ -86,6 +88,7 @@ export async function createStage({ orgId, GSI1SK, openingId }) {
       };
 
       await Dynamo.send(new TransactWriteCommand(transactParams));
+      return;
     } catch (error) {
       console.error(error);
       throw new Error(error);

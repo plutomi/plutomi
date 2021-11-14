@@ -1,4 +1,4 @@
-import { getStage } from "../../../../utils/stages/getStage";
+import { getStageById } from "../../../../utils/stages/getStageById";
 import { NextApiResponse } from "next";
 import InputValidation from "../../../../utils/inputValidation";
 import { deleteStage } from "../../../../utils/stages/deleteStage";
@@ -26,7 +26,7 @@ const handler = async (
     };
 
     try {
-      const stage = await getStage(getStageInput);
+      const stage = await getStageById(getStageInput);
       if (!stage) {
         return res.status(404).json({ message: "Stage not found" });
       }

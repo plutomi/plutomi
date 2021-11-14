@@ -1,7 +1,7 @@
 import { NextApiResponse } from "next";
 import { getAllApplicantsInStage } from "../../../../utils/stages/getAllApplicantsInStage";
 import { withSessionRoute } from "../../../../middleware/withSession";
-import { getStage } from "../../../../utils/stages/getStage";
+import { getStageById } from "../../../../utils/stages/getStageById";
 
 const handler = async (
   req: NextApiRequest,

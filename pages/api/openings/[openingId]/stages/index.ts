@@ -1,4 +1,4 @@
-import { getAllStagesInOpening } from "../../../../../utils/stages/getAllStagesInOpening";
+import { getAllStagesInOpening } from "../../../../../utils/openings/getAllStagesInOpening";
 import { createStage } from "../../../../../utils/stages/createStage";
 import InputValidation from "../../../../../utils/inputValidation";
 import { NextApiResponse } from "next";

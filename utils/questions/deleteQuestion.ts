@@ -4,7 +4,7 @@ import {
 } from "@aws-sdk/lib-dynamodb";
 import { Dynamo } from "../../awsClients/ddbDocClient";
 const { DYNAMO_TABLE_NAME } = process.env;
-import { getStage } from "../stages/getStage";
+import { getStageById } from "../stages/getStageById";
 import { getQuestionById } from "./getQuestionById";
 import { DeleteQuestionInput } from "./types/Questions";
 export async function DeleteQuestion(
@@ -14,7 +14,7 @@ export async function DeleteQuestion(
   // Delete the question item & update the question order on the stage
   try {
     let question = await getQuestionById({ orgId, questionId });
-    let stage = await getStage({ orgId, stageId: question.stageId });
+    let stage = await getStageById({ orgId, stageId: question.stageId });
     const deletedQuestionIndex = stage.questionOrder.indexOf(questionId);
 
     // Update question order

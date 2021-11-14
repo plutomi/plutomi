@@ -1,6 +1,6 @@
 import { QueryCommand, QueryCommandInput } from "@aws-sdk/lib-dynamodb";
 import { Dynamo } from "../../awsClients/ddbDocClient";
-import { getStage } from "../stages/getStage";
+import { getStageById } from "../stages/getStageById";
 import {
   GetAllQuestionsInStageInput,
   GetAllQuestionsInStageOutput,
@@ -12,7 +12,7 @@ export async function getAllQuestionsInStage(
   props: GetAllQuestionsInStageInput
 ): Promise<GetAllQuestionsInStageOutput> {
   const { orgId, stageId } = props;
-  const stage = await getStage({ orgId, stageId });
+  const stage = await getStageById({ orgId, stageId });
   const { questionOrder } = stage;
 
   const params: QueryCommandInput = {

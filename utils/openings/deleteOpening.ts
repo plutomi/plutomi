@@ -7,7 +7,7 @@ import {
 import { Dynamo } from "../../awsClients/ddbDocClient";
 const { DYNAMO_TABLE_NAME } = process.env;
 import { deleteStage } from "../stages/deleteStage";
-import { getAllStagesInOpening } from "../stages/getAllStagesInOpening";
+import { getAllStagesInOpening } from "./getAllStagesInOpening";
 // TODO check if stage is empt of appliants first
 // TODO delete stage from the funnels sort order
 export async function deleteOpening({ orgId, openingId }) {
