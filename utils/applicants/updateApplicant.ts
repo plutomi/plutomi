@@ -1,23 +1,20 @@
 import { UpdateCommand, UpdateCommandInput } from "@aws-sdk/lib-dynamodb";
+import { UpdateApplicantInput } from "../../Applicants";
 import { Dynamo } from "../../awsClients/ddbDocClient";
 const { DYNAMO_TABLE_NAME } = process.env;
-
-export default async function updateApplicant({
-  orgId,
-  applicantId,
-  newApplicantValues,
-}) {
+const FORBIDDEN_KEYS = [
+  "PK",
+  "SK",
+  "orgId",
+  "entityType",
+  "createdAt",
+  "applicantId",
+  "GSI1PK",
+];
+export default async function updateApplicant(props: UpdateApplicantInput) {
+  const { orgId, applicantId, newApplicantValues } = props;
+  
   // TODO user the cleaning functions instead
-  const FORBIDDEN_KEYS = [
-    "PK",
-    "SK",
-    "orgId",
-    "entityType",
-    "createdAt",
-    "applicantId",
-    "GSI1PK",
-  ];
-
   const incomingKeys = Object.keys(newApplicantValues);
   // TODO should this throw an error and
   // let the user know we can't update that key?

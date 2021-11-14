@@ -102,3 +102,8 @@ type DeleteApplicantInput = Pick<ApplicantDynamoEntry, "orgId" | "applicantId">;
 interface GetApplicantByIdOutput extends ApplicantDynamoEntry {
   responses: Object[]; // TODO fix this type with a response type
 }
+
+
+interface UpdateApplicantInput extends Pick<ApplicantDynamoEntry, "orgId" | "applicantId"> {
+  newApplicantValues: {[key : string]}
+}
