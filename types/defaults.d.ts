@@ -125,13 +125,11 @@ export enum ID_LENGTHS {
   STAGE_RULE = 16,
 }
 
-// TODO @mazupicua - Same issue as above
-// We need some default values here for FIRST_NAME and FULL_NAME
-// You can reference FIRST_NAME by calling the attribute like DEFAULT_VALUES.FIRST_NAME
-// FULL_NAME should be first and last name combined with a space in the middle... look up  `template literals`!!!!
 export enum DEFAULT_VALUES {
   FIRST_NAME = "NO_FIRST_NAME",
-  // TODO here!
+  LAST_NAME = "NO_LAST_NAME",
+  FULL_NAME = `${DEFAULT_VALUES.FIRST_NAME} ${DEFAULT_VALUES.LAST_NAME}`,
+  NO_ORG = `NO_ORG_ASSIGNED`,
 }
 
 export enum CONTACT {
