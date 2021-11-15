@@ -17,6 +17,7 @@ export class DynamoDBStack extends cdk.Stack {
       // TODO @mazupicua
       // Issue: https://github.com/plutomi/plutomi/issues/280
       // Add a `timeToLiveAttribute` of `ttlExpiry`
+      timeToLiveAttribute: "ttlExpiry",
       readCapacity: 1,
       writeCapacity: 1,
       billingMode: dynamodb.BillingMode.PAY_PER_REQUEST,
