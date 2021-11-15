@@ -118,12 +118,11 @@ export enum ERRORS {
 export enum ID_LENGTHS {
   USER = 42,
   APPLICANT = 60,
-  // TODO @mazupicua issue https://github.com/plutomi/plutomi/issues/298
-  // const inviteId = nanoid(50); <-- Replace these with the formats above
-  // const openingId = nanoid(16); <-- Should be OPENING
-  // const questionId = nanoid(50); <-- Should be STAGE_QUESTION
-  // const stageId = nanoid(50); <-- STAGE
-  // const stageRuleId = nanoid(16); <-- STAGE_RULE
+  INVITE = 50,
+  OPENING = 16,
+  STAGE = 50,
+  STAGE_QUESTION = 50,
+  STAGE_RULE = 16,
 }
 
 // TODO @mazupicua - Same issue as above
