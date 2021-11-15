@@ -14,18 +14,11 @@ export class DynamoDBStack extends cdk.Stack {
       tableName: TABLE_NAME,
       partitionKey: { name: "PK", type: dynamodb.AttributeType.STRING },
       sortKey: { name: "SK", type: dynamodb.AttributeType.STRING },
-      // TODO @mazupicua
-      // Issue: https://github.com/plutomi/plutomi/issues/280
-      // Add a `timeToLiveAttribute` of `ttlExpiry`
       timeToLiveAttribute: "ttlExpiry",
       readCapacity: 1,
       writeCapacity: 1,
       billingMode: dynamodb.BillingMode.PAY_PER_REQUEST,
-      // TODO @mazupicua 2nd part of above issue
-      // We need to enable 'streams' on our databsae
-      // https://docs.aws.amazon.com/cdk/api/latest/docs/@aws-cdk_aws-dynamodb.StreamViewType.html
-      // Add a property here of `stream` that has a value of `dynamodb.StreamViewType.NEW_AND_OLD_IMAGES`
-      // TODO!!
+      stream: dynamodb.StreamViewType.NEW_AND_OLD_IMAGES,
     });
 
     table.addGlobalSecondaryIndex({
