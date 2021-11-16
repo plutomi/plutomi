@@ -13,7 +13,6 @@ import deleteLoginLink from "../../../utils/loginLinks/deleteLoginLink";
 import cleanUser from "../../../utils/clean/cleanUser";
 import { getUserById } from "../../../utils/users/getUserById";
 import updateLoginLink from "../../../utils/loginLinks/updateLoginLink";
-import { TIME_UNITS } from "../../../types/defaults";
 import dayjs from "dayjs";
 
 const handler = async (

@@ -6,21 +6,16 @@ import { Dynamo } from "../../awsClients/ddbDocClient";
 import Time from "../time";
 import { nanoid } from "nanoid";
 import { getStageById } from "../stages/getStageById";
-import { ENTITY_TYPES, Errors, Limits } from "../../types/defaults";
-import {
-  QuestionsDynamoEntry,
-  CreateQuestionInput,
-} from "../../types/Questions";
 
 const { DYNAMO_TABLE_NAME } = process.env;
 
-export async function createQuestion(
-  props: CreateQuestionInput
+export async function createStageQuestion(
+  props: CreateStageQuestionInput
 ): Promise<void> {
   const { orgId, stageId, GSI1SK, questionDescription } = props;
   const now = Time.currentISO();
   const questionId = nanoid(50);
-  const newStageQuestion: QuestionsDynamoEntry = {
+  const newStageQuestion: StageQuestionDynamoEntry = {
     PK: `ORG#${orgId}#STAGE_QUESTION#${questionId}`,
     SK: ENTITY_TYPES.STAGE_QUESTION,
     questionDescription: questionDescription || "",
@@ -37,7 +32,7 @@ export async function createQuestion(
     let stage = await getStageById({ orgId, stageId });
 
     if (stage.questionOrder.length >= Limits.MAX_CHILD_ITEM_LIMIT) {
-      throw Errors.MAX_CHILD_ITEM_LIMIT_ERROR_MESSAGE;
+      throw ERRORS.MAX_CHILD_ITEM_LIMIT_ERROR_MESSAGE;
     }
 
     try {

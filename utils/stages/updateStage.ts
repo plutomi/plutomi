@@ -1,6 +1,5 @@
 import { UpdateCommand } from "@aws-sdk/lib-dynamodb";
 import { Dynamo } from "../../awsClients/ddbDocClient";
-import { UpdateStageInput } from "../../types/StageRules";
 const { DYNAMO_TABLE_NAME } = process.env;
 
 export default async function updateStage(

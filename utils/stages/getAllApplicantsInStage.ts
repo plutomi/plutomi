@@ -1,9 +1,6 @@
 import { QueryCommand, QueryCommandInput } from "@aws-sdk/lib-dynamodb";
 import { Dynamo } from "../../awsClients/ddbDocClient";
-import {
-  GetAllApplicantsInStageInput,
-  GetAllApplicantsInStageOutput,
-} from "../../types/Stages";
+
 const { DYNAMO_TABLE_NAME } = process.env;
 
 export async function getAllApplicantsInStage(

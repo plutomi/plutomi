@@ -3,7 +3,7 @@ import { getOpening } from "../../../utils/openings/getOpeningById";
 import InputValidation from "../../../utils/inputValidation";
 import { createApplicant } from "../../../utils/applicants/createApplicant";
 import { getOrg } from "../../../utils/orgs/getOrg";
-import sendApplicantLink from "../../../utils/applicantEmail/sendApplicantLink";
+import sendApplicantLink from "../../../utils/email/sendApplicantLink";
 
 const handler = async (
   req: NextApiRequest,

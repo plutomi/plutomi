@@ -27,11 +27,6 @@
     "strictPropertyInitialization": false,
     "typeRoots": ["./node_modules/@types"]
   },
-  "exclude": ["node_modules", "cdk.out"],
-  "include": [
-    "types/*",
-    "next-env.d.ts",
-    "**/*.ts",
-    "**/*.tsx"
-  ]
+  "exclude": ["node_modules", "cdk.out", "*"],
+  "include": ["types.d.ts", "next-env.d.ts", "**/*.ts", "**/*.tsx"]
 }

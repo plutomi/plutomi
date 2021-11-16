@@ -5,12 +5,6 @@ import {
 import { Dynamo } from "../../awsClients/ddbDocClient";
 import Time from "../time";
 import { nanoid } from "nanoid";
-import { ENTITY_TYPES } from "../../types/defaults";
-import {
-  ApplicantDynamoEntry,
-  CreateApplicantInput,
-  CreateApplicantOutput,
-} from "../../Applicants";
 
 const { DYNAMO_TABLE_NAME } = process.env;
 

@@ -1,5 +1,4 @@
 import { UpdateCommand, UpdateCommandInput } from "@aws-sdk/lib-dynamodb";
-import { UpdateApplicantInput } from "../../types/Applicants";
 import { Dynamo } from "../../awsClients/ddbDocClient";
 const { DYNAMO_TABLE_NAME } = process.env;
 const FORBIDDEN_KEYS = [

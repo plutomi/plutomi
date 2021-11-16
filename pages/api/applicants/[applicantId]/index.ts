@@ -4,7 +4,6 @@ import InputValidation from "../../../../utils/inputValidation";
 import deleteApplicant from "../../../../utils/applicants/deleteApplicant";
 import updateApplicant from "../../../../utils/applicants/updateApplicant";
 import { withSessionRoute } from "../../../../middleware/withSession";
-import { CUSTOM_QUERY } from "../../../../types/defaults";
 
 const handler = async (
   req: NextApiRequest,

@@ -1,7 +1,5 @@
 import relativeTime from "dayjs/plugin/relativeTime";
 import dayjs from "dayjs";
-import { Errors, TIME_UNITS } from "../types/defaults";
-
 dayjs.extend(relativeTime);
 
 /**
@@ -30,7 +28,7 @@ export default class Time {
    * @param date  The date (in any format) to get a relative time to.
    * @returns A string such as '23 days ago' relative to the passed in date
    * @external String
-   * @throws {@link Errors.INVALID_DATE_ERROR} if the date cannot be converted to a Date object
+   * @throws {@link ERRORS.INVALID_DATE_ERROR} if the date cannot be converted to a Date object
    * @see The DayJS documentation for more info https://day.js.org/docs/en/plugin/relative-time
    */
   static relative(date: string | number | Date): string {
@@ -38,7 +36,7 @@ export default class Time {
       let convertedDate = dayjs(date).toDate();
       return dayjs().to(convertedDate);
     } catch (error) {
-      throw Errors.INVALID_DATE_ERROR;
+      throw ERRORS.INVALID_DATE_ERROR;
     }
   }
 

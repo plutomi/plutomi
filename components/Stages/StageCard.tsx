@@ -1,5 +1,4 @@
 import React from "react";
-import { useRouter } from "next/router";
 import Link from "next/dist/client/link";
 import { UserGroupIcon } from "@heroicons/react/outline";
 import NumberFormat from "react-number-format";
@@ -11,9 +10,6 @@ export default function StageCard({
   openingId,
   totalApplicants,
 }) {
-  const router = useRouter();
-  const { stageId }: Partial<CUSTOM_QUERY> = router.query;
-
   return (
     <Link
       href={`${process.env.NEXT_PUBLIC_WEBSITE_URL}/openings/${openingId}/stages/${stageId}/applicants`} // TODO should this end with applicants?

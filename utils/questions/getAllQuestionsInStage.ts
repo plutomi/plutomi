@@ -1,10 +1,6 @@
 import { QueryCommand, QueryCommandInput } from "@aws-sdk/lib-dynamodb";
 import { Dynamo } from "../../awsClients/ddbDocClient";
 import { getStageById } from "../stages/getStageById";
-import {
-  GetAllQuestionsInStageInput,
-  GetAllQuestionsInStageOutput,
-} from "../../types/Questions";
 
 const { DYNAMO_TABLE_NAME } = process.env;
 

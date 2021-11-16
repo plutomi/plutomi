@@ -1,13 +1,9 @@
-import React, { useState } from "react";
-import { useRouter } from "next/router";
+import React from "react";
 import { UserGroupIcon } from "@heroicons/react/outline";
 import NumberFormat from "react-number-format";
 import _ from "lodash";
 
 export default function DraggableStageCard({ name, stageId, totalApplicants }) {
-  const router = useRouter();
-  const { stageId }: Partial<CUSTOM_QUERY> = router.query;
-
   return (
     <div
       className={`border my-2   py-4 text-center  ${

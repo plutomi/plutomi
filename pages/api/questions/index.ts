@@ -1,5 +1,5 @@
-import { CreateStageQuestion } from "../../../utils/questions/createStageQuestion";
 import { NextApiResponse } from "next";
+import { createStageQuestion } from "../../../utils/questions/createStageQuestion";
 import { withSessionRoute } from "../../../middleware/withSession";
 
 const handler = async (
@@ -23,7 +23,7 @@ const handler = async (
     };
 
     try {
-      await CreateStageQuestion(createStageQuestionInput);
+      await createStageQuestion(createStageQuestionInput);
       return res.status(201).json({ message: "Question created!" });
     } catch (error) {
       // TODO add error logger

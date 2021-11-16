@@ -6,8 +6,6 @@ import { Dynamo } from "../../awsClients/ddbDocClient";
 import Time from "../time";
 import { nanoid } from "nanoid";
 import { getOpening } from "../openings/getOpeningById";
-import { ENTITY_TYPES, Errors, Limits } from "../../types/defaults";
-import { CreateStageInput, StagesDynamoEntry } from "../../types/Stages";
 
 const { DYNAMO_TABLE_NAME } = process.env;
 
@@ -36,7 +34,7 @@ export async function createStage(props: CreateStageInput): Promise<void> {
       opening.stageOrder.push(stageId);
 
       if (opening.stageOrder.length >= Limits.MAX_CHILD_ITEM_LIMIT) {
-        throw Errors.MAX_CHILD_ITEM_LIMIT_ERROR_MESSAGE;
+        throw ERRORS.MAX_CHILD_ITEM_LIMIT_ERROR_MESSAGE;
       }
 
       const transactParams: TransactWriteCommandInput = {

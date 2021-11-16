@@ -2,13 +2,6 @@ import { PutCommand, PutCommandInput } from "@aws-sdk/lib-dynamodb";
 import { Dynamo } from "../../awsClients/ddbDocClient";
 import Time from "../time";
 import { nanoid } from "nanoid";
-import {
-  ApplicantResponseEntry,
-  CreateApplicantResponseInput,
-  CreateApplicantResponseOutput,
-} from "../../types/ApplicantResponses";
-import { ENTITY_TYPES } from "../../types/defaults";
-
 const { DYNAMO_TABLE_NAME } = process.env;
 
 export async function createApplicantResponse(

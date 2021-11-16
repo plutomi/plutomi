@@ -15,7 +15,6 @@ import useOpeningById from "../SWR/useOpeningById";
 import useAllStagesInOpening from "../SWR/useAllStagesInOpening";
 import useStageById from "../SWR/useStageById";
 import OpeningsService from "../adapters/OpeningsService";
-import { CUSTOM_QUERY } from "../types/defaults";
 
 export default function StageReorderColumn() {
   const createStage = async () => {
