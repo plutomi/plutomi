@@ -13,15 +13,13 @@ const handler = async (
   req: NextApiRequest,
   res: NextApiResponse
 ): Promise<void> => {
-  const userSession = req.session.user;
-
   const { body, method, query } = req;
   const { questionId } = query as Pick<CUSTOM_QUERY, "questionId">;
 
   if (method === API_METHODS.DELETE) {
     try {
       const deleteQuestionInput = {
-        orgId: userSession.orgId,
+        orgId: req.session.user.orgId,
         questionId: questionId,
       };
       await DeleteQuestion(deleteQuestionInput);
@@ -37,7 +35,7 @@ const handler = async (
   if (method === API_METHODS.PUT) {
     try {
       const updatedQuestionInput: UpdateQuestionInput = {
-        orgId: userSession.orgId,
+        orgId: req.session.user.orgId,
         questionId: questionId,
         newQuestionValues: body.newQuestionValues, // Just the keys that are passed down
       };

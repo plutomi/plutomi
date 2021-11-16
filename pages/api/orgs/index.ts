@@ -14,8 +14,6 @@ const handler = async (
   req: NextApiRequest,
   res: NextApiResponse
 ): Promise<void> => {
-  const userSession = req.session.user;
-
   const { body, method } = req;
   const { GSI1SK, orgId } = body;
 
@@ -27,13 +25,13 @@ const handler = async (
         message: `You cannot create an org with this name: ${GSI1SK}`,
       });
     }
-    if (userSession.orgId != "NO_ORG_ASSIGNED") {
+    if (req.session.user.orgId != "NO_ORG_ASSIGNED") {
       return res.status(400).json({
         message: `You already belong to an org!`,
       });
     }
 
-    const pendingInvites = await getAllUserInvites(userSession.userId);
+    const pendingInvites = await getAllUserInvites(req.session.user.userId);
 
     if (pendingInvites && pendingInvites.length > 0) {
       return res.status(403).json({
@@ -45,7 +43,7 @@ const handler = async (
     const createOrgInput = {
       GSI1SK: GSI1SK,
       orgId: orgId,
-      user: userSession,
+      user: req.session.user,
     };
 
     try {
@@ -61,11 +59,11 @@ const handler = async (
 
     try {
       await createAndJoinOrg({
-        userId: userSession.userId,
+        userId: req.session.user.userId,
         orgId: orgId,
         GSI1SK: GSI1SK,
       });
-      const updatedUser = await getUserById(userSession.userId); // TODO remove this, wait for transact
+      const updatedUser = await getUserById(req.session.user.userId); // TODO remove this, wait for transact
 
       // Update the logged in user session with the new org id
       req.session.user = cleanUser(updatedUser);

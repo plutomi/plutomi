@@ -15,14 +15,12 @@ const handler = async (
   req: NextApiRequest,
   res: NextApiResponse
 ): Promise<void> => {
-  const userSession = req.session.user;
-
   const { method, query, body } = req;
   const { stageId } = query as Pick<CUSTOM_QUERY, "stageId">;
   // Get a single stage in an opening
   if (method === API_METHODS.GET) {
     const getStageInput = {
-      orgId: userSession.orgId,
+      orgId: req.session.user.orgId,
       stageId: stageId,
     };
 
@@ -44,7 +42,7 @@ const handler = async (
   if (method === API_METHODS.PUT) {
     try {
       const updateStageInput: UpdateStageInput = {
-        orgId: userSession.orgId,
+        orgId: req.session.user.orgId,
         stageId: stageId,
         newStageValues: body.newStageValues,
       };
@@ -67,7 +65,7 @@ const handler = async (
   if (method === API_METHODS.DELETE) {
     try {
       const deleteStageInput = {
-        orgId: userSession.orgId,
+        orgId: req.session.user.orgId,
         stageId: stageId,
       };
 

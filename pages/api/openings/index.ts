@@ -11,20 +11,18 @@ const handler = async (
   req: NextApiRequest,
   res: NextApiResponse
 ): Promise<void> => {
-  const userSession = req.session.user;
-
   const { body, method } = req;
   const { GSI1SK } = body;
 
   if (method === API_METHODS.POST) {
-    if (userSession.orgId === "NO_ORG_ASSIGNED") {
+    if (req.session.user.orgId === "NO_ORG_ASSIGNED") {
       return res.status(403).json({
         message: "Please create an organization before creating an opening",
       });
     }
     try {
       const createOpeningInput = {
-        orgId: userSession.orgId,
+        orgId: req.session.user.orgId,
         GSI1SK: GSI1SK,
       };
 
@@ -48,7 +46,7 @@ const handler = async (
 
   if (method === API_METHODS.GET) {
     try {
-      const allOpenings = await getAllOpeningsInOrg(userSession.orgId);
+      const allOpenings = await getAllOpeningsInOrg(req.session.user.orgId);
       return res.status(200).json(allOpenings);
     } catch (error) {
       // TODO add error logger

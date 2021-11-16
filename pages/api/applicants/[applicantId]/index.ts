@@ -13,8 +13,6 @@ const handler = async (
   req: NextApiRequest,
   res: NextApiResponse
 ): Promise<void> => {
-  const userSession = req.session.user;
-
   const { method, query, body } = req;
   const { applicantId } = query as Pick<CUSTOM_QUERY, "applicantId">;
 
@@ -23,7 +21,7 @@ const handler = async (
       // TODO gather applicant responses here
       const applicant = await getApplicantById({
         applicantId: applicantId,
-        orgId: userSession.orgId,
+        orgId: req.session.user.orgId,
       });
 
       if (!applicant) {
@@ -41,7 +39,7 @@ const handler = async (
   if (method === API_METHODS.PUT) {
     try {
       const updateApplicantInput = {
-        orgId: userSession.orgId,
+        orgId: req.session.user.orgId,
         applicantId: applicantId,
         newApplicantValues: body.newApplicantValues,
       };
@@ -64,7 +62,7 @@ const handler = async (
   if (method === API_METHODS.DELETE) {
     try {
       await deleteApplicant({
-        orgId: userSession.orgId,
+        orgId: req.session.user.orgId,
         applicantId: applicantId!,
       });
       return res.status(200).json({ message: "Applicant deleted!" });

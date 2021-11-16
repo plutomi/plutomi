@@ -10,8 +10,7 @@ const handler = async (
   req: NextApiRequest,
   res: NextApiResponse
 ): Promise<void> => {
-  const userSession = req.session.user;
-  if (!userSession) {
+  if (!req.session.user) {
     req.session.destroy();
     return res.status(401).json({ message: "Please log in again" }); // TODO middleware
   }
@@ -20,7 +19,7 @@ const handler = async (
 
   if (method === API_METHODS.GET) {
     try {
-      const requestedUser = await getUserById(userSession.userId);
+      const requestedUser = await getUserById(req.session.user.userId);
       if (!requestedUser) {
         req.session.destroy();
         return res.status(401).json({ message: "Please log in again" }); // TODO middleware
@@ -34,7 +33,6 @@ const handler = async (
         .json({ message: `${error}` });
     }
   }
-
 };
 
 export default withCleanOrgId(

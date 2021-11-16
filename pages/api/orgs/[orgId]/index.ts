@@ -15,7 +15,6 @@ const handler = async (
   const { method, query } = req; // TODO user type
   const { orgId } = query as Pick<CUSTOM_QUERY, "orgId">;
 
-  const userSession = req.session.user;
   const org = await getOrg(orgId);
 
   if (method === API_METHODS.GET) {
@@ -23,7 +22,7 @@ const handler = async (
     // For public org data such as basic info or openings, please use the
     // /api/public/orgs/[orgId] route
 
-    if (orgId != userSession.orgId) {
+    if (orgId != req.session.user.orgId) {
       return res
         .status(403)
         .json({ message: "You are not authorized to view this org" });
@@ -52,7 +51,7 @@ const handler = async (
       }
 
       const updatedUser = await updateUser({
-        userId: userSession.userId,
+        userId: req.session.user.userId,
         newUserValues: {
           orgId: "NO_ORG_ASSIGNED",
           orgJoinDate: "NO_ORG_ASSIGNED",

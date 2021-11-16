@@ -11,13 +11,11 @@ const handler = async (
   req: NextApiRequest,
   res: NextApiResponse
 ): Promise<void> => {
-  const userSession = req.session.user;
-
   const { method } = req;
 
   if (method === API_METHODS.GET) {
     try {
-      const invites = await getAllUserInvites(userSession.userId);
+      const invites = await getAllUserInvites(req.session.user.userId);
       return res.status(200).json(invites);
     } catch (error) {
       // TODO add error logger
@@ -26,7 +24,6 @@ const handler = async (
         .json({ message: `${error}` });
     }
   }
-
 };
 
 export default withCleanOrgId(

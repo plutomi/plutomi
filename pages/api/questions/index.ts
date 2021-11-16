@@ -10,14 +10,12 @@ const handler = async (
   req: NextApiRequest,
   res: NextApiResponse
 ): Promise<void> => {
-  const userSession = req.session.user;
-
   const { body, method } = req;
   const { GSI1SK, questionDescription, stageId } = body;
 
   if (method === API_METHODS.POST) {
     const createStageQuestionInput = {
-      orgId: userSession.orgId,
+      orgId: req.session.user.orgId,
       stageId: stageId,
       GSI1SK: GSI1SK,
       questionDescription: questionDescription,

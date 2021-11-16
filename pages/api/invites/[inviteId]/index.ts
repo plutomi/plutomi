@@ -15,16 +15,13 @@ const handler = async (
   req: NextApiRequest,
   res: NextApiResponse
 ): Promise<void> => {
-  console.log(req.session);
-  const userSession = req.session.user;
-
   const { method, query } = req;
   const { inviteId } = query as Pick<CUSTOM_QUERY, "inviteId">;
 
   // TODO trycatch
-  const invite = await getOrgInvite(userSession.userId, inviteId);
+  const invite = await getOrgInvite(req.session.user.userId, inviteId);
   const joinOrgInput = {
-    userId: userSession.userId,
+    userId: req.session.user.userId,
     invite: invite,
   };
 
@@ -37,16 +34,16 @@ const handler = async (
 
   if (method === API_METHODS.POST) {
     // TODO disallow orgId's by this name
-    if (userSession.orgId != "NO_ORG_ASSIGNED") {
+    if (req.session.user.orgId != "NO_ORG_ASSIGNED") {
       return res.status(400).json({
-        message: `You already belong to an org: ${userSession.orgId}`,
+        message: `You already belong to an org: ${req.session.user.orgId}`,
       });
     }
 
     try {
-      await joinOrgFromInvite({ userId: userSession.userId, invite });
+      await joinOrgFromInvite({ userId: req.session.user.userId, invite });
 
-      const updatedUser = await getUserById(userSession.userId);
+      const updatedUser = await getUserById(req.session.user.userId);
       req.session.user = cleanUser(updatedUser);
       await req.session.save();
       return res
@@ -63,7 +60,7 @@ const handler = async (
 
   if (method === API_METHODS.DELETE) {
     const deleteOrgInviteInput = {
-      userId: userSession.userId,
+      userId: req.session.user.userId,
       inviteId: inviteId,
     };
 

@@ -10,8 +10,6 @@ const handler = async (
   req: NextApiRequest,
   res: NextApiResponse
 ): Promise<void> => {
-  const userSession = req.session.user;
-
   const { method, query } = req;
   const { openingId } = query as Pick<CUSTOM_QUERY, "openingId">;
 
@@ -19,7 +17,7 @@ const handler = async (
   if (method === API_METHODS.GET) {
     try {
       const allStages = await getAllStagesInOpening(
-        userSession.orgId,
+        req.session.user.orgId,
         openingId
       );
       return res.status(200).json(allStages);

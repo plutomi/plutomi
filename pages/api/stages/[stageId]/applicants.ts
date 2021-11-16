@@ -11,14 +11,12 @@ const handler = async (
   req: NextApiRequest,
   res: NextApiResponse
 ): Promise<void> => {
-  const userSession = req.session.user;
-
   const { method, query } = req;
   const { stageId } = query as Pick<CUSTOM_QUERY, "stageId">;
 
   if (method === API_METHODS.GET) {
     const getAllApplicantsInStageInput = {
-      orgId: userSession.orgId,
+      orgId: req.session.user.orgId,
       stageId: stageId,
     };
 

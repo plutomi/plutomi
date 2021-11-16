@@ -12,19 +12,17 @@ const handler = async (
   req: NextApiRequest,
   res: NextApiResponse
 ): Promise<void> => {
-  const userSession = req.session.user;
-
   const { body, method } = req;
   const { GSI1SK, openingId } = body;
 
   if (method === API_METHODS.POST) {
-    if (userSession.orgId === "NO_ORG_ASSIGNED") {
+    if (req.session.user.orgId === "NO_ORG_ASSIGNED") {
       return res.status(403).json({
         message: "Please create an organization before creating a stage",
       });
     }
     const createStageInput = {
-      orgId: userSession.orgId,
+      orgId: req.session.user.orgId,
       openingId: openingId,
       GSI1SK: GSI1SK,
     };

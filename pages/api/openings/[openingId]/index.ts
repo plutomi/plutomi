@@ -13,13 +13,15 @@ const handler = async (
   req: NextApiRequest,
   res: NextApiResponse
 ): Promise<void> => {
-  const userSession = req.session.user;
   const { method, query, body } = req;
   const { openingId } = query as Pick<CUSTOM_QUERY, "openingId">;
 
   if (method === API_METHODS.GET) {
     try {
-      const opening = await getOpening({ openingId, orgId: userSession.orgId });
+      const opening = await getOpening({
+        openingId,
+        orgId: req.session.user.orgId,
+      });
       if (!opening) {
         return res.status(404).json({ message: "Opening not found" });
       }
@@ -36,7 +38,7 @@ const handler = async (
   if (method === API_METHODS.PUT) {
     try {
       const updateOpeningInput = {
-        orgId: userSession.orgId,
+        orgId: req.session.user.orgId,
         openingId: openingId,
         newOpeningValues: body.newOpeningValues,
       };
@@ -59,7 +61,7 @@ const handler = async (
   if (method === API_METHODS.DELETE) {
     try {
       const deleteOpeningInput = {
-        orgId: userSession.orgId,
+        orgId: req.session.user.orgId,
         openingId: openingId,
       };
       await deleteOpening(deleteOpeningInput);

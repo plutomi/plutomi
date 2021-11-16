@@ -13,20 +13,18 @@ const handler = async (
   req: NextApiRequest,
   res: NextApiResponse
 ): Promise<void> => {
-  const userSession = req.session.user;
-
   const { body, method } = req;
 
   const { recipientEmail } = body;
 
   const expiresAt = Time.futureISO(3, TIME_UNITS.DAYS);
 
-  const org = await getOrg(userSession.orgId);
+  const org = await getOrg(req.session.user.orgId);
 
   const newOrgInvite = {
     claimed: false,
     orgName: org.GSI1SK, // For the recipient they can see the name of the org instead of the orgId, much neater
-    createdBy: userSession, // TODO reduce this to just name & email
+    createdBy: req.session.user, // TODO reduce this to just name & email
     orgId: org.orgId,
     recipientEmail: recipientEmail,
     expiresAt: expiresAt,
@@ -38,11 +36,11 @@ const handler = async (
       return res.status(400).json({ message: `${error.message}` });
     }
 
-    if (userSession.email == recipientEmail) {
+    if (req.session.user.email == recipientEmail) {
       return res.status(400).json({ message: "You can't invite yourself" });
     }
 
-    if (userSession.orgId === "NO_ORG_ASSIGNED") {
+    if (req.session.user.orgId === "NO_ORG_ASSIGNED") {
       return res.status(400).json({
         message: `You must create an organization before inviting users`,
       });
@@ -52,7 +50,7 @@ const handler = async (
     const recipient = await createUser({ email: recipientEmail });
 
     const newOrgInviteEmail = {
-      createdBy: userSession,
+      createdBy: req.session.user,
       orgName: org.GSI1SK,
       recipientEmail: recipient.email, // Will be lowercase & .trim()'d by createUser
     };
@@ -62,7 +60,7 @@ const handler = async (
         user: recipient,
         orgName: org.GSI1SK,
         expiresAt: expiresAt,
-        createdBy: userSession,
+        createdBy: req.session.user,
       });
       try {
         await sendOrgInvite(newOrgInviteEmail); // TODO async with streams
