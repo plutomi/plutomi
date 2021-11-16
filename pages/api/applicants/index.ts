@@ -3,8 +3,7 @@ import { getOpening } from "../../../utils/openings/getOpeningById";
 import InputValidation from "../../../utils/inputValidation";
 import { createApplicant } from "../../../utils/applicants/createApplicant";
 import { getOrg } from "../../../utils/orgs/getOrg";
-import sendApplicantLink from "../../../utils/email/sendApplicantLink";
-import { API_METHODS } from "../../../defaults";
+import { API_METHODS, CONTACT } from "../../../defaults";
 import withAuth from "../../../middleware/withAuth";
 import { withSessionRoute } from "../../../middleware/withSession";
 import withValidMethod from "../../../middleware/withValidMethod";
@@ -13,6 +12,7 @@ import {
   CreateApplicantAPIBody,
 } from "../../../types/main";
 import withCleanOrgId from "../../../middleware/withCleanOrgId";
+import sendEmail from "../../../utils/sendEmail";
 
 const handler = async (
   req: NextApiRequest,
@@ -64,13 +64,15 @@ const handler = async (
 
       const org = await getOrg(orgId);
 
-      const sendApplicantLinkInput = {
-        email: newApplicant.email,
-        orgId: orgId,
-        orgName: org.GSI1SK,
-        applicantId: newApplicant.applicantId,
-      };
-      await sendApplicantLink(sendApplicantLinkInput);
+      const applicantionLink = `${process.env.NEXT_PUBLIC_WEBSITE_URL}/${orgId}/applicants/${newApplicant.applicantId}`;
+
+      await sendEmail({
+        fromName: "Applications",
+        fromAddress: CONTACT.GENERAL,
+        toAddresses: ["newApplicant.email"],
+        subject: `Here is a link to your application!`,
+        html: `<h1><a href="${applicantionLink}" noreferrer target="_blank" >Click this link to view your application!</a></h1><p>If you did not request this link, you can safely ignore it.</p>`,
+      });
 
       return res.status(201).json({
         message: `We've sent a link to your email to complete your application!`,
