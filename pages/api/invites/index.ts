@@ -39,7 +39,7 @@ const handler = async (
       return res.status(400).json({ message: `${error.message}` });
     }
 
-    if (userSession.userEmail == recipientEmail) {
+    if (userSession.email == recipientEmail) {
       return res.status(400).json({ message: "You can't invite yourself" });
     }
 
@@ -50,12 +50,12 @@ const handler = async (
     }
 
     // Creates the user
-    const recipient = await createUser({ userEmail: recipientEmail });
+    const recipient = await createUser({ email: recipientEmail });
 
     const newOrgInviteEmail = {
       createdBy: userSession,
       orgName: org.GSI1SK,
-      recipientEmail: recipient.userEmail, // Will be lowercase & .trim()'d by createUser
+      recipientEmail: recipient.email, // Will be lowercase & .trim()'d by createUser
     };
     try {
       await createOrgInvite({
@@ -69,7 +69,7 @@ const handler = async (
         await sendOrgInvite(newOrgInviteEmail); // TODO async with streams
         return res
           .status(201)
-          .json({ message: `Invite sent to '${recipient.userEmail}'` });
+          .json({ message: `Invite sent to '${recipient.email}'` });
       } catch (error) {
         return res.status(500).json({
           message: `The invite was created, but we were not able to send an email to the user. They log in and accept their invite at https://plutomi.com/invites - ${error}`,

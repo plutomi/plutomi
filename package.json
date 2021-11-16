@@ -21,6 +21,7 @@
     "@aws-cdk/aws-route53": "^1.130.0",
     "@aws-cdk/core": "^1.130.0",
     "@aws-sdk/client-ses": "^3.41.0",
+    "@hapi/joi": "^17.1.1",
     "@headlessui/react": "^1.4.1",
     "@heroicons/react": "^1.0.5",
     "@tailwindcss/aspect-ratio": "^0.2.2",

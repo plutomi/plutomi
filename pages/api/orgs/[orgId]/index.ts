@@ -4,18 +4,18 @@ import { NextApiRequest, NextApiResponse } from "next";
 import { withSessionRoute } from "../../../../middleware/withSession";
 import cleanUser from "../../../../utils/clean/cleanUser";
 import { updateUser } from "../../../../utils/users/updateUser";
-
+import withAuth from "../../../../middleware/withAuth";
+import { API_METHODS } from "../../../../defaults";
+import { CUSTOM_QUERY } from "../../../../Types";
+import withValidMethod from "../../../../middleware/withValidMethod";
 const handler = async (
   req: NextApiRequest,
   res: NextApiResponse
 ): Promise<void> => {
-  const userSession = req.session.user;
-  if (!userSession) {
-    req.session.destroy();
-    return res.status(401).json({ message: "Please log in again" });
-  }
-  const { method, query } = req;
+  const { method, query } = req; // TODO user type
   const { orgId } = query as Pick<CUSTOM_QUERY, "orgId">;
+
+  const userSession = req.session.user;
   const org = await getOrg(orgId);
 
   if (method === "GET") {
@@ -75,7 +75,11 @@ const handler = async (
         });
     }
   }
-  return res.status(405).json({ message: "Not Allowed" });
 };
 
-export default withSessionRoute(withCleanOrgId(handler));
+export default withCleanOrgId(
+  withValidMethod(withSessionRoute(withAuth(handler)), [
+    API_METHODS.DELETE,
+    API_METHODS.GET,
+  ])
+);

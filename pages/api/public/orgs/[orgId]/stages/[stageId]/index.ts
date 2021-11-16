@@ -9,14 +9,9 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   const { method, query } = req;
   const { orgId, stageId } = query as Pick<CUSTOM_QUERY, "orgId" | "stageId">;
 
-  const getStageInput: GetStageInput = {
-    orgId: orgId,
-    stageId: stageId,
-  };
-
   if (method === "GET") {
     try {
-      const stage = await getStageById(getStageInput);
+      const stage = await getStageById({ orgId, stageId });
       if (!stage) {
         return res.status(404).json({ message: "Stage not found" });
       }

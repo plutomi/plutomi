@@ -1,7 +1,7 @@
 import { SendEmailCommand, SendEmailCommandInput } from "@aws-sdk/client-ses";
 import SES from "../../awsClients/sesClient";
 
-export default async function sendNewUserEmail(newUser) {
+export default async function sendNewemail(newUser) {
   const newEmail: SendEmailCommandInput = {
     Source: `Plutomi <newuser@plutomi.com>`,
     Destination: {
@@ -15,7 +15,7 @@ export default async function sendNewUserEmail(newUser) {
       },
       Body: {
         Html: {
-          Data: `<h1>Email: ${newUser.userEmail}</h1><h1>ID: ${newUser.userId}</h1>`,
+          Data: `<h1>Email: ${newUser.email}</h1><h1>ID: ${newUser.userId}</h1>`,
         },
       },
     },

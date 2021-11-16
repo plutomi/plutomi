@@ -2,13 +2,13 @@ import { PutCommand, PutCommandInput } from "@aws-sdk/lib-dynamodb";
 import { Dynamo } from "../../awsClients/ddbDocClient";
 import Time from "../time";
 import { nanoid } from "nanoid";
-import sendNewUserEmail from "../email/sendNewUser";
+import sendNewemail from "../email/sendNewUser";
 import { getUserByEmail } from "./getUserByEmail";
 const { DYNAMO_TABLE_NAME } = process.env;
 
 export async function createUser(props) {
-  const { userEmail } = props;
-  const user = await getUserByEmail(userEmail);
+  const { email } = props;
+  const user = await getUserByEmail(email);
 
   if (user) {
     return user;
@@ -20,7 +20,7 @@ export async function createUser(props) {
     SK: `USER`,
     firstName: "NO_FIRST_NAME",
     lastName: "NO_LAST_NAME",
-    userEmail: userEmail.toLowerCase().trim(),
+    email: email.toLowerCase().trim(),
     userId: userId,
     entityType: "USER",
     createdAt: now,
@@ -29,7 +29,7 @@ export async function createUser(props) {
     totalInvites: 0,
     GSI1PK: "ORG#NO_ORG_ASSIGNED#USERS",
     GSI1SK: `NO_FIRST_NAME NO_LAST_NAME`,
-    GSI2PK: userEmail.toLowerCase().trim(),
+    GSI2PK: email.toLowerCase().trim(),
     GSI2SK: "USER",
   };
 
@@ -41,7 +41,7 @@ export async function createUser(props) {
 
   try {
     await Dynamo.send(new PutCommand(params));
-    sendNewUserEmail(newUser); // TODO async with streams
+    sendNewemail(newUser); // TODO async with streams
     return newUser;
   } catch (error) {
     throw new Error(error);

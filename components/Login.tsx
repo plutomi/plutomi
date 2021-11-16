@@ -6,7 +6,7 @@ import GoogleLoginButton from "./GoogleLoginButton";
 import axios from "axios";
 
 export default function Login({ loggedOutPageText }) {
-  const [userEmail, setUserEmail] = useState("");
+  const [email, setemail] = useState("");
   const [submittedText, setSubmittedText] = useState(
     `We've sent a magic login link to your email!`
   );
@@ -14,7 +14,7 @@ export default function Login({ loggedOutPageText }) {
   const [buttonText, setButtonText] = useState("Send Link");
 
   const handleEmailChange = (newEmail) => {
-    setUserEmail(newEmail);
+    setemail(newEmail);
   };
 
   const sendEmail = async (e) => {
@@ -23,7 +23,7 @@ export default function Login({ loggedOutPageText }) {
 
     try {
       const { message } = await AuthService.login(
-        userEmail,
+        email,
         `${process.env.NEXT_PUBLIC_WEBSITE_URL + router.asPath}`,
         "LINK"
       );
@@ -37,10 +37,10 @@ export default function Login({ loggedOutPageText }) {
 
   const successfulLogin = async (response) => {
     console.log(response);
-    const userEmail = response.profileObj.email;
+    const email = response.profileObj.email;
 
     const { message } = await AuthService.login(
-      userEmail,
+      email,
       `${process.env.NEXT_PUBLIC_WEBSITE_URL + router.asPath}`,
       "GOOGLE"
     );
@@ -65,7 +65,7 @@ export default function Login({ loggedOutPageText }) {
         {emailSubmitted ? (
           <div className="text-center">
             <h1 className=" text-dark text-2xl">{submittedText}</h1>
-            <p className="text-light text-lg">{userEmail}</p>
+            <p className="text-light text-lg">{email}</p>
           </div>
         ) : (
           <div className="space-y-2 flex-col items-center  justify-center  ">
@@ -78,7 +78,7 @@ export default function Login({ loggedOutPageText }) {
             </p>{" "}
             <LoginEmail
               onChange={handleEmailChange}
-              userEmail={userEmail}
+              email={email}
               buttonText={buttonText}
               sendEmail={sendEmail}
             />{" "}

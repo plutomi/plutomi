@@ -2,7 +2,7 @@ const safeKeys = [
   ,
   "userId",
   "orgId",
-  "userEmail",
+  "email",
   "firstName",
   "lastName",
   "totalInvites",

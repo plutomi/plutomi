@@ -1,3 +1,5 @@
+import { ENTITY_TYPES } from "./defaults";
+
 type CreateApplicantAPIBody = CreateApplicantInput;
 interface CreateApplicantAPIResponse {
   message: string;
@@ -46,119 +48,12 @@ interface CUSTOM_QUERY {
   inviteId: string;
 }
 
-declare enum ENTITY_TYPES {
-  /**
-   * For applicants
-   */
-  APPLICANT = "APPLICANT",
-
-  /**
-   * For applicant responses to a `STAGE_QUESTION`
-   */
-  APPLICANT_RESPONSE = "APPLICANT_RESPONSE",
-  /**
-   * For organizations
-   */
-  ORG = "ORG",
-
-  /**
-   * Invites to join an organization
-   */
-  ORG_INVITE = "ORG_INVITE",
-
-  /**
-   * For users of the service
-   */
-  USER = "USER",
-
-  /**
-   * For openings inside an `ORG`
-   */
-  OPENING = "OPENING",
-
-  /**
-   * For stages inside an `ORG`
-   */
-  STAGE = "STAGE",
-
-  /**
-   * For questions inside of a `STAGE`
-   */
-  STAGE_QUESTION = "STAGE_QUESTION",
-
-  /**
-   * For rules inside of a `STAGE`
-   */
-  STAGE_RULE = "STAGE_RULE",
-
-  /**
-   * Login links for `USER`s
-   */
-  LOGIN_LINK = "LOGIN_LINK",
-}
-
-declare enum TIME_UNITS {
-  MILLISECONDS = "milliseconds",
-  SECONDS = "seconds",
-  MINUTES = "minutes",
-  HOURS = "hours",
-  DAYS = "days",
-  WEEKS = "weeks",
-  MONTHS = "months",
-  YEARS = "years",
-}
-
-declare enum LIMITS {
-  MAX_CHILD_ITEM_LIMIT = 200,
-}
-
-declare enum ERRORS {
-  MAX_CHILD_ITEM_LIMIT_ERROR_MESSAGE = `MAX_CHILD_ITEM_LIMIT reached, please contact support@plutomi.com for assistance`,
-  INVALID_DATE_ERROR = `The date you provided appears to be invalid`,
-}
-
-declare enum ID_LENGTHS {
-  USER = 42,
-  APPLICANT = 60,
-  INVITE = 50,
-  OPENING = 16,
-  STAGE = 50,
-  STAGE_QUESTION = 50,
-  STAGE_RULE = 16,
-}
-
-declare enum DEFAULT_VALUES {
-  FIRST_NAME = "NO_FIRST_NAME",
-  LAST_NAME = "NO_LAST_NAME",
-  FULL_NAME = `NO_FIRST_NAME NO_LAST_NAME`,
-  NO_ORG = `NO_ORG_ASSIGNED`,
-}
-
-declare enum CONTACT {
-  /**
-   * For troubleshooting issues
-   */
-  SUPPORT = "support@plutomi.com",
-  /**
-   * For general information
-   */
-  GENERAL = "contact@plutomi.com",
-  /**
-   * For investor relations
-   */
-  INVEST = "ir@plutomi.com",
-  /**
-   * For administrative / Github related
-   */
-  ADMIN = "jose@plutomi.com",
-}
-
 declare module "iron-session" {
   interface IronSessionData {
     user?: {
       orgId: string;
       userId: string;
-      userEmail: string;
+      email: string;
       // TODO user role RBAC - fix these types
       // TODO fix these types https://github.com/plutomi/plutomi/issues/301
     };
@@ -324,7 +219,7 @@ interface DynamoNewApplicant {
   /**
    * If the applicant's email has been verified (clicked on the application link sent to their email // TODO maybe answered questions on one stage?)
    */
-  isApplicantEmailVerified: boolean;
+  isemailVerified: boolean;
   /**
    * The org this applicant belongs to
    */
@@ -332,7 +227,7 @@ interface DynamoNewApplicant {
   /**
    * The applicant's email address
    */
-  applicantEmail: string;
+  email: string;
   /**
    * The entity type of the applicant
    */
@@ -378,12 +273,7 @@ interface DynamoNewApplicant {
 
 type CreateApplicantInput = Pick<
   DynamoNewApplicant,
-  | "orgId"
-  | "firstName"
-  | "lastName"
-  | "applicantEmail"
-  | "openingId"
-  | "stageId"
+  "orgId" | "firstName" | "lastName" | "email" | "openingId" | "stageId"
 >;
 
 type orgIdAndApplicantId = "orgId" | "applicantId";

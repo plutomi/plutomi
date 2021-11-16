@@ -11,8 +11,7 @@ const { DYNAMO_TABLE_NAME } = process.env;
 export async function createApplicant(
   props: CreateApplicantInput
 ): Promise<CreateApplicantOutput> {
-  const { orgId, firstName, lastName, applicantEmail, openingId, stageId } =
-    props;
+  const { orgId, firstName, lastName, email, openingId, stageId } = props;
 
   const now = Time.currentISO();
 
@@ -25,8 +24,8 @@ export async function createApplicant(
     firstName: firstName,
     lastName: lastName,
     fullName: `${firstName} ${lastName}`,
-    applicantEmail: applicantEmail.toLowerCase().trim(),
-    isApplicantEmailVerified: false,
+    email: email.toLowerCase().trim(),
+    isemailVerified: false,
     orgId: orgId,
     applicantId: applicantId,
     entityType: ENTITY_TYPES.APPLICANT,

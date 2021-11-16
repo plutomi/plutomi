@@ -14,7 +14,6 @@ export async function getOrg(orgId: string) {
     },
   };
 
-  console.log("Params get command input", params);
   try {
     const response = await Dynamo.send(new GetCommand(params));
     return response.Item;

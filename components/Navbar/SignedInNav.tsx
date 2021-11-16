@@ -153,9 +153,7 @@ export default function SignedInNav({ current }) {
                                   </div>
                                 ))}
 
-                              <div className=" text-light">
-                                {user?.userEmail}
-                              </div>
+                              <div className=" text-light">{user?.email}</div>
                             </>
                           )}
                         </div>
@@ -254,7 +252,7 @@ export default function SignedInNav({ current }) {
                           {user?.GSI1SK}
                         </div>
                         <div className="text-md font-medium text-normal">
-                          {user?.userEmail}
+                          {user?.email}
                         </div>
                       </div>
                     </>

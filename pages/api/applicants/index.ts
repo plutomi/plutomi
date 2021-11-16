@@ -15,7 +15,7 @@ const handler = async (
     openingId,
     firstName,
     lastName,
-    applicantEmail,
+    email,
     stageId,
   }: CreateApplicantAPIBody = body;
 
@@ -32,7 +32,7 @@ const handler = async (
     try {
       const CreateApplicantInput = {
         orgId: orgId,
-        applicantEmail: applicantEmail,
+        email: email,
         firstName: firstName,
         lastName: lastName,
         openingId: openingId,
@@ -48,7 +48,7 @@ const handler = async (
         orgId: orgId,
         firstName: firstName,
         lastName: lastName,
-        applicantEmail: applicantEmail,
+        email: email,
         openingId: openingId,
         stageId: firstStage,
       });
@@ -56,7 +56,7 @@ const handler = async (
       const org = await getOrg(orgId);
 
       const sendApplicantLinkInput = {
-        applicantEmail: newApplicant.applicantEmail,
+        email: newApplicant.email,
         orgId: orgId,
         orgName: org.GSI1SK,
         applicantId: newApplicant.applicantId,
@@ -64,7 +64,7 @@ const handler = async (
       await sendApplicantLink(sendApplicantLinkInput);
 
       return res.status(201).json({
-        message: `We've sent a link to your applicantEmail to complete your application!`,
+        message: `We've sent a link to your email to complete your application!`,
       });
     } catch (error) {
       // TODO add error logger

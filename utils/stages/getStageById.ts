@@ -3,6 +3,11 @@ import { Dynamo } from "../../awsClients/ddbDocClient";
 
 const { DYNAMO_TABLE_NAME } = process.env;
 
+/**
+ * Returns a stage by its ID.
+ * @param props {@link GetStageByIdInput}
+ * @returns - {@link GetStageByIdOutput}
+ */
 export async function getStageById(
   props: GetStageByIdInput
 ): Promise<GetStageByIdOutput> {
