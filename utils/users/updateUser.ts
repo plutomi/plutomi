@@ -61,7 +61,7 @@ export async function updateUser({
     const params: UpdateCommandInput = {
       Key: {
         PK: `${ENTITY_TYPES.USER}#${userId}`,
-        SK: `USER`,
+        SK: ENTITY_TYPES.USER,
       },
       UpdateExpression: NewUpdateExpression,
       ExpressionAttributeValues: newAttributes,

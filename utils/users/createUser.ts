@@ -18,7 +18,7 @@ export async function createUser(props) {
   const userId = nanoid(ID_LENGTHS.USER);
   const newUser = {
     PK: `${ENTITY_TYPES.USER}#${userId}`,
-    SK: `USER`,
+    SK: ENTITY_TYPES.USER,
     firstName: PLACEHOLDER.FIRST_NAME,
     lastName: PLACEHOLDER.LAST_NAME,
     email: email.toLowerCase().trim(),

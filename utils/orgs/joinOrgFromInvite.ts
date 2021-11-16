@@ -29,7 +29,7 @@ export async function joinOrgFromInvite({ userId, invite }) {
           Update: {
             Key: {
               PK: `${ENTITY_TYPES.USER}#${userId}`,
-              SK: `USER`,
+              SK: ENTITY_TYPES.USER,
             },
             TableName: DYNAMO_TABLE_NAME,
             UpdateExpression:
@@ -37,7 +37,7 @@ export async function joinOrgFromInvite({ userId, invite }) {
             ExpressionAttributeValues: {
               ":orgId": invite.orgId,
               ":orgJoinDate": now,
-              ":GSI1PK": `${ENTITY_TYPES.ORG}#${invite.orgId}#USERS`,
+              ":GSI1PK": `${ENTITY_TYPES.ORG}#${invite.orgId}#${ENTITY_TYPES.USER}S`,
               ":value": 1,
             },
           },

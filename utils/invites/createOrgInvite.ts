@@ -63,7 +63,7 @@ export default async function createOrgInvite({
           Update: {
             Key: {
               PK: `${ENTITY_TYPES.USER}#${user.userId}`,
-              SK: `USER`,
+              SK: ENTITY_TYPES.USER,
             },
             TableName: DYNAMO_TABLE_NAME,
             UpdateExpression:

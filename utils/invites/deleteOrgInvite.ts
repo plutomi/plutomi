@@ -26,7 +26,7 @@ export default async function deleteOrgInvite({ userId, inviteId }) {
           Update: {
             Key: {
               PK: `${ENTITY_TYPES.USER}#${userId}`,
-              SK: `USER`,
+              SK: ENTITY_TYPES.USER,
             },
             TableName: DYNAMO_TABLE_NAME,
             UpdateExpression: "SET totalInvites = totalInvites - :value",

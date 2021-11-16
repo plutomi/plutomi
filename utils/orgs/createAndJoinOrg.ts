@@ -3,6 +3,7 @@ import {
   TransactWriteCommandInput,
 } from "@aws-sdk/lib-dynamodb";
 import { Dynamo } from "../../awsClients/ddbDocClient";
+import { ENTITY_TYPES } from "../../defaults";
 import Time from "../time";
 
 const { DYNAMO_TABLE_NAME } = process.env;
@@ -33,7 +34,7 @@ export async function createAndJoinOrg({ userId, orgId, GSI1SK }) {
           Update: {
             Key: {
               PK: `${ENTITY_TYPES.USER}#${userId}`,
-              SK: `USER`,
+              SK: ENTITY_TYPES.USER,
             },
             TableName: DYNAMO_TABLE_NAME,
             UpdateExpression:
@@ -41,7 +42,7 @@ export async function createAndJoinOrg({ userId, orgId, GSI1SK }) {
             ExpressionAttributeValues: {
               ":orgId": orgId,
               ":orgJoinDate": now,
-              ":GSI1PK": `${ENTITY_TYPES.ORG}#${orgId}#USERS`,
+              ":GSI1PK": `${ENTITY_TYPES.ORG}#${orgId}#${ENTITY_TYPES.USER}S`,
             },
           },
         },
