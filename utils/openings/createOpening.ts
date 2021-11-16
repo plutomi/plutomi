@@ -7,12 +7,13 @@ import {
 import { Dynamo } from "../../awsClients/ddbDocClient";
 import Time from "../time";
 import { nanoid } from "nanoid";
+import { ENTITY_TYPES, ID_LENGTHS } from "../../defaults";
 
 const { DYNAMO_TABLE_NAME } = process.env;
 
 export async function createOpening({ orgId, GSI1SK }) {
   const now = Time.currentISO();
-  const openingId = nanoid(16);
+  const openingId = nanoid(ID_LENGTHS.OPENING);
   const newOpening = {
     PK: `${ENTITY_TYPES.ORG}#${orgId}#${ENTITY_TYPES.OPENING}#${openingId}`,
     SK: `${ENTITY_TYPES.OPENING}`,

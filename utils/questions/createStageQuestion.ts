@@ -6,8 +6,8 @@ import { Dynamo } from "../../awsClients/ddbDocClient";
 import Time from "../time";
 import { nanoid } from "nanoid";
 import { getStageById } from "../stages/getStageById";
-import { ENTITY_TYPES } from "../../defaults";
-import { DynamoNewStageQuestion } from "../../Types";
+import { ENTITY_TYPES, ID_LENGTHS } from "../../defaults";
+import { CreateStageQuestionInput, DynamoNewStageQuestion } from "../../Types";
 
 const { DYNAMO_TABLE_NAME } = process.env;
 
@@ -16,7 +16,7 @@ export async function createStageQuestion(
 ): Promise<void> {
   const { orgId, stageId, GSI1SK, questionDescription } = props;
   const now = Time.currentISO();
-  const questionId = nanoid(50);
+  const questionId = nanoid(ID_LENGTHS.STAGE_QUESTION);
   const newStageQuestion: DynamoNewStageQuestion = {
     PK: `${ENTITY_TYPES.ORG}#${orgId}#${ENTITY_TYPES.STAGE_QUESTION}#${questionId}`,
     SK: ENTITY_TYPES.STAGE_QUESTION,

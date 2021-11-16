@@ -58,7 +58,7 @@ export enum ENTITY_TYPES {
   /**
    * Tiemstamp of a user login
    */
-  LOGIN_EVENT = "LOGIN_EVENT"
+  LOGIN_EVENT = "LOGIN_EVENT",
 }
 
 export enum TIME_UNITS {
@@ -84,9 +84,10 @@ export enum ERRORS {
 export enum ID_LENGTHS {
   USER = 42,
   APPLICANT = 60,
-  INVITE = 50,
+  APPLICANT_RESPONSE = 30,
+  ORG_INVITE = 50,
   OPENING = 16,
-  ${ENTITY_TYPES.STAGE} = 50,
+  STAGE = 50,
   STAGE_QUESTION = 50,
   STAGE_RULE = 16,
 }

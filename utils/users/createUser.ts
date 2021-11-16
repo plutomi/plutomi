@@ -4,7 +4,7 @@ import Time from "../time";
 import { nanoid } from "nanoid";
 import sendNewemail from "../email/sendNewUser";
 import { getUserByEmail } from "./getUserByEmail";
-import { ENTITY_TYPES, PLACEHOLDER } from "../../defaults";
+import { ENTITY_TYPES, ID_LENGTHS, PLACEHOLDER } from "../../defaults";
 const { DYNAMO_TABLE_NAME } = process.env;
 
 export async function createUser(props) {
@@ -15,7 +15,7 @@ export async function createUser(props) {
     return user;
   }
   const now = Time.currentISO();
-  const userId = nanoid(42);
+  const userId = nanoid(ID_LENGTHS.USER);
   const newUser = {
     PK: `${ENTITY_TYPES.USER}#${userId}`,
     SK: `USER`,

@@ -2,7 +2,7 @@ import { PutCommand, PutCommandInput } from "@aws-sdk/lib-dynamodb";
 import { Dynamo } from "../../awsClients/ddbDocClient";
 import Time from "../time";
 import { nanoid } from "nanoid";
-import { ENTITY_TYPES } from "../../defaults";
+import { ENTITY_TYPES, ID_LENGTHS } from "../../defaults";
 const { DYNAMO_TABLE_NAME } = process.env;
 
 export async function createApplicantResponse(
@@ -16,7 +16,7 @@ export async function createApplicantResponse(
     questionResponse,
   } = props;
   const now = Time.currentISO();
-  const responseId = nanoid(30);
+  const responseId = nanoid(ID_LENGTHS.APPLICANT_RESPONSE);
   const newApplicantResponse: DynamoNewApplicantResponse = {
     PK: `${ENTITY_TYPES.ORG}#${orgId}#${ENTITY_TYPES.APPLICANT}#${applicantId}`,
     SK: `${ENTITY_TYPES.APPLICANT_RESPONSE}#${responseId}`,

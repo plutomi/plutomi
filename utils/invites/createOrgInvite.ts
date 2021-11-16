@@ -6,7 +6,7 @@ import { Dynamo } from "../../awsClients/ddbDocClient";
 import { getAllUserInvites } from "./getAllOrgInvites";
 import Time from "../time";
 import { nanoid } from "nanoid";
-import { ENTITY_TYPES } from "../../defaults";
+import { ENTITY_TYPES, ID_LENGTHS } from "../../defaults";
 
 const { DYNAMO_TABLE_NAME } = process.env;
 
@@ -31,7 +31,7 @@ export default async function createOrgInvite({
     if (unclaimedInvites.length > 0) {
       throw `This user already has a pending invite to your org! They can log in at ${process.env.NEXT_PUBLIC_WEBSITE_URL}/invites to claim it!`;
     }
-    const inviteId = nanoid(50);
+    const inviteId = nanoid(ID_LENGTHS.ORG_INVITE);
     const now = Time.currentISO();
     const newOrgInvite = {
       PK: `${ENTITY_TYPES.USER}#${user.userId}`,

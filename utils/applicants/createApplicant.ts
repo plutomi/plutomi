@@ -5,7 +5,7 @@ import {
 import { Dynamo } from "../../awsClients/ddbDocClient";
 import Time from "../time";
 import { nanoid } from "nanoid";
-import { ENTITY_TYPES } from "../../defaults";
+import { ENTITY_TYPES, ID_LENGTHS } from "../../defaults";
 import {
   CreateApplicantInput,
   CreateApplicantOutput,
@@ -22,7 +22,7 @@ export async function createApplicant(
 
   // Applicant ID has to be pretty high as the apply link will be their application link
   // https://zelark.github.io/nano-id-cc/
-  const applicantId = nanoid(60);
+  const applicantId = nanoid(ID_LENGTHS.APPLICANT);
 
   const newApplicant: DynamoNewApplicant = {
     PK: `${ENTITY_TYPES.ORG}#${orgId}#${ENTITY_TYPES.APPLICANT}#${applicantId}`,
