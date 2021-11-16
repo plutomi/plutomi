@@ -3,10 +3,12 @@ import sendOrgInvite from "../../../utils/email/sendOrgInvite";
 import InputValidation from "../../../utils/inputValidation";
 import { NextApiRequest, NextApiResponse } from "next";
 import Time from "../../../utils/time";
-import withCleanOrgId from "../../../middleware/withCleanOrgId";
 import { getOrg } from "../../../utils/orgs/getOrg";
 import { withSessionRoute } from "../../../middleware/withSession";
 import { createUser } from "../../../utils/users/createUser";
+import { TIME_UNITS, API_METHODS } from "../../../defaults";
+import withAuth from "../../../middleware/withAuth";
+import withValidMethod from "../../../middleware/withValidMethod";
 const handler = async (
   req: NextApiRequest,
   res: NextApiResponse
@@ -76,7 +78,8 @@ const handler = async (
       return res.status(500).json({ message: `${error}` });
     }
   }
-  return res.status(405).json({ message: "Not Allowed" });
 };
 
-export default withSessionRoute(withCleanOrgId(handler));
+export default withValidMethod(withSessionRoute(withAuth(handler)), [
+  API_METHODS.POST,
+]);

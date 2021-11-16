@@ -1,8 +1,12 @@
 import { createStage } from "../../../utils/stages/createStage";
 import InputValidation from "../../../utils/inputValidation";
-import { NextApiResponse } from "next";
+import { NextApiRequest, NextApiResponse } from "next";
 // Create stage in an opening
 import { withSessionRoute } from "../../../middleware/withSession";
+import { API_METHODS } from "../../../defaults";
+import withAuth from "../../../middleware/withAuth";
+import withCleanOrgId from "../../../middleware/withCleanOrgId";
+import withValidMethod from "../../../middleware/withValidMethod";
 
 const handler = async (
   req: NextApiRequest,
@@ -11,7 +15,7 @@ const handler = async (
   const userSession = req.session.user;
 
   const { body, method } = req;
-  const { GSI1SK, openingId }: APICreateStageInput = body;
+  const { GSI1SK, openingId } = body;
 
   if (method === API_METHODS.POST) {
     if (userSession.orgId === "NO_ORG_ASSIGNED") {
@@ -19,7 +23,7 @@ const handler = async (
         message: "Please create an organization before creating a stage",
       });
     }
-    const createStageInput: DynamoCreateStageInput = {
+    const createStageInput = {
       orgId: userSession.orgId,
       openingId: openingId,
       GSI1SK: GSI1SK,
@@ -41,8 +45,8 @@ const handler = async (
         .json({ message: `Unable to create stage: ${error}` });
     }
   }
-
-  return res.status(405).json({ message: "Not Allowed" });
 };
 
-export default withSessionRoute(handler);
+export default withCleanOrgId(
+  withValidMethod(withSessionRoute(withAuth(handler)), [API_METHODS.POST])
+);

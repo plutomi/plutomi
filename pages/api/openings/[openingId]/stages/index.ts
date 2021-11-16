@@ -1,6 +1,10 @@
 import { getAllStagesInOpening } from "../../../../../utils/openings/getAllStagesInOpening";
 import { NextApiRequest, NextApiResponse } from "next";
 import { withSessionRoute } from "../../../../../middleware/withSession";
+import { API_METHODS } from "../../../../../defaults";
+import withAuth from "../../../../../middleware/withAuth";
+import withValidMethod from "../../../../../middleware/withValidMethod";
+import { CUSTOM_QUERY } from "../../../../../Types";
 
 const handler = async (
   req: NextApiRequest,
@@ -26,8 +30,8 @@ const handler = async (
         .json({ message: `Unable to retrieve stages: ${error}` });
     }
   }
-
-  return res.status(405).json({ message: "Not Allowed" });
 };
 
-export default withSessionRoute(handler);
+export default withValidMethod(withSessionRoute(withAuth(handler)), [
+  API_METHODS.GET,
+]);

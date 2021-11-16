@@ -1,4 +1,4 @@
-import { NextApiResponse } from "next";
+import { NextApiRequest, NextApiResponse } from "next";
 import withCleanOrgId from "../../../middleware/withCleanOrgId";
 import InputValidation from "../../../utils/inputValidation";
 import { getAllUserInvites } from "../../../utils/invites/getAllOrgInvites";
@@ -6,6 +6,9 @@ import { withSessionRoute } from "../../../middleware/withSession";
 import cleanUser from "../../../utils/clean/cleanUser";
 import { getUserById } from "../../../utils/users/getUserById";
 import { createAndJoinOrg } from "../../../utils/orgs/createAndJoinOrg";
+import { API_METHODS } from "../../../defaults";
+import withAuth from "../../../middleware/withAuth";
+import withValidMethod from "../../../middleware/withValidMethod";
 
 const handler = async (
   req: NextApiRequest,
@@ -14,7 +17,7 @@ const handler = async (
   const userSession = req.session.user;
 
   const { body, method } = req;
-  const { GSI1SK, orgId }: APICreateOrgInput = body;
+  const { GSI1SK, orgId } = body;
 
   // Create an org
   if (method === API_METHODS.POST) {
@@ -39,7 +42,7 @@ const handler = async (
       });
     }
 
-    const createOrgInput: CreateOrgInput = {
+    const createOrgInput = {
       GSI1SK: GSI1SK,
       orgId: orgId,
       user: userSession,
@@ -76,8 +79,8 @@ const handler = async (
         .json({ message: `${error}` });
     }
   }
-
-  return res.status(405).json({ message: "Not Allowed" });
 };
 
-export default withSessionRoute(withCleanOrgId(handler));
+export default withCleanOrgId(
+  withValidMethod(withSessionRoute(withAuth(handler)), [API_METHODS.POST])
+);

@@ -2,6 +2,9 @@ import { NextApiRequest, NextApiResponse } from "next";
 import { getApplicantById } from "../../../../../../../utils/applicants/getApplicantById";
 import cleanApplicant from "../../../../../../../utils/clean/cleanApplicant";
 import withCleanOrgId from "../../../../../../../middleware/withCleanOrgId";
+import { API_METHODS } from "../../../../../../../defaults";
+import withValidMethod from "../../../../../../../middleware/withValidMethod";
+import { CUSTOM_QUERY } from "../../../../../../../Types";
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   const user = req.user;
   const { method, query, body } = req;
@@ -30,8 +33,6 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
         .json({ message: `Unable to get applicant: ${error}` });
     }
   }
-
-  return res.status(405).json({ message: "Not Allowed" });
 };
 
-export default withCleanOrgId(handler);
+export default withCleanOrgId(withValidMethod(handler, [API_METHODS.GET]));

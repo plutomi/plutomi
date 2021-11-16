@@ -1,6 +1,11 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import { getAllApplicantsInStage } from "../../../../utils/stages/getAllApplicantsInStage";
 import { withSessionRoute } from "../../../../middleware/withSession";
+import { API_METHODS } from "../../../../defaults";
+import withAuth from "../../../../middleware/withAuth";
+import withCleanOrgId from "../../../../middleware/withCleanOrgId";
+import withValidMethod from "../../../../middleware/withValidMethod";
+import { CUSTOM_QUERY } from "../../../../Types";
 
 const handler = async (
   req: NextApiRequest,
@@ -29,8 +34,8 @@ const handler = async (
         .json({ message: `Unable to retrieve applicants: ${error}` });
     }
   }
-
-  return res.status(405).json({ message: "Not Allowed" });
 };
 
-export default withSessionRoute(handler);
+export default withCleanOrgId(
+  withValidMethod(withSessionRoute(withAuth(handler)), [API_METHODS.GET])
+);

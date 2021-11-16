@@ -5,6 +5,11 @@ import { deleteStage } from "../../../../utils/stages/deleteStage";
 import updateStage from "../../../../utils/stages/updateStage";
 // Create stage in a opening
 import { withSessionRoute } from "../../../../middleware/withSession";
+import { API_METHODS } from "../../../../defaults";
+import withAuth from "../../../../middleware/withAuth";
+import withCleanOrgId from "../../../../middleware/withCleanOrgId";
+import withValidMethod from "../../../../middleware/withValidMethod";
+import { CUSTOM_QUERY, UpdateStageInput } from "../../../../Types";
 
 const handler = async (
   req: NextApiRequest,
@@ -16,7 +21,7 @@ const handler = async (
   const { stageId } = query as Pick<CUSTOM_QUERY, "stageId">;
   // Get a single stage in an opening
   if (method === API_METHODS.GET) {
-    const getStageInput: GetStageInput = {
+    const getStageInput = {
       orgId: userSession.orgId,
       stageId: stageId,
     };
@@ -76,7 +81,12 @@ const handler = async (
         .json({ message: `Unable to delete your stage: ${error}` });
     }
   }
-  return res.status(405).json({ message: "Not Allowed" });
 };
 
-export default withSessionRoute(handler);
+export default withCleanOrgId(
+  withValidMethod(withSessionRoute(withAuth(handler)), [
+    API_METHODS.GET,
+    API_METHODS.PUT,
+    API_METHODS.DELETE,
+  ])
+);

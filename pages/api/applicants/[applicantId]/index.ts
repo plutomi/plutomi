@@ -8,7 +8,7 @@ import withValidMethod from "../../../../middleware/withValidMethod";
 import withAuth from "../../../../middleware/withAuth";
 import { API_METHODS } from "../../../../defaults";
 import { CUSTOM_QUERY } from "../../../../Types";
-
+import withCleanOrgId from "../../../../middleware/withCleanOrgId";
 const handler = async (
   req: NextApiRequest,
   res: NextApiResponse
@@ -74,7 +74,6 @@ const handler = async (
         .json({ message: `Unable to delete applicant - ${error}` });
     }
   }
-  return res.status(405).json({ message: "Not Allowed" });
 };
 
 export default withValidMethod(withSessionRoute(withAuth(handler)), [

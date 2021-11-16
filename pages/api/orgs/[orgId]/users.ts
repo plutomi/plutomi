@@ -2,6 +2,10 @@ import { getAllUsersInOrg } from "../../../../utils/orgs/getAllUsersInOrg";
 import withCleanOrgId from "../../../../middleware/withCleanOrgId";
 import { NextApiRequest, NextApiResponse } from "next";
 import { withSessionRoute } from "../../../../middleware/withSession";
+import { API_METHODS } from "../../../../defaults";
+import withAuth from "../../../../middleware/withAuth";
+import withValidMethod from "../../../../middleware/withValidMethod";
+import { CUSTOM_QUERY } from "../../../../Types";
 
 const handler = async (
   req: NextApiRequest,
@@ -35,8 +39,8 @@ const handler = async (
         .json({ message: `Unable to retrieve users - ${error}` });
     }
   }
-
-  return res.status(405).json({ message: "Not Allowed" });
 };
 
-export default withSessionRoute(withCleanOrgId(handler));
+export default withCleanOrgId(
+  withValidMethod(withSessionRoute(withAuth(handler)), [API_METHODS.GET])
+);

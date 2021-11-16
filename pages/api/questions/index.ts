@@ -1,6 +1,10 @@
-import { NextApiResponse } from "next";
+import { NextApiRequest, NextApiResponse } from "next";
 import { createStageQuestion } from "../../../utils/questions/createStageQuestion";
 import { withSessionRoute } from "../../../middleware/withSession";
+import { API_METHODS } from "../../../defaults";
+import withAuth from "../../../middleware/withAuth";
+import withCleanOrgId from "../../../middleware/withCleanOrgId";
+import withValidMethod from "../../../middleware/withValidMethod";
 
 const handler = async (
   req: NextApiRequest,
@@ -29,8 +33,8 @@ const handler = async (
         .json({ message: `Unable to create stage question: ${error}` });
     }
   }
-
-  return res.status(405).json({ message: "Not Allowed" });
 };
 
-export default withSessionRoute(handler);
+export default withCleanOrgId(
+  withValidMethod(withSessionRoute(withAuth(handler)), [API_METHODS.POST])
+);

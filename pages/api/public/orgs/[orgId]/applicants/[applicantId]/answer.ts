@@ -2,6 +2,9 @@ import { NextApiRequest, NextApiResponse } from "next";
 import InputValidation from "../../../../../../../utils/inputValidation";
 import withCleanOrgId from "../../../../../../../middleware/withCleanOrgId";
 import { createApplicantResponse } from "../../../../../../../utils/applicants/createApplicantResponse";
+import { API_METHODS } from "../../../../../../../defaults";
+import withValidMethod from "../../../../../../../middleware/withValidMethod";
+import { CUSTOM_QUERY, CreateApplicantResponseInput } from "../../../../../../../Types";
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   const { method, query, body } = req;
   const { orgId, applicantId } = query as Pick<
@@ -61,8 +64,6 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       });
     }
   }
-
-  return res.status(405).json({ message: "Not Allowed" });
 };
 
-export default withCleanOrgId(handler);
+export default withCleanOrgId(withValidMethod(handler, [API_METHODS.POST]));

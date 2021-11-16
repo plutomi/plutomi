@@ -2,6 +2,10 @@ import { NextApiRequest, NextApiResponse } from "next";
 import { getAllQuestionsInStage } from "../../../../utils/questions/getAllQuestionsInStage";
 import withCleanOrgId from "../../../../middleware/withCleanOrgId";
 import { withSessionRoute } from "../../../../middleware/withSession";
+import { API_METHODS } from "../../../../defaults";
+import withAuth from "../../../../middleware/withAuth";
+import withValidMethod from "../../../../middleware/withValidMethod";
+import { CUSTOM_QUERY } from "../../../../Types";
 
 const handler = async (
   req: NextApiRequest,
@@ -24,7 +28,8 @@ const handler = async (
       return res.status(500).json({ message: "Unable to retrieve questions" });
     }
   }
-  return res.status(405).json({ message: "Not Allowed" });
 };
 
-export default withSessionRoute(withCleanOrgId(handler));
+export default withCleanOrgId(
+  withValidMethod(withSessionRoute(withAuth(handler)), [API_METHODS.GET])
+);

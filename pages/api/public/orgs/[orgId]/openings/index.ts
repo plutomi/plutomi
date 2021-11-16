@@ -3,6 +3,9 @@ import withCleanOrgId from "../../../../../../middleware/withCleanOrgId";
 import { NextApiRequest, NextApiResponse } from "next";
 import { getAllOpeningsInOrg } from "../../../../../../utils/openings/getAllOpeningsInOrg";
 import cleanOpening from "../../../../../../utils/clean/cleanOpening";
+import { API_METHODS } from "../../../../../../defaults";
+import withValidMethod from "../../../../../../middleware/withValidMethod";
+import { CUSTOM_QUERY } from "../../../../../../Types";
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   const { method, query } = req;
@@ -25,8 +28,6 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
         .json({ message: `Unable to retrieve org: ${error}` });
     }
   }
-
-  return res.status(405).json({ message: "Not Allowed" });
 };
 
-export default withCleanOrgId(handler);
+export default withCleanOrgId(withValidMethod(handler, [API_METHODS.GET]));

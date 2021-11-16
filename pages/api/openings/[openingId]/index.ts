@@ -4,24 +4,22 @@ import InputValidation from "../../../../utils/inputValidation";
 import updateOpening from "../../../../utils/openings/updateOpening";
 import { deleteOpening } from "../../../../utils/openings/deleteOpening";
 import { withSessionRoute } from "../../../../middleware/withSession";
+import { API_METHODS } from "../../../../defaults";
+import withAuth from "../../../../middleware/withAuth";
+import withValidMethod from "../../../../middleware/withValidMethod";
+import { CUSTOM_QUERY } from "../../../../Types";
 
 const handler = async (
   req: NextApiRequest,
   res: NextApiResponse
 ): Promise<void> => {
   const userSession = req.session.user;
-
   const { method, query, body } = req;
   const { openingId } = query as Pick<CUSTOM_QUERY, "openingId">;
 
-  const getOpeningInput: GetOpeningInput = {
-    orgId: userSession.orgId,
-    openingId: openingId,
-  };
-
   if (method === API_METHODS.GET) {
     try {
-      const opening = await getOpening(getOpeningInput);
+      const opening = await getOpening({ openingId, orgId: userSession.orgId });
       if (!opening) {
         return res.status(404).json({ message: "Opening not found" });
       }
@@ -37,7 +35,7 @@ const handler = async (
 
   if (method === API_METHODS.PUT) {
     try {
-      const updateOpeningInput: UpdateOpeningInput = {
+      const updateOpeningInput = {
         orgId: userSession.orgId,
         openingId: openingId,
         newOpeningValues: body.newOpeningValues,
@@ -72,7 +70,10 @@ const handler = async (
         .json({ message: `Unable to delete your opening ${error}` });
     }
   }
-  return res.status(405).json({ message: "Not Allowed" });
 };
 
-export default withSessionRoute(handler);
+export default withValidMethod(withSessionRoute(withAuth(handler)), [
+  API_METHODS.GET,
+  API_METHODS.PUT,
+  API_METHODS.DELETE,
+]);

@@ -4,6 +4,9 @@ import withCleanOrgId from "../../../../../../../middleware/withCleanOrgId";
 import { NextApiRequest, NextApiResponse } from "next";
 import { getStageById } from "../../../../../../../utils/stages/getStageById";
 import cleanStage from "../../../../../../../utils/clean/cleanStage";
+import { API_METHODS } from "../../../../../../../defaults";
+import withValidMethod from "../../../../../../../middleware/withValidMethod";
+import { CUSTOM_QUERY } from "../../../../../../../Types";
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   const { method, query } = req;
@@ -30,8 +33,6 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
         .json({ message: `Unable to get stage: ${error}` });
     }
   }
-
-  return res.status(405).json({ message: "Not Allowed" });
 };
 
-export default withCleanOrgId(handler);
+export default withCleanOrgId(withValidMethod(handler, [API_METHODS.GET]));

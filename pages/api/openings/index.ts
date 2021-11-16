@@ -1,8 +1,11 @@
 import { getAllOpeningsInOrg } from "../../../utils/openings/getAllOpeningsInOrg";
 import { createOpening } from "../../../utils/openings/createOpening";
 import InputValidation from "../../../utils/inputValidation";
-import { NextApiResponse } from "next";
+import { NextApiRequest, NextApiResponse } from "next";
 import { withSessionRoute } from "../../../middleware/withSession";
+import { API_METHODS } from "../../../defaults";
+import withAuth from "../../../middleware/withAuth";
+import withValidMethod from "../../../middleware/withValidMethod";
 
 const handler = async (
   req: NextApiRequest,
@@ -11,7 +14,7 @@ const handler = async (
   const userSession = req.session.user;
 
   const { body, method } = req;
-  const { GSI1SK }: APICreateOpeningInput = body;
+  const { GSI1SK } = body;
 
   if (method === API_METHODS.POST) {
     if (userSession.orgId === "NO_ORG_ASSIGNED") {
@@ -20,7 +23,7 @@ const handler = async (
       });
     }
     try {
-      const createOpeningInput: CreateOpeningInput = {
+      const createOpeningInput = {
         orgId: userSession.orgId,
         GSI1SK: GSI1SK,
       };
@@ -54,7 +57,9 @@ const handler = async (
         .json({ message: `Unable to retrieve openings: ${error}` });
     }
   }
-  return res.status(405).json({ message: "Not Allowed" });
 };
 
-export default withSessionRoute(handler);
+export default withValidMethod(withSessionRoute(withAuth(handler)), [
+  API_METHODS.GET,
+  API_METHODS.POST,
+]);

@@ -175,7 +175,7 @@ const handler = async (
       req.session.user = cleanedUser;
       await req.session.save();
 
-      // If a user has invites, redirect them to that page automatically
+      // If a user has invites, redirect them to that page automatically // TODO update the invites email #306
       if (cleanedUser.totalInvites > 0) {
         res.redirect(`${process.env.NEXT_PUBLIC_WEBSITE_URL}/invites`);
         return;
@@ -185,8 +185,6 @@ const handler = async (
       return;
     }
   }
-
-  return res.status(405).json({ message: "Not Allowed" });
 };
 
 export default withValidMethod(withSessionRoute(withAuth(handler)), [

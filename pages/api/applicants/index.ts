@@ -12,6 +12,7 @@ import {
   CreateApplicantAPIResponse,
   CreateApplicantAPIBody,
 } from "../../../Types";
+import withCleanOrgId from "../../../middleware/withCleanOrgId";
 
 const handler = async (
   req: NextApiRequest,
@@ -81,12 +82,8 @@ const handler = async (
         .json({ message: `Unable to create applicant: ${error}` });
     }
   }
-
-  return res.status(405).json({ message: "Not Allowed" });
 };
 
-export default withValidMethod(withSessionRoute(withAuth(handler)), [
-  API_METHODS.DELETE,
-  API_METHODS.GET,
-  API_METHODS.PUT,
-]);
+export default withCleanOrgId(
+  withValidMethod(withSessionRoute(withAuth(handler)), [API_METHODS.POST])
+);
