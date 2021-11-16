@@ -51,8 +51,8 @@ Or [cold starts](https://filia-aleks.medium.com/aws-lambda-battle-2021-performan
 ## Useful commands
 
 - `npm run dev` run the app locally
-- `cdk deploy` deploy the site - _Docker image is built and deployed by CDK automatically!_
-- `cdk destroy` destroy the site
+- `npm run deploy` deploy the site - _Docker image is built and deployed by CDK automatically!_
+- `npm run destroy` destroy the site
 - `cdk diff` compare deployed stack with current state
 - `cdk synth` emits the synthesized CloudFormation template
 

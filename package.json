@@ -8,7 +8,8 @@
     "start": "next start",
     "lint": "next lint",
     "test": "next dev & jest --coverage -i --silent=false tests/ALL.spec.ts ",
-    "deploy": "cdk deploy --all"
+    "deploy": "cdk deploy --all",
+    "destroy": "cdk destroy --all"
   },
   "dependencies": {
     "@aws-cdk/aws-apigatewayv2": "^1.130.0",
