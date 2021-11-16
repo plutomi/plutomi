@@ -12,7 +12,7 @@ const handler = async (
   const { openingId } = query as Pick<CUSTOM_QUERY, "openingId">;
 
   // Get all stages in an opening
-  if (method === "GET") {
+  if (method === API_METHODS.GET) {
     try {
       const allStages = await getAllStagesInOpening(
         userSession.orgId,

@@ -14,7 +14,7 @@ const handler = async (
   const { userId } = query as Pick<CUSTOM_QUERY, "userId">;
   const { newUserValues } = body;
 
-  if (method === "GET") {
+  if (method === API_METHODS.GET) {
     try {
       const requestedUser = await getUserById(userId);
 
@@ -37,7 +37,7 @@ const handler = async (
     }
   }
 
-  if (method === "PUT") {
+  if (method === API_METHODS.PUT) {
     const updateStageInput = {
       newUserValues: newUserValues,
       userId: userSession.userId,

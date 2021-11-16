@@ -18,7 +18,7 @@ const handler = async (
   const userSession = req.session.user;
   const org = await getOrg(orgId);
 
-  if (method === "GET") {
+  if (method === API_METHODS.GET) {
     // When signed in, this returns all data for an org
     // For public org data such as basic info or openings, please use the
     // /api/public/orgs/[orgId] route
@@ -43,7 +43,7 @@ const handler = async (
     }
   }
 
-  if (method === "DELETE") {
+  if (method === API_METHODS.DELETE) {
     try {
       if (org.totalUsers > 1) {
         return res.status(400).json({

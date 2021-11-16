@@ -9,7 +9,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   const { method, query } = req;
   const { orgId, stageId } = query as Pick<CUSTOM_QUERY, "orgId" | "stageId">;
 
-  if (method === "GET") {
+  if (method === API_METHODS.GET) {
     try {
       const stage = await getStageById({ orgId, stageId });
       if (!stage) {

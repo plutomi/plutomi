@@ -8,7 +8,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   const { method, query } = req;
   const { orgId } = query as Pick<CUSTOM_QUERY, "orgId">;
 
-  if (method === "GET") {
+  if (method === API_METHODS.GET) {
     try {
       const allOpenings = await getAllOpeningsInOrg(orgId);
       const publicOpenings = allOpenings.filter((opening) => opening.isPublic);

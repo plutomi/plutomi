@@ -11,7 +11,7 @@ const handler = async (
   const { body, method } = req;
   const { GSI1SK, questionDescription, stageId } = body;
 
-  if (method === "POST") {
+  if (method === API_METHODS.POST) {
     const createStageQuestionInput = {
       orgId: userSession.orgId,
       stageId: stageId,

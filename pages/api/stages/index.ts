@@ -13,7 +13,7 @@ const handler = async (
   const { body, method } = req;
   const { GSI1SK, openingId }: APICreateStageInput = body;
 
-  if (method === "POST") {
+  if (method === API_METHODS.POST) {
     if (userSession.orgId === "NO_ORG_ASSIGNED") {
       return res.status(403).json({
         message: "Please create an organization before creating a stage",

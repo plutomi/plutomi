@@ -35,7 +35,7 @@ const handler = async (
     return res.status(400).json({ message: `${error.message}` });
   }
 
-  if (method === "POST") {
+  if (method === API_METHODS.POST) {
     // TODO disallow orgId's by this name
     if (userSession.orgId != "NO_ORG_ASSIGNED") {
       return res.status(400).json({
@@ -61,7 +61,7 @@ const handler = async (
     }
   }
 
-  if (method === "DELETE") {
+  if (method === API_METHODS.DELETE) {
     const deleteOrgInviteInput = {
       userId: userSession.userId,
       inviteId: inviteId,

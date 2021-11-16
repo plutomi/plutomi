@@ -18,7 +18,7 @@ const handler = async (
   const { method, query, body } = req;
   const { applicantId } = query as Pick<CUSTOM_QUERY, "applicantId">;
 
-  if (method === "GET") {
+  if (method === API_METHODS.GET) {
     try {
       // TODO gather applicant responses here
       const applicant = await getApplicantById({
@@ -38,7 +38,7 @@ const handler = async (
     }
   }
 
-  if (method === "PUT") {
+  if (method === API_METHODS.PUT) {
     try {
       const updateApplicantInput = {
         orgId: userSession.orgId,
@@ -61,7 +61,7 @@ const handler = async (
     }
   }
 
-  if (method === "DELETE") {
+  if (method === API_METHODS.DELETE) {
     try {
       await deleteApplicant({
         orgId: userSession.orgId,

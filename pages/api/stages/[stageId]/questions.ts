@@ -12,7 +12,7 @@ const handler = async (
   const { method, query } = req;
   const { stageId } = query as Pick<CUSTOM_QUERY, "stageId">;
 
-  if (method === "GET") {
+  if (method === API_METHODS.GET) {
     try {
       const questions = await getAllQuestionsInStage({
         orgId: userSession.orgId,

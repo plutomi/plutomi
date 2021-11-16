@@ -15,7 +15,7 @@ const handler = async (
   const { method, query, body } = req;
   const { stageId } = query as Pick<CUSTOM_QUERY, "stageId">;
   // Get a single stage in an opening
-  if (method === "GET") {
+  if (method === API_METHODS.GET) {
     const getStageInput: GetStageInput = {
       orgId: userSession.orgId,
       stageId: stageId,
@@ -36,7 +36,7 @@ const handler = async (
     }
   }
 
-  if (method === "PUT") {
+  if (method === API_METHODS.PUT) {
     try {
       const updateStageInput: UpdateStageInput = {
         orgId: userSession.orgId,
@@ -59,7 +59,7 @@ const handler = async (
     }
   }
 
-  if (method === "DELETE") {
+  if (method === API_METHODS.DELETE) {
     try {
       const deleteStageInput = {
         orgId: userSession.orgId,

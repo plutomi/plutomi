@@ -12,7 +12,7 @@ const handler = async (
   const { method, query } = req;
   const { openingId } = query as Pick<CUSTOM_QUERY, "openingId">;
 
-  if (method === "GET") {
+  if (method === API_METHODS.GET) {
     const getAllApplicantsInOpeningInput = {
       orgId: userSession.orgId,
       openingId: openingId,

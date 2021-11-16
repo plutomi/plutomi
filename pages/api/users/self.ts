@@ -14,7 +14,7 @@ const handler = async (
 
   const { method } = req;
 
-  if (method === "GET") {
+  if (method === API_METHODS.GET) {
     try {
       const requestedUser = await getUserById(userSession.userId);
       if (!requestedUser) {

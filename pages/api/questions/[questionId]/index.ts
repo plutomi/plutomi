@@ -13,7 +13,7 @@ const handler = async (
   const { body, method, query } = req;
   const { questionId } = query as Pick<CUSTOM_QUERY, "questionId">;
 
-  if (method === "DELETE") {
+  if (method === API_METHODS.DELETE) {
     try {
       const deleteQuestionInput = {
         orgId: userSession.orgId,
@@ -29,7 +29,7 @@ const handler = async (
     }
   }
 
-  if (method === "PUT") {
+  if (method === API_METHODS.PUT) {
     try {
       const updatedQuestionInput: UpdateQuestionInput = {
         orgId: userSession.orgId,

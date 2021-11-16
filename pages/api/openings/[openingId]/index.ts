@@ -19,7 +19,7 @@ const handler = async (
     openingId: openingId,
   };
 
-  if (method === "GET") {
+  if (method === API_METHODS.GET) {
     try {
       const opening = await getOpening(getOpeningInput);
       if (!opening) {
@@ -35,7 +35,7 @@ const handler = async (
     }
   }
 
-  if (method === "PUT") {
+  if (method === API_METHODS.PUT) {
     try {
       const updateOpeningInput: UpdateOpeningInput = {
         orgId: userSession.orgId,
@@ -58,7 +58,7 @@ const handler = async (
     }
   }
 
-  if (method === "DELETE") {
+  if (method === API_METHODS.DELETE) {
     try {
       const deleteOpeningInput = {
         orgId: userSession.orgId,

@@ -16,7 +16,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     openingId: openingId,
   };
 
-  if (method === "GET") {
+  if (method === API_METHODS.GET) {
     try {
       const opening = await getOpening(getOpeningInput);
       if (!opening) {

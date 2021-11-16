@@ -29,7 +29,7 @@ const handler = async (
     recipientEmail: recipientEmail,
     expiresAt: expiresAt,
   };
-  if (method === "POST") {
+  if (method === API_METHODS.POST) {
     try {
       InputValidation(newOrgInvite);
     } catch (error) {

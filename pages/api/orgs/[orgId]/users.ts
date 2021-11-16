@@ -12,7 +12,7 @@ const handler = async (
   const { method, query } = req;
   const { orgId } = query as Pick<CUSTOM_QUERY, "orgId">;
 
-  if (method === "GET") {
+  if (method === API_METHODS.GET) {
     if (userSession.orgId != orgId) {
       // TODO team site bug returning 403 -- TODO I think this is fixed
       return res

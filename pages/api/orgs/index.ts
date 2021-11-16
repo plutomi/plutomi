@@ -17,7 +17,7 @@ const handler = async (
   const { GSI1SK, orgId }: APICreateOrgInput = body;
 
   // Create an org
-  if (method === "POST") {
+  if (method === API_METHODS.POST) {
     if (GSI1SK === "NO_ORG_ASSIGNED") {
       // TODO major, this isn't using the withCleanOrgId
       return res.status(400).json({

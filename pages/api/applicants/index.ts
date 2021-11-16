@@ -28,7 +28,7 @@ const handler = async (
   }: CreateApplicantAPIBody = body;
 
   // Creates an applicant
-  if (method === "POST") {
+  if (method === API_METHODS.POST) {
     const opening = await getOpening({ orgId, openingId });
 
     if (!opening) {

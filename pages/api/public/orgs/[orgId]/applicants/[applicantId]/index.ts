@@ -7,7 +7,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   const { method, query, body } = req;
   const { applicantId } = query as Pick<CUSTOM_QUERY, "applicantId">;
 
-  if (method === "GET") {
+  if (method === API_METHODS.GET) {
     try {
       // TODO gather applicant responses here
       const applicant = await getApplicantById({

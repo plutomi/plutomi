@@ -16,6 +16,7 @@ import { TIME_UNITS, API_METHODS } from "../../../defaults";
 import withAuth from "../../../middleware/withAuth";
 import withValidMethod from "../../../middleware/withValidMethod";
 import { CUSTOM_QUERY } from "../../../Types";
+import cleanUser from "../../../utils/clean/cleanUser";
 
 const handler = async (
   req: NextApiRequest,
@@ -35,7 +36,7 @@ const handler = async (
   );
 
   // Creates a login link
-  if (method === "POST") {
+  if (method === API_METHODS.POST) {
     try {
       InputValidation({ email });
     } catch (error) {
@@ -105,7 +106,7 @@ const handler = async (
   }
 
   // Validates the login link when clicked
-  if (method === "GET") {
+  if (method === API_METHODS.GET) {
     const validateLoginLinkInput = {
       userId: userId,
       key: key,
@@ -169,13 +170,13 @@ const handler = async (
       // Invalidates the last login link while allowing the user to login again if needed
       deleteLoginLink(userId, latestLoginLink.createdAt);
 
-      const cleanUser = cleanUser(user as DynamoUser);
+      const cleanedUser = cleanUser(user);
 
-      req.session.user = cleanUser;
+      req.session.user = cleanedUser;
       await req.session.save();
 
       // If a user has invites, redirect them to that page automatically
-      if (cleanUser.totalInvites > 0) {
+      if (cleanedUser.totalInvites > 0) {
         res.redirect(`${process.env.NEXT_PUBLIC_WEBSITE_URL}/invites`);
         return;
       }

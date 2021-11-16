@@ -11,7 +11,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   const responses: DynamoApplicantResponse[] = body.responses;
 
   // Public route to update limited applicant information, ie: questions & answers
-  if (method === "POST") {
+  if (method === API_METHODS.POST) {
     if (!responses || responses.length == 0) {
       return res.status(400).json({ message: "Empty responses" });
     }
