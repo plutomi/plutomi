@@ -2,9 +2,9 @@ import { PutCommand, PutCommandInput } from "@aws-sdk/lib-dynamodb";
 import { Dynamo } from "../../awsClients/ddbDocClient";
 import Time from "../time";
 import { nanoid } from "nanoid";
-import sendNewemail from "../email/sendNewUser";
 import { getUserByEmail } from "./getUserByEmail";
-import { ENTITY_TYPES, ID_LENGTHS, PLACEHOLDER } from "../../defaults";
+import { CONTACT, ENTITY_TYPES, ID_LENGTHS, PLACEHOLDER } from "../../defaults";
+import sendEmail from "../sendEmail";
 const { DYNAMO_TABLE_NAME } = process.env;
 
 export async function createUser(props) {
@@ -42,7 +42,13 @@ export async function createUser(props) {
 
   try {
     await Dynamo.send(new PutCommand(params));
-    sendNewemail(newUser); // TODO async with streams
+    sendEmail({
+      fromName: "New Plutomi User",
+      fromAddress: CONTACT.GENERAL,
+      toAddresses: ["contact@plutomi.com"],
+      subject: `A new user has signed up!`,
+      html: `<h1>Email: ${newUser.email}</h1><h1>ID: ${newUser.userId}</h1>`,
+    });
     return newUser;
   } catch (error) {
     throw new Error(error);

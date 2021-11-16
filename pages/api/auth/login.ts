@@ -1,7 +1,6 @@
 import Time from "../../../utils/time";
 import InputValidation from "../../../utils/inputValidation";
 import { NextApiRequest, NextApiResponse } from "next";
-import sendLoginLink from "../../../utils/email/sendLoginLink";
 import createLoginLink from "../../../utils/loginLinks/createLoginLink";
 import { nanoid } from "nanoid";
 import { withSessionRoute } from "../../../middleware/withSession";
@@ -12,10 +11,11 @@ import createLoginEvent from "../../../utils/users/createLoginEvent";
 import deleteLoginLink from "../../../utils/loginLinks/deleteLoginLink";
 import { getUserById } from "../../../utils/users/getUserById";
 import updateLoginLink from "../../../utils/loginLinks/updateLoginLink";
-import { TIME_UNITS, API_METHODS } from "../../../defaults";
+import { TIME_UNITS, API_METHODS, CONTACT } from "../../../defaults";
 import withValidMethod from "../../../middleware/withValidMethod";
 import { CUSTOM_QUERY } from "../../../types/main";
 import cleanUser from "../../../utils/clean/cleanUser";
+import sendEmail from "../../../utils/sendEmail";
 
 const handler = async (
   req: NextApiRequest,
@@ -82,10 +82,14 @@ const handler = async (
           return res.status(200).json({ message: loginLink });
         }
         try {
-          await sendLoginLink({
-            recipientEmail: user.email,
-            loginLink: loginLink,
-            loginLinkRelativeExpiry: Time.relative(new Date(loginLinkExpiry)),
+          await sendEmail({
+            fromName: "Plutomi",
+            fromAddress: CONTACT.GENERAL,
+            toAddresses: [user.email],
+            subject: `Your magic login link is here!`,
+            html: `<h1><a href="${loginLink}" noreferrer target="_blank" >Click this link to log in</a></h1><p>It will expire ${Time.relative(
+              new Date(loginLinkExpiry)
+            )}. <strong>DO NOT SHARE THIS LINK WITH ANYONE!!!</strong></p><p>If you did not request this link, you can safely ignore it.</p>`,
           });
           return res
             .status(201)

@@ -2,16 +2,21 @@ import { SendEmailCommand, SendEmailCommandInput } from "@aws-sdk/client-ses";
 import SESclient from "../awsClients/sesClient";
 
 export default async function sendEmail({
-  fromName,
+  fromName, // TODO add types
   fromAddress,
   toAddresses,
   subject,
   html,
 }) {
+  // Add it to the beginning so we only have to lower case and trim once
+  toAddresses.unshift(fromAddress);
+  const cleanAddresses = toAddresses.map((email: string) =>
+    email.toLowerCase().trim()
+  );
   const newEmail: SendEmailCommandInput = {
-    Source: `${fromName} <${fromAddress}>`,
+    Source: `${fromName} <${cleanAddresses.shift()}>`,
     Destination: {
-      ToAddresses: toAddresses,
+      ToAddresses: cleanAddresses,
       CcAddresses: null,
       BccAddresses: null,
     },
