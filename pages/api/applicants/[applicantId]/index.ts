@@ -4,16 +4,17 @@ import InputValidation from "../../../../utils/inputValidation";
 import deleteApplicant from "../../../../utils/applicants/deleteApplicant";
 import updateApplicant from "../../../../utils/applicants/updateApplicant";
 import { withSessionRoute } from "../../../../middleware/withSession";
+import withValidMethod from "../../../../middleware/withValidMethod";
+import withAuth from "../../../../middleware/withAuth";
+import { API_METHODS } from "../../../../defaults";
+import { CUSTOM_QUERY } from "../../../../Types";
 
 const handler = async (
   req: NextApiRequest,
   res: NextApiResponse
 ): Promise<void> => {
   const userSession = req.session.user;
-  if (!userSession) {
-    req.session.destroy();
-    return res.status(401).json({ message: "Please log in again" });
-  }
+
   const { method, query, body } = req;
   const { applicantId } = query as Pick<CUSTOM_QUERY, "applicantId">;
 
@@ -76,4 +77,8 @@ const handler = async (
   return res.status(405).json({ message: "Not Allowed" });
 };
 
-export default withSessionRoute(handler);
+export default withValidMethod(withSessionRoute(withAuth(handler)), [
+  API_METHODS.DELETE,
+  API_METHODS.GET,
+  API_METHODS.PUT,
+]);

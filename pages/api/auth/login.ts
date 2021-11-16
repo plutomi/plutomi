@@ -12,6 +12,10 @@ import createLoginEvent from "../../../utils/users/createLoginEvent";
 import deleteLoginLink from "../../../utils/loginLinks/deleteLoginLink";
 import { getUserById } from "../../../utils/users/getUserById";
 import updateLoginLink from "../../../utils/loginLinks/updateLoginLink";
+import { TIME_UNITS, API_METHODS } from "../../../defaults";
+import withAuth from "../../../middleware/withAuth";
+import withValidMethod from "../../../middleware/withValidMethod";
+import { CUSTOM_QUERY } from "../../../Types";
 
 const handler = async (
   req: NextApiRequest,
@@ -184,4 +188,7 @@ const handler = async (
   return res.status(405).json({ message: "Not Allowed" });
 };
 
-export default withSessionRoute(handler);
+export default withValidMethod(withSessionRoute(withAuth(handler)), [
+  API_METHODS.POST,
+  API_METHODS.GET,
+]);

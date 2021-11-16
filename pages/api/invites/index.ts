@@ -12,10 +12,7 @@ const handler = async (
   res: NextApiResponse
 ): Promise<void> => {
   const userSession = req.session.user;
-  if (!userSession) {
-    req.session.destroy();
-    return res.status(401).json({ message: "Please log in again" });
-  }
+
   const { body, method } = req;
 
   const { recipientEmail } = body;

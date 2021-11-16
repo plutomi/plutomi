@@ -11,14 +11,11 @@ import { joinOrgFromInvite } from "../../../../utils/orgs/joinOrgFromInvite";
 
 const handler = async (
   req: NextApiRequest,
-  res: NextApiResponse,
+  res: NextApiResponse
 ): Promise<void> => {
   console.log(req.session);
   const userSession = req.session.user;
-  if (!userSession) {
-    req.session.destroy();
-    return res.status(401).json({ message: "Please log in again" });
-  }
+
   const { method, query } = req;
   const { inviteId } = query as Pick<CUSTOM_QUERY, "inviteId">;
 

@@ -4,6 +4,14 @@ import InputValidation from "../../../utils/inputValidation";
 import { createApplicant } from "../../../utils/applicants/createApplicant";
 import { getOrg } from "../../../utils/orgs/getOrg";
 import sendApplicantLink from "../../../utils/email/sendApplicantLink";
+import { API_METHODS } from "../../../defaults";
+import withAuth from "../../../middleware/withAuth";
+import { withSessionRoute } from "../../../middleware/withSession";
+import withValidMethod from "../../../middleware/withValidMethod";
+import {
+  CreateApplicantAPIResponse,
+  CreateApplicantAPIBody,
+} from "../../../Types";
 
 const handler = async (
   req: NextApiRequest,
@@ -77,4 +85,8 @@ const handler = async (
   return res.status(405).json({ message: "Not Allowed" });
 };
 
-export default handler;
+export default withValidMethod(withSessionRoute(withAuth(handler)), [
+  API_METHODS.DELETE,
+  API_METHODS.GET,
+  API_METHODS.PUT,
+]);
