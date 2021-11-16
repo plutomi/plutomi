@@ -1,64 +1,6 @@
-import { ENTITY_TYPES } from "./defaults";
-
-type CreateApplicantAPIBody = CreateApplicantInput;
-interface CreateApplicantAPIResponse {
-  message: string;
-}
-
-/**
- * All possible parameters in the URL
- */
-
-interface CUSTOM_QUERY {
-  /**
-   * Id of the org
-   */
-  orgId: string;
-  /**
-   * Id of the opening
-   */
-  openingId: string;
-  /**
-   * Id of the user
-   */
-  userId: string;
-  /**
-   * Id of the stage
-   */
-  stageId: string;
-  /**
-   * Id of the applicant
-   */
-  applicantId: string;
-  /**
-   * The key to for the LOGIN_LINKS that allow it to be used
-   */
-  key: string;
-  /**
-   * The callback url
-   */
-  callbackUrl: string;
-  /**
-   * Id for the question
-   */
-  questionId: string;
-  /**
-   * Id for the invite
-   */
-  inviteId: string;
-}
-
-declare module "iron-session" {
-  interface IronSessionData {
-    user?: {
-      orgId: string;
-      userId: string;
-      email: string;
-      // TODO user role RBAC - fix these types
-      // TODO fix these types https://github.com/plutomi/plutomi/issues/301
-    };
-  }
-}
+// This file is for the actual DynamoDB entries and their Types - ie: A full object with all properties.
+// All  other types are derivatives with Pick, Omit, etc.
+import { ENTITY_TYPES } from "../defaults";
 
 interface DynamoNewStage {
   /**
@@ -105,18 +47,6 @@ interface DynamoNewStage {
    * The stage name
    */
   GSI1SK: string;
-}
-
-type CreateStageInput = Pick<DynamoNewStage, "orgId" | "GSI1SK" | "openingId">;
-
-type DeleteStageInput = Pick<DynamoNewStage, "orgId" | "stageId">;
-type GetStageByIdInput = Pick<DynamoNewStage, "orgId" | "stageId">;
-type GetStageByIdOutput = DynamoNewStage;
-type GetAllApplicantsInStageInput = Pick<DynamoNewStage, "orgId" | "stageId">;
-type GetAllApplicantsInStageOutput = DynamoNewApplicant[];
-
-interface UpdateStageInput extends Pick<DynamoNewStage, "orgId" | "stageId"> {
-  newStageValues: { [key: string]: any };
 }
 
 interface DynamoNewStageQuestion {
@@ -166,30 +96,6 @@ interface DynamoNewStageQuestion {
    */
   GSI1SK: string;
 }
-
-type CreateStageQuestionInput = Pick<
-  DynamoNewStageQuestion,
-  "orgId" | "stageId" | "GSI1SK" | "questionDescription"
->;
-
-type orgIdAndQuestionId = "orgId" | "questionId";
-
-type DeleteQuestionInput = Pick<DynamoNewStageQuestion, orgIdAndQuestionId>;
-
-type GetQuestionInput = Pick<DynamoNewStageQuestion, orgIdAndQuestionId>;
-type GetQuestionOutput = DynamoNewStageQuestion;
-
-type GetAllQuestionsInStageInput = Pick<
-  DynamoNewStageQuestion,
-  "orgId" | "stageId"
->;
-
-interface UpdateQuestionInput
-  extends Pick<DynamoNewStageQuestion, orgIdAndQuestionId> {
-  newQuestionValues: { [key: string]: any };
-}
-
-type GetAllQuestionsInStageOutput = GetQuestionOutput[];
 
 interface DynamoNewApplicant {
   /**
@@ -272,32 +178,6 @@ interface DynamoNewApplicant {
   GSI2SK: `${ENTITY_TYPES.STAGE}#${string}#DATE_LANDED#${string}`;
 }
 
-type CreateApplicantInput = Pick<
-  DynamoNewApplicant,
-  "orgId" | "firstName" | "lastName" | "email" | "openingId" | "stageId"
->;
-
-type orgIdAndApplicantId = "orgId" | "applicantId";
-
-type CreateApplicantOutput = DynamoNewApplicant;
-type GetApplicantByIdInput = Pick<DynamoNewApplicant, orgIdAndApplicantId>;
-
-type DeleteApplicantInput = Pick<DynamoNewApplicant, orgIdAndApplicantId>;
-
-// TODO types for files, etc.
-interface GetApplicantByIdOutput extends DynamoNewApplicant {
-  responses: Object[]; // TODO fix this type with a response type
-}
-
-interface UpdateApplicantInput
-  extends Pick<DynamoNewApplicant, orgIdAndApplicantId> {
-  newApplicantValues: { [key: string]: any };
-}
-
-interface UpdateApplicantOutput extends DynamoNewApplicant {
-  responses: Object[]; // TODO fix this type with a response type
-}
-
 interface DynamoNewApplicantResponse {
   /**
    * The primary key for the response - needs an `orgId` and `applicantId`
@@ -348,14 +228,3 @@ interface DynamoNewApplicantResponse {
    */
   GSI1SK: ENTITY_TYPES.APPLICANT_RESPONSE; // TODO add timestmap?
 }
-
-type CreateApplicantResponseInput = Pick<
-  DynamoNewApplicantResponse,
-  | "orgId"
-  | "applicantId"
-  | "questionTitle"
-  | "questionDescription"
-  | "questionResponse"
->;
-
-type CreateApplicantResponseOutput = DynamoNewApplicantResponse;

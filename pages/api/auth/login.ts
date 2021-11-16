@@ -13,9 +13,8 @@ import deleteLoginLink from "../../../utils/loginLinks/deleteLoginLink";
 import { getUserById } from "../../../utils/users/getUserById";
 import updateLoginLink from "../../../utils/loginLinks/updateLoginLink";
 import { TIME_UNITS, API_METHODS } from "../../../defaults";
-import withAuth from "../../../middleware/withAuth";
 import withValidMethod from "../../../middleware/withValidMethod";
-import { CUSTOM_QUERY } from "../../../Types";
+import { CUSTOM_QUERY } from "../../../types/main";
 import cleanUser from "../../../utils/clean/cleanUser";
 
 const handler = async (
@@ -37,6 +36,7 @@ const handler = async (
 
   // Creates a login link
   if (method === API_METHODS.POST) {
+    console.log("IN POST", email);
     try {
       InputValidation({ email });
     } catch (error) {
@@ -98,6 +98,7 @@ const handler = async (
         return res.status(500).json({ message: `${error}` });
       }
     } catch (error) {
+      console.error("Error getting login link", error);
       return res.status(500).json({
         // TODO error #
         message: "An error ocurred getting your info, please try again",
@@ -173,6 +174,7 @@ const handler = async (
       const cleanedUser = cleanUser(user);
 
       req.session.user = cleanedUser;
+
       await req.session.save();
 
       // If a user has invites, redirect them to that page automatically // TODO update the invites email #306
@@ -187,7 +189,8 @@ const handler = async (
   }
 };
 
-export default withValidMethod(withSessionRoute(withAuth(handler)), [
+export default withValidMethod(withSessionRoute(handler), [
+  // NO AUTH as this will block all requests without a session.. and uhh.. we're creating sessions here
   API_METHODS.POST,
   API_METHODS.GET,
 ]);

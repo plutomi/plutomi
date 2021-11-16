@@ -6,7 +6,7 @@ import cleanUser from "../../../../utils/clean/cleanUser";
 import { updateUser } from "../../../../utils/users/updateUser";
 import withAuth from "../../../../middleware/withAuth";
 import { API_METHODS, PLACEHOLDER } from "../../../../defaults";
-import { CUSTOM_QUERY } from "../../../../Types";
+import { CUSTOM_QUERY } from "../../../../types/main";
 import withValidMethod from "../../../../middleware/withValidMethod";
 const handler = async (
   req: NextApiRequest,

@@ -2,8 +2,8 @@ import {
   TransactWriteCommand,
   TransactWriteCommandInput,
 } from "@aws-sdk/lib-dynamodb";
-import { DeleteApplicantInput, GetApplicantByIdOutput } from "../../Applicants";
 import { Dynamo } from "../../awsClients/ddbDocClient";
+import { DeleteApplicantInput, GetApplicantByIdOutput } from "../../types/main";
 import { ENTITY_TYPES } from "../../defaults";
 import { getApplicantById } from "./getApplicantById";
 const { DYNAMO_TABLE_NAME } = process.env;

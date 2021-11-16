@@ -4,7 +4,10 @@ import withCleanOrgId from "../../../../../../../middleware/withCleanOrgId";
 import { createApplicantResponse } from "../../../../../../../utils/applicants/createApplicantResponse";
 import { API_METHODS } from "../../../../../../../defaults";
 import withValidMethod from "../../../../../../../middleware/withValidMethod";
-import { CUSTOM_QUERY, CreateApplicantResponseInput } from "../../../../../../../Types";
+import {
+  CUSTOM_QUERY,
+  CreateApplicantResponseInput,
+} from "../../../../../../../types/main";
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   const { method, query, body } = req;
   const { orgId, applicantId } = query as Pick<

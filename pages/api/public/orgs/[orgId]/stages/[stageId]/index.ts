@@ -6,7 +6,7 @@ import { getStageById } from "../../../../../../../utils/stages/getStageById";
 import cleanStage from "../../../../../../../utils/clean/cleanStage";
 import { API_METHODS } from "../../../../../../../defaults";
 import withValidMethod from "../../../../../../../middleware/withValidMethod";
-import { CUSTOM_QUERY } from "../../../../../../../Types";
+import { CUSTOM_QUERY } from "../../../../../../../types/main";
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   const { method, query } = req;

@@ -10,11 +10,6 @@ const handler = async (
   req: NextApiRequest,
   res: NextApiResponse
 ): Promise<void> => {
-  if (!req.session.user) {
-    req.session.destroy();
-    return res.status(401).json({ message: "Please log in again" }); // TODO middleware
-  }
-
   const { method } = req;
 
   if (method === API_METHODS.GET) {

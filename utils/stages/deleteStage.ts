@@ -4,6 +4,7 @@ import {
 } from "@aws-sdk/lib-dynamodb";
 import { Dynamo } from "../../awsClients/ddbDocClient";
 import { ENTITY_TYPES } from "../../defaults";
+import { DeleteStageInput } from "../../types/main";
 import { getOpening } from "../openings/getOpeningById";
 import { getStageById } from "./getStageById";
 const { DYNAMO_TABLE_NAME } = process.env;

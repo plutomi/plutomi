@@ -3,7 +3,7 @@ import { getOrg } from "../../../../../utils/orgs/getOrg";
 import { NextApiRequest, NextApiResponse } from "next";
 import { API_METHODS } from "../../../../../defaults";
 import withValidMethod from "../../../../../middleware/withValidMethod";
-import { CUSTOM_QUERY } from "../../../../../Types";
+import { CUSTOM_QUERY } from "../../../../../types/main";
 // This returns limited public information about an org
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   const { method, query } = req;

@@ -6,7 +6,7 @@ import { getOpening } from "../../../../../../../utils/openings/getOpeningById";
 import cleanOpening from "../../../../../../../utils/clean/cleanOpening";
 import { API_METHODS } from "../../../../../../../defaults";
 import withValidMethod from "../../../../../../../middleware/withValidMethod";
-import { CUSTOM_QUERY } from "../../../../../../../Types";
+import { CUSTOM_QUERY } from "../../../../../../../types/main";
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   const { method, query } = req;
   const { orgId, openingId } = query as Pick<

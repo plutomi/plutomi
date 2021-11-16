@@ -6,11 +6,8 @@ import { Dynamo } from "../../awsClients/ddbDocClient";
 import Time from "../time";
 import { nanoid } from "nanoid";
 import { ENTITY_TYPES, ID_LENGTHS } from "../../defaults";
-import {
-  CreateApplicantInput,
-  CreateApplicantOutput,
-  DynamoNewApplicant,
-} from "../../Types";
+import { CreateApplicantInput, CreateApplicantOutput } from "../../types/main";
+import { DynamoNewApplicant } from "../../types/dynamo";
 const { DYNAMO_TABLE_NAME } = process.env;
 
 export async function createApplicant(

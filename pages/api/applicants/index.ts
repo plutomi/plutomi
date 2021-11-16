@@ -11,7 +11,7 @@ import withValidMethod from "../../../middleware/withValidMethod";
 import {
   CreateApplicantAPIResponse,
   CreateApplicantAPIBody,
-} from "../../../Types";
+} from "../../../types/main";
 import withCleanOrgId from "../../../middleware/withCleanOrgId";
 
 const handler = async (

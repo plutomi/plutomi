@@ -28,5 +28,5 @@
     "typeRoots": ["./node_modules/@types"]
   },
   "exclude": ["node_modules", "cdk.out", "*"],
-  "include": ["types.d.ts", "next-env.d.ts", "**/*.ts", "**/*.tsx"]
+  "include": ["types/types.d.ts", "next-env.d.ts", "**/*.ts", "**/*.tsx"]
 }

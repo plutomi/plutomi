@@ -6,8 +6,9 @@ import { Dynamo } from "../../awsClients/ddbDocClient";
 import Time from "../time";
 import { nanoid } from "nanoid";
 import { getOpening } from "../openings/getOpeningById";
-import { ENTITY_TYPES, ID_LENGTHS } from "../../defaults";
-import { CreateStageInput, DynamoNewStage } from "../../Types";
+import { ENTITY_TYPES, ERRORS, ID_LENGTHS, LIMITS } from "../../defaults";
+import { CreateStageInput } from "../../types/main";
+import { DynamoNewStage } from "../../types/dynamo";
 
 const { DYNAMO_TABLE_NAME } = process.env;
 
@@ -16,6 +17,7 @@ export async function createStage(props: CreateStageInput): Promise<void> {
   const now = Time.currentISO();
   const stageId = nanoid(ID_LENGTHS.STAGE);
   const newStage: DynamoNewStage = {
+    // TODO fix this type
     PK: `${ENTITY_TYPES.ORG}#${orgId}#${ENTITY_TYPES.STAGE}#${stageId}`,
     SK: ENTITY_TYPES.STAGE,
     entityType: ENTITY_TYPES.STAGE,
@@ -35,7 +37,7 @@ export async function createStage(props: CreateStageInput): Promise<void> {
       // Get current opening
       opening.stageOrder.push(stageId);
 
-      if (opening.stageOrder.length >= Limits.MAX_CHILD_ITEM_LIMIT) {
+      if (opening.stageOrder.length >= LIMITS.MAX_CHILD_ITEM_LIMIT) {
         throw ERRORS.MAX_CHILD_ITEM_LIMIT_ERROR_MESSAGE;
       }
 

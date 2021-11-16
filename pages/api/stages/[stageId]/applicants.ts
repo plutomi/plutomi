@@ -5,7 +5,7 @@ import { API_METHODS } from "../../../../defaults";
 import withAuth from "../../../../middleware/withAuth";
 import withCleanOrgId from "../../../../middleware/withCleanOrgId";
 import withValidMethod from "../../../../middleware/withValidMethod";
-import { CUSTOM_QUERY } from "../../../../Types";
+import { CUSTOM_QUERY } from "../../../../types/main";
 
 const handler = async (
   req: NextApiRequest,

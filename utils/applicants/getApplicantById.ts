@@ -6,7 +6,7 @@ import {
   CreateApplicantOutput,
   GetApplicantByIdInput,
   GetApplicantByIdOutput,
-} from "../../Applicants";
+} from "../../types/main";
 import { ENTITY_TYPES } from "../../defaults";
 
 /**
@@ -35,7 +35,7 @@ export async function getApplicantById(
 
     const grouped = _.groupBy(allApplicantInfo.Items, "entityType");
 
-    const metadata = grouped.${ENTITY_TYPES.APPLICANT}[0] as CreateApplicantOutput;
+    const metadata = grouped.APPLICANT[0] as CreateApplicantOutput;
     const responses = grouped.APPLICANT_RESPONSE;
     // TODO files
 

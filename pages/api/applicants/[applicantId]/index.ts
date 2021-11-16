@@ -7,7 +7,7 @@ import { withSessionRoute } from "../../../../middleware/withSession";
 import withValidMethod from "../../../../middleware/withValidMethod";
 import withAuth from "../../../../middleware/withAuth";
 import { API_METHODS } from "../../../../defaults";
-import { CUSTOM_QUERY } from "../../../../Types";
+import { CUSTOM_QUERY } from "../../../../types/main";
 import withCleanOrgId from "../../../../middleware/withCleanOrgId";
 const handler = async (
   req: NextApiRequest,

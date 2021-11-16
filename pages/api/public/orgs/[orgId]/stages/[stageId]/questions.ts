@@ -3,7 +3,7 @@ import { getAllQuestionsInStage } from "../../../../../../../utils/questions/get
 import withCleanOrgId from "../../../../../../../middleware/withCleanOrgId";
 import { API_METHODS } from "../../../../../../../defaults";
 import withValidMethod from "../../../../../../../middleware/withValidMethod";
-import { CUSTOM_QUERY } from "../../../../../../../Types";
+import { CUSTOM_QUERY } from "../../../../../../../types/main";
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   const { method, query } = req;
   const { orgId, stageId } = query as Pick<CUSTOM_QUERY, "orgId" | "stageId">;
