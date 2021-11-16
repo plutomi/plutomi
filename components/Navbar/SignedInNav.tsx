@@ -15,6 +15,7 @@ import Link from "next/dist/client/link";
 import Banner from "../BannerTop";
 import { mutate } from "swr";
 import UsersService from "../../adapters/UsersService";
+import { PLACEHOLDER } from "../../defaults";
 
 function classNames(...classes) {
   return classes.filter(Boolean).join(" ");
@@ -146,8 +147,10 @@ export default function SignedInNav({ current }) {
                             "Loading user info..."
                           ) : (
                             <>
-                              {!user?.GSI1SK.includes("NO_FIRST_NAME") ||
-                                (!user?.GSI1SK.includes("NO_LAST_NAME") && (
+                              {!user?.GSI1SK.includes(PLACEHOLDER.FIRST_NAME) || // TODO this is gross
+                                (!user?.GSI1SK.includes(
+                                  PLACEHOLDER.LAST_NAME
+                                ) && (
                                   <div className="   text-dark ">
                                     Signed in as ${user?.GSI1SK}
                                   </div>

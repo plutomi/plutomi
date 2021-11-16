@@ -1,5 +1,6 @@
 import { UpdateCommand, UpdateCommandInput } from "@aws-sdk/lib-dynamodb";
 import { Dynamo } from "../../awsClients/ddbDocClient";
+import { PLACEHOLDER } from "../../defaults";
 
 const { DYNAMO_TABLE_NAME } = process.env;
 
@@ -41,7 +42,11 @@ export async function updateUser({
     });
 
     // TODO refactor this into its own function, easy way to have banned values
-    const bannedKeys = ["NO_FIRST_NAME", "NO_LAST_NAME"];
+    const bannedKeys = [
+      PLACEHOLDER.FIRST_NAME,
+      PLACEHOLDER.LAST_NAME,
+      PLACEHOLDER.FULL_NAME,
+    ];
 
     // @ts-ignore TODO fix types
     const checker = (value) =>

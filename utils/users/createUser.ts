@@ -4,6 +4,7 @@ import Time from "../time";
 import { nanoid } from "nanoid";
 import sendNewemail from "../email/sendNewUser";
 import { getUserByEmail } from "./getUserByEmail";
+import { ENTITY_TYPES, PLACEHOLDER } from "../../defaults";
 const { DYNAMO_TABLE_NAME } = process.env;
 
 export async function createUser(props) {
@@ -18,19 +19,19 @@ export async function createUser(props) {
   const newUser = {
     PK: `USER#${userId}`,
     SK: `USER`,
-    firstName: "NO_FIRST_NAME",
-    lastName: "NO_LAST_NAME",
+    firstName: PLACEHOLDER.FIRST_NAME,
+    lastName: PLACEHOLDER.LAST_NAME,
     email: email.toLowerCase().trim(),
     userId: userId,
-    entityType: "USER",
+    entityType: ENTITY_TYPES.USER,
     createdAt: now,
     orgId: "NO_ORG_ASSIGNED",
     orgJoinDate: "NO_ORG_ASSIGNED",
     totalInvites: 0,
     GSI1PK: "ORG#NO_ORG_ASSIGNED#USERS",
-    GSI1SK: `NO_FIRST_NAME NO_LAST_NAME`,
+    GSI1SK: PLACEHOLDER.FULL_NAME,
     GSI2PK: email.toLowerCase().trim(),
-    GSI2SK: "USER",
+    GSI2SK: ENTITY_TYPES.USER,
   };
 
   const params: PutCommandInput = {

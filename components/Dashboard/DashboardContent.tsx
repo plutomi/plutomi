@@ -9,6 +9,7 @@ import OrgsService from "../../adapters/OrgsService";
 import useStore from "../../utils/store";
 import { OfficeBuildingIcon, PlusIcon } from "@heroicons/react/outline";
 import CreateOrgModal from "../CreateOrgModal";
+import { PLACEHOLDER } from "../../defaults";
 export default function DashboardContent() {
   const { user, isUserLoading, isUserError } = useSelf();
   const { org, isOrgLoading, isOrgError } = usePrivateOrgById(user?.orgId);
@@ -129,8 +130,8 @@ export default function DashboardContent() {
             />
           </div>
           <div className="flex justify-center mx-auto">
-            {(user?.firstName === "NO_FIRST_NAME" ||
-              user?.lastName === "NO_LAST_NAME") && (
+            {(user?.firstName === PLACEHOLDER.FIRST_NAME ||
+              user?.lastName === PLACEHOLDER.LAST_NAME) && (
               <UpdateName updateName={updateName} />
             )}
           </div>
