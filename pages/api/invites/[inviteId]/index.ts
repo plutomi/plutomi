@@ -1,6 +1,6 @@
 import acceptOrgInvite from "../../../../utils/invites/acceptOrgInvite";
 import InputValidation from "../../../../utils/inputValidation";
-import { NextApiResponse } from "next";
+import { NextApiRequest, NextApiResponse } from "next";
 import deleteOrgInvite from "../../../../utils/invites/deleteOrgInvite";
 import withCleanOrgId from "../../../../middleware/withCleanOrgId";
 import { getOrgInvite } from "../../../../utils/invites/getOrgInvite";
@@ -11,7 +11,7 @@ import { joinOrgFromInvite } from "../../../../utils/orgs/joinOrgFromInvite";
 
 const handler = async (
   req: NextApiRequest,
-  res: NextApiResponse
+  res: NextApiResponse,
 ): Promise<void> => {
   console.log(req.session);
   const userSession = req.session.user;
@@ -20,7 +20,7 @@ const handler = async (
     return res.status(401).json({ message: "Please log in again" });
   }
   const { method, query } = req;
-  const { inviteId } = query as CUSTOM_QUERY;
+  const { inviteId } = query as Pick<CUSTOM_QUERY, "inviteId">;
 
   console.log("INvite id", req.query);
   // TODO trycatch

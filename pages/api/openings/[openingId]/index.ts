@@ -1,5 +1,5 @@
 import { getOpening } from "../../../../utils/openings/getOpeningById";
-import { NextApiResponse } from "next";
+import { NextApiRequest, NextApiResponse } from "next";
 import InputValidation from "../../../../utils/inputValidation";
 import updateOpening from "../../../../utils/openings/updateOpening";
 import { deleteOpening } from "../../../../utils/openings/deleteOpening";
@@ -15,7 +15,7 @@ const handler = async (
     return res.status(401).json({ message: "Please log in again" });
   }
   const { method, query, body } = req;
-  const { openingId } = query as CUSTOM_QUERY;
+  const { openingId } = query as Pick<CUSTOM_QUERY, "openingId">;
 
   const getOpeningInput: GetOpeningInput = {
     orgId: userSession.orgId,

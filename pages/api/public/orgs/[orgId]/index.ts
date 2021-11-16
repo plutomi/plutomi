@@ -1,11 +1,10 @@
 import withCleanOrgId from "../../../../../middleware/withCleanOrgId";
 import { getOrg } from "../../../../../utils/orgs/getOrg";
-import { NextApiResponse } from "next";
-import cleanOrg from "../../../../../utils/clean/cleanOrg";
+import { NextApiRequest, NextApiResponse } from "next";
 // This returns limited public information about an org
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   const { method, query } = req;
-  const { orgId } = query;
+  const { orgId } = query as Pick<CUSTOM_QUERY, "orgId">;
 
   if (method === "GET") {
     try {

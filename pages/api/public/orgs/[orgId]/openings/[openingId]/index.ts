@@ -1,12 +1,15 @@
 // Returns some public info about an opening
 // Such as the opening name, description, and stage order
 import withCleanOrgId from "../../../../../../../middleware/withCleanOrgId";
-import { NextApiResponse } from "next";
-import cleanOpening from "../../../../../../../utils/clean/cleanOpening";
+import { NextApiRequest, NextApiResponse } from "next";
 import { getOpening } from "../../../../../../../utils/openings/getOpeningById";
+import cleanOpening from "../../../../../../../utils/clean/cleanOpening";
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   const { method, query } = req;
-  const { orgId, openingId } = query as CUSTOM_QUERY;
+  const { orgId, openingId } = query as Pick<
+    CUSTOM_QUERY,
+    "orgId" | "openingId"
+  >;
 
   const getOpeningInput: GetOpeningInput = {
     orgId: orgId,
@@ -25,8 +28,8 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
           .status(400)
           .json({ message: "You cannot apply here just yet" });
       }
-      const cleanOpening = cleanOpening(opening as DynamoOpening);
-      return res.status(200).json(cleanOpening);
+      const cleanedOpening = cleanOpening(opening);
+      return res.status(200).json(cleanedOpening);
     } catch (error) {
       // TODO add error logger
       return res

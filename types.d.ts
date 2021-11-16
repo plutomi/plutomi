@@ -159,12 +159,13 @@ declare module "iron-session" {
       orgId: string;
       userId: string;
       userEmail: string;
-      // TODO user role RBAC
+      // TODO user role RBAC - fix these types
+      // TODO fix these types https://github.com/plutomi/plutomi/issues/301
     };
   }
 }
 
-interface StagesDynamoEntry {
+interface DynamoNewStage {
   /**
    * Primary key for creating a stage - takes `orgId` and `stageId`
    */
@@ -211,26 +212,19 @@ interface StagesDynamoEntry {
   GSI1SK: string;
 }
 
-type CreateStageInput = Pick<
-  StagesDynamoEntry,
-  "orgId" | "GSI1SK" | "openingId"
->;
+type CreateStageInput = Pick<DynamoNewStage, "orgId" | "GSI1SK" | "openingId">;
 
-type DeleteStageInput = Pick<StagesDynamoEntry, "orgId" | "stageId">;
-type GetStageByIdInput = Pick<StagesDynamoEntry, "orgId" | "stageId">;
-type GetStageByIdOutput = StagesDynamoEntry;
-type GetAllApplicantsInStageInput = Pick<
-  StagesDynamoEntry,
-  "orgId" | "stageId"
->;
-type GetAllApplicantsInStageOutput = ApplicantDynamoEntry[];
+type DeleteStageInput = Pick<DynamoNewStage, "orgId" | "stageId">;
+type GetStageByIdInput = Pick<DynamoNewStage, "orgId" | "stageId">;
+type GetStageByIdOutput = DynamoNewStage;
+type GetAllApplicantsInStageInput = Pick<DynamoNewStage, "orgId" | "stageId">;
+type GetAllApplicantsInStageOutput = DynamoNewApplicant[];
 
-interface UpdateStageInput
-  extends Pick<StagesDynamoEntry, "orgId" | "stageId"> {
+interface UpdateStageInput extends Pick<DynamoNewStage, "orgId" | "stageId"> {
   newStageValues: { [key: string]: any };
 }
 
-interface StageQuestionDynamoEntry {
+interface DynamoNewStageQuestion {
   /**
    * The primary key for the question. Variables are `orgId` and `questionId`
    */
@@ -279,30 +273,30 @@ interface StageQuestionDynamoEntry {
 }
 
 type CreateStageQuestionInput = Pick<
-  StageQuestionDynamoEntry,
+  DynamoNewStageQuestion,
   "orgId" | "stageId" | "GSI1SK" | "questionDescription"
 >;
 
 type orgIdAndQuestionId = "orgId" | "questionId";
 
-type DeleteQuestionInput = Pick<StageQuestionDynamoEntry, orgIdAndQuestionId>;
+type DeleteQuestionInput = Pick<DynamoNewStageQuestion, orgIdAndQuestionId>;
 
-type GetQuestionInput = Pick<StageQuestionDynamoEntry, orgIdAndQuestionId>;
-type GetQuestionOutput = StageQuestionDynamoEntry;
+type GetQuestionInput = Pick<DynamoNewStageQuestion, orgIdAndQuestionId>;
+type GetQuestionOutput = DynamoNewStageQuestion;
 
 type GetAllQuestionsInStageInput = Pick<
-  StageQuestionDynamoEntry,
+  DynamoNewStageQuestion,
   "orgId" | "stageId"
 >;
 
 interface UpdateQuestionInput
-  extends Pick<StageQuestionDynamoEntry, orgIdAndQuestionId> {
+  extends Pick<DynamoNewStageQuestion, orgIdAndQuestionId> {
   newQuestionValues: { [key: string]: any };
 }
 
 type GetAllQuestionsInStageOutput = GetQuestionOutput[];
 
-interface ApplicantDynamoEntry {
+interface DynamoNewApplicant {
   /**
    * Primary key of the applicant where the inputs are `orgId` and `applicantId`
    */
@@ -383,7 +377,7 @@ interface ApplicantDynamoEntry {
 }
 
 type CreateApplicantInput = Pick<
-  ApplicantDynamoEntry,
+  DynamoNewApplicant,
   | "orgId"
   | "firstName"
   | "lastName"
@@ -394,26 +388,26 @@ type CreateApplicantInput = Pick<
 
 type orgIdAndApplicantId = "orgId" | "applicantId";
 
-type CreateApplicantOutput = ApplicantDynamoEntry;
-type GetApplicantByIdInput = Pick<ApplicantDynamoEntry, orgIdAndApplicantId>;
+type CreateApplicantOutput = DynamoNewApplicant;
+type GetApplicantByIdInput = Pick<DynamoNewApplicant, orgIdAndApplicantId>;
 
-type DeleteApplicantInput = Pick<ApplicantDynamoEntry, orgIdAndApplicantId>;
+type DeleteApplicantInput = Pick<DynamoNewApplicant, orgIdAndApplicantId>;
 
 // TODO types for files, etc.
-interface GetApplicantByIdOutput extends ApplicantDynamoEntry {
+interface GetApplicantByIdOutput extends DynamoNewApplicant {
   responses: Object[]; // TODO fix this type with a response type
 }
 
 interface UpdateApplicantInput
-  extends Pick<ApplicantDynamoEntry, orgIdAndApplicantId> {
+  extends Pick<DynamoNewApplicant, orgIdAndApplicantId> {
   newApplicantValues: { [key: string]: any };
 }
 
-interface UpdateApplicantOutput extends ApplicantDynamoEntry {
+interface UpdateApplicantOutput extends DynamoNewApplicant {
   responses: Object[]; // TODO fix this type with a response type
 }
 
-interface ApplicantResponseEntry {
+interface DynamoNewApplicantResponse {
   /**
    * The primary key for the response - needs an `orgId` and `applicantId`
    */
@@ -465,7 +459,7 @@ interface ApplicantResponseEntry {
 }
 
 type CreateApplicantResponseInput = Pick<
-  ApplicantResponseEntry,
+  DynamoNewApplicantResponse,
   | "orgId"
   | "applicantId"
   | "questionTitle"
@@ -473,4 +467,4 @@ type CreateApplicantResponseInput = Pick<
   | "questionResponse"
 >;
 
-type CreateApplicantResponseOutput = ApplicantResponseEntry;
+type CreateApplicantResponseOutput = DynamoNewApplicantResponse;

@@ -1,6 +1,6 @@
 import withCleanOrgId from "../../../../middleware/withCleanOrgId";
 import { getOrg } from "../../../../utils/orgs/getOrg";
-import { NextApiResponse } from "next";
+import { NextApiRequest, NextApiResponse } from "next";
 import { withSessionRoute } from "../../../../middleware/withSession";
 import cleanUser from "../../../../utils/clean/cleanUser";
 import { updateUser } from "../../../../utils/users/updateUser";
@@ -15,7 +15,7 @@ const handler = async (
     return res.status(401).json({ message: "Please log in again" });
   }
   const { method, query } = req;
-  const { orgId } = query as CUSTOM_QUERY;
+  const { orgId } = query as Pick<CUSTOM_QUERY, "orgId">;
   const org = await getOrg(orgId);
 
   if (method === "GET") {

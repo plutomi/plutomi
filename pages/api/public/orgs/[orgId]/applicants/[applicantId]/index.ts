@@ -5,7 +5,7 @@ import withCleanOrgId from "../../../../../../../middleware/withCleanOrgId";
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   const user = req.user;
   const { method, query, body } = req;
-  const { applicantId } = query as CUSTOM_QUERY;
+  const { applicantId } = query as Pick<CUSTOM_QUERY, "applicantId">;
 
   if (method === "GET") {
     try {

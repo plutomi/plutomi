@@ -16,7 +16,7 @@ export async function createApplicantResponse(
   } = props;
   const now = Time.currentISO();
   const responseId = nanoid(30);
-  const newApplicantResponse: ApplicantResponseEntry = {
+  const newApplicantResponse: DynamoNewApplicantResponse = {
     PK: `ORG#${orgId}#APPLICANT#${applicantId}`,
     SK: `${ENTITY_TYPES.APPLICANT_RESPONSE}#${responseId}`,
     orgId: orgId,

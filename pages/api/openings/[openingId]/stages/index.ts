@@ -1,7 +1,5 @@
 import { getAllStagesInOpening } from "../../../../../utils/openings/getAllStagesInOpening";
-import { createStage } from "../../../../../utils/stages/createStage";
-import InputValidation from "../../../../../utils/inputValidation";
-import { NextApiResponse } from "next";
+import { NextApiRequest, NextApiResponse } from "next";
 import { withSessionRoute } from "../../../../../middleware/withSession";
 
 const handler = async (
@@ -13,8 +11,8 @@ const handler = async (
     req.session.destroy();
     return res.status(401).json({ message: "Please log in again" });
   }
-  const { body, method, query } = req;
-  const { openingId } = query as CUSTOM_QUERY;
+  const { method, query } = req;
+  const { openingId } = query as Pick<CUSTOM_QUERY, "openingId">;
 
   // Get all stages in an opening
   if (method === "GET") {

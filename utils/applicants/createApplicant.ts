@@ -19,7 +19,7 @@ export async function createApplicant(
   // Applicant ID has to be pretty high as the apply link will be their application link
   // https://zelark.github.io/nano-id-cc/
   const applicantId = nanoid(60);
-  const newApplicant: ApplicantDynamoEntry = {
+  const newApplicant: DynamoNewApplicant = {
     PK: `ORG#${orgId}#APPLICANT#${applicantId}`,
     SK: ENTITY_TYPES.APPLICANT,
     firstName: firstName,

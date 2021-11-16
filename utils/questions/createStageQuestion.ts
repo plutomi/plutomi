@@ -15,7 +15,7 @@ export async function createStageQuestion(
   const { orgId, stageId, GSI1SK, questionDescription } = props;
   const now = Time.currentISO();
   const questionId = nanoid(50);
-  const newStageQuestion: StageQuestionDynamoEntry = {
+  const newStageQuestion: DynamoNewStageQuestion = {
     PK: `ORG#${orgId}#STAGE_QUESTION#${questionId}`,
     SK: ENTITY_TYPES.STAGE_QUESTION,
     questionDescription: questionDescription || "",

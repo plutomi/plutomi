@@ -1,4 +1,4 @@
-import { NextApiResponse } from "next";
+import { NextApiRequest, NextApiResponse } from "next";
 import { getAllApplicantsInOpening } from "../../../../utils/openings/getAllApplicantsInOpening";
 import { withSessionRoute } from "../../../../middleware/withSession";
 import InputValidation from "../../../../utils/inputValidation";
@@ -13,7 +13,7 @@ const handler = async (
     return res.status(401).json({ message: "Please log in again" });
   }
   const { method, query } = req;
-  const { openingId } = query as CUSTOM_QUERY;
+  const { openingId } = query as Pick<CUSTOM_QUERY, "openingId">;
 
   if (method === "GET") {
     const getAllApplicantsInOpeningInput = {

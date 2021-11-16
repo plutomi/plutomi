@@ -1,7 +1,6 @@
-import { NextApiResponse } from "next";
+import { NextApiRequest, NextApiResponse } from "next";
 import { getAllApplicantsInStage } from "../../../../utils/stages/getAllApplicantsInStage";
 import { withSessionRoute } from "../../../../middleware/withSession";
-import { getStageById } from "../../../../utils/stages/getStageById";
 
 const handler = async (
   req: NextApiRequest,
@@ -13,7 +12,7 @@ const handler = async (
     return res.status(401).json({ message: "Please log in again" });
   }
   const { method, query } = req;
-  const { stageId } = query as CUSTOM_QUERY;
+  const { stageId } = query as Pick<CUSTOM_QUERY, "stageId">;
 
   if (method === "GET") {
     const getAllApplicantsInStageInput = {

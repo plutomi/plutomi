@@ -1,12 +1,13 @@
 // Returns some public info about an opening
 // Such as the opening name, description, and stage order
 import withCleanOrgId from "../../../../../../../middleware/withCleanOrgId";
-import { NextApiResponse } from "next";
-import cleanStage from "../../../../../../../utils/clean/cleanStage";
+import { NextApiRequest, NextApiResponse } from "next";
 import { getStageById } from "../../../../../../../utils/stages/getStageById";
+import cleanStage from "../../../../../../../utils/clean/cleanStage";
+
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   const { method, query } = req;
-  const { orgId, openingId, stageId } = query as CUSTOM_QUERY;
+  const { orgId, stageId } = query as Pick<CUSTOM_QUERY, "orgId" | "stageId">;
 
   const getStageInput: GetStageInput = {
     orgId: orgId,
@@ -25,8 +26,8 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       //       .status(400)
       //       .json({ message: "You cannot apply here just yet" });
       //   }
-      const cleanStage = cleanStage(stage as DynamoStage);
-      return res.status(200).json(cleanStage);
+      const cleanedStage = cleanStage(stage);
+      return res.status(200).json(cleanedStage);
     } catch (error) {
       // TODO add error logger
       return res

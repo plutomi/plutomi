@@ -1,12 +1,12 @@
 // All public openings for the org
 import withCleanOrgId from "../../../../../../middleware/withCleanOrgId";
-import { NextApiResponse } from "next";
+import { NextApiRequest, NextApiResponse } from "next";
 import { getAllOpeningsInOrg } from "../../../../../../utils/openings/getAllOpeningsInOrg";
 import cleanOpening from "../../../../../../utils/clean/cleanOpening";
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   const { method, query } = req;
-  const { orgId } = query as CUSTOM_QUERY;
+  const { orgId } = query as Pick<CUSTOM_QUERY, "orgId">;
 
   if (method === "GET") {
     try {

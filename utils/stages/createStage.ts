@@ -13,7 +13,7 @@ export async function createStage(props: CreateStageInput): Promise<void> {
   const { orgId, GSI1SK, openingId } = props;
   const now = Time.currentISO();
   const stageId = nanoid(50);
-  const newStage: StagesDynamoEntry = {
+  const newStage: DynamoNewStage = {
     PK: `ORG#${orgId}#STAGE#${stageId}`,
     SK: ENTITY_TYPES.STAGE,
     entityType: ENTITY_TYPES.STAGE,

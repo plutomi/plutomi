@@ -10,10 +10,8 @@ import { getLatestLoginLink } from "../../../utils/loginLinks/getLatestLoginLink
 import { createUser } from "../../../utils/users/createUser";
 import createLoginEvent from "../../../utils/users/createLoginEvent";
 import deleteLoginLink from "../../../utils/loginLinks/deleteLoginLink";
-import cleanUser from "../../../utils/clean/cleanUser";
 import { getUserById } from "../../../utils/users/getUserById";
 import updateLoginLink from "../../../utils/loginLinks/updateLoginLink";
-import dayjs from "dayjs";
 
 const handler = async (
   req: NextApiRequest,
@@ -21,7 +19,10 @@ const handler = async (
 ): Promise<void> => {
   const { body, method, query } = req; // TODO get from body
   const { userEmail, loginMethod } = body;
-  const { userId, key, callbackUrl } = query as CUSTOM_QUERY;
+  const { userId, key, callbackUrl } = query as Pick<
+    CUSTOM_QUERY,
+    "callbackUrl" | "userId" | "key"
+  >;
   const loginLinkLength = 1500;
   const loginLinkMaxDelayMinutes = 10;
   const timeThreshold = Time.pastISO(

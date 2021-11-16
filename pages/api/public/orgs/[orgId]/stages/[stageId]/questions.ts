@@ -1,9 +1,9 @@
-import { NextApiResponse } from "next";
+import { NextApiRequest, NextApiResponse } from "next";
 import { getAllQuestionsInStage } from "../../../../../../../utils/questions/getAllQuestionsInStage";
 import withCleanOrgId from "../../../../../../../middleware/withCleanOrgId";
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   const { method, query } = req;
-  const { orgId, stageId } = query as CUSTOM_QUERY;
+  const { orgId, stageId } = query as Pick<CUSTOM_QUERY, "orgId" | "stageId">;
 
   if (method === "GET") {
     try {

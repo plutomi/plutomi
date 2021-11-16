@@ -1,5 +1,5 @@
 import { getUserById } from "../../../../utils/users/getUserById";
-import { NextApiResponse } from "next";
+import { NextApiRequest, NextApiResponse } from "next";
 import { updateUser } from "../../../../utils/users/updateUser";
 import { withSessionRoute } from "../../../../middleware/withSession";
 import cleanUser from "../../../../utils/clean/cleanUser";
@@ -14,7 +14,7 @@ const handler = async (
     return res.status(401).json({ message: "Please log in again" });
   }
   const { method, query, body } = req;
-  const { userId } = query as CUSTOM_QUERY;
+  const { userId } = query as Pick<CUSTOM_QUERY, "userId">;
   const { newUserValues } = body;
 
   if (method === "GET") {

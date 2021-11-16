@@ -1,7 +1,6 @@
 import { getAllUsersInOrg } from "../../../../utils/orgs/getAllUsersInOrg";
 import withCleanOrgId from "../../../../middleware/withCleanOrgId";
-import { NextApiResponse } from "next";
-
+import { NextApiRequest, NextApiResponse } from "next";
 import { withSessionRoute } from "../../../../middleware/withSession";
 
 const handler = async (
@@ -14,7 +13,7 @@ const handler = async (
     return res.status(401).json({ message: "Please log in again" });
   }
   const { method, query } = req;
-  const { orgId } = query as CUSTOM_QUERY;
+  const { orgId } = query as Pick<CUSTOM_QUERY, "orgId">;
 
   if (method === "GET") {
     if (userSession.orgId != orgId) {

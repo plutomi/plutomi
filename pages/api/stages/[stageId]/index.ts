@@ -1,5 +1,5 @@
 import { getStageById } from "../../../../utils/stages/getStageById";
-import { NextApiResponse } from "next";
+import { NextApiRequest, NextApiResponse } from "next";
 import InputValidation from "../../../../utils/inputValidation";
 import { deleteStage } from "../../../../utils/stages/deleteStage";
 import updateStage from "../../../../utils/stages/updateStage";
@@ -16,8 +16,7 @@ const handler = async (
     return res.status(401).json({ message: "Please log in again" });
   }
   const { method, query, body } = req;
-  const { stageId } = query as CUSTOM_QUERY;
-  const { openingId } = body;
+  const { stageId } = query as Pick<CUSTOM_QUERY, "stageId">;
   // Get a single stage in an opening
   if (method === "GET") {
     const getStageInput: GetStageInput = {

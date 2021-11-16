@@ -1,4 +1,4 @@
-import { NextApiResponse } from "next";
+import { NextApiRequest, NextApiResponse } from "next";
 import { DeleteQuestion } from "../../../../utils/questions/deleteQuestion";
 import InputValidation from "../../../../utils/inputValidation";
 import updateQuestion from "../../../../utils/questions/updateStageQuestion";
@@ -14,7 +14,7 @@ const handler = async (
     return res.status(401).json({ message: "Please log in again" });
   }
   const { body, method, query } = req;
-  const { questionId } = query as CUSTOM_QUERY;
+  const { questionId } = query as Pick<CUSTOM_QUERY, "questionId">;
 
   if (method === "DELETE") {
     try {
