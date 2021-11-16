@@ -11,8 +11,8 @@ export async function createAndJoinOrg({ userId, orgId, GSI1SK }) {
   const now = Time.currentISO();
 
   const newOrg = {
-    PK: `ORG#${orgId}`,
-    SK: `ORG`,
+    PK: `${ENTITY_TYPES.ORG}#${orgId}`,
+    SK: `${ENTITY_TYPES.ORG}`,
     orgId: orgId, // plutomi - Cannot be changed
     entityType: "ORG",
     createdAt: now,
@@ -20,7 +20,7 @@ export async function createAndJoinOrg({ userId, orgId, GSI1SK }) {
     totalOpenings: 0,
     totalStages: 0,
     totalUsers: 1,
-    GSI1PK: `ORG`, // Allows for 'get all orgs' query
+    GSI1PK: `${ENTITY_TYPES.ORG}`, // Allows for 'get all orgs' query
     // but cannot do get org by specific name as there might be duplicates
     GSI1SK: GSI1SK, // Actual org name ie: Plutomi Inc - Can be changed!
   };
@@ -32,7 +32,7 @@ export async function createAndJoinOrg({ userId, orgId, GSI1SK }) {
           // Update user with the new org
           Update: {
             Key: {
-              PK: `USER#${userId}`,
+              PK: `${ENTITY_TYPES.USER}#${userId}`,
               SK: `USER`,
             },
             TableName: DYNAMO_TABLE_NAME,
@@ -41,7 +41,7 @@ export async function createAndJoinOrg({ userId, orgId, GSI1SK }) {
             ExpressionAttributeValues: {
               ":orgId": orgId,
               ":orgJoinDate": now,
-              ":GSI1PK": `ORG#${orgId}#USERS`,
+              ":GSI1PK": `${ENTITY_TYPES.ORG}#${orgId}#USERS`,
             },
           },
         },

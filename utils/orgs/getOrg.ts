@@ -9,8 +9,8 @@ export async function getOrg(orgId: string) {
   const params: GetCommandInput = {
     TableName: DYNAMO_TABLE_NAME,
     Key: {
-      PK: `ORG#${orgId}`,
-      SK: `ORG`,
+      PK: `${ENTITY_TYPES.ORG}#${orgId}`,
+      SK: `${ENTITY_TYPES.ORG}`,
     },
   };
 

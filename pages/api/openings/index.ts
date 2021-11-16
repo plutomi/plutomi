@@ -15,7 +15,7 @@ const handler = async (
   const { GSI1SK } = body;
 
   if (method === API_METHODS.POST) {
-    if (req.session.user.orgId === "NO_ORG_ASSIGNED") {
+    if (req.session.user.orgId === PLACEHOLDER.NO_ORG) {
       return res.status(403).json({
         message: "Please create an organization before creating an opening",
       });

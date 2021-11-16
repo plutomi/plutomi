@@ -1,4 +1,3 @@
-import { getAllUserInvites } from "./getAllOrgInvites";
 import deleteOrgInvite from "./deleteOrgInvite";
 import { getOrgInvite } from "./getOrgInvite";
 import Time from "../time";

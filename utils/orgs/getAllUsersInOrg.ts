@@ -9,7 +9,7 @@ export async function getAllUsersInOrg(orgId: string, limit?: number) {
     IndexName: "GSI1",
     KeyConditionExpression: "GSI1PK = :GSI1PK",
     ExpressionAttributeValues: {
-      ":GSI1PK": `ORG#${orgId}#USERS`,
+      ":GSI1PK": `${ENTITY_TYPES.ORG}#${orgId}#USERS`,
     },
     Limit: limit || null,
   }; // TODO query until all results are returned

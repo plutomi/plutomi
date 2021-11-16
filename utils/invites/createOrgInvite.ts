@@ -6,6 +6,7 @@ import { Dynamo } from "../../awsClients/ddbDocClient";
 import { getAllUserInvites } from "./getAllOrgInvites";
 import Time from "../time";
 import { nanoid } from "nanoid";
+import { ENTITY_TYPES } from "../../defaults";
 
 const { DYNAMO_TABLE_NAME } = process.env;
 
@@ -33,16 +34,16 @@ export default async function createOrgInvite({
     const inviteId = nanoid(50);
     const now = Time.currentISO();
     const newOrgInvite = {
-      PK: `USER#${user.userId}`,
-      SK: `ORG_INVITE#${inviteId}`, // Allows sorting, and incase two get created in the same millisecond
+      PK: `${ENTITY_TYPES.USER}#${user.userId}`,
+      SK: `${ENTITY_TYPES.ORG_INVITE}#${inviteId}`, // Allows sorting, and incase two get created in the same millisecond
       orgId: orgId,
       orgName: orgName, // using orgName here because GSI1SK is taken obv
       createdBy: createdBy,
-      entityType: "ORG_INVITE",
+      entityType: `${ENTITY_TYPES.ORG_INVITE}`,
       createdAt: now,
       expiresAt: expiresAt,
       inviteId: inviteId,
-      GSI1PK: `ORG#${orgId}#ORG_INVITES`,
+      GSI1PK: `${ENTITY_TYPES.ORG}#${orgId}#${ENTITY_TYPES.ORG_INVITE}S`,
       GSI1SK: now,
     };
 
@@ -61,7 +62,7 @@ export default async function createOrgInvite({
           // Increment the user's total invites
           Update: {
             Key: {
-              PK: `USER#${user.userId}`,
+              PK: `${ENTITY_TYPES.USER}#${user.userId}`,
               SK: `USER`,
             },
             TableName: DYNAMO_TABLE_NAME,

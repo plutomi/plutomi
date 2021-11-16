@@ -5,7 +5,12 @@ import {
 import { Dynamo } from "../../awsClients/ddbDocClient";
 import Time from "../time";
 import { nanoid } from "nanoid";
-
+import { ENTITY_TYPES } from "../../defaults";
+import {
+  CreateApplicantInput,
+  CreateApplicantOutput,
+  DynamoNewApplicant,
+} from "../../Types";
 const { DYNAMO_TABLE_NAME } = process.env;
 
 export async function createApplicant(
@@ -18,8 +23,9 @@ export async function createApplicant(
   // Applicant ID has to be pretty high as the apply link will be their application link
   // https://zelark.github.io/nano-id-cc/
   const applicantId = nanoid(60);
+
   const newApplicant: DynamoNewApplicant = {
-    PK: `ORG#${orgId}#APPLICANT#${applicantId}`,
+    PK: `${ENTITY_TYPES.ORG}#${orgId}#${ENTITY_TYPES.APPLICANT}#${applicantId}`,
     SK: ENTITY_TYPES.APPLICANT,
     firstName: firstName,
     lastName: lastName,
@@ -35,12 +41,12 @@ export async function createApplicant(
     stageId: stageId,
 
     // The reason for the below is so we can get applicants in an org, in an opening, or in a specific stage just by the ID of each.
-    // Before we had `OPENING#${openingId}#STAGE#{stageId}` for the SK which required the opening when getting applicants in specific stage
+    // Before we had `${ENTITY_TYPES.OPENING}#${openingId}#${ENTITY_TYPES.STAGE}#{stageId}` for the SK which required the opening when getting applicants in specific stage
     // TODO recheck later if this is still good
-    GSI1PK: `ORG#${orgId}#APPLICANTS`,
-    GSI1SK: `OPENING#${openingId}#DATE_LANDED#${now}`,
-    GSI2PK: `ORG#${orgId}#APPLICANTS`,
-    GSI2SK: `STAGE#${stageId}#DATE_LANDED#${now}`,
+    GSI1PK: `${ENTITY_TYPES.ORG}#${orgId}#APPLICANTS`,
+    GSI1SK: `${ENTITY_TYPES.OPENING}#${openingId}#DATE_LANDED#${now}`,
+    GSI2PK: `${ENTITY_TYPES.ORG}#${orgId}#APPLICANTS`,
+    GSI2SK: `${ENTITY_TYPES.STAGE}#${stageId}#DATE_LANDED#${now}`,
   };
 
   try {
@@ -59,8 +65,8 @@ export async function createApplicant(
           // Increment the opening's totalApplicants
           Update: {
             Key: {
-              PK: `ORG#${orgId}#OPENING#${openingId}`,
-              SK: `OPENING`,
+              PK: `${ENTITY_TYPES.ORG}#${orgId}#${ENTITY_TYPES.OPENING}#${openingId}`,
+              SK: `${ENTITY_TYPES.OPENING}`,
             },
             TableName: DYNAMO_TABLE_NAME,
             UpdateExpression:
@@ -75,8 +81,8 @@ export async function createApplicant(
           // Increment the stage's total applicants
           Update: {
             Key: {
-              PK: `ORG#${orgId}#STAGE#${stageId}`,
-              SK: `STAGE`,
+              PK: `${ENTITY_TYPES.ORG}#${orgId}#${ENTITY_TYPES.STAGE}#${stageId}`,
+              SK: `${ENTITY_TYPES.STAGE}`,
             },
             TableName: DYNAMO_TABLE_NAME,
             UpdateExpression:
@@ -91,8 +97,8 @@ export async function createApplicant(
           // Increment the org's total applicants
           Update: {
             Key: {
-              PK: `ORG#${orgId}`,
-              SK: `ORG`,
+              PK: `${ENTITY_TYPES.ORG}#${orgId}`,
+              SK: `${ENTITY_TYPES.ORG}`,
             },
             TableName: DYNAMO_TABLE_NAME,
             UpdateExpression:

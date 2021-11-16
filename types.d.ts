@@ -64,7 +64,7 @@ interface DynamoNewStage {
   /**
    * Primary key for creating a stage - takes `orgId` and `stageId`
    */
-  PK: `ORG#${string}#STAGE#${string}`;
+  PK: `${ENTITY_TYPES.ORG}#${string}#${ENTITY_TYPES.STAGE}#${string}`;
   /**
    * Sort key for a stage, it's just the {@link ENTITY_TYPES.STAGE}
    */
@@ -100,7 +100,7 @@ interface DynamoNewStage {
   /**
    * The primary key to get all stages in an opening. Requires `orgId` and `openingId`
    */
-  GSI1PK: `ORG#${string}#OPENING#${string}#STAGES`;
+  GSI1PK: `${ENTITY_TYPES.ORG}#${string}#${ENTITY_TYPES.OPENING}#${string}#${ENTITY_TYPES.STAGE}S`;
   /**
    * The stage name
    */
@@ -123,7 +123,7 @@ interface DynamoNewStageQuestion {
   /**
    * The primary key for the question. Variables are `orgId` and `questionId`
    */
-  PK: `ORG#${string}#STAGE_QUESTION#${string}`;
+  PK: `${ENTITY_TYPES.ORG}#${string}#${ENTITY_TYPES.STAGE_QUESTION}#${string}`;
   /**
    * Sort key for the question. In this case, it's just the {@link ENTITY_TYPES.STAGE_QUESTION}
    */
@@ -159,7 +159,7 @@ interface DynamoNewStageQuestion {
   /**
    * The primary key for the questios GSI1, params are `orgId` and `stageId`
    */
-  GSI1PK: `ORG#${string}#STAGE#${string}#QUESTIONS`;
+  GSI1PK: `${ENTITY_TYPES.ORG}#${string}#${ENTITY_TYPES.STAGE}#${string}#QUESTIONS`;
 
   /**
    * The question title
@@ -195,7 +195,7 @@ interface DynamoNewApplicant {
   /**
    * Primary key of the applicant where the inputs are `orgId` and `applicantId`
    */
-  PK: `ORG#${string}#APPLICANT#${string}`;
+  PK: `${ENTITY_TYPES.ORG}#${string}#${ENTITY_TYPES.APPLICANT}#${string}`;
   /**
    * The {@link ENTITY_TYPES.APPLICANT}
    */
@@ -257,19 +257,19 @@ interface DynamoNewApplicant {
   /**
    * Key for returning all applicants in an org - `orgId`
    */
-  GSI1PK: `ORG#${string}#APPLICANTS`;
+  GSI1PK: `${ENTITY_TYPES.ORG}#${string}#${ENTITY_TYPES.APPLICANT}S`;
   /**
    * Sort Key for returning all applicants that landed at X time in this opening - `orgId` and the current time
    */
-  GSI1SK: `OPENING#${string}#DATE_LANDED#${string}`;
+  GSI1SK: `${ENTITY_TYPES.OPENING}#${string}#DATE_LANDED#${string}`;
   /**
    * Key for returning all applicants in an org - While this is a duplicate, it is to facilitate the query for stages
    */
-  GSI2PK: `ORG#${string}#APPLICANTS`;
+  GSI2PK: `${ENTITY_TYPES.ORG}#${string}#${ENTITY_TYPES.APPLICANT}S`;
   /**
    * Sort Key for returning all applicants that landed at X time in this stage
    */
-  GSI2SK: `STAGE#${string}#DATE_LANDED#${string}`;
+  GSI2SK: `${ENTITY_TYPES.STAGE}#${string}#DATE_LANDED#${string}`;
 }
 
 type CreateApplicantInput = Pick<
@@ -302,7 +302,7 @@ interface DynamoNewApplicantResponse {
   /**
    * The primary key for the response - needs an `orgId` and `applicantId`
    */
-  PK: `ORG#${string}#APPLICANT#${string}`;
+  PK: `${ENTITY_TYPES.ORG}#${string}#${ENTITY_TYPES.APPLICANT}#${string}`;
   /**
    * The sort key for the response - needs `responseId`
    */
@@ -342,7 +342,7 @@ interface DynamoNewApplicantResponse {
   /**
    * Primary key to retrieve all responses for an applicant - takes `orgId` and `applicantId`
    */
-  GSI1PK: `ORG#${string}#APPLICANT#${string}`;
+  GSI1PK: `${ENTITY_TYPES.ORG}#${string}#${ENTITY_TYPES.APPLICANT}#${string}`;
   /**
    * Sort key to retrieve all responses for an applicant
    */

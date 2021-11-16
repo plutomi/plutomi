@@ -3,6 +3,7 @@ import {
   TransactWriteCommandInput,
 } from "@aws-sdk/lib-dynamodb";
 import { Dynamo } from "../../awsClients/ddbDocClient";
+import { ENTITY_TYPES } from "../../defaults";
 const { DYNAMO_TABLE_NAME } = process.env;
 import { getStageById } from "../stages/getStageById";
 import { getQuestionById } from "./getQuestionById";
@@ -25,8 +26,8 @@ export async function DeleteQuestion(
           // Delete question
           Delete: {
             Key: {
-              PK: `ORG#${orgId}#STAGE_QUESTION#${questionId}`,
-              SK: `STAGE_QUESTION`,
+              PK: `${ENTITY_TYPES.ORG}#${orgId}#${ENTITY_TYPES.STAGE_QUESTION}#${questionId}`,
+              SK: `${ENTITY_TYPES.STAGE_QUESTION}`,
             },
             TableName: DYNAMO_TABLE_NAME,
           },
@@ -35,8 +36,8 @@ export async function DeleteQuestion(
           // Update Question Order
           Update: {
             Key: {
-              PK: `ORG#${orgId}#STAGE#${stage.stageId}`,
-              SK: `STAGE`,
+              PK: `${ENTITY_TYPES.ORG}#${orgId}#${ENTITY_TYPES.STAGE}#${stage.stageId}`,
+              SK: `${ENTITY_TYPES.STAGE}`,
             },
             TableName: DYNAMO_TABLE_NAME,
             UpdateExpression: "SET questionOrder = :questionOrder",

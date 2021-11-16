@@ -12,7 +12,7 @@ export default async function createLoginLink({
   try {
     const now = Time.currentISO();
     const newLoginLink = {
-      PK: `USER#${user.userId}`,
+      PK: `${ENTITY_TYPES.USER}#${user.userId}`,
       SK: `LOGIN_LINK#${now}`,
       loginLinkHash: loginLinkHash,
       userId: user.userId,

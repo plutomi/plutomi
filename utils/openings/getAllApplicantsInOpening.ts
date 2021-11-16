@@ -9,8 +9,8 @@ export async function getAllApplicantsInOpening({ orgId, openingId }) {
     KeyConditionExpression:
       "GSI1PK = :GSI1PK AND  begins_with(GSI1SK, :GSI1SK)",
     ExpressionAttributeValues: {
-      ":GSI1PK": `ORG#${orgId}#APPLICANTS`,
-      ":GSI1SK": `OPENING#${openingId}`,
+      ":GSI1PK": `${ENTITY_TYPES.ORG}#${orgId}#APPLICANTS`,
+      ":GSI1SK": `${ENTITY_TYPES.OPENING}#${openingId}`,
     },
   };
 

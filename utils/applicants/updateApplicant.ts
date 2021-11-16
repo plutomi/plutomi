@@ -1,5 +1,6 @@
 import { UpdateCommand, UpdateCommandInput } from "@aws-sdk/lib-dynamodb";
 import { Dynamo } from "../../awsClients/ddbDocClient";
+import { ENTITY_TYPES } from "../../defaults";
 const { DYNAMO_TABLE_NAME } = process.env;
 const FORBIDDEN_KEYS = [
   "PK",
@@ -35,8 +36,8 @@ export default async function updateApplicant(
 
   const params: UpdateCommandInput = {
     Key: {
-      PK: `ORG#${orgId}#APPLICANT#${applicantId}`,
-      SK: `APPLICANT`,
+      PK: `${ENTITY_TYPES.ORG}#${orgId}#${ENTITY_TYPES.APPLICANT}#${applicantId}`,
+      SK: `${ENTITY_TYPES.APPLICANT}`,
     },
     UpdateExpression: UpdatedExpression,
     ExpressionAttributeValues: newAttributes,

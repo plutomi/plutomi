@@ -8,7 +8,7 @@ export async function getAllOpeningsInOrg(orgId: string) {
     IndexName: "GSI1",
     KeyConditionExpression: "GSI1PK = :GSI1PK",
     ExpressionAttributeValues: {
-      ":GSI1PK": `ORG#${orgId}#OPENINGS`,
+      ":GSI1PK": `${ENTITY_TYPES.ORG}#${orgId}#OPENINGS`,
     },
   };
 

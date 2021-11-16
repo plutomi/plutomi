@@ -6,6 +6,8 @@ import { Dynamo } from "../../awsClients/ddbDocClient";
 import Time from "../time";
 import { nanoid } from "nanoid";
 import { getOpening } from "../openings/getOpeningById";
+import { ENTITY_TYPES } from "../../defaults";
+import { CreateStageInput, DynamoNewStage } from "../../Types";
 
 const { DYNAMO_TABLE_NAME } = process.env;
 
@@ -14,7 +16,7 @@ export async function createStage(props: CreateStageInput): Promise<void> {
   const now = Time.currentISO();
   const stageId = nanoid(50);
   const newStage: DynamoNewStage = {
-    PK: `ORG#${orgId}#STAGE#${stageId}`,
+    PK: `${ENTITY_TYPES.ORG}#${orgId}#${ENTITY_TYPES.STAGE}#${stageId}`,
     SK: ENTITY_TYPES.STAGE,
     entityType: ENTITY_TYPES.STAGE,
     createdAt: now,
@@ -22,7 +24,7 @@ export async function createStage(props: CreateStageInput): Promise<void> {
     stageId: stageId,
     totalApplicants: 0,
     openingId: openingId,
-    GSI1PK: `ORG#${orgId}#OPENING#${openingId}#STAGES`, // Get all stages in an opening
+    GSI1PK: `${ENTITY_TYPES.ORG}#${orgId}#${ENTITY_TYPES.OPENING}#${openingId}#STAGES`, // Get all stages in an opening
     GSI1SK: GSI1SK,
   };
 
@@ -52,8 +54,8 @@ export async function createStage(props: CreateStageInput): Promise<void> {
             // Add stage to the opening + increment stage count on opening
             Update: {
               Key: {
-                PK: `ORG#${orgId}#OPENING#${openingId}`,
-                SK: `OPENING`,
+                PK: `${ENTITY_TYPES.ORG}#${orgId}#${ENTITY_TYPES.OPENING}#${openingId}`,
+                SK: `${ENTITY_TYPES.OPENING}`,
               },
               TableName: DYNAMO_TABLE_NAME,
 
@@ -70,8 +72,8 @@ export async function createStage(props: CreateStageInput): Promise<void> {
             // Increment stage count on org
             Update: {
               Key: {
-                PK: `ORG#${orgId}`,
-                SK: `ORG`,
+                PK: `${ENTITY_TYPES.ORG}#${orgId}`,
+                SK: `${ENTITY_TYPES.ORG}`,
               },
               TableName: DYNAMO_TABLE_NAME,
               UpdateExpression:

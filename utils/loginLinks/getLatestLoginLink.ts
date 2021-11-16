@@ -7,7 +7,7 @@ export async function getLatestLoginLink(userId: string) {
     TableName: DYNAMO_TABLE_NAME,
     KeyConditionExpression: "PK = :pk AND begins_with(SK, :sk)",
     ExpressionAttributeValues: {
-      ":pk": `USER#${userId}`,
+      ":pk": `${ENTITY_TYPES.USER}#${userId}`,
       ":sk": "loginLink",
     },
     ScanIndexForward: false,

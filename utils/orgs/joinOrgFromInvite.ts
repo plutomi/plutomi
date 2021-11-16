@@ -3,6 +3,7 @@ import {
   TransactWriteCommandInput,
 } from "@aws-sdk/lib-dynamodb";
 import { Dynamo } from "../../awsClients/ddbDocClient";
+import { ENTITY_TYPES } from "../../defaults";
 import Time from "../time";
 
 const { DYNAMO_TABLE_NAME } = process.env;
@@ -16,8 +17,8 @@ export async function joinOrgFromInvite({ userId, invite }) {
           // Delete org invite
           Delete: {
             Key: {
-              PK: `USER#${userId}`,
-              SK: `ORG_INVITE#${invite.inviteId}`,
+              PK: `${ENTITY_TYPES.USER}#${userId}`,
+              SK: `${ENTITY_TYPES.ORG_INVITE}#${invite.inviteId}`,
             },
             TableName: DYNAMO_TABLE_NAME,
           },
@@ -27,7 +28,7 @@ export async function joinOrgFromInvite({ userId, invite }) {
           // Update user with the new org and decrement their total invites
           Update: {
             Key: {
-              PK: `USER#${userId}`,
+              PK: `${ENTITY_TYPES.USER}#${userId}`,
               SK: `USER`,
             },
             TableName: DYNAMO_TABLE_NAME,
@@ -36,7 +37,7 @@ export async function joinOrgFromInvite({ userId, invite }) {
             ExpressionAttributeValues: {
               ":orgId": invite.orgId,
               ":orgJoinDate": now,
-              ":GSI1PK": `ORG#${invite.orgId}#USERS`,
+              ":GSI1PK": `${ENTITY_TYPES.ORG}#${invite.orgId}#USERS`,
               ":value": 1,
             },
           },
@@ -45,8 +46,8 @@ export async function joinOrgFromInvite({ userId, invite }) {
           // Increment the org with the new user
           Update: {
             Key: {
-              PK: `ORG#${invite.orgId}`,
-              SK: `ORG`,
+              PK: `${ENTITY_TYPES.ORG}#${invite.orgId}`,
+              SK: `${ENTITY_TYPES.ORG}`,
             },
             TableName: DYNAMO_TABLE_NAME,
             UpdateExpression: "SET totalUsers = totalUsers + :value",

@@ -2,7 +2,7 @@ import { getAllUsersInOrg } from "../../../../utils/orgs/getAllUsersInOrg";
 import withCleanOrgId from "../../../../middleware/withCleanOrgId";
 import { NextApiRequest, NextApiResponse } from "next";
 import { withSessionRoute } from "../../../../middleware/withSession";
-import { API_METHODS } from "../../../../defaults";
+import { API_METHODS, PLACEHOLDER } from "../../../../defaults";
 import withAuth from "../../../../middleware/withAuth";
 import withValidMethod from "../../../../middleware/withValidMethod";
 import { CUSTOM_QUERY } from "../../../../Types";
@@ -22,7 +22,7 @@ const handler = async (
         .json({ message: "You cannot view the users of this org" });
     }
 
-    if (req.session.user.orgId === "NO_ORG_ASSIGNED") {
+    if (req.session.user.orgId === PLACEHOLDER.NO_ORG) {
       return res.status(400).json({
         message: "You must create an org or join one to view it's users",
       });

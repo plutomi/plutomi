@@ -36,8 +36,8 @@ export async function deleteOpening({ orgId, openingId }) {
           // Delete the opening
           Delete: {
             Key: {
-              PK: `ORG#${orgId}#OPENING#${openingId}`,
-              SK: `OPENING`,
+              PK: `${ENTITY_TYPES.ORG}#${orgId}#${ENTITY_TYPES.OPENING}#${openingId}`,
+              SK: `${ENTITY_TYPES.OPENING}`,
             },
             TableName: DYNAMO_TABLE_NAME,
           },
@@ -46,8 +46,8 @@ export async function deleteOpening({ orgId, openingId }) {
           // Decrement the org's total openings
           Update: {
             Key: {
-              PK: `ORG#${orgId}`,
-              SK: `ORG`,
+              PK: `${ENTITY_TYPES.ORG}#${orgId}`,
+              SK: `${ENTITY_TYPES.ORG}`,
             },
             TableName: DYNAMO_TABLE_NAME,
             UpdateExpression: "SET totalOpenings = totalOpenings - :value",

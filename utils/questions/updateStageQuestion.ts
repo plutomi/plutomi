@@ -1,5 +1,6 @@
 import { UpdateCommand } from "@aws-sdk/lib-dynamodb";
 import { Dynamo } from "../../awsClients/ddbDocClient";
+import { ENTITY_TYPES } from "../../defaults";
 const { DYNAMO_TABLE_NAME } = process.env;
 
 export default async function updateQuestion(
@@ -37,8 +38,8 @@ export default async function updateQuestion(
 
   const params = {
     Key: {
-      PK: `ORG#${orgId}#STAGE_QUESTION#${questionId}`,
-      SK: `STAGE_QUESTION`,
+      PK: `${ENTITY_TYPES.ORG}#${orgId}#${ENTITY_TYPES.STAGE_QUESTION}#${questionId}`,
+      SK: `${ENTITY_TYPES.STAGE_QUESTION}`,
     },
     UpdateExpression: UpdatedExpression,
     ExpressionAttributeValues: newAttributes,

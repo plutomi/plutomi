@@ -1,5 +1,6 @@
 import { QueryCommand, QueryCommandInput } from "@aws-sdk/lib-dynamodb";
 import { Dynamo } from "../../awsClients/ddbDocClient";
+import { ENTITY_TYPES } from "../../defaults";
 import { getStageById } from "../stages/getStageById";
 
 const { DYNAMO_TABLE_NAME } = process.env;
@@ -16,7 +17,7 @@ export async function getAllQuestionsInStage(
     TableName: DYNAMO_TABLE_NAME,
     KeyConditionExpression: "GSI1PK = :GSI1PK",
     ExpressionAttributeValues: {
-      ":GSI1PK": `ORG#${orgId}#STAGE#${stageId}#QUESTIONS`,
+      ":GSI1PK": `${ENTITY_TYPES.ORG}#${orgId}#${ENTITY_TYPES.STAGE}#${stageId}#QUESTIONS`,
     },
   };
 

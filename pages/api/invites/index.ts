@@ -40,7 +40,7 @@ const handler = async (
       return res.status(400).json({ message: "You can't invite yourself" });
     }
 
-    if (req.session.user.orgId === "NO_ORG_ASSIGNED") {
+    if (req.session.user.orgId === PLACEHOLDER.NO_ORG) {
       return res.status(400).json({
         message: `You must create an organization before inviting users`,
       });

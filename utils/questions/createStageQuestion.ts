@@ -6,6 +6,8 @@ import { Dynamo } from "../../awsClients/ddbDocClient";
 import Time from "../time";
 import { nanoid } from "nanoid";
 import { getStageById } from "../stages/getStageById";
+import { ENTITY_TYPES } from "../../defaults";
+import { DynamoNewStageQuestion } from "../../Types";
 
 const { DYNAMO_TABLE_NAME } = process.env;
 
@@ -16,13 +18,13 @@ export async function createStageQuestion(
   const now = Time.currentISO();
   const questionId = nanoid(50);
   const newStageQuestion: DynamoNewStageQuestion = {
-    PK: `ORG#${orgId}#STAGE_QUESTION#${questionId}`,
+    PK: `${ENTITY_TYPES.ORG}#${orgId}#${ENTITY_TYPES.STAGE_QUESTION}#${questionId}`,
     SK: ENTITY_TYPES.STAGE_QUESTION,
     questionDescription: questionDescription || "",
     questionId: questionId,
     entityType: ENTITY_TYPES.STAGE_QUESTION,
     createdAt: now,
-    GSI1PK: `ORG#${orgId}#STAGE#${stageId}#QUESTIONS`,
+    GSI1PK: `${ENTITY_TYPES.ORG}#${orgId}#${ENTITY_TYPES.STAGE}#${stageId}#QUESTIONS`,
     GSI1SK: GSI1SK,
     orgId: orgId,
     stageId: stageId,
@@ -51,8 +53,8 @@ export async function createStageQuestion(
             // Add question to question order
             Update: {
               Key: {
-                PK: `ORG#${orgId}#STAGE#${stageId}`,
-                SK: `STAGE`,
+                PK: `${ENTITY_TYPES.ORG}#${orgId}#${ENTITY_TYPES.STAGE}#${stageId}`,
+                SK: `${ENTITY_TYPES.STAGE}`,
               },
               TableName: DYNAMO_TABLE_NAME,
               UpdateExpression: "SET questionOrder = :questionOrder",

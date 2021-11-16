@@ -1,5 +1,7 @@
 import { GetCommand, GetCommandInput } from "@aws-sdk/lib-dynamodb";
 import { Dynamo } from "../../awsClients/ddbDocClient";
+import { ENTITY_TYPES } from "../../defaults";
+import { GetQuestionInput, GetQuestionOutput } from "../../Types";
 
 const { DYNAMO_TABLE_NAME } = process.env;
 
@@ -10,8 +12,8 @@ export async function getQuestionById(
   const params: GetCommandInput = {
     TableName: DYNAMO_TABLE_NAME,
     Key: {
-      PK: `ORG#${orgId}#STAGE_QUESTION#${questionId}`,
-      SK: `STAGE_QUESTION`,
+      PK: `${ENTITY_TYPES.ORG}#${orgId}#${ENTITY_TYPES.STAGE_QUESTION}#${questionId}`,
+      SK: `${ENTITY_TYPES.STAGE_QUESTION}`,
     },
   };
 

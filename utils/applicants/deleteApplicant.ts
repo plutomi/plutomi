@@ -4,6 +4,7 @@ import {
 } from "@aws-sdk/lib-dynamodb";
 import { DeleteApplicantInput, GetApplicantByIdOutput } from "../../Applicants";
 import { Dynamo } from "../../awsClients/ddbDocClient";
+import { ENTITY_TYPES } from "../../defaults";
 import { getApplicantById } from "./getApplicantById";
 const { DYNAMO_TABLE_NAME } = process.env;
 
@@ -23,8 +24,8 @@ export default async function deleteApplicant(
           // Delete the applicant
           Delete: {
             Key: {
-              PK: `ORG#${orgId}#APPLICANT#${applicantId}`,
-              SK: `APPLICANT`,
+              PK: `${ENTITY_TYPES.ORG}#${orgId}#${ENTITY_TYPES.APPLICANT}#${applicantId}`,
+              SK: `${ENTITY_TYPES.APPLICANT}`,
             },
             TableName: DYNAMO_TABLE_NAME,
           },
@@ -34,8 +35,8 @@ export default async function deleteApplicant(
           // Decrement opening's totalApplicants
           Update: {
             Key: {
-              PK: `ORG#${orgId}#OPENING#${applicant.openingId}`, // todo fix types
-              SK: `OPENING`,
+              PK: `${ENTITY_TYPES.ORG}#${orgId}#${ENTITY_TYPES.OPENING}#${applicant.openingId}`, // todo fix types
+              SK: `${ENTITY_TYPES.OPENING}`,
             },
             TableName: DYNAMO_TABLE_NAME,
             UpdateExpression: "SET totalApplicants = totalApplicants - :value",
@@ -48,8 +49,8 @@ export default async function deleteApplicant(
           // Decrement stage's totalApplicants
           Update: {
             Key: {
-              PK: `ORG#${orgId}#STAGE#${applicant.stageId}`, // todo fix types
-              SK: `STAGE`,
+              PK: `${ENTITY_TYPES.ORG}#${orgId}#${ENTITY_TYPES.STAGE}#${applicant.stageId}`, // todo fix types
+              SK: `${ENTITY_TYPES.STAGE}`,
             },
             TableName: DYNAMO_TABLE_NAME,
             UpdateExpression: "SET totalApplicants = totalApplicants - :value",
@@ -62,8 +63,8 @@ export default async function deleteApplicant(
           // Decrement the org's total applicants
           Update: {
             Key: {
-              PK: `ORG#${orgId}`,
-              SK: `ORG`,
+              PK: `${ENTITY_TYPES.ORG}#${orgId}`,
+              SK: `${ENTITY_TYPES.ORG}`,
             },
             TableName: DYNAMO_TABLE_NAME,
             UpdateExpression: "SET totalApplicants = totalApplicants - :value",

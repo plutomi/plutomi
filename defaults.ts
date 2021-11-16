@@ -42,12 +42,12 @@ export enum ENTITY_TYPES {
   STAGE = "STAGE",
 
   /**
-   * For questions inside of a `STAGE`
+   * For questions inside of a `${ENTITY_TYPES.STAGE}`
    */
   STAGE_QUESTION = "STAGE_QUESTION",
 
   /**
-   * For rules inside of a `STAGE`
+   * For rules inside of a `${ENTITY_TYPES.STAGE}`
    */
   STAGE_RULE = "STAGE_RULE",
 
@@ -55,6 +55,10 @@ export enum ENTITY_TYPES {
    * Login links for `USER`s
    */
   LOGIN_LINK = "LOGIN_LINK",
+  /**
+   * Tiemstamp of a user login
+   */
+  LOGIN_EVENT = "LOGIN_EVENT"
 }
 
 export enum TIME_UNITS {
@@ -82,7 +86,7 @@ export enum ID_LENGTHS {
   APPLICANT = 60,
   INVITE = 50,
   OPENING = 16,
-  STAGE = 50,
+  ${ENTITY_TYPES.STAGE} = 50,
   STAGE_QUESTION = 50,
   STAGE_RULE = 16,
 }

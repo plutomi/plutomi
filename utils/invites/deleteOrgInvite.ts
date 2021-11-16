@@ -3,6 +3,7 @@ import {
   TransactWriteCommandInput,
 } from "@aws-sdk/lib-dynamodb";
 import { Dynamo } from "../../awsClients/ddbDocClient";
+import { ENTITY_TYPES } from "../../defaults";
 
 const { DYNAMO_TABLE_NAME } = process.env;
 export default async function deleteOrgInvite({ userId, inviteId }) {
@@ -13,8 +14,8 @@ export default async function deleteOrgInvite({ userId, inviteId }) {
           // Delete the org invite
           Delete: {
             Key: {
-              PK: `USER#${userId}`,
-              SK: `ORG_INVITE#${inviteId}`,
+              PK: `${ENTITY_TYPES.USER}#${userId}`,
+              SK: `${ENTITY_TYPES.ORG_INVITE}#${inviteId}`,
             },
             TableName: DYNAMO_TABLE_NAME,
           },
@@ -24,7 +25,7 @@ export default async function deleteOrgInvite({ userId, inviteId }) {
           // Decrement the user's total invites
           Update: {
             Key: {
-              PK: `USER#${userId}`,
+              PK: `${ENTITY_TYPES.USER}#${userId}`,
               SK: `USER`,
             },
             TableName: DYNAMO_TABLE_NAME,

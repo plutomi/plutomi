@@ -12,7 +12,7 @@ export async function getAllStagesInOpening(orgId: string, openingId: string) {
     IndexName: "GSI1",
     KeyConditionExpression: "GSI1PK = :GSI1PK",
     ExpressionAttributeValues: {
-      ":GSI1PK": `ORG#${orgId}#OPENING#${openingId}#STAGES`,
+      ":GSI1PK": `${ENTITY_TYPES.ORG}#${orgId}#${ENTITY_TYPES.OPENING}#${openingId}#STAGES`,
     },
   };
 

@@ -1,5 +1,6 @@
 import { QueryCommand, QueryCommandInput } from "@aws-sdk/lib-dynamodb";
 import { Dynamo } from "../../awsClients/ddbDocClient";
+import { ENTITY_TYPES } from "../../defaults";
 
 const { DYNAMO_TABLE_NAME } = process.env;
 
@@ -8,8 +9,8 @@ export async function getAllUserInvites(userId: string) {
     TableName: DYNAMO_TABLE_NAME,
     KeyConditionExpression: "PK = :pk AND begins_with(SK, :sk)",
     ExpressionAttributeValues: {
-      ":pk": `USER#${userId}`,
-      ":sk": "ORG_INVITE",
+      ":pk": `${ENTITY_TYPES.USER}#${userId}`,
+      ":sk": ENTITY_TYPES.ORG_INVITE,
     },
   };
 

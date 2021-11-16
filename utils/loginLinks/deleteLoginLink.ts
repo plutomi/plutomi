@@ -11,7 +11,7 @@ export default async function deleteLoginLink(
     const params: DeleteCommandInput = {
       TableName: DYNAMO_TABLE_NAME,
       Key: {
-        PK: `USER#${userId}`,
+        PK: `${ENTITY_TYPES.USER}#${userId}`,
         SK: `loginLink#${loginLinkTimestmap}`,
       },
     };

@@ -17,7 +17,7 @@ export async function createUser(props) {
   const now = Time.currentISO();
   const userId = nanoid(42);
   const newUser = {
-    PK: `USER#${userId}`,
+    PK: `${ENTITY_TYPES.USER}#${userId}`,
     SK: `USER`,
     firstName: PLACEHOLDER.FIRST_NAME,
     lastName: PLACEHOLDER.LAST_NAME,
@@ -25,10 +25,10 @@ export async function createUser(props) {
     userId: userId,
     entityType: ENTITY_TYPES.USER,
     createdAt: now,
-    orgId: "NO_ORG_ASSIGNED",
-    orgJoinDate: "NO_ORG_ASSIGNED",
+    orgId: PLACEHOLDER.NO_ORG,
+    orgJoinDate: PLACEHOLDER.NO_ORG,
     totalInvites: 0,
-    GSI1PK: "ORG#NO_ORG_ASSIGNED#USERS",
+    GSI1PK: `${ENTITY_TYPES.ORG}#${PLACEHOLDER.NO_ORG}#USERS`,
     GSI1SK: PLACEHOLDER.FULL_NAME,
     GSI2PK: email.toLowerCase().trim(),
     GSI2SK: ENTITY_TYPES.USER,

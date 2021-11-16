@@ -7,6 +7,7 @@ import {
   GetApplicantByIdInput,
   GetApplicantByIdOutput,
 } from "../../Applicants";
+import { ENTITY_TYPES } from "../../defaults";
 
 /**
  * Get an applicant by their ID
@@ -21,8 +22,8 @@ export async function getApplicantById(
     TableName: DYNAMO_TABLE_NAME,
     KeyConditionExpression: "PK = :PK AND begins_with(SK, :SK)",
     ExpressionAttributeValues: {
-      ":PK": `ORG#${orgId}#APPLICANT#${applicantId}`,
-      ":SK": `APPLICANT`,
+      ":PK": `${ENTITY_TYPES.ORG}#${orgId}#${ENTITY_TYPES.APPLICANT}#${applicantId}`,
+      ":SK": `${ENTITY_TYPES.APPLICANT}`,
     },
   };
 
@@ -34,7 +35,7 @@ export async function getApplicantById(
 
     const grouped = _.groupBy(allApplicantInfo.Items, "entityType");
 
-    const metadata = grouped.APPLICANT[0] as CreateApplicantOutput;
+    const metadata = grouped.${ENTITY_TYPES.APPLICANT}[0] as CreateApplicantOutput;
     const responses = grouped.APPLICANT_RESPONSE;
     // TODO files
 

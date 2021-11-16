@@ -6,8 +6,8 @@ export async function getOpening({ orgId, openingId }) {
   const params: GetCommandInput = {
     TableName: DYNAMO_TABLE_NAME,
     Key: {
-      PK: `ORG#${orgId}#OPENING#${openingId}`,
-      SK: `OPENING`,
+      PK: `${ENTITY_TYPES.ORG}#${orgId}#${ENTITY_TYPES.OPENING}#${openingId}`,
+      SK: `${ENTITY_TYPES.OPENING}`,
     },
   };
 

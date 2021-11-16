@@ -23,7 +23,7 @@ export default function DashboardContent() {
     return <Loader text={"Loading user..."} />;
   }
 
-  if (user.orgId != "NO_ORG_ASSIGNED" && isOrgLoading) {
+  if (user.orgId != PLACEHOLDER.NO_ORG && isOrgLoading) {
     return <Loader text={"Loading org info..."} />;
   }
 
@@ -87,7 +87,7 @@ export default function DashboardContent() {
     <div>
       <CreateOrgModal createOrg={createOrg} />
 
-      {user?.orgId === "NO_ORG_ASSIGNED" ? (
+      {user?.orgId === PLACEHOLDER.NO_ORG ? (
         <div className="text-center w-full h-full flex flex-col justify-center items-center">
           <OfficeBuildingIcon className="mx-auto h-12 w-12 text-light" />
           <h3 className="mt-2 text-lg font-medium text-dark">

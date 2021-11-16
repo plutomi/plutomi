@@ -37,8 +37,8 @@ export default async function updateOpening({
 
   const params: UpdateCommandInput = {
     Key: {
-      PK: `ORG#${orgId}#OPENING#${openingId}`,
-      SK: `OPENING`,
+      PK: `${ENTITY_TYPES.ORG}#${orgId}#${ENTITY_TYPES.OPENING}#${openingId}`,
+      SK: `${ENTITY_TYPES.OPENING}`,
     },
     UpdateExpression: UpdatedExpression,
     ExpressionAttributeValues: newAttributes,

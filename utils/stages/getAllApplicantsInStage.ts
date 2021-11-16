@@ -1,5 +1,6 @@
 import { QueryCommand, QueryCommandInput } from "@aws-sdk/lib-dynamodb";
 import { Dynamo } from "../../awsClients/ddbDocClient";
+import { ENTITY_TYPES } from "../../defaults";
 
 const { DYNAMO_TABLE_NAME } = process.env;
 
@@ -13,8 +14,8 @@ export async function getAllApplicantsInStage(
     KeyConditionExpression:
       "GSI2PK = :GSI2PK AND  begins_with(GSI2SK, :GSI2SK)",
     ExpressionAttributeValues: {
-      ":GSI2PK": `ORG#${orgId}#APPLICANTS`,
-      ":GSI2SK": `STAGE#${stageId}`,
+      ":GSI2PK": `${ENTITY_TYPES.ORG}#${orgId}#APPLICANTS`,
+      ":GSI2SK": `${ENTITY_TYPES.STAGE}#${stageId}`,
     },
   };
 

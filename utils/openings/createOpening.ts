@@ -14,12 +14,12 @@ export async function createOpening({ orgId, GSI1SK }) {
   const now = Time.currentISO();
   const openingId = nanoid(16);
   const newOpening = {
-    PK: `ORG#${orgId}#OPENING#${openingId}`,
-    SK: `OPENING`,
-    entityType: "OPENING",
+    PK: `${ENTITY_TYPES.ORG}#${orgId}#${ENTITY_TYPES.OPENING}#${openingId}`,
+    SK: `${ENTITY_TYPES.OPENING}`,
+    entityType: "${ENTITY_TYPES.OPENING}",
     createdAt: now,
     openingId: openingId,
-    GSI1PK: `ORG#${orgId}#OPENINGS`,
+    GSI1PK: `${ENTITY_TYPES.ORG}#${orgId}#OPENINGS`,
     GSI1SK: GSI1SK,
     totalStages: 0,
     totalOpenings: 0,
@@ -42,8 +42,8 @@ export async function createOpening({ orgId, GSI1SK }) {
         // Increment the org's total openings
         Update: {
           Key: {
-            PK: `ORG#${orgId}`,
-            SK: `ORG`,
+            PK: `${ENTITY_TYPES.ORG}#${orgId}`,
+            SK: `${ENTITY_TYPES.ORG}`,
           },
           TableName: DYNAMO_TABLE_NAME,
           UpdateExpression:

@@ -69,14 +69,14 @@ export default function SignedInNav({ current }) {
                   <div className="hidden sm:-my-px sm:ml-6 sm:flex sm:space-x-8">
                     {NAVBAR_NAVIGATION.map((item) => {
                       if (
-                        user?.orgId === "NO_ORG_ASSIGNED" &&
+                        user?.orgId === PLACEHOLDER.NO_ORG &&
                         item.hiddenIfNoOrg
                       ) {
                         return null;
                       }
 
                       if (
-                        user?.orgId !== "NO_ORG_ASSIGNED" &&
+                        user?.orgId !== PLACEHOLDER.NO_ORG &&
                         item.hiddenIfOrg
                       ) {
                         return null;

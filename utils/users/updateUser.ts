@@ -1,6 +1,6 @@
 import { UpdateCommand, UpdateCommandInput } from "@aws-sdk/lib-dynamodb";
 import { Dynamo } from "../../awsClients/ddbDocClient";
-import { PLACEHOLDER } from "../../defaults";
+import { ENTITY_TYPES, PLACEHOLDER } from "../../defaults";
 
 const { DYNAMO_TABLE_NAME } = process.env;
 
@@ -60,7 +60,7 @@ export async function updateUser({
     const NewUpdateExpression = `SET ${newUpdateExpression.join(", ")}`;
     const params: UpdateCommandInput = {
       Key: {
-        PK: `USER#${userId}`,
+        PK: `${ENTITY_TYPES.USER}#${userId}`,
         SK: `USER`,
       },
       UpdateExpression: NewUpdateExpression,
