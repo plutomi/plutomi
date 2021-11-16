@@ -3,7 +3,7 @@ import { createOpening } from "../../../utils/openings/createOpening";
 import InputValidation from "../../../utils/inputValidation";
 import { NextApiRequest, NextApiResponse } from "next";
 import { withSessionRoute } from "../../../middleware/withSession";
-import { API_METHODS } from "../../../defaults";
+import { API_METHODS, PLACEHOLDERS } from "../../../defaults";
 import withAuth from "../../../middleware/withAuth";
 import withValidMethod from "../../../middleware/withValidMethod";
 
@@ -15,7 +15,7 @@ const handler = async (
   const { GSI1SK } = body;
 
   if (method === API_METHODS.POST) {
-    if (req.session.user.orgId === PLACEHOLDER.NO_ORG) {
+    if (req.session.user.orgId === PLACEHOLDERS.NO_ORG) {
       return res.status(403).json({
         message: "Please create an organization before creating an opening",
       });

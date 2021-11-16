@@ -6,7 +6,7 @@ import { withSessionRoute } from "../../../middleware/withSession";
 import cleanUser from "../../../utils/clean/cleanUser";
 import { getUserById } from "../../../utils/users/getUserById";
 import { createAndJoinOrg } from "../../../utils/orgs/createAndJoinOrg";
-import { API_METHODS, PLACEHOLDER } from "../../../defaults";
+import { API_METHODS, PLACEHOLDERS } from "../../../defaults";
 import withAuth from "../../../middleware/withAuth";
 import withValidMethod from "../../../middleware/withValidMethod";
 
@@ -19,13 +19,13 @@ const handler = async (
 
   // Create an org
   if (method === API_METHODS.POST) {
-    if (GSI1SK === PLACEHOLDER.NO_ORG) {
+    if (GSI1SK === PLACEHOLDERS.NO_ORG) {
       // TODO major, this isn't using the withCleanOrgId
       return res.status(400).json({
         message: `You cannot create an org with this name: ${GSI1SK}`,
       });
     }
-    if (req.session.user.orgId != PLACEHOLDER.NO_ORG) {
+    if (req.session.user.orgId != PLACEHOLDERS.NO_ORG) {
       return res.status(400).json({
         message: `You already belong to an org!`,
       });

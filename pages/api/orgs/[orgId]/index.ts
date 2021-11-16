@@ -5,7 +5,7 @@ import { withSessionRoute } from "../../../../middleware/withSession";
 import cleanUser from "../../../../utils/clean/cleanUser";
 import { updateUser } from "../../../../utils/users/updateUser";
 import withAuth from "../../../../middleware/withAuth";
-import { API_METHODS, PLACEHOLDER } from "../../../../defaults";
+import { API_METHODS, PLACEHOLDERS } from "../../../../defaults";
 import { CUSTOM_QUERY } from "../../../../types/main";
 import withValidMethod from "../../../../middleware/withValidMethod";
 const handler = async (
@@ -53,9 +53,9 @@ const handler = async (
       const updatedUser = await updateUser({
         userId: req.session.user.userId,
         newUserValues: {
-          orgId: PLACEHOLDER.NO_ORG,
-          orgJoinDate: PLACEHOLDER.NO_ORG,
-          GSI1PK: PLACEHOLDER.NO_ORG,
+          orgId: PLACEHOLDERS.NO_ORG,
+          orgJoinDate: PLACEHOLDERS.NO_ORG,
+          GSI1PK: PLACEHOLDERS.NO_ORG,
         },
 
         ALLOW_FORBIDDEN_KEYS: true,

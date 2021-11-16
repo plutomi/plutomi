@@ -2,7 +2,7 @@ import useSelf from "../../SWR/useSelf";
 import { PencilAltIcon, PlusIcon } from "@heroicons/react/outline";
 import Loader from "../Loader";
 import useStore from "../../utils/store";
-import { PLACEHOLDER } from "../../defaults";
+import { PLACEHOLDERS } from "../../defaults";
 export default function UserProfileHeader() {
   const { user, isUserLoading, isUserError } = useSelf();
   const setUserProfileModal = useStore((state) => state.setUserProfileModal);
@@ -14,7 +14,7 @@ export default function UserProfileHeader() {
       <div className=" min-w-0 ">
         <h2 className="text-2xl font-bold leading-7 text-dark sm:text-3xl sm:truncate">
           Welcome to your profile
-          {user?.firstName === PLACEHOLDER.FIRST_NAME
+          {user?.firstName === PLACEHOLDERS.FIRST_NAME
             ? "!"
             : `, ${user?.firstName}!`}
         </h2>

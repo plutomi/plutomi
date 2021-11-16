@@ -108,18 +108,18 @@ interface DynamoNewApplicant {
   SK: ENTITY_TYPES.APPLICANT;
   /**
    * First name of the applicant
-   * @default - {@link PLACEHOLDER.FIRST_NAME}
+   * @default - {@link PLACEHOLDERS.FIRST_NAME}
    */
   firstName: string;
   /**
    * Last name of the applicant
-   * @default - {@link PLACEHOLDER.LAST_NAME}
+   * @default - {@link PLACEHOLDERS.LAST_NAME}
    *
    * */
   lastName: string;
   /**
    * Full name of the applicant. Concatenated `firstName` and `lastName`
-   * @default - {@link PLACEHOLDER.FULL_NAME}
+   * @default - {@link PLACEHOLDERS.FULL_NAME}
    */
   fullName: `${string} ${string}`;
 

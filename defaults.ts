@@ -92,14 +92,14 @@ export enum ID_LENGTHS {
   STAGE_RULE = 16,
 }
 
-export enum PLACEHOLDER {
+export enum PLACEHOLDERS {
   FIRST_NAME = "NO_FIRST_NAME",
   LAST_NAME = "NO_LAST_NAME",
   FULL_NAME = `NO_FIRST_NAME NO_LAST_NAME`,
   NO_ORG = `NO_ORG_ASSIGNED`,
 }
 
-export enum CONTACT {
+export enum EMAILS { // TODO replace domain with .env domain
   /**
    * For troubleshooting issues
    */
@@ -116,4 +116,14 @@ export enum CONTACT {
    * For administrative / Github related
    */
   ADMIN = "jose@plutomi.com",
+
+  /**
+   * For login links
+   */
+  LOGIN = "login@plutomi.com",
+
+  /**
+   * For org invites
+   */
+  INVITES = "join@plutomi.com",
 }

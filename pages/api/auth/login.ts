@@ -11,7 +11,7 @@ import createLoginEvent from "../../../utils/users/createLoginEvent";
 import deleteLoginLink from "../../../utils/loginLinks/deleteLoginLink";
 import { getUserById } from "../../../utils/users/getUserById";
 import updateLoginLink from "../../../utils/loginLinks/updateLoginLink";
-import { TIME_UNITS, API_METHODS, CONTACT } from "../../../defaults";
+import { TIME_UNITS, API_METHODS, EMAILS } from "../../../defaults";
 import withValidMethod from "../../../middleware/withValidMethod";
 import { CUSTOM_QUERY } from "../../../types/main";
 import cleanUser from "../../../utils/clean/cleanUser";
@@ -84,7 +84,7 @@ const handler = async (
         try {
           await sendEmail({
             fromName: "Plutomi",
-            fromAddress: CONTACT.GENERAL,
+            fromAddress: EMAILS.GENERAL,
             toAddresses: [user.email],
             subject: `Your magic login link is here!`,
             html: `<h1><a href="${loginLink}" noreferrer target="_blank" >Click this link to log in</a></h1><p>It will expire ${Time.relative(

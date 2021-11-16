@@ -8,7 +8,7 @@
     "start": "next start",
     "lint": "next lint",
     "test": "next dev & jest --coverage -i --silent=false tests/ALL.spec.ts ",
-    "deploy": "set NODE_ENV=production && cdk deploy && serverless --debug"
+    "deploy": "cdk deploy --all"
   },
   "dependencies": {
     "@aws-cdk/aws-apigatewayv2": "^1.130.0",

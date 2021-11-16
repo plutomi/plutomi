@@ -3,7 +3,7 @@ import { Dynamo } from "../../awsClients/ddbDocClient";
 import Time from "../time";
 import { nanoid } from "nanoid";
 import { getUserByEmail } from "./getUserByEmail";
-import { CONTACT, ENTITY_TYPES, ID_LENGTHS, PLACEHOLDER } from "../../defaults";
+import { EMAILS, ENTITY_TYPES, ID_LENGTHS, PLACEHOLDERS } from "../../defaults";
 import sendEmail from "../sendEmail";
 const { DYNAMO_TABLE_NAME } = process.env;
 
@@ -19,17 +19,17 @@ export async function createUser(props) {
   const newUser = {
     PK: `${ENTITY_TYPES.USER}#${userId}`,
     SK: ENTITY_TYPES.USER,
-    firstName: PLACEHOLDER.FIRST_NAME,
-    lastName: PLACEHOLDER.LAST_NAME,
+    firstName: PLACEHOLDERS.FIRST_NAME,
+    lastName: PLACEHOLDERS.LAST_NAME,
     email: email.toLowerCase().trim(),
     userId: userId,
     entityType: ENTITY_TYPES.USER,
     createdAt: now,
-    orgId: PLACEHOLDER.NO_ORG,
-    orgJoinDate: PLACEHOLDER.NO_ORG,
+    orgId: PLACEHOLDERS.NO_ORG,
+    orgJoinDate: PLACEHOLDERS.NO_ORG,
     totalInvites: 0,
-    GSI1PK: `${ENTITY_TYPES.ORG}#${PLACEHOLDER.NO_ORG}#USERS`,
-    GSI1SK: PLACEHOLDER.FULL_NAME,
+    GSI1PK: `${ENTITY_TYPES.ORG}#${PLACEHOLDERS.NO_ORG}#USERS`,
+    GSI1SK: PLACEHOLDERS.FULL_NAME,
     GSI2PK: email.toLowerCase().trim(),
     GSI2SK: ENTITY_TYPES.USER,
   };
@@ -44,7 +44,7 @@ export async function createUser(props) {
     await Dynamo.send(new PutCommand(params));
     sendEmail({
       fromName: "New Plutomi User",
-      fromAddress: CONTACT.GENERAL,
+      fromAddress: EMAILS.GENERAL,
       toAddresses: ["contact@plutomi.com"],
       subject: `A new user has signed up!`,
       html: `<h1>Email: ${newUser.email}</h1><h1>ID: ${newUser.userId}</h1>`,

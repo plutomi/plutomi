@@ -3,7 +3,7 @@ import { getOpening } from "../../../utils/openings/getOpeningById";
 import InputValidation from "../../../utils/inputValidation";
 import { createApplicant } from "../../../utils/applicants/createApplicant";
 import { getOrg } from "../../../utils/orgs/getOrg";
-import { API_METHODS, CONTACT } from "../../../defaults";
+import { API_METHODS, EMAILS } from "../../../defaults";
 import withAuth from "../../../middleware/withAuth";
 import { withSessionRoute } from "../../../middleware/withSession";
 import withValidMethod from "../../../middleware/withValidMethod";
@@ -68,7 +68,7 @@ const handler = async (
 
       await sendEmail({
         fromName: "Applications",
-        fromAddress: CONTACT.GENERAL,
+        fromAddress: EMAILS.GENERAL,
         toAddresses: ["newApplicant.email"],
         subject: `Here is a link to your application!`,
         html: `<h1><a href="${applicantionLink}" noreferrer target="_blank" >Click this link to view your application!</a></h1><p>If you did not request this link, you can safely ignore it.</p>`,

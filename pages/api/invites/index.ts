@@ -8,8 +8,8 @@ import { createUser } from "../../../utils/users/createUser";
 import {
   TIME_UNITS,
   API_METHODS,
-  CONTACT,
-  PLACEHOLDER,
+  EMAILS,
+  PLACEHOLDERS,
 } from "../../../defaults";
 import withAuth from "../../../middleware/withAuth";
 import withValidMethod from "../../../middleware/withValidMethod";
@@ -45,7 +45,7 @@ const handler = async (
       return res.status(400).json({ message: "You can't invite yourself" });
     }
 
-    if (req.session.user.orgId === PLACEHOLDER.NO_ORG) {
+    if (req.session.user.orgId === PLACEHOLDERS.NO_ORG) {
       return res.status(400).json({
         message: `You must create an organization before inviting users`,
       });
@@ -65,7 +65,7 @@ const handler = async (
       try {
         await sendEmail({
           fromName: "Plutomi",
-          fromAddress: CONTACT.GENERAL,
+          fromAddress: EMAILS.GENERAL,
           toAddresses: [recipient.email],
           subject: `${req.session.user.firstName} ${req.session.user.lastName} has invited you to join ${org.GSI1SK} on Plutomi!`,
           html: `<h4>You can log in at <a href="${process.env.NEXT_PUBLIC_WEBSITE_URL}">${process.env.NEXT_PUBLIC_WEBSITE_URL}</a> to accept it!</h4><p>If you believe this email was received in error, you can safely ignore it.</p>`,
