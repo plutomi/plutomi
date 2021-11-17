@@ -12,7 +12,7 @@ export default async function deleteApplicant(
   props: DeleteApplicantInput
 ): Promise<void> {
   const { orgId, applicantId } = props;
-  const applicant: GetApplicantByIdOutput = await getApplicantById({
+  const applicant = await getApplicantById({
     orgId,
     applicantId,
   });

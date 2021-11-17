@@ -1,10 +1,16 @@
 import { GetCommand, GetCommandInput } from "@aws-sdk/lib-dynamodb";
 import { Dynamo } from "../../awsClients/ddbDocClient";
 import { ENTITY_TYPES } from "../../defaults";
+import { DynamoNewUser } from "../../types/dynamo";
 
 const { DYNAMO_TABLE_NAME } = process.env;
 
-export async function getUserById(userId: string) {
+/**
+ * Returns a user's metadata
+ * @param userId The userId you want to find
+ * @returns {@link DynamoNewUser}
+ */
+export async function getUserById(userId: string): Promise<DynamoNewUser> {
   const params: GetCommandInput = {
     TableName: DYNAMO_TABLE_NAME,
     Key: {
@@ -15,7 +21,7 @@ export async function getUserById(userId: string) {
 
   try {
     const response = await Dynamo.send(new GetCommand(params));
-    return response.Item;
+    return response.Item as DynamoNewUser;
   } catch (error) {
     throw new Error(error);
   }

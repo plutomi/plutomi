@@ -1,6 +1,7 @@
 // This file is for the actual DynamoDB entries and their Types - ie: A full object with all properties.
 // All  other types are derivatives with Pick, Omit, etc.
-import { ENTITY_TYPES } from "../defaults";
+import { IronSessionData } from "iron-session";
+import { ENTITY_TYPES, PLACEHOLDERS } from "../defaults";
 
 interface DynamoNewStage {
   /**
@@ -284,4 +285,81 @@ interface DynamoNewOpening {
    * An array of `stageId`s, and the order they should be shown in
    */
   stageOrder: string[];
+}
+
+interface DynamoNewOrgInvite {
+  /**
+   * Primary key, requires a `userId`
+   */
+  PK: `${ENTITY_TYPES.USER}#${string}`;
+  /**
+   * Sort key, takes in an `inviteId`
+   */
+  SK: `${ENTITY_TYPES.ORG_INVITE}#${string}`;
+  /**
+   * The orgId this invite is for
+   */
+  orgId: string;
+  /**
+   * The actual name of the org to show on the invite
+   */
+  orgName: string;
+  /**
+   * Who created this invite, info comes from their session
+   */
+  createdBy: IronSessionData;
+  /**
+   * The entity type, see {@link ENTITY_TYPES.ORG_INVITE}
+   */
+  entityType: ENTITY_TYPES.ORG_INVITE;
+  /**
+   * ISO string timestamp of when this invite was created
+   */
+  createdAt: string;
+  /**
+   * ISO string timestamp of when this invite becomes invalid
+   */
+  expiresAt: string;
+  /**
+   * The invite's id
+   */
+  inviteId: string;
+  /**
+   * PK for the GSI, takes an 'orgId' to be able to retrieve all invites for an org
+   */
+  GSI1PK: `${ENTITY_TYPES.ORG}#${string}#${ENTITY_TYPES.ORG_INVITE}S`;
+  /**
+   * Current ISO timestamp, same as when createdAt
+   */
+  GSI1SK: string;
+}
+
+interface DynamoNewUser {
+  PK: `${ENTITY_TYPES.USER}#${string}`;
+  SK: ENTITY_TYPES.USER;
+  /**
+   * The given `firstName`
+   * @default PLACEHOLDERS.FIRST_NAME
+   */
+  firstName: string | PLACEHOLDERS.FIRST_NAME;
+  /**
+   * The given `lastName`
+   * @default PLACEHOLDERS.LAST_NAME
+   */
+  lastName: string | PLACEHOLDERS.LAST_NAME;
+  email: string;
+  userId: string;
+  entityType: ENTITY_TYPES.USER;
+  createdAt: string;
+  orgId: PLACEHOLDERS.NO_ORG;
+  orgJoinDate: PLACEHOLDERS.NO_ORG;
+  totalInvites: number;
+  GSI1PK: `${ENTITY_TYPES.ORG}#${PLACEHOLDERS.NO_ORG}#${ENTITY_TYPES.USER}S`;
+  /**
+   * Combined `firstName` and `lastName`
+   * @default PLACEHOLDERS.FULL_NAME
+   */
+  GSI1SK: `${string} ${string}` | PLACEHOLDERS.FULL_NAME;
+  GSI2PK: string;
+  GSI2SK: ENTITY_TYPES.USER;
 }

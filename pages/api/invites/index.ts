@@ -57,10 +57,10 @@ const handler = async (
     try {
       await createOrgInvite({
         orgId: org.orgId,
-        user: recipient,
+        recipient: recipient,
         orgName: org.GSI1SK,
         expiresAt: expiresAt,
-        createdBy: req.session.user,
+        createdBy: req.session,
       });
       try {
         await sendEmail({

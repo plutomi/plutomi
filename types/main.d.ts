@@ -1,9 +1,11 @@
+import { IronSessionData } from "iron-session";
 import {
   DynamoNewApplicant,
   DynamoNewApplicantResponse,
   DynamoNewOpening,
   DynamoNewStage,
   DynamoNewStageQuestion,
+  DynamoNewUser,
 } from "./dynamo";
 
 type CreateApplicantAPIBody = CreateApplicantInput;
@@ -81,6 +83,11 @@ export interface UpdateStageInput
   newStageValues: { [key: string]: any };
 }
 
+export interface UpdateUserInput extends Pick<DynamoNewUser, "userId"> {
+  newUserValues: { [key: string]: any };
+  ALLOW_FORBIDDEN_KEYS?: boolean;
+}
+
 type CreateStageQuestionInput = Pick<
   DynamoNewStageQuestion,
   "orgId" | "stageId" | "GSI1SK" | "questionDescription"
@@ -156,3 +163,22 @@ export interface UpdateOpeningInput
   extends Pick<DynamoNewOpening, "orgId" | "openingId"> {
   newOpeningValues: { [key: string]: any };
 }
+
+interface AcceptOrgInviteInput {
+  userId: string;
+  inviteId: string;
+}
+
+interface CreateOrgInviteInput {
+  orgId: string;
+  orgName: string;
+  expiresAt: string;
+  createdBy: Pick<IronSessionData, "user">;
+  recipient: DynamoNewUser;
+}
+
+type CreateUserInput = {
+  email: string;
+  firstName?: string;
+  lastName?: string;
+};

@@ -3,10 +3,10 @@
 import withCleanOrgId from "../../../../../../../middleware/withCleanOrgId";
 import { NextApiRequest, NextApiResponse } from "next";
 import { getOpening } from "../../../../../../../utils/openings/getOpeningById";
-import cleanOpening from "../../../../../../../utils/clean/cleanOpening";
-import { API_METHODS } from "../../../../../../../defaults";
+import { API_METHODS, ENTITY_TYPES } from "../../../../../../../defaults";
 import withValidMethod from "../../../../../../../middleware/withValidMethod";
 import { CUSTOM_QUERY } from "../../../../../../../types/main";
+import clean from "../../../../../../../utils/clean";
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   const { method, query } = req;
   const { orgId, openingId } = query as Pick<
@@ -14,7 +14,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     "orgId" | "openingId"
   >;
 
-  const getOpeningInput: GetOpeningInput = {
+  const getOpeningInput = {
     orgId: orgId,
     openingId: openingId,
   };
@@ -23,21 +23,21 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     try {
       const opening = await getOpening(getOpeningInput);
       if (!opening) {
-        return res.status(404).json({ message: "Opening not found" });
+        return res.status(404).json({ message: "Opening not found" }); // todo ERRORS
       }
 
       if (!opening.isPublic) {
         return res
           .status(400)
-          .json({ message: "You cannot apply here just yet" });
+          .json({ message: "You cannot apply here just yet" }); // todo ERRORS
       }
-      const cleanedOpening = cleanOpening(opening);
+      const cleanedOpening = clean(opening, ENTITY_TYPES.OPENING);
       return res.status(200).json(cleanedOpening);
     } catch (error) {
       // TODO add error logger
       return res
         .status(400) // TODO change #
-        .json({ message: `Unable to get opening: ${error}` });
+        .json({ message: `Unable to get opening: ${error}` }); // todo ERRORS
     }
   }
 };

@@ -5,7 +5,11 @@ import { ENTITY_TYPES, TIME_UNITS } from "../../defaults";
 
 const { DYNAMO_TABLE_NAME } = process.env;
 
-export default async function createLoginEvent(userId: string) {
+/**
+ * Creates a {@link ENTITY_TYPES.LOGIN_EVENT} for the user
+ * @param userId - The id of the user
+ */
+export default async function createLoginEvent(userId: string): Promise<void> {
   try {
     const now = Time.currentISO();
     const newLoginEvent = {
@@ -24,6 +28,7 @@ export default async function createLoginEvent(userId: string) {
     };
 
     await Dynamo.send(new PutCommand(params));
+    return;
   } catch (error) {
     throw new Error(`Unable to create login event ${error}`);
   }
