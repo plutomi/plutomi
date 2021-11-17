@@ -9,12 +9,12 @@ export default async function acceptOrgInvite({ userId, inviteId }) {
     let invite = await getOrgInvite(userId, inviteId);
 
     if (!invite) {
-      throw "Invite no longer exists";
+      throw "Invite no longer exists"; // todo add to errors enum
     }
 
     if (invite.expiresAt <= Time.currentISO()) {
       deleteOrgInvite({ userId, inviteId });
-      throw "Invite has expired";
+      throw "Invite has expired"; // todo add to errors enum
     }
     deleteOrgInvite({ userId, inviteId });
 

@@ -83,6 +83,6 @@ export async function deleteStage(props: DeleteStageInput): Promise<void> {
     }
   } catch (error) {
     console.error(error);
-    throw Error(`Unable to retrieve opening to delete stage ${error}`);
+    throw Error(`Unable to retrieve opening to delete stage ${error}`); // TODO add to errors
   }
 }

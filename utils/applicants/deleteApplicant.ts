@@ -79,6 +79,6 @@ export default async function deleteApplicant(
     await Dynamo.send(new TransactWriteCommand(transactParams));
   } catch (error) {
     console.error(error);
-    throw new Error(`Unable to delete applicant ${error}`);
+    throw new Error(`Unable to delete applicant ${error}`); // TODO add to errors
   }
 }

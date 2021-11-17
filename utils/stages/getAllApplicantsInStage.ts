@@ -18,7 +18,7 @@ export async function getAllApplicantsInStage(
     KeyConditionExpression:
       "GSI2PK = :GSI2PK AND  begins_with(GSI2SK, :GSI2SK)",
     ExpressionAttributeValues: {
-      ":GSI2PK": `${ENTITY_TYPES.ORG}#${orgId}#APPLICANTS`,
+      ":GSI2PK": `${ENTITY_TYPES.ORG}#${orgId}#${ENTITY_TYPES.APPLICANT}S`,
       ":GSI2SK": `${ENTITY_TYPES.STAGE}#${stageId}`,
     },
   };

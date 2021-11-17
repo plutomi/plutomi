@@ -40,9 +40,9 @@ export async function createApplicant(
     // The reason for the below is so we can get applicants in an org, in an opening, or in a specific stage just by the ID of each.
     // Before we had `${ENTITY_TYPES.OPENING}#${openingId}#${ENTITY_TYPES.STAGE}#{stageId}` for the SK which required the opening when getting applicants in specific stage
     // TODO recheck later if this is still good
-    GSI1PK: `${ENTITY_TYPES.ORG}#${orgId}#APPLICANTS`,
+    GSI1PK: `${ENTITY_TYPES.ORG}#${orgId}#${ENTITY_TYPES.APPLICANT}S`,
     GSI1SK: `${ENTITY_TYPES.OPENING}#${openingId}#DATE_LANDED#${now}`,
-    GSI2PK: `${ENTITY_TYPES.ORG}#${orgId}#APPLICANTS`,
+    GSI2PK: `${ENTITY_TYPES.ORG}#${orgId}#${ENTITY_TYPES.APPLICANT}S`,
     GSI2SK: `${ENTITY_TYPES.STAGE}#${stageId}#DATE_LANDED#${now}`,
   };
 

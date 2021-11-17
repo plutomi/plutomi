@@ -28,7 +28,7 @@ export async function createUser(props) {
     orgId: PLACEHOLDERS.NO_ORG,
     orgJoinDate: PLACEHOLDERS.NO_ORG,
     totalInvites: 0,
-    GSI1PK: `${ENTITY_TYPES.ORG}#${PLACEHOLDERS.NO_ORG}#USERS`,
+    GSI1PK: `${ENTITY_TYPES.ORG}#${PLACEHOLDERS.NO_ORG}#${ENTITY_TYPES.USER}S`,
     GSI1SK: PLACEHOLDERS.FULL_NAME,
     GSI2PK: email.toLowerCase().trim(),
     GSI2SK: ENTITY_TYPES.USER,

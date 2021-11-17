@@ -34,7 +34,7 @@ export async function createOrg({ orgId, GSI1SK }) {
   } catch (error) {
     if (error.name == "ConditionalCheckFailedException") {
       throw new Error(
-        `The organization name '${orgId}' has already been taken :(`
+        `The organization name '${orgId}' has already been taken :(` // todo add to errors
       );
     }
     throw new Error(error);

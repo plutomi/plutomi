@@ -98,7 +98,7 @@ export async function createStage(props: CreateStageInput): Promise<void> {
     }
   } catch (error) {
     throw new Error(
-      `Unable to retrieve opening where stage should be added ${error}`
+      `Unable to retrieve opening where stage should be added ${error}` // TODO add to errors
     );
   }
 }

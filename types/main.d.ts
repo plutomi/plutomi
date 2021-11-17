@@ -56,7 +56,8 @@ export interface CUSTOM_QUERY {
 
 declare module "iron-session" {
   export interface IronSessionData {
-    user?: {
+    user: // TODO replace with DynamoNewUser
+    {
       firstName: string;
       lastName: string;
       email: string;
@@ -64,7 +65,6 @@ declare module "iron-session" {
       userId: string;
       totalInvites: number;
       // TODO user role RBAC - fix these types
-      // TODO fix these types https://github.com/plutomi/plutomi/issues/301
     };
   }
 }
