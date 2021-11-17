@@ -57,9 +57,12 @@ export interface CUSTOM_QUERY {
 declare module "iron-session" {
   export interface IronSessionData {
     user?: {
+      firstName: string;
+      lastName: string;
+      email: string;
       orgId: string;
       userId: string;
-      email: string;
+      totalInvites: number;
       // TODO user role RBAC - fix these types
       // TODO fix these types https://github.com/plutomi/plutomi/issues/301
     };
