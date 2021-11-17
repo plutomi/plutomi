@@ -8,22 +8,27 @@ import { Dynamo } from "../../awsClients/ddbDocClient";
 import Time from "../time";
 import { nanoid } from "nanoid";
 import { ENTITY_TYPES, ID_LENGTHS } from "../../defaults";
+import { DynamoNewOpening } from "../../types/dynamo";
+import { CreateOpeningInput } from "../../types/main";
 
 const { DYNAMO_TABLE_NAME } = process.env;
 
-export async function createOpening({ orgId, GSI1SK }) {
+export async function createOpening(
+  props: CreateOpeningInput
+): Promise<DynamoNewOpening> {
+  const { orgId, GSI1SK } = props;
   const now = Time.currentISO();
   const openingId = nanoid(ID_LENGTHS.OPENING);
-  const newOpening = {
+  const newOpening: DynamoNewOpening = {
     PK: `${ENTITY_TYPES.ORG}#${orgId}#${ENTITY_TYPES.OPENING}#${openingId}`,
-    SK: `${ENTITY_TYPES.OPENING}`,
-    entityType: "${ENTITY_TYPES.OPENING}",
+    SK: ENTITY_TYPES.OPENING,
+    entityType: ENTITY_TYPES.OPENING,
     createdAt: now,
+    orgId: orgId,
     openingId: openingId,
-    GSI1PK: `${ENTITY_TYPES.ORG}#${orgId}#OPENINGS`,
+    GSI1PK: `${ENTITY_TYPES.ORG}#${orgId}#${ENTITY_TYPES.OPENING}S`,
     GSI1SK: GSI1SK,
     totalStages: 0,
-    totalOpenings: 0,
     totalApplicants: 0,
     isPublic: false,
     stageOrder: [],

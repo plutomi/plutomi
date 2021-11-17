@@ -228,3 +228,60 @@ interface DynamoNewApplicantResponse {
    */
   GSI1SK: ENTITY_TYPES.APPLICANT_RESPONSE; // TODO add timestmap?
 }
+
+interface DynamoNewOpening {
+  /**
+   * Primary key for creating an opening. Takes an `orgId`
+   */
+  PK: `${ENTITY_TYPES.ORG}#${string}#${ENTITY_TYPES.OPENING}#${string}`;
+  /**
+   * {@link ENTITY_TYPES.OPENING}
+   */
+  SK: ENTITY_TYPES.OPENING;
+
+  /**
+   * The org this opening belongs to
+   */
+
+  orgId: string;
+  /**
+   * {@link ENTITY_TYPES.OPENING}
+   */
+  entityType: ENTITY_TYPES.OPENING;
+  /**
+   * ISO Timestamp of when the opening was created
+   */
+  createdAt: string;
+  /**
+   * The ID of the opening
+   */
+  openingId: string;
+  /**
+   * GSIPK to retrieve all openings in an org. Takes an `orgId`
+   */
+  GSI1PK: `${ENTITY_TYPES.ORG}#${string}#${ENTITY_TYPES.OPENING}S`;
+  /**
+   * The opening name
+   */
+  GSI1SK: string;
+  /**
+   * Total stages in opening.
+   * @default 0
+   */
+  totalStages: number;
+  /**
+   *
+   *  Total applicants in opening.
+   * @default 0
+   */
+
+  totalApplicants: number;
+  /**
+   * If the opening should be public
+   */
+  isPublic: boolean;
+  /**
+   * An array of `stageId`s, and the order they should be shown in
+   */
+  stageOrder: string[];
+}

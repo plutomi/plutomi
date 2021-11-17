@@ -5,13 +5,16 @@ import {
   TransactWriteCommandInput,
 } from "@aws-sdk/lib-dynamodb";
 import { Dynamo } from "../../awsClients/ddbDocClient";
+import { ENTITY_TYPES } from "../../defaults";
+import { DeleteOpeningInput } from "../../types/main";
 const { DYNAMO_TABLE_NAME } = process.env;
 import { deleteStage } from "../stages/deleteStage";
 import { getAllStagesInOpening } from "./getAllStagesInOpening";
 // TODO check if stage is empt of appliants first
 // TODO delete stage from the funnels sort order
-export async function deleteOpening({ orgId, openingId }) {
-  const allStages = await getAllStagesInOpening(orgId, openingId);
+export async function deleteOpening(props: DeleteOpeningInput): Promise<void> {
+  const { orgId, openingId } = props;
+  const allStages = await getAllStagesInOpening({ orgId, openingId }); // TODO we dont have to query this anymore!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   try {
     // Delete stages first

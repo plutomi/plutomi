@@ -1,8 +1,14 @@
 import { GetCommand, GetCommandInput } from "@aws-sdk/lib-dynamodb";
 import { Dynamo } from "../../awsClients/ddbDocClient";
+import { ENTITY_TYPES } from "../../defaults";
+import { DynamoNewOpening } from "../../types/dynamo";
+import { GetOpeningByIdInput } from "../../types/main";
 const { DYNAMO_TABLE_NAME } = process.env;
 
-export async function getOpening({ orgId, openingId }) {
+export async function getOpening(
+  props: GetOpeningByIdInput
+): Promise<DynamoNewOpening> {
+  const { orgId, openingId } = props;
   const params: GetCommandInput = {
     TableName: DYNAMO_TABLE_NAME,
     Key: {
@@ -13,7 +19,7 @@ export async function getOpening({ orgId, openingId }) {
 
   try {
     const response = await Dynamo.send(new GetCommand(params));
-    return response.Item;
+    return response.Item as DynamoNewOpening;
   } catch (error) {
     throw new Error(error);
   }

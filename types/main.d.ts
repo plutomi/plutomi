@@ -1,6 +1,7 @@
 import {
   DynamoNewApplicant,
   DynamoNewApplicantResponse,
+  DynamoNewOpening,
   DynamoNewStage,
   DynamoNewStageQuestion,
 } from "./dynamo";
@@ -137,3 +138,18 @@ type CreateApplicantResponseInput = Pick<
 >;
 
 type CreateApplicantResponseOutput = DynamoNewApplicantResponse;
+
+type CreateOpeningInput = Pick<DynamoNewOpening, "orgId" | "GSI1SK">;
+type DeleteOpeningInput = Pick<DynamoNewOpening, "orgId" | "openingId">;
+type GetAllApplicantsInOpeningInput = Pick<
+  DynamoNewOpening,
+  "orgId" | "openingId"
+>;
+
+type GetAllOpeningsInOrgInput = Pick<DynamoNewOpening, "orgId">;
+type GetAllStagesInOpeningInput = Pick<DynamoNewOpening, "orgId" | "openingId">;
+type GetOpeningByIdInput = Pick<DynamoNewOpening, "orgId" | "openingId">;
+export interface UpdateOpeningInput
+  extends Pick<DynamoNewOpening, "orgId" | "openingId"> {
+  newOpeningValues: { [key: string]: any };
+}

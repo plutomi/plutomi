@@ -24,6 +24,7 @@ export async function createStage(props: CreateStageInput): Promise<void> {
     createdAt: now,
     questionOrder: [],
     stageId: stageId,
+    orgId: orgId,
     totalApplicants: 0,
     openingId: openingId,
     GSI1PK: `${ENTITY_TYPES.ORG}#${orgId}#${ENTITY_TYPES.OPENING}#${openingId}#STAGES`, // Get all stages in an opening

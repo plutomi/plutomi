@@ -46,7 +46,9 @@ const handler = async (
 
   if (method === API_METHODS.GET) {
     try {
-      const allOpenings = await getAllOpeningsInOrg(req.session.user.orgId);
+      const allOpenings = await getAllOpeningsInOrg({
+        orgId: req.session.user.orgId,
+      });
       return res.status(200).json(allOpenings);
     } catch (error) {
       // TODO add error logger
