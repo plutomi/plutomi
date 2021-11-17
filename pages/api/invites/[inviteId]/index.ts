@@ -3,13 +3,13 @@ import { NextApiRequest, NextApiResponse } from "next";
 import deleteOrgInvite from "../../../../utils/invites/deleteOrgInvite";
 import { getOrgInvite } from "../../../../utils/invites/getOrgInvite";
 import { withSessionRoute } from "../../../../middleware/withSession";
-import cleanUser from "../../../../utils/clean/cleanUser";
 import { getUserById } from "../../../../utils/users/getUserById";
 import { joinOrgFromInvite } from "../../../../utils/orgs/joinOrgFromInvite";
-import { API_METHODS } from "../../../../defaults";
+import { API_METHODS, ENTITY_TYPES } from "../../../../defaults";
 import withAuth from "../../../../middleware/withAuth";
 import withValidMethod from "../../../../middleware/withValidMethod";
 import { CUSTOM_QUERY } from "../../../../types/main";
+import clean from "../../../../utils/clean";
 
 const handler = async (
   req: NextApiRequest,
@@ -44,7 +44,8 @@ const handler = async (
       await joinOrgFromInvite({ userId: req.session.user.userId, invite });
 
       const updatedUser = await getUserById(req.session.user.userId);
-      req.session.user = cleanUser(updatedUser);
+
+      req.session.user = clean(updatedUser, ENTITY_TYPES.USER);
       await req.session.save();
       return res
         .status(200)

@@ -127,3 +127,14 @@ export enum EMAILS { // TODO replace domain with .env domain
    */
   INVITES = "join@plutomi.com",
 }
+
+/**
+ * When using the /public/ api, what properties are allowed to be returned for each entity
+ */
+export const SAFE_PROPERTIES = {
+  APPLICANT: ["firstName", "lastName", "createdAt", "openingId", "stageId"],
+  ORG: ["GSI1SK", "orgId"],
+  STAGE: ["GSI1SK", "stageId", "createdAt", "questionOrder"],
+  USER: ["userId", "orgId", "email", "firstName", "lastName", "totalInvites"],
+  OPENING: ["GSI1SK", "openingId", "createdAt", "stageOrder"],
+};

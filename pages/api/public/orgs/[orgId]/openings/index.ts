@@ -2,10 +2,10 @@
 import withCleanOrgId from "../../../../../../middleware/withCleanOrgId";
 import { NextApiRequest, NextApiResponse } from "next";
 import { getAllOpeningsInOrg } from "../../../../../../utils/openings/getAllOpeningsInOrg";
-import cleanOpening from "../../../../../../utils/clean/cleanOpening";
-import { API_METHODS } from "../../../../../../defaults";
+import { API_METHODS, ENTITY_TYPES } from "../../../../../../defaults";
 import withValidMethod from "../../../../../../middleware/withValidMethod";
 import { CUSTOM_QUERY } from "../../../../../../types/main";
+import clean from "../../../../../../utils/clean";
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   const { method, query } = req;
@@ -13,12 +13,10 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 
   if (method === API_METHODS.GET) {
     try {
-      const allOpenings = await getAllOpeningsInOrg(orgId);
+      const allOpenings = await getAllOpeningsInOrg({ orgId });
       const publicOpenings = allOpenings.filter((opening) => opening.isPublic);
 
-      publicOpenings.forEach((opening) =>
-        cleanOpening(opening as DynamoOpening)
-      );
+      publicOpenings.forEach((opening) => clean(opening, ENTITY_TYPES.OPENING));
 
       return res.status(200).json(publicOpenings);
     } catch (error) {

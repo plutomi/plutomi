@@ -11,11 +11,16 @@ import createLoginEvent from "../../../utils/users/createLoginEvent";
 import deleteLoginLink from "../../../utils/loginLinks/deleteLoginLink";
 import { getUserById } from "../../../utils/users/getUserById";
 import updateLoginLink from "../../../utils/loginLinks/updateLoginLink";
-import { TIME_UNITS, API_METHODS, EMAILS } from "../../../defaults";
+import {
+  TIME_UNITS,
+  API_METHODS,
+  EMAILS,
+  ENTITY_TYPES,
+} from "../../../defaults";
 import withValidMethod from "../../../middleware/withValidMethod";
 import { CUSTOM_QUERY } from "../../../types/main";
-import cleanUser from "../../../utils/clean/cleanUser";
 import sendEmail from "../../../utils/sendEmail";
+import clean from "../../../utils/clean";
 
 const handler = async (
   req: NextApiRequest,
@@ -175,7 +180,7 @@ const handler = async (
       // Invalidates the last login link while allowing the user to login again if needed
       deleteLoginLink(userId, latestLoginLink.createdAt);
 
-      const cleanedUser = cleanUser(user);
+      const cleanedUser = clean(user, ENTITY_TYPES.USER);
 
       req.session.user = cleanedUser;
 

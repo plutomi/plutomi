@@ -2,12 +2,12 @@ import { getUserById } from "../../../../utils/users/getUserById";
 import { NextApiRequest, NextApiResponse } from "next";
 import { updateUser } from "../../../../utils/users/updateUser";
 import { withSessionRoute } from "../../../../middleware/withSession";
-import cleanUser from "../../../../utils/clean/cleanUser";
-import { API_METHODS } from "../../../../defaults";
+import { API_METHODS, ENTITY_TYPES } from "../../../../defaults";
 import withAuth from "../../../../middleware/withAuth";
 import withCleanOrgId from "../../../../middleware/withCleanOrgId";
 import withValidMethod from "../../../../middleware/withValidMethod";
 import { CUSTOM_QUERY } from "../../../../types/main";
+import clean from "../../../../utils/clean";
 
 const handler = async (
   req: NextApiRequest,
@@ -59,7 +59,7 @@ const handler = async (
 
       // If a signed in user is updating themselves, update the session state
       if (updatedUser.userId === req.session.user.userId) {
-        req.session.user = cleanUser(updatedUser);
+        req.session.user = clean(updatedUser, ENTITY_TYPES.USER);
         await req.session.save();
       }
       return res.status(200).json({ message: "Updated!" });

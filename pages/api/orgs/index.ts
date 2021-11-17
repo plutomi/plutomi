@@ -3,12 +3,12 @@ import withCleanOrgId from "../../../middleware/withCleanOrgId";
 import InputValidation from "../../../utils/inputValidation";
 import { getAllUserInvites } from "../../../utils/invites/getAllOrgInvites";
 import { withSessionRoute } from "../../../middleware/withSession";
-import cleanUser from "../../../utils/clean/cleanUser";
 import { getUserById } from "../../../utils/users/getUserById";
 import { createAndJoinOrg } from "../../../utils/orgs/createAndJoinOrg";
-import { API_METHODS, PLACEHOLDERS } from "../../../defaults";
+import { API_METHODS, ENTITY_TYPES, PLACEHOLDERS } from "../../../defaults";
 import withAuth from "../../../middleware/withAuth";
 import withValidMethod from "../../../middleware/withValidMethod";
+import clean from "../../../utils/clean";
 
 const handler = async (
   req: NextApiRequest,
@@ -66,7 +66,7 @@ const handler = async (
       const updatedUser = await getUserById(req.session.user.userId); // TODO remove this, wait for transact
 
       // Update the logged in user session with the new org id
-      req.session.user = cleanUser(updatedUser);
+      req.session.user = clean(updatedUser, ENTITY_TYPES.USER);
       await req.session.save();
 
       return res.status(201).json({ message: "Org created!", org: orgId });

@@ -2,12 +2,12 @@ import withCleanOrgId from "../../../../middleware/withCleanOrgId";
 import { getOrg } from "../../../../utils/orgs/getOrg";
 import { NextApiRequest, NextApiResponse } from "next";
 import { withSessionRoute } from "../../../../middleware/withSession";
-import cleanUser from "../../../../utils/clean/cleanUser";
 import { updateUser } from "../../../../utils/users/updateUser";
 import withAuth from "../../../../middleware/withAuth";
-import { API_METHODS, PLACEHOLDERS } from "../../../../defaults";
+import { API_METHODS, ENTITY_TYPES, PLACEHOLDERS } from "../../../../defaults";
 import { CUSTOM_QUERY } from "../../../../types/main";
 import withValidMethod from "../../../../middleware/withValidMethod";
+import clean from "../../../../utils/clean";
 const handler = async (
   req: NextApiRequest,
   res: NextApiResponse
@@ -60,7 +60,7 @@ const handler = async (
 
         ALLOW_FORBIDDEN_KEYS: true,
       });
-      req.session.user = cleanUser(updatedUser);
+      req.session.user = clean(updatedUser, ENTITY_TYPES.USER);
       await req.session.save();
       return res
         .status(200)
