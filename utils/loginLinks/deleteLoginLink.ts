@@ -13,7 +13,7 @@ export default async function deleteLoginLink(
       TableName: DYNAMO_TABLE_NAME,
       Key: {
         PK: `${ENTITY_TYPES.USER}#${userId}`,
-        SK: `loginLink#${loginLinkTimestmap}`,
+        SK: `${ENTITY_TYPES.LOGIN_LINK}#${loginLinkTimestmap}`,
       },
     };
 

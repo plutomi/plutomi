@@ -9,7 +9,7 @@ export async function getLatestLoginLink(userId: string) {
     KeyConditionExpression: "PK = :pk AND begins_with(SK, :sk)",
     ExpressionAttributeValues: {
       ":pk": `${ENTITY_TYPES.USER}#${userId}`,
-      ":sk": "loginLink",
+      ":sk": ENTITY_TYPES.LOGIN_LINK,
     },
     ScanIndexForward: false,
     Limit: 1,

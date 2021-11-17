@@ -41,7 +41,6 @@ const handler = async (
 
   // Creates a login link
   if (method === API_METHODS.POST) {
-    console.log("IN POST", email);
     try {
       InputValidation({ email });
     } catch (error) {
@@ -100,9 +99,11 @@ const handler = async (
             .status(201)
             .json({ message: `We've sent a magic login link to your email!` });
         } catch (error) {
+          console.error(error);
           return res.status(500).json({ message: `${error}` }); // TODO error #
         }
       } catch (error) {
+        console.error(error);
         // TODO error #
         return res.status(500).json({ message: `${error}` });
       }
@@ -153,6 +154,7 @@ const handler = async (
       });
 
       return res.status(401).json({
+        // TODO make this an error
         message: `Your login link has been suspended. Please try again later.`,
       });
     }
@@ -160,13 +162,14 @@ const handler = async (
     // Lock account if already suspended
     if (latestLoginLink.linkStatus === "SUSPENDED") {
       return res.status(401).json({
+        // TODO make this an error
         message: `Your login link has been suspended. Please try again later or email support@plutomi.com`,
       });
     }
 
     if (latestLoginLink.expiresAt <= Time.currentISO()) {
       return res.status(401).json({
-        message: `Your login link has expired.`,
+        message: `Your login link has expired.`, // TODO make this an error
       });
     }
 
