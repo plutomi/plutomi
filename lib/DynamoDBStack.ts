@@ -15,8 +15,6 @@ export class DynamoDBStack extends cdk.Stack {
       partitionKey: { name: "PK", type: dynamodb.AttributeType.STRING },
       sortKey: { name: "SK", type: dynamodb.AttributeType.STRING },
       timeToLiveAttribute: "ttlExpiry",
-      readCapacity: 1,
-      writeCapacity: 1,
       billingMode: dynamodb.BillingMode.PAY_PER_REQUEST,
       stream: dynamodb.StreamViewType.NEW_AND_OLD_IMAGES,
     });
@@ -25,8 +23,6 @@ export class DynamoDBStack extends cdk.Stack {
       indexName: "GSI1",
       partitionKey: { name: "GSI1PK", type: dynamodb.AttributeType.STRING },
       sortKey: { name: "GSI1SK", type: dynamodb.AttributeType.STRING },
-      readCapacity: 1,
-      writeCapacity: 1,
       projectionType: dynamodb.ProjectionType.ALL,
     });
 
@@ -34,8 +30,6 @@ export class DynamoDBStack extends cdk.Stack {
       indexName: "GSI2",
       partitionKey: { name: "GSI2PK", type: dynamodb.AttributeType.STRING },
       sortKey: { name: "GSI2SK", type: dynamodb.AttributeType.STRING },
-      readCapacity: 1,
-      writeCapacity: 1,
       projectionType: dynamodb.ProjectionType.ALL,
     });
 
