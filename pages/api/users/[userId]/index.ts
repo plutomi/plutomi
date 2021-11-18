@@ -19,7 +19,7 @@ const handler = async (
 
   if (method === API_METHODS.GET) {
     try {
-      const requestedUser = await getUserById(userId);
+      const requestedUser = await getUserById({ userId: userId });
 
       if (!requestedUser) {
         return res.status(404).json({ message: "User not found" });

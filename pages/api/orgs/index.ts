@@ -31,7 +31,9 @@ const handler = async (
       });
     }
 
-    const pendingInvites = await getOrgInvitesForUser(req.session.user.userId);
+    const pendingInvites = await getOrgInvitesForUser({
+      userId: req.session.user.userId,
+    });
 
     if (pendingInvites && pendingInvites.length > 0) {
       return res.status(403).json({
@@ -63,10 +65,9 @@ const handler = async (
         orgId: orgId,
         GSI1SK: GSI1SK,
       });
-      const updatedUser = await getUserById(req.session.user.userId); // TODO remove this, wait for transact
 
       // Update the logged in user session with the new org id
-      req.session.user = clean(updatedUser, ENTITY_TYPES.USER);
+      req.session.user.orgId = orgId;
       await req.session.save();
 
       return res.status(201).json({ message: "Org created!", org: orgId });

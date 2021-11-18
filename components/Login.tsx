@@ -4,6 +4,7 @@ import router from "next/router";
 import AuthService from "../adapters/AuthService";
 import GoogleLoginButton from "./GoogleLoginButton";
 import axios from "axios";
+import { LOGIN_METHODS } from "../defaults";
 
 export default function Login({ loggedOutPageText }) {
   const [email, setemail] = useState("");
@@ -25,7 +26,7 @@ export default function Login({ loggedOutPageText }) {
       const { message } = await AuthService.login(
         email,
         `${process.env.NEXT_PUBLIC_WEBSITE_URL + router.asPath}`,
-        "LINK"
+        LOGIN_METHODS.LINK
       );
 
       setSubmittedText(message);
@@ -39,13 +40,17 @@ export default function Login({ loggedOutPageText }) {
     console.log(response);
     const email = response.profileObj.email;
 
-    const { message } = await AuthService.login(
-      email,
-      `${process.env.NEXT_PUBLIC_WEBSITE_URL + router.asPath}`,
-      "GOOGLE"
-    );
-
-    window.location.replace(message);
+    try {
+      const { message } = await AuthService.login(
+        email,
+        `${process.env.NEXT_PUBLIC_WEBSITE_URL + router.asPath}`,
+        LOGIN_METHODS.GOOGLE
+      );
+      window.location.replace(message);
+      return;
+    } catch (error) {
+      alert(`Error logging in with google - ${error}`);
+    }
   };
 
   const failedLogin = (response) => {

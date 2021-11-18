@@ -15,7 +15,9 @@ const handler = async (
 
   if (method === API_METHODS.GET) {
     try {
-      const invites = await getOrgInvitesForUser(req.session.user.userId);
+      const invites = await getOrgInvitesForUser({
+        userId: req.session.user.userId,
+      });
       return res.status(200).json(invites);
     } catch (error) {
       // TODO add error logger

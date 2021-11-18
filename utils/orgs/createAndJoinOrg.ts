@@ -25,7 +25,7 @@ export async function createAndJoinOrg(
     totalApplicants: 0,
     totalOpenings: 0,
     totalStages: 0,
-    totalUsers: 2,
+    totalUsers: 1,
     GSI1PK: ENTITY_TYPES.ORG, // Allows for 'get all orgs' query
     // but cannot do get org by specific name as there might be duplicates
     GSI1SK: GSI1SK, // Actual org name ie: Plutomi Inc - Can be changed!

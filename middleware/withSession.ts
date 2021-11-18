@@ -6,8 +6,8 @@ import {
 } from "next";
 
 const sessionOptions = {
-  password: process.env.NEXT_IRON_SESSION_PASSWORD_1,
-  cookieName: process.env.NEXT_IRON_SESSION_COOKIE_NAME,
+  password: process.env.IRON_SESSION_PASSWORD_1,
+  cookieName: process.env.IRON_SESSION_COOKIE_NAME,
 };
 
 /**

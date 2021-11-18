@@ -1,19 +1,25 @@
 import { QueryCommand, QueryCommandInput } from "@aws-sdk/lib-dynamodb";
 import { Dynamo } from "../../awsClients/ddbDocClient";
 import { ENTITY_TYPES } from "../../defaults";
-import { LoginLinkAnyState, GetLatestLoginLinkInput } from "../../types/main";
+import { DynamoNewLoginLink } from "../../types/dynamo";
+import { GetLatestLoginLinkInput } from "../../types/main";
 
 const { DYNAMO_TABLE_NAME } = process.env;
+/**
+ * Returns the latest login link for a user. Used to compare timestamps with a login timeout to make sure you can't spam login links
+ * @param props
+ * @returns
+ */
 export async function getLatestLoginLink(
   props: GetLatestLoginLinkInput
-): Promise<LoginLinkAnyState> {
+): Promise<DynamoNewLoginLink> {
   const { userId } = props;
   const params: QueryCommandInput = {
     TableName: DYNAMO_TABLE_NAME,
-    KeyConditionExpression: "PK = :pk AND begins_with(SK, :sk)",
+    IndexName: "GSI1",
+    KeyConditionExpression: "GSI1PK = :GSI1PK",
     ExpressionAttributeValues: {
-      ":pk": `${ENTITY_TYPES.USER}#${userId}`,
-      ":sk": ENTITY_TYPES.LOGIN_LINK,
+      ":GSI1PK": `${ENTITY_TYPES.USER}#${userId}#${ENTITY_TYPES.LOGIN_LINK}S`,
     },
     ScanIndexForward: false,
     Limit: 1,
@@ -21,8 +27,7 @@ export async function getLatestLoginLink(
 
   try {
     const response = await Dynamo.send(new QueryCommand(params));
-    const latestLink = response.Items[0];
-    return latestLink as LoginLinkAnyState;
+    return response.Items[0] as DynamoNewLoginLink;
   } catch (error) {
     throw new Error(error);
   }

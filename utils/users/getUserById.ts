@@ -9,7 +9,7 @@ const { DYNAMO_TABLE_NAME } = process.env;
 /**
  * Returns a user's metadata
  * @param userId The userId you want to find
- * @returns {@link DynamoNewUser}
+ * @returns - {@link DynamoNewUser}
  */
 export async function getUserById(
   props: GetUserByIdInput

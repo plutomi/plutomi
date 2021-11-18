@@ -3,6 +3,7 @@ import LoginEmail from "./EmailSigninInput";
 import GoogleLoginButton from "./GoogleLoginButton";
 import { useRouter } from "next/router";
 import { useState } from "react";
+import { LOGIN_METHODS } from "../defaults";
 
 interface CallbackUrl {
   callbackUrl?: string;
@@ -28,7 +29,11 @@ export default function LoginHomepage({ callbackUrl }: CallbackUrl) {
     e.preventDefault();
 
     try {
-      const { message } = await AuthService.login(email, callbackUrl, "LINK");
+      const { message } = await AuthService.login(
+        email,
+        callbackUrl,
+        LOGIN_METHODS.LINK
+      );
 
       setSubmittedText(message);
       setEmailSubmitted(true);
@@ -41,13 +46,11 @@ export default function LoginHomepage({ callbackUrl }: CallbackUrl) {
     console.log(response);
     const email = response.profileObj.email;
 
-    const { message } = await AuthService.login(
+    await AuthService.login(
       email,
       `${process.env.NEXT_PUBLIC_WEBSITE_URL}/dashboard`, // TODO make this a config variable as the "DEFAULT_REDIRECT_ROUTE_HOMEPAGE"
-      "GOOGLE"
+      LOGIN_METHODS.GOOGLE
     );
-
-    window.location.replace(message);
   };
 
   const failedLogin = (response) => {
