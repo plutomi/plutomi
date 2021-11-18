@@ -31,7 +31,6 @@ export async function createUser(
     createdAt: now,
     orgId: PLACEHOLDERS.NO_ORG,
     orgJoinDate: PLACEHOLDERS.NO_ORG,
-    totalInvites: 0,
     GSI1PK: `${ENTITY_TYPES.ORG}#${PLACEHOLDERS.NO_ORG}#${ENTITY_TYPES.USER}S`,
     GSI1SK:
       firstName && lastName

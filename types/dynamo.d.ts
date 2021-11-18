@@ -353,7 +353,6 @@ interface DynamoNewUser {
   createdAt: string;
   orgId: PLACEHOLDERS.NO_ORG;
   orgJoinDate: PLACEHOLDERS.NO_ORG;
-  totalInvites: number;
   GSI1PK: `${ENTITY_TYPES.ORG}#${PLACEHOLDERS.NO_ORG}#${ENTITY_TYPES.USER}S`;
   /**
    * Combined `firstName` and `lastName`

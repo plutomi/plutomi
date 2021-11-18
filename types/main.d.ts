@@ -164,7 +164,7 @@ export interface UpdateOpeningInput
   newOpeningValues: { [key: string]: any };
 }
 
-interface AcceptOrgInviteInput {
+interface DeleteOrgInviteInput {
   userId: string;
   inviteId: string;
 }

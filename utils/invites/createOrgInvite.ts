@@ -1,9 +1,11 @@
 import {
+  PutCommand,
+  PutCommandInput,
   TransactWriteCommand,
   TransactWriteCommandInput,
 } from "@aws-sdk/lib-dynamodb";
 import { Dynamo } from "../../awsClients/ddbDocClient";
-import { getAllUserInvites } from "./getAllOrgInvites";
+import { getAllOrgInvites } from "./getAllOrgInvites";
 import Time from "../time";
 import { nanoid } from "nanoid";
 import { ENTITY_TYPES, ID_LENGTHS } from "../../defaults";
@@ -20,7 +22,7 @@ export default async function createOrgInvite(props: CreateOrgInviteInput) {
     }
 
     // Check if the user we are inviting already has pending invites for the current org
-    const pendingInvites = await getAllUserInvites(recipient.userId);
+    const pendingInvites = await getAllOrgInvites(recipient.userId);
     const unclaimedInvites = pendingInvites.filter(
       (invite) => invite.orgId == orgId
     );
@@ -45,37 +47,13 @@ export default async function createOrgInvite(props: CreateOrgInviteInput) {
       GSI1SK: now,
     };
 
-    const transactParams: TransactWriteCommandInput = {
-      TransactItems: [
-        {
-          // Add a new invite
-          Put: {
-            Item: newOrgInvite,
-            TableName: DYNAMO_TABLE_NAME,
-            ConditionExpression: "attribute_not_exists(PK)",
-          },
-        },
-
-        {
-          // Increment the recipient's total invites
-          Update: {
-            Key: {
-              PK: `${ENTITY_TYPES.USER}#${recipient.userId}`,
-              SK: ENTITY_TYPES.USER,
-            },
-            TableName: DYNAMO_TABLE_NAME,
-            UpdateExpression:
-              "SET totalInvites = if_not_exists(totalInvites, :zero) + :value",
-            ExpressionAttributeValues: {
-              ":zero": 0,
-              ":value": 1,
-            },
-          },
-        },
-      ],
+    const params: PutCommandInput = {
+      Item: newOrgInvite,
+      TableName: DYNAMO_TABLE_NAME,
+      ConditionExpression: "attribute_not_exists(PK)",
     };
 
-    await Dynamo.send(new TransactWriteCommand(transactParams));
+    await Dynamo.send(new PutCommand(params));
 
     return;
   } catch (error) {

@@ -16,11 +16,13 @@ import {
   API_METHODS,
   EMAILS,
   ENTITY_TYPES,
+  PLACEHOLDERS,
 } from "../../../defaults";
 import withValidMethod from "../../../middleware/withValidMethod";
 import { CUSTOM_QUERY } from "../../../types/main";
 import sendEmail from "../../../utils/sendEmail";
 import clean from "../../../utils/clean";
+import { getAllOrgInvites } from "../../../utils/invites/getAllOrgInvites";
 
 const handler = async (
   req: NextApiRequest,
@@ -175,22 +177,37 @@ const handler = async (
 
     const user = await getUserById(userId);
 
+    if (!user) {
+      return res
+        .status(401)
+        .json({ message: "User does not exist, please login again" });
+    }
+
     if (user && latestLoginLink) {
       // TODO should this be a transaction?
       // Simple timestamp when the user actually logged in
-      createLoginEvent(userId);
+      createLoginEvent(userId); // TODO move this to the org events
 
       // Invalidates the last login link while allowing the user to login again if needed
       deleteLoginLink(userId, latestLoginLink.createdAt);
 
+      /**
+       * Get the user's org invites, if any, if they're not in an org.
+       * The logic here being, if a user is in an org, what are the chances they're going to join another?
+       *  TODO maybe revisit this?
+       */
+
+      let userInvites; // TODO types array of org invite
+      if (req.session.user.orgId === PLACEHOLDERS.NO_ORG) {
+        userInvites = await getAllOrgInvites(req.session.user.userId);
+      }
       const cleanedUser = clean(user, ENTITY_TYPES.USER);
 
-      req.session.user = cleanedUser;
-
+      req.session.user = { ...cleanedUser, totalInvites: userInvites.length };
       await req.session.save();
 
-      // If a user has invites, redirect them to that page automatically // TODO update the invites email #306
-      if (cleanedUser.totalInvites > 0) {
+      // If a user has invites, redirect them to the invites page on login
+      if (req.session.user.totalInvites > 0) {
         res.redirect(`${process.env.NEXT_PUBLIC_WEBSITE_URL}/invites`);
         return;
       }

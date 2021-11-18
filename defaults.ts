@@ -135,6 +135,6 @@ export const SAFE_PROPERTIES = {
   APPLICANT: ["firstName", "lastName", "createdAt", "openingId", "stageId"],
   ORG: ["GSI1SK", "orgId"],
   STAGE: ["GSI1SK", "stageId", "createdAt", "questionOrder"],
-  USER: ["userId", "orgId", "email", "firstName", "lastName", "totalInvites"],
+  USER: ["userId", "orgId", "email", "firstName", "lastName"],
   OPENING: ["GSI1SK", "openingId", "createdAt", "stageOrder"],
 };

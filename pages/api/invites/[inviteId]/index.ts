@@ -4,7 +4,7 @@ import deleteOrgInvite from "../../../../utils/invites/deleteOrgInvite";
 import { getOrgInvite } from "../../../../utils/invites/getOrgInvite";
 import { withSessionRoute } from "../../../../middleware/withSession";
 import { getUserById } from "../../../../utils/users/getUserById";
-import { joinOrgFromInvite } from "../../../../utils/orgs/joinOrgFromInvite";
+import { joinOrgFromInvite } from "../../../../utils/invites/joinOrgFromInvite";
 import { API_METHODS, ENTITY_TYPES, PLACEHOLDERS } from "../../../../defaults";
 import withAuth from "../../../../middleware/withAuth";
 import withValidMethod from "../../../../middleware/withValidMethod";
@@ -60,20 +60,14 @@ const handler = async (
   }
 
   if (method === API_METHODS.DELETE) {
-    const deleteOrgInviteInput = {
-      userId: req.session.user.userId,
-      inviteId: inviteId,
-    };
-
     try {
-      InputValidation(deleteOrgInviteInput);
-    } catch (error) {
-      return res.status(400).json({ message: `${error.message}` });
-    }
-
-    try {
-      await deleteOrgInvite(deleteOrgInviteInput);
-      return res.status(200).json({ message: "Invite rejected!" });
+      await deleteOrgInvite({
+        inviteId: inviteId,
+        userId: req.session.user.userId,
+      });
+      req.session.user.totalInvites -= 1;
+      await req.session.save();
+      return res.status(200).json({ message: "Invite rejected!" }); // TODO enum for RESPONSES
     } catch (error) {
       return res
         .status(500)

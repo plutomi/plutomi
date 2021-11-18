@@ -4,7 +4,7 @@ import { ENTITY_TYPES } from "../../defaults";
 
 const { DYNAMO_TABLE_NAME } = process.env;
 
-export async function getAllUserInvites(userId: string) {
+export async function getAllOrgInvites(userId: string) {
   const params: QueryCommandInput = {
     TableName: DYNAMO_TABLE_NAME,
     KeyConditionExpression: "PK = :pk AND begins_with(SK, :sk)",

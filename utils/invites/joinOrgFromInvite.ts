@@ -8,7 +8,12 @@ import Time from "../time";
 
 const { DYNAMO_TABLE_NAME } = process.env;
 
+/**
+ * Adds the user to the org and deletes the org invite
+ * @param param
+ */
 export async function joinOrgFromInvite({ userId, invite }) {
+  // TODO types
   const now = Time.currentISO();
   try {
     const transactParams: TransactWriteCommandInput = {
@@ -25,7 +30,7 @@ export async function joinOrgFromInvite({ userId, invite }) {
         },
 
         {
-          // Update user with the new org and decrement their total invites
+          // Update the user with the new org
           Update: {
             Key: {
               PK: `${ENTITY_TYPES.USER}#${userId}`,
@@ -33,12 +38,11 @@ export async function joinOrgFromInvite({ userId, invite }) {
             },
             TableName: DYNAMO_TABLE_NAME,
             UpdateExpression:
-              "SET orgId = :orgId, orgJoinDate = :orgJoinDate, GSI1PK = :GSI1PK, totalInvites = totalInvites - :value",
+              "SET orgId = :orgId, orgJoinDate = :orgJoinDate, GSI1PK = :GSI1PK",
             ExpressionAttributeValues: {
               ":orgId": invite.orgId,
               ":orgJoinDate": now,
               ":GSI1PK": `${ENTITY_TYPES.ORG}#${invite.orgId}#${ENTITY_TYPES.USER}S`,
-              ":value": 1,
             },
           },
         },

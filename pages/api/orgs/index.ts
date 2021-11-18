@@ -1,7 +1,7 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import withCleanOrgId from "../../../middleware/withCleanOrgId";
 import InputValidation from "../../../utils/inputValidation";
-import { getAllUserInvites } from "../../../utils/invites/getAllOrgInvites";
+import { getAllOrgInvites } from "../../../utils/invites/getAllOrgInvites";
 import { withSessionRoute } from "../../../middleware/withSession";
 import { getUserById } from "../../../utils/users/getUserById";
 import { createAndJoinOrg } from "../../../utils/orgs/createAndJoinOrg";
@@ -31,12 +31,12 @@ const handler = async (
       });
     }
 
-    const pendingInvites = await getAllUserInvites(req.session.user.userId);
+    const pendingInvites = await getAllOrgInvites(req.session.user.userId);
 
     if (pendingInvites && pendingInvites.length > 0) {
       return res.status(403).json({
         message:
-          "You seem to have pending invites, please accept or reject them before creating an org :)",
+          "You seem to have pending invites, please accept or reject them before creating an org :)", // TODO error enum
       });
     }
 

@@ -1,44 +1,27 @@
-import {
-  TransactWriteCommand,
-  TransactWriteCommandInput,
-} from "@aws-sdk/lib-dynamodb";
+import { DeleteCommand, DeleteCommandInput } from "@aws-sdk/lib-dynamodb";
 import { Dynamo } from "../../awsClients/ddbDocClient";
 import { ENTITY_TYPES } from "../../defaults";
-
+import { DeleteOrgInviteInput } from "../../types/main";
 const { DYNAMO_TABLE_NAME } = process.env;
-export default async function deleteOrgInvite({ userId, inviteId }) {
+/**
+ * Deletes an org invite
+ * @param props {@link DeleteOrgInviteInput}
+ * @returns
+ */
+export default async function deleteOrgInvite(
+  props: DeleteOrgInviteInput
+): Promise<void> {
+  const { userId, inviteId } = props;
   try {
-    const transactParams: TransactWriteCommandInput = {
-      TransactItems: [
-        {
-          // Delete the org invite
-          Delete: {
-            Key: {
-              PK: `${ENTITY_TYPES.USER}#${userId}`,
-              SK: `${ENTITY_TYPES.ORG_INVITE}#${inviteId}`,
-            },
-            TableName: DYNAMO_TABLE_NAME,
-          },
-        },
-
-        {
-          // Decrement the user's total invites
-          Update: {
-            Key: {
-              PK: `${ENTITY_TYPES.USER}#${userId}`,
-              SK: ENTITY_TYPES.USER,
-            },
-            TableName: DYNAMO_TABLE_NAME,
-            UpdateExpression: "SET totalInvites = totalInvites - :value",
-            ExpressionAttributeValues: {
-              ":value": 1,
-            },
-          },
-        },
-      ],
+    const params: DeleteCommandInput = {
+      Key: {
+        PK: `${ENTITY_TYPES.USER}#${userId}`,
+        SK: `${ENTITY_TYPES.ORG_INVITE}#${inviteId}`,
+      },
+      TableName: DYNAMO_TABLE_NAME,
     };
 
-    await Dynamo.send(new TransactWriteCommand(transactParams));
+    await Dynamo.send(new DeleteCommand(params));
     return;
   } catch (error) {
     throw new Error(`Unable to delete invite ${error}`);
