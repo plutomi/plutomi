@@ -40,13 +40,17 @@ export default function Login({ loggedOutPageText }) {
     console.log(response);
     const email = response.profileObj.email;
 
-    const { message } = await AuthService.login(
-      email,
-      `${process.env.NEXT_PUBLIC_WEBSITE_URL + router.asPath}`,
-      LOGIN_METHODS.GOOGLE
-    );
-
-    window.location.replace(message);
+    try {
+      const { message } = await AuthService.login(
+        email,
+        `${process.env.NEXT_PUBLIC_WEBSITE_URL + router.asPath}`,
+        LOGIN_METHODS.GOOGLE
+      );
+      window.location.replace(message);
+      return;
+    } catch (error) {
+      alert(`Error logging in with google - ${error}`);
+    }
   };
 
   const failedLogin = (response) => {

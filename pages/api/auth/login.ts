@@ -43,7 +43,6 @@ const handler = async (
 
   // Creates a login link
   if (method === API_METHODS.POST) {
-    console.log("POSTING (trying to log in)");
     try {
       InputValidation({ email });
     } catch (error) {
@@ -96,9 +95,8 @@ const handler = async (
         }`;
 
         if (loginMethod === LOGIN_METHODS.GOOGLE) {
-          // TODO serverside redirect??
-          res.redirect(307, loginLink);
-          return;
+          // Cannot do serverside redirect from axios post
+          return res.status(200).json({ message: loginLink });
         }
 
         try {
@@ -163,7 +161,6 @@ const handler = async (
     const cleanedUser = clean(user, ENTITY_TYPES.USER);
     req.session.user = cleanedUser;
 
-    console.log("userrrr", cleanedUser);
     /**
      * Get the user's org invites, if any, if they're not in an org.
      * The logic here being, if a user is in an org, what are the chances they're going to join another?
