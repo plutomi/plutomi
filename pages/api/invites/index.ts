@@ -20,11 +20,11 @@ const handler = async (
 ): Promise<void> => {
   const { body, method } = req;
 
-  const { recipientEmail } = body;
+  const { recipientEmail } = body; // todo trim and lowercase this email
 
   const expiresAt = Time.futureISO(3, TIME_UNITS.DAYS);
 
-  const org = await getOrg(req.session.user.orgId);
+  const org = await getOrg({ orgId: req.session.user.orgId });
 
   const newOrgInvite = {
     claimed: false,
@@ -74,7 +74,8 @@ const handler = async (
           .status(201)
           .json({ message: `Invite sent to '${recipient.email}'` });
       } catch (error) {
-        return res.status(500).json({ // TODO update this since email will be done with streams
+        return res.status(500).json({
+          // TODO update this since email will be done with streams
           message: `The invite was created, but we were not able to send an email to the user. They log in and accept their invite at https://plutomi.com/invites - ${error}`,
         });
       }

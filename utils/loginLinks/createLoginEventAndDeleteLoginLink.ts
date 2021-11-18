@@ -62,18 +62,18 @@ export async function createLoginEventAndDeleteLoginLink(
             TableName: DYNAMO_TABLE_NAME,
           },
         },
-
-        orgId ?? {
-          // Create a login event on the org
-          Put: {
-            Item: newOrgLoginEvent,
-            TableName: DYNAMO_TABLE_NAME,
-            ConditionExpression: "attribute_not_exists(PK)",
-          },
-        },
       ],
     };
-
+    // If a user has an orgId, create a login event on the org as well
+    orgId ??
+      transactParams.TransactItems.push({
+        // Create a login event on the org
+        Put: {
+          Item: newOrgLoginEvent,
+          TableName: DYNAMO_TABLE_NAME,
+          ConditionExpression: "attribute_not_exists(PK)",
+        },
+      });
     await Dynamo.send(new TransactWriteCommand(transactParams));
     return;
   } catch (error) {

@@ -19,7 +19,10 @@ const handler = async (
   const { inviteId } = query as Pick<CUSTOM_QUERY, "inviteId">;
 
   // TODO trycatch
-  const invite = await getOrgInvite(req.session.user.userId, inviteId);
+  const invite = await getOrgInvite({
+    inviteId: inviteId,
+    userId: req.session.user.userId,
+  });
   const joinOrgInput = {
     userId: req.session.user.userId,
     invite: invite,
@@ -43,7 +46,9 @@ const handler = async (
     try {
       await joinOrgFromInvite({ userId: req.session.user.userId, invite });
 
-      const updatedUser = await getUserById(req.session.user.userId);
+      const updatedUser = await getUserById({
+        userId: req.session.user.userId,
+      });
 
       req.session.user = clean(updatedUser, ENTITY_TYPES.USER);
       await req.session.save();
