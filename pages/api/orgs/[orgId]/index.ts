@@ -15,7 +15,7 @@ const handler = async (
   const { method, query } = req; // TODO user type
   const { orgId } = query as Pick<CUSTOM_QUERY, "orgId">;
 
-  const org = await getOrg(orgId);
+  const org = await getOrg({ orgId: orgId });
 
   if (method === API_METHODS.GET) {
     // When signed in, this returns all data for an org
