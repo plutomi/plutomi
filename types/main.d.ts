@@ -239,3 +239,15 @@ type GetAllUsersInOrgInput = {
 type GetOrgInput = {
   orgId: string;
 };
+
+type CreateLoginEventInput = {
+  userId: string;
+};
+
+type GetUserByIdInput = {
+  userId: string;
+};
+
+interface GetUserByEmailInput {
+  email: string;
+}

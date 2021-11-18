@@ -2,9 +2,13 @@ import { QueryCommand, QueryCommandInput } from "@aws-sdk/lib-dynamodb";
 import { Dynamo } from "../../awsClients/ddbDocClient";
 import { ENTITY_TYPES } from "../../defaults";
 import { DynamoNewUser } from "../../types/dynamo";
+import { GetUserByEmailInput } from "../../types/main";
 const { DYNAMO_TABLE_NAME } = process.env;
 
-export async function getUserByEmail(email: string): Promise<DynamoNewUser> {
+export async function getUserByEmail(
+  props: GetUserByEmailInput
+): Promise<DynamoNewUser> {
+  const { email } = props;
   const params: QueryCommandInput = {
     TableName: DYNAMO_TABLE_NAME,
     IndexName: "GSI2",

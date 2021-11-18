@@ -398,3 +398,10 @@ interface DynamoNewOrg {
   // but cannot do get org by specific name as there might be duplicates
   GSI1SK: string; // Actual org name ie: Plutomi Inc - Can be changed!
 }
+
+interface DynamoNewLoginEvent {
+  PK: `${ENTITY_TYPES.USER}#${string}`; // TODO set login events as org events if the user has an org
+  SK: `${ENTITY_TYPES.LOGIN_EVENT}#${string}`;
+  createdAt: string; // ISO timestamp
+  ttlExpiry: number; // ttl unix expiry
+}
