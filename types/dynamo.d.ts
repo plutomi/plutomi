@@ -366,20 +366,15 @@ interface DynamoNewUser {
 
 interface DynamoNewLoginLink {
   PK: `${ENTITY_TYPES.USER}#${string}`;
-  /**
-   * Sort key, an ISO date
-   */
   SK: `${ENTITY_TYPES.LOGIN_LINK}#${string}`;
-  loginLinkHash: string;
-  userId: string;
-  linkStatus: LOGIN_LINK_STATUS.NEW; // TODO maybe remove with new seal method
   entityType: ENTITY_TYPES.LOGIN_LINK;
   createdAt: string;
-  expiresAt: string;
   /**
    * A UNIX date for which Dynamo will auto delete this link
    */
-  ttlExpiry: number; // unix date
+  ttlExpiry: number; // Unix timestmap for the item to be deleted after 15 minutes, must be >= ttl on `sealData`
+  GSI1PK: `${ENTITY_TYPES.USER}#${string}#${ENTITY_TYPES.LOGIN_LINK}S`; // Get latest login link(s) for a user for throttling
+  GSI1SK: string; // ISO timestamp
 }
 
 interface DynamoNewOrg {

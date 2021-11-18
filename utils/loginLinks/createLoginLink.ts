@@ -15,19 +15,17 @@ const { DYNAMO_TABLE_NAME } = process.env;
 export default async function createLoginLink(
   props: CreateLoginLinkInput
 ): Promise<void> {
-  const { userId, loginLinkHash, loginLinkExpiry } = props;
+  const { userId, loginLinkId } = props;
+  const now = Time.currentISO();
   try {
-    const now = Time.currentISO();
     const newLoginLink: DynamoNewLoginLink = {
       PK: `${ENTITY_TYPES.USER}#${userId}`,
-      SK: `${ENTITY_TYPES.LOGIN_LINK}#${now}`,
-      loginLinkHash: loginLinkHash,
-      userId: userId,
+      SK: `${ENTITY_TYPES.LOGIN_LINK}#${loginLinkId}`,
       entityType: ENTITY_TYPES.LOGIN_LINK,
-      linkStatus: LOGIN_LINK_STATUS.NEW, // TODO enum
       createdAt: now,
-      expiresAt: loginLinkExpiry,
-      ttlExpiry: Time.futureUNIX(1, TIME_UNITS.DAYS),
+      ttlExpiry: Time.futureUNIX(1, TIME_UNITS.MINUTES), // Deleted after 15 minutes, must be >= ttl on `sealData`
+      GSI1PK: `${ENTITY_TYPES.USER}#${userId}#${ENTITY_TYPES.LOGIN_LINK}S`, // Get latest login link(s) for a user for throttling
+      GSI1SK: now,
     };
 
     const params: PutCommandInput = {

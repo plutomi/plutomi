@@ -42,9 +42,9 @@ export interface CUSTOM_QUERY {
    */
   applicantId: string;
   /**
-   * The key to for the LOGIN_LINKS that allow it to be used
+   * The seal to for the {@link ENTITY_TYPES.LOGIN_LINK} that contains the user id
    */
-  key: string;
+  seal: string;
   /**
    * The callback url
    */
@@ -200,8 +200,7 @@ type JoinOrgFromInviteInput = {
 
 type CreateLoginLinkInput = {
   userId: string;
-  loginLinkHash: string;
-  loginLinkExpiry: string;
+  loginLinkId: string;
 };
 
 interface LoginLinkAnyState extends Omit<DynamoNewLoginLink, "linkStatus"> {

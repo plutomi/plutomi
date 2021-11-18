@@ -13,7 +13,7 @@ export async function createUser(
   props: CreateUserInput
 ): Promise<DynamoNewUser> {
   const { email, firstName, lastName } = props;
-  const user = await getUserByEmail(email);
+  const user = await getUserByEmail({ email });
 
   if (user) {
     return user;
