@@ -4,6 +4,7 @@ import {
 } from "@aws-sdk/lib-dynamodb";
 import { Dynamo } from "../../awsClients/ddbDocClient";
 import { ENTITY_TYPES } from "../../defaults";
+import { JoinOrgFromInviteInput } from "../../types/main";
 import Time from "../time";
 
 const { DYNAMO_TABLE_NAME } = process.env;
@@ -12,7 +13,10 @@ const { DYNAMO_TABLE_NAME } = process.env;
  * Adds the user to the org and deletes the org invite
  * @param param
  */
-export async function joinOrgFromInvite({ userId, invite }) {
+export async function joinOrgFromInvite(
+  props: JoinOrgFromInviteInput
+): Promise<void> {
+  const { userId, invite } = props;
   // TODO types
   try {
     const transactParams: TransactWriteCommandInput = {
@@ -63,6 +67,7 @@ export async function joinOrgFromInvite({ userId, invite }) {
     };
 
     await Dynamo.send(new TransactWriteCommand(transactParams));
+    return;
   } catch (error) {
     console.error(error);
     throw new Error(error);

@@ -17,13 +17,13 @@ import {
   EMAILS,
   ENTITY_TYPES,
   PLACEHOLDERS,
+  LOGIN_LINK_STATUS,
 } from "../../../defaults";
 import withValidMethod from "../../../middleware/withValidMethod";
 import { CUSTOM_QUERY } from "../../../types/main";
 import sendEmail from "../../../utils/sendEmail";
 import clean from "../../../utils/clean";
-import { getAllOrgInvites } from "../../../utils/invites/getAllOrgInvites";
-
+import { getOrgInvitesForUser } from "../../../utils/invites/getOrgInvitesForUser";
 const handler = async (
   req: NextApiRequest,
   res: NextApiResponse
@@ -53,7 +53,7 @@ const handler = async (
     const user = await createUser({ email });
 
     try {
-      const latestLink = await getLatestLoginLink(user.userId);
+      const latestLink = await getLatestLoginLink({ userId: user.userId });
 
       // Limit the amount of links sent in a certain period of time
       if (
@@ -73,7 +73,7 @@ const handler = async (
 
       try {
         await createLoginLink({
-          user: user,
+          userId: user.userId,
           loginLinkHash: hash,
           loginLinkExpiry: loginLinkExpiry,
         });
@@ -130,7 +130,7 @@ const handler = async (
       return res.status(400).json({ message: `${error.message}` });
     }
 
-    const latestLoginLink = await getLatestLoginLink(userId);
+    const latestLoginLink = await getLatestLoginLink({ userId });
 
     if (!latestLoginLink) {
       return res.status(400).json({ message: "Invalid link" });
@@ -147,7 +147,7 @@ const handler = async (
 
       const updatedLoginLink = {
         ...latestLoginLink,
-        linkStatus: "SUSPENDED",
+        linkStatus: LOGIN_LINK_STATUS.SUSPENDED,
       };
 
       await updateLoginLink({
@@ -162,7 +162,7 @@ const handler = async (
     }
 
     // Lock account if already suspended
-    if (latestLoginLink.linkStatus === "SUSPENDED") {
+    if (latestLoginLink.linkStatus === LOGIN_LINK_STATUS.SUSPENDED) {
       return res.status(401).json({
         // TODO make this an error
         message: `Your login link has been suspended. Please try again later or email support@plutomi.com`,
@@ -189,11 +189,14 @@ const handler = async (
       createLoginEvent(userId); // TODO move this to the org events
 
       // Invalidates the last login link while allowing the user to login again if needed
-      deleteLoginLink(userId, latestLoginLink.createdAt);
+      deleteLoginLink({
+        userId: userId,
+        loginLinkTimestmap: latestLoginLink.createdAt,
+      });
 
       const cleanedUser = clean(user, ENTITY_TYPES.USER);
       req.session.user = cleanedUser;
-      
+
       /**
        * Get the user's org invites, if any, if they're not in an org.
        * The logic here being, if a user is in an org, what are the chances they're going to join another?
@@ -201,7 +204,9 @@ const handler = async (
        */
       let userInvites = []; // TODO types array of org invite
       if (req.session.user.orgId === PLACEHOLDERS.NO_ORG) {
-        userInvites = await getAllOrgInvites(req.session.user.userId);
+        userInvites = await getOrgInvitesForUser({
+          userId: req.session.user.userId,
+        });
       }
       req.session.user.totalInvites = userInvites.length;
       await req.session.save();

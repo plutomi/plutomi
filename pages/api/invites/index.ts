@@ -42,12 +42,12 @@ const handler = async (
     }
 
     if (req.session.user.email == recipientEmail) {
-      return res.status(400).json({ message: "You can't invite yourself" });
+      return res.status(400).json({ message: "You can't invite yourself" }); // TODO errors enum
     }
 
     if (req.session.user.orgId === PLACEHOLDERS.NO_ORG) {
       return res.status(400).json({
-        message: `You must create an organization before inviting users`,
+        message: `You must create an organization before inviting users`, // TODO errors enum
       });
     }
 
@@ -60,7 +60,7 @@ const handler = async (
         recipient: recipient,
         orgName: org.GSI1SK,
         expiresAt: expiresAt,
-        createdBy: req.session,
+        createdBy: req.session.user,
       });
       try {
         await sendEmail({
@@ -74,7 +74,7 @@ const handler = async (
           .status(201)
           .json({ message: `Invite sent to '${recipient.email}'` });
       } catch (error) {
-        return res.status(500).json({
+        return res.status(500).json({ // TODO update this since email will be done with streams
           message: `The invite was created, but we were not able to send an email to the user. They log in and accept their invite at https://plutomi.com/invites - ${error}`,
         });
       }

@@ -1,8 +1,11 @@
 import { IronSessionData } from "iron-session";
+import { LOGIN_LINK_STATUS } from "../defaults";
 import {
   DynamoNewApplicant,
   DynamoNewApplicantResponse,
+  DynamoNewLoginLink,
   DynamoNewOpening,
+  DynamoNewOrgInvite,
   DynamoNewStage,
   DynamoNewStageQuestion,
   DynamoNewUser,
@@ -56,18 +59,16 @@ export interface CUSTOM_QUERY {
   inviteId: string;
 }
 
+interface UserSessionData
+  extends Pick<
+    DynamoNewUser,
+    "firstName" | "lastName" | "GSI1SK" | "email" | "orgId" | "userId"
+  > {
+  totalInvites: number;
+}
 declare module "iron-session" {
   export interface IronSessionData {
-    user: // TODO replace with DynamoNewUser
-    {
-      firstName: string;
-      lastName: string;
-      email: string;
-      orgId: string;
-      userId: string;
-      totalInvites: number;
-      // TODO user role RBAC - fix these types
-    };
+    user: UserSessionData;
   }
 }
 
@@ -173,7 +174,7 @@ interface CreateOrgInviteInput {
   orgId: string;
   orgName: string;
   expiresAt: string;
-  createdBy: Pick<IronSessionData, "user">;
+  createdBy: UserSessionData;
   recipient: DynamoNewUser;
 }
 
@@ -181,4 +182,42 @@ type CreateUserInput = {
   email: string;
   firstName?: string;
   lastName?: string;
+};
+
+type GetOrgInvitesForUserInput = {
+  userId: string;
+};
+
+type GetOrgInviteInput = {
+  userId: string;
+  inviteId: string;
+};
+
+type JoinOrgFromInviteInput = {
+  userId: string;
+  invite: DynamoNewOrgInvite; // TODO I think the invite sent to the client is the clean version, need to verify this and if so make types for the clean version anyway
+};
+
+type CreateLoginLinkInput = {
+  userId: string;
+  loginLinkHash: string;
+  loginLinkExpiry: string;
+};
+
+interface LoginLinkAnyState extends Omit<DynamoNewLoginLink, "linkStatus"> {
+  linkStatus: LOGIN_LINK_STATUS; // can be new or suspended
+}
+
+type DeleteLoginLinkInput = {
+  userId: string;
+  loginLinkTimestmap: string;
+};
+
+type GetLatestLoginLinkInput = {
+  userId: string;
+};
+
+type UpdateLoginLinkInput = {
+  userId: string;
+  updatedLoginLink: LoginLinkAnyState;
 };

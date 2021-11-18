@@ -1,9 +1,13 @@
 import { QueryCommand, QueryCommandInput } from "@aws-sdk/lib-dynamodb";
 import { Dynamo } from "../../awsClients/ddbDocClient";
 import { ENTITY_TYPES } from "../../defaults";
+import { LoginLinkAnyState, GetLatestLoginLinkInput } from "../../types/main";
 
 const { DYNAMO_TABLE_NAME } = process.env;
-export async function getLatestLoginLink(userId: string) {
+export async function getLatestLoginLink(
+  props: GetLatestLoginLinkInput
+): Promise<LoginLinkAnyState> {
+  const { userId } = props;
   const params: QueryCommandInput = {
     TableName: DYNAMO_TABLE_NAME,
     KeyConditionExpression: "PK = :pk AND begins_with(SK, :sk)",
@@ -18,7 +22,7 @@ export async function getLatestLoginLink(userId: string) {
   try {
     const response = await Dynamo.send(new QueryCommand(params));
     const latestLink = response.Items[0];
-    return latestLink;
+    return latestLink as LoginLinkAnyState;
   } catch (error) {
     throw new Error(error);
   }

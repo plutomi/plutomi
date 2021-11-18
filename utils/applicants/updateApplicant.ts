@@ -12,6 +12,10 @@ const FORBIDDEN_KEYS = [
   "applicantId",
   "GSI1PK",
 ];
+/**
+ * Updates an applicant with the specified `newApplicantValues`
+ * @param props {@link UpdateApplicantInput}
+ */
 export default async function updateApplicant(
   props: UpdateApplicantInput
 ): Promise<void> {

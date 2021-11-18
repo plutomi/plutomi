@@ -1,7 +1,8 @@
 // This file is for the actual DynamoDB entries and their Types - ie: A full object with all properties.
 // All  other types are derivatives with Pick, Omit, etc.
 import { IronSessionData } from "iron-session";
-import { ENTITY_TYPES, PLACEHOLDERS } from "../defaults";
+import { ENTITY_TYPES, LOGIN_LINK_STATUS, PLACEHOLDERS } from "../defaults";
+import { UserSessionData } from "./main";
 
 interface DynamoNewStage {
   /**
@@ -307,7 +308,7 @@ interface DynamoNewOrgInvite {
   /**
    * Who created this invite, info comes from their session
    */
-  createdBy: IronSessionData;
+  createdBy: UserSessionData;
   /**
    * The entity type, see {@link ENTITY_TYPES.ORG_INVITE}
    */
@@ -361,4 +362,22 @@ interface DynamoNewUser {
   GSI1SK: `${string} ${string}` | PLACEHOLDERS.FULL_NAME;
   GSI2PK: string;
   GSI2SK: ENTITY_TYPES.USER;
+}
+
+interface DynamoNewLoginLink {
+  PK: `${ENTITY_TYPES.USER}#${string}`;
+  /**
+   * Sort key, an ISO date
+   */
+  SK: `${ENTITY_TYPES.LOGIN_LINK}#${string}`;
+  loginLinkHash: string;
+  userId: string;
+  linkStatus: LOGIN_LINK_STATUS.NEW; // TODO maybe remove with new seal method
+  entityType: ENTITY_TYPES.LOGIN_LINK;
+  createdAt: string;
+  expiresAt: string;
+  /**
+   * A UNIX date for which Dynamo will auto delete this link
+   */
+  ttlExpiry: number; // unix date
 }

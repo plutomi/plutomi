@@ -138,3 +138,8 @@ export const SAFE_PROPERTIES = {
   USER: ["userId", "orgId", "email", "firstName", "lastName", "GSI1SK"],
   OPENING: ["GSI1SK", "openingId", "createdAt", "stageOrder"],
 };
+
+export enum LOGIN_LINK_STATUS {
+  NEW = "NEW",
+  SUSPENDED = "SUSPENDED",
+}

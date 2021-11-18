@@ -71,7 +71,7 @@ const handler = async (
         fromAddress: EMAILS.GENERAL,
         toAddresses: ["newApplicant.email"],
         subject: `Here is a link to your application!`,
-        html: `<h1><a href="${applicantionLink}" noreferrer target="_blank" >Click this link to view your application!</a></h1><p>If you did not request this link, you can safely ignore it.</p>`,
+        html: `<h1><a href="${applicantionLink}" rel=noreferrer target="_blank" >Click this link to view your application!</a></h1><p>If you did not request this link, you can safely ignore it.</p>`,
       });
 
       return res.status(201).json({

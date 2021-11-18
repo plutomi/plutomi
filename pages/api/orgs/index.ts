@@ -1,7 +1,7 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import withCleanOrgId from "../../../middleware/withCleanOrgId";
 import InputValidation from "../../../utils/inputValidation";
-import { getAllOrgInvites } from "../../../utils/invites/getAllOrgInvites";
+import { getOrgInvitesForUser } from "../../../utils/invites/getOrgInvitesForUser";
 import { withSessionRoute } from "../../../middleware/withSession";
 import { getUserById } from "../../../utils/users/getUserById";
 import { createAndJoinOrg } from "../../../utils/orgs/createAndJoinOrg";
@@ -31,7 +31,7 @@ const handler = async (
       });
     }
 
-    const pendingInvites = await getAllOrgInvites(req.session.user.userId);
+    const pendingInvites = await getOrgInvitesForUser(req.session.user.userId);
 
     if (pendingInvites && pendingInvites.length > 0) {
       return res.status(403).json({

@@ -13,7 +13,7 @@ const { DYNAMO_TABLE_NAME } = process.env;
 /**
  * Creates an applicant in a given org
  * @param props {@link CreateApplicantInput}
- * @returns {@link CreateApplicantOutput}
+ * @returns - {@link CreateApplicantOutput}
  */
 export async function createApplicant(
   props: CreateApplicantInput

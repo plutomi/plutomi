@@ -4,7 +4,7 @@ import { ENTITY_TYPES } from "../../defaults";
 import { DeleteOrgInviteInput } from "../../types/main";
 const { DYNAMO_TABLE_NAME } = process.env;
 /**
- * Deletes an org invite
+ * Deletes an org invite, called when a user rejects an invite to an org
  * @param props {@link DeleteOrgInviteInput}
  * @returns
  */
