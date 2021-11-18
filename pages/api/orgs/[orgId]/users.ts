@@ -16,7 +16,6 @@ const handler = async (
 
   if (method === API_METHODS.GET) {
     if (req.session.user.orgId != orgId) {
-      // TODO team site bug returning 403 -- TODO I think this is fixed
       return res
         .status(403)
         .json({ message: "You cannot view the users of this org" });
@@ -29,7 +28,9 @@ const handler = async (
     }
 
     try {
-      const allUsers = await getAllUsersInOrg(req.session.user.orgId);
+      const allUsers = await getAllUsersInOrg({
+        orgId: req.session.user.orgId,
+      });
       return res.status(200).json(allUsers);
     } catch (error) {
       return res
