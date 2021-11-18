@@ -221,3 +221,21 @@ type UpdateLoginLinkInput = {
   userId: string;
   updatedLoginLink: LoginLinkAnyState;
 };
+
+type CreateAndJoinOrgInput = {
+  userId: string;
+  orgId: string;
+  GSI1SK: string; /// The org name
+};
+
+type GetAllUsersInOrgInput = {
+  orgId: string;
+  /**
+   * Optional limit to only return a certain number of users
+   */
+  limit?: number;
+};
+
+type GetOrgInput = {
+  orgId: string;
+};

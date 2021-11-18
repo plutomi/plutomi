@@ -1,10 +1,15 @@
 import { QueryCommand, QueryCommandInput } from "@aws-sdk/lib-dynamodb";
 import { Dynamo } from "../../awsClients/ddbDocClient";
 import { ENTITY_TYPES } from "../../defaults";
+import { DynamoNewUser } from "../../types/dynamo";
+import { GetAllUsersInOrgInput } from "../../types/main";
 
 const { DYNAMO_TABLE_NAME } = process.env;
 
-export async function getAllUsersInOrg(orgId: string, limit?: number) {
+export async function getAllUsersInOrg(
+  props: GetAllUsersInOrgInput
+): Promise<DynamoNewUser[]> {
+  const { orgId, limit } = props;
   const params: QueryCommandInput = {
     TableName: DYNAMO_TABLE_NAME,
     IndexName: "GSI1",
@@ -19,7 +24,7 @@ export async function getAllUsersInOrg(orgId: string, limit?: number) {
 
   try {
     const response = await Dynamo.send(new QueryCommand(params));
-    return response.Items;
+    return response.Items as DynamoNewUser[];
   } catch (error) {
     throw new Error(error);
   }

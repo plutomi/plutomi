@@ -381,3 +381,20 @@ interface DynamoNewLoginLink {
    */
   ttlExpiry: number; // unix date
 }
+
+interface DynamoNewOrg {
+  PK: `${ENTITY_TYPES.ORG}#${string}`;
+  SK: ENTITY_TYPES.ORG;
+  orgId: string; // The actual org id
+  entityType: ENTITY_TYPES.ORG;
+  createdAt: string; // ISO timestamp
+  totalApplicants: number;
+  totalOpenings: number; // TODO set defaults..??? I mean its all 0.. And if we reference this interface
+  // Somewhere else, the numbers might change so its not wise to have it set as default.. althought we can always
+  // <Omit> in and make the counts numbers.. hmmmm // TODO revisit
+  totalStages: number;
+  totalUsers: number;
+  GSI1PK: ENTITY_TYPES.ORG; // Allows for 'get all orgs' query
+  // but cannot do get org by specific name as there might be duplicates
+  GSI1SK: string; // Actual org name ie: Plutomi Inc - Can be changed!
+}
