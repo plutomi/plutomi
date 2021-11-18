@@ -18,7 +18,7 @@ export async function getAllOrgInvites(userId: string) {
     const response = await Dynamo.send(new QueryCommand(params));
     return response.Items;
   } catch (error) {
-    console.error(error);
+    console.log("Error getting org invites", error);
     throw new Error(error);
   }
 }

@@ -20,7 +20,7 @@ const handler = async (
         return res.status(401).json({ message: "Please log in again" }); // TODO middleware
       }
 
-      return res.status(200).json(requestedUser);
+      return res.status(200).json(req.session.user);
     } catch (error) {
       // TODO add error logger
       return res

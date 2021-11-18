@@ -29,7 +29,7 @@ export default async function createOrgInvite(props: CreateOrgInviteInput) {
 
     if (unclaimedInvites.length > 0) {
       // TODO errors enum
-      throw `This user already has a pending invite to your org! They can log in at ${process.env.NEXT_PUBLIC_WEBSITE_URL}/invites to claim it!`;
+      throw `This user already has a pending invite to your org! They can log in to claim it!`; // todo enum
     }
     const inviteId = nanoid(ID_LENGTHS.ORG_INVITE);
     const now = Time.currentISO();
