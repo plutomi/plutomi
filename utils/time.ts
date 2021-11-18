@@ -68,7 +68,7 @@ export default class Time {
    * @returns A past ISO timestamp
    */
   static pastISO(amount: number, unit: TIME_UNITS): string {
-    return dayjs().add(amount, unit).toISOString();
+    return dayjs().subtract(amount, unit).toISOString();
   }
 
   /**
@@ -78,6 +78,6 @@ export default class Time {
    * @returns A past UNIX timestamp
    */
   static pastUNIX(amount: number, unit: TIME_UNITS): number {
-    return dayjs().add(amount, unit).unix();
+    return dayjs().subtract(amount, unit).unix();
   }
 }
