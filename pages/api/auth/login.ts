@@ -60,13 +60,14 @@ const handler = async (
 
       // Limit the amount of links sent in a certain period of time
       const timeThreshold = Time.pastISO(10, TIME_UNITS.MINUTES);
+
       if (
         latestLink &&
         latestLink.createdAt >= timeThreshold &&
         !user.email.endsWith("@plutomi.com") // todo contact enum or domain name
       ) {
         return res.status(400).json({
-          message: "You're doing that too much, please try again later",
+          message: "You're doing that too much, please try again later", // TODO enum
         });
       }
 
