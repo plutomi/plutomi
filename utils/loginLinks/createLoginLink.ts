@@ -1,7 +1,7 @@
 import { PutCommand, PutCommandInput } from "@aws-sdk/lib-dynamodb";
 import Time from "../time";
 import { Dynamo } from "../../awsClients/ddbDocClient";
-import { ENTITY_TYPES, LOGIN_LINK_STATUS, TIME_UNITS } from "../../defaults";
+import { ENTITY_TYPES, TIME_UNITS } from "../../defaults";
 import { CreateLoginLinkInput } from "../../types/main";
 import { DynamoNewLoginLink } from "../../types/dynamo";
 

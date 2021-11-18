@@ -8,23 +8,21 @@ import { createHash } from "crypto";
 import { sealData, unsealData } from "iron-session";
 import { getLatestLoginLink } from "../../../utils/loginLinks/getLatestLoginLink";
 import { createUser } from "../../../utils/users/createUser";
-import createLoginEvent from "../../../utils/users/createLoginEvent";
-import deleteLoginLink from "../../../utils/loginLinks/deleteLoginLink";
 import { getUserById } from "../../../utils/users/getUserById";
-import updateLoginLink from "../../../utils/loginLinks/updateLoginLink";
 import {
   TIME_UNITS,
   API_METHODS,
   EMAILS,
   ENTITY_TYPES,
   PLACEHOLDERS,
-  LOGIN_LINK_STATUS,
+  LOGIN_METHODS,
 } from "../../../defaults";
 import withValidMethod from "../../../middleware/withValidMethod";
 import { CUSTOM_QUERY } from "../../../types/main";
 import sendEmail from "../../../utils/sendEmail";
 import clean from "../../../utils/clean";
 import { getOrgInvitesForUser } from "../../../utils/invites/getOrgInvitesForUser";
+import { createLoginEventAndDeleteLoginLink } from "../../../utils/loginLinks/createLoginEventAndDeleteLoginLink";
 
 const ironPassword = process.env.IRON_SEAL_PASSWORD;
 
@@ -45,6 +43,7 @@ const handler = async (
 
   // Creates a login link
   if (method === API_METHODS.POST) {
+    console.log("POSTING (trying to log in)");
     try {
       InputValidation({ email });
     } catch (error) {
@@ -65,7 +64,7 @@ const handler = async (
       if (
         latestLink &&
         latestLink.createdAt >= timeThreshold &&
-        !user.email.endsWith("@plutomi.com") // todo contact enum
+        !user.email.endsWith("@plutomi.com") // todo contact enum or domain name
       ) {
         return res.status(400).json({
           message: "You're doing that too much, please try again later",
@@ -96,9 +95,10 @@ const handler = async (
           callbackUrl ? callbackUrl : defaultRedirect
         }`;
 
-        if (loginMethod === "GOOGLE") {
-          // TODO redirect the user direcly here!!!
-          return res.status(200).json({ message: loginLink });
+        if (loginMethod === LOGIN_METHODS.GOOGLE) {
+          // TODO serverside redirect??
+          res.redirect(307, loginLink);
+          return;
         }
 
         try {
@@ -149,23 +149,21 @@ const handler = async (
 
     if (!user) {
       return res
-        .status(401) // I dont know in what situation this would happen, but just in case
+        .status(401) // I dont know in what situation this would happen, but just in case.. we need the user's orgId anyway
         .json({ message: "Invalid userId, please login again" });
     }
 
-    // TODO should this be a transaction?
-    // Simple timestamp when the user actually logged in
-    createLoginEvent({ userId }); // TODO move this to the org events
-
-    // Invalidates the last login link while allowing the user to login again if needed
-    deleteLoginLink({
-      userId: userId,
-      loginLinkTimestmap: latestLoginLink.createdAt,
+    const userOrg = user.orgId !== PLACEHOLDERS.NO_ORG ?? user.orgId;
+    await createLoginEventAndDeleteLoginLink({
+      loginLinkId,
+      userId,
+      orgId: userOrg,
     });
 
     const cleanedUser = clean(user, ENTITY_TYPES.USER);
     req.session.user = cleanedUser;
 
+    console.log("userrrr", cleanedUser);
     /**
      * Get the user's org invites, if any, if they're not in an org.
      * The logic here being, if a user is in an org, what are the chances they're going to join another?
@@ -186,7 +184,7 @@ const handler = async (
       return;
     }
 
-    res.redirect(callbackUrl);
+    res.redirect(307, callbackUrl);
     return;
   }
 };

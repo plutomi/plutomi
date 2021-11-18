@@ -1,5 +1,4 @@
 import { IronSessionData } from "iron-session";
-import { LOGIN_LINK_STATUS } from "../defaults";
 import {
   DynamoNewApplicant,
   DynamoNewApplicantResponse,
@@ -203,10 +202,6 @@ type CreateLoginLinkInput = {
   loginLinkId: string;
 };
 
-interface LoginLinkAnyState extends Omit<DynamoNewLoginLink, "linkStatus"> {
-  linkStatus: LOGIN_LINK_STATUS; // can be new or suspended
-}
-
 type DeleteLoginLinkInput = {
   userId: string;
   loginLinkTimestmap: string;
@@ -214,11 +209,6 @@ type DeleteLoginLinkInput = {
 
 type GetLatestLoginLinkInput = {
   userId: string;
-};
-
-type UpdateLoginLinkInput = {
-  userId: string;
-  updatedLoginLink: LoginLinkAnyState;
 };
 
 type CreateAndJoinOrgInput = {
@@ -239,10 +229,6 @@ type GetOrgInput = {
   orgId: string;
 };
 
-type CreateLoginEventInput = {
-  userId: string;
-};
-
 type GetUserByIdInput = {
   userId: string;
 };
@@ -250,3 +236,9 @@ type GetUserByIdInput = {
 interface GetUserByEmailInput {
   email: string;
 }
+
+type CreateLoginEventAndDeleteLoginLinkInput = {
+  loginLinkId: string;
+  userId: string;
+  orgId?: string | boolean; // If the user has an orgId, a LOGIN_EVENT will be created on the org as well
+};

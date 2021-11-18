@@ -1,7 +1,8 @@
 import { QueryCommand, QueryCommandInput } from "@aws-sdk/lib-dynamodb";
 import { Dynamo } from "../../awsClients/ddbDocClient";
 import { ENTITY_TYPES } from "../../defaults";
-import { LoginLinkAnyState, GetLatestLoginLinkInput } from "../../types/main";
+import { DynamoNewLoginLink } from "../../types/dynamo";
+import { GetLatestLoginLinkInput } from "../../types/main";
 
 const { DYNAMO_TABLE_NAME } = process.env;
 /**
@@ -11,7 +12,7 @@ const { DYNAMO_TABLE_NAME } = process.env;
  */
 export async function getLatestLoginLink(
   props: GetLatestLoginLinkInput
-): Promise<LoginLinkAnyState> {
+): Promise<DynamoNewLoginLink> {
   const { userId } = props;
   const params: QueryCommandInput = {
     TableName: DYNAMO_TABLE_NAME,
@@ -26,8 +27,7 @@ export async function getLatestLoginLink(
 
   try {
     const response = await Dynamo.send(new QueryCommand(params));
-    const latestLink = response.Items[0];
-    return latestLink as LoginLinkAnyState;
+    return response.Items[0] as DynamoNewLoginLink;
   } catch (error) {
     throw new Error(error);
   }

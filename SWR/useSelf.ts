@@ -6,7 +6,6 @@ const fetcher = (url: string) => axios.get(url).then((res) => res.data);
 
 function useSelf(): useSelfOutput {
   const { data, error } = useSWR(UsersService.getSelfURL(), fetcher);
-
   return {
     user: data,
     isUserLoading: !error && !data,

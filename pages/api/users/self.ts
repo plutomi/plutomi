@@ -14,10 +14,12 @@ const handler = async (
 
   if (method === API_METHODS.GET) {
     try {
-      const requestedUser = await getUserById(req.session.user.userId);
+      const requestedUser = await getUserById({
+        userId: req.session.user.userId,
+      });
       if (!requestedUser) {
         req.session.destroy();
-        return res.status(401).json({ message: "Please log in again" }); // TODO middleware
+        return res.status(401).json({ message: "Please log in again" }); // TODO enum error
       }
 
       return res.status(200).json(req.session.user);

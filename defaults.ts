@@ -139,7 +139,7 @@ export const SAFE_PROPERTIES = {
   OPENING: ["GSI1SK", "openingId", "createdAt", "stageOrder"],
 };
 
-export enum LOGIN_LINK_STATUS {
-  NEW = "NEW",
-  SUSPENDED = "SUSPENDED",
+export enum LOGIN_METHODS {
+  LINK = "LINK",
+  GOOGLE = "GOOGLE",
 }
