@@ -1,12 +1,13 @@
 import { UpdateCommand } from "@aws-sdk/lib-dynamodb";
 import { Dynamo } from "../../awsClients/ddbDocClient";
+import { ENTITY_TYPES } from "../../defaults";
+import { UpdateQuestionInput } from "../../types/main";
 const { DYNAMO_TABLE_NAME } = process.env;
 
-export default async function UpdateQuestion({
-  orgId,
-  questionId,
-  newQuestionValues,
-}) {
+export default async function updateQuestion(
+  props: UpdateQuestionInput
+): Promise<void> {
+  const { orgId, questionId, newQuestionValues } = props;
   // TODO user the cleaning functions instead
 
   const FORBIDDEN_KEYS = [
@@ -38,8 +39,8 @@ export default async function UpdateQuestion({
 
   const params = {
     Key: {
-      PK: `ORG#${orgId}#QUESTION#${questionId}`,
-      SK: `STAGE_QUESTION`,
+      PK: `${ENTITY_TYPES.ORG}#${orgId}#${ENTITY_TYPES.STAGE_QUESTION}#${questionId}`,
+      SK: `${ENTITY_TYPES.STAGE_QUESTION}`,
     },
     UpdateExpression: UpdatedExpression,
     ExpressionAttributeValues: newAttributes,

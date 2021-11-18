@@ -3,42 +3,42 @@ import {
   TransactWriteCommandInput,
 } from "@aws-sdk/lib-dynamodb";
 import { Dynamo } from "../../awsClients/ddbDocClient";
-import { GetCurrentTime } from "../time";
+import Time from "../time";
 import { nanoid } from "nanoid";
-import { GetOpening } from "../openings/getOpeningById";
-import { MAX_CHILD_ITEM_LIMIT, MAX_ITEM_LIMIT_ERROR } from "../../Config";
+import { getOpening } from "../openings/getOpeningById";
+import { ENTITY_TYPES, ERRORS, ID_LENGTHS, LIMITS } from "../../defaults";
+import { CreateStageInput } from "../../types/main";
+import { DynamoNewStage } from "../../types/dynamo";
 
 const { DYNAMO_TABLE_NAME } = process.env;
 
-export async function CreateStage({
-  orgId,
-  GSI1SK,
-  openingId,
-}: DynamoCreateStageInput) {
-  const now = GetCurrentTime("iso") as string;
-  const stageId = nanoid(50);
-  const newStage = {
-    PK: `ORG#${orgId}#STAGE#${stageId}`,
-    SK: `STAGE`,
-    entityType: "STAGE",
-    createdAt: now,
+export async function createStage(props: CreateStageInput): Promise<void> {
+  const { orgId, GSI1SK, openingId } = props;
+  const stageId = nanoid(ID_LENGTHS.STAGE);
+  const newStage: DynamoNewStage = {
+    // TODO fix this type
+    PK: `${ENTITY_TYPES.ORG}#${orgId}#${ENTITY_TYPES.STAGE}#${stageId}`,
+    SK: ENTITY_TYPES.STAGE,
+    entityType: ENTITY_TYPES.STAGE,
+    createdAt: Time.currentISO(),
     questionOrder: [],
     stageId: stageId,
+    orgId: orgId,
     totalApplicants: 0,
     openingId: openingId,
-    GSI1PK: `ORG#${orgId}#OPENING#${openingId}#STAGES`, // Get all stages in an opening
+    GSI1PK: `${ENTITY_TYPES.ORG}#${orgId}#${ENTITY_TYPES.OPENING}#${openingId}#STAGES`, // Get all stages in an opening
     GSI1SK: GSI1SK,
   };
 
   try {
-    let opening = await GetOpening({ orgId, openingId });
+    let opening = await getOpening({ orgId, openingId });
 
     try {
       // Get current opening
       opening.stageOrder.push(stageId);
 
-      if (opening.stageOrder.length >= MAX_CHILD_ITEM_LIMIT) {
-        throw MAX_ITEM_LIMIT_ERROR;
+      if (opening.stageOrder.length >= LIMITS.MAX_CHILD_ITEM_LIMIT) {
+        throw ERRORS.MAX_CHILD_ITEM_LIMIT_ERROR_MESSAGE;
       }
 
       const transactParams: TransactWriteCommandInput = {
@@ -56,8 +56,8 @@ export async function CreateStage({
             // Add stage to the opening + increment stage count on opening
             Update: {
               Key: {
-                PK: `ORG#${orgId}#OPENING#${openingId}`,
-                SK: `OPENING`,
+                PK: `${ENTITY_TYPES.ORG}#${orgId}#${ENTITY_TYPES.OPENING}#${openingId}`,
+                SK: `${ENTITY_TYPES.OPENING}`,
               },
               TableName: DYNAMO_TABLE_NAME,
 
@@ -74,8 +74,8 @@ export async function CreateStage({
             // Increment stage count on org
             Update: {
               Key: {
-                PK: `ORG#${orgId}`,
-                SK: `ORG`,
+                PK: `${ENTITY_TYPES.ORG}#${orgId}`,
+                SK: `${ENTITY_TYPES.ORG}`,
               },
               TableName: DYNAMO_TABLE_NAME,
               UpdateExpression:
@@ -90,13 +90,14 @@ export async function CreateStage({
       };
 
       await Dynamo.send(new TransactWriteCommand(transactParams));
+      return;
     } catch (error) {
       console.error(error);
       throw new Error(error);
     }
   } catch (error) {
     throw new Error(
-      `Unable to retrieve opening where stage should be added ${error}`
+      `Unable to retrieve opening where stage should be added ${error}` // TODO add to errors
     );
   }
 }

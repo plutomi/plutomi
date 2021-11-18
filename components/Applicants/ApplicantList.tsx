@@ -6,7 +6,8 @@ import useStore from "../../utils/store";
 import useAllApplicantsInStage from "../../SWR/useAllApplicantsInStage";
 export default function ApplicantList() {
   const router = useRouter();
-  const { openingId, stageId } = router.query as CustomQuery;
+  const { openingId, stageId }: Partial<CUSTOM_QUERY> = router.query;
+
   const { applicants, isApplicantsLoading, isApplicantsError } =
     useAllApplicantsInStage(openingId, stageId);
 
@@ -49,7 +50,7 @@ export default function ApplicantList() {
   return (
     <div className="bg-white shadow overflow-hidden sm:rounded-md">
       <ul role="list" className="divide-y divide-gray-200">
-        {applicants?.map((applicant: DynamoApplicant) => (
+        {applicants?.map((applicant: DynamoNewApplicant) => (
           <ApplicantListItem
             key={applicant.applicantId}
             applicant={applicant}

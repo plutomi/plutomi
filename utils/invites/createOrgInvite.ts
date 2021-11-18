@@ -1,82 +1,63 @@
-import {
-  TransactWriteCommand,
-  TransactWriteCommandInput,
-} from "@aws-sdk/lib-dynamodb";
+import { PutCommand, PutCommandInput } from "@aws-sdk/lib-dynamodb";
 import { Dynamo } from "../../awsClients/ddbDocClient";
-import { GetAllUserInvites } from "./getAllOrgInvites";
-import { GetCurrentTime } from "../time";
+import { getOrgInvitesForUser } from "./getOrgInvitesForUser";
+import Time from "../time";
 import { nanoid } from "nanoid";
+import { ENTITY_TYPES, ID_LENGTHS } from "../../defaults";
+import { DynamoNewOrgInvite } from "../../types/dynamo";
+import { CreateOrgInviteInput } from "../../types/main";
 
 const { DYNAMO_TABLE_NAME } = process.env;
 
-export default async function CreateOrgInvite({
-  orgId,
-  expiresAt,
-  createdBy,
-  user,
-  orgName,
-}) {
+/**
+ * Invites a user to join your org
+ * @param props {@link CreateOrgInviteInput}
+ * @returns
+ */
+export default async function createOrgInvite(
+  props: CreateOrgInviteInput
+): Promise<void> {
+  const { orgId, expiresAt, createdBy, recipient, orgName } = props;
   try {
-    if (user.orgId === orgId) {
-      throw "User is already in your org";
+    if (recipient.orgId === orgId) {
+      throw "User is already in your org"; // todo errors enum
     }
 
     // Check if the user we are inviting already has pending invites for the current org
-    const pendingInvites = await GetAllUserInvites(user.userId);
-    const unclaimedInvites = pendingInvites.filter(
-      (invite) => invite.orgId == orgId
+    const allUserInvites = await getOrgInvitesForUser({
+      userId: recipient.userId,
+    });
+    const pendingInvites = allUserInvites.find(
+      (invite) => invite.orgId === orgId
     );
 
-    if (unclaimedInvites.length > 0) {
-      throw `This user already has a pending invite to your org! They can log in at ${process.env.NEXT_PUBLIC_WEBSITE_URL}/invites to claim it!`;
+    if (pendingInvites) {
+      // TODO errors enum
+      throw `This user already has a pending invite to your org! They can log in to claim it.`; // todo enum
     }
-    const inviteId = nanoid(50);
-    const now = GetCurrentTime("iso") as string;
-    const newOrgInvite = {
-      PK: `USER#${user.userId}`,
-      SK: `ORG_INVITE#${inviteId}`, // Allows sorting, and incase two get created in the same millisecond
+    const inviteId = nanoid(ID_LENGTHS.ORG_INVITE);
+    const now = Time.currentISO();
+    const newOrgInvite: DynamoNewOrgInvite = {
+      PK: `${ENTITY_TYPES.USER}#${recipient.userId}`,
+      SK: `${ENTITY_TYPES.ORG_INVITE}#${inviteId}`,
       orgId: orgId,
       orgName: orgName, // using orgName here because GSI1SK is taken obv
       createdBy: createdBy,
-      entityType: "ORG_INVITE",
+      entityType: ENTITY_TYPES.ORG_INVITE,
       createdAt: now,
       expiresAt: expiresAt,
       inviteId: inviteId,
-      GSI1PK: `ORG#${orgId}#ORG_INVITES`,
+      GSI1PK: `${ENTITY_TYPES.ORG}#${orgId}#${ENTITY_TYPES.ORG_INVITE}S`, // Returns all invites sent by an org
       GSI1SK: now,
     };
 
-    const transactParams: TransactWriteCommandInput = {
-      TransactItems: [
-        {
-          // Add a new invite
-          Put: {
-            Item: newOrgInvite,
-            TableName: DYNAMO_TABLE_NAME,
-            ConditionExpression: "attribute_not_exists(PK)",
-          },
-        },
-
-        {
-          // Increment the user's total invites
-          Update: {
-            Key: {
-              PK: `USER#${user.userId}`,
-              SK: `USER`,
-            },
-            TableName: DYNAMO_TABLE_NAME,
-            UpdateExpression:
-              "SET totalInvites = if_not_exists(totalInvites, :zero) + :value",
-            ExpressionAttributeValues: {
-              ":zero": 0,
-              ":value": 1,
-            },
-          },
-        },
-      ],
+    const params: PutCommandInput = {
+      Item: newOrgInvite,
+      TableName: DYNAMO_TABLE_NAME,
+      ConditionExpression: "attribute_not_exists(PK)",
     };
 
-    await Dynamo.send(new TransactWriteCommand(transactParams));
+    await Dynamo.send(new PutCommand(params));
 
     return;
   } catch (error) {

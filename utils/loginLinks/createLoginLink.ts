@@ -1,25 +1,33 @@
 import { PutCommand, PutCommandInput } from "@aws-sdk/lib-dynamodb";
-import { GetCurrentTime, GetPastOrFutureTime } from "../time";
+import Time from "../time";
 import { Dynamo } from "../../awsClients/ddbDocClient";
+import { ENTITY_TYPES, LOGIN_LINK_STATUS, TIME_UNITS } from "../../defaults";
+import { CreateLoginLinkInput } from "../../types/main";
+import { DynamoNewLoginLink } from "../../types/dynamo";
 
 const { DYNAMO_TABLE_NAME } = process.env;
 
-export default async function CreateLoginLink({
-  user,
-  loginLinkHash,
-  loginLinkExpiry,
-}) {
+/**
+ * Creates a login link for the requested user
+ * @param props {@link CreateLoginLinkInput}
+ * @returns
+ */
+export default async function createLoginLink(
+  props: CreateLoginLinkInput
+): Promise<void> {
+  const { userId, loginLinkHash, loginLinkExpiry } = props;
   try {
-    const now = GetCurrentTime("iso") as string;
-    const newLoginLink = {
-      PK: `USER#${user.userId}`,
-      SK: `loginLink#${now}`,
+    const now = Time.currentISO();
+    const newLoginLink: DynamoNewLoginLink = {
+      PK: `${ENTITY_TYPES.USER}#${userId}`,
+      SK: `${ENTITY_TYPES.LOGIN_LINK}#${now}`,
       loginLinkHash: loginLinkHash,
-      userId: user.userId,
-      entityType: "loginLink",
+      userId: userId,
+      entityType: ENTITY_TYPES.LOGIN_LINK,
+      linkStatus: LOGIN_LINK_STATUS.NEW, // TODO enum
       createdAt: now,
       expiresAt: loginLinkExpiry,
-      ttlExpiry: GetPastOrFutureTime("future", 1, "days", "unix"),
+      ttlExpiry: Time.futureUNIX(1, TIME_UNITS.DAYS),
     };
 
     const params: PutCommandInput = {

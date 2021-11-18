@@ -10,6 +10,18 @@ const sessionOptions = {
   cookieName: process.env.NEXT_IRON_SESSION_COOKIE_NAME,
 };
 
+/**
+ * https://github.com/vvo/iron-session
+ * `withSessionRoute` is a wrapper so we don't have to keep passing sessionOptions to each API route
+ * `withIronSessionApiRoute` is what actually adds the session object.
+ * It DOES NOT:
+ * 1. Check if a session.user exists
+ * 2. Check for OR validate API keys
+ *
+ * We have a separate middleware for that, withAuth. // TODO revisit this and maybe combine them?
+ */
+
+// For validating a session || API Keys, see withAuth
 export function withSessionRoute(handler: NextApiHandler) {
   return withIronSessionApiRoute(handler, sessionOptions);
 }

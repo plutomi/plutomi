@@ -1,29 +1,28 @@
-import { CreateStageQuestion } from "../../../utils/questions/createStageQuestion";
-import { NextApiResponse } from "next";
+import { NextApiRequest, NextApiResponse } from "next";
+import { createStageQuestion } from "../../../utils/questions/createStageQuestion";
 import { withSessionRoute } from "../../../middleware/withSession";
+import { API_METHODS } from "../../../defaults";
+import withAuth from "../../../middleware/withAuth";
+import withCleanOrgId from "../../../middleware/withCleanOrgId";
+import withValidMethod from "../../../middleware/withValidMethod";
 
 const handler = async (
-  req: NextIronRequest,
+  req: NextApiRequest,
   res: NextApiResponse
 ): Promise<void> => {
-  const userSession = req.session.user;
-  if (!userSession) {
-    req.session.destroy();
-    return res.status(401).json({ message: "Please log in again" });
-  }
   const { body, method } = req;
   const { GSI1SK, questionDescription, stageId } = body;
 
-  if (method === "POST") {
+  if (method === API_METHODS.POST) {
     const createStageQuestionInput = {
-      orgId: userSession.orgId,
+      orgId: req.session.user.orgId,
       stageId: stageId,
       GSI1SK: GSI1SK,
       questionDescription: questionDescription,
     };
 
     try {
-      await CreateStageQuestion(createStageQuestionInput);
+      await createStageQuestion(createStageQuestionInput);
       return res.status(201).json({ message: "Question created!" });
     } catch (error) {
       // TODO add error logger
@@ -32,8 +31,8 @@ const handler = async (
         .json({ message: `Unable to create stage question: ${error}` });
     }
   }
-
-  return res.status(405).json({ message: "Not Allowed" });
 };
 
-export default withSessionRoute(handler);
+export default withCleanOrgId(
+  withValidMethod(withSessionRoute(withAuth(handler)), [API_METHODS.POST])
+);

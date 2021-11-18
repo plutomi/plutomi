@@ -5,26 +5,29 @@ import {
   TransactWriteCommandInput,
 } from "@aws-sdk/lib-dynamodb";
 import { Dynamo } from "../../awsClients/ddbDocClient";
+import { ENTITY_TYPES } from "../../defaults";
+import { DeleteOpeningInput } from "../../types/main";
 const { DYNAMO_TABLE_NAME } = process.env;
-import { DeleteStage } from "../stages/deleteStage";
-import { GetAllStagesInOpening } from "../stages/getAllStagesInOpening";
+import { deleteStage } from "../stages/deleteStage";
+import { getAllStagesInOpening } from "./getAllStagesInOpening";
 // TODO check if stage is empt of appliants first
 // TODO delete stage from the funnels sort order
-export async function DeleteOpening({ orgId, openingId }) {
-  const allStages = await GetAllStagesInOpening(orgId, openingId);
+export async function deleteOpening(props: DeleteOpeningInput): Promise<void> {
+  const { orgId, openingId } = props;
+  const allStages = await getAllStagesInOpening({ orgId, openingId }); // TODO we dont have to query this anymore!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   try {
     // Delete stages first
     if (allStages.length > 0) {
       console.log("Deleting stages");
-      allStages.map(async (stage: DynamoStage) => {
+      allStages.map(async (stage) => {
         // TODO add to SQS & delete applicants, rules, questions, etc.
         const input = {
           orgId: orgId,
           openingId: openingId,
           stageId: stage.stageId,
         };
-        await DeleteStage(input);
+        await deleteStage(input);
       });
     }
 
@@ -36,8 +39,8 @@ export async function DeleteOpening({ orgId, openingId }) {
           // Delete the opening
           Delete: {
             Key: {
-              PK: `ORG#${orgId}#OPENING#${openingId}`,
-              SK: `OPENING`,
+              PK: `${ENTITY_TYPES.ORG}#${orgId}#${ENTITY_TYPES.OPENING}#${openingId}`,
+              SK: `${ENTITY_TYPES.OPENING}`,
             },
             TableName: DYNAMO_TABLE_NAME,
           },
@@ -46,8 +49,8 @@ export async function DeleteOpening({ orgId, openingId }) {
           // Decrement the org's total openings
           Update: {
             Key: {
-              PK: `ORG#${orgId}`,
-              SK: `ORG`,
+              PK: `${ENTITY_TYPES.ORG}#${orgId}`,
+              SK: `${ENTITY_TYPES.ORG}`,
             },
             TableName: DYNAMO_TABLE_NAME,
             UpdateExpression: "SET totalOpenings = totalOpenings - :value",

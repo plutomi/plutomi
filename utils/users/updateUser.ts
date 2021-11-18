@@ -1,17 +1,15 @@
 import { UpdateCommand, UpdateCommandInput } from "@aws-sdk/lib-dynamodb";
 import { Dynamo } from "../../awsClients/ddbDocClient";
+import { ENTITY_TYPES, PLACEHOLDERS } from "../../defaults";
+import { DynamoNewUser } from "../../types/dynamo";
+import { UpdateUserInput } from "../../types/main";
 
 const { DYNAMO_TABLE_NAME } = process.env;
 
-export async function UpdateUser({
-  userId,
-  newUserValues,
-  ALLOW_FORBIDDEN_KEYS,
-}: {
-  newUserValues: any;
-  userId: string;
-  ALLOW_FORBIDDEN_KEYS?: boolean;
-}) {
+export async function updateUser(
+  props: UpdateUserInput
+): Promise<DynamoNewUser> {
+  const { userId, newUserValues, ALLOW_FORBIDDEN_KEYS } = props;
   try {
     // TODO user the cleaning functions instead
     const FORBIDDEN_KEYS = [
@@ -41,7 +39,11 @@ export async function UpdateUser({
     });
 
     // TODO refactor this into its own function, easy way to have banned values
-    const bannedKeys = ["NO_FIRST_NAME", "NO_LAST_NAME"];
+    const bannedKeys = [
+      PLACEHOLDERS.FIRST_NAME,
+      PLACEHOLDERS.LAST_NAME,
+      PLACEHOLDERS.FULL_NAME,
+    ];
 
     // @ts-ignore TODO fix types
     const checker = (value) =>
@@ -55,8 +57,8 @@ export async function UpdateUser({
     const NewUpdateExpression = `SET ${newUpdateExpression.join(", ")}`;
     const params: UpdateCommandInput = {
       Key: {
-        PK: `USER#${userId}`,
-        SK: `USER`,
+        PK: `${ENTITY_TYPES.USER}#${userId}`,
+        SK: ENTITY_TYPES.USER,
       },
       UpdateExpression: NewUpdateExpression,
       ExpressionAttributeValues: newAttributes,
@@ -66,7 +68,7 @@ export async function UpdateUser({
     };
 
     const updatedUser = await Dynamo.send(new UpdateCommand(params));
-    return updatedUser.Attributes as DynamoUser;
+    return updatedUser.Attributes as DynamoNewUser;
   } catch (error) {
     throw new Error(error);
   }

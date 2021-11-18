@@ -1,23 +1,22 @@
 // All public openings for the org
 import withCleanOrgId from "../../../../../../middleware/withCleanOrgId";
-import { NextApiResponse } from "next";
-import { GetAllOpeningsInOrg } from "../../../../../../utils/openings/getAllOpeningsInOrg";
-import CleanOpening from "../../../../../../utils/clean/cleanOpening";
+import { NextApiRequest, NextApiResponse } from "next";
+import { getAllOpeningsInOrg } from "../../../../../../utils/openings/getAllOpeningsInOrg";
+import { API_METHODS, ENTITY_TYPES } from "../../../../../../defaults";
+import withValidMethod from "../../../../../../middleware/withValidMethod";
+import { CUSTOM_QUERY } from "../../../../../../types/main";
+import clean from "../../../../../../utils/clean";
 
-const handler = async (req: CustomRequest, res: NextApiResponse) => {
+const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   const { method, query } = req;
-  const { orgId } = query as CustomQuery;
+  const { orgId } = query as Pick<CUSTOM_QUERY, "orgId">;
 
-  if (method === "GET") {
+  if (method === API_METHODS.GET) {
     try {
-      const allOpenings = await GetAllOpeningsInOrg(orgId);
-      const publicOpenings = allOpenings.filter(
-        (opening): DynamoOpening => opening.isPublic
-      );
+      const allOpenings = await getAllOpeningsInOrg({ orgId });
+      const publicOpenings = allOpenings.filter((opening) => opening.isPublic);
 
-      publicOpenings.forEach((opening) =>
-        CleanOpening(opening as DynamoOpening)
-      );
+      publicOpenings.forEach((opening) => clean(opening, ENTITY_TYPES.OPENING));
 
       return res.status(200).json(publicOpenings);
     } catch (error) {
@@ -27,8 +26,6 @@ const handler = async (req: CustomRequest, res: NextApiResponse) => {
         .json({ message: `Unable to retrieve org: ${error}` });
     }
   }
-
-  return res.status(405).json({ message: "Not Allowed" });
 };
 
-export default withCleanOrgId(handler);
+export default withCleanOrgId(withValidMethod(handler, [API_METHODS.GET]));

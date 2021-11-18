@@ -5,7 +5,7 @@ import { useRouter } from "next/router";
 import ApplicationHeader from "../../../../components/Applicants/ApplicationHeader";
 export default function Application() {
   const router = useRouter();
-  const { applicantId } = router.query as CustomQuery;
+  const { applicantId }: Partial<CUSTOM_QUERY> = router.query;
   const { applicant, isApplicantLoading, isApplicantError } =
     useApplicantById(applicantId);
 

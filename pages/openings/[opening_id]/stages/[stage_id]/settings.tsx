@@ -12,7 +12,7 @@ import NewPage from "../../../../../components/Templates/NewPage";
 import useStageById from "../../../../../SWR/useStageById";
 export default function StageSettings() {
   const router = useRouter();
-  const { openingId, stageId } = router.query as CustomQuery;
+  const { openingId, stageId }: Partial<CUSTOM_QUERY> = router.query;
 
   const { user, isUserLoading, isUserError } = useSelf();
   let { opening, isOpeningLoading, isOpeningError } = useOpeningById(openingId);

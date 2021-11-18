@@ -1,84 +1,80 @@
-import CreateOrgInvite from "../../../utils/invites/createOrgInvite";
-import SendOrgInvite from "../../../utils/email/sendOrgInvite";
+import createOrgInvite from "../../../utils/invites/createOrgInvite";
 import InputValidation from "../../../utils/inputValidation";
-import { GetPastOrFutureTime } from "../../../utils/time";
-import { NextApiResponse } from "next";
-import withCleanOrgId from "../../../middleware/withCleanOrgId";
-import { GetOrg } from "../../../utils/orgs/getOrg";
+import { NextApiRequest, NextApiResponse } from "next";
+import Time from "../../../utils/time";
+import { getOrg } from "../../../utils/orgs/getOrg";
 import { withSessionRoute } from "../../../middleware/withSession";
-import { CreateUser } from "../../../utils/users/createUser";
+import { createUser } from "../../../utils/users/createUser";
+import {
+  TIME_UNITS,
+  API_METHODS,
+  EMAILS,
+  PLACEHOLDERS,
+} from "../../../defaults";
+import withAuth from "../../../middleware/withAuth";
+import withValidMethod from "../../../middleware/withValidMethod";
+import sendEmail from "../../../utils/sendEmail";
 const handler = async (
-  req: NextIronRequest,
+  req: NextApiRequest,
   res: NextApiResponse
 ): Promise<void> => {
-  const userSession = req.session.user;
-  if (!userSession) {
-    req.session.destroy();
-    return res.status(401).json({ message: "Please log in again" });
-  }
   const { body, method } = req;
 
-  const { recipientEmail }: APICreateOrgInviteInput = body;
+  const { recipientEmail } = body;
 
-  const defaultExpiryTime = 3;
-  const defaultExpiryValue = "days";
-  const expiresAt = GetPastOrFutureTime(
-    "future",
-    defaultExpiryTime,
-    "days" || defaultExpiryValue,
-    "iso"
-  );
+  const expiresAt = Time.futureISO(3, TIME_UNITS.DAYS);
 
-  const org = await GetOrg(userSession.orgId);
+  const org = await getOrg(req.session.user.orgId);
 
-  const newOrgInvite: CreateOrgInviteInput = {
+  const newOrgInvite = {
     claimed: false,
     orgName: org.GSI1SK, // For the recipient they can see the name of the org instead of the orgId, much neater
-    createdBy: userSession, // TODO reduce this to just name & email
+    createdBy: req.session.user, // TODO reduce this to just name & email
     orgId: org.orgId,
     recipientEmail: recipientEmail,
     expiresAt: expiresAt,
   };
-  if (method === "POST") {
+  if (method === API_METHODS.POST) {
     try {
       InputValidation(newOrgInvite);
     } catch (error) {
       return res.status(400).json({ message: `${error.message}` });
     }
 
-    if (userSession.userEmail == recipientEmail) {
-      return res.status(400).json({ message: "You can't invite yourself" });
+    if (req.session.user.email == recipientEmail) {
+      return res.status(400).json({ message: "You can't invite yourself" }); // TODO errors enum
     }
 
-    if (userSession.orgId === "NO_ORG_ASSIGNED") {
+    if (req.session.user.orgId === PLACEHOLDERS.NO_ORG) {
       return res.status(400).json({
-        message: `You must create an organization before inviting users`,
+        message: `You must create an organization before inviting users`, // TODO errors enum
       });
     }
 
     // Creates the user
-    const recipient = await CreateUser({ userEmail: recipientEmail });
+    const recipient = await createUser({ email: recipientEmail });
 
-    const newOrgInviteEmail: SendOrgInviteInput = {
-      createdBy: userSession,
-      orgName: org.GSI1SK,
-      recipientEmail: recipient.userEmail, // Will be lowercase & .trim()'d by createUser
-    };
     try {
-      await CreateOrgInvite({
+      await createOrgInvite({
         orgId: org.orgId,
-        user: recipient,
+        recipient: recipient,
         orgName: org.GSI1SK,
         expiresAt: expiresAt,
-        createdBy: userSession,
+        createdBy: req.session.user,
       });
       try {
-        await SendOrgInvite(newOrgInviteEmail); // TODO async with streams
+        await sendEmail({
+          fromName: "Plutomi",
+          fromAddress: EMAILS.GENERAL,
+          toAddresses: [recipient.email],
+          subject: `${req.session.user.firstName} ${req.session.user.lastName} has invited you to join ${org.GSI1SK} on Plutomi!`,
+          html: `<h4>You can log in at <a href="${process.env.NEXT_PUBLIC_WEBSITE_URL}">${process.env.NEXT_PUBLIC_WEBSITE_URL}</a> to accept it!</h4><p>If you believe this email was received in error, you can safely ignore it.</p>`,
+        });
         return res
           .status(201)
-          .json({ message: `Invite sent to '${recipient.userEmail}'` });
+          .json({ message: `Invite sent to '${recipient.email}'` });
       } catch (error) {
-        return res.status(500).json({
+        return res.status(500).json({ // TODO update this since email will be done with streams
           message: `The invite was created, but we were not able to send an email to the user. They log in and accept their invite at https://plutomi.com/invites - ${error}`,
         });
       }
@@ -86,7 +82,8 @@ const handler = async (
       return res.status(500).json({ message: `${error}` });
     }
   }
-  return res.status(405).json({ message: "Not Allowed" });
 };
 
-export default withSessionRoute(withCleanOrgId(handler));
+export default withValidMethod(withSessionRoute(withAuth(handler)), [
+  API_METHODS.POST,
+]);

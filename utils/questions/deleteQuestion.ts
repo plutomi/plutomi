@@ -3,14 +3,19 @@ import {
   TransactWriteCommandInput,
 } from "@aws-sdk/lib-dynamodb";
 import { Dynamo } from "../../awsClients/ddbDocClient";
+import { ENTITY_TYPES } from "../../defaults";
+import { DeleteQuestionInput } from "../../types/main";
 const { DYNAMO_TABLE_NAME } = process.env;
-import { getStage } from "../stages/getStage";
-import { GetQuestion } from "./getQuestionById";
-export async function DeleteQuestion({ orgId, questionId }) {
+import { getStageById } from "../stages/getStageById";
+import { getQuestionById } from "./getQuestionById";
+export async function DeleteQuestion(
+  props: DeleteQuestionInput
+): Promise<void> {
+  const { orgId, questionId } = props;
   // Delete the question item & update the question order on the stage
   try {
-    let question = await GetQuestion({ orgId, questionId });
-    let stage = await GetStage({ orgId, stageId: question.stageId });
+    let question = await getQuestionById({ orgId, questionId });
+    let stage = await getStageById({ orgId, stageId: question.stageId });
     const deletedQuestionIndex = stage.questionOrder.indexOf(questionId);
 
     // Update question order
@@ -22,8 +27,8 @@ export async function DeleteQuestion({ orgId, questionId }) {
           // Delete question
           Delete: {
             Key: {
-              PK: `ORG#${orgId}#QUESTION#${questionId}`,
-              SK: `STAGE_QUESTION`,
+              PK: `${ENTITY_TYPES.ORG}#${orgId}#${ENTITY_TYPES.STAGE_QUESTION}#${questionId}`,
+              SK: `${ENTITY_TYPES.STAGE_QUESTION}`,
             },
             TableName: DYNAMO_TABLE_NAME,
           },
@@ -32,8 +37,8 @@ export async function DeleteQuestion({ orgId, questionId }) {
           // Update Question Order
           Update: {
             Key: {
-              PK: `ORG#${orgId}#STAGE#${stage.stageId}`,
-              SK: `STAGE`,
+              PK: `${ENTITY_TYPES.ORG}#${orgId}#${ENTITY_TYPES.STAGE}#${stage.stageId}`,
+              SK: `${ENTITY_TYPES.STAGE}`,
             },
             TableName: DYNAMO_TABLE_NAME,
             UpdateExpression: "SET questionOrder = :questionOrder",

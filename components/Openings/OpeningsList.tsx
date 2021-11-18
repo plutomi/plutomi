@@ -4,7 +4,7 @@ import {
   UsersIcon,
 } from "@heroicons/react/solid";
 import ClickToCopy from "../ClickToCopy";
-import { getRelativeTime } from "../../utils/time";
+import Time from "../../utils/time";
 import Link from "next/dist/client/link";
 import useOpenings from "../../SWR/useOpenings";
 import useSelf from "../../SWR/useSelf";
@@ -17,14 +17,14 @@ export default function OpeningList() {
 
   const search = useStore((state) => state.openingsSearchInput);
 
-  const filteredOpenings = openings?.filter((opening: DynamoOpening) =>
+  const filteredOpenings = openings?.filter((opening) =>
     opening.GSI1SK.toLowerCase().trim().includes(search.toLowerCase().trim())
   );
 
   return (
     <div className="bg-white shadow overflow-hidden sm:rounded-md">
       <ul role="list" className="divide-y divide-gray-200">
-        {filteredOpenings?.map((opening: DynamoOpening) => (
+        {filteredOpenings?.map((opening) => (
           <li key={opening.openingId}>
             {/* If the opening has stages, go to the first stage and view aplicants. Otherwise, go to the settings page for the opening to create one*/}
             <Link
@@ -87,8 +87,8 @@ export default function OpeningList() {
                       />
                       <p>
                         Created{" "}
-                        <time dateTime={opening.createdAt as string}>
-                          {getRelativeTime(opening.createdAt)}
+                        <time dateTime={opening.createdAt}>
+                          {Time.relative(opening.createdAt)}
                         </time>
                       </p>
                     </div>

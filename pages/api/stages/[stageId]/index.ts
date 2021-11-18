@@ -1,32 +1,31 @@
-import { getStage } from "../../../../utils/stages/getStage";
-import { NextApiResponse } from "next";
+import { getStageById } from "../../../../utils/stages/getStageById";
+import { NextApiRequest, NextApiResponse } from "next";
 import InputValidation from "../../../../utils/inputValidation";
-import { DeleteStage } from "../../../../utils/stages/deleteStage";
-import UpdateStage from "../../../../utils/stages/updateStage";
+import { deleteStage } from "../../../../utils/stages/deleteStage";
+import updateStage from "../../../../utils/stages/updateStage";
 // Create stage in a opening
 import { withSessionRoute } from "../../../../middleware/withSession";
+import { API_METHODS } from "../../../../defaults";
+import withAuth from "../../../../middleware/withAuth";
+import withCleanOrgId from "../../../../middleware/withCleanOrgId";
+import withValidMethod from "../../../../middleware/withValidMethod";
+import { CUSTOM_QUERY, UpdateStageInput } from "../../../../types/main";
 
 const handler = async (
-  req: NextIronRequest,
+  req: NextApiRequest,
   res: NextApiResponse
 ): Promise<void> => {
-  const userSession = req.session.user;
-  if (!userSession) {
-    req.session.destroy();
-    return res.status(401).json({ message: "Please log in again" });
-  }
   const { method, query, body } = req;
-  const { stageId } = query as CustomQuery;
-  const { openingId } = body;
+  const { stageId } = query as Pick<CUSTOM_QUERY, "stageId">;
   // Get a single stage in an opening
-  if (method === "GET") {
-    const getStageInput: GetStageInput = {
-      orgId: userSession.orgId,
+  if (method === API_METHODS.GET) {
+    const getStageInput = {
+      orgId: req.session.user.orgId,
       stageId: stageId,
     };
 
     try {
-      const stage = await GetStage(getStageInput);
+      const stage = await getStageById(getStageInput);
       if (!stage) {
         return res.status(404).json({ message: "Stage not found" });
       }
@@ -40,10 +39,10 @@ const handler = async (
     }
   }
 
-  if (method === "PUT") {
+  if (method === API_METHODS.PUT) {
     try {
       const updateStageInput: UpdateStageInput = {
-        orgId: userSession.orgId,
+        orgId: req.session.user.orgId,
         stageId: stageId,
         newStageValues: body.newStageValues,
       };
@@ -54,7 +53,7 @@ const handler = async (
         return res.status(400).json({ message: `${error.message}` });
       }
 
-      await UpdateStage(updateStageInput);
+      await updateStage(updateStageInput);
       return res.status(200).json({ message: "Stage updated!" });
     } catch (error) {
       return res
@@ -63,14 +62,14 @@ const handler = async (
     }
   }
 
-  if (method === "DELETE") {
+  if (method === API_METHODS.DELETE) {
     try {
       const deleteStageInput = {
-        orgId: userSession.orgId,
+        orgId: req.session.user.orgId,
         stageId: stageId,
       };
 
-      await DeleteStage(deleteStageInput);
+      await deleteStage(deleteStageInput);
 
       return res.status(200).json({ message: "Stage deleted!" });
     } catch (error) {
@@ -80,7 +79,12 @@ const handler = async (
         .json({ message: `Unable to delete your stage: ${error}` });
     }
   }
-  return res.status(405).json({ message: "Not Allowed" });
 };
 
-export default withSessionRoute(handler);
+export default withCleanOrgId(
+  withValidMethod(withSessionRoute(withAuth(handler)), [
+    API_METHODS.GET,
+    API_METHODS.PUT,
+    API_METHODS.DELETE,
+  ])
+);

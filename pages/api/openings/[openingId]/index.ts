@@ -1,30 +1,27 @@
-import { GetOpening } from "../../../../utils/openings/getOpeningById";
-import { NextApiResponse } from "next";
+import { getOpening } from "../../../../utils/openings/getOpeningById";
+import { NextApiRequest, NextApiResponse } from "next";
 import InputValidation from "../../../../utils/inputValidation";
-import UpdateOpening from "../../../../utils/openings/updateOpening";
-import { DeleteOpening } from "../../../../utils/openings/deleteOpening";
+import updateOpening from "../../../../utils/openings/updateOpening";
+import { deleteOpening } from "../../../../utils/openings/deleteOpening";
 import { withSessionRoute } from "../../../../middleware/withSession";
+import { API_METHODS } from "../../../../defaults";
+import withAuth from "../../../../middleware/withAuth";
+import withValidMethod from "../../../../middleware/withValidMethod";
+import { CUSTOM_QUERY } from "../../../../types/main";
 
 const handler = async (
-  req: NextIronRequest,
+  req: NextApiRequest,
   res: NextApiResponse
 ): Promise<void> => {
-  const userSession = req.session.user;
-  if (!userSession) {
-    req.session.destroy();
-    return res.status(401).json({ message: "Please log in again" });
-  }
   const { method, query, body } = req;
-  const { openingId } = query as CustomQuery;
+  const { openingId } = query as Pick<CUSTOM_QUERY, "openingId">;
 
-  const getOpeningInput: GetOpeningInput = {
-    orgId: userSession.orgId,
-    openingId: openingId,
-  };
-
-  if (method === "GET") {
+  if (method === API_METHODS.GET) {
     try {
-      const opening = await GetOpening(getOpeningInput);
+      const opening = await getOpening({
+        openingId,
+        orgId: req.session.user.orgId,
+      });
       if (!opening) {
         return res.status(404).json({ message: "Opening not found" });
       }
@@ -38,10 +35,10 @@ const handler = async (
     }
   }
 
-  if (method === "PUT") {
+  if (method === API_METHODS.PUT) {
     try {
-      const updateOpeningInput: UpdateOpeningInput = {
-        orgId: userSession.orgId,
+      const updateOpeningInput = {
+        orgId: req.session.user.orgId,
         openingId: openingId,
         newOpeningValues: body.newOpeningValues,
       };
@@ -52,7 +49,7 @@ const handler = async (
         return res.status(400).json({ message: `${error.message}` });
       }
 
-      await UpdateOpening(updateOpeningInput);
+      await updateOpening(updateOpeningInput);
       return res.status(200).json({ message: "Opening updated!" });
     } catch (error) {
       return res
@@ -61,13 +58,13 @@ const handler = async (
     }
   }
 
-  if (method === "DELETE") {
+  if (method === API_METHODS.DELETE) {
     try {
       const deleteOpeningInput = {
-        orgId: userSession.orgId,
+        orgId: req.session.user.orgId,
         openingId: openingId,
       };
-      await DeleteOpening(deleteOpeningInput);
+      await deleteOpening(deleteOpeningInput);
       return res.status(200).json({ message: "Opening deleted" });
     } catch (error) {
       return res
@@ -75,7 +72,10 @@ const handler = async (
         .json({ message: `Unable to delete your opening ${error}` });
     }
   }
-  return res.status(405).json({ message: "Not Allowed" });
 };
 
-export default withSessionRoute(handler);
+export default withValidMethod(withSessionRoute(withAuth(handler)), [
+  API_METHODS.GET,
+  API_METHODS.PUT,
+  API_METHODS.DELETE,
+]);

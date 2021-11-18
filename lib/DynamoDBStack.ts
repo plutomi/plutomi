@@ -14,9 +14,11 @@ export class DynamoDBStack extends cdk.Stack {
       tableName: TABLE_NAME,
       partitionKey: { name: "PK", type: dynamodb.AttributeType.STRING },
       sortKey: { name: "SK", type: dynamodb.AttributeType.STRING },
+      timeToLiveAttribute: "ttlExpiry",
       readCapacity: 1,
       writeCapacity: 1,
       billingMode: dynamodb.BillingMode.PAY_PER_REQUEST,
+      stream: dynamodb.StreamViewType.NEW_AND_OLD_IMAGES,
     });
 
     table.addGlobalSecondaryIndex({

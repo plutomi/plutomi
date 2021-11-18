@@ -1,21 +1,20 @@
 // Returns some public info about an opening
 // Such as the opening name, description, and stage order
 import withCleanOrgId from "../../../../../../../middleware/withCleanOrgId";
-import { NextApiResponse } from "next";
-import CleanStage from "../../../../../../../utils/clean/cleanStage";
-import { getStage } from "../../../../../../../utils/stages/getStage";
-const handler = async (req: CustomRequest, res: NextApiResponse) => {
+import { NextApiRequest, NextApiResponse } from "next";
+import { getStageById } from "../../../../../../../utils/stages/getStageById";
+import { API_METHODS, ENTITY_TYPES } from "../../../../../../../defaults";
+import withValidMethod from "../../../../../../../middleware/withValidMethod";
+import { CUSTOM_QUERY } from "../../../../../../../types/main";
+import clean from "../../../../../../../utils/clean";
+
+const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   const { method, query } = req;
-  const { orgId, openingId, stageId } = query as CustomQuery;
+  const { orgId, stageId } = query as Pick<CUSTOM_QUERY, "orgId" | "stageId">;
 
-  const getStageInput: GetStageInput = {
-    orgId: orgId,
-    stageId: stageId,
-  };
-
-  if (method === "GET") {
+  if (method === API_METHODS.GET) {
     try {
-      const stage = await GetStage(getStageInput);
+      const stage = await getStageById({ orgId, stageId });
       if (!stage) {
         return res.status(404).json({ message: "Stage not found" });
       }
@@ -25,8 +24,8 @@ const handler = async (req: CustomRequest, res: NextApiResponse) => {
       //       .status(400)
       //       .json({ message: "You cannot apply here just yet" });
       //   }
-      const cleanStage = CleanStage(stage as DynamoStage);
-      return res.status(200).json(cleanStage);
+      const cleanedStage = clean(stage, ENTITY_TYPES.STAGE)
+      return res.status(200).json(cleanedStage);
     } catch (error) {
       // TODO add error logger
       return res
@@ -34,8 +33,6 @@ const handler = async (req: CustomRequest, res: NextApiResponse) => {
         .json({ message: `Unable to get stage: ${error}` });
     }
   }
-
-  return res.status(405).json({ message: "Not Allowed" });
 };
 
-export default withCleanOrgId(handler);
+export default withCleanOrgId(withValidMethod(handler, [API_METHODS.GET]));

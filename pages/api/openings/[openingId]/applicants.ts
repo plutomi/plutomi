@@ -1,23 +1,22 @@
-import { NextApiResponse } from "next";
-import { GetAllApplicantsInOpening } from "../../../../utils/openings/getAllApplicantsInOpening";
+import { NextApiRequest, NextApiResponse } from "next";
+import { getAllApplicantsInOpening } from "../../../../utils/openings/getAllApplicantsInOpening";
 import { withSessionRoute } from "../../../../middleware/withSession";
 import InputValidation from "../../../../utils/inputValidation";
+import { API_METHODS } from "../../../../defaults";
+import withAuth from "../../../../middleware/withAuth";
+import withValidMethod from "../../../../middleware/withValidMethod";
+import { CUSTOM_QUERY } from "../../../../types/main";
 
 const handler = async (
-  req: NextIronRequest,
+  req: NextApiRequest,
   res: NextApiResponse
 ): Promise<void> => {
-  const userSession = req.session.user;
-  if (!userSession) {
-    req.session.destroy();
-    return res.status(401).json({ message: "Please log in again" });
-  }
   const { method, query } = req;
-  const { openingId } = query as CustomQuery;
+  const { openingId } = query as Pick<CUSTOM_QUERY, "openingId">;
 
-  if (method === "GET") {
+  if (method === API_METHODS.GET) {
     const getAllApplicantsInOpeningInput = {
-      orgId: userSession.orgId,
+      orgId: req.session.user.orgId,
       openingId: openingId,
     };
 
@@ -28,7 +27,7 @@ const handler = async (
     }
 
     try {
-      const allApplicants = await GetAllApplicantsInOpening(
+      const allApplicants = await getAllApplicantsInOpening(
         getAllApplicantsInOpeningInput
       );
       return res.status(200).json(allApplicants);
@@ -39,8 +38,8 @@ const handler = async (
         .json({ message: `Unable to retrieve applicants: ${error}` });
     }
   }
-
-  return res.status(405).json({ message: "Not Allowed" });
 };
 
-export default withSessionRoute(handler);
+export default withValidMethod(withSessionRoute(withAuth(handler)), [
+  API_METHODS.GET,
+]);

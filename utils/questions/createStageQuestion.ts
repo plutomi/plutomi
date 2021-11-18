@@ -3,39 +3,39 @@ import {
   TransactWriteCommandInput,
 } from "@aws-sdk/lib-dynamodb";
 import { Dynamo } from "../../awsClients/ddbDocClient";
-import { GetCurrentTime } from "../time";
+import Time from "../time";
 import { nanoid } from "nanoid";
-import { getStage } from "../stages/getStage";
-import { MAX_CHILD_ITEM_LIMIT, MAX_ITEM_LIMIT_ERROR } from "../../Config";
+import { getStageById } from "../stages/getStageById";
+import { ENTITY_TYPES, ERRORS, ID_LENGTHS, LIMITS } from "../../defaults";
+import { CreateStageQuestionInput } from "../../types/main";
+import { DynamoNewStageQuestion } from "../../types/dynamo";
 
 const { DYNAMO_TABLE_NAME } = process.env;
 
-export async function CreateStageQuestion({
-  orgId,
-  stageId,
-  GSI1SK,
-  questionDescription,
-}: CreateStageQuestionInput) {
-  const now = GetCurrentTime("iso") as string;
-  const questionId = nanoid(70);
-  const newStageQuestion = {
-    PK: `ORG#${orgId}#QUESTION#${questionId}`,
-    SK: `STAGE_QUESTION`,
-    questionDescription: questionDescription,
+export async function createStageQuestion(
+  props: CreateStageQuestionInput
+): Promise<void> {
+  const { orgId, stageId, GSI1SK, questionDescription } = props;
+  const now = Time.currentISO();
+  const questionId = nanoid(ID_LENGTHS.STAGE_QUESTION);
+  const newStageQuestion: DynamoNewStageQuestion = {
+    PK: `${ENTITY_TYPES.ORG}#${orgId}#${ENTITY_TYPES.STAGE_QUESTION}#${questionId}`,
+    SK: ENTITY_TYPES.STAGE_QUESTION,
+    questionDescription: questionDescription || "",
     questionId: questionId,
-    entityType: "STAGE_QUESTION",
+    entityType: ENTITY_TYPES.STAGE_QUESTION,
     createdAt: now,
-    GSI1PK: `ORG#${orgId}#STAGE#${stageId}#QUESTIONS`,
+    GSI1PK: `${ENTITY_TYPES.ORG}#${orgId}#${ENTITY_TYPES.STAGE}#${stageId}#QUESTIONS`,
     GSI1SK: GSI1SK,
     orgId: orgId,
     stageId: stageId,
   };
 
   try {
-    let stage = await GetStage({ orgId, stageId });
+    let stage = await getStageById({ orgId, stageId });
 
-    if (stage.questionOrder.length >= MAX_CHILD_ITEM_LIMIT) {
-      throw MAX_ITEM_LIMIT_ERROR;
+    if (stage.questionOrder.length >= LIMITS.MAX_CHILD_ITEM_LIMIT) {
+      throw ERRORS.MAX_CHILD_ITEM_LIMIT_ERROR_MESSAGE;
     }
 
     try {
@@ -54,8 +54,8 @@ export async function CreateStageQuestion({
             // Add question to question order
             Update: {
               Key: {
-                PK: `ORG#${orgId}#STAGE#${stageId}`,
-                SK: `STAGE`,
+                PK: `${ENTITY_TYPES.ORG}#${orgId}#${ENTITY_TYPES.STAGE}#${stageId}`,
+                SK: `${ENTITY_TYPES.STAGE}`,
               },
               TableName: DYNAMO_TABLE_NAME,
               UpdateExpression: "SET questionOrder = :questionOrder",
@@ -74,7 +74,7 @@ export async function CreateStageQuestion({
     }
   } catch (error) {
     throw new Error(
-      `Unable to retrieve stage where question should be added ${error}`
+      `Unable to retrieve stage where question should be added ${error}` // TODO add to errors
     );
   }
 }

@@ -3,7 +3,7 @@ import { Dynamo } from "../awsClients/ddbDocClient";
 
 const { DYNAMO_TABLE_NAME } = process.env;
 
-export async function AllByType(entityType: string) {
+export async function allByType(entityType: string) {
   const params: QueryCommandInput = {
     TableName: DYNAMO_TABLE_NAME,
     IndexName: "AllByType",

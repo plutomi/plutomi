@@ -1,29 +1,28 @@
-import { CreateStage } from "../../../utils/stages/createStage";
+import { createStage } from "../../../utils/stages/createStage";
 import InputValidation from "../../../utils/inputValidation";
-import { NextApiResponse } from "next";
+import { NextApiRequest, NextApiResponse } from "next";
 // Create stage in an opening
 import { withSessionRoute } from "../../../middleware/withSession";
+import { API_METHODS, PLACEHOLDERS } from "../../../defaults";
+import withAuth from "../../../middleware/withAuth";
+import withCleanOrgId from "../../../middleware/withCleanOrgId";
+import withValidMethod from "../../../middleware/withValidMethod";
 
 const handler = async (
-  req: NextIronRequest,
+  req: NextApiRequest,
   res: NextApiResponse
 ): Promise<void> => {
-  const userSession = req.session.user;
-  if (!userSession) {
-    req.session.destroy();
-    return res.status(401).json({ message: "Please log in again" });
-  }
   const { body, method } = req;
-  const { GSI1SK, openingId }: APICreateStageInput = body;
+  const { GSI1SK, openingId } = body;
 
-  if (method === "POST") {
-    if (userSession.orgId === "NO_ORG_ASSIGNED") {
+  if (method === API_METHODS.POST) {
+    if (req.session.user.orgId === PLACEHOLDERS.NO_ORG) {
       return res.status(403).json({
         message: "Please create an organization before creating a stage",
       });
     }
-    const createStageInput: DynamoCreateStageInput = {
-      orgId: userSession.orgId,
+    const createStageInput = {
+      orgId: req.session.user.orgId,
       openingId: openingId,
       GSI1SK: GSI1SK,
     };
@@ -35,7 +34,7 @@ const handler = async (
     }
 
     try {
-      await CreateStage(createStageInput);
+      await createStage(createStageInput);
       return res.status(201).json({ message: "Stage created" });
     } catch (error) {
       // TODO add error logger
@@ -44,8 +43,8 @@ const handler = async (
         .json({ message: `Unable to create stage: ${error}` });
     }
   }
-
-  return res.status(405).json({ message: "Not Allowed" });
 };
 
-export default withSessionRoute(handler);
+export default withCleanOrgId(
+  withValidMethod(withSessionRoute(withAuth(handler)), [API_METHODS.POST])
+);

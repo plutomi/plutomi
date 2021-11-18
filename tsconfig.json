@@ -1,11 +1,7 @@
 {
   "compilerOptions": {
     "target": "esnext",
-    "lib": [
-      "dom",
-      "dom.iterable",
-      "esnext"
-    ],
+    "lib": ["dom", "dom.iterable", "esnext"],
     "allowJs": true,
     "skipLibCheck": true,
     "strict": false,
@@ -17,7 +13,6 @@
     "resolveJsonModule": true,
     "isolatedModules": true,
     "jsx": "preserve",
-    "declaration": true,
     "noImplicitAny": false,
     "strictNullChecks": true,
     "noImplicitThis": true,
@@ -30,18 +25,8 @@
     "inlineSources": true,
     "experimentalDecorators": true,
     "strictPropertyInitialization": false,
-    "typeRoots": [
-      "./node_modules/@types"
-    ]
+    "typeRoots": ["./node_modules/@types"]
   },
-  "exclude": [
-    "node_modules",
-    "cdk.out",
-    "./*"
-  ],
-  "include": [
-    "next-env.d.ts",
-    "**/*.ts",
-    "**/*.tsx"
-  ]
+  "exclude": ["node_modules", "cdk.out", "*"],
+  "include": ["types/types.d.ts", "next-env.d.ts", "**/*.ts", "**/*.tsx"]
 }

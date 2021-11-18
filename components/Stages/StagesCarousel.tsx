@@ -13,7 +13,7 @@ export default function StageCarousel() {
   const [activeItemIndex, setActiveItemIndex] = useState(0);
   const chevronWidth = 60;
 
-  const { openingId, stageId } = router.query as CustomQuery;
+  const { openingId, stageId }: Partial<CUSTOM_QUERY> = router.query;
 
   const { user, isUserLoading, isUserError } = useSelf();
 
@@ -49,11 +49,11 @@ export default function StageCarousel() {
         outsideChevron
         firstAndLastGutter={true}
       >
-        {stages?.map((stage: DynamoStage) => (
+        {stages?.map((stage) => (
           <StageCard
             key={stage.stageId}
             name={stage.GSI1SK}
-            currentStageId={stage.stageId}
+            stageId={stage.stageId}
             openingId={stage.openingId}
             totalApplicants={stage.totalApplicants}
           />

@@ -10,12 +10,12 @@ export default function ApplicationContent() {
   const [responses, setResponses] = useState([]);
 
   const router = useRouter();
-  const { orgId, applicantId } = router.query as CustomQuery;
+  const { orgId, applicantId }: Partial<CUSTOM_QUERY> = router.query;
   const { applicant, isApplicantLoading, isApplicantError } =
     usePublicApplicant(applicantId);
 
   const { questions, isQuestionsLoading, isQuestionsError } =
-    useAllStageQuestions(orgId, applicant?.currentStageId);
+    useAllStageQuestions(orgId, applicant?.stageId);
   if (isQuestionsLoading) {
     return <Loader text="Loading questions..." />;
   }
@@ -78,7 +78,7 @@ export default function ApplicationContent() {
   return (
     <div>
       <ul className="my-4 space-y-8">
-        {questions.map((question: DynamoStageQuestion) => (
+        {questions.map((question) => (
           <li key={question?.questionId} className="space-y-1 mb-4">
             <label
               htmlFor="email"

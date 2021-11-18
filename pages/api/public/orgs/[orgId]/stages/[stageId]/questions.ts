@@ -1,13 +1,16 @@
-import { NextApiResponse } from "next";
-import { GetAllQuestionsInStage } from "../../../../../../../utils/questions/getAllQuestionsInStage";
+import { NextApiRequest, NextApiResponse } from "next";
+import { getAllQuestionsInStage } from "../../../../../../../utils/questions/getAllQuestionsInStage";
 import withCleanOrgId from "../../../../../../../middleware/withCleanOrgId";
-const handler = async (req: CustomRequest, res: NextApiResponse) => {
+import { API_METHODS } from "../../../../../../../defaults";
+import withValidMethod from "../../../../../../../middleware/withValidMethod";
+import { CUSTOM_QUERY } from "../../../../../../../types/main";
+const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   const { method, query } = req;
-  const { orgId, stageId } = query as CustomQuery;
+  const { orgId, stageId } = query as Pick<CUSTOM_QUERY, "orgId" | "stageId">;
 
-  if (method === "GET") {
+  if (method === API_METHODS.GET) {
     try {
-      const questions = await GetAllQuestionsInStage({
+      const questions = await getAllQuestionsInStage({
         orgId,
         stageId,
       });
@@ -18,7 +21,6 @@ const handler = async (req: CustomRequest, res: NextApiResponse) => {
       return res.status(500).json({ message: "Unable to retrieve questions" });
     }
   }
-  return res.status(405).json({ message: "Not Allowed" });
 };
 
-export default withCleanOrgId(handler);
+export default withCleanOrgId(withValidMethod(handler, [API_METHODS.GET]));

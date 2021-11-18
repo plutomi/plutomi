@@ -1,31 +1,31 @@
-import { GetUserById } from "../../../../utils/users/getUserById";
-import { NextApiResponse } from "next";
-import { UpdateUser } from "../../../../utils/users/updateUser";
+import { getUserById } from "../../../../utils/users/getUserById";
+import { NextApiRequest, NextApiResponse } from "next";
+import { updateUser } from "../../../../utils/users/updateUser";
 import { withSessionRoute } from "../../../../middleware/withSession";
-import CleanUser from "../../../../utils/clean/cleanUser";
+import { API_METHODS, ENTITY_TYPES } from "../../../../defaults";
+import withAuth from "../../../../middleware/withAuth";
+import withCleanOrgId from "../../../../middleware/withCleanOrgId";
+import withValidMethod from "../../../../middleware/withValidMethod";
+import { CUSTOM_QUERY } from "../../../../types/main";
+import clean from "../../../../utils/clean";
 
 const handler = async (
-  req: NextIronRequest,
+  req: NextApiRequest,
   res: NextApiResponse
 ): Promise<void> => {
-  const userSession = req.session.user;
-  if (!userSession) {
-    req.session.destroy();
-    return res.status(401).json({ message: "Please log in again" });
-  }
   const { method, query, body } = req;
-  const { userId } = query as CustomQuery;
+  const { userId } = query as Pick<CUSTOM_QUERY, "userId">;
   const { newUserValues } = body;
 
-  if (method === "GET") {
+  if (method === API_METHODS.GET) {
     try {
-      const requestedUser = await GetUserById(userId);
+      const requestedUser = await getUserById(userId);
 
       if (!requestedUser) {
         return res.status(404).json({ message: "User not found" });
       }
       // Check that the user who made this call is in the same org as the requested user
-      if (userSession.orgId != requestedUser.orgId) {
+      if (req.session.user.orgId != requestedUser.orgId) {
         return res
           .status(403)
           .json({ message: "You are not authorized to view this user" });
@@ -40,26 +40,26 @@ const handler = async (
     }
   }
 
-  if (method === "PUT") {
+  if (method === API_METHODS.PUT) {
     const updateStageInput = {
       newUserValues: newUserValues,
-      userId: userSession.userId,
+      userId: req.session.user.userId,
       ALLOW_FORBIDDEN_KEYS: false,
     };
 
     try {
       // TODO RBAC will go here, right now you can only update yourself
-      if (userId != userSession.userId) {
+      if (userId != req.session.user.userId) {
         return res
           .status(403)
           .json({ message: "You cannot update another user" });
       }
 
-      const updatedUser = await UpdateUser(updateStageInput);
+      const updatedUser = await updateUser(updateStageInput);
 
       // If a signed in user is updating themselves, update the session state
-      if (updatedUser.userId === userSession.userId) {
-        req.session.user = CleanUser(updatedUser);
+      if (updatedUser.userId === req.session.user.userId) {
+        req.session.user = clean(updatedUser, ENTITY_TYPES.USER);
         await req.session.save();
       }
       return res.status(200).json({ message: "Updated!" });
@@ -69,8 +69,11 @@ const handler = async (
       return res.status(500).json({ message: `${error}` });
     }
   }
-
-  return res.status(405).json({ message: "Not Allowed" });
 };
 
-export default withSessionRoute(handler);
+export default withCleanOrgId(
+  withValidMethod(withSessionRoute(withAuth(handler)), [
+    API_METHODS.GET,
+    API_METHODS.PUT,
+  ])
+);

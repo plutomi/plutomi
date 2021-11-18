@@ -1,23 +1,27 @@
 import { UpdateCommand, UpdateCommandInput } from "@aws-sdk/lib-dynamodb";
 import { Dynamo } from "../../awsClients/ddbDocClient";
+import { ENTITY_TYPES } from "../../defaults";
+import { UpdateApplicantInput } from "../../types/main";
 const { DYNAMO_TABLE_NAME } = process.env;
+const FORBIDDEN_KEYS = [
+  "PK",
+  "SK",
+  "orgId",
+  "entityType",
+  "createdAt",
+  "applicantId",
+  "GSI1PK",
+];
+/**
+ * Updates an applicant with the specified `newApplicantValues`
+ * @param props {@link UpdateApplicantInput}
+ */
+export default async function updateApplicant(
+  props: UpdateApplicantInput
+): Promise<void> {
+  const { orgId, applicantId, newApplicantValues } = props;
 
-export default async function UpdateApplicant({
-  orgId,
-  applicantId,
-  newApplicantValues,
-}) {
   // TODO user the cleaning functions instead
-  const FORBIDDEN_KEYS = [
-    "PK",
-    "SK",
-    "orgId",
-    "entityType",
-    "createdAt",
-    "applicantId",
-    "GSI1PK",
-  ];
-
   const incomingKeys = Object.keys(newApplicantValues);
   // TODO should this throw an error and
   // let the user know we can't update that key?
@@ -37,8 +41,8 @@ export default async function UpdateApplicant({
 
   const params: UpdateCommandInput = {
     Key: {
-      PK: `ORG#${orgId}#APPLICANT#${applicantId}`,
-      SK: `APPLICANT`,
+      PK: `${ENTITY_TYPES.ORG}#${orgId}#${ENTITY_TYPES.APPLICANT}#${applicantId}`,
+      SK: `${ENTITY_TYPES.APPLICANT}`,
     },
     UpdateExpression: UpdatedExpression,
     ExpressionAttributeValues: newAttributes,
@@ -48,7 +52,6 @@ export default async function UpdateApplicant({
 
   try {
     await Dynamo.send(new UpdateCommand(params));
-    return;
   } catch (error) {
     throw new Error(error);
   }

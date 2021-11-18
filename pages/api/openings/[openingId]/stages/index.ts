@@ -1,26 +1,23 @@
-import { GetAllStagesInOpening } from "../../../../../utils/stages/getAllStagesInOpening";
-import { CreateStage } from "../../../../../utils/stages/createStage";
-import InputValidation from "../../../../../utils/inputValidation";
-import { NextApiResponse } from "next";
+import { getAllStagesInOpening } from "../../../../../utils/openings/getAllStagesInOpening";
+import { NextApiRequest, NextApiResponse } from "next";
 import { withSessionRoute } from "../../../../../middleware/withSession";
+import { API_METHODS } from "../../../../../defaults";
+import withAuth from "../../../../../middleware/withAuth";
+import withValidMethod from "../../../../../middleware/withValidMethod";
+import { CUSTOM_QUERY } from "../../../../../types/main";
 
 const handler = async (
-  req: NextIronRequest,
+  req: NextApiRequest,
   res: NextApiResponse
 ): Promise<void> => {
-  const userSession = req.session.user;
-  if (!userSession) {
-    req.session.destroy();
-    return res.status(401).json({ message: "Please log in again" });
-  }
-  const { body, method, query } = req;
-  const { openingId } = query as CustomQuery;
+  const { method, query } = req;
+  const { openingId } = query as Pick<CUSTOM_QUERY, "openingId">;
 
   // Get all stages in an opening
-  if (method === "GET") {
+  if (method === API_METHODS.GET) {
     try {
-      const allStages = await GetAllStagesInOpening(
-        userSession.orgId,
+      const allStages = await getAllStagesInOpening(
+        req.session.user.orgId,
         openingId
       );
       return res.status(200).json(allStages);
@@ -31,8 +28,8 @@ const handler = async (
         .json({ message: `Unable to retrieve stages: ${error}` });
     }
   }
-
-  return res.status(405).json({ message: "Not Allowed" });
 };
 
-export default withSessionRoute(handler);
+export default withValidMethod(withSessionRoute(withAuth(handler)), [
+  API_METHODS.GET,
+]);

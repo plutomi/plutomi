@@ -1,11 +1,19 @@
 import { QueryCommand, QueryCommandInput } from "@aws-sdk/lib-dynamodb";
 import { Dynamo } from "../../awsClients/ddbDocClient";
-import { getStage } from "../stages/getStage";
+import { ENTITY_TYPES } from "../../defaults";
+import {
+  GetAllQuestionsInStageInput,
+  GetAllQuestionsInStageOutput,
+} from "../../types/main";
+import { getStageById } from "../stages/getStageById";
 
 const { DYNAMO_TABLE_NAME } = process.env;
 
-export async function GetAllQuestionsInStage({ orgId, stageId }) {
-  const stage = await GetStage({ orgId, stageId });
+export async function getAllQuestionsInStage(
+  props: GetAllQuestionsInStageInput
+): Promise<GetAllQuestionsInStageOutput> {
+  const { orgId, stageId } = props;
+  const stage = await getStageById({ orgId, stageId });
   const { questionOrder } = stage;
 
   const params: QueryCommandInput = {
@@ -13,7 +21,7 @@ export async function GetAllQuestionsInStage({ orgId, stageId }) {
     TableName: DYNAMO_TABLE_NAME,
     KeyConditionExpression: "GSI1PK = :GSI1PK",
     ExpressionAttributeValues: {
-      ":GSI1PK": `ORG#${orgId}#STAGE#${stageId}#QUESTIONS`,
+      ":GSI1PK": `${ENTITY_TYPES.ORG}#${orgId}#${ENTITY_TYPES.STAGE}#${stageId}#QUESTIONS`, // NOT STAGE_QUESTIONS, just QUESTIONS
     },
   };
 
@@ -25,7 +33,7 @@ export async function GetAllQuestionsInStage({ orgId, stageId }) {
       allQuestions.Items.find((j) => j.questionId === i)
     );
 
-    return result;
+    return result as GetAllQuestionsInStageOutput;
   } catch (error) {
     console.error(error);
     throw new Error(error);

@@ -10,9 +10,6 @@
  * I did a test with 3000(!!!) IDs and it came out to around 173kb, less than half of the Dynamo limit.
  * This will be a soft limit and can be raised up to a point with the understanding that performance might suffer.
  */
-const MAX_CHILD_ITEM_LIMIT = 200;
-const MAX_ITEM_LIMIT_ERROR =
-  "MAX_CHILD_ITEM_LIMIT reached, please contact support@plutomi.com for assistance";
 
 const NAVBAR_NAVIGATION = [
   {
@@ -43,10 +40,4 @@ const DROPDOWN_NAVIGATION = [
 // How often we should poll for invites while on the /invites page
 const INVITES_REFRESH_INTERVAL = 10000;
 
-export {
-  MAX_CHILD_ITEM_LIMIT,
-  MAX_ITEM_LIMIT_ERROR,
-  NAVBAR_NAVIGATION,
-  DROPDOWN_NAVIGATION,
-  INVITES_REFRESH_INTERVAL,
-};
+export { NAVBAR_NAVIGATION, DROPDOWN_NAVIGATION, INVITES_REFRESH_INTERVAL };

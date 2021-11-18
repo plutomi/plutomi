@@ -1,28 +1,26 @@
-import { GetUserById } from "../../../utils/users/getUserById";
-import { NextApiResponse } from "next";
+import { getUserById } from "../../../utils/users/getUserById";
+import { NextApiRequest, NextApiResponse } from "next";
 import { withSessionRoute } from "../../../middleware/withSession";
+import { API_METHODS } from "../../../defaults";
+import withAuth from "../../../middleware/withAuth";
+import withCleanOrgId from "../../../middleware/withCleanOrgId";
+import withValidMethod from "../../../middleware/withValidMethod";
 
 const handler = async (
-  req: NextIronRequest,
+  req: NextApiRequest,
   res: NextApiResponse
 ): Promise<void> => {
-  const userSession = req.session.user;
-  if (!userSession) {
-    req.session.destroy();
-    return res.status(401).json({ message: "Please log in again" }); // TODO middleware
-  }
-
   const { method } = req;
 
-  if (method === "GET") {
+  if (method === API_METHODS.GET) {
     try {
-      const requestedUser = await GetUserById(userSession.userId);
+      const requestedUser = await getUserById(req.session.user.userId);
       if (!requestedUser) {
         req.session.destroy();
         return res.status(401).json({ message: "Please log in again" }); // TODO middleware
       }
 
-      return res.status(200).json(requestedUser);
+      return res.status(200).json(req.session.user);
     } catch (error) {
       // TODO add error logger
       return res
@@ -30,8 +28,8 @@ const handler = async (
         .json({ message: `${error}` });
     }
   }
-
-  return res.status(405).json({ message: "Not Allowed" });
 };
 
-export default withSessionRoute(handler);
+export default withCleanOrgId(
+  withValidMethod(withSessionRoute(withAuth(handler)), [API_METHODS.GET])
+);

@@ -8,7 +8,7 @@ function classNames(...classes) {
 import { useRouter } from "next/router";
 export default function ApplicantInfoForm() {
   const router = useRouter();
-  const { orgId, openingId } = router.query as CustomQuery;
+  const { orgId, openingId }: Partial<CUSTOM_QUERY> = router.query;
   const [agreed, setAgreed] = useState(false);
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");

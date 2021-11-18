@@ -3,24 +3,30 @@ import {
   TransactWriteCommandInput,
 } from "@aws-sdk/lib-dynamodb";
 import { Dynamo } from "../../awsClients/ddbDocClient";
-import { GetCurrentTime } from "../time";
+import { ENTITY_TYPES } from "../../defaults";
+import { DynamoNewOrg } from "../../types/dynamo";
+import { CreateAndJoinOrgInput } from "../../types/main";
+import Time from "../time";
 
 const { DYNAMO_TABLE_NAME } = process.env;
 
-export async function CreateAndJoinOrg({ userId, orgId, GSI1SK }) {
-  const now = GetCurrentTime("iso") as string;
+export async function createAndJoinOrg(
+  props: CreateAndJoinOrgInput
+): Promise<void> {
+  const { userId, orgId, GSI1SK } = props;
+  const now = Time.currentISO();
 
-  const newOrg = {
-    PK: `ORG#${orgId}`,
-    SK: `ORG`,
+  const newOrg: DynamoNewOrg = {
+    PK: `${ENTITY_TYPES.ORG}#${orgId}`,
+    SK: ENTITY_TYPES.ORG,
     orgId: orgId, // plutomi - Cannot be changed
-    entityType: "ORG",
+    entityType: ENTITY_TYPES.ORG,
     createdAt: now,
     totalApplicants: 0,
     totalOpenings: 0,
     totalStages: 0,
-    totalUsers: 1,
-    GSI1PK: `ORG`, // Allows for 'get all orgs' query
+    totalUsers: 2,
+    GSI1PK: ENTITY_TYPES.ORG, // Allows for 'get all orgs' query
     // but cannot do get org by specific name as there might be duplicates
     GSI1SK: GSI1SK, // Actual org name ie: Plutomi Inc - Can be changed!
   };
@@ -32,8 +38,8 @@ export async function CreateAndJoinOrg({ userId, orgId, GSI1SK }) {
           // Update user with the new org
           Update: {
             Key: {
-              PK: `USER#${userId}`,
-              SK: `USER`,
+              PK: `${ENTITY_TYPES.USER}#${userId}`,
+              SK: ENTITY_TYPES.USER,
             },
             TableName: DYNAMO_TABLE_NAME,
             UpdateExpression:
@@ -41,7 +47,7 @@ export async function CreateAndJoinOrg({ userId, orgId, GSI1SK }) {
             ExpressionAttributeValues: {
               ":orgId": orgId,
               ":orgJoinDate": now,
-              ":GSI1PK": `ORG#${orgId}#USERS`,
+              ":GSI1PK": `${ENTITY_TYPES.ORG}#${orgId}#${ENTITY_TYPES.USER}S`,
             },
           },
         },
@@ -56,9 +62,7 @@ export async function CreateAndJoinOrg({ userId, orgId, GSI1SK }) {
       ],
     };
 
-    const response = await Dynamo.send(
-      new TransactWriteCommand(transactParams)
-    );
+    await Dynamo.send(new TransactWriteCommand(transactParams));
 
     return;
   } catch (error) {

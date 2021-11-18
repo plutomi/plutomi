@@ -5,24 +5,29 @@ import {
   TransactWriteCommandInput,
 } from "@aws-sdk/lib-dynamodb";
 import { Dynamo } from "../../awsClients/ddbDocClient";
-import { GetCurrentTime } from "../time";
+import Time from "../time";
 import { nanoid } from "nanoid";
+import { ENTITY_TYPES, ID_LENGTHS } from "../../defaults";
+import { DynamoNewOpening } from "../../types/dynamo";
+import { CreateOpeningInput } from "../../types/main";
 
 const { DYNAMO_TABLE_NAME } = process.env;
 
-export async function CreateOpening({ orgId, GSI1SK }: CreateOpeningInput) {
-  const now = GetCurrentTime("iso") as string;
-  const openingId = nanoid(16);
-  const newOpening: DynamoOpening = {
-    PK: `ORG#${orgId}#OPENING#${openingId}`,
-    SK: `OPENING`,
-    entityType: "OPENING",
-    createdAt: now,
+export async function createOpening(
+  props: CreateOpeningInput
+): Promise<DynamoNewOpening> {
+  const { orgId, GSI1SK } = props;
+  const openingId = nanoid(ID_LENGTHS.OPENING);
+  const newOpening: DynamoNewOpening = {
+    PK: `${ENTITY_TYPES.ORG}#${orgId}#${ENTITY_TYPES.OPENING}#${openingId}`,
+    SK: ENTITY_TYPES.OPENING,
+    entityType: ENTITY_TYPES.OPENING,
+    createdAt: Time.currentISO(),
+    orgId: orgId,
     openingId: openingId,
-    GSI1PK: `ORG#${orgId}#OPENINGS`,
+    GSI1PK: `${ENTITY_TYPES.ORG}#${orgId}#${ENTITY_TYPES.OPENING}S`,
     GSI1SK: GSI1SK,
     totalStages: 0,
-    totalOpenings: 0,
     totalApplicants: 0,
     isPublic: false,
     stageOrder: [],
@@ -42,8 +47,8 @@ export async function CreateOpening({ orgId, GSI1SK }: CreateOpeningInput) {
         // Increment the org's total openings
         Update: {
           Key: {
-            PK: `ORG#${orgId}`,
-            SK: `ORG`,
+            PK: `${ENTITY_TYPES.ORG}#${orgId}`,
+            SK: `${ENTITY_TYPES.ORG}`,
           },
           TableName: DYNAMO_TABLE_NAME,
           UpdateExpression:

@@ -62,7 +62,7 @@ export default function StageReorderColumn() {
   };
 
   const router = useRouter();
-  const { openingId, stageId } = router.query as CustomQuery;
+  const { openingId, stageId }: Partial<CUSTOM_QUERY> = router.query;
 
   const { user, isUserLoading, isUserError } = useSelf();
   let { opening, isOpeningLoading, isOpeningError } = useOpeningById(openingId);
@@ -174,7 +174,7 @@ export default function StageReorderColumn() {
                                 <DraggableStageCard
                                   totalApplicants={stage.totalApplicants}
                                   name={`${stage.GSI1SK}`}
-                                  currentStageId={stage.stageId}
+                                  stageId={stage.stageId}
                                 />
                               </a>
                             </Link>

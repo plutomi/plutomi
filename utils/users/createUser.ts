@@ -1,35 +1,42 @@
 import { PutCommand, PutCommandInput } from "@aws-sdk/lib-dynamodb";
 import { Dynamo } from "../../awsClients/ddbDocClient";
-import { GetCurrentTime } from "../time";
+import Time from "../time";
 import { nanoid } from "nanoid";
-import SendNewUserEmail from "../email/sendNewUser";
-import { GetUserByEmail } from "./getUserByEmail";
+import { getUserByEmail } from "./getUserByEmail";
+import { EMAILS, ENTITY_TYPES, ID_LENGTHS, PLACEHOLDERS } from "../../defaults";
+import sendEmail from "../sendEmail";
+import { CreateUserInput } from "../../types/main";
+import { DynamoNewUser } from "../../types/dynamo";
 const { DYNAMO_TABLE_NAME } = process.env;
 
-export async function CreateUser({ userEmail }) {
-  const user = await GetUserByEmail(userEmail);
+export async function createUser(
+  props: CreateUserInput
+): Promise<DynamoNewUser> {
+  const { email, firstName, lastName } = props;
+  const user = await getUserByEmail(email);
 
   if (user) {
     return user;
   }
-  const now = GetCurrentTime("iso") as string;
-  const userId = nanoid(42);
-  const newUser: DynamoUser = {
-    PK: `USER#${userId}`,
-    SK: `USER`,
-    firstName: "NO_FIRST_NAME",
-    lastName: "NO_LAST_NAME",
-    userEmail: userEmail.toLowerCase().trim(),
+  const userId = nanoid(ID_LENGTHS.USER);
+  const newUser: DynamoNewUser = {
+    PK: `${ENTITY_TYPES.USER}#${userId}`,
+    SK: ENTITY_TYPES.USER,
+    firstName: firstName || PLACEHOLDERS.FIRST_NAME,
+    lastName: lastName || PLACEHOLDERS.LAST_NAME,
+    email: email.toLowerCase().trim(),
     userId: userId,
-    entityType: "USER",
-    createdAt: now,
-    orgId: "NO_ORG_ASSIGNED",
-    orgJoinDate: "NO_ORG_ASSIGNED",
-    totalInvites: 0,
-    GSI1PK: "ORG#NO_ORG_ASSIGNED#USERS",
-    GSI1SK: `NO_FIRST_NAME NO_LAST_NAME`,
-    GSI2PK: userEmail.toLowerCase().trim(),
-    GSI2SK: "USER",
+    entityType: ENTITY_TYPES.USER,
+    createdAt: Time.currentISO(),
+    orgId: PLACEHOLDERS.NO_ORG,
+    orgJoinDate: PLACEHOLDERS.NO_ORG,
+    GSI1PK: `${ENTITY_TYPES.ORG}#${PLACEHOLDERS.NO_ORG}#${ENTITY_TYPES.USER}S`,
+    GSI1SK:
+      firstName && lastName
+        ? `${firstName} ${lastName}`
+        : PLACEHOLDERS.FULL_NAME,
+    GSI2PK: email.toLowerCase().trim(),
+    GSI2SK: ENTITY_TYPES.USER,
   };
 
   const params: PutCommandInput = {
@@ -40,7 +47,14 @@ export async function CreateUser({ userEmail }) {
 
   try {
     await Dynamo.send(new PutCommand(params));
-    SendNewUserEmail(newUser); // TODO async with streams
+    sendEmail({
+      // TODO streams
+      fromName: "New Plutomi User",
+      fromAddress: EMAILS.GENERAL,
+      toAddresses: ["contact@plutomi.com"],
+      subject: `A new user has signed up!`,
+      html: `<h1>Email: ${newUser.email}</h1><h1>ID: ${newUser.userId}</h1>`,
+    });
     return newUser;
   } catch (error) {
     throw new Error(error);

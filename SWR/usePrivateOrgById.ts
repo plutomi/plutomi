@@ -2,11 +2,12 @@
 import axios from "axios";
 import useSWR from "swr";
 import OrgsService from "../adapters/OrgsService";
+import { PLACEHOLDERS } from "../defaults";
 const fetcher = (url: string) => axios.get(url).then((res) => res.data);
 
 // Returns private details about an org. Must be signed in
 function usePrivateOrgById(orgId: string): useOrgOutput {
-  const shouldFetch = orgId != "NO_ORG_ASSIGNED" ? true : false;
+  const shouldFetch = orgId != PLACEHOLDERS.NO_ORG ? true : false;
 
   // TODO make sure this org ID is being passed by the user
   const { data, error } = useSWR(

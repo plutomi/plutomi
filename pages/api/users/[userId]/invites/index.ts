@@ -1,22 +1,21 @@
-import { GetAllUserInvites } from "../../../../../utils/invites/getAllOrgInvites";
-import { NextApiResponse } from "next";
+import { getOrgInvitesForUser } from "../../../../../utils/invites/getOrgInvitesForUser";
+import { NextApiRequest, NextApiResponse } from "next";
 
 import { withSessionRoute } from "../../../../../middleware/withSession";
+import { API_METHODS } from "../../../../../defaults";
+import withAuth from "../../../../../middleware/withAuth";
+import withCleanOrgId from "../../../../../middleware/withCleanOrgId";
+import withValidMethod from "../../../../../middleware/withValidMethod";
 
 const handler = async (
-  req: NextIronRequest,
+  req: NextApiRequest,
   res: NextApiResponse
 ): Promise<void> => {
-  const userSession = req.session.user;
-  if (!userSession) {
-    req.session.destroy();
-    return res.status(401).json({ message: "Please log in again" });
-  }
   const { method } = req;
 
-  if (method === "GET") {
+  if (method === API_METHODS.GET) {
     try {
-      const invites = await GetAllUserInvites(userSession.userId);
+      const invites = await getOrgInvitesForUser(req.session.user.userId);
       return res.status(200).json(invites);
     } catch (error) {
       // TODO add error logger
@@ -25,8 +24,8 @@ const handler = async (
         .json({ message: `${error}` });
     }
   }
-
-  return res.status(405).json({ message: "Not Allowed" });
 };
 
-export default withSessionRoute(handler);
+export default withCleanOrgId(
+  withValidMethod(withSessionRoute(withAuth(handler)), [API_METHODS.GET])
+);

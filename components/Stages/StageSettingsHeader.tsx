@@ -6,10 +6,10 @@ import Breadcrumbs from "../Breadcrumbs";
 import { useRouter } from "next/router";
 import { PencilAltIcon } from "@heroicons/react/outline";
 import useStageById from "../../SWR/useStageById";
-import { getRelativeTime } from "../../utils/time";
+import Time from "../../utils/time";
 export default function StageSettingsHeader({ deleteStage }) {
   const router = useRouter();
-  const { openingId, stageId } = router.query as CustomQuery;
+  const { openingId, stageId }: Partial<CUSTOM_QUERY> = router.query;
 
   const { user, isUserLoading, isUserError } = useSelf();
   let { opening, isOpeningLoading, isOpeningError } = useOpeningById(openingId);
@@ -59,7 +59,7 @@ export default function StageSettingsHeader({ deleteStage }) {
   const crumbs = [
     {
       name: "Applicants",
-      // Go to the CURRENT STAGE in the opening to view the applicants
+      // Go to the CURRENT ${ENTITY_TYPES.STAGE} in the opening to view the applicants
       href: `/openings/${openingId}/stages/${stageId}/applicants`, // TODO should this end with applicants?
       current: false,
     },
@@ -82,7 +82,7 @@ export default function StageSettingsHeader({ deleteStage }) {
       </div>
 
       <p className="text-md text-light text-center">
-        Created {getRelativeTime(stage?.createdAt)}
+        Created {Time.relative(stage?.createdAt)}
       </p>
       <div className="space-x-4 flex items-center">
         <button

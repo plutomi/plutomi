@@ -1,30 +1,28 @@
-import { GetAllOpeningsInOrg } from "../../../utils/openings/getAllOpeningsInOrg";
-import { CreateOpening } from "../../../utils/openings/createOpening";
+import { getAllOpeningsInOrg } from "../../../utils/openings/getAllOpeningsInOrg";
+import { createOpening } from "../../../utils/openings/createOpening";
 import InputValidation from "../../../utils/inputValidation";
-import { NextApiResponse } from "next";
+import { NextApiRequest, NextApiResponse } from "next";
 import { withSessionRoute } from "../../../middleware/withSession";
+import { API_METHODS, PLACEHOLDERS } from "../../../defaults";
+import withAuth from "../../../middleware/withAuth";
+import withValidMethod from "../../../middleware/withValidMethod";
 
 const handler = async (
-  req: NextIronRequest,
+  req: NextApiRequest,
   res: NextApiResponse
 ): Promise<void> => {
-  const userSession = req.session.user;
-  if (!userSession) {
-    req.session.destroy();
-    return res.status(401).json({ message: "Please log in again" });
-  }
   const { body, method } = req;
-  const { GSI1SK }: APICreateOpeningInput = body;
+  const { GSI1SK } = body;
 
-  if (method === "POST") {
-    if (userSession.orgId === "NO_ORG_ASSIGNED") {
+  if (method === API_METHODS.POST) {
+    if (req.session.user.orgId === PLACEHOLDERS.NO_ORG) {
       return res.status(403).json({
         message: "Please create an organization before creating an opening",
       });
     }
     try {
-      const createOpeningInput: CreateOpeningInput = {
-        orgId: userSession.orgId,
+      const createOpeningInput = {
+        orgId: req.session.user.orgId,
         GSI1SK: GSI1SK,
       };
 
@@ -36,7 +34,7 @@ const handler = async (
           .json({ message: `An error occurred: ${error.message}` });
       }
 
-      await CreateOpening(createOpeningInput);
+      await createOpening(createOpeningInput);
       return res.status(201).json({ message: "Opening created!" });
     } catch (error) {
       // TODO add error logger
@@ -46,9 +44,11 @@ const handler = async (
     }
   }
 
-  if (method === "GET") {
+  if (method === API_METHODS.GET) {
     try {
-      const allOpenings = await GetAllOpeningsInOrg(userSession.orgId);
+      const allOpenings = await getAllOpeningsInOrg({
+        orgId: req.session.user.orgId,
+      });
       return res.status(200).json(allOpenings);
     } catch (error) {
       // TODO add error logger
@@ -57,7 +57,9 @@ const handler = async (
         .json({ message: `Unable to retrieve openings: ${error}` });
     }
   }
-  return res.status(405).json({ message: "Not Allowed" });
 };
 
-export default withSessionRoute(handler);
+export default withValidMethod(withSessionRoute(withAuth(handler)), [
+  API_METHODS.GET,
+  API_METHODS.POST,
+]);

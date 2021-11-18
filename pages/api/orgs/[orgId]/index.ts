@@ -1,29 +1,28 @@
 import withCleanOrgId from "../../../../middleware/withCleanOrgId";
-import { GetOrg } from "../../../../utils/orgs/getOrg";
-import { NextApiResponse } from "next";
+import { getOrg } from "../../../../utils/orgs/getOrg";
+import { NextApiRequest, NextApiResponse } from "next";
 import { withSessionRoute } from "../../../../middleware/withSession";
-import CleanUser from "../../../../utils/clean/cleanUser";
-import { UpdateUser } from "../../../../utils/users/updateUser";
-
+import { updateUser } from "../../../../utils/users/updateUser";
+import withAuth from "../../../../middleware/withAuth";
+import { API_METHODS, ENTITY_TYPES, PLACEHOLDERS } from "../../../../defaults";
+import { CUSTOM_QUERY } from "../../../../types/main";
+import withValidMethod from "../../../../middleware/withValidMethod";
+import clean from "../../../../utils/clean";
 const handler = async (
-  req: NextIronRequest,
+  req: NextApiRequest,
   res: NextApiResponse
 ): Promise<void> => {
-  const userSession = req.session.user;
-  if (!userSession) {
-    req.session.destroy();
-    return res.status(401).json({ message: "Please log in again" });
-  }
-  const { method, query } = req;
-  const { orgId } = query as CustomQuery;
-  const org = await GetOrg(orgId);
+  const { method, query } = req; // TODO user type
+  const { orgId } = query as Pick<CUSTOM_QUERY, "orgId">;
 
-  if (method === "GET") {
+  const org = await getOrg(orgId);
+
+  if (method === API_METHODS.GET) {
     // When signed in, this returns all data for an org
     // For public org data such as basic info or openings, please use the
     // /api/public/orgs/[orgId] route
 
-    if (orgId != userSession.orgId) {
+    if (orgId != req.session.user.orgId) {
       return res
         .status(403)
         .json({ message: "You are not authorized to view this org" });
@@ -43,7 +42,7 @@ const handler = async (
     }
   }
 
-  if (method === "DELETE") {
+  if (method === API_METHODS.DELETE) {
     try {
       if (org.totalUsers > 1) {
         return res.status(400).json({
@@ -51,17 +50,17 @@ const handler = async (
         });
       }
 
-      const updatedUser = await UpdateUser({
-        userId: userSession.userId,
+      const updatedUser = await updateUser({
+        userId: req.session.user.userId,
         newUserValues: {
-          orgId: "NO_ORG_ASSIGNED",
-          orgJoinDate: "NO_ORG_ASSIGNED",
-          GSI1PK: "NO_ORG_ASSIGNED",
+          orgId: PLACEHOLDERS.NO_ORG,
+          orgJoinDate: PLACEHOLDERS.NO_ORG,
+          GSI1PK: PLACEHOLDERS.NO_ORG,
         },
 
         ALLOW_FORBIDDEN_KEYS: true,
       });
-      req.session.user = CleanUser(updatedUser);
+      req.session.user = clean(updatedUser, ENTITY_TYPES.USER);
       await req.session.save();
       return res
         .status(200)
@@ -75,7 +74,11 @@ const handler = async (
         });
     }
   }
-  return res.status(405).json({ message: "Not Allowed" });
 };
 
-export default withSessionRoute(withCleanOrgId(handler));
+export default withCleanOrgId(
+  withValidMethod(withSessionRoute(withAuth(handler)), [
+    API_METHODS.DELETE,
+    API_METHODS.GET,
+  ])
+);

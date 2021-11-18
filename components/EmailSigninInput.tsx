@@ -1,9 +1,4 @@
-export default function LoginEmail({
-  userEmail,
-  onChange,
-  sendEmail,
-  buttonText,
-}) {
+export default function LoginEmail({ email, onChange, sendEmail, buttonText }) {
   return (
     <form
       className=" sm:flex  w-full max-w-sm md:max-w-md px-4 sm:px-0 "
@@ -17,7 +12,7 @@ export default function LoginEmail({
         name="email"
         id="email"
         required
-        value={userEmail}
+        value={email}
         onChange={(e) => onChange(e.target.value)}
         className="block w-full py-3 text-base rounded-md placeholder-normal shadow-sm focus:ring-normal focus:border-normal sm:flex-1 border-blue-gray-300"
         placeholder="Log in with your email"

@@ -1,28 +1,27 @@
-import { NextApiResponse } from "next";
-import { GetAllApplicantsInStage } from "../../../../utils/stages/getAllApplicantsInStage";
+import { NextApiRequest, NextApiResponse } from "next";
+import { getAllApplicantsInStage } from "../../../../utils/stages/getAllApplicantsInStage";
 import { withSessionRoute } from "../../../../middleware/withSession";
-import { getStage } from "../../../../utils/stages/getStage";
+import { API_METHODS } from "../../../../defaults";
+import withAuth from "../../../../middleware/withAuth";
+import withCleanOrgId from "../../../../middleware/withCleanOrgId";
+import withValidMethod from "../../../../middleware/withValidMethod";
+import { CUSTOM_QUERY } from "../../../../types/main";
 
 const handler = async (
-  req: NextIronRequest,
+  req: NextApiRequest,
   res: NextApiResponse
 ): Promise<void> => {
-  const userSession = req.session.user;
-  if (!userSession) {
-    req.session.destroy();
-    return res.status(401).json({ message: "Please log in again" });
-  }
   const { method, query } = req;
-  const { stageId } = query as CustomQuery;
+  const { stageId } = query as Pick<CUSTOM_QUERY, "stageId">;
 
-  if (method === "GET") {
+  if (method === API_METHODS.GET) {
     const getAllApplicantsInStageInput = {
-      orgId: userSession.orgId,
+      orgId: req.session.user.orgId,
       stageId: stageId,
     };
 
     try {
-      const allApplicants = await GetAllApplicantsInStage(
+      const allApplicants = await getAllApplicantsInStage(
         getAllApplicantsInStageInput
       );
       return res.status(200).json(allApplicants);
@@ -33,8 +32,8 @@ const handler = async (
         .json({ message: `Unable to retrieve applicants: ${error}` });
     }
   }
-
-  return res.status(405).json({ message: "Not Allowed" });
 };
 
-export default withSessionRoute(handler);
+export default withCleanOrgId(
+  withValidMethod(withSessionRoute(withAuth(handler)), [API_METHODS.GET])
+);

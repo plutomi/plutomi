@@ -1,14 +1,23 @@
-import { NextApiResponse } from "next";
+import { NextApiRequest, NextApiResponse } from "next";
 import InputValidation from "../../../../../../../utils/inputValidation";
 import withCleanOrgId from "../../../../../../../middleware/withCleanOrgId";
-import { CreateApplicantResponse } from "../../../../../../../utils/applicants/createApplicantResponse";
-const handler = async (req: CustomRequest, res: NextApiResponse) => {
+import { createApplicantResponse } from "../../../../../../../utils/applicants/createApplicantResponse";
+import { API_METHODS } from "../../../../../../../defaults";
+import withValidMethod from "../../../../../../../middleware/withValidMethod";
+import {
+  CUSTOM_QUERY,
+  CreateApplicantResponseInput,
+} from "../../../../../../../types/main";
+const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   const { method, query, body } = req;
-  const { orgId, applicantId } = query as CustomQuery;
+  const { orgId, applicantId } = query as Pick<
+    CUSTOM_QUERY,
+    "orgId" | "applicantId"
+  >;
   const responses: DynamoApplicantResponse[] = body.responses;
 
   // Public route to update limited applicant information, ie: questions & answers
-  if (method === "POST") {
+  if (method === API_METHODS.POST) {
     if (!responses || responses.length == 0) {
       return res.status(400).json({ message: "Empty responses" });
     }
@@ -45,7 +54,7 @@ const handler = async (req: CustomRequest, res: NextApiResponse) => {
             questionResponse: questionResponse,
           };
 
-          await CreateApplicantResponse(createApplicantResponseInput);
+          await createApplicantResponse(createApplicantResponseInput);
         })
       );
 
@@ -58,8 +67,6 @@ const handler = async (req: CustomRequest, res: NextApiResponse) => {
       });
     }
   }
-
-  return res.status(405).json({ message: "Not Allowed" });
 };
 
-export default withCleanOrgId(handler);
+export default withCleanOrgId(withValidMethod(handler, [API_METHODS.POST]));

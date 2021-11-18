@@ -9,6 +9,7 @@ import OrgsService from "../../adapters/OrgsService";
 import useStore from "../../utils/store";
 import { OfficeBuildingIcon, PlusIcon } from "@heroicons/react/outline";
 import CreateOrgModal from "../CreateOrgModal";
+import { PLACEHOLDERS } from "../../defaults";
 export default function DashboardContent() {
   const { user, isUserLoading, isUserError } = useSelf();
   const { org, isOrgLoading, isOrgError } = usePrivateOrgById(user?.orgId);
@@ -22,7 +23,7 @@ export default function DashboardContent() {
     return <Loader text={"Loading user..."} />;
   }
 
-  if (user.orgId != "NO_ORG_ASSIGNED" && isOrgLoading) {
+  if (user.orgId != PLACEHOLDERS.NO_ORG && isOrgLoading) {
     return <Loader text={"Loading org info..."} />;
   }
 
@@ -86,7 +87,7 @@ export default function DashboardContent() {
     <div>
       <CreateOrgModal createOrg={createOrg} />
 
-      {user?.orgId === "NO_ORG_ASSIGNED" ? (
+      {user?.orgId === PLACEHOLDERS.NO_ORG ? (
         <div className="text-center w-full h-full flex flex-col justify-center items-center">
           <OfficeBuildingIcon className="mx-auto h-12 w-12 text-light" />
           <h3 className="mt-2 text-lg font-medium text-dark">
@@ -129,8 +130,8 @@ export default function DashboardContent() {
             />
           </div>
           <div className="flex justify-center mx-auto">
-            {(user?.firstName === "NO_FIRST_NAME" ||
-              user?.lastName === "NO_LAST_NAME") && (
+            {(user?.firstName === PLACEHOLDERS.FIRST_NAME ||
+              user?.lastName === PLACEHOLDERS.LAST_NAME) && (
               <UpdateName updateName={updateName} />
             )}
           </div>

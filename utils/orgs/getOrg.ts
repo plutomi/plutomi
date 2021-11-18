@@ -1,23 +1,26 @@
 import { GetCommand, GetCommandInput } from "@aws-sdk/lib-dynamodb";
 import { Dynamo } from "../../awsClients/ddbDocClient";
+import { ENTITY_TYPES } from "../../defaults";
+import { DynamoNewOrg } from "../../types/dynamo";
+import { GetOrgInput } from "../../types/main";
 
 const { DYNAMO_TABLE_NAME } = process.env;
 /**
  * @param orgId
  */
-export async function GetOrg(orgId: string) {
+export async function getOrg(props: GetOrgInput): Promise<DynamoNewOrg> {
+  const { orgId } = props;
   const params: GetCommandInput = {
     TableName: DYNAMO_TABLE_NAME,
     Key: {
-      PK: `ORG#${orgId}`,
-      SK: `ORG`,
+      PK: `${ENTITY_TYPES.ORG}#${orgId}`,
+      SK: ENTITY_TYPES.ORG,
     },
   };
 
-  console.log("Params get command input", params);
   try {
     const response = await Dynamo.send(new GetCommand(params));
-    return response.Item;
+    return response.Item as DynamoNewOrg;
   } catch (error) {
     throw new Error(error);
   }

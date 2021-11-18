@@ -5,6 +5,7 @@ import Login from "../../components/Login";
 import PageHeader from "./PageHeader";
 import { useRouter } from "next/router";
 import { NAVBAR_NAVIGATION } from "../../Config";
+import { PLACEHOLDERS } from "../../defaults";
 export default function NewPage({
   headerText,
   loggedOutPageText,
@@ -28,7 +29,7 @@ export default function NewPage({
   );
 
   // Redirect on no org
-  if (currentNavItem.hiddenIfNoOrg && user?.orgId === "NO_ORG_ASSIGNED") {
+  if (currentNavItem.hiddenIfNoOrg && user?.orgId === PLACEHOLDERS.NO_ORG) {
     if (currentNavItem.name === "Openings") {
       alert(
         `You must create an org or join one before adding or viewing openings. If you have pending invites, you can view them at ${process.env.NEXT_PUBLIC_WEBSITE_URL}/invites`

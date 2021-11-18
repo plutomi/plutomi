@@ -1,51 +1,49 @@
-import { NextApiResponse } from "next";
+import { NextApiRequest, NextApiResponse } from "next";
 import withCleanOrgId from "../../../middleware/withCleanOrgId";
 import InputValidation from "../../../utils/inputValidation";
-import { GetAllUserInvites } from "../../../utils/invites/getAllOrgInvites";
+import { getOrgInvitesForUser } from "../../../utils/invites/getOrgInvitesForUser";
 import { withSessionRoute } from "../../../middleware/withSession";
-import CleanUser from "../../../utils/clean/cleanUser";
-import { GetUserById } from "../../../utils/users/getUserById";
-import { CreateAndJoinOrg } from "../../../utils/orgs/createAndJoinOrg";
+import { getUserById } from "../../../utils/users/getUserById";
+import { createAndJoinOrg } from "../../../utils/orgs/createAndJoinOrg";
+import { API_METHODS, ENTITY_TYPES, PLACEHOLDERS } from "../../../defaults";
+import withAuth from "../../../middleware/withAuth";
+import withValidMethod from "../../../middleware/withValidMethod";
+import clean from "../../../utils/clean";
 
 const handler = async (
-  req: NextIronRequest,
+  req: NextApiRequest,
   res: NextApiResponse
 ): Promise<void> => {
-  const userSession = req.session.user;
-  if (!userSession) {
-    req.session.destroy();
-    return res.status(401).json({ message: "Please log in again" });
-  }
   const { body, method } = req;
-  const { GSI1SK, orgId }: APICreateOrgInput = body;
+  const { GSI1SK, orgId } = body;
 
   // Create an org
-  if (method === "POST") {
-    if (GSI1SK === "NO_ORG_ASSIGNED") {
+  if (method === API_METHODS.POST) {
+    if (GSI1SK === PLACEHOLDERS.NO_ORG) {
       // TODO major, this isn't using the withCleanOrgId
       return res.status(400).json({
         message: `You cannot create an org with this name: ${GSI1SK}`,
       });
     }
-    if (userSession.orgId != "NO_ORG_ASSIGNED") {
+    if (req.session.user.orgId != PLACEHOLDERS.NO_ORG) {
       return res.status(400).json({
         message: `You already belong to an org!`,
       });
     }
 
-    const pendingInvites = await GetAllUserInvites(userSession.userId);
+    const pendingInvites = await getOrgInvitesForUser(req.session.user.userId);
 
     if (pendingInvites && pendingInvites.length > 0) {
       return res.status(403).json({
         message:
-          "You seem to have pending invites, please accept or reject them before creating an org :)",
+          "You seem to have pending invites, please accept or reject them before creating an org :)", // TODO error enum
       });
     }
 
-    const createOrgInput: CreateOrgInput = {
+    const createOrgInput = {
       GSI1SK: GSI1SK,
       orgId: orgId,
-      user: userSession,
+      user: req.session.user,
     };
 
     try {
@@ -60,15 +58,15 @@ const handler = async (
     }
 
     try {
-      await CreateAndJoinOrg({
-        userId: userSession.userId,
+      await createAndJoinOrg({
+        userId: req.session.user.userId,
         orgId: orgId,
         GSI1SK: GSI1SK,
       });
-      const updatedUser = await GetUserById(userSession.userId); // TODO remove this, wait for transact
+      const updatedUser = await getUserById(req.session.user.userId); // TODO remove this, wait for transact
 
       // Update the logged in user session with the new org id
-      req.session.user = CleanUser(updatedUser);
+      req.session.user = clean(updatedUser, ENTITY_TYPES.USER);
       await req.session.save();
 
       return res.status(201).json({ message: "Org created!", org: orgId });
@@ -79,8 +77,8 @@ const handler = async (
         .json({ message: `${error}` });
     }
   }
-
-  return res.status(405).json({ message: "Not Allowed" });
 };
 
-export default withSessionRoute(withCleanOrgId(handler));
+export default withCleanOrgId(
+  withValidMethod(withSessionRoute(withAuth(handler)), [API_METHODS.POST])
+);

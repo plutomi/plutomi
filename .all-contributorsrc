@@ -15,17 +15,6 @@
         "infra",
         "maintenance"
       ]
-    },
-    {
-      "login": "mazupicua",
-      "name": "mazupicua",
-      "avatar_url": "https://avatars.githubusercontent.com/u/37680756?v=4",
-      "profile": "https://github.com/mazupicua",
-      "contributions": [
-        "projectManagement",
-        "code",
-        "maintenance"
-      ]
     }
   ],
   "contributorsPerLine": 7,

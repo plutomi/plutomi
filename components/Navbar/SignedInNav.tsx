@@ -15,6 +15,7 @@ import Link from "next/dist/client/link";
 import Banner from "../BannerTop";
 import { mutate } from "swr";
 import UsersService from "../../adapters/UsersService";
+import { PLACEHOLDERS } from "../../defaults";
 
 function classNames(...classes) {
   return classes.filter(Boolean).join(" ");
@@ -68,14 +69,14 @@ export default function SignedInNav({ current }) {
                   <div className="hidden sm:-my-px sm:ml-6 sm:flex sm:space-x-8">
                     {NAVBAR_NAVIGATION.map((item) => {
                       if (
-                        user?.orgId === "NO_ORG_ASSIGNED" &&
+                        user?.orgId === PLACEHOLDERS.NO_ORG &&
                         item.hiddenIfNoOrg
                       ) {
                         return null;
                       }
 
                       if (
-                        user?.orgId !== "NO_ORG_ASSIGNED" &&
+                        user?.orgId !== PLACEHOLDERS.NO_ORG &&
                         item.hiddenIfOrg
                       ) {
                         return null;
@@ -146,15 +147,19 @@ export default function SignedInNav({ current }) {
                             "Loading user info..."
                           ) : (
                             <>
-                              {!user?.GSI1SK.includes("NO_FIRST_NAME") ||
-                                (!user?.GSI1SK.includes("NO_LAST_NAME") && (
+                              {!user?.GSI1SK.includes(
+                                PLACEHOLDERS.FIRST_NAME
+                              ) || // TODO this is gross
+                                (!user?.GSI1SK.includes(
+                                  PLACEHOLDERS.LAST_NAME
+                                ) && (
                                   <div className="   text-dark ">
                                     Signed in as ${user?.GSI1SK}
                                   </div>
                                 ))}
 
                               <div className=" text-light">
-                                {user?.userEmail}
+                                Logged in as {user?.email}
                               </div>
                             </>
                           )}
@@ -254,7 +259,7 @@ export default function SignedInNav({ current }) {
                           {user?.GSI1SK}
                         </div>
                         <div className="text-md font-medium text-normal">
-                          {user?.userEmail}
+                          {user?.email}
                         </div>
                       </div>
                     </>

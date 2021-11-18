@@ -7,10 +7,10 @@ import useOpeningById from "../../SWR/useOpeningById";
 import { useRouter } from "next/router";
 import Loader from "../Loader";
 import OpeningsService from "../../adapters/OpeningsService";
-import { getRelativeTime } from "../../utils/time";
+import Time from "../../utils/time";
 export default function OpeningSettingsHeader() {
   const router = useRouter();
-  const { openingId } = router.query as CustomQuery;
+  const { openingId }: Partial<CUSTOM_QUERY> = router.query;
 
   let { opening, isOpeningLoading, isOpeningError } = useOpeningById(openingId);
 
@@ -85,7 +85,7 @@ export default function OpeningSettingsHeader() {
           {opening?.isPublic ? "Public" : "Private"}
         </span>
         <p className="text-md text-light text-center">
-          Created {getRelativeTime(opening?.createdAt)}
+          Created {Time.relative(opening?.createdAt)}
         </p>
       </div>
       <div className="space-x-4 flex items-center">

@@ -1,32 +1,29 @@
-import { NextApiResponse } from "next";
-import { GetApplicantById } from "../../../../utils/applicants/getApplicantById";
+import { NextApiRequest, NextApiResponse } from "next";
+import { getApplicantById } from "../../../../utils/applicants/getApplicantById";
 import InputValidation from "../../../../utils/inputValidation";
-import DeleteApplicant from "../../../../utils/applicants/deleteApplicant";
-import UpdateApplicant from "../../../../utils/applicants/updateApplicant";
+import deleteApplicant from "../../../../utils/applicants/deleteApplicant";
+import updateApplicant from "../../../../utils/applicants/updateApplicant";
 import { withSessionRoute } from "../../../../middleware/withSession";
-
+import withValidMethod from "../../../../middleware/withValidMethod";
+import withAuth from "../../../../middleware/withAuth";
+import { API_METHODS } from "../../../../defaults";
+import { CUSTOM_QUERY } from "../../../../types/main";
+import withCleanOrgId from "../../../../middleware/withCleanOrgId";
 const handler = async (
-  req: NextIronRequest,
+  req: NextApiRequest,
   res: NextApiResponse
 ): Promise<void> => {
-  const userSession = req.session.user;
-  if (!userSession) {
-    req.session.destroy();
-    return res.status(401).json({ message: "Please log in again" });
-  }
   const { method, query, body } = req;
-  const { applicantId } = query as CustomQuery;
+  const { applicantId } = query as Pick<CUSTOM_QUERY, "applicantId">;
 
-  const getApplicantInput: GetApplicantInput = {
-    orgId: userSession.orgId,
-    applicantId: applicantId,
-  };
-
-  if (method === "GET") {
+  if (method === API_METHODS.GET) {
     try {
       // TODO gather applicant responses here
-      const applicant = await GetApplicantById(getApplicantInput);
-      // const responses = await GetApplicant
+      const applicant = await getApplicantById({
+        applicantId: applicantId,
+        orgId: req.session.user.orgId,
+      });
+
       if (!applicant) {
         return res.status(404).json({ message: "Applicant not found" });
       }
@@ -39,10 +36,10 @@ const handler = async (
     }
   }
 
-  if (method === "PUT") {
+  if (method === API_METHODS.PUT) {
     try {
-      const updateApplicantInput: UpdateApplicantInput = {
-        orgId: userSession.orgId,
+      const updateApplicantInput = {
+        orgId: req.session.user.orgId,
         applicantId: applicantId,
         newApplicantValues: body.newApplicantValues,
       };
@@ -53,7 +50,7 @@ const handler = async (
         return res.status(400).json({ message: `${error.message}` });
       }
 
-      await UpdateApplicant(updateApplicantInput);
+      await updateApplicant(updateApplicantInput);
       return res.status(200).json({ message: "Applicant updated!" });
     } catch (error) {
       return res
@@ -62,11 +59,11 @@ const handler = async (
     }
   }
 
-  if (method === "DELETE") {
+  if (method === API_METHODS.DELETE) {
     try {
-      await DeleteApplicant({
-        orgId: userSession.orgId,
-        applicantId: applicantId,
+      await deleteApplicant({
+        orgId: req.session.user.orgId,
+        applicantId: applicantId!,
       });
       return res.status(200).json({ message: "Applicant deleted!" });
     } catch (error) {
@@ -75,7 +72,10 @@ const handler = async (
         .json({ message: `Unable to delete applicant - ${error}` });
     }
   }
-  return res.status(405).json({ message: "Not Allowed" });
 };
 
-export default withSessionRoute(handler);
+export default withValidMethod(withSessionRoute(withAuth(handler)), [
+  API_METHODS.DELETE,
+  API_METHODS.GET,
+  API_METHODS.PUT,
+]);

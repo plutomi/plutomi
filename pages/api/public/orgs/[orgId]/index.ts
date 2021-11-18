@@ -1,23 +1,26 @@
 import withCleanOrgId from "../../../../../middleware/withCleanOrgId";
-import { GetOrg } from "../../../../../utils/orgs/getOrg";
-import { NextApiResponse } from "next";
-import CleanOrg from "../../../../../utils/clean/cleanOrg";
+import { getOrg } from "../../../../../utils/orgs/getOrg";
+import { NextApiRequest, NextApiResponse } from "next";
+import { API_METHODS, ENTITY_TYPES } from "../../../../../defaults";
+import withValidMethod from "../../../../../middleware/withValidMethod";
+import { CUSTOM_QUERY } from "../../../../../types/main";
+import clean from "../../../../../utils/clean";
 // This returns limited public information about an org
-const handler = async (req: CustomRequest, res: NextApiResponse) => {
+const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   const { method, query } = req;
-  const { orgId } = query;
+  const { orgId } = query as Pick<CUSTOM_QUERY, "orgId">;
 
-  if (method === "GET") {
+  if (method === API_METHODS.GET) {
     try {
-      const org = await GetOrg(orgId);
+      const org = await getOrg(orgId);
 
       if (!org) {
         return res.status(404).json({ message: "Org not found" });
       }
 
-      const cleanOrg = CleanOrg(org);
+      const cleanedOrg = clean(org, ENTITY_TYPES.ORG)
 
-      return res.status(200).json(cleanOrg);
+      return res.status(200).json(cleanedOrg);
     } catch (error) {
       // TODO add error logger
       return res
@@ -25,8 +28,6 @@ const handler = async (req: CustomRequest, res: NextApiResponse) => {
         .json({ message: `Unable to retrieve org: ${error}` });
     }
   }
-
-  return res.status(405).json({ message: "Not Allowed" });
 };
 
-export default withCleanOrgId(handler);
+export default withCleanOrgId(withValidMethod(handler, [API_METHODS.GET]));

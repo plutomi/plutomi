@@ -1,5 +1,5 @@
 import { CheckIcon, XCircleIcon } from "@heroicons/react/outline";
-import { getRelativeTime } from "../../utils/time";
+import Time from "../../utils/time";
 export default function Invite({ invite, acceptInvite, rejectInvite }) {
   return (
     <li
@@ -13,7 +13,7 @@ export default function Invite({ invite, acceptInvite, rejectInvite }) {
               {invite.orgName}
             </h3>
             <span className="flex-shrink-0 inline-block px-2 py-0.5 text-blue-gray-800 text-xs font-medium bg-blue-gray-100 rounded-full">
-              Expires {getRelativeTime(invite.expiresAt)}
+              Expires {Time.relative(invite.expiresAt)}
             </span>
           </div>
           <p className="mt-2 text-normal text-sm truncate">

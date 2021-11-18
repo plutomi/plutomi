@@ -3,17 +3,20 @@ import {
   TransactWriteCommandInput,
 } from "@aws-sdk/lib-dynamodb";
 import { Dynamo } from "../../awsClients/ddbDocClient";
-import { GetOpening } from "../openings/getOpeningById";
-import { getStage } from "./getStage";
+import { ENTITY_TYPES } from "../../defaults";
+import { DeleteStageInput } from "../../types/main";
+import { getOpening } from "../openings/getOpeningById";
+import { getStageById } from "./getStageById";
 const { DYNAMO_TABLE_NAME } = process.env;
 // TODO check if stage is empt of appliants first
 // TODO delete stage from the funnels sort order
-export async function DeleteStage({ orgId, stageId }: DeleteStageInput) {
-  // TODO Qeuery all items that start with PK: stageId & SK: STAGE
+export async function deleteStage(props: DeleteStageInput): Promise<void> {
+  const { orgId, stageId } = props;
+  // TODO Qeuery all items that start with PK: stageId & SK: ${ENTITY_TYPES.STAGE}
   // Get the opening we need to update
   try {
-    let stage = await GetStage({ orgId, stageId });
-    let opening = await GetOpening({
+    let stage = await getStageById({ orgId, stageId });
+    let opening = await getOpening({
       orgId: orgId,
       openingId: stage.openingId,
     });
@@ -31,8 +34,8 @@ export async function DeleteStage({ orgId, stageId }: DeleteStageInput) {
           // Delete stage
           Delete: {
             Key: {
-              PK: `ORG#${orgId}#STAGE#${stageId}`,
-              SK: `STAGE`,
+              PK: `${ENTITY_TYPES.ORG}#${orgId}#${ENTITY_TYPES.STAGE}#${stageId}`,
+              SK: `${ENTITY_TYPES.STAGE}`,
             },
             TableName: DYNAMO_TABLE_NAME,
           },
@@ -41,8 +44,8 @@ export async function DeleteStage({ orgId, stageId }: DeleteStageInput) {
           // Update Stage Order
           Update: {
             Key: {
-              PK: `ORG#${orgId}#OPENING#${opening.openingId}`,
-              SK: `OPENING`,
+              PK: `${ENTITY_TYPES.ORG}#${orgId}#${ENTITY_TYPES.OPENING}#${opening.openingId}`,
+              SK: `${ENTITY_TYPES.OPENING}`,
             },
             TableName: DYNAMO_TABLE_NAME,
             ConditionExpression: "attribute_exists(PK)",
@@ -57,8 +60,8 @@ export async function DeleteStage({ orgId, stageId }: DeleteStageInput) {
           // Decrement stage count on org
           Update: {
             Key: {
-              PK: `ORG#${orgId}`,
-              SK: `ORG`,
+              PK: `${ENTITY_TYPES.ORG}#${orgId}`,
+              SK: `${ENTITY_TYPES.ORG}`,
             },
             TableName: DYNAMO_TABLE_NAME,
             UpdateExpression: "SET totalStages = totalStages - :value",
@@ -72,7 +75,7 @@ export async function DeleteStage({ orgId, stageId }: DeleteStageInput) {
 
     try {
       await Dynamo.send(new TransactWriteCommand(transactParams));
-      // TODO Qeuery all items that start with PK: stageId & SK: STAGE
+      // TODO Qeuery all items that start with PK: stageId & SK: ${ENTITY_TYPES.STAGE}
       // Maybe background processes can handle this instead
       return;
     } catch (error) {
@@ -80,6 +83,6 @@ export async function DeleteStage({ orgId, stageId }: DeleteStageInput) {
     }
   } catch (error) {
     console.error(error);
-    throw Error(`Unable to retrieve opening to delete stage ${error}`);
+    throw Error(`Unable to retrieve opening to delete stage ${error}`); // TODO add to errors
   }
 }

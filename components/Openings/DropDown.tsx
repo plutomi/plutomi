@@ -10,7 +10,7 @@ export default function OpeningsDropdown({ openings, index }) {
   const router = useRouter();
   const [selected, setSelected] = useState(openings[index]);
 
-  const handleChange = (newValue: DynamoOpening) => {
+  const handleChange = (newValue) => {
     if (selected == newValue) {
       return;
     }
@@ -52,7 +52,7 @@ export default function OpeningsDropdown({ openings, index }) {
           leaveTo="opacity-0"
         >
           <Listbox.Options className="absolute z-10 mt-1 w-full bg-white shadow-lg max-h-60 rounded-md py-1 text-md ring-1 ring-black ring-opacity-5 overflow-auto focus:outline-none sm:text-lg">
-            {openings.map((opening: DynamoOpening) => (
+            {openings.map((opening) => (
               <Listbox.Option
                 key={opening.openingId}
                 className={({ active }) =>

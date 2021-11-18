@@ -1,58 +1,65 @@
-import {
-  GetCurrentTime,
-  GetPastOrFutureTime,
-  getRelativeTime,
-} from "../../../utils/time";
+import Time from "../../../utils/time";
 import InputValidation from "../../../utils/inputValidation";
-import { NextApiResponse } from "next";
-import SendLoginLink from "../../../utils/email/sendLoginLink";
-import CreateLoginLink from "../../../utils/loginLinks/createLoginLink";
+import { NextApiRequest, NextApiResponse } from "next";
+import createLoginLink from "../../../utils/loginLinks/createLoginLink";
 import { nanoid } from "nanoid";
 import { withSessionRoute } from "../../../middleware/withSession";
 import { createHash } from "crypto";
 import { getLatestLoginLink } from "../../../utils/loginLinks/getLatestLoginLink";
-import { CreateUser } from "../../../utils/users/createUser";
-import CreateLoginEvent from "../../../utils/users/createLoginEvent";
-import DeleteLoginLink from "../../../utils/loginLinks/deleteLoginLink";
-import CleanUser from "../../../utils/clean/cleanUser";
-import { GetUserById } from "../../../utils/users/getUserById";
-import UpdateLoginLink from "../../../utils/loginLinks/updateLoginLink";
-
+import { createUser } from "../../../utils/users/createUser";
+import createLoginEvent from "../../../utils/users/createLoginEvent";
+import deleteLoginLink from "../../../utils/loginLinks/deleteLoginLink";
+import { getUserById } from "../../../utils/users/getUserById";
+import updateLoginLink from "../../../utils/loginLinks/updateLoginLink";
+import {
+  TIME_UNITS,
+  API_METHODS,
+  EMAILS,
+  ENTITY_TYPES,
+  PLACEHOLDERS,
+  LOGIN_LINK_STATUS,
+} from "../../../defaults";
+import withValidMethod from "../../../middleware/withValidMethod";
+import { CUSTOM_QUERY } from "../../../types/main";
+import sendEmail from "../../../utils/sendEmail";
+import clean from "../../../utils/clean";
+import { getOrgInvitesForUser } from "../../../utils/invites/getOrgInvitesForUser";
 const handler = async (
-  req: NextIronRequest,
+  req: NextApiRequest,
   res: NextApiResponse
 ): Promise<void> => {
   const { body, method, query } = req; // TODO get from body
-  const { userEmail, loginMethod } = body;
-  const { userId, key, callbackUrl } = query as CustomQuery;
+  const { email, loginMethod } = body;
+  const { userId, key, callbackUrl } = query as Pick<
+    CUSTOM_QUERY,
+    "callbackUrl" | "userId" | "key"
+  >;
   const loginLinkLength = 1500;
   const loginLinkMaxDelayMinutes = 10;
-  const timeThreshold = GetPastOrFutureTime(
-    "past",
+  const timeThreshold = Time.pastISO(
     loginLinkMaxDelayMinutes,
-    "minutes",
-    "iso"
+    TIME_UNITS.MINUTES
   );
 
   // Creates a login link
-  if (method === "POST") {
+  if (method === API_METHODS.POST) {
     try {
-      InputValidation({ userEmail });
+      InputValidation({ email });
     } catch (error) {
       console.error(error);
       return res.status(400).json({ message: `${error.message}` });
     }
     // Creates a user, returns it if already created
-    const user = await CreateUser({ userEmail });
+    const user = await createUser({ email });
 
     try {
-      const latestLink = await getLatestLoginLink(user.userId);
+      const latestLink = await getLatestLoginLink({ userId: user.userId });
 
       // Limit the amount of links sent in a certain period of time
       if (
         latestLink &&
         latestLink.createdAt >= timeThreshold &&
-        !user.userEmail.endsWith("@plutomi.com")
+        !user.email.endsWith("@plutomi.com")
       ) {
         return res.status(400).json({
           message: "You're doing that too much, please try again later",
@@ -62,16 +69,11 @@ const handler = async (
       const secret = nanoid(loginLinkLength);
       const hash = createHash("sha512").update(secret).digest("hex");
 
-      const loginLinkExpiry = GetPastOrFutureTime(
-        "future",
-        15,
-        "minutes",
-        "iso"
-      );
+      const loginLinkExpiry = Time.futureISO(15, TIME_UNITS.MINUTES);
 
       try {
-        await CreateLoginLink({
-          user: user,
+        await createLoginLink({
+          userId: user.userId,
           loginLinkHash: hash,
           loginLinkExpiry: loginLinkExpiry,
         });
@@ -86,22 +88,29 @@ const handler = async (
           return res.status(200).json({ message: loginLink });
         }
         try {
-          await SendLoginLink({
-            recipientEmail: user.userEmail,
-            loginLink: loginLink,
-            loginLinkRelativeExpiry: getRelativeTime(loginLinkExpiry),
+          await sendEmail({
+            fromName: "Plutomi",
+            fromAddress: EMAILS.GENERAL,
+            toAddresses: [user.email],
+            subject: `Your magic login link is here!`,
+            html: `<h1><a href="${loginLink}" noreferrer target="_blank" >Click this link to log in</a></h1><p>It will expire ${Time.relative(
+              new Date(loginLinkExpiry)
+            )}. <strong>DO NOT SHARE THIS LINK WITH ANYONE!!!</strong></p><p>If you did not request this link, you can safely ignore it.</p>`,
           });
           return res
             .status(201)
             .json({ message: `We've sent a magic login link to your email!` });
         } catch (error) {
+          console.error(error);
           return res.status(500).json({ message: `${error}` }); // TODO error #
         }
       } catch (error) {
+        console.error(error);
         // TODO error #
         return res.status(500).json({ message: `${error}` });
       }
     } catch (error) {
+      console.error("Error getting login link", error);
       return res.status(500).json({
         // TODO error #
         message: "An error ocurred getting your info, please try again",
@@ -110,7 +119,7 @@ const handler = async (
   }
 
   // Validates the login link when clicked
-  if (method === "GET") {
+  if (method === API_METHODS.GET) {
     const validateLoginLinkInput = {
       userId: userId,
       key: key,
@@ -121,7 +130,7 @@ const handler = async (
       return res.status(400).json({ message: `${error.message}` });
     }
 
-    const latestLoginLink = await getLatestLoginLink(userId);
+    const latestLoginLink = await getLatestLoginLink({ userId });
 
     if (!latestLoginLink) {
       return res.status(400).json({ message: "Invalid link" });
@@ -138,49 +147,72 @@ const handler = async (
 
       const updatedLoginLink = {
         ...latestLoginLink,
-        linkStatus: "SUSPENDED",
+        linkStatus: LOGIN_LINK_STATUS.SUSPENDED,
       };
 
-      await UpdateLoginLink({
+      await updateLoginLink({
         userId,
         updatedLoginLink,
       });
 
       return res.status(401).json({
+        // TODO make this an error
         message: `Your login link has been suspended. Please try again later.`,
       });
     }
 
     // Lock account if already suspended
-    if (latestLoginLink.linkStatus === "SUSPENDED") {
+    if (latestLoginLink.linkStatus === LOGIN_LINK_STATUS.SUSPENDED) {
       return res.status(401).json({
+        // TODO make this an error
         message: `Your login link has been suspended. Please try again later or email support@plutomi.com`,
       });
     }
 
-    if (latestLoginLink.expiresAt <= GetCurrentTime("iso")) {
+    if (latestLoginLink.expiresAt <= Time.currentISO()) {
       return res.status(401).json({
-        message: `Your login link has expired.`,
+        message: `Your login link has expired.`, // TODO make this an error
       });
     }
 
-    const user = await GetUserById(userId);
+    const user = await getUserById(userId);
+
+    if (!user) {
+      return res
+        .status(401)
+        .json({ message: "User does not exist, please login again" });
+    }
 
     if (user && latestLoginLink) {
       // TODO should this be a transaction?
       // Simple timestamp when the user actually logged in
-      CreateLoginEvent(userId);
+      createLoginEvent(userId); // TODO move this to the org events
 
       // Invalidates the last login link while allowing the user to login again if needed
-      DeleteLoginLink(userId, latestLoginLink.createdAt);
+      deleteLoginLink({
+        userId: userId,
+        loginLinkTimestmap: latestLoginLink.createdAt,
+      });
 
-      const cleanUser = CleanUser(user as DynamoUser);
+      const cleanedUser = clean(user, ENTITY_TYPES.USER);
+      req.session.user = cleanedUser;
 
-      req.session.user = cleanUser;
+      /**
+       * Get the user's org invites, if any, if they're not in an org.
+       * The logic here being, if a user is in an org, what are the chances they're going to join another?
+       *  TODO maybe revisit this?
+       */
+      let userInvites = []; // TODO types array of org invite
+      if (req.session.user.orgId === PLACEHOLDERS.NO_ORG) {
+        userInvites = await getOrgInvitesForUser({
+          userId: req.session.user.userId,
+        });
+      }
+      req.session.user.totalInvites = userInvites.length;
       await req.session.save();
 
-      // If a user has invites, redirect them to that page automatically
-      if (cleanUser.totalInvites > 0) {
+      // If a user has invites, redirect them to the invites page on login
+      if (req.session.user.totalInvites > 0) {
         res.redirect(`${process.env.NEXT_PUBLIC_WEBSITE_URL}/invites`);
         return;
       }
@@ -189,8 +221,10 @@ const handler = async (
       return;
     }
   }
-
-  return res.status(405).json({ message: "Not Allowed" });
 };
 
-export default withSessionRoute(handler);
+export default withValidMethod(withSessionRoute(handler), [
+  // NO AUTH as this will block all requests without a session.. and uhh.. we're creating sessions here
+  API_METHODS.POST,
+  API_METHODS.GET,
+]);

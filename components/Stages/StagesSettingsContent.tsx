@@ -1,7 +1,6 @@
 import { useRouter } from "next/router";
 import { mutate } from "swr";
 import difference from "../../utils/getObjectDifference";
-import { getRelativeTime } from "../../utils/time";
 import StageReorderColumn from "../StageReorderColumn";
 import QuestionList from "../Questions/QuestionList";
 import useStore from "../../utils/store";
@@ -14,6 +13,7 @@ import useOpeningById from "../../SWR/useOpeningById";
 import useStageById from "../../SWR/useStageById";
 import StagesService from "../../adapters/StagesService";
 import QuestionsService from "../../adapters/QuestionsService";
+
 export default function StageSettingsContent() {
   const createQuestion = async () => {
     try {
@@ -40,7 +40,7 @@ export default function StageSettingsContent() {
     mutate(StagesService.getStageURL(stageId));
 
     // Refresh the question list
-    mutate(StagesService.getAllQuestionsInStageURL( stageId ));
+    mutate(StagesService.getAllQuestionsInStageURL(stageId));
   };
 
   const updateQuestion = async () => {
@@ -80,11 +80,11 @@ export default function StageSettingsContent() {
     mutate(StagesService.getStageURL(stageId));
 
     // Refresh the question list
-    mutate(StagesService.getAllQuestionsInStageURL( stageId ));
+    mutate(StagesService.getAllQuestionsInStageURL(stageId));
   };
 
   const router = useRouter();
-  const { openingId, stageId } = router.query as CustomQuery;
+  const { openingId, stageId }: Partial<CUSTOM_QUERY> = router.query;
 
   const { user, isUserLoading, isUserError } = useSelf();
   let { opening, isOpeningLoading, isOpeningError } = useOpeningById(openingId);
