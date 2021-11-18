@@ -18,7 +18,6 @@ export async function createUser(
   if (user) {
     return user;
   }
-  const now = Time.currentISO();
   const userId = nanoid(ID_LENGTHS.USER);
   const newUser: DynamoNewUser = {
     PK: `${ENTITY_TYPES.USER}#${userId}`,
@@ -28,7 +27,7 @@ export async function createUser(
     email: email.toLowerCase().trim(),
     userId: userId,
     entityType: ENTITY_TYPES.USER,
-    createdAt: now,
+    createdAt: Time.currentISO(),
     orgId: PLACEHOLDERS.NO_ORG,
     orgJoinDate: PLACEHOLDERS.NO_ORG,
     GSI1PK: `${ENTITY_TYPES.ORG}#${PLACEHOLDERS.NO_ORG}#${ENTITY_TYPES.USER}S`,

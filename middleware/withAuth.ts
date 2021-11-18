@@ -1,11 +1,10 @@
 import { NextApiHandler, NextApiRequest, NextApiResponse } from "next";
 
 /**
- * Checks if there is a session and in the future // TODO !!!!
- * Checks API keys as well
+ * Checks if there is a session in the request and in the future...
+ * Checks API keys as well // TODO !!!!
  * @param handler Your function handler
  * @param methodsWithAuth An array of {@link API_METHODS} that require authorization checks, defaults to 'ALL'
- * Since all methods are in one file in NextJS, we might need auth for *just* POST and not GET
  * @returns handler
  */
 export default function withAuth(
@@ -20,7 +19,7 @@ export default function withAuth(
       !req.session.user
     ) {
       req.session.destroy();
-      return res.status(401).json({ message: "Please log in again" });
+      return res.status(401).json({ message: "Please log in again" }); // TODO error messages
     }
 
     return handler(req, res);

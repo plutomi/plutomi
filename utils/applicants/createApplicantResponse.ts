@@ -4,9 +4,17 @@ import Time from "../time";
 import { nanoid } from "nanoid";
 import { ENTITY_TYPES, ID_LENGTHS } from "../../defaults";
 import { DynamoNewApplicantResponse } from "../../types/dynamo";
-import { CreateApplicantResponseInput, CreateApplicantResponseOutput } from "../../types/main";
+import {
+  CreateApplicantResponseInput,
+  CreateApplicantResponseOutput,
+} from "../../types/main";
 const { DYNAMO_TABLE_NAME } = process.env;
 
+/**
+ * Creates an applicant response to a question
+ * @param props {@link CreateApplicantResponseInput}
+ * @returns {@link CreateApplicantResponseOutput}
+ */
 export async function createApplicantResponse(
   props: CreateApplicantResponseInput
 ): Promise<CreateApplicantResponseOutput> {
@@ -17,7 +25,6 @@ export async function createApplicantResponse(
     questionDescription,
     questionResponse,
   } = props;
-  const now = Time.currentISO();
   const responseId = nanoid(ID_LENGTHS.APPLICANT_RESPONSE);
   const newApplicantResponse: DynamoNewApplicantResponse = {
     PK: `${ENTITY_TYPES.ORG}#${orgId}#${ENTITY_TYPES.APPLICANT}#${applicantId}`,
@@ -25,7 +32,7 @@ export async function createApplicantResponse(
     orgId: orgId,
     applicantId: applicantId,
     entityType: ENTITY_TYPES.APPLICANT_RESPONSE,
-    createdAt: now,
+    createdAt: Time.currentISO(),
     responseId: responseId,
     questionTitle: questionTitle,
     questionDescription: questionDescription,
@@ -42,9 +49,9 @@ export async function createApplicantResponse(
 
   try {
     await Dynamo.send(new PutCommand(params));
-
     return newApplicantResponse;
   } catch (error) {
+    // TODO error enum
     throw new Error(error);
   }
 }

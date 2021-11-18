@@ -6,13 +6,12 @@ import Time from "../time";
 const { DYNAMO_TABLE_NAME } = process.env;
 
 export async function createOrg({ orgId, GSI1SK }) {
-  const now = Time.currentISO();
   const newOrg = {
     PK: `${ENTITY_TYPES.ORG}#${orgId}`,
     SK: `${ENTITY_TYPES.ORG}`,
     orgId: orgId, // plutomi - Cannot be changed
     entityType: "ORG",
-    createdAt: now,
+    createdAt: Time.currentISO(),
     totalApplicants: 0,
     totalOpenings: 0,
     totalStages: 0,

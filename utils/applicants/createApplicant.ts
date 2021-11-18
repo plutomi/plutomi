@@ -10,6 +10,11 @@ import { CreateApplicantInput, CreateApplicantOutput } from "../../types/main";
 import { DynamoNewApplicant } from "../../types/dynamo";
 const { DYNAMO_TABLE_NAME } = process.env;
 
+/**
+ * Creates an applicant in a given org
+ * @param props {@link CreateApplicantInput}
+ * @returns {@link CreateApplicantOutput}
+ */
 export async function createApplicant(
   props: CreateApplicantInput
 ): Promise<CreateApplicantOutput> {
@@ -37,7 +42,7 @@ export async function createApplicant(
     openingId: openingId,
     stageId: stageId,
 
-    // The reason for the below is so we can get applicants in an org, in an opening, or in a specific stage just by the ID of each.
+    // The reason for the below is so we can get ALL applicants in an org, in an opening, or in a specific stage just by the ID of each.
     // Before we had `${ENTITY_TYPES.OPENING}#${openingId}#${ENTITY_TYPES.STAGE}#{stageId}` for the SK which required the opening when getting applicants in specific stage
     // TODO recheck later if this is still good
     GSI1PK: `${ENTITY_TYPES.ORG}#${orgId}#${ENTITY_TYPES.APPLICANT}S`,
@@ -112,6 +117,7 @@ export async function createApplicant(
     await Dynamo.send(new TransactWriteCommand(transactParams));
     return newApplicant;
   } catch (error) {
+    // TODO error enum
     throw new Error(error);
   }
 }

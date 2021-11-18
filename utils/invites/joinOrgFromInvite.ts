@@ -14,7 +14,6 @@ const { DYNAMO_TABLE_NAME } = process.env;
  */
 export async function joinOrgFromInvite({ userId, invite }) {
   // TODO types
-  const now = Time.currentISO();
   try {
     const transactParams: TransactWriteCommandInput = {
       TransactItems: [
@@ -41,7 +40,7 @@ export async function joinOrgFromInvite({ userId, invite }) {
               "SET orgId = :orgId, orgJoinDate = :orgJoinDate, GSI1PK = :GSI1PK",
             ExpressionAttributeValues: {
               ":orgId": invite.orgId,
-              ":orgJoinDate": now,
+              ":orgJoinDate": Time.currentISO(),
               ":GSI1PK": `${ENTITY_TYPES.ORG}#${invite.orgId}#${ENTITY_TYPES.USER}S`,
             },
           },

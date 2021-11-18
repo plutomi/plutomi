@@ -17,13 +17,12 @@ export async function createOpening(
   props: CreateOpeningInput
 ): Promise<DynamoNewOpening> {
   const { orgId, GSI1SK } = props;
-  const now = Time.currentISO();
   const openingId = nanoid(ID_LENGTHS.OPENING);
   const newOpening: DynamoNewOpening = {
     PK: `${ENTITY_TYPES.ORG}#${orgId}#${ENTITY_TYPES.OPENING}#${openingId}`,
     SK: ENTITY_TYPES.OPENING,
     entityType: ENTITY_TYPES.OPENING,
-    createdAt: now,
+    createdAt: Time.currentISO(),
     orgId: orgId,
     openingId: openingId,
     GSI1PK: `${ENTITY_TYPES.ORG}#${orgId}#${ENTITY_TYPES.OPENING}S`,

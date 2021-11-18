@@ -14,14 +14,13 @@ const { DYNAMO_TABLE_NAME } = process.env;
 
 export async function createStage(props: CreateStageInput): Promise<void> {
   const { orgId, GSI1SK, openingId } = props;
-  const now = Time.currentISO();
   const stageId = nanoid(ID_LENGTHS.STAGE);
   const newStage: DynamoNewStage = {
     // TODO fix this type
     PK: `${ENTITY_TYPES.ORG}#${orgId}#${ENTITY_TYPES.STAGE}#${stageId}`,
     SK: ENTITY_TYPES.STAGE,
     entityType: ENTITY_TYPES.STAGE,
-    createdAt: now,
+    createdAt: Time.currentISO(),
     questionOrder: [],
     stageId: stageId,
     orgId: orgId,
