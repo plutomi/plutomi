@@ -7,11 +7,14 @@ import LoginHomepage from "../components/LoginHomepage";
 import UseCases from "../components/UseCases";
 import Hero from "../components/Static/Hero";
 import useSelf from "../SWR/useSelf";
+import WarningBanner from "../components/WarningBanner";
 export default function Main() {
   const { user, isUserLoading, isUserError } = useSelf();
   return (
     <>
       <main className="bg-gradient-to-b from-blue-gray-50 to-white via-homepageGradient">
+        <WarningBanner />
+
         <Navbar />
         <Hero />
         {!user || isUserError ? (

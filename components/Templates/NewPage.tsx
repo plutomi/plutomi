@@ -6,6 +6,7 @@ import PageHeader from "./PageHeader";
 import { useRouter } from "next/router";
 import { NAVBAR_NAVIGATION } from "../../Config";
 import { PLACEHOLDERS } from "../../defaults";
+import WarningBanner from "../WarningBanner";
 export default function NewPage({
   headerText,
   loggedOutPageText,
@@ -51,6 +52,7 @@ export default function NewPage({
 
   return (
     <>
+      <WarningBanner />
       <SignedInNav current={currentNavbarItem} />
       <header className="max-w-7xl mx-auto  p-4 my-6 rounded-lg ">
         <PageHeader headerText={headerText} />
