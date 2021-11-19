@@ -12,13 +12,13 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 
   if (method === API_METHODS.GET) {
     try {
-      const org = await getOrg(orgId);
+      const org = await getOrg({ orgId });
 
       if (!org) {
         return res.status(404).json({ message: "Org not found" });
       }
 
-      const cleanedOrg = clean(org, ENTITY_TYPES.ORG)
+      const cleanedOrg = clean(org, ENTITY_TYPES.ORG);
 
       return res.status(200).json(cleanedOrg);
     } catch (error) {

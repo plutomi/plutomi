@@ -12,6 +12,7 @@ import ApplicantProfileModal from "../../../../../components/Applicants/Applican
 import NewPage from "../../../../../components/Templates/NewPage";
 import useOpeningById from "../../../../../SWR/useOpeningById";
 import NumberFormat from "react-number-format";
+import { CUSTOM_QUERY } from "../../../../../types/main";
 export default function StageApplicants() {
   const router = useRouter();
   const { openingId, stageId, applicantId }: Partial<CUSTOM_QUERY> =

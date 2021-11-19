@@ -4,6 +4,7 @@ import NewPage from "../../../components/Templates/NewPage";
 import { useRouter } from "next/router";
 import useSelf from "../../../SWR/useSelf";
 import useOpeningById from "../../../SWR/useOpeningById";
+import { CUSTOM_QUERY } from "../../../types/main";
 export default function OpeningSettings() {
   const router = useRouter();
   const { openingId }: Partial<CUSTOM_QUERY> = router.query;

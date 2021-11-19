@@ -3,7 +3,7 @@ import Link from "next/link";
 import useSelf from "../SWR/useSelf";
 import AuthService from "../adapters/AuthService";
 import { mutate } from "swr";
-import UsersService from "../adapters/UsersService";
+import UsersService from "../Adapters/UsersService";
 const handleLogout = async () => {
   try {
     const { message } = await AuthService.logout(); // TODO logout to same page

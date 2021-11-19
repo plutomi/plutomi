@@ -1,12 +1,9 @@
 import AlreadySignedIn from "../components/AlreadySignedIn";
-import FeatureBox from "../components/Static/featureBox";
-import Navbar from "../components/Navbar/HomepageNavbar";
 import Contact from "../components/Static/ContactUs";
 import LoginHomepage from "../components/LoginHomepage";
 import UseCases from "../components/UseCases";
 import Hero from "../components/Static/Hero";
 import useSelf from "../SWR/useSelf";
-import WarningBanner from "../components/WarningBanner";
 import axios from "axios";
 import { ChevronRightIcon, MailIcon } from "@heroicons/react/outline";
 import _ from "lodash";

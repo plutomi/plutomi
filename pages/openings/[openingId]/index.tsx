@@ -1,8 +1,9 @@
-import useSelf from "../../../../SWR/useSelf";
-import Loader from "../../../../components/Loader";
+import useSelf from "../../../SWR/useSelf";
+import Loader from "../../../components/Loader";
 import { useRouter } from "next/router";
-import useAllStagesInOpening from "../../../../SWR/useAllStagesInOpening";
-import useOpeningById from "../../../../SWR/useOpeningById";
+import useAllStagesInOpening from "../../../SWR/useAllStagesInOpening";
+import useOpeningById from "../../../SWR/useOpeningById";
+import { CUSTOM_QUERY } from "../../../types/main";
 import { useEffect } from "react";
 export default function Openings() {
   const router = useRouter();
