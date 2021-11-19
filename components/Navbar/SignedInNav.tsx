@@ -15,7 +15,7 @@ import Link from "next/dist/client/link";
 import Banner from "../BannerTop";
 import { mutate } from "swr";
 import { PLACEHOLDERS } from "../../defaults";
-import UsersService from "../../Adapters/UsersService";
+import UsersService from "../../adapters/UsersService";
 
 function classNames(...classes) {
   return classes.filter(Boolean).join(" ");

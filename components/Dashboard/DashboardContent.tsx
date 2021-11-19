@@ -9,7 +9,7 @@ import useStore from "../../utils/store";
 import { OfficeBuildingIcon, PlusIcon } from "@heroicons/react/outline";
 import CreateOrgModal from "../CreateOrgModal";
 import { PLACEHOLDERS } from "../../defaults";
-import UsersService from "../../Adapters/UsersService";
+import UsersService from "../../adapters/UsersService";
 export default function DashboardContent() {
   const { user, isUserLoading, isUserError } = useSelf();
   const { org, isOrgLoading, isOrgError } = usePrivateOrgById(user?.orgId);

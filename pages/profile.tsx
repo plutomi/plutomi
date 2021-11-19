@@ -6,7 +6,7 @@ import UserProfileModal from "../components/UserProfile/UserProfileModal";
 import Loader from "../components/Loader";
 import Login from "../components/Login";
 import useStore from "../utils/store";
-import UsersService from "../Adapters/UsersService";
+import UsersService from "../adapters/UsersService";
 export default function Team() {
   const { user, isUserLoading, isUserError } = useSelf();
 

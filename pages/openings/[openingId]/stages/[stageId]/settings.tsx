@@ -1,6 +1,3 @@
-import SignedInNav from "../../../../../components/Navbar/SignedInNav";
-import useSelf from "../../../../../SWR/useSelf";
-import Loader from "../../../../../components/Loader";
 import { mutate } from "swr";
 import useOpeningById from "../../../../../SWR/useOpeningById";
 import { useRouter } from "next/router";
@@ -9,8 +6,9 @@ import StageSettingsContent from "../../../../../components/Stages/StagesSetting
 import NewPage from "../../../../../components/Templates/NewPage";
 import useStageById from "../../../../../SWR/useStageById";
 import { CUSTOM_QUERY } from "../../../../../types/main";
-import StagesService from "../../../../../adapters/StagesService";
 import OpeningsService from "../../../../../adapters/OpeningsService";
+import StagesService from "../../../../../adapters/StagesService";
+
 export default function StageSettings() {
   const router = useRouter();
   const { openingId, stageId }: Partial<CUSTOM_QUERY> = router.query;
