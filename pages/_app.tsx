@@ -7,7 +7,7 @@ export default function App({ Component, pageProps }: AppProps) {
   return (
     <div>
       {router.asPath === "/faq" ? null : <WarningBanner />}
-      <Component {...pageProps} />;
+      <Component {...pageProps} />
     </div>
   );
 }

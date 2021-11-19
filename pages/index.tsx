@@ -25,7 +25,7 @@ export default function Main({ commits }) {
           <AlreadySignedIn />
         )}
       </main>
-      <div className="flex  justify-center space-x-2">
+      <div className="flex-wrap md:flex  justify-center space-x-2">
         <UseCases />
         <ul
           role="list"
