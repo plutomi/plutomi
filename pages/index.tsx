@@ -99,16 +99,18 @@ export async function getStaticProps() {
       );
 
       data.map(async (commit) => {
-        let customCommit = {
-          name: commit.commit.author.name,
-          username: commit.author.login,
-          image: commit.author.avatar_url,
-          email: commit.commit.author.email,
-          date: commit.commit.author.date,
-          message: commit.commit.message,
-          url: commit.html_url,
-        };
-        allCommits.push(customCommit);
+        if (commit.commit.author.name !== "allcontributors[bot]") {
+          let customCommit = {
+            name: commit.commit.author.name,
+            username: commit.author.login,
+            image: commit.author.avatar_url,
+            email: commit.commit.author.email,
+            date: commit.commit.author.date,
+            message: commit.commit.message,
+            url: commit.html_url,
+          };
+          allCommits.push(customCommit);
+        }
       });
     })
   );
