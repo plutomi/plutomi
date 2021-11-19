@@ -90,7 +90,7 @@ export default function FAQ() {
               <dl className=" space-y-12 flex flex-col  ">
                 {faqs.map((faq) => (
                   <div key={faq.question} className=" my-auto">
-                    <dt className="text-xl leading-6 font-medium text-dark">
+                    <dt className="text-xl leading-6text-dark font-bold">
                       {faq.question}
                     </dt>
                     <dd className="mt-2 text-lg text-normal ">{faq.answer}</dd>
