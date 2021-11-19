@@ -28,7 +28,7 @@ export default function Main({ commits }) {
                 rel="noreferrer"
                 className="underline font-bold transition ease-in-out duration-300 text-dark hover:text-blue-500"
               >
-                on Github!
+                on GitHub!
               </a>
             </p>
           </div>

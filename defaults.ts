@@ -113,7 +113,7 @@ export enum EMAILS { // TODO replace domain with .env domain
    */
   INVEST = "ir@plutomi.com",
   /**
-   * For administrative / Github related
+   * For administrative / GitHub related
    */
   ADMIN = "jose@plutomi.com",
 

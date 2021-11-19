@@ -2,7 +2,6 @@ import AlreadySignedIn from "../components/AlreadySignedIn";
 import FeatureBox from "../components/Static/featureBox";
 import Navbar from "../components/Navbar/HomepageNavbar";
 import Contact from "../components/Static/ContactUs";
-import Pricing from "../components/Pricing/Pricing";
 import LoginHomepage from "../components/LoginHomepage";
 import UseCases from "../components/UseCases";
 import Hero from "../components/Static/Hero";
@@ -13,8 +12,6 @@ export default function Main() {
   return (
     <>
       <main className="bg-gradient-to-b from-blue-gray-50 to-white via-homepageGradient">
-        <WarningBanner />
-
         <Navbar />
         <Hero />
         {!user || isUserError ? (
@@ -44,7 +41,6 @@ export default function Main() {
         </div>
       </section>
 
-      <Pricing />
       <Contact />
     </>
   );

@@ -12,7 +12,6 @@ interface CallbackUrl {
 // Identical to SignIn, but with less margin/padding to fit in the homepage
 // TODO probably better to refactor this as this is bad practice
 export default function LoginHomepage({ callbackUrl }: CallbackUrl) {
-  const router = useRouter();
   const [email, setemail] = useState("");
   const [submittedText, setSubmittedText] = useState(
     `We've sent a magic login link to your email!`
@@ -46,11 +45,14 @@ export default function LoginHomepage({ callbackUrl }: CallbackUrl) {
     console.log(response);
     const email = response.profileObj.email;
 
-    await AuthService.login(
+    const { message } = await AuthService.login(
+      // TODO trycatch
       email,
       `${process.env.NEXT_PUBLIC_WEBSITE_URL}/dashboard`, // TODO make this a config variable as the "DEFAULT_REDIRECT_ROUTE_HOMEPAGE"
       LOGIN_METHODS.GOOGLE
     );
+    window.location.replace(message);
+    return;
   };
 
   const failedLogin = (response) => {

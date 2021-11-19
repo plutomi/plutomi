@@ -58,7 +58,7 @@ export default function Features() {
                     Read, inspect, and contribute to{" "}
                     <CustomLink
                       url="https://github.com/plutomi/plutomi"
-                      text="our Github repository"
+                      text="our GitHub repository"
                     />
                   </p>
                 ) : (
