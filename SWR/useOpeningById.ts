@@ -9,13 +9,16 @@ import OpeningsService from "../adapters/OpeningsService";
  * @param userId - The ID of the logged in user
  * @param openingId - The opening ID that you want to look up
  */
-function useOpeningById(openingId: string): useOpeningByIdOutput {
+function useOpeningById(openingId: string) {
+  console.log("Getting opening id");
   const shouldFetch = openingId ? true : false;
+  console.log("Should fetch"), shouldFetch;
 
   const { data, error } = useSWR(
     shouldFetch && OpeningsService.getOpeningURL(openingId),
     fetcher
   );
+  console.log("DATA", data);
 
   return {
     opening: data,

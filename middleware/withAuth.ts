@@ -21,7 +21,6 @@ export default function withAuth(
       req.session.destroy();
       return res.status(401).json({ message: "Please log in again" }); // TODO error messages
     }
-
     return handler(req, res);
   };
 }

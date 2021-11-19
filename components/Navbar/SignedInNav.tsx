@@ -14,15 +14,14 @@ import {
 import Link from "next/dist/client/link";
 import Banner from "../BannerTop";
 import { mutate } from "swr";
-import UsersService from "../../adapters/UsersService";
 import { PLACEHOLDERS } from "../../defaults";
+import UsersService from "../../adapters/UsersService";
 
 function classNames(...classes) {
   return classes.filter(Boolean).join(" ");
 }
 
 export default function SignedInNav({ current }) {
-  const router = useRouter();
   const { user, isUserLoading, isUserError } = useSelf();
 
   const handleLogout = async () => {

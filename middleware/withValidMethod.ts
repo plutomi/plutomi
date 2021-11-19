@@ -11,6 +11,7 @@ export default function withValidMethod(
   allowedMethods: string[]
 ) {
   return async (req: NextApiRequest, res: NextApiResponse) => {
+
     if (!allowedMethods.includes(req.method)) {
       return res.status(405).json({ message: "Method not allowed" });
     }

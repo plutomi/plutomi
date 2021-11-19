@@ -4,12 +4,12 @@ import Loader from "../Loader";
 import ClickToCopy from "../ClickToCopy";
 import usePrivateOrgById from "../../SWR/usePrivateOrgById";
 import { mutate } from "swr";
-import UsersService from "../../adapters/UsersService";
 import OrgsService from "../../adapters/OrgsService";
 import useStore from "../../utils/store";
 import { OfficeBuildingIcon, PlusIcon } from "@heroicons/react/outline";
 import CreateOrgModal from "../CreateOrgModal";
 import { PLACEHOLDERS } from "../../defaults";
+import UsersService from "../../adapters/UsersService";
 export default function DashboardContent() {
   const { user, isUserLoading, isUserError } = useSelf();
   const { org, isOrgLoading, isOrgError } = usePrivateOrgById(user?.orgId);

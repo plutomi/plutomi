@@ -1,20 +1,17 @@
-import SignedInNav from "../../../../../components/Navbar/SignedInNav";
-import useSelf from "../../../../../SWR/useSelf";
-import Loader from "../../../../../components/Loader";
 import { mutate } from "swr";
 import useOpeningById from "../../../../../SWR/useOpeningById";
 import { useRouter } from "next/router";
-import OpeningsService from "../../../../../adapters/OpeningsService";
 import StageSettingsHeader from "../../../../../components/Stages/StageSettingsHeader";
 import StageSettingsContent from "../../../../../components/Stages/StagesSettingsContent";
-import StagesService from "../../../../../adapters/StagesService";
 import NewPage from "../../../../../components/Templates/NewPage";
 import useStageById from "../../../../../SWR/useStageById";
+import { CUSTOM_QUERY } from "../../../../../types/main";
+import OpeningsService from "../../../../../adapters/OpeningsService";
+import StagesService from "../../../../../adapters/StagesService";
+
 export default function StageSettings() {
   const router = useRouter();
   const { openingId, stageId }: Partial<CUSTOM_QUERY> = router.query;
-
-  const { user, isUserLoading, isUserError } = useSelf();
   let { opening, isOpeningLoading, isOpeningError } = useOpeningById(openingId);
   let { stage, isStageLoading, isStageError } = useStageById(stageId);
 

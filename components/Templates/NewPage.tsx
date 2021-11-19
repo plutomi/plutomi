@@ -6,6 +6,7 @@ import PageHeader from "./PageHeader";
 import { useRouter } from "next/router";
 import { NAVBAR_NAVIGATION } from "../../Config";
 import { PLACEHOLDERS } from "../../defaults";
+import WarningBanner from "../WarningBanner";
 export default function NewPage({
   headerText,
   loggedOutPageText,

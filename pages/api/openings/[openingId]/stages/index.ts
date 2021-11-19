@@ -16,10 +16,10 @@ const handler = async (
   // Get all stages in an opening
   if (method === API_METHODS.GET) {
     try {
-      const allStages = await getAllStagesInOpening(
-        req.session.user.orgId,
-        openingId
-      );
+      const allStages = await getAllStagesInOpening({
+        openingId: openingId,
+        orgId: req.session.user.orgId,
+      });
       return res.status(200).json(allStages);
     } catch (error) {
       // TODO add error logger

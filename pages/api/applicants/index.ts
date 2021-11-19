@@ -62,8 +62,6 @@ const handler = async (
         stageId: firstStage,
       });
 
-      const org = await getOrg(orgId);
-
       const applicantionLink = `${process.env.NEXT_PUBLIC_WEBSITE_URL}/${orgId}/applicants/${newApplicant.applicantId}`;
 
       await sendEmail({

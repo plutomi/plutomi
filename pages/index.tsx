@@ -1,41 +1,32 @@
-import {
-  CheckCircleIcon,
-  ChevronDownIcon,
-  ChevronRightIcon,
-  MailIcon,
-} from "@heroicons/react/solid";
+import AlreadySignedIn from "../components/AlreadySignedIn";
+import Contact from "../components/Static/ContactUs";
+import LoginHomepage from "../components/LoginHomepage";
+import UseCases from "../components/UseCases";
+import Hero from "../components/Static/Hero";
+import useSelf from "../SWR/useSelf";
 import axios from "axios";
+import { ChevronRightIcon, MailIcon } from "@heroicons/react/outline";
 import _ from "lodash";
 import Time from "../utils/time";
-
 export default function Main({ commits }) {
+  const { user, isUserLoading, isUserError } = useSelf();
   return (
-    <div>
-      <div className="bg-white overflow-hidden sm:rounded-md mx-auto">
-        <div className="bg-white">
-          <div className="max-w-7xl mx-auto mt-24  px-4  sm:px-6 lg:px-8 lg:flex lg:justify-between">
-            <h2 className="text-4xl font-extrabold text-gray-900 sm:text-5xl sm:tracking-tight lg:text-6xl  border-l-8 border-blue-500 pl-4 ">
-              Hello there!
-            </h2>
-          </div>
-          <div className="max-w-7xl mx-auto px-4 mb-12 sm:px-6 lg:px-8 lg:flex lg:justify-between">
-            <p className="mt-5 text-xl text-gray-500 ">
-              We&apos;re currently down for maintenance as we migrate some of
-              our backend infrastructure - you can even contribute{" "}
-              <a
-                href="https://github.com/plutomi/plutomi"
-                target={"_blank"}
-                rel="noreferrer"
-                className="underline font-bold transition ease-in-out duration-300 text-dark hover:text-blue-500"
-              >
-                on Github!
-              </a>
-            </p>
-          </div>
-        </div>
+    <>
+      <main className="bg-gradient-to-b from-blue-gray-50 to-white via-homepageGradient">
+        <Hero />
+        {!user || isUserError ? (
+          <LoginHomepage
+            callbackUrl={`${process.env.NEXT_PUBLIC_WEBSITE_URL}/dashboard`}
+          />
+        ) : (
+          <AlreadySignedIn />
+        )}
+      </main>
+      <div className="flex-wrap md:flex  justify-center space-x-2">
+        <UseCases />
         <ul
           role="list"
-          className="divide-y mx-auto max-w-7xl divide-gray-200  mt-12"
+          className="divide-y mx-auto max-w-4xl divide-gray-200  mt-12"
         >
           {commits.map((commit) => (
             <li
@@ -89,7 +80,8 @@ export default function Main({ commits }) {
           ))}
         </ul>
       </div>
-    </div>
+      <Contact />
+    </>
   );
 }
 
@@ -107,16 +99,18 @@ export async function getStaticProps() {
       );
 
       data.map(async (commit) => {
-        let customCommit = {
-          name: commit.commit.author.name,
-          username: commit.author.login,
-          image: commit.author.avatar_url,
-          email: commit.commit.author.email,
-          date: commit.commit.author.date,
-          message: commit.commit.message,
-          url: commit.html_url,
-        };
-        allCommits.push(customCommit);
+        if (commit.commit.author.name !== "allcontributors[bot]") {
+          let customCommit = {
+            name: commit.commit.author.name,
+            username: commit.author.login,
+            image: commit.author.avatar_url,
+            email: commit.commit.author.email,
+            date: commit.commit.author.date,
+            message: commit.commit.message,
+            url: commit.html_url,
+          };
+          allCommits.push(customCommit);
+        }
       });
     })
   );

@@ -5,6 +5,7 @@ import usePublicOrgById from "../../../SWR/usePublicOrgById";
 import usePublicOpeningById from "../../../SWR/usePublicOpeningById";
 import OpeningApplyPageContent from "../../../components/Openings/Public/OpeningApplyPageContent";
 import OpeningApplyPageHeader from "../../../components/Openings/Public/OpeningApplyPageHeader";
+import { CUSTOM_QUERY } from "../../../types/main";
 export default function Apply() {
   const router = useRouter();
   const { orgId, openingId }: Partial<CUSTOM_QUERY> = router.query;

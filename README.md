@@ -4,9 +4,13 @@
 [![License](https://img.shields.io/github/license/plutomi/plutomi?style=flat-square)](#)
 [![All Contributors](https://img.shields.io/badge/all_contributors-2-blue.svg?style=flat-square)](#contributors-)
 
-### [Website](https://plutomi.com)
+> ⚠️ _WARNING_ ⚠️
+>
+> _This project is **NOT** production ready and can change at any time. You **WILL** lose your data_ :)
 
-**Plutomi is an applicant tracking system**.
+### [Website / Live Demo](https://plutomi.com)
+
+Plutomi is an [applicant tracking system](https://en.wikipedia.org/wiki/Applicant_tracking_system).
 
 You can create `openings`, which people can apply to. An opening can be anything from a job, a location for a delivery company, or a program like a summer camp.
 

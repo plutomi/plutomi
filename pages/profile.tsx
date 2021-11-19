@@ -1,14 +1,11 @@
 import SignedInNav from "../components/Navbar/SignedInNav";
 import useSelf from "../SWR/useSelf";
-import axios from "axios";
 import UserProfileHeader from "../components/UserProfile/UserProfileHeader";
 import { mutate } from "swr";
 import UserProfileModal from "../components/UserProfile/UserProfileModal";
 import Loader from "../components/Loader";
 import Login from "../components/Login";
-import useOrgUsers from "../SWR/useOrgUsers";
 import useStore from "../utils/store";
-import { useRouter } from "next/router";
 import UsersService from "../adapters/UsersService";
 export default function Team() {
   const { user, isUserLoading, isUserError } = useSelf();

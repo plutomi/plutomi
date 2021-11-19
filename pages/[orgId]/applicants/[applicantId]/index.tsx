@@ -3,6 +3,7 @@ import Loader from "../../../../components/Loader";
 import useApplicantById from "../../../../SWR/useApplicantById";
 import { useRouter } from "next/router";
 import ApplicationHeader from "../../../../components/Applicants/ApplicationHeader";
+import { CUSTOM_QUERY } from "../../../../types/main";
 export default function Application() {
   const router = useRouter();
   const { applicantId }: Partial<CUSTOM_QUERY> = router.query;

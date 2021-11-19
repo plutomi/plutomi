@@ -2,10 +2,11 @@ import useSelf from "../../SWR/useSelf";
 import Loader from "../Loader";
 import Invite from "./Invite";
 import { mutate } from "swr";
-import UsersService from "../../adapters/UsersService";
 import { useRouter } from "next/router";
 import InvitesService from "../../adapters/InvitesService";
 import useOrgInvites from "../../SWR/useOrgInvites";
+import { DynamoNewOrgInvite } from "../../types/dynamo";
+import UsersService from "../../adapters/UsersService";
 export default function InvitesContent() {
   const router = useRouter();
   const { user, isUserLoading, isUserError } = useSelf();
@@ -57,7 +58,7 @@ export default function InvitesContent() {
         role="list"
         className="divide-y divide-gray-200 mx-auto max-w-xl flex-col space-y-4 p-20  "
       >
-        {invites.map((invite: DynamoOrgInvite) => (
+        {invites.map((invite: DynamoNewOrgInvite) => (
           <Invite
             invite={invite}
             key={invite.inviteId}
