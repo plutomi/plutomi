@@ -4,6 +4,8 @@ import { useRouter } from "next/router";
 import Loader from "../Loader";
 import useStore from "../../utils/store";
 import useAllApplicantsInStage from "../../SWR/useAllApplicantsInStage";
+import { CUSTOM_QUERY } from "../../types/main";
+import { DynamoNewApplicant } from "../../types/dynamo";
 export default function ApplicantList() {
   const router = useRouter();
   const { openingId, stageId }: Partial<CUSTOM_QUERY> = router.query;

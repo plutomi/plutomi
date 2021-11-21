@@ -1,6 +1,6 @@
 import { GetCommand, GetCommandInput } from "@aws-sdk/lib-dynamodb";
 import { Dynamo } from "../../awsClients/ddbDocClient";
-import { ENTITY_TYPES } from "../../defaults";
+import { ENTITY_TYPES } from "../../Config";
 import { DynamoNewOrg } from "../../types/dynamo";
 import { GetOrgInput } from "../../types/main";
 

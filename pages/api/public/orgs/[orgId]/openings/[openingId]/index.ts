@@ -3,7 +3,7 @@
 import withCleanOrgId from "../../../../../../../middleware/withCleanOrgId";
 import { NextApiRequest, NextApiResponse } from "next";
 import { getOpening } from "../../../../../../../utils/openings/getOpeningById";
-import { API_METHODS, ENTITY_TYPES } from "../../../../../../../defaults";
+import { API_METHODS, ENTITY_TYPES } from "../../../../../../../Config";
 import withValidMethod from "../../../../../../../middleware/withValidMethod";
 import { CUSTOM_QUERY } from "../../../../../../../types/main";
 import clean from "../../../../../../../utils/clean";

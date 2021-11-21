@@ -1,7 +1,7 @@
 import withCleanOrgId from "../../../../../middleware/withCleanOrgId";
 import { getOrg } from "../../../../../utils/orgs/getOrg";
 import { NextApiRequest, NextApiResponse } from "next";
-import { API_METHODS, ENTITY_TYPES } from "../../../../../defaults";
+import { API_METHODS, ENTITY_TYPES } from "../../../../../Config";
 import withValidMethod from "../../../../../middleware/withValidMethod";
 import { CUSTOM_QUERY } from "../../../../../types/main";
 import clean from "../../../../../utils/clean";

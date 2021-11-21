@@ -4,7 +4,7 @@ import InputValidation from "../../../../utils/inputValidation";
 import updateOpening from "../../../../utils/openings/updateOpening";
 import { deleteOpening } from "../../../../utils/openings/deleteOpening";
 import { withSessionRoute } from "../../../../middleware/withSession";
-import { API_METHODS } from "../../../../defaults";
+import { API_METHODS } from "../../../../Config";
 import withAuth from "../../../../middleware/withAuth";
 import withValidMethod from "../../../../middleware/withValidMethod";
 import { CUSTOM_QUERY } from "../../../../types/main";

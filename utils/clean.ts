@@ -1,4 +1,4 @@
-import { ENTITY_TYPES, SAFE_PROPERTIES } from "../defaults";
+import { ENTITY_TYPES, SAFE_PROPERTIES } from "../Config";
 
 /**
  * Removes properties from a given `entity`

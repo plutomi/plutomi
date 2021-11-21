@@ -1,7 +1,7 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import { createStageQuestion } from "../../../utils/questions/createStageQuestion";
 import { withSessionRoute } from "../../../middleware/withSession";
-import { API_METHODS } from "../../../defaults";
+import { API_METHODS } from "../../../Config";
 import withAuth from "../../../middleware/withAuth";
 import withCleanOrgId from "../../../middleware/withCleanOrgId";
 import withValidMethod from "../../../middleware/withValidMethod";

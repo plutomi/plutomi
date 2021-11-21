@@ -14,9 +14,9 @@ import {
   API_METHODS,
   EMAILS,
   ENTITY_TYPES,
-  PLACEHOLDERS,
+  DEFAULTS,
   LOGIN_METHODS,
-} from "../../../defaults";
+} from "../../../Config";
 import withValidMethod from "../../../middleware/withValidMethod";
 import { CUSTOM_QUERY } from "../../../types/main";
 import sendEmail from "../../../utils/sendEmail";
@@ -152,7 +152,7 @@ const handler = async (
         .json({ message: "Invalid userId, please login again" });
     }
 
-    const userOrg = user.orgId !== PLACEHOLDERS.NO_ORG ?? user.orgId;
+    const userOrg = user.orgId !== DEFAULTS.NO_ORG ?? user.orgId;
     await createLoginEventAndDeleteLoginLink({
       loginLinkId,
       userId,
@@ -168,7 +168,7 @@ const handler = async (
      *  TODO maybe revisit this?
      */
     let userInvites = []; // TODO types array of org invite
-    if (req.session.user.orgId === PLACEHOLDERS.NO_ORG) {
+    if (req.session.user.orgId === DEFAULTS.NO_ORG) {
       userInvites = await getOrgInvitesForUser({
         userId: req.session.user.userId,
       });

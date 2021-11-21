@@ -7,7 +7,7 @@ import {
   GetApplicantByIdInput,
   GetApplicantByIdOutput,
 } from "../../types/main";
-import { ENTITY_TYPES } from "../../defaults";
+import { ENTITY_TYPES } from "../../Config";
 
 /**
  * Get an applicant by their ID

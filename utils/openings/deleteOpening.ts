@@ -5,7 +5,7 @@ import {
   TransactWriteCommandInput,
 } from "@aws-sdk/lib-dynamodb";
 import { Dynamo } from "../../awsClients/ddbDocClient";
-import { ENTITY_TYPES } from "../../defaults";
+import { ENTITY_TYPES } from "../../Config";
 import { DeleteOpeningInput } from "../../types/main";
 const { DYNAMO_TABLE_NAME } = process.env;
 import { deleteStage } from "../stages/deleteStage";

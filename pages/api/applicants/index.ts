@@ -1,9 +1,7 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import { getOpening } from "../../../utils/openings/getOpeningById";
-import InputValidation from "../../../utils/inputValidation";
 import { createApplicant } from "../../../utils/applicants/createApplicant";
-import { getOrg } from "../../../utils/orgs/getOrg";
-import { API_METHODS, EMAILS } from "../../../defaults";
+import { API_METHODS, EMAILS, ID_LENGTHS } from "../../../Config";
 import withAuth from "../../../middleware/withAuth";
 import { withSessionRoute } from "../../../middleware/withSession";
 import withValidMethod from "../../../middleware/withValidMethod";
@@ -11,6 +9,8 @@ import {
   CreateApplicantAPIResponse,
   CreateApplicantAPIBody,
 } from "../../../types/main";
+
+import Joi from "joi";
 import withCleanOrgId from "../../../middleware/withCleanOrgId";
 import sendEmail from "../../../utils/sendEmail";
 
@@ -39,6 +39,15 @@ const handler = async (
     const firstStage = stageId || opening.stageOrder[0];
 
     try {
+      const schema = Joi.object({
+        orgId: Joi.string(),
+        email: Joi.string().email(),
+        firstName: Joi.string(),
+        lastName: Joi.string(),
+        openingId: Joi.string().length(ID_LENGTHS.OPENING),
+        stageId: Joi.string().length(ID_LENGTHS.STAGE),
+      }).options({ presence: "required" });
+
       const CreateApplicantInput = {
         orgId: orgId,
         email: email,
@@ -47,8 +56,10 @@ const handler = async (
         openingId: openingId,
         stageId: firstStage,
       };
+
       try {
-        InputValidation(CreateApplicantInput);
+        const value = await schema.validateAsync(CreateApplicantInput);
+        return res.status(200).json({ message: value });
       } catch (error) {
         return res.status(400).json({ message: `${error.message}` });
       }
@@ -67,7 +78,7 @@ const handler = async (
       await sendEmail({
         fromName: "Applications",
         fromAddress: EMAILS.GENERAL,
-        toAddresses: ["newApplicant.email"],
+        toAddresses: ["newApplicant.email"], // TODO remove the quotes around this https://github.com/plutomi/plutomi/issues/342
         subject: `Here is a link to your application!`,
         html: `<h1><a href="${applicantionLink}" rel=noreferrer target="_blank" >Click this link to view your application!</a></h1><p>If you did not request this link, you can safely ignore it.</p>`,
       });
@@ -84,6 +95,4 @@ const handler = async (
   }
 };
 
-export default withCleanOrgId(
-  withValidMethod(withSessionRoute(withAuth(handler)), [API_METHODS.POST])
-);
+export default withCleanOrgId(withValidMethod(handler, [API_METHODS.POST]));

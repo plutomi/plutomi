@@ -3,7 +3,7 @@ import { Dynamo } from "../../awsClients/ddbDocClient";
 import Time from "../time";
 import { nanoid } from "nanoid";
 import { getUserByEmail } from "./getUserByEmail";
-import { EMAILS, ENTITY_TYPES, ID_LENGTHS, PLACEHOLDERS } from "../../defaults";
+import { EMAILS, ENTITY_TYPES, ID_LENGTHS, DEFAULTS } from "../../Config";
 import sendEmail from "../sendEmail";
 import { CreateUserInput } from "../../types/main";
 import { DynamoNewUser } from "../../types/dynamo";
@@ -22,19 +22,17 @@ export async function createUser(
   const newUser: DynamoNewUser = {
     PK: `${ENTITY_TYPES.USER}#${userId}`,
     SK: ENTITY_TYPES.USER,
-    firstName: firstName || PLACEHOLDERS.FIRST_NAME,
-    lastName: lastName || PLACEHOLDERS.LAST_NAME,
+    firstName: firstName || DEFAULTS.FIRST_NAME,
+    lastName: lastName || DEFAULTS.LAST_NAME,
     email: email.toLowerCase().trim(),
     userId: userId,
     entityType: ENTITY_TYPES.USER,
     createdAt: Time.currentISO(),
-    orgId: PLACEHOLDERS.NO_ORG,
-    orgJoinDate: PLACEHOLDERS.NO_ORG,
-    GSI1PK: `${ENTITY_TYPES.ORG}#${PLACEHOLDERS.NO_ORG}#${ENTITY_TYPES.USER}S`,
+    orgId: DEFAULTS.NO_ORG,
+    orgJoinDate: DEFAULTS.NO_ORG,
+    GSI1PK: `${ENTITY_TYPES.ORG}#${DEFAULTS.NO_ORG}#${ENTITY_TYPES.USER}S`,
     GSI1SK:
-      firstName && lastName
-        ? `${firstName} ${lastName}`
-        : PLACEHOLDERS.FULL_NAME,
+      firstName && lastName ? `${firstName} ${lastName}` : DEFAULTS.FULL_NAME,
     GSI2PK: email.toLowerCase().trim(),
     GSI2SK: ENTITY_TYPES.USER,
   };
@@ -51,7 +49,7 @@ export async function createUser(
       // TODO streams
       fromName: "New Plutomi User",
       fromAddress: EMAILS.GENERAL,
-      toAddresses: ["contact@plutomi.com"],
+      toAddresses: ["contact@plutomi.com"], // TODO add var for default new user notifications
       subject: `A new user has signed up!`,
       html: `<h1>Email: ${newUser.email}</h1><h1>ID: ${newUser.userId}</h1>`,
     });

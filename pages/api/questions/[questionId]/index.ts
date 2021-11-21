@@ -3,7 +3,7 @@ import { DeleteQuestion } from "../../../../utils/questions/deleteQuestion";
 import InputValidation from "../../../../utils/inputValidation";
 import updateQuestion from "../../../../utils/questions/updateStageQuestion";
 import { withSessionRoute } from "../../../../middleware/withSession";
-import { API_METHODS } from "../../../../defaults";
+import { API_METHODS } from "../../../../Config";
 import withAuth from "../../../../middleware/withAuth";
 import withCleanOrgId from "../../../../middleware/withCleanOrgId";
 import withValidMethod from "../../../../middleware/withValidMethod";

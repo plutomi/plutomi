@@ -2,7 +2,7 @@ import { getOrgInvitesForUser } from "../../../../../utils/invites/getOrgInvites
 import { NextApiRequest, NextApiResponse } from "next";
 
 import { withSessionRoute } from "../../../../../middleware/withSession";
-import { API_METHODS } from "../../../../../defaults";
+import { API_METHODS } from "../../../../../Config";
 import withAuth from "../../../../../middleware/withAuth";
 import withCleanOrgId from "../../../../../middleware/withCleanOrgId";
 import withValidMethod from "../../../../../middleware/withValidMethod";

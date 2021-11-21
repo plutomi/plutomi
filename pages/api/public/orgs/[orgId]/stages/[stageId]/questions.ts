@@ -1,7 +1,7 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import { getAllQuestionsInStage } from "../../../../../../../utils/questions/getAllQuestionsInStage";
 import withCleanOrgId from "../../../../../../../middleware/withCleanOrgId";
-import { API_METHODS } from "../../../../../../../defaults";
+import { API_METHODS } from "../../../../../../../Config";
 import withValidMethod from "../../../../../../../middleware/withValidMethod";
 import { CUSTOM_QUERY } from "../../../../../../../types/main";
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {

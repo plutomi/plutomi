@@ -3,7 +3,7 @@
 import withCleanOrgId from "../../../../../../../middleware/withCleanOrgId";
 import { NextApiRequest, NextApiResponse } from "next";
 import { getStageById } from "../../../../../../../utils/stages/getStageById";
-import { API_METHODS, ENTITY_TYPES } from "../../../../../../../defaults";
+import { API_METHODS, ENTITY_TYPES } from "../../../../../../../Config";
 import withValidMethod from "../../../../../../../middleware/withValidMethod";
 import { CUSTOM_QUERY } from "../../../../../../../types/main";
 import clean from "../../../../../../../utils/clean";
@@ -24,7 +24,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       //       .status(400)
       //       .json({ message: "You cannot apply here just yet" });
       //   }
-      const cleanedStage = clean(stage, ENTITY_TYPES.STAGE)
+      const cleanedStage = clean(stage, ENTITY_TYPES.STAGE);
       return res.status(200).json(cleanedStage);
     } catch (error) {
       // TODO add error logger
