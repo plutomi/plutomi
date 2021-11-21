@@ -3,7 +3,7 @@ import { Dynamo } from "../../awsClients/ddbDocClient";
 import { getOrgInvitesForUser } from "./getOrgInvitesForUser";
 import Time from "../time";
 import { nanoid } from "nanoid";
-import { ENTITY_TYPES, ID_LENGTHS } from "../../defaults";
+import { ENTITY_TYPES, ID_LENGTHS } from "../../Config";
 import { DynamoNewOrgInvite } from "../../types/dynamo";
 import { CreateOrgInviteInput } from "../../types/main";
 

@@ -2,7 +2,7 @@ import { getUserById } from "../../../../utils/users/getUserById";
 import { NextApiRequest, NextApiResponse } from "next";
 import { updateUser } from "../../../../utils/users/updateUser";
 import { withSessionRoute } from "../../../../middleware/withSession";
-import { API_METHODS, ENTITY_TYPES } from "../../../../defaults";
+import { API_METHODS, ENTITY_TYPES } from "../../../../Config";
 import withAuth from "../../../../middleware/withAuth";
 import withCleanOrgId from "../../../../middleware/withCleanOrgId";
 import withValidMethod from "../../../../middleware/withValidMethod";

@@ -2,7 +2,7 @@ import { NextApiRequest, NextApiResponse } from "next";
 import { getAllApplicantsInOpening } from "../../../../utils/openings/getAllApplicantsInOpening";
 import { withSessionRoute } from "../../../../middleware/withSession";
 import InputValidation from "../../../../utils/inputValidation";
-import { API_METHODS } from "../../../../defaults";
+import { API_METHODS } from "../../../../Config";
 import withAuth from "../../../../middleware/withAuth";
 import withValidMethod from "../../../../middleware/withValidMethod";
 import { CUSTOM_QUERY } from "../../../../types/main";

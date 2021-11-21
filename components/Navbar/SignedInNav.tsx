@@ -14,7 +14,7 @@ import {
 import Link from "next/dist/client/link";
 import Banner from "../BannerTop";
 import { mutate } from "swr";
-import { PLACEHOLDERS } from "../../defaults";
+import { DEFAULTS } from "../../Config";
 import UsersService from "../../adapters/UsersService";
 
 function classNames(...classes) {
@@ -68,16 +68,13 @@ export default function SignedInNav({ current }) {
                   <div className="hidden sm:-my-px sm:ml-6 sm:flex sm:space-x-8">
                     {NAVBAR_NAVIGATION.map((item) => {
                       if (
-                        user?.orgId === PLACEHOLDERS.NO_ORG &&
+                        user?.orgId === DEFAULTS.NO_ORG &&
                         item.hiddenIfNoOrg
                       ) {
                         return null;
                       }
 
-                      if (
-                        user?.orgId !== PLACEHOLDERS.NO_ORG &&
-                        item.hiddenIfOrg
-                      ) {
+                      if (user?.orgId !== DEFAULTS.NO_ORG && item.hiddenIfOrg) {
                         return null;
                       }
                       return (
@@ -146,12 +143,8 @@ export default function SignedInNav({ current }) {
                             "Loading user info..."
                           ) : (
                             <>
-                              {!user?.GSI1SK.includes(
-                                PLACEHOLDERS.FIRST_NAME
-                              ) || // TODO this is gross
-                                (!user?.GSI1SK.includes(
-                                  PLACEHOLDERS.LAST_NAME
-                                ) && (
+                              {!user?.GSI1SK.includes(DEFAULTS.FIRST_NAME) || // TODO this is gross
+                                (!user?.GSI1SK.includes(DEFAULTS.LAST_NAME) && (
                                   <div className="   text-dark ">
                                     Signed in as ${user?.GSI1SK}
                                   </div>

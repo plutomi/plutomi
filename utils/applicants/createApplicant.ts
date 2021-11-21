@@ -5,7 +5,7 @@ import {
 import { Dynamo } from "../../awsClients/ddbDocClient";
 import Time from "../time";
 import { nanoid } from "nanoid";
-import { ENTITY_TYPES, ID_LENGTHS } from "../../defaults";
+import { ENTITY_TYPES, ID_LENGTHS } from "../../Config";
 import { CreateApplicantInput, CreateApplicantOutput } from "../../types/main";
 import { DynamoNewApplicant } from "../../types/dynamo";
 const { DYNAMO_TABLE_NAME } = process.env;
@@ -68,7 +68,7 @@ export async function createApplicant(
           Update: {
             Key: {
               PK: `${ENTITY_TYPES.ORG}#${orgId}#${ENTITY_TYPES.OPENING}#${openingId}`,
-              SK: `${ENTITY_TYPES.OPENING}`,
+              SK: ENTITY_TYPES.OPENING,
             },
             TableName: DYNAMO_TABLE_NAME,
             UpdateExpression:
@@ -84,7 +84,7 @@ export async function createApplicant(
           Update: {
             Key: {
               PK: `${ENTITY_TYPES.ORG}#${orgId}#${ENTITY_TYPES.STAGE}#${stageId}`,
-              SK: `${ENTITY_TYPES.STAGE}`,
+              SK: ENTITY_TYPES.STAGE,
             },
             TableName: DYNAMO_TABLE_NAME,
             UpdateExpression:
@@ -100,7 +100,7 @@ export async function createApplicant(
           Update: {
             Key: {
               PK: `${ENTITY_TYPES.ORG}#${orgId}`,
-              SK: `${ENTITY_TYPES.ORG}`,
+              SK: ENTITY_TYPES.ORG,
             },
             TableName: DYNAMO_TABLE_NAME,
             UpdateExpression:

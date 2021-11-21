@@ -10,7 +10,7 @@ import {
   DynamoNewUser,
 } from "./dynamo";
 
-type CreateApplicantAPIBody = CreateApplicantInput;
+type CreateApplicantAPIBody = Omit<CreateApplicantInput, "stageId">;
 export interface CreateApplicantAPIResponse {
   message: string;
 }

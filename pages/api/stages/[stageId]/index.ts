@@ -5,7 +5,7 @@ import { deleteStage } from "../../../../utils/stages/deleteStage";
 import updateStage from "../../../../utils/stages/updateStage";
 // Create stage in a opening
 import { withSessionRoute } from "../../../../middleware/withSession";
-import { API_METHODS } from "../../../../defaults";
+import { API_METHODS } from "../../../../Config";
 import withAuth from "../../../../middleware/withAuth";
 import withCleanOrgId from "../../../../middleware/withCleanOrgId";
 import withValidMethod from "../../../../middleware/withValidMethod";

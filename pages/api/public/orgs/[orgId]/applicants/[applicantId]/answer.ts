@@ -2,7 +2,7 @@ import { NextApiRequest, NextApiResponse } from "next";
 import InputValidation from "../../../../../../../utils/inputValidation";
 import withCleanOrgId from "../../../../../../../middleware/withCleanOrgId";
 import { createApplicantResponse } from "../../../../../../../utils/applicants/createApplicantResponse";
-import { API_METHODS } from "../../../../../../../defaults";
+import { API_METHODS } from "../../../../../../../Config";
 import withValidMethod from "../../../../../../../middleware/withValidMethod";
 import {
   CUSTOM_QUERY,

@@ -6,7 +6,7 @@ import { Dynamo } from "../../awsClients/ddbDocClient";
 import Time from "../time";
 import { nanoid } from "nanoid";
 import { getStageById } from "../stages/getStageById";
-import { ENTITY_TYPES, ERRORS, ID_LENGTHS, LIMITS } from "../../defaults";
+import { ENTITY_TYPES, ERRORS, ID_LENGTHS, LIMITS } from "../../Config";
 import { CreateStageQuestionInput } from "../../types/main";
 import { DynamoNewStageQuestion } from "../../types/dynamo";
 

@@ -1,6 +1,6 @@
 import { withSessionRoute } from "../../../middleware/withSession";
 import { NextApiRequest, NextApiResponse } from "next";
-import { API_METHODS } from "../../../defaults";
+import { API_METHODS } from "../../../Config";
 import withAuth from "../../../middleware/withAuth";
 import withValidMethod from "../../../middleware/withValidMethod";
 

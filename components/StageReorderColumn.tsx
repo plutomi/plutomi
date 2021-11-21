@@ -15,6 +15,7 @@ import useOpeningById from "../SWR/useOpeningById";
 import useAllStagesInOpening from "../SWR/useAllStagesInOpening";
 import useStageById from "../SWR/useStageById";
 import OpeningsService from "../adapters/OpeningsService";
+import { CUSTOM_QUERY } from "../types/main";
 
 export default function StageReorderColumn() {
   const createStage = async () => {
@@ -62,9 +63,10 @@ export default function StageReorderColumn() {
   };
 
   const router = useRouter();
-  const { openingId, stageId }: Partial<CUSTOM_QUERY> = router.query;
+  // To this
+  const { openingId, stageId }: Pick<CUSTOM_QUERY, "openingId" | "stageId"> =
+    router.query;
 
-  const { user, isUserLoading, isUserError } = useSelf();
   let { opening, isOpeningLoading, isOpeningError } = useOpeningById(openingId);
 
   let { stages, isStagesLoading, isStagesError } = useAllStagesInOpening(

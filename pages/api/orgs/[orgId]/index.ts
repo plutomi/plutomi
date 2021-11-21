@@ -4,7 +4,7 @@ import { NextApiRequest, NextApiResponse } from "next";
 import { withSessionRoute } from "../../../../middleware/withSession";
 import { updateUser } from "../../../../utils/users/updateUser";
 import withAuth from "../../../../middleware/withAuth";
-import { API_METHODS, ENTITY_TYPES, PLACEHOLDERS } from "../../../../defaults";
+import { API_METHODS, ENTITY_TYPES, DEFAULTS } from "../../../../Config";
 import { CUSTOM_QUERY } from "../../../../types/main";
 import withValidMethod from "../../../../middleware/withValidMethod";
 import clean from "../../../../utils/clean";
@@ -53,13 +53,13 @@ const handler = async (
       const updatedUser = await updateUser({
         userId: req.session.user.userId,
         newUserValues: {
-          orgId: PLACEHOLDERS.NO_ORG,
-          orgJoinDate: PLACEHOLDERS.NO_ORG,
-          GSI1PK: PLACEHOLDERS.NO_ORG,
+          orgId: DEFAULTS.NO_ORG,
+          orgJoinDate: DEFAULTS.NO_ORG,
+          GSI1PK: DEFAULTS.NO_ORG,
         },
-
         ALLOW_FORBIDDEN_KEYS: true,
       });
+
       req.session.user = clean(updatedUser, ENTITY_TYPES.USER);
       await req.session.save();
       return res

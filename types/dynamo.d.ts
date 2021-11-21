@@ -1,7 +1,7 @@
 // This file is for the actual DynamoDB entries and their Types - ie: A full object with all properties.
 // All  other types are derivatives with Pick, Omit, etc.
 import { IronSessionData } from "iron-session";
-import { ENTITY_TYPES, PLACEHOLDERS } from "../defaults";
+import { ENTITY_TYPES, DEFAULTS } from "../Config";
 import { UserSessionData } from "./main";
 
 interface DynamoNewStage {
@@ -110,18 +110,18 @@ interface DynamoNewApplicant {
   SK: ENTITY_TYPES.APPLICANT;
   /**
    * First name of the applicant
-   * @default - {@link PLACEHOLDERS.FIRST_NAME}
+   * @default - {@link DEFAULTS.FIRST_NAME}
    */
   firstName: string;
   /**
    * Last name of the applicant
-   * @default - {@link PLACEHOLDERS.LAST_NAME}
+   * @default - {@link DEFAULTS.LAST_NAME}
    *
    * */
   lastName: string;
   /**
    * Full name of the applicant. Concatenated `firstName` and `lastName`
-   * @default - {@link PLACEHOLDERS.FULL_NAME}
+   * @default - {@link DEFAULTS.FULL_NAME}
    */
   fullName: `${string} ${string}`;
 
@@ -340,26 +340,26 @@ interface DynamoNewUser {
   SK: ENTITY_TYPES.USER;
   /**
    * The given `firstName`
-   * @default PLACEHOLDERS.FIRST_NAME
+   * @default DEFAULTS.FIRST_NAME
    */
-  firstName: string | PLACEHOLDERS.FIRST_NAME;
+  firstName: string | DEFAULTS.FIRST_NAME;
   /**
    * The given `lastName`
-   * @default PLACEHOLDERS.LAST_NAME
+   * @default DEFAULTS.LAST_NAME
    */
-  lastName: string | PLACEHOLDERS.LAST_NAME;
+  lastName: string | DEFAULTS.LAST_NAME;
   email: string;
   userId: string;
   entityType: ENTITY_TYPES.USER;
   createdAt: string;
-  orgId: PLACEHOLDERS.NO_ORG;
-  orgJoinDate: PLACEHOLDERS.NO_ORG;
-  GSI1PK: `${ENTITY_TYPES.ORG}#${PLACEHOLDERS.NO_ORG}#${ENTITY_TYPES.USER}S`;
+  orgId: DEFAULTS.NO_ORG;
+  orgJoinDate: DEFAULTS.NO_ORG;
+  GSI1PK: `${ENTITY_TYPES.ORG}#${DEFAULTS.NO_ORG}#${ENTITY_TYPES.USER}S`;
   /**
    * Combined `firstName` and `lastName`
-   * @default PLACEHOLDERS.FULL_NAME
+   * @default DEFAULTS.FULL_NAME
    */
-  GSI1SK: `${string} ${string}` | PLACEHOLDERS.FULL_NAME;
+  GSI1SK: `${string} ${string}` | DEFAULTS.FULL_NAME;
   GSI2PK: string;
   GSI2SK: ENTITY_TYPES.USER;
 }

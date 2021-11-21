@@ -3,7 +3,7 @@ import LoginEmail from "./EmailSigninInput";
 import GoogleLoginButton from "./GoogleLoginButton";
 import { useRouter } from "next/router";
 import { useState } from "react";
-import { LOGIN_METHODS } from "../defaults";
+import { LOGIN_METHODS } from "../Config";
 
 interface CallbackUrl {
   callbackUrl?: string;

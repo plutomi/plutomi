@@ -4,7 +4,7 @@ import {
 } from "@aws-sdk/lib-dynamodb";
 import { Dynamo } from "../../awsClients/ddbDocClient";
 import { DeleteApplicantInput, GetApplicantByIdOutput } from "../../types/main";
-import { ENTITY_TYPES } from "../../defaults";
+import { ENTITY_TYPES } from "../../Config";
 import { getApplicantById } from "./getApplicantById";
 const { DYNAMO_TABLE_NAME } = process.env;
 

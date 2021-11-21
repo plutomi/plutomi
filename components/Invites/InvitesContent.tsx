@@ -10,7 +10,7 @@ import UsersService from "../../adapters/UsersService";
 export default function InvitesContent() {
   const router = useRouter();
   const { user, isUserLoading, isUserError } = useSelf();
-  // TODO we don't have to make this call ehre if a user doesn't have invites
+  // TODO we don't have to make this call here if a user doesn't have invites
   const { invites, isInvitesLoading, isInvitesError } = useOrgInvites(
     user?.userId
   );

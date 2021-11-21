@@ -11,6 +11,7 @@ import ClickToCopy from "../ClickToCopy";
 import delay from "delay";
 import useApplicantById from "../../SWR/useApplicantById";
 import ApplicantsService from "../../adapters/ApplicantsService";
+import { CUSTOM_QUERY } from "../../types/main";
 const tabs = [
   { id: 1, name: "Details" },
   { id: 2, name: "History (todo)" },

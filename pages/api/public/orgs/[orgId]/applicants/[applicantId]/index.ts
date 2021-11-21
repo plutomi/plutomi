@@ -1,7 +1,7 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import { getApplicantById } from "../../../../../../../utils/applicants/getApplicantById";
 import withCleanOrgId from "../../../../../../../middleware/withCleanOrgId";
-import { API_METHODS, ENTITY_TYPES } from "../../../../../../../defaults";
+import { API_METHODS, ENTITY_TYPES } from "../../../../../../../Config";
 import withValidMethod from "../../../../../../../middleware/withValidMethod";
 import { CUSTOM_QUERY } from "../../../../../../../types/main";
 import clean from "../../../../../../../utils/clean";

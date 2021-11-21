@@ -4,7 +4,7 @@ import {
 } from "@aws-sdk/lib-dynamodb";
 import { Dynamo } from "../../awsClients/ddbDocClient";
 import Time from "../time";
-import { ENTITY_TYPES, ID_LENGTHS, TIME_UNITS } from "../../defaults";
+import { ENTITY_TYPES, ID_LENGTHS, TIME_UNITS } from "../../Config";
 import { DynamoNewApplicant, DynamoNewLoginEvent } from "../../types/dynamo";
 import { CreateLoginEventAndDeleteLoginLinkInput } from "../../types/main";
 const { DYNAMO_TABLE_NAME } = process.env;
@@ -24,7 +24,7 @@ export async function createLoginEventAndDeleteLoginLink(
   const now = Time.currentISO();
 
   const newUserLoginEvent: DynamoNewLoginEvent = {
-    PK: `${ENTITY_TYPES.USER}#${userId}`, // TODO set login events as org events if the user has an org
+    PK: `${ENTITY_TYPES.USER}#${userId}`,
     SK: `${ENTITY_TYPES.LOGIN_EVENT}#${now}`,
     // TODO in the future, get more the info about the login event such as IP, headers, device, etc.
     createdAt: now,
@@ -33,7 +33,7 @@ export async function createLoginEventAndDeleteLoginLink(
 
   const newOrgLoginEvent = {
     // TODO types
-    PK: `${ENTITY_TYPES.ORG}#${orgId}`, // TODO set login events as org events if the user has an org
+    PK: `${ENTITY_TYPES.ORG}#${orgId}`,
     SK: `${ENTITY_TYPES.LOGIN_EVENT}#${now}`,
     // TODO in the future, get more the info about the login event such as IP, headers, device, etc.
     createdAt: now,

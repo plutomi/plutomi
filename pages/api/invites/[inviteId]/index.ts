@@ -5,7 +5,7 @@ import { getOrgInvite } from "../../../../utils/invites/getOrgInvite";
 import { withSessionRoute } from "../../../../middleware/withSession";
 import { getUserById } from "../../../../utils/users/getUserById";
 import { joinOrgFromInvite } from "../../../../utils/invites/joinOrgFromInvite";
-import { API_METHODS, ENTITY_TYPES, PLACEHOLDERS } from "../../../../defaults";
+import { API_METHODS, ENTITY_TYPES, DEFAULTS } from "../../../../Config";
 import withAuth from "../../../../middleware/withAuth";
 import withValidMethod from "../../../../middleware/withValidMethod";
 import { CUSTOM_QUERY } from "../../../../types/main";
@@ -37,7 +37,7 @@ const handler = async (
 
   if (method === API_METHODS.POST) {
     // TODO disallow orgId's by this name
-    if (req.session.user.orgId != PLACEHOLDERS.NO_ORG) {
+    if (req.session.user.orgId != DEFAULTS.NO_ORG) {
       return res.status(400).json({
         message: `You already belong to an org: ${req.session.user.orgId}`,
       });
