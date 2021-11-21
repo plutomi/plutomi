@@ -186,10 +186,12 @@ export const DROPDOWN_NAVIGATION = [
   { name: "Log Out", href: "#" },
 ];
 
-// How often we should poll for invites while on the /invites page
-export const INVITES_REFRESH_INTERVAL = 10000;
-
 export const SWR = {
   MAX_RETRY_ATTEMPTS: 3,
+
+  /**
+   * How often we should poll for invites while on the /invites page.
+   * Was a 'cost' saving thing when using Lambda as API.. // TODO revisit this
+   */
   INVITES_REFRESH_INTERVAL: 10000,
 };
