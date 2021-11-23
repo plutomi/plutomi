@@ -88,16 +88,16 @@ export default function FAQ() {
               </dl>
             </div>
           </div>
-                <div>
-        <div className="mt-32">
-          {!user || isUserError ? (
-            <LoginHomepage
-              callbackUrl={`${process.env.NEXT_PUBLIC_WEBSITE_URL}/dashboard`}
-            />
-          ) : (
-            <AlreadySignedIn />
-          )}
-        </div>
+        <div>
+          <div className="mt-32">
+            {!user || isUserError ? (
+              <LoginHomepage
+                callbackUrl={`${process.env.NEXT_PUBLIC_WEBSITE_URL}/dashboard`}
+              />
+            ) : (
+              <AlreadySignedIn />
+            )}
+          </div>
         </div>
       </div>
     </div>
