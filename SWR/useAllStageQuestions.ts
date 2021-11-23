@@ -1,8 +1,8 @@
 // Retrieves all questions for a stage
 import axios from "axios";
 import useSWR from "swr";
-import QuestionsService from "../adapters/QuestionsService";
-import StagesService from "../adapters/StagesService";
+import QuestionsService from "../Adapters/QuestionsService";
+import StagesService from "../Adapters/StagesService";
 const fetcher = (url: string) => axios.get(url).then((res) => res.data);
 
 function useAllStageQuestions(

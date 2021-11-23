@@ -1,4 +1,4 @@
-import AuthService from "../adapters/AuthService";
+import AuthService from "../Adapters/AuthService";
 import LoginEmail from "./EmailSigninInput";
 import GoogleLoginButton from "./GoogleLoginButton";
 import { useRouter } from "next/router";

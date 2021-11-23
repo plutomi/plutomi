@@ -1,6 +1,6 @@
 import axios from "axios";
 import useSWR from "swr";
-import UsersService from "../adapters/UsersService";
+import UsersService from "../Adapters/UsersService";
 const fetcher = (url: string) => axios.get(url).then((res) => res.data);
 
 function useSelf() {

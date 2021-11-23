@@ -3,7 +3,7 @@ import axios from "axios";
 import useSWR from "swr";
 
 const fetcher = (url: string) => axios.get(url).then((res) => res.data);
-import OpeningsService from "../adapters/OpeningsService";
+import OpeningsService from "../Adapters/OpeningsService";
 /**
  *
  * @param userId - The ID of the logged in user

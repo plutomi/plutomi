@@ -1,6 +1,6 @@
 import { FormEvent, useState } from "react";
 import { Switch } from "@headlessui/react";
-import ApplicantsService from "../../../adapters/ApplicantsService";
+import ApplicantsService from "../../../Adapters/ApplicantsService";
 
 function classNames(...classes) {
   return classes.filter(Boolean).join(" ");

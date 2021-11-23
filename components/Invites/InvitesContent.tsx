@@ -3,10 +3,10 @@ import Loader from "../Loader";
 import Invite from "./Invite";
 import { mutate } from "swr";
 import { useRouter } from "next/router";
-import InvitesService from "../../adapters/InvitesService";
+import InvitesService from "../../Adapters/InvitesService";
 import useOrgInvites from "../../SWR/useOrgInvites";
 import { DynamoNewOrgInvite } from "../../types/dynamo";
-import UsersService from "../../adapters/UsersService";
+import UsersService from "../../Adapters/UsersService";
 export default function InvitesContent() {
   const router = useRouter();
   const { user, isUserLoading, isUserError } = useSelf();

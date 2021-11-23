@@ -1,6 +1,6 @@
 import axios from "axios";
 import useSWR from "swr";
-import StagesService from "../adapters/StagesService";
+import StagesService from "../Adapters/StagesService";
 
 const fetcher = (url: string) => axios.get(url).then((res) => res.data);
 

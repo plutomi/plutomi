@@ -2,7 +2,7 @@ import { mutate } from "swr";
 import Loader from "../Loader";
 import useSelf from "../../SWR/useSelf";
 import { useState } from "react";
-import OpeningsService from "../../adapters/OpeningsService";
+import OpeningsService from "../../Adapters/OpeningsService";
 import OpeningList from "./OpeningsList";
 import { PlusIcon } from "@heroicons/react/outline";
 import useStore from "../../utils/store";
