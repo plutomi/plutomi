@@ -59,17 +59,6 @@ export default function FAQ() {
 
   return (
     <div className="bg-white mx-auto text-left  flex justify-center">
-      <div>
-        <div className="mt-32">
-          {!user || isUserError ? (
-            <LoginHomepage
-              callbackUrl={`${process.env.NEXT_PUBLIC_WEBSITE_URL}/dashboard`}
-            />
-          ) : (
-            <AlreadySignedIn />
-          )}
-        </div>
-
         <div className="max-w-7xl  mx-auto py-16 px-4 sm:px-6 lg:py-20 lg:px-8  mt-8">
           <div className="lg:grid  lg:grid-cols-4 px-auto    place-content-center">
             <div className=" text-center lg:col-span-2 lg:text-left flex flex-col items-center justify-center">
@@ -99,6 +88,16 @@ export default function FAQ() {
               </dl>
             </div>
           </div>
+                <div>
+        <div className="mt-32">
+          {!user || isUserError ? (
+            <LoginHomepage
+              callbackUrl={`${process.env.NEXT_PUBLIC_WEBSITE_URL}/dashboard`}
+            />
+          ) : (
+            <AlreadySignedIn />
+          )}
+        </div>
         </div>
       </div>
     </div>
