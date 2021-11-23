@@ -1,7 +1,7 @@
 // Retrieves all users in an org
 import axios from "axios";
 import useSWR from "swr";
-import OrgsService from "../adapters/OrgsService";
+import OrgsService from "../Adapters/OrgsService";
 const fetcher = (url: string) => axios.get(url).then((res) => res.data);
 
 function useOrgUsers(orgId: string): useOrgUsersOutput {

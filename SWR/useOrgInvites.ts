@@ -1,7 +1,7 @@
 // Retrieves all invites for a logged in user
 import axios from "axios";
 import useSWR from "swr";
-import InvitesService from "../adapters/InvitesService";
+import InvitesService from "../Adapters/InvitesService";
 import { SWR } from "../Config";
 const fetcher = (url: string) => axios.get(url).then((res) => res.data);
 

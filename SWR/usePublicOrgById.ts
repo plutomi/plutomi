@@ -1,7 +1,7 @@
 // Retrieves a specific user by ID
 import axios from "axios";
 import useSWR from "swr";
-import PublicInfoService from "../adapters/PublicInfoService";
+import PublicInfoService from "../Adapters/PublicInfoService";
 const fetcher = (url: string) => axios.get(url).then((res) => res.data);
 
 // Returns very limited details about an org

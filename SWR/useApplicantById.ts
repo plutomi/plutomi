@@ -1,7 +1,7 @@
 // Retrieves a specific opening by ID
 import axios from "axios";
 import useSWR from "swr";
-import ApplicantsService from "../adapters/ApplicantsService";
+import ApplicantsService from "../Adapters/ApplicantsService";
 const fetcher = (url: string) => axios.get(url).then((res) => res.data);
 
 function useApplicantById(applicantId: string): useApplicantByIdOutput {

@@ -46,7 +46,7 @@ export default class PlutomiWebsiteStack extends cdk.Stack {
       assumedBy: new iam.ServicePrincipal("ecs-tasks.amazonaws.com"),
     });
 
-    // Add Dynamo access policy
+    // Allows Fargate to access DynamoDB
     taskRole.addToPolicy(
       new iam.PolicyStatement({
         effect: iam.Effect.ALLOW,
@@ -63,6 +63,17 @@ export default class PlutomiWebsiteStack extends cdk.Stack {
           `arn:aws:dynamodb:*:${ACCOUNT_ID}:table/Plutomi/index/GSI1`, // TODO dynamic table name
           `arn:aws:dynamodb:*:${ACCOUNT_ID}:table/Plutomi/index/GSI2`, // TODO dynamic table name
           `arn:aws:dynamodb:*:${ACCOUNT_ID}:table/Plutomi`, // TODO dynamic table name
+        ],
+      })
+    );
+
+    // Allows Fargate to send emails
+    taskRole.addToPolicy(
+      new iam.PolicyStatement({
+        effect: iam.Effect.ALLOW,
+        actions: ["ses:SendEmail"],
+        resources: [
+          `arn:aws:ses:us-east-1:${ACCOUNT_ID}:identity/plutomi.com`, // TODO add domain & Dynamic region
         ],
       })
     );

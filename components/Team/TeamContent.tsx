@@ -6,7 +6,7 @@ import { PlusIcon } from "@heroicons/react/outline";
 import useStore from "../../utils/store";
 import CreateInviteModal from "../CreateInviteModal";
 import { useRouter } from "next/router";
-import InvitesService from "../../adapters/InvitesService";
+import InvitesService from "../../Adapters/InvitesService";
 import EmptyTeamState from "./EmptyTeamState";
 export default function TeamContent() {
   const router = useRouter();

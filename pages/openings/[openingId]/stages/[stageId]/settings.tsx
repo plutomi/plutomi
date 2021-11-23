@@ -6,8 +6,8 @@ import StageSettingsContent from "../../../../../components/Stages/StagesSetting
 import NewPage from "../../../../../components/Templates/NewPage";
 import useStageById from "../../../../../SWR/useStageById";
 import { CUSTOM_QUERY } from "../../../../../types/main";
-import OpeningsService from "../../../../../adapters/OpeningsService";
-import StagesService from "../../../../../adapters/StagesService";
+import OpeningsService from "../../../../../Adapters/OpeningsService";
+import StagesService from "../../../../../Adapters/StagesService";
 
 export default function StageSettings() {
   const router = useRouter();
