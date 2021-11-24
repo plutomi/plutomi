@@ -25,6 +25,17 @@
         "code",
         "maintenance"
       ]
+    },
+    {
+      "login": "mazupicua",
+      "name": "Jose Valerio",
+      "avatar_url": "https://avatars.githubusercontent.com/u/37680756?v=4",
+      "profile": "https://github.com/mazupicua",
+      "contributions": [
+        "code",
+        "maintenance",
+        "bug"
+      ]
     }
   ],
   "contributorsPerLine": 7,
