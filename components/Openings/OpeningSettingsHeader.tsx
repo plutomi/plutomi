@@ -11,7 +11,7 @@ import Time from "../../utils/time";
 import { CUSTOM_QUERY } from "../../types/main";
 export default function OpeningSettingsHeader() {
   const router = useRouter();
-  const { openingId }: Partial<CUSTOM_QUERY> = router.query;
+  const { openingId } = router.query as Pick<CUSTOM_QUERY, "openingId">;
 
   let { opening, isOpeningLoading, isOpeningError } = useOpeningById(openingId);
 

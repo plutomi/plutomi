@@ -6,9 +6,13 @@ function classNames(...classes) {
   return classes.filter(Boolean).join(" ");
 }
 import { useRouter } from "next/router";
+import { CUSTOM_QUERY } from "../../../types/main";
 export default function ApplicantInfoForm() {
   const router = useRouter();
-  const { orgId, openingId }: Partial<CUSTOM_QUERY> = router.query;
+  const { orgId, openingId } = router.query as Pick<
+    CUSTOM_QUERY,
+    "openingId" | "orgId"
+  >;
   const [agreed, setAgreed] = useState(false);
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");

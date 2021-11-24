@@ -7,7 +7,7 @@ import useOpeningById from "../../../SWR/useOpeningById";
 import { CUSTOM_QUERY } from "../../../types/main";
 export default function OpeningSettings() {
   const router = useRouter();
-  const { openingId }: Partial<CUSTOM_QUERY> = router.query;
+  const { openingId } = router.query as Pick<CUSTOM_QUERY, "openingId">;
   let { opening, isOpeningLoading, isOpeningError } = useOpeningById(openingId);
   return (
     <NewPage

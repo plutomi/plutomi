@@ -7,7 +7,7 @@ import { CUSTOM_QUERY } from "../../../types/main";
 import { useEffect } from "react";
 export default function Openings() {
   const router = useRouter();
-  const { openingId }: Partial<CUSTOM_QUERY> = router.query;
+  const { openingId } = router.query as Pick<CUSTOM_QUERY, "openingId">;
 
   const { user, isUserLoading, isUserError } = useSelf();
 

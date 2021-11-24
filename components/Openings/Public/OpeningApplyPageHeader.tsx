@@ -2,9 +2,13 @@ import { useRouter } from "next/router";
 import usePublicOrgById from "../../../SWR/usePublicOrgById";
 import usePublicOpeningById from "../../../SWR/usePublicOpeningById";
 import Loader from "../../Loader";
+import { CUSTOM_QUERY } from "../../../types/main";
 export default function OpeningApplyPageHeader() {
   const router = useRouter();
-  const { orgId, openingId }: Partial<CUSTOM_QUERY> = router.query;
+  const { orgId, openingId } = router.query as Pick<
+    CUSTOM_QUERY,
+    "openingId" | "orgId"
+  >;
   const { org, isOrgLoading, isOrgError } = usePublicOrgById(orgId);
   const { opening, isOpeningLoading, isOpeningError } = usePublicOpeningById(
     orgId,

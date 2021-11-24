@@ -4,9 +4,10 @@ import useStore from "../../utils/store";
 import { useRouter } from "next/router";
 import useSelf from "../../SWR/useSelf";
 import useAllStagesInOpening from "../../SWR/useAllStagesInOpening";
+import { CUSTOM_QUERY } from "../../types/main";
 export default function EmptyStagesState() {
   const router = useRouter();
-  const { openingId }: Partial<CUSTOM_QUERY> = router.query;
+  const { openingId } = router.query as Pick<CUSTOM_QUERY, "openingId">;
 
   const { user, isUserLoading, isUserError } = useSelf();
 

@@ -64,7 +64,7 @@ const handler = async (
           await sendEmail({
             fromName: "Applications",
             fromAddress: EMAILS.GENERAL,
-            toAddresses: ["newApplicant.email"], // TODO remove the quotes around this https://github.com/plutomi/plutomi/issues/342
+            toAddresses: [newApplicant.email], // TODO remove the quotes around this https://github.com/plutomi/plutomi/issues/342
             subject: `Here is a link to your application!`,
             html: `<h1><a href="${applicantionLink}" rel=noreferrer target="_blank" >Click this link to view your application!</a></h1><p>If you did not request this link, you can safely ignore it.</p>`,
           });

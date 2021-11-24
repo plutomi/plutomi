@@ -4,9 +4,13 @@ import usePublicOpeningById from "../../../SWR/usePublicOpeningById";
 import Loader from "../../Loader";
 import ApplicantInfoForm from "./ApplicantInfoForm";
 import axios from "axios";
+import { CUSTOM_QUERY } from "../../../types/main";
 export default function OpeningApplyPageContent() {
   const router = useRouter();
-  const { orgId, openingId }: Partial<CUSTOM_QUERY> = router.query;
+  const { orgId, openingId } = router.query as Pick<
+    CUSTOM_QUERY,
+    "openingId" | "orgId"
+  >;
   const { opening, isOpeningLoading, isOpeningError } = usePublicOpeningById(
     orgId,
     openingId
