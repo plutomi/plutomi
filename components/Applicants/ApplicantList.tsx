@@ -8,7 +8,10 @@ import { CUSTOM_QUERY } from "../../types/main";
 import { DynamoNewApplicant } from "../../types/dynamo";
 export default function ApplicantList() {
   const router = useRouter();
-  const { openingId, stageId }: Partial<CUSTOM_QUERY> = router.query;
+  const { openingId, stageId } = router.query as Pick<
+    CUSTOM_QUERY,
+    "openingId" | "stageId"
+  >;
 
   const { applicants, isApplicantsLoading, isApplicantsError } =
     useAllApplicantsInStage(openingId, stageId);

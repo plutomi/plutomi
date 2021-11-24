@@ -7,9 +7,10 @@ import Loader from "../Loader";
 import useStore from "../../utils/store";
 import useOpeningById from "../../SWR/useOpeningById";
 import OpeningsService from "../../Adapters/OpeningsService";
+import { CUSTOM_QUERY } from "../../types/main";
 export default function OpeningSettingsContent() {
   const router = useRouter();
-  const { openingId }: Partial<CUSTOM_QUERY> = router.query;
+  const { openingId } = router.query as Pick<CUSTOM_QUERY, "openingId">;
   let { opening, isOpeningLoading, isOpeningError } = useOpeningById(openingId);
 
   const openingModal = useStore((state) => state.openingModal);

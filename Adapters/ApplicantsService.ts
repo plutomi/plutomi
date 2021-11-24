@@ -44,7 +44,7 @@ export default class ApplicantsService {
   static answerQuestionsURL(orgId, applicantId) {
     return `/api/public/orgs/${orgId}/applicants/${applicantId}/answer`; // TODO applicantId is being used in query as well as body. TODO maybe add unique question ids?
   }
-  static async answerQuestions(orgId, applicantId, { responses }) {
+  static async answerQuestions(orgId, applicantId, responses) {
     const body = {
       applicantId: applicantId,
       responses: responses,

@@ -8,14 +8,13 @@ import useSelf from "../../SWR/useSelf";
 import StageCard from "./StageCard";
 import Loader from "../Loader";
 import useOpeningById from "../../SWR/useOpeningById";
+import { CUSTOM_QUERY } from "../../types/main";
 export default function StageCarousel() {
   const router = useRouter();
   const [activeItemIndex, setActiveItemIndex] = useState(0);
   const chevronWidth = 60;
 
-  const { openingId, stageId }: Partial<CUSTOM_QUERY> = router.query;
-
-  const { user, isUserLoading, isUserError } = useSelf();
+  const { openingId } = router.query as Pick<CUSTOM_QUERY, "openingId">;
 
   let { opening, isOpeningLoading, isOpeningError } = useOpeningById(openingId);
 

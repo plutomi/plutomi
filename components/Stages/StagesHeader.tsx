@@ -7,9 +7,10 @@ import OpeningsDropdown from "../Openings/DropDown";
 import useOpeningById from "../../SWR/useOpeningById";
 import { useRouter } from "next/router";
 import useOpenings from "../../SWR/useOpenings";
+import { CUSTOM_QUERY } from "../../types/main";
 export default function StagesHeader() {
   const router = useRouter();
-  const { openingId }: Partial<CUSTOM_QUERY> = router.query;
+  const { openingId } = router.query as Pick<CUSTOM_QUERY, "openingId">;
 
   const { user, isUserLoading, isUserError } = useSelf();
   let { opening, isOpeningLoading, isOpeningError } = useOpeningById(openingId);

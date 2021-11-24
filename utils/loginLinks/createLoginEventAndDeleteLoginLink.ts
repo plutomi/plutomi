@@ -4,7 +4,7 @@ import {
 } from "@aws-sdk/lib-dynamodb";
 import { Dynamo } from "../../awsClients/ddbDocClient";
 import Time from "../time";
-import { ENTITY_TYPES, ID_LENGTHS, TIME_UNITS } from "../../Config";
+import { DEFAULTS, ENTITY_TYPES, ID_LENGTHS, TIME_UNITS } from "../../Config";
 import { DynamoNewApplicant, DynamoNewLoginEvent } from "../../types/dynamo";
 import { CreateLoginEventAndDeleteLoginLinkInput } from "../../types/main";
 const { DYNAMO_TABLE_NAME } = process.env;
@@ -28,7 +28,10 @@ export async function createLoginEventAndDeleteLoginLink(
     SK: `${ENTITY_TYPES.LOGIN_EVENT}#${now}`,
     // TODO in the future, get more the info about the login event such as IP, headers, device, etc.
     createdAt: now,
-    ttlExpiry: Time.futureUNIX(30, TIME_UNITS.DAYS), // TODO ENUM for login retention period
+    ttlExpiry: Time.futureUNIX(
+      DEFAULTS.LOGIN_EVENT_RETENTION_PERIOD,
+      TIME_UNITS.DAYS
+    ), // TODO ENUM for login retention period
   };
 
   const newOrgLoginEvent = {
@@ -37,7 +40,10 @@ export async function createLoginEventAndDeleteLoginLink(
     SK: `${ENTITY_TYPES.LOGIN_EVENT}#${now}`,
     // TODO in the future, get more the info about the login event such as IP, headers, device, etc.
     createdAt: now,
-    ttlExpiry: Time.futureUNIX(30, TIME_UNITS.DAYS), // TODO ENUM for login retention period
+    ttlExpiry: Time.futureUNIX(
+      DEFAULTS.LOGIN_EVENT_RETENTION_PERIOD,
+      TIME_UNITS.DAYS
+    ), // TODO ENUM for login retention period
   };
 
   try {

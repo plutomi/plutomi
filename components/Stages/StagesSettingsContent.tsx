@@ -13,6 +13,7 @@ import useOpeningById from "../../SWR/useOpeningById";
 import useStageById from "../../SWR/useStageById";
 import StagesService from "../../Adapters/StagesService";
 import QuestionsService from "../../Adapters/QuestionsService";
+import { CUSTOM_QUERY } from "../../types/main";
 
 export default function StageSettingsContent() {
   const createQuestion = async () => {
@@ -84,7 +85,10 @@ export default function StageSettingsContent() {
   };
 
   const router = useRouter();
-  const { openingId, stageId }: Partial<CUSTOM_QUERY> = router.query;
+  const { openingId, stageId } = router.query as Pick<
+    CUSTOM_QUERY,
+    "openingId" | "stageId"
+  >;
 
   const { user, isUserLoading, isUserError } = useSelf();
   let { opening, isOpeningLoading, isOpeningError } = useOpeningById(openingId);

@@ -15,9 +15,10 @@ import NumberFormat from "react-number-format";
 import { CUSTOM_QUERY } from "../../../../../types/main";
 export default function StageApplicants() {
   const router = useRouter();
-  const { openingId, stageId, applicantId }: Partial<CUSTOM_QUERY> =
-    router.query;
-  const { user, isUserLoading, isUserError } = useSelf();
+  const { openingId, stageId } = router.query as Pick<
+    CUSTOM_QUERY,
+    "openingId" | "stageId"
+  >;
   let { opening, isOpeningLoading, isOpeningError } = useOpeningById(openingId);
 
   const { stages, isStagesLoading, isStagesError } = useAllStagesInOpening(
@@ -26,7 +27,7 @@ export default function StageApplicants() {
   // Allows for copying the URL of the applicant directly directly
   useEffect(() => {
     if (!router.isReady) return;
-    const { applicantId }: Partial<CUSTOM_QUERY> = router.query;
+    const { applicantId } = router.query as Pick<CUSTOM_QUERY, "applicantId">;
 
     if (applicantId && typeof applicantId === "string" && applicantId !== "") {
       setApplicantProfileModal({

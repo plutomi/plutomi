@@ -11,7 +11,10 @@ import StagesService from "../../../../../Adapters/StagesService";
 
 export default function StageSettings() {
   const router = useRouter();
-  const { openingId, stageId }: Partial<CUSTOM_QUERY> = router.query;
+  const { openingId, stageId } = router.query as Pick<
+    CUSTOM_QUERY,
+    "openingId" | "stageId"
+  >;
   let { opening, isOpeningLoading, isOpeningError } = useOpeningById(openingId);
   let { stage, isStageLoading, isStageError } = useStageById(stageId);
 

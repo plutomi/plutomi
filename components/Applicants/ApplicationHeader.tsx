@@ -4,7 +4,7 @@ import useStageById from "../../SWR/useStageById";
 import { CUSTOM_QUERY } from "../../types/main";
 export default function ApplicationHeader() {
   const router = useRouter();
-  const { applicantId }: Partial<CUSTOM_QUERY> = router.query;
+  const { applicantId } = router.query as Pick<CUSTOM_QUERY, "applicantId">;
   const { applicant, isApplicantLoading, isApplicantError } =
     useApplicantById(applicantId);
 

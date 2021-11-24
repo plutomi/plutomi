@@ -38,8 +38,10 @@ export default function ApplicantProfileModal() {
   const [isEditing, setIsEditing] = useState(false);
   const [currentActive, setCurrentActive] = useState(1); // Id of item
   const router = useRouter();
-  const { applicantId, openingId, stageId }: Partial<CUSTOM_QUERY> =
-    router.query;
+  const { applicantId, openingId, stageId } = router.query as Pick<
+    CUSTOM_QUERY,
+    "openingId" | "stageId" | "applicantId"
+  >;
 
   const setApplicantProfileModal = useStore(
     (store) => store.setApplicantProfileModal

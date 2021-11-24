@@ -112,7 +112,7 @@ export enum DEFAULTS {
   LAST_NAME = "NO_LAST_NAME",
   FULL_NAME = `NO_FIRST_NAME NO_LAST_NAME`,
   NO_ORG = `NO_ORG_ASSIGNED`,
-  // Here https://github.com/plutomi/plutomi/issues/334
+  LOGIN_EVENT_RETENTION_PERIOD = 30,
 }
 
 export enum EMAILS { // TODO replace domain with .env domain

@@ -11,7 +11,10 @@ export default function ApplicationContent() {
   const [responses, setResponses] = useState([]);
 
   const router = useRouter();
-  const { orgId, applicantId }: Partial<CUSTOM_QUERY> = router.query;
+  const { orgId, applicantId } = router.query as Pick<
+    CUSTOM_QUERY,
+    "orgId" | "applicantId"
+  >;
   const { applicant, isApplicantLoading, isApplicantError } =
     usePublicApplicant(applicantId);
 
@@ -31,7 +34,7 @@ export default function ApplicationContent() {
     questionDescription: string,
     response: string
   ) => {
-    const incoming: ApplicantAnswer = {
+    const incoming = {
       questionId: questionId,
       questionTitle: questionTitle,
       questionDescription: questionDescription,
@@ -65,11 +68,11 @@ export default function ApplicationContent() {
 
   const handleSubmit = async () => {
     try {
-      const { message } = await ApplicantsService.answerQuestions({
+      const { message } = await ApplicantsService.answerQuestions(
         orgId,
         applicantId,
-        responses,
-      });
+        responses
+      );
       alert(message);
     } catch (error) {
       alert(error.response.data.message);
