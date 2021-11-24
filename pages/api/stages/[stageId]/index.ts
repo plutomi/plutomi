@@ -1,6 +1,5 @@
 import { getStageById } from "../../../../utils/stages/getStageById";
 import { NextApiRequest, NextApiResponse } from "next";
-import InputValidation from "../../../../utils/inputValidation";
 import { deleteStage } from "../../../../utils/stages/deleteStage";
 import updateStage from "../../../../utils/stages/updateStage";
 // Create stage in a opening
@@ -10,6 +9,7 @@ import withAuth from "../../../../middleware/withAuth";
 import withCleanOrgId from "../../../../middleware/withCleanOrgId";
 import withValidMethod from "../../../../middleware/withValidMethod";
 import { CUSTOM_QUERY, UpdateStageInput } from "../../../../types/main";
+import Joi from "joi";
 
 const handler = async (
   req: NextApiRequest,
@@ -47,8 +47,15 @@ const handler = async (
         newStageValues: body.newStageValues,
       };
 
+      const schema = Joi.object({
+        orgId: Joi.string(),
+        stageId: Joi.string(),
+        newStageValues: Joi.object(), // TODo add actual inputs of new stage values
+      }).options({ presence: "required" });
+
+      // Validate input
       try {
-        InputValidation(updateStageInput);
+        await schema.validateAsync(updateStageInput);
       } catch (error) {
         return res.status(400).json({ message: `${error.message}` });
       }

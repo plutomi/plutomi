@@ -1,4 +1,3 @@
-import InputValidation from "../../../../utils/inputValidation";
 import { NextApiRequest, NextApiResponse } from "next";
 import deleteOrgInvite from "../../../../utils/invites/deleteOrgInvite";
 import { getOrgInvite } from "../../../../utils/invites/getOrgInvite";
@@ -23,16 +22,9 @@ const handler = async (
     inviteId: inviteId,
     userId: req.session.user.userId,
   });
-  const joinOrgInput = {
-    userId: req.session.user.userId,
-    invite: invite,
-  };
 
-  try {
-    InputValidation(joinOrgInput);
-  } catch (error) {
-    console.error("Error accepting invite", error);
-    return res.status(400).json({ message: `${error.message}` });
+  if (!invite) {
+    return res.status(400).json({ message: `Invite no longer exists` });
   }
 
   if (method === API_METHODS.POST) {

@@ -1,11 +1,11 @@
 import { getAllOpeningsInOrg } from "../../../utils/openings/getAllOpeningsInOrg";
 import { createOpening } from "../../../utils/openings/createOpening";
-import InputValidation from "../../../utils/inputValidation";
 import { NextApiRequest, NextApiResponse } from "next";
 import { withSessionRoute } from "../../../middleware/withSession";
 import { API_METHODS, DEFAULTS } from "../../../Config";
 import withAuth from "../../../middleware/withAuth";
 import withValidMethod from "../../../middleware/withValidMethod";
+import Joi from "joi";
 
 const handler = async (
   req: NextApiRequest,
@@ -25,13 +25,15 @@ const handler = async (
         orgId: req.session.user.orgId,
         GSI1SK: GSI1SK,
       };
+      const schema = Joi.object({
+        GSI1SK: Joi.string(),
+      }).options({ presence: "required" });
 
+      // Validate input
       try {
-        InputValidation(createOpeningInput);
+        await schema.validateAsync(createOpeningInput);
       } catch (error) {
-        return res
-          .status(400)
-          .json({ message: `An error occurred: ${error.message}` });
+        return res.status(400).json({ message: `${error.message}` });
       }
 
       await createOpening(createOpeningInput);

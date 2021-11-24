@@ -1,6 +1,5 @@
 import { getOpening } from "../../../../utils/openings/getOpeningById";
 import { NextApiRequest, NextApiResponse } from "next";
-import InputValidation from "../../../../utils/inputValidation";
 import updateOpening from "../../../../utils/openings/updateOpening";
 import { deleteOpening } from "../../../../utils/openings/deleteOpening";
 import { withSessionRoute } from "../../../../middleware/withSession";
@@ -8,6 +7,7 @@ import { API_METHODS } from "../../../../Config";
 import withAuth from "../../../../middleware/withAuth";
 import withValidMethod from "../../../../middleware/withValidMethod";
 import { CUSTOM_QUERY } from "../../../../types/main";
+import Joi from "joi";
 
 const handler = async (
   req: NextApiRequest,
@@ -43,8 +43,15 @@ const handler = async (
         newOpeningValues: body.newOpeningValues,
       };
 
+      const schema = Joi.object({
+        orgId: Joi.string(),
+        openingId: Joi.string(),
+        newOpeningValues: Joi.object(), // TODO allow only specific values!!!
+      }).options({ presence: "required" });
+
+      // Validate input
       try {
-        InputValidation(updateOpeningInput);
+        await schema.validateAsync(updateOpeningInput);
       } catch (error) {
         return res.status(400).json({ message: `${error.message}` });
       }

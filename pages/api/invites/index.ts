@@ -1,5 +1,4 @@
 import createOrgInvite from "../../../utils/invites/createOrgInvite";
-import InputValidation from "../../../utils/inputValidation";
 import { NextApiRequest, NextApiResponse } from "next";
 import Time from "../../../utils/time";
 import { getOrg } from "../../../utils/orgs/getOrg";
@@ -9,6 +8,7 @@ import { TIME_UNITS, API_METHODS, EMAILS, DEFAULTS } from "../../../Config";
 import withAuth from "../../../middleware/withAuth";
 import withValidMethod from "../../../middleware/withValidMethod";
 import sendEmail from "../../../utils/sendEmail";
+import Joi from "joi";
 const handler = async (
   req: NextApiRequest,
   res: NextApiResponse
@@ -29,9 +29,20 @@ const handler = async (
     recipientEmail: recipientEmail,
     expiresAt: expiresAt,
   };
+
   if (method === API_METHODS.POST) {
+    const schema = Joi.object({
+      claimed: Joi.boolean().equal(false),
+      orgName: Joi.string(),
+      orgId: Joi.string(),
+      createdBy: Joi.object(), // todo user session inputs!!!!!!
+      recipientEmail: Joi.string().email(),
+      expiresAt: Joi.string().isoDate(),
+    }).options({ presence: "required" });
+
+    // Validate input
     try {
-      InputValidation(newOrgInvite);
+      await schema.validateAsync(newOrgInvite);
     } catch (error) {
       return res.status(400).json({ message: `${error.message}` });
     }

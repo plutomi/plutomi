@@ -1,5 +1,4 @@
 import Time from "../../../utils/time";
-import InputValidation from "../../../utils/inputValidation";
 import { NextApiRequest, NextApiResponse } from "next";
 import createLoginLink from "../../../utils/loginLinks/createLoginLink";
 import { nanoid } from "nanoid";
@@ -23,6 +22,7 @@ import sendEmail from "../../../utils/sendEmail";
 import clean from "../../../utils/clean";
 import { getOrgInvitesForUser } from "../../../utils/invites/getOrgInvitesForUser";
 import { createLoginEventAndDeleteLoginLink } from "../../../utils/loginLinks/createLoginEventAndDeleteLoginLink";
+import Joi from "joi";
 
 const ironPassword = process.env.IRON_SEAL_PASSWORD;
 
@@ -43,10 +43,20 @@ const handler = async (
 
   // Creates a login link
   if (method === API_METHODS.POST) {
+    const createLoginLinkInput = {
+      email: email,
+      loginMethod: loginMethod,
+    };
+
+    const schema = Joi.object({
+      email: Joi.string().email(),
+      loginMethod: Joi.string().valid(LOGIN_METHODS.GOOGLE, LOGIN_METHODS.LINK),
+    }).options({ presence: "required" });
+
+    // Validate input
     try {
-      InputValidation({ email });
+      await schema.validateAsync(createLoginLinkInput);
     } catch (error) {
-      console.error(error);
       return res.status(400).json({ message: `${error.message}` });
     }
 

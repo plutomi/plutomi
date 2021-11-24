@@ -1,6 +1,5 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import { getApplicantById } from "../../../../utils/applicants/getApplicantById";
-import InputValidation from "../../../../utils/inputValidation";
 import deleteApplicant from "../../../../utils/applicants/deleteApplicant";
 import updateApplicant from "../../../../utils/applicants/updateApplicant";
 import { withSessionRoute } from "../../../../middleware/withSession";
@@ -9,6 +8,7 @@ import withAuth from "../../../../middleware/withAuth";
 import { API_METHODS } from "../../../../Config";
 import { CUSTOM_QUERY } from "../../../../types/main";
 import withCleanOrgId from "../../../../middleware/withCleanOrgId";
+import Joi from "joi";
 const handler = async (
   req: NextApiRequest,
   res: NextApiResponse
@@ -44,8 +44,15 @@ const handler = async (
         newApplicantValues: body.newApplicantValues,
       };
 
+      const schema = Joi.object({
+        orgId: Joi.string(),
+        applicantId: Joi.string(),
+        newApplicantValues: Joi.object(), // todo add banned keys
+      }).options({ presence: "required" });
+
+      // Validate input
       try {
-        InputValidation(updateApplicantInput);
+        await schema.validateAsync(updateApplicantInput);
       } catch (error) {
         return res.status(400).json({ message: `${error.message}` });
       }
