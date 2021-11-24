@@ -1,11 +1,11 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import { getAllApplicantsInOpening } from "../../../../utils/openings/getAllApplicantsInOpening";
 import { withSessionRoute } from "../../../../middleware/withSession";
-import InputValidation from "../../../../utils/inputValidation";
 import { API_METHODS } from "../../../../Config";
 import withAuth from "../../../../middleware/withAuth";
 import withValidMethod from "../../../../middleware/withValidMethod";
 import { CUSTOM_QUERY } from "../../../../types/main";
+import Joi from "joi";
 
 const handler = async (
   req: NextApiRequest,
@@ -20,8 +20,14 @@ const handler = async (
       openingId: openingId,
     };
 
+    const schema = Joi.object({
+      orgId: Joi.string(),
+      openingId: Joi.string(),
+    }).options({ presence: "required" });
+
+    // Validate input
     try {
-      InputValidation(getAllApplicantsInOpeningInput);
+      await schema.validateAsync(getAllApplicantsInOpeningInput);
     } catch (error) {
       return res.status(400).json({ message: `${error.message}` });
     }

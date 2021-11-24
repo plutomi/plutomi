@@ -1,6 +1,5 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import { DeleteQuestion } from "../../../../utils/questions/deleteQuestion";
-import InputValidation from "../../../../utils/inputValidation";
 import updateQuestion from "../../../../utils/questions/updateStageQuestion";
 import { withSessionRoute } from "../../../../middleware/withSession";
 import { API_METHODS } from "../../../../Config";
@@ -8,6 +7,7 @@ import withAuth from "../../../../middleware/withAuth";
 import withCleanOrgId from "../../../../middleware/withCleanOrgId";
 import withValidMethod from "../../../../middleware/withValidMethod";
 import { CUSTOM_QUERY, UpdateQuestionInput } from "../../../../types/main";
+import Joi from "joi";
 
 const handler = async (
   req: NextApiRequest,
@@ -39,9 +39,15 @@ const handler = async (
         questionId: questionId,
         newQuestionValues: body.newQuestionValues, // Just the keys that are passed down
       };
+      const schema = Joi.object({
+        orgId: Joi.string(),
+        questionId: Joi.string(),
+        newQuestionValues: Joi.object(),
+      }).options({ presence: "required" }); // TODo add actual inputs of new question values
 
+      // Validate input
       try {
-        InputValidation(updatedQuestionInput);
+        await schema.validateAsync(updatedQuestionInput);
       } catch (error) {
         return res.status(400).json({ message: `${error.message}` });
       }

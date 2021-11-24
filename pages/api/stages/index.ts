@@ -1,5 +1,4 @@
 import { createStage } from "../../../utils/stages/createStage";
-import InputValidation from "../../../utils/inputValidation";
 import { NextApiRequest, NextApiResponse } from "next";
 // Create stage in an opening
 import { withSessionRoute } from "../../../middleware/withSession";
@@ -7,6 +6,7 @@ import { API_METHODS, DEFAULTS } from "../../../Config";
 import withAuth from "../../../middleware/withAuth";
 import withCleanOrgId from "../../../middleware/withCleanOrgId";
 import withValidMethod from "../../../middleware/withValidMethod";
+import Joi from "joi";
 
 const handler = async (
   req: NextApiRequest,
@@ -27,12 +27,19 @@ const handler = async (
       GSI1SK: GSI1SK,
     };
 
+    const schema = Joi.object({
+      orgId: Joi.string(),
+      openingId: Joi.string(),
+      GSI1SK: Joi.string(),
+    }).options({ presence: "required" }); // TODo add actual inputs of new question values
+
+    // Validate input
     try {
-      InputValidation(createStageInput);
+      await schema.validateAsync(createStageInput);
     } catch (error) {
       return res.status(400).json({ message: `${error.message}` });
     }
-
+    
     try {
       await createStage(createStageInput);
       return res.status(201).json({ message: "Stage created" });

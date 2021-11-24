@@ -1,5 +1,4 @@
 import { NextApiRequest, NextApiResponse } from "next";
-import InputValidation from "../../../../../../../utils/inputValidation";
 import withCleanOrgId from "../../../../../../../middleware/withCleanOrgId";
 import { createApplicantResponse } from "../../../../../../../utils/applicants/createApplicantResponse";
 import { API_METHODS } from "../../../../../../../Config";
@@ -8,41 +7,39 @@ import {
   CUSTOM_QUERY,
   CreateApplicantResponseInput,
 } from "../../../../../../../types/main";
+import Joi from "joi";
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   const { method, query, body } = req;
   const { orgId, applicantId } = query as Pick<
     CUSTOM_QUERY,
     "orgId" | "applicantId"
   >;
-  const responses: DynamoApplicantResponse[] = body.responses;
+  const responses = body.responses;
 
   // Public route to update limited applicant information, ie: questions & answers
   if (method === API_METHODS.POST) {
-    if (!responses || responses.length == 0) {
-      return res.status(400).json({ message: "Empty responses" });
-    }
+    const incoming = Joi.object({
+      applicantId: Joi.string(),
+      responses: Joi.array()
+        .items({
+          questionTitle: Joi.string(),
+          questionDescription: Joi.string(),
+          questionResponse: Joi.string(),
+        })
+        .options({ presence: "required" }),
+    });
 
+    // Validate input
     try {
-      // Validate all answers
-      responses.every((response: DynamoApplicantResponse) => {
-        // TODO while this validates, it does not return what went wrong!
-        const createApplicantResponseInput: CreateApplicantResponseInput = {
-          orgId: orgId,
-          applicantId: applicantId,
-          questionTitle: response.questionTitle,
-          questionDescription: response.questionDescription,
-          questionResponse: response.questionResponse,
-        };
-        InputValidation(createApplicantResponseInput);
-      });
+      await incoming.validateAsync(req.body);
     } catch (error) {
-      console.error(error);
-      return res.status(400).json({ message: `Invalid response(s)` });
+      return res.status(400).json({ message: `${error.message}` });
     }
 
     try {
+      // Write questions to Dynamo
       await Promise.all(
-        responses.map(async (response: DynamoApplicantResponse) => {
+        responses.map(async (response) => {
           const { questionTitle, questionDescription, questionResponse } =
             response;
 

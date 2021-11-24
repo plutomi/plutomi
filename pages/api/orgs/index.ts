@@ -1,14 +1,12 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import withCleanOrgId from "../../../middleware/withCleanOrgId";
-import InputValidation from "../../../utils/inputValidation";
 import { getOrgInvitesForUser } from "../../../utils/invites/getOrgInvitesForUser";
 import { withSessionRoute } from "../../../middleware/withSession";
-import { getUserById } from "../../../utils/users/getUserById";
 import { createAndJoinOrg } from "../../../utils/orgs/createAndJoinOrg";
-import { API_METHODS, ENTITY_TYPES, DEFAULTS } from "../../../Config";
+import { API_METHODS, DEFAULTS } from "../../../Config";
 import withAuth from "../../../middleware/withAuth";
 import withValidMethod from "../../../middleware/withValidMethod";
-import clean from "../../../utils/clean";
+import Joi from "joi";
 
 const handler = async (
   req: NextApiRequest,
@@ -48,15 +46,17 @@ const handler = async (
       user: req.session.user,
     };
 
+    const schema = Joi.object({
+      orgId: Joi.string().min(1),
+      GSI1SK: Joi.string().min(1),
+      user: Joi.object(), // TODO add user session object
+    }).options({ presence: "required" });
+
+    // Validate input
     try {
-      InputValidation(createOrgInput);
+      await schema.validateAsync(createOrgInput);
     } catch (error) {
       return res.status(400).json({ message: `${error.message}` });
-    }
-
-    // TODO add joi
-    if (GSI1SK.length == 0) {
-      return res.status(400).json({ message: "Org name cannot be empty" });
     }
 
     try {
