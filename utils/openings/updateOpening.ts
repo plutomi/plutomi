@@ -10,11 +10,11 @@ export default async function updateOpening(
   const { orgId, openingId, newOpeningValues } = props;
   // TODO user the cleaning functions instead
 
-  const incomingKeys = Object.keys(newOpeningValues);
+  const incomingProperties = Object.keys(newOpeningValues);
   // TODO should this throw an error and
   // let the user know we can't update that key?
   // Maybe just return in the message that we weren't able to update those keys
-  const newKeys = incomingKeys.filter(
+  const newKeys = incomingProperties.filter(
     (key) => !FORBIDDEN_PROPERTIES.OPENING.includes(key)
   );
 

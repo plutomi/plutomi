@@ -11,10 +11,12 @@ export async function updateUser(
 ): Promise<DynamoNewUser> {
   const { userId, newUserValues, ALLOW_FORBIDDEN_KEYS } = props;
   try {
-    const incomingKeys = Object.keys(newUserValues);
+    const incomingProperties = Object.keys(newUserValues);
     let newKeys = ALLOW_FORBIDDEN_KEYS
-      ? incomingKeys
-      : incomingKeys.filter((key) => !FORBIDDEN_PROPERTIES.USER.includes(key));
+      ? incomingProperties
+      : incomingProperties.filter(
+          (key) => !FORBIDDEN_PROPERTIES.USER.includes(key)
+        );
 
     let newUpdateExpression: string[] = [];
     let newAttributes: any = {};

@@ -9,11 +9,11 @@ export default async function updateStage(
 ): Promise<void> {
   const { orgId, stageId, newStageValues } = props;
 
-  const incomingKeys = Object.keys(newStageValues);
+  const incomingProperties = Object.keys(newStageValues);
   // TODO should this throw an error and
   // let the user know we can't update that key?
   // Maybe just return in the message that we weren't able to update those keys
-  const newKeys = incomingKeys.filter(
+  const newKeys = incomingProperties.filter(
     (key) => !FORBIDDEN_PROPERTIES.STAGE.includes(key)
   );
 
