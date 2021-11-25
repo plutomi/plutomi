@@ -18,8 +18,7 @@ export async function deleteOpening(props: DeleteOpeningInput): Promise<void> {
 
   try {
     // Delete stages first
-    if (allStages.length > 0) {
-      console.log("Deleting stages");
+    if (allStages.length) {
       allStages.map(async (stage) => {
         // TODO add to SQS & delete applicants, rules, questions, etc.
         const input = {

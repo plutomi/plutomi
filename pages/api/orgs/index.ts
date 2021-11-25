@@ -29,7 +29,7 @@ const handler = async (
       userId: req.session.user.userId,
     });
 
-    if (pendingInvites && pendingInvites.length > 0) {
+    if (pendingInvites && pendingInvites.length) {
       return res.status(403).json({
         message:
           "You seem to have pending invites, please accept or reject them before creating an org :)", // TODO error enum
