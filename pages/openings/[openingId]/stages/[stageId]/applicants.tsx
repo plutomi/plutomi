@@ -50,7 +50,7 @@ export default function StageApplicants() {
 
   return (
     <NewPage
-      loggedOutPageText={"Log in to view your opening settings"}
+      loggedOutPageText={"Log in to view your applicants"}
       currentNavbarItem={"Openings"}
       headerText={
         isOpeningLoading ? (
