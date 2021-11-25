@@ -1,3 +1,4 @@
+import CustomLink from "../components/CustomLink";
 import Link from "../components/CustomLink";
 const faqs = [
   {
@@ -18,7 +19,7 @@ const faqs = [
     answer: (
       <p>
         The code is licensed under the{" "}
-        <Link
+        <CustomLink
           url={
             "https://tldrlegal.com/license/gnu-affero-general-public-license-v3-(agpl-3.0)"
           }

@@ -12,7 +12,7 @@ export default function StageCard({
 }) {
   return (
     <Link
-      href={`${process.env.NEXT_PUBLIC_WEBSITE_URL}/openings/${openingId}/stages/${stageId}/applicants`} // TODO should this end with applicants?
+      href={`/openings/${openingId}/stages/${stageId}/applicants`} // TODO should this end with applicants?
     >
       <a>
         <div
