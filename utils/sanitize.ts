@@ -4,7 +4,7 @@ export default class Sanitize {
   /**
    * Removes properties from a given `entity`. Usually used for cleaning an entity before returning to a client, such as a public API route
    * @param entity Your entity
-   * @param type: Your entity's type see {@link ENTITY_TYPES}
+   * @param type Your entity's type see {@link ENTITY_TYPES}
    * @returns Your entity but with ONLY the listed properties. See {@link SAFE_PROPERTIES}
    */
   static clean(entity: any, type: ENTITY_TYPES) {

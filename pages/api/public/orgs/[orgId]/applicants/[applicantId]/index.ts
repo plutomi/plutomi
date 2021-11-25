@@ -4,7 +4,7 @@ import withCleanOrgId from "../../../../../../../middleware/withCleanOrgId";
 import { API_METHODS, ENTITY_TYPES } from "../../../../../../../Config";
 import withValidMethod from "../../../../../../../middleware/withValidMethod";
 import { CUSTOM_QUERY } from "../../../../../../../types/main";
-import clean from "../../../../../../../utils/clean";
+import Sanitize from "../../../../../../../utils/sanitize";
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   const user = req.session.user;
   const { method, query, body } = req;
@@ -22,7 +22,10 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
         return res.status(404).json({ message: "Applicant not found" });
       }
 
-      const cleanedApplicant = clean(applicant, ENTITY_TYPES.APPLICANT);
+      const cleanedApplicant = Sanitize.clean(
+        applicant,
+        ENTITY_TYPES.APPLICANT
+      );
 
       return res.status(200).json(cleanedApplicant);
     } catch (error) {

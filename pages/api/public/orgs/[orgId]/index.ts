@@ -4,7 +4,7 @@ import { NextApiRequest, NextApiResponse } from "next";
 import { API_METHODS, ENTITY_TYPES } from "../../../../../Config";
 import withValidMethod from "../../../../../middleware/withValidMethod";
 import { CUSTOM_QUERY } from "../../../../../types/main";
-import clean from "../../../../../utils/clean";
+import Sanitize from "../../../../../utils/sanitize";
 // This returns limited public information about an org
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   const { method, query } = req;
@@ -18,7 +18,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
         return res.status(404).json({ message: "Org not found" });
       }
 
-      const cleanedOrg = clean(org, ENTITY_TYPES.ORG);
+      const cleanedOrg = Sanitize.clean(org, ENTITY_TYPES.ORG);
 
       return res.status(200).json(cleanedOrg);
     } catch (error) {

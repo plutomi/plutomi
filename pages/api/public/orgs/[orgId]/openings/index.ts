@@ -5,8 +5,7 @@ import { getAllOpeningsInOrg } from "../../../../../../utils/openings/getAllOpen
 import { API_METHODS, ENTITY_TYPES } from "../../../../../../Config";
 import withValidMethod from "../../../../../../middleware/withValidMethod";
 import { CUSTOM_QUERY } from "../../../../../../types/main";
-import clean from "../../../../../../utils/clean";
-
+import Sanitize from "../../../../../../utils/sanitize";
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   const { method, query } = req;
   const { orgId } = query as Pick<CUSTOM_QUERY, "orgId">;
@@ -16,7 +15,9 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       const allOpenings = await getAllOpeningsInOrg({ orgId });
       const publicOpenings = allOpenings.filter((opening) => opening.isPublic);
 
-      publicOpenings.forEach((opening) => clean(opening, ENTITY_TYPES.OPENING));
+      publicOpenings.forEach((opening) =>
+        Sanitize.clean(opening, ENTITY_TYPES.OPENING)
+      );
 
       return res.status(200).json(publicOpenings);
     } catch (error) {

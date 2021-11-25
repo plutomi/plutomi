@@ -7,7 +7,8 @@ import withAuth from "../../../../middleware/withAuth";
 import { API_METHODS, ENTITY_TYPES, DEFAULTS } from "../../../../Config";
 import { CUSTOM_QUERY } from "../../../../types/main";
 import withValidMethod from "../../../../middleware/withValidMethod";
-import clean from "../../../../utils/clean";
+import Sanitize from "../../../../utils/sanitize";
+
 const handler = async (
   req: NextApiRequest,
   res: NextApiResponse
@@ -61,7 +62,7 @@ const handler = async (
         ALLOW_FORBIDDEN_KEYS: true,
       });
 
-      req.session.user = clean(updatedUser, ENTITY_TYPES.USER);
+      req.session.user = Sanitize.clean(updatedUser, ENTITY_TYPES.USER);
       await req.session.save();
       return res
         .status(200)

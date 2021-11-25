@@ -6,8 +6,7 @@ import { getStageById } from "../../../../../../../utils/stages/getStageById";
 import { API_METHODS, ENTITY_TYPES } from "../../../../../../../Config";
 import withValidMethod from "../../../../../../../middleware/withValidMethod";
 import { CUSTOM_QUERY } from "../../../../../../../types/main";
-import clean from "../../../../../../../utils/clean";
-
+import Sanitize from "../../../../../../../utils/sanitize";
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   const { method, query } = req;
   const { orgId, stageId } = query as Pick<CUSTOM_QUERY, "orgId" | "stageId">;
@@ -24,7 +23,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       //       .status(400)
       //       .json({ message: "You cannot apply here just yet" });
       //   }
-      const cleanedStage = clean(stage, ENTITY_TYPES.STAGE);
+      const cleanedStage = Sanitize.clean(stage, ENTITY_TYPES.STAGE);
       return res.status(200).json(cleanedStage);
     } catch (error) {
       // TODO add error logger

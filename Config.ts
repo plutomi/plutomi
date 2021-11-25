@@ -167,6 +167,9 @@ const GLOBAL_FORBIDDEN_PROPERTIES = [
   "createdAt",
 ];
 
+/**
+ * Properties that cannot be updated
+ */
 export const FORBIDDEN_PROPERTIES = {
   USER: [
     ...GLOBAL_FORBIDDEN_PROPERTIES,

@@ -7,8 +7,7 @@ import withAuth from "../../../../middleware/withAuth";
 import withCleanOrgId from "../../../../middleware/withCleanOrgId";
 import withValidMethod from "../../../../middleware/withValidMethod";
 import { CUSTOM_QUERY } from "../../../../types/main";
-import clean from "../../../../utils/clean";
-
+import Sanitize from "../../../../utils/sanitize";
 const handler = async (
   req: NextApiRequest,
   res: NextApiResponse
@@ -59,7 +58,7 @@ const handler = async (
 
       // If a signed in user is updating themselves, update the session state
       if (updatedUser.userId === req.session.user.userId) {
-        req.session.user = clean(updatedUser, ENTITY_TYPES.USER);
+        req.session.user = Sanitize.clean(updatedUser, ENTITY_TYPES.USER);
         await req.session.save();
       }
       return res.status(200).json({ message: "Updated!" });
