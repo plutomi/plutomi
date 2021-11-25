@@ -28,6 +28,6 @@
     "typeRoots": ["./node_modules/@types"],
     "incremental": true
   },
-  "exclude": ["node_modules", "cdk.out"],
+  "exclude": ["node_modules", "cdk.out", "*"],
   "include": ["types/types.d.ts", "next-env.d.ts", "**/*.ts", "**/*.tsx"]
 }

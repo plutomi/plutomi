@@ -8,18 +8,13 @@ import axios from "axios";
 import { ChevronRightIcon, MailIcon } from "@heroicons/react/outline";
 import _ from "lodash";
 import Time from "../utils/time";
-import useRequest from "../SWR/SWR";
-import UsersService from "../Adapters/UsersService";
-import { sessionOptions } from "../middleware/withSession";
-import { withSessionSsr } from "../middleware/withSession";
-import { useRouter } from "next/router";
-import { IronSessionData } from "iron-session";
-export default function Main({ commits, user }) {
+export default function Main({ commits }) {
+  const { user, isUserLoading, isUserError } = useSelf();
   return (
     <>
       <main className="bg-gradient-to-b from-blue-gray-50 to-white via-homepageGradient">
         <Hero />
-        {!user ? ( // SSR
+        {!user || isUserError ? (
           <LoginHomepage
             callbackUrl={`${process.env.NEXT_PUBLIC_WEBSITE_URL}/dashboard`}
           />
@@ -90,8 +85,8 @@ export default function Main({ commits, user }) {
   );
 }
 
-export async function getServerSideProps() {
-  const commitsFromEachBranch = 100;
+export async function getStaticProps() {
+  const commitsFromEachBranch = 25;
   let allCommits = [];
   const { data } = await axios.get(
     `https://api.github.com/repos/plutomi/plutomi/branches?u=joswayski`
@@ -123,24 +118,9 @@ export async function getServerSideProps() {
   // Sort by commit timestamp
   const commits = _.orderBy(allCommits, (commit) => commit.date, ["desc"]);
 
-  try {
-    // Get User
-    const user = await axios.get(
-      process.env.NEXT_PUBLIC_WEBSITE_URL + UsersService.getSelf()
-    );
-
-    return {
-      props: {
-        user: user,
-        commits: commits,
-      },
-    };
-  } catch (error) {
-    return {
-      props: {
-        user: null,
-        commits: commits,
-      },
-    };
-  }
+  return {
+    props: {
+      commits,
+    },
+  };
 }
