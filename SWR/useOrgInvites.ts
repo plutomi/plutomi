@@ -1,15 +1,10 @@
-// Retrieves all invites for a logged in user
 import axios from "axios";
 import useSWR from "swr";
 import InvitesService from "../Adapters/InvitesService";
 import { SWR } from "../Config";
 const fetcher = (url: string) => axios.get(url).then((res) => res.data);
 
-/**
- *
- * @param userId - The ID of the logged in user
- */
-function useOrgInvites(userId: string) {
+export default function useOrgInvites(userId: string) {
   const shouldFetch = userId ? true : false;
 
   const { data, error } = useSWR(
@@ -24,5 +19,3 @@ function useOrgInvites(userId: string) {
     isInvitesError: error,
   };
 }
-
-export default useOrgInvites;

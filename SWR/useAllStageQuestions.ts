@@ -1,14 +1,9 @@
-// Retrieves all questions for a stage
 import axios from "axios";
 import useSWR from "swr";
-import QuestionsService from "../Adapters/QuestionsService";
 import StagesService from "../Adapters/StagesService";
 const fetcher = (url: string) => axios.get(url).then((res) => res.data);
 
-function useAllStageQuestions(
-  orgId: string,
-  stageId: string
-): useAllStageQuestionsOutput {
+export default function useAllStageQuestions(orgId: string, stageId: string) {
   const shouldFetch = orgId && stageId ? true : false;
 
   const { data, error } = useSWR(
@@ -22,5 +17,3 @@ function useAllStageQuestions(
     isQuestionsError: error,
   };
 }
-
-export default useAllStageQuestions;

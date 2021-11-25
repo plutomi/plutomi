@@ -1,10 +1,9 @@
-// Retrieves all users in an org
 import axios from "axios";
 import useSWR from "swr";
 import OrgsService from "../Adapters/OrgsService";
 const fetcher = (url: string) => axios.get(url).then((res) => res.data);
 
-function useOrgUsers(orgId: string): useOrgUsersOutput {
+export default function useOrgUsers(orgId: string) {
   const shouldFetch = orgId ? true : false;
 
   const { data, error } = useSWR(
@@ -18,5 +17,3 @@ function useOrgUsers(orgId: string): useOrgUsersOutput {
     isOrgUsersError: error,
   };
 }
-
-export default useOrgUsers;

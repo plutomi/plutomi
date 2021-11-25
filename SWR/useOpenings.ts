@@ -1,10 +1,9 @@
-// Retrieves all openings in an org, public or private
 import axios from "axios";
 import useSWR from "swr";
 import OpeningsService from "../Adapters/OpeningsService";
 const fetcher = (url: string) => axios.get(url).then((res) => res.data);
 
-function useOpenings(): useOpeningsOutput {
+export default function useOpenings() {
   const { data, error } = useSWR(OpeningsService.getAllOpeningsURL(), fetcher);
 
   return {
@@ -13,5 +12,3 @@ function useOpenings(): useOpeningsOutput {
     isOpeningsError: error,
   };
 }
-
-export default useOpenings;

@@ -8,13 +8,18 @@ import axios from "axios";
 import { ChevronRightIcon, MailIcon } from "@heroicons/react/outline";
 import _ from "lodash";
 import Time from "../utils/time";
-export default function Main({ commits }) {
-  const { user, isUserLoading, isUserError } = useSelf();
+import useRequest from "../SWR/SWR";
+import UsersService from "../Adapters/UsersService";
+import { sessionOptions } from "../middleware/withSession";
+import { withSessionSsr } from "../middleware/withSession";
+export default function Main({ commits, user }) {
+  // const { user, isUserLoading, isUserError } = useSelf();
+
   return (
     <>
       <main className="bg-gradient-to-b from-blue-gray-50 to-white via-homepageGradient">
         <Hero />
-        {!user || isUserError ? (
+        {!user ? (
           <LoginHomepage
             callbackUrl={`${process.env.NEXT_PUBLIC_WEBSITE_URL}/dashboard`}
           />
@@ -24,7 +29,7 @@ export default function Main({ commits }) {
       </main>
       <div className="flex-wrap md:flex  justify-center space-x-2">
         <UseCases />
-        <ul
+        {/* <ul
           role="list"
           className="divide-y mx-auto max-w-4xl divide-gray-200  mt-12"
         >
@@ -78,49 +83,66 @@ export default function Main({ commits }) {
               </a>
             </li>
           ))}
-        </ul>
+        </ul> */}
       </div>
       <Contact />
     </>
   );
 }
 
-export async function getStaticProps() {
-  const commitsFromEachBranch = 100;
-  let allCommits = [];
-  const { data } = await axios.get(
-    `https://api.github.com/repos/plutomi/plutomi/branches?u=joswayski`
-  );
+// export async function getStaticProps() {
+//   const commitsFromEachBranch = 100;
+//   let allCommits = [];
+//   const { data } = await axios.get(
+//     `https://api.github.com/repos/plutomi/plutomi/branches?u=joswayski`
+//   );
 
-  await Promise.all(
-    data.map(async (branch) => {
-      const { data } = await axios.get(
-        `https://api.github.com/repos/plutomi/plutomi/commits?sha=${branch.name}&per_page=${commitsFromEachBranch}&u=joswayski`
-      );
+//   await Promise.all(
+//     data.map(async (branch) => {
+//       const { data } = await axios.get(
+//         `https://api.github.com/repos/plutomi/plutomi/commits?sha=${branch.name}&per_page=${commitsFromEachBranch}&u=joswayski`
+//       );
 
-      data.map(async (commit) => {
-        if (commit.commit.author.name !== "allcontributors[bot]") {
-          let customCommit = {
-            name: commit.commit.author.name,
-            username: commit.author.login,
-            image: commit.author.avatar_url,
-            email: commit.commit.author.email,
-            date: commit.commit.author.date,
-            message: commit.commit.message,
-            url: commit.html_url,
-          };
-          allCommits.push(customCommit);
-        }
-      });
-    })
-  );
+//       data.map(async (commit) => {
+//         if (commit.commit.author.name !== "allcontributors[bot]") {
+//           let customCommit = {
+//             name: commit.commit.author.name,
+//             username: commit.author.login,
+//             image: commit.author.avatar_url,
+//             email: commit.commit.author.email,
+//             date: commit.commit.author.date,
+//             message: commit.commit.message,
+//             url: commit.html_url,
+//           };
+//           allCommits.push(customCommit);
+//         }
+//       });
+//     })
+//   );
 
-  // Sort by commit timestamp
-  const commits = _.orderBy(allCommits, (commit) => commit.date, ["desc"]);
+//   // Sort by commit timestamp
+//   const commits = _.orderBy(allCommits, (commit) => commit.date, ["desc"]);
+
+//   return {
+//     props: {
+//       commits,
+//     },
+//   };
+// }
+
+export const getServerSideProps = withSessionSsr(async function ({ req }) {
+  const user = req.session.user;
+
+  // SSR the page, but if a user is not logged in, it'll return the log in component instead of their session data
+  if (user === undefined) {
+    return {
+      props: {
+        user: null,
+      },
+    };
+  }
 
   return {
-    props: {
-      commits,
-    },
+    props: { user: req.session.user },
   };
-}
+});

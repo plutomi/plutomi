@@ -1,6 +1,5 @@
 // This file is for the actual DynamoDB entries and their Types - ie: A full object with all properties.
 // All  other types are derivatives with Pick, Omit, etc.
-import { IronSessionData } from "iron-session";
 import { ENTITY_TYPES, DEFAULTS } from "../Config";
 import { UserSessionData } from "./main";
 
