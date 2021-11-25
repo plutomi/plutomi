@@ -8,34 +8,32 @@ export default async function updateOpening(
   props: UpdateOpeningInput
 ): Promise<void> {
   const { orgId, openingId, newOpeningValues } = props;
-  // TODO user the cleaning functions instead
-
-  const incomingProperties = Object.keys(newOpeningValues);
-  // TODO should this throw an error and
-  // let the user know we can't update that key?
-  // Maybe just return in the message that we weren't able to update those keys
-  const newKeys = incomingProperties.filter(
-    (key) => !FORBIDDEN_PROPERTIES.OPENING.includes(key)
-  );
-
   // Build update expression
-  let newUpdateExpression: string[] = [];
-  let newAttributes: any = {};
+  let allUpdateExpressions: string[] = [];
+  let allAttributeValues: any = {};
 
-  newKeys.forEach((key) => {
-    newUpdateExpression.push(`${key} = :${key}`);
-    newAttributes[`:${key}`] = newOpeningValues[key];
-  });
+  // Filter out forbidden property
+  for (const property in newOpeningValues) {
+    if (FORBIDDEN_PROPERTIES.STAGE.includes(property)) {
+      // Delete the property so it isn't updated
+      delete newOpeningValues[property];
+    }
 
-  const UpdatedExpression = `SET ${newUpdateExpression.join(", ").toString()}`;
+    // If its a valid property, start creating the new update expression
+    // Push each property into the update expression
+    allUpdateExpressions.push(`${property} = :${property}`);
+
+    // Create values for each attribute
+    allAttributeValues[`:${property}`] = newOpeningValues[property];
+  }
 
   const params: UpdateCommandInput = {
     Key: {
       PK: `${ENTITY_TYPES.ORG}#${orgId}#${ENTITY_TYPES.OPENING}#${openingId}`,
       SK: `${ENTITY_TYPES.OPENING}`,
     },
-    UpdateExpression: UpdatedExpression,
-    ExpressionAttributeValues: newAttributes,
+    UpdateExpression: `SET ` + allUpdateExpressions.join(", "),
+    ExpressionAttributeValues: allAttributeValues,
     TableName: DYNAMO_TABLE_NAME,
     ConditionExpression: "attribute_exists(PK)",
   };

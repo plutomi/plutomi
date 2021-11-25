@@ -2,12 +2,13 @@ import { getUserById } from "../../../../utils/users/getUserById";
 import { NextApiRequest, NextApiResponse } from "next";
 import { updateUser } from "../../../../utils/users/updateUser";
 import { withSessionRoute } from "../../../../middleware/withSession";
-import { API_METHODS, ENTITY_TYPES } from "../../../../Config";
+import { API_METHODS, DEFAULTS, ENTITY_TYPES } from "../../../../Config";
 import withAuth from "../../../../middleware/withAuth";
 import withCleanOrgId from "../../../../middleware/withCleanOrgId";
 import withValidMethod from "../../../../middleware/withValidMethod";
 import { CUSTOM_QUERY } from "../../../../types/main";
 import Sanitize from "../../../../utils/sanitize";
+import Joi from "joi";
 const handler = async (
   req: NextApiRequest,
   res: NextApiResponse
@@ -40,11 +41,29 @@ const handler = async (
   }
 
   if (method === API_METHODS.PUT) {
+    console.log("Session", req.session.user);
     const updateUserInput = {
-      newUserValues: newUserValues,
       userId: req.session.user.userId,
       ALLOW_FORBIDDEN_KEYS: false,
+      newUserValues: newUserValues,
     };
+
+    const schema = Joi.object({
+      userId: Joi.string(),
+      ALLOW_FORBIDDEN_KEYS: Joi.boolean().invalid(true),
+      newUserValues: Joi.object({
+        firstName: Joi.string().invalid(DEFAULTS.FIRST_NAME).optional(),
+        lastName: Joi.string().invalid(DEFAULTS.LAST_NAME).optional(),
+        GSI1SK: Joi.string().invalid(DEFAULTS.FULL_NAME).optional(),
+      }),
+    }).options({ presence: "required" });
+
+    // Validate input
+    try {
+      await schema.validateAsync(updateUserInput);
+    } catch (error) {
+      return res.status(400).json({ message: `${error.message}` });
+    }
 
     try {
       // TODO RBAC will go here, right now you can only update yourself

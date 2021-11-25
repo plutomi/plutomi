@@ -9,36 +9,34 @@ export default async function updateQuestion(
   props: UpdateQuestionInput
 ): Promise<void> {
   const { orgId, questionId, newQuestionValues } = props;
-  // TODO user the cleaning functions instead
-
-  const incomingProperties = Object.keys(newQuestionValues);
-  // TODO should this throw an error and
-  // let the user know we can't update that key?
-  // Maybe just return in the message that we weren't able to update those keys
-  const newKeys = incomingProperties.filter(
-    (key) => !FORBIDDEN_PROPERTIES.STAGE_QUESTION.includes(key)
-  );
-
   // Build update expression
-  let newUpdateExpression: string[] = [];
-  let newAttributes: any = {};
+  let allUpdateExpressions: string[] = [];
+  let allAttributeValues: any = {};
 
-  newKeys.forEach((key) => {
-    newUpdateExpression.push(`${key} = :${key}`);
-    newAttributes[`:${key}`] = newQuestionValues[key];
-  });
+  // Filter out forbidden property
+  for (const property in newQuestionValues) {
+    if (FORBIDDEN_PROPERTIES.STAGE_QUESTION.includes(property)) {
+      // Delete the property so it isn't updated
+      delete newQuestionValues[property];
+    }
 
-  const UpdatedExpression = `SET ${newUpdateExpression.join(", ").toString()}`;
+    // If its a valid property, start creating the new update expression
+    // Push each property into the update expression
+    allUpdateExpressions.push(`${property} = :${property}`);
+
+    // Create values for each attribute
+    allAttributeValues[`:${property}`] = newQuestionValues[property];
+  }
 
   const params = {
     Key: {
       PK: `${ENTITY_TYPES.ORG}#${orgId}#${ENTITY_TYPES.STAGE_QUESTION}#${questionId}`,
       SK: `${ENTITY_TYPES.STAGE_QUESTION}`,
     },
-    UpdateExpression: UpdatedExpression,
-    ExpressionAttributeValues: newAttributes,
+    UpdateExpression: `SET ` + allUpdateExpressions.join(", "),
+    ExpressionAttributeValues: allAttributeValues,
     TableName: DYNAMO_TABLE_NAME,
-    ConditionExpression: "attribute_exists(PK)", // This is throwing an error
+    ConditionExpression: "attribute_exists(PK)",
   };
 
   try {

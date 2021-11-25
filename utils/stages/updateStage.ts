@@ -9,39 +9,38 @@ export default async function updateStage(
 ): Promise<void> {
   const { orgId, stageId, newStageValues } = props;
 
-  const incomingProperties = Object.keys(newStageValues);
-  // TODO should this throw an error and
-  // let the user know we can't update that key?
-  // Maybe just return in the message that we weren't able to update those keys
-  const newKeys = incomingProperties.filter(
-    (key) => !FORBIDDEN_PROPERTIES.STAGE.includes(key)
-  );
-
   // Build update expression
-  let newUpdateExpression: string[] = [];
-  let newAttributes: any = {};
+  let allUpdateExpressions: string[] = [];
+  let allAttributeValues: any = {};
 
-  newKeys.forEach((key) => {
-    newUpdateExpression.push(`${key} = :${key}`);
-    newAttributes[`:${key}`] = newStageValues[key];
-  });
+  // Filter out forbidden property
+  for (const property in newStageValues) {
+    if (FORBIDDEN_PROPERTIES.STAGE.includes(property)) {
+      // Delete the property so it isn't updated
+      delete newStageValues[property];
+    }
 
-  const UpdatedExpression = `SET ${newUpdateExpression.join(", ").toString()}`;
+    // If its a valid property, start creating the new update expression
+    // Push each property into the update expression
+    allUpdateExpressions.push(`${property} = :${property}`);
+
+    // Create values for each attribute
+    allAttributeValues[`:${property}`] = newStageValues[property];
+  }
 
   const params = {
     Key: {
       PK: `${ENTITY_TYPES.ORG}#${orgId}#${ENTITY_TYPES.STAGE}#${stageId}`,
-      SK: `${ENTITY_TYPES.STAGE}`,
+      SK: ENTITY_TYPES.STAGE,
     },
-    UpdateExpression: UpdatedExpression,
-    ExpressionAttributeValues: newAttributes,
+    UpdateExpression: `SET ` + allUpdateExpressions.join(", "),
+    ExpressionAttributeValues: allAttributeValues,
     TableName: DYNAMO_TABLE_NAME,
     ConditionExpression: "attribute_exists(PK)",
   };
 
   try {
     await Dynamo.send(new UpdateCommand(params));
-    return;
   } catch (error) {
     throw new Error(error);
   }

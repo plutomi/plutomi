@@ -10,48 +10,37 @@ export async function updateUser(
   props: UpdateUserInput
 ): Promise<DynamoNewUser> {
   const { userId, newUserValues, ALLOW_FORBIDDEN_KEYS } = props;
+
+  // Build update expression
+  let allUpdateExpressions: string[] = [];
+  let allAttributeValues: any = {};
+
   try {
-    const incomingProperties = Object.keys(newUserValues);
-    let newKeys = ALLOW_FORBIDDEN_KEYS
-      ? incomingProperties
-      : incomingProperties.filter(
-          (key) => !FORBIDDEN_PROPERTIES.USER.includes(key)
-        );
+    for (const property in newUserValues) {
+      // If updating forbidden keys is banned, filter these keys out
+      if (
+        !ALLOW_FORBIDDEN_KEYS &&
+        FORBIDDEN_PROPERTIES.STAGE.includes(property)
+      ) {
+        delete newUserValues[property];
+      }
+      // If its a valid property, start creating the new update expression
+      // Push each property into the update expression
+      allUpdateExpressions.push(`${property} = :${property}`);
 
-    let newUpdateExpression: string[] = [];
-    let newAttributes: any = {};
-
-    newKeys.forEach((key) => {
-      newUpdateExpression.push(`${key} = :${key}`);
-      newAttributes[`:${key}`] = newUserValues[key];
-    });
-
-    // TODO refactor this into its own function, easy way to have banned values
-    const bannedKeys = [
-      DEFAULTS.FIRST_NAME,
-      DEFAULTS.LAST_NAME,
-      DEFAULTS.FULL_NAME,
-    ];
-
-    // @ts-ignore TODO fix types
-    const checker = (value) =>
-      bannedKeys.some((element) => value.includes(element));
-
-    const matching = Object.values(newAttributes).filter(checker);
-    if (matching.length > 0) {
-      throw `Invalid values: ${matching}`;
+      // Create values for each attribute
+      allAttributeValues[`:${property}`] = newUserValues[property];
     }
 
-    const NewUpdateExpression = `SET ${newUpdateExpression.join(", ")}`;
     const params: UpdateCommandInput = {
       Key: {
         PK: `${ENTITY_TYPES.USER}#${userId}`,
         SK: ENTITY_TYPES.USER,
       },
-      UpdateExpression: NewUpdateExpression,
-      ExpressionAttributeValues: newAttributes,
-      TableName: DYNAMO_TABLE_NAME,
       ReturnValues: "ALL_NEW",
+      UpdateExpression: `SET ` + allUpdateExpressions.join(", "),
+      ExpressionAttributeValues: allAttributeValues,
+      TableName: DYNAMO_TABLE_NAME,
       ConditionExpression: "attribute_exists(PK)",
     };
 
