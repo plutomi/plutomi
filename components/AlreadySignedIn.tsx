@@ -4,9 +4,12 @@ import useSelf from "../SWR/useSelf";
 import AuthService from "../Adapters/AuthService";
 import { mutate } from "swr";
 import UsersService from "../Adapters/UsersService";
-const handleLogout = async () => {
+import { route } from "next/dist/server/router";
+const handleLogout = async (isHomepage: boolean) => {
+  // If we're on the homepage, since its SSR, we want to refresh the page
   try {
     const { message } = await AuthService.logout(); // TODO logout to same page
+    isHomepage ? window.location.reload() : null;
     alert(message);
     // TODO reroute to homepage
   } catch (error) {
@@ -16,9 +19,9 @@ const handleLogout = async () => {
   mutate(UsersService.getSelfURL()); // Refresh the login state
 };
 export default function AlreadySignedIn() {
-  const { user, isUserLoading, isUserError } = useSelf();
-
   const router = useRouter();
+
+  const { user, isUserLoading, isUserError } = useSelf();
 
   return (
     <section id="login" className="flex  justify-center mx-auto ">
@@ -36,7 +39,7 @@ export default function AlreadySignedIn() {
 
         <button
           className=" items-center px-4 py-2 border border-gray-300 shadow-sm text-base font-medium rounded-md text-dark bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
-          onClick={() => handleLogout()}
+          onClick={() => handleLogout(router.asPath === "/" && true)}
         >
           Log out
         </button>

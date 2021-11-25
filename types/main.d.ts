@@ -1,4 +1,3 @@
-import { IronSessionData } from "iron-session";
 import {
   DynamoNewApplicant,
   DynamoNewApplicantResponse,

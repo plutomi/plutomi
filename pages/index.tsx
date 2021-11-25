@@ -12,14 +12,13 @@ import useRequest from "../SWR/SWR";
 import UsersService from "../Adapters/UsersService";
 import { sessionOptions } from "../middleware/withSession";
 import { withSessionSsr } from "../middleware/withSession";
+import { useRouter } from "next/router";
 export default function Main({ commits, user }) {
-  // const { user, isUserLoading, isUserError } = useSelf();
-
   return (
     <>
       <main className="bg-gradient-to-b from-blue-gray-50 to-white via-homepageGradient">
         <Hero />
-        {!user ? (
+        {!user ? ( // SSR
           <LoginHomepage
             callbackUrl={`${process.env.NEXT_PUBLIC_WEBSITE_URL}/dashboard`}
           />
