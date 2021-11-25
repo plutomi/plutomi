@@ -1,4 +1,5 @@
 import AlreadySignedIn from "../components/AlreadySignedIn";
+import CustomLink from "../components/CustomLink";
 import Link from "../components/CustomLink";
 import LoginHomepage from "../components/LoginHomepage";
 import useSelf from "../SWR/useSelf";
@@ -21,7 +22,7 @@ const faqs = [
     question: "How do I give feedback / submit feature requests?",
     answer: (
       <p>
-        <Link
+        <CustomLink
           url={"https://github.com/plutomi/plutomi/issues"}
           text={"Create an issue"}
         />{" "}
@@ -34,7 +35,7 @@ const faqs = [
     answer: (
       <p>
         Yes! Feel free to make a PR into the <strong>main</strong> branch on{" "}
-        <Link url={"https://github.com/plutomi/plutomi"} text={"GitHub"} />
+        <CustomLink url={"https://github.com/plutomi/plutomi"} text={"GitHub"} />
       </p>
     ),
   },
@@ -43,7 +44,7 @@ const faqs = [
     answer: (
       <p>
         The code is licensed under the{" "}
-        <Link
+        <CustomLink
           url={
             "https://tldrlegal.com/license/gnu-affero-general-public-license-v3-(agpl-3.0)"
           }

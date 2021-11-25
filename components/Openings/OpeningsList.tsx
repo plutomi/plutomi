@@ -30,7 +30,7 @@ export default function OpeningList() {
             <Link
               href={`${process.env.NEXT_PUBLIC_WEBSITE_URL}/openings/${
                 opening.openingId
-              }/${
+              }/${ // TODO clean up this logic
                 opening.totalStages > 0
                   ? `stages/${opening.stageOrder[0]}/applicants` // TODO should this end with applicants?
                   : `settings`
