@@ -13,6 +13,7 @@ import UsersService from "../Adapters/UsersService";
 import { sessionOptions } from "../middleware/withSession";
 import { withSessionSsr } from "../middleware/withSession";
 import { useRouter } from "next/router";
+import { IronSessionData } from "iron-session";
 export default function Main({ commits, user }) {
   return (
     <>
@@ -28,7 +29,7 @@ export default function Main({ commits, user }) {
       </main>
       <div className="flex-wrap md:flex  justify-center space-x-2">
         <UseCases />
-        {/* <ul
+        <ul
           role="list"
           className="divide-y mx-auto max-w-4xl divide-gray-200  mt-12"
         >
@@ -82,7 +83,7 @@ export default function Main({ commits, user }) {
               </a>
             </li>
           ))}
-        </ul> */}
+        </ul>
       </div>
       <Contact />
     </>
@@ -130,7 +131,8 @@ export default function Main({ commits, user }) {
 // }
 
 export const getServerSideProps = withSessionSsr(async function ({ req }) {
-  const user = req.session.user;
+  const session = req.session as IronSessionData; // TODO fix this type, not sure why its not using  IronSessionData
+  const user = session.user;
 
   // SSR the page, but if a user is not logged in, it'll return the log in component instead of their session data
   if (user === undefined) {
@@ -142,6 +144,6 @@ export const getServerSideProps = withSessionSsr(async function ({ req }) {
   }
 
   return {
-    props: { user: req.session.user },
+    props: { user: session.user },
   };
 });
