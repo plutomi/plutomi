@@ -11,6 +11,7 @@ const FORBIDDEN_KEYS = [
   "createdAt",
   "applicantId",
   "GSI1PK",
+  "ttlExpiry"
 ];
 /**
  * Updates an applicant with the specified `newApplicantValues`

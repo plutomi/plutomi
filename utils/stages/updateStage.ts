@@ -17,6 +17,7 @@ export default async function updateStage(
     "createdAt",
     "stageId",
     "GSI1PK",
+    "ttlExpiry",
   ];
 
   const incomingKeys = Object.keys(newStageValues);

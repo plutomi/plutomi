@@ -17,6 +17,7 @@ export default async function updateOpening(
     "createdAt",
     "openingId",
     "GSI1PK",
+    "ttlExpiry",
   ];
 
   const incomingKeys = Object.keys(newOpeningValues);

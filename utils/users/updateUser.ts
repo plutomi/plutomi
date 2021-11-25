@@ -23,6 +23,7 @@ export async function updateUser(
       "GSI2PK",
       "userRole",
       "orgJoinDate",
+      "ttlExpiry",
     ];
 
     const incomingKeys = Object.keys(newUserValues);

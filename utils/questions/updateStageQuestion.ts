@@ -18,6 +18,7 @@ export default async function updateQuestion(
     "createdAt",
     "openingId",
     "GSI1PK",
+    "ttlExpiry",
   ];
 
   const incomingKeys = Object.keys(newQuestionValues);
