@@ -4,9 +4,9 @@ import * as ec2 from "@aws-cdk/aws-ec2";
 import * as ecsPatterns from "@aws-cdk/aws-ecs-patterns";
 import * as route53 from "@aws-cdk/aws-route53";
 import * as protocol from "@aws-cdk/aws-elasticloadbalancingv2";
-import * as ssm from "@aws-cdk/aws-ssm";
 import * as iam from "@aws-cdk/aws-iam";
-
+require("dotenv").config();
+import { get } from "env-var";
 export default class PlutomiWebsiteStack extends cdk.Stack {
   /**
    *
@@ -17,29 +17,12 @@ export default class PlutomiWebsiteStack extends cdk.Stack {
   constructor(scope: cdk.App, id: string, props?: cdk.StackProps) {
     super(scope, id, props);
 
-    const HOSTED_ZONE_ID = ssm.StringParameter.fromStringParameterAttributes(
-      this,
-      "plutomi-hosted-zone-id",
-      {
-        parameterName: "/plutomi/HOSTED_ZONE_ID",
-      }
-    ).stringValue;
+    const HOSTED_ZONE_ID: string = get("HOSTED_ZONE_ID").required().asString();
+    const DOMAIN_NAME: string = get("DOMAIN_NAME").required().asString();
+    const AWS_ACCOUNT_ID: string = get("AWS_ACCOUNT_ID").required().asString();
 
-    const DOMAIN_NAME = ssm.StringParameter.fromStringParameterAttributes(
-      this,
-      "plutomi-domain-name",
-      {
-        parameterName: "/plutomi/DOMAIN_NAME",
-      }
-    ).stringValue;
-
-    const ACCOUNT_ID = ssm.StringParameter.fromStringParameterAttributes(
-      this,
-      "plutomi-account-id",
-      {
-        parameterName: "/plutomi/ACCOUNT_ID",
-      }
-    ).stringValue;
+    // Get table name from the DynamoDBStack
+    const TABLE_NAME = cdk.Fn.importValue("DynamoDB-Table-Name");
 
     // IAM inline role - the service principal is required
     const taskRole = new iam.Role(this, "plutomi-website-role", {
@@ -60,9 +43,9 @@ export default class PlutomiWebsiteStack extends cdk.Stack {
           "dynamodb:UpdateItem",
         ],
         resources: [
-          `arn:aws:dynamodb:*:${ACCOUNT_ID}:table/Plutomi/index/GSI1`, // TODO dynamic table name
-          `arn:aws:dynamodb:*:${ACCOUNT_ID}:table/Plutomi/index/GSI2`, // TODO dynamic table name
-          `arn:aws:dynamodb:*:${ACCOUNT_ID}:table/Plutomi`, // TODO dynamic table name
+          `arn:aws:dynamodb:*:${AWS_ACCOUNT_ID}:table/${TABLE_NAME}/index/GSI1`,
+          `arn:aws:dynamodb:*:${AWS_ACCOUNT_ID}:table/${TABLE_NAME}/index/GSI2`,
+          `arn:aws:dynamodb:*:${AWS_ACCOUNT_ID}:table/${TABLE_NAME}`,
         ],
       })
     );
@@ -73,7 +56,7 @@ export default class PlutomiWebsiteStack extends cdk.Stack {
         effect: iam.Effect.ALLOW,
         actions: ["ses:SendEmail"],
         resources: [
-          `arn:aws:ses:us-east-1:${ACCOUNT_ID}:identity/plutomi.com`, // TODO add domain & Dynamic region
+          `arn:aws:ses:us-east-1:${AWS_ACCOUNT_ID}:identity/${DOMAIN_NAME}`, // TODO add  Dynamic region
         ],
       })
     );
