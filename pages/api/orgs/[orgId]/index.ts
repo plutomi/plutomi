@@ -43,6 +43,7 @@ const handler = async (
   }
 
   if (method === API_METHODS.DELETE) {
+    // TODO actually delete org
     try {
       if (org.totalUsers > 1) {
         return res.status(400).json({

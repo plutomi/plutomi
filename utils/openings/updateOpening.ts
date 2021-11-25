@@ -3,28 +3,20 @@ import { Dynamo } from "../../awsClients/ddbDocClient";
 import { ENTITY_TYPES } from "../../Config";
 import { UpdateOpeningInput } from "../../types/main";
 const { DYNAMO_TABLE_NAME } = process.env;
-
+import { FORBIDDEN_PROPERTIES } from "../../Config";
 export default async function updateOpening(
   props: UpdateOpeningInput
 ): Promise<void> {
   const { orgId, openingId, newOpeningValues } = props;
   // TODO user the cleaning functions instead
-  const FORBIDDEN_KEYS = [
-    "PK",
-    "SK",
-    "orgId",
-    "entityType",
-    "createdAt",
-    "openingId",
-    "GSI1PK",
-    "ttlExpiry",
-  ];
 
   const incomingKeys = Object.keys(newOpeningValues);
   // TODO should this throw an error and
   // let the user know we can't update that key?
   // Maybe just return in the message that we weren't able to update those keys
-  const newKeys = incomingKeys.filter((key) => !FORBIDDEN_KEYS.includes(key));
+  const newKeys = incomingKeys.filter(
+    (key) => !FORBIDDEN_PROPERTIES.OPENING.includes(key)
+  );
 
   // Build update expression
   let newUpdateExpression: string[] = [];

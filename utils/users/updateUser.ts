@@ -3,7 +3,7 @@ import { Dynamo } from "../../awsClients/ddbDocClient";
 import { ENTITY_TYPES, DEFAULTS } from "../../Config";
 import { DynamoNewUser } from "../../types/dynamo";
 import { UpdateUserInput } from "../../types/main";
-
+import { FORBIDDEN_PROPERTIES } from "../../Config";
 const { DYNAMO_TABLE_NAME } = process.env;
 
 export async function updateUser(
@@ -11,25 +11,10 @@ export async function updateUser(
 ): Promise<DynamoNewUser> {
   const { userId, newUserValues, ALLOW_FORBIDDEN_KEYS } = props;
   try {
-    // TODO user the cleaning functions instead
-    const FORBIDDEN_KEYS = [
-      "PK",
-      "SK",
-      "orgId",
-      "entityType",
-      "createdAt",
-      "openingId",
-      "GSI1PK",
-      "GSI2PK",
-      "userRole",
-      "orgJoinDate",
-      "ttlExpiry",
-    ];
-
     const incomingKeys = Object.keys(newUserValues);
     let newKeys = ALLOW_FORBIDDEN_KEYS
       ? incomingKeys
-      : incomingKeys.filter((key) => !FORBIDDEN_KEYS.includes(key));
+      : incomingKeys.filter((key) => !FORBIDDEN_PROPERTIES.USER.includes(key));
 
     let newUpdateExpression: string[] = [];
     let newAttributes: any = {};

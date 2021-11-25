@@ -3,20 +3,15 @@ import { Dynamo } from "../../awsClients/ddbDocClient";
 import { ENTITY_TYPES } from "../../Config";
 import { UpdateApplicantInput } from "../../types/main";
 const { DYNAMO_TABLE_NAME } = process.env;
-const FORBIDDEN_KEYS = [
-  "PK",
-  "SK",
-  "orgId",
-  "entityType",
-  "createdAt",
-  "applicantId",
-  "GSI1PK",
-  "ttlExpiry"
-];
+import { FORBIDDEN_PROPERTIES } from "../../Config";
 /**
  * Updates an applicant with the specified `newApplicantValues`
  * @param props {@link UpdateApplicantInput}
  */
+
+// TODO - MAJOR~!
+// When it comes to advancing an applicant, we're going to want a new stage id and new opening id
+// And we obviously don't want to update the entire GSI..
 export default async function updateApplicant(
   props: UpdateApplicantInput
 ): Promise<void> {
@@ -27,7 +22,9 @@ export default async function updateApplicant(
   // TODO should this throw an error and
   // let the user know we can't update that key?
   // Maybe just return in the message that we weren't able to update those keys
-  const newKeys = incomingKeys.filter((key) => !FORBIDDEN_KEYS.includes(key));
+  const newKeys = incomingKeys.filter(
+    (key) => !FORBIDDEN_PROPERTIES.APPLICANT.includes(key)
+  );
 
   // Build update expression
   let newUpdateExpression: string[] = [];

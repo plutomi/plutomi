@@ -5,6 +5,7 @@ import { API_METHODS } from "../../../Config";
 import withAuth from "../../../middleware/withAuth";
 import withCleanOrgId from "../../../middleware/withCleanOrgId";
 import withValidMethod from "../../../middleware/withValidMethod";
+import { FORBIDDEN_PROPERTIES } from "../../../Config";
 
 const handler = async (
   req: NextApiRequest,
@@ -19,7 +20,9 @@ const handler = async (
       });
       if (!requestedUser) {
         req.session.destroy();
-        return res.status(401).json({ message: "Please log in again" }); // TODO enum error
+        return res.status(401).json({
+          message: `Please log in again`,
+        }); // TODO enum error
       }
 
       return res.status(200).json(req.session.user);

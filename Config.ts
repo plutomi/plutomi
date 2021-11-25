@@ -155,6 +155,44 @@ export const SAFE_PROPERTIES = {
   OPENING: ["GSI1SK", "openingId", "createdAt", "stageOrder"],
 };
 
+/**
+ * Properties that cannot be updated no matter the entity type once created
+ */
+const GLOBAL_FORBIDDEN_PROPERTIES = [
+  "orgId",
+  "PK",
+  "SK",
+  "ttlExpiry",
+  "entityType",
+  "createdAt",
+];
+
+export const FORBIDDEN_PROPERTIES = {
+  USER: [
+    ...GLOBAL_FORBIDDEN_PROPERTIES,
+    "userRole", // TODO, only admins
+    "orgJoinDate",
+    "GSI1PK", // Org#EntityType
+    "GSI2PK", // Email
+  ],
+  APPLICANT: [
+    ...GLOBAL_FORBIDDEN_PROPERTIES,
+    "applicantId",
+    "GSI1PK",
+    "GSI1SK",
+    "GSI2PK",
+    "GSI2SK", // TODO, remove these when advancing / moving applicants!!!!!!!!!
+  ],
+  OPENING: [...GLOBAL_FORBIDDEN_PROPERTIES, "openingId", "GSI1PK"],
+  STAGE: [...GLOBAL_FORBIDDEN_PROPERTIES, "stageId", "openingId", "GSI1PK"],
+  STAGE_QUESTION: [
+    ...GLOBAL_FORBIDDEN_PROPERTIES,
+    "questionId",
+    "GSI1PK",
+    "stageId",
+  ],
+};
+
 export enum LOGIN_METHODS {
   LINK = "LINK",
   GOOGLE = "GOOGLE",
