@@ -27,7 +27,6 @@ const handler = async (
   }
 
   if (method === API_METHODS.POST) {
-    // TODO disallow orgId's by this name
     if (req.session.user.orgId != DEFAULTS.NO_ORG) {
       return res.status(400).json({
         message: `You already belong to an org: ${req.session.user.orgId}`,

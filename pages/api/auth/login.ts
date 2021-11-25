@@ -35,7 +35,7 @@ const handler = async (
 ): Promise<void> => {
   const { body, method, query } = req; // TODO get from body
   const { email, loginMethod } = body;
-  const { userId, seal, callbackUrl } = query as Pick<
+  const { seal, callbackUrl } = query as Pick<
     CUSTOM_QUERY,
     "callbackUrl" | "userId" | "seal"
   >;
@@ -43,6 +43,7 @@ const handler = async (
   // Creates a login link
   if (method === API_METHODS.POST) {
     const createLoginLinkInput = {
+      // TODO create type
       email: email,
       loginMethod: loginMethod,
     };

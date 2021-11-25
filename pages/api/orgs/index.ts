@@ -43,12 +43,14 @@ const handler = async (
     };
 
     const schema = Joi.object({
-      orgId: Joi.string()
-        .min(1)
-        .invalid(DEFAULTS.NO_ORG, tagGenerator.generate(DEFAULTS.NO_ORG)),
-      GSI1SK: Joi.string()
-        .min(1)
-        .invalid(DEFAULTS.NO_ORG, tagGenerator.generate(DEFAULTS.NO_ORG)),
+      orgId: Joi.string().invalid(
+        DEFAULTS.NO_ORG,
+        tagGenerator.generate(DEFAULTS.NO_ORG)
+      ),
+      GSI1SK: Joi.string().invalid(
+        DEFAULTS.NO_ORG,
+        tagGenerator.generate(DEFAULTS.NO_ORG)
+      ),
       user: Joi.object(),
     }).options({ presence: "required" });
 

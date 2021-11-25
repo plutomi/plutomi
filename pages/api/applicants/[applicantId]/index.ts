@@ -5,9 +5,12 @@ import updateApplicant from "../../../../utils/applicants/updateApplicant";
 import { withSessionRoute } from "../../../../middleware/withSession";
 import withValidMethod from "../../../../middleware/withValidMethod";
 import withAuth from "../../../../middleware/withAuth";
-import { API_METHODS } from "../../../../Config";
+import { API_METHODS, DEFAULTS } from "../../../../Config";
 import { CUSTOM_QUERY } from "../../../../types/main";
-import withCleanOrgId from "../../../../middleware/withCleanOrgId";
+const UrlSafeString = require("url-safe-string"),
+  tagGenerator = new UrlSafeString();
+
+
 import Joi from "joi";
 const handler = async (
   req: NextApiRequest,
@@ -45,7 +48,7 @@ const handler = async (
       };
 
       const schema = Joi.object({
-        orgId: Joi.string(),
+        orgId: Joi.string().invalid(DEFAULTS.NO_ORG, tagGenerator.generate(DEFAULTS.NO_ORG)),
         applicantId: Joi.string(),
         newApplicantValues: Joi.object(), // todo add banned keys
       }).options({ presence: "required" });

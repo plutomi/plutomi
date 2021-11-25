@@ -9,40 +9,29 @@ import withAuth from "../../../middleware/withAuth";
 import withValidMethod from "../../../middleware/withValidMethod";
 import sendEmail from "../../../utils/sendEmail";
 import Joi from "joi";
+const UrlSafeString = require("url-safe-string"),
+  tagGenerator = new UrlSafeString();
+
 const handler = async (
   req: NextApiRequest,
   res: NextApiResponse
 ): Promise<void> => {
   const { body, method } = req;
-
   const { recipientEmail } = body; // todo trim and lowercase this email
-
   const expiresAt = Time.futureISO(3, TIME_UNITS.DAYS);
-
   const org = await getOrg({ orgId: req.session.user.orgId });
 
-  const newOrgInvite = {
-    claimed: false,
-    orgName: org.GSI1SK, // For the recipient they can see the name of the org instead of the orgId, much neater
-    createdBy: req.session.user, // TODO reduce this to just name & email
-    orgId: org.orgId,
-    recipientEmail: recipientEmail,
-    expiresAt: expiresAt,
-  };
-
   if (method === API_METHODS.POST) {
+    // TODO add types
     const schema = Joi.object({
-      claimed: Joi.boolean().equal(false),
-      orgName: Joi.string(),
-      orgId: Joi.string(),
-      createdBy: Joi.object(), // todo user session inputs!!!!!!
-      recipientEmail: Joi.string().email(),
-      expiresAt: Joi.string().isoDate(),
+      recipientEmail: Joi.string().email().messages({
+        "string.base": `"recipientEmail" must be a string`,
+        "string.email": `"recipientEmail" must be a valid email`,
+      }),
     }).options({ presence: "required" });
 
-    // Validate input
     try {
-      await schema.validateAsync(newOrgInvite);
+      await schema.validateAsync(body);
     } catch (error) {
       return res.status(400).json({ message: `${error.message}` });
     }

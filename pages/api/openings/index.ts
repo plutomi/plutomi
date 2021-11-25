@@ -21,14 +21,13 @@ const handler = async (
       });
     }
 
-    console.log("Incoming create opening", req.body);
     try {
       const createOpeningInput = {
         orgId: req.session.user.orgId,
         GSI1SK: GSI1SK,
       };
+
       const schema = Joi.object({
-        orgId: Joi.string(),
         GSI1SK: Joi.string(),
       }).options({ presence: "required" });
 
