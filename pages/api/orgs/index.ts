@@ -7,6 +7,8 @@ import { API_METHODS, DEFAULTS } from "../../../Config";
 import withAuth from "../../../middleware/withAuth";
 import withValidMethod from "../../../middleware/withValidMethod";
 import Joi from "joi";
+const UrlSafeString = require("url-safe-string"),
+  tagGenerator = new UrlSafeString();
 
 const handler = async (
   req: NextApiRequest,
@@ -17,12 +19,6 @@ const handler = async (
 
   // Create an org
   if (method === API_METHODS.POST) {
-    if (GSI1SK === DEFAULTS.NO_ORG) {
-      // TODO major, this isn't using the withCleanOrgId
-      return res.status(400).json({
-        message: `You cannot create an org with this name: ${GSI1SK}`,
-      });
-    }
     if (req.session.user.orgId != DEFAULTS.NO_ORG) {
       return res.status(400).json({
         message: `You already belong to an org!`,
@@ -47,9 +43,13 @@ const handler = async (
     };
 
     const schema = Joi.object({
-      orgId: Joi.string().min(1),
-      GSI1SK: Joi.string().min(1),
-      user: Joi.object(), // TODO add user session object
+      orgId: Joi.string()
+        .min(1)
+        .invalid(DEFAULTS.NO_ORG, tagGenerator.generate(DEFAULTS.NO_ORG)),
+      GSI1SK: Joi.string()
+        .min(1)
+        .invalid(DEFAULTS.NO_ORG, tagGenerator.generate(DEFAULTS.NO_ORG)),
+      user: Joi.object(),
     }).options({ presence: "required" });
 
     // Validate input
