@@ -90,60 +90,57 @@ export default function Main({ commits, user }) {
   );
 }
 
-// export async function getStaticProps() {
-//   const commitsFromEachBranch = 100;
-//   let allCommits = [];
-//   const { data } = await axios.get(
-//     `https://api.github.com/repos/plutomi/plutomi/branches?u=joswayski`
-//   );
+export async function getServerSideProps() {
+  const commitsFromEachBranch = 100;
+  let allCommits = [];
+  const { data } = await axios.get(
+    `https://api.github.com/repos/plutomi/plutomi/branches?u=joswayski`
+  );
 
-//   await Promise.all(
-//     data.map(async (branch) => {
-//       const { data } = await axios.get(
-//         `https://api.github.com/repos/plutomi/plutomi/commits?sha=${branch.name}&per_page=${commitsFromEachBranch}&u=joswayski`
-//       );
+  await Promise.all(
+    data.map(async (branch) => {
+      const { data } = await axios.get(
+        `https://api.github.com/repos/plutomi/plutomi/commits?sha=${branch.name}&per_page=${commitsFromEachBranch}&u=joswayski`
+      );
 
-//       data.map(async (commit) => {
-//         if (commit.commit.author.name !== "allcontributors[bot]") {
-//           let customCommit = {
-//             name: commit.commit.author.name,
-//             username: commit.author.login,
-//             image: commit.author.avatar_url,
-//             email: commit.commit.author.email,
-//             date: commit.commit.author.date,
-//             message: commit.commit.message,
-//             url: commit.html_url,
-//           };
-//           allCommits.push(customCommit);
-//         }
-//       });
-//     })
-//   );
+      data.map(async (commit) => {
+        if (commit.commit.author.name !== "allcontributors[bot]") {
+          let customCommit = {
+            name: commit.commit.author.name,
+            username: commit.author.login,
+            image: commit.author.avatar_url,
+            email: commit.commit.author.email,
+            date: commit.commit.author.date,
+            message: commit.commit.message,
+            url: commit.html_url,
+          };
+          allCommits.push(customCommit);
+        }
+      });
+    })
+  );
 
-//   // Sort by commit timestamp
-//   const commits = _.orderBy(allCommits, (commit) => commit.date, ["desc"]);
+  // Sort by commit timestamp
+  const commits = _.orderBy(allCommits, (commit) => commit.date, ["desc"]);
 
-//   return {
-//     props: {
-//       commits,
-//     },
-//   };
-// }
+  try {
+    // Get User
+    const user = await axios.get(
+      process.env.NEXT_PUBLIC_WEBSITE_URL + UsersService.getSelf()
+    );
 
-export const getServerSideProps = withSessionSsr(async function ({ req }) {
-  const session = req.session as IronSessionData; // TODO fix this type, not sure why its not using  IronSessionData
-  const user = session.user;
-
-  // SSR the page, but if a user is not logged in, it'll return the log in component instead of their session data
-  if (user === undefined) {
+    return {
+      props: {
+        user: user,
+        commits: commits,
+      },
+    };
+  } catch (error) {
     return {
       props: {
         user: null,
+        commits: commits,
       },
     };
   }
-
-  return {
-    props: { user: session.user },
-  };
-});
+}
