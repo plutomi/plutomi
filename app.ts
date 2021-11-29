@@ -19,6 +19,12 @@ api
   .get(publicInfo.getOrgInfo)
   .all(Middleware.methodNotAllowed);
 
+// Return public openings for an org
+api
+  .route("/public/:orgId/openings")
+  .get(publicInfo.getOrgOpenings)
+  .all(Middleware.methodNotAllowed);
+
 // Catch all other routes
 api.all("*", Middleware.routeNotFound);
 api.listen(port, () => {
