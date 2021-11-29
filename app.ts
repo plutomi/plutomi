@@ -11,18 +11,22 @@ const api = express();
 api.use(cors());
 api.use(express.json());
 api.use(helmet());
-api.use(Middleware.cleanOrgId);
 
 // Return an org's public info
 api
   .route("/public/:orgId")
-  .get(publicInfo.getOrgInfo)
+  .get([Middleware.cleanOrgId], publicInfo.getOrgInfo)
   .all(Middleware.methodNotAllowed);
 
-// Return public openings for an org
+// Return all public openings for an org
 api
   .route("/public/:orgId/openings")
-  .get(publicInfo.getOrgOpenings)
+  .get([Middleware.cleanOrgId], publicInfo.getOrgOpenings)
+  .all(Middleware.methodNotAllowed);
+
+api
+  .route("/public/:orgId/openings/:openingId")
+  .get([Middleware.cleanOrgId], publicInfo.getSingleOrgOpening)
   .all(Middleware.methodNotAllowed);
 
 // Catch all other routes

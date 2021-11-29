@@ -1,11 +1,20 @@
+import { Request, Response, NextFunction } from "express";
 // Temporary
 const UrlSafeString = require("url-safe-string"),
   tagGenerator = new UrlSafeString();
 
-export const methodNotAllowed = (req, res, next) => res.status(405).send();
-export const routeNotFound = (req, res, next) => res.status(404).send();
+export const methodNotAllowed = (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => res.status(405).send();
+export const routeNotFound = (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => res.status(404).send();
 
-export const cleanOrgId = (req, res, next) => {
+export const cleanOrgId = (req: Request, res: Response, next: NextFunction) => {
   /**
    * Makes the orgId, whether in the url params or in the body, have a specific, URL Safe, format
    */
