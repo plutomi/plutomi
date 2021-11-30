@@ -56,27 +56,26 @@ And other useful repos:
 - [AWS ECS Patterns](https://github.com/aws/aws-cdk/tree/master/packages/%40aws-cdk/aws-ecs-patterns)
 - [Serverless CDK Patterns](https://github.com/cdk-patterns/serverless)
 
-## License and Open Source
-
-**We are committed to keeping this project open source.**
-
-It is our belief that transparency and direct input into the development process will bring the most benefit to our users in the long run. This project is licensed under the `GNU AGPLv3` license. It can be viewed [here](https://choosealicense.com/licenses/agpl-3.0/) or in the [LICENSE.md](LICENSE.md) file. The reason(s) for this license can be eloquently described by the makers of Plausible.io in [this](https://plausible.io/blog/open-source-licenses) blog post.
-
 ## Contributing
 
 To make a contribution, submit a pull request into the `main` branch. You will be asked to sign a [Contributor License Agreement](https://en.wikipedia.org/wiki/Contributor_License_Agreement) for your PR. You'll only have to do this once.
 
-Your PR _title_ should have the format `type:` whatever-you-worked-on.
+This project tries to follow Semantic Pull Requests some what.
+Your PR _title_ should have the format `:emoji: type:` whatever-you-worked-on.
 
-Your `type` can be any of the following:
+| Type                             | Description                                                                                    |
+| -------------------------------- | ---------------------------------------------------------------------------------------------- |
+| :sparkles: feat: OR enhancement: | Added a new feature or enhancement                                                             |
+| :bug: fix:                       | Squashed some bugs!                                                                            |
+| :book: docs:                     | Updated documentation, readme, examples                                                        |
+| :rotating_light: test:           | Added / modified tests                                                                         |
+| :broom: chore:                   | Maintenance, cleanup, comment removal, refactoring, etc. If it doesn't fit above, it goes here |
 
-| Type   | Description                                                                 |
-| ------ | --------------------------------------------------------------------------- |
-| feat:  | Added a new feature or enhancement                                          |
-| fix:   | Squashed some bugs!                                                         |
-| chore: | Maintenance, tests, refactoring, etc. If it doesn't fit above, it goes here |
+Example: _:bug: fix: Removed the double modals popping up on login_
 
-Example: `fix: Removed the double modals popping up on login`
+## License
+
+This project is licensed under the `GNU AGPLv3` license. It can be viewed [here](https://choosealicense.com/licenses/agpl-3.0/) or in the [LICENSE.md](LICENSE.md) file.
 
 ---
 
