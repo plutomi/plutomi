@@ -41,14 +41,7 @@ We use Docker to containerize our Nextjs app to be run on AWS Fargate.
 
 ![infra](images/infra.png)
 
-We _started_ with the [Serverless-Nextjs](https://github.com/serverless-Nextjs/serverless-next.js) component which uses Lambda@Edge for API routes. There are many downsides to Edge functions, some are listed [here](https://github.com/plutomi/plutomi/issues/172). We've since moved on to hosting entirely on AWS Fargate.
-
-As much as we love "serverless" (API Gateway + Lambda), we keep running into quirks that essentially wipe out all of the gains from "only focusing on business logic". A main complaint is local development. The only real way to test lambda functions locally is to use [AWS SAM with CDK](https://aws.amazon.com/blogs/compute/better-together-aws-sam-and-aws-cdk/) which just seems like a hack :/.
-With CDK, we can run Nextjs in Docker and use the native Nextjs dev environment, tooling, & file based routing and not have to change anything. [This comment](https://news.ycombinator.com/item?id=28841292) on Hacker News also adds some insight.
-
-Here is an example of a fun (4 year old) bug: [Unable to change parameter name in API Gateway without tearing it all down and rebuilding](https://github.com/serverless/serverless/issues/3785)! Because why would you ever need to do that?
-
-Or [cold starts](https://filia-aleks.medium.com/aws-lambda-battle-2021-performance-comparison-for-all-languages-c1b441005fd1) / [performance](https://www.trek10.com/blog/fargate-vs-lambda) / cost (either way you slice this one: pure throughput or just Denial of Wallet attacks). To be clear, we will still use lambda for background tasks such as queues, DynamoDB streams, email sending, etc. just not for the main API of the site.
+We will eventually move the front end to [Serverless-Nextjs](https://github.com/serverless-Nextjs/serverless-next.js) and lambda for background tasks such as queues, DynamoDB streams, email sending, etc. just not for the main API of the site. That is being migrated to an Express server at the moment.
 
 ## Useful commands
 
@@ -63,27 +56,26 @@ And other useful repos:
 - [AWS ECS Patterns](https://github.com/aws/aws-cdk/tree/master/packages/%40aws-cdk/aws-ecs-patterns)
 - [Serverless CDK Patterns](https://github.com/cdk-patterns/serverless)
 
-## License and Open Source
-
-**We are committed to keeping this project open source.**
-
-It is our belief that transparency and direct input into the development process will bring the most benefit to our users in the long run. This project is licensed under the `GNU AGPLv3` license. It can be viewed [here](https://choosealicense.com/licenses/agpl-3.0/) or in the [LICENSE.md](LICENSE.md) file. The reason(s) for this license can be eloquently described by the makers of Plausible.io in [this](https://plausible.io/blog/open-source-licenses) blog post.
-
 ## Contributing
 
 To make a contribution, submit a pull request into the `main` branch. You will be asked to sign a [Contributor License Agreement](https://en.wikipedia.org/wiki/Contributor_License_Agreement) for your PR. You'll only have to do this once.
 
-Your PR _title_ should have the format `type:` whatever-you-worked-on.
+This project tries to follow Semantic Pull Requests some what.
+Your PR _title_ should have the format `:emoji: type:` whatever-you-worked-on.
 
-Your `type` can be any of the following:
+| Type                             | Description                                                                                    |
+| -------------------------------- | ---------------------------------------------------------------------------------------------- |
+| :sparkles: feat: OR enhancement: | Added a new feature or enhancement                                                             |
+| :bug: fix:                       | Squashed some bugs!                                                                            |
+| :book: docs:                     | Updated documentation, readme, examples                                                        |
+| :rotating_light: test:           | Added / modified tests                                                                         |
+| :broom: chore:                   | Maintenance, cleanup, comment removal, refactoring, etc. If it doesn't fit above, it goes here |
 
-| Type   | Description                                                                 |
-| ------ | --------------------------------------------------------------------------- |
-| feat:  | Added a new feature or enhancement                                          |
-| fix:   | Squashed some bugs!                                                         |
-| chore: | Maintenance, tests, refactoring, etc. If it doesn't fit above, it goes here |
+Example: _:bug: fix: Removed the double modals popping up on login_
 
-Example: `fix: Removed the double modals popping up on login`
+## License
+
+This project is licensed under the `GNU AGPLv3` license. It can be viewed [here](https://choosealicense.com/licenses/agpl-3.0/) or in the [LICENSE.md](LICENSE.md) file.
 
 ---
 
