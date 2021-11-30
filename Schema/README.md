@@ -18,8 +18,8 @@ To create & edit your data models locally, I suggest downloading [NoSQL Workbenc
 
 I've created a handy spreadsheet with access patterns and use cases, you can [view it here](https://docs.google.com/spreadsheets/d/1KZMJt0X2J0s1v8_jz6JC7aiiwYW8qVV9pKWobQ5012Y/edit?usp=sharing). It helps to follow along with NoSQL Workbench on your own machine or you can view the pictures next to this README.
 
-You might have noticed that _some_ sort keys (SK, GSI1SK, GSI2SK) have the `entity type` prefixed (e.g. ORG_ROLE). This is intentional and it's so we can retrieve these sub-entities when doing a query on the parent.
-For example, when retrieving an `org`, we might want to get all of the `roles` for that org as well. We can do \_one\* query with `PK = orgId and SK = begins_with(ORG)` :)
+You might have noticed that _some_ sort keys (SK, GSI1SK, GSI2SK) have the `entity type` prefixed (e.g. `ORG_ROLE`). This is intentional and it's so we can retrieve these sub-entities when doing a query on the parent.
+For example, when retrieving an `org`, we might want to get all of the `roles` for that org as well. We can do one query with `PK = orgId and SK = begins_with(ORG)` :)
 
 Some partitions will [need to be sharded](https://youtu.be/_KNrRdWD25M?t=581) in the future, specially for high throughput items at millions of items scale (get all applicants in an org, in a stage, in an opening, all webhook history, etc.). Not going to bother with that for now but it _is_ on my radar!
 
