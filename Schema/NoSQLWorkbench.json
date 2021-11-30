@@ -1,0 +1,788 @@
+{
+  "ModelName": "Plutomi",
+  "ModelMetadata": {
+    "Author": "Jose Valerio",
+    "DateCreated": "Nov 29, 2021, 10:20 PM",
+    "DateLastModified": "Nov 30, 2021, 04:51 PM",
+    "Description": "",
+    "AWSService": "Amazon DynamoDB",
+    "Version": "3.0"
+  },
+  "DataModel": [
+    {
+      "TableName": "Plutomi",
+      "KeyAttributes": {
+        "PartitionKey": {
+          "AttributeName": "PK",
+          "AttributeType": "S"
+        },
+        "SortKey": {
+          "AttributeName": "SK",
+          "AttributeType": "S"
+        }
+      },
+      "NonKeyAttributes": [
+        {
+          "AttributeName": "type",
+          "AttributeType": "S"
+        },
+        {
+          "AttributeName": "GSI1PK",
+          "AttributeType": "S"
+        },
+        {
+          "AttributeName": "GSI1SK",
+          "AttributeType": "S"
+        },
+        {
+          "AttributeName": "GSI2PK",
+          "AttributeType": "S"
+        },
+        {
+          "AttributeName": "GSI2SK",
+          "AttributeType": "S"
+        }
+      ],
+      "GlobalSecondaryIndexes": [
+        {
+          "IndexName": "GSI1",
+          "KeyAttributes": {
+            "PartitionKey": {
+              "AttributeName": "GSI1PK",
+              "AttributeType": "S"
+            },
+            "SortKey": {
+              "AttributeName": "GSI1SK",
+              "AttributeType": "S"
+            }
+          },
+          "Projection": {
+            "ProjectionType": "ALL"
+          }
+        },
+        {
+          "IndexName": "GSI2",
+          "KeyAttributes": {
+            "PartitionKey": {
+              "AttributeName": "GSI2PK",
+              "AttributeType": "S"
+            },
+            "SortKey": {
+              "AttributeName": "GSI2SK",
+              "AttributeType": "S"
+            }
+          },
+          "Projection": {
+            "ProjectionType": "ALL"
+          }
+        }
+      ],
+      "TableData": [
+        {
+          "PK": {
+            "S": "USER#123"
+          },
+          "SK": {
+            "S": "USER"
+          },
+          "type": {
+            "S": "USER"
+          },
+          "GSI1PK": {
+            "S": "ORG#plutomi#USERS"
+          },
+          "GSI1SK": {
+            "S": "ROLE#Admin"
+          },
+          "GSI2PK": {
+            "S": "USER#joe@example.com"
+          },
+          "GSI2SK": {
+            "S": "USER#joe@example.com"
+          }
+        },
+        {
+          "PK": {
+            "S": "ORG#plutomi"
+          },
+          "SK": {
+            "S": "ORG"
+          },
+          "type": {
+            "S": "ORG"
+          }
+        },
+        {
+          "PK": {
+            "S": "APPLICANT#123"
+          },
+          "SK": {
+            "S": "APPLICANT"
+          },
+          "type": {
+            "S": "APPLICANT"
+          },
+          "GSI1PK": {
+            "S": "ORG#plutomi#APPLICANTS"
+          },
+          "GSI1SK": {
+            "S": "OPENING#123#DATE_LANDED#2021-11-30T09:39:20.049Z"
+          },
+          "GSI2PK": {
+            "S": "ORG#plutomi#APPLICANTS"
+          },
+          "GSI2SK": {
+            "S": "STAGE#123#DATE_LANDED#2021-11-30T12:27:26.058Z"
+          }
+        },
+        {
+          "PK": {
+            "S": "ORG#plutomi#OPENING#123"
+          },
+          "SK": {
+            "S": "OPENING"
+          },
+          "type": {
+            "S": "OPENING"
+          },
+          "GSI1PK": {
+            "S": "ORG#plutomi#OPENINGS"
+          },
+          "GSI1SK": {
+            "S": "Miami"
+          }
+        },
+        {
+          "PK": {
+            "S": "ORG#plutomi#STAGE#123"
+          },
+          "SK": {
+            "S": "STAGE"
+          },
+          "type": {
+            "S": "STAGE"
+          },
+          "GSI1PK": {
+            "S": "ORG#plutomi#STAGES"
+          },
+          "GSI1SK": {
+            "S": "Questionnaire"
+          },
+          "GSI2PK": {
+            "S": "ORG#plutomi#OPENING#123#STAGES"
+          },
+          "GSI2SK": {
+            "S": "Questionnaire"
+          }
+        },
+        {
+          "PK": {
+            "S": "APPLICANT#123"
+          },
+          "SK": {
+            "S": "APPLICANT_FILE#123"
+          },
+          "type": {
+            "S": "APPLICANT_FILE"
+          }
+        },
+        {
+          "PK": {
+            "S": "ORG#plutomi#STAGE#123"
+          },
+          "SK": {
+            "S": "STAGE_QUESTION#123"
+          },
+          "type": {
+            "S": "STAGE_QUESTION"
+          }
+        },
+        {
+          "PK": {
+            "S": "ORG#plutomi#STAGE#123"
+          },
+          "SK": {
+            "S": "STAGE_QUESTION#456"
+          },
+          "type": {
+            "S": "STAGE_QUESTION"
+          }
+        },
+        {
+          "PK": {
+            "S": "ORG#plutomi#STAGE#123"
+          },
+          "SK": {
+            "S": "STAGE_RULE#123"
+          },
+          "type": {
+            "S": "STAGE_RULE"
+          }
+        },
+        {
+          "PK": {
+            "S": "ORG#plutomi#STAGE#123"
+          },
+          "SK": {
+            "S": "STAGE_RULE#456"
+          },
+          "type": {
+            "S": "STAGE_RULE"
+          }
+        },
+        {
+          "PK": {
+            "S": "ORG#plutomi#STAGE#123"
+          },
+          "SK": {
+            "S": "STAGE_RULE#768"
+          },
+          "type": {
+            "S": "STAGE_RULE"
+          }
+        },
+        {
+          "PK": {
+            "S": "APPLICANT#123"
+          },
+          "SK": {
+            "S": "APPLICANT_RESPONSE#123"
+          },
+          "type": {
+            "S": "APPLICANT_RESPONSE"
+          }
+        },
+        {
+          "PK": {
+            "S": "APPLICANT#123"
+          },
+          "SK": {
+            "S": "APPLICANT_RESPONSE#456"
+          },
+          "type": {
+            "S": "APPLICANT_RESPONSE"
+          }
+        },
+        {
+          "PK": {
+            "S": "APPLICANT#123"
+          },
+          "SK": {
+            "S": "APPLICANT_FILE#456"
+          },
+          "type": {
+            "S": "APPLICANT_FILE"
+          }
+        },
+        {
+          "PK": {
+            "S": "APPLICANT#123"
+          },
+          "SK": {
+            "S": "APPLICANT_NOTE#123"
+          },
+          "type": {
+            "S": "APPLICANT_NOTE"
+          }
+        },
+        {
+          "PK": {
+            "S": "ORG#plutomi#OPENING#456"
+          },
+          "SK": {
+            "S": "OPENING"
+          },
+          "type": {
+            "S": "OPENING"
+          },
+          "GSI1PK": {
+            "S": "ORG#plutomi#OPENINGS"
+          },
+          "GSI1SK": {
+            "S": "New York"
+          }
+        },
+        {
+          "PK": {
+            "S": "ORG#plutomi#STAGE#456"
+          },
+          "SK": {
+            "S": "STAGE"
+          },
+          "type": {
+            "S": "STAGE"
+          },
+          "GSI1PK": {
+            "S": "ORG#plutomi#STAGES"
+          },
+          "GSI1SK": {
+            "S": "Insurance Upload"
+          },
+          "GSI2PK": {
+            "S": "ORG#plutomi#OPENING#123#STAGES"
+          },
+          "GSI2SK": {
+            "S": "Insurance Upload"
+          }
+        },
+        {
+          "PK": {
+            "S": "USER#789"
+          },
+          "SK": {
+            "S": "USER"
+          },
+          "type": {
+            "S": "USER"
+          },
+          "GSI1PK": {
+            "S": "ORG#plutomi#USERS"
+          },
+          "GSI1SK": {
+            "S": "ROLE#Third Party"
+          },
+          "GSI2PK": {
+            "S": "USER#maria@example.com"
+          },
+          "GSI2SK": {
+            "S": "USER#maria@example.com"
+          }
+        },
+        {
+          "PK": {
+            "S": "APPLICANT#123"
+          },
+          "SK": {
+            "S": "APPLICANT_RESPONSE#789"
+          },
+          "type": {
+            "S": "APPLICANT_RESPONSE"
+          }
+        },
+        {
+          "PK": {
+            "S": "APPLICANT#456"
+          },
+          "SK": {
+            "S": "APPLICANT"
+          },
+          "type": {
+            "S": "APPLICANT"
+          },
+          "GSI1PK": {
+            "S": "ORG#plutomi#APPLICANTS"
+          },
+          "GSI1SK": {
+            "S": "OPENING#123#DATE_LANDED#2021-11-30T09:35:38.521Z"
+          },
+          "GSI2PK": {
+            "S": "ORG#plutomi#APPLICANTS"
+          },
+          "GSI2SK": {
+            "S": "STAGE#456#DATE_LANDED#2021-11-30T12:27:55.305Z"
+          }
+        },
+        {
+          "PK": {
+            "S": "APPLICANT#786"
+          },
+          "SK": {
+            "S": "APPLICANT"
+          },
+          "type": {
+            "S": "APPLICANT"
+          },
+          "GSI1PK": {
+            "S": "ORG#plutomi#APPLICANTS"
+          },
+          "GSI1SK": {
+            "S": "OPENING#123#DATE_LANDED#2021-11-30T09:36:01.623Z"
+          },
+          "GSI2PK": {
+            "S": "ORG#plutomi#APPLICANTS"
+          },
+          "GSI2SK": {
+            "S": "STAGE#456#DATE_LANDED#2021-11-30T12:28:12.106Z"
+          }
+        },
+        {
+          "PK": {
+            "S": "APPLICANT#123123"
+          },
+          "SK": {
+            "S": "APPLICANT"
+          },
+          "type": {
+            "S": "APPLICANT"
+          },
+          "GSI1PK": {
+            "S": "ORG#plutomi#APPLICANTS"
+          },
+          "GSI1SK": {
+            "S": "OPENING#123#DATE_LANDED#2021-11-30T09:36:29.082Z"
+          },
+          "GSI2PK": {
+            "S": "ORG#plutomi#APPLICANTS"
+          },
+          "GSI2SK": {
+            "S": "STAGE#123#DATE_LANDED#2021-11-30T12:28:23.581Z"
+          }
+        },
+        {
+          "PK": {
+            "S": "APPLICANT#456456"
+          },
+          "SK": {
+            "S": "APPLICANT"
+          },
+          "type": {
+            "S": "APPLICANT"
+          },
+          "GSI1PK": {
+            "S": "ORG#plutomi#APPLICANTS"
+          },
+          "GSI1SK": {
+            "S": "OPENING#123#DATE_LANDED#2021-11-30T09:36:50.401Z"
+          },
+          "GSI2PK": {
+            "S": "ORG#plutomi#APPLICANTS"
+          },
+          "GSI2SK": {
+            "S": "STAGE#456#DATE_LANDED#2021-11-30T12:28:40.405Z"
+          }
+        },
+        {
+          "PK": {
+            "S": "APPLICANT#789789"
+          },
+          "SK": {
+            "S": "APPLICANT"
+          },
+          "type": {
+            "S": "APPLICANT"
+          },
+          "GSI1PK": {
+            "S": "ORG#plutomi#APPLICANTS"
+          },
+          "GSI1SK": {
+            "S": "OPENING#123#DATE_LANDED#2021-11-30T09:37:59.116Z"
+          },
+          "GSI2PK": {
+            "S": "ORG#plutomi#APPLICANTS"
+          },
+          "GSI2SK": {
+            "S": "STAGE#123#DATE_LANDED#2021-11-30T12:28:49.609Z"
+          }
+        },
+        {
+          "PK": {
+            "S": "ORG#plutomi#OPENING#789"
+          },
+          "SK": {
+            "S": "OPENING"
+          },
+          "type": {
+            "S": "OPENING"
+          },
+          "GSI1PK": {
+            "S": "ORG#plutomi#OPENINGS"
+          },
+          "GSI1SK": {
+            "S": "Chicago"
+          }
+        },
+        {
+          "PK": {
+            "S": "USER#123"
+          },
+          "SK": {
+            "S": "ORG_INVITE#123"
+          },
+          "type": {
+            "S": "ORG_INVITE"
+          },
+          "GSI1PK": {
+            "S": "ORG#plutomi"
+          },
+          "GSI1SK": {
+            "S": "ORG_INVITE#2021-11-30T12:14:54.642Z"
+          }
+        },
+        {
+          "PK": {
+            "S": "USER#123"
+          },
+          "SK": {
+            "S": "LOGIN_LINK#123"
+          },
+          "type": {
+            "S": "LOGIN_LINK"
+          }
+        },
+        {
+          "PK": {
+            "S": "ORG#plutomi"
+          },
+          "SK": {
+            "S": "ORG_WEBHOOK#123"
+          },
+          "type": {
+            "S": "WEBHOOK"
+          }
+        },
+        {
+          "PK": {
+            "S": "ORG#plutomi#OPENING#789"
+          },
+          "SK": {
+            "S": "OPENING_WEBHOOK#123"
+          },
+          "type": {
+            "S": "WEBHOOK"
+          }
+        },
+        {
+          "PK": {
+            "S": "ORG#plutomi#STAGE#123"
+          },
+          "SK": {
+            "S": "STAGE_WEBHOOK#456"
+          },
+          "type": {
+            "S": "WEBHOOK"
+          }
+        },
+        {
+          "PK": {
+            "S": "ORG#plutomi"
+          },
+          "SK": {
+            "S": "ORG_WEBHOOK#456"
+          },
+          "type": {
+            "S": "WEBHOOK"
+          }
+        },
+        {
+          "PK": {
+            "S": "ORG#plutomi#STAGE#123"
+          },
+          "SK": {
+            "S": "STAGE_WEBHOOK#123"
+          },
+          "type": {
+            "S": "WEBHOOK"
+          }
+        },
+        {
+          "PK": {
+            "S": "ORG#plutomi#WEBHOOK#123#HISTORY"
+          },
+          "SK": {
+            "S": "2021-11-30T14:36:40.460Z"
+          },
+          "type": {
+            "S": "WEBHOOK_HISTORY"
+          }
+        },
+        {
+          "PK": {
+            "S": "ORG#plutomi#LOGIN_EVENTS"
+          },
+          "SK": {
+            "S": "2021-11-30T14:41:26.437Z"
+          },
+          "type": {
+            "S": "LOGIN_EVENT"
+          }
+        },
+        {
+          "PK": {
+            "S": "USER#123#LOGIN_EVENTS"
+          },
+          "SK": {
+            "S": "2021-11-30T14:41:26.437Z"
+          },
+          "type": {
+            "S": "LOGIN_EVENT"
+          }
+        },
+        {
+          "PK": {
+            "S": "FORBIDDEN_EMAILS#contact@plutomi.com"
+          },
+          "SK": {
+            "S": "2021-11-30T14:55:44.452Z"
+          },
+          "type": {
+            "S": "UNSUBSCRIBE_EVENT"
+          }
+        },
+        {
+          "PK": {
+            "S": "APPLICANT#456#ACTIVITY"
+          },
+          "SK": {
+            "S": "APPLICANT_ACTIVITY#2021-11-30T16:01:47.047Z"
+          },
+          "type": {
+            "S": "ACTIVITY"
+          }
+        },
+        {
+          "PK": {
+            "S": "APPLICANT#456#ACTIVITY"
+          },
+          "SK": {
+            "S": "APPLICANT_ACTIVITY#2021-11-30T16:08:12.091Z"
+          },
+          "type": {
+            "S": "ACTIVITY"
+          }
+        },
+        {
+          "PK": {
+            "S": "USER#789#ACTIVITY"
+          },
+          "SK": {
+            "S": "USER_ACTIVITY#2021-11-30T16:02:41.713Z"
+          },
+          "type": {
+            "S": "ACTIVITY"
+          }
+        },
+        {
+          "PK": {
+            "S": "USER#789#ACTIVITY"
+          },
+          "SK": {
+            "S": "USER_ACTIVITY#2021-11-30T16:02:55.468Z"
+          },
+          "type": {
+            "S": "ACTIVITY"
+          }
+        },
+        {
+          "PK": {
+            "S": "USER#789"
+          },
+          "SK": {
+            "S": "LOGIN_LINK#123"
+          },
+          "type": {
+            "S": "LOGIN_LINK"
+          }
+        },
+        {
+          "PK": {
+            "S": "ORG#plutomi#OPTION_BANK#123"
+          },
+          "SK": {
+            "S": "OPTION_BANK"
+          },
+          "type": {
+            "S": "OPTION_BANK"
+          },
+          "GSI1PK": {
+            "S": "ORG#plutomi"
+          },
+          "GSI1SK": {
+            "S": "ORG_OPTION_BANK#123"
+          }
+        },
+        {
+          "PK": {
+            "S": "ORG#plutomi#OPTION_BANK#456"
+          },
+          "SK": {
+            "S": "OPTION_BANK"
+          },
+          "type": {
+            "S": "OPTION_BANK"
+          },
+          "GSI1PK": {
+            "S": "ORG#plutomi"
+          },
+          "GSI1SK": {
+            "S": "ORG_OPTION_BANK#456"
+          }
+        },
+        {
+          "PK": {
+            "S": "ORG#plutomi#ROLE#123"
+          },
+          "SK": {
+            "S": "ROLE"
+          },
+          "type": {
+            "S": "ROLE"
+          },
+          "GSI1PK": {
+            "S": "ORG#plutomi"
+          },
+          "GSI1SK": {
+            "S": "ORG_ROLE#123"
+          }
+        },
+        {
+          "PK": {
+            "S": "ORG#plutomi#ROLE#456"
+          },
+          "SK": {
+            "S": "ROLE"
+          },
+          "type": {
+            "S": "ROLE"
+          },
+          "GSI1PK": {
+            "S": "ORG#plutomi"
+          },
+          "GSI1SK": {
+            "S": "ORG_ROLE#456"
+          }
+        },
+        {
+          "PK": {
+            "S": "ORG#plutomi#APPLICATIONS@applicantemail@example.com"
+          },
+          "SK": {
+            "S": "2021-11-30T20:18:56.683Z"
+          },
+          "type": {
+            "S": "PREVIOUS_APPLICATIONS"
+          }
+        }
+      ],
+      "DataAccess": {
+        "MySql": {}
+      },
+      "BillingMode": "PROVISIONED",
+      "ProvisionedCapacitySettings": {
+        "ProvisionedThroughput": {
+          "ReadCapacityUnits": 5,
+          "WriteCapacityUnits": 5
+        },
+        "AutoScalingRead": {
+          "ScalableTargetRequest": {
+            "MinCapacity": 1,
+            "MaxCapacity": 10,
+            "ServiceRole": "AWSServiceRoleForApplicationAutoScaling_DynamoDBTable"
+          },
+          "ScalingPolicyConfiguration": {
+            "TargetValue": 70
+          }
+        },
+        "AutoScalingWrite": {
+          "ScalableTargetRequest": {
+            "MinCapacity": 1,
+            "MaxCapacity": 10,
+            "ServiceRole": "AWSServiceRoleForApplicationAutoScaling_DynamoDBTable"
+          },
+          "ScalingPolicyConfiguration": {
+            "TargetValue": 70
+          }
+        }
+      }
+    }
+  ]
+}

@@ -41,14 +41,7 @@ We use Docker to containerize our Nextjs app to be run on AWS Fargate.
 
 ![infra](images/infra.png)
 
-We _started_ with the [Serverless-Nextjs](https://github.com/serverless-Nextjs/serverless-next.js) component which uses Lambda@Edge for API routes. There are many downsides to Edge functions, some are listed [here](https://github.com/plutomi/plutomi/issues/172). We've since moved on to hosting entirely on AWS Fargate.
-
-As much as we love "serverless" (API Gateway + Lambda), we keep running into quirks that essentially wipe out all of the gains from "only focusing on business logic". A main complaint is local development. The only real way to test lambda functions locally is to use [AWS SAM with CDK](https://aws.amazon.com/blogs/compute/better-together-aws-sam-and-aws-cdk/) which just seems like a hack :/.
-With CDK, we can run Nextjs in Docker and use the native Nextjs dev environment, tooling, & file based routing and not have to change anything. [This comment](https://news.ycombinator.com/item?id=28841292) on Hacker News also adds some insight.
-
-Here is an example of a fun (4 year old) bug: [Unable to change parameter name in API Gateway without tearing it all down and rebuilding](https://github.com/serverless/serverless/issues/3785)! Because why would you ever need to do that?
-
-Or [cold starts](https://filia-aleks.medium.com/aws-lambda-battle-2021-performance-comparison-for-all-languages-c1b441005fd1) / [performance](https://www.trek10.com/blog/fargate-vs-lambda) / cost (either way you slice this one: pure throughput or just Denial of Wallet attacks). To be clear, we will still use lambda for background tasks such as queues, DynamoDB streams, email sending, etc. just not for the main API of the site.
+We will eventually move the front end to [Serverless-Nextjs](https://github.com/serverless-Nextjs/serverless-next.js) and lambda for background tasks such as queues, DynamoDB streams, email sending, etc. just not for the main API of the site. That is being migrated to an Express server at the moment.
 
 ## Useful commands
 
