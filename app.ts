@@ -24,6 +24,7 @@ api
   .get([Middleware.cleanOrgId], publicInfo.getOrgOpenings)
   .all(Middleware.methodNotAllowed);
 
+  // Return public info for an opening
 api
   .route("/public/:orgId/openings/:openingId")
   .get([Middleware.cleanOrgId], publicInfo.getSingleOrgOpening)

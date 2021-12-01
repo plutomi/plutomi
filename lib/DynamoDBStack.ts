@@ -6,13 +6,12 @@ import { get } from "env-var";
 /**
  * Creates a DynamoDB table with two GSIs
  */
-export class DynamoDBStack extends cdk.Stack {
+export default class DynamoDBStack extends cdk.Stack {
   constructor(scope: cdk.Construct, id: string, props?: cdk.StackProps) {
     super(scope, id, props);
 
     const TABLE_NAME: string = get("DYNAMO_TABLE_NAME").required().asString();
 
-    console.log("In dynamo stack", TABLE_NAME);
     const table = new dynamodb.Table(this, "plutomi-dynamo-table", {
       tableName: TABLE_NAME,
       partitionKey: { name: "PK", type: dynamodb.AttributeType.STRING },

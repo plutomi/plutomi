@@ -43,6 +43,17 @@ We use Docker to containerize our Nextjs app to be run on AWS Fargate.
 
 We will eventually move the front end to [Serverless-Nextjs](https://github.com/serverless-Nextjs/serverless-next.js) and lambda for background tasks such as queues, DynamoDB streams, email sending, etc. just not for the main API of the site. That is being migrated to an Express server at the moment.
 
+For the DynamoDB schema, checkout the [Schema](./Schema) folder.
+
+## Prerequisites
+
+- Install [Docker](https://docs.docker.com/get-docker/)
+- Create a [Hosted Zone](https://docs.aws.amazon.com/Route53/latest/DeveloperGuide/CreatingHostedZone.html) in Route53 with your domain
+- Create a [verified identity](https://docs.aws.amazon.com/ses/latest/DeveloperGuide/verify-domain-procedure.html) with your domain in SES
+- Create a [certificate for your domain](https://docs.aws.amazon.com/acm/latest/userguide/gs-acm-request-public.html#request-public-console) in AWS Certificate Manager
+
+> Will try to add those steps to CDK eventually :point_up:
+
 ## Useful commands
 
 - `npm run dev` run the app locally
@@ -55,6 +66,16 @@ And other useful repos:
 
 - [AWS ECS Patterns](https://github.com/aws/aws-cdk/tree/master/packages/%40aws-cdk/aws-ecs-patterns)
 - [Serverless CDK Patterns](https://github.com/cdk-patterns/serverless)
+
+## Common errors
+
+> Argument of type 'this' is not assignable to parameter of type 'Construct'
+
+Make sure all of your `@aws-cdk/*` dependencies are running the same version + make sure whatever you are using in the construct is actually being imported at the top of the file
+
+> ERROR [internal] load metadata for public.ecr.aws/sam/build-nodejs
+
+Try running this command: `aws ecr-public get-login-password --region us-east-1 | docker login --username AWS --password-stdin public.ecr.aws/sam/build-nodejs`
 
 ## Contributing
 
