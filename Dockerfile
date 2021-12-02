@@ -1,18 +1,17 @@
-# Warning: IDK what I'm doing with Docker
 FROM node:16
-
-# Setting working directory. All the paths will be relative to WORKDIR
-WORKDIR /usr/app
+# Setting working directory. All the path will be relative to WORKDIR
+WORKDIR /usr/src/app
 
 # Installing dependencies
-COPY package.json .
-
+COPY package*.json ./
 RUN npm install
 
 # Copying source files
 COPY . .
 
-# Express port
+# Building app
+RUN npm run build
 EXPOSE 4000
-# Run the Express app
-CMD [ "npm", "server" ]
+
+# Running the app
+CMD [ "npm", "start" ]

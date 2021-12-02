@@ -6,61 +6,19 @@ export enum API_METHODS {
   OPTIONS = "OPTIONS",
   DELETE = "DELETE",
 }
-
-export enum ENTITY_TYPES {
-  /**
-   * For applicants
-   */
-  APPLICANT = "APPLICANT",
-
-  /**
-   * For applicant responses to a `STAGE_QUESTION`
-   */
-  APPLICANT_RESPONSE = "APPLICANT_RESPONSE",
-  /**
-   * For organizations
-   */
-  ORG = "ORG",
-
-  /**
-   * Invites to join an organization
-   */
-  ORG_INVITE = "ORG_INVITE",
-
-  /**
-   * For users of the service
-   */
-  USER = "USER",
-
-  /**
-   * For openings inside an `ORG`
-   */
-  OPENING = "OPENING",
-
-  /**
-   * For stages inside an `ORG`
-   */
-  STAGE = "STAGE",
-
-  /**
-   * For questions inside of a `${ENTITY_TYPES.STAGE}`
-   */
-  STAGE_QUESTION = "STAGE_QUESTION",
-
-  /**
-   * For rules inside of a `${ENTITY_TYPES.STAGE}`
-   */
-  STAGE_RULE = "STAGE_RULE",
-
-  /**
-   * Login links for `USER`s
-   */
-  LOGIN_LINK = "LOGIN_LINK",
-  /**
-   * Tiemstamp of a user login
-   */
-  LOGIN_EVENT = "LOGIN_EVENT",
-}
+export const ENTITY_TYPES = {
+  APPLICANT: "APPLICANT",
+  APPLICANT_RESPONSE: "APPLICANT_RESPONSE",
+  ORG: "ORG",
+  ORG_INVITE: "ORG_INVITE",
+  USER: "USER",
+  OPENING: "OPENING",
+  STAGE: "STAGE",
+  STAGE_QUESTION: "STAGE_QUESTION",
+  STAGE_RULE: "STAGE_RULE",
+  LOGIN_LINK: "LOGIN_LINK",
+  LOGIN_EVENT: "LOGIN_EVENT",
+};
 
 export enum TIME_UNITS {
   MILLISECONDS = "milliseconds",
@@ -153,6 +111,10 @@ export const SAFE_PROPERTIES = {
   STAGE: ["GSI1SK", "stageId", "createdAt", "questionOrder"],
   USER: ["userId", "orgId", "email", "firstName", "lastName", "GSI1SK"],
   OPENING: ["GSI1SK", "openingId", "createdAt", "stageOrder"],
+  APPLICANT_RESPONSE: ["PK", "SK"], // TODO fix - TS7053, just setting this for now so i can test the app lol
+  ORG_INVITE: ["PK", "SK"], // TODO same ^
+  STAGE_QUESTION: ["PK", "SK"], // TODO same ^
+  STAGE_RULE: ["PK", "SK"], // TODO same ^
 };
 
 /**

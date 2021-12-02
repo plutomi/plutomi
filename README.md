@@ -79,7 +79,7 @@ Here are a few:
 
 Also, don't forget to buy **THE** [DynamoDB Book](https://www.dynamodbbook.com/) by Alex ;)
 
-To create & edit your data models locally, I suggest downloading [NoSQL Workbench](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/workbench.settingup.html). The files [CloudFormation.json](CloudFormation.json) and [NoSQLWorkbench.json](NoSQLWorkbench.json) are direct outputs from it that have the current schema. The Workbench tool also allows you to easily visualize your schema, export the table to your AWS account, and even generate queries in Python, JavaScript, or Java.
+To create & edit your data models locally, I suggest downloading [NoSQL Workbench](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/workbench.settingup.html). The files [CloudFormation.json](Schema/CloudFormation.json) and [NoSQLWorkbench.json](Schema/NoSQLWorkbench.json) are direct outputs from it that have the current schema. The Workbench tool also allows you to easily visualize your schema, export the table to your AWS account, and even generate queries in Python, JavaScript, or Java.
 
 I've created a handy spreadsheet with access patterns and use cases, you can [view it here](https://docs.google.com/spreadsheets/d/1KZMJt0X2J0s1v8_jz6JC7aiiwYW8qVV9pKWobQ5012Y/edit?usp=sharing). It helps to follow along with NoSQL Workbench on your own machine or you can view the pictures next to this README.
 

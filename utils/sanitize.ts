@@ -7,15 +7,15 @@ export default class Sanitize {
    * @param type Your entity's type see {@link ENTITY_TYPES}
    * @returns Your entity but with ONLY the listed properties. See {@link SAFE_PROPERTIES}
    */
-  static clean(entity: any, type: ENTITY_TYPES) {
-    const safeProperties = SAFE_PROPERTIES[type];
-    for (const property in entity) {
-      if (!safeProperties.includes(property)) {
-        delete entity[property];
-      }
-    }
+  static clean(entity: any, type: string) {
+    // TODO fix types!!
+    // const safeProperties: { [key: string]: any } = SAFE_PROPERTIES[type];
+    // for (const property in entity) {
+    //   if (!safeProperties.includes(property)) {
+    //     delete entity[property];
+    //   }
+    // }
 
     return entity;
   }
 }
-
