@@ -131,7 +131,7 @@ export default class APIStack extends cdk.Stack {
       listenerPort: 443,
       protocol: protocol.ApplicationProtocol.HTTPS,
       redirectHTTP: true,
-      assignPublicIp: true,  // TODO revisit this
+      assignPublicIp: true, // TODO revisit this
     });
   }
 }
