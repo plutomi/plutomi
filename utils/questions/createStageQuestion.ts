@@ -34,8 +34,8 @@ export async function createStageQuestion(
   try {
     let stage = await getStageById({ orgId, stageId });
 
-    if (stage.questionOrder.length >= LIMITS.MAX_CHILD_ITEM_LIMIT) {
-      throw ERRORS.MAX_CHILD_ITEM_LIMIT_ERROR_MESSAGE;
+    if (stage.questionOrder.length >= LIMITS.MAX_CHILD_ENTITY_LIMIT) {
+      throw ERRORS.MAX_CHILD_ENTITY_LIMIT_ERROR_MESSAGE;
     }
 
     try {

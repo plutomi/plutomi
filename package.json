@@ -4,10 +4,10 @@
   "private": true,
   "scripts": {
     "dev": "concurrently --kill-others \"nodemon app.ts\" \"next dev\"",
+    "next": "next dev",
+    "api": "nodemon app.ts",
     "build": "next build",
     "lint": "next lint",
-    "deploy": "cdk deploy --all",
-    "destroy": "cdk destroy --all",
     "start": "ts-node --transpile-only app.ts"
   },
   "dependencies": {

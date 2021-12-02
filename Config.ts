@@ -46,11 +46,11 @@ export enum LIMITS {
    * I did a test with 3000(!!!) IDs and it came out to around 173kb, less than half of the Dynamo limit.
    * This will be a soft limit and can be raised up to a point with the understanding that performance might suffer.
    */
-  MAX_CHILD_ITEM_LIMIT = 200,
+  MAX_CHILD_ENTITY_LIMIT = 200,
 }
 
 export enum ERRORS {
-  MAX_CHILD_ITEM_LIMIT_ERROR_MESSAGE = `MAX_CHILD_ITEM_LIMIT reached, please contact support@plutomi.com for assistance`,
+  MAX_CHILD_ENTITY_LIMIT_ERROR_MESSAGE = `MAX_CHILD_ENTITY_LIMIT reached, please contact support@plutomi.com for assistance`,
   INVALID_DATE_ERROR = `The date you provided appears to be invalid`,
 }
 
