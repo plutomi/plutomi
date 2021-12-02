@@ -14,7 +14,7 @@ export const getOrgInfo = async (req: Request, res: Response) => {
 
   const [org, error] = await getOrg({ orgId: orgId });
 
-  if (error) {
+  if (error instanceof Error) {
     return res.status(400).json({
       message: `An error ocurred retrieving your org: ${error.message}`,
     });
