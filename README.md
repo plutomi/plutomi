@@ -4,15 +4,23 @@
 [![License](https://img.shields.io/github/license/plutomi/plutomi?style=flat-square)](#)
 [![All Contributors](https://img.shields.io/badge/all_contributors-2-blue.svg?style=flat-square)](#contributors-)
 
-> ⚠️ :no*entry: \_WARNING* :no_entry: ⚠️
+> ⚠️ ⛔ _WARNING_ ⛔ ⚠️
 >
 > _This project is **NOT** production ready and can change at any time. You **WILL** lose your data_ :)
 
 ### [Website / Live Demo](https://plutomi.com)
 
-Plutomi is an [applicant tracking system](https://en.wikipedia.org/wiki/Applicant_tracking_system).
+Plutomi is an [applicant tracking system](https://en.wikipedia.org/wiki/Applicant_tracking_system) that streamlines your entire application process with automated workflows at _any_ scale.
 
-You can create `openings`, which people can apply to. An opening can be anything from a job, a location for a delivery company, or a program like a summer camp.
+## Motivation
+
+Having worked at a company that needed to recruit thousands of contractors every month, implementing custom processes in our acquisition flow was challening. This would be things like address validation, cloning openings and stages, duplicate applicant detection, automatically engaging leads based on our forecasts, programmable applicant routing logic, automatically closing texts that didn't require a response, intraday queues for applicant actions, simpler PII scrubbing for third party integrations, more customizability of opening and stage styling, and many more.
+
+It would have benefited us to have an open platform to contribute to and build upon, as well as one where we didn't have to continuously tip toe around performance limits. This project is our attempt to do just that.
+
+## Summary
+
+In your recruiting flow, you can create `openings`, which people can apply to. An opening can be anything from a job, a location for a delivery company, or a program like a summer camp.
 
 In these openings, you can create `stages` which are individual steps for your application. You can add questions which applicants can answer, and setup automatic move rules that determine where applicants go next depending on their answers or after a certain time period.
 
@@ -27,8 +35,6 @@ Stage order:
 3. **Document Upload** - Collect an applicant's license
 4. **Final Review** - Manually review an applicant's license for compliance
 5. **Ready to Drive** - Applicants that have completed your application
-
-## Motivation
 
 ## Prerequisites
 
@@ -70,7 +76,7 @@ The frontend runs on the [CDK construct](https://serverless-nextjs.com/docs/cdkc
 
 Typical 'monolith' express app on a soon to be ([#253](https://github.com/plutomi/plutomi/issues/253)) autoscaling cluster on Fargate.
 
-We considered API Gateway + Lambda but we kept running into quirks that essentially wipe out all of the gains from "only focusing on business logic". Here is an example of a fun (4 year old) bug: [Unable to change parameter names in API Gateway without tearing it all down and rebuilding](https://github.com/serverless/serverless/issues/3785)! Another main complaint is local development, or lack there of. Or cold starts no matter how infrequent they might be. Or performance (we were getting consistently faster response times like in [this test by the folks at Trek10](https://www.trek10.com/blog/fargate-vs-lambda). Or cost at high throughput.. mainly API Gateway :sweat_smile:
+We considered API Gateway + Lambda but we kept running into quirks that essentially wipe out all of the gains from "only focusing on business logic". Here is an example of a fun (4 year old) bug: [Unable to change parameter names in API Gateway without tearing the route down and redeploying](https://github.com/serverless/serverless/issues/3785)! Another main complaint is local development, or lack there of. Or cold starts no matter how infrequent they might be. Or performance (we were getting consistently faster response times like in [this test by the folks at Trek10](https://www.trek10.com/blog/fargate-vs-lambda)). Or cost at high throughput.. mainly API Gateway :sweat_smile:
 
 To be clear, we will still use lambda for background tasks such as queues, DynamoDB streams, email sending, etc. just not for the main API of the site. Fargate gives us the best of both worlds, and we're very happy with it!
 
@@ -97,7 +103,7 @@ For example, if we want to retrieve an applicant, we might also want to retrieve
 
 Some partitions will [need to be sharded](https://youtu.be/6yqfmXiZTlM?t=884) in the future, especially for high RCU queries at scale (get all applicants in an org, in a stage, in an opening, all webhook history, etc.). I am not going to bother with this for now but it _is_ on my radar!
 
-Another thing to note is that Dynamo has a 400kb limit per item. This means that we do have to set _some_ limits, specifically around entities that can have their order re-arranged (`MAX_CHILD_ENTITY_LIMIT`). The limit is on the _parent_ entity, not the re-arrangeable entity itself. Things like stages in an opening or questions & rules in a stage are affected since we have to store their order in their parent item. In the real world, it is very unlikely to have hundreds of these entities under one parent so you are not likely to reach this limit.
+Another thing to note is that Dynamo has a 400kb limit per item. This means that we do have to set _some_ limits, specifically around entities that can have their order re-arranged (`MAX_CHILD_ENTITY_LIMIT`). The limit is on the _parent_ entity, not the re-arrangeable entity itself. Things like stages in an opening or questions & rules in a stage are affected since we have to store their order in their parent item. In practice, even at millions of applicants, it is very unlikely to have hundreds of these entities under one parent.
 
 ## Other useful repos:
 
@@ -119,7 +125,7 @@ Try running this command: `aws ecr-public get-login-password --region us-east-1 
 To make a contribution, submit a pull request into the `main` branch. You will be asked to sign a [Contributor License Agreement](https://en.wikipedia.org/wiki/Contributor_License_Agreement) for your PR. You'll only have to do this once.
 
 This project tries to follow Semantic Pull Requests some what.
-Your PR _title_ should have the format `:emoji: type:` whatever-you-worked-on.
+Your PR _title_ should have the following format:
 
 | Type                             | Description                                                                                    |
 | -------------------------------- | ---------------------------------------------------------------------------------------------- |
