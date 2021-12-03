@@ -12,11 +12,24 @@ import sendEmail from "../utils/sendEmail";
 import Time from "../utils/time";
 import { createUser } from "../utils/users/createUser";
 import { getUserByEmail } from "../utils/users/getUserByEmail";
+import createLoginLink from "../utils/loginLinks/createLoginLink";
+import { CUSTOM_QUERY } from "../types/main";
 
-export const createLoginLink = async (req: Request, res: Response) => {};
+const ironPassword = process.env.IRON_SEAL_PASSWORD;
+
+export const ironOptions = {
+  password: ironPassword,
+  ttl: 60 * 15, // Seal will be valid for 15 minutes // TODO test seal
+};
+
+// export const createLoginLink = async (req: Request, res: Response) => {}; // TODO change this name
 
 export const login = async (req: Request, res: Response) => {
   const { email, loginMethod } = req.body;
+  const { seal, callbackUrl } = req.query as Pick<
+    CUSTOM_QUERY,
+    "callbackUrl" | "userId" | "seal"
+  >;
   // Creates a login link
   const createLoginLinkInput = {
     // TODO create type

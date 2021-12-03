@@ -23,12 +23,7 @@ import { getOrgInvitesForUser } from "../../../utils/invites/getOrgInvitesForUse
 import { createLoginEventAndDeleteLoginLink } from "../../../utils/loginLinks/createLoginEventAndDeleteLoginLink";
 import Joi from "joi";
 
-const ironPassword = process.env.IRON_SEAL_PASSWORD;
 
-const ironOptions = {
-  password: ironPassword,
-  ttl: 60 * 15, // Seal will be valid for 15 minutes // TODO test seal
-};
 const handler = async (
   req: NextApiRequest,
   res: NextApiResponse
@@ -39,8 +34,6 @@ const handler = async (
     CUSTOM_QUERY,
     "callbackUrl" | "userId" | "seal"
   >;
-
-
 
   // Validates the login link when clicked
   if (method === API_METHODS.GET) {
