@@ -13,6 +13,7 @@ export const routeNotFound = (
   res: Response,
   next: NextFunction
 ) => res.status(404).send();
+// Switch the above to return res.status(NUMBER).json({message: "error name ^"})
 
 export const cleanOrgId = (req: Request, res: Response, next: NextFunction) => {
   /**

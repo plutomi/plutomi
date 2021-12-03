@@ -39,15 +39,6 @@ Stage order:
 
 > :point_up: Will try to add the Route53 / ACM / SES setup to CDK eventually [#390](https://github.com/plutomi/plutomi/issues/390)
 
-## Language & Tooling
-
-The project is 100% TypeScript. Would appreciate any assistance on types as we're definitely not the best :sweat_smile:
-
-We believe CDK to be the future and it's nice to have 'first-class' tooling directly from AWS. Therefore,
-**all architecture is managed by CDK**.
-
-We use Docker to containerize our Express API to run on Fargate.
-
 ## Useful commands
 
 | Command      | Function                                                                         |
@@ -61,11 +52,27 @@ We use Docker to containerize our Express API to run on Fargate.
 
 For more information on AWS CDK, please visit the [docs page](https://docs.aws.amazon.com/cdk/latest/guide/cli.html).
 
-## Architecture
+## Language & Tooling
 
-![infra](images/infra.png)
+The project is 100% TypeScript. Would appreciate any assistance on types as we're definitely not the best :sweat_smile:
 
-We will eventually move the front end to [Serverless-Nextjs](https://github.com/serverless-Nextjs/serverless-next.js) and lambda for background tasks such as queues, DynamoDB streams, email sending, etc. just not for the main API of the site. That is being migrated to an Express server at the moment.
+Docker is used to run our Express API on Fargate.
+
+_ALL_ infrastructure is managed by AWS CDK.
+
+## Infrastructure
+
+![frontend](infra/Frontend.png)
+
+The frontend runs on the [CDK construct](https://serverless-nextjs.com/docs/cdkconstruct/) of the [Serverless-Nextjs](https://github.com/serverless-Nextjs/serverless-next.js) component. The reason being is we wanted everything managed by CDK and this provides an awesome way to do just that. The SLS component brings with it the Next API routes using Lambda but there are a couple of downsides (some of them are listed [here](https://github.com/plutomi/plutomi/issues/172)) and we won't be using them.
+
+![backend](infra/Backend.png)
+
+Typical 'monolith' express app on a soon to be ([#253](https://github.com/plutomi/plutomi/issues/253)) autoscaling cluster on Fargate.
+
+We considered API Gateway + Lambda but we kept running into quirks that essentially wipe out all of the gains from "only focusing on business logic". Here is an example of a fun (4 year old) bug: [Unable to change parameter names in API Gateway without tearing it all down and rebuilding](https://github.com/serverless/serverless/issues/3785)! Another main complaint is local development, or lack there of. Or cold starts no matter how infrequent they might be. Or performance (we were getting consistently faster response times like in [this test by the folks at Trek10](https://www.trek10.com/blog/fargate-vs-lambda). Or cost at high throughput.. mainly API Gateway :sweat_smile:
+
+To be clear, we will still use lambda for background tasks such as queues, DynamoDB streams, email sending, etc. just not for the main API of the site. Fargate gives us the best of both worlds, and we're very happy with it!
 
 ## DynamoDB Schema
 
@@ -90,7 +97,7 @@ For example, if we want to retrieve an applicant, we might also want to retrieve
 
 Some partitions will [need to be sharded](https://youtu.be/6yqfmXiZTlM?t=884) in the future, especially for high RCU queries at scale (get all applicants in an org, in a stage, in an opening, all webhook history, etc.). I am not going to bother with this for now but it _is_ on my radar!
 
-Another thing to note is that Dynamo has a 400kb limit per item. This means that we do have to set _some_ limits, specifically around entities that can have their order re-arranged (`MAX_CHILD_ENTITY_LIMIT`). The limit is on the _parent_ entity, not the re-arrangeable entity itself. Things like stages in an opening or questions & rules in a stage are affected since we have to store their order in their parent item. In practice, if you have hundreds of any of these entities in their respective parent, something is deeply wrong :T
+Another thing to note is that Dynamo has a 400kb limit per item. This means that we do have to set _some_ limits, specifically around entities that can have their order re-arranged (`MAX_CHILD_ENTITY_LIMIT`). The limit is on the _parent_ entity, not the re-arrangeable entity itself. Things like stages in an opening or questions & rules in a stage are affected since we have to store their order in their parent item. In the real world, it is very unlikely to have hundreds of these entities under one parent so you are not likely to reach this limit.
 
 ## Other useful repos:
 
@@ -127,8 +134,6 @@ Example: _:bug: fix: Removed the double modals popping up on login_
 ## License
 
 This project is licensed under the `GNU AGPLv3` license. It can be viewed [here](https://choosealicense.com/licenses/agpl-3.0/) or in the [LICENSE.md](LICENSE.md) file.
-
----
 
 For any questions, please submit an issue or email contact@plutomi.com!
 
