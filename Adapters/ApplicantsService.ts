@@ -1,5 +1,4 @@
-import axios from "../axios/axios";
-
+import axios from "../axios";
 export default class ApplicantsService {
   static async createApplicant({
     orgId,

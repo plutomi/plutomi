@@ -1,4 +1,4 @@
-import axios from "../axios/axios";
+import axios from "axios";
 
 export default class OrgsService {
   static async createOrg(GSI1SK, orgId) {

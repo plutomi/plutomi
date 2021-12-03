@@ -161,8 +161,8 @@ export const createLoginLinks = async (req: Request, res: Response) => {
 
       const defaultRedirect = `${process.env.NEXT_PUBLIC_WEBSITE_URL}/dashboard`;
       const loginLink = `${
-        process.env.NEXT_PUBLIC_WEBSITE_URL
-      }auth/login?seal=${seal}&callbackUrl=${
+        process.env.API_URL
+      }/auth/login?seal=${seal}&callbackUrl=${
         callbackUrl ? callbackUrl : defaultRedirect
       }`;
 

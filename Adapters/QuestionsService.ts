@@ -1,4 +1,4 @@
-import axios from "../axios/axios";
+import axios from "axios";
 
 export default class QuestionsService {
   static async createQuestion(GSI1SK, stageId, questionDescription) {
