@@ -25,7 +25,7 @@ export default async function deleteApplicant(
           Delete: {
             Key: {
               PK: `${ENTITY_TYPES.ORG}#${orgId}#${ENTITY_TYPES.APPLICANT}#${applicantId}`,
-              SK: `${ENTITY_TYPES.APPLICANT}`,
+              SK: ENTITY_TYPES.APPLICANT,
             },
             TableName: DYNAMO_TABLE_NAME,
           },
@@ -36,7 +36,7 @@ export default async function deleteApplicant(
           Update: {
             Key: {
               PK: `${ENTITY_TYPES.ORG}#${orgId}#${ENTITY_TYPES.OPENING}#${applicant.openingId}`, // todo fix types
-              SK: `${ENTITY_TYPES.OPENING}`,
+              SK: ENTITY_TYPES.OPENING,
             },
             TableName: DYNAMO_TABLE_NAME,
             UpdateExpression: "SET totalApplicants = totalApplicants - :value",
@@ -50,7 +50,7 @@ export default async function deleteApplicant(
           Update: {
             Key: {
               PK: `${ENTITY_TYPES.ORG}#${orgId}#${ENTITY_TYPES.STAGE}#${applicant.stageId}`, // todo fix types
-              SK: `${ENTITY_TYPES.STAGE}`,
+              SK: ENTITY_TYPES.STAGE,
             },
             TableName: DYNAMO_TABLE_NAME,
             UpdateExpression: "SET totalApplicants = totalApplicants - :value",
@@ -64,7 +64,7 @@ export default async function deleteApplicant(
           Update: {
             Key: {
               PK: `${ENTITY_TYPES.ORG}#${orgId}`,
-              SK: `${ENTITY_TYPES.ORG}`,
+              SK: ENTITY_TYPES.ORG,
             },
             TableName: DYNAMO_TABLE_NAME,
             UpdateExpression: "SET totalApplicants = totalApplicants - :value",

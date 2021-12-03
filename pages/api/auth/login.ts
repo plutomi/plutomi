@@ -3,11 +3,11 @@ import { NextApiRequest, NextApiResponse } from "next";
 import createLoginLink from "../../../utils/loginLinks/createLoginLink";
 import { nanoid } from "nanoid";
 import { withSessionRoute } from "../../../middleware/withSession";
-import { createHash } from "crypto";
 import { sealData, unsealData } from "iron-session";
 import { getLatestLoginLink } from "../../../utils/loginLinks/getLatestLoginLink";
 import { createUser } from "../../../utils/users/createUser";
 import { getUserById } from "../../../utils/users/getUserById";
+import Sanitize from "../../../utils/sanitize";
 import {
   TIME_UNITS,
   API_METHODS,
@@ -19,7 +19,6 @@ import {
 import withValidMethod from "../../../middleware/withValidMethod";
 import { CUSTOM_QUERY } from "../../../types/main";
 import sendEmail from "../../../utils/sendEmail";
-import clean from "../../../utils/clean";
 import { getOrgInvitesForUser } from "../../../utils/invites/getOrgInvitesForUser";
 import { createLoginEventAndDeleteLoginLink } from "../../../utils/loginLinks/createLoginEventAndDeleteLoginLink";
 import Joi from "joi";
@@ -36,7 +35,7 @@ const handler = async (
 ): Promise<void> => {
   const { body, method, query } = req; // TODO get from body
   const { email, loginMethod } = body;
-  const { userId, seal, callbackUrl } = query as Pick<
+  const { seal, callbackUrl } = query as Pick<
     CUSTOM_QUERY,
     "callbackUrl" | "userId" | "seal"
   >;
@@ -44,6 +43,7 @@ const handler = async (
   // Creates a login link
   if (method === API_METHODS.POST) {
     const createLoginLinkInput = {
+      // TODO create type
       email: email,
       loginMethod: loginMethod,
     };
@@ -169,7 +169,7 @@ const handler = async (
       orgId: userOrg,
     });
 
-    const cleanedUser = clean(user, ENTITY_TYPES.USER);
+    const cleanedUser = Sanitize.clean(user, ENTITY_TYPES.USER);
     req.session.user = cleanedUser;
 
     /**

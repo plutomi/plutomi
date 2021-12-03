@@ -22,6 +22,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       applicantId: Joi.string(),
       responses: Joi.array()
         .items({
+          questionId: Joi.string(),
           questionTitle: Joi.string(),
           questionDescription: Joi.string(),
           questionResponse: Joi.string(),

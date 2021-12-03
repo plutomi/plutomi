@@ -4,7 +4,10 @@ import StagesService from "../Adapters/StagesService";
 
 const fetcher = (url: string) => axios.get(url).then((res) => res.data);
 
-function useAllApplicantsInStage(openingId?: string, stageId?: string) {
+export default function useAllApplicantsInStage(
+  openingId?: string,
+  stageId?: string
+) {
   const shouldFetch = openingId && stageId ? true : false;
   const { data, error } = useSWR(
     // @ts-ignore TODO
@@ -18,5 +21,3 @@ function useAllApplicantsInStage(openingId?: string, stageId?: string) {
     isApplicantsError: error,
   };
 }
-
-export default useAllApplicantsInStage;

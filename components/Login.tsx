@@ -43,7 +43,7 @@ export default function Login({ loggedOutPageText }) {
     try {
       const { message } = await AuthService.login(
         email,
-        `${process.env.NEXT_PUBLIC_WEBSITE_URL + router.asPath}`,
+        process.env.NEXT_PUBLIC_WEBSITE_URL + router.asPath,
         LOGIN_METHODS.GOOGLE
       );
       window.location.replace(message);

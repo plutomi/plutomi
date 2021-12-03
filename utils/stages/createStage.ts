@@ -37,8 +37,8 @@ export async function createStage(props: CreateStageInput): Promise<void> {
       // Get current opening
       opening.stageOrder.push(stageId);
 
-      if (opening.stageOrder.length >= LIMITS.MAX_CHILD_ITEM_LIMIT) {
-        throw ERRORS.MAX_CHILD_ITEM_LIMIT_ERROR_MESSAGE;
+      if (opening.stageOrder.length >= LIMITS.MAX_CHILD_ENTITY_LIMIT) {
+        throw ERRORS.MAX_CHILD_ENTITY_LIMIT_ERROR_MESSAGE;
       }
 
       const transactParams: TransactWriteCommandInput = {

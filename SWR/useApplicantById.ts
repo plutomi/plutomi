@@ -1,10 +1,9 @@
-// Retrieves a specific opening by ID
 import axios from "axios";
 import useSWR from "swr";
 import ApplicantsService from "../Adapters/ApplicantsService";
 const fetcher = (url: string) => axios.get(url).then((res) => res.data);
 
-function useApplicantById(applicantId: string): useApplicantByIdOutput {
+export default function useApplicantById(applicantId: string) {
   // Despite removing the query string (applicant id) from the URl, this still runs before changing to null
   const shouldFetch =
     applicantId && applicantId !== "" && typeof applicantId === "string"
@@ -22,5 +21,3 @@ function useApplicantById(applicantId: string): useApplicantByIdOutput {
     isApplicantError: error,
   };
 }
-
-export default useApplicantById;

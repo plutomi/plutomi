@@ -22,9 +22,7 @@ export default function PublicOpeningsList() {
         {publicOpenings?.map((opening) => (
           <li key={opening.openingId}>
             {/* Take applicant to opening info page */}
-            <Link
-              href={`${process.env.NEXT_PUBLIC_WEBSITE_URL}/${orgId}/${opening?.openingId}/apply`}
-            >
+            <Link href={`/${orgId}/${opening?.openingId}/apply`}>
               <a className="block hover:bg-gray-50">
                 <div className="px-4 py-4 sm:px-6">
                   <div className="flex items-center justify-between">

@@ -28,7 +28,7 @@ export async function DeleteQuestion(
           Delete: {
             Key: {
               PK: `${ENTITY_TYPES.ORG}#${orgId}#${ENTITY_TYPES.STAGE_QUESTION}#${questionId}`,
-              SK: `${ENTITY_TYPES.STAGE_QUESTION}`,
+              SK: ENTITY_TYPES.STAGE_QUESTION,
             },
             TableName: DYNAMO_TABLE_NAME,
           },
@@ -38,7 +38,7 @@ export async function DeleteQuestion(
           Update: {
             Key: {
               PK: `${ENTITY_TYPES.ORG}#${orgId}#${ENTITY_TYPES.STAGE}#${stage.stageId}`,
-              SK: `${ENTITY_TYPES.STAGE}`,
+              SK: ENTITY_TYPES.STAGE,
             },
             TableName: DYNAMO_TABLE_NAME,
             UpdateExpression: "SET questionOrder = :questionOrder",

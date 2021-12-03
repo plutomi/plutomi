@@ -6,11 +6,11 @@ const fetcher = (url: string) => axios.get(url).then((res) => res.data);
 
 // Returns very limited details an org's public opening
 // User does not need to be signed in
-function usePublicStageById( // TODO i think this can be refactored since we no longer need th eopening ID
+export default function usePublicStageById( // TODO i think this can be refactored since we no longer need th eopening ID
   orgId: string,
   openingId: string,
   stageId: string
-): useStageByIdOutput {
+) {
   const shouldFetch = orgId && openingId && stageId ? true : false;
 
   const { data, error } = useSWR(
@@ -25,5 +25,3 @@ function usePublicStageById( // TODO i think this can be refactored since we no 
     isStageError: error,
   };
 }
-
-export default usePublicStageById;

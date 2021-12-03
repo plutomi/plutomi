@@ -1,5 +1,5 @@
 import { NextApiHandler, NextApiRequest, NextApiResponse } from "next";
-
+import { FORBIDDEN_PROPERTIES } from "../Config";
 /**
  * Checks if there is a session in the request and in the future...
  * Checks API keys as well // TODO !!!!
@@ -19,7 +19,11 @@ export default function withAuth(
       !req.session.user
     ) {
       req.session.destroy();
-      return res.status(401).json({ message: "Please log in again" }); // TODO error messages
+      return res
+        .status(401)
+        .json({
+          message: "Please log in again",
+        }); // TODO error messages
     }
     return handler(req, res);
   };

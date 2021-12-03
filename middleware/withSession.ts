@@ -5,7 +5,8 @@ import {
   NextApiHandler,
 } from "next";
 
-const sessionOptions = {
+// TODO move this to config
+export const sessionOptions = {
   password: process.env.IRON_SESSION_PASSWORD_1,
   cookieName: process.env.IRON_SESSION_COOKIE_NAME,
 };

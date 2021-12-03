@@ -4,14 +4,11 @@ import useSWR from "swr";
 import PublicInfoService from "../Adapters/PublicInfoService";
 const fetcher = (url: string) => axios.get(url).then((res) => res.data);
 
-/**
- *
- * @param orgId - The org which you want to return the openings for
- */
-function useAllPublicOpenings(orgId: string): usePublicOpeningsOutput {
+export default function useAllPublicOpenings(orgId: string) {
   const shouldFetch = orgId ? true : false;
 
   const { data, error } = useSWR(
+    // @ts-ignore TODO
     shouldFetch && PublicInfoService.getAllPublicOpeningsURL(orgId),
     fetcher
   );
@@ -22,5 +19,3 @@ function useAllPublicOpenings(orgId: string): usePublicOpeningsOutput {
     isPublicOpeningsError: error,
   };
 }
-
-export default useAllPublicOpenings;

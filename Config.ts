@@ -6,61 +6,19 @@ export enum API_METHODS {
   OPTIONS = "OPTIONS",
   DELETE = "DELETE",
 }
-
-export enum ENTITY_TYPES {
-  /**
-   * For applicants
-   */
-  APPLICANT = "APPLICANT",
-
-  /**
-   * For applicant responses to a `STAGE_QUESTION`
-   */
-  APPLICANT_RESPONSE = "APPLICANT_RESPONSE",
-  /**
-   * For organizations
-   */
-  ORG = "ORG",
-
-  /**
-   * Invites to join an organization
-   */
-  ORG_INVITE = "ORG_INVITE",
-
-  /**
-   * For users of the service
-   */
-  USER = "USER",
-
-  /**
-   * For openings inside an `ORG`
-   */
-  OPENING = "OPENING",
-
-  /**
-   * For stages inside an `ORG`
-   */
-  STAGE = "STAGE",
-
-  /**
-   * For questions inside of a `${ENTITY_TYPES.STAGE}`
-   */
-  STAGE_QUESTION = "STAGE_QUESTION",
-
-  /**
-   * For rules inside of a `${ENTITY_TYPES.STAGE}`
-   */
-  STAGE_RULE = "STAGE_RULE",
-
-  /**
-   * Login links for `USER`s
-   */
-  LOGIN_LINK = "LOGIN_LINK",
-  /**
-   * Tiemstamp of a user login
-   */
-  LOGIN_EVENT = "LOGIN_EVENT",
-}
+export const ENTITY_TYPES = {
+  APPLICANT: "APPLICANT",
+  APPLICANT_RESPONSE: "APPLICANT_RESPONSE",
+  ORG: "ORG",
+  ORG_INVITE: "ORG_INVITE",
+  USER: "USER",
+  OPENING: "OPENING",
+  STAGE: "STAGE",
+  STAGE_QUESTION: "STAGE_QUESTION",
+  STAGE_RULE: "STAGE_RULE",
+  LOGIN_LINK: "LOGIN_LINK",
+  LOGIN_EVENT: "LOGIN_EVENT",
+};
 
 export enum TIME_UNITS {
   MILLISECONDS = "milliseconds",
@@ -88,11 +46,11 @@ export enum LIMITS {
    * I did a test with 3000(!!!) IDs and it came out to around 173kb, less than half of the Dynamo limit.
    * This will be a soft limit and can be raised up to a point with the understanding that performance might suffer.
    */
-  MAX_CHILD_ITEM_LIMIT = 200,
+  MAX_CHILD_ENTITY_LIMIT = 200,
 }
 
 export enum ERRORS {
-  MAX_CHILD_ITEM_LIMIT_ERROR_MESSAGE = `MAX_CHILD_ITEM_LIMIT reached, please contact support@plutomi.com for assistance`,
+  MAX_CHILD_ENTITY_LIMIT_ERROR_MESSAGE = `MAX_CHILD_ENTITY_LIMIT reached, please contact support@plutomi.com for assistance`,
   INVALID_DATE_ERROR = `The date you provided appears to be invalid`,
 }
 
@@ -153,6 +111,51 @@ export const SAFE_PROPERTIES = {
   STAGE: ["GSI1SK", "stageId", "createdAt", "questionOrder"],
   USER: ["userId", "orgId", "email", "firstName", "lastName", "GSI1SK"],
   OPENING: ["GSI1SK", "openingId", "createdAt", "stageOrder"],
+  APPLICANT_RESPONSE: ["PK", "SK"], // TODO fix - TS7053, just setting this for now so i can test the app lol
+  ORG_INVITE: ["PK", "SK"], // TODO same ^
+  STAGE_QUESTION: ["PK", "SK"], // TODO same ^
+  STAGE_RULE: ["PK", "SK"], // TODO same ^
+};
+
+/**
+ * Properties that cannot be updated no matter the entity type once created
+ */
+const GLOBAL_FORBIDDEN_PROPERTIES = [
+  "orgId",
+  "PK",
+  "SK",
+  "ttlExpiry",
+  "entityType",
+  "createdAt",
+];
+
+/**
+ * Properties that cannot be updated
+ */
+export const FORBIDDEN_PROPERTIES = {
+  USER: [
+    ...GLOBAL_FORBIDDEN_PROPERTIES,
+    "userRole", // TODO, only admins
+    "orgJoinDate",
+    "GSI1PK", // Org#EntityType
+    "GSI2PK", // Email
+  ],
+  APPLICANT: [
+    ...GLOBAL_FORBIDDEN_PROPERTIES,
+    "applicantId",
+    "GSI1PK",
+    "GSI1SK",
+    "GSI2PK",
+    "GSI2SK", // TODO, remove these when advancing / moving applicants!!!!!!!!!
+  ],
+  OPENING: [...GLOBAL_FORBIDDEN_PROPERTIES, "openingId", "GSI1PK"],
+  STAGE: [...GLOBAL_FORBIDDEN_PROPERTIES, "stageId", "openingId", "GSI1PK"],
+  STAGE_QUESTION: [
+    ...GLOBAL_FORBIDDEN_PROPERTIES,
+    "questionId",
+    "GSI1PK",
+    "stageId",
+  ],
 };
 
 export enum LOGIN_METHODS {

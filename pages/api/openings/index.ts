@@ -20,11 +20,13 @@ const handler = async (
         message: "Please create an organization before creating an opening",
       });
     }
+
     try {
       const createOpeningInput = {
         orgId: req.session.user.orgId,
         GSI1SK: GSI1SK,
       };
+
       const schema = Joi.object({
         GSI1SK: Joi.string(),
       }).options({ presence: "required" });

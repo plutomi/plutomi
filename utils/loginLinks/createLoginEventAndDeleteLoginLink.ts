@@ -31,19 +31,20 @@ export async function createLoginEventAndDeleteLoginLink(
     ttlExpiry: Time.futureUNIX(
       DEFAULTS.LOGIN_EVENT_RETENTION_PERIOD,
       TIME_UNITS.DAYS
-    ), // TODO ENUM for login retention period
+    ),
   };
 
   const newOrgLoginEvent = {
     // TODO types
     PK: `${ENTITY_TYPES.ORG}#${orgId}`,
     SK: `${ENTITY_TYPES.LOGIN_EVENT}#${now}`,
+    // TODO user info here
     // TODO in the future, get more the info about the login event such as IP, headers, device, etc.
     createdAt: now,
     ttlExpiry: Time.futureUNIX(
       DEFAULTS.LOGIN_EVENT_RETENTION_PERIOD,
       TIME_UNITS.DAYS
-    ), // TODO ENUM for login retention period
+    ),
   };
 
   try {

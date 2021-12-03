@@ -5,9 +5,7 @@ import { DynamoNewOpening } from "../../types/dynamo";
 import { GetAllOpeningsInOrgInput } from "../../types/main";
 const { DYNAMO_TABLE_NAME } = process.env;
 
-export async function getAllOpeningsInOrg(
-  props: GetAllOpeningsInOrgInput
-): Promise<DynamoNewOpening[]> {
+export async function getAllOpeningsInOrg(props: GetAllOpeningsInOrgInput) {
   const { orgId } = props;
   const params: QueryCommandInput = {
     TableName: DYNAMO_TABLE_NAME,
@@ -20,8 +18,9 @@ export async function getAllOpeningsInOrg(
 
   try {
     const response = await Dynamo.send(new QueryCommand(params));
-    return response.Items as DynamoNewOpening[];
+    return [response.Items, null];
   } catch (error) {
-    throw new Error(error);
+    console.error("error", error);
+    return [null, error];
   }
 }

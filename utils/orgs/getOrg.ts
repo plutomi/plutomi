@@ -1,3 +1,4 @@
+require("dotenv").config();
 import { GetCommand, GetCommandInput } from "@aws-sdk/lib-dynamodb";
 import { Dynamo } from "../../awsClients/ddbDocClient";
 import { ENTITY_TYPES } from "../../Config";
@@ -8,7 +9,7 @@ const { DYNAMO_TABLE_NAME } = process.env;
 /**
  * @param orgId
  */
-export async function getOrg(props: GetOrgInput): Promise<DynamoNewOrg> {
+export async function getOrg(props: GetOrgInput) {
   const { orgId } = props;
   const params: GetCommandInput = {
     TableName: DYNAMO_TABLE_NAME,
@@ -20,8 +21,9 @@ export async function getOrg(props: GetOrgInput): Promise<DynamoNewOrg> {
 
   try {
     const response = await Dynamo.send(new GetCommand(params));
-    return response.Item as DynamoNewOrg;
+    return [response.Item as DynamoNewOrg, null];
   } catch (error) {
-    throw new Error(error);
+    console.error("error", error);
+    return [null, error];
   }
 }

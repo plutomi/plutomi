@@ -4,7 +4,7 @@
 [![License](https://img.shields.io/github/license/plutomi/plutomi?style=flat-square)](#)
 [![All Contributors](https://img.shields.io/badge/all_contributors-2-blue.svg?style=flat-square)](#contributors-)
 
-> ⚠️ _WARNING_ ⚠️
+> ⚠️ :no*entry: \_WARNING* :no_entry: ⚠️
 >
 > _This project is **NOT** production ready and can change at any time. You **WILL** lose your data_ :)
 
@@ -28,33 +28,91 @@ Stage order:
 4. **Final Review** - Manually review an applicant's license for compliance
 5. **Ready to Drive** - Applicants that have completed your application
 
+## Motivation
+
+## Prerequisites
+
+- Install [Docker](https://docs.docker.com/get-docker/)
+- Create a [Hosted Zone](https://docs.aws.amazon.com/Route53/latest/DeveloperGuide/CreatingHostedZone.html) in Route53 with your domain
+- Create a [verified identity](https://docs.aws.amazon.com/ses/latest/DeveloperGuide/verify-domain-procedure.html) with your domain in SES
+- Create a [certificate for your domain](https://docs.aws.amazon.com/acm/latest/userguide/gs-acm-request-public.html#request-public-console) in AWS Certificate Manager
+
+> :point_up: Will try to add the Route53 / ACM / SES setup to CDK eventually [#390](https://github.com/plutomi/plutomi/issues/390)
+
+## Useful commands
+
+| Command      | Function                                                                         |
+| ------------ | -------------------------------------------------------------------------------- |
+| npm run dev  | Will start the NextJS frontend on port `3000` and the Express API on port `4000` |
+| npm run next | Will start NextJS only                                                           |
+| npm run api  | Will start the API only                                                          |
+| cdk deploy   | Will deploy the specified stack(s)                                               |
+| cdk destroy  | Will destroy the specified stack(s)                                              |
+| cdk synth    | Emits the synthesized CloudFormation template for the stack(s)                   |
+
+For more information on AWS CDK, please visit the [docs page](https://docs.aws.amazon.com/cdk/latest/guide/cli.html).
+
 ## Language & Tooling
 
 The project is 100% TypeScript. Would appreciate any assistance on types as we're definitely not the best :sweat_smile:
 
-We believe CDK to be the future and it's nice to have 'first-class' tooling directly from AWS. Therefore,
-**all architecture is managed by CDK**.
+Docker is used to run our Express API on Fargate.
 
-We use Docker to containerize our Nextjs app to be run on AWS Fargate.
+_ALL_ infrastructure is managed by AWS CDK.
 
-## Architecture
+## Infrastructure
 
-![infra](images/infra.png)
+![frontend](infra/Frontend.png)
 
-We will eventually move the front end to [Serverless-Nextjs](https://github.com/serverless-Nextjs/serverless-next.js) and lambda for background tasks such as queues, DynamoDB streams, email sending, etc. just not for the main API of the site. That is being migrated to an Express server at the moment.
+The frontend runs on the [CDK construct](https://serverless-nextjs.com/docs/cdkconstruct/) of the [Serverless-Nextjs](https://github.com/serverless-Nextjs/serverless-next.js) component. The reason being is we wanted everything managed by CDK and this provides an awesome way to do just that. The SLS component brings with it the Next API routes using Lambda but there are a couple of downsides (some of them are listed [here](https://github.com/plutomi/plutomi/issues/172)) and we won't be using them.
 
-## Useful commands
+![backend](infra/Backend.png)
 
-- `npm run dev` run the app locally
-- `npm run deploy` deploy the site - _Docker image is built and deployed by CDK automatically!_
-- `npm run destroy` destroy the site
-- `cdk diff` compare deployed stack with current state
-- `cdk synth` emits the synthesized CloudFormation template
+Typical 'monolith' express app on a soon to be ([#253](https://github.com/plutomi/plutomi/issues/253)) autoscaling cluster on Fargate.
 
-And other useful repos:
+We considered API Gateway + Lambda but we kept running into quirks that essentially wipe out all of the gains from "only focusing on business logic". Here is an example of a fun (4 year old) bug: [Unable to change parameter names in API Gateway without tearing it all down and rebuilding](https://github.com/serverless/serverless/issues/3785)! Another main complaint is local development, or lack there of. Or cold starts no matter how infrequent they might be. Or performance (we were getting consistently faster response times like in [this test by the folks at Trek10](https://www.trek10.com/blog/fargate-vs-lambda). Or cost at high throughput.. mainly API Gateway :sweat_smile:
+
+To be clear, we will still use lambda for background tasks such as queues, DynamoDB streams, email sending, etc. just not for the main API of the site. Fargate gives us the best of both worlds, and we're very happy with it!
+
+## DynamoDB Schema
+
+> Schema is subject to change but I will try to keep this updated as much as I can
+
+We're using a single table design for this project. If you're new to Dynamo, I recommend watching these talks by Alex DeBrie and Rick Houlihan first:
+
+- Alex DeBrie @ re:Invent 2020 - [Data modeling with Amazon DynamoDB – Part 1](https://www.youtube.com/watch?v=fiP2e-g-r4g)
+- Alex DeBrie @ re:Invent 2020 -[ Data modeling with Amazon DynamoDB – Part 2](https://www.youtube.com/watch?v=0uLF1tjI_BI)
+
+- Rick Houlihan @ re:invent 2018 - [Advanced Design Patterns for DynamoDB (DAT401)](https://www.youtube.com/watch?v=HaEPXoXVf2k)
+- Rick Houlihan @ re:invent 2019 - [Advanced design patterns for DynamoDB (DAT403-R1)](https://www.youtube.com/watch?v=6yqfmXiZTlM)
+
+Also, don't forget to buy **THE** [DynamoDB Book](https://www.dynamodbbook.com/) by Alex ;)
+
+To play around with the data model locally, you can download [NoSQL Workbench](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/workbench.settingup.html) and import the [NoSQLWorkbench.json](Schema/NoSQLWorkbench.json) file into it. You can even export the table to your AWS account and generate queries in Python, JavaScript, or Java.
+
+I've created [a spreadsheet](https://docs.google.com/spreadsheets/d/1KZMJt0X2J0s1v8_jz6JC7aiiwYW8qVV9pKWobQ5012Y/edit?usp=sharing) with access patterns and use cases if you prefer that. It helps to follow along with NoSQL Workbench on your own machine or you can view the pictures in the [Schema](./Schema) folder.
+
+You might have noticed that _some_(!) sort keys (SK, GSI1SK, GSI2SK) have the `ENTITY_TYPE` prefixed (e.g. `APPLICANT_FILE`). This is intentional and it's to retrieve these child items when doing a query on the parent.
+For example, if we want to retrieve an applicant, we might also want to retrieve their files, notes, and responses. We can do that with a single query: `PK = APPLICANT#{APPLICANT ID} and SK begins_with(APPLICANT)` :)
+
+Some partitions will [need to be sharded](https://youtu.be/6yqfmXiZTlM?t=884) in the future, especially for high RCU queries at scale (get all applicants in an org, in a stage, in an opening, all webhook history, etc.). I am not going to bother with this for now but it _is_ on my radar!
+
+Another thing to note is that Dynamo has a 400kb limit per item. This means that we do have to set _some_ limits, specifically around entities that can have their order re-arranged (`MAX_CHILD_ENTITY_LIMIT`). The limit is on the _parent_ entity, not the re-arrangeable entity itself. Things like stages in an opening or questions & rules in a stage are affected since we have to store their order in their parent item. In the real world, it is very unlikely to have hundreds of these entities under one parent so you are not likely to reach this limit.
+
+## Other useful repos:
 
 - [AWS ECS Patterns](https://github.com/aws/aws-cdk/tree/master/packages/%40aws-cdk/aws-ecs-patterns)
 - [Serverless CDK Patterns](https://github.com/cdk-patterns/serverless)
+
+## Common errors
+
+> Argument of type 'this' is not assignable to parameter of type 'Construct'
+
+Make sure all of your `@aws-cdk/*` dependencies are running the same version + make sure whatever you are using in the construct is actually being imported at the top of the file
+
+> ERROR [internal] load metadata for public.ecr.aws/sam/build-nodejs
+
+Try running this command: `aws ecr-public get-login-password --region us-east-1 | docker login --username AWS --password-stdin public.ecr.aws/sam/build-nodejs`
 
 ## Contributing
 
@@ -76,8 +134,6 @@ Example: _:bug: fix: Removed the double modals popping up on login_
 ## License
 
 This project is licensed under the `GNU AGPLv3` license. It can be viewed [here](https://choosealicense.com/licenses/agpl-3.0/) or in the [LICENSE.md](LICENSE.md) file.
-
----
 
 For any questions, please submit an issue or email contact@plutomi.com!
 

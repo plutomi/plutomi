@@ -3,67 +3,44 @@ import { Dynamo } from "../../awsClients/ddbDocClient";
 import { ENTITY_TYPES, DEFAULTS } from "../../Config";
 import { DynamoNewUser } from "../../types/dynamo";
 import { UpdateUserInput } from "../../types/main";
-
+import { FORBIDDEN_PROPERTIES } from "../../Config";
 const { DYNAMO_TABLE_NAME } = process.env;
 
 export async function updateUser(
   props: UpdateUserInput
 ): Promise<DynamoNewUser> {
   const { userId, newUserValues, ALLOW_FORBIDDEN_KEYS } = props;
+
+  // Build update expression
+  let allUpdateExpressions: string[] = [];
+  let allAttributeValues: any = {};
+
   try {
-    // TODO user the cleaning functions instead
-    const FORBIDDEN_KEYS = [
-      "PK",
-      "SK",
-      "orgId",
-      "entityType",
-      "createdAt",
-      "openingId",
-      "GSI1PK",
-      "GSI2PK",
-      "userRole",
-      "orgJoinDate",
-    ];
+    for (const property in newUserValues) {
+      // If updating forbidden keys is banned, filter these keys out
+      if (
+        !ALLOW_FORBIDDEN_KEYS &&
+        FORBIDDEN_PROPERTIES.STAGE.includes(property)
+      ) {
+        delete newUserValues[property];
+      }
+      // If its a valid property, start creating the new update expression
+      // Push each property into the update expression
+      allUpdateExpressions.push(`${property} = :${property}`);
 
-    const incomingKeys = Object.keys(newUserValues);
-    let newKeys = ALLOW_FORBIDDEN_KEYS
-      ? incomingKeys
-      : incomingKeys.filter((key) => !FORBIDDEN_KEYS.includes(key));
-
-    let newUpdateExpression: string[] = [];
-    let newAttributes: any = {};
-
-    newKeys.forEach((key) => {
-      newUpdateExpression.push(`${key} = :${key}`);
-      newAttributes[`:${key}`] = newUserValues[key];
-    });
-
-    // TODO refactor this into its own function, easy way to have banned values
-    const bannedKeys = [
-      DEFAULTS.FIRST_NAME,
-      DEFAULTS.LAST_NAME,
-      DEFAULTS.FULL_NAME,
-    ];
-
-    // @ts-ignore TODO fix types
-    const checker = (value) =>
-      bannedKeys.some((element) => value.includes(element));
-
-    const matching = Object.values(newAttributes).filter(checker);
-    if (matching.length > 0) {
-      throw `Invalid values: ${matching}`;
+      // Create values for each attribute
+      allAttributeValues[`:${property}`] = newUserValues[property];
     }
 
-    const NewUpdateExpression = `SET ${newUpdateExpression.join(", ")}`;
     const params: UpdateCommandInput = {
       Key: {
         PK: `${ENTITY_TYPES.USER}#${userId}`,
         SK: ENTITY_TYPES.USER,
       },
-      UpdateExpression: NewUpdateExpression,
-      ExpressionAttributeValues: newAttributes,
-      TableName: DYNAMO_TABLE_NAME,
       ReturnValues: "ALL_NEW",
+      UpdateExpression: `SET ` + allUpdateExpressions.join(", "),
+      ExpressionAttributeValues: allAttributeValues,
+      TableName: DYNAMO_TABLE_NAME,
       ConditionExpression: "attribute_exists(PK)",
     };
 

@@ -8,8 +8,7 @@ import { API_METHODS, ENTITY_TYPES, DEFAULTS } from "../../../../Config";
 import withAuth from "../../../../middleware/withAuth";
 import withValidMethod from "../../../../middleware/withValidMethod";
 import { CUSTOM_QUERY } from "../../../../types/main";
-import clean from "../../../../utils/clean";
-
+import Sanitize from "../../../../utils/sanitize";
 const handler = async (
   req: NextApiRequest,
   res: NextApiResponse
@@ -28,7 +27,6 @@ const handler = async (
   }
 
   if (method === API_METHODS.POST) {
-    // TODO disallow orgId's by this name
     if (req.session.user.orgId != DEFAULTS.NO_ORG) {
       return res.status(400).json({
         message: `You already belong to an org: ${req.session.user.orgId}`,
@@ -42,7 +40,7 @@ const handler = async (
         userId: req.session.user.userId,
       });
 
-      req.session.user = clean(updatedUser, ENTITY_TYPES.USER);
+      req.session.user = Sanitize.clean(updatedUser, ENTITY_TYPES.USER);
       await req.session.save();
       return res
         .status(200)

@@ -86,7 +86,7 @@ export default function Main({ commits }) {
 }
 
 export async function getStaticProps() {
-  const commitsFromEachBranch = 100;
+  const commitsFromEachBranch = 25;
   let allCommits = [];
   const { data } = await axios.get(
     `https://api.github.com/repos/plutomi/plutomi/branches?u=joswayski`
