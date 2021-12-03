@@ -3,7 +3,8 @@ import express from "express";
 import helmet from "helmet";
 import cors from "cors";
 import * as Middleware from "./newMiddleware";
-import * as publicInfo from "./APIControllers/publicInfo";
+import * as PublicInfo from "./APIControllers/PublicInfo";
+import * as Auth from "./APIControllers/auth";
 import { info } from "./APIControllers/APIInfo";
 import listEndpoints from "express-list-endpoints";
 
@@ -17,21 +18,28 @@ app.use(helmet());
 // Return an org's public info
 app
   .route("/public/:orgId")
-  .get([Middleware.cleanOrgId], publicInfo.getOrgInfo)
+  .get([Middleware.cleanOrgId], PublicInfo.getOrgInfo)
   .all(Middleware.methodNotAllowed);
 
 // Return all public openings for an org
 app
   .route("/public/:orgId/openings")
-  .get([Middleware.cleanOrgId], publicInfo.getOrgOpenings)
+  .get([Middleware.cleanOrgId], PublicInfo.getOrgOpenings)
   .all(Middleware.methodNotAllowed);
 
 // Return public info for an opening
 app
   .route("/public/:orgId/openings/:openingId")
-  .get([Middleware.cleanOrgId], publicInfo.getSingleOrgOpening)
+  .get([Middleware.cleanOrgId], PublicInfo.getSingleOrgOpening)
   .all(Middleware.methodNotAllowed);
 
+app
+  .route("/auth/login")
+  .post(Auth.createLoginLink)
+  .get(Auth.login)
+  .all(Middleware.methodNotAllowed);
+
+// DO NOT TOUCH :)
 const endpoints = listEndpoints(app);
 app.set("endpoints", endpoints);
 // Healthcheck & Info
