@@ -21,7 +21,7 @@ const handler = async (
   if (method === API_METHODS.GET) {
     // When signed in, this returns all data for an org
     // For public org data such as basic info or openings, please use the
-    // /api/public/orgs/[orgId] route
+    // public/orgs/[orgId] route
 
     if (orgId != req.session.user.orgId) {
       return res

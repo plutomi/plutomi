@@ -9,14 +9,14 @@ export default class AuthService {
     };
 
     const { data } = await axios.post(
-      `/api/auth/login?callbackUrl=${callbackUrl}`,
+      `/auth/login?callbackUrl=${callbackUrl}`,
       body
     );
     return data;
   }
 
   static async logout() {
-    const { data } = await axios.post(`/api/auth/logout`);
+    const { data } = await axios.post(`/auth/logout`);
     return data;
   }
 }

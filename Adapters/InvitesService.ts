@@ -5,23 +5,23 @@ export default class InvitesService {
     const body = {
       recipientEmail: recipientEmail,
     };
-    const { data } = await axios.post(`/api/invites`, body);
+    const { data } = await axios.post(`/invites`, body);
     return data;
   }
 
   static async acceptInvite(inviteId) {
-    const { data } = await axios.post(`/api/invites/${inviteId}`);
+    const { data } = await axios.post(`/invites/${inviteId}`);
 
     return data;
   }
 
   static async rejectInvite(inviteId) {
-    const { data } = await axios.delete(`/api/invites/${inviteId}`);
+    const { data } = await axios.delete(`/invites/${inviteId}`);
     return data;
   }
 
   static getInvitesURL(userId) {
-    return `/api/users/${userId}/invites`;
+    return `/users/${userId}/invites`;
   }
 
   static async getAllInvites(userId) {

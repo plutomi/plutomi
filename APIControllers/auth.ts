@@ -1,11 +1,15 @@
-import { EMAILS, ENTITY_TYPES, LOGIN_METHODS, TIME_UNITS } from "../Config";
-import { getOrg } from "../utils/orgs/getOrg";
+import {
+  DEFAULTS,
+  EMAILS,
+  ENTITY_TYPES,
+  LOGIN_METHODS,
+  TIME_UNITS,
+} from "../Config";
 import { Request, Response } from "express";
 import Sanitize from "../utils/sanitize";
-import { getAllOpeningsInOrg } from "../utils/openings/getAllOpeningsInOrg";
-import { getOpening } from "../utils/openings/getOpeningById";
-import { sealData } from "iron-session";
+import { sealData, unsealData } from "iron-session";
 import Joi from "joi";
+import { getUserById } from "../utils/users/getUserById";
 import { nanoid } from "nanoid";
 import { getLatestLoginLink } from "../utils/loginLinks/getLatestLoginLink";
 import sendEmail from "../utils/sendEmail";
@@ -14,19 +18,84 @@ import { createUser } from "../utils/users/createUser";
 import { getUserByEmail } from "../utils/users/getUserByEmail";
 import createLoginLink from "../utils/loginLinks/createLoginLink";
 import { CUSTOM_QUERY } from "../types/main";
-
+import { getOrgInvitesForUser } from "../utils/invites/getOrgInvitesForUser";
+import { createLoginEventAndDeleteLoginLink } from "../utils/loginLinks/createLoginEventAndDeleteLoginLink";
 const ironPassword = process.env.IRON_SEAL_PASSWORD;
 
 export const ironOptions = {
   password: ironPassword,
-  ttl: 60 * 15, // Seal will be valid for 15 minutes // TODO test seal
+  ttl: 60 * 15,
 };
 
-// export const createLoginLink = async (req: Request, res: Response) => {}; // TODO change this name
-
 export const login = async (req: Request, res: Response) => {
+  const { callbackUrl, seal } = req.query as Pick<
+    CUSTOM_QUERY,
+    "callbackUrl" | "userId" | "seal"
+  >;
+
+  if (!seal) {
+    return res.status(400).json({ message: "Invalid seal" });
+  }
+
+  console.log("Incoming req", req.query);
+  // Validates the login link when clicked
+  const { userId, loginLinkId }: { userId: string; loginLinkId: string } =
+    await unsealData(
+      // TODO types, // TODO try catch
+      seal,
+      ironOptions
+    );
+
+  // If the link expired, these will be undefined
+  if (!userId || !loginLinkId) {
+    return res.status(401).json({ message: "Your link is invalid" });
+  }
+
+  const user = await getUserById({ userId }); // TODO async
+
+  if (!user) {
+    return res
+      .status(401) // I dont know in what situation this would happen, but just in case.. we need the user's orgId anyway
+      .json({ message: "Invalid userId, please login again" });
+  }
+
+  const userOrg = user.orgId !== DEFAULTS.NO_ORG ?? user.orgId;
+  await createLoginEventAndDeleteLoginLink({
+    loginLinkId,
+    userId,
+    orgId: userOrg,
+  });
+
+  const cleanedUser = Sanitize.clean(user, ENTITY_TYPES.USER);
+  req.session.user = cleanedUser;
+
+  /**
+   * Get the user's org invites, if any, if they're not in an org.
+   * The logic here being, if a user is in an org, what are the chances they're going to join another?
+   *  TODO maybe revisit this?
+   */
+  let userInvites = []; // TODO types array of org invite
+  if (req.session.user.orgId === DEFAULTS.NO_ORG) {
+    userInvites = await getOrgInvitesForUser({
+      userId: req.session.user.userId,
+    });
+  }
+  req.session.user.totalInvites = userInvites.length;
+  await req.session.save();
+
+  // If a user has invites, redirect them to the invites page on login
+  if (req.session.user.totalInvites > 0) {
+    res.redirect(`${process.env.NEXT_PUBLIC_WEBSITE_URL}/invites`);
+    return;
+  }
+
+  res.redirect(307, callbackUrl);
+  return;
+};
+
+export const createLoginLinks = async (req: Request, res: Response) => {
   const { email, loginMethod } = req.body;
-  const { seal, callbackUrl } = req.query as Pick<
+  const { callbackUrl } = req.query as Pick<
     CUSTOM_QUERY,
     "callbackUrl" | "userId" | "seal"
   >;
@@ -93,7 +162,7 @@ export const login = async (req: Request, res: Response) => {
       const defaultRedirect = `${process.env.NEXT_PUBLIC_WEBSITE_URL}/dashboard`;
       const loginLink = `${
         process.env.NEXT_PUBLIC_WEBSITE_URL
-      }/api/auth/login?seal=${seal}&callbackUrl=${
+      }auth/login?seal=${seal}&callbackUrl=${
         callbackUrl ? callbackUrl : defaultRedirect
       }`;
 
@@ -102,6 +171,7 @@ export const login = async (req: Request, res: Response) => {
         return res.status(200).json({ message: loginLink });
       }
 
+      // TODO TRY CATCH HELL LOL
       try {
         await sendEmail({
           fromName: "Plutomi",

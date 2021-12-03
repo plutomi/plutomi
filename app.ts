@@ -33,7 +33,11 @@ app
   .get([Middleware.cleanOrgId], PublicInfo.getSingleOrgOpening)
   .all(Middleware.methodNotAllowed);
 
-app.route("/auth/login").get(Auth.login).all(Middleware.methodNotAllowed);
+app
+  .route("/auth/login")
+  .get(Auth.login)
+  .post(Auth.createLoginLinks)
+  .all(Middleware.methodNotAllowed);
 
 // DO NOT TOUCH :)
 const endpoints = listEndpoints(app);
