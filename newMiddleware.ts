@@ -7,13 +7,12 @@ export const methodNotAllowed = (
   req: Request,
   res: Response,
   next: NextFunction
-) => res.status(405).send();
+) => res.status(405).json({ message: "Method not allowed" });
 export const routeNotFound = (
   req: Request,
   res: Response,
   next: NextFunction
-) => res.status(404).send();
-// Switch the above to return res.status(NUMBER).json({message: "error name ^"})
+) => res.status(404).json({ message: "Not found" });
 
 export const cleanOrgId = (req: Request, res: Response, next: NextFunction) => {
   /**
