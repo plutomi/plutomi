@@ -143,7 +143,7 @@ export default class APIStack extends cdk.Stack {
     const scalableTarget =
       loadBalancedFargateService.service.autoScaleTaskCount({
         minCapacity: 1,
-        maxCapacity: 4,
+        maxCapacity: 1,
       });
 
     scalableTarget.scaleOnCpuUtilization("CpuScaling", {
