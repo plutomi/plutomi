@@ -74,7 +74,7 @@ The frontend runs on the [CDK construct](https://serverless-nextjs.com/docs/cdkc
 
 ![backend](infra/Backend.png)
 
-Typical 'monolith' express app on a soon to be ([#253](https://github.com/plutomi/plutomi/issues/253)) autoscaling cluster on Fargate.
+Typical 'monolith' express app on an autoscaling Fargate cluster.
 
 We considered API Gateway + Lambda but we kept running into quirks that essentially wipe out all of the gains from "only focusing on business logic". Here is an example of a fun (4 year old) bug: [Unable to change parameter names in API Gateway without tearing the route down and redeploying](https://github.com/serverless/serverless/issues/3785)! Another main complaint is local development, or lack there of. Or cold starts no matter how infrequent they might be. Or performance (we were getting consistently faster response times like in [this test by the folks at Trek10](https://www.trek10.com/blog/fargate-vs-lambda)). Or cost at high throughput.. mainly API Gateway :sweat_smile:
 

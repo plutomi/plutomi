@@ -121,17 +121,37 @@ export default class APIStack extends cdk.Stack {
     );
 
     // Create a load-balanced Fargate service and make it public with HTTPS traffic only
-    new ecsPatterns.ApplicationLoadBalancedFargateService(this, "PlutomiApi", {
-      cluster: cluster, // Required
-      desiredCount: 1, // Default is 1
-      taskDefinition: taskDefinition,
-      publicLoadBalancer: true, // Default is false
-      domainName: DOMAIN_NAME,
-      domainZone: hostedZone,
-      listenerPort: 443,
-      protocol: protocol.ApplicationProtocol.HTTPS,
-      redirectHTTP: true,
-      assignPublicIp: true, // TODO revisit this
+    const loadBalancedFargateService =
+      new ecsPatterns.ApplicationLoadBalancedFargateService(
+        this,
+        "PlutomiApi",
+        {
+          cluster: cluster, // Required
+          desiredCount: 1, // Default is 1
+          taskDefinition: taskDefinition,
+          publicLoadBalancer: true, // Default is false
+          domainName: DOMAIN_NAME,
+          domainZone: hostedZone,
+          listenerPort: 443,
+          protocol: protocol.ApplicationProtocol.HTTPS,
+          redirectHTTP: true,
+          assignPublicIp: true, // TODO revisit this
+        }
+      );
+
+    // Auto scaling
+    const scalableTarget =
+      loadBalancedFargateService.service.autoScaleTaskCount({
+        minCapacity: 1,
+        maxCapacity: 4,
+      });
+
+    scalableTarget.scaleOnCpuUtilization("CpuScaling", {
+      targetUtilizationPercent: 50,
+    });
+
+    scalableTarget.scaleOnMemoryUtilization("MemoryScaling", {
+      targetUtilizationPercent: 50,
     });
   }
 }
