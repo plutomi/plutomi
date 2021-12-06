@@ -22,11 +22,14 @@ import { getOrgInvitesForUser } from "../utils/invites/getOrgInvitesForUser";
 import { createLoginEventAndDeleteLoginLink } from "../utils/loginLinks/createLoginEventAndDeleteLoginLink";
 const ironPassword = process.env.IRON_SEAL_PASSWORD;
 
-export const ironOptions = {
+const ironOptions = {
   password: ironPassword,
   ttl: 60 * 15,
 };
 
+export const session = async (req: Request, res: Response) => {
+  return res.status(200).json({ message: req.session });
+};
 export const login = async (req: Request, res: Response) => {
   const { callbackUrl, seal } = req.query as Pick<
     CUSTOM_QUERY,
@@ -37,7 +40,6 @@ export const login = async (req: Request, res: Response) => {
     return res.status(400).json({ message: "Invalid seal" });
   }
 
-  console.log("Incoming req", req.query);
   // Validates the login link when clicked
   const { userId, loginLinkId }: { userId: string; loginLinkId: string } =
     await unsealData(
@@ -46,12 +48,15 @@ export const login = async (req: Request, res: Response) => {
       ironOptions
     );
 
+  console.log("user ID", userId);
+  console.log("login link id", loginLinkId);
+
   // If the link expired, these will be undefined
   if (!userId || !loginLinkId) {
     return res.status(401).json({ message: "Your link is invalid" });
   }
 
-  const user = await getUserById({ userId }); // TODO async
+  const user = await getUserById({ userId }); // TODO async error handling
 
   if (!user) {
     return res
@@ -66,9 +71,8 @@ export const login = async (req: Request, res: Response) => {
     orgId: userOrg,
   });
 
-  const cleanedUser = Sanitize.clean(user, ENTITY_TYPES.USER);
+  const cleanedUser = Sanitize.clean(user, ENTITY_TYPES.USER); // TODO not working!
   req.session.user = cleanedUser;
-
   /**
    * Get the user's org invites, if any, if they're not in an org.
    * The logic here being, if a user is in an org, what are the chances they're going to join another?
@@ -106,6 +110,7 @@ export const createLoginLinks = async (req: Request, res: Response) => {
     loginMethod: loginMethod,
   };
 
+  console.log("creating login link input", createLoginLinkInput);
   const schema = Joi.object({
     email: Joi.string().email(),
     loginMethod: Joi.string().valid(LOGIN_METHODS.GOOGLE, LOGIN_METHODS.LINK),
@@ -119,10 +124,12 @@ export const createLoginLinks = async (req: Request, res: Response) => {
   }
 
   let user = await getUserByEmail({ email });
-
+  console.log("Creating login link, user is ", user);
   if (!user) {
+    console.log("Creating user");
     user = await createUser({ email });
   }
+  console.log("user created", user);
 
   try {
     const latestLink = await getLatestLoginLink({
@@ -203,4 +210,7 @@ export const createLoginLinks = async (req: Request, res: Response) => {
   }
 };
 
-export const logout = async (req: Request, res: Response) => {};
+export const logout = async (req: Request, res: Response) => {
+  req.session.destroy();
+  return res.status(200).json({ message: "You've been logged out" });
+};

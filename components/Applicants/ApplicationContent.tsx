@@ -4,7 +4,7 @@ import Loader from "../Loader";
 import { useState } from "react";
 import useAllStageQuestions from "../../SWR/useAllStageQuestions";
 import { nanoid } from "nanoid";
-import axios from "axios";
+import axios from "../axios";
 import ApplicantsService from "../../Adapters/ApplicantsService";
 import { CUSTOM_QUERY } from "../../types/main";
 export default function ApplicationContent() {

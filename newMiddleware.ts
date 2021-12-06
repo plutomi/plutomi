@@ -18,6 +18,7 @@ export const cleanOrgId = (req: Request, res: Response, next: NextFunction) => {
   /**
    * Makes the orgId, whether in the url params or in the body, have a specific, URL Safe, format
    */
+
   if (req.body.orgId) {
     req.body.orgId = tagGenerator.generate(req.body.orgId);
   }

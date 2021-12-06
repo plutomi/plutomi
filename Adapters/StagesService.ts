@@ -1,4 +1,4 @@
-import axios from "axios";
+import axios from "../axios";
 
 export default class StagesService {
   static async createStage(GSI1SK, openingId) {

@@ -14,9 +14,7 @@ Plutomi is an [applicant tracking system](https://en.wikipedia.org/wiki/Applican
 
 ## Motivation
 
-Having worked at a company that needed to recruit thousands of contractors every month, implementing custom processes in our acquisition flow was challening. This would be things like address validation, cloning openings and stages, duplicate applicant detection, automatically engaging leads based on our forecasts, programmable applicant routing logic, automatically closing texts that didn't require a response, intraday queues for applicant actions, simpler PII scrubbing for third party integrations, more customizability of opening and stage styling, and many more.
-
-It would have benefited us to have an open platform to contribute to and build upon, as well as one where we didn't have to continuously tip toe around performance limits. This project is our attempt to do just that.
+Having worked at a company that needed to recruit thousands of contractors every month, implementing custom processes in our acquisition flow was challening. It would have benefited us to have an open platform to contribute to and build upon, as well as one where we didn't have to continuously tip toe around performance limits. This project is our attempt to do just that.
 
 ## Summary
 
@@ -101,7 +99,7 @@ I've created [a spreadsheet](https://docs.google.com/spreadsheets/d/1KZMJt0X2J0s
 You might have noticed that _some_(!) sort keys (SK, GSI1SK, GSI2SK) have the `ENTITY_TYPE` prefixed (e.g. `APPLICANT_FILE`). This is intentional and it's to retrieve these child items when doing a query on the parent.
 For example, if we want to retrieve an applicant, we might also want to retrieve their files, notes, and responses. We can do that with a single query: `PK = APPLICANT#{APPLICANT ID} and SK begins_with(APPLICANT)` :)
 
-Some partitions will [need to be sharded](https://youtu.be/6yqfmXiZTlM?t=884) in the future, especially for high RCU queries at scale (get all applicants in an org, in a stage, in an opening, all webhook history, etc.). I am not going to bother with this for now but it _is_ on my radar!
+Some partitions will [need to be sharded](https://youtu.be/6yqfmXiZTlM?t=884) in the future, especially for high RCU queries at scale (get all applicants in an org, in a stage, in an opening, all webhook history, etc.). I am not going to bother with this for now but it _is_ on my radar! You can read more about good partition keys [here](https://aws.amazon.com/blogs/database/choosing-the-right-dynamodb-partition-key/).
 
 Another thing to note is that Dynamo has a 400kb limit per item. This means that we do have to set _some_ limits, specifically around entities that can have their order re-arranged (`MAX_CHILD_ENTITY_LIMIT`). The limit is on the _parent_ entity, not the re-arrangeable entity itself. Things like stages in an opening or questions & rules in a stage are affected since we have to store their order in their parent item. In practice, even at millions of applicants, it is very unlikely to have hundreds of these entities under one parent.
 

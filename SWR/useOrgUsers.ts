@@ -1,4 +1,4 @@
-import axios from "axios";
+import axios from "../axios";
 import useSWR from "swr";
 import OrgsService from "../Adapters/OrgsService";
 const fetcher = (url: string) => axios.get(url).then((res) => res.data);
