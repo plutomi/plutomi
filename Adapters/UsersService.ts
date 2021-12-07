@@ -1,8 +1,8 @@
-import axios from "../axios/axios";
+import axios from "../axios";
 
 export default class UsersService {
   static getSelfURL() {
-    return `/api/users/self`;
+    return `/users/self`;
   }
   static async getSelf() {
     const { data } = await axios.get(this.getSelfURL());
@@ -10,7 +10,7 @@ export default class UsersService {
   }
 
   static getSpecificUserURL(userId) {
-    return `/api/users/${userId}`;
+    return `/users/${userId}`;
   }
   static async getSpecificUser(userId) {
     const { data } = await axios.get(this.getSpecificUserURL(userId));

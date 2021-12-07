@@ -9,6 +9,7 @@ import withAuth from "../../../middleware/withAuth";
 import withValidMethod from "../../../middleware/withValidMethod";
 import sendEmail from "../../../utils/sendEmail";
 import Joi from "joi";
+import { getUserByEmail } from "../../../utils/users/getUserByEmail";
 const UrlSafeString = require("url-safe-string"),
   tagGenerator = new UrlSafeString();
 
@@ -19,7 +20,7 @@ const handler = async (
   const { body, method } = req;
   const { recipientEmail } = body; // todo trim and lowercase this email
   const expiresAt = Time.futureISO(3, TIME_UNITS.DAYS);
-  const org = await getOrg({ orgId: req.session.user.orgId });
+  const org = await getOrg({ orgId: req.session.user.orgId }); // TODO fix this type
 
   if (method === API_METHODS.POST) {
     // TODO add types
@@ -46,8 +47,11 @@ const handler = async (
       });
     }
 
-    // Creates the user
-    const recipient = await createUser({ email: recipientEmail });
+    let recipient = await getUserByEmail({ email: recipientEmail });
+
+    if (!recipient) {
+      recipient = await createUser({ email: recipientEmail });
+    }
 
     try {
       await createOrgInvite({

@@ -57,7 +57,7 @@ export async function createStage(props: CreateStageInput): Promise<void> {
             Update: {
               Key: {
                 PK: `${ENTITY_TYPES.ORG}#${orgId}#${ENTITY_TYPES.OPENING}#${openingId}`,
-                SK: `${ENTITY_TYPES.OPENING}`,
+                SK: ENTITY_TYPES.OPENING,
               },
               TableName: DYNAMO_TABLE_NAME,
 
@@ -75,7 +75,7 @@ export async function createStage(props: CreateStageInput): Promise<void> {
             Update: {
               Key: {
                 PK: `${ENTITY_TYPES.ORG}#${orgId}`,
-                SK: `${ENTITY_TYPES.ORG}`,
+                SK: ENTITY_TYPES.ORG,
               },
               TableName: DYNAMO_TABLE_NAME,
               UpdateExpression:

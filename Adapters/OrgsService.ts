@@ -1,4 +1,4 @@
-import axios from "../axios/axios";
+import axios from "../axios";
 
 export default class OrgsService {
   static async createOrg(GSI1SK, orgId) {
@@ -7,13 +7,13 @@ export default class OrgsService {
       orgId: orgId,
     };
 
-    const { data } = await axios.post(`/api/orgs`, body);
+    const { data } = await axios.post(`/orgs`, body);
     console.log("Data", data);
     return data;
   }
 
   static getOrgURL(orgId) {
-    return `/api/orgs/${orgId}`;
+    return `/orgs/${orgId}`;
   }
   static async getOrg(orgId) {
     const { data } = await axios.get(this.getOrgURL(orgId));
@@ -26,7 +26,7 @@ export default class OrgsService {
   }
 
   static getAllUsersInOrgURL(orgId) {
-    return `/api/orgs/${orgId}/users`;
+    return `/orgs/${orgId}/users`;
   }
 
   static async getAllUsersInOrg(orgId) {

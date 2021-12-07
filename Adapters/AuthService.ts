@@ -1,5 +1,4 @@
-import axios from "../axios/axios";
-
+import axios from "../axios";
 export default class AuthService {
   // TODO types
   static async login(email, callbackUrl, loginMethod) {
@@ -9,14 +8,14 @@ export default class AuthService {
     };
 
     const { data } = await axios.post(
-      `/api/auth/login?callbackUrl=${callbackUrl}`,
+      `/auth/login?callbackUrl=${callbackUrl}`,
       body
     );
     return data;
   }
 
   static async logout() {
-    const { data } = await axios.post(`/api/auth/logout`);
+    const { data } = await axios.post(`/auth/logout`);
     return data;
   }
 }

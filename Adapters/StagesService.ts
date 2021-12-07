@@ -1,4 +1,4 @@
-import axios from "../axios/axios";
+import axios from "../axios";
 
 export default class StagesService {
   static async createStage(GSI1SK, openingId) {
@@ -7,12 +7,12 @@ export default class StagesService {
       openingId: openingId,
     };
 
-    const { data } = await axios.post(`/api/stages`, body);
+    const { data } = await axios.post(`/stages`, body);
     return data;
   }
 
   static getStageURL(stageId) {
-    return `/api/stages/${stageId}`;
+    return `/stages/${stageId}`;
   }
   static async getStage(stageId) {
     const { data } = await axios.get(this.getStageURL(stageId));
@@ -33,7 +33,7 @@ export default class StagesService {
   }
 
   static getAllQuestionsInStageURL(stageId) {
-    return `/api/stages/${stageId}/questions`;
+    return `/stages/${stageId}/questions`;
   }
 
   static async getAllQuestionsInStage(stageId) {
@@ -42,7 +42,7 @@ export default class StagesService {
   }
 
   static getAllApplicantsInStageURL(stageId) {
-    return `/api/stages/${stageId}/applicants`;
+    return `/stages/${stageId}/applicants`;
   }
 
   static async getAllApplicantsInStage(stageId) {

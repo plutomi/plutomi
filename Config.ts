@@ -1,4 +1,5 @@
-import Time from "./utils/time";
+import { ironSession } from "iron-session/express";
+
 export enum API_METHODS {
   GET = "GET",
   POST = "POST",
@@ -19,6 +20,15 @@ export const ENTITY_TYPES = {
   LOGIN_LINK: "LOGIN_LINK",
   LOGIN_EVENT: "LOGIN_EVENT",
 };
+
+export const sessionSettings = ironSession({
+  cookieName: "test",
+  password:
+    "UnhandledPromiseRejectionWarning: Error: iron-session: Bad usage. Password must be at least 32 characters long.",
+  cookieOptions: {
+    secure: process.env.NODE_ENV === "production",
+  },
+});
 
 export enum TIME_UNITS {
   MILLISECONDS = "milliseconds",

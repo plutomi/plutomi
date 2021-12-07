@@ -39,7 +39,7 @@ export async function deleteOpening(props: DeleteOpeningInput): Promise<void> {
           Delete: {
             Key: {
               PK: `${ENTITY_TYPES.ORG}#${orgId}#${ENTITY_TYPES.OPENING}#${openingId}`,
-              SK: `${ENTITY_TYPES.OPENING}`,
+              SK: ENTITY_TYPES.OPENING,
             },
             TableName: DYNAMO_TABLE_NAME,
           },
@@ -49,7 +49,7 @@ export async function deleteOpening(props: DeleteOpeningInput): Promise<void> {
           Update: {
             Key: {
               PK: `${ENTITY_TYPES.ORG}#${orgId}`,
-              SK: `${ENTITY_TYPES.ORG}`,
+              SK: ENTITY_TYPES.ORG,
             },
             TableName: DYNAMO_TABLE_NAME,
             UpdateExpression: "SET totalOpenings = totalOpenings - :value",

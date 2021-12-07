@@ -37,6 +37,7 @@ export default function LoginHomepage({ callbackUrl }: CallbackUrl) {
       setSubmittedText(message);
       setEmailSubmitted(true);
     } catch (error) {
+      console.log(error);
       alert(error.response.data.message);
     }
   };

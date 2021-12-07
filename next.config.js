@@ -1,6 +1,7 @@
 module.exports = {
   reactStrictMode: true,
   env: {
+    NEXT_PUBLIC_API_URL: process.env.API_URL || `http://localhost:4000`,
     NEXT_PUBLIC_WEBSITE_URL: process.env.WEBSITE_URL || `http://localhost:3000`, // The url of your website ie `https://plutomi.com`
     DYNAMO_TABLE_NAME: process.env.DYNAMO_TABLE_NAME, // Name of your Dynamo table
     NEXT_PUBLIC_GOOGLE_CLIENT_ID: process.env.GOOGLE_CLIENT_ID, // Client ID for sign in with google

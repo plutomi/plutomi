@@ -1,4 +1,4 @@
-import axios from "../axios/axios";
+import axios from "../axios";
 
 export default class QuestionsService {
   static async createQuestion(GSI1SK, stageId, questionDescription) {
@@ -8,12 +8,12 @@ export default class QuestionsService {
       questionDescription: questionDescription,
     };
 
-    const { data } = await axios.post(`/api/questions`, body);
+    const { data } = await axios.post(`/questions`, body);
     return data;
   }
 
   static getQuestionURL(questionId) {
-    return `/api/questions/${questionId}`;
+    return `/questions/${questionId}`;
   }
   static async getQuestion(questionId) {
     const { data } = await axios.get(this.getQuestionURL(questionId));

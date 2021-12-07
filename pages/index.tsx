@@ -4,10 +4,11 @@ import LoginHomepage from "../components/LoginHomepage";
 import UseCases from "../components/UseCases";
 import Hero from "../components/Static/Hero";
 import useSelf from "../SWR/useSelf";
-import axios from "axios";
+import axios from "../axios";
 import { ChevronRightIcon, MailIcon } from "@heroicons/react/outline";
 import _ from "lodash";
 import Time from "../utils/time";
+import { nanoid } from "nanoid";
 export default function Main({ commits }) {
   const { user, isUserLoading, isUserError } = useSelf();
   return (
@@ -30,7 +31,7 @@ export default function Main({ commits }) {
         >
           {commits.map((commit) => (
             <li
-              key={commit.email}
+              key={nanoid(15)}
               className="transition ease-in-out duration-200 hover:bg-blue-gray-50"
             >
               <a href={commit.url} className="block hover:bg-gray-50">

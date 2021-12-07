@@ -1,4 +1,4 @@
-import axios from "../axios/axios";
+import axios from "../axios";
 
 export default class OpeningsService {
   static async createOpening(GSI1SK) {
@@ -6,12 +6,12 @@ export default class OpeningsService {
       GSI1SK: GSI1SK,
     };
 
-    const { data } = await axios.post(`/api/openings`, body);
+    const { data } = await axios.post(`/openings`, body);
     return data;
   }
 
   static getOpeningURL(openingId) {
-    return `/api/openings/${openingId}`;
+    return `/openings/${openingId}`;
   }
   static async getOpening(openingId) {
     const { data } = await axios.get(this.getOpeningURL(openingId));
@@ -19,7 +19,7 @@ export default class OpeningsService {
   }
 
   static getAllOpeningsURL() {
-    return `/api/openings`;
+    return `/openings`;
   }
 
   static async getAllOpenings() {
@@ -42,7 +42,7 @@ export default class OpeningsService {
 
   // TODO should this be moved to openings?
   static getAllStagesInOpeningURL(openingId) {
-    return `/api/openings/${openingId}/stages`;
+    return `/openings/${openingId}/stages`;
   }
 
   static async getAllStagesInOpening(openingId) {
@@ -51,7 +51,7 @@ export default class OpeningsService {
   }
 
   // static getAllApplicantsInOpeningURL({ openingId }) { // TODO expensive call if there are a lot of applicants - should this be enabled?
-  //   return `/api/openings/${openingId}/applicants`;
+  //   return `/openings/${openingId}/applicants`;
   // }
 
   // static async getAllApplicantsInOpening({ openingId }) {

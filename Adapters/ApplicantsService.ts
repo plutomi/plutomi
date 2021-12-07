@@ -1,5 +1,4 @@
-import axios from "../axios/axios";
-
+import axios from "../axios";
 export default class ApplicantsService {
   static async createApplicant({
     orgId,
@@ -16,12 +15,12 @@ export default class ApplicantsService {
       email,
     };
 
-    const { data } = await axios.post(`/api/applicants`, body);
+    const { data } = await axios.post(`/applicants`, body);
     return data;
   }
 
   static getApplicantURL(applicantId) {
-    return `/api/applicants/${applicantId}`;
+    return `/applicants/${applicantId}`;
   }
   static async getApplicant(applicantId) {
     const { data } = await axios.get(this.getApplicantURL(applicantId));
@@ -42,7 +41,7 @@ export default class ApplicantsService {
   }
 
   static answerQuestionsURL(orgId, applicantId) {
-    return `/api/public/orgs/${orgId}/applicants/${applicantId}/answer`; // TODO applicantId is being used in query as well as body. TODO maybe add unique question ids?
+    return `/public/orgs/${orgId}/applicants/${applicantId}/answer`; // TODO applicantId is being used in query as well as body. TODO maybe add unique question ids?
   }
   static async answerQuestions(orgId, applicantId, responses) {
     const body = {

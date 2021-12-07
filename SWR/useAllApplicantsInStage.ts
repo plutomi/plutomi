@@ -1,4 +1,4 @@
-import axios from "axios";
+import axios from "../axios";
 import useSWR from "swr";
 import StagesService from "../Adapters/StagesService";
 

@@ -48,7 +48,7 @@ export async function createOpening(
         Update: {
           Key: {
             PK: `${ENTITY_TYPES.ORG}#${orgId}`,
-            SK: `${ENTITY_TYPES.ORG}`,
+            SK: ENTITY_TYPES.ORG,
           },
           TableName: DYNAMO_TABLE_NAME,
           UpdateExpression:

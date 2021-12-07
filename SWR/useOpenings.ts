@@ -1,4 +1,4 @@
-import axios from "axios";
+import axios from "../axios";
 import useSWR from "swr";
 import OpeningsService from "../Adapters/OpeningsService";
 const fetcher = (url: string) => axios.get(url).then((res) => res.data);
