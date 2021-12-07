@@ -48,9 +48,6 @@ export const login = async (req: Request, res: Response) => {
       ironOptions
     );
 
-  console.log("user ID", userId);
-  console.log("login link id", loginLinkId);
-
   // If the link expired, these will be undefined
   if (!userId || !loginLinkId) {
     return res.status(401).json({ message: "Your link is invalid" });
@@ -110,7 +107,6 @@ export const createLoginLinks = async (req: Request, res: Response) => {
     loginMethod: loginMethod,
   };
 
-  console.log("creating login link input", createLoginLinkInput);
   const schema = Joi.object({
     email: Joi.string().email(),
     loginMethod: Joi.string().valid(LOGIN_METHODS.GOOGLE, LOGIN_METHODS.LINK),
@@ -124,12 +120,9 @@ export const createLoginLinks = async (req: Request, res: Response) => {
   }
 
   let user = await getUserByEmail({ email });
-  console.log("Creating login link, user is ", user);
   if (!user) {
-    console.log("Creating user");
     user = await createUser({ email });
   }
-  console.log("user created", user);
 
   try {
     const latestLink = await getLatestLoginLink({

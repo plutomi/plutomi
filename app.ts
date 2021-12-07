@@ -9,11 +9,15 @@ import { info } from "./APIControllers/APIInfo";
 import listEndpoints from "express-list-endpoints";
 import { ironSession } from "iron-session/express";
 import * as Users from "./APIControllers/Users";
-import UsersService from "./Adapters/UsersService";
-const port = process.env.EXPRESS_PORT;
+const PORT = process.env.EXPRESS_PORT;
+const WEBSITE_URL = process.env.WEBSITE_URL;
 const app = express();
-console.log("Get url user self", UsersService.getSelfURL());
-app.use(cors());
+app.use(
+  cors({
+    credentials: true,
+    origin: WEBSITE_URL,
+  })
+);
 app.use(express.json());
 app.use(helmet());
 app.set("trust proxy", 1);
@@ -26,10 +30,9 @@ const session = ironSession({
     secure: process.env.NODE_ENV === "production",
   },
 });
+app.use(session);
 
-app.route("/session").get(Auth.session, [session]);
 // Return an org's public info
-
 app
   .route("/public/:orgId")
   .get([Middleware.cleanOrgId], PublicInfo.getOrgInfo)
@@ -49,16 +52,26 @@ app
 
 app
   .route("/auth/login")
-  .get([session], Auth.login)
-  .post(Auth.createLoginLinks)
+  .get(Auth.login) // Log a user in
+  .post(Auth.createLoginLinks) // Creat login links for the user
   .all(Middleware.methodNotAllowed);
 
+// Log out a user. Session is needed to log out obviously
+app
+  .route("/auth/logout")
+  .post([Middleware.withAuth], Auth.logout)
+  .all(Middleware.methodNotAllowed);
+
+// Return information about the current logged in user
 app
   .route("/users/self")
-  .get([session], Users.self)
+  .get([Middleware.withAuth], Users.self)
   .all(Middleware.methodNotAllowed);
 
-// DO NOT TOUCH :)
+/**
+ * ------------------------ DO NOT TOUCH BELOW THIS LINE ---------------------------
+ * Catch alls for wrong methods and 404s on API routes that do not exist
+ */
 const endpoints = listEndpoints(app);
 app.set("endpoints", endpoints);
 // Healthcheck & Info
@@ -66,6 +79,6 @@ app.route("/").get(info).all(Middleware.methodNotAllowed);
 
 // Catch all other routes
 app.all("*", Middleware.routeNotFound);
-app.listen(port, () => {
-  console.log(`Server running on http://localhost:${port}`);
+app.listen(PORT, () => {
+  console.log(`Server running on http://localhost:${PORT}`);
 });
