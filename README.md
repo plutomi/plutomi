@@ -12,12 +12,6 @@
 
 Plutomi is an [applicant tracking system](https://en.wikipedia.org/wiki/Applicant_tracking_system) that streamlines your entire application process with automated workflows at _any_ scale.
 
-## Motivation
-
-Having worked at a company that needed to recruit thousands of contractors every month, implementing custom processes in our acquisition flow was challening. It would have benefited us to have an open platform to contribute to and build upon, as well as one where we didn't have to continuously tip toe around performance limits. This project is our attempt to do just that.
-
-## Summary
-
 In your recruiting flow, you can create `openings`, which people can apply to. An opening can be anything from a job, a location for a delivery company, or a program like a summer camp.
 
 In these openings, you can create `stages` which are individual steps for your application. You can add questions which applicants can answer, and setup automatic move rules that determine where applicants go next depending on their answers or after a certain time period.

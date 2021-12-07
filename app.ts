@@ -7,8 +7,8 @@ import * as PublicInfo from "./APIControllers/PublicInfo";
 import * as Auth from "./APIControllers/auth";
 import { info } from "./APIControllers/APIInfo";
 import listEndpoints from "express-list-endpoints";
-import { ironSession } from "iron-session/express";
 import * as Users from "./APIControllers/Users";
+import { sessionSettings } from "./Config";
 const PORT = process.env.EXPRESS_PORT;
 const WEBSITE_URL = process.env.WEBSITE_URL;
 const app = express();
@@ -22,15 +22,8 @@ app.use(express.json());
 app.use(helmet());
 app.set("trust proxy", 1);
 
-const session = ironSession({
-  cookieName: "test",
-  password:
-    "UnhandledPromiseRejectionWarning: Error: iron-session: Bad usage. Password must be at least 32 characters long.",
-  cookieOptions: {
-    secure: process.env.NODE_ENV === "production",
-  },
-});
-app.use(session);
+// Adds req.session to routes
+app.use(sessionSettings);
 
 // Return an org's public info
 app
@@ -76,9 +69,8 @@ const endpoints = listEndpoints(app);
 app.set("endpoints", endpoints);
 // Healthcheck & Info
 app.route("/").get(info).all(Middleware.methodNotAllowed);
-
-// Catch all other routes
 app.all("*", Middleware.routeNotFound);
+
 app.listen(PORT, () => {
   console.log(`Server running on http://localhost:${PORT}`);
 });
