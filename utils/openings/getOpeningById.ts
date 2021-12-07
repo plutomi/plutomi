@@ -13,7 +13,7 @@ export async function getOpening(
     TableName: DYNAMO_TABLE_NAME,
     Key: {
       PK: `${ENTITY_TYPES.ORG}#${orgId}#${ENTITY_TYPES.OPENING}#${openingId}`,
-      SK: `${ENTITY_TYPES.OPENING}`,
+      SK: ENTITY_TYPES.OPENING,
     },
   };
 

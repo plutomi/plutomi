@@ -13,7 +13,7 @@ export async function getQuestionById(
     TableName: DYNAMO_TABLE_NAME,
     Key: {
       PK: `${ENTITY_TYPES.ORG}#${orgId}#${ENTITY_TYPES.STAGE_QUESTION}#${questionId}`,
-      SK: `${ENTITY_TYPES.STAGE_QUESTION}`,
+      SK: ENTITY_TYPES.STAGE_QUESTION,
     },
   };
 

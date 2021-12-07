@@ -31,7 +31,7 @@ export default async function updateQuestion(
   const params = {
     Key: {
       PK: `${ENTITY_TYPES.ORG}#${orgId}#${ENTITY_TYPES.STAGE_QUESTION}#${questionId}`,
-      SK: `${ENTITY_TYPES.STAGE_QUESTION}`,
+      SK: ENTITY_TYPES.STAGE_QUESTION,
     },
     UpdateExpression: `SET ` + allUpdateExpressions.join(", "),
     ExpressionAttributeValues: allAttributeValues,

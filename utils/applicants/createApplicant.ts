@@ -49,7 +49,7 @@ export async function createApplicant(
      *
      * 1. Get all applicants in org
      * 2. Get all applicants in an opening
-     * 3. Get all applicants in a stage, no opening Id required
+     * 3. Get all applicants in a stage, no opening ID required. We can query for all stages that = "Questionnaire" and get all applicants in those stages.
      *
      * but also!
      *
@@ -72,9 +72,9 @@ export async function createApplicant(
      *
      *
      */
-    GSI1PK: `${ENTITY_TYPES.ORG}#${orgId}#${ENTITY_TYPES.APPLICANT}S`,
+    GSI1PK: `${ENTITY_TYPES.ORG}#${orgId}#${ENTITY_TYPES.APPLICANT}S`, // TODO needs sharding
     GSI1SK: `${ENTITY_TYPES.OPENING}#${openingId}#DATE_LANDED#${now}`,
-    GSI2PK: `${ENTITY_TYPES.ORG}#${orgId}#${ENTITY_TYPES.APPLICANT}S`,
+    GSI2PK: `${ENTITY_TYPES.ORG}#${orgId}#${ENTITY_TYPES.APPLICANT}S`, // TODO needs sharding
     GSI2SK: `${ENTITY_TYPES.STAGE}#${stageId}#DATE_LANDED#${now}`,
   };
 

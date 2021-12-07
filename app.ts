@@ -4,7 +4,7 @@ import helmet from "helmet";
 import cors from "cors";
 import * as Middleware from "./newMiddleware";
 import * as PublicInfo from "./APIControllers/PublicInfo";
-import * as Auth from "./APIControllers/auth";
+import * as Auth from "./APIControllers/Auth";
 import { info } from "./APIControllers/APIInfo";
 import listEndpoints from "express-list-endpoints";
 import * as Users from "./APIControllers/Users";

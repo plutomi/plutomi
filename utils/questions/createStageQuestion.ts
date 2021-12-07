@@ -55,7 +55,7 @@ export async function createStageQuestion(
             Update: {
               Key: {
                 PK: `${ENTITY_TYPES.ORG}#${orgId}#${ENTITY_TYPES.STAGE}#${stageId}`,
-                SK: `${ENTITY_TYPES.STAGE}`,
+                SK: ENTITY_TYPES.STAGE,
               },
               TableName: DYNAMO_TABLE_NAME,
               UpdateExpression: "SET questionOrder = :questionOrder",

@@ -54,7 +54,7 @@ export async function joinOrgFromInvite(
           Update: {
             Key: {
               PK: `${ENTITY_TYPES.ORG}#${invite.orgId}`,
-              SK: `${ENTITY_TYPES.ORG}`,
+              SK: ENTITY_TYPES.ORG,
             },
             TableName: DYNAMO_TABLE_NAME,
             UpdateExpression: "SET totalUsers = totalUsers + :value",

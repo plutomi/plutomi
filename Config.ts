@@ -1,4 +1,4 @@
-import { ironSession } from "iron-session/express/dist";
+import { ironSession } from "iron-session/express";
 
 export enum API_METHODS {
   GET = "GET",

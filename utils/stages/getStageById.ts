@@ -18,7 +18,7 @@ export async function getStageById(
     TableName: DYNAMO_TABLE_NAME,
     Key: {
       PK: `${ENTITY_TYPES.ORG}#${orgId}#${ENTITY_TYPES.STAGE}#${stageId}`,
-      SK: `${ENTITY_TYPES.STAGE}`,
+      SK: ENTITY_TYPES.STAGE,
     },
   };
 
