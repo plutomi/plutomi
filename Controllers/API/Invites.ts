@@ -1,13 +1,23 @@
 import { Request, Response } from "express";
 import Joi from "joi";
-import { API_METHODS, DEFAULTS, EMAILS, TIME_UNITS } from "../../Config";
+import {
+  API_METHODS,
+  DEFAULTS,
+  EMAILS,
+  ENTITY_TYPES,
+  TIME_UNITS,
+} from "../../Config";
 import createOrgInvite from "../../utils/invites/createOrgInvite";
 import deleteOrgInvite from "../../utils/invites/deleteOrgInvite";
+import { getOrgInvite } from "../../utils/invites/getOrgInvite";
+import { joinOrgFromInvite } from "../../utils/invites/joinOrgFromInvite";
 import { getOrg } from "../../utils/orgs/getOrg";
+import Sanitize from "../../utils/sanitize";
 import sendEmail from "../../utils/sendEmail";
 import * as Time from "../../utils/time";
 import { createUser } from "../../utils/users/createUser";
 import { getUserByEmail } from "../../utils/users/getUserByEmail";
+import { getUserById } from "../../utils/users/getUserById";
 
 export const create = async (req: Request, res: Response) => {
   const { body, method } = req;
@@ -82,6 +92,45 @@ export const create = async (req: Request, res: Response) => {
     } catch (error) {
       return res.status(500).json({ message: `${error}` });
     }
+  }
+};
+
+export const accept = async (req: Request, res: Response) => {
+  const { inviteId } = req.params;
+  // TODO trycatch
+  const invite = await getOrgInvite({
+    inviteId: inviteId,
+    userId: req.session.user.userId,
+  });
+
+  if (!invite) {
+    return res.status(400).json({ message: `Invite no longer exists` });
+  }
+
+  if (req.session.user.orgId != DEFAULTS.NO_ORG) {
+    return res.status(400).json({
+      message: `You already belong to an org: ${req.session.user.orgId}`,
+    });
+  }
+
+  try {
+    await joinOrgFromInvite({ userId: req.session.user.userId, invite });
+
+    const updatedUser = await getUserById({
+      userId: req.session.user.userId,
+    });
+
+    req.session.user = Sanitize.clean(updatedUser, ENTITY_TYPES.USER);
+    await req.session.save();
+    return res
+      .status(200)
+      .json({ message: `You've joined the ${invite.orgName} org!` });
+  } catch (error) {
+    return res
+      .status(500) // TODO change #
+      .json({
+        message: `We were unable to  ${error}`,
+      });
   }
 };
 
