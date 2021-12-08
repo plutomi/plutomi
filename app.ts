@@ -74,17 +74,32 @@ app
   .get([Middleware.withAuth], Users.getInvites)
   .all(Middleware.methodNotAllowed);
 
-app.route("/invites").post([Middleware.withAuth], Invites.create);
+app
+  .route("/invites")
+  .post([Middleware.withAuth], Invites.create)
+  .all(Middleware.methodNotAllowed);
+
 app
   .route("/invites/:inviteId")
   .post([Middleware.withAuth], Invites.accept)
-  .put([Middleware.withAuth], Invites.reject);
+  .put([Middleware.withAuth], Invites.reject)
+  .all(Middleware.methodNotAllowed);
 
-app.route("/orgs").post([Middleware.withAuth], Orgs.create);
+app
+  .route("/orgs")
+  .post([Middleware.withAuth], Orgs.create)
+  .all(Middleware.methodNotAllowed);
+
 app
   .route("/orgs/:orgId")
   .get([Middleware.withAuth], Orgs.get)
-  .delete([Middleware.withAuth], Orgs.deleteOrg);
+  .delete([Middleware.withAuth], Orgs.deleteOrg)
+  .all(Middleware.methodNotAllowed);
+
+app
+  .route("/orgs/:orgId")
+  .get([Middleware.withAuth], Orgs.users)
+  .all(Middleware.methodNotAllowed);
 /**
  * ------------------------ DO NOT TOUCH BELOW THIS LINE ---------------------------
  * Catch alls for wrong methods and 404s on API routes that do not exist
