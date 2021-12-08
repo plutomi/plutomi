@@ -125,15 +125,15 @@ To make a contribution, submit a pull request into the `main` branch. You will b
 This project tries to follow Semantic Pull Requests some what.
 Your PR _title_ should have the following format:
 
-| Type                             | Description                                                                                    |
-| -------------------------------- | ---------------------------------------------------------------------------------------------- |
-| :sparkles: feat: OR enhancement: | Added a new feature or enhancement                                                             |
-| :bug: fix:                       | Squashed some bugs!                                                                            |
-| :book: docs:                     | Updated documentation, readme, examples                                                        |
-| :rotating_light: test:           | Added / modified tests                                                                         |
-| :broom: chore:                   | Maintenance, cleanup, comment removal, refactoring, etc. If it doesn't fit above, it goes here |
+| Type                  | Description                                                                                    |
+| --------------------- | ---------------------------------------------------------------------------------------------- |
+| feat: OR enhancement: | Added a new feature or enhancement                                                             |
+| fix:                  | Squashed some bugs!                                                                            |
+| docs:                 | Updated documentation, readme, examples                                                        |
+| test:                 | Added / modified tests                                                                         |
+| chore:                | Maintenance, cleanup, comment removal, refactoring, etc. If it doesn't fit above, it goes here |
 
-Example: _:bug: fix: Removed the double modals popping up on login_
+Example: _fix: Removed the double modals popping up on login_
 
 ## License
 
