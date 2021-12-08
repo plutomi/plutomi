@@ -1,26 +1,25 @@
-import createOrgInvite from "../../../utils/invites/createOrgInvite";
-import { NextApiRequest, NextApiResponse } from "next";
-import * as Time from "../../../utils/time";
-import { getOrg } from "../../../utils/orgs/getOrg";
-import { withSessionRoute } from "../../../middleware/withSession";
-import { createUser } from "../../../utils/users/createUser";
-import { TIME_UNITS, API_METHODS, EMAILS, DEFAULTS } from "../../../Config";
-import withAuth from "../../../middleware/withAuth";
-import withValidMethod from "../../../middleware/withValidMethod";
-import sendEmail from "../../../utils/sendEmail";
+import { Request, Response } from "express";
 import Joi from "joi";
-import { getUserByEmail } from "../../../utils/users/getUserByEmail";
-const UrlSafeString = require("url-safe-string"),
-  tagGenerator = new UrlSafeString();
+import { API_METHODS, DEFAULTS, EMAILS, TIME_UNITS } from "../../Config";
+import createOrgInvite from "../../utils/invites/createOrgInvite";
+import { getOrg } from "../../utils/orgs/getOrg";
+import sendEmail from "../../utils/sendEmail";
+import * as Time from "../../utils/time";
+import { createUser } from "../../utils/users/createUser";
+import { getUserByEmail } from "../../utils/users/getUserByEmail";
 
-const handler = async (
-  req: NextApiRequest,
-  res: NextApiResponse
-): Promise<void> => {
+export const create = async (req: Request, res: Response) => {
   const { body, method } = req;
   const { recipientEmail } = body; // todo trim and lowercase this email
   const expiresAt = Time.futureISO(3, TIME_UNITS.DAYS);
-  const org = await getOrg({ orgId: req.session.user.orgId }); // TODO fix this type
+  const [org, error] = await getOrg({ orgId: req.session.user.orgId });
+
+  if (error) {
+    console.error("error creating invite", error);
+    return res
+      .status(500)
+      .json({ message: "An error ocurred creating your invite" });
+  }
 
   if (method === API_METHODS.POST) {
     // TODO add types
@@ -55,7 +54,7 @@ const handler = async (
 
     try {
       await createOrgInvite({
-        orgId: org.orgId,
+        orgId: org.orgId, // TODO should be fixed with return type above
         recipient: recipient,
         orgName: org.GSI1SK,
         expiresAt: expiresAt,
@@ -63,7 +62,8 @@ const handler = async (
       });
       try {
         await sendEmail({
-          fromName: org.GSI1SK,
+          // TODO async decouple this
+          fromName: org.GSI1SK, // TODO should be fixed with return type above
           fromAddress: EMAILS.GENERAL,
           toAddresses: [recipient.email],
           subject: `${req.session.user.firstName} ${req.session.user.lastName} has invited you to join them on Plutomi!`,
@@ -83,7 +83,3 @@ const handler = async (
     }
   }
 };
-
-export default withValidMethod(withSessionRoute(withAuth(handler)), [
-  API_METHODS.POST,
-]);
