@@ -6,7 +6,7 @@ import { Dynamo } from "../../awsClients/ddbDocClient";
 import { ENTITY_TYPES } from "../../Config";
 import { DynamoNewOrg } from "../../types/dynamo";
 import { CreateAndJoinOrgInput } from "../../types/main";
-import Time from "../time";
+import * as Time from "../time";
 
 const { DYNAMO_TABLE_NAME } = process.env;
 

@@ -4,7 +4,7 @@ import {
   UsersIcon,
 } from "@heroicons/react/solid";
 import ClickToCopy from "../ClickToCopy";
-import Time from "../../utils/time";
+import * as Time from "../../utils/time";
 import Link from "next/dist/client/link";
 import useOpenings from "../../SWR/useOpenings";
 import useSelf from "../../SWR/useSelf";

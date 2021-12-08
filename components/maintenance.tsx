@@ -5,7 +5,7 @@ import {
   MailIcon,
 } from "@heroicons/react/solid";
 
-import Time from "../utils/time";
+import * as Time from "../utils/time";
 const commits = [
   {
     applicant: {

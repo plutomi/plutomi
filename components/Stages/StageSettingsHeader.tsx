@@ -6,7 +6,7 @@ import Breadcrumbs from "../Breadcrumbs";
 import { useRouter } from "next/router";
 import { PencilAltIcon } from "@heroicons/react/outline";
 import useStageById from "../../SWR/useStageById";
-import Time from "../../utils/time";
+import * as Time from "../../utils/time";
 import { CUSTOM_QUERY } from "../../types/main";
 export default function StageSettingsHeader({ deleteStage }) {
   const router = useRouter();

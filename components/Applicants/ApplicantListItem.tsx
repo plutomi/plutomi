@@ -1,4 +1,4 @@
-import Time from "../../utils/time";
+import * as Time from "../../utils/time";
 import { CalendarIcon } from "@heroicons/react/outline";
 import ClickToCopy from "../ClickToCopy";
 

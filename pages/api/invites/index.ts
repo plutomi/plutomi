@@ -1,6 +1,6 @@
 import createOrgInvite from "../../../utils/invites/createOrgInvite";
 import { NextApiRequest, NextApiResponse } from "next";
-import Time from "../../../utils/time";
+import * as Time from "../../../utils/time";
 import { getOrg } from "../../../utils/orgs/getOrg";
 import { withSessionRoute } from "../../../middleware/withSession";
 import { createUser } from "../../../utils/users/createUser";
