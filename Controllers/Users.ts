@@ -4,6 +4,7 @@ import { DEFAULTS, ENTITY_TYPES } from "../Config";
 import Joi from "joi";
 import { updateUser } from "../utils/users/updateUser";
 import Sanitize from "../utils/sanitize";
+import { getOrgInvitesForUser } from "../utils/invites/getOrgInvitesForUser";
 export const self = async (req: Request, res: Response) => {
   try {
     const requestedUser = await getUserById({
@@ -99,5 +100,19 @@ export const update = async (req: Request, res: Response) => {
     // TODO add error logger
     // TODO get correct status code
     return res.status(500).json({ message: `${error}` });
+  }
+};
+
+export const getInvites = async (req: Request, res: Response) => {
+  try {
+    const invites = await getOrgInvitesForUser({
+      userId: req.session.user.userId,
+    });
+    return res.status(200).json(invites);
+  } catch (error) {
+    // TODO add error logger
+    return res
+      .status(400) // TODO change #
+      .json({ message: `${error}` });
   }
 };

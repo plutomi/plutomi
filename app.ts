@@ -66,6 +66,11 @@ app
   .get([Middleware.withAuth], Users.getById)
   .put([Middleware.withAuth], Users.update)
   .all(Middleware.methodNotAllowed);
+
+app
+  .route("/users/:userId/invites")
+  .get([Middleware.withAuth], Users.getInvites)
+  .all(Middleware.methodNotAllowed);
 /**
  * ------------------------ DO NOT TOUCH BELOW THIS LINE ---------------------------
  * Catch alls for wrong methods and 404s on API routes that do not exist
