@@ -74,6 +74,10 @@ app
   .all(Middleware.methodNotAllowed);
 
 app.route("/invites").post([Middleware.withAuth], Invites.create);
+app
+  .route("/invites/:inviteId")
+  .post([Middleware.withAuth], Invites.accept)
+  .put([Middleware.withAuth], Invites.reject);
 /**
  * ------------------------ DO NOT TOUCH BELOW THIS LINE ---------------------------
  * Catch alls for wrong methods and 404s on API routes that do not exist

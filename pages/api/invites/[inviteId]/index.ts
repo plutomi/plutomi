@@ -55,19 +55,7 @@ const handler = async (
   }
 
   if (method === API_METHODS.DELETE) {
-    try {
-      await deleteOrgInvite({
-        inviteId: inviteId,
-        userId: req.session.user.userId,
-      });
-      req.session.user.totalInvites -= 1;
-      await req.session.save();
-      return res.status(200).json({ message: "Invite rejected!" }); // TODO enum for RESPONSES
-    } catch (error) {
-      return res
-        .status(500)
-        .json({ message: `Unable to reject invite - ${error}` });
-    }
+
   }
 };
 

@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import Joi from "joi";
 import { API_METHODS, DEFAULTS, EMAILS, TIME_UNITS } from "../../Config";
 import createOrgInvite from "../../utils/invites/createOrgInvite";
+import deleteOrgInvite from "../../utils/invites/deleteOrgInvite";
 import { getOrg } from "../../utils/orgs/getOrg";
 import sendEmail from "../../utils/sendEmail";
 import * as Time from "../../utils/time";
@@ -81,5 +82,22 @@ export const create = async (req: Request, res: Response) => {
     } catch (error) {
       return res.status(500).json({ message: `${error}` });
     }
+  }
+};
+
+export const reject = async (req: Request, res: Response) => {
+  const { inviteId } = req.params;
+  try {
+    await deleteOrgInvite({
+      inviteId: inviteId,
+      userId: req.session.user.userId,
+    });
+    req.session.user.totalInvites -= 1;
+    await req.session.save();
+    return res.status(200).json({ message: "Invite rejected!" }); // TODO enum for RESPONSES
+  } catch (error) {
+    return res
+      .status(500)
+      .json({ message: `Unable to reject invite - ${error}` });
   }
 };
