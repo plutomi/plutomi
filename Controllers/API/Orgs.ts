@@ -1,8 +1,11 @@
 import { Request, Response } from "express";
 import Joi from "joi";
-import { DEFAULTS } from "../../Config";
+import { DEFAULTS, ENTITY_TYPES } from "../../Config";
 import { getOrgInvitesForUser } from "../../utils/invites/getOrgInvitesForUser";
 import { createAndJoinOrg } from "../../utils/orgs/createAndJoinOrg";
+import { getOrg } from "../../utils/orgs/getOrg";
+import Sanitize from "../../utils/sanitize";
+import { updateUser } from "../../utils/users/updateUser";
 const UrlSafeString = require("url-safe-string"),
   tagGenerator = new UrlSafeString();
 
@@ -68,5 +71,80 @@ export const create = async (req: Request, res: Response) => {
     return res
       .status(400) // TODO change #
       .json({ message: `${error}` });
+  }
+};
+
+/**
+ * When signed in, this returns all data for an org
+ * For public org data such as basic info or openings, please use the /public/:orgId route
+ */
+export const get = async (req: Request, res: Response) => {
+  const { orgId } = req.params;
+  const [org, error] = await getOrg({ orgId: orgId });
+
+  if (error) {
+    console.log("Error retrieving org info", error);
+    return res
+      .status(500)
+      .json({ message: "An error ocurred retrieving your org" });
+  }
+
+  if (!org) {
+    return res.status(404).json({ message: "Org not found" });
+  }
+
+  if (orgId != req.session.user.orgId) {
+    return res
+      .status(403)
+      .json({ message: "You are not authorized to view this org" });
+  }
+
+  return res.status(200).json(org);
+};
+
+export const deleteOrg = async (req: Request, res: Response) => {
+  const { orgId } = req.params;
+  const [org, error] = await getOrg({ orgId: orgId });
+
+  if (error) {
+    console.log("Error retrieving org info", error);
+    return res
+      .status(500)
+      .json({ message: "An error ocurred retrieving your org" });
+  }
+
+  if (!org) {
+    return res.status(404).json({ message: "Org not found" });
+  }
+  if (org.totalUsers > 1) {
+    return res.status(400).json({
+      message: "You cannot delete this org as there are other users in it",
+    });
+  }
+
+  try {
+    const updatedUser = await updateUser({
+      // TODO possible transaction?
+      userId: req.session.user.userId,
+      newUserValues: {
+        orgId: DEFAULTS.NO_ORG,
+        orgJoinDate: DEFAULTS.NO_ORG,
+        GSI1PK: DEFAULTS.NO_ORG,
+      },
+      ALLOW_FORBIDDEN_KEYS: true,
+    });
+
+    req.session.user = Sanitize.clean(updatedUser, ENTITY_TYPES.USER);
+    await req.session.save();
+    return res
+      .status(200)
+      .json({ message: `You've deleted the ${orgId} org :(` });
+  } catch (error) {
+    // TODO add error logger
+    return res
+      .status(500) // TODO change #
+      .json({
+        message: `Unable to delete org - ${error}`,
+      });
   }
 };

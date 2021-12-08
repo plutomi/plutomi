@@ -9,7 +9,7 @@ import metadata from "./Controllers/API/Metadata";
 import listEndpoints from "express-list-endpoints";
 import * as Users from "./Controllers/API/Users";
 import * as Invites from "./Controllers/API/Invites";
-import * as Orgs from "./Controllers/API/Orgs"
+import * as Orgs from "./Controllers/API/Orgs";
 import { sessionSettings } from "./Config";
 const PORT = process.env.EXPRESS_PORT;
 const WEBSITE_URL = process.env.WEBSITE_URL;
@@ -80,8 +80,11 @@ app
   .post([Middleware.withAuth], Invites.accept)
   .put([Middleware.withAuth], Invites.reject);
 
-
-app.route("/orgs").post([Middleware.withAuth], Orgs.create)
+app.route("/orgs").post([Middleware.withAuth], Orgs.create);
+app
+  .route("/orgs/:orgId")
+  .get([Middleware.withAuth], Orgs.get)
+  .delete([Middleware.withAuth], Orgs.deleteOrg);
 /**
  * ------------------------ DO NOT TOUCH BELOW THIS LINE ---------------------------
  * Catch alls for wrong methods and 404s on API routes that do not exist
