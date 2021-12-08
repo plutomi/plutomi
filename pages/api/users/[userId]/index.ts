@@ -18,26 +18,7 @@ const handler = async (
   const { newUserValues } = body;
 
   if (method === API_METHODS.GET) {
-    try {
-      const requestedUser = await getUserById({ userId: userId });
 
-      if (!requestedUser) {
-        return res.status(404).json({ message: "User not found" });
-      }
-      // Check that the user who made this call is in the same org as the requested user
-      if (req.session.user.orgId != requestedUser.orgId) {
-        return res
-          .status(403)
-          .json({ message: "You are not authorized to view this user" });
-      }
-
-      return res.status(200).json(requestedUser);
-    } catch (error) {
-      // TODO add error logger
-      return res
-        .status(400) // TODO change #
-        .json({ message: `${error}` });
-    }
   }
 
   if (method === API_METHODS.PUT) {

@@ -3,11 +3,11 @@ import express from "express";
 import helmet from "helmet";
 import cors from "cors";
 import * as Middleware from "./newMiddleware";
-import * as PublicInfo from "./APIControllers/PublicInfo";
-import * as Auth from "./APIControllers/Auth";
-import { info } from "./APIControllers/APIInfo";
+import * as PublicInfo from "./Controllers/PublicInfo";
+import * as Auth from "./Controllers/Auth";
+import metadata from "./Controllers/Metadata";
 import listEndpoints from "express-list-endpoints";
-import * as Users from "./APIControllers/Users";
+import * as Users from "./Controllers/Users";
 import { sessionSettings } from "./Config";
 const PORT = process.env.EXPRESS_PORT;
 const WEBSITE_URL = process.env.WEBSITE_URL;
@@ -61,14 +61,18 @@ app
   .get([Middleware.withAuth], Users.self)
   .all(Middleware.methodNotAllowed);
 
+app
+  .route("/users/:userId")
+  .get([Middleware.withAuth], Users.getById)
+  .all(Middleware.methodNotAllowed);
 /**
  * ------------------------ DO NOT TOUCH BELOW THIS LINE ---------------------------
  * Catch alls for wrong methods and 404s on API routes that do not exist
  */
 const endpoints = listEndpoints(app);
 app.set("endpoints", endpoints);
-// Healthcheck & Info
-app.route("/").get(info).all(Middleware.methodNotAllowed);
+// Healthcheck & Basic metadata about the API
+app.route("/").get(metadata).all(Middleware.methodNotAllowed);
 app.all("*", Middleware.routeNotFound);
 
 app.listen(PORT, () => {
