@@ -13,7 +13,7 @@ import { getUserById } from "../utils/users/getUserById";
 import { nanoid } from "nanoid";
 import { getLatestLoginLink } from "../utils/loginLinks/getLatestLoginLink";
 import sendEmail from "../utils/sendEmail";
-import Time from "../utils/time";
+import * as Time from "../utils/time";
 import { createUser } from "../utils/users/createUser";
 import { getUserByEmail } from "../utils/users/getUserByEmail";
 import createLoginLink from "../utils/loginLinks/createLoginLink";

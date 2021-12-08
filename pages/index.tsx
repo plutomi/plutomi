@@ -7,7 +7,7 @@ import useSelf from "../SWR/useSelf";
 import axios from "../axios";
 import { ChevronRightIcon, MailIcon } from "@heroicons/react/outline";
 import _ from "lodash";
-import Time from "../utils/time";
+import * as Time from "../utils/time";
 import { nanoid } from "nanoid";
 export default function Main({ commits }) {
   const { user, isUserLoading, isUserError } = useSelf();

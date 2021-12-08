@@ -7,7 +7,7 @@ import useOpeningById from "../../SWR/useOpeningById";
 import { useRouter } from "next/router";
 import Loader from "../Loader";
 import OpeningsService from "../../Adapters/OpeningsService";
-import Time from "../../utils/time";
+import * as Time from "../../utils/time";
 import { CUSTOM_QUERY } from "../../types/main";
 export default function OpeningSettingsHeader() {
   const router = useRouter();

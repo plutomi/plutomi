@@ -1,4 +1,4 @@
-import Time from "../../utils/time";
+import * as Time from "../../utils/time";
 export default function UserCard({ user }) {
   return (
     <div className="border rounded-lg shadow-sm p-4 max-w-lg mx-auto my-4">

@@ -1,6 +1,6 @@
 import { PutCommand, PutCommandInput } from "@aws-sdk/lib-dynamodb";
 import { Dynamo } from "../../awsClients/ddbDocClient";
-import Time from "../time";
+import * as Time from "../time";
 import { nanoid } from "nanoid";
 import { ENTITY_TYPES, ID_LENGTHS } from "../../Config";
 import { DynamoNewApplicantResponse } from "../../types/dynamo";
