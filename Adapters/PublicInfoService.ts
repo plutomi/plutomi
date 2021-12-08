@@ -2,7 +2,7 @@ import axios from "../axios";
 
 export default class PublicInfoService {
   static getPublicOrgURL(orgId) {
-    return `/public/orgs/${orgId}`;
+    return `/public/${orgId}`;
   }
   static async getPublicOrg(orgId) {
     const { data } = await axios.get(this.getPublicOrgURL(orgId));
@@ -10,7 +10,7 @@ export default class PublicInfoService {
   }
 
   static getAllPublicOpeningsURL(orgId) {
-    return `/public/orgs/${orgId}/openings`;
+    return `/public/${orgId}/openings`;
   }
 
   static async getAllPublicOpenings(orgId) {
@@ -19,7 +19,7 @@ export default class PublicInfoService {
   }
 
   static getPublicOpeningURL(orgId, openingId) {
-    return `/public/orgs/${orgId}/openings/${openingId}`;
+    return `/public/${orgId}/openings/${openingId}`;
   }
 
   static async getPublicOpening(orgId, openingId) {
@@ -30,7 +30,7 @@ export default class PublicInfoService {
   }
 
   static getPublicStageURL(orgId, openingId, stageId) {
-    return `/public/orgs/${orgId}/openings/${openingId}/stages/${stageId}`;
+    return `/public/${orgId}/openings/${openingId}/stages/${stageId}`;
   }
 
   static async getPublicStage(orgId, openingId, stageId) {
