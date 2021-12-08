@@ -64,6 +64,7 @@ app
 app
   .route("/users/:userId")
   .get([Middleware.withAuth], Users.getById)
+  .put([Middleware.withAuth], Users.update)
   .all(Middleware.methodNotAllowed);
 /**
  * ------------------------ DO NOT TOUCH BELOW THIS LINE ---------------------------

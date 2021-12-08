@@ -1,6 +1,9 @@
 import { getUserById } from "../utils/users/getUserById";
 import { Request, Response } from "express";
-import { DEFAULTS } from "../Config";
+import { DEFAULTS, ENTITY_TYPES } from "../Config";
+import Joi from "joi";
+import { updateUser } from "../utils/users/updateUser";
+import Sanitize from "../utils/sanitize";
 export const self = async (req: Request, res: Response) => {
   try {
     const requestedUser = await getUserById({
@@ -47,5 +50,54 @@ export const getById = async (req: Request, res: Response) => {
     return res
       .status(400) // TODO change #
       .json({ message: `${error}` });
+  }
+};
+
+export const update = async (req: Request, res: Response) => {
+  const { userId } = req.params;
+  const { newUserValues } = req.body;
+  const updateUserInput = {
+    userId: req.session.user.userId,
+    ALLOW_FORBIDDEN_KEYS: false,
+    newUserValues: newUserValues,
+  };
+
+  const schema = Joi.object({
+    userId: Joi.string(),
+    ALLOW_FORBIDDEN_KEYS: Joi.boolean().invalid(true),
+    newUserValues: Joi.object({
+      firstName: Joi.string().invalid(DEFAULTS.FIRST_NAME).optional(),
+      lastName: Joi.string().invalid(DEFAULTS.LAST_NAME).optional(),
+      GSI1SK: Joi.string().invalid(DEFAULTS.FULL_NAME).optional(),
+    }),
+  }).options({ presence: "required" });
+
+  // Validate input
+  try {
+    await schema.validateAsync(updateUserInput);
+  } catch (error) {
+    return res.status(400).json({ message: `${error.message}` });
+  }
+
+  try {
+    // TODO RBAC will go here, right now you can only update yourself
+    if (userId != req.session.user.userId) {
+      return res
+        .status(403)
+        .json({ message: "You cannot update another user" });
+    }
+
+    const updatedUser = await updateUser(updateUserInput);
+
+    // If a signed in user is updating themselves, update the session state
+    if (updatedUser.userId === req.session.user.userId) {
+      req.session.user = Sanitize.clean(updatedUser, ENTITY_TYPES.USER);
+      await req.session.save();
+    }
+    return res.status(200).json({ message: "Updated!" });
+  } catch (error) {
+    // TODO add error logger
+    // TODO get correct status code
+    return res.status(500).json({ message: `${error}` });
   }
 };
