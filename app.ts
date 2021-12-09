@@ -119,6 +119,11 @@ app
   .route("/applicants")
   .post(Applicants.create)
   .all(Middleware.methodNotAllowed);
+
+app
+  .route("/applicants/:applicantId")
+  .get([Middleware.withAuth], Applicants.get)
+  .all(Middleware.methodNotAllowed);
   
 app
   .route("/auth/login")

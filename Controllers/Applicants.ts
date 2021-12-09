@@ -3,6 +3,7 @@ import Joi from "joi";
 import { DEFAULTS, EMAILS } from "../Config";
 import { CreateApplicantAPIBody } from "../types/main";
 import { createApplicant } from "../utils/applicants/createApplicant";
+import { getApplicantById } from "../utils/applicants/getApplicantById";
 import { getOpening } from "../utils/openings/getOpeningById";
 import sendEmail from "../utils/sendEmail";
 const UrlSafeString = require("url-safe-string"),
@@ -75,5 +76,26 @@ export const create = async (req: Request, res: Response) => {
     }
   } catch (error) {
     return res.status(400).json({ message: `${error.message}` });
+  }
+};
+
+export const get = async (req: Request, res: Response) => {
+  const { applicantId } = req.params;
+  try {
+    // TODO gather applicant responses here
+    const applicant = await getApplicantById({
+      applicantId: applicantId,
+      orgId: req.session.user.orgId,
+    });
+
+    if (!applicant) {
+      return res.status(404).json({ message: "Applicant not found" });
+    }
+    return res.status(200).json(applicant);
+  } catch (error) {
+    // TODO add error logger
+    return res
+      .status(400) // TODO change #
+      .json({ message: `Unable to get applicant: ${error}` });
   }
 };

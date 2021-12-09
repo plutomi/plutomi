@@ -20,23 +20,7 @@ const handler = async (
   const { applicantId } = query as Pick<CUSTOM_QUERY, "applicantId">;
 
   if (method === API_METHODS.GET) {
-    try {
-      // TODO gather applicant responses here
-      const applicant = await getApplicantById({
-        applicantId: applicantId,
-        orgId: req.session.user.orgId,
-      });
 
-      if (!applicant) {
-        return res.status(404).json({ message: "Applicant not found" });
-      }
-      return res.status(200).json(applicant);
-    } catch (error) {
-      // TODO add error logger
-      return res
-        .status(400) // TODO change #
-        .json({ message: `Unable to get applicant: ${error}` });
-    }
   }
 
   if (method === API_METHODS.PUT) {
