@@ -1,10 +1,7 @@
 import { Request, Response } from "express";
-import Joi from "joi";
 import { UpdateQuestionInput } from "../types/main";
-import { createStageQuestion } from "../utils/questions/createStageQuestion";
-import { DeleteQuestion } from "../utils/questions/deleteQuestion";
-import updateQuestion from "../utils/questions/updateStageQuestion";
-
+import * as Questions from "../models/Questions";
+import Joi from "joi";
 export const create = async (req: Request, res: Response) => {
   const { GSI1SK, questionDescription, stageId } = req.body;
 
@@ -16,7 +13,7 @@ export const create = async (req: Request, res: Response) => {
   };
 
   try {
-    await createStageQuestion(createStageQuestionInput);
+    await Questions.createQuestion(createStageQuestionInput);
     return res.status(201).json({ message: "Question created!" });
   } catch (error) {
     // TODO add error logger
@@ -33,7 +30,7 @@ export const deleteQuestion = async (req: Request, res: Response) => {
       orgId: req.session.user.orgId,
       questionId: questionId,
     };
-    await DeleteQuestion(deleteQuestionInput);
+    await Questions.deleteQuestion(deleteQuestionInput);
     return res.status(200).json({ message: "Question deleted!" });
   } catch (error) {
     // TODO add error logger
@@ -65,7 +62,7 @@ export const update = async (req: Request, res: Response) => {
       return res.status(400).json({ message: `${error.message}` });
     }
 
-    await updateQuestion(updatedQuestionInput);
+    await Questions.updateQuestion(updatedQuestionInput);
     return res.status(200).json({ message: "Question updated!" });
   } catch (error) {
     console.error(error);

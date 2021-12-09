@@ -1,17 +1,11 @@
 import { Request, Response } from "express";
 import Joi from "joi";
 import { DEFAULTS } from "../Config";
-import { createOpening } from "../utils/openings/createOpening";
-import { deleteOpening } from "../utils/openings/deleteOpening";
-import { getAllApplicantsInOpening } from "../utils/openings/getAllApplicantsInOpening";
-import { getAllOpeningsInOrg } from "../utils/openings/getAllOpeningsInOrg";
-import { getAllStagesInOpening } from "../utils/openings/getAllStagesInOpening";
-import { getOpening } from "../utils/openings/getOpeningById";
-import updateOpening from "../utils/openings/updateOpening";
-
+import * as Openings from "../models/Openings";
+import * as Orgs from "../models/Orgs";
 export const getAllOpenings = async (req: Request, res: Response) => {
   try {
-    const allOpenings = await getAllOpeningsInOrg({
+    const allOpenings = await Orgs.getAllOpeningsInOrg({
       orgId: req.session.user.orgId,
     });
     return res.status(200).json(allOpenings);
@@ -50,7 +44,7 @@ export const createOpeningController = async (req: Request, res: Response) => {
       return res.status(400).json({ message: `${error.message}` });
     }
 
-    await createOpening(createOpeningInput);
+    await Openings.createOpening(createOpeningInput);
     return res.status(201).json({ message: "Opening created!" });
   } catch (error) {
     // TODO add error logger
@@ -63,7 +57,7 @@ export const createOpeningController = async (req: Request, res: Response) => {
 export const getOpeningById = async (req: Request, res: Response) => {
   const { openingId } = req.params;
   try {
-    const opening = await getOpening({
+    const opening = await Openings.getOpeningById({
       openingId,
       orgId: req.session.user.orgId,
     });
@@ -88,7 +82,7 @@ export const deleteOpeningController = async (req: Request, res: Response) => {
       orgId: req.session.user.orgId,
       openingId: openingId,
     };
-    await deleteOpening(deleteOpeningInput);
+    await Openings.deleteOpening(deleteOpeningInput);
     return res.status(200).json({ message: "Opening deleted" });
   } catch (error) {
     return res
@@ -120,7 +114,7 @@ export const updateOpeningController = async (req: Request, res: Response) => {
       return res.status(400).json({ message: `${error.message}` });
     }
 
-    await updateOpening(updateOpeningInput);
+    await Openings.updateOpening(updateOpeningInput);
     return res.status(200).json({ message: "Opening updated!" });
   } catch (error) {
     return res
@@ -149,7 +143,7 @@ export const getApplicants = async (req: Request, res: Response) => {
   }
 
   try {
-    const allApplicants = await getAllApplicantsInOpening(
+    const allApplicants = await Openings.getAllApplicantsInOpening(
       getAllApplicantsInOpeningInput
     );
     return res.status(200).json(allApplicants);
@@ -164,7 +158,7 @@ export const getApplicants = async (req: Request, res: Response) => {
 export const getStages = async (req: Request, res: Response) => {
   const { openingId } = req.params;
   try {
-    const allStages = await getAllStagesInOpening({
+    const allStages = await Openings.getAllStagesInOpening({
       openingId: openingId,
       orgId: req.session.user.orgId,
     });

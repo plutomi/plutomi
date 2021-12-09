@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 
-export default async function metadata(req: Request, res: Response) {
+export const metadata = async (req: Request, res: Response) => {
   const endpoints = req.app.get("endpoints");
   const cleanedEndpoints = endpoints.map((endpoint) => {
     delete endpoint.middlewares;
@@ -21,4 +21,4 @@ export default async function metadata(req: Request, res: Response) {
       subdomains: req.subdomains,
     },
   });
-}
+};

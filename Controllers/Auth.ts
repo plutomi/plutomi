@@ -6,20 +6,14 @@ import {
   TIME_UNITS,
 } from "../Config";
 import { Request, Response } from "express";
-import Sanitize from "../utils/sanitize";
 import { sealData, unsealData } from "iron-session";
-import Joi from "joi";
-import { getUserById } from "../utils/users/getUserById";
 import { nanoid } from "nanoid";
-import { getLatestLoginLink } from "../utils/loginLinks/getLatestLoginLink";
+import { CUSTOM_QUERY } from "../types/main";
+import Sanitize from "../utils/sanitize";
+import Joi from "joi";
 import sendEmail from "../utils/sendEmail";
 import * as Time from "../utils/time";
-import { createUser } from "../utils/users/createUser";
-import { getUserByEmail } from "../utils/users/getUserByEmail";
-import createLoginLink from "../utils/loginLinks/createLoginLink";
-import { CUSTOM_QUERY } from "../types/main";
-import { getOrgInvitesForUser } from "../utils/invites/getOrgInvitesForUser";
-import { createLoginEventAndDeleteLoginLink } from "../utils/loginLinks/createLoginEventAndDeleteLoginLink";
+import * as Users from "../models/Users";
 const ironPassword = process.env.IRON_SEAL_PASSWORD;
 
 const ironOptions = {
@@ -53,7 +47,7 @@ export const login = async (req: Request, res: Response) => {
     return res.status(401).json({ message: "Your link is invalid" });
   }
 
-  const user = await getUserById({ userId }); // TODO async error handling
+  const user = await Users.getUserById({ userId }); // TODO async error handling
 
   if (!user) {
     return res
@@ -62,7 +56,7 @@ export const login = async (req: Request, res: Response) => {
   }
 
   const userOrg = user.orgId !== DEFAULTS.NO_ORG ?? user.orgId;
-  await createLoginEventAndDeleteLoginLink({
+  await Users.createLoginEventAndDeleteLoginLink({
     loginLinkId,
     userId,
     orgId: userOrg,
@@ -77,7 +71,7 @@ export const login = async (req: Request, res: Response) => {
    */
   let userInvites = []; // TODO types array of org invite
   if (req.session.user.orgId === DEFAULTS.NO_ORG) {
-    userInvites = await getOrgInvitesForUser({
+    userInvites = await Users.getInvitesForUser({
       userId: req.session.user.userId,
     });
   }
@@ -119,13 +113,13 @@ export const createLoginLinks = async (req: Request, res: Response) => {
     return res.status(400).json({ message: `${error.message}` });
   }
 
-  let user = await getUserByEmail({ email });
+  let user = await Users.getUserByEmail({ email });
   if (!user) {
-    user = await createUser({ email });
+    user = await Users.createUser({ email });
   }
 
   try {
-    const latestLink = await getLatestLoginLink({
+    const latestLink = await Users.getLatestLoginLink({
       userId: user.userId,
     });
 
@@ -154,7 +148,7 @@ export const createLoginLinks = async (req: Request, res: Response) => {
     );
 
     try {
-      await createLoginLink({
+      await Users.createLoginLink({
         userId: user.userId,
         loginLinkId,
       });

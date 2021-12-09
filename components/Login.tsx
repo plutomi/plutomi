@@ -1,7 +1,7 @@
 import LoginEmail from "./EmailSigninInput";
 import { useState } from "react";
 import router from "next/router";
-import AuthService from "../Adapters/AuthService";
+import AuthService from "../adapters/AuthService";
 import GoogleLoginButton from "./GoogleLoginButton";
 import axios from "../axios";
 import { LOGIN_METHODS } from "../Config";

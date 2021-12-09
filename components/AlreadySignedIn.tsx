@@ -1,9 +1,9 @@
 import { useRouter } from "next/router";
 import Link from "next/link";
 import useSelf from "../SWR/useSelf";
-import AuthService from "../Adapters/AuthService";
+import AuthService from "../adapters/AuthService";
 import { mutate } from "swr";
-import UsersService from "../Adapters/UsersService";
+import UsersService from "../adapters/UsersService";
 import { route } from "next/dist/server/router";
 const handleLogout = async (isHomepage: boolean) => {
   // If we're on the homepage, since its SSR, we want to refresh the page

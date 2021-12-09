@@ -1,13 +1,8 @@
 import { Request, Response } from "express";
-import Joi from "joi";
 import { DEFAULTS } from "../Config";
 import { UpdateStageInput } from "../types/main";
-import { getAllQuestionsInStage } from "../utils/questions/getAllQuestionsInStage";
-import { createStage } from "../utils/stages/createStage";
-import * as Stage from "../utils/stages/deleteStage";
-import { getAllApplicantsInStage } from "../utils/stages/getAllApplicantsInStage";
-import { getStageById } from "../utils/stages/getStageById";
-import updateStage from "../utils/stages/updateStage";
+import * as Stages from "../models/Stages";
+import Joi from "joi";
 
 export const create = async (req: Request, res: Response) => {
   const { GSI1SK, openingId } = req.body;
@@ -37,7 +32,7 @@ export const create = async (req: Request, res: Response) => {
   }
 
   try {
-    await createStage(createStageInput);
+    await Stages.createStage(createStageInput);
     return res.status(201).json({ message: "Stage created" });
   } catch (error) {
     // TODO add error logger
@@ -55,7 +50,7 @@ export const deleteStage = async (req: Request, res: Response) => {
       stageId: stageId,
     };
 
-    await Stage.deleteStage(deleteStageInput); // TODO fix this as its not grouped with the other funnels
+    await Stages.deleteStage(deleteStageInput); // TODO fix this as its not grouped with the other funnels
 
     return res.status(200).json({ message: "Stage deleted!" });
   } catch (error) {
@@ -74,7 +69,7 @@ export const getStageInfo = async (req: Request, res: Response) => {
   };
 
   try {
-    const stage = await getStageById(getStageInput);
+    const stage = await Stages.getStageById(getStageInput);
     if (!stage) {
       return res.status(404).json({ message: "Stage not found" });
     }
@@ -111,7 +106,7 @@ export const update = async (req: Request, res: Response) => {
       return res.status(400).json({ message: `${error.message}` });
     }
 
-    await updateStage(updateStageInput);
+    await Stages.updateStage(updateStageInput);
     return res.status(200).json({ message: "Stage updated!" });
   } catch (error) {
     return res
@@ -128,7 +123,7 @@ export const getApplicantsInStage = async (req: Request, res: Response) => {
   };
 
   try {
-    const allApplicants = await getAllApplicantsInStage(
+    const allApplicants = await Stages.getAllApplicantsInStage(
       getAllApplicantsInStageInput
     );
     return res.status(200).json(allApplicants);
@@ -143,7 +138,7 @@ export const getApplicantsInStage = async (req: Request, res: Response) => {
 export const getQuestionsInStage = async (req: Request, res: Response) => {
   const { stageId } = req.params;
   try {
-    const questions = await getAllQuestionsInStage({
+    const questions = await Stages.getAllQuestionsInStage({
       orgId: req.session.user.orgId,
       stageId,
     });

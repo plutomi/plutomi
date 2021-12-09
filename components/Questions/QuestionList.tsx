@@ -9,8 +9,8 @@ import { useEffect } from "react";
 import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
 import useAllStageQuestions from "../../SWR/useAllStageQuestions";
 import Loader from "../Loader";
-import StagesService from "../../Adapters/StagesService";
-import QuestionsService from "../../Adapters/QuestionsService";
+import StagesService from "../../adapters/StagesService";
+import QuestionsService from "../../adapters/QuestionsService";
 import { CUSTOM_QUERY } from "../../types/main";
 export default function QuestionList() {
   const router = useRouter();

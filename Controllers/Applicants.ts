@@ -1,17 +1,15 @@
 import { Request, Response } from "express";
-import Joi from "joi";
 import { DEFAULTS, EMAILS } from "../Config";
 import {
   CreateApplicantAPIBody,
   CreateApplicantResponseInput,
 } from "../types/main";
-import { createApplicant } from "../utils/applicants/createApplicant";
-import { createApplicantResponse } from "../utils/applicants/createApplicantResponse";
-import deleteApplicant from "../utils/applicants/deleteApplicant";
-import { getApplicantById } from "../utils/applicants/getApplicantById";
-import updateApplicant from "../utils/applicants/updateApplicant";
-import { getOpening } from "../utils/openings/getOpeningById";
 import sendEmail from "../utils/sendEmail";
+import * as Openings from "../models/Openings";
+import * as Applicants from "../models/Applicants";
+import _ from "lodash";
+import Joi from "joi";
+
 const UrlSafeString = require("url-safe-string"),
   tagGenerator = new UrlSafeString();
 export const create = async (req: Request, res: Response) => {
@@ -42,7 +40,7 @@ export const create = async (req: Request, res: Response) => {
   }
 
   try {
-    const opening = await getOpening({ orgId, openingId });
+    const opening = await Openings.getOpeningById({ orgId, openingId });
 
     // DO NOT REMOVE
     // We need the first stage in this opening
@@ -51,7 +49,7 @@ export const create = async (req: Request, res: Response) => {
     }
 
     try {
-      const newApplicant = await createApplicant({
+      const newApplicant = await Applicants.createApplicant({
         orgId: orgId,
         firstName: firstName,
         lastName: lastName,
@@ -89,7 +87,7 @@ export const get = async (req: Request, res: Response) => {
   const { applicantId } = req.params;
   try {
     // TODO gather applicant responses here
-    const applicant = await getApplicantById({
+    const applicant = await Applicants.getApplicantById({
       applicantId: applicantId,
     });
 
@@ -108,7 +106,7 @@ export const get = async (req: Request, res: Response) => {
 export const remove = async (req: Request, res: Response) => {
   const { applicantId } = req.params;
   try {
-    await deleteApplicant({
+    await Applicants.deleteApplicant({
       orgId: req.session.user.orgId,
       applicantId: applicantId!,
     });
@@ -146,7 +144,7 @@ export const update = async (req: Request, res: Response) => {
       return res.status(400).json({ message: `${error.message}` });
     }
 
-    await updateApplicant(updateApplicantInput);
+    await Applicants.updateApplicant(updateApplicantInput);
     return res.status(200).json({ message: "Applicant updated!" });
   } catch (error) {
     return res
@@ -177,7 +175,9 @@ export const answer = async (req: Request, res: Response) => {
     return res.status(400).json({ message: `${error.message}` });
   }
 
-  const applicant = await getApplicantById({ applicantId: applicantId });
+  const applicant = await Applicants.getApplicantById({
+    applicantId: applicantId,
+  });
   try {
     // Write questions to Dynamo
     await Promise.all(
@@ -193,7 +193,7 @@ export const answer = async (req: Request, res: Response) => {
           questionResponse: questionResponse,
         };
 
-        await createApplicantResponse(createApplicantResponseInput);
+        await Applicants.createApplicantResponse(createApplicantResponseInput);
       })
     );
 
@@ -204,3 +204,9 @@ export const answer = async (req: Request, res: Response) => {
     });
   }
 };
+
+/**
+ * Get an applicant by their ID
+ * @param props - {@link GetApplicantByIdInput}
+ * @returns An applicant's metadata and responses
+ */

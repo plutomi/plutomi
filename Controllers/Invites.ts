@@ -7,23 +7,17 @@ import {
   ENTITY_TYPES,
   TIME_UNITS,
 } from "./../Config";
-import createOrgInvite from "./../utils/invites/createOrgInvite";
-import deleteOrgInvite from "./../utils/invites/deleteOrgInvite";
-import { getOrgInvite } from "./../utils/invites/getOrgInvite";
-import { joinOrgFromInvite } from "./../utils/invites/joinOrgFromInvite";
-import { getOrg } from "./../utils/orgs/getOrg";
 import Sanitize from "./../utils/sanitize";
 import sendEmail from "./../utils/sendEmail";
+import * as Invites from "../models/Invites";
 import * as Time from "./../utils/time";
-import { createUser } from "./../utils/users/createUser";
-import { getUserByEmail } from "./../utils/users/getUserByEmail";
-import { getUserById } from "./../utils/users/getUserById";
-
+import * as Users from "../models/Users";
+import * as Orgs from "../models/Orgs";
 export const create = async (req: Request, res: Response) => {
   const { body, method } = req;
   const { recipientEmail } = body; // todo trim and lowercase this email
   const expiresAt = Time.futureISO(3, TIME_UNITS.DAYS);
-  const [org, error] = await getOrg({ orgId: req.session.user.orgId });
+  const [org, error] = await Orgs.getOrgById({ orgId: req.session.user.orgId });
 
   if (error) {
     console.error("error creating invite", error);
@@ -57,14 +51,14 @@ export const create = async (req: Request, res: Response) => {
       });
     }
 
-    let recipient = await getUserByEmail({ email: recipientEmail });
+    let recipient = await Users.getUserByEmail({ email: recipientEmail });
 
     if (!recipient) {
-      recipient = await createUser({ email: recipientEmail });
+      recipient = await Users.createUser({ email: recipientEmail });
     }
 
     try {
-      await createOrgInvite({
+      await Invites.createInvite({
         orgId: org.orgId, // TODO should be fixed with return type above
         recipient: recipient,
         orgName: org.GSI1SK,
@@ -98,7 +92,7 @@ export const create = async (req: Request, res: Response) => {
 export const accept = async (req: Request, res: Response) => {
   const { inviteId } = req.params;
   // TODO trycatch
-  const invite = await getOrgInvite({
+  const invite = await Invites.getInviteById({
     inviteId: inviteId,
     userId: req.session.user.userId,
   });
@@ -114,9 +108,12 @@ export const accept = async (req: Request, res: Response) => {
   }
 
   try {
-    await joinOrgFromInvite({ userId: req.session.user.userId, invite });
+    await Invites.joinOrgFromInvite({
+      userId: req.session.user.userId,
+      invite,
+    });
 
-    const updatedUser = await getUserById({
+    const updatedUser = await Users.getUserById({
       userId: req.session.user.userId,
     });
 
@@ -137,7 +134,7 @@ export const accept = async (req: Request, res: Response) => {
 export const reject = async (req: Request, res: Response) => {
   const { inviteId } = req.params;
   try {
-    await deleteOrgInvite({
+    await Invites.deleteInvite({
       inviteId: inviteId,
       userId: req.session.user.userId,
     });

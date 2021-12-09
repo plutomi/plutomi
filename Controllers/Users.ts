@@ -1,13 +1,12 @@
-import { getUserById } from "./../utils/users/getUserById";
 import { Request, Response } from "express";
 import { DEFAULTS, ENTITY_TYPES } from "./../Config";
-import Joi from "joi";
-import { updateUser } from "./../utils/users/updateUser";
 import Sanitize from "./../utils/sanitize";
-import { getOrgInvitesForUser } from "./../utils/invites/getOrgInvitesForUser";
+import * as Users from "../models/Users";
+import Joi from "joi";
+
 export const self = async (req: Request, res: Response) => {
   try {
-    const requestedUser = await getUserById({
+    const requestedUser = await Users.getUserById({
       userId: req.session.user.userId,
     });
     if (!requestedUser) {
@@ -29,7 +28,7 @@ export const self = async (req: Request, res: Response) => {
 export const getById = async (req: Request, res: Response) => {
   const { userId } = req.params;
   try {
-    const requestedUser = await getUserById({ userId: userId });
+    const requestedUser = await Users.getUserById({ userId: userId });
 
     if (!requestedUser) {
       return res.status(404).json({ message: "User not found" });
@@ -88,7 +87,7 @@ export const update = async (req: Request, res: Response) => {
         .json({ message: "You cannot update another user" });
     }
 
-    const updatedUser = await updateUser(updateUserInput);
+    const updatedUser = await Users.updateUser(updateUserInput);
 
     // If a signed in user is updating themselves, update the session state
     if (updatedUser.userId === req.session.user.userId) {
@@ -105,7 +104,7 @@ export const update = async (req: Request, res: Response) => {
 
 export const getInvites = async (req: Request, res: Response) => {
   try {
-    const invites = await getOrgInvitesForUser({
+    const invites = await Users.getInvitesForUser({
       userId: req.session.user.userId,
     });
     return res.status(200).json(invites);

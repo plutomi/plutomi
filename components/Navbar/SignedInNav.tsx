@@ -1,7 +1,7 @@
 import { Fragment } from "react";
 import useSelf from "../../SWR/useSelf";
 import NavbarSearch from "./NavbarSearch";
-import AuthService from "../../Adapters/AuthService";
+import AuthService from "../../adapters/AuthService";
 import { Disclosure, Menu, Transition } from "@headlessui/react";
 import { NAVBAR_NAVIGATION, DROPDOWN_NAVIGATION } from "../../Config";
 import { useRouter } from "next/router";
@@ -15,7 +15,7 @@ import Link from "next/dist/client/link";
 import Banner from "../BannerTop";
 import { mutate } from "swr";
 import { DEFAULTS } from "../../Config";
-import UsersService from "../../Adapters/UsersService";
+import UsersService from "../../adapters/UsersService";
 
 function classNames(...classes) {
   return classes.filter(Boolean).join(" ");

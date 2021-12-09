@@ -1,12 +1,9 @@
 import { Request, Response } from "express";
-import Joi from "joi";
 import { DEFAULTS, ENTITY_TYPES } from "./../Config";
-import { getOrgInvitesForUser } from "./../utils/invites/getOrgInvitesForUser";
-import { createAndJoinOrg } from "./../utils/orgs/createAndJoinOrg";
-import { getAllUsersInOrg } from "./../utils/orgs/getAllUsersInOrg";
-import { getOrg } from "./../utils/orgs/getOrg";
 import Sanitize from "./../utils/sanitize";
-import { updateUser } from "./../utils/users/updateUser";
+import Joi from "joi";
+import * as Users from "../models/Users";
+import * as Orgs from "../models/Orgs";
 const UrlSafeString = require("url-safe-string"),
   tagGenerator = new UrlSafeString();
 
@@ -19,7 +16,7 @@ export const create = async (req: Request, res: Response) => {
     });
   }
 
-  const pendingInvites = await getOrgInvitesForUser({
+  const pendingInvites = await Users.getInvitesForUser({
     userId: req.session.user.userId,
   });
 
@@ -56,7 +53,7 @@ export const create = async (req: Request, res: Response) => {
   }
 
   try {
-    await createAndJoinOrg({
+    await Orgs.createAndJoinOrg({
       userId: req.session.user.userId,
       orgId: orgId,
       GSI1SK: GSI1SK,
@@ -81,7 +78,7 @@ export const create = async (req: Request, res: Response) => {
  */
 export const get = async (req: Request, res: Response) => {
   const { orgId } = req.params;
-  const [org, error] = await getOrg({ orgId: orgId });
+  const [org, error] = await Orgs.getOrgById({ orgId: orgId });
 
   if (error) {
     console.log("Error retrieving org info", error);
@@ -105,7 +102,7 @@ export const get = async (req: Request, res: Response) => {
 
 export const deleteOrg = async (req: Request, res: Response) => {
   const { orgId } = req.params;
-  const [org, error] = await getOrg({ orgId: orgId });
+  const [org, error] = await Orgs.getOrgById({ orgId: orgId });
 
   if (error) {
     console.log("Error retrieving org info", error);
@@ -124,7 +121,7 @@ export const deleteOrg = async (req: Request, res: Response) => {
   }
 
   try {
-    const updatedUser = await updateUser({
+    const updatedUser = await Users.updateUser({
       // TODO possible transaction?
       userId: req.session.user.userId,
       newUserValues: {
@@ -165,7 +162,7 @@ export const users = async (req: Request, res: Response) => {
   }
 
   try {
-    const allUsers = await getAllUsersInOrg({
+    const allUsers = await Orgs.getAllUsersInOrg({
       orgId: req.session.user.orgId,
     });
     return res.status(200).json(allUsers);

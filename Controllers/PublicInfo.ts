@@ -1,12 +1,9 @@
 import { ENTITY_TYPES } from "./../Config";
-import { getOrg } from "./../utils/orgs/getOrg";
 import { Request, Response } from "express";
 import Sanitize from "./../utils/sanitize";
-import { getAllOpeningsInOrg } from "./../utils/openings/getAllOpeningsInOrg";
-import { getOpening } from "./../utils/openings/getOpeningById";
-import { getStageById } from "./../utils/stages/getStageById";
-import { getAllQuestionsInStage } from "./../utils/questions/getAllQuestionsInStage";
-
+import * as Openings from "../models/Openings";
+import * as Orgs from "../models/Orgs";
+import * as Stages from "../models/Stages";
 export const getOrgInfo = async (req: Request, res: Response) => {
   const { orgId } = req.params;
 
@@ -14,7 +11,7 @@ export const getOrgInfo = async (req: Request, res: Response) => {
     return res.status(400).json({ message: "orgId is missing" });
   }
 
-  const [org, error] = await getOrg({ orgId: orgId });
+  const [org, error] = await Orgs.getOrgById({ orgId });
 
   if (error instanceof Error) {
     return res.status(400).json({
@@ -32,7 +29,7 @@ export const getOrgInfo = async (req: Request, res: Response) => {
 
 export const getOrgOpenings = async (req: Request, res: Response) => {
   const { orgId } = req.params;
-  const allOpenings = await getAllOpeningsInOrg({ orgId });
+  const allOpenings = await Orgs.getAllOpeningsInOrg({ orgId });
   const publicOpenings = allOpenings.filter((opening) => opening.isPublic);
 
   publicOpenings.forEach((opening) =>
@@ -45,7 +42,10 @@ export const getOrgOpenings = async (req: Request, res: Response) => {
 export const getOpeningInfo = async (req: Request, res: Response) => {
   const { orgId, openingId } = req.params;
 
-  const opening = await getOpening({ orgId: orgId, openingId: openingId });
+  const opening = await Openings.getOpeningById({
+    orgId,
+    openingId,
+  });
   if (!opening) {
     return res.status(404).json({ message: "Opening not found" });
   }
@@ -63,7 +63,7 @@ export const getOpeningInfo = async (req: Request, res: Response) => {
 export const getStageInfo = async (req: Request, res: Response) => {
   const { orgId, stageId } = req.params;
   try {
-    const stage = await getStageById({ orgId, stageId });
+    const stage = await Stages.getStageById({ orgId, stageId });
     if (!stage) {
       return res.status(404).json({ message: "Stage not found" });
     }
@@ -86,7 +86,7 @@ export const getStageInfo = async (req: Request, res: Response) => {
 export const getStageQuestions = async (req: Request, res: Response) => {
   const { orgId, stageId } = req.params;
   try {
-    const questions = await getAllQuestionsInStage({
+    const questions = await Stages.getAllQuestionsInStage({
       orgId,
       stageId,
     });
