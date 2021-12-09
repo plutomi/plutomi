@@ -3,7 +3,6 @@ import Joi from "joi";
 import { DEFAULTS, ENTITY_TYPES } from "../Config";
 import { getAllOpeningsInOrg } from "../utils/openings/getAllOpeningsInOrg";
 import * as Openings from "../models/Openings";
-import updateOpening from "../utils/openings/updateOpening";
 import { QueryCommandInput, QueryCommand } from "@aws-sdk/client-dynamodb";
 import { Dynamo } from "../awsClients/ddbDocClient";
 import { DynamoNewStage } from "../types/dynamo";
@@ -120,7 +119,7 @@ export const updateOpeningController = async (req: Request, res: Response) => {
       return res.status(400).json({ message: `${error.message}` });
     }
 
-    await updateOpening(updateOpeningInput);
+    await Openings.updateOpening(updateOpeningInput);
     return res.status(200).json({ message: "Opening updated!" });
   } catch (error) {
     return res
