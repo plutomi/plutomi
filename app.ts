@@ -20,30 +20,30 @@ const WEBSITE_URL = process.env.WEBSITE_URL;
 const app = express();
 app.use(
   cors({
-    credentials: true,
-    origin: WEBSITE_URL,
+    credentials: true, // Access-Control-Allow-Credentials
+    origin: WEBSITE_URL, // Only allow browser requests from our site: https://plutomi.com
   })
 );
 app.use(express.json());
 app.use(helmet());
 app.set("trust proxy", 1);
+app.use(sessionSettings); // Adds req.session to each route, if applicable
 
-// Adds req.session to routes
-app.use(sessionSettings);
-
-// Return an org's public info
+/**
+ ****************************************************************************
+ * All /public routes return publicly available information about the entity
+ ****************************************************************************
+ */
 app
   .route("/public/:orgId")
   .get([Middleware.cleanOrgId], PublicInfo.getOrgInfo)
   .all(Middleware.methodNotAllowed);
 
-// Return all public openings for an org
 app
   .route("/public/:orgId/openings")
   .get([Middleware.cleanOrgId], PublicInfo.getOrgOpenings)
   .all(Middleware.methodNotAllowed);
 
-// Return public info for an opening
 app
   .route("/public/:orgId/openings/:openingId") // TODO get stages in opening
   .get([Middleware.cleanOrgId], PublicInfo.getOpeningInfo)
@@ -59,39 +59,32 @@ app
   .get([Middleware.cleanOrgId], PublicInfo.getStageQuestions)
   .all(Middleware.methodNotAllowed);
 
+/**
+ ****************************************************************************
+ * Orgs
+ ****************************************************************************
+ */
 app
-  .route("/questions")
-  .post([Middleware.withAuth], Questions.create)
+  .route("/orgs")
+  .post([Middleware.withAuth], Orgs.create)
   .all(Middleware.methodNotAllowed);
 
 app
-  .route("/questions/:questionId")
-  .delete([Middleware.withAuth], Questions.deleteQuestion)
-  .put([Middleware.withAuth], Questions.update)
+  .route("/orgs/:orgId")
+  .get([Middleware.withAuth, Middleware.cleanOrgId], Orgs.get)
+  .delete([Middleware.withAuth, Middleware.cleanOrgId], Orgs.deleteOrg)
   .all(Middleware.methodNotAllowed);
 
 app
-  .route("/stages")
-  .post([Middleware.withAuth], Stages.create)
+  .route("/orgs/:orgId")
+  .get([Middleware.withAuth, Middleware.cleanOrgId], Orgs.users)
   .all(Middleware.methodNotAllowed);
 
-app
-  .route("/stages/:stageId")
-  .get([Middleware.withAuth], Stages.getStageInfo)
-  .delete([Middleware.withAuth], Stages.deleteStage)
-  .put([Middleware.withAuth], Stages.update)
-  .all(Middleware.methodNotAllowed);
-
-app
-  .route("/stages/:stageId/applicants")
-  .get([Middleware.withAuth], Stages.getApplicantsInStage)
-  .all(Middleware.methodNotAllowed);
-
-app
-  .route("/stages/:stageId/questions")
-  .get([Middleware.withAuth], Stages.getQuestionsInStage)
-  .all(Middleware.methodNotAllowed);
-
+/**
+ ****************************************************************************
+ * Openings
+ ****************************************************************************
+ */
 app
   .route("/openings")
   .get([Middleware.withAuth], Openings.getAllOpenings)
@@ -115,6 +108,56 @@ app
   .get([Middleware.withAuth], Openings.getStages)
   .all(Middleware.methodNotAllowed);
 
+/**
+ ****************************************************************************
+ * Stages
+ ****************************************************************************
+ */
+app
+  .route("/stages")
+  .post([Middleware.withAuth], Stages.create)
+  .all(Middleware.methodNotAllowed);
+
+app
+  .route("/stages/:stageId")
+  .get([Middleware.withAuth], Stages.getStageInfo)
+  .delete([Middleware.withAuth], Stages.deleteStage)
+  .put([Middleware.withAuth], Stages.update)
+  .all(Middleware.methodNotAllowed);
+
+app
+  .route("/stages/:stageId/applicants")
+  .get([Middleware.withAuth], Stages.getApplicantsInStage)
+  .all(Middleware.methodNotAllowed);
+
+app
+  .route("/stages/:stageId/questions")
+  .get([Middleware.withAuth], Stages.getQuestionsInStage)
+  .all(Middleware.methodNotAllowed);
+
+/**
+ ****************************************************************************
+ * Questions
+ ****************************************************************************
+ */
+
+app
+  .route("/questions")
+  .post([Middleware.withAuth], Questions.create)
+  .all(Middleware.methodNotAllowed);
+
+app
+  .route("/questions/:questionId")
+  .delete([Middleware.withAuth], Questions.deleteQuestion)
+  .put([Middleware.withAuth], Questions.update)
+  .all(Middleware.methodNotAllowed);
+
+/**
+ ****************************************************************************
+ * Applicants
+ ****************************************************************************
+ */
+
 app
   .route("/applicants")
   .post(Applicants.create)
@@ -131,19 +174,29 @@ app
   .route("/applicants/:applicantId/answer")
   .post(Applicants.answer)
   .all(Middleware.methodNotAllowed);
+
+/**
+ ****************************************************************************
+ * Auth
+ ****************************************************************************
+ */
 app
   .route("/auth/login")
-  .get(Auth.login) // Log a user in
-  .post(Auth.createLoginLinks) // Create login links for the user
+  .get(Auth.login)
+  .post(Auth.createLoginLinks)
   .all(Middleware.methodNotAllowed);
 
-// Log out a user. Session is needed to log out obviously
 app
   .route("/auth/logout")
   .post([Middleware.withAuth], Auth.logout)
   .all(Middleware.methodNotAllowed);
 
-// Return information about the current logged in user
+/**
+ ****************************************************************************
+ * Users
+ ****************************************************************************
+ */
+
 app
   .route("/users/self")
   .get([Middleware.withAuth], Users.self)
@@ -160,6 +213,12 @@ app
   .get([Middleware.withAuth], Users.getInvites)
   .all(Middleware.methodNotAllowed);
 
+/**
+ ****************************************************************************
+ * Invites
+ ****************************************************************************
+ */
+
 app
   .route("/invites")
   .post([Middleware.withAuth], Invites.create)
@@ -171,28 +230,14 @@ app
   .put([Middleware.withAuth], Invites.reject)
   .all(Middleware.methodNotAllowed);
 
-app
-  .route("/orgs")
-  .post([Middleware.withAuth], Orgs.create)
-  .all(Middleware.methodNotAllowed);
-
-app
-  .route("/orgs/:orgId")
-  .get([Middleware.withAuth, Middleware.cleanOrgId], Orgs.get)
-  .delete([Middleware.withAuth, Middleware.cleanOrgId], Orgs.deleteOrg)
-  .all(Middleware.methodNotAllowed);
-
-app
-  .route("/orgs/:orgId")
-  .get([Middleware.withAuth, Middleware.cleanOrgId], Orgs.users)
-  .all(Middleware.methodNotAllowed);
 /**
- * ------------------------ DO NOT TOUCH BELOW THIS LINE ---------------------------
+ * *------------------------ DO NOT TOUCH BELOW THIS LINE ---------------------------*
+ ****************************************************************************
  * Catch alls for wrong methods and 404s on API routes that do not exist
+ ****************************************************************************
  */
 const endpoints = listEndpoints(app);
 app.set("endpoints", endpoints);
-// Healthcheck & Basic metadata about the API
 app.route("/").get(metadata).all(Middleware.methodNotAllowed);
 app.all("*", Middleware.routeNotFound);
 
