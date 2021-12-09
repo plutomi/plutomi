@@ -3,11 +3,13 @@ import express from "express";
 import helmet from "helmet";
 import cors from "cors";
 import * as Middleware from "./newMiddleware";
-import * as PublicInfo from "./Controllers/PublicInfo";
-import * as Auth from "./Controllers/Auth";
-import metadata from "./Controllers/Metadata";
+import * as PublicInfo from "./Controllers/API/PublicInfo";
+import * as Auth from "./Controllers/API/Auth";
+import metadata from "./Controllers/API/Metadata";
 import listEndpoints from "express-list-endpoints";
-import * as Users from "./Controllers/Users";
+import * as Users from "./Controllers/API/Users";
+import * as Invites from "./Controllers/API/Invites";
+import * as Orgs from "./Controllers/API/Orgs";
 import { sessionSettings } from "./Config";
 const PORT = process.env.EXPRESS_PORT;
 const WEBSITE_URL = process.env.WEBSITE_URL;
@@ -70,6 +72,33 @@ app
 app
   .route("/users/:userId/invites")
   .get([Middleware.withAuth], Users.getInvites)
+  .all(Middleware.methodNotAllowed);
+
+app
+  .route("/invites")
+  .post([Middleware.withAuth], Invites.create)
+  .all(Middleware.methodNotAllowed);
+
+app
+  .route("/invites/:inviteId")
+  .post([Middleware.withAuth], Invites.accept)
+  .put([Middleware.withAuth], Invites.reject)
+  .all(Middleware.methodNotAllowed);
+
+app
+  .route("/orgs")
+  .post([Middleware.withAuth], Orgs.create)
+  .all(Middleware.methodNotAllowed);
+
+app
+  .route("/orgs/:orgId")
+  .get([Middleware.withAuth], Orgs.get)
+  .delete([Middleware.withAuth], Orgs.deleteOrg)
+  .all(Middleware.methodNotAllowed);
+
+app
+  .route("/orgs/:orgId")
+  .get([Middleware.withAuth], Orgs.users)
   .all(Middleware.methodNotAllowed);
 /**
  * ------------------------ DO NOT TOUCH BELOW THIS LINE ---------------------------

@@ -6,10 +6,10 @@ import { DynamoNewOrg } from "../../types/dynamo";
 import { GetOrgInput } from "../../types/main";
 
 const { DYNAMO_TABLE_NAME } = process.env;
-/**
- * @param orgId
- */
-export async function getOrg(props: GetOrgInput) {
+export async function getOrg(
+  props: GetOrgInput
+): Promise<[DynamoNewOrg, null] | [null, Error]> {
+  // TODO add these types all over the dynamo calls
   const { orgId } = props;
   const params: GetCommandInput = {
     TableName: DYNAMO_TABLE_NAME,

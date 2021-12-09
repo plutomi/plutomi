@@ -4,22 +4,22 @@ import {
   ENTITY_TYPES,
   LOGIN_METHODS,
   TIME_UNITS,
-} from "../Config";
+} from "../../Config";
 import { Request, Response } from "express";
-import Sanitize from "../utils/sanitize";
+import Sanitize from "../../utils/sanitize";
 import { sealData, unsealData } from "iron-session";
 import Joi from "joi";
-import { getUserById } from "../utils/users/getUserById";
+import { getUserById } from "../../utils/users/getUserById";
 import { nanoid } from "nanoid";
-import { getLatestLoginLink } from "../utils/loginLinks/getLatestLoginLink";
-import sendEmail from "../utils/sendEmail";
-import * as Time from "../utils/time";
-import { createUser } from "../utils/users/createUser";
-import { getUserByEmail } from "../utils/users/getUserByEmail";
-import createLoginLink from "../utils/loginLinks/createLoginLink";
-import { CUSTOM_QUERY } from "../types/main";
-import { getOrgInvitesForUser } from "../utils/invites/getOrgInvitesForUser";
-import { createLoginEventAndDeleteLoginLink } from "../utils/loginLinks/createLoginEventAndDeleteLoginLink";
+import { getLatestLoginLink } from "../../utils/loginLinks/getLatestLoginLink";
+import sendEmail from "../../utils/sendEmail";
+import * as Time from "../../utils/time";
+import { createUser } from "../../utils/users/createUser";
+import { getUserByEmail } from "../../utils/users/getUserByEmail";
+import createLoginLink from "../../utils/loginLinks/createLoginLink";
+import { CUSTOM_QUERY } from "../../types/main";
+import { getOrgInvitesForUser } from "../../utils/invites/getOrgInvitesForUser";
+import { createLoginEventAndDeleteLoginLink } from "../../utils/loginLinks/createLoginEventAndDeleteLoginLink";
 const ironPassword = process.env.IRON_SEAL_PASSWORD;
 
 const ironOptions = {
