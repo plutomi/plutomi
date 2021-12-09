@@ -3,14 +3,20 @@ import {
   PutCommand,
   PutCommandInput,
   DeleteCommandInput,
+  GetCommand,
+  GetCommandInput,
 } from "@aws-sdk/lib-dynamodb";
 import { Dynamo } from "../awsClients/ddbDocClient";
-import { getOrgInvitesForUser } from "./getOrgInvitesForUser";
 import * as Time from "./../utils/time";
+import * as Users from "../models/Users";
 import { nanoid } from "nanoid";
 import { ENTITY_TYPES, ID_LENGTHS } from "../Config";
 import { DynamoNewOrgInvite } from "../types/dynamo";
-import { CreateOrgInviteInput, DeleteOrgInviteInput } from "../types/main";
+import {
+  CreateOrgInviteInput,
+  DeleteOrgInviteInput,
+  GetOrgInviteInput,
+} from "../types/main";
 
 const { DYNAMO_TABLE_NAME } = process.env;
 
@@ -32,7 +38,7 @@ export const createInvite = async (
 
     // TODO move this to controller, it should not be here
     // Check if the user we are inviting already has pending invites for the current org
-    const allUserInvites = await getOrgInvitesForUser({
+    const allUserInvites = await Users.getInvitesForUser({
       userId: recipient.userId,
     });
     const pendingInvites = allUserInvites.find(
@@ -79,7 +85,7 @@ export const createInvite = async (
  * @param props {@link DeleteOrgInviteInput}
  * @returns
  */
-export const deleteOrgInvite = async (
+export const deleteInvite = async (
   props: DeleteOrgInviteInput
 ): Promise<void> => {
   const { userId, inviteId } = props;
@@ -96,5 +102,25 @@ export const deleteOrgInvite = async (
     return;
   } catch (error) {
     throw new Error(`Unable to delete invite ${error}`);
+  }
+};
+
+export const getInviteById = async (
+  props: GetOrgInviteInput
+): Promise<DynamoNewOrgInvite> => {
+  const { userId, inviteId } = props;
+  const params: GetCommandInput = {
+    TableName: DYNAMO_TABLE_NAME,
+    Key: {
+      PK: `${ENTITY_TYPES.USER}#${userId}`,
+      SK: `${ENTITY_TYPES.ORG_INVITE}#${inviteId}`,
+    },
+  };
+
+  try {
+    const response = await Dynamo.send(new GetCommand(params));
+    return response.Item as DynamoNewOrgInvite;
+  } catch (error) {
+    throw new Error(error);
   }
 };

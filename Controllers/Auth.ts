@@ -18,7 +18,7 @@ import { createUser } from "../utils/users/createUser";
 import { getUserByEmail } from "../utils/users/getUserByEmail";
 import createLoginLink from "../utils/loginLinks/createLoginLink";
 import { CUSTOM_QUERY } from "../types/main";
-import { getOrgInvitesForUser } from "../utils/invites/getOrgInvitesForUser";
+import * as Users from "../models/Users"
 import { createLoginEventAndDeleteLoginLink } from "../utils/loginLinks/createLoginEventAndDeleteLoginLink";
 const ironPassword = process.env.IRON_SEAL_PASSWORD;
 
@@ -77,7 +77,7 @@ export const login = async (req: Request, res: Response) => {
    */
   let userInvites = []; // TODO types array of org invite
   if (req.session.user.orgId === DEFAULTS.NO_ORG) {
-    userInvites = await getOrgInvitesForUser({
+    userInvites = await Users.getInvitesForUser({
       userId: req.session.user.userId,
     });
   }

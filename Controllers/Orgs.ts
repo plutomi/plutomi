@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import Joi from "joi";
 import { DEFAULTS, ENTITY_TYPES } from "./../Config";
-import { getOrgInvitesForUser } from "./../utils/invites/getOrgInvitesForUser";
+import * as Users from "../models/Users";
 import { createAndJoinOrg } from "./../utils/orgs/createAndJoinOrg";
 import { getAllUsersInOrg } from "./../utils/orgs/getAllUsersInOrg";
 import { getOrg } from "./../utils/orgs/getOrg";
@@ -19,7 +19,7 @@ export const create = async (req: Request, res: Response) => {
     });
   }
 
-  const pendingInvites = await getOrgInvitesForUser({
+  const pendingInvites = await Users.getInvitesForUser({
     userId: req.session.user.userId,
   });
 

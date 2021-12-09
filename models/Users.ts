@@ -1,48 +1,35 @@
-import { QueryCommand, QueryCommandInput } from "@aws-sdk/lib-dynamodb";
-import { Dynamo } from "../../awsClients/ddbDocClient";
-import { ENTITY_TYPES } from "../../Config";
-import { DynamoNewOrgInvite } from "../../types/dynamo";
-import { GetOrgInvitesForUserInput } from "../../types/main";
+import {
+  DeleteCommand,
+  PutCommand,
+  PutCommandInput,
+  DeleteCommandInput,
+  GetCommand,
+  GetCommandInput,
+  QueryCommandInput,
+  QueryCommand,
+} from "@aws-sdk/lib-dynamodb";
+import { Dynamo } from "../awsClients/ddbDocClient";
+import * as Time from "./../utils/time";
+import { nanoid } from "nanoid";
+import { ENTITY_TYPES, ID_LENGTHS } from "../Config";
+import { DynamoNewOrgInvite } from "../types/dynamo";
+import {
+  CreateOrgInviteInput,
+  DeleteOrgInviteInput,
+  GetOrgInviteInput,
+  GetOrgInvitesForUserInput,
+} from "../types/main";
 
 const { DYNAMO_TABLE_NAME } = process.env;
 
-/**
- *
- *
- *
- *
- *
- *
- *
- *
- *
- *
- *
- *
- *
- *
- *
- *
- *
- *
- *
- *
- *
- *
- *
- *
- *
- *
- * TODO MOVE OVER TO USERS
- */
 /**
  * Given a `userId`, returns the user's invites to join an org
  * @param props {@link GetOrgInvitesForUserInput}
  * @returns - {@link DynamoNewOrgInvite[]}
  */
-export async function getOrgInvitesForUser(
+export const getInvitesForUser = async (
   props: GetOrgInvitesForUserInput
-): Promise<DynamoNewOrgInvite[]> {
+): Promise<DynamoNewOrgInvite[]> => {
   const { userId } = props;
   const params: QueryCommandInput = {
     TableName: DYNAMO_TABLE_NAME,
@@ -60,4 +47,4 @@ export async function getOrgInvitesForUser(
     console.log("Error getting org invites", error);
     throw new Error(error);
   }
-}
+};

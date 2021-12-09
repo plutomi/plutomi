@@ -8,8 +8,6 @@ import {
   TIME_UNITS,
 } from "./../Config";
 import * as Invites from "../models/Invites";
-import deleteOrgInvite from "./../utils/invites/deleteOrgInvite";
-import { getOrgInvite } from "./../utils/invites/getOrgInvite";
 import { joinOrgFromInvite } from "./../utils/invites/joinOrgFromInvite";
 import { getOrg } from "./../utils/orgs/getOrg";
 import Sanitize from "./../utils/sanitize";
@@ -98,7 +96,7 @@ export const create = async (req: Request, res: Response) => {
 export const accept = async (req: Request, res: Response) => {
   const { inviteId } = req.params;
   // TODO trycatch
-  const invite = await getOrgInvite({
+  const invite = await Invites.getInviteById({
     inviteId: inviteId,
     userId: req.session.user.userId,
   });
@@ -137,7 +135,7 @@ export const accept = async (req: Request, res: Response) => {
 export const reject = async (req: Request, res: Response) => {
   const { inviteId } = req.params;
   try {
-    await Invites.deleteOrgInvite({
+    await Invites.deleteInvite({
       inviteId: inviteId,
       userId: req.session.user.userId,
     });

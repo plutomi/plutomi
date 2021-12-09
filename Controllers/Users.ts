@@ -4,7 +4,7 @@ import { DEFAULTS, ENTITY_TYPES } from "./../Config";
 import Joi from "joi";
 import { updateUser } from "./../utils/users/updateUser";
 import Sanitize from "./../utils/sanitize";
-import { getOrgInvitesForUser } from "./../utils/invites/getOrgInvitesForUser";
+import * as Users from "../models/Users";
 export const self = async (req: Request, res: Response) => {
   try {
     const requestedUser = await getUserById({
@@ -105,7 +105,7 @@ export const update = async (req: Request, res: Response) => {
 
 export const getInvites = async (req: Request, res: Response) => {
   try {
-    const invites = await getOrgInvitesForUser({
+    const invites = await Users.getInvitesForUser({
       userId: req.session.user.userId,
     });
     return res.status(200).json(invites);
