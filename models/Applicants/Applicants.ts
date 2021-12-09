@@ -1,0 +1,10 @@
+import create from "./create";
+import get from "./get";
+import remove from "./delete";
+import update from "./update";
+import respond from "./respond";
+export const createApplicant = create;
+export const getApplicantById = get;
+export const deleteApplicant = remove;
+export const updateApplicant = update;
+export const createResponse = respond;
