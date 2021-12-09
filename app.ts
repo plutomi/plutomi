@@ -94,6 +94,7 @@ app
 app
   .route("/openings")
   .get([Middleware.withAuth], Openings.getAllOpenings)
+  .post([Middleware.withAuth], Openings.createOpeningController) // TODO fix name
   .all(Middleware.methodNotAllowed);
 
 app
