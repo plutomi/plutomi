@@ -1,8 +1,6 @@
 import { Request, Response } from "express";
 import Joi from "joi";
 import { DEFAULTS } from "../Config";
-import { createOpening } from "../utils/openings/createOpening";
-import { deleteOpening } from "../utils/openings/deleteOpening";
 import { getAllApplicantsInOpening } from "../utils/openings/getAllApplicantsInOpening";
 import { getAllOpeningsInOrg } from "../utils/openings/getAllOpeningsInOrg";
 import { getAllStagesInOpening } from "../utils/openings/getAllStagesInOpening";
@@ -50,7 +48,7 @@ export const createOpeningController = async (req: Request, res: Response) => {
       return res.status(400).json({ message: `${error.message}` });
     }
 
-    await createOpening(createOpeningInput);
+    await Openings.createOpening(createOpeningInput);
     return res.status(201).json({ message: "Opening created!" });
   } catch (error) {
     // TODO add error logger
@@ -88,7 +86,7 @@ export const deleteOpeningController = async (req: Request, res: Response) => {
       orgId: req.session.user.orgId,
       openingId: openingId,
     };
-    await deleteOpening(deleteOpeningInput);
+    await Openings.deleteOpening(deleteOpeningInput);
     return res.status(200).json({ message: "Opening deleted" });
   } catch (error) {
     return res
