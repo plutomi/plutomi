@@ -1,13 +1,21 @@
 import {
+  QueryCommand,
+  QueryCommandInput,
   TransactWriteCommand,
   TransactWriteCommandInput,
 } from "@aws-sdk/lib-dynamodb";
-import { Dynamo } from "../../awsClients/ddbDocClient";
-import * as Time from "../time";
+import { Dynamo } from "../awsClients/ddbDocClient";
+import * as Time from "../utils/time";
 import { nanoid } from "nanoid";
-import { ENTITY_TYPES, ID_LENGTHS } from "../../Config";
-import { CreateApplicantInput, CreateApplicantOutput } from "../../types/main";
-import { DynamoNewApplicant } from "../../types/dynamo";
+import { ENTITY_TYPES, ID_LENGTHS } from "../Config";
+import {
+  CreateApplicantInput,
+  CreateApplicantOutput,
+  GetApplicantByIdInput,
+  GetApplicantByIdOutput,
+} from "../types/main";
+import { DynamoNewApplicant } from "../types/dynamo";
+import _ from "lodash";
 const { DYNAMO_TABLE_NAME } = process.env;
 
 /**
@@ -15,15 +23,12 @@ const { DYNAMO_TABLE_NAME } = process.env;
  * @param props {@link CreateApplicantInput}
  * @returns - {@link CreateApplicantOutput}
  */
-export async function createApplicant(
+export const createApplicant = async (
   props: CreateApplicantInput
-): Promise<CreateApplicantOutput> {
+): Promise<CreateApplicantOutput> => {
   const { orgId, firstName, lastName, email, openingId, stageId } = props;
 
   const now = Time.currentISO();
-
-  // Applicant ID has to be pretty high as the apply link will be their application link
-  // https://zelark.github.io/nano-id-cc/
   const applicantId = nanoid(ID_LENGTHS.APPLICANT);
 
   const newApplicant: DynamoNewApplicant = {
@@ -42,7 +47,7 @@ export async function createApplicant(
     openingId: openingId,
     stageId: stageId,
 
-    /**
+    /** // TODO revisit this below
      * The below might seem silly and it does look like we have a dead index. Which we do! Sort of.. :)
      *
      * By having two separate indexes that do almost the same thing, we can have the following access patterns:
@@ -147,4 +152,40 @@ export async function createApplicant(
     // TODO error enum
     throw new Error(error);
   }
-}
+};
+
+export const getApplicantById = async (
+  props: GetApplicantByIdInput
+): Promise<GetApplicantByIdOutput> => {
+  const { applicantId } = props;
+  const responsesParams: QueryCommandInput = {
+    TableName: DYNAMO_TABLE_NAME,
+    KeyConditionExpression: "PK = :PK AND begins_with(SK, :SK)",
+    ExpressionAttributeValues: {
+      ":PK": `${ENTITY_TYPES.APPLICANT}#${applicantId}`,
+      ":SK": ENTITY_TYPES.APPLICANT,
+    },
+  };
+
+  try {
+    // TODO refactor for promise all / transact
+    const allApplicantInfo = await Dynamo.send(
+      new QueryCommand(responsesParams)
+    );
+
+    const grouped = _.groupBy(allApplicantInfo.Items, "entityType");
+
+    const metadata = grouped.APPLICANT[0] as CreateApplicantOutput;
+    const responses = grouped.APPLICANT_RESPONSE;
+    // TODO files
+
+    const applicant: GetApplicantByIdOutput = {
+      ...metadata,
+      responses: responses,
+      // TODO files
+    };
+    return applicant; // TODO TYPE!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+  } catch (error) {
+    throw new Error(error);
+  }
+};

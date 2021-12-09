@@ -5,13 +5,15 @@ import {
   CreateApplicantAPIBody,
   CreateApplicantResponseInput,
 } from "../types/main";
-import { createApplicant } from "../utils/applicants/createApplicant";
+
 import { createApplicantResponse } from "../utils/applicants/createApplicantResponse";
 import deleteApplicant from "../utils/applicants/deleteApplicant";
-import { getApplicantById } from "../utils/applicants/getApplicantById";
 import updateApplicant from "../utils/applicants/updateApplicant";
 import { getOpening } from "../utils/openings/getOpeningById";
 import sendEmail from "../utils/sendEmail";
+import * as Applicants from "../models/Applicants";
+import _ from "lodash";
+
 const UrlSafeString = require("url-safe-string"),
   tagGenerator = new UrlSafeString();
 export const create = async (req: Request, res: Response) => {
@@ -51,7 +53,7 @@ export const create = async (req: Request, res: Response) => {
     }
 
     try {
-      const newApplicant = await createApplicant({
+      const newApplicant = await Applicants.createApplicant({
         orgId: orgId,
         firstName: firstName,
         lastName: lastName,
@@ -89,7 +91,7 @@ export const get = async (req: Request, res: Response) => {
   const { applicantId } = req.params;
   try {
     // TODO gather applicant responses here
-    const applicant = await getApplicantById({
+    const applicant = await Applicants.getApplicantById({
       applicantId: applicantId,
     });
 
@@ -177,7 +179,9 @@ export const answer = async (req: Request, res: Response) => {
     return res.status(400).json({ message: `${error.message}` });
   }
 
-  const applicant = await getApplicantById({ applicantId: applicantId });
+  const applicant = await Applicants.getApplicantById({
+    applicantId: applicantId,
+  });
   try {
     // Write questions to Dynamo
     await Promise.all(
@@ -204,3 +208,9 @@ export const answer = async (req: Request, res: Response) => {
     });
   }
 };
+
+/**
+ * Get an applicant by their ID
+ * @param props - {@link GetApplicantByIdInput}
+ * @returns An applicant's metadata and responses
+ */
