@@ -6,13 +6,13 @@ import {
   TIME_UNITS,
 } from "../Config";
 import { Request, Response } from "express";
-import Sanitize from "../utils/sanitize";
 import { sealData, unsealData } from "iron-session";
-import Joi from "joi";
 import { nanoid } from "nanoid";
+import { CUSTOM_QUERY } from "../types/main";
+import Sanitize from "../utils/sanitize";
+import Joi from "joi";
 import sendEmail from "../utils/sendEmail";
 import * as Time from "../utils/time";
-import { CUSTOM_QUERY } from "../types/main";
 import * as Users from "../models/Users";
 const ironPassword = process.env.IRON_SEAL_PASSWORD;
 

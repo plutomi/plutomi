@@ -1,15 +1,14 @@
 import { Request, Response } from "express";
-import Joi from "joi";
 import { DEFAULTS, EMAILS } from "../Config";
 import {
   CreateApplicantAPIBody,
   CreateApplicantResponseInput,
 } from "../types/main";
-
-import * as Openings from "../models/Openings";
 import sendEmail from "../utils/sendEmail";
+import * as Openings from "../models/Openings";
 import * as Applicants from "../models/Applicants";
 import _ from "lodash";
+import Joi from "joi";
 
 const UrlSafeString = require("url-safe-string"),
   tagGenerator = new UrlSafeString();

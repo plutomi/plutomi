@@ -7,9 +7,9 @@ import {
   ENTITY_TYPES,
   TIME_UNITS,
 } from "./../Config";
-import * as Invites from "../models/Invites";
 import Sanitize from "./../utils/sanitize";
 import sendEmail from "./../utils/sendEmail";
+import * as Invites from "../models/Invites";
 import * as Time from "./../utils/time";
 import * as Users from "../models/Users";
 import * as Orgs from "../models/Orgs";

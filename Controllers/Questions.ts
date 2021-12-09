@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
-import Joi from "joi";
 import { UpdateQuestionInput } from "../types/main";
 import * as Questions from "../models/Questions";
+import Joi from "joi";
 export const create = async (req: Request, res: Response) => {
   const { GSI1SK, questionDescription, stageId } = req.body;
 

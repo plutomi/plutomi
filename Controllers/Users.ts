@@ -1,8 +1,9 @@
 import { Request, Response } from "express";
 import { DEFAULTS, ENTITY_TYPES } from "./../Config";
-import Joi from "joi";
 import Sanitize from "./../utils/sanitize";
 import * as Users from "../models/Users";
+import Joi from "joi";
+
 export const self = async (req: Request, res: Response) => {
   try {
     const requestedUser = await Users.getUserById({

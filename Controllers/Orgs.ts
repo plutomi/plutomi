@@ -1,8 +1,8 @@
 import { Request, Response } from "express";
-import Joi from "joi";
 import { DEFAULTS, ENTITY_TYPES } from "./../Config";
-import * as Users from "../models/Users";
 import Sanitize from "./../utils/sanitize";
+import Joi from "joi";
+import * as Users from "../models/Users";
 import * as Orgs from "../models/Orgs";
 const UrlSafeString = require("url-safe-string"),
   tagGenerator = new UrlSafeString();
