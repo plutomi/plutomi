@@ -110,6 +110,10 @@ app
   .all(Middleware.methodNotAllowed);
 
 app
+  .route("/openings/:openingId/stages")
+  .get([Middleware.withAuth], Openings.getStages)
+  .all(Middleware.methodNotAllowed);
+app
   .route("/auth/login")
   .get(Auth.login) // Log a user in
   .post(Auth.createLoginLinks) // Create login links for the user

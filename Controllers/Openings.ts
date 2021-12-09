@@ -5,6 +5,7 @@ import { createOpening } from "../utils/openings/createOpening";
 import { deleteOpening } from "../utils/openings/deleteOpening";
 import { getAllApplicantsInOpening } from "../utils/openings/getAllApplicantsInOpening";
 import { getAllOpeningsInOrg } from "../utils/openings/getAllOpeningsInOrg";
+import { getAllStagesInOpening } from "../utils/openings/getAllStagesInOpening";
 import { getOpening } from "../utils/openings/getOpeningById";
 import updateOpening from "../utils/openings/updateOpening";
 
@@ -157,5 +158,21 @@ export const getApplicants = async (req: Request, res: Response) => {
     return res
       .status(400) // TODO change #
       .json({ message: `Unable to retrieve applicants: ${error}` });
+  }
+};
+
+export const getStages = async (req: Request, res: Response) => {
+  const { openingId } = req.params;
+  try {
+    const allStages = await getAllStagesInOpening({
+      openingId: openingId,
+      orgId: req.session.user.orgId,
+    });
+    return res.status(200).json(allStages);
+  } catch (error) {
+    // TODO add error logger
+    return res
+      .status(400) // TODO change #
+      .json({ message: `Unable to retrieve stages: ${error}` });
   }
 };
