@@ -13,7 +13,7 @@ import Sanitize from "../utils/sanitize";
 import Joi from "joi";
 import sendEmail from "../utils/sendEmail";
 import * as Time from "../utils/time";
-import * as Users from "../models/Users";
+import * as Users from "../models/Users/Users";
 const ironPassword = process.env.IRON_SEAL_PASSWORD;
 
 const ironOptions = {

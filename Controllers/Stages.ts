@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import { DEFAULTS } from "../Config";
 import { UpdateStageInput } from "../types/main";
-import * as Stages from "../models/Stages";
+import * as Stages from "../models/Stages/Stages";
 import Joi from "joi";
 
 export const create = async (req: Request, res: Response) => {
@@ -123,7 +123,7 @@ export const getApplicantsInStage = async (req: Request, res: Response) => {
   };
 
   try {
-    const allApplicants = await Stages.getAllApplicantsInStage(
+    const allApplicants = await Stages.getApplicantsInStage(
       getAllApplicantsInStageInput
     );
     return res.status(200).json(allApplicants);
@@ -138,7 +138,7 @@ export const getApplicantsInStage = async (req: Request, res: Response) => {
 export const getQuestionsInStage = async (req: Request, res: Response) => {
   const { stageId } = req.params;
   try {
-    const questions = await Stages.getAllQuestionsInStage({
+    const questions = await Stages.getQuestionsInStage({
       orgId: req.session.user.orgId,
       stageId,
     });

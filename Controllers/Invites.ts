@@ -9,10 +9,10 @@ import {
 } from "./../Config";
 import Sanitize from "./../utils/sanitize";
 import sendEmail from "./../utils/sendEmail";
-import * as Invites from "../models/Invites";
+import * as Invites from "../models/Invites/Invites";
 import * as Time from "./../utils/time";
-import * as Users from "../models/Users";
-import * as Orgs from "../models/Orgs";
+import * as Users from "../models/Users/Users";
+import * as Orgs from "../models/Orgs/Orgs";
 export const create = async (req: Request, res: Response) => {
   const { body, method } = req;
   const { recipientEmail } = body; // todo trim and lowercase this email

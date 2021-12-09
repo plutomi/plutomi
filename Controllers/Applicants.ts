@@ -6,7 +6,7 @@ import {
 } from "../types/main";
 import sendEmail from "../utils/sendEmail";
 import * as Openings from "../models/Openings";
-import * as Applicants from "../models/Applicants";
+import * as Applicants from "../models/Applicants/Applicants";
 import _ from "lodash";
 import Joi from "joi";
 
@@ -193,7 +193,7 @@ export const answer = async (req: Request, res: Response) => {
           questionResponse: questionResponse,
         };
 
-        await Applicants.createApplicantResponse(createApplicantResponseInput);
+        await Applicants.createResponse(createApplicantResponseInput);
       })
     );
 

@@ -1,11 +1,11 @@
 import { Request, Response } from "express";
 import Joi from "joi";
 import { DEFAULTS } from "../Config";
-import * as Openings from "../models/Openings";
-import * as Orgs from "../models/Orgs";
+import * as Openings from "../models/Openings/Openings";
+import * as Orgs from "../models/Orgs/Orgs";
 export const getAllOpenings = async (req: Request, res: Response) => {
   try {
-    const allOpenings = await Orgs.getAllOpeningsInOrg({
+    const allOpenings = await Orgs.getOpeningsInOrg({
       orgId: req.session.user.orgId,
     });
     return res.status(200).json(allOpenings);
@@ -143,7 +143,7 @@ export const getApplicants = async (req: Request, res: Response) => {
   }
 
   try {
-    const allApplicants = await Openings.getAllApplicantsInOpening(
+    const allApplicants = await Openings.getApplicantsInOpening(
       getAllApplicantsInOpeningInput
     );
     return res.status(200).json(allApplicants);
@@ -158,7 +158,7 @@ export const getApplicants = async (req: Request, res: Response) => {
 export const getStages = async (req: Request, res: Response) => {
   const { openingId } = req.params;
   try {
-    const allStages = await Openings.getAllStagesInOpening({
+    const allStages = await Openings.getStagesInOpening({
       openingId: openingId,
       orgId: req.session.user.orgId,
     });
