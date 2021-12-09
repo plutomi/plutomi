@@ -2,7 +2,9 @@ import { Request, Response } from "express";
 import Joi from "joi";
 import { DEFAULTS } from "../Config";
 import { createOpening } from "../utils/openings/createOpening";
+import { deleteOpening } from "../utils/openings/deleteOpening";
 import { getAllOpeningsInOrg } from "../utils/openings/getAllOpeningsInOrg";
+import { getOpening } from "../utils/openings/getOpeningById";
 
 export const getAllOpenings = async (req: Request, res: Response) => {
   try {
@@ -52,5 +54,41 @@ export const createOpeningController = async (req: Request, res: Response) => {
     return res
       .status(400) // TODO change #
       .json({ message: `Unable to create opening: ${error}` });
+  }
+};
+
+export const getOpeningById = async (req: Request, res: Response) => {
+  const { openingId } = req.params;
+  try {
+    const opening = await getOpening({
+      openingId,
+      orgId: req.session.user.orgId,
+    });
+    if (!opening) {
+      return res.status(404).json({ message: "Opening not found" });
+    }
+
+    return res.status(200).json(opening);
+  } catch (error) {
+    // TODO add error logger
+    return res
+      .status(400) // TODO change #
+      .json({ message: `Unable to get opening: ${error}` });
+  }
+};
+
+export const deleteOpeningController = async (req: Request, res: Response) => { // TODO fix name!!
+    const {openingId} = req.params
+  try {
+    const deleteOpeningInput = {
+      orgId: req.session.user.orgId,
+      openingId: openingId,
+    };
+    await deleteOpening(deleteOpeningInput);
+    return res.status(200).json({ message: "Opening deleted" });
+  } catch (error) {
+    return res
+      .status(500)
+      .json({ message: `Unable to delete your opening ${error}` });
   }
 };

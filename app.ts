@@ -98,6 +98,11 @@ app
   .all(Middleware.methodNotAllowed);
 
 app
+  .route("/openings/:openingId")
+  .get([Middleware.withAuth], Openings.getOpeningById)
+  .delete(Openings.deleteOpeningController) // TODO fix name
+  .all(Middleware.methodNotAllowed);
+app
   .route("/auth/login")
   .get(Auth.login) // Log a user in
   .post(Auth.createLoginLinks) // Create login links for the user

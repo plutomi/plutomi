@@ -16,25 +16,6 @@ const handler = async (
   const { method, query, body } = req;
   const { openingId } = query as Pick<CUSTOM_QUERY, "openingId">;
 
-  if (method === API_METHODS.GET) {
-    try {
-      const opening = await getOpening({
-        openingId,
-        orgId: req.session.user.orgId,
-      });
-      if (!opening) {
-        return res.status(404).json({ message: "Opening not found" });
-      }
-
-      return res.status(200).json(opening);
-    } catch (error) {
-      // TODO add error logger
-      return res
-        .status(400) // TODO change #
-        .json({ message: `Unable to get opening: ${error}` });
-    }
-  }
-
   if (method === API_METHODS.PUT) {
     try {
       const updateOpeningInput = {
@@ -66,18 +47,6 @@ const handler = async (
   }
 
   if (method === API_METHODS.DELETE) {
-    try {
-      const deleteOpeningInput = {
-        orgId: req.session.user.orgId,
-        openingId: openingId,
-      };
-      await deleteOpening(deleteOpeningInput);
-      return res.status(200).json({ message: "Opening deleted" });
-    } catch (error) {
-      return res
-        .status(500)
-        .json({ message: `Unable to delete your opening ${error}` });
-    }
   }
 };
 
