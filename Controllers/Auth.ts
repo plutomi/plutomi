@@ -13,7 +13,6 @@ import { nanoid } from "nanoid";
 import { getLatestLoginLink } from "../utils/loginLinks/getLatestLoginLink";
 import sendEmail from "../utils/sendEmail";
 import * as Time from "../utils/time";
-import createLoginLink from "../utils/loginLinks/createLoginLink";
 import { CUSTOM_QUERY } from "../types/main";
 import * as Users from "../models/Users";
 import { createLoginEventAndDeleteLoginLink } from "../utils/loginLinks/createLoginEventAndDeleteLoginLink";
@@ -151,7 +150,7 @@ export const createLoginLinks = async (req: Request, res: Response) => {
     );
 
     try {
-      await createLoginLink({
+      await Users.createLoginLink({
         userId: user.userId,
         loginLinkId,
       });
