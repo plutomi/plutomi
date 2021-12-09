@@ -10,7 +10,6 @@ import Sanitize from "../utils/sanitize";
 import { sealData, unsealData } from "iron-session";
 import Joi from "joi";
 import { nanoid } from "nanoid";
-import { getLatestLoginLink } from "../utils/loginLinks/getLatestLoginLink";
 import sendEmail from "../utils/sendEmail";
 import * as Time from "../utils/time";
 import { CUSTOM_QUERY } from "../types/main";
@@ -121,7 +120,7 @@ export const createLoginLinks = async (req: Request, res: Response) => {
   }
 
   try {
-    const latestLink = await getLatestLoginLink({
+    const latestLink = await Users.getLatestLoginLink({
       userId: user.userId,
     });
 

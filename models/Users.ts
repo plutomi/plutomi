@@ -31,6 +31,7 @@ import {
   CreateOrgInviteInput,
   CreateUserInput,
   DeleteOrgInviteInput,
+  GetLatestLoginLinkInput,
   GetOrgInviteInput,
   GetOrgInvitesForUserInput,
   GetUserByEmailInput,
@@ -235,5 +236,28 @@ export const createLoginLink = async (
   } catch (error) {
     console.error(error);
     throw new Error(`Unable to create login link ${error}`);
+  }
+};
+
+export const getLatestLoginLink = async (
+  props: GetLatestLoginLinkInput
+): Promise<DynamoNewLoginLink> => {
+  const { userId } = props;
+  const params: QueryCommandInput = {
+    TableName: DYNAMO_TABLE_NAME,
+    IndexName: "GSI1",
+    KeyConditionExpression: "GSI1PK = :GSI1PK",
+    ExpressionAttributeValues: {
+      ":GSI1PK": `${ENTITY_TYPES.USER}#${userId}#${ENTITY_TYPES.LOGIN_LINK}S`, // TODO login links dont need GSIs, begins_with login link
+    },
+    ScanIndexForward: false,
+    Limit: 1,
+  };
+
+  try {
+    const response = await Dynamo.send(new QueryCommand(params));
+    return response.Items[0] as DynamoNewLoginLink;
+  } catch (error) {
+    throw new Error(error);
   }
 };
