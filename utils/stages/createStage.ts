@@ -5,7 +5,6 @@ import {
 import { Dynamo } from "../../awsClients/ddbDocClient";
 import * as Time from "../time";
 import { nanoid } from "nanoid";
-import { getOpening } from "../openings/getOpeningById";
 import { ENTITY_TYPES, ERRORS, ID_LENGTHS, LIMITS } from "../../Config";
 import { CreateStageInput } from "../../types/main";
 import { DynamoNewStage } from "../../types/dynamo";
@@ -31,6 +30,7 @@ export async function createStage(props: CreateStageInput): Promise<void> {
   };
 
   try {
+    // TODO this should not be here, this should be in controller
     let opening = await getOpening({ orgId, openingId });
 
     try {

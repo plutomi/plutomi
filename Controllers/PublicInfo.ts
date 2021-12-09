@@ -2,8 +2,8 @@ import { ENTITY_TYPES } from "./../Config";
 import { Request, Response } from "express";
 import Sanitize from "./../utils/sanitize";
 import { getAllOpeningsInOrg } from "./../utils/openings/getAllOpeningsInOrg";
-import { getOpening } from "./../utils/openings/getOpeningById";
 import { getStageById } from "./../utils/stages/getStageById";
+import * as Openings from "../models/Openings";
 import { getAllQuestionsInStage } from "./../utils/questions/getAllQuestionsInStage";
 import * as Orgs from "../models/Orgs";
 export const getOrgInfo = async (req: Request, res: Response) => {
@@ -44,7 +44,10 @@ export const getOrgOpenings = async (req: Request, res: Response) => {
 export const getOpeningInfo = async (req: Request, res: Response) => {
   const { orgId, openingId } = req.params;
 
-  const opening = await getOpening({ orgId: orgId, openingId: openingId });
+  const opening = await Openings.getOpeningById({
+    orgId,
+    openingId,
+  });
   if (!opening) {
     return res.status(404).json({ message: "Opening not found" });
   }

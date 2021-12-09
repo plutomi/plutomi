@@ -6,7 +6,7 @@ import { deleteOpening } from "../utils/openings/deleteOpening";
 import { getAllApplicantsInOpening } from "../utils/openings/getAllApplicantsInOpening";
 import { getAllOpeningsInOrg } from "../utils/openings/getAllOpeningsInOrg";
 import { getAllStagesInOpening } from "../utils/openings/getAllStagesInOpening";
-import { getOpening } from "../utils/openings/getOpeningById";
+import * as Openings from "../models/Openings";
 import updateOpening from "../utils/openings/updateOpening";
 
 export const getAllOpenings = async (req: Request, res: Response) => {
@@ -63,7 +63,7 @@ export const createOpeningController = async (req: Request, res: Response) => {
 export const getOpeningById = async (req: Request, res: Response) => {
   const { openingId } = req.params;
   try {
-    const opening = await getOpening({
+    const opening = await Openings.getOpeningById({
       openingId,
       orgId: req.session.user.orgId,
     });

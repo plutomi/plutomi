@@ -3,13 +3,14 @@ import { Dynamo } from "../../awsClients/ddbDocClient";
 import { ENTITY_TYPES } from "../../Config";
 import { DynamoNewStage } from "../../types/dynamo";
 import { GetAllStagesInOpeningInput } from "../../types/main";
-import { getOpening } from "./getOpeningById";
+
 const { DYNAMO_TABLE_NAME } = process.env;
 
 export async function getAllStagesInOpening(
   props: GetAllStagesInOpeningInput
 ): Promise<DynamoNewStage[]> {
   const { orgId, openingId } = props;
+  // TODO this should not be here, this should be in controller
   const opening = await getOpening({ orgId, openingId });
 
   const { stageOrder } = opening;

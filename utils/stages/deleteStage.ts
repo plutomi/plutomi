@@ -16,6 +16,7 @@ export async function deleteStage(props: DeleteStageInput): Promise<void> {
   // Get the opening we need to update
   try {
     let stage = await getStageById({ orgId, stageId });
+    // TODO this should not be here, this should be in controller
     let opening = await getOpening({
       orgId: orgId,
       openingId: stage.openingId,

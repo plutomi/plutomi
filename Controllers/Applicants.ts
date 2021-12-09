@@ -6,7 +6,7 @@ import {
   CreateApplicantResponseInput,
 } from "../types/main";
 
-import { getOpening } from "../utils/openings/getOpeningById";
+import * as Openings from "../models/Openings";
 import sendEmail from "../utils/sendEmail";
 import * as Applicants from "../models/Applicants";
 import _ from "lodash";
@@ -41,7 +41,7 @@ export const create = async (req: Request, res: Response) => {
   }
 
   try {
-    const opening = await getOpening({ orgId, openingId });
+    const opening = await Openings.getOpeningById({ orgId, openingId });
 
     // DO NOT REMOVE
     // We need the first stage in this opening
