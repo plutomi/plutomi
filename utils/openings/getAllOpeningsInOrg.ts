@@ -5,6 +5,17 @@ import { DynamoNewOpening } from "../../types/dynamo";
 import { GetAllOpeningsInOrgInput } from "../../types/main";
 const { DYNAMO_TABLE_NAME } = process.env;
 
+/**
+ *
+ *
+ *
+ *
+ *
+ *
+ * TODOOOOOOOOOOOOOOOOOOOO
+ *
+ * Move this to the org
+ */
 export async function getAllOpeningsInOrg(props: GetAllOpeningsInOrgInput) {
   const { orgId } = props;
   const params: QueryCommandInput = {

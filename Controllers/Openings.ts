@@ -1,11 +1,13 @@
 import { Request, Response } from "express";
 import Joi from "joi";
-import { DEFAULTS } from "../Config";
-import { getAllApplicantsInOpening } from "../utils/openings/getAllApplicantsInOpening";
+import { DEFAULTS, ENTITY_TYPES } from "../Config";
 import { getAllOpeningsInOrg } from "../utils/openings/getAllOpeningsInOrg";
-import { getAllStagesInOpening } from "../utils/openings/getAllStagesInOpening";
 import * as Openings from "../models/Openings";
 import updateOpening from "../utils/openings/updateOpening";
+import { QueryCommandInput, QueryCommand } from "@aws-sdk/client-dynamodb";
+import { Dynamo } from "../awsClients/ddbDocClient";
+import { DynamoNewStage } from "../types/dynamo";
+import { GetAllStagesInOpeningInput } from "../types/main";
 
 export const getAllOpenings = async (req: Request, res: Response) => {
   try {
@@ -147,7 +149,7 @@ export const getApplicants = async (req: Request, res: Response) => {
   }
 
   try {
-    const allApplicants = await getAllApplicantsInOpening(
+    const allApplicants = await Openings.getAllApplicantsInOpening(
       getAllApplicantsInOpeningInput
     );
     return res.status(200).json(allApplicants);
@@ -162,7 +164,7 @@ export const getApplicants = async (req: Request, res: Response) => {
 export const getStages = async (req: Request, res: Response) => {
   const { openingId } = req.params;
   try {
-    const allStages = await getAllStagesInOpening({
+    const allStages = await Openings.getAllStagesInOpening({
       openingId: openingId,
       orgId: req.session.user.orgId,
     });
