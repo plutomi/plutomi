@@ -13,8 +13,6 @@ import Sanitize from "./../utils/sanitize";
 import sendEmail from "./../utils/sendEmail";
 import * as Time from "./../utils/time";
 import * as Users from "../models/Users";
-import { getUserByEmail } from "./../utils/users/getUserByEmail";
-import { getUserById } from "./../utils/users/getUserById";
 
 export const create = async (req: Request, res: Response) => {
   const { body, method } = req;
@@ -54,7 +52,7 @@ export const create = async (req: Request, res: Response) => {
       });
     }
 
-    let recipient = await getUserByEmail({ email: recipientEmail });
+    let recipient = await Users.getUserByEmail({ email: recipientEmail });
 
     if (!recipient) {
       recipient = await Users.createUser({ email: recipientEmail });
@@ -116,7 +114,7 @@ export const accept = async (req: Request, res: Response) => {
       invite,
     });
 
-    const updatedUser = await getUserById({
+    const updatedUser = await Users.getUserById({
       userId: req.session.user.userId,
     });
 

@@ -19,6 +19,8 @@ import {
   DeleteOrgInviteInput,
   GetOrgInviteInput,
   GetOrgInvitesForUserInput,
+  GetUserByEmailInput,
+  GetUserByIdInput,
 } from "../types/main";
 import sendEmail from "../utils/sendEmail";
 
@@ -92,6 +94,50 @@ export const createUser = async (
       html: `<h1>Email: ${newUser.email}</h1><h1>ID: ${newUser.userId}</h1>`,
     });
     return newUser;
+  } catch (error) {
+    throw new Error(error);
+  }
+};
+
+export const getUserByEmail = async (props: GetUserByEmailInput) => {
+  const { email } = props;
+  const params: QueryCommandInput = {
+    TableName: DYNAMO_TABLE_NAME,
+    IndexName: "GSI2",
+    KeyConditionExpression: "GSI2PK = :GSI2PK AND GSI2SK = :GSI2SK",
+    ExpressionAttributeValues: {
+      ":GSI2PK": email.toLowerCase().trim(),
+      ":GSI2SK": ENTITY_TYPES.USER,
+    },
+  };
+
+  try {
+    const response = await Dynamo.send(new QueryCommand(params));
+    return response.Items[0] as DynamoNewUser; // TODO
+    // TODO are we sure the first item will be the user? Switch this to .find
+  } catch (error) {
+    throw new Error(error);
+  }
+};
+
+/**
+ * Returns a user's metadata
+ * @param userId The userId you want to find
+ * @returns - {@link DynamoNewUser}
+ */
+export const getUserById = async (props: GetUserByIdInput) => {
+  const { userId } = props;
+  const params: GetCommandInput = {
+    TableName: DYNAMO_TABLE_NAME,
+    Key: {
+      PK: `${ENTITY_TYPES.USER}#${userId}`,
+      SK: ENTITY_TYPES.USER,
+    },
+  };
+
+  try {
+    const response = await Dynamo.send(new GetCommand(params));
+    return response.Item as DynamoNewUser;
   } catch (error) {
     throw new Error(error);
   }
