@@ -1,8 +1,6 @@
 import {
   GetCommand,
   GetCommandInput,
-  PutCommand,
-  PutCommandInput,
   QueryCommand,
   QueryCommandInput,
   TransactWriteCommand,
@@ -15,19 +13,11 @@ import * as Time from "../utils/time";
 import { nanoid } from "nanoid";
 import { ENTITY_TYPES, FORBIDDEN_PROPERTIES, ID_LENGTHS } from "../Config";
 import {
-  CreateApplicantInput,
-  CreateApplicantOutput,
-  CreateApplicantResponseInput,
-  CreateApplicantResponseOutput,
   CreateOpeningInput,
-  DeleteApplicantInput,
   DeleteOpeningInput,
   GetAllApplicantsInOpeningInput,
   GetAllStagesInOpeningInput,
-  GetApplicantByIdInput,
-  GetApplicantByIdOutput,
   GetOpeningByIdInput,
-  UpdateApplicantInput,
   UpdateOpeningInput,
 } from "../types/main";
 import {

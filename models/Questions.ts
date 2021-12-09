@@ -1,14 +1,9 @@
 import {
   GetCommand,
   GetCommandInput,
-  PutCommand,
-  PutCommandInput,
-  QueryCommand,
-  QueryCommandInput,
   TransactWriteCommand,
   TransactWriteCommandInput,
   UpdateCommand,
-  UpdateCommandInput,
 } from "@aws-sdk/lib-dynamodb";
 import { Dynamo } from "../awsClients/ddbDocClient";
 import * as Time from "../utils/time";
@@ -21,25 +16,13 @@ import {
   LIMITS,
 } from "../Config";
 import {
-  CreateApplicantInput,
-  CreateApplicantOutput,
-  CreateApplicantResponseInput,
-  CreateApplicantResponseOutput,
   CreateStageQuestionInput,
-  DeleteApplicantInput,
   DeleteQuestionInput,
-  GetApplicantByIdInput,
-  GetApplicantByIdOutput,
   GetQuestionInput,
   GetQuestionOutput,
-  UpdateApplicantInput,
   UpdateQuestionInput,
 } from "../types/main";
-import {
-  DynamoNewApplicant,
-  DynamoNewApplicantResponse,
-  DynamoNewStageQuestion,
-} from "../types/dynamo";
+import { DynamoNewStageQuestion } from "../types/dynamo";
 import _ from "lodash";
 const { DYNAMO_TABLE_NAME } = process.env;
 
