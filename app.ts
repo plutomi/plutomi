@@ -13,6 +13,7 @@ import * as Orgs from "./Controllers/Orgs";
 import * as Questions from "./Controllers/Questions";
 import * as Stages from "./Controllers/Stages";
 import * as Openings from "./Controllers/Openings";
+import * as Applicants from "./Controllers/Applicants";
 import { sessionSettings } from "./Config";
 const PORT = process.env.EXPRESS_PORT;
 const WEBSITE_URL = process.env.WEBSITE_URL;
@@ -113,6 +114,12 @@ app
   .route("/openings/:openingId/stages")
   .get([Middleware.withAuth], Openings.getStages)
   .all(Middleware.methodNotAllowed);
+
+app
+  .route("/applicants")
+  .post(Applicants.create)
+  .all(Middleware.methodNotAllowed);
+  
 app
   .route("/auth/login")
   .get(Auth.login) // Log a user in

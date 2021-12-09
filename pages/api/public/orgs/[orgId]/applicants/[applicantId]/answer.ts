@@ -1,3 +1,35 @@
+/**
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ * TODO - I think this route should be under /applicants
+ */
 import { NextApiRequest, NextApiResponse } from "next";
 import withCleanOrgId from "../../../../../../../middleware/withCleanOrgId";
 import { createApplicantResponse } from "../../../../../../../utils/applicants/createApplicantResponse";
