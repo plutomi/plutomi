@@ -3,7 +3,7 @@ import { Request, Response } from "express";
 import Sanitize from "./../utils/sanitize";
 import * as Openings from "../models/Openings/Openings";
 import * as Orgs from "../models/Orgs/Orgs";
-import * as Stages from "../models/Stages";
+import * as Stages from "../models/Stages/Stages";
 export const getOrgInfo = async (req: Request, res: Response) => {
   const { orgId } = req.params;
 
@@ -86,7 +86,7 @@ export const getStageInfo = async (req: Request, res: Response) => {
 export const getStageQuestions = async (req: Request, res: Response) => {
   const { orgId, stageId } = req.params;
   try {
-    const questions = await Stages.getAllQuestionsInStage({
+    const questions = await Stages.getQuestionsInStage({
       orgId,
       stageId,
     });
