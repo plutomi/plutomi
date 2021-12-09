@@ -8,7 +8,7 @@ const { DYNAMO_TABLE_NAME } = process.env;
  * @param props {@link DeleteOrgInviteInput}
  * @returns
  */
-export default async function deleteInvite(
+export default async function DeleteInvite(
   props: DeleteOrgInviteInput
 ): Promise<void> {
   const { userId, inviteId } = props;

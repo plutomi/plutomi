@@ -5,7 +5,7 @@ import { DynamoNewOpening } from "../../types/dynamo";
 import { GetOpeningByIdInput } from "../../types/main";
 const { DYNAMO_TABLE_NAME } = process.env;
 
-export default async function get(
+export default async function Get(
   props: GetOpeningByIdInput
 ): Promise<DynamoNewOpening> {
   const { orgId, openingId } = props;

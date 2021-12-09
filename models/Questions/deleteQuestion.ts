@@ -7,7 +7,7 @@ import { ENTITY_TYPES } from "../../Config";
 import { DeleteQuestionInput } from "../../types/main";
 import { getQuestionById } from "./Questions";
 const { DYNAMO_TABLE_NAME } = process.env;
-export default async function deleteQuestion(
+export default async function DeleteQuestion(
   props: DeleteQuestionInput
 ): Promise<void> {
   const { orgId, questionId } = props;

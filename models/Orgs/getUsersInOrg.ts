@@ -4,7 +4,7 @@ import { ENTITY_TYPES } from "../../Config";
 import { DynamoNewUser } from "../../types/dynamo";
 import { GetAllUsersInOrgInput } from "../../types/main";
 const { DYNAMO_TABLE_NAME } = process.env;
-export default async function getUsers(
+export default async function GetUsers(
   props: GetAllUsersInOrgInput
 ): Promise<DynamoNewUser[]> {
   const { orgId, limit } = props;

@@ -11,7 +11,7 @@ const { DYNAMO_TABLE_NAME } = process.env;
  * @param props {@link CreateOrgInviteInput}
  * @returns
  */
-export default async function create(
+export default async function Create(
   props: CreateOrgInviteInput
 ): Promise<void> {
   const { orgId, expiresAt, createdBy, recipient, orgName } = props;

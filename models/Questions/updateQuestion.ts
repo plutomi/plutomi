@@ -3,7 +3,7 @@ import { Dynamo } from "../../awsClients/ddbDocClient";
 import { FORBIDDEN_PROPERTIES, ENTITY_TYPES } from "../../Config";
 import { UpdateQuestionInput } from "../../types/main";
 const { DYNAMO_TABLE_NAME } = process.env;
-export default async function update(
+export default async function Update(
   props: UpdateQuestionInput
 ): Promise<void> {
   const { orgId, questionId, newQuestionValues } = props;

@@ -9,7 +9,7 @@ import { DynamoNewStageQuestion } from "../../types/dynamo";
 import { CreateStageQuestionInput } from "../../types/main";
 import * as Time from "../../utils/time";
 const { DYNAMO_TABLE_NAME } = process.env;
-export default async function create(
+export default async function Create(
   props: CreateStageQuestionInput
 ): Promise<void> {
   const { orgId, stageId, GSI1SK, questionDescription } = props;

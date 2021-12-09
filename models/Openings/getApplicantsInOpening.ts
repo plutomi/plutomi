@@ -4,7 +4,7 @@ import { ENTITY_TYPES } from "../../Config";
 import { DynamoNewApplicant } from "../../types/dynamo";
 import { GetAllApplicantsInOpeningInput } from "../../types/main";
 const { DYNAMO_TABLE_NAME } = process.env;
-export default async function getApplicants(
+export default async function GetApplicants(
   props: GetAllApplicantsInOpeningInput
 ): Promise<DynamoNewApplicant[]> {
   const { orgId, openingId } = props;

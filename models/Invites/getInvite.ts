@@ -6,7 +6,7 @@ import { GetOrgInviteInput } from "../../types/main";
 import * as Time from "../../utils/time";
 const { DYNAMO_TABLE_NAME } = process.env;
 
-export default async function get(
+export default async function Get(
   props: GetOrgInviteInput
 ): Promise<DynamoNewOrgInvite> {
   const { userId, inviteId } = props;

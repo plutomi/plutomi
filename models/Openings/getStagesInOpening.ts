@@ -9,7 +9,7 @@ import {
 } from "../../types/main";
 const { DYNAMO_TABLE_NAME } = process.env;
 
-export default async function getStages(
+export default async function GetStages(
   props: GetAllStagesInOpeningInput
 ): Promise<DynamoNewStage[]> {
   const { orgId, openingId } = props;

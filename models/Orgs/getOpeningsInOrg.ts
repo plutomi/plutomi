@@ -4,7 +4,7 @@ import { ENTITY_TYPES } from "../../Config";
 import { GetAllOpeningsInOrgInput } from "../../types/main";
 import * as Time from "../../utils/time";
 const { DYNAMO_TABLE_NAME } = process.env;
-export default async function getOpenings(props: GetAllOpeningsInOrgInput) {
+export default async function GetOpenings(props: GetAllOpeningsInOrgInput) {
   const { orgId } = props;
   const params: QueryCommandInput = {
     TableName: DYNAMO_TABLE_NAME,

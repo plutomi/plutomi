@@ -9,7 +9,7 @@ import { CreateAndJoinOrgInput } from "../../types/main";
 import * as Time from "../../utils/time";
 
 const { DYNAMO_TABLE_NAME } = process.env;
-export default async function createAndJoinOrg(
+export default async function CreateAndJoinOrg(
   props: CreateAndJoinOrgInput
 ): Promise<void> {
   const { userId, orgId, GSI1SK } = props;

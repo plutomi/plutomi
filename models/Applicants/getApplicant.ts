@@ -9,7 +9,7 @@ import {
 } from "../../types/main";
 const { DYNAMO_TABLE_NAME } = process.env;
 
-export default async function get(
+export default async function Get(
   props: GetApplicantByIdInput
 ): Promise<GetApplicantByIdOutput> {
   const { applicantId } = props;

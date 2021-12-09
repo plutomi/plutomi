@@ -3,7 +3,7 @@ import { Dynamo } from "../../awsClients/ddbDocClient";
 import { ENTITY_TYPES } from "../../Config";
 import { GetQuestionInput, GetQuestionOutput } from "../../types/main";
 const { DYNAMO_TABLE_NAME } = process.env;
-export default async function get(
+export default async function Get(
   props: GetQuestionInput
 ): Promise<GetQuestionOutput> {
   const { orgId, questionId } = props;

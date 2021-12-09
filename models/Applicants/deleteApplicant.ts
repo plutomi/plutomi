@@ -8,7 +8,7 @@ import { DeleteApplicantInput } from "../../types/main";
 import { getApplicantById } from "./Applicants";
 const { DYNAMO_TABLE_NAME } = process.env;
 
-export default async function remove(
+export default async function Remove(
   props: DeleteApplicantInput
 ): Promise<void> {
   const { orgId, applicantId } = props;
