@@ -121,7 +121,7 @@ export const createLoginLinks = async (req: Request, res: Response) => {
 
   let user = await getUserByEmail({ email });
   if (!user) {
-    user = await createUser({ email });
+    user = await Users.createUser({ email });
   }
 
   try {

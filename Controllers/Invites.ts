@@ -12,7 +12,7 @@ import { getOrg } from "./../utils/orgs/getOrg";
 import Sanitize from "./../utils/sanitize";
 import sendEmail from "./../utils/sendEmail";
 import * as Time from "./../utils/time";
-import { createUser } from "./../utils/users/createUser";
+import * as Users from "../models/Users";
 import { getUserByEmail } from "./../utils/users/getUserByEmail";
 import { getUserById } from "./../utils/users/getUserById";
 
@@ -57,7 +57,7 @@ export const create = async (req: Request, res: Response) => {
     let recipient = await getUserByEmail({ email: recipientEmail });
 
     if (!recipient) {
-      recipient = await createUser({ email: recipientEmail });
+      recipient = await Users.createUser({ email: recipientEmail });
     }
 
     try {
