@@ -2,7 +2,6 @@ import { Request, Response } from "express";
 import Joi from "joi";
 import { DEFAULTS } from "../Config";
 import { UpdateStageInput } from "../types/main";
-import { getAllQuestionsInStage } from "../utils/questions/getAllQuestionsInStage";
 import * as Stages from "../models/Stages";
 
 export const create = async (req: Request, res: Response) => {
@@ -139,7 +138,7 @@ export const getApplicantsInStage = async (req: Request, res: Response) => {
 export const getQuestionsInStage = async (req: Request, res: Response) => {
   const { stageId } = req.params;
   try {
-    const questions = await getAllQuestionsInStage({
+    const questions = await Stages.getAllQuestionsInStage({
       orgId: req.session.user.orgId,
       stageId,
     });

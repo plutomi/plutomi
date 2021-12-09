@@ -2,7 +2,6 @@ import { ENTITY_TYPES } from "./../Config";
 import { Request, Response } from "express";
 import Sanitize from "./../utils/sanitize";
 import * as Openings from "../models/Openings";
-import { getAllQuestionsInStage } from "./../utils/questions/getAllQuestionsInStage";
 import * as Orgs from "../models/Orgs";
 import * as Stages from "../models/Stages";
 export const getOrgInfo = async (req: Request, res: Response) => {
@@ -87,7 +86,7 @@ export const getStageInfo = async (req: Request, res: Response) => {
 export const getStageQuestions = async (req: Request, res: Response) => {
   const { orgId, stageId } = req.params;
   try {
-    const questions = await getAllQuestionsInStage({
+    const questions = await Stages.getAllQuestionsInStage({
       orgId,
       stageId,
     });
