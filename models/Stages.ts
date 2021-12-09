@@ -1,17 +1,35 @@
 import {
+  PutCommand,
+  PutCommandInput,
+  QueryCommand,
+  QueryCommandInput,
   TransactWriteCommand,
   TransactWriteCommandInput,
+  UpdateCommand,
+  UpdateCommandInput,
 } from "@aws-sdk/lib-dynamodb";
-import { Dynamo } from "../../awsClients/ddbDocClient";
-import * as Time from "../time";
+import { Dynamo } from "../awsClients/ddbDocClient";
+import * as Time from "../utils/time";
 import { nanoid } from "nanoid";
-import { ENTITY_TYPES, ERRORS, ID_LENGTHS, LIMITS } from "../../Config";
-import { CreateStageInput } from "../../types/main";
-import { DynamoNewStage } from "../../types/dynamo";
-
+import { ENTITY_TYPES, FORBIDDEN_PROPERTIES, ID_LENGTHS } from "../Config";
+import {
+  CreateApplicantInput,
+  CreateApplicantOutput,
+  CreateApplicantResponseInput,
+  CreateApplicantResponseOutput,
+  DeleteApplicantInput,
+  GetApplicantByIdInput,
+  GetApplicantByIdOutput,
+  UpdateApplicantInput,
+} from "../types/main";
+import {
+  DynamoNewApplicant,
+  DynamoNewApplicantResponse,
+} from "../types/dynamo";
+import _ from "lodash";
 const { DYNAMO_TABLE_NAME } = process.env;
 
-export async function createStage(props: CreateStageInput): Promise<void> {
+export const createStage = async (props: CreateStageInput): Promise<void> => {
   const { orgId, GSI1SK, openingId } = props;
   const stageId = nanoid(ID_LENGTHS.STAGE);
   const newStage: DynamoNewStage = {
@@ -100,4 +118,4 @@ export async function createStage(props: CreateStageInput): Promise<void> {
       `Unable to retrieve opening where stage should be added ${error}` // TODO add to errors
     );
   }
-}
+};

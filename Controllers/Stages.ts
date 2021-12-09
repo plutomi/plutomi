@@ -3,8 +3,7 @@ import Joi from "joi";
 import { DEFAULTS } from "../Config";
 import { UpdateStageInput } from "../types/main";
 import { getAllQuestionsInStage } from "../utils/questions/getAllQuestionsInStage";
-import { createStage } from "../utils/stages/createStage";
-import * as Stage from "../utils/stages/deleteStage";
+import * as Stages from "../utils/stages/deleteStage";
 import { getAllApplicantsInStage } from "../utils/stages/getAllApplicantsInStage";
 import { getStageById } from "../utils/stages/getStageById";
 import updateStage from "../utils/stages/updateStage";
@@ -37,7 +36,7 @@ export const create = async (req: Request, res: Response) => {
   }
 
   try {
-    await createStage(createStageInput);
+    await Stages.createStage(createStageInput);
     return res.status(201).json({ message: "Stage created" });
   } catch (error) {
     // TODO add error logger
@@ -55,7 +54,7 @@ export const deleteStage = async (req: Request, res: Response) => {
       stageId: stageId,
     };
 
-    await Stage.deleteStage(deleteStageInput); // TODO fix this as its not grouped with the other funnels
+    await Stages.deleteStage(deleteStageInput); // TODO fix this as its not grouped with the other funnels
 
     return res.status(200).json({ message: "Stage deleted!" });
   } catch (error) {
