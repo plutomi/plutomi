@@ -6,18 +6,18 @@ import {
   EMAILS,
   ENTITY_TYPES,
   TIME_UNITS,
-} from "../../Config";
-import createOrgInvite from "../../utils/invites/createOrgInvite";
-import deleteOrgInvite from "../../utils/invites/deleteOrgInvite";
-import { getOrgInvite } from "../../utils/invites/getOrgInvite";
-import { joinOrgFromInvite } from "../../utils/invites/joinOrgFromInvite";
-import { getOrg } from "../../utils/orgs/getOrg";
-import Sanitize from "../../utils/sanitize";
-import sendEmail from "../../utils/sendEmail";
-import * as Time from "../../utils/time";
-import { createUser } from "../../utils/users/createUser";
-import { getUserByEmail } from "../../utils/users/getUserByEmail";
-import { getUserById } from "../../utils/users/getUserById";
+} from "./../Config";
+import createOrgInvite from "./../utils/invites/createOrgInvite";
+import deleteOrgInvite from "./../utils/invites/deleteOrgInvite";
+import { getOrgInvite } from "./../utils/invites/getOrgInvite";
+import { joinOrgFromInvite } from "./../utils/invites/joinOrgFromInvite";
+import { getOrg } from "./../utils/orgs/getOrg";
+import Sanitize from "./../utils/sanitize";
+import sendEmail from "./../utils/sendEmail";
+import * as Time from "./../utils/time";
+import { createUser } from "./../utils/users/createUser";
+import { getUserByEmail } from "./../utils/users/getUserByEmail";
+import { getUserById } from "./../utils/users/getUserById";
 
 export const create = async (req: Request, res: Response) => {
   const { body, method } = req;

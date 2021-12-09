@@ -1,10 +1,10 @@
-import { getUserById } from "../../utils/users/getUserById";
+import { getUserById } from "./../utils/users/getUserById";
 import { Request, Response } from "express";
-import { DEFAULTS, ENTITY_TYPES } from "../../Config";
+import { DEFAULTS, ENTITY_TYPES } from "./../Config";
 import Joi from "joi";
-import { updateUser } from "../../utils/users/updateUser";
-import Sanitize from "../../utils/sanitize";
-import { getOrgInvitesForUser } from "../../utils/invites/getOrgInvitesForUser";
+import { updateUser } from "./../utils/users/updateUser";
+import Sanitize from "./../utils/sanitize";
+import { getOrgInvitesForUser } from "./../utils/invites/getOrgInvitesForUser";
 export const self = async (req: Request, res: Response) => {
   try {
     const requestedUser = await getUserById({
