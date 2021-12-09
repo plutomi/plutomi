@@ -1,8 +1,12 @@
 import { Request, Response } from "express";
 import Joi from "joi";
 import { DEFAULTS, EMAILS } from "../Config";
-import { CreateApplicantAPIBody } from "../types/main";
+import {
+  CreateApplicantAPIBody,
+  CreateApplicantResponseInput,
+} from "../types/main";
 import { createApplicant } from "../utils/applicants/createApplicant";
+import { createApplicantResponse } from "../utils/applicants/createApplicantResponse";
 import deleteApplicant from "../utils/applicants/deleteApplicant";
 import { getApplicantById } from "../utils/applicants/getApplicantById";
 import updateApplicant from "../utils/applicants/updateApplicant";
@@ -87,7 +91,6 @@ export const get = async (req: Request, res: Response) => {
     // TODO gather applicant responses here
     const applicant = await getApplicantById({
       applicantId: applicantId,
-      orgId: req.session.user.orgId,
     });
 
     if (!applicant) {
@@ -149,5 +152,55 @@ export const update = async (req: Request, res: Response) => {
     return res
       .status(500)
       .json({ message: `Unable to update applicant - ${error}` });
+  }
+};
+
+export const answer = async (req: Request, res: Response) => {
+  const { applicantId } = req.params;
+  const { responses } = req.body;
+  const incoming = Joi.object({
+    applicantId: Joi.string(),
+    responses: Joi.array()
+      .items({
+        questionId: Joi.string(),
+        questionTitle: Joi.string(),
+        questionDescription: Joi.string(),
+        questionResponse: Joi.string(),
+      })
+      .options({ presence: "required" }),
+  });
+
+  // Validate input
+  try {
+    await incoming.validateAsync(req.body);
+  } catch (error) {
+    return res.status(400).json({ message: `${error.message}` });
+  }
+
+  const applicant = await getApplicantById({ applicantId: applicantId });
+  try {
+    // Write questions to Dynamo
+    await Promise.all(
+      responses.map(async (response) => {
+        const { questionTitle, questionDescription, questionResponse } =
+          response;
+
+        const createApplicantResponseInput: CreateApplicantResponseInput = {
+          orgId: applicant.orgId, // TODO is this needed?
+          applicantId: applicantId,
+          questionTitle: questionTitle,
+          questionDescription: questionDescription,
+          questionResponse: questionResponse,
+        };
+
+        await createApplicantResponse(createApplicantResponseInput);
+      })
+    );
+
+    return res.status(201).json({ message: `Questions answered succesfully!` });
+  } catch (error) {
+    return res.status(500).json({
+      message: `Unable to answer questions, please try again`,
+    });
   }
 };

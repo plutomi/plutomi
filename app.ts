@@ -7,8 +7,8 @@ import listEndpoints from "express-list-endpoints";
 import * as Middleware from "./newMiddleware";
 import * as PublicInfo from "./Controllers/PublicInfo";
 import * as Auth from "./Controllers/Auth";
-import * as Users from "./Controllers/API/Users";
-import * as Invites from "./Controllers/API/Invites";
+import * as Users from "./Controllers/Users";
+import * as Invites from "./Controllers/Invites";
 import * as Orgs from "./Controllers/Orgs";
 import * as Questions from "./Controllers/Questions";
 import * as Stages from "./Controllers/Stages";
@@ -127,6 +127,10 @@ app
   .put([Middleware.withAuth], Applicants.update)
   .all(Middleware.methodNotAllowed);
 
+app
+  .route("/applicants/:applicantId/answer")
+  .post(Applicants.answer)
+  .all(Middleware.methodNotAllowed);
 app
   .route("/auth/login")
   .get(Auth.login) // Log a user in

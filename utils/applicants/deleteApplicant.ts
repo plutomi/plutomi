@@ -13,7 +13,6 @@ export default async function deleteApplicant(
 ): Promise<void> {
   const { orgId, applicantId } = props;
   const applicant = await getApplicantById({
-    orgId,
     applicantId,
   });
 
@@ -24,7 +23,7 @@ export default async function deleteApplicant(
           // Delete the applicant
           Delete: {
             Key: {
-              PK: `${ENTITY_TYPES.ORG}#${orgId}#${ENTITY_TYPES.APPLICANT}#${applicantId}`,
+              PK: `${ENTITY_TYPES.APPLICANT}#${applicantId}`,
               SK: ENTITY_TYPES.APPLICANT,
             },
             TableName: DYNAMO_TABLE_NAME,
