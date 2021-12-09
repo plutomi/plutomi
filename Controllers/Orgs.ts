@@ -2,7 +2,6 @@ import { Request, Response } from "express";
 import Joi from "joi";
 import { DEFAULTS, ENTITY_TYPES } from "./../Config";
 import * as Users from "../models/Users";
-import { createAndJoinOrg } from "./../utils/orgs/createAndJoinOrg";
 import { getAllUsersInOrg } from "./../utils/orgs/getAllUsersInOrg";
 import Sanitize from "./../utils/sanitize";
 import * as Orgs from "../models/Orgs";
@@ -55,7 +54,7 @@ export const create = async (req: Request, res: Response) => {
   }
 
   try {
-    await createAndJoinOrg({
+    await Orgs.createAndJoinOrg({
       userId: req.session.user.userId,
       orgId: orgId,
       GSI1SK: GSI1SK,
