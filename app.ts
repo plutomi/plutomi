@@ -62,6 +62,12 @@ app
   .all(Middleware.methodNotAllowed);
 
 app
+  .route("/questions/:questionId")
+  .delete([Middleware.withAuth], Questions.deleteQuestion)
+  .put([Middleware.withAuth], Questions.update)
+  .all(Middleware.methodNotAllowed);
+
+app
   .route("/auth/login")
   .get(Auth.login) // Log a user in
   .post(Auth.createLoginLinks) // Create login links for the user
@@ -108,13 +114,13 @@ app
 
 app
   .route("/orgs/:orgId")
-  .get([Middleware.withAuth], Orgs.get)
-  .delete([Middleware.withAuth], Orgs.deleteOrg)
+  .get([Middleware.withAuth, Middleware.cleanOrgId], Orgs.get)
+  .delete([Middleware.withAuth, Middleware.cleanOrgId], Orgs.deleteOrg)
   .all(Middleware.methodNotAllowed);
 
 app
   .route("/orgs/:orgId")
-  .get([Middleware.withAuth], Orgs.users)
+  .get([Middleware.withAuth, Middleware.cleanOrgId], Orgs.users)
   .all(Middleware.methodNotAllowed);
 /**
  * ------------------------ DO NOT TOUCH BELOW THIS LINE ---------------------------

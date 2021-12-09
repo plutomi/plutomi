@@ -1,5 +1,9 @@
 import { Request, Response } from "express";
+import Joi from "joi";
+import { UpdateQuestionInput } from "../types/main";
 import { createStageQuestion } from "../utils/questions/createStageQuestion";
+import { DeleteQuestion } from "../utils/questions/deleteQuestion";
+import updateQuestion from "../utils/questions/updateStageQuestion";
 
 export const create = async (req: Request, res: Response) => {
   const { GSI1SK, questionDescription, stageId } = req.body;
@@ -19,5 +23,54 @@ export const create = async (req: Request, res: Response) => {
     return res
       .status(500) // TODO change #
       .json({ message: `Unable to create stage question: ${error}` });
+  }
+};
+
+export const deleteQuestion = async (req: Request, res: Response) => {
+  const { questionId } = req.params;
+  try {
+    const deleteQuestionInput = {
+      orgId: req.session.user.orgId,
+      questionId: questionId,
+    };
+    await DeleteQuestion(deleteQuestionInput);
+    return res.status(200).json({ message: "Question deleted!" });
+  } catch (error) {
+    // TODO add error logger
+    return res
+      .status(500) // TODO change #
+      .json({ message: `Unable to delete stage question: ${error}` });
+  }
+};
+
+export const update = async (req: Request, res: Response) => {
+  const { questionId } = req.params;
+  const { newQuestionValues } = req.body;
+  try {
+    const updatedQuestionInput: UpdateQuestionInput = {
+      orgId: req.session.user.orgId,
+      questionId: questionId,
+      newQuestionValues: newQuestionValues, // Just the keys that are passed down
+    };
+    const schema = Joi.object({
+      orgId: Joi.string(),
+      questionId: Joi.string(),
+      newQuestionValues: Joi.object(),
+    }).options({ presence: "required" }); // TODo add actual inputs of new question values
+
+    // Validate input
+    try {
+      await schema.validateAsync(updatedQuestionInput);
+    } catch (error) {
+      return res.status(400).json({ message: `${error.message}` });
+    }
+
+    await updateQuestion(updatedQuestionInput);
+    return res.status(200).json({ message: "Question updated!" });
+  } catch (error) {
+    console.error(error);
+    return res
+      .status(500)
+      .json({ message: `Unable to update question - ${error}` });
   }
 };
