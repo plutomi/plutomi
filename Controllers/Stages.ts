@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import Joi from "joi";
 import { DEFAULTS } from "../Config";
 import { createStage } from "../utils/stages/createStage";
+import * as Stage from "../utils/stages/deleteStage";
 
 export const create = async (req: Request, res: Response) => {
   const { GSI1SK, openingId } = req.body;
@@ -38,5 +39,24 @@ export const create = async (req: Request, res: Response) => {
     return res
       .status(400) // TODO change #
       .json({ message: `Unable to create stage: ${error}` });
+  }
+};
+
+export const deleteStage = async (req: Request, res: Response) => {
+  const { stageId } = req.params;
+  try {
+    const deleteStageInput = {
+      orgId: req.session.user.orgId,
+      stageId: stageId,
+    };
+
+    await Stage.deleteStage(deleteStageInput); // TODO fix this as its not grouped with the other funnels
+
+    return res.status(200).json({ message: "Stage deleted!" });
+  } catch (error) {
+    // TODO add error logger
+    return res
+      .status(400) // TODO change #
+      .json({ message: `Unable to delete your stage: ${error}` });
   }
 };

@@ -70,21 +70,7 @@ const handler = async (
   }
 
   if (method === API_METHODS.DELETE) {
-    try {
-      const deleteStageInput = {
-        orgId: req.session.user.orgId,
-        stageId: stageId,
-      };
 
-      await deleteStage(deleteStageInput);
-
-      return res.status(200).json({ message: "Stage deleted!" });
-    } catch (error) {
-      // TODO add error logger
-      return res
-        .status(400) // TODO change #
-        .json({ message: `Unable to delete your stage: ${error}` });
-    }
   }
 };
 
