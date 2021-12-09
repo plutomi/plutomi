@@ -101,6 +101,7 @@ app
   .route("/openings/:openingId")
   .get([Middleware.withAuth], Openings.getOpeningById)
   .delete(Openings.deleteOpeningController) // TODO fix name
+  .put(Openings.updateOpeningController) // TODO fix name
   .all(Middleware.methodNotAllowed);
 app
   .route("/auth/login")

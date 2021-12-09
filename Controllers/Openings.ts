@@ -5,6 +5,7 @@ import { createOpening } from "../utils/openings/createOpening";
 import { deleteOpening } from "../utils/openings/deleteOpening";
 import { getAllOpeningsInOrg } from "../utils/openings/getAllOpeningsInOrg";
 import { getOpening } from "../utils/openings/getOpeningById";
+import updateOpening from "../utils/openings/updateOpening";
 
 export const getAllOpenings = async (req: Request, res: Response) => {
   try {
@@ -77,8 +78,9 @@ export const getOpeningById = async (req: Request, res: Response) => {
   }
 };
 
-export const deleteOpeningController = async (req: Request, res: Response) => { // TODO fix name!!
-    const {openingId} = req.params
+export const deleteOpeningController = async (req: Request, res: Response) => {
+  // TODO fix name!!
+  const { openingId } = req.params;
   try {
     const deleteOpeningInput = {
       orgId: req.session.user.orgId,
@@ -90,5 +92,37 @@ export const deleteOpeningController = async (req: Request, res: Response) => { 
     return res
       .status(500)
       .json({ message: `Unable to delete your opening ${error}` });
+  }
+};
+
+export const updateOpeningController = async (req: Request, res: Response) => {
+  const { openingId } = req.params;
+  const { newOpeningValues } = req.body;
+  try {
+    const updateOpeningInput = {
+      orgId: req.session.user.orgId,
+      openingId: openingId,
+      newOpeningValues: newOpeningValues,
+    };
+
+    const schema = Joi.object({
+      orgId: Joi.string(),
+      openingId: Joi.string(),
+      newOpeningValues: Joi.object(), // TODO allow only specific values!!!
+    }).options({ presence: "required" });
+
+    // Validate input
+    try {
+      await schema.validateAsync(updateOpeningInput);
+    } catch (error) {
+      return res.status(400).json({ message: `${error.message}` });
+    }
+
+    await updateOpening(updateOpeningInput);
+    return res.status(200).json({ message: "Opening updated!" });
+  } catch (error) {
+    return res
+      .status(500)
+      .json({ message: `Unable to update opening - ${error}` });
   }
 };
