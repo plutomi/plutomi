@@ -1,10 +1,10 @@
 import { ENTITY_TYPES } from "./../Config";
 import { Request, Response } from "express";
 import Sanitize from "./../utils/sanitize";
-import { getStageById } from "./../utils/stages/getStageById";
 import * as Openings from "../models/Openings";
 import { getAllQuestionsInStage } from "./../utils/questions/getAllQuestionsInStage";
 import * as Orgs from "../models/Orgs";
+import * as Stages from "../models/Stages";
 export const getOrgInfo = async (req: Request, res: Response) => {
   const { orgId } = req.params;
 
@@ -64,7 +64,7 @@ export const getOpeningInfo = async (req: Request, res: Response) => {
 export const getStageInfo = async (req: Request, res: Response) => {
   const { orgId, stageId } = req.params;
   try {
-    const stage = await getStageById({ orgId, stageId });
+    const stage = await Stages.getStageById({ orgId, stageId });
     if (!stage) {
       return res.status(404).json({ message: "Stage not found" });
     }

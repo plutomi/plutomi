@@ -37,7 +37,6 @@ import {
   DynamoNewStage,
 } from "../types/dynamo";
 import _ from "lodash";
-import { deleteStage } from "../utils/stages/deleteStage";
 const { DYNAMO_TABLE_NAME } = process.env;
 
 export const getOpeningById = async (
