@@ -3,6 +3,7 @@ import Joi from "joi";
 import { DEFAULTS } from "../Config";
 import { createOpening } from "../utils/openings/createOpening";
 import { deleteOpening } from "../utils/openings/deleteOpening";
+import { getAllApplicantsInOpening } from "../utils/openings/getAllApplicantsInOpening";
 import { getAllOpeningsInOrg } from "../utils/openings/getAllOpeningsInOrg";
 import { getOpening } from "../utils/openings/getOpeningById";
 import updateOpening from "../utils/openings/updateOpening";
@@ -124,5 +125,37 @@ export const updateOpeningController = async (req: Request, res: Response) => {
     return res
       .status(500)
       .json({ message: `Unable to update opening - ${error}` });
+  }
+};
+
+export const getApplicants = async (req: Request, res: Response) => {
+  const { openingId } = req.params;
+  const getAllApplicantsInOpeningInput = {
+    orgId: req.session.user.orgId,
+    openingId: openingId,
+  };
+
+  const schema = Joi.object({
+    orgId: Joi.string(),
+    openingId: Joi.string(),
+  }).options({ presence: "required" });
+
+  // Validate input
+  try {
+    await schema.validateAsync(getAllApplicantsInOpeningInput);
+  } catch (error) {
+    return res.status(400).json({ message: `${error.message}` });
+  }
+
+  try {
+    const allApplicants = await getAllApplicantsInOpening(
+      getAllApplicantsInOpeningInput
+    );
+    return res.status(200).json(allApplicants);
+  } catch (error) {
+    // TODO add error logger
+    return res
+      .status(400) // TODO change #
+      .json({ message: `Unable to retrieve applicants: ${error}` });
   }
 };

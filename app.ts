@@ -105,6 +105,11 @@ app
   .all(Middleware.methodNotAllowed);
 
 app
+  .route("/openings/:openingId/applicants")
+  .get([Middleware.withAuth], Openings.getApplicants)
+  .all(Middleware.methodNotAllowed);
+
+app
   .route("/auth/login")
   .get(Auth.login) // Log a user in
   .post(Auth.createLoginLinks) // Create login links for the user
