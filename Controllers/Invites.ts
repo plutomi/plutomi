@@ -8,7 +8,6 @@ import {
   TIME_UNITS,
 } from "./../Config";
 import * as Invites from "../models/Invites";
-import { joinOrgFromInvite } from "./../utils/invites/joinOrgFromInvite";
 import { getOrg } from "./../utils/orgs/getOrg";
 import Sanitize from "./../utils/sanitize";
 import sendEmail from "./../utils/sendEmail";
@@ -112,7 +111,10 @@ export const accept = async (req: Request, res: Response) => {
   }
 
   try {
-    await joinOrgFromInvite({ userId: req.session.user.userId, invite });
+    await Invites.joinOrgFromInvite({
+      userId: req.session.user.userId,
+      invite,
+    });
 
     const updatedUser = await getUserById({
       userId: req.session.user.userId,
