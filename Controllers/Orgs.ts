@@ -2,7 +2,6 @@ import { Request, Response } from "express";
 import Joi from "joi";
 import { DEFAULTS, ENTITY_TYPES } from "./../Config";
 import * as Users from "../models/Users";
-import { getAllUsersInOrg } from "./../utils/orgs/getAllUsersInOrg";
 import Sanitize from "./../utils/sanitize";
 import * as Orgs from "../models/Orgs";
 const UrlSafeString = require("url-safe-string"),
@@ -163,7 +162,7 @@ export const users = async (req: Request, res: Response) => {
   }
 
   try {
-    const allUsers = await getAllUsersInOrg({
+    const allUsers = await Orgs.getAllUsersInOrg({
       orgId: req.session.user.orgId,
     });
     return res.status(200).json(allUsers);

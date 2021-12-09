@@ -32,6 +32,7 @@ import {
   CreateOrgInviteInput,
   CreateUserInput,
   DeleteOrgInviteInput,
+  GetAllUsersInOrgInput,
   GetOrgInput,
   GetOrgInviteInput,
   GetOrgInvitesForUserInput,
@@ -122,6 +123,30 @@ export const createAndJoinOrg = async (
     return;
   } catch (error) {
     console.error(error);
+    throw new Error(error);
+  }
+};
+
+export const getAllUsersInOrg = async (
+  props: GetAllUsersInOrgInput
+): Promise<DynamoNewUser[]> => {
+  const { orgId, limit } = props;
+  const params: QueryCommandInput = {
+    TableName: DYNAMO_TABLE_NAME,
+    IndexName: "GSI1",
+    KeyConditionExpression: "GSI1PK = :GSI1PK",
+    ExpressionAttributeValues: {
+      ":GSI1PK": `${ENTITY_TYPES.ORG}#${orgId}#${ENTITY_TYPES.USER}S`,
+    },
+    Limit: limit || null,
+  }; // TODO query until all results are returned
+
+  limit && (params.Limit = limit);
+
+  try {
+    const response = await Dynamo.send(new QueryCommand(params));
+    return response.Items as DynamoNewUser[];
+  } catch (error) {
     throw new Error(error);
   }
 };
