@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import Joi from "joi";
 import { DEFAULTS } from "../Config";
 import { UpdateStageInput } from "../types/main";
+import { getAllQuestionsInStage } from "../utils/questions/getAllQuestionsInStage";
 import { createStage } from "../utils/stages/createStage";
 import * as Stage from "../utils/stages/deleteStage";
 import { getAllApplicantsInStage } from "../utils/stages/getAllApplicantsInStage";
@@ -136,5 +137,19 @@ export const getApplicantsInStage = async (req: Request, res: Response) => {
     return res
       .status(400) // TODO change #
       .json({ message: `Unable to retrieve applicants: ${error}` });
+  }
+};
+
+export const getQuestionsInStage = async (req: Request, res: Response) => {
+  const { stageId } = req.params;
+  try {
+    const questions = await getAllQuestionsInStage({
+      orgId: req.session.user.orgId,
+      stageId,
+    });
+
+    return res.status(200).json(questions);
+  } catch (error) {
+    return res.status(500).json({ message: "Unable to retrieve questions" });
   }
 };
