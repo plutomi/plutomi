@@ -4,6 +4,7 @@ import { DEFAULTS } from "../Config";
 import { UpdateStageInput } from "../types/main";
 import { createStage } from "../utils/stages/createStage";
 import * as Stage from "../utils/stages/deleteStage";
+import { getAllApplicantsInStage } from "../utils/stages/getAllApplicantsInStage";
 import { getStageById } from "../utils/stages/getStageById";
 import updateStage from "../utils/stages/updateStage";
 
@@ -115,5 +116,25 @@ export const update = async (req: Request, res: Response) => {
     return res
       .status(500)
       .json({ message: `Unable to update stage - ${error}` });
+  }
+};
+
+export const getApplicantsInStage = async (req: Request, res: Response) => {
+  const { stageId } = req.params;
+  const getAllApplicantsInStageInput = {
+    orgId: req.session.user.orgId,
+    stageId: stageId,
+  };
+
+  try {
+    const allApplicants = await getAllApplicantsInStage(
+      getAllApplicantsInStageInput
+    );
+    return res.status(200).json(allApplicants);
+  } catch (error) {
+    // TODO add error logger
+    return res
+      .status(400) // TODO change #
+      .json({ message: `Unable to retrieve applicants: ${error}` });
   }
 };
