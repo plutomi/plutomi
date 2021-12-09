@@ -2,15 +2,16 @@ require("dotenv").config();
 import express from "express";
 import helmet from "helmet";
 import cors from "cors";
+import metadata from "./Controllers/Metadata";
+import listEndpoints from "express-list-endpoints";
 import * as Middleware from "./newMiddleware";
 import * as PublicInfo from "./Controllers/PublicInfo";
 import * as Auth from "./Controllers/Auth";
-import metadata from "./Controllers/API/Metadata";
-import listEndpoints from "express-list-endpoints";
 import * as Users from "./Controllers/API/Users";
 import * as Invites from "./Controllers/API/Invites";
 import * as Orgs from "./Controllers/Orgs";
 import * as Questions from "./Controllers/Questions";
+import * as Stages from "./Controllers/Stages";
 import { sessionSettings } from "./Config";
 const PORT = process.env.EXPRESS_PORT;
 const WEBSITE_URL = process.env.WEBSITE_URL;
@@ -65,6 +66,28 @@ app
   .route("/questions/:questionId")
   .delete([Middleware.withAuth], Questions.deleteQuestion)
   .put([Middleware.withAuth], Questions.update)
+  .all(Middleware.methodNotAllowed);
+
+app
+  .route("/stages")
+  .post([Middleware.withAuth], Stages.create)
+  .all(Middleware.methodNotAllowed);
+
+app
+  .route("/stages/:stageId")
+  .get([Middleware.withAuth], Stages.getStageInfo)
+  .delete([Middleware.withAuth], Stages.deleteStage)
+  .put([Middleware.withAuth], Stages.update)
+  .all(Middleware.methodNotAllowed);
+
+app
+  .route("/stages/:stageId/applicants")
+  .get([Middleware.withAuth], Stages.getApplicantsInStage)
+  .all(Middleware.methodNotAllowed);
+
+app
+  .route("/stages/:stageId/questions")
+  .get([Middleware.withAuth], Stages.getQuestionsInStage)
   .all(Middleware.methodNotAllowed);
 
 app
