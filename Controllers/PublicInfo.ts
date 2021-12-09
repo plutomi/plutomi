@@ -1,8 +1,8 @@
 import { ENTITY_TYPES } from "./../Config";
 import { Request, Response } from "express";
 import Sanitize from "./../utils/sanitize";
-import * as Openings from "../models/Openings";
-import * as Orgs from "../models/Orgs";
+import * as Openings from "../models/Openings/Openings";
+import * as Orgs from "../models/Orgs/Orgs";
 import * as Stages from "../models/Stages";
 export const getOrgInfo = async (req: Request, res: Response) => {
   const { orgId } = req.params;
@@ -29,7 +29,7 @@ export const getOrgInfo = async (req: Request, res: Response) => {
 
 export const getOrgOpenings = async (req: Request, res: Response) => {
   const { orgId } = req.params;
-  const allOpenings = await Orgs.getAllOpeningsInOrg({ orgId });
+  const allOpenings = await Orgs.getOpeningsInOrg({ orgId });
   const publicOpenings = allOpenings.filter((opening) => opening.isPublic);
 
   publicOpenings.forEach((opening) =>

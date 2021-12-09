@@ -3,7 +3,7 @@ import { DEFAULTS, ENTITY_TYPES } from "./../Config";
 import Sanitize from "./../utils/sanitize";
 import Joi from "joi";
 import * as Users from "../models/Users";
-import * as Orgs from "../models/Orgs";
+import * as Orgs from "../models/Orgs/Orgs";
 const UrlSafeString = require("url-safe-string"),
   tagGenerator = new UrlSafeString();
 
@@ -162,7 +162,7 @@ export const users = async (req: Request, res: Response) => {
   }
 
   try {
-    const allUsers = await Orgs.getAllUsersInOrg({
+    const allUsers = await Orgs.getUsersInOrg({
       orgId: req.session.user.orgId,
     });
     return res.status(200).json(allUsers);

@@ -1,8 +1,8 @@
-import create from "./create";
-import get from "./get";
-import remove from "./delete";
-import update from "./update";
-import respond from "./respond";
+import create from "./createApplicant";
+import get from "./getApplicant";
+import remove from "./deleteApplicant";
+import update from "./updateApplicant";
+import respond from "./createApplicantResponse";
 export const createApplicant = create;
 export const getApplicantById = get;
 export const deleteApplicant = remove;

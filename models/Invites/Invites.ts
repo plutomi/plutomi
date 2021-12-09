@@ -1,7 +1,7 @@
-import create from "./create";
-import remove from "./delete";
-import get from "./get";
-import join from "./join";
+import create from "./createInvite";
+import remove from "./deleteInvite";
+import get from "./getInvite";
+import join from "./joinOrgFromInvite";
 export const createInvite = create;
 export const deleteInvite = remove;
 export const getInviteById = get;
