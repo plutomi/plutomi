@@ -1,12 +1,12 @@
 import { Request, Response } from "express";
 import Joi from "joi";
-import { DEFAULTS, ENTITY_TYPES } from "../../Config";
-import { getOrgInvitesForUser } from "../../utils/invites/getOrgInvitesForUser";
-import { createAndJoinOrg } from "../../utils/orgs/createAndJoinOrg";
-import { getAllUsersInOrg } from "../../utils/orgs/getAllUsersInOrg";
-import { getOrg } from "../../utils/orgs/getOrg";
-import Sanitize from "../../utils/sanitize";
-import { updateUser } from "../../utils/users/updateUser";
+import { DEFAULTS, ENTITY_TYPES } from "./../Config";
+import { getOrgInvitesForUser } from "./../utils/invites/getOrgInvitesForUser";
+import { createAndJoinOrg } from "./../utils/orgs/createAndJoinOrg";
+import { getAllUsersInOrg } from "./../utils/orgs/getAllUsersInOrg";
+import { getOrg } from "./../utils/orgs/getOrg";
+import Sanitize from "./../utils/sanitize";
+import { updateUser } from "./../utils/users/updateUser";
 const UrlSafeString = require("url-safe-string"),
   tagGenerator = new UrlSafeString();
 
