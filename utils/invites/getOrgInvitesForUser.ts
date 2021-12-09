@@ -7,6 +7,35 @@ import { GetOrgInvitesForUserInput } from "../../types/main";
 const { DYNAMO_TABLE_NAME } = process.env;
 
 /**
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ * TODO MOVE OVER TO USERS
+ */
+/**
  * Given a `userId`, returns the user's invites to join an org
  * @param props {@link GetOrgInvitesForUserInput}
  * @returns - {@link DynamoNewOrgInvite[]}

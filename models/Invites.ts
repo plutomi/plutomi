@@ -1,11 +1,16 @@
-import { PutCommand, PutCommandInput } from "@aws-sdk/lib-dynamodb";
-import { Dynamo } from "../../awsClients/ddbDocClient";
+import {
+  DeleteCommand,
+  PutCommand,
+  PutCommandInput,
+  DeleteCommandInput,
+} from "@aws-sdk/lib-dynamodb";
+import { Dynamo } from "../awsClients/ddbDocClient";
 import { getOrgInvitesForUser } from "./getOrgInvitesForUser";
-import * as Time from "../time";
+import * as Time from "./../utils/time";
 import { nanoid } from "nanoid";
-import { ENTITY_TYPES, ID_LENGTHS } from "../../Config";
-import { DynamoNewOrgInvite } from "../../types/dynamo";
-import { CreateOrgInviteInput } from "../../types/main";
+import { ENTITY_TYPES, ID_LENGTHS } from "../Config";
+import { DynamoNewOrgInvite } from "../types/dynamo";
+import { CreateOrgInviteInput, DeleteOrgInviteInput } from "../types/main";
 
 const { DYNAMO_TABLE_NAME } = process.env;
 
@@ -14,15 +19,18 @@ const { DYNAMO_TABLE_NAME } = process.env;
  * @param props {@link CreateOrgInviteInput}
  * @returns
  */
-export default async function createOrgInvite(
+export const createInvite = async (
   props: CreateOrgInviteInput
-): Promise<void> {
+): Promise<void> => {
   const { orgId, expiresAt, createdBy, recipient, orgName } = props;
   try {
+    // TODO move this to controller, it should not be here
+
     if (recipient.orgId === orgId) {
       throw "User is already in your org"; // todo errors enum
     }
 
+    // TODO move this to controller, it should not be here
     // Check if the user we are inviting already has pending invites for the current org
     const allUserInvites = await getOrgInvitesForUser({
       userId: recipient.userId,
@@ -64,4 +72,29 @@ export default async function createOrgInvite(
     console.error(error);
     throw new Error(error);
   }
-}
+};
+
+/**
+ * Deletes an org invite, called when a user rejects an invite to an org
+ * @param props {@link DeleteOrgInviteInput}
+ * @returns
+ */
+export const deleteOrgInvite = async (
+  props: DeleteOrgInviteInput
+): Promise<void> => {
+  const { userId, inviteId } = props;
+  try {
+    const params: DeleteCommandInput = {
+      Key: {
+        PK: `${ENTITY_TYPES.USER}#${userId}`,
+        SK: `${ENTITY_TYPES.ORG_INVITE}#${inviteId}`,
+      },
+      TableName: DYNAMO_TABLE_NAME,
+    };
+
+    await Dynamo.send(new DeleteCommand(params));
+    return;
+  } catch (error) {
+    throw new Error(`Unable to delete invite ${error}`);
+  }
+};

@@ -7,7 +7,7 @@ import {
   ENTITY_TYPES,
   TIME_UNITS,
 } from "./../Config";
-import createOrgInvite from "./../utils/invites/createOrgInvite";
+import * as Invites from "../models/Invites";
 import deleteOrgInvite from "./../utils/invites/deleteOrgInvite";
 import { getOrgInvite } from "./../utils/invites/getOrgInvite";
 import { joinOrgFromInvite } from "./../utils/invites/joinOrgFromInvite";
@@ -64,7 +64,7 @@ export const create = async (req: Request, res: Response) => {
     }
 
     try {
-      await createOrgInvite({
+      await Invites.createInvite({
         orgId: org.orgId, // TODO should be fixed with return type above
         recipient: recipient,
         orgName: org.GSI1SK,
@@ -137,7 +137,7 @@ export const accept = async (req: Request, res: Response) => {
 export const reject = async (req: Request, res: Response) => {
   const { inviteId } = req.params;
   try {
-    await deleteOrgInvite({
+    await Invites.deleteOrgInvite({
       inviteId: inviteId,
       userId: req.session.user.userId,
     });
