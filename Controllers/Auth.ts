@@ -14,7 +14,6 @@ import sendEmail from "../utils/sendEmail";
 import * as Time from "../utils/time";
 import { CUSTOM_QUERY } from "../types/main";
 import * as Users from "../models/Users";
-import { createLoginEventAndDeleteLoginLink } from "../utils/loginLinks/createLoginEventAndDeleteLoginLink";
 const ironPassword = process.env.IRON_SEAL_PASSWORD;
 
 const ironOptions = {
@@ -57,7 +56,7 @@ export const login = async (req: Request, res: Response) => {
   }
 
   const userOrg = user.orgId !== DEFAULTS.NO_ORG ?? user.orgId;
-  await createLoginEventAndDeleteLoginLink({
+  await Users.createLoginEventAndDeleteLoginLink({
     loginLinkId,
     userId,
     orgId: userOrg,
