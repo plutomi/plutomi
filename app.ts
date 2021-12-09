@@ -3,13 +3,14 @@ import express from "express";
 import helmet from "helmet";
 import cors from "cors";
 import * as Middleware from "./newMiddleware";
-import * as PublicInfo from "./Controllers/API/PublicInfo";
-import * as Auth from "./Controllers/API/Auth";
+import * as PublicInfo from "./Controllers/PublicInfo";
+import * as Auth from "./Controllers/Auth";
 import metadata from "./Controllers/API/Metadata";
 import listEndpoints from "express-list-endpoints";
 import * as Users from "./Controllers/API/Users";
 import * as Invites from "./Controllers/API/Invites";
-import * as Orgs from "./Controllers/API/Orgs";
+import * as Orgs from "./Controllers/Orgs";
+import * as Questions from "./Controllers/Questions";
 import { sessionSettings } from "./Config";
 const PORT = process.env.EXPRESS_PORT;
 const WEBSITE_URL = process.env.WEBSITE_URL;
@@ -55,7 +56,17 @@ app
   .get([Middleware.cleanOrgId], PublicInfo.getStageQuestions)
   .all(Middleware.methodNotAllowed);
 
-app.route("/questions")
+app
+  .route("/questions")
+  .post([Middleware.withAuth], Questions.create)
+  .all(Middleware.methodNotAllowed);
+
+app
+  .route("/questions/:questionId")
+  .delete([Middleware.withAuth], Questions.deleteQuestion)
+  .put([Middleware.withAuth], Questions.update)
+  .all(Middleware.methodNotAllowed);
+
 app
   .route("/auth/login")
   .get(Auth.login) // Log a user in
@@ -103,13 +114,13 @@ app
 
 app
   .route("/orgs/:orgId")
-  .get([Middleware.withAuth], Orgs.get)
-  .delete([Middleware.withAuth], Orgs.deleteOrg)
+  .get([Middleware.withAuth, Middleware.cleanOrgId], Orgs.get)
+  .delete([Middleware.withAuth, Middleware.cleanOrgId], Orgs.deleteOrg)
   .all(Middleware.methodNotAllowed);
 
 app
   .route("/orgs/:orgId")
-  .get([Middleware.withAuth], Orgs.users)
+  .get([Middleware.withAuth, Middleware.cleanOrgId], Orgs.users)
   .all(Middleware.methodNotAllowed);
 /**
  * ------------------------ DO NOT TOUCH BELOW THIS LINE ---------------------------

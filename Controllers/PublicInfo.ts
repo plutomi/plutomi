@@ -1,11 +1,11 @@
-import { ENTITY_TYPES } from "../../Config";
-import { getOrg } from "../../utils/orgs/getOrg";
+import { ENTITY_TYPES } from "./../Config";
+import { getOrg } from "./../utils/orgs/getOrg";
 import { Request, Response } from "express";
-import Sanitize from "../../utils/sanitize";
-import { getAllOpeningsInOrg } from "../../utils/openings/getAllOpeningsInOrg";
-import { getOpening } from "../../utils/openings/getOpeningById";
-import { getStageById } from "../../utils/stages/getStageById";
-import { getAllQuestionsInStage } from "../../utils/questions/getAllQuestionsInStage";
+import Sanitize from "./../utils/sanitize";
+import { getAllOpeningsInOrg } from "./../utils/openings/getAllOpeningsInOrg";
+import { getOpening } from "./../utils/openings/getOpeningById";
+import { getStageById } from "./../utils/stages/getStageById";
+import { getAllQuestionsInStage } from "./../utils/questions/getAllQuestionsInStage";
 
 export const getOrgInfo = async (req: Request, res: Response) => {
   const { orgId } = req.params;
