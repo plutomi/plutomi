@@ -6,7 +6,6 @@ import { createAndJoinOrg } from "./../utils/orgs/createAndJoinOrg";
 import { getAllUsersInOrg } from "./../utils/orgs/getAllUsersInOrg";
 import { getOrg } from "./../utils/orgs/getOrg";
 import Sanitize from "./../utils/sanitize";
-import { updateUser } from "./../utils/users/updateUser";
 const UrlSafeString = require("url-safe-string"),
   tagGenerator = new UrlSafeString();
 
@@ -124,7 +123,7 @@ export const deleteOrg = async (req: Request, res: Response) => {
   }
 
   try {
-    const updatedUser = await updateUser({
+    const updatedUser = await Users.updateUser({
       // TODO possible transaction?
       userId: req.session.user.userId,
       newUserValues: {
