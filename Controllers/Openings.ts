@@ -1,16 +1,15 @@
 import { Request, Response } from "express";
 import Joi from "joi";
 import { DEFAULTS, ENTITY_TYPES } from "../Config";
-import { getAllOpeningsInOrg } from "../utils/openings/getAllOpeningsInOrg";
 import * as Openings from "../models/Openings";
 import { QueryCommandInput, QueryCommand } from "@aws-sdk/client-dynamodb";
 import { Dynamo } from "../awsClients/ddbDocClient";
 import { DynamoNewStage } from "../types/dynamo";
 import { GetAllStagesInOpeningInput } from "../types/main";
-
+import * as Orgs from "../models/Orgs";
 export const getAllOpenings = async (req: Request, res: Response) => {
   try {
-    const allOpenings = await getAllOpeningsInOrg({
+    const allOpenings = await Orgs.getAllOpeningsInOrg({
       orgId: req.session.user.orgId,
     });
     return res.status(200).json(allOpenings);

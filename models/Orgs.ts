@@ -32,6 +32,7 @@ import {
   CreateOrgInviteInput,
   CreateUserInput,
   DeleteOrgInviteInput,
+  GetAllOpeningsInOrgInput,
   GetAllUsersInOrgInput,
   GetOrgInput,
   GetOrgInviteInput,
@@ -148,5 +149,25 @@ export const getAllUsersInOrg = async (
     return response.Items as DynamoNewUser[];
   } catch (error) {
     throw new Error(error);
+  }
+};
+
+export const getAllOpeningsInOrg = async (props: GetAllOpeningsInOrgInput) => {
+  const { orgId } = props;
+  const params: QueryCommandInput = {
+    TableName: DYNAMO_TABLE_NAME,
+    IndexName: "GSI1",
+    KeyConditionExpression: "GSI1PK = :GSI1PK",
+    ExpressionAttributeValues: {
+      ":GSI1PK": `${ENTITY_TYPES.ORG}#${orgId}#${ENTITY_TYPES.OPENING}S`,
+    },
+  };
+
+  try {
+    const response = await Dynamo.send(new QueryCommand(params));
+    return [response.Items, null];
+  } catch (error) {
+    console.error("error", error);
+    return [null, error];
   }
 };
