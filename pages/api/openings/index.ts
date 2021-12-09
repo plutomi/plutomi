@@ -47,20 +47,6 @@ const handler = async (
         .json({ message: `Unable to create opening: ${error}` });
     }
   }
-
-  if (method === API_METHODS.GET) {
-    try {
-      const allOpenings = await getAllOpeningsInOrg({
-        orgId: req.session.user.orgId,
-      });
-      return res.status(200).json(allOpenings);
-    } catch (error) {
-      // TODO add error logger
-      return res
-        .status(400) // TODO change #
-        .json({ message: `Unable to retrieve openings: ${error}` });
-    }
-  }
 };
 
 export default withValidMethod(withSessionRoute(withAuth(handler)), [

@@ -12,6 +12,7 @@ import * as Invites from "./Controllers/API/Invites";
 import * as Orgs from "./Controllers/Orgs";
 import * as Questions from "./Controllers/Questions";
 import * as Stages from "./Controllers/Stages";
+import * as Openings from "./Controllers/Openings";
 import { sessionSettings } from "./Config";
 const PORT = process.env.EXPRESS_PORT;
 const WEBSITE_URL = process.env.WEBSITE_URL;
@@ -88,6 +89,11 @@ app
 app
   .route("/stages/:stageId/questions")
   .get([Middleware.withAuth], Stages.getQuestionsInStage)
+  .all(Middleware.methodNotAllowed);
+
+app
+  .route("/openings")
+  .get([Middleware.withAuth], Openings.getAllOpenings)
   .all(Middleware.methodNotAllowed);
 
 app
