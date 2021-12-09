@@ -4,8 +4,8 @@ import { DEFAULTS, ENTITY_TYPES } from "./../Config";
 import * as Users from "../models/Users";
 import { createAndJoinOrg } from "./../utils/orgs/createAndJoinOrg";
 import { getAllUsersInOrg } from "./../utils/orgs/getAllUsersInOrg";
-import { getOrg } from "./../utils/orgs/getOrg";
 import Sanitize from "./../utils/sanitize";
+import * as Orgs from "../models/Orgs";
 const UrlSafeString = require("url-safe-string"),
   tagGenerator = new UrlSafeString();
 
@@ -80,7 +80,7 @@ export const create = async (req: Request, res: Response) => {
  */
 export const get = async (req: Request, res: Response) => {
   const { orgId } = req.params;
-  const [org, error] = await getOrg({ orgId: orgId });
+  const [org, error] = await Orgs.getOrgById({ orgId: orgId });
 
   if (error) {
     console.log("Error retrieving org info", error);
@@ -104,7 +104,7 @@ export const get = async (req: Request, res: Response) => {
 
 export const deleteOrg = async (req: Request, res: Response) => {
   const { orgId } = req.params;
-  const [org, error] = await getOrg({ orgId: orgId });
+  const [org, error] = await Orgs.getOrgById({ orgId: orgId });
 
   if (error) {
     console.log("Error retrieving org info", error);

@@ -1,12 +1,11 @@
 import { ENTITY_TYPES } from "./../Config";
-import { getOrg } from "./../utils/orgs/getOrg";
 import { Request, Response } from "express";
 import Sanitize from "./../utils/sanitize";
 import { getAllOpeningsInOrg } from "./../utils/openings/getAllOpeningsInOrg";
 import { getOpening } from "./../utils/openings/getOpeningById";
 import { getStageById } from "./../utils/stages/getStageById";
 import { getAllQuestionsInStage } from "./../utils/questions/getAllQuestionsInStage";
-
+import * as Orgs from "../models/Orgs";
 export const getOrgInfo = async (req: Request, res: Response) => {
   const { orgId } = req.params;
 
@@ -14,7 +13,7 @@ export const getOrgInfo = async (req: Request, res: Response) => {
     return res.status(400).json({ message: "orgId is missing" });
   }
 
-  const [org, error] = await getOrg({ orgId: orgId });
+  const [org, error] = await Orgs.getOrgById({ orgId });
 
   if (error instanceof Error) {
     return res.status(400).json({

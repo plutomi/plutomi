@@ -8,17 +8,16 @@ import {
   TIME_UNITS,
 } from "./../Config";
 import * as Invites from "../models/Invites";
-import { getOrg } from "./../utils/orgs/getOrg";
 import Sanitize from "./../utils/sanitize";
 import sendEmail from "./../utils/sendEmail";
 import * as Time from "./../utils/time";
 import * as Users from "../models/Users";
-
+import * as Orgs from "../models/Orgs";
 export const create = async (req: Request, res: Response) => {
   const { body, method } = req;
   const { recipientEmail } = body; // todo trim and lowercase this email
   const expiresAt = Time.futureISO(3, TIME_UNITS.DAYS);
-  const [org, error] = await getOrg({ orgId: req.session.user.orgId });
+  const [org, error] = await Orgs.getOrgById({ orgId: req.session.user.orgId });
 
   if (error) {
     console.error("error creating invite", error);
