@@ -75,8 +75,11 @@ app
 
 app
   .route("/stages/:stageId")
+  .get([Middleware.withAuth], Stages.getStageInfo)
   .delete([Middleware.withAuth], Stages.deleteStage)
+  .put([Middleware.withAuth], Stages.update)
   .all(Middleware.methodNotAllowed);
+
 app
   .route("/auth/login")
   .get(Auth.login) // Log a user in

@@ -1,8 +1,11 @@
 import { Request, Response } from "express";
 import Joi from "joi";
 import { DEFAULTS } from "../Config";
+import { UpdateStageInput } from "../types/main";
 import { createStage } from "../utils/stages/createStage";
 import * as Stage from "../utils/stages/deleteStage";
+import { getStageById } from "../utils/stages/getStageById";
+import updateStage from "../utils/stages/updateStage";
 
 export const create = async (req: Request, res: Response) => {
   const { GSI1SK, openingId } = req.body;
@@ -58,5 +61,59 @@ export const deleteStage = async (req: Request, res: Response) => {
     return res
       .status(400) // TODO change #
       .json({ message: `Unable to delete your stage: ${error}` });
+  }
+};
+
+export const getStageInfo = async (req: Request, res: Response) => {
+  const { stageId } = req.params;
+  const getStageInput = {
+    orgId: req.session.user.orgId,
+    stageId: stageId,
+  };
+
+  try {
+    const stage = await getStageById(getStageInput);
+    if (!stage) {
+      return res.status(404).json({ message: "Stage not found" });
+    }
+
+    return res.status(200).json(stage);
+  } catch (error) {
+    // TODO add error logger
+    return res
+      .status(400) // TODO change #
+      .json({ message: `Unable to retrieve stage: ${error}` });
+  }
+};
+
+export const update = async (req: Request, res: Response) => {
+  const { newStageValues } = req.body;
+  const { stageId } = req.params;
+  try {
+    const updateStageInput: UpdateStageInput = {
+      orgId: req.session.user.orgId,
+      stageId: stageId,
+      newStageValues: newStageValues,
+    };
+
+    const schema = Joi.object({
+      orgId: Joi.string(),
+      stageId: Joi.string(),
+      newStageValues: Joi.object(), // TODo add actual inputs of new stage values
+    }).options({ presence: "required" });
+
+    // Validate input
+    try {
+      await schema.validateAsync(updateStageInput);
+    } catch (error) {
+      return res.status(400).json({ message: `${error.message}` });
+    }
+
+    await updateStage(updateStageInput);
+    return res.status(200).json({ message: "Stage updated!" });
+  } catch (error) {
+    return res
+      .status(500)
+      .json({ message: `Unable to update stage - ${error}` });
   }
 };
