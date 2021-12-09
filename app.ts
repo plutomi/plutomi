@@ -123,8 +123,9 @@ app
 app
   .route("/applicants/:applicantId")
   .get([Middleware.withAuth], Applicants.get)
+  .delete([Middleware.withAuth], Applicants.remove)
   .all(Middleware.methodNotAllowed);
-  
+
 app
   .route("/auth/login")
   .get(Auth.login) // Log a user in

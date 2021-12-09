@@ -54,17 +54,7 @@ const handler = async (
   }
 
   if (method === API_METHODS.DELETE) {
-    try {
-      await deleteApplicant({
-        orgId: req.session.user.orgId,
-        applicantId: applicantId!,
-      });
-      return res.status(200).json({ message: "Applicant deleted!" });
-    } catch (error) {
-      return res
-        .status(500)
-        .json({ message: `Unable to delete applicant - ${error}` });
-    }
+
   }
 };
 

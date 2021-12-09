@@ -3,6 +3,7 @@ import Joi from "joi";
 import { DEFAULTS, EMAILS } from "../Config";
 import { CreateApplicantAPIBody } from "../types/main";
 import { createApplicant } from "../utils/applicants/createApplicant";
+import deleteApplicant from "../utils/applicants/deleteApplicant";
 import { getApplicantById } from "../utils/applicants/getApplicantById";
 import { getOpening } from "../utils/openings/getOpeningById";
 import sendEmail from "../utils/sendEmail";
@@ -97,5 +98,20 @@ export const get = async (req: Request, res: Response) => {
     return res
       .status(400) // TODO change #
       .json({ message: `Unable to get applicant: ${error}` });
+  }
+};
+
+export const remove = async (req: Request, res: Response) => {
+  const { applicantId } = req.params;
+  try {
+    await deleteApplicant({
+      orgId: req.session.user.orgId,
+      applicantId: applicantId!,
+    });
+    return res.status(200).json({ message: "Applicant deleted!" });
+  } catch (error) {
+    return res
+      .status(500)
+      .json({ message: `Unable to delete applicant - ${error}` });
   }
 };
