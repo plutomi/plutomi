@@ -6,7 +6,7 @@ import { TrashIcon } from "@heroicons/react/outline";
 import useOpeningById from "../../SWR/useOpeningById";
 import { useRouter } from "next/router";
 import Loader from "../Loader";
-import OpeningsService from "../../Adapters/OpeningsService";
+import OpeningsService from "../../adapters/OpeningsService";
 import * as Time from "../../utils/time";
 import { CUSTOM_QUERY } from "../../types/main";
 export default function OpeningSettingsHeader() {

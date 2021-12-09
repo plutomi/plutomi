@@ -1,6 +1,6 @@
 import axios from "../axios";
 import useSWR from "swr";
-import InvitesService from "../Adapters/InvitesService";
+import InvitesService from "../adapters/InvitesService";
 import { SWR } from "../Config";
 const fetcher = (url: string) => axios.get(url).then((res) => res.data);
 

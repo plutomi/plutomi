@@ -1,6 +1,6 @@
 import axios from "../axios";
 import useSWR from "swr";
-import ApplicantsService from "../Adapters/ApplicantsService";
+import ApplicantsService from "../adapters/ApplicantsService";
 const fetcher = (url: string) => axios.get(url).then((res) => res.data);
 
 export default function useApplicantById(applicantId: string) {

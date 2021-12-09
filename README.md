@@ -92,9 +92,9 @@ We're using a single table design for this project. If you're new to Dynamo, I r
 
 Also, don't forget to buy **THE** [DynamoDB Book](https://www.dynamodbbook.com/) by Alex ;)
 
-To play around with the data model locally, you can download [NoSQL Workbench](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/workbench.settingup.html) and import the [NoSQLWorkbench.json](Schema/NoSQLWorkbench.json) file into it. You can even export the table to your AWS account and generate queries in Python, JavaScript, or Java.
+To play around with the data model locally, you can download [NoSQL Workbench](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/workbench.settingup.html) and import the [NoSQLWorkbench.json](schema/NoSQLWorkbench.json) file into it. You can even export the table to your AWS account and generate queries in Python, JavaScript, or Java.
 
-I've created [a spreadsheet](https://docs.google.com/spreadsheets/d/1KZMJt0X2J0s1v8_jz6JC7aiiwYW8qVV9pKWobQ5012Y/edit?usp=sharing) with access patterns and use cases if you prefer that. It helps to follow along with NoSQL Workbench on your own machine or you can view the pictures in the [Schema](./Schema) folder.
+I've created [a spreadsheet](https://docs.google.com/spreadsheets/d/1KZMJt0X2J0s1v8_jz6JC7aiiwYW8qVV9pKWobQ5012Y/edit?usp=sharing) with access patterns and use cases if you prefer that. It helps to follow along with NoSQL Workbench on your own machine or you can view the pictures in the [schema](./schema) folder.
 
 You might have noticed that _some_(!) sort keys (SK, GSI1SK, GSI2SK) have the `ENTITY_TYPE` prefixed (e.g. `APPLICANT_FILE`). This is intentional and it's to retrieve these child items when doing a query on the parent.
 For example, if we want to retrieve an applicant, we might also want to retrieve their files, notes, and responses. We can do that with a single query: `PK = APPLICANT#{APPLICANT ID} and SK begins_with(APPLICANT)` :)

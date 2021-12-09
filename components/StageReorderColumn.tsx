@@ -7,14 +7,14 @@ import { useRouter } from "next/router";
 import difference from "../utils/getObjectDifference";
 import StageModal from "./Stages/StageModal";
 import Link from "next/dist/client/link";
-import StagesService from "../Adapters/StagesService";
+import StagesService from "../adapters/StagesService";
 import useSelf from "../SWR/useSelf";
 import { useEffect } from "react";
 import DraggableStageCard from "./Stages/DraggableStageCard";
 import useOpeningById from "../SWR/useOpeningById";
 import useAllStagesInOpening from "../SWR/useAllStagesInOpening";
 import useStageById from "../SWR/useStageById";
-import OpeningsService from "../Adapters/OpeningsService";
+import OpeningsService from "../adapters/OpeningsService";
 import { CUSTOM_QUERY } from "../types/main";
 
 export default function StageReorderColumn() {

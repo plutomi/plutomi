@@ -6,7 +6,7 @@ import OpeningModal from "./OpeningModal";
 import Loader from "../Loader";
 import useStore from "../../utils/store";
 import useOpeningById from "../../SWR/useOpeningById";
-import OpeningsService from "../../Adapters/OpeningsService";
+import OpeningsService from "../../adapters/OpeningsService";
 import { CUSTOM_QUERY } from "../../types/main";
 export default function OpeningSettingsContent() {
   const router = useRouter();

@@ -5,7 +5,7 @@ import { useState } from "react";
 import useAllStageQuestions from "../../SWR/useAllStageQuestions";
 import { nanoid } from "nanoid";
 import axios from "../axios";
-import ApplicantsService from "../../Adapters/ApplicantsService";
+import ApplicantsService from "../../adapters/ApplicantsService";
 import { CUSTOM_QUERY } from "../../types/main";
 export default function ApplicationContent() {
   const [responses, setResponses] = useState([]);

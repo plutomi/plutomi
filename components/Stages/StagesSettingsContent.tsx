@@ -11,8 +11,8 @@ import useSelf from "../../SWR/useSelf";
 import useAllStagesInOpening from "../../SWR/useAllStagesInOpening";
 import useOpeningById from "../../SWR/useOpeningById";
 import useStageById from "../../SWR/useStageById";
-import StagesService from "../../Adapters/StagesService";
-import QuestionsService from "../../Adapters/QuestionsService";
+import StagesService from "../../adapters/StagesService";
+import QuestionsService from "../../adapters/QuestionsService";
 import { CUSTOM_QUERY } from "../../types/main";
 
 export default function StageSettingsContent() {

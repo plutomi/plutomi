@@ -1,6 +1,6 @@
 import axios from "../axios";
 import useSWR from "swr";
-import OrgsService from "../Adapters/OrgsService";
+import OrgsService from "../adapters/OrgsService";
 const fetcher = (url: string) => axios.get(url).then((res) => res.data);
 
 export default function useOrgUsers(orgId: string) {
