@@ -124,6 +124,7 @@ app
   .route("/applicants/:applicantId")
   .get([Middleware.withAuth], Applicants.get)
   .delete([Middleware.withAuth], Applicants.remove)
+  .put([Middleware.withAuth], Applicants.update)
   .all(Middleware.methodNotAllowed);
 
 app

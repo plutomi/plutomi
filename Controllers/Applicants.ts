@@ -5,6 +5,7 @@ import { CreateApplicantAPIBody } from "../types/main";
 import { createApplicant } from "../utils/applicants/createApplicant";
 import deleteApplicant from "../utils/applicants/deleteApplicant";
 import { getApplicantById } from "../utils/applicants/getApplicantById";
+import updateApplicant from "../utils/applicants/updateApplicant";
 import { getOpening } from "../utils/openings/getOpeningById";
 import sendEmail from "../utils/sendEmail";
 const UrlSafeString = require("url-safe-string"),
@@ -113,5 +114,40 @@ export const remove = async (req: Request, res: Response) => {
     return res
       .status(500)
       .json({ message: `Unable to delete applicant - ${error}` });
+  }
+};
+
+export const update = async (req: Request, res: Response) => {
+  const { applicantId } = req.params;
+  const { newApplicantValues } = req.body;
+  try {
+    const updateApplicantInput = {
+      orgId: req.session.user.orgId,
+      applicantId: applicantId,
+      newApplicantValues: newApplicantValues,
+    };
+
+    const schema = Joi.object({
+      orgId: Joi.string().invalid(
+        DEFAULTS.NO_ORG,
+        tagGenerator.generate(DEFAULTS.NO_ORG)
+      ),
+      applicantId: Joi.string(),
+      newApplicantValues: Joi.object(), // todo add banned keys
+    }).options({ presence: "required" });
+
+    // Validate input
+    try {
+      await schema.validateAsync(updateApplicantInput);
+    } catch (error) {
+      return res.status(400).json({ message: `${error.message}` });
+    }
+
+    await updateApplicant(updateApplicantInput);
+    return res.status(200).json({ message: "Applicant updated!" });
+  } catch (error) {
+    return res
+      .status(500)
+      .json({ message: `Unable to update applicant - ${error}` });
   }
 };
