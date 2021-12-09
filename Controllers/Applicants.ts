@@ -6,9 +6,6 @@ import {
   CreateApplicantResponseInput,
 } from "../types/main";
 
-import { createApplicantResponse } from "../utils/applicants/createApplicantResponse";
-import deleteApplicant from "../utils/applicants/deleteApplicant";
-import updateApplicant from "../utils/applicants/updateApplicant";
 import { getOpening } from "../utils/openings/getOpeningById";
 import sendEmail from "../utils/sendEmail";
 import * as Applicants from "../models/Applicants";
@@ -110,7 +107,7 @@ export const get = async (req: Request, res: Response) => {
 export const remove = async (req: Request, res: Response) => {
   const { applicantId } = req.params;
   try {
-    await deleteApplicant({
+    await Applicants.deleteApplicant({
       orgId: req.session.user.orgId,
       applicantId: applicantId!,
     });
@@ -148,7 +145,7 @@ export const update = async (req: Request, res: Response) => {
       return res.status(400).json({ message: `${error.message}` });
     }
 
-    await updateApplicant(updateApplicantInput);
+    await Applicants.updateApplicant(updateApplicantInput);
     return res.status(200).json({ message: "Applicant updated!" });
   } catch (error) {
     return res
@@ -197,7 +194,7 @@ export const answer = async (req: Request, res: Response) => {
           questionResponse: questionResponse,
         };
 
-        await createApplicantResponse(createApplicantResponseInput);
+        await Applicants.createApplicantResponse(createApplicantResponseInput);
       })
     );
 

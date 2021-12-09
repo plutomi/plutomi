@@ -1,20 +1,31 @@
 import {
+  PutCommand,
+  PutCommandInput,
   QueryCommand,
   QueryCommandInput,
   TransactWriteCommand,
   TransactWriteCommandInput,
+  UpdateCommand,
+  UpdateCommandInput,
 } from "@aws-sdk/lib-dynamodb";
 import { Dynamo } from "../awsClients/ddbDocClient";
 import * as Time from "../utils/time";
 import { nanoid } from "nanoid";
-import { ENTITY_TYPES, ID_LENGTHS } from "../Config";
+import { ENTITY_TYPES, FORBIDDEN_PROPERTIES, ID_LENGTHS } from "../Config";
 import {
   CreateApplicantInput,
   CreateApplicantOutput,
+  CreateApplicantResponseInput,
+  CreateApplicantResponseOutput,
+  DeleteApplicantInput,
   GetApplicantByIdInput,
   GetApplicantByIdOutput,
+  UpdateApplicantInput,
 } from "../types/main";
-import { DynamoNewApplicant } from "../types/dynamo";
+import {
+  DynamoNewApplicant,
+  DynamoNewApplicantResponse,
+} from "../types/dynamo";
 import _ from "lodash";
 const { DYNAMO_TABLE_NAME } = process.env;
 
@@ -77,6 +88,7 @@ export const createApplicant = async (
      *
      *
      */
+    // TODO reqork this
     GSI1PK: `${ENTITY_TYPES.ORG}#${orgId}#${ENTITY_TYPES.APPLICANT}S`, // TODO needs sharding
     GSI1SK: `${ENTITY_TYPES.OPENING}#${openingId}#DATE_LANDED#${now}`,
     GSI2PK: `${ENTITY_TYPES.ORG}#${orgId}#${ENTITY_TYPES.APPLICANT}S`, // TODO needs sharding
@@ -186,6 +198,163 @@ export const getApplicantById = async (
     };
     return applicant; // TODO TYPE!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
   } catch (error) {
+    throw new Error(error);
+  }
+};
+
+export const deleteApplicant = async (
+  props: DeleteApplicantInput
+): Promise<void> => {
+  const { orgId, applicantId } = props;
+  const applicant = await getApplicantById({
+    applicantId,
+  });
+
+  try {
+    const transactParams: TransactWriteCommandInput = {
+      TransactItems: [
+        {
+          // Delete the applicant
+          Delete: {
+            Key: {
+              PK: `${ENTITY_TYPES.APPLICANT}#${applicantId}`,
+              SK: ENTITY_TYPES.APPLICANT,
+            },
+            TableName: DYNAMO_TABLE_NAME,
+          },
+        },
+
+        {
+          // Decrement opening's totalApplicants
+          Update: {
+            Key: {
+              PK: `${ENTITY_TYPES.ORG}#${orgId}#${ENTITY_TYPES.OPENING}#${applicant.openingId}`, // todo fix types
+              SK: ENTITY_TYPES.OPENING,
+            },
+            TableName: DYNAMO_TABLE_NAME,
+            UpdateExpression: "SET totalApplicants = totalApplicants - :value",
+            ExpressionAttributeValues: {
+              ":value": 1,
+            },
+          },
+        },
+        {
+          // Decrement stage's totalApplicants
+          Update: {
+            Key: {
+              PK: `${ENTITY_TYPES.ORG}#${orgId}#${ENTITY_TYPES.STAGE}#${applicant.stageId}`, // todo fix types
+              SK: ENTITY_TYPES.STAGE,
+            },
+            TableName: DYNAMO_TABLE_NAME,
+            UpdateExpression: "SET totalApplicants = totalApplicants - :value",
+            ExpressionAttributeValues: {
+              ":value": 1,
+            },
+          },
+        },
+        {
+          // Decrement the org's total applicants
+          Update: {
+            Key: {
+              PK: `${ENTITY_TYPES.ORG}#${orgId}`,
+              SK: ENTITY_TYPES.ORG,
+            },
+            TableName: DYNAMO_TABLE_NAME,
+            UpdateExpression: "SET totalApplicants = totalApplicants - :value",
+            ExpressionAttributeValues: {
+              ":value": 1,
+            },
+          },
+        },
+      ],
+    };
+
+    await Dynamo.send(new TransactWriteCommand(transactParams));
+  } catch (error) {
+    console.error(error);
+    throw new Error(`Unable to delete applicant ${error}`); // TODO add to errors
+  }
+};
+
+export const updateApplicant = async (
+  props: UpdateApplicantInput
+): Promise<void> => {
+  const { orgId, applicantId, newApplicantValues } = props;
+
+  // Build update expression
+  let allUpdateExpressions: string[] = [];
+  let allAttributeValues: any = {};
+
+  // Filter out forbidden property
+  for (const property in newApplicantValues) {
+    if (FORBIDDEN_PROPERTIES.APPLICANT.includes(property)) {
+      // Delete the property so it isn't updated
+      delete newApplicantValues[property];
+    }
+
+    // If its a valid property, start creating the new update expression
+    // Push each property into the update expression
+    allUpdateExpressions.push(`${property} = :${property}`);
+
+    // Create values for each attribute
+    allAttributeValues[`:${property}`] = newApplicantValues[property];
+  }
+
+  const params: UpdateCommandInput = {
+    Key: {
+      PK: `${ENTITY_TYPES.APPLICANT}#${applicantId}`,
+      SK: ENTITY_TYPES.APPLICANT,
+    },
+    UpdateExpression: `SET ` + allUpdateExpressions.join(", "),
+    ExpressionAttributeValues: allAttributeValues,
+    TableName: DYNAMO_TABLE_NAME,
+    ConditionExpression: "attribute_exists(PK)",
+  };
+
+  try {
+    await Dynamo.send(new UpdateCommand(params));
+  } catch (error) {
+    throw new Error(error);
+  }
+};
+
+export const createApplicantResponse = async (
+  props: CreateApplicantResponseInput
+): Promise<CreateApplicantResponseOutput> => {
+  const {
+    orgId,
+    applicantId,
+    questionTitle,
+    questionDescription,
+    questionResponse,
+  } = props;
+  const responseId = nanoid(ID_LENGTHS.APPLICANT_RESPONSE);
+  const newApplicantResponse: DynamoNewApplicantResponse = {
+    PK: `${ENTITY_TYPES.APPLICANT}#${applicantId}`,
+    SK: `${ENTITY_TYPES.APPLICANT_RESPONSE}#${responseId}`,
+    orgId: orgId,
+    applicantId: applicantId,
+    entityType: ENTITY_TYPES.APPLICANT_RESPONSE,
+    createdAt: Time.currentISO(),
+    responseId: responseId,
+    questionTitle: questionTitle,
+    questionDescription: questionDescription,
+    questionResponse: questionResponse,
+    GSI1PK: `${ENTITY_TYPES.ORG}#${orgId}#${ENTITY_TYPES.APPLICANT}#${applicantId}`,
+    GSI1SK: ENTITY_TYPES.APPLICANT_RESPONSE, // TODO add timestmap?
+  };
+
+  const params: PutCommandInput = {
+    TableName: DYNAMO_TABLE_NAME,
+    Item: newApplicantResponse,
+    ConditionExpression: "attribute_not_exists(PK)",
+  };
+
+  try {
+    await Dynamo.send(new PutCommand(params));
+    return newApplicantResponse;
+  } catch (error) {
+    // TODO error enum
     throw new Error(error);
   }
 };
