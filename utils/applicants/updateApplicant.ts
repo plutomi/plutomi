@@ -38,7 +38,7 @@ export default async function updateApplicant(
 
   const params: UpdateCommandInput = {
     Key: {
-      PK: `${ENTITY_TYPES.ORG}#${orgId}#${ENTITY_TYPES.APPLICANT}#${applicantId}`,
+      PK: `${ENTITY_TYPES.APPLICANT}#${applicantId}`,
       SK: ENTITY_TYPES.APPLICANT,
     },
     UpdateExpression: `SET ` + allUpdateExpressions.join(", "),

@@ -17,12 +17,12 @@ import { ENTITY_TYPES } from "../../Config";
 export async function getApplicantById(
   props: GetApplicantByIdInput
 ): Promise<GetApplicantByIdOutput> {
-  const { orgId, applicantId } = props;
+  const { applicantId } = props;
   const responsesParams: QueryCommandInput = {
     TableName: DYNAMO_TABLE_NAME,
     KeyConditionExpression: "PK = :PK AND begins_with(SK, :SK)",
     ExpressionAttributeValues: {
-      ":PK": `${ENTITY_TYPES.ORG}#${orgId}#${ENTITY_TYPES.APPLICANT}#${applicantId}`,
+      ":PK": `${ENTITY_TYPES.APPLICANT}#${applicantId}`,
       ":SK": `${ENTITY_TYPES.APPLICANT}`,
     },
   };

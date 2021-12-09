@@ -7,12 +7,13 @@ import listEndpoints from "express-list-endpoints";
 import * as Middleware from "./newMiddleware";
 import * as PublicInfo from "./Controllers/PublicInfo";
 import * as Auth from "./Controllers/Auth";
-import * as Users from "./Controllers/API/Users";
-import * as Invites from "./Controllers/API/Invites";
+import * as Users from "./Controllers/Users";
+import * as Invites from "./Controllers/Invites";
 import * as Orgs from "./Controllers/Orgs";
 import * as Questions from "./Controllers/Questions";
 import * as Stages from "./Controllers/Stages";
 import * as Openings from "./Controllers/Openings";
+import * as Applicants from "./Controllers/Applicants";
 import { sessionSettings } from "./Config";
 const PORT = process.env.EXPRESS_PORT;
 const WEBSITE_URL = process.env.WEBSITE_URL;
@@ -112,6 +113,23 @@ app
 app
   .route("/openings/:openingId/stages")
   .get([Middleware.withAuth], Openings.getStages)
+  .all(Middleware.methodNotAllowed);
+
+app
+  .route("/applicants")
+  .post(Applicants.create)
+  .all(Middleware.methodNotAllowed);
+
+app
+  .route("/applicants/:applicantId")
+  .get([Middleware.withAuth], Applicants.get)
+  .delete([Middleware.withAuth], Applicants.remove)
+  .put([Middleware.withAuth], Applicants.update)
+  .all(Middleware.methodNotAllowed);
+
+app
+  .route("/applicants/:applicantId/answer")
+  .post(Applicants.answer)
   .all(Middleware.methodNotAllowed);
 app
   .route("/auth/login")
