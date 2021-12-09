@@ -123,7 +123,7 @@ export const getApplicantsInStage = async (req: Request, res: Response) => {
   };
 
   try {
-    const allApplicants = await Stages.getAllApplicantsInStage(
+    const allApplicants = await Stages.getApplicantsInStage(
       getAllApplicantsInStageInput
     );
     return res.status(200).json(allApplicants);
