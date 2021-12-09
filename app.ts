@@ -41,14 +41,25 @@ app
 
 // Return public info for an opening
 app
-  .route("/public/:orgId/openings/:openingId")
-  .get([Middleware.cleanOrgId], PublicInfo.getSingleOrgOpening)
+  .route("/public/:orgId/openings/:openingId") // TODO get stages in opening
+  .get([Middleware.cleanOrgId], PublicInfo.getOpeningInfo)
   .all(Middleware.methodNotAllowed);
 
 app
+  .route("/public/:orgId/stages/:stageId")
+  .get([Middleware.cleanOrgId], PublicInfo.getStageInfo)
+  .all(Middleware.methodNotAllowed);
+
+app
+  .route("/public/:orgId/stages/:stageId/questions")
+  .get([Middleware.cleanOrgId], PublicInfo.getStageQuestions)
+  .all(Middleware.methodNotAllowed);
+
+app.route("/questions")
+app
   .route("/auth/login")
   .get(Auth.login) // Log a user in
-  .post(Auth.createLoginLinks) // Creat login links for the user
+  .post(Auth.createLoginLinks) // Create login links for the user
   .all(Middleware.methodNotAllowed);
 
 // Log out a user. Session is needed to log out obviously
