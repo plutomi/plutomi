@@ -2,15 +2,16 @@ require("dotenv").config();
 import express from "express";
 import helmet from "helmet";
 import cors from "cors";
+import metadata from "./Controllers/Metadata";
+import listEndpoints from "express-list-endpoints";
 import * as Middleware from "./newMiddleware";
 import * as PublicInfo from "./Controllers/PublicInfo";
 import * as Auth from "./Controllers/Auth";
-import metadata from "./Controllers/API/Metadata";
-import listEndpoints from "express-list-endpoints";
 import * as Users from "./Controllers/API/Users";
 import * as Invites from "./Controllers/API/Invites";
 import * as Orgs from "./Controllers/Orgs";
 import * as Questions from "./Controllers/Questions";
+import * as Stages from "./Controllers/Stages";
 import { sessionSettings } from "./Config";
 const PORT = process.env.EXPRESS_PORT;
 const WEBSITE_URL = process.env.WEBSITE_URL;
@@ -67,6 +68,10 @@ app
   .put([Middleware.withAuth], Questions.update)
   .all(Middleware.methodNotAllowed);
 
+app
+  .route("/stages")
+  .post([Middleware.withAuth], Stages.create)
+  .all(Middleware.methodNotAllowed);
 app
   .route("/auth/login")
   .get(Auth.login) // Log a user in
