@@ -9,7 +9,7 @@ const { DYNAMO_TABLE_NAME } = process.env;
  * @param props {@link GetStageByIdInput}
  * @returns - {@link GetStageByIdOutput}
  */
-export default async function get(
+export default async function Get(
   props: GetStageByIdInput
 ): Promise<GetStageByIdOutput> {
   const { orgId, stageId } = props;

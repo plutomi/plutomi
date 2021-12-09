@@ -8,7 +8,7 @@ import {
 import getStageById from "./getStageById";
 const { DYNAMO_TABLE_NAME } = process.env;
 
-export default async function getQuestions(
+export default async function GetQuestions(
   props: GetAllQuestionsInStageInput
 ): Promise<GetAllQuestionsInStageOutput> {
   const { orgId, stageId } = props;

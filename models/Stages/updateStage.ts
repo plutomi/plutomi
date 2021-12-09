@@ -4,7 +4,7 @@ import { FORBIDDEN_PROPERTIES, ENTITY_TYPES } from "../../Config";
 import { UpdateStageInput } from "../../types/main";
 const { DYNAMO_TABLE_NAME } = process.env;
 
-export default async function update(props: UpdateStageInput): Promise<void> {
+export default async function Update(props: UpdateStageInput): Promise<void> {
   const { orgId, stageId, newStageValues } = props;
 
   // Build update expression

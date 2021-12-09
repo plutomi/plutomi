@@ -5,8 +5,9 @@ import {
   GetAllApplicantsInStageInput,
   GetAllApplicantsInStageOutput,
 } from "../../types/main";
+const { DYNAMO_TABLE_NAME } = process.env;
 
-export default async function getApplicants(
+export default async function GetApplicants(
   props: GetAllApplicantsInStageInput
 ): Promise<GetAllApplicantsInStageOutput> {
   {

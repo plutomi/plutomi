@@ -11,7 +11,7 @@ import getOpening from "../Openings/getOpening";
 import * as Time from "../../utils/time";
 const { DYNAMO_TABLE_NAME } = process.env;
 
-export default async function create(props: CreateStageInput): Promise<void> {
+export default async function Create(props: CreateStageInput): Promise<void> {
   const { orgId, GSI1SK, openingId } = props;
   const stageId = nanoid(ID_LENGTHS.STAGE);
   const newStage: DynamoNewStage = {
