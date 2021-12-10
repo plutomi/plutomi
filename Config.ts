@@ -22,9 +22,8 @@ export const ENTITY_TYPES = {
 };
 
 export const sessionSettings = ironSession({
-  cookieName: "test",
-  password:
-    "UnhandledPromiseRejectionWarning: Error: iron-session: Bad usage. Password must be at least 32 characters long.",
+  cookieName: "plutomi-cookie",
+  password: process.env.IRON_SESSION_PASSWORD_1,
   cookieOptions: {
     secure: process.env.NODE_ENV === "production",
   },
@@ -83,6 +82,10 @@ export enum DEFAULTS {
   LOGIN_EVENT_RETENTION_PERIOD = 30,
 }
 
+export const LOGIN_LINK_SETTINGS = {
+  password: process.env.IRON_SEAL_PASSWORD,
+  ttl: 900, // In seconds, how long should login links be valid for
+};
 export enum EMAILS { // TODO replace domain with .env domain
   /**
    * For troubleshooting issues

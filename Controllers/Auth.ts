@@ -14,12 +14,7 @@ import Joi from "joi";
 import sendEmail from "../utils/sendEmail";
 import * as Time from "../utils/time";
 import * as Users from "../models/Users/Users";
-const ironPassword = process.env.IRON_SEAL_PASSWORD;
-
-const ironOptions = {
-  password: ironPassword,
-  ttl: 60 * 15,
-};
+import { LOGIN_LINK_SETTINGS } from "../Config";
 
 export const session = async (req: Request, res: Response) => {
   return res.status(200).json({ message: req.session });
@@ -39,7 +34,7 @@ export const login = async (req: Request, res: Response) => {
     await unsealData(
       // TODO types, // TODO try catch
       seal,
-      ironOptions
+      LOGIN_LINK_SETTINGS
     );
 
   // If the link expired, these will be undefined
@@ -144,7 +139,7 @@ export const createLoginLinks = async (req: Request, res: Response) => {
         userId: user.userId,
         loginLinkId: loginLinkId,
       },
-      ironOptions
+      LOGIN_LINK_SETTINGS
     );
 
     try {

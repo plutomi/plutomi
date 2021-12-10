@@ -138,6 +138,27 @@ export default class APIStack extends cdk.Stack {
           assignPublicIp: true, // TODO revisit this
         }
       );
+    /**
+     * Reduce deploy time by:
+     * 1. Lowering the deregistration delay from 300 seconds to 30
+     * 2. Lower the healthcheck thresholds for a healthy instance
+     *
+     * https://github.com/plutomi/plutomi/issues/406
+     *
+     */
+    // Deregistration delay
+    loadBalancedFargateService.targetGroup.setAttribute(
+      "deregistration_delay.timeout_seconds",
+      "30"
+    );
+    // Healthcheck thresholds
+    loadBalancedFargateService.targetGroup.configureHealthCheck({
+      interval: cdk.Duration.seconds(5),
+      healthyHttpCodes: "200",
+      healthyThresholdCount: 2,
+      unhealthyThresholdCount: 3,
+      timeout: cdk.Duration.seconds(4),
+    });
 
     // Auto scaling
     const scalableTarget =

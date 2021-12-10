@@ -18,9 +18,11 @@ import methodNotAllowed from "./middleware/methodNotAllowed";
 import withAuth from "./middleware/withAuth";
 import routeNotFound from "./middleware/routeNotFound";
 import { sessionSettings } from "./Config";
+const timeout = require("connect-timeout");
 const PORT = process.env.EXPRESS_PORT;
 const WEBSITE_URL = process.env.WEBSITE_URL;
 const app = express();
+app.use(timeout("5s"));
 app.use(
   cors({
     credentials: true, // Access-Control-Allow-Credentials
@@ -32,6 +34,8 @@ app.use(helmet());
 app.set("trust proxy", 1);
 app.use(sessionSettings); // Adds req.session to each route, if applicable
 app.use(withCleanOrgId); // If the route has an :orgId, normalize it
+app.use(haltOnTimedout);
+
 /**
  ****************************************************************************
  * All /public routes return publicly available information about the entity
@@ -206,7 +210,7 @@ app.route("/invites").post([withAuth], Invites.create).all(methodNotAllowed);
 app
   .route("/invites/:inviteId")
   .post([withAuth], Invites.accept)
-  .put([withAuth], Invites.reject)
+  .delete([withAuth], Invites.reject)
   .all(methodNotAllowed);
 
 /**
@@ -219,6 +223,11 @@ const endpoints = listEndpoints(app);
 app.set("endpoints", endpoints);
 app.route("/").get(metadata).all(methodNotAllowed);
 app.all("*", routeNotFound);
+
+// Catch timeouts
+function haltOnTimedout(req, res, next) {
+  if (!req.timedout) next();
+}
 
 app.listen(PORT, () => {
   console.log(`Server running on http://localhost:${PORT}`);
