@@ -2,9 +2,8 @@ require("dotenv").config();
 import express from "express";
 import helmet from "helmet";
 import cors from "cors";
-import metadata from "./controllers/Metadata";
+import { metadata } from "./controllers/Metadata";
 import listEndpoints from "express-list-endpoints";
-import * as Middleware from "./newMiddleware";
 import * as PublicInfo from "./controllers/PublicInfo";
 import * as Auth from "./controllers/Auth";
 import * as Users from "./controllers/Users";
@@ -14,6 +13,10 @@ import * as Questions from "./controllers/Questions";
 import * as Stages from "./controllers/Stages";
 import * as Openings from "./controllers/Openings";
 import * as Applicants from "./controllers/Applicants";
+import withCleanOrgId from "./middleware/withCleanOrgId";
+import methodNotAllowed from "./middleware/methodNotAllowed";
+import withAuth from "./middleware/withAuth";
+import routeNotFound from "./middleware/routeNotFound";
 import { sessionSettings } from "./Config";
 const PORT = process.env.EXPRESS_PORT;
 const WEBSITE_URL = process.env.WEBSITE_URL;
@@ -28,57 +31,48 @@ app.use(express.json());
 app.use(helmet());
 app.set("trust proxy", 1);
 app.use(sessionSettings); // Adds req.session to each route, if applicable
-
+app.use(withCleanOrgId); // If the route has an :orgId, normalize it
 /**
  ****************************************************************************
  * All /public routes return publicly available information about the entity
  ****************************************************************************
  */
-app
-  .route("/public/:orgId")
-  .get([Middleware.cleanOrgId], PublicInfo.getOrgInfo)
-  .all(Middleware.methodNotAllowed);
+app.route("/public/:orgId").get(PublicInfo.getOrgInfo).all(methodNotAllowed);
 
 app
   .route("/public/:orgId/openings")
-  .get([Middleware.cleanOrgId], PublicInfo.getOrgOpenings)
-  .all(Middleware.methodNotAllowed);
+  .get(PublicInfo.getOrgOpenings)
+  .all(methodNotAllowed);
 
 app
   .route("/public/:orgId/openings/:openingId") // TODO get stages in opening
-  .get([Middleware.cleanOrgId], PublicInfo.getOpeningInfo)
-  .all(Middleware.methodNotAllowed);
+  .get(PublicInfo.getOpeningInfo)
+  .all(methodNotAllowed);
 
 app
   .route("/public/:orgId/stages/:stageId")
-  .get([Middleware.cleanOrgId], PublicInfo.getStageInfo)
-  .all(Middleware.methodNotAllowed);
+  .get(PublicInfo.getStageInfo)
+  .all(methodNotAllowed);
 
 app
   .route("/public/:orgId/stages/:stageId/questions")
-  .get([Middleware.cleanOrgId], PublicInfo.getStageQuestions)
-  .all(Middleware.methodNotAllowed);
+  .get(PublicInfo.getStageQuestions)
+  .all(methodNotAllowed);
 
 /**
  ****************************************************************************
  * Orgs
  ****************************************************************************
  */
-app
-  .route("/orgs")
-  .post([Middleware.withAuth], Orgs.create)
-  .all(Middleware.methodNotAllowed);
+app.route("/orgs").post([withAuth], Orgs.create).all(methodNotAllowed);
 
 app
   .route("/orgs/:orgId")
-  .get([Middleware.withAuth, Middleware.cleanOrgId], Orgs.get)
-  .delete([Middleware.withAuth, Middleware.cleanOrgId], Orgs.deleteOrg)
-  .all(Middleware.methodNotAllowed);
+  .get([withAuth], Orgs.get)
+  .delete([withAuth], Orgs.deleteOrg)
+  .all(methodNotAllowed);
 
-app
-  .route("/orgs/:orgId")
-  .get([Middleware.withAuth, Middleware.cleanOrgId], Orgs.users)
-  .all(Middleware.methodNotAllowed);
+app.route("/orgs/:orgId").get([withAuth], Orgs.users).all(methodNotAllowed);
 
 /**
  ****************************************************************************
@@ -87,53 +81,50 @@ app
  */
 app
   .route("/openings")
-  .get([Middleware.withAuth], Openings.getAllOpenings)
-  .post([Middleware.withAuth], Openings.createOpeningController) // TODO fix name
-  .all(Middleware.methodNotAllowed);
+  .get([withAuth], Openings.getAllOpenings)
+  .post([withAuth], Openings.createOpeningController) // TODO fix name
+  .all(methodNotAllowed);
 
 app
   .route("/openings/:openingId")
-  .get([Middleware.withAuth], Openings.getOpeningById)
-  .delete([Middleware.withAuth], Openings.deleteOpeningController) // TODO fix name
-  .put([Middleware.withAuth], Openings.updateOpeningController) // TODO fix name
-  .all(Middleware.methodNotAllowed);
+  .get([withAuth], Openings.getOpeningById)
+  .delete([withAuth], Openings.deleteOpeningController) // TODO fix name
+  .put([withAuth], Openings.updateOpeningController) // TODO fix name
+  .all(methodNotAllowed);
 
 app
   .route("/openings/:openingId/applicants")
-  .get([Middleware.withAuth], Openings.getApplicants)
-  .all(Middleware.methodNotAllowed);
+  .get([withAuth], Openings.getApplicants)
+  .all(methodNotAllowed);
 
 app
   .route("/openings/:openingId/stages")
-  .get([Middleware.withAuth], Openings.getStages)
-  .all(Middleware.methodNotAllowed);
+  .get([withAuth], Openings.getStages)
+  .all(methodNotAllowed);
 
 /**
  ****************************************************************************
  * Stages
  ****************************************************************************
  */
-app
-  .route("/stages")
-  .post([Middleware.withAuth], Stages.create)
-  .all(Middleware.methodNotAllowed);
+app.route("/stages").post([withAuth], Stages.create).all(methodNotAllowed);
 
 app
   .route("/stages/:stageId")
-  .get([Middleware.withAuth], Stages.getStageInfo)
-  .delete([Middleware.withAuth], Stages.deleteStage)
-  .put([Middleware.withAuth], Stages.update)
-  .all(Middleware.methodNotAllowed);
+  .get([withAuth], Stages.getStageInfo)
+  .delete([withAuth], Stages.deleteStage)
+  .put([withAuth], Stages.update)
+  .all(methodNotAllowed);
 
 app
   .route("/stages/:stageId/applicants")
-  .get([Middleware.withAuth], Stages.getApplicantsInStage)
-  .all(Middleware.methodNotAllowed);
+  .get([withAuth], Stages.getApplicantsInStage)
+  .all(methodNotAllowed);
 
 app
   .route("/stages/:stageId/questions")
-  .get([Middleware.withAuth], Stages.getQuestionsInStage)
-  .all(Middleware.methodNotAllowed);
+  .get([withAuth], Stages.getQuestionsInStage)
+  .all(methodNotAllowed);
 
 /**
  ****************************************************************************
@@ -143,14 +134,14 @@ app
 
 app
   .route("/questions")
-  .post([Middleware.withAuth], Questions.create)
-  .all(Middleware.methodNotAllowed);
+  .post([withAuth], Questions.create)
+  .all(methodNotAllowed);
 
 app
   .route("/questions/:questionId")
-  .delete([Middleware.withAuth], Questions.deleteQuestion)
-  .put([Middleware.withAuth], Questions.update)
-  .all(Middleware.methodNotAllowed);
+  .delete([withAuth], Questions.deleteQuestion)
+  .put([withAuth], Questions.update)
+  .all(methodNotAllowed);
 
 /**
  ****************************************************************************
@@ -158,22 +149,19 @@ app
  ****************************************************************************
  */
 
-app
-  .route("/applicants")
-  .post(Applicants.create)
-  .all(Middleware.methodNotAllowed);
+app.route("/applicants").post(Applicants.create).all(methodNotAllowed);
 
 app
   .route("/applicants/:applicantId")
-  .get([Middleware.withAuth], Applicants.get)
-  .delete([Middleware.withAuth], Applicants.remove)
-  .put([Middleware.withAuth], Applicants.update)
-  .all(Middleware.methodNotAllowed);
+  .get([withAuth], Applicants.get)
+  .delete([withAuth], Applicants.remove)
+  .put([withAuth], Applicants.update)
+  .all(methodNotAllowed);
 
 app
   .route("/applicants/:applicantId/answer")
   .post(Applicants.answer)
-  .all(Middleware.methodNotAllowed);
+  .all(methodNotAllowed);
 
 /**
  ****************************************************************************
@@ -184,12 +172,9 @@ app
   .route("/auth/login")
   .get(Auth.login)
   .post(Auth.createLoginLinks)
-  .all(Middleware.methodNotAllowed);
+  .all(methodNotAllowed);
 
-app
-  .route("/auth/logout")
-  .post([Middleware.withAuth], Auth.logout)
-  .all(Middleware.methodNotAllowed);
+app.route("/auth/logout").post([withAuth], Auth.logout).all(methodNotAllowed);
 
 /**
  ****************************************************************************
@@ -197,21 +182,18 @@ app
  ****************************************************************************
  */
 
-app
-  .route("/users/self")
-  .get([Middleware.withAuth], Users.self)
-  .all(Middleware.methodNotAllowed);
+app.route("/users/self").get([withAuth], Users.self).all(methodNotAllowed);
 
 app
   .route("/users/:userId")
-  .get([Middleware.withAuth], Users.getById)
-  .put([Middleware.withAuth], Users.update)
-  .all(Middleware.methodNotAllowed);
+  .get([withAuth], Users.getById)
+  .put([withAuth], Users.update)
+  .all(methodNotAllowed);
 
 app
   .route("/users/:userId/invites")
-  .get([Middleware.withAuth], Users.getInvites)
-  .all(Middleware.methodNotAllowed);
+  .get([withAuth], Users.getInvites)
+  .all(methodNotAllowed);
 
 /**
  ****************************************************************************
@@ -219,16 +201,13 @@ app
  ****************************************************************************
  */
 
-app
-  .route("/invites")
-  .post([Middleware.withAuth], Invites.create)
-  .all(Middleware.methodNotAllowed);
+app.route("/invites").post([withAuth], Invites.create).all(methodNotAllowed);
 
 app
   .route("/invites/:inviteId")
-  .post([Middleware.withAuth], Invites.accept)
-  .put([Middleware.withAuth], Invites.reject)
-  .all(Middleware.methodNotAllowed);
+  .post([withAuth], Invites.accept)
+  .put([withAuth], Invites.reject)
+  .all(methodNotAllowed);
 
 /**
  * *------------------------ DO NOT TOUCH BELOW THIS LINE ---------------------------*
@@ -238,8 +217,8 @@ app
  */
 const endpoints = listEndpoints(app);
 app.set("endpoints", endpoints);
-app.route("/").get(metadata).all(Middleware.methodNotAllowed);
-app.all("*", Middleware.routeNotFound);
+app.route("/").get(metadata).all(methodNotAllowed);
+app.all("*", routeNotFound);
 
 app.listen(PORT, () => {
   console.log(`Server running on http://localhost:${PORT}`);

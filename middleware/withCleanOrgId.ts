@@ -1,19 +1,22 @@
-import { NextApiRequest, NextApiResponse } from "next";
+import { Request, Response, NextFunction } from "express";
 const UrlSafeString = require("url-safe-string"),
   tagGenerator = new UrlSafeString();
 
-// Cleans up the orgId to be URL safe if in body or query
-export default function withCleanOrgId(handler: any) {
-  return async (req: NextApiRequest, res: NextApiResponse) => {
+export default async function withCleanOrgId(
+  req: Request,
+  res: Response,
+  next: NextFunction
+) {
+  /**
+   * Makes the orgId, whether in the url params or in the body, have a specific, URL Safe, format
+   */
 
-    if (req.body.orgId) {
-      req.body.orgId = tagGenerator.generate(req.body.orgId);
-    }
+  if (req.body.orgId) {
+    req.body.orgId = tagGenerator.generate(req.body.orgId);
+  }
 
-    if (req.query.orgId) {
-      req.query.orgId = tagGenerator.generate(req.query.orgId);
-    }
-
-    return handler(req, res);
-  };
+  if (req.params.orgId) {
+    req.params.orgId = tagGenerator.generate(req.params.orgId);
+  }
+  next();
 }
