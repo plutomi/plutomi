@@ -3,13 +3,13 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "set NODE_ENV=development && concurrently --kill-others \"nodemon app.ts\" \"next dev\"",
-    "next": "next dev",
+    "dev": "cross-env NODE_ENV=development concurrently --kill-others \"nodemon app.ts\" \"next dev\"",
+    "next": "cross-env NODE_ENV=development next dev",
     "api": "nodemon app.ts",
     "build": "next build",
     "lint": "next lint",
     "start": "ts-node --transpile-only app.ts",
-    "deploy": "set NODE_ENV=production & cdk deploy --all",
+    "deploy": "cross-env NODE_ENV=production cdk deploy --all",
     "destroy": "cdk destroy --all"
   },
   "dependencies": {
@@ -82,6 +82,7 @@
     "@types/source-map-support": "^0.5.4",
     "autoprefixer": "^10.4.0",
     "concurrently": "^6.4.0",
+    "cross-env": "^7.0.3",
     "depcheck": "^1.4.2",
     "dotenv": "^10.0.0",
     "eslint": "^7.32.0",
