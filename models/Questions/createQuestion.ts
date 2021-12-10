@@ -8,6 +8,7 @@ import { ID_LENGTHS, ENTITY_TYPES, LIMITS, ERRORS } from "../../Config";
 import { DynamoNewStageQuestion } from "../../types/dynamo";
 import { CreateStageQuestionInput } from "../../types/main";
 import * as Time from "../../utils/time";
+import * as Stages from "../Stages/Stages";
 const { DYNAMO_TABLE_NAME } = process.env;
 export default async function Create(
   props: CreateStageQuestionInput
@@ -29,7 +30,8 @@ export default async function Create(
   };
 
   try {
-    let stage = await getStageById({ orgId, stageId });
+    // TODO i dont think this should be here
+    let stage = await Stages.getStageById({ orgId, stageId });
 
     if (stage.questionOrder.length >= LIMITS.MAX_CHILD_ENTITY_LIMIT) {
       throw ERRORS.MAX_CHILD_ENTITY_LIMIT_ERROR_MESSAGE;

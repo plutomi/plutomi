@@ -3,12 +3,14 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "concurrently --kill-others \"nodemon app.ts\" \"next dev\"",
+    "dev": "set NODE_ENV=development & concurrently --kill-others \"nodemon app.ts\" \"next dev\"",
     "next": "next dev",
     "api": "nodemon app.ts",
     "build": "next build",
     "lint": "next lint",
-    "start": "ts-node --transpile-only app.ts"
+    "start": "ts-node --transpile-only app.ts",
+    "deploy": "set NODE_ENV=production & cdk deploy --all",
+    "destroy": "cdk destroy --all"
   },
   "dependencies": {
     "@aws-cdk/assert": "^2.0.0",
@@ -34,8 +36,10 @@
     "axios": "^0.21.4",
     "connect-timeout": "^1.9.0",
     "cors": "^2.8.5",
+    "custom-env": "^2.0.1",
     "dayjs": "^1.10.7",
     "delay": "^5.0.0",
+    "dotenv-flow": "^3.2.0",
     "env-var": "^7.1.1",
     "express": "^4.17.1",
     "express-list-endpoints": "^6.0.0",

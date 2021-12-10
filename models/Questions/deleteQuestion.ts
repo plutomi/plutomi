@@ -7,15 +7,17 @@ import { ENTITY_TYPES } from "../../Config";
 import { DeleteQuestionInput } from "../../types/main";
 import { getQuestionById } from "./Questions";
 const { DYNAMO_TABLE_NAME } = process.env;
+import * as Stages from "../Stages/Stages";
+import * as Questions from "../Questions/Questions";
 export default async function DeleteQuestion(
   props: DeleteQuestionInput
 ): Promise<void> {
   const { orgId, questionId } = props;
   // Delete the question item & update the question order on the stage
   try {
-    let question = await getQuestionById({ orgId, questionId });
+    let question = await Questions.getQuestionById({ orgId, questionId });
     // TODO this shouldnt be here!!!
-    let stage = await getStageById({ orgId, stageId: question.stageId });
+    let stage = await Stages.getStageById({ orgId, stageId: question.stageId });
     const deletedQuestionIndex = stage.questionOrder.indexOf(questionId);
 
     // Update question order

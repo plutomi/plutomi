@@ -5,11 +5,14 @@ import {
 import { Dynamo } from "../../awsClients/ddbDocClient";
 import { ENTITY_TYPES } from "../../Config";
 import { DeleteOpeningInput } from "../../types/main";
+import deleteStage from "../Stages/deleteStage";
 const { DYNAMO_TABLE_NAME } = process.env;
+import * as Openings from "./Openings";
+import * as Stages from "../Stages/Stages";
 export default async function remove(props: DeleteOpeningInput): Promise<void> {
   const { orgId, openingId } = props;
   // TODO we should not be doing this here!!!
-  const allStages = await GetAllStagesInOpening({ orgId, openingId }); // TODO we dont have to query this anymore!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+  const allStages = await Openings.getStagesInOpening({ orgId, openingId }); // TODO we dont have to query this anymore!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   try {
     // Delete stages first
@@ -21,7 +24,7 @@ export default async function remove(props: DeleteOpeningInput): Promise<void> {
           openingId: openingId,
           stageId: stage.stageId,
         };
-        await deleteStage(input); // TODO we should not be doing this her
+        await Stages.deleteStage(input); // TODO we should not be doing this her
       });
     }
 
