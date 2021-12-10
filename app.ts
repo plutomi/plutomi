@@ -206,7 +206,7 @@ app.route("/invites").post([withAuth], Invites.create).all(methodNotAllowed);
 app
   .route("/invites/:inviteId")
   .post([withAuth], Invites.accept)
-  .put([withAuth], Invites.reject)
+  .delete([withAuth], Invites.reject)
   .all(methodNotAllowed);
 
 /**
