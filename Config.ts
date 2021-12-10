@@ -23,8 +23,7 @@ export const ENTITY_TYPES = {
 
 export const sessionSettings = ironSession({
   cookieName: "test",
-  password:
-    "UnhandledPromiseRejectionWarning: Error: iron-session: Bad usage. Password must be at least 32 characters long.",
+  password: process.env.IRON_SESSION_PASSWORD_1,
   cookieOptions: {
     secure: process.env.NODE_ENV === "production",
   },
