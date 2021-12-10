@@ -82,6 +82,10 @@ export enum DEFAULTS {
   LOGIN_EVENT_RETENTION_PERIOD = 30,
 }
 
+export const LOGIN_LINK_SETTINGS = {
+  password: process.env.IRON_SEAL_PASSWORD,
+  ttl: 900, // In seconds, how long should login links be valid for
+};
 export enum EMAILS { // TODO replace domain with .env domain
   /**
    * For troubleshooting issues
