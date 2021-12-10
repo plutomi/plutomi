@@ -72,7 +72,7 @@ export const create = async (req: Request, res: Response) => {
           fromAddress: EMAILS.GENERAL,
           toAddresses: [recipient.email],
           subject: `${req.session.user.firstName} ${req.session.user.lastName} has invited you to join them on Plutomi!`,
-          html: `<h4>You can log in at <a href="${process.env.NEXT_PUBLIC_WEBSITE_URL} target=_blank rel=noreferrer">${process.env.NEXT_PUBLIC_WEBSITE_URL}</a> to accept it!</h4><p>If you believe this email was received in error, you can safely ignore it.</p>`,
+          html: `<h4>You can log in at <a href="${process.env.WEBSITE_URL}" target="_blank" rel=noreferrer>${process.env.WEBSITE_URL}</a> to accept it!</h4><p>If you believe this email was received in error, you can safely ignore it.</p>`,
         }); // TODO add target=_blank and rel=noreferrer ^
         return res
           .status(201)
