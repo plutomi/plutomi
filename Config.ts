@@ -22,7 +22,7 @@ export const ENTITY_TYPES = {
 };
 
 export const sessionSettings = ironSession({
-  cookieName: "plutomi-cookie",
+  cookieName: process.env.IRON_SESSION_COOKIE_NAME,
   password: process.env.IRON_SESSION_PASSWORD_1,
   cookieOptions: {
     secure: process.env.NODE_ENV === "production",

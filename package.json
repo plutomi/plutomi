@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "set NODE_ENV=development & concurrently --kill-others \"nodemon app.ts\" \"next dev\"",
+    "dev": "set NODE_ENV=development && concurrently --kill-others \"nodemon app.ts\" \"next dev\"",
     "next": "next dev",
     "api": "nodemon app.ts",
     "build": "next build",

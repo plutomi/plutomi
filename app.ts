@@ -1,4 +1,4 @@
-require("dotenv-flow").config();
+require("dotenv").config();
 import express from "express";
 import helmet from "helmet";
 import cors from "cors";
@@ -19,6 +19,7 @@ import withAuth from "./middleware/withAuth";
 import routeNotFound from "./middleware/routeNotFound";
 import { sessionSettings } from "./Config";
 const timeout = require("connect-timeout");
+console.log("Api url", process.env.API_URl);
 const PORT = process.env.EXPRESS_PORT;
 const WEBSITE_URL = process.env.WEBSITE_URL;
 const app = express();
