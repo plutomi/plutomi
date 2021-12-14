@@ -7,8 +7,8 @@ import { ENTITY_TYPES } from "../../Config";
 import { DeleteOpeningInput } from "../../types/main";
 import deleteStage from "../Stages/deleteStage";
 const { DYNAMO_TABLE_NAME } = process.env;
-import * as Openings from "./Openings";
-import * as Stages from "../Stages/Stages";
+import * as Openings from ".";
+import * as Stages from "../Stages";
 export default async function remove(
   props: DeleteOpeningInput
 ): Promise<[null, null] | [null, Error]> {

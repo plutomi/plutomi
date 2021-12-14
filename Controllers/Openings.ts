@@ -1,8 +1,8 @@
 import { Request, Response } from "express";
 import Joi from "joi";
 import { DEFAULTS } from "../Config";
-import * as Openings from "../models/Openings/Openings";
-import * as Orgs from "../models/Orgs/Orgs";
+import * as Openings from "../models/Openings/index";
+import * as Orgs from "../models/Orgs/index";
 export const getAllOpenings = async (req: Request, res: Response) => {
   const [openings, error] = await Orgs.getOpeningsInOrg({
     orgId: req.session.user.orgId,

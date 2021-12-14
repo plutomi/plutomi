@@ -13,7 +13,7 @@ import Sanitize from "../utils/sanitize";
 import Joi from "joi";
 import sendEmail from "../utils/sendEmail";
 import * as Time from "../utils/time";
-import * as Users from "../models/Users/Users";
+import * as Users from "../models/Users/index";
 import { LOGIN_LINK_SETTINGS } from "../Config";
 
 export const session = async (req: Request, res: Response) => {

@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import { DEFAULTS } from "../Config";
 import { UpdateStageInput } from "../types/main";
-import * as Stages from "../models/Stages/Stages";
+import * as Stages from "../models/Stages/index";
 import Joi from "joi";
 
 export const create = async (req: Request, res: Response) => {

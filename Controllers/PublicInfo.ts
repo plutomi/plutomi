@@ -1,9 +1,9 @@
 import { ENTITY_TYPES } from "./../Config";
 import { Request, Response } from "express";
 import Sanitize from "./../utils/sanitize";
-import * as Openings from "../models/Openings/Openings";
-import * as Orgs from "../models/Orgs/Orgs";
-import * as Stages from "../models/Stages/Stages";
+import * as Openings from "../models/Openings/index";
+import * as Orgs from "../models/Orgs/index";
+import * as Stages from "../models/Stages/index";
 export const getOrgInfo = async (req: Request, res: Response) => {
   const { orgId } = req.params;
 

@@ -5,10 +5,10 @@ import {
 import { Dynamo } from "../../awsClients/ddbDocClient";
 import { ENTITY_TYPES } from "../../Config";
 import { DeleteQuestionInput } from "../../types/main";
-import { getQuestionById } from "./Questions";
+import { getQuestionById } from ".";
 const { DYNAMO_TABLE_NAME } = process.env;
 import * as Stages from "../Stages/Stages";
-import * as Questions from "../Questions/Questions";
+import * as Questions from ".";
 export default async function DeleteQuestion(
   props: DeleteQuestionInput
 ): Promise<[null, null] | [null, Error]> {

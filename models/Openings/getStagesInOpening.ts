@@ -4,7 +4,7 @@ import { Dynamo } from "../../awsClients/ddbDocClient";
 import { ENTITY_TYPES, FORBIDDEN_PROPERTIES } from "../../Config";
 import { DynamoNewStage } from "../../types/dynamo";
 import { GetAllStagesInOpeningInput } from "../../types/main";
-import * as Openings from "./Openings";
+import * as Openings from ".";
 const { DYNAMO_TABLE_NAME } = process.env;
 
 export default async function GetStages(

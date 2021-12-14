@@ -5,7 +5,7 @@ import { ID_LENGTHS, ENTITY_TYPES } from "../../Config";
 import { DynamoNewOrgInvite } from "../../types/dynamo";
 import { CreateOrgInviteInput } from "../../types/main";
 import * as Time from "../../utils/time";
-import * as Users from "../Users/Users";
+import * as Users from "../Users";
 const { DYNAMO_TABLE_NAME } = process.env;
 /**
  * Invites a user to join your org

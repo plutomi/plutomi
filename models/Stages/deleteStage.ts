@@ -8,7 +8,7 @@ import { Dynamo } from "../../awsClients/ddbDocClient";
 import { ENTITY_TYPES } from "../../Config";
 import { DeleteStageInput } from "../../types/main";
 import getOpening from "../Openings/getOpening";
-import { getStageById } from "./Stages";
+import { getStageById } from ".";
 const { DYNAMO_TABLE_NAME } = process.env;
 
 // TODO delete stage from the funnels sort order

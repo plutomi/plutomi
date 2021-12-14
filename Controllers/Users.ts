@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import { DEFAULTS, ENTITY_TYPES } from "./../Config";
 import Sanitize from "./../utils/sanitize";
-import * as Users from "../models/Users/Users";
+import * as Users from "../models/Users/index";
 import Joi from "joi";
 
 export const self = async (req: Request, res: Response) => {
