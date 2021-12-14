@@ -49,7 +49,7 @@ export default function InvitesContent() {
     return <Loader text="Loading invites..." />;
   }
 
-  if (invites.length == 0) {
+  if (invites.length === 0) {
     return <h1>You don&apos;t have any invites :(</h1>;
   }
   return (

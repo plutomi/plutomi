@@ -73,7 +73,7 @@ export default function StageApplicants() {
 
         <div className="space-y-10">
           <StagesHeader />
-          {stages?.length == 0 ? (
+          {stages?.length === 0 ? (
             <EmptyStagesState />
           ) : (
             <div className="space-y-10">

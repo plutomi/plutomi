@@ -23,7 +23,7 @@ export default function DashboardContent() {
     return <Loader text={"Loading user..."} />;
   }
 
-  if (user.orgId != DEFAULTS.NO_ORG && isOrgLoading) {
+  if (user.orgId !== DEFAULTS.NO_ORG && isOrgLoading) {
     return <Loader text={"Loading org info..."} />;
   }
 

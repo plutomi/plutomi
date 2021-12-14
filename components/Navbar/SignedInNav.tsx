@@ -158,7 +158,7 @@ export default function SignedInNav({ current }) {
                         </div>
 
                         {DROPDOWN_NAVIGATION.map((item) =>
-                          item.name == "Log Out" ? (
+                          item.name === "Log Out" ? (
                             <div
                               className="cursor-pointer"
                               key={item.name}

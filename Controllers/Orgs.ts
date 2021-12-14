@@ -91,7 +91,7 @@ export const get = async (req: Request, res: Response) => {
     return res.status(404).json({ message: "Org not found" });
   }
 
-  if (orgId != req.session.user.orgId) {
+  if (orgId !== req.session.user.orgId) {
     return res
       .status(403)
       .json({ message: "You are not authorized to view this org" });
@@ -156,7 +156,7 @@ export const users = async (req: Request, res: Response) => {
     });
   }
 
-  if (req.session.user.orgId != orgId) {
+  if (req.session.user.orgId !== orgId) {
     return res
       .status(403)
       .json({ message: "You cannot view the users of this org" });

@@ -28,7 +28,7 @@ export default function ApplicantList() {
     return <Loader text="Loading applicants..." />;
   }
 
-  if (applicants.length == 0) {
+  if (applicants.length === 0) {
     return (
       <h1 className="text-2xl font-semibold text-normal">
         No applicants in this stage

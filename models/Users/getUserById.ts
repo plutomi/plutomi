@@ -26,6 +26,7 @@ export default async function GetById(
     const response = await Dynamo.send(new GetCommand(params));
     return [response.Item as DynamoNewUser, null];
   } catch (error) {
+    console.error("ERROR in dynamo call TODO remove", error);
     return [null, error];
   }
 }

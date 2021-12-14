@@ -144,7 +144,7 @@ export default function StageReorderColumn() {
           </button>
         </div>
         <h1 className="text-center text-xl font-semibold my-4">
-          {opening?.totalStages == 0 ? "No stages found" : "Stage Order"}
+          {opening?.totalStages === 0 ? "No stages found" : "Stage Order"}
         </h1>
 
         {opening?.totalStages > 0 && (

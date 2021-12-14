@@ -55,7 +55,7 @@ export default function OpeningsContent() {
     <>
       <OpeningModal createOpening={createOpening} />
 
-      {openings.length == 0 ? (
+      {openings.length === 0 ? (
         <EmptyOpeningsState />
       ) : (
         <div className="flex-1 my-4 flex md:mt-0  items-center  md:flex-grow justify-center">

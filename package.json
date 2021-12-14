@@ -4,6 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "cross-env NODE_ENV=development concurrently --kill-others \"nodemon app.ts\" \"next dev\"",
+    "notypes": "cross-env NODE_ENV=development concurrently --kill-others \"ts-node --transpile-only app.ts\" \"next dev\"",
     "build": "next build",
     "lint": "next lint",
     "start": "cross-env NODE_ENV=production ts-node --transpile-only app.ts",

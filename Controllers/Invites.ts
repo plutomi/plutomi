@@ -9,10 +9,10 @@ import {
 } from "./../Config";
 import Sanitize from "./../utils/sanitize";
 import sendEmail from "./../utils/sendEmail";
-import * as Invites from "../models/Invites/Invites";
+import * as Invites from "../models/Invites/index";
 import * as Time from "./../utils/time";
-import * as Users from "../models/Users/Users";
-import * as Orgs from "../models/Orgs/Orgs";
+import * as Users from "../models/Users/index";
+import * as Orgs from "../models/Orgs/index";
 export const create = async (req: Request, res: Response) => {
   const { body, method } = req;
   const { recipientEmail } = body; // todo trim and lowercase this email
@@ -41,7 +41,7 @@ export const create = async (req: Request, res: Response) => {
       return res.status(400).json({ message: `${error.message}` });
     }
 
-    if (req.session.user.email == recipientEmail) {
+    if (req.session.user.email === recipientEmail) {
       return res.status(400).json({ message: "You can't invite yourself" }); // TODO errors enum
     }
 
@@ -101,7 +101,7 @@ export const accept = async (req: Request, res: Response) => {
     return res.status(400).json({ message: `Invite no longer exists` });
   }
 
-  if (req.session.user.orgId != DEFAULTS.NO_ORG) {
+  if (req.session.user.orgId !== DEFAULTS.NO_ORG) {
     return res.status(400).json({
       message: `You already belong to an org: ${req.session.user.orgId}`,
     });

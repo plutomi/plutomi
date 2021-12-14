@@ -241,7 +241,7 @@ export default function ApplicantProfileModal() {
                             key={tab.name}
                             href={null}
                             className={classNames(
-                              tab.id == currentActive
+                              tab.id === currentActive
                                 ? "border-blue-500 text-blue-600"
                                 : "border-transparent text-normal hover:text-dark hover:border-blue-gray-300 transition ease-in-out duration-200",
                               "text-center w-full cursor-pointer whitespace-nowrap pb-4 px-1 border-b-2 font-medium text-lg"
@@ -255,7 +255,7 @@ export default function ApplicantProfileModal() {
                   </div>
 
                   <div className="p-4 ">
-                    {currentActive == 1 ? (
+                    {currentActive === 1 ? (
                       <>
                         {/* TODO refactor this to its own component */}
                         {applicant?.responses?.length ? (
@@ -294,9 +294,9 @@ export default function ApplicantProfileModal() {
                           </h1>
                         )}
                       </>
-                    ) : currentActive == 2 ? (
+                    ) : currentActive === 2 ? (
                       <h1>Viewing History</h1>
-                    ) : currentActive == 3 ? (
+                    ) : currentActive === 3 ? (
                       <h1>Viewing messages</h1>
                     ) : (
                       <h1>Invalid nav index</h1>
