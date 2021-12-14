@@ -13,7 +13,7 @@ const { DYNAMO_TABLE_NAME } = process.env;
 
 export default async function getInvites(
   props: GetOrgInvitesForUserInput
-): Promise<DynamoNewOrgInvite[]> {
+): Promise<[DynamoNewOrgInvite[], null] | [null, Error]> {
   const { userId } = props;
   const params: QueryCommandInput = {
     TableName: DYNAMO_TABLE_NAME,
@@ -26,9 +26,8 @@ export default async function getInvites(
 
   try {
     const response = await Dynamo.send(new QueryCommand(params));
-    return response.Items as DynamoNewOrgInvite[];
+    return [response.Items as DynamoNewOrgInvite[], null];
   } catch (error) {
-    console.log("Error getting org invites", error);
-    throw new Error(error);
+    return [null, error];
   }
 }

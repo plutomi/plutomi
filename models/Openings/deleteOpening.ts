@@ -9,7 +9,9 @@ import deleteStage from "../Stages/deleteStage";
 const { DYNAMO_TABLE_NAME } = process.env;
 import * as Openings from "./Openings";
 import * as Stages from "../Stages/Stages";
-export default async function remove(props: DeleteOpeningInput): Promise<void> {
+export default async function remove(
+  props: DeleteOpeningInput
+): Promise<[null, null] | [null, Error]> {
   const { orgId, openingId } = props;
   // TODO we should not be doing this here!!!
   const allStages = await Openings.getStagesInOpening({ orgId, openingId }); // TODO we dont have to query this anymore!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -27,8 +29,6 @@ export default async function remove(props: DeleteOpeningInput): Promise<void> {
         await Stages.deleteStage(input); // TODO we should not be doing this her
       });
     }
-
-    console.log("Deleting funnel");
 
     const transactParams: TransactWriteCommandInput = {
       TransactItems: [
@@ -60,8 +60,8 @@ export default async function remove(props: DeleteOpeningInput): Promise<void> {
     };
 
     await Dynamo.send(new TransactWriteCommand(transactParams));
-    return;
+    return [null, null];
   } catch (error) {
-    throw new Error(error);
+    return [null, error];
   }
 }

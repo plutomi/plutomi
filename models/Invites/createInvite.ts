@@ -14,7 +14,7 @@ const { DYNAMO_TABLE_NAME } = process.env;
  */
 export default async function Create(
   props: CreateOrgInviteInput
-): Promise<void> {
+): Promise<[null, null] | [null, Error]> {
   const { orgId, expiresAt, createdBy, recipient, orgName } = props;
   try {
     // TODO move this to controller, it should not be here
@@ -60,9 +60,8 @@ export default async function Create(
 
     await Dynamo.send(new PutCommand(params));
 
-    return;
+    return [null, null];
   } catch (error) {
-    console.error(error);
-    throw new Error(error);
+    return [null, error];
   }
 }

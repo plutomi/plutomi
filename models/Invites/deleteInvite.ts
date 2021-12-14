@@ -10,7 +10,7 @@ const { DYNAMO_TABLE_NAME } = process.env;
  */
 export default async function DeleteInvite(
   props: DeleteOrgInviteInput
-): Promise<void> {
+): Promise<[null, null] | [null, Error]> {
   const { userId, inviteId } = props;
   try {
     const params: DeleteCommandInput = {
@@ -22,8 +22,8 @@ export default async function DeleteInvite(
     };
 
     await Dynamo.send(new DeleteCommand(params));
-    return;
+    return [null, null];
   } catch (error) {
-    throw new Error(`Unable to delete invite ${error}`);
+    return [null, error];
   }
 }

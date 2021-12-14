@@ -12,7 +12,7 @@ const { DYNAMO_TABLE_NAME } = process.env;
 
 export default async function Create(
   props: CreateOpeningInput
-): Promise<DynamoNewOpening> {
+): Promise<[DynamoNewOpening, null] | [null, Error]> {
   const { orgId, GSI1SK } = props;
   const openingId = nanoid(ID_LENGTHS.OPENING);
   const newOpening: DynamoNewOpening = {
@@ -61,8 +61,8 @@ export default async function Create(
 
   try {
     await Dynamo.send(new TransactWriteCommand(transactParams));
-    return newOpening;
+    return [newOpening, null];
   } catch (error) {
-    throw new Error(error);
+    return [null, error];
   }
 }

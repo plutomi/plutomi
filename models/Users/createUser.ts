@@ -10,7 +10,7 @@ const { DYNAMO_TABLE_NAME } = process.env;
 
 export default async function CreateUser(
   props: CreateUserInput
-): Promise<DynamoNewUser> {
+): Promise<[DynamoNewUser, null] | [null, Error]> {
   const { email, firstName, lastName } = props;
 
   const userId = nanoid(ID_LENGTHS.USER);
@@ -48,8 +48,8 @@ export default async function CreateUser(
       subject: `A new user has signed up!`,
       html: `<h1>Email: ${newUser.email}</h1><h1>ID: ${newUser.userId}</h1>`,
     });
-    return newUser;
+    return [newUser, null];
   } catch (error) {
-    throw new Error(error);
+    return [null, error];
   }
 }

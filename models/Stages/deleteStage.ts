@@ -12,7 +12,9 @@ import { getStageById } from "./Stages";
 const { DYNAMO_TABLE_NAME } = process.env;
 
 // TODO delete stage from the funnels sort order
-export default async function Remove(props: DeleteStageInput): Promise<void> {
+export default async function Remove(
+  props: DeleteStageInput
+): Promise<[null, null] | [null, Error]> {
   const { orgId, stageId } = props;
   // TODO Qeuery all items that start with PK: stageId & SK: ${ENTITY_TYPES.STAGE}
   // Get the opening we need to update
@@ -80,12 +82,11 @@ export default async function Remove(props: DeleteStageInput): Promise<void> {
       await Dynamo.send(new TransactWriteCommand(transactParams));
       // TODO Qeuery all items that start with PK: stageId & SK: ${ENTITY_TYPES.STAGE}
       // Maybe background processes can handle this instead
-      return;
+      return [null, null];
     } catch (error) {
-      throw new Error(error);
+      return [null, error];
     }
   } catch (error) {
-    console.error(error);
-    throw Error(`Unable to retrieve opening to delete stage ${error}`); // TODO add to errors
+    return [null, error];
   }
 }

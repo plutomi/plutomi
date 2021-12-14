@@ -6,7 +6,7 @@ const { DYNAMO_TABLE_NAME } = process.env;
 
 export default async function Update(
   props: UpdateApplicantInput
-): Promise<void> {
+): Promise<[null, null] | [null, Error]> {
   const { applicantId, newApplicantValues } = props;
 
   // Build update expression
@@ -41,7 +41,8 @@ export default async function Update(
 
   try {
     await Dynamo.send(new UpdateCommand(params));
+    return [null, null];
   } catch (error) {
-    throw new Error(error);
+    return [null, error];
   }
 }

@@ -11,7 +11,7 @@ const { DYNAMO_TABLE_NAME } = process.env;
 
 export default async function Get(
   props: GetApplicantByIdInput
-): Promise<GetApplicantByIdOutput> {
+): Promise<[GetApplicantByIdOutput, null] | [null, Error]> {
   const { applicantId } = props;
   const responsesParams: QueryCommandInput = {
     TableName: DYNAMO_TABLE_NAME,
@@ -39,8 +39,8 @@ export default async function Get(
       responses: responses,
       // TODO files
     };
-    return applicant; // TODO TYPE!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    return [applicant, null]; // TODO TYPE!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
   } catch (error) {
-    throw new Error(error);
+    return [null, error];
   }
 }

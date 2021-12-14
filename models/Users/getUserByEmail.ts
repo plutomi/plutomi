@@ -5,7 +5,9 @@ import { DynamoNewUser } from "../../types/dynamo";
 import { GetUserByEmailInput } from "../../types/main";
 const { DYNAMO_TABLE_NAME } = process.env;
 
-export default async function GetByEmail(props: GetUserByEmailInput) {
+export default async function GetByEmail(
+  props: GetUserByEmailInput
+): Promise<[DynamoNewUser, null] | [null, Error]> {
   const { email } = props;
   const params: QueryCommandInput = {
     TableName: DYNAMO_TABLE_NAME,
@@ -19,9 +21,9 @@ export default async function GetByEmail(props: GetUserByEmailInput) {
 
   try {
     const response = await Dynamo.send(new QueryCommand(params));
-    return response.Items[0] as DynamoNewUser; // TODO
+    return [response.Items[0] as DynamoNewUser, null];
     // TODO are we sure the first item will be the user? Switch this to .find
   } catch (error) {
-    throw new Error(error);
+    return [null, error];
   }
 }

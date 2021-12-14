@@ -10,7 +10,9 @@ const { DYNAMO_TABLE_NAME } = process.env;
  * @param userId The userId you want to find
  * @returns - {@link DynamoNewUser}
  */
-export default async function GetById(props: GetUserByIdInput) {
+export default async function GetById(
+  props: GetUserByIdInput
+): Promise<[DynamoNewUser, null] | [null, Error]> {
   const { userId } = props;
   const params: GetCommandInput = {
     TableName: DYNAMO_TABLE_NAME,
@@ -22,8 +24,8 @@ export default async function GetById(props: GetUserByIdInput) {
 
   try {
     const response = await Dynamo.send(new GetCommand(params));
-    return response.Item as DynamoNewUser;
+    return [response.Item as DynamoNewUser, null];
   } catch (error) {
-    throw new Error(error);
+    return [null, error];
   }
 }

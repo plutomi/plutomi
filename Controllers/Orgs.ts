@@ -149,11 +149,6 @@ export const deleteOrg = async (req: Request, res: Response) => {
 
 export const users = async (req: Request, res: Response) => {
   const { orgId } = req.params;
-  if (req.session.user.orgId != orgId) {
-    return res
-      .status(403)
-      .json({ message: "You cannot view the users of this org" });
-  }
 
   if (req.session.user.orgId === DEFAULTS.NO_ORG) {
     return res.status(400).json({
@@ -161,14 +156,21 @@ export const users = async (req: Request, res: Response) => {
     });
   }
 
-  try {
-    const allUsers = await Orgs.getUsersInOrg({
-      orgId: req.session.user.orgId,
-    });
-    return res.status(200).json(allUsers);
-  } catch (error) {
+  if (req.session.user.orgId != orgId) {
+    return res
+      .status(403)
+      .json({ message: "You cannot view the users of this org" });
+  }
+
+  const [users, error] = await Orgs.getUsersInOrg({
+    orgId: req.session.user.orgId,
+  });
+
+  if (error) {
     return res
       .status(500)
-      .json({ message: `Unable to retrieve users - ${error}` });
+      .json({ message: "An error ocurred getting the users in your org" });
   }
+
+  return res.status(200).json(users);
 };

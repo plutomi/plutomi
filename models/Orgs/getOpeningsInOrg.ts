@@ -2,7 +2,6 @@ import { QueryCommandInput, QueryCommand } from "@aws-sdk/lib-dynamodb";
 import { Dynamo } from "../../awsClients/ddbDocClient";
 import { ENTITY_TYPES } from "../../Config";
 import { GetAllOpeningsInOrgInput } from "../../types/main";
-import * as Time from "../../utils/time";
 const { DYNAMO_TABLE_NAME } = process.env;
 export default async function GetOpenings(props: GetAllOpeningsInOrgInput) {
   const { orgId } = props;
@@ -19,7 +18,6 @@ export default async function GetOpenings(props: GetAllOpeningsInOrgInput) {
     const response = await Dynamo.send(new QueryCommand(params));
     return [response.Items, null];
   } catch (error) {
-    console.error("error", error);
     return [null, error];
   }
 }

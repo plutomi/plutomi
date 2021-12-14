@@ -5,7 +5,7 @@ import { UpdateQuestionInput } from "../../types/main";
 const { DYNAMO_TABLE_NAME } = process.env;
 export default async function Update(
   props: UpdateQuestionInput
-): Promise<void> {
+): Promise<[null, null] | [null, Error]> {
   const { orgId, questionId, newQuestionValues } = props;
   // Build update expression
   let allUpdateExpressions: string[] = [];
@@ -39,8 +39,8 @@ export default async function Update(
 
   try {
     await Dynamo.send(new UpdateCommand(params));
-    return;
+    return [null, null];
   } catch (error) {
-    throw new Error(error);
+    return [null, error];
   }
 }

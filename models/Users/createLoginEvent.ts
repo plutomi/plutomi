@@ -17,7 +17,7 @@ import * as Time from "../../utils/time";
  */
 export default async function CreateLoginEvent(
   props: CreateLoginEventAndDeleteLoginLinkInput
-): Promise<void> {
+): Promise<[null, null] | [null, Error]> {
   const { userId, loginLinkId, orgId } = props;
 
   const now = Time.currentISO();
@@ -81,9 +81,8 @@ export default async function CreateLoginEvent(
         },
       });
     await Dynamo.send(new TransactWriteCommand(transactParams));
-    return;
+    return [null, null];
   } catch (error) {
-    // TODO error enum
-    throw new Error(error);
+    return [null, error];
   }
 }

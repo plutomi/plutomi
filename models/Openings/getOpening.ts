@@ -7,7 +7,7 @@ const { DYNAMO_TABLE_NAME } = process.env;
 
 export default async function Get(
   props: GetOpeningByIdInput
-): Promise<DynamoNewOpening> {
+): Promise<[DynamoNewOpening, null] | [null, Error]> {
   const { orgId, openingId } = props;
   const params: GetCommandInput = {
     TableName: DYNAMO_TABLE_NAME,
@@ -19,8 +19,8 @@ export default async function Get(
 
   try {
     const response = await Dynamo.send(new GetCommand(params));
-    return response.Item as DynamoNewOpening;
+    return [response.Item as DynamoNewOpening, null];
   } catch (error) {
-    throw new Error(error);
+    return [null, error];
   }
 }

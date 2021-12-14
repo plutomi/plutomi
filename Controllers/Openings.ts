@@ -4,17 +4,17 @@ import { DEFAULTS } from "../Config";
 import * as Openings from "../models/Openings/Openings";
 import * as Orgs from "../models/Orgs/Orgs";
 export const getAllOpenings = async (req: Request, res: Response) => {
-  try {
-    const allOpenings = await Orgs.getOpeningsInOrg({
-      orgId: req.session.user.orgId,
-    });
-    return res.status(200).json(allOpenings);
-  } catch (error) {
-    // TODO add error logger
-    return res
-      .status(400) // TODO change #
-      .json({ message: `Unable to retrieve openings: ${error}` });
+  const [openings, error] = await Orgs.getOpeningsInOrg({
+    orgId: req.session.user.orgId,
+  });
+
+  if (error) {
+    return res.status(500).json({
+      message: `An error ocurred retrieving the openings for ${req.session.user.orgId}`,
+    }); // TODO error code
   }
+
+  return res.status(200).json(openings);
 };
 
 export const createOpeningController = async (req: Request, res: Response) => {
@@ -159,7 +159,7 @@ export const getApplicants = async (req: Request, res: Response) => {
 export const getStages = async (req: Request, res: Response) => {
   const { openingId } = req.params;
   try {
-    const allStages = await Openings.getStagesInOpening({
+    const [allStages] = await Openings.getStagesInOpening({
       openingId: openingId,
       orgId: req.session.user.orgId,
     });

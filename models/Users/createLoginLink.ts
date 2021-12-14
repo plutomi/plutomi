@@ -13,7 +13,7 @@ import * as Time from "../../utils/time";
  */
 export default async function CreateLoginLink(
   props: CreateLoginLinkInput
-): Promise<void> {
+): Promise<[null, null] | [null, Error]> {
   const { userId, loginLinkId } = props;
   const now = Time.currentISO();
   try {
@@ -34,9 +34,8 @@ export default async function CreateLoginLink(
     };
 
     await Dynamo.send(new PutCommand(params));
-    return;
+    return [null, null];
   } catch (error) {
-    console.error(error);
-    throw new Error(`Unable to create login link ${error}`);
+    return [null, error];
   }
 }

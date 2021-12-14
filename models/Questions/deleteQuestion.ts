@@ -11,7 +11,7 @@ import * as Stages from "../Stages/Stages";
 import * as Questions from "../Questions/Questions";
 export default async function DeleteQuestion(
   props: DeleteQuestionInput
-): Promise<void> {
+): Promise<[null, null] | [null, Error]> {
   const { orgId, questionId } = props;
   // Delete the question item & update the question order on the stage
   try {
@@ -55,13 +55,11 @@ export default async function DeleteQuestion(
     try {
       await Dynamo.send(new TransactWriteCommand(transactParams));
 
-      return;
+      return [null, null];
     } catch (error) {
-      console.error(error);
-      throw new Error(error);
+      return [null, error];
     }
   } catch (error) {
-    console.error(error);
-    throw Error(`Unable to retrieve stage to delete question ${error}`);
+    return [null, error];
   }
 }

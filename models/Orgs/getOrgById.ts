@@ -22,7 +22,6 @@ export default async function GetOrgById(
     const response = await Dynamo.send(new GetCommand(params));
     return [response.Item as DynamoNewOrg, null];
   } catch (error) {
-    console.error("error", error);
     return [null, error];
   }
 }

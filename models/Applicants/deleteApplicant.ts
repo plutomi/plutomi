@@ -10,8 +10,9 @@ const { DYNAMO_TABLE_NAME } = process.env;
 
 export default async function Remove(
   props: DeleteApplicantInput
-): Promise<void> {
+): Promise<[null, null] | [null, Error]> {
   const { orgId, applicantId } = props;
+  // TODO this shouldn't be here, move up to controller
   const applicant = await getApplicantById({
     applicantId,
   });
@@ -76,8 +77,8 @@ export default async function Remove(
     };
 
     await Dynamo.send(new TransactWriteCommand(transactParams));
+    return [null, null];
   } catch (error) {
-    console.error(error);
-    throw new Error(`Unable to delete applicant ${error}`); // TODO add to errors
+    return [null, error];
   }
 }

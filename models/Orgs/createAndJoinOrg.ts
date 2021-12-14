@@ -11,7 +11,7 @@ import * as Time from "../../utils/time";
 const { DYNAMO_TABLE_NAME } = process.env;
 export default async function CreateAndJoinOrg(
   props: CreateAndJoinOrgInput
-): Promise<void> {
+): Promise<[null, null] | [null, Error]> {
   const { userId, orgId, GSI1SK } = props;
   const now = Time.currentISO();
 
@@ -63,9 +63,8 @@ export default async function CreateAndJoinOrg(
 
     await Dynamo.send(new TransactWriteCommand(transactParams));
 
-    return;
+    return [null, null];
   } catch (error) {
-    console.error(error);
-    throw new Error(error);
+    return [null, error];
   }
 }

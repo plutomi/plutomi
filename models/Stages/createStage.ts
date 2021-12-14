@@ -11,7 +11,9 @@ import getOpening from "../Openings/getOpening";
 import * as Time from "../../utils/time";
 const { DYNAMO_TABLE_NAME } = process.env;
 
-export default async function Create(props: CreateStageInput): Promise<void> {
+export default async function Create(
+  props: CreateStageInput
+): Promise<[null, null] | [null, error]> {
   const { orgId, GSI1SK, openingId } = props;
   const stageId = nanoid(ID_LENGTHS.STAGE);
   const newStage: DynamoNewStage = {
@@ -90,14 +92,11 @@ export default async function Create(props: CreateStageInput): Promise<void> {
       };
 
       await Dynamo.send(new TransactWriteCommand(transactParams));
-      return;
+      return [null, null];
     } catch (error) {
-      console.error(error);
-      throw new Error(error);
+      return [null, error];
     }
   } catch (error) {
-    throw new Error(
-      `Unable to retrieve opening where stage should be added ${error}` // TODO add to errors
-    );
+    return [null, error];
   }
 }

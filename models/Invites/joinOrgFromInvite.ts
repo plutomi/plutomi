@@ -9,7 +9,7 @@ import * as Time from "../../utils/time";
 const { DYNAMO_TABLE_NAME } = process.env;
 export default async function Join(
   props: JoinOrgFromInviteInput
-): Promise<void> {
+): Promise<[null, null] | [null, Error]> {
   const { userId, invite } = props;
   // TODO types
   try {
@@ -61,9 +61,8 @@ export default async function Join(
     };
 
     await Dynamo.send(new TransactWriteCommand(transactParams));
-    return;
+    return [null, null];
   } catch (error) {
-    console.error(error);
-    throw new Error(error);
+    return [null, error];
   }
 }

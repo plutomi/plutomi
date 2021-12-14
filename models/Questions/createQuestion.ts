@@ -12,7 +12,7 @@ import * as Stages from "../Stages/Stages";
 const { DYNAMO_TABLE_NAME } = process.env;
 export default async function Create(
   props: CreateStageQuestionInput
-): Promise<void> {
+): Promise<[null, null] | [null, Error]> {
   const { orgId, stageId, GSI1SK, questionDescription } = props;
   const now = Time.currentISO();
   const questionId = nanoid(ID_LENGTHS.STAGE_QUESTION);
@@ -67,13 +67,11 @@ export default async function Create(
       };
 
       await Dynamo.send(new TransactWriteCommand(transactParams));
-      return;
+      return [null, null];
     } catch (error) {
-      throw new Error(error);
+      return [null, error];
     }
   } catch (error) {
-    throw new Error(
-      `Unable to retrieve stage where question should be added ${error}` // TODO add to errors
-    );
+    return [null, error];
   }
 }

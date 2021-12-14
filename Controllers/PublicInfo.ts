@@ -29,8 +29,13 @@ export const getOrgInfo = async (req: Request, res: Response) => {
 
 export const getOrgOpenings = async (req: Request, res: Response) => {
   const { orgId } = req.params;
-  const allOpenings = await Orgs.getOpeningsInOrg({ orgId });
-  const publicOpenings = allOpenings.filter((opening) => opening.isPublic);
+  const [openings, error] = await Orgs.getOpeningsInOrg({ orgId });
+  if (error) {
+    return res.status(500).json({
+      message: "An error ocurred retrieving the openings for this org",
+    });
+  }
+  const publicOpenings = openings.filter((opening) => opening.isPublic);
 
   publicOpenings.forEach((opening) =>
     Sanitize.clean(opening, ENTITY_TYPES.OPENING)
@@ -42,10 +47,16 @@ export const getOrgOpenings = async (req: Request, res: Response) => {
 export const getOpeningInfo = async (req: Request, res: Response) => {
   const { orgId, openingId } = req.params;
 
-  const opening = await Openings.getOpeningById({
+  const [opening, error] = await Openings.getOpeningById({
     orgId,
     openingId,
   });
+
+  if (error) {
+    return res
+      .status(500)
+      .json({ message: "An error ocurred getting opening info" });
+  }
   if (!opening) {
     return res.status(404).json({ message: "Opening not found" });
   }
@@ -68,11 +79,6 @@ export const getStageInfo = async (req: Request, res: Response) => {
       return res.status(404).json({ message: "Stage not found" });
     }
 
-    //   if (!stage.isPublic) { // TODO add public and private stages?
-    //     return res
-    //       .status(400)
-    //       .json({ message: "You cannot apply here just yet" });
-    //   }
     const cleanedStage = Sanitize.clean(stage, ENTITY_TYPES.STAGE);
     return res.status(200).json(cleanedStage);
   } catch (error) {

@@ -10,7 +10,7 @@ const { DYNAMO_TABLE_NAME } = process.env;
 
 export default async function GetQuestions(
   props: GetAllQuestionsInStageInput
-): Promise<GetAllQuestionsInStageOutput> {
+): Promise<[GetAllQuestionsInStageOutput, null] | [null | Error]> {
   const { orgId, stageId } = props;
   // TODO this shouldn't be here!!
   const stage = await getStageById({ orgId, stageId });
@@ -33,9 +33,8 @@ export default async function GetQuestions(
       allQuestions.Items.find((j) => j.questionId === i)
     );
 
-    return result as GetAllQuestionsInStageOutput;
+    return [result as GetAllQuestionsInStageOutput, null];
   } catch (error) {
-    console.error(error);
-    throw new Error(error);
+    return [null, error];
   }
 }

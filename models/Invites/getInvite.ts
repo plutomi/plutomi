@@ -8,7 +8,7 @@ const { DYNAMO_TABLE_NAME } = process.env;
 
 export default async function Get(
   props: GetOrgInviteInput
-): Promise<DynamoNewOrgInvite> {
+): Promise<[DynamoNewOrgInvite, null] | [null, Error]> {
   const { userId, inviteId } = props;
   const params: GetCommandInput = {
     TableName: DYNAMO_TABLE_NAME,
@@ -20,8 +20,8 @@ export default async function Get(
 
   try {
     const response = await Dynamo.send(new GetCommand(params));
-    return response.Item as DynamoNewOrgInvite;
+    return [response.Item as DynamoNewOrgInvite, null];
   } catch (error) {
-    throw new Error(error);
+    return [null, error];
   }
 }

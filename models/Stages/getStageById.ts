@@ -11,7 +11,7 @@ const { DYNAMO_TABLE_NAME } = process.env;
  */
 export default async function Get(
   props: GetStageByIdInput
-): Promise<GetStageByIdOutput> {
+): Promise<[GetStageByIdOutput, null] | [null, error]> {
   const { orgId, stageId } = props;
   const params: GetCommandInput = {
     TableName: DYNAMO_TABLE_NAME,
@@ -23,8 +23,8 @@ export default async function Get(
 
   try {
     const response = await Dynamo.send(new GetCommand(params));
-    return response.Item as GetStageByIdOutput;
+    return [response.Item as GetStageByIdOutput, null];
   } catch (error) {
-    throw new Error(error);
+    return [null, error];
   }
 }
