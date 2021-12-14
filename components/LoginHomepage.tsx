@@ -49,7 +49,7 @@ export default function LoginHomepage({ callbackUrl }: CallbackUrl) {
     const { message } = await AuthService.login(
       // TODO trycatch
       email,
-      process.env.NEXT_PUBLIC_WEBSITE_URL + "/dashboard", // TODO make this a config variable as the "DEFAULT_REDIRECT_ROUTE_HOMEPAGE"
+      process.env.NEXT_PUBLIC_DOMAIN_NAME + "/dashboard", // TODO make this a config variable as the "DEFAULT_REDIRECT_ROUTE_HOMEPAGE"
       LOGIN_METHODS.GOOGLE
     );
     window.location.replace(message);

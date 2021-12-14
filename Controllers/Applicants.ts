@@ -58,7 +58,7 @@ export const create = async (req: Request, res: Response) => {
         stageId: opening.stageOrder[0],
       });
 
-      const applicantionLink = `${process.env.NEXT_PUBLIC_WEBSITE_URL}/${orgId}/applicants/${newApplicant.applicantId}`;
+      const applicantionLink = `${process.env.NEXT_PUBLIC_DOMAIN_NAME}/${orgId}/applicants/${newApplicant.applicantId}`;
 
       await sendEmail({
         // TODO async

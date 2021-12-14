@@ -16,7 +16,7 @@ export default function OpeningsDropdown({ openings, index }) {
     }
     setSelected(newValue);
     router.push(
-      `${process.env.NEXT_PUBLIC_WEBSITE_URL}/openings/${
+      `${process.env.NEXT_PUBLIC_DOMAIN_NAME}/openings/${
         newValue.openingId
       }/stages${
         newValue.stageOrder[0] ? `/${newValue.stageOrder[0]}/applicants` : ""

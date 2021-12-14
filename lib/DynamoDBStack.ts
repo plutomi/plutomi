@@ -1,6 +1,9 @@
+require("dotenv").config({ path: `../.env.${process.env.NODE_ENV}` });
+
+console.log("Path DB stack", `../.env.${process.env.NODE_ENV}`);
+
 import * as cdk from "@aws-cdk/core";
 import * as dynamodb from "@aws-cdk/aws-dynamodb";
-require("dotenv").config();
 import { get } from "env-var";
 
 /**
@@ -13,7 +16,7 @@ export default class DynamoDBStack extends cdk.Stack {
   constructor(scope: cdk.Construct, id: string, props?: cdk.StackProps) {
     super(scope, id, props);
 
-    const TABLE_NAME: string = get("DYNAMO_TABLE_NAME").required().asString();
+    const TABLE_NAME: string = process.env.DYNAMO_TABLE_NAME;
 
     this.table = new dynamodb.Table(this, "plutomi-dynamo-table", {
       tableName: TABLE_NAME,

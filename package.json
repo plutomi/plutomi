@@ -4,11 +4,9 @@
   "private": true,
   "scripts": {
     "dev": "cross-env NODE_ENV=development concurrently --kill-others \"nodemon app.ts\" \"next dev\"",
-    "next": "cross-env NODE_ENV=development next dev",
-    "api": "nodemon app.ts",
     "build": "next build",
     "lint": "next lint",
-    "start": "ts-node --transpile-only app.ts",
+    "start": "cross-env NODE_ENV=production ts-node --transpile-only app.ts",
     "deploy": "cross-env NODE_ENV=production cdk deploy --all",
     "destroy": "cdk destroy --all"
   },

@@ -48,8 +48,6 @@ Stage order:
 | Command         | Function                                                                                          |
 | --------------- | ------------------------------------------------------------------------------------------------- |
 | npm run dev     | Will start the NextJS frontend on port `3000` and the Express API on port `4000`                  |
-| npm run next    | Will start NextJS only                                                                            |
-| npm run api     | Will start the API only                                                                           |
 | npm run deploy  | Will deploy the entire app, use `cdk deploy STACK_NAME` if you want to deploy a specific stack    |
 | npm run destroy | Will destroy the entire app, use `cdk destroy STACK_NAME` if you want to destroy a specific stack |
 | cdk synth       | Emits the synthesized CloudFormation template for the stack(s)                                    |
