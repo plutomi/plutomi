@@ -1,6 +1,7 @@
 import axios from "../axios";
 
 export default class OrgsService {
+  // TODO remove class
   static async createOrg(GSI1SK, orgId) {
     const body = {
       GSI1SK: GSI1SK,
@@ -8,7 +9,6 @@ export default class OrgsService {
     };
 
     const { data } = await axios.post(`/orgs`, body);
-    console.log("Data", data);
     return data;
   }
 
@@ -33,4 +33,6 @@ export default class OrgsService {
     const { data } = await axios.get(this.getAllUsersInOrgURL(orgId));
     return data;
   }
+
+  // TODO add get all invites for org
 }
