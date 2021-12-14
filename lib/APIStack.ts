@@ -1,5 +1,4 @@
-require("dotenv").config({ path: `../.env.${process.env.NODE_ENV}` });
-
+import * as dotenv from "dotenv";
 import * as cdk from "@aws-cdk/core";
 import * as ecs from "@aws-cdk/aws-ecs";
 import * as ec2 from "@aws-cdk/aws-ec2";
@@ -9,7 +8,13 @@ import * as protocol from "@aws-cdk/aws-elasticloadbalancingv2";
 import * as iam from "@aws-cdk/aws-iam";
 import * as dynamodb from "@aws-cdk/aws-dynamodb";
 
-import { get } from "env-var";
+const resultDotEnv = dotenv.config({
+  path: __dirname + `../../.env.${process.env.NODE_ENV}`,
+});
+
+if (resultDotEnv.error) {
+  throw resultDotEnv.error;
+}
 
 interface APIStackProps extends cdk.StackProps {
   table: dynamodb.Table;

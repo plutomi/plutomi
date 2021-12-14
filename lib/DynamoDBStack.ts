@@ -1,8 +1,13 @@
-require("dotenv").config({ path: `../.env.${process.env.NODE_ENV}` });
-
-
 import * as cdk from "@aws-cdk/core";
 import * as dynamodb from "@aws-cdk/aws-dynamodb";
+import * as dotenv from "dotenv";
+const resultDotEnv = dotenv.config({
+  path: __dirname + `../../.env.${process.env.NODE_ENV}`,
+});
+
+if (resultDotEnv.error) {
+  throw resultDotEnv.error;
+}
 
 /**
  * Creates a DynamoDB table with two GSIs
