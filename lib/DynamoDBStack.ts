@@ -1,10 +1,8 @@
 require("dotenv").config({ path: `../.env.${process.env.NODE_ENV}` });
 
-console.log("Path DB stack", `../.env.${process.env.NODE_ENV}`);
 
 import * as cdk from "@aws-cdk/core";
 import * as dynamodb from "@aws-cdk/aws-dynamodb";
-import { get } from "env-var";
 
 /**
  * Creates a DynamoDB table with two GSIs

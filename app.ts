@@ -1,6 +1,5 @@
 require("dotenv").config({ path: `.env.${process.env.NODE_ENV}` });
 
-console.log("Path app.ts", `.env.${process.env.NODE_ENV}`);
 import express from "express";
 import helmet from "helmet";
 import cors from "cors";
@@ -26,8 +25,8 @@ const app = express();
 app.use(timeout("5s")); // TODO test this
 app.use(
   cors({
-    credentials: true, // Access-Control-Allow-Credentials
-    origin: process.env.DOMAIN_NAME, // Only allow browser requests from our site
+    credentials: true,
+    origin: process.env.WEBSITE_URL,
   })
 );
 app.use(express.json());

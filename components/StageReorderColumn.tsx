@@ -170,7 +170,7 @@ export default function StageReorderColumn() {
                             ref={provided.innerRef}
                           >
                             <Link
-                              href={`${process.env.NEXT_PUBLIC_DOMAIN_NAME}/openings/${openingId}/stages/${stage.stageId}/settings`}
+                              href={`/openings/${openingId}/stages/${stage.stageId}/settings`}
                             >
                               <a>
                                 <DraggableStageCard

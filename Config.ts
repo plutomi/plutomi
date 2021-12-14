@@ -80,6 +80,7 @@ export enum DEFAULTS {
   FULL_NAME = `NO_FIRST_NAME NO_LAST_NAME`,
   NO_ORG = `NO_ORG_ASSIGNED`,
   LOGIN_EVENT_RETENTION_PERIOD = 30,
+  REDIRECT = "/dashboard", // When logging in from the homepage, where should the user be redirected
 }
 
 export const LOGIN_LINK_SETTINGS = {
