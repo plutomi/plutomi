@@ -96,7 +96,7 @@ export default function FAQ() {
           <div className="mt-32">
             {!user || isUserError ? (
               <LoginHomepage
-                callbackUrl={`${process.env.NEXT_PUBLIC_DOMAIN_NAME}/dashboard`} // TODO fallback url is already set im pretty sure
+                callbackUrl={`${process.env.NEXT_PUBLIC_WEBSITE_URL}/dashboard`} // TODO fallback url is already set im pretty sure
               />
             ) : (
               <AlreadySignedIn />
