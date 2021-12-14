@@ -76,7 +76,7 @@ app
   .delete([withAuth], Orgs.deleteOrg)
   .all(methodNotAllowed);
 
-app.route("/orgs/:orgId").get([withAuth], Orgs.users).all(methodNotAllowed);
+// app.route("/orgs/:orgId/invites").get([withAuth], ) // TODO - Get all invites for org
 
 /**
  ****************************************************************************
@@ -185,6 +185,11 @@ app.route("/auth/logout").post([withAuth], Auth.logout).all(methodNotAllowed);
  * Users
  ****************************************************************************
  */
+
+app
+  .route("/orgs/:orgId/users")
+  .get([withAuth], Orgs.users)
+  .all(methodNotAllowed);
 
 app.route("/users/self").get([withAuth], Users.self).all(methodNotAllowed);
 
