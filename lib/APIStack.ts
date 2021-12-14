@@ -93,9 +93,8 @@ export default class APIStack extends cdk.Stack {
       }
     );
 
-    const EXPRESS_PORT = 4000; // TODO env
     container.addPortMappings({
-      containerPort: EXPRESS_PORT,
+      containerPort: parseInt(process.env.EXPRESS_PORT) || 4000,
       protocol: ecs.Protocol.TCP,
     });
 

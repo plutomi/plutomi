@@ -20,7 +20,7 @@ import withAuth from "./middleware/withAuth";
 import routeNotFound from "./middleware/routeNotFound";
 import { sessionSettings } from "./Config";
 const timeout = require("connect-timeout");
-const PORT = process.env.EXPRESS_PORT;
+const PORT = parseInt(process.env.EXPRESS_PORT) || 4000;
 const app = express();
 app.use(timeout("5s")); // TODO test this
 app.use(
