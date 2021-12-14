@@ -75,7 +75,7 @@ export const login = async (req: Request, res: Response) => {
 
   // If a user has invites, redirect them to the invites page on login
   if (req.session.user.totalInvites > 0) {
-    res.redirect(`${process.env.NEXT_PUBLIC_WEBSITE_URL}/invites`);
+    res.redirect(`${process.env.WEBSITE_URL}/invites`);
     return;
   }
 
@@ -148,7 +148,7 @@ export const createLoginLinks = async (req: Request, res: Response) => {
         loginLinkId,
       });
 
-      const defaultRedirect = `${process.env.NEXT_PUBLIC_WEBSITE_URL}/dashboard`;
+      const defaultRedirect = process.env.DOMAIN_NAME + DEFAULTS.REDIRECT;
       const loginLink = `${
         process.env.API_URL
       }/auth/login?seal=${seal}&callbackUrl=${

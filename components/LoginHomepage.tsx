@@ -3,7 +3,7 @@ import LoginEmail from "./EmailSigninInput";
 import GoogleLoginButton from "./GoogleLoginButton";
 import { useRouter } from "next/router";
 import { useState } from "react";
-import { LOGIN_METHODS } from "../Config";
+import { DEFAULTS, LOGIN_METHODS } from "../Config";
 
 interface CallbackUrl {
   callbackUrl?: string;
@@ -49,7 +49,7 @@ export default function LoginHomepage({ callbackUrl }: CallbackUrl) {
     const { message } = await AuthService.login(
       // TODO trycatch
       email,
-      process.env.NEXT_PUBLIC_WEBSITE_URL + "/dashboard", // TODO make this a config variable as the "DEFAULT_REDIRECT_ROUTE_HOMEPAGE"
+      process.env.NEXT_PUBLIC_WEBSITE_URL + DEFAULTS.REDIRECT,
       LOGIN_METHODS.GOOGLE
     );
     window.location.replace(message);

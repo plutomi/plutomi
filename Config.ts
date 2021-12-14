@@ -1,12 +1,12 @@
 import { ironSession } from "iron-session/express";
 
-export enum API_METHODS {
-  GET = "GET",
-  POST = "POST",
-  PUT = "PUT",
-  OPTIONS = "OPTIONS",
-  DELETE = "DELETE",
-}
+export const API_METHODS = {
+  GET: "GET",
+  POST: "POST",
+  PUT: "PUT",
+  OPTIONS: "OPTIONS",
+  DELETE: "DELETE",
+};
 export const ENTITY_TYPES = {
   APPLICANT: "APPLICANT",
   APPLICANT_RESPONSE: "APPLICANT_RESPONSE",
@@ -21,26 +21,19 @@ export const ENTITY_TYPES = {
   LOGIN_EVENT: "LOGIN_EVENT",
 };
 
-export const sessionSettings = ironSession({
-  cookieName: "plutomi-cookie",
-  password: process.env.IRON_SESSION_PASSWORD_1,
-  cookieOptions: {
-    secure: process.env.NODE_ENV === "production",
-  },
-});
+export const TIME_UNITS = {
+  MILLISECONDS: "milliseconds",
+  SECONDS: "seconds",
+  MINUTES: "minutes",
+  HOURS: "hours",
+  DAYS: "days",
+  WEEKS: "weeks",
+  MONTHS: "months",
+  YEARS: "years",
+};
 
-export enum TIME_UNITS {
-  MILLISECONDS = "milliseconds",
-  SECONDS = "seconds",
-  MINUTES = "minutes",
-  HOURS = "hours",
-  DAYS = "days",
-  WEEKS = "weeks",
-  MONTHS = "months",
-  YEARS = "years",
-}
-
-export enum LIMITS {
+export const LIMITS = {
+  // TODO remove
   /**
    * For entities that can have their order rearranged such as stages, questions, rules, etc.
    * We are storing the order in an array in the parent component.
@@ -55,65 +48,68 @@ export enum LIMITS {
    * I did a test with 3000(!!!) IDs and it came out to around 173kb, less than half of the Dynamo limit.
    * This will be a soft limit and can be raised up to a point with the understanding that performance might suffer.
    */
-  MAX_CHILD_ENTITY_LIMIT = 200,
-}
+  MAX_CHILD_ENTITY_LIMIT: 200,
+};
 
-export enum ERRORS {
-  MAX_CHILD_ENTITY_LIMIT_ERROR_MESSAGE = `MAX_CHILD_ENTITY_LIMIT reached, please contact support@plutomi.com for assistance`,
-  INVALID_DATE_ERROR = `The date you provided appears to be invalid`,
-}
+export const ERRORS = {
+  MAX_CHILD_ENTITY_LIMIT_ERROR_MESSAGE: `MAX_CHILD_ENTITY_LIMIT reached, please contact support@plutomi.com for assistance`,
+  INVALID_DATE_ERROR: `The date you provided appears to be invalid`,
+};
 
-export enum ID_LENGTHS {
-  USER = 42,
-  APPLICANT = 60,
-  APPLICANT_RESPONSE = 30,
-  ORG_INVITE = 50,
-  OPENING = 16,
-  STAGE = 50,
-  STAGE_QUESTION = 50,
-  STAGE_RULE = 16,
-}
+export const ID_LENGTHS = {
+  USER: 42,
+  APPLICANT: 60,
+  APPLICANT_RESPONSE: 30,
+  ORG_INVITE: 50,
+  OPENING: 16,
+  STAGE: 50,
+  STAGE_QUESTION: 50,
+  STAGE_RULE: 16,
+};
 
-export enum DEFAULTS {
-  FIRST_NAME = "NO_FIRST_NAME",
-  LAST_NAME = "NO_LAST_NAME",
-  FULL_NAME = `NO_FIRST_NAME NO_LAST_NAME`,
-  NO_ORG = `NO_ORG_ASSIGNED`,
-  LOGIN_EVENT_RETENTION_PERIOD = 30,
-}
+export const DEFAULTS = {
+  FIRST_NAME: "NO_FIRST_NAME",
+  LAST_NAME: "NO_LAST_NAME",
+  FULL_NAME: `NO_FIRST_NAME NO_LAST_NAME`,
+  NO_ORG: `NO_ORG_ASSIGNED`,
+  LOGIN_EVENT_RETENTION_PERIOD: 30,
+  REDIRECT: "/dashboard", // When logging in from the homepage, where should the user be redirected
+  COOKIE_NAME: "plutomi-cookie", // Name of the session cookie
+};
 
 export const LOGIN_LINK_SETTINGS = {
   password: process.env.IRON_SEAL_PASSWORD,
   ttl: 900, // In seconds, how long should login links be valid for
 };
-export enum EMAILS { // TODO replace domain with .env domain
+export const EMAILS = {
+  // TODO replace domain with .env domain
   /**
    * For troubleshooting issues
    */
-  SUPPORT = "support@plutomi.com",
+  SUPPORT: "support@plutomi.com",
   /**
    * For general information
    */
-  GENERAL = "contact@plutomi.com",
+  GENERAL: "contact@plutomi.com",
   /**
    * For investor relations
    */
-  INVEST = "ir@plutomi.com",
+  INVEST: "ir@plutomi.com",
   /**
    * For administrative / GitHub related
    */
-  ADMIN = "jose@plutomi.com",
+  ADMIN: "jose@plutomi.com",
 
   /**
    * For login links
    */
-  LOGIN = "login@plutomi.com",
+  LOGIN: "login@plutomi.com",
 
   /**
    * For org invites
    */
-  INVITES = "join@plutomi.com",
-}
+  INVITES: "join@plutomi.com",
+};
 
 /**
  * When using the /public/ api, what properties are allowed to be returned for each entity
@@ -171,10 +167,10 @@ export const FORBIDDEN_PROPERTIES = {
   ],
 };
 
-export enum LOGIN_METHODS {
-  LINK = "LINK",
-  GOOGLE = "GOOGLE",
-}
+export const LOGIN_METHODS = {
+  LINK: "LINK",
+  GOOGLE: "GOOGLE",
+};
 
 export const NAVBAR_NAVIGATION = [
   {
@@ -211,3 +207,11 @@ export const SWR = {
    */
   INVITES_REFRESH_INTERVAL: 10000,
 };
+
+export const sessionSettings = ironSession({
+  cookieName: DEFAULTS.COOKIE_NAME,
+  password: process.env.IRON_SESSION_PASSWORD_1,
+  cookieOptions: {
+    secure: process.env.NODE_ENV === "production",
+  },
+});

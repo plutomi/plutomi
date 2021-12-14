@@ -19,7 +19,7 @@ export default function OpeningsDropdown({ openings, index }) {
       `${process.env.NEXT_PUBLIC_WEBSITE_URL}/openings/${
         newValue.openingId
       }/stages${
-        newValue.stageOrder[0] ? `/${newValue.stageOrder[0]}/applicants` : ""
+        newValue.stageOrder[0] && `/${newValue.stageOrder[0]}/applicants`
       }`
     );
   };

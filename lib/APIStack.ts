@@ -1,3 +1,5 @@
+require("dotenv").config({ path: `../.env.${process.env.NODE_ENV}` });
+
 import * as cdk from "@aws-cdk/core";
 import * as ecs from "@aws-cdk/aws-ecs";
 import * as ec2 from "@aws-cdk/aws-ec2";
@@ -7,7 +9,6 @@ import * as protocol from "@aws-cdk/aws-elasticloadbalancingv2";
 import * as iam from "@aws-cdk/aws-iam";
 import * as dynamodb from "@aws-cdk/aws-dynamodb";
 
-require("dotenv").config();
 import { get } from "env-var";
 
 interface APIStackProps extends cdk.StackProps {
@@ -24,9 +25,8 @@ export default class APIStack extends cdk.Stack {
   constructor(scope: cdk.App, id: string, props: APIStackProps) {
     super(scope, id, props);
 
-    const HOSTED_ZONE_ID: string = get("HOSTED_ZONE_ID").required().asString();
-    const DOMAIN_NAME: string = "api.plutomi.com"; // TODO env variable
-    const AWS_ACCOUNT_ID: string = get("AWS_ACCOUNT_ID").required().asString();
+    const HOSTED_ZONE_ID: string = process.env.HOSTED_ZONE_ID;
+    const AWS_ACCOUNT_ID: string = process.env.AWS_ACCOUNT_ID;
 
     // Get table name from the DynamoDBStack
     const TABLE_NAME = props.table.tableName;
@@ -93,9 +93,8 @@ export default class APIStack extends cdk.Stack {
       }
     );
 
-    const EXPRESS_PORT = 4000; // TODO env
     container.addPortMappings({
-      containerPort: EXPRESS_PORT,
+      containerPort: parseInt(process.env.EXPRESS_PORT) || 4000,
       protocol: ecs.Protocol.TCP,
     });
 
@@ -116,7 +115,7 @@ export default class APIStack extends cdk.Stack {
       "plutomi-hosted-zone",
       {
         hostedZoneId: HOSTED_ZONE_ID,
-        zoneName: DOMAIN_NAME,
+        zoneName: process.env.DOMAIN_NAME,
       }
     );
 
@@ -130,7 +129,7 @@ export default class APIStack extends cdk.Stack {
           desiredCount: 1, // Default is 1
           taskDefinition: taskDefinition,
           publicLoadBalancer: true, // Default is false
-          domainName: DOMAIN_NAME,
+          domainName: process.env.API_DOMAIN_NAME,
           domainZone: hostedZone,
           listenerPort: 443,
           protocol: protocol.ApplicationProtocol.HTTPS,

@@ -17,7 +17,7 @@ export default function Main({ commits }) {
         <Hero />
         {!user || isUserError ? (
           <LoginHomepage
-            callbackUrl={`${process.env.NEXT_PUBLIC_WEBSITE_URL}/dashboard`}
+            callbackUrl={`${process.env.NEXT_PUBLIC_WEBSITE_URL}/dashboard`} // TODO fallback url is already set im pretty sure
           />
         ) : (
           <AlreadySignedIn />

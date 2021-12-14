@@ -35,7 +35,10 @@ const faqs = [
     answer: (
       <p>
         Yes! Feel free to make a PR into the <strong>main</strong> branch on{" "}
-        <CustomLink url={"https://github.com/plutomi/plutomi"} text={"GitHub"} />
+        <CustomLink
+          url={"https://github.com/plutomi/plutomi"}
+          text={"GitHub"}
+        />
       </p>
     ),
   },
@@ -60,13 +63,13 @@ export default function FAQ() {
 
   return (
     <div className="bg-white mx-auto text-left  flex justify-center">
-        <div className="max-w-7xl  mx-auto py-16 px-4 sm:px-6 lg:py-20 lg:px-8  mt-8">
-          <div className="lg:grid  lg:grid-cols-4 px-auto    place-content-center">
-            <div className=" text-center lg:col-span-2 lg:text-left flex flex-col items-center justify-center">
-              <h2 className="text-4xl font-extrabold text-dark ">
-                Frequently Asked Questions
-              </h2>
-              {/* <p className="mt-4 text-lg text-normal">
+      <div className="max-w-7xl  mx-auto py-16 px-4 sm:px-6 lg:py-20 lg:px-8  mt-8">
+        <div className="lg:grid  lg:grid-cols-4 px-auto    place-content-center">
+          <div className=" text-center lg:col-span-2 lg:text-left flex flex-col items-center justify-center">
+            <h2 className="text-4xl font-extrabold text-dark ">
+              Frequently Asked Questions
+            </h2>
+            {/* <p className="mt-4 text-lg text-normal">
               Can’t find the answer you’re looking for? Please{" "}
               <CustomLink
                 url={"mailto:contact@plutomi.com?subject=Question"}
@@ -74,26 +77,26 @@ export default function FAQ() {
               />
               !
             </p> */}
-            </div>
-
-            <div className="px-auto mx-auto mt-12 lg:mt-0 lg:col-span-2  text-end">
-              <dl className=" space-y-12 flex flex-col  ">
-                {faqs.map((faq) => (
-                  <div key={faq.question} className=" my-auto">
-                    <dt className="text-xl leading-6text-dark font-bold">
-                      {faq.question}
-                    </dt>
-                    <dd className="mt-2 text-lg text-normal ">{faq.answer}</dd>
-                  </div>
-                ))}
-              </dl>
-            </div>
           </div>
+
+          <div className="px-auto mx-auto mt-12 lg:mt-0 lg:col-span-2  text-end">
+            <dl className=" space-y-12 flex flex-col  ">
+              {faqs.map((faq) => (
+                <div key={faq.question} className=" my-auto">
+                  <dt className="text-xl leading-6text-dark font-bold">
+                    {faq.question}
+                  </dt>
+                  <dd className="mt-2 text-lg text-normal ">{faq.answer}</dd>
+                </div>
+              ))}
+            </dl>
+          </div>
+        </div>
         <div>
           <div className="mt-32">
             {!user || isUserError ? (
               <LoginHomepage
-                callbackUrl={`${process.env.NEXT_PUBLIC_WEBSITE_URL}/dashboard`}
+                callbackUrl={`${process.env.NEXT_PUBLIC_WEBSITE_URL}/dashboard`} // TODO fallback url is already set im pretty sure
               />
             ) : (
               <AlreadySignedIn />

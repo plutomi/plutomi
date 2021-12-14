@@ -37,6 +37,7 @@ Stage order:
 ## Prerequisites
 
 - Install [Docker](https://docs.docker.com/get-docker/)
+- Create `.env.development` & `.env.production` files, see `.env.sample` for the values required
 - Create a [Hosted Zone](https://docs.aws.amazon.com/Route53/latest/DeveloperGuide/CreatingHostedZone.html) in Route53 with your domain
 - Create a [verified identity](https://docs.aws.amazon.com/ses/latest/DeveloperGuide/verify-domain-procedure.html) with your domain in SES
 - Create a [certificate for your domain](https://docs.aws.amazon.com/acm/latest/userguide/gs-acm-request-public.html#request-public-console) in AWS Certificate Manager
@@ -45,14 +46,12 @@ Stage order:
 
 ## Useful commands
 
-| Command      | Function                                                                         |
-| ------------ | -------------------------------------------------------------------------------- |
-| npm run dev  | Will start the NextJS frontend on port `3000` and the Express API on port `4000` |
-| npm run next | Will start NextJS only                                                           |
-| npm run api  | Will start the API only                                                          |
-| cdk deploy   | Will deploy the specified stack(s)                                               |
-| cdk destroy  | Will destroy the specified stack(s)                                              |
-| cdk synth    | Emits the synthesized CloudFormation template for the stack(s)                   |
+| Command         | Function                                                                                          |
+| --------------- | ------------------------------------------------------------------------------------------------- |
+| npm run dev     | Will start the NextJS frontend on port `3000` and the Express API on port `4000`                  |
+| npm run deploy  | Will deploy the entire app, use `cdk deploy STACK_NAME` if you want to deploy a specific stack    |
+| npm run destroy | Will destroy the entire app, use `cdk destroy STACK_NAME` if you want to destroy a specific stack |
+| cdk synth       | Emits the synthesized CloudFormation template for the stack(s)                                    |
 
 For more information on AWS CDK, please visit the [docs page](https://docs.aws.amazon.com/cdk/latest/guide/cli.html).
 
