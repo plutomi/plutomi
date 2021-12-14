@@ -34,6 +34,7 @@ export const createOpeningController = async (req: Request, res: Response) => {
     };
 
     const schema = Joi.object({
+      orgId: Joi.string(),
       GSI1SK: Joi.string(),
     }).options({ presence: "required" });
 

@@ -1,4 +1,11 @@
-require("dotenv").config({ path: `.env.${process.env.NODE_ENV}` });
+import * as dotenv from "dotenv";
+const resultDotEnv = dotenv.config({
+  path: __dirname + `/.env.${process.env.NODE_ENV}`,
+});
+
+if (resultDotEnv.error) {
+  throw resultDotEnv.error;
+}
 
 import express from "express";
 import helmet from "helmet";
