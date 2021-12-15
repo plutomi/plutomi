@@ -74,9 +74,41 @@ export const create = async (req: Request, res: Response) => {
     }
     recipient = createdUser;
   }
+  if (recipient.orgId === req.session.user.orgId) {
+    return res.status(400).json({ message: "User is already in your org!" });
+  }
+
+  // Check if the user we are inviting already has pending invites for the current org
+  const [recipientInvites, recipientInvitesError] =
+    await Users.getInvitesForUser({
+      userId: recipient.userId,
+    });
+
+  if (recipientInvitesError) {
+    const formattedError = errorFormatter(recipientInvitesError);
+    return res.status(recipientInvitesError.$metadata.httpStatusCode).json({
+      message:
+        "An error ocurred while checking to see if your invitee has pending invites",
+      ...formattedError,
+    });
+  }
+
+  const pendingInvites = recipientInvites.some(
+    // Some returns true if any match the condition
+    (invite) => invite.orgId === req.session.user.orgId
+  );
+
+  if (pendingInvites) {
+    return res
+      .status(409)
+      .json({
+        message:
+          "This user already has a pending invite to your org! They can log in to claim it.",
+      });
+  }
 
   const [inviteCreated, inviteError] = await Invites.createInvite({
-    orgId: org.orgId, // TODO should be fixed with return type above
+    orgId: org.orgId,
     recipient: recipient,
     orgName: org.GSI1SK,
     expiresAt: Time.futureISO(3, TIME_UNITS.DAYS),

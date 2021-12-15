@@ -18,25 +18,6 @@ export default async function Create(
 ): Promise<[null, null] | [null, SdkError]> {
   const { orgId, expiresAt, createdBy, recipient, orgName } = props;
   try {
-    // TODO move this to controller, it should not be here
-
-    if (recipient.orgId === orgId) {
-      throw "User is already in your org"; // todo errors enum
-    }
-
-    // TODO move this to controller, it should not be here
-    // Check if the user we are inviting already has pending invites for the current org
-    const allUserInvites = await Users.getInvitesForUser({
-      userId: recipient.userId,
-    });
-    const pendingInvites = allUserInvites.find(
-      (invite) => invite.orgId === orgId
-    );
-
-    if (pendingInvites) {
-      // TODO errors enum
-      throw `This user already has a pending invite to your org! They can log in to claim it.`; // todo enum
-    }
     const inviteId = nanoid(ID_LENGTHS.ORG_INVITE);
     const now = Time.currentISO();
     const newOrgInvite: DynamoNewOrgInvite = {
