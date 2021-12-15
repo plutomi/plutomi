@@ -10,10 +10,10 @@ import { CreateStageInput } from "../../types/main";
 import getOpening from "../Openings/getOpening";
 import * as Time from "../../utils/time";
 const { DYNAMO_TABLE_NAME } = process.env;
-
+import { SdkError } from "@aws-sdk/types";
 export default async function Create(
   props: CreateStageInput
-): Promise<[null, null] | [null, error]> {
+): Promise<[null, null] | [null, SdkError]> {
   const { orgId, GSI1SK, openingId } = props;
   const stageId = nanoid(ID_LENGTHS.STAGE);
   const newStage: DynamoNewStage = {

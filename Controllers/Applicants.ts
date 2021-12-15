@@ -46,7 +46,7 @@ export const create = async (req: Request, res: Response) => {
 
   if (error) {
     return res
-      .status(500)
+      .status(400)
       .json({ message: "An error ocurred retrieving opening info" });
   }
   // We need the first stage in this opening

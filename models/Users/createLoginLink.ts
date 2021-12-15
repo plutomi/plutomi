@@ -5,6 +5,7 @@ import { DynamoNewLoginLink } from "../../types/dynamo";
 import { CreateLoginLinkInput } from "../../types/main";
 const { DYNAMO_TABLE_NAME } = process.env;
 import * as Time from "../../utils/time";
+import { SdkError } from "@aws-sdk/types";
 
 /**
  * Creates a login link for the requested user
@@ -13,7 +14,7 @@ import * as Time from "../../utils/time";
  */
 export default async function CreateLoginLink(
   props: CreateLoginLinkInput
-): Promise<[null, null] | [null, Error]> {
+): Promise<[null, null] | [null, SdkError]> {
   const { userId, loginLinkId } = props;
   const now = Time.currentISO();
   try {

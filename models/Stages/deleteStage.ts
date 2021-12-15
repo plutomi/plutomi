@@ -10,11 +10,11 @@ import { DeleteStageInput } from "../../types/main";
 import getOpening from "../Openings/getOpening";
 import { getStageById } from ".";
 const { DYNAMO_TABLE_NAME } = process.env;
-
+import { SdkError } from "@aws-sdk/types";
 // TODO delete stage from the funnels sort order
 export default async function Remove(
   props: DeleteStageInput
-): Promise<[null, null] | [null, Error]> {
+): Promise<[null, null] | [null, SdkError]> {
   const { orgId, stageId } = props;
   // TODO Qeuery all items that start with PK: stageId & SK: ${ENTITY_TYPES.STAGE}
   // Get the opening we need to update

@@ -7,10 +7,10 @@ import { ENTITY_TYPES } from "../../Config";
 import { DeleteApplicantInput } from "../../types/main";
 import { getApplicantById } from ".";
 const { DYNAMO_TABLE_NAME } = process.env;
-
+import { SdkError } from "@aws-sdk/types";
 export default async function Remove(
   props: DeleteApplicantInput
-): Promise<[null, null] | [null, Error]> {
+): Promise<[null, null] | [null, SdkError]> {
   const { orgId, applicantId } = props;
   // TODO this shouldn't be here, move up to controller
   const applicant = await getApplicantById({

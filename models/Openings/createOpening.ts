@@ -9,10 +9,10 @@ import { DynamoNewOpening } from "../../types/dynamo";
 import { CreateOpeningInput } from "../../types/main";
 import * as Time from "../../utils/time";
 const { DYNAMO_TABLE_NAME } = process.env;
-
+import { SdkError } from "@aws-sdk/types";
 export default async function Create(
   props: CreateOpeningInput
-): Promise<[DynamoNewOpening, null] | [null, Error]> {
+): Promise<[DynamoNewOpening, null] | [null, SdkError]> {
   const { orgId, GSI1SK } = props;
   const openingId = nanoid(ID_LENGTHS.OPENING);
   const newOpening: DynamoNewOpening = {

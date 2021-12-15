@@ -8,10 +8,10 @@ import {
   CreateApplicantOutput,
 } from "../../types/main";
 const { DYNAMO_TABLE_NAME } = process.env;
-
+import { SdkError } from "@aws-sdk/types";
 export default async function Get(
   props: GetApplicantByIdInput
-): Promise<[GetApplicantByIdOutput, null] | [null, Error]> {
+): Promise<[GetApplicantByIdOutput, null] | [null, SdkError]> {
   const { applicantId } = props;
   const responsesParams: QueryCommandInput = {
     TableName: DYNAMO_TABLE_NAME,

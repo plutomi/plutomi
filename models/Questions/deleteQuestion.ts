@@ -7,11 +7,12 @@ import { ENTITY_TYPES } from "../../Config";
 import { DeleteQuestionInput } from "../../types/main";
 import { getQuestionById } from ".";
 const { DYNAMO_TABLE_NAME } = process.env;
-import * as Stages from "../Stages/Stages";
+import * as Stages from "../Stages/index";
 import * as Questions from ".";
+import { SdkError } from "@aws-sdk/types";
 export default async function DeleteQuestion(
   props: DeleteQuestionInput
-): Promise<[null, null] | [null, Error]> {
+): Promise<[null, null] | [null, SdkError]> {
   const { orgId, questionId } = props;
   // Delete the question item & update the question order on the stage
   try {

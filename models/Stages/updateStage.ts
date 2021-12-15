@@ -3,10 +3,10 @@ import { Dynamo } from "../../awsClients/ddbDocClient";
 import { FORBIDDEN_PROPERTIES, ENTITY_TYPES } from "../../Config";
 import { UpdateStageInput } from "../../types/main";
 const { DYNAMO_TABLE_NAME } = process.env;
-
+import { SdkError } from "@aws-sdk/types";
 export default async function Update(
   props: UpdateStageInput
-): Promise<[null, null] | [null, Error]> {
+): Promise<[null, null] | [null, SdkError]> {
   const { orgId, stageId, newStageValues } = props;
 
   // Build update expression

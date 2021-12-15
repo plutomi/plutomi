@@ -6,6 +6,7 @@ import { DynamoNewOrgInvite } from "../../types/dynamo";
 import { CreateOrgInviteInput } from "../../types/main";
 import * as Time from "../../utils/time";
 import * as Users from "../Users";
+import { SdkError } from "@aws-sdk/types";
 const { DYNAMO_TABLE_NAME } = process.env;
 /**
  * Invites a user to join your org
@@ -14,7 +15,7 @@ const { DYNAMO_TABLE_NAME } = process.env;
  */
 export default async function Create(
   props: CreateOrgInviteInput
-): Promise<[null, null] | [null, Error]> {
+): Promise<[null, null] | [null, SdkError]> {
   const { orgId, expiresAt, createdBy, recipient, orgName } = props;
   try {
     // TODO move this to controller, it should not be here

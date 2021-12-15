@@ -4,7 +4,7 @@ import { ENTITY_TYPES } from "../../Config";
 import { DynamoNewOrgInvite } from "../../types/dynamo";
 import { GetOrgInvitesForUserInput } from "../../types/main";
 const { DYNAMO_TABLE_NAME } = process.env;
-
+import { SdkError } from "@aws-sdk/types";
 /**
  * Given a `userId`, returns the user's invites to join an org
  * @param props {@link GetOrgInvitesForUserInput}
@@ -13,7 +13,7 @@ const { DYNAMO_TABLE_NAME } = process.env;
 
 export default async function getInvites(
   props: GetOrgInvitesForUserInput
-): Promise<[DynamoNewOrgInvite[], null] | [null, Error]> {
+): Promise<[DynamoNewOrgInvite[], null] | [null, SdkError]> {
   const { userId } = props;
   const params: QueryCommandInput = {
     TableName: DYNAMO_TABLE_NAME,

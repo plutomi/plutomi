@@ -5,13 +5,13 @@ import {
 import { Dynamo } from "../../awsClients/ddbDocClient";
 import { ENTITY_TYPES } from "../../Config";
 import { DeleteOpeningInput } from "../../types/main";
-import deleteStage from "../Stages/deleteStage";
 const { DYNAMO_TABLE_NAME } = process.env;
 import * as Openings from ".";
 import * as Stages from "../Stages";
+import { SdkError } from "@aws-sdk/types";
 export default async function remove(
   props: DeleteOpeningInput
-): Promise<[null, null] | [null, Error]> {
+): Promise<[null, null] | [null, SdkError]> {
   const { orgId, openingId } = props;
   // TODO we should not be doing this here!!!
   const allStages = await Openings.getStagesInOpening({ orgId, openingId }); // TODO we dont have to query this anymore!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!

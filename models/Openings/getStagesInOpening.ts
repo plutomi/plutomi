@@ -6,10 +6,10 @@ import { DynamoNewStage } from "../../types/dynamo";
 import { GetAllStagesInOpeningInput } from "../../types/main";
 import * as Openings from ".";
 const { DYNAMO_TABLE_NAME } = process.env;
-
+import { SdkError } from "@aws-sdk/types";
 export default async function GetStages(
   props: GetAllStagesInOpeningInput
-): Promise<[DynamoNewStage[], null] | [null, Error]> {
+): Promise<[DynamoNewStage[], null] | [null, SdkError]> {
   const { orgId, openingId } = props;
   // TODO this should not be here, this should be in controller
   const [opening, error] = await Openings.getOpeningById({ orgId, openingId });

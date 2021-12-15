@@ -7,7 +7,7 @@ export default async function sendEmail({
   toAddresses,
   subject,
   html,
-}): Promise<[null, null] | [null, Error]> {
+}): Promise<[null, null] | [null, SdkError]> {
   // Add it to the beginning so we only have to lower case and trim once
   toAddresses.unshift(fromAddress);
   const cleanAddresses = toAddresses.map((email: string) =>

@@ -4,10 +4,10 @@ import { ENTITY_TYPES } from "../../Config";
 import { DynamoNewLoginLink } from "../../types/dynamo";
 import { GetLatestLoginLinkInput } from "../../types/main";
 const { DYNAMO_TABLE_NAME } = process.env;
-
+import { SdkError } from "@aws-sdk/types";
 export default async function GetLatestLink(
   props: GetLatestLoginLinkInput
-): Promise<[DynamoNewLoginLink, null] | [null, Error]> {
+): Promise<[DynamoNewLoginLink, null] | [null, SdkError]> {
   const { userId } = props;
   const params: QueryCommandInput = {
     TableName: DYNAMO_TABLE_NAME,

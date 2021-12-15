@@ -8,11 +8,12 @@ import { ID_LENGTHS, ENTITY_TYPES, LIMITS, ERRORS } from "../../Config";
 import { DynamoNewStageQuestion } from "../../types/dynamo";
 import { CreateStageQuestionInput } from "../../types/main";
 import * as Time from "../../utils/time";
-import * as Stages from "../Stages/Stages";
+import * as Stages from "../Stages/index";
+import { SdkError } from "@aws-sdk/types";
 const { DYNAMO_TABLE_NAME } = process.env;
 export default async function Create(
   props: CreateStageQuestionInput
-): Promise<[null, null] | [null, Error]> {
+): Promise<[null, null] | [null, SdkError]> {
   const { orgId, stageId, GSI1SK, questionDescription } = props;
   const now = Time.currentISO();
   const questionId = nanoid(ID_LENGTHS.STAGE_QUESTION);

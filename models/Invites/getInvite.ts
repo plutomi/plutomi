@@ -3,12 +3,12 @@ import { Dynamo } from "../../awsClients/ddbDocClient";
 import { ENTITY_TYPES } from "../../Config";
 import { DynamoNewOrgInvite } from "../../types/dynamo";
 import { GetOrgInviteInput } from "../../types/main";
-import * as Time from "../../utils/time";
 const { DYNAMO_TABLE_NAME } = process.env;
+import { SdkError } from "@aws-sdk/types";
 
 export default async function Get(
   props: GetOrgInviteInput
-): Promise<[DynamoNewOrgInvite, null] | [null, Error]> {
+): Promise<[DynamoNewOrgInvite, null] | [null, SdkError]> {
   const { userId, inviteId } = props;
   const params: GetCommandInput = {
     TableName: DYNAMO_TABLE_NAME,

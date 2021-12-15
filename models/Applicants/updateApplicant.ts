@@ -3,10 +3,10 @@ import { Dynamo } from "../../awsClients/ddbDocClient";
 import { FORBIDDEN_PROPERTIES, ENTITY_TYPES, ID_LENGTHS } from "../../Config";
 import { UpdateApplicantInput } from "../../types/main";
 const { DYNAMO_TABLE_NAME } = process.env;
-
+import { SdkError } from "@aws-sdk/types";
 export default async function Update(
   props: UpdateApplicantInput
-): Promise<[null, null] | [null, Error]> {
+): Promise<[null, null] | [null, SdkError]> {
   const { applicantId, newApplicantValues } = props;
 
   // Build update expression

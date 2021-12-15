@@ -7,9 +7,11 @@ import { ENTITY_TYPES } from "../../Config";
 import { JoinOrgFromInviteInput } from "../../types/main";
 import * as Time from "../../utils/time";
 const { DYNAMO_TABLE_NAME } = process.env;
+import { SdkError } from "@aws-sdk/types";
+
 export default async function Join(
   props: JoinOrgFromInviteInput
-): Promise<[null, null] | [null, Error]> {
+): Promise<[null, null] | [null, SdkError]> {
   const { userId, invite } = props;
   // TODO types
   try {

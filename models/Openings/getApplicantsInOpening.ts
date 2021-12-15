@@ -4,9 +4,11 @@ import { ENTITY_TYPES } from "../../Config";
 import { DynamoNewApplicant } from "../../types/dynamo";
 import { GetAllApplicantsInOpeningInput } from "../../types/main";
 const { DYNAMO_TABLE_NAME } = process.env;
+import { SdkError } from "@aws-sdk/types";
+
 export default async function GetApplicants(
   props: GetAllApplicantsInOpeningInput
-): Promise<[DynamoNewApplicant[], null] | [null, Error]> {
+): Promise<[DynamoNewApplicant[], null] | [null, SdkError]> {
   const { orgId, openingId } = props;
   const params: QueryCommandInput = {
     TableName: DYNAMO_TABLE_NAME,

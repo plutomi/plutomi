@@ -10,7 +10,6 @@ export const self = async (req: Request, res: Response) => {
   });
 
   if (error) {
-    console.error("Error:", error);
     return res
       .status(500)
       .json({ message: "An error ocurred getting user info", error: error });

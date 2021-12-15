@@ -3,7 +3,7 @@ import { Dynamo } from "../../awsClients/ddbDocClient";
 import { ENTITY_TYPES } from "../../Config";
 import { GetStageByIdInput, GetStageByIdOutput } from "../../types/main";
 const { DYNAMO_TABLE_NAME } = process.env;
-
+import { SdkError } from "@aws-sdk/types";
 /**
  * Returns a stage by its ID.
  * @param props {@link GetStageByIdInput}
@@ -11,7 +11,7 @@ const { DYNAMO_TABLE_NAME } = process.env;
  */
 export default async function Get(
   props: GetStageByIdInput
-): Promise<[GetStageByIdOutput, null] | [null, error]> {
+): Promise<[GetStageByIdOutput, null] | [null, SdkError]> {
   const { orgId, stageId } = props;
   const params: GetCommandInput = {
     TableName: DYNAMO_TABLE_NAME,
