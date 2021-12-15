@@ -28,6 +28,7 @@ export const create = async (req: Request, res: Response) => {
     orgId: Joi.string(),
     openingId: Joi.string(),
     GSI1SK: Joi.string(),
+    stageOrder: Joi.array(), // TODO THIS IS BAD AND SHOULD NOT BE HERE!!!!!!!!!
   }).options({ presence: "required" });
 
   // Validate input

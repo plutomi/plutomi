@@ -32,7 +32,7 @@ export default async function Remove(
         },
       },
       {
-        // Update Stage Order
+        // Update Stage Order & decrement count
         Update: {
           Key: {
             PK: `${ENTITY_TYPES.ORG}#${orgId}#${ENTITY_TYPES.OPENING}#${openingId}`,
@@ -40,9 +40,11 @@ export default async function Remove(
           },
           TableName: DYNAMO_TABLE_NAME,
           ConditionExpression: "attribute_exists(PK)",
-          UpdateExpression: "SET stageOrder = :stageOrder",
+          UpdateExpression:
+            "SET stageOrder = :stageOrder, totalStages = totalStages - :value",
           ExpressionAttributeValues: {
             ":stageOrder": newStageOrder,
+            ":value": 1,
           },
         },
       },
