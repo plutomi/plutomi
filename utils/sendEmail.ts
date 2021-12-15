@@ -1,6 +1,6 @@
 import { SendEmailCommand, SendEmailCommandInput } from "@aws-sdk/client-ses";
 import SESclient from "../awsClients/sesClient";
-
+import { SdkError } from "@aws-sdk/types";
 export default async function sendEmail({
   fromName, // TODO add types
   fromAddress,

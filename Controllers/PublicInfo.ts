@@ -100,9 +100,21 @@ export const getStageInfo = async (req: Request, res: Response) => {
 export const getStageQuestions = async (req: Request, res: Response) => {
   const { orgId, stageId } = req.params;
 
+  const [stage, stageInfoError] = await Stages.getStageById({ orgId, stageId });
+  if (stageInfoError) {
+    const formattedError = errorFormatter(stageInfoError);
+    return res.status(formattedError.httpStatusCode).json({
+      message:
+        "An error ocurred retrieving questions in this stage, unable to get stage info",
+      ...formattedError,
+    });
+  }
+  const { questionOrder } = stage;
+
   const [questions, error] = await Stages.getQuestionsInStage({
     orgId,
     stageId,
+    questionOrder: questionOrder,
   });
 
   if (error) {

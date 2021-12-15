@@ -11,10 +11,7 @@ import { SdkError } from "@aws-sdk/types";
 export default async function GetQuestions(
   props: GetAllQuestionsInStageInput
 ): Promise<[GetAllQuestionsInStageOutput, null] | [null, SdkError]> {
-  const { orgId, stageId } = props;
-  // TODO this shouldn't be here!!
-  const stage = await getStageById({ orgId, stageId });
-  const { questionOrder } = stage;
+  const { orgId, stageId, questionOrder } = props;
 
   const params: QueryCommandInput = {
     IndexName: "GSI1",
