@@ -3,7 +3,7 @@ import { DEFAULTS } from "../Config";
 import { UpdateStageInput } from "../types/main";
 import * as Stages from "../models/Stages/index";
 import Joi from "joi";
-
+import errorFormatter from "../utils/errorFormatter";
 export const create = async (req: Request, res: Response) => {
   const { GSI1SK, openingId } = req.body;
 
@@ -33,9 +33,11 @@ export const create = async (req: Request, res: Response) => {
 
   const [created, error] = await Stages.createStage(createStageInput);
   if (error) {
-    return res
-      .status(500)
-      .json({ message: "An error ocurred creating the stage" });
+    const formattedError = errorFormatter(error);
+    return res.status(error.$metadata.httpStatusCode).json({
+      message: "An error ocurred creating the stage",
+      ...formattedError,
+    });
   }
   return res.status(201).json({ message: "Stage created" });
 };
@@ -51,9 +53,11 @@ export const deleteStage = async (req: Request, res: Response) => {
   const [deleted, error] = await Stages.deleteStage(deleteStageInput); // TODO fix this as its not grouped with the other funnels
 
   if (error) {
-    return res
-      .status(500)
-      .json({ message: "An error ocurred deleting this stage" });
+    const formattedError = errorFormatter(error);
+    return res.status(error.$metadata.httpStatusCode).json({
+      message: "An error ocurred deleting stage",
+      ...formattedError,
+    });
   }
   return res.status(200).json({ message: "Stage deleted!" });
 };
@@ -68,9 +72,11 @@ export const getStageInfo = async (req: Request, res: Response) => {
   const [stage, error] = await Stages.getStageById(getStageInput);
 
   if (error) {
-    return res
-      .status(500)
-      .json({ message: "An error ocurred retrieving your stage info" });
+    const formattedError = errorFormatter(error);
+    return res.status(error.$metadata.httpStatusCode).json({
+      message: "An error ocurred retrieving stage info",
+      ...formattedError,
+    });
   }
   if (!stage) {
     return res.status(404).json({ message: "Stage not found" });
@@ -104,9 +110,11 @@ export const update = async (req: Request, res: Response) => {
 
   const [updated, error] = await Stages.updateStage(updateStageInput);
   if (error) {
-    return res
-      .status(500)
-      .json({ message: "An error ocurred updating your stage" });
+    const formattedError = errorFormatter(error);
+    return res.status(error.$metadata.httpStatusCode).json({
+      message: "An error ocurred updating stage",
+      ...formattedError,
+    });
   }
   return res.status(200).json({ message: "Stage updated!" });
 };
@@ -123,9 +131,11 @@ export const getApplicantsInStage = async (req: Request, res: Response) => {
   );
 
   if (error) {
-    return res
-      .status(500)
-      .json({ message: "An error ocurred getting applicants in this stage" });
+    const formattedError = errorFormatter(error);
+    return res.status(error.$metadata.httpStatusCode).json({
+      message: "An error ocurred getting applicants in this stage",
+      ...formattedError,
+    });
   }
   return res.status(200).json(applicants);
 };
@@ -139,7 +149,11 @@ export const getQuestionsInStage = async (req: Request, res: Response) => {
   });
 
   if (error) {
-    return res.status(500).json({ message: "Unable to retrieve questions" });
+    const formattedError = errorFormatter(error);
+    return res.status(error.$metadata.httpStatusCode).json({
+      message: "An error ocurred retrieving questions in this stage",
+      ...formattedError,
+    });
   }
   return res.status(200).json(questions);
 };
