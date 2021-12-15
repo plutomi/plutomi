@@ -29,7 +29,7 @@ import { sessionSettings } from "./Config";
 const timeout = require("connect-timeout");
 const PORT = parseInt(process.env.EXPRESS_PORT) || 4000;
 const app = express();
-app.use(timeout("5s")); // TODO test this
+app.use(timeout("5s"));
 app.use(
   cors({
     credentials: true,
