@@ -46,12 +46,13 @@ Stage order:
 
 ## Useful commands
 
-| Command         | Function                                                                                          |
-| --------------- | ------------------------------------------------------------------------------------------------- |
-| npm run dev     | Will start the NextJS frontend on port `3000` and the Express API on port `4000`                  |
-| npm run deploy  | Will deploy the entire app, use `cdk deploy STACK_NAME` if you want to deploy a specific stack    |
-| npm run destroy | Will destroy the entire app, use `cdk destroy STACK_NAME` if you want to destroy a specific stack |
-| cdk synth       | Emits the synthesized CloudFormation template for the stack(s)                                    |
+| Command         | Function                                                                                                                                        |
+| --------------- | ----------------------------------------------------------------------------------------------------------------------------------------------- |
+| npm run dev     | Will start the NextJS frontend on port `3000` and the Express API on port `4000`                                                                |
+| npm run notypes | Messed with types and broke everything? Run dev environment normally but disable type checking! (Does not use nodemon! Needs restart on change) |
+| npm run deploy  | Will deploy the entire app, use `cdk deploy STACK_NAME` if you want to deploy a specific stack                                                  |
+| npm run destroy | Will destroy the entire app, use `cdk destroy STACK_NAME` if you want to destroy a specific stack                                               |
+| cdk synth       | Emits the synthesized CloudFormation template for the stack(s)                                                                                  |
 
 For more information on AWS CDK, please visit the [docs page](https://docs.aws.amazon.com/cdk/latest/guide/cli.html).
 
