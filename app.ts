@@ -119,6 +119,7 @@ app.delete("/invites/:inviteId", [withAuth], Invites.reject);
 // ------------------------ DO NOT TOUCH BELOW THIS LINE ---------------------------
 const endpoints = listEndpoints(app);
 app.set("endpoints", endpoints);
+app.get("/", metadata);
 app.all("*", routeNotFound);
 
 // Catch timeouts
