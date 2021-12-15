@@ -111,7 +111,7 @@ export const get = async (req: Request, res: Response) => {
 };
 
 export const deleteOrg = async (req: Request, res: Response) => {
-  const { orgId } = req.params; // TODO this route should be .delete @ /orgs since we can get the org id from the user
+  const { orgId } = req.session.user;
   const [org, error] = await Orgs.getOrgById({ orgId: orgId });
 
   if (error) {
