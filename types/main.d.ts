@@ -74,7 +74,11 @@ export interface CreateStageInput
   extends Pick<DynamoNewStage, "orgId" | "GSI1SK" | "openingId"> {
   stageOrder: string[];
 }
-type DeleteStageInput = Pick<DynamoNewStage, "orgId" | "stageId">;
+export interface DeleteStageInput
+  extends Pick<DynamoNewStage, "orgId" | "stageId"> {
+  openingId: string;
+  stageOrder: string[];
+}
 type GetStageByIdInput = Pick<DynamoNewStage, "orgId" | "stageId">;
 type GetStageByIdOutput = DynamoNewStage;
 type GetAllApplicantsInStageInput = Pick<DynamoNewStage, "orgId" | "stageId">;

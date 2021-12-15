@@ -1,6 +1,10 @@
 import { Request, Response } from "express";
 import { DEFAULTS } from "../Config";
-import { CreateStageInput, UpdateStageInput } from "../types/main";
+import {
+  CreateStageInput,
+  DeleteStageInput,
+  UpdateStageInput,
+} from "../types/main";
 import * as Stages from "../models/Stages/index";
 import * as Openings from "../models/Openings/index";
 import Joi from "joi";
@@ -61,10 +65,36 @@ export const create = async (req: Request, res: Response) => {
 
 export const deleteStage = async (req: Request, res: Response) => {
   const { stageId } = req.params;
+  const { orgId } = req.session.user;
 
-  const deleteStageInput = {
+  let [stage, stageError] = await Stages.getStageById({ orgId, stageId });
+
+  if (stageError) {
+    const formattedError = errorFormatter(stageError);
+    return res.status(stageError.$metadata.httpStatusCode).json({
+      message: "An error ocurred deleting stage, unable to get stage info",
+      ...formattedError,
+    });
+  }
+
+  let [opening, openingError] = await Openings.getOpeningById({
+    orgId: orgId,
+    openingId: stage.openingId,
+  });
+
+  if (openingError) {
+    const formattedError = errorFormatter(openingError);
+    return res.status(openingError.$metadata.httpStatusCode).json({
+      message: "An error ocurred deleting stage, unable to get opening info",
+      ...formattedError,
+    });
+  }
+
+  const deleteStageInput: DeleteStageInput = {
     orgId: req.session.user.orgId,
     stageId: stageId,
+    openingId: opening.openingId,
+    stageOrder: opening.stageOrder,
   };
 
   const [deleted, error] = await Stages.deleteStage(deleteStageInput); // TODO fix this as its not grouped with the other funnels

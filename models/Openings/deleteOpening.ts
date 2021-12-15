@@ -13,23 +13,8 @@ export default async function remove(
   props: DeleteOpeningInput
 ): Promise<[null, null] | [null, SdkError]> {
   const { orgId, openingId } = props;
-  // TODO we should not be doing this here!!!
-  const allStages = await Openings.getStagesInOpening({ orgId, openingId }); // TODO we dont have to query this anymore!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   try {
-    // Delete stages first
-    if (allStages.length) {
-      allStages.map(async (stage) => {
-        // TODO add to SQS & delete applicants, rules, questions, etc.
-        const input = {
-          orgId: orgId,
-          openingId: openingId,
-          stageId: stage.stageId,
-        };
-        await Stages.deleteStage(input); // TODO we should not be doing this her
-      });
-    }
-
     const transactParams: TransactWriteCommandInput = {
       TransactItems: [
         {
