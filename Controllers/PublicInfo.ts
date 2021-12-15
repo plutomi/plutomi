@@ -73,33 +73,31 @@ export const getOpeningInfo = async (req: Request, res: Response) => {
 
 export const getStageInfo = async (req: Request, res: Response) => {
   const { orgId, stageId } = req.params;
-  try {
-    const stage = await Stages.getStageById({ orgId, stageId });
-    if (!stage) {
-      return res.status(404).json({ message: "Stage not found" });
-    }
 
-    const cleanedStage = Sanitize.clean(stage, ENTITY_TYPES.STAGE);
-    return res.status(200).json(cleanedStage);
-  } catch (error) {
-    // TODO add error logger
+  const [stage, error] = await Stages.getStageById({ orgId, stageId });
+  if (error) {
     return res
-      .status(400) // TODO change #
-      .json({ message: `Unable to get stage: ${error}` });
+      .status(500)
+      .json({ message: "An error ocurred returning stage info" });
   }
+  if (!stage) {
+    return res.status(404).json({ message: "Stage not found" });
+  }
+
+  const cleanedStage = Sanitize.clean(stage, ENTITY_TYPES.STAGE);
+  return res.status(200).json(cleanedStage);
 };
 
 export const getStageQuestions = async (req: Request, res: Response) => {
   const { orgId, stageId } = req.params;
-  try {
-    const questions = await Stages.getQuestionsInStage({
-      orgId,
-      stageId,
-    });
 
-    // TODO add filter here for public / private questions
-    return res.status(200).json(questions);
-  } catch (error) {
+  const [questions, error] = await Stages.getQuestionsInStage({
+    orgId,
+    stageId,
+  });
+
+  if (error) {
     return res.status(500).json({ message: "Unable to retrieve questions" });
   }
+  return res.status(200).json(questions);
 };
