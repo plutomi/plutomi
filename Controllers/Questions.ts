@@ -12,62 +12,59 @@ export const create = async (req: Request, res: Response) => {
     questionDescription: questionDescription,
   };
 
-  try {
-    await Questions.createQuestion(createStageQuestionInput);
-    return res.status(201).json({ message: "Question created!" });
-  } catch (error) {
-    // TODO add error logger
+  const [created, error] = await Questions.createQuestion(
+    createStageQuestionInput
+  );
+  if (error) {
     return res
-      .status(500) // TODO change #
-      .json({ message: `Unable to create stage question: ${error}` });
+      .status(500)
+      .json({ message: "An error ocurred creating that question" });
   }
+  return res.status(201).json({ message: "Question created!" });
 };
 
 export const deleteQuestion = async (req: Request, res: Response) => {
   const { questionId } = req.params;
-  try {
-    const deleteQuestionInput = {
-      orgId: req.session.user.orgId,
-      questionId: questionId,
-    };
-    await Questions.deleteQuestion(deleteQuestionInput);
-    return res.status(200).json({ message: "Question deleted!" });
-  } catch (error) {
-    // TODO add error logger
+
+  const deleteQuestionInput = {
+    orgId: req.session.user.orgId,
+    questionId: questionId,
+  };
+  const [deleted, error] = await Questions.deleteQuestion(deleteQuestionInput);
+  if (error) {
     return res
       .status(500) // TODO change #
       .json({ message: `Unable to delete stage question: ${error}` });
   }
+  return res.status(200).json({ message: "Question deleted!" });
 };
 
 export const update = async (req: Request, res: Response) => {
   const { questionId } = req.params;
   const { newQuestionValues } = req.body;
+
+  const updatedQuestionInput: UpdateQuestionInput = {
+    orgId: req.session.user.orgId,
+    questionId: questionId,
+    newQuestionValues: newQuestionValues, // Just the keys that are passed down
+  };
+  const schema = Joi.object({
+    orgId: Joi.string(),
+    questionId: Joi.string(),
+    newQuestionValues: Joi.object(),
+  }).options({ presence: "required" }); // TODo add actual inputs of new question values
+
+  // Validate input
   try {
-    const updatedQuestionInput: UpdateQuestionInput = {
-      orgId: req.session.user.orgId,
-      questionId: questionId,
-      newQuestionValues: newQuestionValues, // Just the keys that are passed down
-    };
-    const schema = Joi.object({
-      orgId: Joi.string(),
-      questionId: Joi.string(),
-      newQuestionValues: Joi.object(),
-    }).options({ presence: "required" }); // TODo add actual inputs of new question values
-
-    // Validate input
-    try {
-      await schema.validateAsync(updatedQuestionInput);
-    } catch (error) {
-      return res.status(400).json({ message: `${error.message}` });
-    }
-
-    await Questions.updateQuestion(updatedQuestionInput);
-    return res.status(200).json({ message: "Question updated!" });
+    await schema.validateAsync(updatedQuestionInput);
   } catch (error) {
-    console.error(error);
-    return res
-      .status(500)
-      .json({ message: `Unable to update question - ${error}` });
+    return res.status(400).json({ message: `${error.message}` });
   }
+
+  const [updated, error] = await Questions.updateQuestion(updatedQuestionInput);
+
+  if (error) {
+    return res.status(500).json({ message: `Unable to update question` });
+  }
+  return res.status(200).json({ message: "Question updated!" });
 };
