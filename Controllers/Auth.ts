@@ -13,12 +13,9 @@ import Sanitize from "../utils/sanitize";
 import Joi from "joi";
 import sendEmail from "../utils/sendEmail";
 import * as Time from "../utils/time";
-import * as Users from "../models/Users/Users";
+import * as Users from "../models/Users/index";
 import { LOGIN_LINK_SETTINGS } from "../Config";
-
-export const session = async (req: Request, res: Response) => {
-  return res.status(200).json({ message: req.session });
-};
+import errorFormatter from "../utils/errorFormatter";
 export const login = async (req: Request, res: Response) => {
   const { callbackUrl, seal } = req.query as Pick<
     CUSTOM_QUERY,
@@ -42,20 +39,35 @@ export const login = async (req: Request, res: Response) => {
     return res.status(401).json({ message: "Your link is invalid" });
   }
 
-  const user = await Users.getUserById({ userId }); // TODO async error handling
+  const [user, error] = await Users.getUserById({ userId }); // TODO async error handling
 
+  if (error) {
+    const formattedError = errorFormatter(error);
+    return res.status(formattedError.httpStatusCode).json({
+      message: "An error ocurred getting your user info",
+      ...formattedError,
+    });
+  }
   if (!user) {
     return res
-      .status(401) // I dont know in what situation this would happen, but just in case.. we need the user's orgId anyway
+      .status(401) // I dont know in what situation this would happen as the seal needs a userId on creation
       .json({ message: "Invalid userId, please login again" });
   }
 
   const userOrg = user.orgId !== DEFAULTS.NO_ORG ?? user.orgId;
-  await Users.createLoginEventAndDeleteLoginLink({
+  const [success, failed] = await Users.createLoginEventAndDeleteLoginLink({
     loginLinkId,
     userId,
     orgId: userOrg,
   });
+
+  if (failed) {
+    const formattedError = errorFormatter(failed);
+    return res.status(formattedError.httpStatusCode).json({
+      message: "Unable to create login event",
+      ...formattedError,
+    });
+  }
 
   const cleanedUser = Sanitize.clean(user, ENTITY_TYPES.USER); // TODO not working!
   req.session.user = cleanedUser;
@@ -108,88 +120,111 @@ export const createLoginLinks = async (req: Request, res: Response) => {
     return res.status(400).json({ message: `${error.message}` });
   }
 
-  let user = await Users.getUserByEmail({ email });
+  let [user, userError] = await Users.getUserByEmail({ email });
+  if (userError) {
+    const formattedError = errorFormatter(userError);
+    return res.status(formattedError.httpStatusCode).json({
+      message: "An error ocurred getting your user info",
+      ...formattedError,
+    });
+  }
+
+  // If a user is signing in for the first time, create an account for them
   if (!user) {
-    user = await Users.createUser({ email });
+    const [createdUser, createUserError] = await Users.createUser({ email });
+
+    if (createUserError) {
+      const formattedError = errorFormatter(createUserError);
+      return res.status(formattedError.httpStatusCode).json({
+        message: "An error ocurred creating your account",
+        ...formattedError,
+      });
+    }
+
+    user = createdUser;
   }
 
-  try {
-    const latestLink = await Users.getLatestLoginLink({
+  const [latestLink, loginLinkError] = await Users.getLatestLoginLink({
+    userId: user.userId,
+  });
+
+  if (loginLinkError) {
+    const formattedError = errorFormatter(loginLinkError);
+    return res.status(formattedError.httpStatusCode).json({
+      message: "An error ocurred getting your login link",
+      ...formattedError,
+    });
+  }
+
+  // Limit the amount of links sent in a certain period of time
+  const timeThreshold = Time.pastISO(10, TIME_UNITS.MINUTES);
+
+  if (
+    latestLink &&
+    latestLink.createdAt >= timeThreshold &&
+    !user.email.endsWith(process.env.DOMAIN_NAME)
+  ) {
+    return res.status(400).json({
+      message: "You're doing that too much, please try again later",
+    });
+  }
+
+  const loginLinkId = nanoid(100);
+  const loginLinkExpiry = Time.futureISO(15, TIME_UNITS.MINUTES); // when the link expires
+
+  const seal = await sealData(
+    {
       userId: user.userId,
-    });
+      loginLinkId: loginLinkId,
+    },
+    LOGIN_LINK_SETTINGS
+  );
 
-    // Limit the amount of links sent in a certain period of time
-    const timeThreshold = Time.pastISO(10, TIME_UNITS.MINUTES);
+  const [success, creationError] = await Users.createLoginLink({
+    userId: user.userId,
+    loginLinkId,
+  });
 
-    if (
-      latestLink &&
-      latestLink.createdAt >= timeThreshold &&
-      !user.email.endsWith("@plutomi.com") // todo contact enum or domain name
-    ) {
-      return res.status(400).json({
-        message: "You're doing that too much, please try again later", // TODO enum
-      });
-    }
-
-    const loginLinkId = nanoid(100);
-    const loginLinkExpiry = Time.futureISO(15, TIME_UNITS.MINUTES); // when the link expires
-
-    const seal = await sealData(
-      {
-        userId: user.userId,
-        loginLinkId: loginLinkId,
-      },
-      LOGIN_LINK_SETTINGS
-    );
-
-    try {
-      await Users.createLoginLink({
-        userId: user.userId,
-        loginLinkId,
-      });
-
-      const defaultRedirect = process.env.DOMAIN_NAME + DEFAULTS.REDIRECT;
-      const loginLink = `${
-        process.env.API_URL
-      }/auth/login?seal=${seal}&callbackUrl=${
-        callbackUrl ? callbackUrl : defaultRedirect
-      }`;
-
-      if (loginMethod === LOGIN_METHODS.GOOGLE) {
-        // Cannot do serverside redirect from axios post
-        return res.status(200).json({ message: loginLink });
-      }
-
-      // TODO TRY CATCH HELL LOL
-      try {
-        await sendEmail({
-          fromName: "Plutomi",
-          fromAddress: EMAILS.GENERAL,
-          toAddresses: [user.email],
-          subject: `Your magic login link is here!`,
-          html: `<h1><a href="${loginLink}" noreferrer target="_blank" >Click this link to log in</a></h1><p>It will expire ${Time.relative(
-            new Date(loginLinkExpiry)
-          )}. <strong>DO NOT SHARE THIS LINK WITH ANYONE!!!</strong></p><p>If you did not request this link, you can safely ignore it.</p>`,
-        });
-        return res
-          .status(201) // todo switch to 200?
-          .json({ message: `We've sent a magic login link to your email!` });
-      } catch (error) {
-        console.error(error);
-        return res.status(500).json({ message: `${error}` }); // TODO error #
-      }
-    } catch (error) {
-      console.error(error);
-      // TODO error #
-      return res.status(500).json({ message: `${error}` });
-    }
-  } catch (error) {
-    console.error("Error getting login link", error);
-    return res.status(500).json({
-      // TODO error #
-      message: "An error ocurred getting your info, please try again",
+  if (creationError) {
+    const formattedError = errorFormatter(creationError);
+    return res.status(formattedError.httpStatusCode).json({
+      message: "An error ocurred creating your login link",
+      ...formattedError,
     });
   }
+
+  const loginLink = `${
+    process.env.API_URL
+  }/auth/login?seal=${seal}&callbackUrl=${
+    callbackUrl ? callbackUrl : process.env.DOMAIN_NAME + DEFAULTS.REDIRECT
+  }`;
+
+  if (loginMethod === LOGIN_METHODS.GOOGLE) {
+    // Cannot do serverside redirect from axios post
+    return res.status(200).json({ message: loginLink });
+  }
+
+  const [emailSent, emailFailure] = await sendEmail({
+    fromName: "Plutomi",
+    fromAddress: EMAILS.GENERAL,
+    toAddresses: [user.email],
+    subject: `Your magic login link is here!`,
+    html: `<h1><a href="${loginLink}" noreferrer target="_blank" >Click this link to log in</a></h1><p>It will expire ${Time.relative(
+      new Date(loginLinkExpiry)
+    )}. <strong>DO NOT SHARE THIS LINK WITH ANYONE!!!</strong></p><p>If you did not request this link, you can safely ignore it.</p>`,
+  });
+
+  if (emailFailure) {
+    const formattedError = errorFormatter(emailFailure);
+    return res.status(formattedError.httpStatusCode).json({
+      message: "An error ocurred sending your login link",
+      ...formattedError,
+    });
+  }
+
+  return res
+    .status(201)
+    .json({ message: `We've sent a magic login link to your email!` });
 };
 
 export const logout = async (req: Request, res: Response) => {

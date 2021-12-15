@@ -3,8 +3,10 @@ import { Dynamo } from "../../awsClients/ddbDocClient";
 import { FORBIDDEN_PROPERTIES, ENTITY_TYPES } from "../../Config";
 import { UpdateOpeningInput } from "../../types/main";
 const { DYNAMO_TABLE_NAME } = process.env;
-
-export default async function update(props: UpdateOpeningInput): Promise<void> {
+import { SdkError } from "@aws-sdk/types";
+export default async function update(
+  props: UpdateOpeningInput
+): Promise<[null, null] | [null, SdkError]> {
   const { orgId, openingId, newOpeningValues } = props;
   // Build update expression
   let allUpdateExpressions: string[] = [];
@@ -38,8 +40,8 @@ export default async function update(props: UpdateOpeningInput): Promise<void> {
 
   try {
     await Dynamo.send(new UpdateCommand(params));
-    return;
+    return [null, null];
   } catch (error) {
-    throw new Error(error);
+    return [null, error];
   }
 }

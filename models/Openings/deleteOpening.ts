@@ -5,31 +5,16 @@ import {
 import { Dynamo } from "../../awsClients/ddbDocClient";
 import { ENTITY_TYPES } from "../../Config";
 import { DeleteOpeningInput } from "../../types/main";
-import deleteStage from "../Stages/deleteStage";
 const { DYNAMO_TABLE_NAME } = process.env;
-import * as Openings from "./Openings";
-import * as Stages from "../Stages/Stages";
-export default async function remove(props: DeleteOpeningInput): Promise<void> {
+import * as Openings from ".";
+import * as Stages from "../Stages";
+import { SdkError } from "@aws-sdk/types";
+export default async function remove(
+  props: DeleteOpeningInput
+): Promise<[null, null] | [null, SdkError]> {
   const { orgId, openingId } = props;
-  // TODO we should not be doing this here!!!
-  const allStages = await Openings.getStagesInOpening({ orgId, openingId }); // TODO we dont have to query this anymore!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   try {
-    // Delete stages first
-    if (allStages.length) {
-      allStages.map(async (stage) => {
-        // TODO add to SQS & delete applicants, rules, questions, etc.
-        const input = {
-          orgId: orgId,
-          openingId: openingId,
-          stageId: stage.stageId,
-        };
-        await Stages.deleteStage(input); // TODO we should not be doing this her
-      });
-    }
-
-    console.log("Deleting funnel");
-
     const transactParams: TransactWriteCommandInput = {
       TransactItems: [
         {
@@ -60,8 +45,8 @@ export default async function remove(props: DeleteOpeningInput): Promise<void> {
     };
 
     await Dynamo.send(new TransactWriteCommand(transactParams));
-    return;
+    return [null, null];
   } catch (error) {
-    throw new Error(error);
+    return [null, error];
   }
 }

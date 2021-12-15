@@ -131,7 +131,7 @@ export default function OpeningModal({
                           </div>
                           <div className="relative flex items-start">
                             {openingModal.modalMode === "CREATE" ||
-                            opening.totalStages == 0 ? (
+                            opening.totalStages === 0 ? (
                               <p className="text-light text-sm ">
                                 You will be able to make this opening public
                                 after adding a stage.

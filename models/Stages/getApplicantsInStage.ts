@@ -6,10 +6,10 @@ import {
   GetAllApplicantsInStageOutput,
 } from "../../types/main";
 const { DYNAMO_TABLE_NAME } = process.env;
-
+import { SdkError } from "@aws-sdk/types";
 export default async function GetApplicants(
   props: GetAllApplicantsInStageInput
-): Promise<GetAllApplicantsInStageOutput> {
+): Promise<[GetAllApplicantsInStageOutput, null] | [null, SdkError]> {
   {
     const { orgId, stageId } = props;
     const params: QueryCommandInput = {
@@ -34,9 +34,9 @@ export default async function GetApplicants(
       // Sort by full name, or whatever else, probably most recently active would be best
       allApplicants.sort((a, b) => (a.fullName < b.fullName ? 1 : -1));
 
-      return allApplicants;
+      return [allApplicants, null];
     } catch (error) {
-      throw new Error(error);
+      return [null, error];
     }
   }
 }

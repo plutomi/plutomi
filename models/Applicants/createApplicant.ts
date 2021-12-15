@@ -8,11 +8,12 @@ import { ID_LENGTHS, ENTITY_TYPES } from "../../Config";
 import { DynamoNewApplicant } from "../../types/dynamo";
 import { CreateApplicantInput, CreateApplicantOutput } from "../../types/main";
 import * as Time from "../../utils/time";
+import { SdkError } from "@aws-sdk/types";
 const { DYNAMO_TABLE_NAME } = process.env;
 
 export default async function Create(
   props: CreateApplicantInput
-): Promise<CreateApplicantOutput> {
+): Promise<[CreateApplicantOutput, null] | [null, SdkError]> {
   const { orgId, firstName, lastName, email, openingId, stageId } = props;
 
   const now = Time.currentISO();
@@ -135,9 +136,8 @@ export default async function Create(
     };
 
     await Dynamo.send(new TransactWriteCommand(transactParams));
-    return newApplicant;
+    return [newApplicant, null];
   } catch (error) {
-    // TODO error enum
-    throw new Error(error);
+    return [null, error];
   }
 }

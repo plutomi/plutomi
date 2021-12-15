@@ -3,9 +3,11 @@ import { Dynamo } from "../../awsClients/ddbDocClient";
 import { ENTITY_TYPES } from "../../Config";
 import { GetQuestionInput, GetQuestionOutput } from "../../types/main";
 const { DYNAMO_TABLE_NAME } = process.env;
+import { SdkError } from "@aws-sdk/types";
+
 export default async function Get(
   props: GetQuestionInput
-): Promise<GetQuestionOutput> {
+): Promise<[GetQuestionOutput, null] | [null, SdkError]> {
   const { orgId, questionId } = props;
   const params: GetCommandInput = {
     TableName: DYNAMO_TABLE_NAME,
@@ -17,8 +19,8 @@ export default async function Get(
 
   try {
     const response = await Dynamo.send(new GetCommand(params));
-    return response.Item as GetQuestionOutput;
+    return [response.Item as GetQuestionOutput, null];
   } catch (error) {
-    throw new Error(error);
+    return [null, error];
   }
 }

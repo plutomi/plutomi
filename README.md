@@ -14,7 +14,7 @@ Plutomi is an [applicant tracking system](https://en.wikipedia.org/wiki/Applican
 
 ## Motivation
 
-Having worked at a company that needed to recruit thousands of contractors every month, improving our acquisition flow at that scale became a challenge. Many processes had to be done manually because there just wasn't an API available for it. We often hit limits and had to work around them with a myriad of webhooks, queues, and batch jobs to keep things running smoothly. It would have benefited us to have an open platform to contribute to and build upon, as well as one where we didn't have to continuously tip toe around performance limits. This project is our attempt to do just that.
+Having worked at a company that needed to recruit thousands of contractors every month, improving our acquisition flow at that scale became a challenge. Many processes had to be done manually because there just wasn't an API available for it. We often hit limits and had to work around them with a myriad of webhooks, queues, and batch jobs to keep things running smoothly. It would have benefited us to have an open platform to contribute to and build upon and this project is our attempt to do just that.
 
 ## Summary
 
@@ -46,12 +46,13 @@ Stage order:
 
 ## Useful commands
 
-| Command         | Function                                                                                          |
-| --------------- | ------------------------------------------------------------------------------------------------- |
-| npm run dev     | Will start the NextJS frontend on port `3000` and the Express API on port `4000`                  |
-| npm run deploy  | Will deploy the entire app, use `cdk deploy STACK_NAME` if you want to deploy a specific stack    |
-| npm run destroy | Will destroy the entire app, use `cdk destroy STACK_NAME` if you want to destroy a specific stack |
-| cdk synth       | Emits the synthesized CloudFormation template for the stack(s)                                    |
+| Command         | Function                                                                                                                                        |
+| --------------- | ----------------------------------------------------------------------------------------------------------------------------------------------- |
+| npm run dev     | Will start the NextJS frontend on port `3000` and the Express API on port `4000`                                                                |
+| npm run notypes | Messed with types and broke everything? Run dev environment normally but disable type checking! (Does not use nodemon! Needs restart on change) |
+| npm run deploy  | Will deploy the entire app, use `cdk deploy STACK_NAME` if you want to deploy a specific stack                                                  |
+| npm run destroy | Will destroy the entire app, use `cdk destroy STACK_NAME` if you want to destroy a specific stack                                               |
+| cdk synth       | Emits the synthesized CloudFormation template for the stack(s)                                                                                  |
 
 For more information on AWS CDK, please visit the [docs page](https://docs.aws.amazon.com/cdk/latest/guide/cli.html).
 
@@ -67,15 +68,14 @@ _ALL_ infrastructure is managed by AWS CDK.
 
 ![frontend](infra/Frontend.png)
 
-The frontend runs on the [CDK construct](https://serverless-nextjs.com/docs/cdkconstruct/) of the [Serverless-Nextjs](https://github.com/serverless-Nextjs/serverless-next.js) component. The reason being is we wanted everything managed by CDK and this provides an awesome way to do just that. The SLS component brings with it the Next API routes using Lambda but there are a couple of downsides (some of them are listed [here](https://github.com/plutomi/plutomi/issues/172)) and we won't be using them.
+The frontend runs on the [CDK construct](https://serverless-nextjs.com/docs/cdkconstruct/) of the [Serverless-Nextjs](https://github.com/serverless-Nextjs/serverless-next.js) component. We wanted to stick with NextJS and if possible, have everything managed by CDK. The SLS component brings with it the Next API routes using Lambda but there are a couple of downsides (some of them are listed [here](https://github.com/plutomi/plutomi/issues/172)) and we won't be using them.
 
 ![backend](infra/Backend.png)
 
 Typical 'monolith' express app on an autoscaling Fargate cluster.
 
-We considered API Gateway + Lambda but we kept running into quirks that essentially wipe out all of the gains from "only focusing on business logic". Here is an example of a fun (4 year old) bug: [Unable to change parameter names in API Gateway without tearing the route down and redeploying](https://github.com/serverless/serverless/issues/3785)! Another main complaint is local development, or lack there of. Or cold starts no matter how infrequent they might be. Or performance (we were getting consistently faster response times like in [this test by the folks at Trek10](https://www.trek10.com/blog/fargate-vs-lambda)). Or cost at high throughput.. mainly API Gateway :sweat_smile:
-
-To be clear, we will still use lambda for background tasks such as queues, DynamoDB streams, email sending, etc. just not for the main API of the site. Fargate gives us the best of both worlds, and we're very happy with it!
+We considered using API Gateway + Lambda for the main API but
+_at this time_, we feel that Fargate has more advantages, mainly around ease of use for local development.
 
 ## DynamoDB Schema
 

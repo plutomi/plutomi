@@ -24,7 +24,7 @@ export default function ApplicationContent() {
     return <Loader text="Loading questions..." />;
   }
 
-  if (questions.length == 0) {
+  if (questions.length === 0) {
     return <h1>There are no questions in this stage :T</h1>;
   }
 
@@ -55,7 +55,7 @@ export default function ApplicationContent() {
     const responseIndex = responses.indexOf(found);
 
     // Delete answer
-    if (!response || response.length == 0) {
+    if (!response || response.length === 0) {
       newResponses.splice(responseIndex, 1);
       setResponses(newResponses);
       return;

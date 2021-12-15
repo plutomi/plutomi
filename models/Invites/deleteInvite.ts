@@ -2,6 +2,7 @@ import { DeleteCommandInput, DeleteCommand } from "@aws-sdk/lib-dynamodb";
 import { Dynamo } from "../../awsClients/ddbDocClient";
 import { ENTITY_TYPES } from "../../Config";
 import { DeleteOrgInviteInput } from "../../types/main";
+import { SdkError } from "@aws-sdk/types";
 const { DYNAMO_TABLE_NAME } = process.env;
 /**
  * Deletes an org invite, called when a user rejects an invite to an org
@@ -10,7 +11,7 @@ const { DYNAMO_TABLE_NAME } = process.env;
  */
 export default async function DeleteInvite(
   props: DeleteOrgInviteInput
-): Promise<void> {
+): Promise<[null, null] | [null, SdkError]> {
   const { userId, inviteId } = props;
   try {
     const params: DeleteCommandInput = {
@@ -22,8 +23,8 @@ export default async function DeleteInvite(
     };
 
     await Dynamo.send(new DeleteCommand(params));
-    return;
+    return [null, null];
   } catch (error) {
-    throw new Error(`Unable to delete invite ${error}`);
+    return [null, error];
   }
 }

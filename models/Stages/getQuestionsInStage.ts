@@ -7,14 +7,11 @@ import {
 } from "../../types/main";
 import getStageById from "./getStageById";
 const { DYNAMO_TABLE_NAME } = process.env;
-
+import { SdkError } from "@aws-sdk/types";
 export default async function GetQuestions(
   props: GetAllQuestionsInStageInput
-): Promise<GetAllQuestionsInStageOutput> {
-  const { orgId, stageId } = props;
-  // TODO this shouldn't be here!!
-  const stage = await getStageById({ orgId, stageId });
-  const { questionOrder } = stage;
+): Promise<[GetAllQuestionsInStageOutput, null] | [null, SdkError]> {
+  const { orgId, stageId, questionOrder } = props;
 
   const params: QueryCommandInput = {
     IndexName: "GSI1",
@@ -33,9 +30,8 @@ export default async function GetQuestions(
       allQuestions.Items.find((j) => j.questionId === i)
     );
 
-    return result as GetAllQuestionsInStageOutput;
+    return [result as GetAllQuestionsInStageOutput, null];
   } catch (error) {
-    console.error(error);
-    throw new Error(error);
+    return [null, error];
   }
 }

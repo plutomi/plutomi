@@ -4,10 +4,10 @@ import { ENTITY_TYPES } from "../../Config";
 import { DynamoNewOrg } from "../../types/dynamo";
 import { GetOrgInput } from "../../types/main";
 const { DYNAMO_TABLE_NAME } = process.env;
-
+import { SdkError } from "@aws-sdk/types";
 export default async function GetOrgById(
   props: GetOrgInput
-): Promise<[DynamoNewOrg, null] | [null, Error]> {
+): Promise<[DynamoNewOrg, null] | [null, SdkError]> {
   // TODO add these types all over the dynamo calls
   const { orgId } = props;
   const params: GetCommandInput = {
@@ -22,7 +22,6 @@ export default async function GetOrgById(
     const response = await Dynamo.send(new GetCommand(params));
     return [response.Item as DynamoNewOrg, null];
   } catch (error) {
-    console.error("error", error);
     return [null, error];
   }
 }

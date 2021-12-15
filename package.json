@@ -4,6 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "cross-env NODE_ENV=development concurrently --kill-others \"nodemon app.ts\" \"next dev\"",
+    "notypes": "cross-env NODE_ENV=development concurrently --kill-others \"ts-node --transpile-only app.ts\" \"next dev\"",
     "build": "next build",
     "lint": "next lint",
     "start": "cross-env NODE_ENV=production ts-node --transpile-only app.ts",
@@ -79,6 +80,7 @@
     "@types/react": "^17.0.33",
     "@types/source-map-support": "^0.5.4",
     "autoprefixer": "^10.4.0",
+    "aws-sdk": "^2.1046.0",
     "concurrently": "^6.4.0",
     "cross-env": "^7.0.3",
     "depcheck": "^1.4.2",

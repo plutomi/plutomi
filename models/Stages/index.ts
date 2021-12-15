@@ -1,0 +1,12 @@
+import create from "./createStage";
+import remove from "./deleteStage";
+import update from "./updateStage";
+import getStage from "./getStageById";
+import getApplicants from "./getApplicantsInStage";
+import getQuestions from "./getQuestionsInStage";
+export const createStage = create;
+export const deleteStage = remove;
+export const updateStage = update;
+export const getStageById = getStage;
+export const getApplicantsInStage = getApplicants;
+export const getQuestionsInStage = getQuestions;

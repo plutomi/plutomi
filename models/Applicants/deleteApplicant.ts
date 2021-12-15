@@ -5,17 +5,13 @@ import {
 import { Dynamo } from "../../awsClients/ddbDocClient";
 import { ENTITY_TYPES } from "../../Config";
 import { DeleteApplicantInput } from "../../types/main";
-import { getApplicantById } from "./Applicants";
+import { getApplicantById } from ".";
 const { DYNAMO_TABLE_NAME } = process.env;
-
+import { SdkError } from "@aws-sdk/types";
 export default async function Remove(
   props: DeleteApplicantInput
-): Promise<void> {
-  const { orgId, applicantId } = props;
-  const applicant = await getApplicantById({
-    applicantId,
-  });
-
+): Promise<[null, null] | [null, SdkError]> {
+  const { orgId, applicantId, openingId, stageId } = props;
   try {
     const transactParams: TransactWriteCommandInput = {
       TransactItems: [
@@ -34,7 +30,7 @@ export default async function Remove(
           // Decrement opening's totalApplicants
           Update: {
             Key: {
-              PK: `${ENTITY_TYPES.ORG}#${orgId}#${ENTITY_TYPES.OPENING}#${applicant.openingId}`, // todo fix types
+              PK: `${ENTITY_TYPES.ORG}#${orgId}#${ENTITY_TYPES.OPENING}#${openingId}`,
               SK: ENTITY_TYPES.OPENING,
             },
             TableName: DYNAMO_TABLE_NAME,
@@ -48,7 +44,7 @@ export default async function Remove(
           // Decrement stage's totalApplicants
           Update: {
             Key: {
-              PK: `${ENTITY_TYPES.ORG}#${orgId}#${ENTITY_TYPES.STAGE}#${applicant.stageId}`, // todo fix types
+              PK: `${ENTITY_TYPES.ORG}#${orgId}#${ENTITY_TYPES.STAGE}#${stageId}`,
               SK: ENTITY_TYPES.STAGE,
             },
             TableName: DYNAMO_TABLE_NAME,
@@ -76,8 +72,8 @@ export default async function Remove(
     };
 
     await Dynamo.send(new TransactWriteCommand(transactParams));
+    return [null, null];
   } catch (error) {
-    console.error(error);
-    throw new Error(`Unable to delete applicant ${error}`); // TODO add to errors
+    return [null, error];
   }
 }

@@ -4,9 +4,11 @@ import { ENTITY_TYPES } from "../../Config";
 import { DynamoNewUser } from "../../types/dynamo";
 import { GetAllUsersInOrgInput } from "../../types/main";
 const { DYNAMO_TABLE_NAME } = process.env;
+import { SdkError } from "@aws-sdk/types";
+
 export default async function GetUsers(
   props: GetAllUsersInOrgInput
-): Promise<DynamoNewUser[]> {
+): Promise<[DynamoNewUser[], null] | [null, SdkError]> {
   const { orgId, limit } = props;
   const params: QueryCommandInput = {
     TableName: DYNAMO_TABLE_NAME,
@@ -22,8 +24,8 @@ export default async function GetUsers(
 
   try {
     const response = await Dynamo.send(new QueryCommand(params));
-    return response.Items as DynamoNewUser[];
+    return [response.Items as DynamoNewUser[], null];
   } catch (error) {
-    throw new Error(error);
+    return [null, error];
   }
 }

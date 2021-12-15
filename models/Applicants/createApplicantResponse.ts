@@ -8,10 +8,11 @@ import {
   CreateApplicantResponseOutput,
 } from "../../types/main";
 import * as Time from "../../utils/time";
+import { SdkError } from "@aws-sdk/types";
 const { DYNAMO_TABLE_NAME } = process.env;
 export default async function CreateResponse(
   props: CreateApplicantResponseInput
-): Promise<CreateApplicantResponseOutput> {
+): Promise<[CreateApplicantResponseOutput, null] | [null, SdkError]> {
   const {
     orgId,
     applicantId,
@@ -43,9 +44,8 @@ export default async function CreateResponse(
 
   try {
     await Dynamo.send(new PutCommand(params));
-    return newApplicantResponse;
+    return [newApplicantResponse, null];
   } catch (error) {
-    // TODO error enum
-    throw new Error(error);
+    return [null, error];
   }
 }

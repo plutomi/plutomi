@@ -1,9 +1,10 @@
 import { ENTITY_TYPES } from "./../Config";
 import { Request, Response } from "express";
 import Sanitize from "./../utils/sanitize";
-import * as Openings from "../models/Openings/Openings";
-import * as Orgs from "../models/Orgs/Orgs";
-import * as Stages from "../models/Stages/Stages";
+import * as Openings from "../models/Openings/index";
+import * as Orgs from "../models/Orgs/index";
+import * as Stages from "../models/Stages/index";
+import errorFormatter from "../utils/errorFormatter";
 export const getOrgInfo = async (req: Request, res: Response) => {
   const { orgId } = req.params;
 
@@ -13,9 +14,11 @@ export const getOrgInfo = async (req: Request, res: Response) => {
 
   const [org, error] = await Orgs.getOrgById({ orgId });
 
-  if (error instanceof Error) {
-    return res.status(400).json({
-      message: `An error ocurred retrieving your org: ${error.message}`,
+  if (error) {
+    const formattedError = errorFormatter(error);
+    return res.status(formattedError.httpStatusCode).json({
+      message: "An error ocurred retrieving this org's info",
+      ...formattedError,
     });
   }
 
@@ -29,8 +32,15 @@ export const getOrgInfo = async (req: Request, res: Response) => {
 
 export const getOrgOpenings = async (req: Request, res: Response) => {
   const { orgId } = req.params;
-  const allOpenings = await Orgs.getOpeningsInOrg({ orgId });
-  const publicOpenings = allOpenings.filter((opening) => opening.isPublic);
+  const [openings, error] = await Orgs.getOpeningsInOrg({ orgId });
+  if (error) {
+    const formattedError = errorFormatter(error);
+    return res.status(formattedError.httpStatusCode).json({
+      message: "An error ocurred retrieving the openings for this org",
+      ...formattedError,
+    });
+  }
+  const publicOpenings = openings.filter((opening) => opening.isPublic);
 
   publicOpenings.forEach((opening) =>
     Sanitize.clean(opening, ENTITY_TYPES.OPENING)
@@ -42,10 +52,18 @@ export const getOrgOpenings = async (req: Request, res: Response) => {
 export const getOpeningInfo = async (req: Request, res: Response) => {
   const { orgId, openingId } = req.params;
 
-  const opening = await Openings.getOpeningById({
+  const [opening, error] = await Openings.getOpeningById({
     orgId,
     openingId,
   });
+
+  if (error) {
+    const formattedError = errorFormatter(error);
+    return res.status(formattedError.httpStatusCode).json({
+      message: "An error ocurred retrieving this opening's",
+      ...formattedError,
+    });
+  }
   if (!opening) {
     return res.status(404).json({ message: "Opening not found" });
   }
@@ -62,38 +80,49 @@ export const getOpeningInfo = async (req: Request, res: Response) => {
 
 export const getStageInfo = async (req: Request, res: Response) => {
   const { orgId, stageId } = req.params;
-  try {
-    const stage = await Stages.getStageById({ orgId, stageId });
-    if (!stage) {
-      return res.status(404).json({ message: "Stage not found" });
-    }
 
-    //   if (!stage.isPublic) { // TODO add public and private stages?
-    //     return res
-    //       .status(400)
-    //       .json({ message: "You cannot apply here just yet" });
-    //   }
-    const cleanedStage = Sanitize.clean(stage, ENTITY_TYPES.STAGE);
-    return res.status(200).json(cleanedStage);
-  } catch (error) {
-    // TODO add error logger
-    return res
-      .status(400) // TODO change #
-      .json({ message: `Unable to get stage: ${error}` });
+  const [stage, error] = await Stages.getStageById({ orgId, stageId });
+  if (error) {
+    const formattedError = errorFormatter(error);
+    return res.status(formattedError.httpStatusCode).json({
+      message: "An error ocurred retrieving this stage's info",
+      ...formattedError,
+    });
   }
+  if (!stage) {
+    return res.status(404).json({ message: "Stage not found" });
+  }
+
+  const cleanedStage = Sanitize.clean(stage, ENTITY_TYPES.STAGE);
+  return res.status(200).json(cleanedStage);
 };
 
 export const getStageQuestions = async (req: Request, res: Response) => {
   const { orgId, stageId } = req.params;
-  try {
-    const questions = await Stages.getQuestionsInStage({
-      orgId,
-      stageId,
-    });
 
-    // TODO add filter here for public / private questions
-    return res.status(200).json(questions);
-  } catch (error) {
-    return res.status(500).json({ message: "Unable to retrieve questions" });
+  const [stage, stageInfoError] = await Stages.getStageById({ orgId, stageId });
+  if (stageInfoError) {
+    const formattedError = errorFormatter(stageInfoError);
+    return res.status(formattedError.httpStatusCode).json({
+      message:
+        "An error ocurred retrieving questions in this stage, unable to get stage info",
+      ...formattedError,
+    });
   }
+  const { questionOrder } = stage;
+
+  const [questions, error] = await Stages.getQuestionsInStage({
+    orgId,
+    stageId,
+    questionOrder: questionOrder,
+  });
+
+  if (error) {
+    const formattedError = errorFormatter(error);
+    return res.status(formattedError.httpStatusCode).json({
+      message: "An error ocurred retrieving questions for this stage",
+      ...formattedError,
+    });
+  }
+  return res.status(200).json(questions);
 };

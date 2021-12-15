@@ -1,61 +1,77 @@
 import { Request, Response } from "express";
 import { DEFAULTS, ENTITY_TYPES } from "./../Config";
 import Sanitize from "./../utils/sanitize";
-import * as Users from "../models/Users/Users";
+import * as Users from "../models/Users/index";
 import Joi from "joi";
-
+import errorFormatter from "../utils/errorFormatter";
 export const self = async (req: Request, res: Response) => {
-  try {
-    const requestedUser = await Users.getUserById({
-      userId: req.session.user.userId,
-    });
-    if (!requestedUser) {
-      req.session.destroy();
-      return res.status(401).json({
-        message: `Please log in again`,
-      }); // TODO enum error
-    }
+  const [user, error] = await Users.getUserById({
+    userId: req.session.user.userId,
+  });
 
-    return res.status(200).json(req.session.user);
-  } catch (error) {
-    // TODO add error logger
-    return res
-      .status(400) // TODO change #
-      .json({ message: `${error}` });
+  if (error) {
+    const formattedError = errorFormatter(error);
+    return res.status(formattedError.httpStatusCode).json({
+      message: "An error ocurred retrieving self info",
+      ...formattedError,
+    });
   }
+
+  if (!user) {
+    req.session.destroy();
+    return res.status(401).json({
+      message: `Please log in again`,
+    });
+  }
+
+  return res.status(200).json(user);
 };
 
 export const getById = async (req: Request, res: Response) => {
   const { userId } = req.params;
-  try {
-    const requestedUser = await Users.getUserById({ userId: userId });
 
-    if (!requestedUser) {
-      return res.status(404).json({ message: "User not found" });
-    }
-
-    // Check that the user who made this call is in the same org as the requested user
-    // TODO RBAC here, users can view other user info if they're in the same org
-    if (
-      req.session.user.orgId === DEFAULTS.NO_ORG || // Block users not in an org from being able to view other users
-      req.session.user.orgId != requestedUser.orgId
-    ) {
-      return res
-        .status(403)
-        .json({ message: "You are not authorized to view this user" });
-    }
-    return res.status(200).json(requestedUser);
-  } catch (error) {
-    // TODO add error logger
+  if (
+    // Block users who arenot in an org from being able to view other users before making the Dynamo call
+    req.session.user.orgId === DEFAULTS.NO_ORG
+  ) {
     return res
-      .status(400) // TODO change #
-      .json({ message: `${error}` });
+      .status(403)
+      .json({ message: "You are not authorized to view this user" });
   }
+
+  const [requestedUser, error] = await Users.getUserById({ userId });
+
+  if (error) {
+    const formattedError = errorFormatter(error);
+    return res.status(formattedError.httpStatusCode).json({
+      message: "An error ocurred retrieving user info by id",
+      ...formattedError,
+    });
+  }
+  if (!requestedUser) {
+    return res.status(404).json({ message: "User not found" });
+  }
+
+  // TODO RBAC here
+  // Only allow viewing users in the same org
+  if (req.session.user.orgId !== requestedUser.orgId) {
+    return res
+      .status(403)
+      .json({ message: "You are not authorized to view this user" });
+  }
+
+  return res.status(200).json(requestedUser);
 };
 
 export const update = async (req: Request, res: Response) => {
   const { userId } = req.params;
   const { newUserValues } = req.body;
+
+  // TODO RBAC will go here, right now you can only update yourself
+  if (userId !== req.session.user.userId) {
+    return res.status(403).json({ message: "You cannot update another user" });
+  }
+
   const updateUserInput = {
     userId: req.session.user.userId,
     ALLOW_FORBIDDEN_KEYS: false,
@@ -79,39 +95,35 @@ export const update = async (req: Request, res: Response) => {
     return res.status(400).json({ message: `${error.message}` });
   }
 
-  try {
-    // TODO RBAC will go here, right now you can only update yourself
-    if (userId != req.session.user.userId) {
-      return res
-        .status(403)
-        .json({ message: "You cannot update another user" });
-    }
+  const [updatedUser, error] = await Users.updateUser(updateUserInput);
 
-    const updatedUser = await Users.updateUser(updateUserInput);
-
-    // If a signed in user is updating themselves, update the session state
-    if (updatedUser.userId === req.session.user.userId) {
-      req.session.user = Sanitize.clean(updatedUser, ENTITY_TYPES.USER);
-      await req.session.save();
-    }
-    return res.status(200).json({ message: "Updated!" });
-  } catch (error) {
-    // TODO add error logger
-    // TODO get correct status code
-    return res.status(500).json({ message: `${error}` });
+  if (error) {
+    const formattedError = errorFormatter(error);
+    return res.status(formattedError.httpStatusCode).json({
+      message: "An error ocurred updating user info",
+      ...formattedError,
+    });
   }
+  // If a signed in user is updating themselves, update the session state as well
+  if (updatedUser.userId === req.session.user.userId) {
+    req.session.user = Sanitize.clean(updatedUser, ENTITY_TYPES.USER);
+    await req.session.save();
+  }
+  return res.status(200).json({ message: "Updated!" });
 };
 
 export const getInvites = async (req: Request, res: Response) => {
-  try {
-    const invites = await Users.getInvitesForUser({
-      userId: req.session.user.userId,
+  const [invites, error] = await Users.getInvitesForUser({
+    userId: req.session.user.userId,
+  });
+
+  if (error) {
+    const formattedError = errorFormatter(error);
+    return res.status(formattedError.httpStatusCode).json({
+      message: "An error ocurred retrieving invites",
+      ...formattedError,
     });
-    return res.status(200).json(invites);
-  } catch (error) {
-    // TODO add error logger
-    return res
-      .status(400) // TODO change #
-      .json({ message: `${error}` });
   }
+
+  return res.status(200).json(invites);
 };

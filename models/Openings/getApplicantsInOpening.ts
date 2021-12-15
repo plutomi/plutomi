@@ -4,9 +4,11 @@ import { ENTITY_TYPES } from "../../Config";
 import { DynamoNewApplicant } from "../../types/dynamo";
 import { GetAllApplicantsInOpeningInput } from "../../types/main";
 const { DYNAMO_TABLE_NAME } = process.env;
+import { SdkError } from "@aws-sdk/types";
+
 export default async function GetApplicants(
   props: GetAllApplicantsInOpeningInput
-): Promise<DynamoNewApplicant[]> {
+): Promise<[DynamoNewApplicant[], null] | [null, SdkError]> {
   const { orgId, openingId } = props;
   const params: QueryCommandInput = {
     TableName: DYNAMO_TABLE_NAME,
@@ -31,8 +33,8 @@ export default async function GetApplicants(
     // Sort by full name, or whatever else, probably most recently active would be best
     allApplicants.sort((a, b) => (a[sortKey] < b[sortKey] ? 1 : -1));
 
-    return allApplicants;
+    return [allApplicants, null];
   } catch (error) {
-    throw new Error(error);
+    return [null, error];
   }
 }

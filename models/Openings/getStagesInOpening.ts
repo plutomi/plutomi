@@ -3,20 +3,14 @@ import { UpdateCommandInput, UpdateCommand } from "@aws-sdk/lib-dynamodb";
 import { Dynamo } from "../../awsClients/ddbDocClient";
 import { ENTITY_TYPES, FORBIDDEN_PROPERTIES } from "../../Config";
 import { DynamoNewStage } from "../../types/dynamo";
-import {
-  GetAllStagesInOpeningInput,
-  UpdateOpeningInput,
-} from "../../types/main";
-import * as Openings from "./Openings";
+import { GetAllStagesInOpeningInput } from "../../types/main";
+import * as Openings from ".";
 const { DYNAMO_TABLE_NAME } = process.env;
-
+import { SdkError } from "@aws-sdk/types";
 export default async function GetStages(
   props: GetAllStagesInOpeningInput
-): Promise<DynamoNewStage[]> {
-  const { orgId, openingId } = props;
-  // TODO this should not be here, this should be in controller
-  const opening = await Openings.getOpeningById({ orgId, openingId });
-  const { stageOrder } = opening;
+): Promise<[DynamoNewStage[], null] | [null, SdkError]> {
+  const { orgId, openingId, stageOrder } = props;
 
   const params: QueryCommandInput = {
     TableName: DYNAMO_TABLE_NAME,
@@ -34,9 +28,8 @@ export default async function GetStages(
     const result = stageOrder.map((i: string) =>
       allStages.find((j) => j.stageId === i)
     );
-
-    return result as DynamoNewStage[];
+    return [result as DynamoNewStage[], null];
   } catch (error) {
-    throw new Error(error);
+    return [null, error];
   }
 }

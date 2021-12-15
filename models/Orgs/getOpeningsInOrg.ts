@@ -1,10 +1,11 @@
 import { QueryCommandInput, QueryCommand } from "@aws-sdk/lib-dynamodb";
 import { Dynamo } from "../../awsClients/ddbDocClient";
 import { ENTITY_TYPES } from "../../Config";
+import { DynamoNewOpening } from "../../types/dynamo";
 import { GetAllOpeningsInOrgInput } from "../../types/main";
-import * as Time from "../../utils/time";
 const { DYNAMO_TABLE_NAME } = process.env;
-export default async function GetOpenings(props: GetAllOpeningsInOrgInput) {
+import { SdkError } from "@aws-sdk/types";
+export default async function GetOpenings(props: GetAllOpeningsInOrgInput): Promise<[DynamoNewOpening[], null] | [null, SdkError]> {
   const { orgId } = props;
   const params: QueryCommandInput = {
     TableName: DYNAMO_TABLE_NAME,
@@ -17,9 +18,8 @@ export default async function GetOpenings(props: GetAllOpeningsInOrgInput) {
 
   try {
     const response = await Dynamo.send(new QueryCommand(params));
-    return [response.Items, null];
+    return [response.Items as DynamoNewOpening[], null];
   } catch (error) {
-    console.error("error", error);
     return [null, error];
   }
 }

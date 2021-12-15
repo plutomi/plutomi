@@ -75,13 +75,20 @@ app
  * Orgs
  ****************************************************************************
  */
-app.route("/orgs").post([withAuth], Orgs.create).all(methodNotAllowed);
-
 app
-  .route("/orgs/:orgId")
-  .get([withAuth], Orgs.get)
+  .route("/orgs")
+  .post([withAuth], Orgs.create)
+
+  /**
+   * The reason for this here instead of @ /orgs/:orgId is because
+   * we can get the orgId of the user form their session token
+   * and ensure that they can only delete orgs that they are in and not have to do a check
+   */
   .delete([withAuth], Orgs.deleteOrg)
+
   .all(methodNotAllowed);
+
+app.route("/orgs/:orgId").get([withAuth], Orgs.get).all(methodNotAllowed);
 
 // app.route("/orgs/:orgId/invites").get([withAuth], ) // TODO - Get all invites for org
 
@@ -193,10 +200,10 @@ app.route("/auth/logout").post([withAuth], Auth.logout).all(methodNotAllowed);
  ****************************************************************************
  */
 
-app
-  .route("/orgs/:orgId/users")
-  .get([withAuth], Orgs.users)
-  .all(methodNotAllowed);
+// app
+//   .route("/orgs/:orgId/users")
+//   .get([withAuth], Orgs.users)
+//   .all(methodNotAllowed);
 
 app.route("/users/self").get([withAuth], Users.self).all(methodNotAllowed);
 

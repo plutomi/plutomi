@@ -23,7 +23,7 @@ export default function DashboardContent() {
     return <Loader text={"Loading user..."} />;
   }
 
-  if (user.orgId != DEFAULTS.NO_ORG && isOrgLoading) {
+  if (user.orgId !== DEFAULTS.NO_ORG && isOrgLoading) {
     return <Loader text={"Loading org info..."} />;
   }
 
@@ -75,7 +75,7 @@ export default function DashboardContent() {
     }
 
     try {
-      const { message } = await OrgsService.deleteOrg(user?.orgId);
+      const { message } = await OrgsService.deleteOrg();
       alert(message);
     } catch (error) {
       alert(error.response.data.message);

@@ -70,8 +70,15 @@ declare module "iron-session" {
   }
 }
 
-type CreateStageInput = Pick<DynamoNewStage, "orgId" | "GSI1SK" | "openingId">;
-type DeleteStageInput = Pick<DynamoNewStage, "orgId" | "stageId">;
+export interface CreateStageInput
+  extends Pick<DynamoNewStage, "orgId" | "GSI1SK" | "openingId"> {
+  stageOrder: string[];
+}
+export interface DeleteStageInput
+  extends Pick<DynamoNewStage, "orgId" | "stageId"> {
+  openingId: string;
+  stageOrder: string[];
+}
 type GetStageByIdInput = Pick<DynamoNewStage, "orgId" | "stageId">;
 type GetStageByIdOutput = DynamoNewStage;
 type GetAllApplicantsInStageInput = Pick<DynamoNewStage, "orgId" | "stageId">;
@@ -92,22 +99,30 @@ export interface UpdateUserInput extends Pick<DynamoNewUser, "userId"> {
   ALLOW_FORBIDDEN_KEYS?: boolean;
 }
 
-type CreateStageQuestionInput = Pick<
-  DynamoNewStageQuestion,
-  "orgId" | "stageId" | "GSI1SK" | "questionDescription"
->;
+export interface CreateStageQuestionInput
+  extends Pick<
+    DynamoNewStageQuestion,
+    "orgId" | "stageId" | "GSI1SK" | "questionDescription"
+  > {
+  questionOrder: string[];
+}
 
 type orgIdAndQuestionId = "orgId" | "questionId";
 
-type DeleteQuestionInput = Pick<DynamoNewStageQuestion, orgIdAndQuestionId>;
+export interface DeleteQuestionInput
+  extends Pick<DynamoNewStageQuestion, orgIdAndQuestionId> {
+  stageId: string;
+  questionOrder: string[];
+  deletedQuestionIndex: number;
+}
 
 type GetQuestionInput = Pick<DynamoNewStageQuestion, orgIdAndQuestionId>;
 type GetQuestionOutput = DynamoNewStageQuestion;
 
-type GetAllQuestionsInStageInput = Pick<
-  DynamoNewStageQuestion,
-  "orgId" | "stageId"
->;
+export interface GetAllQuestionsInStageInput
+  extends Pick<DynamoNewStageQuestion, "orgId" | "stageId"> {
+  questionOrder: string[];
+}
 
 export interface UpdateQuestionInput
   extends Pick<DynamoNewStageQuestion, orgIdAndQuestionId> {
@@ -126,7 +141,10 @@ type orgIdAndApplicantId = "orgId" | "applicantId";
 type CreateApplicantOutput = DynamoNewApplicant;
 type GetApplicantByIdInput = Pick<DynamoNewApplicant, "applicantId">;
 
-type DeleteApplicantInput = Pick<DynamoNewApplicant, orgIdAndApplicantId>;
+type DeleteApplicantInput = Pick<
+  DynamoNewApplicant,
+  orgIdAndApplicantId | "openingId" | "stageId" // Last two are needed to decrement the applicant count
+>;
 
 // TODO types for files, etc.
 export interface GetApplicantByIdOutput extends DynamoNewApplicant {
@@ -161,7 +179,10 @@ type GetAllApplicantsInOpeningInput = Pick<
 >;
 
 type GetAllOpeningsInOrgInput = Pick<DynamoNewOpening, "orgId">;
-type GetAllStagesInOpeningInput = Pick<DynamoNewOpening, "orgId" | "openingId">;
+type GetAllStagesInOpeningInput = Pick<
+  DynamoNewOpening,
+  "orgId" | "openingId" | "stageOrder"
+>;
 type GetOpeningByIdInput = Pick<DynamoNewOpening, "orgId" | "openingId">;
 export interface UpdateOpeningInput
   extends Pick<DynamoNewOpening, "orgId" | "openingId"> {

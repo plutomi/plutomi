@@ -47,7 +47,7 @@ export default function StageSettingsContent() {
   const updateQuestion = async () => {
     try {
       const question = questions.find(
-        (question) => question?.questionId == questionModal.questionId
+        (question) => question?.questionId === questionModal.questionId
       );
 
       // Get the difference between the question returned from SWR

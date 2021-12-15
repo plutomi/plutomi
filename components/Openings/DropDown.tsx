@@ -11,7 +11,7 @@ export default function OpeningsDropdown({ openings, index }) {
   const [selected, setSelected] = useState(openings[index]);
 
   const handleChange = (newValue) => {
-    if (selected == newValue) {
+    if (selected === newValue) {
       return;
     }
     setSelected(newValue);
