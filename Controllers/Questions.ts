@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import { UpdateQuestionInput } from "../types/main";
 import * as Questions from "../models/Questions/index";
 import Joi from "joi";
+import errorFormatter from "../utils/errorFormatter";
 export const create = async (req: Request, res: Response) => {
   const { GSI1SK, questionDescription, stageId } = req.body;
 
@@ -16,9 +17,11 @@ export const create = async (req: Request, res: Response) => {
     createStageQuestionInput
   );
   if (error) {
-    return res
-      .status(500)
-      .json({ message: "An error ocurred creating that question" });
+    const formattedError = errorFormatter(error);
+    return res.status(error.$metadata.httpStatusCode).json({
+      message: "An error ocurred creating question",
+      ...formattedError,
+    });
   }
   return res.status(201).json({ message: "Question created!" });
 };
@@ -32,9 +35,11 @@ export const deleteQuestion = async (req: Request, res: Response) => {
   };
   const [deleted, error] = await Questions.deleteQuestion(deleteQuestionInput);
   if (error) {
-    return res
-      .status(500) // TODO change #
-      .json({ message: `Unable to delete stage question: ${error}` });
+    const formattedError = errorFormatter(error);
+    return res.status(error.$metadata.httpStatusCode).json({
+      message: "An error ocurred deleting that question",
+      ...formattedError,
+    });
   }
   return res.status(200).json({ message: "Question deleted!" });
 };
@@ -64,7 +69,11 @@ export const update = async (req: Request, res: Response) => {
   const [updated, error] = await Questions.updateQuestion(updatedQuestionInput);
 
   if (error) {
-    return res.status(500).json({ message: `Unable to update question` });
+    const formattedError = errorFormatter(error);
+    return res.status(error.$metadata.httpStatusCode).json({
+      message: "An error ocurred updating that question",
+      ...formattedError,
+    });
   }
   return res.status(200).json({ message: "Question updated!" });
 };
