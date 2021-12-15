@@ -15,8 +15,7 @@ import sendEmail from "../utils/sendEmail";
 import * as Time from "../utils/time";
 import * as Users from "../models/Users/index";
 import { LOGIN_LINK_SETTINGS } from "../Config";
-import { DynamoNewUser } from "../types/dynamo";
-
+import errorFormatter from "../utils/errorFormatter";
 export const login = async (req: Request, res: Response) => {
   const { callbackUrl, seal } = req.query as Pick<
     CUSTOM_QUERY,
@@ -43,9 +42,11 @@ export const login = async (req: Request, res: Response) => {
   const [user, error] = await Users.getUserById({ userId }); // TODO async error handling
 
   if (error) {
-    return res
-      .status(500)
-      .json({ message: "An error ocurred getting your user info" });
+    const formattedError = errorFormatter(error);
+    return res.status(error.$metadata.httpStatusCode).json({
+      message: "An error ocurred getting your user info",
+      ...formattedError,
+    });
   }
   if (!user) {
     return res
@@ -61,7 +62,11 @@ export const login = async (req: Request, res: Response) => {
   });
 
   if (failed) {
-    return res.status(500).json({ message: "Unable to create login event :(" });
+    const formattedError = errorFormatter(failed);
+    return res.status(error.$metadata.httpStatusCode).json({
+      message: "Unable to create login event",
+      ...formattedError,
+    });
   }
 
   const cleanedUser = Sanitize.clean(user, ENTITY_TYPES.USER); // TODO not working!
@@ -117,9 +122,11 @@ export const createLoginLinks = async (req: Request, res: Response) => {
 
   let [user, error] = await Users.getUserByEmail({ email });
   if (error) {
-    return res
-      .status(500)
-      .json({ message: "An error ocurred getting your user info" });
+    const formattedError = errorFormatter(error);
+    return res.status(error.$metadata.httpStatusCode).json({
+      message: "An error ocurred getting your user info",
+      ...formattedError,
+    });
   }
 
   // If a user is signing in for the first time, create an account for them
@@ -127,9 +134,11 @@ export const createLoginLinks = async (req: Request, res: Response) => {
     const [createdUser, error] = await Users.createUser({ email });
 
     if (error) {
-      return res
-        .status(500)
-        .json({ message: "An error ocurred creating your account" });
+      const formattedError = errorFormatter(error);
+      return res.status(error.$metadata.httpStatusCode).json({
+        message: "An error ocurred creating your account",
+        ...formattedError,
+      });
     }
 
     user = createdUser;
@@ -140,9 +149,11 @@ export const createLoginLinks = async (req: Request, res: Response) => {
   });
 
   if (loginLinkError) {
-    return res
-      .status(500)
-      .json({ message: "An error ocurred creating your login link :(" });
+    const formattedError = errorFormatter(loginLinkError);
+    return res.status(error.$metadata.httpStatusCode).json({
+      message: "An error ocurred getting your login link",
+      ...formattedError,
+    });
   }
 
   // Limit the amount of links sent in a certain period of time
@@ -151,10 +162,10 @@ export const createLoginLinks = async (req: Request, res: Response) => {
   if (
     latestLink &&
     latestLink.createdAt >= timeThreshold &&
-    !user.email.endsWith("@plutomi.com") // todo contact enum or domain name
+    !user.email.endsWith(process.env.DOMAIN_NAME)
   ) {
     return res.status(400).json({
-      message: "You're doing that too much, please try again later", // TODO enum
+      message: "You're doing that too much, please try again later",
     });
   }
 
@@ -175,9 +186,11 @@ export const createLoginLinks = async (req: Request, res: Response) => {
   });
 
   if (creationError) {
-    return res
-      .status(500)
-      .json({ message: "An error ocurred creating your login link :(" });
+    const formattedError = errorFormatter(creationError);
+    return res.status(error.$metadata.httpStatusCode).json({
+      message: "An error ocurred creating your login link",
+      ...formattedError,
+    });
   }
 
   const loginLink = `${
@@ -202,9 +215,10 @@ export const createLoginLinks = async (req: Request, res: Response) => {
   });
 
   if (emailFailure) {
-    return res.status(500).json({
-      message:
-        "An error ocurred sending your login link, please try again in a bit",
+    const formattedError = errorFormatter(emailFailure);
+    return res.status(error.$metadata.httpStatusCode).json({
+      message: "An error ocurred sending your login link",
+      ...formattedError,
     });
   }
 

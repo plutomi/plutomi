@@ -66,7 +66,7 @@ export const create = async (req: Request, res: Response) => {
   });
 
   if (newApplicantError) {
-    const formattedError = errorFormatter(error);
+    const formattedError = errorFormatter(newApplicantError);
     return res.status(error.$metadata.httpStatusCode).json({
       message: "An error ocurred creating your application",
       ...formattedError,
@@ -84,7 +84,7 @@ export const create = async (req: Request, res: Response) => {
   });
 
   if (emailFailure) {
-    const formattedError = errorFormatter(error);
+    const formattedError = errorFormatter(emailFailure);
     return res.status(error.$metadata.httpStatusCode).json({
       message:
         "We've created your application link, however, we were not able to send you your email",
