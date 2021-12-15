@@ -14,7 +14,7 @@ import { SdkError } from "@aws-sdk/types";
 export default async function Create(
   props: CreateStageInput
 ): Promise<[null, null] | [null, SdkError]> {
-  const { orgId, GSI1SK, openingId } = props;
+  const { orgId, GSI1SK, openingId, stageOrder } = props;
   const stageId = nanoid(ID_LENGTHS.STAGE);
   const newStage: DynamoNewStage = {
     // TODO fix this type
@@ -32,70 +32,63 @@ export default async function Create(
   };
 
   try {
-    // TODO this should not be here, this should be in controller
-    let opening = await getOpening({ orgId, openingId });
+    // Get current opening
+    stageOrder.push(stageId);
 
-    try {
-      // Get current opening
-      opening.stageOrder.push(stageId);
-
-      if (opening.stageOrder.length >= LIMITS.MAX_CHILD_ENTITY_LIMIT) {
-        throw ERRORS.MAX_CHILD_ENTITY_LIMIT_ERROR_MESSAGE;
-      }
-
-      const transactParams: TransactWriteCommandInput = {
-        TransactItems: [
-          {
-            // Add a stage item
-            Put: {
-              Item: newStage,
-              TableName: DYNAMO_TABLE_NAME,
-              ConditionExpression: "attribute_not_exists(PK)",
-            },
-          },
-
-          {
-            // Add stage to the opening + increment stage count on opening
-            Update: {
-              Key: {
-                PK: `${ENTITY_TYPES.ORG}#${orgId}#${ENTITY_TYPES.OPENING}#${openingId}`,
-                SK: ENTITY_TYPES.OPENING,
-              },
-              TableName: DYNAMO_TABLE_NAME,
-
-              UpdateExpression:
-                "SET stageOrder = :stageOrder, totalStages = if_not_exists(totalStages, :zero) + :value",
-              ExpressionAttributeValues: {
-                ":stageOrder": opening.stageOrder,
-                ":zero": 0,
-                ":value": 1,
-              },
-            },
-          },
-          {
-            // Increment stage count on org
-            Update: {
-              Key: {
-                PK: `${ENTITY_TYPES.ORG}#${orgId}`,
-                SK: ENTITY_TYPES.ORG,
-              },
-              TableName: DYNAMO_TABLE_NAME,
-              UpdateExpression:
-                "SET totalStages = if_not_exists(totalStages, :zero) + :value",
-              ExpressionAttributeValues: {
-                ":zero": 0,
-                ":value": 1,
-              },
-            },
-          },
-        ],
-      };
-
-      await Dynamo.send(new TransactWriteCommand(transactParams));
-      return [null, null];
-    } catch (error) {
-      return [null, error];
+    if (stageOrder.length >= LIMITS.MAX_CHILD_ENTITY_LIMIT) {
+      throw ERRORS.MAX_CHILD_ENTITY_LIMIT_ERROR_MESSAGE;
     }
+
+    const transactParams: TransactWriteCommandInput = {
+      TransactItems: [
+        {
+          // Add a stage item
+          Put: {
+            Item: newStage,
+            TableName: DYNAMO_TABLE_NAME,
+            ConditionExpression: "attribute_not_exists(PK)",
+          },
+        },
+
+        {
+          // Add stage to the opening + increment stage count on opening
+          Update: {
+            Key: {
+              PK: `${ENTITY_TYPES.ORG}#${orgId}#${ENTITY_TYPES.OPENING}#${openingId}`,
+              SK: ENTITY_TYPES.OPENING,
+            },
+            TableName: DYNAMO_TABLE_NAME,
+
+            UpdateExpression:
+              "SET stageOrder = :stageOrder, totalStages = if_not_exists(totalStages, :zero) + :value",
+            ExpressionAttributeValues: {
+              ":stageOrder": stageOrder,
+              ":zero": 0,
+              ":value": 1,
+            },
+          },
+        },
+        {
+          // Increment stage count on org
+          Update: {
+            Key: {
+              PK: `${ENTITY_TYPES.ORG}#${orgId}`,
+              SK: ENTITY_TYPES.ORG,
+            },
+            TableName: DYNAMO_TABLE_NAME,
+            UpdateExpression:
+              "SET totalStages = if_not_exists(totalStages, :zero) + :value",
+            ExpressionAttributeValues: {
+              ":zero": 0,
+              ":value": 1,
+            },
+          },
+        },
+      ],
+    };
+
+    await Dynamo.send(new TransactWriteCommand(transactParams));
+    return [null, null];
   } catch (error) {
     return [null, error];
   }

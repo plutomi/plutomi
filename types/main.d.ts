@@ -70,7 +70,10 @@ declare module "iron-session" {
   }
 }
 
-type CreateStageInput = Pick<DynamoNewStage, "orgId" | "GSI1SK" | "openingId">;
+export interface CreateStageInput
+  extends Pick<DynamoNewStage, "orgId" | "GSI1SK" | "openingId"> {
+  stageOrder: string[];
+}
 type DeleteStageInput = Pick<DynamoNewStage, "orgId" | "stageId">;
 type GetStageByIdInput = Pick<DynamoNewStage, "orgId" | "stageId">;
 type GetStageByIdOutput = DynamoNewStage;

@@ -1,28 +1,30 @@
 import { Request, Response } from "express";
 import { DEFAULTS } from "../Config";
-import { UpdateStageInput } from "../types/main";
+import { CreateStageInput, UpdateStageInput } from "../types/main";
 import * as Stages from "../models/Stages/index";
+import * as Openings from "../models/Openings/index";
 import Joi from "joi";
 import errorFormatter from "../utils/errorFormatter";
 export const create = async (req: Request, res: Response) => {
   const { GSI1SK, openingId } = req.body;
-
+  const { orgId } = req.session.user;
   if (req.session.user.orgId === DEFAULTS.NO_ORG) {
     return res.status(403).json({
       message: "Please create an organization before creating a stage",
     });
   }
-  const createStageInput = {
+  let createStageInput: CreateStageInput = {
     orgId: req.session.user.orgId,
     openingId: openingId,
     GSI1SK: GSI1SK,
+    stageOrder: [], // TODO THIS IS BAD AND SHOULD NOT BE HERE!!!!!!!!!
   };
 
   const schema = Joi.object({
     orgId: Joi.string(),
     openingId: Joi.string(),
     GSI1SK: Joi.string(),
-  }).options({ presence: "required" }); // TODo add actual inputs of new question values
+  }).options({ presence: "required" });
 
   // Validate input
   try {
@@ -30,6 +32,21 @@ export const create = async (req: Request, res: Response) => {
   } catch (error) {
     return res.status(400).json({ message: `${error.message}` });
   }
+
+  let [opening, openingError] = await Openings.getOpeningById({
+    orgId,
+    openingId,
+  });
+
+  if (openingError) {
+    const formattedError = errorFormatter(openingError);
+    return res.status(openingError.$metadata.httpStatusCode).json({
+      message:
+        "An error ocurred creating the stage, unable to get opening info",
+      ...formattedError,
+    });
+  }
+  createStageInput = { ...createStageInput, stageOrder: opening.stageOrder };
 
   const [created, error] = await Stages.createStage(createStageInput);
   if (error) {
