@@ -9,7 +9,7 @@ import * as Openings from "../models/Openings/index";
 import * as Applicants from "../models/Applicants/index";
 import _ from "lodash";
 import Joi from "joi";
-
+import errorFormatter from "../utils/errorFormatter";
 const UrlSafeString = require("url-safe-string"),
   tagGenerator = new UrlSafeString();
 export const create = async (req: Request, res: Response) => {
@@ -45,9 +45,11 @@ export const create = async (req: Request, res: Response) => {
   });
 
   if (error) {
-    return res
-      .status(400)
-      .json({ message: "An error ocurred retrieving opening info" });
+    const formattedError = errorFormatter(error);
+    return res.status(error.$metadata.httpStatusCode).json({
+      message: `An error ocurred retrieving opening info`,
+      ...formattedError,
+    });
   }
   // We need the first stage in this opening
   if (!opening) {
