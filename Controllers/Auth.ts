@@ -43,7 +43,7 @@ export const login = async (req: Request, res: Response) => {
 
   if (error) {
     const formattedError = errorFormatter(error);
-    return res.status(error.$metadata.httpStatusCode).json({
+    return res.status(formattedError.httpStatusCode).json({
       message: "An error ocurred getting your user info",
       ...formattedError,
     });
@@ -63,7 +63,7 @@ export const login = async (req: Request, res: Response) => {
 
   if (failed) {
     const formattedError = errorFormatter(failed);
-    return res.status(error.$metadata.httpStatusCode).json({
+    return res.status(formattedError.httpStatusCode).json({
       message: "Unable to create login event",
       ...formattedError,
     });
@@ -120,10 +120,10 @@ export const createLoginLinks = async (req: Request, res: Response) => {
     return res.status(400).json({ message: `${error.message}` });
   }
 
-  let [user, error] = await Users.getUserByEmail({ email });
-  if (error) {
-    const formattedError = errorFormatter(error);
-    return res.status(error.$metadata.httpStatusCode).json({
+  let [user, userError] = await Users.getUserByEmail({ email });
+  if (userError) {
+    const formattedError = errorFormatter(userError);
+    return res.status(formattedError.httpStatusCode).json({
       message: "An error ocurred getting your user info",
       ...formattedError,
     });
@@ -131,11 +131,11 @@ export const createLoginLinks = async (req: Request, res: Response) => {
 
   // If a user is signing in for the first time, create an account for them
   if (!user) {
-    const [createdUser, error] = await Users.createUser({ email });
+    const [createdUser, createUserError] = await Users.createUser({ email });
 
-    if (error) {
-      const formattedError = errorFormatter(error);
-      return res.status(error.$metadata.httpStatusCode).json({
+    if (createUserError) {
+      const formattedError = errorFormatter(createUserError);
+      return res.status(formattedError.httpStatusCode).json({
         message: "An error ocurred creating your account",
         ...formattedError,
       });
@@ -150,7 +150,7 @@ export const createLoginLinks = async (req: Request, res: Response) => {
 
   if (loginLinkError) {
     const formattedError = errorFormatter(loginLinkError);
-    return res.status(error.$metadata.httpStatusCode).json({
+    return res.status(formattedError.httpStatusCode).json({
       message: "An error ocurred getting your login link",
       ...formattedError,
     });
@@ -187,7 +187,7 @@ export const createLoginLinks = async (req: Request, res: Response) => {
 
   if (creationError) {
     const formattedError = errorFormatter(creationError);
-    return res.status(error.$metadata.httpStatusCode).json({
+    return res.status(formattedError.httpStatusCode).json({
       message: "An error ocurred creating your login link",
       ...formattedError,
     });
@@ -216,7 +216,7 @@ export const createLoginLinks = async (req: Request, res: Response) => {
 
   if (emailFailure) {
     const formattedError = errorFormatter(emailFailure);
-    return res.status(error.$metadata.httpStatusCode).json({
+    return res.status(formattedError.httpStatusCode).json({
       message: "An error ocurred sending your login link",
       ...formattedError,
     });
