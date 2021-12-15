@@ -1,16 +1,36 @@
 import { Request, Response } from "express";
 import { UpdateQuestionInput } from "../types/main";
 import * as Questions from "../models/Questions/index";
+import * as Stages from "../models/Stages/index";
 import Joi from "joi";
 import errorFormatter from "../utils/errorFormatter";
+import { ERRORS, LIMITS } from "../Config";
 export const create = async (req: Request, res: Response) => {
   const { GSI1SK, questionDescription, stageId } = req.body;
+  const { orgId } = req.session.user;
+
+  let [stage, stageError] = await Stages.getStageById({ orgId, stageId });
+
+  if (stageError) {
+    const formattedError = errorFormatter(stageError);
+    return res.status(stageError.$metadata.httpStatusCode).json({
+      message:
+        "An error ocurred creating question, unable to retrieve stage info",
+      ...formattedError,
+    });
+  }
+  if (stage.questionOrder.length >= LIMITS.MAX_CHILD_ENTITY_LIMIT) {
+    return res
+      .status(403)
+      .json({ message: ERRORS.MAX_CHILD_ENTITY_LIMIT_ERROR_MESSAGE });
+  }
 
   const createStageQuestionInput = {
     orgId: req.session.user.orgId,
     stageId: stageId,
     GSI1SK: GSI1SK,
     questionDescription: questionDescription,
+    questionOrder: stage.questionOrder,
   };
 
   const [created, error] = await Questions.createQuestion(

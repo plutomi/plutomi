@@ -92,10 +92,13 @@ export interface UpdateUserInput extends Pick<DynamoNewUser, "userId"> {
   ALLOW_FORBIDDEN_KEYS?: boolean;
 }
 
-type CreateStageQuestionInput = Pick<
-  DynamoNewStageQuestion,
-  "orgId" | "stageId" | "GSI1SK" | "questionDescription"
->;
+export interface CreateStageQuestionInput
+  extends Pick<
+    DynamoNewStageQuestion,
+    "orgId" | "stageId" | "GSI1SK" | "questionDescription"
+  > {
+  questionOrder: string[];
+}
 
 type orgIdAndQuestionId = "orgId" | "questionId";
 

@@ -14,7 +14,7 @@ const { DYNAMO_TABLE_NAME } = process.env;
 export default async function Create(
   props: CreateStageQuestionInput
 ): Promise<[null, null] | [null, SdkError]> {
-  const { orgId, stageId, GSI1SK, questionDescription } = props;
+  const { orgId, stageId, GSI1SK, questionDescription, questionOrder } = props;
   const now = Time.currentISO();
   const questionId = nanoid(ID_LENGTHS.STAGE_QUESTION);
   const newStageQuestion: DynamoNewStageQuestion = {
@@ -31,47 +31,36 @@ export default async function Create(
   };
 
   try {
-    // TODO i dont think this should be here
-    let stage = await Stages.getStageById({ orgId, stageId });
+    questionOrder.push(questionId);
 
-    if (stage.questionOrder.length >= LIMITS.MAX_CHILD_ENTITY_LIMIT) {
-      throw ERRORS.MAX_CHILD_ENTITY_LIMIT_ERROR_MESSAGE;
-    }
-
-    try {
-      stage.questionOrder.push(questionId);
-
-      const transactParams: TransactWriteCommandInput = {
-        TransactItems: [
-          {
-            // Add question
-            Put: {
-              Item: newStageQuestion,
-              TableName: DYNAMO_TABLE_NAME,
+    const transactParams: TransactWriteCommandInput = {
+      TransactItems: [
+        {
+          // Add question
+          Put: {
+            Item: newStageQuestion,
+            TableName: DYNAMO_TABLE_NAME,
+          },
+        },
+        {
+          // Add question to question order
+          Update: {
+            Key: {
+              PK: `${ENTITY_TYPES.ORG}#${orgId}#${ENTITY_TYPES.STAGE}#${stageId}`,
+              SK: ENTITY_TYPES.STAGE,
+            },
+            TableName: DYNAMO_TABLE_NAME,
+            UpdateExpression: "SET questionOrder = :questionOrder",
+            ExpressionAttributeValues: {
+              ":questionOrder": questionOrder,
             },
           },
-          {
-            // Add question to question order
-            Update: {
-              Key: {
-                PK: `${ENTITY_TYPES.ORG}#${orgId}#${ENTITY_TYPES.STAGE}#${stageId}`,
-                SK: ENTITY_TYPES.STAGE,
-              },
-              TableName: DYNAMO_TABLE_NAME,
-              UpdateExpression: "SET questionOrder = :questionOrder",
-              ExpressionAttributeValues: {
-                ":questionOrder": stage.questionOrder,
-              },
-            },
-          },
-        ],
-      };
+        },
+      ],
+    };
 
-      await Dynamo.send(new TransactWriteCommand(transactParams));
-      return [null, null];
-    } catch (error) {
-      return [null, error];
-    }
+    await Dynamo.send(new TransactWriteCommand(transactParams));
+    return [null, null];
   } catch (error) {
     return [null, error];
   }
