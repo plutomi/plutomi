@@ -13,137 +13,168 @@ import * as Invites from "../models/Invites/index";
 import * as Time from "./../utils/time";
 import * as Users from "../models/Users/index";
 import * as Orgs from "../models/Orgs/index";
+const UrlSafeString = require("url-safe-string"),
+  tagGenerator = new UrlSafeString();
+
 export const create = async (req: Request, res: Response) => {
-  const { body, method } = req;
-  const { recipientEmail } = body; // todo trim and lowercase this email
-  const expiresAt = Time.futureISO(3, TIME_UNITS.DAYS);
+  const { body } = req;
+  const recipientEmail = tagGenerator(body.recipientEmail.trim());
+
+  if (req.session.user.email === recipientEmail) {
+    return res.status(400).json({ message: "You can't invite yourself" }); // TODO errors enum
+  }
+
+  if (req.session.user.orgId === DEFAULTS.NO_ORG) {
+    return res.status(400).json({
+      message: `You must create an organization before inviting users`, // TODO errors enum
+    });
+  }
+
   const [org, error] = await Orgs.getOrgById({ orgId: req.session.user.orgId });
 
   if (error) {
-    console.error("error creating invite", error);
+    return res
+      .status(500)
+      .json({ message: "An error retrieving your org information" });
+  }
+
+  const schema = Joi.object({
+    recipientEmail: Joi.string().email().messages({
+      "string.base": `"recipientEmail" must be a string`,
+      "string.email": `"recipientEmail" must be a valid email`,
+    }),
+  }).options({ presence: "required" });
+
+  try {
+    await schema.validateAsync(body);
+  } catch (error) {
+    return res.status(400).json({ message: `${error.message}` });
+  }
+
+  let [recipient, recipientError] = await Users.getUserByEmail({
+    email: recipientEmail,
+  });
+
+  if (recipientError) {
+    return res
+      .status(500)
+      .json({ message: "An error ocurred getting your invitee's information" });
+  }
+
+  if (!recipient) {
+    const [createdUser, error] = await Users.createUser({
+      email: recipientEmail,
+    });
+
+    if (error) {
+      return res.status(500).json({
+        message: "An error ocurred creating an account for your invitee",
+      });
+    }
+    recipient = createdUser;
+  }
+
+  const [inviteCreated, inviteError] = await Invites.createInvite({
+    orgId: org.orgId, // TODO should be fixed with return type above
+    recipient: recipient,
+    orgName: org.GSI1SK,
+    expiresAt: Time.futureISO(3, TIME_UNITS.DAYS),
+    createdBy: req.session.user,
+  });
+
+  if (inviteError) {
     return res
       .status(500)
       .json({ message: "An error ocurred creating your invite" });
   }
 
-  if (method === API_METHODS.POST) {
-    // TODO add types
-    const schema = Joi.object({
-      recipientEmail: Joi.string().email().messages({
-        "string.base": `"recipientEmail" must be a string`,
-        "string.email": `"recipientEmail" must be a valid email`,
-      }),
-    }).options({ presence: "required" });
+  const [emailSent, emailFailure] = await sendEmail({
+    // TODO async decouple this
+    fromName: org.GSI1SK,
+    fromAddress: EMAILS.GENERAL,
+    toAddresses: [recipientEmail],
+    subject: `${req.session.user.firstName} ${req.session.user.lastName} has invited you to join them on Plutomi!`,
+    html: `<h4>You can log in at <a href="${process.env.WEBSITE_URL}" target="_blank" rel=noreferrer>${process.env.WEBSITE_URL}</a> to accept it!</h4><p>If you believe this email was received in error, you can safely ignore it.</p>`,
+  }); // TODO add target=_blank and rel=noreferrer ^
 
-    try {
-      await schema.validateAsync(body);
-    } catch (error) {
-      return res.status(400).json({ message: `${error.message}` });
-    }
-
-    if (req.session.user.email === recipientEmail) {
-      return res.status(400).json({ message: "You can't invite yourself" }); // TODO errors enum
-    }
-
-    if (req.session.user.orgId === DEFAULTS.NO_ORG) {
-      return res.status(400).json({
-        message: `You must create an organization before inviting users`, // TODO errors enum
-      });
-    }
-
-    let recipient = await Users.getUserByEmail({ email: recipientEmail });
-
-    if (!recipient) {
-      recipient = await Users.createUser({ email: recipientEmail });
-    }
-
-    try {
-      await Invites.createInvite({
-        orgId: org.orgId, // TODO should be fixed with return type above
-        recipient: recipient,
-        orgName: org.GSI1SK,
-        expiresAt: expiresAt,
-        createdBy: req.session.user,
-      });
-      try {
-        await sendEmail({
-          // TODO async decouple this
-          fromName: org.GSI1SK, // TODO should be fixed with return type above
-          fromAddress: EMAILS.GENERAL,
-          toAddresses: [recipient.email],
-          subject: `${req.session.user.firstName} ${req.session.user.lastName} has invited you to join them on Plutomi!`,
-          html: `<h4>You can log in at <a href="${process.env.WEBSITE_URL}" target="_blank" rel=noreferrer>${process.env.WEBSITE_URL}</a> to accept it!</h4><p>If you believe this email was received in error, you can safely ignore it.</p>`,
-        }); // TODO add target=_blank and rel=noreferrer ^
-        return res
-          .status(201)
-          .json({ message: `Invite sent to '${recipient.email}'` });
-      } catch (error) {
-        return res.status(500).json({
-          // TODO update this since email will be done with streams
-          message: `The invite was created, but we were not able to send an email to the user. They can log in and accept their invite at https://plutomi.com/invites - ${error}`,
-        });
-      }
-    } catch (error) {
-      return res.status(500).json({ message: `${error}` });
-    }
+  if (emailFailure) {
+    return res.status(500).json({
+      // TODO update this since email will be done with streams
+      message: `The invite was created, but we were not able to send an email to the user. They can log in and accept their invite at https://plutomi.com/invites - ${error}`,
+    });
   }
+
+  return res
+    .status(201)
+    .json({ message: `Invite sent to '${recipientEmail}'` });
 };
 
 export const accept = async (req: Request, res: Response) => {
   const { inviteId } = req.params;
-  // TODO trycatch
-  const invite = await Invites.getInviteById({
+
+  if (req.session.user.orgId !== DEFAULTS.NO_ORG) {
+    return res.status(400).json({
+      message: `You already belong to an org: ${req.session.user.orgId} - delete it before joining another one!`,
+    });
+  }
+
+  const [invite, error] = await Invites.getInviteById({
     inviteId: inviteId,
     userId: req.session.user.userId,
   });
+
+  if (error) {
+    return res
+      .status(500)
+      .json({ message: "An error ocurred getting the info for your invite" });
+  }
 
   if (!invite) {
     return res.status(400).json({ message: `Invite no longer exists` });
   }
 
-  if (req.session.user.orgId !== DEFAULTS.NO_ORG) {
-    return res.status(400).json({
-      message: `You already belong to an org: ${req.session.user.orgId}`,
-    });
+  const [joined, joinError] = await Invites.joinOrgFromInvite({
+    userId: req.session.user.userId,
+    invite,
+  });
+
+  if (joinError) {
+    return res
+      .status(500)
+      .json({ message: "We were unable to join that org, please try again" });
   }
 
-  try {
-    await Invites.joinOrgFromInvite({
-      userId: req.session.user.userId,
-      invite,
-    });
+  const [updatedUser, updatedUserFailure] = await Users.getUserById({
+    userId: req.session.user.userId,
+  });
 
-    const updatedUser = await Users.getUserById({
-      userId: req.session.user.userId,
+  if (updatedUserFailure) {
+    return res.status(500).json({
+      message:
+        "We were able to succesfully join the org, but we were unable to update your session. Please log out and log in again!",
     });
-
-    req.session.user = Sanitize.clean(updatedUser, ENTITY_TYPES.USER);
-    await req.session.save();
-    return res
-      .status(200)
-      .json({ message: `You've joined the ${invite.orgName} org!` });
-  } catch (error) {
-    return res
-      .status(500) // TODO change #
-      .json({
-        message: `We were unable to  ${error}`,
-      });
   }
+  req.session.user = Sanitize.clean(updatedUser, ENTITY_TYPES.USER);
+  await req.session.save();
+  return res
+    .status(200)
+    .json({ message: `You've joined the ${invite.orgName} org!` });
 };
 
 export const reject = async (req: Request, res: Response) => {
   const { inviteId } = req.params;
-  try {
-    await Invites.deleteInvite({
-      inviteId: inviteId,
-      userId: req.session.user.userId,
-    });
-    req.session.user.totalInvites -= 1;
-    await req.session.save();
-    return res.status(200).json({ message: "Invite rejected!" }); // TODO enum for RESPONSES
-  } catch (error) {
+
+  const [deleted, error] = await Invites.deleteInvite({
+    inviteId: inviteId,
+    userId: req.session.user.userId,
+  });
+
+  if (error) {
     return res
       .status(500)
-      .json({ message: `Unable to reject invite - ${error}` });
+      .json({ message: "We were unable to delete that invite :(" });
   }
+  req.session.user.totalInvites -= 1;
+  await req.session.save();
+  return res.status(200).json({ message: "Invite rejected!" }); // TODO enum for RESPONSES
 };
