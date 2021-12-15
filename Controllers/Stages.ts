@@ -44,7 +44,7 @@ export const create = async (req: Request, res: Response) => {
 
   if (openingError) {
     const formattedError = errorFormatter(openingError);
-    return res.status(openingError.$metadata.httpStatusCode).json({
+    return res.status(formattedError.httpStatusCode).json({
       message:
         "An error ocurred creating the stage, unable to get opening info",
       ...formattedError,
@@ -55,7 +55,7 @@ export const create = async (req: Request, res: Response) => {
   const [created, error] = await Stages.createStage(createStageInput);
   if (error) {
     const formattedError = errorFormatter(error);
-    return res.status(error.$metadata.httpStatusCode).json({
+    return res.status(formattedError.httpStatusCode).json({
       message: "An error ocurred creating the stage",
       ...formattedError,
     });
@@ -71,7 +71,7 @@ export const deleteStage = async (req: Request, res: Response) => {
 
   if (stageError) {
     const formattedError = errorFormatter(stageError);
-    return res.status(stageError.$metadata.httpStatusCode).json({
+    return res.status(formattedError.httpStatusCode).json({
       message: "An error ocurred deleting stage, unable to get stage info",
       ...formattedError,
     });
@@ -84,7 +84,7 @@ export const deleteStage = async (req: Request, res: Response) => {
 
   if (openingError) {
     const formattedError = errorFormatter(openingError);
-    return res.status(openingError.$metadata.httpStatusCode).json({
+    return res.status(formattedError.httpStatusCode).json({
       message: "An error ocurred deleting stage, unable to get opening info",
       ...formattedError,
     });
@@ -101,7 +101,7 @@ export const deleteStage = async (req: Request, res: Response) => {
 
   if (error) {
     const formattedError = errorFormatter(error);
-    return res.status(error.$metadata.httpStatusCode).json({
+    return res.status(formattedError.httpStatusCode).json({
       message: "An error ocurred deleting stage",
       ...formattedError,
     });
@@ -120,7 +120,7 @@ export const getStageInfo = async (req: Request, res: Response) => {
 
   if (error) {
     const formattedError = errorFormatter(error);
-    return res.status(error.$metadata.httpStatusCode).json({
+    return res.status(formattedError.httpStatusCode).json({
       message: "An error ocurred retrieving stage info",
       ...formattedError,
     });
@@ -158,7 +158,7 @@ export const update = async (req: Request, res: Response) => {
   const [updated, error] = await Stages.updateStage(updateStageInput);
   if (error) {
     const formattedError = errorFormatter(error);
-    return res.status(error.$metadata.httpStatusCode).json({
+    return res.status(formattedError.httpStatusCode).json({
       message: "An error ocurred updating stage",
       ...formattedError,
     });
@@ -179,7 +179,7 @@ export const getApplicantsInStage = async (req: Request, res: Response) => {
 
   if (error) {
     const formattedError = errorFormatter(error);
-    return res.status(error.$metadata.httpStatusCode).json({
+    return res.status(formattedError.httpStatusCode).json({
       message: "An error ocurred getting applicants in this stage",
       ...formattedError,
     });
@@ -197,7 +197,7 @@ export const getQuestionsInStage = async (req: Request, res: Response) => {
 
   if (error) {
     const formattedError = errorFormatter(error);
-    return res.status(error.$metadata.httpStatusCode).json({
+    return res.status(formattedError.httpStatusCode).json({
       message: "An error ocurred retrieving questions in this stage",
       ...formattedError,
     });
