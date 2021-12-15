@@ -102,7 +102,12 @@ export interface CreateStageQuestionInput
 
 type orgIdAndQuestionId = "orgId" | "questionId";
 
-type DeleteQuestionInput = Pick<DynamoNewStageQuestion, orgIdAndQuestionId>;
+export interface DeleteQuestionInput
+  extends Pick<DynamoNewStageQuestion, orgIdAndQuestionId> {
+  stageId: string;
+  questionOrder: string[];
+  deletedQuestionIndex: number;
+}
 
 type GetQuestionInput = Pick<DynamoNewStageQuestion, orgIdAndQuestionId>;
 type GetQuestionOutput = DynamoNewStageQuestion;

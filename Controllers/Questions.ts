@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { UpdateQuestionInput } from "../types/main";
+import { DeleteQuestionInput, UpdateQuestionInput } from "../types/main";
 import * as Questions from "../models/Questions/index";
 import * as Stages from "../models/Stages/index";
 import Joi from "joi";
@@ -48,11 +48,45 @@ export const create = async (req: Request, res: Response) => {
 
 export const deleteQuestion = async (req: Request, res: Response) => {
   const { questionId } = req.params;
+  const { orgId } = req.session.user;
 
-  const deleteQuestionInput = {
+  let [question, questionError] = await Questions.getQuestionById({
+    orgId,
+    questionId,
+  });
+
+  if (questionError) {
+    const formattedError = errorFormatter(questionError);
+    return res.status(questionError.$metadata.httpStatusCode).json({
+      message:
+        "An error ocurred deleting that question, unable to retrieve question info",
+      ...formattedError,
+    });
+  }
+
+  let [stage, stageError] = await Stages.getStageById({
+    orgId,
+    stageId: question.stageId,
+  });
+  if (stageError) {
+    const formattedError = errorFormatter(stageError);
+    return res.status(stageError.$metadata.httpStatusCode).json({
+      message:
+        "An error ocurred deleting that question, unable to retrieve stage info",
+      ...formattedError,
+    });
+  }
+
+  const deletedQuestionIndex = stage.questionOrder.indexOf(questionId);
+
+  const deleteQuestionInput: DeleteQuestionInput = {
     orgId: req.session.user.orgId,
     questionId: questionId,
+    stageId: stage.stageId,
+    questionOrder: stage.questionOrder,
+    deletedQuestionIndex: deletedQuestionIndex,
   };
+
   const [deleted, error] = await Questions.deleteQuestion(deleteQuestionInput);
   if (error) {
     const formattedError = errorFormatter(error);
