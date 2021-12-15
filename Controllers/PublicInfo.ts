@@ -16,7 +16,7 @@ export const getOrgInfo = async (req: Request, res: Response) => {
 
   if (error) {
     const formattedError = errorFormatter(error);
-    return res.status(error.$metadata.httpStatusCode).json({
+    return res.status(formattedError.httpStatusCode).json({
       message: "An error ocurred retrieving this org's info",
       ...formattedError,
     });
@@ -35,7 +35,7 @@ export const getOrgOpenings = async (req: Request, res: Response) => {
   const [openings, error] = await Orgs.getOpeningsInOrg({ orgId });
   if (error) {
     const formattedError = errorFormatter(error);
-    return res.status(error.$metadata.httpStatusCode).json({
+    return res.status(formattedError.httpStatusCode).json({
       message: "An error ocurred retrieving the openings for this org",
       ...formattedError,
     });
@@ -59,7 +59,7 @@ export const getOpeningInfo = async (req: Request, res: Response) => {
 
   if (error) {
     const formattedError = errorFormatter(error);
-    return res.status(error.$metadata.httpStatusCode).json({
+    return res.status(formattedError.httpStatusCode).json({
       message: "An error ocurred retrieving this opening's",
       ...formattedError,
     });
@@ -84,7 +84,7 @@ export const getStageInfo = async (req: Request, res: Response) => {
   const [stage, error] = await Stages.getStageById({ orgId, stageId });
   if (error) {
     const formattedError = errorFormatter(error);
-    return res.status(error.$metadata.httpStatusCode).json({
+    return res.status(formattedError.httpStatusCode).json({
       message: "An error ocurred retrieving this stage's info",
       ...formattedError,
     });
@@ -107,7 +107,7 @@ export const getStageQuestions = async (req: Request, res: Response) => {
 
   if (error) {
     const formattedError = errorFormatter(error);
-    return res.status(error.$metadata.httpStatusCode).json({
+    return res.status(formattedError.httpStatusCode).json({
       message: "An error ocurred retrieving questions for this stage",
       ...formattedError,
     });
