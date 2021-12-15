@@ -126,7 +126,10 @@ type orgIdAndApplicantId = "orgId" | "applicantId";
 type CreateApplicantOutput = DynamoNewApplicant;
 type GetApplicantByIdInput = Pick<DynamoNewApplicant, "applicantId">;
 
-type DeleteApplicantInput = Pick<DynamoNewApplicant, orgIdAndApplicantId>;
+type DeleteApplicantInput = Pick<
+  DynamoNewApplicant,
+  orgIdAndApplicantId | "openingId" | "stageId" // Last two are needed to decrement the applicant count
+>;
 
 // TODO types for files, etc.
 export interface GetApplicantByIdOutput extends DynamoNewApplicant {

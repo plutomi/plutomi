@@ -11,12 +11,7 @@ import { SdkError } from "@aws-sdk/types";
 export default async function Remove(
   props: DeleteApplicantInput
 ): Promise<[null, null] | [null, SdkError]> {
-  const { orgId, applicantId } = props;
-  // TODO this shouldn't be here, move up to controller
-  const applicant = await getApplicantById({
-    applicantId,
-  });
-
+  const { orgId, applicantId, openingId, stageId } = props;
   try {
     const transactParams: TransactWriteCommandInput = {
       TransactItems: [
@@ -35,7 +30,7 @@ export default async function Remove(
           // Decrement opening's totalApplicants
           Update: {
             Key: {
-              PK: `${ENTITY_TYPES.ORG}#${orgId}#${ENTITY_TYPES.OPENING}#${applicant.openingId}`, // todo fix types
+              PK: `${ENTITY_TYPES.ORG}#${orgId}#${ENTITY_TYPES.OPENING}#${openingId}`,
               SK: ENTITY_TYPES.OPENING,
             },
             TableName: DYNAMO_TABLE_NAME,
@@ -49,7 +44,7 @@ export default async function Remove(
           // Decrement stage's totalApplicants
           Update: {
             Key: {
-              PK: `${ENTITY_TYPES.ORG}#${orgId}#${ENTITY_TYPES.STAGE}#${applicant.stageId}`, // todo fix types
+              PK: `${ENTITY_TYPES.ORG}#${orgId}#${ENTITY_TYPES.STAGE}#${stageId}`,
               SK: ENTITY_TYPES.STAGE,
             },
             TableName: DYNAMO_TABLE_NAME,

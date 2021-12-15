@@ -121,9 +121,23 @@ export const get = async (req: Request, res: Response) => {
 export const remove = async (req: Request, res: Response) => {
   const { applicantId } = req.params;
 
+  const [applicant, applicantError] = await Applicants.getApplicantById({
+    applicantId,
+  });
+
+  if (applicantError) {
+    const formattedError = errorFormatter(applicantError);
+    return res.status(applicantError.$metadata.httpStatusCode).json({
+      message: "An error ocurred getting applicant info, unable to delete",
+      ...formattedError,
+    });
+  }
+
   const [success, error] = await Applicants.deleteApplicant({
     orgId: req.session.user.orgId,
     applicantId: applicantId!,
+    openingId: applicant.openingId,
+    stageId: applicant.stageId,
   });
 
   if (error) {
