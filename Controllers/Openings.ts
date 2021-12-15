@@ -105,11 +105,19 @@ export const deleteOpeningController = async (req: Request, res: Response) => {
     });
   }
   // TODO we should send this to a queue instead, and delete all sub items
-  const allStages = await Openings.getStagesInOpening({
+  const [allStages, allStagesError] = await Openings.getStagesInOpening({
     orgId,
     openingId,
     stageOrder: opening.stageOrder,
   });
+
+  if (allStagesError) {
+    const formattedError = errorFormatter(allStagesError);
+    return res.status(formattedError.httpStatusCode).json({
+      message: "Unable to delete opening, unable to get stage info",
+      ...formattedError,
+    });
+  }
   // Delete stages first
   if (allStages.length) {
     allStages.map(async (stage) => {
