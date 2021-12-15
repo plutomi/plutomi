@@ -111,7 +111,16 @@ export const get = async (req: Request, res: Response) => {
 };
 
 export const deleteOrg = async (req: Request, res: Response) => {
-  const { orgId } = req.session.user;
+  const { orgId } = req.params;
+
+  if (req.session.user.orgId !== orgId) {
+    return res
+      .status(400)
+      .json({
+        message: "You cannot delete this org as you do not belong to i",
+      });
+  }
+  
   const [org, error] = await Orgs.getOrgById({ orgId: orgId });
 
   if (error) {

@@ -54,14 +54,8 @@ app.get(
 
 // Orgs
 app.post("/orgs", [withAuth], Orgs.create);
-
-/** // TODO change this
- * The reason for this here instead of @ /orgs/:orgId is because
- * we can get the orgId of the user form their session token
- * and ensure that they can only delete orgs that they are in and not have to do a check
- */
-app.delete("/orgs", [withAuth], Orgs.deleteOrg);
 app.get("/orgs/:orgId", [withAuth], Orgs.get);
+app.delete("/orgs/:orgId", [withAuth], Orgs.deleteOrg);
 // app.get("/orgs/:orgId/invites").get([withAuth], ) // TODO - Get all invites for org
 
 app.get("/openings", [withAuth], Openings.getAllOpenings);

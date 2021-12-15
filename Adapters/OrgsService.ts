@@ -20,8 +20,8 @@ export default class OrgsService {
     return data;
   }
 
-  static async deleteOrg() {
-    const { data } = await axios.delete("/orgs");
+  static async deleteOrg(orgId) {
+    const { data } = await axios.delete(`/orgs/${orgId}`);
     return data;
   }
 
