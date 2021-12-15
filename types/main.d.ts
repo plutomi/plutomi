@@ -164,7 +164,10 @@ type GetAllApplicantsInOpeningInput = Pick<
 >;
 
 type GetAllOpeningsInOrgInput = Pick<DynamoNewOpening, "orgId">;
-type GetAllStagesInOpeningInput = Pick<DynamoNewOpening, "orgId" | "openingId">;
+type GetAllStagesInOpeningInput = Pick<
+  DynamoNewOpening,
+  "orgId" | "openingId" | "stageOrder"
+>;
 type GetOpeningByIdInput = Pick<DynamoNewOpening, "orgId" | "openingId">;
 export interface UpdateOpeningInput
   extends Pick<DynamoNewOpening, "orgId" | "openingId"> {

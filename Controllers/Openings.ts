@@ -168,10 +168,26 @@ export const getApplicants = async (req: Request, res: Response) => {
 
 export const getStages = async (req: Request, res: Response) => {
   const { openingId } = req.params;
+  const { orgId } = req.session.user;
+
+  const [opening, openingInfoError] = await Openings.getOpeningById({
+    orgId,
+    openingId,
+  });
+
+  if (openingInfoError) {
+    const formattedError = errorFormatter(openingInfoError);
+    return res.status(openingInfoError.$metadata.httpStatusCode).json({
+      message: "Unable to opening info",
+      ...formattedError,
+    });
+  }
+  const { stageOrder } = opening;
 
   const [allStages, error] = await Openings.getStagesInOpening({
     openingId: openingId,
     orgId: req.session.user.orgId,
+    stageOrder: stageOrder,
   });
   if (error) {
     const formattedError = errorFormatter(error);

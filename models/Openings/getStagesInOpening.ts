@@ -10,14 +10,7 @@ import { SdkError } from "@aws-sdk/types";
 export default async function GetStages(
   props: GetAllStagesInOpeningInput
 ): Promise<[DynamoNewStage[], null] | [null, SdkError]> {
-  const { orgId, openingId } = props;
-  // TODO this should not be here, this should be in controller
-  const [opening, error] = await Openings.getOpeningById({ orgId, openingId });
-
-  if (error) {
-    throw new Error("An error ocurred retrieving opening info");
-  } // TODO this should not be here, this should be in controller ^^^^^^^^^^^^^^^^^^^^^
-  const { stageOrder } = opening;
+  const { orgId, openingId, stageOrder } = props;
 
   const params: QueryCommandInput = {
     TableName: DYNAMO_TABLE_NAME,
