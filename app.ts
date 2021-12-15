@@ -22,7 +22,6 @@ import * as Stages from "./controllers/Stages";
 import * as Openings from "./controllers/Openings";
 import * as Applicants from "./controllers/Applicants";
 import withCleanOrgId from "./middleware/withCleanOrgId";
-import methodNotAllowed from "./middleware/methodNotAllowed";
 import withAuth from "./middleware/withAuth";
 import routeNotFound from "./middleware/routeNotFound";
 import { sessionSettings } from "./Config";
