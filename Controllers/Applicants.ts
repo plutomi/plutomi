@@ -46,7 +46,7 @@ export const create = async (req: Request, res: Response) => {
 
   if (error) {
     const formattedError = errorFormatter(error);
-    return res.status(error.$metadata.httpStatusCode).json({
+    return res.status(formattedError.httpStatusCode).json({
       message: `An error ocurred retrieving opening info`,
       ...formattedError,
     });
@@ -67,7 +67,7 @@ export const create = async (req: Request, res: Response) => {
 
   if (newApplicantError) {
     const formattedError = errorFormatter(newApplicantError);
-    return res.status(error.$metadata.httpStatusCode).json({
+    return res.status(formattedError.httpStatusCode).json({
       message: "An error ocurred creating your application",
       ...formattedError,
     });
@@ -85,7 +85,7 @@ export const create = async (req: Request, res: Response) => {
 
   if (emailFailure) {
     const formattedError = errorFormatter(emailFailure);
-    return res.status(error.$metadata.httpStatusCode).json({
+    return res.status(formattedError.httpStatusCode).json({
       message:
         "We've created your application link, however, we were not able to send you your email",
       ...formattedError,
@@ -107,7 +107,7 @@ export const get = async (req: Request, res: Response) => {
 
   if (error) {
     const formattedError = errorFormatter(error);
-    return res.status(error.$metadata.httpStatusCode).json({
+    return res.status(formattedError.httpStatusCode).json({
       message: "An error ocurred getting applicant info",
       ...formattedError,
     });
@@ -127,7 +127,7 @@ export const remove = async (req: Request, res: Response) => {
 
   if (applicantError) {
     const formattedError = errorFormatter(applicantError);
-    return res.status(applicantError.$metadata.httpStatusCode).json({
+    return res.status(formattedError.httpStatusCode).json({
       message: "An error ocurred getting applicant info, unable to delete",
       ...formattedError,
     });
@@ -142,7 +142,7 @@ export const remove = async (req: Request, res: Response) => {
 
   if (error) {
     const formattedError = errorFormatter(error);
-    return res.status(error.$metadata.httpStatusCode).json({
+    return res.status(formattedError.httpStatusCode).json({
       message: "An error ocurred deleting this applicant",
       ...formattedError,
     });
@@ -183,7 +183,7 @@ export const update = async (req: Request, res: Response) => {
 
   if (error) {
     const formattedError = errorFormatter(error);
-    return res.status(error.$metadata.httpStatusCode).json({
+    return res.status(formattedError.httpStatusCode).json({
       message: "An error ocurred updating this applicant",
       ...formattedError,
     });
@@ -218,7 +218,7 @@ export const answer = async (req: Request, res: Response) => {
   });
   if (error) {
     const formattedError = errorFormatter(error);
-    return res.status(error.$metadata.httpStatusCode).json({
+    return res.status(formattedError.httpStatusCode).json({
       message: "An error ocurred retrieving this applicant's information",
       ...formattedError,
     });

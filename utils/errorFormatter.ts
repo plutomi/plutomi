@@ -8,5 +8,6 @@ export default function handler(error: SdkError) {
     error: error.name,
     errorMessage: error.message,
     requestId: error.$metadata.requestId,
+    httpStatusCode: error.$metadata.httpStatusCode,
   };
 }
