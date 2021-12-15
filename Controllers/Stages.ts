@@ -31,34 +31,31 @@ export const create = async (req: Request, res: Response) => {
     return res.status(400).json({ message: `${error.message}` });
   }
 
-  try {
-    await Stages.createStage(createStageInput);
-    return res.status(201).json({ message: "Stage created" });
-  } catch (error) {
-    // TODO add error logger
+  const [created, error] = await Stages.createStage(createStageInput);
+  if (error) {
     return res
-      .status(400) // TODO change #
-      .json({ message: `Unable to create stage: ${error}` });
+      .status(500)
+      .json({ message: "An error ocurred creating the stage" });
   }
+  return res.status(201).json({ message: "Stage created" });
 };
 
 export const deleteStage = async (req: Request, res: Response) => {
   const { stageId } = req.params;
-  try {
-    const deleteStageInput = {
-      orgId: req.session.user.orgId,
-      stageId: stageId,
-    };
 
-    await Stages.deleteStage(deleteStageInput); // TODO fix this as its not grouped with the other funnels
+  const deleteStageInput = {
+    orgId: req.session.user.orgId,
+    stageId: stageId,
+  };
 
-    return res.status(200).json({ message: "Stage deleted!" });
-  } catch (error) {
-    // TODO add error logger
+  const [deleted, error] = await Stages.deleteStage(deleteStageInput); // TODO fix this as its not grouped with the other funnels
+
+  if (error) {
     return res
-      .status(400) // TODO change #
-      .json({ message: `Unable to delete your stage: ${error}` });
+      .status(500)
+      .json({ message: "An error ocurred deleting this stage" });
   }
+  return res.status(200).json({ message: "Stage deleted!" });
 };
 
 export const getStageInfo = async (req: Request, res: Response) => {
@@ -68,51 +65,50 @@ export const getStageInfo = async (req: Request, res: Response) => {
     stageId: stageId,
   };
 
-  try {
-    const stage = await Stages.getStageById(getStageInput);
-    if (!stage) {
-      return res.status(404).json({ message: "Stage not found" });
-    }
+  const [stage, error] = await Stages.getStageById(getStageInput);
 
-    return res.status(200).json(stage);
-  } catch (error) {
-    // TODO add error logger
+  if (error) {
     return res
-      .status(400) // TODO change #
-      .json({ message: `Unable to retrieve stage: ${error}` });
+      .status(500)
+      .json({ message: "An error ocurred retrieving your stage info" });
   }
+  if (!stage) {
+    return res.status(404).json({ message: "Stage not found" });
+  }
+
+  return res.status(200).json(stage);
 };
 
 export const update = async (req: Request, res: Response) => {
   const { newStageValues } = req.body;
   const { stageId } = req.params;
+
+  const updateStageInput: UpdateStageInput = {
+    orgId: req.session.user.orgId,
+    stageId: stageId,
+    newStageValues: newStageValues,
+  };
+
+  const schema = Joi.object({
+    orgId: Joi.string(),
+    stageId: Joi.string(),
+    newStageValues: Joi.object(), // TODo add actual inputs of new stage values
+  }).options({ presence: "required" });
+
+  // Validate input
   try {
-    const updateStageInput: UpdateStageInput = {
-      orgId: req.session.user.orgId,
-      stageId: stageId,
-      newStageValues: newStageValues,
-    };
-
-    const schema = Joi.object({
-      orgId: Joi.string(),
-      stageId: Joi.string(),
-      newStageValues: Joi.object(), // TODo add actual inputs of new stage values
-    }).options({ presence: "required" });
-
-    // Validate input
-    try {
-      await schema.validateAsync(updateStageInput);
-    } catch (error) {
-      return res.status(400).json({ message: `${error.message}` });
-    }
-
-    await Stages.updateStage(updateStageInput);
-    return res.status(200).json({ message: "Stage updated!" });
+    await schema.validateAsync(updateStageInput);
   } catch (error) {
+    return res.status(400).json({ message: `${error.message}` });
+  }
+
+  const [updated, error] = await Stages.updateStage(updateStageInput);
+  if (error) {
     return res
       .status(500)
-      .json({ message: `Unable to update stage - ${error}` });
+      .json({ message: "An error ocurred updating your stage" });
   }
+  return res.status(200).json({ message: "Stage updated!" });
 };
 
 export const getApplicantsInStage = async (req: Request, res: Response) => {
@@ -122,29 +118,28 @@ export const getApplicantsInStage = async (req: Request, res: Response) => {
     stageId: stageId,
   };
 
-  try {
-    const allApplicants = await Stages.getApplicantsInStage(
-      getAllApplicantsInStageInput
-    );
-    return res.status(200).json(allApplicants);
-  } catch (error) {
-    // TODO add error logger
+  const [applicants, error] = await Stages.getApplicantsInStage(
+    getAllApplicantsInStageInput
+  );
+
+  if (error) {
     return res
-      .status(400) // TODO change #
-      .json({ message: `Unable to retrieve applicants: ${error}` });
+      .status(500)
+      .json({ message: "An error ocurred getting applicants in this stage" });
   }
+  return res.status(200).json(applicants);
 };
 
 export const getQuestionsInStage = async (req: Request, res: Response) => {
   const { stageId } = req.params;
-  try {
-    const questions = await Stages.getQuestionsInStage({
-      orgId: req.session.user.orgId,
-      stageId,
-    });
 
-    return res.status(200).json(questions);
-  } catch (error) {
+  const [questions, error] = await Stages.getQuestionsInStage({
+    orgId: req.session.user.orgId,
+    stageId,
+  });
+
+  if (error) {
     return res.status(500).json({ message: "Unable to retrieve questions" });
   }
+  return res.status(200).json(questions);
 };
