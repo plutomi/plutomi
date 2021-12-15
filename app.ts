@@ -48,144 +48,151 @@ app.use(haltOnTimedout);
  * All /public routes return publicly available information about the entity
  ****************************************************************************
  */
-// app.route("/public/:orgId").get(PublicInfo.getOrgInfo).all(methodNotAllowed);
+app.route("/public/:orgId").get(PublicInfo.getOrgInfo).all(methodNotAllowed);
 
-// app
-//   .route("/public/:orgId/openings")
-//   .get(PublicInfo.getOrgOpenings)
-//   .all(methodNotAllowed);
+app
+  .route("/public/:orgId/openings")
+  .get(PublicInfo.getOrgOpenings)
+  .all(methodNotAllowed);
 
-// app
-//   .route("/public/:orgId/openings/:openingId") // TODO get stages in opening
-//   .get(PublicInfo.getOpeningInfo)
-//   .all(methodNotAllowed);
+app
+  .route("/public/:orgId/openings/:openingId") // TODO get stages in opening
+  .get(PublicInfo.getOpeningInfo)
+  .all(methodNotAllowed);
 
-// app
-//   .route("/public/:orgId/stages/:stageId")
-//   .get(PublicInfo.getStageInfo)
-//   .all(methodNotAllowed);
+app
+  .route("/public/:orgId/stages/:stageId")
+  .get(PublicInfo.getStageInfo)
+  .all(methodNotAllowed);
 
-// app
-//   .route("/public/:orgId/stages/:stageId/questions")
-//   .get(PublicInfo.getStageQuestions)
-//   .all(methodNotAllowed);
+app
+  .route("/public/:orgId/stages/:stageId/questions")
+  .get(PublicInfo.getStageQuestions)
+  .all(methodNotAllowed);
 
-// /**
-//  ****************************************************************************
-//  * Orgs
-//  ****************************************************************************
-//  */
-// app.route("/orgs").post([withAuth], Orgs.create).all(methodNotAllowed);
+/**
+ ****************************************************************************
+ * Orgs
+ ****************************************************************************
+ */
+app
+  .route("/orgs")
+  .post([withAuth], Orgs.create)
 
-// app
-//   .route("/orgs/:orgId")
-//   .get([withAuth], Orgs.get)
-//   .delete([withAuth], Orgs.deleteOrg)
-//   .all(methodNotAllowed);
+  /**
+   * The reason for this here instead of @ /orgs/:orgId is because
+   * we can get the orgId of the user form their session token
+   * and ensure that they can only delete orgs that they are in and not have to do a check
+   */
+  .delete([withAuth], Orgs.deleteOrg)
 
-// // app.route("/orgs/:orgId/invites").get([withAuth], ) // TODO - Get all invites for org
+  .all(methodNotAllowed);
 
-// /**
-//  ****************************************************************************
-//  * Openings
-//  ****************************************************************************
-//  */
-// app
-//   .route("/openings")
-//   .get([withAuth], Openings.getAllOpenings)
-//   .post([withAuth], Openings.createOpeningController) // TODO fix name
-//   .all(methodNotAllowed);
+app.route("/orgs/:orgId").get([withAuth], Orgs.get).all(methodNotAllowed);
 
-// app
-//   .route("/openings/:openingId")
-//   .get([withAuth], Openings.getOpeningById)
-//   .delete([withAuth], Openings.deleteOpeningController) // TODO fix name
-//   .put([withAuth], Openings.updateOpeningController) // TODO fix name
-//   .all(methodNotAllowed);
+// app.route("/orgs/:orgId/invites").get([withAuth], ) // TODO - Get all invites for org
 
-// app
-//   .route("/openings/:openingId/applicants")
-//   .get([withAuth], Openings.getApplicants)
-//   .all(methodNotAllowed);
+/**
+ ****************************************************************************
+ * Openings
+ ****************************************************************************
+ */
+app
+  .route("/openings")
+  .get([withAuth], Openings.getAllOpenings)
+  .post([withAuth], Openings.createOpeningController) // TODO fix name
+  .all(methodNotAllowed);
 
-// app
-//   .route("/openings/:openingId/stages")
-//   .get([withAuth], Openings.getStages)
-//   .all(methodNotAllowed);
+app
+  .route("/openings/:openingId")
+  .get([withAuth], Openings.getOpeningById)
+  .delete([withAuth], Openings.deleteOpeningController) // TODO fix name
+  .put([withAuth], Openings.updateOpeningController) // TODO fix name
+  .all(methodNotAllowed);
 
-// /**
-//  ****************************************************************************
-//  * Stages
-//  ****************************************************************************
-//  */
-// app.route("/stages").post([withAuth], Stages.create).all(methodNotAllowed);
+app
+  .route("/openings/:openingId/applicants")
+  .get([withAuth], Openings.getApplicants)
+  .all(methodNotAllowed);
 
-// app
-//   .route("/stages/:stageId")
-//   .get([withAuth], Stages.getStageInfo)
-//   .delete([withAuth], Stages.deleteStage)
-//   .put([withAuth], Stages.update)
-//   .all(methodNotAllowed);
+app
+  .route("/openings/:openingId/stages")
+  .get([withAuth], Openings.getStages)
+  .all(methodNotAllowed);
 
-// app
-//   .route("/stages/:stageId/applicants")
-//   .get([withAuth], Stages.getApplicantsInStage)
-//   .all(methodNotAllowed);
+/**
+ ****************************************************************************
+ * Stages
+ ****************************************************************************
+ */
+app.route("/stages").post([withAuth], Stages.create).all(methodNotAllowed);
 
-// app
-//   .route("/stages/:stageId/questions")
-//   .get([withAuth], Stages.getQuestionsInStage)
-//   .all(methodNotAllowed);
+app
+  .route("/stages/:stageId")
+  .get([withAuth], Stages.getStageInfo)
+  .delete([withAuth], Stages.deleteStage)
+  .put([withAuth], Stages.update)
+  .all(methodNotAllowed);
 
-// /**
-//  ****************************************************************************
-//  * Questions
-//  ****************************************************************************
-//  */
+app
+  .route("/stages/:stageId/applicants")
+  .get([withAuth], Stages.getApplicantsInStage)
+  .all(methodNotAllowed);
 
-// app
-//   .route("/questions")
-//   .post([withAuth], Questions.create)
-//   .all(methodNotAllowed);
+app
+  .route("/stages/:stageId/questions")
+  .get([withAuth], Stages.getQuestionsInStage)
+  .all(methodNotAllowed);
 
-// app
-//   .route("/questions/:questionId")
-//   .delete([withAuth], Questions.deleteQuestion)
-//   .put([withAuth], Questions.update)
-//   .all(methodNotAllowed);
+/**
+ ****************************************************************************
+ * Questions
+ ****************************************************************************
+ */
 
-// /**
-//  ****************************************************************************
-//  * Applicants
-//  ****************************************************************************
-//  */
+app
+  .route("/questions")
+  .post([withAuth], Questions.create)
+  .all(methodNotAllowed);
 
-// app.route("/applicants").post(Applicants.create).all(methodNotAllowed);
+app
+  .route("/questions/:questionId")
+  .delete([withAuth], Questions.deleteQuestion)
+  .put([withAuth], Questions.update)
+  .all(methodNotAllowed);
 
-// app
-//   .route("/applicants/:applicantId")
-//   .get([withAuth], Applicants.get)
-//   .delete([withAuth], Applicants.remove)
-//   .put([withAuth], Applicants.update)
-//   .all(methodNotAllowed);
+/**
+ ****************************************************************************
+ * Applicants
+ ****************************************************************************
+ */
 
-// app
-//   .route("/applicants/:applicantId/answer")
-//   .post(Applicants.answer)
-//   .all(methodNotAllowed);
+app.route("/applicants").post(Applicants.create).all(methodNotAllowed);
 
-// /**
-//  ****************************************************************************
-//  * Auth
-//  ****************************************************************************
-//  */
-// app
-//   .route("/auth/login")
-//   .get(Auth.login)
-//   .post(Auth.createLoginLinks)
-//   .all(methodNotAllowed);
+app
+  .route("/applicants/:applicantId")
+  .get([withAuth], Applicants.get)
+  .delete([withAuth], Applicants.remove)
+  .put([withAuth], Applicants.update)
+  .all(methodNotAllowed);
 
-// app.route("/auth/logout").post([withAuth], Auth.logout).all(methodNotAllowed);
+app
+  .route("/applicants/:applicantId/answer")
+  .post(Applicants.answer)
+  .all(methodNotAllowed);
+
+/**
+ ****************************************************************************
+ * Auth
+ ****************************************************************************
+ */
+app
+  .route("/auth/login")
+  .get(Auth.login)
+  .post(Auth.createLoginLinks)
+  .all(methodNotAllowed);
+
+app.route("/auth/logout").post([withAuth], Auth.logout).all(methodNotAllowed);
 
 /**
  ****************************************************************************

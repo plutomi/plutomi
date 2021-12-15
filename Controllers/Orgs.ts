@@ -4,6 +4,7 @@ import Sanitize from "./../utils/sanitize";
 import Joi from "joi";
 import * as Users from "../models/Users/index";
 import * as Orgs from "../models/Orgs/index";
+import errorFormatter from "../utils/errorFormatter";
 const UrlSafeString = require("url-safe-string"),
   tagGenerator = new UrlSafeString();
 
@@ -21,9 +22,10 @@ export const create = async (req: Request, res: Response) => {
   });
 
   if (error) {
-    return res.status(500).json({
-      message:
-        "An error ocurred creating your org - Unable to get pending invites",
+    const formattedError = errorFormatter(error);
+    return res.status(error.$metadata.httpStatusCode).json({
+      message: "Unable to create org - error retrieving invites",
+      ...formattedError,
     });
   }
 
@@ -66,7 +68,11 @@ export const create = async (req: Request, res: Response) => {
   });
 
   if (failed) {
-    return res.status(500).json({ message: "Unable to create org" });
+    const formattedError = errorFormatter(failed);
+    return res.status(error.$metadata.httpStatusCode).json({
+      message: "Unable to create org",
+      ...formattedError,
+    });
   }
   // Update the logged in user session with the new org id
   req.session.user.orgId = orgId;
@@ -83,34 +89,37 @@ export const get = async (req: Request, res: Response) => {
   const { orgId } = req.params;
   const [org, error] = await Orgs.getOrgById({ orgId: orgId });
 
-  if (error) {
-    console.log("Error retrieving org info", error);
-    return res
-      .status(500)
-      .json({ message: "An error ocurred retrieving your org" });
-  }
-
-  if (!org) {
-    return res.status(404).json({ message: "Org not found" });
-  }
-
   if (orgId !== req.session.user.orgId) {
     return res
       .status(403)
       .json({ message: "You are not authorized to view this org" });
   }
 
+  if (error) {
+    const formattedError = errorFormatter(error);
+    return res.status(error.$metadata.httpStatusCode).json({
+      message: "Unable to retrieve org info",
+      ...formattedError,
+    });
+  }
+
+  if (!org) {
+    return res.status(404).json({ message: "Org not found" });
+  }
+
   return res.status(200).json(org);
 };
 
 export const deleteOrg = async (req: Request, res: Response) => {
-  const { orgId } = req.params;
+  const { orgId } = req.params; // TODO this route should be .delete @ /orgs since we can get the org id from the user
   const [org, error] = await Orgs.getOrgById({ orgId: orgId });
 
   if (error) {
-    return res
-      .status(500)
-      .json({ message: "An error ocurred retrieving your org" });
+    const formattedError = errorFormatter(error);
+    return res.status(error.$metadata.httpStatusCode).json({
+      message: "Unable to retrieve org info",
+      ...formattedError,
+    });
   }
 
   if (!org) {
@@ -134,9 +143,11 @@ export const deleteOrg = async (req: Request, res: Response) => {
   });
 
   if (userUpdateError) {
-    return res.status(500).json({
+    const formattedError = errorFormatter(userUpdateError);
+    return res.status(error.$metadata.httpStatusCode).json({
       message:
         "We were unable to remove you from the org :( TODO - stuck condition if the org is already deleted, should be done in a transaction",
+      ...formattedError,
     });
   }
   req.session.user = Sanitize.clean(updatedUser, ENTITY_TYPES.USER);
@@ -166,9 +177,11 @@ export const users = async (req: Request, res: Response) => {
   });
 
   if (error) {
-    return res
-      .status(500)
-      .json({ message: "An error ocurred getting the users in your org" });
+    const formattedError = errorFormatter(error);
+    return res.status(error.$metadata.httpStatusCode).json({
+      message: "An error ocurred getting the users in your org",
+      ...formattedError,
+    });
   }
 
   return res.status(200).json(users);
