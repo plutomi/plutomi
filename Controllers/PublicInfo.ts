@@ -4,6 +4,7 @@ import Sanitize from "./../utils/sanitize";
 import * as Openings from "../models/Openings/index";
 import * as Orgs from "../models/Orgs/index";
 import * as Stages from "../models/Stages/index";
+import errorFormatter from "../utils/errorFormatter";
 export const getOrgInfo = async (req: Request, res: Response) => {
   const { orgId } = req.params;
 
@@ -13,9 +14,11 @@ export const getOrgInfo = async (req: Request, res: Response) => {
 
   const [org, error] = await Orgs.getOrgById({ orgId });
 
-  if (error instanceof Error) {
-    return res.status(400).json({
-      message: `An error ocurred retrieving your org: ${error.message}`,
+  if (error) {
+    const formattedError = errorFormatter(error);
+    return res.status(error.$metadata.httpStatusCode).json({
+      message: "An error ocurred retrieving this org's info",
+      ...formattedError,
     });
   }
 
@@ -31,8 +34,10 @@ export const getOrgOpenings = async (req: Request, res: Response) => {
   const { orgId } = req.params;
   const [openings, error] = await Orgs.getOpeningsInOrg({ orgId });
   if (error) {
-    return res.status(500).json({
+    const formattedError = errorFormatter(error);
+    return res.status(error.$metadata.httpStatusCode).json({
       message: "An error ocurred retrieving the openings for this org",
+      ...formattedError,
     });
   }
   const publicOpenings = openings.filter((opening) => opening.isPublic);
@@ -53,9 +58,11 @@ export const getOpeningInfo = async (req: Request, res: Response) => {
   });
 
   if (error) {
-    return res
-      .status(500)
-      .json({ message: "An error ocurred getting opening info" });
+    const formattedError = errorFormatter(error);
+    return res.status(error.$metadata.httpStatusCode).json({
+      message: "An error ocurred retrieving this opening's",
+      ...formattedError,
+    });
   }
   if (!opening) {
     return res.status(404).json({ message: "Opening not found" });
@@ -76,9 +83,11 @@ export const getStageInfo = async (req: Request, res: Response) => {
 
   const [stage, error] = await Stages.getStageById({ orgId, stageId });
   if (error) {
-    return res
-      .status(500)
-      .json({ message: "An error ocurred returning stage info" });
+    const formattedError = errorFormatter(error);
+    return res.status(error.$metadata.httpStatusCode).json({
+      message: "An error ocurred retrieving this stage's info",
+      ...formattedError,
+    });
   }
   if (!stage) {
     return res.status(404).json({ message: "Stage not found" });
@@ -97,7 +106,11 @@ export const getStageQuestions = async (req: Request, res: Response) => {
   });
 
   if (error) {
-    return res.status(500).json({ message: "Unable to retrieve questions" });
+    const formattedError = errorFormatter(error);
+    return res.status(error.$metadata.httpStatusCode).json({
+      message: "An error ocurred retrieving questions for this stage",
+      ...formattedError,
+    });
   }
   return res.status(200).json(questions);
 };

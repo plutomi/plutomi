@@ -10,7 +10,7 @@ const { DYNAMO_TABLE_NAME } = process.env;
 import { SdkError } from "@aws-sdk/types";
 export default async function GetQuestions(
   props: GetAllQuestionsInStageInput
-): Promise<[GetAllQuestionsInStageOutput, null] | [null | SdkError]> {
+): Promise<[GetAllQuestionsInStageOutput, null] | [null, SdkError]> {
   const { orgId, stageId } = props;
   // TODO this shouldn't be here!!
   const stage = await getStageById({ orgId, stageId });
