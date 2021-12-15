@@ -11,7 +11,7 @@ export const self = async (req: Request, res: Response) => {
 
   if (error) {
     const formattedError = errorFormatter(error);
-    return res.status(error.$metadata.httpStatusCode).json({
+    return res.status(formattedError.httpStatusCode).json({
       message: "An error ocurred retrieving self info",
       ...formattedError,
     });
@@ -43,7 +43,7 @@ export const getById = async (req: Request, res: Response) => {
 
   if (error) {
     const formattedError = errorFormatter(error);
-    return res.status(error.$metadata.httpStatusCode).json({
+    return res.status(formattedError.httpStatusCode).json({
       message: "An error ocurred retrieving user info by id",
       ...formattedError,
     });
@@ -99,7 +99,7 @@ export const update = async (req: Request, res: Response) => {
 
   if (error) {
     const formattedError = errorFormatter(error);
-    return res.status(error.$metadata.httpStatusCode).json({
+    return res.status(formattedError.httpStatusCode).json({
       message: "An error ocurred updating user info",
       ...formattedError,
     });
@@ -119,7 +119,7 @@ export const getInvites = async (req: Request, res: Response) => {
 
   if (error) {
     const formattedError = errorFormatter(error);
-    return res.status(error.$metadata.httpStatusCode).json({
+    return res.status(formattedError.httpStatusCode).json({
       message: "An error ocurred retrieving invites",
       ...formattedError,
     });
