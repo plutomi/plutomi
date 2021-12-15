@@ -4,6 +4,7 @@ import { SdkError } from "@aws-sdk/types";
  * @param error
  */
 export default function handler(error: SdkError) {
+  console.error(error);
   return {
     error: error.name,
     errorMessage: error.message,

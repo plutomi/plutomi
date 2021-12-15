@@ -75,7 +75,7 @@ export default function DashboardContent() {
     }
 
     try {
-      const { message } = await OrgsService.deleteOrg();
+      const { message } = await OrgsService.deleteOrg(user?.orgId);
       alert(message);
     } catch (error) {
       alert(error.response.data.message);
