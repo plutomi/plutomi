@@ -12,7 +12,7 @@ export const getAllOpenings = async (req: Request, res: Response) => {
 
   if (error) {
     const formattedError = errorFormatter(error);
-    return res.status(error.$metadata.httpStatusCode).json({
+    return res.status(formattedError.httpStatusCode).json({
       message: "An error ocurred retrieving the openings for this org",
       ...formattedError,
     });
@@ -22,7 +22,6 @@ export const getAllOpenings = async (req: Request, res: Response) => {
 };
 
 export const createOpeningController = async (req: Request, res: Response) => {
-  // TODO fix names
   const { GSI1SK } = req.body;
 
   if (req.session.user.orgId === DEFAULTS.NO_ORG) {
@@ -48,11 +47,13 @@ export const createOpeningController = async (req: Request, res: Response) => {
     return res.status(400).json({ message: `${error.message}` });
   }
 
-  const [created, error] = await Openings.createOpening(createOpeningInput);
+  const [created, createOpeningError] = await Openings.createOpening(
+    createOpeningInput
+  );
 
-  if (error) {
-    const formattedError = errorFormatter(error);
-    return res.status(error.$metadata.httpStatusCode).json({
+  if (createOpeningError) {
+    const formattedError = errorFormatter(createOpeningError);
+    return res.status(formattedError.httpStatusCode).json({
       message: "An error ocurred creating opening",
       ...formattedError,
     });
@@ -70,7 +71,7 @@ export const getOpeningById = async (req: Request, res: Response) => {
 
   if (error) {
     const formattedError = errorFormatter(error);
-    return res.status(error.$metadata.httpStatusCode).json({
+    return res.status(formattedError.httpStatusCode).json({
       message: "Unable to retrieve opening info",
       ...formattedError,
     });
@@ -97,7 +98,7 @@ export const deleteOpeningController = async (req: Request, res: Response) => {
 
   if (openingError) {
     const formattedError = errorFormatter(openingError);
-    return res.status(openingError.$metadata.httpStatusCode).json({
+    return res.status(formattedError.httpStatusCode).json({
       message:
         "Unable to delete opening, error ocurred retrieving opening info",
       ...formattedError,
@@ -118,14 +119,16 @@ export const deleteOpeningController = async (req: Request, res: Response) => {
         stageId: stage.stageId,
         stageOrder: opening.stageOrder,
       };
-      await Stages.deleteStage(input); // TODO we should not be doing this her
+      await Stages.deleteStage(input);
     });
   }
 
-  const [deleted, error] = await Openings.deleteOpening(deleteOpeningInput);
-  if (error) {
-    const formattedError = errorFormatter(error);
-    return res.status(error.$metadata.httpStatusCode).json({
+  const [deleted, deleteOpeningError] = await Openings.deleteOpening(
+    deleteOpeningInput
+  );
+  if (deleteOpeningError) {
+    const formattedError = errorFormatter(deleteOpeningError);
+    return res.status(formattedError.httpStatusCode).json({
       message: "Unable to delete opening",
       ...formattedError,
     });
@@ -159,7 +162,7 @@ export const updateOpeningController = async (req: Request, res: Response) => {
   const [updated, error] = await Openings.updateOpening(updateOpeningInput);
   if (error) {
     const formattedError = errorFormatter(error);
-    return res.status(error.$metadata.httpStatusCode).json({
+    return res.status(formattedError.httpStatusCode).json({
       message: "Unable to update opening",
       ...formattedError,
     });
@@ -191,7 +194,7 @@ export const getApplicants = async (req: Request, res: Response) => {
   );
   if (error) {
     const formattedError = errorFormatter(error);
-    return res.status(error.$metadata.httpStatusCode).json({
+    return res.status(formattedError.httpStatusCode).json({
       message: "Unable to retrieve applicants",
       ...formattedError,
     });
@@ -210,21 +213,21 @@ export const getStages = async (req: Request, res: Response) => {
 
   if (openingInfoError) {
     const formattedError = errorFormatter(openingInfoError);
-    return res.status(openingInfoError.$metadata.httpStatusCode).json({
+    return res.status(formattedError.httpStatusCode).json({
       message: "Unable to opening info",
       ...formattedError,
     });
   }
   const { stageOrder } = opening;
 
-  const [allStages, error] = await Openings.getStagesInOpening({
+  const [allStages, stagesError] = await Openings.getStagesInOpening({
     openingId: openingId,
     orgId: req.session.user.orgId,
     stageOrder: stageOrder,
   });
-  if (error) {
-    const formattedError = errorFormatter(error);
-    return res.status(error.$metadata.httpStatusCode).json({
+  if (stagesError) {
+    const formattedError = errorFormatter(stagesError);
+    return res.status(formattedError.httpStatusCode).json({
       message: "Unable to retrieve stages",
       ...formattedError,
     });
