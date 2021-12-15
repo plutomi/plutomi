@@ -3,16 +3,18 @@ import { DEFAULTS, ENTITY_TYPES } from "./../Config";
 import Sanitize from "./../utils/sanitize";
 import * as Users from "../models/Users/index";
 import Joi from "joi";
-
+import errorFormatter from "../utils/errorFormatter";
 export const self = async (req: Request, res: Response) => {
   const [user, error] = await Users.getUserById({
     userId: req.session.user.userId,
   });
 
   if (error) {
-    return res
-      .status(500)
-      .json({ message: "An error ocurred getting user info", error: error });
+    const formattedError = errorFormatter(error);
+    return res.status(error.$metadata.httpStatusCode).json({
+      message: "An error ocurred retrieving self info",
+      ...formattedError,
+    });
   }
 
   if (!user) {
@@ -40,9 +42,11 @@ export const getById = async (req: Request, res: Response) => {
   const [requestedUser, error] = await Users.getUserById({ userId });
 
   if (error) {
-    return res
-      .status(500)
-      .json({ message: "An error ocurred getting the info for that user" });
+    const formattedError = errorFormatter(error);
+    return res.status(error.$metadata.httpStatusCode).json({
+      message: "An error ocurred retrieving user info by id",
+      ...formattedError,
+    });
   }
   if (!requestedUser) {
     return res.status(404).json({ message: "User not found" });
@@ -94,7 +98,11 @@ export const update = async (req: Request, res: Response) => {
   const [updatedUser, error] = await Users.updateUser(updateUserInput);
 
   if (error) {
-    return res.status(500).json({ message: "An error ocurred updating user" });
+    const formattedError = errorFormatter(error);
+    return res.status(error.$metadata.httpStatusCode).json({
+      message: "An error ocurred updating user info",
+      ...formattedError,
+    });
   }
   // If a signed in user is updating themselves, update the session state as well
   if (updatedUser.userId === req.session.user.userId) {
@@ -110,9 +118,11 @@ export const getInvites = async (req: Request, res: Response) => {
   });
 
   if (error) {
-    return res
-      .status(500)
-      .json({ message: "An error ocurred retrieving your invites" });
+    const formattedError = errorFormatter(error);
+    return res.status(error.$metadata.httpStatusCode).json({
+      message: "An error ocurred retrieving invites",
+      ...formattedError,
+    });
   }
 
   return res.status(200).json(invites);
