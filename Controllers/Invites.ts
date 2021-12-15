@@ -13,7 +13,7 @@ const UrlSafeString = require("url-safe-string"),
 
 export const create = async (req: Request, res: Response) => {
   const { body } = req;
-  const recipientEmail = tagGenerator(body.recipientEmail.trim());
+  const recipientEmail = body.recipientEmail.trim();
 
   if (req.session.user.email === recipientEmail) {
     return res.status(400).json({ message: "You can't invite yourself" }); // TODO errors enum
@@ -128,8 +128,20 @@ export const create = async (req: Request, res: Response) => {
     toAddresses: [recipientEmail],
     subject: `${req.session.user.firstName} ${req.session.user.lastName} has invited you to join them on Plutomi!`,
     html: `<h4>You can log in at <a href="${process.env.WEBSITE_URL}" target="_blank" rel=noreferrer>${process.env.WEBSITE_URL}</a> to accept it!</h4><p>If you believe this email was received in error, you can safely ignore it.</p>`,
-  }); // TODO add target=_blank and rel=noreferrer ^
+  });
 
+  console.log(
+    "Test",
+
+    {
+      // TODO async decouple this
+      fromName: org.GSI1SK,
+      fromAddress: EMAILS.GENERAL,
+      toAddresses: [recipientEmail],
+      subject: `${req.session.user.firstName} ${req.session.user.lastName} has invited you to join them on Plutomi!`,
+      html: `<h4>You can log in at <a href="${process.env.WEBSITE_URL}" target="_blank" rel=noreferrer>${process.env.WEBSITE_URL}</a> to accept it!</h4><p>If you believe this email was received in error, you can safely ignore it.</p>`,
+    }
+  );
   if (emailFailure) {
     const formattedError = errorFormatter(emailFailure);
     return res.status(formattedError.httpStatusCode).json({
