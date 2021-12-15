@@ -23,7 +23,7 @@ export const create = async (req: Request, res: Response) => {
 
   if (error) {
     const formattedError = errorFormatter(error);
-    return res.status(error.$metadata.httpStatusCode).json({
+    return res.status(formattedError.httpStatusCode).json({
       message: "Unable to create org - error retrieving invites",
       ...formattedError,
     });
@@ -69,7 +69,7 @@ export const create = async (req: Request, res: Response) => {
 
   if (failed) {
     const formattedError = errorFormatter(failed);
-    return res.status(error.$metadata.httpStatusCode).json({
+    return res.status(formattedError.httpStatusCode).json({
       message: "Unable to create org",
       ...formattedError,
     });
@@ -97,7 +97,7 @@ export const get = async (req: Request, res: Response) => {
 
   if (error) {
     const formattedError = errorFormatter(error);
-    return res.status(error.$metadata.httpStatusCode).json({
+    return res.status(formattedError.httpStatusCode).json({
       message: "Unable to retrieve org info",
       ...formattedError,
     });
@@ -116,7 +116,7 @@ export const deleteOrg = async (req: Request, res: Response) => {
 
   if (error) {
     const formattedError = errorFormatter(error);
-    return res.status(error.$metadata.httpStatusCode).json({
+    return res.status(formattedError.httpStatusCode).json({
       message: "Unable to retrieve org info",
       ...formattedError,
     });
@@ -144,7 +144,7 @@ export const deleteOrg = async (req: Request, res: Response) => {
 
   if (userUpdateError) {
     const formattedError = errorFormatter(userUpdateError);
-    return res.status(error.$metadata.httpStatusCode).json({
+    return res.status(formattedError.httpStatusCode).json({
       message:
         "We were unable to remove you from the org :( TODO - stuck condition if the org is already deleted, should be done in a transaction",
       ...formattedError,
@@ -178,7 +178,7 @@ export const users = async (req: Request, res: Response) => {
 
   if (error) {
     const formattedError = errorFormatter(error);
-    return res.status(error.$metadata.httpStatusCode).json({
+    return res.status(formattedError.httpStatusCode).json({
       message: "An error ocurred getting the users in your org",
       ...formattedError,
     });
