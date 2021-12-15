@@ -13,7 +13,7 @@ export const create = async (req: Request, res: Response) => {
 
   if (stageError) {
     const formattedError = errorFormatter(stageError);
-    return res.status(stageError.$metadata.httpStatusCode).json({
+    return res.status(formattedError.httpStatusCode).json({
       message:
         "An error ocurred creating question, unable to retrieve stage info",
       ...formattedError,
@@ -38,7 +38,7 @@ export const create = async (req: Request, res: Response) => {
   );
   if (error) {
     const formattedError = errorFormatter(error);
-    return res.status(error.$metadata.httpStatusCode).json({
+    return res.status(formattedError.httpStatusCode).json({
       message: "An error ocurred creating question",
       ...formattedError,
     });
@@ -57,7 +57,7 @@ export const deleteQuestion = async (req: Request, res: Response) => {
 
   if (questionError) {
     const formattedError = errorFormatter(questionError);
-    return res.status(questionError.$metadata.httpStatusCode).json({
+    return res.status(formattedError.httpStatusCode).json({
       message:
         "An error ocurred deleting that question, unable to retrieve question info",
       ...formattedError,
@@ -70,7 +70,7 @@ export const deleteQuestion = async (req: Request, res: Response) => {
   });
   if (stageError) {
     const formattedError = errorFormatter(stageError);
-    return res.status(stageError.$metadata.httpStatusCode).json({
+    return res.status(formattedError.httpStatusCode).json({
       message:
         "An error ocurred deleting that question, unable to retrieve stage info",
       ...formattedError,
@@ -87,10 +87,12 @@ export const deleteQuestion = async (req: Request, res: Response) => {
     deletedQuestionIndex: deletedQuestionIndex,
   };
 
-  const [deleted, error] = await Questions.deleteQuestion(deleteQuestionInput);
-  if (error) {
-    const formattedError = errorFormatter(error);
-    return res.status(error.$metadata.httpStatusCode).json({
+  const [deleted, deleteQuestionError] = await Questions.deleteQuestion(
+    deleteQuestionInput
+  );
+  if (deleteQuestionError) {
+    const formattedError = errorFormatter(deleteQuestionError);
+    return res.status(formattedError.httpStatusCode).json({
       message: "An error ocurred deleting that question",
       ...formattedError,
     });
@@ -124,7 +126,7 @@ export const update = async (req: Request, res: Response) => {
 
   if (error) {
     const formattedError = errorFormatter(error);
-    return res.status(error.$metadata.httpStatusCode).json({
+    return res.status(formattedError.httpStatusCode).json({
       message: "An error ocurred updating that question",
       ...formattedError,
     });
