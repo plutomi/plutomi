@@ -29,7 +29,7 @@ export const create = async (req: Request, res: Response) => {
 
   if (error) {
     const formattedError = errorFormatter(error);
-    return res.status(error.$metadata.httpStatusCode).json({
+    return res.status(formattedError.httpStatusCode).json({
       message: "An error ocurred retrieving your org information",
       ...formattedError,
     });
@@ -54,20 +54,20 @@ export const create = async (req: Request, res: Response) => {
 
   if (recipientError) {
     const formattedError = errorFormatter(recipientError);
-    return res.status(error.$metadata.httpStatusCode).json({
+    return res.status(formattedError.httpStatusCode).json({
       message: "An error ocurred getting your invitee's information",
       ...formattedError,
     });
   }
 
   if (!recipient) {
-    const [createdUser, error] = await Users.createUser({
+    const [createdUser, createUserError] = await Users.createUser({
       email: recipientEmail,
     });
 
-    if (error) {
-      const formattedError = errorFormatter(error);
-      return res.status(error.$metadata.httpStatusCode).json({
+    if (createUserError) {
+      const formattedError = errorFormatter(createUserError);
+      return res.status(formattedError.httpStatusCode).json({
         message: "An error ocurred creating an account for your invitee",
         ...formattedError,
       });
@@ -86,7 +86,7 @@ export const create = async (req: Request, res: Response) => {
 
   if (recipientInvitesError) {
     const formattedError = errorFormatter(recipientInvitesError);
-    return res.status(recipientInvitesError.$metadata.httpStatusCode).json({
+    return res.status(formattedError.httpStatusCode).json({
       message:
         "An error ocurred while checking to see if your invitee has pending invites",
       ...formattedError,
@@ -99,12 +99,10 @@ export const create = async (req: Request, res: Response) => {
   );
 
   if (pendingInvites) {
-    return res
-      .status(409)
-      .json({
-        message:
-          "This user already has a pending invite to your org! They can log in to claim it.",
-      });
+    return res.status(409).json({
+      message:
+        "This user already has a pending invite to your org! They can log in to claim it.",
+    });
   }
 
   const [inviteCreated, inviteError] = await Invites.createInvite({
@@ -117,7 +115,7 @@ export const create = async (req: Request, res: Response) => {
 
   if (inviteError) {
     const formattedError = errorFormatter(inviteError);
-    return res.status(error.$metadata.httpStatusCode).json({
+    return res.status(formattedError.httpStatusCode).json({
       message: "An error ocurred creating your invite",
       ...formattedError,
     });
@@ -134,7 +132,7 @@ export const create = async (req: Request, res: Response) => {
 
   if (emailFailure) {
     const formattedError = errorFormatter(emailFailure);
-    return res.status(error.$metadata.httpStatusCode).json({
+    return res.status(formattedError.httpStatusCode).json({
       message:
         "The invite was created, but we were not able to send an email to the user. They can log in and accept their invite!",
       ...formattedError,
@@ -162,7 +160,7 @@ export const accept = async (req: Request, res: Response) => {
 
   if (error) {
     const formattedError = errorFormatter(error);
-    return res.status(error.$metadata.httpStatusCode).json({
+    return res.status(formattedError.httpStatusCode).json({
       message: "An error ocurred getting the info for your invite",
       ...formattedError,
     });
@@ -179,7 +177,7 @@ export const accept = async (req: Request, res: Response) => {
 
   if (joinError) {
     const formattedError = errorFormatter(joinError);
-    return res.status(error.$metadata.httpStatusCode).json({
+    return res.status(formattedError.httpStatusCode).json({
       message: "We were unable to join that org",
       ...formattedError,
     });
@@ -191,7 +189,7 @@ export const accept = async (req: Request, res: Response) => {
 
   if (updatedUserFailure) {
     const formattedError = errorFormatter(updatedUserFailure);
-    return res.status(error.$metadata.httpStatusCode).json({
+    return res.status(formattedError.httpStatusCode).json({
       message:
         "We were able to succesfully join the org, but we were unable to update your session. Please log out and log in again!",
       ...formattedError,
@@ -214,7 +212,7 @@ export const reject = async (req: Request, res: Response) => {
 
   if (error) {
     const formattedError = errorFormatter(error);
-    return res.status(error.$metadata.httpStatusCode).json({
+    return res.status(formattedError.httpStatusCode).json({
       message: "We were unable to delete that invite",
       ...formattedError,
     });
