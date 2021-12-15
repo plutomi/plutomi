@@ -16,9 +16,16 @@ export const create = async (req: Request, res: Response) => {
     });
   }
 
-  const pendingInvites = await Users.getInvitesForUser({
+  const [pendingInvites, error] = await Users.getInvitesForUser({
     userId: req.session.user.userId,
   });
+
+  if (error) {
+    return res.status(500).json({
+      message:
+        "An error ocurred creating your org - Unable to get pending invites",
+    });
+  }
 
   if (pendingInvites && pendingInvites.length) {
     return res.status(403).json({
@@ -52,24 +59,20 @@ export const create = async (req: Request, res: Response) => {
     return res.status(400).json({ message: `${error.message}` });
   }
 
-  try {
-    await Orgs.createAndJoinOrg({
-      userId: req.session.user.userId,
-      orgId: orgId,
-      GSI1SK: GSI1SK,
-    });
+  const [created, failed] = await Orgs.createAndJoinOrg({
+    userId: req.session.user.userId,
+    orgId: orgId,
+    GSI1SK: GSI1SK,
+  });
 
-    // Update the logged in user session with the new org id
-    req.session.user.orgId = orgId;
-    await req.session.save();
-
-    return res.status(201).json({ message: "Org created!", org: orgId });
-  } catch (error) {
-    // TODO add error logger
-    return res
-      .status(400) // TODO change #
-      .json({ message: `${error}` });
+  if (failed) {
+    return res.status(500).json({ message: "Unable to create org" });
   }
+  // Update the logged in user session with the new org id
+  req.session.user.orgId = orgId;
+  await req.session.save();
+
+  return res.status(201).json({ message: "Org created!", org: orgId });
 };
 
 /**
@@ -105,7 +108,6 @@ export const deleteOrg = async (req: Request, res: Response) => {
   const [org, error] = await Orgs.getOrgById({ orgId: orgId });
 
   if (error) {
-    console.log("Error retrieving org info", error);
     return res
       .status(500)
       .json({ message: "An error ocurred retrieving your org" });
@@ -120,31 +122,28 @@ export const deleteOrg = async (req: Request, res: Response) => {
     });
   }
 
-  try {
-    const updatedUser = await Users.updateUser({
-      // TODO possible transaction?
-      userId: req.session.user.userId,
-      newUserValues: {
-        orgId: DEFAULTS.NO_ORG,
-        orgJoinDate: DEFAULTS.NO_ORG,
-        GSI1PK: DEFAULTS.NO_ORG,
-      },
-      ALLOW_FORBIDDEN_KEYS: true,
-    });
+  const [updatedUser, userUpdateError] = await Users.updateUser({
+    // TODO possible transaction?
+    userId: req.session.user.userId,
+    newUserValues: {
+      orgId: DEFAULTS.NO_ORG,
+      orgJoinDate: DEFAULTS.NO_ORG,
+      GSI1PK: DEFAULTS.NO_ORG,
+    },
+    ALLOW_FORBIDDEN_KEYS: true,
+  });
 
-    req.session.user = Sanitize.clean(updatedUser, ENTITY_TYPES.USER);
-    await req.session.save();
-    return res
-      .status(200)
-      .json({ message: `You've deleted the ${orgId} org :(` });
-  } catch (error) {
-    // TODO add error logger
-    return res
-      .status(500) // TODO change #
-      .json({
-        message: `Unable to delete org - ${error}`,
-      });
+  if (userUpdateError) {
+    return res.status(500).json({
+      message:
+        "We were unable to remove you from the org :( TODO - stuck condition if the org is already deleted, should be done in a transaction",
+    });
   }
+  req.session.user = Sanitize.clean(updatedUser, ENTITY_TYPES.USER);
+  await req.session.save();
+  return res
+    .status(200)
+    .json({ message: `You've deleted the ${orgId} org :(` });
 };
 
 export const users = async (req: Request, res: Response) => {
