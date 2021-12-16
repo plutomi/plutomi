@@ -8,12 +8,20 @@ import sendEmail from "../../utils/sendEmail";
 import * as Time from "../../utils/time";
 const { DYNAMO_TABLE_NAME } = process.env;
 import { SdkError } from "@aws-sdk/types";
+import * as crypto from "crypto";
+
 export default async function CreateUser(
   props: CreateUserInput
 ): Promise<[DynamoNewUser, null] | [null, SdkError]> {
   const { email, firstName, lastName } = props;
 
   const userId = nanoid(ID_LENGTHS.USER);
+
+  const unsubscribeHash = crypto
+    .createHash("sha256")
+    .update(userId + email + nanoid(10000))
+    .digest("base64");
+
   const newUser: DynamoNewUser = {
     PK: `${ENTITY_TYPES.USER}#${userId}`,
     SK: ENTITY_TYPES.USER,
@@ -30,6 +38,7 @@ export default async function CreateUser(
       firstName && lastName ? `${firstName} ${lastName}` : DEFAULTS.FULL_NAME,
     GSI2PK: email.toLowerCase().trim(),
     GSI2SK: ENTITY_TYPES.USER,
+    unsubscribeHash: unsubscribeHash,
   };
 
   const params: PutCommandInput = {

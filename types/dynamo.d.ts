@@ -1,8 +1,7 @@
 // This file is for the actual DynamoDB entries and their Types - ie: A full object with all properties.
 // All  other types are derivatives with Pick, Omit, etc.
-import { ENTITY_TYPES, DEFAULTS } from "../Config";
 import { UserSessionData } from "./main";
-
+import { ENTITY_TYPES } from "../Config";
 interface DynamoNewStage {
   /**
    * Primary key for creating a stage - takes `orgId` and `stageId`
@@ -361,6 +360,7 @@ interface DynamoNewUser {
   GSI1SK: `${string} ${string}` | DEFAULTS.FULL_NAME;
   GSI2PK: string;
   GSI2SK: ENTITY_TYPES.USER;
+  unsubscribeHash: string;
 }
 
 interface DynamoNewLoginLink {

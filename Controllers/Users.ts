@@ -127,3 +127,29 @@ export const getInvites = async (req: Request, res: Response) => {
 
   return res.status(200).json(invites);
 };
+
+export const unsubscribe = async (req: Request, res: Response) => {
+  const { hash } = req.params;
+  const email = req.query.email as string;
+
+  if (!hash || !email) {
+    return res.status(400).json({ message: "Invalid link" });
+  }
+  const [user, error] = await Users.getUserByEmail({ email });
+
+  if (error) {
+    const formattedError = errorFormatter(error);
+    return res.status(formattedError.httpStatusCode).json({
+      message: "An error ocurred retrieving user info",
+      ...formattedError,
+    });
+  }
+
+  const { unsubscribeHash } = user;
+
+  if (hash !== unsubscribeHash) {
+    return res.status(400).json({ message: "Invalid link" });
+  }
+
+  return res.status(200).json({ message: "Unsubscribed!" });
+};
