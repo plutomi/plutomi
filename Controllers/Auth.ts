@@ -189,7 +189,7 @@ export const createLoginLinks = async (req: Request, res: Response) => {
   const [success, creationError] = await Users.createLoginLink({
     userId: user.userId,
     loginLinkId,
-    linkType: loginMethod,
+    loginMethod: loginMethod,
   });
 
   if (creationError) {

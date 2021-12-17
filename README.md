@@ -117,6 +117,12 @@ Make sure all of your `@aws-cdk/*` dependencies are running the same version + m
 
 Try running this command: `aws ecr-public get-login-password --region us-east-1 | docker login --username AWS --password-stdin public.ecr.aws/sam/build-nodejs`
 
+> `Resource_Name` cannot be deleted as it is in use by `Another_Resource`
+
+https://github.com/aws/aws-cdk/issues/3414
+
+TLDR: Try updating the stack with the `-e` flag
+
 ## Contributing
 
 To make a contribution, submit a pull request into the `main` branch. You will be asked to sign a [Contributor License Agreement](https://en.wikipedia.org/wiki/Contributor_License_Agreement) for your PR. You'll only have to do this once.

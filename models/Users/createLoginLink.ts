@@ -15,7 +15,7 @@ import { SdkError } from "@aws-sdk/types";
 export default async function CreateLoginLink(
   props: CreateLoginLinkInput
 ): Promise<[null, null] | [null, SdkError]> {
-  const { userId, loginLinkId, linkType } = props;
+  const { userId, loginLinkId, loginMethod } = props;
   const now = Time.currentISO();
   try {
     const newLoginLink: DynamoNewLoginLink = {
@@ -26,7 +26,7 @@ export default async function CreateLoginLink(
       ttlExpiry: Time.futureUNIX(1, TIME_UNITS.MINUTES), // Deleted after 15 minutes, must be >= ttl on `sealData`
       GSI1PK: `${ENTITY_TYPES.USER}#${userId}#${ENTITY_TYPES.LOGIN_LINK}S`, // Get latest login link(s) for a user for throttling
       GSI1SK: now,
-      linkType: linkType,
+      loginMethod: loginMethod,
     };
 
     const params: PutCommandInput = {

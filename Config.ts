@@ -136,9 +136,14 @@ const GLOBAL_FORBIDDEN_PROPERTIES = [
   "ttlExpiry",
   "entityType",
   "createdAt",
-  "unsubscribeSecret",
 ];
 
+/**
+ * Events for filtering DynamoDB streams
+ */
+export const STREAM_EVENTS = {
+  SEND_LOGIN_LINK: "SEND_LOGIN_LINK",
+};
 /**
  * Properties that cannot be updated per entity type
  */

@@ -225,7 +225,7 @@ type JoinOrgFromInviteInput = {
 type CreateLoginLinkInput = {
   userId: string;
   loginLinkId: string;
-  linkType: string; // GOOGLE or LINK
+  loginMethod: string; // GOOGLE or LINK
 };
 
 type DeleteLoginLinkInput = {

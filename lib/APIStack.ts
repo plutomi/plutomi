@@ -19,7 +19,6 @@ if (resultDotEnv.error) {
 interface APIStackProps extends cdk.StackProps {
   table: dynamodb.Table;
 }
-
 export default class APIStack extends cdk.Stack {
   /**
    *
@@ -33,36 +32,15 @@ export default class APIStack extends cdk.Stack {
     const HOSTED_ZONE_ID: string = process.env.HOSTED_ZONE_ID;
     const AWS_ACCOUNT_ID: string = process.env.AWS_ACCOUNT_ID;
 
-    // Get table name from the DynamoDBStack
-    const TABLE_NAME = props.table.tableName;
-
     // IAM inline role - the service principal is required
     const taskRole = new iam.Role(this, "plutomi-api-fargate-role", {
       assumedBy: new iam.ServicePrincipal("ecs-tasks.amazonaws.com"),
     });
 
     // Allows Fargate to access DynamoDB
-    taskRole.addToPolicy(
-      new iam.PolicyStatement({
-        effect: iam.Effect.ALLOW,
-        actions: [
-          "dynamodb:BatchGetItem",
-          "dynamodb:BatchWriteItem",
-          "dynamodb:PutItem",
-          "dynamodb:DeleteItem",
-          "dynamodb:GetItem",
-          "dynamodb:Query",
-          "dynamodb:UpdateItem",
-        ],
-        resources: [
-          `arn:aws:dynamodb:*:${AWS_ACCOUNT_ID}:table/${TABLE_NAME}/index/GSI1`,
-          `arn:aws:dynamodb:*:${AWS_ACCOUNT_ID}:table/${TABLE_NAME}/index/GSI2`,
-          `arn:aws:dynamodb:*:${AWS_ACCOUNT_ID}:table/${TABLE_NAME}`,
-        ],
-      })
-    );
+    props.table.grantReadWriteData(taskRole);
 
-    const SES_DOMAIN = "plutomi.com"; // TODO
+    const SES_DOMAIN = "plutomi.com"; // TODO remove once stream processor is implemented
     // Allows Fargate to send emails
     taskRole.addToPolicy(
       new iam.PolicyStatement({
@@ -131,7 +109,6 @@ export default class APIStack extends cdk.Stack {
         "PlutomiApi",
         {
           cluster: cluster, // Required
-          desiredCount: 1, // Default is 1
           taskDefinition: taskDefinition,
           publicLoadBalancer: true, // Default is false
           domainName: process.env.API_DOMAIN_NAME,

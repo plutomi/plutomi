@@ -6,6 +6,7 @@ import { NodejsFunction } from "@aws-cdk/aws-lambda-nodejs";
 import * as path from "path";
 import * as sns from "@aws-cdk/aws-sns";
 import * as sqs from "@aws-cdk/aws-sqs";
+import { STREAM_EVENTS } from "../Config";
 import * as subscriptions from "@aws-cdk/aws-sns-subscriptions";
 import { DynamoEventSource } from "@aws-cdk/aws-lambda-event-sources";
 const resultDotEnv = dotenv.config({
@@ -16,22 +17,17 @@ if (resultDotEnv.error) {
   throw resultDotEnv.error;
 }
 
-interface StreamProcessorStackPropsProps extends cdk.StackProps {
+interface StreamProcessorStackProps extends cdk.StackProps {
   table: dynamodb.Table;
 }
-
-export default class StreamProcessorStackProps extends cdk.Stack {
+export default class StreamProcessorStack extends cdk.Stack {
   /**
    *
    * @param {cdk.Construct} scope
    * @param {string} id
    * @param {cdk.StackProps=} props
    */
-  constructor(
-    scope: cdk.App,
-    id: string,
-    props: StreamProcessorStackPropsProps
-  ) {
+  constructor(scope: cdk.App, id: string, props: StreamProcessorStackProps) {
     super(scope, id, props);
 
     // Create an SNS topic to fan-out / filter all table changes
@@ -70,7 +66,7 @@ export default class StreamProcessorStackProps extends cdk.Stack {
     // Allow lambda to publish into our SNS topic
     streamProcessorTopic.grantPublish(streamProcessorFunction);
 
-    // TODO test queue
+    // TODO test queue, extract to its own stack with another lambda process
 
     const processorQueue = new sqs.Queue(this, "TEST Queue", {
       queueName: "TestQueue",
@@ -78,7 +74,13 @@ export default class StreamProcessorStackProps extends cdk.Stack {
 
     // TODO test, just making sure events reach the queue
     streamProcessorTopic.addSubscription(
-      new subscriptions.SqsSubscription(processorQueue)
+      new subscriptions.SqsSubscription(processorQueue, {
+        filterPolicy: {
+          eventType: sns.SubscriptionFilter.stringFilter({
+            allowlist: [STREAM_EVENTS.SEND_LOGIN_LINK],
+          }),
+        },
+      })
     );
   }
 }

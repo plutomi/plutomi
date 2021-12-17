@@ -371,7 +371,7 @@ interface DynamoNewLoginLink {
   SK: `${ENTITY_TYPES.LOGIN_LINK}#${string}`;
   entityType: ENTITY_TYPES.LOGIN_LINK;
   createdAt: string;
-  linkType: string; // "GOOGLE" or "EMAIL"
+  loginMethod: string; // "GOOGLE" or "EMAIL"
   /**
    * A UNIX date for which Dynamo will auto delete this link
    */
