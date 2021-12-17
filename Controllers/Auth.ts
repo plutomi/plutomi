@@ -110,7 +110,7 @@ export const createLoginLinks = async (req: Request, res: Response) => {
 
   const schema = Joi.object({
     email: Joi.string().email(),
-    loginMethod: Joi.string().valid(LOGIN_METHODS.GOOGLE, LOGIN_METHODS.LINK),
+    loginMethod: Joi.string().valid(LOGIN_METHODS.GOOGLE, LOGIN_METHODS.EMAIL),
   }).options({ presence: "required" });
 
   // Validate input
@@ -168,7 +168,7 @@ export const createLoginLinks = async (req: Request, res: Response) => {
   if (
     latestLink &&
     latestLink.createdAt >= timeThreshold &&
-    !user.email.endsWith(process.env.DOMAIN_NAME)
+    !user.email.endsWith(process.env.DOMAIN_NAME) // Allow admins to send multiple login links in a short timespan
   ) {
     return res.status(400).json({
       message: "You're doing that too much, please try again later",
@@ -189,6 +189,7 @@ export const createLoginLinks = async (req: Request, res: Response) => {
   const [success, creationError] = await Users.createLoginLink({
     userId: user.userId,
     loginLinkId,
+    linkType: loginMethod,
   });
 
   if (creationError) {

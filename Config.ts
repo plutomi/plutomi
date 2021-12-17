@@ -170,7 +170,7 @@ export const FORBIDDEN_PROPERTIES = {
 };
 
 export const LOGIN_METHODS = {
-  LINK: "LINK",
+  EMAIL: "EMAIL",
   GOOGLE: "GOOGLE",
 };
 

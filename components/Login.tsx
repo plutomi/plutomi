@@ -3,7 +3,7 @@ import { useState } from "react";
 import router from "next/router";
 import AuthService from "../adapters/AuthService";
 import GoogleLoginButton from "./GoogleLoginButton";
-import axios from "../axios";
+import axios from "../utils/axios";
 import { LOGIN_METHODS } from "../Config";
 
 export default function Login({ loggedOutPageText }) {
@@ -26,7 +26,7 @@ export default function Login({ loggedOutPageText }) {
       const { message } = await AuthService.login(
         email,
         window.location.href,
-        LOGIN_METHODS.LINK
+        LOGIN_METHODS.EMAIL
       );
 
       setSubmittedText(message);

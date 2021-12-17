@@ -4,7 +4,7 @@ import LoginHomepage from "../components/LoginHomepage";
 import UseCases from "../components/UseCases";
 import Hero from "../components/Static/Hero";
 import useSelf from "../SWR/useSelf";
-import axios from "../axios";
+import axios from "../utils/axios";
 import { ChevronRightIcon, MailIcon } from "@heroicons/react/outline";
 import _ from "lodash";
 import * as Time from "../utils/time";

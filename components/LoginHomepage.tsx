@@ -31,7 +31,7 @@ export default function LoginHomepage({ callbackUrl }: CallbackUrl) {
       const { message } = await AuthService.login(
         email,
         callbackUrl,
-        LOGIN_METHODS.LINK
+        LOGIN_METHODS.EMAIL
       );
 
       setSubmittedText(message);

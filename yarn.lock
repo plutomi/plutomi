@@ -502,7 +502,7 @@
     "@aws-cdk/core" "1.133.0"
     "constructs" "^3.3.69"
 
-"@aws-cdk/aws-lambda-nodejs@1.133.0":
+"@aws-cdk/aws-lambda-nodejs@^1.133.0":
   "integrity" "sha512-LxJ13Do/HhGvLXIhKqWGGndAiSs1gBOMSiWhut5mRZKXxxiKNSglTCeBh4bAouBSy46+e11y+OE6rO9BUMev4w=="
   "resolved" "https://registry.npmjs.org/@aws-cdk/aws-lambda-nodejs/-/aws-lambda-nodejs-1.133.0.tgz"
   "version" "1.133.0"
@@ -677,7 +677,7 @@
     "@aws-cdk/core" "1.133.0"
     "constructs" "^3.3.69"
 
-"@aws-cdk/aws-sns-subscriptions@1.133.0":
+"@aws-cdk/aws-sns-subscriptions@^1.133.0", "@aws-cdk/aws-sns-subscriptions@1.133.0":
   "integrity" "sha512-W9YKnAytKuzF0AOGqL0BPEqpcySKSgKmSLERlluqo8vG3jlMK6lV3XWYfjlvEZJLpMAz5N4bMfiACoJfAe3TdQ=="
   "resolved" "https://registry.npmjs.org/@aws-cdk/aws-sns-subscriptions/-/aws-sns-subscriptions-1.133.0.tgz"
   "version" "1.133.0"
@@ -1025,6 +1025,45 @@
     "@aws-sdk/util-utf8-browser" "3.37.0"
     "@aws-sdk/util-utf8-node" "3.37.0"
     "@aws-sdk/util-waiter" "3.40.0"
+    "entities" "2.2.0"
+    "fast-xml-parser" "3.19.0"
+    "tslib" "^2.3.0"
+
+"@aws-sdk/client-sns@^3.43.0":
+  "integrity" "sha512-UJLTGJAjincLkrxwHVDmDxl+hhs9Kr2HhgToDlSEjXQlLw1QmZpt8Wp+nrqdnr07iwaUcoPCcb0I9Zcex/HeWw=="
+  "resolved" "https://registry.npmjs.org/@aws-sdk/client-sns/-/client-sns-3.43.0.tgz"
+  "version" "3.43.0"
+  dependencies:
+    "@aws-crypto/sha256-browser" "2.0.0"
+    "@aws-crypto/sha256-js" "2.0.0"
+    "@aws-sdk/client-sts" "3.43.0"
+    "@aws-sdk/config-resolver" "3.40.0"
+    "@aws-sdk/credential-provider-node" "3.41.0"
+    "@aws-sdk/fetch-http-handler" "3.40.0"
+    "@aws-sdk/hash-node" "3.40.0"
+    "@aws-sdk/invalid-dependency" "3.40.0"
+    "@aws-sdk/middleware-content-length" "3.40.0"
+    "@aws-sdk/middleware-host-header" "3.40.0"
+    "@aws-sdk/middleware-logger" "3.40.0"
+    "@aws-sdk/middleware-retry" "3.40.0"
+    "@aws-sdk/middleware-serde" "3.40.0"
+    "@aws-sdk/middleware-signing" "3.40.0"
+    "@aws-sdk/middleware-stack" "3.40.0"
+    "@aws-sdk/middleware-user-agent" "3.40.0"
+    "@aws-sdk/node-config-provider" "3.40.0"
+    "@aws-sdk/node-http-handler" "3.40.0"
+    "@aws-sdk/protocol-http" "3.40.0"
+    "@aws-sdk/smithy-client" "3.41.0"
+    "@aws-sdk/types" "3.40.0"
+    "@aws-sdk/url-parser" "3.40.0"
+    "@aws-sdk/util-base64-browser" "3.37.0"
+    "@aws-sdk/util-base64-node" "3.37.0"
+    "@aws-sdk/util-body-length-browser" "3.37.0"
+    "@aws-sdk/util-body-length-node" "3.37.0"
+    "@aws-sdk/util-user-agent-browser" "3.40.0"
+    "@aws-sdk/util-user-agent-node" "3.40.0"
+    "@aws-sdk/util-utf8-browser" "3.37.0"
+    "@aws-sdk/util-utf8-node" "3.37.0"
     "entities" "2.2.0"
     "fast-xml-parser" "3.19.0"
     "tslib" "^2.3.0"
