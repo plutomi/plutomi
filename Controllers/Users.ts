@@ -134,12 +134,12 @@ export const unsubscribe = async (req: Request, res: Response) => {
   const email = req.query.email as string;
 
   if (!clientHash || !email) {
-    return res.status(400).json({ message: "Invalid link1" });
+    return res.status(400).json({ message: "Invalid link" });
   }
   const [user, error] = await Users.getUserByEmail({ email });
 
   if (!user) {
-    return res.status(400).json({ message: "Invalid link2" });
+    return res.status(400).json({ message: "Invalid link" });
   }
 
   if (error) {
@@ -158,7 +158,7 @@ export const unsubscribe = async (req: Request, res: Response) => {
   }
 
   if (clientHash !== user.unsubscribeHash) {
-    return res.status(400).json({ message: "Invalid link3" });
+    return res.status(400).json({ message: "Invalid link" });
   }
 
   const [unsubbed, failed] = await Users.updateUser({
