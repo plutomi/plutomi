@@ -8,7 +8,11 @@ import * as sns from "@aws-cdk/aws-sns";
 import * as sqs from "@aws-cdk/aws-sqs";
 import { STREAM_EVENTS } from "../Config";
 import * as subscriptions from "@aws-cdk/aws-sns-subscriptions";
-import { DynamoEventSource } from "@aws-cdk/aws-lambda-event-sources";
+import {
+  DynamoEventSource,
+  SqsEventSource,
+} from "@aws-cdk/aws-lambda-event-sources";
+
 const resultDotEnv = dotenv.config({
   path: __dirname + `../../.env.${process.env.NODE_ENV}`,
 });
@@ -80,6 +84,27 @@ export default class StreamProcessorStack extends cdk.Stack {
             allowlist: [STREAM_EVENTS.SEND_LOGIN_LINK],
           }),
         },
+      })
+    );
+
+    const loginEventProcessorFunction = new NodejsFunction(
+      this,
+      "LoginEventProcessorFunction",
+      {
+        memorySize: 256,
+        timeout: cdk.Duration.seconds(5),
+        runtime: lambda.Runtime.NODEJS_14_X,
+        architecture: lambda.Architecture.ARM_64,
+        description: "LOGIN EVENTS",
+        handler: "main",
+        entry: path.join(__dirname, `/../functions/loginEventProcessor.ts`),
+      }
+    );
+
+    loginEventProcessorFunction.addEventSource(
+      new SqsEventSource(processorQueue, {
+        batchSize: 1,
+        // TODO add mroe settings
       })
     );
   }

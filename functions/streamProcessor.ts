@@ -17,12 +17,13 @@ export async function main(event: DynamoDBStreamEvent) {
   const oldItem = record.dynamodb.OldImage;
   const newItem = record.dynamodb.NewImage;
   let attributes;
-  // TODO recently released, filtering from streams -> Lambda so we don't have to do these checks
+  // TODO recently released, filtering from streams -> Lambda so we don't have to do these checks for irrelevant events
   const SEND_LOGIN_LINK =
     eventName === "INSERT" &&
     newItem.entityType.S === ENTITY_TYPES.LOGIN_LINK &&
     newItem.loginMethod.S === LOGIN_METHODS.EMAIL;
 
+  // TODO create a login event processor here, and only send if a user has !verifiedEmail, covers our "New User" email problem
   if (SEND_LOGIN_LINK) {
     console.log("User is requesting to log in", newItem);
     attributes = {
