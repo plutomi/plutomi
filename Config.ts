@@ -136,16 +136,18 @@ const GLOBAL_FORBIDDEN_PROPERTIES = [
   "ttlExpiry",
   "entityType",
   "createdAt",
+  "unsubscribeSecret",
 ];
 
 /**
- * Properties that cannot be updated
+ * Properties that cannot be updated per entity type
  */
 export const FORBIDDEN_PROPERTIES = {
   USER: [
     ...GLOBAL_FORBIDDEN_PROPERTIES,
     "userRole", // TODO, only admins
     "orgJoinDate",
+    "canReceiveEmails",
     "GSI1PK", // Org#EntityType
     "GSI2PK", // Email
   ],

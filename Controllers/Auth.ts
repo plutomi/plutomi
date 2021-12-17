@@ -16,6 +16,7 @@ import * as Time from "../utils/time";
 import * as Users from "../models/Users/index";
 import { LOGIN_LINK_SETTINGS } from "../Config";
 import errorFormatter from "../utils/errorFormatter";
+import genUnsubHash from "../utils/genUnsubHash";
 export const login = async (req: Request, res: Response) => {
   const { callbackUrl, seal } = req.query as Pick<
     CUSTOM_QUERY,
@@ -144,6 +145,12 @@ export const createLoginLinks = async (req: Request, res: Response) => {
     user = createdUser;
   }
 
+  if (!user.canReceiveEmails) {
+    return res.status(403).json({
+      message: `${user.email} is unable to receive emails, please reach out to support@plutomi.com to opt back in!`,
+    });
+  }
+
   const [latestLink, loginLinkError] = await Users.getLatestLoginLink({
     userId: user.userId,
   });
@@ -211,7 +218,9 @@ export const createLoginLinks = async (req: Request, res: Response) => {
     subject: `Your magic login link is here!`,
     html: `<h1><a href="${loginLink}" noreferrer target="_blank" >Click this link to log in</a></h1><p>It will expire ${Time.relative(
       new Date(loginLinkExpiry)
-    )}. <strong>DO NOT SHARE THIS LINK WITH ANYONE!!!</strong></p><p>If you did not request this link, you can safely ignore it.</p>`,
+    )}.</p><p>If you did not request this link, you can safely ignore it and unsubscribe here: ${
+      process.env.API_URL
+    }/unsubscribe/${user.unsubscribeHash}?email=${user.email}</p>`,
   });
 
   if (emailFailure) {

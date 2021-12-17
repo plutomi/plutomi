@@ -360,7 +360,9 @@ interface DynamoNewUser {
   GSI1SK: `${string} ${string}` | DEFAULTS.FULL_NAME;
   GSI2PK: string;
   GSI2SK: ENTITY_TYPES.USER;
+  unsubscribeSecret: string;
   unsubscribeHash: string;
+  canReceiveEmails: boolean;
 }
 
 interface DynamoNewLoginLink {
