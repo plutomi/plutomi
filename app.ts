@@ -21,6 +21,7 @@ import * as Questions from "./controllers/Questions";
 import * as Stages from "./controllers/Stages";
 import * as Openings from "./controllers/Openings";
 import * as Applicants from "./controllers/Applicants";
+import * as Emails from "./controllers/Emails";
 import withCleanOrgId from "./middleware/withCleanOrgId";
 import withAuth from "./middleware/withAuth";
 import routeNotFound from "./middleware/routeNotFound";
@@ -110,8 +111,7 @@ app.post("/invites/:inviteId", [withAuth], Invites.accept);
 app.delete("/invites/:inviteId", [withAuth], Invites.reject);
 
 // Misc
-
-app.get("/unsubscribe/:hash", Users.unsubscribe);
+app.get("/unsubscribe/:hash", Emails.unsubscribe);
 // ------------------------ DO NOT TOUCH BELOW THIS LINE ---------------------------
 const endpoints = listEndpoints(app);
 app.set("endpoints", endpoints);

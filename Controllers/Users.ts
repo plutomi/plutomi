@@ -4,7 +4,7 @@ import Sanitize from "./../utils/sanitize";
 import * as Users from "../models/Users/index";
 import Joi from "joi";
 import errorFormatter from "../utils/errorFormatter";
-import genUnsubHash from "../utils/genUnsubHash";
+import { unsealData } from "iron-session";
 export const self = async (req: Request, res: Response) => {
   const [user, error] = await Users.getUserById({
     userId: req.session.user.userId,
@@ -129,52 +129,4 @@ export const getInvites = async (req: Request, res: Response) => {
   return res.status(200).json(invites);
 };
 
-export const unsubscribe = async (req: Request, res: Response) => {
-  const clientHash = req.params.hash;
-  const email = req.query.email as string;
 
-  if (!clientHash || !email) {
-    return res.status(400).json({ message: "Invalid link" });
-  }
-  const [user, error] = await Users.getUserByEmail({ email });
-
-  if (!user) {
-    return res.status(400).json({ message: "Invalid link" });
-  }
-
-  if (error) {
-    const formattedError = errorFormatter(error);
-    return res.status(formattedError.httpStatusCode).json({
-      message: "An error ocurred retrieving user info",
-      ...formattedError,
-    });
-  }
-
-  if (!user.canReceiveEmails) {
-    return res.status(200).json({
-      message:
-        "You've already unsubscribed! Please reach out to support@plutomi.com to opt back in to emails",
-    });
-  }
-
-  if (clientHash !== user.unsubscribeHash) {
-    return res.status(400).json({ message: "Invalid link" });
-  }
-
-  const [unsubbed, failed] = await Users.updateUser({
-    userId: user.userId,
-    ALLOW_FORBIDDEN_KEYS: true,
-    newUserValues: {
-      canReceiveEmails: false,
-    },
-  });
-
-  if (failed) {
-    const formattedError = errorFormatter(failed);
-    return res.status(formattedError.httpStatusCode).json({
-      message: "An error ocurred while unsubscribing",
-      ...formattedError,
-    });
-  }
-  return res.status(200).json({ message: "Unsubscribed!" });
-};

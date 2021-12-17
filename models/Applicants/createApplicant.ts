@@ -9,6 +9,7 @@ import { DynamoNewApplicant } from "../../types/dynamo";
 import { CreateApplicantInput, CreateApplicantOutput } from "../../types/main";
 import * as Time from "../../utils/time";
 import { SdkError } from "@aws-sdk/types";
+import { sealData } from "iron-session";
 const { DYNAMO_TABLE_NAME } = process.env;
 
 export default async function Create(
@@ -18,6 +19,19 @@ export default async function Create(
 
   const now = Time.currentISO();
   const applicantId = nanoid(ID_LENGTHS.APPLICANT);
+
+  const unsubscribeHash = await sealData(
+    {
+      applicantId: applicantId,
+      orgId: orgId,
+      entityType: ENTITY_TYPES.APPLICANT,
+    },
+    {
+      // TODO try catch
+      password: process.env.IRON_SEAL_PASSWORD,
+      ttl: 0,
+    }
+  );
 
   const newApplicant: DynamoNewApplicant = {
     PK: `${ENTITY_TYPES.APPLICANT}#${applicantId}`,
@@ -34,6 +48,8 @@ export default async function Create(
     // TODO add phone number
     openingId: openingId,
     stageId: stageId,
+    unsubscribeHash: unsubscribeHash,
+    canReceiveEmails: true,
 
     /** // TODO revisit this below
      * The below might seem silly and it does look like we have a dead index. Which we do! Sort of.. :)

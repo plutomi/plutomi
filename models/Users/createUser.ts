@@ -8,7 +8,7 @@ import sendEmail from "../../utils/sendEmail";
 import * as Time from "../../utils/time";
 const { DYNAMO_TABLE_NAME } = process.env;
 import { SdkError } from "@aws-sdk/types";
-import genUnsubHash from "../../utils/genUnsubHash";
+import { sealData } from "iron-session";
 export default async function CreateUser(
   props: CreateUserInput
 ): Promise<[DynamoNewUser, null] | [null, SdkError]> {
@@ -16,8 +16,15 @@ export default async function CreateUser(
 
   const userId = nanoid(ID_LENGTHS.USER);
 
-  const unsubscribeSecret = nanoid(10);
-  const unsubscribeHash = genUnsubHash(userId, email, unsubscribeSecret);
+  const unsubscribeHash = await sealData(
+    { userId: userId, entityType: ENTITY_TYPES.USER },
+    {
+      // TODO try catch
+      password: process.env.IRON_SEAL_PASSWORD,
+      ttl: 0,
+    }
+  );
+
   const newUser: DynamoNewUser = {
     PK: `${ENTITY_TYPES.USER}#${userId}`,
     SK: ENTITY_TYPES.USER,
@@ -34,7 +41,6 @@ export default async function CreateUser(
       firstName && lastName ? `${firstName} ${lastName}` : DEFAULTS.FULL_NAME,
     GSI2PK: email.toLowerCase().trim(),
     GSI2SK: ENTITY_TYPES.USER,
-    unsubscribeSecret: unsubscribeSecret,
     unsubscribeHash: unsubscribeHash,
     canReceiveEmails: true,
   };
