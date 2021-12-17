@@ -6,6 +6,7 @@ import update from "./updateUser";
 import createLink from "./createLoginLink";
 import latestLink from "./getLatestLoginLink";
 import loginEvent from "./createLoginEvent";
+
 export const getInvitesForUser = getInvites;
 export const createUser = create;
 export const getUserByEmail = getByEmail;

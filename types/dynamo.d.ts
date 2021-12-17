@@ -1,8 +1,7 @@
 // This file is for the actual DynamoDB entries and their Types - ie: A full object with all properties.
 // All  other types are derivatives with Pick, Omit, etc.
-import { ENTITY_TYPES, DEFAULTS } from "../Config";
 import { UserSessionData } from "./main";
-
+import { ENTITY_TYPES } from "../Config";
 interface DynamoNewStage {
   /**
    * Primary key for creating a stage - takes `orgId` and `stageId`
@@ -124,6 +123,7 @@ interface DynamoNewApplicant {
    */
   fullName: `${string} ${string}`;
 
+  canReceiveEmails: boolean;
   /**
    * If the applicant's email has been verified (clicked on the application link sent to their email // TODO maybe answered questions on one stage?)
    */
@@ -161,6 +161,7 @@ interface DynamoNewApplicant {
   // Before we had `OPENING#${openingId}#STAGE#{stageId}` for the SK which required the opening when getting applicants in specific stage
   // TODO recheck later if this is still good
 
+  unsubscribeHash: string;
   /**
    * Key for returning all applicants in an org - `orgId`
    */
@@ -361,6 +362,8 @@ interface DynamoNewUser {
   GSI1SK: `${string} ${string}` | DEFAULTS.FULL_NAME;
   GSI2PK: string;
   GSI2SK: ENTITY_TYPES.USER;
+  unsubscribeHash: string;
+  canReceiveEmails: boolean;
 }
 
 interface DynamoNewLoginLink {

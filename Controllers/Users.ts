@@ -4,6 +4,7 @@ import Sanitize from "./../utils/sanitize";
 import * as Users from "../models/Users/index";
 import Joi from "joi";
 import errorFormatter from "../utils/errorFormatter";
+import { unsealData } from "iron-session";
 export const self = async (req: Request, res: Response) => {
   const [user, error] = await Users.getUserById({
     userId: req.session.user.userId,
@@ -127,3 +128,5 @@ export const getInvites = async (req: Request, res: Response) => {
 
   return res.status(200).json(invites);
 };
+
+
