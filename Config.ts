@@ -1,4 +1,6 @@
 import { ironSession } from "iron-session/express";
+import { Duration } from "@aws-cdk/core";
+import { Runtime, Architecture } from "@aws-cdk/aws-lambda";
 
 export const API_METHODS = {
   GET: "GET",
@@ -179,6 +181,18 @@ export const LOGIN_METHODS = {
   GOOGLE: "GOOGLE",
 };
 
+// Reusable defaults across all lambda functions. Feel free to override when needed
+export const DEFAULT_LAMBDA_CONFIG = {
+  memorySize: 256,
+  timeout: Duration.seconds(5),
+  runtime: Runtime.NODEJS_14_X,
+  architecture: Architecture.ARM_64,
+  bundling: {
+    minify: true,
+    externalModules: ["aws-sdk"],
+  },
+  handler: "main",
+};
 export const NAVBAR_NAVIGATION = [
   {
     name: "Dashboard",

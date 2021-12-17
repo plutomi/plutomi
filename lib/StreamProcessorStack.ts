@@ -2,12 +2,12 @@ import * as dotenv from "dotenv";
 import * as cdk from "@aws-cdk/core";
 import * as dynamodb from "@aws-cdk/aws-dynamodb";
 import * as lambda from "@aws-cdk/aws-lambda";
-import { NodejsFunction } from "@aws-cdk/aws-lambda-nodejs";
 import * as path from "path";
-import * as sns from "@aws-cdk/aws-sns";
-import * as sqs from "@aws-cdk/aws-sqs";
-import { STREAM_EVENTS } from "../Config";
-import * as subscriptions from "@aws-cdk/aws-sns-subscriptions";
+import { NodejsFunction } from "@aws-cdk/aws-lambda-nodejs";
+import { Topic, SubscriptionFilter } from "@aws-cdk/aws-sns";
+import { Queue } from "@aws-cdk/aws-sqs";
+import { DEFAULT_LAMBDA_CONFIG, STREAM_EVENTS } from "../Config";
+import { SqsSubscription } from "@aws-cdk/aws-sns-subscriptions";
 import {
   DynamoEventSource,
   SqsEventSource,
@@ -23,6 +23,7 @@ if (resultDotEnv.error) {
 
 interface StreamProcessorStackProps extends cdk.StackProps {
   table: dynamodb.Table;
+  sendLoginLinkQueue: Queue;
 }
 export default class StreamProcessorStack extends cdk.Stack {
   /**
@@ -35,7 +36,7 @@ export default class StreamProcessorStack extends cdk.Stack {
     super(scope, id, props);
 
     // Create an SNS topic to fan-out / filter all table changes
-    const streamProcessorTopic = new sns.Topic(this, "Topic", {
+    const streamProcessorTopic = new Topic(this, "Topic", {
       displayName: "StreamProcessorTopic",
       topicName: "StreamProcessorTopic",
     });
@@ -44,13 +45,9 @@ export default class StreamProcessorStack extends cdk.Stack {
       this,
       "StreamProcessorFunction",
       {
-        memorySize: 256,
-        timeout: cdk.Duration.seconds(5),
-        runtime: lambda.Runtime.NODEJS_14_X,
-        architecture: lambda.Architecture.ARM_64,
+        ...DEFAULT_LAMBDA_CONFIG,
         description:
           "Processes table changes from DynamoDB streams and sends them to SNS",
-        handler: "main",
         entry: path.join(__dirname, `/../functions/streamProcessor.ts`),
         environment: {
           STREAM_PROCESSOR_TOPIC_ARN: streamProcessorTopic.topicArn,
@@ -70,41 +67,14 @@ export default class StreamProcessorStack extends cdk.Stack {
     // Allow lambda to publish into our SNS topic
     streamProcessorTopic.grantPublish(streamProcessorFunction);
 
-    // TODO test queue, extract to its own stack with another lambda process
-
-    const processorQueue = new sqs.Queue(this, "TEST Queue", {
-      queueName: "TestQueue",
-    });
-
     // TODO test, just making sure events reach the queue
     streamProcessorTopic.addSubscription(
-      new subscriptions.SqsSubscription(processorQueue, {
+      new SqsSubscription(props.sendLoginLinkQueue, {
         filterPolicy: {
-          eventType: sns.SubscriptionFilter.stringFilter({
+          eventType: SubscriptionFilter.stringFilter({
             allowlist: [STREAM_EVENTS.SEND_LOGIN_LINK],
           }),
         },
-      })
-    );
-
-    const loginEventProcessorFunction = new NodejsFunction(
-      this,
-      "LoginEventProcessorFunction",
-      {
-        memorySize: 256,
-        timeout: cdk.Duration.seconds(5),
-        runtime: lambda.Runtime.NODEJS_14_X,
-        architecture: lambda.Architecture.ARM_64,
-        description: "LOGIN EVENTS",
-        handler: "main",
-        entry: path.join(__dirname, `/../functions/loginEventProcessor.ts`),
-      }
-    );
-
-    loginEventProcessorFunction.addEventSource(
-      new SqsEventSource(processorQueue, {
-        batchSize: 1,
-        // TODO add mroe settings
       })
     );
   }

@@ -13,19 +13,19 @@ import errorFormatter from "../utils/errorFormatter";
  */
 export async function main(event: DynamoDBStreamEvent) {
   const record = event.Records[0]; // todo change if batch size changes
-  const eventName = record.eventName;
-  const oldItem = record.dynamodb.OldImage;
-  const newItem = record.dynamodb.NewImage;
+  const { eventName } = record;
+  const { OldImage } = record.dynamodb;
+  const { NewImage } = record.dynamodb;
   let attributes;
   // TODO recently released, filtering from streams -> Lambda so we don't have to do these checks for irrelevant events
   const SEND_LOGIN_LINK =
     eventName === "INSERT" &&
-    newItem.entityType.S === ENTITY_TYPES.LOGIN_LINK &&
-    newItem.loginMethod.S === LOGIN_METHODS.EMAIL;
+    NewImage.entityType.S === ENTITY_TYPES.LOGIN_LINK &&
+    NewImage.loginMethod.S === LOGIN_METHODS.EMAIL;
 
   // TODO create a login event processor here, and only send if a user has !verifiedEmail, covers our "New User" email problem
   if (SEND_LOGIN_LINK) {
-    console.log("User is requesting to log in", newItem);
+    console.log("User is requesting to log in", NewImage);
     attributes = {
       eventType: {
         DataType: "String",
