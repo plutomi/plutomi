@@ -30,6 +30,7 @@ export default class APIStack extends cdk.Stack {
 
     const HOSTED_ZONE_ID: string = process.env.HOSTED_ZONE_ID;
     const AWS_ACCOUNT_ID: string = process.env.AWS_ACCOUNT_ID;
+    const SES_DOMAIN = process.env.DOMAIN_NAME;
 
     // IAM inline role - the service principal is required
     const taskRole = new iam.Role(this, "plutomi-api-fargate-role", {
@@ -39,8 +40,7 @@ export default class APIStack extends cdk.Stack {
     // Allows Fargate to access DynamoDB
     props.table.grantReadWriteData(taskRole);
 
-    const SES_DOMAIN = "plutomi.com"; // TODO remove once stream processor is implemented
-    // Allows Fargate to send emails
+    // Allows Fargate to send emails // TODO remove once stream processor is implemented
     taskRole.addToPolicy(
       new iam.PolicyStatement({
         effect: iam.Effect.ALLOW,

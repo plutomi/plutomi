@@ -6,7 +6,7 @@ import * as sqs from "@aws-cdk/aws-sqs";
 import * as lambda from "@aws-cdk/aws-lambda";
 import * as lambdaEventSources from "@aws-cdk/aws-lambda-event-sources";
 import { NodejsFunction } from "@aws-cdk/aws-lambda-nodejs";
-
+import * as iam from "@aws-cdk/aws-iam";
 const resultDotEnv = dotenv.config({
   path: __dirname + `../../.env.${process.env.NODE_ENV}`,
 });
@@ -35,6 +35,8 @@ export default class SendLoginLinkStack extends cdk.Stack {
       visibilityTimeout: cdk.Duration.seconds(10),
     });
 
+    const API_URL: string = process.env.API_URL;
+
     const SendLoginLinkProcessorFunction = new NodejsFunction(
       this,
       "SendLoginLinkProcessorFunction",
@@ -51,12 +53,28 @@ export default class SendLoginLinkStack extends cdk.Stack {
         description:
           "Sends login links to users when they sign in with their email",
         entry: path.join(__dirname, `/../functions/sendLoginLink.ts`),
+        environment: {
+          API_URL: API_URL,
+        },
       }
     );
 
     SendLoginLinkProcessorFunction.addEventSource(
       new lambdaEventSources.SqsEventSource(this.sendLoginLinkQueue, {
         batchSize: 1,
+      })
+    );
+
+    const AWS_ACCOUNT_ID: string = process.env.AWS_ACCOUNT_ID;
+    const SES_DOMAIN = process.env.DOMAIN_NAME;
+
+    SendLoginLinkProcessorFunction.addToRolePolicy(
+      new iam.PolicyStatement({
+        effect: iam.Effect.ALLOW,
+        actions: ["ses:SendEmail"],
+        resources: [
+          `arn:aws:ses:us-east-1:${AWS_ACCOUNT_ID}:identity/${SES_DOMAIN}`,
+        ],
       })
     );
   }

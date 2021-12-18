@@ -20,7 +20,7 @@ builder
     });
     const { sendLoginLinkQueue } = new SendLoginLinkStack(
       app,
-      `SendLoginLinkStack1`,
+      `SendLoginLinkStack`,
       { table }
     );
 
