@@ -1,6 +1,6 @@
 import { ironSession } from "iron-session/express";
-import * as cdk from "@aws-cdk/core";
-import * as lambda from "@aws-cdk/aws-lambda";
+// import * as cdk from "@aws-cdk/core";
+// import * as lambda from "@aws-cdk/aws-lambda";
 
 export const API_METHODS = {
   GET: "GET",
@@ -182,17 +182,17 @@ export const LOGIN_METHODS = {
 };
 
 // Reusable defaults across all lambda functions. Feel free to override when needed
-export const DEFAULT_LAMBDA_CONFIG = {
-  memorySize: 256,
-  timeout: cdk.Duration.seconds(5),
-  runtime: lambda.Runtime.NODEJS_14_X,
-  architecture: lambda.Architecture.ARM_64,
-  // bundling: {
-  //   minify: true,
-  //   externalModules: ["aws-sdk"],
-  // },
-  handler: "main",
-};
+// export const DEFAULT_LAMBDA_CONFIG = {
+//   memorySize: 256,
+//   timeout: cdk.Duration.seconds(5),
+//   runtime: lambda.Runtime.NODEJS_14_X,
+//   architecture: lambda.Architecture.ARM_64,
+//   // bundling: {
+//   //   minify: true,
+//   //   externalModules: ["aws-sdk"],
+//   // },
+//   handler: "main",
+// };
 export const NAVBAR_NAVIGATION = [
   {
     name: "Dashboard",

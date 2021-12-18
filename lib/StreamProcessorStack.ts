@@ -7,7 +7,7 @@ import * as sns from "@aws-cdk/aws-sns";
 import * as sqs from "@aws-cdk/aws-sqs";
 import * as snsSubscriptions from "@aws-cdk/aws-sns-subscriptions";
 import * as lambdaEventSources from "@aws-cdk/aws-lambda-event-sources";
-import { DEFAULT_LAMBDA_CONFIG, STREAM_EVENTS } from "../Config";
+import { STREAM_EVENTS } from "../Config";
 import { NodejsFunction } from "@aws-cdk/aws-lambda-nodejs";
 
 const resultDotEnv = dotenv.config({
@@ -42,7 +42,15 @@ export default class StreamProcessorStack extends cdk.Stack {
       this,
       "StreamProcessorFunction",
       {
-        ...DEFAULT_LAMBDA_CONFIG,
+        memorySize: 256,
+        timeout: cdk.Duration.seconds(5),
+        runtime: lambda.Runtime.NODEJS_14_X,
+        architecture: lambda.Architecture.ARM_64,
+        bundling: {
+          minify: true,
+          externalModules: ["aws-sdk"],
+        },
+        handler: "main",
         description:
           "Processes table changes from DynamoDB streams and sends them to SNS",
         entry: path.join(__dirname, `/../functions/streamProcessor.ts`),

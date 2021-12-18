@@ -3,9 +3,9 @@ import * as cdk from "@aws-cdk/core";
 import * as dynamodb from "@aws-cdk/aws-dynamodb";
 import * as path from "path";
 import * as sqs from "@aws-cdk/aws-sqs";
-import * as lambda from "@aws-cdk/aws-lambda-nodejs";
+import * as lambda from "@aws-cdk/aws-lambda";
 import * as lambdaEventSources from "@aws-cdk/aws-lambda-event-sources";
-import { DEFAULT_LAMBDA_CONFIG } from "../Config";
+import { NodejsFunction } from "@aws-cdk/aws-lambda-nodejs";
 
 const resultDotEnv = dotenv.config({
   path: __dirname + `../../.env.${process.env.NODE_ENV}`,
@@ -35,16 +35,19 @@ export default class SendLoginLinkStack extends cdk.Stack {
       visibilityTimeout: cdk.Duration.seconds(10),
     });
 
-    const SendLoginLinkProcessorFunction = new lambda.NodejsFunction(
+    const SendLoginLinkProcessorFunction = new NodejsFunction(
       this,
       "SendLoginLinkProcessorFunction",
       {
-        ...DEFAULT_LAMBDA_CONFIG,
+        memorySize: 256,
+        timeout: cdk.Duration.seconds(5),
+        runtime: lambda.Runtime.NODEJS_14_X,
+        architecture: lambda.Architecture.ARM_64,
         bundling: {
-         tsconfig: {
-           
-         }
+          minify: true,
+          externalModules: ["aws-sdk"],
         },
+        handler: "main",
         description:
           "Sends login links to users when they sign in with their email",
         entry: path.join(__dirname, `/../functions/sendLoginLink.ts`),
