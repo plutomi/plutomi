@@ -1,13 +1,12 @@
 import * as dotenv from "dotenv";
 import * as cdk from "@aws-cdk/core";
-import * as ecs from "@aws-cdk/aws-ecs";
 import * as ec2 from "@aws-cdk/aws-ec2";
 import * as ecsPatterns from "@aws-cdk/aws-ecs-patterns";
 import * as route53 from "@aws-cdk/aws-route53";
 import * as protocol from "@aws-cdk/aws-elasticloadbalancingv2";
 import * as dynamodb from "@aws-cdk/aws-dynamodb";
 import * as iam from "@aws-cdk/aws-iam";
-
+import * as ecs from "@aws-cdk/aws-ecs";
 const resultDotEnv = dotenv.config({
   path: __dirname + `../../.env.${process.env.NODE_ENV}`,
 });

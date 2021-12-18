@@ -1,5 +1,4 @@
 import * as dotenv from "dotenv";
-import * as cdk from "@aws-cdk/core";
 import * as dynamodb from "@aws-cdk/aws-dynamodb";
 import * as lambda from "@aws-cdk/aws-lambda";
 import * as path from "path";
@@ -9,6 +8,7 @@ import * as snsSubscriptions from "@aws-cdk/aws-sns-subscriptions";
 import * as lambdaEventSources from "@aws-cdk/aws-lambda-event-sources";
 import { STREAM_EVENTS } from "../Config";
 import { NodejsFunction } from "@aws-cdk/aws-lambda-nodejs";
+import * as cdk from "@aws-cdk/core";
 
 const resultDotEnv = dotenv.config({
   path: __dirname + `../../.env.${process.env.NODE_ENV}`,

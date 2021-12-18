@@ -111,7 +111,7 @@ Another thing to note is that Dynamo has a 400kb limit per item. This means that
 
 > Argument of type 'this' is not assignable to parameter of type 'Construct'
 
-Make sure all of your `@aws-cdk/*` dependencies are running the same version + make sure whatever you are using in the construct is actually being imported at the top of the file
+Make sure all of your `@aws-cdk/*` dependencies are running the same version (even the `^` prefix!) + make sure whatever you are using in the construct is actually being imported at the top of the file
 
 > ERROR [internal] load metadata for public.ecr.aws/sam/build-nodejs
 
