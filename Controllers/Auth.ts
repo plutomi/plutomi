@@ -186,10 +186,23 @@ export const createLoginLinks = async (req: Request, res: Response) => {
     LOGIN_LINK_SETTINGS
   );
 
+  const loginLinkUrl = `${
+    process.env.API_URL
+  }/auth/login?seal=${seal}&callbackUrl=${
+    callbackUrl ? callbackUrl : process.env.DOMAIN_NAME + DEFAULTS.REDIRECT
+  }`;
+
+  /**
+   * Email will be sent by queue handler downstream
+   */
   const [success, creationError] = await Users.createLoginLink({
-    userId: user.userId,
     loginLinkId,
-    loginMethod: loginMethod,
+    loginMethod,
+    loginLinkUrl,
+    userId: user.userId,
+    email: user.email,
+    loginLinkExpiry,
+    unsubscribeHash: user.unsubscribeHash,
   });
 
   if (creationError) {
@@ -200,35 +213,9 @@ export const createLoginLinks = async (req: Request, res: Response) => {
     });
   }
 
-  const loginLink = `${
-    process.env.API_URL
-  }/auth/login?seal=${seal}&callbackUrl=${
-    callbackUrl ? callbackUrl : process.env.DOMAIN_NAME + DEFAULTS.REDIRECT
-  }`;
-
   if (loginMethod === LOGIN_METHODS.GOOGLE) {
     // Cannot do serverside redirect from axios post
-    return res.status(200).json({ message: loginLink });
-  }
-
-  const [emailSent, emailFailure] = await sendEmail({
-    fromName: "Plutomi",
-    fromAddress: EMAILS.GENERAL,
-    toAddresses: [user.email],
-    subject: `Your magic login link is here!`,
-    html: `<h1><a href="${loginLink}" noreferrer target="_blank" >Click this link to log in</a></h1><p>It will expire ${Time.relative(
-      new Date(loginLinkExpiry)
-    )}.</p><p>If you did not request this link, you can safely ignore it and unsubscribe here: ${
-      process.env.API_URL
-    }/unsubscribe/${user.unsubscribeHash}</p>`,
-  });
-
-  if (emailFailure) {
-    const formattedError = errorFormatter(emailFailure);
-    return res.status(formattedError.httpStatusCode).json({
-      message: "An error ocurred sending your login link",
-      ...formattedError,
-    });
+    return res.status(200).json({ message: loginLinkUrl });
   }
 
   return res

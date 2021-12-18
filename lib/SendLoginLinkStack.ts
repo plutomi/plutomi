@@ -1,11 +1,10 @@
 import * as dotenv from "dotenv";
 import * as cdk from "@aws-cdk/core";
-import { Table } from "@aws-cdk/aws-dynamodb";
+import * as dynamodb from "@aws-cdk/aws-dynamodb";
 import * as path from "path";
-import { Queue } from "@aws-cdk/aws-sqs";
-import { NodejsFunction } from "@aws-cdk/aws-lambda-nodejs";
-import { Duration } from "@aws-cdk/core";
-import { SqsEventSource } from "@aws-cdk/aws-lambda-event-sources";
+import * as sqs from "@aws-cdk/aws-sqs";
+import * as lambda from "@aws-cdk/aws-lambda-nodejs";
+import * as lambdaEventSources from "@aws-cdk/aws-lambda-event-sources";
 import { DEFAULT_LAMBDA_CONFIG } from "../Config";
 
 const resultDotEnv = dotenv.config({
@@ -17,7 +16,7 @@ if (resultDotEnv.error) {
 }
 
 interface SendLoginLinkStackProps extends cdk.StackProps {
-  table: Table;
+  table: dynamodb.Table;
 }
 export default class SendLoginLinkStack extends cdk.Stack {
   /**
@@ -26,21 +25,26 @@ export default class SendLoginLinkStack extends cdk.Stack {
    * @param {string} id
    * @param {cdk.StackProps=} props
    */
-  public readonly sendLoginLinkQueue: Queue;
+  public readonly sendLoginLinkQueue: sqs.Queue;
 
   constructor(scope: cdk.App, id: string, props: SendLoginLinkStackProps) {
     super(scope, id, props);
 
-    this.sendLoginLinkQueue = new Queue(this, "SendLoginLinkQueue", {
+    this.sendLoginLinkQueue = new sqs.Queue(this, "SendLoginLinkQueue", {
       queueName: "SendLoginLink",
-      visibilityTimeout: Duration.seconds(10),
+      visibilityTimeout: cdk.Duration.seconds(10),
     });
 
-    const SendLoginLinkProcessorFunction = new NodejsFunction(
+    const SendLoginLinkProcessorFunction = new lambda.NodejsFunction(
       this,
       "SendLoginLinkProcessorFunction",
       {
         ...DEFAULT_LAMBDA_CONFIG,
+        bundling: {
+         tsconfig: {
+           
+         }
+        },
         description:
           "Sends login links to users when they sign in with their email",
         entry: path.join(__dirname, `/../functions/sendLoginLink.ts`),
@@ -48,7 +52,7 @@ export default class SendLoginLinkStack extends cdk.Stack {
     );
 
     SendLoginLinkProcessorFunction.addEventSource(
-      new SqsEventSource(this.sendLoginLinkQueue, {
+      new lambdaEventSources.SqsEventSource(this.sendLoginLinkQueue, {
         batchSize: 1,
       })
     );

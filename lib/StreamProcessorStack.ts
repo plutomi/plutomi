@@ -3,15 +3,12 @@ import * as cdk from "@aws-cdk/core";
 import * as dynamodb from "@aws-cdk/aws-dynamodb";
 import * as lambda from "@aws-cdk/aws-lambda";
 import * as path from "path";
-import { NodejsFunction } from "@aws-cdk/aws-lambda-nodejs";
-import { Topic, SubscriptionFilter } from "@aws-cdk/aws-sns";
-import { Queue } from "@aws-cdk/aws-sqs";
+import * as sns from "@aws-cdk/aws-sns";
+import * as sqs from "@aws-cdk/aws-sqs";
+import * as snsSubscriptions from "@aws-cdk/aws-sns-subscriptions";
+import * as lambdaEventSources from "@aws-cdk/aws-lambda-event-sources";
 import { DEFAULT_LAMBDA_CONFIG, STREAM_EVENTS } from "../Config";
-import { SqsSubscription } from "@aws-cdk/aws-sns-subscriptions";
-import {
-  DynamoEventSource,
-  SqsEventSource,
-} from "@aws-cdk/aws-lambda-event-sources";
+import { NodejsFunction } from "@aws-cdk/aws-lambda-nodejs";
 
 const resultDotEnv = dotenv.config({
   path: __dirname + `../../.env.${process.env.NODE_ENV}`,
@@ -23,7 +20,7 @@ if (resultDotEnv.error) {
 
 interface StreamProcessorStackProps extends cdk.StackProps {
   table: dynamodb.Table;
-  sendLoginLinkQueue: Queue;
+  sendLoginLinkQueue: sqs.Queue;
 }
 export default class StreamProcessorStack extends cdk.Stack {
   /**
@@ -36,7 +33,7 @@ export default class StreamProcessorStack extends cdk.Stack {
     super(scope, id, props);
 
     // Create an SNS topic to fan-out / filter all table changes
-    const streamProcessorTopic = new Topic(this, "Topic", {
+    const streamProcessorTopic = new sns.Topic(this, "Topic", {
       displayName: "StreamProcessorTopic",
       topicName: "StreamProcessorTopic",
     });
@@ -55,12 +52,15 @@ export default class StreamProcessorStack extends cdk.Stack {
       }
     );
 
-    const dynamoStreams = new DynamoEventSource(props.table, {
-      startingPosition: lambda.StartingPosition.LATEST,
-      retryAttempts: 3,
-      batchSize: 1, // TODO re-evaluate this amount
-      // TODO DLQ
-    });
+    const dynamoStreams = new lambdaEventSources.DynamoEventSource(
+      props.table,
+      {
+        startingPosition: lambda.StartingPosition.LATEST,
+        retryAttempts: 3,
+        batchSize: 1, // TODO re-evaluate this amount
+        // TODO DLQ
+      }
+    );
     // Subscribe our lambda to the stream
     streamProcessorFunction.addEventSource(dynamoStreams);
 
@@ -69,9 +69,9 @@ export default class StreamProcessorStack extends cdk.Stack {
 
     // TODO test, just making sure events reach the queue
     streamProcessorTopic.addSubscription(
-      new SqsSubscription(props.sendLoginLinkQueue, {
+      new snsSubscriptions.SqsSubscription(props.sendLoginLinkQueue, {
         filterPolicy: {
-          eventType: SubscriptionFilter.stringFilter({
+          eventType: sns.SubscriptionFilter.stringFilter({
             allowlist: [STREAM_EVENTS.SEND_LOGIN_LINK],
           }),
         },

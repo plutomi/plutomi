@@ -5,8 +5,8 @@ import * as ec2 from "@aws-cdk/aws-ec2";
 import * as ecsPatterns from "@aws-cdk/aws-ecs-patterns";
 import * as route53 from "@aws-cdk/aws-route53";
 import * as protocol from "@aws-cdk/aws-elasticloadbalancingv2";
+import * as dynamodb from "@aws-cdk/aws-dynamodb";
 import * as iam from "@aws-cdk/aws-iam";
-import { Table } from "@aws-cdk/aws-dynamodb";
 
 const resultDotEnv = dotenv.config({
   path: __dirname + `../../.env.${process.env.NODE_ENV}`,
@@ -17,7 +17,7 @@ if (resultDotEnv.error) {
 }
 
 interface APIStackProps extends cdk.StackProps {
-  table: Table;
+  table: dynamodb.Table;
 }
 export default class APIStack extends cdk.Stack {
   /**

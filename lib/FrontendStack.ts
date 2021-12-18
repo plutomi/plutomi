@@ -1,8 +1,9 @@
+import * as dotenv from "dotenv";
+import * as cdk from "@aws-cdk/core";
 import { NextJSLambdaEdge } from "@sls-next/cdk-construct";
 import { HostedZone } from "@aws-cdk/aws-route53";
 import { Certificate } from "@aws-cdk/aws-certificatemanager";
-import * as dotenv from "dotenv";
-import * as cdk from "@aws-cdk/core";
+
 const resultDotEnv = dotenv.config({
   path: __dirname + `../../.env.${process.env.NODE_ENV}`,
 });
