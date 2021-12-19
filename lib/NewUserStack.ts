@@ -33,7 +33,6 @@ interface NewUserStackProps extends cdk.StackProps {
  */
 export default class NewUserStack extends cdk.Stack {
   /**
-   *
    * @param {cdk.Construct} scope
    * @param {string} id
    * @param {cdk.StackProps=} props
@@ -48,15 +47,20 @@ export default class NewUserStack extends cdk.Stack {
 
     const STACK = [
       {
-        queueName: "SendLoginLinkQueue",
-        desiredEvents: [STREAM_EVENTS.SEND_LOGIN_LINK],
-        visibilityTimeout: cdk.Duration.seconds(10),
+        queue: {
+          queueName: "SendLoginLinkQueue",
+          desiredEvents: [STREAM_EVENTS.SEND_LOGIN_LINK],
+          visibilityTimeout: cdk.Duration.seconds(10),
+        },
         function: {
           name: "SendLoginLinkFunction",
           description:
             "Sends login links to users when they sign in with their email",
-          entry: path.join(__dirname, `/../functions/sendLoginLink.ts`),
+          entry: "sendLoginLink.ts", // Parent directory is the `functions`
           sendEmail: true,
+          environment: {
+            API_URL: API_URL,
+          },
         },
       },
     ];
@@ -65,9 +69,9 @@ export default class NewUserStack extends cdk.Stack {
       /**
        * Create the queues
        */
-      const createdQueue = new sqs.Queue(this, item.queueName, {
-        queueName: item.queueName,
-        visibilityTimeout: item.visibilityTimeout,
+      const createdQueue = new sqs.Queue(this, item.queue.queueName, {
+        queueName: item.queue.queueName,
+        visibilityTimeout: item.queue.visibilityTimeout,
       });
 
       /**
@@ -77,7 +81,7 @@ export default class NewUserStack extends cdk.Stack {
         new snsSubscriptions.SqsSubscription(createdQueue, {
           filterPolicy: {
             eventType: sns.SubscriptionFilter.stringFilter({
-              allowlist: item.desiredEvents,
+              allowlist: item.queue.desiredEvents,
             }),
           },
         })
@@ -96,9 +100,8 @@ export default class NewUserStack extends cdk.Stack {
           externalModules: ["aws-sdk"],
         },
         handler: "main",
-        environment: {
-          API_URL: API_URL,
-        },
+        entry: path.join(__dirname, `/../functions/` + item.function.entry),
+        environment: item.function.environment,
       });
 
       /**
