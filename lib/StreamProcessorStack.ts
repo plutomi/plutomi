@@ -33,26 +33,19 @@ export default class StreamProcessorStack extends cdk.Stack {
   constructor(scope: cdk.App, id: string, props: StreamProcessorStackProps) {
     super(scope, id, props);
 
-    const createdQueue = new sqs.Queue(this, "EB queue", {
-      queueName: "EBTestQueue",
-    });
     const bus = events.EventBus.fromEventBusName(this, "defaultBus", "default");
+    const arn = cdk.Fn.importValue("BEANSQUEUEARN");
+    const testq = sqs.Queue.fromQueueArn(this, "tesfdasfsadfsadrft", arn);
+    console.log("New arn", arn);
 
-    const rule = new events.Rule(this, "testrule", {
+    new events.Rule(this, "testrule", {
       description: "Testing rule",
       ruleName: "Testebrule",
-      targets: [new targets.SqsQueue(createdQueue)],
-
+      targets: [new targets.SqsQueue(testq)],
       eventPattern: {
         source: ["dynamodb.streams"], // NOT AN AWS EVENT!
         detailType: [STREAM_EVENTS.SEND_LOGIN_LINK],
       },
-    });
-
-    // Create the SNS topic
-    this.StreamProcessorTopic = new sns.Topic(this, "Topic", {
-      displayName: "StreamProcessorTopic",
-      topicName: "StreamProcessorTopic",
     });
 
     const streamProcessorFunction = new NodejsFunction(
@@ -71,9 +64,6 @@ export default class StreamProcessorStack extends cdk.Stack {
         description:
           "Processes table changes from DynamoDB streams and sends them to SNS",
         entry: path.join(__dirname, `/../functions/streamProcessor.ts`),
-        environment: {
-          STREAM_PROCESSOR_TOPIC_ARN: this.StreamProcessorTopic.topicArn,
-        },
       }
     );
 
@@ -89,9 +79,5 @@ export default class StreamProcessorStack extends cdk.Stack {
     // Subscribe our lambda to the stream
     streamProcessorFunction.addEventSource(dynamoStreams);
     bus.grantPutEventsTo(streamProcessorFunction);
-    this.StreamProcessorTopic.grantPublish(
-      // Allow lambda to publish into our SNS topic
-      streamProcessorFunction
-    );
   }
 }

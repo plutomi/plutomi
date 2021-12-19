@@ -29,7 +29,6 @@ builder
     });
     new NewUserStack(app, `NewUserStack`, {
       table,
-      StreamProcessorTopic,
     });
 
     new StateMachine(app, `StateMachine`, {

@@ -8,7 +8,6 @@ import * as lambdaEventSources from "@aws-cdk/aws-lambda-event-sources";
 import { NodejsFunction } from "@aws-cdk/aws-lambda-nodejs";
 import * as iam from "@aws-cdk/aws-iam";
 import * as sns from "@aws-cdk/aws-sns";
-import * as snsSubscriptions from "@aws-cdk/aws-sns-subscriptions";
 import { STREAM_EVENTS } from "../Config";
 
 const resultDotEnv = dotenv.config({
@@ -21,7 +20,6 @@ if (resultDotEnv.error) {
 
 interface NewUserStackProps extends cdk.StackProps {
   table: dynamodb.Table;
-  StreamProcessorTopic: sns.Topic;
 }
 
 /**
@@ -63,7 +61,6 @@ export default class NewUserStack extends cdk.Stack {
           },
         },
       },
-
       {
         queue: {
           queueName: "NewUserAdminEmailQueue",
@@ -75,6 +72,12 @@ export default class NewUserStack extends cdk.Stack {
           description: "Sends an email to app admins whenever a user signs up",
           entry: "sendNewUserAdminEmail.ts", // Parent directory is the `functions`
           sendEmail: true,
+        },
+      },
+
+      {
+        queue: {
+          queueName: "BEANSQUEUE",
         },
       },
 
@@ -107,66 +110,65 @@ export default class NewUserStack extends cdk.Stack {
         encryption: sqs.QueueEncryption.KMS,
       });
 
-      /**
-       * Subscribe the queue to the topic with the desired events
-       */
-      props.StreamProcessorTopic.addSubscription(
-        new snsSubscriptions.SqsSubscription(createdQueue, {
-          filterPolicy: {
-            eventType: sns.SubscriptionFilter.stringFilter({
-              allowlist: item.queue.desiredEvents,
-            }),
-          },
-        })
-      );
+      // Export queue arn
+      new cdk.CfnOutput(this, item.queue.queueName + "ARN", {
+        value: createdQueue.queueArn,
+        description: "The arn of the queue",
+        exportName: item.queue.queueName + "ARN",
+      });
 
       /**
        * Create the functions associated with each queue
        */
-      const createdFunction = new NodejsFunction(this, item.function.name, {
-        memorySize: 128,
-        timeout: cdk.Duration.seconds(5),
-        runtime: lambda.Runtime.NODEJS_14_X,
-        architecture: lambda.Architecture.ARM_64,
-        bundling: {
-          minify: true,
-          externalModules: ["aws-sdk"],
-        },
-        handler: "main",
-        entry: path.join(__dirname, `/../functions/` + item.function.entry),
-        environment: item.function.environment,
-      });
+      let createdFunction;
 
-      /**
-       * Link the queue and function together
-       */
-      createdFunction.addEventSource(
-        new lambdaEventSources.SqsEventSource(createdQueue, {
-          batchSize: 1,
-        })
-      );
+      if (item.function) {
+        createdFunction = new NodejsFunction(this, item.function.name, {
+          memorySize: 128,
+          timeout: cdk.Duration.seconds(5),
+          runtime: lambda.Runtime.NODEJS_14_X,
+          architecture: lambda.Architecture.ARM_64,
+          bundling: {
+            minify: true,
+            externalModules: ["aws-sdk"],
+          },
+          handler: "main",
+          entry: path.join(__dirname, `/../functions/` + item.function.entry),
+          environment: item.function.environment,
+        });
 
-      /**
-       * Grant lambda email permissions if needed
-       */
-      item.function.sendEmail &&
-        createdFunction.addToRolePolicy(
-          new iam.PolicyStatement({
-            effect: iam.Effect.ALLOW,
-            actions: ["ses:SendEmail"],
-            resources: [
-              `arn:aws:ses:us-east-1:${AWS_ACCOUNT_ID}:identity/${SES_DOMAIN}`,
-            ],
+        /**
+         * Link the queue and function together
+         */
+        createdFunction.addEventSource(
+          new lambdaEventSources.SqsEventSource(createdQueue, {
+            batchSize: 1,
           })
         );
 
-      /**
-       * Grant lambda write access to Dynamo if needed
-       *
-       *
-       */
-      // TODO this is too broad (only updates) despite the function literally only able to do one thing
-      item.function.dynamoWrite && props.table.grantWriteData(createdFunction);
+        /**
+         * Grant lambda email permissions if needed
+         */
+        item.function.sendEmail &&
+          createdFunction.addToRolePolicy(
+            new iam.PolicyStatement({
+              effect: iam.Effect.ALLOW,
+              actions: ["ses:SendEmail"],
+              resources: [
+                `arn:aws:ses:us-east-1:${AWS_ACCOUNT_ID}:identity/${SES_DOMAIN}`,
+              ],
+            })
+          );
+
+        /**
+         * Grant lambda write access to Dynamo if needed
+         *
+         *
+         */
+        // TODO this is too broad (only updates) despite the function literally only able to do one thing
+        item.function.dynamoWrite &&
+          props.table.grantWriteData(createdFunction);
+      }
     });
   }
 }
