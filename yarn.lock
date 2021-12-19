@@ -541,6 +541,25 @@
     "@aws-cdk/cx-api" "1.134.0"
     "constructs" "^3.3.69"
 
+"@aws-cdk/aws-eks@1.134.0":
+  "integrity" "sha512-kfyAKRM9mmFO8tEcsTqkdsMduAuAGhPSR79cQeWM+BOT/+BpUWteoJr0Q/zol/yTowCZxBemjQE9J9LD9YrmsQ=="
+  "resolved" "https://registry.npmjs.org/@aws-cdk/aws-eks/-/aws-eks-1.134.0.tgz"
+  "version" "1.134.0"
+  dependencies:
+    "@aws-cdk/aws-autoscaling" "1.134.0"
+    "@aws-cdk/aws-ec2" "1.134.0"
+    "@aws-cdk/aws-iam" "1.134.0"
+    "@aws-cdk/aws-kms" "1.134.0"
+    "@aws-cdk/aws-lambda" "1.134.0"
+    "@aws-cdk/aws-ssm" "1.134.0"
+    "@aws-cdk/core" "1.134.0"
+    "@aws-cdk/custom-resources" "1.134.0"
+    "@aws-cdk/lambda-layer-awscli" "1.134.0"
+    "@aws-cdk/lambda-layer-kubectl" "1.134.0"
+    "@aws-cdk/lambda-layer-node-proxy-agent" "1.134.0"
+    "constructs" "^3.3.69"
+    "yaml" "1.10.2"
+
 "@aws-cdk/aws-elasticloadbalancing@1.133.0":
   "integrity" "sha512-fNw0UpH5r4SRCZqcgV0DveQMUl0zugKAHctJ0u3PKDtTJVkR3RIipzid2FkjT9VvdqOy8d8ZVhYkZCvjjYT0Fw=="
   "resolved" "https://registry.npmjs.org/@aws-cdk/aws-elasticloadbalancing/-/aws-elasticloadbalancing-1.133.0.tgz"
@@ -593,7 +612,7 @@
     "@aws-cdk/region-info" "1.134.0"
     "constructs" "^3.3.69"
 
-"@aws-cdk/aws-events-targets@1.134.0":
+"@aws-cdk/aws-events-targets@^1.134.0", "@aws-cdk/aws-events-targets@1.134.0":
   "integrity" "sha512-mGzOXu6FoqFeXBKEHzvTNY55O0ce+SDE+dB5FdS+PfkNHHt8pTMQEov1skloMqi1/tNyNS6CfDSDlFXEBpNNOQ=="
   "resolved" "https://registry.npmjs.org/@aws-cdk/aws-events-targets/-/aws-events-targets-1.134.0.tgz"
   "version" "1.134.0"
@@ -619,6 +638,15 @@
     "@aws-cdk/custom-resources" "1.134.0"
     "constructs" "^3.3.69"
 
+"@aws-cdk/aws-events@^1.134.0", "@aws-cdk/aws-events@1.134.0":
+  "integrity" "sha512-M0jmIwgIssB4Gi1m4h3Jeuu+KETmjijHHFGI0Xffxmu9myMvfKjfgyFLytQuz4/7UfaPH6vqkHCCp9/bJNLo2Q=="
+  "resolved" "https://registry.npmjs.org/@aws-cdk/aws-events/-/aws-events-1.134.0.tgz"
+  "version" "1.134.0"
+  dependencies:
+    "@aws-cdk/aws-iam" "1.134.0"
+    "@aws-cdk/core" "1.134.0"
+    "constructs" "^3.3.69"
+
 "@aws-cdk/aws-events@1.133.0":
   "integrity" "sha512-zO8DUZroZaQnWGVKEfz2dodH9vCFgNVwaxb4ajqa6YZCHuockfTCI7XF43efmsTmys94+jYffXilUFvu1zn+aw=="
   "resolved" "https://registry.npmjs.org/@aws-cdk/aws-events/-/aws-events-1.133.0.tgz"
@@ -626,15 +654,6 @@
   dependencies:
     "@aws-cdk/aws-iam" "1.133.0"
     "@aws-cdk/core" "1.133.0"
-    "constructs" "^3.3.69"
-
-"@aws-cdk/aws-events@1.134.0":
-  "integrity" "sha512-M0jmIwgIssB4Gi1m4h3Jeuu+KETmjijHHFGI0Xffxmu9myMvfKjfgyFLytQuz4/7UfaPH6vqkHCCp9/bJNLo2Q=="
-  "resolved" "https://registry.npmjs.org/@aws-cdk/aws-events/-/aws-events-1.134.0.tgz"
-  "version" "1.134.0"
-  dependencies:
-    "@aws-cdk/aws-iam" "1.134.0"
-    "@aws-cdk/core" "1.134.0"
     "constructs" "^3.3.69"
 
 "@aws-cdk/aws-globalaccelerator@1.133.0":
@@ -1052,7 +1071,32 @@
     "@aws-cdk/core" "1.134.0"
     "constructs" "^3.3.69"
 
-"@aws-cdk/aws-stepfunctions@1.134.0":
+"@aws-cdk/aws-stepfunctions-tasks@^1.134.0":
+  "integrity" "sha512-ChzBXMt4xJv/RieWcOtEYDX+FKwwsBHK+rcB28ocqRRGLFUOUsIQI6BCgxTqQ/nYyTBjmiQQ87fywAPkqvJ9Tw=="
+  "resolved" "https://registry.npmjs.org/@aws-cdk/aws-stepfunctions-tasks/-/aws-stepfunctions-tasks-1.134.0.tgz"
+  "version" "1.134.0"
+  dependencies:
+    "@aws-cdk/aws-apigateway" "1.134.0"
+    "@aws-cdk/aws-cloudwatch" "1.134.0"
+    "@aws-cdk/aws-codebuild" "1.134.0"
+    "@aws-cdk/aws-dynamodb" "1.134.0"
+    "@aws-cdk/aws-ec2" "1.134.0"
+    "@aws-cdk/aws-ecr" "1.134.0"
+    "@aws-cdk/aws-ecr-assets" "1.134.0"
+    "@aws-cdk/aws-ecs" "1.134.0"
+    "@aws-cdk/aws-eks" "1.134.0"
+    "@aws-cdk/aws-events" "1.134.0"
+    "@aws-cdk/aws-iam" "1.134.0"
+    "@aws-cdk/aws-kms" "1.134.0"
+    "@aws-cdk/aws-lambda" "1.134.0"
+    "@aws-cdk/aws-s3" "1.134.0"
+    "@aws-cdk/aws-sns" "1.134.0"
+    "@aws-cdk/aws-sqs" "1.134.0"
+    "@aws-cdk/aws-stepfunctions" "1.134.0"
+    "@aws-cdk/core" "1.134.0"
+    "constructs" "^3.3.69"
+
+"@aws-cdk/aws-stepfunctions@^1.134.0", "@aws-cdk/aws-stepfunctions@1.134.0":
   "integrity" "sha512-EwcA1O5kz9SJGLoc+j6G3e8fKIXttQ4/+hr0gk4mCAOrJODmzjzIEKrM8GX8XrzknHiW39sOc5lPavVoFkuP+Q=="
   "resolved" "https://registry.npmjs.org/@aws-cdk/aws-stepfunctions/-/aws-stepfunctions-1.134.0.tgz"
   "version" "1.134.0"
@@ -1163,6 +1207,24 @@
 "@aws-cdk/lambda-layer-awscli@1.134.0":
   "integrity" "sha512-LXzfg3aadSHkSeefMnGveIDXj+K7/79Ug19Sm4Vp0CZXAykkUco1RWk9TZ/dKoEPxGC8MhYoQYxxZegjUlMmzw=="
   "resolved" "https://registry.npmjs.org/@aws-cdk/lambda-layer-awscli/-/lambda-layer-awscli-1.134.0.tgz"
+  "version" "1.134.0"
+  dependencies:
+    "@aws-cdk/aws-lambda" "1.134.0"
+    "@aws-cdk/core" "1.134.0"
+    "constructs" "^3.3.69"
+
+"@aws-cdk/lambda-layer-kubectl@1.134.0":
+  "integrity" "sha512-FrzgFgLzZkDEzCJfRs0ig7JzkrXfbx+aSPh/aVROr98wlSPoMWFiavGBRS0BIB5JK7eXxpg7I0VPvMFzEx96OA=="
+  "resolved" "https://registry.npmjs.org/@aws-cdk/lambda-layer-kubectl/-/lambda-layer-kubectl-1.134.0.tgz"
+  "version" "1.134.0"
+  dependencies:
+    "@aws-cdk/aws-lambda" "1.134.0"
+    "@aws-cdk/core" "1.134.0"
+    "constructs" "^3.3.69"
+
+"@aws-cdk/lambda-layer-node-proxy-agent@1.134.0":
+  "integrity" "sha512-5l3BmgI5H3nq8+FWK/2W9T8bqbmsyJ4bhCswao6xZ3I2LT2iKPs2Gw0oXPhDc6xakdy2DglSlOUx9kM9ZvWW4w=="
+  "resolved" "https://registry.npmjs.org/@aws-cdk/lambda-layer-node-proxy-agent/-/lambda-layer-node-proxy-agent-1.134.0.tgz"
   "version" "1.134.0"
   dependencies:
     "@aws-cdk/aws-lambda" "1.134.0"
@@ -1296,6 +1358,43 @@
     "@aws-sdk/util-waiter" "3.40.0"
     "tslib" "^2.3.0"
     "uuid" "^8.3.2"
+
+"@aws-sdk/client-eventbridge@^3.43.0":
+  "integrity" "sha512-T41Ly1HpCKHBtgRZkjJPidR/b/E1n4JnUSYaKWZDQQh9sDxjPlc1phAMCpekJFJpfTMsj+mmoL4tivPfIB1LzQ=="
+  "resolved" "https://registry.npmjs.org/@aws-sdk/client-eventbridge/-/client-eventbridge-3.43.0.tgz"
+  "version" "3.43.0"
+  dependencies:
+    "@aws-crypto/sha256-browser" "2.0.0"
+    "@aws-crypto/sha256-js" "2.0.0"
+    "@aws-sdk/client-sts" "3.43.0"
+    "@aws-sdk/config-resolver" "3.40.0"
+    "@aws-sdk/credential-provider-node" "3.41.0"
+    "@aws-sdk/fetch-http-handler" "3.40.0"
+    "@aws-sdk/hash-node" "3.40.0"
+    "@aws-sdk/invalid-dependency" "3.40.0"
+    "@aws-sdk/middleware-content-length" "3.40.0"
+    "@aws-sdk/middleware-host-header" "3.40.0"
+    "@aws-sdk/middleware-logger" "3.40.0"
+    "@aws-sdk/middleware-retry" "3.40.0"
+    "@aws-sdk/middleware-serde" "3.40.0"
+    "@aws-sdk/middleware-signing" "3.40.0"
+    "@aws-sdk/middleware-stack" "3.40.0"
+    "@aws-sdk/middleware-user-agent" "3.40.0"
+    "@aws-sdk/node-config-provider" "3.40.0"
+    "@aws-sdk/node-http-handler" "3.40.0"
+    "@aws-sdk/protocol-http" "3.40.0"
+    "@aws-sdk/smithy-client" "3.41.0"
+    "@aws-sdk/types" "3.40.0"
+    "@aws-sdk/url-parser" "3.40.0"
+    "@aws-sdk/util-base64-browser" "3.37.0"
+    "@aws-sdk/util-base64-node" "3.37.0"
+    "@aws-sdk/util-body-length-browser" "3.37.0"
+    "@aws-sdk/util-body-length-node" "3.37.0"
+    "@aws-sdk/util-user-agent-browser" "3.40.0"
+    "@aws-sdk/util-user-agent-node" "3.40.0"
+    "@aws-sdk/util-utf8-browser" "3.37.0"
+    "@aws-sdk/util-utf8-node" "3.37.0"
+    "tslib" "^2.3.0"
 
 "@aws-sdk/client-s3@3.42.0":
   "integrity" "sha512-y/MyfTr2uF/M8zidHn5T85Bz7p0gIewPtGeDg2rWVCtfRiG2hNgKGB5+wcFAN91ObFde7VCM+/zMDJ7XPXyTmg=="
@@ -4129,7 +4228,7 @@
   "resolved" "https://registry.npmjs.org/available-typed-arrays/-/available-typed-arrays-1.0.5.tgz"
   "version" "1.0.5"
 
-"aws-sdk@^2.1046.0":
+"aws-sdk@^2.1046.0", "aws-sdk@^2.973.0":
   "integrity" "sha512-ocwHclMXdIA+NWocUyvp9Ild3/zy2vr5mHp3mTyodf0WU5lzBE8PocCVLSWhMAXLxyia83xv2y5f5AzAcetbqA=="
   "resolved" "https://registry.npmjs.org/aws-sdk/-/aws-sdk-2.1046.0.tgz"
   "version" "2.1046.0"
@@ -5295,6 +5394,11 @@
   "resolved" "https://registry.npmjs.org/deep-is/-/deep-is-0.1.4.tgz"
   "version" "0.1.4"
 
+"deep-object-diff@^1.1.0":
+  "integrity" "sha512-b+QLs5vHgS+IoSNcUE4n9HP2NwcHj7aqnJWsjPtuG75Rh5TOaGt0OjAYInh77d5T16V5cRDC+Pw/6ZZZiETBGw=="
+  "resolved" "https://registry.npmjs.org/deep-object-diff/-/deep-object-diff-1.1.0.tgz"
+  "version" "1.1.0"
+
 "deepmerge@^4.2.2":
   "integrity" "sha512-FJ3UgI4gIl+PHZm53knsuSFpE+nESMr7M4v9QcgB7S63Kj/6WqMiFQJpBBYz1Pt+66bZpP3Q7Lye0Oo9MPKEdg=="
   "resolved" "https://registry.npmjs.org/deepmerge/-/deepmerge-4.2.2.tgz"
@@ -5508,6 +5612,14 @@
   "integrity" "sha1-7gHdHKwO08vH/b6jfcCo8c4ALOI="
   "resolved" "https://registry.npmjs.org/duplexer3/-/duplexer3-0.1.4.tgz"
   "version" "0.1.4"
+
+"dynamodb-streams-processor@^1.0.1":
+  "integrity" "sha512-U1HalDTexJyTAmYJrhnDGOdnoBiOOWylilbw4O2dafFkeRpYm0JXynYvNREd2nWz0Z6QjRS6RwpPq7NX/ISq8A=="
+  "resolved" "https://registry.npmjs.org/dynamodb-streams-processor/-/dynamodb-streams-processor-1.0.1.tgz"
+  "version" "1.0.1"
+  dependencies:
+    "aws-sdk" "^2.973.0"
+    "deep-object-diff" "^1.1.0"
 
 "ecdsa-sig-formatter@1.0.11":
   "integrity" "sha512-nagl3RYrbNv6kQkeJIpt6NJZy8twLB/2vtz6yN9Z4vRKHN4/QZJIEbqohALSgwKdnksuY3k5Addp5lg8sVoVcQ=="

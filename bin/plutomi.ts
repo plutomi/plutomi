@@ -7,6 +7,7 @@ import { Builder } from "@sls-next/lambda-at-edge";
 import FrontendStack from "../lib/FrontendStack";
 import StreamProcessorStack from "../lib/StreamProcessorStack";
 import NewUserStack from "../lib/NewUserStack";
+import StateMachine from "../lib/StateMachine";
 // Run the serverless builder before deploying
 const builder = new Builder(".", "./build", { args: ["build"] });
 
@@ -28,9 +29,12 @@ builder
     });
     new NewUserStack(app, `NewUserStack`, {
       table,
-      StreamProcessorTopic: StreamProcessorTopic,
+      StreamProcessorTopic,
     });
 
+    new StateMachine(app, `StateMachine`, {
+      table,
+    });
     new FrontendStack(app, `FrontendStack`);
   })
   .catch((e) => {

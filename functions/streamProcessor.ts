@@ -3,6 +3,9 @@ import { ENTITY_TYPES, LOGIN_METHODS, STREAM_EVENTS } from "../Config";
 import { PublishCommand, PublishCommandInput } from "@aws-sdk/client-sns";
 import SNSclient from "../awsClients/snsClient";
 import errorFormatter from "../utils/errorFormatter";
+import EBClient from "../awsClients/eventBridgeClient";
+
+const processor = require("dynamodb-streams-processor");
 
 /**
  * Sends messages to an SNS topic.
@@ -12,19 +15,23 @@ import errorFormatter from "../utils/errorFormatter";
  *
  */
 export async function main(event: DynamoDBStreamEvent) {
-  // TODO unmarshall the events >:[
   // Was reading a bit and this came up https://github.com/aws/aws-sdk-js/issues/2486
-  const record = event.Records[0];
-  const { eventName } = record;
-  const { OldImage } = record.dynamodb;
-  const { NewImage } = record.dynamodb;
+  const record = processor(event.Records)[0];
 
+  console.log("New, formatted record");
+  console.log(record);
+  return;
+  const { eventName } = record;
+
+  let { OldImage } = record.dynamodb;
+  let { NewImage } = record.dynamodb;
   console.log({
     eventName: eventName,
     OldImage: OldImage,
     NewImage: NewImage,
   });
 
+  return;
   /**
    * The logic below describes what 'rules' need to match for each event type to be processed
    */
@@ -32,8 +39,8 @@ export async function main(event: DynamoDBStreamEvent) {
   // Send a user a link to login via email
   const SEND_LOGIN_LINK =
     eventName === "INSERT" &&
-    NewImage.entityType.S === ENTITY_TYPES.LOGIN_LINK &&
-    NewImage.loginMethod.S === LOGIN_METHODS.EMAIL;
+    NewImage.entityType === ENTITY_TYPES.LOGIN_LINK &&
+    NewImage.loginMethod === LOGIN_METHODS.EMAIL;
 
   /**
    * If a user logs in for the first time, asynchronously notify the app Admin
@@ -41,7 +48,7 @@ export async function main(event: DynamoDBStreamEvent) {
    */
   const NEW_USER =
     eventName === "INSERT" &&
-    NewImage.entityType.S === ENTITY_TYPES.LOGIN_EVENT &&
+    NewImage.entityType === ENTITY_TYPES.LOGIN_EVENT &&
     !NewImage.verifiedEmail.BOOL;
 
   // Attributes are what we use to filter in SNS and the corresponding downstream queues
