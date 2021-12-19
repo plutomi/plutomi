@@ -46,7 +46,7 @@ export default class APIStack extends cdk.Stack {
         effect: iam.Effect.ALLOW,
         actions: ["ses:SendEmail"],
         resources: [
-          `arn:aws:ses:us-east-1:${AWS_ACCOUNT_ID}:identity/${SES_DOMAIN}`,
+          `arn:aws:ses:us-east-1:${cdk.Stack.of(this).account}:identity/${SES_DOMAIN}`,
         ],
       })
     );

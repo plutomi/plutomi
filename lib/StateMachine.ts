@@ -1,18 +1,8 @@
 import * as dotenv from "dotenv";
 import * as dynamodb from "@aws-cdk/aws-dynamodb";
-import * as path from "path";
 import * as cdk from "@aws-cdk/core";
-import * as sqs from "@aws-cdk/aws-sqs";
-import * as lambda from "@aws-cdk/aws-lambda";
-import * as lambdaEventSources from "@aws-cdk/aws-lambda-event-sources";
-import { NodejsFunction } from "@aws-cdk/aws-lambda-nodejs";
-import * as iam from "@aws-cdk/aws-iam";
-import * as sns from "@aws-cdk/aws-sns";
-import * as snsSubscriptions from "@aws-cdk/aws-sns-subscriptions";
-import { STREAM_EVENTS } from "../Config";
 import * as sfn from "@aws-cdk/aws-stepfunctions";
 import * as tasks from "@aws-cdk/aws-stepfunctions-tasks";
-import apigw = require("@aws-cdk/aws-apigatewayv2");
 
 import {
   Effect,
@@ -21,7 +11,6 @@ import {
   Role,
   ServicePrincipal,
 } from "@aws-cdk/aws-iam";
-import { table } from "console";
 
 const resultDotEnv = dotenv.config({
   path: __dirname + `../../.env.${process.env.NODE_ENV}`,
@@ -68,13 +57,73 @@ export default class StepFunctionStack extends cdk.Stack {
       updateExpression: "SET GSI1SK = :GSI1SK",
     });
 
-    const success = new sfn.Succeed(this, "We did it!");
+    const notifyAdmin = new tasks.CallAwsService(this, "SES", {
+      service: "ses",
+      action: "sendEmail",
 
-    const definition = sfn.Chain.start(updateUser).next(success);
+      parameters: {
+        Destination: {
+          ToAddresses: ["joseyvalerio@gmail.com"],
+        },
+        Message: {
+          Subject: {
+            Data: "New user has signed up!",
+          },
+          Body: {
+            Html: {
+              Data: "<h1>New user!!!!!!!!!!!!!!!! From Steps</h1>",
+            },
+          },
+        },
+
+        Source: "Plutomi <admin@plutomi.com>",
+      },
+
+      iamResources: [
+        `arn:aws:ses:us-east-1:${cdk.Stack.of(this).account}:identity/${
+          process.env.DOMAIN_NAME
+        }`,
+      ],
+    });
+
+    const notifyUser = new tasks.CallAwsService(this, "SES2", {
+      service: "ses",
+      action: "sendEmail",
+
+      parameters: {
+        Destination: {
+          ToAddresses: ["joseyvalerio@gmail.com"],
+        },
+        Message: {
+          Subject: {
+            Data: "New user has signed up!",
+          },
+          Body: {
+            Html: {
+              Data: "<h1>New user!!!!!!!!!!!!!!!! From Steps</h1>",
+            },
+          },
+        },
+
+        Source: "Plutomi <admin@plutomi.com>",
+      },
+
+      iamResources: [
+        `arn:aws:ses:us-east-1:${cdk.Stack.of(this).account}:identity/${
+          process.env.DOMAIN_NAME
+        }`,
+      ],
+    });
+
+    const definition = new sfn.Parallel(this, "NewUserMachine")
+      .branch(updateUser)
+      .branch(notifyAdmin)
+      .branch(notifyUser);
 
     const stateMachine = new sfn.StateMachine(this, "StateMachine", {
       definition,
       timeout: cdk.Duration.minutes(5),
+      stateMachineType: sfn.StateMachineType.EXPRESS,
     });
 
     props.table.grantFullAccess(stateMachine);
