@@ -15,18 +15,23 @@ builder
   .then(() => {
     const app = new cdk.App();
     const { table } = new DynamoDBStack(app, "DynamoDBStack");
+    const { StreamProcessorTopic } = new StreamProcessorStack(
+      app,
+      `StreamProcessorStack`,
+      {
+        table,
+      }
+    );
+
     new APIStack(app, "APIStack", {
       table,
     });
-    const { SendLoginLinkQueue } = new NewUserStack(app, `NewUserStack`, {
+    new NewUserStack(app, `NewUserStack`, {
       table,
+      StreamProcessorTopic: StreamProcessorTopic,
     });
 
     new FrontendStack(app, `FrontendStack`);
-    new StreamProcessorStack(app, `StreamProcessorStack`, {
-      table,
-      SendLoginLinkQueue,
-    });
   })
   .catch((e) => {
     console.log(e);

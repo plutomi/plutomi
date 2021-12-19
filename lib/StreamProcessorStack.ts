@@ -3,10 +3,7 @@ import * as dynamodb from "@aws-cdk/aws-dynamodb";
 import * as lambda from "@aws-cdk/aws-lambda";
 import * as path from "path";
 import * as sns from "@aws-cdk/aws-sns";
-import * as sqs from "@aws-cdk/aws-sqs";
-import * as snsSubscriptions from "@aws-cdk/aws-sns-subscriptions";
 import * as lambdaEventSources from "@aws-cdk/aws-lambda-event-sources";
-import { STREAM_EVENTS } from "../Config";
 import { NodejsFunction } from "@aws-cdk/aws-lambda-nodejs";
 import * as cdk from "@aws-cdk/core";
 
@@ -20,9 +17,10 @@ if (resultDotEnv.error) {
 
 interface StreamProcessorStackProps extends cdk.StackProps {
   table: dynamodb.Table;
-  SendLoginLinkQueue: sqs.Queue;
 }
 export default class StreamProcessorStack extends cdk.Stack {
+  public readonly StreamProcessorTopic: sns.Topic;
+
   /**
    *
    * @param {cdk.Construct} scope
@@ -32,8 +30,8 @@ export default class StreamProcessorStack extends cdk.Stack {
   constructor(scope: cdk.App, id: string, props: StreamProcessorStackProps) {
     super(scope, id, props);
 
-    // Create an SNS topic to fan-out / filter all table changes
-    const streamProcessorTopic = new sns.Topic(this, "Topic", {
+    // Create the SNS topic
+    this.StreamProcessorTopic = new sns.Topic(this, "Topic", {
       displayName: "StreamProcessorTopic",
       topicName: "StreamProcessorTopic",
     });
@@ -55,14 +53,13 @@ export default class StreamProcessorStack extends cdk.Stack {
           "Processes table changes from DynamoDB streams and sends them to SNS",
         entry: path.join(__dirname, `/../functions/streamProcessor.ts`),
         environment: {
-          STREAM_PROCESSOR_TOPIC_ARN: streamProcessorTopic.topicArn,
+          STREAM_PROCESSOR_TOPIC_ARN: this.StreamProcessorTopic.topicArn,
         },
       }
     );
 
     const dynamoStreams = new lambdaEventSources.DynamoEventSource(
       props.table,
-
       {
         startingPosition: lambda.StartingPosition.LATEST,
         retryAttempts: 3,
@@ -74,20 +71,6 @@ export default class StreamProcessorStack extends cdk.Stack {
     streamProcessorFunction.addEventSource(dynamoStreams);
 
     // Allow lambda to publish into our SNS topic
-    streamProcessorTopic.grantPublish(streamProcessorFunction);
-
-    /**
-     * Below are all of the subscriptions to this topic
-     */
-    // TODO test, just making sure events reach the queue
-    streamProcessorTopic.addSubscription(
-      new snsSubscriptions.SqsSubscription(props.SendLoginLinkQueue, {
-        filterPolicy: {
-          eventType: sns.SubscriptionFilter.stringFilter({
-            allowlist: [STREAM_EVENTS.SEND_LOGIN_LINK],
-          }),
-        },
-      })
-    );
+    this.StreamProcessorTopic.grantPublish(streamProcessorFunction);
   }
 }

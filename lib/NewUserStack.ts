@@ -7,6 +7,10 @@ import * as lambda from "@aws-cdk/aws-lambda";
 import * as lambdaEventSources from "@aws-cdk/aws-lambda-event-sources";
 import { NodejsFunction } from "@aws-cdk/aws-lambda-nodejs";
 import * as iam from "@aws-cdk/aws-iam";
+import * as sns from "@aws-cdk/aws-sns";
+import * as snsSubscriptions from "@aws-cdk/aws-sns-subscriptions";
+import { STREAM_EVENTS } from "../Config";
+
 const resultDotEnv = dotenv.config({
   path: __dirname + `../../.env.${process.env.NODE_ENV}`,
 });
@@ -17,6 +21,7 @@ if (resultDotEnv.error) {
 
 interface NewUserStackProps extends cdk.StackProps {
   table: dynamodb.Table;
+  StreamProcessorTopic: sns.Topic;
 }
 
 /**
@@ -34,9 +39,6 @@ export default class NewUserStack extends cdk.Stack {
    * @param {cdk.StackProps=} props
    */
 
-  public readonly SendLoginLinkQueue: sqs.Queue;
-  public readonly NewUserAdminEmailQueue: sqs.Queue;
-
   constructor(scope: cdk.App, id: string, props: NewUserStackProps) {
     super(scope, id, props);
 
@@ -44,15 +46,10 @@ export default class NewUserStack extends cdk.Stack {
     const SES_DOMAIN = process.env.DOMAIN_NAME;
     const API_URL: string = process.env.API_URL;
 
-    /**
-     *------------------------------------------------------------------------------
-     * 1. Process login link requests
-     *-----------------------------------------------------------------------------
-     */
-
     const STACK = [
       {
         queueName: "SendLoginLinkQueue",
+        desiredEvents: [STREAM_EVENTS.SEND_LOGIN_LINK],
         visibilityTimeout: cdk.Duration.seconds(10),
         function: {
           name: "SendLoginLinkFunction",
@@ -72,6 +69,19 @@ export default class NewUserStack extends cdk.Stack {
         queueName: item.queueName,
         visibilityTimeout: item.visibilityTimeout,
       });
+
+      /**
+       * Subscribe the queue to the topic with the desired events
+       */
+      props.StreamProcessorTopic.addSubscription(
+        new snsSubscriptions.SqsSubscription(createdQueue, {
+          filterPolicy: {
+            eventType: sns.SubscriptionFilter.stringFilter({
+              allowlist: item.desiredEvents,
+            }),
+          },
+        })
+      );
 
       /**
        * Create the functions associated with each queue
