@@ -4,8 +4,7 @@
  * @param SQSEventRecord
  */
 export const parse = (SQSEventRecord) => {
-  const item = JSON.parse(JSON.parse(SQSEventRecord.body).Message).dynamodb
-    .NewImage;
+  const item = JSON.parse(JSON.parse(SQSEventRecord.body).Message).dynamodb;
 
   return item;
 };

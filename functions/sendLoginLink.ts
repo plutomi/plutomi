@@ -1,7 +1,5 @@
 import { SQSEvent } from "aws-lambda";
-import { EMAILS, ENTITY_TYPES, LOGIN_METHODS, STREAM_EVENTS } from "../Config";
-import SNSclient from "../awsClients/snsClient";
-import { PublishCommand, PublishCommandInput } from "@aws-sdk/client-sns";
+import { EMAILS } from "../Config";
 import errorFormatter from "../utils/errorFormatter";
 import * as Time from "../utils/time";
 import sendEmail from "../utils/sendEmail";
@@ -13,9 +11,9 @@ import { parse } from "../utils/SQSParser";
  */
 export async function main(event: SQSEvent) {
   const record = event.Records[0]; // todo change if batch size changes
-  const item = parse(record);
+  const item = parse(record).NewImage;
   const email = item.email.S;
-  const loginLinkUrl = item.loginLinkUrl.S; // TODO unmarshall
+  const loginLinkUrl = item.loginLinkUrl.S;
   const relativeExpiry = item.relativeExpiry.S;
   const unsubscribeHash = item.unsubscribeHash.S;
   const [emailSent, emailFailure] = await sendEmail({
@@ -27,10 +25,12 @@ export async function main(event: SQSEvent) {
   });
 
   if (emailFailure) {
-    // TODO throw error & DLQ
+    // TODO DLQ
     const formattedError = errorFormatter(emailFailure);
-    console.error("An error ocurred sending your login link", formattedError);
+    console.error(formattedError);
+    throw new Error("Unable to send login link");
   }
 
+  console.log("Login link sent!");
   return;
 }
