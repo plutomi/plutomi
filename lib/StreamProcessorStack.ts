@@ -22,10 +22,8 @@ interface StreamProcessorStackProps extends cdk.StackProps {
   table: dynamodb.Table;
 }
 export default class StreamProcessorStack extends cdk.Stack {
-  public readonly StreamProcessorTopic: sns.Topic;
-
+  StreamProcessorFunction: NodejsFunction;
   /**
-   *
    * @param {cdk.Construct} scope
    * @param {string} id
    * @param {cdk.StackProps=} props
@@ -33,22 +31,23 @@ export default class StreamProcessorStack extends cdk.Stack {
   constructor(scope: cdk.App, id: string, props: StreamProcessorStackProps) {
     super(scope, id, props);
 
-    const bus = events.EventBus.fromEventBusName(this, "defaultBus", "default");
-    const arn = cdk.Fn.importValue("BEANSQUEUEARN");
-    const testq = sqs.Queue.fromQueueArn(this, "tesfdasfsadfsadrft", arn);
-    console.log("New arn", arn);
+    const bus = events.EventBus.fromEventBusName(
+      this,
+      "DefaultEventBus",
+      "default"
+    );
 
-    new events.Rule(this, "testrule", {
-      description: "Testing rule",
-      ruleName: "Testebrule",
-      targets: [new targets.SqsQueue(testq)],
-      eventPattern: {
-        source: ["dynamodb.streams"], // NOT AN AWS EVENT!
-        detailType: [STREAM_EVENTS.SEND_LOGIN_LINK],
-      },
-    });
+    // new events.Rule(this, "testrule", {
+    //   description: "Testing rule",
+    //   ruleName: "Testebrule",
+    //   targets: [new targets.SqsQueue(SendLoginLinkQueue)],
+    //   eventPattern: {
+    //     source: ["dynamodb.streams"], // NOT AN AWS EVENT!
+    //     detailType: [STREAM_EVENTS.SEND_LOGIN_LINK],
+    //   },
+    // });
 
-    const streamProcessorFunction = new NodejsFunction(
+    const StreamProcessorFunction = new NodejsFunction(
       this,
       "StreamProcessorFunction",
       {
@@ -77,7 +76,7 @@ export default class StreamProcessorStack extends cdk.Stack {
       }
     );
     // Subscribe our lambda to the stream
-    streamProcessorFunction.addEventSource(dynamoStreams);
-    bus.grantPutEventsTo(streamProcessorFunction);
+    StreamProcessorFunction.addEventSource(dynamoStreams);
+    bus.grantPutEventsTo(StreamProcessorFunction);
   }
 }

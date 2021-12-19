@@ -8,6 +8,7 @@ import FrontendStack from "../lib/FrontendStack";
 import StreamProcessorStack from "../lib/StreamProcessorStack";
 import NewUserStack from "../lib/NewUserStack";
 import StateMachine from "../lib/StateMachine";
+import EventBusStack from "../lib/EventBusStack";
 // Run the serverless builder before deploying
 const builder = new Builder(".", "./build", { args: ["build"] });
 
@@ -16,7 +17,7 @@ builder
   .then(() => {
     const app = new cdk.App();
     const { table } = new DynamoDBStack(app, "DynamoDBStack");
-    const { StreamProcessorTopic } = new StreamProcessorStack(
+    const { StreamProcessorFunction } = new StreamProcessorStack(
       app,
       `StreamProcessorStack`,
       {
@@ -27,12 +28,23 @@ builder
     new APIStack(app, "APIStack", {
       table,
     });
-    new NewUserStack(app, `NewUserStack`, {
+    const {
+      SendLoginLinkQueue,
+      NewUserAdminEmailQueue,
+      NewUserVerifiedEmailQueue,
+    } = new NewUserStack(app, `NewUserStack`, {
       table,
     });
 
     new StateMachine(app, `StateMachine`, {
       table,
+    });
+
+    new EventBusStack(app, `EventBus`, {
+      StreamProcessorFunction,
+      SendLoginLinkQueue,
+      NewUserAdminEmailQueue,
+      NewUserVerifiedEmailQueue,
     });
     new FrontendStack(app, `FrontendStack`);
   })

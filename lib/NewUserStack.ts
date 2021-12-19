@@ -7,8 +7,8 @@ import * as lambda from "@aws-cdk/aws-lambda";
 import * as lambdaEventSources from "@aws-cdk/aws-lambda-event-sources";
 import { NodejsFunction } from "@aws-cdk/aws-lambda-nodejs";
 import * as iam from "@aws-cdk/aws-iam";
-import * as sns from "@aws-cdk/aws-sns";
 import { STREAM_EVENTS } from "../Config";
+import * as events from "@aws-cdk/aws-events";
 
 const resultDotEnv = dotenv.config({
   path: __dirname + `../../.env.${process.env.NODE_ENV}`,
@@ -30,6 +30,9 @@ interface NewUserStackProps extends cdk.StackProps {
  * 4. When a user logs in for the first time, send that user a welcome email
  */
 export default class NewUserStack extends cdk.Stack {
+  public readonly SendLoginLinkQueue: sqs.Queue;
+  public readonly NewUserAdminEmailQueue: sqs.Queue;
+  public readonly NewUserVerifiedEmailQueue: sqs.Queue;
   /**
    * @param {cdk.Construct} scope
    * @param {string} id
@@ -47,7 +50,6 @@ export default class NewUserStack extends cdk.Stack {
       {
         queue: {
           queueName: "SendLoginLinkQueue",
-          desiredEvents: [STREAM_EVENTS.SEND_LOGIN_LINK],
           visibilityTimeout: cdk.Duration.seconds(10),
         },
         function: {
@@ -64,7 +66,6 @@ export default class NewUserStack extends cdk.Stack {
       {
         queue: {
           queueName: "NewUserAdminEmailQueue",
-          desiredEvents: [STREAM_EVENTS.NEW_USER],
           visibilityTimeout: cdk.Duration.seconds(10),
         },
         function: {
@@ -74,17 +75,9 @@ export default class NewUserStack extends cdk.Stack {
           sendEmail: true,
         },
       },
-
-      {
-        queue: {
-          queueName: "BEANSQUEUE",
-        },
-      },
-
       {
         queue: {
           queueName: "NewUserVerifiedEmailQueue",
-          desiredEvents: [STREAM_EVENTS.NEW_USER],
           visibilityTimeout: cdk.Duration.seconds(10),
         },
         function: {
@@ -103,72 +96,58 @@ export default class NewUserStack extends cdk.Stack {
       /**
        * Create the queues
        */
-      const createdQueue = new sqs.Queue(this, item.queue.queueName, {
+      this[item.queue.queueName] = new sqs.Queue(this, item.queue.queueName, {
         queueName: item.queue.queueName,
         visibilityTimeout: item.queue.visibilityTimeout,
         receiveMessageWaitTime: cdk.Duration.seconds(20),
         encryption: sqs.QueueEncryption.KMS,
       });
 
-      // Export queue arn
-      new cdk.CfnOutput(this, item.queue.queueName + "ARN", {
-        value: createdQueue.queueArn,
-        description: "The arn of the queue",
-        exportName: item.queue.queueName + "ARN",
-      });
-
       /**
        * Create the functions associated with each queue
        */
-      let createdFunction;
+      const createdFunction = new NodejsFunction(this, item.function.name, {
+        memorySize: 128,
+        timeout: cdk.Duration.seconds(5),
+        runtime: lambda.Runtime.NODEJS_14_X,
+        architecture: lambda.Architecture.ARM_64,
+        bundling: {
+          minify: true,
+          externalModules: ["aws-sdk"],
+        },
+        handler: "main",
+        entry: path.join(__dirname, `/../functions/` + item.function.entry),
+        environment: item.function.environment,
+      });
 
-      if (item.function) {
-        createdFunction = new NodejsFunction(this, item.function.name, {
-          memorySize: 128,
-          timeout: cdk.Duration.seconds(5),
-          runtime: lambda.Runtime.NODEJS_14_X,
-          architecture: lambda.Architecture.ARM_64,
-          bundling: {
-            minify: true,
-            externalModules: ["aws-sdk"],
-          },
-          handler: "main",
-          entry: path.join(__dirname, `/../functions/` + item.function.entry),
-          environment: item.function.environment,
-        });
+      /**
+       * Link the queue and function together
+       */
+      createdFunction.addEventSource(
+        new lambdaEventSources.SqsEventSource(this[item.queue.queueName], {
+          batchSize: 1,
+        })
+      );
 
-        /**
-         * Link the queue and function together
-         */
-        createdFunction.addEventSource(
-          new lambdaEventSources.SqsEventSource(createdQueue, {
-            batchSize: 1,
+      /**
+       * Grant lambda email permissions if needed
+       */
+      item.function.sendEmail &&
+        createdFunction.addToRolePolicy(
+          new iam.PolicyStatement({
+            effect: iam.Effect.ALLOW,
+            actions: ["ses:SendEmail"],
+            resources: [
+              `arn:aws:ses:us-east-1:${AWS_ACCOUNT_ID}:identity/${SES_DOMAIN}`,
+            ],
           })
         );
 
-        /**
-         * Grant lambda email permissions if needed
-         */
-        item.function.sendEmail &&
-          createdFunction.addToRolePolicy(
-            new iam.PolicyStatement({
-              effect: iam.Effect.ALLOW,
-              actions: ["ses:SendEmail"],
-              resources: [
-                `arn:aws:ses:us-east-1:${AWS_ACCOUNT_ID}:identity/${SES_DOMAIN}`,
-              ],
-            })
-          );
-
-        /**
-         * Grant lambda write access to Dynamo if needed
-         *
-         *
-         */
-        // TODO this is too broad (only updates) despite the function literally only able to do one thing
-        item.function.dynamoWrite &&
-          props.table.grantWriteData(createdFunction);
-      }
+      /**
+       * Grant lambda write access to Dynamo if needed
+       */
+      // TODO this is too broad (only updates) despite the function literally only able to do one thing
+      item.function.dynamoWrite && props.table.grantWriteData(createdFunction);
     });
   }
 }
