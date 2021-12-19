@@ -4,7 +4,6 @@ import { Dynamo } from "../../awsClients/ddbDocClient";
 import { ID_LENGTHS, ENTITY_TYPES, DEFAULTS, EMAILS } from "../../Config";
 import { DynamoNewUser } from "../../types/dynamo";
 import { CreateUserInput } from "../../types/main";
-import sendEmail from "../../utils/sendEmail";
 import * as Time from "../../utils/time";
 const { DYNAMO_TABLE_NAME } = process.env;
 import { SdkError } from "@aws-sdk/types";
@@ -43,6 +42,7 @@ export default async function CreateUser(
     GSI2SK: ENTITY_TYPES.USER,
     unsubscribeHash: unsubscribeHash,
     canReceiveEmails: true,
+    verifiedEmail: false,
   };
 
   const params: PutCommandInput = {
@@ -53,14 +53,6 @@ export default async function CreateUser(
 
   try {
     await Dynamo.send(new PutCommand(params));
-    sendEmail({
-      // TODO streams
-      fromName: "New Plutomi User",
-      fromAddress: EMAILS.GENERAL,
-      toAddresses: ["contact@plutomi.com"], // TODO add var for default new user notifications
-      subject: `A new user has signed up!`,
-      html: `<h1>Email: ${newUser.email}</h1><h1>ID: ${newUser.userId}</h1>`,
-    });
     return [newUser, null];
   } catch (error) {
     return [null, error];

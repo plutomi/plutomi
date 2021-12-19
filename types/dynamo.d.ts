@@ -1,7 +1,7 @@
 // This file is for the actual DynamoDB entries and their Types - ie: A full object with all properties.
 // All  other types are derivatives with Pick, Omit, etc.
 import { UserSessionData } from "./main";
-import { ENTITY_TYPES } from "../Config";
+import { DEFAULTS, ENTITY_TYPES } from "../Config";
 interface DynamoNewStage {
   /**
    * Primary key for creating a stage - takes `orgId` and `stageId`
@@ -101,7 +101,7 @@ interface DynamoNewApplicant {
   /**
    * Primary key of the applicant where the inputs are `orgId` and `applicantId`
    */
-  PK: `${ENTITY_TYPES.APPLICANT}#${applicantId}`;
+  PK: `${ENTITY_TYPES.APPLICANT}#${string}`;
   /**
    * The {@link ENTITY_TYPES.APPLICANT}
    */
@@ -364,6 +364,7 @@ interface DynamoNewUser {
   GSI2SK: ENTITY_TYPES.USER;
   unsubscribeHash: string;
   canReceiveEmails: boolean;
+  verifiedEmail: boolean;
 }
 
 interface DynamoNewLoginLink {
@@ -406,4 +407,8 @@ interface DynamoNewLoginEvent {
   SK: `${ENTITY_TYPES.LOGIN_EVENT}#${string}`;
   createdAt: string; // ISO timestamp
   ttlExpiry: number; // ttl unix expiry
+  userId: string;
+  email: string;
+  entityType: ENTITY_TYPES.LOGIN_EVENT;
+  verifiedEmail: boolean;
 }

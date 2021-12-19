@@ -11,7 +11,6 @@ import { nanoid } from "nanoid";
 import { CUSTOM_QUERY } from "../types/main";
 import Sanitize from "../utils/sanitize";
 import Joi from "joi";
-import sendEmail from "../utils/sendEmail";
 import * as Time from "../utils/time";
 import * as Users from "../models/Users/index";
 import { LOGIN_LINK_SETTINGS } from "../Config";
@@ -59,6 +58,8 @@ export const login = async (req: Request, res: Response) => {
     loginLinkId,
     userId,
     orgId: userOrg,
+    email: user.email,
+    verifiedEmail: user.verifiedEmail,
   });
 
   if (failed) {

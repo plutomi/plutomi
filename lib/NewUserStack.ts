@@ -63,6 +63,20 @@ export default class NewUserStack extends cdk.Stack {
           },
         },
       },
+
+      {
+        queue: {
+          queueName: "NewUserAdminEmailQueue",
+          desiredEvents: [STREAM_EVENTS.NEW_USER],
+          visibilityTimeout: cdk.Duration.seconds(10),
+        },
+        function: {
+          name: "NewUserAdminEmailFunction",
+          description: "Sends an email to app admins whenever a user signs up",
+          entry: "sendNewUserAdminEmail.ts", // Parent directory is the `functions`
+          sendEmail: true,
+        },
+      },
     ];
 
     STACK.map((item) => {

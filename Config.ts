@@ -69,15 +69,15 @@ export const ID_LENGTHS = {
   STAGE_RULE: 16,
 };
 
-export const DEFAULTS = {
-  FIRST_NAME: "NO_FIRST_NAME",
-  LAST_NAME: "NO_LAST_NAME",
-  FULL_NAME: `NO_FIRST_NAME NO_LAST_NAME`,
-  NO_ORG: `NO_ORG_ASSIGNED`,
-  LOGIN_EVENT_RETENTION_PERIOD: 30,
-  REDIRECT: "/dashboard", // When logging in from the homepage, where should the user be redirected
-  COOKIE_NAME: "plutomi-cookie", // Name of the session cookie
-};
+export enum DEFAULTS {
+  FIRST_NAME = "NO_FIRST_NAME",
+  LAST_NAME = "NO_LAST_NAME",
+  FULL_NAME = `NO_FIRST_NAME NO_LAST_NAME`,
+  NO_ORG = `NO_ORG_ASSIGNED`,
+  LOGIN_EVENT_RETENTION_PERIOD = 30,
+  REDIRECT = "/dashboard", // When logging in from the homepage, where should the user be redirected
+  COOKIE_NAME = "plutomi-cookie", // Name of the session cookie
+}
 
 export const LOGIN_LINK_SETTINGS = {
   password: process.env.IRON_SEAL_PASSWORD,
@@ -231,7 +231,7 @@ export const SWR = {
 };
 
 export const sessionSettings = ironSession({
-  cookieName: DEFAULTS.COOKIE_NAME,
+  cookieName: "plutomi-cookie",
   password: process.env.IRON_SESSION_PASSWORD_1,
   cookieOptions: {
     secure: process.env.NODE_ENV === "production",
