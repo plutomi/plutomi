@@ -7,7 +7,9 @@ import * as lambdaEventSources from "@aws-cdk/aws-lambda-event-sources";
 import { NodejsFunction } from "@aws-cdk/aws-lambda-nodejs";
 import * as cdk from "@aws-cdk/core";
 import * as events from "@aws-cdk/aws-events";
+import * as sqs from "@aws-cdk/aws-sqs";
 import * as targets from "@aws-cdk/aws-events-targets";
+import { STREAM_EVENTS } from "../Config";
 const resultDotEnv = dotenv.config({
   path: __dirname + `../../.env.${process.env.NODE_ENV}`,
 });
@@ -30,6 +32,22 @@ export default class StreamProcessorStack extends cdk.Stack {
    */
   constructor(scope: cdk.App, id: string, props: StreamProcessorStackProps) {
     super(scope, id, props);
+
+    const createdQueue = new sqs.Queue(this, "EB queue", {
+      queueName: "EBTestQueue",
+    });
+    const bus = events.EventBus.fromEventBusName(this, "defaultBus", "default");
+
+    const rule = new events.Rule(this, "testrule", {
+      description: "Testing rule",
+      ruleName: "Testebrule",
+      targets: [new targets.SqsQueue(createdQueue)],
+
+      eventPattern: {
+        source: ["dynamodb.streams"], // NOT AN AWS EVENT!
+        detailType: [STREAM_EVENTS.SEND_LOGIN_LINK],
+      },
+    });
 
     // Create the SNS topic
     this.StreamProcessorTopic = new sns.Topic(this, "Topic", {
@@ -70,8 +88,10 @@ export default class StreamProcessorStack extends cdk.Stack {
     );
     // Subscribe our lambda to the stream
     streamProcessorFunction.addEventSource(dynamoStreams);
-
-    // Allow lambda to publish into our SNS topic
-    this.StreamProcessorTopic.grantPublish(streamProcessorFunction);
+    bus.grantPutEventsTo(streamProcessorFunction);
+    this.StreamProcessorTopic.grantPublish(
+      // Allow lambda to publish into our SNS topic
+      streamProcessorFunction
+    );
   }
 }

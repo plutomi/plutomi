@@ -4,9 +4,12 @@ import { PublishCommand, PublishCommandInput } from "@aws-sdk/client-sns";
 import SNSclient from "../awsClients/snsClient";
 import errorFormatter from "../utils/errorFormatter";
 import EBClient from "../awsClients/eventBridgeClient";
-
+import {
+  PutEventsCommand,
+  PutEventsCommandInput,
+} from "@aws-sdk/client-eventbridge";
 const processor = require("dynamodb-streams-processor");
-
+import * as Time from "../utils/time";
 /**
  * Sends messages to an SNS topic.
  * We do most of our filtering here so we don't even have to call SNS if it isn't needed.
@@ -20,17 +23,26 @@ export async function main(event: DynamoDBStreamEvent) {
 
   console.log("New, formatted record");
   console.log(record);
-  return;
   const { eventName } = record;
-
-  let { OldImage } = record.dynamodb;
-  let { NewImage } = record.dynamodb;
+  const { OldImage, NewImage } = record.dynamodb;
   console.log({
     eventName: eventName,
     OldImage: OldImage,
     NewImage: NewImage,
   });
-
+  const newEvent: PutEventsCommandInput = {
+    Entries: [
+      {
+        // Event envelope fields
+        DetailType: STREAM_EVENTS.SEND_LOGIN_LINK,
+        Source: "dynamodb.streams",
+        // Main event body
+        Detail: JSON.stringify(NewImage),
+      },
+    ],
+  };
+  // TODO try catch and all
+  await EBClient.send(new PutEventsCommand(newEvent));
   return;
   /**
    * The logic below describes what 'rules' need to match for each event type to be processed

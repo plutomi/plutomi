@@ -1,6 +1,5 @@
 import { EventBridgeClient } from "@aws-sdk/client-eventbridge";
 
-const config = { region: "us-east-1" };
-const EBClient = new EventBridgeClient(config);
+const EBClient = new EventBridgeClient({ region: "us-east-1" });
 
 export default EBClient;
