@@ -145,7 +145,7 @@ const GLOBAL_FORBIDDEN_PROPERTIES = [
  */
 export enum STREAM_EVENTS {
   SEND_LOGIN_LINK = "SEND_LOGIN_LINK",
-  USER_LOGIN = "USER_LOGIN",
+  NEW_USER = "NEW_USER",
 }
 /**
  * Properties that cannot be updated per entity type

@@ -69,7 +69,7 @@ export async function main(event: DynamoDBStreamEvent) {
       attributes = {
         eventType: {
           DataType: "String",
-          StringValue: STREAM_EVENTS.USER_LOGIN,
+          StringValue: STREAM_EVENTS.NEW_USER,
         },
       };
     }
