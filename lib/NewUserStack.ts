@@ -104,6 +104,7 @@ export default class NewUserStack extends cdk.Stack {
         queueName: item.queue.queueName,
         visibilityTimeout: item.queue.visibilityTimeout,
         receiveMessageWaitTime: cdk.Duration.seconds(20),
+        encryption: sqs.QueueEncryption.KMS,
       });
 
       /**
