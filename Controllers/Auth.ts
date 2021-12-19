@@ -144,7 +144,7 @@ export const createLoginLinks = async (req: Request, res: Response) => {
     user = createdUser;
   }
 
-  if (!user.canReceiveEmails) {
+  if (!user.canReceiveEmails && loginMethod === LOGIN_METHODS.EMAIL) {
     return res.status(403).json({
       message: `${user.email} is unable to receive emails, please reach out to support@plutomi.com to opt back in!`,
     });
