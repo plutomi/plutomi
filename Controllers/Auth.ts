@@ -72,15 +72,24 @@ export const login = async (req: Request, res: Response) => {
   const cleanedUser = Sanitize.clean(user, ENTITY_TYPES.USER); // TODO not working!
   req.session.user = cleanedUser;
   /**
-   * Get the user's org invites, if any, if they're not in an org.
+   * Get the user's org invites if they're not in an org.
    * The logic here being, if a user is in an org, what are the chances they're going to join another?
    *  TODO maybe revisit this?
    */
   let userInvites = []; // TODO types array of org invite
   if (req.session.user.orgId === DEFAULTS.NO_ORG) {
-    userInvites = await Users.getInvitesForUser({
+    const [invites, inviteError] = await Users.getInvitesForUser({
       userId: req.session.user.userId,
     });
+
+    if (inviteError) {
+      const formattedError = errorFormatter(inviteError);
+      return res.status(formattedError.httpStatusCode).json({
+        message: "An error ocurred getting your invites",
+        ...formattedError,
+      });
+    }
+    userInvites = invites;
   }
   req.session.user.totalInvites = userInvites.length;
   await req.session.save();
