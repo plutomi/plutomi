@@ -10,6 +10,7 @@ import {
 } from "@aws-sdk/client-eventbridge";
 const processor = require("dynamodb-streams-processor");
 import * as Time from "../utils/time";
+import { PutEventsRequestEntry } from "aws-sdk/clients/eventbridge";
 /**
  * Sends messages to an SNS topic.
  * We do most of our filtering here so we don't even have to call SNS if it isn't needed.
@@ -30,85 +31,61 @@ export async function main(event: DynamoDBStreamEvent) {
     OldImage: OldImage,
     NewImage: NewImage,
   });
-  const newEvent: PutEventsCommandInput = {
-    Entries: [
-      {
-        // Event envelope fields
-        DetailType: STREAM_EVENTS.SEND_LOGIN_LINK,
-        Source: "dynamodb.streams",
-        // Main event body
-        Detail: JSON.stringify(NewImage),
-      },
-    ],
-  };
-  // TODO try catch and all
-  await EBClient.send(new PutEventsCommand(newEvent));
-  return;
+
   /**
-   * The logic below describes what 'rules' need to match for each event type to be processed
+   * First, we're going to define some events & the criteria that is needed for them to trigger
+   * We don't really want to send *everything* to EventBridge, we don't have a use for it at this time.
+   * When that time comes, we can delete all this code and setup rules on EB directly :)
    */
 
-  // Send a user a link to login via email
-  const SEND_LOGIN_LINK =
+  // User requested a login lnk
+  const REQUEST_LOGIN_LINK =
     eventName === "INSERT" &&
     NewImage.entityType === ENTITY_TYPES.LOGIN_LINK &&
     NewImage.loginMethod === LOGIN_METHODS.EMAIL;
 
   /**
-   * If a user logs in for the first time, asynchronously notify the app Admin
-   * This will go to 2 separate queues, one for sending the email and one for updating the user's verifiedEmail property
+   * User verified their email
    */
   const NEW_USER =
     eventName === "INSERT" &&
     NewImage.entityType === ENTITY_TYPES.LOGIN_EVENT &&
-    !NewImage.verifiedEmail.BOOL;
+    !NewImage.verifiedEmail;
 
-  // Attributes are what we use to filter in SNS and the corresponding downstream queues
-  let attributes: {
-    // TODO split to its own type
-    eventType: {
-      DataType: string;
-      StringValue: STREAM_EVENTS;
-    };
-  };
+  let entry: { Source: string; Detail: string; DetailType: string } | undefined;
 
-  if (SEND_LOGIN_LINK) {
+  if (REQUEST_LOGIN_LINK) {
     console.log("User is requesting to log in");
-    attributes = {
-      eventType: {
-        DataType: "String",
-        StringValue: STREAM_EVENTS.SEND_LOGIN_LINK,
-      },
+    entry = {
+      Source: "dynamodb.streams",
+      Detail: JSON.stringify(NewImage),
+      DetailType: STREAM_EVENTS.REQUEST_LOGIN_LINK,
     };
   }
 
   if (NEW_USER) {
     console.log("A new user has signed up");
-    attributes = {
-      eventType: {
-        DataType: "String",
-        StringValue: STREAM_EVENTS.NEW_USER,
-      },
+    entry = {
+      Source: "dynamodb.streams",
+      Detail: JSON.stringify(NewImage),
+      DetailType: STREAM_EVENTS.NEW_USER,
     };
   }
+
   // No match - We don't care about this event
-  if (!attributes) {
+  if (!entry) {
     return;
   }
-  const snsMessage: PublishCommandInput = {
-    // Message attributes are sent only when the message structure is String, not JSON.
-    // https://docs.aws.amazon.com/sns/latest/dg/sns-message-attributes.html
-    Message: JSON.stringify(record),
-    MessageAttributes: attributes,
-    TopicArn: process.env.STREAM_PROCESSOR_TOPIC_ARN, // Set in CDK in the lambda environment variables - NOT in .env file
+
+  const newEvent: PutEventsCommandInput = {
+    Entries: [entry],
   };
   try {
-    await SNSclient.send(new PublishCommand(snsMessage));
-    console.log("Message sent to SNS!");
-    console.log(snsMessage);
+    await EBClient.send(new PutEventsCommand(newEvent));
+    console.log("Message sent to EventBridge!");
     return;
   } catch (error) {
-    console.error("Unable to send message to SNS");
+    console.error("Unable to send message to EventBridge");
     console.error(errorFormatter(error));
     return;
   }

@@ -96,7 +96,13 @@ export async function getStaticProps() {
   await Promise.all(
     data.map(async (branch) => {
       const { data } = await axios.get(
-        `https://api.github.com/repos/plutomi/plutomi/commits?sha=${branch.name}&per_page=${commitsFromEachBranch}&u=joswayski`
+        `https://api.github.com/repos/plutomi/plutomi/commits?sha=${branch.name}&per_page=${commitsFromEachBranch}&u=joswayski`,
+        {
+          auth: {
+            username: "joswayski",
+            password: "GithubAccount44!@#",
+          },
+        }
       );
 
       data.map(async (commit) => {

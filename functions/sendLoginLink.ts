@@ -10,12 +10,9 @@ import { parse } from "../utils/SQSParser";
  * this function will send them their login link via SES
  */
 export async function main(event: SQSEvent) {
-  const record = event.Records[0]; // todo change if batch size changes
-  const item = parse(record).NewImage;
-  const email = item.email.S;
-  const loginLinkUrl = item.loginLinkUrl.S;
-  const relativeExpiry = item.relativeExpiry.S;
-  const unsubscribeHash = item.unsubscribeHash.S;
+  const item = JSON.parse(event.Records[0].body).detail;
+  const { email, loginLinkUrl, relativeExpiry, unsubscribeHash } = item;
+
   const [emailSent, emailFailure] = await sendEmail({
     fromName: "Plutomi",
     fromAddress: EMAILS.GENERAL,

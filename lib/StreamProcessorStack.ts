@@ -31,23 +31,7 @@ export default class StreamProcessorStack extends cdk.Stack {
   constructor(scope: cdk.App, id: string, props: StreamProcessorStackProps) {
     super(scope, id, props);
 
-    const bus = events.EventBus.fromEventBusName(
-      this,
-      "DefaultEventBus",
-      "default"
-    );
-
-    // new events.Rule(this, "testrule", {
-    //   description: "Testing rule",
-    //   ruleName: "Testebrule",
-    //   targets: [new targets.SqsQueue(SendLoginLinkQueue)],
-    //   eventPattern: {
-    //     source: ["dynamodb.streams"], // NOT AN AWS EVENT!
-    //     detailType: [STREAM_EVENTS.SEND_LOGIN_LINK],
-    //   },
-    // });
-
-    const StreamProcessorFunction = new NodejsFunction(
+    this.StreamProcessorFunction = new NodejsFunction(
       this,
       "StreamProcessorFunction",
       {
@@ -76,7 +60,6 @@ export default class StreamProcessorStack extends cdk.Stack {
       }
     );
     // Subscribe our lambda to the stream
-    StreamProcessorFunction.addEventSource(dynamoStreams);
-    bus.grantPutEventsTo(StreamProcessorFunction);
+    this.StreamProcessorFunction.addEventSource(dynamoStreams);
   }
 }

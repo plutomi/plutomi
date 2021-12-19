@@ -18,22 +18,20 @@ if (resultDotEnv.error) {
   throw resultDotEnv.error;
 }
 
-interface EventBusStackProps extends cdk.StackProps {
+interface EventBridgeStackProps extends cdk.StackProps {
   StreamProcessorFunction: NodejsFunction;
   SendLoginLinkQueue: sqs.Queue;
   NewUserAdminEmailQueue: sqs.Queue;
   NewUserVerifiedEmailQueue: sqs.Queue;
 }
-export default class EventBusStack extends cdk.Stack {
-  public readonly EventBus: events.EventBus;
-
+export default class EventBridgeStack extends cdk.Stack {
   /**
    *
    * @param {cdk.Construct} scope
    * @param {string} id
    * @param {cdk.StackProps=} props
    */
-  constructor(scope: cdk.App, id: string, props: EventBusStackProps) {
+  constructor(scope: cdk.App, id: string, props: EventBridgeStackProps) {
     super(scope, id, props);
 
     // Get a reference to the event bus
@@ -47,17 +45,17 @@ export default class EventBusStack extends cdk.Stack {
     bus.grantPutEventsTo(props.StreamProcessorFunction);
 
     new events.Rule(this, "LoginLinkRule", {
-      description: "A user has requested a login lnk",
-      ruleName: "SendLoginLinkRule",
+      description: "A user has requested a login link",
+      ruleName: "RequestedLoginLink",
       targets: [new targets.SqsQueue(props.SendLoginLinkQueue)],
       eventPattern: {
         source: ["dynamodb.streams"],
-        detailType: [STREAM_EVENTS.SEND_LOGIN_LINK],
+        detailType: [STREAM_EVENTS.REQUEST_LOGIN_LINK],
       },
     });
 
     new events.Rule(this, "NewUserRule", {
-      description: "A new user has been confirmed.",
+      description: "A new user has been signed up and verified their email",
       ruleName: "NewUserRule",
       targets: [
         new targets.SqsQueue(props.NewUserAdminEmailQueue),

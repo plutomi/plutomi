@@ -8,9 +8,8 @@ import * as Users from "../models/Users";
  * this function will send them their login link via SES
  */
 export async function main(event: SQSEvent) {
-  const record = event.Records[0]; // todo change if batch size changes
-  const item = parse(record).NewImage;
-  const userId = item.userId.S;
+  const item = JSON.parse(event.Records[0].body).detail;
+  const { userId } = item;
 
   const [update, error] = await Users.updateUser({
     userId: userId,

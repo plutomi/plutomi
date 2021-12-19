@@ -144,7 +144,7 @@ const GLOBAL_FORBIDDEN_PROPERTIES = [
  * Events for filtering DynamoDB streams
  */
 export enum STREAM_EVENTS {
-  SEND_LOGIN_LINK = "SEND_LOGIN_LINK",
+  REQUEST_LOGIN_LINK = "REQUEST_LOGIN_LINK",
   NEW_USER = "NEW_USER",
 }
 /**

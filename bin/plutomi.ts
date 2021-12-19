@@ -8,7 +8,7 @@ import FrontendStack from "../lib/FrontendStack";
 import StreamProcessorStack from "../lib/StreamProcessorStack";
 import NewUserStack from "../lib/NewUserStack";
 import StateMachine from "../lib/StateMachine";
-import EventBusStack from "../lib/EventBusStack";
+import EventBridgeStack from "../lib/EventBridgeStack";
 // Run the serverless builder before deploying
 const builder = new Builder(".", "./build", { args: ["build"] });
 
@@ -40,7 +40,7 @@ builder
       table,
     });
 
-    new EventBusStack(app, `EventBus`, {
+    new EventBridgeStack(app, `EventBridgeStack`, {
       StreamProcessorFunction,
       SendLoginLinkQueue,
       NewUserAdminEmailQueue,
