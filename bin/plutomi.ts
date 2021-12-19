@@ -6,7 +6,7 @@ import APIStack from "../lib/APIStack";
 import { Builder } from "@sls-next/lambda-at-edge";
 import FrontendStack from "../lib/FrontendStack";
 import StreamProcessorStack from "../lib/StreamProcessorStack";
-import SendLoginLinkStack from "../lib/SendLoginLinkStack";
+import NewUserStack from "../lib/NewUserStack";
 // Run the serverless builder before deploying
 const builder = new Builder(".", "./build", { args: ["build"] });
 
@@ -18,16 +18,14 @@ builder
     new APIStack(app, "APIStack", {
       table,
     });
-    const { sendLoginLinkQueue } = new SendLoginLinkStack(
-      app,
-      `SendLoginLinkStack`,
-      { table }
-    );
+    const { SendLoginLinkQueue } = new NewUserStack(app, `NewUserStack`, {
+      table,
+    });
 
     new FrontendStack(app, `FrontendStack`);
     new StreamProcessorStack(app, `StreamProcessorStack`, {
       table,
-      sendLoginLinkQueue,
+      SendLoginLinkQueue,
     });
   })
   .catch((e) => {

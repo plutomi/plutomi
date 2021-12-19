@@ -20,7 +20,7 @@ if (resultDotEnv.error) {
 
 interface StreamProcessorStackProps extends cdk.StackProps {
   table: dynamodb.Table;
-  sendLoginLinkQueue: sqs.Queue;
+  SendLoginLinkQueue: sqs.Queue;
 }
 export default class StreamProcessorStack extends cdk.Stack {
   /**
@@ -76,9 +76,12 @@ export default class StreamProcessorStack extends cdk.Stack {
     // Allow lambda to publish into our SNS topic
     streamProcessorTopic.grantPublish(streamProcessorFunction);
 
+    /**
+     * Below are all of the subscriptions to this topic
+     */
     // TODO test, just making sure events reach the queue
     streamProcessorTopic.addSubscription(
-      new snsSubscriptions.SqsSubscription(props.sendLoginLinkQueue, {
+      new snsSubscriptions.SqsSubscription(props.SendLoginLinkQueue, {
         filterPolicy: {
           eventType: sns.SubscriptionFilter.stringFilter({
             allowlist: [STREAM_EVENTS.SEND_LOGIN_LINK],
