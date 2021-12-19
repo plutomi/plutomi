@@ -9,19 +9,19 @@ export const API_METHODS = {
   OPTIONS: "OPTIONS",
   DELETE: "DELETE",
 };
-export const ENTITY_TYPES = {
-  APPLICANT: "APPLICANT",
-  APPLICANT_RESPONSE: "APPLICANT_RESPONSE",
-  ORG: "ORG",
-  ORG_INVITE: "ORG_INVITE",
-  USER: "USER",
-  OPENING: "OPENING",
-  STAGE: "STAGE",
-  STAGE_QUESTION: "STAGE_QUESTION",
-  STAGE_RULE: "STAGE_RULE",
-  LOGIN_LINK: "LOGIN_LINK",
-  LOGIN_EVENT: "LOGIN_EVENT",
-};
+export enum ENTITY_TYPES {
+  APPLICANT = "APPLICANT",
+  APPLICANT_RESPONSE = "APPLICANT_RESPONSE",
+  ORG = "ORG",
+  ORG_INVITE = "ORG_INVITE",
+  USER = "USER",
+  OPENING = "OPENING",
+  STAGE = "STAGE",
+  STAGE_QUESTION = "STAGE_QUESTION",
+  STAGE_RULE = "STAGE_RULE",
+  LOGIN_LINK = "LOGIN_LINK",
+  LOGIN_EVENT = "LOGIN_EVENT",
+}
 
 export const TIME_UNITS = {
   MILLISECONDS: "milliseconds",
@@ -143,9 +143,10 @@ const GLOBAL_FORBIDDEN_PROPERTIES = [
 /**
  * Events for filtering DynamoDB streams
  */
-export const STREAM_EVENTS = {
-  SEND_LOGIN_LINK: "SEND_LOGIN_LINK",
-};
+export enum STREAM_EVENTS {
+  SEND_LOGIN_LINK = "SEND_LOGIN_LINK",
+  USER_LOGIN = "USER_LOGIN",
+}
 /**
  * Properties that cannot be updated per entity type
  */
@@ -176,10 +177,10 @@ export const FORBIDDEN_PROPERTIES = {
   ],
 };
 
-export const LOGIN_METHODS = {
-  EMAIL: "EMAIL",
-  GOOGLE: "GOOGLE",
-};
+export enum LOGIN_METHODS {
+  EMAIL = "EMAIL",
+  GOOGLE = "GOOGLE",
+}
 
 // Reusable defaults across all lambda functions. Feel free to override when needed
 // export const DEFAULT_LAMBDA_CONFIG = {

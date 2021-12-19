@@ -62,6 +62,7 @@ export default class StreamProcessorStack extends cdk.Stack {
 
     const dynamoStreams = new lambdaEventSources.DynamoEventSource(
       props.table,
+
       {
         startingPosition: lambda.StartingPosition.LATEST,
         retryAttempts: 3,
