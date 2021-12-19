@@ -40,7 +40,7 @@ export default class StreamProcessorStack extends cdk.Stack {
       this,
       "StreamProcessorFunction",
       {
-        memorySize: 256,
+        memorySize: 128,
         timeout: cdk.Duration.seconds(5),
         runtime: lambda.Runtime.NODEJS_14_X,
         architecture: lambda.Architecture.ARM_64,

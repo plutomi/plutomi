@@ -158,6 +158,7 @@ export const FORBIDDEN_PROPERTIES = {
     "canReceiveEmails",
     "GSI1PK", // Org#EntityType
     "GSI2PK", // Email
+    "verifiedEmail", // Updated asynchronously on 1st login
   ],
   APPLICANT: [
     ...GLOBAL_FORBIDDEN_PROPERTIES,
@@ -182,18 +183,6 @@ export enum LOGIN_METHODS {
   GOOGLE = "GOOGLE",
 }
 
-// Reusable defaults across all lambda functions. Feel free to override when needed
-// export const DEFAULT_LAMBDA_CONFIG = {
-//   memorySize: 256,
-//   timeout: cdk.Duration.seconds(5),
-//   runtime: lambda.Runtime.NODEJS_14_X,
-//   architecture: lambda.Architecture.ARM_64,
-//   // bundling: {
-//   //   minify: true,
-//   //   externalModules: ["aws-sdk"],
-//   // },
-//   handler: "main",
-// };
 export const NAVBAR_NAVIGATION = [
   {
     name: "Dashboard",

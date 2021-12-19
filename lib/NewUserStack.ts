@@ -44,7 +44,7 @@ export default class NewUserStack extends cdk.Stack {
     const AWS_ACCOUNT_ID: string = process.env.AWS_ACCOUNT_ID;
     const SES_DOMAIN = process.env.DOMAIN_NAME;
     const API_URL: string = process.env.API_URL;
-
+    const DYNAMO_TABLE_NAME = process.env.DYNAMO_TABLE_NAME;
     const STACK = [
       {
         queue: {
@@ -77,6 +77,23 @@ export default class NewUserStack extends cdk.Stack {
           sendEmail: true,
         },
       },
+
+      {
+        queue: {
+          queueName: "NewUserVerifiedEmailQueue",
+          desiredEvents: [STREAM_EVENTS.NEW_USER],
+          visibilityTimeout: cdk.Duration.seconds(10),
+        },
+        function: {
+          name: "NewUserVerifiedEmailFunction",
+          description: "Marks the `verifiedEmail` property on a user to `TRUE`",
+          entry: "newUserVerifiedEmail.ts", // Parent directory is the `functions`
+          environment: {
+            DYNAMO_TABLE_NAME: DYNAMO_TABLE_NAME,
+          },
+          dynamoWrite: true,
+        },
+      },
     ];
 
     STACK.map((item) => {
@@ -105,7 +122,7 @@ export default class NewUserStack extends cdk.Stack {
        * Create the functions associated with each queue
        */
       const createdFunction = new NodejsFunction(this, item.function.name, {
-        memorySize: 256,
+        memorySize: 128,
         timeout: cdk.Duration.seconds(5),
         runtime: lambda.Runtime.NODEJS_14_X,
         architecture: lambda.Architecture.ARM_64,
@@ -140,6 +157,14 @@ export default class NewUserStack extends cdk.Stack {
             ],
           })
         );
+
+      /**
+       * Grant lambda write access to Dynamo if needed
+       *
+       *
+       */
+      // TODO this is too broad (only updates) despite the function literally only able to do one thing
+      item.function.dynamoWrite && props.table.grantWriteData(createdFunction);
     });
   }
 }

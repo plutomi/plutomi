@@ -86,6 +86,7 @@ export async function main(event: DynamoDBStreamEvent) {
   try {
     await SNSclient.send(new PublishCommand(snsMessage));
     console.log("Message sent to SNS!");
+    console.log(snsMessage);
     return;
   } catch (error) {
     console.error("Unable to send message to SNS");
