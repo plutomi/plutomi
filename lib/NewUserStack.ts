@@ -103,6 +103,7 @@ export default class NewUserStack extends cdk.Stack {
       const createdQueue = new sqs.Queue(this, item.queue.queueName, {
         queueName: item.queue.queueName,
         visibilityTimeout: item.queue.visibilityTimeout,
+        receiveMessageWaitTime: cdk.Duration.seconds(20),
       });
 
       /**
