@@ -3,6 +3,7 @@ import { ENTITY_TYPES, LOGIN_METHODS, STREAM_EVENTS } from "../Config";
 import SNSclient from "../awsClients/snsClient";
 import { PublishCommand, PublishCommandInput } from "@aws-sdk/client-sns";
 import errorFormatter from "../utils/errorFormatter";
+import { unmarshall } from "@aws-sdk/util-dynamodb";
 
 /**
  * Sends messages to an SNS topic.
@@ -13,6 +14,7 @@ import errorFormatter from "../utils/errorFormatter";
  */
 export async function main(event: DynamoDBStreamEvent) {
   // TODO unmarshall the events >:[
+  // Was reading a bit and this came up https://github.com/aws/aws-sdk-js/issues/2486
   event.Records.map(async (record) => {
     const { eventName } = record;
     const { OldImage } = record.dynamodb;
@@ -34,12 +36,16 @@ export async function main(event: DynamoDBStreamEvent) {
       NewImage.entityType.S === ENTITY_TYPES.LOGIN_LINK &&
       NewImage.loginMethod.S === LOGIN_METHODS.EMAIL;
 
-    // If a user logs in for the first time, send it to an queue to notify the app owner
+    /**
+     * If a user logs in for the first time, asynchronously notify the app Admin
+     * This will go to 2 separate queues, one for sending the email and one for updating the user's verifiedEmail property
+     */
     const NEW_USER =
       eventName === "INSERT" &&
       NewImage.entityType.S === ENTITY_TYPES.LOGIN_EVENT &&
-      !NewImage.verifiedEmail.BOOL; // <-- The queue will update this to true after they log in for the first time
+      !NewImage.verifiedEmail.BOOL;
 
+    // Attributes are what we use to filter in SNS and the corresponding downstream queues
     let attributes: {
       // TODO split to its own type
       eventType: {
@@ -69,6 +75,8 @@ export async function main(event: DynamoDBStreamEvent) {
     }
     try {
       const snsMessage: PublishCommandInput = {
+        // Message attributes are sent only when the message structure is String, not JSON.
+        // https://docs.aws.amazon.com/sns/latest/dg/sns-message-attributes.html
         Message: JSON.stringify(record),
         MessageAttributes: attributes,
         TopicArn: process.env.STREAM_PROCESSOR_TOPIC_ARN, // Set in CDK in the lambda environment variables - NOT in .env file
