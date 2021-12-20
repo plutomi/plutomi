@@ -791,20 +791,7 @@
     "@aws-cdk/region-info" "1.134.0"
     "constructs" "^3.3.69"
 
-"@aws-cdk/aws-logs@1.133.0":
-  "integrity" "sha512-2Doi8/KGUIQFiBhZMXP3rZCcUFnSZ/mGDqUvEsKLpNq9ahQ9U3sqipOV74d1ghrL0eOA9z5rVEBbo3WwQbH2SQ=="
-  "resolved" "https://registry.npmjs.org/@aws-cdk/aws-logs/-/aws-logs-1.133.0.tgz"
-  "version" "1.133.0"
-  dependencies:
-    "@aws-cdk/aws-cloudwatch" "1.133.0"
-    "@aws-cdk/aws-iam" "1.133.0"
-    "@aws-cdk/aws-kms" "1.133.0"
-    "@aws-cdk/aws-s3-assets" "1.133.0"
-    "@aws-cdk/core" "1.133.0"
-    "@aws-cdk/cx-api" "1.133.0"
-    "constructs" "^3.3.69"
-
-"@aws-cdk/aws-logs@1.134.0":
+"@aws-cdk/aws-logs@^1.134.0", "@aws-cdk/aws-logs@1.133.0", "@aws-cdk/aws-logs@1.134.0":
   "integrity" "sha512-XolgIfT8vamdlVy7TAtHvhX7BFeJrg37pEur0CAiuzROipnBGwHc63K4QqJYlA0QDEsLXn8BupUV76jBHr3wvQ=="
   "resolved" "https://registry.npmjs.org/@aws-cdk/aws-logs/-/aws-logs-1.134.0.tgz"
   "version" "1.134.0"

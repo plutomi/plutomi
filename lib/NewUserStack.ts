@@ -42,7 +42,6 @@ export default class NewUserStack extends cdk.Stack {
   constructor(scope: cdk.App, id: string, props: NewUserStackProps) {
     super(scope, id, props);
 
-    const AWS_ACCOUNT_ID: string = process.env.AWS_ACCOUNT_ID;
     const SES_DOMAIN = process.env.DOMAIN_NAME;
     const API_URL: string = process.env.API_URL;
     const DYNAMO_TABLE_NAME = process.env.DYNAMO_TABLE_NAME;
@@ -138,7 +137,9 @@ export default class NewUserStack extends cdk.Stack {
             effect: iam.Effect.ALLOW,
             actions: ["ses:SendEmail"],
             resources: [
-              `arn:aws:ses:us-east-1:${AWS_ACCOUNT_ID}:identity/${SES_DOMAIN}`,
+              `arn:aws:ses:us-east-1:${
+                cdk.Stack.of(this).account
+              }:identity/${SES_DOMAIN}`,
             ],
           })
         );

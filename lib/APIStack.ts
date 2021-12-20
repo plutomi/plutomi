@@ -29,7 +29,6 @@ export default class APIStack extends cdk.Stack {
     super(scope, id, props);
 
     const HOSTED_ZONE_ID: string = process.env.HOSTED_ZONE_ID;
-    const AWS_ACCOUNT_ID: string = process.env.AWS_ACCOUNT_ID;
     const SES_DOMAIN = process.env.DOMAIN_NAME;
 
     // IAM inline role - the service principal is required

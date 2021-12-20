@@ -7,7 +7,7 @@ import { Builder } from "@sls-next/lambda-at-edge";
 import FrontendStack from "../lib/FrontendStack";
 import StreamProcessorStack from "../lib/StreamProcessorStack";
 import NewUserStack from "../lib/NewUserStack";
-import StateMachine from "../lib/StateMachine";
+import CommsMachineStack from "../lib/CommsMachineStack";
 import EventBridgeStack from "../lib/EventBridgeStack";
 // Run the serverless builder before deploying
 const builder = new Builder(".", "./build", { args: ["build"] });
@@ -36,7 +36,7 @@ builder
       table,
     });
 
-    new StateMachine(app, `StateMachine`, {
+    const { CommsMachine } = new CommsMachineStack(app, `CommsMachineStack`, {
       table,
     });
 
@@ -45,6 +45,7 @@ builder
       SendLoginLinkQueue,
       NewUserAdminEmailQueue,
       NewUserVerifiedEmailQueue,
+      CommsMachine,
     });
     new FrontendStack(app, `FrontendStack`);
   })

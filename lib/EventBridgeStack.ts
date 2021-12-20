@@ -8,6 +8,7 @@ import { NodejsFunction } from "@aws-cdk/aws-lambda-nodejs";
 import * as cdk from "@aws-cdk/core";
 import * as events from "@aws-cdk/aws-events";
 import * as sqs from "@aws-cdk/aws-sqs";
+import * as sfn from "@aws-cdk/aws-stepfunctions";
 import * as targets from "@aws-cdk/aws-events-targets";
 import { STREAM_EVENTS } from "../Config";
 const resultDotEnv = dotenv.config({
@@ -23,6 +24,7 @@ interface EventBridgeStackProps extends cdk.StackProps {
   SendLoginLinkQueue: sqs.Queue;
   NewUserAdminEmailQueue: sqs.Queue;
   NewUserVerifiedEmailQueue: sqs.Queue;
+  CommsMachine: sfn.StateMachine;
 }
 export default class EventBridgeStack extends cdk.Stack {
   /**
@@ -47,7 +49,7 @@ export default class EventBridgeStack extends cdk.Stack {
     new events.Rule(this, "LoginLinkRule", {
       description: "A user has requested a login link",
       ruleName: "RequestedLoginLink",
-      targets: [new targets.SqsQueue(props.SendLoginLinkQueue)],
+      // targets: [new targets.SqsQueue(props.SendLoginLinkQueue)],
       eventPattern: {
         source: ["dynamodb.streams"],
         detailType: [STREAM_EVENTS.REQUEST_LOGIN_LINK],
@@ -58,8 +60,9 @@ export default class EventBridgeStack extends cdk.Stack {
       description: "A new user has been signed up and verified their email",
       ruleName: "NewUserRule",
       targets: [
-        new targets.SqsQueue(props.NewUserAdminEmailQueue),
-        new targets.SqsQueue(props.NewUserVerifiedEmailQueue),
+        // new targets.SqsQueue(props.NewUserAdminEmailQueue),
+        // new targets.SqsQueue(props.NewUserVerifiedEmailQueue),
+        new targets.SfnStateMachine(props.CommsMachine),
       ],
       eventPattern: {
         source: ["dynamodb.streams"],

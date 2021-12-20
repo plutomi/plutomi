@@ -27,7 +27,7 @@ export default async function CreateLoginEvent(
     PK: `${ENTITY_TYPES.USER}#${userId}`,
     SK: `${ENTITY_TYPES.LOGIN_EVENT}#${now}`,
     userId: userId,
-    email: email,
+    email: [email], // TODO - This is an array for the step function to just parse and send the welcome email. Might revisit
     entityType: ENTITY_TYPES.LOGIN_EVENT,
     /**
      * Whenever a user logs in, a background process is triggerred to notify
