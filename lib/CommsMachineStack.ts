@@ -124,18 +124,17 @@ export default class CommsMachineStack extends cdk.Stack {
       }
     );
 
-    const adminFilter = new sfn.Pass(scope, "format-admin-email", {
-      parameters: {
-        "subject.$": sfn.JsonPath.stringAt(
-          `States.Format('Admin BLOOP - {}', $.email)`
-        ),
-        html: "<h1>Testttttttttttttttttt</h1>",
-      },
-    });
-
-    const notifyAdmin = new tasks.CallAwsService(this, "NotifyAdminOfNewUser", {
+    const SES_SETTINGS = {
       service: "ses",
       action: "sendEmail",
+      iamResources: [
+        `arn:aws:ses:${cdk.Stack.of(this).region}:${
+          cdk.Stack.of(this).account
+        }:identity/${process.env.DOMAIN_NAME}`,
+      ],
+    };
+    const notifyAdmin = new tasks.CallAwsService(this, "NotifyAdminOfNewUser", {
+      ...SES_SETTINGS,
       parameters: {
         Source: `Plutomi <${EMAILS.GENERAL}>`,
         Destination: {
@@ -143,50 +142,41 @@ export default class CommsMachineStack extends cdk.Stack {
         },
         Message: {
           Subject: {
-            Data: "$.subject",
+            "Data.$": `States.Format('New user signed up - {}', $.email)`,
           },
           Body: {
             Html: {
-              Data: "$.html",
+              "Data.$": `States.Format('<h1>Say hello to {}</h1>', $.userId)`,
             },
           },
         },
       },
-
-      iamResources: [
-        `arn:aws:ses:${cdk.Stack.of(this).region}:${
-          cdk.Stack.of(this).account
-        }:identity/${process.env.DOMAIN_NAME}`,
-      ],
     }); //TODO update once native integration is implemented
 
-    const newUserBloop = new sfn.Pass(scope, "format-newuser-email", {
-      parameters: {
-        "email.$": "$.email",
-        "subject.$": sfn.JsonPath.stringAt(
-          `States.Format('NEWUSER BLOOP - {}', $.email)`
-        ),
-      },
-    });
+    // const newUserBloop = new sfn.Pass(scope, "format-newuser-email", {
+    //   parameters: {
+    //     "email.$": "$.email",
+    //     "subject.$": 'States.Format("NEWUSER BLOOP - {}", $.email)',
+    //   },
+    // });
 
-    const newUserEmail = generateEmail({
-      from: `Jose <${EMAILS.ADMIN}>`,
-      to: "$.email",
-      subject: "$.subject",
-      html: `<h1>Hello!</h1><p>Just wanted to make you aware that this website is still in development.<br></br>
-      Please let us know if you have any questions, concerns, or feature requests :)
-      You can reply to this email or leave an issue <a href="https://github.com/plutomi/plutomi" rel=noreferrer target="_blank" >on Github</a>!</p>`,
-    });
-    const welcomeUser = new tasks.CallAwsService( // TODO update once native integration is there
-      this,
-      "WelcomeNewUser",
-      newUserEmail
-    );
+    // const newUserEmail = generateEmail({
+    //   from: `Jose at Plutomi <${EMAILS.ADMIN}>`,
+    //   to: "$.email",
+    //   subject: "$.subject",
+    //   html: `<h1>Hello!</h1><p>Just wanted to make you aware that this website is still in development.<br></br>
+    //   Please let us know if you have any questions, concerns, or feature requests :)
+    //   You can reply to this email or leave an issue <a href="https://github.com/plutomi/plutomi" rel=noreferrer target="_blank" >on Github</a>!</p>`,
+    // });
+    // const welcomeUser = new tasks.CallAwsService( // TODO update once native integration is there
+    //   this,
+    //   "WelcomeNewUser",
+    //   newUserEmail
+    // );
 
     const definition = updateUser.next(
-      new sfn.Parallel(this, "Parallel")
-        .branch(adminFilter.next(notifyAdmin))
-        .branch(newUserBloop.next(welcomeUser))
+      new sfn.Parallel(this, "Parallel").branch(notifyAdmin)
+      // .branch(newUserBloop.next(welcomeUser))
     );
 
     const log = new logs.LogGroup(this, "CommsMachineLogGroup");
