@@ -134,6 +134,7 @@ export default class CommsMachineStack extends cdk.Stack {
       ],
     };
     const notifyAdmin = new tasks.CallAwsService(this, "NotifyAdminOfNewUser", {
+      //TODO update once native integration is implemented
       ...SES_SETTINGS,
       parameters: {
         Source: `Plutomi <${EMAILS.GENERAL}>`,
@@ -146,37 +147,40 @@ export default class CommsMachineStack extends cdk.Stack {
           },
           Body: {
             Html: {
-              "Data.$": `States.Format('<h1>Say hello to {}</h1>', $.userId)`,
+              "Data.$": `States.Format('<h1>User ID: {}</h1>', $.userId)`,
             },
           },
         },
       },
-    }); //TODO update once native integration is implemented
+    });
 
-    // const newUserBloop = new sfn.Pass(scope, "format-newuser-email", {
-    //   parameters: {
-    //     "email.$": "$.email",
-    //     "subject.$": 'States.Format("NEWUSER BLOOP - {}", $.email)',
-    //   },
-    // });
-
-    // const newUserEmail = generateEmail({
-    //   from: `Jose at Plutomi <${EMAILS.ADMIN}>`,
-    //   to: "$.email",
-    //   subject: "$.subject",
-    //   html: `<h1>Hello!</h1><p>Just wanted to make you aware that this website is still in development.<br></br>
-    //   Please let us know if you have any questions, concerns, or feature requests :)
-    //   You can reply to this email or leave an issue <a href="https://github.com/plutomi/plutomi" rel=noreferrer target="_blank" >on Github</a>!</p>`,
-    // });
-    // const welcomeUser = new tasks.CallAwsService( // TODO update once native integration is there
-    //   this,
-    //   "WelcomeNewUser",
-    //   newUserEmail
-    // );
+    const welcomeNewUser = new tasks.CallAwsService(this, "WelcomeNewUser", {
+      //TODO update once native integration is implemented
+      ...SES_SETTINGS,
+      parameters: {
+        Source: `Jose Valerio <${EMAILS.ADMIN}>`,
+        Destination: {
+          "ToAddresses.$": `States.Array($.email)`,
+        },
+        Message: {
+          Subject: {
+            Data: `Welcome to Plutomi!`,
+          },
+          Body: {
+            Html: {
+              Data: `<h1>Hello!</h1><p>Just wanted to make you aware that this website is still in development.<br>
+                Please let us know if you have any questions, concerns, or feature requests :)
+                You can reply to this email or <a href="https://github.com/plutomi/plutomi" rel=noreferrer target="_blank" >create an issue on Github</a>!</p>`,
+            },
+          },
+        },
+      },
+    });
 
     const definition = updateUser.next(
-      new sfn.Parallel(this, "Parallel").branch(notifyAdmin)
-      // .branch(newUserBloop.next(welcomeUser))
+      new sfn.Parallel(this, "Parallel")
+        .branch(notifyAdmin)
+        .branch(welcomeNewUser)
     );
 
     const log = new logs.LogGroup(this, "CommsMachineLogGroup");
