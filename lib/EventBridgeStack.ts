@@ -62,7 +62,6 @@ export default class EventBridgeStack extends cdk.Stack {
       targets: [
         new targets.SfnStateMachine(props.CommsMachine, {
           input: events.RuleTargetInput.fromObject({
-            PK: events.EventField.fromPath("$.detail.PK"),
             email: events.EventField.fromPath("$.detail.email"),
             userId: events.EventField.fromPath("$.detail.userId"),
           }),

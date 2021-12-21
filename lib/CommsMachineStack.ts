@@ -5,6 +5,7 @@ import * as sfn from "@aws-cdk/aws-stepfunctions";
 import * as tasks from "@aws-cdk/aws-stepfunctions-tasks";
 import * as logs from "@aws-cdk/aws-logs";
 import { EMAILS } from "../Config";
+import { string } from "joi";
 const resultDotEnv = dotenv.config({
   path: __dirname + `../../.env.${process.env.NODE_ENV}`,
 });
@@ -28,99 +29,33 @@ export default class CommsMachineStack extends cdk.Stack {
   constructor(scope: cdk.App, id: string, props: CommsMachineProps) {
     super(scope, id, props);
 
-    /**
-     * Generates an email & permissions to send with SES
-     *
-     * @param from - "Plutomi <admin@plutomi.com>"
-     * @param to - Just the recipient email address
-     * @param subject - Email subject
-     * @param html - HTMl of your email
-     */
-    const generateEmail = ({
-      from,
-      to,
-      subject,
-      html,
-    }: {
-      from: string;
-      to: string;
-      subject: string;
-      html: string;
-    }) => {
-      const template = {
-        service: "ses",
-        action: "sendEmail",
-        parameters: {
-          Destination: {
-            "ToAddresses.$": to,
-          },
-          Message: {
-            Subject: {
-              Data: subject,
-            },
-            Body: {
-              Html: {
-                Data: html,
-              },
-            },
-          },
+    const formatInput = new sfn.Pass(this, "FormatInput", {
+      comment:
+        "Formats the input from EventBridge to be used by downstream calls.",
+      parameters: {
+        "PK.$": `States.Format('USER#{}', $.userId)`,
+        "adminEmailSubject.$": `States.Format('New user signed up - {}', $.email)`,
+        "adminEmailBody.$": `States.Format('<h1>User ID: {}</h1>', $.userId)`,
+        "newUserEmail.$": `States.Array($.email)`,
+      },
+    });
 
-          Source: from,
-        },
-
-        iamResources: [
-          `arn:aws:ses:${cdk.Stack.of(this).region}:${
-            cdk.Stack.of(this).account
-          }:identity/${process.env.DOMAIN_NAME}`,
-        ],
-      };
-
-      return template;
-    };
-
-    // const updateUser = new tasks.DynamoUpdateItem(this, "UpdateItem", {
-    //   key: {
-    //     PK: tasks.DynamoAttributeValue.fromString(
-    //       "USER#IgfNlIQwKS9TEiGDJ_5Gv94ZbtVODkFv8goZE6aSdc"
-    //     ),
-    //     SK: tasks.DynamoAttributeValue.fromString("USER"),
-    //   },
-    //   table: props.table,
-    //   expressionAttributeValues: {
-    //     ":GSI1SK": tasks.DynamoAttributeValue.fromString("BEans1"),
-    //   },
-    //   updateExpression: "SET GSI1SK = :GSI1SK",
-    // });
-    const updateUser = new tasks.CallAwsService(
+    const updateUser = new tasks.DynamoUpdateItem(
       this,
       "UpdateVerifiedEmailStatus",
       {
-        service: "dynamodb",
-        action: "updateItem",
-        parameters: {
-          TableName: props.table.tableName,
-          Key: {
-            PK: {
-              "S.$": "$.PK",
-            },
-            SK: {
-              S: "USER",
-            },
-          },
-          UpdateExpression: "SET verifiedEmail = :newValue",
-          ExpressionAttributeValues: {
-            ":newValue": {
-              S: "true", // TODO change to boolean
-            },
-          },
+        key: {
+          PK: tasks.DynamoAttributeValue.fromString(
+            sfn.JsonPath.stringAt("$.PK")
+          ),
+
+          SK: tasks.DynamoAttributeValue.fromString("USER"),
         },
-        /**
-         * If the value of ResultPath is null, that means that the state’s own raw output is discarded and its raw input becomes its result.
-         * https://states-language.net/spec.html#filters
-         * We want the original input to be passed down to the next tasks so that we can format emails
-         */
-        resultPath: sfn.JsonPath.DISCARD,
-        iamResources: [props.table.tableArn],
+        table: props.table,
+        updateExpression: "SET verifiedEmail = :newValue",
+        expressionAttributeValues: {
+          ":newValue": tasks.DynamoAttributeValue.fromBoolean(true),
+        },
       }
     );
 
@@ -133,6 +68,7 @@ export default class CommsMachineStack extends cdk.Stack {
         }:identity/${process.env.DOMAIN_NAME}`,
       ],
     };
+
     const notifyAdmin = new tasks.CallAwsService(this, "NotifyAdminOfNewUser", {
       //TODO update once native integration is implemented
       ...SES_SETTINGS,
@@ -143,11 +79,11 @@ export default class CommsMachineStack extends cdk.Stack {
         },
         Message: {
           Subject: {
-            "Data.$": `States.Format('New user signed up - {}', $.email)`,
+            "Data.$": `$.adminEmailSubject`,
           },
           Body: {
             Html: {
-              "Data.$": `States.Format('<h1>User ID: {}</h1>', $.userId)`,
+              "Data.$": `$.adminEmailBody`,
             },
           },
         },
@@ -160,7 +96,7 @@ export default class CommsMachineStack extends cdk.Stack {
       parameters: {
         Source: `Jose Valerio <${EMAILS.ADMIN}>`,
         Destination: {
-          "ToAddresses.$": `States.Array($.email)`,
+          "ToAddresses.$": `$.newUserEmail`,
         },
         Message: {
           Subject: {
@@ -168,19 +104,19 @@ export default class CommsMachineStack extends cdk.Stack {
           },
           Body: {
             Html: {
-              Data: `<h1>Hello!</h1><p>Just wanted to make you aware that this website is still in development.<br>
-                Please let us know if you have any questions, concerns, or feature requests :)
-                You can reply to this email or <a href="https://github.com/plutomi/plutomi" rel=noreferrer target="_blank" >create an issue on Github</a>!</p>`,
+              Data: `<h1>Hello there!</h1><p>Just wanted to make you aware that this website is still in active development and <strong>you will lose your data!!!</strong><br><br>
+                Please let us know if you have any questions, concerns, or feature requests by replying to this email or <a href="https://github.com/plutomi/plutomi" rel=noreferrer target="_blank" >creating an issue on Github</a>!</p>`,
             },
           },
         },
       },
     });
 
-    const definition = updateUser.next(
+    const definition = formatInput.next(
       new sfn.Parallel(this, "Parallel")
         .branch(notifyAdmin)
         .branch(welcomeNewUser)
+        .branch(updateUser)
     );
 
     const log = new logs.LogGroup(this, "CommsMachineLogGroup");
