@@ -5,7 +5,7 @@ import * as events from "@aws-cdk/aws-events";
 import * as sqs from "@aws-cdk/aws-sqs";
 import * as sfn from "@aws-cdk/aws-stepfunctions";
 import * as targets from "@aws-cdk/aws-events-targets";
-import { ENTITY_TYPES, LOGIN_METHODS, STREAM_EVENTS } from "../Config";
+import { ENTITY_TYPES, LOGIN_METHODS } from "../Config";
 const resultDotEnv = dotenv.config({
   path: __dirname + `../../.env.${process.env.NODE_ENV}`,
 });
@@ -16,7 +16,7 @@ if (resultDotEnv.error) {
 
 interface EventBridgeStackProps extends cdk.StackProps {
   SendLoginLinkQueue: sqs.Queue;
-  CommsMachine: sfn.StateMachine;
+  NewUserFlowSF: sfn.StateMachine;
 }
 export default class EventBridgeStack extends cdk.Stack {
   /**
@@ -31,7 +31,7 @@ export default class EventBridgeStack extends cdk.Stack {
     new events.Rule(this, "LoginLinkRule", {
       description: "A user has requested a login link",
       ruleName: "RequestedLoginLink",
-      targets: [new targets.SqsQueue(props.SendLoginLinkQueue)], // TODO move to comms machine
+      targets: [new targets.SqsQueue(props.SendLoginLinkQueue)], 
       eventPattern: {
         source: ["dynamodb.streams"],
         detail: {
@@ -48,7 +48,7 @@ export default class EventBridgeStack extends cdk.Stack {
       description: "A new user has been signed up and verified their email",
       ruleName: "NewUserRule",
       targets: [
-        new targets.SfnStateMachine(props.CommsMachine, {
+        new targets.SfnStateMachine(props.NewUserFlowSF, {
           input: events.RuleTargetInput.fromObject({
             email: events.EventField.fromPath("$.detail.NewImage.email"),
             userId: events.EventField.fromPath("$.detail.NewImage.userId"),

@@ -5,9 +5,8 @@ import DynamoDBStack from "../lib/DynamoDBStack";
 import APIStack from "../lib/APIStack";
 import FrontendStack from "../lib/FrontendStack";
 import StreamProcessorStack from "../lib/StreamProcessorStack";
-
 import NewUserStack from "../lib/NewUserStack";
-import CommsMachineStack from "../lib/CommsMachineStack";
+import NewUserFlowSFStack from "../lib/NewUserFlowSFStack";
 import EventBridgeStack from "../lib/EventBridgeStack";
 import { Builder } from "@sls-next/lambda-at-edge";
 
@@ -33,13 +32,13 @@ builder
       table,
     });
 
-    const { CommsMachine } = new CommsMachineStack(app, `CommsMachineStack`, {
+    const { NewUserFlowSF } = new NewUserFlowSFStack(app, `NewUserFlowSFStack`, {
       table,
     });
 
     new EventBridgeStack(app, `EventBridgeStack`, {
       SendLoginLinkQueue,
-      CommsMachine,
+      NewUserFlowSF,
     });
     new FrontendStack(app, `FrontendStack`);
   })

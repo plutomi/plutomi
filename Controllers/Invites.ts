@@ -130,18 +130,6 @@ export const create = async (req: Request, res: Response) => {
     html: `<h4>You can log in at <a href="${process.env.WEBSITE_URL}" target="_blank" rel=noreferrer>${process.env.WEBSITE_URL}</a> to accept it!</h4><p>If you believe this email was received in error, you can safely ignore it.</p>`,
   });
 
-  console.log(
-    "Test",
-
-    {
-      // TODO async decouple this
-      fromName: org.GSI1SK,
-      fromAddress: EMAILS.GENERAL,
-      toAddresses: [recipientEmail],
-      subject: `${req.session.user.firstName} ${req.session.user.lastName} has invited you to join them on Plutomi!`,
-      html: `<h4>You can log in at <a href="${process.env.WEBSITE_URL}" target="_blank" rel=noreferrer>${process.env.WEBSITE_URL}</a> to accept it!</h4><p>If you believe this email was received in error, you can safely ignore it.</p>`,
-    }
-  );
   if (emailFailure) {
     const formattedError = errorFormatter(emailFailure);
     return res.status(formattedError.httpStatusCode).json({

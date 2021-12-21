@@ -5,7 +5,6 @@ import * as sfn from "@aws-cdk/aws-stepfunctions";
 import * as tasks from "@aws-cdk/aws-stepfunctions-tasks";
 import * as logs from "@aws-cdk/aws-logs";
 import { EMAILS } from "../Config";
-import { string } from "joi";
 const resultDotEnv = dotenv.config({
   path: __dirname + `../../.env.${process.env.NODE_ENV}`,
 });
@@ -14,19 +13,19 @@ if (resultDotEnv.error) {
   throw resultDotEnv.error;
 }
 
-interface CommsMachineProps extends cdk.StackProps {
+interface NewUserFlowSFProps extends cdk.StackProps {
   table: dynamodb.Table;
 }
 
-export default class CommsMachineStack extends cdk.Stack {
-  public CommsMachine: sfn.StateMachine;
+export default class NewUserFlowSFStack extends cdk.Stack {
+  public NewUserFlowSF: sfn.StateMachine;
   /**
    * @param {cdk.Construct} scope
    * @param {string} id
    * @param {cdk.StackProps=} props
    */
 
-  constructor(scope: cdk.App, id: string, props: CommsMachineProps) {
+  constructor(scope: cdk.App, id: string, props: NewUserFlowSFProps) {
     super(scope, id, props);
 
     const formatInput = new sfn.Pass(this, "FormatInput", {
@@ -119,10 +118,10 @@ export default class CommsMachineStack extends cdk.Stack {
         .branch(updateUser)
     );
 
-    const log = new logs.LogGroup(this, "CommsMachineLogGroup");
+    const log = new logs.LogGroup(this, "NewUserFlowSFLogGroup");
 
-    this.CommsMachine = new sfn.StateMachine(this, "CommsMachine", {
-      stateMachineName: "CommsMachine",
+    this.NewUserFlowSF = new sfn.StateMachine(this, "NewUserFlowSF", {
+      stateMachineName: "NewUserFlowSF",
       definition,
       timeout: cdk.Duration.minutes(5),
       stateMachineType: sfn.StateMachineType.EXPRESS,
@@ -133,6 +132,6 @@ export default class CommsMachineStack extends cdk.Stack {
         level: sfn.LogLevel.ALL,
       },
     });
-    props.table.grantWriteData(this.CommsMachine);
+    props.table.grantWriteData(this.NewUserFlowSF);
   }
 }

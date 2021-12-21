@@ -17,11 +17,9 @@ import { PutEventsRequestEntry } from "aws-sdk/clients/eventbridge";
 export async function main(event: DynamoDBStreamEvent) {
   // Was reading a bit and this came up https://github.com/aws/aws-sdk-js/issues/2486
   const record = processor(event.Records)[0];
-
-  console.log(record);
   const { eventName } = record;
   const { OldImage, NewImage } = record.dynamodb;
-  const entry = {
+  const entry: PutEventsRequestEntry = {
     Source: "dynamodb.streams",
     DetailType: "stream", // Was having issues if this wasn't specified - can be anything
     Detail: JSON.stringify({
@@ -35,9 +33,10 @@ export async function main(event: DynamoDBStreamEvent) {
     Entries: [entry],
   };
   try {
+    console.log(entry);
     await EBClient.send(new PutEventsCommand(newEvent));
     console.log("Message sent to EventBridge!");
-    console.log(entry);
+
     return;
   } catch (error) {
     console.error("Unable to send message to EventBridge");
