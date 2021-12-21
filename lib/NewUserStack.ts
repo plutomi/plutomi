@@ -31,8 +31,6 @@ interface NewUserStackProps extends cdk.StackProps {
  */
 export default class NewUserStack extends cdk.Stack {
   public readonly SendLoginLinkQueue: sqs.Queue;
-  public readonly NewUserAdminEmailQueue: sqs.Queue;
-  public readonly NewUserVerifiedEmailQueue: sqs.Queue;
   /**
    * @param {cdk.Construct} scope
    * @param {string} id
@@ -44,78 +42,57 @@ export default class NewUserStack extends cdk.Stack {
 
     const SES_DOMAIN = process.env.DOMAIN_NAME;
     const API_URL: string = process.env.API_URL;
-    const DYNAMO_TABLE_NAME = process.env.DYNAMO_TABLE_NAME;
     const STACK = [
       {
         queue: {
-          queueName: "SendLoginLinkQueue",
+          queueName: "",
           visibilityTimeout: cdk.Duration.seconds(10),
         },
         function: {
           name: "SendLoginLinkFunction",
-          description:
-            "Sends login links to users when they sign in with their email",
-          entry: "sendLoginLink.ts", // Parent directory is the `functions`
-          sendEmail: true,
-          environment: {
-            API_URL: API_URL,
-          },
         },
       },
     ];
 
-    STACK.map((item) => {
-      /**
-       * Create the queues
-       */
-      this[item.queue.queueName] = new sqs.Queue(this, item.queue.queueName, {
-        queueName: item.queue.queueName,
-        visibilityTimeout: item.queue.visibilityTimeout,
-        receiveMessageWaitTime: cdk.Duration.seconds(20),
-        encryption: sqs.QueueEncryption.KMS,
-      });
-
-      /**
-       * Create the functions associated with each queue
-       */
-      const createdFunction = new NodejsFunction(this, item.function.name, {
-        memorySize: 128,
-        timeout: cdk.Duration.seconds(5),
-        runtime: lambda.Runtime.NODEJS_14_X,
-        architecture: lambda.Architecture.ARM_64,
-        bundling: {
-          minify: true,
-          externalModules: ["aws-sdk"],
-        },
-        handler: "main",
-        entry: path.join(__dirname, `/../functions/` + item.function.entry),
-        environment: item.function.environment,
-      });
-
-      /**
-       * Link the queue and function together
-       */
-      createdFunction.addEventSource(
-        new lambdaEventSources.SqsEventSource(this[item.queue.queueName], {
-          batchSize: 1,
-        })
-      );
-
-      /**
-       * Grant lambda email permissions if needed
-       */
-      item.function.sendEmail &&
-        createdFunction.addToRolePolicy(
-          new iam.PolicyStatement({
-            effect: iam.Effect.ALLOW,
-            actions: ["ses:SendEmail"],
-            resources: [
-              `arn:aws:ses:us-east-1:${
-                cdk.Stack.of(this).account
-              }:identity/${SES_DOMAIN}`,
-            ],
-          })
-        );
+    this.SendLoginLinkQueue = new sqs.Queue(this, "SendLoginLinkQueue", {
+      queueName: "SendLoginLinkQueue",
+      visibilityTimeout: cdk.Duration.seconds(10),
+      receiveMessageWaitTime: cdk.Duration.seconds(20),
+      encryption: sqs.QueueEncryption.KMS,
     });
+
+    const createdFunction = new NodejsFunction(this, "SendLoginLinkFunction", {
+      memorySize: 128,
+      timeout: cdk.Duration.seconds(5),
+      runtime: lambda.Runtime.NODEJS_14_X,
+      architecture: lambda.Architecture.ARM_64,
+      bundling: {
+        minify: true,
+        externalModules: ["aws-sdk"],
+      },
+      handler: "main",
+      entry: path.join(__dirname, `/../functions/sendLoginLink.ts`),
+      environment: {
+        API_URL: API_URL,
+      },
+      description:
+        "Sends login links to users when they sign in with their email",
+    });
+    createdFunction.addEventSource(
+      new lambdaEventSources.SqsEventSource(this.SendLoginLinkQueue, {
+        batchSize: 1,
+      })
+    );
+    createdFunction.addToRolePolicy(
+      new iam.PolicyStatement({
+        effect: iam.Effect.ALLOW,
+        actions: ["ses:SendEmail"],
+        resources: [
+          `arn:aws:ses:us-east-1:${
+            cdk.Stack.of(this).account
+          }:identity/${SES_DOMAIN}`,
+        ],
+      })
+    );
   }
 }

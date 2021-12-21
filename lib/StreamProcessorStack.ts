@@ -35,7 +35,7 @@ export default class StreamProcessorStack extends cdk.Stack {
       this,
       "StreamProcessorFunction",
       {
-        memorySize: 128,
+        memorySize: 256,
         timeout: cdk.Duration.seconds(5),
         runtime: lambda.Runtime.NODEJS_14_X,
         architecture: lambda.Architecture.ARM_64,
@@ -61,5 +61,14 @@ export default class StreamProcessorStack extends cdk.Stack {
     );
     // Subscribe our lambda to the stream
     this.StreamProcessorFunction.addEventSource(dynamoStreams);
+
+    // Give our lambda acccess to the push events into EB
+    const bus = events.EventBus.fromEventBusName(
+      this,
+      "DefaultEventBus",
+      "default"
+    );
+
+    bus.grantPutEventsTo(this.StreamProcessorFunction);
   }
 }

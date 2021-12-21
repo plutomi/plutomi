@@ -11,7 +11,7 @@ import { parse } from "../utils/SQSParser";
  */
 export async function main(event: SQSEvent) {
   const item = JSON.parse(event.Records[0].body).detail;
-  const { email, loginLinkUrl, relativeExpiry, unsubscribeHash } = item;
+  const { email, loginLinkUrl, relativeExpiry, unsubscribeHash } = item.NewImage;
 
   const [emailSent, emailFailure] = await sendEmail({
     fromName: "Plutomi",
