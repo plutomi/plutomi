@@ -6,6 +6,7 @@ import APIStack from "../lib/APIStack";
 import FrontendStack from "../lib/FrontendStack";
 import StreamProcessorStack from "../lib/StreamProcessorStack";
 import NewUserStack from "../lib/NewUserStack";
+import LoginLinksStack from "../lib/loginLinksStack";
 import NewUserFlowSFStack from "../lib/NewUserFlowSFStack";
 import EventBridgeStack from "../lib/EventBridgeStack";
 import { Builder } from "@sls-next/lambda-at-edge";
@@ -18,26 +19,28 @@ builder
   .then(() => {
     const app = new cdk.App();
     const { table } = new DynamoDBStack(app, "DynamoDBStack");
-    const { StreamProcessorFunction } = new StreamProcessorStack(
+    new StreamProcessorStack(app, `StreamProcessorStack`, {
+      table,
+    });
+    new APIStack(app, "APIStack", {
+      table,
+    });
+
+    const { SendLoginLinksQueue } = new LoginLinksStack(app, `LoginLinksStack`);
+    // new NewUserStack(app, `NewUserStack`, {
+    //   table,
+    // });
+
+    const { NewUserFlowSF } = new NewUserFlowSFStack(
       app,
-      `StreamProcessorStack`,
+      `NewUserFlowSFStack`,
       {
         table,
       }
     );
-    new APIStack(app, "APIStack", {
-      table,
-    });
-    const { SendLoginLinkQueue } = new NewUserStack(app, `NewUserStack`, {
-      table,
-    });
-
-    const { NewUserFlowSF } = new NewUserFlowSFStack(app, `NewUserFlowSFStack`, {
-      table,
-    });
 
     new EventBridgeStack(app, `EventBridgeStack`, {
-      SendLoginLinkQueue,
+      SendLoginLinksQueue,
       NewUserFlowSF,
     });
     new FrontendStack(app, `FrontendStack`);

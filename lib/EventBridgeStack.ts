@@ -15,7 +15,7 @@ if (resultDotEnv.error) {
 }
 
 interface EventBridgeStackProps extends cdk.StackProps {
-  SendLoginLinkQueue: sqs.Queue;
+  SendLoginLinksQueue: sqs.Queue;
   NewUserFlowSF: sfn.StateMachine;
 }
 export default class EventBridgeStack extends cdk.Stack {
@@ -31,7 +31,7 @@ export default class EventBridgeStack extends cdk.Stack {
     new events.Rule(this, "LoginLinkRule", {
       description: "A user has requested a login link",
       ruleName: "RequestedLoginLink",
-      targets: [new targets.SqsQueue(props.SendLoginLinkQueue)], 
+      targets: [new targets.SqsQueue(props.SendLoginLinksQueue)],
       eventPattern: {
         source: ["dynamodb.streams"],
         detail: {
