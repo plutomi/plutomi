@@ -1,4 +1,4 @@
-import axios from "../axios";
+import axios from "../utils/axios";
 import useSWR from "swr";
 import InvitesService from "../adapters/InvitesService";
 import { SWR } from "../Config";

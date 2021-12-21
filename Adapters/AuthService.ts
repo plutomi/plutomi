@@ -1,4 +1,4 @@
-import axios from "../axios";
+import axios from "../utils/axios";
 export default class AuthService {
   // TODO types
   static async login(email, callbackUrl, loginMethod) {

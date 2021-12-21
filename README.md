@@ -68,14 +68,18 @@ _ALL_ infrastructure is managed by AWS CDK.
 
 ![frontend](infra/Frontend.png)
 
-The frontend runs on the [CDK construct](https://serverless-nextjs.com/docs/cdkconstruct/) of the [Serverless-Nextjs](https://github.com/serverless-Nextjs/serverless-next.js) component. We wanted to stick with NextJS and if possible, have everything managed by CDK. The SLS component brings with it the Next API routes using Lambda but there are a couple of downsides (some of them are listed [here](https://github.com/plutomi/plutomi/issues/172)) and we won't be using them.
+The frontend runs on the [CDK construct](https://serverless-nextjs.com/docs/cdkconstruct/) of the [Serverless-Nextjs](https://github.com/serverless-Nextjs/serverless-next.js) component. We wanted to stick with NextJS and if possible, have everything managed by CDK. The SLS component does that for us and it brings with it the Next API routes using Lambda but there are a couple of downsides (some of them are listed [here](https://github.com/plutomi/plutomi/issues/172)) and we won't be using them.
 
-![backend](infra/Backend.png)
+![backend](infra/Backend2.png)
 
 Typical 'monolith' express app on an autoscaling Fargate cluster.
 
 We considered using API Gateway + Lambda for the main API but
-_at this time_, we feel that Fargate has more advantages, mainly around ease of use for local development.
+_at this time_, we feel that Fargate has more advantages, mainly around performance & local development.
+
+We experimented with DynamoDB streams, EventBridge, and Step Functions this past weekend and migrated the workflow of sending a welcome email + notifying the admin that a new user joined. There is an EventBridge rule that checks for `LOGIN_EVENT`s and if the user's `verifiedEmail` property is false, it triggers the workflow in the picture.
+
+Login links are now sent asynchronously through a queue, however we want to migrate all email comms to their own workflow as well.
 
 ## DynamoDB Schema
 
@@ -111,11 +115,17 @@ Another thing to note is that Dynamo has a 400kb limit per item. This means that
 
 > Argument of type 'this' is not assignable to parameter of type 'Construct'
 
-Make sure all of your `@aws-cdk/*` dependencies are running the same version + make sure whatever you are using in the construct is actually being imported at the top of the file
+Make sure all of your `@aws-cdk/*` dependencies are running the same version (even the `^` prefix!) + make sure whatever you are using in the construct is actually being imported at the top of the file
 
 > ERROR [internal] load metadata for public.ecr.aws/sam/build-nodejs
 
 Try running this command: `aws ecr-public get-login-password --region us-east-1 | docker login --username AWS --password-stdin public.ecr.aws/sam/build-nodejs`
+
+> `Resource_Name` cannot be deleted as it is in use by `Another_Resource`
+
+https://github.com/aws/aws-cdk/issues/3414
+
+TLDR: Try updating the stack with the `-e` flag
 
 ## Contributing
 

@@ -1,13 +1,12 @@
 import * as dotenv from "dotenv";
 import * as cdk from "@aws-cdk/core";
-import * as ecs from "@aws-cdk/aws-ecs";
 import * as ec2 from "@aws-cdk/aws-ec2";
 import * as ecsPatterns from "@aws-cdk/aws-ecs-patterns";
 import * as route53 from "@aws-cdk/aws-route53";
 import * as protocol from "@aws-cdk/aws-elasticloadbalancingv2";
-import * as iam from "@aws-cdk/aws-iam";
 import * as dynamodb from "@aws-cdk/aws-dynamodb";
-
+import * as iam from "@aws-cdk/aws-iam";
+import * as ecs from "@aws-cdk/aws-ecs";
 const resultDotEnv = dotenv.config({
   path: __dirname + `../../.env.${process.env.NODE_ENV}`,
 });
@@ -19,7 +18,6 @@ if (resultDotEnv.error) {
 interface APIStackProps extends cdk.StackProps {
   table: dynamodb.Table;
 }
-
 export default class APIStack extends cdk.Stack {
   /**
    *
@@ -31,10 +29,7 @@ export default class APIStack extends cdk.Stack {
     super(scope, id, props);
 
     const HOSTED_ZONE_ID: string = process.env.HOSTED_ZONE_ID;
-    const AWS_ACCOUNT_ID: string = process.env.AWS_ACCOUNT_ID;
-
-    // Get table name from the DynamoDBStack
-    const TABLE_NAME = props.table.tableName;
+    const SES_DOMAIN = process.env.DOMAIN_NAME;
 
     // IAM inline role - the service principal is required
     const taskRole = new iam.Role(this, "plutomi-api-fargate-role", {
@@ -42,34 +37,15 @@ export default class APIStack extends cdk.Stack {
     });
 
     // Allows Fargate to access DynamoDB
-    taskRole.addToPolicy(
-      new iam.PolicyStatement({
-        effect: iam.Effect.ALLOW,
-        actions: [
-          "dynamodb:BatchGetItem",
-          "dynamodb:BatchWriteItem",
-          "dynamodb:PutItem",
-          "dynamodb:DeleteItem",
-          "dynamodb:GetItem",
-          "dynamodb:Query",
-          "dynamodb:UpdateItem",
-        ],
-        resources: [
-          `arn:aws:dynamodb:*:${AWS_ACCOUNT_ID}:table/${TABLE_NAME}/index/GSI1`,
-          `arn:aws:dynamodb:*:${AWS_ACCOUNT_ID}:table/${TABLE_NAME}/index/GSI2`,
-          `arn:aws:dynamodb:*:${AWS_ACCOUNT_ID}:table/${TABLE_NAME}`,
-        ],
-      })
-    );
+    props.table.grantReadWriteData(taskRole);
 
-    const SES_DOMAIN = "plutomi.com"; // TODO
-    // Allows Fargate to send emails
+    // Allows Fargate to send emails // TODO remove once stream processor is implemented
     taskRole.addToPolicy(
       new iam.PolicyStatement({
         effect: iam.Effect.ALLOW,
         actions: ["ses:SendEmail"],
         resources: [
-          `arn:aws:ses:us-east-1:${AWS_ACCOUNT_ID}:identity/${SES_DOMAIN}`,
+          `arn:aws:ses:us-east-1:${cdk.Stack.of(this).account}:identity/${SES_DOMAIN}`,
         ],
       })
     );
@@ -131,7 +107,6 @@ export default class APIStack extends cdk.Stack {
         "PlutomiApi",
         {
           cluster: cluster, // Required
-          desiredCount: 1, // Default is 1
           taskDefinition: taskDefinition,
           publicLoadBalancer: true, // Default is false
           domainName: process.env.API_DOMAIN_NAME,

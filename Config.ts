@@ -1,4 +1,6 @@
 import { ironSession } from "iron-session/express";
+// import * as cdk from "@aws-cdk/core";
+// import * as lambda from "@aws-cdk/aws-lambda";
 
 export const API_METHODS = {
   GET: "GET",
@@ -7,19 +9,19 @@ export const API_METHODS = {
   OPTIONS: "OPTIONS",
   DELETE: "DELETE",
 };
-export const ENTITY_TYPES = {
-  APPLICANT: "APPLICANT",
-  APPLICANT_RESPONSE: "APPLICANT_RESPONSE",
-  ORG: "ORG",
-  ORG_INVITE: "ORG_INVITE",
-  USER: "USER",
-  OPENING: "OPENING",
-  STAGE: "STAGE",
-  STAGE_QUESTION: "STAGE_QUESTION",
-  STAGE_RULE: "STAGE_RULE",
-  LOGIN_LINK: "LOGIN_LINK",
-  LOGIN_EVENT: "LOGIN_EVENT",
-};
+export enum ENTITY_TYPES {
+  APPLICANT = "APPLICANT",
+  APPLICANT_RESPONSE = "APPLICANT_RESPONSE",
+  ORG = "ORG",
+  ORG_INVITE = "ORG_INVITE",
+  USER = "USER",
+  OPENING = "OPENING",
+  STAGE = "STAGE",
+  STAGE_QUESTION = "STAGE_QUESTION",
+  STAGE_RULE = "STAGE_RULE",
+  LOGIN_LINK = "LOGIN_LINK",
+  LOGIN_EVENT = "LOGIN_EVENT",
+}
 
 export const TIME_UNITS = {
   MILLISECONDS: "milliseconds",
@@ -67,15 +69,15 @@ export const ID_LENGTHS = {
   STAGE_RULE: 16,
 };
 
-export const DEFAULTS = {
-  FIRST_NAME: "NO_FIRST_NAME",
-  LAST_NAME: "NO_LAST_NAME",
-  FULL_NAME: `NO_FIRST_NAME NO_LAST_NAME`,
-  NO_ORG: `NO_ORG_ASSIGNED`,
-  LOGIN_EVENT_RETENTION_PERIOD: 30,
-  REDIRECT: "/dashboard", // When logging in from the homepage, where should the user be redirected
-  COOKIE_NAME: "plutomi-cookie", // Name of the session cookie
-};
+export enum DEFAULTS {
+  FIRST_NAME = "NO_FIRST_NAME",
+  LAST_NAME = "NO_LAST_NAME",
+  FULL_NAME = `NO_FIRST_NAME NO_LAST_NAME`,
+  NO_ORG = `NO_ORG_ASSIGNED`,
+  LOGIN_EVENT_RETENTION_PERIOD = 30,
+  REDIRECT = "/dashboard", // When logging in from the homepage, where should the user be redirected
+  COOKIE_NAME = "plutomi-cookie", // Name of the session cookie
+}
 
 export const LOGIN_LINK_SETTINGS = {
   password: process.env.IRON_SEAL_PASSWORD,
@@ -136,9 +138,15 @@ const GLOBAL_FORBIDDEN_PROPERTIES = [
   "ttlExpiry",
   "entityType",
   "createdAt",
-  "unsubscribeSecret",
 ];
 
+/**
+ * Events for filtering DynamoDB streams
+ */
+export enum STREAM_EVENTS {
+  REQUEST_LOGIN_LINK = "REQUEST_LOGIN_LINK",
+  NEW_USER = "NEW_USER",
+}
 /**
  * Properties that cannot be updated per entity type
  */
@@ -150,6 +158,7 @@ export const FORBIDDEN_PROPERTIES = {
     "canReceiveEmails",
     "GSI1PK", // Org#EntityType
     "GSI2PK", // Email
+    "verifiedEmail", // Updated asynchronously on 1st login
   ],
   APPLICANT: [
     ...GLOBAL_FORBIDDEN_PROPERTIES,
@@ -169,10 +178,10 @@ export const FORBIDDEN_PROPERTIES = {
   ],
 };
 
-export const LOGIN_METHODS = {
-  LINK: "LINK",
-  GOOGLE: "GOOGLE",
-};
+export enum LOGIN_METHODS {
+  EMAIL = "EMAIL",
+  GOOGLE = "GOOGLE",
+}
 
 export const NAVBAR_NAVIGATION = [
   {
@@ -211,7 +220,7 @@ export const SWR = {
 };
 
 export const sessionSettings = ironSession({
-  cookieName: DEFAULTS.COOKIE_NAME,
+  cookieName: "plutomi-cookie",
   password: process.env.IRON_SESSION_PASSWORD_1,
   cookieOptions: {
     secure: process.env.NODE_ENV === "production",

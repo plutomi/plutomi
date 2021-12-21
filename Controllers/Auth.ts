@@ -11,7 +11,6 @@ import { nanoid } from "nanoid";
 import { CUSTOM_QUERY } from "../types/main";
 import Sanitize from "../utils/sanitize";
 import Joi from "joi";
-import sendEmail from "../utils/sendEmail";
 import * as Time from "../utils/time";
 import * as Users from "../models/Users/index";
 import { LOGIN_LINK_SETTINGS } from "../Config";
@@ -59,6 +58,8 @@ export const login = async (req: Request, res: Response) => {
     loginLinkId,
     userId,
     orgId: userOrg,
+    email: user.email,
+    verifiedEmail: user.verifiedEmail,
   });
 
   if (failed) {
@@ -72,15 +73,24 @@ export const login = async (req: Request, res: Response) => {
   const cleanedUser = Sanitize.clean(user, ENTITY_TYPES.USER); // TODO not working!
   req.session.user = cleanedUser;
   /**
-   * Get the user's org invites, if any, if they're not in an org.
+   * Get the user's org invites if they're not in an org.
    * The logic here being, if a user is in an org, what are the chances they're going to join another?
    *  TODO maybe revisit this?
    */
   let userInvites = []; // TODO types array of org invite
   if (req.session.user.orgId === DEFAULTS.NO_ORG) {
-    userInvites = await Users.getInvitesForUser({
+    const [invites, inviteError] = await Users.getInvitesForUser({
       userId: req.session.user.userId,
     });
+
+    if (inviteError) {
+      const formattedError = errorFormatter(inviteError);
+      return res.status(formattedError.httpStatusCode).json({
+        message: "An error ocurred getting your invites",
+        ...formattedError,
+      });
+    }
+    userInvites = invites;
   }
   req.session.user.totalInvites = userInvites.length;
   await req.session.save();
@@ -110,7 +120,7 @@ export const createLoginLinks = async (req: Request, res: Response) => {
 
   const schema = Joi.object({
     email: Joi.string().email(),
-    loginMethod: Joi.string().valid(LOGIN_METHODS.GOOGLE, LOGIN_METHODS.LINK),
+    loginMethod: Joi.string().valid(LOGIN_METHODS.GOOGLE, LOGIN_METHODS.EMAIL),
   }).options({ presence: "required" });
 
   // Validate input
@@ -144,7 +154,8 @@ export const createLoginLinks = async (req: Request, res: Response) => {
     user = createdUser;
   }
 
-  if (!user.canReceiveEmails) {
+  // Allow google log in even if a user opted out of emails
+  if (!user.canReceiveEmails && loginMethod === LOGIN_METHODS.EMAIL) {
     return res.status(403).json({
       message: `${user.email} is unable to receive emails, please reach out to support@plutomi.com to opt back in!`,
     });
@@ -162,13 +173,13 @@ export const createLoginLinks = async (req: Request, res: Response) => {
     });
   }
 
-  // Limit the amount of links sent in a certain period of time
+  // Limit the amount of links sent in a certain period of time // TODO i think we can dump this on the dyamo call directly
   const timeThreshold = Time.pastISO(10, TIME_UNITS.MINUTES);
 
   if (
     latestLink &&
     latestLink.createdAt >= timeThreshold &&
-    !user.email.endsWith(process.env.DOMAIN_NAME)
+    !user.email.endsWith(process.env.DOMAIN_NAME) // Allow admins to send multiple login links in a short timespan
   ) {
     return res.status(400).json({
       message: "You're doing that too much, please try again later",
@@ -186,9 +197,23 @@ export const createLoginLinks = async (req: Request, res: Response) => {
     LOGIN_LINK_SETTINGS
   );
 
+  const loginLinkUrl = `${
+    process.env.API_URL
+  }/auth/login?seal=${seal}&callbackUrl=${
+    callbackUrl ? callbackUrl : process.env.DOMAIN_NAME + DEFAULTS.REDIRECT
+  }`;
+
+  /**
+   * Email will be sent by queue handler downstream
+   */
   const [success, creationError] = await Users.createLoginLink({
-    userId: user.userId,
     loginLinkId,
+    loginMethod,
+    loginLinkUrl,
+    userId: user.userId,
+    email: user.email,
+    loginLinkExpiry,
+    unsubscribeHash: user.unsubscribeHash,
   });
 
   if (creationError) {
@@ -199,35 +224,9 @@ export const createLoginLinks = async (req: Request, res: Response) => {
     });
   }
 
-  const loginLink = `${
-    process.env.API_URL
-  }/auth/login?seal=${seal}&callbackUrl=${
-    callbackUrl ? callbackUrl : process.env.DOMAIN_NAME + DEFAULTS.REDIRECT
-  }`;
-
   if (loginMethod === LOGIN_METHODS.GOOGLE) {
     // Cannot do serverside redirect from axios post
-    return res.status(200).json({ message: loginLink });
-  }
-
-  const [emailSent, emailFailure] = await sendEmail({
-    fromName: "Plutomi",
-    fromAddress: EMAILS.GENERAL,
-    toAddresses: [user.email],
-    subject: `Your magic login link is here!`,
-    html: `<h1><a href="${loginLink}" noreferrer target="_blank" >Click this link to log in</a></h1><p>It will expire ${Time.relative(
-      new Date(loginLinkExpiry)
-    )}.</p><p>If you did not request this link, you can safely ignore it and unsubscribe here: ${
-      process.env.API_URL
-    }/unsubscribe/${user.unsubscribeHash}</p>`,
-  });
-
-  if (emailFailure) {
-    const formattedError = errorFormatter(emailFailure);
-    return res.status(formattedError.httpStatusCode).json({
-      message: "An error ocurred sending your login link",
-      ...formattedError,
-    });
+    return res.status(200).json({ message: loginLinkUrl });
   }
 
   return res

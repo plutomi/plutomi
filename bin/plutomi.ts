@@ -3,8 +3,13 @@ import * as cdk from "@aws-cdk/core";
 import "source-map-support";
 import DynamoDBStack from "../lib/DynamoDBStack";
 import APIStack from "../lib/APIStack";
-import { Builder } from "@sls-next/lambda-at-edge";
 import FrontendStack from "../lib/FrontendStack";
+import StreamProcessorStack from "../lib/StreamProcessorStack";
+import NewUserStack from "../lib/NewUserStack";
+import LoginLinksStack from "../lib/loginLinksStack";
+import NewUserFlowSFStack from "../lib/NewUserFlowSFStack";
+import EventBridgeStack from "../lib/EventBridgeStack";
+import { Builder } from "@sls-next/lambda-at-edge";
 
 // Run the serverless builder before deploying
 const builder = new Builder(".", "./build", { args: ["build"] });
@@ -14,8 +19,29 @@ builder
   .then(() => {
     const app = new cdk.App();
     const { table } = new DynamoDBStack(app, "DynamoDBStack");
+    new StreamProcessorStack(app, `StreamProcessorStack`, {
+      table,
+    });
     new APIStack(app, "APIStack", {
-      table: table,
+      table,
+    });
+
+    const { SendLoginLinksQueue } = new LoginLinksStack(app, `LoginLinksStack`);
+    // new NewUserStack(app, `NewUserStack`, {
+    //   table,
+    // });
+
+    const { NewUserFlowSF } = new NewUserFlowSFStack(
+      app,
+      `NewUserFlowSFStack`,
+      {
+        table,
+      }
+    );
+
+    new EventBridgeStack(app, `EventBridgeStack`, {
+      SendLoginLinksQueue,
+      NewUserFlowSF,
     });
     new FrontendStack(app, `FrontendStack`);
   })

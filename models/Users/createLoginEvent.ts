@@ -19,13 +19,21 @@ import * as Time from "../../utils/time";
 export default async function CreateLoginEvent(
   props: CreateLoginEventAndDeleteLoginLinkInput
 ): Promise<[null, null] | [null, SdkError]> {
-  const { userId, loginLinkId, orgId } = props;
+  const { userId, loginLinkId, orgId, email, verifiedEmail } = props;
 
   const now = Time.currentISO();
 
   const newUserLoginEvent: DynamoNewLoginEvent = {
     PK: `${ENTITY_TYPES.USER}#${userId}`,
     SK: `${ENTITY_TYPES.LOGIN_EVENT}#${now}`,
+    userId: userId,
+    email: email,
+    entityType: ENTITY_TYPES.LOGIN_EVENT,
+    /**
+     * Whenever a user logs in, a background process is triggerred to notify
+     * the app admin that a new user has signed up if the below is false
+     */
+    verifiedEmail: verifiedEmail,
     // TODO in the future, get more the info about the login event such as IP, headers, device, etc.
     createdAt: now,
     ttlExpiry: Time.futureUNIX(

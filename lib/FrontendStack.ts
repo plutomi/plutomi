@@ -1,8 +1,9 @@
+import * as dotenv from "dotenv";
+import * as cdk from "@aws-cdk/core";
 import { NextJSLambdaEdge } from "@sls-next/cdk-construct";
 import { HostedZone } from "@aws-cdk/aws-route53";
 import { Certificate } from "@aws-cdk/aws-certificatemanager";
-import * as dotenv from "dotenv";
-import * as cdk from "@aws-cdk/core";
+
 const resultDotEnv = dotenv.config({
   path: __dirname + `../../.env.${process.env.NODE_ENV}`,
 });
@@ -32,7 +33,9 @@ export default class FrontendStack extends cdk.Stack {
         certificate: Certificate.fromCertificateArn(
           this,
           "DomainCertificate",
-          `arn:aws:acm:us-east-1:${process.env.AWS_ACCOUNT_ID}:certificate/${process.env.ACM_CERTIFICATE_ID}`
+          `arn:aws:acm:us-east-1:${cdk.Stack.of(this).account}:certificate/${
+            process.env.ACM_CERTIFICATE_ID
+          }`
         ),
       },
     });

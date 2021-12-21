@@ -1,6 +1,12 @@
 import * as cdk from "@aws-cdk/core";
-import * as dynamodb from "@aws-cdk/aws-dynamodb";
 import * as dotenv from "dotenv";
+import * as dynamodb from "@aws-cdk/aws-dynamodb";
+import * as lambda from "@aws-cdk/aws-lambda";
+import * as path from "path";
+import * as lambdaEventSources from "@aws-cdk/aws-lambda-event-sources";
+import { NodejsFunction } from "@aws-cdk/aws-lambda-nodejs";
+import * as events from "@aws-cdk/aws-events";
+
 const resultDotEnv = dotenv.config({
   path: __dirname + `../../.env.${process.env.NODE_ENV}`,
 });
@@ -13,14 +19,11 @@ if (resultDotEnv.error) {
  * Creates a DynamoDB table with two GSIs
  */
 export default class DynamoDBStack extends cdk.Stack {
-  // Export the table so we can reference it in other stacks
   public readonly table: dynamodb.Table;
-
   constructor(scope: cdk.Construct, id: string, props?: cdk.StackProps) {
     super(scope, id, props);
 
     const TABLE_NAME: string = process.env.DYNAMO_TABLE_NAME;
-
     this.table = new dynamodb.Table(this, "plutomi-dynamo-table", {
       tableName: TABLE_NAME,
       partitionKey: { name: "PK", type: dynamodb.AttributeType.STRING },
