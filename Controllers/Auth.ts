@@ -173,7 +173,7 @@ export const createLoginLinks = async (req: Request, res: Response) => {
     });
   }
 
-  // Limit the amount of links sent in a certain period of time
+  // Limit the amount of links sent in a certain period of time // TODO i think we can dump this on the dyamo call directly
   const timeThreshold = Time.pastISO(10, TIME_UNITS.MINUTES);
 
   if (

@@ -28,17 +28,6 @@ export default class NewUserFlowSFStack extends cdk.Stack {
   constructor(scope: cdk.App, id: string, props: NewUserFlowSFProps) {
     super(scope, id, props);
 
-    const formatInput = new sfn.Pass(this, "FormatInput", {
-      comment:
-        "Formats the input from EventBridge to be used by downstream calls.",
-      parameters: {
-        "PK.$": `States.Format('USER#{}', $.userId)`,
-        "adminEmailSubject.$": `States.Format('New user signed up - {}', $.email)`,
-        "adminEmailBody.$": `States.Format('<h1>User ID: {}</h1>', $.userId)`,
-        "newUserEmail.$": `States.Array($.email)`,
-      },
-    });
-
     const updateUser = new tasks.DynamoUpdateItem(
       this,
       "UpdateVerifiedEmailStatus",
@@ -55,8 +44,15 @@ export default class NewUserFlowSFStack extends cdk.Stack {
         expressionAttributeValues: {
           ":newValue": tasks.DynamoAttributeValue.fromBoolean(true),
         },
+        /**
+         * If the value of ResultPath is null, that means that the state’s own raw output is discarded and its raw input becomes its result.
+         * https://states-language.net/spec.html#filters
+         * We want the original input to be passed down to the next tasks so that we can format emails
+         */
+        resultPath: sfn.JsonPath.DISCARD,
       }
     );
+    updateUser.addRetry({ maxAttempts: 2 });
 
     const SES_SETTINGS = {
       service: "ses",
@@ -78,11 +74,11 @@ export default class NewUserFlowSFStack extends cdk.Stack {
         },
         Message: {
           Subject: {
-            "Data.$": `$.adminEmailSubject`,
+            "Data.$": `States.Format('New user signed up - {}', $.email)`,
           },
           Body: {
             Html: {
-              "Data.$": `$.adminEmailBody`,
+              "Data.$": `States.Format('<h1>User ID: {}</h1>', $.userId)`,
             },
           },
         },
@@ -95,7 +91,7 @@ export default class NewUserFlowSFStack extends cdk.Stack {
       parameters: {
         Source: `Jose Valerio <${EMAILS.ADMIN}>`,
         Destination: {
-          "ToAddresses.$": `$.newUserEmail`,
+          "ToAddresses.$": `States.Array($.email)`,
         },
         Message: {
           Subject: {
@@ -111,11 +107,10 @@ export default class NewUserFlowSFStack extends cdk.Stack {
       },
     });
 
-    const definition = formatInput.next(
+    const definition = updateUser.next(
       new sfn.Parallel(this, "Parallel")
         .branch(notifyAdmin)
         .branch(welcomeNewUser)
-        .branch(updateUser)
     );
 
     const log = new logs.LogGroup(this, "NewUserFlowSFLogGroup");
