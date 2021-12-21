@@ -4,6 +4,7 @@ import * as cdk from "@aws-cdk/core";
 import * as sfn from "@aws-cdk/aws-stepfunctions";
 import * as tasks from "@aws-cdk/aws-stepfunctions-tasks";
 import * as logs from "@aws-cdk/aws-logs";
+import { EMAILS } from "../Config";
 const resultDotEnv = dotenv.config({
   path: __dirname + `../../.env.${process.env.NODE_ENV}`,
 });
@@ -77,62 +78,118 @@ export default class CommsMachineStack extends cdk.Stack {
       return template;
     };
 
-    const updateUser = new tasks.CallAwsService(this, "UserVerifiedEmail", {
-      service: "dynamodb",
-      action: "updateItem",
-      parameters: {
-        TableName: props.table.tableName,
-        Key: {
-          PK: {
-            "S.$": "$.detail.PK",
+    // const updateUser = new tasks.DynamoUpdateItem(this, "UpdateItem", {
+    //   key: {
+    //     PK: tasks.DynamoAttributeValue.fromString(
+    //       "USER#IgfNlIQwKS9TEiGDJ_5Gv94ZbtVODkFv8goZE6aSdc"
+    //     ),
+    //     SK: tasks.DynamoAttributeValue.fromString("USER"),
+    //   },
+    //   table: props.table,
+    //   expressionAttributeValues: {
+    //     ":GSI1SK": tasks.DynamoAttributeValue.fromString("BEans1"),
+    //   },
+    //   updateExpression: "SET GSI1SK = :GSI1SK",
+    // });
+    const updateUser = new tasks.CallAwsService(
+      this,
+      "UpdateVerifiedEmailStatus",
+      {
+        service: "dynamodb",
+        action: "updateItem",
+        parameters: {
+          TableName: props.table.tableName,
+          Key: {
+            PK: {
+              "S.$": "$.PK",
+            },
+            SK: {
+              S: "USER",
+            },
           },
-          SK: {
-            S: "USER",
+          UpdateExpression: "SET verifiedEmail = :newValue",
+          ExpressionAttributeValues: {
+            ":newValue": {
+              S: "true", // TODO change to boolean
+            },
           },
         },
-        UpdateExpression: "SET orgId = :newValue",
-        ExpressionAttributeValues: {
-          ":newValue": {
-            "S.$": "$.detail.PK",
+        /**
+         * If the value of ResultPath is null, that means that the state’s own raw output is discarded and its raw input becomes its result.
+         * https://states-language.net/spec.html#filters
+         * We want the original input to be passed down to the next tasks so that we can format emails
+         */
+        resultPath: sfn.JsonPath.DISCARD,
+        iamResources: [props.table.tableArn],
+      }
+    );
+
+    const adminFilter = new sfn.Pass(scope, "format-admin-email", {
+      parameters: {
+        "subject.$": sfn.JsonPath.stringAt(
+          `States.Format('Admin BLOOP - {}', $.email)`
+        ),
+        html: "<h1>Testttttttttttttttttt</h1>",
+      },
+    });
+
+    const notifyAdmin = new tasks.CallAwsService(this, "NotifyAdminOfNewUser", {
+      service: "ses",
+      action: "sendEmail",
+      parameters: {
+        Source: `Plutomi <${EMAILS.GENERAL}>`,
+        Destination: {
+          ToAddresses: [EMAILS.ADMIN],
+        },
+        Message: {
+          Subject: {
+            Data: "$.subject",
+          },
+          Body: {
+            Html: {
+              Data: "$.html",
+            },
           },
         },
       },
-      iamResources: [props.table.tableArn],
-    });
 
-    const adminEmail = generateEmail({
-      from: "Plutomi <admin@plutomi.com>",
-      to: "$.detail.email",
-      subject: "New user has signed up!",
-      html: "<h1>New user!!!!!!!!!!!!!!!! From Steps</h1>",
-    });
+      iamResources: [
+        `arn:aws:ses:${cdk.Stack.of(this).region}:${
+          cdk.Stack.of(this).account
+        }:identity/${process.env.DOMAIN_NAME}`,
+      ],
+    }); //TODO update once native integration is implemented
 
-    const notifyAdmin = new tasks.CallAwsService(
-      this,
-      "NotifyAdminOfNewUser",
-      adminEmail
-    ); // TODO update once native integration is implemented
+    const newUserBloop = new sfn.Pass(scope, "format-newuser-email", {
+      parameters: {
+        "email.$": "$.email",
+        "subject.$": sfn.JsonPath.stringAt(
+          `States.Format('NEWUSER BLOOP - {}', $.email)`
+        ),
+      },
+    });
 
     const newUserEmail = generateEmail({
-      from: "Plutomi <contact@plutomi.com>",
-      to: "$.detail.email",
-      subject: "Thank's for signing up!",
-      html: "<h1>Hi!</h1><p>Please let us know if you have any questions or concerns!</p>",
+      from: `Jose <${EMAILS.ADMIN}>`,
+      to: "$.email",
+      subject: "$.subject",
+      html: `<h1>Hello!</h1><p>Just wanted to make you aware that this website is still in development.<br></br>
+      Please let us know if you have any questions, concerns, or feature requests :)
+      You can reply to this email or leave an issue <a href="https://github.com/plutomi/plutomi" rel=noreferrer target="_blank" >on Github</a>!</p>`,
     });
-    const notifyUser = new tasks.CallAwsService( // TODO update once native integration is there
+    const welcomeUser = new tasks.CallAwsService( // TODO update once native integration is there
       this,
       "WelcomeNewUser",
       newUserEmail
     );
 
-    const definition = new sfn.Parallel(this, "CommsMachineDefinition")
-      .branch(updateUser)
-      .branch(notifyAdmin)
-      .branch(notifyUser);
+    const definition = updateUser.next(
+      new sfn.Parallel(this, "Parallel")
+        .branch(adminFilter.next(notifyAdmin))
+        .branch(newUserBloop.next(welcomeUser))
+    );
 
     const log = new logs.LogGroup(this, "CommsMachineLogGroup");
-
-    const logGroup = new logs.LogGroup(this, "MyLogGroup");
 
     this.CommsMachine = new sfn.StateMachine(this, "CommsMachine", {
       stateMachineName: "CommsMachine",
@@ -141,6 +198,7 @@ export default class CommsMachineStack extends cdk.Stack {
       stateMachineType: sfn.StateMachineType.EXPRESS,
       logs: {
         // Not enabled by default
+        includeExecutionData: true,
         destination: log,
         level: sfn.LogLevel.ALL,
       },

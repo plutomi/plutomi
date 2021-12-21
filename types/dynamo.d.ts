@@ -408,7 +408,7 @@ interface DynamoNewLoginEvent {
   createdAt: string; // ISO timestamp
   ttlExpiry: number; // ttl unix expiry
   userId: string;
-  email: string[];
+  email: string;
   entityType: ENTITY_TYPES.LOGIN_EVENT;
   verifiedEmail: boolean;
 }

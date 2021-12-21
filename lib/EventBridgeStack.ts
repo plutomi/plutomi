@@ -49,7 +49,7 @@ export default class EventBridgeStack extends cdk.Stack {
     new events.Rule(this, "LoginLinkRule", {
       description: "A user has requested a login link",
       ruleName: "RequestedLoginLink",
-      // targets: [new targets.SqsQueue(props.SendLoginLinkQueue)],
+      // targets: [new targets.SqsQueue(props.SendLoginLinkQueue)], // TODO move to comms machine
       eventPattern: {
         source: ["dynamodb.streams"],
         detailType: [STREAM_EVENTS.REQUEST_LOGIN_LINK],
@@ -60,9 +60,14 @@ export default class EventBridgeStack extends cdk.Stack {
       description: "A new user has been signed up and verified their email",
       ruleName: "NewUserRule",
       targets: [
-        // new targets.SqsQueue(props.NewUserAdminEmailQueue),
-        // new targets.SqsQueue(props.NewUserVerifiedEmailQueue),
-        new targets.SfnStateMachine(props.CommsMachine),
+        new targets.SfnStateMachine(props.CommsMachine, {
+          input: events.RuleTargetInput.fromObject({
+            PK: events.EventField.fromPath("$.detail.PK"),
+            // We need to transform the email to an array for SES
+            email: [events.EventField.fromPath("$.detail.email")],
+            userId: events.EventField.fromPath("$.detail.userId"),
+          }),
+        }),
       ],
       eventPattern: {
         source: ["dynamodb.streams"],

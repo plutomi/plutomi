@@ -62,33 +62,6 @@ export default class NewUserStack extends cdk.Stack {
           },
         },
       },
-      {
-        queue: {
-          queueName: "NewUserAdminEmailQueue",
-          visibilityTimeout: cdk.Duration.seconds(10),
-        },
-        function: {
-          name: "NewUserAdminEmailFunction",
-          description: "Sends an email to app admins whenever a user signs up",
-          entry: "sendNewUserAdminEmail.ts", // Parent directory is the `functions`
-          sendEmail: true,
-        },
-      },
-      {
-        queue: {
-          queueName: "NewUserVerifiedEmailQueue",
-          visibilityTimeout: cdk.Duration.seconds(10),
-        },
-        function: {
-          name: "NewUserVerifiedEmailFunction",
-          description: "Marks the `verifiedEmail` property on a user to `TRUE`",
-          entry: "newUserVerifiedEmail.ts", // Parent directory is the `functions`
-          environment: {
-            DYNAMO_TABLE_NAME: DYNAMO_TABLE_NAME,
-          },
-          dynamoWrite: true,
-        },
-      },
     ];
 
     STACK.map((item) => {
@@ -143,12 +116,6 @@ export default class NewUserStack extends cdk.Stack {
             ],
           })
         );
-
-      /**
-       * Grant lambda write access to Dynamo if needed
-       */
-      // TODO this is too broad (only updates) despite the function literally only able to do one thing
-      item.function.dynamoWrite && props.table.grantWriteData(createdFunction);
     });
   }
 }
