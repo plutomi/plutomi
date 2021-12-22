@@ -1,9 +1,7 @@
 import { SQSEvent } from "aws-lambda";
 import { EMAILS } from "../Config";
 import errorFormatter from "../utils/errorFormatter";
-import * as Time from "../utils/time";
 import sendEmail from "../utils/sendEmail";
-import { parse } from "../utils/SQSParser";
 // TODO partial processing is here!! https://aws.amazon.com/about-aws/whats-new/2021/11/aws-lambda-partial-batch-response-sqs-event-source/#:~:text=With%20this%20feature%2C%20when%20messages,of%20only%20the%20failed%20records.&text=There%20are%20no%20additional%20charges,standard%20Lambda%20price%20for%20Lambda.
 /**
  * For users logging in with an email (not Google log in)
