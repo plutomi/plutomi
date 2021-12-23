@@ -72,7 +72,7 @@ export const create = async (req: Request, res: Response) => {
       ...formattedError,
     });
   }
-  const applicantionLink = `${process.env.NEXT_PUBLIC_WEBSITE_URL}/${orgId}/applicants/${newApplicant.applicantId}`;
+  const applicantionLink = `${process.env.WEBSITE_URL}/${orgId}/applicants/${newApplicant.applicantId}`;
 
   const [sent, emailFailure] = await sendEmail({
     // TODO async

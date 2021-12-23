@@ -15,12 +15,13 @@ export default function OpeningsDropdown({ openings, index }) {
       return;
     }
     setSelected(newValue);
+    if (newValue.stageOrder[0] != undefined) {
+      router.push(
+        `${process.env.NEXT_PUBLIC_WEBSITE_URL}/openings/${newValue.openingId}/stages${newValue.stageOrder[0]}/${newValue.stageOrder[0]}/applicants`
+      );
+    }
     router.push(
-      `${process.env.NEXT_PUBLIC_WEBSITE_URL}/openings/${
-        newValue.openingId
-      }/stages${
-        newValue.stageOrder[0] && `/${newValue.stageOrder[0]}/applicants`
-      }`
+      `${process.env.NEXT_PUBLIC_WEBSITE_URL}/openings/${newValue.openingId}/settings`
     );
   };
   return (
