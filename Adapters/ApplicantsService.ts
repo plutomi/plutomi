@@ -40,16 +40,16 @@ export default class ApplicantsService {
     return data;
   }
 
-  static answerQuestionsURL(orgId, applicantId) {
-    return `/public/${orgId}/applicants/${applicantId}/answer`; // TODO applicantId is being used in query as well as body. TODO maybe add unique question ids?
+  static answerQuestionsURL(applicantId) {
+    return `/applicants/${applicantId}/answer`; // TODO applicantId is being used in query as well as body. TODO maybe add unique question ids?
   }
-  static async answerQuestions(orgId, applicantId, responses) {
+  static async answerQuestions(applicantId, responses) {
     const body = {
-      applicantId: applicantId,
-      responses: responses,
+      applicantId,
+      responses,
     };
     const { data } = await axios.post(
-      this.answerQuestionsURL(orgId, applicantId),
+      this.answerQuestionsURL(applicantId),
       body
     );
     return data;

@@ -81,7 +81,10 @@ export interface DeleteStageInput
 }
 type GetStageByIdInput = Pick<DynamoNewStage, "orgId" | "stageId">;
 type GetStageByIdOutput = DynamoNewStage;
-type GetAllApplicantsInStageInput = Pick<DynamoNewStage, "orgId" | "stageId">;
+type GetAllApplicantsInStageInput = Pick<
+  DynamoNewStage,
+  "orgId" | "stageId" | "openingId"
+>;
 type GetAllApplicantsInStageOutput = DynamoNewApplicant[];
 
 export interface UpdateStageInput
@@ -175,7 +178,7 @@ type CreateOpeningInput = Pick<DynamoNewOpening, "orgId" | "GSI1SK">;
 type DeleteOpeningInput = Pick<DynamoNewOpening, "orgId" | "openingId">;
 type GetAllApplicantsInOpeningInput = Pick<
   DynamoNewOpening,
-  "orgId" | "openingId"
+  "orgId" | "openingId" | "stageId" | "openingId"
 >;
 
 type GetAllOpeningsInOrgInput = Pick<DynamoNewOpening, "orgId">;

@@ -38,7 +38,7 @@ export default async function Create(
     SK: ENTITY_TYPES.APPLICANT,
     firstName: firstName,
     lastName: lastName,
-    fullName: `${firstName} ${lastName}`, // TODO Dynamo sorts in lexigraphical order.. migth need to .uppercase these
+    fullName: `${firstName} ${lastName}`, // TODO Dynamo sorts in lexigraphical order.. migth need to .uppercase() these
     email: email.toLowerCase().trim(),
     isemailVerified: false,
     orgId: orgId,
@@ -50,42 +50,10 @@ export default async function Create(
     stageId: stageId,
     unsubscribeHash: unsubscribeHash,
     canReceiveEmails: true,
-
-    /** // TODO revisit this below
-     * The below might seem silly and it does look like we have a dead index. Which we do! Sort of.. :)
-     *
-     * By having two separate indexes that do almost the same thing, we can have the following access patterns:
-     *
-     * 1. Get all applicants in org
-     * 2. Get all applicants in an opening
-     * 3. Get all applicants in a stage, no opening ID required. We can query for all stages that = "Questionnaire" and get all applicants in those stages.
-     *
-     * but also!
-     *
-     * 4. Get all applicants in the opening of `IT Director` that applied in the last month
-     * 5. Get all applicants in the opening of `IT Director` that applied in the last month, that landed on `Interviewing` in the past week
-     *
-     * or any variations. Date Landed is a useful metric at high scales as you might want to send applicants that landed on a `Ready to Drive`
-     * stage in the past week an email to start making deliveries for a bonus incentive... as an example ;)
-     *
-     * Before we had `${ENTITY_TYPES.OPENING}#${openingId}#${ENTITY_TYPES.STAGE}#{stageId}` as the only GSI.
-     *
-     * While this *does* allow getting all applicants in a specific stage or in an opening, you will have to:
-     * 1. Get all openings in an org
-     * 2. Get all stages for that opening
-     * 3. Filter for the stage that you want
-     * 4. Get all applicants in that stage
-     *
-     * And you *technically* could add a DATE_LANDED at the end, but this would only be for the opening or stage landed date.
-     * These new queries allow us to filter independently of the opening AND/OR stage.
-     *
-     *
-     */
-    // TODO reqork this
-    GSI1PK: `${ENTITY_TYPES.ORG}#${orgId}#${ENTITY_TYPES.APPLICANT}S`, // TODO needs sharding
-    GSI1SK: `${ENTITY_TYPES.OPENING}#${openingId}#DATE_LANDED#${now}`,
-    GSI2PK: `${ENTITY_TYPES.ORG}#${orgId}#${ENTITY_TYPES.APPLICANT}S`, // TODO needs sharding
-    GSI2SK: `${ENTITY_TYPES.STAGE}#${stageId}#DATE_LANDED#${now}`,
+    // TODO Might need to be sharded on high volumes
+    // Max seen is 75k per stage (on hold)
+    GSI1PK: `${ENTITY_TYPES.ORG}#${orgId}#${ENTITY_TYPES.OPENING}#${openingId}#${ENTITY_TYPES.STAGE}#${stageId}`,
+    GSI1SK: `DATE_LANDED#${now}`,
   };
 
   try {

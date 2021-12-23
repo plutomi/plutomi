@@ -200,7 +200,7 @@ export const answer = async (req: Request, res: Response) => {
       .items({
         questionId: Joi.string(),
         questionTitle: Joi.string(),
-        questionDescription: Joi.string(),
+        questionDescription: Joi.string().allow(null, ""),
         questionResponse: Joi.string(),
       })
       .options({ presence: "required" }),

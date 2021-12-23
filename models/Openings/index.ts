@@ -7,6 +7,6 @@ import update from "./updateOpening";
 export const getOpeningById = get;
 export const createOpening = create;
 export const deleteOpening = remove;
-export const getApplicantsInOpening = getApplicants;
+// export const getApplicantsInOpening = getApplicants;
 export const getStagesInOpening = getStages;
 export const updateOpening = update;

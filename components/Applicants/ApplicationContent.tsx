@@ -3,8 +3,6 @@ import { useRouter } from "next/router";
 import Loader from "../Loader";
 import { useState } from "react";
 import useAllStageQuestions from "../../SWR/useAllStageQuestions";
-import { nanoid } from "nanoid";
-import axios from "../utils/axios";
 import ApplicantsService from "../../adapters/ApplicantsService";
 import { CUSTOM_QUERY } from "../../types/main";
 export default function ApplicationContent() {
@@ -68,8 +66,8 @@ export default function ApplicationContent() {
 
   const handleSubmit = async () => {
     try {
+      console.log("Responses are", responses);
       const { message } = await ApplicantsService.answerQuestions(
-        orgId,
         applicantId,
         responses
       );

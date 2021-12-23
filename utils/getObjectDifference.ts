@@ -1,4 +1,3 @@
-import { inspect } from "util";
 import { transform, isEqual, isArray, isObject } from "lodash";
 /**
  * Find difference between two objects
@@ -22,52 +21,3 @@ export default function difference(origObj: {}, newObj: {}): {} {
   }
   return changes(newObj, origObj);
 }
-
-/* Usage */
-
-// const originalObject = {
-//   foo: "bar",
-//   baz: "fizz",
-//   cool: true,
-//   what: {
-//     one: "one",
-//     two: "two",
-//   },
-//   wow: {
-//     deep: {
-//       key: ["a", "b", "c"],
-//       values: "123",
-//     },
-//   },
-//   array: ["lol", "hi", "there"],
-// };
-
-// const newObject = {
-//   foo: "bar",
-//   baz: "fizz",
-//   cool: false, // <-- diff
-//   what: {
-//     one: "one",
-//     two: "twox", // <-- diff
-//   },
-//   wow: {
-//     deep: {
-//       key: ["x", "y", "c"], // <-- diff
-//       values: "098", // <-- diff
-//     },
-//   },
-//   array: ["lol", "hi", "difference"], // <-- diff
-// };
-
-// Get the Diff!
-// const diff = difference(originalObject, newObject);
-
-// console.log(inspect(diff, { showHidden: false, depth: null, colors: true }));
-/* result:
-{
-  cool: false,
-  what: { two: 'twox' },
-  wow: { deep: { key: [ 'x', 'y' ], values: '098' } },
-  array: [ 'difference' ]
-}
-*/

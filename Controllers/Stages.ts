@@ -168,10 +168,11 @@ export const update = async (req: Request, res: Response) => {
 };
 
 export const getApplicantsInStage = async (req: Request, res: Response) => {
-  const { stageId } = req.params;
+  const { openingId, stageId } = req.params;
   const getAllApplicantsInStageInput = {
     orgId: req.session.user.orgId,
-    stageId: stageId,
+    stageId,
+    openingId,
   };
 
   const [applicants, error] = await Stages.getApplicantsInStage(

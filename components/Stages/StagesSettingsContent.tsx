@@ -58,7 +58,6 @@ export default function StageSettingsContent() {
       delete diff["isModalOpen"];
       delete diff["modalMode"];
 
-      console.log(`Difference between the two objects`, diff);
 
       const { message } = await QuestionsService.updateQuestion(
         questionModal.questionId,
