@@ -175,7 +175,6 @@ export const getApplicantsInStage = async (req: Request, res: Response) => {
     openingId,
   };
 
-  console.log("Input for applicants in stage", getAllApplicantsInStageInput);
   const [applicants, error] = await Stages.getApplicantsInStage(
     getAllApplicantsInStageInput
   );

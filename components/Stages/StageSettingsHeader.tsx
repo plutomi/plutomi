@@ -60,8 +60,7 @@ export default function StageSettingsHeader({ deleteStage }) {
   const crumbs = [
     {
       name: "Applicants",
-      // Go to the CURRENT ${ENTITY_TYPES.STAGE} in the opening to view the applicants
-      href: `/openings/${openingId}/stages/${stageId}/applicants`, // TODO should this end with applicants?
+      href: `/openings/${openingId}/stages/${stageId}/applicants`, 
       current: false,
     },
     {

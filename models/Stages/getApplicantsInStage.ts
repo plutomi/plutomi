@@ -21,7 +21,6 @@ export default async function GetApplicants(
       },
       ScanIndexForward: false,
     };
-    console.log("parmas for query", params);
     try {
       // TODO - MAJOR!
       // Query until ALL items returned! Even though applicants are "split up" in a sense
