@@ -26,6 +26,5 @@ export async function main(event: SQSEvent) {
     throw new Error("Unable to send login link");
   }
 
-  console.log("Login link sent!");
   return;
 }
