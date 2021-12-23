@@ -56,15 +56,11 @@ Stage order:
 
 For more information on AWS CDK, please visit the [docs page](https://docs.aws.amazon.com/cdk/latest/guide/cli.html).
 
-## Language & Tooling
+## Language, Tooling, & Infrastructure
 
 The project is 100% TypeScript. Would appreciate any assistance on types as we're definitely not the best :sweat_smile:
 
-Docker is used to run our Express API on Fargate.
-
 _ALL_ infrastructure is managed by AWS CDK.
-
-## Infrastructure
 
 ![frontend](infra/Frontend.png)
 
@@ -75,7 +71,7 @@ The frontend runs on the [CDK construct](https://serverless-nextjs.com/docs/cdkc
 Typical 'monolith' express app on an autoscaling Fargate cluster.
 
 We considered using API Gateway + Lambda for the main API but
-_at this time_, we feel that Fargate has more advantages, mainly around performance & local development.
+_at this time_, we feel that Fargate has more advantages, mainly around performance, local development, and not having fun 'features' like [this one](https://github.com/serverless/serverless/issues/3785).
 
 We experimented with DynamoDB streams, EventBridge, and Step Functions this past weekend and migrated the workflow of sending a welcome email + notifying the admin that a new user joined. There is an EventBridge rule that checks for `LOGIN_EVENT`s and if the user's `verifiedEmail` property is false, it triggers the workflow in the picture.
 
@@ -83,7 +79,7 @@ Login links are now sent asynchronously through a queue, however we want to migr
 
 ## DynamoDB Schema
 
-> Schema is subject to change but I will try to keep this updated as much as I can
+Schema is subject to change but I will try to keep this updated as much as I can.
 
 We're using a single table design for this project. If you're new to Dynamo, I recommend watching these talks by Alex DeBrie and Rick Houlihan first:
 
@@ -115,7 +111,7 @@ Another thing to note is that Dynamo has a 400kb limit per item. This means that
 
 > Argument of type 'this' is not assignable to parameter of type 'Construct'
 
-Make sure all of your `@aws-cdk/*` dependencies are running the same version (even the `^` prefix!) + make sure whatever you are using in the construct is actually being imported at the top of the file
+Make sure all of your `@aws-cdk/*` dependencies are running the same version + make sure whatever you are using in the construct is actually being imported at the top of the file
 
 > ERROR [internal] load metadata for public.ecr.aws/sam/build-nodejs
 
