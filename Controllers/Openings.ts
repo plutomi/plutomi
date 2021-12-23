@@ -178,37 +178,37 @@ export const updateOpeningController = async (req: Request, res: Response) => {
   return res.status(200).json({ message: "Opening updated!" });
 };
 
-export const getApplicants = async (req: Request, res: Response) => {
-  const { openingId } = req.params;
-  const getAllApplicantsInOpeningInput = {
-    orgId: req.session.user.orgId,
-    openingId: openingId,
-  };
+// export const getApplicants = async (req: Request, res: Response) => {
+//   const { openingId } = req.params;
+//   const getAllApplicantsInOpeningInput = {
+//     orgId: req.session.user.orgId,
+//     openingId: openingId,
+//   };
 
-  const schema = Joi.object({
-    orgId: Joi.string(),
-    openingId: Joi.string(),
-  }).options({ presence: "required" });
+//   const schema = Joi.object({
+//     orgId: Joi.string(),
+//     openingId: Joi.string(),
+//   }).options({ presence: "required" });
 
-  // Validate input
-  try {
-    await schema.validateAsync(getAllApplicantsInOpeningInput);
-  } catch (error) {
-    return res.status(400).json({ message: `${error.message}` });
-  }
+//   // Validate input
+//   try {
+//     await schema.validateAsync(getAllApplicantsInOpeningInput);
+//   } catch (error) {
+//     return res.status(400).json({ message: `${error.message}` });
+//   }
 
-  const [applicants, error] = await Openings.getApplicantsInOpening(
-    getAllApplicantsInOpeningInput
-  );
-  if (error) {
-    const formattedError = errorFormatter(error);
-    return res.status(formattedError.httpStatusCode).json({
-      message: "Unable to retrieve applicants",
-      ...formattedError,
-    });
-  }
-  return res.status(200).json(applicants);
-};
+//   const [applicants, error] = await Openings.getApplicantsInOpening(
+//     getAllApplicantsInOpeningInput
+//   );
+//   if (error) {
+//     const formattedError = errorFormatter(error);
+//     return res.status(formattedError.httpStatusCode).json({
+//       message: "Unable to retrieve applicants",
+//       ...formattedError,
+//     });
+//   }
+//   return res.status(200).json(applicants);
+// };
 
 export const getStages = async (req: Request, res: Response) => {
   const { openingId } = req.params;

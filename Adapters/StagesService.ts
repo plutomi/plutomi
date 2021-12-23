@@ -41,12 +41,14 @@ export default class StagesService {
     return data;
   }
 
-  static getAllApplicantsInStageURL(stageId) {
-    return `/stages/${stageId}/applicants`;
+  static getAllApplicantsInStageURL(openingId, stageId) {
+    return `/openings/${openingId}/stages/${stageId}/applicants`;
   }
 
-  static async getAllApplicantsInStage(stageId) {
-    const { data } = await axios.get(this.getAllApplicantsInStageURL(stageId));
+  static async getAllApplicantsInStage(openingId, stageId) {
+    const { data } = await axios.get(
+      this.getAllApplicantsInStageURL(openingId, stageId)
+    );
     return data;
   }
 }

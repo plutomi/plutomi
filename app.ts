@@ -70,7 +70,7 @@ app.delete(
 );
 // Openings
 app.put("/openings/:openingId", [withAuth], Openings.updateOpeningController);
-app.get("/openings/:openingId/applicants", [withAuth], Openings.getApplicants);
+// app.get("/openings/:openingId/applicants", [withAuth], Openings.getApplicants);
 app.get("/openings/:openingId/stages", [withAuth], Openings.getStages);
 
 // Stages
@@ -91,7 +91,11 @@ app.get("/applicants/:applicantId", [withAuth], Applicants.get);
 app.put("/applicants/:applicantId", [withAuth], Applicants.update);
 app.delete("/applicants/:applicantId", [withAuth], Applicants.remove);
 app.post("/applicants/:applicantId/answer", Applicants.answer);
-app.get("/stages/:stageId/applicants", [withAuth], Stages.getApplicantsInStage);
+app.get(
+  `/openings/:openingId/stages/:stageId/applicants`,
+  [withAuth],
+  Stages.getApplicantsInStage
+);
 
 // Auth
 app.get("/auth/login", Auth.login);

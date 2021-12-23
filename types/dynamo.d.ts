@@ -162,22 +162,8 @@ interface DynamoNewApplicant {
   // TODO recheck later if this is still good
 
   unsubscribeHash: string;
-  /**
-   * Key for returning all applicants in an org - `orgId`
-   */
-  GSI1PK: `${ENTITY_TYPES.ORG}#${string}#${ENTITY_TYPES.APPLICANT}S`;
-  /**
-   * Sort Key for returning all applicants that landed at X time in this opening - `orgId` and the current time
-   */
-  GSI1SK: `${ENTITY_TYPES.OPENING}#${string}#DATE_LANDED#${string}`;
-  /**
-   * Key for returning all applicants in an org - While this is a duplicate, it is to facilitate the query for stages
-   */
-  GSI2PK: `${ENTITY_TYPES.ORG}#${string}#${ENTITY_TYPES.APPLICANT}S`;
-  /**
-   * Sort Key for returning all applicants that landed at X time in this stage
-   */
-  GSI2SK: `${ENTITY_TYPES.STAGE}#${string}#DATE_LANDED#${string}`;
+  GSI1PK: `${ENTITY_TYPES.ORG}#${string}#${ENTITY_TYPES.OPENING}#${string}#${ENTITY_TYPES.STAGE}#${string}`;
+  GSI1SK: `DATE_LANDED#${string}`;
 }
 
 interface DynamoNewApplicantResponse {

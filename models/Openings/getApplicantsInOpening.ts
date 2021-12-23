@@ -16,8 +16,8 @@ export default async function GetApplicants(
     KeyConditionExpression:
       "GSI1PK = :GSI1PK AND  begins_with(GSI1SK, :GSI1SK)",
     ExpressionAttributeValues: {
-      ":GSI1PK": `${ENTITY_TYPES.ORG}#${orgId}#${ENTITY_TYPES.APPLICANT}S`,
-      ":GSI1SK": `${ENTITY_TYPES.OPENING}#${openingId}`,
+      ":GSI1PK": `${ENTITY_TYPES.ORG}#${orgId}#${ENTITY_TYPES.OPENING}#${openingId}`,
+      ":GSI1SK": `${ENTITY_TYPES.STAGE}#${stageId}`,
     },
   };
 
