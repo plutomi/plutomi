@@ -66,7 +66,7 @@ export const getById = async (req: Request, res: Response) => {
 
 export const update = async (req: Request, res: Response) => {
   const { userId } = req.params;
-  const { newUserValues } = req.body;
+  const { newValues } = req.body;
 
   // TODO RBAC will go here, right now you can only update yourself
   if (userId !== req.session.user.userId) {
@@ -76,13 +76,13 @@ export const update = async (req: Request, res: Response) => {
   const updateUserInput = {
     userId: req.session.user.userId,
     ALLOW_FORBIDDEN_KEYS: false,
-    newUserValues: newUserValues,
+    newValues,
   };
 
   const schema = Joi.object({
     userId: Joi.string(),
     ALLOW_FORBIDDEN_KEYS: Joi.boolean().invalid(true),
-    newUserValues: Joi.object({
+    newValues: Joi.object({
       firstName: Joi.string().invalid(DEFAULTS.FIRST_NAME).optional(),
       lastName: Joi.string().invalid(DEFAULTS.LAST_NAME).optional(),
       GSI1SK: Joi.string().invalid(DEFAULTS.FULL_NAME).optional(),
@@ -128,5 +128,3 @@ export const getInvites = async (req: Request, res: Response) => {
 
   return res.status(200).json(invites);
 };
-
-

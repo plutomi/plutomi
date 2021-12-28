@@ -8,27 +8,27 @@ import { SdkError } from "@aws-sdk/types";
 export default async function Update(
   props: UpdateUserInput
 ): Promise<[DynamoNewUser, null] | [null, SdkError]> {
-  const { userId, newUserValues, ALLOW_FORBIDDEN_KEYS } = props;
+  const { userId, newValues, ALLOW_FORBIDDEN_KEYS } = props;
 
   // Build update expression
   let allUpdateExpressions: string[] = [];
   let allAttributeValues: any = {};
 
   try {
-    for (const property in newUserValues) {
+    for (const property in newValues) {
       // If updating forbidden keys is banned, filter these keys out
       if (
         !ALLOW_FORBIDDEN_KEYS &&
         FORBIDDEN_PROPERTIES.STAGE.includes(property)
       ) {
-        delete newUserValues[property];
+        delete newValues[property];
       }
       // If its a valid property, start creating the new update expression
       // Push each property into the update expression
       allUpdateExpressions.push(`${property} = :${property}`);
 
       // Create values for each attribute
-      allAttributeValues[`:${property}`] = newUserValues[property];
+      allAttributeValues[`:${property}`] = newValues[property];
     }
 
     const params: UpdateCommandInput = {

@@ -15,9 +15,6 @@ export default function StageCard({
 }) {
   const urlParams = router.query as Pick<CUSTOM_QUERY, "stageId">;
 
-  if (stageId === urlParams.stageId) {
-    console.log("Stage ID match!!");
-  }
   const content = (
     <div
       className={`border my-6 shadow-xs py-4 text-center  ${

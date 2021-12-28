@@ -134,12 +134,12 @@ export const remove = async (req: Request, res: Response) => {
 
 export const update = async (req: Request, res: Response) => {
   const { applicantId } = req.params;
-  const { newApplicantValues } = req.body;
+  const { newValues } = req.body;
 
   const updateApplicantInput = {
     orgId: req.session.user.orgId,
     applicantId: applicantId,
-    newApplicantValues: newApplicantValues,
+    newValues,
   };
 
   const schema = Joi.object({
@@ -148,7 +148,7 @@ export const update = async (req: Request, res: Response) => {
       tagGenerator.generate(DEFAULTS.NO_ORG)
     ),
     applicantId: Joi.string(),
-    newApplicantValues: Joi.object(), // todo add banned keys
+    newValues: Joi.object(), // todo add banned keys
   }).options({ presence: "required" });
 
   // Validate input

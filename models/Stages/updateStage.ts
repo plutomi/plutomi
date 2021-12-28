@@ -7,17 +7,17 @@ import { SdkError } from "@aws-sdk/types";
 export default async function Update(
   props: UpdateStageInput
 ): Promise<[null, null] | [null, SdkError]> {
-  const { orgId, stageId, newStageValues } = props;
+  const { orgId, stageId, newValues } = props;
 
   // Build update expression
   let allUpdateExpressions: string[] = [];
   let allAttributeValues: any = {};
 
   // Filter out forbidden property
-  for (const property in newStageValues) {
+  for (const property in newValues) {
     if (FORBIDDEN_PROPERTIES.STAGE.includes(property)) {
       // Delete the property so it isn't updated
-      delete newStageValues[property];
+      delete newValues[property];
     }
 
     // If its a valid property, start creating the new update expression
@@ -25,7 +25,7 @@ export default async function Update(
     allUpdateExpressions.push(`${property} = :${property}`);
 
     // Create values for each attribute
-    allAttributeValues[`:${property}`] = newStageValues[property];
+    allAttributeValues[`:${property}`] = newValues[property];
   }
 
   const params = {

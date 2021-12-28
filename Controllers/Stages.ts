@@ -134,19 +134,19 @@ export const getStageInfo = async (req: Request, res: Response) => {
 };
 
 export const update = async (req: Request, res: Response) => {
-  const { newStageValues } = req.body;
+  const { newValues } = req.body;
   const { stageId } = req.params;
 
   const updateStageInput: UpdateStageInput = {
     orgId: req.session.user.orgId,
     stageId: stageId,
-    newStageValues: newStageValues,
+    newValues,
   };
 
   const schema = Joi.object({
     orgId: Joi.string(),
     stageId: Joi.string(),
-    newStageValues: Joi.object(), // TODo add actual inputs of new stage values
+    newValues: Joi.object(), // TODo add actual inputs of new stage values
   }).options({ presence: "required" });
 
   // Validate input

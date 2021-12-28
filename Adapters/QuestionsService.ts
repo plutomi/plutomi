@@ -24,9 +24,9 @@ export default class QuestionsService {
     const { data } = await axios.delete(this.getQuestionURL(questionId));
     return data;
   }
-  static async updateQuestion(questionId, newQuestionValues) {
+  static async updateQuestion(questionId, newValues) {
     const body = {
-      newQuestionValues: newQuestionValues,
+      newValues,
     };
     const { data } = await axios.put(this.getQuestionURL(questionId), body);
     return data;

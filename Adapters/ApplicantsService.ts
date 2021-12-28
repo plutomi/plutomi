@@ -32,9 +32,9 @@ export default class ApplicantsService {
     return data;
   }
 
-  static async updateApplicant(applicantId, newApplicantValues) {
+  static async updateApplicant(applicantId, newValues) {
     const body = {
-      newApplicantValues: newApplicantValues,
+      newValues,
     };
     const { data } = await axios.put(this.getApplicantURL(applicantId), body);
     return data;

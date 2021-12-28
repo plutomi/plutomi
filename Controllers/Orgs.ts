@@ -114,13 +114,11 @@ export const deleteOrg = async (req: Request, res: Response) => {
   const { orgId } = req.params;
 
   if (req.session.user.orgId !== orgId) {
-    return res
-      .status(400)
-      .json({
-        message: "You cannot delete this org as you do not belong to i",
-      });
+    return res.status(400).json({
+      message: "You cannot delete this org as you do not belong to i",
+    });
   }
-  
+
   const [org, error] = await Orgs.getOrgById({ orgId: orgId });
 
   if (error) {
@@ -143,7 +141,7 @@ export const deleteOrg = async (req: Request, res: Response) => {
   const [updatedUser, userUpdateError] = await Users.updateUser({
     // TODO possible transaction?
     userId: req.session.user.userId,
-    newUserValues: {
+    newValues: {
       orgId: DEFAULTS.NO_ORG,
       orgJoinDate: DEFAULTS.NO_ORG,
       GSI1PK: DEFAULTS.NO_ORG,

@@ -8,16 +8,16 @@ import { SdkError } from "@aws-sdk/types";
 export default async function Update(
   props: UpdateQuestionInput
 ): Promise<[null, null] | [null, SdkError]> {
-  const { orgId, questionId, newQuestionValues } = props;
+  const { orgId, questionId, newValues } = props;
   // Build update expression
   let allUpdateExpressions: string[] = [];
   let allAttributeValues: any = {};
 
   // Filter out forbidden property
-  for (const property in newQuestionValues) {
+  for (const property in newValues) {
     if (FORBIDDEN_PROPERTIES.STAGE_QUESTION.includes(property)) {
       // Delete the property so it isn't updated
-      delete newQuestionValues[property];
+      delete newValues[property];
     }
 
     // If its a valid property, start creating the new update expression
@@ -25,7 +25,7 @@ export default async function Update(
     allUpdateExpressions.push(`${property} = :${property}`);
 
     // Create values for each attribute
-    allAttributeValues[`:${property}`] = newQuestionValues[property];
+    allAttributeValues[`:${property}`] = newValues[property];
   }
 
   const params = {

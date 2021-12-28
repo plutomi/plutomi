@@ -146,18 +146,18 @@ export const deleteOpeningController = async (req: Request, res: Response) => {
 
 export const updateOpeningController = async (req: Request, res: Response) => {
   const { openingId } = req.params;
-  const { newOpeningValues } = req.body;
+  const { newValues } = req.body;
 
   const updateOpeningInput = {
     orgId: req.session.user.orgId,
     openingId: openingId,
-    newOpeningValues: newOpeningValues,
+    newValues,
   };
 
   const schema = Joi.object({
     orgId: Joi.string(),
     openingId: Joi.string(),
-    newOpeningValues: Joi.object(), // TODO allow only specific values!!!
+    newValues: Joi.object(), // TODO allow only specific values!!!
   }).options({ presence: "required" });
 
   // Validate input
