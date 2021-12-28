@@ -111,7 +111,7 @@ export default class NewUserFlowSFStack extends cdk.Stack {
       //TODO update once native integration is implemented
       ...SES_SETTINGS,
       parameters: {
-        Source: `Jose Valerio <${EMAILS.ADMIN}>`,
+        Source: `Plutomi <${EMAILS.ADMIN}>`,
         Destination: {
           "ToAddresses.$": `States.Array($.detail.NewImage.user.email)`,
         },
@@ -128,6 +128,33 @@ export default class NewUserFlowSFStack extends cdk.Stack {
         },
       },
     });
+
+    const sendApplicationLink = new tasks.CallAwsService(
+      this,
+      "sendApplicationLink",
+      {
+        //TODO update once native integration is implemented
+        ...SES_SETTINGS,
+        parameters: {
+          Source: `Plutomi <${EMAILS.ADMIN}>`,
+          Destination: {
+            "ToAddresses.$": `States.Array($.detail.NewImage.email)`,
+          },
+          Message: {
+            Subject: {
+              Data: `Here is a link to your application!`,
+            },
+            Body: {
+              Html: {
+                // TODO add unsubscribe
+                "Data.$": `States.Format('<h1><a href="${process.env.WEBSITE_URL}/{}/applicants/{}" rel=noreferrer target="_blank" >Click this link to view your application!</a></h1><p>If you did not request this link, you can safely ignore it.</p>', 
+                $.detail.NewImage.orgId, $.detail.NewImage.applicantId)`,
+              },
+            },
+          },
+        },
+      }
+    );
 
     const definition = new sfn.Choice(this, "EventType?")
       .when(
@@ -159,8 +186,15 @@ export default class NewUserFlowSFStack extends cdk.Stack {
           ),
           sendLoginLink
         )
+      )
+      // TODO new applicant
+      .when(
+        sfn.Condition.stringEquals(
+          "$.detail.NewImage.entityType",
+          ENTITY_TYPES.APPLICANT
+        ),
+        sendApplicationLink
       );
-
     const log = new logs.LogGroup(this, "NewUserFlowSFLogGroup");
 
     this.NewUserFlowSF = new sfn.StateMachine(this, "NewUserFlowSF", {

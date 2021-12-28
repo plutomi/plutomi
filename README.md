@@ -60,7 +60,7 @@ For more information on AWS CDK, please visit the [docs page](https://docs.aws.a
 
 The project is 100% TypeScript. Would appreciate any assistance on types as we're definitely not the best :sweat_smile:
 
-_ALL_ infrastructure is managed by AWS CDK.
+_ALL_ infrastructure is managed by AWS CDK. You can view the infrastructure diagram [here](https://drive.google.com/file/d/1wE7QLZF1AAJ97tfCLW1yWahBWe1c-GZA/view?usp=sharing).
 
 ![frontend](infra/Frontend.png)
 

@@ -37,7 +37,11 @@ export default class EventBridgeStack extends cdk.Stack {
         detail: {
           eventName: ["INSERT"],
           NewImage: {
-            entityType: [ENTITY_TYPES.LOGIN_EVENT, ENTITY_TYPES.LOGIN_LINK],
+            entityType: [
+              ENTITY_TYPES.LOGIN_EVENT,
+              ENTITY_TYPES.LOGIN_LINK,
+              ENTITY_TYPES.APPLICANT,
+            ],
           },
         },
       },

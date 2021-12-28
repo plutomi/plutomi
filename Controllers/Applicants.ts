@@ -72,26 +72,8 @@ export const create = async (req: Request, res: Response) => {
       ...formattedError,
     });
   }
-  const applicantionLink = `${process.env.WEBSITE_URL}/${orgId}/applicants/${newApplicant.applicantId}`;
 
-  const [sent, emailFailure] = await sendEmail({
-    // TODO async
-    fromName: "Applications",
-    fromAddress: EMAILS.GENERAL,
-    toAddresses: [newApplicant.email],
-    subject: `Here is a link to your application!`,
-    html: `<h1><a href="${applicantionLink}" rel=noreferrer target="_blank" >Click this link to view your application!</a></h1><p>If you did not request this link, you can safely ignore it.</p>`,
-  });
-
-  if (emailFailure) {
-    const formattedError = errorFormatter(emailFailure);
-    return res.status(formattedError.httpStatusCode).json({
-      message:
-        "We've created your application link, however, we were not able to send you your email",
-      ...formattedError,
-    });
-  }
-
+  // Email is sent asynchronously through step functions
   return res.status(201).json({
     message: `We've sent a link to your email to complete your application!`,
   });
