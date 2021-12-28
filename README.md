@@ -60,7 +60,7 @@ For more information on AWS CDK, please visit the [docs page](https://docs.aws.a
 
 The project is 100% TypeScript. Would appreciate any assistance on types as we're definitely not the best :sweat_smile:
 
-_ALL_ infrastructure is managed by AWS CDK.
+_ALL_ infrastructure is managed by AWS CDK. You can view the infrastructure diagram [here](https://drive.google.com/file/d/1wE7QLZF1AAJ97tfCLW1yWahBWe1c-GZA/view?usp=sharing).
 
 ![frontend](infra/Frontend.png)
 
@@ -73,9 +73,7 @@ Typical 'monolith' express app on an autoscaling Fargate cluster.
 We considered using API Gateway + Lambda for the main API but
 _at this time_, we feel that Fargate has more advantages, mainly around performance, local development, and not having fun 'features' like [this one](https://github.com/serverless/serverless/issues/3785).
 
-We experimented with DynamoDB streams, EventBridge, and Step Functions this past weekend and migrated the workflow of sending a welcome email + notifying the admin that a new user joined. There is an EventBridge rule that checks for `LOGIN_EVENT`s and if the user's `verifiedEmail` property is false, it triggers the workflow in the picture.
-
-Login links are now sent asynchronously through a queue, however we want to migrate all email comms to their own workflow as well.
+We have a direct integration with EventBridge and Step Functions to handle all comms. Certain events trigger the state machine, such as whenever there is a new `LOGIN_EVENT` or `LOGIN_LINK`. We let the state machine decide the path to take instead of having multiple EB rules and multiple state machines. We can therefore eliminate the myriad of queues and lambda functions polling said queues with the direct SDK calls Step Functions provides.
 
 ## DynamoDB Schema
 

@@ -2,7 +2,6 @@ import { Request, Response } from "express";
 import Joi from "joi";
 import { DEFAULTS, EMAILS, ENTITY_TYPES, TIME_UNITS } from "./../Config";
 import Sanitize from "./../utils/sanitize";
-import sendEmail from "./../utils/sendEmail";
 import * as Invites from "../models/Invites/index";
 import * as Time from "./../utils/time";
 import * as Users from "../models/Users/index";
@@ -106,7 +105,6 @@ export const create = async (req: Request, res: Response) => {
   }
 
   const [inviteCreated, inviteError] = await Invites.createInvite({
-    orgId: org.orgId,
     recipient: recipient,
     orgName: org.GSI1SK,
     expiresAt: Time.futureISO(3, TIME_UNITS.DAYS),
@@ -121,24 +119,7 @@ export const create = async (req: Request, res: Response) => {
     });
   }
 
-  const [emailSent, emailFailure] = await sendEmail({
-    // TODO async decouple this
-    fromName: org.GSI1SK,
-    fromAddress: EMAILS.GENERAL,
-    toAddresses: [recipientEmail],
-    subject: `${req.session.user.firstName} ${req.session.user.lastName} has invited you to join them on Plutomi!`,
-    html: `<h4>You can log in at <a href="${process.env.WEBSITE_URL}" target="_blank" rel=noreferrer>${process.env.WEBSITE_URL}</a> to accept it!</h4><p>If you believe this email was received in error, you can safely ignore it.</p>`,
-  });
-
-  if (emailFailure) {
-    const formattedError = errorFormatter(emailFailure);
-    return res.status(formattedError.httpStatusCode).json({
-      message:
-        "The invite was created, but we were not able to send an email to the user. They can log in and accept their invite!",
-      ...formattedError,
-    });
-  }
-
+  // Email sent asynchronously through step functions
   return res
     .status(201)
     .json({ message: `Invite sent to '${recipientEmail}'` });

@@ -19,21 +19,15 @@ import * as Time from "../../utils/time";
 export default async function CreateLoginEvent(
   props: CreateLoginEventAndDeleteLoginLinkInput
 ): Promise<[null, null] | [null, SdkError]> {
-  const { userId, loginLinkId, orgId, email, verifiedEmail } = props;
+  const { loginLinkId, user } = props;
 
   const now = Time.currentISO();
 
   const newUserLoginEvent: DynamoNewLoginEvent = {
-    PK: `${ENTITY_TYPES.USER}#${userId}`,
+    PK: `${ENTITY_TYPES.USER}#${user.userId}`,
     SK: `${ENTITY_TYPES.LOGIN_EVENT}#${now}`,
-    userId: userId,
-    email: email,
+    user: user,
     entityType: ENTITY_TYPES.LOGIN_EVENT,
-    /**
-     * Whenever a user logs in, a background process is triggerred to notify
-     * the app admin that a new user has signed up if the below is false
-     */
-    verifiedEmail: verifiedEmail,
     // TODO in the future, get more the info about the login event such as IP, headers, device, etc.
     createdAt: now,
     ttlExpiry: Time.futureUNIX(
@@ -44,7 +38,7 @@ export default async function CreateLoginEvent(
 
   const newOrgLoginEvent = {
     // TODO types
-    PK: `${ENTITY_TYPES.ORG}#${orgId}`,
+    PK: `${ENTITY_TYPES.ORG}#${user.orgId}`,
     SK: `${ENTITY_TYPES.LOGIN_EVENT}#${now}`,
     // TODO user info here
     // TODO in the future, get more the info about the login event such as IP, headers, device, etc.
@@ -71,7 +65,7 @@ export default async function CreateLoginEvent(
           // Delete the link used to login
           Delete: {
             Key: {
-              PK: `${ENTITY_TYPES.USER}#${userId}`,
+              PK: `${ENTITY_TYPES.USER}#${user.userId}`,
               SK: `${ENTITY_TYPES.LOGIN_LINK}#${loginLinkId}`,
             },
             TableName: DYNAMO_TABLE_NAME,
@@ -80,7 +74,7 @@ export default async function CreateLoginEvent(
       ],
     };
     // If a user has an orgId, create a login event on the org as well
-    orgId ??
+    user.orgId != DEFAULTS.NO_ORG ??
       transactParams.TransactItems.push({
         // Create a login event on the org
         Put: {

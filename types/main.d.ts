@@ -198,7 +198,6 @@ interface DeleteOrgInviteInput {
 }
 
 interface CreateOrgInviteInput {
-  orgId: string;
   orgName: string;
   expiresAt: string;
   createdBy: UserSessionData;
@@ -226,13 +225,11 @@ type JoinOrgFromInviteInput = {
 };
 
 type CreateLoginLinkInput = {
-  userId: string;
   loginLinkId: string;
   loginMethod: string; // GOOGLE or LINK
-  email: string;
   loginLinkUrl: string;
   loginLinkExpiry: string;
-  unsubscribeHash: string;
+  user: DynamoNewUser;
 };
 
 type DeleteLoginLinkInput = {
@@ -272,8 +269,5 @@ interface GetUserByEmailInput {
 
 type CreateLoginEventAndDeleteLoginLinkInput = {
   loginLinkId: string;
-  userId: string;
-  email: string;
-  verifiedEmail: boolean;
-  orgId?: string | boolean; // If the user has an orgId, a LOGIN_EVENT will be created on the org as well
+  user: DynamoNewUser;
 };

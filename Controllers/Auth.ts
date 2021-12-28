@@ -56,10 +56,7 @@ export const login = async (req: Request, res: Response) => {
   const userOrg = user.orgId !== DEFAULTS.NO_ORG ?? user.orgId;
   const [success, failed] = await Users.createLoginEventAndDeleteLoginLink({
     loginLinkId,
-    userId,
-    orgId: userOrg,
-    email: user.email,
-    verifiedEmail: user.verifiedEmail,
+    user: user,
   });
 
   if (failed) {
@@ -210,10 +207,8 @@ export const createLoginLinks = async (req: Request, res: Response) => {
     loginLinkId,
     loginMethod,
     loginLinkUrl,
-    userId: user.userId,
-    email: user.email,
     loginLinkExpiry,
-    unsubscribeHash: user.unsubscribeHash,
+    user,
   });
 
   if (creationError) {
