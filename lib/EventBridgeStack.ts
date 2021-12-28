@@ -44,26 +44,17 @@ export default class EventBridgeStack extends cdk.Stack {
       },
     });
 
+    // We want to send all communication events to the step function, we can handle routing there
     new events.Rule(this, "NewUserRule", {
       description: "A new user has been signed up and verified their email",
       ruleName: "NewUserRule",
-      targets: [
-        new targets.SfnStateMachine(props.NewUserFlowSF, {
-          input: events.RuleTargetInput.fromObject({
-            PK: events.EventField.fromPath("$.detail.NewImage.PK"),
-            email: events.EventField.fromPath("$.detail.NewImage.email"),
-            userId: events.EventField.fromPath("$.detail.NewImage.userId"),
-            entityType: events.EventField.fromPath("$.detail.NewImage.entityType"),
-          }),
-        }),
-      ],
+      targets: [new targets.SfnStateMachine(props.NewUserFlowSF)],
       eventPattern: {
         source: ["dynamodb.streams"],
         detail: {
           eventName: ["INSERT"],
           NewImage: {
-            entityType: ["LOGIN_EVENT"],
-            verifiedEmail: [false], // How we identify new users
+            entityType: ["LOGIN_EVENT", "LOGIN_LINK"],
           },
         },
       },

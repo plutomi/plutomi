@@ -210,10 +210,8 @@ export const createLoginLinks = async (req: Request, res: Response) => {
     loginLinkId,
     loginMethod,
     loginLinkUrl,
-    userId: user.userId,
-    email: user.email,
     loginLinkExpiry,
-    unsubscribeHash: user.unsubscribeHash,
+    user,
   });
 
   if (creationError) {

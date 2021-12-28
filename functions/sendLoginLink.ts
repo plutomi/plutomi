@@ -9,7 +9,10 @@ import sendEmail from "../utils/sendEmail";
  */
 export async function main(event: SQSEvent) {
   const item = JSON.parse(event.Records[0].body).detail;
-  const { email, loginLinkUrl, relativeExpiry, unsubscribeHash } = item.NewImage;
+  console.log(item, "Ending loop, not sending login link");
+  return;
+  const { email, loginLinkUrl, relativeExpiry, unsubscribeHash } =
+    item.NewImage;
 
   const [emailSent, emailFailure] = await sendEmail({
     fromName: "Plutomi",

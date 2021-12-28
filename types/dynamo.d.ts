@@ -359,9 +359,8 @@ interface DynamoNewLoginLink {
   entityType: ENTITY_TYPES.LOGIN_LINK;
   createdAt: string;
   relativeExpiry: string;
-  email: string;
+  user: DynamoNewUser,
   loginLinkUrl: string;
-  unsubscribeHash: string;
   loginMethod: string; // "GOOGLE" or "EMAIL"
   /**
    * A UNIX date for which Dynamo will auto delete this link

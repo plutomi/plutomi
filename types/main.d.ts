@@ -226,13 +226,11 @@ type JoinOrgFromInviteInput = {
 };
 
 type CreateLoginLinkInput = {
-  userId: string;
   loginLinkId: string;
   loginMethod: string; // GOOGLE or LINK
-  email: string;
   loginLinkUrl: string;
   loginLinkExpiry: string;
-  unsubscribeHash: string;
+  user: DynamoNewUser;
 };
 
 type DeleteLoginLinkInput = {

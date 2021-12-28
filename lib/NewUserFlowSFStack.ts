@@ -5,7 +5,6 @@ import * as sfn from "@aws-cdk/aws-stepfunctions";
 import * as tasks from "@aws-cdk/aws-stepfunctions-tasks";
 import * as logs from "@aws-cdk/aws-logs";
 import { EMAILS } from "../Config";
-import { Fn } from "@aws-cdk/core";
 const resultDotEnv = dotenv.config({
   path: __dirname + `../../.env.${process.env.NODE_ENV}`,
 });
@@ -35,7 +34,7 @@ export default class NewUserFlowSFStack extends cdk.Stack {
       {
         key: {
           PK: tasks.DynamoAttributeValue.fromString(
-            sfn.JsonPath.stringAt("$.PK")
+            sfn.JsonPath.stringAt("$.detail.NewImage.PK")
           ),
 
           SK: tasks.DynamoAttributeValue.fromString("USER"),
@@ -75,11 +74,11 @@ export default class NewUserFlowSFStack extends cdk.Stack {
         },
         Message: {
           Subject: {
-            "Data.$": `States.Format('New user signed up - {}', $.email)`,
+            "Data.$": `States.Format('New user signed up - {}', $.detail.NewImage.email)`,
           },
           Body: {
             Html: {
-              "Data.$": `States.Format('<h1>User ID: {}</h1>', $.userId)`,
+              "Data.$": `States.Format('<h1>User ID: {}</h1>', $.detail.NewImage.userId)`,
             },
           },
         },
@@ -92,7 +91,7 @@ export default class NewUserFlowSFStack extends cdk.Stack {
       parameters: {
         Source: `Jose Valerio <${EMAILS.ADMIN}>`,
         Destination: {
-          "ToAddresses.$": `States.Array($.email)`,
+          "ToAddresses.$": `States.Array($.detail.NewImage.email)`,
         },
         Message: {
           Subject: {
@@ -107,17 +106,54 @@ export default class NewUserFlowSFStack extends cdk.Stack {
         },
       },
     });
+
+    const sendLoginLink = new tasks.CallAwsService(this, "SendLoginLink", {
+      //TODO update once native integration is implemented
+      ...SES_SETTINGS,
+      parameters: {
+        Source: `Jose Valerio <${EMAILS.ADMIN}>`,
+        Destination: {
+          "ToAddresses.$": `States.Array($.detail.NewImage.user.email)`,
+        },
+        Message: {
+          Subject: {
+            Data: `Login link`,
+          },
+          Body: {
+            Html: {
+              Data: `<h1>Your login link is here from step functions!</h1>`,
+            },
+          },
+        },
+      },
+    });
+
     const notApplicable = new sfn.Pass(this, "NotApplicable");
 
+    const NEW_USER_EVENT =
+      sfn.Condition.stringEquals(
+        "$.detail.NewImage.entityType",
+        "LOGIN_EVENT"
+      ) &&
+      sfn.Condition.booleanEquals(
+        "$.detail.NewImage.user.verifiedEmail",
+        false
+      );
+
+    const LOGIN_LINK_REQUESTED = sfn.Condition.stringEquals(
+      "$.detail.NewImage.entityType",
+      "LOGIN_LINK"
+    );
     const definition = new sfn.Choice(this, "Event type?")
       .when(
-        sfn.Condition.stringEquals("$.entityType", "LOGIN_EVENT"),
+        NEW_USER_EVENT,
         setEmailToVerified.next(
           new sfn.Parallel(this, "Parallel")
             .branch(notifyAdmin)
             .branch(welcomeNewUser)
         )
       )
+      .when(LOGIN_LINK_REQUESTED, sendLoginLink)
       .otherwise(notApplicable);
 
     const log = new logs.LogGroup(this, "NewUserFlowSFLogGroup");

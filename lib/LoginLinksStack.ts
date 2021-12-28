@@ -17,6 +17,7 @@ if (resultDotEnv.error) {
 }
 
 export default class LoginLinksStackStack extends cdk.Stack {
+  // TODO remove this
   public readonly SendLoginLinksQueue: sqs.Queue;
   /**
    * @param {cdk.Construct} scope
@@ -29,17 +30,6 @@ export default class LoginLinksStackStack extends cdk.Stack {
 
     const SES_DOMAIN = process.env.DOMAIN_NAME;
     const API_URL: string = process.env.API_URL;
-    const STACK = [
-      {
-        queue: {
-          queueName: "",
-          visibilityTimeout: cdk.Duration.seconds(10),
-        },
-        function: {
-          name: "SendLoginLinkFunction",
-        },
-      },
-    ];
 
     this.SendLoginLinksQueue = new sqs.Queue(this, "SendLoginLinksQueue", {
       queueName: "SendLoginLinksQueue",
