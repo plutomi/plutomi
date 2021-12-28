@@ -7,16 +7,16 @@ import { SdkError } from "@aws-sdk/types";
 export default async function update(
   props: UpdateOpeningInput
 ): Promise<[null, null] | [null, SdkError]> {
-  const { orgId, openingId, newOpeningValues } = props;
+  const { orgId, openingId, newValues } = props;
   // Build update expression
   let allUpdateExpressions: string[] = [];
   let allAttributeValues: any = {};
 
   // Filter out forbidden property
-  for (const property in newOpeningValues) {
+  for (const property in newValues) {
     if (FORBIDDEN_PROPERTIES.STAGE.includes(property)) {
       // Delete the property so it isn't updated
-      delete newOpeningValues[property];
+      delete newValues[property];
     }
 
     // If its a valid property, start creating the new update expression
@@ -24,7 +24,7 @@ export default async function update(
     allUpdateExpressions.push(`${property} = :${property}`);
 
     // Create values for each attribute
-    allAttributeValues[`:${property}`] = newOpeningValues[property];
+    allAttributeValues[`:${property}`] = newValues[property];
   }
 
   const params: UpdateCommandInput = {

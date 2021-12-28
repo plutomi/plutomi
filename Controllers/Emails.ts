@@ -54,7 +54,7 @@ export const unsubscribe = async (req: Request, res: Response) => {
     const [unsubbed, failed] = await Users.updateUser({
       userId: user.userId,
       ALLOW_FORBIDDEN_KEYS: true,
-      newUserValues: {
+      newValues: {
         canReceiveEmails: false,
         unsubscribedAt: Time.currentISO(),
       },
@@ -101,7 +101,7 @@ export const unsubscribe = async (req: Request, res: Response) => {
     const [unsubbed, failed] = await Applicants.updateApplicant({
       applicantId: applicant.applicantId,
       orgId: applicant.orgId,
-      newApplicantValues: {
+      newValues: {
         canReceiveEmails: false,
         unsubscribedAt: Time.currentISO(),
       },

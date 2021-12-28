@@ -67,14 +67,14 @@ type GetAllApplicantsInStageOutput = DynamoNewApplicant[];
 
 export interface UpdateStageInput
   extends Pick<DynamoNewStage, "orgId" | "stageId"> {
-  newStageValues: { [key: string]: any };
+  newValues: { [key: string]: any };
 }
 
 export interface UpdateUserInput extends Pick<DynamoNewUser, "userId"> {
-  newUserValues: { [key: string]: any };
+  newValues: { [key: string]: any };
   /**
    * Allows updating some properties that are typically banned, such as an orgId or an email.
-   * This shoudnt be set if its with newUserValues, only when directly updating an attribute verified on our end.
+   * This shoudnt be set if its with newValues, only when directly updating an attribute verified on our end.
    * TODO Only allow certain variables to  be updated via array of strings or whatever
    */
   ALLOW_FORBIDDEN_KEYS?: boolean;
@@ -107,7 +107,7 @@ export interface GetAllQuestionsInStageInput
 
 export interface UpdateQuestionInput
   extends Pick<DynamoNewStageQuestion, orgIdAndQuestionId> {
-  newQuestionValues: { [key: string]: any };
+  newValues: { [key: string]: any };
 }
 
 type GetAllQuestionsInStageOutput = GetQuestionOutput[];
@@ -134,7 +134,7 @@ export interface GetApplicantByIdOutput extends DynamoNewApplicant {
 
 export interface UpdateApplicantInput
   extends Pick<DynamoNewApplicant, orgIdAndApplicantId> {
-  newApplicantValues: { [key: string]: any };
+  newValues: { [key: string]: any };
 }
 
 export interface UpdateApplicantOutput extends DynamoNewApplicant {
@@ -163,7 +163,7 @@ type GetAllStagesInOpeningInput = Pick<
 type GetOpeningByIdInput = Pick<DynamoNewOpening, "orgId" | "openingId">;
 export interface UpdateOpeningInput
   extends Pick<DynamoNewOpening, "orgId" | "openingId"> {
-  newOpeningValues: { [key: string]: any };
+  newValues: { [key: string]: any };
 }
 
 interface DeleteOrgInviteInput {

@@ -102,17 +102,17 @@ export const deleteQuestion = async (req: Request, res: Response) => {
 
 export const update = async (req: Request, res: Response) => {
   const { questionId } = req.params;
-  const { newQuestionValues } = req.body;
+  const { newValues } = req.body;
 
   const updatedQuestionInput: UpdateQuestionInput = {
     orgId: req.session.user.orgId,
     questionId: questionId,
-    newQuestionValues: newQuestionValues, // Just the keys that are passed down
+    newValues, // Just the keys that are passed down
   };
   const schema = Joi.object({
     orgId: Joi.string(),
     questionId: Joi.string(),
-    newQuestionValues: Joi.object(),
+    newValues: Joi.object(),
   }).options({ presence: "required" }); // TODo add actual inputs of new question values
 
   // Validate input
