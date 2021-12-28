@@ -22,12 +22,8 @@ export default async function GetApplicants(
       ScanIndexForward: false,
     };
     try {
-      // TODO - MAJOR!
-      // Query until ALL items returned! Even though applicants are "split up" in a sense
-      // That meaning, files, notes, etc are different items in Dynamo
-      // The result might (and probably will!) be large enough that it might not be returned in one query
+      // TODO - Query until ALL items returned!
       const response = await Dynamo.send(new QueryCommand(params));
-      console.log("Response:", response);
       const allApplicants = response.Items as GetAllApplicantsInStageOutput;
 
       // Sort by full name, or whatever else, probably most recently active would be best
