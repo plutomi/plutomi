@@ -13,7 +13,7 @@ if (resultDotEnv.error) {
 }
 
 interface EventBridgeStackProps extends cdk.StackProps {
-  NewUserFlowSF: sfn.StateMachine;
+  CommsMachine: sfn.StateMachine;
 }
 export default class EventBridgeStack extends cdk.Stack {
   /**
@@ -29,7 +29,7 @@ export default class EventBridgeStack extends cdk.Stack {
     new events.Rule(this, "NewUserRule", {
       description: "A new user has been signed up and verified their email",
       ruleName: "NewUserRule",
-      targets: [new targets.SfnStateMachine(props.NewUserFlowSF)],
+      targets: [new targets.SfnStateMachine(props.CommsMachine)],
       eventPattern: {
         source: ["dynamodb.streams"],
         detail: {

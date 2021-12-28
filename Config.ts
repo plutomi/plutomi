@@ -84,33 +84,12 @@ export const LOGIN_LINK_SETTINGS = {
   ttl: 900, // In seconds, how long should login links be valid for
 };
 export const EMAILS = {
-  // TODO replace domain with .env domain
-  /**
-   * For troubleshooting issues
-   */
   SUPPORT: "support@plutomi.com",
-  /**
-   * For general information
-   */
   GENERAL: "contact@plutomi.com",
-  /**
-   * For investor relations
-   */
   INVEST: "ir@plutomi.com",
-  /**
-   * For administrative / GitHub related
-   */
-  ADMIN: "jose@plutomi.com",
-
-  /**
-   * For login links
-   */
-  LOGIN: "login@plutomi.com",
-
-  /**
-   * For org invites
-   */
-  INVITES: "join@plutomi.com",
+  ADMIN: "admin@plutomi.com",
+  LOGIN: "login@plutomi.com", // Login links
+  JOIN: "join@plutomi.com", // Org invites
 };
 
 /**

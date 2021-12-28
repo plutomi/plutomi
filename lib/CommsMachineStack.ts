@@ -13,19 +13,19 @@ if (resultDotEnv.error) {
   throw resultDotEnv.error;
 }
 
-interface NewUserFlowSFProps extends cdk.StackProps {
+interface CommsMachineProps extends cdk.StackProps {
   table: dynamodb.Table;
 }
 
-export default class NewUserFlowSFStack extends cdk.Stack {
-  public NewUserFlowSF: sfn.StateMachine;
+export default class CommsMachineStack extends cdk.Stack {
+  public CommsMachine: sfn.StateMachine;
   /**
    * @param {cdk.Construct} scope
    * @param {string} id
    * @param {cdk.StackProps=} props
    */
 
-  constructor(scope: cdk.App, id: string, props: NewUserFlowSFProps) {
+  constructor(scope: cdk.App, id: string, props: CommsMachineProps) {
     super(scope, id, props);
 
     const setEmailToVerified = new tasks.DynamoUpdateItem(
@@ -68,7 +68,7 @@ export default class NewUserFlowSFStack extends cdk.Stack {
       //TODO update once native integration is implemented
       ...SES_SETTINGS,
       parameters: {
-        Source: `Plutomi <${EMAILS.GENERAL}>`,
+        Source: `Plutomi <${EMAILS.ADMIN}>`,
         Destination: {
           ToAddresses: [EMAILS.ADMIN],
         },
@@ -89,7 +89,7 @@ export default class NewUserFlowSFStack extends cdk.Stack {
       //TODO update once native integration is implemented
       ...SES_SETTINGS,
       parameters: {
-        Source: `Jose Valerio <${EMAILS.ADMIN}>`,
+        Source: `Jose Valerio <${EMAILS.GENERAL}>`,
         Destination: {
           "ToAddresses.$": `States.Array($.detail.NewImage.user.email)`,
         },
@@ -111,7 +111,7 @@ export default class NewUserFlowSFStack extends cdk.Stack {
       //TODO update once native integration is implemented
       ...SES_SETTINGS,
       parameters: {
-        Source: `Plutomi <${EMAILS.ADMIN}>`,
+        Source: `Plutomi <${EMAILS.GENERAL}>`,
         Destination: {
           "ToAddresses.$": `States.Array($.detail.NewImage.user.email)`,
         },
@@ -131,12 +131,12 @@ export default class NewUserFlowSFStack extends cdk.Stack {
 
     const sendApplicationLink = new tasks.CallAwsService(
       this,
-      "sendApplicationLink",
+      "SendApplicationLink",
       {
         //TODO update once native integration is implemented
         ...SES_SETTINGS,
         parameters: {
-          Source: `Plutomi <${EMAILS.ADMIN}>`,
+          Source: `Plutomi <${EMAILS.GENERAL}>`,
           Destination: {
             "ToAddresses.$": `States.Array($.detail.NewImage.email)`,
           },
@@ -156,11 +156,11 @@ export default class NewUserFlowSFStack extends cdk.Stack {
       }
     );
 
-    const sendOrgInvite = new tasks.CallAwsService(this, "sendOrgInvite", {
+    const sendOrgInvite = new tasks.CallAwsService(this, "SendOrgInvite", {
       //TODO update once native integration is implemented
       ...SES_SETTINGS,
       parameters: {
-        Source: `Plutomi <${EMAILS.ADMIN}>`,
+        Source: `Plutomi <${EMAILS.JOIN}>`,
         Destination: {
           "ToAddresses.$": `States.Array($.detail.NewImage.recipient.email)`,
         },
@@ -224,10 +224,10 @@ export default class NewUserFlowSFStack extends cdk.Stack {
         ),
         sendOrgInvite
       );
-    const log = new logs.LogGroup(this, "NewUserFlowSFLogGroup");
+    const log = new logs.LogGroup(this, "CommsMachineLogGroup");
 
-    this.NewUserFlowSF = new sfn.StateMachine(this, "NewUserFlowSF", {
-      stateMachineName: "NewUserFlowSF",
+    this.CommsMachine = new sfn.StateMachine(this, "CommsMachine", {
+      stateMachineName: "CommsMachine",
       definition,
       timeout: cdk.Duration.minutes(5),
       stateMachineType: sfn.StateMachineType.EXPRESS,
@@ -238,6 +238,6 @@ export default class NewUserFlowSFStack extends cdk.Stack {
         level: sfn.LogLevel.ALL,
       },
     });
-    props.table.grantWriteData(this.NewUserFlowSF);
+    props.table.grantWriteData(this.CommsMachine);
   }
 }
