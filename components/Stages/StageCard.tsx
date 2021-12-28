@@ -15,19 +15,21 @@ export default function StageCard({
 }) {
   const urlParams = router.query as Pick<CUSTOM_QUERY, "stageId">;
 
-  console.log("URL PARAMS", urlParams, stageId);
   if (stageId === urlParams.stageId) {
     console.log("Stage ID match!!");
   }
   const content = (
     <div
-      className={`border my-6 shadow-xs py-4 text-center  hover:border-blue-500 transition ease-in-out duration-300 rounded-xl overflow-hidden ${
+      className={`border my-6 shadow-xs py-4 text-center  ${
+        !draggable ? " hover:border-blue-500" : "" // Only show blue border on hover on the stage carousel
+      } transition ease-in-out duration-300 rounded-xl overflow-hidden ${
         stageId === urlParams.stageId
-          ? " bg-sky-50  border-t-4 border-blue-500"
-          : "bg-white"
+          ? " bg-sky-50  border border-t-4 border-t-blue-500"
+          : " bg-white"
       } ${
-        draggable ??
-        "shadow-md hover:shadow-xl transition ease-in-out duration-300 "
+        draggable
+          ? " shadow-md hover:shadow-lg transition ease-in-out duration-300"
+          : ""
       }`}
     >
       <h5 className=" px-2 text-md font-medium text-dark truncate">{name}</h5>
