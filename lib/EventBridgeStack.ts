@@ -15,7 +15,6 @@ if (resultDotEnv.error) {
 }
 
 interface EventBridgeStackProps extends cdk.StackProps {
-  SendLoginLinksQueue: sqs.Queue;
   NewUserFlowSF: sfn.StateMachine;
 }
 export default class EventBridgeStack extends cdk.Stack {
@@ -28,22 +27,6 @@ export default class EventBridgeStack extends cdk.Stack {
   constructor(scope: cdk.App, id: string, props: EventBridgeStackProps) {
     super(scope, id, props);
 
-    new events.Rule(this, "LoginLinkRule", {
-      description: "A user has requested a login link",
-      ruleName: "RequestedLoginLink",
-      targets: [new targets.SqsQueue(props.SendLoginLinksQueue)],
-      eventPattern: {
-        source: ["dynamodb.streams"],
-        detail: {
-          eventName: ["INSERT"],
-          NewImage: {
-            entityType: [ENTITY_TYPES.LOGIN_LINK],
-            loginMethod: [LOGIN_METHODS.EMAIL],
-          },
-        },
-      },
-    });
-
     // We want to send all communication events to the step function, we can handle routing there
     new events.Rule(this, "NewUserRule", {
       description: "A new user has been signed up and verified their email",
@@ -54,7 +37,7 @@ export default class EventBridgeStack extends cdk.Stack {
         detail: {
           eventName: ["INSERT"],
           NewImage: {
-            entityType: ["LOGIN_EVENT", "LOGIN_LINK"],
+            entityType: [ENTITY_TYPES.LOGIN_EVENT, ENTITY_TYPES.LOGIN_LINK],
           },
         },
       },

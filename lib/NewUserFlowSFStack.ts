@@ -4,7 +4,7 @@ import * as cdk from "@aws-cdk/core";
 import * as sfn from "@aws-cdk/aws-stepfunctions";
 import * as tasks from "@aws-cdk/aws-stepfunctions-tasks";
 import * as logs from "@aws-cdk/aws-logs";
-import { EMAILS } from "../Config";
+import { EMAILS, ENTITY_TYPES, LOGIN_METHODS } from "../Config";
 const resultDotEnv = dotenv.config({
   path: __dirname + `../../.env.${process.env.NODE_ENV}`,
 });
@@ -74,11 +74,11 @@ export default class NewUserFlowSFStack extends cdk.Stack {
         },
         Message: {
           Subject: {
-            "Data.$": `States.Format('New user signed up - {}', $.detail.NewImage.email)`,
+            "Data.$": `States.Format('New user signed up - {}', $.detail.NewImage.user.email)`,
           },
           Body: {
             Html: {
-              "Data.$": `States.Format('<h1>User ID: {}</h1>', $.detail.NewImage.userId)`,
+              "Data.$": `States.Format('<h1>User ID: {}</h1>', $.detail.NewImage.user.userId)`,
             },
           },
         },
@@ -91,7 +91,7 @@ export default class NewUserFlowSFStack extends cdk.Stack {
       parameters: {
         Source: `Jose Valerio <${EMAILS.ADMIN}>`,
         Destination: {
-          "ToAddresses.$": `States.Array($.detail.NewImage.email)`,
+          "ToAddresses.$": `States.Array($.detail.NewImage.user.email)`,
         },
         Message: {
           Subject: {
@@ -117,44 +117,49 @@ export default class NewUserFlowSFStack extends cdk.Stack {
         },
         Message: {
           Subject: {
-            Data: `Login link`,
+            Data: `Your magic login link is here!`,
           },
           Body: {
             Html: {
-              Data: `<h1>Your login link is here from step functions!</h1>`,
+              "Data.$": `States.Format('<h1>Click <a href="{}" noreferrer target="_blank" >this link</a> to log in!</h1><p>It will expire {} so you better hurry.</p><p>If you did not request this link you can safely ignore it and <a href="${process.env.API_URL}/unsubscribe/{}" noreferrer target="_blank" >unsubscribe</a>.</p>',
+              $.detail.NewImage.loginLinkUrl, $.detail.NewImage.relativeExpiry, $.detail.NewImage.user.unsubscribeHash)`,
             },
           },
         },
       },
     });
 
-    const notApplicable = new sfn.Pass(this, "NotApplicable");
-
-    const NEW_USER_EVENT =
-      sfn.Condition.stringEquals(
-        "$.detail.NewImage.entityType",
-        "LOGIN_EVENT"
-      ) &&
-      sfn.Condition.booleanEquals(
-        "$.detail.NewImage.user.verifiedEmail",
-        false
-      );
-
-    const LOGIN_LINK_REQUESTED = sfn.Condition.stringEquals(
-      "$.detail.NewImage.entityType",
-      "LOGIN_LINK"
-    );
-    const definition = new sfn.Choice(this, "Event type?")
+    const definition = new sfn.Choice(this, "EventType?")
       .when(
-        NEW_USER_EVENT,
-        setEmailToVerified.next(
-          new sfn.Parallel(this, "Parallel")
-            .branch(notifyAdmin)
-            .branch(welcomeNewUser)
+        sfn.Condition.stringEquals(
+          "$.detail.NewImage.entityType",
+          ENTITY_TYPES.LOGIN_EVENT
+        ),
+        new sfn.Choice(this, "IsNewUser?").when(
+          sfn.Condition.booleanEquals(
+            "$.detail.NewImage.user.verifiedEmail",
+            false
+          ),
+          setEmailToVerified.next(
+            new sfn.Parallel(this, "SendNewUserComms")
+              .branch(notifyAdmin)
+              .branch(welcomeNewUser)
+          )
         )
       )
-      .when(LOGIN_LINK_REQUESTED, sendLoginLink)
-      .otherwise(notApplicable);
+      .when(
+        sfn.Condition.stringEquals(
+          "$.detail.NewImage.entityType",
+          ENTITY_TYPES.LOGIN_LINK
+        ),
+        new sfn.Choice(this, "LoginMethodIsEmail?").when(
+          sfn.Condition.stringEquals(
+            "$.detail.NewImage.loginMethod",
+            LOGIN_METHODS.EMAIL
+          ),
+          sendLoginLink
+        )
+      );
 
     const log = new logs.LogGroup(this, "NewUserFlowSFLogGroup");
 

@@ -392,8 +392,6 @@ interface DynamoNewLoginEvent {
   SK: `${ENTITY_TYPES.LOGIN_EVENT}#${string}`;
   createdAt: string; // ISO timestamp
   ttlExpiry: number; // ttl unix expiry
-  userId: string;
-  email: string;
   entityType: ENTITY_TYPES.LOGIN_EVENT;
-  verifiedEmail: boolean;
+  user: DynamoNewUser
 }
