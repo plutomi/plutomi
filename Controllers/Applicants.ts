@@ -4,7 +4,6 @@ import {
   CreateApplicantAPIBody,
   CreateApplicantResponseInput,
 } from "../types/main";
-import sendEmail from "../utils/sendEmail";
 import * as Openings from "../models/Openings/index";
 import * as Applicants from "../models/Applicants/index";
 import _ from "lodash";

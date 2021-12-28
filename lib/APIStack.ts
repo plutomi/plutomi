@@ -39,16 +39,6 @@ export default class APIStack extends cdk.Stack {
     // Allows Fargate to access DynamoDB
     props.table.grantReadWriteData(taskRole);
 
-    // Allows Fargate to send emails // TODO remove once stream processor is implemented
-    taskRole.addToPolicy(
-      new iam.PolicyStatement({
-        effect: iam.Effect.ALLOW,
-        actions: ["ses:SendEmail"],
-        resources: [
-          `arn:aws:ses:us-east-1:${cdk.Stack.of(this).account}:identity/${SES_DOMAIN}`,
-        ],
-      })
-    );
 
     // Define a fargate task with the newly created execution and task roles
     const taskDefinition = new ecs.FargateTaskDefinition(

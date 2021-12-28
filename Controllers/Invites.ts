@@ -2,7 +2,6 @@ import { Request, Response } from "express";
 import Joi from "joi";
 import { DEFAULTS, EMAILS, ENTITY_TYPES, TIME_UNITS } from "./../Config";
 import Sanitize from "./../utils/sanitize";
-import sendEmail from "./../utils/sendEmail";
 import * as Invites from "../models/Invites/index";
 import * as Time from "./../utils/time";
 import * as Users from "../models/Users/index";
@@ -106,7 +105,6 @@ export const create = async (req: Request, res: Response) => {
   }
 
   const [inviteCreated, inviteError] = await Invites.createInvite({
-    orgId: org.orgId,
     recipient: recipient,
     orgName: org.GSI1SK,
     expiresAt: Time.futureISO(3, TIME_UNITS.DAYS),
