@@ -5,6 +5,7 @@ import * as sfn from "@aws-cdk/aws-stepfunctions";
 import * as tasks from "@aws-cdk/aws-stepfunctions-tasks";
 import * as logs from "@aws-cdk/aws-logs";
 import { EMAILS } from "../Config";
+import { Fn } from "@aws-cdk/core";
 const resultDotEnv = dotenv.config({
   path: __dirname + `../../.env.${process.env.NODE_ENV}`,
 });
@@ -28,7 +29,7 @@ export default class NewUserFlowSFStack extends cdk.Stack {
   constructor(scope: cdk.App, id: string, props: NewUserFlowSFProps) {
     super(scope, id, props);
 
-    const updateUser = new tasks.DynamoUpdateItem(
+    const setEmailToVerified = new tasks.DynamoUpdateItem(
       this,
       "UpdateVerifiedEmailStatus",
       {
@@ -52,7 +53,7 @@ export default class NewUserFlowSFStack extends cdk.Stack {
         resultPath: sfn.JsonPath.DISCARD,
       }
     );
-    updateUser.addRetry({ maxAttempts: 2 });
+    setEmailToVerified.addRetry({ maxAttempts: 2 });
 
     const SES_SETTINGS = {
       service: "ses",
@@ -106,12 +107,18 @@ export default class NewUserFlowSFStack extends cdk.Stack {
         },
       },
     });
+    const notApplicable = new sfn.Pass(this, "NotApplicable");
 
-    const definition = updateUser.next(
-      new sfn.Parallel(this, "Parallel")
-        .branch(notifyAdmin)
-        .branch(welcomeNewUser)
-    );
+    const definition = new sfn.Choice(this, "Event type?")
+      .when(
+        sfn.Condition.stringEquals("$.entityType", "LOGIN_EVENT"),
+        setEmailToVerified.next(
+          new sfn.Parallel(this, "Parallel")
+            .branch(notifyAdmin)
+            .branch(welcomeNewUser)
+        )
+      )
+      .otherwise(notApplicable);
 
     const log = new logs.LogGroup(this, "NewUserFlowSFLogGroup");
 

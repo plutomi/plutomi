@@ -53,6 +53,7 @@ export default class EventBridgeStack extends cdk.Stack {
             PK: events.EventField.fromPath("$.detail.NewImage.PK"),
             email: events.EventField.fromPath("$.detail.NewImage.email"),
             userId: events.EventField.fromPath("$.detail.NewImage.userId"),
+            entityType: events.EventField.fromPath("$.detail.NewImage.entityType"),
           }),
         }),
       ],
