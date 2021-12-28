@@ -24,7 +24,7 @@ builder
       table,
     });
 
-    const { CommsMachine } = new CommsMachineStack(app, `CommsMachine`, {
+    const { CommsMachine } = new CommsMachineStack(app, `CommsMachineStack`, {
       table,
     });
 

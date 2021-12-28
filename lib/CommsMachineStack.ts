@@ -238,6 +238,6 @@ export default class CommsMachineStack extends cdk.Stack {
         level: sfn.LogLevel.ALL,
       },
     });
-    props.table.grantWriteData(this.CommsMachine);
+    props.table.grantWriteData(this.CommsMachine); // TODO this event should just be update. No need for extra permissions
   }
 }
