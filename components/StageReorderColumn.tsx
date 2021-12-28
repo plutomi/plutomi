@@ -6,16 +6,14 @@ import { useState } from "react";
 import { useRouter } from "next/router";
 import difference from "../utils/getObjectDifference";
 import StageModal from "./Stages/StageModal";
-import Link from "next/dist/client/link";
 import StagesService from "../adapters/StagesService";
-import useSelf from "../SWR/useSelf";
 import { useEffect } from "react";
-import DraggableStageCard from "./Stages/DraggableStageCard";
 import useOpeningById from "../SWR/useOpeningById";
 import useAllStagesInOpening from "../SWR/useAllStagesInOpening";
 import useStageById from "../SWR/useStageById";
 import OpeningsService from "../adapters/OpeningsService";
 import { CUSTOM_QUERY } from "../types/main";
+import StageCard from "./Stages/StageCard";
 
 export default function StageReorderColumn() {
   const createStage = async () => {
@@ -63,9 +61,10 @@ export default function StageReorderColumn() {
   };
 
   const router = useRouter();
-  // To this
-  const { openingId, stageId }: Pick<CUSTOM_QUERY, "openingId" | "stageId"> =
-    router.query;
+  const { openingId, stageId } = router.query as Pick<
+    CUSTOM_QUERY,
+    "openingId" | "stageId"
+  >;
 
   let { opening, isOpeningLoading, isOpeningError } = useOpeningById(openingId);
 
@@ -169,17 +168,14 @@ export default function StageReorderColumn() {
                             {...provided.dragHandleProps}
                             ref={provided.innerRef}
                           >
-                            <Link
-                              href={`/openings/${openingId}/stages/${stage.stageId}/settings`}
-                            >
-                              <a>
-                                <DraggableStageCard
-                                  totalApplicants={stage.totalApplicants}
-                                  name={`${stage.GSI1SK}`}
-                                  stageId={stage.stageId}
-                                />
-                              </a>
-                            </Link>
+                            <StageCard
+                              key={stage.stageId}
+                              totalApplicants={stage.totalApplicants}
+                              name={`${stage.GSI1SK}`}
+                              stageId={stage.stageId}
+                              linkHref={`/openings/${openingId}/stages/${stage.stageId}/settings`}
+                              draggable={true}
+                            />
                           </div>
                         )}
                       </Draggable>

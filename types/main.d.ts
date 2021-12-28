@@ -18,42 +18,20 @@ export interface CreateApplicantAPIResponse {
  * All possible parameters in the URL
  */
 
-export interface CUSTOM_QUERY {
-  /**
-   * Id of the org
-   */
+interface CUSTOM_QUERY {
   orgId: string;
-  /**
-   * Id of the opening
-   */
   openingId: string;
-  /**
-   * Id of the user
-   */
   userId: string;
-  /**
-   * Id of the stage
-   */
   stageId: string;
-  /**
-   * Id of the applicant
-   */
+
   applicantId: string;
   /**
    * The seal to for the {@link ENTITY_TYPES.LOGIN_LINK} that contains the user id
    */
   seal: string;
-  /**
-   * The callback url
-   */
+
   callbackUrl: string;
-  /**
-   * Id for the question
-   */
   questionId: string;
-  /**
-   * Id for the invite
-   */
   inviteId: string;
 }
 
@@ -176,10 +154,6 @@ type CreateApplicantResponseOutput = DynamoNewApplicantResponse;
 
 type CreateOpeningInput = Pick<DynamoNewOpening, "orgId" | "GSI1SK">;
 type DeleteOpeningInput = Pick<DynamoNewOpening, "orgId" | "openingId">;
-type GetAllApplicantsInOpeningInput = Pick<
-  DynamoNewOpening,
-  "orgId" | "openingId" | "stageId" | "openingId"
->;
 
 type GetAllOpeningsInOrgInput = Pick<DynamoNewOpening, "orgId">;
 type GetAllStagesInOpeningInput = Pick<

@@ -53,8 +53,9 @@ export default function StageCarousel() {
             key={stage.stageId}
             name={stage.GSI1SK}
             stageId={stage.stageId}
-            openingId={stage.openingId}
             totalApplicants={stage.totalApplicants}
+            draggable={false}
+            linkHref={`/openings/${openingId}/stages/${stage.stageId}/applicants`}
           />
         ))}
       </ItemsCarousel>
