@@ -156,6 +156,29 @@ export default class NewUserFlowSFStack extends cdk.Stack {
       }
     );
 
+    const sendOrgInvite = new tasks.CallAwsService(this, "sendOrgInvite", {
+      //TODO update once native integration is implemented
+      ...SES_SETTINGS,
+      parameters: {
+        Source: `Plutomi <${EMAILS.ADMIN}>`,
+        Destination: {
+          "ToAddresses.$": `States.Array($.detail.NewImage.recipient.email)`,
+        },
+        Message: {
+          Subject: {
+            "Data.$": `States.Format('{} {} has invited you to join them on {}!',
+            $.detail.NewImage.createdBy.firstName, $.detail.NewImage.createdBy.lastName, $.detail.NewImage.orgName)`,
+          },
+          Body: {
+            Html: {
+              // TODO add unsubscribe
+              Data: `<h4>You can log in at <a href="${process.env.WEBSITE_URL}" target="_blank" rel=noreferrer>${process.env.WEBSITE_URL}</a> to accept their invite!</h4><p>If you believe this email was received in error, you can safely ignore it.</p>`,
+            },
+          },
+        },
+      },
+    });
+
     const definition = new sfn.Choice(this, "EventType?")
       .when(
         sfn.Condition.stringEquals(
@@ -187,13 +210,19 @@ export default class NewUserFlowSFStack extends cdk.Stack {
           sendLoginLink
         )
       )
-      // TODO new applicant
       .when(
         sfn.Condition.stringEquals(
           "$.detail.NewImage.entityType",
           ENTITY_TYPES.APPLICANT
         ),
         sendApplicationLink
+      )
+      .when(
+        sfn.Condition.stringEquals(
+          "$.detail.NewImage.entityType",
+          ENTITY_TYPES.ORG_INVITE
+        ),
+        sendOrgInvite
       );
     const log = new logs.LogGroup(this, "NewUserFlowSFLogGroup");
 

@@ -198,7 +198,6 @@ interface DeleteOrgInviteInput {
 }
 
 interface CreateOrgInviteInput {
-  orgId: string;
   orgName: string;
   expiresAt: string;
   createdBy: UserSessionData;

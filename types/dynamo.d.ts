@@ -295,6 +295,8 @@ interface DynamoNewOrgInvite {
    * Who created this invite, info comes from their session
    */
   createdBy: UserSessionData;
+
+  recipient: DynamoNewUser;
   /**
    * The entity type, see {@link ENTITY_TYPES.ORG_INVITE}
    */
@@ -359,7 +361,7 @@ interface DynamoNewLoginLink {
   entityType: ENTITY_TYPES.LOGIN_LINK;
   createdAt: string;
   relativeExpiry: string;
-  user: DynamoNewUser,
+  user: DynamoNewUser;
   loginLinkUrl: string;
   loginMethod: string; // "GOOGLE" or "EMAIL"
   /**
@@ -393,5 +395,5 @@ interface DynamoNewLoginEvent {
   createdAt: string; // ISO timestamp
   ttlExpiry: number; // ttl unix expiry
   entityType: ENTITY_TYPES.LOGIN_EVENT;
-  user: DynamoNewUser
+  user: DynamoNewUser;
 }

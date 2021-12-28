@@ -1,11 +1,9 @@
 import * as dotenv from "dotenv";
-import { NodejsFunction } from "@aws-cdk/aws-lambda-nodejs";
 import * as cdk from "@aws-cdk/core";
 import * as events from "@aws-cdk/aws-events";
-import * as sqs from "@aws-cdk/aws-sqs";
 import * as sfn from "@aws-cdk/aws-stepfunctions";
 import * as targets from "@aws-cdk/aws-events-targets";
-import { ENTITY_TYPES, LOGIN_METHODS } from "../Config";
+import { ENTITY_TYPES } from "../Config";
 const resultDotEnv = dotenv.config({
   path: __dirname + `../../.env.${process.env.NODE_ENV}`,
 });
@@ -41,6 +39,7 @@ export default class EventBridgeStack extends cdk.Stack {
               ENTITY_TYPES.LOGIN_EVENT,
               ENTITY_TYPES.LOGIN_LINK,
               ENTITY_TYPES.APPLICANT,
+              ENTITY_TYPES.ORG_INVITE,
             ],
           },
         },
