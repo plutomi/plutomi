@@ -2,11 +2,11 @@
 import * as cdk from "@aws-cdk/core";
 import "source-map-support";
 import DynamoDBStack from "../lib/DynamoDBStack";
-import APIStack from "../lib/APIStack";
 import FrontendStack from "../lib/FrontendStack";
 import StreamProcessorStack from "../lib/StreamProcessorStack";
 import CommsMachineStack from "../lib/commsMachineStack";
 import EventBridgeStack from "../lib/EventBridgeStack";
+import APIStack from "../lib/APIStack";
 import { Builder } from "@sls-next/lambda-at-edge";
 
 // Run the serverless builder before deploying
@@ -16,21 +16,33 @@ builder
   .build()
   .then(() => {
     const app = new cdk.App();
-    const { table } = new DynamoDBStack(app, "DynamoDBStack");
-    new StreamProcessorStack(app, `StreamProcessorStack`, {
-      table,
-    });
-    new APIStack(app, "APIStack", {
-      table,
-    });
+    const { table } = new DynamoDBStack(
+      app,
+      `${process.env.NODE_ENV}-DynamoDBStack`
+    );
+    new StreamProcessorStack(
+      app,
+      `${process.env.NODE_ENV}-StreamProcessorStack`,
+      {
+        table,
+      }
+    );
 
-    const { CommsMachine } = new CommsMachineStack(app, `CommsMachineStack`, {
-      table,
-    });
+    const { api } = new APIStack(app, `${process.env.NODE_ENV}-APIStack`);
 
-    new EventBridgeStack(app, `EventBridgeStack`, {
+    const { CommsMachine } = new CommsMachineStack(
+      app,
+      `${process.env.NODE_ENV}-CommsMachineStack`,
+      {
+        table,
+      }
+    );
+
+    new EventBridgeStack(app, `${process.env.NODE_ENV}-EventBridgeStack`, {
       CommsMachine,
     });
+
+    // Run FE locally, no need to deploy
     new FrontendStack(app, `FrontendStack`);
   })
   .catch((e) => {

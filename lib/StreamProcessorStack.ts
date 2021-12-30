@@ -2,14 +2,10 @@ import * as dotenv from "dotenv";
 import * as dynamodb from "@aws-cdk/aws-dynamodb";
 import * as lambda from "@aws-cdk/aws-lambda";
 import * as path from "path";
-import * as sns from "@aws-cdk/aws-sns";
 import * as lambdaEventSources from "@aws-cdk/aws-lambda-event-sources";
 import { NodejsFunction } from "@aws-cdk/aws-lambda-nodejs";
 import * as cdk from "@aws-cdk/core";
 import * as events from "@aws-cdk/aws-events";
-import * as sqs from "@aws-cdk/aws-sqs";
-import * as targets from "@aws-cdk/aws-events-targets";
-import { STREAM_EVENTS } from "../Config";
 const resultDotEnv = dotenv.config({
   path: __dirname + `../../.env.${process.env.NODE_ENV}`,
 });
@@ -35,6 +31,7 @@ export default class StreamProcessorStack extends cdk.Stack {
       this,
       "StreamProcessorFunction",
       {
+        functionName: `${process.env.NODE_ENV}-StreamProcessor`,
         memorySize: 256,
         timeout: cdk.Duration.seconds(5),
         runtime: lambda.Runtime.NODEJS_14_X,
@@ -65,7 +62,7 @@ export default class StreamProcessorStack extends cdk.Stack {
     // Give our lambda acccess to the push events into EB
     const bus = events.EventBus.fromEventBusName(
       this,
-      "DefaultEventBus",
+      `${process.env.NODE_ENV}-EventBus`,
       "default"
     );
 

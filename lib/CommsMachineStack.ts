@@ -227,7 +227,7 @@ export default class CommsMachineStack extends cdk.Stack {
     const log = new logs.LogGroup(this, "CommsMachineLogGroup");
 
     this.CommsMachine = new sfn.StateMachine(this, "CommsMachine", {
-      stateMachineName: "CommsMachine",
+      stateMachineName: `${process.env.NODE_ENV}-CommsMachine`,
       definition,
       timeout: cdk.Duration.minutes(5),
       stateMachineType: sfn.StateMachineType.EXPRESS,

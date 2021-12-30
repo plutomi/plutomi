@@ -25,8 +25,14 @@ export default class EventBridgeStack extends cdk.Stack {
   constructor(scope: cdk.App, id: string, props: EventBridgeStackProps) {
     super(scope, id, props);
 
+    // Create a new event bus
+    const bus = new events.EventBus(this, "bus", {
+      eventBusName: `${process.env.NODE_ENV}-EventBus`,
+    });
+
     // We want to send all communication events to the step function, we can handle routing there
     new events.Rule(this, "NewUserRule", {
+      eventBus: bus,
       description: "A new user has been signed up and verified their email",
       ruleName: "NewUserRule",
       targets: [new targets.SfnStateMachine(props.CommsMachine)],

@@ -25,7 +25,7 @@ export default class DynamoDBStack extends cdk.Stack {
 
     const TABLE_NAME: string = process.env.DYNAMO_TABLE_NAME;
     this.table = new dynamodb.Table(this, "plutomi-dynamo-table", {
-      tableName: TABLE_NAME,
+      tableName: `${process.env.NODE_ENV}-${TABLE_NAME}`,
       partitionKey: { name: "PK", type: dynamodb.AttributeType.STRING },
       sortKey: { name: "SK", type: dynamodb.AttributeType.STRING },
       timeToLiveAttribute: "ttlExpiry",

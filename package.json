@@ -3,16 +3,14 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "cross-env NODE_ENV=development concurrently --kill-others \"nodemon app.ts\" \"next dev\"",
-    "notypes": "cross-env NODE_ENV=development concurrently --kill-others \"ts-node --transpile-only app.ts\" \"next dev\"",
     "build": "next build",
     "lint": "next lint",
-    "start": "cross-env NODE_ENV=production ts-node --transpile-only app.ts",
-    "deploy": "cross-env NODE_ENV=production cdk deploy --all",
-    "destroy": "cross-env NODE_ENV=production cdk destroy --all"
+    "dev": "cross-env NODE_ENV=development cdk deploy development-DynamoDBStack development-StreamProcessorStack development-APIStack development-CommsMachineStack development-EventBridgeStack && next dev",
+    "deploy-prod": "cross-env NODE_ENV=production  cdk deploy production-DynamoDBStack production-StreamProcessorStack production-APIStack production-CommsMachineStack production-EventBridgeStack FrontendStack"
   },
   "dependencies": {
     "@aws-cdk/assert": "2.0.0",
+    "@aws-cdk/aws-apigatewayv2-integrations": "^1.134.0",
     "@aws-cdk/aws-certificatemanager": "1.134.0",
     "@aws-cdk/aws-cloudfront-origins": "1.134.0",
     "@aws-cdk/aws-dynamodb": "1.134.0",
@@ -26,9 +24,10 @@
     "@aws-cdk/aws-iam": "1.134.0",
     "@aws-cdk/aws-lambda": "1.134.0",
     "@aws-cdk/aws-lambda-event-sources": "1.134.0",
-    "@aws-cdk/aws-lambda-nodejs": "1.134.0",
+    "@aws-cdk/aws-lambda-nodejs": "^1.134.0",
     "@aws-cdk/aws-logs": "^1.134.0",
     "@aws-cdk/aws-route53": "1.134.0",
+    "@aws-cdk/aws-route53-targets": "^1.134.0",
     "@aws-cdk/aws-s3-deployment": "1.134.0",
     "@aws-cdk/aws-sns": "1.134.0",
     "@aws-cdk/aws-sns-subscriptions": "1.134.0",

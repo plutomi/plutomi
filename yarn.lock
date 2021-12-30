@@ -43,25 +43,6 @@
     "@aws-cdk/core" "1.134.0"
     "constructs" "^3.3.69"
 
-"@aws-cdk/aws-apigateway@1.133.0":
-  "integrity" "sha512-7qlTr8bPXhqw4Po0YmhzojY32a0suVX4GqgKOiGngO1GZzFQeUaj3e9MJuAfTEVvRlKEpJkdwYYsIZ49bYrZhw=="
-  "resolved" "https://registry.npmjs.org/@aws-cdk/aws-apigateway/-/aws-apigateway-1.133.0.tgz"
-  "version" "1.133.0"
-  dependencies:
-    "@aws-cdk/aws-certificatemanager" "1.133.0"
-    "@aws-cdk/aws-cloudwatch" "1.133.0"
-    "@aws-cdk/aws-cognito" "1.133.0"
-    "@aws-cdk/aws-ec2" "1.133.0"
-    "@aws-cdk/aws-elasticloadbalancingv2" "1.133.0"
-    "@aws-cdk/aws-iam" "1.133.0"
-    "@aws-cdk/aws-lambda" "1.133.0"
-    "@aws-cdk/aws-logs" "1.133.0"
-    "@aws-cdk/aws-s3" "1.133.0"
-    "@aws-cdk/aws-s3-assets" "1.133.0"
-    "@aws-cdk/core" "1.133.0"
-    "@aws-cdk/cx-api" "1.133.0"
-    "constructs" "^3.3.69"
-
 "@aws-cdk/aws-apigateway@1.134.0":
   "integrity" "sha512-Old3NjNaU+XdFs3Rrfynq6Oa6bt6iE+6YSkq/ZHqljdTGydhTb/wU5fCBh3j9AbYsBxrua5VZO7IJdyEoiQ25w=="
   "resolved" "https://registry.npmjs.org/@aws-cdk/aws-apigateway/-/aws-apigateway-1.134.0.tgz"
@@ -79,6 +60,33 @@
     "@aws-cdk/aws-s3-assets" "1.134.0"
     "@aws-cdk/core" "1.134.0"
     "@aws-cdk/cx-api" "1.134.0"
+    "constructs" "^3.3.69"
+
+"@aws-cdk/aws-apigatewayv2-integrations@^1.134.0":
+  "integrity" "sha512-3NUifKX06DgbTTMMX9ZTMY9Fz5aUyXhqWlv4dvoJ9ZRczLpELAaEvtbDUI+w63sN5jew0hCjEH8r5qSRw6SX8w=="
+  "resolved" "https://registry.npmjs.org/@aws-cdk/aws-apigatewayv2-integrations/-/aws-apigatewayv2-integrations-1.134.0.tgz"
+  "version" "1.134.0"
+  dependencies:
+    "@aws-cdk/aws-apigatewayv2" "1.134.0"
+    "@aws-cdk/aws-ec2" "1.134.0"
+    "@aws-cdk/aws-elasticloadbalancingv2" "1.134.0"
+    "@aws-cdk/aws-iam" "1.134.0"
+    "@aws-cdk/aws-lambda" "1.134.0"
+    "@aws-cdk/aws-servicediscovery" "1.134.0"
+    "@aws-cdk/core" "1.134.0"
+    "constructs" "^3.3.69"
+
+"@aws-cdk/aws-apigatewayv2@1.134.0":
+  "integrity" "sha512-SHkNt64vCXaUXK6XdemPD4EBHZaEbndY/ENAmcrs/FJ+3enaVqmjL4ykNTgaRvfipFjNQfEvnZVLcJIRj2VRvw=="
+  "resolved" "https://registry.npmjs.org/@aws-cdk/aws-apigatewayv2/-/aws-apigatewayv2-1.134.0.tgz"
+  "version" "1.134.0"
+  dependencies:
+    "@aws-cdk/aws-certificatemanager" "1.134.0"
+    "@aws-cdk/aws-cloudwatch" "1.134.0"
+    "@aws-cdk/aws-ec2" "1.134.0"
+    "@aws-cdk/aws-iam" "1.134.0"
+    "@aws-cdk/aws-s3" "1.134.0"
+    "@aws-cdk/core" "1.134.0"
     "constructs" "^3.3.69"
 
 "@aws-cdk/aws-applicationautoscaling@1.133.0":
@@ -336,19 +344,6 @@
     "@aws-cdk/core" "1.134.0"
     "constructs" "^3.3.69"
 
-"@aws-cdk/aws-cognito@1.133.0":
-  "integrity" "sha512-LZPeFecWkbc/7tF8r8QPbnWl1Q6l2W/tKOuTe/Bmrw/IU7LQlwCP8emlzhm668JODIOf5PQtJrvWqw67QlaPLA=="
-  "resolved" "https://registry.npmjs.org/@aws-cdk/aws-cognito/-/aws-cognito-1.133.0.tgz"
-  "version" "1.133.0"
-  dependencies:
-    "@aws-cdk/aws-certificatemanager" "1.133.0"
-    "@aws-cdk/aws-iam" "1.133.0"
-    "@aws-cdk/aws-lambda" "1.133.0"
-    "@aws-cdk/core" "1.133.0"
-    "@aws-cdk/custom-resources" "1.133.0"
-    "constructs" "^3.3.69"
-    "punycode" "^2.1.1"
-
 "@aws-cdk/aws-cognito@1.134.0":
   "integrity" "sha512-P6ybQBUoxneyUotbwFDlgf+3E9zdqdgcVdAc6x75rkNAC6VgOMPi4ktTs0BLoe9g1qFepinnwSoOGrDw/T2M6w=="
   "resolved" "https://registry.npmjs.org/@aws-cdk/aws-cognito/-/aws-cognito-1.134.0.tgz"
@@ -560,15 +555,6 @@
     "constructs" "^3.3.69"
     "yaml" "1.10.2"
 
-"@aws-cdk/aws-elasticloadbalancing@1.133.0":
-  "integrity" "sha512-fNw0UpH5r4SRCZqcgV0DveQMUl0zugKAHctJ0u3PKDtTJVkR3RIipzid2FkjT9VvdqOy8d8ZVhYkZCvjjYT0Fw=="
-  "resolved" "https://registry.npmjs.org/@aws-cdk/aws-elasticloadbalancing/-/aws-elasticloadbalancing-1.133.0.tgz"
-  "version" "1.133.0"
-  dependencies:
-    "@aws-cdk/aws-ec2" "1.133.0"
-    "@aws-cdk/core" "1.133.0"
-    "constructs" "^3.3.69"
-
 "@aws-cdk/aws-elasticloadbalancing@1.134.0":
   "integrity" "sha512-eVQmn39enzFT5n6e/DOcZnRXLbBxPWw0q0DhXJrOY1DAIXUO6Ba7X64al7YdQ+aDs/RZ9Rao9L4Ok9lWxJgWdw=="
   "resolved" "https://registry.npmjs.org/@aws-cdk/aws-elasticloadbalancing/-/aws-elasticloadbalancing-1.134.0.tgz"
@@ -576,23 +562,6 @@
   dependencies:
     "@aws-cdk/aws-ec2" "1.134.0"
     "@aws-cdk/core" "1.134.0"
-    "constructs" "^3.3.69"
-
-"@aws-cdk/aws-elasticloadbalancingv2@1.133.0":
-  "integrity" "sha512-aBcootSqguTin0Bt0O57pAUhr5K/Pz63rfiJG10b8HpTEgY+QETU7sy1rGq+hORnjUD41ymuyR8Lq5lr266lJg=="
-  "resolved" "https://registry.npmjs.org/@aws-cdk/aws-elasticloadbalancingv2/-/aws-elasticloadbalancingv2-1.133.0.tgz"
-  "version" "1.133.0"
-  dependencies:
-    "@aws-cdk/aws-certificatemanager" "1.133.0"
-    "@aws-cdk/aws-cloudwatch" "1.133.0"
-    "@aws-cdk/aws-ec2" "1.133.0"
-    "@aws-cdk/aws-iam" "1.133.0"
-    "@aws-cdk/aws-lambda" "1.133.0"
-    "@aws-cdk/aws-s3" "1.133.0"
-    "@aws-cdk/cloud-assembly-schema" "1.133.0"
-    "@aws-cdk/core" "1.133.0"
-    "@aws-cdk/cx-api" "1.133.0"
-    "@aws-cdk/region-info" "1.133.0"
     "constructs" "^3.3.69"
 
 "@aws-cdk/aws-elasticloadbalancingv2@1.134.0":
@@ -654,16 +623,6 @@
   dependencies:
     "@aws-cdk/aws-iam" "1.133.0"
     "@aws-cdk/core" "1.133.0"
-    "constructs" "^3.3.69"
-
-"@aws-cdk/aws-globalaccelerator@1.133.0":
-  "integrity" "sha512-kVSz6m1zF7PYbg919oDJt8Jzr5VUQyFmDWuQ6Ew8chac1t4QLl+wAmd1pHy77sN6vBoV0uhWJ40YGs9yTzIPTQ=="
-  "resolved" "https://registry.npmjs.org/@aws-cdk/aws-globalaccelerator/-/aws-globalaccelerator-1.133.0.tgz"
-  "version" "1.133.0"
-  dependencies:
-    "@aws-cdk/aws-ec2" "1.133.0"
-    "@aws-cdk/core" "1.133.0"
-    "@aws-cdk/custom-resources" "1.133.0"
     "constructs" "^3.3.69"
 
 "@aws-cdk/aws-globalaccelerator@1.134.0":
@@ -757,7 +716,7 @@
     "@aws-cdk/core" "1.134.0"
     "constructs" "^3.3.69"
 
-"@aws-cdk/aws-lambda-nodejs@1.134.0":
+"@aws-cdk/aws-lambda-nodejs@^1.134.0":
   "integrity" "sha512-tAlyH9/h3EEDtxTSnFW7E5HtkDHpdnamnW3VjF3BQOPz7W6ZhMG2XWVd+byFJg0/xgIeiIGjkaBTY1Pcxnc78Q=="
   "resolved" "https://registry.npmjs.org/@aws-cdk/aws-lambda-nodejs/-/aws-lambda-nodejs-1.134.0.tgz"
   "version" "1.134.0"
@@ -804,26 +763,7 @@
     "@aws-cdk/cx-api" "1.134.0"
     "constructs" "^3.3.69"
 
-"@aws-cdk/aws-route53-targets@1.133.0":
-  "integrity" "sha512-q/LuIYCQsnUdPJiXkaW8P750mk7XuTCMxxDP2x/MCIvtybk5vOhmOcrLD3arf2l8hnO/BlG/ALG6f2+P4/tmjg=="
-  "resolved" "https://registry.npmjs.org/@aws-cdk/aws-route53-targets/-/aws-route53-targets-1.133.0.tgz"
-  "version" "1.133.0"
-  dependencies:
-    "@aws-cdk/aws-apigateway" "1.133.0"
-    "@aws-cdk/aws-cloudfront" "1.133.0"
-    "@aws-cdk/aws-cognito" "1.133.0"
-    "@aws-cdk/aws-ec2" "1.133.0"
-    "@aws-cdk/aws-elasticloadbalancing" "1.133.0"
-    "@aws-cdk/aws-elasticloadbalancingv2" "1.133.0"
-    "@aws-cdk/aws-globalaccelerator" "1.133.0"
-    "@aws-cdk/aws-iam" "1.133.0"
-    "@aws-cdk/aws-route53" "1.133.0"
-    "@aws-cdk/aws-s3" "1.133.0"
-    "@aws-cdk/core" "1.133.0"
-    "@aws-cdk/region-info" "1.133.0"
-    "constructs" "^3.3.69"
-
-"@aws-cdk/aws-route53-targets@1.134.0":
+"@aws-cdk/aws-route53-targets@^1.134.0", "@aws-cdk/aws-route53-targets@1.133.0", "@aws-cdk/aws-route53-targets@1.134.0":
   "integrity" "sha512-5COv3nOUl4iiYJ4RUHVQH9TPEadP5Tt3WahbQtaQdelBhZ3co/q/UNp95/fLLeaR+A8HOk64A0JEKTpmVyXnRw=="
   "resolved" "https://registry.npmjs.org/@aws-cdk/aws-route53-targets/-/aws-route53-targets-1.134.0.tgz"
   "version" "1.134.0"
