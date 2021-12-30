@@ -41,6 +41,9 @@ export default class StreamProcessorStack extends cdk.Stack {
           minify: true,
           externalModules: ["aws-sdk"],
         },
+        environment: {
+          NODE_ENV: process.env.NODE_ENV, // To get the event bus name
+        },
         handler: "main",
         description:
           "Processes table changes from DynamoDB streams and sends them to SNS",

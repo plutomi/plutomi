@@ -21,6 +21,9 @@ export async function main(event: DynamoDBStreamEvent) {
   const { OldImage, NewImage } = record.dynamodb;
   const entry: PutEventsRequestEntry = {
     Source: "dynamodb.streams",
+    // Note, if we ever use AWS events directly, they will go to the default event bus and not this one.
+    // This is for easy dev / prod testing
+    EventBusName: `${process.env.NODE_ENV}-EventBus`,
     DetailType: "stream", // Was having issues if this wasn't specified - can be anything
     Detail: JSON.stringify({
       eventName: eventName,

@@ -22,13 +22,6 @@ builder
       app,
       `${process.env.NODE_ENV}-DynamoDBStack`
     );
-    new StreamProcessorStack(
-      app,
-      `${process.env.NODE_ENV}-StreamProcessorStack`,
-      {
-        table,
-      }
-    );
 
     const { api } = new APIStack(app, `${process.env.NODE_ENV}-APIStack`);
     new APIAuthServiceStack(
@@ -51,6 +44,14 @@ builder
     new EventBridgeStack(app, `${process.env.NODE_ENV}-EventBridgeStack`, {
       CommsMachine,
     });
+
+    new StreamProcessorStack(
+      app,
+      `${process.env.NODE_ENV}-StreamProcessorStack`,
+      {
+        table,
+      }
+    );
 
     // Run FE locally, no need to deploy
     new FrontendStack(app, `FrontendStack`);

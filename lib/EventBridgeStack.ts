@@ -25,6 +25,8 @@ export default class EventBridgeStack extends cdk.Stack {
   constructor(scope: cdk.App, id: string, props: EventBridgeStackProps) {
     super(scope, id, props);
 
+    // Note, if we ever use AWS events directly, they will go to the default event bus and not this one.
+    // This is for easy dev / prod testing
     // Create a new event bus
     const bus = new EventBus(this, `EventBus`, {
       eventBusName: `${process.env.NODE_ENV}-EventBus`,
