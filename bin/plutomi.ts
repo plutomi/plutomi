@@ -1,12 +1,14 @@
 #!/usr/bin/env node
-import * as cdk from "@aws-cdk/core";
 import "source-map-support";
+import * as cdk from "@aws-cdk/core";
+import APIStack from "../lib/APIStack";
 import DynamoDBStack from "../lib/DynamoDBStack";
 import FrontendStack from "../lib/FrontendStack";
-import StreamProcessorStack from "../lib/StreamProcessorStack";
-import CommsMachineStack from "../lib/commsMachineStack";
 import EventBridgeStack from "../lib/EventBridgeStack";
-import APIStack from "../lib/APIStack";
+import CommsMachineStack from "../lib/commsMachineStack";
+import APIAuthServiceStack from "../lib/APIAuthServiceStack";
+import StreamProcessorStack from "../lib/StreamProcessorStack";
+
 import { Builder } from "@sls-next/lambda-at-edge";
 
 // Run the serverless builder before deploying
@@ -29,6 +31,14 @@ builder
     );
 
     const { api } = new APIStack(app, `${process.env.NODE_ENV}-APIStack`);
+    new APIAuthServiceStack(
+      app,
+      `${process.env.NODE_ENV}-APIAuthServiceStack`,
+      {
+        table,
+        api,
+      }
+    );
 
     const { CommsMachine } = new CommsMachineStack(
       app,

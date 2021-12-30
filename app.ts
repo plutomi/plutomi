@@ -27,7 +27,6 @@ import withAuth from "./middleware/withAuth";
 import routeNotFound from "./middleware/routeNotFound";
 import { sessionSettings } from "./Config";
 const timeout = require("connect-timeout");
-const PORT = parseInt(process.env.EXPRESS_PORT) || 4000;
 const app = express();
 app.use(timeout("5s"));
 app.use(
@@ -42,6 +41,10 @@ app.set("trust proxy", 1);
 app.use(sessionSettings); // Adds req.session to each route, if applicable
 app.use(withCleanOrgId); // If the route has an :orgId, normalize it
 app.use(haltOnTimedout);
+
+// Auth
+app.get("/auth/login", Auth.login);
+app.post("/auth/logout", [withAuth], Auth.logout);
 
 // Public info
 app.get("/public/:orgId", PublicInfo.getOrgInfo);
@@ -97,11 +100,6 @@ app.get(
   Stages.getApplicantsInStage
 );
 
-// Auth
-app.get("/auth/login", Auth.login);
-app.post("/auth/login", Auth.createLoginLinks);
-app.post("/auth/logout", [withAuth], Auth.logout);
-
 // Users
 app.get("/orgs/:orgId/users", [withAuth], Orgs.users);
 app.get("/users/self", [withAuth], Users.self);
@@ -127,6 +125,6 @@ function haltOnTimedout(req, res, next) {
   if (!req.timedout) next();
 }
 
-app.listen(PORT, () => {
-  console.log(`Server running on http://localhost:${PORT}`);
+app.listen(4000, () => {
+  console.log(`Server running on http://localhost:4000`);
 });

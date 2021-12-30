@@ -1,11 +1,12 @@
 import * as dotenv from "dotenv";
-import * as dynamodb from "@aws-cdk/aws-dynamodb";
-import * as lambda from "@aws-cdk/aws-lambda";
 import * as path from "path";
-import * as lambdaEventSources from "@aws-cdk/aws-lambda-event-sources";
-import { NodejsFunction } from "@aws-cdk/aws-lambda-nodejs";
 import * as cdk from "@aws-cdk/core";
-import * as events from "@aws-cdk/aws-events";
+import { Table } from "@aws-cdk/aws-dynamodb";
+import { EventBus } from "@aws-cdk/aws-events";
+import { NodejsFunction } from "@aws-cdk/aws-lambda-nodejs";
+import { DynamoEventSource } from "@aws-cdk/aws-lambda-event-sources";
+import { Runtime, Architecture, StartingPosition } from "@aws-cdk/aws-lambda";
+
 const resultDotEnv = dotenv.config({
   path: __dirname + `../../.env.${process.env.NODE_ENV}`,
 });
@@ -15,7 +16,7 @@ if (resultDotEnv.error) {
 }
 
 interface StreamProcessorStackProps extends cdk.StackProps {
-  table: dynamodb.Table;
+  table: Table;
 }
 export default class StreamProcessorStack extends cdk.Stack {
   StreamProcessorFunction: NodejsFunction;
@@ -34,8 +35,8 @@ export default class StreamProcessorStack extends cdk.Stack {
         functionName: `${process.env.NODE_ENV}-StreamProcessor`,
         memorySize: 256,
         timeout: cdk.Duration.seconds(5),
-        runtime: lambda.Runtime.NODEJS_14_X,
-        architecture: lambda.Architecture.ARM_64,
+        runtime: Runtime.NODEJS_14_X,
+        architecture: Architecture.ARM_64,
         bundling: {
           minify: true,
           externalModules: ["aws-sdk"],
@@ -47,23 +48,20 @@ export default class StreamProcessorStack extends cdk.Stack {
       }
     );
 
-    const dynamoStreams = new lambdaEventSources.DynamoEventSource(
-      props.table,
-      {
-        startingPosition: lambda.StartingPosition.LATEST,
-        retryAttempts: 3,
-        batchSize: 1, // TODO re-evaluate this amount
-        // TODO DLQ
-      }
-    );
+    const dynamoStreams = new DynamoEventSource(props.table, {
+      startingPosition: StartingPosition.LATEST,
+      retryAttempts: 3,
+      batchSize: 1, // TODO re-evaluate this amount
+      // TODO DLQ
+    });
     // Subscribe our lambda to the stream
     this.StreamProcessorFunction.addEventSource(dynamoStreams);
 
     // Give our lambda acccess to the push events into EB
-    const bus = events.EventBus.fromEventBusName(
+    const bus = EventBus.fromEventBusName(
       this,
-      `${process.env.NODE_ENV}-EventBus`,
-      "default"
+      `EventBus`,
+      `${process.env.NODE_ENV}-EventBus`
     );
 
     bus.grantPutEventsTo(this.StreamProcessorFunction);

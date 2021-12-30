@@ -1,10 +1,11 @@
 import * as dotenv from "dotenv";
-import * as dynamodb from "@aws-cdk/aws-dynamodb";
 import * as cdk from "@aws-cdk/core";
 import * as sfn from "@aws-cdk/aws-stepfunctions";
 import * as tasks from "@aws-cdk/aws-stepfunctions-tasks";
-import * as logs from "@aws-cdk/aws-logs";
+import { LogGroup } from "@aws-cdk/aws-logs";
+import { Table } from "@aws-cdk/aws-dynamodb";
 import { EMAILS, ENTITY_TYPES, LOGIN_METHODS } from "../Config";
+
 const resultDotEnv = dotenv.config({
   path: __dirname + `../../.env.${process.env.NODE_ENV}`,
 });
@@ -14,7 +15,7 @@ if (resultDotEnv.error) {
 }
 
 interface CommsMachineProps extends cdk.StackProps {
-  table: dynamodb.Table;
+  table: Table;
 }
 
 export default class CommsMachineStack extends cdk.Stack {
@@ -224,7 +225,7 @@ export default class CommsMachineStack extends cdk.Stack {
         ),
         sendOrgInvite
       );
-    const log = new logs.LogGroup(this, "CommsMachineLogGroup");
+    const log = new LogGroup(this, "CommsMachineLogGroup");
 
     this.CommsMachine = new sfn.StateMachine(this, "CommsMachine", {
       stateMachineName: `${process.env.NODE_ENV}-CommsMachine`,

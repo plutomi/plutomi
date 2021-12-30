@@ -39,7 +39,9 @@ export async function main(
       cookieData: unsealedData || "No data in seal",
     }),
     statusCode: 200,
-    cookies: [`${cookieName}=${seal || encryptedCookie}; Secure; httpOnly`],
+    cookies: [`${cookieName}=${seal || encryptedCookie}; Secure; httpOnly;`],
   };
   return response;
 }
+
+

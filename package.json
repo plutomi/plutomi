@@ -5,7 +5,7 @@
   "scripts": {
     "build": "next build",
     "lint": "next lint",
-    "dev": "cross-env NODE_ENV=development cdk deploy development-DynamoDBStack development-StreamProcessorStack development-APIStack development-CommsMachineStack development-EventBridgeStack && next dev",
+    "dev": "cross-env NODE_ENV=development cdk deploy development-DynamoDBStack development-StreamProcessorStack development-APIStack development-CommsMachineStack development-EventBridgeStack development-APIAuthServiceStack && next dev",
     "deploy-prod": "cross-env NODE_ENV=production  cdk deploy production-DynamoDBStack production-StreamProcessorStack production-APIStack production-CommsMachineStack production-EventBridgeStack FrontendStack"
   },
   "dependencies": {
@@ -14,11 +14,7 @@
     "@aws-cdk/aws-certificatemanager": "1.134.0",
     "@aws-cdk/aws-cloudfront-origins": "1.134.0",
     "@aws-cdk/aws-dynamodb": "1.134.0",
-    "@aws-cdk/aws-ec2": "1.134.0",
     "@aws-cdk/aws-ecr": "1.134.0",
-    "@aws-cdk/aws-ecs": "1.134.0",
-    "@aws-cdk/aws-ecs-patterns": "1.134.0",
-    "@aws-cdk/aws-elasticloadbalancingv2": "1.134.0",
     "@aws-cdk/aws-events": "^1.134.0",
     "@aws-cdk/aws-events-targets": "^1.134.0",
     "@aws-cdk/aws-iam": "1.134.0",

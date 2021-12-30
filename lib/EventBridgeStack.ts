@@ -1,9 +1,9 @@
 import * as dotenv from "dotenv";
 import * as cdk from "@aws-cdk/core";
-import * as events from "@aws-cdk/aws-events";
-import * as sfn from "@aws-cdk/aws-stepfunctions";
-import * as targets from "@aws-cdk/aws-events-targets";
 import { ENTITY_TYPES } from "../Config";
+import { EventBus, Rule } from "@aws-cdk/aws-events";
+import { StateMachine } from "@aws-cdk/aws-stepfunctions";
+import { SfnStateMachine } from "@aws-cdk/aws-events-targets";
 const resultDotEnv = dotenv.config({
   path: __dirname + `../../.env.${process.env.NODE_ENV}`,
 });
@@ -13,7 +13,7 @@ if (resultDotEnv.error) {
 }
 
 interface EventBridgeStackProps extends cdk.StackProps {
-  CommsMachine: sfn.StateMachine;
+  CommsMachine: StateMachine;
 }
 export default class EventBridgeStack extends cdk.Stack {
   /**
@@ -26,16 +26,16 @@ export default class EventBridgeStack extends cdk.Stack {
     super(scope, id, props);
 
     // Create a new event bus
-    const bus = new events.EventBus(this, "bus", {
+    const bus = new EventBus(this, `EventBus`, {
       eventBusName: `${process.env.NODE_ENV}-EventBus`,
     });
 
     // We want to send all communication events to the step function, we can handle routing there
-    new events.Rule(this, "NewUserRule", {
+    new Rule(this, "NewUserRule", {
       eventBus: bus,
       description: "A new user has been signed up and verified their email",
       ruleName: "NewUserRule",
-      targets: [new targets.SfnStateMachine(props.CommsMachine)],
+      targets: [new SfnStateMachine(props.CommsMachine)],
       eventPattern: {
         source: ["dynamodb.streams"],
         detail: {

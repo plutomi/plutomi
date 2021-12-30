@@ -1,7 +1,7 @@
 import * as dotenv from "dotenv";
 import * as cdk from "@aws-cdk/core";
-import { NextJSLambdaEdge } from "@sls-next/cdk-construct";
 import { HostedZone } from "@aws-cdk/aws-route53";
+import { NextJSLambdaEdge } from "@sls-next/cdk-construct";
 import { Certificate } from "@aws-cdk/aws-certificatemanager";
 
 const resultDotEnv = dotenv.config({

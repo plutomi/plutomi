@@ -1,15 +1,16 @@
-import lambda = require("@aws-cdk/aws-lambda");
-import integrations = require("@aws-cdk/aws-apigatewayv2-integrations");
+import { LambdaProxyIntegration } from "@aws-cdk/aws-apigatewayv2-integrations";
+import { HttpApi, HttpMethod } from "@aws-cdk/aws-apigatewayv2";
+import { Runtime, Architecture } from "@aws-cdk/aws-lambda";
 import { NodejsFunction } from "@aws-cdk/aws-lambda-nodejs";
-import * as path from "path";
+import { Policy, PolicyStatement } from "@aws-cdk/aws-iam";
+import { Table } from "@aws-cdk/aws-dynamodb";
 import * as cdk from "@aws-cdk/core";
-import * as dynamodb from "@aws-cdk/aws-dynamodb";
-import * as apigw from "@aws-cdk/aws-apigatewayv2";
+import * as path from "path";
 const DEFAULT_LAMBDA_CONFIG = {
   memorySize: 256,
   timeout: cdk.Duration.seconds(5),
-  runtime: lambda.Runtime.NODEJS_14_X,
-  architecture: lambda.Architecture.ARM_64,
+  runtime: Runtime.NODEJS_14_X,
+  architecture: Architecture.ARM_64,
   bundling: {
     minify: true,
     externalModules: ["aws-sdk"],
@@ -18,8 +19,8 @@ const DEFAULT_LAMBDA_CONFIG = {
 };
 
 interface APIAuthServiceProps extends cdk.StackProps {
-  table: dynamodb.Table;
-  api: apigw.HttpApi;
+  table: Table;
+  api: HttpApi;
 }
 
 /**
@@ -34,23 +35,46 @@ export default class APIAuthServiceStack extends cdk.Stack {
   constructor(scope: cdk.Construct, id: string, props?: APIAuthServiceProps) {
     super(scope, id, props);
 
+    /**
+     * Request login link
+     */
+    const requestLoginLinkFunction = new NodejsFunction(
+      this,
+      `${process.env.NODE_ENV}-request-login-link-function`,
+      {
+        functionName: `${process.env.NODE_ENV}-request-login-link-function`,
+        ...DEFAULT_LAMBDA_CONFIG,
+        environment: {
+          DYNAMO_TABLE_NAME: props.table.tableName,
+          IRON_SEAL_PASSWORD: process.env.IRON_SEAL_PASSWORD,
+        },
+        entry: path.join(__dirname, `../functions/auth/request-login-link.ts`),
+      }
+    );
     props.api.addRoutes({
       path: "/request-login-link",
-      methods: [apigw.HttpMethod.POST],
-      integration: new integrations.LambdaProxyIntegration({
-        handler: new NodejsFunction(
-          this,
-          process.env.NODE_ENV + `-request-login-link-function`,
-          {
-            functionName: process.env.NODE_ENV + "-request-login-link-function",
-            ...DEFAULT_LAMBDA_CONFIG,
-            entry: path.join(
-              __dirname,
-              `../functions/auth/request-login-link.ts`
-            ),
-          }
-        ),
+      methods: [HttpMethod.POST],
+      integration: new LambdaProxyIntegration({
+        handler: requestLoginLinkFunction,
       }),
     });
+    // Grant minimum permissions
+    const dynamoAccessPolicy = new PolicyStatement({
+      actions: ["dynamodb:Query", "dynamodb:PutItem", "dynamodb:GetItem"],
+      resources: [
+        `arn:aws:dynamodb:${cdk.Stack.of(this).region}:${
+          cdk.Stack.of(this).account
+        }:table/${props.table.tableName}`,
+        `arn:aws:dynamodb:${cdk.Stack.of(this).region}:${
+          cdk.Stack.of(this).account
+        }:table/${props.table.tableName}/index/*`,
+      ],
+    });
+
+    requestLoginLinkFunction.role.attachInlinePolicy(
+      new Policy(this, "read-query-put-dynamo-policy", {
+        statements: [dynamoAccessPolicy],
+      })
+    );
   }
 }
