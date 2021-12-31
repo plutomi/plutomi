@@ -46,7 +46,7 @@ export default class APIAuthServiceStack extends cdk.Stack {
         ...DEFAULT_LAMBDA_CONFIG,
         environment: {
           DYNAMO_TABLE_NAME: props.table.tableName,
-          IRON_SEAL_PASSWORD: process.env.IRON_SEAL_PASSWORD,
+          LOGIN_LINKS_PASSWORD: process.env.LOGIN_LINKS_PASSWORD,
         },
         entry: path.join(__dirname, `../functions/auth/request-login-link.ts`),
       }
@@ -88,7 +88,8 @@ export default class APIAuthServiceStack extends cdk.Stack {
         ...DEFAULT_LAMBDA_CONFIG,
         environment: {
           DYNAMO_TABLE_NAME: props.table.tableName,
-          IRON_SEAL_PASSWORD: process.env.IRON_SEAL_PASSWORD,
+          LOGIN_LINKS_PASSWORD: process.env.LOGIN_LINKS_PASSWORD,
+          SESSION_PASSWORD: process.env.SESSION_PASSWORD,
         },
         entry: path.join(__dirname, `../functions/auth/login.ts`),
       }
@@ -124,5 +125,25 @@ export default class APIAuthServiceStack extends cdk.Stack {
         statements: [loginFunctionPolicy],
       })
     );
+
+    /**
+     * Logout
+     */
+    const logoutFunction = new NodejsFunction(
+      this,
+      `${process.env.NODE_ENV}-logout-function`,
+      {
+        functionName: `${process.env.NODE_ENV}-logout-function`,
+        ...DEFAULT_LAMBDA_CONFIG,
+        entry: path.join(__dirname, `../functions/auth/logout.ts`),
+      }
+    );
+    props.api.addRoutes({
+      path: "/logout",
+      methods: [HttpMethod.POST],
+      integration: new LambdaProxyIntegration({
+        handler: logoutFunction,
+      }),
+    });
   }
 }

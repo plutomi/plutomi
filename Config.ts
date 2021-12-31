@@ -3,7 +3,7 @@ export const API_SUBDOMAIN =
   process.env.NODE_ENV === "production" ? "api" : "dev";
 export const API_DOMAIN = `${API_SUBDOMAIN}.${DOMAIN_NAME}`;
 export const API_URL = `https://${API_DOMAIN}`; // API Gateway does not redirect to https :/
-
+export const WEBSITE_URL = `https://${DOMAIN_NAME}`;
 export enum ENTITY_TYPES {
   APPLICANT = "APPLICANT",
   APPLICANT_RESPONSE = "APPLICANT_RESPONSE",
@@ -75,8 +75,13 @@ export enum DEFAULTS {
 }
 
 export const LOGIN_LINK_SETTINGS = {
-  password: process.env.IRON_SEAL_PASSWORD,
+  password: process.env.LOGIN_LINKS_PASSWORD,
   ttl: 900, // In seconds, how long should login links be valid for
+};
+
+export const SESSION_SETTINGS = {
+  password: process.env.SESSION_PASSWORD,
+  ttl: 43200, // In seconds, how long should sessions be valid for (12 hours default)
 };
 export const EMAILS = {
   SUPPORT: "support@plutomi.com",

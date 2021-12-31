@@ -11,7 +11,6 @@ import express from "express";
 import { metadata } from "./controllers/Metadata";
 import listEndpoints from "express-list-endpoints";
 import * as PublicInfo from "./controllers/PublicInfo";
-import * as Auth from "./controllers/Auth";
 import * as Users from "./controllers/Users";
 import * as Invites from "./controllers/Invites";
 import * as Orgs from "./controllers/Orgs";
@@ -19,14 +18,9 @@ import * as Questions from "./controllers/Questions";
 import * as Stages from "./controllers/Stages";
 import * as Openings from "./controllers/Openings";
 import * as Applicants from "./controllers/Applicants";
-import * as Emails from "./controllers/Emails";
 import withAuth from "./middleware/withAuth";
 import routeNotFound from "./middleware/routeNotFound";
-const timeout = require("connect-timeout");
 const app = express();
-
-// Auth
-app.post("/auth/logout", [withAuth], Auth.logout);
 
 // Public info
 app.get("/public/:orgId", PublicInfo.getOrgInfo);
@@ -93,20 +87,3 @@ app.get("/users/:userId/invites", [withAuth], Users.getInvites);
 app.post("/invites", [withAuth], Invites.create);
 app.post("/invites/:inviteId", [withAuth], Invites.accept);
 app.delete("/invites/:inviteId", [withAuth], Invites.reject);
-
-// Misc
-app.get("/unsubscribe/:hash", Emails.unsubscribe);
-// ------------------------ DO NOT TOUCH BELOW THIS LINE ---------------------------
-const endpoints = listEndpoints(app);
-app.set("endpoints", endpoints);
-app.get("/", metadata);
-app.all("*", routeNotFound);
-
-// Catch timeouts
-function haltOnTimedout(req, res, next) {
-  if (!req.timedout) next();
-}
-
-app.listen(4000, () => {
-  console.log(`Server running on http://localhost:4000`);
-});

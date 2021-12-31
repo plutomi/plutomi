@@ -1,10 +1,10 @@
 import * as dotenv from "dotenv";
 import * as cdk from "@aws-cdk/core";
-import { HttpApi, DomainName } from "@aws-cdk/aws-apigatewayv2";
+import { HttpApi, DomainName, CorsHttpMethod } from "@aws-cdk/aws-apigatewayv2";
 import { Certificate } from "@aws-cdk/aws-certificatemanager";
 import { HostedZone, ARecord, RecordTarget } from "@aws-cdk/aws-route53";
 import { ApiGatewayv2DomainProperties } from "@aws-cdk/aws-route53-targets";
-import { API_DOMAIN, API_SUBDOMAIN, API_URL, DOMAIN_NAME } from "../Config";
+import { API_DOMAIN, API_SUBDOMAIN, DOMAIN_NAME, WEBSITE_URL } from "../Config";
 const resultDotEnv = dotenv.config({
   path: __dirname + `../../.env.${process.env.NODE_ENV}`,
 });
@@ -46,6 +46,18 @@ export default class APIStack extends cdk.Stack {
     this.api = new HttpApi(this, `${process.env.NODE_ENV}-APIEndpoint`, {
       defaultDomainMapping: {
         domainName: domain,
+      },
+      corsPreflight: {
+        allowMethods: [
+          CorsHttpMethod.OPTIONS,
+          CorsHttpMethod.GET,
+          CorsHttpMethod.POST,
+          CorsHttpMethod.PUT,
+          CorsHttpMethod.PATCH,
+          CorsHttpMethod.DELETE,
+        ],
+        allowCredentials: true,
+        allowOrigins: [WEBSITE_URL],
       },
     });
 

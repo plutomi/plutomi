@@ -15,15 +15,6 @@ export default async function CreateUser(
 
   const userId = nanoid(ID_LENGTHS.USER);
 
-  const unsubscribeHash = await sealData(
-    { userId: userId, entityType: ENTITY_TYPES.USER },
-    {
-      // TODO try catch
-      password: process.env.IRON_SEAL_PASSWORD,
-      ttl: 0,
-    }
-  );
-
   const newUser: DynamoNewUser = {
     PK: `${ENTITY_TYPES.USER}#${userId}`,
     SK: ENTITY_TYPES.USER,
@@ -34,13 +25,14 @@ export default async function CreateUser(
     entityType: ENTITY_TYPES.USER,
     createdAt: Time.currentISO(),
     orgId: DEFAULTS.NO_ORG,
+    totalInvites: 0, // TODO when creating an invite, a user is created. We should set this to 1!
     orgJoinDate: DEFAULTS.NO_ORG,
     GSI1PK: `${ENTITY_TYPES.ORG}#${DEFAULTS.NO_ORG}#${ENTITY_TYPES.USER}S`,
     GSI1SK:
       firstName && lastName ? `${firstName} ${lastName}` : DEFAULTS.FULL_NAME,
     GSI2PK: email.toLowerCase().trim(),
     GSI2SK: ENTITY_TYPES.USER,
-    unsubscribeHash: unsubscribeHash,
+    unsubscribeHash: nanoid(10),
     canReceiveEmails: true,
     verifiedEmail: false,
   };

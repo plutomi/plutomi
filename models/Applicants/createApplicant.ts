@@ -20,19 +20,6 @@ export default async function Create(
   const now = Time.currentISO();
   const applicantId = nanoid(ID_LENGTHS.APPLICANT);
 
-  const unsubscribeHash = await sealData(
-    {
-      applicantId: applicantId,
-      orgId: orgId,
-      entityType: ENTITY_TYPES.APPLICANT,
-    },
-    {
-      // TODO try catch
-      password: process.env.IRON_SEAL_PASSWORD,
-      ttl: 0,
-    }
-  );
-
   const newApplicant: DynamoNewApplicant = {
     PK: `${ENTITY_TYPES.APPLICANT}#${applicantId}`,
     SK: ENTITY_TYPES.APPLICANT,
@@ -48,7 +35,7 @@ export default async function Create(
     // TODO add phone number
     openingId: openingId,
     stageId: stageId,
-    unsubscribeHash: unsubscribeHash,
+    unsubscribeHash: nanoid(10),
     canReceiveEmails: true,
     // TODO Might need to be sharded on high volumes
     // Max seen is 75k per stage (on hold)

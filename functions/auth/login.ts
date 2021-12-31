@@ -5,12 +5,13 @@ import {
   DOMAIN_NAME,
   LOGIN_LINK_SETTINGS,
   LOGIN_METHODS,
+  SESSION_SETTINGS,
 } from "../../Config";
 import errorFormatter from "../../utils/errorFormatter";
 import * as Users from "../../models/Users";
 import { sealData, unsealData } from "iron-session";
-import { keepProperties, removeProperties } from "../../utils/sanitize";
-import { DynamoNewApplicant, DynamoNewUser } from "../../types/dynamo";
+import { keepProperties } from "../../utils/sanitize";
+import { DynamoNewUser } from "../../types/dynamo";
 export interface RequestLoginLinkAPIBody {
   email: string;
   loginMethod: LOGIN_METHODS;
@@ -58,7 +59,7 @@ export async function main(
     };
     return response;
   }
-  // If the link expired, these will be undefined
+  // If the seal expired, these will be undefined
   if (!userId || !loginLinkId) {
     const response: APIGatewayProxyResultV2 = {
       statusCode: 401,
@@ -129,14 +130,10 @@ export async function main(
     "orgId",
   ]);
 
-  const encryptedCookie = await sealData(cleanUser, {
-    password:
-      "fasdhiopuhdsafoiahdiojuashiodhasiodhiosahdioahsiodkhasihdiashdijashdkjlashdkjlashdkljahsdkljhasldkhaskdljhaskldjhas",
-    ttl: 900000,
-  });
+  const encryptedCookie = await sealData(cleanUser, SESSION_SETTINGS);
   const response: APIGatewayProxyResultV2 = {
     cookies: [
-      `${DEFAULTS.COOKIE_NAME}=${encryptedCookie}; Secure; httpOnly; sameSite=Lax; Domain=${DOMAIN_NAME}`,
+      `${DEFAULTS.COOKIE_NAME}=${encryptedCookie}; Secure; HttpOnly; SameSite=Lax; Domain=${DOMAIN_NAME}`,
     ],
     statusCode: 307,
     headers: {
