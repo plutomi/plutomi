@@ -2,6 +2,7 @@ import AlreadySignedIn from "../components/AlreadySignedIn";
 import CustomLink from "../components/CustomLink";
 import Link from "../components/CustomLink";
 import LoginHomepage from "../components/LoginHomepage";
+import { DOMAIN_NAME } from "../Config";
 import useSelf from "../SWR/useSelf";
 const faqs = [
   {
@@ -96,7 +97,7 @@ export default function FAQ() {
           <div className="mt-32">
             {!user || isUserError ? (
               <LoginHomepage
-                callbackUrl={`${process.env.NEXT_PUBLIC_WEBSITE_URL}/dashboard`} // TODO fallback url is already set im pretty sure
+                callbackUrl={`${DOMAIN_NAME}/dashboard`} // TODO fallback url is already set im pretty sure
               />
             ) : (
               <AlreadySignedIn />

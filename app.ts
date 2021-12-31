@@ -8,8 +8,6 @@ if (resultDotEnv.error) {
 }
 
 import express from "express";
-import helmet from "helmet";
-import cors from "cors";
 import { metadata } from "./controllers/Metadata";
 import listEndpoints from "express-list-endpoints";
 import * as PublicInfo from "./controllers/PublicInfo";
@@ -22,28 +20,12 @@ import * as Stages from "./controllers/Stages";
 import * as Openings from "./controllers/Openings";
 import * as Applicants from "./controllers/Applicants";
 import * as Emails from "./controllers/Emails";
-import withCleanOrgId from "./middleware/withCleanOrgId";
 import withAuth from "./middleware/withAuth";
 import routeNotFound from "./middleware/routeNotFound";
-import { sessionSettings } from "./Config";
 const timeout = require("connect-timeout");
 const app = express();
-app.use(timeout("5s"));
-app.use(
-  cors({
-    credentials: true,
-    origin: process.env.WEBSITE_URL,
-  })
-);
-app.use(express.json());
-app.use(helmet());
-app.set("trust proxy", 1);
-app.use(sessionSettings); // Adds req.session to each route, if applicable
-app.use(withCleanOrgId); // If the route has an :orgId, normalize it
-app.use(haltOnTimedout);
 
 // Auth
-app.get("/auth/login", Auth.login);
 app.post("/auth/logout", [withAuth], Auth.logout);
 
 // Public info

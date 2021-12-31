@@ -59,7 +59,7 @@ export default class APIAuthServiceStack extends cdk.Stack {
       }),
     });
     // Grant minimum permissions
-    const dynamoAccessPolicy = new PolicyStatement({
+    const requestLoginLinkFunctionPolicy = new PolicyStatement({
       actions: ["dynamodb:Query", "dynamodb:PutItem", "dynamodb:GetItem"],
       resources: [
         `arn:aws:dynamodb:${cdk.Stack.of(this).region}:${
@@ -72,8 +72,56 @@ export default class APIAuthServiceStack extends cdk.Stack {
     });
 
     requestLoginLinkFunction.role.attachInlinePolicy(
-      new Policy(this, "read-query-put-dynamo-policy", {
-        statements: [dynamoAccessPolicy],
+      new Policy(this, "request-login-link-function-policy", {
+        statements: [requestLoginLinkFunctionPolicy],
+      })
+    );
+
+    /**
+     * Login
+     */
+    const loginFunction = new NodejsFunction(
+      this,
+      `${process.env.NODE_ENV}-login-function`,
+      {
+        functionName: `${process.env.NODE_ENV}-login-function`,
+        ...DEFAULT_LAMBDA_CONFIG,
+        environment: {
+          DYNAMO_TABLE_NAME: props.table.tableName,
+          IRON_SEAL_PASSWORD: process.env.IRON_SEAL_PASSWORD,
+        },
+        entry: path.join(__dirname, `../functions/auth/login.ts`),
+      }
+    );
+    props.api.addRoutes({
+      path: "/login",
+      methods: [HttpMethod.GET],
+      integration: new LambdaProxyIntegration({
+        handler: loginFunction,
+      }),
+    });
+
+    // Grant minimum permissions
+    const loginFunctionPolicy = new PolicyStatement({
+      actions: [
+        "dynamodb:Query",
+        "dynamodb:PutItem",
+        "dynamodb:GetItem",
+        "dynamodb:DeleteItem",
+      ],
+      resources: [
+        `arn:aws:dynamodb:${cdk.Stack.of(this).region}:${
+          cdk.Stack.of(this).account
+        }:table/${props.table.tableName}`,
+        `arn:aws:dynamodb:${cdk.Stack.of(this).region}:${
+          cdk.Stack.of(this).account
+        }:table/${props.table.tableName}/index/*`,
+      ],
+    });
+
+    loginFunction.role.attachInlinePolicy(
+      new Policy(this, "login-function-policy", {
+        statements: [loginFunctionPolicy],
       })
     );
   }

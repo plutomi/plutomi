@@ -5,6 +5,7 @@ import useAllStagesInOpening from "../../../SWR/useAllStagesInOpening";
 import useOpeningById from "../../../SWR/useOpeningById";
 import { CUSTOM_QUERY } from "../../../types/main";
 import { useEffect } from "react";
+import { DOMAIN_NAME } from "../../../Config";
 export default function Openings() {
   const router = useRouter();
   const { openingId } = router.query as Pick<CUSTOM_QUERY, "openingId">;
@@ -25,12 +26,12 @@ export default function Openings() {
     // Redirect to the first stage
     if (opening.totalStages > 0) {
       router.push(
-        `${process.env.NEXT_PUBLIC_WEBSITE_URL}/openings/${openingId}/stages/${stages[0].stageId}/applicants` // TODO should this end with applicants?
+        `${DOMAIN_NAME}/openings/${openingId}/stages/${stages[0].stageId}/applicants` // TODO should this end with applicants?
       );
     } else {
       // Redirect to opening settings if no stages
       router.push(
-        `${process.env.NEXT_PUBLIC_WEBSITE_URL}/openings/${openingId}/settings`
+        `${DOMAIN_NAME}/openings/${openingId}/settings`
       );
     }
   }, [router.isReady]);

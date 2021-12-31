@@ -1,5 +1,6 @@
 import {
   DEFAULTS,
+  DOMAIN_NAME,
   EMAILS,
   ENTITY_TYPES,
   LOGIN_METHODS,
@@ -94,14 +95,13 @@ export const login = async (req: Request, res: Response) => {
 
   // If a user has invites, redirect them to the invites page on login
   if (req.session.user.totalInvites > 0) {
-    res.redirect(`${process.env.WEBSITE_URL}/invites`);
+    res.redirect(`${DOMAIN_NAME}/invites`);
     return;
   }
 
   res.redirect(307, callbackUrl);
   return;
 };
-
 
 export const logout = async (req: Request, res: Response) => {
   req.session.destroy();

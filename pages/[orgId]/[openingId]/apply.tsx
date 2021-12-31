@@ -6,6 +6,7 @@ import usePublicOpeningById from "../../../SWR/usePublicOpeningById";
 import OpeningApplyPageContent from "../../../components/Openings/Public/OpeningApplyPageContent";
 import OpeningApplyPageHeader from "../../../components/Openings/Public/OpeningApplyPageHeader";
 import { CUSTOM_QUERY } from "../../../types/main";
+import { DOMAIN_NAME } from "../../../Config";
 export default function Apply() {
   const router = useRouter();
   const { orgId, openingId } = router.query as Pick<
@@ -32,7 +33,7 @@ export default function Apply() {
         <h1 className="text-2xl text-center font-bold">
           Unfortunately, you cannot apply to this opening.
         </h1>
-        <GoBack url={`${process.env.NEXT_PUBLIC_WEBSITE_URL}/${orgId}/apply`} />
+        <GoBack url={`${DOMAIN_NAME}/${orgId}/apply`} />
       </div>
     );
   }

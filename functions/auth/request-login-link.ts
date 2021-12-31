@@ -6,12 +6,12 @@ import {
   LOGIN_METHODS,
   TIME_UNITS,
 } from "../../Config";
-import formattedResponse from "../../utils/formattedResponse";
 import errorFormatter from "../../utils/errorFormatter";
 import * as Time from "../../utils/time";
 import * as Users from "../../models/Users";
 import { nanoid } from "nanoid";
 import { sealData } from "iron-session";
+import { API_URL, DOMAIN_NAME } from "../../Config";
 export interface RequestLoginLinkAPIBody {
   email: string;
   loginMethod: LOGIN_METHODS;
@@ -31,9 +31,13 @@ export async function main(
 
   // Validate input
   try {
-    await schema.validateAsync({ ...body, callbackUrl: callbackUrl });
+    await schema.validateAsync({ ...body, callbackUrl });
   } catch (error) {
-    return formattedResponse(400, { message: `${error.message}` });
+    const response: APIGatewayProxyResultV2 = {
+      statusCode: 400,
+      body: JSON.stringify({ message: `${error.message}` }),
+    };
+    return response;
   }
 
   // If a user is signing in for the first time, create an account for them
@@ -41,10 +45,14 @@ export async function main(
 
   if (userError) {
     const formattedError = errorFormatter(userError);
-    return formattedResponse(formattedError.httpStatusCode, {
-      message: "An error ocurred getting your user info",
-      ...formattedError,
-    });
+    const response: APIGatewayProxyResultV2 = {
+      statusCode: formattedError.httpStatusCode,
+      body: JSON.stringify({
+        message: "An error ocurred getting your user info",
+        ...formattedError,
+      }),
+    };
+    return response;
   }
 
   if (!user) {
@@ -54,20 +62,27 @@ export async function main(
 
     if (createUserError) {
       const formattedError = errorFormatter(createUserError);
-      return formattedResponse(formattedError.httpStatusCode, {
-        message: "An error ocurred creating your account",
-        ...formattedError,
-      });
+      const response: APIGatewayProxyResultV2 = {
+        statusCode: formattedError.httpStatusCode,
+        body: JSON.stringify({
+          message: "An error ocurred creating your account",
+          ...formattedError,
+        }),
+      };
+      return response;
     }
     user = createdUser;
   }
 
-
   // Allow google login even if a user opted out of emails // TODO revisit once unsubscribe has been implemented
   if (!user.canReceiveEmails && body.loginMethod === LOGIN_METHODS.EMAIL) {
-    return formattedResponse(403, {
-      message: `${user.email} is unable to receive emails, please reach out to support@plutomi.com to opt back in!`,
-    });
+    const response: APIGatewayProxyResultV2 = {
+      statusCode: 403,
+      body: JSON.stringify({
+        message: `${user.email} is unable to receive emails, please reach out to support@plutomi.com to opt back in!`,
+      }),
+    };
+    return response;
   }
 
   // Check if a user is  making too many requests for a login link by comparing the time of their last link
@@ -77,21 +92,29 @@ export async function main(
 
   if (loginLinkError) {
     const formattedError = errorFormatter(loginLinkError);
-    return formattedResponse(formattedError.httpStatusCode, {
-      message: "An error ocurred getting your login link",
-      ...formattedError,
-    });
+    const response: APIGatewayProxyResultV2 = {
+      statusCode: formattedError.httpStatusCode,
+      body: JSON.stringify({
+        message: "An error ocurred getting your login link",
+        ...formattedError,
+      }),
+    };
+    return response;
   }
   const timeThreshold = Time.pastISO(10, TIME_UNITS.MINUTES);
 
   if (
     latestLink &&
     latestLink.createdAt >= timeThreshold &&
-    !user.email.endsWith(process.env.DOMAIN_NAME) // Allow admins to send multiple login links in a short timespan
+    !user.email.endsWith(DOMAIN_NAME) // Allow admins to send multiple login links in a short timespan
   ) {
-    return formattedResponse(400, {
-      message: "You're doing that too much, please try again later",
-    });
+    const response: APIGatewayProxyResultV2 = {
+      statusCode: 400,
+      body: JSON.stringify({
+        message: "You're doing that too much, please try again later",
+      }),
+    };
+    return response;
   }
 
   // Create a login link for them
@@ -107,10 +130,8 @@ export async function main(
     LOGIN_LINK_SETTINGS
   );
 
-  const loginLinkUrl = `${
-    process.env.API_URL
-  }/auth/login?seal=${seal}&callbackUrl=${
-    callbackUrl ? callbackUrl : process.env.DOMAIN_NAME + DEFAULTS.REDIRECT
+  const loginLinkUrl = `${API_URL}/login?seal=${seal}&callbackUrl=${
+    callbackUrl ? callbackUrl : DOMAIN_NAME + DEFAULTS.REDIRECT
   }`;
 
   /**
@@ -126,18 +147,31 @@ export async function main(
 
   if (creationError) {
     const formattedError = errorFormatter(creationError);
-    return formattedResponse(formattedError.httpStatusCode, {
-      message: "An error ocurred creating your login link",
-      ...formattedError,
-    });
+
+    const response: APIGatewayProxyResultV2 = {
+      statusCode: formattedError.httpStatusCode,
+      body: JSON.stringify({
+        message: "An error ocurred creating your login link",
+        ...formattedError,
+      }),
+    };
+    return response;
   }
 
   // Cannot do serverside redirect from axios POST, client will make the POST instead
   if (body.loginMethod === LOGIN_METHODS.GOOGLE) {
-    return formattedResponse(200, { message: loginLinkUrl });
+    const response: APIGatewayProxyResultV2 = {
+      statusCode: 200,
+      body: JSON.stringify({ message: loginLinkUrl }),
+    };
+    return response;
   }
 
-  return formattedResponse(201, {
-    message: `We've sent a magic login link to your email!`,
-  });
+  const response: APIGatewayProxyResultV2 = {
+    statusCode: 201,
+    body: JSON.stringify({
+      message: `We've sent a magic login link to your email!`,
+    }),
+  };
+  return response;
 }

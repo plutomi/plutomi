@@ -2,6 +2,7 @@ import { Fragment, useState } from "react";
 import { Listbox, Transition } from "@headlessui/react";
 import { CheckIcon, SelectorIcon } from "@heroicons/react/solid";
 import { useRouter } from "next/router";
+import { DOMAIN_NAME } from "../../Config";
 function classNames(...classes) {
   return classes.filter(Boolean).join(" ");
 }
@@ -17,12 +18,10 @@ export default function OpeningsDropdown({ openings, index }) {
     setSelected(newValue);
     if (newValue.stageOrder[0] !== undefined) {
       router.push(
-        `${process.env.NEXT_PUBLIC_WEBSITE_URL}/openings/${newValue.openingId}/stages${newValue.stageOrder[0]}/${newValue.stageOrder[0]}/applicants`
+        `${DOMAIN_NAME}/openings/${newValue.openingId}/stages${newValue.stageOrder[0]}/${newValue.stageOrder[0]}/applicants`
       );
     }
-    router.push(
-      `${process.env.NEXT_PUBLIC_WEBSITE_URL}/openings/${newValue.openingId}/settings`
-    );
+    router.push(`${DOMAIN_NAME}/openings/${newValue.openingId}/settings`);
   };
   return (
     <Listbox value={selected} onChange={handleChange}>

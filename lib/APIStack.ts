@@ -4,7 +4,7 @@ import { HttpApi, DomainName } from "@aws-cdk/aws-apigatewayv2";
 import { Certificate } from "@aws-cdk/aws-certificatemanager";
 import { HostedZone, ARecord, RecordTarget } from "@aws-cdk/aws-route53";
 import { ApiGatewayv2DomainProperties } from "@aws-cdk/aws-route53-targets";
-
+import { API_DOMAIN, API_SUBDOMAIN, API_URL, DOMAIN_NAME } from "../Config";
 const resultDotEnv = dotenv.config({
   path: __dirname + `../../.env.${process.env.NODE_ENV}`,
 });
@@ -21,12 +21,10 @@ export default class APIStack extends cdk.Stack {
   constructor(scope: cdk.Construct, id: string, props?: cdk.StackProps) {
     super(scope, id, props);
 
-    const API_SUBDOMAIN = process.env.NODE_ENV === "production" ? "api" : "dev";
-
     // Retrieves the hosted zone from Route53
     const hostedZone = HostedZone.fromHostedZoneAttributes(this, `HostedZone`, {
       hostedZoneId: process.env.HOSTED_ZONE_ID,
-      zoneName: process.env.DOMAIN_NAME,
+      zoneName: DOMAIN_NAME,
     });
 
     // Retrieves the certificate that we are using for our domain
@@ -40,7 +38,7 @@ export default class APIStack extends cdk.Stack {
 
     // Creates a domain for our API
     const domain = new DomainName(this, `APIDomain`, {
-      domainName: `${API_SUBDOMAIN}.${process.env.DOMAIN_NAME}`,
+      domainName: API_DOMAIN,
       certificate: apiCert,
     });
 
@@ -61,11 +59,6 @@ export default class APIStack extends cdk.Stack {
           domain.regionalHostedZoneId
         )
       ),
-    });
-
-    // Prints the endpoint to the console
-    new cdk.CfnOutput(this, "API URL", {
-      value: this.api.apiEndpoint ?? "Something went wrong with the deploy",
     });
   }
 }

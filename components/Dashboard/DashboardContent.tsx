@@ -8,12 +8,12 @@ import OrgsService from "../../adapters/OrgsService";
 import useStore from "../../utils/store";
 import { OfficeBuildingIcon, PlusIcon } from "@heroicons/react/outline";
 import CreateOrgModal from "../CreateOrgModal";
-import { DEFAULTS } from "../../Config";
+import { DEFAULTS, DOMAIN_NAME } from "../../Config";
 import UsersService from "../../adapters/UsersService";
 export default function DashboardContent() {
   const { user, isUserLoading, isUserError } = useSelf();
   const { org, isOrgLoading, isOrgError } = usePrivateOrgById(user?.orgId);
-  const customApplyLink = `${process.env.NEXT_PUBLIC_WEBSITE_URL}/${org?.orgId}/apply`;
+  const customApplyLink = `${DOMAIN_NAME}/${org?.orgId}/apply`;
 
   const setCreateOrgModalOpen = useStore(
     (state) => state.setCreateOrgModalOpen

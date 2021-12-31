@@ -1,14 +1,9 @@
-import { ironSession } from "iron-session/express";
-// import * as cdk from "@aws-cdk/core";
-// import * as lambda from "@aws-cdk/aws-lambda";
+export const DOMAIN_NAME = `plutomi.com`;
+export const API_SUBDOMAIN =
+  process.env.NODE_ENV === "production" ? "api" : "dev";
+export const API_DOMAIN = `${API_SUBDOMAIN}.${DOMAIN_NAME}`;
+export const API_URL = `https://${API_DOMAIN}`; // API Gateway does not redirect to https :/
 
-export const API_METHODS = {
-  GET: "GET",
-  POST: "POST",
-  PUT: "PUT",
-  OPTIONS: "OPTIONS",
-  DELETE: "DELETE",
-};
 export enum ENTITY_TYPES {
   APPLICANT = "APPLICANT",
   APPLICANT_RESPONSE = "APPLICANT_RESPONSE",
@@ -197,11 +192,3 @@ export const SWR = {
    */
   INVITES_REFRESH_INTERVAL: 10000,
 };
-
-export const sessionSettings = ironSession({
-  cookieName: "plutomi-cookie",
-  password: process.env.IRON_SESSION_PASSWORD_1,
-  cookieOptions: {
-    secure: process.env.NODE_ENV === "production",
-  },
-});

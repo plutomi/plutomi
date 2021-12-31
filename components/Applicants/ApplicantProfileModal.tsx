@@ -12,6 +12,7 @@ import delay from "delay";
 import useApplicantById from "../../SWR/useApplicantById";
 import ApplicantsService from "../../adapters/ApplicantsService";
 import { CUSTOM_QUERY } from "../../types/main";
+import { DOMAIN_NAME } from "../../Config";
 const tabs = [
   { id: 1, name: "Details" },
   { id: 2, name: "History (todo)" },
@@ -188,7 +189,7 @@ export default function ApplicantProfileModal() {
                       <div className="ml-3 h-7 flex items-center space-x-4">
                         <ClickToCopy
                           showText={"Copy Application Link"}
-                          copyText={`${process.env.NEXT_PUBLIC_WEBSITE_URL}/${applicant?.orgId}/applicants/${applicant?.applicantId}`}
+                          copyText={`${DOMAIN_NAME}/${applicant?.orgId}/applicants/${applicant?.applicantId}`}
                         />
                         <button
                           type="button"

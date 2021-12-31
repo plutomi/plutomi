@@ -4,7 +4,13 @@ import * as sfn from "@aws-cdk/aws-stepfunctions";
 import * as tasks from "@aws-cdk/aws-stepfunctions-tasks";
 import { LogGroup } from "@aws-cdk/aws-logs";
 import { Table } from "@aws-cdk/aws-dynamodb";
-import { EMAILS, ENTITY_TYPES, LOGIN_METHODS } from "../Config";
+import {
+  EMAILS,
+  ENTITY_TYPES,
+  LOGIN_METHODS,
+  API_URL,
+  DOMAIN_NAME,
+} from "../Config";
 
 const resultDotEnv = dotenv.config({
   path: __dirname + `../../.env.${process.env.NODE_ENV}`,
@@ -61,7 +67,7 @@ export default class CommsMachineStack extends cdk.Stack {
       iamResources: [
         `arn:aws:ses:${cdk.Stack.of(this).region}:${
           cdk.Stack.of(this).account
-        }:identity/${process.env.DOMAIN_NAME}`,
+        }:identity/${DOMAIN_NAME}`,
       ],
     };
 
@@ -122,7 +128,7 @@ export default class CommsMachineStack extends cdk.Stack {
           },
           Body: {
             Html: {
-              "Data.$": `States.Format('<h1>Click <a href="{}" noreferrer target="_blank" >this link</a> to log in!</h1><p>It will expire {} so you better hurry.</p><p>If you did not request this link you can safely ignore it and <a href="${process.env.API_URL}/unsubscribe/{}" noreferrer target="_blank" >unsubscribe</a>.</p>',
+              "Data.$": `States.Format('<h1>Click <a href="{}" noreferrer target="_blank" >this link</a> to log in!</h1><p>It will expire {} so you better hurry.</p><p>If you did not request this link you can safely ignore it and <a href="${API_URL}/unsubscribe/{}" noreferrer target="_blank" >unsubscribe</a>.</p>',
               $.detail.NewImage.loginLinkUrl, $.detail.NewImage.relativeExpiry, $.detail.NewImage.user.unsubscribeHash)`,
             },
           },
@@ -148,7 +154,7 @@ export default class CommsMachineStack extends cdk.Stack {
             Body: {
               Html: {
                 // TODO add unsubscribe
-                "Data.$": `States.Format('<h1><a href="${process.env.WEBSITE_URL}/{}/applicants/{}" rel=noreferrer target="_blank" >Click this link to view your application!</a></h1><p>If you did not request this link, you can safely ignore it.</p>', 
+                "Data.$": `States.Format('<h1><a href="https://${DOMAIN_NAME}/{}/applicants/{}" rel=noreferrer target="_blank" >Click this link to view your application!</a></h1><p>If you did not request this link, you can safely ignore it.</p>', 
                 $.detail.NewImage.orgId, $.detail.NewImage.applicantId)`,
               },
             },
@@ -173,7 +179,7 @@ export default class CommsMachineStack extends cdk.Stack {
           Body: {
             Html: {
               // TODO add unsubscribe
-              Data: `<h4>You can log in at <a href="${process.env.WEBSITE_URL}" target="_blank" rel=noreferrer>${process.env.WEBSITE_URL}</a> to accept their invite!</h4><p>If you believe this email was received in error, you can safely ignore it.</p>`,
+              Data: `<h4>You can log in at <a href="https://${DOMAIN_NAME}" target="_blank" rel=noreferrer>https://${DOMAIN_NAME}</a> to accept their invite!</h4><p>If you believe this email was received in error, you can safely ignore it.</p>`,
             },
           },
         },

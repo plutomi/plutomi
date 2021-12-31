@@ -3,6 +3,7 @@ import * as cdk from "@aws-cdk/core";
 import { HostedZone } from "@aws-cdk/aws-route53";
 import { NextJSLambdaEdge } from "@sls-next/cdk-construct";
 import { Certificate } from "@aws-cdk/aws-certificatemanager";
+import { DOMAIN_NAME } from "../Config";
 
 const resultDotEnv = dotenv.config({
   path: __dirname + `../../.env.${process.env.NODE_ENV}`,
@@ -25,10 +26,10 @@ export default class FrontendStack extends cdk.Stack {
       // retrieve existing resources, however you could create a new ones in your
       // stack via the relevant constructs
       domain: {
-        domainNames: [process.env.DOMAIN_NAME],
+        domainNames: [DOMAIN_NAME],
         hostedZone: HostedZone.fromHostedZoneAttributes(this, "HostedZone", {
           hostedZoneId: process.env.HOSTED_ZONE_ID,
-          zoneName: process.env.DOMAIN_NAME,
+          zoneName: DOMAIN_NAME,
         }),
         certificate: Certificate.fromCertificateArn(
           this,

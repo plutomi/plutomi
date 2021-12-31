@@ -9,6 +9,7 @@ import { ChevronRightIcon, MailIcon } from "@heroicons/react/outline";
 import _ from "lodash";
 import * as Time from "../utils/time";
 import { nanoid } from "nanoid";
+import { DOMAIN_NAME } from "../Config";
 export default function Main({ commits }) {
   const { user, isUserLoading, isUserError } = useSelf();
   return (
@@ -17,7 +18,7 @@ export default function Main({ commits }) {
         <Hero />
         {!user || isUserError ? (
           <LoginHomepage
-            callbackUrl={`${process.env.NEXT_PUBLIC_WEBSITE_URL}/dashboard`} // TODO fallback url is already set im pretty sure
+            callbackUrl={`${DOMAIN_NAME}/dashboard`} // TODO fallback url is already set im pretty sure
           />
         ) : (
           <AlreadySignedIn />

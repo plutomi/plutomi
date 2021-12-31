@@ -8,6 +8,7 @@ import useOpeningById from "../../SWR/useOpeningById";
 import { useRouter } from "next/router";
 import useOpenings from "../../SWR/useOpenings";
 import { CUSTOM_QUERY } from "../../types/main";
+import { DOMAIN_NAME } from "../../Config";
 export default function StagesHeader() {
   const router = useRouter();
   const { openingId } = router.query as Pick<CUSTOM_QUERY, "openingId">;
@@ -34,7 +35,7 @@ export default function StagesHeader() {
       <p className="mt-2 text-md text-normal sm:mt-0 ">
         <ClickToCopy
           showText={"Application Link"}
-          copyText={`${process.env.NEXT_PUBLIC_WEBSITE_URL}/${user?.orgId}/${opening?.openingId}/apply`}
+          copyText={`${DOMAIN_NAME}/${user?.orgId}/${opening?.openingId}/apply`}
         />
       </p>
       <div className=" flex justify-center">
