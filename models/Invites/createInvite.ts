@@ -5,10 +5,12 @@ import { ID_LENGTHS, ENTITY_TYPES } from "../../Config";
 import { DynamoNewOrgInvite } from "../../types/dynamo";
 import { CreateOrgInviteInput } from "../../types/main";
 import * as Time from "../../utils/time";
-import * as Users from "../Users";
 import { SdkError } from "@aws-sdk/types";
-import { userInfo } from "os";
-import { create } from "lodash";
+
+import {
+  TransactWriteCommandInput,
+  TransactWriteCommand,
+} from "@aws-sdk/lib-dynamodb";
 const { DYNAMO_TABLE_NAME } = process.env;
 /**
  * Invites a user to join your org
@@ -26,25 +28,49 @@ export default async function Create(
       PK: `${ENTITY_TYPES.USER}#${recipient.userId}`,
       SK: `${ENTITY_TYPES.ORG_INVITE}#${inviteId}`,
       orgId: createdBy.orgId,
-      orgName: orgName, // using orgName here because GSI1SK is taken obv
-      createdBy: createdBy,
-      recipient: recipient,
+      orgName, // using orgName here because GSI1SK is taken obv
+      createdBy,
+      recipient,
       entityType: ENTITY_TYPES.ORG_INVITE,
       createdAt: now,
-      expiresAt: expiresAt,
-      inviteId: inviteId,
+      expiresAt,
+      inviteId,
       // TODO TTL
       GSI1PK: `${ENTITY_TYPES.ORG}#${createdBy.orgId}#${ENTITY_TYPES.ORG_INVITE}S`, // Returns all invites sent by an org
       GSI1SK: now,
     };
 
-    const params: PutCommandInput = {
-      Item: newOrgInvite,
-      TableName: DYNAMO_TABLE_NAME,
-      ConditionExpression: "attribute_not_exists(PK)",
+    const transactParams: TransactWriteCommandInput = {
+      TransactItems: [
+        {
+          // Create the org invite
+          Put: {
+            Item: newOrgInvite,
+            TableName: DYNAMO_TABLE_NAME,
+            ConditionExpression: "attribute_not_exists(PK)",
+          },
+        },
+
+        {
+          // Increment the recipient's total invites
+          Update: {
+            Key: {
+              PK: `${ENTITY_TYPES.USER}#${recipient.userId}`,
+              SK: ENTITY_TYPES.USER,
+            },
+            TableName: DYNAMO_TABLE_NAME,
+            UpdateExpression:
+              "SET totalInvites = if_not_exists(totalApplicants, :zero) + :value",
+            ExpressionAttributeValues: {
+              ":zero": 0,
+              ":value": 1,
+            },
+          },
+        },
+      ],
     };
 
-    await Dynamo.send(new PutCommand(params));
+    await Dynamo.send(new TransactWriteCommand(transactParams));
 
     return [null, null];
   } catch (error) {

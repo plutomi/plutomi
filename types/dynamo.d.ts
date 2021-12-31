@@ -353,6 +353,7 @@ interface DynamoNewUser {
   unsubscribeHash: string;
   canReceiveEmails: boolean;
   verifiedEmail: boolean;
+  totalInvites: number;
 }
 
 interface DynamoNewLoginLink {

@@ -69,6 +69,7 @@ export default async function CreateLoginEvent(
               SK: `${ENTITY_TYPES.LOGIN_LINK}#${loginLinkId}`,
             },
             TableName: DYNAMO_TABLE_NAME,
+            ConditionExpression: "attribute_exists(PK)", // Link MUST exist!!!
           },
         },
       ],

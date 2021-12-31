@@ -8,7 +8,9 @@ import {
 } from "../../Config";
 import errorFormatter from "../../utils/errorFormatter";
 import * as Users from "../../models/Users";
-import { unsealData } from "iron-session";
+import { sealData, unsealData } from "iron-session";
+import { keepProperties, removeProperties } from "../../utils/sanitize";
+import { DynamoNewApplicant, DynamoNewUser } from "../../types/dynamo";
 export interface RequestLoginLinkAPIBody {
   email: string;
   loginMethod: LOGIN_METHODS;
@@ -36,11 +38,26 @@ export async function main(
     };
     return response;
   }
+  let userId: string;
+  let loginLinkId: string;
 
-  // Validates the login link when clicked
-  const { userId, loginLinkId }: { userId: string; loginLinkId: string } =
-    await unsealData(seal, LOGIN_LINK_SETTINGS); // TODO replace with iron seal
-
+  // Validate that the login link is 1. Valid - syntax wise & 2. Has valid data
+  try {
+    const data: { userId: string; loginLinkId: string } = await unsealData(
+      seal,
+      LOGIN_LINK_SETTINGS
+    );
+    userId = data.userId;
+    loginLinkId = data.loginLinkId;
+  } catch (error) {
+    const response: APIGatewayProxyResultV2 = {
+      statusCode: 400,
+      body: JSON.stringify({
+        message: "Bad seal",
+      }),
+    };
+    return response;
+  }
   // If the link expired, these will be undefined
   if (!userId || !loginLinkId) {
     const response: APIGatewayProxyResultV2 = {
@@ -56,10 +73,11 @@ export async function main(
 
   if (error) {
     const formattedError = errorFormatter(error);
+
     const response: APIGatewayProxyResultV2 = {
       statusCode: formattedError.httpStatusCode,
       body: JSON.stringify({
-        message: "An error ocurred getting your user info",
+        message: "An error ocurred using your login link",
         ...formattedError,
       }),
     };
@@ -75,6 +93,19 @@ export async function main(
 
   if (failed) {
     const formattedError = errorFormatter(failed);
+
+    // If login link has been used, it will throw this error
+    const LOGIN_LINK_ALREADY_USED_ERROR = `Transaction cancelled, please refer cancellation reasons for specific reasons [None, ConditionalCheckFailed]`;
+    if (formattedError.errorMessage === LOGIN_LINK_ALREADY_USED_ERROR) {
+      const response: APIGatewayProxyResultV2 = {
+        statusCode: 401,
+        body: JSON.stringify({
+          message: "Login link no longer valid",
+        }),
+      };
+      return response;
+    }
+
     const response: APIGatewayProxyResultV2 = {
       statusCode: formattedError.httpStatusCode,
       body: JSON.stringify({
@@ -85,42 +116,29 @@ export async function main(
     return response;
   }
 
-  //   const cleanedUser = Sanitize.clean(user, ENTITY_TYPES.USER); // TODO not working!
-  /**
-   * Get the user's org invites if they're not in an org.
-   * The logic here being, if a user is in an org, what are the chances they're going to join another?
-   *  TODO maybe revisit this?
-   */
+  type SessionData = Pick<
+    DynamoNewUser,
+    "firstName" | "lastName" | "orgId" | "GSI1SK" | "userId"
+  >;
 
-  let userInvites = []; // TODO types array of org invite
-  if (user.orgId === DEFAULTS.NO_ORG) {
-    const [invites, inviteError] = await Users.getInvitesForUser({
-      userId: user.userId,
-    });
+  const cleanUser: SessionData = keepProperties(user, [
+    "firstName",
+    "lastName",
+    "GSI1SK",
+    "userId",
+    "orgId",
+  ]);
 
-    if (inviteError) {
-      const formattedError = errorFormatter(inviteError);
-      const response: APIGatewayProxyResultV2 = {
-        statusCode: formattedError.httpStatusCode,
-        body: JSON.stringify({
-          message: "An error ocurred getting your invites",
-          ...formattedError,
-        }),
-      };
-      return response;
-    }
-    userInvites = invites;
-  }
-
-  //  TODO cookies. Encrypt the user
-  //   req.session.user = cleanedUser;
-  //   req.session.user.totalInvites = userInvites.length;
-  //   await req.session.save();
-
-  // TODO token with session info
+  const encryptedCookie = await sealData(cleanUser, {
+    password:
+      "fasdhiopuhdsafoiahdiojuashiodhasiodhiosahdioahsiodkhasihdiashdijashdkjlashdkjlashdkljahsdkljhasldkhaskdljhaskldjhas",
+    ttl: 900000,
+  });
   const response: APIGatewayProxyResultV2 = {
-    cookies: ["plutomi-cookie=beansbeansbeans; Secure; httpOnly"],
-    statusCode: 200,
+    cookies: [
+      `${DEFAULTS.COOKIE_NAME}=${encryptedCookie}; Secure; httpOnly; sameSite=Lax; Domain=${DOMAIN_NAME}`,
+    ],
+    statusCode: 307,
     headers: {
       Location: callbackUrl,
     },
@@ -128,7 +146,7 @@ export async function main(
   };
 
   // If a user has invites, redirect them to the invites page on login regardless of the callback url
-  if (userInvites.length) {
+  if (user.totalInvites > 0) {
     return {
       ...response,
       headers: {

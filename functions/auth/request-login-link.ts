@@ -158,7 +158,7 @@ export async function main(
     return response;
   }
 
-  // Cannot do serverside redirect from axios POST, client will make the POST instead
+  // Cannot do serverside redirect from axios POST, client will make the POST instead - // TODO revisit this and just have a router.push?
   if (body.loginMethod === LOGIN_METHODS.GOOGLE) {
     const response: APIGatewayProxyResultV2 = {
       statusCode: 200,
