@@ -8,9 +8,7 @@ export async function main(
   // All this does is delete the cookie with Max-Age
   const response: APIGatewayProxyResultV2 = {
     statusCode: 200,
-    cookies: [
-      `${DEFAULTS.COOKIE_NAME}=null; Max-Age=-1; Domain=${DOMAIN_NAME}`,
-    ],
+    cookies: [`${DEFAULTS.COOKIE_NAME}=''; Max-Age=-1; Domain=${DOMAIN_NAME}`],
     body: JSON.stringify({ message: "You've succesfully logged out!" }),
   };
   return response;

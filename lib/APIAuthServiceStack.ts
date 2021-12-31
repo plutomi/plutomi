@@ -16,6 +16,8 @@ const DEFAULT_LAMBDA_CONFIG = {
     externalModules: ["aws-sdk"],
   },
   handler: "main",
+  reservedConcurrentExecutions: 1, // TODO change to sane defaults
+
 };
 
 interface APIAuthServiceProps extends cdk.StackProps {
@@ -43,6 +45,7 @@ export default class APIAuthServiceStack extends cdk.Stack {
       `${process.env.NODE_ENV}-request-login-link-function`,
       {
         functionName: `${process.env.NODE_ENV}-request-login-link-function`,
+        
         ...DEFAULT_LAMBDA_CONFIG,
         environment: {
           DYNAMO_TABLE_NAME: props.table.tableName,
