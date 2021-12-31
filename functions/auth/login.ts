@@ -1,17 +1,21 @@
 import { APIGatewayProxyEventV2, APIGatewayProxyResultV2 } from "aws-lambda";
 import Joi from "joi";
 import {
+  CustomJoi,
   DEFAULTS,
-  DOMAIN_NAME,
   LOGIN_LINK_SETTINGS,
   LOGIN_METHODS,
   SESSION_SETTINGS,
+  JOI_SETTINGS,
+  COOKIE_SETTINGS,
+  WEBSITE_URL,
 } from "../../Config";
 import errorFormatter from "../../utils/errorFormatter";
-import * as Users from "../../models/Users";
 import { sealData, unsealData } from "iron-session";
 import { keepProperties } from "../../utils/sanitize";
 import { DynamoNewUser } from "../../types/dynamo";
+import * as Users from "../../models/Users";
+
 export interface RequestLoginLinkAPIBody {
   email: string;
   loginMethod: LOGIN_METHODS;
@@ -20,25 +24,31 @@ export async function main(
   event: APIGatewayProxyEventV2
 ): Promise<APIGatewayProxyResultV2> {
   console.log(event);
-  const { callbackUrl, seal } = event?.queryStringParameters || {};
+  const queryStringParameters = event.queryStringParameters || {};
+  const input = {
+    queryStringParameters,
+  };
 
-  const schema = Joi.object({
-    seal: Joi.string(),
-    callbackUrl: Joi.string().uri(),
-  }).options({ presence: "required", abortEarly: false, stripUnknown: true });
+  const schema = CustomJoi.object({
+    queryStringParameters: {
+      callbackUrl: Joi.string().uri(),
+      seal: Joi.string(),
+    },
+  }).options(JOI_SETTINGS);
 
-  // Validate URL
+  // Validate input
   try {
-    await schema.validateAsync({ callbackUrl, seal });
+    await schema.validateAsync(input);
   } catch (error) {
     const response: APIGatewayProxyResultV2 = {
       statusCode: 400,
-      body: JSON.stringify({
-        message: `${error.message}`,
-      }),
+      body: JSON.stringify({ message: `${error.message}` }),
     };
     return response;
   }
+
+  const { callbackUrl, seal } = event.queryStringParameters;
+
   let userId: string;
   let loginLinkId: string;
 
@@ -59,7 +69,7 @@ export async function main(
     };
     return response;
   }
-  // If the seal expired, these will be undefined
+  // If the seal expired, these will be undefined. Also undefined for things like seal=123
   if (!userId || !loginLinkId) {
     const response: APIGatewayProxyResultV2 = {
       statusCode: 401,
@@ -132,9 +142,7 @@ export async function main(
 
   const encryptedCookie = await sealData(cleanUser, SESSION_SETTINGS);
   const response: APIGatewayProxyResultV2 = {
-    cookies: [
-      `${DEFAULTS.COOKIE_NAME}=${encryptedCookie}; Secure; HttpOnly; SameSite=Lax; Domain=${DOMAIN_NAME}`,
-    ],
+    cookies: [`${DEFAULTS.COOKIE_NAME}=${encryptedCookie}; ${COOKIE_SETTINGS}`],
     statusCode: 307,
     headers: {
       Location: callbackUrl,
@@ -147,7 +155,7 @@ export async function main(
     return {
       ...response,
       headers: {
-        Location: `${DOMAIN_NAME}/invites`,
+        Location: `${WEBSITE_URL}/invites`,
       },
     };
   }

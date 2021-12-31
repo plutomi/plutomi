@@ -4,7 +4,7 @@ import Loader from "../../components/Loader";
 import Login from "../../components/Login";
 import PageHeader from "./PageHeader";
 import { useRouter } from "next/router";
-import { DOMAIN_NAME, NAVBAR_NAVIGATION } from "../../Config";
+import { DOMAIN_NAME, NAVBAR_NAVIGATION, WEBSITE_URL } from "../../Config";
 import { DEFAULTS } from "../../Config";
 import WarningBanner from "../WarningBanner";
 export default function NewPage({
@@ -35,7 +35,7 @@ export default function NewPage({
       alert(
         `You must create an org or join one before adding or viewing openings. If you have pending invites, you can view them at ${DOMAIN_NAME}/invites`
       );
-      router.push(`${DOMAIN_NAME}/dashboard`);
+      router.push(`${WEBSITE_URL}/dashboard`);
 
       return null;
     }
@@ -44,7 +44,7 @@ export default function NewPage({
       alert(
         `You must create an org or join one before adding or viewing team members. If you have pending invites, you can view them at ${DOMAIN_NAME}/invites`
       );
-      router.push(`${DOMAIN_NAME}/dashboard`);
+      router.push(`${WEBSITE_URL}/dashboard`);
 
       return null;
     }

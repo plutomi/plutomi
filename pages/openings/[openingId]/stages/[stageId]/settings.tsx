@@ -8,7 +8,7 @@ import useStageById from "../../../../../SWR/useStageById";
 import { CUSTOM_QUERY } from "../../../../../types/main";
 import OpeningsService from "../../../../../adapters/OpeningsService";
 import StagesService from "../../../../../adapters/StagesService";
-import { DOMAIN_NAME } from "../../../../../Config";
+import { DOMAIN_NAME, WEBSITE_URL } from "../../../../../Config";
 
 export default function StageSettings() {
   const router = useRouter();
@@ -34,7 +34,7 @@ export default function StageSettings() {
     }
     try {
       await StagesService.deleteStage(stageId);
-      router.push(`${DOMAIN_NAME}/openings/${openingId}/settings`);
+      router.push(`${WEBSITE_URL}/openings/${openingId}/settings`);
     } catch (error) {
       alert(error.response.data.message);
     }

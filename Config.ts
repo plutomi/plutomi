@@ -1,9 +1,36 @@
+import Joi from "joi";
 export const DOMAIN_NAME = `plutomi.com`;
 export const API_SUBDOMAIN =
   process.env.NODE_ENV === "production" ? "api" : "dev";
 export const API_DOMAIN = `${API_SUBDOMAIN}.${DOMAIN_NAME}`;
 export const API_URL = `https://${API_DOMAIN}`; // API Gateway does not redirect to https :/
 export const WEBSITE_URL = `https://${DOMAIN_NAME}`;
+export const COOKIE_SETTINGS = `Secure; HttpOnly; SameSite=Lax; Domain=${DOMAIN_NAME}`; // See SESSION_SETTINGS for setting session length
+// Custom object to parse the event.body in lambda.
+export const CustomJoi = Joi.extend((joi) => {
+  return {
+    type: "object",
+    base: joi.object(),
+    coerce(value, schema) {
+      if (value[0] !== "{" && !/^\s*\{/.test(value)) {
+        return;
+      }
+
+      try {
+        return { value: JSON.parse(value) };
+      } catch (err) {
+        console.log(err);
+      }
+    },
+  };
+});
+
+export const JOI_SETTINGS = {
+  presence: "required",
+  abortEarly: false,
+  stripUnknown: true,
+};
+
 export enum ENTITY_TYPES {
   APPLICANT = "APPLICANT",
   APPLICANT_RESPONSE = "APPLICANT_RESPONSE",

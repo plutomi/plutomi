@@ -9,7 +9,7 @@ import Loader from "../Loader";
 import OpeningsService from "../../adapters/OpeningsService";
 import * as Time from "../../utils/time";
 import { CUSTOM_QUERY } from "../../types/main";
-import { DOMAIN_NAME } from "../../Config";
+import { DOMAIN_NAME, WEBSITE_URL } from "../../Config";
 export default function OpeningSettingsHeader() {
   const router = useRouter();
   const { openingId } = router.query as Pick<CUSTOM_QUERY, "openingId">;
@@ -54,7 +54,7 @@ export default function OpeningSettingsHeader() {
 
     try {
       await OpeningsService.deleteOpening(openingId);
-      router.push(`${DOMAIN_NAME}/openings`);
+      router.push(`${WEBSITE_URL}/openings`);
     } catch (error) {
       alert(error.response.data.message);
     }

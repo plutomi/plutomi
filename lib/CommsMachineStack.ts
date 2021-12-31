@@ -10,6 +10,7 @@ import {
   LOGIN_METHODS,
   API_URL,
   DOMAIN_NAME,
+  WEBSITE_URL,
 } from "../Config";
 
 const resultDotEnv = dotenv.config({
@@ -154,7 +155,7 @@ export default class CommsMachineStack extends cdk.Stack {
             Body: {
               Html: {
                 // TODO add unsubscribe
-                "Data.$": `States.Format('<h1><a href="https://${DOMAIN_NAME}/{}/applicants/{}" rel=noreferrer target="_blank" >Click this link to view your application!</a></h1><p>If you did not request this link, you can safely ignore it.</p>', 
+                "Data.$": `States.Format('<h1><a href="${WEBSITE_URL}/{}/applicants/{}" rel=noreferrer target="_blank" >Click this link to view your application!</a></h1><p>If you did not request this link, you can safely ignore it.</p>', 
                 $.detail.NewImage.orgId, $.detail.NewImage.applicantId)`,
               },
             },
@@ -179,7 +180,7 @@ export default class CommsMachineStack extends cdk.Stack {
           Body: {
             Html: {
               // TODO add unsubscribe
-              Data: `<h4>You can log in at <a href="https://${DOMAIN_NAME}" target="_blank" rel=noreferrer>https://${DOMAIN_NAME}</a> to accept their invite!</h4><p>If you believe this email was received in error, you can safely ignore it.</p>`,
+              Data: `<h4>You can log in at <a href="${WEBSITE_URL}" target="_blank" rel=noreferrer>${WEBSITE_URL}</a> to accept their invite!</h4><p>If you believe this email was received in error, you can safely ignore it.</p>`,
             },
           },
         },

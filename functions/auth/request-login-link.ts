@@ -1,10 +1,13 @@
 import { APIGatewayProxyEventV2, APIGatewayProxyResultV2 } from "aws-lambda";
 import Joi from "joi";
+
 import {
   DEFAULTS,
   LOGIN_LINK_SETTINGS,
   LOGIN_METHODS,
   TIME_UNITS,
+  CustomJoi,
+  JOI_SETTINGS,
 } from "../../Config";
 import errorFormatter from "../../utils/errorFormatter";
 import * as Time from "../../utils/time";
@@ -16,22 +19,33 @@ export interface RequestLoginLinkAPIBody {
   email: string;
   loginMethod: LOGIN_METHODS;
 }
+
 export async function main(
   event: APIGatewayProxyEventV2
 ): Promise<APIGatewayProxyResultV2> {
   console.log(event);
-  const body: RequestLoginLinkAPIBody = JSON.parse(event?.body || "{}");
-  const { callbackUrl } = event?.queryStringParameters || {};
+  const body = JSON.parse(event.body || "{}");
+  const queryStringParameters = event.queryStringParameters || {};
+  const input = {
+    body,
+    queryStringParameters,
+  };
 
-  const schema = Joi.object({
-    email: Joi.string().email(),
-    loginMethod: Joi.string().valid(LOGIN_METHODS.GOOGLE, LOGIN_METHODS.EMAIL),
-    callbackUrl: Joi.string().uri(),
-  }).options({ presence: "required", abortEarly: false, stripUnknown: true });
+  const schema = CustomJoi.object({
+    body: Joi.object({
+      email: Joi.string().email(),
+      loginMethod: Joi.string()
+        .valid(LOGIN_METHODS.GOOGLE, LOGIN_METHODS.EMAIL)
+        .required(),
+    }),
+    queryStringParameters: {
+      callbackUrl: Joi.string().uri(),
+    },
+  }).options(JOI_SETTINGS);
 
   // Validate input
   try {
-    await schema.validateAsync({ ...body, callbackUrl });
+    await schema.validateAsync(input);
   } catch (error) {
     const response: APIGatewayProxyResultV2 = {
       statusCode: 400,
@@ -40,8 +54,10 @@ export async function main(
     return response;
   }
 
+  const { email, loginMethod } = JSON.parse(event.body);
+  const { callbackUrl } = event.queryStringParameters;
   // If a user is signing in for the first time, create an account for them
-  let [user, userError] = await Users.getUserByEmail({ email: body.email });
+  let [user, userError] = await Users.getUserByEmail({ email });
 
   if (userError) {
     const formattedError = errorFormatter(userError);
@@ -57,7 +73,7 @@ export async function main(
 
   if (!user) {
     const [createdUser, createUserError] = await Users.createUser({
-      email: body.email,
+      email,
     });
 
     if (createUserError) {
@@ -75,7 +91,7 @@ export async function main(
   }
 
   // Allow google login even if a user opted out of emails // TODO revisit once unsubscribe has been implemented
-  if (!user.canReceiveEmails && body.loginMethod === LOGIN_METHODS.EMAIL) {
+  if (!user.canReceiveEmails && loginMethod === LOGIN_METHODS.EMAIL) {
     const response: APIGatewayProxyResultV2 = {
       statusCode: 403,
       body: JSON.stringify({
@@ -139,7 +155,7 @@ export async function main(
    */
   const [success, creationError] = await Users.createLoginLink({
     loginLinkId,
-    loginMethod: body.loginMethod,
+    loginMethod,
     loginLinkUrl,
     loginLinkExpiry,
     user,
@@ -159,7 +175,7 @@ export async function main(
   }
 
   // Cannot do serverside redirect from axios POST, client will make the POST instead - // TODO revisit this and just have a router.push?
-  if (body.loginMethod === LOGIN_METHODS.GOOGLE) {
+  if (loginMethod === LOGIN_METHODS.GOOGLE) {
     const response: APIGatewayProxyResultV2 = {
       statusCode: 200,
       body: JSON.stringify({ message: loginLinkUrl }),
