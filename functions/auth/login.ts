@@ -20,21 +20,21 @@ export async function main(
   event: APIGatewayProxyEventV2
 ): Promise<APIGatewayProxyResultV2> {
   console.log(event);
-  const { callbackUrl, seal } = event?.queryStringParameters;
+  const { callbackUrl, seal } = event?.queryStringParameters || {};
 
   const schema = Joi.object({
     seal: Joi.string(),
     callbackUrl: Joi.string().uri(),
-  }).options({ presence: "required", abortEarly: false });
+  }).options({ presence: "required", abortEarly: false, stripUnknown: true });
 
   // Validate URL
   try {
-    await schema.validateAsync({ callbackUrl: callbackUrl, seal: seal });
+    await schema.validateAsync({ callbackUrl, seal });
   } catch (error) {
     const response: APIGatewayProxyResultV2 = {
       statusCode: 400,
       body: JSON.stringify({
-        message: `${error.body.message}`,
+        message: `${error.message}`,
       }),
     };
     return response;

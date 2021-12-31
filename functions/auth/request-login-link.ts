@@ -21,13 +21,13 @@ export async function main(
 ): Promise<APIGatewayProxyResultV2> {
   console.log(event);
   const body: RequestLoginLinkAPIBody = JSON.parse(event?.body || "{}");
-  const { callbackUrl } = event?.queryStringParameters;
+  const { callbackUrl } = event?.queryStringParameters || {};
 
   const schema = Joi.object({
     email: Joi.string().email(),
     loginMethod: Joi.string().valid(LOGIN_METHODS.GOOGLE, LOGIN_METHODS.EMAIL),
     callbackUrl: Joi.string().uri(),
-  }).options({ presence: "required", abortEarly: false });
+  }).options({ presence: "required", abortEarly: false, stripUnknown: true });
 
   // Validate input
   try {
