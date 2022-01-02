@@ -47,7 +47,7 @@ export default class StreamProcessorStack extends cdk.Stack {
         handler: "main",
         description:
           "Processes table changes from DynamoDB streams and sends them to SNS",
-        entry: path.join(__dirname, `/../functions/streamProcessor.ts`),
+        entry: path.join(__dirname, `/../functions/stream-processor.ts`),
       }
     );
 

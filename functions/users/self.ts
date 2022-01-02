@@ -6,6 +6,7 @@ import { COOKIE_SETTINGS, DEFAULTS } from "../../Config";
 export async function main(
   event: withSessionEvent
 ): Promise<APIGatewayProxyResultV2> {
+  console.log(event);
   const { session } = event.requestContext.authorizer.lambda;
 
   const [user, error] = await Users.getUserById({ userId: session.userId });

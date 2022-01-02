@@ -75,7 +75,6 @@ app.get(
 
 // Users
 app.get("/orgs/:orgId/users", [withAuth], Orgs.users);
-app.get("/users/:userId", [withAuth], Users.getById);
 app.put("/users/:userId", [withAuth], Users.update);
 
 // Invites

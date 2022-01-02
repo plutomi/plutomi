@@ -31,6 +31,7 @@ interface APIGatewayServiceProps extends cdk.StackProps {
   loginFunction: NodejsFunction;
   logoutFunction: NodejsFunction;
   sessionInfoFunction: NodejsFunction;
+  getUserByIdFunction: NodejsFunction;
 }
 
 const DEFAULT_LAMBDA_CONFIG = {
@@ -132,41 +133,49 @@ export default class APIStack extends cdk.Stack {
       responseTypes: [HttpLambdaResponseType.SIMPLE], // Define if returns simple and/or iam response
     });
 
-    /**
-     * Routes
-     */
+    const routes = [
+      {
+        path: "/request-login-link",
+        methods: [HttpMethod.POST],
+        integration: new LambdaProxyIntegration({
+          handler: props.requestLoginLinkFunction,
+        }),
+      },
+      {
+        path: "/login",
+        methods: [HttpMethod.GET],
+        integration: new LambdaProxyIntegration({
+          handler: props.loginFunction,
+        }),
+      },
+      {
+        path: "/logout",
+        methods: [HttpMethod.POST],
+        integration: new LambdaProxyIntegration({
+          handler: props.logoutFunction,
+        }),
+      },
+      {
+        path: "/users/self",
+        methods: [HttpMethod.GET],
+        integration: new LambdaProxyIntegration({
+          handler: props.sessionInfoFunction,
+        }),
+        authorizer,
+      },
 
-    api.addRoutes({
-      path: "/request-login-link",
-      methods: [HttpMethod.POST],
-      integration: new LambdaProxyIntegration({
-        handler: props.requestLoginLinkFunction,
-      }),
-    });
+      {
+        path: `/users/{userId}`,
+        methods: [HttpMethod.GET],
+        integration: new LambdaProxyIntegration({
+          handler: props.getUserByIdFunction,
+        }),
+        authorizer,
+      },
+    ];
 
-    api.addRoutes({
-      path: "/login",
-      methods: [HttpMethod.GET],
-      integration: new LambdaProxyIntegration({
-        handler: props.loginFunction,
-      }),
-    });
-
-    api.addRoutes({
-      path: "/logout",
-      methods: [HttpMethod.POST],
-      integration: new LambdaProxyIntegration({
-        handler: props.logoutFunction,
-      }),
-    });
-
-    api.addRoutes({
-      path: "/users/self",
-      methods: [HttpMethod.GET],
-      integration: new LambdaProxyIntegration({
-        handler: props.sessionInfoFunction,
-      }),
-      authorizer,
-    });
+    for (const route of routes) {
+      api.addRoutes(route);
+    }
   }
 }

@@ -4,42 +4,6 @@ import * as Users from "../models/Users/index";
 import Joi from "joi";
 import errorFormatter from "../utils/errorFormatter";
 
-export const getById = async (req: Request, res: Response) => {
-  const { userId } = req.params;
-
-  if (
-    // Block users who arenot in an org from being able to view other users before making the Dynamo call
-    req.session.user.orgId === DEFAULTS.NO_ORG
-  ) {
-    return res
-      .status(403)
-      .json({ message: "You are not authorized to view this user" });
-  }
-
-  const [requestedUser, error] = await Users.getUserById({ userId });
-
-  if (error) {
-    const formattedError = errorFormatter(error);
-    return res.status(formattedError.httpStatusCode).json({
-      message: "An error ocurred retrieving user info by id",
-      ...formattedError,
-    });
-  }
-  if (!requestedUser) {
-    return res.status(404).json({ message: "User not found" });
-  }
-
-  // TODO RBAC here
-  // Only allow viewing users in the same org
-  if (req.session.user.orgId !== requestedUser.orgId) {
-    return res
-      .status(403)
-      .json({ message: "You are not authorized to view this user" });
-  }
-
-  return res.status(200).json(requestedUser);
-};
-
 export const update = async (req: Request, res: Response) => {
   const { userId } = req.params;
   const { newValues } = req.body;
@@ -83,7 +47,7 @@ export const update = async (req: Request, res: Response) => {
   }
   // If a signed in user is updating themselves, update the session state as well
   if (updatedUser.userId === req.session.user.userId) {
-    req.session.user = Sanitize.clean(updatedUser, ENTITY_TYPES.USER);
+    // req.session.user = Sanitize.clean(updatedUser, ENTITY_TYPES.USER);
     await req.session.save();
   }
   return res.status(200).json({ message: "Updated!" });
