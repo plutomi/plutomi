@@ -3,7 +3,7 @@ import * as dotenv from "dotenv";
 import * as dynamodb from "@aws-cdk/aws-dynamodb";
 
 const resultDotEnv = dotenv.config({
-  path: __dirname + `../../.env.${process.env.NODE_ENV}`,
+  path: `${process.cwd()}/.env.${process.env.NODE_ENV}`,
 });
 
 if (resultDotEnv.error) {

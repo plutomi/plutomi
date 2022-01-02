@@ -8,7 +8,6 @@ import EventBridgeStack from "../lib/EventBridgeStack";
 import CommsMachineStack from "../lib/commsMachineStack";
 import APIAuthServiceStack from "../lib/APIAuthServiceStack";
 import StreamProcessorStack from "../lib/StreamProcessorStack";
-
 import { Builder } from "@sls-next/lambda-at-edge";
 
 // Run the serverless builder before deploying

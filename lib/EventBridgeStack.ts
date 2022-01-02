@@ -5,7 +5,7 @@ import { EventBus, Rule } from "@aws-cdk/aws-events";
 import { StateMachine } from "@aws-cdk/aws-stepfunctions";
 import { SfnStateMachine } from "@aws-cdk/aws-events-targets";
 const resultDotEnv = dotenv.config({
-  path: __dirname + `../../.env.${process.env.NODE_ENV}`,
+  path: `${process.cwd()}/.env.${process.env.NODE_ENV}`,
 });
 
 if (resultDotEnv.error) {

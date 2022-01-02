@@ -8,7 +8,7 @@ import { DynamoEventSource } from "@aws-cdk/aws-lambda-event-sources";
 import { Runtime, Architecture, StartingPosition } from "@aws-cdk/aws-lambda";
 
 const resultDotEnv = dotenv.config({
-  path: __dirname + `../../.env.${process.env.NODE_ENV}`,
+  path: `${process.cwd()}/.env.${process.env.NODE_ENV}`,
 });
 
 if (resultDotEnv.error) {

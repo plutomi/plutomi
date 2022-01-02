@@ -1,6 +1,6 @@
 import * as dotenv from "dotenv";
 const resultDotEnv = dotenv.config({
-  path: __dirname + `/.env.${process.env.NODE_ENV}`,
+  path: `/.env.${process.env.NODE_ENV}`,
 });
 
 if (resultDotEnv.error) {

@@ -6,7 +6,7 @@ import { HostedZone, ARecord, RecordTarget } from "@aws-cdk/aws-route53";
 import { ApiGatewayv2DomainProperties } from "@aws-cdk/aws-route53-targets";
 import { API_DOMAIN, API_SUBDOMAIN, DOMAIN_NAME, WEBSITE_URL } from "../Config";
 const resultDotEnv = dotenv.config({
-  path: __dirname + `../../.env.${process.env.NODE_ENV}`,
+  path: `${process.cwd()}/.env.${process.env.NODE_ENV}`,
 });
 
 if (resultDotEnv.error) {
