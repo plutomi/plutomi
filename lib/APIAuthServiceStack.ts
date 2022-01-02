@@ -1,5 +1,3 @@
-import { LambdaProxyIntegration } from "@aws-cdk/aws-apigatewayv2-integrations";
-import { HttpApi, HttpMethod } from "@aws-cdk/aws-apigatewayv2";
 import { Runtime, Architecture } from "@aws-cdk/aws-lambda";
 import { NodejsFunction } from "@aws-cdk/aws-lambda-nodejs";
 import { Policy, PolicyStatement } from "@aws-cdk/aws-iam";
@@ -21,25 +19,27 @@ const DEFAULT_LAMBDA_CONFIG = {
 
 interface APIAuthServiceProps extends cdk.StackProps {
   table: Table;
-  api: HttpApi;
 }
 
 /**
  * Handles auth for our API.
- * This involves 4 main functions:
- * 1. Request login link [O]
- * 2. Validate login link & create session [O]
- * 3. Logout & delete session [O]
- * 4. Auth middleware to validate session on each followup request [O]
+ * This involves 3 main functions:
+ * 1. Request login link
+ * 2. Validate login link & create session
+ * 3. Logout & delete session
  */
 export default class APIAuthServiceStack extends cdk.Stack {
+  public requestLoginLinkFunction: NodejsFunction;
+  public loginFunction: NodejsFunction;
+  public logoutFunction: NodejsFunction;
+
   constructor(scope: cdk.Construct, id: string, props?: APIAuthServiceProps) {
     super(scope, id, props);
 
     /**
      * Request login link
      */
-    const requestLoginLinkFunction = new NodejsFunction(
+    this.requestLoginLinkFunction = new NodejsFunction(
       this,
       `${process.env.NODE_ENV}-request-login-link-function`,
       {
@@ -53,13 +53,7 @@ export default class APIAuthServiceStack extends cdk.Stack {
         entry: path.join(__dirname, `../functions/auth/request-login-link.ts`),
       }
     );
-    props.api.addRoutes({
-      path: "/request-login-link",
-      methods: [HttpMethod.POST],
-      integration: new LambdaProxyIntegration({
-        handler: requestLoginLinkFunction,
-      }),
-    });
+
     // Grant minimum permissions
     const requestLoginLinkFunctionPolicy = new PolicyStatement({
       actions: ["dynamodb:Query", "dynamodb:PutItem", "dynamodb:GetItem"],
@@ -73,7 +67,7 @@ export default class APIAuthServiceStack extends cdk.Stack {
       ],
     });
 
-    requestLoginLinkFunction.role.attachInlinePolicy(
+    this.requestLoginLinkFunction.role.attachInlinePolicy(
       new Policy(this, "request-login-link-function-policy", {
         statements: [requestLoginLinkFunctionPolicy],
       })
@@ -82,7 +76,7 @@ export default class APIAuthServiceStack extends cdk.Stack {
     /**
      * Login
      */
-    const loginFunction = new NodejsFunction(
+    this.loginFunction = new NodejsFunction(
       this,
       `${process.env.NODE_ENV}-login-function`,
       {
@@ -96,13 +90,6 @@ export default class APIAuthServiceStack extends cdk.Stack {
         entry: path.join(__dirname, `../functions/auth/login.ts`),
       }
     );
-    props.api.addRoutes({
-      path: "/login",
-      methods: [HttpMethod.GET],
-      integration: new LambdaProxyIntegration({
-        handler: loginFunction,
-      }),
-    });
 
     // Grant minimum permissions
     const loginFunctionPolicy = new PolicyStatement({
@@ -122,7 +109,7 @@ export default class APIAuthServiceStack extends cdk.Stack {
       ],
     });
 
-    loginFunction.role.attachInlinePolicy(
+    this.loginFunction.role.attachInlinePolicy(
       new Policy(this, "login-function-policy", {
         statements: [loginFunctionPolicy],
       })
@@ -131,7 +118,7 @@ export default class APIAuthServiceStack extends cdk.Stack {
     /**
      * Logout
      */
-    const logoutFunction = new NodejsFunction(
+    this.logoutFunction = new NodejsFunction(
       this,
       `${process.env.NODE_ENV}-logout-function`,
       {
@@ -140,35 +127,5 @@ export default class APIAuthServiceStack extends cdk.Stack {
         entry: path.join(__dirname, `../functions/auth/logout.ts`),
       }
     );
-    props.api.addRoutes({
-      path: "/logout",
-      methods: [HttpMethod.POST],
-      integration: new LambdaProxyIntegration({
-        handler: logoutFunction,
-      }),
-    });
-
-    /**
-     * Authorizer function
-     */
-    const authorizerFunction = new NodejsFunction(
-      this,
-      `${process.env.NODE_ENV}-authorizer-function`,
-      {
-        functionName: `${process.env.NODE_ENV}-authorizer-function`,
-        ...DEFAULT_LAMBDA_CONFIG,
-        environment: {
-          SESSION_PASSWORD: process.env.SESSION_PASSWORD,
-        },
-        entry: path.join(__dirname, `../functions/auth/authorizer.ts`),
-      }
-    );
-    props.api.addRoutes({
-      path: "/auth",
-      methods: [HttpMethod.GET],
-      integration: new LambdaProxyIntegration({
-        handler: authorizerFunction,
-      }),
-    });
   }
 }

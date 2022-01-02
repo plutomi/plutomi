@@ -1,3 +1,4 @@
+import { APIGatewayProxyEventV2 } from "aws-lambda";
 import {
   DynamoNewApplicant,
   DynamoNewApplicantResponse,
@@ -69,6 +70,16 @@ export interface UpdateStageInput
   extends Pick<DynamoNewStage, "orgId" | "stageId"> {
   newValues: { [key: string]: any };
 }
+
+export type withSessionEvent = APIGatewayProxyEventV2 & {
+  requestContext: {
+    authorizer: {
+      lambda: {
+        session: UserSessionData;
+      };
+    };
+  };
+};
 
 export interface UpdateUserInput extends Pick<DynamoNewUser, "userId"> {
   newValues: { [key: string]: any };

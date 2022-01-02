@@ -29,6 +29,7 @@ export default async function getSessionFromCookies(cookies: string[]) {
       const data: UserSessionData = await unsealData(seal, SESSION_SETTINGS);
 
       sessionData = { ...data };
+
       return sessionData;
     } catch (error) {
       throw "Bad seal";

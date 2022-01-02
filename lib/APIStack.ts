@@ -1,10 +1,23 @@
 import * as dotenv from "dotenv";
 import * as cdk from "@aws-cdk/core";
-import { HttpApi, DomainName, CorsHttpMethod } from "@aws-cdk/aws-apigatewayv2";
+import {
+  HttpLambdaAuthorizer,
+  HttpLambdaResponseType,
+} from "@aws-cdk/aws-apigatewayv2-authorizers";
+import { LambdaProxyIntegration } from "@aws-cdk/aws-apigatewayv2-integrations";
+import {
+  HttpApi,
+  DomainName,
+  CorsHttpMethod,
+  HttpMethod,
+} from "@aws-cdk/aws-apigatewayv2";
 import { Certificate } from "@aws-cdk/aws-certificatemanager";
+import { NodejsFunction } from "@aws-cdk/aws-lambda-nodejs";
+import { Runtime, Architecture } from "@aws-cdk/aws-lambda";
 import { HostedZone, ARecord, RecordTarget } from "@aws-cdk/aws-route53";
 import { ApiGatewayv2DomainProperties } from "@aws-cdk/aws-route53-targets";
 import { API_DOMAIN, API_SUBDOMAIN, DOMAIN_NAME, WEBSITE_URL } from "../Config";
+import path from "path";
 const resultDotEnv = dotenv.config({
   path: `${process.cwd()}/.env.${process.env.NODE_ENV}`,
 });
@@ -13,12 +26,35 @@ if (resultDotEnv.error) {
   throw resultDotEnv.error;
 }
 
+interface APIGatewayServiceProps extends cdk.StackProps {
+  requestLoginLinkFunction: NodejsFunction;
+  loginFunction: NodejsFunction;
+  logoutFunction: NodejsFunction;
+  sessionInfoFunction: NodejsFunction;
+}
+
+const DEFAULT_LAMBDA_CONFIG = {
+  memorySize: 256,
+  timeout: cdk.Duration.seconds(5),
+  runtime: Runtime.NODEJS_14_X,
+  architecture: Architecture.ARM_64,
+  bundling: {
+    minify: true,
+    externalModules: ["aws-sdk"],
+  },
+  handler: "main",
+  reservedConcurrentExecutions: 1, // TODO change to sane defaults
+};
+
 /**
  * Creates an API Gateway
  */
 export default class APIStack extends cdk.Stack {
-  public api: HttpApi;
-  constructor(scope: cdk.Construct, id: string, props?: cdk.StackProps) {
+  constructor(
+    scope: cdk.Construct,
+    id: string,
+    props?: APIGatewayServiceProps
+  ) {
     super(scope, id, props);
 
     // Retrieves the hosted zone from Route53
@@ -43,7 +79,7 @@ export default class APIStack extends cdk.Stack {
     });
 
     // Defines an http API Gateway
-    this.api = new HttpApi(this, `${process.env.NODE_ENV}-APIEndpoint`, {
+    const api = new HttpApi(this, `${process.env.NODE_ENV}-APIEndpoint`, {
       defaultDomainMapping: {
         domainName: domain,
       },
@@ -71,6 +107,66 @@ export default class APIStack extends cdk.Stack {
           domain.regionalHostedZoneId
         )
       ),
+    });
+
+    /**
+     * Authorizer function
+     */
+    const authorizerFunction = new NodejsFunction(
+      this,
+      `${process.env.NODE_ENV}-authorizer-function`,
+      {
+        functionName: `${process.env.NODE_ENV}-authorizer-function`,
+        ...DEFAULT_LAMBDA_CONFIG,
+        environment: {
+          SESSION_PASSWORD: process.env.SESSION_PASSWORD,
+        },
+        entry: path.join(__dirname, `../functions/auth/authorizer.ts`),
+      }
+    );
+    const authorizer = new HttpLambdaAuthorizer({
+      authorizerName: `${process.env.NODE_ENV}-authorizer`,
+      handler: authorizerFunction,
+      resultsCacheTtl: cdk.Duration.seconds(0),
+      identitySource: [],
+      responseTypes: [HttpLambdaResponseType.SIMPLE], // Define if returns simple and/or iam response
+    });
+
+    /**
+     * Routes
+     */
+
+    api.addRoutes({
+      path: "/request-login-link",
+      methods: [HttpMethod.POST],
+      integration: new LambdaProxyIntegration({
+        handler: props.requestLoginLinkFunction,
+      }),
+    });
+
+    api.addRoutes({
+      path: "/login",
+      methods: [HttpMethod.GET],
+      integration: new LambdaProxyIntegration({
+        handler: props.loginFunction,
+      }),
+    });
+
+    api.addRoutes({
+      path: "/logout",
+      methods: [HttpMethod.POST],
+      integration: new LambdaProxyIntegration({
+        handler: props.logoutFunction,
+      }),
+    });
+
+    api.addRoutes({
+      path: "/users/self",
+      methods: [HttpMethod.GET],
+      integration: new LambdaProxyIntegration({
+        handler: props.sessionInfoFunction,
+      }),
+      authorizer,
     });
   }
 }

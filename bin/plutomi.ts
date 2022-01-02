@@ -8,6 +8,7 @@ import EventBridgeStack from "../lib/EventBridgeStack";
 import CommsMachineStack from "../lib/commsMachineStack";
 import APIAuthServiceStack from "../lib/APIAuthServiceStack";
 import StreamProcessorStack from "../lib/StreamProcessorStack";
+import APIUsersServiceStack from "../lib/APIUsersServiceStack";
 import { Builder } from "@sls-next/lambda-at-edge";
 
 // Run the serverless builder before deploying
@@ -22,15 +23,25 @@ builder
       `${process.env.NODE_ENV}-DynamoDBStack`
     );
 
-    const { api } = new APIStack(app, `${process.env.NODE_ENV}-APIStack`);
-    new APIAuthServiceStack(
+    const { sessionInfoFunction } = new APIUsersServiceStack(
       app,
-      `${process.env.NODE_ENV}-APIAuthServiceStack`,
-      {
-        table,
-        api,
-      }
+      `${process.env.NODE_ENV}-APIUsersServiceStack`
     );
+    const { requestLoginLinkFunction, loginFunction, logoutFunction } =
+      new APIAuthServiceStack(
+        app,
+        `${process.env.NODE_ENV}-APIAuthServiceStack`,
+        {
+          table,
+        }
+      );
+
+    new APIStack(app, `${process.env.NODE_ENV}-APIStack`, {
+      sessionInfoFunction,
+      requestLoginLinkFunction,
+      loginFunction,
+      logoutFunction,
+    });
 
     const { CommsMachine } = new CommsMachineStack(
       app,

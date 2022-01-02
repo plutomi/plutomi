@@ -12,15 +12,22 @@ export async function main(event: APIGatewayProxyEventV2) {
 
   try {
     const session = await getSessionFromCookies(cookies);
-    const response = {
-      statusCode: 200,
-      body: JSON.stringify({ message: "Success", session, event }),
-    };
-    return response;
-  } catch (error) {
+
+    console.log("Session data", session);
+    // Pass the session to the next lambda's event.context
     return {
-      statusCode: 400,
-      body: JSON.stringify({ error, message: error.message, event }),
+      isAuthorized: true,
+      context: {
+        session,
+      },
+    };
+  } catch (error) {
+    console.log("Error authorizing", error);
+    return {
+      isAuthorized: true,
+      context: {
+        error,
+      },
     };
   }
 }
