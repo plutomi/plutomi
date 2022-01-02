@@ -24,7 +24,7 @@ export async function main(event: APIGatewayProxyEventV2) {
   } catch (error) {
     console.log("Error authorizing", error);
     return {
-      isAuthorized: true,
+      isAuthorized: false,
       context: {
         error,
       },
