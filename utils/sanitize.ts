@@ -1,6 +1,6 @@
 export const keepProperties = (object: any, properties: string[]) => {
   for (const property in object) {
-    if (properties.includes(property)) {
+    if (!properties.includes(property)) {
       delete object[property];
     }
   }

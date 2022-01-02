@@ -62,6 +62,18 @@
     "@aws-cdk/cx-api" "1.134.0"
     "constructs" "^3.3.69"
 
+"@aws-cdk/aws-apigatewayv2-authorizers@^1.134.0":
+  "integrity" "sha512-629hUGcQsW9wEm96YQlq1aut8Ve1N6k79ejpVosNgadqxFhD/3VFo4C/+Rm3d8PMiorbJ3ZXTEQG6nRtNI2hOw=="
+  "resolved" "https://registry.npmjs.org/@aws-cdk/aws-apigatewayv2-authorizers/-/aws-apigatewayv2-authorizers-1.134.0.tgz"
+  "version" "1.134.0"
+  dependencies:
+    "@aws-cdk/aws-apigatewayv2" "1.134.0"
+    "@aws-cdk/aws-cognito" "1.134.0"
+    "@aws-cdk/aws-iam" "1.134.0"
+    "@aws-cdk/aws-lambda" "1.134.0"
+    "@aws-cdk/core" "1.134.0"
+    "constructs" "^3.3.69"
+
 "@aws-cdk/aws-apigatewayv2-integrations@^1.134.0":
   "integrity" "sha512-3NUifKX06DgbTTMMX9ZTMY9Fz5aUyXhqWlv4dvoJ9ZRczLpELAaEvtbDUI+w63sN5jew0hCjEH8r5qSRw6SX8w=="
   "resolved" "https://registry.npmjs.org/@aws-cdk/aws-apigatewayv2-integrations/-/aws-apigatewayv2-integrations-1.134.0.tgz"

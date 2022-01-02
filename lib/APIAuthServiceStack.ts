@@ -147,5 +147,28 @@ export default class APIAuthServiceStack extends cdk.Stack {
         handler: logoutFunction,
       }),
     });
+
+    /**
+     * Authorizer function
+     */
+    const authorizerFunction = new NodejsFunction(
+      this,
+      `${process.env.NODE_ENV}-authorizer-function`,
+      {
+        functionName: `${process.env.NODE_ENV}-authorizer-function`,
+        ...DEFAULT_LAMBDA_CONFIG,
+        environment: {
+          SESSION_PASSWORD: process.env.SESSION_PASSWORD,
+        },
+        entry: path.join(__dirname, `../functions/auth/authorizer.ts`),
+      }
+    );
+    props.api.addRoutes({
+      path: "/auth",
+      methods: [HttpMethod.GET],
+      integration: new LambdaProxyIntegration({
+        handler: authorizerFunction,
+      }),
+    });
   }
 }

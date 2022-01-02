@@ -129,15 +129,16 @@ export async function main(
 
   type SessionData = Pick<
     DynamoNewUser,
-    "firstName" | "lastName" | "orgId" | "GSI1SK" | "userId"
+    "firstName" | "lastName" | "orgId" | "email" | "userId" | "canReceiveEmails"
   >;
 
   const cleanUser: SessionData = keepProperties(user, [
     "firstName",
     "lastName",
-    "GSI1SK",
+    "email",
     "userId",
     "orgId",
+    "canReceiveEmails",
   ]);
 
   const encryptedCookie = await sealData(cleanUser, SESSION_SETTINGS);

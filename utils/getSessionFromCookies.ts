@@ -7,12 +7,11 @@ import { UserSessionData } from "../types/main";
  * @param cookies
  * @param cookieName
  */
-export default async function findCookieSeal(
-  cookies: string[],
-  cookieName: string
-) {
+export default async function getSessionFromCookies(cookies: string[]) {
   // If a cookie by this name exists, extract the seal
-  const cookie = cookies?.find((cookie) => cookie.includes(cookieName + "="));
+  const cookie = cookies?.find((cookie) =>
+    cookie.includes(DEFAULTS.COOKIE_NAME + "=")
+  );
 
   if (!cookie) {
     throw `${DEFAULTS.COOKIE_NAME} not found`;
