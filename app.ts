@@ -8,8 +8,6 @@ if (resultDotEnv.error) {
 }
 
 import express from "express";
-import { metadata } from "./controllers/Metadata";
-import listEndpoints from "express-list-endpoints";
 import * as PublicInfo from "./controllers/PublicInfo";
 import * as Users from "./controllers/Users";
 import * as Invites from "./controllers/Invites";
@@ -19,7 +17,6 @@ import * as Stages from "./controllers/Stages";
 import * as Openings from "./controllers/Openings";
 import * as Applicants from "./controllers/Applicants";
 import withAuth from "./middleware/withAuth";
-import routeNotFound from "./middleware/routeNotFound";
 const app = express();
 
 // Public info
@@ -78,7 +75,6 @@ app.get(
 
 // Users
 app.get("/orgs/:orgId/users", [withAuth], Orgs.users);
-app.get("/users/self", [withAuth], Users.self);
 app.get("/users/:userId", [withAuth], Users.getById);
 app.put("/users/:userId", [withAuth], Users.update);
 

@@ -1,32 +1,8 @@
 import { Request, Response } from "express";
 import { DEFAULTS, ENTITY_TYPES } from "./../Config";
-import Sanitize from "./../utils/sanitize";
 import * as Users from "../models/Users/index";
 import Joi from "joi";
 import errorFormatter from "../utils/errorFormatter";
-import { unsealData } from "iron-session";
-export const self = async (req: Request, res: Response) => {
-  const [user, error] = await Users.getUserById({
-    userId: req.session.user.userId,
-  });
-
-  if (error) {
-    const formattedError = errorFormatter(error);
-    return res.status(formattedError.httpStatusCode).json({
-      message: "An error ocurred retrieving self info",
-      ...formattedError,
-    });
-  }
-
-  if (!user) {
-    req.session.destroy();
-    return res.status(401).json({
-      message: `Please log in again`,
-    });
-  }
-
-  return res.status(200).json(user);
-};
 
 export const getById = async (req: Request, res: Response) => {
   const { userId } = req.params;

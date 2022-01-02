@@ -30,9 +30,9 @@ export default class StreamProcessorStack extends cdk.Stack {
 
     this.StreamProcessorFunction = new NodejsFunction(
       this,
-      "StreamProcessorFunction",
+      "stream-processor-function",
       {
-        functionName: `${process.env.NODE_ENV}-StreamProcessor`,
+        functionName: `${process.env.NODE_ENV}-stream-processor-function`,
         memorySize: 256,
         timeout: cdk.Duration.seconds(5),
         runtime: Runtime.NODEJS_14_X,
