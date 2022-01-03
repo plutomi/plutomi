@@ -32,6 +32,7 @@ interface APIGatewayServiceProps extends cdk.StackProps {
   logoutFunction: NodejsFunction;
   sessionInfoFunction: NodejsFunction;
   getUserByIdFunction: NodejsFunction;
+  updateUserFunction: NodejsFunction;
 }
 
 const DEFAULT_LAMBDA_CONFIG = {
@@ -169,6 +170,15 @@ export default class APIStack extends cdk.Stack {
         methods: [HttpMethod.GET],
         integration: new LambdaProxyIntegration({
           handler: props.getUserByIdFunction,
+        }),
+        authorizer,
+      },
+
+      {
+        path: `/users/{userId}`,
+        methods: [HttpMethod.PUT],
+        integration: new LambdaProxyIntegration({
+          handler: props.updateUserFunction,
         }),
         authorizer,
       },

@@ -71,6 +71,10 @@ export interface UpdateStageInput
   newValues: { [key: string]: any };
 }
 
+export type SessionData = Pick<
+  DynamoNewUser,
+  "firstName" | "lastName" | "orgId" | "email" | "userId" | "canReceiveEmails"
+>;
 export type withSessionEvent = APIGatewayProxyEventV2 & {
   requestContext: {
     authorizer: {

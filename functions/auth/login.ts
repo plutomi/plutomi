@@ -13,7 +13,6 @@ import {
 import errorFormatter from "../../utils/errorFormatter";
 import { sealData, unsealData } from "iron-session";
 import { keepProperties } from "../../utils/sanitize";
-import { DynamoNewUser } from "../../types/dynamo";
 import * as Users from "../../models/Users";
 
 export interface RequestLoginLinkAPIBody {
@@ -141,12 +140,7 @@ export async function main(
     return response;
   }
 
-  type SessionData = Pick<
-    DynamoNewUser,
-    "firstName" | "lastName" | "orgId" | "email" | "userId" | "canReceiveEmails"
-  >;
-
-  const cleanUser: SessionData = keepProperties(user, [
+  const result = keepProperties(user, [
     "firstName",
     "lastName",
     "email",
@@ -155,7 +149,7 @@ export async function main(
     "canReceiveEmails",
   ]);
 
-  const encryptedCookie = await sealData(cleanUser, SESSION_SETTINGS);
+  const encryptedCookie = await sealData(result.object, SESSION_SETTINGS);
   const response: APIGatewayProxyResultV2 = {
     cookies: [`${DEFAULTS.COOKIE_NAME}=${encryptedCookie}; ${COOKIE_SETTINGS}`],
     statusCode: 307,

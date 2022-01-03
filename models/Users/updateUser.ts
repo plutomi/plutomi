@@ -16,14 +16,6 @@ export default async function Update(
 
   try {
     for (const property in newValues) {
-      // If updating forbidden keys is banned, filter these keys out
-      if (
-        !ALLOW_FORBIDDEN_KEYS &&
-        FORBIDDEN_PROPERTIES.STAGE.includes(property)
-      ) {
-        delete newValues[property];
-      }
-      // If its a valid property, start creating the new update expression
       // Push each property into the update expression
       allUpdateExpressions.push(`${property} = :${property}`);
 

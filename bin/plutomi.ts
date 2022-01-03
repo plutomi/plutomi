@@ -23,13 +23,14 @@ builder
       `${process.env.NODE_ENV}-DynamoDBStack`
     );
 
-    const { sessionInfoFunction, getUserByIdFunction } = new APIUsersServiceStack(
-      app,
-      `${process.env.NODE_ENV}-APIUsersServiceStack`,
-      {
-        table,
-      }
-    );
+    const { sessionInfoFunction, getUserByIdFunction, updateUserFunction } =
+      new APIUsersServiceStack(
+        app,
+        `${process.env.NODE_ENV}-APIUsersServiceStack`,
+        {
+          table,
+        }
+      );
     const { requestLoginLinkFunction, loginFunction, logoutFunction } =
       new APIAuthServiceStack(
         app,
@@ -44,7 +45,8 @@ builder
       requestLoginLinkFunction,
       loginFunction,
       logoutFunction,
-      getUserByIdFunction
+      getUserByIdFunction,
+      updateUserFunction,
     });
 
     const { CommsMachine } = new CommsMachineStack(

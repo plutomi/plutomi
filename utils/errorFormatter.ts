@@ -6,9 +6,9 @@ import { SdkError } from "@aws-sdk/types";
 export default function handler(error: SdkError) {
   console.error(error);
   return {
-    error: error.name,
-    errorMessage: error.message,
-    requestId: error.$metadata.requestId,
-    httpStatusCode: error.$metadata.httpStatusCode,
+    error: error.name || "ERROR",
+    errorMessage: error.message || "An error ocurred",
+    requestId: error.$metadata.requestId || null,
+    httpStatusCode: error.$metadata.httpStatusCode || 500,
   };
 }
