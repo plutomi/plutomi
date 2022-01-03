@@ -58,6 +58,18 @@ export async function main(
       seal,
       LOGIN_LINK_SETTINGS
     );
+
+    // If the seal expired, these will be undefined. Also undefined for things like seal=123
+    if (!data.userId || !data.loginLinkId) {
+      const response: APIGatewayProxyResultV2 = {
+        statusCode: 401,
+        body: JSON.stringify({
+          message: "Your link is invalid",
+        }),
+      };
+      return response;
+    }
+
     userId = data.userId;
     loginLinkId = data.loginLinkId;
   } catch (error) {
@@ -69,19 +81,11 @@ export async function main(
     };
     return response;
   }
-  // If the seal expired, these will be undefined. Also undefined for things like seal=123
-  if (!userId || !loginLinkId) {
-    const response: APIGatewayProxyResultV2 = {
-      statusCode: 401,
-      body: JSON.stringify({
-        message: "Your link is invalid",
-      }),
-    };
-    return response;
-  }
 
+  console.log("Getting user", userId);
   const [user, error] = await Users.getUserById({ userId }); // TODO async error handling
 
+  console.log("User found", user);
   if (error) {
     const formattedError = errorFormatter(error);
 
@@ -93,6 +97,16 @@ export async function main(
       }),
     };
     return response;
+  }
+
+  // If a user is deleted between when they made they requested the login link and they attempted to sign in
+  if (!user) {
+    return {
+      statusCode: 401,
+      body: JSON.stringify({
+        message: `Please contact support, your user account appears to be deleted.`,
+      }),
+    };
   }
 
   // If this is a new user, an asynchronous welcome email is sent through step functions

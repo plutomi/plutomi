@@ -141,7 +141,7 @@ export async function main(
   const seal = await sealData(
     {
       userId: user.userId,
-      loginLinkId: loginLinkId,
+      loginLinkId,
     },
     LOGIN_LINK_SETTINGS
   );

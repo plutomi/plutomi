@@ -23,11 +23,12 @@ export async function main(
   }
 
   if (!user) {
-    return {
+    const response = {
       statusCode: 401,
-      cookies: [`${DEFAULTS.COOKIE_NAME}=''; ${COOKIE_SETTINGS}`],
+      cookies: [`${DEFAULTS.COOKIE_NAME}=''; Max-Age=-1; ${COOKIE_SETTINGS}`],
       body: JSON.stringify({ message: `Please log in again` }),
     };
+    return response;
   }
 
   return {
