@@ -10,9 +10,11 @@ import {
   COOKIE_SETTINGS,
   WEBSITE_URL,
 } from "../../Config";
+import { keys } from "ts-transformer-keys";
+import { SessionData } from "../../types/main";
 import errorFormatter from "../../utils/errorFormatter";
 import { sealData, unsealData } from "iron-session";
-import { keepProperties } from "../../utils/sanitize";
+import Sanitize from "../../utils/sanitize";
 import * as Users from "../../models/Users";
 
 export interface RequestLoginLinkAPIBody {
@@ -140,14 +142,8 @@ export async function main(
     return response;
   }
 
-  const result = keepProperties(user, [
-    "firstName",
-    "lastName",
-    "email",
-    "userId",
-    "orgId",
-    "canReceiveEmails",
-  ]);
+  // https://stackoverflow.com/a/43572554
+  const result = Sanitize("KEEP", keys<SessionData>(), user);
 
   const encryptedCookie = await sealData(result.object, SESSION_SETTINGS);
   const response: APIGatewayProxyResultV2 = {

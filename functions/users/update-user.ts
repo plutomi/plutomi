@@ -1,6 +1,8 @@
 import { APIGatewayProxyResultV2 } from "aws-lambda";
-import { SessionData, withSessionEvent } from "../../types/main";
+import { withSessionEvent } from "../../types/main";
+import Sanitize from "../../utils/sanitize";
 import * as Users from "../../models/Users";
+import { SessionData } from "../../types/main";
 import Joi from "joi";
 import {
   COOKIE_SETTINGS,
@@ -10,8 +12,8 @@ import {
   JOI_SETTINGS,
   SESSION_SETTINGS,
 } from "../../Config";
+import { keys } from "ts-transformer-keys";
 import errorFormatter from "../../utils/errorFormatter";
-import { keepProperties, removeProperties } from "../../utils/sanitize";
 import { sealData } from "iron-session";
 export async function main(
   event: withSessionEvent
@@ -56,7 +58,11 @@ export async function main(
     };
   }
 
-  const filteredValues = removeProperties(newValues, FORBIDDEN_PROPERTIES.USER);
+  const filteredValues = Sanitize(
+    "REMOVE",
+    FORBIDDEN_PROPERTIES.USER,
+    newValues
+  );
   // TODO add this to all other update expressions, or combine them into one
   // Throw an error if all properties are invalid (empty object)
   if (Object.keys(filteredValues.object).length === 0) {
@@ -86,19 +92,17 @@ export async function main(
 
   // If a signed in user is updating themselves, update the session state as well
   if (updatedUser.userId === session.userId) {
-    const result = keepProperties(updatedUser, [
-      "firstName",
-      "lastName",
-      "email",
-      "userId",
-      "orgId",
-      "canReceiveEmails",
-    ]);
+    const result = Sanitize(
+      "KEEP",
+      // https://stackoverflow.com/a/43572554
+      keys<SessionData>(),
+      updatedUser
+    );
 
     const encryptedCookie = await sealData(result.object, SESSION_SETTINGS);
 
-    const customMessage = filteredValues.removedProperties.length
-      ? `We've updated your info, but some properties could not be updated: '${filteredValues.removedProperties.join(
+    const customMessage = filteredValues.removedKeys.length
+      ? `We've updated your info, but some properties could not be updated: '${filteredValues.removedKeys.join(
           ", "
         )}'`
       : `We've updated your info!`;
@@ -114,8 +118,8 @@ export async function main(
     return response;
   }
 
-  const customMessage = filteredValues.removedProperties.length
-    ? `User updated! However, some properties could not be updated: '${filteredValues.removedProperties.join(
+  const customMessage = filteredValues.removedKeys.length
+    ? `User updated! However, some properties could not be updated: '${filteredValues.removedKeys.join(
         ", "
       )}'`
     : `User updated!`;

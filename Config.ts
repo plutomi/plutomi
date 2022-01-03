@@ -1,4 +1,5 @@
 import Joi from "joi";
+import { SessionData } from "./types/main";
 export const DOMAIN_NAME = `plutomi.com`;
 export const API_SUBDOMAIN =
   process.env.NODE_ENV === "production" ? "api" : "dev";
@@ -153,6 +154,7 @@ export enum STREAM_EVENTS {
   REQUEST_LOGIN_LINK = "REQUEST_LOGIN_LINK",
   NEW_USER = "NEW_USER",
 }
+
 /**
  * Properties that cannot be updated per entity type
  */

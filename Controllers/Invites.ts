@@ -176,7 +176,7 @@ export const accept = async (req: Request, res: Response) => {
       ...formattedError,
     });
   }
-  req.session.user = Sanitize.clean(updatedUser, ENTITY_TYPES.USER);
+  req.session.user = Sanitize("REMOVE", ENTITY_TYPES.USER, updatedUser);
   await req.session.save();
   return res
     .status(200)

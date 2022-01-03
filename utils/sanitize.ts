@@ -1,24 +1,27 @@
-// TODO clean this up this is a mess
-export const keepProperties = (object: any, properties: string[]) => {
-  let removedProperties = [];
-  for (const property in object) {
-    if (!properties.includes(property)) {
-      delete object[property];
-      removedProperties.push(property);
+/**
+ *
+ * @param action Whether to `REMOVE` or `KEEP` the listed properties
+ * @param properties The properties to filter on
+ * @param object The object that you want to remove or keep certain keys
+ * @returns An object with certain keys remove or kept
+ */
+export default function Sanitize(
+  action: "REMOVE" | "KEEP",
+  properties: string[],
+  object: {}
+) {
+  let removedKeys = [];
+  for (const key in object) {
+    const rule =
+      action === "REMOVE"
+        ? properties.includes(key)
+        : !properties.includes(key);
+
+    if (rule) {
+      delete object[key];
+      removedKeys.push(key);
     }
   }
-  return { object, removedProperties };
-};
 
-export const removeProperties = (object: any, properties: string[]) => {
-  let removedProperties = [];
-
-  for (const property of properties) {
-    if (property in object) {
-      // So we can have a list of properties that were removed
-      removedProperties.push(property);
-    }
-    delete object[property];
-  }
-  return { object, removedProperties };
-};
+  return { object, removedKeys };
+}
