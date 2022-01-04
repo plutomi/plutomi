@@ -32,7 +32,7 @@ export default async function CreateUser(
       firstName && lastName ? `${firstName} ${lastName}` : DEFAULTS.FULL_NAME,
     GSI2PK: email.toLowerCase().trim(),
     GSI2SK: ENTITY_TYPES.USER,
-    unsubscribeHash: nanoid(10),
+    unsubscribeKey: nanoid(10),
     canReceiveEmails: true,
     verifiedEmail: false,
   };

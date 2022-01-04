@@ -9,6 +9,7 @@ import {
   sessionDataKeys,
   SESSION_SETTINGS,
   COOKIE_SETTINGS,
+  JoiOrgId,
 } from "../../Config";
 import errorFormatter from "../../utils/errorFormatter";
 import getSessionFromCookies from "../../utils/getSessionFromCookies";
@@ -37,10 +38,7 @@ export async function main(
 
   const schema = CustomJoi.object({
     body: {
-      orgId: Joi.string().invalid(
-        DEFAULTS.NO_ORG,
-        tagGenerator.generate(DEFAULTS.NO_ORG)
-      ),
+      orgId: JoiOrgId,
       displayName: Joi.string().invalid(
         DEFAULTS.NO_ORG,
         tagGenerator.generate(DEFAULTS.NO_ORG)

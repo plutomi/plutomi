@@ -45,12 +45,14 @@ builder
         }
       );
 
-    const { createOrgFunction, getOrgInfoFunction } = new APIOrgsServiceStack(
-      app,
-      `${process.env.NODE_ENV}-APIOrgsServiceStack`,
-      { table }
-    );
+    const { createOrgFunction, getOrgInfoFunction, deleteOrgFunction } =
+      new APIOrgsServiceStack(
+        app,
+        `${process.env.NODE_ENV}-APIOrgsServiceStack`,
+        { table }
+      );
     new APIStack(app, `${process.env.NODE_ENV}-APIStack`, {
+      deleteOrgFunction,
       getSelfInfoFunction,
       requestLoginLinkFunction,
       loginFunction,

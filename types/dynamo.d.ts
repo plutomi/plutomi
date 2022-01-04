@@ -161,7 +161,7 @@ interface DynamoNewApplicant {
   // Before we had `OPENING#${openingId}#STAGE#{stageId}` for the SK which required the opening when getting applicants in specific stage
   // TODO recheck later if this is still good
 
-  unsubscribeHash: string;
+  unsubscribeKey: string;
   GSI1PK: `${ENTITY_TYPES.ORG}#${string}#${ENTITY_TYPES.OPENING}#${string}#${ENTITY_TYPES.STAGE}#${string}`;
   GSI1SK: `DATE_LANDED#${string}`;
 }
@@ -350,7 +350,7 @@ interface DynamoNewUser {
   GSI1SK: `${string} ${string}` | DEFAULTS.FULL_NAME;
   GSI2PK: string;
   GSI2SK: ENTITY_TYPES.USER;
-  unsubscribeHash: string;
+  unsubscribeKey: string;
   canReceiveEmails: boolean;
   verifiedEmail: boolean;
   totalInvites: number;

@@ -11,61 +11,6 @@ const UrlSafeString = require("url-safe-string"),
  * For public org data such as basic info or openings, please use the /public/:orgId route
  */
 
-
-export const deleteOrg = async (req: Request, res: Response) => {
-  const { orgId } = req.params;
-
-  if (req.session.user.orgId !== orgId) {
-    return res.status(400).json({
-      message: "You cannot delete this org as you do not belong to i",
-    });
-  }
-
-  const [org, error] = await Orgs.getOrgById({ orgId: orgId });
-
-  if (error) {
-    const formattedError = errorFormatter(error);
-    return res.status(formattedError.httpStatusCode).json({
-      message: "Unable to retrieve org info",
-      ...formattedError,
-    });
-  }
-
-  if (!org) {
-    return res.status(404).json({ message: "Org not found" });
-  }
-  if (org.totalUsers > 1) {
-    return res.status(400).json({
-      message: "You cannot delete this org as there are other users in it",
-    });
-  }
-
-  const [updatedUser, userUpdateError] = await Users.updateUser({
-    // TODO possible transaction?
-    userId: req.session.user.userId,
-    newValues: {
-      orgId: DEFAULTS.NO_ORG,
-      orgJoinDate: DEFAULTS.NO_ORG,
-      GSI1PK: DEFAULTS.NO_ORG,
-    },
-    ALLOW_FORBIDDEN_KEYS: true,
-  });
-
-  if (userUpdateError) {
-    const formattedError = errorFormatter(userUpdateError);
-    return res.status(formattedError.httpStatusCode).json({
-      message:
-        "We were unable to remove you from the org :( TODO - stuck condition if the org is already deleted, should be done in a transaction",
-      ...formattedError,
-    });
-  }
-  req.session.user = Sanitize.clean(updatedUser, ENTITY_TYPES.USER);
-  await req.session.save();
-  return res
-    .status(200)
-    .json({ message: `You've deleted the ${orgId} org :(` });
-};
-
 export const users = async (req: Request, res: Response) => {
   const { orgId } = req.params;
 

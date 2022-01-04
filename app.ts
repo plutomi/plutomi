@@ -29,7 +29,6 @@ app.get(
 );
 
 // Orgs
-app.delete("/orgs/:orgId", [withAuth], Orgs.deleteOrg);
 // app.get("/orgs/:orgId/invites").get([withAuth], ) // TODO - Get all invites for org
 
 app.get("/openings", [withAuth], Openings.getAllOpenings);

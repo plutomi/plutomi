@@ -35,7 +35,7 @@ export default async function Create(
     // TODO add phone number
     openingId: openingId,
     stageId: stageId,
-    unsubscribeHash: nanoid(10),
+    unsubscribeKey: nanoid(10),
     canReceiveEmails: true,
     // TODO Might need to be sharded on high volumes
     // Max seen is 75k per stage (on hold)

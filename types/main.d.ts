@@ -229,6 +229,11 @@ type CreateAndJoinOrgInput = {
   displayName: string;
 };
 
+type LeaveAndDeleteOrgInput = {
+  orgId: string;
+  userId: string;
+};
+
 type GetAllUsersInOrgInput = {
   orgId: string;
   /**

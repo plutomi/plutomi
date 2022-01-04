@@ -14,6 +14,9 @@ export const sessionDataKeys = [
   "userId",
 ];
 
+const UrlSafeString = require("url-safe-string"),
+  tagGenerator = new UrlSafeString();
+
 // Custom object to parse the event.body in lambda.
 export const CustomJoi = Joi.extend((joi) => {
   return {
@@ -239,3 +242,9 @@ export const NO_SESSION_RESPONSE = {
   cookies: [`${DEFAULTS.COOKIE_NAME}=''; Max-Age=-1; ${COOKIE_SETTINGS}`],
   body: JSON.stringify({ message: "Please log in again" }),
 };
+
+// Schema to validate orgIds against in joi
+export const JoiOrgId = Joi.string().invalid(
+  DEFAULTS.NO_ORG,
+  tagGenerator.generate(DEFAULTS.NO_ORG)
+);

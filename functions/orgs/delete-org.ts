@@ -5,11 +5,14 @@ import {
   NO_SESSION_RESPONSE,
   JOI_SETTINGS,
   DEFAULTS,
+  SESSION_SETTINGS,
+  COOKIE_SETTINGS,
   JoiOrgId,
 } from "../../Config";
 import errorFormatter from "../../utils/errorFormatter";
 import getSessionFromCookies from "../../utils/getSessionFromCookies";
 import * as Orgs from "../../models/Orgs";
+import { sealData } from "iron-session";
 const UrlSafeString = require("url-safe-string"),
   tagGenerator = new UrlSafeString();
 
@@ -49,13 +52,11 @@ export async function main(
 
   const orgId = tagGenerator.generate(pathParameters.orgId);
 
-  console.log("after tag orgid", orgId);
-  console.log("Session orgid", session.orgId);
-  if (orgId !== session.orgId) {
+  if (session.orgId !== orgId) {
     return {
       statusCode: 403,
       body: JSON.stringify({
-        message: "You cannot view this org",
+        message: "You cannot delete this org as you do not belong to it",
       }),
     };
   }
@@ -79,9 +80,41 @@ export async function main(
       body: JSON.stringify({ message: "Org not found" }),
     };
   }
+  if (org.totalUsers > 1) {
+    return {
+      statusCode: 403,
+      body: JSON.stringify({
+        message: "You cannot delete this org as there are other users in it",
+      }),
+    };
+  }
 
+  // Transaction - updates the user with default org values
+  const [success, failure] = await Orgs.leaveAndDeleteOrg({
+    orgId,
+    userId: session.userId,
+  });
+
+  if (failure) {
+    const formattedError = errorFormatter(failure);
+    return {
+      statusCode: formattedError.httpStatusCode,
+      body: JSON.stringify({
+        message: "We were unable to remove you from the org",
+        ...formattedError,
+      }),
+    };
+  }
+
+  const newSession = {
+    ...session,
+    orgId: DEFAULTS.NO_ORG,
+  };
+
+  const encryptedCookie = await sealData(newSession, SESSION_SETTINGS);
   return {
-    statusCode: 200,
-    body: JSON.stringify(org),
+    statusCode: 201,
+    cookies: [`${DEFAULTS.COOKIE_NAME}=${encryptedCookie}; ${COOKIE_SETTINGS}`],
+    body: JSON.stringify({ message: "Org deleted!" }),
   };
 }

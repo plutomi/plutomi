@@ -24,6 +24,7 @@ interface APIOrgsServiceProps extends cdk.StackProps {
 export default class APIOrgsServiceStack extends cdk.Stack {
   public createOrgFunction: NodejsFunction;
   public getOrgInfoFunction: NodejsFunction;
+  public deleteOrgFunction: NodejsFunction;
 
   constructor(scope: cdk.Construct, id: string, props?: APIOrgsServiceProps) {
     super(scope, id, props);
@@ -83,6 +84,39 @@ export default class APIOrgsServiceStack extends cdk.Stack {
     this.getOrgInfoFunction.role.attachInlinePolicy(
       new Policy(this, "get-org-info-function-policy", {
         statements: [getOrgInfoPolicy],
+      })
+    );
+
+    this.deleteOrgFunction = new NodejsFunction(
+      this,
+      `${process.env.NODE_ENV}-delete-org-function`,
+      {
+        functionName: `${process.env.NODE_ENV}-delete-org-function`,
+        ...DEFAULT_LAMBDA_CONFIG,
+        environment: {
+          DYNAMO_TABLE_NAME: props.table.tableName,
+          SESSION_PASSWORD: process.env.SESSION_PASSWORD,
+        },
+        entry: path.join(__dirname, `../functions/orgs/delete-org.ts`),
+      }
+    );
+
+    const deleteOrgPolicy = new PolicyStatement({
+      actions: [
+        "dynamodb:GetItem",
+        "dynamodb:UpdateItem",
+        "dynamodb:DeleteItem",
+      ],
+      resources: [
+        `arn:aws:dynamodb:${cdk.Stack.of(this).region}:${
+          cdk.Stack.of(this).account
+        }:table/${props.table.tableName}`,
+      ],
+    });
+
+    this.deleteOrgFunction.role.attachInlinePolicy(
+      new Policy(this, "delete-org-function-policy", {
+        statements: [deleteOrgPolicy],
       })
     );
   }
