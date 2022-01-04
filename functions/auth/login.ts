@@ -61,42 +61,36 @@ export async function main(
 
     // If the seal expired, these will be undefined. Also undefined for things like seal=123
     if (!data.userId || !data.loginLinkId) {
-      const response: APIGatewayProxyResultV2 = {
+      return {
         statusCode: 401,
         body: JSON.stringify({
           message: "Your link is invalid",
         }),
       };
-      return response;
     }
 
     userId = data.userId;
     loginLinkId = data.loginLinkId;
   } catch (error) {
-    const response: APIGatewayProxyResultV2 = {
+    return {
       statusCode: 400,
       body: JSON.stringify({
         message: "Bad seal",
       }),
     };
-    return response;
   }
 
-  console.log("Getting user", userId);
   const [user, error] = await Users.getUserById({ userId }); // TODO async error handling
 
-  console.log("User found", user);
   if (error) {
-    console.log("Error after getting user", error);
     const formattedError = errorFormatter(error);
-    const response: APIGatewayProxyResultV2 = {
+    return {
       statusCode: formattedError.httpStatusCode,
       body: JSON.stringify({
         message: "An error ocurred using your login link",
         ...formattedError,
       }),
     };
-    return response;
   }
 
   // If a user is deleted between when they made they requested the login link and they attempted to sign in
@@ -125,34 +119,25 @@ export async function main(
     // If login link has been used, it will throw this error
     const LOGIN_LINK_ALREADY_USED_ERROR = `Transaction cancelled, please refer cancellation reasons for specific reasons [None, ConditionalCheckFailed]`;
     if (formattedError.errorMessage === LOGIN_LINK_ALREADY_USED_ERROR) {
-      const response: APIGatewayProxyResultV2 = {
+      return {
         statusCode: 401,
         body: JSON.stringify({
           message: "Login link no longer valid",
         }),
       };
-      return response;
     }
 
-    const response: APIGatewayProxyResultV2 = {
+    return {
       statusCode: formattedError.httpStatusCode,
       body: JSON.stringify({
         message: "Unable to create login event",
         ...formattedError,
       }),
     };
-    return response;
   }
 
-  function interfaceKeys<T>(keys: Record<keyof T, 1>) {
-    return Object.keys(keys) as Array<keyof T>;
-  }
-
-  console.log("Trying to sanitize");
-  // https://stackoverflow.com/a/43572554
   const result = Sanitize("KEEP", sessionDataKeys, user);
 
-  console.log("Sanitized", result);
   const encryptedCookie = await sealData(result.object, SESSION_SETTINGS);
   const response: APIGatewayProxyResultV2 = {
     cookies: [`${DEFAULTS.COOKIE_NAME}=${encryptedCookie}; ${COOKIE_SETTINGS}`],
@@ -160,7 +145,7 @@ export async function main(
     headers: {
       Location: callbackUrl,
     },
-    body: JSON.stringify({ message: "Success, check cookies. " }),
+    body: JSON.stringify({ message: "Login success!" }),
   };
 
   // If a user has invites, redirect them to the invites page on login regardless of the callback url

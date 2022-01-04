@@ -100,12 +100,7 @@ export async function main(
 
   // If a signed in user is updating themselves, update the session state as well
   if (updatedUser.userId === session.userId) {
-    const result = Sanitize(
-      "KEEP",
-      // https://stackoverflow.com/a/43572554
-      sessionDataKeys,
-      updatedUser
-    );
+    const result = Sanitize("KEEP", sessionDataKeys, updatedUser);
 
     const encryptedCookie = await sealData(result.object, SESSION_SETTINGS);
 
@@ -114,7 +109,7 @@ export async function main(
           ", "
         )}'`
       : `We've updated your info!`;
-    let response: APIGatewayProxyResultV2 = {
+    return {
       statusCode: 200,
       cookies: [
         `${DEFAULTS.COOKIE_NAME}=${encryptedCookie}; ${COOKIE_SETTINGS}`,
@@ -123,20 +118,18 @@ export async function main(
         message: customMessage,
       }),
     };
-    return response;
   }
-
+  // When updating another user
   const customMessage = filteredValues.removedKeys.length
     ? `User updated! However, some properties could not be updated: '${filteredValues.removedKeys.join(
         ", "
       )}'`
     : `User updated!`;
-  let response: APIGatewayProxyResultV2 = {
+
+  return {
     statusCode: 200,
     body: JSON.stringify({
       message: customMessage,
     }),
   };
-
-  return response;
 }

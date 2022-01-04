@@ -18,21 +18,21 @@ export async function main(
   }
   const [user, error] = await Users.getUserById({ userId: session.userId });
 
-  console.log("user", user);
   if (error) {
     const formattedError = errorFormatter(error);
     return {
       statusCode: formattedError.httpStatusCode,
       body: JSON.stringify({
-        message: "An error ocurred retrieving self info",
+        message: "An error ocurred retrieving your info",
         ...formattedError,
       }),
     };
   }
 
   // User was deleted for some reason
-  !user && NO_SESSION_RESPONSE;
-
+  if (!user) {
+    return NO_SESSION_RESPONSE;
+  }
   return {
     statusCode: 200,
     body: JSON.stringify(user),

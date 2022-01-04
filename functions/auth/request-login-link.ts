@@ -60,14 +60,13 @@ export async function main(
 
   if (userError) {
     const formattedError = errorFormatter(userError);
-    const response: APIGatewayProxyResultV2 = {
+    return {
       statusCode: formattedError.httpStatusCode,
       body: JSON.stringify({
         message: "An error ocurred getting your user info",
         ...formattedError,
       }),
     };
-    return response;
   }
 
   if (!user) {
@@ -77,27 +76,25 @@ export async function main(
 
     if (createUserError) {
       const formattedError = errorFormatter(createUserError);
-      const response: APIGatewayProxyResultV2 = {
+      return {
         statusCode: formattedError.httpStatusCode,
         body: JSON.stringify({
           message: "An error ocurred creating your account",
           ...formattedError,
         }),
       };
-      return response;
     }
     user = createdUser;
   }
 
   // Allow google login even if a user opted out of emails // TODO revisit once unsubscribe has been implemented
   if (!user.canReceiveEmails && loginMethod === LOGIN_METHODS.EMAIL) {
-    const response: APIGatewayProxyResultV2 = {
+    return {
       statusCode: 403,
       body: JSON.stringify({
         message: `${user.email} is unable to receive emails, please reach out to support@plutomi.com to opt back in!`,
       }),
     };
-    return response;
   }
 
   // Check if a user is  making too many requests for a login link by comparing the time of their last link
@@ -107,14 +104,13 @@ export async function main(
 
   if (loginLinkError) {
     const formattedError = errorFormatter(loginLinkError);
-    const response: APIGatewayProxyResultV2 = {
+    return {
       statusCode: formattedError.httpStatusCode,
       body: JSON.stringify({
         message: "An error ocurred getting your login link",
         ...formattedError,
       }),
     };
-    return response;
   }
   const timeThreshold = Time.pastISO(10, TIME_UNITS.MINUTES);
 
@@ -123,13 +119,12 @@ export async function main(
     latestLink.createdAt >= timeThreshold &&
     !user.email.endsWith(DOMAIN_NAME) // Allow admins to send multiple login links in a short timespan
   ) {
-    const response: APIGatewayProxyResultV2 = {
+    return {
       statusCode: 400,
       body: JSON.stringify({
         message: "You're doing that too much, please try again later",
       }),
     };
-    return response;
   }
 
   // Create a login link for them
@@ -163,30 +158,28 @@ export async function main(
   if (creationError) {
     const formattedError = errorFormatter(creationError);
 
-    const response: APIGatewayProxyResultV2 = {
+    return {
       statusCode: formattedError.httpStatusCode,
       body: JSON.stringify({
         message: "An error ocurred creating your login link",
         ...formattedError,
       }),
     };
-    return response;
   }
 
   // Cannot do serverside redirect from axios POST, client will make the POST instead - // TODO revisit this and just have a router.push?
   if (loginMethod === LOGIN_METHODS.GOOGLE) {
-    const response: APIGatewayProxyResultV2 = {
+    return {
       statusCode: 200,
       body: JSON.stringify({ message: loginLinkUrl }),
     };
-    return response;
   }
 
-  const response: APIGatewayProxyResultV2 = {
+  // Else, send the email asynchronously w/ step functions
+  return {
     statusCode: 201,
     body: JSON.stringify({
       message: `We've sent a magic login link to your email!`,
     }),
   };
-  return response;
 }
