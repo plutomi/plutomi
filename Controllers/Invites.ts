@@ -112,7 +112,7 @@ export const create = async (req: Request, res: Response) => {
 
   const [inviteCreated, inviteError] = await Invites.createInvite({
     recipient: recipient,
-    orgName: org.GSI1SK,
+    orgName: org.displayName,
     expiresAt: Time.futureISO(3, TIME_UNITS.DAYS),
     createdBy: req.session.user,
   });
