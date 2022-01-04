@@ -9,7 +9,6 @@ if (resultDotEnv.error) {
 
 import express from "express";
 import * as PublicInfo from "./controllers/PublicInfo";
-import * as Users from "./controllers/Users";
 import * as Invites from "./controllers/Invites";
 import * as Orgs from "./controllers/Orgs";
 import * as Questions from "./controllers/Questions";
@@ -77,7 +76,6 @@ app.get(
 app.get("/orgs/:orgId/users", [withAuth], Orgs.users);
 
 // Invites
-app.get("/users/:userId/invites", [withAuth], Users.getInvites);
 app.post("/invites", [withAuth], Invites.create);
 app.post("/invites/:inviteId", [withAuth], Invites.accept);
 app.delete("/invites/:inviteId", [withAuth], Invites.reject);

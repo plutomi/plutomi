@@ -6,7 +6,16 @@ export const API_SUBDOMAIN =
 export const API_DOMAIN = `${API_SUBDOMAIN}.${DOMAIN_NAME}`;
 export const API_URL = `https://${API_DOMAIN}`; // API Gateway does not redirect to https :/
 export const WEBSITE_URL = `https://${DOMAIN_NAME}`;
-export const COOKIE_SETTINGS = `Secure; HttpOnly; SameSite=Lax; Domain=${DOMAIN_NAME}`; // See SESSION_SETTINGS for setting session length
+export const COOKIE_SETTINGS = `Secure; HttpOnly; SameSite=Lax; Domain=${DOMAIN_NAME}; Path=/;`; // See SESSION_SETTINGS for setting session length
+export const sessionDataKeys = [
+  "firstName",
+  "lastName",
+  "orgId",
+  "email",
+  "userId",
+  "canReceiveEmails",
+];
+
 // Custom object to parse the event.body in lambda.
 export const CustomJoi = Joi.extend((joi) => {
   return {
@@ -225,4 +234,10 @@ export const SWR = {
    * Was a 'cost' saving thing when using Lambda as API.. // TODO revisit this
    */
   INVITES_REFRESH_INTERVAL: 10000,
+};
+
+export const NO_SESSION_RESPONSE = {
+  statusCode: 401,
+  cookies: [`${DEFAULTS.COOKIE_NAME}=''; Max-Age=-1; ${COOKIE_SETTINGS}`],
+  body: JSON.stringify({ message: "Please log in again" }),
 };

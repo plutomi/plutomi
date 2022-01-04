@@ -1,5 +1,6 @@
 import { APIGatewayProxyEventV2, APIGatewayProxyResultV2 } from "aws-lambda";
 import Joi from "joi";
+import { UserSessionData } from "../../types/main";
 import {
   CustomJoi,
   DEFAULTS,
@@ -9,9 +10,8 @@ import {
   JOI_SETTINGS,
   COOKIE_SETTINGS,
   WEBSITE_URL,
+  sessionDataKeys,
 } from "../../Config";
-import { keys } from "ts-transformer-keys";
-import { SessionData } from "../../types/main";
 import errorFormatter from "../../utils/errorFormatter";
 import { sealData, unsealData } from "iron-session";
 import Sanitize from "../../utils/sanitize";
@@ -88,8 +88,8 @@ export async function main(
 
   console.log("User found", user);
   if (error) {
+    console.log("Error after getting user", error);
     const formattedError = errorFormatter(error);
-
     const response: APIGatewayProxyResultV2 = {
       statusCode: formattedError.httpStatusCode,
       body: JSON.stringify({
@@ -102,6 +102,7 @@ export async function main(
 
   // If a user is deleted between when they made they requested the login link and they attempted to sign in
   if (!user) {
+    console.log("User deleted");
     return {
       statusCode: 401,
       body: JSON.stringify({
@@ -118,6 +119,8 @@ export async function main(
   });
 
   if (failed) {
+    console.log("Unable to create login event and delete login link", failed);
+
     const formattedError = errorFormatter(failed);
 
     // If login link has been used, it will throw this error
@@ -142,9 +145,15 @@ export async function main(
     return response;
   }
 
-  // https://stackoverflow.com/a/43572554
-  const result = Sanitize("KEEP", keys<SessionData>(), user);
+  function interfaceKeys<T>(keys: Record<keyof T, 1>) {
+    return Object.keys(keys) as Array<keyof T>;
+  }
 
+  console.log("Trying to sanitize");
+  // https://stackoverflow.com/a/43572554
+  const result = Sanitize("KEEP", sessionDataKeys, user);
+
+  console.log("Sanitized", result);
   const encryptedCookie = await sealData(result.object, SESSION_SETTINGS);
   const response: APIGatewayProxyResultV2 = {
     cookies: [`${DEFAULTS.COOKIE_NAME}=${encryptedCookie}; ${COOKIE_SETTINGS}`],

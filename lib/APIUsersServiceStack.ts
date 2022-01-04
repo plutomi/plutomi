@@ -26,6 +26,7 @@ export default class APIUsersServiceStack extends cdk.Stack {
   public readonly sessionInfoFunction: NodejsFunction;
   public readonly getUserByIdFunction: NodejsFunction;
   public readonly updateUserFunction: NodejsFunction;
+  public readonly getUserInvites: NodejsFunction;
   constructor(scope: cdk.Construct, id: string, props?: APIUsersServiceProps) {
     super(scope, id, props);
 
@@ -123,6 +124,37 @@ export default class APIUsersServiceStack extends cdk.Stack {
     this.updateUserFunction.role.attachInlinePolicy(
       new Policy(this, "update-user-function-policy", {
         statements: [updateUserPolicy],
+      })
+    );
+
+    /**
+     * Get Invites for User
+     */
+    this.getUserInvites = new NodejsFunction(
+      this,
+      `${process.env.NODE_ENV}-get-user-invites-function`,
+      {
+        functionName: `${process.env.NODE_ENV}-get-user-invites-function`,
+        ...DEFAULT_LAMBDA_CONFIG,
+        environment: {
+          DYNAMO_TABLE_NAME: props.table.tableName,
+        },
+        entry: path.join(__dirname, `../functions/users/get-invites.ts`),
+      }
+    );
+
+    const getInvitesForUserPolicy = new PolicyStatement({
+      actions: ["dynamodb:Query"],
+      resources: [
+        `arn:aws:dynamodb:${cdk.Stack.of(this).region}:${
+          cdk.Stack.of(this).account
+        }:table/${props.table.tableName}`,
+      ],
+    });
+
+    this.getUserInvites.role.attachInlinePolicy(
+      new Policy(this, "get-user-invites-function-policy", {
+        statements: [getInvitesForUserPolicy],
       })
     );
   }

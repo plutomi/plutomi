@@ -10,9 +10,10 @@ import {
   DEFAULTS,
   FORBIDDEN_PROPERTIES,
   JOI_SETTINGS,
+  NO_SESSION_RESPONSE,
+  sessionDataKeys,
   SESSION_SETTINGS,
 } from "../../Config";
-import { keys } from "ts-transformer-keys";
 import errorFormatter from "../../utils/errorFormatter";
 import { sealData } from "iron-session";
 export async function main(
@@ -20,6 +21,9 @@ export async function main(
 ): Promise<APIGatewayProxyResultV2> {
   console.log(event);
   const { session } = event.requestContext.authorizer.lambda;
+  if (!session) {
+    return NO_SESSION_RESPONSE;
+  }
   const pathParameters = event.pathParameters || {};
   const body = JSON.parse(event.body || "{}");
   const input = {
@@ -95,7 +99,7 @@ export async function main(
     const result = Sanitize(
       "KEEP",
       // https://stackoverflow.com/a/43572554
-      keys<SessionData>(),
+      sessionDataKeys,
       updatedUser
     );
 

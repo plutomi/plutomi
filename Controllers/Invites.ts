@@ -1,6 +1,12 @@
 import { Request, Response } from "express";
 import Joi from "joi";
-import { DEFAULTS, EMAILS, ENTITY_TYPES, TIME_UNITS } from "./../Config";
+import {
+  DEFAULTS,
+  EMAILS,
+  ENTITY_TYPES,
+  FORBIDDEN_PROPERTIES,
+  TIME_UNITS,
+} from "./../Config";
 import Sanitize from "./../utils/sanitize";
 import * as Invites from "../models/Invites/index";
 import * as Time from "./../utils/time";
@@ -176,7 +182,7 @@ export const accept = async (req: Request, res: Response) => {
       ...formattedError,
     });
   }
-  req.session.user = Sanitize("REMOVE", ENTITY_TYPES.USER, updatedUser);
+  req.session.user = Sanitize("REMOVE", FORBIDDEN_PROPERTIES.USER, updatedUser);
   await req.session.save();
   return res
     .status(200)

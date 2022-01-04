@@ -1,9 +1,5 @@
 import * as dotenv from "dotenv";
 import * as cdk from "@aws-cdk/core";
-import {
-  HttpLambdaAuthorizer,
-  HttpLambdaResponseType,
-} from "@aws-cdk/aws-apigatewayv2-authorizers";
 import { LambdaProxyIntegration } from "@aws-cdk/aws-apigatewayv2-integrations";
 import {
   HttpApi,
@@ -33,6 +29,7 @@ interface APIGatewayServiceProps extends cdk.StackProps {
   sessionInfoFunction: NodejsFunction;
   getUserByIdFunction: NodejsFunction;
   updateUserFunction: NodejsFunction;
+  getUserInvites: NodejsFunction;
 }
 
 const DEFAULT_LAMBDA_CONFIG = {
@@ -126,13 +123,6 @@ export default class APIStack extends cdk.Stack {
         entry: path.join(__dirname, `../functions/auth/authorizer.ts`),
       }
     );
-    const authorizer = new HttpLambdaAuthorizer({
-      authorizerName: `${process.env.NODE_ENV}-authorizer`,
-      handler: authorizerFunction,
-      resultsCacheTtl: cdk.Duration.seconds(0),
-      identitySource: [],
-      responseTypes: [HttpLambdaResponseType.SIMPLE], // Define if returns simple and/or iam response
-    });
 
     const routes = [
       {
@@ -162,7 +152,6 @@ export default class APIStack extends cdk.Stack {
         integration: new LambdaProxyIntegration({
           handler: props.sessionInfoFunction,
         }),
-        authorizer,
       },
 
       {
@@ -171,7 +160,6 @@ export default class APIStack extends cdk.Stack {
         integration: new LambdaProxyIntegration({
           handler: props.getUserByIdFunction,
         }),
-        authorizer,
       },
 
       {
@@ -180,7 +168,13 @@ export default class APIStack extends cdk.Stack {
         integration: new LambdaProxyIntegration({
           handler: props.updateUserFunction,
         }),
-        authorizer,
+      },
+      {
+        path: `/users/{userId}/invites`,
+        methods: [HttpMethod.GET],
+        integration: new LambdaProxyIntegration({
+          handler: props.getUserInvites,
+        }),
       },
     ];
 

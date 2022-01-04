@@ -22,17 +22,16 @@ export default async function getSessionFromCookies(cookies: string[]) {
   if (!seal) {
     throw "Session seal not found";
   }
-  let sessionData: UserSessionData;
-
   if (seal) {
     try {
-      const data: UserSessionData = await unsealData(seal, SESSION_SETTINGS);
+      const data = await unsealData(seal, SESSION_SETTINGS);
 
-      sessionData = { ...data };
-
-      return sessionData;
+      if (Object.keys(data).length === 0) {
+        throw "Session expired";
+      }
+      return data;
     } catch (error) {
-      throw "Bad seal";
+      throw `Bad seal: ${error.message}`;
     }
   }
 }
