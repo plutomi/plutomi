@@ -23,6 +23,7 @@ interface APIOrgsServiceProps extends cdk.StackProps {
 
 export default class APIOrgsServiceStack extends cdk.Stack {
   public createOrgFunction: NodejsFunction;
+  public getOrgInfoFunction: NodejsFunction;
 
   constructor(scope: cdk.Construct, id: string, props?: APIOrgsServiceProps) {
     super(scope, id, props);
@@ -51,8 +52,37 @@ export default class APIOrgsServiceStack extends cdk.Stack {
     });
 
     this.createOrgFunction.role.attachInlinePolicy(
-      new Policy(this, "request-login-link-function-policy", {
+      new Policy(this, "create-org-function-policy", {
         statements: [createOrgFunctionPolicy],
+      })
+    );
+
+    this.getOrgInfoFunction = new NodejsFunction(
+      this,
+      `${process.env.NODE_ENV}-get-org-info-function`,
+      {
+        functionName: `${process.env.NODE_ENV}-get-org-info-function`,
+        ...DEFAULT_LAMBDA_CONFIG,
+        environment: {
+          DYNAMO_TABLE_NAME: props.table.tableName,
+          SESSION_PASSWORD: process.env.SESSION_PASSWORD,
+        },
+        entry: path.join(__dirname, `../functions/orgs/get-org-info.ts`),
+      }
+    );
+
+    const getOrgInfoPolicy = new PolicyStatement({
+      actions: ["dynamodb:GetItem"],
+      resources: [
+        `arn:aws:dynamodb:${cdk.Stack.of(this).region}:${
+          cdk.Stack.of(this).account
+        }:table/${props.table.tableName}`,
+      ],
+    });
+
+    this.getOrgInfoFunction.role.attachInlinePolicy(
+      new Policy(this, "get-org-info-function-policy", {
+        statements: [getOrgInfoPolicy],
       })
     );
   }

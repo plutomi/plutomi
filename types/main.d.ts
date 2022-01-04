@@ -226,7 +226,7 @@ type GetLatestLoginLinkInput = {
 type CreateAndJoinOrgInput = {
   userId: string;
   orgId: string;
-  GSI1SK: string; /// The org name
+  displayName: string;
 };
 
 type GetAllUsersInOrgInput = {

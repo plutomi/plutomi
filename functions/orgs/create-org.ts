@@ -41,7 +41,7 @@ export async function main(
         DEFAULTS.NO_ORG,
         tagGenerator.generate(DEFAULTS.NO_ORG)
       ),
-      GSI1SK: Joi.string().invalid(
+      displayName: Joi.string().invalid(
         DEFAULTS.NO_ORG,
         tagGenerator.generate(DEFAULTS.NO_ORG)
       ),
@@ -89,13 +89,13 @@ export async function main(
       }),
     };
   }
-  const { GSI1SK } = body;
-  const orgId = tagGenerator(body.orgId);
+  const { displayName } = body;
+  const orgId = tagGenerator.generate(body.orgId);
 
   const [created, failed] = await Orgs.createAndJoinOrg({
     userId: session.userId,
     orgId,
-    GSI1SK,
+    displayName,
   });
 
   if (failed) {

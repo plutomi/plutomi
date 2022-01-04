@@ -10,30 +10,7 @@ const UrlSafeString = require("url-safe-string"),
  * When signed in, this returns all data for an org
  * For public org data such as basic info or openings, please use the /public/:orgId route
  */
-export const get = async (req: Request, res: Response) => {
-  const { orgId } = req.params;
-  const [org, error] = await Orgs.getOrgById({ orgId: orgId });
 
-  if (orgId !== req.session.user.orgId) {
-    return res
-      .status(403)
-      .json({ message: "You are not authorized to view this org" });
-  }
-
-  if (error) {
-    const formattedError = errorFormatter(error);
-    return res.status(formattedError.httpStatusCode).json({
-      message: "Unable to retrieve org info",
-      ...formattedError,
-    });
-  }
-
-  if (!org) {
-    return res.status(404).json({ message: "Org not found" });
-  }
-
-  return res.status(200).json(org);
-};
 
 export const deleteOrg = async (req: Request, res: Response) => {
   const { orgId } = req.params;

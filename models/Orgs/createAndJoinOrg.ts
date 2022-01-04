@@ -12,22 +12,20 @@ const { DYNAMO_TABLE_NAME } = process.env;
 export default async function CreateAndJoinOrg(
   props: CreateAndJoinOrgInput
 ): Promise<[null, null] | [null, SdkError]> {
-  const { userId, orgId, GSI1SK } = props;
+  const { userId, orgId, displayName } = props;
   const now = Time.currentISO();
 
   const newOrg: DynamoNewOrg = {
     PK: `${ENTITY_TYPES.ORG}#${orgId}`,
     SK: ENTITY_TYPES.ORG,
-    orgId: orgId, // plutomi - Cannot be changed
+    orgId, // Cannot be changed
     entityType: ENTITY_TYPES.ORG,
     createdAt: now,
     totalApplicants: 0,
     totalOpenings: 0,
     totalStages: 0,
     totalUsers: 1,
-    GSI1PK: ENTITY_TYPES.ORG, // Allows for 'get all orgs' query
-    // but cannot do get org by specific name as there might be duplicates
-    GSI1SK: GSI1SK, // Actual org name ie: Plutomi Inc - Can be changed!
+    displayName,
   };
 
   try {

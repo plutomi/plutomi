@@ -385,9 +385,7 @@ interface DynamoNewOrg {
   // <Omit> in and make the counts numbers.. hmmmm // TODO revisit
   totalStages: number;
   totalUsers: number;
-  GSI1PK: ENTITY_TYPES.ORG; // Allows for 'get all orgs' query
-  // but cannot do get org by specific name as there might be duplicates
-  GSI1SK: string; // Actual org name ie: Plutomi Inc - Can be changed!
+  displayName: string;
 }
 
 interface DynamoNewLoginEvent {

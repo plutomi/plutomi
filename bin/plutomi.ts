@@ -45,7 +45,7 @@ builder
         }
       );
 
-    const { createOrgFunction } = new APIOrgsServiceStack(
+    const { createOrgFunction, getOrgInfoFunction } = new APIOrgsServiceStack(
       app,
       `${process.env.NODE_ENV}-APIOrgsServiceStack`,
       { table }
@@ -59,6 +59,7 @@ builder
       updateUserFunction,
       getUserInvitesFunction,
       createOrgFunction,
+      getOrgInfoFunction,
     });
 
     const { CommsMachine } = new CommsMachineStack(
