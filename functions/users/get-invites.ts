@@ -1,15 +1,20 @@
-import { APIGatewayProxyResultV2 } from "aws-lambda";
+import { APIGatewayProxyEventV2, APIGatewayProxyResultV2 } from "aws-lambda";
 import { withSessionEvent } from "../../types/main";
 import * as Users from "../../models/Users";
 import Joi from "joi";
 import { CustomJoi, NO_SESSION_RESPONSE, JOI_SETTINGS } from "../../Config";
 import errorFormatter from "../../utils/errorFormatter";
+import getSessionFromCookies from "../../utils/getSessionFromCookies";
 export async function main(
-  event: withSessionEvent
+  event: APIGatewayProxyEventV2
 ): Promise<APIGatewayProxyResultV2> {
   console.log(event);
-  const { session } = event.requestContext.authorizer.lambda;
-  if (!session) {
+  const [session, sessionError] = await getSessionFromCookies(event);
+  console.log({
+    session,
+    sessionError,
+  });
+  if (sessionError) {
     return NO_SESSION_RESPONSE;
   }
 
@@ -28,11 +33,10 @@ export async function main(
   try {
     await schema.validateAsync(input);
   } catch (error) {
-    const response: APIGatewayProxyResultV2 = {
+    return {
       statusCode: 400,
       body: JSON.stringify({ message: `${error.message}` }),
     };
-    return response;
   }
 
   const { userId } = pathParameters;

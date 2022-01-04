@@ -47,11 +47,10 @@ export async function main(
   try {
     await schema.validateAsync(input);
   } catch (error) {
-    const response: APIGatewayProxyResultV2 = {
+    return {
       statusCode: 400,
       body: JSON.stringify({ message: `${error.message}` }),
     };
-    return response;
   }
 
   const { email, loginMethod } = JSON.parse(event.body);

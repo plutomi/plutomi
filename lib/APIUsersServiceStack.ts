@@ -41,6 +41,7 @@ export default class APIUsersServiceStack extends cdk.Stack {
         ...DEFAULT_LAMBDA_CONFIG,
         environment: {
           DYNAMO_TABLE_NAME: props.table.tableName,
+          SESSION_PASSWORD: process.env.SESSION_PASSWORD,
         },
         entry: path.join(__dirname, `../functions/users/self.ts`),
       }
@@ -73,6 +74,7 @@ export default class APIUsersServiceStack extends cdk.Stack {
         ...DEFAULT_LAMBDA_CONFIG,
         environment: {
           DYNAMO_TABLE_NAME: props.table.tableName,
+          SESSION_PASSWORD: process.env.SESSION_PASSWORD,
         },
         entry: path.join(__dirname, `../functions/users/get-user-by-id.ts`),
       }
@@ -138,6 +140,7 @@ export default class APIUsersServiceStack extends cdk.Stack {
         ...DEFAULT_LAMBDA_CONFIG,
         environment: {
           DYNAMO_TABLE_NAME: props.table.tableName,
+          SESSION_PASSWORD: process.env.SESSION_PASSWORD,
         },
         entry: path.join(__dirname, `../functions/users/get-invites.ts`),
       }

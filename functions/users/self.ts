@@ -1,17 +1,21 @@
-import { APIGatewayProxyResultV2 } from "aws-lambda";
+import { APIGatewayProxyEventV2, APIGatewayProxyResultV2 } from "aws-lambda";
 import { withSessionEvent } from "../../types/main";
 import * as Users from "../../models/Users";
 import errorFormatter from "../../utils/errorFormatter";
 import { COOKIE_SETTINGS, DEFAULTS, NO_SESSION_RESPONSE } from "../../Config";
+import getSessionFromCookies from "../../utils/getSessionFromCookies";
 export async function main(
-  event: withSessionEvent
+  event: APIGatewayProxyEventV2
 ): Promise<APIGatewayProxyResultV2> {
   console.log(event);
-  const { session } = event.requestContext.authorizer.lambda;
-  if (!session) {
+  const [session, sessionError] = await getSessionFromCookies(event);
+  console.log({
+    session,
+    sessionError,
+  });
+  if (sessionError) {
     return NO_SESSION_RESPONSE;
   }
-
   const [user, error] = await Users.getUserById({ userId: session.userId });
 
   console.log("user", user);
