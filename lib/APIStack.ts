@@ -93,70 +93,54 @@ export default class APIStack extends cdk.Stack {
         )
       ),
     });
-
     const routes = [
       {
         path: "/request-login-link",
-        methods: [HttpMethod.POST],
-        integration: new LambdaProxyIntegration({
-          handler: props.requestLoginLinkFunction,
-        }),
+        method: "POST",
+        handler: props.requestLoginLinkFunction,
       },
       {
         path: "/login",
-        methods: [HttpMethod.GET],
-        integration: new LambdaProxyIntegration({
-          handler: props.loginFunction,
-        }),
+        method: "GET",
+        handler: props.loginFunction,
       },
-      {
-        path: "/logout",
-        methods: [HttpMethod.POST],
-        integration: new LambdaProxyIntegration({
-          handler: props.logoutFunction,
-        }),
-      },
+      { path: "/logout", method: "POST", handler: props.logoutFunction },
       {
         path: "/users/self",
-        methods: [HttpMethod.GET],
-        integration: new LambdaProxyIntegration({
-          handler: props.sessionInfoFunction,
-        }),
+        method: "GET",
+        handler: props.sessionInfoFunction,
       },
-
       {
         path: `/users/{userId}`,
-        methods: [HttpMethod.GET],
-        integration: new LambdaProxyIntegration({
-          handler: props.getUserByIdFunction,
-        }),
+        method: "GET",
+        handler: props.getUserByIdFunction,
       },
-
       {
         path: `/users/{userId}`,
-        methods: [HttpMethod.PUT],
-        integration: new LambdaProxyIntegration({
-          handler: props.updateUserFunction,
-        }),
+        method: "PUT",
+        handler: props.updateUserFunction,
       },
       {
         path: `/users/{userId}/invites`,
-        methods: [HttpMethod.GET],
-        integration: new LambdaProxyIntegration({
-          handler: props.getUserInvitesFunction,
-        }),
+        method: "GET",
+        handler: props.getUserInvitesFunction,
       },
       {
         path: `/orgs`,
-        methods: [HttpMethod.POST],
-        integration: new LambdaProxyIntegration({
-          handler: props.createOrgFunction,
-        }),
+        method: "POST",
+        handler: props.createOrgFunction,
       },
     ];
 
     for (const route of routes) {
-      api.addRoutes(route);
+      const { path, method, handler } = route;
+      api.addRoutes({
+        path,
+        methods: [HttpMethod[method]],
+        integration: new LambdaProxyIntegration({
+          handler,
+        }),
+      });
     }
   }
 }
