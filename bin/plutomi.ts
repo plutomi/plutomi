@@ -9,6 +9,7 @@ import CommsMachineStack from "../lib/commsMachineStack";
 import APIAuthServiceStack from "../lib/APIAuthServiceStack";
 import StreamProcessorStack from "../lib/StreamProcessorStack";
 import APIUsersServiceStack from "../lib/APIUsersServiceStack";
+import APIOrgsServiceStack from "../lib/APIOrgsServiceStack";
 import { Builder } from "@sls-next/lambda-at-edge";
 
 // Run the serverless builder before deploying
@@ -23,14 +24,18 @@ builder
       `${process.env.NODE_ENV}-DynamoDBStack`
     );
 
-    const { sessionInfoFunction, getUserByIdFunction, updateUserFunction, getUserInvites } =
-      new APIUsersServiceStack(
-        app,
-        `${process.env.NODE_ENV}-APIUsersServiceStack`,
-        {
-          table,
-        }
-      );
+    const {
+      sessionInfoFunction,
+      getUserByIdFunction,
+      updateUserFunction,
+      getUserInvitesFunction,
+    } = new APIUsersServiceStack(
+      app,
+      `${process.env.NODE_ENV}-APIUsersServiceStack`,
+      {
+        table,
+      }
+    );
     const { requestLoginLinkFunction, loginFunction, logoutFunction } =
       new APIAuthServiceStack(
         app,
@@ -40,6 +45,11 @@ builder
         }
       );
 
+    const { createOrgFunction } = new APIOrgsServiceStack(
+      app,
+      `${process.env.NODE_ENV}-APIOrgsServiceStack`,
+      { table }
+    );
     new APIStack(app, `${process.env.NODE_ENV}-APIStack`, {
       sessionInfoFunction,
       requestLoginLinkFunction,
@@ -47,7 +57,8 @@ builder
       logoutFunction,
       getUserByIdFunction,
       updateUserFunction,
-      getUserInvites
+      getUserInvitesFunction,
+      createOrgFunction,
     });
 
     const { CommsMachine } = new CommsMachineStack(

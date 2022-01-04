@@ -1,5 +1,4 @@
 import Joi from "joi";
-import { SessionData } from "./types/main";
 export const DOMAIN_NAME = `plutomi.com`;
 export const API_SUBDOMAIN =
   process.env.NODE_ENV === "production" ? "api" : "dev";
@@ -13,7 +12,6 @@ export const sessionDataKeys = [
   "orgId",
   "email",
   "userId",
-  "canReceiveEmails",
 ];
 
 // Custom object to parse the event.body in lambda.

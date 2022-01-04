@@ -39,15 +39,8 @@ interface CUSTOM_QUERY {
 interface UserSessionData
   extends Pick<
     DynamoNewUser,
-    "firstName" | "lastName" | "GSI1SK" | "email" | "orgId" | "userId"
-  > {
-  totalInvites: number;
-}
-declare module "iron-session" {
-  export interface IronSessionData {
-    user: UserSessionData;
-  }
-}
+    "firstName" | "lastName" | "email" | "orgId" | "userId"
+  > {}
 
 export interface CreateStageInput
   extends Pick<DynamoNewStage, "orgId" | "GSI1SK" | "openingId"> {

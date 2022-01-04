@@ -5,7 +5,7 @@
   "scripts": {
     "build": "next build",
     "lint": "next lint",
-    "dev": "cross-env NODE_ENV=development cdk deploy development-DynamoDBStack development-StreamProcessorStack development-APIStack development-CommsMachineStack development-EventBridgeStack development-APIAuthServiceStack development-APIUsersServiceStack && next dev",
+    "dev": "cross-env NODE_ENV=development cdk deploy development-DynamoDBStack development-StreamProcessorStack development-APIStack development-CommsMachineStack development-EventBridgeStack development-APIAuthServiceStack development-APIUsersServiceStack development-API_OrgsServiceStack && next dev",
     "deploy-prod": "cross-env NODE_ENV=production  cdk deploy production-DynamoDBStack production-StreamProcessorStack production-APIStack production-CommsMachineStack production-EventBridgeStack FrontendStack"
   },
   "dependencies": {

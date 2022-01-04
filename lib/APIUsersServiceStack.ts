@@ -26,7 +26,7 @@ export default class APIUsersServiceStack extends cdk.Stack {
   public readonly sessionInfoFunction: NodejsFunction;
   public readonly getUserByIdFunction: NodejsFunction;
   public readonly updateUserFunction: NodejsFunction;
-  public readonly getUserInvites: NodejsFunction;
+  public readonly getUserInvitesFunction: NodejsFunction;
   constructor(scope: cdk.Construct, id: string, props?: APIUsersServiceProps) {
     super(scope, id, props);
 
@@ -132,7 +132,7 @@ export default class APIUsersServiceStack extends cdk.Stack {
     /**
      * Get Invites for User
      */
-    this.getUserInvites = new NodejsFunction(
+    this.getUserInvitesFunction = new NodejsFunction(
       this,
       `${process.env.NODE_ENV}-get-user-invites-function`,
       {
@@ -155,7 +155,7 @@ export default class APIUsersServiceStack extends cdk.Stack {
       ],
     });
 
-    this.getUserInvites.role.attachInlinePolicy(
+    this.getUserInvitesFunction.role.attachInlinePolicy(
       new Policy(this, "get-user-invites-function-policy", {
         statements: [getInvitesForUserPolicy],
       })

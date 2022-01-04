@@ -9,11 +9,9 @@ import {
 } from "@aws-cdk/aws-apigatewayv2";
 import { Certificate } from "@aws-cdk/aws-certificatemanager";
 import { NodejsFunction } from "@aws-cdk/aws-lambda-nodejs";
-import { Runtime, Architecture } from "@aws-cdk/aws-lambda";
 import { HostedZone, ARecord, RecordTarget } from "@aws-cdk/aws-route53";
 import { ApiGatewayv2DomainProperties } from "@aws-cdk/aws-route53-targets";
 import { API_DOMAIN, API_SUBDOMAIN, DOMAIN_NAME, WEBSITE_URL } from "../Config";
-import path from "path";
 const resultDotEnv = dotenv.config({
   path: `${process.cwd()}/.env.${process.env.NODE_ENV}`,
 });
@@ -29,21 +27,9 @@ interface APIGatewayServiceProps extends cdk.StackProps {
   sessionInfoFunction: NodejsFunction;
   getUserByIdFunction: NodejsFunction;
   updateUserFunction: NodejsFunction;
-  getUserInvites: NodejsFunction;
+  getUserInvitesFunction: NodejsFunction;
+  createOrgFunction: NodejsFunction; // TODO
 }
-
-const DEFAULT_LAMBDA_CONFIG = {
-  memorySize: 256,
-  timeout: cdk.Duration.seconds(5),
-  runtime: Runtime.NODEJS_14_X,
-  architecture: Architecture.ARM_64,
-  bundling: {
-    minify: true,
-    externalModules: ["aws-sdk"],
-  },
-  handler: "main",
-  reservedConcurrentExecutions: 1, // TODO change to sane defaults
-};
 
 /**
  * Creates an API Gateway
@@ -157,7 +143,14 @@ export default class APIStack extends cdk.Stack {
         path: `/users/{userId}/invites`,
         methods: [HttpMethod.GET],
         integration: new LambdaProxyIntegration({
-          handler: props.getUserInvites,
+          handler: props.getUserInvitesFunction,
+        }),
+      },
+      {
+        path: `/orgs`,
+        methods: [HttpMethod.POST],
+        integration: new LambdaProxyIntegration({
+          handler: props.createOrgFunction,
         }),
       },
     ];

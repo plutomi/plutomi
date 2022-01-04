@@ -1,86 +1,11 @@
 import { Request, Response } from "express";
 import { DEFAULTS, ENTITY_TYPES } from "./../Config";
 import Sanitize from "./../utils/sanitize";
-import Joi from "joi";
 import * as Users from "../models/Users/index";
 import * as Orgs from "../models/Orgs/index";
 import errorFormatter from "../utils/errorFormatter";
 const UrlSafeString = require("url-safe-string"),
   tagGenerator = new UrlSafeString();
-
-export const create = async (req: Request, res: Response) => {
-  const { GSI1SK, orgId } = req.body;
-
-  if (req.session.user.orgId !== DEFAULTS.NO_ORG) {
-    return res.status(400).json({
-      message: `You already belong to an org!`,
-    });
-  }
-
-  const [pendingInvites, error] = await Users.getInvitesForUser({
-    userId: req.session.user.userId,
-  });
-
-  if (error) {
-    const formattedError = errorFormatter(error);
-    return res.status(formattedError.httpStatusCode).json({
-      message: "Unable to create org - error retrieving invites",
-      ...formattedError,
-    });
-  }
-
-  if (pendingInvites && pendingInvites.length) {
-    return res.status(403).json({
-      message:
-        "You seem to have pending invites, please accept or reject them before creating an org :)", // TODO error enum
-    });
-  }
-
-  const createOrgInput = {
-    GSI1SK: GSI1SK,
-    orgId: orgId,
-    user: req.session.user,
-  };
-
-  const schema = Joi.object({
-    orgId: Joi.string().invalid(
-      DEFAULTS.NO_ORG,
-      tagGenerator.generate(DEFAULTS.NO_ORG)
-    ),
-    GSI1SK: Joi.string().invalid(
-      DEFAULTS.NO_ORG,
-      tagGenerator.generate(DEFAULTS.NO_ORG)
-    ),
-    user: Joi.object(),
-  }).options({ presence: "required" });
-
-  // Validate input
-  try {
-    await schema.validateAsync(createOrgInput);
-  } catch (error) {
-    return res.status(400).json({ message: `${error.message}` });
-  }
-
-  const [created, failed] = await Orgs.createAndJoinOrg({
-    userId: req.session.user.userId,
-    orgId: orgId,
-    GSI1SK: GSI1SK,
-  });
-
-  if (failed) {
-    const formattedError = errorFormatter(failed);
-    return res.status(formattedError.httpStatusCode).json({
-      message: "Unable to create org",
-      ...formattedError,
-    });
-  }
-  // Update the logged in user session with the new org id
-  req.session.user.orgId = orgId;
-  await req.session.save();
-
-  return res.status(201).json({ message: "Org created!", org: orgId });
-};
-
 /**
  * When signed in, this returns all data for an org
  * For public org data such as basic info or openings, please use the /public/:orgId route

@@ -1,0 +1,59 @@
+import { Runtime, Architecture } from "@aws-cdk/aws-lambda";
+import { NodejsFunction } from "@aws-cdk/aws-lambda-nodejs";
+import { Policy, PolicyStatement } from "@aws-cdk/aws-iam";
+import { Table } from "@aws-cdk/aws-dynamodb";
+import * as cdk from "@aws-cdk/core";
+import * as path from "path";
+const DEFAULT_LAMBDA_CONFIG = {
+  memorySize: 256,
+  timeout: cdk.Duration.seconds(5),
+  runtime: Runtime.NODEJS_14_X,
+  architecture: Architecture.ARM_64,
+  bundling: {
+    minify: true,
+    externalModules: ["aws-sdk"],
+  },
+  handler: "main",
+  reservedConcurrentExecutions: 1, // TODO change to sane defaults
+};
+
+interface APIOrgsServiceProps extends cdk.StackProps {
+  table: Table;
+}
+
+export default class APIOrgsServiceStack extends cdk.Stack {
+  public createOrgFunction: NodejsFunction;
+
+  constructor(scope: cdk.Construct, id: string, props?: APIOrgsServiceProps) {
+    super(scope, id, props);
+
+    this.createOrgFunction = new NodejsFunction(
+      this,
+      `${process.env.NODE_ENV}-create-org-function`,
+      {
+        functionName: `${process.env.NODE_ENV}-create-org-function`,
+        ...DEFAULT_LAMBDA_CONFIG,
+        environment: {
+          DYNAMO_TABLE_NAME: props.table.tableName,
+          SESSION_PASSWORD: process.env.SESSION_PASSWORD,
+        },
+        entry: path.join(__dirname, `../functions/orgs/create-org.ts`),
+      }
+    );
+
+    const createOrgFunctionPolicy = new PolicyStatement({
+      actions: ["dynamodb:Query", "dynamodb:PutItem", "dynamodb:UpdateItem"],
+      resources: [
+        `arn:aws:dynamodb:${cdk.Stack.of(this).region}:${
+          cdk.Stack.of(this).account
+        }:table/${props.table.tableName}`,
+      ],
+    });
+
+    this.createOrgFunction.role.attachInlinePolicy(
+      new Policy(this, "request-login-link-function-policy", {
+        statements: [createOrgFunctionPolicy],
+      })
+    );
+  }
+}
