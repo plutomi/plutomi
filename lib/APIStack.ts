@@ -24,7 +24,7 @@ interface APIGatewayServiceProps extends cdk.StackProps {
   requestLoginLinkFunction: NodejsFunction;
   loginFunction: NodejsFunction;
   logoutFunction: NodejsFunction;
-  sessionInfoFunction: NodejsFunction;
+  getSelfInfoFunction: NodejsFunction;
   getUserByIdFunction: NodejsFunction;
   updateUserFunction: NodejsFunction;
   getUserInvitesFunction: NodejsFunction;
@@ -109,7 +109,7 @@ export default class APIStack extends cdk.Stack {
       {
         path: "/users/self",
         method: "GET",
-        handler: props.sessionInfoFunction,
+        handler: props.getSelfInfoFunction,
       },
       {
         path: `/users/{userId}`,

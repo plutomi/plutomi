@@ -23,7 +23,7 @@ interface APIUsersServiceProps extends cdk.StackProps {
 }
 
 export default class APIUsersServiceStack extends cdk.Stack {
-  public readonly sessionInfoFunction: NodejsFunction;
+  public readonly getSelfInfoFunction: NodejsFunction;
   public readonly getUserByIdFunction: NodejsFunction;
   public readonly updateUserFunction: NodejsFunction;
   public readonly getUserInvitesFunction: NodejsFunction;
@@ -33,17 +33,17 @@ export default class APIUsersServiceStack extends cdk.Stack {
     /**
      * Session info function
      */
-    this.sessionInfoFunction = new NodejsFunction(
+    this.getSelfInfoFunction = new NodejsFunction(
       this,
-      `${process.env.NODE_ENV}-self-function`,
+      `${process.env.NODE_ENV}-get-self-info-function`,
       {
-        functionName: `${process.env.NODE_ENV}-self-function`,
+        functionName: `${process.env.NODE_ENV}-get-self-info-function`,
         ...DEFAULT_LAMBDA_CONFIG,
         environment: {
           DYNAMO_TABLE_NAME: props.table.tableName,
           SESSION_PASSWORD: process.env.SESSION_PASSWORD,
         },
-        entry: path.join(__dirname, `../functions/users/self.ts`),
+        entry: path.join(__dirname, `../functions/users/get-self-info.ts`),
       }
     );
 
@@ -57,7 +57,7 @@ export default class APIUsersServiceStack extends cdk.Stack {
       ],
     });
 
-    this.sessionInfoFunction.role.attachInlinePolicy(
+    this.getSelfInfoFunction.role.attachInlinePolicy(
       new Policy(this, "get-self-function-policy", {
         statements: [getSelfPolicy],
       })

@@ -25,10 +25,10 @@ builder
     );
 
     const {
-      sessionInfoFunction,
       getUserByIdFunction,
       updateUserFunction,
       getUserInvitesFunction,
+      getSelfInfoFunction,
     } = new APIUsersServiceStack(
       app,
       `${process.env.NODE_ENV}-APIUsersServiceStack`,
@@ -51,7 +51,7 @@ builder
       { table }
     );
     new APIStack(app, `${process.env.NODE_ENV}-APIStack`, {
-      sessionInfoFunction,
+      getSelfInfoFunction,
       requestLoginLinkFunction,
       loginFunction,
       logoutFunction,
