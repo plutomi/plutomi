@@ -53,33 +53,26 @@ export async function main(
     return {
       statusCode: 403,
       body: JSON.stringify({
-        message: "You cannot view this org",
+        message: "You cannot view the invites for this org",
       }),
     };
   }
 
-  const [org, error] = await Orgs.getOrgById({ orgId });
+  const [invites, error] = await Orgs.getPendingInvites({ orgId });
 
   if (error) {
     const formattedError = errorFormatter(error);
     return {
       statusCode: formattedError.httpStatusCode,
       body: JSON.stringify({
-        message: "Unable to retrieve org info",
+        message: "Unable to retrieve invites for org",
         ...formattedError,
       }),
     };
   }
 
-  if (!org) {
-    return {
-      statusCode: 404,
-      body: JSON.stringify({ message: "Org not found" }),
-    };
-  }
-
   return {
     statusCode: 200,
-    body: JSON.stringify(org),
+    body: JSON.stringify(invites),
   };
 }

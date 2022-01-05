@@ -27,9 +27,6 @@ app.get(
   PublicInfo.getStageQuestions
 );
 
-// Orgs
-// app.get("/orgs/:orgId/invites").get([withAuth], ) // TODO - Get all invites for org
-
 app.get("/openings", [withAuth], Openings.getAllOpenings);
 app.post("/openings", [withAuth], Openings.createOpeningController); // TODO fix name
 
