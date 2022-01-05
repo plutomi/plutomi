@@ -42,12 +42,13 @@ export async function main(
     };
   }
 
-  const cleanUsers = users.map((user) =>
-    Sanitize(
-      "KEEP",
-      ["userId", "orgId", "firstName", "lastName", "email", "orgJoinDate"],
-      user
-    )
+  const cleanUsers = users.map(
+    (user) =>
+      Sanitize(
+        "KEEP",
+        ["userId", "orgId", "firstName", "lastName", "email", "orgJoinDate"],
+        user
+      ).object
   );
   return {
     statusCode: 200,
