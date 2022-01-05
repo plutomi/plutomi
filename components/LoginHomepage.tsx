@@ -28,9 +28,9 @@ export default function LoginHomepage({ callbackUrl }: CallbackUrl) {
     e.preventDefault();
 
     try {
-      const { message } = await AuthService.login(
+      const { message } = await AuthService.requestLoginLink(
         email,
-        callbackUrl,
+        window.location.href + DEFAULTS.REDIRECT,
         LOGIN_METHODS.EMAIL
       );
 
@@ -46,10 +46,10 @@ export default function LoginHomepage({ callbackUrl }: CallbackUrl) {
     console.log(response);
     const email = response.profileObj.email;
 
-    const { message } = await AuthService.login(
+    const { message } = await AuthService.requestLoginLink(
       // TODO trycatch
       email,
-      DOMAIN_NAME + DEFAULTS.REDIRECT,
+      window.location.href + DEFAULTS.REDIRECT,
       LOGIN_METHODS.GOOGLE
     );
     window.location.replace(message);

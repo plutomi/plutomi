@@ -103,9 +103,6 @@ export default class APIAuthServiceStack extends cdk.Stack {
         `arn:aws:dynamodb:${cdk.Stack.of(this).region}:${
           cdk.Stack.of(this).account
         }:table/${props.table.tableName}`,
-        `arn:aws:dynamodb:${cdk.Stack.of(this).region}:${
-          cdk.Stack.of(this).account
-        }:table/${props.table.tableName}/index/*`,
       ],
     });
 

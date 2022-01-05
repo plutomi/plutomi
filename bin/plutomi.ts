@@ -29,6 +29,7 @@ builder
       updateUserFunction,
       getUserInvitesFunction,
       getSelfInfoFunction,
+      getSessionFunctionDEBUGGING
     } = new APIUsersServiceStack(
       app,
       `${process.env.NODE_ENV}-APIUsersServiceStack`,
@@ -45,7 +46,7 @@ builder
         }
       );
 
-    const { createOrgFunction, getOrgInfoFunction, deleteOrgFunction } =
+    const {  createOrgFunction, getOrgInfoFunction, deleteOrgFunction, getUsersInOrgFunction } =
       new APIOrgsServiceStack(
         app,
         `${process.env.NODE_ENV}-APIOrgsServiceStack`,
@@ -62,6 +63,8 @@ builder
       getUserInvitesFunction,
       createOrgFunction,
       getOrgInfoFunction,
+      getUsersInOrgFunction,
+      getSessionFunctionDEBUGGING
     });
 
     const { CommsMachine } = new CommsMachineStack(

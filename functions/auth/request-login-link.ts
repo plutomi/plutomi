@@ -8,6 +8,7 @@ import {
   TIME_UNITS,
   CustomJoi,
   JOI_SETTINGS,
+  WEBSITE_URL,
 } from "../../Config";
 import errorFormatter from "../../utils/errorFormatter";
 import * as Time from "../../utils/time";
@@ -120,7 +121,7 @@ export async function main(
     !user.email.endsWith(DOMAIN_NAME) // Allow admins to send multiple login links in a short timespan
   ) {
     return {
-      statusCode: 400,
+      statusCode: 403,
       body: JSON.stringify({
         message: "You're doing that too much, please try again later",
       }),
@@ -141,7 +142,7 @@ export async function main(
   );
 
   const loginLinkUrl = `${API_URL}/login?seal=${seal}&callbackUrl=${
-    callbackUrl ? callbackUrl : DOMAIN_NAME + DEFAULTS.REDIRECT
+    callbackUrl ? callbackUrl : `${WEBSITE_URL}/${DEFAULTS.REDIRECT}`
   }`;
 
   /**

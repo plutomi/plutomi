@@ -27,6 +27,7 @@ export default class APIUsersServiceStack extends cdk.Stack {
   public readonly getUserByIdFunction: NodejsFunction;
   public readonly updateUserFunction: NodejsFunction;
   public readonly getUserInvitesFunction: NodejsFunction;
+  public readonly getSessionFunctionDEBUGGING: NodejsFunction;
   constructor(scope: cdk.Construct, id: string, props?: APIUsersServiceProps) {
     super(scope, id, props);
 
@@ -159,6 +160,23 @@ export default class APIUsersServiceStack extends cdk.Stack {
       new Policy(this, "get-user-invites-function-policy", {
         statements: [getInvitesForUserPolicy],
       })
+    );
+
+    this.getSessionFunctionDEBUGGING = new NodejsFunction(
+      this,
+      `${process.env.NODE_ENV}-get-session-DEBUGGING-function`,
+      {
+        functionName: `${process.env.NODE_ENV}-get-session-DEBUGGING-function`,
+        ...DEFAULT_LAMBDA_CONFIG,
+        environment: {
+          DYNAMO_TABLE_NAME: props.table.tableName,
+          SESSION_PASSWORD: process.env.SESSION_PASSWORD,
+        },
+        entry: path.join(
+          __dirname,
+          `../functions/users/get-session-DEBUGGING.ts`
+        ),
+      }
     );
   }
 }

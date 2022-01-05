@@ -108,11 +108,11 @@ export async function main(
   }
 
   // Update the logged in user session with the new org id
-  const newSession = { ...session, orgId };
+  const newSession = { ...session, orgId }; // TODO this orgid is not being set
   const encryptedCookie = await sealData(newSession, SESSION_SETTINGS);
   return {
     statusCode: 201,
     cookies: [`${DEFAULTS.COOKIE_NAME}=${encryptedCookie}; ${COOKIE_SETTINGS}`],
-    body: JSON.stringify({ message: "Org created!", org: orgId }),
+    body: JSON.stringify({ message: "Org created!", orgId }),
   };
 }

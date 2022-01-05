@@ -31,6 +31,8 @@ interface APIGatewayServiceProps extends cdk.StackProps {
   createOrgFunction: NodejsFunction;
   getOrgInfoFunction: NodejsFunction;
   deleteOrgFunction: NodejsFunction;
+  getUsersInOrgFunction: NodejsFunction;
+  getSessionFunctionDEBUGGING: NodejsFunction;
 }
 
 /**
@@ -81,6 +83,7 @@ export default class APIStack extends cdk.Stack {
         ],
         allowCredentials: true,
         allowOrigins: [WEBSITE_URL],
+        allowHeaders: ["Content-Type"],
       },
     });
 
@@ -96,6 +99,7 @@ export default class APIStack extends cdk.Stack {
       ),
     });
     const routes = [
+      // Auth routes
       {
         path: "/request-login-link",
         method: "POST",
@@ -112,6 +116,7 @@ export default class APIStack extends cdk.Stack {
         method: "GET",
         handler: props.getSelfInfoFunction,
       },
+      // Users
       {
         path: `/users/{userId}`,
         method: "GET",
@@ -141,6 +146,16 @@ export default class APIStack extends cdk.Stack {
         path: "/orgs/{orgId}",
         method: "DELETE",
         handler: props.deleteOrgFunction,
+      },
+      {
+        path: "/users",
+        method: "GET",
+        handler: props.getUsersInOrgFunction,
+      },
+      {
+        path: "/session", // Debugging
+        method: "GET",
+        handler: props.getSessionFunctionDEBUGGING,
       },
     ];
 

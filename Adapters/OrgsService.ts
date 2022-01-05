@@ -2,10 +2,10 @@ import axios from "../utils/axios";
 
 export default class OrgsService {
   // TODO remove class
-  static async createOrg(GSI1SK, orgId) {
+  static async createOrg(displayName, orgId) {
     const body = {
-      GSI1SK: GSI1SK,
-      orgId: orgId,
+      displayName,
+      orgId,
     };
 
     const { data } = await axios.post(`/orgs`, body);
@@ -26,7 +26,7 @@ export default class OrgsService {
   }
 
   static getAllUsersInOrgURL(orgId) {
-    return `/orgs/${orgId}/users`;
+    return `/users`;
   }
 
   static async getAllUsersInOrg(orgId) {

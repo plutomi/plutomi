@@ -94,7 +94,6 @@ export async function main(
 
   // If a user is deleted between when they made they requested the login link and they attempted to sign in
   if (!user) {
-    console.log("User deleted");
     return {
       statusCode: 401,
       body: JSON.stringify({
@@ -111,7 +110,6 @@ export async function main(
   });
 
   if (failed) {
-    console.log("Unable to create login event and delete login link", failed);
 
     const formattedError = errorFormatter(failed);
 
@@ -138,6 +136,7 @@ export async function main(
   const result = Sanitize("KEEP", sessionDataKeys, user);
 
   const encryptedCookie = await sealData(result.object, SESSION_SETTINGS);
+
   const response: APIGatewayProxyResultV2 = {
     cookies: [`${DEFAULTS.COOKIE_NAME}=${encryptedCookie}; ${COOKIE_SETTINGS}`],
     statusCode: 307,

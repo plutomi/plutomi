@@ -23,7 +23,7 @@ export default function Login({ loggedOutPageText }) {
     e.preventDefault();
 
     try {
-      const { message } = await AuthService.login(
+      const { message } = await AuthService.requestLoginLink(
         email,
         window.location.href,
         LOGIN_METHODS.EMAIL
@@ -41,7 +41,7 @@ export default function Login({ loggedOutPageText }) {
     const email = response.profileObj.email;
 
     try {
-      const { message } = await AuthService.login(
+      const { message } = await AuthService.requestLoginLink(
         email,
         window.location.href,
         LOGIN_METHODS.GOOGLE

@@ -1,11 +1,17 @@
 import Joi from "joi";
 export const DOMAIN_NAME = `plutomi.com`;
+// Some backend dependencies (SES, ACM, Route53, etc..) depend on
+// DOMAIN_NAME being the actual domain name, do not change!
+export const DYNAMIC_DOMAIN = // Use this one for local testing
+  process.env.NODE_ENV === "production" ? DOMAIN_NAME : `localhost:3000`;
 export const API_SUBDOMAIN =
   process.env.NODE_ENV === "production" ? "api" : "dev";
 export const API_DOMAIN = `${API_SUBDOMAIN}.${DOMAIN_NAME}`;
-export const API_URL = `https://${API_DOMAIN}`; // API Gateway does not redirect to https :/
-export const WEBSITE_URL = `https://${DOMAIN_NAME}`;
-export const COOKIE_SETTINGS = `Secure; HttpOnly; SameSite=Lax; Domain=${DOMAIN_NAME}; Path=/;`; // See SESSION_SETTINGS for setting session length
+export const API_URL = `https://${API_DOMAIN}`;
+const PROTOCOL = process.env.NODE_ENV === "production" ? `https://` : `http://`;
+export const WEBSITE_URL = PROTOCOL + DYNAMIC_DOMAIN;
+// Reason for SameSite=None: https://stackoverflow.com/a/62726825
+export const COOKIE_SETTINGS = `Secure; HttpOnly; SameSite=None; Path=/; Domain=${DOMAIN_NAME}`; // See SESSION_SETTINGS for setting session length
 export const sessionDataKeys = [
   "firstName",
   "lastName",
@@ -108,7 +114,7 @@ export enum DEFAULTS {
   FULL_NAME = `NO_FIRST_NAME NO_LAST_NAME`,
   NO_ORG = `NO_ORG_ASSIGNED`,
   LOGIN_EVENT_RETENTION_PERIOD = 30,
-  REDIRECT = "/dashboard", // When logging in from the homepage, where should the user be redirected
+  REDIRECT = "dashboard", // When logging in from the homepage, where should the user be redirected
   COOKIE_NAME = "plutomi-cookie", // Name of the session cookie
 }
 
