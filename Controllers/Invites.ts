@@ -72,23 +72,3 @@ export const accept = async (req: Request, res: Response) => {
     .status(200)
     .json({ message: `You've joined the ${invite.orgName} org!` });
 };
-
-export const reject = async (req: Request, res: Response) => {
-  const { inviteId } = req.params;
-
-  const [deleted, error] = await Invites.deleteInvite({
-    inviteId: inviteId,
-    userId: req.session.user.userId,
-  });
-
-  if (error) {
-    const formattedError = errorFormatter(error);
-    return res.status(formattedError.httpStatusCode).json({
-      message: "We were unable to delete that invite",
-      ...formattedError,
-    });
-  }
-  req.session.user.totalInvites -= 1;
-  await req.session.save();
-  return res.status(200).json({ message: "Invite rejected!" }); // TODO enum for RESPONSES
-};

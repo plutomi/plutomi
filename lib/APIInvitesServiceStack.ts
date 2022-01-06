@@ -25,6 +25,7 @@ export default class APIInvitesServiceStack extends cdk.Stack {
   public readonly getOrgInvitesFunction: NodejsFunction;
   public readonly getUserInvitesFunction: NodejsFunction;
   public readonly createInvitesFunction: NodejsFunction;
+  public readonly rejectInvitesFunction: NodejsFunction;
 
   constructor(scope: cdk.Construct, id: string, props?: APIAuthServiceProps) {
     super(scope, id, props);
@@ -130,6 +131,38 @@ export default class APIInvitesServiceStack extends cdk.Stack {
     this.createInvitesFunction.role.attachInlinePolicy(
       new Policy(this, "create-invites-function-policy", {
         statements: [createInvitesFunctionPolicy],
+      })
+    );
+
+    /**
+     * Reject invites
+     */
+    this.rejectInvitesFunction = new NodejsFunction(
+      this,
+      `${process.env.NODE_ENV}-reject-invites-function`,
+      {
+        functionName: `${process.env.NODE_ENV}-reject-invites-function`,
+        ...DEFAULT_LAMBDA_CONFIG,
+        environment: {
+          DYNAMO_TABLE_NAME: props.table.tableName,
+          SESSION_PASSWORD: process.env.SESSION_PASSWORD,
+        },
+        entry: path.join(__dirname, `../functions/invites/reject-invites.ts`),
+      }
+    );
+
+    const rejectInvitesFunctionPolicy = new PolicyStatement({
+      actions: ["dynamodb:DeleteItem"],
+      resources: [
+        `arn:aws:dynamodb:${cdk.Stack.of(this).region}:${
+          cdk.Stack.of(this).account
+        }:table/${props.table.tableName}`,
+      ],
+    });
+
+    this.rejectInvitesFunction.role.attachInlinePolicy(
+      new Policy(this, "reject-invites-function-policy", {
+        statements: [rejectInvitesFunctionPolicy],
       })
     );
   }

@@ -42,6 +42,7 @@ builder
       getOrgInvitesFunction,
       getUserInvitesFunction,
       createInvitesFunction,
+      rejectInvitesFunction,
     } = new APIInvitesServiceStack(
       app,
       `${process.env.NODE_ENV}-APIInvitesServiceStack`,
@@ -77,7 +78,8 @@ builder
       getUsersInOrgFunction,
       getOrgInvitesFunction,
       getUserInvitesFunction,
-      createInvitesFunction
+      createInvitesFunction,
+      rejectInvitesFunction,
     });
 
     const { CommsMachine } = new CommsMachineStack(
