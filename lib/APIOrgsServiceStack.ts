@@ -25,8 +25,6 @@ export default class APIOrgsServiceStack extends cdk.Stack {
   public readonly createOrgFunction: NodejsFunction;
   public readonly getOrgInfoFunction: NodejsFunction;
   public readonly deleteOrgFunction: NodejsFunction;
-  public readonly getUsersInOrgFunction: NodejsFunction;
-  public readonly getPendingOrgInvites: NodejsFunction;
 
   constructor(scope: cdk.Construct, id: string, props?: APIOrgsServiceProps) {
     super(scope, id, props);
@@ -119,73 +117,6 @@ export default class APIOrgsServiceStack extends cdk.Stack {
     this.deleteOrgFunction.role.attachInlinePolicy(
       new Policy(this, "delete-org-function-policy", {
         statements: [deleteOrgPolicy],
-      })
-    );
-
-    /**
-     * Get users in org
-     */
-    this.getUsersInOrgFunction = new NodejsFunction(
-      this,
-      `${process.env.NODE_ENV}-get-users-in-org-function`,
-      {
-        functionName: `${process.env.NODE_ENV}-get-users-in-org-function`,
-        ...DEFAULT_LAMBDA_CONFIG,
-        environment: {
-          DYNAMO_TABLE_NAME: props.table.tableName,
-          SESSION_PASSWORD: process.env.SESSION_PASSWORD,
-        },
-        entry: path.join(__dirname, `../functions/orgs/get-users-in-org.ts`),
-      }
-    );
-
-    const getUsersPolicy = new PolicyStatement({
-      actions: ["dynamodb:Query"],
-      resources: [
-        `arn:aws:dynamodb:${cdk.Stack.of(this).region}:${
-          cdk.Stack.of(this).account
-        }:table/${props.table.tableName}/index/GSI1`,
-      ],
-    });
-
-    this.getUsersInOrgFunction.role.attachInlinePolicy(
-      new Policy(this, "get-users-in-org-function-policy", {
-        statements: [getUsersPolicy],
-      })
-    );
-
-    /**
-     * Get pending invites
-     */
-    this.getPendingOrgInvites = new NodejsFunction(
-      this,
-      `${process.env.NODE_ENV}-get-pending-org-invites-function`,
-      {
-        functionName: `${process.env.NODE_ENV}-get-pending-org-invites-function`,
-        ...DEFAULT_LAMBDA_CONFIG,
-        environment: {
-          DYNAMO_TABLE_NAME: props.table.tableName,
-          SESSION_PASSWORD: process.env.SESSION_PASSWORD,
-        },
-        entry: path.join(
-          __dirname,
-          `../functions/orgs/get-pending-org-invites.ts`
-        ),
-      }
-    );
-
-    const getPendingOrgInvitesFunctionPolicy = new PolicyStatement({
-      actions: ["dynamodb:Query"],
-      resources: [
-        `arn:aws:dynamodb:${cdk.Stack.of(this).region}:${
-          cdk.Stack.of(this).account
-        }:table/${props.table.tableName}/index/GSI1`,
-      ],
-    });
-
-    this.getPendingOrgInvites.role.attachInlinePolicy(
-      new Policy(this, "get-pending-org-invites-function-policy", {
-        statements: [getPendingOrgInvitesFunctionPolicy],
       })
     );
   }

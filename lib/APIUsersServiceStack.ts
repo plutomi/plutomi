@@ -26,8 +26,8 @@ export default class APIUsersServiceStack extends cdk.Stack {
   public readonly getSelfInfoFunction: NodejsFunction;
   public readonly getUserByIdFunction: NodejsFunction;
   public readonly updateUserFunction: NodejsFunction;
-  public readonly getUserInvitesFunction: NodejsFunction;
-  public readonly getSessionFunctionDEBUGGING: NodejsFunction;
+  public readonly getUsersInOrgFunction: NodejsFunction;
+
   constructor(scope: cdk.Construct, id: string, props?: APIUsersServiceProps) {
     super(scope, id, props);
 
@@ -131,52 +131,35 @@ export default class APIUsersServiceStack extends cdk.Stack {
     );
 
     /**
-     * Get Invites for User
+     * Get users in org
      */
-    this.getUserInvitesFunction = new NodejsFunction(
+    this.getUsersInOrgFunction = new NodejsFunction(
       this,
-      `${process.env.NODE_ENV}-get-user-invites-function`,
+      `${process.env.NODE_ENV}-get-users-in-org-function`,
       {
-        functionName: `${process.env.NODE_ENV}-get-user-invites-function`,
+        functionName: `${process.env.NODE_ENV}-get-users-in-org-function`,
         ...DEFAULT_LAMBDA_CONFIG,
         environment: {
           DYNAMO_TABLE_NAME: props.table.tableName,
           SESSION_PASSWORD: process.env.SESSION_PASSWORD,
         },
-        entry: path.join(__dirname, `../functions/users/get-invites.ts`),
+        entry: path.join(__dirname, `../functions/users/get-users-in-org.ts`),
       }
     );
 
-    const getInvitesForUserPolicy = new PolicyStatement({
+    const getUsersInOrgPolicy = new PolicyStatement({
       actions: ["dynamodb:Query"],
       resources: [
         `arn:aws:dynamodb:${cdk.Stack.of(this).region}:${
           cdk.Stack.of(this).account
-        }:table/${props.table.tableName}`,
+        }:table/${props.table.tableName}/index/GSI1`,
       ],
     });
 
-    this.getUserInvitesFunction.role.attachInlinePolicy(
-      new Policy(this, "get-user-invites-function-policy", {
-        statements: [getInvitesForUserPolicy],
+    this.getUsersInOrgFunction.role.attachInlinePolicy(
+      new Policy(this, "get-users-in-org-function-policy", {
+        statements: [getUsersInOrgPolicy],
       })
-    );
-
-    this.getSessionFunctionDEBUGGING = new NodejsFunction(
-      this,
-      `${process.env.NODE_ENV}-get-session-DEBUGGING-function`,
-      {
-        functionName: `${process.env.NODE_ENV}-get-session-DEBUGGING-function`,
-        ...DEFAULT_LAMBDA_CONFIG,
-        environment: {
-          DYNAMO_TABLE_NAME: props.table.tableName,
-          SESSION_PASSWORD: process.env.SESSION_PASSWORD,
-        },
-        entry: path.join(
-          __dirname,
-          `../functions/users/get-session-DEBUGGING.ts`
-        ),
-      }
     );
   }
 }

@@ -10,6 +10,7 @@ import APIAuthServiceStack from "../lib/APIAuthServiceStack";
 import StreamProcessorStack from "../lib/StreamProcessorStack";
 import APIUsersServiceStack from "../lib/APIUsersServiceStack";
 import APIOrgsServiceStack from "../lib/APIOrgsServiceStack";
+import APIInvitesServiceStack from "../lib/APIInvitesServiceStack";
 import { Builder } from "@sls-next/lambda-at-edge";
 
 // Run the serverless builder before deploying
@@ -27,9 +28,8 @@ builder
     const {
       getUserByIdFunction,
       updateUserFunction,
-      getUserInvitesFunction,
       getSelfInfoFunction,
-      getSessionFunctionDEBUGGING,
+      getUsersInOrgFunction,
     } = new APIUsersServiceStack(
       app,
       `${process.env.NODE_ENV}-APIUsersServiceStack`,
@@ -37,6 +37,15 @@ builder
         table,
       }
     );
+
+    const { getOrgInvitesFunction, getUserInvitesFunction } =
+      new APIInvitesServiceStack(
+        app,
+        `${process.env.NODE_ENV}-APIInvitesServiceStack`,
+        {
+          table,
+        }
+      );
     const { requestLoginLinkFunction, loginFunction, logoutFunction } =
       new APIAuthServiceStack(
         app,
@@ -46,17 +55,12 @@ builder
         }
       );
 
-    const {
-      createOrgFunction,
-      getOrgInfoFunction,
-      deleteOrgFunction,
-      getUsersInOrgFunction,
-      getPendingOrgInvites,
-    } = new APIOrgsServiceStack(
-      app,
-      `${process.env.NODE_ENV}-APIOrgsServiceStack`,
-      { table }
-    );
+    const { createOrgFunction, getOrgInfoFunction, deleteOrgFunction } =
+      new APIOrgsServiceStack(
+        app,
+        `${process.env.NODE_ENV}-APIOrgsServiceStack`,
+        { table }
+      );
     new APIStack(app, `${process.env.NODE_ENV}-APIStack`, {
       deleteOrgFunction,
       getSelfInfoFunction,
@@ -65,12 +69,11 @@ builder
       logoutFunction,
       getUserByIdFunction,
       updateUserFunction,
-      getUserInvitesFunction,
       createOrgFunction,
       getOrgInfoFunction,
       getUsersInOrgFunction,
-      getPendingOrgInvites,
-      getSessionFunctionDEBUGGING, // TODO remove
+      getOrgInvitesFunction,
+      getUserInvitesFunction,
     });
 
     const { CommsMachine } = new CommsMachineStack(
