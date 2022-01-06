@@ -10,6 +10,12 @@ export const API_DOMAIN = `${API_SUBDOMAIN}.${DOMAIN_NAME}`;
 export const API_URL = `https://${API_DOMAIN}`;
 const PROTOCOL = process.env.NODE_ENV === "production" ? `https://` : `http://`;
 export const WEBSITE_URL = PROTOCOL + DYNAMIC_DOMAIN;
+
+export const COOKIE_NAME =
+  process.env.NODE_ENV === "production"
+    ? "plutomi-cookie"
+    : "DEV-plutomi-cookie"; // Name of the session cookie
+
 // Reason for SameSite=None: https://stackoverflow.com/a/62726825
 export const COOKIE_SETTINGS = `Secure; HttpOnly; SameSite=None; Path=/; Domain=${DOMAIN_NAME}`; // See SESSION_SETTINGS for setting session length
 export const sessionDataKeys = [
@@ -115,7 +121,6 @@ export enum DEFAULTS {
   NO_ORG = `NO_ORG_ASSIGNED`,
   LOGIN_EVENT_RETENTION_PERIOD = 30,
   REDIRECT = "dashboard", // When logging in from the homepage, where should the user be redirected
-  COOKIE_NAME = "plutomi-cookie", // Name of the session cookie
 }
 
 export const LOGIN_LINK_SETTINGS = {
@@ -245,7 +250,7 @@ export const SWR = {
 
 export const NO_SESSION_RESPONSE = {
   statusCode: 401,
-  cookies: [`${DEFAULTS.COOKIE_NAME}=''; Max-Age=-1; ${COOKIE_SETTINGS}`],
+  cookies: [`${COOKIE_NAME}=''; Max-Age=-1; ${COOKIE_SETTINGS}`],
   body: JSON.stringify({ message: "Please log in again" }),
 };
 

@@ -1,6 +1,6 @@
 import { APIGatewayProxyEventV2 } from "aws-lambda";
 import { unsealData } from "iron-session";
-import { DEFAULTS, SESSION_SETTINGS } from "../Config";
+import { COOKIE_NAME, DEFAULTS, SESSION_SETTINGS } from "../Config";
 import { UserSessionData } from "../types/main";
 /**
  *  Finds an encrypted session seal in a list of cookies form a lambda event
@@ -13,12 +13,10 @@ export default async function getSessionFromCookies(
   const cookies = event.cookies || [];
 
   // If a cookie by this name exists, extract the seal
-  const cookie = cookies?.find((cookie) =>
-    cookie.includes(DEFAULTS.COOKIE_NAME + "=")
-  );
+  const cookie = cookies?.find((cookie) => cookie.includes(COOKIE_NAME + "="));
 
   if (!cookie) {
-    return [null, `${DEFAULTS.COOKIE_NAME} not found`];
+    return [null, `${COOKIE_NAME} not found`];
   }
 
   const seal = cookie.split("=")[1];

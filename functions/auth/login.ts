@@ -10,6 +10,7 @@ import {
   COOKIE_SETTINGS,
   WEBSITE_URL,
   sessionDataKeys,
+  COOKIE_NAME,
 } from "../../Config";
 import errorFormatter from "../../utils/errorFormatter";
 import { sealData, unsealData } from "iron-session";
@@ -110,7 +111,6 @@ export async function main(
   });
 
   if (failed) {
-
     const formattedError = errorFormatter(failed);
 
     // If login link has been used, it will throw this error
@@ -138,7 +138,7 @@ export async function main(
   const encryptedCookie = await sealData(result.object, SESSION_SETTINGS);
 
   const response: APIGatewayProxyResultV2 = {
-    cookies: [`${DEFAULTS.COOKIE_NAME}=${encryptedCookie}; ${COOKIE_SETTINGS}`],
+    cookies: [`${COOKIE_NAME}=${encryptedCookie}; ${COOKIE_SETTINGS}`],
     statusCode: 307,
     headers: {
       Location: callbackUrl,

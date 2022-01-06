@@ -5,6 +5,7 @@ import * as Users from "../../models/Users";
 import { SessionData } from "../../types/main";
 import Joi from "joi";
 import {
+  COOKIE_NAME,
   COOKIE_SETTINGS,
   CustomJoi,
   DEFAULTS,
@@ -111,9 +112,7 @@ export async function main(
       : `We've updated your info!`;
     return {
       statusCode: 200,
-      cookies: [
-        `${DEFAULTS.COOKIE_NAME}=${encryptedCookie}; ${COOKIE_SETTINGS}`,
-      ],
+      cookies: [`${COOKIE_NAME}=${encryptedCookie}; ${COOKIE_SETTINGS}`],
       body: JSON.stringify({
         message: customMessage,
       }),

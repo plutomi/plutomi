@@ -8,6 +8,7 @@ import {
   SESSION_SETTINGS,
   COOKIE_SETTINGS,
   JoiOrgId,
+  COOKIE_NAME,
 } from "../../Config";
 import errorFormatter from "../../utils/errorFormatter";
 import getSessionFromCookies from "../../utils/getSessionFromCookies";
@@ -114,7 +115,7 @@ export async function main(
   const encryptedCookie = await sealData(newSession, SESSION_SETTINGS);
   return {
     statusCode: 201,
-    cookies: [`${DEFAULTS.COOKIE_NAME}=${encryptedCookie}; ${COOKIE_SETTINGS}`],
+    cookies: [`${COOKIE_NAME}=${encryptedCookie}; ${COOKIE_SETTINGS}`],
     body: JSON.stringify({ message: "Org deleted!" }),
   };
 }
