@@ -38,14 +38,17 @@ builder
       }
     );
 
-    const { getOrgInvitesFunction, getUserInvitesFunction } =
-      new APIInvitesServiceStack(
-        app,
-        `${process.env.NODE_ENV}-APIInvitesServiceStack`,
-        {
-          table,
-        }
-      );
+    const {
+      getOrgInvitesFunction,
+      getUserInvitesFunction,
+      createInvitesFunction,
+    } = new APIInvitesServiceStack(
+      app,
+      `${process.env.NODE_ENV}-APIInvitesServiceStack`,
+      {
+        table,
+      }
+    );
     const { requestLoginLinkFunction, loginFunction, logoutFunction } =
       new APIAuthServiceStack(
         app,
@@ -74,6 +77,7 @@ builder
       getUsersInOrgFunction,
       getOrgInvitesFunction,
       getUserInvitesFunction,
+      createInvitesFunction
     });
 
     const { CommsMachine } = new CommsMachineStack(

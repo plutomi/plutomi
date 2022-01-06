@@ -66,6 +66,5 @@ app.get(
 );
 
 // Invites
-app.post("/invites", [withAuth], Invites.create);
 app.post("/invites/:inviteId", [withAuth], Invites.accept);
 app.delete("/invites/:inviteId", [withAuth], Invites.reject);

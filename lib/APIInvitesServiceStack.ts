@@ -24,6 +24,7 @@ interface APIAuthServiceProps extends cdk.StackProps {
 export default class APIInvitesServiceStack extends cdk.Stack {
   public readonly getOrgInvitesFunction: NodejsFunction;
   public readonly getUserInvitesFunction: NodejsFunction;
+  public readonly createInvitesFunction: NodejsFunction;
 
   constructor(scope: cdk.Construct, id: string, props?: APIAuthServiceProps) {
     super(scope, id, props);
@@ -89,6 +90,46 @@ export default class APIInvitesServiceStack extends cdk.Stack {
     this.getUserInvitesFunction.role.attachInlinePolicy(
       new Policy(this, "get-user-invites-function-policy", {
         statements: [getInvitesForUserPolicy],
+      })
+    );
+
+    /**
+     * Create invites
+     */
+    this.createInvitesFunction = new NodejsFunction(
+      this,
+      `${process.env.NODE_ENV}-create-invites-function`,
+      {
+        functionName: `${process.env.NODE_ENV}-create-invites-function`,
+        ...DEFAULT_LAMBDA_CONFIG,
+        environment: {
+          DYNAMO_TABLE_NAME: props.table.tableName,
+          SESSION_PASSWORD: process.env.SESSION_PASSWORD,
+        },
+        entry: path.join(__dirname, `../functions/invites/create-invites.ts`),
+      }
+    );
+
+    const createInvitesFunctionPolicy = new PolicyStatement({
+      actions: [
+        "dynamodb:Query",
+        "dynamodb:PutItem",
+        "dynamodb:GetItem",
+        "dynamodb:UpdateItem",
+      ],
+      resources: [
+        `arn:aws:dynamodb:${cdk.Stack.of(this).region}:${
+          cdk.Stack.of(this).account
+        }:table/${props.table.tableName}`,
+        `arn:aws:dynamodb:${cdk.Stack.of(this).region}:${
+          cdk.Stack.of(this).account
+        }:table/${props.table.tableName}/index/GSI2`,
+      ],
+    });
+
+    this.createInvitesFunction.role.attachInlinePolicy(
+      new Policy(this, "create-invites-function-policy", {
+        statements: [createInvitesFunctionPolicy],
       })
     );
   }

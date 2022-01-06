@@ -33,6 +33,7 @@ interface APIGatewayServiceProps extends cdk.StackProps {
   deleteOrgFunction: NodejsFunction;
   getUsersInOrgFunction: NodejsFunction;
   getOrgInvitesFunction: NodejsFunction;
+  createInvitesFunction: NodejsFunction;
 }
 
 /**
@@ -156,6 +157,11 @@ export default class APIStack extends cdk.Stack {
         path: "/users",
         method: "GET",
         handler: props.getUsersInOrgFunction,
+      },
+      {
+        path: "/invites",
+        method: "POST",
+        handler: props.createInvitesFunction,
       },
     ];
 
