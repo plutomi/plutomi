@@ -4,6 +4,9 @@ import { Policy, PolicyStatement } from "@aws-cdk/aws-iam";
 import { Table } from "@aws-cdk/aws-dynamodb";
 import * as cdk from "@aws-cdk/core";
 import * as path from "path";
+import { HttpApi, HttpMethod } from "@aws-cdk/aws-apigatewayv2";
+import { LambdaProxyIntegration } from "@aws-cdk/aws-apigatewayv2-integrations";
+
 const DEFAULT_LAMBDA_CONFIG = {
   memorySize: 256,
   timeout: cdk.Duration.seconds(5),
@@ -19,6 +22,7 @@ const DEFAULT_LAMBDA_CONFIG = {
 
 interface APIAuthServiceProps extends cdk.StackProps {
   table: Table;
+  api: HttpApi;
 }
 
 /**
@@ -29,17 +33,13 @@ interface APIAuthServiceProps extends cdk.StackProps {
  * 3. Logout & delete session
  */
 export default class APIAuthServiceStack extends cdk.Stack {
-  public requestLoginLinkFunction: NodejsFunction;
-  public loginFunction: NodejsFunction;
-  public logoutFunction: NodejsFunction;
-
   constructor(scope: cdk.Construct, id: string, props?: APIAuthServiceProps) {
     super(scope, id, props);
 
     /**
      * Request login link
      */
-    this.requestLoginLinkFunction = new NodejsFunction(
+    const requestLoginLinkFunction = new NodejsFunction(
       this,
       `${process.env.NODE_ENV}-request-login-link-function`,
       {
@@ -54,6 +54,13 @@ export default class APIAuthServiceStack extends cdk.Stack {
       }
     );
 
+    props.api.addRoutes({
+      path: "/request-login-link",
+      methods: [HttpMethod.POST],
+      integration: new LambdaProxyIntegration({
+        handler: requestLoginLinkFunction,
+      }),
+    });
     // Grant minimum permissions
     const requestLoginLinkFunctionPolicy = new PolicyStatement({
       actions: ["dynamodb:Query", "dynamodb:PutItem", "dynamodb:GetItem"],
@@ -67,7 +74,7 @@ export default class APIAuthServiceStack extends cdk.Stack {
       ],
     });
 
-    this.requestLoginLinkFunction.role.attachInlinePolicy(
+    requestLoginLinkFunction.role.attachInlinePolicy(
       new Policy(this, "request-login-link-function-policy", {
         statements: [requestLoginLinkFunctionPolicy],
       })
@@ -76,7 +83,7 @@ export default class APIAuthServiceStack extends cdk.Stack {
     /**
      * Login
      */
-    this.loginFunction = new NodejsFunction(
+    const loginFunction = new NodejsFunction(
       this,
       `${process.env.NODE_ENV}-login-function`,
       {
@@ -90,6 +97,14 @@ export default class APIAuthServiceStack extends cdk.Stack {
         entry: path.join(__dirname, `../functions/auth/login.ts`),
       }
     );
+
+    props.api.addRoutes({
+      path: "/login",
+      methods: [HttpMethod.GET],
+      integration: new LambdaProxyIntegration({
+        handler: loginFunction,
+      }),
+    });
 
     // Grant minimum permissions
     const loginFunctionPolicy = new PolicyStatement({
@@ -106,7 +121,7 @@ export default class APIAuthServiceStack extends cdk.Stack {
       ],
     });
 
-    this.loginFunction.role.attachInlinePolicy(
+    loginFunction.role.attachInlinePolicy(
       new Policy(this, "login-function-policy", {
         statements: [loginFunctionPolicy],
       })
@@ -115,7 +130,7 @@ export default class APIAuthServiceStack extends cdk.Stack {
     /**
      * Logout
      */
-    this.logoutFunction = new NodejsFunction(
+    const logoutFunction = new NodejsFunction(
       this,
       `${process.env.NODE_ENV}-logout-function`,
       {
@@ -124,5 +139,13 @@ export default class APIAuthServiceStack extends cdk.Stack {
         entry: path.join(__dirname, `../functions/auth/logout.ts`),
       }
     );
+
+    props.api.addRoutes({
+      path: "/logout",
+      methods: [HttpMethod.POST],
+      integration: new LambdaProxyIntegration({
+        handler: logoutFunction,
+      }),
+    });
   }
 }

@@ -21,26 +21,20 @@ if (resultDotEnv.error) {
 }
 
 interface APIGatewayServiceProps extends cdk.StackProps {
-  requestLoginLinkFunction: NodejsFunction;
-  loginFunction: NodejsFunction;
-  logoutFunction: NodejsFunction;
   getSelfInfoFunction: NodejsFunction;
   getUserByIdFunction: NodejsFunction;
   updateUserFunction: NodejsFunction;
-  getUserInvitesFunction: NodejsFunction;
   createOrgFunction: NodejsFunction;
   getOrgInfoFunction: NodejsFunction;
   deleteOrgFunction: NodejsFunction;
   getUsersInOrgFunction: NodejsFunction;
-  getOrgInvitesFunction: NodejsFunction;
-  createInvitesFunction: NodejsFunction;
-  rejectInvitesFunction: NodejsFunction;
 }
 
 /**
  * Creates an API Gateway
  */
 export default class APIStack extends cdk.Stack {
+  public api: HttpApi;
   constructor(
     scope: cdk.Construct,
     id: string,
@@ -70,7 +64,7 @@ export default class APIStack extends cdk.Stack {
     });
 
     // Defines an http API Gateway
-    const api = new HttpApi(this, `${process.env.NODE_ENV}-APIEndpoint`, {
+    this.api = new HttpApi(this, `${process.env.NODE_ENV}-APIEndpoint`, {
       defaultDomainMapping: {
         domainName: domain,
       },
@@ -101,18 +95,6 @@ export default class APIStack extends cdk.Stack {
       ),
     });
     const routes = [
-      // Auth routes
-      {
-        path: "/request-login-link",
-        method: "POST",
-        handler: props.requestLoginLinkFunction,
-      },
-      {
-        path: "/login",
-        method: "GET",
-        handler: props.loginFunction,
-      },
-      { path: "/logout", method: "POST", handler: props.logoutFunction },
       {
         path: "/users/self",
         method: "GET",
@@ -130,11 +112,6 @@ export default class APIStack extends cdk.Stack {
         handler: props.updateUserFunction,
       },
       {
-        path: `/users/{userId}/invites`,
-        method: "GET",
-        handler: props.getUserInvitesFunction,
-      },
-      {
         path: `/orgs`,
         method: "POST",
         handler: props.createOrgFunction,
@@ -150,37 +127,10 @@ export default class APIStack extends cdk.Stack {
         handler: props.deleteOrgFunction,
       },
       {
-        path: "/orgs/{orgId}/invites",
-        method: "GET",
-        handler: props.getOrgInvitesFunction,
-      },
-      {
         path: "/users",
         method: "GET",
         handler: props.getUsersInOrgFunction,
       },
-      {
-        path: "/invites",
-        method: "POST",
-        handler: props.createInvitesFunction,
-      },
-
-      {
-        path: "/invites/{inviteId}",
-        method: "DELETE",
-        handler: props.deleteOrgFunction,
-      },
     ];
-
-    for (const route of routes) {
-      const { path, method, handler } = route;
-      api.addRoutes({
-        path,
-        methods: [HttpMethod[method]],
-        integration: new LambdaProxyIntegration({
-          handler,
-        }),
-      });
-    }
   }
 }

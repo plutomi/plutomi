@@ -38,49 +38,38 @@ builder
       }
     );
 
-    const {
-      getOrgInvitesFunction,
-      getUserInvitesFunction,
-      createInvitesFunction,
-      rejectInvitesFunction,
-    } = new APIInvitesServiceStack(
-      app,
-      `${process.env.NODE_ENV}-APIInvitesServiceStack`,
-      {
-        table,
-      }
-    );
-    const { requestLoginLinkFunction, loginFunction, logoutFunction } =
-      new APIAuthServiceStack(
-        app,
-        `${process.env.NODE_ENV}-APIAuthServiceStack`,
-        {
-          table,
-        }
-      );
-
     const { createOrgFunction, getOrgInfoFunction, deleteOrgFunction } =
       new APIOrgsServiceStack(
         app,
         `${process.env.NODE_ENV}-APIOrgsServiceStack`,
         { table }
       );
-    new APIStack(app, `${process.env.NODE_ENV}-APIStack`, {
+    const { api } = new APIStack(app, `${process.env.NODE_ENV}-APIStack`, {
       deleteOrgFunction,
       getSelfInfoFunction,
-      requestLoginLinkFunction,
-      loginFunction,
-      logoutFunction,
       getUserByIdFunction,
       updateUserFunction,
       createOrgFunction,
       getOrgInfoFunction,
       getUsersInOrgFunction,
-      getOrgInvitesFunction,
-      getUserInvitesFunction,
-      createInvitesFunction,
-      rejectInvitesFunction,
     });
+
+    new APIInvitesServiceStack(
+      app,
+      `${process.env.NODE_ENV}-APIInvitesServiceStack`,
+      {
+        table,
+        api,
+      }
+    );
+    new APIAuthServiceStack(
+      app,
+      `${process.env.NODE_ENV}-APIAuthServiceStack`,
+      {
+        table,
+        api,
+      }
+    );
 
     const { CommsMachine } = new CommsMachineStack(
       app,

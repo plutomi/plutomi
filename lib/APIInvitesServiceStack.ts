@@ -4,6 +4,8 @@ import { Policy, PolicyStatement } from "@aws-cdk/aws-iam";
 import { Table } from "@aws-cdk/aws-dynamodb";
 import * as cdk from "@aws-cdk/core";
 import * as path from "path";
+import { HttpApi, HttpMethod } from "@aws-cdk/aws-apigatewayv2";
+import { LambdaProxyIntegration } from "@aws-cdk/aws-apigatewayv2-integrations";
 const DEFAULT_LAMBDA_CONFIG = {
   memorySize: 256,
   timeout: cdk.Duration.seconds(5),
@@ -19,21 +21,17 @@ const DEFAULT_LAMBDA_CONFIG = {
 
 interface APIAuthServiceProps extends cdk.StackProps {
   table: Table;
+  api: HttpApi;
 }
 
 export default class APIInvitesServiceStack extends cdk.Stack {
-  public readonly getOrgInvitesFunction: NodejsFunction;
-  public readonly getUserInvitesFunction: NodejsFunction;
-  public readonly createInvitesFunction: NodejsFunction;
-  public readonly rejectInvitesFunction: NodejsFunction;
-
   constructor(scope: cdk.Construct, id: string, props?: APIAuthServiceProps) {
     super(scope, id, props);
 
     /**
-     * Get  invites
+     * Get org invites
      */
-    this.getOrgInvitesFunction = new NodejsFunction(
+    const getOrgInvitesFunction = new NodejsFunction(
       this,
       `${process.env.NODE_ENV}-get-org-invites-function`,
       {
@@ -46,6 +44,13 @@ export default class APIInvitesServiceStack extends cdk.Stack {
         entry: path.join(__dirname, `../functions/invites/get-org-invites.ts`),
       }
     );
+    props.api.addRoutes({
+      path: "/orgs/{orgId}/invites",
+      methods: [HttpMethod.GET],
+      integration: new LambdaProxyIntegration({
+        handler: getOrgInvitesFunction,
+      }),
+    });
 
     const getOrgInvitesFunctionFunctionPolicy = new PolicyStatement({
       actions: ["dynamodb:Query"],
@@ -56,16 +61,16 @@ export default class APIInvitesServiceStack extends cdk.Stack {
       ],
     });
 
-    this.getOrgInvitesFunction.role.attachInlinePolicy(
+    getOrgInvitesFunction.role.attachInlinePolicy(
       new Policy(this, "get-org-invites-function-policy", {
         statements: [getOrgInvitesFunctionFunctionPolicy],
       })
     );
 
     /**
-     * Get Invites for User
+     * Get user invites
      */
-    this.getUserInvitesFunction = new NodejsFunction(
+    const getUserInvitesFunction = new NodejsFunction(
       this,
       `${process.env.NODE_ENV}-get-user-invites-function`,
       {
@@ -78,6 +83,13 @@ export default class APIInvitesServiceStack extends cdk.Stack {
         entry: path.join(__dirname, `../functions/invites/get-user-invites.ts`),
       }
     );
+    props.api.addRoutes({
+      path: "/invites",
+      methods: [HttpMethod.GET],
+      integration: new LambdaProxyIntegration({
+        handler: getUserInvitesFunction,
+      }),
+    });
 
     const getInvitesForUserPolicy = new PolicyStatement({
       actions: ["dynamodb:Query"],
@@ -88,7 +100,7 @@ export default class APIInvitesServiceStack extends cdk.Stack {
       ],
     });
 
-    this.getUserInvitesFunction.role.attachInlinePolicy(
+    getUserInvitesFunction.role.attachInlinePolicy(
       new Policy(this, "get-user-invites-function-policy", {
         statements: [getInvitesForUserPolicy],
       })
@@ -97,7 +109,7 @@ export default class APIInvitesServiceStack extends cdk.Stack {
     /**
      * Create invites
      */
-    this.createInvitesFunction = new NodejsFunction(
+    const createInvitesFunction = new NodejsFunction(
       this,
       `${process.env.NODE_ENV}-create-invites-function`,
       {
@@ -110,6 +122,14 @@ export default class APIInvitesServiceStack extends cdk.Stack {
         entry: path.join(__dirname, `../functions/invites/create-invites.ts`),
       }
     );
+
+    props.api.addRoutes({
+      path: "/invites",
+      methods: [HttpMethod.POST],
+      integration: new LambdaProxyIntegration({
+        handler: createInvitesFunction,
+      }),
+    });
 
     const createInvitesFunctionPolicy = new PolicyStatement({
       actions: [
@@ -128,7 +148,7 @@ export default class APIInvitesServiceStack extends cdk.Stack {
       ],
     });
 
-    this.createInvitesFunction.role.attachInlinePolicy(
+    createInvitesFunction.role.attachInlinePolicy(
       new Policy(this, "create-invites-function-policy", {
         statements: [createInvitesFunctionPolicy],
       })
@@ -137,7 +157,7 @@ export default class APIInvitesServiceStack extends cdk.Stack {
     /**
      * Reject invites
      */
-    this.rejectInvitesFunction = new NodejsFunction(
+    const rejectInvitesFunction = new NodejsFunction(
       this,
       `${process.env.NODE_ENV}-reject-invites-function`,
       {
@@ -151,6 +171,14 @@ export default class APIInvitesServiceStack extends cdk.Stack {
       }
     );
 
+    props.api.addRoutes({
+      path: "/invites/{inviteId}",
+      methods: [HttpMethod.DELETE],
+      integration: new LambdaProxyIntegration({
+        handler: rejectInvitesFunction,
+      }),
+    });
+
     const rejectInvitesFunctionPolicy = new PolicyStatement({
       actions: ["dynamodb:DeleteItem"],
       resources: [
@@ -160,7 +188,7 @@ export default class APIInvitesServiceStack extends cdk.Stack {
       ],
     });
 
-    this.rejectInvitesFunction.role.attachInlinePolicy(
+    rejectInvitesFunction.role.attachInlinePolicy(
       new Policy(this, "reject-invites-function-policy", {
         statements: [rejectInvitesFunctionPolicy],
       })
