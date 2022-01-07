@@ -1,15 +1,11 @@
 import * as cdk from "@aws-cdk/core";
 import { CDKLambda } from "../types/main";
-import { Table } from "@aws-cdk/aws-dynamodb";
-import { HttpApi, HttpMethod } from "@aws-cdk/aws-apigatewayv2";
+import { LambdaAPIProps } from "../types/main";
+import { HttpMethod } from "@aws-cdk/aws-apigatewayv2";
 import createAPIGatewayFunctions from "../utils/createAPIGatewayFunctions";
-interface APIUsersServiceProps extends cdk.StackProps {
-  table: Table;
-  api: HttpApi;
-}
 
 export default class APIUsersServiceStack extends cdk.Stack {
-  constructor(scope: cdk.Construct, id: string, props?: APIUsersServiceProps) {
+  constructor(scope: cdk.Construct, id: string, props?: LambdaAPIProps) {
     super(scope, id, props);
 
     const functions: CDKLambda[] = [

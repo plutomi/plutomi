@@ -1,5 +1,7 @@
-import { HttpMethod } from "@aws-cdk/aws-apigatewayv2";
+import { HttpMethod, HttpApi } from "@aws-cdk/aws-apigatewayv2";
 import { APIGatewayProxyEventV2 } from "aws-lambda";
+import { Table } from "@aws-cdk/aws-dynamodb";
+import { StackProps } from "@aws-cdk/core";
 import {
   DynamoNewApplicant,
   DynamoNewApplicantResponse,
@@ -54,6 +56,11 @@ export interface CDKLambda {
     GSI1?: boolean;
     GSI2?: boolean;
   };
+}
+
+export interface LambdaAPIProps extends StackProps {
+  table: Table;
+  api: HttpApi;
 }
 
 type CreateApplicantAPIBody = Omit<CreateApplicantInput, "stageId">;
