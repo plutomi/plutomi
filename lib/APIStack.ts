@@ -24,9 +24,6 @@ interface APIGatewayServiceProps extends cdk.StackProps {
   getSelfInfoFunction: NodejsFunction;
   getUserByIdFunction: NodejsFunction;
   updateUserFunction: NodejsFunction;
-  createOrgFunction: NodejsFunction;
-  getOrgInfoFunction: NodejsFunction;
-  deleteOrgFunction: NodejsFunction;
   getUsersInOrgFunction: NodejsFunction;
 }
 
@@ -111,21 +108,7 @@ export default class APIStack extends cdk.Stack {
         method: "PUT",
         handler: props.updateUserFunction,
       },
-      {
-        path: `/orgs`,
-        method: "POST",
-        handler: props.createOrgFunction,
-      },
-      {
-        path: `/orgs/{orgId}`,
-        method: "GET",
-        handler: props.getOrgInfoFunction,
-      },
-      {
-        path: "/orgs/{orgId}",
-        method: "DELETE",
-        handler: props.deleteOrgFunction,
-      },
+
       {
         path: "/users",
         method: "GET",

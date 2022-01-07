@@ -4,6 +4,8 @@ import { Policy, PolicyStatement } from "@aws-cdk/aws-iam";
 import { Table } from "@aws-cdk/aws-dynamodb";
 import * as cdk from "@aws-cdk/core";
 import * as path from "path";
+import { HttpApi, HttpMethod } from "@aws-cdk/aws-apigatewayv2";
+import { LambdaProxyIntegration } from "@aws-cdk/aws-apigatewayv2-integrations";
 const DEFAULT_LAMBDA_CONFIG = {
   memorySize: 256,
   timeout: cdk.Duration.seconds(5),
@@ -19,17 +21,14 @@ const DEFAULT_LAMBDA_CONFIG = {
 
 interface APIOrgsServiceProps extends cdk.StackProps {
   table: Table;
+  api: HttpApi;
 }
 
 export default class APIOrgsServiceStack extends cdk.Stack {
-  public readonly createOrgFunction: NodejsFunction;
-  public readonly getOrgInfoFunction: NodejsFunction;
-  public readonly deleteOrgFunction: NodejsFunction;
-
   constructor(scope: cdk.Construct, id: string, props?: APIOrgsServiceProps) {
     super(scope, id, props);
 
-    this.createOrgFunction = new NodejsFunction(
+    const createOrgFunction = new NodejsFunction(
       this,
       `${process.env.NODE_ENV}-create-org-function`,
       {
@@ -43,6 +42,14 @@ export default class APIOrgsServiceStack extends cdk.Stack {
       }
     );
 
+    props.api.addRoutes({
+      path: "/orgs",
+      methods: [HttpMethod.POST],
+      integration: new LambdaProxyIntegration({
+        handler: createOrgFunction,
+      }),
+    });
+
     const createOrgFunctionPolicy = new PolicyStatement({
       actions: ["dynamodb:Query", "dynamodb:PutItem", "dynamodb:UpdateItem"],
       resources: [
@@ -52,13 +59,13 @@ export default class APIOrgsServiceStack extends cdk.Stack {
       ],
     });
 
-    this.createOrgFunction.role.attachInlinePolicy(
+    createOrgFunction.role.attachInlinePolicy(
       new Policy(this, "create-org-function-policy", {
         statements: [createOrgFunctionPolicy],
       })
     );
 
-    this.getOrgInfoFunction = new NodejsFunction(
+    const getOrgInfoFunction = new NodejsFunction(
       this,
       `${process.env.NODE_ENV}-get-org-info-function`,
       {
@@ -72,6 +79,14 @@ export default class APIOrgsServiceStack extends cdk.Stack {
       }
     );
 
+    props.api.addRoutes({
+      path: "/orgs/{orgId}",
+      methods: [HttpMethod.GET],
+      integration: new LambdaProxyIntegration({
+        handler: getOrgInfoFunction,
+      }),
+    });
+
     const getOrgInfoPolicy = new PolicyStatement({
       actions: ["dynamodb:GetItem"],
       resources: [
@@ -81,13 +96,13 @@ export default class APIOrgsServiceStack extends cdk.Stack {
       ],
     });
 
-    this.getOrgInfoFunction.role.attachInlinePolicy(
+    getOrgInfoFunction.role.attachInlinePolicy(
       new Policy(this, "get-org-info-function-policy", {
         statements: [getOrgInfoPolicy],
       })
     );
 
-    this.deleteOrgFunction = new NodejsFunction(
+    const deleteOrgFunction = new NodejsFunction(
       this,
       `${process.env.NODE_ENV}-delete-org-function`,
       {
@@ -100,6 +115,14 @@ export default class APIOrgsServiceStack extends cdk.Stack {
         entry: path.join(__dirname, `../functions/orgs/delete-org.ts`),
       }
     );
+
+    props.api.addRoutes({
+      path: "/orgs/{orgId}",
+      methods: [HttpMethod.DELETE],
+      integration: new LambdaProxyIntegration({
+        handler: deleteOrgFunction,
+      }),
+    });
 
     const deleteOrgPolicy = new PolicyStatement({
       actions: [
@@ -114,7 +137,7 @@ export default class APIOrgsServiceStack extends cdk.Stack {
       ],
     });
 
-    this.deleteOrgFunction.role.attachInlinePolicy(
+    deleteOrgFunction.role.attachInlinePolicy(
       new Policy(this, "delete-org-function-policy", {
         statements: [deleteOrgPolicy],
       })

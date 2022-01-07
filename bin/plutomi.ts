@@ -38,37 +38,29 @@ builder
       }
     );
 
-    const { createOrgFunction, getOrgInfoFunction, deleteOrgFunction } =
-      new APIOrgsServiceStack(
-        app,
-        `${process.env.NODE_ENV}-APIOrgsServiceStack`,
-        { table }
-      );
     const { api } = new APIStack(app, `${process.env.NODE_ENV}-APIStack`, {
-      deleteOrgFunction,
       getSelfInfoFunction,
       getUserByIdFunction,
       updateUserFunction,
-      createOrgFunction,
-      getOrgInfoFunction,
       getUsersInOrgFunction,
     });
 
+    const TableAndAPI = { table, api };
+
+    new APIOrgsServiceStack(
+      app,
+      `${process.env.NODE_ENV}-APIOrgsServiceStack`,
+      TableAndAPI
+    );
     new APIInvitesServiceStack(
       app,
       `${process.env.NODE_ENV}-APIInvitesServiceStack`,
-      {
-        table,
-        api,
-      }
+      TableAndAPI
     );
     new APIAuthServiceStack(
       app,
       `${process.env.NODE_ENV}-APIAuthServiceStack`,
-      {
-        table,
-        api,
-      }
+      TableAndAPI
     );
 
     const { CommsMachine } = new CommsMachineStack(
