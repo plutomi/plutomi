@@ -11,6 +11,7 @@ export default class APIUsersServiceStack extends cdk.Stack {
     const functions: CDKLambda[] = [
       {
         name: `get-self-info-function`,
+        description: `Retrieves info about the current user, ID is taken from the session cookie`,
         environment: {
           DYNAMO_TABLE_NAME: props.table.tableName,
           SESSION_PASSWORD: process.env.SESSION_PASSWORD,
@@ -26,6 +27,7 @@ export default class APIUsersServiceStack extends cdk.Stack {
 
       {
         name: `get-user-by-id-function`,
+        description: `Retrieves info about a specific user`,
         environment: {
           DYNAMO_TABLE_NAME: props.table.tableName,
           SESSION_PASSWORD: process.env.SESSION_PASSWORD,
@@ -40,6 +42,7 @@ export default class APIUsersServiceStack extends cdk.Stack {
       },
       {
         name: `update-user-function`,
+        description: `Updates a specific user`,
         environment: {
           SESSION_PASSWORD: process.env.SESSION_PASSWORD,
           DYNAMO_TABLE_NAME: props.table.tableName,
@@ -54,6 +57,7 @@ export default class APIUsersServiceStack extends cdk.Stack {
       },
       {
         name: `get-users-in-org-function`,
+        description: `Retrieves all users in the requester's org`,
         environment: {
           DYNAMO_TABLE_NAME: props.table.tableName,
           SESSION_PASSWORD: process.env.SESSION_PASSWORD,

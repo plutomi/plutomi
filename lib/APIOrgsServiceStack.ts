@@ -11,6 +11,7 @@ export default class APIOrgsServiceStack extends cdk.Stack {
     const functions: CDKLambda[] = [
       {
         name: `create-org-function`,
+        description: `As a user, creates an organization and joins it`,
         environment: {
           DYNAMO_TABLE_NAME: props.table.tableName,
           SESSION_PASSWORD: process.env.SESSION_PASSWORD,
@@ -30,6 +31,7 @@ export default class APIOrgsServiceStack extends cdk.Stack {
 
       {
         name: `get-org-info-function`,
+        description: `Retrieves information for an org`,
         environment: {
           DYNAMO_TABLE_NAME: props.table.tableName,
           SESSION_PASSWORD: process.env.SESSION_PASSWORD,
@@ -44,6 +46,7 @@ export default class APIOrgsServiceStack extends cdk.Stack {
       },
       {
         name: `delete-org-function`,
+        description: `Deletes the org the user is in`,
         environment: {
           DYNAMO_TABLE_NAME: props.table.tableName,
           SESSION_PASSWORD: process.env.SESSION_PASSWORD,

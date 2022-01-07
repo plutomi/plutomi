@@ -10,6 +10,7 @@ export default class APIAuthServiceStack extends cdk.Stack {
     const functions: CDKLambda[] = [
       {
         name: `request-login-link-function`,
+        description: `Sends login links to the user`,
         environment: {
           DYNAMO_TABLE_NAME: props.table.tableName,
           LOGIN_LINKS_PASSWORD: process.env.LOGIN_LINKS_PASSWORD,
@@ -30,6 +31,7 @@ export default class APIAuthServiceStack extends cdk.Stack {
       },
       {
         name: `login-function`,
+        description: `Logs a user in and creates an encrypted session cookie`,
         environment: {
           DYNAMO_TABLE_NAME: props.table.tableName,
           LOGIN_LINKS_PASSWORD: process.env.LOGIN_LINKS_PASSWORD,
@@ -51,6 +53,7 @@ export default class APIAuthServiceStack extends cdk.Stack {
 
       {
         name: `logout-function`,
+        description: `Destroys the user's session cookie`, // TODO capture logout events in Dynamo
         environment: {
           DYNAMO_TABLE_NAME: props.table.tableName,
           LOGIN_LINKS_PASSWORD: process.env.LOGIN_LINKS_PASSWORD,

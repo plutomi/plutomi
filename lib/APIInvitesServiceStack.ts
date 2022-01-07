@@ -11,6 +11,7 @@ export default class APIInvitesServiceStack extends cdk.Stack {
     const functions: CDKLambda[] = [
       {
         name: `get-org-invites-function`,
+        description: `Retrieves invites for an org that haven't been accepted yet`,
         environment: {
           DYNAMO_TABLE_NAME: props.table.tableName,
           SESSION_PASSWORD: process.env.SESSION_PASSWORD,
@@ -25,6 +26,7 @@ export default class APIInvitesServiceStack extends cdk.Stack {
       },
       {
         name: `get-user-invites-function`,
+        description: `Retrieves invites for a user that haven't been accepted yet`,
         environment: {
           DYNAMO_TABLE_NAME: props.table.tableName,
           SESSION_PASSWORD: process.env.SESSION_PASSWORD,
@@ -39,6 +41,7 @@ export default class APIInvitesServiceStack extends cdk.Stack {
       },
       {
         name: "create-invites-function",
+        description: `Creates an invite for a user to join an org`,
         environment: {
           DYNAMO_TABLE_NAME: props.table.tableName,
           SESSION_PASSWORD: process.env.SESSION_PASSWORD,
@@ -60,6 +63,7 @@ export default class APIInvitesServiceStack extends cdk.Stack {
 
       {
         name: `reject-invites-function`,
+        description: `Rejectes an org invite`,
         environment: {
           DYNAMO_TABLE_NAME: props.table.tableName,
           SESSION_PASSWORD: process.env.SESSION_PASSWORD,

@@ -25,6 +25,11 @@ export interface CDKLambda {
    * Name of the lambda function
    */
   name: string;
+
+  /**
+   * What this function does
+   */
+  description: string;
   /**
    * Environment variables for the lambda function
    */
@@ -57,7 +62,7 @@ export interface CDKLambda {
   };
 
   /**
-   * In mb, how much memory should the lambda have
+   * In MB, how much memory should the lambda have
    * @default 256
    *
    */
