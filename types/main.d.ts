@@ -1,3 +1,4 @@
+import { HttpMethod } from "@aws-cdk/aws-apigatewayv2";
 import { APIGatewayProxyEventV2 } from "aws-lambda";
 import {
   DynamoNewApplicant,
@@ -9,6 +10,51 @@ import {
   DynamoNewStageQuestion,
   DynamoNewUser,
 } from "./dynamo";
+
+type DynamoActions =
+  | "dynamodb:GetItem"
+  | "dynamodb:BatchGetItem"
+  | "dynamodb:Query"
+  | "dynamodb:PutItem"
+  | "dynamodb:UpdateItem"
+  | "dynamodb:DeleteItem"
+  | "dynamodb:BatchWriteItem";
+export interface CDKLambda {
+  /**
+   * Name of the lambda function
+   */
+  name: string;
+  /**
+   * Environment variables for the lambda function
+   */
+  environment: {
+    DYNAMO_TABLE_NAME?: string;
+    LOGIN_LINKS_PASSWORD?: string;
+    SESSION_PASSWORD?: string;
+  };
+  filePath: string;
+  /**
+   * Path for the API, such as "/users/{userId}"
+   */
+  APIPath: string;
+  /**
+   * HTTP Method for the API call
+   */
+  method: HttpMethod;
+  /**
+   * What actions the lambda is allowed to perform such as
+   * "dynamodb:Query", "dynamodb:PutItem", "dynamodb:GetItem"
+   */
+  dynamoActions: DynamoActions[];
+  /**
+   * What the lambda is allowed to access from the DynamoDB table
+   */
+  dynamoResources: {
+    main?: boolean;
+    GSI1?: boolean;
+    GSI2?: boolean;
+  };
+}
 
 type CreateApplicantAPIBody = Omit<CreateApplicantInput, "stageId">;
 export interface CreateApplicantAPIResponse {

@@ -25,42 +25,28 @@ builder
       `${process.env.NODE_ENV}-DynamoDBStack`
     );
 
-    const {
-      getUserByIdFunction,
-      updateUserFunction,
-      getSelfInfoFunction,
-      getUsersInOrgFunction,
-    } = new APIUsersServiceStack(
+    const { api } = new APIStack(app, `${process.env.NODE_ENV}-APIStack`);
+
+    new APIUsersServiceStack(
       app,
       `${process.env.NODE_ENV}-APIUsersServiceStack`,
-      {
-        table,
-      }
+      { table, api }
     );
-
-    const { api } = new APIStack(app, `${process.env.NODE_ENV}-APIStack`, {
-      getSelfInfoFunction,
-      getUserByIdFunction,
-      updateUserFunction,
-      getUsersInOrgFunction,
-    });
-
-    const TableAndAPI = { table, api };
 
     new APIOrgsServiceStack(
       app,
       `${process.env.NODE_ENV}-APIOrgsServiceStack`,
-      TableAndAPI
+      { table, api }
     );
     new APIInvitesServiceStack(
       app,
       `${process.env.NODE_ENV}-APIInvitesServiceStack`,
-      TableAndAPI
+      { table, api }
     );
     new APIAuthServiceStack(
       app,
       `${process.env.NODE_ENV}-APIAuthServiceStack`,
-      TableAndAPI
+      { table, api }
     );
 
     const { CommsMachine } = new CommsMachineStack(

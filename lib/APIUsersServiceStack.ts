@@ -2,6 +2,9 @@ import { Runtime, Architecture } from "@aws-cdk/aws-lambda";
 import { Table } from "@aws-cdk/aws-dynamodb";
 import * as cdk from "@aws-cdk/core";
 import * as path from "path";
+import { HttpApi, HttpMethod } from "@aws-cdk/aws-apigatewayv2";
+import { LambdaProxyIntegration } from "@aws-cdk/aws-apigatewayv2-integrations";
+
 const DEFAULT_LAMBDA_CONFIG = {
   memorySize: 256,
   timeout: cdk.Duration.seconds(5),
@@ -20,21 +23,17 @@ import { Policy, PolicyStatement } from "@aws-cdk/aws-iam";
 
 interface APIUsersServiceProps extends cdk.StackProps {
   table: Table;
+  api: HttpApi;
 }
 
 export default class APIUsersServiceStack extends cdk.Stack {
-  public readonly getSelfInfoFunction: NodejsFunction;
-  public readonly getUserByIdFunction: NodejsFunction;
-  public readonly updateUserFunction: NodejsFunction;
-  public readonly getUsersInOrgFunction: NodejsFunction;
-
   constructor(scope: cdk.Construct, id: string, props?: APIUsersServiceProps) {
     super(scope, id, props);
 
     /**
-     * Session info function
+     * Info about the current user, ID gotten from session
      */
-    this.getSelfInfoFunction = new NodejsFunction(
+    const getSelfInfoFunction = new NodejsFunction(
       this,
       `${process.env.NODE_ENV}-get-self-info-function`,
       {
@@ -48,6 +47,14 @@ export default class APIUsersServiceStack extends cdk.Stack {
       }
     );
 
+    props.api.addRoutes({
+      path: "/users/self",
+      methods: [HttpMethod.GET],
+      integration: new LambdaProxyIntegration({
+        handler: getSelfInfoFunction,
+      }),
+    });
+
     // Grant minimum permissions
     const getSelfPolicy = new PolicyStatement({
       actions: ["dynamodb:GetItem"],
@@ -58,7 +65,7 @@ export default class APIUsersServiceStack extends cdk.Stack {
       ],
     });
 
-    this.getSelfInfoFunction.role.attachInlinePolicy(
+    getSelfInfoFunction.role.attachInlinePolicy(
       new Policy(this, "get-self-function-policy", {
         statements: [getSelfPolicy],
       })
@@ -67,7 +74,7 @@ export default class APIUsersServiceStack extends cdk.Stack {
     /**
      * Get user by ID
      */
-    this.getUserByIdFunction = new NodejsFunction(
+    const getUserByIdFunction = new NodejsFunction(
       this,
       `${process.env.NODE_ENV}-get-user-by-id-function`,
       {
@@ -81,6 +88,14 @@ export default class APIUsersServiceStack extends cdk.Stack {
       }
     );
 
+    props.api.addRoutes({
+      path: "/users/{userId}",
+      methods: [HttpMethod.GET],
+      integration: new LambdaProxyIntegration({
+        handler: getUserByIdFunction,
+      }),
+    });
+
     // Grant minimum permissions
     const getUserByIdPolicy = new PolicyStatement({
       actions: ["dynamodb:GetItem"],
@@ -91,7 +106,7 @@ export default class APIUsersServiceStack extends cdk.Stack {
       ],
     });
 
-    this.getUserByIdFunction.role.attachInlinePolicy(
+    getUserByIdFunction.role.attachInlinePolicy(
       new Policy(this, "get-user-by-id-function-policy", {
         statements: [getUserByIdPolicy],
       })
@@ -100,7 +115,7 @@ export default class APIUsersServiceStack extends cdk.Stack {
     /**
      * Update user
      */
-    this.updateUserFunction = new NodejsFunction(
+    const updateUserFunction = new NodejsFunction(
       this,
       `${process.env.NODE_ENV}-update-user-function`,
       {
@@ -114,6 +129,14 @@ export default class APIUsersServiceStack extends cdk.Stack {
       }
     );
 
+    props.api.addRoutes({
+      path: "/users/{userId}",
+      methods: [HttpMethod.PUT],
+      integration: new LambdaProxyIntegration({
+        handler: updateUserFunction,
+      }),
+    });
+
     // Grant minimum permissions
     const updateUserPolicy = new PolicyStatement({
       actions: ["dynamodb:UpdateItem"],
@@ -124,7 +147,7 @@ export default class APIUsersServiceStack extends cdk.Stack {
       ],
     });
 
-    this.updateUserFunction.role.attachInlinePolicy(
+    updateUserFunction.role.attachInlinePolicy(
       new Policy(this, "update-user-function-policy", {
         statements: [updateUserPolicy],
       })
@@ -133,7 +156,7 @@ export default class APIUsersServiceStack extends cdk.Stack {
     /**
      * Get users in org
      */
-    this.getUsersInOrgFunction = new NodejsFunction(
+    const getUsersInOrgFunction = new NodejsFunction(
       this,
       `${process.env.NODE_ENV}-get-users-in-org-function`,
       {
@@ -147,6 +170,14 @@ export default class APIUsersServiceStack extends cdk.Stack {
       }
     );
 
+    props.api.addRoutes({
+      path: "/users",
+      methods: [HttpMethod.GET],
+      integration: new LambdaProxyIntegration({
+        handler: getUsersInOrgFunction,
+      }),
+    });
+
     const getUsersInOrgPolicy = new PolicyStatement({
       actions: ["dynamodb:Query"],
       resources: [
@@ -156,7 +187,7 @@ export default class APIUsersServiceStack extends cdk.Stack {
       ],
     });
 
-    this.getUsersInOrgFunction.role.attachInlinePolicy(
+    getUsersInOrgFunction.role.attachInlinePolicy(
       new Policy(this, "get-users-in-org-function-policy", {
         statements: [getUsersInOrgPolicy],
       })

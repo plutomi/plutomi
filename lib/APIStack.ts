@@ -20,12 +20,7 @@ if (resultDotEnv.error) {
   throw resultDotEnv.error;
 }
 
-interface APIGatewayServiceProps extends cdk.StackProps {
-  getSelfInfoFunction: NodejsFunction;
-  getUserByIdFunction: NodejsFunction;
-  updateUserFunction: NodejsFunction;
-  getUsersInOrgFunction: NodejsFunction;
-}
+interface APIGatewayServiceProps extends cdk.StackProps {}
 
 /**
  * Creates an API Gateway
@@ -91,29 +86,5 @@ export default class APIStack extends cdk.Stack {
         )
       ),
     });
-    const routes = [
-      {
-        path: "/users/self",
-        method: "GET",
-        handler: props.getSelfInfoFunction,
-      },
-      // Users
-      {
-        path: `/users/{userId}`,
-        method: "GET",
-        handler: props.getUserByIdFunction,
-      },
-      {
-        path: `/users/{userId}`,
-        method: "PUT",
-        handler: props.updateUserFunction,
-      },
-
-      {
-        path: "/users",
-        method: "GET",
-        handler: props.getUsersInOrgFunction,
-      },
-    ];
   }
 }
