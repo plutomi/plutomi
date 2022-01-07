@@ -1,5 +1,8 @@
 import { Runtime, Architecture } from "@aws-cdk/aws-lambda";
-import { NodejsFunction } from "@aws-cdk/aws-lambda-nodejs";
+import {
+  NodejsFunction,
+  NodejsFunctionProps,
+} from "@aws-cdk/aws-lambda-nodejs";
 import { Policy, PolicyStatement } from "@aws-cdk/aws-iam";
 import { Table } from "@aws-cdk/aws-dynamodb";
 import * as cdk from "@aws-cdk/core";
@@ -7,19 +10,6 @@ import * as path from "path";
 import { HttpApi } from "@aws-cdk/aws-apigatewayv2";
 import { LambdaProxyIntegration } from "@aws-cdk/aws-apigatewayv2-integrations";
 import { CDKLambda } from "../types/main";
-
-const DEFAULT_LAMBDA_CONFIG = {
-  memorySize: 256,
-  timeout: cdk.Duration.seconds(5),
-  runtime: Runtime.NODEJS_14_X,
-  architecture: Architecture.ARM_64,
-  bundling: {
-    minify: true,
-    externalModules: ["aws-sdk"],
-  },
-  handler: "main",
-  reservedConcurrentExecutions: 1, // TODO change to sane defaults
-};
 
 /**
  *  For CDK, this creates functions that are attached to API Gateway. These only really need DynamoDB permissions.
@@ -40,9 +30,17 @@ export default function createAPIGatewayFunctions(
       `${process.env.NODE_ENV}-${lambda.name}`,
       {
         functionName: `${process.env.NODE_ENV}-${lambda.name}`,
-
-        ...DEFAULT_LAMBDA_CONFIG,
+        memorySize: lambda.memorySize || 256,
+        timeout: lambda.timeout || cdk.Duration.seconds(5),
+        runtime: Runtime.NODEJS_14_X,
+        architecture: Architecture.ARM_64,
         environment: lambda.environment,
+        bundling: {
+          minify: true,
+          externalModules: ["aws-sdk"],
+        },
+        handler: "main",
+        reservedConcurrentExecutions: lambda.maxConcurrency || 1,
         entry: path.join(__dirname, lambda.filePath),
       }
     );

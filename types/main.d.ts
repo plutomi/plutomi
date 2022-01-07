@@ -1,11 +1,10 @@
 import { HttpMethod, HttpApi } from "@aws-cdk/aws-apigatewayv2";
 import { APIGatewayProxyEventV2 } from "aws-lambda";
 import { Table } from "@aws-cdk/aws-dynamodb";
-import { StackProps } from "@aws-cdk/core";
+import { Duration, StackProps } from "@aws-cdk/core";
 import {
   DynamoNewApplicant,
   DynamoNewApplicantResponse,
-  DynamoNewLoginLink,
   DynamoNewOpening,
   DynamoNewOrgInvite,
   DynamoNewStage,
@@ -29,7 +28,7 @@ export interface CDKLambda {
   /**
    * Environment variables for the lambda function
    */
-  environment: {
+  environment?: {
     DYNAMO_TABLE_NAME?: string;
     LOGIN_LINKS_PASSWORD?: string;
     SESSION_PASSWORD?: string;
@@ -56,6 +55,25 @@ export interface CDKLambda {
     GSI1?: boolean;
     GSI2?: boolean;
   };
+
+  /**
+   * In mb, how much memory should the lambda have
+   * @default 256
+   *
+   */
+  memorySize?: number;
+
+  /**
+   * In seconds, when should this function timeout
+   * @default 5
+   */
+  timeout?: Duration;
+
+  /**
+   * Max number of concurrent functions
+   * @default 1
+   */
+  maxConcurrency?: number;
 }
 
 export interface LambdaAPIProps extends StackProps {
