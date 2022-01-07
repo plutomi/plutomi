@@ -27,16 +27,16 @@ export default class EventBridgeStack extends cdk.Stack {
 
     // Note, if we ever use AWS events directly, they will go to the default event bus and not this one.
     // This is for easy dev / prod testing
-    // Create a new event bus
-    const bus = new EventBus(this, `EventBus`, {
+    const bus = new EventBus(this, `${process.env.NODE_ENV}-EventBus`, {
       eventBusName: `${process.env.NODE_ENV}-EventBus`,
     });
 
     // We want to send all communication events to the step function, we can handle routing there
-    new Rule(this, "NewUserRule", {
+    new Rule(this, "NeedsCommsRule", {
       eventBus: bus,
-      description: "A new user has been signed up and verified their email",
-      ruleName: "NewUserRule",
+      description:
+        "Rule that checks if an action needs further comms such as login links or welcome emails. Forwards to the `CommsMachine` step function.",
+      ruleName: "NeedsCommsRule",
       targets: [new SfnStateMachine(props.CommsMachine)],
       eventPattern: {
         source: ["dynamodb.streams"],
