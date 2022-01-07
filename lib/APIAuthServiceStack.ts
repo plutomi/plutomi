@@ -1,7 +1,7 @@
-import { Table } from "@aws-cdk/aws-dynamodb";
 import * as cdk from "@aws-cdk/core";
-import { HttpApi, HttpMethod } from "@aws-cdk/aws-apigatewayv2";
 import { CDKLambda } from "../types/main";
+import { Table } from "@aws-cdk/aws-dynamodb";
+import { HttpApi, HttpMethod } from "@aws-cdk/aws-apigatewayv2";
 import createAPIGatewayFunctions from "../utils/createAPIGatewayFunctions";
 interface APIAuthServiceProps extends cdk.StackProps {
   table: Table;

@@ -1,12 +1,7 @@
-import { Runtime, Architecture } from "@aws-cdk/aws-lambda";
-import { NodejsFunction } from "@aws-cdk/aws-lambda-nodejs";
-import { Policy, PolicyStatement } from "@aws-cdk/aws-iam";
-import { Table } from "@aws-cdk/aws-dynamodb";
 import * as cdk from "@aws-cdk/core";
-import * as path from "path";
-import { HttpApi, HttpMethod } from "@aws-cdk/aws-apigatewayv2";
-import { LambdaProxyIntegration } from "@aws-cdk/aws-apigatewayv2-integrations";
 import { CDKLambda } from "../types/main";
+import { Table } from "@aws-cdk/aws-dynamodb";
+import { HttpApi, HttpMethod } from "@aws-cdk/aws-apigatewayv2";
 import createAPIGatewayFunctions from "../utils/createAPIGatewayFunctions";
 
 interface APIAuthServiceProps extends cdk.StackProps {
