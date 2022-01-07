@@ -67,11 +67,16 @@ export default function createAPIGatewayFunctions(
     /**
      * dynamoActions and dynamoResources must both be defined, or undefined. They cannot exist without the other.
      */
-    const validDynamoPolicy =
-      (lambda.dynamoActions.length > 0 &&
-        Object.keys(lambda.dynamoResources).length === 0) ||
-      (lambda.dynamoActions.length === 0 &&
-        Object.keys(lambda.dynamoResources).length > 0);
+
+    const policyExists =
+      lambda.dynamoActions.length > 0 &&
+      Object.keys(lambda.dynamoResources).length > 0;
+
+    const policyUndefined =
+      lambda.dynamoActions.length === 0 &&
+      Object.keys(lambda.dynamoResources).length === 0;
+
+    const validDynamoPolicy = policyExists || policyUndefined;
 
     if (!validDynamoPolicy) {
       throw `The function ${lambda.name} has ${
@@ -80,15 +85,18 @@ export default function createAPIGatewayFunctions(
         Object.keys(lambda.dynamoResources).length
       } 'dynamoResources'. This is invalid as you need a resource to perform actions on and vice versa. If one is defined, the other must be as well. `;
     }
-    const policy = new PolicyStatement({
-      actions: lambda.dynamoActions,
-      resources,
-    });
 
-    func.role.attachInlinePolicy(
-      new Policy(stack, `${process.env.NODE_ENV}-${lambda.name}-policy`, {
-        statements: [policy],
-      })
-    );
+    if (policyExists) {
+      const policy = new PolicyStatement({
+        actions: lambda.dynamoActions,
+        resources,
+      });
+
+      func.role.attachInlinePolicy(
+        new Policy(stack, `${process.env.NODE_ENV}-${lambda.name}-policy`, {
+          statements: [policy],
+        })
+      );
+    }
   }
 }

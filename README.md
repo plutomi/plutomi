@@ -115,6 +115,11 @@ Make sure all of your `@aws-cdk/*` dependencies are running the same version + m
 
 Try running this command: `aws ecr-public get-login-password --region us-east-1 | docker login --username AWS --password-stdin public.ecr.aws/sam/build-nodejs`
 
+> Error: Cannot perform an interactive login from a non TTY device
+
+Not 100% on this but ended up reinstalling AWS CLIv2 and it got fixed.
+https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html
+
 > `Resource_Name` cannot be deleted as it is in use by `Another_Resource`
 
 https://github.com/aws/aws-cdk/issues/3414

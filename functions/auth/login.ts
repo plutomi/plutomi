@@ -1,8 +1,6 @@
 import { APIGatewayProxyEventV2, APIGatewayProxyResultV2 } from "aws-lambda";
 import Joi from "joi";
 import {
-  CustomJoi,
-  DEFAULTS,
   LOGIN_LINK_SETTINGS,
   LOGIN_METHODS,
   SESSION_SETTINGS,
@@ -21,6 +19,7 @@ export interface RequestLoginLinkAPIBody {
   email: string;
   loginMethod: LOGIN_METHODS;
 }
+
 export async function main(
   event: APIGatewayProxyEventV2
 ): Promise<APIGatewayProxyResultV2> {
@@ -30,7 +29,7 @@ export async function main(
     queryStringParameters,
   };
 
-  const schema = CustomJoi.object({
+  const schema = Joi.object({
     queryStringParameters: {
       callbackUrl: Joi.string().uri(),
       seal: Joi.string(),

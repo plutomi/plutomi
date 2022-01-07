@@ -2,7 +2,6 @@ import { APIGatewayProxyEventV2, APIGatewayProxyResultV2 } from "aws-lambda";
 import * as Users from "../../models/Users";
 import Joi from "joi";
 import {
-  CustomJoi,
   NO_SESSION_RESPONSE,
   JOI_SETTINGS,
   DEFAULTS,
@@ -37,7 +36,7 @@ export async function main(
     body,
   };
 
-  const schema = CustomJoi.object({
+  const schema = Joi.object({
     body: {
       orgId: JoiOrgId,
       displayName: Joi.string().invalid(

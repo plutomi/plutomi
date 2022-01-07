@@ -4,7 +4,6 @@ import * as Users from "../../models/Users";
 import Joi from "joi";
 import {
   COOKIE_SETTINGS,
-  CustomJoi,
   DEFAULTS,
   JOI_SETTINGS,
   NO_SESSION_RESPONSE,
@@ -28,7 +27,7 @@ export async function main(
     pathParameters,
   };
 
-  const schema = CustomJoi.object({
+  const schema = Joi.object({
     pathParameters: {
       userId: Joi.string(),
     },

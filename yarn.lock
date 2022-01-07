@@ -3122,6 +3122,30 @@
     "@types/yargs" "^16.0.0"
     "chalk" "^4.0.0"
 
+"@lambda-middleware/compose@^1.2.0":
+  "integrity" "sha512-5WsGK3QNHuPDHgviREZqZaU/PkXxg+pwtEb9inEmxezgy9pCjWWjLE3A51Qf9m5jQs+avkyU4w8GK5swmI4RZg=="
+  "resolved" "https://registry.npmjs.org/@lambda-middleware/compose/-/compose-1.2.0.tgz"
+  "version" "1.2.0"
+  dependencies:
+    "tslib" "^2.0.1"
+
+"@lambda-middleware/json-serializer@^2.1.1":
+  "integrity" "sha512-hhoQwJgjRohxiCniOSziH5LjD2x7B/BK2UxpH223MMSA++lR7/uRLS56F9zQ/KplsvAPmfAh4DKwaqZ0jFahzg=="
+  "resolved" "https://registry.npmjs.org/@lambda-middleware/json-serializer/-/json-serializer-2.1.1.tgz"
+  "version" "2.1.1"
+  dependencies:
+    "@lambda-middleware/utils" "^1.0.3"
+    "debug" ">=4.1.0"
+    "tslib" "^2.0.1"
+
+"@lambda-middleware/utils@^1.0.3":
+  "integrity" "sha512-DKjQ+nySDESswupoqYJPFXIwTSllkoFCagDYaWO9VfTPNr1/S8cP1fkSMyZ23rA43cK7N+drOf1tkVhG0fT98w=="
+  "resolved" "https://registry.npmjs.org/@lambda-middleware/utils/-/utils-1.0.4.tgz"
+  "version" "1.0.4"
+  dependencies:
+    "@types/aws-lambda" "^8.10.47"
+    "tslib" "^2.0.1"
+
 "@mapbox/node-pre-gyp@^1.0.5":
   "integrity" "sha512-PplSvl4pJ5N3BkVjAdDzpPhVUPdC73JgttkR+LnBx2OORC1GCQsBjUeEuipf9uOaAM1SbxcdZFfR3KDTKm2S0A=="
   "resolved" "https://registry.npmjs.org/@mapbox/node-pre-gyp/-/node-pre-gyp-1.0.7.tgz"
@@ -3137,7 +3161,7 @@
     "semver" "^7.3.5"
     "tar" "^6.1.11"
 
-"@middy/core@^2.5.4":
+"@middy/core@^2.5.3", "@middy/core@^2.5.4":
   "integrity" "sha512-WQFUFhCG0P2rmNDBX8x5RiREfSUnMhq77QyrwIZg2/gLUhuOZa8TPFFKzIFBz+blvw9Ep41LRrWdV/gzYwMuww=="
   "resolved" "https://registry.npmjs.org/@middy/core/-/core-2.5.4.tgz"
   "version" "2.5.4"
@@ -3427,7 +3451,7 @@
   "resolved" "https://registry.npmjs.org/@tsconfig/node16/-/node16-1.0.2.tgz"
   "version" "1.0.2"
 
-"@types/aws-lambda@^8.10.84":
+"@types/aws-lambda@^8.10.47", "@types/aws-lambda@^8.10.84":
   "integrity" "sha512-cMRXVxb+NMb6EekKel1fPBfz2ZqE5cGhIS14G7FVUM4Bqilx0lHKnZbsDLWLSeckDpkvlp5six2F7UWyEEJSoQ=="
   "resolved" "https://registry.npmjs.org/@types/aws-lambda/-/aws-lambda-8.10.85.tgz"
   "version" "8.10.85"
@@ -5313,6 +5337,13 @@
     "ms" "2.1.2"
 
 "debug@^4.3.1":
+  "integrity" "sha512-/zxw5+vh1Tfv+4Qn7a5nsbcJKPaSvCDhojn6FEl9vupwK2VCSDtEiEtqr8DFtzYFOdz63LBkxec7DYuc2jon6Q=="
+  "resolved" "https://registry.npmjs.org/debug/-/debug-4.3.3.tgz"
+  "version" "4.3.3"
+  dependencies:
+    "ms" "2.1.2"
+
+"debug@>=4.1.0":
   "integrity" "sha512-/zxw5+vh1Tfv+4Qn7a5nsbcJKPaSvCDhojn6FEl9vupwK2VCSDtEiEtqr8DFtzYFOdz63LBkxec7DYuc2jon6Q=="
   "resolved" "https://registry.npmjs.org/debug/-/debug-4.3.3.tgz"
   "version" "4.3.3"
@@ -8244,6 +8275,11 @@
     "braces" "^3.0.1"
     "picomatch" "^2.2.3"
 
+"middy-console-logger@^1.0.0":
+  "integrity" "sha512-Bl9cvcwxDRvGH5tZyNjQEtC2tZgvP3z4XAsBQC8VxYIqbBr2P9P0jux4F66EdHCnVLOz7870VjecjvlY9IBR7w=="
+  "resolved" "https://registry.npmjs.org/middy-console-logger/-/middy-console-logger-1.0.0.tgz"
+  "version" "1.0.0"
+
 "miller-rabin@^4.0.0":
   "integrity" "sha512-115fLhvZVqWwHPbClyntxEVfVDfl9DLLTuJvq3g2O/Oxi8AiNouAHvDSzHS0viUJc+V5vm3eq91Xwqn9dp4jRA=="
   "resolved" "https://registry.npmjs.org/miller-rabin/-/miller-rabin-4.0.1.tgz"
@@ -10934,7 +10970,7 @@
   "resolved" "https://registry.npmjs.org/tslib/-/tslib-1.14.1.tgz"
   "version" "1.14.1"
 
-"tslib@^2", "tslib@^2.3.0":
+"tslib@^2", "tslib@^2.0.1", "tslib@^2.3.0":
   "integrity" "sha512-77EbyPPpMz+FRFRuAFlWMtmgUWGe9UOG2Z25NqCwiIjRhOf5iKGuzSe5P2w1laq+FkRy4p+PCuVkJSGkzTEKVw=="
   "resolved" "https://registry.npmjs.org/tslib/-/tslib-2.3.1.tgz"
   "version" "2.3.1"

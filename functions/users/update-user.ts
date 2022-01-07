@@ -7,7 +7,6 @@ import Joi from "joi";
 import {
   COOKIE_NAME,
   COOKIE_SETTINGS,
-  CustomJoi,
   DEFAULTS,
   FORBIDDEN_PROPERTIES,
   JOI_SETTINGS,
@@ -37,7 +36,7 @@ export async function main(
     body,
   };
 
-  const schema = CustomJoi.object({
+  const schema = Joi.object({
     pathParameters: {
       userId: Joi.string(),
     },

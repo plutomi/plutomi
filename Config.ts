@@ -29,26 +29,7 @@ export const sessionDataKeys = [
 const UrlSafeString = require("url-safe-string"),
   tagGenerator = new UrlSafeString();
 
-// Custom object to parse the event.body in lambda.
-export const CustomJoi = Joi.extend((joi) => {
-  return {
-    type: "object",
-    base: joi.object(),
-    coerce(value, schema) {
-      if (value[0] !== "{" && !/^\s*\{/.test(value)) {
-        return;
-      }
-
-      try {
-        return { value: JSON.parse(value) };
-      } catch (err) {
-        console.log(err);
-      }
-    },
-  };
-});
-
-export const JOI_SETTINGS = {
+export const JOI_SETTINGS: Joi.ValidationOptions = {
   presence: "required",
   abortEarly: false,
   stripUnknown: true,

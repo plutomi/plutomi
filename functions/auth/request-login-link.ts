@@ -6,7 +6,6 @@ import {
   LOGIN_LINK_SETTINGS,
   LOGIN_METHODS,
   TIME_UNITS,
-  CustomJoi,
   JOI_SETTINGS,
   WEBSITE_URL,
 } from "../../Config";
@@ -21,9 +20,9 @@ export interface RequestLoginLinkAPIBody {
   loginMethod: LOGIN_METHODS;
 }
 
-export async function main(
+const main = async (
   event: APIGatewayProxyEventV2
-): Promise<APIGatewayProxyResultV2> {
+): Promise<APIGatewayProxyResultV2> => {
   console.log(event);
   const body = JSON.parse(event.body || "{}");
   const queryStringParameters = event.queryStringParameters || {};
@@ -32,7 +31,7 @@ export async function main(
     queryStringParameters,
   };
 
-  const schema = CustomJoi.object({
+  const schema = Joi.object({
     body: Joi.object({
       email: Joi.string().email(),
       loginMethod: Joi.string()
@@ -183,4 +182,6 @@ export async function main(
       message: `We've sent a magic login link to your email!`,
     }),
   };
-}
+};
+
+module.exports = main;

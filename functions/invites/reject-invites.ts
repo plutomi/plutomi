@@ -1,7 +1,7 @@
 import { APIGatewayProxyEventV2, APIGatewayProxyResultV2 } from "aws-lambda";
 import Joi from "joi";
 import * as Invites from "../../models/Invites";
-import { CustomJoi, NO_SESSION_RESPONSE, JOI_SETTINGS } from "../../Config";
+import { NO_SESSION_RESPONSE, JOI_SETTINGS } from "../../Config";
 import errorFormatter from "../../utils/errorFormatter";
 import getSessionFromCookies from "../../utils/getSessionFromCookies";
 export async function main(
@@ -22,7 +22,7 @@ export async function main(
     pathParameters,
   };
 
-  const schema = CustomJoi.object({
+  const schema = Joi.object({
     pathParameters: {
       inviteId: Joi.string(),
     },
