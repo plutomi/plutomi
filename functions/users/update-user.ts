@@ -16,10 +16,17 @@ import {
 } from "../../Config";
 import errorFormatter from "../../utils/errorFormatter";
 import { sealData } from "iron-session";
+import httpEventNormalizer from "@middy/http-event-normalizer";
+import httpJsonBodyParser from "@middy/http-json-body-parser";
+import httpSecurityHeaders from "@middy/http-security-headers";
+import inputOutputLogger from "@middy/input-output-logger";
+import middy from "@middy/core";
+
 import getSessionFromCookies from "../../utils/getSessionFromCookies";
-export async function main(
+import createJoiResponse from "../../utils/createJoiResponse";
+const main = async (
   event: APIGatewayProxyEventV2
-): Promise<APIGatewayProxyResultV2> {
+): Promise<APIGatewayProxyResultV2> => {
   const [session, sessionError] = await getSessionFromCookies(event);
   console.log({
     session,
@@ -28,13 +35,6 @@ export async function main(
   if (sessionError) {
     return NO_SESSION_RESPONSE;
   }
-  const pathParameters = event.pathParameters || {};
-  const body = JSON.parse(event.body || "{}");
-  const input = {
-    pathParameters,
-    body,
-  };
-
   const schema = Joi.object({
     pathParameters: {
       userId: Joi.string(),
@@ -44,17 +44,16 @@ export async function main(
     },
   }).options(JOI_SETTINGS);
 
-  // Validate input
   try {
-    await schema.validateAsync(input);
+    await schema.validateAsync(event);
   } catch (error) {
-    return {
-      statusCode: 400,
-      body: JSON.stringify({ message: `${error.message}` }),
-    };
+    return createJoiResponse(error);
   }
 
+  // TODO types
+  // @ts-ignore
   const { userId } = pathParameters;
+  // @ts-ignore
   const { newValues } = body;
 
   // TODO RBAC will go here, right now you can only update yourself
@@ -129,4 +128,10 @@ export async function main(
       message: customMessage,
     }),
   };
-}
+};
+
+module.exports.main = middy(main)
+  .use(httpEventNormalizer({ payloadFormatVersion: 2 }))
+  .use(httpJsonBodyParser())
+  .use(inputOutputLogger())
+  .use(httpSecurityHeaders());

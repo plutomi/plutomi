@@ -11,10 +11,17 @@ import {
   JoiOrgId,
   COOKIE_NAME,
 } from "../../Config";
+import httpEventNormalizer from "@middy/http-event-normalizer";
+import httpJsonBodyParser from "@middy/http-json-body-parser";
+import httpSecurityHeaders from "@middy/http-security-headers";
+import inputOutputLogger from "@middy/input-output-logger";
+import middy from "@middy/core";
+
 import errorFormatter from "../../utils/errorFormatter";
 import getSessionFromCookies from "../../utils/getSessionFromCookies";
 import * as Orgs from "../../models/Orgs";
 import { sealData } from "iron-session";
+import createJoiResponse from "../../utils/createJoiResponse";
 const UrlSafeString = require("url-safe-string"),
   tagGenerator = new UrlSafeString();
 
@@ -30,11 +37,6 @@ export async function main(
     return NO_SESSION_RESPONSE;
   }
 
-  const body = JSON.parse(event.body || "{}");
-  const input = {
-    body,
-  };
-
   const schema = Joi.object({
     body: {
       orgId: JoiOrgId,
@@ -45,14 +47,10 @@ export async function main(
     },
   }).options(JOI_SETTINGS);
 
-  // Validate input
   try {
-    await schema.validateAsync(input);
+    await schema.validateAsync(event);
   } catch (error) {
-    return {
-      statusCode: 400,
-      body: JSON.stringify({ message: `${error.message}` }),
-    };
+    return createJoiResponse(error);
   }
 
   if (session.orgId !== DEFAULTS.NO_ORG) {
@@ -86,7 +84,10 @@ export async function main(
       }),
     };
   }
+  // TODO types
+  // @ts-ignore
   const { displayName } = body;
+  // @ts-ignore
   const orgId = tagGenerator.generate(body.orgId);
 
   const [created, failed] = await Orgs.createAndJoinOrg({
@@ -115,3 +116,9 @@ export async function main(
     body: JSON.stringify({ message: "Org created!", orgId }),
   };
 }
+
+module.exports.main = middy(main)
+  .use(httpEventNormalizer({ payloadFormatVersion: 2 }))
+  .use(httpJsonBodyParser())
+  .use(inputOutputLogger())
+  .use(httpSecurityHeaders());

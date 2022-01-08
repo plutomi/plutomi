@@ -20,6 +20,7 @@ import * as Users from "../../models/Users";
 import { nanoid } from "nanoid";
 import { sealData } from "iron-session";
 import { API_URL, DOMAIN_NAME } from "../../Config";
+import createJoiResponse from "../../utils/createJoiResponse";
 
 const schema = Joi.object({
   body: {
@@ -39,10 +40,7 @@ const main = async (
   try {
     await schema.validateAsync(event);
   } catch (error) {
-    return {
-      statusCode: 400,
-      body: JSON.stringify({ message: `${error.message}` }),
-    };
+    return createJoiResponse(error);
   }
 
   // TODO types

@@ -4,10 +4,15 @@ import * as Orgs from "../../models/Orgs";
 import errorFormatter from "../../utils/errorFormatter";
 import { COOKIE_SETTINGS, DEFAULTS, NO_SESSION_RESPONSE } from "../../Config";
 import getSessionFromCookies from "../../utils/getSessionFromCookies";
+import httpEventNormalizer from "@middy/http-event-normalizer";
+import httpJsonBodyParser from "@middy/http-json-body-parser";
+import httpSecurityHeaders from "@middy/http-security-headers";
+import inputOutputLogger from "@middy/input-output-logger";
+import middy from "@middy/core";
 import Sanitize from "../../utils/sanitize";
-export async function main(
+const main = async (
   event: APIGatewayProxyEventV2
-): Promise<APIGatewayProxyResultV2> {
+): Promise<APIGatewayProxyResultV2> => {
   const [session, sessionError] = await getSessionFromCookies(event);
   console.log({
     session,
@@ -53,4 +58,10 @@ export async function main(
     statusCode: 200,
     body: JSON.stringify(cleanUsers),
   };
-}
+};
+
+module.exports.main = middy(main)
+  .use(httpEventNormalizer({ payloadFormatVersion: 2 }))
+  .use(httpJsonBodyParser())
+  .use(inputOutputLogger())
+  .use(httpSecurityHeaders());

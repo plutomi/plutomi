@@ -9,6 +9,7 @@ import httpJsonBodyParser from "@middy/http-json-body-parser";
 import httpSecurityHeaders from "@middy/http-security-headers";
 import inputOutputLogger from "@middy/input-output-logger";
 import middy from "@middy/core";
+import createJoiResponse from "../../utils/createJoiResponse";
 
 const main = async (
   event: APIGatewayProxyEventV2
@@ -28,14 +29,10 @@ const main = async (
     },
   }).options(JOI_SETTINGS);
 
-  // Validate input
   try {
     await schema.validateAsync(event);
   } catch (error) {
-    return {
-      statusCode: 400,
-      body: JSON.stringify({ message: `${error.message}` }),
-    };
+    return createJoiResponse(error);
   }
   // TODO types
   // @ts-ignore

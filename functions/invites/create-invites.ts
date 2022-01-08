@@ -18,6 +18,7 @@ import * as Users from "../../models/Users";
 import errorFormatter from "../../utils/errorFormatter";
 import getSessionFromCookies from "../../utils/getSessionFromCookies";
 import * as Orgs from "../../models/Orgs";
+import createJoiResponse from "../../utils/createJoiResponse";
 const UrlSafeString = require("url-safe-string"),
   tagGenerator = new UrlSafeString();
 
@@ -43,10 +44,7 @@ const main = async (
   try {
     await schema.validateAsync(event);
   } catch (error) {
-    return {
-      statusCode: 400,
-      body: JSON.stringify({ message: `${error.message}` }),
-    };
+    return createJoiResponse(error);
   }
 
   // TODO types

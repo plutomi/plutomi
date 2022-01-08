@@ -10,6 +10,7 @@ import middy from "@middy/core";
 import { NO_SESSION_RESPONSE, JOI_SETTINGS } from "../../Config";
 import errorFormatter from "../../utils/errorFormatter";
 import getSessionFromCookies from "../../utils/getSessionFromCookies";
+import createJoiResponse from "../../utils/createJoiResponse";
 const main = async (
   event: APIGatewayProxyEventV2
 ): Promise<APIGatewayProxyResultV2> => {
@@ -28,14 +29,10 @@ const main = async (
     },
   }).options(JOI_SETTINGS);
 
-  // Validate input
   try {
     await schema.validateAsync(event);
   } catch (error) {
-    return {
-      statusCode: 400,
-      body: JSON.stringify({ message: `${error.message}` }),
-    };
+    return createJoiResponse(error);
   }
 
   // TODO types

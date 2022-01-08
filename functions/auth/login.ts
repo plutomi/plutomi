@@ -4,7 +4,7 @@ import httpJsonBodyParser from "@middy/http-json-body-parser";
 import httpSecurityHeaders from "@middy/http-security-headers";
 import inputOutputLogger from "@middy/input-output-logger";
 import middy from "@middy/core";
-
+import createJoiResponse from "../../utils/createJoiResponse";
 import Joi from "joi";
 import {
   LOGIN_LINK_SETTINGS,
@@ -40,10 +40,7 @@ const main = async (
   try {
     await schema.validateAsync(event);
   } catch (error) {
-    return {
-      statusCode: 400,
-      body: JSON.stringify({ message: `${error.message}` }),
-    };
+    return createJoiResponse(error);
   }
 
   const { callbackUrl, seal } = event.queryStringParameters;
