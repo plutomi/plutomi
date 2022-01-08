@@ -5,7 +5,6 @@ import { COOKIE_NAME, COOKIE_SETTINGS } from "../../Config";
 export async function main(
   event: APIGatewayProxyEventV2
 ): Promise<APIGatewayProxyResultV2> {
-  console.log(event);
   return {
     statusCode: 200,
     cookies: [`${COOKIE_NAME}=''; Max-Age=-1; ${COOKIE_SETTINGS}`],

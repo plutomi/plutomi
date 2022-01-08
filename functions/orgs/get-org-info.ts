@@ -15,7 +15,6 @@ const UrlSafeString = require("url-safe-string"),
 export async function main(
   event: APIGatewayProxyEventV2
 ): Promise<APIGatewayProxyResultV2> {
-  console.log(event);
   const [session, sessionError] = await getSessionFromCookies(event);
   console.log({
     session,

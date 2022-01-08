@@ -65,15 +65,6 @@ export default class APIAuthServiceStack extends cdk.Stack {
         dynamoActions: [],
         dynamoResources: {},
       },
-      {
-        name: "custom-middleware",
-        description: "",
-        APIPath: `/mid`,
-        dynamoActions: [],
-        dynamoResources: {},
-        filePath: "../functions/auth/middy.ts",
-        method: HttpMethod.POST,
-      },
     ];
 
     createAPIGatewayFunctions(this, functions, props.api, props.table);

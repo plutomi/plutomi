@@ -23,7 +23,6 @@ export interface RequestLoginLinkAPIBody {
 export async function main(
   event: APIGatewayProxyEventV2
 ): Promise<APIGatewayProxyResultV2> {
-  console.log(event);
   const queryStringParameters = event.queryStringParameters || {};
   const input = {
     queryStringParameters,

@@ -1,6 +1,9 @@
 import { APIGatewayProxyEventV2, APIGatewayProxyResultV2 } from "aws-lambda";
 import Joi from "joi";
-
+import httpEventNormalizer from "@middy/http-event-normalizer";
+import httpJsonBodyParser from "@middy/http-json-body-parser";
+import httpSecurityHeaders from "@middy/http-security-headers";
+import middy from "@middy/core";
 import {
   DEFAULTS,
   LOGIN_LINK_SETTINGS,
@@ -15,37 +18,31 @@ import * as Users from "../../models/Users";
 import { nanoid } from "nanoid";
 import { sealData } from "iron-session";
 import { API_URL, DOMAIN_NAME } from "../../Config";
-export interface RequestLoginLinkAPIBody {
+interface RequestLoginLinkAPIBody {
   email: string;
   loginMethod: LOGIN_METHODS;
 }
 
+type RequestLoginLinkAPIInput = Omit<APIGatewayProxyEventV2, "body"> & {
+  body: RequestLoginLinkAPIBody;
+};
+const schema = Joi.object({
+  body: {
+    email: Joi.string().email(),
+    loginMethod: Joi.string()
+      .valid(LOGIN_METHODS.GOOGLE, LOGIN_METHODS.EMAIL)
+      .required(),
+  },
+  queryStringParameters: {
+    callbackUrl: Joi.string().uri(),
+  },
+}).options(JOI_SETTINGS);
+
 const main = async (
-  event: APIGatewayProxyEventV2
+  event: RequestLoginLinkAPIInput
 ): Promise<APIGatewayProxyResultV2> => {
-  console.log(event);
-  const body = JSON.parse(event.body || "{}");
-  const queryStringParameters = event.queryStringParameters || {};
-  const input = {
-    body,
-    queryStringParameters,
-  };
-
-  const schema = Joi.object({
-    body: Joi.object({
-      email: Joi.string().email(),
-      loginMethod: Joi.string()
-        .valid(LOGIN_METHODS.GOOGLE, LOGIN_METHODS.EMAIL)
-        .required(),
-    }),
-    queryStringParameters: {
-      callbackUrl: Joi.string().uri(),
-    },
-  }).options(JOI_SETTINGS);
-
-  // Validate input
   try {
-    await schema.validateAsync(input);
+    await schema.validateAsync(event);
   } catch (error) {
     return {
       statusCode: 400,
@@ -53,11 +50,11 @@ const main = async (
     };
   }
 
-  const { email, loginMethod } = JSON.parse(event.body);
+  const { email, loginMethod } = event.body;
   const { callbackUrl } = event.queryStringParameters;
+  
   // If a user is signing in for the first time, create an account for them
   let [user, userError] = await Users.getUserByEmail({ email });
-
   if (userError) {
     const formattedError = errorFormatter(userError);
     return {
@@ -184,4 +181,7 @@ const main = async (
   };
 };
 
-module.exports = main;
+module.exports.main = middy(main)
+  .use(httpEventNormalizer({ payloadFormatVersion: 2 }))
+  .use(httpJsonBodyParser())
+  .use(httpSecurityHeaders());
