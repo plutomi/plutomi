@@ -1,4 +1,10 @@
 import { APIGatewayProxyEventV2, APIGatewayProxyResultV2 } from "aws-lambda";
+import httpEventNormalizer from "@middy/http-event-normalizer";
+import httpJsonBodyParser from "@middy/http-json-body-parser";
+import httpSecurityHeaders from "@middy/http-security-headers";
+import inputOutputLogger from "@middy/input-output-logger";
+import middy from "@middy/core";
+
 import Joi from "joi";
 import {
   LOGIN_LINK_SETTINGS,
@@ -20,14 +26,9 @@ export interface RequestLoginLinkAPIBody {
   loginMethod: LOGIN_METHODS;
 }
 
-export async function main(
+const main = async (
   event: APIGatewayProxyEventV2
-): Promise<APIGatewayProxyResultV2> {
-  const queryStringParameters = event.queryStringParameters || {};
-  const input = {
-    queryStringParameters,
-  };
-
+): Promise<APIGatewayProxyResultV2> => {
   const schema = Joi.object({
     queryStringParameters: {
       callbackUrl: Joi.string().uri(),
@@ -37,7 +38,7 @@ export async function main(
 
   // Validate input
   try {
-    await schema.validateAsync(input);
+    await schema.validateAsync(event);
   } catch (error) {
     return {
       statusCode: 400,
@@ -155,4 +156,10 @@ export async function main(
   }
   // Else, redirect to the callback url
   return response;
-}
+};
+
+module.exports.main = middy(main)
+  .use(httpEventNormalizer({ payloadFormatVersion: 2 }))
+  .use(httpJsonBodyParser())
+  .use(inputOutputLogger())
+  .use(httpSecurityHeaders());

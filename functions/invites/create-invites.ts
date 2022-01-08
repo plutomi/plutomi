@@ -1,10 +1,15 @@
 import { APIGatewayProxyEventV2, APIGatewayProxyResultV2 } from "aws-lambda";
+import httpEventNormalizer from "@middy/http-event-normalizer";
+import httpJsonBodyParser from "@middy/http-json-body-parser";
+import httpSecurityHeaders from "@middy/http-security-headers";
+import inputOutputLogger from "@middy/input-output-logger";
+import middy from "@middy/core";
+
 import Joi from "joi";
 import {
   NO_SESSION_RESPONSE,
   JOI_SETTINGS,
   DEFAULTS,
-  JoiOrgId,
   TIME_UNITS,
 } from "../../Config";
 import * as Invites from "../../models/Invites";
@@ -16,9 +21,9 @@ import * as Orgs from "../../models/Orgs";
 const UrlSafeString = require("url-safe-string"),
   tagGenerator = new UrlSafeString();
 
-export async function main(
+const main = async (
   event: APIGatewayProxyEventV2
-): Promise<APIGatewayProxyResultV2> {
+): Promise<APIGatewayProxyResultV2> => {
   const [session, sessionError] = await getSessionFromCookies(event);
   console.log({
     session,
@@ -28,11 +33,6 @@ export async function main(
     return NO_SESSION_RESPONSE;
   }
 
-  const body = JSON.parse(event.body || "{}");
-  const input = {
-    body,
-  };
-
   const schema = Joi.object({
     body: {
       recipientEmail: Joi.string().email().trim(),
@@ -41,7 +41,7 @@ export async function main(
 
   // Validate input
   try {
-    await schema.validateAsync(input);
+    await schema.validateAsync(event);
   } catch (error) {
     return {
       statusCode: 400,
@@ -49,6 +49,8 @@ export async function main(
     };
   }
 
+  // TODO types
+  // @ts-ignore
   const { recipientEmail } = body;
 
   if (session.email === recipientEmail) {
@@ -177,4 +179,10 @@ export async function main(
     statusCode: 201,
     body: JSON.stringify({ message: `Invite sent to '${recipientEmail}'` }),
   };
-}
+};
+
+module.exports.main = middy(main)
+  .use(httpEventNormalizer({ payloadFormatVersion: 2 }))
+  .use(httpJsonBodyParser())
+  .use(inputOutputLogger())
+  .use(httpSecurityHeaders());

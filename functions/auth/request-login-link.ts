@@ -1,9 +1,11 @@
-import { APIGatewayProxyEventV2, APIGatewayProxyResultV2 } from "aws-lambda";
-import Joi from "joi";
 import httpEventNormalizer from "@middy/http-event-normalizer";
 import httpJsonBodyParser from "@middy/http-json-body-parser";
 import httpSecurityHeaders from "@middy/http-security-headers";
+import inputOutputLogger from "@middy/input-output-logger";
 import middy from "@middy/core";
+
+import { APIGatewayProxyEventV2, APIGatewayProxyResultV2 } from "aws-lambda";
+import Joi from "joi";
 import {
   DEFAULTS,
   LOGIN_LINK_SETTINGS,
@@ -18,14 +20,7 @@ import * as Users from "../../models/Users";
 import { nanoid } from "nanoid";
 import { sealData } from "iron-session";
 import { API_URL, DOMAIN_NAME } from "../../Config";
-interface RequestLoginLinkAPIBody {
-  email: string;
-  loginMethod: LOGIN_METHODS;
-}
 
-type RequestLoginLinkAPIInput = Omit<APIGatewayProxyEventV2, "body"> & {
-  body: RequestLoginLinkAPIBody;
-};
 const schema = Joi.object({
   body: {
     email: Joi.string().email(),
@@ -39,7 +34,7 @@ const schema = Joi.object({
 }).options(JOI_SETTINGS);
 
 const main = async (
-  event: RequestLoginLinkAPIInput
+  event: APIGatewayProxyEventV2
 ): Promise<APIGatewayProxyResultV2> => {
   try {
     await schema.validateAsync(event);
@@ -50,9 +45,11 @@ const main = async (
     };
   }
 
+  // TODO types
+  // @ts-ignore
   const { email, loginMethod } = event.body;
   const { callbackUrl } = event.queryStringParameters;
-  
+
   // If a user is signing in for the first time, create an account for them
   let [user, userError] = await Users.getUserByEmail({ email });
   if (userError) {
@@ -184,4 +181,5 @@ const main = async (
 module.exports.main = middy(main)
   .use(httpEventNormalizer({ payloadFormatVersion: 2 }))
   .use(httpJsonBodyParser())
+  .use(inputOutputLogger())
   .use(httpSecurityHeaders());
