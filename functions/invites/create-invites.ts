@@ -15,10 +15,10 @@ import {
 import * as Invites from "../../models/Invites";
 import * as Time from "../../utils/time";
 import * as Users from "../../models/Users";
-import errorFormatter from "../../utils/errorFormatter";
-import getSessionFromCookies from "../../utils/getSessionFromCookies";
 import * as Orgs from "../../models/Orgs";
+import getSessionFromCookies from "../../utils/getSessionFromCookies";
 import createJoiResponse from "../../utils/createJoiResponse";
+import createSDKErrorResponse from "../../utils/createSDKErrorResponse";
 const UrlSafeString = require("url-safe-string"),
   tagGenerator = new UrlSafeString();
 
@@ -70,14 +70,10 @@ const main = async (
   const [org, error] = await Orgs.getOrgById({ orgId: session.orgId });
 
   if (error) {
-    const formattedError = errorFormatter(error);
-    return {
-      statusCode: formattedError.httpStatusCode,
-      body: JSON.stringify({
-        message: "An error ocurred retrieving your org information",
-        ...formattedError,
-      }),
-    };
+    return createSDKErrorResponse(
+      error,
+      "An error ocurred retrieving your org information"
+    );
   }
 
   let [recipient, recipientError] = await Users.getUserByEmail({
@@ -85,14 +81,10 @@ const main = async (
   });
 
   if (recipientError) {
-    const formattedError = errorFormatter(recipientError);
-    return {
-      statusCode: formattedError.httpStatusCode,
-      body: JSON.stringify({
-        message: "An error ocurred getting your invitee's information",
-        ...formattedError,
-      }),
-    };
+    return createSDKErrorResponse(
+      error,
+      "An error ocurred getting your invitee's information"
+    );
   }
 
   // Invite is for a user that doesn't exist
@@ -102,14 +94,10 @@ const main = async (
     });
 
     if (createUserError) {
-      const formattedError = errorFormatter(createUserError);
-      return {
-        statusCode: formattedError.httpStatusCode,
-        body: JSON.stringify({
-          message: "An error ocurred creating an account for your invitee",
-          ...formattedError,
-        }),
-      };
+      return createSDKErrorResponse(
+        createUserError,
+        "An error ocurred creating an account for your invitee"
+      );
     }
     recipient = createdUser;
   }
@@ -128,15 +116,10 @@ const main = async (
     });
 
   if (recipientInvitesError) {
-    const formattedError = errorFormatter(recipientInvitesError);
-    return {
-      statusCode: formattedError.httpStatusCode,
-      body: JSON.stringify({
-        message:
-          "An error ocurred while checking to see if your invitee has pending invites",
-        ...formattedError,
-      }),
-    };
+    return createSDKErrorResponse(
+      recipientInvitesError,
+      "An error ocurred while checking to see if your invitee has pending invites"
+    );
   }
 
   // Some returns true if any match the condition
@@ -162,14 +145,10 @@ const main = async (
   });
 
   if (inviteError) {
-    const formattedError = errorFormatter(inviteError);
-    return {
-      statusCode: formattedError.httpStatusCode,
-      body: JSON.stringify({
-        message: "An error ocurred creating your invite",
-        ...formattedError,
-      }),
-    };
+    return createSDKErrorResponse(
+      inviteError,
+      "An error ocurred creating your invite"
+    );
   }
 
   // Email sent asynchronously through step functions

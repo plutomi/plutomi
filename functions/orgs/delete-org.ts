@@ -14,11 +14,11 @@ import httpJsonBodyParser from "@middy/http-json-body-parser";
 import httpSecurityHeaders from "@middy/http-security-headers";
 import inputOutputLogger from "@middy/input-output-logger";
 import middy from "@middy/core";
-import errorFormatter from "../../utils/errorFormatter";
 import getSessionFromCookies from "../../utils/getSessionFromCookies";
 import * as Orgs from "../../models/Orgs";
 import { sealData } from "iron-session";
 import createJoiResponse from "../../utils/createJoiResponse";
+import createSDKErrorResponse from "../../utils/createSDKErrorResponse";
 const UrlSafeString = require("url-safe-string"),
   tagGenerator = new UrlSafeString();
 
@@ -62,14 +62,7 @@ const main = async (
   const [org, error] = await Orgs.getOrgById({ orgId });
 
   if (error) {
-    const formattedError = errorFormatter(error);
-    return {
-      statusCode: formattedError.httpStatusCode,
-      body: JSON.stringify({
-        message: "Unable to retrieve org info",
-        ...formattedError,
-      }),
-    };
+    return createSDKErrorResponse(error, "Unable to retrieve org info");
   }
 
   if (!org) {
@@ -94,14 +87,10 @@ const main = async (
   });
 
   if (failure) {
-    const formattedError = errorFormatter(failure);
-    return {
-      statusCode: formattedError.httpStatusCode,
-      body: JSON.stringify({
-        message: "We were unable to remove you from the org",
-        ...formattedError,
-      }),
-    };
+    return createSDKErrorResponse(
+      failure,
+      "We were unable to remove you from the org"
+    );
   }
 
   const newSession = {

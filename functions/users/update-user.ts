@@ -14,7 +14,6 @@ import {
   sessionDataKeys,
   SESSION_SETTINGS,
 } from "../../Config";
-import errorFormatter from "../../utils/errorFormatter";
 import { sealData } from "iron-session";
 import httpEventNormalizer from "@middy/http-event-normalizer";
 import httpJsonBodyParser from "@middy/http-json-body-parser";
@@ -24,6 +23,7 @@ import middy from "@middy/core";
 
 import getSessionFromCookies from "../../utils/getSessionFromCookies";
 import createJoiResponse from "../../utils/createJoiResponse";
+import createSDKErrorResponse from "../../utils/createSDKErrorResponse";
 const main = async (
   event: APIGatewayProxyEventV2
 ): Promise<APIGatewayProxyResultV2> => {
@@ -86,14 +86,7 @@ const main = async (
   const [updatedUser, error] = await Users.updateUser(updateUserInput);
 
   if (error) {
-    const formattedError = errorFormatter(error);
-    return {
-      statusCode: formattedError.httpStatusCode,
-      body: JSON.stringify({
-        message: "An error ocurred updating user info",
-        ...formattedError,
-      }),
-    };
+    return createSDKErrorResponse(error, "An error ocurred updating user info");
   }
 
   // If a signed in user is updating themselves, update the session state as well

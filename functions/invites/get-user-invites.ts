@@ -6,11 +6,10 @@ import httpJsonBodyParser from "@middy/http-json-body-parser";
 import httpSecurityHeaders from "@middy/http-security-headers";
 import inputOutputLogger from "@middy/input-output-logger";
 import middy from "@middy/core";
-
 import { NO_SESSION_RESPONSE, JOI_SETTINGS } from "../../Config";
-import errorFormatter from "../../utils/errorFormatter";
 import getSessionFromCookies from "../../utils/getSessionFromCookies";
 import createJoiResponse from "../../utils/createJoiResponse";
+import createSDKErrorResponse from "../../utils/createSDKErrorResponse";
 const main = async (
   event: APIGatewayProxyEventV2
 ): Promise<APIGatewayProxyResultV2> => {
@@ -51,14 +50,7 @@ const main = async (
   });
 
   if (error) {
-    const formattedError = errorFormatter(error);
-    return {
-      statusCode: formattedError.httpStatusCode,
-      body: JSON.stringify({
-        message: "An error ocurred retrieving invites",
-        ...formattedError,
-      }),
-    };
+    return createSDKErrorResponse(error, "An error ocurred retrieving invites");
   }
 
   return {

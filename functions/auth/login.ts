@@ -16,10 +16,11 @@ import {
   sessionDataKeys,
   COOKIE_NAME,
 } from "../../Config";
-import errorFormatter from "../../utils/errorFormatter";
+import createSDKErrorResponse from "../../utils/createSDKErrorResponse";
 import { sealData, unsealData } from "iron-session";
 import Sanitize from "../../utils/sanitize";
 import * as Users from "../../models/Users";
+import errorFormatter from "../../utils/errorFormatter";
 
 export interface RequestLoginLinkAPIBody {
   email: string;
@@ -79,14 +80,10 @@ const main = async (
   const [user, error] = await Users.getUserById({ userId }); // TODO async error handling
 
   if (error) {
-    const formattedError = errorFormatter(error);
-    return {
-      statusCode: formattedError.httpStatusCode,
-      body: JSON.stringify({
-        message: "An error ocurred using your login link",
-        ...formattedError,
-      }),
-    };
+    return createSDKErrorResponse(
+      error,
+      "An error ocurred using your login link"
+    );
   }
 
   // If a user is deleted between when they made they requested the login link and they attempted to sign in
@@ -108,7 +105,6 @@ const main = async (
 
   if (failed) {
     const formattedError = errorFormatter(failed);
-
     // If login link has been used, it will throw this error
     const LOGIN_LINK_ALREADY_USED_ERROR = `Transaction cancelled, please refer cancellation reasons for specific reasons [None, ConditionalCheckFailed]`;
     if (formattedError.errorMessage === LOGIN_LINK_ALREADY_USED_ERROR) {
@@ -120,20 +116,14 @@ const main = async (
       };
     }
 
-    return {
-      statusCode: formattedError.httpStatusCode,
-      body: JSON.stringify({
-        message: "Unable to create login event",
-        ...formattedError,
-      }),
-    };
+    return createSDKErrorResponse(failed, "Unable to create login event");
   }
 
   const result = Sanitize("KEEP", sessionDataKeys, user);
 
   const encryptedCookie = await sealData(result.object, SESSION_SETTINGS);
 
-  const response: APIGatewayProxyResultV2 = {
+  const response = {
     cookies: [`${COOKIE_NAME}=${encryptedCookie}; ${COOKIE_SETTINGS}`],
     statusCode: 307,
     headers: {

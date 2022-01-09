@@ -14,7 +14,7 @@ import {
   JOI_SETTINGS,
   WEBSITE_URL,
 } from "../../Config";
-import errorFormatter from "../../utils/errorFormatter";
+import createSDKErrorResponse from "../../utils/createSDKErrorResponse";
 import * as Time from "../../utils/time";
 import * as Users from "../../models/Users";
 import { nanoid } from "nanoid";
@@ -51,14 +51,10 @@ const main = async (
   // If a user is signing in for the first time, create an account for them
   let [user, userError] = await Users.getUserByEmail({ email });
   if (userError) {
-    const formattedError = errorFormatter(userError);
-    return {
-      statusCode: formattedError.httpStatusCode,
-      body: JSON.stringify({
-        message: "An error ocurred getting your user info",
-        ...formattedError,
-      }),
-    };
+    return createSDKErrorResponse(
+      userError,
+      "An error ocurred getting your user info"
+    );
   }
 
   if (!user) {
@@ -67,14 +63,10 @@ const main = async (
     });
 
     if (createUserError) {
-      const formattedError = errorFormatter(createUserError);
-      return {
-        statusCode: formattedError.httpStatusCode,
-        body: JSON.stringify({
-          message: "An error ocurred creating your account",
-          ...formattedError,
-        }),
-      };
+      return createSDKErrorResponse(
+        userError,
+        "An error ocurred creating your account"
+      );
     }
     user = createdUser;
   }
@@ -95,14 +87,10 @@ const main = async (
   });
 
   if (loginLinkError) {
-    const formattedError = errorFormatter(loginLinkError);
-    return {
-      statusCode: formattedError.httpStatusCode,
-      body: JSON.stringify({
-        message: "An error ocurred getting your login link",
-        ...formattedError,
-      }),
-    };
+    return createSDKErrorResponse(
+      loginLinkError,
+      "An error ocurred getting your login link"
+    );
   }
   const timeThreshold = Time.pastISO(10, TIME_UNITS.MINUTES);
 
@@ -148,15 +136,10 @@ const main = async (
   });
 
   if (creationError) {
-    const formattedError = errorFormatter(creationError);
-
-    return {
-      statusCode: formattedError.httpStatusCode,
-      body: JSON.stringify({
-        message: "An error ocurred creating your login link",
-        ...formattedError,
-      }),
-    };
+    return createSDKErrorResponse(
+      creationError,
+      "An error ocurred creating your login link"
+    );
   }
 
   // Cannot do serverside redirect from axios POST, client will make the POST instead - // TODO revisit this and just have a router.push?

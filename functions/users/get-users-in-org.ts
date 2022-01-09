@@ -1,8 +1,6 @@
 import { APIGatewayProxyEventV2, APIGatewayProxyResultV2 } from "aws-lambda";
-import { withSessionEvent } from "../../types/main";
 import * as Orgs from "../../models/Orgs";
-import errorFormatter from "../../utils/errorFormatter";
-import { COOKIE_SETTINGS, DEFAULTS, NO_SESSION_RESPONSE } from "../../Config";
+import { DEFAULTS, NO_SESSION_RESPONSE } from "../../Config";
 import getSessionFromCookies from "../../utils/getSessionFromCookies";
 import httpEventNormalizer from "@middy/http-event-normalizer";
 import httpJsonBodyParser from "@middy/http-json-body-parser";
@@ -10,6 +8,7 @@ import httpSecurityHeaders from "@middy/http-security-headers";
 import inputOutputLogger from "@middy/input-output-logger";
 import middy from "@middy/core";
 import Sanitize from "../../utils/sanitize";
+import createSDKErrorResponse from "../../utils/createSDKErrorResponse";
 const main = async (
   event: APIGatewayProxyEventV2
 ): Promise<APIGatewayProxyResultV2> => {
@@ -36,14 +35,10 @@ const main = async (
   });
 
   if (error) {
-    const formattedError = errorFormatter(error);
-    return {
-      statusCode: formattedError.httpStatusCode,
-      body: JSON.stringify({
-        message: "An error ocurred getting the users in your org",
-        ...formattedError,
-      }),
-    };
+    return createSDKErrorResponse(
+      error,
+      "An error ocurred getting the users in your org"
+    );
   }
 
   const cleanUsers = users.map(

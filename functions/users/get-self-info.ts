@@ -1,8 +1,6 @@
 import { APIGatewayProxyEventV2, APIGatewayProxyResultV2 } from "aws-lambda";
-import { withSessionEvent } from "../../types/main";
 import * as Users from "../../models/Users";
-import errorFormatter from "../../utils/errorFormatter";
-import { COOKIE_SETTINGS, DEFAULTS, NO_SESSION_RESPONSE } from "../../Config";
+import { NO_SESSION_RESPONSE } from "../../Config";
 import httpEventNormalizer from "@middy/http-event-normalizer";
 import httpJsonBodyParser from "@middy/http-json-body-parser";
 import httpSecurityHeaders from "@middy/http-security-headers";
@@ -10,6 +8,7 @@ import inputOutputLogger from "@middy/input-output-logger";
 import middy from "@middy/core";
 
 import getSessionFromCookies from "../../utils/getSessionFromCookies";
+import createSDKErrorResponse from "../../utils/createSDKErrorResponse";
 const main = async (
   event: APIGatewayProxyEventV2
 ): Promise<APIGatewayProxyResultV2> => {
@@ -24,14 +23,10 @@ const main = async (
   const [user, error] = await Users.getUserById({ userId: session.userId });
 
   if (error) {
-    const formattedError = errorFormatter(error);
-    return {
-      statusCode: formattedError.httpStatusCode,
-      body: JSON.stringify({
-        message: "An error ocurred retrieving your info",
-        ...formattedError,
-      }),
-    };
+    return createSDKErrorResponse(
+      error,
+      "An error ocurred retrieving your info"
+    );
   }
 
   // User was deleted for some reason

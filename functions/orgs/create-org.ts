@@ -16,12 +16,11 @@ import httpJsonBodyParser from "@middy/http-json-body-parser";
 import httpSecurityHeaders from "@middy/http-security-headers";
 import inputOutputLogger from "@middy/input-output-logger";
 import middy from "@middy/core";
-
-import errorFormatter from "../../utils/errorFormatter";
 import getSessionFromCookies from "../../utils/getSessionFromCookies";
 import * as Orgs from "../../models/Orgs";
 import { sealData } from "iron-session";
 import createJoiResponse from "../../utils/createJoiResponse";
+import createSDKErrorResponse from "../../utils/createSDKErrorResponse";
 const UrlSafeString = require("url-safe-string"),
   tagGenerator = new UrlSafeString();
 
@@ -65,14 +64,10 @@ export async function main(
   });
 
   if (error) {
-    const formattedError = errorFormatter(error);
-    return {
-      statusCode: formattedError.httpStatusCode,
-      body: JSON.stringify({
-        message: "Unable to create org - error retrieving invites",
-        ...formattedError,
-      }),
-    };
+    return createSDKErrorResponse(
+      error,
+      "Unable to create org - error retrieving invites"
+    );
   }
 
   if (pendingInvites && pendingInvites.length > 0) {
@@ -97,14 +92,7 @@ export async function main(
   });
 
   if (failed) {
-    const formattedError = errorFormatter(failed);
-    return {
-      statusCode: formattedError.httpStatusCode,
-      body: JSON.stringify({
-        message: "Unable to create org",
-        ...formattedError,
-      }),
-    };
+    return createSDKErrorResponse(failed, "Unable to create org");
   }
 
   // Update the logged in user session with the new org id

@@ -6,7 +6,6 @@ import {
   DEFAULTS,
   JoiOrgId,
 } from "../../Config";
-import errorFormatter from "../../utils/errorFormatter";
 import httpEventNormalizer from "@middy/http-event-normalizer";
 import httpJsonBodyParser from "@middy/http-json-body-parser";
 import httpSecurityHeaders from "@middy/http-security-headers";
@@ -15,6 +14,7 @@ import middy from "@middy/core";
 import getSessionFromCookies from "../../utils/getSessionFromCookies";
 import * as Orgs from "../../models/Orgs";
 import createJoiResponse from "../../utils/createJoiResponse";
+import createSDKErrorResponse from "../../utils/createSDKErrorResponse";
 const UrlSafeString = require("url-safe-string"),
   tagGenerator = new UrlSafeString();
 
@@ -58,14 +58,7 @@ const main = async (
   const [org, error] = await Orgs.getOrgById({ orgId });
 
   if (error) {
-    const formattedError = errorFormatter(error);
-    return {
-      statusCode: formattedError.httpStatusCode,
-      body: JSON.stringify({
-        message: "Unable to retrieve org info",
-        ...formattedError,
-      }),
-    };
+    return createSDKErrorResponse(error, "Unable to retrieve org info");
   }
 
   if (!org) {

@@ -4,18 +4,12 @@ import httpJsonBodyParser from "@middy/http-json-body-parser";
 import httpSecurityHeaders from "@middy/http-security-headers";
 import inputOutputLogger from "@middy/input-output-logger";
 import middy from "@middy/core";
-
 import Joi from "joi";
-import {
-  NO_SESSION_RESPONSE,
-  JOI_SETTINGS,
-  DEFAULTS,
-  JoiOrgId,
-} from "../../Config";
-import errorFormatter from "../../utils/errorFormatter";
+import { NO_SESSION_RESPONSE, JOI_SETTINGS, JoiOrgId } from "../../Config";
 import getSessionFromCookies from "../../utils/getSessionFromCookies";
 import * as Orgs from "../../models/Orgs";
 import createJoiResponse from "../../utils/createJoiResponse";
+import createSDKErrorResponse from "../../utils/createSDKErrorResponse";
 const UrlSafeString = require("url-safe-string"),
   tagGenerator = new UrlSafeString();
 
@@ -59,14 +53,7 @@ const main = async (
   const [invites, error] = await Orgs.getPendingInvites({ orgId });
 
   if (error) {
-    const formattedError = errorFormatter(error);
-    return {
-      statusCode: formattedError.httpStatusCode,
-      body: JSON.stringify({
-        message: "Unable to retrieve invites for org",
-        ...formattedError,
-      }),
-    };
+    return createSDKErrorResponse(error, "Unable to retrieve invites for org");
   }
 
   return {
