@@ -3178,13 +3178,6 @@
   dependencies:
     "@middy/util" "^2.5.4"
 
-"@middy/http-security-headers@^2.5.4":
-  "integrity" "sha512-tUZSex6QKYJ993hMRZE2dzcTfzC6GSwNfu615SKmZnScz9/tBLFzWgJl3SYNBys1zr8tOybLQc0zIowvLqqaaQ=="
-  "resolved" "https://registry.npmjs.org/@middy/http-security-headers/-/http-security-headers-2.5.4.tgz"
-  "version" "2.5.4"
-  dependencies:
-    "@middy/util" "^2.5.4"
-
 "@middy/input-output-logger@^2.5.4":
   "integrity" "sha512-Xo83EWk0LJjPTv85fN3AzfeY1gqRCes6Lafd6XZ41Oetyvd9ycWxfUfXLw99cSWuu9WZN81WTL397dKbTIJ6Mw=="
   "resolved" "https://registry.npmjs.org/@middy/input-output-logger/-/input-output-logger-2.5.4.tgz"

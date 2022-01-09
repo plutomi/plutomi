@@ -44,7 +44,6 @@
     "@middy/core": "^2.5.4",
     "@middy/http-event-normalizer": "^2.5.4",
     "@middy/http-json-body-parser": "^2.5.4",
-    "@middy/http-security-headers": "^2.5.4",
     "@middy/input-output-logger": "^2.5.4",
     "@sls-next/cdk-construct": "^3.7.0-alpha.0",
     "@sls-next/lambda-at-edge": "^3.7.0-alpha.0",

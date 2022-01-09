@@ -2,7 +2,7 @@ import { APIGatewayProxyEventV2, APIGatewayProxyResultV2 } from "aws-lambda";
 import { COOKIE_NAME, COOKIE_SETTINGS } from "../../Config";
 import httpEventNormalizer from "@middy/http-event-normalizer";
 import httpJsonBodyParser from "@middy/http-json-body-parser";
-import httpSecurityHeaders from "@middy/http-security-headers";
+
 import inputOutputLogger from "@middy/input-output-logger";
 import middy from "@middy/core";
 // TODO create logoout event in Dynamo
@@ -20,5 +20,4 @@ const main = async (
 module.exports.main = middy(main)
   .use(httpEventNormalizer({ payloadFormatVersion: 2 }))
   .use(httpJsonBodyParser())
-  .use(inputOutputLogger())
-  .use(httpSecurityHeaders());
+  .use(inputOutputLogger());

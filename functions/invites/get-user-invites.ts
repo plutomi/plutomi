@@ -3,7 +3,7 @@ import * as Users from "../../models/Users";
 import Joi from "joi";
 import httpEventNormalizer from "@middy/http-event-normalizer";
 import httpJsonBodyParser from "@middy/http-json-body-parser";
-import httpSecurityHeaders from "@middy/http-security-headers";
+
 import inputOutputLogger from "@middy/input-output-logger";
 import middy from "@middy/core";
 import { NO_SESSION_RESPONSE, JOI_SETTINGS } from "../../Config";
@@ -62,5 +62,4 @@ const main = async (
 module.exports.main = middy(main)
   .use(httpEventNormalizer({ payloadFormatVersion: 2 }))
   .use(httpJsonBodyParser())
-  .use(inputOutputLogger())
-  .use(httpSecurityHeaders());
+  .use(inputOutputLogger());

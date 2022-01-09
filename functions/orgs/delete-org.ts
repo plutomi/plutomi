@@ -11,7 +11,7 @@ import {
 } from "../../Config";
 import httpEventNormalizer from "@middy/http-event-normalizer";
 import httpJsonBodyParser from "@middy/http-json-body-parser";
-import httpSecurityHeaders from "@middy/http-security-headers";
+
 import inputOutputLogger from "@middy/input-output-logger";
 import middy from "@middy/core";
 import getSessionFromCookies from "../../utils/getSessionFromCookies";
@@ -109,5 +109,4 @@ const main = async (
 module.exports.main = middy(main)
   .use(httpEventNormalizer({ payloadFormatVersion: 2 }))
   .use(httpJsonBodyParser())
-  .use(inputOutputLogger())
-  .use(httpSecurityHeaders());
+  .use(inputOutputLogger());
