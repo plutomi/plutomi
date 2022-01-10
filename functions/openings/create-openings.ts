@@ -33,10 +33,7 @@ interface APICreateOpeningsEvent extends Omit<CustomLambdaEvent, "body"> {
 
 const main = async (event: APICreateOpeningsEvent) => {
   const [session, sessionError] = await getSessionFromCookies(event);
-  console.log({
-    session,
-    sessionError,
-  });
+
   if (sessionError) {
     return NO_SESSION_RESPONSE;
   }

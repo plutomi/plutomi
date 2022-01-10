@@ -10,10 +10,7 @@ import createSDKErrorResponse from "../../utils/createSDKErrorResponse";
 import { CustomLambdaEvent } from "../../types/main";
 const main = async (event: CustomLambdaEvent) => {
   const [session, sessionError] = await getSessionFromCookies(event);
-  console.log({
-    session,
-    sessionError,
-  });
+
   if (sessionError) {
     return NO_SESSION_RESPONSE;
   }

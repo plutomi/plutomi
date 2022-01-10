@@ -37,10 +37,7 @@ interface APIDeleteOrgEvent extends Omit<CustomLambdaEvent, "pathParameters"> {
 }
 const main = async (event: APIDeleteOrgEvent) => {
   const [session, sessionError] = await getSessionFromCookies(event);
-  console.log({
-    session,
-    sessionError,
-  });
+
   if (sessionError) {
     return NO_SESSION_RESPONSE;
   }

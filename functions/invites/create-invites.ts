@@ -37,10 +37,7 @@ interface APICreateInvitesEvent extends Omit<CustomLambdaEvent, "body"> {
 
 const main = async (event: APICreateInvitesEvent) => {
   const [session, sessionError] = await getSessionFromCookies(event);
-  console.log({
-    session,
-    sessionError,
-  });
+
   if (sessionError) {
     return NO_SESSION_RESPONSE;
   }

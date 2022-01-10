@@ -36,10 +36,7 @@ interface APIUpdateUserEvent
 
 const main = async (event: APIUpdateUserEvent) => {
   const [session, sessionError] = await getSessionFromCookies(event);
-  console.log({
-    session,
-    sessionError,
-  });
+
   if (sessionError) {
     return NO_SESSION_RESPONSE;
   }

@@ -7,34 +7,39 @@ import { UserSessionData } from "../types/main";
  * @param cookies
  * @param cookieName
  */
-// TODO this type is broken as each event type differs
+type GetSessionFromCookiesResponse = [UserSessionData, null] | [null, string];
+
 export default async function getSessionFromCookies(
-  event
-): Promise<[UserSessionData, null] | [null, string]> {
+  event // TODO this type is broken as each event type differs per lambda function
+): Promise<GetSessionFromCookiesResponse> {
   const cookies = event.cookies || [];
 
   // If a cookie by this name exists, extract the seal
   const cookie = cookies?.find((cookie) => cookie.includes(COOKIE_NAME + "="));
-
+  let response: GetSessionFromCookiesResponse;
   if (!cookie) {
-    return [null, `${COOKIE_NAME} not found`];
+    response = [null, `${COOKIE_NAME} not found`];
   }
 
   const seal = cookie.split("=")[1];
 
   if (!seal) {
-    return [null, `Session seal not found`];
+    response = [null, `Session seal not found`];
   }
   if (seal) {
     try {
       const session: UserSessionData = await unsealData(seal, SESSION_SETTINGS);
 
       if (Object.keys(session).length === 0) {
-        return [null, `Invalid session`];
+        response = [null, `Invalid session`];
       }
-      return [session, null];
+
+      response = [session, null];
     } catch (error) {
-      return [null, error.message];
+      response = [null, error.message];
     }
   }
+
+  console.log(response);
+  return response;
 }

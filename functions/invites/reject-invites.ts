@@ -30,10 +30,7 @@ interface APIRejectInvitesEvent
 }
 const main = async (event: APIRejectInvitesEvent) => {
   const [session, sessionError] = await getSessionFromCookies(event);
-  console.log({
-    session,
-    sessionError,
-  });
+
   if (sessionError) {
     return NO_SESSION_RESPONSE;
   }

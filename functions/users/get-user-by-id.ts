@@ -30,10 +30,7 @@ interface APIUserByIdEvent extends Omit<CustomLambdaEvent, "pathParameters"> {
 
 const main = async (event: APIUserByIdEvent) => {
   const [session, sessionError] = await getSessionFromCookies(event);
-  console.log({
-    session,
-    sessionError,
-  });
+
   if (sessionError) {
     return NO_SESSION_RESPONSE;
   }
