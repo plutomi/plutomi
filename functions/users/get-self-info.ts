@@ -5,7 +5,6 @@ import httpJsonBodyParser from "@middy/http-json-body-parser";
 import httpResponseSerializer from "@middy/http-response-serializer";
 import inputOutputLogger from "@middy/input-output-logger";
 import middy from "@middy/core";
-import getSessionFromCookies from "../../utils/getSessionFromCookies";
 import createSDKErrorResponse from "../../utils/createSDKErrorResponse";
 import { CustomLambdaEvent, CustomLambdaResponse } from "../../types/main";
 import withAuth from "../../middleware/withAuth";

@@ -5,7 +5,7 @@ import {
   APIGatewayProxyResultV2,
   APIGatewayProxyResult,
 } from "aws-lambda";
-import { COOKIE_NAME, COOKIE_SETTINGS, NO_SESSION_RESPONSE } from "../Config";
+import { COOKIE_NAME, COOKIE_SETTINGS } from "../Config";
 import getSessionFromCookies from "../utils/getSessionFromCookies";
 
 const middleware = (): middy.MiddlewareObj<

@@ -15,7 +15,6 @@ import httpJsonBodyParser from "@middy/http-json-body-parser";
 import httpResponseSerializer from "@middy/http-response-serializer";
 import inputOutputLogger from "@middy/input-output-logger";
 import middy from "@middy/core";
-import getSessionFromCookies from "../../utils/getSessionFromCookies";
 import * as Orgs from "../../models/Orgs";
 import { sealData } from "iron-session";
 import createJoiResponse from "../../utils/createJoiResponse";
@@ -42,18 +41,15 @@ const schema = Joi.object({
   },
 }).options(JOI_SETTINGS);
 
-const main = async (event: APICreateOrgEvent): Promise<CustomLambdaResponse> => {
-  const [session, sessionError] = await getSessionFromCookies(event);
-
-  if (sessionError) {
-    return NO_SESSION_RESPONSE;
-  }
-
+const main = async (
+  event: APICreateOrgEvent
+): Promise<CustomLambdaResponse> => {
   try {
     await schema.validateAsync(event);
   } catch (error) {
     return createJoiResponse(error);
   }
+  const { session } = event;
 
   if (session.orgId !== DEFAULTS.NO_ORG) {
     return {

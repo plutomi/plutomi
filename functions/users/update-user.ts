@@ -17,7 +17,6 @@ import httpEventNormalizer from "@middy/http-event-normalizer";
 import httpJsonBodyParser from "@middy/http-json-body-parser";
 import inputOutputLogger from "@middy/input-output-logger";
 import middy from "@middy/core";
-import getSessionFromCookies from "../../utils/getSessionFromCookies";
 import createJoiResponse from "../../utils/createJoiResponse";
 import createSDKErrorResponse from "../../utils/createSDKErrorResponse";
 import { CustomLambdaEvent, CustomLambdaResponse } from "../../types/main";
@@ -46,12 +45,6 @@ const schema = Joi.object({
 const main = async (
   event: APIUpdateUserEvent
 ): Promise<CustomLambdaResponse> => {
-  const [session, sessionError] = await getSessionFromCookies(event);
-
-  if (sessionError) {
-    return NO_SESSION_RESPONSE;
-  }
-
   try {
     await schema.validateAsync(event);
   } catch (error) {
@@ -60,9 +53,11 @@ const main = async (
 
   const { userId } = event.pathParameters;
   const { newValues } = event.body;
+  const { session } = event;
 
   // TODO RBAC will go here, right now you can only update yourself
   if (userId !== session.userId) {
+    // TODO this can be moved into JOI
     return {
       statusCode: 403,
       body: { message: "You cannot update another user" },

@@ -5,7 +5,6 @@ import {
   JOI_SETTINGS,
   MIDDY_SERIALIZERS,
 } from "../../Config";
-import getSessionFromCookies from "../../utils/getSessionFromCookies";
 import httpEventNormalizer from "@middy/http-event-normalizer";
 import httpJsonBodyParser from "@middy/http-json-body-parser";
 import httpResponseSerializer from "@middy/http-response-serializer";
@@ -29,13 +28,9 @@ const schema = Joi.object({
   },
 }).options(JOI_SETTINGS);
 
-const main = async (event: APIRejectInvitesEvent): Promise<CustomLambdaResponse> => {
-  const [session, sessionError] = await getSessionFromCookies(event);
-
-  if (sessionError) {
-    return NO_SESSION_RESPONSE;
-  }
-
+const main = async (
+  event: APIRejectInvitesEvent
+): Promise<CustomLambdaResponse> => {
   try {
     await schema.validateAsync(event);
   } catch (error) {
@@ -43,6 +38,7 @@ const main = async (event: APIRejectInvitesEvent): Promise<CustomLambdaResponse>
   }
 
   const { inviteId } = event.pathParameters;
+  const { session } = event;
 
   const [deleted, error] = await Invites.deleteInvite({
     inviteId,

@@ -12,7 +12,6 @@ import {
   TIME_UNITS,
   MIDDY_SERIALIZERS,
 } from "../../Config";
-import getSessionFromCookies from "../../utils/getSessionFromCookies";
 import createJoiResponse from "../../utils/createJoiResponse";
 import createSDKErrorResponse from "../../utils/createSDKErrorResponse";
 import { CustomLambdaEvent, CustomLambdaResponse } from "../../types/main";
@@ -32,13 +31,9 @@ const schema = Joi.object({
   },
 }).options(JOI_SETTINGS);
 
-const main = async (event: APICreateOpeningsEvent): Promise<CustomLambdaResponse> => {
-  const [session, sessionError] = await getSessionFromCookies(event);
-
-  if (sessionError) {
-    return NO_SESSION_RESPONSE;
-  }
-
+const main = async (
+  event: APICreateOpeningsEvent
+): Promise<CustomLambdaResponse> => {
   try {
     await schema.validateAsync(event);
   } catch (error) {
@@ -46,7 +41,7 @@ const main = async (event: APICreateOpeningsEvent): Promise<CustomLambdaResponse
   }
 
   const { GSI1SK } = event.body;
-
+  const { session } = event;
   if (session.orgId === DEFAULTS.NO_ORG) {
     return {
       statusCode: 400,

@@ -1,6 +1,5 @@
 import * as Orgs from "../../models/Orgs";
 import { DEFAULTS, MIDDY_SERIALIZERS, NO_SESSION_RESPONSE } from "../../Config";
-import getSessionFromCookies from "../../utils/getSessionFromCookies";
 import httpEventNormalizer from "@middy/http-event-normalizer";
 import httpJsonBodyParser from "@middy/http-json-body-parser";
 import httpResponseSerializer from "@middy/http-response-serializer";
@@ -10,13 +9,10 @@ import Sanitize from "../../utils/sanitize";
 import createSDKErrorResponse from "../../utils/createSDKErrorResponse";
 import { CustomLambdaEvent, CustomLambdaResponse } from "../../types/main";
 
-const main = async (event: CustomLambdaEvent): Promise<CustomLambdaResponse> => {
-  const [session, sessionError] = await getSessionFromCookies(event);
-
-  if (sessionError) {
-    return NO_SESSION_RESPONSE;
-  }
-
+const main = async (
+  event: CustomLambdaEvent
+): Promise<CustomLambdaResponse> => {
+  const { session } = event;
   if (session.orgId === DEFAULTS.NO_ORG) {
     return {
       statusCode: 200,

@@ -10,7 +10,6 @@ import {
   JoiOrgId,
   MIDDY_SERIALIZERS,
 } from "../../Config";
-import getSessionFromCookies from "../../utils/getSessionFromCookies";
 import * as Orgs from "../../models/Orgs";
 import createJoiResponse from "../../utils/createJoiResponse";
 import createSDKErrorResponse from "../../utils/createSDKErrorResponse";
@@ -34,18 +33,13 @@ const schema = Joi.object({
 const main = async (
   event: APIGetOrgInvitesEvent
 ): Promise<CustomLambdaResponse> => {
-  const [session, sessionError] = await getSessionFromCookies(event);
-
-  if (sessionError) {
-    return NO_SESSION_RESPONSE;
-  }
-
   try {
     await schema.validateAsync(event);
   } catch (error) {
     return createJoiResponse(error);
   }
 
+  const { session } = event;
   const orgId = tagGenerator.generate(event.pathParameters.orgId);
 
   if (orgId !== session.orgId) {

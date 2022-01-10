@@ -5,7 +5,6 @@ import middy from "@middy/core";
 import httpResponseSerializer from "@middy/http-response-serializer";
 import Joi from "joi";
 import {
-  NO_SESSION_RESPONSE,
   JOI_SETTINGS,
   DEFAULTS,
   TIME_UNITS,
@@ -15,7 +14,6 @@ import * as Invites from "../../models/Invites";
 import * as Time from "../../utils/time";
 import * as Users from "../../models/Users";
 import * as Orgs from "../../models/Orgs";
-import getSessionFromCookies from "../../utils/getSessionFromCookies";
 import createJoiResponse from "../../utils/createJoiResponse";
 import createSDKErrorResponse from "../../utils/createSDKErrorResponse";
 import { CustomLambdaEvent, CustomLambdaResponse } from "../../types/main";
@@ -38,18 +36,13 @@ const schema = Joi.object({
 const main = async (
   event: APICreateInvitesEvent
 ): Promise<CustomLambdaResponse> => {
-  const [session, sessionError] = await getSessionFromCookies(event);
-
-  if (sessionError) {
-    return NO_SESSION_RESPONSE;
-  }
-
   try {
     await schema.validateAsync(event);
   } catch (error) {
     return createJoiResponse(error);
   }
 
+  const { session } = event;
   const { recipientEmail } = event.body;
 
   if (session.email === recipientEmail) {

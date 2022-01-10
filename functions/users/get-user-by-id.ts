@@ -11,7 +11,6 @@ import httpEventNormalizer from "@middy/http-event-normalizer";
 import httpJsonBodyParser from "@middy/http-json-body-parser";
 import inputOutputLogger from "@middy/input-output-logger";
 import middy from "@middy/core";
-import getSessionFromCookies from "../../utils/getSessionFromCookies";
 import createJoiResponse from "../../utils/createJoiResponse";
 import createSDKErrorResponse from "../../utils/createSDKErrorResponse";
 import { CustomLambdaEvent, CustomLambdaResponse } from "../../types/main";
@@ -30,12 +29,6 @@ const schema = Joi.object({
 }).options(JOI_SETTINGS);
 
 const main = async (event: APIUserByIdEvent): Promise<CustomLambdaResponse> => {
-  const [session, sessionError] = await getSessionFromCookies(event);
-
-  if (sessionError) {
-    return NO_SESSION_RESPONSE;
-  }
-
   try {
     await schema.validateAsync(event);
   } catch (error) {
@@ -43,7 +36,7 @@ const main = async (event: APIUserByIdEvent): Promise<CustomLambdaResponse> => {
   }
 
   const { userId } = event.pathParameters;
-
+  const { session } = event;
   if (
     // Block users who are not in an org from being able to view other users before making the Dynamo call
     session.orgId === DEFAULTS.NO_ORG &&

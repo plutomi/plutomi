@@ -93,6 +93,7 @@ export interface CustomLambdaEvent
   body: { [key: string]: any };
   queryStringParameters: { [key: string]: string };
   pathParameters: { [key: string]: string };
+  session: UserSessionData;
 }
 
 /**
