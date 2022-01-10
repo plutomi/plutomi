@@ -1,8 +1,8 @@
-import { APIGatewayProxyResultV2 } from "aws-lambda";
+import { CustomLambdaResponse } from "../types/main";
 
-export default function createJoiResponse(error): APIGatewayProxyResultV2 {
-  return {  
+export default function createJoiResponse(error: Error): CustomLambdaResponse {
+  return {
     statusCode: 400,
-    body: JSON.stringify({ message: `${error.message}` }),
+    body: { message: `${error.message}` },
   };
 }

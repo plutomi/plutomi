@@ -13,7 +13,7 @@ import inputOutputLogger from "@middy/input-output-logger";
 import middy from "@middy/core";
 import createJoiResponse from "../../utils/createJoiResponse";
 import createSDKErrorResponse from "../../utils/createSDKErrorResponse";
-import { CustomLambdaEvent } from "../../types/main";
+import { CustomLambdaEvent, CustomLambdaResponse } from "../../types/main";
 
 interface APIRejectInvitesPathParameters {
   inviteId?: string;
@@ -29,7 +29,7 @@ const schema = Joi.object({
   },
 }).options(JOI_SETTINGS);
 
-const main = async (event: APIRejectInvitesEvent) => {
+const main = async (event: APIRejectInvitesEvent): Promise<CustomLambdaResponse> => {
   const [session, sessionError] = await getSessionFromCookies(event);
 
   if (sessionError) {

@@ -20,7 +20,7 @@ import { sealData, unsealData } from "iron-session";
 import Sanitize from "../../utils/sanitize";
 import * as Users from "../../models/Users";
 import errorFormatter from "../../utils/errorFormatter";
-import { CustomLambdaEvent } from "../../types/main";
+import { CustomLambdaEvent, CustomLambdaResponse } from "../../types/main";
 
 interface APIRequestLoginLinkQueryStrings {
   callbackUrl?: string;
@@ -38,8 +38,7 @@ const schema = Joi.object({
   },
 }).options(JOI_SETTINGS);
 
-const main = async (event: APILoginEvent) => {
-  // Validate input
+const main = async (event: APILoginEvent): Promise<CustomLambdaResponse> => {
   try {
     await schema.validateAsync(event);
   } catch (error) {

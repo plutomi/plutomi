@@ -19,7 +19,7 @@ import * as Orgs from "../../models/Orgs";
 import { sealData } from "iron-session";
 import createJoiResponse from "../../utils/createJoiResponse";
 import createSDKErrorResponse from "../../utils/createSDKErrorResponse";
-import { CustomLambdaEvent } from "../../types/main";
+import { CustomLambdaEvent, CustomLambdaResponse } from "../../types/main";
 const UrlSafeString = require("url-safe-string"),
   tagGenerator = new UrlSafeString();
 
@@ -36,7 +36,7 @@ const schema = Joi.object({
   },
 }).options(JOI_SETTINGS);
 
-const main = async (event: APIDeleteOrgEvent) => {
+const main = async (event: APIDeleteOrgEvent): Promise<CustomLambdaResponse> => {
   const [session, sessionError] = await getSessionFromCookies(event);
 
   if (sessionError) {

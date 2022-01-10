@@ -14,7 +14,7 @@ import getSessionFromCookies from "../../utils/getSessionFromCookies";
 import * as Orgs from "../../models/Orgs";
 import createJoiResponse from "../../utils/createJoiResponse";
 import createSDKErrorResponse from "../../utils/createSDKErrorResponse";
-import { CustomLambdaEvent } from "../../types/main";
+import { CustomLambdaEvent, CustomLambdaResponse } from "../../types/main";
 const UrlSafeString = require("url-safe-string"),
   tagGenerator = new UrlSafeString();
 interface APIGetOrgInvitesPathParameters {
@@ -31,7 +31,9 @@ const schema = Joi.object({
   },
 }).options(JOI_SETTINGS);
 
-const main = async (event: APIGetOrgInvitesEvent) => {
+const main = async (
+  event: APIGetOrgInvitesEvent
+): Promise<CustomLambdaResponse> => {
   const [session, sessionError] = await getSessionFromCookies(event);
 
   if (sessionError) {

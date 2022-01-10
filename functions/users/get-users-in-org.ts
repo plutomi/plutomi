@@ -8,9 +8,9 @@ import inputOutputLogger from "@middy/input-output-logger";
 import middy from "@middy/core";
 import Sanitize from "../../utils/sanitize";
 import createSDKErrorResponse from "../../utils/createSDKErrorResponse";
-import { CustomLambdaEvent } from "../../types/main";
+import { CustomLambdaEvent, CustomLambdaResponse } from "../../types/main";
 
-const main = async (event: CustomLambdaEvent) => {
+const main = async (event: CustomLambdaEvent): Promise<CustomLambdaResponse> => {
   const [session, sessionError] = await getSessionFromCookies(event);
 
   if (sessionError) {

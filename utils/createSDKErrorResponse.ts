@@ -10,9 +10,9 @@ export default function createSDKErrorResponse(
   const formattedError = errorFormatter(error);
   return {
     statusCode: formattedError.httpStatusCode,
-    body: JSON.stringify({
+    body: {
       message,
       ...formattedError,
-    }),
+    },
   };
 }

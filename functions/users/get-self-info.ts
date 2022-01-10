@@ -7,8 +7,10 @@ import inputOutputLogger from "@middy/input-output-logger";
 import middy from "@middy/core";
 import getSessionFromCookies from "../../utils/getSessionFromCookies";
 import createSDKErrorResponse from "../../utils/createSDKErrorResponse";
-import { CustomLambdaEvent } from "../../types/main";
-const main = async (event: CustomLambdaEvent) => {
+import { CustomLambdaEvent, CustomLambdaResponse } from "../../types/main";
+const main = async (
+  event: CustomLambdaEvent
+): Promise<CustomLambdaResponse> => {
   const [session, sessionError] = await getSessionFromCookies(event);
 
   if (sessionError) {

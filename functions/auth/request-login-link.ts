@@ -20,7 +20,7 @@ import { sealData } from "iron-session";
 import { API_URL, DOMAIN_NAME } from "../../Config";
 import createJoiResponse from "../../utils/createJoiResponse";
 import httpResponseSerializer from "@middy/http-response-serializer";
-import { CustomLambdaEvent } from "../../types/main";
+import { CustomLambdaEvent, CustomLambdaResponse } from "../../types/main";
 
 interface APIRequestLoginLinkBody {
   email?: string;
@@ -47,7 +47,9 @@ const schema = Joi.object({
   },
 }).options(JOI_SETTINGS);
 
-const main = async (event: APIRequestLoginLinkEvent) => {
+const main = async (
+  event: APIRequestLoginLinkEvent
+): Promise<CustomLambdaResponse> => {
   try {
     await schema.validateAsync(event);
   } catch (error) {

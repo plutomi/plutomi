@@ -251,7 +251,7 @@ export const SWR = {
 export const NO_SESSION_RESPONSE = {
   statusCode: 401,
   cookies: [`${COOKIE_NAME}=''; Max-Age=-1; ${COOKIE_SETTINGS}`],
-  body: JSON.stringify({ message: "Please log in again" }),
+  body: { message: "Please log in again" },
 };
 
 // Schema to validate orgIds against in joi

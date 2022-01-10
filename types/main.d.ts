@@ -1,5 +1,9 @@
 import { HttpMethod, HttpApi } from "@aws-cdk/aws-apigatewayv2";
-import { APIGatewayProxyEventV2 } from "aws-lambda";
+import {
+  APIGatewayProxyEventV2,
+  APIGatewayProxyResultV2,
+  APIGatewayProxyStructuredResultV2,
+} from "aws-lambda";
 import { Table } from "@aws-cdk/aws-dynamodb";
 import { Duration, StackProps } from "@aws-cdk/core";
 import {
@@ -89,6 +93,18 @@ export interface CustomLambdaEvent
   body: { [key: string]: any };
   queryStringParameters: { [key: string]: string };
   pathParameters: { [key: string]: string };
+}
+
+/**
+ * APIGatewayProxyStructuredResultV2 +
+ * 1. A regular object {} for a body.
+ * 2. Enforces statusCodes
+ * Middy will JSON.stringify() the body for us so we can use this instead
+ */
+export interface CustomLambdaResponse
+  extends Omit<APIGatewayProxyStructuredResultV2, "body" | "statusCode"> {
+  statusCode: number;
+  body: { [key: string]: any };
 }
 
 export interface LambdaAPIProps extends StackProps {
