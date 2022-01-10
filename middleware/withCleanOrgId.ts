@@ -17,9 +17,8 @@ const middleware = (): middy.MiddlewareObj<
     APIGatewayProxyResult
   > = async (request) => {
     // TODO types, this would run after the other middlewares
-    console.log("IN clean org id middleware", request);
     // @ts-ignore
-    if (request.event.body.orgId) {
+    if (request.event?.body?.orgId) {
       // @ts-ignore
       request.event.body.orgId = tagGenerator.generate(
         // @ts-ignore
@@ -27,20 +26,18 @@ const middleware = (): middy.MiddlewareObj<
       );
     }
 
-    if (request.event.pathParameters.orgId) {
+    if (request.event?.pathParameters?.orgId) {
       // @ts-ignore
       request.event.body.pathParameters = tagGenerator.generate(
         request.event.pathParameters.orgId
       );
     }
 
-    if (request.event.queryStringParameters.orgId) {
+    if (request.event?.queryStringParameters?.orgId) {
       request.event.queryStringParameters.orgId = tagGenerator.generate(
         request.event.queryStringParameters.orgId
       );
     }
-
-    console.log("Exiting clean orgId middleware", request);
   };
 
   const after: middy.MiddlewareFn<

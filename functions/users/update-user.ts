@@ -16,6 +16,7 @@ import middy from "@middy/core";
 import createJoiResponse from "../../utils/createJoiResponse";
 import createSDKErrorResponse from "../../utils/createSDKErrorResponse";
 import { CustomLambdaEvent, CustomLambdaResponse } from "../../types/main";
+import session from "express-session";
 
 interface APIUpdateUserPathParameters {
   userId?: string;
@@ -89,7 +90,11 @@ const main = async (
   if (updatedUser.userId === session.userId) {
     const result = Sanitize("KEEP", sessionDataKeys, updatedUser);
 
-    const encryptedCookie = await sealData(result.object, SESSION_SETTINGS);
+    const newSession = {
+      ...session, // To keep the old expiry
+      ...result.object,
+    };
+    const encryptedCookie = await sealData(newSession, SESSION_SETTINGS);
 
     const customMessage = filteredValues.removedKeys.length
       ? `We've updated your info, but some properties could not be updated: '${filteredValues.removedKeys.join(

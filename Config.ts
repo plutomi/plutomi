@@ -26,6 +26,12 @@ export const sessionDataKeys = [
   "userId",
 ];
 
+export const AUTH_ERRORS = {
+  COOKIE_NOT_FOUND: `${COOKIE_NAME} not found`,
+  SEAL_NOT_FOUND: `Session seal not found`,
+  INVALID_SESSION: `Invalid session`,
+  SESSION_EXPIRED: `Session expired`,
+};
 const UrlSafeString = require("url-safe-string"),
   tagGenerator = new UrlSafeString();
 
@@ -130,8 +136,12 @@ export const LOGIN_LINK_SETTINGS = {
 
 export const SESSION_SETTINGS = {
   password: process.env.SESSION_PASSWORD,
-  ttl: 43200, // In seconds, how long should sessions be valid for (12 hours default)
+  // We handle session expiry because if a user updates a property on themselves,
+  // the new ttl is +12 hours on that event.. and not 12 hours since session was created - #475
+  // Setting ttl to 0 has a theoretical infinite session, but we verify that it hasn't expired in withAuth middleware
+  ttl: 0,
 };
+
 export const EMAILS = {
   SUPPORT: "support@plutomi.com",
   GENERAL: "contact@plutomi.com",

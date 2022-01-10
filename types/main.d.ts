@@ -143,7 +143,13 @@ interface UserSessionData
   extends Pick<
     DynamoNewUser,
     "firstName" | "lastName" | "email" | "orgId" | "userId"
-  > {}
+  > {
+  /**
+   * ISO timestamp of when the cookie expires, encrypted with the cookie itself
+   * To override all browser checks
+   */
+  expiresAt: string; // ISO timestamp
+}
 
 export interface CreateStageInput
   extends Pick<DynamoNewStage, "orgId" | "GSI1SK" | "openingId"> {

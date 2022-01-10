@@ -10,7 +10,9 @@ import {
   sessionDataKeys,
   COOKIE_NAME,
   withDefaultMiddleware,
+  TIME_UNITS,
 } from "../../Config";
+import * as Time from "../../utils/time";
 import createSDKErrorResponse from "../../utils/createSDKErrorResponse";
 import { sealData, unsealData } from "iron-session";
 import Sanitize from "../../utils/sanitize";
@@ -119,8 +121,11 @@ const main = async (event: APILoginEvent): Promise<CustomLambdaResponse> => {
 
   const result = Sanitize("KEEP", sessionDataKeys, user);
 
-  const encryptedCookie = await sealData(result.object, SESSION_SETTINGS);
-
+  const session = {
+    ...result.object,
+    expiresAt: Time.futureISO(2, TIME_UNITS.MINUTES), // TODO CHANGE!!!
+  };
+  const encryptedCookie = await sealData(session, SESSION_SETTINGS);
   const response = {
     cookies: [`${COOKIE_NAME}=${encryptedCookie}; ${COOKIE_SETTINGS}`],
     statusCode: 307,
