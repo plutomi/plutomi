@@ -1,14 +1,10 @@
-import httpEventNormalizer from "@middy/http-event-normalizer";
-import httpJsonBodyParser from "@middy/http-json-body-parser";
-import inputOutputLogger from "@middy/input-output-logger";
 import middy from "@middy/core";
-import httpResponseSerializer from "@middy/http-response-serializer";
 import Joi from "joi";
 import {
   JOI_SETTINGS,
   DEFAULTS,
   TIME_UNITS,
-  MIDDY_SERIALIZERS,
+  withSessionMiddleware,
 } from "../../Config";
 import * as Invites from "../../models/Invites";
 import * as Time from "../../utils/time";
@@ -151,9 +147,6 @@ const main = async (
     body: { message: `Invite sent to '${recipientEmail}'` },
   };
 };
-
-module.exports.main = middy(main)
-  .use(httpEventNormalizer({ payloadFormatVersion: 2 }))
-  .use(httpJsonBodyParser())
-  .use(inputOutputLogger())
-  .use(httpResponseSerializer(MIDDY_SERIALIZERS));
+// TODO types with API Gateway event and middleware
+// @ts-ignore
+module.exports.main = middy(main).use(withSessionMiddleware);

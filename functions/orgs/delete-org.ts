@@ -6,12 +6,8 @@ import {
   COOKIE_SETTINGS,
   JoiOrgId,
   COOKIE_NAME,
-  MIDDY_SERIALIZERS,
+  withSessionMiddleware,
 } from "../../Config";
-import httpEventNormalizer from "@middy/http-event-normalizer";
-import httpJsonBodyParser from "@middy/http-json-body-parser";
-import httpResponseSerializer from "@middy/http-response-serializer";
-import inputOutputLogger from "@middy/input-output-logger";
 import middy from "@middy/core";
 import * as Orgs from "../../models/Orgs";
 import { sealData } from "iron-session";
@@ -102,8 +98,6 @@ const main = async (
   };
 };
 
-module.exports.main = middy(main)
-  .use(httpEventNormalizer({ payloadFormatVersion: 2 }))
-  .use(httpJsonBodyParser())
-  .use(inputOutputLogger())
-  .use(httpResponseSerializer(MIDDY_SERIALIZERS));
+// TODO types with API Gateway event and middleware
+// @ts-ignore
+module.exports.main = middy(main).use(withSessionMiddleware);

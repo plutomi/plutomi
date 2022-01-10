@@ -270,6 +270,9 @@ export const withSessionMiddleware = [
 ];
 
 // All other requests
-export const defaultMiddleware = withSessionMiddleware.filter(
-  (middleware) => middleware != withAuth()
-);
+export const withDefaultMiddleware = [
+  httpEventNormalizer({ payloadFormatVersion: 2 }),
+  httpJsonBodyParser(),
+  inputOutputLogger(),
+  httpResponseSerializer(MIDDY_SERIALIZERS),
+];

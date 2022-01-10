@@ -7,14 +7,11 @@ import {
   COOKIE_SETTINGS,
   FORBIDDEN_PROPERTIES,
   JOI_SETTINGS,
-  MIDDY_SERIALIZERS,
   sessionDataKeys,
   SESSION_SETTINGS,
+  withSessionMiddleware,
 } from "../../Config";
 import { sealData } from "iron-session";
-import httpEventNormalizer from "@middy/http-event-normalizer";
-import httpJsonBodyParser from "@middy/http-json-body-parser";
-import inputOutputLogger from "@middy/input-output-logger";
 import middy from "@middy/core";
 import createJoiResponse from "../../utils/createJoiResponse";
 import createSDKErrorResponse from "../../utils/createSDKErrorResponse";
@@ -122,8 +119,6 @@ const main = async (
   };
 };
 
-module.exports.main = middy(main)
-  .use(httpEventNormalizer({ payloadFormatVersion: 2 }))
-  .use(httpJsonBodyParser())
-  .use(inputOutputLogger())
-  .use(httpResponseSerializer(MIDDY_SERIALIZERS));
+// TODO types with API Gateway event and middleware
+// @ts-ignore
+module.exports.main = middy(main).use(withSessionMiddleware);

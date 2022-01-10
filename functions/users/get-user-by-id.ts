@@ -1,14 +1,6 @@
 import * as Users from "../../models/Users";
 import Joi from "joi";
-import {
-  DEFAULTS,
-  JOI_SETTINGS,
-  MIDDY_SERIALIZERS,
-} from "../../Config";
-import httpResponseSerializer from "@middy/http-response-serializer";
-import httpEventNormalizer from "@middy/http-event-normalizer";
-import httpJsonBodyParser from "@middy/http-json-body-parser";
-import inputOutputLogger from "@middy/input-output-logger";
+import { DEFAULTS, JOI_SETTINGS, withSessionMiddleware } from "../../Config";
 import middy from "@middy/core";
 import createJoiResponse from "../../utils/createJoiResponse";
 import createSDKErrorResponse from "../../utils/createSDKErrorResponse";
@@ -83,8 +75,6 @@ const main = async (event: APIUserByIdEvent): Promise<CustomLambdaResponse> => {
   };
 };
 
-module.exports.main = middy(main)
-  .use(httpEventNormalizer({ payloadFormatVersion: 2 }))
-  .use(httpJsonBodyParser())
-  .use(inputOutputLogger())
-  .use(httpResponseSerializer(MIDDY_SERIALIZERS));
+// TODO types with API Gateway event and middleware
+// @ts-ignore
+module.exports.main = middy(main).use(withSessionMiddleware);

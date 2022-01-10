@@ -1,13 +1,6 @@
 import Joi from "joi";
 import * as Invites from "../../models/Invites";
-import {
-  JOI_SETTINGS,
-  MIDDY_SERIALIZERS,
-} from "../../Config";
-import httpEventNormalizer from "@middy/http-event-normalizer";
-import httpJsonBodyParser from "@middy/http-json-body-parser";
-import httpResponseSerializer from "@middy/http-response-serializer";
-import inputOutputLogger from "@middy/input-output-logger";
+import { JOI_SETTINGS, withSessionMiddleware } from "../../Config";
 import middy from "@middy/core";
 import createJoiResponse from "../../utils/createJoiResponse";
 import createSDKErrorResponse from "../../utils/createSDKErrorResponse";
@@ -57,8 +50,6 @@ const main = async (
   };
 };
 
-module.exports.main = middy(main)
-  .use(httpEventNormalizer({ payloadFormatVersion: 2 }))
-  .use(httpJsonBodyParser())
-  .use(inputOutputLogger())
-  .use(httpResponseSerializer(MIDDY_SERIALIZERS));
+// TODO types with API Gateway event and middleware
+// @ts-ignore
+module.exports.main = middy(main).use(withSessionMiddleware);

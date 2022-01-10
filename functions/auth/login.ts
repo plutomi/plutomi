@@ -1,8 +1,4 @@
-import httpEventNormalizer from "@middy/http-event-normalizer";
-import httpJsonBodyParser from "@middy/http-json-body-parser";
-import inputOutputLogger from "@middy/input-output-logger";
 import createJoiResponse from "../../utils/createJoiResponse";
-import httpResponseSerializer from "@middy/http-response-serializer";
 import middy from "@middy/core";
 import Joi from "joi";
 import {
@@ -13,7 +9,7 @@ import {
   WEBSITE_URL,
   sessionDataKeys,
   COOKIE_NAME,
-  MIDDY_SERIALIZERS,
+  withDefaultMiddleware,
 } from "../../Config";
 import createSDKErrorResponse from "../../utils/createSDKErrorResponse";
 import { sealData, unsealData } from "iron-session";
@@ -147,8 +143,6 @@ const main = async (event: APILoginEvent): Promise<CustomLambdaResponse> => {
   return response;
 };
 
-module.exports.main = middy(main)
-  .use(httpEventNormalizer({ payloadFormatVersion: 2 }))
-  .use(httpJsonBodyParser())
-  .use(inputOutputLogger())
-  .use(httpResponseSerializer(MIDDY_SERIALIZERS));
+// TODO types with API Gateway event and middleware
+// @ts-ignore
+module.exports.main = middy(main).use(withDefaultMiddleware);
