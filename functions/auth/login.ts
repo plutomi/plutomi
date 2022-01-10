@@ -123,7 +123,7 @@ const main = async (event: APILoginEvent): Promise<CustomLambdaResponse> => {
 
   const session = {
     ...result.object,
-    expiresAt: Time.futureISO(2, TIME_UNITS.MINUTES), // TODO CHANGE!!!
+    expiresAt: Time.futureISO(12, TIME_UNITS.HOURS), // TODO set in config
   };
   const encryptedCookie = await sealData(session, SESSION_SETTINGS);
   const response = {

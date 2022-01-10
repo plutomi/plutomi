@@ -27,8 +27,6 @@ app.get(
   PublicInfo.getStageQuestions
 );
 
-app.get("/openings", [withAuth], Openings.getAllOpenings);
-
 app.get("/openings/:openingId", [withAuth], Openings.getOpeningById);
 app.delete(
   "/openings/:openingId",

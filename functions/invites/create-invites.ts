@@ -13,8 +13,6 @@ import * as Orgs from "../../models/Orgs";
 import createJoiResponse from "../../utils/createJoiResponse";
 import createSDKErrorResponse from "../../utils/createSDKErrorResponse";
 import { CustomLambdaEvent, CustomLambdaResponse } from "../../types/main";
-const UrlSafeString = require("url-safe-string"),
-  tagGenerator = new UrlSafeString();
 
 interface APICreateInvitesBody {
   recipientEmail?: string;

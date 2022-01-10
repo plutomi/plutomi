@@ -14,8 +14,6 @@ import { sealData } from "iron-session";
 import createJoiResponse from "../../utils/createJoiResponse";
 import createSDKErrorResponse from "../../utils/createSDKErrorResponse";
 import { CustomLambdaEvent, CustomLambdaResponse } from "../../types/main";
-const UrlSafeString = require("url-safe-string"),
-  tagGenerator = new UrlSafeString();
 
 interface APIDeleteOrgPathParameters {
   orgId?: string;

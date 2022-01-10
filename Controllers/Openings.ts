@@ -5,21 +5,6 @@ import * as Openings from "../models/Openings/index";
 import * as Orgs from "../models/Orgs/index";
 import * as Stages from "../models/Stages/index";
 import errorFormatter from "../utils/errorFormatter";
-export const getAllOpenings = async (req: Request, res: Response) => {
-  const [openings, error] = await Orgs.getOpeningsInOrg({
-    orgId: req.session.user.orgId,
-  });
-
-  if (error) {
-    const formattedError = errorFormatter(error);
-    return res.status(formattedError.httpStatusCode).json({
-      message: "An error ocurred retrieving the openings for this org",
-      ...formattedError,
-    });
-  }
-
-  return res.status(200).json(openings);
-};
 
 export const getOpeningById = async (req: Request, res: Response) => {
   const { openingId } = req.params;

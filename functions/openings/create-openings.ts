@@ -5,8 +5,6 @@ import { JOI_SETTINGS, DEFAULTS, withSessionMiddleware } from "../../Config";
 import createJoiResponse from "../../utils/createJoiResponse";
 import createSDKErrorResponse from "../../utils/createSDKErrorResponse";
 import { CustomLambdaEvent, CustomLambdaResponse } from "../../types/main";
-const UrlSafeString = require("url-safe-string"),
-  tagGenerator = new UrlSafeString();
 
 interface APICreateOpeningsBody {
   GSI1SK?: string;
