@@ -1,4 +1,3 @@
-import { APIGatewayProxyEventV2, APIGatewayProxyResultV2 } from "aws-lambda";
 import httpEventNormalizer from "@middy/http-event-normalizer";
 import httpJsonBodyParser from "@middy/http-json-body-parser";
 import inputOutputLogger from "@middy/input-output-logger";
@@ -22,22 +21,24 @@ import { sealData, unsealData } from "iron-session";
 import Sanitize from "../../utils/sanitize";
 import * as Users from "../../models/Users";
 import errorFormatter from "../../utils/errorFormatter";
+import { CustomLambdaEvent } from "../../types/main";
+const schema = Joi.object({
+  queryStringParameters: {
+    callbackUrl: Joi.string().uri(),
+    seal: Joi.string(),
+  },
+}).options(JOI_SETTINGS);
 
-interface RequestLoginLinkAPIBody {
-  email: string;
-  loginMethod: LOGIN_METHODS;
+interface APIRequestLoginLinkQueryStrings {
+  callbackUrl?: string;
+  seal?: string;
+}
+interface AttemptLoginEvent
+  extends Omit<CustomLambdaEvent, "queryStringParameters"> {
+  queryStringParameters: APIRequestLoginLinkQueryStrings;
 }
 
-const main = async (
-  event: APIGatewayProxyEventV2
-): Promise<APIGatewayProxyResultV2> => {
-  const schema = Joi.object({
-    queryStringParameters: {
-      callbackUrl: Joi.string().uri(),
-      seal: Joi.string(),
-    },
-  }).options(JOI_SETTINGS);
-
+const main = async (event: AttemptLoginEvent) => {
   // Validate input
   try {
     await schema.validateAsync(event);
@@ -52,6 +53,7 @@ const main = async (
 
   // Validate that the login link is 1. Valid - syntax wise & 2. Has valid data
   try {
+    // TODO types
     const data: { userId: string; loginLinkId: string } = await unsealData(
       seal,
       LOGIN_LINK_SETTINGS
@@ -61,9 +63,9 @@ const main = async (
     if (!data.userId || !data.loginLinkId) {
       return {
         statusCode: 401,
-        body: JSON.stringify({
+        body: {
           message: "Your link is invalid",
-        }),
+        },
       };
     }
 
@@ -72,9 +74,9 @@ const main = async (
   } catch (error) {
     return {
       statusCode: 400,
-      body: JSON.stringify({
+      body: {
         message: "Bad seal",
-      }),
+      },
     };
   }
 
@@ -91,9 +93,9 @@ const main = async (
   if (!user) {
     return {
       statusCode: 401,
-      body: JSON.stringify({
+      body: {
         message: `Please contact support, your user account appears to be deleted.`,
-      }),
+      },
     };
   }
 
@@ -111,9 +113,9 @@ const main = async (
     if (formattedError.errorMessage === LOGIN_LINK_ALREADY_USED_ERROR) {
       return {
         statusCode: 401,
-        body: JSON.stringify({
+        body: {
           message: "Login link no longer valid",
-        }),
+        },
       };
     }
 
@@ -130,7 +132,7 @@ const main = async (
     headers: {
       Location: callbackUrl,
     },
-    body: JSON.stringify({ message: "Login success!" }),
+    body: { message: "Login success!" },
   };
 
   // If a user has invites, redirect them to the invites page on login regardless of the callback url

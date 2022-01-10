@@ -1,10 +1,7 @@
 import httpEventNormalizer from "@middy/http-event-normalizer";
 import httpJsonBodyParser from "@middy/http-json-body-parser";
-
 import inputOutputLogger from "@middy/input-output-logger";
 import middy from "@middy/core";
-
-import { APIGatewayProxyEventV2, APIGatewayProxyResultV2 } from "aws-lambda";
 import Joi from "joi";
 import {
   DEFAULTS,
@@ -23,7 +20,6 @@ import { sealData } from "iron-session";
 import { API_URL, DOMAIN_NAME } from "../../Config";
 import createJoiResponse from "../../utils/createJoiResponse";
 import httpResponseSerializer from "@middy/http-response-serializer";
-import { AnyNode } from "postcss";
 import { CustomLambdaEvent } from "../../types/main";
 
 const schema = Joi.object({
