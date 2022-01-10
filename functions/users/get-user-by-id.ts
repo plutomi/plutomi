@@ -4,7 +4,6 @@ import {
   DEFAULTS,
   JOI_SETTINGS,
   MIDDY_SERIALIZERS,
-  NO_SESSION_RESPONSE,
 } from "../../Config";
 import httpResponseSerializer from "@middy/http-response-serializer";
 import httpEventNormalizer from "@middy/http-event-normalizer";

@@ -5,7 +5,6 @@ import inputOutputLogger from "@middy/input-output-logger";
 import middy from "@middy/core";
 import Joi from "joi";
 import {
-  NO_SESSION_RESPONSE,
   JOI_SETTINGS,
   JoiOrgId,
   MIDDY_SERIALIZERS,

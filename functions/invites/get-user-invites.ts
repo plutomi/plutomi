@@ -6,7 +6,6 @@ import httpResponseSerializer from "@middy/http-response-serializer";
 import inputOutputLogger from "@middy/input-output-logger";
 import middy from "@middy/core";
 import {
-  NO_SESSION_RESPONSE,
   JOI_SETTINGS,
   MIDDY_SERIALIZERS,
 } from "../../Config";

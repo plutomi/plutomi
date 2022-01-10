@@ -1,18 +1,16 @@
 import * as Users from "../../models/Users";
-import { MIDDY_SERIALIZERS, NO_SESSION_RESPONSE } from "../../Config";
-import httpEventNormalizer from "@middy/http-event-normalizer";
-import httpJsonBodyParser from "@middy/http-json-body-parser";
-import httpResponseSerializer from "@middy/http-response-serializer";
-import inputOutputLogger from "@middy/input-output-logger";
+import {
+  COOKIE_NAME,
+  COOKIE_SETTINGS,
+  withSessionMiddleware,
+} from "../../Config";
 import middy from "@middy/core";
 import createSDKErrorResponse from "../../utils/createSDKErrorResponse";
 import { CustomLambdaEvent, CustomLambdaResponse } from "../../types/main";
-import withAuth from "../../middleware/withAuth";
 const main = async (
   event: CustomLambdaEvent // TODO create type
 ): Promise<CustomLambdaResponse> => {
   const [user, error] = await Users.getUserById({
-    // @ts-ignore // TODO tpes
     userId: event.session.userId,
   });
 
@@ -25,18 +23,17 @@ const main = async (
 
   // User was deleted for some reason
   if (!user) {
-    return NO_SESSION_RESPONSE;
+    return {
+      statusCode: 401,
+      cookies: [`${COOKIE_NAME}=''; Max-Age=-1; ${COOKIE_SETTINGS}`],
+      body: { message: "Please log in again" },
+    };
   }
   return {
     statusCode: 200,
     body: user,
   };
 };
-
-module.exports.main = middy(main)
-  .use(httpEventNormalizer({ payloadFormatVersion: 2 }))
-  .use(httpJsonBodyParser())
-  .use(inputOutputLogger())
-  // @ts-ignore // TODO types
-  .use(withAuth())
-  .use(httpResponseSerializer(MIDDY_SERIALIZERS));
+// TODO types with API Gateway event and middleware
+// @ts-ignore
+module.exports.main = middy(main).use(withSessionMiddleware);

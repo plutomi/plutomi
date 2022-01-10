@@ -1,7 +1,6 @@
 import Joi from "joi";
 import * as Invites from "../../models/Invites";
 import {
-  NO_SESSION_RESPONSE,
   JOI_SETTINGS,
   MIDDY_SERIALIZERS,
 } from "../../Config";

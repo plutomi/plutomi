@@ -8,7 +8,6 @@ import {
   FORBIDDEN_PROPERTIES,
   JOI_SETTINGS,
   MIDDY_SERIALIZERS,
-  NO_SESSION_RESPONSE,
   sessionDataKeys,
   SESSION_SETTINGS,
 } from "../../Config";

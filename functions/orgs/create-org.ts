@@ -1,7 +1,6 @@
 import * as Users from "../../models/Users";
 import Joi from "joi";
 import {
-  NO_SESSION_RESPONSE,
   JOI_SETTINGS,
   DEFAULTS,
   SESSION_SETTINGS,

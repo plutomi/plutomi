@@ -23,27 +23,23 @@ const middleware = (): middy.MiddlewareObj<
     if (sessionError) {
       console.log("Session error");
       /**
-       *  Returning from a Middy middleware cancels the reuest
-       *  we need to return a JSON.stringified body here as the response middleware to format
-       *  the body never gets to run
+       *  Returning from a Middy middleware cancels the request so we have to return here
        */
       request.response = {
         statusCode: 401,
         // @ts-ignore // TODO types, needs V2 result
         cookies: [`${COOKIE_NAME}=''; Max-Age=-1; ${COOKIE_SETTINGS}`],
         body: JSON.stringify({ message: "Please log in again" }),
+        headers: {
+          "Content-Type": "application/json",
+        },
       };
       console.log(request);
       return request.response;
     }
 
-    // TODO gotta figure out middy middleware to auto reject and set cookies
-    // But i think setting session to undefined is fine, TODO cleanup
-    session
-      ? (request.event["session"] = session)
-      : (request.event["session"] = undefined);
-    // TODO add this to lambda type
-    console.log("New event", request);
+    request.event["session"] = session;
+    console.log("Added session to event");
   };
 
   const after: middy.MiddlewareFn<

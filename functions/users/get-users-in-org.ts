@@ -1,5 +1,5 @@
 import * as Orgs from "../../models/Orgs";
-import { DEFAULTS, MIDDY_SERIALIZERS, NO_SESSION_RESPONSE } from "../../Config";
+import { DEFAULTS, MIDDY_SERIALIZERS } from "../../Config";
 import httpEventNormalizer from "@middy/http-event-normalizer";
 import httpJsonBodyParser from "@middy/http-json-body-parser";
 import httpResponseSerializer from "@middy/http-response-serializer";

@@ -248,14 +248,28 @@ export const SWR = {
   INVITES_REFRESH_INTERVAL: 10000,
 };
 
-export const NO_SESSION_RESPONSE = {
-  statusCode: 401,
-  cookies: [`${COOKIE_NAME}=''; Max-Age=-1; ${COOKIE_SETTINGS}`],
-  body: { message: "Please log in again" },
-};
-
 // Schema to validate orgIds against in joi
 export const JoiOrgId = Joi.string().invalid(
   DEFAULTS.NO_ORG,
   tagGenerator.generate(DEFAULTS.NO_ORG)
+);
+
+import httpEventNormalizer from "@middy/http-event-normalizer";
+import httpJsonBodyParser from "@middy/http-json-body-parser";
+import httpResponseSerializer from "@middy/http-response-serializer";
+import inputOutputLogger from "@middy/input-output-logger";
+import withAuth from "./middleware/withAuth";
+
+// Requires session
+export const withSessionMiddleware = [
+  httpEventNormalizer({ payloadFormatVersion: 2 }),
+  httpJsonBodyParser(),
+  inputOutputLogger(),
+  withAuth(),
+  httpResponseSerializer(MIDDY_SERIALIZERS),
+];
+
+// All other requests
+export const defaultMiddleware = withSessionMiddleware.filter(
+  (middleware) => middleware != withAuth()
 );

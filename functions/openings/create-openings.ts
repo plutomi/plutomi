@@ -5,13 +5,7 @@ import inputOutputLogger from "@middy/input-output-logger";
 import middy from "@middy/core";
 import httpResponseSerializer from "@middy/http-response-serializer";
 import Joi from "joi";
-import {
-  NO_SESSION_RESPONSE,
-  JOI_SETTINGS,
-  DEFAULTS,
-  TIME_UNITS,
-  MIDDY_SERIALIZERS,
-} from "../../Config";
+import { JOI_SETTINGS, DEFAULTS, MIDDY_SERIALIZERS } from "../../Config";
 import createJoiResponse from "../../utils/createJoiResponse";
 import createSDKErrorResponse from "../../utils/createSDKErrorResponse";
 import { CustomLambdaEvent, CustomLambdaResponse } from "../../types/main";
