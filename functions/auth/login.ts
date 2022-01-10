@@ -7,7 +7,6 @@ import middy from "@middy/core";
 import Joi from "joi";
 import {
   LOGIN_LINK_SETTINGS,
-  LOGIN_METHODS,
   SESSION_SETTINGS,
   JOI_SETTINGS,
   COOKIE_SETTINGS,
@@ -33,12 +32,12 @@ interface APIRequestLoginLinkQueryStrings {
   callbackUrl?: string;
   seal?: string;
 }
-interface AttemptLoginEvent
+interface APILoginEvent
   extends Omit<CustomLambdaEvent, "queryStringParameters"> {
   queryStringParameters: APIRequestLoginLinkQueryStrings;
 }
 
-const main = async (event: AttemptLoginEvent) => {
+const main = async (event: APILoginEvent) => {
   // Validate input
   try {
     await schema.validateAsync(event);

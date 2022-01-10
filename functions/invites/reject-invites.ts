@@ -13,8 +13,22 @@ import inputOutputLogger from "@middy/input-output-logger";
 import middy from "@middy/core";
 import createJoiResponse from "../../utils/createJoiResponse";
 import createSDKErrorResponse from "../../utils/createSDKErrorResponse";
+import { CustomLambdaEvent } from "../../types/main";
 
-const main = async (event) => {
+const schema = Joi.object({
+  pathParameters: {
+    inviteId: Joi.string(),
+  },
+}).options(JOI_SETTINGS);
+
+interface APIRejectInvitesPathParameters {
+  inviteId?: string;
+}
+interface APIRejectInvitesEvent
+  extends Omit<CustomLambdaEvent, "pathParameters"> {
+  pathParameters: APIRejectInvitesPathParameters;
+}
+const main = async (event: APIRejectInvitesEvent) => {
   const [session, sessionError] = await getSessionFromCookies(event);
   console.log({
     session,
@@ -24,20 +38,13 @@ const main = async (event) => {
     return NO_SESSION_RESPONSE;
   }
 
-  const schema = Joi.object({
-    pathParameters: {
-      inviteId: Joi.string(),
-    },
-  }).options(JOI_SETTINGS);
-
   try {
     await schema.validateAsync(event);
   } catch (error) {
     return createJoiResponse(error);
   }
-  // TODO types
-  // @ts-ignore
-  const { inviteId } = pathParameters;
+
+  const { inviteId } = event.pathParameters;
 
   const [deleted, error] = await Invites.deleteInvite({
     inviteId,

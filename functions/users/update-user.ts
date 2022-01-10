@@ -20,7 +20,21 @@ import middy from "@middy/core";
 import getSessionFromCookies from "../../utils/getSessionFromCookies";
 import createJoiResponse from "../../utils/createJoiResponse";
 import createSDKErrorResponse from "../../utils/createSDKErrorResponse";
-const main = async (event) => {
+import { CustomLambdaEvent } from "../../types/main";
+
+interface APIUpdateUserPathParameters {
+  userId?: string;
+}
+interface APIUpdateUserBody {
+  newValues?: { [key: string]: any };
+}
+interface APIUpdateUserEvent
+  extends Omit<CustomLambdaEvent, "body" | "pathParameters"> {
+  body: APIUpdateUserBody;
+  pathParameters: APIUpdateUserPathParameters;
+}
+
+const main = async (event: APIUpdateUserEvent) => {
   const [session, sessionError] = await getSessionFromCookies(event);
   console.log({
     session,
@@ -44,11 +58,8 @@ const main = async (event) => {
     return createJoiResponse(error);
   }
 
-  // TODO types
-  // @ts-ignore
-  const { userId } = pathParameters;
-  // @ts-ignore
-  const { newValues } = body;
+  const { userId } = event.pathParameters;
+  const { newValues } = event.body;
 
   // TODO RBAC will go here, right now you can only update yourself
   if (userId !== session.userId) {

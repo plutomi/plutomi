@@ -2,7 +2,6 @@ import Joi from "joi";
 import {
   NO_SESSION_RESPONSE,
   JOI_SETTINGS,
-  DEFAULTS,
   JoiOrgId,
   MIDDY_SERIALIZERS,
 } from "../../Config";
@@ -15,10 +14,24 @@ import getSessionFromCookies from "../../utils/getSessionFromCookies";
 import * as Orgs from "../../models/Orgs";
 import createJoiResponse from "../../utils/createJoiResponse";
 import createSDKErrorResponse from "../../utils/createSDKErrorResponse";
+import { CustomLambdaEvent } from "../../types/main";
 const UrlSafeString = require("url-safe-string"),
   tagGenerator = new UrlSafeString();
 
-const main = async (event) => {
+const schema = Joi.object({
+  pathParameters: {
+    orgId: JoiOrgId,
+  },
+}).options(JOI_SETTINGS);
+
+interface APIGetOrgInfoPathParameters {
+  orgId?: string;
+}
+interface APIGetOrgInfoOrgEvent
+  extends Omit<CustomLambdaEvent, "pathParameters"> {
+  pathParameters: APIGetOrgInfoPathParameters;
+}
+const main = async (event: APIGetOrgInfoOrgEvent) => {
   const [session, sessionError] = await getSessionFromCookies(event);
   console.log({
     session,
@@ -28,21 +41,13 @@ const main = async (event) => {
     return NO_SESSION_RESPONSE;
   }
 
-  const schema = Joi.object({
-    pathParameters: {
-      orgId: JoiOrgId,
-    },
-  }).options(JOI_SETTINGS);
-
   try {
     await schema.validateAsync(event);
   } catch (error) {
     return createJoiResponse(error);
   }
 
-  // TODO types
-  // @ts-ignore
-  const orgId = tagGenerator.generate(pathParameters.orgId);
+  const orgId = tagGenerator.generate(event.pathParameters.orgId);
 
   if (orgId !== session.orgId) {
     return {

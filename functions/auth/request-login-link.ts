@@ -35,19 +35,19 @@ const schema = Joi.object({
 }).options(JOI_SETTINGS);
 
 interface APIRequestLoginLinkBody {
-  email: string;
-  loginMethod: string;
+  email?: string;
+  loginMethod?: string;
 }
 interface APIRequestLoginLinkQueryStrings {
   callbackUrl?: string;
 }
-interface RequestLoginLinkEvent
+interface APIRequestLoginLinkEvent
   extends Omit<CustomLambdaEvent, "body" | "queryStringParameters"> {
   body: APIRequestLoginLinkBody;
   queryStringParameters: APIRequestLoginLinkQueryStrings;
 }
 
-const main = async (event: RequestLoginLinkEvent) => {
+const main = async (event: APIRequestLoginLinkEvent) => {
   try {
     await schema.validateAsync(event);
   } catch (error) {

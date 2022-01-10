@@ -7,8 +7,9 @@ import { UserSessionData } from "../types/main";
  * @param cookies
  * @param cookieName
  */
+// TODO this type is broken as each event type differs
 export default async function getSessionFromCookies(
-  event: APIGatewayProxyEventV2
+  event
 ): Promise<[UserSessionData, null] | [null, string]> {
   const cookies = event.cookies || [];
 

@@ -4,9 +4,10 @@ import httpJsonBodyParser from "@middy/http-json-body-parser";
 import httpResponseSerializer from "@middy/http-response-serializer";
 import inputOutputLogger from "@middy/input-output-logger";
 import middy from "@middy/core";
+import { APIGatewayProxyEventV2 } from "aws-lambda";
 // TODO create logoout event in Dynamo
 
-const main = async (event) => {
+const main = async (event: APIGatewayProxyEventV2) => {
   return {
     statusCode: 200,
     cookies: [`${COOKIE_NAME}=''; Max-Age=-1; ${COOKIE_SETTINGS}`],

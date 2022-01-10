@@ -20,10 +20,28 @@ import * as Orgs from "../../models/Orgs";
 import { sealData } from "iron-session";
 import createJoiResponse from "../../utils/createJoiResponse";
 import createSDKErrorResponse from "../../utils/createSDKErrorResponse";
+import { CustomLambdaEvent } from "../../types/main";
 const UrlSafeString = require("url-safe-string"),
   tagGenerator = new UrlSafeString();
 
-const main = async (event) => {
+const schema = Joi.object({
+  body: {
+    orgId: JoiOrgId,
+    displayName: Joi.string().invalid(
+      DEFAULTS.NO_ORG,
+      tagGenerator.generate(DEFAULTS.NO_ORG)
+    ),
+  },
+}).options(JOI_SETTINGS);
+
+interface APICreateOrgBody {
+  orgId?: string;
+  displayName?: string;
+}
+interface APICreateOrgEvent extends Omit<CustomLambdaEvent, "body"> {
+  body: APICreateOrgBody;
+}
+const main = async (event: APICreateOrgEvent) => {
   const [session, sessionError] = await getSessionFromCookies(event);
   console.log({
     session,
@@ -32,16 +50,6 @@ const main = async (event) => {
   if (sessionError) {
     return NO_SESSION_RESPONSE;
   }
-
-  const schema = Joi.object({
-    body: {
-      orgId: JoiOrgId,
-      displayName: Joi.string().invalid(
-        DEFAULTS.NO_ORG,
-        tagGenerator.generate(DEFAULTS.NO_ORG)
-      ),
-    },
-  }).options(JOI_SETTINGS);
 
   try {
     await schema.validateAsync(event);
@@ -76,11 +84,8 @@ const main = async (event) => {
       },
     };
   }
-  // TODO types
-  // @ts-ignore
-  const { displayName } = body;
-  // @ts-ignore
-  const orgId = tagGenerator.generate(body.orgId);
+  const { displayName } = event.body;
+  const orgId = tagGenerator.generate(event.body.orgId);
 
   const [created, failed] = await Orgs.createAndJoinOrg({
     userId: session.userId,

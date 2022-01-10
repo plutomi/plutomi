@@ -14,7 +14,21 @@ import middy from "@middy/core";
 import getSessionFromCookies from "../../utils/getSessionFromCookies";
 import createJoiResponse from "../../utils/createJoiResponse";
 import createSDKErrorResponse from "../../utils/createSDKErrorResponse";
-const main = async (event) => {
+import { CustomLambdaEvent } from "../../types/main";
+const schema = Joi.object({
+  pathParameters: {
+    userId: Joi.string(),
+  },
+}).options(JOI_SETTINGS);
+
+interface APIUserByIdPathParameters {
+  userId?: string;
+}
+interface APIUserByIdEvent extends Omit<CustomLambdaEvent, "pathParameters"> {
+  pathParameters: APIUserByIdPathParameters;
+}
+
+const main = async (event: APIUserByIdEvent) => {
   const [session, sessionError] = await getSessionFromCookies(event);
   console.log({
     session,
@@ -24,22 +38,13 @@ const main = async (event) => {
     return NO_SESSION_RESPONSE;
   }
 
-  const schema = Joi.object({
-    pathParameters: {
-      userId: Joi.string(),
-    },
-  }).options(JOI_SETTINGS);
-
-  // Validate input
   try {
     await schema.validateAsync(event);
   } catch (error) {
     return createJoiResponse(error);
   }
 
-  // TODO types
-  // @ts-ignore
-  const { userId } = pathParameters;
+  const { userId } = event.pathParameters;
 
   if (
     // Block users who are not in an org from being able to view other users before making the Dynamo call

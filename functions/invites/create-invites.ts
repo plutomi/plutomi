@@ -18,6 +18,7 @@ import * as Orgs from "../../models/Orgs";
 import getSessionFromCookies from "../../utils/getSessionFromCookies";
 import createJoiResponse from "../../utils/createJoiResponse";
 import createSDKErrorResponse from "../../utils/createSDKErrorResponse";
+import { CustomLambdaEvent } from "../../types/main";
 const UrlSafeString = require("url-safe-string"),
   tagGenerator = new UrlSafeString();
 
@@ -27,7 +28,14 @@ const schema = Joi.object({
   },
 }).options(JOI_SETTINGS);
 
-const main = async (event) => {
+interface APICreateInvitesBody {
+  recipientEmail?: string;
+}
+interface APICreateInvitesEvent extends Omit<CustomLambdaEvent, "body"> {
+  body: APICreateInvitesBody;
+}
+
+const main = async (event: APICreateInvitesEvent) => {
   const [session, sessionError] = await getSessionFromCookies(event);
   console.log({
     session,
@@ -37,16 +45,13 @@ const main = async (event) => {
     return NO_SESSION_RESPONSE;
   }
 
-  // Validate input
   try {
     await schema.validateAsync(event);
   } catch (error) {
     return createJoiResponse(error);
   }
 
-  // TODO types
-  // @ts-ignore
-  const { recipientEmail } = body;
+  const { recipientEmail } = event.body;
 
   if (session.email === recipientEmail) {
     return {

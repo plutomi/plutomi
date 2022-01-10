@@ -19,10 +19,23 @@ import * as Orgs from "../../models/Orgs";
 import { sealData } from "iron-session";
 import createJoiResponse from "../../utils/createJoiResponse";
 import createSDKErrorResponse from "../../utils/createSDKErrorResponse";
+import { CustomLambdaEvent } from "../../types/main";
 const UrlSafeString = require("url-safe-string"),
   tagGenerator = new UrlSafeString();
 
-const main = async (event) => {
+const schema = Joi.object({
+  pathParameters: {
+    orgId: JoiOrgId,
+  },
+}).options(JOI_SETTINGS);
+
+interface APIDeleteOrgPathParameters {
+  orgId?: string;
+}
+interface APIDeleteOrgEvent extends Omit<CustomLambdaEvent, "pathParameters"> {
+  pathParameters: APIDeleteOrgPathParameters;
+}
+const main = async (event: APIDeleteOrgEvent) => {
   const [session, sessionError] = await getSessionFromCookies(event);
   console.log({
     session,
@@ -32,20 +45,13 @@ const main = async (event) => {
     return NO_SESSION_RESPONSE;
   }
 
-  const schema = Joi.object({
-    pathParameters: {
-      orgId: JoiOrgId,
-    },
-  }).options(JOI_SETTINGS);
-
   try {
     await schema.validateAsync(event);
   } catch (error) {
     return createJoiResponse(error);
   }
-  // TODO
-  // @ts-ignore
-  const orgId = tagGenerator.generate(pathParameters.orgId);
+
+  const orgId = tagGenerator.generate(event.pathParameters.orgId);
 
   if (session.orgId !== orgId) {
     return {

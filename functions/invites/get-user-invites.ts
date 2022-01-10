@@ -13,7 +13,23 @@ import {
 import getSessionFromCookies from "../../utils/getSessionFromCookies";
 import createJoiResponse from "../../utils/createJoiResponse";
 import createSDKErrorResponse from "../../utils/createSDKErrorResponse";
-const main = async (event) => {
+import { CustomLambdaEvent } from "../../types/main";
+
+const schema = Joi.object({
+  pathParameters: {
+    userId: Joi.string(),
+  },
+}).options(JOI_SETTINGS);
+
+interface APIGetUserInvitesPathParameters {
+  userId?: string;
+}
+interface APIGetUserInvitesEvent
+  extends Omit<CustomLambdaEvent, "pathParameters"> {
+  pathParameters: APIGetUserInvitesPathParameters;
+}
+
+const main = async (event: APIGetUserInvitesEvent) => {
   const [session, sessionError] = await getSessionFromCookies(event);
   console.log({
     session,
@@ -23,21 +39,13 @@ const main = async (event) => {
     return NO_SESSION_RESPONSE;
   }
 
-  const schema = Joi.object({
-    pathParameters: {
-      userId: Joi.string(),
-    },
-  }).options(JOI_SETTINGS);
-
   try {
     await schema.validateAsync(event);
   } catch (error) {
     return createJoiResponse(error);
   }
 
-  // TODO types
-  // @ts-ignore
-  const { userId } = pathParameters;
+  const { userId } = event.pathParameters;
   if (userId !== session.userId) {
     return {
       statusCode: 403,
