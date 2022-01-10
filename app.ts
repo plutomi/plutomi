@@ -28,7 +28,6 @@ app.get(
 );
 
 app.get("/openings", [withAuth], Openings.getAllOpenings);
-app.post("/openings", [withAuth], Openings.createOpeningController); // TODO fix name
 
 app.get("/openings/:openingId", [withAuth], Openings.getOpeningById);
 app.delete(

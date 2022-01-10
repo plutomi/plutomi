@@ -5,7 +5,7 @@
   "scripts": {
     "build": "next build",
     "lint": "next lint",
-    "dev": "cross-env NODE_ENV=development cdk deploy development-DynamoDBStack development-StreamProcessorStack development-APIStack development-CommsMachineStack development-EventBridgeStack development-APIAuthServiceStack development-APIUsersServiceStack development-APIOrgsServiceStack development-APIInvitesServiceStack && next dev",
+    "dev": "cross-env NODE_ENV=development cdk deploy development-DynamoDBStack development-StreamProcessorStack development-APIStack development-CommsMachineStack development-EventBridgeStack development-APIAuthServiceStack development-APIUsersServiceStack development-APIOrgsServiceStack development-APIInvitesServiceStack development-APIOpeningsServiceStack && next dev",
     "deploy-prod": "cross-env NODE_ENV=production  cdk deploy production-DynamoDBStack production-StreamProcessorStack production-APIStack production-CommsMachineStack production-EventBridgeStack FrontendStack"
   },
   "dependencies": {
@@ -44,6 +44,7 @@
     "@middy/core": "^2.5.4",
     "@middy/http-event-normalizer": "^2.5.4",
     "@middy/http-json-body-parser": "^2.5.4",
+    "@middy/http-response-serializer": "^2.5.4",
     "@middy/input-output-logger": "^2.5.4",
     "@sls-next/cdk-construct": "^3.7.0-alpha.0",
     "@sls-next/lambda-at-edge": "^3.7.0-alpha.0",

@@ -21,46 +21,6 @@ export const getAllOpenings = async (req: Request, res: Response) => {
   return res.status(200).json(openings);
 };
 
-export const createOpeningController = async (req: Request, res: Response) => {
-  const { GSI1SK } = req.body;
-
-  if (req.session.user.orgId === DEFAULTS.NO_ORG) {
-    return res.status(403).json({
-      message: "Please create an organization before creating an opening",
-    });
-  }
-
-  const createOpeningInput = {
-    orgId: req.session.user.orgId,
-    GSI1SK: GSI1SK,
-  };
-
-  const schema = Joi.object({
-    orgId: Joi.string(),
-    GSI1SK: Joi.string(),
-  }).options({ presence: "required" });
-
-  // Validate input
-  try {
-    await schema.validateAsync(createOpeningInput);
-  } catch (error) {
-    return res.status(400).json({ message: `${error.message}` });
-  }
-
-  const [created, createOpeningError] = await Openings.createOpening(
-    createOpeningInput
-  );
-
-  if (createOpeningError) {
-    const formattedError = errorFormatter(createOpeningError);
-    return res.status(formattedError.httpStatusCode).json({
-      message: "An error ocurred creating opening",
-      ...formattedError,
-    });
-  }
-  return res.status(201).json({ message: "Opening created!" });
-};
-
 export const getOpeningById = async (req: Request, res: Response) => {
   const { openingId } = req.params;
 
@@ -177,8 +137,6 @@ export const updateOpeningController = async (req: Request, res: Response) => {
   }
   return res.status(200).json({ message: "Opening updated!" });
 };
-
-
 
 export const getStages = async (req: Request, res: Response) => {
   const { openingId } = req.params;

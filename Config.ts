@@ -35,6 +35,25 @@ export const JOI_SETTINGS: Joi.ValidationOptions = {
   stripUnknown: true,
 };
 
+export const MIDDY_SERIALIZERS = {
+  serializers: [
+    // TODO - APIGatewayProxyResultV2 needs types since we can remove JSON.stringify
+    {
+      regex: /^application\/xml$/,
+      serializer: ({ body }) => `<message>${body}</message>`,
+    },
+    {
+      regex: /^application\/json$/,
+      serializer: ({ body }) => JSON.stringify(body),
+    },
+    {
+      regex: /^text\/plain$/,
+      serializer: ({ body }) => body,
+    },
+  ],
+  default: "application/json",
+};
+
 export enum ENTITY_TYPES {
   APPLICANT = "APPLICANT",
   APPLICANT_RESPONSE = "APPLICANT_RESPONSE",

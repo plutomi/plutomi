@@ -81,6 +81,16 @@ export interface CDKLambda {
   maxConcurrency?: number;
 }
 
+export interface CustomLambdaEvent
+  extends Omit<
+    APIGatewayProxyEventV2,
+    "body" | "queryStringParameters" | "pathParameters"
+  > {
+  body: { [key: string]: any };
+  queryStringParameters: { [key: string]: string };
+  pathParameters: { [key: string]: string };
+}
+
 export interface LambdaAPIProps extends StackProps {
   table: Table;
   api: HttpApi;

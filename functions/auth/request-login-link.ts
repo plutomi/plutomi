@@ -13,6 +13,7 @@ import {
   TIME_UNITS,
   JOI_SETTINGS,
   WEBSITE_URL,
+  MIDDY_SERIALIZERS,
 } from "../../Config";
 import createSDKErrorResponse from "../../utils/createSDKErrorResponse";
 import * as Time from "../../utils/time";
@@ -21,6 +22,9 @@ import { nanoid } from "nanoid";
 import { sealData } from "iron-session";
 import { API_URL, DOMAIN_NAME } from "../../Config";
 import createJoiResponse from "../../utils/createJoiResponse";
+import httpResponseSerializer from "@middy/http-response-serializer";
+import { AnyNode } from "postcss";
+import { CustomLambdaEvent } from "../../types/main";
 
 const schema = Joi.object({
   body: {
@@ -34,17 +38,26 @@ const schema = Joi.object({
   },
 }).options(JOI_SETTINGS);
 
-const main = async (
-  event: APIGatewayProxyEventV2
-): Promise<APIGatewayProxyResultV2> => {
+interface APIRequestLoginLinkBody {
+  email: string;
+  loginMethod: string;
+}
+interface APIRequestLoginLinkQueryStrings {
+  callbackUrl?: string;
+}
+interface RequestLoginLinkEvent
+  extends Omit<CustomLambdaEvent, "body" | "queryStringParameters"> {
+  body: APIRequestLoginLinkBody;
+  queryStringParameters: APIRequestLoginLinkQueryStrings;
+}
+
+const main = async (event: RequestLoginLinkEvent) => {
   try {
     await schema.validateAsync(event);
   } catch (error) {
     return createJoiResponse(error);
   }
 
-  // TODO types
-  // @ts-ignore
   const { email, loginMethod } = event.body;
   const { callbackUrl } = event.queryStringParameters;
 
@@ -75,9 +88,9 @@ const main = async (
   if (!user.canReceiveEmails && loginMethod === LOGIN_METHODS.EMAIL) {
     return {
       statusCode: 403,
-      body: JSON.stringify({
+      body: {
         message: `${user.email} is unable to receive emails, please reach out to support@plutomi.com to opt back in!`,
-      }),
+      },
     };
   }
 
@@ -101,9 +114,9 @@ const main = async (
   ) {
     return {
       statusCode: 403,
-      body: JSON.stringify({
+      body: {
         message: "You're doing that too much, please try again later",
-      }),
+      },
     };
   }
 
@@ -146,20 +159,21 @@ const main = async (
   if (loginMethod === LOGIN_METHODS.GOOGLE) {
     return {
       statusCode: 200,
-      body: JSON.stringify({ message: loginLinkUrl }),
+      body: { message: loginLinkUrl },
     };
   }
 
   // Else, send the email asynchronously w/ step functions
   return {
     statusCode: 201,
-    body: JSON.stringify({
+    body: {
       message: `We've sent a magic login link to your email!`,
-    }),
+    },
   };
 };
 
 module.exports.main = middy(main)
   .use(httpEventNormalizer({ payloadFormatVersion: 2 }))
   .use(httpJsonBodyParser())
-  .use(inputOutputLogger());
+  .use(inputOutputLogger())
+  .use(httpResponseSerializer(MIDDY_SERIALIZERS));

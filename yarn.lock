@@ -3178,6 +3178,14 @@
   dependencies:
     "@middy/util" "^2.5.4"
 
+"@middy/http-response-serializer@^2.5.4":
+  "integrity" "sha512-cRMLOtAmbxWeZ3Ajexfs897S0uPBtEpJ3oLJ+MWeiTlQkHOv0+Ey2ankFVxQAeh4K8sI56FgFpoMtTxF1on0kg=="
+  "resolved" "https://registry.npmjs.org/@middy/http-response-serializer/-/http-response-serializer-2.5.4.tgz"
+  "version" "2.5.4"
+  dependencies:
+    "@hapi/accept" "5.0.2"
+    "@middy/util" "^2.5.4"
+
 "@middy/input-output-logger@^2.5.4":
   "integrity" "sha512-Xo83EWk0LJjPTv85fN3AzfeY1gqRCes6Lafd6XZ41Oetyvd9ycWxfUfXLw99cSWuu9WZN81WTL397dKbTIJ6Mw=="
   "resolved" "https://registry.npmjs.org/@middy/input-output-logger/-/input-output-logger-2.5.4.tgz"

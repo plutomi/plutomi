@@ -11,6 +11,7 @@ import StreamProcessorStack from "../lib/StreamProcessorStack";
 import APIUsersServiceStack from "../lib/APIUsersServiceStack";
 import APIOrgsServiceStack from "../lib/APIOrgsServiceStack";
 import APIInvitesServiceStack from "../lib/APIInvitesServiceStack";
+import APIOpeningsServiceStack from "../lib/APIOpeningsServiceStack";
 import { Builder } from "@sls-next/lambda-at-edge";
 
 // Run the serverless builder before deploying
@@ -46,6 +47,12 @@ builder
     new APIAuthServiceStack(
       app,
       `${process.env.NODE_ENV}-APIAuthServiceStack`,
+      { table, api }
+    );
+
+    new APIOpeningsServiceStack(
+      app,
+      `${process.env.NODE_ENV}-APIOpeningsServiceStack`,
       { table, api }
     );
 

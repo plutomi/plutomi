@@ -1,10 +1,10 @@
 import { APIGatewayProxyEventV2, APIGatewayProxyResultV2 } from "aws-lambda";
 import httpEventNormalizer from "@middy/http-event-normalizer";
 import httpJsonBodyParser from "@middy/http-json-body-parser";
-
 import inputOutputLogger from "@middy/input-output-logger";
-import middy from "@middy/core";
 import createJoiResponse from "../../utils/createJoiResponse";
+import httpResponseSerializer from "@middy/http-response-serializer";
+import middy from "@middy/core";
 import Joi from "joi";
 import {
   LOGIN_LINK_SETTINGS,
@@ -15,6 +15,7 @@ import {
   WEBSITE_URL,
   sessionDataKeys,
   COOKIE_NAME,
+  MIDDY_SERIALIZERS,
 } from "../../Config";
 import createSDKErrorResponse from "../../utils/createSDKErrorResponse";
 import { sealData, unsealData } from "iron-session";
@@ -22,7 +23,7 @@ import Sanitize from "../../utils/sanitize";
 import * as Users from "../../models/Users";
 import errorFormatter from "../../utils/errorFormatter";
 
-export interface RequestLoginLinkAPIBody {
+interface RequestLoginLinkAPIBody {
   email: string;
   loginMethod: LOGIN_METHODS;
 }
@@ -148,4 +149,5 @@ const main = async (
 module.exports.main = middy(main)
   .use(httpEventNormalizer({ payloadFormatVersion: 2 }))
   .use(httpJsonBodyParser())
-  .use(inputOutputLogger());
+  .use(inputOutputLogger())
+  .use(httpResponseSerializer(MIDDY_SERIALIZERS));
