@@ -10,10 +10,11 @@ import {
   COOKIE_SETTINGS,
   JoiOrgId,
   COOKIE_NAME,
+  MIDDY_SERIALIZERS,
 } from "../../Config";
 import httpEventNormalizer from "@middy/http-event-normalizer";
 import httpJsonBodyParser from "@middy/http-json-body-parser";
-
+import httpResponseSerializer from "@middy/http-response-serializer";
 import inputOutputLogger from "@middy/input-output-logger";
 import middy from "@middy/core";
 import getSessionFromCookies from "../../utils/getSessionFromCookies";
@@ -24,9 +25,7 @@ import createSDKErrorResponse from "../../utils/createSDKErrorResponse";
 const UrlSafeString = require("url-safe-string"),
   tagGenerator = new UrlSafeString();
 
-export async function main(
-  event: APIGatewayProxyEventV2
-): Promise<APIGatewayProxyResultV2> {
+const main = async (event) => {
   const [session, sessionError] = await getSessionFromCookies(event);
   console.log({
     session,
@@ -55,7 +54,7 @@ export async function main(
   if (session.orgId !== DEFAULTS.NO_ORG) {
     return {
       statusCode: 403,
-      body: JSON.stringify({ message: `You already belong to an org!` }),
+      body: { message: `You already belong to an org!` },
     };
   }
 
@@ -73,10 +72,10 @@ export async function main(
   if (pendingInvites && pendingInvites.length > 0) {
     return {
       statusCode: 403,
-      body: JSON.stringify({
+      body: {
         message:
           "You seem to have pending invites, please accept or reject them before creating an org :)",
-      }),
+      },
     };
   }
   // TODO types
@@ -101,11 +100,12 @@ export async function main(
   return {
     statusCode: 201,
     cookies: [`${COOKIE_NAME}=${encryptedCookie}; ${COOKIE_SETTINGS}`],
-    body: JSON.stringify({ message: "Org created!", orgId }),
+    body: { message: "Org created!", orgId },
   };
-}
+};
 
 module.exports.main = middy(main)
   .use(httpEventNormalizer({ payloadFormatVersion: 2 }))
   .use(httpJsonBodyParser())
-  .use(inputOutputLogger());
+  .use(inputOutputLogger())
+  .use(httpResponseSerializer(MIDDY_SERIALIZERS));

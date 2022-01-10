@@ -5,10 +5,11 @@ import {
   JOI_SETTINGS,
   DEFAULTS,
   JoiOrgId,
+  MIDDY_SERIALIZERS,
 } from "../../Config";
 import httpEventNormalizer from "@middy/http-event-normalizer";
 import httpJsonBodyParser from "@middy/http-json-body-parser";
-
+import httpResponseSerializer from "@middy/http-response-serializer";
 import inputOutputLogger from "@middy/input-output-logger";
 import middy from "@middy/core";
 import getSessionFromCookies from "../../utils/getSessionFromCookies";
@@ -18,9 +19,7 @@ import createSDKErrorResponse from "../../utils/createSDKErrorResponse";
 const UrlSafeString = require("url-safe-string"),
   tagGenerator = new UrlSafeString();
 
-const main = async (
-  event: APIGatewayProxyEventV2
-): Promise<APIGatewayProxyResultV2> => {
+const main = async (event) => {
   const [session, sessionError] = await getSessionFromCookies(event);
   console.log({
     session,
@@ -49,9 +48,9 @@ const main = async (
   if (orgId !== session.orgId) {
     return {
       statusCode: 403,
-      body: JSON.stringify({
+      body: {
         message: "You cannot view this org",
-      }),
+      },
     };
   }
 
@@ -64,17 +63,18 @@ const main = async (
   if (!org) {
     return {
       statusCode: 404,
-      body: JSON.stringify({ message: "Org not found" }),
+      body: { message: "Org not found" },
     };
   }
 
   return {
     statusCode: 200,
-    body: JSON.stringify(org),
+    body: org,
   };
 };
 
 module.exports.main = middy(main)
   .use(httpEventNormalizer({ payloadFormatVersion: 2 }))
   .use(httpJsonBodyParser())
-  .use(inputOutputLogger());
+  .use(inputOutputLogger())
+  .use(httpResponseSerializer(MIDDY_SERIALIZERS));

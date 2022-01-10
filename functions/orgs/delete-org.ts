@@ -8,10 +8,11 @@ import {
   COOKIE_SETTINGS,
   JoiOrgId,
   COOKIE_NAME,
+  MIDDY_SERIALIZERS,
 } from "../../Config";
 import httpEventNormalizer from "@middy/http-event-normalizer";
 import httpJsonBodyParser from "@middy/http-json-body-parser";
-
+import httpResponseSerializer from "@middy/http-response-serializer";
 import inputOutputLogger from "@middy/input-output-logger";
 import middy from "@middy/core";
 import getSessionFromCookies from "../../utils/getSessionFromCookies";
@@ -22,9 +23,7 @@ import createSDKErrorResponse from "../../utils/createSDKErrorResponse";
 const UrlSafeString = require("url-safe-string"),
   tagGenerator = new UrlSafeString();
 
-const main = async (
-  event: APIGatewayProxyEventV2
-): Promise<APIGatewayProxyResultV2> => {
+const main = async (event) => {
   const [session, sessionError] = await getSessionFromCookies(event);
   console.log({
     session,
@@ -45,17 +44,16 @@ const main = async (
   } catch (error) {
     return createJoiResponse(error);
   }
-
-  // TODO types
+  // TODO
   // @ts-ignore
   const orgId = tagGenerator.generate(pathParameters.orgId);
 
   if (session.orgId !== orgId) {
     return {
       statusCode: 403,
-      body: JSON.stringify({
+      body: {
         message: "You cannot delete this org as you do not belong to it",
-      }),
+      },
     };
   }
 
@@ -68,15 +66,15 @@ const main = async (
   if (!org) {
     return {
       statusCode: 404,
-      body: JSON.stringify({ message: "Org not found" }),
+      body: { message: "Org not found" },
     };
   }
   if (org.totalUsers > 1) {
     return {
       statusCode: 403,
-      body: JSON.stringify({
+      body: {
         message: "You cannot delete this org as there are other users in it",
-      }),
+      },
     };
   }
 
@@ -102,11 +100,12 @@ const main = async (
   return {
     statusCode: 201,
     cookies: [`${COOKIE_NAME}=${encryptedCookie}; ${COOKIE_SETTINGS}`],
-    body: JSON.stringify({ message: "Org deleted!" }),
+    body: { message: "Org deleted!" },
   };
 };
 
 module.exports.main = middy(main)
   .use(httpEventNormalizer({ payloadFormatVersion: 2 }))
   .use(httpJsonBodyParser())
-  .use(inputOutputLogger());
+  .use(inputOutputLogger())
+  .use(httpResponseSerializer(MIDDY_SERIALIZERS));
