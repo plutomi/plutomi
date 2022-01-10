@@ -1,4 +1,3 @@
-import { APIGatewayProxyEventV2, APIGatewayProxyResultV2 } from "aws-lambda";
 import Joi from "joi";
 import * as Invites from "../../models/Invites";
 import {

@@ -1,4 +1,3 @@
-import { APIGatewayProxyEventV2, APIGatewayProxyResultV2 } from "aws-lambda";
 import * as Users from "../../models/Users";
 import Joi from "joi";
 import httpEventNormalizer from "@middy/http-event-normalizer";

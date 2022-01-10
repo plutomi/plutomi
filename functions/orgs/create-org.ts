@@ -1,11 +1,9 @@
-import { APIGatewayProxyEventV2, APIGatewayProxyResultV2 } from "aws-lambda";
 import * as Users from "../../models/Users";
 import Joi from "joi";
 import {
   NO_SESSION_RESPONSE,
   JOI_SETTINGS,
   DEFAULTS,
-  sessionDataKeys,
   SESSION_SETTINGS,
   COOKIE_SETTINGS,
   JoiOrgId,

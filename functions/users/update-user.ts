@@ -1,15 +1,13 @@
-import { APIGatewayProxyEventV2, APIGatewayProxyResultV2 } from "aws-lambda";
-import { withSessionEvent } from "../../types/main";
 import Sanitize from "../../utils/sanitize";
 import * as Users from "../../models/Users";
-import { SessionData } from "../../types/main";
+import httpResponseSerializer from "@middy/http-response-serializer";
 import Joi from "joi";
 import {
   COOKIE_NAME,
   COOKIE_SETTINGS,
-  DEFAULTS,
   FORBIDDEN_PROPERTIES,
   JOI_SETTINGS,
+  MIDDY_SERIALIZERS,
   NO_SESSION_RESPONSE,
   sessionDataKeys,
   SESSION_SETTINGS,
@@ -17,16 +15,12 @@ import {
 import { sealData } from "iron-session";
 import httpEventNormalizer from "@middy/http-event-normalizer";
 import httpJsonBodyParser from "@middy/http-json-body-parser";
-
 import inputOutputLogger from "@middy/input-output-logger";
 import middy from "@middy/core";
-
 import getSessionFromCookies from "../../utils/getSessionFromCookies";
 import createJoiResponse from "../../utils/createJoiResponse";
 import createSDKErrorResponse from "../../utils/createSDKErrorResponse";
-const main = async (
-  event: APIGatewayProxyEventV2
-): Promise<APIGatewayProxyResultV2> => {
+const main = async (event) => {
   const [session, sessionError] = await getSessionFromCookies(event);
   console.log({
     session,
@@ -60,7 +54,7 @@ const main = async (
   if (userId !== session.userId) {
     return {
       statusCode: 403,
-      body: JSON.stringify({ message: "You cannot update another user" }),
+      body: { message: "You cannot update another user" },
     };
   }
 
@@ -74,7 +68,7 @@ const main = async (
   if (Object.keys(filteredValues.object).length === 0) {
     return {
       statusCode: 400,
-      body: JSON.stringify({ message: "All properties are invalid" }),
+      body: { message: "All properties are invalid" },
     };
   }
   const updateUserInput = {
@@ -103,9 +97,9 @@ const main = async (
     return {
       statusCode: 200,
       cookies: [`${COOKIE_NAME}=${encryptedCookie}; ${COOKIE_SETTINGS}`],
-      body: JSON.stringify({
+      body: {
         message: customMessage,
-      }),
+      },
     };
   }
   // When updating another user
@@ -117,13 +111,14 @@ const main = async (
 
   return {
     statusCode: 200,
-    body: JSON.stringify({
+    body: {
       message: customMessage,
-    }),
+    },
   };
 };
 
 module.exports.main = middy(main)
   .use(httpEventNormalizer({ payloadFormatVersion: 2 }))
   .use(httpJsonBodyParser())
-  .use(inputOutputLogger());
+  .use(inputOutputLogger())
+  .use(httpResponseSerializer(MIDDY_SERIALIZERS));

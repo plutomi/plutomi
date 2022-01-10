@@ -1,6 +1,6 @@
 import { APIGatewayProxyEventV2 } from "aws-lambda";
 import { unsealData } from "iron-session";
-import { COOKIE_NAME, DEFAULTS, SESSION_SETTINGS } from "../Config";
+import { COOKIE_NAME, SESSION_SETTINGS } from "../Config";
 import { UserSessionData } from "../types/main";
 /**
  *  Finds an encrypted session seal in a list of cookies form a lambda event
