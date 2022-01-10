@@ -15,12 +15,6 @@ import createJoiResponse from "../../utils/createJoiResponse";
 import createSDKErrorResponse from "../../utils/createSDKErrorResponse";
 import { CustomLambdaEvent } from "../../types/main";
 
-const schema = Joi.object({
-  pathParameters: {
-    inviteId: Joi.string(),
-  },
-}).options(JOI_SETTINGS);
-
 interface APIRejectInvitesPathParameters {
   inviteId?: string;
 }
@@ -28,6 +22,13 @@ interface APIRejectInvitesEvent
   extends Omit<CustomLambdaEvent, "pathParameters"> {
   pathParameters: APIRejectInvitesPathParameters;
 }
+
+const schema = Joi.object({
+  pathParameters: {
+    inviteId: Joi.string(),
+  },
+}).options(JOI_SETTINGS);
+
 const main = async (event: APIRejectInvitesEvent) => {
   const [session, sessionError] = await getSessionFromCookies(event);
 

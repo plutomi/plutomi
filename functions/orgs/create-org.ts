@@ -24,6 +24,14 @@ import { CustomLambdaEvent } from "../../types/main";
 const UrlSafeString = require("url-safe-string"),
   tagGenerator = new UrlSafeString();
 
+interface APICreateOrgBody {
+  orgId?: string;
+  displayName?: string;
+}
+interface APICreateOrgEvent extends Omit<CustomLambdaEvent, "body"> {
+  body: APICreateOrgBody;
+}
+
 const schema = Joi.object({
   body: {
     orgId: JoiOrgId,
@@ -34,13 +42,6 @@ const schema = Joi.object({
   },
 }).options(JOI_SETTINGS);
 
-interface APICreateOrgBody {
-  orgId?: string;
-  displayName?: string;
-}
-interface APICreateOrgEvent extends Omit<CustomLambdaEvent, "body"> {
-  body: APICreateOrgBody;
-}
 const main = async (event: APICreateOrgEvent) => {
   const [session, sessionError] = await getSessionFromCookies(event);
 

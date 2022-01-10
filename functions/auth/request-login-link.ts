@@ -22,18 +22,6 @@ import createJoiResponse from "../../utils/createJoiResponse";
 import httpResponseSerializer from "@middy/http-response-serializer";
 import { CustomLambdaEvent } from "../../types/main";
 
-const schema = Joi.object({
-  body: {
-    email: Joi.string().email(),
-    loginMethod: Joi.string()
-      .valid(LOGIN_METHODS.GOOGLE, LOGIN_METHODS.EMAIL)
-      .required(),
-  },
-  queryStringParameters: {
-    callbackUrl: Joi.string().uri(),
-  },
-}).options(JOI_SETTINGS);
-
 interface APIRequestLoginLinkBody {
   email?: string;
   loginMethod?: string;
@@ -46,6 +34,18 @@ interface APIRequestLoginLinkEvent
   body: APIRequestLoginLinkBody;
   queryStringParameters: APIRequestLoginLinkQueryStrings;
 }
+
+const schema = Joi.object({
+  body: {
+    email: Joi.string().email(),
+    loginMethod: Joi.string()
+      .valid(LOGIN_METHODS.GOOGLE, LOGIN_METHODS.EMAIL)
+      .required(),
+  },
+  queryStringParameters: {
+    callbackUrl: Joi.string().uri(),
+  },
+}).options(JOI_SETTINGS);
 
 const main = async (event: APIRequestLoginLinkEvent) => {
   try {

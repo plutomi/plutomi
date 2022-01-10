@@ -18,11 +18,6 @@ import createSDKErrorResponse from "../../utils/createSDKErrorResponse";
 import { CustomLambdaEvent } from "../../types/main";
 const UrlSafeString = require("url-safe-string"),
   tagGenerator = new UrlSafeString();
-const schema = Joi.object({
-  body: {
-    GSI1SK: Joi.string().max(100),
-  },
-}).options(JOI_SETTINGS);
 
 interface APICreateOpeningsBody {
   GSI1SK?: string;
@@ -30,6 +25,12 @@ interface APICreateOpeningsBody {
 interface APICreateOpeningsEvent extends Omit<CustomLambdaEvent, "body"> {
   body: APICreateOpeningsBody;
 }
+
+const schema = Joi.object({
+  body: {
+    GSI1SK: Joi.string().max(100),
+  },
+}).options(JOI_SETTINGS);
 
 const main = async (event: APICreateOpeningsEvent) => {
   const [session, sessionError] = await getSessionFromCookies(event);

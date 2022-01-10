@@ -22,18 +22,18 @@ import { CustomLambdaEvent } from "../../types/main";
 const UrlSafeString = require("url-safe-string"),
   tagGenerator = new UrlSafeString();
 
-const schema = Joi.object({
-  body: {
-    recipientEmail: Joi.string().email().trim(),
-  },
-}).options(JOI_SETTINGS);
-
 interface APICreateInvitesBody {
   recipientEmail?: string;
 }
 interface APICreateInvitesEvent extends Omit<CustomLambdaEvent, "body"> {
   body: APICreateInvitesBody;
 }
+
+const schema = Joi.object({
+  body: {
+    recipientEmail: Joi.string().email().trim(),
+  },
+}).options(JOI_SETTINGS);
 
 const main = async (event: APICreateInvitesEvent) => {
   const [session, sessionError] = await getSessionFromCookies(event);

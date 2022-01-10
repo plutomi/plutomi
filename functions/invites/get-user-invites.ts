@@ -14,13 +14,6 @@ import getSessionFromCookies from "../../utils/getSessionFromCookies";
 import createJoiResponse from "../../utils/createJoiResponse";
 import createSDKErrorResponse from "../../utils/createSDKErrorResponse";
 import { CustomLambdaEvent } from "../../types/main";
-
-const schema = Joi.object({
-  pathParameters: {
-    userId: Joi.string(),
-  },
-}).options(JOI_SETTINGS);
-
 interface APIGetUserInvitesPathParameters {
   userId?: string;
 }
@@ -28,6 +21,12 @@ interface APIGetUserInvitesEvent
   extends Omit<CustomLambdaEvent, "pathParameters"> {
   pathParameters: APIGetUserInvitesPathParameters;
 }
+
+const schema = Joi.object({
+  pathParameters: {
+    userId: Joi.string(),
+  },
+}).options(JOI_SETTINGS);
 
 const main = async (event: APIGetUserInvitesEvent) => {
   const [session, sessionError] = await getSessionFromCookies(event);

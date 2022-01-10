@@ -17,13 +17,6 @@ import createSDKErrorResponse from "../../utils/createSDKErrorResponse";
 import { CustomLambdaEvent } from "../../types/main";
 const UrlSafeString = require("url-safe-string"),
   tagGenerator = new UrlSafeString();
-
-const schema = Joi.object({
-  pathParameters: {
-    orgId: JoiOrgId,
-  },
-}).options(JOI_SETTINGS);
-
 interface APIGetOrgInvitesPathParameters {
   orgId?: string;
 }
@@ -31,6 +24,12 @@ interface APIGetOrgInvitesEvent
   extends Omit<CustomLambdaEvent, "pathParameters"> {
   pathParameters: APIGetOrgInvitesPathParameters;
 }
+
+const schema = Joi.object({
+  pathParameters: {
+    orgId: JoiOrgId,
+  },
+}).options(JOI_SETTINGS);
 
 const main = async (event: APIGetOrgInvitesEvent) => {
   const [session, sessionError] = await getSessionFromCookies(event);

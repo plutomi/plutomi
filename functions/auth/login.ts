@@ -21,12 +21,6 @@ import Sanitize from "../../utils/sanitize";
 import * as Users from "../../models/Users";
 import errorFormatter from "../../utils/errorFormatter";
 import { CustomLambdaEvent } from "../../types/main";
-const schema = Joi.object({
-  queryStringParameters: {
-    callbackUrl: Joi.string().uri(),
-    seal: Joi.string(),
-  },
-}).options(JOI_SETTINGS);
 
 interface APIRequestLoginLinkQueryStrings {
   callbackUrl?: string;
@@ -36,6 +30,13 @@ interface APILoginEvent
   extends Omit<CustomLambdaEvent, "queryStringParameters"> {
   queryStringParameters: APIRequestLoginLinkQueryStrings;
 }
+
+const schema = Joi.object({
+  queryStringParameters: {
+    callbackUrl: Joi.string().uri(),
+    seal: Joi.string(),
+  },
+}).options(JOI_SETTINGS);
 
 const main = async (event: APILoginEvent) => {
   // Validate input

@@ -34,20 +34,21 @@ interface APIUpdateUserEvent
   pathParameters: APIUpdateUserPathParameters;
 }
 
+const schema = Joi.object({
+  pathParameters: {
+    userId: Joi.string(),
+  },
+  body: {
+    newValues: Joi.object(),
+  },
+}).options(JOI_SETTINGS);
+
 const main = async (event: APIUpdateUserEvent) => {
   const [session, sessionError] = await getSessionFromCookies(event);
 
   if (sessionError) {
     return NO_SESSION_RESPONSE;
   }
-  const schema = Joi.object({
-    pathParameters: {
-      userId: Joi.string(),
-    },
-    body: {
-      newValues: Joi.object(),
-    },
-  }).options(JOI_SETTINGS);
 
   try {
     await schema.validateAsync(event);
