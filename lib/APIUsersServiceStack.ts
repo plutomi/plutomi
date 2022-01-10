@@ -50,7 +50,7 @@ export default class APIUsersServiceStack extends cdk.Stack {
         filePath: `../functions/users/update-user.ts`,
         APIPath: `/users/{userId}`,
         method: HttpMethod.PUT,
-        dynamoActions: ["dynamodb:UpdateItem"],
+        dynamoActions: ["dynamodb:UpdateItem", "dynamodb:GetItem"],
         dynamoResources: {
           main: true,
         },
@@ -65,8 +65,25 @@ export default class APIUsersServiceStack extends cdk.Stack {
         filePath: `../functions/users/get-users-in-org.ts`,
         APIPath: `/users`,
         method: HttpMethod.GET,
-        dynamoActions: ["dynamodb:Query"],
+        dynamoActions: ["dynamodb:Query", "dynamodb:GetItem"],
         dynamoResources: {
+          GSI1: true,
+          main: true,
+        },
+      },
+      {
+        name: `DEBUGGING`,
+        description: `DEBUGGING`,
+        environment: {
+          DYNAMO_TABLE_NAME: props.table.tableName,
+          SESSION_PASSWORD: process.env.SESSION_PASSWORD,
+        },
+        filePath: `../functions/users/debugging.ts`,
+        APIPath: `/debug`,
+        method: HttpMethod.GET,
+        dynamoActions: ["dynamodb:Query", "dynamodb:GetItem"],
+        dynamoResources: {
+          main: true,
           GSI1: true,
         },
       },

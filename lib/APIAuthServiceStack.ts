@@ -62,8 +62,10 @@ export default class APIAuthServiceStack extends cdk.Stack {
         filePath: `../functions/auth/logout.ts`,
         APIPath: "/logout",
         method: HttpMethod.POST,
-        dynamoActions: [],
-        dynamoResources: {},
+        dynamoActions: ["dynamodb:GetItem"],
+        dynamoResources: {
+          main: true,
+        },
       },
     ];
 

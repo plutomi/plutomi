@@ -19,7 +19,11 @@ export default class APIOpeningsServiceStack extends cdk.Stack {
         filePath: `../functions/openings/create-openings.ts`,
         APIPath: "/openings",
         method: HttpMethod.POST,
-        dynamoActions: ["dynamodb:PutItem", "dynamodb:UpdateItem"], // TODO
+        dynamoActions: [
+          "dynamodb:PutItem",
+          "dynamodb:UpdateItem",
+          "dynamodb:GetItem",
+        ],
         dynamoResources: {
           main: true,
         },

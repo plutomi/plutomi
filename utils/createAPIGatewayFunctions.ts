@@ -68,6 +68,13 @@ export default function createAPIGatewayFunctions(
      * dynamoActions and dynamoResources must both be defined, or undefined. They cannot exist without the other.
      */
 
+    if (!lambda.dynamoActions.includes("dynamodb:GetItem")) {
+      throw "Missing 'dynamodb:GetItem' from 'lambda.dynamoActions'. This is required to get the session info from Dynamo in the middleware.";
+    }
+
+    if (!lambda.dynamoResources.main) {
+      throw "Missing 'main' from 'lambda.dynamoResources'. This is required to get the session info from Dynamo in the middleware.";
+    }
     const policyExists =
       lambda.dynamoActions.length > 0 &&
       Object.keys(lambda.dynamoResources).length > 0;

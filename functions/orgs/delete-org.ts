@@ -83,15 +83,8 @@ const main = async (
     );
   }
 
-  const newSession = {
-    ...session,
-    orgId: DEFAULTS.NO_ORG,
-  };
-
-  const encryptedCookie = await sealData(newSession, SESSION_SETTINGS);
   return {
     statusCode: 201,
-    cookies: [`${COOKIE_NAME}=${encryptedCookie}; ${COOKIE_SETTINGS}`],
     body: { message: "Org deleted!" },
   };
 };

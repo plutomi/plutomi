@@ -80,12 +80,9 @@ const main = async (
     return createSDKErrorResponse(failed, "Unable to create org");
   }
 
-  // Update the logged in user session with the new org id
-  const newSession = { ...session, orgId }; // TODO this orgid is not being set
-  const encryptedCookie = await sealData(newSession, SESSION_SETTINGS);
+
   return {
     statusCode: 201,
-    cookies: [`${COOKIE_NAME}=${encryptedCookie}; ${COOKIE_SETTINGS}`],
     body: { message: "Org created!", orgId },
   };
 };

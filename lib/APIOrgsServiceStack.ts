@@ -23,6 +23,7 @@ export default class APIOrgsServiceStack extends cdk.Stack {
           "dynamodb:Query",
           "dynamodb:PutItem",
           "dynamodb:UpdateItem",
+          "dynamodb:GetItem",
         ],
         dynamoResources: {
           main: true,
@@ -73,9 +74,10 @@ export default class APIOrgsServiceStack extends cdk.Stack {
         filePath: `../functions/orgs/get-openings.ts`,
         APIPath: `/openings`,
         method: HttpMethod.GET,
-        dynamoActions: ["dynamodb:Query"],
+        dynamoActions: ["dynamodb:Query", "dynamodb:GetItem"],
         dynamoResources: {
           GSI1: true,
+          main: true,
         },
       },
     ];

@@ -24,7 +24,10 @@ export default class DynamoDBStack extends cdk.Stack {
       partitionKey: { name: "PK", type: dynamodb.AttributeType.STRING },
       sortKey: { name: "SK", type: dynamodb.AttributeType.STRING },
       timeToLiveAttribute: "ttlExpiry",
-      billingMode: dynamodb.BillingMode.PAY_PER_REQUEST,
+      // Below is the default free tier
+      billingMode: dynamodb.BillingMode.PROVISIONED,
+      readCapacity: 25,
+      writeCapacity: 25,
       stream: dynamodb.StreamViewType.NEW_AND_OLD_IMAGES,
     });
 

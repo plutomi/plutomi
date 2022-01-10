@@ -88,14 +88,6 @@ const main = async (
 
   // If a signed in user is updating themselves, update the session state as well
   if (updatedUser.userId === session.userId) {
-    const result = Sanitize("KEEP", sessionDataKeys, updatedUser);
-
-    const newSession = {
-      ...session, // To keep the old expiry
-      ...result.object,
-    };
-    const encryptedCookie = await sealData(newSession, SESSION_SETTINGS);
-
     const customMessage = filteredValues.removedKeys.length
       ? `We've updated your info, but some properties could not be updated: '${filteredValues.removedKeys.join(
           ", "
@@ -103,7 +95,6 @@ const main = async (
       : `We've updated your info!`;
     return {
       statusCode: 200,
-      cookies: [`${COOKIE_NAME}=${encryptedCookie}; ${COOKIE_SETTINGS}`],
       body: {
         message: customMessage,
       },

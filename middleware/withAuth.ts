@@ -5,6 +5,7 @@ import {
   APIGatewayProxyResultV2,
   APIGatewayProxyResult,
 } from "aws-lambda";
+import * as Users from "../models/Users";
 import { AUTH_ERRORS, COOKIE_NAME, COOKIE_SETTINGS } from "../Config";
 import getSessionFromCookies from "../utils/getSessionFromCookies";
 
@@ -42,8 +43,28 @@ const middleware = (): middy.MiddlewareObj<
       return request.response;
     }
 
-    request.event["session"] = session;
-    console.log("Added session to event");
+    const [user, userError] = await Users.getUserById({
+      userId: session.userId,
+    });
+
+    if (userError || !user) {
+      request.response = {
+        statusCode: 401,
+        // @ts-ignore // TODO types, needs V2 result
+        cookies: [`${COOKIE_NAME}=''; Max-Age=-1; ${COOKIE_SETTINGS}`],
+        body: JSON.stringify({
+          message: `An error ocurred retrieving your user data. Please log in again.`,
+        }),
+        headers: {
+          "Content-Type": "application/json",
+        },
+      };
+      console.log("Modified request - bas user data", request);
+      return request.response;
+    }
+
+    request.event["session"] = user; // TOD change this to user
+    console.log("Added  (user data) to event");
   };
 
   const after: middy.MiddlewareFn<

@@ -19,9 +19,10 @@ export default class APIInvitesServiceStack extends cdk.Stack {
         filePath: `../functions/invites/get-org-invites.ts`,
         APIPath: "/orgs/{orgId}/invites",
         method: HttpMethod.GET,
-        dynamoActions: ["dynamodb:Query"],
+        dynamoActions: ["dynamodb:Query", "dynamodb:GetItem"],
         dynamoResources: {
           GSI1: true,
+          main: true,
         },
       },
       {
@@ -34,7 +35,7 @@ export default class APIInvitesServiceStack extends cdk.Stack {
         filePath: `../functions/invites/get-user-invites.ts`,
         APIPath: "/invites",
         method: HttpMethod.GET,
-        dynamoActions: ["dynamodb:Query"],
+        dynamoActions: ["dynamodb:Query", "dynamodb:GetItem"],
         dynamoResources: {
           main: true,
         },
@@ -71,7 +72,7 @@ export default class APIInvitesServiceStack extends cdk.Stack {
         filePath: `../functions/invites/reject-invites.ts`,
         APIPath: `/invites/{inviteId}`,
         method: HttpMethod.DELETE,
-        dynamoActions: ["dynamodb:DeleteItem"],
+        dynamoActions: ["dynamodb:DeleteItem", "dynamodb:GetItem"],
         dynamoResources: {
           main: true,
         },

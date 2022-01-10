@@ -77,7 +77,7 @@ const main = async (event: APILoginEvent): Promise<CustomLambdaResponse> => {
     };
   }
 
-  const [user, error] = await Users.getUserById({ userId }); // TODO async error handling
+  const [user, error] = await Users.getUserById({ userId }); 
 
   if (error) {
     return createSDKErrorResponse(
@@ -86,7 +86,8 @@ const main = async (event: APILoginEvent): Promise<CustomLambdaResponse> => {
     );
   }
 
-  // If a user is deleted between when they made they requested the login link and they attempted to sign in
+  // If a user is deleted between when they made they requested the login link
+  // and when they attempted to sign in... somehow
   if (!user) {
     return {
       statusCode: 401,
@@ -119,10 +120,8 @@ const main = async (event: APILoginEvent): Promise<CustomLambdaResponse> => {
     return createSDKErrorResponse(failed, "Unable to create login event");
   }
 
-  const result = Sanitize("KEEP", sessionDataKeys, user);
-
   const session = {
-    ...result.object,
+    userId,
     expiresAt: Time.futureISO(12, TIME_UNITS.HOURS), // TODO set in config
   };
   const encryptedCookie = await sealData(session, SESSION_SETTINGS);

@@ -5026,6 +5026,11 @@
   dependencies:
     "safe-buffer" "~5.1.1"
 
+"cookie-signature@^1.1.0":
+  "integrity" "sha512-Alvs19Vgq07eunykd3Xy2jF0/qSNv2u7KDbAek9H5liV1UMijbqFs5cycZvv5dVsvseT/U4H8/7/w8Koh35C4A=="
+  "resolved" "https://registry.npmjs.org/cookie-signature/-/cookie-signature-1.1.0.tgz"
+  "version" "1.1.0"
+
 "cookie-signature@1.0.6":
   "integrity" "sha1-4wOogrNCzD7oylE6eZmXNNqzriw="
   "resolved" "https://registry.npmjs.org/cookie-signature/-/cookie-signature-1.0.6.tgz"
