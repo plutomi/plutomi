@@ -1,16 +1,16 @@
 import { APIGatewayProxyEventV2, APIGatewayProxyResultV2 } from "aws-lambda";
 import httpEventNormalizer from "@middy/http-event-normalizer";
 import httpJsonBodyParser from "@middy/http-json-body-parser";
-
 import inputOutputLogger from "@middy/input-output-logger";
 import middy from "@middy/core";
-
+import httpResponseSerializer from "@middy/http-response-serializer";
 import Joi from "joi";
 import {
   NO_SESSION_RESPONSE,
   JOI_SETTINGS,
   DEFAULTS,
   TIME_UNITS,
+  MIDDY_SERIALIZERS,
 } from "../../Config";
 import * as Invites from "../../models/Invites";
 import * as Time from "../../utils/time";
@@ -22,9 +22,13 @@ import createSDKErrorResponse from "../../utils/createSDKErrorResponse";
 const UrlSafeString = require("url-safe-string"),
   tagGenerator = new UrlSafeString();
 
-const main = async (
-  event: APIGatewayProxyEventV2
-): Promise<APIGatewayProxyResultV2> => {
+const schema = Joi.object({
+  body: {
+    recipientEmail: Joi.string().email().trim(),
+  },
+}).options(JOI_SETTINGS);
+
+const main = async (event) => {
   const [session, sessionError] = await getSessionFromCookies(event);
   console.log({
     session,
@@ -33,12 +37,6 @@ const main = async (
   if (sessionError) {
     return NO_SESSION_RESPONSE;
   }
-
-  const schema = Joi.object({
-    body: {
-      recipientEmail: Joi.string().email().trim(),
-    },
-  }).options(JOI_SETTINGS);
 
   // Validate input
   try {
@@ -54,16 +52,16 @@ const main = async (
   if (session.email === recipientEmail) {
     return {
       statusCode: 400,
-      body: JSON.stringify({ message: `You can't invite yourself` }),
+      body: { message: `You can't invite yourself` },
     };
   }
 
   if (session.orgId === DEFAULTS.NO_ORG) {
     return {
       statusCode: 400,
-      body: JSON.stringify({
+      body: {
         message: `You must create an organization before inviting users`,
-      }),
+      },
     };
   }
 
@@ -105,7 +103,7 @@ const main = async (
   if (recipient.orgId === session.orgId) {
     return {
       statusCode: 403,
-      body: JSON.stringify({ message: "User is already in your org!" }),
+      body: { message: "User is already in your org!" },
     };
   }
 
@@ -130,10 +128,10 @@ const main = async (
   if (pendingInvites) {
     return {
       statusCode: 403,
-      body: JSON.stringify({
+      body: {
         message:
           "This user already has a pending invite to your org! They can log in to claim it.",
-      }),
+      },
     };
   }
 
@@ -154,11 +152,12 @@ const main = async (
   // Email sent asynchronously through step functions
   return {
     statusCode: 201,
-    body: JSON.stringify({ message: `Invite sent to '${recipientEmail}'` }),
+    body: { message: `Invite sent to '${recipientEmail}'` },
   };
 };
 
 module.exports.main = middy(main)
   .use(httpEventNormalizer({ payloadFormatVersion: 2 }))
   .use(httpJsonBodyParser())
-  .use(inputOutputLogger());
+  .use(inputOutputLogger())
+  .use(httpResponseSerializer(MIDDY_SERIALIZERS));
