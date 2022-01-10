@@ -8,15 +8,14 @@ import middy from "@middy/core";
 import getSessionFromCookies from "../../utils/getSessionFromCookies";
 import createSDKErrorResponse from "../../utils/createSDKErrorResponse";
 import { CustomLambdaEvent, CustomLambdaResponse } from "../../types/main";
+import withAuth from "../../middleware/withAuth";
 const main = async (
-  event: CustomLambdaEvent
+  event: CustomLambdaEvent // TODO create type
 ): Promise<CustomLambdaResponse> => {
-  const [session, sessionError] = await getSessionFromCookies(event);
-
-  if (sessionError) {
-    return NO_SESSION_RESPONSE;
-  }
-  const [user, error] = await Users.getUserById({ userId: session.userId });
+  const [user, error] = await Users.getUserById({
+    // @ts-ignore // TODO tpes
+    userId: event.session.userId,
+  });
 
   if (error) {
     return createSDKErrorResponse(
@@ -39,4 +38,6 @@ module.exports.main = middy(main)
   .use(httpEventNormalizer({ payloadFormatVersion: 2 }))
   .use(httpJsonBodyParser())
   .use(inputOutputLogger())
+  // @ts-ignore // TODO types
+  .use(withAuth())
   .use(httpResponseSerializer(MIDDY_SERIALIZERS));
