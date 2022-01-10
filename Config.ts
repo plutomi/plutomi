@@ -259,13 +259,14 @@ import httpJsonBodyParser from "@middy/http-json-body-parser";
 import httpResponseSerializer from "@middy/http-response-serializer";
 import inputOutputLogger from "@middy/input-output-logger";
 import withAuth from "./middleware/withAuth";
-
+import withCleanOrgId from "./middleware/withCleanOrgId";
 // Requires session
 export const withSessionMiddleware = [
   httpEventNormalizer({ payloadFormatVersion: 2 }),
   httpJsonBodyParser(),
   inputOutputLogger(),
   withAuth(),
+  withCleanOrgId(),
   httpResponseSerializer(MIDDY_SERIALIZERS),
 ];
 
@@ -274,5 +275,6 @@ export const withDefaultMiddleware = [
   httpEventNormalizer({ payloadFormatVersion: 2 }),
   httpJsonBodyParser(),
   inputOutputLogger(),
+  withCleanOrgId(),
   httpResponseSerializer(MIDDY_SERIALIZERS),
 ];

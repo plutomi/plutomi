@@ -31,7 +31,7 @@ const main = async (
   }
 
   const { session } = event;
-  const orgId = tagGenerator.generate(event.pathParameters.orgId);
+  const { orgId } = event.pathParameters;
 
   if (orgId !== session.orgId) {
     return {

@@ -29,10 +29,7 @@ interface APICreateOrgEvent extends Omit<CustomLambdaEvent, "body"> {
 const schema = Joi.object({
   body: {
     orgId: JoiOrgId,
-    displayName: Joi.string().invalid(
-      DEFAULTS.NO_ORG,
-      tagGenerator.generate(DEFAULTS.NO_ORG)
-    ),
+    displayName: Joi.string(),
   },
 }).options(JOI_SETTINGS);
 
@@ -73,8 +70,7 @@ const main = async (
       },
     };
   }
-  const { displayName } = event.body;
-  const orgId = tagGenerator.generate(event.body.orgId);
+  const { displayName, orgId } = event.body;
 
   const [created, failed] = await Orgs.createAndJoinOrg({
     userId: session.userId,

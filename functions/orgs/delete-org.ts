@@ -39,7 +39,7 @@ const main = async (
     return createJoiResponse(error);
   }
 
-  const orgId = tagGenerator.generate(event.pathParameters.orgId);
+  const { orgId } = event.pathParameters;
   const { session } = event;
   if (session.orgId !== orgId) {
     // TODO i think we can move this to Joi
