@@ -66,9 +66,7 @@ export default class CommsMachineStack extends cdk.Stack {
       service: "ses",
       action: "sendEmail",
       iamResources: [
-        `arn:aws:ses:${cdk.Stack.of(this).region}:${
-          cdk.Stack.of(this).account
-        }:identity/${DOMAIN_NAME}`,
+        `arn:aws:ses:${this.region}:${this.account}:identity/${DOMAIN_NAME}`,
       ],
     };
 

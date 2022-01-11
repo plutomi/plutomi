@@ -34,9 +34,7 @@ export default class FrontendStack extends cdk.Stack {
         certificate: Certificate.fromCertificateArn(
           this,
           "DomainCertificate",
-          `arn:aws:acm:${cdk.Stack.of(this).region}:${
-            cdk.Stack.of(this).account
-          }:certificate/${process.env.ACM_CERTIFICATE_ID}`
+          `arn:aws:acm:${this.region}:${this.account}:certificate/${process.env.ACM_CERTIFICATE_ID}`
         ),
       },
     });

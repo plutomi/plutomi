@@ -47,12 +47,10 @@ export default class APIStack extends cdk.Stack {
     const apiCert = Certificate.fromCertificateArn(
       this,
       `CertificateArn`,
-      `arn:aws:acm:${cdk.Stack.of(this).region}:${
-        cdk.Stack.of(this).account
-      }:certificate/${process.env.ACM_CERTIFICATE_ID}`
+      `arn:aws:acm:${this.region}:${this.account}:certificate/${process.env.ACM_CERTIFICATE_ID}`
     );
 
-    // Defines an http API Gateway
+    // Defines an HTTP API Gateway
     this.api = new HttpApi(this, `${process.env.NODE_ENV}-APIEndpoint`, {
       corsPreflight: {
         allowMethods: [
@@ -69,8 +67,8 @@ export default class APIStack extends cdk.Stack {
       },
     });
 
-    // Creates a cloudfront distribution so that we can attach a WAF to it.
-    // API GatewayV2 does not allow WAF directly at the moment
+    // Creates a Cloudfront distribution so that we can attach a WAF to it.
+    // API GatewayV2 does not allow WAF directly at the moment :/
     const distribution = new cf.CloudFrontWebDistribution(
       this,
       `${process.env.NODE_ENV}-CF-API-Distribution`,
@@ -82,6 +80,11 @@ export default class APIStack extends cdk.Stack {
         originConfigs: [
           {
             customOriginSource: {
+              /**
+               * this.api.url & this.api.apiEndpoint were not working:
+               * Invalid request provided: The parameter origin name cannot contain a colon.
+               * https://stackoverflow.com/a/57467656
+               */
               domainName: `${this.api.httpApiId}.execute-api.${this.region}.amazonaws.com`,
             },
             behaviors: [
@@ -101,6 +104,7 @@ export default class APIStack extends cdk.Stack {
             ],
           },
         ],
+        // Custom domain stuff
         viewerCertificate: cf.ViewerCertificate.fromAcmCertificate(apiCert, {
           aliases: [API_DOMAIN],
           securityPolicy: cf.SecurityPolicyProtocol.TLS_V1_2_2018,
@@ -108,7 +112,7 @@ export default class APIStack extends cdk.Stack {
       }
     );
 
-    // Creates an A record to point to our API behind cloudfront
+    // Creates an A record that points our API domain to Cloudfront
     new ARecord(this, `${process.env.NODE_ENV}-APIAlias`, {
       zone: hostedZone,
       recordName: API_SUBDOMAIN,
