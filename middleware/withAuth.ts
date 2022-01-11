@@ -59,7 +59,7 @@ const middleware = (): middy.MiddlewareObj<
           "Content-Type": "application/json",
         },
       };
-      console.log("Modified request - bas user data", request);
+      console.log("Modified request - has user data", request);
       return request.response;
     }
 

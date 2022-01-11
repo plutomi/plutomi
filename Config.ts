@@ -14,10 +14,10 @@ export const WEBSITE_URL = PROTOCOL + DYNAMIC_DOMAIN;
 export const COOKIE_NAME =
   process.env.NODE_ENV === "production"
     ? "plutomi-cookie"
-    : "DEV-plutomi-cookie"; // Name of the session cookie
+    : "DEV-plutomi-cookie"; 
 
-// Reason for SameSite=None: https://stackoverflow.com/a/62726825
-export const COOKIE_SETTINGS = `Secure; HttpOnly; SameSite=None; Path=/; Domain=${DOMAIN_NAME}`; // See SESSION_SETTINGS for setting session length
+// //Reason for SameSite=None: https://stackoverflow.com/a/62726825 // TODO revisit
+export const COOKIE_SETTINGS = `Secure; HttpOnly; SameSite=Strict; Path=/; Domain=${DOMAIN_NAME}`; // See SESSION_SETTINGS for setting session length
 export const sessionDataKeys = [
   "firstName",
   "lastName",
