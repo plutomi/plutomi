@@ -2,10 +2,12 @@ import * as dotenv from "dotenv";
 import * as cdk from "@aws-cdk/core";
 import * as cf from "@aws-cdk/aws-cloudfront";
 import * as waf from "@aws-cdk/aws-wafv2";
+import * as logs from "@aws-cdk/aws-logs";
 import { HttpApi, CorsHttpMethod } from "@aws-cdk/aws-apigatewayv2";
 import { Certificate } from "@aws-cdk/aws-certificatemanager";
 import { HostedZone, ARecord, RecordTarget } from "@aws-cdk/aws-route53";
 import { CloudFrontTarget } from "@aws-cdk/aws-route53-targets";
+import * as cr from "@aws-cdk/custom-resources";
 import { API_DOMAIN, API_SUBDOMAIN, DOMAIN_NAME, WEBSITE_URL } from "../Config";
 const resultDotEnv = dotenv.config({
   path: `${process.cwd()}/.env.${process.env.NODE_ENV}`,
@@ -160,6 +162,7 @@ export default class APIStack extends cdk.Stack {
 
     // Creates a Cloudfront distribution so that we can attach a WAF to it.
     // API GatewayV2 does not allow WAF directly at the moment :/
+    // TODO also. Cannot send logs directly to Cloudwatch from CDK / CF. :T
     const distribution = new cf.CloudFrontWebDistribution(
       this,
       `${process.env.NODE_ENV}-CF-API-Distribution`,

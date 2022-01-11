@@ -891,7 +891,7 @@
     "ignore" "^5.1.9"
     "minimatch" "^3.0.4"
 
-"@aws-cdk/custom-resources@1.134.0":
+"@aws-cdk/custom-resources@^1.134.0", "@aws-cdk/custom-resources@1.134.0":
   "integrity" "sha512-BfVq0IsXpPV6Eyzt0kLzNzLHKZvslNzQexSXY3yN5E2NHqXucqCem4X+qN+xp8p5eO0R83pmsPKUW9OT9SyEqg=="
   "resolved" "https://registry.npmjs.org/@aws-cdk/custom-resources/-/custom-resources-1.134.0.tgz"
   "version" "1.134.0"
