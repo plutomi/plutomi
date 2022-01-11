@@ -20,10 +20,8 @@ const faqs = [
       <p>
         The code is licensed under the{" "}
         <CustomLink
-          url={
-            "https://tldrlegal.com/license/gnu-affero-general-public-license-v3-(agpl-3.0)"
-          }
-          text={"AGPLv3 license"}
+          url={"https://tldrlegal.com/license/mit-license"}
+          text={"MIT license"}
         />
         .
       </p>

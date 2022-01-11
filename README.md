@@ -149,7 +149,7 @@ Example: _fix: Removed the double modals popping up on login_
 
 ## License
 
-This project is licensed under the `GNU AGPLv3` license. It can be viewed [here](https://choosealicense.com/licenses/agpl-3.0/) or in the [LICENSE.md](LICENSE.md) file.
+This project is [MIT licensed](LICENSE.md) file.
 
 For any questions, please submit an issue or email contact@plutomi.com!
 
