@@ -1,19 +1,11 @@
 import * as dotenv from "dotenv";
 import * as cdk from "@aws-cdk/core";
 import * as cf from "@aws-cdk/aws-cloudfront";
-import { LambdaProxyIntegration } from "@aws-cdk/aws-apigatewayv2-integrations";
-import {
-  HttpApi,
-  DomainName,
-  CorsHttpMethod,
-  HttpMethod,
-} from "@aws-cdk/aws-apigatewayv2";
+import * as waf from "@aws-cdk/aws-wafv2";
+import { HttpApi, CorsHttpMethod } from "@aws-cdk/aws-apigatewayv2";
 import { Certificate } from "@aws-cdk/aws-certificatemanager";
 import { HostedZone, ARecord, RecordTarget } from "@aws-cdk/aws-route53";
-import {
-  ApiGatewayv2DomainProperties,
-  CloudFrontTarget,
-} from "@aws-cdk/aws-route53-targets";
+import { CloudFrontTarget } from "@aws-cdk/aws-route53-targets";
 import { API_DOMAIN, API_SUBDOMAIN, DOMAIN_NAME, WEBSITE_URL } from "../Config";
 const resultDotEnv = dotenv.config({
   path: `${process.cwd()}/.env.${process.env.NODE_ENV}`,
@@ -67,6 +59,105 @@ export default class APIStack extends cdk.Stack {
       },
     });
 
+    // Create the WAF & WAF Rules
+    const API_WAF = new waf.CfnWebACL(
+      this,
+      `${process.env.NODE_ENV}-API-Gateway-WAF`,
+      {
+        name: `${process.env.NODE_ENV}-API-Gateway-WAF`,
+
+        description:
+          "This WAF blocks IPs that are making too many requests and sends the logs of those blocks to cloudwatch.",
+        defaultAction: {
+          allow: {},
+        },
+        scope: "CLOUDFRONT",
+        visibilityConfig: {
+          cloudWatchMetricsEnabled: true,
+          metricName: "cloudfront-ipset-waf",
+          sampledRequestsEnabled: true,
+        },
+        rules: [
+          {
+            name: `too-many-requests-rule`,
+            priority: 0,
+            statement: {
+              rateBasedStatement: {
+                limit: 1000, // In a 5 minute period
+                aggregateKeyType: "IP",
+              },
+            },
+            action: {
+              block: {
+                customResponse: {
+                  responseCode: 429,
+                },
+              },
+            },
+            visibilityConfig: {
+              sampledRequestsEnabled: true,
+              cloudWatchMetricsEnabled: true,
+              metricName: `${process.env.NODE_ENV}-WAF-BLOCKED-IPs`,
+            },
+          },
+          {
+            name: "AWS-AWSManagedRulesBotControlRuleSet",
+            priority: 1,
+            statement: {
+              managedRuleGroupStatement: {
+                vendorName: "AWS",
+                name: "AWSManagedRulesBotControlRuleSet",
+              },
+            },
+            overrideAction: {
+              none: {},
+            },
+            visibilityConfig: {
+              sampledRequestsEnabled: false,
+              cloudWatchMetricsEnabled: true,
+              metricName: "AWS-AWSManagedRulesBotControlRuleSet",
+            },
+          },
+          {
+            name: "AWS-AWSManagedRulesAmazonIpReputationList",
+            priority: 2,
+            statement: {
+              managedRuleGroupStatement: {
+                vendorName: "AWS",
+                name: "AWSManagedRulesAmazonIpReputationList",
+              },
+            },
+            overrideAction: {
+              none: {},
+            },
+            visibilityConfig: {
+              sampledRequestsEnabled: false,
+              cloudWatchMetricsEnabled: true,
+              metricName: "AWS-AWSManagedRulesAmazonIpReputationList",
+            },
+          },
+          {
+            name: "AWS-AWSManagedRulesCommonRuleSet",
+            priority: 3,
+            statement: {
+              managedRuleGroupStatement: {
+                vendorName: "AWS",
+                name: "AWSManagedRulesCommonRuleSet",
+              },
+            },
+            overrideAction: {
+              none: {},
+            },
+            visibilityConfig: {
+              sampledRequestsEnabled: false,
+              cloudWatchMetricsEnabled: true,
+              metricName: "AWS-AWSManagedRulesCommonRuleSet",
+            },
+          },
+        ],
+      }
+    );
+
     // Creates a Cloudfront distribution so that we can attach a WAF to it.
     // API GatewayV2 does not allow WAF directly at the moment :/
     const distribution = new cf.CloudFrontWebDistribution(
@@ -109,11 +200,13 @@ export default class APIStack extends cdk.Stack {
           aliases: [API_DOMAIN],
           securityPolicy: cf.SecurityPolicyProtocol.TLS_V1_2_2018,
         }),
+        webACLId: API_WAF.attrArn,
       }
     );
 
+    // TODO BUG this gets stuck on CREATE_IN_PROGRESS - I think its because of the process.env prefix
     // Creates an A record that points our API domain to Cloudfront
-    new ARecord(this, `${process.env.NODE_ENV}-APIAlias`, {
+    new ARecord(this, `APIAlias`, {
       zone: hostedZone,
       recordName: API_SUBDOMAIN,
       target: RecordTarget.fromAlias(new CloudFrontTarget(distribution)),

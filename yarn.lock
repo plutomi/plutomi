@@ -832,6 +832,14 @@
     "@aws-cdk/core" "1.134.0"
     "constructs" "^3.3.69"
 
+"@aws-cdk/aws-wafv2@^1.134.0":
+  "integrity" "sha512-R/d7jbHorJX06eksjCKP6VylYDfB76BNUr4/uDh6Oy++A29B1o19imsURboUFMop8h6sdHq993X7ysFMHhBU8A=="
+  "resolved" "https://registry.npmjs.org/@aws-cdk/aws-wafv2/-/aws-wafv2-1.134.0.tgz"
+  "version" "1.134.0"
+  dependencies:
+    "@aws-cdk/core" "1.134.0"
+    "constructs" "^3.3.69"
+
 "@aws-cdk/cfnspec@2.0.0":
   "integrity" "sha512-l04CkW6E7AEkuAe5zza7J0WNKfpArFMg/fZx0bbgpvfZBNs4WSkGwuo0byKT2Sn4Xv/sYirKSJNkQ5Jikt17+Q=="
   "resolved" "https://registry.npmjs.org/@aws-cdk/cfnspec/-/cfnspec-2.0.0.tgz"
