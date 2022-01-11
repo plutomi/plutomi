@@ -1,6 +1,6 @@
 import { PutCommandInput, PutCommand } from "@aws-sdk/lib-dynamodb";
 import { nanoid } from "nanoid";
-import { Dynamo } from "../../awsClients/ddbDocClient";
+import { Dynamo } from "../../AWSClients/ddbDocClient";
 import { ID_LENGTHS, ENTITY_TYPES, DEFAULTS, EMAILS } from "../../Config";
 import { DynamoNewUser } from "../../types/dynamo";
 import { CreateUserInput } from "../../types/main";

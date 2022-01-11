@@ -3,7 +3,7 @@ import {
   TransactWriteCommand,
 } from "@aws-sdk/lib-dynamodb";
 import { SdkError } from "@aws-sdk/types";
-import { Dynamo } from "../../awsClients/ddbDocClient";
+import { Dynamo } from "../../AWSClients/ddbDocClient";
 import { ENTITY_TYPES, DEFAULTS, TIME_UNITS } from "../../Config";
 import { DynamoNewLoginEvent } from "../../types/dynamo";
 import { CreateLoginEventAndDeleteLoginLinkInput } from "../../types/main";
