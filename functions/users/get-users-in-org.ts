@@ -2,7 +2,7 @@ import * as Orgs from "../../models/Orgs";
 import { DEFAULTS, withDefaultMiddleware } from "../../Config";
 import middy from "@middy/core";
 import Sanitize from "../../utils/sanitize";
-import createSDKErrorResponse from "../../utils/createSDKErrorResponse";
+import * as Response from "../../utils/createResponse";
 import { CustomLambdaEvent, CustomLambdaResponse } from "../../types/main";
 
 const main = async (
@@ -23,7 +23,7 @@ const main = async (
   });
 
   if (error) {
-    return createSDKErrorResponse(
+    return Response.SDK(
       error,
       "An error ocurred getting the users in your org"
     );

@@ -2,7 +2,7 @@ import * as Users from "../../models/Users";
 import Joi from "joi";
 import middy from "@middy/core";
 import { JOI_SETTINGS, withDefaultMiddleware } from "../../Config";
-import createSDKErrorResponse from "../../utils/createSDKErrorResponse";
+
 import { CustomLambdaEvent, CustomLambdaResponse } from "../../types/main";
 import * as Response from "../../utils/createResponse";
 interface APIGetUserInvitesPathParameters {
@@ -42,7 +42,7 @@ const main = async (
   });
 
   if (error) {
-    return createSDKErrorResponse(error, "An error ocurred retrieving invites");
+    return Response.SDK(error, "An error ocurred retrieving invites");
   }
 
   return {

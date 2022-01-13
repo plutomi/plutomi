@@ -2,7 +2,7 @@ import * as Openings from "../../models/Openings";
 import middy from "@middy/core";
 import Joi from "joi";
 import { JOI_SETTINGS, DEFAULTS, withDefaultMiddleware } from "../../Config";
-import createSDKErrorResponse from "../../utils/createSDKErrorResponse";
+
 import { CustomLambdaEvent, CustomLambdaResponse } from "../../types/main";
 import * as Response from "../../utils/createResponse";
 interface APICreateOpeningsBody {
@@ -44,7 +44,7 @@ const main = async (
   });
 
   if (createOpeningError) {
-    return createSDKErrorResponse(
+    return Response.SDK(
       createOpeningError,
       "An error ocurred creating opening"
     );

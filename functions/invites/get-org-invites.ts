@@ -2,7 +2,7 @@ import middy from "@middy/core";
 import Joi from "joi";
 import { JOI_SETTINGS, JoiOrgId, withDefaultMiddleware } from "../../Config";
 import * as Orgs from "../../models/Orgs";
-import createSDKErrorResponse from "../../utils/createSDKErrorResponse";
+
 import { CustomLambdaEvent, CustomLambdaResponse } from "../../types/main";
 import * as Response from "../../utils/createResponse";
 interface APIGetOrgInvitesPathParameters {
@@ -43,7 +43,7 @@ const main = async (
   const [invites, error] = await Orgs.getPendingInvites({ orgId });
 
   if (error) {
-    return createSDKErrorResponse(error, "Unable to retrieve invites for org");
+    return Response.SDK(error, "Unable to retrieve invites for org");
   }
 
   return {

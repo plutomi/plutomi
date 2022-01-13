@@ -2,7 +2,7 @@ import Joi from "joi";
 import { JOI_SETTINGS, JoiOrgId, withDefaultMiddleware } from "../../Config";
 import middy from "@middy/core";
 import * as Orgs from "../../models/Orgs";
-import createSDKErrorResponse from "../../utils/createSDKErrorResponse";
+
 import { CustomLambdaEvent, CustomLambdaResponse } from "../../types/main";
 import * as Response from "../../utils/createResponse";
 interface APIGetOrgInfoPathParameters {
@@ -43,7 +43,7 @@ const main = async (
   const [org, error] = await Orgs.getOrgById({ orgId });
 
   if (error) {
-    return createSDKErrorResponse(error, "Unable to retrieve org info");
+    return Response.SDK(error, "Unable to retrieve org info");
   }
 
   if (!org) {

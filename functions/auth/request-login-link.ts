@@ -9,7 +9,6 @@ import {
   WEBSITE_URL,
   withDefaultMiddleware,
 } from "../../Config";
-import createSDKErrorResponse from "../../utils/createSDKErrorResponse";
 import * as Time from "../../utils/time";
 import * as Users from "../../models/Users";
 import { nanoid } from "nanoid";
@@ -58,10 +57,7 @@ const main = async (
   // If a user is signing in for the first time, create an account for them
   let [user, userError] = await Users.getUserByEmail({ email });
   if (userError) {
-    return createSDKErrorResponse(
-      userError,
-      "An error ocurred getting your user info"
-    );
+    return Response.SDK(userError, "An error ocurred getting your user info");
   }
 
   if (!user) {
@@ -70,10 +66,7 @@ const main = async (
     });
 
     if (createUserError) {
-      return createSDKErrorResponse(
-        userError,
-        "An error ocurred creating your account"
-      );
+      return Response.SDK(userError, "An error ocurred creating your account");
     }
     user = createdUser;
   }
@@ -94,7 +87,7 @@ const main = async (
   });
 
   if (loginLinkError) {
-    return createSDKErrorResponse(
+    return Response.SDK(
       loginLinkError,
       "An error ocurred getting your login link"
     );
@@ -143,7 +136,7 @@ const main = async (
   });
 
   if (creationError) {
-    return createSDKErrorResponse(
+    return Response.SDK(
       creationError,
       "An error ocurred creating your login link"
     );

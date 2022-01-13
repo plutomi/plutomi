@@ -8,7 +8,7 @@ import { CustomLambdaResponse } from "../types/main";
  * @param message - Your custom message describing what happened
  * @returns
  */
-export function createSDKErrorResponse(error: SdkError, message: string) {
+export function SDK(error: SdkError, message: string) {
   const formattedError = errorFormatter(error);
   return {
     statusCode: formattedError.httpStatusCode,

@@ -1,6 +1,5 @@
 import middy from "@middy/core";
 import Joi from "joi";
-import * as Response from "../../utils/createResponse";
 import {
   LOGIN_LINK_SETTINGS,
   SESSION_SETTINGS,
@@ -12,12 +11,11 @@ import {
   withDefaultMiddleware,
 } from "../../Config";
 import * as Time from "../../utils/time";
-import createSDKErrorResponse from "../../utils/createSDKErrorResponse";
 import { sealData, unsealData } from "iron-session";
 import * as Users from "../../models/Users";
 import errorFormatter from "../../utils/errorFormatter";
 import { CustomLambdaEvent, CustomLambdaResponse } from "../../types/main";
-
+import * as Response from "../../utils/createResponse";
 interface APIRequestLoginLinkQueryStrings {
   callbackUrl?: string;
   seal?: string;
@@ -78,10 +76,7 @@ const main = async (event: APILoginEvent): Promise<CustomLambdaResponse> => {
   const [user, error] = await Users.getUserById({ userId });
 
   if (error) {
-    return createSDKErrorResponse(
-      error,
-      "An error ocurred using your login link"
-    );
+    return Response.SDK(error, "An error ocurred using your login link");
   }
 
   // If a user is deleted between when they made they requested the login link
@@ -114,8 +109,7 @@ const main = async (event: APILoginEvent): Promise<CustomLambdaResponse> => {
         },
       };
     }
-
-    return createSDKErrorResponse(failed, "Unable to create login event");
+    return Response.SDK(error, "Unable to create login event");
   }
 
   const session = {

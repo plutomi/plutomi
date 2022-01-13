@@ -7,7 +7,7 @@ import {
   withDefaultMiddleware,
 } from "../../Config";
 import middy from "@middy/core";
-import createSDKErrorResponse from "../../utils/createSDKErrorResponse";
+
 import { CustomLambdaEvent, CustomLambdaResponse } from "../../types/main";
 import * as Response from "../../utils/createResponse";
 interface APIUpdateUserPathParameters {
@@ -75,7 +75,7 @@ const main = async (
   const [updatedUser, error] = await Users.updateUser(updateUserInput);
 
   if (error) {
-    return createSDKErrorResponse(error, "An error ocurred updating user info");
+    return Response.SDK(error, "An error ocurred updating user info");
   }
 
   // If a signed in user is updating themselves, update the session state as well

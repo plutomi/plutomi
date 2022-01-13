@@ -10,7 +10,7 @@ import {
 } from "../../Config";
 import middy from "@middy/core";
 import * as Orgs from "../../models/Orgs";
-import createSDKErrorResponse from "../../utils/createSDKErrorResponse";
+
 import { CustomLambdaEvent, CustomLambdaResponse } from "../../types/main";
 import * as Response from "../../utils/createResponse";
 interface APIDeleteOrgPathParameters {
@@ -51,7 +51,7 @@ const main = async (
   const [org, error] = await Orgs.getOrgById({ orgId });
 
   if (error) {
-    return createSDKErrorResponse(error, "Unable to retrieve org info");
+    return Response.SDK(error, "Unable to retrieve org info");
   }
 
   if (!org) {
@@ -76,10 +76,7 @@ const main = async (
   });
 
   if (failure) {
-    return createSDKErrorResponse(
-      failure,
-      "We were unable to remove you from the org"
-    );
+    return Response.SDK(failure, "We were unable to remove you from the org");
   }
 
   return {

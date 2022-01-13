@@ -11,7 +11,7 @@ import {
 } from "../../Config";
 import middy from "@middy/core";
 import * as Orgs from "../../models/Orgs";
-import createSDKErrorResponse from "../../utils/createSDKErrorResponse";
+
 import { CustomLambdaEvent, CustomLambdaResponse } from "../../types/main";
 import * as Response from "../../utils/createResponse";
 interface APICreateOrgBody {
@@ -51,7 +51,7 @@ const main = async (
   });
 
   if (error) {
-    return createSDKErrorResponse(
+    return Response.SDK(
       error,
       "Unable to create org - error retrieving invites"
     );
@@ -75,7 +75,7 @@ const main = async (
   });
 
   if (failed) {
-    return createSDKErrorResponse(failed, "Unable to create org");
+    return Response.SDK(failed, "Unable to create org");
   }
 
   return {

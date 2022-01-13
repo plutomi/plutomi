@@ -1,7 +1,7 @@
 import * as Orgs from "../../models/Orgs";
 import middy from "@middy/core";
 import { DEFAULTS, withDefaultMiddleware } from "../../Config";
-import createSDKErrorResponse from "../../utils/createSDKErrorResponse";
+
 import { CustomLambdaEvent, CustomLambdaResponse } from "../../types/main";
 
 const main = async (
@@ -23,10 +23,7 @@ const main = async (
   });
 
   if (openingsError) {
-    return createSDKErrorResponse(
-      openingsError,
-      "An error ocurred retrieving openings"
-    );
+    return Response.SDK(openingsError, "An error ocurred retrieving openings");
   }
 
   return {

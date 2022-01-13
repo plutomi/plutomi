@@ -10,7 +10,6 @@ import * as Invites from "../../models/Invites";
 import * as Time from "../../utils/time";
 import * as Users from "../../models/Users";
 import * as Orgs from "../../models/Orgs";
-import createSDKErrorResponse from "../../utils/createSDKErrorResponse";
 import { CustomLambdaEvent, CustomLambdaResponse } from "../../types/main";
 import * as Response from "../../utils/createResponse";
 interface APICreateInvitesBody {
@@ -58,7 +57,7 @@ const main = async (
   const [org, error] = await Orgs.getOrgById({ orgId: session.orgId });
 
   if (error) {
-    return createSDKErrorResponse(
+    return Response.SDK(
       error,
       "An error ocurred retrieving your org information"
     );
@@ -69,7 +68,7 @@ const main = async (
   });
 
   if (recipientError) {
-    return createSDKErrorResponse(
+    return Response.SDK(
       error,
       "An error ocurred getting your invitee's information"
     );
@@ -82,7 +81,7 @@ const main = async (
     });
 
     if (createUserError) {
-      return createSDKErrorResponse(
+      return Response.SDK(
         createUserError,
         "An error ocurred creating an account for your invitee"
       );
@@ -104,7 +103,7 @@ const main = async (
     });
 
   if (recipientInvitesError) {
-    return createSDKErrorResponse(
+    return Response.SDK(
       recipientInvitesError,
       "An error ocurred while checking to see if your invitee has pending invites"
     );
@@ -133,10 +132,7 @@ const main = async (
   });
 
   if (inviteError) {
-    return createSDKErrorResponse(
-      inviteError,
-      "An error ocurred creating your invite"
-    );
+    return Response.SDK(inviteError, "An error ocurred creating your invite");
   }
 
   // Email sent asynchronously through step functions

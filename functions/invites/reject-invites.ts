@@ -2,7 +2,7 @@ import Joi from "joi";
 import * as Invites from "../../models/Invites";
 import { JOI_SETTINGS, withDefaultMiddleware } from "../../Config";
 import middy from "@middy/core";
-import createSDKErrorResponse from "../../utils/createSDKErrorResponse";
+
 import { CustomLambdaEvent, CustomLambdaResponse } from "../../types/main";
 import * as Response from "../../utils/createResponse";
 interface APIRejectInvitesPathParameters {
@@ -36,10 +36,7 @@ const main = async (
   });
 
   if (error) {
-    return createSDKErrorResponse(
-      error,
-      "We were unable to reject that invite"
-    );
+    return Response.SDK(error, "We were unable to reject that invite");
   }
 
   return {
