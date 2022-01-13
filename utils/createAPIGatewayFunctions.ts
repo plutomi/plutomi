@@ -3,6 +3,7 @@ import {
   NodejsFunction,
   NodejsFunctionProps,
 } from "@aws-cdk/aws-lambda-nodejs";
+import { HttpNoneAuthorizer, HttpAuthorizer } from "@aws-cdk/aws-apigatewayv2";
 import { Policy, PolicyStatement } from "@aws-cdk/aws-iam";
 import { Table } from "@aws-cdk/aws-dynamodb";
 import * as cdk from "@aws-cdk/core";
@@ -10,6 +11,7 @@ import * as path from "path";
 import { HttpApi } from "@aws-cdk/aws-apigatewayv2";
 import { LambdaProxyIntegration } from "@aws-cdk/aws-apigatewayv2-integrations";
 import { CDKLambda } from "../types/main";
+import { HttpLambdaAuthorizer } from "@aws-cdk/aws-apigatewayv2-authorizers";
 
 /**
  *  For CDK, this creates functions that are attached to API Gateway. These only really need DynamoDB permissions.
@@ -17,6 +19,7 @@ import { CDKLambda } from "../types/main";
  * @param functions
  * @param api
  * @param table
+ * @param authorizer
  */
 export default function createAPIGatewayFunctions(
   stack: cdk.Stack,
@@ -34,7 +37,10 @@ export default function createAPIGatewayFunctions(
         timeout: lambda.timeout || cdk.Duration.seconds(5),
         runtime: Runtime.NODEJS_14_X,
         architecture: Architecture.ARM_64,
-        environment: lambda.environment,
+        environment: {
+          ...lambda.environment,
+          DYNAMO_TABLE_NAME: table.tableName,
+        },
         bundling: {
           minify: true,
           externalModules: ["aws-sdk"],
@@ -51,6 +57,7 @@ export default function createAPIGatewayFunctions(
       integration: new LambdaProxyIntegration({
         handler: func,
       }),
+      authorizer: lambda.skipAuth && new HttpNoneAuthorizer(),
     });
 
     const base = `arn:aws:dynamodb:${cdk.Stack.of(stack).region}:${
@@ -67,14 +74,6 @@ export default function createAPIGatewayFunctions(
     /**
      * dynamoActions and dynamoResources must both be defined, or undefined. They cannot exist without the other.
      */
-
-    if (!lambda.dynamoActions.includes("dynamodb:GetItem")) {
-      throw "Missing 'dynamodb:GetItem' from 'lambda.dynamoActions'. This is required to get the session info from Dynamo in the middleware.";
-    }
-
-    if (!lambda.dynamoResources.main) {
-      throw "Missing 'main' from 'lambda.dynamoResources'. This is required to get the session info from Dynamo in the middleware.";
-    }
     const policyExists =
       lambda.dynamoActions.length > 0 &&
       Object.keys(lambda.dynamoResources).length > 0;

@@ -1,22 +1,15 @@
 import Sanitize from "../../utils/sanitize";
 import * as Users from "../../models/Users";
-import httpResponseSerializer from "@middy/http-response-serializer";
 import Joi from "joi";
 import {
-  COOKIE_NAME,
-  COOKIE_SETTINGS,
   FORBIDDEN_PROPERTIES,
   JOI_SETTINGS,
-  sessionDataKeys,
-  SESSION_SETTINGS,
-  withSessionMiddleware,
+  withDefaultMiddleware,
 } from "../../Config";
-import { sealData } from "iron-session";
 import middy from "@middy/core";
 import createJoiResponse from "../../utils/createJoiResponse";
 import createSDKErrorResponse from "../../utils/createSDKErrorResponse";
 import { CustomLambdaEvent, CustomLambdaResponse } from "../../types/main";
-import session from "express-session";
 
 interface APIUpdateUserPathParameters {
   userId?: string;
@@ -48,9 +41,9 @@ const main = async (
     return createJoiResponse(error);
   }
 
+  const { session } = event.requestContext.authorizer.lambda;
   const { userId } = event.pathParameters;
   const { newValues } = event.body;
-  const { session } = event;
 
   // TODO RBAC will go here, right now you can only update yourself
   if (userId !== session.userId) {
@@ -117,4 +110,4 @@ const main = async (
 
 // TODO types with API Gateway event and middleware
 // @ts-ignore
-module.exports.main = middy(main).use(withSessionMiddleware);
+module.exports.main = middy(main).use(withDefaultMiddleware);

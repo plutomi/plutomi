@@ -7,7 +7,7 @@ import {
   COOKIE_SETTINGS,
   JoiOrgId,
   COOKIE_NAME,
-  withSessionMiddleware,
+  withDefaultMiddleware,
 } from "../../Config";
 import middy from "@middy/core";
 import * as Orgs from "../../models/Orgs";
@@ -39,7 +39,7 @@ const main = async (
   } catch (error) {
     return createJoiResponse(error);
   }
-  const { session } = event;
+  const { session } = event.requestContext.authorizer.lambda;
 
   if (session.orgId !== DEFAULTS.NO_ORG) {
     return {
@@ -80,7 +80,6 @@ const main = async (
     return createSDKErrorResponse(failed, "Unable to create org");
   }
 
-
   return {
     statusCode: 201,
     body: { message: "Org created!", orgId },
@@ -88,4 +87,4 @@ const main = async (
 };
 // TODO types with API Gateway event and middleware
 // @ts-ignore
-module.exports.main = middy(main).use(withSessionMiddleware);
+module.exports.main = middy(main).use(withDefaultMiddleware);

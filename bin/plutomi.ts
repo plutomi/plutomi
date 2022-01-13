@@ -26,34 +26,36 @@ builder
       `${process.env.NODE_ENV}-DynamoDBStack`
     );
 
-    const { api } = new APIStack(app, `${process.env.NODE_ENV}-APIStack`);
+    const { api } = new APIStack(app, `${process.env.NODE_ENV}-APIStack`, {
+      table,
+    });
 
     new APIUsersServiceStack(
       app,
       `${process.env.NODE_ENV}-APIUsersServiceStack`,
-      { table, api }
+      { api, table }
     );
 
     new APIOrgsServiceStack(
       app,
       `${process.env.NODE_ENV}-APIOrgsServiceStack`,
-      { table, api }
+      { api, table }
     );
     new APIInvitesServiceStack(
       app,
       `${process.env.NODE_ENV}-APIInvitesServiceStack`,
-      { table, api }
+      { api, table }
     );
     new APIAuthServiceStack(
       app,
       `${process.env.NODE_ENV}-APIAuthServiceStack`,
-      { table, api }
+      { api, table }
     );
 
     new APIOpeningsServiceStack(
       app,
       `${process.env.NODE_ENV}-APIOpeningsServiceStack`,
-      { table, api }
+      { api, table }
     );
 
     const { CommsMachine } = new CommsMachineStack(

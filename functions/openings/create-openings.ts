@@ -1,7 +1,7 @@
 import * as Openings from "../../models/Openings";
 import middy from "@middy/core";
 import Joi from "joi";
-import { JOI_SETTINGS, DEFAULTS, withSessionMiddleware } from "../../Config";
+import { JOI_SETTINGS, DEFAULTS, withDefaultMiddleware } from "../../Config";
 import createJoiResponse from "../../utils/createJoiResponse";
 import createSDKErrorResponse from "../../utils/createSDKErrorResponse";
 import { CustomLambdaEvent, CustomLambdaResponse } from "../../types/main";
@@ -28,8 +28,8 @@ const main = async (
     return createJoiResponse(error);
   }
 
+  const { session } = event.requestContext.authorizer.lambda;
   const { GSI1SK } = event.body;
-  const { session } = event;
   if (session.orgId === DEFAULTS.NO_ORG) {
     return {
       statusCode: 400,
@@ -59,4 +59,4 @@ const main = async (
 
 // TODO types with API Gateway event and middleware
 // @ts-ignore
-module.exports.main = middy(main).use(withSessionMiddleware);
+module.exports.main = middy(main).use(withDefaultMiddleware);

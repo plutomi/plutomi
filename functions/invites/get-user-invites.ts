@@ -1,7 +1,7 @@
 import * as Users from "../../models/Users";
 import Joi from "joi";
 import middy from "@middy/core";
-import { JOI_SETTINGS, withSessionMiddleware } from "../../Config";
+import { JOI_SETTINGS, withDefaultMiddleware } from "../../Config";
 import createJoiResponse from "../../utils/createJoiResponse";
 import createSDKErrorResponse from "../../utils/createSDKErrorResponse";
 import { CustomLambdaEvent, CustomLambdaResponse } from "../../types/main";
@@ -27,7 +27,7 @@ const main = async (
   } catch (error) {
     return createJoiResponse(error);
   }
-  const { session } = event;
+  const { session } = event.requestContext.authorizer.lambda;
   const { userId } = event.pathParameters;
   if (userId !== session.userId) {
     return {
@@ -53,4 +53,4 @@ const main = async (
 
 // TODO types with API Gateway event and middleware
 // @ts-ignore
-module.exports.main = middy(main).use(withSessionMiddleware);
+module.exports.main = middy(main).use(withDefaultMiddleware);

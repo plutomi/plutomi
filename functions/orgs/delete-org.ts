@@ -6,7 +6,7 @@ import {
   COOKIE_SETTINGS,
   JoiOrgId,
   COOKIE_NAME,
-  withSessionMiddleware,
+  withDefaultMiddleware,
 } from "../../Config";
 import middy from "@middy/core";
 import * as Orgs from "../../models/Orgs";
@@ -37,8 +37,9 @@ const main = async (
     return createJoiResponse(error);
   }
 
+  const { session } = event.requestContext.authorizer.lambda;
   const { orgId } = event.pathParameters;
-  const { session } = event;
+
   if (session.orgId !== orgId) {
     // TODO i think we can move this to Joi
     return {
@@ -91,4 +92,4 @@ const main = async (
 
 // TODO types with API Gateway event and middleware
 // @ts-ignore
-module.exports.main = middy(main).use(withSessionMiddleware);
+module.exports.main = middy(main).use(withDefaultMiddleware);

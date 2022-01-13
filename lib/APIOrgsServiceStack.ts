@@ -12,10 +12,6 @@ export default class APIOrgsServiceStack extends cdk.Stack {
       {
         name: `create-org-function`,
         description: `As a user, creates an organization and joins it`,
-        environment: {
-          DYNAMO_TABLE_NAME: props.table.tableName,
-          SESSION_PASSWORD: process.env.SESSION_PASSWORD,
-        },
         filePath: `../functions/orgs/create-org.ts`,
         APIPath: `/orgs`,
         method: HttpMethod.POST,
@@ -23,7 +19,6 @@ export default class APIOrgsServiceStack extends cdk.Stack {
           "dynamodb:Query",
           "dynamodb:PutItem",
           "dynamodb:UpdateItem",
-          "dynamodb:GetItem",
         ],
         dynamoResources: {
           main: true,
@@ -33,10 +28,6 @@ export default class APIOrgsServiceStack extends cdk.Stack {
       {
         name: `get-org-info-function`,
         description: `Retrieves information for an org`,
-        environment: {
-          DYNAMO_TABLE_NAME: props.table.tableName,
-          SESSION_PASSWORD: process.env.SESSION_PASSWORD,
-        },
         filePath: `../functions/orgs/get-org-info.ts`,
         APIPath: `/orgs/{orgId}`,
         method: HttpMethod.GET,
@@ -48,10 +39,6 @@ export default class APIOrgsServiceStack extends cdk.Stack {
       {
         name: `delete-org-function`,
         description: `Deletes the org the user is in`,
-        environment: {
-          DYNAMO_TABLE_NAME: props.table.tableName,
-          SESSION_PASSWORD: process.env.SESSION_PASSWORD,
-        },
         filePath: `../functions/orgs/delete-org.ts`,
         APIPath: `/orgs/{orgId}`,
         method: HttpMethod.DELETE,
@@ -67,17 +54,12 @@ export default class APIOrgsServiceStack extends cdk.Stack {
       {
         name: "get-openings-in-org-function",
         description: `Retrieves the openings in an org`,
-        environment: {
-          DYNAMO_TABLE_NAME: props.table.tableName,
-          SESSION_PASSWORD: process.env.SESSION_PASSWORD,
-        },
         filePath: `../functions/orgs/get-openings.ts`,
         APIPath: `/openings`,
         method: HttpMethod.GET,
-        dynamoActions: ["dynamodb:Query", "dynamodb:GetItem"],
+        dynamoActions: ["dynamodb:Query"],
         dynamoResources: {
           GSI1: true,
-          main: true,
         },
       },
     ];

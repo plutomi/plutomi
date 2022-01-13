@@ -4,7 +4,7 @@ import {
   JOI_SETTINGS,
   DEFAULTS,
   TIME_UNITS,
-  withSessionMiddleware,
+  withDefaultMiddleware,
 } from "../../Config";
 import * as Invites from "../../models/Invites";
 import * as Time from "../../utils/time";
@@ -36,7 +36,8 @@ const main = async (
     return createJoiResponse(error);
   }
 
-  const { session } = event;
+  const { session } = event.requestContext.authorizer.lambda;
+
   const { recipientEmail } = event.body;
 
   if (session.email === recipientEmail) {
@@ -147,4 +148,4 @@ const main = async (
 };
 // TODO types with API Gateway event and middleware
 // @ts-ignore
-module.exports.main = middy(main).use(withSessionMiddleware);
+module.exports.main = middy(main).use(withDefaultMiddleware);

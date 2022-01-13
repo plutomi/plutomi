@@ -15,6 +15,7 @@ import {
   DynamoNewStageQuestion,
   DynamoNewUser,
 } from "./dynamo";
+import { HttpLambdaAuthorizer } from "@aws-cdk/aws-apigatewayv2-authorizers";
 
 type DynamoActions =
   | "dynamodb:GetItem"
@@ -66,6 +67,12 @@ export interface CDKLambda {
   };
 
   /**
+   * Whether the route for this lambda should skip the authorization check
+   * @default false
+   */
+  skipAuth?: boolean;
+
+  /**
    * In MB, how much memory should the lambda have
    * @default 256
    *
@@ -88,12 +95,20 @@ export interface CDKLambda {
 export interface CustomLambdaEvent
   extends Omit<
     APIGatewayProxyEventV2,
-    "body" | "queryStringParameters" | "pathParameters"
+    "body" | "queryStringParameters" | "pathParameters" | "requestContext"
   > {
+  // Custom types because they will be there due to Middy middleware
   body: { [key: string]: any };
   queryStringParameters: { [key: string]: string };
   pathParameters: { [key: string]: string };
-  session: UserSessionData;
+  requestContext: {
+    authorizer: {
+      lambda: {
+        // Lambda authorizer adds the user
+        session: DynamoNewUser;
+      };
+    };
+  };
 }
 
 /**
@@ -138,19 +153,14 @@ interface CUSTOM_QUERY {
   questionId: string;
   inviteId: string;
 }
-
-interface UserSessionData
-  extends Pick<
-    DynamoNewUser,
-    "firstName" | "lastName" | "email" | "orgId" | "userId"
-  > {
+interface UserSessionData {
+  userId: string;
   /**
    * ISO timestamp of when the cookie expires, encrypted with the cookie itself
    * To override all browser checks
    */
   expiresAt: string; // ISO timestamp
 }
-
 export interface CreateStageInput
   extends Pick<DynamoNewStage, "orgId" | "GSI1SK" | "openingId"> {
   stageOrder: string[];
@@ -282,7 +292,7 @@ interface DeleteOrgInviteInput {
 interface CreateOrgInviteInput {
   orgName: string;
   expiresAt: string;
-  createdBy: UserSessionData;
+  createdBy: Pick<DynamoNewUser, "firstName" | "lastName" | "orgId">;
   recipient: DynamoNewUser;
 }
 

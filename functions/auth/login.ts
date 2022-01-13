@@ -7,15 +7,13 @@ import {
   JOI_SETTINGS,
   COOKIE_SETTINGS,
   WEBSITE_URL,
-  sessionDataKeys,
   COOKIE_NAME,
-  withDefaultMiddleware,
   TIME_UNITS,
+  withDefaultMiddleware,
 } from "../../Config";
 import * as Time from "../../utils/time";
 import createSDKErrorResponse from "../../utils/createSDKErrorResponse";
 import { sealData, unsealData } from "iron-session";
-import Sanitize from "../../utils/sanitize";
 import * as Users from "../../models/Users";
 import errorFormatter from "../../utils/errorFormatter";
 import { CustomLambdaEvent, CustomLambdaResponse } from "../../types/main";
@@ -77,7 +75,7 @@ const main = async (event: APILoginEvent): Promise<CustomLambdaResponse> => {
     };
   }
 
-  const [user, error] = await Users.getUserById({ userId }); 
+  const [user, error] = await Users.getUserById({ userId });
 
   if (error) {
     return createSDKErrorResponse(
@@ -147,6 +145,5 @@ const main = async (event: APILoginEvent): Promise<CustomLambdaResponse> => {
   return response;
 };
 
-// TODO types with API Gateway event and middleware
-// @ts-ignore
+//@ts-ignore // TODO types
 module.exports.main = middy(main).use(withDefaultMiddleware);

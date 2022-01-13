@@ -1,5 +1,5 @@
 import * as Orgs from "../../models/Orgs";
-import { DEFAULTS, withSessionMiddleware } from "../../Config";
+import { DEFAULTS, withDefaultMiddleware } from "../../Config";
 import middy from "@middy/core";
 import Sanitize from "../../utils/sanitize";
 import createSDKErrorResponse from "../../utils/createSDKErrorResponse";
@@ -8,7 +8,7 @@ import { CustomLambdaEvent, CustomLambdaResponse } from "../../types/main";
 const main = async (
   event: CustomLambdaEvent
 ): Promise<CustomLambdaResponse> => {
-  const { session } = event;
+  const { session } = event.requestContext.authorizer.lambda;
   if (session.orgId === DEFAULTS.NO_ORG) {
     return {
       statusCode: 200,
@@ -45,4 +45,4 @@ const main = async (
 
 // TODO types with API Gateway event and middleware
 // @ts-ignore
-module.exports.main = middy(main).use(withSessionMiddleware);
+module.exports.main = middy(main).use(withDefaultMiddleware);

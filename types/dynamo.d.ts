@@ -1,7 +1,7 @@
 // This file is for the actual DynamoDB entries and their Types - ie: A full object with all properties.
 // All  other types are derivatives with Pick, Omit, etc.
-import { UserSessionData } from "./main";
 import { DEFAULTS, ENTITY_TYPES } from "../Config";
+import { UserSessionData } from "./main";
 interface DynamoNewStage {
   /**
    * Primary key for creating a stage - takes `orgId` and `stageId`
@@ -294,7 +294,7 @@ interface DynamoNewOrgInvite {
   /**
    * Who created this invite, info comes from their session
    */
-  createdBy: UserSessionData;
+  createdBy: Pick<DynamoNewUser, "firstName" | "lastName" | "orgId">;
 
   recipient: DynamoNewUser;
   /**

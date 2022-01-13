@@ -4,10 +4,6 @@
 [![License](https://img.shields.io/github/license/plutomi/plutomi?style=flat-square)](#)
 [![All Contributors](https://img.shields.io/badge/all_contributors-2-blue.svg?style=flat-square)](#contributors-)
 
-> ⚠️ ⛔ _WARNING_ ⛔ ⚠️
->
-> _This project is **NOT** production ready and can change at any time. You **WILL** lose your data_ :)
-
 ### [Website / Live Demo](https://plutomi.com)
 
 Plutomi is an [applicant tracking system](https://en.wikipedia.org/wiki/Applicant_tracking_system) that streamlines your entire application process with automated workflows at _any_ scale.
@@ -18,9 +14,9 @@ Having worked at a company that needed to recruit thousands of contractors every
 
 ## Summary
 
-In your recruiting flow, you can create `openings`, which people can apply to. An opening can be anything from a job, a location for a delivery company, or a program like a summer camp.
+In your recruiting flow, you can create `openings` which people can apply to. An opening can be anything from a job, a location for a delivery company, or a program like a summer camp.
 
-In these openings, you can create `stages` which are individual steps for your application. You can add questions which applicants can answer, and setup automatic move rules that determine where applicants go next depending on their answers or after a certain time period.
+In these openings, you can create `stages` which are individual steps for your application. You can add questions for applicants to answer, and setup automatic move rules that determine where applicants go next depending on their answers or after a certain time period.
 
 An _opening_ for a delivery company might look like this:
 
@@ -46,13 +42,12 @@ Stage order:
 
 ## Useful commands
 
-| Command         | Function                                                                                                                                        |
-| --------------- | ----------------------------------------------------------------------------------------------------------------------------------------------- |
-| npm run dev     | Will start the NextJS frontend on port `3000` and the Express API on port `4000`                                                                |
-| npm run notypes | Messed with types and broke everything? Run dev environment normally but disable type checking! (Does not use nodemon! Needs restart on change) |
-| npm run deploy  | Will deploy the entire app, use `cdk deploy STACK_NAME` if you want to deploy a specific stack                                                  |
-| npm run destroy | Will destroy the entire app, use `cdk destroy STACK_NAME` if you want to destroy a specific stack                                               |
-| cdk synth       | Emits the synthesized CloudFormation template for the stack(s)                                                                                  |
+| Command                                                     | Function                                                                                                                               |
+| ----------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------- |
+| npm run deploy-prod                                         | Will deploy everything to your production environment                                                                                  |
+| npm run dev                                                 | Will deploy a complete copy of the backend to AWS. The frontend runs in localhost because Cloudfront takes forever to do invalidations |
+| npx cross-env NODE_ENV=development cdk deploy -e STACK_NAME | Will deploy a specific stack in the desired environment                                                                                |
+| cdk synth                                                   | Emits the synthesized CloudFormation template for the stack(s)                                                                         |
 
 For more information on AWS CDK, please visit the [docs page](https://docs.aws.amazon.com/cdk/latest/guide/cli.html).
 
@@ -102,33 +97,9 @@ Another thing to note is that Dynamo has a 400kb limit per item. This means that
 
 ## Other useful repos:
 
+- [Serverless Nextjs](https://github.com/serverless-nextjs/serverless-next.js)
 - [AWS ECS Patterns](https://github.com/aws/aws-cdk/tree/master/packages/%40aws-cdk/aws-ecs-patterns)
 - [Serverless CDK Patterns](https://github.com/cdk-patterns/serverless)
-
-## Common errors
-
-> Argument of type 'this' is not assignable to parameter of type 'Construct'
-
-Make sure all of your `@aws-cdk/*` dependencies are running the same version + make sure whatever you are using in the construct is actually being imported at the top of the file
-
-> ERROR [internal] load metadata for public.ecr.aws/sam/build-nodejs (...) failed to solve with frontend dockerfile.v0: failed to create LLB definition: unexpected status code [manifests latest]: 403 Forbidden
-
-Try running this command to log in again: `aws ecr-public get-login-password --region us-east-1 | docker login --username AWS --password-stdin public.ecr.aws/sam/build-nodejs`
-
-> Error: Cannot perform an interactive login from a non TTY device
-
-Not 100% on this but ended up reinstalling AWS CLIv2 and it got fixed.
-https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html
-
-> `Resource_Name` cannot be deleted as it is in use by `Another_Resource`
-
-https://github.com/aws/aws-cdk/issues/3414
-
-TLDR: Try updating the stack that is using the removed stack with the `-e` flag first
-
-> "Runtime.HandlerNotFound: index.main is undefined or not exported",
-
-Make sure the only thing you are exporting from a function is the function itself: `module.exports.main`, even exporting a type or interface will cause this error
 
 ## Contributing
 
@@ -149,9 +120,7 @@ Example: _fix: Removed the double modals popping up on login_
 
 ## License
 
-This project is [MIT licensed](LICENSE.md) file.
-
-For any questions, please submit an issue or email contact@plutomi.com!
+This project is [MIT licensed](LICENSE.md)
 
 ## Contributors ✨
 

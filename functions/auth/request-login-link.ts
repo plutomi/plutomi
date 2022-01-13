@@ -16,7 +16,6 @@ import { nanoid } from "nanoid";
 import { sealData } from "iron-session";
 import { API_URL, DOMAIN_NAME } from "../../Config";
 import createJoiResponse from "../../utils/createJoiResponse";
-import httpResponseSerializer from "@middy/http-response-serializer";
 import { CustomLambdaEvent, CustomLambdaResponse } from "../../types/main";
 
 interface APIRequestLoginLinkBody {
@@ -167,6 +166,5 @@ const main = async (
   };
 };
 
-// TODO types with API Gateway event and middleware
-// @ts-ignore
+//@ts-ignore // TODO types
 module.exports.main = middy(main).use(withDefaultMiddleware);

@@ -42,7 +42,7 @@ export default class StreamProcessorStack extends cdk.Stack {
           externalModules: ["aws-sdk"],
         },
         environment: {
-          NODE_ENV: process.env.NODE_ENV, // To get the event bus name
+          NODE_ENV: process.env.NODE_ENV, // To get the dynamic event bus name // TODO this is silly
         },
         handler: "main",
         description:

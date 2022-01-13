@@ -12,18 +12,10 @@ export default class APIOpeningsServiceStack extends cdk.Stack {
       {
         name: `create-openings-function`,
         description: `Creates openings in an org`,
-        environment: {
-          DYNAMO_TABLE_NAME: props.table.tableName,
-          SESSION_PASSWORD: process.env.SESSION_PASSWORD,
-        },
         filePath: `../functions/openings/create-openings.ts`,
         APIPath: "/openings",
         method: HttpMethod.POST,
-        dynamoActions: [
-          "dynamodb:PutItem",
-          "dynamodb:UpdateItem",
-          "dynamodb:GetItem",
-        ],
+        dynamoActions: ["dynamodb:PutItem", "dynamodb:UpdateItem"],
         dynamoResources: {
           main: true,
         },

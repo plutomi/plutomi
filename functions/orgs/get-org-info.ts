@@ -1,5 +1,5 @@
 import Joi from "joi";
-import { JOI_SETTINGS, JoiOrgId, withSessionMiddleware } from "../../Config";
+import { JOI_SETTINGS, JoiOrgId, withDefaultMiddleware } from "../../Config";
 import middy from "@middy/core";
 import * as Orgs from "../../models/Orgs";
 import createJoiResponse from "../../utils/createJoiResponse";
@@ -29,7 +29,7 @@ const main = async (
     return createJoiResponse(error);
   }
 
-  const { session } = event;
+  const { session } = event.requestContext.authorizer.lambda;
   const { orgId } = event.pathParameters;
 
   if (orgId !== session.orgId) {
@@ -61,4 +61,4 @@ const main = async (
 };
 // TODO types with API Gateway event and middleware
 // @ts-ignore
-module.exports.main = middy(main).use(withSessionMiddleware);
+module.exports.main = middy(main).use(withDefaultMiddleware);

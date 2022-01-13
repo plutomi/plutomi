@@ -6,13 +6,11 @@ import createAPIGatewayFunctions from "../utils/createAPIGatewayFunctions";
 export default class APIAuthServiceStack extends cdk.Stack {
   constructor(scope: cdk.Construct, id: string, props?: LambdaAPIProps) {
     super(scope, id, props);
-
     const functions: CDKLambda[] = [
       {
         name: `request-login-link-function`,
         description: `Sends login links to the user`,
         environment: {
-          DYNAMO_TABLE_NAME: props.table.tableName,
           LOGIN_LINKS_PASSWORD: process.env.LOGIN_LINKS_PASSWORD,
         },
         filePath: `../functions/auth/request-login-link.ts`,
@@ -28,12 +26,12 @@ export default class APIAuthServiceStack extends cdk.Stack {
           GSI1: true,
           GSI2: true,
         },
+        skipAuth: true,
       },
       {
         name: `login-function`,
         description: `Logs a user in and creates an encrypted session cookie`,
         environment: {
-          DYNAMO_TABLE_NAME: props.table.tableName,
           LOGIN_LINKS_PASSWORD: process.env.LOGIN_LINKS_PASSWORD,
           SESSION_PASSWORD: process.env.SESSION_PASSWORD,
         },
@@ -49,26 +47,18 @@ export default class APIAuthServiceStack extends cdk.Stack {
         dynamoResources: {
           main: true,
         },
+        skipAuth: true,
       },
-
       {
         name: `logout-function`,
         description: `Destroys the user's session cookie`, // TODO capture logout events in Dynamo
-        environment: {
-          DYNAMO_TABLE_NAME: props.table.tableName,
-          LOGIN_LINKS_PASSWORD: process.env.LOGIN_LINKS_PASSWORD,
-          SESSION_PASSWORD: process.env.SESSION_PASSWORD,
-        },
         filePath: `../functions/auth/logout.ts`,
         APIPath: "/logout",
         method: HttpMethod.POST,
-        dynamoActions: ["dynamodb:GetItem"],
-        dynamoResources: {
-          main: true,
-        },
+        dynamoActions: [],
+        dynamoResources: {},
       },
     ];
-
     createAPIGatewayFunctions(this, functions, props.api, props.table);
   }
 }

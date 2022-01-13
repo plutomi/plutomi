@@ -14,7 +14,7 @@ export const WEBSITE_URL = PROTOCOL + DYNAMIC_DOMAIN;
 export const COOKIE_NAME =
   process.env.NODE_ENV === "production"
     ? "plutomi-cookie"
-    : "DEV-plutomi-cookie"; 
+    : "DEV-plutomi-cookie";
 
 // //Reason for SameSite=None: https://stackoverflow.com/a/62726825 // TODO revisit
 export const COOKIE_SETTINGS = `Secure; HttpOnly; SameSite=Strict; Path=/; Domain=${DOMAIN_NAME}`; // See SESSION_SETTINGS for setting session length
@@ -138,7 +138,7 @@ export const SESSION_SETTINGS = {
   password: process.env.SESSION_PASSWORD,
   // We handle session expiry because if a user updates a property on themselves,
   // the new ttl is +12 hours on that event.. and not 12 hours since session was created - #475
-  // Setting ttl to 0 has a theoretical infinite session, but we verify that it hasn't expired in withAuth middleware
+  // Setting ttl to 0 has a theoretical infinite session, but we verify that it hasn't expired in authorizer function
   ttl: 0,
 };
 
@@ -268,22 +268,25 @@ import httpEventNormalizer from "@middy/http-event-normalizer";
 import httpJsonBodyParser from "@middy/http-json-body-parser";
 import httpResponseSerializer from "@middy/http-response-serializer";
 import inputOutputLogger from "@middy/input-output-logger";
-import withAuth from "./middleware/withAuth";
 import withCleanOrgId from "./middleware/withCleanOrgId";
-// Requires session
-export const withSessionMiddleware = [
+
+export const withDefaultMiddleware = [
   httpEventNormalizer({ payloadFormatVersion: 2 }),
   httpJsonBodyParser(),
   inputOutputLogger(),
-  withAuth(),
   withCleanOrgId(),
   httpResponseSerializer(MIDDY_SERIALIZERS),
 ];
 
-// All other requests
-export const withDefaultMiddleware = [
+export const lambdaAuthorizerMiddleware = [
   httpEventNormalizer({ payloadFormatVersion: 2 }),
-  httpJsonBodyParser(),
+  /**
+   * This middleware cannot be used because the Lambda authorizer
+   * does not get the request body passed into it and therefore
+   * it will throw an error
+   * https://docs.aws.amazon.com/apigateway/latest/developerguide/api-gateway-lambda-authorizer-input.html
+   */
+  // httpJsonBodyParser(),
   inputOutputLogger(),
   withCleanOrgId(),
   httpResponseSerializer(MIDDY_SERIALIZERS),
