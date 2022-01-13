@@ -10,10 +10,9 @@ import * as Invites from "../../models/Invites";
 import * as Time from "../../utils/time";
 import * as Users from "../../models/Users";
 import * as Orgs from "../../models/Orgs";
-import createJoiResponse from "../../utils/createJoiResponse";
 import createSDKErrorResponse from "../../utils/createSDKErrorResponse";
 import { CustomLambdaEvent, CustomLambdaResponse } from "../../types/main";
-
+import * as Response from "../../utils/createResponse";
 interface APICreateInvitesBody {
   recipientEmail?: string;
 }
@@ -33,7 +32,7 @@ const main = async (
   try {
     await schema.validateAsync(event);
   } catch (error) {
-    return createJoiResponse(error);
+    return Response.JOI(error);
   }
 
   const { session } = event.requestContext.authorizer.lambda;

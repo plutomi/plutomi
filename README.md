@@ -120,7 +120,7 @@ Example: _fix: Removed the double modals popping up on login_
 
 ## License
 
-This project is [MIT licensed](LICENSE.md)
+This project is [MIT licensed](LICENSE)
 
 ## Contributors ✨
 

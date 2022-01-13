@@ -1,6 +1,5 @@
 import { Request, Response } from "express";
 import { DEFAULTS, EMAILS } from "../Config";
-import createJoiResponse from "../utils/createJoiResponse";
 import {
   CreateApplicantAPIBody,
   CreateApplicantResponseInput,

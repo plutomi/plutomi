@@ -2,10 +2,9 @@ import * as Openings from "../../models/Openings";
 import middy from "@middy/core";
 import Joi from "joi";
 import { JOI_SETTINGS, DEFAULTS, withDefaultMiddleware } from "../../Config";
-import createJoiResponse from "../../utils/createJoiResponse";
 import createSDKErrorResponse from "../../utils/createSDKErrorResponse";
 import { CustomLambdaEvent, CustomLambdaResponse } from "../../types/main";
-
+import * as Response from "../../utils/createResponse";
 interface APICreateOpeningsBody {
   GSI1SK?: string;
 }
@@ -25,7 +24,7 @@ const main = async (
   try {
     await schema.validateAsync(event);
   } catch (error) {
-    return createJoiResponse(error);
+    return Response.JOI(error);
   }
 
   const { session } = event.requestContext.authorizer.lambda;

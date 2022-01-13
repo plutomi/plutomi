@@ -1,6 +1,6 @@
-import createJoiResponse from "../../utils/createJoiResponse";
 import middy from "@middy/core";
 import Joi from "joi";
+import * as Response from "../../utils/createResponse";
 import {
   LOGIN_LINK_SETTINGS,
   SESSION_SETTINGS,
@@ -38,7 +38,7 @@ const main = async (event: APILoginEvent): Promise<CustomLambdaResponse> => {
   try {
     await schema.validateAsync(event);
   } catch (error) {
-    return createJoiResponse(error);
+    return Response.JOI(error);
   }
 
   const { callbackUrl, seal } = event.queryStringParameters;

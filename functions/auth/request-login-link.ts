@@ -15,7 +15,7 @@ import * as Users from "../../models/Users";
 import { nanoid } from "nanoid";
 import { sealData } from "iron-session";
 import { API_URL, DOMAIN_NAME } from "../../Config";
-import createJoiResponse from "../../utils/createJoiResponse";
+import * as Response from "../../utils/createResponse";
 import { CustomLambdaEvent, CustomLambdaResponse } from "../../types/main";
 
 interface APIRequestLoginLinkBody {
@@ -49,7 +49,7 @@ const main = async (
   try {
     await schema.validateAsync(event);
   } catch (error) {
-    return createJoiResponse(error);
+    return Response.JOI(error);
   }
 
   const { email, loginMethod } = event.body;

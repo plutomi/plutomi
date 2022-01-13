@@ -10,11 +10,9 @@ import {
 } from "../../Config";
 import middy from "@middy/core";
 import * as Orgs from "../../models/Orgs";
-import { sealData } from "iron-session";
-import createJoiResponse from "../../utils/createJoiResponse";
 import createSDKErrorResponse from "../../utils/createSDKErrorResponse";
 import { CustomLambdaEvent, CustomLambdaResponse } from "../../types/main";
-
+import * as Response from "../../utils/createResponse";
 interface APIDeleteOrgPathParameters {
   orgId?: string;
 }
@@ -34,7 +32,7 @@ const main = async (
   try {
     await schema.validateAsync(event);
   } catch (error) {
-    return createJoiResponse(error);
+    return Response.JOI(error);
   }
 
   const { session } = event.requestContext.authorizer.lambda;
