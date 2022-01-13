@@ -4,7 +4,7 @@ import { JOI_SETTINGS, JoiOrgId, withDefaultMiddleware } from "../../Config";
 import * as Orgs from "../../models/Orgs";
 
 import { CustomLambdaEvent, CustomLambdaResponse } from "../../types/main";
-import * as Response from "../../utils/createResponse";
+import * as Response from "../../utils/customResponse";
 interface APIGetOrgInvitesPathParameters {
   orgId?: string;
 }

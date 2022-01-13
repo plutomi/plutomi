@@ -121,6 +121,8 @@ export interface CustomLambdaResponse
   extends Omit<APIGatewayProxyStructuredResultV2, "body" | "statusCode"> {
   statusCode: number;
   body: { [key: string]: any };
+  headers?: { [key: string]: string };
+  cookies?: string[];
 }
 
 export interface LambdaAPIProps extends StackProps {

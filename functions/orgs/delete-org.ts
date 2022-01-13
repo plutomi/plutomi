@@ -12,7 +12,7 @@ import middy from "@middy/core";
 import * as Orgs from "../../models/Orgs";
 
 import { CustomLambdaEvent, CustomLambdaResponse } from "../../types/main";
-import * as Response from "../../utils/createResponse";
+import * as Response from "../../utils/customResponse";
 interface APIDeleteOrgPathParameters {
   orgId?: string;
 }

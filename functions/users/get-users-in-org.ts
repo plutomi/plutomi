@@ -2,7 +2,7 @@ import * as Orgs from "../../models/Orgs";
 import { DEFAULTS, withDefaultMiddleware } from "../../Config";
 import middy from "@middy/core";
 import Sanitize from "../../utils/sanitize";
-import * as Response from "../../utils/createResponse";
+import * as Response from "../../utils/customResponse";
 import { CustomLambdaEvent, CustomLambdaResponse } from "../../types/main";
 
 const main = async (

@@ -15,7 +15,7 @@ import { sealData, unsealData } from "iron-session";
 import * as Users from "../../models/Users";
 import errorFormatter from "../../utils/errorFormatter";
 import { CustomLambdaEvent, CustomLambdaResponse } from "../../types/main";
-import * as Response from "../../utils/createResponse";
+import * as Response from "../../utils/customResponse";
 interface APIRequestLoginLinkQueryStrings {
   callbackUrl?: string;
   seal?: string;

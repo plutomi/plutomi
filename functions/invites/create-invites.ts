@@ -11,7 +11,7 @@ import * as Time from "../../utils/time";
 import * as Users from "../../models/Users";
 import * as Orgs from "../../models/Orgs";
 import { CustomLambdaEvent, CustomLambdaResponse } from "../../types/main";
-import * as Response from "../../utils/createResponse";
+import * as Response from "../../utils/customResponse";
 interface APICreateInvitesBody {
   recipientEmail?: string;
 }

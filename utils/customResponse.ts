@@ -1,4 +1,4 @@
-import errorFormatter from "../utils/errorFormatter";
+import errorFormatter from "./errorFormatter";
 import { SdkError } from "@aws-sdk/types";
 import { CustomLambdaResponse } from "../types/main";
 

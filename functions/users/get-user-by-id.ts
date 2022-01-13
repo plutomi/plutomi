@@ -4,7 +4,7 @@ import { DEFAULTS, JOI_SETTINGS, withDefaultMiddleware } from "../../Config";
 import middy from "@middy/core";
 
 import { CustomLambdaEvent, CustomLambdaResponse } from "../../types/main";
-import * as Response from "../../utils/createResponse";
+import * as Response from "../../utils/customResponse";
 interface APIUserByIdPathParameters {
   userId?: string;
 }

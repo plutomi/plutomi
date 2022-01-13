@@ -4,7 +4,7 @@ import Joi from "joi";
 import { JOI_SETTINGS, DEFAULTS, withDefaultMiddleware } from "../../Config";
 
 import { CustomLambdaEvent, CustomLambdaResponse } from "../../types/main";
-import * as Response from "../../utils/createResponse";
+import * as Response from "../../utils/customResponse";
 interface APICreateOpeningsBody {
   GSI1SK?: string;
 }

@@ -14,7 +14,7 @@ import * as Users from "../../models/Users";
 import { nanoid } from "nanoid";
 import { sealData } from "iron-session";
 import { API_URL, DOMAIN_NAME } from "../../Config";
-import * as Response from "../../utils/createResponse";
+import * as Response from "../../utils/customResponse";
 import { CustomLambdaEvent, CustomLambdaResponse } from "../../types/main";
 
 interface APIRequestLoginLinkBody {
@@ -74,7 +74,7 @@ const main = async (
   // Allow google login even if a user opted out of emails // TODO revisit once unsubscribe has been implemented
   if (!user.canReceiveEmails && loginMethod === LOGIN_METHODS.EMAIL) {
     return {
-      statusCode: 403,
+      statusCode: 200,
       body: {
         message: `${user.email} is unable to receive emails, please reach out to support@plutomi.com to opt back in!`,
       },

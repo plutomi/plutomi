@@ -4,7 +4,7 @@ import middy from "@middy/core";
 import { JOI_SETTINGS, withDefaultMiddleware } from "../../Config";
 
 import { CustomLambdaEvent, CustomLambdaResponse } from "../../types/main";
-import * as Response from "../../utils/createResponse";
+import * as Response from "../../utils/customResponse";
 interface APIGetUserInvitesPathParameters {
   userId?: string;
 }

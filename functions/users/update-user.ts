@@ -9,7 +9,7 @@ import {
 import middy from "@middy/core";
 
 import { CustomLambdaEvent, CustomLambdaResponse } from "../../types/main";
-import * as Response from "../../utils/createResponse";
+import * as Response from "../../utils/customResponse";
 interface APIUpdateUserPathParameters {
   userId?: string;
 }
