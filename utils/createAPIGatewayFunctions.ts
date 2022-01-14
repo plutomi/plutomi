@@ -33,9 +33,16 @@ export default function createAPIGatewayFunctions(
       {
         entry: path.join(__dirname, lambda.filePath),
         ...DEFAULT_LAMBDA_CONFIG,
-        ...lambda, // Overwrite defaults
+        // Overwrite defaults
+        ...lambda,
+
         // Must have different names for dev / prod
         functionName: `${process.env.NODE_ENV}-${lambda.functionName}`,
+        // These lambdas all need the table name
+        environment: {
+          ...lambda.environment,
+          DYNAMO_TABLE_NAME: table.tableName,
+        },
       }
     );
 

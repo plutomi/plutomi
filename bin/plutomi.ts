@@ -29,9 +29,6 @@ export const DEFAULT_LAMBDA_CONFIG: NodejsFunctionProps = {
   timeout: cdk.Duration.seconds(5),
   memorySize: 256,
   logRetention: RetentionDays.ONE_WEEK,
-  environment: {
-    DYNAMO_TABLE_NAME: process.env.DYNAMO_TABLE_NAME,
-  },
   runtime: Runtime.NODEJS_14_X,
   architecture: Architecture.ARM_64,
   bundling: {

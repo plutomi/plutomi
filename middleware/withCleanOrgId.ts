@@ -16,7 +16,7 @@ const middleware = (): middy.MiddlewareObj<
     APIGatewayProxyEvent,
     APIGatewayProxyResult
   > = async (request) => {
-    // TODO types, this would run after the other middlewares
+    // TODO types
     // @ts-ignore
     if (request.event?.body?.orgId) {
       // @ts-ignore

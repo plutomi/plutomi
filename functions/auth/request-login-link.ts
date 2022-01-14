@@ -7,6 +7,7 @@ import {
   JOI_SETTINGS,
   WEBSITE_URL,
   withDefaultMiddleware,
+  ID_LENGTHS,
 } from "../../Config";
 import * as Time from "../../utils/time";
 import * as Users from "../../models/Users";
@@ -59,9 +60,11 @@ const main = async (
     const [createdUser, createUserError] = await Users.createUser({
       email,
     });
-
     if (createUserError) {
-      return Response.SDK(userError, "An error ocurred creating your account");
+      return Response.SDK(
+        createUserError,
+        "An error ocurred creating your account"
+      );
     }
     user = createdUser;
   }
@@ -87,7 +90,6 @@ const main = async (
     );
   }
   const timeThreshold = Time.pastISO(10, TIME_UNITS.MINUTES);
-
   if (
     latestLink &&
     latestLink.createdAt >= timeThreshold &&
@@ -102,7 +104,7 @@ const main = async (
   }
 
   // Create a login link for them
-  const loginLinkId = nanoid(100);
+  const loginLinkId = nanoid();
   const loginLinkExpiry = Time.futureISO(15, TIME_UNITS.MINUTES); // when the link expires
 
   // TODO replace this with iron seal directly
@@ -117,7 +119,6 @@ const main = async (
   const loginLinkUrl = `${API_URL}/login?seal=${seal}&callbackUrl=${
     callbackUrl ? callbackUrl : `${WEBSITE_URL}/${DEFAULTS.REDIRECT}`
   }`;
-
   /**
    * Email will be sent asynchronously
    */

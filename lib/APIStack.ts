@@ -64,7 +64,7 @@ export default class APIStack extends cdk.Stack {
       environment: {
         SESSION_PASSWORD: process.env.SESSION_PASSWORD,
       },
-      reservedConcurrentExecutions: null,
+      reservedConcurrentExecutions: undefined, // Don't want to cap this to the default
       entry: path.join(__dirname, `../functions/auth/authorizer.ts`),
     });
 

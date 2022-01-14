@@ -212,7 +212,6 @@ export const withDefaultMiddleware = [
   inputOutputLogger(),
   withCleanOrgId(),
   httpResponseSerializer(MIDDY_SERIALIZERS),
-  cors(),
 ];
 
 export const lambdaAuthorizerMiddleware = [
@@ -226,6 +225,6 @@ export const lambdaAuthorizerMiddleware = [
   // httpJsonBodyParser(),
   inputOutputLogger(),
   withCleanOrgId(),
-  httpResponseSerializer(MIDDY_SERIALIZERS),
-  cors(),
+  // This isn't needed for the authorizer
+  // httpResponseSerializer(MIDDY_SERIALIZERS),
 ];

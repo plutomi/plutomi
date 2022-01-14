@@ -38,7 +38,7 @@ export default class StreamProcessorStack extends cdk.Stack {
         environment: {
           NODE_ENV: process.env.NODE_ENV, // To get the dynamic event bus name // TODO this is silly
         },
-        reservedConcurrentExecutions: null,
+        reservedConcurrentExecutions: undefined, // Don't want to cap this to the default
         description:
           "Processes table changes from DynamoDB streams and sends them to EventBridge",
         entry: path.join(__dirname, `/../functions/stream-processor.ts`),
