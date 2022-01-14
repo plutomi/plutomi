@@ -3,7 +3,6 @@ import Joi from "joi";
 import {
   DEFAULTS,
   LOGIN_LINK_SETTINGS,
-  LOGIN_METHODS,
   TIME_UNITS,
   JOI_SETTINGS,
   WEBSITE_URL,
@@ -19,7 +18,6 @@ import { CustomLambdaEvent, CustomLambdaResponse } from "../../types/main";
 
 interface APIRequestLoginLinkBody {
   email?: string;
-  loginMethod?: string;
 }
 interface APIRequestLoginLinkQueryStrings {
   callbackUrl?: string;
@@ -33,9 +31,6 @@ interface APIRequestLoginLinkEvent
 const schema = Joi.object({
   body: {
     email: Joi.string().email(),
-    loginMethod: Joi.string()
-      .valid(LOGIN_METHODS.GOOGLE, LOGIN_METHODS.EMAIL)
-      .required(),
   },
   queryStringParameters: {
     callbackUrl: Joi.string().uri(),
@@ -51,7 +46,7 @@ const main = async (
     return Response.JOI(error);
   }
 
-  const { email, loginMethod } = event.body;
+  const { email } = event.body;
   const { callbackUrl } = event.queryStringParameters;
 
   // If a user is signing in for the first time, create an account for them
@@ -71,12 +66,11 @@ const main = async (
     user = createdUser;
   }
 
-  // Allow google login even if a user opted out of emails // TODO revisit once unsubscribe has been implemented
-  if (!user.canReceiveEmails && loginMethod === LOGIN_METHODS.EMAIL) {
+  if (!user.canReceiveEmails) {
     return {
       statusCode: 200,
       body: {
-        message: `${user.email} is unable to receive emails, please reach out to support@plutomi.com to opt back in!`,
+        message: `'${user.email}' is unable to receive emails, please reach out to support@plutomi.com to opt back in!`,
       },
     };
   }
@@ -129,7 +123,6 @@ const main = async (
    */
   const [success, creationError] = await Users.createLoginLink({
     loginLinkId,
-    loginMethod,
     loginLinkUrl,
     loginLinkExpiry,
     user,
@@ -140,14 +133,6 @@ const main = async (
       creationError,
       "An error ocurred creating your login link"
     );
-  }
-
-  // Cannot do serverside redirect from axios POST, client will make the POST instead - // TODO revisit this and just have a router.push?
-  if (loginMethod === LOGIN_METHODS.GOOGLE) {
-    return {
-      statusCode: 200,
-      body: { message: loginLinkUrl },
-    };
   }
 
   // Else, send the email asynchronously w/ step functions

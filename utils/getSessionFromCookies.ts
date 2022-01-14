@@ -28,7 +28,7 @@ export default async function getSessionFromCookies(
   }
   if (seal) {
     try {
-      const session = await unsealData(seal, SESSION_SETTINGS);
+      const session: UserSessionData = await unsealData(seal, SESSION_SETTINGS);
 
       if (Object.keys(session).length === 0) {
         return [null, AUTH_ERRORS.INVALID_SESSION];

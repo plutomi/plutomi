@@ -364,7 +364,6 @@ interface DynamoNewLoginLink {
   relativeExpiry: string;
   user: DynamoNewUser;
   loginLinkUrl: string;
-  loginMethod: string; // "GOOGLE" or "EMAIL"
   /**
    * A UNIX date for which Dynamo will auto delete this link
    */

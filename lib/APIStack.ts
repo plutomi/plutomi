@@ -1,8 +1,8 @@
 import * as dotenv from "dotenv";
-import * as cdk from "@aws-cdk/core";
 import * as cf from "@aws-cdk/aws-cloudfront";
 import * as waf from "@aws-cdk/aws-wafv2";
-import { CDKLambda } from "../types/main";
+import * as cdk from "@aws-cdk/core";
+import * as logs from "@aws-cdk/aws-logs";
 import {
   HttpLambdaAuthorizer,
   HttpLambdaResponseType,
@@ -15,9 +15,8 @@ import { CloudFrontTarget } from "@aws-cdk/aws-route53-targets";
 import * as path from "path";
 import { API_DOMAIN, API_SUBDOMAIN, DOMAIN_NAME, WEBSITE_URL } from "../Config";
 import { NodejsFunction } from "@aws-cdk/aws-lambda-nodejs";
-import { Architecture, Runtime } from "@aws-cdk/aws-lambda";
-import { create } from "lodash";
-import createAPIGatewayFunctions from "../utils/createAPIGatewayFunctions";
+import { Policy, PolicyStatement } from "@aws-cdk/aws-iam";
+import { DEFAULT_LAMBDA_CONFIG } from "../bin/plutomi";
 const resultDotEnv = dotenv.config({
   path: `${process.cwd()}/.env.${process.env.NODE_ENV}`,
 });
@@ -26,10 +25,6 @@ if (resultDotEnv.error) {
   throw resultDotEnv.error;
 }
 
-interface StackAndFunctions {
-  stack: cdk.Stack;
-  functions: CDKLambda[];
-}
 interface APIGatewayServiceProps extends cdk.StackProps {
   table: Table;
 }
@@ -61,29 +56,36 @@ export default class APIStack extends cdk.Stack {
     );
 
     /**
-     * Authorizer function at API Gateway
+     * Lambda authorizer function for API Gateway
      */
-    const authorizerFunction = new NodejsFunction(
-      this,
-      `${process.env.NODE_ENV}-authorizer-function`,
-      {
-        functionName: `${process.env.NODE_ENV}-authorizer-function`,
-        memorySize: 256,
-        timeout: cdk.Duration.seconds(5),
-        runtime: Runtime.NODEJS_14_X,
-        architecture: Architecture.ARM_64,
-        bundling: {
-          minify: true,
-          externalModules: ["aws-sdk"],
-        },
-        handler: "main",
-        environment: {
-          DYNAMO_TABLE_NAME: props.table.tableName,
-          SESSION_PASSWORD: process.env.SESSION_PASSWORD,
-        },
-        entry: path.join(__dirname, `../functions/auth/authorizer.ts`),
-      }
+    const functionName = `${process.env.NODE_ENV}-authorizer-function`;
+    const authorizerFunction = new NodejsFunction(this, functionName, {
+      ...DEFAULT_LAMBDA_CONFIG,
+      functionName,
+      environment: {
+        SESSION_PASSWORD: process.env.SESSION_PASSWORD,
+      },
+      entry: path.join(__dirname, `../functions/auth/authorizer.ts`),
+    });
+
+    /**
+     * Allow the authorize function to retrieve user data
+     */
+    const policy = new PolicyStatement({
+      actions: ["dynamodb:GetItem"],
+      resources: [
+        `arn:aws:dynamodb:${cdk.Stack.of(this).region}:${
+          cdk.Stack.of(this).account
+        }:table/${props.table.tableName}`,
+      ],
+    });
+
+    authorizerFunction.role.attachInlinePolicy(
+      new Policy(this, `${process.env.NODE_ENV}-${functionName}-policy`, {
+        statements: [policy],
+      })
     );
+
     const authorizer = new HttpLambdaAuthorizer({
       authorizerName: `${process.env.NODE_ENV}-authorizer`,
       handler: authorizerFunction,

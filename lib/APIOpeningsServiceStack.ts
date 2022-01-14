@@ -10,7 +10,7 @@ export default class APIOpeningsServiceStack extends cdk.Stack {
 
     const functions: CDKLambda[] = [
       {
-        name: `create-openings-function`,
+        functionName: `create-openings-function`,
         description: `Creates openings in an org`,
         filePath: `../functions/openings/create-openings.ts`,
         APIPath: "/openings",

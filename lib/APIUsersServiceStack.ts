@@ -9,7 +9,7 @@ export default class APIUsersServiceStack extends cdk.Stack {
     super(scope, id, props);
     const functions: CDKLambda[] = [
       {
-        name: `get-self-info-function`,
+        functionName: `get-self-info-function`,
         description: `Retrieves info about the current user, ID is taken from the session cookie`,
         filePath: `../functions/users/get-self-info.ts`,
         APIPath: `/users/self`,
@@ -21,7 +21,7 @@ export default class APIUsersServiceStack extends cdk.Stack {
       },
 
       {
-        name: `get-user-by-id-function`,
+        functionName: `get-user-by-id-function`,
         description: `Retrieves info about a specific user`,
         filePath: `../functions/users/get-user-by-id.ts`,
         APIPath: `/users/{userId}`,
@@ -32,7 +32,7 @@ export default class APIUsersServiceStack extends cdk.Stack {
         },
       },
       {
-        name: `update-user-function`,
+        functionName: `update-user-function`,
         description: `Updates a specific user`,
         filePath: `../functions/users/update-user.ts`,
         APIPath: `/users/{userId}`,
@@ -43,7 +43,7 @@ export default class APIUsersServiceStack extends cdk.Stack {
         },
       },
       {
-        name: `get-users-in-org-function`,
+        functionName: `get-users-in-org-function`,
         description: `Retrieves all users in the requester's org`,
         filePath: `../functions/users/get-users-in-org.ts`,
         APIPath: `/users`,

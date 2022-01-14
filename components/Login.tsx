@@ -1,10 +1,6 @@
 import LoginEmail from "./EmailSigninInput";
 import { useState } from "react";
-import router from "next/router";
 import AuthService from "../adapters/AuthService";
-import GoogleLoginButton from "./GoogleLoginButton";
-import axios from "../utils/axios";
-import { LOGIN_METHODS } from "../Config";
 
 export default function Login({ loggedOutPageText }) {
   const [email, setemail] = useState("");
@@ -25,8 +21,7 @@ export default function Login({ loggedOutPageText }) {
     try {
       const { message } = await AuthService.requestLoginLink(
         email,
-        window.location.href,
-        LOGIN_METHODS.EMAIL
+        window.location.href
       );
 
       setSubmittedText(message);
@@ -34,30 +29,6 @@ export default function Login({ loggedOutPageText }) {
     } catch (error) {
       alert(error.response.data.message);
     }
-  };
-
-  const successfulLogin = async (response) => {
-    console.log(response);
-    const email = response.profileObj.email;
-
-    try {
-      const { message } = await AuthService.requestLoginLink(
-        email,
-        window.location.href,
-        LOGIN_METHODS.GOOGLE
-      );
-      window.location.replace(message);
-      return;
-    } catch (error) {
-      alert(`Error logging in with google - ${error}`);
-    }
-  };
-
-  const failedLogin = (response) => {
-    console.log(response);
-    alert(
-      `An error ocurred logging you in, please try again or log in through the magic links`
-    );
   };
 
   return (
@@ -74,13 +45,6 @@ export default function Login({ loggedOutPageText }) {
           </div>
         ) : (
           <div className="space-y-2 flex-col items-center  justify-center  ">
-            <GoogleLoginButton
-              successfulLogin={successfulLogin}
-              failedLogin={failedLogin}
-            />
-            <p className=" text-lg text-red text-center sm:max-w-8xl max-w-sm">
-              OR
-            </p>{" "}
             <LoginEmail
               onChange={handleEmailChange}
               email={email}

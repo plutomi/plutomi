@@ -7,7 +7,6 @@ import { Table } from "@aws-cdk/aws-dynamodb";
 import {
   EMAILS,
   ENTITY_TYPES,
-  LOGIN_METHODS,
   API_URL,
   DOMAIN_NAME,
   WEBSITE_URL,
@@ -208,13 +207,8 @@ export default class CommsMachineStack extends cdk.Stack {
           "$.detail.NewImage.entityType",
           ENTITY_TYPES.LOGIN_LINK
         ),
-        new sfn.Choice(this, "LoginMethodIsEmail?").when(
-          sfn.Condition.stringEquals(
-            "$.detail.NewImage.loginMethod",
-            LOGIN_METHODS.EMAIL
-          ),
-          sendLoginLink
-        )
+
+        sendLoginLink
       )
       .when(
         sfn.Condition.stringEquals(

@@ -16,6 +16,10 @@ import {
   DynamoNewUser,
 } from "./dynamo";
 import { HttpLambdaAuthorizer } from "@aws-cdk/aws-apigatewayv2-authorizers";
+import {
+  NodejsFunction,
+  NodejsFunctionProps,
+} from "@aws-cdk/aws-lambda-nodejs";
 
 type DynamoActions =
   | "dynamodb:GetItem"
@@ -25,33 +29,20 @@ type DynamoActions =
   | "dynamodb:UpdateItem"
   | "dynamodb:DeleteItem"
   | "dynamodb:BatchWriteItem";
-export interface CDKLambda {
-  /**
-   * Name of the lambda function
-   */
-  name: string;
-
-  /**
-   * What this function does
-   */
-  description: string;
-  /**
-   * Environment variables for the lambda function
-   */
-  environment?: {
-    DYNAMO_TABLE_NAME?: string;
-    LOGIN_LINKS_PASSWORD?: string;
-    SESSION_PASSWORD?: string;
-  };
-  filePath: string;
+export interface CDKLambda extends NodejsFunctionProps {
   /**
    * Path for the API, such as "/users/{userId}"
    */
   APIPath: string;
+
   /**
    * HTTP Method for the API call
    */
   method: HttpMethod;
+  /**
+   * Path to the file with the function code
+   */
+  filePath: string;
   /**
    * What actions the lambda is allowed to perform such as
    * "dynamodb:Query", "dynamodb:PutItem", "dynamodb:GetItem"
@@ -71,25 +62,6 @@ export interface CDKLambda {
    * @default false
    */
   skipAuth?: boolean;
-
-  /**
-   * In MB, how much memory should the lambda have
-   * @default 256
-   *
-   */
-  memorySize?: number;
-
-  /**
-   * In seconds, when should this function timeout
-   * @default 5
-   */
-  timeout?: Duration;
-
-  /**
-   * Max number of concurrent functions
-   * @default 1
-   */
-  maxConcurrency?: number;
 }
 
 export interface CustomLambdaEvent
@@ -320,7 +292,6 @@ type JoinOrgFromInviteInput = {
 
 type CreateLoginLinkInput = {
   loginLinkId: string;
-  loginMethod: string; // GOOGLE or LINK
   loginLinkUrl: string;
   loginLinkExpiry: string;
   user: DynamoNewUser;

@@ -1,4 +1,3 @@
-import { Runtime, Architecture } from "@aws-cdk/aws-lambda";
 import {
   NodejsFunction,
   NodejsFunctionProps,
@@ -11,7 +10,7 @@ import * as path from "path";
 import { HttpApi } from "@aws-cdk/aws-apigatewayv2";
 import { LambdaProxyIntegration } from "@aws-cdk/aws-apigatewayv2-integrations";
 import { CDKLambda } from "../types/main";
-import { HttpLambdaAuthorizer } from "@aws-cdk/aws-apigatewayv2-authorizers";
+import { DEFAULT_LAMBDA_CONFIG } from "../bin/plutomi";
 
 /**
  *  For CDK, this creates functions that are attached to API Gateway. These only really need DynamoDB permissions.
@@ -28,26 +27,19 @@ export default function createAPIGatewayFunctions(
   table: Table
 ): void {
   for (const lambda of functions) {
+    const overwrittenFunction = {
+      ...DEFAULT_LAMBDA_CONFIG,
+      ...lambda,
+    };
+
+    console.log("OVERWRITTEN FUNCTION", overwrittenFunction);
     const func = new NodejsFunction(
       stack,
-      `${process.env.NODE_ENV}-${lambda.name}`,
+      `${process.env.NODE_ENV}-${lambda.functionName}`,
       {
-        functionName: `${process.env.NODE_ENV}-${lambda.name}`,
-        memorySize: lambda.memorySize || 256,
-        timeout: lambda.timeout || cdk.Duration.seconds(5),
-        runtime: Runtime.NODEJS_14_X,
-        architecture: Architecture.ARM_64,
-        environment: {
-          ...lambda.environment,
-          DYNAMO_TABLE_NAME: table.tableName,
-        },
-        bundling: {
-          minify: true,
-          externalModules: ["aws-sdk"],
-        },
-        handler: "main",
-        reservedConcurrentExecutions: lambda.maxConcurrency || 1,
         entry: path.join(__dirname, lambda.filePath),
+        ...overwrittenFunction,
+        // Overwrite defaults
       }
     );
 
@@ -85,7 +77,7 @@ export default function createAPIGatewayFunctions(
     const validDynamoPolicy = policyExists || policyUndefined;
 
     if (!validDynamoPolicy) {
-      throw `The function ${lambda.name} has ${
+      throw `The function ${lambda.functionName} has ${
         lambda.dynamoActions.length
       } 'dynamoActions' but ${
         Object.keys(lambda.dynamoResources).length
@@ -99,9 +91,13 @@ export default function createAPIGatewayFunctions(
       });
 
       func.role.attachInlinePolicy(
-        new Policy(stack, `${process.env.NODE_ENV}-${lambda.name}-policy`, {
-          statements: [policy],
-        })
+        new Policy(
+          stack,
+          `${process.env.NODE_ENV}-${lambda.functionName}-policy`,
+          {
+            statements: [policy],
+          }
+        )
       );
     }
   }

@@ -2,9 +2,8 @@ import axios from "../utils/axios";
 export default class AuthService {
   // TODO types
   // Default callbackurl is DEFAULTS.REDIRECT
-  static async requestLoginLink(email, callbackUrl, loginMethod) {
+  static async requestLoginLink(email, callbackUrl) {
     const body = {
-      loginMethod,
       email,
     };
 

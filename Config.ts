@@ -217,11 +217,6 @@ export const FORBIDDEN_PROPERTIES = {
   ],
 };
 
-export enum LOGIN_METHODS {
-  EMAIL = "EMAIL",
-  GOOGLE = "GOOGLE",
-}
-
 export const NAVBAR_NAVIGATION = [
   {
     name: "Dashboard",
@@ -269,6 +264,11 @@ import httpJsonBodyParser from "@middy/http-json-body-parser";
 import httpResponseSerializer from "@middy/http-response-serializer";
 import inputOutputLogger from "@middy/input-output-logger";
 import withCleanOrgId from "./middleware/withCleanOrgId";
+import {
+  NodejsFunction,
+  NodejsFunctionProps,
+} from "@aws-cdk/aws-lambda-nodejs";
+import { nanoid } from "nanoid";
 
 export const withDefaultMiddleware = [
   httpEventNormalizer({ payloadFormatVersion: 2 }),

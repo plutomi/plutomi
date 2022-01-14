@@ -10,7 +10,7 @@ export default class APIInvitesServiceStack extends cdk.Stack {
 
     const functions: CDKLambda[] = [
       {
-        name: `get-org-invites-function`,
+        functionName: `get-org-invites-function`,
         description: `Retrieves invites for an org that haven't been accepted yet`,
         filePath: `../functions/invites/get-org-invites.ts`,
         APIPath: "/orgs/{orgId}/invites",
@@ -21,7 +21,7 @@ export default class APIInvitesServiceStack extends cdk.Stack {
         },
       },
       {
-        name: `get-user-invites-function`,
+        functionName: `get-user-invites-function`,
         description: `Retrieves invites for a user that haven't been accepted yet`,
         filePath: `../functions/invites/get-user-invites.ts`,
         APIPath: "/invites",
@@ -32,7 +32,7 @@ export default class APIInvitesServiceStack extends cdk.Stack {
         },
       },
       {
-        name: "create-invites-function",
+        functionName: "create-invites-function",
         description: `Creates an invite for a user to join an org`,
         filePath: `../functions/invites/create-invites.ts`,
         APIPath: `/invites`,
@@ -50,7 +50,7 @@ export default class APIInvitesServiceStack extends cdk.Stack {
       },
 
       {
-        name: `reject-invites-function`,
+        functionName: `reject-invites-function`,
         description: `Rejectes an org invite`,
         filePath: `../functions/invites/reject-invites.ts`,
         APIPath: `/invites/{inviteId}`,
