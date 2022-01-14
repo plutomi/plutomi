@@ -23,18 +23,18 @@ export default async function Create(
   const newApplicant: DynamoNewApplicant = {
     PK: `${ENTITY_TYPES.APPLICANT}#${applicantId}`,
     SK: ENTITY_TYPES.APPLICANT,
-    firstName: firstName,
-    lastName: lastName,
+    firstName,
+    lastName,
     fullName: `${firstName} ${lastName}`, // TODO Dynamo sorts in lexigraphical order.. migth need to .uppercase() these
     email: email.toLowerCase().trim(),
     isemailVerified: false,
-    orgId: orgId,
-    applicantId: applicantId,
+    orgId,
+    applicantId,
     entityType: ENTITY_TYPES.APPLICANT,
     createdAt: now,
     // TODO add phone number
-    openingId: openingId,
-    stageId: stageId,
+    openingId,
+    stageId,
     unsubscribeKey: nanoid(10),
     canReceiveEmails: true,
     // TODO Might need to be sharded on high volumes

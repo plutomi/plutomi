@@ -1,14 +1,29 @@
 import Joi from "joi";
+
+import httpEventNormalizer from "@middy/http-event-normalizer";
+import httpJsonBodyParser from "@middy/http-json-body-parser";
+import httpResponseSerializer from "@middy/http-response-serializer";
+import inputOutputLogger from "@middy/input-output-logger";
+import withCleanOrgId from "./middleware/withCleanOrgId";
+import cors from "@middy/http-cors";
+/**
+ * Some backend dependencies (SES, ACM, Route53, etc..) depend on
+ * DOMAIN_NAME being the actual domain name, do not change!
+ */
 export const DOMAIN_NAME = `plutomi.com`;
-// Some backend dependencies (SES, ACM, Route53, etc..) depend on
-// DOMAIN_NAME being the actual domain name, do not change!
+
 export const DYNAMIC_DOMAIN = // Use this one for local testing
   process.env.NODE_ENV === "production" ? DOMAIN_NAME : `localhost:3000`;
+
 export const API_SUBDOMAIN =
   process.env.NODE_ENV === "production" ? "api" : "dev";
+
 export const API_DOMAIN = `${API_SUBDOMAIN}.${DOMAIN_NAME}`;
+
+// Full dev environment is created in AWS
 export const API_URL = `https://${API_DOMAIN}`;
-const PROTOCOL = process.env.NODE_ENV === "production" ? `https://` : `http://`;
+
+const PROTOCOL = process.env.NODE_ENV === "production" ? `https://` : `http://`; // localhost
 export const WEBSITE_URL = PROTOCOL + DYNAMIC_DOMAIN;
 
 export const COOKIE_NAME =
@@ -16,7 +31,6 @@ export const COOKIE_NAME =
     ? "plutomi-cookie"
     : "DEV-plutomi-cookie";
 
-// //Reason for SameSite=None: https://stackoverflow.com/a/62726825 // TODO revisit
 export const COOKIE_SETTINGS = `Secure; HttpOnly; SameSite=Strict; Path=/; Domain=${DOMAIN_NAME}`; // See SESSION_SETTINGS for setting session length
 export const sessionDataKeys = [
   "firstName",
@@ -26,12 +40,6 @@ export const sessionDataKeys = [
   "userId",
 ];
 
-export const AUTH_ERRORS = {
-  COOKIE_NOT_FOUND: `${COOKIE_NAME} not found`,
-  SEAL_NOT_FOUND: `Session seal not found`,
-  INVALID_SESSION: `Invalid session`,
-  SESSION_EXPIRED: `Session expired`,
-};
 const UrlSafeString = require("url-safe-string"),
   tagGenerator = new UrlSafeString();
 
@@ -43,7 +51,6 @@ export const JOI_SETTINGS: Joi.ValidationOptions = {
 
 export const MIDDY_SERIALIZERS = {
   serializers: [
-    // TODO - APIGatewayProxyResultV2 needs types since we can remove JSON.stringify
     {
       regex: /^application\/xml$/,
       serializer: ({ body }) => `<message>${body}</message>`,
@@ -61,7 +68,7 @@ export const MIDDY_SERIALIZERS = {
 };
 
 export enum ENTITY_TYPES {
-  APPLICANT = "APPLICANT",
+  APPLICANT = "APPLICANT", // TODO remove prefixes #435
   APPLICANT_RESPONSE = "APPLICANT_RESPONSE",
   ORG = "ORG",
   ORG_INVITE = "ORG_INVITE",
@@ -85,39 +92,15 @@ export const TIME_UNITS = {
   YEARS: "years",
 };
 
-export const LIMITS = {
-  // TODO remove
-  /**
-   * For entities that can have their order rearranged such as stages, questions, rules, etc.
-   * We are storing the order in an array in the parent component.
-   * For example:
-   * The order of stages is stored in the opening the stage belongs to in a property called stageOrder
-   * The order of questions are stored on the stage they belong to in a property called questionOrder
-   * and so on...
-   *
-   * As more items are added, the parent item gets closer to reaching the 400kb item limit on Dynamo.
-   *
-   * In reality, nobody is likely to hit this threshold. If you have 200 stages in an opening.. or 200 questions in a stage.. something is deeply wrong.
-   * I did a test with 3000(!!!) IDs and it came out to around 173kb, less than half of the Dynamo limit.
-   * This will be a soft limit and can be raised up to a point with the understanding that performance might suffer.
-   */
-  MAX_CHILD_ENTITY_LIMIT: 200,
-};
-
-export const ERRORS = {
-  MAX_CHILD_ENTITY_LIMIT_ERROR_MESSAGE: `MAX_CHILD_ENTITY_LIMIT reached, please contact support@plutomi.com for assistance`,
-  INVALID_DATE_ERROR: `The date you provided appears to be invalid`,
-};
-
 export const ID_LENGTHS = {
-  USER: 42,
-  APPLICANT: 60,
-  APPLICANT_RESPONSE: 30,
+  USER: 50,
+  APPLICANT: 50,
+  APPLICANT_RESPONSE: 20,
   ORG_INVITE: 50,
-  OPENING: 16,
-  STAGE: 50,
-  STAGE_QUESTION: 50,
-  STAGE_RULE: 16,
+  OPENING: 20,
+  STAGE: 20,
+  STAGE_QUESTION: 20,
+  STAGE_RULE: 20,
 };
 
 export enum DEFAULTS {
@@ -125,7 +108,7 @@ export enum DEFAULTS {
   LAST_NAME = "NO_LAST_NAME",
   FULL_NAME = `NO_FIRST_NAME NO_LAST_NAME`,
   NO_ORG = `NO_ORG_ASSIGNED`,
-  LOGIN_EVENT_RETENTION_PERIOD = 30,
+  LOGIN_EVENT_RETENTION_PERIOD = 30, // Days
   REDIRECT = "dashboard", // When logging in from the homepage, where should the user be redirected
 }
 
@@ -136,10 +119,7 @@ export const LOGIN_LINK_SETTINGS = {
 
 export const SESSION_SETTINGS = {
   password: process.env.SESSION_PASSWORD,
-  // We handle session expiry because if a user updates a property on themselves,
-  // the new ttl is +12 hours on that event.. and not 12 hours since session was created - #475
-  // Setting ttl to 0 has a theoretical infinite session, but we verify that it hasn't expired in authorizer function
-  ttl: 0,
+  ttl: 0, // We handle expiry
 };
 
 export const EMAILS = {
@@ -149,21 +129,6 @@ export const EMAILS = {
   ADMIN: "admin@plutomi.com",
   LOGIN: "login@plutomi.com", // Login links
   JOIN: "join@plutomi.com", // Org invites
-};
-
-/**
- * When using the /public/ api, what properties are allowed to be returned for each entity
- */
-export const SAFE_PROPERTIES = {
-  APPLICANT: ["firstName", "lastName", "createdAt", "openingId", "stageId"],
-  ORG: ["GSI1SK", "orgId"],
-  STAGE: ["GSI1SK", "stageId", "createdAt", "questionOrder"],
-  USER: ["userId", "orgId", "email", "firstName", "lastName", "GSI1SK"],
-  OPENING: ["GSI1SK", "openingId", "createdAt", "stageOrder"],
-  APPLICANT_RESPONSE: ["PK", "SK"], // TODO fix - TS7053, just setting this for now so i can test the app lol
-  ORG_INVITE: ["PK", "SK"], // TODO same ^
-  STAGE_QUESTION: ["PK", "SK"], // TODO same ^
-  STAGE_RULE: ["PK", "SK"], // TODO same ^
 };
 
 /**
@@ -177,14 +142,6 @@ const GLOBAL_FORBIDDEN_PROPERTIES = [
   "entityType",
   "createdAt",
 ];
-
-/**
- * Events for filtering DynamoDB streams
- */
-export enum STREAM_EVENTS {
-  REQUEST_LOGIN_LINK = "REQUEST_LOGIN_LINK",
-  NEW_USER = "NEW_USER",
-}
 
 /**
  * Properties that cannot be updated per entity type
@@ -243,28 +200,11 @@ export const DROPDOWN_NAVIGATION = [
   { name: "Log Out", href: "#" },
 ];
 
-export const SWR = {
-  MAX_RETRY_ATTEMPTS: 3,
-
-  /**
-   * How often we should poll for invites while on the /invites page.
-   * Was a 'cost' saving thing when using Lambda as API.. // TODO revisit this
-   */
-  INVITES_REFRESH_INTERVAL: 10000,
-};
-
 // Schema to validate orgIds against in joi
 export const JoiOrgId = Joi.string().invalid(
   DEFAULTS.NO_ORG,
   tagGenerator.generate(DEFAULTS.NO_ORG)
 );
-
-import httpEventNormalizer from "@middy/http-event-normalizer";
-import httpJsonBodyParser from "@middy/http-json-body-parser";
-import httpResponseSerializer from "@middy/http-response-serializer";
-import inputOutputLogger from "@middy/input-output-logger";
-import withCleanOrgId from "./middleware/withCleanOrgId";
-import cors from "@middy/http-cors";
 
 export const withDefaultMiddleware = [
   httpEventNormalizer({ payloadFormatVersion: 2 }),

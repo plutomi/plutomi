@@ -1,7 +1,6 @@
 import axios from "../utils/axios";
 import useSWR from "swr";
 import InvitesService from "../adapters/InvitesService";
-import { SWR } from "../Config";
 const fetcher = (url: string) => axios.get(url).then((res) => res.data);
 
 export default function useOrgInvites(userId: string) {
@@ -10,7 +9,7 @@ export default function useOrgInvites(userId: string) {
   const { data, error } = useSWR(
     shouldFetch && InvitesService.getInvitesURL(userId),
     fetcher,
-    { refreshInterval: SWR.INVITES_REFRESH_INTERVAL }
+    { refreshInterval: 5000 }
   );
 
   return {

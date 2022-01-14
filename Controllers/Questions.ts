@@ -4,7 +4,6 @@ import * as Questions from "../models/Questions/index";
 import * as Stages from "../models/Stages/index";
 import Joi from "joi";
 import errorFormatter from "../utils/errorFormatter";
-import { ERRORS, LIMITS } from "../Config";
 export const create = async (req: Request, res: Response) => {
   const { GSI1SK, questionDescription, stageId } = req.body;
   const { orgId } = req.session.user;
@@ -18,11 +17,6 @@ export const create = async (req: Request, res: Response) => {
         "An error ocurred creating question, unable to retrieve stage info",
       ...formattedError,
     });
-  }
-  if (stage.questionOrder.length >= LIMITS.MAX_CHILD_ENTITY_LIMIT) {
-    return res
-      .status(403)
-      .json({ message: ERRORS.MAX_CHILD_ENTITY_LIMIT_ERROR_MESSAGE });
   }
 
   const createStageQuestionInput = {
