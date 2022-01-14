@@ -33,7 +33,7 @@ const schema = Joi.object({
     email: Joi.string().email(),
   },
   queryStringParameters: {
-    callbackUrl: Joi.string().uri(),
+    callbackUrl: Joi.string().uri().optional(),
   },
 }).options(JOI_SETTINGS);
 

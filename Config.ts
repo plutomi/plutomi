@@ -264,11 +264,7 @@ import httpJsonBodyParser from "@middy/http-json-body-parser";
 import httpResponseSerializer from "@middy/http-response-serializer";
 import inputOutputLogger from "@middy/input-output-logger";
 import withCleanOrgId from "./middleware/withCleanOrgId";
-import {
-  NodejsFunction,
-  NodejsFunctionProps,
-} from "@aws-cdk/aws-lambda-nodejs";
-import { nanoid } from "nanoid";
+import cors from "@middy/http-cors";
 
 export const withDefaultMiddleware = [
   httpEventNormalizer({ payloadFormatVersion: 2 }),
@@ -276,6 +272,7 @@ export const withDefaultMiddleware = [
   inputOutputLogger(),
   withCleanOrgId(),
   httpResponseSerializer(MIDDY_SERIALIZERS),
+  cors(),
 ];
 
 export const lambdaAuthorizerMiddleware = [
@@ -290,4 +287,5 @@ export const lambdaAuthorizerMiddleware = [
   inputOutputLogger(),
   withCleanOrgId(),
   httpResponseSerializer(MIDDY_SERIALIZERS),
+  cors(),
 ];

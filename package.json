@@ -45,6 +45,7 @@
     "@lambda-middleware/compose": "^1.2.0",
     "@lambda-middleware/json-serializer": "^2.1.1",
     "@middy/core": "^2.5.4",
+    "@middy/http-cors": "^2.5.4",
     "@middy/http-event-normalizer": "^2.5.4",
     "@middy/http-json-body-parser": "^2.5.4",
     "@middy/http-response-serializer": "^2.5.4",

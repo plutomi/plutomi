@@ -27,19 +27,15 @@ export default function createAPIGatewayFunctions(
   table: Table
 ): void {
   for (const lambda of functions) {
-    const overwrittenFunction = {
-      ...DEFAULT_LAMBDA_CONFIG,
-      ...lambda,
-    };
-
-    console.log("OVERWRITTEN FUNCTION", overwrittenFunction);
     const func = new NodejsFunction(
       stack,
       `${process.env.NODE_ENV}-${lambda.functionName}`,
       {
         entry: path.join(__dirname, lambda.filePath),
-        ...overwrittenFunction,
-        // Overwrite defaults
+        ...DEFAULT_LAMBDA_CONFIG,
+        ...lambda, // Overwrite defaults
+        // Must have different names for dev / prod
+        functionName: `${process.env.NODE_ENV}-${lambda.functionName}`,
       }
     );
 

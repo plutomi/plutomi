@@ -2966,6 +2966,13 @@
   "resolved" "https://registry.npmjs.org/@middy/core/-/core-2.5.4.tgz"
   "version" "2.5.4"
 
+"@middy/http-cors@^2.5.4":
+  "integrity" "sha512-sdf+CW2GKQdIaJ7Ku8jS3VkXjGkSioIKd+GB0FPdX6plAX0FNlZ62vj9/DGX/i5qhQgIC0DnAe7RwhKqOu5jVg=="
+  "resolved" "https://registry.npmjs.org/@middy/http-cors/-/http-cors-2.5.4.tgz"
+  "version" "2.5.4"
+  dependencies:
+    "@middy/util" "^2.5.4"
+
 "@middy/http-event-normalizer@^2.5.4":
   "integrity" "sha512-NR9vTiJyWqgjFEvnTAdKG0G+c67lU/qXvudtxC1pq/f30lzzYpdqGYleZ06PXps69HgMoYoKDotwnVMJ6FYlDQ=="
   "resolved" "https://registry.npmjs.org/@middy/http-event-normalizer/-/http-event-normalizer-2.5.4.tgz"

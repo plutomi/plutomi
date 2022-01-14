@@ -2,7 +2,6 @@ import * as dotenv from "dotenv";
 import * as cf from "@aws-cdk/aws-cloudfront";
 import * as waf from "@aws-cdk/aws-wafv2";
 import * as cdk from "@aws-cdk/core";
-import * as logs from "@aws-cdk/aws-logs";
 import {
   HttpLambdaAuthorizer,
   HttpLambdaResponseType,
@@ -65,6 +64,7 @@ export default class APIStack extends cdk.Stack {
       environment: {
         SESSION_PASSWORD: process.env.SESSION_PASSWORD,
       },
+      reservedConcurrentExecutions: null,
       entry: path.join(__dirname, `../functions/auth/authorizer.ts`),
     });
 
@@ -108,7 +108,7 @@ export default class APIStack extends cdk.Stack {
           CorsHttpMethod.DELETE,
         ],
         allowCredentials: true,
-        allowOrigins: [WEBSITE_URL], // TODO I think we can set this to only allow from cloudfront?
+        allowOrigins: [WEBSITE_URL],
         allowHeaders: ["Content-Type"],
       },
       defaultAuthorizer: authorizer,

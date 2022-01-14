@@ -55,7 +55,7 @@ export default function LoginHomepage({ callbackUrl }: CallbackUrl) {
             sendEmail={sendEmail}
           />{" "}
           <p className=" text-lg text-normal text-center sm:max-w-8xl max-w-sm">
-            We can email you a magic link for a password-free log in.
+            We will email you a magic link for a password-free log in.
           </p>
         </div>
       )}
