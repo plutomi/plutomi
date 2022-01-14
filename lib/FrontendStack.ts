@@ -4,6 +4,7 @@ import { HostedZone } from "@aws-cdk/aws-route53";
 import { NextJSLambdaEdge } from "@sls-next/cdk-construct";
 import { Certificate } from "@aws-cdk/aws-certificatemanager";
 import { DOMAIN_NAME } from "../Config";
+import { Architecture, Runtime } from "@aws-cdk/aws-lambda";
 
 const resultDotEnv = dotenv.config({
   path: `${process.cwd()}/.env.${process.env.NODE_ENV}`,
@@ -36,6 +37,17 @@ export default class FrontendStack extends cdk.Stack {
           "DomainCertificate",
           `arn:aws:acm:${this.region}:${this.account}:certificate/${process.env.ACM_CERTIFICATE_ID}`
         ),
+      },
+      runtime: Runtime.NODEJS_14_X,
+      name: {
+        defaultLambda: `frontend-default-function`,
+        imageLambda: `frontend-image-function`,
+        regenerationLambda: `frontend-regeneration-function`,
+      },
+      memory: {
+        defaultLambda: 256,
+        imageLambda: 1024,
+        regenerationLambda: 256,
       },
     });
   }
