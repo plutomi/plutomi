@@ -134,6 +134,9 @@ export const EMAILS = {
 
 /**
  * Properties that cannot be updated no matter the entity type once created
+ * This is only for UpdateItem expressions and does not apply for transactions
+ * like when a user joins an org, their orgId is updated then.
+ * This prevents calling PUT /users/:userId with a new orgId
  */
 const GLOBAL_FORBIDDEN_PROPERTIES = [
   "orgId",
@@ -145,18 +148,24 @@ const GLOBAL_FORBIDDEN_PROPERTIES = [
 ];
 
 /**
- * Properties that cannot be updated per entity type
+ * Extra properties that cannot be updated per entity type
  */
 export const FORBIDDEN_PROPERTIES = {
+  /**
+   * {@link DynamoNewUser}
+   */
   USER: [
     ...GLOBAL_FORBIDDEN_PROPERTIES,
     "userRole", // TODO, only admins
     "orgJoinDate",
     "canReceiveEmails",
-    "GSI1PK", // Org#EntityType
+    "GSI1PK",
     "GSI2PK", // Email
-    "verifiedEmail", // Updated asynchronously on 1st login
+    "verifiedEmail", // Updated asynchronously (step functions) on 1st login
   ],
+  /**
+   * {@link DynamoNewApplicant}
+   */
   APPLICANT: [
     ...GLOBAL_FORBIDDEN_PROPERTIES,
     "applicantId",
@@ -165,7 +174,13 @@ export const FORBIDDEN_PROPERTIES = {
     "GSI2PK",
     "GSI2SK", // TODO, remove these when advancing / moving applicants!!!!!!!!!
   ],
+  /**
+   * {@link DynamoNewOpening}
+   */
   OPENING: [...GLOBAL_FORBIDDEN_PROPERTIES, "openingId", "GSI1PK"],
+  /**
+   * {@link DynamoNewStage}
+   */
   STAGE: [...GLOBAL_FORBIDDEN_PROPERTIES, "stageId", "openingId", "GSI1PK"],
   STAGE_QUESTION: [
     ...GLOBAL_FORBIDDEN_PROPERTIES,

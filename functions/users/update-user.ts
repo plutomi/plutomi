@@ -68,7 +68,6 @@ const main = async (
   }
   const updateUserInput = {
     userId: session.userId,
-    ALLOW_FORBIDDEN_KEYS: false,
     newValues: filteredValues.object,
   };
 
@@ -78,9 +77,9 @@ const main = async (
     return Response.SDK(error, "An error ocurred updating user info");
   }
 
-  // If a signed in user is updating themselves, update the session state as well
+  // When updating themselves
   if (updatedUser.userId === session.userId) {
-    const customMessage = filteredValues.removedKeys.length
+    const responseMessage = filteredValues.removedKeys.length
       ? `We've updated your info, but some properties could not be updated: '${filteredValues.removedKeys.join(
           ", "
         )}'`
@@ -88,12 +87,12 @@ const main = async (
     return {
       statusCode: 200,
       body: {
-        message: customMessage,
+        message: responseMessage,
       },
     };
   }
   // When updating another user
-  const customMessage = filteredValues.removedKeys.length
+  const responseMessage = filteredValues.removedKeys.length
     ? `User updated! However, some properties could not be updated: '${filteredValues.removedKeys.join(
         ", "
       )}'`
@@ -102,7 +101,7 @@ const main = async (
   return {
     statusCode: 200,
     body: {
-      message: customMessage,
+      message: responseMessage,
     },
   };
 };

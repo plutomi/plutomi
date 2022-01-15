@@ -26,8 +26,6 @@ app.get(
   PublicInfo.getStageQuestions
 );
 
-// Openings
-app.put("/openings/:openingId", Openings.updateOpeningController);
 // app.get("/openings/:openingId/applicants",  Openings.getApplicants);
 app.get("/openings/:openingId/stages", Openings.getStages);
 // Stages

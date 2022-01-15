@@ -164,12 +164,6 @@ export type SessionData = Pick<
 
 export interface UpdateUserInput extends Pick<DynamoNewUser, "userId"> {
   newValues: { [key: string]: any };
-  /**
-   * Allows updating some properties that are typically banned, such as an orgId or an email.
-   * This shoudnt be set if its with newValues, only when directly updating an attribute verified on our end.
-   * TODO Only allow certain variables to  be updated via array of strings or whatever
-   */
-  ALLOW_FORBIDDEN_KEYS?: boolean;
 }
 
 export interface CreateStageQuestionInput

@@ -42,6 +42,17 @@ export default class APIOpeningsServiceStack extends cdk.Stack {
           main: true,
         },
       },
+      {
+        functionName: `update-opening-function`,
+        description: `Updates a specific opening`,
+        filePath: `../functions/openings/update-openings.ts`,
+        APIPath: "/openings/{openingId}",
+        method: HttpMethod.PUT,
+        dynamoActions: ["dynamodb:UpdateItem"],
+        dynamoResources: {
+          main: true,
+        },
+      },
     ];
 
     createAPIGatewayFunctions(this, functions, props.api, props.table);

@@ -123,11 +123,14 @@ interface DynamoNewApplicant {
    */
   fullName: `${string} ${string}`;
 
+  /**
+   * If an applicant has unsubscribed from emails
+   */
   canReceiveEmails: boolean;
   /**
    * If the applicant's email has been verified (clicked on the application link sent to their email // TODO maybe answered questions on one stage?)
    */
-  isemailVerified: boolean;
+  isEmailVerified: boolean;
   /**
    * The org this applicant belongs to
    */
@@ -157,12 +160,19 @@ interface DynamoNewApplicant {
    * Which `stage` this applicant should be created in
    */
   stageId: string;
-  // The reason for the below is so we can get applicants in an org, in an opening, or in a specific stage just by the ID of each.
-  // Before we had `OPENING#${openingId}#STAGE#{stageId}` for the SK which required the opening when getting applicants in specific stage
-  // TODO recheck later if this is still good
-
+  /**
+   * The key to unsubscribe this applicant from emails -
+   * TODO when adding login portal (one applicant, many applications across orgs)
+   * this can be set at the applicant level
+   */
   unsubscribeKey: string;
+  /**
+   * The current opening and stage the applicant is in
+   */
   GSI1PK: `${ENTITY_TYPES.ORG}#${string}#${ENTITY_TYPES.OPENING}#${string}#${ENTITY_TYPES.STAGE}#${string}`;
+  /**
+   * The date the applicant landed on this stage - ISO timestamp
+   */
   GSI1SK: `DATE_LANDED#${string}`;
 }
 

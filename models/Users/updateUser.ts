@@ -1,6 +1,6 @@
 import { UpdateCommandInput, UpdateCommand } from "@aws-sdk/lib-dynamodb";
 import { Dynamo } from "../../AWSClients/ddbDocClient";
-import { FORBIDDEN_PROPERTIES, ENTITY_TYPES } from "../../Config";
+import { ENTITY_TYPES } from "../../Config";
 import { DynamoNewUser } from "../../types/dynamo";
 import { UpdateUserInput } from "../../types/main";
 const { DYNAMO_TABLE_NAME } = process.env;
@@ -8,11 +8,11 @@ import { SdkError } from "@aws-sdk/types";
 export default async function Update(
   props: UpdateUserInput
 ): Promise<[DynamoNewUser, null] | [null, SdkError]> {
-  const { userId, newValues, ALLOW_FORBIDDEN_KEYS } = props;
+  const { userId, newValues } = props;
 
   // Build update expression
-  let allUpdateExpressions: string[] = [];
-  let allAttributeValues: any = {};
+  let allUpdateExpressions: string[];
+  let allAttributeValues: {};
 
   try {
     for (const property in newValues) {

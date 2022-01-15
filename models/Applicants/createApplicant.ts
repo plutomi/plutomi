@@ -27,7 +27,7 @@ export default async function Create(
     lastName,
     fullName: `${firstName} ${lastName}`, // TODO Dynamo sorts in lexigraphical order.. migth need to .uppercase() these
     email: email.toLowerCase().trim(),
-    isemailVerified: false,
+    isEmailVerified: false,
     orgId,
     applicantId,
     entityType: ENTITY_TYPES.APPLICANT,
