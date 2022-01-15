@@ -127,7 +127,7 @@ const main = async (
   const [inviteCreated, inviteError] = await Invites.createInvite({
     recipient: recipient,
     orgName: org.displayName,
-    expiresAt: Time.futureISO(3, TIME_UNITS.DAYS),
+    expiresAt: Time.futureISO(3, TIME_UNITS.DAYS), // TODO https://github.com/plutomi/plutomi/issues/333
     createdBy: session,
   });
 

@@ -191,24 +191,24 @@ export default class APIStack extends cdk.Stack {
               metricName: "AWS-AWSManagedRulesAmazonIpReputationList",
             },
           },
-          {
-            name: "AWS-AWSManagedRulesCommonRuleSet",
-            priority: 3,
-            statement: {
-              managedRuleGroupStatement: {
-                vendorName: "AWS",
-                name: "AWSManagedRulesCommonRuleSet",
-              },
-            },
-            overrideAction: {
-              none: {},
-            },
-            visibilityConfig: {
-              sampledRequestsEnabled: false,
-              cloudWatchMetricsEnabled: true,
-              metricName: "AWS-AWSManagedRulesCommonRuleSet",
-            },
-          },
+          // { // TODO this rule breaks login links, see https://github.com/plutomi/plutomi/issues/510
+          //   name: "AWS-AWSManagedRulesCommonRuleSet",
+          //   priority: 3,
+          //   statement: {
+          //     managedRuleGroupStatement: {
+          //       vendorName: "AWS",
+          //       name: "AWSManagedRulesCommonRuleSet",
+          //     },
+          //   },
+          //   overrideAction: {
+          //     none: {},
+          //   },
+          //   visibilityConfig: {
+          //     sampledRequestsEnabled: false,
+          //     cloudWatchMetricsEnabled: true,
+          //     metricName: "AWS-AWSManagedRulesCommonRuleSet",
+          //   },
+          // },
         ],
       }
     );
