@@ -30,24 +30,18 @@ const main = async (
   const { orgId } = event.requestContext.authorizer.lambda.session;
   const { openingId } = event.pathParameters;
 
-  const [opening, error] = await Openings.getOpeningById({
+  const [opening, error] = await Openings.deleteOpening({
     openingId,
     orgId,
   });
 
   if (error) {
-    return Response.SDK(error, "An error ocurred retrieving your opening");
-  }
-  if (!opening) {
-    return {
-      statusCode: 404,
-      body: { message: "Opening not found" },
-    };
+    return Response.SDK(error, "An error ocurred deleting your opening");
   }
 
   return {
     statusCode: 200,
-    body: opening,
+    body: { message: "Opening deleted" },
   };
 };
 

@@ -22,11 +22,22 @@ export default class APIOpeningsServiceStack extends cdk.Stack {
       },
       {
         functionName: `get-opening-by-id-function`,
-        description: `Retrieve a specific opening `,
+        description: `Retrieve a specific opening`,
         filePath: `../functions/openings/get-opening-by-id.ts`,
         APIPath: "/openings/{openingId}",
         method: HttpMethod.GET,
         dynamoActions: ["dynamodb:GetItem"],
+        dynamoResources: {
+          main: true,
+        },
+      },
+      {
+        functionName: `delete-opening-function`,
+        description: `Deletes a specific opening`,
+        filePath: `../functions/openings/delete-openings.ts`,
+        APIPath: "/openings/{openingId}",
+        method: HttpMethod.DELETE,
+        dynamoActions: ["dynamodb:DeleteItem", "dynamodb:UpdateItem"],
         dynamoResources: {
           main: true,
         },

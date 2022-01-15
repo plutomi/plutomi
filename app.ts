@@ -26,11 +26,6 @@ app.get(
   PublicInfo.getStageQuestions
 );
 
-app.delete(
-  "/openings/:openingId",
-
-  Openings.deleteOpeningController // TODO name
-);
 // Openings
 app.put("/openings/:openingId", Openings.updateOpeningController);
 // app.get("/openings/:openingId/applicants",  Openings.getApplicants);

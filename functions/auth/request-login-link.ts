@@ -69,6 +69,7 @@ const main = async (
     user = createdUser;
   }
 
+  // TODO move this to comms machine? This would be for login links and its pretty crucial to know if I unsubscribed
   if (!user.canReceiveEmails) {
     return {
       statusCode: 200,

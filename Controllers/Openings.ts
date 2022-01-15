@@ -1,72 +1,7 @@
 import { Request, Response } from "express";
 import Joi from "joi";
-import { DEFAULTS } from "../Config";
 import * as Openings from "../models/Openings/index";
-import * as Orgs from "../models/Orgs/index";
-import * as Stages from "../models/Stages/index";
-import { CustomLambdaEvent } from "../types/main";
 import errorFormatter from "../utils/errorFormatter";
-
-export const deleteOpeningController = async (req: Request, res: Response) => {
-  const { openingId } = req.params;
-  const { orgId } = req.session.user;
-  const deleteOpeningInput = {
-    orgId: req.session.user.orgId,
-    openingId: openingId,
-  };
-
-  const [opening, openingError] = await Openings.getOpeningById({
-    orgId,
-    openingId,
-  });
-
-  if (openingError) {
-    const formattedError = errorFormatter(openingError);
-    return res.status(formattedError.httpStatusCode).json({
-      message:
-        "Unable to delete opening, error ocurred retrieving opening info",
-      ...formattedError,
-    });
-  }
-  // TODO we should send this to a queue instead, and delete all sub items
-  const [allStages, allStagesError] = await Openings.getStagesInOpening({
-    orgId,
-    openingId,
-    stageOrder: opening.stageOrder,
-  });
-
-  if (allStagesError) {
-    const formattedError = errorFormatter(allStagesError);
-    return res.status(formattedError.httpStatusCode).json({
-      message: "Unable to delete opening, unable to get stage info",
-      ...formattedError,
-    });
-  }
-  // Delete stages first
-  if (allStages.length) {
-    allStages.map(async (stage) => {
-      const input = {
-        orgId: orgId,
-        openingId: openingId,
-        stageId: stage.stageId,
-        stageOrder: opening.stageOrder,
-      };
-      await Stages.deleteStage(input);
-    });
-  }
-
-  const [deleted, deleteOpeningError] = await Openings.deleteOpening(
-    deleteOpeningInput
-  );
-  if (deleteOpeningError) {
-    const formattedError = errorFormatter(deleteOpeningError);
-    return res.status(formattedError.httpStatusCode).json({
-      message: "Unable to delete opening",
-      ...formattedError,
-    });
-  }
-  return res.status(200).json({ message: "Opening deleted" });
-};
 
 export const updateOpeningController = async (req: Request, res: Response) => {
   const { openingId } = req.params;
