@@ -21,7 +21,7 @@ export default class InvitesService {
   }
 
   static getInvitesURL(userId) {
-    return `/users/${userId}/invites`;
+    return `/invites`;
   }
 
   static async getAllInvites(userId) {

@@ -48,7 +48,21 @@ export default class APIInvitesServiceStack extends cdk.Stack {
           GSI2: true,
         },
       },
-
+      {
+        functionName: `accept-invites-function`,
+        description: `Accepts an org invite`,
+        filePath: `../functions/invites/accept-invites.ts`,
+        APIPath: `/invites/{inviteId}`,
+        method: HttpMethod.POST,
+        dynamoActions: [
+          "dynamodb:GetItem",
+          "dynamodb:DeleteItem",
+          "dynamodb:UpdateItem",
+        ],
+        dynamoResources: {
+          main: true,
+        },
+      },
       {
         functionName: `reject-invites-function`,
         description: `Rejectes an org invite`,

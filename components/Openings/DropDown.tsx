@@ -79,7 +79,7 @@ export default function OpeningsDropdown({ openings, index }) {
                           "ml-3 block truncate"
                         )}
                       >
-                        {opening.GSI1SK}
+                        {opening?.GSI1SK}
                         <span className="sr-only">
                           {" "}
                           is {opening.isPublic ? "online" : "offline"}

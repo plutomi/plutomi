@@ -49,7 +49,7 @@ export default function InvitesContent() {
     return <Loader text="Loading invites..." />;
   }
 
-  if (invites.length === 0) {
+  if (invites?.length === 0) {
     return <h1>You don&apos;t have any invites :(</h1>;
   }
   return (
@@ -58,7 +58,7 @@ export default function InvitesContent() {
         role="list"
         className="divide-y divide-gray-200 mx-auto max-w-xl flex-col space-y-4 p-20  "
       >
-        {invites.map((invite: DynamoNewOrgInvite) => (
+        {invites?.map((invite: DynamoNewOrgInvite) => (
           <Invite
             invite={invite}
             key={invite.inviteId}

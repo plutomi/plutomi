@@ -109,9 +109,9 @@ const main = async (
     );
   }
 
-  // Some returns true if any match the condition
+  // .some() returns true if any item matches the condition
   const pendingInvites = recipientInvites.some(
-    (invite) => invite.orgId === session.userId
+    (invite) => invite.orgId === session.orgId
   );
 
   if (pendingInvites) {
@@ -125,10 +125,10 @@ const main = async (
   }
 
   const [inviteCreated, inviteError] = await Invites.createInvite({
-    recipient: recipient,
+    recipient,
     orgName: org.displayName,
     expiresAt: Time.futureISO(3, TIME_UNITS.DAYS), // TODO https://github.com/plutomi/plutomi/issues/333
-    createdBy: session,
+    createdBy: session, // TODO this has too much snesitive ata
   });
 
   if (inviteError) {

@@ -17,10 +17,10 @@ export default async function getInvites(
   const { userId } = props;
   const params: QueryCommandInput = {
     TableName: DYNAMO_TABLE_NAME,
-    KeyConditionExpression: "PK = :pk AND begins_with(SK, :sk)",
+    KeyConditionExpression: "PK = :PK AND begins_with(SK, :SK)",
     ExpressionAttributeValues: {
-      ":pk": `${ENTITY_TYPES.USER}#${userId}`,
-      ":sk": ENTITY_TYPES.ORG_INVITE,
+      ":PK": `${ENTITY_TYPES.USER}#${userId}`,
+      ":SK": ENTITY_TYPES.ORG_INVITE,
     },
   };
 

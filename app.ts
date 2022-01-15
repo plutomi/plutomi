@@ -9,7 +9,6 @@ if (resultDotEnv.error) {
 
 import express from "express";
 import * as PublicInfo from "./controllers/PublicInfo";
-import * as Invites from "./controllers/Invites";
 import * as Questions from "./controllers/Questions";
 import * as Stages from "./controllers/Stages";
 import * as Openings from "./controllers/Openings";
@@ -51,6 +50,3 @@ app.get(
 
   Stages.getApplicantsInStage
 );
-
-// Invites
-app.post("/invites/:inviteId", Invites.accept);

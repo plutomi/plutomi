@@ -98,7 +98,7 @@ export default function OpeningSettingsHeader() {
               isModalOpen: true,
               modalMode: "EDIT",
               openingId: opening.openingId,
-              GSI1SK: opening.GSI1SK,
+              GSI1SK: opening?.GSI1SK,
               isPublic: opening.isPublic,
             })
           }

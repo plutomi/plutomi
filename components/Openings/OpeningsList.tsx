@@ -43,7 +43,7 @@ export default function OpeningList() {
                   <div className="px-4 py-4 sm:px-6">
                     <div className="flex items-center justify-between">
                       <h1 className="text-lg font-medium text-blue-600 truncate">
-                        {opening.GSI1SK}
+                        {opening?.GSI1SK}
                       </h1>
                       <div className="ml-2 flex-shrink-0 flex">
                         {opening.isPublic ? (
