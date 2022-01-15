@@ -28,9 +28,7 @@ interface APIGatewayServiceProps extends cdk.StackProps {
   table: Table;
 }
 
-/**
- * Creates an API Gateway
- */
+// Creates an API Gateway
 export default class APIStack extends cdk.Stack {
   public api: HttpApi;
 
@@ -54,23 +52,20 @@ export default class APIStack extends cdk.Stack {
       `arn:aws:acm:${this.region}:${this.account}:certificate/${process.env.ACM_CERTIFICATE_ID}`
     );
 
-    /**
-     * Lambda authorizer function for API Gateway
-     */
+    // Lambda authorizer function for API Gateway
     const functionName = `${process.env.NODE_ENV}-authorizer-function`;
     const authorizerFunction = new NodejsFunction(this, functionName, {
       ...DEFAULT_LAMBDA_CONFIG,
       functionName,
       environment: {
         SESSION_PASSWORD: process.env.SESSION_PASSWORD,
+        DYNAMO_TABLE_NAME: props.table.tableName,
       },
       reservedConcurrentExecutions: undefined, // Don't want to cap this to the default
       entry: path.join(__dirname, `../functions/auth/authorizer.ts`),
     });
 
-    /**
-     * Allow the authorize function to retrieve user data
-     */
+    // Allow the authorize function to retrieve user data
     const policy = new PolicyStatement({
       actions: ["dynamodb:GetItem"],
       resources: [
@@ -111,6 +106,7 @@ export default class APIStack extends cdk.Stack {
         allowOrigins: [WEBSITE_URL],
         allowHeaders: ["Content-Type"],
       },
+      // All routes have auth unless otherwise specified
       defaultAuthorizer: authorizer,
     });
 

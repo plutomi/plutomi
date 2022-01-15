@@ -14,7 +14,6 @@ import * as Questions from "./controllers/Questions";
 import * as Stages from "./controllers/Stages";
 import * as Openings from "./controllers/Openings";
 import * as Applicants from "./controllers/Applicants";
-import withAuth from "./middleware/withAuth";
 const app = express();
 
 // Public info
@@ -27,40 +26,38 @@ app.get(
   PublicInfo.getStageQuestions
 );
 
-app.get("/openings/:openingId", [withAuth], Openings.getOpeningById);
 app.delete(
   "/openings/:openingId",
-  [withAuth],
+
   Openings.deleteOpeningController // TODO name
 );
 // Openings
-app.put("/openings/:openingId", [withAuth], Openings.updateOpeningController);
-// app.get("/openings/:openingId/applicants", [withAuth], Openings.getApplicants);
-app.get("/openings/:openingId/stages", [withAuth], Openings.getStages);
-
+app.put("/openings/:openingId", Openings.updateOpeningController);
+// app.get("/openings/:openingId/applicants",  Openings.getApplicants);
+app.get("/openings/:openingId/stages", Openings.getStages);
 // Stages
-app.post("/stages", [withAuth], Stages.create);
-app.get("/stages/:stageId", [withAuth], Stages.getStageInfo);
-app.delete("/stages/:stageId", [withAuth], Stages.deleteStage);
-app.put("/stages/:stageId", [withAuth], Stages.update);
+app.post("/stages", Stages.create);
+app.get("/stages/:stageId", Stages.getStageInfo);
+app.delete("/stages/:stageId", Stages.deleteStage);
+app.put("/stages/:stageId", Stages.update);
 
 // Questions
-app.get("/stages/:stageId/questions", [withAuth], Stages.getQuestionsInStage);
-app.post("/questions", [withAuth], Questions.create);
-app.delete("/questions/:questionId", [withAuth], Questions.deleteQuestion);
-app.put("/questions/:questionId", [withAuth], Questions.update);
+app.get("/stages/:stageId/questions", Stages.getQuestionsInStage);
+app.post("/questions", Questions.create);
+app.delete("/questions/:questionId", Questions.deleteQuestion);
+app.put("/questions/:questionId", Questions.update);
 
 // Applicants
 app.post("/applicants", Applicants.create);
-app.get("/applicants/:applicantId", [withAuth], Applicants.get);
-app.put("/applicants/:applicantId", [withAuth], Applicants.update);
-app.delete("/applicants/:applicantId", [withAuth], Applicants.remove);
+app.get("/applicants/:applicantId", Applicants.get);
+app.put("/applicants/:applicantId", Applicants.update);
+app.delete("/applicants/:applicantId", Applicants.remove);
 app.post("/applicants/:applicantId/answer", Applicants.answer);
 app.get(
   `/openings/:openingId/stages/:stageId/applicants`,
-  [withAuth],
+
   Stages.getApplicantsInStage
 );
 
 // Invites
-app.post("/invites/:inviteId", [withAuth], Invites.accept);
+app.post("/invites/:inviteId", Invites.accept);

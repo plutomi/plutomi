@@ -4,29 +4,8 @@ import { DEFAULTS } from "../Config";
 import * as Openings from "../models/Openings/index";
 import * as Orgs from "../models/Orgs/index";
 import * as Stages from "../models/Stages/index";
+import { CustomLambdaEvent } from "../types/main";
 import errorFormatter from "../utils/errorFormatter";
-
-export const getOpeningById = async (req: Request, res: Response) => {
-  const { openingId } = req.params;
-
-  const [opening, error] = await Openings.getOpeningById({
-    openingId,
-    orgId: req.session.user.orgId,
-  });
-
-  if (error) {
-    const formattedError = errorFormatter(error);
-    return res.status(formattedError.httpStatusCode).json({
-      message: "Unable to retrieve opening info",
-      ...formattedError,
-    });
-  }
-  if (!opening) {
-    return res.status(404).json({ message: "Opening not found" });
-  }
-
-  return res.status(200).json(opening);
-};
 
 export const deleteOpeningController = async (req: Request, res: Response) => {
   const { openingId } = req.params;

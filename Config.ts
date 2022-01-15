@@ -31,7 +31,8 @@ export const COOKIE_NAME =
     ? "plutomi-cookie"
     : "DEV-plutomi-cookie";
 
-export const COOKIE_SETTINGS = `Secure; HttpOnly; SameSite=Strict; Path=/; Domain=${DOMAIN_NAME}`; // See SESSION_SETTINGS for setting session length
+const SAME_SITE = process.env.NODE_ENV === "production" ? "Strict" : "None"; // localhost -> dev.plutomi.com
+export const COOKIE_SETTINGS = `Secure; HttpOnly; SameSite=${SAME_SITE}; Path=/; Domain=${DOMAIN_NAME}`; // See SESSION_SETTINGS for setting session length
 export const sessionDataKeys = [
   "firstName",
   "lastName",

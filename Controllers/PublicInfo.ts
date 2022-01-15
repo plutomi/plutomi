@@ -30,6 +30,7 @@ export const getOrgInfo = async (req: Request, res: Response) => {
   return res.status(200).json(cleanedOrg);
 };
 
+// TODO note, implemented in /openings, but needs session
 export const getOrgOpenings = async (req: Request, res: Response) => {
   const { orgId } = req.params;
   const [openings, error] = await Orgs.getOpeningsInOrg({ orgId });

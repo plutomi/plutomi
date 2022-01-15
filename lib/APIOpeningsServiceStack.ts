@@ -20,6 +20,17 @@ export default class APIOpeningsServiceStack extends cdk.Stack {
           main: true,
         },
       },
+      {
+        functionName: `get-opening-by-id-function`,
+        description: `Retrieve a specific opening `,
+        filePath: `../functions/openings/get-opening-by-id.ts`,
+        APIPath: "/openings/{openingId}",
+        method: HttpMethod.GET,
+        dynamoActions: ["dynamodb:GetItem"],
+        dynamoResources: {
+          main: true,
+        },
+      },
     ];
 
     createAPIGatewayFunctions(this, functions, props.api, props.table);

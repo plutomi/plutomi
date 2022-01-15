@@ -12,7 +12,6 @@ type GetSessionFromCookiesResponse = [UserSessionData, null] | [null, string];
 export default async function getSessionFromCookies(
   event // TODO this type is broken as each event type differs per lambda function
 ): Promise<GetSessionFromCookiesResponse> {
-  console.log("Getting Session From Cookies", event);
   const cookies = event.cookies || [];
 
   // If a cookie by this name exists, extract the seal
