@@ -3,6 +3,7 @@ import * as Users from "../../models/Users";
 import Joi from "joi";
 import {
   FORBIDDEN_PROPERTIES,
+  JOI_GLOBAL_FORBIDDEN,
   JOI_SETTINGS,
   withDefaultMiddleware,
 } from "../../Config";
@@ -21,13 +22,25 @@ interface APIUpdateUserEvent
   body: APIUpdateUserBody;
   pathParameters: APIUpdateUserPathParameters;
 }
+/**
+ * When calling PUT /users/:userId, these properties cannot be updated by the user
+ */
+const JOI_FORBIDDEN_USER = Joi.object({
+  ...JOI_GLOBAL_FORBIDDEN,
+  userRole: Joi.any().forbidden().strip(), // TODO rbac
+  orgJoinDate: Joi.any().forbidden().strip(),
+  canReceiveEmails: Joi.any().forbidden().strip(),
+  GSI1PK: Joi.any().forbidden().strip(),
+  GSI2PK: Joi.any().forbidden().strip(), // Email
+  verifiedEmail: Joi.any().forbidden().strip(), // Updated asynchronously (step functions) on 1st login
+});
 
 const schema = Joi.object({
   pathParameters: {
     userId: Joi.string(),
   },
   body: {
-    newValues: Joi.object(),
+    newValues: JOI_FORBIDDEN_USER,
   },
 }).options(JOI_SETTINGS);
 
@@ -53,22 +66,9 @@ const main = async (
     };
   }
 
-  const filteredValues = Sanitize(
-    "REMOVE",
-    FORBIDDEN_PROPERTIES.USER,
-    newValues
-  );
-  // TODO add this to all other update expressions, or combine them into one
-  // Throw an error if all properties are invalid (empty object)
-  if (Object.keys(filteredValues.object).length === 0) {
-    return {
-      statusCode: 400,
-      body: { message: "All properties are invalid" },
-    };
-  }
   const updateUserInput = {
     userId: session.userId,
-    newValues: filteredValues.object,
+    newValues,
   };
 
   const [updatedUser, error] = await Users.updateUser(updateUserInput);
@@ -77,31 +77,12 @@ const main = async (
     return Response.SDK(error, "An error ocurred updating user info");
   }
 
-  // When updating themselves
-  if (updatedUser.userId === session.userId) {
-    const responseMessage = filteredValues.removedKeys.length
-      ? `We've updated your info, but some properties could not be updated: '${filteredValues.removedKeys.join(
-          ", "
-        )}'`
-      : `We've updated your info!`;
-    return {
-      statusCode: 200,
-      body: {
-        message: responseMessage,
-      },
-    };
-  }
-  // When updating another user
-  const responseMessage = filteredValues.removedKeys.length
-    ? `User updated! However, some properties could not be updated: '${filteredValues.removedKeys.join(
-        ", "
-      )}'`
-    : `User updated!`;
-
   return {
     statusCode: 200,
     body: {
-      message: responseMessage,
+      // TODO RBAC is not implemented yet so this won't trigger
+      message:
+        userId === session.userId ? "Updated your info!" : "User updated!",
     },
   };
 };

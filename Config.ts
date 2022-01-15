@@ -96,7 +96,7 @@ export const TIME_UNITS = {
 // https://zelark.github.io/nano-id-cc/
 export const ID_LENGTHS = {
   USER: 25, // Unique to application
-  APPLICANT: 25, // Unique to org
+  APPLICANT: 25, // Unique to application
   APPLICANT_RESPONSE: 10, // Unique to applicant
   ORG_INVITE: 5, // Unique to user
   OPENING: 10, // Unique to org
@@ -148,6 +148,22 @@ const GLOBAL_FORBIDDEN_PROPERTIES = [
   "entityType",
   "createdAt",
 ];
+
+/**
+ * Global forbidden properties. Cannot be updated, regardless of entity
+ * forbidden() blocks the key, except undefined. strip() removes it afterwards
+ * sice we don't want it going to Dynamo as undefined
+ * https://joi.dev/api/?v=15.1.1#anyforbidden
+ * https://joi.dev/api/?v=15.1.1#anystrip
+ */
+export const JOI_GLOBAL_FORBIDDEN = {
+  orgId: Joi.any().forbidden().strip(),
+  PK: Joi.any().forbidden().strip(),
+  SK: Joi.any().forbidden().strip(),
+  ttlExpiry: Joi.any().forbidden().strip(),
+  entityType: Joi.any().forbidden().strip(),
+  createdAt: Joi.any().forbidden().strip(),
+};
 
 /**
  * Extra properties that cannot be updated per entity type
