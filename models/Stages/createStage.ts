@@ -14,11 +14,11 @@ import { SdkError } from "@aws-sdk/types";
 export default async function Create(
   props: CreateStageInput
 ): Promise<[null, null] | [null, SdkError]> {
-  const { orgId, GSI1SK, openingId, stageOrder } = props;
+  const { orgId, GSI1SK, openingId } = props;
   const stageId = nanoid(ID_LENGTHS.STAGE);
   const newStage: DynamoNewStage = {
     // TODO fix this type
-    PK: `${ENTITY_TYPES.ORG}#${orgId}#${ENTITY_TYPES.STAGE}#${stageId}`,
+    PK: `${ENTITY_TYPES.ORG}#${orgId}#${ENTITY_TYPES.OPENING}#${openingId}#${ENTITY_TYPES.STAGE}#${stageId}`,
     SK: ENTITY_TYPES.STAGE,
     entityType: ENTITY_TYPES.STAGE,
     createdAt: Time.currentISO(),
@@ -26,15 +26,13 @@ export default async function Create(
     stageId,
     orgId,
     totalApplicants: 0,
+    stageOrder: 0, // TODO this is new
     openingId,
     GSI1PK: `${ENTITY_TYPES.ORG}#${orgId}#${ENTITY_TYPES.OPENING}#${openingId}#STAGES`, // Get all stages in an opening
     GSI1SK: GSI1SK,
   };
 
   try {
-    // Get current opening
-    stageOrder.push(stageId);
-
     const transactParams: TransactWriteCommandInput = {
       TransactItems: [
         {
@@ -47,7 +45,7 @@ export default async function Create(
         },
 
         {
-          // Add stage to the opening + increment stage count on opening
+          // Increment stage count on opening
           Update: {
             Key: {
               PK: `${ENTITY_TYPES.ORG}#${orgId}#${ENTITY_TYPES.OPENING}#${openingId}`,

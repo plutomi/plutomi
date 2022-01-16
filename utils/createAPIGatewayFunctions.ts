@@ -9,7 +9,7 @@ import * as cdk from "@aws-cdk/core";
 import * as path from "path";
 import { HttpApi } from "@aws-cdk/aws-apigatewayv2";
 import { LambdaProxyIntegration } from "@aws-cdk/aws-apigatewayv2-integrations";
-import { CDKLambda } from "../types/main";
+import { APIGatewayLambda } from "../types/main";
 import { DEFAULT_LAMBDA_CONFIG } from "../bin/plutomi";
 
 /**
@@ -22,7 +22,7 @@ import { DEFAULT_LAMBDA_CONFIG } from "../bin/plutomi";
  */
 export default function createAPIGatewayFunctions(
   stack: cdk.Stack,
-  functions: CDKLambda[],
+  functions: APIGatewayLambda[],
   api: HttpApi,
   table: Table
 ): void {

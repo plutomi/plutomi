@@ -1,12 +1,12 @@
 import * as cdk from "@aws-cdk/core";
-import { CDKLambda } from "../types/main";
+import { APIGatewayLambda } from "../types/main";
 import { LambdaAPIProps } from "../types/main";
 import { HttpMethod } from "@aws-cdk/aws-apigatewayv2";
 import createAPIGatewayFunctions from "../utils/createAPIGatewayFunctions";
 export default class APIAuthServiceStack extends cdk.Stack {
   constructor(scope: cdk.Construct, id: string, props?: LambdaAPIProps) {
     super(scope, id, props);
-    const functions: CDKLambda[] = [
+    const functions: APIGatewayLambda[] = [
       {
         functionName: `request-login-link-function`,
         description: `Sends login links to the user`,

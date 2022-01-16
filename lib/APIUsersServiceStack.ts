@@ -1,5 +1,5 @@
 import * as cdk from "@aws-cdk/core";
-import { CDKLambda } from "../types/main";
+import { APIGatewayLambda } from "../types/main";
 import { LambdaAPIProps } from "../types/main";
 import { HttpMethod } from "@aws-cdk/aws-apigatewayv2";
 import createAPIGatewayFunctions from "../utils/createAPIGatewayFunctions";
@@ -7,7 +7,7 @@ import createAPIGatewayFunctions from "../utils/createAPIGatewayFunctions";
 export default class APIUsersServiceStack extends cdk.Stack {
   constructor(scope: cdk.Construct, id: string, props?: LambdaAPIProps) {
     super(scope, id, props);
-    const functions: CDKLambda[] = [
+    const functions: APIGatewayLambda[] = [
       {
         functionName: `get-self-info-function`,
         description: `Retrieves info about the current user, ID is taken from the session cookie`,

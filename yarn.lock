@@ -2922,6 +2922,11 @@
     "@types/yargs" "^16.0.0"
     "chalk" "^4.0.0"
 
+"@kayron013/lexorank@^2.0.0":
+  "integrity" "sha512-acQaZPjnsHnXm28i6YATdi/nZ3gs2c5ZFlkFhXcSw0CgDymF+U5v4SYcQT0/ryjBcEjKl1HQWpBLK+PtVOIAHA=="
+  "resolved" "https://registry.npmjs.org/@kayron013/lexorank/-/lexorank-2.0.0.tgz"
+  "version" "2.0.0"
+
 "@lambda-middleware/compose@^1.2.0":
   "integrity" "sha512-5WsGK3QNHuPDHgviREZqZaU/PkXxg+pwtEb9inEmxezgy9pCjWWjLE3A51Qf9m5jQs+avkyU4w8GK5swmI4RZg=="
   "resolved" "https://registry.npmjs.org/@lambda-middleware/compose/-/compose-1.2.0.tgz"
@@ -7793,6 +7798,11 @@
   dependencies:
     "package-json" "^6.3.0"
 
+"layerr@^0.1.2":
+  "integrity" "sha512-ob5kTd9H3S4GOG2nVXyQhOu9O8nBgP555XxWPkJI0tR0JeRilfyTp8WtPdIJHLXBmHMSdEq5+KMxiYABeScsIQ=="
+  "resolved" "https://registry.npmjs.org/layerr/-/layerr-0.1.2.tgz"
+  "version" "0.1.2"
+
 "leven@^3.1.0":
   "integrity" "sha512-qsda+H8jTaUaN/x5vzW2rzc+8Rw4TAQ/4KjB46IwK5VH+IlVeeeje/EoZRpiXvIqjFgK84QffqPztGI3VBLG1A=="
   "resolved" "https://registry.npmjs.org/leven/-/leven-3.1.0.tgz"
@@ -7813,6 +7823,11 @@
   dependencies:
     "prelude-ls" "~1.1.2"
     "type-check" "~0.3.2"
+
+"lexorank@^1.0.4":
+  "integrity" "sha512-CMgA8AMJIX/QfoYHKyjg0hv9W1SGL2xRkt0uLyhT9xKKRj73fHi+IhsrB3W36wwk4I0iz8YlKHfdW14QDwerMA=="
+  "resolved" "https://registry.npmjs.org/lexorank/-/lexorank-1.0.4.tgz"
+  "version" "1.0.4"
 
 "lilconfig@^2.0.3":
   "integrity" "sha512-bfTIN7lEsiooCocSISTWXkiWJkRqtL9wYtYy+8EK3Y41qh3mpwPU0ycTOgjdY9ErwXCc8QyrQp82bdL0Xkm9yA=="
@@ -10882,6 +10897,18 @@
   "integrity" "sha512-5BlMof9H1yGt0P8/WF+wPNw6GfctgGjXp5hkblpyT+8rkASSmkUKMXrxR0Xg8ThVCi/JnHQiKXeBaEwCeQwMFw=="
   "resolved" "https://registry.npmjs.org/typescript/-/typescript-4.5.2.tgz"
   "version" "4.5.2"
+
+"ulid@^2.3.0":
+  "integrity" "sha512-keqHubrlpvT6G2wH0OEfSW4mquYRcbe/J8NMmveoQOjUqmo+hXtO+ORCpWhdbZ7k72UtY61BL7haGxW6enBnjw=="
+  "resolved" "https://registry.npmjs.org/ulid/-/ulid-2.3.0.tgz"
+  "version" "2.3.0"
+
+"ulidx@^0.3.0":
+  "integrity" "sha512-Qvpa2xAzS6fBUpiqHSHWvn6XiSLCAPyNDDz035vsEWmUoXRqC4c9JySLIfdBuK0N1xGBxng6GHDOZgyNQfxAHg=="
+  "resolved" "https://registry.npmjs.org/ulidx/-/ulidx-0.3.0.tgz"
+  "version" "0.3.0"
+  dependencies:
+    "layerr" "^0.1.2"
 
 "unbox-primitive@^1.0.1":
   "integrity" "sha512-tZU/3NqK3dA5gpE1KtyiJUrEB0lxnGkMFHptJ7q6ewdZ8s12QrODwNbhIJStmJkd1QDXa1NRA8aF2A1zk/Ypyw=="

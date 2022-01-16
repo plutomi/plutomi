@@ -12,11 +12,7 @@ import errorFormatter from "../utils/errorFormatter";
 export const create = async (req: Request, res: Response) => {
   const { GSI1SK, openingId } = req.body;
   const { orgId } = req.session.user;
-  if (req.session.user.orgId === DEFAULTS.NO_ORG) {
-    return res.status(403).json({
-      message: "Please create an organization before creating a stage",
-    });
-  }
+
   let createStageInput: CreateStageInput = {
     orgId: req.session.user.orgId,
     openingId: openingId,
@@ -24,19 +20,9 @@ export const create = async (req: Request, res: Response) => {
     stageOrder: [], // TODO THIS IS BAD AND SHOULD NOT BE HERE!!!!!!!!!
   };
 
-  const schema = Joi.object({
-    orgId: Joi.string(),
-    openingId: Joi.string(),
-    GSI1SK: Joi.string(),
-    stageOrder: Joi.array(), // TODO THIS IS BAD AND SHOULD NOT BE HERE!!!!!!!!!
-  }).options({ presence: "required" });
-
+ 
   // Validate input
-  try {
-    await schema.validateAsync(createStageInput);
-  } catch (error) {
-    return res.status(400).json({ message: `${error.message}` });
-  }
+
 
   let [opening, openingError] = await Openings.getOpeningById({
     orgId,
@@ -53,7 +39,6 @@ export const create = async (req: Request, res: Response) => {
   }
   createStageInput = { ...createStageInput, stageOrder: opening.stageOrder };
 
-  const [created, error] = await Stages.createStage(createStageInput);
   if (error) {
     const formattedError = errorFormatter(error);
     return res.status(formattedError.httpStatusCode).json({

@@ -12,12 +12,13 @@ import APIUsersServiceStack from "../lib/APIUsersServiceStack";
 import APIOrgsServiceStack from "../lib/APIOrgsServiceStack";
 import APIInvitesServiceStack from "../lib/APIInvitesServiceStack";
 import APIOpeningsServiceStack from "../lib/APIOpeningsServiceStack";
+import APIStagesServiceStack from "../lib/APIStagesServiceStack";
+
 import { Builder } from "@sls-next/lambda-at-edge";
 import { nanoid } from "nanoid";
 import { NodejsFunctionProps } from "@aws-cdk/aws-lambda-nodejs";
 import { Architecture, Runtime } from "@aws-cdk/aws-lambda";
 import { RetentionDays } from "@aws-cdk/aws-logs";
-
 /**
  * You can easily override these settings when declaring your function.
  * For API Gateway lambdas, these settings are used in the createAPIGatewayFunctions.ts file
@@ -88,6 +89,12 @@ builder
       {
         table,
       }
+    );
+
+    new APIStagesServiceStack(
+      app,
+      `${process.env.NODE_ENV}-APIStagesServiceStack`,
+      { api, table }
     );
 
     new EventBridgeStack(app, `${process.env.NODE_ENV}-EventBridgeStack`, {

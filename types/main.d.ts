@@ -29,7 +29,7 @@ type DynamoActions =
   | "dynamodb:UpdateItem"
   | "dynamodb:DeleteItem"
   | "dynamodb:BatchWriteItem";
-export interface CDKLambda extends NodejsFunctionProps {
+export interface APIGatewayLambda extends NodejsFunctionProps {
   /**
    * Path for the API, such as "/users/{userId}"
    */
@@ -136,9 +136,7 @@ interface UserSessionData {
   expiresAt: string; // ISO timestamp
 }
 export interface CreateStageInput
-  extends Pick<DynamoNewStage, "orgId" | "GSI1SK" | "openingId"> {
-  stageOrder: string[];
-}
+  extends Pick<DynamoNewStage, "orgId" | "GSI1SK" | "openingId"> {}
 export interface DeleteStageInput
   extends Pick<DynamoNewStage, "orgId" | "stageId"> {
   openingId: string;

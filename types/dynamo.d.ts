@@ -4,9 +4,9 @@ import { DEFAULTS, ENTITY_TYPES } from "../Config";
 import { UserSessionData } from "./main";
 interface DynamoNewStage {
   /**
-   * Primary key for creating a stage - takes `orgId` and `stageId`
+   * Primary key for creating a stage - takes `orgId`, `openingId`, & `stageId`
    */
-  PK: `${ENTITY_TYPES.ORG}#${string}#${ENTITY_TYPES.STAGE}#${string}`;
+  PK: `${ENTITY_TYPES.ORG}#${string}#${ENTITY_TYPES.OPENING}#${string}${ENTITY_TYPES.STAGE}#${string}`;
   /**
    * Sort key for a stage, it's just the {@link ENTITY_TYPES.STAGE}
    */
@@ -24,7 +24,7 @@ interface DynamoNewStage {
    */
   orgId: string;
   /**
-   * The order of the questions for the stage
+   * The order of the questions for the stage // TODO remove with new format
    */
   questionOrder: string[];
   /**
@@ -40,7 +40,7 @@ interface DynamoNewStage {
    */
   openingId: string;
   /**
-   * The primary key to get all stages in an opening. Requires `orgId` and `openingId`
+   * The index key to get all stages in an opening. Requires `orgId` and `openingId`
    */
   GSI1PK: `${ENTITY_TYPES.ORG}#${string}#${ENTITY_TYPES.OPENING}#${string}#${ENTITY_TYPES.STAGE}S`;
   /**

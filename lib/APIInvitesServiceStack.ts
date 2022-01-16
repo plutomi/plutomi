@@ -1,5 +1,5 @@
 import * as cdk from "@aws-cdk/core";
-import { CDKLambda } from "../types/main";
+import { APIGatewayLambda } from "../types/main";
 import { LambdaAPIProps } from "../types/main";
 import { HttpMethod } from "@aws-cdk/aws-apigatewayv2";
 import createAPIGatewayFunctions from "../utils/createAPIGatewayFunctions";
@@ -8,7 +8,7 @@ export default class APIInvitesServiceStack extends cdk.Stack {
   constructor(scope: cdk.Construct, id: string, props?: LambdaAPIProps) {
     super(scope, id, props);
 
-    const functions: CDKLambda[] = [
+    const functions: APIGatewayLambda[] = [
       {
         functionName: `get-org-invites-function`,
         description: `Retrieves invites for an org that haven't been accepted yet`,
