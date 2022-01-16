@@ -170,18 +170,6 @@ export const JOI_GLOBAL_FORBIDDEN = {
  */
 export const FORBIDDEN_PROPERTIES = {
   /**
-   * {@link DynamoNewUser}
-   */
-  USER: [
-    ...GLOBAL_FORBIDDEN_PROPERTIES,
-    "userRole", // TODO, only admins
-    "orgJoinDate",
-    "canReceiveEmails",
-    "GSI1PK",
-    "GSI2PK", // Email
-    "verifiedEmail", // Updated asynchronously (step functions) on 1st login
-  ],
-  /**
    * {@link DynamoNewApplicant}
    */
   APPLICANT: [
