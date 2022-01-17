@@ -136,7 +136,16 @@ interface UserSessionData {
   expiresAt: string; // ISO timestamp
 }
 export interface CreateStageInput
-  extends Pick<DynamoNewStage, "orgId" | "GSI1SK" | "openingId"> {}
+  extends Pick<DynamoNewStage, "orgId" | "GSI1SK" | "openingId"> {
+  /**
+   * If this stage goes after another, `null` if it should go in the beginning
+   */
+  previousStage?: string;
+  /**
+   * If there are stages after this one, `null` if it should go at the end
+   */
+  nextStage?: string;
+}
 export interface DeleteStageInput
   extends Pick<DynamoNewStage, "orgId" | "stageId"> {
   openingId: string;
@@ -240,10 +249,7 @@ type CreateOpeningInput = Pick<DynamoNewOpening, "orgId" | "GSI1SK">;
 type DeleteOpeningInput = Pick<DynamoNewOpening, "orgId" | "openingId">;
 
 type GetAllOpeningsInOrgInput = Pick<DynamoNewOpening, "orgId">;
-type GetAllStagesInOpeningInput = Pick<
-  DynamoNewOpening,
-  "orgId" | "openingId" | "stageOrder"
->;
+type GetAllStagesInOpeningInput = Pick<DynamoNewOpening, "orgId" | "openingId">;
 type GetOpeningByIdInput = Pick<DynamoNewOpening, "orgId" | "openingId">;
 export interface UpdateOpeningInput
   extends Pick<DynamoNewOpening, "orgId" | "openingId"> {

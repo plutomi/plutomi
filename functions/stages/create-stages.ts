@@ -46,6 +46,7 @@ const main = async (
 
   const { session } = event.requestContext.authorizer.lambda;
   const { GSI1SK, openingId, nextStage, previousStage } = event.body;
+
   if (session.orgId === DEFAULTS.NO_ORG) {
     return {
       statusCode: 400,
@@ -55,27 +56,68 @@ const main = async (
     };
   }
 
+  // Please note: If we don't get all stages in this query this might cause some issues
+  const [allCurrentStages, allStagesError] = await Openings.getStagesInOpening({
+    openingId,
+    orgId: session.orgId,
+  });
+
+  if (allStagesError) {
+    return Response.SDK(
+      allStagesError,
+      "An error ocurred retrieving all the current stages"
+    );
+  }
+
+  if (allCurrentStages.length === 0) {
+    /**
+     * TODO If there are no stages:
+     * previousStage: null
+     * nextStage: null
+     */
+  }
+
+  if (!nextStage && !previousStage) {
+    /**
+     * If there are stages, nextStage and previousStage CAN be null,
+     * but the stage will be added to the end of the opening by default
+     * TODO add to ending of the opening
+     * previousStage: allStages.at(-1).stageId,
+     * nextStage: null
+     */
+  }
+
+  const currentFirst = allCurrentStages.find(
+    (stage) => stage.previousStage === null
+  );
+  const currentLast = allCurrentStages.find(
+    (stage) => stage.nextStage === null
+  );
+
+  if (currentFirst === currentLast) {
+    /**
+     * TODO if there is only one stage:
+     * nextStage OR previousStage must be null
+     */
+
+    if (nextStage === previousStage) {
+      /**
+       * TODO throw error, this is invalid
+       */
+    }
+  }
+
   const [created, error] = await Stages.createStage({
     orgId: session.orgId,
     GSI1SK,
     openingId,
+    previousStage,
+    nextStage,
   });
-
-  const [created, createOpeningError] = await Openings.createOpening({
-    orgId: session.orgId,
-    GSI1SK,
-  });
-
-  if (createOpeningError) {
-    return Response.SDK(
-      createOpeningError,
-      "An error ocurred creating opening"
-    );
-  }
 
   return {
     statusCode: 201,
-    body: { message: "Opening created!" },
+    body: { message: "Stage created!" },
   };
 };
 
