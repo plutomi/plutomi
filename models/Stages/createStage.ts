@@ -26,10 +26,11 @@ export default async function Create(
     stageId,
     orgId,
     totalApplicants: 0,
-    stageOrder: 0, // TODO this is new
     openingId,
     GSI1PK: `${ENTITY_TYPES.ORG}#${orgId}#${ENTITY_TYPES.OPENING}#${openingId}#STAGES`, // Get all stages in an opening
     GSI1SK: GSI1SK,
+    nextStage,
+    previousStage,
   };
 
   try {
@@ -54,9 +55,8 @@ export default async function Create(
             TableName: DYNAMO_TABLE_NAME,
 
             UpdateExpression:
-              "SET stageOrder = :stageOrder, totalStages = if_not_exists(totalStages, :zero) + :value",
+              "SET totalStages = if_not_exists(totalStages, :zero) + :value",
             ExpressionAttributeValues: {
-              ":stageOrder": stageOrder,
               ":zero": 0,
               ":value": 1,
             },

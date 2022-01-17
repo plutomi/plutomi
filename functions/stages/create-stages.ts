@@ -5,11 +5,14 @@ import * as Stages from "../../models/Stages";
 import { JOI_SETTINGS, DEFAULTS, withDefaultMiddleware } from "../../Config";
 import { CustomLambdaEvent, CustomLambdaResponse } from "../../types/main";
 import * as Response from "../../utils/customResponse";
-interface APICreateOpeningsBody {
-  GSI1SK?: string;
+interface APICreateStagesBody {
+  GSI1SK: string;
+  openingId: string;
+  nextStage?: string;
+  previousStage?: string;
 }
-interface APICreateOpeningsEvent extends Omit<CustomLambdaEvent, "body"> {
-  body: APICreateOpeningsBody;
+interface APICreateStagesEvent extends Omit<CustomLambdaEvent, "body"> {
+  body: APICreateStagesBody;
 }
 
 const schema = Joi.object({
@@ -17,11 +20,23 @@ const schema = Joi.object({
     // Stage name
     GSI1SK: Joi.string().max(100),
     openingId: Joi.string(),
+    /**
+     *  If nextStage is not provided, stage is added to the end of the opening
+     *  previousStage will be the current final stage in an opening.
+     *
+     * If nextStage is provided and previousStage is NOT the current first stage,
+     * this should throw an error.
+     *
+     * If nextStage is provided and nextStage IS the current first stage,
+     * previousStage can be null
+     */
+    nextStage: Joi.string().optional(),
+    previousStage: Joi.string().optional(),
   },
 }).options(JOI_SETTINGS);
 
 const main = async (
-  event: APICreateOpeningsEvent
+  event: APICreateStagesEvent
 ): Promise<CustomLambdaResponse> => {
   try {
     await schema.validateAsync(event);
@@ -30,7 +45,7 @@ const main = async (
   }
 
   const { session } = event.requestContext.authorizer.lambda;
-  const { GSI1SK } = event.body;
+  const { GSI1SK, openingId, nextStage, previousStage } = event.body;
   if (session.orgId === DEFAULTS.NO_ORG) {
     return {
       statusCode: 400,

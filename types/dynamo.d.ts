@@ -47,6 +47,14 @@ interface DynamoNewStage {
    * The stage name
    */
   GSI1SK: string;
+
+  /**
+   * Linked list to get next & previous stages
+   * If `nextStage` not provided, stage is added to the end of the opening.
+   * `previousStage` becomes the last stage
+   */
+  nextStage?: string;
+  previousStage?: string;
 }
 
 interface DynamoNewStageQuestion {
