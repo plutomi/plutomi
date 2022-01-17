@@ -20,16 +20,7 @@ const schema = Joi.object({
     // Stage name
     GSI1SK: Joi.string().max(100),
     openingId: Joi.string(),
-    /**
-     *  If nextStage is not provided, stage is added to the end of the opening
-     *  previousStage will be the current final stage in an opening.
-     *
-     * If nextStage is provided and previousStage is NOT the current first stage,
-     * this should throw an error.
-     *
-     * If nextStage is provided and nextStage IS the current first stage,
-     * previousStage can be null
-     */
+    // If these are not provided, stage is added to the end by default
     nextStage: Joi.string().optional(),
     previousStage: Joi.string().optional(),
   },
@@ -56,7 +47,7 @@ const main = async (
     };
   }
 
-  // Please note: If we don't get all stages in this query this might cause some issues
+  // TODO Please note, (update this query to be recursive): If we don't get all stages in this query this might cause some issues
   const [allCurrentStages, allStagesError] = await Openings.getStagesInOpening({
     openingId,
     orgId: session.orgId,
@@ -69,22 +60,49 @@ const main = async (
     );
   }
 
+  /**
+   * First stage in opening
+   */
   if (allCurrentStages.length === 0) {
-    /**
-     * TODO If there are no stages:
-     * previousStage: null
-     * nextStage: null
-     */
+    const [created, error] = await Stages.createStage({
+      orgId: session.orgId,
+      GSI1SK,
+      openingId,
+      previousStage: null,
+      nextStage: null,
+    });
+
+    if (error) {
+      return Response.SDK(error, "An error ocurred creating your stage");
+    }
+
+    return {
+      statusCode: 201,
+      body: { message: "Stage created!" },
+    };
   }
 
+  /**
+   * If there are stages, nextStage and previousStage CAN be null,
+   * and the stage will be added to the end of the opening by default
+   */
   if (!nextStage && !previousStage) {
-    /**
-     * If there are stages, nextStage and previousStage CAN be null,
-     * but the stage will be added to the end of the opening by default
-     * TODO add to ending of the opening
-     * previousStage: allStages.at(-1).stageId,
-     * nextStage: null
-     */
+    const [created, error] = await Stages.createStage({
+      orgId: session.orgId,
+      GSI1SK,
+      openingId,
+      previousStage: allCurrentStages.at(-1).stageId,
+      nextStage: null,
+    });
+
+    if (error) {
+      return Response.SDK(error, "An error ocurred creating your stage");
+    }
+
+    return {
+      statusCode: 201,
+      body: { message: "Stage created!" },
+    };
   }
 
   const currentFirst = allCurrentStages.find(
@@ -94,16 +112,22 @@ const main = async (
     (stage) => stage.nextStage === null
   );
 
+  /**
+   * We already check for 2 nulls on nextStage and previousStage above
+   * which adds the stage to the end..
+   * So if there is ONE stage,
+   * nextStage OR previousStage MUST equal that stageId, and the other must be null
+   */
+  // TODO  be thisshoulda function that checks if the provied values exists in the stage list
   if (currentFirst === currentLast) {
-    /**
-     * TODO if there is only one stage:
-     * nextStage OR previousStage must be null
-     */
-
-    if (nextStage === previousStage) {
-      /**
-       * TODO throw error, this is invalid
-       */
+    if (
+      (!nextStage && previousStage === currentFirst.stageId) ||
+      (!previousStage && nextStage === currentFirst.stageId)
+    ) {
+      return {
+        statusCode: 400,
+        body: {message: `There is only one opening in this stage and either the 'previousStage' or 'nextStage' ids that you provided do not match up to that stage`}
+      }
     }
   }
 

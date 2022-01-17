@@ -11,10 +11,11 @@ import getOpening from "../Openings/getOpening";
 import * as Time from "../../utils/time";
 const { DYNAMO_TABLE_NAME } = process.env;
 import { SdkError } from "@aws-sdk/types";
+import { isDoStatement } from "typescript";
 export default async function Create(
   props: CreateStageInput
 ): Promise<[null, null] | [null, SdkError]> {
-  const { orgId, GSI1SK, openingId } = props;
+  const { orgId, GSI1SK, openingId, nextStage, previousStage } = props;
   const stageId = nanoid(ID_LENGTHS.STAGE);
   const newStage: DynamoNewStage = {
     // TODO fix this type
@@ -34,10 +35,10 @@ export default async function Create(
   };
 
   try {
-    const transactParams: TransactWriteCommandInput = {
+    let transactParams: TransactWriteCommandInput = {
       TransactItems: [
         {
-          // Add a stage item
+          // Add the new stage item
           Put: {
             Item: newStage,
             TableName: DYNAMO_TABLE_NAME,
@@ -80,6 +81,36 @@ export default async function Create(
         },
       ],
     };
+
+    /**
+     * TODO add logic here to add updates to previous and next stages
+     */
+
+    if (previousStage) {
+      // TODO update that stage with a new `nextStage` value
+
+      const stagement = {
+        // Update the previous stage's nextStage attribute to the new stage being created
+        Update: {
+          Key: {
+            PK: `${ENTITY_TYPES.ORG}#${orgId}#${ENTITY_TYPES.OPENING}#${openingId}#${ENTITY_TYPES.STAGE}#${stageId}`,
+            SK: ENTITY_TYPES.STAGE,
+          },
+          TableName: DYNAMO_TABLE_NAME,
+
+          UpdateExpression: "SET nextStage = :value",
+          ExpressionAttributeValues: {
+            ":value": stageId,
+          },
+        },
+      };
+
+      transactParams.TransactItems.push(isDoStatement);
+    }
+
+    if (nextStage) {
+      // TODO update that stage with a new `previousStage` value
+    }
 
     await Dynamo.send(new TransactWriteCommand(transactParams));
     return [null, null];

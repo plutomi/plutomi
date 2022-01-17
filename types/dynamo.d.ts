@@ -53,8 +53,8 @@ interface DynamoNewStage {
    * If `nextStage` not provided, stage is added to the end of the opening.
    * `previousStage` becomes the last stage
    */
-  nextStage?: string;
-  previousStage?: string;
+  nextStage?: string | null;
+  previousStage?: string | null;
 }
 
 interface DynamoNewStageQuestion {
