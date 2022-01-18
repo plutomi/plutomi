@@ -26,9 +26,7 @@ app.get(
 );
 
 // app.get("/openings/:openingId/applicants",  Openings.getApplicants);
-app.get("/openings/:openingId/stages", Openings.getStages);
-// Stages
-app.post("/stages", Stages.create);
+// app.get("/openings/:openingId/stages", Openings.getStages);
 app.get("/stages/:stageId", Stages.getStageInfo);
 app.delete("/stages/:stageId", Stages.deleteStage);
 app.put("/stages/:stageId", Stages.update);

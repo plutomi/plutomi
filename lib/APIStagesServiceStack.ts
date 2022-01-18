@@ -15,10 +15,26 @@ export default class APIStagesServiceStack extends cdk.Stack {
         filePath: `../functions/stages/create-stages.ts`,
         APIPath: "/stages",
         method: HttpMethod.POST,
-        // dynamoActions: ["dynamodb:PutItem", "dynamodb:UpdateItem"],
-        // dynamoResources: {
-        //   main: true,
-        // }
+        dynamoActions: [
+          "dynamodb:PutItem",
+          "dynamodb:UpdateItem",
+          "dynamodb:Query",
+        ],
+        dynamoResources: {
+          main: true,
+          GSI1: true,
+        },
+      },
+      {
+        functionName: `get-stages-in-opening-function`,
+        description: "Returns the stages in the specified opening",
+        filePath: `../functions/stages/get-stages-in-opening.ts`,
+        APIPath: "/openings/{openingId}/stages",
+        method: HttpMethod.GET,
+        dynamoActions: ["dynamodb:Query"],
+        dynamoResources: {
+          GSI1: true,
+        },
       },
     ];
 

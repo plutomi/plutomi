@@ -51,17 +51,6 @@ export default class APIOrgsServiceStack extends cdk.Stack {
           main: true,
         },
       },
-      {
-        functionName: "get-openings-in-org-function",
-        description: `Retrieves the openings in an org`,
-        filePath: `../functions/orgs/get-openings.ts`,
-        APIPath: `/openings`,
-        method: HttpMethod.GET,
-        dynamoActions: ["dynamodb:Query"],
-        dynamoResources: {
-          GSI1: true,
-        },
-      },
     ];
 
     createAPIGatewayFunctions(this, functions, props.api, props.table);

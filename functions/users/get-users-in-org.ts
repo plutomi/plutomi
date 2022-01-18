@@ -11,7 +11,7 @@ const main = async (
   const { session } = event.requestContext.authorizer.lambda;
   if (session.orgId === DEFAULTS.NO_ORG) {
     return {
-      statusCode: 200,
+      statusCode: 403,
       body: {
         message: "You must create an org or join one to view it's users",
       },

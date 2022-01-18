@@ -24,9 +24,41 @@ export default async function GetStages(
 
   try {
     const response = await Dynamo.send(new QueryCommand(params));
-    const allStages = response.Items;
+    const allStages = response.Items as DynamoNewStage[];
 
-    return [allStages as DynamoNewStage[], null];
+    console.log("All stages in opening", allStages);
+    let orderedStages = [];
+
+    // Stages are essentially a doubly linked list. This orders them.
+    // TODO abstract this to its own function as we will need it for other entities that can be re-orderd
+    if (allStages.length > 1) {
+      console.log("More than one stage, ordering...");
+
+      const first = allStages.find((stage) => stage.previousStage === null);
+      const last = allStages.find((stage) => stage.nextStage === null);
+
+      orderedStages.push(first);
+      let current = allStages.find(
+        (stage) => stage.stageId === first.nextStage
+      );
+      console.log("First stage:", first);
+
+      while (current.nextStage) {
+        console.log("There are more stages");
+        console.log("Current stage:", current);
+        const nextStage = allStages.find(
+          (stage) => stage.stageId === current.nextStage
+        );
+        console.log("Next stage:", nextStage);
+
+        orderedStages.push(current);
+        current = nextStage;
+      }
+
+      orderedStages.push(last);
+    }
+
+    return [allStages.length === 1 ? allStages : orderedStages, null];
   } catch (error) {
     return [null, error];
   }

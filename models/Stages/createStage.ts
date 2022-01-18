@@ -18,7 +18,6 @@ export default async function Create(
   const { orgId, GSI1SK, openingId, nextStage, previousStage } = props;
   const stageId = nanoid(ID_LENGTHS.STAGE);
   const newStage: DynamoNewStage = {
-    // TODO fix this type
     PK: `${ENTITY_TYPES.ORG}#${orgId}#${ENTITY_TYPES.OPENING}#${openingId}#${ENTITY_TYPES.STAGE}#${stageId}`,
     SK: ENTITY_TYPES.STAGE,
     entityType: ENTITY_TYPES.STAGE,
@@ -34,6 +33,7 @@ export default async function Create(
     previousStage,
   };
 
+  // TODO to locking to make sure stage being updated has the correct current nextStage and previousStage
   try {
     let transactParams: TransactWriteCommandInput = {
       TransactItems: [
@@ -83,17 +83,14 @@ export default async function Create(
     };
 
     /**
-     * TODO add logic here to add updates to previous and next stages
+     * If a previousStage is provided, the stage being created goes AFTER it.
+     * Update the previous stage's nextStage property with the stage being created
      */
-
     if (previousStage) {
-      // TODO update that stage with a new `nextStage` value
-
-      const stagement = {
-        // Update the previous stage's nextStage attribute to the new stage being created
+      const statement = {
         Update: {
           Key: {
-            PK: `${ENTITY_TYPES.ORG}#${orgId}#${ENTITY_TYPES.OPENING}#${openingId}#${ENTITY_TYPES.STAGE}#${stageId}`,
+            PK: `${ENTITY_TYPES.ORG}#${orgId}#${ENTITY_TYPES.OPENING}#${openingId}#${ENTITY_TYPES.STAGE}#${previousStage}`,
             SK: ENTITY_TYPES.STAGE,
           },
           TableName: DYNAMO_TABLE_NAME,
@@ -105,13 +102,33 @@ export default async function Create(
         },
       };
 
-      transactParams.TransactItems.push(isDoStatement);
+      transactParams.TransactItems.push(statement);
     }
 
+    /**
+     * If a nextStage is provided, the stage being created goes BEFORE it.
+     * Update the next stage's previousStage property with the stage being created
+     */
     if (nextStage) {
-      // TODO update that stage with a new `previousStage` value
+      const statement = {
+        Update: {
+          Key: {
+            PK: `${ENTITY_TYPES.ORG}#${orgId}#${ENTITY_TYPES.OPENING}#${openingId}#${ENTITY_TYPES.STAGE}#${nextStage}`,
+            SK: ENTITY_TYPES.STAGE,
+          },
+          TableName: DYNAMO_TABLE_NAME,
+
+          UpdateExpression: "SET previousStage = :value",
+          ExpressionAttributeValues: {
+            ":value": stageId,
+          },
+        },
+      };
+
+      transactParams.TransactItems.push(statement);
     }
 
+    console.log("In dynamo call for creating stages", transactParams);
     await Dynamo.send(new TransactWriteCommand(transactParams));
     return [null, null];
   } catch (error) {
