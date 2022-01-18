@@ -82,6 +82,7 @@ export default function StageReorderColumn() {
   const setStageModal = useStore((state) => state.setStageModal);
 
   const handleDragEnd = async (result) => {
+    console.log("Drag end result", result);
     const { destination, source, draggableId } = result;
     // No change
     if (!destination) {

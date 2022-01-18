@@ -121,11 +121,6 @@ interface DynamoNewApplicant {
    *
    * */
   lastName: string;
-  /**
-   * Full name of the applicant. Concatenated `firstName` and `lastName`
-   * @default - {@link DEFAULTS.FULL_NAME}
-   */
-  fullName: `${string} ${string}`;
 
   /**
    * If an applicant has unsubscribed from emails

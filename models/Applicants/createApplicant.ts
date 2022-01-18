@@ -25,7 +25,6 @@ export default async function Create(
     SK: ENTITY_TYPES.APPLICANT,
     firstName,
     lastName,
-    fullName: `${firstName} ${lastName}`, // TODO Dynamo sorts in lexigraphical order.. migth need to .uppercase() these
     email: email.toLowerCase().trim(),
     isEmailVerified: false,
     orgId,
@@ -37,8 +36,6 @@ export default async function Create(
     stageId,
     unsubscribeKey: nanoid(10),
     canReceiveEmails: true,
-    // TODO Might need to be sharded on high volumes
-    // Max seen is 75k per stage (on hold)
     GSI1PK: `${ENTITY_TYPES.ORG}#${orgId}#${ENTITY_TYPES.OPENING}#${openingId}#${ENTITY_TYPES.STAGE}#${stageId}`,
     GSI1SK: `DATE_LANDED#${now}`,
   };
@@ -75,7 +72,7 @@ export default async function Create(
           // Increment the stage's total applicants
           Update: {
             Key: {
-              PK: `${ENTITY_TYPES.ORG}#${orgId}#${ENTITY_TYPES.STAGE}#${stageId}`,
+              PK: `${ENTITY_TYPES.ORG}#${orgId}#${ENTITY_TYPES.OPENING}#${openingId}#${ENTITY_TYPES.STAGE}#${stageId}`,
               SK: ENTITY_TYPES.STAGE,
             },
             TableName: DYNAMO_TABLE_NAME,

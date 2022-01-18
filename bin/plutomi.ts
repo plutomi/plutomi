@@ -13,6 +13,7 @@ import APIOrgsServiceStack from "../lib/APIOrgsServiceStack";
 import APIInvitesServiceStack from "../lib/APIInvitesServiceStack";
 import APIOpeningsServiceStack from "../lib/APIOpeningsServiceStack";
 import APIStagesServiceStack from "../lib/APIStagesServiceStack";
+import APIApplicantsServiceStack from "../lib/APIApplicantsServiceStack";
 
 import { Builder } from "@sls-next/lambda-at-edge";
 import { nanoid } from "nanoid";
@@ -80,6 +81,12 @@ builder
     new APIOpeningsServiceStack(
       app,
       `${process.env.NODE_ENV}-APIOpeningsServiceStack`,
+      { api, table }
+    );
+
+    new APIApplicantsServiceStack(
+      app,
+      `${process.env.NODE_ENV}-APIApplicantsServiceStack`,
       { api, table }
     );
 

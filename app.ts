@@ -11,7 +11,6 @@ import express from "express";
 import * as PublicInfo from "./controllers/PublicInfo";
 import * as Questions from "./controllers/Questions";
 import * as Stages from "./controllers/Stages";
-import * as Openings from "./controllers/Openings";
 import * as Applicants from "./controllers/Applicants";
 const app = express();
 
@@ -25,7 +24,7 @@ app.get(
   PublicInfo.getStageQuestions
 );
 
-// app.get("/openings/:openingId/applicants",  Openings.getApplicants); // TODO should this be added?
+// TODO needs reordering!!
 app.put("/stages/:stageId", Stages.update);
 
 // Questions
@@ -40,8 +39,3 @@ app.get("/applicants/:applicantId", Applicants.get);
 app.put("/applicants/:applicantId", Applicants.update);
 app.delete("/applicants/:applicantId", Applicants.remove);
 app.post("/applicants/:applicantId/answer", Applicants.answer);
-app.get(
-  `/openings/:openingId/stages/:stageId/applicants`,
-
-  Stages.getApplicantsInStage
-);

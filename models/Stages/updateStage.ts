@@ -23,7 +23,7 @@ export default async function Update(
 
   const params = {
     Key: {
-      PK: `${ENTITY_TYPES.ORG}#${orgId}#${ENTITY_TYPES.OPENING}#${openingId}${ENTITY_TYPES.STAGE}#${stageId}`,
+      PK: `${ENTITY_TYPES.ORG}#${orgId}#${ENTITY_TYPES.OPENING}#${openingId}#${ENTITY_TYPES.STAGE}#${stageId}`,
       SK: ENTITY_TYPES.STAGE,
     },
     UpdateExpression: `SET ` + allUpdateExpressions.join(", "),

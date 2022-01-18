@@ -5,7 +5,7 @@
   "scripts": {
     "build": "next build",
     "lint": "next lint",
-    "dev": "cross-env NODE_ENV=development cdk deploy development-DynamoDBStack development-StreamProcessorStack development-APIStack development-CommsMachineStack development-EventBridgeStack development-APIAuthServiceStack development-APIUsersServiceStack development-APIOrgsServiceStack development-APIInvitesServiceStack development-APIOpeningsServiceStack && next dev",
+    "dev": "cross-env NODE_ENV=development cdk deploy development-DynamoDBStack development-StreamProcessorStack development-APIStack development-CommsMachineStack development-EventBridgeStack && next dev",
     "deploy-prod": "TODO cross-env NODE_ENV=production  cdk deploy production-DynamoDBStack production-StreamProcessorStack production-APIStack production-CommsMachineStack production-EventBridgeStack FrontendStack"
   },
   "dependencies": {
@@ -62,6 +62,7 @@
     "cors": "^2.8.5",
     "custom-env": "^2.0.1",
     "dayjs": "^1.10.7",
+    "deep-email-validator": "^0.1.21",
     "delay": "^5.0.0",
     "dotenv-flow": "^3.2.0",
     "dynamodb-streams-processor": "^1.0.1",
