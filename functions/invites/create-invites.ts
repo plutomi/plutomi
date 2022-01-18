@@ -35,8 +35,10 @@ const main = async (
     return Response.JOI(error);
   }
 
-  const res = await emailValidator(event.body.recipientEmail);
-
+  const res = await emailValidator({
+    email: event.body.recipientEmail,
+    validateSMTP: false, // BUG, this isnt working
+  });
   if (!res.valid) {
     return {
       statusCode: 400,
@@ -140,7 +142,7 @@ const main = async (
     recipient,
     orgName: org.displayName,
     expiresAt: Time.futureISO(3, TIME_UNITS.DAYS), // TODO https://github.com/plutomi/plutomi/issues/333
-    createdBy: session, // TODO this has too much snesitive ata
+    createdBy: session, // TODO this has too much snesitive data https://github.com/plutomi/plutomi/issues/513
   });
 
   if (inviteError) {

@@ -20,6 +20,7 @@ interface APICreateApplicantsBody {
   firstName: string;
   lastName: string;
   email: string;
+  username?: string; // bot honeypot // TODO
 }
 interface APICreateApplicantsEvent extends Omit<CustomLambdaEvent, "body"> {
   body: APICreateApplicantsBody;
@@ -31,8 +32,9 @@ const schema = Joi.object({
     orgId: JoiOrgId, // Can't be default org
     openingId: Joi.string(),
     email: Joi.string().email(),
-    firstName: Joi.string().invalid(DEFAULTS.FIRST_NAME),
-    lastName: Joi.string().invalid(DEFAULTS.FIRST_NAME),
+    firstName: Joi.string().invalid(DEFAULTS.FIRST_NAME).max(20),
+    lastName: Joi.string().invalid(DEFAULTS.FIRST_NAME).max(20),
+    username: Joi.string().optional().forbidden(),
   },
 }).options(JOI_SETTINGS);
 
@@ -45,9 +47,13 @@ const main = async (
   } catch (error) {
     return Response.JOI(error);
   }
+  console.log("Validating");
+  const res = await emailValidator({
+    email: event.body.email,
+    validateSMTP: false, // BUG, this isnt working
+  });
 
-  const res = await emailValidator(event.body.email);
-
+  console.log(res);
   if (!res.valid) {
     return {
       statusCode: 400,

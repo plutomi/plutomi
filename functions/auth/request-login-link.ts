@@ -50,8 +50,10 @@ const main = async (
 
   const { email } = event.body;
 
-  const res = await emailValidator(event.body.email);
-
+  const res = await emailValidator({
+    email: event.body.email,
+    validateSMTP: false, // BUG, this isnt working
+  });
   if (!res.valid) {
     return {
       statusCode: 400,
