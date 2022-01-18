@@ -6,8 +6,6 @@ import { Dynamo } from "../../awsClients/ddbDocClient";
 import { ENTITY_TYPES } from "../../Config";
 import { DeleteOpeningInput } from "../../types/main";
 const { DYNAMO_TABLE_NAME } = process.env;
-import * as Openings from ".";
-import * as Stages from "../Stages";
 import { SdkError } from "@aws-sdk/types";
 export default async function remove(
   props: DeleteOpeningInput
@@ -25,6 +23,7 @@ export default async function remove(
               SK: ENTITY_TYPES.OPENING,
             },
             TableName: DYNAMO_TABLE_NAME,
+            ConditionExpression: "attribute_exists(PK)",
           },
         },
         {
@@ -39,6 +38,7 @@ export default async function remove(
             ExpressionAttributeValues: {
               ":value": 1,
             },
+            ConditionExpression: "attribute_exists(PK)",
           },
         },
       ],

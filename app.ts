@@ -25,9 +25,7 @@ app.get(
   PublicInfo.getStageQuestions
 );
 
-// app.get("/openings/:openingId/applicants",  Openings.getApplicants);
-// app.get("/openings/:openingId/stages", Openings.getStages);
-app.get("/stages/:stageId", Stages.getStageInfo);
+// app.get("/openings/:openingId/applicants",  Openings.getApplicants); // TODO should this be added?
 app.delete("/stages/:stageId", Stages.deleteStage);
 app.put("/stages/:stageId", Stages.update);
 

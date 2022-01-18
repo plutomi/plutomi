@@ -146,12 +146,15 @@ export interface CreateStageInput
    */
   nextStage?: string;
 }
-export interface DeleteStageInput
-  extends Pick<DynamoNewStage, "orgId" | "stageId"> {
-  openingId: string;
-  stageOrder: string[];
-}
-type GetStageByIdInput = Pick<DynamoNewStage, "orgId" | "stageId">;
+type DeleteStageInput = Pick<
+  DynamoNewStage,
+  "orgId" | "stageId" | "openingId" | "nextStage" | "previousStage"
+>;
+
+type GetStageByIdInput = Pick<
+  DynamoNewStage,
+  "orgId" | "stageId" | "openingId"
+>;
 type GetStageByIdOutput = DynamoNewStage;
 type GetAllApplicantsInStageInput = Pick<
   DynamoNewStage,

@@ -25,6 +25,7 @@ export default async function Join(
               SK: `${ENTITY_TYPES.ORG_INVITE}#${invite.inviteId}`,
             },
             TableName: DYNAMO_TABLE_NAME,
+            ConditionExpression: "attribute_exists(PK)",
           },
         },
 
@@ -43,6 +44,7 @@ export default async function Join(
               ":orgJoinDate": Time.currentISO(),
               ":GSI1PK": `${ENTITY_TYPES.ORG}#${invite.orgId}#${ENTITY_TYPES.USER}S`,
             },
+            ConditionExpression: "attribute_exists(PK)",
           },
         },
         {
@@ -57,6 +59,7 @@ export default async function Join(
             ExpressionAttributeValues: {
               ":value": 1,
             },
+            ConditionExpression: "attribute_exists(PK)",
           },
         },
       ],

@@ -129,7 +129,8 @@ const main = async (
    * If no nextStage or previousStage were provided, the stage will be added to the end of the opening
    */
   if (noPositionProvided) {
-    previousStage = allCurrentStages.at(-1).stageId;
+    // allCurrentStages.at(-1).stageId; is throwing errors :>\
+    previousStage = allCurrentStages[allCurrentStages.length - 1].stageId;
     nextStage = null;
   }
 

@@ -20,6 +20,7 @@ export default async function DeleteInvite(
         SK: `${ENTITY_TYPES.ORG_INVITE}#${inviteId}`,
       },
       TableName: DYNAMO_TABLE_NAME,
+      ConditionExpression: "attribute_exists(PK)",
     };
 
     await Dynamo.send(new DeleteCommand(params));

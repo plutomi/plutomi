@@ -37,6 +37,34 @@ export default class APIStagesServiceStack extends cdk.Stack {
           GSI1: true,
         },
       },
+
+      {
+        functionName: `get-stage-info-function`,
+        description: "Returns the info for the specified stage",
+        filePath: `../functions/stages/get-stage-info.ts`,
+        APIPath: "/openings/{openingId}/stages/{stageId}",
+        method: HttpMethod.GET,
+        dynamoActions: ["dynamodb:GetItem"],
+        dynamoResources: {
+          main: true,
+        },
+      },
+      {
+        functionName: `delete-stage-function`,
+        description: "Deletes the specified stage",
+        filePath: `../functions/stages/delete-stage.ts`,
+        APIPath: "/openings/{openingId}/stages/{stageId}",
+        method: HttpMethod.DELETE,
+        dynamoActions: [
+          "dynamodb:DeleteItem",
+          "dynamodb:UpdateItem",
+          "dynamodb:Query",
+        ],
+        dynamoResources: {
+          main: true,
+          GSI1: true,
+        },
+      },
     ];
 
     createAPIGatewayFunctions(this, functions, props.api, props.table);

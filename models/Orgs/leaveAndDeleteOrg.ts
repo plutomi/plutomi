@@ -31,6 +31,7 @@ export default async function Create(
               ":orgJoinDate": DEFAULTS.NO_ORG,
               ":GSI1PK": DEFAULTS.NO_ORG,
             },
+            ConditionExpression: "attribute_exists(PK)",
           },
         },
         {
@@ -41,6 +42,7 @@ export default async function Create(
               SK: ENTITY_TYPES.ORG,
             },
             TableName: DYNAMO_TABLE_NAME,
+            ConditionExpression: "attribute_exists(PK)",
           },
         },
       ],

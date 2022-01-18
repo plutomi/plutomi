@@ -128,7 +128,6 @@ export default async function Create(
       transactParams.TransactItems.push(statement);
     }
 
-    console.log("In dynamo call for creating stages", transactParams);
     await Dynamo.send(new TransactWriteCommand(transactParams));
     return [null, null];
   } catch (error) {

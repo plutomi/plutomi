@@ -12,40 +12,19 @@ import { SdkError } from "@aws-sdk/types";
 export default async function Remove(
   props: DeleteStageInput
 ): Promise<[null, null] | [null, SdkError]> {
-  const { orgId, stageId, stageOrder, openingId } = props;
-  // TODO Qeuery all items that start with PK: stageId & SK: ${ENTITY_TYPES.STAGE}
+  const { orgId, stageId, openingId, nextStage, previousStage } = props;
 
-  // Set the new stage order
-  let newStageOrder = stageOrder.filter((id: string) => id !== stageId);
-
-  // Delete the stage item & update the stage order on the opening
   const transactParams: TransactWriteCommandInput = {
     TransactItems: [
       {
         // Delete stage
         Delete: {
           Key: {
-            PK: `${ENTITY_TYPES.ORG}#${orgId}#${ENTITY_TYPES.STAGE}#${stageId}`,
+            PK: `${ENTITY_TYPES.ORG}#${orgId}#${ENTITY_TYPES.OPENING}#${openingId}#${ENTITY_TYPES.STAGE}#${stageId}`,
             SK: ENTITY_TYPES.STAGE,
           },
           TableName: DYNAMO_TABLE_NAME,
-        },
-      },
-      {
-        // Update Stage Order & decrement count
-        Update: {
-          Key: {
-            PK: `${ENTITY_TYPES.ORG}#${orgId}#${ENTITY_TYPES.OPENING}#${openingId}`,
-            SK: ENTITY_TYPES.OPENING,
-          },
-          TableName: DYNAMO_TABLE_NAME,
           ConditionExpression: "attribute_exists(PK)",
-          UpdateExpression:
-            "SET stageOrder = :stageOrder, totalStages = totalStages - :value",
-          ExpressionAttributeValues: {
-            ":stageOrder": newStageOrder,
-            ":value": 1,
-          },
         },
       },
 
@@ -61,10 +40,54 @@ export default async function Remove(
           ExpressionAttributeValues: {
             ":value": 1,
           },
+          ConditionExpression: "attribute_exists(PK)",
         },
       },
     ],
   };
+
+  // If the stage that is about to be deleted had a stage before it,
+  // set the nextStage attribute of that stage to the one the deleted stage had
+  if (previousStage) {
+    const statement = {
+      Update: {
+        Key: {
+          PK: `${ENTITY_TYPES.ORG}#${orgId}#${ENTITY_TYPES.OPENING}#${openingId}#${ENTITY_TYPES.STAGE}#${previousStage}`,
+          SK: ENTITY_TYPES.STAGE,
+        },
+        TableName: DYNAMO_TABLE_NAME,
+        UpdateExpression: "SET nextStage = :value",
+        ExpressionAttributeValues: {
+          ":value": nextStage,
+        },
+      },
+    };
+
+    transactParams.TransactItems.push(statement);
+  }
+
+  /**
+   * If a nextStage is provided, the stage being created goes BEFORE it.
+   * Update the next stage's previousStage property with the stage being created
+   */
+  if (nextStage) {
+    const statement = {
+      Update: {
+        Key: {
+          PK: `${ENTITY_TYPES.ORG}#${orgId}#${ENTITY_TYPES.OPENING}#${openingId}#${ENTITY_TYPES.STAGE}#${nextStage}`,
+          SK: ENTITY_TYPES.STAGE,
+        },
+        TableName: DYNAMO_TABLE_NAME,
+
+        UpdateExpression: "SET previousStage = :value",
+        ExpressionAttributeValues: {
+          ":value": previousStage,
+        },
+      },
+    };
+
+    transactParams.TransactItems.push(statement);
+  }
 
   try {
     await Dynamo.send(new TransactWriteCommand(transactParams));

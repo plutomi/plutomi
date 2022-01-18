@@ -83,15 +83,7 @@ export const deleteStage = async (req: Request, res: Response) => {
     stageOrder: opening.stageOrder,
   };
 
-  const [deleted, error] = await Stages.deleteStage(deleteStageInput); // TODO fix this as its not grouped with the other funnels
 
-  if (error) {
-    const formattedError = errorFormatter(error);
-    return res.status(formattedError.httpStatusCode).json({
-      message: "An error ocurred deleting stage",
-      ...formattedError,
-    });
-  }
   return res.status(200).json({ message: "Stage deleted!" });
 };
 

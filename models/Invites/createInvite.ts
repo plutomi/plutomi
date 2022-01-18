@@ -65,6 +65,7 @@ export default async function Create(
               ":zero": 0,
               ":value": 1,
             },
+            ConditionExpression: "attribute_exists(PK)",
           },
         },
       ],

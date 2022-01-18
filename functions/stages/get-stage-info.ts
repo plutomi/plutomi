@@ -1,25 +1,27 @@
-import * as Openings from "../../models/Openings";
 import middy from "@middy/core";
 import Joi from "joi";
+import * as Stages from "../../models/Stages";
 import { JOI_SETTINGS, DEFAULTS, withDefaultMiddleware } from "../../Config";
 import { CustomLambdaEvent, CustomLambdaResponse } from "../../types/main";
 import * as Response from "../../utils/customResponse";
 
-interface APIGetStagesInOpeningEvent
+interface APIGetStagesInfoEvent
   extends Omit<CustomLambdaEvent, "pathParameters"> {
   pathParameters: {
     openingId: string;
+    stageId: string;
   };
 }
 
 const schema = Joi.object({
   pathParameters: {
     openingId: Joi.string(),
+    stageId: Joi.string(),
   },
 }).options(JOI_SETTINGS);
 
 const main = async (
-  event: APIGetStagesInOpeningEvent
+  event: APIGetStagesInfoEvent
 ): Promise<CustomLambdaResponse> => {
   try {
     await schema.validateAsync(event);
@@ -33,33 +35,28 @@ const main = async (
     return {
       statusCode: 400,
       body: {
-        message: `You must create an organization before viewing stages for an opening`,
+        message: `You must create an organization before viewing a stage`,
       },
     };
   }
 
-  const { openingId } = event.pathParameters;
-  /**
-   * TODO Please note, (update this query to be recursive):
-   * If we don't get all stages in this query this might cause some issues
-   * if the stages we need to update are not in the query results
-   */
-  const [allCurrentStages, allStagesError] = await Openings.getStagesInOpening({
-    openingId,
+  const { openingId, stageId } = event.pathParameters;
+  const [stage, stageError] = await Stages.getStageById({
     orgId: session.orgId,
+    stageId,
+    openingId,
   });
 
-
-  if (allStagesError) {
+  if (stageError) {
     return Response.SDK(
-      allStagesError,
-      "An error ocurred retrieving all the current stages"
+      stageError,
+      "An error ocurred retrieving that stage info"
     );
   }
 
   return {
     statusCode: 200,
-    body: allCurrentStages,
+    body: stage,
   };
 };
 
