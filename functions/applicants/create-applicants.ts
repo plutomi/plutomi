@@ -47,13 +47,11 @@ const main = async (
   } catch (error) {
     return Response.JOI(error);
   }
-  console.log("Validating");
   const res = await emailValidator({
     email: event.body.email,
     validateSMTP: false, // BUG, this isnt working
   });
 
-  console.log(res);
   if (!res.valid) {
     return {
       statusCode: 400,
@@ -63,33 +61,6 @@ const main = async (
     };
   }
   const { openingId, orgId, firstName, lastName, email } = event.body;
-
-  const [opening, getOpeningError] = await Openings.getOpeningById({
-    orgId,
-    openingId,
-  });
-  if (getOpeningError) {
-    return Response.SDK(
-      getOpeningError,
-      "An error ocurred retrieving the info for this opening"
-    );
-  }
-
-  if (!opening) {
-    return {
-      statusCode: 404,
-      body: { message: "Unfortunately that opening does not exist" },
-    };
-  }
-
-  if (!opening.isPublic || opening.totalStages === 0) {
-    return {
-      statusCode: 403,
-      body: {
-        message: "Unfortunately you cannot apply to this opening just yet",
-      },
-    };
-  }
 
   const [allStages, allStagesError] = await Openings.getStagesInOpening({
     openingId,
@@ -103,13 +74,15 @@ const main = async (
     );
   }
 
+  const stageId = !allStages[0] ? "" : allStages[0].stageId;
+  // Conditional check will catch the error if there are no stages, and if the opening is private
   const [created, failed] = await Applicants.createApplicant({
     firstName,
     lastName,
     openingId,
     orgId,
     email,
-    stageId: allStages[0].stageId,
+    stageId,
   });
 
   if (failed) {

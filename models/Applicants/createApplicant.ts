@@ -51,7 +51,6 @@ export default async function Create(
             ConditionExpression: "attribute_not_exists(PK)",
           },
         },
-
         {
           // Increment the opening's totalApplicants
           Update: {
@@ -62,9 +61,17 @@ export default async function Create(
             TableName: DYNAMO_TABLE_NAME,
             UpdateExpression:
               "SET totalApplicants = if_not_exists(totalApplicants, :zero) + :value",
+            /**
+             * Opening must exist, be public, & must have stages
+             * Since this is a transaction, this whole thing will fail if this check fails
+             */
+            ConditionExpression:
+              "attribute_exists(PK) AND isPublic = :isPublic AND totalStages > :totalStages",
             ExpressionAttributeValues: {
               ":zero": 0,
               ":value": 1,
+              ":isPublic": true,
+              ":totalStages": 0,
             },
           },
         },
@@ -76,6 +83,7 @@ export default async function Create(
               SK: ENTITY_TYPES.STAGE,
             },
             TableName: DYNAMO_TABLE_NAME,
+            ConditionExpression: "attribute_exists(PK)",
             UpdateExpression:
               "SET totalApplicants = if_not_exists(totalApplicants, :zero) + :value",
             ExpressionAttributeValues: {
@@ -92,6 +100,7 @@ export default async function Create(
               SK: ENTITY_TYPES.ORG,
             },
             TableName: DYNAMO_TABLE_NAME,
+            ConditionExpression: "attribute_exists(PK)",
             UpdateExpression:
               "SET totalApplicants = if_not_exists(totalApplicants, :zero) + :value",
             ExpressionAttributeValues: {
