@@ -27,7 +27,6 @@ export default async function Create(
     totalStages: 0,
     totalApplicants: 0,
     isPublic: false,
-    stageOrder: [],
   };
 
   const transactParams: TransactWriteCommandInput = {

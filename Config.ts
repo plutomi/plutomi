@@ -109,10 +109,15 @@ export const ID_LENGTHS = {
 export enum DEFAULTS {
   FIRST_NAME = "NO_FIRST_NAME",
   LAST_NAME = "NO_LAST_NAME",
-  FULL_NAME = `NO_FIRST_NAME NO_LAST_NAME`,
   NO_ORG = `NO_ORG_ASSIGNED`,
+  /**
+   * In days, how long should login events be kept
+   */
   LOGIN_EVENT_RETENTION_PERIOD = 30, // Days
-  REDIRECT = "dashboard", // When logging in from the homepage, where should the user be redirected
+  /**
+   * When no callbackUrl is provided on login, what page should users be redirected to
+   */
+  REDIRECT = "dashboard",
 }
 
 export const LOGIN_LINK_SETTINGS = {
@@ -180,10 +185,6 @@ export const FORBIDDEN_PROPERTIES = {
     "GSI2PK",
     "GSI2SK", // TODO, remove these when advancing / moving applicants!!!!!!!!!
   ],
-  /**
-   * {@link DynamoNewOpening}
-   */
-  OPENING: [...GLOBAL_FORBIDDEN_PROPERTIES, "openingId", "GSI1PK"],
   /**
    * {@link DynamoNewStage}
    */

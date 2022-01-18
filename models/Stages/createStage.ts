@@ -22,7 +22,6 @@ export default async function Create(
     SK: ENTITY_TYPES.STAGE,
     entityType: ENTITY_TYPES.STAGE,
     createdAt: Time.currentISO(),
-    questionOrder: [],
     stageId,
     orgId,
     totalApplicants: 0,

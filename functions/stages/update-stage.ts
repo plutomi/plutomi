@@ -1,8 +1,7 @@
-import Sanitize from "../../utils/sanitize";
 import * as Openings from "../../models/openings";
+import * as Stages from "../../models/stages";
 import Joi from "joi";
 import {
-  FORBIDDEN_PROPERTIES,
   JOI_GLOBAL_FORBIDDEN,
   JOI_SETTINGS,
   withDefaultMiddleware,
@@ -15,37 +14,39 @@ import {
   UpdateOpeningInput,
 } from "../../types/main";
 import * as Response from "../../utils/customResponse";
-interface APIUpdateOpeningPathParameters {
+interface APIUpdateStagePathParameters {
   openingId: string;
+  stageId: string;
 }
-interface APIUpdateOpeningBody {
+interface APIUpdateStageBody {
   newValues: { [key: string]: any };
 }
-interface APIUpdateOpeningEvent
+interface APIUpdateStageEvent
   extends Omit<CustomLambdaEvent, "body" | "pathParameters"> {
-  body: APIUpdateOpeningBody;
-  pathParameters: APIUpdateOpeningPathParameters;
+  body: APIUpdateStageBody;
+  pathParameters: APIUpdateStagePathParameters;
 }
 
-const JOI_FORBIDDEN_OPENING = Joi.object({
+const JOI_FORBIDDEN_STAGE = Joi.object({
   ...JOI_GLOBAL_FORBIDDEN,
   openingId: Joi.any().forbidden().strip(),
+  stageId: Joi.any().forbidden().strip(),
   GSI1PK: Joi.any().forbidden().strip(),
-  totalStages: Joi.any().forbidden().strip(),
   totalApplicants: Joi.any().forbidden().strip(),
 });
 
 const schema = Joi.object({
   pathParameters: {
     openingId: Joi.string(),
+    stageId: Joi.string(),
   },
   body: {
-    newValues: JOI_FORBIDDEN_OPENING,
+    newValues: JOI_FORBIDDEN_STAGE,
   },
 }).options(JOI_SETTINGS);
 
 const main = async (
-  event: APIUpdateOpeningEvent
+  event: APIUpdateStageEvent
 ): Promise<CustomLambdaResponse> => {
   try {
     await schema.validateAsync(event);
@@ -54,27 +55,24 @@ const main = async (
   }
 
   const { session } = event.requestContext.authorizer.lambda;
-  const { openingId } = event.pathParameters;
+  const { openingId, stageId } = event.pathParameters;
   const { newValues } = event.body;
 
-  const updateOpeningInput: UpdateOpeningInput = {
-    openingId,
+  const [updatedOpening, error] = await Stages.updateStage({
     orgId: session.orgId,
+    openingId,
+    stageId,
     newValues,
-  };
-
-  const [updatedOpening, error] = await Openings.updateOpening(
-    updateOpeningInput
-  );
+  });
 
   if (error) {
-    return Response.SDK(error, "An error ocurred updating this opening");
+    return Response.SDK(error, "An error ocurred updating this stage");
   }
 
   return {
     statusCode: 200,
     body: {
-      message: "Opening updated!",
+      message: "Stage updated!",
     },
   };
 };

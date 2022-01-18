@@ -163,7 +163,7 @@ type GetAllApplicantsInStageInput = Pick<
 type GetAllApplicantsInStageOutput = DynamoNewApplicant[];
 
 export interface UpdateStageInput
-  extends Pick<DynamoNewStage, "orgId" | "stageId"> {
+  extends Pick<DynamoNewStage, "orgId" | "stageId" | "openingId"> {
   newValues: { [key: string]: any };
 }
 

@@ -143,13 +143,6 @@ export default function SignedInNav({ current }) {
                             "Loading user info..."
                           ) : (
                             <>
-                              {!user?.GSI1SK.includes(DEFAULTS.FIRST_NAME) || // TODO this is gross
-                                (!user?.GSI1SK.includes(DEFAULTS.LAST_NAME) && (
-                                  <div className="   text-dark ">
-                                    Signed in as ${user?.GSI1SK}
-                                  </div>
-                                ))}
-
                               <div className=" text-light">
                                 Logged in as {user?.email}
                               </div>
@@ -248,7 +241,7 @@ export default function SignedInNav({ current }) {
                     <>
                       <div className="ml-3">
                         <div className="text-base font-medium text-gray-800">
-                          {user?.GSI1SK}
+                          {user?.firstName} {user?.lastname}
                         </div>
                         <div className="text-md font-medium text-normal">
                           {user?.email}

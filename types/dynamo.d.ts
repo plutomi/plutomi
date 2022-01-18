@@ -1,7 +1,6 @@
 // This file is for the actual DynamoDB entries and their Types - ie: A full object with all properties.
 // All  other types are derivatives with Pick, Omit, etc.
 import { DEFAULTS, ENTITY_TYPES } from "../Config";
-import { UserSessionData } from "./main";
 interface DynamoNewStage {
   /**
    * Primary key for creating a stage - takes `orgId`, `openingId`, & `stageId`
@@ -23,10 +22,7 @@ interface DynamoNewStage {
    * The org this stage belongs to
    */
   orgId: string;
-  /**
-   * The order of the questions for the stage // TODO remove with new format
-   */
-  questionOrder: string[];
+
   /**
    * The Id for the stage
    */
@@ -280,16 +276,11 @@ interface DynamoNewOpening {
    *  Total applicants in opening.
    * @default 0
    */
-
   totalApplicants: number;
   /**
    * If the opening should be public
    */
   isPublic: boolean;
-  /**
-   * An array of `stageId`s, and the order they should be shown in
-   */
-  stageOrder: string[];
 }
 
 interface DynamoNewOrgInvite {
@@ -361,11 +352,6 @@ interface DynamoNewUser {
   orgId: DEFAULTS.NO_ORG;
   orgJoinDate: DEFAULTS.NO_ORG;
   GSI1PK: `${ENTITY_TYPES.ORG}#${DEFAULTS.NO_ORG}#${ENTITY_TYPES.USER}S`;
-  /**
-   * Combined `firstName` and `lastName`
-   * @default DEFAULTS.FULL_NAME
-   */
-  GSI1SK: `${string} ${string}` | DEFAULTS.FULL_NAME;
   GSI2PK: string;
   GSI2SK: ENTITY_TYPES.USER;
   unsubscribeKey: string;

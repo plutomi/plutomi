@@ -26,7 +26,6 @@ app.get(
 );
 
 // app.get("/openings/:openingId/applicants",  Openings.getApplicants); // TODO should this be added?
-app.delete("/stages/:stageId", Stages.deleteStage);
 app.put("/stages/:stageId", Stages.update);
 
 // Questions

@@ -12,14 +12,7 @@ export default async function update(
   let allUpdateExpressions: string[] = [];
   let allAttributeValues: any = {};
 
-  // Filter out forbidden property
   for (const property in newValues) {
-    if (FORBIDDEN_PROPERTIES.STAGE.includes(property)) {
-      // Delete the property so it isn't updated
-      delete newValues[property];
-    }
-
-    // If its a valid property, start creating the new update expression
     // Push each property into the update expression
     allUpdateExpressions.push(`${property} = :${property}`);
 

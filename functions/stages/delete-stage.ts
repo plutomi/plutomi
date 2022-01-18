@@ -59,9 +59,7 @@ const main = async (
     );
   }
 
-  console.log("All stages", allStages);
   const stageToBeDeleted = allStages.find((stage) => stage.stageId === stageId);
-  console.log("Stage to be deleted", stageToBeDeleted);
   if (!stageToBeDeleted) {
     return {
       statusCode: 404,

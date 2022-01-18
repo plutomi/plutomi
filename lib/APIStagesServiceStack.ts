@@ -65,6 +65,17 @@ export default class APIStagesServiceStack extends cdk.Stack {
           GSI1: true,
         },
       },
+      {
+        functionName: `update-stage-function`,
+        description: "Updates the specified stage",
+        filePath: `../functions/stages/update-stage.ts`,
+        APIPath: "/openings/{openingId}/stages/{stageId}",
+        method: HttpMethod.PUT,
+        dynamoActions: ["dynamodb:UpdateItem"],
+        dynamoResources: {
+          main: true,
+        },
+      },
     ];
 
     createAPIGatewayFunctions(this, functions, props.api, props.table);
