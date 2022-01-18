@@ -1,5 +1,6 @@
 import middy from "@middy/core";
 import Joi from "joi";
+import emailValidator from "deep-email-validator";
 import {
   JOI_SETTINGS,
   DEFAULTS,
@@ -32,6 +33,17 @@ const main = async (
     await schema.validateAsync(event);
   } catch (error) {
     return Response.JOI(error);
+  }
+
+  const res = await emailValidator(event.body.recipientEmail);
+
+  if (!res.valid) {
+    return {
+      statusCode: 400,
+      body: {
+        message: "Hmm... that email doesn't seem quite right. Check it again.",
+      },
+    };
   }
 
   const { session } = event.requestContext.authorizer.lambda;
