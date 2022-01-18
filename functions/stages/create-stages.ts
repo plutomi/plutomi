@@ -20,8 +20,10 @@ const schema = Joi.object({
     // Stage name
     GSI1SK: Joi.string().max(100),
     openingId: Joi.string(),
-    // Provide one or the other, or none, but not both. We handle that logic
-    // If none are provided, stage is added to the end by default
+    /**
+     * Provide one or the other, or none, but not both. We handle that logic for you.
+     * If none are provided, stage is added to the end by default
+     */
     nextStage: Joi.string().default(null).optional(),
     previousStage: Joi.string().default(null).optional(),
   },
@@ -36,7 +38,6 @@ const main = async (
     return Response.JOI(error);
   }
 
-  // TODO make sure that opening actually exists
   const { session } = event.requestContext.authorizer.lambda;
   let { GSI1SK, openingId, nextStage, previousStage } = event.body;
 
@@ -59,6 +60,22 @@ const main = async (
       },
     };
   }
+
+  const [opening, openingError] = await Openings.getOpeningById({
+    openingId,
+    orgId: session.orgId,
+  });
+
+  if (openingError) {
+    return Response.SDK(openingError, "Unable to retrieve opening info");
+  }
+
+  if (!opening) {
+    return {
+      statusCode: 404,
+      body: { message: "Opening does not exist" },
+    };
+  }
   /**
    * TODO Please note, (update this query to be recursive):
    * If we don't get all stages in this query this might cause some issues
@@ -68,8 +85,6 @@ const main = async (
     openingId,
     orgId: session.orgId,
   });
-
-  console.log("Current stages", allCurrentStages);
 
   if (allStagesError) {
     return Response.SDK(
@@ -86,9 +101,6 @@ const main = async (
   const missingNextStage =
     nextStage && !allCurrentStages.some((stage) => stage.stageId === nextStage);
 
-  console.log("Missing previous", missingPreviousStage);
-  console.log("Missing next", missingNextStage);
-
   if (missingPreviousStage || missingNextStage) {
     return {
       statusCode: 400,
@@ -99,32 +111,56 @@ const main = async (
     };
   }
 
+  const firstStageInOpening = allCurrentStages.length === 0;
+
+  const noPositionProvided =
+    allCurrentStages.length > 0 && !nextStage && !previousStage;
+
+  const stageFallsInBetweenOthers = !firstStageInOpening && !noPositionProvided;
   /**
-   * If the stage being created is the first one in the opening:
+   * If there are no other stages in this opening
    */
-  if (allCurrentStages.length === 0) {
-    console.log("This will be the first stage");
+  if (firstStageInOpening) {
     previousStage = null;
     nextStage = null;
   }
 
   /**
-   * If there are stages & nextStage and previousStage are null,
-   * the stage will be added to the end of the opening by default
+   * If no nextStage or previousStage were provided, the stage will be added to the end of the opening
    */
-  if (allCurrentStages.length > 0 && !nextStage && !previousStage) {
-    console.log(
-      "Stage will be added to the end by default as stage ids are missing"
-    );
-    // .at kept throwing errors??
-    // previousStage = allCurrentStages.at(-1).stageId;
-    previousStage = allCurrentStages[allCurrentStages.length - 1].stageId;
+  if (noPositionProvided) {
+    previousStage = allCurrentStages.at(-1).stageId;
     nextStage = null;
-
-    console.log("Previous stage will be", previousStage);
   }
 
-  // Else, call create a stage and let the model decide which stages to update
+  //
+  /**
+   * Find the corresponding stages if the stage is between others
+   */
+  if (stageFallsInBetweenOthers) {
+    // If the user provided a previousStage, find the stage that comes after it
+    if (previousStage) {
+      // To get the index of the user provided stageId
+      const tempPreviousStage = allCurrentStages.find(
+        (stage) => stage.stageId === previousStage
+      );
+      // Set the next stage to that index + 1
+      nextStage =
+        allCurrentStages[allCurrentStages.indexOf(tempPreviousStage) + 1]
+          .stageId;
+    }
+
+    // If the user provided a nextStage, find the previous stage
+    if (nextStage) {
+      const tempNextStage = allCurrentStages.find(
+        (stage) => stage.stageId === nextStage
+      );
+      previousStage =
+        allCurrentStages[allCurrentStages.indexOf(tempNextStage) - 1].stageId;
+    }
+  }
+
+  // Create the stage and let the model decide which stages to update
   const [created, stageError] = await Stages.createStage({
     orgId: session.orgId,
     GSI1SK,

@@ -19,6 +19,7 @@ export default class APIStagesServiceStack extends cdk.Stack {
           "dynamodb:PutItem",
           "dynamodb:UpdateItem",
           "dynamodb:Query",
+          "dynamodb:GetItem",
         ],
         dynamoResources: {
           main: true,
