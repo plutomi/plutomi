@@ -1,4 +1,5 @@
 import middy from "@middy/core";
+import emailValidator from "deep-email-validator";
 import Joi from "joi";
 import {
   DEFAULTS,
@@ -48,6 +49,17 @@ const main = async (
   }
 
   const { email } = event.body;
+
+  const res = await emailValidator(event.body.email);
+
+  if (!res.valid) {
+    return {
+      statusCode: 400,
+      body: {
+        message: "Hmm... that email doesn't seem quite right. Check it again.",
+      },
+    };
+  }
   const { callbackUrl } = event.queryStringParameters;
 
   // If a user is signing in for the first time, create an account for them
