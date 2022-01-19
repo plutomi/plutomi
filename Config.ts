@@ -3,7 +3,7 @@ export const COOKIE_SETTINGS = {
   httpOnly: true,
   sameSite: true, // (same as strict)
   secure: true,
-  maxAge: 43200, // 12 hours
+  maxAge: 1000 * 60 * 60 * 12, // 12 hours
   signed: true,
 };
 /**
