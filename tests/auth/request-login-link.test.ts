@@ -51,7 +51,7 @@ describe("Request login link", () => {
     }
   });
 
-  it("can pass in undefined callback url", async () => {
+  it("can pass in an undefined callback url", async () => {
     try {
       const { status, data } = await axios.post(
         // TODO dynamic link
@@ -63,9 +63,7 @@ describe("Request login link", () => {
 
       expect(status).toBe(201);
       expect(data.message).toBe("Login link sent!");
-    } catch (error) {
-      console.log(error);
-    }
+    } catch (error) {}
   });
 
   it("blocks an invalid callbackUrl", async () => {
@@ -78,12 +76,61 @@ describe("Request login link", () => {
         }
       );
     } catch (error) {
-      console.log(error);
       expect(error.response.status).toBe(400);
       expect(error.response.data.message).toContain(
         "queryStringParameters.callbackUrl"
       );
       expect(error.response.data.message).toContain("must be a valid uri");
     }
+  });
+
+  it("blocks frequent requests from non-admins", async () => {
+    try {
+      await axios.post(
+        // TODO dynamic link
+        "https://dev.plutomi.com/request-login-link",
+        {
+          email: "joseyvalerio@gmail.com",
+        }
+      );
+      //
+      await axios.post(
+        // TODO dynamic link
+        "https://dev.plutomi.com/request-login-link",
+        {
+          email: "joseyvalerio@gmail.com",
+        }
+      );
+    } catch (error) {
+      expect(error.response.status).toBe(403);
+      expect(error.response.data.message).toBe(
+        "You're doing that too much, please try again later"
+      );
+    }
+  });
+
+  it("allows admins to skip the request timer", async () => {
+    try {
+      const data = await axios.post(
+        // TODO dynamic link
+        "https://dev.plutomi.com/request-login-link",
+        {
+          email: "contact@josevalerio.com",
+        }
+      );
+      //
+      const data2 = await axios.post(
+        // TODO dynamic link
+        "https://dev.plutomi.com/request-login-link",
+        {
+          email: "jose@plutomi.com",
+        }
+      );
+
+      expect(data.status).toBe(201);
+      expect(data.data.message).toBe("Login link sent!");
+      expect(data2.status).toBe(201);
+      expect(data2.data.message).toBe("Login link sent!");
+    } catch (error) {}
   });
 });
