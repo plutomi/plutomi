@@ -21,7 +21,7 @@ const schema = Joi.object({
     openingId: Joi.string(),
     /**
      * 0 based index on where should the stage be added
-     * If no position is provided, stage is added to the end
+     * If no position is provided, stage is added to the end of the opening
      */
     position: Joi.number()
       .min(0)

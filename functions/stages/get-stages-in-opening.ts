@@ -54,7 +54,7 @@ const main = async (
   const [allCurrentStages, allStagesError] = await Openings.getStagesInOpening({
     openingId,
     orgId: session.orgId,
-    stageOrder: opening.stageOrder,
+    stageOrder: opening.stageOrder, // To order them correctly
   });
 
   if (allStagesError) {
