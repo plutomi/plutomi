@@ -115,7 +115,7 @@ Example: _fix: Removed the double modals popping up on login_
 
 ## License
 
-This project is [MIT licensed](LICENSE)
+This project is licensed under the [Apache 2.0 license](LICENSE)
 
 ## Contributors ✨
 

@@ -74,6 +74,12 @@ const main = async (
     );
   }
 
+  if (!opening) {
+    return {
+      statusCode: 404,
+      body: { message: "Opening does not exist" },
+    };
+  }
   // Conditional check will also catch this
   if (!opening.isPublic || opening.totalStages === 0) {
     return {

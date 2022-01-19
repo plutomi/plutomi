@@ -47,10 +47,10 @@ const faqs = [
     question: "What is the license for the code?",
     answer: (
       <p>
-        The code is licensed under the{" "}
+        The project is licensed under the{" "}
         <CustomLink
-          url={"https://tldrlegal.com/license/mit-license"}
-          text={"MIT license"}
+          url={"https://tldrlegal.com/license/apache-license-2.0-(apache-2.0)"}
+          text={"Apache 2.0 license"}
         />
       </p>
     ),
