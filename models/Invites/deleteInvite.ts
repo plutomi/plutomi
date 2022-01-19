@@ -19,7 +19,8 @@ export default async function DeleteInvite(
         PK: `${ENTITY_TYPES.USER}#${userId}`,
         SK: `${ENTITY_TYPES.ORG_INVITE}#${inviteId}`,
       },
-      TableName: DYNAMO_TABLE_NAME,
+      TableName: `${process.env.NODE_ENV}-${DYNAMO_TABLE_NAME}`,
+
       ConditionExpression: "attribute_exists(PK)",
     };
 

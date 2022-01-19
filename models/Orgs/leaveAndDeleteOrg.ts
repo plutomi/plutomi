@@ -23,7 +23,8 @@ export default async function Create(
               PK: `${ENTITY_TYPES.USER}#${userId}`,
               SK: ENTITY_TYPES.STAGE,
             },
-            TableName: DYNAMO_TABLE_NAME,
+            TableName: `${process.env.NODE_ENV}-${DYNAMO_TABLE_NAME}`,
+
             UpdateExpression:
               "SET orgId = :orgId, orgJoinDate = :orgJoinDate, GSI1PK = :GSI1PK",
             ExpressionAttributeValues: {
@@ -41,7 +42,8 @@ export default async function Create(
               PK: `${ENTITY_TYPES.ORG}#${orgId}`,
               SK: ENTITY_TYPES.ORG,
             },
-            TableName: DYNAMO_TABLE_NAME,
+            TableName: `${process.env.NODE_ENV}-${DYNAMO_TABLE_NAME}`,
+
             ConditionExpression: "attribute_exists(PK)",
           },
         },

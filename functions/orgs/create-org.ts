@@ -7,13 +7,12 @@ import {
   COOKIE_SETTINGS,
   JoiOrgId,
   COOKIE_NAME,
-  withDefaultMiddleware,
 } from "../../Config";
 import middy from "@middy/core";
 import * as Orgs from "../../models/Orgs";
 
 import { CustomLambdaEvent, CustomLambdaResponse } from "../../types/main";
-import * as Response from "../../utils/customResponse";
+import * as CreateError from "../../utils/errorGenerator";
 interface APICreateOrgBody {
   orgId?: string;
   displayName?: string;
@@ -35,7 +34,7 @@ const main = async (
   try {
     await schema.validateAsync(event);
   } catch (error) {
-    return Response.JOI(error);
+    return CreateError.JOI(error);
   }
   const { session } = event.requestContext.authorizer.lambda;
 
@@ -51,7 +50,7 @@ const main = async (
   });
 
   if (error) {
-    return Response.SDK(
+    return CreateError.SDK(
       error,
       "Unable to create org - error retrieving invites"
     );
@@ -75,7 +74,7 @@ const main = async (
   });
 
   if (failed) {
-    return Response.SDK(failed, "Unable to create org");
+    return CreateError.SDK(failed, "Unable to create org");
   }
 
   return {
@@ -85,4 +84,3 @@ const main = async (
 };
 // TODO types with API Gateway event and middleware
 // @ts-ignore
-module.exports.main = middy(main).use(withDefaultMiddleware);

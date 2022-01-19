@@ -10,7 +10,8 @@ export default async function GetLatestLink(
 ): Promise<[DynamoNewLoginLink, null] | [null, SdkError]> {
   const { userId } = props;
   const params: QueryCommandInput = {
-    TableName: DYNAMO_TABLE_NAME,
+    TableName: `${process.env.NODE_ENV}-${DYNAMO_TABLE_NAME}`,
+
     IndexName: "GSI1",
     KeyConditionExpression: "GSI1PK = :GSI1PK",
     ExpressionAttributeValues: {

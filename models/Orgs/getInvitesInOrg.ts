@@ -9,7 +9,8 @@ export default async function GetInvitesInOrg(
 ): Promise<[DynamoNewOrgInvite[], null] | [null, SdkError]> {
   const { orgId } = props;
   const params: QueryCommandInput = {
-    TableName: DYNAMO_TABLE_NAME,
+    TableName: `${process.env.NODE_ENV}-${DYNAMO_TABLE_NAME}`,
+
     IndexName: "GSI1",
     KeyConditionExpression: "GSI1PK = :GSI1PK",
     ExpressionAttributeValues: {

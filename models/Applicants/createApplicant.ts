@@ -47,7 +47,8 @@ export default async function Create(
           // Add an applicant item
           Put: {
             Item: newApplicant,
-            TableName: DYNAMO_TABLE_NAME,
+            TableName: `${process.env.NODE_ENV}-${DYNAMO_TABLE_NAME}`,
+
             ConditionExpression: "attribute_not_exists(PK)",
           },
         },
@@ -58,7 +59,8 @@ export default async function Create(
               PK: `${ENTITY_TYPES.ORG}#${orgId}#${ENTITY_TYPES.OPENING}#${openingId}`,
               SK: ENTITY_TYPES.OPENING,
             },
-            TableName: DYNAMO_TABLE_NAME,
+            TableName: `${process.env.NODE_ENV}-${DYNAMO_TABLE_NAME}`,
+
             UpdateExpression:
               "SET totalApplicants = if_not_exists(totalApplicants, :zero) + :value",
             /**
@@ -82,7 +84,8 @@ export default async function Create(
               PK: `${ENTITY_TYPES.ORG}#${orgId}#${ENTITY_TYPES.OPENING}#${openingId}#${ENTITY_TYPES.STAGE}#${stageId}`,
               SK: ENTITY_TYPES.STAGE,
             },
-            TableName: DYNAMO_TABLE_NAME,
+            TableName: `${process.env.NODE_ENV}-${DYNAMO_TABLE_NAME}`,
+
             ConditionExpression: "attribute_exists(PK)",
             UpdateExpression:
               "SET totalApplicants = if_not_exists(totalApplicants, :zero) + :value",
@@ -99,7 +102,8 @@ export default async function Create(
               PK: `${ENTITY_TYPES.ORG}#${orgId}`,
               SK: ENTITY_TYPES.ORG,
             },
-            TableName: DYNAMO_TABLE_NAME,
+            TableName: `${process.env.NODE_ENV}-${DYNAMO_TABLE_NAME}`,
+
             ConditionExpression: "attribute_exists(PK)",
             UpdateExpression:
               "SET totalApplicants = if_not_exists(totalApplicants, :zero) + :value",

@@ -35,7 +35,8 @@ export default async function Update(
     },
     UpdateExpression: `SET ` + allUpdateExpressions.join(", "),
     ExpressionAttributeValues: allAttributeValues,
-    TableName: DYNAMO_TABLE_NAME,
+    TableName: `${process.env.NODE_ENV}-${DYNAMO_TABLE_NAME}`,
+
     ConditionExpression: "attribute_exists(PK)",
   };
 

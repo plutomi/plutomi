@@ -11,7 +11,8 @@ export default async function GetOrgById(
   // TODO add these types all over the dynamo calls
   const { orgId } = props;
   const params: GetCommandInput = {
-    TableName: DYNAMO_TABLE_NAME,
+    TableName: `${process.env.NODE_ENV}-${DYNAMO_TABLE_NAME}`,
+
     Key: {
       PK: `${ENTITY_TYPES.ORG}#${orgId}`,
       SK: ENTITY_TYPES.ORG,

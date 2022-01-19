@@ -4,7 +4,7 @@ import { JOI_SETTINGS, withDefaultMiddleware } from "../../Config";
 import middy from "@middy/core";
 
 import { CustomLambdaEvent, CustomLambdaResponse } from "../../types/main";
-import * as Response from "../../utils/customResponse";
+import * as CreateError from "../../utils/errorGenerator";
 interface APIRejectInvitesPathParameters {
   inviteId?: string;
 }
@@ -25,7 +25,7 @@ const main = async (
   try {
     await schema.validateAsync(event);
   } catch (error) {
-    return Response.JOI(error);
+    return CreateError.JOI(error);
   }
   const { session } = event.requestContext.authorizer.lambda;
   const { inviteId } = event.pathParameters;
@@ -36,7 +36,7 @@ const main = async (
   });
 
   if (error) {
-    return Response.SDK(error, "We were unable to reject that invite");
+    return CreateError.SDK(error, "We were unable to reject that invite");
   }
 
   return {
@@ -47,4 +47,3 @@ const main = async (
 
 // TODO types with API Gateway event and middleware
 // @ts-ignore
-module.exports.main = middy(main).use(withDefaultMiddleware);

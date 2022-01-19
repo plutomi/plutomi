@@ -1,15 +1,10 @@
 import middy from "@middy/core";
 import Joi from "joi";
-import {
-  JOI_SETTINGS,
-  DEFAULTS,
-  TIME_UNITS,
-  withDefaultMiddleware,
-} from "../../Config";
+import { JOI_SETTINGS, DEFAULTS, TIME_UNITS } from "../../Config";
 import * as Invites from "../../models/Invites";
 import * as Time from "../../utils/time";
 import { CustomLambdaEvent, CustomLambdaResponse } from "../../types/main";
-import * as Response from "../../utils/customResponse";
+import * as CreateError from "../../utils/errorGenerator";
 
 const schema = Joi.object({
   pathParameters: {
@@ -23,7 +18,7 @@ const main = async (
   try {
     await schema.validateAsync(event);
   } catch (error) {
-    return Response.JOI(error);
+    return CreateError.JOI(error);
   }
 
   const { session } = event.requestContext.authorizer.lambda;
@@ -44,7 +39,7 @@ const main = async (
   });
 
   if (error) {
-    return Response.SDK(
+    return CreateError.SDK(
       error,
       "An error ocurred getting the info for your invite"
     );
@@ -81,7 +76,7 @@ const main = async (
   });
 
   if (joinError) {
-    return Response.SDK(joinError, "We were unable to accept that invite");
+    return CreateError.SDK(joinError, "We were unable to accept that invite");
   }
 
   return {
@@ -91,4 +86,3 @@ const main = async (
 };
 // TODO types with API Gateway event and middleware
 // @ts-ignore
-module.exports.main = middy(main).use(withDefaultMiddleware);

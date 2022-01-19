@@ -1,72 +1,44 @@
 import Joi from "joi";
 
-import httpEventNormalizer from "@middy/http-event-normalizer";
-import httpJsonBodyParser from "@middy/http-json-body-parser";
-import httpResponseSerializer from "@middy/http-response-serializer";
-import inputOutputLogger from "@middy/input-output-logger";
-import withCleanOrgId from "./middleware/withCleanOrgId";
-import cors from "@middy/http-cors";
 /**
  * Some backend dependencies (SES, ACM, Route53, etc..) depend on
  * DOMAIN_NAME being the actual domain name, do not change!
  */
 export const DOMAIN_NAME = `plutomi.com`;
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-export const DYNAMIC_DOMAIN = // Use this one for local testing
-  process.env.NODE_ENV === "production" ? DOMAIN_NAME : `localhost:3000`;
+export const COOKIE_DOMAIN =
+  process.env.production === "production" ? DOMAIN_NAME : `localhost:3000`;
 
-export const API_SUBDOMAIN =
-  process.env.NODE_ENV === "production" ? "api" : "dev";
+export const WEBSITE_URL =
+  process.env.production === "production"
+    ? `https://${DOMAIN_NAME}`
+    : `http://localhost:3000`;
 
-export const API_DOMAIN = `${API_SUBDOMAIN}.${DOMAIN_NAME}`;
+export const EXPRESS_PORT = 4000;
 
-// Full dev environment is created in AWS
-export const API_URL = `https://${API_DOMAIN}`;
+export const API_DOMAIN =
+  process.env.NODE_ENV === "production"
+    ? `api.${DOMAIN_NAME}`
+    : `localhost:${EXPRESS_PORT}`;
 
-const PROTOCOL = process.env.NODE_ENV === "production" ? `https://` : `http://`; // localhost
-export const WEBSITE_URL = PROTOCOL + DYNAMIC_DOMAIN;
+export const API_URL =
+  process.env.NODE_ENV === "production"
+    ? `https://${API_DOMAIN}`
+    : `http://${API_DOMAIN}`;
 
 export const COOKIE_NAME =
   process.env.NODE_ENV === "production"
     ? "plutomi-cookie"
     : "DEV-plutomi-cookie";
 
-const SAME_SITE = process.env.NODE_ENV === "production" ? "Strict" : "None"; // localhost -> dev.plutomi.com
-export const COOKIE_SETTINGS = `Secure; HttpOnly; SameSite=${SAME_SITE}; Path=/; Domain=${DOMAIN_NAME}`; // See SESSION_SETTINGS for setting session length
-export const sessionDataKeys = [
-  "firstName",
-  "lastName",
-  "orgId",
-  "email",
-  "userId",
-];
+export const COOKIE_SETTINGS = `Secure; HttpOnly; SameSite=Strict; Path=/; Domain=${DOMAIN_NAME}`; // See SESSION_SETTINGS for setting session length
 
 const UrlSafeString = require("url-safe-string"),
   tagGenerator = new UrlSafeString();
-
-export const JOI_SETTINGS: Joi.ValidationOptions = {
-  presence: "required",
-  abortEarly: false,
-  stripUnknown: true,
-};
-
-export const MIDDY_SERIALIZERS = {
-  serializers: [
-    {
-      regex: /^application\/xml$/,
-      serializer: ({ body }) => `<message>${body}</message>`,
-    },
-    {
-      regex: /^application\/json$/,
-      serializer: ({ body }) => JSON.stringify(body),
-    },
-    {
-      regex: /^text\/plain$/,
-      serializer: ({ body }) => body,
-    },
-  ],
-  default: "application/json",
-};
 
 export enum ENTITY_TYPES {
   APPLICANT = "APPLICANT", // TODO remove prefixes #435
@@ -112,14 +84,19 @@ export enum DEFAULTS {
   NO_ORG = `NO_ORG_ASSIGNED`,
   /**
    * How many child items (that can be re-ordered!) is a parent allowed to have.
-   * Stages in an opening, questions in question sets.
+   * Stages in an opening, rules in a stage, questions in question sets.
    * Depending on the ID size you can have more or less but this is a good starting default value.
    */
   MAX_CHILD_ITEM_LIMIT = 200,
   /**
-   * In days, how long should login  events be kept
+   * In days, how long should login events be kept
    */
   LOGIN_EVENT_RETENTION_PERIOD = 30, // Days
+
+  /**
+   * In days, how long should logout events be kept
+   */
+  LOGOUT_EVENT_RETENTION_PERIOD = 30, // Days
   /**
    * When no callbackUrl is provided on login, what page should users be redirected to
    */
@@ -160,6 +137,12 @@ const GLOBAL_FORBIDDEN_PROPERTIES = [
   "createdAt",
 ];
 
+export const JOI_SETTINGS: Joi.ValidationOptions = {
+  presence: "required",
+  abortEarly: false,
+  stripUnknown: true,
+};
+
 /**
  * Global forbidden properties. Cannot be updated, regardless of entity
  * forbidden() blocks the key, except undefined. strip() removes it afterwards
@@ -191,10 +174,7 @@ export const FORBIDDEN_PROPERTIES = {
     "GSI2PK",
     "GSI2SK", // TODO, remove these when advancing / moving applicants!!!!!!!!!
   ],
-  /**
-   * {@link DynamoNewStage}
-   */
-  STAGE: [...GLOBAL_FORBIDDEN_PROPERTIES, "stageId", "openingId", "GSI1PK"],
+
   STAGE_QUESTION: [
     ...GLOBAL_FORBIDDEN_PROPERTIES,
     "questionId",
@@ -232,28 +212,6 @@ export const DROPDOWN_NAVIGATION = [
 // Schema to validate orgIds against in joi
 export const JoiOrgId = Joi.string().invalid(
   DEFAULTS.NO_ORG,
-  tagGenerator.generate(DEFAULTS.NO_ORG)
+  tagGenerator.generate(DEFAULTS.NO_ORG),
+  "plutomi"
 );
-
-export const withDefaultMiddleware = [
-  httpEventNormalizer({ payloadFormatVersion: 2 }),
-  httpJsonBodyParser(),
-  inputOutputLogger(),
-  withCleanOrgId(),
-  httpResponseSerializer(MIDDY_SERIALIZERS),
-];
-
-export const lambdaAuthorizerMiddleware = [
-  httpEventNormalizer({ payloadFormatVersion: 2 }),
-  /**
-   * This middleware cannot be used because the Lambda authorizer
-   * does not get the request body passed into it and therefore
-   * it will throw an error
-   * https://docs.aws.amazon.com/apigateway/latest/developerguide/api-gateway-lambda-authorizer-input.html
-   */
-  // httpJsonBodyParser(),
-  inputOutputLogger(),
-  withCleanOrgId(),
-  // This isn't needed for the authorizer
-  // httpResponseSerializer(MIDDY_SERIALIZERS),
-];

@@ -1,18 +1,13 @@
 import middy from "@middy/core";
 import Joi from "joi";
 import emailValidator from "deep-email-validator";
-import {
-  JOI_SETTINGS,
-  DEFAULTS,
-  TIME_UNITS,
-  withDefaultMiddleware,
-} from "../../Config";
+import { JOI_SETTINGS, DEFAULTS, TIME_UNITS } from "../../Config";
 import * as Invites from "../../models/Invites";
 import * as Time from "../../utils/time";
 import * as Users from "../../models/Users";
 import * as Orgs from "../../models/Orgs";
 import { CustomLambdaEvent, CustomLambdaResponse } from "../../types/main";
-import * as Response from "../../utils/customResponse";
+import * as CreateError from "../../utils/errorGenerator";
 interface APICreateInvitesBody {
   recipientEmail?: string;
 }
@@ -32,7 +27,7 @@ const main = async (
   try {
     await schema.validateAsync(event);
   } catch (error) {
-    return Response.JOI(error);
+    return CreateError.JOI(error);
   }
 
   const res = await emailValidator({
@@ -71,7 +66,7 @@ const main = async (
   const [org, error] = await Orgs.getOrgById({ orgId: session.orgId });
 
   if (error) {
-    return Response.SDK(
+    return CreateError.SDK(
       error,
       "An error ocurred retrieving your org information"
     );
@@ -82,7 +77,7 @@ const main = async (
   });
 
   if (recipientError) {
-    return Response.SDK(
+    return CreateError.SDK(
       error,
       "An error ocurred getting your invitee's information"
     );
@@ -95,7 +90,7 @@ const main = async (
     });
 
     if (createUserError) {
-      return Response.SDK(
+      return CreateError.SDK(
         createUserError,
         "An error ocurred creating an account for your invitee"
       );
@@ -117,7 +112,7 @@ const main = async (
     });
 
   if (recipientInvitesError) {
-    return Response.SDK(
+    return CreateError.SDK(
       recipientInvitesError,
       "An error ocurred while checking to see if your invitee has pending invites"
     );
@@ -146,7 +141,10 @@ const main = async (
   });
 
   if (inviteError) {
-    return Response.SDK(inviteError, "An error ocurred creating your invite");
+    return CreateError.SDK(
+      inviteError,
+      "An error ocurred creating your invite"
+    );
   }
 
   // Email sent asynchronously through step functions
@@ -157,4 +155,3 @@ const main = async (
 };
 // TODO types with API Gateway event and middleware
 // @ts-ignore
-module.exports.main = middy(main).use(withDefaultMiddleware);

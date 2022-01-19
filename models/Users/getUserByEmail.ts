@@ -10,7 +10,7 @@ export default async function GetByEmail(
 ): Promise<[DynamoNewUser, null] | [null, SdkError]> {
   const { email } = props;
   const params: QueryCommandInput = {
-    TableName: DYNAMO_TABLE_NAME,
+    TableName: `${process.env.NODE_ENV}-${DYNAMO_TABLE_NAME}`,
     IndexName: "GSI2",
     KeyConditionExpression: "GSI2PK = :GSI2PK AND GSI2SK = :GSI2SK",
     ExpressionAttributeValues: {
@@ -19,6 +19,7 @@ export default async function GetByEmail(
     },
   };
 
+  console.log("Dynamo params", params);
   try {
     const response = await Dynamo.send(new QueryCommand(params));
     return [response.Items[0] as DynamoNewUser, null];

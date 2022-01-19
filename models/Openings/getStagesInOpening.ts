@@ -13,7 +13,8 @@ export default async function GetStages(
   const { orgId, openingId, stageOrder } = props;
 
   const params: QueryCommandInput = {
-    TableName: DYNAMO_TABLE_NAME,
+    TableName: `${process.env.NODE_ENV}-${DYNAMO_TABLE_NAME}`,
+
     IndexName: "GSI1",
     KeyConditionExpression: "GSI1PK = :GSI1PK",
     ExpressionAttributeValues: {

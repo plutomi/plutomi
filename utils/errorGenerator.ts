@@ -1,7 +1,6 @@
 import errorFormatter from "./errorFormatter";
 import { SdkError } from "@aws-sdk/types";
 import { CustomLambdaResponse } from "../types/main";
-
 /**
  * Response for AWS SDK calls.
  * @param error - The error object
@@ -10,13 +9,12 @@ import { CustomLambdaResponse } from "../types/main";
  */
 export function SDK(error: SdkError, message: string) {
   const formattedError = errorFormatter(error);
-  return {
-    statusCode: formattedError.httpStatusCode,
-    body: {
-      message,
-      ...formattedError,
-    },
+  const status = formattedError.httpStatusCode;
+  const body = {
+    message,
+    ...formattedError,
   };
+  return { status, body };
 }
 
 /**
@@ -24,9 +22,9 @@ export function SDK(error: SdkError, message: string) {
  * @param error
  * @returns
  */
-export function JOI(error: Error): CustomLambdaResponse {
+export function JOI(error: Error) {
   return {
-    statusCode: 400,
+    status: 400,
     body: { message: `${error.message}` },
   };
 }

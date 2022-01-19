@@ -15,7 +15,8 @@ export default async function GetById(
 ): Promise<[DynamoNewUser, null] | [null, SdkError]> {
   const { userId } = props;
   const params: GetCommandInput = {
-    TableName: DYNAMO_TABLE_NAME,
+    TableName: `${process.env.NODE_ENV}-${DYNAMO_TABLE_NAME}`,
+
     Key: {
       PK: `${ENTITY_TYPES.USER}#${userId}`,
       SK: ENTITY_TYPES.USER,

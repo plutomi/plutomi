@@ -15,7 +15,8 @@ export default async function GetQuestions(
 
   const params: QueryCommandInput = {
     IndexName: "GSI1",
-    TableName: DYNAMO_TABLE_NAME,
+    TableName: `${process.env.NODE_ENV}-${DYNAMO_TABLE_NAME}`,
+
     KeyConditionExpression: "GSI1PK = :GSI1PK",
     ExpressionAttributeValues: {
       ":GSI1PK": `${ENTITY_TYPES.ORG}#${orgId}#${ENTITY_TYPES.STAGE}#${stageId}#QUESTIONS`, // NOT STAGE_QUESTIONS, just QUESTIONS

@@ -14,7 +14,8 @@ export default async function Get(
 ): Promise<[GetApplicantByIdOutput, null] | [null, SdkError]> {
   const { applicantId } = props;
   const responsesParams: QueryCommandInput = {
-    TableName: DYNAMO_TABLE_NAME,
+    TableName: `${process.env.NODE_ENV}-${DYNAMO_TABLE_NAME}`,
+
     KeyConditionExpression: "PK = :PK AND begins_with(SK, :SK)",
     ExpressionAttributeValues: {
       ":PK": `${ENTITY_TYPES.APPLICANT}#${applicantId}`,

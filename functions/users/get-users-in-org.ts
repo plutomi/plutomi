@@ -2,7 +2,7 @@ import * as Orgs from "../../models/Orgs";
 import { DEFAULTS, withDefaultMiddleware } from "../../Config";
 import middy from "@middy/core";
 import Sanitize from "../../utils/sanitize";
-import * as Response from "../../utils/customResponse";
+import * as CreateError from "../../utils/errorGenerator";
 import { CustomLambdaEvent, CustomLambdaResponse } from "../../types/main";
 
 const main = async (
@@ -23,7 +23,7 @@ const main = async (
   });
 
   if (error) {
-    return Response.SDK(
+    return CreateError.SDK(
       error,
       "An error ocurred getting the users in your org"
     );
@@ -45,4 +45,3 @@ const main = async (
 
 // TODO types with API Gateway event and middleware
 // @ts-ignore
-module.exports.main = middy(main).use(withDefaultMiddleware);

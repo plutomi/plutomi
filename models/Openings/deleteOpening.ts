@@ -22,7 +22,8 @@ export default async function remove(
               PK: `${ENTITY_TYPES.ORG}#${orgId}#${ENTITY_TYPES.OPENING}#${openingId}`,
               SK: ENTITY_TYPES.OPENING,
             },
-            TableName: DYNAMO_TABLE_NAME,
+            TableName: `${process.env.NODE_ENV}-${DYNAMO_TABLE_NAME}`,
+
             ConditionExpression: "attribute_exists(PK)",
           },
         },
@@ -33,7 +34,8 @@ export default async function remove(
               PK: `${ENTITY_TYPES.ORG}#${orgId}`,
               SK: ENTITY_TYPES.ORG,
             },
-            TableName: DYNAMO_TABLE_NAME,
+            TableName: `${process.env.NODE_ENV}-${DYNAMO_TABLE_NAME}`,
+
             UpdateExpression: "SET totalOpenings = totalOpenings - :value",
             ExpressionAttributeValues: {
               ":value": 1,

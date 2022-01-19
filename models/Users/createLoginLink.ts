@@ -32,7 +32,8 @@ export default async function CreateLoginLink(
     };
 
     const params: PutCommandInput = {
-      TableName: DYNAMO_TABLE_NAME,
+      TableName: `${process.env.NODE_ENV}-${DYNAMO_TABLE_NAME}`,
+
       Item: newLoginLink,
       ConditionExpression: "attribute_not_exists(PK)",
     };

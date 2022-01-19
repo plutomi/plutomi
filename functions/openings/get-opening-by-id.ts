@@ -3,7 +3,7 @@ import Joi from "joi";
 import { DEFAULTS, JOI_SETTINGS, withDefaultMiddleware } from "../../Config";
 import * as Openings from "../../models/Openings";
 import { CustomLambdaEvent, CustomLambdaResponse } from "../../types/main";
-import * as Response from "../../utils/customResponse";
+import * as CreateError from "../../utils/errorGenerator";
 
 interface APIGetOpeningByIdEvent
   extends Omit<CustomLambdaEvent, "pathParameters"> {
@@ -24,7 +24,7 @@ const main = async (
   try {
     await schema.validateAsync(event);
   } catch (error) {
-    return Response.JOI(error);
+    return CreateError.JOI(error);
   }
 
   const { orgId } = event.requestContext.authorizer.lambda.session;
@@ -36,7 +36,7 @@ const main = async (
   });
 
   if (error) {
-    return Response.SDK(error, "An error ocurred retrieving your opening");
+    return CreateError.SDK(error, "An error ocurred retrieving your opening");
   }
   if (!opening) {
     return {
@@ -53,4 +53,3 @@ const main = async (
 
 // TODO types with API Gateway event and middleware
 // @ts-ignore
-module.exports.main = middy(main).use(withDefaultMiddleware);

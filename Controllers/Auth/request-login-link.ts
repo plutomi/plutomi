@@ -1,73 +1,66 @@
-import middy from "@middy/core";
+import { Request, Response } from "express";
 import emailValidator from "deep-email-validator";
 import Joi from "joi";
+
 import {
   DEFAULTS,
   LOGIN_LINK_SETTINGS,
   TIME_UNITS,
   JOI_SETTINGS,
   WEBSITE_URL,
-  withDefaultMiddleware,
-  ID_LENGTHS,
 } from "../../Config";
 import * as Time from "../../utils/time";
 import * as Users from "../../models/Users";
 import { nanoid } from "nanoid";
 import { sealData } from "iron-session";
 import { API_URL, DOMAIN_NAME } from "../../Config";
-import * as Response from "../../utils/customResponse";
-import { CustomLambdaEvent, CustomLambdaResponse } from "../../types/main";
-
+import * as CreateError from "../../utils/errorGenerator";
 interface APIRequestLoginLinkBody {
   email?: string;
 }
-interface APIRequestLoginLinkQueryStrings {
+interface APIRequestLoginLinkQuery {
   callbackUrl?: string;
-}
-interface APIRequestLoginLinkEvent
-  extends Omit<CustomLambdaEvent, "body" | "queryStringParameters"> {
-  body: APIRequestLoginLinkBody;
-  queryStringParameters: APIRequestLoginLinkQueryStrings;
 }
 
 const schema = Joi.object({
   body: {
     email: Joi.string().email(),
   },
-  queryStringParameters: {
+  query: {
     callbackUrl: Joi.string().uri().optional(),
   },
 }).options(JOI_SETTINGS);
-
-const main = async (
-  event: APIRequestLoginLinkEvent
-): Promise<CustomLambdaResponse> => {
+const requestLoginLink = async (req: Request, res: Response) => {
   try {
-    await schema.validateAsync(event);
+    await schema.validateAsync(req);
   } catch (error) {
-    return Response.JOI(error);
+    const { status, body } = CreateError.JOI(error);
+    return res.status(status).json(body);
   }
 
-  const { email } = event.body;
+  const { email }: APIRequestLoginLinkBody = req.body;
+  const { callbackUrl }: APIRequestLoginLinkQuery = req.query;
 
-  const res = await emailValidator({
-    email: event.body.email,
-    validateSMTP: false, // BUG, this isnt working
+  const emailValidation = await emailValidator({
+    email,
+    validateSMTP: false, // TODO BUG, this isnt working
   });
-  if (!res.valid) {
-    return {
-      statusCode: 400,
-      body: {
-        message: "Hmm... that email doesn't seem quite right. Check it again.",
-      },
-    };
+
+  if (!emailValidation.valid) {
+    return res.status(400).json({
+      message: "Hmm... that email doesn't seem quite right. Check it again.",
+    });
   }
-  const { callbackUrl } = event.queryStringParameters;
 
   // If a user is signing in for the first time, create an account for them
   let [user, userError] = await Users.getUserByEmail({ email });
   if (userError) {
-    return Response.SDK(userError, "An error ocurred getting your user info");
+    console.error(userError);
+    const { status, body } = CreateError.SDK(
+      userError,
+      "An error ocurred getting your user info"
+    );
+    return res.status(status).json(body);
   }
 
   if (!user) {
@@ -75,22 +68,22 @@ const main = async (
       email,
     });
     if (createUserError) {
-      return Response.SDK(
+      const { status, body } = CreateError.SDK(
         createUserError,
         "An error ocurred creating your account"
       );
+
+      return res.status(status).json(body);
     }
     user = createdUser;
   }
 
   // TODO move this to comms machine? This would be for login links and its pretty crucial to know if I unsubscribed
+  // TODO add a test for this @jest
   if (!user.canReceiveEmails) {
-    return {
-      statusCode: 200,
-      body: {
-        message: `'${user.email}' is unable to receive emails, please reach out to support@plutomi.com to opt back in!`,
-      },
-    };
+    return res.status(403).json({
+      message: `'${user.email}' is unable to receive emails, please reach out to support@plutomi.com to opt back in!`,
+    });
   }
 
   // Check if a user is  making too many requests for a login link by comparing the time of their last link
@@ -99,10 +92,12 @@ const main = async (
   });
 
   if (loginLinkError) {
-    return Response.SDK(
+    const { status, body } = CreateError.SDK(
       loginLinkError,
       "An error ocurred getting your login link"
     );
+
+    return res.status(status).json(body);
   }
   const timeThreshold = Time.pastISO(10, TIME_UNITS.MINUTES);
   if (
@@ -110,12 +105,9 @@ const main = async (
     latestLink.createdAt >= timeThreshold &&
     !user.email.endsWith(DOMAIN_NAME) // Allow admins to send multiple login links in a short timespan
   ) {
-    return {
-      statusCode: 403,
-      body: {
-        message: "You're doing that too much, please try again later",
-      },
-    };
+    return res
+      .status(403)
+      .json({ message: "You're doing that too much, please try again later" });
   }
 
   // Create a login link for them
@@ -145,20 +137,17 @@ const main = async (
   });
 
   if (creationError) {
-    return Response.SDK(
+    const { status, body } = CreateError.SDK(
       creationError,
       "An error ocurred creating your login link"
     );
+
+    return res.status(status).json(body);
   }
 
-  // Else, send the email asynchronously w/ step functions
-  return {
-    statusCode: 201,
-    body: {
-      message: `We've sent a magic login link to your email!`,
-    },
-  };
+  return res
+    .status(201)
+    .json({ message: `We've sent a magic login link to your email!` });
 };
 
-//@ts-ignore // TODO types
-module.exports.main = middy(main).use(withDefaultMiddleware);
+export default requestLoginLink;

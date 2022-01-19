@@ -1,11 +1,13 @@
 import axios from "axios";
+import { API_URL } from "../../Config";
+const URL = `${API_URL}/request-login-link`;
 
 describe("Request login link", () => {
   it("blocks slightly wrong addresses", async () => {
     try {
       await axios.post(
         // TODO dynamic link
-        "https://dev.plutomi.com/request-login-link",
+        URL,
         {
           email: "beepboop@gmaill.com",
         }
@@ -22,7 +24,7 @@ describe("Request login link", () => {
     try {
       await axios.post(
         // TODO dynamic link
-        "https://dev.plutomi.com/request-login-link",
+        URL,
         {
           email: "test@10minutemail.com",
         }
@@ -39,7 +41,7 @@ describe("Request login link", () => {
     try {
       await axios.post(
         // TODO dynamic link
-        "https://dev.plutomi.com/request-login-link",
+        URL,
         {
           email: "10minutemail.com",
         }
@@ -55,7 +57,7 @@ describe("Request login link", () => {
     try {
       const { status, data } = await axios.post(
         // TODO dynamic link
-        "https://dev.plutomi.com/request-login-link?callbackUrl=",
+        URL + "?callbackUrl=",
         {
           email: "contact@plutomi.com",
         }
@@ -68,18 +70,16 @@ describe("Request login link", () => {
 
   it("blocks an invalid callbackUrl", async () => {
     try {
-      const { status, data } = await axios.post(
+      await axios.post(
         // TODO dynamic link
-        "https://dev.plutomi.com/request-login-link?callbackUrl=http:mongo.",
+        URL + "?callbackUrl=http:mongo.",
         {
           email: "contact@plutomi.com",
         }
       );
     } catch (error) {
       expect(error.response.status).toBe(400);
-      expect(error.response.data.message).toContain(
-        "queryStringParameters.callbackUrl"
-      );
+      expect(error.response.data.message).toContain("query.callbackUrl");
       expect(error.response.data.message).toContain("must be a valid uri");
     }
   });
@@ -88,7 +88,7 @@ describe("Request login link", () => {
     try {
       await axios.post(
         // TODO dynamic link
-        "https://dev.plutomi.com/request-login-link",
+        URL,
         {
           email: "joseyvalerio@gmail.com",
         }
@@ -96,7 +96,7 @@ describe("Request login link", () => {
       //
       await axios.post(
         // TODO dynamic link
-        "https://dev.plutomi.com/request-login-link",
+        URL,
         {
           email: "joseyvalerio@gmail.com",
         }
@@ -113,7 +113,7 @@ describe("Request login link", () => {
     try {
       const data = await axios.post(
         // TODO dynamic link
-        "https://dev.plutomi.com/request-login-link",
+        URL,
         {
           email: "contact@josevalerio.com",
         }
@@ -121,7 +121,7 @@ describe("Request login link", () => {
       //
       const data2 = await axios.post(
         // TODO dynamic link
-        "https://dev.plutomi.com/request-login-link",
+        URL,
         {
           email: "jose@plutomi.com",
         }

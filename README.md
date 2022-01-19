@@ -46,8 +46,9 @@ Stage order:
 
 | Command                                                                                                 | Function                                                                                                                                   |
 | ------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------ |
-| npm run deploy-prod                                                                                     | Will deploy everything to your production environment                                                                                      |
 | npm run dev                                                                                             | Will deploy **a complete copy** of the backend to AWS. The frontend runs in localhost because Cloudfront takes forever to do invalidations |
+| npm run test                                                                                            | Will run tests                                                                                                                             |
+| npm run deploy-prod                                                                                     | Will deploy everything to your production environment                                                                                      |
 | npx cross-env NODE_ENV=(development or production) cdk deploy -e (development or production)-STACK_NAME | Will deploy a specific stack in the desired environment                                                                                    |
 
 For more information on AWS CDK, please visit the [docs page](https://docs.aws.amazon.com/cdk/latest/guide/cli.html).

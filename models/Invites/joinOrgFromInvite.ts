@@ -24,7 +24,8 @@ export default async function Join(
               PK: `${ENTITY_TYPES.USER}#${userId}`,
               SK: `${ENTITY_TYPES.ORG_INVITE}#${invite.inviteId}`,
             },
-            TableName: DYNAMO_TABLE_NAME,
+            TableName: `${process.env.NODE_ENV}-${DYNAMO_TABLE_NAME}`,
+
             ConditionExpression: "attribute_exists(PK)",
           },
         },
@@ -36,7 +37,8 @@ export default async function Join(
               PK: `${ENTITY_TYPES.USER}#${userId}`,
               SK: ENTITY_TYPES.USER,
             },
-            TableName: DYNAMO_TABLE_NAME,
+            TableName: `${process.env.NODE_ENV}-${DYNAMO_TABLE_NAME}`,
+
             UpdateExpression:
               "SET orgId = :orgId, orgJoinDate = :orgJoinDate, GSI1PK = :GSI1PK",
             ExpressionAttributeValues: {
@@ -54,7 +56,8 @@ export default async function Join(
               PK: `${ENTITY_TYPES.ORG}#${invite.orgId}`,
               SK: ENTITY_TYPES.ORG,
             },
-            TableName: DYNAMO_TABLE_NAME,
+            TableName: `${process.env.NODE_ENV}-${DYNAMO_TABLE_NAME}`,
+
             UpdateExpression: "SET totalUsers = totalUsers + :value",
             ExpressionAttributeValues: {
               ":value": 1,

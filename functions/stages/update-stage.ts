@@ -1,11 +1,7 @@
 import * as Openings from "../../models/openings";
 import * as Stages from "../../models/stages";
 import Joi from "joi";
-import {
-  JOI_GLOBAL_FORBIDDEN,
-  JOI_SETTINGS,
-  withDefaultMiddleware,
-} from "../../Config";
+import { JOI_GLOBAL_FORBIDDEN, JOI_SETTINGS } from "../../Config";
 import middy from "@middy/core";
 
 import {
@@ -13,7 +9,7 @@ import {
   CustomLambdaResponse,
   UpdateOpeningInput,
 } from "../../types/main";
-import * as Response from "../../utils/customResponse";
+import * as CreateError from "../../utils/errorGenerator";
 import { DynamoNewStage } from "../../types/dynamo";
 interface APIUpdateStagePathParameters {
   openingId: string;
@@ -55,7 +51,7 @@ const main = async (
   try {
     await schema.validateAsync(event);
   } catch (error) {
-    return Response.JOI(error);
+    return CreateError.JOI(error);
   }
 
   const { session } = event.requestContext.authorizer.lambda;
@@ -70,7 +66,7 @@ const main = async (
   });
 
   if (error) {
-    return Response.SDK(error, "An error ocurred updating this stage");
+    return CreateError.SDK(error, "An error ocurred updating this stage");
   }
 
   return {
@@ -83,4 +79,3 @@ const main = async (
 
 // TODO types with API Gateway event and middleware
 // @ts-ignore
-module.exports.main = middy(main).use(withDefaultMiddleware);

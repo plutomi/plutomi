@@ -3,7 +3,7 @@ import { JOI_SETTINGS, JoiOrgId, withDefaultMiddleware } from "../../Config";
 import middy from "@middy/core";
 import * as Openings from "../../models/openings";
 import { CustomLambdaEvent, CustomLambdaResponse } from "../../types/main";
-import * as Response from "../../utils/customResponse";
+import * as CreateError from "../../utils/errorGenerator";
 import { pick } from "lodash";
 import * as Orgs from "../../models/orgs";
 import { DynamoNewOpening } from "../../types/dynamo";
@@ -27,7 +27,7 @@ const main = async (
   try {
     await schema.validateAsync(event);
   } catch (error) {
-    return Response.JOI(error);
+    return CreateError.JOI(error);
   }
 
   const { orgId } = event.pathParameters;
@@ -37,7 +37,7 @@ const main = async (
   });
 
   if (openingsError) {
-    return Response.SDK(
+    return CreateError.SDK(
       openingsError,
       "An error ocurred retrieving openings for this org"
     );
@@ -58,4 +58,3 @@ const main = async (
 };
 // TODO types with API Gateway event and middleware
 // @ts-ignore
-module.exports.main = middy(main).use(withDefaultMiddleware);

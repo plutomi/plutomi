@@ -6,15 +6,7 @@ import DynamoDBStack from "../lib/DynamoDBStack";
 import FrontendStack from "../lib/FrontendStack";
 import EventBridgeStack from "../lib/EventBridgeStack";
 import CommsMachineStack from "../lib/commsMachineStack";
-import APIAuthServiceStack from "../lib/APIAuthServiceStack";
 import StreamProcessorStack from "../lib/StreamProcessorStack";
-import APIUsersServiceStack from "../lib/APIUsersServiceStack";
-import APIOrgsServiceStack from "../lib/APIOrgsServiceStack";
-import APIInvitesServiceStack from "../lib/APIInvitesServiceStack";
-import APIOpeningsServiceStack from "../lib/APIOpeningsServiceStack";
-import APIStagesServiceStack from "../lib/APIStagesServiceStack";
-import APIApplicantsServiceStack from "../lib/APIApplicantsServiceStack";
-import APIPublicInfoServiceStack from "../lib/APIPublicInfoServiceStack";
 
 import { Builder } from "@sls-next/lambda-at-edge";
 import { nanoid } from "nanoid";
@@ -57,57 +49,12 @@ builder
       table,
     });
 
-    new APIUsersServiceStack(
-      app,
-      `${process.env.NODE_ENV}-APIUsersServiceStack`,
-      { api, table }
-    );
-
-    new APIOrgsServiceStack(
-      app,
-      `${process.env.NODE_ENV}-APIOrgsServiceStack`,
-      { api, table }
-    );
-    new APIInvitesServiceStack(
-      app,
-      `${process.env.NODE_ENV}-APIInvitesServiceStack`,
-      { api, table }
-    );
-    new APIPublicInfoServiceStack(
-      app,
-      `${process.env.NODE_ENV}-APIPublicInfoServiceStack`,
-      { api, table }
-    );
-    new APIAuthServiceStack(
-      app,
-      `${process.env.NODE_ENV}-APIAuthServiceStack`,
-      { api, table }
-    );
-
-    new APIOpeningsServiceStack(
-      app,
-      `${process.env.NODE_ENV}-APIOpeningsServiceStack`,
-      { api, table }
-    );
-
-    new APIApplicantsServiceStack(
-      app,
-      `${process.env.NODE_ENV}-APIApplicantsServiceStack`,
-      { api, table }
-    );
-
     const { CommsMachine } = new CommsMachineStack(
       app,
       `${process.env.NODE_ENV}-CommsMachineStack`,
       {
         table,
       }
-    );
-
-    new APIStagesServiceStack(
-      app,
-      `${process.env.NODE_ENV}-APIStagesServiceStack`,
-      { api, table }
     );
 
     new EventBridgeStack(app, `${process.env.NODE_ENV}-EventBridgeStack`, {

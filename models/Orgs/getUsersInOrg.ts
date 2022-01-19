@@ -11,7 +11,8 @@ export default async function GetUsers(
 ): Promise<[DynamoNewUser[], null] | [null, SdkError]> {
   const { orgId, limit } = props;
   const params: QueryCommandInput = {
-    TableName: DYNAMO_TABLE_NAME,
+    TableName: `${process.env.NODE_ENV}-${DYNAMO_TABLE_NAME}`,
+
     IndexName: "GSI1",
     KeyConditionExpression: "GSI1PK = :GSI1PK",
     ExpressionAttributeValues: {

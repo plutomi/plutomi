@@ -5,8 +5,9 @@
   "scripts": {
     "build": "next build",
     "lint": "next lint",
+    "start": "cross-env NODE_ENV=development nodemon app.ts",
     "test": "jest --silent=false --verbose=true",
-    "dev": "cross-env NODE_ENV=development cdk deploy development-DynamoDBStack development-StreamProcessorStack development-APIStack development-CommsMachineStack development-EventBridgeStack && next dev",
+    "dev": "cross-env NODE_ENV=development cdk deploy development-DynamoDBStack development-StreamProcessorStack development-CommsMachineStack development-EventBridgeStack && nodemon app.ts && next dev",
     "deploy-prod": "cross-env NODE_ENV=production cdk deploy production-DynamoDBStack production-StreamProcessorStack production-APIStack production-CommsMachineStack production-EventBridgeStack FrontendStack"
   },
   "dependencies": {
@@ -59,6 +60,7 @@
     "@tailwindcss/forms": "^0.3.4",
     "axios": "^0.21.4",
     "connect-timeout": "^1.9.0",
+    "cookie-parser": "^1.4.6",
     "cookie-signature": "^1.1.0",
     "cors": "^2.8.5",
     "custom-env": "^2.0.1",
@@ -70,6 +72,7 @@
     "env-var": "^7.1.1",
     "express": "^4.17.1",
     "express-list-endpoints": "^6.0.0",
+    "express-session": "^1.17.2",
     "helmet": "^4.6.0",
     "iron-session": "^6.0.2",
     "joi": "^17.4.2",
@@ -77,6 +80,7 @@
     "loadtest": "^5.1.2",
     "lodash": "^4.17.21",
     "middy-console-logger": "^1.0.0",
+    "morgan": "^1.10.0",
     "nanoid": "^3.1.30",
     "next": "^12.0.7",
     "react": "^17.0.2",

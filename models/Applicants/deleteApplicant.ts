@@ -22,7 +22,7 @@ export default async function Remove(
               PK: `${ENTITY_TYPES.APPLICANT}#${applicantId}`,
               SK: ENTITY_TYPES.APPLICANT,
             },
-            TableName: DYNAMO_TABLE_NAME,
+            TableName: `${process.env.NODE_ENV}-${DYNAMO_TABLE_NAME}`,
           },
         },
 
@@ -33,7 +33,8 @@ export default async function Remove(
               PK: `${ENTITY_TYPES.ORG}#${orgId}#${ENTITY_TYPES.OPENING}#${openingId}`,
               SK: ENTITY_TYPES.OPENING,
             },
-            TableName: DYNAMO_TABLE_NAME,
+            TableName: `${process.env.NODE_ENV}-${DYNAMO_TABLE_NAME}`,
+
             UpdateExpression: "SET totalApplicants = totalApplicants - :value",
             ExpressionAttributeValues: {
               ":value": 1,
@@ -47,7 +48,8 @@ export default async function Remove(
               PK: `${ENTITY_TYPES.ORG}#${orgId}#${ENTITY_TYPES.STAGE}#${stageId}`,
               SK: ENTITY_TYPES.STAGE,
             },
-            TableName: DYNAMO_TABLE_NAME,
+            TableName: `${process.env.NODE_ENV}-${DYNAMO_TABLE_NAME}`,
+
             UpdateExpression: "SET totalApplicants = totalApplicants - :value",
             ExpressionAttributeValues: {
               ":value": 1,
@@ -61,7 +63,8 @@ export default async function Remove(
               PK: `${ENTITY_TYPES.ORG}#${orgId}`,
               SK: ENTITY_TYPES.ORG,
             },
-            TableName: DYNAMO_TABLE_NAME,
+            TableName: `${process.env.NODE_ENV}-${DYNAMO_TABLE_NAME}`,
+
             UpdateExpression: "SET totalApplicants = totalApplicants - :value",
             ExpressionAttributeValues: {
               ":value": 1,

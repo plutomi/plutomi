@@ -5,10 +5,13 @@ import { DynamoNewOpening } from "../../types/dynamo";
 import { GetAllOpeningsInOrgInput } from "../../types/main";
 const { DYNAMO_TABLE_NAME } = process.env;
 import { SdkError } from "@aws-sdk/types";
-export default async function GetOpenings(props: GetAllOpeningsInOrgInput): Promise<[DynamoNewOpening[], null] | [null, SdkError]> {
+export default async function GetOpenings(
+  props: GetAllOpeningsInOrgInput
+): Promise<[DynamoNewOpening[], null] | [null, SdkError]> {
   const { orgId } = props;
   const params: QueryCommandInput = {
-    TableName: DYNAMO_TABLE_NAME,
+    TableName: `${process.env.NODE_ENV}-${DYNAMO_TABLE_NAME}`,
+
     IndexName: "GSI1",
     KeyConditionExpression: "GSI1PK = :GSI1PK",
     ExpressionAttributeValues: {

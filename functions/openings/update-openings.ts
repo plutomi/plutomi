@@ -5,7 +5,6 @@ import {
   FORBIDDEN_PROPERTIES,
   JOI_GLOBAL_FORBIDDEN,
   JOI_SETTINGS,
-  withDefaultMiddleware,
 } from "../../Config";
 import middy from "@middy/core";
 
@@ -14,7 +13,7 @@ import {
   CustomLambdaResponse,
   UpdateOpeningInput,
 } from "../../types/main";
-import * as Response from "../../utils/customResponse";
+import * as CreateError from "../../utils/errorGenerator";
 interface APIUpdateOpeningPathParameters {
   openingId: string;
 }
@@ -50,7 +49,7 @@ const main = async (
   try {
     await schema.validateAsync(event);
   } catch (error) {
-    return Response.JOI(error);
+    return CreateError.JOI(error);
   }
 
   const { session } = event.requestContext.authorizer.lambda;
@@ -68,7 +67,7 @@ const main = async (
   );
 
   if (error) {
-    return Response.SDK(error, "An error ocurred updating this opening");
+    return CreateError.SDK(error, "An error ocurred updating this opening");
   }
 
   return {
@@ -81,4 +80,3 @@ const main = async (
 
 // TODO types with API Gateway event and middleware
 // @ts-ignore
-module.exports.main = middy(main).use(withDefaultMiddleware);

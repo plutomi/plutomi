@@ -1,58 +1,27 @@
-import middy from "@middy/core";
-import {
-  APIGatewayProxyEventV2,
-  APIGatewayProxyEvent,
-  APIGatewayProxyResultV2,
-  APIGatewayProxyResult,
-} from "aws-lambda";
+import { Request, Response, NextFunction } from "express";
 const UrlSafeString = require("url-safe-string"),
   tagGenerator = new UrlSafeString();
 
-const middleware = (): middy.MiddlewareObj<
-  APIGatewayProxyEvent,
-  APIGatewayProxyResult
-> => {
-  const before: middy.MiddlewareFn<
-    APIGatewayProxyEvent,
-    APIGatewayProxyResult
-  > = async (request) => {
-    // TODO types
-    // @ts-ignore
-    if (request.event?.body?.orgId) {
-      // @ts-ignore
-      request.event.body.orgId = tagGenerator.generate(
-        // @ts-ignore
-        request.event.body.orgId
-      );
-    }
+export default async function withCleanOrgId(
+  req: Request,
+  res: Response,
+  next: NextFunction
+) {
+  /**
+   * Makes the orgId, whether in the url params or in the body, have a specific, URL Safe, format
+   */
 
+  if (req.body.orgId) {
+    req.body.orgId = tagGenerator.generate(req.body.orgId);
+  }
 
-    if (request.event?.pathParameters?.orgId) {
+  if (req.params.orgId) {
+    req.params.orgId = tagGenerator.generate(req.params.orgId);
+  }
 
-      // @ts-ignore
-      request.event.pathParameters.orgId = tagGenerator.generate(
-        request.event.pathParameters.orgId
-      );
-    }
+  if (req.query.orgId) {
+    req.query.orgId = tagGenerator.generate(req.query.orgId);
+  }
 
-    if (request.event?.queryStringParameters?.orgId) {
-      request.event.queryStringParameters.orgId = tagGenerator.generate(
-        request.event.queryStringParameters.orgId
-      );
-    }
-  };
-
-  const after: middy.MiddlewareFn<
-    APIGatewayProxyEvent, // TODO types
-    APIGatewayProxyResult
-  > = async (request): Promise<void> => {
-    // Your middleware logic
-  };
-
-  return {
-    before,
-    after,
-  };
-};
-
-export default middleware;
+  next();
+}

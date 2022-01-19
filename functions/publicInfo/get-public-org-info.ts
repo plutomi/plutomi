@@ -3,7 +3,7 @@ import { JOI_SETTINGS, JoiOrgId, withDefaultMiddleware } from "../../Config";
 import middy from "@middy/core";
 import * as Orgs from "../../models/Orgs";
 import { CustomLambdaEvent, CustomLambdaResponse } from "../../types/main";
-import * as Response from "../../utils/customResponse";
+import * as CreateError from "../../utils/errorGenerator";
 import { pick } from "lodash";
 interface APIGetOrgInfoPathParameters {
   orgId: string;
@@ -26,7 +26,7 @@ const main = async (
     await schema.validateAsync(event);
   } catch (error) {
     console.log(error);
-    return Response.JOI(error);
+    return CreateError.JOI(error);
   }
 
   const { orgId } = event.pathParameters;
@@ -34,7 +34,7 @@ const main = async (
   const [org, orgError] = await Orgs.getOrgById({ orgId });
 
   if (orgError) {
-    return Response.SDK(orgError, "Unable to retrieve org info");
+    return CreateError.SDK(orgError, "Unable to retrieve org info");
   }
 
   if (!org) {
@@ -52,4 +52,3 @@ const main = async (
 };
 // TODO types with API Gateway event and middleware
 // @ts-ignore
-module.exports.main = middy(main).use(withDefaultMiddleware);

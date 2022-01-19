@@ -1,7 +1,7 @@
 import * as Orgs from "../../models/Orgs";
 import middy from "@middy/core";
 import { DEFAULTS, withDefaultMiddleware } from "../../Config";
-import * as Response from "../../utils/customResponse";
+import * as CreateError from "../../utils/errorGenerator";
 import { CustomLambdaEvent, CustomLambdaResponse } from "../../types/main";
 
 const main = async (
@@ -23,7 +23,10 @@ const main = async (
   });
 
   if (openingsError) {
-    return Response.SDK(openingsError, "An error ocurred retrieving openings");
+    return CreateError.SDK(
+      openingsError,
+      "An error ocurred retrieving openings"
+    );
   }
 
   return {
@@ -34,4 +37,3 @@ const main = async (
 
 // TODO types with API Gateway event and middleware
 // @ts-ignore
-module.exports.main = middy(main).use(withDefaultMiddleware);

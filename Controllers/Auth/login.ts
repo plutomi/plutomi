@@ -1,45 +1,42 @@
-import middy from "@middy/core";
+import { Request, Response } from "express";
 import Joi from "joi";
+
 import {
+  DEFAULTS,
   LOGIN_LINK_SETTINGS,
-  SESSION_SETTINGS,
+  TIME_UNITS,
   JOI_SETTINGS,
-  COOKIE_SETTINGS,
   WEBSITE_URL,
   COOKIE_NAME,
-  TIME_UNITS,
-  withDefaultMiddleware,
+  COOKIE_SETTINGS,
+  SESSION_SETTINGS,
 } from "../../Config";
 import * as Time from "../../utils/time";
-import { sealData, unsealData } from "iron-session";
 import * as Users from "../../models/Users";
+import { nanoid } from "nanoid";
+import { sealData, unsealData } from "iron-session";
+import { API_URL, DOMAIN_NAME } from "../../Config";
+import * as CreateError from "../../utils/errorGenerator";
 import errorFormatter from "../../utils/errorFormatter";
-import { CustomLambdaEvent, CustomLambdaResponse } from "../../types/main";
-import * as Response from "../../utils/customResponse";
-interface APIRequestLoginLinkQueryStrings {
+interface APILoginQuery {
   callbackUrl?: string;
   seal?: string;
 }
-interface APILoginEvent
-  extends Omit<CustomLambdaEvent, "queryStringParameters"> {
-  queryStringParameters: APIRequestLoginLinkQueryStrings;
-}
 
 const schema = Joi.object({
-  queryStringParameters: {
-    callbackUrl: Joi.string().uri(),
+  query: {
+    callbackUrl: Joi.string().uri().optional(),
     seal: Joi.string(),
   },
 }).options(JOI_SETTINGS);
-
-const main = async (event: APILoginEvent): Promise<CustomLambdaResponse> => {
+const login = async (req: Request, res: Response) => {
   try {
-    await schema.validateAsync(event);
+    await schema.validateAsync(req);
   } catch (error) {
-    return Response.JOI(error);
+    const { status, body } = CreateError.JOI(error);
+    return res.status(status).json(body);
   }
-
-  const { callbackUrl, seal } = event.queryStringParameters;
+  const { callbackUrl, seal }: APILoginQuery = req.query;
 
   let userId: string;
   let loginLinkId: string;
@@ -54,40 +51,31 @@ const main = async (event: APILoginEvent): Promise<CustomLambdaResponse> => {
 
     // If the seal expired, these will be undefined. Also undefined for things like seal=123
     if (!data.userId || !data.loginLinkId) {
-      return {
-        statusCode: 401,
-        body: {
-          message: "Your link is invalid",
-        },
-      };
+      return res.status(401).json({ message: "Your link is invalid" });
     }
 
     userId = data.userId;
     loginLinkId = data.loginLinkId;
   } catch (error) {
-    return {
-      statusCode: 400,
-      body: {
-        message: "Bad seal",
-      },
-    };
+    return res.status(400).json({ message: "Bad seal" });
   }
 
   const [user, error] = await Users.getUserById({ userId });
 
   if (error) {
-    return Response.SDK(error, "An error ocurred using your login link");
+    const { status, body } = CreateError.SDK(
+      error,
+      "An error ocurred using your login link"
+    );
+    return res.status(status).json(body);
   }
 
   // If a user is deleted between when they made they requested the login link
   // and when they attempted to sign in... somehow
   if (!user) {
-    return {
-      statusCode: 401,
-      body: {
-        message: `Please contact support, your user account appears to be deleted.`,
-      },
-    };
+    return res.status(401).json({
+      message: `Please contact support, your user account appears to be deleted.`,
+    });
   }
 
   // If this is a new user, an asynchronous welcome email is sent through step functions
@@ -102,14 +90,14 @@ const main = async (event: APILoginEvent): Promise<CustomLambdaResponse> => {
     // If login link has been used, it will throw this error
     const LOGIN_LINK_ALREADY_USED_ERROR = `Transaction cancelled, please refer cancellation reasons for specific reasons [None, ConditionalCheckFailed]`;
     if (formattedError.errorMessage === LOGIN_LINK_ALREADY_USED_ERROR) {
-      return {
-        statusCode: 401,
-        body: {
-          message: "Login link no longer valid",
-        },
-      };
+      return res.status(401).json({ message: "Login link no longer valid" });
     }
-    return Response.SDK(error, "Unable to create login event");
+    const { status, body } = CreateError.SDK(
+      error,
+      "Unable to create login event"
+    );
+
+    return res.status(status).json(body);
   }
 
   const session = {
@@ -117,27 +105,20 @@ const main = async (event: APILoginEvent): Promise<CustomLambdaResponse> => {
     expiresAt: Time.futureISO(12, TIME_UNITS.HOURS), // TODO set in config
   };
   const encryptedCookie = await sealData(session, SESSION_SETTINGS);
-  const response = {
-    cookies: [`${COOKIE_NAME}=${encryptedCookie}; ${COOKIE_SETTINGS}`],
-    statusCode: 307,
-    headers: {
-      Location: callbackUrl,
-    },
-    body: { message: "Login success!" },
-  };
 
-  // If a user has invites, redirect them to the invites page on login regardless of the callback url
+  res.cookie(COOKIE_NAME, encryptedCookie, {
+    httpOnly: process.env.NODE_ENV === "production",
+    sameSite: "strict",
+    secure: true,
+  });
+  res.header("Location", callbackUrl);
+  // If a user has invites, redirect them to the invites page
+  //  on login regardless of the callback url
   if (user.totalInvites > 0) {
-    return {
-      ...response,
-      headers: {
-        Location: `${WEBSITE_URL}/invites`,
-      },
-    };
+    res.header("Location", `${WEBSITE_URL}/invites`);
   }
-  // Else, redirect to the callback url
-  return response;
+
+  return res.status(307).json({ message: "Login success!" });
 };
 
-//@ts-ignore // TODO types
-module.exports.main = middy(main).use(withDefaultMiddleware);
+export default login;

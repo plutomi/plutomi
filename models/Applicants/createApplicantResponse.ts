@@ -37,7 +37,8 @@ export default async function CreateResponse(
   };
 
   const params: PutCommandInput = {
-    TableName: DYNAMO_TABLE_NAME,
+    TableName: `${process.env.NODE_ENV}-${DYNAMO_TABLE_NAME}`,
+
     Item: newApplicantResponse,
     ConditionExpression: "attribute_not_exists(PK)",
   };

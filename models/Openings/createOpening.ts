@@ -36,7 +36,8 @@ export default async function Create(
         // Create the opening
         Put: {
           Item: newOpening,
-          TableName: DYNAMO_TABLE_NAME,
+          TableName: `${process.env.NODE_ENV}-${DYNAMO_TABLE_NAME}`,
+
           ConditionExpression: "attribute_not_exists(PK)",
         },
       },
@@ -47,7 +48,8 @@ export default async function Create(
             PK: `${ENTITY_TYPES.ORG}#${orgId}`,
             SK: ENTITY_TYPES.ORG,
           },
-          TableName: DYNAMO_TABLE_NAME,
+          TableName: `${process.env.NODE_ENV}-${DYNAMO_TABLE_NAME}`,
+
           UpdateExpression:
             "SET totalOpenings = if_not_exists(totalOpenings, :zero) + :value",
           ExpressionAttributeValues: {

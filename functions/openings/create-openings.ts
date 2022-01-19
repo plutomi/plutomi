@@ -4,7 +4,7 @@ import Joi from "joi";
 import { JOI_SETTINGS, DEFAULTS, withDefaultMiddleware } from "../../Config";
 
 import { CustomLambdaEvent, CustomLambdaResponse } from "../../types/main";
-import * as Response from "../../utils/customResponse";
+import * as CreateError from "../../utils/errorGenerator";
 interface APICreateOpeningsBody {
   GSI1SK?: string;
 }
@@ -24,7 +24,7 @@ const main = async (
   try {
     await schema.validateAsync(event);
   } catch (error) {
-    return Response.JOI(error);
+    return CreateError.JOI(error);
   }
 
   const { session } = event.requestContext.authorizer.lambda;
@@ -44,7 +44,7 @@ const main = async (
   });
 
   if (createOpeningError) {
-    return Response.SDK(
+    return CreateError.SDK(
       createOpeningError,
       "An error ocurred creating opening"
     );
@@ -58,4 +58,3 @@ const main = async (
 
 // TODO types with API Gateway event and middleware
 // @ts-ignore
-module.exports.main = middy(main).use(withDefaultMiddleware);

@@ -1,15 +1,10 @@
 import Joi from "joi";
-import {
-  JOI_SETTINGS,
-  JoiOrgId,
-  withDefaultMiddleware,
-  DEFAULTS,
-} from "../../Config";
+import { JOI_SETTINGS, JoiOrgId, DEFAULTS } from "../../Config";
 import middy from "@middy/core";
 import * as Orgs from "../../models/Orgs";
 
 import { CustomLambdaEvent, CustomLambdaResponse } from "../../types/main";
-import * as Response from "../../utils/customResponse";
+import * as CreateError from "../../utils/errorGenerator";
 interface APIGetOrgInfoPathParameters {
   orgId?: string;
 }
@@ -30,7 +25,7 @@ const main = async (
   try {
     await schema.validateAsync(event);
   } catch (error) {
-    return Response.JOI(error);
+    return CreateError.JOI(error);
   }
 
   const { session } = event.requestContext.authorizer.lambda;
@@ -48,7 +43,7 @@ const main = async (
   const [org, error] = await Orgs.getOrgById({ orgId });
 
   if (error) {
-    return Response.SDK(error, "Unable to retrieve org info");
+    return CreateError.SDK(error, "Unable to retrieve org info");
   }
 
   if (!org) {
@@ -65,4 +60,3 @@ const main = async (
 };
 // TODO types with API Gateway event and middleware
 // @ts-ignore
-module.exports.main = middy(main).use(withDefaultMiddleware);

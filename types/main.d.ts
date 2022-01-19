@@ -107,10 +107,15 @@ export interface CreateApplicantAPIResponse {
   message: string;
 }
 
+declare module "iron-session" {
+  export interface IronSessionData {
+    user: DynamoNewUser;
+  }
+}
+
 /**
  * All possible parameters in the URL
  */
-
 interface CUSTOM_QUERY {
   orgId: string;
   openingId: string;

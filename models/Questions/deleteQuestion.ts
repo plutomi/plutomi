@@ -10,7 +10,8 @@ import { SdkError } from "@aws-sdk/types";
 export default async function DeleteQuestion(
   props: DeleteQuestionInput
 ): Promise<[null, null] | [null, SdkError]> {
-  const { orgId, questionId, stageId, questionOrder, deletedQuestionIndex } = props;
+  const { orgId, questionId, stageId, questionOrder, deletedQuestionIndex } =
+    props;
 
   // Update question order
   questionOrder.splice(deletedQuestionIndex, 1);
@@ -24,7 +25,7 @@ export default async function DeleteQuestion(
             PK: `${ENTITY_TYPES.ORG}#${orgId}#${ENTITY_TYPES.STAGE_QUESTION}#${questionId}`,
             SK: ENTITY_TYPES.STAGE_QUESTION,
           },
-          TableName: DYNAMO_TABLE_NAME,
+          TableName: `${process.env.NODE_ENV}-${DYNAMO_TABLE_NAME}`,
         },
       },
       {
@@ -34,7 +35,8 @@ export default async function DeleteQuestion(
             PK: `${ENTITY_TYPES.ORG}#${orgId}#${ENTITY_TYPES.STAGE}#${stageId}`,
             SK: ENTITY_TYPES.STAGE,
           },
-          TableName: DYNAMO_TABLE_NAME,
+          TableName: `${process.env.NODE_ENV}-${DYNAMO_TABLE_NAME}`,
+
           UpdateExpression: "SET questionOrder = :questionOrder",
           ExpressionAttributeValues: {
             ":questionOrder": questionOrder,

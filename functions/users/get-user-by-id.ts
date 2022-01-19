@@ -4,7 +4,7 @@ import { DEFAULTS, JOI_SETTINGS, withDefaultMiddleware } from "../../Config";
 import middy from "@middy/core";
 
 import { CustomLambdaEvent, CustomLambdaResponse } from "../../types/main";
-import * as Response from "../../utils/customResponse";
+import * as CreateError from "../../utils/errorGenerator";
 interface APIUserByIdPathParameters {
   userId?: string;
 }
@@ -22,7 +22,7 @@ const main = async (event: APIUserByIdEvent): Promise<CustomLambdaResponse> => {
   try {
     await schema.validateAsync(event);
   } catch (error) {
-    return Response.JOI(error);
+    return CreateError.JOI(error);
   }
 
   const { session } = event.requestContext.authorizer.lambda;
@@ -45,7 +45,10 @@ const main = async (event: APIUserByIdEvent): Promise<CustomLambdaResponse> => {
   });
 
   if (error) {
-    return Response.SDK(error, "An error ocurred retrieving user info by id");
+    return CreateError.SDK(
+      error,
+      "An error ocurred retrieving user info by id"
+    );
   }
   if (!requestedUser) {
     return {
@@ -73,4 +76,3 @@ const main = async (event: APIUserByIdEvent): Promise<CustomLambdaResponse> => {
 
 // TODO types with API Gateway event and middleware
 // @ts-ignore
-module.exports.main = middy(main).use(withDefaultMiddleware);

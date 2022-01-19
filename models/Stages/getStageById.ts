@@ -14,7 +14,8 @@ export default async function Get(
 ): Promise<[GetStageByIdOutput, null] | [null, SdkError]> {
   const { orgId, stageId, openingId } = props;
   const params: GetCommandInput = {
-    TableName: DYNAMO_TABLE_NAME,
+    TableName: `${process.env.NODE_ENV}-${DYNAMO_TABLE_NAME}`,
+
     Key: {
       PK: `${ENTITY_TYPES.ORG}#${orgId}#${ENTITY_TYPES.OPENING}#${openingId}#${ENTITY_TYPES.STAGE}#${stageId}`,
       SK: ENTITY_TYPES.STAGE,

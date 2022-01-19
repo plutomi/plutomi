@@ -3,7 +3,7 @@ import Joi from "joi";
 import * as Stages from "../../models/Stages";
 import { JOI_SETTINGS, DEFAULTS, withDefaultMiddleware } from "../../Config";
 import { CustomLambdaEvent, CustomLambdaResponse } from "../../types/main";
-import * as Response from "../../utils/customResponse";
+import * as CreateError from "../../utils/errorGenerator";
 
 interface APIGetStagesInfoEvent
   extends Omit<CustomLambdaEvent, "pathParameters"> {
@@ -26,7 +26,7 @@ const main = async (
   try {
     await schema.validateAsync(event);
   } catch (error) {
-    return Response.JOI(error);
+    return CreateError.JOI(error);
   }
 
   const { session } = event.requestContext.authorizer.lambda;
@@ -48,7 +48,7 @@ const main = async (
   });
 
   if (stageError) {
-    return Response.SDK(
+    return CreateError.SDK(
       stageError,
       "An error ocurred retrieving that stage info"
     );
@@ -62,4 +62,3 @@ const main = async (
 
 // TODO types with API Gateway event and middleware
 // @ts-ignore
-module.exports.main = middy(main).use(withDefaultMiddleware);

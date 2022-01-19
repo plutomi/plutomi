@@ -4,7 +4,7 @@ import middy from "@middy/core";
 import { JOI_SETTINGS, withDefaultMiddleware } from "../../Config";
 
 import { CustomLambdaEvent, CustomLambdaResponse } from "../../types/main";
-import * as Response from "../../utils/customResponse";
+import * as CreateError from "../../utils/errorGenerator";
 
 const main = async (
   event: CustomLambdaEvent
@@ -16,7 +16,7 @@ const main = async (
   });
 
   if (error) {
-    return Response.SDK(error, "An error ocurred retrieving invites");
+    return CreateError.SDK(error, "An error ocurred retrieving invites");
   }
 
   return {
@@ -27,4 +27,3 @@ const main = async (
 
 // TODO types with API Gateway event and middleware
 // @ts-ignore
-module.exports.main = middy(main).use(withDefaultMiddleware);

@@ -8,12 +8,11 @@ import Joi from "joi";
 import {
   JOI_SETTINGS,
   DEFAULTS,
-  withDefaultMiddleware,
   JOI_GLOBAL_FORBIDDEN,
   JoiOrgId,
 } from "../../Config";
 import { CustomLambdaEvent, CustomLambdaResponse } from "../../types/main";
-import * as Response from "../../utils/customResponse";
+import * as CreateError from "../../utils/errorGenerator";
 interface APICreateApplicantsBody {
   orgId: string;
   openingId: string;
@@ -45,7 +44,7 @@ const main = async (
   try {
     await schema.validateAsync(event);
   } catch (error) {
-    return Response.JOI(error);
+    return CreateError.JOI(error);
   }
   const res = await emailValidator({
     email: event.body.email,
@@ -68,7 +67,7 @@ const main = async (
   });
 
   if (openingError) {
-    return Response.SDK(
+    return CreateError.SDK(
       openingError,
       "An error ocurred getting your opening info"
     );
@@ -100,7 +99,10 @@ const main = async (
   });
 
   if (failed) {
-    return Response.SDK(failed, "An error ocurred creating your application");
+    return CreateError.SDK(
+      failed,
+      "An error ocurred creating your application"
+    );
   }
 
   return {
@@ -111,4 +113,3 @@ const main = async (
 
 // TODO types with API Gateway event and middleware
 // @ts-ignore
-module.exports.main = middy(main).use(withDefaultMiddleware);

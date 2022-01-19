@@ -3,7 +3,7 @@ import { JOI_SETTINGS, JoiOrgId, withDefaultMiddleware } from "../../Config";
 import middy from "@middy/core";
 import * as Openings from "../../models/openings";
 import { CustomLambdaEvent, CustomLambdaResponse } from "../../types/main";
-import * as Response from "../../utils/customResponse";
+import * as CreateError from "../../utils/errorGenerator";
 import { pick } from "lodash";
 interface APIGetPublicOpeningInfoPathParameters {
   orgId: string;
@@ -27,7 +27,7 @@ const main = async (
   try {
     await schema.validateAsync(event);
   } catch (error) {
-    return Response.JOI(error);
+    return CreateError.JOI(error);
   }
 
   const { orgId, openingId } = event.pathParameters;
@@ -38,7 +38,7 @@ const main = async (
   });
 
   if (openingError) {
-    return Response.SDK(
+    return CreateError.SDK(
       openingError,
       "An error ocurred retrieving information for this opening"
     );
@@ -62,4 +62,3 @@ const main = async (
 };
 // TODO types with API Gateway event and middleware
 // @ts-ignore
-module.exports.main = middy(main).use(withDefaultMiddleware);

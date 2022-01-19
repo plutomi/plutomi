@@ -6,13 +6,12 @@ import {
   COOKIE_SETTINGS,
   JoiOrgId,
   COOKIE_NAME,
-  withDefaultMiddleware,
 } from "../../Config";
 import middy from "@middy/core";
 import * as Orgs from "../../models/Orgs";
 
 import { CustomLambdaEvent, CustomLambdaResponse } from "../../types/main";
-import * as Response from "../../utils/customResponse";
+import * as CreateError from "../../utils/errorGenerator";
 interface APIDeleteOrgPathParameters {
   orgId?: string;
 }
@@ -32,7 +31,7 @@ const main = async (
   try {
     await schema.validateAsync(event);
   } catch (error) {
-    return Response.JOI(error);
+    return CreateError.JOI(error);
   }
 
   const { session } = event.requestContext.authorizer.lambda;
@@ -51,7 +50,7 @@ const main = async (
   const [org, error] = await Orgs.getOrgById({ orgId });
 
   if (error) {
-    return Response.SDK(error, "Unable to retrieve org info");
+    return CreateError.SDK(error, "Unable to retrieve org info");
   }
 
   if (!org) {
@@ -76,7 +75,10 @@ const main = async (
   });
 
   if (failure) {
-    return Response.SDK(failure, "We were unable to remove you from the org");
+    return CreateError.SDK(
+      failure,
+      "We were unable to remove you from the org"
+    );
   }
 
   return {
@@ -87,4 +89,3 @@ const main = async (
 
 // TODO types with API Gateway event and middleware
 // @ts-ignore
-module.exports.main = middy(main).use(withDefaultMiddleware);

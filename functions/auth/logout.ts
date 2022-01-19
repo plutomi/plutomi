@@ -1,8 +1,4 @@
-import {
-  COOKIE_NAME,
-  COOKIE_SETTINGS,
-  withDefaultMiddleware,
-} from "../../Config";
+import { COOKIE_NAME, COOKIE_SETTINGS } from "../../Config";
 import middy from "@middy/core";
 import { APIGatewayProxyEventV2 } from "aws-lambda";
 import { CustomLambdaResponse } from "../../types/main";
@@ -17,6 +13,3 @@ const main = async (
     body: { message: "You've succesfully logged out!" },
   };
 };
-
-//@ts-ignore // TODO types
-module.exports.main = middy(main).use(withDefaultMiddleware);

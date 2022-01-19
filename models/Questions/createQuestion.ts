@@ -39,7 +39,7 @@ export default async function Create(
           // Add question
           Put: {
             Item: newStageQuestion,
-            TableName: DYNAMO_TABLE_NAME,
+            TableName: `${process.env.NODE_ENV}-${DYNAMO_TABLE_NAME}`,
           },
         },
         {
@@ -49,7 +49,8 @@ export default async function Create(
               PK: `${ENTITY_TYPES.ORG}#${orgId}#${ENTITY_TYPES.STAGE}#${stageId}`,
               SK: ENTITY_TYPES.STAGE,
             },
-            TableName: DYNAMO_TABLE_NAME,
+            TableName: `${process.env.NODE_ENV}-${DYNAMO_TABLE_NAME}`,
+
             UpdateExpression: "SET questionOrder = :questionOrder",
             ExpressionAttributeValues: {
               ":questionOrder": questionOrder,

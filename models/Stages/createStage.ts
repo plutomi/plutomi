@@ -45,7 +45,8 @@ export default async function Create(
           // Add the new stage
           Put: {
             Item: newStage,
-            TableName: DYNAMO_TABLE_NAME,
+            TableName: `${process.env.NODE_ENV}-${DYNAMO_TABLE_NAME}`,
+
             ConditionExpression: "attribute_not_exists(PK)",
           },
         },
@@ -57,7 +58,8 @@ export default async function Create(
               PK: `${ENTITY_TYPES.ORG}#${orgId}#${ENTITY_TYPES.OPENING}#${openingId}`,
               SK: ENTITY_TYPES.OPENING,
             },
-            TableName: DYNAMO_TABLE_NAME,
+            TableName: `${process.env.NODE_ENV}-${DYNAMO_TABLE_NAME}`,
+
             ConditionExpression:
               "totalStages < :maxChildItemLimit AND attribute_exists(PK)",
             UpdateExpression:

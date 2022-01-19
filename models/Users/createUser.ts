@@ -40,7 +40,8 @@ export default async function CreateUser(
   };
 
   const params: PutCommandInput = {
-    TableName: DYNAMO_TABLE_NAME,
+    TableName: `${process.env.NODE_ENV}-${DYNAMO_TABLE_NAME}`,
+
     Item: newUser,
     ConditionExpression: "attribute_not_exists(PK)",
   };

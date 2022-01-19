@@ -12,7 +12,7 @@ import { Certificate } from "@aws-cdk/aws-certificatemanager";
 import { HostedZone, ARecord, RecordTarget } from "@aws-cdk/aws-route53";
 import { CloudFrontTarget } from "@aws-cdk/aws-route53-targets";
 import * as path from "path";
-import { API_DOMAIN, API_SUBDOMAIN, DOMAIN_NAME, WEBSITE_URL } from "../Config";
+import { API_DOMAIN, DOMAIN_NAME, WEBSITE_URL } from "../Config";
 import { NodejsFunction } from "@aws-cdk/aws-lambda-nodejs";
 import { Policy, PolicyStatement } from "@aws-cdk/aws-iam";
 import { DEFAULT_LAMBDA_CONFIG } from "../bin/plutomi";
@@ -140,7 +140,7 @@ export default class APIStack extends cdk.Stack {
             },
             action: {
               block: {
-                customResponse: {
+                errorGenerator: {
                   responseCode: 429,
                 },
               },

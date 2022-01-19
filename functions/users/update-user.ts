@@ -1,15 +1,10 @@
 import * as Users from "../../models/Users";
 import Joi from "joi";
-import {
-  DEFAULTS,
-  JOI_GLOBAL_FORBIDDEN,
-  JOI_SETTINGS,
-  withDefaultMiddleware,
-} from "../../Config";
+import { DEFAULTS, JOI_GLOBAL_FORBIDDEN, JOI_SETTINGS } from "../../Config";
 import middy from "@middy/core";
 
 import { CustomLambdaEvent, CustomLambdaResponse } from "../../types/main";
-import * as Response from "../../utils/customResponse";
+import * as CreateError from "../../utils/errorGenerator";
 interface APIUpdateUserPathParameters {
   userId?: string;
 }
@@ -56,7 +51,7 @@ const main = async (
   try {
     await schema.validateAsync(event);
   } catch (error) {
-    return Response.JOI(error);
+    return CreateError.JOI(error);
   }
 
   const { session } = event.requestContext.authorizer.lambda;
@@ -77,7 +72,7 @@ const main = async (
   });
 
   if (error) {
-    return Response.SDK(error, "An error ocurred updating user info");
+    return CreateError.SDK(error, "An error ocurred updating user info");
   }
 
   return {
@@ -92,4 +87,3 @@ const main = async (
 
 // TODO types with API Gateway event and middleware
 // @ts-ignore
-module.exports.main = middy(main).use(withDefaultMiddleware);

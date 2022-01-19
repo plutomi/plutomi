@@ -46,7 +46,8 @@ export default async function Create(
           // Create the org invite
           Put: {
             Item: newOrgInvite,
-            TableName: DYNAMO_TABLE_NAME,
+            TableName: `${process.env.NODE_ENV}-${DYNAMO_TABLE_NAME}`,
+
             ConditionExpression: "attribute_not_exists(PK)",
           },
         },
@@ -58,7 +59,8 @@ export default async function Create(
               PK: `${ENTITY_TYPES.USER}#${recipient.userId}`,
               SK: ENTITY_TYPES.USER,
             },
-            TableName: DYNAMO_TABLE_NAME,
+            TableName: `${process.env.NODE_ENV}-${DYNAMO_TABLE_NAME}`,
+
             UpdateExpression:
               "SET totalInvites = if_not_exists(totalApplicants, :zero) + :value",
             ExpressionAttributeValues: {

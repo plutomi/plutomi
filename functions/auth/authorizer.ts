@@ -39,5 +39,4 @@ const main = async (event: APIGatewayProxyEventV2) => {
   };
 };
 
-//@ts-ignore // TODO types
 module.exports.main = middy(main).use(lambdaAuthorizerMiddleware);

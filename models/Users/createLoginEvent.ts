@@ -56,7 +56,8 @@ export default async function CreateLoginEvent(
           // Create a login event on the user
           Put: {
             Item: newUserLoginEvent,
-            TableName: DYNAMO_TABLE_NAME,
+            TableName: `${process.env.NODE_ENV}-${DYNAMO_TABLE_NAME}`,
+
             ConditionExpression: "attribute_not_exists(PK)",
           },
         },
@@ -68,7 +69,8 @@ export default async function CreateLoginEvent(
               PK: `${ENTITY_TYPES.USER}#${user.userId}`,
               SK: `${ENTITY_TYPES.LOGIN_LINK}#${loginLinkId}`,
             },
-            TableName: DYNAMO_TABLE_NAME,
+            TableName: `${process.env.NODE_ENV}-${DYNAMO_TABLE_NAME}`,
+
             ConditionExpression: "attribute_exists(PK)", // Link MUST exist!!!
           },
         },
@@ -80,7 +82,8 @@ export default async function CreateLoginEvent(
         // Create a login event on the org
         Put: {
           Item: newOrgLoginEvent,
-          TableName: DYNAMO_TABLE_NAME,
+          TableName: `${process.env.NODE_ENV}-${DYNAMO_TABLE_NAME}`,
+
           ConditionExpression: "attribute_not_exists(PK)",
         },
       });
