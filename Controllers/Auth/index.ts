@@ -1,4 +1,4 @@
 import RequestLoginLink from "./request-login-link";
 import Login from "./login";
-
-export { RequestLoginLink, Login };
+import Logout from "./logout"
+export { RequestLoginLink, Login , Logout};

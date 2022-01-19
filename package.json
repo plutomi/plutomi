@@ -6,7 +6,7 @@
     "build": "next build",
     "lint": "next lint",
     "start": "cross-env NODE_ENV=development nodemon app.ts",
-    "test": "jest --silent=false --verbose=true",
+    "test": "npm run start & jest --silent=false --verbose=true",
     "dev": "cross-env NODE_ENV=development cdk deploy development-DynamoDBStack development-StreamProcessorStack development-CommsMachineStack development-EventBridgeStack && concurrently \"npm run start\" \"next dev\"",
     "deploy-prod": "cross-env NODE_ENV=production cdk deploy production-DynamoDBStack production-StreamProcessorStack production-APIStack production-CommsMachineStack production-EventBridgeStack FrontendStack"
   },
@@ -41,6 +41,7 @@
     "@aws-sdk/client-eventbridge": "^3.43.0",
     "@aws-sdk/client-ses": "^3.43.0",
     "@aws-sdk/client-sns": "^3.43.0",
+    "@faker-js/faker": "^6.0.0-alpha.3",
     "@hapi/iron": "^6.0.0",
     "@hapi/joi": "^17.1.1",
     "@headlessui/react": "^1.4.1",

@@ -79,6 +79,9 @@ export const ID_LENGTHS = {
   STAGE_QUESTION: 10, // TODO, unique to question set, needs name change
 };
 
+
+
+
 export enum DEFAULTS {
   FIRST_NAME = "NO_FIRST_NAME",
   LAST_NAME = "NO_LAST_NAME",
@@ -92,16 +95,24 @@ export enum DEFAULTS {
   /**
    * In days, how long should login events be kept
    */
-  LOGIN_EVENT_RETENTION_PERIOD = 30, // Days
+  LOGIN_EVENT_RETENTION_PERIOD = 30,
+
+
+
 
   /**
    * In days, how long should logout events be kept
    */
-  LOGOUT_EVENT_RETENTION_PERIOD = 30, // Days
+  LOGOUT_EVENT_RETENTION_PERIOD = 30,
+
+
+
   /**
    * When no callbackUrl is provided on login, what page should users be redirected to
    */
   REDIRECT = "dashboard",
+  NO_FIRST_NAME = "NO_FIRST_NAME",
+  NO_LAST_NAME = "NO_LAST_NAME"
 }
 
 export const LOGIN_LINK_SETTINGS = {

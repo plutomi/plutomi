@@ -8,7 +8,9 @@ if (resultDotEnv.error) {
 }
 
 import * as Auth from "./Controllers/Auth";
+import * as Users from "./Controllers/Users";
 import helmet from "helmet";
+import * as Jest from "./Controllers/jest-setup";
 import express from "express";
 import cors from "cors";
 const morgan = require("morgan");
@@ -37,6 +39,7 @@ app.set("trust proxy", 1);
 app.use(haltOnTimedout);
 app.use(withCleanOrgId);
 app.use(cookieParser(["sessionpw1"], COOKIE_SETTINGS));
+
 // // Public info
 // TODO based on how questionnaire is setup
 // app.get("/public/:orgId/stages/:stageId", PublicInfo.getStageInfo);
@@ -58,11 +61,14 @@ app.use(cookieParser(["sessionpw1"], COOKIE_SETTINGS));
 // app.put("/applicants/:applicantId", Applicants.update);
 // app.delete("/applicants/:applicantId", Applicants.remove);
 // app.post("/applicants/:applicantId/answer", Applicants.answer);
+app.post("/jest-setup", Jest.setup);
 
 app.post("/request-login-link", Auth.RequestLoginLink);
 app.get("/login", Auth.Login);
+app.post("/logout", withSession, Auth.Logout);
 
-app.get("/", withSession);
+app.get("/users/self", withSession, Users.Self);
+
 // Catch timeouts
 function haltOnTimedout(req, res, next) {
   if (!req.timedout) next();

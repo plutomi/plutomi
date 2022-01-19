@@ -6,7 +6,6 @@ export default async function withSession(
   res: Response,
   next: NextFunction
 ) {
-  console.log(req.signedCookies);
   const userId = req.signedCookies[COOKIE_NAME];
   if (!userId) {
     console.log("Missing / invalid cookie");
@@ -40,12 +39,7 @@ export default async function withSession(
   }
 
   console.log("Session", user);
-  res.locals.session = {
-    user,
-  };
+  res.locals.session = user;
 
-  return res
-    .status(200)
-    .json({ message: "TODO, in middleware. This should be next", user });
   next();
 }
