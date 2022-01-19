@@ -26,9 +26,11 @@ const middleware = (): middy.MiddlewareObj<
       );
     }
 
+
     if (request.event?.pathParameters?.orgId) {
+
       // @ts-ignore
-      request.event.body.pathParameters = tagGenerator.generate(
+      request.event.pathParameters.orgId = tagGenerator.generate(
         request.event.pathParameters.orgId
       );
     }

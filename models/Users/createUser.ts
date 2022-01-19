@@ -29,7 +29,9 @@ export default async function CreateUser(
     orgJoinDate: DEFAULTS.NO_ORG,
     GSI1PK: `${ENTITY_TYPES.ORG}#${DEFAULTS.NO_ORG}#${ENTITY_TYPES.USER}S`,
     GSI1SK:
-      firstName && lastName ? `${firstName} ${lastName}` : DEFAULTS.FULL_NAME,
+      firstName && lastName
+        ? `${firstName} ${lastName}`
+        : `${DEFAULTS.FIRST_NAME} ${DEFAULTS.LAST_NAME}`,
     GSI2PK: email.toLowerCase().trim(),
     GSI2SK: ENTITY_TYPES.USER,
     unsubscribeKey: nanoid(10),

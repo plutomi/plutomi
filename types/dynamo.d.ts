@@ -343,6 +343,7 @@ interface DynamoNewUser {
   orgId: DEFAULTS.NO_ORG;
   orgJoinDate: DEFAULTS.NO_ORG;
   GSI1PK: `${ENTITY_TYPES.ORG}#${DEFAULTS.NO_ORG}#${ENTITY_TYPES.USER}S`;
+  GSI1SK: string; // first & last name
   GSI2PK: string;
   GSI2SK: ENTITY_TYPES.USER;
   unsubscribeKey: string;

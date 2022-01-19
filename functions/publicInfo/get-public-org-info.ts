@@ -1,19 +1,14 @@
 import Joi from "joi";
-import {
-  JOI_SETTINGS,
-  JoiOrgId,
-  withDefaultMiddleware,
-  DEFAULTS,
-} from "../../Config";
+import { JOI_SETTINGS, JoiOrgId, withDefaultMiddleware } from "../../Config";
 import middy from "@middy/core";
 import * as Orgs from "../../models/Orgs";
-
 import { CustomLambdaEvent, CustomLambdaResponse } from "../../types/main";
 import * as Response from "../../utils/customResponse";
+import { pick } from "lodash";
 interface APIGetOrgInfoPathParameters {
-  orgId?: string;
+  orgId: string;
 }
-interface APIGetOrgInfoOrgEvent
+interface APIGetPublicOrgInfoEvent
   extends Omit<CustomLambdaEvent, "pathParameters"> {
   pathParameters: APIGetOrgInfoPathParameters;
 }
@@ -25,30 +20,21 @@ const schema = Joi.object({
 }).options(JOI_SETTINGS);
 
 const main = async (
-  event: APIGetOrgInfoOrgEvent
+  event: APIGetPublicOrgInfoEvent
 ): Promise<CustomLambdaResponse> => {
   try {
     await schema.validateAsync(event);
   } catch (error) {
+    console.log(error);
     return Response.JOI(error);
   }
 
-  const { session } = event.requestContext.authorizer.lambda;
   const { orgId } = event.pathParameters;
 
-  if (orgId !== session.orgId || session.orgId === DEFAULTS.NO_ORG) {
-    return {
-      statusCode: 403,
-      body: {
-        message: "You cannot view this org",
-      },
-    };
-  }
+  const [org, orgError] = await Orgs.getOrgById({ orgId });
 
-  const [org, error] = await Orgs.getOrgById({ orgId });
-
-  if (error) {
-    return Response.SDK(error, "Unable to retrieve org info");
+  if (orgError) {
+    return Response.SDK(orgError, "Unable to retrieve org info");
   }
 
   if (!org) {
@@ -58,9 +44,10 @@ const main = async (
     };
   }
 
+  const modifiedOrg = pick(org, ["orgId", "displayName"]);
   return {
     statusCode: 200,
-    body: org,
+    body: modifiedOrg,
   };
 };
 // TODO types with API Gateway event and middleware

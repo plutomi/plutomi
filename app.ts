@@ -8,34 +8,27 @@ if (resultDotEnv.error) {
 }
 
 import express from "express";
-import * as PublicInfo from "./controllers/PublicInfo";
-import * as Questions from "./controllers/Questions";
-import * as Stages from "./controllers/Stages";
-import * as Applicants from "./controllers/Applicants";
+
 const app = express();
 
-// Public info
-app.get("/public/:orgId", PublicInfo.getOrgInfo);
-app.get("/public/:orgId/openings", PublicInfo.getOrgOpenings);
-app.get("/public/:orgId/openings/:openingId", PublicInfo.getOpeningInfo); // TODO get stages in opening
-app.get("/public/:orgId/stages/:stageId", PublicInfo.getStageInfo);
-app.get(
-  "/public/:orgId/stages/:stageId/questions",
-  PublicInfo.getStageQuestions
-);
-
-// TODO needs reordering!!
-app.put("/stages/:stageId", Stages.update);
+// // Public info
+// TODO based on how questionnaire is setup
+// app.get("/public/:orgId/stages/:stageId", PublicInfo.getStageInfo);
+// app.get(
+//   "/public/:orgId/stages/:stageId/questions",
+//   PublicInfo.getStageQuestions
+// );
 
 // Questions
-app.get("/stages/:stageId/questions", Stages.getQuestionsInStage);
-app.post("/questions", Questions.create);
-app.delete("/questions/:questionId", Questions.deleteQuestion);
-app.put("/questions/:questionId", Questions.update);
+// TODO rework to use question sets #401 https://github.com/plutomi/plutomi/issues/401
+// app.get("/stages/:stageId/questions", Stages.getQuestionsInStage);
+// app.post("/questions", Questions.create);
+// app.delete("/questions/:questionId", Questions.deleteQuestion);
+// app.put("/questions/:questionId", Questions.update);
 
-// Applicants
-app.post("/applicants", Applicants.create);
-app.get("/applicants/:applicantId", Applicants.get);
-app.put("/applicants/:applicantId", Applicants.update);
-app.delete("/applicants/:applicantId", Applicants.remove);
-app.post("/applicants/:applicantId/answer", Applicants.answer);
+// TODO rework to add applicant login
+// https://github.com/plutomi/plutomi/issues/467
+// app.get("/applicants/:applicantId", Applicants.get);
+// app.put("/applicants/:applicantId", Applicants.update);
+// app.delete("/applicants/:applicantId", Applicants.remove);
+// app.post("/applicants/:applicantId/answer", Applicants.answer);
