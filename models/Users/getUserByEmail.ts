@@ -19,7 +19,6 @@ export default async function GetByEmail(
     },
   };
 
-  console.log("Dynamo params", params);
   try {
     const response = await Dynamo.send(new QueryCommand(params));
     return [response.Items[0] as DynamoNewUser, null];

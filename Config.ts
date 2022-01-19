@@ -10,9 +10,6 @@ export const DOMAIN_NAME = `plutomi.com`;
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-export const COOKIE_DOMAIN =
-  process.env.production === "production" ? DOMAIN_NAME : `localhost:3000`;
-
 export const WEBSITE_URL =
   process.env.production === "production"
     ? `https://${DOMAIN_NAME}`

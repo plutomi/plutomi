@@ -45,7 +45,7 @@ builder
       `${process.env.NODE_ENV}-DynamoDBStack`
     );
 
-    const { api } = new APIStack(app, `${process.env.NODE_ENV}-APIStack`, {
+    new APIStack(app, `${process.env.NODE_ENV}-APIStack`, {
       table,
     });
 

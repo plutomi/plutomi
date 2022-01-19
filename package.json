@@ -7,7 +7,7 @@
     "lint": "next lint",
     "start": "cross-env NODE_ENV=development nodemon app.ts",
     "test": "jest --silent=false --verbose=true",
-    "dev": "cross-env NODE_ENV=development cdk deploy development-DynamoDBStack development-StreamProcessorStack development-CommsMachineStack development-EventBridgeStack && nodemon app.ts && next dev",
+    "dev": "cross-env NODE_ENV=development cdk deploy development-DynamoDBStack development-StreamProcessorStack development-CommsMachineStack development-EventBridgeStack && concurrently \"npm run start\" \"next dev\"",
     "deploy-prod": "cross-env NODE_ENV=production cdk deploy production-DynamoDBStack production-StreamProcessorStack production-APIStack production-CommsMachineStack production-EventBridgeStack FrontendStack"
   },
   "dependencies": {
@@ -116,7 +116,7 @@
     "@types/source-map-support": "^0.5.4",
     "autoprefixer": "^10.4.0",
     "aws-sdk": "^2.1046.0",
-    "concurrently": "^6.4.0",
+    "concurrently": "^6.5.1",
     "cross-env": "^7.0.3",
     "depcheck": "^1.4.2",
     "dotenv": "^10.0.0",

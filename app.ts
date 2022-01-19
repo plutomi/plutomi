@@ -1,6 +1,6 @@
 import * as dotenv from "dotenv";
 const resultDotEnv = dotenv.config({
-  path: `.env.${process.env.NODE_ENV}`,
+  path: `./.env.${process.env.NODE_ENV}`,
 });
 
 if (resultDotEnv.error) {
@@ -14,7 +14,7 @@ import cors from "cors";
 const morgan = require("morgan");
 import withCleanOrgId from "./middleware/withCleanOrgId";
 import timeout from "connect-timeout";
-import { API_URL } from "./Config";
+import { API_URL, WEBSITE_URL } from "./Config";
 const cookieParser = require("cookie-parser");
 
 const app = express();
@@ -23,7 +23,7 @@ app.use(timeout("5s"));
 app.use(
   cors({
     credentials: true,
-    origin: API_URL,
+    origin: WEBSITE_URL,
   })
 );
 
