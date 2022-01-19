@@ -143,8 +143,10 @@ export interface CreateStageInput
   position?: number;
   stageOrder: string[];
 }
-type DeleteStageInput = Pick<DynamoNewStage, "orgId" | "stageId" | "openingId">;
-
+interface DeleteStageInput
+  extends Pick<DynamoNewStage, "orgId" | "stageId" | "openingId"> {
+  stageOrder: string[]; // To delete it from the opening
+}
 type GetStageByIdInput = Pick<
   DynamoNewStage,
   "orgId" | "stageId" | "openingId"

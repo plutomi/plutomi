@@ -2,7 +2,6 @@ import middy from "@middy/core";
 import Joi from "joi";
 import * as Stages from "../../models/Stages";
 import * as Openings from "../../models/Openings";
-
 import { JOI_SETTINGS, DEFAULTS, withDefaultMiddleware } from "../../Config";
 import { CustomLambdaEvent, CustomLambdaResponse } from "../../types/main";
 import * as Response from "../../utils/customResponse";
@@ -37,17 +36,29 @@ const main = async (
     return {
       statusCode: 400,
       body: {
-        message: `You must create an organization before viewing a stage`,
+        message: `You must be in an organization to be able to delete stages`,
       },
     };
   }
 
   const { openingId, stageId } = event.pathParameters;
+  const [opening, openingError] = await Openings.getOpeningById({
+    openingId,
+    orgId: session.orgId,
+  });
+
+  if (openingError) {
+    return Response.SDK(
+      openingError,
+      "An error ocurred retrieving your opening info"
+    );
+  }
 
   const [deleted, error] = await Stages.deleteStage({
     openingId,
     orgId: session.orgId,
     stageId,
+    stageOrder: opening.stageOrder,
   });
 
   if (error) {

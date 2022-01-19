@@ -29,9 +29,6 @@ export default async function Create(
   };
 
   /**
-   *
-   */
-  /**
    * Position can be undefined, and if so, add it to the end of the opening
    * Joi checks for out of range values
    * So all we have to do is make sure this value is a number

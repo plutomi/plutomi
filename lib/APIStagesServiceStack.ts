@@ -57,11 +57,10 @@ export default class APIStagesServiceStack extends cdk.Stack {
         dynamoActions: [
           "dynamodb:DeleteItem",
           "dynamodb:UpdateItem",
-          "dynamodb:Query",
+          "dynamodb:GetItem",
         ],
         dynamoResources: {
           main: true,
-          GSI1: true,
         },
       },
       {
