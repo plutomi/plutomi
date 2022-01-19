@@ -62,8 +62,7 @@ const main = async (
   const { openingId, stageId } = event.pathParameters;
   const { newValues } = event.body;
 
-  // TODO if stage order is defined
-  const [updatedOpening, error] = await Stages.updateStage({
+  const [updatedStage, error] = await Stages.updateStage({
     orgId: session.orgId,
     openingId,
     stageId,

@@ -73,28 +73,24 @@ const main = async (
       "An error ocurred getting your opening info"
     );
   }
-  const [allStages, allStagesError] = await Openings.getStagesInOpening({
-    openingId,
-    orgId,
-    stageOrder: opening.stageOrder,
-  });
 
-  if (allStagesError) {
-    return Response.SDK(
-      allStagesError,
-      "An error ocurred retrieving stages for this opening"
-    );
+  // Conditional check will also catch this
+  if (!opening.isPublic || opening.totalStages === 0) {
+    return {
+      statusCode: 403,
+      body: {
+        message: "You cannot apply to this opening just yet!",
+      },
+    };
   }
 
-  const stageId = !allStages[0] ? "" : allStages[0].stageId;
-  // Conditional check will catch the error if there are no stages, and if the opening is private
   const [created, failed] = await Applicants.createApplicant({
     firstName,
     lastName,
     openingId,
     orgId,
     email,
-    stageId,
+    stageId: opening.stageOrder[0],
   });
 
   if (failed) {

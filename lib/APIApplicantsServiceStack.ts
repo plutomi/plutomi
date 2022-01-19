@@ -19,12 +19,10 @@ export default class APIApplicantsServiceStack extends cdk.Stack {
         dynamoActions: [
           "dynamodb:PutItem",
           "dynamodb:UpdateItem",
-          "dynamodb:Query",
           "dynamodb:GetItem",
         ],
         dynamoResources: {
           main: true,
-          GSI1: true,
         },
       },
     ];
