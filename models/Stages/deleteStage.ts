@@ -12,7 +12,7 @@ import { SdkError } from "@aws-sdk/types";
 export default async function Remove(
   props: DeleteStageInput
 ): Promise<[null, null] | [null, SdkError]> {
-  const { orgId, stageId, openingId, nextStage, previousStage } = props;
+  const { orgId, stageId, openingId } = props;
 
   const transactParams: TransactWriteCommandInput = {
     TransactItems: [
@@ -24,22 +24,6 @@ export default async function Remove(
             SK: ENTITY_TYPES.STAGE,
           },
           TableName: DYNAMO_TABLE_NAME,
-          ConditionExpression: "attribute_exists(PK)",
-        },
-      },
-
-      {
-        // Decrement stage count on org
-        Update: {
-          Key: {
-            PK: `${ENTITY_TYPES.ORG}#${orgId}`,
-            SK: ENTITY_TYPES.ORG,
-          },
-          TableName: DYNAMO_TABLE_NAME,
-          UpdateExpression: "SET totalStages = totalStages - :value",
-          ExpressionAttributeValues: {
-            ":value": 1,
-          },
           ConditionExpression: "attribute_exists(PK)",
         },
       },

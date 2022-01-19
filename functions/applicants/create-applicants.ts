@@ -62,9 +62,21 @@ const main = async (
   }
   const { openingId, orgId, firstName, lastName, email } = event.body;
 
+  const [opening, openingError] = await Openings.getOpeningById({
+    openingId,
+    orgId,
+  });
+
+  if (openingError) {
+    return Response.SDK(
+      openingError,
+      "An error ocurred getting your opening info"
+    );
+  }
   const [allStages, allStagesError] = await Openings.getStagesInOpening({
     openingId,
     orgId,
+    stageOrder: opening.stageOrder,
   });
 
   if (allStagesError) {

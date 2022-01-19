@@ -39,16 +39,23 @@ const main = async (
   }
 
   const { openingId } = event.pathParameters;
-  /**
-   * TODO Please note, (update this query to be recursive):
-   * If we don't get all stages in this query this might cause some issues
-   * if the stages we need to update are not in the query results
-   */
-  const [allCurrentStages, allStagesError] = await Openings.getStagesInOpening({
+
+  const [opening, openingError] = await Openings.getOpeningById({
     openingId,
     orgId: session.orgId,
   });
 
+  if (openingError) {
+    return Response.SDK(
+      openingError,
+      "An error ocurred getting your opening info"
+    );
+  }
+  const [allCurrentStages, allStagesError] = await Openings.getStagesInOpening({
+    openingId,
+    orgId: session.orgId,
+    stageOrder: opening.stageOrder,
+  });
 
   if (allStagesError) {
     return Response.SDK(

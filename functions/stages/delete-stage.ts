@@ -44,38 +44,10 @@ const main = async (
 
   const { openingId, stageId } = event.pathParameters;
 
-  // TODO make this query recursive to be sure to get all stages
-  // We need this query to get the stage's current position and update
-  // the linked list accordingly
-  const [allStages, allStagesError] = await Openings.getStagesInOpening({
-    openingId,
-    orgId: session.orgId,
-  });
-
-  if (allStagesError) {
-    return Response.SDK(
-      allStagesError,
-      "Unable to delete stage, error retrieving opening info"
-    );
-  }
-
-  const stageToBeDeleted = allStages.find((stage) => stage.stageId === stageId);
-  if (!stageToBeDeleted) {
-    return {
-      statusCode: 404,
-      body: { message: "That stage does not exist" },
-    };
-  }
-
-  const nextStage = allStages[allStages.indexOf(stageToBeDeleted) + 1];
-  const previousStage = allStages[allStages.indexOf(stageToBeDeleted) - 1];
   const [deleted, error] = await Stages.deleteStage({
     openingId,
     orgId: session.orgId,
     stageId,
-    // The delete stage model will handle updating the corresponding stages
-    nextStage: nextStage ? nextStage.stageId : null,
-    previousStage: previousStage ? previousStage.stageId : null,
   });
 
   if (error) {

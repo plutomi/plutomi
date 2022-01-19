@@ -23,7 +23,6 @@ export default async function CreateAndJoinOrg(
     createdAt: now,
     totalApplicants: 0,
     totalOpenings: 0,
-    totalStages: 0,
     totalUsers: 1,
     displayName,
   };

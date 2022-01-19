@@ -25,6 +25,7 @@ export default async function Create(
     GSI1PK: `${ENTITY_TYPES.ORG}#${orgId}#${ENTITY_TYPES.OPENING}S`,
     GSI1SK, // Name of the opening
     totalStages: 0,
+    stageOrder: [],
     totalApplicants: 0,
     isPublic: false,
   };

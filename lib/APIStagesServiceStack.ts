@@ -18,12 +18,10 @@ export default class APIStagesServiceStack extends cdk.Stack {
         dynamoActions: [
           "dynamodb:PutItem",
           "dynamodb:UpdateItem",
-          "dynamodb:Query",
           "dynamodb:GetItem",
         ],
         dynamoResources: {
           main: true,
-          GSI1: true,
         },
       },
       {
@@ -32,8 +30,9 @@ export default class APIStagesServiceStack extends cdk.Stack {
         filePath: `../functions/stages/get-stages-in-opening.ts`,
         APIPath: "/openings/{openingId}/stages",
         method: HttpMethod.GET,
-        dynamoActions: ["dynamodb:Query"],
+        dynamoActions: ["dynamodb:Query", "dynamodb:GetItem"],
         dynamoResources: {
+          main: true,
           GSI1: true,
         },
       },

@@ -43,14 +43,6 @@ interface DynamoNewStage {
    * The stage name
    */
   GSI1SK: string;
-
-  /**
-   * Linked list to get next & previous stages
-   * If `nextStage` not provided, stage is added to the end of the opening.
-   * `previousStage` becomes the last stage
-   */
-  nextStage?: string | null;
-  previousStage?: string | null;
 }
 
 interface DynamoNewStageQuestion {
@@ -250,6 +242,10 @@ interface DynamoNewOpening {
    */
   createdAt: string;
   /**
+   *
+   */
+  stageOrder: string[];
+  /**
    * The ID of the opening
    */
   openingId: string;
@@ -378,10 +374,7 @@ interface DynamoNewOrg {
   entityType: ENTITY_TYPES.ORG;
   createdAt: string; // ISO timestamp
   totalApplicants: number;
-  totalOpenings: number; // TODO set defaults..??? I mean its all 0.. And if we reference this interface
-  // Somewhere else, the numbers might change so its not wise to have it set as default.. althought we can always
-  // <Omit> in and make the counts numbers.. hmmmm // TODO revisit
-  totalStages: number;
+  totalOpenings: number;
   totalUsers: number;
   displayName: string;
 }

@@ -14,12 +14,16 @@ import {
   UpdateOpeningInput,
 } from "../../types/main";
 import * as Response from "../../utils/customResponse";
+import { DynamoNewStage } from "../../types/dynamo";
 interface APIUpdateStagePathParameters {
   openingId: string;
   stageId: string;
 }
+
 interface APIUpdateStageBody {
-  newValues: { [key: string]: any };
+  newValues: {
+    [key: string]: any;
+  };
 }
 interface APIUpdateStageEvent
   extends Omit<CustomLambdaEvent, "body" | "pathParameters"> {
@@ -58,6 +62,7 @@ const main = async (
   const { openingId, stageId } = event.pathParameters;
   const { newValues } = event.body;
 
+  // TODO if stage order is defined
   const [updatedOpening, error] = await Stages.updateStage({
     orgId: session.orgId,
     openingId,

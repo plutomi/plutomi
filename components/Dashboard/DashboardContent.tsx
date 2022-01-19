@@ -119,8 +119,7 @@ export default function DashboardContent() {
 
           <h1>
             Also, there are <strong>{org?.totalApplicants}</strong> applicants
-            across <strong>{org?.totalOpenings}</strong> openings and{" "}
-            <strong>{org?.totalStages}</strong> stages.{" "}
+            across <strong>{org?.totalOpenings}</strong> openings.
           </h1>
 
           <div className="flex items-center mt-4 -ml-3 text-md">

@@ -6,10 +6,11 @@ import { DynamoNewStage } from "../../types/dynamo";
 import { GetAllStagesInOpeningInput } from "../../types/main";
 const { DYNAMO_TABLE_NAME } = process.env;
 import { SdkError } from "@aws-sdk/types";
+import * as Openings from "../Openings";
 export default async function GetStages(
   props: GetAllStagesInOpeningInput
 ): Promise<[DynamoNewStage[], null] | [null, SdkError]> {
-  const { orgId, openingId } = props;
+  const { orgId, openingId, stageOrder } = props;
 
   const params: QueryCommandInput = {
     TableName: DYNAMO_TABLE_NAME,
@@ -26,32 +27,11 @@ export default async function GetStages(
     const response = await Dynamo.send(new QueryCommand(params));
     const allStages = response.Items as DynamoNewStage[];
 
-    let orderedStages = [];
-
-    // Stages are essentially a doubly linked list. This orders them.
-    // TODO abstract this to its own function as we will need it for other entities that can be re-orderd
-    if (allStages.length > 1) {
-      const first = allStages.find((stage) => stage.previousStage === null);
-      const last = allStages.find((stage) => stage.nextStage === null);
-
-      orderedStages.push(first);
-      let current = allStages.find(
-        (stage) => stage.stageId === first.nextStage
-      );
-
-      while (current.nextStage) {
-        const nextStage = allStages.find(
-          (stage) => stage.stageId === current.nextStage
-        );
-
-        orderedStages.push(current);
-        current = nextStage;
-      }
-
-      orderedStages.push(last);
-    }
-
-    return [allStages.length === 1 ? allStages : orderedStages, null];
+    // Orders results in the way the stageOrder is
+    const result = stageOrder.map((i: string) =>
+      allStages.find((j) => j.stageId === i)
+    );
+    return [result as DynamoNewStage[], null];
   } catch (error) {
     return [null, error];
   }

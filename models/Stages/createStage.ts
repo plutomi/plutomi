@@ -4,18 +4,16 @@ import {
 } from "@aws-sdk/lib-dynamodb";
 import { nanoid } from "nanoid";
 import { Dynamo } from "../../awsClients/ddbDocClient";
-import { ID_LENGTHS, ENTITY_TYPES } from "../../Config";
+import { ID_LENGTHS, ENTITY_TYPES, DEFAULTS } from "../../Config";
 import { DynamoNewStage } from "../../types/dynamo";
 import { CreateStageInput } from "../../types/main";
-import getOpening from "../Openings/getOpening";
 import * as Time from "../../utils/time";
 const { DYNAMO_TABLE_NAME } = process.env;
 import { SdkError } from "@aws-sdk/types";
-import { isDoStatement } from "typescript";
 export default async function Create(
   props: CreateStageInput
 ): Promise<[null, null] | [null, SdkError]> {
-  const { orgId, GSI1SK, openingId, nextStage, previousStage } = props;
+  const { orgId, GSI1SK, openingId, position } = props;
   const stageId = nanoid(ID_LENGTHS.STAGE);
   const newStage: DynamoNewStage = {
     PK: `${ENTITY_TYPES.ORG}#${orgId}#${ENTITY_TYPES.OPENING}#${openingId}#${ENTITY_TYPES.STAGE}#${stageId}`,
@@ -28,16 +26,26 @@ export default async function Create(
     openingId,
     GSI1PK: `${ENTITY_TYPES.ORG}#${orgId}#${ENTITY_TYPES.OPENING}#${openingId}#STAGES`, // Get all stages in an opening
     GSI1SK: GSI1SK,
-    nextStage,
-    previousStage,
   };
 
-  // TODO to locking to make sure stage being updated has the correct current nextStage and previousStage
+  /**
+   *
+   */
+  /**
+   * Position can be undefined, and if so, add it to the end of the opening
+   * Joi checks for out of range values
+   * So all we have to do is make sure this value is a number
+   * as checking for if (position) {} would return falsy on '0'
+   */
+
+  const newPosition = !isNaN(position) ? position : props.stageOrder.length;
+  props.stageOrder.splice(newPosition, 0, stageId);
+
   try {
     let transactParams: TransactWriteCommandInput = {
       TransactItems: [
         {
-          // Add the new stage item
+          // Add the new stage
           Put: {
             Item: newStage,
             TableName: DYNAMO_TABLE_NAME,
@@ -46,86 +54,27 @@ export default async function Create(
         },
 
         {
-          // Increment stage count on opening
+          // Increment stage count on the opening and update the newStageOrder
           Update: {
             Key: {
               PK: `${ENTITY_TYPES.ORG}#${orgId}#${ENTITY_TYPES.OPENING}#${openingId}`,
               SK: ENTITY_TYPES.OPENING,
             },
             TableName: DYNAMO_TABLE_NAME,
-
+            ConditionExpression:
+              "totalStages < :maxChildItemLimit AND attribute_exists(PK)",
             UpdateExpression:
-              "SET totalStages = if_not_exists(totalStages, :zero) + :value",
+              "SET totalStages = if_not_exists(totalStages, :zero) + :value, stageOrder = :stageOrder",
             ExpressionAttributeValues: {
               ":zero": 0,
               ":value": 1,
-            },
-          },
-        },
-        {
-          // Increment stage count on org
-          Update: {
-            Key: {
-              PK: `${ENTITY_TYPES.ORG}#${orgId}`,
-              SK: ENTITY_TYPES.ORG,
-            },
-            TableName: DYNAMO_TABLE_NAME,
-            UpdateExpression:
-              "SET totalStages = if_not_exists(totalStages, :zero) + :value",
-            ExpressionAttributeValues: {
-              ":zero": 0,
-              ":value": 1,
+              ":stageOrder": props.stageOrder,
+              ":maxChildItemLimit": DEFAULTS.MAX_CHILD_ITEM_LIMIT,
             },
           },
         },
       ],
     };
-
-    /**
-     * If a previousStage is provided, the stage being created goes AFTER it.
-     * Update the previous stage's nextStage property with the stage being created
-     */
-    if (previousStage) {
-      const statement = {
-        Update: {
-          Key: {
-            PK: `${ENTITY_TYPES.ORG}#${orgId}#${ENTITY_TYPES.OPENING}#${openingId}#${ENTITY_TYPES.STAGE}#${previousStage}`,
-            SK: ENTITY_TYPES.STAGE,
-          },
-          TableName: DYNAMO_TABLE_NAME,
-
-          UpdateExpression: "SET nextStage = :value",
-          ExpressionAttributeValues: {
-            ":value": stageId,
-          },
-        },
-      };
-
-      transactParams.TransactItems.push(statement);
-    }
-
-    /**
-     * If a nextStage is provided, the stage being created goes BEFORE it.
-     * Update the next stage's previousStage property with the stage being created
-     */
-    if (nextStage) {
-      const statement = {
-        Update: {
-          Key: {
-            PK: `${ENTITY_TYPES.ORG}#${orgId}#${ENTITY_TYPES.OPENING}#${openingId}#${ENTITY_TYPES.STAGE}#${nextStage}`,
-            SK: ENTITY_TYPES.STAGE,
-          },
-          TableName: DYNAMO_TABLE_NAME,
-
-          UpdateExpression: "SET previousStage = :value",
-          ExpressionAttributeValues: {
-            ":value": stageId,
-          },
-        },
-      };
-
-      transactParams.TransactItems.push(statement);
-    }
 
     await Dynamo.send(new TransactWriteCommand(transactParams));
     return [null, null];

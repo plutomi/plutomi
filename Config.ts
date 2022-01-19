@@ -111,7 +111,13 @@ export enum DEFAULTS {
   LAST_NAME = "NO_LAST_NAME",
   NO_ORG = `NO_ORG_ASSIGNED`,
   /**
-   * In days, how long should login events be kept
+   * How many child items (that can be re-ordered!) is a parent allowed to have.
+   * Stages in an opening, questions in question sets.
+   * Depending on the ID size you can have more or less but this is a good starting default value.
+   */
+  MAX_CHILD_ITEM_LIMIT = 200,
+  /**
+   * In days, how long should login  events be kept
    */
   LOGIN_EVENT_RETENTION_PERIOD = 30, // Days
   /**

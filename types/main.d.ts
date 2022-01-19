@@ -138,18 +138,12 @@ interface UserSessionData {
 export interface CreateStageInput
   extends Pick<DynamoNewStage, "orgId" | "GSI1SK" | "openingId"> {
   /**
-   * If this stage goes after another, `null` if it should go in the beginning
+   * Optional position on where to place the new opening, optional. Added to the end if not provided
    */
-  previousStage?: string;
-  /**
-   * If there are stages after this one, `null` if it should go at the end
-   */
-  nextStage?: string;
+  position?: number;
+  stageOrder: string[];
 }
-type DeleteStageInput = Pick<
-  DynamoNewStage,
-  "orgId" | "stageId" | "openingId" | "nextStage" | "previousStage"
->;
+type DeleteStageInput = Pick<DynamoNewStage, "orgId" | "stageId" | "openingId">;
 
 type GetStageByIdInput = Pick<
   DynamoNewStage,
@@ -252,7 +246,10 @@ type CreateOpeningInput = Pick<DynamoNewOpening, "orgId" | "GSI1SK">;
 type DeleteOpeningInput = Pick<DynamoNewOpening, "orgId" | "openingId">;
 
 type GetAllOpeningsInOrgInput = Pick<DynamoNewOpening, "orgId">;
-type GetAllStagesInOpeningInput = Pick<DynamoNewOpening, "orgId" | "openingId">;
+type GetAllStagesInOpeningInput = Pick<
+  DynamoNewOpening,
+  "orgId" | "openingId" | "stageOrder"
+>;
 type GetOpeningByIdInput = Pick<DynamoNewOpening, "orgId" | "openingId">;
 export interface UpdateOpeningInput
   extends Pick<DynamoNewOpening, "orgId" | "openingId"> {
