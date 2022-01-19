@@ -2,11 +2,13 @@
 
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat-square)](http://makeapullrequest.com)
 [![License](https://img.shields.io/github/license/plutomi/plutomi?style=flat-square)](#)
-[![All Contributors](https://img.shields.io/badge/all_contributors-2-blue.svg?style=flat-square)](#contributors-)
+[![All Contributors](https://img.shields.io/badge/all_contributors-3-blue.svg?style=flat-square)](#contributors-)
 
 ### [Website / Live Demo](https://plutomi.com)
 
 Plutomi is an [applicant tracking system](https://en.wikipedia.org/wiki/Applicant_tracking_system) that streamlines your entire application process with automated workflows at _any_ scale.
+
+![infra](images/infra.png)
 
 ## Motivation
 
@@ -42,12 +44,11 @@ Stage order:
 
 ## Useful commands
 
-| Command                                                     | Function                                                                                                                               |
-| ----------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------- |
-| npm run deploy-prod                                         | Will deploy everything to your production environment                                                                                  |
-| npm run dev                                                 | Will deploy a complete copy of the backend to AWS. The frontend runs in localhost because Cloudfront takes forever to do invalidations |
-| npx cross-env NODE_ENV=development cdk deploy -e STACK_NAME | Will deploy a specific stack in the desired environment                                                                                |
-| cdk synth                                                   | Emits the synthesized CloudFormation template for the stack(s)                                                                         |
+| Command                                                                                                 | Function                                                                                                                                   |
+| ------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------ |
+| npm run deploy-prod                                                                                     | Will deploy everything to your production environment                                                                                      |
+| npm run dev                                                                                             | Will deploy **a complete copy** of the backend to AWS. The frontend runs in localhost because Cloudfront takes forever to do invalidations |
+| npx cross-env NODE_ENV=(development or production) cdk deploy -e (development or production)-STACK_NAME | Will deploy a specific stack in the desired environment                                                                                    |
 
 For more information on AWS CDK, please visit the [docs page](https://docs.aws.amazon.com/cdk/latest/guide/cli.html).
 
@@ -55,20 +56,11 @@ For more information on AWS CDK, please visit the [docs page](https://docs.aws.a
 
 The project is 100% TypeScript. Would appreciate any assistance on types as we're definitely not the best :sweat_smile:
 
-_ALL_ infrastructure is managed by AWS CDK. You can view the infrastructure diagram [here](https://drive.google.com/file/d/1wE7QLZF1AAJ97tfCLW1yWahBWe1c-GZA/view?usp=sharing).
+_ALL_ infrastructure is managed by AWS CDK.
 
-![frontend](infra/Frontend.png)
+The frontend runs on the [Serverless-Nextjs](https://github.com/serverless-Nextjs/serverless-next.js) component. The API is just an HTTP API Gateway backed by lambda functions that each have one task.
 
-The frontend runs on the [CDK construct](https://serverless-nextjs.com/docs/cdkconstruct/) of the [Serverless-Nextjs](https://github.com/serverless-Nextjs/serverless-next.js) component. We wanted to stick with NextJS and if possible, have everything managed by CDK. The SLS component does that for us and it brings with it the Next API routes using Lambda but there are a couple of downsides (some of them are listed [here](https://github.com/plutomi/plutomi/issues/172)) and we won't be using them.
-
-![backend](infra/Backend2.png)
-
-Typical 'monolith' express app on an autoscaling Fargate cluster.
-
-We considered using API Gateway + Lambda for the main API but
-_at this time_, we feel that Fargate has more advantages, mainly around performance, local development, and not having fun 'features' like [this one](https://github.com/serverless/serverless/issues/3785).
-
-We have a direct integration with EventBridge and Step Functions to handle all comms. Certain events trigger the state machine, such as whenever there is a new `LOGIN_EVENT` or `LOGIN_LINK`. We let the state machine decide the path to take instead of having multiple EB rules and multiple state machines. We can therefore eliminate the myriad of queues and lambda functions polling said queues with the direct SDK calls Step Functions provides.
+There is a state machine that triggers on certain events such as a new `LOGIN_EVENT` or a `LOGIN_LINK` request. We let the state machine decide the path to take instead of having multiple EB rules and multiple state machines. We can therefore eliminate the myriad of queues and lambda functions polling said queues with the direct SDK calls Step Functions provides.
 
 ## DynamoDB Schema
 
@@ -103,13 +95,13 @@ To make a contribution, submit a pull request into the `main` branch. You will b
 This project tries to follow Semantic Pull Requests some what.
 Your PR _title_ should have the following format:
 
-| Type                  | Description                                                                                    |
-| --------------------- | ---------------------------------------------------------------------------------------------- |
-| feat: OR enhancement: | Added a new feature or enhancement                                                             |
-| fix:                  | Squashed some bugs!                                                                            |
-| docs:                 | Updated documentation, readme, examples                                                        |
-| test:                 | Added / modified tests                                                                         |
-| chore:                | Maintenance, cleanup, comment removal, refactoring, etc. If it doesn't fit above, it goes here |
+| Type                  | Description                                                          |
+| --------------------- | -------------------------------------------------------------------- |
+| feat: OR enhancement: | Added a new feature or enhancement                                   |
+| fix:                  | Squashed some bugs!                                                  |
+| docs:                 | Updated documentation, readme, examples                              |
+| test:                 | Added / modified tests                                               |
+| chore:                | Maintenance, refactoring, etc. If it doesn't fit above, it goes here |
 
 Example: _fix: Removed the double modals popping up on login_
 
