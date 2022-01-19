@@ -1,21 +1,14 @@
 import { Request, Response } from "express";
 import Joi from "joi";
-
 import {
-  DEFAULTS,
   LOGIN_LINK_SETTINGS,
-  TIME_UNITS,
   JOI_SETTINGS,
   WEBSITE_URL,
   COOKIE_NAME,
   COOKIE_SETTINGS,
-  SESSION_SETTINGS,
 } from "../../Config";
-import * as Time from "../../utils/time";
 import * as Users from "../../models/Users";
-import { nanoid } from "nanoid";
-import { sealData, unsealData } from "iron-session";
-import { API_URL, DOMAIN_NAME } from "../../Config";
+import { unsealData } from "iron-session";
 import * as CreateError from "../../utils/errorGenerator";
 import errorFormatter from "../../utils/errorFormatter";
 interface APILoginQuery {
@@ -100,17 +93,7 @@ const login = async (req: Request, res: Response) => {
     return res.status(status).json(body);
   }
 
-  const session = {
-    userId,
-    expiresAt: Time.futureISO(12, TIME_UNITS.HOURS), // TODO set in config
-  };
-  const encryptedCookie = await sealData(session, SESSION_SETTINGS);
-
-  res.cookie(COOKIE_NAME, encryptedCookie, {
-    httpOnly: process.env.NODE_ENV === "production",
-    sameSite: "strict",
-    secure: true,
-  });
+  res.cookie(COOKIE_NAME, user.userId, COOKIE_SETTINGS);
   res.header("Location", callbackUrl);
   // If a user has invites, redirect them to the invites page
   //  on login regardless of the callback url

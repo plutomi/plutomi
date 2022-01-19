@@ -1,5 +1,11 @@
 import Joi from "joi";
-
+export const COOKIE_SETTINGS = {
+  httpOnly: true,
+  sameSite: true, // (same as strict)
+  secure: true,
+  maxAge: 43200, // 12 hours
+  signed: true,
+};
 /**
  * Some backend dependencies (SES, ACM, Route53, etc..) depend on
  * DOMAIN_NAME being the actual domain name, do not change!
@@ -31,8 +37,6 @@ export const COOKIE_NAME =
   process.env.NODE_ENV === "production"
     ? "plutomi-cookie"
     : "DEV-plutomi-cookie";
-
-export const COOKIE_SETTINGS = `Secure; HttpOnly; SameSite=Strict; Path=/; Domain=${DOMAIN_NAME}`; // See SESSION_SETTINGS for setting session length
 
 const UrlSafeString = require("url-safe-string"),
   tagGenerator = new UrlSafeString();
@@ -103,11 +107,6 @@ export enum DEFAULTS {
 export const LOGIN_LINK_SETTINGS = {
   password: process.env.LOGIN_LINKS_PASSWORD,
   ttl: 900, // In seconds, how long should login links be valid for
-};
-
-export const SESSION_SETTINGS = {
-  password: process.env.SESSION_PASSWORD,
-  ttl: 0, // We handle expiry
 };
 
 export const EMAILS = {

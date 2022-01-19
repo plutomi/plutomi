@@ -14,9 +14,9 @@ import cors from "cors";
 const morgan = require("morgan");
 import withCleanOrgId from "./middleware/withCleanOrgId";
 import timeout from "connect-timeout";
-import { API_URL, WEBSITE_URL } from "./Config";
+import { COOKIE_SETTINGS, WEBSITE_URL } from "./Config";
+import withSession from "./middleware/withSession";
 const cookieParser = require("cookie-parser");
-
 const app = express();
 app.use(timeout("5s"));
 
@@ -35,8 +35,8 @@ app.use(express.json());
 app.use(helmet());
 app.set("trust proxy", 1);
 app.use(haltOnTimedout);
-app.use(withCleanOrgId); // If the route has an :orgId, normalize it
-app.use(cookieParser({}));
+app.use(withCleanOrgId);
+app.use(cookieParser(["sessionpw1"], COOKIE_SETTINGS));
 // // Public info
 // TODO based on how questionnaire is setup
 // app.get("/public/:orgId/stages/:stageId", PublicInfo.getStageInfo);
@@ -61,6 +61,8 @@ app.use(cookieParser({}));
 
 app.post("/request-login-link", Auth.RequestLoginLink);
 app.get("/login", Auth.Login);
+
+app.get("/", withSession);
 // Catch timeouts
 function haltOnTimedout(req, res, next) {
   if (!req.timedout) next();
