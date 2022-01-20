@@ -55,7 +55,7 @@ For more information on AWS CDK, please visit the [docs page](https://docs.aws.a
 
 ## Language, Tooling, & Infrastructure
 
-All infrastructure is managed by CDK. We use [Jest](https://jestjs.io/) for testing. 100% TypeScript and would appreciate any assistance on types as we're definitely not the best :sweat_smile:
+All infrastructure is managed by CDK. We use [Jest](https://jestjs.io/) for testing and all items created in Dynamo during development have a `ttlExpiry` of 1 day so they're automatically deleted. Everything is witten TypeScript and would appreciate any assistance on types as we're definitely not the best :sweat_smile:
 
 The frontend runs on the [Serverless-Nextjs](https://github.com/serverless-Nextjs/serverless-next.js) component. While we don't rely on serverside rendering much, it is nice to have SSG capabilities and file based routing.
 

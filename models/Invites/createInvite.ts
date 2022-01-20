@@ -1,7 +1,7 @@
 import { PutCommandInput, PutCommand } from "@aws-sdk/lib-dynamodb";
 import { nanoid } from "nanoid";
 import { Dynamo } from "../../awsClients/ddbDocClient";
-import { ID_LENGTHS, ENTITY_TYPES } from "../../Config";
+import { ID_LENGTHS, ENTITY_TYPES, TIME_UNITS } from "../../Config";
 import { DynamoNewOrgInvite } from "../../types/dynamo";
 import { CreateOrgInviteInput } from "../../types/main";
 import * as Time from "../../utils/time";
@@ -40,6 +40,10 @@ export default async function Create(
       GSI1SK: now,
     };
 
+    // If in dev, set a TTL for auto delete
+    if (process.env.NODE_ENV === "development") {
+      newOrgInvite["ttlExpiry"] = Time.futureUNIX(1, TIME_UNITS.DAYS);
+    }
     const transactParams: TransactWriteCommandInput = {
       TransactItems: [
         {

@@ -4,7 +4,7 @@ import {
 } from "@aws-sdk/lib-dynamodb";
 import { nanoid } from "nanoid";
 import { Dynamo } from "../../awsClients/ddbDocClient";
-import { ID_LENGTHS, ENTITY_TYPES } from "../../Config";
+import { ID_LENGTHS, ENTITY_TYPES, TIME_UNITS } from "../../Config";
 import { DynamoNewApplicant } from "../../types/dynamo";
 import { CreateApplicantInput, CreateApplicantOutput } from "../../types/main";
 import * as Time from "../../utils/time";
@@ -38,6 +38,11 @@ export default async function Create(
     GSI1PK: `${ENTITY_TYPES.ORG}#${orgId}#${ENTITY_TYPES.OPENING}#${openingId}#${ENTITY_TYPES.STAGE}#${stageId}`,
     GSI1SK: `DATE_LANDED#${now}`,
   };
+
+  // If in dev, set a TTL for auto delete
+  if (process.env.NODE_ENV === "development") {
+    newApplicant["ttlExpiry"] = Time.futureUNIX(1, TIME_UNITS.DAYS);
+  }
 
   try {
     const transactParams: TransactWriteCommandInput = {

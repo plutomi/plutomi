@@ -4,7 +4,7 @@ import {
 } from "@aws-sdk/lib-dynamodb";
 import { nanoid } from "nanoid";
 import { Dynamo } from "../../awsClients/ddbDocClient";
-import { ID_LENGTHS, ENTITY_TYPES } from "../../Config";
+import { ID_LENGTHS, ENTITY_TYPES, TIME_UNITS } from "../../Config";
 import { DynamoNewStageQuestion } from "../../types/dynamo";
 import { CreateStageQuestionInput } from "../../types/main";
 import * as Time from "../../utils/time";
@@ -29,6 +29,11 @@ export default async function Create(
     orgId: orgId,
     stageId: stageId,
   };
+
+  // If in dev, set a TTL for auto delete
+  if (process.env.NODE_ENV === "development") {
+    newStageQuestion["ttlExpiry"] = Time.futureUNIX(1, TIME_UNITS.DAYS);
+  }
 
   try {
     questionOrder.push(questionId);
