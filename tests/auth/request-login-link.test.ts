@@ -1,12 +1,12 @@
 import axios from "axios";
-import { API_URL } from "../../Config";
+import { API_URL, EMAILS } from "../../Config";
 const URL = `${API_URL}/request-login-link`;
 
 describe("Request login link", () => {
   it("blocks slightly wrong addresses", async () => {
     try {
       await axios.post(URL, {
-        email: "beepboop@gmaill.com",
+        email: "wronggmailtypo@gmaill.com",
       });
     } catch (error) {
       expect(error.response.status).toBe(400);
@@ -32,7 +32,7 @@ describe("Request login link", () => {
   it("needs an actual email address", async () => {
     try {
       await axios.post(URL, {
-        email: "10minutemail.com",
+        email: "beans.com",
       });
     } catch (error) {
       expect(error.response.status).toBe(400);
@@ -44,7 +44,7 @@ describe("Request login link", () => {
   it("can pass in an undefined callback url", async () => {
     try {
       const { status, data } = await axios.post(URL + "?callbackUrl=", {
-        email: "contact@plutomi.com",
+        email: EMAILS.TESTING,
       });
 
       expect(status).toBe(201);
@@ -55,7 +55,7 @@ describe("Request login link", () => {
   it("blocks an invalid callbackUrl", async () => {
     try {
       await axios.post(URL + "?callbackUrl=http:mongo.", {
-        email: "contact@plutomi.com",
+        email: EMAILS.TESTING,
       });
     } catch (error) {
       expect(error.response.status).toBe(400);
@@ -67,11 +67,11 @@ describe("Request login link", () => {
   it("blocks frequent requests from non-admins", async () => {
     try {
       await axios.post(URL, {
-        email: "joseyvalerio@gmail.com",
+        email: "plutomitesting@gmail.com",
       });
       //
       await axios.post(URL, {
-        email: "joseyvalerio@gmail.com",
+        email: "plutomitesting@gmail.com",
       });
     } catch (error) {
       expect(error.response.status).toBe(403);
@@ -84,14 +84,14 @@ describe("Request login link", () => {
   it("allows admins to skip the request timer", async () => {
     try {
       const data = await axios.post(URL, {
-        email: "jose@plutomi.com",
+        email: EMAILS.TESTING,
       });
 
       expect(data.status).toBe(201);
       expect(data.data.message).toBe("Login link sent!");
 
       const data2 = await axios.post(URL, {
-        email: "jose@plutomi.com",
+        email: EMAILS.TESTING,
       });
 
       expect(data2.status).toBe(201);
