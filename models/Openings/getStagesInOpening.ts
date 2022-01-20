@@ -1,6 +1,6 @@
 import { QueryCommandInput, QueryCommand } from "@aws-sdk/lib-dynamodb";
 import { UpdateCommandInput, UpdateCommand } from "@aws-sdk/lib-dynamodb";
-import { Dynamo } from "../../awsClients/ddbDocClient";
+import { Dynamo } from "../../AWSClients/ddbDocClient";
 import { ENTITY_TYPES, FORBIDDEN_PROPERTIES } from "../../Config";
 import { DynamoNewStage } from "../../types/dynamo";
 import { GetAllStagesInOpeningInput } from "../../types/main";

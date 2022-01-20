@@ -1,5 +1,5 @@
-import axios from "axios";
-import { API_URL, EMAILS } from "../../Config";
+import axios, { AxiosResponse } from "axios";
+import { API_URL, EMAILS } from "../Config";
 const URL = `${API_URL}/request-login-link`;
 
 describe("Request login link", () => {
@@ -96,6 +96,60 @@ describe("Request login link", () => {
 
       expect(data2.status).toBe(201);
       expect(data2.data.message).toBe("Login link sent!");
+    } catch (error) {}
+  });
+});
+
+describe("Login", () => {
+  it("fails with an empty login token", async () => {
+    try {
+      await axios.get(API_URL + "/login?token=");
+    } catch (error) {
+      expect(error.response.status).toBe(400);
+      expect(error.response.data.message).toContain("query.token");
+      expect(error.response.data.message).toContain("not allowed to be empty");
+    }
+  });
+
+  it("fails without a token", async () => {
+    try {
+      await axios.get(API_URL + "/login");
+    } catch (error) {
+      expect(error.response.status).toBe(400);
+      expect(error.response.data.message).toContain("query.token");
+      expect(error.response.data.message).toContain("is required");
+    }
+  });
+
+  it("fails with a bad token", async () => {
+    try {
+      await axios.get(API_URL + "/login?token=123");
+    } catch (error) {
+      expect(error.response.status).toBe(401);
+      expect(error.response.data.message).toBe("Invalid login link");
+    }
+  });
+});
+
+describe("Logout", () => {
+  /**
+   * Creates a session cookie
+   */
+  beforeAll(async () => {
+    const data: AxiosResponse = await axios.post(API_URL + `/jest-setup`);
+    const cookie = data.headers["set-cookie"][0];
+
+    axios.defaults.headers.Cookie = cookie;
+  });
+
+  it("Deletes the session cookie", async () => {
+    try {
+      const data = await axios.post("/logout");
+      const cookie = data.headers["set-cookie"][0];
+
+      expect(cookie).toBe([]);
+      expect(data.status).toBe(200);
+      expect(data.data.message).toBe("You've been logged out!");
     } catch (error) {}
   });
 });

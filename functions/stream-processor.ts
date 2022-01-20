@@ -1,6 +1,6 @@
 import { DynamoDBStreamEvent } from "aws-lambda";
 import errorFormatter from "../utils/errorFormatter";
-import EBClient from "../awsClients/eventBridgeClient";
+import EBClient from "../AWSClients/eventBridgeClient";
 import {
   PutEventsCommand,
   PutEventsCommandInput,

@@ -2,7 +2,7 @@ import {
   TransactWriteCommandInput,
   TransactWriteCommand,
 } from "@aws-sdk/lib-dynamodb";
-import { Dynamo } from "../../awsClients/ddbDocClient";
+import { Dynamo } from "../../AWSClients/ddbDocClient";
 import { ID_LENGTHS, ENTITY_TYPES, DEFAULTS } from "../../Config";
 import { SdkError } from "@aws-sdk/types";
 import { LeaveAndDeleteOrgInput } from "../../types/main";

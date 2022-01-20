@@ -9,6 +9,7 @@ if (resultDotEnv.error) {
 
 import * as Auth from "./Controllers/Auth";
 import * as Users from "./Controllers/Users";
+import * as Orgs from "./Controllers/Orgs";
 import helmet from "helmet";
 import * as Jest from "./Controllers/jest-setup";
 import express from "express";
@@ -70,6 +71,9 @@ app.post("/logout", withSession, Auth.Logout);
 app.get("/users/self", withSession, Users.Self);
 app.get("/users/:userId", withSession, Users.GetUserById);
 app.put("/users/:userId", withSession, Users.UpdateUser);
+app.get("/users", withSession, Users.GetUsersInOrg); // TODO jest, needs create org first
+
+app.post("/orgs", withSession, Orgs.CreateAndJoinOrg);
 // Catch timeouts
 function haltOnTimedout(req, res, next) {
   if (!req.timedout) next();

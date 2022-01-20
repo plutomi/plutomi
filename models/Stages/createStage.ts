@@ -3,7 +3,7 @@ import {
   TransactWriteCommand,
 } from "@aws-sdk/lib-dynamodb";
 import { nanoid } from "nanoid";
-import { Dynamo } from "../../awsClients/ddbDocClient";
+import { Dynamo } from "../../AWSClients/ddbDocClient";
 import { ID_LENGTHS, ENTITY_TYPES, DEFAULTS, TIME_UNITS } from "../../Config";
 import { DynamoNewStage } from "../../types/dynamo";
 import { CreateStageInput } from "../../types/main";

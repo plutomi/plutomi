@@ -1,5 +1,5 @@
 import { GetCommandInput, GetCommand } from "@aws-sdk/lib-dynamodb";
-import { Dynamo } from "../../awsClients/ddbDocClient";
+import { Dynamo } from "../../AWSClients/ddbDocClient";
 import { ENTITY_TYPES } from "../../Config";
 import { DynamoNewOpening } from "../../types/dynamo";
 import { GetOpeningByIdInput } from "../../types/main";

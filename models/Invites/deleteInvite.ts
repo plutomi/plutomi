@@ -1,5 +1,5 @@
 import { DeleteCommandInput, DeleteCommand } from "@aws-sdk/lib-dynamodb";
-import { Dynamo } from "../../awsClients/ddbDocClient";
+import { Dynamo } from "../../AWSClients/ddbDocClient";
 import { ENTITY_TYPES } from "../../Config";
 import { DeleteOrgInviteInput } from "../../types/main";
 import { SdkError } from "@aws-sdk/types";

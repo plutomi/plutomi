@@ -2,7 +2,7 @@ import {
   TransactWriteCommandInput,
   TransactWriteCommand,
 } from "@aws-sdk/lib-dynamodb";
-import { Dynamo } from "../../awsClients/ddbDocClient";
+import { Dynamo } from "../../AWSClients/ddbDocClient";
 import { ENTITY_TYPES, TIME_UNITS } from "../../Config";
 import { DynamoNewOrg } from "../../types/dynamo";
 import { CreateAndJoinOrgInput } from "../../types/main";
