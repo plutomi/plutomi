@@ -9,7 +9,6 @@ import { DynamoNewApplicant } from "../../types/dynamo";
 import { CreateApplicantInput, CreateApplicantOutput } from "../../types/main";
 import * as Time from "../../utils/time";
 import { SdkError } from "@aws-sdk/types";
-import { sealData } from "iron-session";
 const { DYNAMO_TABLE_NAME } = process.env;
 
 export default async function Create(

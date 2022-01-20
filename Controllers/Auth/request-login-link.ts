@@ -12,7 +12,7 @@ import {
 import * as Time from "../../utils/time";
 import * as Users from "../../models/Users";
 import { nanoid } from "nanoid";
-import { sealData } from "iron-session";
+const jwt = require("jsonwebtoken");
 import { API_URL, DOMAIN_NAME } from "../../Config";
 import * as CreateError from "../../utils/errorGenerator";
 interface APIRequestLoginLinkBody {
@@ -114,16 +114,16 @@ const requestLoginLink = async (req: Request, res: Response) => {
   const loginLinkId = nanoid();
   const loginLinkExpiry = Time.futureISO(15, TIME_UNITS.MINUTES); // when the link expires
 
-  // TODO replace this with iron seal directly
-  const seal = await sealData(
+  const token = await jwt.sign(
     {
       userId: user.userId,
       loginLinkId,
     },
-    LOGIN_LINK_SETTINGS
+    "secret",
+    { expiresIn: 900 } // 15 min
   );
 
-  const loginLinkUrl = `${API_URL}/login?seal=${seal}&callbackUrl=${
+  const loginLinkUrl = `${API_URL}/login?token=${token}&callbackUrl=${
     callbackUrl ? callbackUrl : `${WEBSITE_URL}/${DEFAULTS.REDIRECT}`
   }`;
   /**

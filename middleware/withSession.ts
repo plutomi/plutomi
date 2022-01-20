@@ -38,7 +38,7 @@ export default async function withSession(
     });
   }
 
-  console.log("Session", user);
+  console.log(`Incoming session: `, user);
   res.locals.session = user;
 
   next();

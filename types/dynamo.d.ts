@@ -363,7 +363,7 @@ interface DynamoNewLoginLink {
   /**
    * A UNIX date for which Dynamo will auto delete this link
    */
-  ttlExpiry: number; // Unix timestmap for the item to be deleted after 15 minutes, must be >= ttl on `sealData`
+  ttlExpiry: number;
   GSI1PK: `${ENTITY_TYPES.USER}#${string}#${ENTITY_TYPES.LOGIN_LINK}S`; // Get latest login link(s) for a user for throttling
   GSI1SK: string; // ISO timestamp
 }

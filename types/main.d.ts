@@ -107,9 +107,9 @@ export interface CreateApplicantAPIResponse {
   message: string;
 }
 
-declare module "iron-session" {
-  export interface IronSessionData {
-    user: DynamoNewUser;
+declare namespace Express {
+  export interface Request {
+    boom: DynamoNewUser;
   }
 }
 
@@ -124,9 +124,9 @@ interface CUSTOM_QUERY {
 
   applicantId: string;
   /**
-   * The seal to for the {@link ENTITY_TYPES.LOGIN_LINK} that contains the user id
+   * The token to for the {@link ENTITY_TYPES.LOGIN_LINK} that contains the user id
    */
-  seal: string;
+  token: string;
 
   callbackUrl: string;
   questionId: string;

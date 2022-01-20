@@ -12,7 +12,7 @@ beforeAll(async () => {
   axios.defaults.headers.Cookie = cookie;
 });
 
-describe("Users", () => {
+describe("Users - Self", () => {
   it("returns my user information", async () => {
     const data = await axios.get(API_URL + "/users/self");
     expect(data.status).toBe(200);

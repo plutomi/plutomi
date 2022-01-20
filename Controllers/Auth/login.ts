@@ -7,19 +7,19 @@ import {
   COOKIE_NAME,
   COOKIE_SETTINGS,
 } from "../../Config";
+const jwt = require("jsonwebtoken");
 import * as Users from "../../models/Users";
-import { unsealData } from "iron-session";
 import * as CreateError from "../../utils/errorGenerator";
 import errorFormatter from "../../utils/errorFormatter";
 interface APILoginQuery {
   callbackUrl?: string;
-  seal?: string;
+  token?: string;
 }
 
 const schema = Joi.object({
   query: {
     callbackUrl: Joi.string().uri().optional(),
-    seal: Joi.string(),
+    token: Joi.string(),
   },
 }).options(JOI_SETTINGS);
 const login = async (req: Request, res: Response) => {
@@ -29,28 +29,21 @@ const login = async (req: Request, res: Response) => {
     const { status, body } = CreateError.JOI(error);
     return res.status(status).json(body);
   }
-  const { callbackUrl, seal }: APILoginQuery = req.query;
+  const { callbackUrl, token }: APILoginQuery = req.query;
 
   let userId: string;
   let loginLinkId: string;
 
-  // Validate that the login link is 1. Valid - syntax wise & 2. Has valid data
   try {
-    // TODO types
-    const data: { userId: string; loginLinkId: string } = await unsealData(
-      seal,
-      LOGIN_LINK_SETTINGS
-    );
-
-    // If the seal expired, these will be undefined. Also undefined for things like seal=123
-    if (!data.userId || !data.loginLinkId) {
-      return res.status(401).json({ message: "Your link is invalid" });
-    }
+    const data = await jwt.verify(token, "secret");
 
     userId = data.userId;
     loginLinkId = data.loginLinkId;
   } catch (error) {
-    return res.status(400).json({ message: "Bad seal" });
+    if (error.name === "TokenExpiredError") {
+      return res.status(401).json({ message: "Login link expired :(" });
+    }
+    return res.status(401).json({ message: "Invalid login link" });
   }
 
   const [user, error] = await Users.getUserById({ userId });

@@ -1,7 +1,7 @@
 import useSelf from "../../../SWR/useSelf";
 import Loader from "../../../components/Loader";
 import { useRouter } from "next/router";
-import useAllStagesInOpening from "../../../SWR/useAllStagesInOpening";
+import utokenlStagesInOpening from "../../../SWR/utokenlStagesInOpening";
 import useOpeningById from "../../../SWR/useOpeningById";
 import { CUSTOM_QUERY } from "../../../types/main";
 import { useEffect } from "react";
@@ -14,7 +14,7 @@ export default function Openings() {
 
   let { opening, isOpeningLoading, isOpeningError } = useOpeningById(openingId);
 
-  let { stages, isStagesLoading, isStagesError } = useAllStagesInOpening(
+  let { stages, isStagesLoading, isStagesError } = utokenlStagesInOpening(
     opening?.openingId
   );
 
@@ -30,9 +30,7 @@ export default function Openings() {
       );
     } else {
       // Redirect to opening settings if no stages
-      router.push(
-        `${DOMAIN_NAME}/openings/${openingId}/settings`
-      );
+      router.push(`${DOMAIN_NAME}/openings/${openingId}/settings`);
     }
   }, [router.isReady]);
 

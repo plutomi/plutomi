@@ -1,3 +1,3 @@
 import Self from "./self";
-
-export { Self };
+import GetUserById from "./get-user-by-id";
+export { Self, GetUserById };

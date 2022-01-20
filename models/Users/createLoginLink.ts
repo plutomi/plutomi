@@ -26,7 +26,7 @@ export default async function CreateLoginLink(
       user: user, // Contains unsubscribe hash, userId, and their email
       entityType: ENTITY_TYPES.LOGIN_LINK,
       createdAt: now,
-      ttlExpiry: Time.futureUNIX(15, TIME_UNITS.MINUTES), // Deleted after 15 minutes, must be >= ttl on `sealData`
+      ttlExpiry: Time.futureUNIX(15, TIME_UNITS.MINUTES), // Deleted after 15 minutes
       GSI1PK: `${ENTITY_TYPES.USER}#${user.userId}#${ENTITY_TYPES.LOGIN_LINK}S`, // Get latest login link(s) for a user for throttling
       GSI1SK: now,
     };

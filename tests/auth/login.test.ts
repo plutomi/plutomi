@@ -13,33 +13,32 @@ beforeAll(async () => {
   axios.defaults.headers.Cookie = cookie;
 });
 describe("Login", () => {
-  it("fails with an empty login seal", async () => {
+  it("fails with an empty login token", async () => {
     try {
-      await axios.get(URL + "?seal=");
+      await axios.get(URL + "?token=");
     } catch (error) {
       expect(error.response.status).toBe(400);
-      expect(error.response.data.message).toContain("query.seal");
+      expect(error.response.data.message).toContain("query.token");
       expect(error.response.data.message).toContain("not allowed to be empty");
     }
   });
 
-  it("fails without a seal at all", async () => {
+  it("fails without a token at all", async () => {
     try {
       await axios.get(URL + "");
     } catch (error) {
       expect(error.response.status).toBe(400);
-      expect(error.response.data.message).toContain("query.seal");
+      expect(error.response.data.message).toContain("query.token");
       expect(error.response.data.message).toContain("is required");
     }
   });
 
-  it("fails with a bad seal", async () => {
+  it("fails with a bad token", async () => {
     try {
-      await axios.get(URL + "?seal=123");
+      await axios.get(URL + "?token=123");
     } catch (error) {
       expect(error.response.status).toBe(401);
-      expect(error.response.data.message).toContain("link");
-      expect(error.response.data.message).toContain("is invalid");
+      expect(error.response.data.message).toBe("Invalid login link");
     }
   });
 });
