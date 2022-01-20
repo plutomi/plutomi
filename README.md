@@ -44,22 +44,24 @@ Stage order:
 
 ## Useful commands
 
-| Command                                                                                                 | Function                                                                                                                                   |
-| ------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------ |
-| npm run dev                                                                                             | Will deploy **a complete copy** of the backend to AWS. The frontend runs in localhost because Cloudfront takes forever to do invalidations |
-| npm run test                                                                                            | Will run tests                                                                                                                             |
-| npm run deploy-prod                                                                                     | Will deploy everything to your production environment                                                                                      |
-| npx cross-env NODE_ENV=(development or production) cdk deploy -e (development or production)-STACK_NAME | Will deploy a specific stack in the desired environment                                                                                    |
+| Command                                                                                                 | Function                                                                                                                                           |
+| ------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------- |
+| npm run dev                                                                                             | Will deploy a copy of **most** the backend to AWS (Dynamo, Event Bridge, SQS, Step Functions, etc). The frontend & Express server run in localhost |
+| npm run test                                                                                            | Will run tests                                                                                                                                     |
+| npm run deploy-prod                                                                                     | Will deploy everything to your production environment                                                                                              |
+| npx cross-env NODE_ENV=(development or production) cdk deploy -e (development or production)-STACK_NAME | Will deploy a specific stack in the desired environment                                                                                            |
 
 For more information on AWS CDK, please visit the [docs page](https://docs.aws.amazon.com/cdk/latest/guide/cli.html).
 
 ## Language, Tooling, & Infrastructure
 
-The project is 100% TypeScript. Would appreciate any assistance on types as we're definitely not the best :sweat_smile:
+All infrastructure is managed by CDK. We use [Jest](https://jestjs.io/) for testing. 100% TypeScript and would appreciate any assistance on types as we're definitely not the best :sweat_smile:
 
-_ALL_ infrastructure is managed by AWS CDK.
+The frontend runs on the [Serverless-Nextjs](https://github.com/serverless-Nextjs/serverless-next.js) component. While we don't rely on serverside rendering much, it is nice to have SSG capabilities and file based routing.
 
-The frontend runs on the [Serverless-Nextjs](https://github.com/serverless-Nextjs/serverless-next.js) component. The API is just an HTTP API Gateway backed by lambda functions that each have one task.
+The API is your typical monolith Express app running on Fargate. We prefer the developer experience of Express, and Fargate gives us all of the upsides of serverless without many of the downsides.
+
+![werner](images/werner.png)
 
 There is a state machine that triggers on certain events such as a new `LOGIN_EVENT` or a `LOGIN_LINK` request. We let the state machine decide the path to take instead of having multiple EB rules and multiple state machines. We can therefore eliminate the myriad of queues and lambda functions polling said queues with the direct SDK calls Step Functions provides.
 
