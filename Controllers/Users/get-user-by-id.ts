@@ -25,7 +25,6 @@ const main = async (req: Request, res: Response) => {
   const { userId }: APIGetUserByIdParameters = req.params;
   if (
     // Block users who are not in an org from being able to view other users
-    // before making the Dynamo call
     session.orgId === DEFAULTS.NO_ORG &&
     session.userId !== userId
   ) {

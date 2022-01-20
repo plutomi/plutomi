@@ -1,43 +1,37 @@
+import { Request, Response } from "express";
 import * as Users from "../../models/Users";
 import Joi from "joi";
-import { DEFAULTS, JOI_GLOBAL_FORBIDDEN, JOI_SETTINGS } from "../../Config";
-import middy from "@middy/core";
-
-import { CustomLambdaEvent, CustomLambdaResponse } from "../../types/main";
 import * as CreateError from "../../utils/errorGenerator";
-interface APIUpdateUserPathParameters {
+import { DEFAULTS, JOI_GLOBAL_FORBIDDEN, JOI_SETTINGS } from "../../Config";
+
+interface APIUpdateUserParameters {
   userId?: string;
 }
 interface APIUpdateUserBody {
   newValues?: { [key: string]: any };
 }
-interface APIUpdateUserEvent
-  extends Omit<CustomLambdaEvent, "body" | "pathParameters"> {
-  body: APIUpdateUserBody;
-  pathParameters: APIUpdateUserPathParameters;
-}
 
 /**
  * When calling PUT /users/:userId, these properties cannot be updated by the user
  */
-const JOI_FORBIDDEN_USER = Joi.object({
+export const JOI_FORBIDDEN_USER = {
   ...JOI_GLOBAL_FORBIDDEN,
   userId: Joi.any().forbidden().strip(),
   userRole: Joi.any().forbidden().strip(), // TODO rbac
   orgJoinDate: Joi.any().forbidden().strip(),
   canReceiveEmails: Joi.any().forbidden().strip(),
   GSI1PK: Joi.any().forbidden().strip(), // Org users
-  firstName: Joi.string().invalid(DEFAULTS.FIRST_NAME),
-  lastName: Joi.string().invalid(DEFAULTS.LAST_NAME),
+  firstName: Joi.string().invalid(DEFAULTS.FIRST_NAME).optional(),
+  lastName: Joi.string().invalid(DEFAULTS.LAST_NAME).optional(),
   unsubscribeKey: Joi.any().forbidden().strip(),
   GSI2PK: Joi.any().forbidden().strip(), // Email
   GSI2SK: Joi.any().forbidden().strip(), // Entity type
   totalInvites: Joi.any().forbidden().strip(),
   verifiedEmail: Joi.any().forbidden().strip(), // Updated asynchronously (step functions) on 1st login
-});
+};
 
 const schema = Joi.object({
-  pathParameters: {
+  params: {
     userId: Joi.string(),
   },
   body: {
@@ -45,25 +39,21 @@ const schema = Joi.object({
   },
 }).options(JOI_SETTINGS);
 
-const main = async (
-  event: APIUpdateUserEvent
-): Promise<CustomLambdaResponse> => {
+const main = async (req: Request, res: Response) => {
   try {
-    await schema.validateAsync(event);
+    await schema.validateAsync(req);
   } catch (error) {
-    return CreateError.JOI(error);
+    const { status, body } = CreateError.JOI(error);
+    return res.status(status).json(body);
   }
 
-  const { session } = event.requestContext.authorizer.lambda;
-  const { userId } = event.pathParameters;
-  const { newValues } = event.body;
+  const { session } = res.locals;
+  const { userId }: APIUpdateUserParameters = req.params;
+  const { newValues }: APIUpdateUserBody = req.body;
 
   // TODO RBAC will go here, right now you can only update yourself
   if (userId !== session.userId) {
-    return {
-      statusCode: 403,
-      body: { message: "You cannot update another user" },
-    };
+    return res.status(403).json({ message: "You cannot update this user" });
   }
 
   const [updatedUser, error] = await Users.updateUser({
@@ -72,18 +62,19 @@ const main = async (
   });
 
   if (error) {
-    return CreateError.SDK(error, "An error ocurred updating user info");
+    console.log("ERROR updating user", error);
+
+    const { status, body } = CreateError.SDK(
+      error,
+      "An error ocurred updating user info"
+    );
+    return res.status(status).json(body);
   }
 
-  return {
-    statusCode: 200,
-    body: {
-      // TODO RBAC is not implemented yet so this won't trigger
-      message:
-        userId === session.userId ? "Updated your info!" : "User updated!",
-    },
-  };
+  return res.status(200).json({
+    // TODO RBAC is not implemented yet so this won't trigger
+    message: userId === session.userId ? "Updated your info!" : "User updated!",
+  });
 };
 
-// TODO types with API Gateway event and middleware
-// @ts-ignore
+export default main;

@@ -11,7 +11,7 @@ export default async function Update(
 
   // Build update expression
   let allUpdateExpressions: string[] = [];
-  let allAttributeValues: any = {};
+  let allAttributeValues: { [key: string]: string } = {};
 
   // Filter out forbidden property
   for (const property in newValues) {

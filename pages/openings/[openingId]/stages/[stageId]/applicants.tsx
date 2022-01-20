@@ -5,8 +5,8 @@ import { useRouter } from "next/router";
 import useStore from "../../../../../utils/store";
 import StagesHeader from "../../../../../components/Stages/StagesHeader";
 import StageCarousel from "../../../../../components/Stages/StagesCarousel";
-import utokenlApplicantsInStage from "../../../../../SWR/utokenlApplicantsInStage";
-import utokenlStagesInOpening from "../../../../../SWR/utokenlStagesInOpening";
+import useAllApplicantsInStage from "../../../../../SWR/useAllApplicantsInStage";
+import useAllStagesInOpening from "../../../../../SWR/useAllStagesInOpening";
 import ApplicantList from "../../../../../components/Applicants/ApplicantList";
 import ApplicantProfileModal from "../../../../../components/Applicants/ApplicantProfileModal";
 import NewPage from "../../../../../components/Templates/NewPage";
@@ -21,7 +21,7 @@ export default function StageApplicants() {
   >;
   let { opening, isOpeningLoading, isOpeningError } = useOpeningById(openingId);
 
-  const { stages, isStagesLoading, isStagesError } = utokenlStagesInOpening(
+  const { stages, isStagesLoading, isStagesError } = useAllStagesInOpening(
     opening?.openingId
   );
   // Allows for copying the URL of the applicant directly directly
@@ -38,7 +38,7 @@ export default function StageApplicants() {
   }, [router.isReady]);
 
   const { applicants, isApplicantsLoading, isApplicantsError } =
-    utokenlApplicantsInStage(openingId, stageId);
+    useAllApplicantsInStage(openingId, stageId);
 
   const setApplicantProfileModal = useStore(
     (store) => store.setApplicantProfileModal

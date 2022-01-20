@@ -69,7 +69,7 @@ app.post("/logout", withSession, Auth.Logout);
 
 app.get("/users/self", withSession, Users.Self);
 app.get("/users/:userId", withSession, Users.GetUserById);
-
+app.put("/users/:userId", withSession, Users.UpdateUser);
 // Catch timeouts
 function haltOnTimedout(req, res, next) {
   if (!req.timedout) next();

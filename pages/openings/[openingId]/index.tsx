@@ -1,7 +1,7 @@
 import useSelf from "../../../SWR/useSelf";
 import Loader from "../../../components/Loader";
 import { useRouter } from "next/router";
-import utokenlStagesInOpening from "../../../SWR/utokenlStagesInOpening";
+import useAllStagesInOpening from "../../../SWR/useAllStagesInOpening";
 import useOpeningById from "../../../SWR/useOpeningById";
 import { CUSTOM_QUERY } from "../../../types/main";
 import { useEffect } from "react";
@@ -14,7 +14,7 @@ export default function Openings() {
 
   let { opening, isOpeningLoading, isOpeningError } = useOpeningById(openingId);
 
-  let { stages, isStagesLoading, isStagesError } = utokenlStagesInOpening(
+  let { stages, isStagesLoading, isStagesError } = useAllStagesInOpening(
     opening?.openingId
   );
 

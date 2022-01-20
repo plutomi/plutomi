@@ -11,7 +11,7 @@ export default async function Update(
 
   // Build update expression
   let allUpdateExpressions: string[] = [];
-  let allAttributeValues: any = {};
+  let allAttributeValues: { [key: string]: string } = {};
 
   for (const property in newValues) {
     // Push each property into the update expression
