@@ -9,10 +9,11 @@ import { COOKIE_NAME, COOKIE_SETTINGS, EMAILS } from "../Config";
  */
 export const setup = async (req: Request, res: Response) => {
   if (process.env.NODE_ENV !== "development") {
+    // TODO add a JWT for another layer of security here
     return res.status(401).json({ message: "NODE_ENV is not development" });
   }
   const [user, userError] = await Users.createUser({
-    email: `test+${EMAILS.GENERAL}`, // TODO make this a test email
+    email: `test+${EMAILS.TESTING}`,
   });
 
   if (userError) {

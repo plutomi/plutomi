@@ -1,6 +1,6 @@
 import axios, { AxiosResponse } from "axios";
 import { nanoid } from "nanoid";
-import { API_URL, DEFAULTS, ENTITY_TYPES } from "../Config";
+import { API_URL, DEFAULTS, ENTITY_TYPES, ERRORS } from "../Config";
 const UrlSafeString = require("url-safe-string"),
   tagGenerator = new UrlSafeString();
 
@@ -50,9 +50,7 @@ describe("Orgs", () => {
       await axios.get(API_URL + "/orgs");
     } catch (error) {
       expect(error.response.status).toBe(403);
-      expect(error.response.data.message).toBe(
-        "You must create or join an org to view it's details"
-      );
+      expect(error.response.data.message).toBe(ERRORS.NEEDS_ORG);
     }
   });
 

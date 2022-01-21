@@ -23,11 +23,8 @@ const main = async (req: Request, res: Response) => {
   }
 
   const { userId }: APIGetUserByIdParameters = req.params;
-  if (
-    // Block users who are not in an org from being able to view other users
-    session.orgId === DEFAULTS.NO_ORG &&
-    session.userId !== userId
-  ) {
+  if (session.userId !== userId) {
+    // TODO RBAC
     return res.status(403).json({
       message: "You are not authorized to view this user",
     });

@@ -62,8 +62,6 @@ const main = async (req: Request, res: Response) => {
   });
 
   if (error) {
-    console.log("ERROR updating user", error);
-
     const { status, body } = CreateError.SDK(
       error,
       "An error ocurred updating user info"

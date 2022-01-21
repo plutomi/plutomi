@@ -5,12 +5,6 @@ import * as CreateError from "../../utils/errorGenerator";
 const main = async (req: Request, res: Response) => {
   const { session } = res.locals;
 
-  if (session.orgId === DEFAULTS.NO_ORG || session.orgId === DEFAULTS.NO_ORG) {
-    return res
-      .status(403)
-      .json({ message: "You must create or join an org to view it's details" });
-  }
-
   const [org, error] = await Orgs.getOrgById({ orgId: session.orgId });
 
   if (error) {

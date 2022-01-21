@@ -1,6 +1,6 @@
 import axios, { AxiosResponse } from "axios";
 import { nanoid } from "nanoid";
-import { API_URL, DEFAULTS, ENTITY_TYPES } from "../Config";
+import { API_URL, DEFAULTS, ENTITY_TYPES, ERRORS } from "../Config";
 
 describe("Users", () => {
   /**
@@ -108,9 +108,7 @@ describe("Users", () => {
       await axios.get(API_URL + "/users");
     } catch (error) {
       expect(error.response.status).toBe(403);
-      expect(error.response.data.message).toBe(
-        "You must join an org to view it's users"
-      );
+      expect(error.response.data.message).toBe(ERRORS.NEEDS_ORG);
     }
   });
 });

@@ -6,12 +6,6 @@ import { pick } from "lodash";
 const main = async (req: Request, res: Response) => {
   const { session } = res.locals;
 
-  if (session.orgId === DEFAULTS.NO_ORG) {
-    return res
-      .status(403)
-      .json({ message: "You must join an org to view it's users" });
-  }
-
   const [users, error] = await Orgs.getUsersInOrg({
     orgId: session.orgId,
   });

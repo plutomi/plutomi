@@ -10,6 +10,8 @@ if (resultDotEnv.error) {
 import * as Auth from "./Controllers/Auth";
 import * as Users from "./Controllers/Users";
 import * as Orgs from "./Controllers/Orgs";
+import * as Openings from "./Controllers/Openings";
+import withHasOrg from "./middleware/withHasOrg";
 import helmet from "helmet";
 import * as Jest from "./Controllers/jest-setup";
 import express from "express";
@@ -68,13 +70,15 @@ app.post("/request-login-link", Auth.RequestLoginLink);
 app.get("/login", Auth.Login);
 app.post("/logout", withSession, Auth.Logout);
 
-app.get("/users", withSession, Users.GetUsersInOrg);
+app.get("/users", [withSession, withHasOrg], Users.GetUsersInOrg);
 app.get("/users/self", withSession, Users.Self);
 app.get("/users/:userId", withSession, Users.GetUserById);
 app.put("/users/:userId", withSession, Users.UpdateUser);
 
-app.get("/orgs", withSession, Orgs.GetOrgInfo);
+app.get("/orgs", [withSession, withHasOrg], Orgs.GetOrgInfo);
 app.post("/orgs", withSession, Orgs.CreateAndJoinOrg);
+
+app.post("/openings", [withSession, withHasOrg], Openings.CreateOpening);
 // Catch timeouts
 function haltOnTimedout(req, res, next) {
   if (!req.timedout) next();

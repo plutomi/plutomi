@@ -66,6 +66,9 @@ export const TIME_UNITS = {
   YEARS: "years",
 };
 
+export const ERRORS = {
+  NEEDS_ORG: `You must create or join an organization to perform this action`,
+};
 // https://zelark.github.io/nano-id-cc/
 export const ID_LENGTHS = {
   USER: 25, // Unique to application
