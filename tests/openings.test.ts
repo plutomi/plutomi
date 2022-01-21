@@ -106,11 +106,110 @@ describe("Openings", () => {
 
     // Get the first opening
     const opening = data2.data[0];
-    console.log("Opening", opening);
 
     // Test getting an opening by id
     const data3 = await axios.get(API_URL + `/openings/${opening.openingId}`);
     expect(data3.status).toBe(200);
     expect(data3.data).toStrictEqual(opening);
+  });
+
+  it("allows editing of an opening", async () => {
+    // Create an opening
+    await axios.post(API_URL + "/openings", {
+      GSI1SK: nanoid(10),
+    });
+
+    // Get openings in an org
+    const data2 = await axios.get(API_URL + "/openings");
+
+    // Get the first opening
+    const opening = data2.data[0];
+
+    const newName = nanoid(20);
+    // Update the opening
+    const data3 = await axios.put(API_URL + `/openings/${opening.openingId}`, {
+      newValues: {
+        GSI1SK: newName,
+      },
+    });
+
+    expect(data3.status).toBe(200);
+    expect(data3.data.message).toBe("Opening updated!");
+  });
+
+  it("blocks updating an opening with an extra long name", async () => {
+    // Create an opening
+    await axios.post(API_URL + "/openings", {
+      GSI1SK: nanoid(10),
+    });
+
+    // Get openings in an org
+    const data2 = await axios.get(API_URL + "/openings");
+
+    // Get the first opening
+    const opening = data2.data[0];
+
+    const newName = nanoid(100);
+
+    // Update the opening
+    try {
+      await axios.put(API_URL + `/openings/${opening.openingId}`, {
+        newValues: {
+          GSI1SK: newName,
+        },
+      });
+    } catch (error) {
+      expect(error.response.status).toBe(400);
+      expect(error.response.data.message).toContain("body.newValues.GSI1SK");
+      expect(error.response.data.message).toContain(
+        "less than or equal to 100"
+      );
+    }
+  });
+
+  it("blocks editing forbidden properties of an opening", async () => {
+    // Create an opening
+    await axios.post(API_URL + "/openings", {
+      GSI1SK: nanoid(10),
+    });
+
+    // Get openings in an org
+    const data2 = await axios.get(API_URL + "/openings");
+
+    // Get the first opening
+    const opening = data2.data[0];
+
+    try {
+      await axios.put(API_URL + `/openings/${opening.openingId}`, {
+        newValues: {
+          orgId: nanoid(5),
+          PK: nanoid(5),
+          SK: nanoid(5),
+          createdAt: nanoid(5),
+        },
+      });
+    } catch (error) {
+      expect(error.response.status).toBe(400);
+      expect(error.response.data.message).toContain("is not allowed");
+    }
+  });
+
+  it("allows deleting openings", async () => {
+    // Create an opening
+    await axios.post(API_URL + "/openings", {
+      GSI1SK: nanoid(10),
+    });
+
+    // Get openings in an org
+    const data = await axios.get(API_URL + "/openings");
+
+    // Get the first opening
+    const opening = data.data[0];
+
+    const data2 = await axios.delete(
+      API_URL + `/openings/${opening.openingId}`
+    );
+    expect(data2.status).toBe(200);
+    expect(data2.data.message).toBe("Opening deleted!");
   });
 });

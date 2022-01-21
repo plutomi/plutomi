@@ -85,6 +85,16 @@ app.get(
   [withSession, withHasOrg],
   Openings.GetOpeningById
 );
+app.delete(
+  "/openings/:openingId",
+  [withSession, withHasOrg],
+  Openings.DeleteOpening
+);
+app.put(
+  "/openings/:openingId",
+  [withSession, withHasOrg],
+  Openings.UpdateOpening
+);
 
 // Catch timeouts // TODO make this into its own middleware
 function haltOnTimedout(req, res, next) {
