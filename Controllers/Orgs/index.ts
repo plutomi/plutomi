@@ -1,3 +1,3 @@
 import CreateAndJoinOrg from "./create-and-join-org";
-
-export { CreateAndJoinOrg };
+import GetOrgInfo from "./get-org-info";
+export { CreateAndJoinOrg, GetOrgInfo };

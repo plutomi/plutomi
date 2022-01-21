@@ -73,6 +73,7 @@ app.get("/users/self", withSession, Users.Self);
 app.get("/users/:userId", withSession, Users.GetUserById);
 app.put("/users/:userId", withSession, Users.UpdateUser);
 
+app.get("/orgs", withSession, Orgs.GetOrgInfo);
 app.post("/orgs", withSession, Orgs.CreateAndJoinOrg);
 // Catch timeouts
 function haltOnTimedout(req, res, next) {

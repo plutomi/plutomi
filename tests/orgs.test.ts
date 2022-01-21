@@ -45,16 +45,29 @@ describe("Orgs", () => {
     }
   });
 
-  it("Allows a user to create an org", async () => {
+  it("blocks users not in an org from viewing org info", async () => {
+    try {
+      await axios.get(API_URL + "/orgs");
+    } catch (error) {
+      expect(error.response.status).toBe(403);
+      expect(error.response.data.message).toBe(
+        "You must create or join an org to view it's details"
+      );
+    }
+  });
+
+  const orgId = tagGenerator.generate(nanoid(15));
+  const displayName = nanoid(10);
+  it("allows a user to create an org", async () => {
     const data = await axios.post(API_URL + "/orgs", {
-      orgId: nanoid(10),
-      displayName: nanoid(10),
+      orgId,
+      displayName,
     });
 
     expect(data.status).toBe(201);
     expect(data.data.message).toBe("Org created!");
   });
-  it("Blocks users in an org from being able to create another one", async () => {
+  it("blocks users in an org from being able to create another one", async () => {
     try {
       await axios.post(API_URL + "/orgs", {
         orgId: nanoid(10),
@@ -73,5 +86,16 @@ describe("Orgs", () => {
     const data = await axios.get(API_URL + "/users");
     expect(data.status).toBe(200);
     expect(data.data[0].userId).toBe(self.data.userId);
+  });
+
+  it("retrieves information about our org", async () => {
+    const data = await axios.get(API_URL + "/orgs");
+
+    expect(data.status).toBe(200);
+    expect(data.data.orgId).toBe(orgId);
+    expect(data.data.displayName).toBe(displayName);
+    expect(data.data.totalUsers).toBe(1);
+    expect(data.data.totalApplicants).toBe(0);
+    expect(data.data.totalOpenings).toBe(0);
   });
 });
