@@ -1,8 +1,6 @@
 import axios, { AxiosResponse } from "axios";
 import { nanoid } from "nanoid";
-import { API_URL, DEFAULTS, ENTITY_TYPES, ERRORS } from "../Config";
-const UrlSafeString = require("url-safe-string"),
-  tagGenerator = new UrlSafeString();
+import { API_URL, DEFAULTS, ERRORS } from "../Config";
 
 describe("Stages", () => {
   /**
@@ -389,8 +387,6 @@ describe("Stages", () => {
       API_URL + `/openings/${ourOpening.openingId}/stages/${stageid}`
     );
 
-    console.log("BEFORE", stageBefore.data);
-    console.log("AFTER", stageAfter.data);
 
     expect(stageAfter.data.GSI1SK).toBe(newName);
   });

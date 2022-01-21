@@ -12,6 +12,7 @@ import * as Users from "./Controllers/Users";
 import * as Orgs from "./Controllers/Orgs";
 import * as Openings from "./Controllers/Openings";
 import * as Stages from "./Controllers/Stages";
+import * as PublicInfo from "./Controllers/PublicInfo";
 import withHasOrg from "./middleware/withHasOrg";
 import helmet from "helmet";
 import * as Jest from "./Controllers/jest-setup";
@@ -119,6 +120,8 @@ app.get(
   [withSession, withHasOrg],
   Stages.GetStagesInOpening
 );
+
+app.get("/public/orgs/:orgId", withCleanOrgId, PublicInfo.GetPublicOrgInfo);
 
 // Catch timeouts // TODO make this into its own middleware
 function haltOnTimedout(req, res, next) {
