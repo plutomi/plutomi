@@ -113,7 +113,7 @@ describe("Openings", () => {
     expect(data3.data).toStrictEqual(opening);
   });
 
-  it("allows editing of an opening", async () => {
+  it("allows updating an opening", async () => {
     // Create an opening
     await axios.post(API_URL + "/openings", {
       GSI1SK: nanoid(10),

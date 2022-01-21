@@ -43,6 +43,15 @@ describe("Stages", () => {
     }
   });
 
+  it("blocks updating a stage if user is not in an org", async () => {
+    try {
+      await axios.put(API_URL + "/openings/123/stages/123");
+    } catch (error) {
+      expect(error.response.status).toBe(403);
+      expect(error.response.data.message).toBe(ERRORS.NEEDS_ORG);
+    }
+  });
+
   it("blocks retrieving stage info if user is not in an org", async () => {
     try {
       await axios.get(API_URL + "/openings/123/stages/123");
@@ -282,5 +291,107 @@ describe("Stages", () => {
     const secondStage = data2.data[1];
     expect(firstStage.GSI1SK).toBe(stage1Name);
     expect(secondStage.GSI1SK).toBe(stage2Name);
+  });
+
+  it("blocks updating forbidden properties of a stage", async () => {
+    const openingName = nanoid(20);
+
+    // Create an opening
+    await axios.post(API_URL + "/openings", {
+      GSI1SK: openingName,
+    });
+
+    // Get openings in an org
+    const data = await axios.get(API_URL + "/openings");
+
+    const ourOpening = data.data.find(
+      (opening) => opening.GSI1SK === openingName
+    );
+
+    const stageName = nanoid(10);
+    // Add a stage
+    await axios.post(API_URL + "/stages", {
+      openingId: ourOpening.openingId,
+      GSI1SK: stageName,
+    });
+
+    const openingAfterStage = await axios.get(
+      API_URL + `/openings/${ourOpening.openingId}`
+    );
+
+    const stageid = openingAfterStage.data.stageOrder[0];
+
+    try {
+      await axios.put(
+        API_URL + `/openings/${ourOpening.openingId}/stages/${stageid}`,
+        {
+          newValues: {
+            orgId: nanoid(5),
+            PK: nanoid(5),
+            SK: nanoid(5),
+            createdAt: nanoid(5),
+          },
+        }
+      );
+    } catch (error) {
+      expect(error.response.status).toBe(400);
+      expect(error.response.data.message).toContain("is not allowed");
+    }
+  });
+
+  it("allows updating a stage", async () => {
+    const openingName = nanoid(20);
+
+    // Create an opening
+    await axios.post(API_URL + "/openings", {
+      GSI1SK: openingName,
+    });
+
+    // Get openings in an org
+    const data = await axios.get(API_URL + "/openings");
+
+    const ourOpening = data.data.find(
+      (opening) => opening.GSI1SK === openingName
+    );
+
+    const stageName = nanoid(10);
+    // Add a stage
+    await axios.post(API_URL + "/stages", {
+      openingId: ourOpening.openingId,
+      GSI1SK: stageName,
+    });
+
+    const openingAfterStage = await axios.get(
+      API_URL + `/openings/${ourOpening.openingId}`
+    );
+
+    const stageid = openingAfterStage.data.stageOrder[0];
+
+    const stageBefore = await axios.get(
+      API_URL + `/openings/${ourOpening.openingId}/stages/${stageid}`
+    );
+
+    const newName = nanoid(20);
+
+    const update = await axios.put(
+      API_URL + `/openings/${ourOpening.openingId}/stages/${stageid}`,
+      {
+        newValues: {
+          GSI1SK: newName,
+        },
+      }
+    );
+
+    expect(update.status).toBe(200);
+    expect(update.data.message).toBe("Stage updated!");
+
+    const stageAfter = await axios.get(
+      API_URL + `/openings/${ourOpening.openingId}/stages/${stageid}`
+    );
+
+    console.log("BEFORE", stageBefore.data);
+    console.log("AFTER", stageAfter.data);
+
+    expect(stageAfter.data.GSI1SK).toBe(newName);
   });
 });

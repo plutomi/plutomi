@@ -108,6 +108,11 @@ app.get(
   [withSession, withHasOrg],
   Stages.GetStageById
 );
+app.put(
+  "/openings/:openingId/stages/:stageId",
+  [withSession, withHasOrg],
+  Stages.UpdateStage
+);
 
 app.get(
   "/openings/:openingId/stages",
