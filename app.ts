@@ -80,7 +80,13 @@ app.post("/orgs", withSession, Orgs.CreateAndJoinOrg);
 
 app.post("/openings", [withSession, withHasOrg], Openings.CreateOpening);
 app.get("/openings", [withSession, withHasOrg], Openings.GetOpeningsInOrg);
-// Catch timeouts
+app.get(
+  "/openings/:openingId",
+  [withSession, withHasOrg],
+  Openings.GetOpeningById
+);
+
+// Catch timeouts // TODO make this into its own middleware
 function haltOnTimedout(req, res, next) {
   if (!req.timedout) next();
 }

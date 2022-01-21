@@ -26,6 +26,24 @@ describe("Openings", () => {
     }
   });
 
+  it("fails to retrieve openings in an org if a user does not have an org", async () => {
+    try {
+      await axios.get(API_URL + "/openings");
+    } catch (error) {
+      expect(error.response.status).toBe(403);
+      expect(error.response.data.message).toBe(ERRORS.NEEDS_ORG);
+    }
+  });
+
+  it("fails to retrieve openings in an org if a user does not have an org", async () => {
+    try {
+      await axios.get(API_URL + "/openings/123");
+    } catch (error) {
+      expect(error.response.status).toBe(403);
+      expect(error.response.data.message).toBe(ERRORS.NEEDS_ORG);
+    }
+  });
+
   it("fails to create an opening with a large name", async () => {
     // Create an org
     await axios.post(API_URL + "/orgs", {
@@ -66,5 +84,33 @@ describe("Openings", () => {
 
     expect(data2.status).toBe(200);
     expect(data2.data.length).toBeGreaterThanOrEqual(1);
+  });
+
+  it("returns a 404 if an opening does not exist", async () => {
+    try {
+      await axios.get(API_URL + "/openings/1");
+    } catch (error) {
+      expect(error.response.status).toBe(404);
+      expect(error.response.data.message).toBe("Opening not found");
+    }
+  });
+
+  it("allows retrieving an opening by id", async () => {
+    // Create an opening first
+    await axios.post(API_URL + "/openings", {
+      GSI1SK: nanoid(10),
+    });
+
+    // Get openings in an org
+    const data2 = await axios.get(API_URL + "/openings");
+
+    // Get the first opening
+    const opening = data2.data[0];
+    console.log("Opening", opening);
+
+    // Test getting an opening by id
+    const data3 = await axios.get(API_URL + `/openings/${opening.openingId}`);
+    expect(data3.status).toBe(200);
+    expect(data3.data).toStrictEqual(opening);
   });
 });

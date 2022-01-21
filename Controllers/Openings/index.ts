@@ -1,3 +1,4 @@
 import CreateOpening from "./create-opening";
 import GetOpeningsInOrg from "./get-openings-in-org";
-export { CreateOpening, GetOpeningsInOrg };
+import GetOpeningById from "./get-opening-by-id";
+export { CreateOpening, GetOpeningsInOrg, GetOpeningById };
