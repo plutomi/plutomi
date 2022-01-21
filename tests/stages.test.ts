@@ -24,6 +24,15 @@ describe("Stages", () => {
     }
   });
 
+  it("blocks deletion of stages if user is not in an org", async () => {
+    try {
+      await axios.delete(API_URL + "/openings/123/stages/123");
+    } catch (error) {
+      expect(error.response.status).toBe(403);
+      expect(error.response.data.message).toBe(ERRORS.NEEDS_ORG);
+    }
+  });
+
   it("fails to create a stage without an empty empty values for openingId and stage name", async () => {
     // Create an org
     await axios.post(API_URL + "/orgs", {
@@ -76,7 +85,7 @@ describe("Stages", () => {
     }
   });
 
-  it("fail to create a stage in an opening that does not exist", async () => {
+  it("fails to create a stage in an opening that does not exist", async () => {
     try {
       await axios.post(API_URL + "/stages", {
         openingId: "1",
@@ -105,7 +114,7 @@ describe("Stages", () => {
       (opening) => opening.GSI1SK === openingName
     );
 
-    const data2 = await axios.post(API_URL + "/stages", {
+    await axios.post(API_URL + "/stages", {
       openingId: ourOpening.openingId,
       GSI1SK: nanoid(10),
     });
@@ -116,5 +125,52 @@ describe("Stages", () => {
     );
 
     expect(ourOpening2.data.stageOrder.length).toBe(1);
+  });
+
+  it("allows deletion of stages", async () => {
+    const openingName = nanoid(20);
+    // Create an opening first
+    await axios.post(API_URL + "/openings", {
+      GSI1SK: openingName,
+    });
+
+    // Get openings in an org
+    const data = await axios.get(API_URL + "/openings");
+
+    const ourOpening = data.data.find(
+      (opening) => opening.GSI1SK === openingName
+    );
+
+    // Create a stage
+    const stage = await axios.post(API_URL + "/stages", {
+      openingId: ourOpening.openingId,
+      GSI1SK: nanoid(10),
+    });
+
+    expect(stage.status).toBe(201);
+    expect(stage.data.message).toBe("Stage created!");
+
+    const stageCreated = await axios.get(
+      API_URL + `/openings/${ourOpening.openingId}`
+    );
+
+    console.log("Opening after stage created", stageCreated);
+    expect(stageCreated.status).toBe(200);
+    expect(stageCreated.data.stageOrder.length).toBe(1);
+
+    const deleteStageRes = await axios.delete(
+      API_URL +
+        `/openings/${stageCreated.data.openingId}/stages/${stageCreated.data.stageOrder[0]}`
+    );
+
+    expect(deleteStageRes.status).toBe(200);
+    expect(deleteStageRes.data.message).toBe("Stage deleted!");
+
+    const afterdeletion = await axios.get(
+      API_URL + `/openings/${ourOpening.openingId}`
+    );
+
+    expect(afterdeletion.status).toBe(200);
+    expect(afterdeletion.data.stageOrder).toStrictEqual([]);
   });
 });

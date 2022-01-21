@@ -98,6 +98,11 @@ app.put(
 );
 
 app.post("/stages", [withSession, withHasOrg], Stages.CreateStage);
+app.delete(
+  "/openings/:openingId/stages/:stageId",
+  [withSession, withHasOrg],
+  Stages.DeleteStage
+);
 
 // Catch timeouts // TODO make this into its own middleware
 function haltOnTimedout(req, res, next) {

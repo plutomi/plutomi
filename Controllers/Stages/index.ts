@@ -1,3 +1,3 @@
 import CreateStage from "./create-stage";
-
-export { CreateStage };
+import DeleteStage from "./delete-stage";
+export { CreateStage, DeleteStage };
