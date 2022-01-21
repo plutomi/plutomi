@@ -11,6 +11,7 @@ import * as Auth from "./Controllers/Auth";
 import * as Users from "./Controllers/Users";
 import * as Orgs from "./Controllers/Orgs";
 import * as Openings from "./Controllers/Openings";
+import * as Stages from "./Controllers/Stages";
 import withHasOrg from "./middleware/withHasOrg";
 import helmet from "helmet";
 import * as Jest from "./Controllers/jest-setup";
@@ -95,6 +96,8 @@ app.put(
   [withSession, withHasOrg],
   Openings.UpdateOpening
 );
+
+app.post("/stages", [withSession, withHasOrg], Stages.CreateStage);
 
 // Catch timeouts // TODO make this into its own middleware
 function haltOnTimedout(req, res, next) {

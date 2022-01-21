@@ -27,8 +27,6 @@ export default async function GetApplicants(
       const response = await Dynamo.send(new QueryCommand(params));
       const allApplicants = response.Items as GetAllApplicantsInStageOutput;
 
-      // Sort by full name, or whatever else, probably most recently active would be best
-      allApplicants.sort((a, b) => (a.fullName < b.fullName ? 1 : -1));
 
       return [allApplicants, null];
     } catch (error) {

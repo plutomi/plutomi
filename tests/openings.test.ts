@@ -35,7 +35,7 @@ describe("Openings", () => {
     }
   });
 
-  it("fails to retrieve openings in an org if a user does not have an org", async () => {
+  it("fails to retrieve a specific opening if a user does not have an org", async () => {
     try {
       await axios.get(API_URL + "/openings/123");
     } catch (error) {
@@ -53,7 +53,7 @@ describe("Openings", () => {
 
     try {
       await axios.post(API_URL + "/openings", {
-        GSI1SK: nanoid(105),
+        GSI1SK: nanoid(2000),
       });
     } catch (error) {
       expect(error.response.status).toBe(400);
