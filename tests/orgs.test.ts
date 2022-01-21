@@ -65,4 +65,13 @@ describe("Orgs", () => {
       expect(error.response.data.message).toBe("You already belong to an org!");
     }
   });
+
+  it("allows retrieving users from an org", async () => {
+    // Since we will be the only users in the org,
+    // we can verify that the only user that is returned is us
+    const self = await axios.get(API_URL + "/users/self");
+    const data = await axios.get(API_URL + "/users");
+    expect(data.status).toBe(200);
+    expect(data.data[0].userId).toBe(self.data.userId);
+  });
 });
