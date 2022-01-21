@@ -54,4 +54,17 @@ describe("Openings", () => {
     expect(data.status).toBe(201);
     expect(data.data.message).toBe("Opening created!");
   });
+
+  it("allows retrieving openings in an org", async () => {
+    // Create an opening first
+    await axios.post(API_URL + "/openings", {
+      GSI1SK: nanoid(10),
+    });
+
+    // Get openings in an org
+    const data2 = await axios.get(API_URL + "/openings");
+
+    expect(data2.status).toBe(200);
+    expect(data2.data.length).toBeGreaterThanOrEqual(1);
+  });
 });

@@ -79,6 +79,7 @@ app.get("/orgs", [withSession, withHasOrg], Orgs.GetOrgInfo);
 app.post("/orgs", withSession, Orgs.CreateAndJoinOrg);
 
 app.post("/openings", [withSession, withHasOrg], Openings.CreateOpening);
+app.get("/openings", [withSession, withHasOrg], Openings.GetOpeningsInOrg);
 // Catch timeouts
 function haltOnTimedout(req, res, next) {
   if (!req.timedout) next();
