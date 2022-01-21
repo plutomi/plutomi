@@ -24,6 +24,16 @@ describe("Stages", () => {
     }
   });
 
+  it("blocks retrieving stages for an opening if not in an org", async () => {
+    try {
+      await axios.get(API_URL + "/openings/123/stages");
+    } catch (error) {
+      console.error("Error retrieving opening stages", error);
+      expect(error.response.status).toBe(403);
+      expect(error.response.data.message).toBe(ERRORS.NEEDS_ORG);
+    }
+  });
+
   it("blocks deletion of stages if user is not in an org", async () => {
     try {
       await axios.delete(API_URL + "/openings/123/stages/123");
@@ -232,5 +242,45 @@ describe("Stages", () => {
 
     expect(stage.status).toBe(200);
     expect(stage.data.GSI1SK).toBe(stageName);
+  });
+
+  it("returns stages in an opening", async () => {
+    const openingName = nanoid(20);
+    // Create an opening first
+    await axios.post(API_URL + "/openings", {
+      GSI1SK: openingName,
+    });
+
+    // Get openings in an org
+    const data = await axios.get(API_URL + "/openings");
+
+    const ourOpening = data.data.find(
+      (opening) => opening.GSI1SK === openingName
+    );
+
+    const stage1Name = nanoid(10);
+    const stage2Name = nanoid(10);
+
+    // Create the two stages
+    await axios.post(API_URL + "/stages", {
+      openingId: ourOpening.openingId,
+      GSI1SK: stage1Name,
+    });
+    await axios.post(API_URL + "/stages", {
+      openingId: ourOpening.openingId,
+      GSI1SK: stage2Name,
+    });
+
+    const data2 = await axios.get(
+      API_URL + `/openings/${ourOpening.openingId}/stages`
+    );
+
+    expect(data2.status).toBe(200);
+    expect(data2.data.length).toBe(2);
+
+    const firstStage = data2.data[0];
+    const secondStage = data2.data[1];
+    expect(firstStage.GSI1SK).toBe(stage1Name);
+    expect(secondStage.GSI1SK).toBe(stage2Name);
   });
 });

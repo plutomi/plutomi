@@ -109,6 +109,12 @@ app.get(
   Stages.GetStageById
 );
 
+app.get(
+  "/openings/:openingId/stages",
+  [withSession, withHasOrg],
+  Stages.GetStagesInOpening
+);
+
 // Catch timeouts // TODO make this into its own middleware
 function haltOnTimedout(req, res, next) {
   if (!req.timedout) next();

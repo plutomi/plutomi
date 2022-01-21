@@ -7,13 +7,7 @@ import {
 } from "@aws-sdk/client-eventbridge";
 const processor = require("dynamodb-streams-processor");
 import { PutEventsRequestEntry } from "aws-sdk/clients/eventbridge";
-/**
- * Sends messages to an SNS topic.
- * We do most of our filtering here so we don't even have to call SNS if it isn't needed.
- * SNS then fans out to a corresponding SQS queue on each event
- * Reading: https://stackabuse.com/publishing-and-subscribing-to-aws-sns-messages-with-node-js/
- *
- */
+
 export async function main(event: DynamoDBStreamEvent) {
   // Was reading a bit and this came up https://github.com/aws/aws-sdk-js/issues/2486
   const record = processor(event.Records)[0];
@@ -24,7 +18,7 @@ export async function main(event: DynamoDBStreamEvent) {
     // Note, if we ever use AWS events directly, they will go to the default event bus and not this one.
     // This is for easy dev / prod testing
     EventBusName: `${process.env.NODE_ENV}-EventBus`,
-    DetailType: "stream", // Was having issues if this wasn't specified - can be anything
+    DetailType: "stream",
     Detail: JSON.stringify({
       eventName: eventName,
       OldImage: OldImage,
