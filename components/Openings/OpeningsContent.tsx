@@ -31,7 +31,7 @@ export default function OpeningsContent() {
   const createOpening = async () => {
     try {
       const { message } = await OpeningsService.createOpening(
-        openingModal.GSI1SK
+        openingModal.openingName
       );
 
       alert(message);
@@ -75,7 +75,7 @@ export default function OpeningsContent() {
                 modalMode: "CREATE",
                 isPublic: false,
                 openingId: "",
-                GSI1SK: "",
+                openingName: "",
               })
             }
             type="button"

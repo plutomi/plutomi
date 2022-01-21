@@ -19,7 +19,7 @@ export default function OpeningList() {
   const search = useStore((state) => state.openingsSearchInput);
 
   const filteredOpenings = openings?.filter((opening) =>
-    opening?.GSI1SK?.toLowerCase().trim().includes(search.toLowerCase().trim())
+    opening?.openingName?.toLowerCase().trim().includes(search.toLowerCase().trim())
   );
 
   return (
@@ -43,7 +43,7 @@ export default function OpeningList() {
                   <div className="px-4 py-4 sm:px-6">
                     <div className="flex items-center justify-between">
                       <h1 className="text-lg font-medium text-blue-600 truncate">
-                        {opening?.GSI1SK}
+                        {opening?.openingName}
                       </h1>
                       <div className="ml-2 flex-shrink-0 flex">
                         {opening.isPublic ? (

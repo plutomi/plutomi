@@ -249,10 +249,14 @@ type CreateApplicantResponseInput = Pick<
 
 type CreateApplicantResponseOutput = DynamoNewApplicantResponse;
 
-type CreateOpeningInput = Pick<DynamoNewOpening, "orgId" | "GSI1SK">;
+type CreateOpeningInput = Pick<DynamoNewOpening, "orgId" | "openingName">;
 type DeleteOpeningInput = Pick<DynamoNewOpening, "orgId" | "openingId">;
 
-type GetAllOpeningsInOrgInput = Pick<DynamoNewOpening, "orgId">;
+// Retrieves all oepnings by default, can filter on public or private
+interface GetOpeningsInOrgInput extends Pick<DynamoNewOpening, "orgId"> {
+  GSI1SK?: "PUBLIC" | "PRIVATE";
+}
+
 type GetAllStagesInOpeningInput = Pick<
   DynamoNewOpening,
   "orgId" | "openingId" | "stageOrder"

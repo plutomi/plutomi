@@ -80,7 +80,7 @@ const main = async (
     };
   }
   // Conditional check will also catch this
-  if (!opening.isPublic || opening.totalStages === 0) {
+  if (opening.GSI1SK === "PRIVATE" || opening.totalStages === 0) {
     return {
       statusCode: 403,
       body: {

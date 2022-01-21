@@ -42,7 +42,61 @@ describe("Public", () => {
   });
 
   // TODO need to create opening, create stage, and then make opening public
-  it("retrieves all public openings in an org", async () => {});
+  it("retrieves all public openings in an org", async () => {
+    // Create two openings in the org
+    const opening1Name = nanoid(20);
+    const opening2Name = nanoid(20);
 
-  it("retrieves public information about an opening", async () => {});
+    try {
+      await axios.post(API_URL + `/openings`, {
+        openingName: opening1Name,
+      });
+    } catch (error) {
+      console.error(error);
+    }
+
+    try {
+      await axios.post(API_URL + `/openings`, {
+        openingName: opening2Name,
+      });
+    } catch (error) {
+      console.error(error);
+    }
+
+    const allOpenings = await axios.get(API_URL + "/openings");
+
+    expect(allOpenings.status).toBe(200);
+    expect(allOpenings.data.length).toBe(2);
+    const opening1 = allOpenings.data.find(
+      (opening) => opening.openingName === opening1Name
+    );
+
+    // Make ONE them public // TODO this should require a stage
+    // https://github.com/plutomi/plutomi/issues/531
+
+    try {
+      await axios.put(API_URL + `/openings/${opening1.openingId}`, {
+        newValues: {
+          GSI1SK: "PUBLIC",
+        },
+      });
+    } catch (error) {
+      console.error(error);
+    }
+
+    const result = await axios.get(
+      API_URL + `/public/orgs/${opening1.orgId}/openings`
+    );
+
+    expect(result.status).toBe(200);
+    expect(result.data.length).toBe(1);
+    expect(Object.keys(result.data[0])).toStrictEqual([
+      "openingName",
+      "createdAt",
+      "openingId",
+    ]);
+  });
+
+  // TODO
+  //   it("retrieves public information about an opening", async () => {});
 });

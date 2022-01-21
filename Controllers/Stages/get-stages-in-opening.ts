@@ -10,8 +10,10 @@ const main = async (req: Request, res: Response) => {
     openingId,
     orgId: session.orgId,
   });
+  console.log("Opening id", openingId);
 
   if (openingError) {
+    console.log("Opening error", openingError);
     const { status, body } = CreateError.SDK(
       openingError,
       "An error ocurred getting your opening info"
@@ -25,6 +27,7 @@ const main = async (req: Request, res: Response) => {
   });
 
   if (allStagesError) {
+    console.log("All stages error", allStagesError);
     const { status, body } = CreateError.SDK(
       allStagesError,
       "An error ocurred retrieving all the current stages"

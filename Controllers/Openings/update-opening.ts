@@ -5,32 +5,6 @@ import * as CreateError from "../../utils/errorGenerator";
 import { DEFAULTS, JOI_GLOBAL_FORBIDDEN, JOI_SETTINGS } from "../../Config";
 import { UpdateOpeningInput } from "../../types/main";
 
-interface APIUpdateUserParameters {
-  userId?: string;
-}
-interface APIUpdateUserBody {
-  newValues?: { [key: string]: any };
-}
-
-/**
- * When calling PUT /users/:userId, these properties cannot be updated by the user
- */
-export const JOI_FORBIDDEN_USER = {
-  ...JOI_GLOBAL_FORBIDDEN,
-  userId: Joi.any().forbidden().strip(),
-  userRole: Joi.any().forbidden().strip(), // TODO rbac
-  orgJoinDate: Joi.any().forbidden().strip(),
-  canReceiveEmails: Joi.any().forbidden().strip(),
-  GSI1PK: Joi.any().forbidden().strip(), // Org users
-  firstName: Joi.string().invalid(DEFAULTS.FIRST_NAME).optional(),
-  lastName: Joi.string().invalid(DEFAULTS.LAST_NAME).optional(),
-  unsubscribeKey: Joi.any().forbidden().strip(),
-  GSI2PK: Joi.any().forbidden().strip(), // Email
-  GSI2SK: Joi.any().forbidden().strip(), // Entity type
-  totalInvites: Joi.any().forbidden().strip(),
-  verifiedEmail: Joi.any().forbidden().strip(), // Updated asynchronously (step functions) on 1st login
-};
-
 const JOI_FORBIDDEN_OPENING = Joi.object({
   ...JOI_GLOBAL_FORBIDDEN,
   openingId: Joi.any().forbidden().strip(),

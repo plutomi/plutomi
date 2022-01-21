@@ -121,10 +121,10 @@ export default function OpeningModal({
                                 onChange={(e) =>
                                   setOpeningModal({
                                     ...openingModal,
-                                    GSI1SK: e.target.value,
+                                    openingName: e.target.value,
                                   })
                                 }
-                                value={openingModal.GSI1SK}
+                                value={openingModal.openingName}
                                 className="block w-full shadow-sm sm:text-sm focus:ring-blue-500 focus:border-blue-500 border-gray-300 rounded-md"
                               />
                             </div>
@@ -145,11 +145,14 @@ export default function OpeningModal({
                                     aria-describedby="comments-description"
                                     name="comments"
                                     type="checkbox"
-                                    checked={openingModal.isPublic}
+                                    // TODO types
+                                    checked={openingModal.GSI1SK === "PUBLIC"}
                                     onChange={(e) =>
                                       setOpeningModal({
                                         ...openingModal,
-                                        isPublic: e.target.checked,
+                                        GSI1SK: e.target.checked
+                                          ? "PUBLIC"
+                                          : "PRIVATE",
                                       })
                                     }
                                     className="focus:ring-blue-500 h-4 w-4 text-blue-600 border-gray-300 rounded"

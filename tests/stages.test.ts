@@ -26,7 +26,6 @@ describe("Stages", () => {
     try {
       await axios.get(API_URL + "/openings/123/stages");
     } catch (error) {
-      console.error("Error retrieving opening stages", error);
       expect(error.response.status).toBe(403);
       expect(error.response.data.message).toBe(ERRORS.NEEDS_ORG);
     }
@@ -130,14 +129,14 @@ describe("Stages", () => {
     const openingName = nanoid(50);
     // Create an opening first
     await axios.post(API_URL + "/openings", {
-      GSI1SK: openingName,
+      openingName,
     });
 
     // Get openings in an org
     const data = await axios.get(API_URL + "/openings");
 
     const ourOpening = data.data.find(
-      (opening) => opening.GSI1SK === openingName
+      (opening) => opening.openingName === openingName
     );
 
     await axios.post(API_URL + "/stages", {
@@ -157,14 +156,14 @@ describe("Stages", () => {
     const openingName = nanoid(20);
     // Create an opening first
     await axios.post(API_URL + "/openings", {
-      GSI1SK: openingName,
+      openingName,
     });
 
     // Get openings in an org
     const data = await axios.get(API_URL + "/openings");
 
     const ourOpening = data.data.find(
-      (opening) => opening.GSI1SK === openingName
+      (opening) => opening.openingName === openingName
     );
 
     // Create a stage
@@ -197,20 +196,19 @@ describe("Stages", () => {
     const openingName = nanoid(20);
     // Create an opening first
     await axios.post(API_URL + "/openings", {
-      GSI1SK: openingName,
+      openingName,
     });
 
     // Get openings in an org
     const data = await axios.get(API_URL + "/openings");
 
     const ourOpening = data.data.find(
-      (opening) => opening.GSI1SK === openingName
+      (opening) => opening.openingName === openingName
     );
 
     try {
       await axios.get(API_URL + `/openings/${ourOpening.openingId}/stages/1`);
     } catch (error) {
-      console.error(error);
       expect(error.response.status).toBe(404);
       expect(error.response.data.message).toBe("Stage not found");
     }
@@ -219,20 +217,19 @@ describe("Stages", () => {
   it("retrieves stage info", async () => {
     // Create an opening
     const openingName = nanoid(20);
-    // Create an opening first
     await axios.post(API_URL + "/openings", {
-      GSI1SK: openingName,
+      openingName,
     });
 
-    // Get openings in an org
+    // Get openings in org
     const data = await axios.get(API_URL + "/openings");
 
     const ourOpening = data.data.find(
-      (opening) => opening.GSI1SK === openingName
+      (opening) => opening.openingName === openingName
     );
 
-    const stageName = nanoid(10);
     // Create a stage
+    const stageName = nanoid(10);
     await axios.post(API_URL + "/stages", {
       openingId: ourOpening.openingId,
       GSI1SK: stageName,
@@ -242,27 +239,31 @@ describe("Stages", () => {
       API_URL + `/openings/${ourOpening.openingId}`
     );
 
-    const stage = await axios.get(
-      API_URL +
-        `/openings/${ourOpening.openingId}/stages/${updatedOpening.data.stageOrder[0]}`
-    );
+    try {
+      const stage = await axios.get(
+        API_URL +
+          `/openings/${ourOpening.openingId}/stages/${updatedOpening.data.stageOrder[0]}`
+      );
 
-    expect(stage.status).toBe(200);
-    expect(stage.data.GSI1SK).toBe(stageName);
+      expect(stage.status).toBe(200);
+      expect(stage.data.GSI1SK).toBe(stageName);
+    } catch (error) {
+      console.error(error);
+    }
   });
 
   it("returns stages in an opening", async () => {
     const openingName = nanoid(20);
     // Create an opening first
     await axios.post(API_URL + "/openings", {
-      GSI1SK: openingName,
+      openingName,
     });
 
     // Get openings in an org
     const data = await axios.get(API_URL + "/openings");
 
     const ourOpening = data.data.find(
-      (opening) => opening.GSI1SK === openingName
+      (opening) => opening.openingName === openingName
     );
 
     const stage1Name = nanoid(10);
@@ -296,14 +297,14 @@ describe("Stages", () => {
 
     // Create an opening
     await axios.post(API_URL + "/openings", {
-      GSI1SK: openingName,
+      openingName,
     });
 
     // Get openings in an org
     const data = await axios.get(API_URL + "/openings");
 
     const ourOpening = data.data.find(
-      (opening) => opening.GSI1SK === openingName
+      (opening) => opening.openingName === openingName
     );
 
     const stageName = nanoid(10);
@@ -342,14 +343,14 @@ describe("Stages", () => {
 
     // Create an opening
     await axios.post(API_URL + "/openings", {
-      GSI1SK: openingName,
+      openingName,
     });
 
     // Get openings in an org
     const data = await axios.get(API_URL + "/openings");
 
     const ourOpening = data.data.find(
-      (opening) => opening.GSI1SK === openingName
+      (opening) => opening.openingName === openingName
     );
 
     const stageName = nanoid(10);
@@ -386,7 +387,6 @@ describe("Stages", () => {
     const stageAfter = await axios.get(
       API_URL + `/openings/${ourOpening.openingId}/stages/${stageid}`
     );
-
 
     expect(stageAfter.data.GSI1SK).toBe(newName);
   });

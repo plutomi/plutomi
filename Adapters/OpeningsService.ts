@@ -1,9 +1,9 @@
 import axios from "../utils/axios";
 
 export default class OpeningsService {
-  static async createOpening(GSI1SK) {
+  static async createOpening(openingName) {
     const body = {
-      GSI1SK: GSI1SK,
+      openingName,
     };
 
     const { data } = await axios.post(`/openings`, body);

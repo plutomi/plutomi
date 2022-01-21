@@ -27,7 +27,7 @@ export default function PublicOpeningsList() {
                 <div className="px-4 py-4 sm:px-6">
                   <div className="flex items-center justify-between">
                     <p className="text-lg font-medium text-blue-600 truncate">
-                      {opening?.GSI1SK}
+                      {opening?.openingName}
                     </p>
                   </div>
                   <div className="mt-2 sm:flex sm:justify-between">

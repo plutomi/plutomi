@@ -13,7 +13,7 @@ import { SdkError } from "@aws-sdk/types";
 export default async function Create(
   props: CreateOpeningInput
 ): Promise<[DynamoNewOpening, null] | [null, SdkError]> {
-  const { orgId, GSI1SK } = props;
+  const { orgId, openingName } = props;
   const openingId = nanoid(ID_LENGTHS.OPENING);
   const newOpening: DynamoNewOpening = {
     PK: `${ENTITY_TYPES.ORG}#${orgId}#${ENTITY_TYPES.OPENING}#${openingId}`,
@@ -22,12 +22,12 @@ export default async function Create(
     createdAt: Time.currentISO(),
     orgId,
     openingId,
+    openingName,
     GSI1PK: `${ENTITY_TYPES.ORG}#${orgId}#${ENTITY_TYPES.OPENING}S`,
-    GSI1SK, // Name of the opening
+    GSI1SK: "PRIVATE", // All openings are private by default
     totalStages: 0,
     stageOrder: [],
     totalApplicants: 0,
-    isPublic: false,
   };
 
   // If in dev, set a TTL for auto delete

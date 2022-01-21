@@ -1,22 +1,27 @@
 import { Request, Response } from "express";
-import * as CreateError from "../../utils/errorGenerator";
 import * as Orgs from "../../models/Orgs";
+import * as CreateError from "../../utils/errorGenerator";
+import { pick } from "lodash";
 const main = async (req: Request, res: Response) => {
-  const { session } = res.locals;
+  const { orgId } = req.params;
+
   const [openings, openingsError] = await Orgs.getOpeningsInOrg({
-    orgId: session.orgId,
+    orgId,
+    GSI1SK: "PUBLIC",
   });
 
   if (openingsError) {
-    console.error("Openings error");
     const { status, body } = CreateError.SDK(
       openingsError,
-      "An error ocurred retrieving openings"
+      "An error ocurred retrieving openings for this org"
     );
-
     return res.status(status).json(body);
   }
 
-  return res.status(200).json(openings);
+  const modifiedOpenings = openings.map((opening) =>
+    pick(opening, ["openingName", "createdAt", "openingId"])
+  );
+
+  return res.status(200).json(modifiedOpenings);
 };
 export default main;

@@ -249,14 +249,19 @@ interface DynamoNewOpening {
    * The ID of the opening
    */
   openingId: string;
+
+  /**
+   * The opening name
+   */
+  openingName: string;
   /**
    * GSIPK to retrieve all openings in an org. Takes an `orgId`
    */
   GSI1PK: `${ENTITY_TYPES.ORG}#${string}#${ENTITY_TYPES.OPENING}S`;
   /**
-   * The opening name
+   * Optional, can filter out PUBLIC or PRIVATE openings
    */
-  GSI1SK: string;
+  GSI1SK: "PUBLIC" | "PRIVATE";
   /**
    * Total stages in opening.
    * @default 0
@@ -268,10 +273,6 @@ interface DynamoNewOpening {
    * @default 0
    */
   totalApplicants: number;
-  /**
-   * If the opening should be public
-   */
-  isPublic: boolean;
 }
 
 interface DynamoNewOrgInvite {

@@ -72,11 +72,11 @@ export default async function Create(
              * Since this is a transaction, this whole thing will fail if this check fails
              */
             ConditionExpression:
-              "attribute_exists(PK) AND isPublic = :isPublic AND totalStages > :totalStages",
+              "attribute_exists(PK) AND GSI1SK = :GSI1SK AND totalStages > :totalStages",
             ExpressionAttributeValues: {
               ":zero": 0,
               ":value": 1,
-              ":isPublic": true,
+              ":GSI1SK": "PUBLIC",
               ":totalStages": 0,
             },
           },

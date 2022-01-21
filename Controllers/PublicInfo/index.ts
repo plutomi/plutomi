@@ -1,3 +1,3 @@
 import GetPublicOrgInfo from "./get-public-org-info";
-
-export { GetPublicOrgInfo };
+import GetPublicOpeningsInOrg from "./get-public-openings-in-org";
+export { GetPublicOrgInfo, GetPublicOpeningsInOrg };

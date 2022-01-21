@@ -2,7 +2,6 @@ import axios, { AxiosResponse } from "axios";
 import { nanoid } from "nanoid";
 import { API_URL, DEFAULTS, ENTITY_TYPES, ERRORS } from "../Config";
 
-
 describe("Openings", () => {
   /**
    * Creates a session cookie
@@ -17,7 +16,7 @@ describe("Openings", () => {
   it("fails to create an opening if a user is not in an org", async () => {
     try {
       await axios.post(API_URL + "/openings", {
-        GSI1SK: nanoid(10),
+        openingName: nanoid(10),
       });
     } catch (error) {
       expect(error.response.status).toBe(403);
@@ -52,11 +51,11 @@ describe("Openings", () => {
 
     try {
       await axios.post(API_URL + "/openings", {
-        GSI1SK: nanoid(2000),
+        openingName: nanoid(2000),
       });
     } catch (error) {
       expect(error.response.status).toBe(400);
-      expect(error.response.data.message).toContain("body.GSI1SK");
+      expect(error.response.data.message).toContain("body.openingName");
       expect(error.response.data.message).toContain(
         "less than or equal to 100"
       );
@@ -65,7 +64,7 @@ describe("Openings", () => {
 
   it("creates an opening", async () => {
     const data = await axios.post(API_URL + "/openings", {
-      GSI1SK: nanoid(20),
+      openingName: nanoid(20),
     });
 
     expect(data.status).toBe(201);
@@ -75,7 +74,7 @@ describe("Openings", () => {
   it("allows retrieving openings in an org", async () => {
     // Create an opening first
     await axios.post(API_URL + "/openings", {
-      GSI1SK: nanoid(10),
+      openingName: nanoid(10),
     });
 
     // Get openings in an org
@@ -97,7 +96,7 @@ describe("Openings", () => {
   it("allows retrieving an opening by id", async () => {
     // Create an opening first
     await axios.post(API_URL + "/openings", {
-      GSI1SK: nanoid(10),
+      openingName: nanoid(10),
     });
 
     // Get openings in an org
@@ -115,7 +114,7 @@ describe("Openings", () => {
   it("allows updating an opening", async () => {
     // Create an opening
     await axios.post(API_URL + "/openings", {
-      GSI1SK: nanoid(10),
+      openingName: nanoid(10),
     });
 
     // Get openings in an org
@@ -128,7 +127,7 @@ describe("Openings", () => {
     // Update the opening
     const data3 = await axios.put(API_URL + `/openings/${opening.openingId}`, {
       newValues: {
-        GSI1SK: newName,
+        openingName: newName,
       },
     });
 
@@ -139,7 +138,7 @@ describe("Openings", () => {
   it("blocks updating an opening with an extra long name", async () => {
     // Create an opening
     await axios.post(API_URL + "/openings", {
-      GSI1SK: nanoid(10),
+      openingName: nanoid(10),
     });
 
     // Get openings in an org
@@ -154,12 +153,14 @@ describe("Openings", () => {
     try {
       await axios.put(API_URL + `/openings/${opening.openingId}`, {
         newValues: {
-          GSI1SK: newName,
+          openingName: newName,
         },
       });
     } catch (error) {
       expect(error.response.status).toBe(400);
-      expect(error.response.data.message).toContain("body.newValues.GSI1SK");
+      expect(error.response.data.message).toContain(
+        "body.newValues.openingName"
+      );
       expect(error.response.data.message).toContain(
         "less than or equal to 100"
       );
@@ -169,7 +170,7 @@ describe("Openings", () => {
   it("blocks editing forbidden properties of an opening", async () => {
     // Create an opening
     await axios.post(API_URL + "/openings", {
-      GSI1SK: nanoid(10),
+      openingName: nanoid(10),
     });
 
     // Get openings in an org
@@ -196,7 +197,7 @@ describe("Openings", () => {
   it("allows deleting openings", async () => {
     // Create an opening
     await axios.post(API_URL + "/openings", {
-      GSI1SK: nanoid(10),
+      openingName: nanoid(10),
     });
 
     // Get openings in an org

@@ -53,7 +53,7 @@ export default function StageSettings() {
       headerText={
         isOpeningLoading
           ? "Settings"
-          : `${opening?.GSI1SK} > ${stage?.GSI1SK} - Settings`
+          : `${opening?.openingName} > ${stage?.GSI1SK} - Settings`
       }
     >
       <>

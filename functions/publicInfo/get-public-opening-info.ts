@@ -44,7 +44,7 @@ const main = async (
     );
   }
 
-  if (opening.isPublic || opening.totalStages === 0) {
+  if (opening.GSI1SK === "PRIVATE" || opening.totalStages === 0) {
     return {
       statusCode: 403,
       body: {
@@ -53,7 +53,11 @@ const main = async (
     };
   }
 
-  const modifiedOpening = pick(opening, ["GSI1SK", "createdAt", "openingId"]);
+  const modifiedOpening = pick(opening, [
+    "openingName",
+    "createdAt",
+    "openingId",
+  ]);
 
   return {
     statusCode: 200,

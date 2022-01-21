@@ -122,7 +122,11 @@ app.get(
 );
 
 app.get("/public/orgs/:orgId", withCleanOrgId, PublicInfo.GetPublicOrgInfo);
-
+app.get(
+  "/public/orgs/:orgId/openings",
+  withCleanOrgId,
+  PublicInfo.GetPublicOpeningsInOrg
+);
 // Catch timeouts // TODO make this into its own middleware
 function haltOnTimedout(req, res, next) {
   if (!req.timedout) next();

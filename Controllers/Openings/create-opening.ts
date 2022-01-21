@@ -5,12 +5,12 @@ import * as Openings from "../../models/Openings";
 import Joi from "joi";
 
 interface APICreateOpeningsBody {
-  GSI1SK?: string;
+  openingName?: string;
 }
 
 const schema = Joi.object({
   body: {
-    GSI1SK: Joi.string().max(100),
+    openingName: Joi.string().max(100),
   },
 }).options(JOI_SETTINGS);
 
@@ -20,15 +20,14 @@ const main = async (req: Request, res: Response) => {
     await schema.validateAsync(req);
   } catch (error) {
     const { status, body } = CreateError.JOI(error);
-
     return res.status(status).json(body);
   }
 
-  const { GSI1SK }: APICreateOpeningsBody = req.body;
+  const { openingName }: APICreateOpeningsBody = req.body;
 
   const [created, createOpeningError] = await Openings.createOpening({
     orgId: session.orgId,
-    GSI1SK,
+    openingName,
   });
 
   if (createOpeningError) {
