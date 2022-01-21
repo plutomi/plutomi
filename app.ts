@@ -103,6 +103,11 @@ app.delete(
   [withSession, withHasOrg],
   Stages.DeleteStage
 );
+app.get(
+  "/openings/:openingId/stages/:stageId",
+  [withSession, withHasOrg],
+  Stages.GetStageById
+);
 
 // Catch timeouts // TODO make this into its own middleware
 function haltOnTimedout(req, res, next) {

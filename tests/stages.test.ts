@@ -33,6 +33,15 @@ describe("Stages", () => {
     }
   });
 
+  it("blocks retrieving stage info if user is not in an org", async () => {
+    try {
+      await axios.get(API_URL + "/openings/123/stages/123");
+    } catch (error) {
+      expect(error.response.status).toBe(403);
+      expect(error.response.data.message).toBe(ERRORS.NEEDS_ORG);
+    }
+  });
+
   it("fails to create a stage without an empty empty values for openingId and stage name", async () => {
     // Create an org
     await axios.post(API_URL + "/orgs", {
@@ -142,21 +151,14 @@ describe("Stages", () => {
     );
 
     // Create a stage
-    const stage = await axios.post(API_URL + "/stages", {
+    await axios.post(API_URL + "/stages", {
       openingId: ourOpening.openingId,
       GSI1SK: nanoid(10),
     });
 
-    expect(stage.status).toBe(201);
-    expect(stage.data.message).toBe("Stage created!");
-
     const stageCreated = await axios.get(
       API_URL + `/openings/${ourOpening.openingId}`
     );
-
-    console.log("Opening after stage created", stageCreated);
-    expect(stageCreated.status).toBe(200);
-    expect(stageCreated.data.stageOrder.length).toBe(1);
 
     const deleteStageRes = await axios.delete(
       API_URL +
@@ -172,5 +174,63 @@ describe("Stages", () => {
 
     expect(afterdeletion.status).toBe(200);
     expect(afterdeletion.data.stageOrder).toStrictEqual([]);
+  });
+
+  it("returns 404 if stage is not found while retrieving info", async () => {
+    const openingName = nanoid(20);
+    // Create an opening first
+    await axios.post(API_URL + "/openings", {
+      GSI1SK: openingName,
+    });
+
+    // Get openings in an org
+    const data = await axios.get(API_URL + "/openings");
+
+    const ourOpening = data.data.find(
+      (opening) => opening.GSI1SK === openingName
+    );
+
+    try {
+      await axios.get(API_URL + `/openings/${ourOpening.openingId}/stages/1`);
+    } catch (error) {
+      console.error(error);
+      expect(error.response.status).toBe(404);
+      expect(error.response.data.message).toBe("Stage not found");
+    }
+  });
+
+  it("retrieves stage info", async () => {
+    // Create an opening
+    const openingName = nanoid(20);
+    // Create an opening first
+    await axios.post(API_URL + "/openings", {
+      GSI1SK: openingName,
+    });
+
+    // Get openings in an org
+    const data = await axios.get(API_URL + "/openings");
+
+    const ourOpening = data.data.find(
+      (opening) => opening.GSI1SK === openingName
+    );
+
+    const stageName = nanoid(10);
+    // Create a stage
+    await axios.post(API_URL + "/stages", {
+      openingId: ourOpening.openingId,
+      GSI1SK: stageName,
+    });
+
+    const updatedOpening = await axios.get(
+      API_URL + `/openings/${ourOpening.openingId}`
+    );
+
+    const stage = await axios.get(
+      API_URL +
+        `/openings/${ourOpening.openingId}/stages/${updatedOpening.data.stageOrder[0]}`
+    );
+
+    expect(stage.status).toBe(200);
+    expect(stage.data.GSI1SK).toBe(stageName);
   });
 });

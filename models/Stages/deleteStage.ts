@@ -26,7 +26,6 @@ export default async function Remove(
             SK: ENTITY_TYPES.STAGE,
           },
           TableName: `${process.env.NODE_ENV}-${DYNAMO_TABLE_NAME}`,
-
           ConditionExpression: "attribute_exists(PK)",
         },
       },
