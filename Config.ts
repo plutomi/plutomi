@@ -74,12 +74,12 @@ export const ERRORS = {
 };
 // https://zelark.github.io/nano-id-cc/
 export const ID_LENGTHS = {
-  USER: 25, // Unique to application
-  APPLICANT: 25, // Unique to application
+  USER: 35, // Unique to application
+  APPLICANT: 35, // Unique to application
   APPLICANT_RESPONSE: 10, // Unique to applicant
-  ORG_INVITE: 5, // Unique to user
-  OPENING: 10, // Unique to org
-  STAGE: 10, // Unique to opening
+  ORG_INVITE: 5, // Unique to user & org
+  OPENING: 15, // Unique to org
+  STAGE: 15, // Unique to opening,
   STAGE_RULE: 10, // TODO, unique to stage
   QUESTION_SET: 10, // TODO unique to org
   STAGE_QUESTION: 10, // TODO, unique to question set, needs name change
