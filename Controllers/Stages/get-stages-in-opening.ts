@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import * as Openings from "../../models/Openings";
 import * as CreateError from "../../utils/errorGenerator";
+import * as Stages from "../../models/Stages";
 const main = async (req: Request, res: Response) => {
   const { session } = res.locals;
 
@@ -13,14 +14,13 @@ const main = async (req: Request, res: Response) => {
   console.log("Opening id", openingId);
 
   if (openingError) {
-    console.log("Opening error", openingError);
     const { status, body } = CreateError.SDK(
       openingError,
       "An error ocurred getting your opening info"
     );
     return res.status(status).json(body);
   }
-  const [allCurrentStages, allStagesError] = await Openings.GetStagesInOpening({
+  const [allCurrentStages, allStagesError] = await Stages.GetStagesInOpenings({
     openingId,
     orgId: session.orgId,
     stageOrder: opening.stageOrder, // To order them correctly

@@ -3,12 +3,12 @@ import DeleteStage from "./delete-stage";
 import UpdateStage from "./update-stage";
 import GetStageById from "./get-stage-by-id";
 import GetApplicantsInStage from "./get-applicants-in-stage";
-import GetQuestionsInStage from "./get-questions-in-stage";
+import GetStagesInOpenings from "./get-stages-in-opening";
 export {
   CreateStage,
   DeleteStage,
   UpdateStage,
   GetStageById,
   GetApplicantsInStage,
-  GetQuestionsInStage,
+  GetStagesInOpenings,
 };

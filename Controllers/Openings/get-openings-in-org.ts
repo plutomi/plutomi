@@ -1,9 +1,9 @@
 import { Request, Response } from "express";
 import * as CreateError from "../../utils/errorGenerator";
-import * as Orgs from "../../models/Orgs";
+import * as Openings from "../../models/Openings";
 const main = async (req: Request, res: Response) => {
   const { session } = res.locals;
-  const [openings, openingsError] = await Orgs.GetOpeningsInOrg({
+  const [openings, openingsError] = await Openings.GetOpeningsInOrg({
     orgId: session.orgId,
   });
 
