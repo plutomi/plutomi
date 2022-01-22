@@ -1,6 +1,6 @@
 import axios, { AxiosResponse } from "axios";
 import { nanoid } from "nanoid";
-import { API_URL, DEFAULTS, ENTITY_TYPES, ERRORS } from "../Config";
+import { API_URL, DEFAULTS, EMAILS, ENTITY_TYPES, ERRORS } from "../Config";
 const UrlSafeString = require("url-safe-string"),
   tagGenerator = new UrlSafeString();
 
@@ -95,5 +95,74 @@ describe("Orgs", () => {
     expect(data.data.totalUsers).toBe(1);
     expect(data.data.totalApplicants).toBe(0);
     expect(data.data.totalOpenings).toBe(0);
+  });
+
+  it("blocks you from deleting an org if there are other users", async () => {
+    // Create a new user
+    const firstUserEmail = `${nanoid(7)}+${EMAILS.TESTING}`;
+    const data: AxiosResponse = await axios.post(API_URL + `/jest-setup`, {
+      email: firstUserEmail,
+    });
+    const cookie = data.headers["set-cookie"][0];
+    axios.defaults.headers.Cookie = cookie;
+
+    const orgId = tagGenerator.generate(nanoid(20));
+
+    // Join org
+    await axios.post(API_URL + "/orgs", { orgId, displayName: nanoid(20) });
+
+    const otherUserEmail = `${nanoid(7)}+${EMAILS.TESTING3}`;
+    // Create an invite for another user
+    await axios.post(API_URL + "/invites", {
+      recipientEmail: otherUserEmail,
+    });
+
+    // Sign in as that other user
+    const data2: AxiosResponse = await axios.post(API_URL + `/jest-setup`, {
+      email: otherUserEmail,
+    });
+    const cookie2 = data2.headers["set-cookie"][0];
+    axios.defaults.headers.Cookie = cookie2;
+
+    const invites = await axios.get(API_URL + "/invites");
+
+    const ourInvite = invites.data.find((invite) => invite.orgId === orgId);
+    // Accept the invite
+    await axios.post(API_URL + `/invites/${ourInvite.inviteId}`);
+
+    // Sign back in as the first user
+    await axios.post(API_URL + `/jest-setup`, {
+      email: firstUserEmail,
+    });
+
+    const orgInfo = await axios.get(API_URL + "/orgs");
+    expect(orgInfo.data.totalUsers).toBe(2);
+
+    try {
+      await axios.delete(API_URL + "/orgs");
+    } catch (error) {
+      expect(error.response.status).toBe(403);
+      expect(error.response.data.message).toBe(
+        "You cannot delete this org as there are other users in it"
+      );
+    }
+  });
+
+  it("deletes an org if you're the only user in it", async () => {
+    // Create a new user
+    const firstUserEmail = `${nanoid(7)}+${EMAILS.TESTING}`;
+    const data: AxiosResponse = await axios.post(API_URL + `/jest-setup`, {
+      email: firstUserEmail,
+    });
+    const cookie = data.headers["set-cookie"][0];
+    axios.defaults.headers.Cookie = cookie;
+
+    const orgId = tagGenerator.generate(nanoid(20));
+
+    // Join org
+    await axios.post(API_URL + "/orgs", { orgId, displayName: nanoid(20) });
+    const deleteOrg = await axios.delete(API_URL + "/orgs");
+    expect(deleteOrg.status).toBe(200);
+    expect(deleteOrg.data.message).toBe("Org deleted!");
   });
 });

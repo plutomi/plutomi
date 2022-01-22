@@ -84,7 +84,7 @@ app.put("/users/:userId", withSession, Users.UpdateUser);
 
 app.get("/orgs", [withSession, withHasOrg], Orgs.GetOrgInfo);
 app.post("/orgs", withSession, Orgs.CreateAndJoinOrg);
-
+app.delete("/orgs", [withSession, withHasOrg], Orgs.DeleteOrg);
 app.post("/openings", [withSession, withHasOrg], Openings.CreateOpening);
 app.get("/openings", [withSession, withHasOrg], Openings.GetOpeningsInOrg);
 app.get(

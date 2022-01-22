@@ -21,10 +21,9 @@ export default async function Create(
           Update: {
             Key: {
               PK: `${ENTITY_TYPES.USER}#${userId}`,
-              SK: ENTITY_TYPES.STAGE,
+              SK: ENTITY_TYPES.USER,
             },
             TableName: `${process.env.NODE_ENV}-${DYNAMO_TABLE_NAME}`,
-
             UpdateExpression:
               "SET orgId = :orgId, orgJoinDate = :orgJoinDate, GSI1PK = :GSI1PK",
             ExpressionAttributeValues: {
