@@ -202,4 +202,45 @@ describe("Openings", () => {
     expect(data2.status).toBe(200);
     expect(data2.data.message).toBe("Opening deleted!");
   });
+
+  it("blocks removing / adding stages in the stageOrder on the opening", async () => {
+    const ourOpeningName = nanoid(15);
+    // Create an opening
+    await axios.post("/openings", {
+      openingName: ourOpeningName,
+    });
+
+    // Get openings in an org
+    const data = await axios.get("/openings");
+
+    // Get the our opening
+    const ourOpening = data.data.find(
+      (opening) => opening.openingName === ourOpeningName
+    );
+
+    expect(ourOpening.stageOrder.length).toBe(0);
+    // Add a stage to our opening
+    await axios.post("/stages", {
+      openingId: ourOpening.openingId,
+      GSI1SK: nanoid(20),
+    });
+
+    const updatedOpening = await axios.get(`/openings/${ourOpening.openingId}`);
+
+    expect(updatedOpening.data.stageOrder.length).toBe(1);
+
+    // Try adding a stage
+    const newStageOrder = [...updatedOpening.data.stageOrder, nanoid(10)];
+
+    try {
+      await axios.put(`/openings/${ourOpening.openingId}`, {
+        staeOrder: newStageOrder,
+      });
+    } catch (error) {
+      expect(error.response.status).toBe(403);
+      expect(error.response.data.message).toBe(
+        "You cannot add / delete stages this way, please use the proper API methods for those actions"
+      );
+    }
+  });
 });

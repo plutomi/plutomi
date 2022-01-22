@@ -48,6 +48,17 @@ const main = async (req: Request, res: Response) => {
     return res.status(status).json(body);
   }
 
+  // https://github.com/plutomi/plutomi/issues/529
+  if (
+    req.body.stageOrder &&
+    req.body.stageOrder.length != opening.stageOrder.length
+  ) {
+    return res.status(403).json({
+      message:
+        "You cannot add / delete stages this way, please use the proper API methods for those actions",
+    });
+  }
+
   // TODO i think this can be moved into dynamo
   if (req.body.GSI1SK === "PUBLIC" && opening.totalStages === 0) {
     return res.status(403).json({
