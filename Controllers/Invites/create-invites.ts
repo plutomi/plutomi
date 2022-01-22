@@ -7,6 +7,7 @@ import * as Users from "../../models/Users";
 import * as Orgs from "../../models/Orgs";
 import * as Time from "../../utils/time";
 import * as Invites from "../../models/Invites";
+import { pick } from "lodash";
 const schema = Joi.object({
   body: {
     recipientEmail: Joi.string().email().trim(),
@@ -110,7 +111,13 @@ const main = async (req: Request, res: Response) => {
     recipient,
     orgName: org.displayName,
     expiresAt: Time.futureISO(3, TIME_UNITS.DAYS), // TODO https://github.com/plutomi/plutomi/issues/333
-    createdBy: session, // TODO this has too much snesitive data https://github.com/plutomi/plutomi/issues/513
+    createdBy: pick(session, [
+      "userId",
+      "firstName",
+      "lastName",
+      "orgId",
+      "email",
+    ]),
   });
 
   if (inviteError) {
