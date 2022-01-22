@@ -4,7 +4,7 @@ import {
 } from "@aws-sdk/lib-dynamodb";
 import { nanoid } from "nanoid";
 import { Dynamo } from "../../AWSClients/ddbDocClient";
-import { ID_LENGTHS, ENTITY_TYPES, TIME_UNITS } from "../../Config";
+import { ID_LENGTHS, ENTITY_TYPES, TIME_UNITS, DEFAULTS } from "../../Config";
 import { DynamoNewOpening } from "../../types/dynamo";
 import { CreateOpeningInput } from "../../types/main";
 import * as Time from "../../utils/time";
@@ -32,7 +32,10 @@ export default async function Create(
 
   // If in dev, set a TTL for auto delete
   if (process.env.NODE_ENV === "development") {
-    newOpening["ttlExpiry"] = Time.futureUNIX(1, TIME_UNITS.DAYS);
+    newOpening["ttlExpiry"] = Time.futureUNIX(
+      DEFAULTS.TEST_DATA_RETENTION_PERIOD,
+      TIME_UNITS.DAYS
+    );
   }
   const transactParams: TransactWriteCommandInput = {
     TransactItems: [

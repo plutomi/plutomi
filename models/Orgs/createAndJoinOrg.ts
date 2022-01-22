@@ -3,7 +3,7 @@ import {
   TransactWriteCommand,
 } from "@aws-sdk/lib-dynamodb";
 import { Dynamo } from "../../AWSClients/ddbDocClient";
-import { ENTITY_TYPES, TIME_UNITS } from "../../Config";
+import { DEFAULTS, ENTITY_TYPES, TIME_UNITS } from "../../Config";
 import { DynamoNewOrg } from "../../types/dynamo";
 import { CreateAndJoinOrgInput } from "../../types/main";
 import * as Time from "../../utils/time";
@@ -29,7 +29,10 @@ export default async function CreateAndJoinOrg(
 
   // If in dev, set a TTL for auto delete
   if (process.env.NODE_ENV === "development") {
-    newOrg["ttlExpiry"] = Time.futureUNIX(1, TIME_UNITS.DAYS);
+    newOrg["ttlExpiry"] = Time.futureUNIX(
+      DEFAULTS.TEST_DATA_RETENTION_PERIOD,
+      TIME_UNITS.DAYS
+    );
   }
 
   try {

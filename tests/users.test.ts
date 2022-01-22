@@ -1,6 +1,6 @@
 import axios from "../utils/axios";
 import { nanoid } from "nanoid";
-import { API_URL, DEFAULTS, ENTITY_TYPES, ERRORS } from "../Config";
+import { DEFAULTS, ENTITY_TYPES, ERRORS } from "../Config";
 
 describe("Users", () => {
   /**

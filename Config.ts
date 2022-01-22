@@ -111,6 +111,12 @@ export enum DEFAULTS {
   REDIRECT = "dashboard",
   NO_FIRST_NAME = "NO_FIRST_NAME",
   NO_LAST_NAME = "NO_LAST_NAME",
+  /**
+   * In days, how long should test data be kept in Dynamo.
+   * This will set a TTL attribute on any created item
+   * if the `NODE_ENV` = `development`
+   */
+  TEST_DATA_RETENTION_PERIOD = 3,
 }
 
 export const LOGIN_LINK_SETTINGS = {
