@@ -1,6 +1,5 @@
 import { ENTITY_TYPES } from "./../../Config";
 import { Request, Response } from "express";
-import Sanitize from "./../../utils/sanitize";
 import * as Stages from "../../models/Stages/index";
 import errorFormatter from "../../utils/errorFormatter";
 
@@ -19,9 +18,9 @@ export const getStageInfo = async (req: Request, res: Response) => {
   if (!stage) {
     return res.status(404).json({ message: "Stage not found" });
   }
-
-  const cleanedStage = Sanitize.clean(stage, ENTITY_TYPES.STAGE);
-  return res.status(200).json(cleanedStage);
+  // TODO
+  // const cleanedStage = Sanitize.clean(stage, ENTITY_TYPES.STAGE);
+  return res.status(200).json(stage);
 };
 
 export const getStageQuestions = async (req: Request, res: Response) => {
