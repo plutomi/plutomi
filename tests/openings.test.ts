@@ -203,6 +203,44 @@ describe("Openings", () => {
     expect(data2.data.message).toBe("Opening deleted!");
   });
 
+  it("allows updating stage order", async () => {
+    const ourOpeningName = nanoid(15);
+    // Create an opening
+    await axios.post("/openings", {
+      openingName: ourOpeningName,
+    });
+
+    // Get openings in an org
+    const data = await axios.get("/openings");
+
+    // Get the our opening
+    const ourOpening = data.data.find(
+      (opening) => opening.openingName === ourOpeningName
+    );
+
+    expect(ourOpening.stageOrder.length).toBe(0);
+    // Add two stages to our opening
+    await axios.post("/stages", {
+      openingId: ourOpening.openingId,
+      GSI1SK: nanoid(20),
+    });
+    await axios.post("/stages", {
+      openingId: ourOpening.openingId,
+      GSI1SK: nanoid(20),
+    });
+
+    const updatedOpening = await axios.get(`/openings/${ourOpening.openingId}`);
+
+    expect(updatedOpening.data.stageOrder.length).toBe(2);
+
+    // Update with new stage order
+    const withNewOrder = await axios.put(`/openings/${ourOpening.openingId}`, {
+      stageOrder: updatedOpening.data.stageOrder.reverse(),
+    });
+
+    expect(withNewOrder.status).toBe(200);
+    expect(withNewOrder.data.message).toBe("Opening updated!");
+  });
   it("blocks removing / adding stages in the stageOrder on the opening", async () => {
     const ourOpeningName = nanoid(15);
     // Create an opening
@@ -229,7 +267,7 @@ describe("Openings", () => {
 
     expect(updatedOpening.data.stageOrder.length).toBe(1);
 
-    // Try adding a stage
+    // Try adding a fake stage
     const newStageOrder = [...updatedOpening.data.stageOrder, nanoid(10)];
 
     try {
