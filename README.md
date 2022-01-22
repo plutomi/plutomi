@@ -6,7 +6,7 @@
 
 ### [Website / Live Demo](https://plutomi.com)
 
-Plutomi is an [applicant tracking system](https://en.wikipedia.org/wiki/Applicant_tracking_system) that streamlines your entire application process with automated workflows at _any_ scale.
+Plutomi is an [applicant tracking system](https://en.wikipedia.org/wiki/Applicant_tracking_system) that streamlines your entire application process with automated workflows at any scale.
 
 ![infra](images/infra.png)
 
@@ -55,7 +55,7 @@ For more information on AWS CDK, please visit the [docs page](https://docs.aws.a
 
 ## Language, Tooling, & Infrastructure
 
-All infrastructure is managed by CDK. We use [Jest](https://jestjs.io/) for testing and all items created in Dynamo during development have a `ttlExpiry` of 1 day so they're automatically deleted. Everything is witten TypeScript and would appreciate any assistance on types or tests as we're definitely not the best :sweat_smile:
+All infrastructure is managed by CDK. We use [Jest](https://jestjs.io/) for testing and all items created in Dynamo during development have a `ttlExpiry` of 1 day so they're automatically deleted. Everything is witten TypeScript and we would appreciate any assistance on types or tests as we're definitely not the best :sweat_smile:
 
 The frontend runs on the [Serverless-Nextjs](https://github.com/serverless-Nextjs/serverless-next.js) component. While we don't rely on serverside rendering much, it is nice to have SSG capabilities and file based routing.
 
@@ -63,7 +63,23 @@ The API is your typical monolith Express app running on Fargate. We prefer the d
 
 ![werner](images/werner.png)
 
-There is a state machine that triggers on certain events such as a new `LOGIN_EVENT` or a `LOGIN_LINK` request. We let the state machine decide the path to take instead of having multiple EB rules and multiple state machines. We can therefore eliminate the myriad of queues and lambda functions polling said queues with the direct SDK calls Step Functions provides.
+There is a state machine that triggers on certain events such as a new `LOGIN_EVENT` or a `LOGIN_LINK` request. We let the state machine decide the path to take instead of having multiple EB rules and multiple state machines. We can therefore eliminate the myriad of queues and lambda functions polling said queues with the direct SDK calls Step Functions provides. 
+
+We try to avoid the [async try/catch pryamid of doom](https://www.youtube.com/watch?v=ITogH7lJTyE) by implementing the pattern shown in the video:
+```node
+  const [user, error] = await Users.GetUserById({ userId });
+
+  if (error) {
+    const { status, body } = CreateError.SDK(
+      error,
+      "An error ocurred using your login link"
+    );
+    return res.status(status).json(body);
+  }
+
+  // continue...
+  ```
+
 
 ## DynamoDB Schema
 
