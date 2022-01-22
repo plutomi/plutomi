@@ -15,7 +15,6 @@ import * as path from "path";
 import { API_DOMAIN, DOMAIN_NAME, WEBSITE_URL } from "../Config";
 import { NodejsFunction } from "@aws-cdk/aws-lambda-nodejs";
 import { Policy, PolicyStatement } from "@aws-cdk/aws-iam";
-import { DEFAULT_LAMBDA_CONFIG } from "../bin/plutomi";
 const resultDotEnv = dotenv.config({
   path: `${process.cwd()}/.env.${process.env.NODE_ENV}`,
 });

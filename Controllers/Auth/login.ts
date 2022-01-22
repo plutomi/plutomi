@@ -8,7 +8,7 @@ import {
 } from "../../Config";
 const jwt = require("jsonwebtoken");
 import * as Users from "../../models/Users";
-import * as CreateError from "../../utils/errorGenerator";
+import * as CreateError from "../../utils/createError";
 import errorFormatter from "../../utils/errorFormatter";
 interface APILoginQuery {
   callbackUrl?: string;

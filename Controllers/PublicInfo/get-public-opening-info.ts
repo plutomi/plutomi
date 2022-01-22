@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import * as Orgs from "../../models/Orgs";
 import * as Openings from "../../models/Openings";
-import * as CreateError from "../../utils/errorGenerator";
+import * as CreateError from "../../utils/createError";
 import { pick } from "lodash";
 const main = async (req: Request, res: Response) => {
   const { orgId, openingId } = req.params;

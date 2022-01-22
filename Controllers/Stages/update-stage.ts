@@ -2,7 +2,7 @@ import { Request, Response } from "express";
 import Joi from "joi";
 import { JOI_GLOBAL_FORBIDDEN, JOI_SETTINGS } from "../../Config";
 import * as Stages from "../../models/Stages";
-import * as CreateError from "../../utils/errorGenerator";
+import * as CreateError from "../../utils/createError";
 
 const JOI_FORBIDDEN_STAGE = Joi.object({
   ...JOI_GLOBAL_FORBIDDEN,

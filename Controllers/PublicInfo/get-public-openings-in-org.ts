@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import * as CreateError from "../../utils/errorGenerator";
+import * as CreateError from "../../utils/createError";
 import * as Openings from "../../models/Openings";
 import { pick } from "lodash";
 const main = async (req: Request, res: Response) => {

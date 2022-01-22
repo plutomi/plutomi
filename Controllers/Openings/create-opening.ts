@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import { DEFAULTS, JOI_SETTINGS } from "../../Config";
-import * as CreateError from "../../utils/errorGenerator";
+import * as CreateError from "../../utils/createError";
 import * as Openings from "../../models/Openings";
 import Joi from "joi";
 

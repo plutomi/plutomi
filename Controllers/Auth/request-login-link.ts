@@ -15,7 +15,7 @@ import * as Users from "../../models/Users";
 import { nanoid } from "nanoid";
 const jwt = require("jsonwebtoken");
 import { API_URL, DOMAIN_NAME } from "../../Config";
-import * as CreateError from "../../utils/errorGenerator";
+import * as CreateError from "../../utils/createError";
 interface APIRequestLoginLinkBody {
   email?: string;
 }

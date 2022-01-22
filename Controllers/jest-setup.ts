@@ -1,6 +1,6 @@
 import * as Users from "../models/Users";
 import { Request, Response } from "express";
-import * as CreateError from "../utils/errorGenerator";
+import * as CreateError from "../utils/createError";
 import { COOKIE_NAME, COOKIE_SETTINGS, EMAILS } from "../Config";
 import { nanoid } from "nanoid";
 /**

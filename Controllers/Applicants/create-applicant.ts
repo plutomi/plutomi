@@ -9,7 +9,7 @@ import {
   JOI_GLOBAL_FORBIDDEN,
   JOI_SETTINGS,
 } from "../../Config";
-import * as CreateError from "../../utils/errorGenerator";
+import * as CreateError from "../../utils/createError";
 const schema = Joi.object({
   body: {
     ...JOI_GLOBAL_FORBIDDEN,

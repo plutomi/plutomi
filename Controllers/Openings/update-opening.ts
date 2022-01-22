@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import Joi from "joi";
 import * as Openings from "../../models/Openings";
-import * as CreateError from "../../utils/errorGenerator";
+import * as CreateError from "../../utils/createError";
 import { DEFAULTS, JOI_GLOBAL_FORBIDDEN, JOI_SETTINGS } from "../../Config";
 import { UpdateOpeningInput } from "../../types/main";
 

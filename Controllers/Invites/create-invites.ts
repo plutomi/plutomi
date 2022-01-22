@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import Joi from "joi";
 import { ERRORS, JOI_SETTINGS, TIME_UNITS } from "../../Config";
-import * as CreateError from "../../utils/errorGenerator";
+import * as CreateError from "../../utils/createError";
 import emailValidator from "deep-email-validator";
 import * as Users from "../../models/Users";
 import * as Orgs from "../../models/Orgs";

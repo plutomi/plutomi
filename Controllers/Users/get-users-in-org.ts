@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import { DEFAULTS } from "../../Config";
 import * as Orgs from "../../models/Orgs";
-import * as CreateError from "../../utils/errorGenerator";
+import * as CreateError from "../../utils/createError";
 import { pick } from "lodash";
 const main = async (req: Request, res: Response) => {
   const { session } = res.locals;

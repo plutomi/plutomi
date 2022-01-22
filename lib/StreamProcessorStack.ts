@@ -5,9 +5,8 @@ import { Table } from "@aws-cdk/aws-dynamodb";
 import { EventBus } from "@aws-cdk/aws-events";
 import { NodejsFunction } from "@aws-cdk/aws-lambda-nodejs";
 import { DynamoEventSource } from "@aws-cdk/aws-lambda-event-sources";
-import { StartingPosition } from "@aws-cdk/aws-lambda";
-import { DEFAULT_LAMBDA_CONFIG } from "../bin/plutomi";
-
+import { StartingPosition, Runtime, Architecture } from "@aws-cdk/aws-lambda";
+import { RetentionDays } from "@aws-cdk/aws-logs";
 const resultDotEnv = dotenv.config({
   path: `${process.cwd()}/.env.${process.env.NODE_ENV}`,
 });
@@ -33,12 +32,20 @@ export default class StreamProcessorStack extends cdk.Stack {
       this,
       `${process.env.NODE_ENV}-stream-processor-function`,
       {
-        ...DEFAULT_LAMBDA_CONFIG,
         functionName: `${process.env.NODE_ENV}-stream-processor-function`,
         environment: {
           NODE_ENV: process.env.NODE_ENV, // To get the dynamic event bus name // TODO this is silly
         },
-        reservedConcurrentExecutions: undefined, // Don't want to cap this to the default
+        timeout: cdk.Duration.seconds(5),
+        memorySize: 256,
+        logRetention: RetentionDays.ONE_WEEK,
+        runtime: Runtime.NODEJS_14_X,
+        architecture: Architecture.ARM_64,
+        bundling: {
+          minify: true,
+          externalModules: ["aws-sdk"],
+        },
+        handler: "main",
         description:
           "Processes table changes from DynamoDB streams and sends them to EventBridge",
         entry: path.join(__dirname, `/../functions/stream-processor.ts`),

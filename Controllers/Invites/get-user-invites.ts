@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import * as Users from "../../models/Users";
-import * as CreateError from "../../utils/errorGenerator";
+import * as CreateError from "../../utils/createError";
 const main = async (req: Request, res: Response) => {
   const { session } = res.locals;
   const [invites, error] = await Users.GetInvitesForUser({
