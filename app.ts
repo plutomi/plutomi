@@ -1,4 +1,5 @@
 import * as dotenv from "dotenv";
+import * as path from "path";
 const resultDotEnv = dotenv.config({
   path: `./.env.${process.env.NODE_ENV}`,
 });
@@ -19,12 +20,12 @@ import withHasOrg from "./middleware/withHasOrg";
 import withSameOrg from "./middleware/withSameOrg";
 import helmet from "helmet";
 import * as Jest from "./Controllers/jest-setup";
-import express from "express";
+import express, { Response } from "express";
 import cors from "cors";
 const morgan = require("morgan");
 import withCleanOrgId from "./middleware/withCleanOrgId";
 import timeout from "connect-timeout";
-import { COOKIE_SETTINGS, WEBSITE_URL } from "./Config";
+import { COOKIE_SETTINGS, EXPRESS_PORT, WEBSITE_URL } from "./Config";
 import withSession from "./middleware/withSession";
 const cookieParser = require("cookie-parser");
 const app = express();
@@ -152,10 +153,15 @@ app.post("/invites/:inviteId", [withSession], Invites.AcceptInvite);
 app.delete("/invites/:inviteId", [withSession], Invites.RejectInvite);
 
 app.post("/applicants", [withCleanOrgId], Applicants.CreateApplicants);
+
+app.get("/", healthcheck);
+function healthcheck(req, res: Response, next) {
+  return res.status(200).json({ message: "It's all good man!" });
+}
 // Catch timeouts // TODO make this into its own middleware
 function haltOnTimedout(req, res, next) {
   if (!req.timedout) next();
 }
-app.listen(4000, () => {
-  console.log(`Server running on http://localhost:${4000}`);
+app.listen(EXPRESS_PORT, () => {
+  console.log(`Server running on http://localhost:${EXPRESS_PORT}`);
 });

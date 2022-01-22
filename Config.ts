@@ -17,7 +17,7 @@ export const DOMAIN_NAME = `plutomi.com`;
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 export const WEBSITE_URL =
-  process.env.production === "production"
+  process.env.NODE_ENV === "production"
     ? `https://${DOMAIN_NAME}`
     : `http://localhost:3000`;
 
@@ -49,7 +49,7 @@ export enum ENTITY_TYPES {
   USER = "USER",
   OPENING = "OPENING",
   STAGE = "STAGE",
-  STAGE_QUESTION = "STAGE_QUESTION",
+  STAGE_QUESTION = "STAGE_QUESTION", // TODO question sets
   STAGE_RULE = "STAGE_RULE",
   LOGIN_LINK = "LOGIN_LINK",
   LOGIN_EVENT = "LOGIN_EVENT",
@@ -229,5 +229,8 @@ export const DROPDOWN_NAVIGATION = [
 export const JoiOrgId = Joi.string().invalid(
   DEFAULTS.NO_ORG,
   tagGenerator.generate(DEFAULTS.NO_ORG),
-  "plutomi"
+  "plutomi",
+  "plutomi-",
+  "plutomi-inc",
+  "plutomiinc"
 );
