@@ -1,5 +1,5 @@
 import axios, { AxiosResponse } from "axios";
-import { API_URL, EMAILS } from "../Config";
+import { API_URL, EMAILS, ERRORS } from "../Config";
 const URL = `${API_URL}/request-login-link`;
 
 describe("Request login link", () => {
@@ -10,9 +10,7 @@ describe("Request login link", () => {
       });
     } catch (error) {
       expect(error.response.status).toBe(400);
-      expect(error.response.data.message).toBe(
-        "Hmm... that email doesn't seem quite right. Check it again."
-      );
+      expect(error.response.data.message).toBe(ERRORS.EMAIL_VALIDATION);
     }
   });
 
@@ -23,9 +21,7 @@ describe("Request login link", () => {
       });
     } catch (error) {
       expect(error.response.status).toBe(400);
-      expect(error.response.data.message).toBe(
-        "Hmm... that email doesn't seem quite right. Check it again."
-      );
+      expect(error.response.data.message).toBe(ERRORS.EMAIL_VALIDATION);
     }
   });
 

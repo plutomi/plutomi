@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import Joi from "joi";
-import { JOI_SETTINGS, TIME_UNITS } from "../../Config";
+import { ERRORS, JOI_SETTINGS, TIME_UNITS } from "../../Config";
 import * as CreateError from "../../utils/errorGenerator";
 import emailValidator from "deep-email-validator";
 import * as Users from "../../models/Users";
@@ -29,7 +29,7 @@ const main = async (req: Request, res: Response) => {
   });
   if (!validation.valid) {
     return res.status(400).json({
-      message: "Hmm... that email doesn't seem quite right. Check it again.",
+      message: ERRORS.EMAIL_VALIDATION,
     });
   }
 

@@ -4,6 +4,7 @@ import * as Openings from "../../models/Openings";
 import * as Applicants from "../../models/Applicants";
 import {
   DEFAULTS,
+  ERRORS,
   JoiOrgId,
   JOI_GLOBAL_FORBIDDEN,
   JOI_SETTINGS,
@@ -12,7 +13,7 @@ import * as CreateError from "../../utils/errorGenerator";
 const schema = Joi.object({
   body: {
     ...JOI_GLOBAL_FORBIDDEN,
-    orgId: JoiOrgId, 
+    orgId: JoiOrgId,
     openingId: Joi.string(),
     email: Joi.string().email(),
     firstName: Joi.string().invalid(DEFAULTS.FIRST_NAME).max(20),
@@ -38,7 +39,7 @@ const main = async (req: Request, res: Response) => {
 
   if (!emailValidation.valid) {
     return res.status(400).json({
-      message: "Hmm... that email doesn't seem quite right. Check it again.",
+      message: ERRORS.EMAIL_VALIDATION,
     });
   }
   const { openingId, orgId, firstName, lastName, email } = req.body;

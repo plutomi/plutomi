@@ -70,6 +70,7 @@ export const ERRORS = {
   NOT_SAME_ORG: "You must belong to this org to perform that action",
   NEEDS_ORG: `You must create or join an organization to perform this action`,
   HAS_PENDING_INVITES: `You seem to have pending invites, please accept or reject them before creating an org :)`,
+  EMAIL_VALIDATION: `Hmm... that email doesn't seem quite right. Check it again.`,
 };
 // https://zelark.github.io/nano-id-cc/
 export const ID_LENGTHS = {

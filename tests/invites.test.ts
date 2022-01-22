@@ -59,9 +59,7 @@ describe("Openings", () => {
       });
     } catch (error) {
       expect(error.response.status).toBe(400);
-      expect(error.response.data.message).toBe(
-        "Hmm... that email doesn't seem quite right. Check it again."
-      );
+      expect(error.response.data.message).toBe(ERRORS.EMAIL_VALIDATION);
     }
   });
 

@@ -8,6 +8,7 @@ import {
   TIME_UNITS,
   JOI_SETTINGS,
   WEBSITE_URL,
+  ERRORS,
 } from "../../Config";
 import * as Time from "../../utils/time";
 import * as Users from "../../models/Users";
@@ -48,7 +49,7 @@ const requestLoginLink = async (req: Request, res: Response) => {
 
   if (!emailValidation.valid) {
     return res.status(400).json({
-      message: "Hmm... that email doesn't seem quite right. Check it again.",
+      message: ERRORS.EMAIL_VALIDATION,
     });
   }
 

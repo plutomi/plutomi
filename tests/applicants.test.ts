@@ -112,9 +112,7 @@ describe("Openings", () => {
     } catch (error) {
       console.error(error);
       expect(error.response.status).toBe(400);
-      expect(error.response.data.message).toContain(
-        "Hmm... that email doesn't seem quite right. Check it again."
-      );
+      expect(error.response.data.message).toContain(ERRORS.EMAIL_VALIDATION);
     }
   });
 
