@@ -13,7 +13,9 @@ import * as Orgs from "./Controllers/Orgs";
 import * as Openings from "./Controllers/Openings";
 import * as Stages from "./Controllers/Stages";
 import * as PublicInfo from "./Controllers/PublicInfo";
+import * as Invites from "./Controllers/Invites";
 import withHasOrg from "./middleware/withHasOrg";
+import withSameOrg from "./middleware/withSameOrg";
 import helmet from "helmet";
 import * as Jest from "./Controllers/jest-setup";
 import express from "express";
@@ -132,6 +134,14 @@ app.get(
   "/public/orgs/:orgId/openings/:openingId",
   withCleanOrgId,
   PublicInfo.GetPublicOpeningInfo
+);
+
+app.post("/invites", [withSession, withHasOrg], Invites.CreateInvites);
+app.get("/invites", [withSession], Invites.GetUserInvites);
+app.get(
+  "/orgs/:orgId/invites",
+  [withCleanOrgId, withSession, withHasOrg, withSameOrg],
+  Invites.GetOrgInvites
 );
 // Catch timeouts // TODO make this into its own middleware
 function haltOnTimedout(req, res, next) {

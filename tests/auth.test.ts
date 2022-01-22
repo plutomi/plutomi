@@ -16,7 +16,7 @@ describe("Request login link", () => {
     }
   });
 
-  it("blocks known spam addresses", async () => {
+  it("blocks known disposable emails", async () => {
     try {
       await axios.post(URL, {
         email: "test@10minutemail.com",

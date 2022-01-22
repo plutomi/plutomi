@@ -7,17 +7,13 @@ export default async function withCleanOrgId(
   res: Response,
   next: NextFunction
 ) {
-  // Blocks the request if a user is not in an org
+  // Blocks the request if a user is not in the same org
   const { session } = res.locals;
 
-  if (
-    session.orgId === DEFAULTS.NO_ORG ||
-    session.orgId === tagGenerator.generate(DEFAULTS.NO_ORG)
-  ) {
+  if (session.orgId !== req.params.orgId) {
     return res.status(403).json({
-      message: ERRORS.NEEDS_ORG,
+      message: ERRORS.NOT_SAME_ORG,
     });
   }
-
   next();
 }

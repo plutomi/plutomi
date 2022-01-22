@@ -67,7 +67,9 @@ export const TIME_UNITS = {
 };
 
 export const ERRORS = {
+  NOT_SAME_ORG: "You must belong to this org to perform that action",
   NEEDS_ORG: `You must create or join an organization to perform this action`,
+  HAS_PENDING_INVITES: `You seem to have pending invites, please accept or reject them before creating an org :)`,
 };
 // https://zelark.github.io/nano-id-cc/
 export const ID_LENGTHS = {
@@ -122,7 +124,11 @@ export const EMAILS = {
   ADMIN: "admin@plutomi.com",
   LOGIN: "login@plutomi.com", // Login links
   JOIN: "join@plutomi.com", // Org invites
-  TESTING: "testing@plutomi.com", // jest test accounts
+  // Jest test accounts
+  TESTING: "testing@plutomi.com",
+  TESTING2: "testing2@plutomi.com",
+  TESTING3: "testing3@plutomi.com",
+  TESTING4: "testing4@plutomi.com",
 };
 
 /**

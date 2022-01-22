@@ -2,6 +2,7 @@ import * as Users from "../models/Users";
 import { Request, Response } from "express";
 import * as CreateError from "../utils/errorGenerator";
 import { COOKIE_NAME, COOKIE_SETTINGS, EMAILS } from "../Config";
+import { nanoid } from "nanoid";
 /**
  * Creates a random test user and sends a session cookie to the client
  * @param req
@@ -9,19 +10,39 @@ import { COOKIE_NAME, COOKIE_SETTINGS, EMAILS } from "../Config";
  */
 export const setup = async (req: Request, res: Response) => {
   if (process.env.NODE_ENV !== "development") {
-    // TODO add a JWT for another layer of security here
+    // TODO add a key for another layer of security here
     return res.status(401).json({ message: "NODE_ENV is not development" });
   }
-  const [user, userError] = await Users.createUser({
-    email: `test+${EMAILS.TESTING}`,
+
+  // TODO this is creating two users under TESTING2 because theres no check to see if email exists
+  // like in the regular createUser flow
+  const userEmail = req.body.email || `${nanoid(15)}+${EMAILS.TESTING}`;
+  let [user, userError] = await Users.getUserByEmail({
+    email: userEmail,
   });
 
   if (userError) {
     const { status, body } = CreateError.SDK(
       userError,
-      "Error ocurred creating test user"
+      "An error ocurred creating your jest user"
     );
     return res.status(status).json(body);
+  }
+
+  if (!user) {
+    const [newUser, newUserError] = await Users.createUser({
+      email: userEmail,
+    });
+
+    if (newUserError) {
+      const { status, body } = CreateError.SDK(
+        newUserError,
+        "Error ocurred creating test user"
+      );
+      return res.status(status).json(body);
+    }
+
+    user = newUser;
   }
 
   res.cookie(COOKIE_NAME, user.userId, COOKIE_SETTINGS);

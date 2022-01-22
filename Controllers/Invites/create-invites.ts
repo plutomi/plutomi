@@ -1,75 +1,50 @@
-import middy from "@middy/core";
+import { Request, Response } from "express";
 import Joi from "joi";
+import { JOI_SETTINGS, TIME_UNITS } from "../../Config";
+import * as CreateError from "../../utils/errorGenerator";
 import emailValidator from "deep-email-validator";
-import { JOI_SETTINGS, DEFAULTS, TIME_UNITS } from "../../Config";
-import * as Invites from "../../models/Invites";
-import * as Time from "../../utils/time";
 import * as Users from "../../models/Users";
 import * as Orgs from "../../models/Orgs";
-import { CustomLambdaEvent, CustomLambdaResponse } from "../../types/main";
-import * as CreateError from "../../utils/errorGenerator";
-interface APICreateInvitesBody {
-  recipientEmail?: string;
-}
-interface APICreateInvitesEvent extends Omit<CustomLambdaEvent, "body"> {
-  body: APICreateInvitesBody;
-}
-
+import * as Time from "../../utils/time";
+import * as Invites from "../../models/Invites";
 const schema = Joi.object({
   body: {
     recipientEmail: Joi.string().email().trim(),
   },
 }).options(JOI_SETTINGS);
-
-const main = async (
-  event: APICreateInvitesEvent
-): Promise<CustomLambdaResponse> => {
+const main = async (req: Request, res: Response) => {
   try {
-    await schema.validateAsync(event);
+    await schema.validateAsync(req);
   } catch (error) {
-    return CreateError.JOI(error);
+    const { status, body } = CreateError.JOI(error);
+    return res.status(status).json(body);
   }
 
-  const res = await emailValidator({
-    email: event.body.recipientEmail,
+  const { session } = res.locals;
+  const { recipientEmail } = req.body;
+
+  const validation = await emailValidator({
+    email: recipientEmail,
     validateSMTP: false, // BUG, this isnt working
   });
-  if (!res.valid) {
-    return {
-      statusCode: 400,
-      body: {
-        message: "Hmm... that email doesn't seem quite right. Check it again.",
-      },
-    };
+  if (!validation.valid) {
+    return res.status(400).json({
+      message: "Hmm... that email doesn't seem quite right. Check it again.",
+    });
   }
-
-  const { session } = event.requestContext.authorizer.lambda;
-
-  const { recipientEmail } = event.body;
 
   if (session.email === recipientEmail) {
-    return {
-      statusCode: 400,
-      body: { message: `You can't invite yourself` },
-    };
-  }
-
-  if (session.orgId === DEFAULTS.NO_ORG) {
-    return {
-      statusCode: 400,
-      body: {
-        message: `You must create an organization before inviting users`,
-      },
-    };
+    return res.status(403).json({ message: `You can't invite yourself` });
   }
 
   const [org, error] = await Orgs.getOrgById({ orgId: session.orgId });
 
   if (error) {
-    return CreateError.SDK(
+    const { status, body } = CreateError.SDK(
       error,
       "An error ocurred retrieving your org information"
     );
+    return res.status(status).json(body);
   }
 
   let [recipient, recipientError] = await Users.getUserByEmail({
@@ -77,10 +52,11 @@ const main = async (
   });
 
   if (recipientError) {
-    return CreateError.SDK(
+    const { status, body } = CreateError.SDK(
       error,
       "An error ocurred getting your invitee's information"
     );
+    return res.status(status).json(body);
   }
 
   // Invite is for a user that doesn't exist
@@ -90,19 +66,18 @@ const main = async (
     });
 
     if (createUserError) {
-      return CreateError.SDK(
+      const { status, body } = CreateError.SDK(
         createUserError,
         "An error ocurred creating an account for your invitee"
       );
+
+      return res.status(status).json(body);
     }
     recipient = createdUser;
   }
 
   if (recipient.orgId === session.orgId) {
-    return {
-      statusCode: 403,
-      body: { message: "User is already in your org!" },
-    };
+    return res.status(403).json({ message: "User is already in your org!" });
   }
 
   // Check if the user we are inviting already has pending invites for the current org
@@ -112,10 +87,11 @@ const main = async (
     });
 
   if (recipientInvitesError) {
-    return CreateError.SDK(
+    const { status, body } = CreateError.SDK(
       recipientInvitesError,
       "An error ocurred while checking to see if your invitee has pending invites"
     );
+    return res.status(status).json(body);
   }
 
   // .some() returns true if any item matches the condition
@@ -124,13 +100,10 @@ const main = async (
   );
 
   if (pendingInvites) {
-    return {
-      statusCode: 403,
-      body: {
-        message:
-          "This user already has a pending invite to your org! They can log in to claim it.",
-      },
-    };
+    return res.status(403).json({
+      message:
+        "This user already has a pending invite to your org! They can log in to claim it.",
+    });
   }
 
   const [inviteCreated, inviteError] = await Invites.createInvite({
@@ -141,17 +114,17 @@ const main = async (
   });
 
   if (inviteError) {
-    return CreateError.SDK(
+    const { status, body } = CreateError.SDK(
       inviteError,
       "An error ocurred creating your invite"
     );
+
+    return res.status(status).json(body);
   }
 
   // Email sent asynchronously through step functions
-  return {
-    statusCode: 201,
-    body: { message: `Invite sent to '${recipientEmail}'` },
-  };
+  return res
+    .status(201)
+    .json({ message: `Invite sent to '${recipientEmail}'` });
 };
-// TODO types with API Gateway event and middleware
-// @ts-ignore
+export default main;
