@@ -1,18 +1,11 @@
-import axios from "../utils/axios";
 import useSWR from "swr";
-import ApplicantsService from "../adapters/ApplicantsService";
-const fetcher = (url: string) => axios.get(url).then((res) => res.data);
+import { GetApplicantByIdURL } from "../adapters/Applicants";
+import { SWRFetcher } from "../Config";
 
-export default function useApplicantById(applicantId: string) {
-  // Despite removing the query string (applicant id) from the URl, this still runs before changing to null
-  const shouldFetch =
-    applicantId && applicantId !== "" && typeof applicantId === "string"
-      ? true
-      : false;
-
+export default function useApplicantById(applicantId?: string) {
   const { data, error } = useSWR(
-    shouldFetch && ApplicantsService.getApplicantURL(applicantId),
-    fetcher
+    applicantId && GetApplicantByIdURL(applicantId),
+    SWRFetcher
   );
 
   return {

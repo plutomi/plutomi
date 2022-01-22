@@ -17,20 +17,20 @@ const CreateApplicant = async ({
   return data;
 };
 
-const GetApplicantURL = (applicantId) => `/applicants/${applicantId}`;
+const GetApplicantByIdURL = (applicantId) => `/applicants/${applicantId}`;
 
 const GetApplicantById = async (applicantId) => {
-  const { data } = await axios.get(GetApplicantURL(applicantId));
+  const { data } = await axios.get(GetApplicantByIdURL(applicantId));
   return data;
 };
 
 const DeleteApplicant = async (applicantId) => {
-  const { data } = await axios.delete(GetApplicantURL(applicantId));
+  const { data } = await axios.delete(GetApplicantByIdURL(applicantId));
   return data;
 };
 
 const UpdateApplicant = async (applicantId, newValues) => {
-  const { data } = await axios.put(GetApplicantURL(applicantId), newValues);
+  const { data } = await axios.put(GetApplicantByIdURL(applicantId), newValues);
   return data;
 };
 
@@ -56,7 +56,7 @@ const GetAllApplicantsInStage = async (openingId, stageId) => {
 
 export {
   CreateApplicant,
-  GetApplicantURL,
+  GetApplicantByIdURL,
   GetApplicantById,
   DeleteApplicant,
   UpdateApplicant,

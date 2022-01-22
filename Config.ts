@@ -1,3 +1,4 @@
+import axios from "axios";
 import Joi from "joi";
 export const COOKIE_SETTINGS = {
   httpOnly: true,
@@ -175,9 +176,13 @@ export const JOI_GLOBAL_FORBIDDEN = {
   createdAt: Joi.any().forbidden().strip(),
 };
 
+export const SWRFetcher = (url: string) =>
+  axios.get(url).then((res) => res.data);
+
 /**
  * Extra properties that cannot be updated per entity type
  */
+// TODO rest of these are on hold as we migrate the data model to something else
 export const FORBIDDEN_PROPERTIES = {
   /**
    * {@link DynamoNewApplicant}

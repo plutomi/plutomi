@@ -1,15 +1,11 @@
-import axios from "../utils/axios";
 import useSWR from "swr";
+import { GetOpeningByIdURL } from "../adapters/Openings";
+import { SWRFetcher } from "../Config";
 
-const fetcher = (url: string) => axios.get(url).then((res) => res.data);
-import OpeningsService from "../adapters/OpeningsService";
-
-export default function useOpeningById(openingId: string) {
-  const shouldFetch = openingId ? true : false;
-
+export default function useOpeningById(openingId?: string) {
   const { data, error } = useSWR(
-    shouldFetch && OpeningsService.getOpeningURL(openingId),
-    fetcher
+    openingId && GetOpeningByIdURL(openingId),
+    SWRFetcher
   );
 
   return {

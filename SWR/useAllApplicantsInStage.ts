@@ -1,18 +1,14 @@
-import axios from "../utils/axios";
 import useSWR from "swr";
-import StagesService from "../adapters/StagesService";
-
-const fetcher = (url: string) => axios.get(url).then((res) => res.data);
-
+import { GetAllApplicantsInStageURL } from "../adapters/Applicants";
+import { SWRFetcher } from "../Config";
 export default function useAllApplicantsInStage(
   openingId?: string,
   stageId?: string
 ) {
-  const shouldFetch = openingId && stageId ? true : false;
+  const shouldFetch = openingId && stageId;
   const { data, error } = useSWR(
-    // @ts-ignore TODO
-    shouldFetch && StagesService.getAllApplicantsInStageURL(openingId, stageId),
-    fetcher
+    shouldFetch && GetAllApplicantsInStageURL(openingId, stageId),
+    SWRFetcher
   );
 
   return {

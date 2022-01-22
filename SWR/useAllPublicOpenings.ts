@@ -1,16 +1,11 @@
-// Retrieves all public openings at https://plutomi.com/`org-id`/apply
-import axios from "../utils/axios";
 import useSWR from "swr";
-import PublicInfoService from "../adapters/PublicInfoService";
-const fetcher = (url: string) => axios.get(url).then((res) => res.data);
+import { GetAllPublicOpeningsURL } from "../adapters/PublicInfo";
+import { SWRFetcher } from "../Config";
 
-export default function useAllPublicOpenings(orgId: string) {
-  const shouldFetch = orgId ? true : false;
-
+export default function useAllPublicOpenings(orgId?: string) {
   const { data, error } = useSWR(
-    // @ts-ignore TODO
-    shouldFetch && PublicInfoService.getAllPublicOpeningsURL(orgId),
-    fetcher
+    orgId && GetAllPublicOpeningsURL(orgId),
+    SWRFetcher
   );
 
   return {

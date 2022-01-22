@@ -1,22 +1,17 @@
 // Retrieves a specific user by ID
-import axios from "../utils/axios";
 import useSWR from "swr";
-import PublicInfoService from "../adapters/PublicInfoService";
-const fetcher = (url: string) => axios.get(url).then((res) => res.data);
-
-// Returns very limited details an org's public opening
-// User does not need to be signed in
+import { SWRFetcher } from "../Config";
+import { GetPublicStageInfo } from "../adapters/PublicInfo";
 export default function usePublicStageById( // TODO i think this can be refactored since we no longer need th eopening ID
-  orgId: string,
-  openingId: string,
-  stageId: string
+  orgId?: string,
+  openingId?: string,
+  stageId?: string
 ) {
-  const shouldFetch = orgId && openingId && stageId ? true : false;
+  const shouldFetch = orgId && openingId && stageId;
 
   const { data, error } = useSWR(
-    shouldFetch &&
-      PublicInfoService.getPublicStageURL(orgId, openingId, stageId),
-    fetcher
+    shouldFetch && GetPublicStageInfo(orgId, openingId, stageId),
+    SWRFetcher
   );
 
   return {

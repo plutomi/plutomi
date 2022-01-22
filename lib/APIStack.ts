@@ -112,6 +112,7 @@ export default class APIStack extends cdk.Stack {
     // Create the cluster
     const cluster = new ecs.Cluster(this, "plutomi-api-fargate-cluster", {
       vpc,
+      containerInsights: true,
     });
 
     // Get a reference to AN EXISTING hosted zone

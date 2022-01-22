@@ -1,14 +1,11 @@
-import axios from "../utils/axios";
 import useSWR from "swr";
-import OpeningsService from "../adapters/OpeningsService";
-const fetcher = (url: string) => axios.get(url).then((res) => res.data);
+import { GetAllStagesInOpening } from "../adapters/Stages";
+import { SWRFetcher } from "../Config";
 
-export default function useAllStagesInOpening(openingId: string) {
-  const shouldFetch = openingId ? true : false;
-
+export default function useAllStagesInOpening(openingId?: string) {
   const { data, error } = useSWR(
-    shouldFetch && OpeningsService.getAllStagesInOpeningURL(openingId),
-    fetcher
+    openingId && GetAllStagesInOpening(openingId),
+    SWRFetcher
   );
 
   return {

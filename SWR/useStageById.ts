@@ -1,14 +1,12 @@
-import axios from "../utils/axios";
 import useSWR from "swr";
-import StagesService from "../adapters/StagesService";
-const fetcher = (url: string) => axios.get(url).then((res) => res.data);
-
-export default function useStageById(stageId: string) {
-  const shouldFetch = stageId ? true : false;
+import { SWRFetcher } from "../Config";
+import { GetStageInfoURL } from "../adapters/Stages";
+export default function useStageById(openingId: string, stageId: string) {
+  const shouldFetch = openingId && stageId;
 
   const { data, error } = useSWR(
-    shouldFetch && StagesService.getStageURL(stageId),
-    fetcher
+    shouldFetch && GetStageInfoURL(openingId, stageId),
+    SWRFetcher
   );
 
   return {
