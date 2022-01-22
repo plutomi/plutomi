@@ -19,7 +19,10 @@ export default function OpeningList() {
   const search = useStore((state) => state.openingsSearchInput);
 
   const filteredOpenings = openings?.filter((opening) =>
-    opening?.openingName?.toLowerCase().trim().includes(search.toLowerCase().trim())
+    opening?.openingName
+      ?.toLowerCase()
+      .trim()
+      .includes(search.toLowerCase().trim())
   );
 
   return (

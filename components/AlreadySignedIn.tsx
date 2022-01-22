@@ -1,14 +1,14 @@
 import { useRouter } from "next/router";
 import Link from "next/link";
 import useSelf from "../SWR/useSelf";
-import AuthService from "../adapters/AuthService";
+import { Logout } from "../adapters/Auth";
 import { mutate } from "swr";
-import UsersService from "../adapters/UsersService";
+import { GetSelfInfoURL } from "../adapters/Users";
 import { route } from "next/dist/server/router";
 const handleLogout = async (isHomepage: boolean) => {
   // If we're on the homepage, since its SSR, we want to refresh the page
   try {
-    const { message } = await AuthService.logout(); // TODO logout to same page
+    const { message } = await Logout(); // TODO logout to same page
     isHomepage ? window.location.reload() : null;
     alert(message);
     // TODO reroute to homepage
@@ -16,7 +16,7 @@ const handleLogout = async (isHomepage: boolean) => {
     alert(error.response.message);
   }
 
-  mutate(UsersService.getSelfURL()); // Refresh the login state
+  mutate(GetSelfInfoURL()); // Refresh the login state
 };
 export default function AlreadySignedIn() {
   const router = useRouter();

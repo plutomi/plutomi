@@ -1,6 +1,6 @@
 import { FormEvent, Fragment, useState } from "react";
 import { Dialog, Transition } from "@headlessui/react";
-import useOpeningById from "../../SWR/useOpeningById";
+import useOpeningInfo from "../../SWR/useOpeningInfo";
 import { XIcon } from "@heroicons/react/outline";
 import useStore from "../../utils/store";
 
@@ -17,7 +17,7 @@ export default function OpeningModal({
   const openingModal = useStore((state) => state.openingModal);
   const setOpeningModal = useStore((state) => state.setOpeningModal);
 
-  const { opening, isOpeningLoading, isOpeningError } = useOpeningById(
+  const { opening, isOpeningLoading, isOpeningError } = useOpeningInfo(
     openingModal.openingId
   );
   const handleSubmit = async (e: FormEvent) => {

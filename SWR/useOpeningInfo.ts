@@ -1,10 +1,10 @@
 import useSWR from "swr";
-import { GetOpeningByIdURL } from "../adapters/Openings";
+import { GetOpeningInfoURL } from "../adapters/Openings";
 import { SWRFetcher } from "../Config";
 
-export default function useOpeningById(openingId?: string) {
+export default function useOpeningInfo(openingId?: string) {
   const { data, error } = useSWR(
-    openingId && GetOpeningByIdURL(openingId),
+    openingId && GetOpeningInfoURL(openingId),
     SWRFetcher
   );
 

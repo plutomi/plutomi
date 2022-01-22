@@ -6,10 +6,10 @@ const CreateOpening = async (openingName) => {
   return data;
 };
 
-const GetOpeningByIdURL = (openingId) => `/openings/${openingId}`;
+const GetOpeningInfoURL = (openingId) => `/openings/${openingId}`;
 
-const GetOpeningById = async (openingId) => {
-  const { data } = await axios.get(GetOpeningByIdURL(openingId));
+const GetOpeningInfo = async (openingId) => {
+  const { data } = await axios.get(GetOpeningInfoURL(openingId));
   return data;
 };
 
@@ -21,12 +21,12 @@ const GetAlOpeningsInOrg = async () => {
 };
 
 const DeleteOpening = async (openingId) => {
-  const { data } = await axios.delete(GetOpeningByIdURL(openingId));
+  const { data } = await axios.delete(GetOpeningInfoURL(openingId));
   return data;
 };
 
 const UpdateOpening = async (openingId, newValues) => {
-  const { data } = await axios.put(GetOpeningByIdURL(openingId), newValues);
+  const { data } = await axios.put(GetOpeningInfoURL(openingId), newValues);
   return data;
 };
 
@@ -36,6 +36,6 @@ export {
   DeleteOpening,
   GetAlOpeningsInOrg,
   GetAllOpeningsInOrgURL,
-  GetOpeningById,
-  GetOpeningByIdURL,
+  GetOpeningInfo,
+  GetOpeningInfoURL,
 };

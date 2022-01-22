@@ -6,7 +6,7 @@ import { PlusIcon } from "@heroicons/react/outline";
 import useStore from "../../utils/store";
 import CreateInviteModal from "../CreateInviteModal";
 import { useRouter } from "next/router";
-import InvitesService from "../../adapters/InvitesService";
+import { CreateInvite } from "../../adapters/Invites";
 import EmptyTeamState from "./EmptyTeamState";
 export default function TeamContent() {
   const router = useRouter();
@@ -26,7 +26,7 @@ export default function TeamContent() {
   const createInvite = async (recipientEmail: string) => {
     try {
       // TODO add custom expiry - Defaults to 3 days
-      const { message } = await InvitesService.createInvite(recipientEmail);
+      const { message } = await CreateInvite(recipientEmail);
       alert(message);
       setCreateInviteModalOpen(false);
     } catch (error) {

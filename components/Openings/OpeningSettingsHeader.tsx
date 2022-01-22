@@ -3,10 +3,10 @@ import { PencilAltIcon } from "@heroicons/react/outline";
 import useStore from "../../utils/store";
 import { mutate } from "swr";
 import { TrashIcon } from "@heroicons/react/outline";
-import useOpeningById from "../../SWR/useOpeningById";
+import useOpeningInfo from "../../SWR/useOpeningInfo";
 import { useRouter } from "next/router";
 import Loader from "../Loader";
-import OpeningsService from "../../adapters/OpeningsService";
+import { DeleteOpening, GetAllOpeningsInOrgURL } from "../../adapters/Openings";
 import * as Time from "../../utils/time";
 import { CUSTOM_QUERY } from "../../types/main";
 import { DOMAIN_NAME, WEBSITE_URL } from "../../Config";
@@ -14,7 +14,7 @@ export default function OpeningSettingsHeader() {
   const router = useRouter();
   const { openingId } = router.query as Pick<CUSTOM_QUERY, "openingId">;
 
-  let { opening, isOpeningLoading, isOpeningError } = useOpeningById(openingId);
+  let { opening, isOpeningLoading, isOpeningError } = useOpeningInfo(openingId);
 
   const setOpeningModal = useStore((state) => state.setOpeningModal);
 
@@ -53,14 +53,14 @@ export default function OpeningSettingsHeader() {
     }
 
     try {
-      await OpeningsService.deleteOpening(openingId);
+      await DeleteOpening(openingId);
       router.push(`${WEBSITE_URL}/openings`);
     } catch (error) {
       alert(error.response.data.message);
     }
 
     // Refresh openings
-    mutate(OpeningsService.getAllOpeningsURL());
+    mutate(GetAllOpeningsInOrgURL());
   };
 
   return (

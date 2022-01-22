@@ -29,10 +29,23 @@ const UpdateQuestion = async (questionId, newValues) => {
   return data;
 };
 
+// TODO wrong url, also needs revamp with question sets.
+// TODO move to questions
+const GetAllQuestionsInStageURL = (openingId, stageId) =>
+  `/openings/${openingId}/stages/${stageId}/questions`;
+
+const GetAllQuestionsInStage = async (openingId, stageId) => {
+  const { data } = await axios.get(
+    GetAllQuestionsInStageURL(openingId, stageId)
+  );
+  return data;
+};
 export {
   CreateQuestion,
   UpdateQuestion,
   DeleteQuestion,
   GetQuestionInfo,
   GetQuestionInfoURL,
+  GetAllQuestionsInStageURL,
+  GetAllQuestionsInStage,
 };

@@ -4,7 +4,7 @@ import useStore from "../../utils/store";
 import ClickToCopy from "../ClickToCopy";
 import Link from "next/dist/client/link";
 import OpeningsDropdown from "../Openings/DropDown";
-import useOpeningById from "../../SWR/useOpeningById";
+import useOpeningInfo from "../../SWR/useOpeningInfo";
 import { useRouter } from "next/router";
 import useOpenings from "../../SWR/useOpenings";
 import { CUSTOM_QUERY } from "../../types/main";
@@ -14,7 +14,7 @@ export default function StagesHeader() {
   const { openingId } = router.query as Pick<CUSTOM_QUERY, "openingId">;
 
   const { user, isUserLoading, isUserError } = useSelf();
-  let { opening, isOpeningLoading, isOpeningError } = useOpeningById(openingId);
+  let { opening, isOpeningLoading, isOpeningError } = useOpeningInfo(openingId);
 
   let { openings, isOpeningsLoading, isOpeningsError } = useOpenings();
 

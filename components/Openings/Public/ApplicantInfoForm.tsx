@@ -1,6 +1,6 @@
 import { FormEvent, useState } from "react";
 import { Switch } from "@headlessui/react";
-import ApplicantsService from "../../../adapters/ApplicantsService";
+import { CreateApplicant } from "../../../adapters/Applicants";
 
 function classNames(...classes) {
   return classes.filter(Boolean).join(" ");
@@ -27,7 +27,7 @@ export default function ApplicantInfoForm() {
     }
 
     try {
-      const { message } = await ApplicantsService.createApplicant({
+      const { message } = await CreateApplicant({
         orgId: orgId,
         openingId: openingId,
         firstName: firstName,

@@ -1,6 +1,6 @@
 import LoginEmail from "./EmailSigninInput";
 import { useState } from "react";
-import AuthService from "../adapters/AuthService";
+import { RequestLoginLink } from "../adapters/Auth";
 
 export default function Login({ loggedOutPageText }) {
   const [email, setemail] = useState("");
@@ -19,7 +19,7 @@ export default function Login({ loggedOutPageText }) {
     e.preventDefault();
 
     try {
-      const { message } = await AuthService.requestLoginLink(
+      const { message } = await RequestLoginLink(
         email,
         window.location.href
       );

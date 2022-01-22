@@ -29,18 +29,6 @@ const UpdateStage = async (openingId, stageId, newValues) => {
   return data;
 };
 
-// TODO wrong url, also needs revamp with question sets.
-// TODO move to questions
-const GetAllQuestionsInStageURL = (openingId, stageId) =>
-  `/openings/${openingId}/stages/${stageId}/questions`;
-
-const GetAllQuestionsInStage = async (openingId, stageId) => {
-  const { data } = await axios.get(
-    GetAllQuestionsInStageURL(openingId, stageId)
-  );
-  return data;
-};
-
 const GetAllStagesInOpeningURL = (openingId) => `/openings/${openingId}/stages`;
 
 const GetAllStagesInOpening = async (openingId) => {
@@ -51,8 +39,6 @@ const GetAllStagesInOpening = async (openingId) => {
 export {
   GetAllStagesInOpening,
   GetAllStagesInOpeningURL,
-  GetAllQuestionsInStage,
-  GetAllQuestionsInStageURL,
   UpdateStage,
   DeleteStage,
   GetStageInfo,

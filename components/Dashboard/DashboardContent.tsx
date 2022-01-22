@@ -2,17 +2,17 @@ import useSelf from "../../SWR/useSelf";
 import UpdateName from "./UpdateName";
 import Loader from "../Loader";
 import ClickToCopy from "../ClickToCopy";
-import usePrivateOrgById from "../../SWR/usePrivateOrgById";
+import useOrgInfo from "../../SWR/useOrgInfo";
 import { mutate } from "swr";
-import OrgsService from "../../adapters/OrgsService";
+import { CreateOrg, DeleteOrg } from "../../adapters/Orgs";
 import useStore from "../../utils/store";
 import { OfficeBuildingIcon, PlusIcon } from "@heroicons/react/outline";
 import CreateOrgModal from "../CreateOrgModal";
 import { DEFAULTS, DOMAIN_NAME } from "../../Config";
-import UsersService from "../../adapters/UsersService";
+import { GetSelfInfoURL, UpdateUser } from "../../adapters/Users";
 export default function DashboardContent() {
   const { user, isUserLoading, isUserError } = useSelf();
-  const { org, isOrgLoading, isOrgError } = usePrivateOrgById(user?.orgId);
+  const { org, isOrgLoading, isOrgError } = useOrgInfo(user?.orgId);
   const customApplyLink = `${DOMAIN_NAME}/${org?.orgId}/apply`;
 
   const setCreateOrgModalOpen = useStore(
@@ -37,19 +37,19 @@ export default function DashboardContent() {
     }
 
     try {
-      const { message } = await OrgsService.createOrg(GSI1SK, orgId);
+      const { message } = await CreateOrg(GSI1SK, orgId);
       alert(message);
       setCreateOrgModalOpen(false);
     } catch (error) {
       alert(error.response.data.message);
     }
 
-    mutate(UsersService.getSelfURL());
+    mutate(GetSelfInfoURL());
   };
 
   const updateName = async ({ firstName, lastName }) => {
     try {
-      const { message } = await UsersService.updateUser(user?.userId, {
+      const { message } = await UpdateUser(user?.userId, {
         firstName: firstName,
         lastName: lastName,
         GSI1SK: `${firstName} ${lastName}`,
@@ -58,7 +58,7 @@ export default function DashboardContent() {
     } catch (error) {
       alert(error.response.data.message);
     }
-    mutate(UsersService.getSelfURL());
+    mutate(GetSelfInfoURL());
   };
 
   const deleteOrg = async () => {
@@ -75,12 +75,12 @@ export default function DashboardContent() {
     }
 
     try {
-      const { message } = await OrgsService.deleteOrg();
+      const { message } = await DeleteOrg();
       alert(message);
     } catch (error) {
       alert(error.response.data.message);
     }
-    mutate(UsersService.getSelfURL()); // Refresh user state
+    mutate(GetSelfInfoURL()); // Refresh user state
   };
 
   return (

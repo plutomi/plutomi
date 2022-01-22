@@ -6,22 +6,24 @@ import { useState } from "react";
 import { useRouter } from "next/router";
 import difference from "../utils/getObjectDifference";
 import StageModal from "./Stages/StageModal";
-import StagesService from "../adapters/StagesService";
+import {
+  CreateStage,
+  UpdateStage,
+  GetStageInfoURL,
+  GetAllStagesInOpeningURL,
+} from "../adapters/Stages";
 import { useEffect } from "react";
-import useOpeningById from "../SWR/useOpeningById";
+import useOpeningInfo from "../SWR/useOpeningInfo";
 import useAllStagesInOpening from "../SWR/useAllStagesInOpening";
-import useStageById from "../SWR/useStageById";
-import OpeningsService from "../adapters/OpeningsService";
+import useStageInfo from "../SWR/useStageInfo";
+import { UpdateOpening, GetOpeningInfoURL } from "../adapters/Openings";
 import { CUSTOM_QUERY } from "../types/main";
 import StageCard from "./Stages/StageCard";
 
 export default function StageReorderColumn() {
   const createStage = async () => {
     try {
-      const { message } = await StagesService.createStage(
-        stageModal.GSI1SK,
-        openingId
-      );
+      const { message } = await CreateStage(stageModal.GSI1SK, openingId);
       alert(message);
       setStageModal({ ...stageModal, GSI1SK: "", isModalOpen: false });
     } catch (error) {
@@ -29,10 +31,10 @@ export default function StageReorderColumn() {
       alert(error.response.data.message);
     }
     // Refresh stage order
-    mutate(OpeningsService.getOpeningURL(openingId));
+    mutate(GetOpeningInfoURL(openingId));
 
     // Refresh stage list
-    mutate(OpeningsService.getAllStagesInOpeningURL(openingId));
+    mutate(GetAllStagesInOpeningURL(openingId));
   };
 
   const updateStage = async () => {
@@ -45,7 +47,7 @@ export default function StageReorderColumn() {
       delete diff["isModalOpen"];
       delete diff["modalMode"];
 
-      const { message } = await StagesService.updateStage(stageId, diff);
+      const { message } = await UpdateStage(openingId, stageId, diff);
       alert(message);
       setStageModal({
         isModalOpen: false,
@@ -57,7 +59,7 @@ export default function StageReorderColumn() {
       alert(error.response.data.message);
     }
 
-    mutate(StagesService.getStageURL(stageId));
+    mutate(GetStageInfoURL(openingId, stageId));
   };
 
   const router = useRouter();
@@ -66,12 +68,15 @@ export default function StageReorderColumn() {
     "openingId" | "stageId"
   >;
 
-  let { opening, isOpeningLoading, isOpeningError } = useOpeningById(openingId);
+  let { opening, isOpeningLoading, isOpeningError } = useOpeningInfo(openingId);
 
   let { stages, isStagesLoading, isStagesError } = useAllStagesInOpening(
     opening?.openingId
   );
-  const { stage, isStageLoading, isStageError } = useStageById(stageId);
+  const { stage, isStageLoading, isStageError } = useStageInfo(
+    openingId,
+    stageId
+  );
 
   const [newStages, setNewStages] = useState(stages);
   useEffect(() => {
@@ -106,7 +111,7 @@ export default function StageReorderColumn() {
     setNewStages(newOrder);
 
     try {
-      await OpeningsService.updateOpening(openingId, {
+      await UpdateOpening(openingId, {
         stageOrder: newStageOrder,
       });
     } catch (error) {
@@ -115,10 +120,10 @@ export default function StageReorderColumn() {
     }
 
     // Refresh the stage order
-    mutate(OpeningsService.getOpeningURL(openingId));
+    mutate(GetOpeningInfoURL(openingId));
 
     // Refresh the stages
-    mutate(OpeningsService.getAllStagesInOpeningURL(openingId));
+    mutate(GetAllStagesInOpeningURL(openingId));
   };
 
   return (

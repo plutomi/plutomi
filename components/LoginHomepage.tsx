@@ -1,4 +1,4 @@
-import AuthService from "../adapters/AuthService";
+import { RequestLoginLink } from "../adapters/Auth";
 import LoginEmail from "./EmailSigninInput";
 import { useState } from "react";
 import { DEFAULTS } from "../Config";
@@ -26,7 +26,7 @@ export default function LoginHomepage({ callbackUrl }: CallbackUrl) {
     e.preventDefault();
 
     try {
-      const { message } = await AuthService.requestLoginLink(
+      const { message } = await RequestLoginLink(
         email,
         window.location.href + DEFAULTS.REDIRECT
       );

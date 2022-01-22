@@ -1,10 +1,10 @@
 import { mutate } from "swr";
-import useOpeningById from "../../../../../SWR/useOpeningById";
+import useOpeningInfo from "../../../../../SWR/useOpeningInfo";
 import { useRouter } from "next/router";
 import StageSettingsHeader from "../../../../../components/Stages/StageSettingsHeader";
 import StageSettingsContent from "../../../../../components/Stages/StagesSettingsContent";
 import NewPage from "../../../../../components/Templates/NewPage";
-import useStageById from "../../../../../SWR/useStageById";
+import useStageInfo from "../../../../../SWR/useStageInfo";
 import { CUSTOM_QUERY } from "../../../../../types/main";
 import OpeningsService from "../../../../../adapters/OpeningsService";
 import StagesService from "../../../../../adapters/StagesService";
@@ -16,8 +16,8 @@ export default function StageSettings() {
     CUSTOM_QUERY,
     "openingId" | "stageId"
   >;
-  let { opening, isOpeningLoading, isOpeningError } = useOpeningById(openingId);
-  let { stage, isStageLoading, isStageError } = useStageById(stageId);
+  let { opening, isOpeningLoading, isOpeningError } = useOpeningInfo(openingId);
+  let { stage, isStageLoading, isStageError } = useStageInfo(stageId);
 
   // Update this to use the new update syntax with diff
   const deleteStage = async () => {

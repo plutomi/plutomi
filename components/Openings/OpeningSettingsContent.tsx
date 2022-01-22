@@ -5,13 +5,13 @@ import difference from "../../utils/getObjectDifference";
 import OpeningModal from "./OpeningModal";
 import Loader from "../Loader";
 import useStore from "../../utils/store";
-import useOpeningById from "../../SWR/useOpeningById";
-import OpeningsService from "../../adapters/OpeningsService";
+import useOpeningInfo from "../../SWR/useOpeningInfo";
+import { UpdateOpening, GetOpeningInfoURL } from "../../adapters/Openings";
 import { CUSTOM_QUERY } from "../../types/main";
 export default function OpeningSettingsContent() {
   const router = useRouter();
   const { openingId } = router.query as Pick<CUSTOM_QUERY, "openingId">;
-  let { opening, isOpeningLoading, isOpeningError } = useOpeningById(openingId);
+  let { opening, isOpeningLoading, isOpeningError } = useOpeningInfo(openingId);
 
   const openingModal = useStore((state) => state.openingModal);
   const setOpeningModal = useStore((state) => state.setOpeningModal);
@@ -32,7 +32,7 @@ export default function OpeningSettingsContent() {
 
       console.log("Outgoing body", diff);
 
-      const { message } = await OpeningsService.updateOpening(openingId, diff);
+      const { message } = await UpdateOpening(openingId, diff);
       alert(message);
       setOpeningModal({
         isModalOpen: false,
@@ -45,7 +45,7 @@ export default function OpeningSettingsContent() {
       alert(error.response.data.message);
     }
     // Refresh opening data
-    mutate(OpeningsService.getOpeningURL(openingId));
+    mutate(GetOpeningInfoURL(openingId));
   };
 
   return (

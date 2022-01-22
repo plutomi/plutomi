@@ -1,5 +1,5 @@
 import useSWR from "swr";
-import { GetAllQuestionsInStageURL } from "../adapters/Stages";
+import { GetAllQuestionsInStageURL } from "../adapters/Questions";
 import { SWRFetcher } from "../Config";
 export default function useAllStageQuestions(
   openingId?: string,

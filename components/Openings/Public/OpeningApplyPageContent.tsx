@@ -1,9 +1,7 @@
 import { useRouter } from "next/router";
-import usePublicOrgById from "../../../SWR/usePublicOrgById";
 import usePublicOpeningById from "../../../SWR/usePublicOpeningById";
 import Loader from "../../Loader";
 import ApplicantInfoForm from "./ApplicantInfoForm";
-import axios from "../utils/axios";
 import { CUSTOM_QUERY } from "../../../types/main";
 export default function OpeningApplyPageContent() {
   const router = useRouter();
