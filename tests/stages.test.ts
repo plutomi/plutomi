@@ -312,12 +312,10 @@ describe("Stages", () => {
 
     try {
       await axios.put(`/openings/${ourOpening.openingId}/stages/${stageid}`, {
-        newValues: {
-          orgId: nanoid(5),
-          PK: nanoid(5),
-          SK: nanoid(5),
-          createdAt: nanoid(5),
-        },
+        orgId: nanoid(5),
+        PK: nanoid(5),
+        SK: nanoid(5),
+        createdAt: nanoid(5),
       });
     } catch (error) {
       expect(error.response.status).toBe(400);
@@ -362,9 +360,7 @@ describe("Stages", () => {
     const update = await axios.put(
       `/openings/${ourOpening.openingId}/stages/${stageid}`,
       {
-        newValues: {
-          GSI1SK: newName,
-        },
+        GSI1SK: newName,
       }
     );
 

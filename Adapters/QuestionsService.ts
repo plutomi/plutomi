@@ -25,10 +25,10 @@ export default class QuestionsService {
     return data;
   }
   static async updateQuestion(questionId, newValues) {
-    const body = {
-      newValues,
-    };
-    const { data } = await axios.put(this.getQuestionURL(questionId), body);
+    const { data } = await axios.put(
+      this.getQuestionURL(questionId),
+      newValues
+    );
     return data;
   }
 }

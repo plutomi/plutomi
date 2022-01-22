@@ -17,10 +17,10 @@ export default class UsersService {
     return data;
   }
   static async updateUser(userId, newValues) {
-    const body = {
-      newValues,
-    };
-    const { data } = await axios.put(this.getSpecificUserURL(userId), body);
+    const { data } = await axios.put(
+      this.getSpecificUserURL(userId),
+      newValues
+    );
     return data;
   }
 }

@@ -4,13 +4,6 @@ import Joi from "joi";
 import * as CreateError from "../../utils/errorGenerator";
 import { DEFAULTS, JOI_GLOBAL_FORBIDDEN, JOI_SETTINGS } from "../../Config";
 
-interface APIUpdateUserParameters {
-  userId?: string;
-}
-interface APIUpdateUserBody {
-  newValues?: { [key: string]: any };
-}
-
 /**
  * When calling PUT /users/:userId, these properties cannot be updated by the user
  */
@@ -34,9 +27,7 @@ const schema = Joi.object({
   params: {
     userId: Joi.string(),
   },
-  body: {
-    newValues: JOI_FORBIDDEN_USER,
-  },
+  body: JOI_FORBIDDEN_USER,
 }).options(JOI_SETTINGS);
 
 const main = async (req: Request, res: Response) => {
@@ -48,8 +39,7 @@ const main = async (req: Request, res: Response) => {
   }
 
   const { session } = res.locals;
-  const { userId }: APIUpdateUserParameters = req.params;
-  const { newValues }: APIUpdateUserBody = req.body;
+  const { userId } = req.params;
 
   // TODO RBAC will go here, right now you can only update yourself
   if (userId !== session.userId) {
@@ -58,7 +48,7 @@ const main = async (req: Request, res: Response) => {
 
   const [updatedUser, error] = await Users.UpdateUser({
     userId: session.userId,
-    newValues,
+    newValues: req.body,
   });
 
   if (error) {

@@ -126,9 +126,7 @@ describe("Openings", () => {
     const newName = nanoid(20);
     // Update the opening
     const data3 = await axios.put(`/openings/${opening.openingId}`, {
-      newValues: {
-        openingName: newName,
-      },
+      openingName: newName,
     });
 
     expect(data3.status).toBe(200);
@@ -152,15 +150,11 @@ describe("Openings", () => {
     // Update the opening
     try {
       await axios.put(`/openings/${opening.openingId}`, {
-        newValues: {
-          openingName: newName,
-        },
+        openingName: newName,
       });
     } catch (error) {
       expect(error.response.status).toBe(400);
-      expect(error.response.data.message).toContain(
-        "body.newValues.openingName"
-      );
+      expect(error.response.data.message).toContain("body.openingName");
       expect(error.response.data.message).toContain(
         "less than or equal to 100"
       );
@@ -181,12 +175,10 @@ describe("Openings", () => {
 
     try {
       await axios.put(`/openings/${opening.openingId}`, {
-        newValues: {
-          orgId: nanoid(5),
-          PK: nanoid(5),
-          SK: nanoid(5),
-          createdAt: nanoid(5),
-        },
+        orgId: nanoid(5),
+        PK: nanoid(5),
+        SK: nanoid(5),
+        createdAt: nanoid(5),
       });
     } catch (error) {
       expect(error.response.status).toBe(400);

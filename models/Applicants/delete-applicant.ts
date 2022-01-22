@@ -5,7 +5,6 @@ import {
 import { Dynamo } from "../../AWSClients/ddbDocClient";
 import { ENTITY_TYPES } from "../../Config";
 import { DeleteApplicantInput } from "../../types/main";
-import { getApplicantById } from ".";
 const { DYNAMO_TABLE_NAME } = process.env;
 import { SdkError } from "@aws-sdk/types";
 export default async function Remove(

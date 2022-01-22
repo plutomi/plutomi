@@ -57,9 +57,7 @@ describe("Public", () => {
     // Try to update
     try {
       await axios.put(`/openings/${ourOpening.openingId}`, {
-        newValues: {
-          GSI1SK: "PUBLIC",
-        },
+        GSI1SK: "PUBLIC",
       });
     } catch (error) {
       expect(error.response.status).toBe(403);
@@ -98,9 +96,7 @@ describe("Public", () => {
 
     // Make one of them public
     await axios.put(`/openings/${opening1.openingId}`, {
-      newValues: {
-        GSI1SK: "PUBLIC",
-      },
+      GSI1SK: "PUBLIC",
     });
 
     const result = await axios.get(`/public/orgs/${opening1.orgId}/openings`);
@@ -147,9 +143,7 @@ describe("Public", () => {
 
     // Make one of them public
     await axios.put(`/openings/${opening1.openingId}`, {
-      newValues: {
-        GSI1SK: "PUBLIC",
-      },
+      GSI1SK: "PUBLIC",
     });
 
     try {
@@ -187,9 +181,7 @@ describe("Public", () => {
     });
     // Make the opening public
     await axios.put(`/openings/${ourOpening.openingId}`, {
-      newValues: {
-        GSI1SK: "PUBLIC",
-      },
+      GSI1SK: "PUBLIC",
     });
 
     const result = await axios.get(

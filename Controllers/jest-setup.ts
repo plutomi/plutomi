@@ -17,7 +17,7 @@ export const setup = async (req: Request, res: Response) => {
   // TODO this is creating two users under TESTING2 because theres no check to see if email exists
   // like in the regular createUser flow
   const userEmail = req.body.email || `${nanoid(15)}+${EMAILS.TESTING}`;
-  let [user, userError] = await Users.getUserByEmail({
+  let [user, userError] = await Users.GetUserByEmail({
     email: userEmail,
   });
 
@@ -30,7 +30,7 @@ export const setup = async (req: Request, res: Response) => {
   }
 
   if (!user) {
-    const [newUser, newUserError] = await Users.createUser({
+    const [newUser, newUserError] = await Users.CreateUser({
       email: userEmail,
     });
 

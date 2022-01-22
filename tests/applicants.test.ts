@@ -59,9 +59,7 @@ describe("Openings", () => {
 
     // make opening public
     await axios.put(`/openings/${publicOpening.openingId}`, {
-      newValues: {
-        GSI1SK: "PUBLIC",
-      },
+      GSI1SK: "PUBLIC",
     });
 
     // Create a private opening

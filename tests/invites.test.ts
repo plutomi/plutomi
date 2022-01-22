@@ -1,6 +1,6 @@
 import axios from "../utils/axios";
 import { nanoid } from "nanoid";
-import { API_URL, EMAILS, ERRORS } from "../Config";
+import { EMAILS, ERRORS } from "../Config";
 const UrlSafeString = require("url-safe-string"),
   tagGenerator = new UrlSafeString();
 

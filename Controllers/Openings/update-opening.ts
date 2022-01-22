@@ -15,9 +15,7 @@ const JOI_FORBIDDEN_OPENING = Joi.object({
 });
 
 const schema = Joi.object({
-  body: {
-    newValues: JOI_FORBIDDEN_OPENING,
-  },
+  body: JOI_FORBIDDEN_OPENING,
 }).options(JOI_SETTINGS);
 
 const main = async (req: Request, res: Response) => {
@@ -30,12 +28,11 @@ const main = async (req: Request, res: Response) => {
 
   const { session } = res.locals;
   const { openingId } = req.params;
-  const { newValues } = req.body;
 
   const updateOpeningInput: UpdateOpeningInput = {
     openingId,
     orgId: session.orgId,
-    newValues,
+    newValues: req.body,
   };
 
   const [opening, openingError] = await Openings.GetOpeningById({
@@ -52,7 +49,7 @@ const main = async (req: Request, res: Response) => {
   }
 
   // TODO i think this can be moved into dynamo
-  if (newValues.GSI1SK === "PUBLIC" && opening.totalStages === 0) {
+  if (req.body.GSI1SK === "PUBLIC" && opening.totalStages === 0) {
     return res.status(403).json({
       message: "An opening needs to have stages before being made public",
     });

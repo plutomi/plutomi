@@ -65,9 +65,7 @@ describe("Users", () => {
 
     try {
       await axios.put(`/users/${userId}`, {
-        newValues: {
-          GSI1SK: nanoid(10),
-        },
+        GSI1SK: nanoid(10),
       });
     } catch (error) {
       expect(error.response.status).toBe(403);
@@ -77,9 +75,7 @@ describe("Users", () => {
   it("blocks updating another user", async () => {
     try {
       await axios.put(`/users/123`, {
-        newValues: {
-          firstName: nanoid(10),
-        },
+        firstName: nanoid(10),
       });
     } catch (error) {
       expect(error.response.status).toBe(403);
@@ -90,12 +86,10 @@ describe("Users", () => {
   it("blocks updating forbidden properties", async () => {
     try {
       await axios.put(`/users/123`, {
-        newValues: {
-          orgId: nanoid(5),
-          PK: nanoid(5),
-          SK: nanoid(5),
-          createdAt: nanoid(5),
-        },
+        orgId: nanoid(5),
+        PK: nanoid(5),
+        SK: nanoid(5),
+        createdAt: nanoid(5),
       });
     } catch (error) {
       expect(error.response.status).toBe(400);

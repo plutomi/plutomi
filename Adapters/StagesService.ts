@@ -25,10 +25,7 @@ export default class StagesService {
   }
 
   static async updateStage(stageId, newValues) {
-    const body = {
-      newValues,
-    };
-    const { data } = await axios.put(this.getStageURL(stageId), body);
+    const { data } = await axios.put(this.getStageURL(stageId), newValues);
     return data;
   }
 

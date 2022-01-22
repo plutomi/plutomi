@@ -134,12 +134,11 @@ export const remove = async (req: Request, res: Response) => {
 
 export const update = async (req: Request, res: Response) => {
   const { applicantId } = req.params;
-  const { newValues } = req.body;
 
   const updateApplicantInput = {
     orgId: res.locals.session.orgId,
     applicantId: applicantId,
-    newValues,
+    newValues: req.body,
   };
 
   const schema = Joi.object({

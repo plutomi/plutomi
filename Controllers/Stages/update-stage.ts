@@ -13,9 +13,7 @@ const JOI_FORBIDDEN_STAGE = Joi.object({
 });
 
 const schema = Joi.object({
-  body: {
-    newValues: JOI_FORBIDDEN_STAGE,
-  },
+  body: JOI_FORBIDDEN_STAGE,
 }).options(JOI_SETTINGS);
 
 const main = async (req: Request, res: Response) => {
@@ -28,13 +26,12 @@ const main = async (req: Request, res: Response) => {
 
   const { session } = res.locals;
   const { openingId, stageId } = req.params;
-  const { newValues } = req.body;
 
   const [updatedStage, error] = await Stages.UpdateStage({
     orgId: session.orgId,
     openingId,
     stageId,
-    newValues,
+    newValues: req.body,
   });
 
   if (error) {
