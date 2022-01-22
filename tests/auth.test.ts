@@ -1,4 +1,4 @@
-import axios, { AxiosResponse } from "axios";
+import axios from "../utils/axios";
 import { API_URL, EMAILS, ERRORS } from "../Config";
 const URL = `${API_URL}/request-login-link`;
 
@@ -99,7 +99,7 @@ describe("Request login link", () => {
 describe("Login", () => {
   it("fails with an empty login token", async () => {
     try {
-      await axios.get(API_URL + "/login?token=");
+      await axios.get("/login?token=");
     } catch (error) {
       expect(error.response.status).toBe(400);
       expect(error.response.data.message).toContain("query.token");
@@ -109,7 +109,7 @@ describe("Login", () => {
 
   it("fails without a token", async () => {
     try {
-      await axios.get(API_URL + "/login");
+      await axios.get("/login");
     } catch (error) {
       expect(error.response.status).toBe(400);
       expect(error.response.data.message).toContain("query.token");
@@ -119,7 +119,7 @@ describe("Login", () => {
 
   it("fails with a bad token", async () => {
     try {
-      await axios.get(API_URL + "/login?token=123");
+      await axios.get("/login?token=123");
     } catch (error) {
       expect(error.response.status).toBe(401);
       expect(error.response.data.message).toBe("Invalid login link");
@@ -132,7 +132,7 @@ describe("Logout", () => {
    * Creates a session cookie
    */
   beforeAll(async () => {
-    const data: AxiosResponse = await axios.post(API_URL + `/jest-setup`);
+    const data = await axios.post(`/jest-setup`);
     const cookie = data.headers["set-cookie"][0];
 
     axios.defaults.headers.Cookie = cookie;

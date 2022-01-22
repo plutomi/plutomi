@@ -1,6 +1,5 @@
-import axios, { AxiosResponse } from "axios";
+import axios from "../utils/axios";
 import { nanoid } from "nanoid";
-import { API_URL, DEFAULTS, ERRORS } from "../Config";
 const UrlSafeString = require("url-safe-string"),
   tagGenerator = new UrlSafeString();
 
@@ -9,7 +8,7 @@ describe("Public", () => {
    * Creates a session cookie to create the necessary entities
    */
   beforeAll(async () => {
-    const data: AxiosResponse = await axios.post(API_URL + `/jest-setup`);
+    const data = await axios.post(`/jest-setup`);
     const cookie = data.headers["set-cookie"][0];
 
     axios.defaults.headers.Cookie = cookie;
@@ -19,7 +18,7 @@ describe("Public", () => {
   const displayName = nanoid(20);
   it("returns a 404 if org not found", async () => {
     try {
-      await axios.get(API_URL + `/public/orgs/${nanoid(500)}`);
+      await axios.get(`/public/orgs/${nanoid(500)}`);
     } catch (error) {
       expect(error.response.status).toBe(404);
       expect(error.response.data.message).toBe("Org not found");
@@ -28,12 +27,12 @@ describe("Public", () => {
 
   it("returns public information about an org", async () => {
     // Create an org
-    await axios.post(API_URL + `/orgs`, {
+    await axios.post(`/orgs`, {
       orgId,
       displayName,
     });
 
-    const data = await axios.get(API_URL + `/public/orgs/${orgId}`);
+    const data = await axios.get(`/public/orgs/${orgId}`);
 
     expect(data.status).toBe(200);
     expect(Object.keys(data.data)).toStrictEqual(["orgId", "displayName"]);
@@ -45,11 +44,11 @@ describe("Public", () => {
     const openingName = nanoid(20);
 
     // Create the opening
-    await axios.post(API_URL + "/openings", {
+    await axios.post("/openings", {
       openingName,
     });
 
-    const allOpenings = await axios.get(API_URL + "/openings");
+    const allOpenings = await axios.get("/openings");
 
     const ourOpening = allOpenings.data.find(
       (opening) => opening.openingName === openingName
@@ -57,7 +56,7 @@ describe("Public", () => {
 
     // Try to update
     try {
-      await axios.put(API_URL + `/openings/${ourOpening.openingId}`, {
+      await axios.put(`/openings/${ourOpening.openingId}`, {
         newValues: {
           GSI1SK: "PUBLIC",
         },
@@ -75,15 +74,15 @@ describe("Public", () => {
     const opening1Name = nanoid(20);
     const opening2Name = nanoid(20);
 
-    await axios.post(API_URL + `/openings`, {
+    await axios.post(`/openings`, {
       openingName: opening1Name,
     });
 
-    await axios.post(API_URL + `/openings`, {
+    await axios.post(`/openings`, {
       openingName: opening2Name,
     });
 
-    const allOpenings = await axios.get(API_URL + "/openings");
+    const allOpenings = await axios.get("/openings");
 
     expect(allOpenings.status).toBe(200);
     expect(allOpenings.data.length).toBeGreaterThanOrEqual(2);
@@ -92,21 +91,19 @@ describe("Public", () => {
     );
 
     // Add a stage to the opening so we can make it public
-    await axios.post(API_URL + "/stages", {
+    await axios.post("/stages", {
       openingId: opening1.openingId,
       GSI1SK: nanoid(20),
     });
 
     // Make one of them public
-    await axios.put(API_URL + `/openings/${opening1.openingId}`, {
+    await axios.put(`/openings/${opening1.openingId}`, {
       newValues: {
         GSI1SK: "PUBLIC",
       },
     });
 
-    const result = await axios.get(
-      API_URL + `/public/orgs/${opening1.orgId}/openings`
-    );
+    const result = await axios.get(`/public/orgs/${opening1.orgId}/openings`);
 
     expect(result.status).toBe(200);
     expect(result.data.length).toBe(1);
@@ -122,15 +119,15 @@ describe("Public", () => {
     const opening1Name = nanoid(20);
     const opening2Name = nanoid(20);
 
-    await axios.post(API_URL + `/openings`, {
+    await axios.post(`/openings`, {
       openingName: opening1Name,
     });
 
-    await axios.post(API_URL + `/openings`, {
+    await axios.post(`/openings`, {
       openingName: opening2Name,
     });
 
-    const allOpenings = await axios.get(API_URL + "/openings");
+    const allOpenings = await axios.get("/openings");
 
     expect(allOpenings.status).toBe(200);
     expect(allOpenings.data.length).toBeGreaterThanOrEqual(2);
@@ -143,22 +140,20 @@ describe("Public", () => {
     );
 
     // Add a stage to the opening so we can make it public
-    await axios.post(API_URL + "/stages", {
+    await axios.post("/stages", {
       openingId: opening1.openingId,
       GSI1SK: nanoid(20),
     });
 
     // Make one of them public
-    await axios.put(API_URL + `/openings/${opening1.openingId}`, {
+    await axios.put(`/openings/${opening1.openingId}`, {
       newValues: {
         GSI1SK: "PUBLIC",
       },
     });
 
     try {
-      await axios.get(
-        API_URL + `/public/orgs/${orgId}/openings/${opening2.openingId}`
-      );
+      await axios.get(`/public/orgs/${orgId}/openings/${opening2.openingId}`);
     } catch (error) {
       expect(error.response.status).toBe(403);
       expect(error.response.data.message).toBe(
@@ -170,15 +165,15 @@ describe("Public", () => {
     // Create an opening
     const openingName = nanoid(20);
 
-    await axios.post(API_URL + `/openings`, {
+    await axios.post(`/openings`, {
       openingName: openingName,
     });
 
-    await axios.post(API_URL + `/openings`, {
+    await axios.post(`/openings`, {
       openingName,
     });
 
-    const allOpenings = await axios.get(API_URL + "/openings");
+    const allOpenings = await axios.get("/openings");
 
     expect(allOpenings.status).toBe(200);
     const ourOpening = allOpenings.data.find(
@@ -186,19 +181,19 @@ describe("Public", () => {
     );
 
     // Add a stage to the opening so we can make it public
-    await axios.post(API_URL + "/stages", {
+    await axios.post("/stages", {
       openingId: ourOpening.openingId,
       GSI1SK: nanoid(20),
     });
     // Make the opening public
-    await axios.put(API_URL + `/openings/${ourOpening.openingId}`, {
+    await axios.put(`/openings/${ourOpening.openingId}`, {
       newValues: {
         GSI1SK: "PUBLIC",
       },
     });
 
     const result = await axios.get(
-      API_URL + `/public/orgs/${orgId}/openings/${ourOpening.openingId}`
+      `/public/orgs/${orgId}/openings/${ourOpening.openingId}`
     );
 
     expect(result.status).toBe(200);

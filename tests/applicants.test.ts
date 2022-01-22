@@ -1,6 +1,6 @@
-import axios, { AxiosResponse } from "axios";
+import axios from "../utils/axios";
 import { nanoid } from "nanoid";
-import { API_URL, DEFAULTS, EMAILS, ENTITY_TYPES, ERRORS } from "../Config";
+import { EMAILS, ERRORS } from "../Config";
 const UrlSafeString = require("url-safe-string"),
   tagGenerator = new UrlSafeString();
 
@@ -14,14 +14,14 @@ describe("Openings", () => {
   let privateOpeningId;
   let applicant;
   beforeAll(async () => {
-    const data: AxiosResponse = await axios.post(API_URL + `/jest-setup`);
+    const data = await axios.post(`/jest-setup`);
     const cookie = data.headers["set-cookie"][0];
 
     axios.defaults.headers.Cookie = cookie;
 
     try {
       // Create an org
-      await axios.post(API_URL + "/orgs", {
+      await axios.post("/orgs", {
         orgId,
         displayName: nanoid(10) + " Inc.",
       });
@@ -32,7 +32,7 @@ describe("Openings", () => {
     // Create a public opening
     const publicOpeningName = nanoid(20);
     try {
-      await axios.post(API_URL + "/openings", {
+      await axios.post("/openings", {
         openingName: publicOpeningName,
       });
     } catch (error) {
@@ -40,7 +40,7 @@ describe("Openings", () => {
     }
 
     // Get public opening
-    let openings = await axios.get(API_URL + "/openings");
+    let openings = await axios.get("/openings");
     const publicOpening = openings.data.find(
       (opening) => opening.openingName === publicOpeningName
     );
@@ -49,7 +49,7 @@ describe("Openings", () => {
 
     try {
       // Add a stage
-      await axios.post(API_URL + "/stages", {
+      await axios.post("/stages", {
         openingId: publicOpeningId,
         GSI1SK: "First Stage",
       });
@@ -58,7 +58,7 @@ describe("Openings", () => {
     }
 
     // make opening public
-    await axios.put(API_URL + `/openings/${publicOpening.openingId}`, {
+    await axios.put(`/openings/${publicOpening.openingId}`, {
       newValues: {
         GSI1SK: "PUBLIC",
       },
@@ -66,12 +66,12 @@ describe("Openings", () => {
 
     // Create a private opening
     const privateOpeningName = nanoid(20);
-    await axios.post(API_URL + "/openings", {
+    await axios.post("/openings", {
       openingName: privateOpeningName,
     });
 
     // Get private opening
-    openings = await axios.get(API_URL + "/openings");
+    openings = await axios.get("/openings");
     const privateOpening = openings.data.find(
       (opening) => opening.openingName === privateOpeningName
     );
@@ -90,7 +90,7 @@ describe("Openings", () => {
 
   it("blocks creating an applicant in private openings", async () => {
     try {
-      await axios.post(API_URL + "/applicants", {
+      await axios.post("/applicants", {
         ...applicant,
         openingId: privateOpeningId,
       });
@@ -105,7 +105,7 @@ describe("Openings", () => {
 
   it("blocks creating an applicant with a spammy email", async () => {
     try {
-      await axios.post(API_URL + "/applicants", {
+      await axios.post("/applicants", {
         ...applicant,
         email: "test@10minutemail.com",
       });
@@ -118,7 +118,7 @@ describe("Openings", () => {
 
   it("blocks creating applicants with long names", async () => {
     try {
-      await axios.post(API_URL + "/applicants", {
+      await axios.post("/applicants", {
         ...applicant,
         firstName: nanoid(80),
         lastName: nanoid(80),
@@ -136,7 +136,7 @@ describe("Openings", () => {
 
   it("blocks creating applicants with invalid emails", async () => {
     try {
-      await axios.post(API_URL + "/applicants", {
+      await axios.post("/applicants", {
         ...applicant,
         email: "beans",
       });
@@ -150,7 +150,7 @@ describe("Openings", () => {
 
   it("blocks creating applicants with the default org", async () => {
     try {
-      await axios.post(API_URL + "/applicants", {
+      await axios.post("/applicants", {
         ...applicant,
         orgId: "NO_ORG_ASSIGNED",
       });

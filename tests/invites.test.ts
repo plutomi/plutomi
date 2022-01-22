@@ -1,6 +1,6 @@
-import axios, { AxiosResponse } from "axios";
+import axios from "../utils/axios";
 import { nanoid } from "nanoid";
-import { API_URL, DEFAULTS, EMAILS, ENTITY_TYPES, ERRORS } from "../Config";
+import { API_URL, EMAILS, ERRORS } from "../Config";
 const UrlSafeString = require("url-safe-string"),
   tagGenerator = new UrlSafeString();
 
@@ -9,7 +9,7 @@ describe("Openings", () => {
    * Creates a session cookie
    */
   beforeAll(async () => {
-    const data: AxiosResponse = await axios.post(API_URL + `/jest-setup`);
+    const data = await axios.post(`/jest-setup`);
     const cookie = data.headers["set-cookie"][0];
 
     axios.defaults.headers.Cookie = cookie;
@@ -17,7 +17,7 @@ describe("Openings", () => {
 
   it("blocks creating invites if you're not in an org", async () => {
     try {
-      await axios.post(API_URL + "/invites");
+      await axios.post("/invites");
     } catch (error) {
       expect(error.response.status).toBe(403);
       expect(error.response.data.message).toBe(ERRORS.NEEDS_ORG);
@@ -26,7 +26,7 @@ describe("Openings", () => {
 
   it("blocks viewing your invites if you're not in an org", async () => {
     try {
-      await axios.get(API_URL + "/invites");
+      await axios.get("/invites");
     } catch (error) {
       expect(error.response.status).toBe(403);
       expect(error.response.data.message).toBe(ERRORS.NEEDS_ORG);
@@ -36,13 +36,13 @@ describe("Openings", () => {
   const orgId = nanoid(20);
   it("blocks creating invites if recipientEmail is not an email", async () => {
     // Create an org
-    await axios.post(API_URL + "/orgs", {
+    await axios.post("/orgs", {
       orgId,
       displayName: nanoid(20),
     });
 
     try {
-      await axios.post(API_URL + "/invites", {
+      await axios.post("/invites", {
         recipientEmail: "beans",
       });
     } catch (error) {
@@ -54,7 +54,7 @@ describe("Openings", () => {
 
   it("blocks creating invites if recipientEmail is a disposable email", async () => {
     try {
-      await axios.post(API_URL + "/invites", {
+      await axios.post("/invites", {
         recipientEmail: "test@10minutemail.com",
       });
     } catch (error) {
@@ -64,10 +64,10 @@ describe("Openings", () => {
   });
 
   it("blocks inviting yourself", async () => {
-    const self = await axios.get(API_URL + "/users/self");
+    const self = await axios.get("/users/self");
 
     try {
-      await axios.post(API_URL + "/invites", {
+      await axios.post("/invites", {
         recipientEmail: self.data.email,
       });
     } catch (error) {
@@ -78,12 +78,12 @@ describe("Openings", () => {
 
   it("blocks inviting someone that already has a pending invite for your org", async () => {
     // Create the invite
-    await axios.post(API_URL + "/invites", {
+    await axios.post("/invites", {
       recipientEmail: EMAILS.TESTING2,
     });
 
     try {
-      await axios.post(API_URL + "/invites", {
+      await axios.post("/invites", {
         recipientEmail: EMAILS.TESTING2,
       });
     } catch (error) {
@@ -95,7 +95,7 @@ describe("Openings", () => {
   });
 
   it("allows creating invites", async () => {
-    const res = await axios.post(API_URL + "/invites", {
+    const res = await axios.post("/invites", {
       recipientEmail: EMAILS.TESTING3,
     });
 
@@ -104,16 +104,14 @@ describe("Openings", () => {
   });
 
   it("allows viewing invites for your org", async () => {
-    const self = await axios.get(API_URL + "/users/self");
+    const self = await axios.get("/users/self");
 
     // Create the invite
-    await axios.post(API_URL + "/invites", {
+    await axios.post("/invites", {
       recipientEmail: EMAILS.TESTING4,
     });
 
-    const response = await axios.get(
-      API_URL + `/orgs/${self.data.orgId}/invites`
-    );
+    const response = await axios.get(`/orgs/${self.data.orgId}/invites`);
 
     expect(response.status).toBe(200);
     expect(response.data.length).toBeGreaterThanOrEqual(1);
@@ -123,18 +121,18 @@ describe("Openings", () => {
   // ToDO this returns you already belong to an org as that is the first thing that is checked
   it("blocks you from creating an org if you have pending invites", async () => {
     // Create another user
-    const data: AxiosResponse = await axios.post(API_URL + `/jest-setup`, {
+    const data = await axios.post(`/jest-setup`, {
       email: EMAILS.TESTING3, // invited up above
     });
     const cookie = data.headers["set-cookie"][0];
 
     axios.defaults.headers.Cookie = cookie;
 
-    await axios.get(API_URL + "/users/self");
+    await axios.get("/users/self");
 
     try {
       // TODO ORG not joining, causing errors
-      await axios.post(API_URL + "/orgs", {
+      await axios.post("/orgs", {
         orgId: nanoid(10),
         displayName: nanoid(20),
       });
@@ -145,9 +143,9 @@ describe("Openings", () => {
   });
 
   it("allows you as a user to view your pending invites", async () => {
-    const self = await axios.get(API_URL + "/users/self");
+    const self = await axios.get("/users/self");
 
-    const res = await axios.get(API_URL + "/invites");
+    const res = await axios.get("/invites");
     expect(res.status).toBe(200);
     expect(res.data.length).toBeGreaterThanOrEqual(1); // TODO invites not being created
     expect(res.data[0].recipient.email).toBe(self.data.email);
@@ -181,39 +179,37 @@ describe("Openings", () => {
   // Accept / reject
   it("allows you to accept invites", async () => {
     // Create a new user
-    const data: AxiosResponse = await axios.post(API_URL + `/jest-setup`, {
+    const data = await axios.post(`/jest-setup`, {
       email: `${nanoid(7)}+${EMAILS.TESTING}`,
     });
     const cookie = data.headers["set-cookie"][0];
     axios.defaults.headers.Cookie = cookie;
-    // const self = await axios.get(API_URL + "/users/self");
+    // const self = await axios.get("/users/self");
 
     const orgId = tagGenerator.generate(nanoid(20));
 
     // Join org
-    await axios.post(API_URL + "/orgs", { orgId, displayName: nanoid(20) });
+    await axios.post("/orgs", { orgId, displayName: nanoid(20) });
 
     const otherUserEmail = `${nanoid(7)}+${EMAILS.TESTING3}`;
     // Create an invite for another user
-    await axios.post(API_URL + "/invites", {
+    await axios.post("/invites", {
       recipientEmail: otherUserEmail,
     });
 
     // Sign in as that other user
-    const data2: AxiosResponse = await axios.post(API_URL + `/jest-setup`, {
+    const data2 = await axios.post(`/jest-setup`, {
       email: otherUserEmail,
     });
     const cookie2 = data2.headers["set-cookie"][0];
     axios.defaults.headers.Cookie = cookie2;
 
-    const invites = await axios.get(API_URL + "/invites");
+    const invites = await axios.get("/invites");
 
     const ourInvite = invites.data.find((invite) => invite.orgId === orgId);
-    const accepted = await axios.post(
-      API_URL + `/invites/${ourInvite.inviteId}`
-    );
+    const accepted = await axios.post(`/invites/${ourInvite.inviteId}`);
 
-    const self = await axios.get(API_URL + "/users/self");
+    const self = await axios.get("/users/self");
     expect(accepted.status).toBe(200);
     expect(accepted.data.message).toContain("You've joined the");
     expect(self.data.orgId).toBe(orgId);
@@ -221,7 +217,7 @@ describe("Openings", () => {
 
   it("allows rejecting invites", async () => {
     // Create a new user
-    const data: AxiosResponse = await axios.post(API_URL + `/jest-setup`, {
+    const data = await axios.post(`/jest-setup`, {
       email: `${nanoid(7)}+${EMAILS.TESTING}`,
     });
     const cookie = data.headers["set-cookie"][0];
@@ -229,29 +225,27 @@ describe("Openings", () => {
 
     // Join org
     const orgId = tagGenerator.generate(nanoid(20));
-    await axios.post(API_URL + "/orgs", { orgId, displayName: nanoid(20) });
+    await axios.post("/orgs", { orgId, displayName: nanoid(20) });
 
     const otherUserEmail = `${nanoid(7)}+${EMAILS.TESTING4}`;
     // Create an invite for another user
-    await axios.post(API_URL + "/invites", {
+    await axios.post("/invites", {
       recipientEmail: otherUserEmail,
     });
 
     // Sign in as that other user
-    const data2: AxiosResponse = await axios.post(API_URL + `/jest-setup`, {
+    const data2 = await axios.post(`/jest-setup`, {
       email: otherUserEmail,
     });
     const cookie2 = data2.headers["set-cookie"][0];
     axios.defaults.headers.Cookie = cookie2;
 
-    const invites = await axios.get(API_URL + "/invites");
+    const invites = await axios.get("/invites");
 
     const ourInvite = invites.data.find((invite) => invite.orgId === orgId);
-    const accepted = await axios.delete(
-      API_URL + `/invites/${ourInvite.inviteId}`
-    );
+    const accepted = await axios.delete(`/invites/${ourInvite.inviteId}`);
 
-    const self = await axios.get(API_URL + "/users/self");
+    const self = await axios.get("/users/self");
     expect(accepted.status).toBe(200);
     expect(accepted.data.message).toContain("Invite rejected");
     expect(self.data.orgId).toBe("NO_ORG_ASSIGNED");

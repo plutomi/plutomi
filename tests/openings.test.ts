@@ -1,13 +1,13 @@
-import axios, { AxiosResponse } from "axios";
+import axios from "../utils/axios";
 import { nanoid } from "nanoid";
-import { API_URL, DEFAULTS, ENTITY_TYPES, ERRORS } from "../Config";
+import { ERRORS } from "../Config";
 
 describe("Openings", () => {
   /**
    * Creates a session cookie
    */
   beforeAll(async () => {
-    const data: AxiosResponse = await axios.post(API_URL + `/jest-setup`);
+    const data = await axios.post(`/jest-setup`);
     const cookie = data.headers["set-cookie"][0];
 
     axios.defaults.headers.Cookie = cookie;
@@ -15,7 +15,7 @@ describe("Openings", () => {
 
   it("fails to create an opening if a user is not in an org", async () => {
     try {
-      await axios.post(API_URL + "/openings", {
+      await axios.post("/openings", {
         openingName: nanoid(10),
       });
     } catch (error) {
@@ -26,7 +26,7 @@ describe("Openings", () => {
 
   it("fails to retrieve openings in an org if a user does not have an org", async () => {
     try {
-      await axios.get(API_URL + "/openings");
+      await axios.get("/openings");
     } catch (error) {
       expect(error.response.status).toBe(403);
       expect(error.response.data.message).toBe(ERRORS.NEEDS_ORG);
@@ -35,7 +35,7 @@ describe("Openings", () => {
 
   it("fails to retrieve a specific opening if a user does not have an org", async () => {
     try {
-      await axios.get(API_URL + "/openings/123");
+      await axios.get("/openings/123");
     } catch (error) {
       expect(error.response.status).toBe(403);
       expect(error.response.data.message).toBe(ERRORS.NEEDS_ORG);
@@ -44,13 +44,13 @@ describe("Openings", () => {
 
   it("fails to create an opening with a large name", async () => {
     // Create an org
-    await axios.post(API_URL + "/orgs", {
+    await axios.post("/orgs", {
       orgId: nanoid(20),
       displayName: nanoid(20),
     });
 
     try {
-      await axios.post(API_URL + "/openings", {
+      await axios.post("/openings", {
         openingName: nanoid(2000),
       });
     } catch (error) {
@@ -63,7 +63,7 @@ describe("Openings", () => {
   });
 
   it("creates an opening", async () => {
-    const data = await axios.post(API_URL + "/openings", {
+    const data = await axios.post("/openings", {
       openingName: nanoid(20),
     });
 
@@ -73,12 +73,12 @@ describe("Openings", () => {
 
   it("allows retrieving openings in an org", async () => {
     // Create an opening first
-    await axios.post(API_URL + "/openings", {
+    await axios.post("/openings", {
       openingName: nanoid(10),
     });
 
     // Get openings in an org
-    const data2 = await axios.get(API_URL + "/openings");
+    const data2 = await axios.get("/openings");
 
     expect(data2.status).toBe(200);
     expect(data2.data.length).toBeGreaterThanOrEqual(1);
@@ -86,7 +86,7 @@ describe("Openings", () => {
 
   it("returns a 404 if an opening does not exist", async () => {
     try {
-      await axios.get(API_URL + "/openings/1");
+      await axios.get("/openings/1");
     } catch (error) {
       expect(error.response.status).toBe(404);
       expect(error.response.data.message).toBe("Opening not found");
@@ -95,37 +95,37 @@ describe("Openings", () => {
 
   it("allows retrieving an opening by id", async () => {
     // Create an opening first
-    await axios.post(API_URL + "/openings", {
+    await axios.post("/openings", {
       openingName: nanoid(10),
     });
 
     // Get openings in an org
-    const data2 = await axios.get(API_URL + "/openings");
+    const data2 = await axios.get("/openings");
 
     // Get the first opening
     const opening = data2.data[0];
 
     // Test getting an opening by id
-    const data3 = await axios.get(API_URL + `/openings/${opening.openingId}`);
+    const data3 = await axios.get(`/openings/${opening.openingId}`);
     expect(data3.status).toBe(200);
     expect(data3.data).toStrictEqual(opening);
   });
 
   it("allows updating an opening", async () => {
     // Create an opening
-    await axios.post(API_URL + "/openings", {
+    await axios.post("/openings", {
       openingName: nanoid(10),
     });
 
     // Get openings in an org
-    const data2 = await axios.get(API_URL + "/openings");
+    const data2 = await axios.get("/openings");
 
     // Get the first opening
     const opening = data2.data[0];
 
     const newName = nanoid(20);
     // Update the opening
-    const data3 = await axios.put(API_URL + `/openings/${opening.openingId}`, {
+    const data3 = await axios.put(`/openings/${opening.openingId}`, {
       newValues: {
         openingName: newName,
       },
@@ -137,12 +137,12 @@ describe("Openings", () => {
 
   it("blocks updating an opening with an extra long name", async () => {
     // Create an opening
-    await axios.post(API_URL + "/openings", {
+    await axios.post("/openings", {
       openingName: nanoid(10),
     });
 
     // Get openings in an org
-    const data2 = await axios.get(API_URL + "/openings");
+    const data2 = await axios.get("/openings");
 
     // Get the first opening
     const opening = data2.data[0];
@@ -151,7 +151,7 @@ describe("Openings", () => {
 
     // Update the opening
     try {
-      await axios.put(API_URL + `/openings/${opening.openingId}`, {
+      await axios.put(`/openings/${opening.openingId}`, {
         newValues: {
           openingName: newName,
         },
@@ -169,18 +169,18 @@ describe("Openings", () => {
 
   it("blocks editing forbidden properties of an opening", async () => {
     // Create an opening
-    await axios.post(API_URL + "/openings", {
+    await axios.post("/openings", {
       openingName: nanoid(10),
     });
 
     // Get openings in an org
-    const data2 = await axios.get(API_URL + "/openings");
+    const data2 = await axios.get("/openings");
 
     // Get the first opening
     const opening = data2.data[0];
 
     try {
-      await axios.put(API_URL + `/openings/${opening.openingId}`, {
+      await axios.put(`/openings/${opening.openingId}`, {
         newValues: {
           orgId: nanoid(5),
           PK: nanoid(5),
@@ -196,19 +196,17 @@ describe("Openings", () => {
 
   it("allows deleting openings", async () => {
     // Create an opening
-    await axios.post(API_URL + "/openings", {
+    await axios.post("/openings", {
       openingName: nanoid(10),
     });
 
     // Get openings in an org
-    const data = await axios.get(API_URL + "/openings");
+    const data = await axios.get("/openings");
 
     // Get the first opening
     const opening = data.data[0];
 
-    const data2 = await axios.delete(
-      API_URL + `/openings/${opening.openingId}`
-    );
+    const data2 = await axios.delete(`/openings/${opening.openingId}`);
     expect(data2.status).toBe(200);
     expect(data2.data.message).toBe("Opening deleted!");
   });
