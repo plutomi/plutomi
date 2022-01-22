@@ -195,14 +195,15 @@ describe("Openings", () => {
     // Join org
     await axios.post(API_URL + "/orgs", { orgId, displayName: nanoid(20) });
 
+    const otherUserEmail = `${nanoid(7)}+${EMAILS.TESTING3}`;
     // Create an invite for another user
     await axios.post(API_URL + "/invites", {
-      recipientEmail: EMAILS.TESTING4,
+      recipientEmail: otherUserEmail,
     });
 
     // Sign in as that other user
     const data2: AxiosResponse = await axios.post(API_URL + `/jest-setup`, {
-      email: EMAILS.TESTING4,
+      email: otherUserEmail,
     });
     const cookie2 = data2.headers["set-cookie"][0];
     axios.defaults.headers.Cookie = cookie2;
@@ -214,11 +215,47 @@ describe("Openings", () => {
       API_URL + `/invites/${ourInvite.inviteId}`
     );
 
-    const self2 = await axios.get(API_URL + "/users/self");
+    const self = await axios.get(API_URL + "/users/self");
     expect(accepted.status).toBe(200);
     expect(accepted.data.message).toContain("You've joined the");
-    expect(self2.data.orgId).toBe(orgId);
+    expect(self.data.orgId).toBe(orgId);
   });
 
-  //   it("allows you to accept invites");
+  it("allows rejecting invites", async () => {
+    // Create a new user
+    const data: AxiosResponse = await axios.post(API_URL + `/jest-setup`, {
+      email: `${nanoid(7)}+${EMAILS.TESTING}`,
+    });
+    const cookie = data.headers["set-cookie"][0];
+    axios.defaults.headers.Cookie = cookie;
+
+    // Join org
+    const orgId = tagGenerator.generate(nanoid(20));
+    await axios.post(API_URL + "/orgs", { orgId, displayName: nanoid(20) });
+
+    const otherUserEmail = `${nanoid(7)}+${EMAILS.TESTING4}`;
+    // Create an invite for another user
+    await axios.post(API_URL + "/invites", {
+      recipientEmail: otherUserEmail,
+    });
+
+    // Sign in as that other user
+    const data2: AxiosResponse = await axios.post(API_URL + `/jest-setup`, {
+      email: otherUserEmail,
+    });
+    const cookie2 = data2.headers["set-cookie"][0];
+    axios.defaults.headers.Cookie = cookie2;
+
+    const invites = await axios.get(API_URL + "/invites");
+
+    const ourInvite = invites.data.find((invite) => invite.orgId === orgId);
+    const accepted = await axios.delete(
+      API_URL + `/invites/${ourInvite.inviteId}`
+    );
+
+    const self = await axios.get(API_URL + "/users/self");
+    expect(accepted.status).toBe(200);
+    expect(accepted.data.message).toContain("Invite rejected");
+    expect(self.data.orgId).toBe("NO_ORG_ASSIGNED");
+  });
 });

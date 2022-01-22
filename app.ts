@@ -148,6 +148,9 @@ app.get(
 );
 
 app.post("/invites/:inviteId", [withSession], Invites.AcceptInvite);
+
+app.delete("/invites/:inviteId", [withSession], Invites.RejectInvite);
+
 // Catch timeouts // TODO make this into its own middleware
 function haltOnTimedout(req, res, next) {
   if (!req.timedout) next();
