@@ -68,7 +68,10 @@ app.use(cookieParser(["sessionpw1"], COOKIE_SETTINGS));
 // app.put("/applicants/:applicantId", Applicants.update);
 // app.delete("/applicants/:applicantId", Applicants.remove);
 // app.post("/applicants/:applicantId/answer", Applicants.answer);
-app.post("/jest-setup", Jest.setup);
+
+if (process.env.NODE_ENV === "development") {
+  app.post("/jest-setup", Jest.setup);
+}
 
 app.post("/request-login-link", Auth.RequestLoginLink);
 app.get("/login", Auth.Login);
@@ -143,6 +146,8 @@ app.get(
   [withCleanOrgId, withSession, withHasOrg, withSameOrg],
   Invites.GetOrgInvites
 );
+
+app.post("/invites/:inviteId", [withSession], Invites.AcceptInvite);
 // Catch timeouts // TODO make this into its own middleware
 function haltOnTimedout(req, res, next) {
   if (!req.timedout) next();

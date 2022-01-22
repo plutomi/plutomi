@@ -1,6 +1,8 @@
 import axios, { AxiosResponse } from "axios";
 import { nanoid } from "nanoid";
 import { API_URL, DEFAULTS, EMAILS, ENTITY_TYPES, ERRORS } from "../Config";
+const UrlSafeString = require("url-safe-string"),
+  tagGenerator = new UrlSafeString();
 
 describe("Openings", () => {
   /**
@@ -120,10 +122,11 @@ describe("Openings", () => {
     expect(response.data[0].createdBy.email).toBe(self.data.email);
   });
 
-  it("bocks you from creating an org if you have pending invites", async () => {
+  // ToDO this returns you already belong to an org as that is the first thing that is checked
+  it("blocks you from creating an org if you have pending invites", async () => {
     // Create another user
     const data: AxiosResponse = await axios.post(API_URL + `/jest-setup`, {
-      email: EMAILS.TESTING2, // invited up above
+      email: EMAILS.TESTING3, // invited up above
     });
     const cookie = data.headers["set-cookie"][0];
 
@@ -152,8 +155,70 @@ describe("Openings", () => {
     expect(res.data[0].recipient.email).toBe(self.data.email);
   });
 
+  // TODO
+  /**
+   * This one requires:
+   * 1. Creating a user
+   * 2. Switching to another user
+   * 3. Inviting the first user
+   * 4. Switching back
+   * 5. Creating an org on the first user
+   * 6. Trying to view the 2nd user's org's invites
+   *
+   * This is because a new user gets blocked if they try to view another org's invites
+   * for not having an org, which is fine, but also to test the same_org middleware,
+   * we need to give the first user an org. If we invite the first user
+   * before they create an org, they get blocked from creating the org
+   * due to having pending invites.. lol.
+   * Might just skip this one for now..
+   */
   //   it("blocks viewing org invites if you don't belong to that org ", async () => {});
 
-  //   it("allows you to reject invites");
+  // TODO -
+
+  // Create a user
+  // Create an org
+  // Invite another user
+  // Sign in as that user
+  // Accept / reject
+  it("allows you to accept invites", async () => {
+    // Create a new user
+    const data: AxiosResponse = await axios.post(API_URL + `/jest-setup`, {
+      email: `${nanoid(7)}+${EMAILS.TESTING}`,
+    });
+    const cookie = data.headers["set-cookie"][0];
+    axios.defaults.headers.Cookie = cookie;
+    // const self = await axios.get(API_URL + "/users/self");
+
+    const orgId = tagGenerator.generate(nanoid(20));
+
+    // Join org
+    await axios.post(API_URL + "/orgs", { orgId, displayName: nanoid(20) });
+
+    // Create an invite for another user
+    await axios.post(API_URL + "/invites", {
+      recipientEmail: EMAILS.TESTING4,
+    });
+
+    // Sign in as that other user
+    const data2: AxiosResponse = await axios.post(API_URL + `/jest-setup`, {
+      email: EMAILS.TESTING4,
+    });
+    const cookie2 = data2.headers["set-cookie"][0];
+    axios.defaults.headers.Cookie = cookie2;
+
+    const invites = await axios.get(API_URL + "/invites");
+
+    const ourInvite = invites.data.find((invite) => invite.orgId === orgId);
+    const accepted = await axios.post(
+      API_URL + `/invites/${ourInvite.inviteId}`
+    );
+
+    const self2 = await axios.get(API_URL + "/users/self");
+    expect(accepted.status).toBe(200);
+    expect(accepted.data.message).toContain("You've joined the");
+    expect(self2.data.orgId).toBe(orgId);
+  });
+
   //   it("allows you to accept invites");
 });

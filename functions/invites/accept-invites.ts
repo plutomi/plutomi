@@ -21,68 +21,7 @@ const main = async (
     return CreateError.JOI(error);
   }
 
-  const { session } = event.requestContext.authorizer.lambda;
-  const { inviteId } = event.pathParameters;
 
-  if (session.orgId !== DEFAULTS.NO_ORG) {
-    return {
-      statusCode: 403,
-      body: {
-        message: `You already belong to an org: ${session.orgId} - delete it before joining another one!`,
-      },
-    };
-  }
-
-  const [invite, error] = await Invites.getInviteById({
-    inviteId,
-    userId: session.userId,
-  });
-
-  if (error) {
-    return CreateError.SDK(
-      error,
-      "An error ocurred getting the info for your invite"
-    );
-  }
-
-  if (!invite) {
-    return {
-      statusCode: 404,
-      body: { message: "Invite no longer exists" },
-    };
-  }
-  // Not sure how this would happen as we do a check before the invite
-  // is sent to prevent this...
-  if (invite.orgId === session.orgId) {
-    return {
-      statusCode: 400,
-      body: { message: "It appears that you're already in this org!" },
-    };
-  }
-
-  if (invite.expiresAt <= Time.currentISO()) {
-    return {
-      statusCode: 403,
-      body: {
-        message:
-          "It looks like that invite has expired, ask the org admin to send you another one!",
-      },
-    };
-  }
-
-  const [joined, joinError] = await Invites.joinOrgFromInvite({
-    userId: session.userId,
-    invite,
-  });
-
-  if (joinError) {
-    return CreateError.SDK(joinError, "We were unable to accept that invite");
-  }
-
-  return {
-    statusCode: 200,
-    body: { message: `You've joined the ${invite.orgName} org!` },
-  };
 };
 // TODO types with API Gateway event and middleware
 // @ts-ignore
