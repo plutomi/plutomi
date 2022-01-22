@@ -12,12 +12,11 @@ import * as CreateError from "../../utils/errorGenerator";
 const schema = Joi.object({
   body: {
     ...JOI_GLOBAL_FORBIDDEN,
-    orgId: JoiOrgId, // Can't be default org
+    orgId: JoiOrgId, 
     openingId: Joi.string(),
     email: Joi.string().email(),
     firstName: Joi.string().invalid(DEFAULTS.FIRST_NAME).max(20),
     lastName: Joi.string().invalid(DEFAULTS.LAST_NAME).max(20),
-    username: Joi.string().optional().forbidden(),
   },
 }).options(JOI_SETTINGS);
 import emailValidator from "deep-email-validator";

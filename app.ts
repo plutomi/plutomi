@@ -14,6 +14,7 @@ import * as Openings from "./Controllers/Openings";
 import * as Stages from "./Controllers/Stages";
 import * as PublicInfo from "./Controllers/PublicInfo";
 import * as Invites from "./Controllers/Invites";
+import * as Applicants from "./Controllers/Applicants";
 import withHasOrg from "./middleware/withHasOrg";
 import withSameOrg from "./middleware/withSameOrg";
 import helmet from "helmet";
@@ -148,9 +149,9 @@ app.get(
 );
 
 app.post("/invites/:inviteId", [withSession], Invites.AcceptInvite);
-
 app.delete("/invites/:inviteId", [withSession], Invites.RejectInvite);
 
+app.post("/applicants", [withCleanOrgId], Applicants.CreateApplicants);
 // Catch timeouts // TODO make this into its own middleware
 function haltOnTimedout(req, res, next) {
   if (!req.timedout) next();
