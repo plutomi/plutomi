@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { DEFAULTS, EMAILS } from "../../Config";
+import { DEFAULTS } from "../../Config";
 import {
   CreateApplicantAPIBody,
   CreateApplicantResponseInput,
@@ -38,7 +38,7 @@ export const create = async (req: Request, res: Response) => {
     return res.status(400).json({ message: `${error.message}` });
   }
 
-  const [opening, error] = await Openings.getOpeningById({
+  const [opening, error] = await Openings.GetOpeningById({
     orgId,
     openingId,
   });
@@ -55,7 +55,7 @@ export const create = async (req: Request, res: Response) => {
     return res.status(404).json({ message: "Bad opening ID" });
   }
 
-  const [newApplicant, newApplicantError] = await Applicants.createApplicant({
+  const [newApplicant, newApplicantError] = await Applicants.CreateApplicant({
     orgId: orgId,
     firstName: firstName,
     lastName: lastName,
@@ -82,7 +82,7 @@ export const get = async (req: Request, res: Response) => {
   const { applicantId } = req.params;
 
   // TODO gather child items here
-  const [applicant, error] = await Applicants.getApplicantById({
+  const [applicant, error] = await Applicants.GetApplicantById({
     applicantId: applicantId,
   });
 
@@ -102,7 +102,7 @@ export const get = async (req: Request, res: Response) => {
 export const remove = async (req: Request, res: Response) => {
   const { applicantId } = req.params;
 
-  const [applicant, applicantError] = await Applicants.getApplicantById({
+  const [applicant, applicantError] = await Applicants.GetApplicantById({
     applicantId,
   });
 
@@ -114,8 +114,8 @@ export const remove = async (req: Request, res: Response) => {
     });
   }
 
-  const [success, error] = await Applicants.deleteApplicant({
-    orgId: req.session.user.orgId,
+  const [success, error] = await Applicants.DeleteApplicant({
+    orgId: res.locals.session.orgId,
     applicantId: applicantId!,
     openingId: applicant.openingId,
     stageId: applicant.stageId,
@@ -137,7 +137,7 @@ export const update = async (req: Request, res: Response) => {
   const { newValues } = req.body;
 
   const updateApplicantInput = {
-    orgId: req.session.user.orgId,
+    orgId: res.locals.session.orgId,
     applicantId: applicantId,
     newValues,
   };
@@ -158,7 +158,7 @@ export const update = async (req: Request, res: Response) => {
     return res.status(400).json({ message: `${error.message}` });
   }
 
-  const [success, error] = await Applicants.updateApplicant(
+  const [success, error] = await Applicants.UpdateApplicant(
     updateApplicantInput
   );
 
@@ -194,7 +194,7 @@ export const answer = async (req: Request, res: Response) => {
     return res.status(400).json({ message: `${error.message}` });
   }
 
-  const [applicant, error] = await Applicants.getApplicantById({
+  const [applicant, error] = await Applicants.GetApplicantById({
     applicantId: applicantId,
   });
   if (error) {
@@ -220,7 +220,7 @@ export const answer = async (req: Request, res: Response) => {
           questionResponse: questionResponse,
         };
 
-        await Applicants.createResponse(createApplicantResponseInput);
+        await Applicants.CreateApplicantResponse(createApplicantResponseInput);
       })
     );
 

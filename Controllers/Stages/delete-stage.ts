@@ -5,7 +5,7 @@ import * as Stages from "../../models/Stages";
 const main = async (req: Request, res: Response) => {
   const { session } = res.locals;
   const { openingId, stageId } = req.params;
-  const [opening, openingError] = await Openings.getOpeningById({
+  const [opening, openingError] = await Openings.GetOpeningById({
     openingId,
     orgId: session.orgId,
   });
@@ -18,7 +18,7 @@ const main = async (req: Request, res: Response) => {
     return res.status(status).json(body);
   }
 
-  const [deleted, error] = await Stages.deleteStage({
+  const [deleted, error] = await Stages.DeleteStage({
     openingId,
     orgId: session.orgId,
     stageId,

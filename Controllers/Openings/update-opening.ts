@@ -38,7 +38,7 @@ const main = async (req: Request, res: Response) => {
     newValues,
   };
 
-  const [opening, openingError] = await Openings.getOpeningById({
+  const [opening, openingError] = await Openings.GetOpeningById({
     orgId: session.orgId,
     openingId,
   });
@@ -57,7 +57,7 @@ const main = async (req: Request, res: Response) => {
       message: "An opening needs to have stages before being made public",
     });
   }
-  const [updatedOpening, error] = await Openings.updateOpening(
+  const [updatedOpening, error] = await Openings.UpdateOpening(
     updateOpeningInput
   );
 

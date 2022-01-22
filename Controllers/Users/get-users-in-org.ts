@@ -6,7 +6,7 @@ import { pick } from "lodash";
 const main = async (req: Request, res: Response) => {
   const { session } = res.locals;
 
-  const [users, error] = await Orgs.getUsersInOrg({
+  const [users, error] = await Orgs.GetUsersInOrg({
     orgId: session.orgId,
   });
 

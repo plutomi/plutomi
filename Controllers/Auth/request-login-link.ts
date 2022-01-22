@@ -54,7 +54,7 @@ const requestLoginLink = async (req: Request, res: Response) => {
   }
 
   // If a user is signing in for the first time, create an account for them
-  let [user, userError] = await Users.getUserByEmail({ email });
+  let [user, userError] = await Users.GetUserByEmail({ email });
   if (userError) {
     console.error(userError);
     const { status, body } = CreateError.SDK(
@@ -65,7 +65,7 @@ const requestLoginLink = async (req: Request, res: Response) => {
   }
 
   if (!user) {
-    const [createdUser, createUserError] = await Users.createUser({
+    const [createdUser, createUserError] = await Users.CreateUser({
       email,
     });
     if (createUserError) {
@@ -88,7 +88,7 @@ const requestLoginLink = async (req: Request, res: Response) => {
   }
 
   // Check if a user is  making too many requests for a login link by comparing the time of their last link
-  const [latestLink, loginLinkError] = await Users.getLatestLoginLink({
+  const [latestLink, loginLinkError] = await Users.GetUsersLatestLoginLink({
     userId: user.userId,
   });
 
@@ -130,7 +130,7 @@ const requestLoginLink = async (req: Request, res: Response) => {
   /**
    * Email will be sent asynchronously
    */
-  const [success, creationError] = await Users.createLoginLink({
+  const [success, creationError] = await Users.CreateLoginLink({
     loginLinkId,
     loginLinkUrl,
     loginLinkExpiry,

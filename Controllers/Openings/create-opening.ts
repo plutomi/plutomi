@@ -25,7 +25,7 @@ const main = async (req: Request, res: Response) => {
 
   const { openingName }: APICreateOpeningsBody = req.body;
 
-  const [created, createOpeningError] = await Openings.createOpening({
+  const [created, createOpeningError] = await Openings.CreateOpening({
     orgId: session.orgId,
     openingName,
   });

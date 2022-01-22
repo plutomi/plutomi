@@ -1,13 +1,14 @@
-import { ENTITY_TYPES } from "./../Config";
+import { ENTITY_TYPES } from "./../../Config";
 import { Request, Response } from "express";
-import Sanitize from "./../utils/sanitize";
-import * as Stages from "../models/Stages/index";
-import errorFormatter from "../utils/errorFormatter";
+import Sanitize from "./../../utils/sanitize";
+import * as Stages from "../../models/Stages/index";
+import errorFormatter from "../../utils/errorFormatter";
 
 export const getStageInfo = async (req: Request, res: Response) => {
   const { orgId, stageId } = req.params;
 
-  const [stage, error] = await Stages.getStageById({ orgId, stageId });
+  // TODO this needs, opening id. is legacy
+  const [stage, error] = await Stages.GetStageById({ orgId, stageId });
   if (error) {
     const formattedError = errorFormatter(error);
     return res.status(formattedError.httpStatusCode).json({

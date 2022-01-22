@@ -1,10 +1,12 @@
-import get from "./getOpening";
-import create from "./createOpening";
-import remove from "./deleteOpening";
-import getStages from "./getStagesInOpening";
-import update from "./updateOpening";
-export const getOpeningById = get;
-export const createOpening = create;
-export const deleteOpening = remove;
-export const getStagesInOpening = getStages;
-export const updateOpening = update;
+import GetOpeningById from "./get-opening-by-id";
+import CreateOpening from "./create-opening";
+import DeleteOpening from "./delete-opening";
+import GetStagesInOpening from "./get-stages-in-opening";
+import UpdateOpening from "./update-opening";
+export {
+  GetOpeningById,
+  CreateOpening,
+  DeleteOpening,
+  GetStagesInOpening,
+  UpdateOpening,
+};

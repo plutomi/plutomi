@@ -37,7 +37,7 @@ const main = async (req: Request, res: Response) => {
     return res.status(403).json({ message: `You can't invite yourself` });
   }
 
-  const [org, error] = await Orgs.getOrgById({ orgId: session.orgId });
+  const [org, error] = await Orgs.GetOrgById({ orgId: session.orgId });
 
   if (error) {
     const { status, body } = CreateError.SDK(
@@ -47,7 +47,7 @@ const main = async (req: Request, res: Response) => {
     return res.status(status).json(body);
   }
 
-  let [recipient, recipientError] = await Users.getUserByEmail({
+  let [recipient, recipientError] = await Users.GetUserByEmail({
     email: recipientEmail,
   });
 
@@ -61,7 +61,7 @@ const main = async (req: Request, res: Response) => {
 
   // Invite is for a user that doesn't exist
   if (!recipient) {
-    const [createdUser, createUserError] = await Users.createUser({
+    const [createdUser, createUserError] = await Users.CreateUser({
       email: recipientEmail,
     });
 
@@ -82,7 +82,7 @@ const main = async (req: Request, res: Response) => {
 
   // Check if the user we are inviting already has pending invites for the current org
   const [recipientInvites, recipientInvitesError] =
-    await Users.getInvitesForUser({
+    await Users.GetInvitesForUser({
       userId: recipient.userId,
     });
 
@@ -106,7 +106,7 @@ const main = async (req: Request, res: Response) => {
     });
   }
 
-  const [inviteCreated, inviteError] = await Invites.createInvite({
+  const [inviteCreated, inviteError] = await Invites.CreateInvite({
     recipient,
     orgName: org.displayName,
     expiresAt: Time.futureISO(3, TIME_UNITS.DAYS), // TODO https://github.com/plutomi/plutomi/issues/333

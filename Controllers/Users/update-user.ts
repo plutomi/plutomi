@@ -56,7 +56,7 @@ const main = async (req: Request, res: Response) => {
     return res.status(403).json({ message: "You cannot update this user" });
   }
 
-  const [updatedUser, error] = await Users.updateUser({
+  const [updatedUser, error] = await Users.UpdateUser({
     userId: session.userId,
     newValues,
   });

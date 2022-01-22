@@ -7,7 +7,7 @@ const main = async (req: Request, res: Response) => {
   const { orgId } = session;
   const { openingId } = req.params;
 
-  const [opening, error] = await Openings.deleteOpening({
+  const [opening, error] = await Openings.DeleteOpening({
     openingId,
     orgId,
   });

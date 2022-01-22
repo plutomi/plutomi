@@ -5,7 +5,7 @@ const main = async (req: Request, res: Response) => {
   const { session } = res.locals;
   const { orgId } = req.params;
 
-  const [invites, error] = await Orgs.getPendingInvites({ orgId });
+  const [invites, error] = await Orgs.GetInvitesForOrg({ orgId });
 
   if (error) {
     const { status, body } = CreateError.SDK(

@@ -1,8 +1,5 @@
-import create from "./createQuestion";
-import remove from "./deleteQuestion";
-import get from "./getQuestionById";
-import update from "./updateQuestion";
-export const createQuestion = create;
-export const deleteQuestion = remove;
-export const getQuestionById = get;
-export const updateQuestion = update;
+import CreateQuestion from "./create-question";
+import DeleteQuestion from "./delete-question";
+import GetQuestionById from "./get-question-by-id";
+import UpdateQuestion from "./update-question";
+export { CreateQuestion, DeleteQuestion, GetQuestionById, UpdateQuestion };

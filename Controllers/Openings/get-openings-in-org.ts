@@ -3,7 +3,7 @@ import * as CreateError from "../../utils/errorGenerator";
 import * as Orgs from "../../models/Orgs";
 const main = async (req: Request, res: Response) => {
   const { session } = res.locals;
-  const [openings, openingsError] = await Orgs.getOpeningsInOrg({
+  const [openings, openingsError] = await Orgs.GetOpeningsInOrg({
     orgId: session.orgId,
   });
 

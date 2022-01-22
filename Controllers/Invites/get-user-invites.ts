@@ -3,7 +3,7 @@ import * as Users from "../../models/Users";
 import * as CreateError from "../../utils/errorGenerator";
 const main = async (req: Request, res: Response) => {
   const { session } = res.locals;
-  const [invites, error] = await Users.getInvitesForUser({
+  const [invites, error] = await Users.GetInvitesForUser({
     userId: session.userId,
   });
 

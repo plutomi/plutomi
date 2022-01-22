@@ -44,7 +44,7 @@ const main = async (req: Request, res: Response) => {
   }
   const { openingId, orgId, firstName, lastName, email } = req.body;
 
-  const [opening, openingError] = await Openings.getOpeningById({
+  const [opening, openingError] = await Openings.GetOpeningById({
     openingId,
     orgId,
   });
@@ -67,7 +67,7 @@ const main = async (req: Request, res: Response) => {
       .json({ message: "You cannot apply to this opening just yet!" });
   }
 
-  const [created, failed] = await Applicants.createApplicant({
+  const [created, failed] = await Applicants.CreateApplicant({
     firstName,
     lastName,
     openingId,

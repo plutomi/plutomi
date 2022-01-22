@@ -32,7 +32,7 @@ const main = async (req: Request, res: Response) => {
     return res.status(403).json({ message: "You already belong to an org!" });
   }
 
-  const [pendingInvites, error] = await Users.getInvitesForUser({
+  const [pendingInvites, error] = await Users.GetInvitesForUser({
     userId: session.userId,
   });
 
@@ -54,7 +54,7 @@ const main = async (req: Request, res: Response) => {
 
   const { displayName, orgId }: APICreateOrgBody = req.body;
 
-  const [created, failed] = await Orgs.createAndJoinOrg({
+  const [created, failed] = await Orgs.CreateAndJoinOrg({
     userId: session.userId,
     orgId,
     displayName,

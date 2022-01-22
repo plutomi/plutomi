@@ -12,7 +12,7 @@ export default async function withSession(
     return res.status(401).json({ message: "Please log in again" });
   }
 
-  const [user, userError] = await Users.getUserById({
+  const [user, userError] = await Users.GetUserById({
     userId,
   });
 

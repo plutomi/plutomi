@@ -5,7 +5,7 @@ import * as CreateError from "../../utils/errorGenerator";
 const main = async (req: Request, res: Response) => {
   const { session } = res.locals;
 
-  const [org, error] = await Orgs.getOrgById({ orgId: session.orgId });
+  const [org, error] = await Orgs.GetOrgById({ orgId: session.orgId });
 
   if (error) {
     const { status, body } = CreateError.SDK(

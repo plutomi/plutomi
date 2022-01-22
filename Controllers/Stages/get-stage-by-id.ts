@@ -5,7 +5,7 @@ const main = async (req: Request, res: Response) => {
   const { session } = res.locals;
 
   const { openingId, stageId } = req.params;
-  const [stage, stageError] = await Stages.getStageById({
+  const [stage, stageError] = await Stages.GetStageById({
     orgId: session.orgId,
     stageId,
     openingId,

@@ -31,7 +31,7 @@ const main = async (req: Request, res: Response) => {
 
   let { GSI1SK, openingId, position } = req.body;
 
-  const [opening, openingError] = await Openings.getOpeningById({
+  const [opening, openingError] = await Openings.GetOpeningById({
     openingId,
     orgId: session.orgId,
   });
@@ -50,7 +50,7 @@ const main = async (req: Request, res: Response) => {
   }
 
   // Create the stage and update the stage order, model will handle where to place it
-  const [created, stageError] = await Stages.createStage({
+  const [created, stageError] = await Stages.CreateStage({
     orgId: session.orgId,
     GSI1SK,
     openingId,

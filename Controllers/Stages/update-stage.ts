@@ -30,7 +30,7 @@ const main = async (req: Request, res: Response) => {
   const { openingId, stageId } = req.params;
   const { newValues } = req.body;
 
-  const [updatedStage, error] = await Stages.updateStage({
+  const [updatedStage, error] = await Stages.UpdateStage({
     orgId: session.orgId,
     openingId,
     stageId,

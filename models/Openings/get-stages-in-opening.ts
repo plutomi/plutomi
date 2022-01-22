@@ -6,7 +6,7 @@ import { DynamoNewStage } from "../../types/dynamo";
 import { GetAllStagesInOpeningInput } from "../../types/main";
 const { DYNAMO_TABLE_NAME } = process.env;
 import { SdkError } from "@aws-sdk/types";
-import * as Openings from "../Openings";
+import * as Openings from ".";
 export default async function GetStages(
   props: GetAllStagesInOpeningInput
 ): Promise<[DynamoNewStage[], null] | [null, SdkError]> {

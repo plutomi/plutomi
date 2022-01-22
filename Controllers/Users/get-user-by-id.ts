@@ -30,7 +30,7 @@ const main = async (req: Request, res: Response) => {
     });
   }
 
-  const [requestedUser, error] = await Users.getUserById({
+  const [requestedUser, error] = await Users.GetUserById({
     userId,
   });
 

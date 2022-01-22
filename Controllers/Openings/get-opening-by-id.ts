@@ -19,7 +19,7 @@ const main = async (req: Request, res: Response) => {
   const { session } = res.locals;
   const { openingId } = req.params;
 
-  const [opening, error] = await Openings.getOpeningById({
+  const [opening, error] = await Openings.GetOpeningById({
     openingId,
     orgId: session.orgId,
   });

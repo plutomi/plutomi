@@ -5,7 +5,7 @@ const main = async (req: Request, res: Response) => {
   const { session } = res.locals;
   const { inviteId } = req.params;
 
-  const [deleted, error] = await Invites.deleteInvite({
+  const [deleted, error] = await Invites.RejectInvite({
     inviteId,
     userId: session.userId,
   });

@@ -5,7 +5,7 @@ import {
   GetAllQuestionsInStageInput,
   GetAllQuestionsInStageOutput,
 } from "../../types/main";
-import getStageById from "./getStageById";
+import getStageById from "./get-stage-by-id";
 const { DYNAMO_TABLE_NAME } = process.env;
 import { SdkError } from "@aws-sdk/types";
 export default async function GetQuestions(

@@ -5,7 +5,7 @@ const main = async (req: Request, res: Response) => {
   const { session } = res.locals;
   const { orgId } = session;
 
-  const [org, error] = await Orgs.getOrgById({ orgId });
+  const [org, error] = await Orgs.GetOrgById({ orgId });
 
   if (error) {
     const { status, body } = CreateError.SDK(
@@ -25,7 +25,7 @@ const main = async (req: Request, res: Response) => {
   }
 
   // Transaction - updates the user with default org values
-  const [success, failure] = await Orgs.leaveAndDeleteOrg({
+  const [success, failure] = await Orgs.LeaveAndDeleteOrg({
     orgId,
     userId: session.userId,
   });

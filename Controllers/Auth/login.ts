@@ -1,7 +1,6 @@
 import { Request, Response } from "express";
 import Joi from "joi";
 import {
-  LOGIN_LINK_SETTINGS,
   JOI_SETTINGS,
   WEBSITE_URL,
   COOKIE_NAME,
@@ -46,7 +45,7 @@ const login = async (req: Request, res: Response) => {
     return res.status(401).json({ message: "Invalid login link" });
   }
 
-  const [user, error] = await Users.getUserById({ userId });
+  const [user, error] = await Users.GetUserById({ userId });
 
   if (error) {
     const { status, body } = CreateError.SDK(
@@ -66,7 +65,7 @@ const login = async (req: Request, res: Response) => {
 
   // If this is a new user, an asynchronous welcome email is sent through step functions
   // It triggers if the user.verifiedEmail is false
-  const [success, failed] = await Users.createLoginEventAndDeleteLoginLink({
+  const [success, failed] = await Users.CreateLoginEvent({
     loginLinkId,
     user,
   });

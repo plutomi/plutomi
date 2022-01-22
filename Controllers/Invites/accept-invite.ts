@@ -13,7 +13,7 @@ const main = async (req: Request, res: Response) => {
     });
   }
 
-  const [invite, error] = await Invites.getInviteById({
+  const [invite, error] = await Invites.GetInvite({
     inviteId,
     userId: session.userId,
   });
@@ -45,7 +45,7 @@ const main = async (req: Request, res: Response) => {
     });
   }
 
-  const [joined, joinError] = await Invites.joinOrgFromInvite({
+  const [joined, joinError] = await Invites.AcceptInvite({
     userId: session.userId,
     invite,
   });

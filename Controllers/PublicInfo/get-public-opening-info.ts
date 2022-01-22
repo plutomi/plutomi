@@ -6,7 +6,7 @@ import { pick } from "lodash";
 const main = async (req: Request, res: Response) => {
   const { orgId, openingId } = req.params;
 
-  const [opening, openingsError] = await Openings.getOpeningById({
+  const [opening, openingsError] = await Openings.GetOpeningById({
     orgId,
     openingId,
   });

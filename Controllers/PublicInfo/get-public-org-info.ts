@@ -5,7 +5,7 @@ import { pick } from "lodash";
 const main = async (req: Request, res: Response) => {
   const { orgId } = req.params;
 
-  const [org, orgError] = await Orgs.getOrgById({ orgId });
+  const [org, orgError] = await Orgs.GetOrgById({ orgId });
 
   if (orgError) {
     const { status, body } = CreateError.SDK(

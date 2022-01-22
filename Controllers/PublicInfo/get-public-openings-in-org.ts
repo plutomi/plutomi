@@ -5,7 +5,7 @@ import { pick } from "lodash";
 const main = async (req: Request, res: Response) => {
   const { orgId } = req.params;
 
-  const [openings, openingsError] = await Orgs.getOpeningsInOrg({
+  const [openings, openingsError] = await Orgs.GetOpeningsInOrg({
     orgId,
     GSI1SK: "PUBLIC",
   });
