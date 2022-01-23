@@ -5,6 +5,7 @@
   "scripts": {
     "build": "next build",
     "lint": "next lint",
+    "test-server": "npx cross-env NODE_ENV=development ts-node-dev app.ts --transpile-only",
     "test": "jest --silent=false --verbose=true",
     "dev": "cross-env NODE_ENV=development cdk deploy development-DynamoDBStack development-StreamProcessorStack development-CommsMachineStack development-EventBridgeStack && concurrently \"npm run dev-server\" \"next dev\"",
     "dev-server": "cross-env NODE_ENV=development ts-node-dev --watch --transpile-only app.ts",
