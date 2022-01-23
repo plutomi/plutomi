@@ -4,7 +4,6 @@ import { ArrowLeftIcon } from "@heroicons/react/outline";
 import { ArrowRightIcon } from "@heroicons/react/outline";
 import { useRouter } from "next/router";
 import useAllStagesInOpening from "../../SWR/useAllStagesInOpening";
-import useSelf from "../../SWR/useSelf";
 import StageCard from "./StageCard";
 import Loader from "../Loader";
 import useOpeningInfo from "../../SWR/useOpeningInfo";

@@ -22,6 +22,7 @@ const schema = Joi.object({
   },
 }).options(JOI_SETTINGS);
 const login = async (req: Request, res: Response) => {
+  console.log("Login, incoming cookies", req.cookies, req.cookies);
   try {
     await schema.validateAsync(req);
   } catch (error) {
@@ -87,8 +88,11 @@ const login = async (req: Request, res: Response) => {
 
   res.cookie(COOKIE_NAME, user.userId, COOKIE_SETTINGS);
   res.header("Location", callbackUrl);
-  // If a user has invites, redirect them to the invites page
-  //  on login regardless of the callback url
+
+  /**
+   * If a user has invites, redirect them to the invites page
+   * on login regardless of the callback url
+   */
   if (user.totalInvites > 0) {
     res.header("Location", `${WEBSITE_URL}/invites`);
   }

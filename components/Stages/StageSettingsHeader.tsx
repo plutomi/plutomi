@@ -1,7 +1,5 @@
-import useSelf from "../../SWR/useSelf";
 import { PlusIcon, TrashIcon } from "@heroicons/react/outline";
 import useStore from "../../utils/store";
-import useOpeningInfo from "../../SWR/useOpeningInfo";
 import Breadcrumbs from "../Breadcrumbs";
 import { useRouter } from "next/router";
 import { PencilAltIcon } from "@heroicons/react/outline";

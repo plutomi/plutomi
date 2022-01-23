@@ -36,6 +36,8 @@ export default async function CreateLoginEvent(
     ),
   };
 
+
+  console.log("New user login event", newUserLoginEvent)
   const newOrgLoginEvent = {
     // TODO types
     PK: `${ENTITY_TYPES.ORG}#${user.orgId}`,
@@ -57,7 +59,6 @@ export default async function CreateLoginEvent(
           Put: {
             Item: newUserLoginEvent,
             TableName: `${process.env.NODE_ENV}-${DYNAMO_TABLE_NAME}`,
-
             ConditionExpression: "attribute_not_exists(PK)",
           },
         },
@@ -70,7 +71,6 @@ export default async function CreateLoginEvent(
               SK: `${ENTITY_TYPES.LOGIN_LINK}#${loginLinkId}`,
             },
             TableName: `${process.env.NODE_ENV}-${DYNAMO_TABLE_NAME}`,
-
             ConditionExpression: "attribute_exists(PK)", // Link MUST exist!!!
           },
         },

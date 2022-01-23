@@ -6,9 +6,12 @@ import StageSettingsContent from "../../../../../components/Stages/StagesSetting
 import NewPage from "../../../../../components/Templates/NewPage";
 import useStageInfo from "../../../../../SWR/useStageInfo";
 import { CUSTOM_QUERY } from "../../../../../types/main";
-import OpeningsService from "../../../../../adapters/OpeningsService";
-import StagesService from "../../../../../adapters/StagesService";
-import { DOMAIN_NAME, WEBSITE_URL } from "../../../../../Config";
+import { GetOpeningInfoURL } from "../../../../../adapters/Openings";
+import {
+  GetAllStagesInOpeningURL,
+  DeleteStage,
+} from "../../../../../adapters/Stages";
+import { WEBSITE_URL } from "../../../../../Config";
 
 export default function StageSettings() {
   const router = useRouter();
@@ -17,7 +20,10 @@ export default function StageSettings() {
     "openingId" | "stageId"
   >;
   let { opening, isOpeningLoading, isOpeningError } = useOpeningInfo(openingId);
-  let { stage, isStageLoading, isStageError } = useStageInfo(stageId);
+  let { stage, isStageLoading, isStageError } = useStageInfo(
+    openingId,
+    stageId
+  );
 
   // Update this to use the new update syntax with diff
   const deleteStage = async () => {
@@ -33,17 +39,17 @@ export default function StageSettings() {
       return;
     }
     try {
-      await StagesService.deleteStage(stageId);
+      await DeleteStage(openingId, stageId);
       router.push(`${WEBSITE_URL}/openings/${openingId}/settings`);
     } catch (error) {
       alert(error.response.data.message);
     }
 
     // Refresh the stageOrder
-    mutate(OpeningsService.getOpeningURL(openingId));
+    mutate(GetOpeningInfoURL(openingId));
 
     // Refresh the stage list
-    mutate(OpeningsService.getAllStagesInOpeningURL(openingId));
+    mutate(GetAllStagesInOpeningURL(openingId));
   };
 
   return (

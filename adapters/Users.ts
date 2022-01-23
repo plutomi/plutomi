@@ -1,4 +1,4 @@
-import axios from "../utils/axios";
+import { AXIOS_INSTANCE as axios } from "../Config";
 // TODO remove class
 const GetSelfInfoURL = () => `/users/self`;
 

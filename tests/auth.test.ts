@@ -1,4 +1,4 @@
-import axios from "../utils/axios";
+import { AXIOS_INSTANCE as axios } from "../Config";
 import { API_URL, EMAILS, ERRORS } from "../Config";
 const URL = `${API_URL}/request-login-link`;
 

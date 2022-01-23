@@ -1,4 +1,4 @@
-import axios from "../utils/axios";
+import { AXIOS_INSTANCE as axios } from "../Config";
 import { nanoid } from "nanoid";
 import { API_URL, DEFAULTS, ERRORS } from "../Config";
 

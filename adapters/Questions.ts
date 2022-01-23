@@ -1,4 +1,4 @@
-import axios from "../utils/axios";
+import { AXIOS_INSTANCE as axios } from "../Config";
 // TODO types
 
 // TODO this needs revamp due to question sets

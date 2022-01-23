@@ -6,7 +6,7 @@ import UserProfileModal from "../components/UserProfile/UserProfileModal";
 import Loader from "../components/Loader";
 import Login from "../components/Login";
 import useStore from "../utils/store";
-import UsersService from "../adapters/UsersService";
+import { UpdateUser, GetSelfInfoURL } from "../adapters/Users";
 export default function Team() {
   const { user, isUserLoading, isUserError } = useSelf();
 
@@ -35,7 +35,7 @@ export default function Team() {
         isModalOpen: false,
       });
 
-      const { message } = await UsersService.updateUser(user?.userId, {
+      const { message } = await UpdateUser(user?.userId, {
         firstName: userProfileModal.firstName,
         lastName: userProfileModal.lastName,
         GSI1SK: `${userProfileModal.firstName} ${userProfileModal.lastName}`,
@@ -45,7 +45,7 @@ export default function Team() {
       alert(error.response.data.message);
     }
 
-    mutate(UsersService.getSelfURL());
+    mutate(GetSelfInfoURL());
   };
 
   return (

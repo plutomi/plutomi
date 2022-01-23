@@ -5,10 +5,10 @@
   "scripts": {
     "build": "next build",
     "lint": "next lint",
-    "ol-start": "cross-env NODE_ENV=development ts-node-dev app.ts",
     "test": "jest --silent=false --verbose=true",
-    "start": "cross-env NODE_ENV=production ts-node --transpile-only app.ts",
-    "dev": "cross-env NODE_ENV=development cdk deploy development-DynamoDBStack development-StreamProcessorStack development-CommsMachineStack development-EventBridgeStack && concurrently \"npm run start\" \"next dev\"",
+    "dev": "cross-env NODE_ENV=development cdk deploy development-DynamoDBStack development-StreamProcessorStack development-CommsMachineStack development-EventBridgeStack && concurrently \"npm run dev-server\" \"next dev\"",
+    "dev-server": "cross-env NODE_ENV=development ts-node-dev --watch --transpile-only app.ts",
+    "server": "cross-env NODE_ENV=production nodemon app.ts",
     "deploy-prod": "cross-env NODE_ENV=production cdk deploy production-DynamoDBStack production-StreamProcessorStack production-APIStack production-CommsMachineStack production-EventBridgeStack FrontendStack"
   },
   "dependencies": {

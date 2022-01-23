@@ -1,12 +1,5 @@
-import axios from "axios";
 import Joi from "joi";
-export const COOKIE_SETTINGS = {
-  httpOnly: true,
-  sameSite: true, // (same as strict)
-  secure: true,
-  maxAge: 1000 * 60 * 60 * 12, // 12 hours
-  signed: true,
-};
+
 /**
  * Some backend dependencies (SES, ACM, Route53, etc..) depend on
  * DOMAIN_NAME being the actual domain name, do not change!
@@ -176,8 +169,17 @@ export const JOI_GLOBAL_FORBIDDEN = {
   createdAt: Joi.any().forbidden().strip(),
 };
 
+import axios from "axios";
+export const AXIOS_INSTANCE = axios.create({
+  withCredentials: true,
+  baseURL: API_URL,
+  headers: {
+    "Content-Type": "application/json",
+  },
+});
+
 export const SWRFetcher = (url: string) =>
-  axios.get(url).then((res) => res.data);
+  AXIOS_INSTANCE.get(API_URL + url).then((res) => res.data);
 
 /**
  * Extra properties that cannot be updated per entity type
@@ -239,3 +241,11 @@ export const JoiOrgId = Joi.string().invalid(
   "plutomi-inc",
   "plutomiinc"
 );
+
+export const COOKIE_SETTINGS = {
+  httpOnly: true,
+  sameSite: true, // (same as strict)
+  secure: true,
+  maxAge: 1000 * 60 * 60 * 12, // 12 hours
+  signed: true,
+};

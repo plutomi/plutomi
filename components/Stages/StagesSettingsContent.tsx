@@ -11,14 +11,18 @@ import useSelf from "../../SWR/useSelf";
 import useAllStagesInOpening from "../../SWR/useAllStagesInOpening";
 import useOpeningInfo from "../../SWR/useOpeningInfo";
 import useStageInfo from "../../SWR/useStageInfo";
-import StagesService from "../../adapters/StagesService";
-import QuestionsService from "../../adapters/QuestionsService";
+import { GetStageInfoURL } from "../../adapters/Stages";
+import {
+  GetAllQuestionsInStageURL,
+  CreateQuestion,
+  UpdateQuestion,
+} from "../../adapters/Questions";
 import { CUSTOM_QUERY } from "../../types/main";
 
 export default function StageSettingsContent() {
   const createQuestion = async () => {
     try {
-      const { message } = await QuestionsService.createQuestion(
+      const { message } = await CreateQuestion(
         questionModal.GSI1SK,
         stageId,
         questionModal.questionDescription
@@ -38,10 +42,10 @@ export default function StageSettingsContent() {
     }
 
     // Refresh the questionOrder
-    mutate(StagesService.getStageURL(stageId));
+    mutate(GetStageInfoURL(openingId, stageId));
 
     // Refresh the question list
-    mutate(StagesService.getAllQuestionsInStageURL(stageId));
+    mutate(GetAllQuestionsInStageURL(openingId, stageId));
   };
 
   const updateQuestion = async () => {
@@ -58,10 +62,7 @@ export default function StageSettingsContent() {
       delete diff["isModalOpen"];
       delete diff["modalMode"];
 
-      const { message } = await QuestionsService.updateQuestion(
-        questionModal.questionId,
-        diff
-      );
+      const { message } = await UpdateQuestion(questionModal.questionId, diff);
       setQuestionModal({
         isModalOpen: false,
         modalMode: "CREATE",
@@ -75,11 +76,9 @@ export default function StageSettingsContent() {
       alert(error.response.data.message);
     }
 
-    // Refresh the questionOrder
-    mutate(StagesService.getStageURL(stageId));
+    mutate(GetStageInfoURL(openingId, stageId));
 
-    // Refresh the question list
-    mutate(StagesService.getAllQuestionsInStageURL(stageId));
+    mutate(GetAllQuestionsInStageURL(openingId, stageId));
   };
 
   const router = useRouter();
@@ -94,10 +93,10 @@ export default function StageSettingsContent() {
   let { stages, isStagesLoading, isStagesError } = useAllStagesInOpening(
     opening?.openingId
   );
-  const stageModal = useStore((state) => state.stageModal);
-  const setStageModal = useStore((state) => state.setStageModal);
-
-  const { stage, isStageLoading, isStageError } = useStageInfo(stageId);
+  const { stage, isStageLoading, isStageError } = useStageInfo(
+    openingId,
+    stageId
+  );
 
   const { questions, isQuestionsLoading, isQuestionsError } =
     useAllStageQuestions(user?.orgId, stage?.stageId);

@@ -1,4 +1,4 @@
-import axios from "../utils/axios";
+import { AXIOS_INSTANCE as axios } from "../Config";
 // TODO types
 const CreateStage = async (GSI1SK, openingId) => {
   const { data } = await axios.post(`/stages`, {

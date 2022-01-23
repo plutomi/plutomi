@@ -1,4 +1,4 @@
-import axios from "../utils/axios";
+import { AXIOS_INSTANCE as axios } from "../Config";
 import useSWR from "swr";
 
 const fetcher = (url: string) => axios.get(url).then((res) => res.data);
