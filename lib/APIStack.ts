@@ -9,13 +9,11 @@ import * as ec2 from "@aws-cdk/aws-ec2";
 import * as route53 from "@aws-cdk/aws-route53";
 import * as ecsPatterns from "@aws-cdk/aws-ecs-patterns";
 import * as origins from "@aws-cdk/aws-cloudfront-origins";
-
 import { Table } from "@aws-cdk/aws-dynamodb";
 import { Certificate } from "@aws-cdk/aws-certificatemanager";
-import { HostedZone, ARecord, RecordTarget } from "@aws-cdk/aws-route53";
+import { ARecord, RecordTarget } from "@aws-cdk/aws-route53";
 import { CloudFrontTarget } from "@aws-cdk/aws-route53-targets";
-import * as path from "path";
-import { API_DOMAIN, DOMAIN_NAME, EXPRESS_PORT, WEBSITE_URL } from "../Config";
+import { API_DOMAIN, DOMAIN_NAME, EXPRESS_PORT } from "../Config";
 import { Policy, PolicyStatement } from "@aws-cdk/aws-iam";
 import { DynamoActions } from "../types/main";
 const resultDotEnv = dotenv.config({
@@ -26,16 +24,12 @@ if (resultDotEnv.error) {
   throw resultDotEnv.error;
 }
 
-interface APIGatewayServiceProps extends cdk.StackProps {
+interface APIStackServiceProps extends cdk.StackProps {
   table: Table;
 }
 
 export default class APIStack extends cdk.Stack {
-  constructor(
-    scope: cdk.Construct,
-    id: string,
-    props?: APIGatewayServiceProps
-  ) {
+  constructor(scope: cdk.Construct, id: string, props?: APIStackServiceProps) {
     super(scope, id, props);
 
     const HOSTED_ZONE_ID: string = process.env.HOSTED_ZONE_ID;
@@ -176,121 +170,114 @@ export default class APIStack extends cdk.Stack {
     // Auto scaling
     const scalableTarget =
       loadBalancedFargateService.service.autoScaleTaskCount({
-        minCapacity: 1,
-        maxCapacity: 1,
+        minCapacity: 2,
+        maxCapacity: 6,
       });
 
     scalableTarget.scaleOnCpuUtilization("CpuScaling", {
-      targetUtilizationPercent: 35,
-    });
-
-    scalableTarget.scaleOnMemoryUtilization("MemoryScaling", {
       targetUtilizationPercent: 50,
     });
 
-    // Below is legacy
-    // Retrieves the hosted zone from Route53
-    // const hostedZone = HostedZone.fromHostedZoneAttributes(this, `HostedZone`, {
-    //   hostedZoneId: process.env.HOSTED_ZONE_ID,
-    //   zoneName: DOMAIN_NAME,
-    // });
+    scalableTarget.scaleOnMemoryUtilization("MemoryScaling", {
+      targetUtilizationPercent: 30,
+    });
 
-    // Create the WAF & WAF Rules
-    // const API_WAF = new waf.CfnWebACL(this, `${process.env.NODE_ENV}-API-WAF`, {
-    //   name: `${process.env.NODE_ENV}-API-WAF`,
+    // Create the WAF & its rules
+    const API_WAF = new waf.CfnWebACL(this, `${process.env.NODE_ENV}-API-WAF`, {
+      name: `${process.env.NODE_ENV}-API-WAF`,
 
-    //   description: "test description",
-    //   defaultAction: {
-    //     allow: {},
-    //   },
-    //   scope: "CLOUDFRONT",
-    //   visibilityConfig: {
-    //     cloudWatchMetricsEnabled: true,
-    //     metricName: "cloudfront-ipset-waf",
-    //     sampledRequestsEnabled: true,
-    //   },
-    //   rules: [
-    //     {
-    //       name: `too-many-requests-rule`,
-    //       priority: 0,
-    //       statement: {
-    //         rateBasedStatement: {
-    //           limit: 1000, // In a 5 minute period
-    //           aggregateKeyType: "IP",
-    //         },
-    //       },
-    //       action: {
-    //         block: {
-    //           customResponse: {
-    //             responseCode: 429,
-    //           },
-    //         },
-    //       },
-    //       visibilityConfig: {
-    //         sampledRequestsEnabled: true,
-    //         cloudWatchMetricsEnabled: true,
-    //         metricName: `${process.env.NODE_ENV}-WAF-BLOCKED-IPs`,
-    //       },
-    //     },
-    //     // { // TODO this is blocking postman requests :/
-    //     //   name: "AWS-AWSManagedRulesBotControlRuleSet",
-    //     //   priority: 1,
-    //     //   statement: {
-    //     //     managedRuleGroupStatement: {
-    //     //       vendorName: "AWS",
-    //     //       name: "AWSManagedRulesBotControlRuleSet",
-    //     //     },
-    //     //   },
-    //     //   overrideAction: {
-    //     //     none: {},
-    //     //   },
-    //     //   visibilityConfig: {
-    //     //     sampledRequestsEnabled: false,
-    //     //     cloudWatchMetricsEnabled: true,
-    //     //     metricName: "AWS-AWSManagedRulesBotControlRuleSet",
-    //     //   },
-    //     // },
-    //     {
-    //       name: "AWS-AWSManagedRulesAmazonIpReputationList",
-    //       priority: 2,
-    //       statement: {
-    //         managedRuleGroupStatement: {
-    //           vendorName: "AWS",
-    //           name: "AWSManagedRulesAmazonIpReputationList",
-    //         },
-    //       },
-    //       overrideAction: {
-    //         none: {},
-    //       },
-    //       visibilityConfig: {
-    //         sampledRequestsEnabled: false,
-    //         cloudWatchMetricsEnabled: true,
-    //         metricName: "AWS-AWSManagedRulesAmazonIpReputationList",
-    //       },
-    //     },
-    //     // {
-    //     //   // TODO this rule breaks login links, see https://github.com/plutomi/plutomi/issues/510
-    //     //   name: "AWS-AWSManagedRulesCommonRuleSet",
-    //     //   priority: 3,
-    //     //   statement: {
-    //     //     managedRuleGroupStatement: {
-    //     //       vendorName: "AWS",
-    //     //       name: "AWSManagedRulesCommonRuleSet",
-    //     //     },
-    //     //   },
-    //     //   overrideAction: {
-    //     //     none: {},
-    //     //   },
-    //     //   visibilityConfig: {
-    //     //     sampledRequestsEnabled: false,
-    //     //     cloudWatchMetricsEnabled: true,
-    //     //     metricName: "AWS-AWSManagedRulesCommonRuleSet",
-    //     //   },
-    //     // },
-    //   ],
-    // });
+      description: "Blocks IPs that make too many requests",
+      defaultAction: {
+        allow: {},
+      },
+      scope: "CLOUDFRONT",
+      visibilityConfig: {
+        cloudWatchMetricsEnabled: true,
+        metricName: "cloudfront-ipset-waf",
+        sampledRequestsEnabled: true,
+      },
+      rules: [
+        {
+          name: `too-many-requests-rule`,
+          priority: 0,
+          statement: {
+            rateBasedStatement: {
+              limit: 1000, // In a 5 minute period
+              aggregateKeyType: "IP",
+            },
+          },
+          action: {
+            block: {
+              customResponse: {
+                responseCode: 429,
+              },
+            },
+          },
+          visibilityConfig: {
+            sampledRequestsEnabled: true,
+            cloudWatchMetricsEnabled: true,
+            metricName: `${process.env.NODE_ENV}-WAF-BLOCKED-IPs`,
+          },
+        },
+        // { // TODO this is blocking postman requests :/
+        //   name: "AWS-AWSManagedRulesBotControlRuleSet",
+        //   priority: 1,
+        //   statement: {
+        //     managedRuleGroupStatement: {
+        //       vendorName: "AWS",
+        //       name: "AWSManagedRulesBotControlRuleSet",
+        //     },
+        //   },
+        //   overrideAction: {
+        //     none: {},
+        //   },
+        //   visibilityConfig: {
+        //     sampledRequestsEnabled: false,
+        //     cloudWatchMetricsEnabled: true,
+        //     metricName: "AWS-AWSManagedRulesBotControlRuleSet",
+        //   },
+        // },
+        {
+          name: "AWS-AWSManagedRulesAmazonIpReputationList",
+          priority: 2,
+          statement: {
+            managedRuleGroupStatement: {
+              vendorName: "AWS",
+              name: "AWSManagedRulesAmazonIpReputationList",
+            },
+          },
+          overrideAction: {
+            none: {},
+          },
+          visibilityConfig: {
+            sampledRequestsEnabled: false,
+            cloudWatchMetricsEnabled: true,
+            metricName: "AWS-AWSManagedRulesAmazonIpReputationList",
+          },
+        },
+        // {
+        //   // TODO this rule breaks login links, see https://github.com/plutomi/plutomi/issues/510
+        //   name: "AWS-AWSManagedRulesCommonRuleSet",
+        //   priority: 3,
+        //   statement: {
+        //     managedRuleGroupStatement: {
+        //       vendorName: "AWS",
+        //       name: "AWSManagedRulesCommonRuleSet",
+        //     },
+        //   },
+        //   overrideAction: {
+        //     none: {},
+        //   },
+        //   visibilityConfig: {
+        //     sampledRequestsEnabled: false,
+        //     cloudWatchMetricsEnabled: true,
+        //     metricName: "AWS-AWSManagedRulesCommonRuleSet",
+        //   },
+        // },
+      ],
+    });
 
-    // No caching! We're using Cloudfront for it's global network and WAF
+    // No caching! We're using Cloudfront for its global network and WAF
     const cachePolicy = new cf.CachePolicy(
       this,
       `${process.env.NODE_ENV}-Cache-Policy`,
@@ -305,7 +292,7 @@ export default class APIStack extends cdk.Stack {
       `${process.env.NODE_ENV}-CF-API-Distribution`,
       {
         certificate: apiCert,
-        // webAclId: API_WAF.attrArn, // TODO add
+        webAclId: API_WAF.attrArn,
         domainNames: [API_DOMAIN],
         defaultBehavior: {
           origin: new origins.LoadBalancerV2Origin(

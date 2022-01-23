@@ -7,7 +7,7 @@
     "lint": "next lint",
     "test": "jest --silent=false --verbose=true",
     "dev": "cross-env NODE_ENV=development cdk deploy development-DynamoDBStack development-StreamProcessorStack development-CommsMachineStack development-EventBridgeStack && concurrently \"npm run dev-server\" \"next dev\"",
-    "start": "cross-env NODE_ENV=production nodemon app.ts",
+    "start": "cross-env NODE_ENV=production ts-node --transpile-only app.ts",
     "deploy-prod": "cross-env NODE_ENV=production cdk deploy production-DynamoDBStack production-StreamProcessorStack production-APIStack production-CommsMachineStack production-EventBridgeStack FrontendStack"
   },
   "dependencies": {
@@ -84,7 +84,6 @@
     "morgan": "^1.10.0",
     "nanoid": "^3.1.30",
     "next": "^12.0.7",
-    "nodemon": "^2.0.15",
     "npm": "^8.3.1",
     "react": "^17.0.2",
     "react-beautiful-dnd": "^13.1.0",
