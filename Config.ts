@@ -110,7 +110,7 @@ export enum DEFAULTS {
    * This will set a TTL attribute on any created item
    * if the `NODE_ENV` = `development`
    */
-  TEST_DATA_RETENTION_PERIOD = 3,
+  TEST_DATA_RETENTION_PERIOD = 30,
 }
 
 export const LOGIN_LINK_SETTINGS = {

@@ -51,21 +51,19 @@ Stage order:
 | npm run deploy-prod                                                                                     | Will deploy everything to your production environment                                                                                              |
 | npx cross-env NODE_ENV=(development or production) cdk deploy -e (development or production)-STACK_NAME | Will deploy a specific stack in the desired environment                                                                                            |
 
-For more information on AWS CDK, please visit the [docs page](https://docs.aws.amazon.com/cdk/latest/guide/cli.html).
-
 ## Language, Tooling, & Infrastructure
 
-All infrastructure is managed by CDK. We use [Jest](https://jestjs.io/) for testing and all items created in Dynamo during development have a `ttlExpiry` of 1 day so they're automatically deleted. Everything is witten TypeScript and we would appreciate any assistance on types or tests as we're definitely not the best :sweat_smile:
+All infrastructure is managed by CDK. We use [Jest](https://jestjs.io/) for testing and all items created in Dynamo during development have a `ttlExpiry` of 30 days so they're automatically deleted. Everything is witten TypeScript and we would appreciate any assistance on types or tests as we're definitely not the best :sweat_smile:
 
-The frontend runs on the [Serverless-Nextjs](https://github.com/serverless-Nextjs/serverless-next.js) component. We use [SSG without data + client side data fetching](https://youtu.be/f1rF9YKm1Ms?t=664) for almost all pages.
+The frontend runs on the [Serverless-Nextjs](https://serverless-nextjs.com/docs/cdkconstruct/) construct. We use [SSG without data + client side data fetching](https://youtu.be/f1rF9YKm1Ms?t=664) for almost all pages.
 
-The API is your typical Express app running on Fargate. It has many of the advantages of serverless without many of the downsides.
+The API is your typical Express app running on Fargate. It has many of the advantages of something like API Gateway + Lambda without many of the downsides...
 
 ![werner](images/werner.png)
 
 There is a state machine that triggers on certain events such as a new `LOGIN_EVENT` or a `LOGIN_LINK` request. We let the state machine decide the path to take instead of having multiple EB rules and multiple state machines. We can then eliminate the myriad of queues and lambda functions polling said queues with the direct SDK calls Step Functions provides.
 
-We try to avoid the [async try/catch twoer of terror](https://www.youtube.com/watch?v=ITogH7lJTyE) by implementing the pattern shown in the video:
+We also try to avoid the [async try/catch twoer of terror](https://www.youtube.com/watch?v=ITogH7lJTyE) by implementing the pattern shown in the video:
 
 ```javascript
 const [user, error] = await Users.GetUserById({ userId });
