@@ -1,14 +1,8 @@
 import { AXIOS_INSTANCE as axios } from "../Config";
-// TODO types
+import { APICreateOpeningOptions } from "../Controllers/Openings/create-opening";
+import { APIUpdateOpeningOptions } from "../Controllers/Openings/update-opening";
 
-interface CreateOpeningOptions {
-  /**
-   * The name of this opening such as `NYC` or `Software Engineer`
-   */
-  openingName: string;
-}
-
-const CreateOpening = async (options: CreateOpeningOptions) => {
+const CreateOpening = async (options: APICreateOpeningOptions) => {
   const { data } = await axios.post(`/openings`, { ...options });
   return data;
 };
@@ -32,8 +26,13 @@ const DeleteOpening = async (openingId) => {
   return data;
 };
 
-const UpdateOpening = async (openingId, newValues) => {
-  const { data } = await axios.put(GetOpeningInfoURL(openingId), newValues);
+const UpdateOpening = async (
+  openingId: string,
+  options: APIUpdateOpeningOptions
+) => {
+  const { data } = await axios.put(GetOpeningInfoURL(openingId), {
+    ...options,
+  });
   return data;
 };
 

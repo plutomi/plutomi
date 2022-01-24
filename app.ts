@@ -1,5 +1,4 @@
 import * as dotenv from "dotenv";
-import * as path from "path";
 const resultDotEnv = dotenv.config({
   path: `./.env.${process.env.NODE_ENV}`,
 });

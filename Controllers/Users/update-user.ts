@@ -9,18 +9,18 @@ import { DEFAULTS, JOI_GLOBAL_FORBIDDEN, JOI_SETTINGS } from "../../Config";
  */
 export const JOI_FORBIDDEN_USER = {
   ...JOI_GLOBAL_FORBIDDEN,
-  userId: Joi.any().forbidden().strip(),
-  userRole: Joi.any().forbidden().strip(), // TODO rbac
-  orgJoinDate: Joi.any().forbidden().strip(),
-  canReceiveEmails: Joi.any().forbidden().strip(),
-  GSI1PK: Joi.any().forbidden().strip(), // Org users
+  userId: Joi.any().forbidden(),
+  userRole: Joi.any().forbidden(), // TODO rbac
+  orgJoinDate: Joi.any().forbidden(),
+  canReceiveEmails: Joi.any().forbidden(),
+  GSI1PK: Joi.any().forbidden(), // Org users
   firstName: Joi.string().invalid(DEFAULTS.FIRST_NAME).optional(),
   lastName: Joi.string().invalid(DEFAULTS.LAST_NAME).optional(),
-  unsubscribeKey: Joi.any().forbidden().strip(),
-  GSI2PK: Joi.any().forbidden().strip(), // Email
-  GSI2SK: Joi.any().forbidden().strip(), // Entity type
-  totalInvites: Joi.any().forbidden().strip(),
-  verifiedEmail: Joi.any().forbidden().strip(), // Updated asynchronously (step functions) on 1st login
+  unsubscribeKey: Joi.any().forbidden(),
+  GSI2PK: Joi.any().forbidden(), // Email
+  GSI2SK: Joi.any().forbidden(), // Entity type
+  totalInvites: Joi.any().forbidden(),
+  verifiedEmail: Joi.any().forbidden(), // Updated asynchronously (step functions) on 1st login
 };
 
 const schema = Joi.object({

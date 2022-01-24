@@ -9,19 +9,18 @@ import Loader from "../Loader";
 import { DeleteOpening, GetAllOpeningsInOrgURL } from "../../adapters/Openings";
 import * as Time from "../../utils/time";
 import { CUSTOM_QUERY } from "../../types/main";
-import { DOMAIN_NAME, WEBSITE_URL } from "../../Config";
+import { WEBSITE_URL } from "../../Config";
 export default function OpeningSettingsHeader() {
   const router = useRouter();
   const { openingId } = router.query as Pick<CUSTOM_QUERY, "openingId">;
 
   let { opening, isOpeningLoading, isOpeningError } = useOpeningInfo(openingId);
 
-  const setOpeningModal = useStore((state) => state.setOpeningModal);
+  isOpeningLoading && <Loader text={"Loading opening..."} />;
 
-  if (isOpeningLoading) {
-    return <Loader text={"Loading opening..."} />;
-  }
-
+  const openUpdateOpeningModal = useStore(
+    (state) => state.openUpdateOpeningModal
+  );
   const crumbs = [
     {
       name: "Opening Settings",
@@ -31,7 +30,7 @@ export default function OpeningSettingsHeader() {
   ];
 
   // Hide applicant crumb if opening has no stages
-  if (opening.totalStages > 0) {
+  if (opening?.totalStages > 0) {
     crumbs.unshift({
       name: "Applicants",
       href: `/openings/${openingId}/stages/${opening?.stageOrder[0]}/applicants`, // TODO should this end with /applicants?
@@ -72,19 +71,19 @@ export default function OpeningSettingsHeader() {
       <div className="flex justify-center space-x-4 py-2 items-center">
         <span
           className={` inline-flex items-center px-2.5 py-0.5 rounded-md text-sm font-medium ${
-            opening?.isPublic ? "bg-green-100" : "bg-blue-gray-100"
+            opening?.GSI1SK ? "bg-green-100" : "bg-blue-gray-100"
           }`}
         >
           <svg
             className={`-ml-0.5 mr-1.5 h-2 w-2 ${
-              opening?.isPublic ? "text-green-800" : "text-blue-gray-800"
+              opening?.GSI1SK ? "text-green-800" : "text-blue-gray-800"
             }`}
             fill="currentColor"
             viewBox="0 0 8 8"
           >
             <circle cx={4} cy={4} r={3} />
           </svg>
-          {opening?.isPublic ? "Public" : "Private"}
+          {opening?.GSI1SK ? "Public" : "Private"}
         </span>
         <p className="text-md text-light text-center">
           Created {Time.relative(opening?.createdAt)}
@@ -93,21 +92,14 @@ export default function OpeningSettingsHeader() {
       <div className="space-x-4 flex items-center">
         <button
           type="button"
-          onClick={() =>
-            setOpeningModal({
-              isModalOpen: true,
-              modalMode: "EDIT",
-              openingId: opening.openingId,
-              openingName: opening?.openingName,
-            })
-          }
+          onClick={openUpdateOpeningModal}
           className="inline-flex items-center px-4 py-2 border  shadow-sm text-base font-medium rounded-md border-blue-500 text-blue-500 bg-white hover:bg-blue-500 hover:text-white  transition ease-in-out duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
         >
           <PencilAltIcon className="-ml-1 mr-3 h-5 w-5" aria-hidden="true" />
           Edit Opening
         </button>
         <button
-          onClick={() => deleteOpening()}
+          onClick={deleteOpening}
           className="rounded-full hover:bg-red-500 hover:text-white border border-red-500 text-red-500 transition ease-in-out duration-200 px-2 py-2 text-md"
         >
           <TrashIcon className="h-6 w-6" />

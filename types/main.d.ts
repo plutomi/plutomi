@@ -1,11 +1,4 @@
-import { HttpMethod, HttpApi } from "@aws-cdk/aws-apigatewayv2";
-import {
-  APIGatewayProxyEventV2,
-  APIGatewayProxyResultV2,
-  APIGatewayProxyStructuredResultV2,
-} from "aws-lambda";
-import { Table } from "@aws-cdk/aws-dynamodb";
-import { Duration, StackProps } from "@aws-cdk/core";
+import { OPENING_PUBLIC_STATE } from "../Config";
 import {
   DynamoNewApplicant,
   DynamoNewApplicantResponse,
@@ -15,12 +8,6 @@ import {
   DynamoNewStageQuestion,
   DynamoNewUser,
 } from "./dynamo";
-import { HttpLambdaAuthorizer } from "@aws-cdk/aws-apigatewayv2-authorizers";
-import {
-  NodejsFunction,
-  NodejsFunctionProps,
-} from "@aws-cdk/aws-lambda-nodejs";
-
 type DynamoActions =
   | "dynamodb:GetItem"
   | "dynamodb:BatchGetItem"
@@ -29,89 +16,8 @@ type DynamoActions =
   | "dynamodb:UpdateItem"
   | "dynamodb:DeleteItem"
   | "dynamodb:BatchWriteItem";
-export interface APIGatewayLambda extends NodejsFunctionProps {
-  /**
-   * Path for the API, such as "/users/{userId}"
-   */
-  APIPath: string;
-
-  /**
-   * HTTP Method for the API call
-   */
-  method: HttpMethod;
-  /**
-   * Path to the file with the function code
-   */
-  filePath: string;
-  /**
-   * What actions the lambda is allowed to perform such as
-   * "dynamodb:Query", "dynamodb:PutItem", "dynamodb:GetItem"
-   */
-  dynamoActions: DynamoActions[];
-  /**
-   * What the lambda is allowed to access from the DynamoDB table
-   */
-  dynamoResources: {
-    main?: boolean;
-    GSI1?: boolean;
-    GSI2?: boolean;
-  };
-
-  /**
-   * Whether the route for this lambda should skip the authorization check
-   * @default false
-   */
-  skipAuth?: boolean;
-}
-
-export interface CustomLambdaEvent
-  extends Omit<
-    APIGatewayProxyEventV2,
-    "body" | "queryStringParameters" | "pathParameters" | "requestContext"
-  > {
-  // Custom types because they will be there due to Middy middleware
-  body: { [key: string]: any };
-  queryStringParameters: { [key: string]: string };
-  pathParameters: { [key: string]: string };
-  requestContext: {
-    authorizer: {
-      lambda: {
-        // Lambda authorizer adds the user
-        session: DynamoNewUser;
-      };
-    };
-  };
-}
-
-/**
- * APIGatewayProxyStructuredResultV2 +
- * 1. A regular object {} for a body.
- * 2. Enforces statusCodes
- * Middy will JSON.stringify() the body for us so we can use this instead
- */
-export interface CustomLambdaResponse
-  extends Omit<APIGatewayProxyStructuredResultV2, "body" | "statusCode"> {
-  statusCode: number;
-  body: { [key: string]: any };
-  headers?: { [key: string]: string };
-  cookies?: string[];
-}
-
-export interface LambdaAPIProps extends StackProps {
-  table: Table;
-  api: HttpApi;
-}
 
 type CreateApplicantAPIBody = Omit<CreateApplicantInput, "stageId">;
-export interface CreateApplicantAPIResponse {
-  message: string;
-}
-
-declare namespace Express {
-  export interface Request {
-    boom: DynamoNewUser;
-  }
-}
 
 /**
  * All possible parameters in the URL
@@ -127,18 +33,9 @@ interface CUSTOM_QUERY {
    * The token to for the {@link ENTITY_TYPES.LOGIN_LINK} that contains the user id
    */
   token: string;
-
   callbackUrl: string;
   questionId: string;
   inviteId: string;
-}
-interface UserSessionData {
-  userId: string;
-  /**
-   * ISO timestamp of when the cookie expires, encrypted with the cookie itself
-   * To override all browser checks
-   */
-  expiresAt: string; // ISO timestamp
 }
 export interface CreateStageInput
   extends Pick<DynamoNewStage, "orgId" | "GSI1SK" | "openingId"> {
@@ -146,6 +43,7 @@ export interface CreateStageInput
    * Optional position on where to place the new opening, optional. Added to the end if not provided
    */
   position?: number;
+  // To figure out where to place it
   stageOrder: string[];
 }
 interface DeleteStageInput
@@ -254,7 +152,7 @@ type DeleteOpeningInput = Pick<DynamoNewOpening, "orgId" | "openingId">;
 
 // Retrieves all oepnings by default, can filter on public or private
 interface GetOpeningsInOrgInput extends Pick<DynamoNewOpening, "orgId"> {
-  GSI1SK?: "PUBLIC" | "PRIVATE";
+  GSI1SK?: OPENING_PUBLIC_STATE;
 }
 
 type GetAllStagesInOpeningInput = Pick<

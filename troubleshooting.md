@@ -21,4 +21,4 @@ TLDR: Try updating the stack that is using the removed stack with the `-e` flag 
 
 > "Runtime.HandlerNotFound: index.main is undefined or not exported",
 
-Make sure the only thing you are exporting from a function is the function itself: `module.exports.main`, even exporting a type or interface will cause this error
+Make sure the only thing you are exporting from a lambda function is the function itself: `module.exports.main`, even exporting a type or interface will cause this error

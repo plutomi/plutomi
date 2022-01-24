@@ -1,19 +1,9 @@
 import { AXIOS_INSTANCE as axios } from "../Config";
-// TODO types
+import { APICreateOrgOptions } from "../Controllers/Orgs/create-and-join-org";
+
 const GetOrgInfoURL = () => `/orgs`;
 
-interface CreateOrgOptions {
-  /**
-   * What shows up on org invites, billing, etc. Can be changed
-   */
-  displayName: string;
-  /**
-   * The unique id used to identify this org. Also shows up in URLs for openings
-   */
-  orgId: string;
-}
-
-const CreateOrg = async (options: CreateOrgOptions) => {
+const CreateOrg = async (options: APICreateOrgOptions) => {
   const { data } = await axios.post(GetOrgInfoURL(), { ...options });
   return data;
 };

@@ -35,6 +35,11 @@ export const COOKIE_NAME =
 const UrlSafeString = require("url-safe-string"),
   tagGenerator = new UrlSafeString();
 
+export enum OPENING_PUBLIC_STATE {
+  PUBLIC = "PUBLIC",
+  PRIVATE = "PRIVATE",
+}
+
 export enum ENTITY_TYPES {
   APPLICANT = "APPLICANT",
   APPLICANT_RESPONSE = "APPLICANT_RESPONSE",
@@ -148,19 +153,18 @@ export const JOI_SETTINGS: Joi.ValidationOptions = {
 };
 
 /**
- * Global forbidden properties. Cannot be updated, regardless of entity
- * forbidden() blocks the key, except undefined. strip() removes it afterwards
- * sice we don't want it going to Dynamo as undefined
+ * Global forbidden properties. Cannot be updated, regardless of entity. 
+ * undefined keys are stripped
  * https://joi.dev/api/?v=15.1.1#anyforbidden
- * https://joi.dev/api/?v=15.1.1#anystrip
+
  */
 export const JOI_GLOBAL_FORBIDDEN = {
-  orgId: Joi.any().forbidden().strip(),
-  PK: Joi.any().forbidden().strip(),
-  SK: Joi.any().forbidden().strip(),
-  ttlExpiry: Joi.any().forbidden().strip(),
-  entityType: Joi.any().forbidden().strip(),
-  createdAt: Joi.any().forbidden().strip(),
+  orgId: Joi.any().forbidden(),
+  PK: Joi.any().forbidden(),
+  SK: Joi.any().forbidden(),
+  ttlExpiry: Joi.any().forbidden(),
+  entityType: Joi.any().forbidden(),
+  createdAt: Joi.any().forbidden(),
 };
 
 import axios from "axios";

@@ -30,8 +30,26 @@ const useStore = create((set) => ({
       showCreateOpeningModal: false,
     })),
 
+  showUpdateOpeningModal: false,
+  openUpdateOpeningModal: () =>
+    set(() => ({
+      showUpdateOpeningModal: true,
+    })),
+  closeUpdateOpeningModal: () =>
+    set(() => ({
+      showUpdateOpeningModal: false,
+    })),
+
+  updateOpeningModalValues: {},
+  // setUpdateOpeningModalValues: (newValues) =>
+  // set((state) => ({
+  //   updateOpeningModalValues: {
+  //     ...state.updateOpeningModalValues,
+  //     ...newValues
+  //   }
+  // }))
   /**
-   * LEGACY!!!!!!!!!!!!
+   * LEGACY!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
    */
   // TODO this is stupidly gross!!!
   openingsSearchInput: "",
