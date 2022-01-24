@@ -1,55 +1,38 @@
 import { FormEvent, Fragment, useState } from "react";
 import { Dialog, Transition } from "@headlessui/react";
 import { XIcon } from "@heroicons/react/outline";
+import { CreateOpening, GetAllOpeningsInOrgURL } from "../../adapters/Openings";
 import useStore from "../../utils/store";
-import { CreateOrg } from "../../adapters/Orgs";
 import { mutate } from "swr";
-import { GetSelfInfoURL } from "../../adapters/Users";
-const UrlSafeString = require("url-safe-string"),
-  tagGenerator = new UrlSafeString();
 
-export default function CreateOrgModal() {
-  const [displayName, setDisplayName] = useState("");
-  const [orgId, setOrgId] = useState("");
+export default function CreateOpeningModal() {
+  const [openingName, setOpeningName] = useState("");
+  const visibility = useStore((state) => state.showCreateOpeningModal);
+  const closeCreateOpeningModal = useStore(
+    (state) => state.closeCreateOpeningModal
+  );
 
-  const closeCreateOrgModal = useStore((state) => state.closeCreateOrgModal);
-  const visibility = useStore((state) => state.showCreateOrgModal);
-
-  const handleCreateOrg = async (e: FormEvent) => {
+  const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
-    console.log({
-      orgId,
-      displayName,
-    });
-    if (
-      !confirm(
-        `Your org id will be '${tagGenerator.generate(
-          orgId
-        )}', this CANNOT be changed. Do you want to continue?`
-      )
-    ) {
-      return;
-    }
 
     try {
-      const { message } = await CreateOrg({
-        displayName,
-        orgId,
+      const { message } = await CreateOpening({
+        openingName,
       });
+      mutate(GetAllOpeningsInOrgURL());
       alert(message);
-      closeCreateOrgModal();
+      closeCreateOpeningModal();
     } catch (error) {
       alert(error.response.data.message);
     }
-
-    mutate(GetSelfInfoURL());
   };
+
   return (
-    <Transition.Root show={visibility || false} as={Fragment}>
+    <Transition.Root show={visibility} as={Fragment}>
       <Dialog
         as="div"
         className="fixed inset-0 overflow-hidden "
-        onClose={closeCreateOrgModal}
+        onClose={closeCreateOpeningModal}
       >
         <div className="absolute inset-0 overflow-hidden">
           <Transition.Child
@@ -77,19 +60,19 @@ export default function CreateOrgModal() {
               <div className="w-screen max-w-md">
                 <form
                   className="h-full divide-y divide-gray-200 flex flex-col bg-white shadow-xl"
-                  onSubmit={handleCreateOrg}
+                  onSubmit={(e) => handleSubmit(e)}
                 >
                   <div className="flex-1 h-0 overflow-y-auto">
                     <div className="py-6 px-4 bg-blue-700 sm:px-6">
                       <div className="flex items-center justify-between">
                         <Dialog.Title className="text-lg font-medium text-white">
-                          New Organization
+                          New Opening
                         </Dialog.Title>
                         <div className="ml-3 h-7 flex items-center">
                           <button
                             type="button"
                             className="bg-blue-700 rounded-md text-blue-200 hover:text-white focus:outline-none focus:ring-2 focus:ring-white"
-                            onClick={closeCreateOrgModal}
+                            onClick={closeCreateOpeningModal}
                           >
                             <span className="sr-only">Close panel</span>
                             <XIcon className="h-6 w-6" aria-hidden="true" />
@@ -98,8 +81,10 @@ export default function CreateOrgModal() {
                       </div>
                       <div className="mt-1">
                         <p className="text-sm text-blue-300">
-                          Get started by creating an organization which will
-                          contain your openings and users
+                          An opening is what you need applicants for. It could
+                          be a job like &apos;Engineer&apos;, a location like
+                          &apos;New York&apos; or &apos;Miami&apos;, or just the
+                          name of your program.
                         </p>
                       </div>
                     </div>
@@ -108,61 +93,27 @@ export default function CreateOrgModal() {
                         <div className="space-y-6 pt-6 pb-5">
                           <div>
                             <label
-                              htmlFor="org-name"
+                              htmlFor="opening-name"
                               className="block text-sm font-medium text-dark"
                             >
-                              Organization name
+                              Opening name
                             </label>
                             <div className="mt-1">
                               <input
                                 type="text"
-                                name="org-name"
-                                id="org-name"
+                                name="opening-name"
+                                id="opening-name"
                                 required
-                                onChange={(e) => setDisplayName(e.target.value)}
-                                value={displayName}
+                                onChange={(e) => setOpeningName(e.target.value)}
+                                value={openingName}
                                 className="block w-full shadow-sm sm:text-sm focus:ring-blue-500 focus:border-blue-500 border-gray-300 rounded-md"
                               />
                             </div>
                           </div>
-                          <div>
-                            <label
-                              htmlFor="org-id"
-                              className="block text-sm font-medium text-dark"
-                            >
-                              Custom ID
-                            </label>
-                            <div className="mt-1 flex rounded-md shadow-sm">
-                              <span className="inline-flex items-center px-3 rounded-l-md border border-r-0 border-gray-300 bg-gray-50 text-normal sm:text-sm">
-                                plutomi.com/
-                              </span>
-                              <input
-                                type="text"
-                                name="org-id"
-                                id="org-id"
-                                required
-                                maxLength={30}
-                                onChange={(e) =>
-                                  setOrgId(
-                                    tagGenerator.generate(e.target.value.trim())
-                                  )
-                                }
-                                value={orgId}
-                                className="flex-1 min-w-0 block w-full px-3 py-2 rounded-none rounded-r-md focus:ring-blue-500 focus:border-blue-500 sm:text-sm border-gray-300"
-                                placeholder="your-organization-name"
-                              />
-                            </div>
-                            {orgId && (
-                              <p className="mt-2 text-blue-gray-500 text-md">
-                                Your ID will be:{" "}
-                                <span className="font-bold text-dark">
-                                  {orgId}
-                                </span>
-                              </p>
-                            )}
-                            <p className="text-red-400 mt-2 text-md">
-                              Your ID <span className="font-bold">cannot</span>{" "}
-                              be changed, please choose carefully.
+                          <div className="relative flex items-start">
+                            <p className="text-light text-sm ">
+                              You will be able to make this opening public after
+                              adding a stage.
                             </p>
                           </div>
                         </div>
@@ -173,7 +124,7 @@ export default function CreateOrgModal() {
                     <button
                       type="button"
                       className="bg-white py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
-                      onClick={closeCreateOrgModal}
+                      onClick={closeCreateOpeningModal}
                     >
                       Cancel
                     </button>
@@ -181,7 +132,7 @@ export default function CreateOrgModal() {
                       type="submit"
                       className="ml-4 inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
                     >
-                      Create Org
+                      Create opening
                     </button>
                   </div>
                 </form>

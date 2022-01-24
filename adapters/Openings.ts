@@ -1,14 +1,21 @@
 import { AXIOS_INSTANCE as axios } from "../Config";
 // TODO types
 
-const CreateOpening = async (openingName) => {
-  const { data } = await axios.post(`/openings`, { openingName });
+interface CreateOpeningOptions {
+  /**
+   * The name of this opening such as `NYC` or `Software Engineer`
+   */
+  openingName: string;
+}
+
+const CreateOpening = async (options: CreateOpeningOptions) => {
+  const { data } = await axios.post(`/openings`, { ...options });
   return data;
 };
 
-const GetOpeningInfoURL = (openingId) => `/openings/${openingId}`;
+const GetOpeningInfoURL = (openingId: string) => `/openings/${openingId}`;
 
-const GetOpeningInfo = async (openingId) => {
+const GetOpeningInfo = async (openingId: string) => {
   const { data } = await axios.get(GetOpeningInfoURL(openingId));
   return data;
 };

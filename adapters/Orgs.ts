@@ -2,10 +2,7 @@ import { AXIOS_INSTANCE as axios } from "../Config";
 // TODO types
 const GetOrgInfoURL = () => `/orgs`;
 
-/**
- *
- */
-interface CreateOrgInput {
+interface CreateOrgOptions {
   /**
    * What shows up on org invites, billing, etc. Can be changed
    */
@@ -16,8 +13,8 @@ interface CreateOrgInput {
   orgId: string;
 }
 
-const CreateOrg = async (props: CreateOrgInput) => {
-  const { data } = await axios.post(GetOrgInfoURL(), props);
+const CreateOrg = async (options: CreateOrgOptions) => {
+  const { data } = await axios.post(GetOrgInfoURL(), { ...options });
   return data;
 };
 

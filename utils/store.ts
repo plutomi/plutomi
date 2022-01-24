@@ -1,18 +1,39 @@
 import create from "zustand";
 
 const useStore = create((set) => ({
-  createOrgModalVisible: false,
+  /**
+   * ORGS
+   */
+  /**
+   * Whether the CreateOrgModal should be visible or not
+   */
+  showCreateOrgModal: false,
   openCreateOrgModal: () =>
     set(() => ({
-      createOrgModalVisible: true,
+      showCreateOrgModal: true,
     })),
   closeCreateOrgModal: () =>
     set(() => ({
-      createOrgModalVisible: false,
+      showCreateOrgModal: false,
     })),
 
+  /**
+   * OPENINGS
+   */
+  showCreateOpeningModal: false,
+  openCreateOpeningModal: () =>
+    set(() => ({
+      showCreateOpeningModal: true,
+    })),
+  closeCreateOpeningModal: () =>
+    set(() => ({
+      showCreateOpeningModal: false,
+    })),
+
+  /**
+   * LEGACY!!!!!!!!!!!!
+   */
   // TODO this is stupidly gross!!!
-  OpeningModalIsOpen: false,
   openingsSearchInput: "",
   createInviteModalIsOpen: false,
 
@@ -63,24 +84,6 @@ const useStore = create((set) => ({
       questionModal: questionModal,
     }));
   },
-
-  openingModal: {
-    isModalOpen: false, // False by default
-    modalMode: "CREATE", // Will render text differently
-    openingId: "",
-    openingName: "",
-    GSI1SK: "PRIVATE",
-  },
-  setOpeningModal: (openingModal) => {
-    set((state) => ({
-      openingModal,
-    }));
-  },
-
-  setOpeningModalOpen: (open: Boolean) =>
-    set((state) => ({
-      OpeningModalIsOpen: open,
-    })),
 
   setOpeningsSearchInput: (input: string) =>
     set((state) => ({
