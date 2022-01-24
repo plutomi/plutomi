@@ -1,9 +1,17 @@
 import create from "zustand";
-import * as Time from "./time";
 
 const useStore = create((set) => ({
+  createOrgModalVisible: false,
+  openCreateOrgModal: () =>
+    set(() => ({
+      createOrgModalVisible: true,
+    })),
+  closeCreateOrgModal: () =>
+    set(() => ({
+      createOrgModalVisible: false,
+    })),
+
   // TODO this is stupidly gross!!!
-  createOrgModalIsOpen: false,
   OpeningModalIsOpen: false,
   openingsSearchInput: "",
   createInviteModalIsOpen: false,
@@ -68,11 +76,6 @@ const useStore = create((set) => ({
       openingModal,
     }));
   },
-
-  setCreateOrgModalOpen: (open: Boolean) =>
-    set((state) => ({
-      createOrgModalIsOpen: open,
-    })),
 
   setOpeningModalOpen: (open: Boolean) =>
     set((state) => ({

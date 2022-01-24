@@ -2,11 +2,22 @@ import { AXIOS_INSTANCE as axios } from "../Config";
 // TODO types
 const GetOrgInfoURL = () => `/orgs`;
 
-const CreateOrg = async (displayName, orgId) => {
-  const { data } = await axios.post(GetOrgInfoURL(), {
-    orgId,
-    displayName,
-  });
+/**
+ *
+ */
+interface CreateOrgInput {
+  /**
+   * What shows up on org invites, billing, etc. Can be changed
+   */
+  displayName: string;
+  /**
+   * The unique id used to identify this org. Also shows up in URLs for openings
+   */
+  orgId: string;
+}
+
+const CreateOrg = async (props: CreateOrgInput) => {
+  const { data } = await axios.post(GetOrgInfoURL(), props);
   return data;
 };
 
