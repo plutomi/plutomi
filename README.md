@@ -59,7 +59,9 @@ All infrastructure is managed by CDK. We use [Jest](https://jestjs.io/) for test
 
 The frontend runs on the [Serverless-Nextjs](https://github.com/serverless-Nextjs/serverless-next.js) component. We use [SSG without data + client side data fetching](https://youtu.be/f1rF9YKm1Ms?t=664) for almost all pages.
 
-The API is your typical Express app running on Fargate. Truly an incredible service and a great middleground between servers / serverless.
+The API is your typical Express app running on Fargate. It has many of the advantages of serverless without many of the downsides.
+
+![werner](images/werner.png)
 
 There is a state machine that triggers on certain events such as a new `LOGIN_EVENT` or a `LOGIN_LINK` request. We let the state machine decide the path to take instead of having multiple EB rules and multiple state machines. We can then eliminate the myriad of queues and lambda functions polling said queues with the direct SDK calls Step Functions provides.
 
