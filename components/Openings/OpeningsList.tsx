@@ -11,7 +11,7 @@ import useSelf from "../../SWR/useSelf";
 import _ from "lodash";
 import useStore from "../../utils/store";
 import { ViewBoardsIcon } from "@heroicons/react/outline";
-import { DOMAIN_NAME } from "../../Config";
+import { DOMAIN_NAME, WEBSITE_URL } from "../../Config";
 export default function OpeningList() {
   const { user, isUserLoading, isUserError } = useSelf();
   let { openings, isOpeningsLoading, isOpeningsError } = useOpenings();
@@ -80,7 +80,7 @@ export default function OpeningList() {
                           <p className="mt-2 flex items-center text-lg text-normal sm:mt-0 sm:ml-6">
                             <ClickToCopy
                               showText={"Application Link"}
-                              copyText={`${DOMAIN_NAME}/${user?.orgId}/${opening?.openingId}/apply`}
+                              copyText={`${WEBSITE_URL}/${user?.orgId}/${opening?.openingId}/apply`}
                             />
                           </p>
                         ) : null}
