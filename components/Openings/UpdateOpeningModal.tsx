@@ -30,7 +30,7 @@ export default function UpdateOpeningModal({
     e.preventDefault();
 
     try {
-      let input = {
+      const input = {
         GSI1SK: opening?.GSI1SK === GSI1SK ? undefined : GSI1SK,
         openingName:
           opening?.openingName == openingName ? undefined : openingName,

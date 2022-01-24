@@ -14,8 +14,6 @@ export default function OpeningSettingsContent() {
   return (
     <>
       <UpdateOpeningModal opening={opening} />
-
-      <p>{JSON.stringify(opening)}</p>
       {/* 3 column wrapper */}
       <div className="flex-grow w-full max-w-7xl mx-auto xl:px-8 lg:flex">
         {/* Left sidebar & main wrapper */}

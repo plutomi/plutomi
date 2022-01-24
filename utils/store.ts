@@ -40,14 +40,16 @@ const useStore = create((set) => ({
       showUpdateOpeningModal: false,
     })),
 
-  updateOpeningModalValues: {},
-  // setUpdateOpeningModalValues: (newValues) =>
-  // set((state) => ({
-  //   updateOpeningModalValues: {
-  //     ...state.updateOpeningModalValues,
-  //     ...newValues
-  //   }
-  // }))
+  showUserProfileModal: false,
+  openUserProfileModal: () =>
+    set(() => ({
+      showUserProfileModal: true,
+    })),
+  closeUserProfileModal: () =>
+    set(() => ({
+      showUserProfileModal: false,
+    })),
+
   /**
    * LEGACY!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
    */
@@ -62,19 +64,6 @@ const useStore = create((set) => ({
   setApplicantProfileModal: (applicantProfileModal) => {
     set((s) => ({
       applicantProfileModal: applicantProfileModal,
-    }));
-  },
-
-  userProfileModal: {
-    isModalOpen: false,
-    modalMode: "EDIT",
-    firstName: "",
-    lastName: "",
-  },
-
-  setUserProfileModal: (userProfileModal) => {
-    set((state) => ({
-      userProfileModal: userProfileModal,
     }));
   },
 

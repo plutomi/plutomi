@@ -1,25 +1,49 @@
-import { FormEvent, Fragment, useState } from "react";
+import { FormEvent, Fragment, useEffect, useState } from "react";
 import { Dialog, Transition } from "@headlessui/react";
 import { XIcon } from "@heroicons/react/outline";
 import useStore from "../../utils/store";
+import { mutate } from "swr";
+import { GetSelfInfoURL, GetUserInfoUrl } from "../../adapters/Users";
+import { DynamoNewUser } from "../../types/dynamo";
+import { UpdateUser } from "../../adapters/Users";
 
-export default function UserProfileModal({ updateUser }) {
-  const userProfileModal = useStore((state) => state.userProfileModal);
-  const setUserProfileModal = useStore((state) => state.setUserProfileModal);
+export default function UserProfileModal({ user }: { user: DynamoNewUser }) {
+  const [firstName, setFirstName] = useState(user?.firstName);
+  const [lastName, setLastName] = useState(user?.lastName);
 
+  useEffect(() => {
+    setFirstName(user?.firstName);
+    setLastName(user?.lastName);
+  }, [user?.firstName, user?.lastName]);
+
+  const visibility = useStore((state) => state.showUserProfileModal);
+  const closeUserProfileModal = useStore(
+    (state) => state.closeUserProfileModal
+  );
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
-    await updateUser();
+
+    try {
+      const input = {
+        firstName: user?.firstName === firstName ? undefined : firstName,
+        lastName: user?.lastName === lastName ? undefined : lastName,
+      };
+      const { message } = await UpdateUser(user?.userId, { ...input });
+      alert(message);
+      closeUserProfileModal();
+      mutate(GetUserInfoUrl(user?.userId));
+    } catch (error) {
+      alert(error.response.data.message);
+    }
+    mutate(GetSelfInfoURL());
   };
 
   return (
-    <Transition.Root show={userProfileModal.isModalOpen} as={Fragment}>
+    <Transition.Root show={visibility} as={Fragment}>
       <Dialog
         as="div"
         className="fixed inset-0 overflow-hidden "
-        onClose={() =>
-          setUserProfileModal({ ...userProfileModal, isModalOpen: false })
-        }
+        onClose={closeUserProfileModal}
       >
         <div className="absolute inset-0 overflow-hidden">
           <Transition.Child
@@ -53,18 +77,13 @@ export default function UserProfileModal({ updateUser }) {
                     <div className="py-6 px-4 bg-blue-700 sm:px-6">
                       <div className="flex items-center justify-between">
                         <Dialog.Title className="text-lg font-medium text-white">
-                          Edit User
+                          Edit Your Info
                         </Dialog.Title>
                         <div className="ml-3 h-7 flex items-center">
                           <button
                             type="button"
                             className="bg-blue-700 rounded-md text-blue-200 hover:text-white focus:outline-none focus:ring-2 focus:ring-white"
-                            onClick={() =>
-                              setUserProfileModal({
-                                ...userProfileModal,
-                                isModalOpen: false,
-                              })
-                            }
+                            onClick={closeUserProfileModal}
                           >
                             <span className="sr-only">Close panel</span>
                             <XIcon className="h-6 w-6" aria-hidden="true" />
@@ -93,13 +112,8 @@ export default function UserProfileModal({ updateUser }) {
                                 name="first-name"
                                 id="first-name"
                                 required
-                                onChange={(e) =>
-                                  setUserProfileModal({
-                                    ...userProfileModal,
-                                    firstName: e.target.value,
-                                  })
-                                }
-                                value={userProfileModal.firstName}
+                                onChange={(e) => setFirstName(e.target.value)}
+                                value={firstName}
                                 className="block w-full shadow-sm sm:text-sm focus:ring-blue-500 focus:border-blue-500 border-gray-300 rounded-md"
                               />
                             </div>
@@ -117,222 +131,13 @@ export default function UserProfileModal({ updateUser }) {
                                 name="last-name"
                                 id="last-name"
                                 required
-                                onChange={(e) =>
-                                  setUserProfileModal({
-                                    ...userProfileModal,
-                                    lastName: e.target.value,
-                                  })
-                                }
-                                value={userProfileModal.lastName}
+                                onChange={(e) => setLastName(e.target.value)}
+                                value={lastName}
                                 className="block w-full shadow-sm sm:text-sm focus:ring-blue-500 focus:border-blue-500 border-gray-300 rounded-md"
                               />
                             </div>
                           </div>
-                          <div className="relative flex items-start">
-                            {/* <div className="flex items-center h-5">
-                              <input
-                                id="comments"
-                                aria-describedby="comments-description"
-                                name="comments"
-                                type="checkbox"
-                                checked={userProfileModal.isPublic}
-                                onChange={(e) =>
-                                  setUserProfileModal({
-                                    ...userProfileModal,
-                                    isPublic: e.target.checked,
-                                  })
-                                }
-                                className="focus:ring-blue-500 h-4 w-4 text-blue-600 border-gray-300 rounded"
-                              />
-                            </div> */}
-                            {/* <div className="ml-3 text-sm">
-                              <label
-                                htmlFor="comments"
-                                className="font-medium text-gray-700"
-                              >
-                                Public
-                              </label>
-                              <p
-                                id="comments-description"
-                                className="text-normal"
-                              >
-                                Make this opening available to everyone once{" "}
-                                {userProfileModal.modalMode === "CREATE"
-                                  ? "created"
-                                  : "updated"}
-                              </p>
-                            </div>*/}
-                          </div>
-
-                          {/* <div>
-                            <label
-                              htmlFor="description"
-                              className="block text-sm font-medium text-dark"
-                            >
-                              Description
-                            </label>
-                            <div className="mt-1">
-                              <textarea
-                                id="description"
-                                name="description"
-                                rows={4}
-                                className="block w-full shadow-sm sm:text-sm focus:ring-blue-500 focus:border-blue-500 border border-gray-300 rounded-md"
-                                defaultValue={""}
-                              />
-                            </div>
-                          </div> */}
-                          {/* <div>
-                           <h3 className="text-sm font-medium text-dark">
-                              Team Members
-                            </h3> */}
-                          {/* <div className="mt-2">
-                              <div className="flex space-x-2">
-                                {team.map((person) => (
-                                  <a
-                                    key={person.email}
-                                    href={person.href}
-                                    className="rounded-full hover:opacity-75"
-                                  >
-                                    <img
-                                      className="inline-block h-8 w-8 rounded-full"
-                                      src={person.imageUrl}
-                                      alt={person.name}
-                                    />
-                                  </a>
-                                ))}
-                                <button
-                                  type="button"
-                                  className="flex-shrink-0 bg-white inline-flex h-8 w-8 items-center justify-center rounded-full border-2 border-dashed border-gray-200 text-light hover:text-normal hover:border-gray-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
-                                >
-                                  <span className="sr-only">
-                                    Add team member
-                                  </span>
-                                  <PlusSmIcon
-                                    className="h-5 w-5"
-                                    aria-hidden="true"
-                                  />
-                                </button>
-                              </div>
-                            </div>
-                          </div> */}
-                          {/* <fieldset>
-                            <legend className="text-sm font-medium text-dark">
-                              Privacy
-                            </legend>
-                            <div className="mt-2 space-y-5">
-                              <div className="relative flex items-start">
-                                <div className="absolute flex items-center h-5">
-                                  <input
-                                    id="privacy-public"
-                                    name="privacy"
-                                    aria-describedby="privacy-public-description"
-                                    type="radio"
-                                    className="focus:ring-blue-500 h-4 w-4 text-blue-600 border-gray-300"
-                                    defaultChecked
-                                  />
-                                </div>
-                                <div className="pl-7 text-sm">
-                                  <label
-                                    htmlFor="privacy-public"
-                                    className="font-medium text-dark"
-                                  >
-                                    Public access
-                                  </label>
-                                  <p
-                                    id="privacy-public-description"
-                                    className="text-normal"
-                                  >
-                                    Everyone with the link will see this
-                                    project.
-                                  </p>
-                                </div>
-                              </div>
-                              <div>
-                                <div className="relative flex items-start">
-                                  <div className="absolute flex items-center h-5">
-                                    <input
-                                      id="privacy-private-to-project"
-                                      name="privacy"
-                                      aria-describedby="privacy-private-to-project-description"
-                                      type="radio"
-                                      className="focus:ring-blue-500 h-4 w-4 text-blue-600 border-gray-300"
-                                    />
-                                  </div>
-                                  <div className="pl-7 text-sm">
-                                    <label
-                                      htmlFor="privacy-private-to-project"
-                                      className="font-medium text-dark"
-                                    >
-                                      Private to project members
-                                    </label>
-                                    <p
-                                      id="privacy-private-to-project-description"
-                                      className="text-normal"
-                                    >
-                                      Only members of this project would be able
-                                      to access.
-                                    </p>
-                                  </div>
-                                </div>
-                              </div>
-                              <div>
-                                <div className="relative flex items-start">
-                                  <div className="absolute flex items-center h-5">
-                                    <input
-                                      id="privacy-private"
-                                      name="privacy"
-                                      aria-describedby="privacy-private-to-project-description"
-                                      type="radio"
-                                      className="focus:ring-blue-500 h-4 w-4 text-blue-600 border-gray-300"
-                                    />
-                                  </div>
-                                  <div className="pl-7 text-sm">
-                                    <label
-                                      htmlFor="privacy-private"
-                                      className="font-medium text-dark"
-                                    >
-                                      Private to you
-                                    </label>
-                                    <p
-                                      id="privacy-private-description"
-                                      className="text-normal"
-                                    >
-                                      You are the only one able to access this
-                                      project.
-                                    </p>
-                                  </div>
-                                </div>
-                              </div>
-                            </div>
-                          </fieldset> 
-                          </div>*/}
-                          {/* <div className="pt-4 pb-6">
-                          <div className="flex text-sm">
-                            <a
-                              href="#"
-                              className="group inline-flex items-center font-medium text-blue-600 hover:text-blue-900"
-                            >
-                              <LinkIcon
-                                className="h-5 w-5 text-blue-500 group-hover:text-blue-900"
-                                aria-hidden="true"
-                              />
-                              <span className="ml-2">Copy link</span>
-                            </a>
-                          </div>
-                          <div className="mt-4 flex text-sm">
-                            <a
-                              href="#"
-                              className="group inline-flex items-center text-normal hover:text-dark"
-                            >
-                              <QuestionMarkCircleIcon
-                                className="h-5 w-5 text-light group-hover:text-normal"
-                                aria-hidden="true"
-                              />
-                              <span className="ml-2">
-                                Learn more about sharing
-                              </span>
-                            </a>
-                          </div> */}
+                          <div className="relative flex items-start"></div>
                         </div>
                       </div>
                     </div>
@@ -341,12 +146,7 @@ export default function UserProfileModal({ updateUser }) {
                     <button
                       type="button"
                       className="bg-white py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
-                      onClick={() =>
-                        setUserProfileModal({
-                          ...userProfileModal,
-                          isModalOpen: false,
-                        })
-                      }
+                      onClick={closeUserProfileModal}
                     >
                       Cancel
                     </button>
