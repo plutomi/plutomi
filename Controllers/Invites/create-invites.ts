@@ -108,7 +108,7 @@ const main = async (req: Request, res: Response) => {
   }
 
   const [inviteCreated, inviteError] = await Invites.CreateInvite({
-    recipient,
+    recipient: pick(recipient, ["userId", "email"]),
     orgName: org.displayName,
     expiresAt: Time.futureISO(3, TIME_UNITS.DAYS), // TODO https://github.com/plutomi/plutomi/issues/333
     createdBy: pick(session, [

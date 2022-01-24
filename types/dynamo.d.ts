@@ -297,7 +297,7 @@ interface DynamoNewOrgInvite {
    */
   createdBy: Pick<DynamoNewUser, "firstName" | "lastName" | "orgId">;
 
-  recipient: DynamoNewUser;
+  recipient: Pick<DynamoNewUser, "userId" | "email">;
   /**
    * The entity type, see {@link ENTITY_TYPES.ORG_INVITE}
    */
