@@ -46,7 +46,6 @@ export default async function Create(
           Put: {
             Item: newOrgInvite,
             TableName: `${process.env.NODE_ENV}-${DYNAMO_TABLE_NAME}`,
-
             ConditionExpression: "attribute_not_exists(PK)",
           },
         },
