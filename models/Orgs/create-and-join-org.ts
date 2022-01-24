@@ -27,14 +27,6 @@ export default async function CreateAndJoinOrg(
     displayName,
   };
 
-  // If in dev, set a TTL for auto delete
-  if (process.env.NODE_ENV === "development") {
-    newOrg["ttlExpiry"] = Time.futureUNIX(
-      DEFAULTS.TEST_DATA_RETENTION_PERIOD,
-      TIME_UNITS.DAYS
-    );
-  }
-
   try {
     const transactParams: TransactWriteCommandInput = {
       TransactItems: [

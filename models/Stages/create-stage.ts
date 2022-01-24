@@ -28,13 +28,6 @@ export default async function Create(
     GSI1SK: GSI1SK,
   };
 
-  // If in dev, set a TTL for auto delete
-  if (process.env.NODE_ENV === "development") {
-    newStage["ttlExpiry"] = Time.futureUNIX(
-      DEFAULTS.TEST_DATA_RETENTION_PERIOD,
-      TIME_UNITS.DAYS
-    );
-  }
   /**
    * Position can be undefined, and if so, add it to the end of the opening
    * Joi checks for out of range values

@@ -21,22 +21,14 @@ export default async function Create(
     PK: `${ENTITY_TYPES.ORG}#${orgId}#${ENTITY_TYPES.STAGE_QUESTION}#${questionId}`,
     SK: ENTITY_TYPES.STAGE_QUESTION,
     questionDescription: questionDescription || "",
-    questionId: questionId,
+    questionId,
     entityType: ENTITY_TYPES.STAGE_QUESTION,
     createdAt: now,
     GSI1PK: `${ENTITY_TYPES.ORG}#${orgId}#${ENTITY_TYPES.STAGE}#${stageId}#QUESTIONS`,
-    GSI1SK: GSI1SK,
-    orgId: orgId,
-    stageId: stageId,
+    GSI1SK,
+    orgId,
+    stageId,
   };
-
-  // If in dev, set a TTL for auto delete
-  if (process.env.NODE_ENV === "development") {
-    newStageQuestion["ttlExpiry"] = Time.futureUNIX(
-      DEFAULTS.TEST_DATA_RETENTION_PERIOD,
-      TIME_UNITS.DAYS
-    );
-  }
 
   try {
     questionOrder.push(questionId);

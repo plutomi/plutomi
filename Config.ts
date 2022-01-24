@@ -36,7 +36,7 @@ const UrlSafeString = require("url-safe-string"),
   tagGenerator = new UrlSafeString();
 
 export enum ENTITY_TYPES {
-  APPLICANT = "APPLICANT", // TODO remove prefixes #435
+  APPLICANT = "APPLICANT",
   APPLICANT_RESPONSE = "APPLICANT_RESPONSE",
   ORG = "ORG",
   ORG_INVITE = "ORG_INVITE",
@@ -105,12 +105,6 @@ export enum DEFAULTS {
   REDIRECT = "dashboard",
   NO_FIRST_NAME = "NO_FIRST_NAME",
   NO_LAST_NAME = "NO_LAST_NAME",
-  /**
-   * In days, how long should test data be kept in Dynamo.
-   * This will set a TTL attribute on any created item
-   * if the `NODE_ENV` = `development`
-   */
-  TEST_DATA_RETENTION_PERIOD = 3,
 }
 
 export const LOGIN_LINK_SETTINGS = {

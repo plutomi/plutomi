@@ -24,21 +24,20 @@ export default async function CreateResponse(
   const newApplicantResponse: DynamoNewApplicantResponse = {
     PK: `${ENTITY_TYPES.APPLICANT}#${applicantId}`,
     SK: `${ENTITY_TYPES.APPLICANT_RESPONSE}#${responseId}`,
-    orgId: orgId,
-    applicantId: applicantId,
+    orgId,
+    applicantId,
     entityType: ENTITY_TYPES.APPLICANT_RESPONSE,
     createdAt: Time.currentISO(),
-    responseId: responseId,
-    questionTitle: questionTitle,
-    questionDescription: questionDescription,
-    questionResponse: questionResponse,
+    responseId,
+    questionTitle,
+    questionDescription,
+    questionResponse,
     GSI1PK: `${ENTITY_TYPES.ORG}#${orgId}#${ENTITY_TYPES.APPLICANT}#${applicantId}`,
     GSI1SK: ENTITY_TYPES.APPLICANT_RESPONSE, // TODO add timestmap?
   };
 
   const params: PutCommandInput = {
     TableName: `${process.env.NODE_ENV}-${DYNAMO_TABLE_NAME}`,
-
     Item: newApplicantResponse,
     ConditionExpression: "attribute_not_exists(PK)",
   };

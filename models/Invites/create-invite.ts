@@ -39,14 +39,6 @@ export default async function Create(
       GSI1PK: `${ENTITY_TYPES.ORG}#${createdBy.orgId}#${ENTITY_TYPES.ORG_INVITE}S`, // Returns all invites sent by an org
       GSI1SK: now,
     };
-
-    // If in dev, set a TTL for auto delete
-    if (process.env.NODE_ENV === "development") {
-      newOrgInvite["ttlExpiry"] = Time.futureUNIX(
-        DEFAULTS.TEST_DATA_RETENTION_PERIOD,
-        TIME_UNITS.DAYS
-      );
-    }
     const transactParams: TransactWriteCommandInput = {
       TransactItems: [
         {

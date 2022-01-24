@@ -30,13 +30,6 @@ export default async function Create(
     totalApplicants: 0,
   };
 
-  // If in dev, set a TTL for auto delete
-  if (process.env.NODE_ENV === "development") {
-    newOpening["ttlExpiry"] = Time.futureUNIX(
-      DEFAULTS.TEST_DATA_RETENTION_PERIOD,
-      TIME_UNITS.DAYS
-    );
-  }
   const transactParams: TransactWriteCommandInput = {
     TransactItems: [
       {
