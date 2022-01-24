@@ -18,7 +18,7 @@ Having worked at a company that needed to recruit thousands of contractors every
 
 In your recruiting flow, you can create `openings` which people can apply to. An opening can be anything from a job, a location for a delivery company, or a program like a summer camp.
 
-In these openings, you can create `stages` which are individual steps for your application. You can add questions for applicants to answer, and setup automatic move rules that determine where applicants go next depending on their answers or after a certain time period.
+In these openings, you can create `stages` which are individual steps for your application. You can add questions for applicants to answer, and setup automatic move rules that determine where applicants go next depending on their answers or after a certain time period. A simple ERD can be viewed [here](images/ERD.png) of the current entities.
 
 An _opening_ for a delivery company might look like this:
 
@@ -61,7 +61,7 @@ The API is your typical Express app running on Fargate. It has many of the advan
 
 ![werner](images/werner.png)
 
-There is a state machine that triggers on certain events such as a new `LOGIN_EVENT` or a `LOGIN_LINK` request. We let the state machine decide the path to take instead of having multiple EB rules and multiple state machines. We can then eliminate the myriad of queues and lambda functions polling said queues with the direct SDK calls Step Functions provides.
+There is a state machine for sending emails that triggers on certain events such as a new `LOGIN_EVENT` or a `LOGIN_LINK` request. We let the state machine decide the path to take instead of having multiple EB rules and multiple state machines. We can then eliminate the myriad of queues and lambda functions polling said queues with the direct SDK calls Step Functions provides.
 
 We also try to avoid the [async try/catch tower of terror](https://www.youtube.com/watch?v=ITogH7lJTyE) by implementing the pattern shown in the video:
 

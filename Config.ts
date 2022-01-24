@@ -36,7 +36,7 @@ const UrlSafeString = require("url-safe-string"),
   tagGenerator = new UrlSafeString();
 
 export enum ENTITY_TYPES {
-  APPLICANT = "APPLICANT", // TODO remove prefixes #435
+  APPLICANT = "APPLICANT",
   APPLICANT_RESPONSE = "APPLICANT_RESPONSE",
   ORG = "ORG",
   ORG_INVITE = "ORG_INVITE",
