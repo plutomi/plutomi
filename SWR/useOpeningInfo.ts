@@ -3,8 +3,10 @@ import { GetOpeningInfoURL } from "../adapters/Openings";
 import { SWRFetcher } from "../Config";
 
 export default function useOpeningInfo(openingId?: string) {
+  const shouldFetch = openingId ? true : false;
+  
   const { data, error } = useSWR(
-    openingId && GetOpeningInfoURL(openingId),
+    shouldFetch && GetOpeningInfoURL(openingId),
     SWRFetcher
   );
 

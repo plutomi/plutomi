@@ -22,7 +22,6 @@ const schema = Joi.object({
   },
 }).options(JOI_SETTINGS);
 const login = async (req: Request, res: Response) => {
-  console.log("Login, incoming cookies", req.cookies, req.cookies);
   try {
     await schema.validateAsync(req);
   } catch (error) {

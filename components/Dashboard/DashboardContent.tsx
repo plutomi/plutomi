@@ -8,12 +8,12 @@ import { CreateOrg, DeleteOrg } from "../../adapters/Orgs";
 import useStore from "../../utils/store";
 import { OfficeBuildingIcon, PlusIcon } from "@heroicons/react/outline";
 import CreateOrgModal from "../CreateOrgModal";
-import { DEFAULTS, DOMAIN_NAME } from "../../Config";
+import { DEFAULTS, WEBSITE_URL } from "../../Config";
 import { GetSelfInfoURL, UpdateUser } from "../../adapters/Users";
 export default function DashboardContent() {
   const { user, isUserLoading, isUserError } = useSelf();
   const { org, isOrgLoading, isOrgError } = useOrgInfo(user?.orgId);
-  const customApplyLink = `${DOMAIN_NAME}/${org?.orgId}/apply`;
+  const customApplyLink = `${WEBSITE_URL}/${org?.orgId}/apply`;
 
   const setCreateOrgModalOpen = useStore(
     (state) => state.setCreateOrgModalOpen

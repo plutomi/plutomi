@@ -6,12 +6,6 @@ export default async function withSession(
   res: Response,
   next: NextFunction
 ) {
-  console.log(
-    "Cookies",
-    JSON.stringify(req.cookies),
-    JSON.stringify(req.signedCookies)
-  );
-
   const userId = req.signedCookies[COOKIE_NAME];
   if (!userId) {
     console.log("beans");

@@ -2,7 +2,7 @@ import { AXIOS_INSTANCE as axios } from "../Config";
 // TODO types
 
 const CreateOpening = async (openingName) => {
-  const { data } = await axios.post(`/openings`, openingName);
+  const { data } = await axios.post(`/openings`, { openingName });
   return data;
 };
 

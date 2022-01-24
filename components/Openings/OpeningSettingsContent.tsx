@@ -50,7 +50,7 @@ export default function OpeningSettingsContent() {
 
   return (
     <>
-      <OpeningModal updateOpening={updateOpening} />
+      {/* <OpeningModal updateOpening={updateOpening} /> */}
 
       {/* 3 column wrapper */}
       <div className="flex-grow w-full max-w-7xl mx-auto xl:px-8 lg:flex">
@@ -59,7 +59,7 @@ export default function OpeningSettingsContent() {
           <div className="border-b border-gray-200 xl:border-b-0 xl:flex-shrink-0 xl:w-64 xl:border-r xl:border-gray-200 bg-white">
             <div className="h-full pl-4 pr-6 py-6 sm:pl-6 lg:pl-8 xl:pl-0">
               {/* Start left column area */}
-              <StageReorderColumn />
+              {/* <StageReorderColumn /> */}
               {/* End left column area */}
             </div>
           </div>
