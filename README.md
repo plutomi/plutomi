@@ -63,7 +63,7 @@ The API is your typical Express app running on Fargate. It has many of the advan
 
 There is a state machine that triggers on certain events such as a new `LOGIN_EVENT` or a `LOGIN_LINK` request. We let the state machine decide the path to take instead of having multiple EB rules and multiple state machines. We can then eliminate the myriad of queues and lambda functions polling said queues with the direct SDK calls Step Functions provides.
 
-We also try to avoid the [async try/catch twoer of terror](https://www.youtube.com/watch?v=ITogH7lJTyE) by implementing the pattern shown in the video:
+We also try to avoid the [async try/catch tower of terror](https://www.youtube.com/watch?v=ITogH7lJTyE) by implementing the pattern shown in the video:
 
 ```javascript
 const [user, error] = await Users.GetUserById({ userId });
