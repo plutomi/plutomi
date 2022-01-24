@@ -60,12 +60,12 @@ const useStore = create((set) => ({
     isModalOpen: false, // False by default
     modalMode: "CREATE", // Will render text differently
     openingId: "",
-    GSI1SK: "",
-    isPublic: false,
+    openingName: "",
+    GSI1SK: "PRIVATE",
   },
   setOpeningModal: (openingModal) => {
     set((state) => ({
-      openingModal: openingModal,
+      openingModal,
     }));
   },
 

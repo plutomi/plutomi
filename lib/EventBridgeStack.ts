@@ -1,11 +1,11 @@
 import * as dotenv from "dotenv";
 import * as cdk from "@aws-cdk/core";
-import * as events from "@aws-cdk/aws-events";
-import * as sfn from "@aws-cdk/aws-stepfunctions";
-import * as targets from "@aws-cdk/aws-events-targets";
 import { ENTITY_TYPES } from "../Config";
+import { EventBus, Rule } from "@aws-cdk/aws-events";
+import { StateMachine } from "@aws-cdk/aws-stepfunctions";
+import { SfnStateMachine } from "@aws-cdk/aws-events-targets";
 const resultDotEnv = dotenv.config({
-  path: __dirname + `../../.env.${process.env.NODE_ENV}`,
+  path: `${process.cwd()}/.env.${process.env.NODE_ENV}`,
 });
 
 if (resultDotEnv.error) {
@@ -13,7 +13,7 @@ if (resultDotEnv.error) {
 }
 
 interface EventBridgeStackProps extends cdk.StackProps {
-  CommsMachine: sfn.StateMachine;
+  CommsMachine: StateMachine;
 }
 export default class EventBridgeStack extends cdk.Stack {
   /**
@@ -25,11 +25,19 @@ export default class EventBridgeStack extends cdk.Stack {
   constructor(scope: cdk.App, id: string, props: EventBridgeStackProps) {
     super(scope, id, props);
 
+    // Note, if we ever use AWS events directly, they will go to the default event bus and not this one.
+    // This is for easy dev / prod testing
+    const bus = new EventBus(this, `${process.env.NODE_ENV}-EventBus`, {
+      eventBusName: `${process.env.NODE_ENV}-EventBus`,
+    });
+
     // We want to send all communication events to the step function, we can handle routing there
-    new events.Rule(this, "NewUserRule", {
-      description: "A new user has been signed up and verified their email",
-      ruleName: "NewUserRule",
-      targets: [new targets.SfnStateMachine(props.CommsMachine)],
+    new Rule(this, "NeedsCommsRule", {
+      eventBus: bus,
+      description:
+        "Rule that checks if an action needs further comms such as login links or welcome emails. Forwards to the `CommsMachine` step function.",
+      ruleName: "NeedsCommsRule",
+      targets: [new SfnStateMachine(props.CommsMachine)],
       eventPattern: {
         source: ["dynamodb.streams"],
         detail: {

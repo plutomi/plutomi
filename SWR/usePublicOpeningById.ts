@@ -1,15 +1,16 @@
-import axios from "../utils/axios";
 import useSWR from "swr";
-import PublicInfoService from "../adapters/PublicInfoService";
-const fetcher = (url: string) => axios.get(url).then((res) => res.data);
-
-export default function usePublicOpeningById(orgId: string, openingId: string) {
-  const shouldFetch = orgId && openingId ? true : false;
+import { SWRFetcher } from "../Config";
+import { GetPublicOpeningInfoURL } from "../adapters/PublicInfo";
+export default function usePublicOpeningById(
+  orgId?: string,
+  openingId?: string
+) {
+  const shouldFetch = orgId && openingId;
 
   const { data, error } = useSWR(
-    shouldFetch && PublicInfoService.getPublicOpeningURL(orgId, openingId),
+    shouldFetch && GetPublicOpeningInfoURL(orgId, openingId),
 
-    fetcher
+    SWRFetcher
   );
 
   return {

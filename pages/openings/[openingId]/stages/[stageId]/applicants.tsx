@@ -10,7 +10,7 @@ import useAllStagesInOpening from "../../../../../SWR/useAllStagesInOpening";
 import ApplicantList from "../../../../../components/Applicants/ApplicantList";
 import ApplicantProfileModal from "../../../../../components/Applicants/ApplicantProfileModal";
 import NewPage from "../../../../../components/Templates/NewPage";
-import useOpeningById from "../../../../../SWR/useOpeningById";
+import useOpeningInfo from "../../../../../SWR/useOpeningInfo";
 import NumberFormat from "react-number-format";
 import { CUSTOM_QUERY } from "../../../../../types/main";
 export default function StageApplicants() {
@@ -19,7 +19,7 @@ export default function StageApplicants() {
     CUSTOM_QUERY,
     "openingId" | "stageId"
   >;
-  let { opening, isOpeningLoading, isOpeningError } = useOpeningById(openingId);
+  let { opening, isOpeningLoading, isOpeningError } = useOpeningInfo(openingId);
 
   const { stages, isStagesLoading, isStagesError } = useAllStagesInOpening(
     opening?.openingId
@@ -57,7 +57,7 @@ export default function StageApplicants() {
           "Applicants"
         ) : (
           <span>
-            {opening.GSI1SK} - Applicants (
+            {opening?.openingName} - Applicants (
             <NumberFormat
               value={opening.totalApplicants}
               thousandSeparator={true}

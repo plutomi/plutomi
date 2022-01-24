@@ -1,14 +1,9 @@
 import * as cdk from "@aws-cdk/core";
 import * as dotenv from "dotenv";
 import * as dynamodb from "@aws-cdk/aws-dynamodb";
-import * as lambda from "@aws-cdk/aws-lambda";
-import * as path from "path";
-import * as lambdaEventSources from "@aws-cdk/aws-lambda-event-sources";
-import { NodejsFunction } from "@aws-cdk/aws-lambda-nodejs";
-import * as events from "@aws-cdk/aws-events";
 
 const resultDotEnv = dotenv.config({
-  path: __dirname + `../../.env.${process.env.NODE_ENV}`,
+  path: `${process.cwd()}/.env.${process.env.NODE_ENV}`,
 });
 
 if (resultDotEnv.error) {
@@ -25,7 +20,7 @@ export default class DynamoDBStack extends cdk.Stack {
 
     const TABLE_NAME: string = process.env.DYNAMO_TABLE_NAME;
     this.table = new dynamodb.Table(this, "plutomi-dynamo-table", {
-      tableName: TABLE_NAME,
+      tableName: `${process.env.NODE_ENV}-${TABLE_NAME}`,
       partitionKey: { name: "PK", type: dynamodb.AttributeType.STRING },
       sortKey: { name: "SK", type: dynamodb.AttributeType.STRING },
       timeToLiveAttribute: "ttlExpiry",

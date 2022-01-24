@@ -1,12 +1,19 @@
 import * as dotenv from "dotenv";
-import * as dynamodb from "@aws-cdk/aws-dynamodb";
 import * as cdk from "@aws-cdk/core";
 import * as sfn from "@aws-cdk/aws-stepfunctions";
 import * as tasks from "@aws-cdk/aws-stepfunctions-tasks";
-import * as logs from "@aws-cdk/aws-logs";
-import { EMAILS, ENTITY_TYPES, LOGIN_METHODS } from "../Config";
+import { LogGroup } from "@aws-cdk/aws-logs";
+import { Table } from "@aws-cdk/aws-dynamodb";
+import {
+  EMAILS,
+  ENTITY_TYPES,
+  API_URL,
+  DOMAIN_NAME,
+  WEBSITE_URL,
+} from "../Config";
+
 const resultDotEnv = dotenv.config({
-  path: __dirname + `../../.env.${process.env.NODE_ENV}`,
+  path: `${process.cwd()}/.env.${process.env.NODE_ENV}`,
 });
 
 if (resultDotEnv.error) {
@@ -14,7 +21,7 @@ if (resultDotEnv.error) {
 }
 
 interface CommsMachineProps extends cdk.StackProps {
-  table: dynamodb.Table;
+  table: Table;
 }
 
 export default class CommsMachineStack extends cdk.Stack {
@@ -58,9 +65,7 @@ export default class CommsMachineStack extends cdk.Stack {
       service: "ses",
       action: "sendEmail",
       iamResources: [
-        `arn:aws:ses:${cdk.Stack.of(this).region}:${
-          cdk.Stack.of(this).account
-        }:identity/${process.env.DOMAIN_NAME}`,
+        `arn:aws:ses:${this.region}:${this.account}:identity/${DOMAIN_NAME}`,
       ],
     };
 
@@ -121,8 +126,8 @@ export default class CommsMachineStack extends cdk.Stack {
           },
           Body: {
             Html: {
-              "Data.$": `States.Format('<h1>Click <a href="{}" noreferrer target="_blank" >this link</a> to log in!</h1><p>It will expire {} so you better hurry.</p><p>If you did not request this link you can safely ignore it and <a href="${process.env.API_URL}/unsubscribe/{}" noreferrer target="_blank" >unsubscribe</a>.</p>',
-              $.detail.NewImage.loginLinkUrl, $.detail.NewImage.relativeExpiry, $.detail.NewImage.user.unsubscribeHash)`,
+              "Data.$": `States.Format('<h1>Click <a href="{}" noreferrer target="_blank" >this link</a> to log in!</h1><p>It will expire {} so you better hurry.</p><p>If you did not request this link you can safely ignore it and <a href="${API_URL}/unsubscribe/{}" noreferrer target="_blank" >unsubscribe</a>.</p>',
+              $.detail.NewImage.loginLinkUrl, $.detail.NewImage.relativeExpiry, $.detail.NewImage.user.unsubscribeKey)`,
             },
           },
         },
@@ -147,7 +152,7 @@ export default class CommsMachineStack extends cdk.Stack {
             Body: {
               Html: {
                 // TODO add unsubscribe
-                "Data.$": `States.Format('<h1><a href="${process.env.WEBSITE_URL}/{}/applicants/{}" rel=noreferrer target="_blank" >Click this link to view your application!</a></h1><p>If you did not request this link, you can safely ignore it.</p>', 
+                "Data.$": `States.Format('<h1><a href="${WEBSITE_URL}/{}/applicants/{}" rel=noreferrer target="_blank" >Click this link to view your application!</a></h1><p>If you did not request this link, you can safely ignore it.</p>', 
                 $.detail.NewImage.orgId, $.detail.NewImage.applicantId)`,
               },
             },
@@ -172,7 +177,7 @@ export default class CommsMachineStack extends cdk.Stack {
           Body: {
             Html: {
               // TODO add unsubscribe
-              Data: `<h4>You can log in at <a href="${process.env.WEBSITE_URL}" target="_blank" rel=noreferrer>${process.env.WEBSITE_URL}</a> to accept their invite!</h4><p>If you believe this email was received in error, you can safely ignore it.</p>`,
+              Data: `<h4>You can log in at <a href="${WEBSITE_URL}" target="_blank" rel=noreferrer>${WEBSITE_URL}</a> to accept their invite!</h4><p>If you believe this email was received in error, you can safely ignore it.</p>`,
             },
           },
         },
@@ -202,13 +207,8 @@ export default class CommsMachineStack extends cdk.Stack {
           "$.detail.NewImage.entityType",
           ENTITY_TYPES.LOGIN_LINK
         ),
-        new sfn.Choice(this, "LoginMethodIsEmail?").when(
-          sfn.Condition.stringEquals(
-            "$.detail.NewImage.loginMethod",
-            LOGIN_METHODS.EMAIL
-          ),
-          sendLoginLink
-        )
+
+        sendLoginLink
       )
       .when(
         sfn.Condition.stringEquals(
@@ -224,10 +224,10 @@ export default class CommsMachineStack extends cdk.Stack {
         ),
         sendOrgInvite
       );
-    const log = new logs.LogGroup(this, "CommsMachineLogGroup");
+    const log = new LogGroup(this, "CommsMachineLogGroup");
 
     this.CommsMachine = new sfn.StateMachine(this, "CommsMachine", {
-      stateMachineName: "CommsMachine",
+      stateMachineName: `${process.env.NODE_ENV}-CommsMachine`,
       definition,
       timeout: cdk.Duration.minutes(5),
       stateMachineType: sfn.StateMachineType.EXPRESS,

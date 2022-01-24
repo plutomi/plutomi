@@ -5,13 +5,13 @@ import difference from "../../utils/getObjectDifference";
 import OpeningModal from "./OpeningModal";
 import Loader from "../Loader";
 import useStore from "../../utils/store";
-import useOpeningById from "../../SWR/useOpeningById";
-import OpeningsService from "../../adapters/OpeningsService";
+import useOpeningInfo from "../../SWR/useOpeningInfo";
+import { UpdateOpening, GetOpeningInfoURL } from "../../adapters/Openings";
 import { CUSTOM_QUERY } from "../../types/main";
 export default function OpeningSettingsContent() {
   const router = useRouter();
   const { openingId } = router.query as Pick<CUSTOM_QUERY, "openingId">;
-  let { opening, isOpeningLoading, isOpeningError } = useOpeningById(openingId);
+  let { opening, isOpeningLoading, isOpeningError } = useOpeningInfo(openingId);
 
   const openingModal = useStore((state) => state.openingModal);
   const setOpeningModal = useStore((state) => state.setOpeningModal);
@@ -32,7 +32,7 @@ export default function OpeningSettingsContent() {
 
       console.log("Outgoing body", diff);
 
-      const { message } = await OpeningsService.updateOpening(openingId, diff);
+      const { message } = await UpdateOpening(openingId, diff);
       alert(message);
       setOpeningModal({
         isModalOpen: false,
@@ -45,12 +45,12 @@ export default function OpeningSettingsContent() {
       alert(error.response.data.message);
     }
     // Refresh opening data
-    mutate(OpeningsService.getOpeningURL(openingId));
+    mutate(GetOpeningInfoURL(openingId));
   };
 
   return (
     <>
-      <OpeningModal updateOpening={updateOpening} />
+      {/* <OpeningModal updateOpening={updateOpening} /> */}
 
       {/* 3 column wrapper */}
       <div className="flex-grow w-full max-w-7xl mx-auto xl:px-8 lg:flex">
@@ -59,7 +59,7 @@ export default function OpeningSettingsContent() {
           <div className="border-b border-gray-200 xl:border-b-0 xl:flex-shrink-0 xl:w-64 xl:border-r xl:border-gray-200 bg-white">
             <div className="h-full pl-4 pr-6 py-6 sm:pl-6 lg:pl-8 xl:pl-0">
               {/* Start left column area */}
-              <StageReorderColumn />
+              {/* <StageReorderColumn /> */}
               {/* End left column area */}
             </div>
           </div>

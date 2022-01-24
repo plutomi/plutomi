@@ -1,9 +1,7 @@
-import AuthService from "../adapters/AuthService";
+import { RequestLoginLink } from "../adapters/Auth";
 import LoginEmail from "./EmailSigninInput";
-import GoogleLoginButton from "./GoogleLoginButton";
-import { useRouter } from "next/router";
 import { useState } from "react";
-import { DEFAULTS, LOGIN_METHODS } from "../Config";
+import { DEFAULTS } from "../Config";
 
 interface CallbackUrl {
   callbackUrl?: string;
@@ -28,10 +26,9 @@ export default function LoginHomepage({ callbackUrl }: CallbackUrl) {
     e.preventDefault();
 
     try {
-      const { message } = await AuthService.login(
+      const { message } = await RequestLoginLink(
         email,
-        callbackUrl,
-        LOGIN_METHODS.EMAIL
+        window.location.href + DEFAULTS.REDIRECT
       );
 
       setSubmittedText(message);
@@ -40,27 +37,6 @@ export default function LoginHomepage({ callbackUrl }: CallbackUrl) {
       console.log(error);
       alert(error.response.data.message);
     }
-  };
-
-  const successfulLogin = async (response) => {
-    console.log(response);
-    const email = response.profileObj.email;
-
-    const { message } = await AuthService.login(
-      // TODO trycatch
-      email,
-      process.env.NEXT_PUBLIC_WEBSITE_URL + DEFAULTS.REDIRECT,
-      LOGIN_METHODS.GOOGLE
-    );
-    window.location.replace(message);
-    return;
-  };
-
-  const failedLogin = (response) => {
-    console.log(response);
-    alert(
-      `An error ocurred logging you in, please try again or log in through the magic links`
-    );
   };
 
   return (
@@ -72,13 +48,6 @@ export default function LoginHomepage({ callbackUrl }: CallbackUrl) {
         </div>
       ) : (
         <div className="space-y-2">
-          <GoogleLoginButton
-            successfulLogin={successfulLogin}
-            failedLogin={failedLogin}
-          />
-          <p className=" text-lg text-red text-center sm:max-w-8xl max-w-sm">
-            OR
-          </p>{" "}
           <LoginEmail
             onChange={handleEmailChange}
             email={email}
@@ -86,7 +55,7 @@ export default function LoginHomepage({ callbackUrl }: CallbackUrl) {
             sendEmail={sendEmail}
           />{" "}
           <p className=" text-lg text-normal text-center sm:max-w-8xl max-w-sm">
-            We can email you a magic link for a password-free log in.
+            We will email you a magic link for a password-free log in.
           </p>
         </div>
       )}

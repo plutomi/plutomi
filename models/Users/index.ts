@@ -1,17 +1,19 @@
-import getInvites from "./getInvitesForUser";
-import create from "./createUser";
-import getByEmail from "./getUserByEmail";
-import getById from "./getUserById";
-import update from "./updateUser";
-import createLink from "./createLoginLink";
-import latestLink from "./getLatestLoginLink";
-import loginEvent from "./createLoginEvent";
+import GetInvitesForUser from "./get-invites-for-user";
+import CreateUser from "./create-user";
+import GetUserByEmail from "./get-user-by-email";
+import GetUserById from "./get-user-by-id";
+import UpdateUser from "./update-user";
+import CreateLoginLink from "./create-login-links";
+import GetUsersLatestLoginLink from "./get-users-latest-login-link";
+import CreateLoginEvent from "./create-login-event";
 
-export const getInvitesForUser = getInvites;
-export const createUser = create;
-export const getUserByEmail = getByEmail;
-export const getUserById = getById;
-export const updateUser = update;
-export const createLoginLink = createLink;
-export const getLatestLoginLink = latestLink;
-export const createLoginEventAndDeleteLoginLink = loginEvent;
+export {
+  GetInvitesForUser,
+  CreateUser,
+  GetUserByEmail,
+  GetUserById,
+  UpdateUser,
+  CreateLoginEvent,
+  CreateLoginLink,
+  GetUsersLatestLoginLink,
+};

@@ -1,7 +1,7 @@
 import { Fragment } from "react";
 import useSelf from "../../SWR/useSelf";
 import NavbarSearch from "./NavbarSearch";
-import AuthService from "../../adapters/AuthService";
+import { Logout } from "../../adapters/Auth";
 import { Disclosure, Menu, Transition } from "@headlessui/react";
 import { NAVBAR_NAVIGATION, DROPDOWN_NAVIGATION } from "../../Config";
 import { useRouter } from "next/router";
@@ -15,7 +15,7 @@ import Link from "next/dist/client/link";
 import Banner from "../BannerTop";
 import { mutate } from "swr";
 import { DEFAULTS } from "../../Config";
-import UsersService from "../../adapters/UsersService";
+import { GetSelfInfoURL } from "../../adapters/Users";
 
 function classNames(...classes) {
   return classes.filter(Boolean).join(" ");
@@ -26,14 +26,14 @@ export default function SignedInNav({ current }) {
 
   const handleLogout = async () => {
     try {
-      const { message } = await AuthService.logout();
+      const { message } = await Logout();
       alert(message);
       // TODO reroute to homepage
     } catch (error) {
       alert(error.response.message);
     }
 
-    mutate(UsersService.getSelfURL()); // Refresh login state - shows login page
+    mutate(GetSelfInfoURL()); // Refresh login state - shows login page
   };
 
   return (
@@ -143,13 +143,6 @@ export default function SignedInNav({ current }) {
                             "Loading user info..."
                           ) : (
                             <>
-                              {!user?.GSI1SK.includes(DEFAULTS.FIRST_NAME) || // TODO this is gross
-                                (!user?.GSI1SK.includes(DEFAULTS.LAST_NAME) && (
-                                  <div className="   text-dark ">
-                                    Signed in as ${user?.GSI1SK}
-                                  </div>
-                                ))}
-
                               <div className=" text-light">
                                 Logged in as {user?.email}
                               </div>
@@ -248,7 +241,7 @@ export default function SignedInNav({ current }) {
                     <>
                       <div className="ml-3">
                         <div className="text-base font-medium text-gray-800">
-                          {user?.GSI1SK}
+                          {user?.firstName} {user?.lastname}
                         </div>
                         <div className="text-md font-medium text-normal">
                           {user?.email}

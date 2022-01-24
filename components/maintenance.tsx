@@ -1,9 +1,4 @@
-/* This example requires Tailwind CSS v2.0+ */
-import {
-  CheckCircleIcon,
-  ChevronRightIcon,
-  MailIcon,
-} from "@heroicons/react/solid";
+import { ChevronRightIcon, MailIcon } from "@heroicons/react/solid";
 
 import * as Time from "../utils/time";
 const commits = [

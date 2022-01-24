@@ -1,13 +1,17 @@
 #!/usr/bin/env node
-import * as cdk from "@aws-cdk/core";
 import "source-map-support";
-import DynamoDBStack from "../lib/DynamoDBStack";
+import * as cdk from "@aws-cdk/core";
 import APIStack from "../lib/APIStack";
+import DynamoDBStack from "../lib/DynamoDBStack";
 import FrontendStack from "../lib/FrontendStack";
-import StreamProcessorStack from "../lib/StreamProcessorStack";
-import CommsMachineStack from "../lib/commsMachineStack";
 import EventBridgeStack from "../lib/EventBridgeStack";
+import CommsMachineStack from "../lib/commsMachineStack";
+import StreamProcessorStack from "../lib/StreamProcessorStack";
 import { Builder } from "@sls-next/lambda-at-edge";
+import { nanoid } from "nanoid";
+import { NodejsFunctionProps } from "@aws-cdk/aws-lambda-nodejs";
+import { Architecture, Runtime } from "@aws-cdk/aws-lambda";
+import { RetentionDays } from "@aws-cdk/aws-logs";
 
 // Run the serverless builder before deploying
 const builder = new Builder(".", "./build", { args: ["build"] });
@@ -16,21 +20,36 @@ builder
   .build()
   .then(() => {
     const app = new cdk.App();
-    const { table } = new DynamoDBStack(app, "DynamoDBStack");
-    new StreamProcessorStack(app, `StreamProcessorStack`, {
-      table,
-    });
-    new APIStack(app, "APIStack", {
+    const { table } = new DynamoDBStack(
+      app,
+      `${process.env.NODE_ENV}-DynamoDBStack`
+    );
+
+    new APIStack(app, `${process.env.NODE_ENV}-APIStack`, {
       table,
     });
 
-    const { CommsMachine } = new CommsMachineStack(app, `CommsMachineStack`, {
-      table,
-    });
+    const { CommsMachine } = new CommsMachineStack(
+      app,
+      `${process.env.NODE_ENV}-CommsMachineStack`,
+      {
+        table,
+      }
+    );
 
-    new EventBridgeStack(app, `EventBridgeStack`, {
+    new EventBridgeStack(app, `${process.env.NODE_ENV}-EventBridgeStack`, {
       CommsMachine,
     });
+
+    new StreamProcessorStack(
+      app,
+      `${process.env.NODE_ENV}-StreamProcessorStack`,
+      {
+        table,
+      }
+    );
+
+    // Run FE locally, no need to deploy
     new FrontendStack(app, `FrontendStack`);
   })
   .catch((e) => {

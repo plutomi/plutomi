@@ -1,8 +1,7 @@
 import { mutate } from "swr";
 import Loader from "../Loader";
-import useSelf from "../../SWR/useSelf";
 import { useState } from "react";
-import OpeningsService from "../../adapters/OpeningsService";
+import { CreateOpening, GetAllOpeningsInOrgURL } from "../../adapters/Openings";
 import OpeningList from "./OpeningsList";
 import { PlusIcon } from "@heroicons/react/outline";
 import useStore from "../../utils/store";
@@ -30,9 +29,7 @@ export default function OpeningsContent() {
 
   const createOpening = async () => {
     try {
-      const { message } = await OpeningsService.createOpening(
-        openingModal.GSI1SK
-      );
+      const { message } = await CreateOpening(openingModal.openingName);
 
       alert(message);
 
@@ -48,7 +45,7 @@ export default function OpeningsContent() {
       alert(error.response.data.message);
     }
 
-    mutate(OpeningsService.getAllOpeningsURL()); // Get all openings
+    mutate(GetAllOpeningsInOrgURL());
   };
 
   return (
@@ -75,7 +72,7 @@ export default function OpeningsContent() {
                 modalMode: "CREATE",
                 isPublic: false,
                 openingId: "",
-                GSI1SK: "",
+                openingName: "",
               })
             }
             type="button"

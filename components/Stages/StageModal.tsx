@@ -1,4 +1,4 @@
-import { FormEvent, Fragment, useState } from "react";
+import { FormEvent, Fragment } from "react";
 import { Dialog, Transition } from "@headlessui/react";
 import { XIcon } from "@heroicons/react/outline";
 import useStore from "../../utils/store";

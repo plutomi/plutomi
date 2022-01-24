@@ -1,11 +1,9 @@
-import useSelf from "../../SWR/useSelf";
 import { PlusIcon, TrashIcon } from "@heroicons/react/outline";
 import useStore from "../../utils/store";
-import useOpeningById from "../../SWR/useOpeningById";
 import Breadcrumbs from "../Breadcrumbs";
 import { useRouter } from "next/router";
 import { PencilAltIcon } from "@heroicons/react/outline";
-import useStageById from "../../SWR/useStageById";
+import useStageInfo from "../../SWR/useStageInfo";
 import * as Time from "../../utils/time";
 import { CUSTOM_QUERY } from "../../types/main";
 export default function StageSettingsHeader({ deleteStage }) {
@@ -15,7 +13,10 @@ export default function StageSettingsHeader({ deleteStage }) {
     "openingId" | "stageId"
   >;
 
-  const { stage, isStageLoading, isStageError } = useStageById(stageId);
+  const { stage, isStageLoading, isStageError } = useStageInfo(
+    openingId,
+    stageId
+  );
 
   const setQuestionModal = useStore((state) => state.setQuestionModal);
 
@@ -60,7 +61,7 @@ export default function StageSettingsHeader({ deleteStage }) {
   const crumbs = [
     {
       name: "Applicants",
-      href: `/openings/${openingId}/stages/${stageId}/applicants`, 
+      href: `/openings/${openingId}/stages/${stageId}/applicants`,
       current: false,
     },
     {

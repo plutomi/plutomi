@@ -1,35 +1,38 @@
 import * as dotenv from "dotenv";
+import * as cf from "@aws-cdk/aws-cloudfront";
+import * as waf from "@aws-cdk/aws-wafv2";
 import * as cdk from "@aws-cdk/core";
-import * as ec2 from "@aws-cdk/aws-ec2";
-import * as ecsPatterns from "@aws-cdk/aws-ecs-patterns";
-import * as route53 from "@aws-cdk/aws-route53";
-import * as protocol from "@aws-cdk/aws-elasticloadbalancingv2";
-import * as dynamodb from "@aws-cdk/aws-dynamodb";
 import * as iam from "@aws-cdk/aws-iam";
 import * as ecs from "@aws-cdk/aws-ecs";
+import * as protocol from "@aws-cdk/aws-elasticloadbalancingv2";
+import * as ec2 from "@aws-cdk/aws-ec2";
+import * as route53 from "@aws-cdk/aws-route53";
+import * as ecsPatterns from "@aws-cdk/aws-ecs-patterns";
+import * as origins from "@aws-cdk/aws-cloudfront-origins";
+import { Table } from "@aws-cdk/aws-dynamodb";
+import { Certificate } from "@aws-cdk/aws-certificatemanager";
+import { ARecord, RecordTarget } from "@aws-cdk/aws-route53";
+import { CloudFrontTarget } from "@aws-cdk/aws-route53-targets";
+import { API_DOMAIN, DOMAIN_NAME, EXPRESS_PORT } from "../Config";
+import { Policy, PolicyStatement } from "@aws-cdk/aws-iam";
+import { DynamoActions } from "../types/main";
 const resultDotEnv = dotenv.config({
-  path: __dirname + `../../.env.${process.env.NODE_ENV}`,
+  path: `${process.cwd()}/.env.${process.env.NODE_ENV}`,
 });
 
 if (resultDotEnv.error) {
   throw resultDotEnv.error;
 }
 
-interface APIStackProps extends cdk.StackProps {
-  table: dynamodb.Table;
+interface APIStackServiceProps extends cdk.StackProps {
+  table: Table;
 }
+
 export default class APIStack extends cdk.Stack {
-  /**
-   *
-   * @param {cdk.Construct} scope
-   * @param {string} id
-   * @param {cdk.StackProps=} props
-   */
-  constructor(scope: cdk.App, id: string, props: APIStackProps) {
+  constructor(scope: cdk.Construct, id: string, props?: APIStackServiceProps) {
     super(scope, id, props);
 
     const HOSTED_ZONE_ID: string = process.env.HOSTED_ZONE_ID;
-    const SES_DOMAIN = process.env.DOMAIN_NAME;
 
     // IAM inline role - the service principal is required
     const taskRole = new iam.Role(this, "plutomi-api-fargate-role", {
@@ -37,19 +40,45 @@ export default class APIStack extends cdk.Stack {
     });
 
     // Allows Fargate to access DynamoDB
-    props.table.grantReadWriteData(taskRole);
 
+    const actions: DynamoActions[] = [
+      "dynamodb:GetItem",
+      "dynamodb:DeleteItem",
+      "dynamodb:PutItem",
+      "dynamodb:Query",
+      "dynamodb:UpdateItem",
+    ];
 
+    const baseTable = `arn:aws:dynamodb:${cdk.Stack.of(this).region}:${
+      cdk.Stack.of(this).account
+    }:table/${props.table.tableName}`;
+
+    const GSI1 = `${baseTable}/index/GSI1`;
+    const GSI2 = `${baseTable}/index/GSI2`;
+    const resources = [baseTable, GSI1, GSI2];
+
+    const policyStatement = new PolicyStatement({
+      actions,
+      resources,
+    });
+
+    const policy = new Policy(
+      this,
+      `${process.env.NODE_ENV}-plutomi-api-policy`,
+      {
+        statements: [policyStatement],
+      }
+    );
+    taskRole.attachInlinePolicy(policy);
     // Define a fargate task with the newly created execution and task roles
     const taskDefinition = new ecs.FargateTaskDefinition(
       this,
       "plutomi-api-fargate-task-definition",
       {
-        taskRole: taskRole, // Send email, dynamo, etc.
-        // TODO ^ Edit above when email is decoupled
-        executionRole: taskRole, // TODO I think this one is just for pulling ECR
-        cpu: 256, // Default is 256
-        memoryLimitMiB: 512, // Default is 512
+        taskRole,
+        executionRole: taskRole,
+        cpu: 256,
+        memoryLimitMiB: 512,
       }
     );
 
@@ -65,19 +94,20 @@ export default class APIStack extends cdk.Stack {
     );
 
     container.addPortMappings({
-      containerPort: parseInt(process.env.EXPRESS_PORT) || 4000,
+      containerPort: EXPRESS_PORT || 4000,
       protocol: ecs.Protocol.TCP,
     });
 
-    // Create a VPC with 2 AZ's (2 is minimum)
+    // Create a VPC
     const vpc = new ec2.Vpc(this, "plutomi-api-fargate-vpc", {
-      maxAzs: 2,
-      natGateways: 0, // Very pricy!
+      maxAzs: 3,
+      natGateways: 0, // Very pricy! https://www.lastweekinaws.com/blog/the-aws-managed-nat-gateway-is-unpleasant-and-not-recommended/
     });
 
     // Create the cluster
     const cluster = new ecs.Cluster(this, "plutomi-api-fargate-cluster", {
       vpc,
+      containerInsights: true,
     });
 
     // Get a reference to AN EXISTING hosted zone
@@ -86,8 +116,15 @@ export default class APIStack extends cdk.Stack {
       "plutomi-hosted-zone",
       {
         hostedZoneId: HOSTED_ZONE_ID,
-        zoneName: process.env.DOMAIN_NAME,
+        zoneName: DOMAIN_NAME,
       }
+    );
+
+    // Retrieves the certificate that we are using for our domain
+    const apiCert = Certificate.fromCertificateArn(
+      this,
+      `CertificateArn`,
+      `arn:aws:acm:${this.region}:${this.account}:certificate/${process.env.ACM_CERTIFICATE_ID}`
     );
 
     // Create a load-balanced Fargate service and make it public with HTTPS traffic only
@@ -96,11 +133,12 @@ export default class APIStack extends cdk.Stack {
         this,
         "PlutomiApi",
         {
-          cluster: cluster, // Required
-          taskDefinition: taskDefinition,
-          publicLoadBalancer: true, // Default is false
-          domainName: process.env.API_DOMAIN_NAME,
-          domainZone: hostedZone,
+          cluster, // Required
+          certificate: apiCert,
+          taskDefinition,
+
+          // domainName: API_DOMAIN,
+          // domainZone: hostedZone,
           listenerPort: 443,
           protocol: protocol.ApplicationProtocol.HTTPS,
           redirectHTTP: true,
@@ -123,7 +161,7 @@ export default class APIStack extends cdk.Stack {
     // Healthcheck thresholds
     loadBalancedFargateService.targetGroup.configureHealthCheck({
       interval: cdk.Duration.seconds(5),
-      healthyHttpCodes: "200",
+      healthyHttpCodes: "200", // Why the fuck is this a string?
       healthyThresholdCount: 2,
       unhealthyThresholdCount: 3,
       timeout: cdk.Duration.seconds(4),
@@ -132,8 +170,8 @@ export default class APIStack extends cdk.Stack {
     // Auto scaling
     const scalableTarget =
       loadBalancedFargateService.service.autoScaleTaskCount({
-        minCapacity: 1,
-        maxCapacity: 1,
+        minCapacity: 2,
+        maxCapacity: 6,
       });
 
     scalableTarget.scaleOnCpuUtilization("CpuScaling", {
@@ -141,7 +179,143 @@ export default class APIStack extends cdk.Stack {
     });
 
     scalableTarget.scaleOnMemoryUtilization("MemoryScaling", {
-      targetUtilizationPercent: 50,
+      targetUtilizationPercent: 30,
+    });
+
+    // Create the WAF & its rules
+    const API_WAF = new waf.CfnWebACL(this, `${process.env.NODE_ENV}-API-WAF`, {
+      name: `${process.env.NODE_ENV}-API-WAF`,
+
+      description: "Blocks IPs that make too many requests",
+      defaultAction: {
+        allow: {},
+      },
+      scope: "CLOUDFRONT",
+      visibilityConfig: {
+        cloudWatchMetricsEnabled: true,
+        metricName: "cloudfront-ipset-waf",
+        sampledRequestsEnabled: true,
+      },
+      rules: [
+        {
+          name: `too-many-requests-rule`,
+          priority: 0,
+          statement: {
+            rateBasedStatement: {
+              limit: 1000, // In a 5 minute period
+              aggregateKeyType: "IP",
+            },
+          },
+          action: {
+            block: {
+              customResponse: {
+                responseCode: 429,
+              },
+            },
+          },
+          visibilityConfig: {
+            sampledRequestsEnabled: true,
+            cloudWatchMetricsEnabled: true,
+            metricName: `${process.env.NODE_ENV}-WAF-BLOCKED-IPs`,
+          },
+        },
+        // { // TODO this is blocking postman requests :/
+        //   name: "AWS-AWSManagedRulesBotControlRuleSet",
+        //   priority: 1,
+        //   statement: {
+        //     managedRuleGroupStatement: {
+        //       vendorName: "AWS",
+        //       name: "AWSManagedRulesBotControlRuleSet",
+        //     },
+        //   },
+        //   overrideAction: {
+        //     none: {},
+        //   },
+        //   visibilityConfig: {
+        //     sampledRequestsEnabled: false,
+        //     cloudWatchMetricsEnabled: true,
+        //     metricName: "AWS-AWSManagedRulesBotControlRuleSet",
+        //   },
+        // },
+        {
+          name: "AWS-AWSManagedRulesAmazonIpReputationList",
+          priority: 2,
+          statement: {
+            managedRuleGroupStatement: {
+              vendorName: "AWS",
+              name: "AWSManagedRulesAmazonIpReputationList",
+            },
+          },
+          overrideAction: {
+            none: {},
+          },
+          visibilityConfig: {
+            sampledRequestsEnabled: false,
+            cloudWatchMetricsEnabled: true,
+            metricName: "AWS-AWSManagedRulesAmazonIpReputationList",
+          },
+        },
+        // {
+        //   // TODO this rule breaks login links, see https://github.com/plutomi/plutomi/issues/510
+        //   name: "AWS-AWSManagedRulesCommonRuleSet",
+        //   priority: 3,
+        //   statement: {
+        //     managedRuleGroupStatement: {
+        //       vendorName: "AWS",
+        //       name: "AWSManagedRulesCommonRuleSet",
+        //     },
+        //   },
+        //   overrideAction: {
+        //     none: {},
+        //   },
+        //   visibilityConfig: {
+        //     sampledRequestsEnabled: false,
+        //     cloudWatchMetricsEnabled: true,
+        //     metricName: "AWS-AWSManagedRulesCommonRuleSet",
+        //   },
+        // },
+      ],
+    });
+
+    // No caching! We're using Cloudfront for its global network and WAF
+    const cachePolicy = new cf.CachePolicy(
+      this,
+      `${process.env.NODE_ENV}-Cache-Policy`,
+      {
+        defaultTtl: cdk.Duration.seconds(0),
+        minTtl: cdk.Duration.seconds(0),
+        maxTtl: cdk.Duration.seconds(0),
+      }
+    );
+    const distribution = new cf.Distribution(
+      this,
+      `${process.env.NODE_ENV}-CF-API-Distribution`,
+      {
+        certificate: apiCert,
+        webAclId: API_WAF.attrArn,
+        domainNames: [API_DOMAIN],
+        defaultBehavior: {
+          origin: new origins.LoadBalancerV2Origin(
+            loadBalancedFargateService.loadBalancer
+          ),
+
+          // Must be enabled!
+          // https://www.reddit.com/r/aws/comments/rhckdm/comment/hoqrjmm/?utm_source=share&utm_medium=web2x&context=3
+          originRequestPolicy: cf.OriginRequestPolicy.ALL_VIEWER,
+          cachePolicy,
+          allowedMethods: cf.AllowedMethods.ALLOW_ALL,
+        },
+        // additionalBehaviors: {
+        // TODO add /public caching behaviors here
+        // },
+      }
+    );
+
+    //  Creates an A record that points our API domain to Cloudfront
+    new ARecord(this, `APIAlias`, {
+      zone: hostedZone,
+      recordName: "api",
+      target: RecordTarget.fromAlias(new CloudFrontTarget(distribution)),
     });
   }
 }

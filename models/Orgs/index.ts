@@ -1,8 +1,12 @@
-import get from "./getOrgById";
-import createAndJoin from "./createAndJoinOrg";
-import getUsers from "./getUsersInOrg";
-import getOpenings from "./getOpeningsInOrg";
-export const getOrgById = get;
-export const createAndJoinOrg = createAndJoin;
-export const getUsersInOrg = getUsers;
-export const getOpeningsInOrg = getOpenings;
+import GetOrgById from "./get-org-by-id";
+import CreateAndJoinOrg from "./create-and-join-org";
+import GetUsersInOrg from "./get-users-in-org";
+import LeaveAndDeleteOrg from "./leave-and-delete-org";
+import GetInvitesForOrg from "./get-invites-in-org";
+export {
+  GetOrgById,
+  CreateAndJoinOrg,
+  GetUsersInOrg,
+  LeaveAndDeleteOrg,
+  GetInvitesForOrg,
+};

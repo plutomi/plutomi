@@ -1,9 +1,8 @@
-import axios from "../utils/axios";
 import useSWR from "swr";
-import UsersService from "../adapters/UsersService";
-const fetcher = (url: string) => axios.get(url).then((res) => res.data);
+import { SWRFetcher } from "../Config";
+import { GetSelfInfoURL } from "../adapters/Users";
 export default function useSelf() {
-  const { data, error } = useSWR(UsersService.getSelfURL(), fetcher, {
+  const { data, error } = useSWR(GetSelfInfoURL(), SWRFetcher, {
     shouldRetryOnError: false,
   });
   return {

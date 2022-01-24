@@ -1,12 +1,11 @@
 // This file is for the actual DynamoDB entries and their Types - ie: A full object with all properties.
 // All  other types are derivatives with Pick, Omit, etc.
-import { UserSessionData } from "./main";
 import { DEFAULTS, ENTITY_TYPES } from "../Config";
 interface DynamoNewStage {
   /**
-   * Primary key for creating a stage - takes `orgId` and `stageId`
+   * Primary key for creating a stage - takes `orgId`, `openingId`, & `stageId`
    */
-  PK: `${ENTITY_TYPES.ORG}#${string}#${ENTITY_TYPES.STAGE}#${string}`;
+  PK: `${ENTITY_TYPES.ORG}#${string}#${ENTITY_TYPES.OPENING}#${string}${ENTITY_TYPES.STAGE}#${string}`;
   /**
    * Sort key for a stage, it's just the {@link ENTITY_TYPES.STAGE}
    */
@@ -23,10 +22,7 @@ interface DynamoNewStage {
    * The org this stage belongs to
    */
   orgId: string;
-  /**
-   * The order of the questions for the stage
-   */
-  questionOrder: string[];
+
   /**
    * The Id for the stage
    */
@@ -40,7 +36,7 @@ interface DynamoNewStage {
    */
   openingId: string;
   /**
-   * The primary key to get all stages in an opening. Requires `orgId` and `openingId`
+   * The index key to get all stages in an opening. Requires `orgId` and `openingId`
    */
   GSI1PK: `${ENTITY_TYPES.ORG}#${string}#${ENTITY_TYPES.OPENING}#${string}#${ENTITY_TYPES.STAGE}S`;
   /**
@@ -117,17 +113,15 @@ interface DynamoNewApplicant {
    *
    * */
   lastName: string;
-  /**
-   * Full name of the applicant. Concatenated `firstName` and `lastName`
-   * @default - {@link DEFAULTS.FULL_NAME}
-   */
-  fullName: `${string} ${string}`;
 
+  /**
+   * If an applicant has unsubscribed from emails
+   */
   canReceiveEmails: boolean;
   /**
    * If the applicant's email has been verified (clicked on the application link sent to their email // TODO maybe answered questions on one stage?)
    */
-  isemailVerified: boolean;
+  isEmailVerified: boolean;
   /**
    * The org this applicant belongs to
    */
@@ -157,12 +151,19 @@ interface DynamoNewApplicant {
    * Which `stage` this applicant should be created in
    */
   stageId: string;
-  // The reason for the below is so we can get applicants in an org, in an opening, or in a specific stage just by the ID of each.
-  // Before we had `OPENING#${openingId}#STAGE#{stageId}` for the SK which required the opening when getting applicants in specific stage
-  // TODO recheck later if this is still good
-
-  unsubscribeHash: string;
+  /**
+   * The key to unsubscribe this applicant from emails -
+   * TODO when adding login portal (one applicant, many applications across orgs)
+   * this can be set at the applicant level
+   */
+  unsubscribeKey: string;
+  /**
+   * The current opening and stage the applicant is in
+   */
   GSI1PK: `${ENTITY_TYPES.ORG}#${string}#${ENTITY_TYPES.OPENING}#${string}#${ENTITY_TYPES.STAGE}#${string}`;
+  /**
+   * The date the applicant landed on this stage - ISO timestamp
+   */
   GSI1SK: `DATE_LANDED#${string}`;
 }
 
@@ -241,17 +242,26 @@ interface DynamoNewOpening {
    */
   createdAt: string;
   /**
+   *
+   */
+  stageOrder: string[];
+  /**
    * The ID of the opening
    */
   openingId: string;
+
+  /**
+   * The opening name
+   */
+  openingName: string;
   /**
    * GSIPK to retrieve all openings in an org. Takes an `orgId`
    */
   GSI1PK: `${ENTITY_TYPES.ORG}#${string}#${ENTITY_TYPES.OPENING}S`;
   /**
-   * The opening name
+   * Optional, can filter out PUBLIC or PRIVATE openings
    */
-  GSI1SK: string;
+  GSI1SK: "PUBLIC" | "PRIVATE";
   /**
    * Total stages in opening.
    * @default 0
@@ -262,16 +272,7 @@ interface DynamoNewOpening {
    *  Total applicants in opening.
    * @default 0
    */
-
   totalApplicants: number;
-  /**
-   * If the opening should be public
-   */
-  isPublic: boolean;
-  /**
-   * An array of `stageId`s, and the order they should be shown in
-   */
-  stageOrder: string[];
 }
 
 interface DynamoNewOrgInvite {
@@ -294,7 +295,7 @@ interface DynamoNewOrgInvite {
   /**
    * Who created this invite, info comes from their session
    */
-  createdBy: UserSessionData;
+  createdBy: Pick<DynamoNewUser, "firstName" | "lastName" | "orgId">;
 
   recipient: DynamoNewUser;
   /**
@@ -343,16 +344,13 @@ interface DynamoNewUser {
   orgId: DEFAULTS.NO_ORG;
   orgJoinDate: DEFAULTS.NO_ORG;
   GSI1PK: `${ENTITY_TYPES.ORG}#${DEFAULTS.NO_ORG}#${ENTITY_TYPES.USER}S`;
-  /**
-   * Combined `firstName` and `lastName`
-   * @default DEFAULTS.FULL_NAME
-   */
-  GSI1SK: `${string} ${string}` | DEFAULTS.FULL_NAME;
+  GSI1SK: string; // first & last name
   GSI2PK: string;
   GSI2SK: ENTITY_TYPES.USER;
-  unsubscribeHash: string;
+  unsubscribeKey: string;
   canReceiveEmails: boolean;
   verifiedEmail: boolean;
+  totalInvites: number;
 }
 
 interface DynamoNewLoginLink {
@@ -363,11 +361,10 @@ interface DynamoNewLoginLink {
   relativeExpiry: string;
   user: DynamoNewUser;
   loginLinkUrl: string;
-  loginMethod: string; // "GOOGLE" or "EMAIL"
   /**
    * A UNIX date for which Dynamo will auto delete this link
    */
-  ttlExpiry: number; // Unix timestmap for the item to be deleted after 15 minutes, must be >= ttl on `sealData`
+  ttlExpiry: number;
   GSI1PK: `${ENTITY_TYPES.USER}#${string}#${ENTITY_TYPES.LOGIN_LINK}S`; // Get latest login link(s) for a user for throttling
   GSI1SK: string; // ISO timestamp
 }
@@ -379,14 +376,9 @@ interface DynamoNewOrg {
   entityType: ENTITY_TYPES.ORG;
   createdAt: string; // ISO timestamp
   totalApplicants: number;
-  totalOpenings: number; // TODO set defaults..??? I mean its all 0.. And if we reference this interface
-  // Somewhere else, the numbers might change so its not wise to have it set as default.. althought we can always
-  // <Omit> in and make the counts numbers.. hmmmm // TODO revisit
-  totalStages: number;
+  totalOpenings: number;
   totalUsers: number;
-  GSI1PK: ENTITY_TYPES.ORG; // Allows for 'get all orgs' query
-  // but cannot do get org by specific name as there might be duplicates
-  GSI1SK: string; // Actual org name ie: Plutomi Inc - Can be changed!
+  displayName: string;
 }
 
 interface DynamoNewLoginEvent {

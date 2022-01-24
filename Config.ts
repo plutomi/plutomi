@@ -1,23 +1,49 @@
-import { ironSession } from "iron-session/express";
-// import * as cdk from "@aws-cdk/core";
-// import * as lambda from "@aws-cdk/aws-lambda";
+import Joi from "joi";
 
-export const API_METHODS = {
-  GET: "GET",
-  POST: "POST",
-  PUT: "PUT",
-  OPTIONS: "OPTIONS",
-  DELETE: "DELETE",
-};
+/**
+ * Some backend dependencies (SES, ACM, Route53, etc..) depend on
+ * DOMAIN_NAME being the actual domain name, do not change!
+ */
+export const DOMAIN_NAME = `plutomi.com`;
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+export const WEBSITE_URL =
+  process.env.NODE_ENV === "production"
+    ? `https://${DOMAIN_NAME}`
+    : `http://localhost:3000`;
+
+export const EXPRESS_PORT = 4000;
+
+export const API_DOMAIN =
+  process.env.NODE_ENV === "production"
+    ? `api.${DOMAIN_NAME}`
+    : `localhost:${EXPRESS_PORT}`;
+
+export const API_URL =
+  process.env.NODE_ENV === "production"
+    ? `https://${API_DOMAIN}`
+    : `http://${API_DOMAIN}`;
+
+export const COOKIE_NAME =
+  process.env.NODE_ENV === "production"
+    ? "plutomi-cookie"
+    : "DEV-plutomi-cookie";
+
+const UrlSafeString = require("url-safe-string"),
+  tagGenerator = new UrlSafeString();
+
 export enum ENTITY_TYPES {
-  APPLICANT = "APPLICANT",
+  APPLICANT = "APPLICANT", // TODO remove prefixes #435
   APPLICANT_RESPONSE = "APPLICANT_RESPONSE",
   ORG = "ORG",
   ORG_INVITE = "ORG_INVITE",
   USER = "USER",
   OPENING = "OPENING",
   STAGE = "STAGE",
-  STAGE_QUESTION = "STAGE_QUESTION",
+  STAGE_QUESTION = "STAGE_QUESTION", // TODO question sets
   STAGE_RULE = "STAGE_RULE",
   LOGIN_LINK = "LOGIN_LINK",
   LOGIN_EVENT = "LOGIN_EVENT",
@@ -34,55 +60,64 @@ export const TIME_UNITS = {
   YEARS: "years",
 };
 
-export const LIMITS = {
-  // TODO remove
-  /**
-   * For entities that can have their order rearranged such as stages, questions, rules, etc.
-   * We are storing the order in an array in the parent component.
-   * For example:
-   * The order of stages is stored in the opening the stage belongs to in a property called stageOrder
-   * The order of questions are stored on the stage they belong to in a property called questionOrder
-   * and so on...
-   *
-   * As more items are added, the parent item gets closer to reaching the 400kb item limit on Dynamo.
-   *
-   * In reality, nobody is likely to hit this threshold. If you have 200 stages in an opening.. or 200 questions in a stage.. something is deeply wrong.
-   * I did a test with 3000(!!!) IDs and it came out to around 173kb, less than half of the Dynamo limit.
-   * This will be a soft limit and can be raised up to a point with the understanding that performance might suffer.
-   */
-  MAX_CHILD_ENTITY_LIMIT: 200,
-};
-
 export const ERRORS = {
-  MAX_CHILD_ENTITY_LIMIT_ERROR_MESSAGE: `MAX_CHILD_ENTITY_LIMIT reached, please contact support@plutomi.com for assistance`,
-  INVALID_DATE_ERROR: `The date you provided appears to be invalid`,
+  NOT_SAME_ORG: "You must belong to this org to perform that action",
+  NEEDS_ORG: `You must create or join an organization to perform this action`,
+  HAS_PENDING_INVITES: `You seem to have pending invites, please accept or reject them before creating an org :)`,
+  EMAIL_VALIDATION: `Hmm... that email doesn't seem quite right. Check it again.`,
 };
-
+// https://zelark.github.io/nano-id-cc/
 export const ID_LENGTHS = {
-  USER: 42,
-  APPLICANT: 60,
-  APPLICANT_RESPONSE: 30,
-  ORG_INVITE: 50,
-  OPENING: 16,
-  STAGE: 50,
-  STAGE_QUESTION: 50,
-  STAGE_RULE: 16,
+  USER: 35, // Unique to application
+  APPLICANT: 35, // Unique to application
+  APPLICANT_RESPONSE: 10, // Unique to applicant
+  ORG_INVITE: 5, // Unique to user & org
+  OPENING: 15, // Unique to org
+  STAGE: 15, // Unique to opening,
+  STAGE_RULE: 10, // TODO, unique to stage
+  QUESTION_SET: 10, // TODO unique to org
+  STAGE_QUESTION: 10, // TODO, unique to question set, needs name change
 };
 
 export enum DEFAULTS {
   FIRST_NAME = "NO_FIRST_NAME",
   LAST_NAME = "NO_LAST_NAME",
-  FULL_NAME = `NO_FIRST_NAME NO_LAST_NAME`,
   NO_ORG = `NO_ORG_ASSIGNED`,
+  /**
+   * How many child items (that can be re-ordered!) is a parent allowed to have.
+   * Stages in an opening, rules in a stage, questions in question sets.
+   * Depending on the ID size you can have more or less but this is a good starting default value.
+   */
+  MAX_CHILD_ITEM_LIMIT = 200,
+  /**
+   * In days, how long should login events be kept
+   */
   LOGIN_EVENT_RETENTION_PERIOD = 30,
-  REDIRECT = "/dashboard", // When logging in from the homepage, where should the user be redirected
-  COOKIE_NAME = "plutomi-cookie", // Name of the session cookie
+
+  /**
+   * In days, how long should logout events be kept
+   */
+  LOGOUT_EVENT_RETENTION_PERIOD = 30,
+
+  /**
+   * When no callbackUrl is provided on login, what page should users be redirected to
+   */
+  REDIRECT = "dashboard",
+  NO_FIRST_NAME = "NO_FIRST_NAME",
+  NO_LAST_NAME = "NO_LAST_NAME",
+  /**
+   * In days, how long should test data be kept in Dynamo.
+   * This will set a TTL attribute on any created item
+   * if the `NODE_ENV` = `development`
+   */
+  TEST_DATA_RETENTION_PERIOD = 3,
 }
 
 export const LOGIN_LINK_SETTINGS = {
-  password: process.env.IRON_SEAL_PASSWORD,
+  password: process.env.LOGIN_LINKS_PASSWORD,
   ttl: 900, // In seconds, how long should login links be valid for
 };
+
 export const EMAILS = {
   SUPPORT: "support@plutomi.com",
   GENERAL: "contact@plutomi.com",
@@ -90,25 +125,18 @@ export const EMAILS = {
   ADMIN: "admin@plutomi.com",
   LOGIN: "login@plutomi.com", // Login links
   JOIN: "join@plutomi.com", // Org invites
-};
-
-/**
- * When using the /public/ api, what properties are allowed to be returned for each entity
- */
-export const SAFE_PROPERTIES = {
-  APPLICANT: ["firstName", "lastName", "createdAt", "openingId", "stageId"],
-  ORG: ["GSI1SK", "orgId"],
-  STAGE: ["GSI1SK", "stageId", "createdAt", "questionOrder"],
-  USER: ["userId", "orgId", "email", "firstName", "lastName", "GSI1SK"],
-  OPENING: ["GSI1SK", "openingId", "createdAt", "stageOrder"],
-  APPLICANT_RESPONSE: ["PK", "SK"], // TODO fix - TS7053, just setting this for now so i can test the app lol
-  ORG_INVITE: ["PK", "SK"], // TODO same ^
-  STAGE_QUESTION: ["PK", "SK"], // TODO same ^
-  STAGE_RULE: ["PK", "SK"], // TODO same ^
+  // Jest test accounts
+  TESTING: "testing@plutomi.com",
+  TESTING2: "testing2@plutomi.com",
+  TESTING3: "testing3@plutomi.com",
+  TESTING4: "testing4@plutomi.com",
 };
 
 /**
  * Properties that cannot be updated no matter the entity type once created
+ * This is only for UpdateItem expressions and does not apply for transactions
+ * like when a user joins an org, their orgId is updated then.
+ * This prevents calling PUT /users/:userId with a new orgId
  */
 const GLOBAL_FORBIDDEN_PROPERTIES = [
   "orgId",
@@ -119,26 +147,48 @@ const GLOBAL_FORBIDDEN_PROPERTIES = [
   "createdAt",
 ];
 
+export const JOI_SETTINGS: Joi.ValidationOptions = {
+  presence: "required",
+  abortEarly: false,
+  stripUnknown: true,
+};
+
 /**
- * Events for filtering DynamoDB streams
+ * Global forbidden properties. Cannot be updated, regardless of entity
+ * forbidden() blocks the key, except undefined. strip() removes it afterwards
+ * sice we don't want it going to Dynamo as undefined
+ * https://joi.dev/api/?v=15.1.1#anyforbidden
+ * https://joi.dev/api/?v=15.1.1#anystrip
  */
-export enum STREAM_EVENTS {
-  REQUEST_LOGIN_LINK = "REQUEST_LOGIN_LINK",
-  NEW_USER = "NEW_USER",
-}
+export const JOI_GLOBAL_FORBIDDEN = {
+  orgId: Joi.any().forbidden().strip(),
+  PK: Joi.any().forbidden().strip(),
+  SK: Joi.any().forbidden().strip(),
+  ttlExpiry: Joi.any().forbidden().strip(),
+  entityType: Joi.any().forbidden().strip(),
+  createdAt: Joi.any().forbidden().strip(),
+};
+
+import axios from "axios";
+export const AXIOS_INSTANCE = axios.create({
+  withCredentials: true,
+  baseURL: API_URL,
+  headers: {
+    "Content-Type": "application/json",
+  },
+});
+
+export const SWRFetcher = (url: string) =>
+  AXIOS_INSTANCE.get(API_URL + url).then((res) => res.data);
+
 /**
- * Properties that cannot be updated per entity type
+ * Extra properties that cannot be updated per entity type
  */
+// TODO rest of these are on hold as we migrate the data model to something else
 export const FORBIDDEN_PROPERTIES = {
-  USER: [
-    ...GLOBAL_FORBIDDEN_PROPERTIES,
-    "userRole", // TODO, only admins
-    "orgJoinDate",
-    "canReceiveEmails",
-    "GSI1PK", // Org#EntityType
-    "GSI2PK", // Email
-    "verifiedEmail", // Updated asynchronously on 1st login
-  ],
+  /**
+   * {@link DynamoNewApplicant}
+   */
   APPLICANT: [
     ...GLOBAL_FORBIDDEN_PROPERTIES,
     "applicantId",
@@ -147,8 +197,7 @@ export const FORBIDDEN_PROPERTIES = {
     "GSI2PK",
     "GSI2SK", // TODO, remove these when advancing / moving applicants!!!!!!!!!
   ],
-  OPENING: [...GLOBAL_FORBIDDEN_PROPERTIES, "openingId", "GSI1PK"],
-  STAGE: [...GLOBAL_FORBIDDEN_PROPERTIES, "stageId", "openingId", "GSI1PK"],
+
   STAGE_QUESTION: [
     ...GLOBAL_FORBIDDEN_PROPERTIES,
     "questionId",
@@ -156,11 +205,6 @@ export const FORBIDDEN_PROPERTIES = {
     "stageId",
   ],
 };
-
-export enum LOGIN_METHODS {
-  EMAIL = "EMAIL",
-  GOOGLE = "GOOGLE",
-}
 
 export const NAVBAR_NAVIGATION = [
   {
@@ -188,20 +232,20 @@ export const DROPDOWN_NAVIGATION = [
   { name: "Log Out", href: "#" },
 ];
 
-export const SWR = {
-  MAX_RETRY_ATTEMPTS: 3,
+// Schema to validate orgIds against in joi
+export const JoiOrgId = Joi.string().invalid(
+  DEFAULTS.NO_ORG,
+  tagGenerator.generate(DEFAULTS.NO_ORG),
+  "plutomi",
+  "plutomi-",
+  "plutomi-inc",
+  "plutomiinc"
+);
 
-  /**
-   * How often we should poll for invites while on the /invites page.
-   * Was a 'cost' saving thing when using Lambda as API.. // TODO revisit this
-   */
-  INVITES_REFRESH_INTERVAL: 10000,
+export const COOKIE_SETTINGS = {
+  httpOnly: true,
+  sameSite: true, // (same as strict)
+  secure: true,
+  maxAge: 1000 * 60 * 60 * 12, // 12 hours
+  signed: true,
 };
-
-export const sessionSettings = ironSession({
-  cookieName: "plutomi-cookie",
-  password: process.env.IRON_SESSION_PASSWORD_1,
-  cookieOptions: {
-    secure: process.env.NODE_ENV === "production",
-  },
-});

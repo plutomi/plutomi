@@ -1,132 +1,167 @@
 import * as dotenv from "dotenv";
+import * as path from "path";
 const resultDotEnv = dotenv.config({
-  path: __dirname + `/.env.${process.env.NODE_ENV}`,
+  path: `./.env.${process.env.NODE_ENV}`,
 });
 
 if (resultDotEnv.error) {
   throw resultDotEnv.error;
 }
 
-import express from "express";
+import * as Auth from "./Controllers/Auth";
+import * as Users from "./Controllers/Users";
+import * as Orgs from "./Controllers/Orgs";
+import * as Openings from "./Controllers/Openings";
+import * as Stages from "./Controllers/Stages";
+import * as PublicInfo from "./Controllers/PublicInfo";
+import * as Invites from "./Controllers/Invites";
+import * as Applicants from "./Controllers/Applicants";
+import withHasOrg from "./middleware/withHasOrg";
+import withSameOrg from "./middleware/withSameOrg";
 import helmet from "helmet";
+import * as Jest from "./Controllers/jest-setup";
+import express, { Response } from "express";
 import cors from "cors";
-import { metadata } from "./controllers/Metadata";
-import listEndpoints from "express-list-endpoints";
-import * as PublicInfo from "./controllers/PublicInfo";
-import * as Auth from "./controllers/Auth";
-import * as Users from "./controllers/Users";
-import * as Invites from "./controllers/Invites";
-import * as Orgs from "./controllers/Orgs";
-import * as Questions from "./controllers/Questions";
-import * as Stages from "./controllers/Stages";
-import * as Openings from "./controllers/Openings";
-import * as Applicants from "./controllers/Applicants";
-import * as Emails from "./controllers/Emails";
+const morgan = require("morgan");
 import withCleanOrgId from "./middleware/withCleanOrgId";
-import withAuth from "./middleware/withAuth";
-import routeNotFound from "./middleware/routeNotFound";
-import { sessionSettings } from "./Config";
-const timeout = require("connect-timeout");
-const PORT = parseInt(process.env.EXPRESS_PORT) || 4000;
+import timeout from "connect-timeout";
+import { COOKIE_SETTINGS, EXPRESS_PORT, WEBSITE_URL } from "./Config";
+import withSession from "./middleware/withSession";
+const cookieParser = require("cookie-parser");
 const app = express();
 app.use(timeout("5s"));
+
 app.use(
   cors({
     credentials: true,
-    origin: process.env.WEBSITE_URL,
+    origin: WEBSITE_URL,
   })
 );
+
+const morganSettings =
+  process.env.NODE_ENV === "development" ? "dev" : "combined";
+
+app.use(morgan(morganSettings));
 app.use(express.json());
 app.use(helmet());
 app.set("trust proxy", 1);
-app.use(sessionSettings); // Adds req.session to each route, if applicable
-app.use(withCleanOrgId); // If the route has an :orgId, normalize it
 app.use(haltOnTimedout);
+app.use(withCleanOrgId);
+app.use(cookieParser(["sessionpw1"], COOKIE_SETTINGS));
 
-// Public info
-app.get("/public/:orgId", PublicInfo.getOrgInfo);
-app.get("/public/:orgId/openings", PublicInfo.getOrgOpenings);
-app.get("/public/:orgId/openings/:openingId", PublicInfo.getOpeningInfo); // TODO get stages in opening
-app.get("/public/:orgId/stages/:stageId", PublicInfo.getStageInfo);
-app.get(
-  "/public/:orgId/stages/:stageId/questions",
-  PublicInfo.getStageQuestions
-);
-
-// Orgs
-app.post("/orgs", [withAuth], Orgs.create);
-app.get("/orgs/:orgId", [withAuth], Orgs.get);
-app.delete("/orgs/:orgId", [withAuth], Orgs.deleteOrg);
-// app.get("/orgs/:orgId/invites").get([withAuth], ) // TODO - Get all invites for org
-
-app.get("/openings", [withAuth], Openings.getAllOpenings);
-app.post("/openings", [withAuth], Openings.createOpeningController); // TODO fix name
-
-app.get("/openings/:openingId", [withAuth], Openings.getOpeningById);
-app.delete(
-  "/openings/:openingId",
-  [withAuth],
-  Openings.deleteOpeningController // TODO name
-);
-// Openings
-app.put("/openings/:openingId", [withAuth], Openings.updateOpeningController);
-// app.get("/openings/:openingId/applicants", [withAuth], Openings.getApplicants);
-app.get("/openings/:openingId/stages", [withAuth], Openings.getStages);
-
-// Stages
-app.post("/stages", [withAuth], Stages.create);
-app.get("/stages/:stageId", [withAuth], Stages.getStageInfo);
-app.delete("/stages/:stageId", [withAuth], Stages.deleteStage);
-app.put("/stages/:stageId", [withAuth], Stages.update);
+// // Public info
+// TODO based on how questionnaire is setup
+// app.get("/public/:orgId/stages/:stageId", PublicInfo.getStageInfo);
+// app.get(
+//   "/public/:orgId/stages/:stageId/questions",
+//   PublicInfo.getStageQuestions
+// );
 
 // Questions
-app.get("/stages/:stageId/questions", [withAuth], Stages.getQuestionsInStage);
-app.post("/questions", [withAuth], Questions.create);
-app.delete("/questions/:questionId", [withAuth], Questions.deleteQuestion);
-app.put("/questions/:questionId", [withAuth], Questions.update);
+// TODO rework to use question sets #401 https://github.com/plutomi/plutomi/issues/401
+// app.get("/stages/:stageId/questions", Stages.getQuestionsInStage);
+// app.post("/questions", Questions.create);
+// app.delete("/questions/:questionId", Questions.deleteQuestion);
+// app.put("/questions/:questionId", Questions.update);
 
-// Applicants
-app.post("/applicants", Applicants.create);
-app.get("/applicants/:applicantId", [withAuth], Applicants.get);
-app.put("/applicants/:applicantId", [withAuth], Applicants.update);
-app.delete("/applicants/:applicantId", [withAuth], Applicants.remove);
-app.post("/applicants/:applicantId/answer", Applicants.answer);
+// TODO rework to add applicant login
+// https://github.com/plutomi/plutomi/issues/467
+// app.get("/applicants/:applicantId", Applicants.get);
+// app.put("/applicants/:applicantId", Applicants.update);
+// app.delete("/applicants/:applicantId", Applicants.remove);
+// app.post("/applicants/:applicantId/answer", Applicants.answer);
+
+if (process.env.NODE_ENV === "development") {
+  app.post("/jest-setup", Jest.setup);
+}
+
+app.post("/request-login-link", Auth.RequestLoginLink);
+app.get("/login", Auth.Login);
+app.post("/logout", withSession, Auth.Logout);
+
+app.get("/users", [withSession, withHasOrg], Users.GetUsersInOrg);
+app.get("/users/self", withSession, Users.Self);
+app.get("/users/:userId", withSession, Users.GetUserById);
+app.put("/users/:userId", withSession, Users.UpdateUser);
+
+app.get("/orgs", [withSession, withHasOrg], Orgs.GetOrgInfo);
+app.post("/orgs", withSession, Orgs.CreateAndJoinOrg);
+app.delete("/orgs", [withSession, withHasOrg], Orgs.DeleteOrg);
+app.post("/openings", [withSession, withHasOrg], Openings.CreateOpening);
+app.get("/openings", [withSession, withHasOrg], Openings.GetOpeningsInOrg);
 app.get(
-  `/openings/:openingId/stages/:stageId/applicants`,
-  [withAuth],
-  Stages.getApplicantsInStage
+  "/openings/:openingId",
+  [withSession, withHasOrg],
+  Openings.GetOpeningById
+);
+app.delete(
+  "/openings/:openingId",
+  [withSession, withHasOrg],
+  Openings.DeleteOpening
+);
+app.put(
+  "/openings/:openingId",
+  [withSession, withHasOrg],
+  Openings.UpdateOpening
 );
 
-// Auth
-app.get("/auth/login", Auth.login);
-app.post("/auth/login", Auth.createLoginLinks);
-app.post("/auth/logout", [withAuth], Auth.logout);
+app.post("/stages", [withSession, withHasOrg], Stages.CreateStage);
+app.delete(
+  "/openings/:openingId/stages/:stageId",
+  [withSession, withHasOrg],
+  Stages.DeleteStage
+);
+app.get(
+  "/openings/:openingId/stages/:stageId",
+  [withSession, withHasOrg],
+  Stages.GetStageById
+);
+app.put(
+  "/openings/:openingId/stages/:stageId",
+  [withSession, withHasOrg],
+  Stages.UpdateStage
+);
 
-// Users
-app.get("/orgs/:orgId/users", [withAuth], Orgs.users);
-app.get("/users/self", [withAuth], Users.self);
-app.get("/users/:userId", [withAuth], Users.getById);
-app.put("/users/:userId", [withAuth], Users.update);
+app.get(
+  "/openings/:openingId/stages",
+  [withSession, withHasOrg],
+  Stages.GetStagesInOpening
+);
 
-// Invites
-app.get("/users/:userId/invites", [withAuth], Users.getInvites);
-app.post("/invites", [withAuth], Invites.create);
-app.post("/invites/:inviteId", [withAuth], Invites.accept);
-app.delete("/invites/:inviteId", [withAuth], Invites.reject);
+app.get("/public/orgs/:orgId", withCleanOrgId, PublicInfo.GetPublicOrgInfo);
+app.get(
+  "/public/orgs/:orgId/openings",
+  withCleanOrgId,
+  PublicInfo.GetPublicOpeningsInOrg
+);
 
-// Misc
-app.get("/unsubscribe/:hash", Emails.unsubscribe);
-// ------------------------ DO NOT TOUCH BELOW THIS LINE ---------------------------
-const endpoints = listEndpoints(app);
-app.set("endpoints", endpoints);
-app.get("/", metadata);
-app.all("*", routeNotFound);
+app.get(
+  "/public/orgs/:orgId/openings/:openingId",
+  withCleanOrgId,
+  PublicInfo.GetPublicOpeningInfo
+);
 
-// Catch timeouts
+app.post("/invites", [withSession, withHasOrg], Invites.CreateInvites);
+app.get("/invites", [withSession], Invites.GetUserInvites);
+app.get(
+  "/orgs/:orgId/invites",
+  [withCleanOrgId, withSession, withHasOrg, withSameOrg],
+  Invites.GetOrgInvites
+);
+
+app.post("/invites/:inviteId", [withSession], Invites.AcceptInvite);
+app.delete("/invites/:inviteId", [withSession], Invites.RejectInvite);
+
+app.post("/applicants", [withCleanOrgId], Applicants.CreateApplicants);
+
+app.get("/", healthcheck);
+function healthcheck(req, res: Response, next) {
+  return res.status(200).json({ message: "It's all good man!" });
+}
+// Catch timeouts // TODO make this into its own middleware
 function haltOnTimedout(req, res, next) {
   if (!req.timedout) next();
 }
-
-app.listen(PORT, () => {
-  console.log(`Server running on http://localhost:${PORT}`);
+app.listen(EXPRESS_PORT, () => {
+  console.log(`Server running on http://localhost:${EXPRESS_PORT}`);
 });

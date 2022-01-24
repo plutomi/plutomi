@@ -2,15 +2,13 @@
 
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat-square)](http://makeapullrequest.com)
 [![License](https://img.shields.io/github/license/plutomi/plutomi?style=flat-square)](#)
-[![All Contributors](https://img.shields.io/badge/all_contributors-2-blue.svg?style=flat-square)](#contributors-)
-
-> ⚠️ ⛔ _WARNING_ ⛔ ⚠️
->
-> _This project is **NOT** production ready and can change at any time. You **WILL** lose your data_ :)
+[![All Contributors](https://img.shields.io/badge/all_contributors-3-blue.svg?style=flat-square)](#contributors-)
 
 ### [Website / Live Demo](https://plutomi.com)
 
-Plutomi is an [applicant tracking system](https://en.wikipedia.org/wiki/Applicant_tracking_system) that streamlines your entire application process with automated workflows at _any_ scale.
+Plutomi is an [applicant tracking system](https://en.wikipedia.org/wiki/Applicant_tracking_system) that streamlines your entire application process with automated workflows at any scale.
+
+![infra](images/infra.png)
 
 ## Motivation
 
@@ -18,9 +16,9 @@ Having worked at a company that needed to recruit thousands of contractors every
 
 ## Summary
 
-In your recruiting flow, you can create `openings`, which people can apply to. An opening can be anything from a job, a location for a delivery company, or a program like a summer camp.
+In your recruiting flow, you can create `openings` which people can apply to. An opening can be anything from a job, a location for a delivery company, or a program like a summer camp.
 
-In these openings, you can create `stages` which are individual steps for your application. You can add questions which applicants can answer, and setup automatic move rules that determine where applicants go next depending on their answers or after a certain time period.
+In these openings, you can create `stages` which are individual steps for your application. You can add questions for applicants to answer, and setup automatic move rules that determine where applicants go next depending on their answers or after a certain time period.
 
 An _opening_ for a delivery company might look like this:
 
@@ -46,80 +44,58 @@ Stage order:
 
 ## Useful commands
 
-| Command         | Function                                                                                                                                        |
-| --------------- | ----------------------------------------------------------------------------------------------------------------------------------------------- |
-| npm run dev     | Will start the NextJS frontend on port `3000` and the Express API on port `4000`                                                                |
-| npm run notypes | Messed with types and broke everything? Run dev environment normally but disable type checking! (Does not use nodemon! Needs restart on change) |
-| npm run deploy  | Will deploy the entire app, use `cdk deploy STACK_NAME` if you want to deploy a specific stack                                                  |
-| npm run destroy | Will destroy the entire app, use `cdk destroy STACK_NAME` if you want to destroy a specific stack                                               |
-| cdk synth       | Emits the synthesized CloudFormation template for the stack(s)                                                                                  |
+| Command                                                                                                 | Function                                                                                                                                           |
+| ------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------- |
+| npm run dev                                                                                             | Will deploy a copy of **most** the backend to AWS (Dynamo, Event Bridge, SQS, Step Functions, etc). The frontend & Express server run in localhost |
+| npm run test                                                                                            | Will run tests                                                                                                                                     |
+| npm run deploy-prod                                                                                     | Will deploy everything to your production environment                                                                                              |
+| npx cross-env NODE_ENV=(development or production) cdk deploy -e (development or production)-STACK_NAME | Will deploy a specific stack in the desired environment                                                                                            |
 
 For more information on AWS CDK, please visit the [docs page](https://docs.aws.amazon.com/cdk/latest/guide/cli.html).
 
 ## Language, Tooling, & Infrastructure
 
-The project is 100% TypeScript. Would appreciate any assistance on types as we're definitely not the best :sweat_smile:
+All infrastructure is managed by CDK. We use [Jest](https://jestjs.io/) for testing and all items created in Dynamo during development have a `ttlExpiry` of 1 day so they're automatically deleted. Everything is witten TypeScript and we would appreciate any assistance on types or tests as we're definitely not the best :sweat_smile:
 
-_ALL_ infrastructure is managed by AWS CDK. You can view the infrastructure diagram [here](https://drive.google.com/file/d/1wE7QLZF1AAJ97tfCLW1yWahBWe1c-GZA/view?usp=sharing).
+The frontend runs on the [Serverless-Nextjs](https://github.com/serverless-Nextjs/serverless-next.js) component. We use [SSG without data + client side data fetching](https://youtu.be/f1rF9YKm1Ms?t=664) for almost all pages.
 
-![frontend](infra/Frontend.png)
+The API is your typical Express app running on Fargate. It has many of the advantages of serverless without many of the downsides.
 
-The frontend runs on the [CDK construct](https://serverless-nextjs.com/docs/cdkconstruct/) of the [Serverless-Nextjs](https://github.com/serverless-Nextjs/serverless-next.js) component. We wanted to stick with NextJS and if possible, have everything managed by CDK. The SLS component does that for us and it brings with it the Next API routes using Lambda but there are a couple of downsides (some of them are listed [here](https://github.com/plutomi/plutomi/issues/172)) and we won't be using them.
+![werner](images/werner.png)
 
-![backend](infra/Backend2.png)
+There is a state machine that triggers on certain events such as a new `LOGIN_EVENT` or a `LOGIN_LINK` request. We let the state machine decide the path to take instead of having multiple EB rules and multiple state machines. We can then eliminate the myriad of queues and lambda functions polling said queues with the direct SDK calls Step Functions provides.
 
-Typical 'monolith' express app on an autoscaling Fargate cluster.
+We try to avoid the [async try/catch twoer of terror](https://www.youtube.com/watch?v=ITogH7lJTyE) by implementing the pattern shown in the video:
 
-We considered using API Gateway + Lambda for the main API but
-_at this time_, we feel that Fargate has more advantages, mainly around performance, local development, and not having fun 'features' like [this one](https://github.com/serverless/serverless/issues/3785).
+```javascript
+const [user, error] = await Users.GetUserById({ userId });
 
-We have a direct integration with EventBridge and Step Functions to handle all comms. Certain events trigger the state machine, such as whenever there is a new `LOGIN_EVENT` or `LOGIN_LINK`. We let the state machine decide the path to take instead of having multiple EB rules and multiple state machines. We can therefore eliminate the myriad of queues and lambda functions polling said queues with the direct SDK calls Step Functions provides.
+if (error) {
+  const { status, body } = CreateError.SDK(
+    error,
+    "An error ocurred using your login link"
+  );
+  return res.status(status).json(body);
+}
+
+// continue...
+```
 
 ## DynamoDB Schema
 
 Schema is subject to change but I will try to keep this updated as much as I can.
 
-We're using a single table design for this project. If you're new to Dynamo, I recommend watching these talks by Alex DeBrie and Rick Houlihan first:
-
-- Alex DeBrie @ re:Invent 2020 - [Data modeling with Amazon DynamoDB – Part 1](https://www.youtube.com/watch?v=fiP2e-g-r4g)
-- Alex DeBrie @ re:Invent 2020 -[ Data modeling with Amazon DynamoDB – Part 2](https://www.youtube.com/watch?v=0uLF1tjI_BI)
-
-- Rick Houlihan @ re:invent 2018 - [Advanced Design Patterns for DynamoDB (DAT401)](https://www.youtube.com/watch?v=HaEPXoXVf2k)
-- Rick Houlihan @ re:invent 2019 - [Advanced design patterns for DynamoDB (DAT403-R1)](https://www.youtube.com/watch?v=6yqfmXiZTlM)
-
-Also, don't forget to buy **THE** [DynamoDB Book](https://www.dynamodbbook.com/) by Alex ;)
+We're using a single table design for this project. If you're new to DynamoDB, I created [a playlist](https://youtube.com/playlist?list=PL4wKJluo18Z2Nh1QlU0LXKy6EbPwB17xq) that will help you get accustomed to it. There are videos from Alex Debrie, Rick Houlihan, Pete Naylor, and an awesome talk by Kai Zhao on adaptive capacity.
 
 To play around with the data model locally, you can download [NoSQL Workbench](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/workbench.settingup.html) and import the [NoSQLWorkbench.json](schema/NoSQLWorkbench.json) file into it. You can even export the table to your AWS account and generate queries in Python, JavaScript, or Java.
 
 I've created [a spreadsheet](https://docs.google.com/spreadsheets/d/1KZMJt0X2J0s1v8_jz6JC7aiiwYW8qVV9pKWobQ5012Y/edit?usp=sharing) with access patterns and use cases if you prefer that. It helps to follow along with NoSQL Workbench on your own machine or you can view the pictures in the [schema](./schema) folder.
 
-You might have noticed that _some_(!) sort keys (SK, GSI1SK, GSI2SK) have the `ENTITY_TYPE` prefixed (e.g. `APPLICANT_FILE`). This is intentional and it's to retrieve these child items when doing a query on the parent.
-For example, if we want to retrieve an applicant, we might also want to retrieve their files, notes, and responses. We can do that with a single query: `PK = APPLICANT#{APPLICANT ID} and SK begins_with(APPLICANT)` :)
-
-Some partitions will [need to be sharded](https://youtu.be/6yqfmXiZTlM?t=884) in the future, especially for high RCU queries at scale (get all applicants in an org, in a stage, in an opening, all webhook history, etc.). I am not going to bother with this for now but it _is_ on my radar! You can read more about good partition keys [here](https://aws.amazon.com/blogs/database/choosing-the-right-dynamodb-partition-key/).
-
-Another thing to note is that Dynamo has a 400kb limit per item. This means that we do have to set _some_ limits, specifically around entities that can have their order re-arranged (`MAX_CHILD_ENTITY_LIMIT`). The limit is on the _parent_ entity, not the re-arrangeable entity itself. Things like stages in an opening or questions & rules in a stage are affected since we have to store their order in their parent item. In practice, even at millions of applicants, it is very unlikely to have hundreds of these entities under one parent.
-
 ## Other useful repos:
 
+- [Serverless Nextjs](https://github.com/serverless-nextjs/serverless-next.js)
 - [AWS ECS Patterns](https://github.com/aws/aws-cdk/tree/master/packages/%40aws-cdk/aws-ecs-patterns)
 - [Serverless CDK Patterns](https://github.com/cdk-patterns/serverless)
-
-## Common errors
-
-> Argument of type 'this' is not assignable to parameter of type 'Construct'
-
-Make sure all of your `@aws-cdk/*` dependencies are running the same version + make sure whatever you are using in the construct is actually being imported at the top of the file
-
-> ERROR [internal] load metadata for public.ecr.aws/sam/build-nodejs
-
-Try running this command: `aws ecr-public get-login-password --region us-east-1 | docker login --username AWS --password-stdin public.ecr.aws/sam/build-nodejs`
-
-> `Resource_Name` cannot be deleted as it is in use by `Another_Resource`
-
-https://github.com/aws/aws-cdk/issues/3414
-
-TLDR: Try updating the stack with the `-e` flag
 
 ## Contributing
 
@@ -128,21 +104,19 @@ To make a contribution, submit a pull request into the `main` branch. You will b
 This project tries to follow Semantic Pull Requests some what.
 Your PR _title_ should have the following format:
 
-| Type                  | Description                                                                                    |
-| --------------------- | ---------------------------------------------------------------------------------------------- |
-| feat: OR enhancement: | Added a new feature or enhancement                                                             |
-| fix:                  | Squashed some bugs!                                                                            |
-| docs:                 | Updated documentation, readme, examples                                                        |
-| test:                 | Added / modified tests                                                                         |
-| chore:                | Maintenance, cleanup, comment removal, refactoring, etc. If it doesn't fit above, it goes here |
+| Type                  | Description                                                          |
+| --------------------- | -------------------------------------------------------------------- |
+| feat: OR enhancement: | Added a new feature or enhancement                                   |
+| fix:                  | Squashed some bugs!                                                  |
+| docs:                 | Updated documentation, readme, examples                              |
+| test:                 | Added / modified tests                                               |
+| chore:                | Maintenance, refactoring, etc. If it doesn't fit above, it goes here |
 
 Example: _fix: Removed the double modals popping up on login_
 
 ## License
 
-This project is licensed under the `GNU AGPLv3` license. It can be viewed [here](https://choosealicense.com/licenses/agpl-3.0/) or in the [LICENSE.md](LICENSE.md) file.
-
-For any questions, please submit an issue or email contact@plutomi.com!
+This project is licensed under the [Apache 2.0 license](LICENSE)
 
 ## Contributors ✨
 

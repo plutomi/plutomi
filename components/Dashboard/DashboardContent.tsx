@@ -2,18 +2,18 @@ import useSelf from "../../SWR/useSelf";
 import UpdateName from "./UpdateName";
 import Loader from "../Loader";
 import ClickToCopy from "../ClickToCopy";
-import usePrivateOrgById from "../../SWR/usePrivateOrgById";
+import useOrgInfo from "../../SWR/useOrgInfo";
 import { mutate } from "swr";
-import OrgsService from "../../adapters/OrgsService";
+import { CreateOrg, DeleteOrg } from "../../adapters/Orgs";
 import useStore from "../../utils/store";
 import { OfficeBuildingIcon, PlusIcon } from "@heroicons/react/outline";
 import CreateOrgModal from "../CreateOrgModal";
-import { DEFAULTS } from "../../Config";
-import UsersService from "../../adapters/UsersService";
+import { DEFAULTS, WEBSITE_URL } from "../../Config";
+import { GetSelfInfoURL, UpdateUser } from "../../adapters/Users";
 export default function DashboardContent() {
   const { user, isUserLoading, isUserError } = useSelf();
-  const { org, isOrgLoading, isOrgError } = usePrivateOrgById(user?.orgId);
-  const customApplyLink = `${process.env.NEXT_PUBLIC_WEBSITE_URL}/${org?.orgId}/apply`;
+  const { org, isOrgLoading, isOrgError } = useOrgInfo(user?.orgId);
+  const customApplyLink = `${WEBSITE_URL}/${org?.orgId}/apply`;
 
   const setCreateOrgModalOpen = useStore(
     (state) => state.setCreateOrgModalOpen
@@ -37,19 +37,19 @@ export default function DashboardContent() {
     }
 
     try {
-      const { message } = await OrgsService.createOrg(GSI1SK, orgId);
+      const { message } = await CreateOrg(GSI1SK, orgId);
       alert(message);
       setCreateOrgModalOpen(false);
     } catch (error) {
       alert(error.response.data.message);
     }
 
-    mutate(UsersService.getSelfURL());
+    mutate(GetSelfInfoURL());
   };
 
   const updateName = async ({ firstName, lastName }) => {
     try {
-      const { message } = await UsersService.updateUser(user?.userId, {
+      const { message } = await UpdateUser(user?.userId, {
         firstName: firstName,
         lastName: lastName,
         GSI1SK: `${firstName} ${lastName}`,
@@ -58,7 +58,7 @@ export default function DashboardContent() {
     } catch (error) {
       alert(error.response.data.message);
     }
-    mutate(UsersService.getSelfURL());
+    mutate(GetSelfInfoURL());
   };
 
   const deleteOrg = async () => {
@@ -75,12 +75,12 @@ export default function DashboardContent() {
     }
 
     try {
-      const { message } = await OrgsService.deleteOrg(user?.orgId);
+      const { message } = await DeleteOrg();
       alert(message);
     } catch (error) {
       alert(error.response.data.message);
     }
-    mutate(UsersService.getSelfURL()); // Refresh user state
+    mutate(GetSelfInfoURL()); // Refresh user state
   };
 
   return (
@@ -110,8 +110,8 @@ export default function DashboardContent() {
       ) : (
         <>
           <h1 className="text-2xl">
-            You&apos;re in the <strong>{org?.GSI1SK}</strong> org. Feel free to
-            click around!
+            You&apos;re in the <strong>{org?.displayName}</strong> org. Feel
+            free to click around!
           </h1>
           <h1>
             There are <strong>{org?.totalUsers}</strong> users in this org.
@@ -119,8 +119,7 @@ export default function DashboardContent() {
 
           <h1>
             Also, there are <strong>{org?.totalApplicants}</strong> applicants
-            across <strong>{org?.totalOpenings}</strong> openings and{" "}
-            <strong>{org?.totalStages}</strong> stages.{" "}
+            across <strong>{org?.totalOpenings}</strong> openings.
           </h1>
 
           <div className="flex items-center mt-4 -ml-3 text-md">

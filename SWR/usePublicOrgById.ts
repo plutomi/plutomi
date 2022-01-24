@@ -1,14 +1,10 @@
-import axios from "../utils/axios";
 import useSWR from "swr";
-import PublicInfoService from "../adapters/PublicInfoService";
-const fetcher = (url: string) => axios.get(url).then((res) => res.data);
-
-export default function usePublicOrgById(orgId: string) {
-  const shouldFetch = orgId ? true : false;
-
+import { SWRFetcher } from "../Config";
+import { GetPublicOrgInfoURL } from "../adapters/PublicInfo";
+export default function usePublicOrgById(orgId?: string) {
   const { data, error } = useSWR(
-    shouldFetch && PublicInfoService.getPublicOrgURL(orgId),
-    fetcher
+    orgId && GetPublicOrgInfoURL(orgId),
+    SWRFetcher
   );
 
   return {

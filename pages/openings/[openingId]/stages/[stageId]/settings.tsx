@@ -1,13 +1,17 @@
 import { mutate } from "swr";
-import useOpeningById from "../../../../../SWR/useOpeningById";
+import useOpeningInfo from "../../../../../SWR/useOpeningInfo";
 import { useRouter } from "next/router";
 import StageSettingsHeader from "../../../../../components/Stages/StageSettingsHeader";
 import StageSettingsContent from "../../../../../components/Stages/StagesSettingsContent";
 import NewPage from "../../../../../components/Templates/NewPage";
-import useStageById from "../../../../../SWR/useStageById";
+import useStageInfo from "../../../../../SWR/useStageInfo";
 import { CUSTOM_QUERY } from "../../../../../types/main";
-import OpeningsService from "../../../../../adapters/OpeningsService";
-import StagesService from "../../../../../adapters/StagesService";
+import { GetOpeningInfoURL } from "../../../../../adapters/Openings";
+import {
+  GetAllStagesInOpeningURL,
+  DeleteStage,
+} from "../../../../../adapters/Stages";
+import { WEBSITE_URL } from "../../../../../Config";
 
 export default function StageSettings() {
   const router = useRouter();
@@ -15,8 +19,11 @@ export default function StageSettings() {
     CUSTOM_QUERY,
     "openingId" | "stageId"
   >;
-  let { opening, isOpeningLoading, isOpeningError } = useOpeningById(openingId);
-  let { stage, isStageLoading, isStageError } = useStageById(stageId);
+  let { opening, isOpeningLoading, isOpeningError } = useOpeningInfo(openingId);
+  let { stage, isStageLoading, isStageError } = useStageInfo(
+    openingId,
+    stageId
+  );
 
   // Update this to use the new update syntax with diff
   const deleteStage = async () => {
@@ -32,19 +39,17 @@ export default function StageSettings() {
       return;
     }
     try {
-      await StagesService.deleteStage(stageId);
-      router.push(
-        `${process.env.NEXT_PUBLIC_WEBSITE_URL}/openings/${openingId}/settings`
-      );
+      await DeleteStage(openingId, stageId);
+      router.push(`${WEBSITE_URL}/openings/${openingId}/settings`);
     } catch (error) {
       alert(error.response.data.message);
     }
 
     // Refresh the stageOrder
-    mutate(OpeningsService.getOpeningURL(openingId));
+    mutate(GetOpeningInfoURL(openingId));
 
     // Refresh the stage list
-    mutate(OpeningsService.getAllStagesInOpeningURL(openingId));
+    mutate(GetAllStagesInOpeningURL(openingId));
   };
 
   return (
@@ -54,7 +59,7 @@ export default function StageSettings() {
       headerText={
         isOpeningLoading
           ? "Settings"
-          : `${opening?.GSI1SK} > ${stage?.GSI1SK} - Settings`
+          : `${opening?.openingName} > ${stage?.GSI1SK} - Settings`
       }
     >
       <>

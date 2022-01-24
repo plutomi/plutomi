@@ -10,8 +10,12 @@ import { mutate } from "swr";
 import ClickToCopy from "../ClickToCopy";
 import delay from "delay";
 import useApplicantById from "../../SWR/useApplicantById";
-import ApplicantsService from "../../adapters/ApplicantsService";
+import {
+  GetApplicantByIdURL,
+  UpdateApplicant,
+} from "../../adapters/Applicants";
 import { CUSTOM_QUERY } from "../../types/main";
+import { DOMAIN_NAME } from "../../Config";
 const tabs = [
   { id: 1, name: "Details" },
   { id: 2, name: "History (todo)" },
@@ -80,10 +84,7 @@ export default function ApplicantProfileModal() {
 
   const updateApplicant = async (applicantId: string, changes: {}) => {
     try {
-      const { message } = await ApplicantsService.updateApplicant(
-        applicantId,
-        changes
-      );
+      const { message } = await UpdateApplicant(applicantId, changes);
 
       alert(message);
     } catch (error) {
@@ -91,7 +92,7 @@ export default function ApplicantProfileModal() {
     }
 
     // TODO NOTE updating that single applicant wont update the applicant list since the list is rendering old data
-    mutate(ApplicantsService.getApplicantURL(applicantId));
+    mutate(GetApplicantByIdURL(applicantId));
   };
 
   return (
@@ -188,7 +189,7 @@ export default function ApplicantProfileModal() {
                       <div className="ml-3 h-7 flex items-center space-x-4">
                         <ClickToCopy
                           showText={"Copy Application Link"}
-                          copyText={`${process.env.NEXT_PUBLIC_WEBSITE_URL}/${applicant?.orgId}/applicants/${applicant?.applicantId}`}
+                          copyText={`${DOMAIN_NAME}/${applicant?.orgId}/applicants/${applicant?.applicantId}`}
                         />
                         <button
                           type="button"

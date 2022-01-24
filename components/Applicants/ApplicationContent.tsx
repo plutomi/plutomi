@@ -3,7 +3,7 @@ import { useRouter } from "next/router";
 import Loader from "../Loader";
 import { useState } from "react";
 import useAllStageQuestions from "../../SWR/useAllStageQuestions";
-import ApplicantsService from "../../adapters/ApplicantsService";
+import { AnswerQuestions } from "../../adapters/Applicants";
 import { CUSTOM_QUERY } from "../../types/main";
 export default function ApplicationContent() {
   const [responses, setResponses] = useState([]);
@@ -67,10 +67,7 @@ export default function ApplicationContent() {
   const handleSubmit = async () => {
     try {
       console.log("Responses are", responses);
-      const { message } = await ApplicantsService.answerQuestions(
-        applicantId,
-        responses
-      );
+      const { message } = await AnswerQuestions(applicantId, responses);
       alert(message);
     } catch (error) {
       alert(error.response.data.message);

@@ -18,5 +18,10 @@ export default async function withCleanOrgId(
   if (req.params.orgId) {
     req.params.orgId = tagGenerator.generate(req.params.orgId);
   }
+
+  if (req.query.orgId) {
+    req.query.orgId = tagGenerator.generate(req.query.orgId);
+  }
+
   next();
 }

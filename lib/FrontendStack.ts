@@ -1,11 +1,13 @@
 import * as dotenv from "dotenv";
 import * as cdk from "@aws-cdk/core";
-import { NextJSLambdaEdge } from "@sls-next/cdk-construct";
 import { HostedZone } from "@aws-cdk/aws-route53";
+import { NextJSLambdaEdge } from "@sls-next/cdk-construct";
 import { Certificate } from "@aws-cdk/aws-certificatemanager";
+import { DOMAIN_NAME } from "../Config";
+import { Architecture, Runtime } from "@aws-cdk/aws-lambda";
 
 const resultDotEnv = dotenv.config({
-  path: __dirname + `../../.env.${process.env.NODE_ENV}`,
+  path: `${process.cwd()}/.env.${process.env.NODE_ENV}`,
 });
 
 if (resultDotEnv.error) {
@@ -25,18 +27,27 @@ export default class FrontendStack extends cdk.Stack {
       // retrieve existing resources, however you could create a new ones in your
       // stack via the relevant constructs
       domain: {
-        domainNames: [process.env.DOMAIN_NAME],
+        domainNames: [DOMAIN_NAME],
         hostedZone: HostedZone.fromHostedZoneAttributes(this, "HostedZone", {
           hostedZoneId: process.env.HOSTED_ZONE_ID,
-          zoneName: process.env.DOMAIN_NAME,
+          zoneName: DOMAIN_NAME,
         }),
         certificate: Certificate.fromCertificateArn(
           this,
           "DomainCertificate",
-          `arn:aws:acm:us-east-1:${cdk.Stack.of(this).account}:certificate/${
-            process.env.ACM_CERTIFICATE_ID
-          }`
+          `arn:aws:acm:${this.region}:${this.account}:certificate/${process.env.ACM_CERTIFICATE_ID}`
         ),
+      },
+      runtime: Runtime.NODEJS_14_X,
+      name: {
+        defaultLambda: `frontend-default-function`,
+        imageLambda: `frontend-image-function`,
+        regenerationLambda: `frontend-regeneration-function`,
+      },
+      memory: {
+        defaultLambda: 256,
+        imageLambda: 1024,
+        regenerationLambda: 256,
       },
     });
   }

@@ -2,6 +2,7 @@ import AlreadySignedIn from "../components/AlreadySignedIn";
 import CustomLink from "../components/CustomLink";
 import Link from "../components/CustomLink";
 import LoginHomepage from "../components/LoginHomepage";
+import { DOMAIN_NAME } from "../Config";
 import useSelf from "../SWR/useSelf";
 const faqs = [
   {
@@ -46,12 +47,10 @@ const faqs = [
     question: "What is the license for the code?",
     answer: (
       <p>
-        The code is licensed under the{" "}
+        The project is licensed under the{" "}
         <CustomLink
-          url={
-            "https://tldrlegal.com/license/gnu-affero-general-public-license-v3-(agpl-3.0)"
-          }
-          text={"AGPLv3 license"}
+          url={"https://tldrlegal.com/license/apache-license-2.0-(apache-2.0)"}
+          text={"Apache 2.0 license"}
         />
       </p>
     ),
@@ -96,7 +95,7 @@ export default function FAQ() {
           <div className="mt-32">
             {!user || isUserError ? (
               <LoginHomepage
-                callbackUrl={`${process.env.NEXT_PUBLIC_WEBSITE_URL}/dashboard`} // TODO fallback url is already set im pretty sure
+                callbackUrl={`${DOMAIN_NAME}/dashboard`} // TODO fallback url is already set im pretty sure
               />
             ) : (
               <AlreadySignedIn />

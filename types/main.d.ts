@@ -1,23 +1,121 @@
+import { HttpMethod, HttpApi } from "@aws-cdk/aws-apigatewayv2";
+import {
+  APIGatewayProxyEventV2,
+  APIGatewayProxyResultV2,
+  APIGatewayProxyStructuredResultV2,
+} from "aws-lambda";
+import { Table } from "@aws-cdk/aws-dynamodb";
+import { Duration, StackProps } from "@aws-cdk/core";
 import {
   DynamoNewApplicant,
   DynamoNewApplicantResponse,
-  DynamoNewLoginLink,
   DynamoNewOpening,
   DynamoNewOrgInvite,
   DynamoNewStage,
   DynamoNewStageQuestion,
   DynamoNewUser,
 } from "./dynamo";
+import { HttpLambdaAuthorizer } from "@aws-cdk/aws-apigatewayv2-authorizers";
+import {
+  NodejsFunction,
+  NodejsFunctionProps,
+} from "@aws-cdk/aws-lambda-nodejs";
+
+type DynamoActions =
+  | "dynamodb:GetItem"
+  | "dynamodb:BatchGetItem"
+  | "dynamodb:Query"
+  | "dynamodb:PutItem"
+  | "dynamodb:UpdateItem"
+  | "dynamodb:DeleteItem"
+  | "dynamodb:BatchWriteItem";
+export interface APIGatewayLambda extends NodejsFunctionProps {
+  /**
+   * Path for the API, such as "/users/{userId}"
+   */
+  APIPath: string;
+
+  /**
+   * HTTP Method for the API call
+   */
+  method: HttpMethod;
+  /**
+   * Path to the file with the function code
+   */
+  filePath: string;
+  /**
+   * What actions the lambda is allowed to perform such as
+   * "dynamodb:Query", "dynamodb:PutItem", "dynamodb:GetItem"
+   */
+  dynamoActions: DynamoActions[];
+  /**
+   * What the lambda is allowed to access from the DynamoDB table
+   */
+  dynamoResources: {
+    main?: boolean;
+    GSI1?: boolean;
+    GSI2?: boolean;
+  };
+
+  /**
+   * Whether the route for this lambda should skip the authorization check
+   * @default false
+   */
+  skipAuth?: boolean;
+}
+
+export interface CustomLambdaEvent
+  extends Omit<
+    APIGatewayProxyEventV2,
+    "body" | "queryStringParameters" | "pathParameters" | "requestContext"
+  > {
+  // Custom types because they will be there due to Middy middleware
+  body: { [key: string]: any };
+  queryStringParameters: { [key: string]: string };
+  pathParameters: { [key: string]: string };
+  requestContext: {
+    authorizer: {
+      lambda: {
+        // Lambda authorizer adds the user
+        session: DynamoNewUser;
+      };
+    };
+  };
+}
+
+/**
+ * APIGatewayProxyStructuredResultV2 +
+ * 1. A regular object {} for a body.
+ * 2. Enforces statusCodes
+ * Middy will JSON.stringify() the body for us so we can use this instead
+ */
+export interface CustomLambdaResponse
+  extends Omit<APIGatewayProxyStructuredResultV2, "body" | "statusCode"> {
+  statusCode: number;
+  body: { [key: string]: any };
+  headers?: { [key: string]: string };
+  cookies?: string[];
+}
+
+export interface LambdaAPIProps extends StackProps {
+  table: Table;
+  api: HttpApi;
+}
 
 type CreateApplicantAPIBody = Omit<CreateApplicantInput, "stageId">;
 export interface CreateApplicantAPIResponse {
   message: string;
 }
 
+declare namespace Express {
+  export interface Request {
+    boom: DynamoNewUser;
+  }
+}
+
 /**
  * All possible parameters in the URL
  */
-
 interface CUSTOM_QUERY {
   orgId: string;
   openingId: string;
@@ -26,38 +124,38 @@ interface CUSTOM_QUERY {
 
   applicantId: string;
   /**
-   * The seal to for the {@link ENTITY_TYPES.LOGIN_LINK} that contains the user id
+   * The token to for the {@link ENTITY_TYPES.LOGIN_LINK} that contains the user id
    */
-  seal: string;
+  token: string;
 
   callbackUrl: string;
   questionId: string;
   inviteId: string;
 }
-
-interface UserSessionData
-  extends Pick<
-    DynamoNewUser,
-    "firstName" | "lastName" | "GSI1SK" | "email" | "orgId" | "userId"
-  > {
-  totalInvites: number;
+interface UserSessionData {
+  userId: string;
+  /**
+   * ISO timestamp of when the cookie expires, encrypted with the cookie itself
+   * To override all browser checks
+   */
+  expiresAt: string; // ISO timestamp
 }
-declare module "iron-session" {
-  export interface IronSessionData {
-    user: UserSessionData;
-  }
-}
-
 export interface CreateStageInput
   extends Pick<DynamoNewStage, "orgId" | "GSI1SK" | "openingId"> {
+  /**
+   * Optional position on where to place the new opening, optional. Added to the end if not provided
+   */
+  position?: number;
   stageOrder: string[];
 }
-export interface DeleteStageInput
-  extends Pick<DynamoNewStage, "orgId" | "stageId"> {
-  openingId: string;
-  stageOrder: string[];
+interface DeleteStageInput
+  extends Pick<DynamoNewStage, "orgId" | "stageId" | "openingId"> {
+  stageOrder: string[]; // To delete it from the opening
 }
-type GetStageByIdInput = Pick<DynamoNewStage, "orgId" | "stageId">;
+type GetStageByIdInput = Pick<
+  DynamoNewStage,
+  "orgId" | "stageId" | "openingId"
+>;
 type GetStageByIdOutput = DynamoNewStage;
 type GetAllApplicantsInStageInput = Pick<
   DynamoNewStage,
@@ -66,18 +164,17 @@ type GetAllApplicantsInStageInput = Pick<
 type GetAllApplicantsInStageOutput = DynamoNewApplicant[];
 
 export interface UpdateStageInput
-  extends Pick<DynamoNewStage, "orgId" | "stageId"> {
+  extends Pick<DynamoNewStage, "orgId" | "stageId" | "openingId"> {
   newValues: { [key: string]: any };
 }
 
+export type SessionData = Pick<
+  DynamoNewUser,
+  "firstName" | "lastName" | "orgId" | "email" | "userId" | "canReceiveEmails"
+>;
+
 export interface UpdateUserInput extends Pick<DynamoNewUser, "userId"> {
   newValues: { [key: string]: any };
-  /**
-   * Allows updating some properties that are typically banned, such as an orgId or an email.
-   * This shoudnt be set if its with newValues, only when directly updating an attribute verified on our end.
-   * TODO Only allow certain variables to  be updated via array of strings or whatever
-   */
-  ALLOW_FORBIDDEN_KEYS?: boolean;
 }
 
 export interface CreateStageQuestionInput
@@ -152,10 +249,14 @@ type CreateApplicantResponseInput = Pick<
 
 type CreateApplicantResponseOutput = DynamoNewApplicantResponse;
 
-type CreateOpeningInput = Pick<DynamoNewOpening, "orgId" | "GSI1SK">;
+type CreateOpeningInput = Pick<DynamoNewOpening, "orgId" | "openingName">;
 type DeleteOpeningInput = Pick<DynamoNewOpening, "orgId" | "openingId">;
 
-type GetAllOpeningsInOrgInput = Pick<DynamoNewOpening, "orgId">;
+// Retrieves all oepnings by default, can filter on public or private
+interface GetOpeningsInOrgInput extends Pick<DynamoNewOpening, "orgId"> {
+  GSI1SK?: "PUBLIC" | "PRIVATE";
+}
+
 type GetAllStagesInOpeningInput = Pick<
   DynamoNewOpening,
   "orgId" | "openingId" | "stageOrder"
@@ -174,7 +275,7 @@ interface DeleteOrgInviteInput {
 interface CreateOrgInviteInput {
   orgName: string;
   expiresAt: string;
-  createdBy: UserSessionData;
+  createdBy: Pick<DynamoNewUser, "firstName" | "lastName" | "orgId">;
   recipient: DynamoNewUser;
 }
 
@@ -200,7 +301,6 @@ type JoinOrgFromInviteInput = {
 
 type CreateLoginLinkInput = {
   loginLinkId: string;
-  loginMethod: string; // GOOGLE or LINK
   loginLinkUrl: string;
   loginLinkExpiry: string;
   user: DynamoNewUser;
@@ -218,7 +318,12 @@ type GetLatestLoginLinkInput = {
 type CreateAndJoinOrgInput = {
   userId: string;
   orgId: string;
-  GSI1SK: string; /// The org name
+  displayName: string;
+};
+
+type LeaveAndDeleteOrgInput = {
+  orgId: string;
+  userId: string;
 };
 
 type GetAllUsersInOrgInput = {

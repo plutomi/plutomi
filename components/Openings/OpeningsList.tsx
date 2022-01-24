@@ -11,6 +11,7 @@ import useSelf from "../../SWR/useSelf";
 import _ from "lodash";
 import useStore from "../../utils/store";
 import { ViewBoardsIcon } from "@heroicons/react/outline";
+import { DOMAIN_NAME } from "../../Config";
 export default function OpeningList() {
   const { user, isUserLoading, isUserError } = useSelf();
   let { openings, isOpeningsLoading, isOpeningsError } = useOpenings();
@@ -18,7 +19,10 @@ export default function OpeningList() {
   const search = useStore((state) => state.openingsSearchInput);
 
   const filteredOpenings = openings?.filter((opening) =>
-    opening?.GSI1SK?.toLowerCase().trim().includes(search.toLowerCase().trim())
+    opening?.openingName
+      ?.toLowerCase()
+      .trim()
+      .includes(search.toLowerCase().trim())
   );
 
   return (
@@ -42,7 +46,7 @@ export default function OpeningList() {
                   <div className="px-4 py-4 sm:px-6">
                     <div className="flex items-center justify-between">
                       <h1 className="text-lg font-medium text-blue-600 truncate">
-                        {opening.GSI1SK}
+                        {opening?.openingName}
                       </h1>
                       <div className="ml-2 flex-shrink-0 flex">
                         {opening.isPublic ? (
@@ -76,7 +80,7 @@ export default function OpeningList() {
                           <p className="mt-2 flex items-center text-lg text-normal sm:mt-0 sm:ml-6">
                             <ClickToCopy
                               showText={"Application Link"}
-                              copyText={`${process.env.NEXT_PUBLIC_WEBSITE_URL}/${user?.orgId}/${opening?.openingId}/apply`}
+                              copyText={`${DOMAIN_NAME}/${user?.orgId}/${opening?.openingId}/apply`}
                             />
                           </p>
                         ) : null}

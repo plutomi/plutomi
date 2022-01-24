@@ -1,6 +1,5 @@
 import relativeTime from "dayjs/plugin/relativeTime";
 import dayjs from "dayjs";
-import { ERRORS, TIME_UNITS } from "../Config";
 dayjs.extend(relativeTime);
 
 /**
@@ -24,7 +23,6 @@ export const currentUNIX = () => {
  * @param date  The date (in any format) to use
  * @returns A string such as '23 days ago' relative to the passed in date
  * @external String
- * @throws {@link ERRORS.INVALID_DATE_ERROR} if the date cannot be converted to a Date object
  * @see The DayJS documentation for more info https://day.js.org/docs/en/plugin/relative-time
  */
 export const relative = (date: string | number | Date): string => {
@@ -32,7 +30,7 @@ export const relative = (date: string | number | Date): string => {
     let convertedDate = dayjs(date).toDate();
     return dayjs().to(convertedDate);
   } catch (error) {
-    throw ERRORS.INVALID_DATE_ERROR;
+    throw `The date you provided appears to be invalid`;
   }
 };
 

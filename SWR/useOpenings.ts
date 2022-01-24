@@ -1,10 +1,9 @@
-import axios from "../utils/axios";
 import useSWR from "swr";
-import OpeningsService from "../adapters/OpeningsService";
-const fetcher = (url: string) => axios.get(url).then((res) => res.data);
+import { GetAllOpeningsInOrgURL } from "../adapters/Openings";
+import { SWRFetcher } from "../Config";
 
 export default function useOpenings() {
-  const { data, error } = useSWR(OpeningsService.getAllOpeningsURL(), fetcher);
+  const { data, error } = useSWR(GetAllOpeningsInOrgURL(), SWRFetcher);
 
   return {
     openings: data,

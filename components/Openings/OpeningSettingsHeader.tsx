@@ -3,17 +3,18 @@ import { PencilAltIcon } from "@heroicons/react/outline";
 import useStore from "../../utils/store";
 import { mutate } from "swr";
 import { TrashIcon } from "@heroicons/react/outline";
-import useOpeningById from "../../SWR/useOpeningById";
+import useOpeningInfo from "../../SWR/useOpeningInfo";
 import { useRouter } from "next/router";
 import Loader from "../Loader";
-import OpeningsService from "../../adapters/OpeningsService";
+import { DeleteOpening, GetAllOpeningsInOrgURL } from "../../adapters/Openings";
 import * as Time from "../../utils/time";
 import { CUSTOM_QUERY } from "../../types/main";
+import { DOMAIN_NAME, WEBSITE_URL } from "../../Config";
 export default function OpeningSettingsHeader() {
   const router = useRouter();
   const { openingId } = router.query as Pick<CUSTOM_QUERY, "openingId">;
 
-  let { opening, isOpeningLoading, isOpeningError } = useOpeningById(openingId);
+  let { opening, isOpeningLoading, isOpeningError } = useOpeningInfo(openingId);
 
   const setOpeningModal = useStore((state) => state.setOpeningModal);
 
@@ -52,14 +53,14 @@ export default function OpeningSettingsHeader() {
     }
 
     try {
-      await OpeningsService.deleteOpening(openingId);
-      router.push(`${process.env.NEXT_PUBLIC_WEBSITE_URL}/openings`);
+      await DeleteOpening(openingId);
+      router.push(`${WEBSITE_URL}/openings`);
     } catch (error) {
       alert(error.response.data.message);
     }
 
     // Refresh openings
-    mutate(OpeningsService.getAllOpeningsURL());
+    mutate(GetAllOpeningsInOrgURL());
   };
 
   return (
@@ -97,8 +98,7 @@ export default function OpeningSettingsHeader() {
               isModalOpen: true,
               modalMode: "EDIT",
               openingId: opening.openingId,
-              GSI1SK: opening.GSI1SK,
-              isPublic: opening.isPublic,
+              openingName: opening?.openingName,
             })
           }
           className="inline-flex items-center px-4 py-2 border  shadow-sm text-base font-medium rounded-md border-blue-500 text-blue-500 bg-white hover:bg-blue-500 hover:text-white  transition ease-in-out duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
