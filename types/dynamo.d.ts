@@ -119,7 +119,7 @@ interface DynamoNewApplicant {
    */
   canReceiveEmails: boolean;
   /**
-   * If the applicant's email has been verified (clicked on the application link sent to their email // TODO maybe answered questions on one stage?)
+   * If the applicant's email has been verified
    */
   isEmailVerified: boolean;
   /**

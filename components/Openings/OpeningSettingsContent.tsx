@@ -3,6 +3,7 @@ import { mutate } from "swr";
 import StageReorderColumn from "../StageReorderColumn";
 import difference from "../../utils/getObjectDifference";
 import OpeningModal from "./OpeningModal";
+import StageReorderCopy from "../StageReorderCOPY";
 import Loader from "../Loader";
 import useStore from "../../utils/store";
 import useOpeningInfo from "../../SWR/useOpeningInfo";
@@ -59,7 +60,7 @@ export default function OpeningSettingsContent() {
           <div className="border-b border-gray-200 xl:border-b-0 xl:flex-shrink-0 xl:w-64 xl:border-r xl:border-gray-200 bg-white">
             <div className="h-full pl-4 pr-6 py-6 sm:pl-6 lg:pl-8 xl:pl-0">
               {/* Start left column area */}
-              {/* <StageReorderColumn /> */}
+              <StageReorderColumn />
               {/* End left column area */}
             </div>
           </div>

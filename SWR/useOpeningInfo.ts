@@ -4,7 +4,7 @@ import { SWRFetcher } from "../Config";
 
 export default function useOpeningInfo(openingId?: string) {
   const shouldFetch = openingId ? true : false;
-  
+
   const { data, error } = useSWR(
     shouldFetch && GetOpeningInfoURL(openingId),
     SWRFetcher
