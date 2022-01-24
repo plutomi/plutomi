@@ -276,7 +276,10 @@ interface CreateOrgInviteInput {
   orgName: string;
   expiresAt: string;
   createdBy: Pick<DynamoNewUser, "firstName" | "lastName" | "orgId">;
-  recipient: Pick<DynamoNewUser, "userId" | "email">;
+  recipient: Pick<
+    DynamoNewUser,
+    "userId" | "email" | "unsubscribeKey" | "firstName" | "lastName"
+  >;
 }
 
 type CreateUserInput = {
