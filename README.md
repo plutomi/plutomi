@@ -53,7 +53,7 @@ Stage order:
 
 ## Language, Tooling, & Infrastructure
 
-All infrastructure is managed by CDK. We use [Jest](https://jestjs.io/) for testing and all items created in Dynamo during development have a `ttlExpiry` of 30 days so they're automatically deleted. Everything is witten TypeScript and we would appreciate any assistance on types or tests as we're definitely not the best :sweat_smile:
+All infrastructure is managed by CDK and we use [Jest](https://jestjs.io/) for testing. Everything is witten TypeScript and we would appreciate any assistance on types or tests as we're definitely not the best :sweat_smile:
 
 The frontend runs on the [Serverless-Nextjs](https://serverless-nextjs.com/docs/cdkconstruct/) construct. We use [SSG without data + client side data fetching](https://youtu.be/f1rF9YKm1Ms?t=664) for almost all pages.
 

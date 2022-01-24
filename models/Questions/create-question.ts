@@ -30,14 +30,6 @@ export default async function Create(
     stageId,
   };
 
-  // If in dev, set a TTL for auto delete
-  if (process.env.NODE_ENV === "development") {
-    newStageQuestion["ttlExpiry"] = Time.futureUNIX(
-      DEFAULTS.TEST_DATA_RETENTION_PERIOD,
-      TIME_UNITS.DAYS
-    );
-  }
-
   try {
     questionOrder.push(questionId);
 

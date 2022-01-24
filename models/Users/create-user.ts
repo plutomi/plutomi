@@ -42,14 +42,6 @@ export default async function CreateUser(
     canReceiveEmails: true,
     verifiedEmail: false,
   };
-
-  // If in dev, set a TTL for auto delete
-  if (process.env.NODE_ENV === "development") {
-    newUser["ttlExpiry"] = Time.futureUNIX(
-      DEFAULTS.TEST_DATA_RETENTION_PERIOD,
-      TIME_UNITS.DAYS
-    );
-  }
   const params: PutCommandInput = {
     TableName: `${process.env.NODE_ENV}-${DYNAMO_TABLE_NAME}`,
     Item: newUser,
