@@ -1,10 +1,10 @@
 import useSelf from "../../SWR/useSelf";
-import UpdateName from "./UpdateName";
 import Loader from "../Loader";
 import ClickToCopy from "../ClickToCopy";
 import useOrgInfo from "../../SWR/useOrgInfo";
 import { mutate } from "swr";
-import { CreateOrg, DeleteOrg } from "../../adapters/Orgs";
+import { DeleteOrg } from "../../adapters/Orgs";
+import UserProfileModal from "../UserProfile/UserProfileModal";
 import useStore from "../../utils/store";
 import { OfficeBuildingIcon, PlusIcon } from "@heroicons/react/outline";
 import CreateOrgModal from "../Orgs/CreateOrgModal";
@@ -20,26 +20,12 @@ export default function DashboardContent() {
 
   const openCreateOrgModal = useStore((state) => state.openCreateOrgModal);
   const closeCreateOrgModal = useStore((state) => state.closeCreateOrgModal);
-
+  const openUserProfileModal = useStore((state) => state.openUserProfileModal);
   isUserLoading && <Loader text={"Loading user..."} />;
 
   user?.orgId !== DEFAULTS.NO_ORG && isOrgLoading && (
     <Loader text={"Loading org info..."} />
   );
-
-  const updateName = async ({ firstName, lastName }) => {
-    try {
-      const { message } = await UpdateUser(user?.userId, {
-        firstName: firstName,
-        lastName: lastName,
-        GSI1SK: `${firstName} ${lastName}`,
-      });
-      alert(message);
-    } catch (error) {
-      alert(error.response.data.message);
-    }
-    mutate(GetSelfInfoURL());
-  };
 
   const deleteOrg = async () => {
     if (
@@ -107,14 +93,25 @@ export default function DashboardContent() {
         />
       </div>
       <div className="flex justify-center mx-auto">
+        <UserProfileModal user={user} />
         {(user?.firstName === DEFAULTS.FIRST_NAME ||
           user?.lastName === DEFAULTS.LAST_NAME) && (
-          <UpdateName updateName={updateName} />
+          <div>
+            <h4>We don&apos;t seem to know your name!</h4>
+
+            <button
+              onClick={openUserProfileModal}
+              type="button"
+              className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+            >
+              Click here to edit it!
+            </button>
+          </div>
         )}
       </div>
       <div className="py-24">
         <button
-          onClick={() => deleteOrg()}
+          onClick={deleteOrg}
           type="button"
           className="inline-flex items-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-red-500 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
         >
