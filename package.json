@@ -61,6 +61,7 @@
     "@sls-next/lambda-at-edge": "^3.7.0-alpha.0",
     "@tailwindcss/aspect-ratio": "^0.2.2",
     "@tailwindcss/forms": "^0.3.4",
+    "artillery": "^2.0.0-10",
     "axios": "^0.21.4",
     "connect-timeout": "^1.9.0",
     "cookie-parser": "^1.4.6",
