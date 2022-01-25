@@ -6,7 +6,6 @@ import { PlusIcon } from "@heroicons/react/outline";
 import useStore from "../../utils/store";
 import CreateInviteModal from "../CreateInviteModal";
 import { useRouter } from "next/router";
-import { CreateInvite } from "../../adapters/Invites";
 import EmptyTeamState from "./EmptyTeamState";
 export default function TeamContent() {
   const router = useRouter();
@@ -15,36 +14,18 @@ export default function TeamContent() {
     user?.orgId
   );
 
-  const setCreateInviteModalOpen = useStore(
-    (state) => state.setCreateInviteModalOpen
-  );
-
-  if (isOrgUsersLoading) {
-    return <Loader text="Loading team..." />;
-  }
-
-  const createInvite = async (recipientEmail: string) => {
-    try {
-      // TODO add custom expiry - Defaults to 3 days
-      const { message } = await CreateInvite(recipientEmail);
-      alert(message);
-      setCreateInviteModalOpen(false);
-    } catch (error) {
-      console.error(error);
-      alert(error.response.data.message);
-    }
-  };
+  const openInviteModal = useStore((state) => state.openInviteModal);
+  isOrgUsersLoading && <Loader text="Loading team..." />;
 
   return (
     <>
-      <CreateInviteModal createInvite={createInvite} />
-
-      {orgUsers?.length > 1 ? ( // Set to 1 because a user can be the only one person in the org.
+      <CreateInviteModal />
+      {orgUsers?.length > 1 ? (
         <div className="">
           <div className="flex justify-end">
             <button
               type="button"
-              onClick={() => setCreateInviteModalOpen(true)}
+              onClick={openInviteModal}
               className="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-lg font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
             >
               <PlusIcon className="-ml-1 mr-2 h-5 w-5" aria-hidden="true" />

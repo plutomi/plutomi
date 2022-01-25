@@ -1,17 +1,17 @@
 import { AXIOS_INSTANCE as axios } from "../Config";
 // TODO types
 
-const CreateInvite = async (recipientEmail) => {
-  const { data } = await axios.post(`/invites`, recipientEmail);
+const CreateInvite = async (recipientEmail: string) => {
+  const { data } = await axios.post(`/invites`, { recipientEmail });
   return data;
 };
 
-const AcceptInvite = async (inviteId) => {
+const AcceptInvite = async (inviteId: string) => {
   const { data } = await axios.post(`/invites/${inviteId}`);
   return data;
 };
 
-const RejectInvite = async (inviteId) => {
+const RejectInvite = async (inviteId: string) => {
   const { data } = await axios.delete(`/invites/${inviteId}`);
   return data;
 };

@@ -55,7 +55,16 @@ const useStore = create((set) => ({
    */
   // TODO this is stupidly gross!!!
   openingsSearchInput: "",
-  createInviteModalIsOpen: false,
+
+  showInviteModal: false,
+  openInviteModal: () =>
+    set(() => ({
+      showInviteModal: true,
+    })),
+  closeInviteModal: () =>
+    set(() => ({
+      showInviteModal: false,
+    })),
 
   applicantProfileModal: {
     isModalOpen: false,
@@ -95,10 +104,6 @@ const useStore = create((set) => ({
   setOpeningsSearchInput: (input: string) =>
     set((state) => ({
       openingsSearchInput: input,
-    })),
-  setCreateInviteModalOpen: (open: Boolean) =>
-    set((state) => ({
-      createInviteModalIsOpen: open,
     })),
 }));
 export default useStore;
