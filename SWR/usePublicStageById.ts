@@ -1,7 +1,7 @@
 // Retrieves a specific user by ID
 import useSWR from "swr";
 import { SWRFetcher } from "../Config";
-import { GetPublicStageInfo } from "../adapters/PublicInfo";
+import { GetPublicStageInfoURL } from "../adapters/PublicInfo";
 export default function usePublicStageById( // TODO i think this can be refactored since we no longer need th eopening ID
   orgId?: string,
   openingId?: string,
@@ -10,7 +10,7 @@ export default function usePublicStageById( // TODO i think this can be refactor
   const shouldFetch = orgId && openingId && stageId;
 
   const { data, error } = useSWR(
-    shouldFetch && GetPublicStageInfo(orgId, openingId, stageId),
+    shouldFetch && GetPublicStageInfoURL(orgId, openingId, stageId),
     SWRFetcher
   );
 
