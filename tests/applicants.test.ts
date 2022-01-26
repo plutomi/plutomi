@@ -26,7 +26,7 @@ describe("Openings", () => {
         displayName: nanoid(10) + " Inc.",
       });
     } catch (error) {
-      console.error(error);
+      ;
     }
 
     // Create a public opening
@@ -36,7 +36,7 @@ describe("Openings", () => {
         openingName: publicOpeningName,
       });
     } catch (error) {
-      console.error(error);
+      ;
     }
 
     // Get public opening
@@ -54,7 +54,7 @@ describe("Openings", () => {
         GSI1SK: "First Stage",
       });
     } catch (error) {
-      console.error(error);
+      ;
     }
 
     // make opening public
@@ -93,7 +93,7 @@ describe("Openings", () => {
         openingId: privateOpeningId,
       });
     } catch (error) {
-      console.error(error);
+      ;
       expect(error.response.status).toBe(403);
       expect(error.response.data.message).toContain(
         "You cannot apply to this opening just yet!"
@@ -108,7 +108,7 @@ describe("Openings", () => {
         email: "test@10minutemail.com",
       });
     } catch (error) {
-      console.error(error);
+      ;
       expect(error.response.status).toBe(400);
       expect(error.response.data.message).toContain(ERRORS.EMAIL_VALIDATION);
     }
@@ -122,7 +122,7 @@ describe("Openings", () => {
         lastName: nanoid(80),
       });
     } catch (error) {
-      console.error(error);
+      ;
       expect(error.response.status).toBe(400);
       expect(error.response.data.message).toContain("body.firstName");
       expect(error.response.data.message).toContain("body.lastName");
@@ -139,7 +139,6 @@ describe("Openings", () => {
         email: "beans",
       });
     } catch (error) {
-      console.error(error);
       expect(error.response.status).toBe(400);
       expect(error.response.data.message).toContain("body.email");
       expect(error.response.data.message).toContain("must be a valid email");
@@ -153,7 +152,6 @@ describe("Openings", () => {
         orgId: "NO_ORG_ASSIGNED",
       });
     } catch (error) {
-      console.error(error);
       expect(error.response.status).toBe(400);
       expect(error.response.data.message).toContain("body.orgId");
       expect(error.response.data.message).toContain(

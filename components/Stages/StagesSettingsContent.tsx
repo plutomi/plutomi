@@ -1,9 +1,5 @@
 import { useRouter } from "next/router";
-import { mutate } from "swr";
-import difference from "../../utils/getObjectDifference";
 import StageReorderColumn from "../StageReorderColumn";
-import QuestionList from "../Questions/QuestionList";
-import useStore from "../../utils/store";
 import useAllQuestions from "../../SWR/useAllQuestions";
 import Loader from "../Loader";
 import useSelf from "../../SWR/useSelf";
@@ -28,11 +24,6 @@ export default function StageSettingsContent() {
   const { stage, isStageLoading, isStageError } = useStageInfo(
     openingId,
     stageId
-  );
-
-  const { questions, isQuestionsLoading, isQuestionsError } = useAllQuestions(
-    user?.orgId,
-    stage?.stageId
   );
 
   if (isOpeningLoading) {
@@ -67,8 +58,6 @@ export default function StageSettingsContent() {
                     <div className="flex justify-center space-x-4 py-2 items-center"></div>
                   </div>
                 </div>
-
-                <QuestionList />
               </div>
               {/* End main area */}
             </div>

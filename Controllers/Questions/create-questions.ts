@@ -1,5 +1,4 @@
 import { Request, Response } from "express";
-import * as Stages from "../../models/Stages";
 import * as CreateError from "../../utils/createError";
 import * as Questions from "../../models/Questions";
 import { DynamoNewQuestion } from "../../types/dynamo";
@@ -37,12 +36,16 @@ const main = async (req: Request, res: Response) => {
   });
 
   if (error) {
-    let customMsg = "An error ocurred creating your question";
     if (error.name === "ConditionalCheckFailedException") {
-      customMsg = "There is already a question with this ID.";
+      return res
+        .status(409)
+        .json({ message: "A question already exists with this ID" });
     }
 
-    const { status, body } = CreateError.SDK(error, customMsg);
+    const { status, body } = CreateError.SDK(
+      error,
+      "An error ocurred creating your question"
+    );
     return res.status(status).json(body);
   }
   return res.status(201).json({ message: "Question created!" });

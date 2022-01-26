@@ -23,7 +23,10 @@ TLDR: Try updating the stack that is using the removed stack with the `-e` flag 
 
 Make sure the only thing you are exporting from a lambda function is the function itself: `module.exports.main`, even exporting a type or interface will cause this error
 
-
 > ERROR: failed to copy files: copy file range failed: no space left on device
 
 https://stackoverflow.com/questions/48668660/docker-no-space-left-on-device-macos
+
+> Cannot connect to the Docker daemon at unix:///var/run/docker.sock. Is the docker daemon running?
+
+Make sure Docker is actually running lol

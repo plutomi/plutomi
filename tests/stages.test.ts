@@ -239,9 +239,7 @@ describe("Stages", () => {
 
       expect(stage.status).toBe(200);
       expect(stage.data.GSI1SK).toBe(stageName);
-    } catch (error) {
-      console.error(error);
-    }
+    } catch (error) {}
   });
 
   it("returns stages in an opening", async () => {
