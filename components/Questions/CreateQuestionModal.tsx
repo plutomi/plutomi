@@ -1,54 +1,43 @@
 import { FormEvent, Fragment, useState } from "react";
 import { Dialog, Transition } from "@headlessui/react";
-import { XIcon } from "@heroicons/react/outline";
+import { XIcon, ArrowRightIcon } from "@heroicons/react/outline";
 import useStore from "../../utils/store";
-import { CreateOrg } from "../../adapters/Orgs";
+import { CreateQuestion } from "../../adapters/Questions";
 const UrlSafeString = require("url-safe-string"),
-  tagGenerator = new UrlSafeString();
-import { mutate } from "swr";
-import { GetSelfInfoURL } from "../../adapters/Users";
-export default function CreateOrgModal() {
-  const [displayName, setDisplayName] = useState("");
-  const [orgId, setOrgId] = useState("");
+  tagGenerator = new UrlSafeString({ joinString: "_" });
 
-  const closeCreateOrgModal = useStore((state) => state.closeCreateOrgModal);
-  const visibility = useStore((state) => state.showCreateOrgModal);
+const descriptionMaxLength = 300; // TODO set this serverside
+export default function CreateQuestionModal() {
+  const [questionId, setQuestionId] = useState("");
+  const [GSI1SK, setGSI1SK] = useState("");
+  const [description, setDescription] = useState("");
 
-  const handleCreateOrg = async (e: FormEvent) => {
+  const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
-    console.log({
-      orgId,
-      displayName,
-    });
-    if (
-      !confirm(
-        `Your org id will be '${tagGenerator.generate(
-          orgId
-        )}', this CANNOT be changed. Do you want to continue?`
-      )
-    ) {
-      return;
-    }
-
     try {
-      const { message } = await CreateOrg({
-        displayName,
-        orgId,
+      const { message } = await CreateQuestion({
+        questionId,
+        GSI1SK,
+        description,
       });
+
       alert(message);
-      closeCreateOrgModal();
+      closeCreateQuestionModal();
     } catch (error) {
       alert(error.response.data.message);
     }
-
-    mutate(GetSelfInfoURL());
   };
+
+  const visibility = useStore((state) => state.showCreateQuestionModal);
+  const closeCreateQuestionModal = useStore(
+    (state) => state.closeCreateQuestionModal
+  );
   return (
-    <Transition.Root show={visibility || false} as={Fragment}>
+    <Transition.Root show={visibility} as={Fragment}>
       <Dialog
         as="div"
         className="fixed inset-0 overflow-hidden "
-        onClose={closeCreateOrgModal}
+        onClose={closeCreateQuestionModal}
       >
         <div className="absolute inset-0 overflow-hidden">
           <Transition.Child
@@ -76,19 +65,19 @@ export default function CreateOrgModal() {
               <div className="w-screen max-w-md">
                 <form
                   className="h-full divide-y divide-gray-200 flex flex-col bg-white shadow-xl"
-                  onSubmit={handleCreateOrg}
+                  onSubmit={(e) => handleSubmit(e)}
                 >
                   <div className="flex-1 h-0 overflow-y-auto">
                     <div className="py-6 px-4 bg-blue-700 sm:px-6">
                       <div className="flex items-center justify-between">
                         <Dialog.Title className="text-lg font-medium text-white">
-                          New Organization
+                          New Question
                         </Dialog.Title>
                         <div className="ml-3 h-7 flex items-center">
                           <button
                             type="button"
                             className="bg-blue-700 rounded-md text-blue-200 hover:text-white focus:outline-none focus:ring-2 focus:ring-white"
-                            onClick={closeCreateOrgModal}
+                            onClick={closeCreateQuestionModal}
                           >
                             <span className="sr-only">Close panel</span>
                             <XIcon className="h-6 w-6" aria-hidden="true" />
@@ -97,8 +86,7 @@ export default function CreateOrgModal() {
                       </div>
                       <div className="mt-1">
                         <p className="text-sm text-blue-300">
-                          Get started by creating an organization which will
-                          contain your openings and users
+                          Questions will be shown to applicants in this stage
                         </p>
                       </div>
                     </div>
@@ -107,62 +95,88 @@ export default function CreateOrgModal() {
                         <div className="space-y-6 pt-6 pb-5">
                           <div>
                             <label
-                              htmlFor="org-name"
+                              htmlFor="title"
                               className="block text-sm font-medium text-dark"
                             >
-                              Organization name
+                              Question Title
                             </label>
                             <div className="mt-1">
                               <input
                                 type="text"
-                                name="org-name"
-                                id="org-name"
+                                name="title"
+                                id="title"
                                 required
-                                onChange={(e) => setDisplayName(e.target.value)}
-                                value={displayName}
-                                className="block w-full shadow-sm sm:text-sm focus:ring-blue-500 focus:border-blue-500 border-gray-300 rounded-md"
+                                placeholder={
+                                  "'What is your name?' or 'Tell us about yourself'"
+                                }
+                                value={GSI1SK}
+                                onChange={(e) => setGSI1SK(e.target.value)}
+                                className="block w-full shadow-sm text-sm focus:ring-blue-500 focus:border-blue-500 border-gray-300 rounded-md"
                               />
                             </div>
                           </div>
                           <div>
                             <label
-                              htmlFor="org-id"
+                              htmlFor="description"
                               className="block text-sm font-medium text-dark"
                             >
-                              Custom ID
+                              Description
                             </label>
-                            <div className="mt-1 flex rounded-md shadow-sm">
-                              <span className="inline-flex items-center px-3 rounded-l-md border border-r-0 border-gray-300 bg-gray-50 text-normal sm:text-sm">
-                                plutomi.com/
-                              </span>
+                            <div className="mt-1 flex rounded-md shadow-sm w-full">
+                              <textarea
+                                name="description"
+                                id="description"
+                                placeholder="Optional helper text for your applicants."
+                                className="p-2 text-sm focus:ring-blue-500 focus:border-blue-500 border-gray-300 rounded-md w-full block resize"
+                                maxLength={descriptionMaxLength} // TODO add counter
+                                rows={5}
+                                value={description}
+                                onChange={(e) => setDescription(e.target.value)}
+                              ></textarea>
+                            </div>
+                          </div>
+                          <div>
+                            <label
+                              htmlFor="title"
+                              className="block text-sm font-medium text-dark"
+                            >
+                              Question ID
+                            </label>
+                            <div className="mt-1">
                               <input
                                 type="text"
-                                name="org-id"
-                                id="org-id"
+                                name="title"
+                                id="title"
                                 required
-                                maxLength={30}
+                                placeholder={
+                                  "Use only a-z, 0-9, and underscore '_'"
+                                }
+                                value={questionId}
                                 onChange={(e) =>
-                                  setOrgId(
+                                  setQuestionId(
                                     tagGenerator.generate(e.target.value)
                                   )
                                 }
-                                value={orgId}
-                                className="flex-1 min-w-0 block w-full px-3 py-2 rounded-none rounded-r-md focus:ring-blue-500 focus:border-blue-500 sm:text-sm border-gray-300"
-                                placeholder="Use only a-z, 0-9, and dash '-'"
+                                className="block w-full shadow-sm text-sm focus:ring-blue-500 focus:border-blue-500 border-gray-300 rounded-md"
                               />
                             </div>
-                            {orgId && (
-                              <p className="mt-2 text-blue-gray-500 text-md">
-                                Your ID will be:{" "}
-                                <span className="font-bold text-dark">
-                                  {orgId}
-                                </span>
+                            <div className="relativeitems-start">
+                              <div>
+                                <p className="block text-light text-sm  mt-2">
+                                  A unique key to match applicant move rules
+                                  against. For example:
+                                </p>
+                              </div>
+
+                              <p className=" text-light text-sm  mt-2">
+                                IF <strong>vehicle_type</strong> =
+                                &quot;bike&quot;{" "}
+                                <span className="inline-flex text-center items-center">
+                                  <ArrowRightIcon className="w-3 h-3" />
+                                </span>{" "}
+                                Move to &quot;Rejected&quot;
                               </p>
-                            )}
-                            <p className="text-red-400 mt-2 text-md">
-                              Your ID <span className="font-bold">cannot</span>{" "}
-                              be changed, please choose carefully.
-                            </p>
+                            </div>
                           </div>
                         </div>
                       </div>
@@ -172,7 +186,7 @@ export default function CreateOrgModal() {
                     <button
                       type="button"
                       className="bg-white py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
-                      onClick={closeCreateOrgModal}
+                      onClick={closeCreateQuestionModal}
                     >
                       Cancel
                     </button>
@@ -180,7 +194,7 @@ export default function CreateOrgModal() {
                       type="submit"
                       className="ml-4 inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
                     >
-                      Create Org
+                      Create Question
                     </button>
                   </div>
                 </form>

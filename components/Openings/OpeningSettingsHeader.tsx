@@ -6,7 +6,7 @@ import { TrashIcon } from "@heroicons/react/outline";
 import useOpeningInfo from "../../SWR/useOpeningInfo";
 import { useRouter } from "next/router";
 import Loader from "../Loader";
-import { DeleteOpening, GetAllOpeningsInOrgURL } from "../../adapters/Openings";
+import { DeleteOpening, GetOpeningsInOrgURL } from "../../adapters/Openings";
 import * as Time from "../../utils/time";
 import { CUSTOM_QUERY } from "../../types/main";
 import { WEBSITE_URL } from "../../Config";
@@ -61,7 +61,7 @@ export default function OpeningSettingsHeader() {
     }
 
     // Refresh openings
-    mutate(GetAllOpeningsInOrgURL());
+    mutate(GetOpeningsInOrgURL());
   };
 
   return (

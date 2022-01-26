@@ -2,49 +2,51 @@ import { FormEvent, Fragment, useEffect, useState } from "react";
 import { Dialog, Transition } from "@headlessui/react";
 import { XIcon } from "@heroicons/react/outline";
 import useStore from "../../utils/store";
-import { mutate } from "swr";
+import { UpdateQuestion } from "../../adapters/Questions";
 import { useRouter } from "next/router";
-import { GetOpeningInfoURL } from "../../adapters/Openings";
-import { GetStagesInOpeningURL, UpdateStage } from "../../adapters/Stages";
 import { CUSTOM_QUERY } from "../../types/main";
-import { DynamoNewStage } from "../../types/dynamo";
+import { mutate } from "swr";
+import { GetStageInfoURL } from "../../adapters/Stages";
 
-export default function UpdateStageModal({ stage }: { stage: DynamoNewStage }) {
+const descriptionMaxLength = 300; // TODO set this serverside
+export default function UpdateQuestionModal({ question }) {
+  const [GSI1SK, setGSI1SK] = useState("");
+  const [description, setDescription] = useState("");
+
+  useEffect(() => {
+    setGSI1SK(question?.GSI1SK);
+    setDescription(question?.description);
+  }, [question?.GSI1SK, question?.description]);
+
+  const visibility = useStore((state) => state.showUpdateQuestionModal);
+  const closeUpdateQuestionModal = useStore(
+    (state) => state.closeUpdateQuestionmodal
+  );
+
   const router = useRouter();
-
   const { openingId, stageId } = router.query as Pick<
     CUSTOM_QUERY,
     "openingId" | "stageId"
   >;
-  const [GSI1SK, setGSI1SK] = useState("");
-
-  useEffect(() => {
-    setGSI1SK(stage?.GSI1SK);
-  }, [stage?.GSI1SK]);
-
-  const visibility = useStore((state) => state.showUpdateStageModal);
-  const closeUpdateStageModal = useStore(
-    (state) => state.closeUpdateStageModal
-  );
-
   const handleSubmit = async (e: FormEvent) => {
-    e.preventDefault();
     try {
-      const { message } = await UpdateStage(openingId, stageId, {
+      // TODO
+      const { message } = await UpdateQuestion({
         GSI1SK,
+        description,
       });
+
       alert(message);
-      setGSI1SK("");
-      closeUpdateStageModal();
+      closeUpdateQuestionModal();
     } catch (error) {
       alert(error.response.data.message);
     }
-    // Refresh stage order
-    mutate(GetOpeningInfoURL(openingId));
 
-    // Refresh stage list
-    mutate(GetStagesInOpeningURL(openingId));
-    // TODO
+    // Refresh the questionOrder
+    mutate(GetStageInfoURL(openingId, stageId));
+
+    // Refresh the question list
+    mutate(GetQuestionsInStageURL(openingId, stageId));
   };
 
   return (
@@ -52,7 +54,7 @@ export default function UpdateStageModal({ stage }: { stage: DynamoNewStage }) {
       <Dialog
         as="div"
         className="fixed inset-0 overflow-hidden "
-        onClose={closeUpdateStageModal}
+        onClose={closeUpdateQuestionModal}
       >
         <div className="absolute inset-0 overflow-hidden">
           <Transition.Child
@@ -86,13 +88,13 @@ export default function UpdateStageModal({ stage }: { stage: DynamoNewStage }) {
                     <div className="py-6 px-4 bg-blue-700 sm:px-6">
                       <div className="flex items-center justify-between">
                         <Dialog.Title className="text-lg font-medium text-white">
-                          Update Stage
+                          Update Question
                         </Dialog.Title>
                         <div className="ml-3 h-7 flex items-center">
                           <button
                             type="button"
                             className="bg-blue-700 rounded-md text-blue-200 hover:text-white focus:outline-none focus:ring-2 focus:ring-white"
-                            onClick={closeUpdateStageModal}
+                            onClick={closeUpdateQuestionModal}
                           >
                             <span className="sr-only">Close panel</span>
                             <XIcon className="h-6 w-6" aria-hidden="true" />
@@ -101,9 +103,7 @@ export default function UpdateStageModal({ stage }: { stage: DynamoNewStage }) {
                       </div>
                       <div className="mt-1">
                         <p className="text-sm text-blue-300">
-                          Stages are individual steps in your application
-                          process such as &apos;Questionnaire&apos;, &apos;Under
-                          Review&apos;, or &apos;Ready to Drive&apos;.
+                          Questions will be shown to applicants in this stage
                         </p>
                       </div>
                     </div>
@@ -112,22 +112,44 @@ export default function UpdateStageModal({ stage }: { stage: DynamoNewStage }) {
                         <div className="space-y-6 pt-6 pb-5">
                           <div>
                             <label
-                              htmlFor="opening-name"
+                              htmlFor="title"
                               className="block text-sm font-medium text-dark"
                             >
-                              New Stage Name
+                              New Question Title
                             </label>
                             <div className="mt-1">
                               <input
                                 type="text"
-                                name="opening-name"
-                                id="opening-name"
-                                placeholder={`What is the overall purpose of this stage?`}
+                                name="title"
+                                id="title"
                                 required
-                                onChange={(e) => setGSI1SK(e.target.value)}
+                                placeholder={
+                                  "'What is your name?' or 'Tell us about yourself'"
+                                }
                                 value={GSI1SK}
-                                className="block w-full shadow-sm sm:text-sm focus:ring-blue-500 focus:border-blue-500 border-gray-300 rounded-md"
+                                onChange={(e) => setGSI1SK(e.target.value)}
+                                className="block w-full shadow-sm text-sm focus:ring-blue-500 focus:border-blue-500 border-gray-300 rounded-md"
                               />
+                            </div>
+                          </div>
+                          <div>
+                            <label
+                              htmlFor="description"
+                              className="block text-sm font-medium text-dark"
+                            >
+                              New Description
+                            </label>
+                            <div className="mt-1 flex rounded-md shadow-sm w-full">
+                              <textarea
+                                name="description"
+                                id="description"
+                                placeholder="Optional helper text for your applicants."
+                                className="p-2 text-sm focus:ring-blue-500 focus:border-blue-500 border-gray-300 rounded-md w-full block resize"
+                                maxLength={descriptionMaxLength} // TODO add counter
+                                rows={5}
+                                value={description}
+                                onChange={(e) => setDescription(e.target.value)}
+                              ></textarea>
                             </div>
                           </div>
                         </div>
@@ -138,7 +160,7 @@ export default function UpdateStageModal({ stage }: { stage: DynamoNewStage }) {
                     <button
                       type="button"
                       className="bg-white py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
-                      onClick={closeUpdateStageModal}
+                      onClick={closeUpdateQuestionModal}
                     >
                       Cancel
                     </button>
@@ -146,7 +168,7 @@ export default function UpdateStageModal({ stage }: { stage: DynamoNewStage }) {
                       type="submit"
                       className="ml-4 inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
                     >
-                      Update Stage
+                      Update Question
                     </button>
                   </div>
                 </form>

@@ -11745,6 +11745,11 @@
     "astral-regex" "^2.0.0"
     "is-fullwidth-code-point" "^3.0.0"
 
+"slugify@^1.6.5":
+  "integrity" "sha512-8mo9bslnBO3tr5PEVFzMPIWwWnipGS0xVbYf65zxDqfNwmzYn1LpiKNrR6DlClusuvo+hDHd1zKpmfAe83NQSQ=="
+  "resolved" "https://registry.npmjs.org/slugify/-/slugify-1.6.5.tgz"
+  "version" "1.6.5"
+
 "smart-buffer@^4.1.0":
   "version" "4.2.0"
 
@@ -12826,6 +12831,11 @@
   "integrity" "sha1-KrGFKSK1bSCVU62yBIEvxQCQQro="
   "resolved" "https://registry.npmjs.org/url-safe-string/-/url-safe-string-1.1.0.tgz"
   "version" "1.1.0"
+
+"url-slug@^3.0.2":
+  "integrity" "sha512-puioWUGY+esk4kKW8L6fCZWb+xK1+0L/KH2miV6GEJdlCJRJ2lfRlvHkUikyEU1e1v4j1C1HBQKvuljFOxmnEA=="
+  "resolved" "https://registry.npmjs.org/url-slug/-/url-slug-3.0.2.tgz"
+  "version" "3.0.2"
 
 "url@^0.11.0":
   "integrity" "sha1-ODjpfPxgUh63PFJajlW/3Z4uKPE="

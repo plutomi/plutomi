@@ -2,12 +2,12 @@ import { QueryCommandInput, QueryCommand } from "@aws-sdk/lib-dynamodb";
 import { Dynamo } from "../../AWSClients/ddbDocClient";
 import { ENTITY_TYPES } from "../../Config";
 import { DynamoNewUser } from "../../types/dynamo";
-import { GetAllUsersInOrgInput } from "../../types/main";
+import { GetUsersInOrgInput } from "../../types/main";
 const { DYNAMO_TABLE_NAME } = process.env;
 import { SdkError } from "@aws-sdk/types";
 
 export default async function GetUsers(
-  props: GetAllUsersInOrgInput
+  props: GetUsersInOrgInput
 ): Promise<[DynamoNewUser[], null] | [null, SdkError]> {
   const { orgId, limit } = props;
   const params: QueryCommandInput = {

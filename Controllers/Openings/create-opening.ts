@@ -33,7 +33,7 @@ const main = async (req: Request, res: Response) => {
   if (createOpeningError) {
     const { status, body } = CreateError.SDK(
       createOpeningError,
-      "An error ocurred creating opening"
+      "An error ocurred creating that opening"
     );
     return res.status(status).json(body);
   }

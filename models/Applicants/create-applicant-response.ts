@@ -13,13 +13,8 @@ const { DYNAMO_TABLE_NAME } = process.env;
 export default async function CreateResponse(
   props: CreateApplicantResponseInput
 ): Promise<[CreateApplicantResponseOutput, null] | [null, SdkError]> {
-  const {
-    orgId,
-    applicantId,
-    questionTitle,
-    questionDescription,
-    questionResponse,
-  } = props;
+  const { orgId, applicantId, questionTitle, description, questionResponse } =
+    props;
   const responseId = nanoid(ID_LENGTHS.APPLICANT_RESPONSE);
   const newApplicantResponse: DynamoNewApplicantResponse = {
     PK: `${ENTITY_TYPES.ORG}#${orgId}#${ENTITY_TYPES.APPLICANT}#${applicantId}`,
@@ -30,7 +25,7 @@ export default async function CreateResponse(
     createdAt: Time.currentISO(),
     responseId,
     questionTitle,
-    questionDescription,
+    description,
     questionResponse,
     GSI1PK: `${ENTITY_TYPES.ORG}#${orgId}#${ENTITY_TYPES.APPLICANT}#${applicantId}`,
     GSI1SK: ENTITY_TYPES.APPLICANT_RESPONSE, // TODO add timestmap?

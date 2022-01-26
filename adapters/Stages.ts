@@ -29,16 +29,16 @@ const UpdateStage = async (openingId, stageId, newValues) => {
   return data;
 };
 
-const GetAllStagesInOpeningURL = (openingId) => `/openings/${openingId}/stages`;
+const GetStagesInOpeningURL = (openingId) => `/openings/${openingId}/stages`;
 
-const GetAllStagesInOpening = async (openingId) => {
-  const { data } = await axios.get(GetAllStagesInOpening(openingId));
+const GetStagesInOpening = async (openingId) => {
+  const { data } = await axios.get(GetStagesInOpening(openingId));
   return data;
 };
 
 export {
-  GetAllStagesInOpening,
-  GetAllStagesInOpeningURL,
+  GetStagesInOpening,
+  GetStagesInOpeningURL,
   UpdateStage,
   DeleteStage,
   GetStageInfo,

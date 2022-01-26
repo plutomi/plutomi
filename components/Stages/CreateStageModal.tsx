@@ -6,7 +6,7 @@ import { mutate } from "swr";
 import { useRouter } from "next/router";
 
 import { GetOpeningInfoURL } from "../../adapters/Openings";
-import { CreateStage, GetAllStagesInOpeningURL } from "../../adapters/Stages";
+import { CreateStage, GetStagesInOpeningURL } from "../../adapters/Stages";
 import { CUSTOM_QUERY } from "../../types/main";
 
 export default function CreateStageModal() {
@@ -34,7 +34,7 @@ export default function CreateStageModal() {
     mutate(GetOpeningInfoURL(openingId));
 
     // Refresh stage list
-    mutate(GetAllStagesInOpeningURL(openingId));
+    mutate(GetStagesInOpeningURL(openingId));
     // TODO
   };
 

@@ -13,9 +13,6 @@ import { GetSelfInfoURL, UpdateUser } from "../../adapters/Users";
 export default function DashboardContent() {
   const { user, isUserLoading, isUserError } = useSelf();
   const { org, isOrgLoading, isOrgError } = useOrgInfo(user?.orgId);
-  const UrlSafeString = require("url-safe-string"),
-    tagGenerator = new UrlSafeString();
-
   const customApplyLink = `${WEBSITE_URL}/${org?.orgId}/apply`;
 
   const openCreateOrgModal = useStore((state) => state.openCreateOrgModal);

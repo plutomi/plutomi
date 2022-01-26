@@ -1,5 +1,5 @@
 import useSWR from "swr";
-import { GetAllApplicantsInStageURL } from "../adapters/Applicants";
+import { GetApplicantsInStageURL } from "../adapters/Applicants";
 import { SWRFetcher } from "../Config";
 export default function useAllApplicantsInStage(
   openingId?: string,
@@ -7,7 +7,7 @@ export default function useAllApplicantsInStage(
 ) {
   const shouldFetch = openingId && stageId;
   const { data, error } = useSWR(
-    shouldFetch && GetAllApplicantsInStageURL(openingId, stageId),
+    shouldFetch && GetApplicantsInStageURL(openingId, stageId),
     SWRFetcher
   );
 

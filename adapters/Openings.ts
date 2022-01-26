@@ -14,10 +14,10 @@ const GetOpeningInfo = async (openingId: string) => {
   return data;
 };
 
-const GetAllOpeningsInOrgURL = () => `/openings`;
+const GetOpeningsInOrgURL = () => `/openings`;
 
 const GetAlOpeningsInOrg = async () => {
-  const { data } = await axios.get(GetAllOpeningsInOrgURL());
+  const { data } = await axios.get(GetOpeningsInOrgURL());
   return data;
 };
 
@@ -41,7 +41,7 @@ export {
   UpdateOpening,
   DeleteOpening,
   GetAlOpeningsInOrg,
-  GetAllOpeningsInOrgURL,
+  GetOpeningsInOrgURL,
   GetOpeningInfo,
   GetOpeningInfoURL,
 };

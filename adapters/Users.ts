@@ -19,10 +19,10 @@ const UpdateUser = async (userId: string, options: APIUpdateUserOptions) => {
   return data;
 };
 
-const GetAllUsersInOrgURL = () => `/users`;
+const GetUsersInOrgURL = () => `/users`;
 
-const GetAllUsersInOrg = async () => {
-  const { data } = await axios.get(GetAllUsersInOrgURL());
+const GetUsersInOrg = async () => {
+  const { data } = await axios.get(GetUsersInOrgURL());
   return data;
 };
 
@@ -32,6 +32,6 @@ export {
   GetUserInfo,
   GetUserInfoUrl,
   UpdateUser,
-  GetAllUsersInOrg,
-  GetAllUsersInOrgURL,
+  GetUsersInOrg,
+  GetUsersInOrgURL,
 };

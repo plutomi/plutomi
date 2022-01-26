@@ -8,7 +8,7 @@ import useStageInfo from "../../../../../SWR/useStageInfo";
 import { CUSTOM_QUERY } from "../../../../../types/main";
 import { GetOpeningInfoURL } from "../../../../../adapters/Openings";
 import {
-  GetAllStagesInOpeningURL,
+  GetStagesInOpeningURL,
   DeleteStage,
 } from "../../../../../adapters/Stages";
 import { WEBSITE_URL } from "../../../../../Config";
@@ -49,7 +49,7 @@ export default function StageSettings() {
     mutate(GetOpeningInfoURL(openingId));
 
     // Refresh the stage list
-    mutate(GetAllStagesInOpeningURL(openingId));
+    mutate(GetStagesInOpeningURL(openingId));
   };
 
   return (

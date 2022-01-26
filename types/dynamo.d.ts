@@ -45,50 +45,48 @@ interface DynamoNewStage {
   GSI1SK: string;
 }
 
-interface DynamoNewStageQuestion {
+interface DynamoNewQuestion {
   /**
    * The primary key for the question. Variables are `orgId` and `questionId`
    */
-  PK: `${ENTITY_TYPES.ORG}#${string}#${ENTITY_TYPES.STAGE_QUESTION}#${string}`;
+  PK: `${ENTITY_TYPES.ORG}#${string}#${ENTITY_TYPES.QUESTION}#${string}`;
   /**
-   * Sort key for the question. In this case, it's just the {@link ENTITY_TYPES.STAGE_QUESTION}
+   * Sort key for the question. In this case, it's just the {@link ENTITY_TYPES.QUESTION}
    */
-  SK: ENTITY_TYPES.STAGE_QUESTION;
+  SK: ENTITY_TYPES.QUESTION;
   /**
-   * The ID of the question
+   * The custom ID of the question, where rules will be evaluated agains
    */
   questionId: string;
+
   /**
    * The description of the question
-   * @default '' - Empty string
+   * @optional
+   * @default ''
+   *
    */
-  questionDescription: string;
+  description?: string;
   /**
    * Which org does this question belong to
    */
   orgId: string;
 
   /**
-   * The entityType {@link ENTITY_TYPES.STAGE_QUESTION}
+   * The entityType {@link ENTITY_TYPES.QUESTION}
    */
-  entityType: ENTITY_TYPES.STAGE_QUESTION;
+  entityType: ENTITY_TYPES.QUESTION;
   /**
    * ISO timestamp of when this question was created
    */
   createdAt: string;
 
   /**
-   * Which stage does this question belong to
+   * Get all questions in org & get question by key
    */
-  stageId: string;
+  GSI1PK: `${ENTITY_TYPES.ORG}#${string}#${ENTITY_TYPES.QUESTION}S`;
 
   /**
-   * The primary key for the questios GSI1, params are `orgId` and `stageId`
-   */
-  GSI1PK: `${ENTITY_TYPES.ORG}#${string}#${ENTITY_TYPES.STAGE}#${string}#QUESTIONS`;
-
-  /**
-   * The question title
+   * The question Title
    */
   GSI1SK: string;
 }
@@ -203,7 +201,7 @@ interface DynamoNewApplicantResponse {
   /**
    * The description of the question for which the response is for
    */
-  questionDescription: string;
+  description: string;
   /**
    * The actual response to the question
    */

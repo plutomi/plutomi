@@ -9,7 +9,7 @@ import {
   CreateStage,
   UpdateStage,
   GetStageInfoURL,
-  GetAllStagesInOpeningURL,
+  GetStagesInOpeningURL,
 } from "../adapters/Stages";
 import { useEffect } from "react";
 import useOpeningInfo from "../SWR/useOpeningInfo";
@@ -83,7 +83,7 @@ export default function StageReorderColumn() {
     mutate(GetOpeningInfoURL(openingId));
 
     // Refresh the stages
-    mutate(GetAllStagesInOpeningURL(openingId));
+    mutate(GetStagesInOpeningURL(openingId));
   };
 
   return (

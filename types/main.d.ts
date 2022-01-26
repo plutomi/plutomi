@@ -5,7 +5,7 @@ import {
   DynamoNewOpening,
   DynamoNewOrgInvite,
   DynamoNewStage,
-  DynamoNewStageQuestion,
+  DynamoNewQuestion,
   DynamoNewUser,
 } from "./dynamo";
 type DynamoActions =
@@ -55,11 +55,11 @@ type GetStageByIdInput = Pick<
   "orgId" | "stageId" | "openingId"
 >;
 type GetStageByIdOutput = DynamoNewStage;
-type GetAllApplicantsInStageInput = Pick<
+type GetApplicantsInStageInput = Pick<
   DynamoNewStage,
   "orgId" | "stageId" | "openingId"
 >;
-type GetAllApplicantsInStageOutput = DynamoNewApplicant[];
+type GetApplicantsInStageOutput = DynamoNewApplicant[];
 
 export interface UpdateStageInput
   extends Pick<DynamoNewStage, "orgId" | "stageId" | "openingId"> {
@@ -75,37 +75,33 @@ export interface UpdateUserInput extends Pick<DynamoNewUser, "userId"> {
   newValues: { [key: string]: any };
 }
 
-export interface CreateStageQuestionInput
-  extends Pick<
-    DynamoNewStageQuestion,
-    "orgId" | "stageId" | "GSI1SK" | "questionDescription"
-  > {
-  questionOrder: string[];
-}
+type CreateQuestionInput = Pick<
+  DynamoNewQuestion,
+  "orgId" | "GSI1SK" | "description" | "questionId"
+>;
 
 type orgIdAndQuestionId = "orgId" | "questionId";
 
+// TODo remove the below types
 export interface DeleteQuestionInput
-  extends Pick<DynamoNewStageQuestion, orgIdAndQuestionId> {
+  extends Pick<DynamoNewQuestion, orgIdAndQuestionId> {
   stageId: string;
   questionOrder: string[];
   deletedQuestionIndex: number;
 }
 
-type GetQuestionInput = Pick<DynamoNewStageQuestion, orgIdAndQuestionId>;
-type GetQuestionOutput = DynamoNewStageQuestion;
+type GetQuestionInput = Pick<DynamoNewQuestion, orgIdAndQuestionId>;
+type GetQuestionOutput = DynamoNewQuestion;
 
-export interface GetAllQuestionsInStageInput
-  extends Pick<DynamoNewStageQuestion, "orgId" | "stageId"> {
-  questionOrder: string[];
-}
+export type GetQuestionsInOrgInput = Pick<DynamoNewQuestion, "orgId">;
+export type GetQuestionsInOrgOutput = DynamoNewQuestion[];
 
 export interface UpdateQuestionInput
-  extends Pick<DynamoNewStageQuestion, orgIdAndQuestionId> {
+  extends Pick<DynamoNewQuestion, orgIdAndQuestionId> {
   newValues: { [key: string]: any };
 }
 
-type GetAllQuestionsInStageOutput = GetQuestionOutput[];
+type GetQuestionsInStageOutput = GetQuestionOutput[];
 
 type CreateApplicantInput = Pick<
   DynamoNewApplicant,
@@ -138,11 +134,7 @@ export interface UpdateApplicantOutput extends DynamoNewApplicant {
 
 type CreateApplicantResponseInput = Pick<
   DynamoNewApplicantResponse,
-  | "orgId"
-  | "applicantId"
-  | "questionTitle"
-  | "questionDescription"
-  | "questionResponse"
+  "orgId" | "applicantId" | "questionTitle" | "description" | "questionResponse"
 >;
 
 type CreateApplicantResponseOutput = DynamoNewApplicantResponse;
@@ -155,7 +147,7 @@ interface GetOpeningsInOrgInput extends Pick<DynamoNewOpening, "orgId"> {
   GSI1SK?: OPENING_PUBLIC_STATE;
 }
 
-type GetAllStagesInOpeningInput = Pick<
+type GetStagesInOpeningInput = Pick<
   DynamoNewOpening,
   "orgId" | "openingId" | "stageOrder"
 >;
@@ -227,7 +219,7 @@ type LeaveAndDeleteOrgInput = {
   userId: string;
 };
 
-type GetAllUsersInOrgInput = {
+type GetUsersInOrgInput = {
   orgId: string;
   /**
    * Optional limit to only return a certain number of users

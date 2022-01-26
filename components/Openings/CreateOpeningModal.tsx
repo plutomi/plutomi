@@ -1,7 +1,7 @@
 import { FormEvent, Fragment, useState } from "react";
 import { Dialog, Transition } from "@headlessui/react";
 import { XIcon } from "@heroicons/react/outline";
-import { CreateOpening, GetAllOpeningsInOrgURL } from "../../adapters/Openings";
+import { CreateOpening, GetOpeningsInOrgURL } from "../../adapters/Openings";
 import useStore from "../../utils/store";
 import { mutate } from "swr";
 
@@ -19,7 +19,7 @@ export default function CreateOpeningModal() {
       const { message } = await CreateOpening({
         openingName,
       });
-      mutate(GetAllOpeningsInOrgURL());
+      mutate(GetOpeningsInOrgURL());
       alert(message);
       closeCreateOpeningModal();
     } catch (error) {

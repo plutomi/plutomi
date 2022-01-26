@@ -48,7 +48,7 @@ export enum ENTITY_TYPES {
   USER = "USER",
   OPENING = "OPENING",
   STAGE = "STAGE",
-  STAGE_QUESTION = "STAGE_QUESTION", // TODO question sets
+  QUESTION = "QUESTION", // TODO question sets
   STAGE_RULE = "STAGE_RULE",
   LOGIN_LINK = "LOGIN_LINK",
   LOGIN_EVENT = "LOGIN_EVENT",
@@ -80,8 +80,6 @@ export const ID_LENGTHS = {
   OPENING: 15, // Unique to org
   STAGE: 15, // Unique to opening,
   STAGE_RULE: 10, // TODO, unique to stage
-  QUESTION_SET: 10, // TODO unique to org
-  STAGE_QUESTION: 10, // TODO, unique to question set, needs name change
 };
 
 export enum DEFAULTS {
@@ -196,12 +194,7 @@ export const FORBIDDEN_PROPERTIES = {
     "GSI2SK", // TODO, remove these when advancing / moving applicants!!!!!!!!!
   ],
 
-  STAGE_QUESTION: [
-    ...GLOBAL_FORBIDDEN_PROPERTIES,
-    "questionId",
-    "GSI1PK",
-    "stageId",
-  ],
+  QUESTION: [...GLOBAL_FORBIDDEN_PROPERTIES, "questionId", "GSI1PK", "stageId"],
 };
 
 export const NAVBAR_NAVIGATION = [
@@ -214,6 +207,12 @@ export const NAVBAR_NAVIGATION = [
   {
     name: "Openings",
     href: "/openings",
+    hiddenIfNoOrg: true,
+    hiddenIfOrg: false,
+  },
+  {
+    name: "Questions",
+    href: "/questions",
     hiddenIfNoOrg: true,
     hiddenIfOrg: false,
   },
@@ -231,14 +230,16 @@ export const DROPDOWN_NAVIGATION = [
 ];
 
 // Schema to validate orgIds against in joi
-export const JoiOrgId = Joi.string().invalid(
-  DEFAULTS.NO_ORG,
-  tagGenerator.generate(DEFAULTS.NO_ORG),
-  "plutomi",
-  "plutomi-",
-  "plutomi-inc",
-  "plutomiinc"
-);
+export const JoiOrgId = Joi.string()
+  .invalid(
+    DEFAULTS.NO_ORG,
+    tagGenerator.generate(DEFAULTS.NO_ORG),
+    "plutomi",
+    "plutomi-",
+    "plutomi-inc",
+    "plutomiinc"
+  )
+  .max(200);
 
 export const COOKIE_SETTINGS = {
   httpOnly: true,

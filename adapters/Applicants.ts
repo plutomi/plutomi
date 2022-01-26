@@ -44,13 +44,11 @@ const AnswerQuestions = async (applicantId, responses) => {
   return data;
 };
 
-const GetAllApplicantsInStageURL = (openingId, stageId) =>
+const GetApplicantsInStageURL = (openingId, stageId) =>
   `/openings/${openingId}/stages/${stageId}/applicants`;
 
-const GetAllApplicantsInStage = async (openingId, stageId) => {
-  const { data } = await axios.get(
-    GetAllApplicantsInStageURL(openingId, stageId)
-  );
+const GetApplicantsInStage = async (openingId, stageId) => {
+  const { data } = await axios.get(GetApplicantsInStageURL(openingId, stageId));
   return data;
 };
 
@@ -62,6 +60,6 @@ export {
   UpdateApplicant,
   AnswerQuestionsURL,
   AnswerQuestions,
-  GetAllApplicantsInStageURL,
-  GetAllApplicantsInStage,
+  GetApplicantsInStageURL,
+  GetApplicantsInStage,
 };

@@ -10,7 +10,7 @@ import {
 } from "../../adapters/Invites";
 import useUserInvites from "../../SWR/useUserInvites";
 import { DynamoNewOrgInvite } from "../../types/dynamo";
-import {GetSelfInfoURL} from "../../adapters/Users";
+import { GetSelfInfoURL } from "../../adapters/Users";
 export default function InvitesContent() {
   const router = useRouter();
   const { user, isUserLoading, isUserError } = useSelf();
@@ -18,36 +18,6 @@ export default function InvitesContent() {
   const { invites, isInvitesLoading, isInvitesError } = useUserInvites(
     user?.userId
   );
-
-  const acceptInvite = async (inviteId) => {
-    try {
-      const { message } = await AcceptInvite(inviteId);
-      alert(message);
-      router.push("/dashboard");
-    } catch (error) {
-      console.error(error);
-      alert(error.response.data.message);
-    }
-
-    // Refresh the user's orgId
-    mutate(GetSelfInfoURL());
-
-    // Refresh the user's invites
-    mutate(GetUserInvitesURL());
-  };
-
-  const rejectInvite = async (invite) => {
-    try {
-      const { message } = await RejectInvite(invite.inviteId);
-
-      alert(message);
-    } catch (error) {
-      console.error(error);
-      alert(error.response.data.message);
-    }
-
-    mutate(GetUserInvitesURL());
-  };
 
   if (isInvitesLoading) {
     return <Loader text="Loading invites..." />;
@@ -63,12 +33,7 @@ export default function InvitesContent() {
         className="divide-y divide-gray-200 mx-auto max-w-xl flex-col space-y-4 p-20  "
       >
         {invites?.map((invite: DynamoNewOrgInvite) => (
-          <Invite
-            invite={invite}
-            key={invite.inviteId}
-            rejectInvite={rejectInvite}
-            acceptInvite={acceptInvite}
-          />
+          <Invite invite={invite} key={invite.inviteId} />
         ))}
       </ul>
     </div>

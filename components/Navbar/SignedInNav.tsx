@@ -27,7 +27,7 @@ export default function SignedInNav({ current }) {
   const handleLogout = async () => {
     try {
       const { message } = await Logout();
-      alert(message);
+      // alert(message);
       // TODO reroute to homepage
     } catch (error) {
       alert(error.response.message);

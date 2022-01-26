@@ -145,7 +145,6 @@ describe("Logout", () => {
 
       expect(cookie).toBe([]);
       expect(data.status).toBe(200);
-      expect(data.data.message).toBe("You've been logged out!");
     } catch (error) {}
   });
 });

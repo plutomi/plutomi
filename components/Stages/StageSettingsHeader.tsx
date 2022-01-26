@@ -7,6 +7,7 @@ import useStageInfo from "../../SWR/useStageInfo";
 import * as Time from "../../utils/time";
 import { CUSTOM_QUERY } from "../../types/main";
 import UpdateStageModal from "./UpdateStageModal";
+import CreateQuestionModal from "../Questions/CreateQuestionModal";
 export default function StageSettingsHeader({ deleteStage }) {
   const router = useRouter();
   const { openingId, stageId } = router.query as Pick<
@@ -20,7 +21,9 @@ export default function StageSettingsHeader({ deleteStage }) {
     stageId
   );
 
-  const setQuestionModal = useStore((state) => state.setQuestionModal);
+  const openCreateQuestionModal = useStore(
+    (state) => state.openCreateQuestionModal
+  );
 
   const crumbs = [
     {
@@ -43,7 +46,7 @@ export default function StageSettingsHeader({ deleteStage }) {
   return (
     <div className="md:flex md:items-center md:justify-between ">
       <UpdateStageModal stage={stage} />
-
+      <CreateQuestionModal />
       <div className=" min-w-0 flex flex-col items-start ">
         <Breadcrumbs crumbs={crumbs} />
       </div>
@@ -62,16 +65,7 @@ export default function StageSettingsHeader({ deleteStage }) {
         </button>
         <button
           type="button"
-          onClick={() =>
-            setQuestionModal({
-              isModalOpen: true,
-              modalMode: "CREATE",
-              stageId: stageId,
-              GSI1SK: "",
-              questionId: "",
-              questionDescription: "",
-            })
-          }
+          onClick={openCreateQuestionModal}
           className="inline-flex items-center px-4 py-2 border  shadow-sm text-base font-medium rounded-md border-blue-500 text-white bg-blue-500 hover:bg-blue-800 hover:text-white  transition ease-in-out duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
         >
           <PlusIcon className="-ml-1 mr-3 h-5 w-5" aria-hidden="true" />

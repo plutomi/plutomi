@@ -4,13 +4,11 @@ import useSelf from "../SWR/useSelf";
 import { Logout } from "../adapters/Auth";
 import { mutate } from "swr";
 import { GetSelfInfoURL } from "../adapters/Users";
-import { route } from "next/dist/server/router";
 const handleLogout = async (isHomepage: boolean) => {
-  // If we're on the homepage, since its SSR, we want to refresh the page
   try {
     const { message } = await Logout(); // TODO logout to same page
     isHomepage ? window.location.reload() : null;
-    alert(message);
+    // alert(message);
     // TODO reroute to homepage
   } catch (error) {
     alert(error.response.message);

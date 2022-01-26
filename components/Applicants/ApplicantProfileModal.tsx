@@ -251,9 +251,9 @@ export default function ApplicantProfileModal() {
                                     />
                                     {response?.questionTitle}
                                   </h3>
-                                  {response?.questionDescription && (
+                                  {response?.description && (
                                     <p className="text-md text-light">
-                                      {response?.questionDescription}
+                                      {response?.description}
                                     </p>
                                   )}
                                   <span className=" inline-flex justify-center items-center space-x-1">

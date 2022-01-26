@@ -15,6 +15,7 @@ import * as Stages from "./Controllers/Stages";
 import * as PublicInfo from "./Controllers/PublicInfo";
 import * as Invites from "./Controllers/Invites";
 import * as Applicants from "./Controllers/Applicants";
+import * as Questions from "./Controllers/Questions";
 import withHasOrg from "./middleware/withHasOrg";
 import withSameOrg from "./middleware/withSameOrg";
 import helmet from "helmet";
@@ -163,6 +164,9 @@ app.get(
   [withSession, withCleanOrgId, withHasOrg],
   Applicants.GetApplicantById
 );
+
+app.post("/questions", [withSession, withHasOrg], Questions.CreateQuestions);
+app.get("/questions", [withSession, withHasOrg], Questions.GetQuestionsInOrg);
 app.get("/", healthcheck);
 function healthcheck(req, res: Response, next) {
   return res.status(200).json({ message: "It's all good man!" });

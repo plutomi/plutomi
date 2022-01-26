@@ -191,10 +191,10 @@
             "S": "ORG#plutomi#STAGE#123"
           },
           "SK": {
-            "S": "STAGE_QUESTION#123"
+            "S": "QUESTION#123"
           },
           "type": {
-            "S": "STAGE_QUESTION"
+            "S": "QUESTION"
           }
         },
         {
@@ -202,10 +202,10 @@
             "S": "ORG#plutomi#STAGE#123"
           },
           "SK": {
-            "S": "STAGE_QUESTION#456"
+            "S": "QUESTION#456"
           },
           "type": {
-            "S": "STAGE_QUESTION"
+            "S": "QUESTION"
           }
         },
         {

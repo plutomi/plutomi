@@ -97,22 +97,26 @@ const useStore = create((set) => ({
     set(() => ({
       showApplicantProfileModal: false,
     })),
-  /**
-   * LEGACY!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-   */
-  // TODO this is stupidly gross!!!
 
-  questionModal: {
-    isModalOpen: false, // False by default
-    modalMode: "CREATE", // Will render text differently
-    questionId: "",
-    GSI1SK: "", // Question title
-    questionDescription: "",
-  },
-  setQuestionModal: (questionModal) => {
-    set((state) => ({
-      questionModal: questionModal,
-    }));
-  },
+  showCreateQuestionModal: false,
+
+  openCreateQuestionModal: () =>
+    set(() => ({
+      showCreateQuestionModal: true,
+    })),
+  closeCreateQuestionModal: () =>
+    set(() => ({
+      showCreateQuestionModal: false,
+    })),
+
+  showUpdateQuestionModal: false,
+  openUpdateQuestionmodal: () =>
+    set(() => ({
+      showUpdateQuestionModal: true,
+    })),
+  closeUpdateQuestionmodal: () =>
+    set(() => ({
+      showUpdateQuestionModal: false,
+    })),
 }));
 export default useStore;
