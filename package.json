@@ -61,6 +61,7 @@
     "@sls-next/lambda-at-edge": "^3.7.0-alpha.0",
     "@tailwindcss/aspect-ratio": "^0.2.2",
     "@tailwindcss/forms": "^0.3.4",
+    "artillery": "^2.0.0-10",
     "axios": "^0.21.4",
     "connect-timeout": "^1.9.0",
     "cookie-parser": "^1.4.6",
@@ -96,11 +97,13 @@
     "react-items-carousel": "^2.8.0",
     "react-number-format": "^4.7.3",
     "redux": "^4.1.2",
+    "slugify": "^1.6.5",
     "swr": "^1.0.1",
     "tailwindcss": "^2.2.19",
     "ulid": "^2.3.0",
     "ulidx": "^0.3.0",
     "url-safe-string": "^1.1.0",
+    "url-slug": "^3.0.2",
     "zustand": "^3.6.2"
   },
   "devDependencies": {

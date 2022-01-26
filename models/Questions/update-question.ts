@@ -15,7 +15,7 @@ export default async function Update(
 
   // Filter out forbidden property
   for (const property in newValues) {
-    if (FORBIDDEN_PROPERTIES.STAGE_QUESTION.includes(property)) {
+    if (FORBIDDEN_PROPERTIES.QUESTION.includes(property)) {
       // Delete the property so it isn't updated
       delete newValues[property];
     }
@@ -30,8 +30,8 @@ export default async function Update(
 
   const params = {
     Key: {
-      PK: `${ENTITY_TYPES.ORG}#${orgId}#${ENTITY_TYPES.STAGE_QUESTION}#${questionId}`,
-      SK: ENTITY_TYPES.STAGE_QUESTION,
+      PK: `${ENTITY_TYPES.ORG}#${orgId}#${ENTITY_TYPES.QUESTION}#${questionId}`,
+      SK: ENTITY_TYPES.QUESTION,
     },
     UpdateExpression: `SET ` + allUpdateExpressions.join(", "),
     ExpressionAttributeValues: allAttributeValues,

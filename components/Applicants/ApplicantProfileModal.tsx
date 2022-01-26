@@ -15,7 +15,7 @@ import {
   UpdateApplicant,
 } from "../../adapters/Applicants";
 import { CUSTOM_QUERY } from "../../types/main";
-import { DOMAIN_NAME } from "../../Config";
+import { WEBSITE_URL } from "../../Config";
 const tabs = [
   { id: 1, name: "Details" },
   { id: 2, name: "History (todo)" },
@@ -47,39 +47,12 @@ export default function ApplicantProfileModal() {
     "openingId" | "stageId" | "applicantId"
   >;
 
-  const setApplicantProfileModal = useStore(
-    (store) => store.setApplicantProfileModal
-  );
-
-  const applicantProfileModal = useStore(
-    (store) => store.applicantProfileModal
-  );
-
   const { applicant, isApplicantLoading, isApplicantError } =
     useApplicantById(applicantId);
 
   const handleNavClick = (e, tabId: number) => {
     e.preventDefault();
     setCurrentActive(tabId);
-  };
-
-  const handleModalClose = async () => {
-    setApplicantProfileModal({
-      ...applicantProfileModal,
-      isModalOpen: false,
-    });
-    await delay(700); // TODO This is dumb
-    // The SWR hook still runs despite the query string being stripped away from the URL
-    // This is essentially a hack to not show a loading state for the user As the modal retracts.
-    // TODO refactor this garbage
-
-    router.push(
-      {
-        pathname: `/openings/${openingId}/stages/${stageId}/applicants`,
-      },
-      undefined,
-      { shallow: true }
-    );
   };
 
   const updateApplicant = async (applicantId: string, changes: {}) => {
@@ -95,12 +68,16 @@ export default function ApplicantProfileModal() {
     mutate(GetApplicantByIdURL(applicantId));
   };
 
+  const visibility = useStore((state) => state.showApplicantProfileModal);
+  const closeApplicantProfileModal = useStore(
+    (state) => state.closeApplicantProfileModal
+  );
   return (
-    <Transition.Root show={applicantProfileModal.isModalOpen} as={Fragment}>
+    <Transition.Root show={visibility} as={Fragment}>
       <Dialog
         as="div"
         className="fixed inset-0 overflow-hidden "
-        onClose={handleModalClose}
+        onClose={closeApplicantProfileModal}
       >
         <div className="absolute inset-0 overflow-hidden ">
           <Transition.Child
@@ -189,12 +166,12 @@ export default function ApplicantProfileModal() {
                       <div className="ml-3 h-7 flex items-center space-x-4">
                         <ClickToCopy
                           showText={"Copy Application Link"}
-                          copyText={`${DOMAIN_NAME}/${applicant?.orgId}/applicants/${applicant?.applicantId}`}
+                          copyText={`${WEBSITE_URL}/${applicant?.orgId}/applicants/${applicant?.applicantId}`}
                         />
                         <button
                           type="button"
                           className="bg-white rounded-md text-red-400 hover:text-red-500 transition ease-in-out duration-200 focus:ring-2 focus:ring-blue-500"
-                          onClick={handleModalClose}
+                          onClick={closeApplicantProfileModal}
                         >
                           <span className="sr-only">Close panel</span>
                           <XIcon className="h-6 w-6" aria-hidden="true" />
@@ -274,9 +251,9 @@ export default function ApplicantProfileModal() {
                                     />
                                     {response?.questionTitle}
                                   </h3>
-                                  {response?.questionDescription && (
+                                  {response?.description && (
                                     <p className="text-md text-light">
-                                      {response?.questionDescription}
+                                      {response?.description}
                                     </p>
                                   )}
                                   <span className=" inline-flex justify-center items-center space-x-1">

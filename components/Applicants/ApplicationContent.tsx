@@ -2,7 +2,7 @@ import usePublicApplicant from "../../SWR/usePublicApplicant";
 import { useRouter } from "next/router";
 import Loader from "../Loader";
 import { useState } from "react";
-import useAllStageQuestions from "../../SWR/useAllStageQuestions";
+import useAllQuestions from "../../SWR/useAllQuestions";
 import { AnswerQuestions } from "../../adapters/Applicants";
 import { CUSTOM_QUERY } from "../../types/main";
 export default function ApplicationContent() {
@@ -16,8 +16,10 @@ export default function ApplicationContent() {
   const { applicant, isApplicantLoading, isApplicantError } =
     usePublicApplicant(applicantId);
 
-  const { questions, isQuestionsLoading, isQuestionsError } =
-    useAllStageQuestions(orgId, applicant?.stageId);
+  const { questions, isQuestionsLoading, isQuestionsError } = useAllQuestions(
+    orgId,
+    applicant?.stageId
+  );
   if (isQuestionsLoading) {
     return <Loader text="Loading questions..." />;
   }
@@ -29,13 +31,13 @@ export default function ApplicationContent() {
   const handleAnswerChange = async (
     questionId: string,
     questionTitle: string,
-    questionDescription: string,
+    description: string,
     response: string
   ) => {
     const incoming = {
       questionId: questionId,
       questionTitle: questionTitle,
-      questionDescription: questionDescription,
+      description: description,
       questionResponse: response,
     };
     const questionOrder = questions.map((a) => a.questionId);
@@ -94,16 +96,14 @@ export default function ApplicationContent() {
                   handleAnswerChange(
                     question?.questionId,
                     question?.GSI1SK,
-                    question?.questionDescription,
+                    question?.description,
                     e.target.value
                   )
                 }
                 className="shadow-sm focus:ring-blue-500 focus:border-blue-500 block w-full sm:text-sm border-gray-300 rounded-md"
               />
             </div>
-            <p className="mt-2 text-sm text-light">
-              {question?.questionDescription}
-            </p>
+            <p className="mt-2 text-sm text-light">{question?.description}</p>
           </li>
         ))}
       </ul>

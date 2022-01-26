@@ -3,12 +3,12 @@ import { UpdateCommandInput, UpdateCommand } from "@aws-sdk/lib-dynamodb";
 import { Dynamo } from "../../AWSClients/ddbDocClient";
 import { ENTITY_TYPES, FORBIDDEN_PROPERTIES } from "../../Config";
 import { DynamoNewStage } from "../../types/dynamo";
-import { GetAllStagesInOpeningInput } from "../../types/main";
+import { GetStagesInOpeningInput } from "../../types/main";
 const { DYNAMO_TABLE_NAME } = process.env;
 import { SdkError } from "@aws-sdk/types";
 import * as Openings from ".";
 export default async function GetStages(
-  props: GetAllStagesInOpeningInput
+  props: GetStagesInOpeningInput
 ): Promise<[DynamoNewStage[], null] | [null, SdkError]> {
   const { orgId, openingId, stageOrder } = props;
 

@@ -1,22 +1,23 @@
 import { AXIOS_INSTANCE as axios } from "../Config";
-// TODO types
+import { APICreateOpeningOptions } from "../Controllers/Openings/create-opening";
+import { APIUpdateOpeningOptions } from "../Controllers/Openings/update-opening";
 
-const CreateOpening = async (openingName) => {
-  const { data } = await axios.post(`/openings`, { openingName });
+const CreateOpening = async (options: APICreateOpeningOptions) => {
+  const { data } = await axios.post(`/openings`, { ...options });
   return data;
 };
 
-const GetOpeningInfoURL = (openingId) => `/openings/${openingId}`;
+const GetOpeningInfoURL = (openingId: string) => `/openings/${openingId}`;
 
-const GetOpeningInfo = async (openingId) => {
+const GetOpeningInfo = async (openingId: string) => {
   const { data } = await axios.get(GetOpeningInfoURL(openingId));
   return data;
 };
 
-const GetAllOpeningsInOrgURL = () => `/openings`;
+const GetOpeningsInOrgURL = () => `/openings`;
 
 const GetAlOpeningsInOrg = async () => {
-  const { data } = await axios.get(GetAllOpeningsInOrgURL());
+  const { data } = await axios.get(GetOpeningsInOrgURL());
   return data;
 };
 
@@ -25,8 +26,13 @@ const DeleteOpening = async (openingId) => {
   return data;
 };
 
-const UpdateOpening = async (openingId, newValues) => {
-  const { data } = await axios.put(GetOpeningInfoURL(openingId), newValues);
+const UpdateOpening = async (
+  openingId: string,
+  options: APIUpdateOpeningOptions
+) => {
+  const { data } = await axios.put(GetOpeningInfoURL(openingId), {
+    ...options,
+  });
   return data;
 };
 
@@ -35,7 +41,7 @@ export {
   UpdateOpening,
   DeleteOpening,
   GetAlOpeningsInOrg,
-  GetAllOpeningsInOrgURL,
+  GetOpeningsInOrgURL,
   GetOpeningInfo,
   GetOpeningInfoURL,
 };

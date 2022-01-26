@@ -2,14 +2,14 @@ import { QueryCommandInput, QueryCommand } from "@aws-sdk/lib-dynamodb";
 import { Dynamo } from "../../AWSClients/ddbDocClient";
 import { ENTITY_TYPES } from "../../Config";
 import {
-  GetAllApplicantsInStageInput,
-  GetAllApplicantsInStageOutput,
+  GetApplicantsInStageInput,
+  GetApplicantsInStageOutput,
 } from "../../types/main";
 const { DYNAMO_TABLE_NAME } = process.env;
 import { SdkError } from "@aws-sdk/types";
 export default async function GetApplicants(
-  props: GetAllApplicantsInStageInput
-): Promise<[GetAllApplicantsInStageOutput, null] | [null, SdkError]> {
+  props: GetApplicantsInStageInput
+): Promise<[GetApplicantsInStageOutput, null] | [null, SdkError]> {
   {
     const { orgId, stageId, openingId } = props;
     const params: QueryCommandInput = {
@@ -25,8 +25,7 @@ export default async function GetApplicants(
     try {
       // TODO - Query until ALL items returned!
       const response = await Dynamo.send(new QueryCommand(params));
-      const allApplicants = response.Items as GetAllApplicantsInStageOutput;
-
+      const allApplicants = response.Items as GetApplicantsInStageOutput;
 
       return [allApplicants, null];
     } catch (error) {

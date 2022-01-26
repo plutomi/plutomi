@@ -1,58 +1,21 @@
 import { useRouter } from "next/router";
-import { mutate } from "swr";
 import StageReorderColumn from "../StageReorderColumn";
-import difference from "../../utils/getObjectDifference";
-import OpeningModal from "./OpeningModal";
-import StageReorderCopy from "../StageReorderCOPY";
 import Loader from "../Loader";
-import useStore from "../../utils/store";
 import useOpeningInfo from "../../SWR/useOpeningInfo";
-import { UpdateOpening, GetOpeningInfoURL } from "../../adapters/Openings";
 import { CUSTOM_QUERY } from "../../types/main";
+import UpdateOpeningModal from "./UpdateOpeningModal";
 export default function OpeningSettingsContent() {
   const router = useRouter();
   const { openingId } = router.query as Pick<CUSTOM_QUERY, "openingId">;
   let { opening, isOpeningLoading, isOpeningError } = useOpeningInfo(openingId);
 
-  const openingModal = useStore((state) => state.openingModal);
-  const setOpeningModal = useStore((state) => state.setOpeningModal);
-
   if (isOpeningLoading) {
     return <Loader text="Loading opening settings..." />;
   }
 
-  const updateOpening = async () => {
-    try {
-      // Get the difference between the opening returned from SWR
-      // And the opening modal inputs / edits
-      const diff = difference(opening, openingModal);
-
-      // Delete the two modal controlling keys
-      delete diff["isModalOpen"];
-      delete diff["modalMode"];
-
-      console.log("Outgoing body", diff);
-
-      const { message } = await UpdateOpening(openingId, diff);
-      alert(message);
-      setOpeningModal({
-        isModalOpen: false,
-        modalMode: "CREATE",
-        isPublic: false,
-        openingId: "",
-        GSI1SK: "",
-      });
-    } catch (error) {
-      alert(error.response.data.message);
-    }
-    // Refresh opening data
-    mutate(GetOpeningInfoURL(openingId));
-  };
-
   return (
     <>
-      {/* <OpeningModal updateOpening={updateOpening} /> */}
-
+      <UpdateOpeningModal opening={opening} />
       {/* 3 column wrapper */}
       <div className="flex-grow w-full max-w-7xl mx-auto xl:px-8 lg:flex">
         {/* Left sidebar & main wrapper */}
@@ -70,7 +33,9 @@ export default function OpeningSettingsContent() {
               {/* Start main area*/}
               <div className="relative h-full" style={{ minHeight: "36rem" }}>
                 <div className=" inset-0  border-gray-200 rounded-lg">
-                  <div className="flex flex-col justify-center items-center"></div>
+                  <div className="flex flex-col justify-center items-center">
+                    Main area
+                  </div>
                 </div>
               </div>
               {/* End main area */}

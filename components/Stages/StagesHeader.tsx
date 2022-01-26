@@ -8,14 +8,13 @@ import useOpeningInfo from "../../SWR/useOpeningInfo";
 import { useRouter } from "next/router";
 import useOpenings from "../../SWR/useOpenings";
 import { CUSTOM_QUERY } from "../../types/main";
-import { DOMAIN_NAME, WEBSITE_URL } from "../../Config";
+import { WEBSITE_URL } from "../../Config";
 export default function StagesHeader() {
   const router = useRouter();
   const { openingId } = router.query as Pick<CUSTOM_QUERY, "openingId">;
 
   const { user, isUserLoading, isUserError } = useSelf();
   let { opening, isOpeningLoading, isOpeningError } = useOpeningInfo(openingId);
-
   let { openings, isOpeningsLoading, isOpeningsError } = useOpenings();
 
   return (
@@ -32,12 +31,16 @@ export default function StagesHeader() {
           <h1>Loading...</h1>
         )}
       </div>
-      <p className="mt-2 text-md text-normal sm:mt-0 ">
-        <ClickToCopy
-          showText={"Application Link"}
-          copyText={`${WEBSITE_URL}/${user?.orgId}/${opening?.openingId}/apply`}
-        />
-      </p>
+
+      {opening?.GSI1SK === "PUBLIC" && (
+        <p className="mt-2 text-md text-normal sm:mt-0 ">
+          <ClickToCopy
+            showText={"Application Link"}
+            copyText={`${WEBSITE_URL}/${user?.orgId}/${opening?.openingId}/apply`}
+          />
+        </p>
+      )}
+
       <div className=" flex justify-center">
         <Link href={`/openings/${openingId}/settings`}>
           <CogIcon className="w-10 h-10  hover:text-dark text-light cursor-pointer transition duration-300 ease-in-out" />

@@ -6,7 +6,7 @@ import { transform, isEqual, isArray, isObject } from "lodash";
  * @param  {object} newObj  - New object with potential changes
  * @return {object} differences
  */
-export default function difference(origObj: {}, newObj: {}): {} {
+export default function GetObjectDifference(origObj: {}, newObj: {}): {} {
   function changes(newObj: {}, origObj: {}) {
     let arrayIndexCounter = 0;
     return transform(newObj, function (result, value, key) {

@@ -40,11 +40,12 @@ export default async function Join(
             TableName: `${process.env.NODE_ENV}-${DYNAMO_TABLE_NAME}`,
 
             UpdateExpression:
-              "SET orgId = :orgId, orgJoinDate = :orgJoinDate, GSI1PK = :GSI1PK",
+              "SET orgId = :orgId, orgJoinDate = :orgJoinDate, GSI1PK = :GSI1PK, totalInvites = totalInvites - :value",
             ExpressionAttributeValues: {
               ":orgId": invite.orgId,
               ":orgJoinDate": Time.currentISO(),
               ":GSI1PK": `${ENTITY_TYPES.ORG}#${invite.orgId}#${ENTITY_TYPES.USER}S`,
+              ":value": 1,
             },
             ConditionExpression: "attribute_exists(PK)",
           },

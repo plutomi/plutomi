@@ -1,35 +1,29 @@
 import useSelf from "../../SWR/useSelf";
 import { PencilAltIcon, PlusIcon } from "@heroicons/react/outline";
 import Loader from "../Loader";
-import useStore from "../../utils/store";
 import { DEFAULTS } from "../../Config";
+import useStore from "../../utils/store";
 export default function UserProfileHeader() {
   const { user, isUserLoading, isUserError } = useSelf();
-  const setUserProfileModal = useStore((state) => state.setUserProfileModal);
+
+  const openUserProfileModal = useStore((state) => state.openUserProfileModal);
+
   if (isUserLoading) {
-    return <Loader text="Loading profile..." />;
+    <Loader text="Loading profile..." />;
   }
+  const greeting = (
+    <h2 className="text-2xl font-bold leading-7 text-dark sm:text-3xl sm:truncate">
+      Welcome to your profile
+      {user?.firstName === DEFAULTS.FIRST_NAME ? "!" : `, ${user?.firstName}!`}
+    </h2>
+  );
   return (
     <div className="md:flex md:items-center md:justify-between ">
-      <div className=" min-w-0 ">
-        <h2 className="text-2xl font-bold leading-7 text-dark sm:text-3xl sm:truncate">
-          Welcome to your profile
-          {user?.firstName === DEFAULTS.FIRST_NAME
-            ? "!"
-            : `, ${user?.firstName}!`}
-        </h2>
-      </div>
+      <div className=" min-w-0 ">{greeting}</div>
 
       <div className="mt-4 flex md:mt-0 md:ml-4 ">
         <button
-          onClick={() =>
-            setUserProfileModal({
-              isModalOpen: true,
-              modalMode: "EDIT",
-              firstName: user?.firstName,
-              lastName: user?.lastName,
-            })
-          }
+          onClick={openUserProfileModal}
           type="button"
           className="ml-3 inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
         >

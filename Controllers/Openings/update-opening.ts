@@ -2,16 +2,27 @@ import { Request, Response } from "express";
 import Joi from "joi";
 import * as Openings from "../../models/Openings";
 import * as CreateError from "../../utils/createError";
-import { DEFAULTS, JOI_GLOBAL_FORBIDDEN, JOI_SETTINGS } from "../../Config";
+import {
+  JOI_GLOBAL_FORBIDDEN,
+  JOI_SETTINGS,
+  OPENING_PUBLIC_STATE,
+} from "../../Config";
 import { UpdateOpeningInput } from "../../types/main";
+import { DynamoNewOpening } from "../../types/dynamo";
+
+export type APIUpdateOpeningOptions = Partial<
+  Pick<DynamoNewOpening, "openingName" | "GSI1SK" | "stageOrder">
+>;
 
 const JOI_FORBIDDEN_OPENING = Joi.object({
   ...JOI_GLOBAL_FORBIDDEN,
-  openingId: Joi.any().forbidden().strip(),
-  GSI1PK: Joi.any().forbidden().strip(),
-  totalStages: Joi.any().forbidden().strip(),
-  totalApplicants: Joi.any().forbidden().strip(),
-  GSI1SK: Joi.string().valid("PUBLIC", "PRIVATE").optional(),
+  openingId: Joi.any().forbidden(),
+  GSI1PK: Joi.any().forbidden(),
+  totalStages: Joi.any().forbidden(),
+  totalApplicants: Joi.any().forbidden(),
+  GSI1SK: Joi.string()
+    .valid(OPENING_PUBLIC_STATE.PUBLIC, OPENING_PUBLIC_STATE.PUBLIC)
+    .optional(),
 });
 
 const schema = Joi.object({

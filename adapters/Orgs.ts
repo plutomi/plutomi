@@ -1,12 +1,10 @@
 import { AXIOS_INSTANCE as axios } from "../Config";
-// TODO types
+import { APICreateOrgOptions } from "../Controllers/Orgs/create-and-join-org";
+
 const GetOrgInfoURL = () => `/orgs`;
 
-const CreateOrg = async (displayName, orgId) => {
-  const { data } = await axios.post(GetOrgInfoURL(), {
-    orgId,
-    displayName,
-  });
+const CreateOrg = async (options: APICreateOrgOptions) => {
+  const { data } = await axios.post(GetOrgInfoURL(), { ...options });
   return data;
 };
 

@@ -8,8 +8,6 @@ export default async function withSession(
 ) {
   const userId = req.signedCookies[COOKIE_NAME];
   if (!userId) {
-    console.log("beans");
-    console.log("Missing / invalid cookie");
     return res.status(401).json({ message: "Please log in again" });
   }
 
@@ -18,7 +16,6 @@ export default async function withSession(
   });
 
   if (userError) {
-    console.log(`An error ocurred retrieving user info:`, userError);
     res.cookie(COOKIE_NAME, "", {
       ...COOKIE_SETTINGS,
       maxAge: -1,

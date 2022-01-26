@@ -10,8 +10,6 @@ export default function Openings() {
   const router = useRouter();
   const { openingId } = router.query as Pick<CUSTOM_QUERY, "openingId">;
 
-  const { user, isUserLoading, isUserError } = useSelf();
-
   let { opening, isOpeningLoading, isOpeningError } = useOpeningInfo(openingId);
 
   let { stages, isStagesLoading, isStagesError } = useAllStagesInOpening(
@@ -24,7 +22,7 @@ export default function Openings() {
     if (!router.isReady) return;
 
     // Redirect to the first stage
-    if (opening.totalStages > 0) {
+    if (opening?.totalStages > 0) {
       router.push(
         `${DOMAIN_NAME}/openings/${openingId}/stages/${stages[0].stageId}/applicants` // TODO should this end with applicants?
       );

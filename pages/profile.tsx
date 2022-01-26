@@ -10,10 +10,6 @@ import { UpdateUser, GetSelfInfoURL } from "../adapters/Users";
 export default function Team() {
   const { user, isUserLoading, isUserError } = useSelf();
 
-  const userProfileModal = useStore((state) => state.userProfileModal);
-
-  const setUserProfileModal = useStore((state) => state.setUserProfileModal);
-
   // When rendering client side don't display anything until loading is complete
   if (typeof window !== "undefined" && isUserLoading) {
     return <Loader text="Loading..." />;
@@ -27,30 +23,9 @@ export default function Team() {
     return <Loader text="Loading user..." />;
   }
 
-  // TODO fix types
-  const updateUser = async () => {
-    try {
-      setUserProfileModal({
-        ...userProfileModal,
-        isModalOpen: false,
-      });
-
-      const { message } = await UpdateUser(user?.userId, {
-        firstName: userProfileModal.firstName,
-        lastName: userProfileModal.lastName,
-        GSI1SK: `${userProfileModal.firstName} ${userProfileModal.lastName}`,
-      });
-      alert(message);
-    } catch (error) {
-      alert(error.response.data.message);
-    }
-
-    mutate(GetSelfInfoURL());
-  };
-
   return (
     <>
-      <UserProfileModal updateUser={updateUser} />
+      <UserProfileModal user={user} />
       <SignedInNav current="PLACEHOLDER" />
       <div className="max-w-7xl mx-auto p-4 my-12 rounded-lg min-h-screen ">
         <header>

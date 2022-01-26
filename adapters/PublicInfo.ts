@@ -8,10 +8,10 @@ const GetPublicOrgInfo = async (orgId) => {
   return data;
 };
 
-const GetAllPublicOpeningsURL = (orgId) => `/public/orgs/${orgId}/openings`;
+const GetPublicOpeningsURL = (orgId) => `/public/orgs/${orgId}/openings`;
 
-const GetAllPublicOpenings = async (orgId) => {
-  const { data } = await axios.get(GetAllPublicOpeningsURL(orgId));
+const GetPublicOpenings = async (orgId) => {
+  const { data } = await axios.get(GetPublicOpeningsURL(orgId));
   return data;
 };
 
@@ -45,8 +45,8 @@ const GetPublicApplicantInfo = async (applicantId) => {
 export {
   GetPublicOrgInfoURL,
   GetPublicOrgInfo,
-  GetAllPublicOpeningsURL,
-  GetAllPublicOpenings,
+  GetPublicOpeningsURL,
+  GetPublicOpenings,
   GetPublicOpeningInfo,
   GetPublicOpeningInfoURL,
   GetPublicStageInfoURL,

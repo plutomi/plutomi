@@ -4,83 +4,15 @@ import difference from "../../utils/getObjectDifference";
 import StageReorderColumn from "../StageReorderColumn";
 import QuestionList from "../Questions/QuestionList";
 import useStore from "../../utils/store";
-import QuestionModal from "../Questions/QuestionModal";
-import useAllStageQuestions from "../../SWR/useAllStageQuestions";
+import useAllQuestions from "../../SWR/useAllQuestions";
 import Loader from "../Loader";
 import useSelf from "../../SWR/useSelf";
 import useAllStagesInOpening from "../../SWR/useAllStagesInOpening";
 import useOpeningInfo from "../../SWR/useOpeningInfo";
 import useStageInfo from "../../SWR/useStageInfo";
-import { GetStageInfoURL } from "../../adapters/Stages";
-import {
-  GetAllQuestionsInStageURL,
-  CreateQuestion,
-  UpdateQuestion,
-} from "../../adapters/Questions";
 import { CUSTOM_QUERY } from "../../types/main";
 
 export default function StageSettingsContent() {
-  const createQuestion = async () => {
-    try {
-      const { message } = await CreateQuestion(
-        questionModal.GSI1SK,
-        stageId,
-        questionModal.questionDescription
-      );
-
-      alert(message);
-      setQuestionModal({
-        isModalOpen: false,
-        modalMode: "CREATE",
-        questionId: "",
-        questionDescription: "",
-        GSI1SK: "",
-      });
-    } catch (error) {
-      console.error(`Error creating`, error);
-      alert(error.response.data.message);
-    }
-
-    // Refresh the questionOrder
-    mutate(GetStageInfoURL(openingId, stageId));
-
-    // Refresh the question list
-    mutate(GetAllQuestionsInStageURL(openingId, stageId));
-  };
-
-  const updateQuestion = async () => {
-    try {
-      const question = questions.find(
-        (question) => question?.questionId === questionModal.questionId
-      );
-
-      // Get the difference between the question returned from SWR
-      // And the updated question in the modal
-      const diff = difference(question, questionModal);
-
-      // Delete the two modal controlling keys
-      delete diff["isModalOpen"];
-      delete diff["modalMode"];
-
-      const { message } = await UpdateQuestion(questionModal.questionId, diff);
-      setQuestionModal({
-        isModalOpen: false,
-        modalMode: "CREATE",
-        questionId: "",
-        questionDescription: "",
-        GSI1SK: "",
-      });
-
-      alert(message);
-    } catch (error) {
-      alert(error.response.data.message);
-    }
-
-    mutate(GetStageInfoURL(openingId, stageId));
-
-    mutate(GetAllQuestionsInStageURL(openingId, stageId));
-  };
-
   const router = useRouter();
   const { openingId, stageId } = router.query as Pick<
     CUSTOM_QUERY,
@@ -98,11 +30,10 @@ export default function StageSettingsContent() {
     stageId
   );
 
-  const { questions, isQuestionsLoading, isQuestionsError } =
-    useAllStageQuestions(user?.orgId, stage?.stageId);
-
-  const questionModal = useStore((state) => state.questionModal);
-  const setQuestionModal = useStore((state) => state.setQuestionModal);
+  const { questions, isQuestionsLoading, isQuestionsError } = useAllQuestions(
+    user?.orgId,
+    stage?.stageId
+  );
 
   if (isOpeningLoading) {
     return <Loader text="Loading opening..." />;
@@ -115,11 +46,6 @@ export default function StageSettingsContent() {
 
   return (
     <>
-      <QuestionModal
-        createQuestion={createQuestion}
-        updateQuestion={updateQuestion}
-      />
-
       {/* 3 column wrapper */}
       <div className="flex-grow w-full max-w-7xl mx-auto xl:px-8 lg:flex">
         {/* Left sidebar & main wrapper */}

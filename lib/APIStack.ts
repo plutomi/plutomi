@@ -16,6 +16,7 @@ import { CloudFrontTarget } from "@aws-cdk/aws-route53-targets";
 import { API_DOMAIN, DOMAIN_NAME, EXPRESS_PORT } from "../Config";
 import { Policy, PolicyStatement } from "@aws-cdk/aws-iam";
 import { DynamoActions } from "../types/main";
+import { Duration } from "@aws-cdk/core";
 const resultDotEnv = dotenv.config({
   path: `${process.cwd()}/.env.${process.env.NODE_ENV}`,
 });
@@ -136,7 +137,7 @@ export default class APIStack extends cdk.Stack {
           cluster, // Required
           certificate: apiCert,
           taskDefinition,
-
+          desiredCount: 1,
           // domainName: API_DOMAIN,
           // domainZone: hostedZone,
           listenerPort: 443,
@@ -161,25 +162,24 @@ export default class APIStack extends cdk.Stack {
     // Healthcheck thresholds
     loadBalancedFargateService.targetGroup.configureHealthCheck({
       interval: cdk.Duration.seconds(5),
-      healthyHttpCodes: "200", // Why the fuck is this a string?
       healthyThresholdCount: 2,
-      unhealthyThresholdCount: 3,
+      unhealthyThresholdCount: 2,
       timeout: cdk.Duration.seconds(4),
     });
 
     // Auto scaling
     const scalableTarget =
       loadBalancedFargateService.service.autoScaleTaskCount({
-        minCapacity: 2,
-        maxCapacity: 6,
+        minCapacity: 1,
+        maxCapacity: 10,
       });
 
+    /**
+     * Good reading  on fargate 25% time :>
+     * https://github.com/aws/containers-roadmap/issues/163
+     */
     scalableTarget.scaleOnCpuUtilization("CpuScaling", {
-      targetUtilizationPercent: 50,
-    });
-
-    scalableTarget.scaleOnMemoryUtilization("MemoryScaling", {
-      targetUtilizationPercent: 30,
+      targetUtilizationPercent: 40,
     });
 
     // Create the WAF & its rules
@@ -256,7 +256,7 @@ export default class APIStack extends cdk.Stack {
           },
         },
         // {
-        //   // TODO this rule breaks login links, see https://github.com/plutomi/plutomi/issues/510
+        // TODO this rule breaks login links, see https://github.com/plutomi/plutomi/issues/510
         //   name: "AWS-AWSManagedRulesCommonRuleSet",
         //   priority: 3,
         //   statement: {

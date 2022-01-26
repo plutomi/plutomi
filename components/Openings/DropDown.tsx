@@ -18,16 +18,14 @@ export default function OpeningsDropdown({ openings, index }) {
     setSelected(newValue);
     if (newValue.stageOrder[0] !== undefined) {
       router.push(
-        `${WEBSITE_URL}/openings/${newValue.openingId}/stages${newValue.stageOrder[0]}/${newValue.stageOrder[0]}/applicants`
+        `${WEBSITE_URL}/openings/${newValue.openingId}/stages/${newValue.stageOrder[0]}/applicants`
       );
+      return;
     }
     router.push(`${WEBSITE_URL}/openings/${newValue.openingId}/settings`);
   };
   return (
     <Listbox value={selected} onChange={handleChange}>
-      {/* <Listbox.Label className="block text-lg font-medium text-gray-700">
-        Assigned to
-      </Listbox.Label> */}
       <div className=" relative w-full ">
         <Listbox.Button className="relative w-full bg-white border border-gray-300 rounded-md shadow-sm pl-3 pr-10 py-2 text-left cursor-default focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500 sm:text-lg">
           <div className="flex items-center">

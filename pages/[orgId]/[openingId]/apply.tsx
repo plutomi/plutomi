@@ -22,9 +22,8 @@ export default function Apply() {
   if (isOrgLoading) {
     return <Loader text="Loading..." />;
   }
-
   if (isOpeningLoading) {
-    <Loader text="Loading opening info..." />;
+    return <Loader text="Loading opening info..." />;
   }
 
   if (!opening) {

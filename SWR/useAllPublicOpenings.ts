@@ -1,10 +1,10 @@
 import useSWR from "swr";
-import { GetAllPublicOpeningsURL } from "../adapters/PublicInfo";
+import { GetPublicOpeningsURL } from "../adapters/PublicInfo";
 import { SWRFetcher } from "../Config";
 
 export default function useAllPublicOpenings(orgId?: string) {
   const { data, error } = useSWR(
-    orgId && GetAllPublicOpeningsURL(orgId),
+    orgId && GetPublicOpeningsURL(orgId),
     SWRFetcher
   );
 

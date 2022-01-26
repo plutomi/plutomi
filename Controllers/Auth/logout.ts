@@ -8,7 +8,7 @@ const login = async (req: Request, res: Response) => {
     maxAge: -1,
   });
 
-  return res.status(200).json({ message: "You've been logged out!" });
+  return res.sendStatus(200);
 };
 
 export default login;

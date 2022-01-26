@@ -11,6 +11,7 @@ import Joi from "joi";
 import errorFormatter from "../../utils/errorFormatter";
 const UrlSafeString = require("url-safe-string"),
   tagGenerator = new UrlSafeString();
+
 export const create = async (req: Request, res: Response) => {
   const {
     orgId,
@@ -31,73 +32,7 @@ export const create = async (req: Request, res: Response) => {
     openingId: Joi.string(),
   }).options({ presence: "required" });
 
-  // Validate input
-  try {
-    await schema.validateAsync(req.body);
-  } catch (error) {
-    return res.status(400).json({ message: `${error.message}` });
-  }
 
-  const [opening, error] = await Openings.GetOpeningById({
-    orgId,
-    openingId,
-  });
-
-  if (error) {
-    const formattedError = errorFormatter(error);
-    return res.status(formattedError.httpStatusCode).json({
-      message: `An error ocurred retrieving opening info`,
-      ...formattedError,
-    });
-  }
-  // We need the first stage in this opening
-  if (!opening) {
-    return res.status(404).json({ message: "Bad opening ID" });
-  }
-
-  const [newApplicant, newApplicantError] = await Applicants.CreateApplicant({
-    orgId: orgId,
-    firstName: firstName,
-    lastName: lastName,
-    email: email,
-    openingId: openingId,
-    stageId: opening.stageOrder[0],
-  });
-
-  if (newApplicantError) {
-    const formattedError = errorFormatter(newApplicantError);
-    return res.status(formattedError.httpStatusCode).json({
-      message: "An error ocurred creating your application",
-      ...formattedError,
-    });
-  }
-
-  // Email is sent asynchronously through step functions
-  return res.status(201).json({
-    message: `We've sent a link to your email to complete your application!`,
-  });
-};
-
-export const get = async (req: Request, res: Response) => {
-  const { applicantId } = req.params;
-
-  // TODO gather child items here
-  const [applicant, error] = await Applicants.GetApplicantById({
-    applicantId: applicantId,
-  });
-
-  if (error) {
-    const formattedError = errorFormatter(error);
-    return res.status(formattedError.httpStatusCode).json({
-      message: "An error ocurred getting applicant info",
-      ...formattedError,
-    });
-  }
-  if (!applicant) {
-    return res.status(404).json({ message: "Applicant not found" });
-  }
-  return res.status(200).json(applicant);
-};
 
 export const remove = async (req: Request, res: Response) => {
   const { applicantId } = req.params;
@@ -180,7 +115,7 @@ export const answer = async (req: Request, res: Response) => {
       .items({
         questionId: Joi.string(),
         questionTitle: Joi.string(),
-        questionDescription: Joi.string().allow(null, ""),
+        description: Joi.string().allow(null, ""),
         questionResponse: Joi.string(),
       })
       .options({ presence: "required" }),
@@ -208,14 +143,14 @@ export const answer = async (req: Request, res: Response) => {
     // Write questions to Dynamo
     await Promise.all(
       responses.map(async (response) => {
-        const { questionTitle, questionDescription, questionResponse } =
+        const { questionTitle, description, questionResponse } =
           response;
 
         const createApplicantResponseInput: CreateApplicantResponseInput = {
           orgId: applicant.orgId, // TODO is this needed?
           applicantId: applicantId,
           questionTitle: questionTitle,
-          questionDescription: questionDescription,
+          description: description,
           questionResponse: questionResponse,
         };
 

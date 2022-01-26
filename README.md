@@ -57,11 +57,9 @@ All infrastructure is managed by CDK and we use [Jest](https://jestjs.io/) for t
 
 The frontend runs on the [Serverless-Nextjs](https://serverless-nextjs.com/docs/cdkconstruct/) construct. We use [SSG without data + client side data fetching](https://youtu.be/f1rF9YKm1Ms?t=664) for almost all pages.
 
-The API is your typical Express app running on Fargate. It has many of the advantages of something like API Gateway + Lambda without many of the downsides...
+The API is your typical Express app running on Fargate. _At this time_, we feel it has many of the advantages of something like API Gateway + Lambda without many of the downsides...
 
 ![werner](images/werner.png)
-
-There is a state machine for sending emails that triggers on certain events such as a new `LOGIN_EVENT` or a `LOGIN_LINK` request. We let the state machine decide the path to take instead of having multiple EB rules and multiple state machines. We can then eliminate the myriad of queues and lambda functions polling said queues with the direct SDK calls Step Functions provides.
 
 We also try to avoid the [async try/catch tower of terror](https://www.youtube.com/watch?v=ITogH7lJTyE) by implementing the pattern shown in the video:
 
@@ -78,6 +76,8 @@ if (error) {
 
 // continue...
 ```
+
+There is a state machine for sending emails that triggers on certain events such as a new `LOGIN_EVENT` or a `LOGIN_LINK` request. We let the state machine decide the path to take instead of having multiple EB rules and multiple state machines. We can then eliminate the myriad of queues and lambda functions polling said queues with the direct SDK calls Step Functions provides.
 
 ## DynamoDB Schema
 

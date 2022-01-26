@@ -1,6 +1,45 @@
 import { CheckIcon, XCircleIcon } from "@heroicons/react/outline";
+import { mutate } from "swr";
+import {
+  AcceptInvite,
+  GetUserInvitesURL,
+  RejectInvite,
+} from "../../adapters/Invites";
+import { GetSelfInfoURL } from "../../adapters/Users";
 import * as Time from "../../utils/time";
-export default function Invite({ invite, acceptInvite, rejectInvite }) {
+import { useRouter } from "next/router";
+export default function Invite({ invite }) {
+  const router = useRouter();
+  const acceptInvite = async (inviteId) => {
+    try {
+      const { message } = await AcceptInvite(inviteId);
+      alert(message);
+      router.push("/dashboard");
+    } catch (error) {
+      console.error(error);
+      alert(error.response.data.message);
+    }
+
+    // Refresh the user's orgId
+    mutate(GetSelfInfoURL());
+
+    // Refresh the user's invites
+    mutate(GetUserInvitesURL());
+  };
+
+  const rejectInvite = async (invite) => {
+    try {
+      const { message } = await RejectInvite(invite.inviteId);
+
+      alert(message);
+    } catch (error) {
+      console.error(error);
+      alert(error.response.data.message);
+    }
+
+    mutate(GetUserInvitesURL());
+  };
+
   return (
     <li
       key={invite.email}

@@ -4,41 +4,7 @@ import * as Questions from "../models/Questions/index";
 import * as Stages from "../models/Stages/index";
 import Joi from "joi";
 import errorFormatter from "../utils/errorFormatter";
-export const create = async (req: Request, res: Response) => {
-  const { GSI1SK, questionDescription, stageId } = req.body;
-  const { orgId } = req.session.user;
 
-  let [stage, stageError] = await Stages.getStageById({ orgId, stageId });
-
-  if (stageError) {
-    const formattedError = errorFormatter(stageError);
-    return res.status(formattedError.httpStatusCode).json({
-      message:
-        "An error ocurred creating question, unable to retrieve stage info",
-      ...formattedError,
-    });
-  }
-
-  const createStageQuestionInput = {
-    orgId: req.session.user.orgId,
-    stageId: stageId,
-    GSI1SK: GSI1SK,
-    questionDescription: questionDescription,
-    questionOrder: stage.questionOrder,
-  };
-
-  const [created, error] = await Questions.createQuestion(
-    createStageQuestionInput
-  );
-  if (error) {
-    const formattedError = errorFormatter(error);
-    return res.status(formattedError.httpStatusCode).json({
-      message: "An error ocurred creating question",
-      ...formattedError,
-    });
-  }
-  return res.status(201).json({ message: "Question created!" });
-};
 
 export const deleteQuestion = async (req: Request, res: Response) => {
   const { questionId } = req.params;

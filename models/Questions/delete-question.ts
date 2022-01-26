@@ -22,8 +22,8 @@ export default async function DeleteQuestion(
         // Delete question
         Delete: {
           Key: {
-            PK: `${ENTITY_TYPES.ORG}#${orgId}#${ENTITY_TYPES.STAGE_QUESTION}#${questionId}`,
-            SK: ENTITY_TYPES.STAGE_QUESTION,
+            PK: `${ENTITY_TYPES.ORG}#${orgId}#${ENTITY_TYPES.QUESTION}#${questionId}`,
+            SK: ENTITY_TYPES.QUESTION,
           },
           TableName: `${process.env.NODE_ENV}-${DYNAMO_TABLE_NAME}`,
         },

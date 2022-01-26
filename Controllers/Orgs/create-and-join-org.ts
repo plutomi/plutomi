@@ -4,11 +4,11 @@ import * as CreateError from "../../utils/createError";
 import * as Users from "../../models/Users";
 import * as Orgs from "../../models/Orgs";
 import Joi from "joi";
+import { DynamoNewOrg } from "../../types/dynamo";
 
-interface APICreateOrgBody {
-  orgId?: string;
-  displayName?: string;
-}
+export type APICreateOrgOptions = Required<
+  Pick<DynamoNewOrg, "orgId" | "displayName">
+>;
 
 const schema = Joi.object({
   body: {
@@ -19,7 +19,6 @@ const schema = Joi.object({
 
 const main = async (req: Request, res: Response) => {
   const { session } = res.locals;
-
   try {
     await schema.validateAsync(req);
   } catch (error) {
@@ -52,7 +51,7 @@ const main = async (req: Request, res: Response) => {
     });
   }
 
-  const { displayName, orgId }: APICreateOrgBody = req.body;
+  const { displayName, orgId }: APICreateOrgOptions = req.body;
 
   const [created, failed] = await Orgs.CreateAndJoinOrg({
     userId: session.userId,

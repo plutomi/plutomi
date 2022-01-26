@@ -1,91 +1,122 @@
 import create from "zustand";
-import * as Time from "./time";
 
 const useStore = create((set) => ({
-  // TODO this is stupidly gross!!!
-  createOrgModalIsOpen: false,
-  OpeningModalIsOpen: false,
+  /**
+   * ORGS
+   */
+  /**
+   * Whether the CreateOrgModal should be visible or not
+   */
+  showCreateOrgModal: false,
+  openCreateOrgModal: () =>
+    set(() => ({
+      showCreateOrgModal: true,
+    })),
+  closeCreateOrgModal: () =>
+    set(() => ({
+      showCreateOrgModal: false,
+    })),
+
+  /**
+   * OPENINGS
+   */
+  showCreateOpeningModal: false,
+  openCreateOpeningModal: () =>
+    set(() => ({
+      showCreateOpeningModal: true,
+    })),
+  closeCreateOpeningModal: () =>
+    set(() => ({
+      showCreateOpeningModal: false,
+    })),
+
+  showUpdateOpeningModal: false,
+  openUpdateOpeningModal: () =>
+    set(() => ({
+      showUpdateOpeningModal: true,
+    })),
+  closeUpdateOpeningModal: () =>
+    set(() => ({
+      showUpdateOpeningModal: false,
+    })),
+
+  showUserProfileModal: false,
+  openUserProfileModal: () =>
+    set(() => ({
+      showUserProfileModal: true,
+    })),
+  closeUserProfileModal: () =>
+    set(() => ({
+      showUserProfileModal: false,
+    })),
+
   openingsSearchInput: "",
-  createInviteModalIsOpen: false,
-
-  applicantProfileModal: {
-    isModalOpen: false,
-  },
-
-  setApplicantProfileModal: (applicantProfileModal) => {
-    set((s) => ({
-      applicantProfileModal: applicantProfileModal,
-    }));
-  },
-
-  userProfileModal: {
-    isModalOpen: false,
-    modalMode: "EDIT",
-    firstName: "",
-    lastName: "",
-  },
-
-  setUserProfileModal: (userProfileModal) => {
-    set((state) => ({
-      userProfileModal: userProfileModal,
-    }));
-  },
-
-  stageModal: {
-    isModalOpen: false, // False by default
-    modalMode: "CREATE", // Will render text differently
-    stageId: "",
-    GSI1SK: "", // Stage title
-  },
-  setStageModal: (stageModal) => {
-    set((state) => ({
-      stageModal: stageModal,
-    }));
-  },
-
-  questionModal: {
-    isModalOpen: false, // False by default
-    modalMode: "CREATE", // Will render text differently
-    questionId: "",
-    GSI1SK: "", // Question title
-    questionDescription: "",
-  },
-  setQuestionModal: (questionModal) => {
-    set((state) => ({
-      questionModal: questionModal,
-    }));
-  },
-
-  openingModal: {
-    isModalOpen: false, // False by default
-    modalMode: "CREATE", // Will render text differently
-    openingId: "",
-    openingName: "",
-    GSI1SK: "PRIVATE",
-  },
-  setOpeningModal: (openingModal) => {
-    set((state) => ({
-      openingModal,
-    }));
-  },
-
-  setCreateOrgModalOpen: (open: Boolean) =>
-    set((state) => ({
-      createOrgModalIsOpen: open,
-    })),
-
-  setOpeningModalOpen: (open: Boolean) =>
-    set((state) => ({
-      OpeningModalIsOpen: open,
-    })),
-
   setOpeningsSearchInput: (input: string) =>
     set((state) => ({
       openingsSearchInput: input,
     })),
-  setCreateInviteModalOpen: (open: Boolean) =>
-    set((state) => ({
-      createInviteModalIsOpen: open,
+
+  // TODO add applicant search input
+
+  showInviteModal: false,
+  openInviteModal: () =>
+    set(() => ({
+      showInviteModal: true,
+    })),
+  closeInviteModal: () =>
+    set(() => ({
+      showInviteModal: false,
+    })),
+
+  showCreateStageModal: false,
+  openCreateStageModal: () =>
+    set(() => ({
+      showCreateStageModal: true,
+    })),
+  closeCreateStageModal: () =>
+    set(() => ({
+      showCreateStageModal: false,
+    })),
+
+  showUpdateStageModal: false,
+  openUpdateStageModal: () =>
+    set(() => ({
+      showUpdateStageModal: true,
+    })),
+  closeUpdateStageModal: () =>
+    set(() => ({
+      showUpdateStageModal: false,
+    })),
+
+  showApplicantProfileModal: false,
+  openApplicantProfileModal: () =>
+    set(() => ({
+      showApplicantProfileModal: true,
+    })),
+  closeApplicantProfileModal: () =>
+    set(() => ({
+      showApplicantProfileModal: false,
+    })),
+
+  showCreateQuestionModal: false,
+
+  openCreateQuestionModal: () =>
+    set(() => ({
+      showCreateQuestionModal: true,
+    })),
+  closeCreateQuestionModal: () =>
+    set(() => ({
+      showCreateQuestionModal: false,
+    })),
+
+  showUpdateQuestionModal: false,
+  openUpdateQuestionmodal: () =>
+    set(() => ({
+      showUpdateQuestionModal: true,
+    })),
+  closeUpdateQuestionmodal: () =>
+    set(() => ({
+      showUpdateQuestionModal: false,
     })),
 }));
 export default useStore;

@@ -2,12 +2,13 @@ import { Request, Response } from "express";
 import * as CreateError from "../../utils/createError";
 import * as Openings from "../../models/Openings";
 import { pick } from "lodash";
+import { OPENING_PUBLIC_STATE } from "../../Config";
 const main = async (req: Request, res: Response) => {
   const { orgId } = req.params;
 
   const [openings, openingsError] = await Openings.GetOpeningsInOrg({
     orgId,
-    GSI1SK: "PUBLIC",
+    GSI1SK: OPENING_PUBLIC_STATE.PUBLIC,
   });
 
   if (openingsError) {

@@ -2,12 +2,13 @@ import { Request, Response, NextFunction } from "express";
 import { DEFAULTS, ERRORS } from "../Config";
 const UrlSafeString = require("url-safe-string"),
   tagGenerator = new UrlSafeString();
-export default async function withCleanOrgId(
+
+// Blocks the request if a user is not in an org
+export default async function withHasOrg(
   req: Request,
   res: Response,
   next: NextFunction
 ) {
-  // Blocks the request if a user is not in an org
   const { session } = res.locals;
 
   if (

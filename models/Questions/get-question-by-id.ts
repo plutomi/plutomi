@@ -13,8 +13,8 @@ export default async function Get(
     TableName: `${process.env.NODE_ENV}-${DYNAMO_TABLE_NAME}`,
 
     Key: {
-      PK: `${ENTITY_TYPES.ORG}#${orgId}#${ENTITY_TYPES.STAGE_QUESTION}#${questionId}`,
-      SK: ENTITY_TYPES.STAGE_QUESTION,
+      PK: `${ENTITY_TYPES.ORG}#${orgId}#${ENTITY_TYPES.QUESTION}#${questionId}`,
+      SK: ENTITY_TYPES.QUESTION,
     },
   };
 
