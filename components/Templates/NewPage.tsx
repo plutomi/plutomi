@@ -29,24 +29,16 @@ export default function NewPage({
   );
 
   // Redirect on no org
+  // TODO i believe this is triggering twice...
   if (currentNavItem.hiddenIfNoOrg && user?.orgId === DEFAULTS.NO_ORG) {
-    if (currentNavItem.name === "Openings") {
-      alert(
-        `You must create an org or join one before adding or viewing openings. If you have pending invites, you can view them at ${DOMAIN_NAME}/invites`
-      );
-      router.push(`${WEBSITE_URL}/dashboard`);
+    const item =
+      currentNavItem.name === "Openings" ? "openings" : "team members";
+    alert(
+      `You must create an org or join one before adding or viewing ${item}. If you have pending invites, you can view them at ${WEBSITE_URL}/invites`
+    );
+    router.push(`${WEBSITE_URL}/dashboard`);
 
-      return null;
-    }
-
-    if (currentNavItem.name === "Team") {
-      alert(
-        `You must create an org or join one before adding or viewing team members. If you have pending invites, you can view them at ${DOMAIN_NAME}/invites`
-      );
-      router.push(`${WEBSITE_URL}/dashboard`);
-
-      return null;
-    }
+    return null;
   }
 
   return (

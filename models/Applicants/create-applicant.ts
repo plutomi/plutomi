@@ -20,7 +20,7 @@ export default async function Create(
   const applicantId = nanoid(ID_LENGTHS.APPLICANT);
 
   const newApplicant: DynamoNewApplicant = {
-    PK: `${ENTITY_TYPES.APPLICANT}#${applicantId}`,
+    PK: `${ENTITY_TYPES.ORG}#${orgId}#${ENTITY_TYPES.APPLICANT}#${applicantId}`,
     SK: ENTITY_TYPES.APPLICANT,
     firstName,
     lastName,
@@ -37,6 +37,8 @@ export default async function Create(
     canReceiveEmails: true,
     GSI1PK: `${ENTITY_TYPES.ORG}#${orgId}#${ENTITY_TYPES.OPENING}#${openingId}#${ENTITY_TYPES.STAGE}#${stageId}`,
     GSI1SK: `DATE_LANDED#${now}`,
+    // TODO add another GSI here for getting all applications by email
+    // Fulfills searching easily and for the applicant portal
   };
 
   try {

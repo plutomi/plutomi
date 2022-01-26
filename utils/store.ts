@@ -87,20 +87,20 @@ const useStore = create((set) => ({
     set(() => ({
       showUpdateStageModal: false,
     })),
+
+  showApplicantProfileModal: false,
+  openApplicantProfileModal: () =>
+    set(() => ({
+      showApplicantProfileModal: true,
+    })),
+  closeApplicantProfileModal: () =>
+    set(() => ({
+      showApplicantProfileModal: false,
+    })),
   /**
    * LEGACY!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
    */
   // TODO this is stupidly gross!!!
-
-  applicantProfileModal: {
-    isModalOpen: false,
-  },
-
-  setApplicantProfileModal: (applicantProfileModal) => {
-    set((s) => ({
-      applicantProfileModal: applicantProfileModal,
-    }));
-  },
 
   questionModal: {
     isModalOpen: false, // False by default

@@ -18,7 +18,7 @@ export default async function Remove(
           // Delete the applicant
           Delete: {
             Key: {
-              PK: `${ENTITY_TYPES.APPLICANT}#${applicantId}`,
+              PK: `${ENTITY_TYPES.ORG}#${orgId}#${ENTITY_TYPES.APPLICANT}#${applicantId}`,
               SK: ENTITY_TYPES.APPLICANT,
             },
             TableName: `${process.env.NODE_ENV}-${DYNAMO_TABLE_NAME}`,

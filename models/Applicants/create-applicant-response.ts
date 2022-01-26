@@ -22,7 +22,7 @@ export default async function CreateResponse(
   } = props;
   const responseId = nanoid(ID_LENGTHS.APPLICANT_RESPONSE);
   const newApplicantResponse: DynamoNewApplicantResponse = {
-    PK: `${ENTITY_TYPES.APPLICANT}#${applicantId}`,
+    PK: `${ENTITY_TYPES.ORG}#${orgId}#${ENTITY_TYPES.APPLICANT}#${applicantId}`,
     SK: `${ENTITY_TYPES.APPLICANT_RESPONSE}#${responseId}`,
     orgId,
     applicantId,

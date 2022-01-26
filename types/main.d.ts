@@ -115,7 +115,7 @@ type CreateApplicantInput = Pick<
 type orgIdAndApplicantId = "orgId" | "applicantId";
 
 type CreateApplicantOutput = DynamoNewApplicant;
-type GetApplicantByIdInput = Pick<DynamoNewApplicant, "applicantId">;
+type GetApplicantByIdInput = Pick<DynamoNewApplicant, "orgId" | "applicantId">;
 
 type DeleteApplicantInput = Pick<
   DynamoNewApplicant,

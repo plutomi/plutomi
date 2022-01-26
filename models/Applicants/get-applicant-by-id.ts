@@ -12,14 +12,12 @@ import { SdkError } from "@aws-sdk/types";
 export default async function Get(
   props: GetApplicantByIdInput
 ): Promise<[GetApplicantByIdOutput, null] | [null, SdkError]> {
-  const { applicantId } = props;
+  const { orgId, applicantId } = props;
   const responsesParams: QueryCommandInput = {
     TableName: `${process.env.NODE_ENV}-${DYNAMO_TABLE_NAME}`,
-
-    KeyConditionExpression: "PK = :PK AND begins_with(SK, :SK)",
+    KeyConditionExpression: "PK = :PK",
     ExpressionAttributeValues: {
-      ":PK": `${ENTITY_TYPES.APPLICANT}#${applicantId}`,
-      ":SK": ENTITY_TYPES.APPLICANT,
+      ":PK": `${ENTITY_TYPES.ORG}#${orgId}#${ENTITY_TYPES.APPLICANT}#${applicantId}`,
     },
   };
 
@@ -28,6 +26,14 @@ export default async function Get(
     const allApplicantInfo = await Dynamo.send(
       new QueryCommand(responsesParams)
     );
+
+    if (allApplicantInfo.Count === 0) {
+      throw "Applicant not found";
+    }
+
+    if (allApplicantInfo?.Items?.length === 0) {
+      throw new Error("Applicant not found");
+    }
 
     const grouped = _.groupBy(allApplicantInfo.Items, "entityType");
 
@@ -40,7 +46,7 @@ export default async function Get(
       responses: responses,
       // TODO files
     };
-    return [applicant, null]; // TODO TYPE!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    return [applicant, null]; // TODO TYPEs!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
   } catch (error) {
     return [null, error];
   }

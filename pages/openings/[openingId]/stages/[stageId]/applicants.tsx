@@ -5,7 +5,6 @@ import { useRouter } from "next/router";
 import useStore from "../../../../../utils/store";
 import StagesHeader from "../../../../../components/Stages/StagesHeader";
 import StageCarousel from "../../../../../components/Stages/StagesCarousel";
-import useAllApplicantsInStage from "../../../../../SWR/useAllApplicantsInStage";
 import useAllStagesInOpening from "../../../../../SWR/useAllStagesInOpening";
 import ApplicantList from "../../../../../components/Applicants/ApplicantList";
 import ApplicantProfileModal from "../../../../../components/Applicants/ApplicantProfileModal";
@@ -23,29 +22,19 @@ export default function StageApplicants() {
   const { stages, isStagesLoading, isStagesError } = useAllStagesInOpening(
     opening?.openingId
   );
+
+  const openApplicantProfileModal = useStore(
+    (state) => state.openApplicantProfileModal
+  );
   // Allows for copying the URL of the applicant directly directly
   useEffect(() => {
     if (!router.isReady) return;
     const { applicantId } = router.query as Pick<CUSTOM_QUERY, "applicantId">;
 
     if (applicantId && typeof applicantId === "string" && applicantId !== "") {
-      setApplicantProfileModal({
-        ...applicantProfileModal,
-        isModalOpen: true,
-      });
+      openApplicantProfileModal();
     }
   }, [router.isReady]);
-
-  const { applicants, isApplicantsLoading, isApplicantsError } =
-    useAllApplicantsInStage(openingId, stageId);
-
-  const setApplicantProfileModal = useStore(
-    (store) => store.setApplicantProfileModal
-  );
-
-  const applicantProfileModal = useStore(
-    (store) => store.applicantProfileModal
-  );
 
   return (
     <NewPage

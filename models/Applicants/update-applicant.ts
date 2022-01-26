@@ -7,12 +7,13 @@ import { SdkError } from "@aws-sdk/types";
 export default async function Update(
   props: UpdateApplicantInput
 ): Promise<[null, null] | [null, SdkError]> {
-  const { applicantId, newValues } = props;
+  const { orgId, applicantId, newValues } = props;
 
   // Build update expression
   let allUpdateExpressions: string[] = [];
   let allAttributeValues: { [key: string]: string } = {};
 
+  // TODO this can be removed, joi handles this
   // Filter out forbidden property
   for (const property in newValues) {
     if (FORBIDDEN_PROPERTIES.APPLICANT.includes(property)) {
@@ -30,7 +31,7 @@ export default async function Update(
 
   const params: UpdateCommandInput = {
     Key: {
-      PK: `${ENTITY_TYPES.APPLICANT}#${applicantId}`,
+      PK: `${ENTITY_TYPES.ORG}#${orgId}#${ENTITY_TYPES.APPLICANT}#${applicantId}`,
       SK: ENTITY_TYPES.APPLICANT,
     },
     UpdateExpression: `SET ` + allUpdateExpressions.join(", "),

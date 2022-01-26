@@ -27,7 +27,6 @@ export default async function GetApplicants(
       const response = await Dynamo.send(new QueryCommand(params));
       const allApplicants = response.Items as GetAllApplicantsInStageOutput;
 
-
       return [allApplicants, null];
     } catch (error) {
       return [null, error];

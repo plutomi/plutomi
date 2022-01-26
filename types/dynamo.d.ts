@@ -97,7 +97,7 @@ interface DynamoNewApplicant {
   /**
    * Primary key of the applicant where the inputs are `orgId` and `applicantId`
    */
-  PK: `${ENTITY_TYPES.APPLICANT}#${string}`;
+  PK: `${ENTITY_TYPES.ORG}#${string}#${ENTITY_TYPES.APPLICANT}#${string}`;
   /**
    * The {@link ENTITY_TYPES.APPLICANT}
    */
@@ -171,7 +171,7 @@ interface DynamoNewApplicantResponse {
   /**
    * The primary key for the response - needs an `orgId` and `applicantId`
    */
-  PK: `${ENTITY_TYPES.APPLICANT}#${string}`;
+  PK: `${ENTITY_TYPES.ORG}#${string}#${ENTITY_TYPES.APPLICANT}#${string}`;
   /**
    * The sort key for the response - needs `responseId`
    */

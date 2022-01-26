@@ -157,6 +157,12 @@ app.get(
   [withCleanOrgId, withSession, withHasOrg],
   Applicants.GetApplicantsInStage
 );
+
+app.get(
+  "/applicants/:applicantId",
+  [withSession, withCleanOrgId, withHasOrg],
+  Applicants.GetApplicantById
+);
 app.get("/", healthcheck);
 function healthcheck(req, res: Response, next) {
   return res.status(200).json({ message: "It's all good man!" });
