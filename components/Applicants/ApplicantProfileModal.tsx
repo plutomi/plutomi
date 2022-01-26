@@ -15,7 +15,7 @@ import {
   UpdateApplicant,
 } from "../../adapters/Applicants";
 import { CUSTOM_QUERY } from "../../types/main";
-import { DOMAIN_NAME } from "../../Config";
+import { WEBSITE_URL } from "../../Config";
 const tabs = [
   { id: 1, name: "Details" },
   { id: 2, name: "History (todo)" },
@@ -189,7 +189,7 @@ export default function ApplicantProfileModal() {
                       <div className="ml-3 h-7 flex items-center space-x-4">
                         <ClickToCopy
                           showText={"Copy Application Link"}
-                          copyText={`${DOMAIN_NAME}/${applicant?.orgId}/applicants/${applicant?.applicantId}`}
+                          copyText={`${WEBSITE_URL}/${applicant?.orgId}/applicants/${applicant?.applicantId}`}
                         />
                         <button
                           type="button"

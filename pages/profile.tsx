@@ -15,9 +15,13 @@ export default function Team() {
     return <Loader text="Loading..." />;
   }
 
-  isUserError && <Login loggedOutPageText={"Log in to view your profile"} />;
+  if (isUserError) {
+    return <Login loggedOutPageText={"Log in to view your profile"} />;
+  }
 
-  isUserLoading && <Loader text="Loading user..." />;
+  if (isUserLoading) {
+    return <Loader text="Loading user..." />;
+  }
 
   return (
     <>

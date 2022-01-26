@@ -18,8 +18,9 @@ export default function OpeningsDropdown({ openings, index }) {
     setSelected(newValue);
     if (newValue.stageOrder[0] !== undefined) {
       router.push(
-        `${WEBSITE_URL}/openings/${newValue.openingId}/stages${newValue.stageOrder[0]}/${newValue.stageOrder[0]}/applicants`
+        `${WEBSITE_URL}/openings/${newValue.openingId}/stages/${newValue.stageOrder[0]}/applicants`
       );
+      return;
     }
     router.push(`${WEBSITE_URL}/openings/${newValue.openingId}/settings`);
   };

@@ -10,8 +10,6 @@ export default function Openings() {
   const router = useRouter();
   const { openingId } = router.query as Pick<CUSTOM_QUERY, "openingId">;
 
-  const { user, isUserLoading, isUserError } = useSelf();
-
   let { opening, isOpeningLoading, isOpeningError } = useOpeningInfo(openingId);
 
   let { stages, isStagesLoading, isStagesError } = useAllStagesInOpening(

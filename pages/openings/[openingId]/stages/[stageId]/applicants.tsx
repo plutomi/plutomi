@@ -11,7 +11,6 @@ import ApplicantList from "../../../../../components/Applicants/ApplicantList";
 import ApplicantProfileModal from "../../../../../components/Applicants/ApplicantProfileModal";
 import NewPage from "../../../../../components/Templates/NewPage";
 import useOpeningInfo from "../../../../../SWR/useOpeningInfo";
-import NumberFormat from "react-number-format";
 import { CUSTOM_QUERY } from "../../../../../types/main";
 export default function StageApplicants() {
   const router = useRouter();
@@ -53,19 +52,7 @@ export default function StageApplicants() {
       loggedOutPageText={"Log in to view your applicants"}
       currentNavbarItem={"Openings"}
       headerText={
-        isOpeningLoading ? (
-          "Applicants"
-        ) : (
-          <span>
-            {opening?.openingName} - Applicants (
-            <NumberFormat
-              value={opening?.totalApplicants}
-              thousandSeparator={true}
-              displayType={"text"}
-            />
-            )
-          </span>
-        )
+        isOpeningLoading ? "Applicants" : `${opening?.openingName} - Applicants`
       }
     >
       <>

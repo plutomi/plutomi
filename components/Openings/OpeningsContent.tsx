@@ -17,7 +17,9 @@ export default function OpeningsContent() {
   const setOpeningsSearch = useStore((state) => state.setOpeningsSearchInput);
   const search = useStore((state) => state.openingsSearchInput);
 
-  isOpeningsLoading && <Loader text="Loading openings..." />;
+  if (isOpeningsLoading) {
+    return <Loader text="Loading openings..." />;
+  }
 
   const handleSearchChange = (e) => {
     setLocalSearch(e.target.value);

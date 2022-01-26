@@ -7,7 +7,10 @@ export default function UserProfileHeader() {
   const { user, isUserLoading, isUserError } = useSelf();
 
   const openUserProfileModal = useStore((state) => state.openUserProfileModal);
-  isUserLoading && <Loader text="Loading profile..." />;
+
+  if (isUserLoading) {
+    <Loader text="Loading profile..." />;
+  }
   const greeting = (
     <h2 className="text-2xl font-bold leading-7 text-dark sm:text-3xl sm:truncate">
       Welcome to your profile

@@ -19,13 +19,15 @@ export default function DashboardContent() {
   const customApplyLink = `${WEBSITE_URL}/${org?.orgId}/apply`;
 
   const openCreateOrgModal = useStore((state) => state.openCreateOrgModal);
-  const closeCreateOrgModal = useStore((state) => state.closeCreateOrgModal);
   const openUserProfileModal = useStore((state) => state.openUserProfileModal);
-  isUserLoading && <Loader text={"Loading user..."} />;
 
-  user?.orgId !== DEFAULTS.NO_ORG && isOrgLoading && (
-    <Loader text={"Loading org info..."} />
-  );
+  if (isUserLoading) {
+    return <Loader text={"Loading user..."} />;
+  }
+
+  if (user?.orgId !== DEFAULTS.NO_ORG && isOrgLoading) {
+    return <Loader text={"Loading org info..."} />;
+  }
 
   const deleteOrg = async () => {
     if (

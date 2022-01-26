@@ -24,6 +24,7 @@ export default function StageCarousel() {
   if (isStagesLoading) {
     return <Loader text="Loading stages..." />;
   }
+
   return (
     <div className="max-w-8xl border -py-4 rounded-xl">
       <ItemsCarousel

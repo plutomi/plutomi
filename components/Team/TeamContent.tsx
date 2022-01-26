@@ -15,8 +15,9 @@ export default function TeamContent() {
   );
 
   const openInviteModal = useStore((state) => state.openInviteModal);
-  isOrgUsersLoading && <Loader text="Loading team..." />;
-
+  if (isOrgUsersLoading) {
+    return <Loader text="Loading team..." />;
+  }
   return (
     <>
       <CreateInviteModal />

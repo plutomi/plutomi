@@ -49,7 +49,7 @@ export default function OpeningList() {
                         {opening?.openingName}
                       </h1>
                       <div className="ml-2 flex-shrink-0 flex">
-                        {opening.isPublic ? (
+                        {opening?.GSI1SK === "PUBLIC" ? (
                           <p className="px-2 inline-flex text-sm leading-5 font-semibold rounded-full bg-green-100 text-green-800">
                             Public
                           </p>
@@ -76,7 +76,7 @@ export default function OpeningList() {
                           />
                           {opening?.totalStages}
                         </p>
-                        {opening?.isPublic ? (
+                        {opening?.GSI1SK === "PUBLIC" ? (
                           <p className="mt-2 flex items-center text-lg text-normal sm:mt-0 sm:ml-6">
                             <ClickToCopy
                               showText={"Application Link"}

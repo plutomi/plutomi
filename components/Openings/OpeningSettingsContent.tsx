@@ -9,7 +9,9 @@ export default function OpeningSettingsContent() {
   const { openingId } = router.query as Pick<CUSTOM_QUERY, "openingId">;
   let { opening, isOpeningLoading, isOpeningError } = useOpeningInfo(openingId);
 
-  isOpeningLoading && <Loader text="Loading opening settings..." />;
+  if (isOpeningLoading) {
+    return <Loader text="Loading opening settings..." />;
+  }
 
   return (
     <>
