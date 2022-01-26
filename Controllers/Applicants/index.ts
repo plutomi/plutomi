@@ -1,3 +1,3 @@
 import CreateApplicants from "./create-applicant";
-
-export { CreateApplicants };
+import GetApplicantsInStage from "./get-applicants-in-stage";
+export { CreateApplicants, GetApplicantsInStage };

@@ -13,7 +13,7 @@ export default function ApplicantListItem({ applicant, handleApplicantClick }) {
         <div className="px-4 py-4 sm:px-6">
           <div className="flex items-center justify-between">
             <h1 className="text-lg font-medium text-blue-600 truncate">
-              {applicant.fullName}
+              {applicant.firstName} {applicant.lastName}
             </h1>
             <div className="ml-2 flex-shrink-0 flex">
               {applicant.isEmailVerified ? (

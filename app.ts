@@ -152,7 +152,11 @@ app.post("/invites/:inviteId", [withSession], Invites.AcceptInvite);
 app.delete("/invites/:inviteId", [withSession], Invites.RejectInvite);
 
 app.post("/applicants", [withCleanOrgId], Applicants.CreateApplicants);
-
+app.get(
+  "/openings/:openingId/stages/:stageId/applicants",
+  [withCleanOrgId, withSession, withHasOrg],
+  Applicants.GetApplicantsInStage
+);
 app.get("/", healthcheck);
 function healthcheck(req, res: Response, next) {
   return res.status(200).json({ message: "It's all good man!" });
