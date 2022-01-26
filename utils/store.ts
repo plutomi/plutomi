@@ -50,11 +50,13 @@ const useStore = create((set) => ({
       showUserProfileModal: false,
     })),
 
-  /**
-   * LEGACY!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-   */
-  // TODO this is stupidly gross!!!
   openingsSearchInput: "",
+  setOpeningsSearchInput: (input: string) =>
+    set((state) => ({
+      openingsSearchInput: input,
+    })),
+
+  // TODO add applicant search input
 
   showInviteModal: false,
   openInviteModal: () =>
@@ -66,6 +68,30 @@ const useStore = create((set) => ({
       showInviteModal: false,
     })),
 
+  showCreateStageModal: false,
+  openCreateStageModal: () =>
+    set(() => ({
+      showCreateStageModal: true,
+    })),
+  closeCreateStageModal: () =>
+    set(() => ({
+      showCreateStageModal: false,
+    })),
+
+  showUpdateStageModal: false,
+  openUpdateStageModal: () =>
+    set(() => ({
+      showUpdateStageModal: true,
+    })),
+  closeUpdateStageModal: () =>
+    set(() => ({
+      showUpdateStageModal: false,
+    })),
+  /**
+   * LEGACY!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+   */
+  // TODO this is stupidly gross!!!
+
   applicantProfileModal: {
     isModalOpen: false,
   },
@@ -73,18 +99,6 @@ const useStore = create((set) => ({
   setApplicantProfileModal: (applicantProfileModal) => {
     set((s) => ({
       applicantProfileModal: applicantProfileModal,
-    }));
-  },
-
-  stageModal: {
-    isModalOpen: false, // False by default
-    modalMode: "CREATE", // Will render text differently
-    stageId: "",
-    GSI1SK: "", // Stage title
-  },
-  setStageModal: (stageModal) => {
-    set((state) => ({
-      stageModal: stageModal,
     }));
   },
 
@@ -100,10 +114,5 @@ const useStore = create((set) => ({
       questionModal: questionModal,
     }));
   },
-
-  setOpeningsSearchInput: (input: string) =>
-    set((state) => ({
-      openingsSearchInput: input,
-    })),
 }));
 export default useStore;

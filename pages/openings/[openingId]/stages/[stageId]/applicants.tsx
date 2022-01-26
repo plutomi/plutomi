@@ -59,7 +59,7 @@ export default function StageApplicants() {
           <span>
             {opening?.openingName} - Applicants (
             <NumberFormat
-              value={opening.totalApplicants}
+              value={opening?.totalApplicants}
               thousandSeparator={true}
               displayType={"text"}
             />

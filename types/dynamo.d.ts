@@ -242,7 +242,7 @@ interface DynamoNewOpening {
    */
   createdAt: string;
   /**
-   *
+   * The order of the stages in this opening
    */
   stageOrder: string[];
   /**

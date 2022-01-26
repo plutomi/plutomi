@@ -35,7 +35,7 @@ export default function OpeningList() {
            */
 
           const endingUrl =
-            opening.totalStages > 0
+            opening?.totalStages > 0
               ? `stages/${opening.stageOrder[0]}/applicants` // TODO should this end with applicants?
               : `settings`;
 
@@ -67,14 +67,14 @@ export default function OpeningList() {
                             className="flex-shrink-0 mr-1.5 h-5 w-5 text-light"
                             aria-hidden="true"
                           />
-                          {opening.totalApplicants}
+                          {opening?.totalApplicants}
                         </p>
                         <p className="mt-2 flex items-center text-lg text-normal sm:mt-0 sm:ml-6">
                           <ViewBoardsIcon
                             className="flex-shrink-0 mr-1.5 h-5 w-5 text-light"
                             aria-hidden="true"
                           />
-                          {opening.totalStages}
+                          {opening?.totalStages}
                         </p>
                         {opening?.isPublic ? (
                           <p className="mt-2 flex items-center text-lg text-normal sm:mt-0 sm:ml-6">
