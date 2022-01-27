@@ -3,10 +3,6 @@ import { Dialog, Transition } from "@headlessui/react";
 import { XIcon } from "@heroicons/react/outline";
 import useStore from "../../utils/store";
 import { UpdateQuestion } from "../../adapters/Questions";
-import { useRouter } from "next/router";
-import { CUSTOM_QUERY } from "../../types/main";
-import { mutate } from "swr";
-import { GetStageInfoURL } from "../../adapters/Stages";
 
 const descriptionMaxLength = 300; // TODO set this serverside
 export default function UpdateQuestionModal({ question }) {
@@ -20,23 +16,18 @@ export default function UpdateQuestionModal({ question }) {
 
   const visibility = useStore((state) => state.showUpdateQuestionModal);
   const closeUpdateQuestionModal = useStore(
-    (state) => state.closeUpdateQuestionmodal
+    (state) => state.closeUpdateQuestionModal
   );
 
-  const router = useRouter();
-  const { openingId, stageId } = router.query as Pick<
-    CUSTOM_QUERY,
-    "openingId" | "stageId"
-  >;
   const handleSubmit = async (e: FormEvent) => {
+    e.preventDefault();
     try {
-      // TODO
-      // const { message } = await UpdateQuestion({
-      //   GSI1SK,
-      //   description,
-      // });
+      const { message } = await UpdateQuestion(question?.questionId, {
+        GSI1SK,
+        description,
+      });
 
-      // alert(message);
+      alert(message);
       closeUpdateQuestionModal();
     } catch (error) {
       alert(error.response.data.message);

@@ -82,6 +82,33 @@ describe("Openings", () => {
     }
   });
 
+  const newQuestionName = nanoid(20);
+  it("allows updating a question", async () => {
+    const data = await axios.put(`/questions/${firstQuestionId}`, {
+      GSI1SK: newQuestionName,
+    });
+    expect(data.status).toBe(200);
+    expect(data.data.message).toBe("Question updated!");
+  });
+
+  it("allows returning a question's info", async () => {
+    const data = await axios.get(`/questions/${firstQuestionId}`);
+    expect(data.status).toBe(200);
+    expect(data.data.GSI1SK).toBe(newQuestionName);
+  });
+
+  it("blocks updating a question id", async () => {
+    try {
+      await axios.put(`/questions/${firstQuestionId}`, {
+        questionId: nanoid(10),
+      });
+    } catch (error) {
+      expect(error.response.status).toBe(400);
+      expect(error.response.data.message).toContain("body.questionId");
+      expect(error.response.data.message).toContain("is not allowed");
+    }
+  });
+
   // TODO this will need major revamp once it's attached to many stages
   it("allows deleting a question", async () => {
     const data = await axios.delete(`/questions/${firstQuestionId}`);

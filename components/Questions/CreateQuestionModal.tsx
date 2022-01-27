@@ -165,10 +165,10 @@ export default function CreateQuestionModal() {
                               />
                             </div>
                             <div className="relative items-start">
-                                <p className="block text-light text-sm  mt-2">
-                                  A <strong>unique ID </strong>to match
-                                  applicant rules against. For example:
-                                </p>
+                              <p className="block text-light text-sm  mt-2">
+                                A <strong>unique ID </strong>to match applicant
+                                rules against. For example:
+                              </p>
 
                               <p className=" text-light text-sm  mt-1">
                                 IF <strong>vehicle_type</strong> =
@@ -179,7 +179,7 @@ export default function CreateQuestionModal() {
                                 Move to &quot;Rejected&quot;
                               </p>
                               <p className="text-red-500 bold mt-2">
-                                NOTE: It cannot be updated afterwards!
+                                This cannot be updated so choose carefully.
                               </p>
                             </div>
                           </div>

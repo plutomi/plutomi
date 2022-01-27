@@ -11,7 +11,7 @@ export type APICreateQuestionOptions = Pick<
 >;
 const schema = Joi.object({
   body: {
-    questionId: Joi.string().max(200),
+    questionId: Joi.string().max(50),
     GSI1SK: Joi.string().max(100),
     description: Joi.string().allow("").max(500).optional(),
   },
