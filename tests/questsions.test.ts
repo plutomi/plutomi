@@ -81,5 +81,11 @@ describe("Openings", () => {
       );
     }
   });
+
+  // TODO this will need major revamp once it's attached to many stages
+  it("allows deleting a question", async () => {
+    const data = await axios.delete(`/questions/${firstQuestionId}`);
+    expect(data.status).toBe(200);
+    expect(data.data.message).toBe("Question deleted!");
+  });
 });
-// Blocks creating a question with an empty string

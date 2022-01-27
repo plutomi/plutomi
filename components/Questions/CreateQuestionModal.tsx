@@ -22,6 +22,9 @@ export default function CreateQuestionModal() {
       });
 
       alert(message);
+      setQuestionId("");
+      setGSI1SK("");
+      setDescription("");
       closeCreateQuestionModal();
     } catch (error) {
       alert(error.response.data.message);
@@ -86,7 +89,8 @@ export default function CreateQuestionModal() {
                       </div>
                       <div className="mt-1">
                         <p className="text-sm text-blue-300">
-                          Questions will be shown to applicants in this stage
+                          Applicants will answer these questions as they go
+                          through stages
                         </p>
                       </div>
                     </div>
@@ -163,8 +167,8 @@ export default function CreateQuestionModal() {
                             <div className="relativeitems-start">
                               <div>
                                 <p className="block text-light text-sm  mt-2">
-                                  A unique key to match applicant move rules
-                                  against. For example:
+                                  A <strong>unique ID </strong>to match
+                                  applicant rules against. For example:
                                 </p>
                               </div>
 

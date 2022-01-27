@@ -83,12 +83,7 @@ type CreateQuestionInput = Pick<
 type orgIdAndQuestionId = "orgId" | "questionId";
 
 // TODo remove the below types
-export interface DeleteQuestionInput
-  extends Pick<DynamoNewQuestion, orgIdAndQuestionId> {
-  stageId: string;
-  questionOrder: string[];
-  deletedQuestionIndex: number;
-}
+type DeleteQuestionInput = Pick<DynamoNewQuestion, orgIdAndQuestionId>;
 
 type GetQuestionInput = Pick<DynamoNewQuestion, orgIdAndQuestionId>;
 type GetQuestionOutput = DynamoNewQuestion;

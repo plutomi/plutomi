@@ -21,9 +21,9 @@ export default async function CreateLoginLink(
     const newLoginLink: DynamoNewLoginLink = {
       PK: `${ENTITY_TYPES.USER}#${user.userId}`,
       SK: `${ENTITY_TYPES.LOGIN_LINK}#${loginLinkId}`,
-      loginLinkUrl: loginLinkUrl,
+      loginLinkUrl,
       relativeExpiry: Time.relative(new Date(loginLinkExpiry)),
-      user: user, // Contains unsubscribe hash, userId, and their email
+      user,
       entityType: ENTITY_TYPES.LOGIN_LINK,
       createdAt: now,
       ttlExpiry: Time.futureUNIX(15, TIME_UNITS.MINUTES), // Deleted after 15 minutes

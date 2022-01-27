@@ -83,7 +83,7 @@ const main = async (req: Request, res: Response) => {
 
   // Check if the user we are inviting already has pending invites for the current org
   const [recipientInvites, recipientInvitesError] =
-    await Users.GetInvitesForUser({
+    await Invites.GetInvitesForUser({
       userId: recipient.userId,
     });
 

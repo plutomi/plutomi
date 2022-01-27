@@ -17,7 +17,7 @@ const GetQuestionInfo = async (questionId: string) => {
   return data;
 };
 
-const DeleteQuestion = async (questionId) => {
+const DeleteQuestion = async (questionId: string) => {
   const { data } = await axios.delete(GetQuestionInfoURL(questionId));
   return data;
 };

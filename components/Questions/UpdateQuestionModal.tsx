@@ -31,22 +31,16 @@ export default function UpdateQuestionModal({ question }) {
   const handleSubmit = async (e: FormEvent) => {
     try {
       // TODO
-      const { message } = await UpdateQuestion({
-        GSI1SK,
-        description,
-      });
+      // const { message } = await UpdateQuestion({
+      //   GSI1SK,
+      //   description,
+      // });
 
-      alert(message);
+      // alert(message);
       closeUpdateQuestionModal();
     } catch (error) {
       alert(error.response.data.message);
     }
-
-    // Refresh the questionOrder
-    mutate(GetStageInfoURL(openingId, stageId));
-
-    // Refresh the question list
-    mutate(GetQuestionsInStageURL(openingId, stageId));
   };
 
   return (
@@ -103,7 +97,8 @@ export default function UpdateQuestionModal({ question }) {
                       </div>
                       <div className="mt-1">
                         <p className="text-sm text-blue-300">
-                          Questions will be shown to applicants in this stage
+                          Applicants will answer these questions as they go
+                          through stages
                         </p>
                       </div>
                     </div>

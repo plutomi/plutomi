@@ -2,4 +2,11 @@ import CreateInvite from "./create-invite";
 import RejectInvite from "./reject-invite";
 import GetInvite from "./get-invite";
 import AcceptInvite from "./accept-invite";
-export { CreateInvite, RejectInvite, GetInvite, AcceptInvite };
+import GetInvitesForUser from "./get-invites-for-user";
+export {
+  CreateInvite,
+  RejectInvite,
+  GetInvite,
+  AcceptInvite,
+  GetInvitesForUser,
+};
