@@ -3,6 +3,7 @@ import * as Orgs from "../../models/Orgs";
 import * as Openings from "../../models/Openings";
 import * as CreateError from "../../utils/createError";
 import { pick } from "lodash";
+import { OPENING_STATE } from "../../Config";
 const main = async (req: Request, res: Response) => {
   const { orgId, openingId } = req.params;
 
@@ -19,7 +20,7 @@ const main = async (req: Request, res: Response) => {
     return res.status(status).json(body);
   }
 
-  if (opening.GSI1SK === "PRIVATE") {
+  if (opening.GSI1SK === OPENING_STATE.PRIVATE) {
     return res
       .status(403)
       .json({ message: "You cannot view this opening at this time" });

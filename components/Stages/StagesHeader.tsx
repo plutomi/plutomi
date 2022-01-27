@@ -32,7 +32,7 @@ export default function StagesHeader() {
         )}
       </div>
 
-      {opening?.GSI1SK === "PUBLIC" && (
+      {opening?.GSI1SK === OPENING_STATE.PUBLIC && (
         <p className="mt-2 text-md text-normal sm:mt-0 ">
           <ClickToCopy
             showText={"Application Link"}

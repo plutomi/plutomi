@@ -8,6 +8,7 @@ import {
   JoiOrgId,
   JOI_GLOBAL_FORBIDDEN,
   JOI_SETTINGS,
+  OPENING_STATE,
 } from "../../Config";
 import * as CreateError from "../../utils/createError";
 const schema = Joi.object({
@@ -61,7 +62,7 @@ const main = async (req: Request, res: Response) => {
     return res.status(404).json({ message: "Opening does not exist" });
   }
   // Conditional check will also catch this
-  if (opening.GSI1SK === "PRIVATE" || opening.totalStages === 0) {
+  if (opening.GSI1SK === OPENING_STATE.PRIVATE || opening.totalStages === 0) {
     return res
       .status(403)
       .json({ message: "You cannot apply to this opening just yet!" });

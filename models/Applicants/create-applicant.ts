@@ -73,7 +73,7 @@ export default async function Create(
             ExpressionAttributeValues: {
               ":zero": 0,
               ":value": 1,
-              ":GSI1SK": "PUBLIC",
+              ":GSI1SK": OPENING_STATE.PUBLIC,
               ":totalStages": 0,
             },
           },

@@ -30,3 +30,8 @@ https://stackoverflow.com/questions/48668660/docker-no-space-left-on-device-maco
 > Cannot connect to the Docker daemon at unix:///var/run/docker.sock. Is the docker daemon running?
 
 Make sure Docker is actually running lol
+
+> Uploaded file must be a non-empty zip
+
+Delete `cdk.out/cache`
+Usually happens when stop a deployment half way. See also: https://github.com/aws/aws-cdk/issues/12536

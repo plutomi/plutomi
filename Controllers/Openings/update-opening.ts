@@ -71,7 +71,7 @@ const main = async (req: Request, res: Response) => {
   }
 
   // TODO i think this can be moved into dynamo
-  if (req.body.GSI1SK === "PUBLIC" && opening.totalStages === 0) {
+  if (req.body.GSI1SK === OPENING_STATE.PUBLIC && opening.totalStages === 0) {
     return res.status(403).json({
       message: "An opening needs to have stages before being made public",
     });

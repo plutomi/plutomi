@@ -25,9 +25,7 @@ describe("Openings", () => {
         orgId,
         displayName: nanoid(10) + " Inc.",
       });
-    } catch (error) {
-      ;
-    }
+    } catch (error) {}
 
     // Create a public opening
     const publicOpeningName = nanoid(20);
@@ -35,9 +33,7 @@ describe("Openings", () => {
       await axios.post("/openings", {
         openingName: publicOpeningName,
       });
-    } catch (error) {
-      ;
-    }
+    } catch (error) {}
 
     // Get public opening
     let openings = await axios.get("/openings");
@@ -53,13 +49,11 @@ describe("Openings", () => {
         openingId: publicOpeningId,
         GSI1SK: "First Stage",
       });
-    } catch (error) {
-      ;
-    }
+    } catch (error) {}
 
     // make opening public
     await axios.put(`/openings/${publicOpening.openingId}`, {
-      GSI1SK: "PUBLIC",
+      GSI1SK: OPENING_STATE.PUBLIC,
     });
 
     // Create a private opening
@@ -93,7 +87,6 @@ describe("Openings", () => {
         openingId: privateOpeningId,
       });
     } catch (error) {
-      ;
       expect(error.response.status).toBe(403);
       expect(error.response.data.message).toContain(
         "You cannot apply to this opening just yet!"
@@ -108,7 +101,6 @@ describe("Openings", () => {
         email: "test@10minutemail.com",
       });
     } catch (error) {
-      ;
       expect(error.response.status).toBe(400);
       expect(error.response.data.message).toContain(ERRORS.EMAIL_VALIDATION);
     }
@@ -122,7 +114,6 @@ describe("Openings", () => {
         lastName: nanoid(80),
       });
     } catch (error) {
-      ;
       expect(error.response.status).toBe(400);
       expect(error.response.data.message).toContain("body.firstName");
       expect(error.response.data.message).toContain("body.lastName");
