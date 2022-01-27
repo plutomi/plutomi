@@ -5,7 +5,7 @@ import * as CreateError from "../../utils/createError";
 import {
   JOI_GLOBAL_FORBIDDEN,
   JOI_SETTINGS,
-  OPENING_PUBLIC_STATE,
+  OPENING_STATE,
 } from "../../Config";
 import { UpdateOpeningInput } from "../../types/main";
 import { DynamoNewOpening } from "../../types/dynamo";
@@ -21,7 +21,7 @@ const JOI_FORBIDDEN_OPENING = Joi.object({
   totalStages: Joi.any().forbidden(),
   totalApplicants: Joi.any().forbidden(),
   GSI1SK: Joi.string()
-    .valid(OPENING_PUBLIC_STATE.PUBLIC, OPENING_PUBLIC_STATE.PUBLIC)
+    .valid(OPENING_STATE.PUBLIC, OPENING_STATE.PRIVATE)
     .optional(),
 });
 

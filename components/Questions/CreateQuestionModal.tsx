@@ -164,21 +164,22 @@ export default function CreateQuestionModal() {
                                 className="block w-full shadow-sm text-sm focus:ring-blue-500 focus:border-blue-500 border-gray-300 rounded-md"
                               />
                             </div>
-                            <div className="relativeitems-start">
-                              <div>
+                            <div className="relative items-start">
                                 <p className="block text-light text-sm  mt-2">
                                   A <strong>unique ID </strong>to match
                                   applicant rules against. For example:
                                 </p>
-                              </div>
 
-                              <p className=" text-light text-sm  mt-2">
+                              <p className=" text-light text-sm  mt-1">
                                 IF <strong>vehicle_type</strong> =
                                 &quot;bike&quot;{" "}
                                 <span className="inline-flex text-center items-center">
                                   <ArrowRightIcon className="w-3 h-3" />
                                 </span>{" "}
                                 Move to &quot;Rejected&quot;
+                              </p>
+                              <p className="text-red-500 bold mt-2">
+                                NOTE: It cannot be updated afterwards!
                               </p>
                             </div>
                           </div>

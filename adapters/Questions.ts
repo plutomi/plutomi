@@ -1,5 +1,6 @@
 import { AXIOS_INSTANCE as axios } from "../Config";
 import { APICreateQuestionOptions } from "../Controllers/Questions/create-questions";
+import { APIUpdateQuestionOptions } from "../Controllers/Questions/update-question";
 
 const CreateQuestion = async (options: APICreateQuestionOptions) => {
   const { data } = await axios.post(`/questions`, {
@@ -22,8 +23,13 @@ const DeleteQuestion = async (questionId: string) => {
   return data;
 };
 
-const UpdateQuestion = async (questionId, newValues) => {
-  const { data } = await axios.put(GetQuestionInfoURL(questionId), newValues);
+const UpdateQuestion = async (
+  questionId: string,
+  options: APIUpdateQuestionOptions
+) => {
+  const { data } = await axios.put(GetQuestionInfoURL(questionId), {
+    ...options,
+  });
   return data;
 };
 

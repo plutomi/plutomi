@@ -172,6 +172,11 @@ app.delete(
   [withSession, withHasOrg],
   Questions.DeleteQuestion
 );
+app.put(
+  "/questions/:questionId",
+  [withSession, withHasOrg],
+  Questions.UpdateQuestion
+);
 app.get("/", healthcheck);
 function healthcheck(req, res: Response, next) {
   return res.status(200).json({ message: "It's all good man!" });

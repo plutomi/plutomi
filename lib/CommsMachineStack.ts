@@ -127,8 +127,9 @@ export default class CommsMachineStack extends cdk.Stack {
           },
           Body: {
             Html: {
-              "Data.$": `States.Format('<h1>Click <a href="{}" noreferrer target="_blank" >this link</a> to log in!</h1><p>It will expire {} so you better hurry.</p><p>If you did not request this link you can safely ignore it and <a href="${API_URL}/unsubscribe/{}" noreferrer target="_blank" >unsubscribe</a>.</p>',
-              $.detail.NewImage.loginLinkUrl, $.detail.NewImage.relativeExpiry, $.detail.NewImage.user.unsubscribeKey)`,
+              // TODO add unsubscribe key
+              "Data.$": `States.Format('<h1>Click <a href="{}" noreferrer target="_blank" >this link</a> to log in!</h1><p>It will expire {} so you better hurry.</p><p>If you did not request this link you can safely ignore it.',
+              $.detail.NewImage.loginLinkUrl, $.detail.NewImage.relativeExpiry)`,
             },
           },
         },

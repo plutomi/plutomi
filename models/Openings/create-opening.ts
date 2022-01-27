@@ -4,7 +4,7 @@ import {
 } from "@aws-sdk/lib-dynamodb";
 import { nanoid } from "nanoid";
 import { Dynamo } from "../../AWSClients/ddbDocClient";
-import { ID_LENGTHS, ENTITY_TYPES, OPENING_PUBLIC_STATE } from "../../Config";
+import { ID_LENGTHS, ENTITY_TYPES, OPENING_STATE } from "../../Config";
 import { DynamoNewOpening } from "../../types/dynamo";
 import { CreateOpeningInput } from "../../types/main";
 import * as Time from "../../utils/time";
@@ -24,7 +24,7 @@ export default async function Create(
     openingId,
     openingName,
     GSI1PK: `${ENTITY_TYPES.ORG}#${orgId}#${ENTITY_TYPES.OPENING}S`,
-    GSI1SK: OPENING_PUBLIC_STATE.PRIVATE, // All openings are private by default
+    GSI1SK: OPENING_STATE.PRIVATE, // All openings are private by default
     totalStages: 0,
     stageOrder: [],
     totalApplicants: 0,

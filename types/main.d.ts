@@ -1,4 +1,4 @@
-import { OPENING_PUBLIC_STATE } from "../Config";
+import { OPENING_STATE } from "../Config";
 import {
   DynamoNewApplicant,
   DynamoNewApplicantResponse,
@@ -139,7 +139,7 @@ type DeleteOpeningInput = Pick<DynamoNewOpening, "orgId" | "openingId">;
 
 // Retrieves all oepnings by default, can filter on public or private
 interface GetOpeningsInOrgInput extends Pick<DynamoNewOpening, "orgId"> {
-  GSI1SK?: OPENING_PUBLIC_STATE;
+  GSI1SK?: OPENING_STATE;
 }
 
 type GetStagesInOpeningInput = Pick<

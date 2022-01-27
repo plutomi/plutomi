@@ -35,7 +35,7 @@ export const COOKIE_NAME =
 const UrlSafeString = require("url-safe-string"),
   tagGenerator = new UrlSafeString();
 
-export enum OPENING_PUBLIC_STATE {
+export enum OPENING_STATE {
   PUBLIC = "PUBLIC",
   PRIVATE = "PRIVATE",
 }

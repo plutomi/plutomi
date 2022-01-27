@@ -87,6 +87,9 @@ const main = async (req: Request, res: Response) => {
 
   return res
     .status(200)
-    .json({ message: "We've created your application! Check your email." });
+    .json({
+      message:
+        "We've sent you a link to your email to complete your application!",
+    });
 };
 export default main;
