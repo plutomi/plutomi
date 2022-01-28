@@ -4,7 +4,7 @@ import {
 } from "@aws-sdk/lib-dynamodb";
 import { nanoid } from "nanoid";
 import { Dynamo } from "../../AWSClients/ddbDocClient";
-import { ID_LENGTHS, ENTITY_TYPES, TIME_UNITS, DEFAULTS } from "../../Config";
+import { ID_LENGTHS, ENTITY_TYPES, TIME_UNITS, DEFAULTS, OPENING_STATE } from "../../Config";
 import { DynamoNewApplicant } from "../../types/dynamo";
 import { CreateApplicantInput, CreateApplicantOutput } from "../../types/main";
 import * as Time from "../../utils/time";

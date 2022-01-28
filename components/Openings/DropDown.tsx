@@ -2,7 +2,7 @@ import { Fragment, useState } from "react";
 import { Listbox, Transition } from "@headlessui/react";
 import { CheckIcon, SelectorIcon } from "@heroicons/react/solid";
 import { useRouter } from "next/router";
-import { DOMAIN_NAME, OPENING_STATE, WEBSITE_URL } from "../../Config";
+import { OPENING_STATE, WEBSITE_URL } from "../../Config";
 function classNames(...classes) {
   return classes.filter(Boolean).join(" ");
 }

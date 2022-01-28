@@ -17,10 +17,9 @@ export default async function GetUsers(
     ExpressionAttributeValues: {
       ":GSI1PK": `${ENTITY_TYPES.ORG}#${orgId}#${ENTITY_TYPES.USER}S`,
     },
-    Limit: limit || null,
   }; // TODO query until all results are returned
 
-  limit && (params.Limit = limit);
+  limit && (params["Limit"] = limit);
 
   try {
     const response = await Dynamo.send(new QueryCommand(params));

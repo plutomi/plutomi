@@ -1,4 +1,4 @@
-import { AXIOS_INSTANCE as axios } from "../Config";
+import { AXIOS_INSTANCE as axios, OPENING_STATE } from "../Config";
 import { nanoid } from "nanoid";
 import { EMAILS, ERRORS } from "../Config";
 const UrlSafeString = require("url-safe-string"),

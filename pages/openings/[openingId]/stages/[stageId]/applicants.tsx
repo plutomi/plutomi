@@ -1,4 +1,3 @@
-import useSelf from "../../../../../SWR/useSelf";
 import EmptyStagesState from "../../../../../components/Stages/EmptyStagesState";
 import { useEffect } from "react";
 import { useRouter } from "next/router";

@@ -21,9 +21,6 @@ export default async function CreateQuestion(
     createdAt: now,
     // All questions in org
     GSI1PK: `${ENTITY_TYPES.ORG}#${orgId}#${ENTITY_TYPES.QUESTION}S`,
-    /**
-     * The custom key that rules are evaluated against
-     */
     GSI1SK,
     orgId,
   };

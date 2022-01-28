@@ -177,6 +177,11 @@ app.put(
   [withSession, withHasOrg],
   Questions.UpdateQuestion
 );
+app.get(
+  "/questions/:questionId",
+  [withSession, withHasOrg],
+  Questions.GetQuestionInfo
+);
 app.get("/", healthcheck);
 function healthcheck(req, res: Response, next) {
   return res.status(200).json({ message: "It's all good man!" });

@@ -11,7 +11,7 @@ import useSelf from "../../SWR/useSelf";
 import _ from "lodash";
 import useStore from "../../utils/store";
 import { ViewBoardsIcon } from "@heroicons/react/outline";
-import { DOMAIN_NAME, WEBSITE_URL } from "../../Config";
+import { DOMAIN_NAME, OPENING_STATE, WEBSITE_URL } from "../../Config";
 export default function OpeningList() {
   const { user, isUserLoading, isUserError } = useSelf();
   let { openings, isOpeningsLoading, isOpeningsError } = useOpenings();

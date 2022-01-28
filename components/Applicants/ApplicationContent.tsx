@@ -37,7 +37,7 @@ export default function ApplicationContent() {
     const incoming = {
       questionId: questionId,
       questionTitle: questionTitle,
-      description: description,
+      description,
       questionResponse: response,
     };
     const questionOrder = questions.map((a) => a.questionId);

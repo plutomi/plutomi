@@ -1,14 +1,8 @@
 import { Request, Response } from "express";
 import Joi from "joi";
-import * as Openings from "../../models/Openings";
 import * as CreateError from "../../utils/createError";
 import * as Questions from "../../models/Questions";
-import {
-  JOI_GLOBAL_FORBIDDEN,
-  JOI_SETTINGS,
-  OPENING_STATE,
-} from "../../Config";
-import { UpdateOpeningInput } from "../../types/main";
+import { JOI_GLOBAL_FORBIDDEN, JOI_SETTINGS } from "../../Config";
 import { DynamoNewQuestion } from "../../types/dynamo";
 
 export type APIUpdateQuestionOptions = Partial<
