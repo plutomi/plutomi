@@ -7,9 +7,23 @@ import useAllStagesInOpening from "../../SWR/useAllStagesInOpening";
 import useOpeningInfo from "../../SWR/useOpeningInfo";
 import useStageInfo from "../../SWR/useStageInfo";
 import { CUSTOM_QUERY } from "../../types/main";
+import { PlusIcon } from "@heroicons/react/solid";
+import { useState } from "react";
+
+function classNames(...classes) {
+  return classes.filter(Boolean).join(" ");
+}
+
+const tabs = [
+  { id: 1, name: "Questions" },
+  { id: 2, name: "Rules (TODO)?" },
+  // { id: 3, name: "Messages" }, // TODO add get messages (Twilio)
+];
 
 export default function StageSettingsContent() {
   const router = useRouter();
+  const [localSearch, setLocalSearch] = useState("");
+  const [currentActive, setCurrentActive] = useState(1); // Id of item
   const { openingId, stageId } = router.query as Pick<
     CUSTOM_QUERY,
     "openingId" | "stageId"
@@ -55,7 +69,35 @@ export default function StageSettingsContent() {
               <div className="relative h-full" style={{ minHeight: "36rem" }}>
                 <div className=" inset-0  border-gray-200 rounded-lg">
                   <div className="flex flex-col justify-center items-center">
-                    <div className="flex justify-center space-x-4 py-2 items-center"></div>
+                    <nav
+                      className="-mb-px flex w-full "
+                      x-descriptions="Tab component"
+                    >
+                      {tabs.map((tab) => (
+                        // TODO this is a mess
+                        <button
+                          onClick={() => setCurrentActive(tab.id)}
+                          key={tab.name}
+                          className={classNames(
+                            tab.id === currentActive
+                              ? "border-blue-500 text-blue-600"
+                              : "border-transparent text-normal hover:text-dark hover:border-blue-gray-300 transition ease-in-out duration-200",
+                            "text-center w-full cursor-pointer whitespace-nowrap pb-4 px-1 border-b-2 font-medium text-lg"
+                          )}
+                        >
+                          {tab.name}
+                        </button>
+                      ))}
+                    </nav>
+                    {/* <input
+                      type="text"
+                      name="search"
+                      id="search"
+                      value={localSearch}
+                      onChange={(e) => setLocalSearch(e.target.value)} // TODO
+                      placeholder={"Search for an question to add to this stage..."}
+                      className="w-2/3 shadow-sm focus:ring-blue-500 focus:border-blue-500 block  border sm:text-sm border-gray-300 rounded-md"
+                    /> */}
                   </div>
                 </div>
               </div>

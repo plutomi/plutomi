@@ -14,7 +14,9 @@ export default function OpeningSettings() {
       loggedOutPageText={"Log in to view your opening settings"}
       currentNavbarItem={"Openings"}
       headerText={
-        isOpeningLoading ? "Settings" : `${opening?.openingName} - Settings`
+        isOpeningLoading
+          ? "Loading opening settings..."
+          : `${opening?.openingName} - Settings`
       }
     >
       <>
