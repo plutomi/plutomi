@@ -59,6 +59,7 @@ const main = async (req: Request, res: Response) => {
     return res.status(status).json(body);
   }
 
+  // TODO add this to updating stages with question and rule orders as well
   // https://github.com/plutomi/plutomi/issues/529
   if (
     req.body.stageOrder &&

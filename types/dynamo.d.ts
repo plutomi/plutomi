@@ -24,6 +24,10 @@ interface DynamoNewStage {
   orgId: string;
 
   /**
+   * An array of questionIds describing how questions should show up
+   */
+  questionOrder: string[];
+  /**
    * The Id for the stage
    */
   stageId: string;

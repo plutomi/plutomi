@@ -15,6 +15,7 @@ export default async function CreateQuestion(
   const newStageQuestion: DynamoNewQuestion = {
     PK: `${ENTITY_TYPES.ORG}#${orgId}#${ENTITY_TYPES.QUESTION}#${questionId}`,
     SK: ENTITY_TYPES.QUESTION,
+    orgId,
     description: description || "",
     questionId,
     entityType: ENTITY_TYPES.QUESTION,
@@ -22,7 +23,6 @@ export default async function CreateQuestion(
     // All questions in org
     GSI1PK: `${ENTITY_TYPES.ORG}#${orgId}#${ENTITY_TYPES.QUESTION}S`,
     GSI1SK,
-    orgId,
   };
 
   try {
