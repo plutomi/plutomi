@@ -51,15 +51,6 @@ export default function StageSettingsHeader({ deleteStage }) {
 
       <div className=" min-w-0 flex flex-col items-start ">
         <Breadcrumbs crumbs={crumbs} />
-        <div className="my-12">
-          <h1 className="text-2xl text-red-500 bold">
-            NOTE: page is being worked on
-          </h1>
-          <CustomLink
-            url={"https://github.com/plutomi/plutomi/tree/question-keys"}
-            text={"https://github.com/plutomi/plutomi/tree/question-keys"}
-          />
-        </div>
       </div>
 
       <p className="text-md text-light text-center">

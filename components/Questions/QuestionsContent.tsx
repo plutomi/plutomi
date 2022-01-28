@@ -22,15 +22,6 @@ export default function QuestionsContent() {
 
   return (
     <div className="">
-      <h1 className="text-2xl text-red-500 bold">
-        NOTE: page is being worked on
-      </h1>
-
-      <CustomLink
-        url={"https://github.com/plutomi/plutomi/tree/question-keys"}
-        text={"https://github.com/plutomi/plutomi/tree/question-keys"}
-      />
-
       <CreateQuestionModal />
       {questions?.length === 0 ? (
         <EmptyQuestionsState />
