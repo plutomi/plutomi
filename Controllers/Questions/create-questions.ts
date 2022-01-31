@@ -11,7 +11,7 @@ export type APICreateQuestionOptions = Pick<
 >;
 const schema = Joi.object({
   body: {
-    questionId: Joi.string().max(50),
+    questionId: Joi.string().max(50), // TODo joi regex to match tag generator
     GSI1SK: Joi.string().max(100),
     description: Joi.string().allow("").max(500).optional(),
   },
@@ -48,6 +48,8 @@ const main = async (req: Request, res: Response) => {
     );
     return res.status(status).json(body);
   }
-  return res.status(201).json({ message: "Question created!" });
+  return res
+    .status(201)
+    .json({ message: "Question created!", question: created });
 };
 export default main;

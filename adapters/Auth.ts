@@ -2,7 +2,7 @@ import { AXIOS_INSTANCE as axios } from "../Config";
 
 // TODO types
 const RequestLoginLink = async (email, callbackUrl) => {
-  const { data } = await axios.post(
+  const data = await axios.post(
     `/request-login-link?callbackUrl=${callbackUrl}`,
     { email }
   );
@@ -10,7 +10,7 @@ const RequestLoginLink = async (email, callbackUrl) => {
 };
 
 const Logout = async () => {
-  const { data } = await axios.post(`/logout`);
+  const data = await axios.post(`/logout`);
   return data;
 };
 

@@ -4,6 +4,8 @@ import { DEFAULTS, JOI_SETTINGS } from "../../Config";
 import * as CreateError from "../../utils/createError";
 import * as Openings from "../../models/Openings";
 import * as Stages from "../../models/Stages";
+import getNewChildItemOrder from "../../utils/getNewChildItemOrder";
+import * as Questions from "../../models/Questions";
 const schema = Joi.object({
   body: {
     questionId: Joi.string(),
@@ -27,13 +29,34 @@ const main = async (req: Request, res: Response) => {
     return res.status(status).json(body);
   }
 
-  let { questionId, position } = req.body;
+  // TODO types
+  let { questionId, position }: { questionId: string; position?: number } =
+    req.body;
   const { openingId, stageId } = req.params;
+
+  const [question, getQuestionError] = await Questions.GetQuestionById({
+    orgId: session.orgId,
+    questionId,
+  });
+
+  if (getQuestionError) {
+    const { status, body } = CreateError.SDK(
+      getQuestionError,
+      "An error ocurred retrieving info for that question"
+    );
+    return res.status(status).json(body);
+  }
+
+  if (!question) {
+    return res.status(404).json({
+      message: `A question with the ID of '${questionId}' does not exist in this org`,
+    });
+  }
 
   const [stage, stageError] = await Stages.GetStageById({
     openingId,
-    orgId: session.orgId,
     stageId,
+    orgId: session.orgId,
   });
 
   if (stageError) {
@@ -49,33 +72,37 @@ const main = async (req: Request, res: Response) => {
     return res.status(404).json({ message: "Stage does not exist" });
   }
 
-  // TODO Update the stage with the new question order
-  const [updatedStage, updatedStageError] = await Stages.UpdateStage({
-      orgId: session.orgId,
-      openingId, 
-      stageId,
-      position, // TODO 
-      newValues: {
+  // Block questions from being added to a stage if it already exists in the stage
+  if (stage.questionOrder.includes(questionId)) {
+    return res.status(409).json({
+      message: `A question with the ID of '${questionId}' already exists in this stage. Please use a different question ID or delete the old one.`,
+    });
+  }
 
-      }
-  })
-  // Create the stage and update the stage order, model will handle where to place it
-  const [created, stageError] = await Stages.CreateStage({
+  // Update the stage with the new questionOrder
+  const questionOrder = getNewChildItemOrder(
+    questionId,
+    stage.questionOrder,
+    position
+  );
+
+  const [stageUpdated, stageUpdatedError] = await Stages.UpdateStage({
     orgId: session.orgId,
-    GSI1SK,
     openingId,
-    position,
-    stageOrder: opening.stageOrder,
+    stageId,
+    newValues: {
+      questionOrder,
+    },
   });
 
-  if (stageError) {
+  if (stageUpdatedError) {
     const { status, body } = CreateError.SDK(
       stageError,
-      "An error ocurred creating your stage"
+      "An error ocurred updating your stage"
     );
     return res.status(status).json(body);
   }
 
-  return res.status(201).json({ message: "Stage created!" });
+  return res.status(201).json({ message: "Question added to stage!" });
 };
 export default main;

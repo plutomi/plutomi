@@ -111,6 +111,12 @@ app.delete(
   [withSession, withHasOrg],
   Stages.DeleteStage
 );
+
+app.post(
+  "/openings/:openingId/stages/:stageId/questions",
+  [withSession, withHasOrg],
+  Questions.AddQuestionToStage
+);
 app.get(
   "/openings/:openingId/stages/:stageId",
   [withSession, withHasOrg],

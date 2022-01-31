@@ -3,7 +3,7 @@ import { APICreateQuestionOptions } from "../Controllers/Questions/create-questi
 import { APIUpdateQuestionOptions } from "../Controllers/Questions/update-question";
 
 const CreateQuestion = async (options: APICreateQuestionOptions) => {
-  const { data } = await axios.post(`/questions`, {
+  const data = await axios.post(`/questions`, {
     ...options,
   });
   return data;
@@ -14,12 +14,12 @@ const GetQuestionInfoURL = (questionId: string) => {
   return `/questions/${questionId}`;
 };
 const GetQuestionInfo = async (questionId: string) => {
-  const { data } = await axios.get(GetQuestionInfoURL(questionId));
+  const data = await axios.get(GetQuestionInfoURL(questionId));
   return data;
 };
 
 const DeleteQuestion = async (questionId: string) => {
-  const { data } = await axios.delete(GetQuestionInfoURL(questionId));
+  const data = await axios.delete(GetQuestionInfoURL(questionId));
   return data;
 };
 
@@ -27,9 +27,23 @@ const UpdateQuestion = async (
   questionId: string,
   options: APIUpdateQuestionOptions
 ) => {
-  const { data } = await axios.put(GetQuestionInfoURL(questionId), {
+  const data = await axios.put(GetQuestionInfoURL(questionId), {
     ...options,
   });
+  return data;
+};
+
+// TODO types
+const AddQuestionToStage = async (openingId, stageId, questionId) => {
+  const data = await axios.post(
+    `/openings/${openingId}/stages/${stageId}/questions`,
+    {
+      openingId,
+      stageId,
+      questionId,
+    }
+  );
+
   return data;
 };
 
@@ -39,7 +53,7 @@ const UpdateQuestion = async (
 //   `/openings/${openingId}/stages/${stageId}/questions`;
 
 // const GetQuestionsInStage = async (openingId, stageId) => {
-//   const { data } = await axios.get(
+//   const  data  = await axios.get(
 //     GetQuestionsInStageURL(openingId, stageId)
 //   );
 //   return data;
@@ -51,4 +65,5 @@ export {
   DeleteQuestion,
   GetQuestionInfo,
   GetQuestionInfoURL,
+  AddQuestionToStage,
 };

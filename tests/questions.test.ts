@@ -1,0 +1,331 @@
+import { AXIOS_INSTANCE as axios } from "../Config";
+import { nanoid } from "nanoid";
+import { ERRORS } from "../Config";
+import * as Openings from "../adapters/Openings";
+import * as Stages from "../adapters/Stages";
+import * as Questions from "../adapters/Questions";
+import { AxiosResponse } from "axios";
+describe("Openings", () => {
+  /**
+   * Creates a session cookie
+   */
+  beforeAll(async () => {
+    const data = await axios.post(`/jest-setup`);
+    const cookie = data.headers["set-cookie"][0];
+
+    axios.defaults.headers.Cookie = cookie;
+  });
+
+  it("blocks creating a question if not in org", async () => {
+    expect.assertions(2);
+
+    try {
+      await axios.post("/questions");
+    } catch (error) {
+      expect(error.response.status).toBe(403);
+      expect(error.response.data.message).toBe(ERRORS.NEEDS_ORG);
+    }
+  });
+
+  const firstQuestionId = nanoid(20);
+  it("creates a question", async () => {
+    // Create an org first
+    await axios.post("/orgs", {
+      orgId: nanoid(20),
+      displayName: nanoid(20),
+    });
+
+    const data = await Questions.CreateQuestion({
+      GSI1SK: nanoid(12),
+      questionId: firstQuestionId,
+    });
+
+    expect(data.status).toBe(201);
+    expect(data.data.message).toBe("Question created!");
+  });
+
+  it("blocks creating a question with the same ID", async () => {
+    expect.assertions(2);
+    try {
+      await axios.post("/questions", {
+        questionId: firstQuestionId,
+        GSI1SK: nanoid(20),
+      });
+    } catch (error) {
+      expect(error.response.status).toBe(409);
+      expect(error.response.data.message).toBe(
+        "A question already exists with this ID"
+      );
+    }
+  });
+
+  it("blocks creating questions with an empty id", async () => {
+    expect.assertions(3);
+
+    try {
+      await axios.post("/questions", {
+        questionId: "",
+        GSI1SK: nanoid(20),
+      });
+    } catch (error) {
+      expect(error.response.status).toBe(400);
+      expect(error.response.data.message).toContain("body.questionId");
+      expect(error.response.data.message).toContain(
+        "is not allowed to be empty"
+      );
+    }
+  });
+
+  it("blocks creating questions with an empty title", async () => {
+    expect.assertions(3);
+    try {
+      await axios.post("/questions", {
+        questionId: nanoid(20),
+        GSI1SK: "",
+      });
+    } catch (error) {
+      expect(error.response.status).toBe(400);
+      expect(error.response.data.message).toContain("body.GSI1SK");
+      expect(error.response.data.message).toContain(
+        "is not allowed to be empty"
+      );
+    }
+  });
+
+  const newQuestionName = nanoid(20);
+  it("allows updating a question", async () => {
+    const data = await axios.put(`/questions/${firstQuestionId}`, {
+      GSI1SK: newQuestionName,
+    });
+    expect(data.status).toBe(200);
+    expect(data.data.message).toBe("Question updated!");
+  });
+
+  it("allows returning a question's info", async () => {
+    const data = await axios.get(`/questions/${firstQuestionId}`);
+    expect(data.status).toBe(200);
+    expect(data.data.GSI1SK).toBe(newQuestionName);
+  });
+
+  it("blocks updating a question id", async () => {
+    expect.assertions(3);
+    try {
+      await axios.put(`/questions/${firstQuestionId}`, {
+        questionId: nanoid(10),
+      });
+    } catch (error) {
+      expect(error.response.status).toBe(400);
+      expect(error.response.data.message).toContain("body.questionId");
+      expect(error.response.data.message).toContain("is not allowed");
+    }
+  });
+
+  it("allows deleting a question from an org", async () => {
+    const data = await axios.delete(`/questions/${firstQuestionId}`);
+    expect(data.status).toBe(200);
+    expect(data.data.message).toBe("Question deleted!");
+  });
+
+  // Questions and stages
+  it("adds a question to a stage", async () => {
+    // Create an opening
+    let createOpening: AxiosResponse;
+    try {
+      createOpening = await Openings.CreateOpening({
+        openingName: nanoid(10),
+      });
+      expect(createOpening.status).toBe(201);
+      expect(createOpening.data.message).toBe("Opening created!");
+    } catch (error) {
+      console.error(error);
+    }
+
+    // Get openings in org
+    let allOpenings: AxiosResponse;
+    try {
+      allOpenings = await Openings.GetAllOpeningsInOrg();
+      expect(allOpenings.status).toBe(200);
+      expect(Array.isArray(allOpenings.data)).toBe(true);
+      expect(allOpenings.data.length).toBeGreaterThanOrEqual(1);
+    } catch (error) {
+      console.error(error);
+    }
+
+    // Doesn't really matter which opening we get
+    const { openingId } = allOpenings.data[0];
+
+    // Create a stage in an opening
+    let createStage: AxiosResponse;
+
+    try {
+      createStage = await Stages.CreateStage(nanoid(10), openingId);
+      expect(createStage.status).toBe(201);
+      expect(createStage.data.message).toBe("Stage created!");
+    } catch (error) {
+      console.error(error);
+    }
+
+    // Get our stage
+    let getStagesInOpening: AxiosResponse;
+
+    try {
+      getStagesInOpening = await Stages.GetStagesInOpening(openingId);
+      expect(getStagesInOpening.status).toBe(200);
+      expect(Array.isArray(getStagesInOpening.data)).toBe(true);
+      expect(getStagesInOpening.data.length).toBeGreaterThanOrEqual(1);
+    } catch (error) {
+      console.error(error);
+    }
+
+    const { stageId } = getStagesInOpening.data[0];
+
+    // Create our question
+    const localQuestionId = nanoid(20); // TODo
+    let createQuestion: AxiosResponse;
+    let result;
+    try {
+      createQuestion = await Questions.CreateQuestion({
+        GSI1SK: nanoid(10),
+        questionId: localQuestionId,
+        description: nanoid(10),
+      });
+      result = createQuestion.data.Item;
+      expect(createQuestion.status).toBe(201);
+      expect(createQuestion.data.message).toBe("Question created!");
+    } catch (error) {
+      console.error(error);
+    }
+
+    let addQuestionToStage: AxiosResponse;
+    try {
+      addQuestionToStage = await Questions.AddQuestionToStage(
+        openingId,
+        stageId,
+        localQuestionId
+      );
+
+      expect(addQuestionToStage.status).toBe(201);
+      expect(addQuestionToStage.data.message).toBe("Question added to stage!");
+    } catch (error) {
+      console.error(error);
+    }
+  });
+
+  it("blocks a user from adding the same question to a stage twice", async () => {
+    expect.assertions(16);
+    // Essentially the same thing as above, but expects an error instead
+    // Create an opening
+    let createOpening: AxiosResponse;
+    try {
+      createOpening = await Openings.CreateOpening({
+        openingName: nanoid(10),
+      });
+      expect(createOpening.status).toBe(201);
+      expect(createOpening.data.message).toBe("Opening created!");
+    } catch (error) {
+      console.error(error);
+    }
+
+    // Get openings in org
+    let allOpenings: AxiosResponse;
+    try {
+      allOpenings = await Openings.GetAllOpeningsInOrg();
+      expect(allOpenings.status).toBe(200);
+      expect(Array.isArray(allOpenings.data)).toBe(true);
+      expect(allOpenings.data.length).toBeGreaterThanOrEqual(1);
+    } catch (error) {
+      console.error(error);
+    }
+
+    // Doesn't really matter which opening we get
+    const { openingId } = allOpenings.data[0];
+
+    // Create a stage in an opening
+    let createStage: AxiosResponse;
+
+    try {
+      createStage = await Stages.CreateStage(nanoid(10), openingId);
+      expect(createStage.status).toBe(201);
+      expect(createStage.data.message).toBe("Stage created!");
+    } catch (error) {
+      console.error(error);
+    }
+
+    // Get our stage
+    let getStagesInOpening: AxiosResponse;
+
+    try {
+      getStagesInOpening = await Stages.GetStagesInOpening(openingId);
+      expect(getStagesInOpening.status).toBe(200);
+      expect(Array.isArray(getStagesInOpening.data)).toBe(true);
+      expect(getStagesInOpening.data.length).toBeGreaterThanOrEqual(1);
+    } catch (error) {
+      console.error(error);
+    }
+
+    const { stageId } = getStagesInOpening.data[0];
+
+    // Create our question
+    const questionId = nanoid(20);
+    let createQuestion: AxiosResponse;
+
+    try {
+      createQuestion = await Questions.CreateQuestion({
+        GSI1SK: nanoid(10),
+        questionId,
+        description: nanoid(10),
+      });
+      expect(createQuestion.status).toBe(201);
+      expect(createQuestion.data.message).toBe("Question created!");
+    } catch (error) {
+      console.error(error);
+    }
+
+    let addQuestionToStage: AxiosResponse;
+    try {
+      addQuestionToStage = await Questions.AddQuestionToStage(
+        openingId,
+        stageId,
+        questionId
+      );
+      expect(addQuestionToStage.status).toBe(201);
+      expect(addQuestionToStage.data.message).toBe("Question added to stage!");
+    } catch (error) {
+      console.error(error);
+    }
+
+    // Try it again
+    try {
+      await Questions.AddQuestionToStage(openingId, stageId, questionId);
+    } catch (error) {
+      console.error(error);
+      expect(error.response.status).toBe(409);
+      expect(error.response.data.message).toBe(
+        `A question with the ID of '${questionId}' already exists in this stage. Please use a different question ID or delete the old one.`
+      );
+    }
+  });
+
+  it.todo("allows deleting a question from a stage");
+
+  it.todo("allows adding a question at a specific position in a stage");
+
+  it("blocks adding a question to a stage if the question does not exist", async () => {
+    expect.assertions(2);
+
+    const questionId = nanoid(50);
+
+    try {
+      await Questions.AddQuestionToStage(nanoid(10), nanoid(10), questionId);
+    } catch (error) {
+      expect(error.response.status).toBe(404);
+      expect(error.response.data.message).toBe(
+        `A question with the ID of '${questionId}' does not exist in this org`
+      );
+    }
+  });
+
+  it.todo(
+    "TODO - When deleting a question from an org, delete from all stages. Will require a transact write on stage update, and also a GSI to keep track of all staegs that have this question :>"
+  );
+});

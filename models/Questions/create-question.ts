@@ -17,7 +17,7 @@ export default async function CreateQuestion(
     SK: ENTITY_TYPES.QUESTION,
     orgId,
     description: description || "",
-    questionId,
+    questionId, // TODO add tag generator
     entityType: ENTITY_TYPES.QUESTION,
     createdAt: now,
     // All questions in org
