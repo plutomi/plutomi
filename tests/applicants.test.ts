@@ -1,6 +1,11 @@
-import { AXIOS_INSTANCE as axios, OPENING_STATE } from "../Config";
+import { AXIOS_INSTANCE as axios, DEFAULTS, OPENING_STATE } from "../Config";
 import { nanoid } from "nanoid";
 import { EMAILS, ERRORS } from "../Config";
+import * as Orgs from "../adapters/Orgs";
+import * as Openings from "../adapters/Openings";
+import * as Stages from "../adapters/Stages";
+import * as Applicants from "../adapters/Applicants";
+import { DynamoNewOpening } from "../types/dynamo";
 const UrlSafeString = require("url-safe-string"),
   tagGenerator = new UrlSafeString();
 
@@ -16,56 +21,51 @@ describe("Openings", () => {
   beforeAll(async () => {
     const data = await axios.post(`/jest-setup`);
     const cookie = data.headers["set-cookie"][0];
-
     axios.defaults.headers.Cookie = cookie;
 
-    try {
-      // Create an org
-      await axios.post("/orgs", {
-        orgId,
-        displayName: nanoid(10) + " Inc.",
-      });
-    } catch (error) {}
+    // Create an org
+    await Orgs.CreateOrg({
+      orgId,
+      displayName: nanoid(10) + " Inc.",
+    });
 
     // Create a public opening
     const publicOpeningName = nanoid(20);
-    try {
-      await axios.post("/openings", {
-        openingName: publicOpeningName,
-      });
-    } catch (error) {}
+    await Openings.CreateOpening({
+      openingName: publicOpeningName,
+    });
 
     // Get public opening
-    let openings = await axios.get("/openings");
+    let openings = await Openings.GetAllOpeningsInOrg();
     const publicOpening = openings.data.find(
-      (opening) => opening.openingName === publicOpeningName
+      (opening: DynamoNewOpening) => opening.openingName === publicOpeningName
     );
 
-    publicOpeningId = publicOpening.openingId;
+    // Create a stage
+    await Stages.CreateStage({
+      GSI1SK: nanoid(10),
+      openingId: publicOpening.openingId,
+    });
 
-    try {
-      // Add a stage
-      await axios.post("/stages", {
-        openingId: publicOpeningId,
-        GSI1SK: "First Stage",
-      });
-    } catch (error) {}
-
-    // make opening public
-    await axios.put(`/openings/${publicOpening.openingId}`, {
-      GSI1SK: OPENING_STATE.PUBLIC,
+    // Make the opening public
+    await Openings.UpdateOpening({
+      openingId: publicOpening.openingId,
+      newValues: {
+        GSI1SK: OPENING_STATE.PUBLIC,
+      },
     });
 
     // Create a private opening
     const privateOpeningName = nanoid(20);
-    await axios.post("/openings", {
+
+    await Openings.CreateOpening({
       openingName: privateOpeningName,
     });
 
     // Get private opening
     openings = await axios.get("/openings");
     const privateOpening = openings.data.find(
-      (opening) => opening.openingName === privateOpeningName
+      (opening: DynamoNewOpening) => opening.openingName === privateOpeningName
     );
 
     privateOpeningId = privateOpening.openingId;
@@ -81,6 +81,7 @@ describe("Openings", () => {
   });
 
   it("blocks creating an applicant in private openings", async () => {
+    expect.assertions(2);
     try {
       await axios.post("/applicants", {
         ...applicant,
@@ -95,8 +96,9 @@ describe("Openings", () => {
   });
 
   it("blocks creating an applicant with a spammy email", async () => {
+    expect.assertions(2);
     try {
-      await axios.post("/applicants", {
+      await Applicants.CreateApplicant({
         ...applicant,
         email: "test@10minutemail.com",
       });
@@ -107,8 +109,9 @@ describe("Openings", () => {
   });
 
   it("blocks creating applicants with long names", async () => {
+    expect.assertions(4);
     try {
-      await axios.post("/applicants", {
+      await Applicants.CreateApplicant({
         ...applicant,
         firstName: nanoid(80),
         lastName: nanoid(80),
@@ -124,8 +127,9 @@ describe("Openings", () => {
   });
 
   it("blocks creating applicants with invalid emails", async () => {
+    expect.assertions(3);
     try {
-      await axios.post("/applicants", {
+      await Applicants.CreateApplicant({
         ...applicant,
         email: "beans",
       });
@@ -137,10 +141,11 @@ describe("Openings", () => {
   });
 
   it("blocks creating applicants with the default org", async () => {
+    expect.assertions(3);
     try {
-      await axios.post("/applicants", {
+      await Applicants.CreateApplicant({
         ...applicant,
-        orgId: "NO_ORG_ASSIGNED",
+        orgId: DEFAULTS.NO_ORG,
       });
     } catch (error) {
       expect(error.response.status).toBe(400);

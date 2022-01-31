@@ -10,18 +10,30 @@ import {
   JOI_SETTINGS,
   OPENING_STATE,
 } from "../../Config";
+import emailValidator from "deep-email-validator";
 import * as CreateError from "../../utils/createError";
+import { DynamoNewApplicant } from "../../types/dynamo";
+
+export type APICreateApplicantOptions = Required<
+  Pick<
+    DynamoNewApplicant,
+    "orgId" | "openingId" | "email" | "firstName" | "lastName"
+  >
+>;
 const schema = Joi.object({
   body: {
     ...JOI_GLOBAL_FORBIDDEN,
     orgId: JoiOrgId,
     openingId: Joi.string(),
     email: Joi.string().email(),
-    firstName: Joi.string().invalid(DEFAULTS.FIRST_NAME).max(20),
-    lastName: Joi.string().invalid(DEFAULTS.LAST_NAME).max(20),
+    firstName: Joi.string()
+      .invalid(DEFAULTS.FIRST_NAME)
+      .max(DEFAULTS.MAX_APPLICANT_FIRSTNAME_LENGTH),
+    lastName: Joi.string()
+      .invalid(DEFAULTS.LAST_NAME)
+      .max(DEFAULTS.MAX_APPLICANT_FIRSTNAME_LENGTH),
   },
 }).options(JOI_SETTINGS);
-import emailValidator from "deep-email-validator";
 
 const main = async (req: Request, res: Response) => {
   // TODO implement only one application per email

@@ -36,7 +36,7 @@ const GetPublicStageInfoURL = (options: GetPublicStageInfoInput) =>
   `/public/orgs/${options.orgId}/openings/${options.openingId}/stages/${options.stageId}`;
 
 const GetPublicStageInfo = async (options: GetPublicStageInfoInput) => {
-  const data = await axios.get(GetPublicStageInfoURL(options));
+  const data = await axios.get(GetPublicStageInfoURL({ ...options }));
   return data;
 };
 
