@@ -35,28 +35,41 @@ const main = async (req: Request, res: Response) => {
   const { session } = res.locals;
   const { openingId, stageId } = req.params;
 
-  // // TODO !!!
-  // if (req.body.questionOrder) {
-  //   if (req.body.stageOrder.length != opening.stageOrder.length) {
-  //     return res.status(403).json({
-  //       message:
-  //         "You cannot add / delete stages this way, please use the proper API methods for those actions",
-  //     });
-  //   }
+  const [stage, stageError] = await Stages.GetStageById({
+    openingId,
+    stageId,
+    orgId: session.orgId,
+  });
 
-  //   // Check if the IDs have been modified
-  //   // TODO add a test for this
-  //   const containsAll = opening.stageOrder.every((stageId) => {
-  //     return req.body.stageOrder.includes(stageId);
-  //   });
+  if (stageError) {
+    const { status, body } = CreateError.SDK(
+      stageError,
+      "An error ocurred retrieving your stage info"
+    );
+    return res.status(status).json(body);
+  }
+  if (req.body.questionOrder) {
+    // TODO - Add a test for this !!!
+    if (req.body.stageOrder.length != stage.questionOrder.length) {
+      return res.status(403).json({
+        message:
+          "You cannot add / delete questions this way, please use the proper API methods for those actions",
+      });
+    }
 
-  //   if (!containsAll) {
-  //     return res.status(400).json({
-  //       message:
-  //         "It appears that the stageIds have been modified, please check your request and try again",
-  //     });
-  //   }
-  // }
+    // Check if the IDs have been modified
+    // TODO add a test for this
+    const containsAll = stage.questionOrder.every((stageId) => {
+      return req.body.questionOrder.includes(stageId);
+    });
+
+    if (!containsAll) {
+      return res.status(400).json({
+        message:
+          "It appears that the questionIds have been modified, please check your request and try again",
+      });
+    }
+  }
 
   const [updatedStage, error] = await Stages.UpdateStage({
     orgId: session.orgId,
