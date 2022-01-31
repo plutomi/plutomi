@@ -1,4 +1,4 @@
-import { AXIOS_INSTANCE as axios, ERRORS } from "../Config";
+import { AXIOS_INSTANCE as axios, ERRORS, OPENING_STATE } from "../Config";
 import { nanoid } from "nanoid";
 import * as Openings from "../adapters/Openings";
 import * as Orgs from "../adapters/Orgs";
@@ -143,6 +143,35 @@ describe("Openings", () => {
 
     expect(data2.status).toBe(200);
     expect(data2.data.message).toBe("Opening updated!");
+  });
+
+  it("fails to make an opening public if there are no stages in it", async () => {
+    const openingName = nanoid(20);
+
+    // Create the opening
+    await Openings.CreateOpening({
+      openingName,
+    });
+    const allOpenings = await Openings.GetAllOpeningsInOrg();
+
+    const ourOpening = allOpenings.data.find(
+      (opening: DynamoNewOpening) => opening.openingName === openingName
+    );
+
+    // Try to update
+    try {
+      await Openings.UpdateOpening({
+        openingId: ourOpening.openingId,
+        newValues: {
+          GSI1SK: OPENING_STATE.PUBLIC,
+        },
+      });
+    } catch (error) {
+      expect(error.response.status).toBe(403);
+      expect(error.response.data.message).toBe(
+        "An opening needs to have stages before being made public"
+      );
+    }
   });
 
   it("blocks updating an opening with an extra long name", async () => {

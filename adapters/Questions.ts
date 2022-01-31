@@ -22,19 +22,25 @@ const DeleteQuestion = async (questionId: string) => {
   const data = await axios.delete(GetQuestionInfoURL(questionId));
   return data;
 };
-
-const UpdateQuestion = async (
-  questionId: string,
-  options: APIUpdateQuestionOptions
-) => {
-  const data = await axios.put(GetQuestionInfoURL(questionId), {
-    ...options,
+interface UpdateQuestionInput {
+  questionId: string;
+  newValues: APIUpdateQuestionOptions;
+}
+const UpdateQuestion = async (options: UpdateQuestionInput) => {
+  const data = await axios.put(GetQuestionInfoURL(options.questionId), {
+    ...options.newValues,
   });
   return data;
 };
 
 // TODO types
-const AddQuestionToStage = async (openingId, stageId, questionId) => {
+interface AddQuestionToStageInput {
+  openingId: string;
+  stageId: string;
+  questionId: string;
+}
+const AddQuestionToStage = async (options: AddQuestionToStageInput) => {
+  const { openingId, stageId, questionId } = options;
   const data = await axios.post(
     `/openings/${openingId}/stages/${stageId}/questions`,
     {

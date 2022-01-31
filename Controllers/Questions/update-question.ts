@@ -2,19 +2,23 @@ import { Request, Response } from "express";
 import Joi from "joi";
 import * as CreateError from "../../utils/createError";
 import * as Questions from "../../models/Questions";
-import { JOI_GLOBAL_FORBIDDEN, JOI_SETTINGS } from "../../Config";
+import { DEFAULTS, JOI_GLOBAL_FORBIDDEN, JOI_SETTINGS } from "../../Config";
 import { DynamoNewQuestion } from "../../types/dynamo";
 
-export type APIUpdateQuestionOptions = Partial<
-  Pick<DynamoNewQuestion, "GSI1SK" | "description">
->;
+export interface APIUpdateQuestionOptions
+  extends Partial<Pick<DynamoNewQuestion, "GSI1SK" | "description">> {
+  [key: string]: any;
+}
 
 const JOI_FORBIDDEN_OPENING = Joi.object({
   ...JOI_GLOBAL_FORBIDDEN,
   questionId: Joi.any().forbidden(),
   GSI1PK: Joi.any().forbidden(),
-  GSI1SK: Joi.string().optional(),
-  description: Joi.string().allow("").max(500).optional(),
+  GSI1SK: Joi.string().optional().max(DEFAULTS.MAX_QUESTION_TITLE_LENGTH),
+  description: Joi.string()
+    .allow("")
+    .max(DEFAULTS.MAX_QUESTION_DESCRIPTION_LENGTH)
+    .optional(),
 });
 
 const schema = Joi.object({
