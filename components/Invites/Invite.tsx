@@ -12,8 +12,8 @@ export default function Invite({ invite }) {
   const router = useRouter();
   const acceptInvite = async (inviteId) => {
     try {
-      const { message } = await AcceptInvite(inviteId);
-      alert(message);
+      const { data } = await AcceptInvite(inviteId);
+      alert(data.message);
       router.push("/dashboard");
     } catch (error) {
       console.error(error);
@@ -29,9 +29,9 @@ export default function Invite({ invite }) {
 
   const rejectInvite = async (invite) => {
     try {
-      const { message } = await RejectInvite(invite.inviteId);
+      const { data } = await RejectInvite(invite.inviteId);
 
-      alert(message);
+      alert(data.message);
     } catch (error) {
       console.error(error);
       alert(error.response.data.message);

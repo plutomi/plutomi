@@ -16,11 +16,11 @@ export default function CreateOpeningModal() {
     e.preventDefault();
 
     try {
-      const { message } = await CreateOpening({
+      const { data } = await CreateOpening({
         openingName,
       });
       mutate(GetOpeningsInOrgURL());
-      alert(message);
+      alert(data.message);
       closeCreateOpeningModal();
     } catch (error) {
       alert(error.response.data.message);

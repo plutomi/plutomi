@@ -13,8 +13,8 @@ export default function CreateInviteModal() {
     e.preventDefault();
     try {
       // TODO add custom expiry - Defaults to 3 days
-      const { message } = await CreateInvite(recipientEmail);
-      alert(message);
+      const { data } = await CreateInvite(recipientEmail);
+      alert(data.message);
       setRecipientEmail("");
       closeInviteModal();
     } catch (error) {

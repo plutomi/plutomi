@@ -6,9 +6,9 @@ import { mutate } from "swr";
 import { GetSelfInfoURL } from "../adapters/Users";
 const handleLogout = async (isHomepage: boolean) => {
   try {
-    const { message } = await Logout(); // TODO logout to same page
+    const { data } = await Logout(); // TODO logout to same page
     isHomepage ? window.location.reload() : null;
-    // alert(message);
+    // alert(data.message);
     // TODO reroute to homepage
   } catch (error) {
     alert(error.response.message);

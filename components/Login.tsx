@@ -19,10 +19,7 @@ export default function Login({ loggedOutPageText }) {
     e.preventDefault();
 
     try {
-      const { message } = await RequestLoginLink(
-        email,
-        window.location.href
-      );
+      const { data } = await RequestLoginLink(email, window.location.href);
 
       setSubmittedText(message);
       setEmailSubmitted(true);

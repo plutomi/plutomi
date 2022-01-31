@@ -30,10 +30,10 @@ export default function UpdateStageModal({ stage }: { stage: DynamoNewStage }) {
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     try {
-      const { message } = await UpdateStage(openingId, stageId, {
+      const { data } = await UpdateStage(openingId, stageId, {
         GSI1SK,
       });
-      alert(message);
+      alert(data.message);
       setGSI1SK("");
       closeUpdateStageModal();
     } catch (error) {

@@ -57,9 +57,9 @@ export default function ApplicantProfileModal() {
 
   const updateApplicant = async (applicantId: string, changes: {}) => {
     try {
-      const { message } = await UpdateApplicant(applicantId, changes);
+      const { data } = await UpdateApplicant(applicantId, changes);
 
-      alert(message);
+      alert(data.message);
     } catch (error) {
       alert(error.response.data.message);
     }

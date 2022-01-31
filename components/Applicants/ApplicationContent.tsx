@@ -69,8 +69,8 @@ export default function ApplicationContent() {
   const handleSubmit = async () => {
     try {
       console.log("Responses are", responses);
-      const { message } = await AnswerQuestions(applicantId, responses);
-      alert(message);
+      const { data } = await AnswerQuestions(applicantId, responses);
+      alert(data.message);
     } catch (error) {
       alert(error.response.data.message);
     }

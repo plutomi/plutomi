@@ -22,8 +22,8 @@ export default function CreateStageModal() {
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     try {
-      const { message } = await CreateStage(GSI1SK, openingId);
-      alert(message);
+      const { data } = await CreateStage(GSI1SK, openingId);
+      alert(data.message);
       closeCreateStageModal();
       setGSI1SK("");
     } catch (error) {

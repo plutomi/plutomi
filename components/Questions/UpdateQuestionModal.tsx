@@ -22,12 +22,12 @@ export default function UpdateQuestionModal({ question }) {
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     try {
-      const { message } = await UpdateQuestion(question?.questionId, {
+      const { data } = await UpdateQuestion(question?.questionId, {
         GSI1SK,
         description,
       });
 
-      alert(message);
+      alert(data.message);
       closeUpdateQuestionModal();
     } catch (error) {
       alert(error.response.data.message);

@@ -36,9 +36,9 @@ export default function UpdateOpeningModal({
           opening?.openingName == openingName ? undefined : openingName,
       };
 
-      const { message } = await UpdateOpening(opening?.openingId, { ...input });
+      const { data } = await UpdateOpening(opening?.openingId, { ...input });
       mutate(GetOpeningInfoURL(opening?.openingId));
-      alert(message);
+      alert(data.message);
       closeUpdateOpeningModal();
     } catch (error) {
       alert(error.response.data.message);

@@ -15,13 +15,13 @@ export default function CreateQuestionModal() {
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     try {
-      const { message } = await CreateQuestion({
+      const { data } = await CreateQuestion({
         questionId,
         GSI1SK,
         description,
       });
 
-      alert(message);
+      alert(data.message);
       setQuestionId("");
       setGSI1SK("");
       setDescription("");
