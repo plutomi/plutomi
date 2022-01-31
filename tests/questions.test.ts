@@ -4,6 +4,7 @@ import { ERRORS } from "../Config";
 import * as Openings from "../adapters/Openings";
 import * as Stages from "../adapters/Stages";
 import * as Questions from "../adapters/Questions";
+import * as Orgs from "../adapters/Orgs";
 import { AxiosResponse } from "axios";
 describe("Openings", () => {
   /**
@@ -20,24 +21,26 @@ describe("Openings", () => {
     expect.assertions(2);
 
     try {
-      await axios.post("/questions");
+      await Questions.CreateQuestion({
+        GSI1SK: nanoid(1),
+        questionId: nanoid(1),
+      });
     } catch (error) {
       expect(error.response.status).toBe(403);
       expect(error.response.data.message).toBe(ERRORS.NEEDS_ORG);
     }
   });
 
-  const firstQuestionId = nanoid(20);
+  let questionId = nanoid(20);
   it("creates a question", async () => {
-    // Create an org first
-    await axios.post("/orgs", {
-      orgId: nanoid(20),
-      displayName: nanoid(20),
-    });
+    expect.assertions(2);
 
+    await Orgs.CreateOrg({ displayName: nanoid(20), orgId: nanoid(20) });
+
+    // Create the question
     const data = await Questions.CreateQuestion({
       GSI1SK: nanoid(12),
-      questionId: firstQuestionId,
+      questionId,
     });
 
     expect(data.status).toBe(201);
@@ -47,8 +50,8 @@ describe("Openings", () => {
   it("blocks creating a question with the same ID", async () => {
     expect.assertions(2);
     try {
-      await axios.post("/questions", {
-        questionId: firstQuestionId,
+      await Questions.CreateQuestion({
+        questionId,
         GSI1SK: nanoid(20),
       });
     } catch (error) {
@@ -63,9 +66,9 @@ describe("Openings", () => {
     expect.assertions(3);
 
     try {
-      await axios.post("/questions", {
+      await Questions.CreateQuestion({
         questionId: "",
-        GSI1SK: nanoid(20),
+        GSI1SK: nanoid(5),
       });
     } catch (error) {
       expect(error.response.status).toBe(400);
@@ -79,7 +82,7 @@ describe("Openings", () => {
   it("blocks creating questions with an empty title", async () => {
     expect.assertions(3);
     try {
-      await axios.post("/questions", {
+      await Questions.CreateQuestion({
         questionId: nanoid(20),
         GSI1SK: "",
       });
@@ -94,15 +97,18 @@ describe("Openings", () => {
 
   const newQuestionName = nanoid(20);
   it("allows updating a question", async () => {
-    const data = await axios.put(`/questions/${firstQuestionId}`, {
+    expect.assertions(2);
+    const data = await Questions.UpdateQuestion(questionId, {
       GSI1SK: newQuestionName,
     });
+
     expect(data.status).toBe(200);
     expect(data.data.message).toBe("Question updated!");
   });
 
   it("allows returning a question's info", async () => {
-    const data = await axios.get(`/questions/${firstQuestionId}`);
+    expect.assertions(2);
+    const data = await Questions.GetQuestionInfo(questionId);
     expect(data.status).toBe(200);
     expect(data.data.GSI1SK).toBe(newQuestionName);
   });
@@ -110,7 +116,8 @@ describe("Openings", () => {
   it("blocks updating a question id", async () => {
     expect.assertions(3);
     try {
-      await axios.put(`/questions/${firstQuestionId}`, {
+      await Questions.UpdateQuestion(questionId, {
+        // @ts-ignore - Intentional
         questionId: nanoid(10),
       });
     } catch (error) {
@@ -121,15 +128,16 @@ describe("Openings", () => {
   });
 
   it("allows deleting a question from an org", async () => {
-    const data = await axios.delete(`/questions/${firstQuestionId}`);
+    expect.assertions(2);
+    const data = await Questions.DeleteQuestion(questionId);
     expect(data.status).toBe(200);
     expect(data.data.message).toBe("Question deleted!");
   });
 
+  // Questions and stages
   let openingId: string;
   let stageId: string;
-  let questionId = nanoid(20);
-  // Questions and stages
+  questionId = nanoid(20);
   it("adds a question to a stage", async () => {
     expect.assertions(2);
     // Create an opening
@@ -152,7 +160,6 @@ describe("Openings", () => {
     stageId = getStagesInOpening.data[0].stageId;
 
     // Create our question
-
     await Questions.CreateQuestion({
       GSI1SK: nanoid(10),
       questionId,
@@ -179,7 +186,6 @@ describe("Openings", () => {
     try {
       await Questions.AddQuestionToStage(openingId, stageId, questionId);
     } catch (error) {
-      console.error(error);
       expect(error.response.status).toBe(409);
       expect(error.response.data.message).toBe(
         `A question with the ID of '${questionId}' already exists in this stage. Please use a different question ID or delete the old one.`
