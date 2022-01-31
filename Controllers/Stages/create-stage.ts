@@ -12,7 +12,7 @@ export type APICreateStageOptions = Required<
 const schema = Joi.object({
   body: {
     // Stage name
-    GSI1SK: Joi.string().max(100),
+    GSI1SK: Joi.string().max(DEFAULTS.MAX_STAGE_NAME_LENGTH),
     openingId: Joi.string(),
     /**
      * 0 based index on where should the stage be added

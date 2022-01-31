@@ -162,7 +162,7 @@ describe("Openings", () => {
       await Openings.UpdateOpening({
         openingId: opening.openingId,
         newValues: {
-          openingName: nanoid(100),
+          openingName: nanoid(500),
         },
       });
     } catch (error) {
@@ -277,6 +277,8 @@ describe("Openings", () => {
       (opening: DynamoNewOpening) => opening.openingName === ourOpeningName
     );
 
+    console.log("Our opening", ourOpening);
+
     expect(ourOpening.stageOrder.length).toBe(0);
     // Add a stage to our opening
 
@@ -285,9 +287,7 @@ describe("Openings", () => {
       GSI1SK: nanoid(20),
     });
 
-    const updatedOpening = await Openings.GetOpeningInfo(
-      ourOpening.openingInfo
-    );
+    const updatedOpening = await Openings.GetOpeningInfo(ourOpening.openingId);
 
     expect(updatedOpening.data.stageOrder.length).toBe(1);
 

@@ -3,6 +3,7 @@ import Joi from "joi";
 import * as Openings from "../../models/Openings";
 import * as CreateError from "../../utils/createError";
 import {
+  DEFAULTS,
   JOI_GLOBAL_FORBIDDEN,
   JOI_SETTINGS,
   OPENING_STATE,
@@ -23,8 +24,8 @@ const JOI_FORBIDDEN_OPENING = Joi.object({
   GSI1PK: Joi.any().forbidden(),
   totalStages: Joi.any().forbidden(),
   totalApplicants: Joi.any().forbidden(),
-  stageOrder: Joi.any().forbidden(),
-  openingName: Joi.string().optional(),
+  stageOrder: Joi.array().items(Joi.string()).optional(),
+  openingName: Joi.string().max(DEFAULTS.MAX_OPENING_NAME_LENGTH).optional(),
   GSI1SK: Joi.string()
     .valid(OPENING_STATE.PUBLIC, OPENING_STATE.PRIVATE)
     .optional(),
@@ -65,15 +66,26 @@ const main = async (req: Request, res: Response) => {
   }
 
   // TODO add this to updating stages with question and rule orders as well
-  // https://github.com/plutomi/plutomi/issues/529
-  if (
-    req.body.stageOrder &&
-    req.body.stageOrder.length != opening.stageOrder.length
-  ) {
-    return res.status(403).json({
-      message:
-        "You cannot add / delete stages this way, please use the proper API methods for those actions",
+  if (req.body.stageOrder) {
+    if (req.body.stageOrder.length != opening.stageOrder.length) {
+      return res.status(403).json({
+        message:
+          "You cannot add / delete stages this way, please use the proper API methods for those actions",
+      });
+    }
+
+    // Check if the IDs have been modified
+    // TODO add a test for this
+    const containsAll = opening.stageOrder.every((stageId) => {
+      return req.body.stageOrder.includes(stageId);
     });
+
+    if (!containsAll) {
+      return res.status(400).json({
+        message:
+          "It appears that the stageIds have been modified, please check your request and try again",
+      });
+    }
   }
 
   // TODO i think this can be moved into dynamo

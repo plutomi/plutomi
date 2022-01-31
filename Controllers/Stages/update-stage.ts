@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import Joi from "joi";
-import { JOI_GLOBAL_FORBIDDEN, JOI_SETTINGS } from "../../Config";
+import { DEFAULTS, JOI_GLOBAL_FORBIDDEN, JOI_SETTINGS } from "../../Config";
 import * as Stages from "../../models/Stages";
 import { DynamoNewStage } from "../../types/dynamo";
 import * as CreateError from "../../utils/createError";
@@ -15,9 +15,9 @@ const JOI_FORBIDDEN_STAGE = Joi.object({
   openingId: Joi.any().forbidden(),
   stageId: Joi.any().forbidden(),
   GSI1PK: Joi.any().forbidden(),
-  questionOrder: Joi.any().forbidden(),
+  questionOrder: Joi.array().items(Joi.string()).optional(),
   totalApplicants: Joi.any().forbidden(),
-  GSI1SK: Joi.string().optional(), // TODO set max length
+  GSI1SK: Joi.string().optional().max(DEFAULTS.MAX_STAGE_NAME_LENGTH),
 });
 
 const schema = Joi.object({
@@ -34,6 +34,29 @@ const main = async (req: Request, res: Response) => {
 
   const { session } = res.locals;
   const { openingId, stageId } = req.params;
+
+  // // TODO !!!
+  // if (req.body.questionOrder) {
+  //   if (req.body.stageOrder.length != opening.stageOrder.length) {
+  //     return res.status(403).json({
+  //       message:
+  //         "You cannot add / delete stages this way, please use the proper API methods for those actions",
+  //     });
+  //   }
+
+  //   // Check if the IDs have been modified
+  //   // TODO add a test for this
+  //   const containsAll = opening.stageOrder.every((stageId) => {
+  //     return req.body.stageOrder.includes(stageId);
+  //   });
+
+  //   if (!containsAll) {
+  //     return res.status(400).json({
+  //       message:
+  //         "It appears that the stageIds have been modified, please check your request and try again",
+  //     });
+  //   }
+  // }
 
   const [updatedStage, error] = await Stages.UpdateStage({
     orgId: session.orgId,

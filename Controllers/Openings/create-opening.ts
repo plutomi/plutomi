@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { JOI_SETTINGS } from "../../Config";
+import { JOI_SETTINGS, DEFAULTS } from "../../Config";
 import * as CreateError from "../../utils/createError";
 import * as Openings from "../../models/Openings";
 import Joi from "joi";
@@ -10,7 +10,7 @@ export type APICreateOpeningOptions = Required<
 
 const schema = Joi.object({
   body: {
-    openingName: Joi.string().max(100),
+    openingName: Joi.string().max(DEFAULTS.MAX_OPENING_NAME_LENGTH),
   },
 }).options(JOI_SETTINGS);
 
@@ -41,3 +41,8 @@ const main = async (req: Request, res: Response) => {
   return res.status(201).json({ message: "Opening created!" });
 };
 export default main;
+function MAX_OPENING_NAME_LENGTH(
+  MAX_OPENING_NAME_LENGTH: any
+): Joi.SchemaLike | Joi.SchemaLike[] {
+  throw new Error("Function not implemented.");
+}

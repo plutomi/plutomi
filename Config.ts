@@ -108,6 +108,9 @@ export enum DEFAULTS {
   REDIRECT = "dashboard",
   NO_FIRST_NAME = "NO_FIRST_NAME",
   NO_LAST_NAME = "NO_LAST_NAME",
+
+  MAX_OPENING_NAME_LENGTH = 100,
+  MAX_STAGE_NAME_LENGTH = 100,
 }
 
 export const LOGIN_LINK_SETTINGS = {
@@ -135,14 +138,6 @@ export const EMAILS = {
  * like when a user joins an org, their orgId is updated then.
  * This prevents calling PUT /users/:userId with a new orgId
  */
-const GLOBAL_FORBIDDEN_PROPERTIES = [
-  "orgId",
-  "PK",
-  "SK",
-  "ttlExpiry",
-  "entityType",
-  "createdAt",
-];
 
 export const JOI_SETTINGS: Joi.ValidationOptions = {
   presence: "required",
@@ -176,26 +171,6 @@ export const AXIOS_INSTANCE = axios.create({
 
 export const SWRFetcher = (url: string) =>
   AXIOS_INSTANCE.get(API_URL + url).then((res) => res.data);
-
-/**
- * Extra properties that cannot be updated per entity type
- */
-// TODO rest of these are on hold as we migrate the data model to something else
-export const FORBIDDEN_PROPERTIES = {
-  /**
-   * {@link DynamoNewApplicant}
-   */
-  APPLICANT: [
-    ...GLOBAL_FORBIDDEN_PROPERTIES,
-    "applicantId",
-    "GSI1PK",
-    "GSI1SK",
-    "GSI2PK",
-    "GSI2SK", // TODO, remove these when advancing / moving applicants!!!!!!!!!
-  ],
-
-  QUESTION: [...GLOBAL_FORBIDDEN_PROPERTIES, "questionId", "GSI1PK", "stageId"],
-};
 
 export const NAVBAR_NAVIGATION = [
   {

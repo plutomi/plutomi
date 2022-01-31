@@ -1,7 +1,6 @@
 import { QueryCommandInput, QueryCommand } from "@aws-sdk/lib-dynamodb";
-import { UpdateCommandInput, UpdateCommand } from "@aws-sdk/lib-dynamodb";
 import { Dynamo } from "../../AWSClients/ddbDocClient";
-import { ENTITY_TYPES, FORBIDDEN_PROPERTIES } from "../../Config";
+import { ENTITY_TYPES } from "../../Config";
 import { DynamoNewStage } from "../../types/dynamo";
 import { GetStagesInOpeningInput } from "../../types/main";
 const { DYNAMO_TABLE_NAME } = process.env;
