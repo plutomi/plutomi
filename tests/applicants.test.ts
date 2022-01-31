@@ -41,6 +41,7 @@ describe("Openings", () => {
       (opening: DynamoNewOpening) => opening.openingName === publicOpeningName
     );
 
+    publicOpeningId = publicOpening.openingId;
     // Create a stage
     await Stages.CreateStage({
       GSI1SK: nanoid(10),
@@ -98,6 +99,7 @@ describe("Openings", () => {
   it("blocks creating an applicant with a spammy email", async () => {
     expect.assertions(2);
     try {
+      console.log("Trying to create an applicant", applicant);
       await Applicants.CreateApplicant({
         ...applicant,
         email: "test@10minutemail.com",
