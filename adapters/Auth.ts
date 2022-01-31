@@ -1,7 +1,18 @@
 import { AXIOS_INSTANCE as axios } from "../Config";
 
 // TODO types
-const RequestLoginLink = async (email, callbackUrl) => {
+interface RequestLoginLinkInput {
+  /**
+   * The email to send the login link to
+   */
+  email: string;
+  /**
+   * The URL to redirect back to
+   */
+  callbackUrl?: string;
+}
+const RequestLoginLink = async (options: RequestLoginLinkInput) => {
+  const { email, callbackUrl } = options;
   const data = await axios.post(
     `/request-login-link?callbackUrl=${callbackUrl}`,
     { email }
@@ -14,4 +25,9 @@ const Logout = async () => {
   return data;
 };
 
-export { RequestLoginLink, Logout };
+const Login = async (token: string) => {
+  const data = await axios.get(`/login?token=${token}`);
+  return data;
+};
+
+export { RequestLoginLink, Logout, Login };
