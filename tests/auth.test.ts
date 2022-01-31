@@ -102,7 +102,7 @@ describe("Request login link", () => {
 });
 
 describe("Login", () => {
-  it("fails with an empty login token", async () => {
+  it("fails without a token", async () => {
     expect.assertions(3);
     try {
       await Auth.Login("");
@@ -110,17 +110,6 @@ describe("Login", () => {
       expect(error.response.status).toBe(400);
       expect(error.response.data.message).toContain("query.token");
       expect(error.response.data.message).toContain("not allowed to be empty");
-    }
-  });
-
-  it("fails without a token", async () => {
-    expect.assertions(3);
-    try {
-      await axios.get("/login");
-    } catch (error) {
-      expect(error.response.status).toBe(400);
-      expect(error.response.data.message).toContain("query.token");
-      expect(error.response.data.message).toContain("is required");
     }
   });
 
