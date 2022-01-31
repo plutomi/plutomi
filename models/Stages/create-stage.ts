@@ -27,7 +27,7 @@ export default async function CreateStage(
     totalApplicants: 0,
     openingId,
     GSI1PK: `${ENTITY_TYPES.ORG}#${orgId}#${ENTITY_TYPES.OPENING}#${openingId}#${ENTITY_TYPES.STAGE}S`, // Get all stages in an opening
-    GSI1SK: GSI1SK,
+    GSI1SK,
   };
 
   const newStageOrder = getNewChildItemOrder(stageId, stageOrder, position);

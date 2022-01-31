@@ -1,7 +1,8 @@
 import { AXIOS_INSTANCE as axios } from "../Config";
 import { nanoid } from "nanoid";
 import { API_URL, DEFAULTS, ERRORS } from "../Config";
-
+import * as Stages from "../adapters/Stages";
+import { expectCt } from "helmet";
 describe("Stages", () => {
   /**
    * Creates a session cookie
@@ -9,13 +10,16 @@ describe("Stages", () => {
   beforeAll(async () => {
     const data = await axios.post(`/jest-setup`);
     const cookie = data.headers["set-cookie"][0];
-
     axios.defaults.headers.Cookie = cookie;
   });
 
   it("blocks creating stages if not in an org", async () => {
+    expect.assertions(2);
     try {
-      await axios.post("/stages");
+      await Stages.CreateStage({
+        GSI1SK: nanoid(1),
+        openingId: nanoid(1),
+      });
     } catch (error) {
       expect(error.response.status).toBe(403);
       expect(error.response.data.message).toBe(ERRORS.NEEDS_ORG);
@@ -23,8 +27,9 @@ describe("Stages", () => {
   });
 
   it("blocks retrieving stages for an opening if not in an org", async () => {
+    expect.assertions(2);
     try {
-      await axios.get("/openings/123/stages");
+      await Stages.GetStagesInOpening("123");
     } catch (error) {
       expect(error.response.status).toBe(403);
       expect(error.response.data.message).toBe(ERRORS.NEEDS_ORG);
@@ -32,8 +37,12 @@ describe("Stages", () => {
   });
 
   it("blocks deletion of stages if user is not in an org", async () => {
+    expect.assertions(2);
     try {
-      await axios.delete("/openings/123/stages/123");
+      await Stages.DeleteStage({
+        openingId: nanoid(3),
+        stageId: nanoid(3),
+      });
     } catch (error) {
       expect(error.response.status).toBe(403);
       expect(error.response.data.message).toBe(ERRORS.NEEDS_ORG);
@@ -42,7 +51,16 @@ describe("Stages", () => {
 
   it("blocks updating a stage if user is not in an org", async () => {
     try {
-      await axios.put("/openings/123/stages/123");
+      await Stages.UpdateStage(
+        {
+          openingId: nanoid(3),
+          stageId: nanoid(3),
+        },
+        {
+          PK: `ORG#123#OPENING#123STAGE#123`,
+          SK: "yeah",
+        }
+      );
     } catch (error) {
       expect(error.response.status).toBe(403);
       expect(error.response.data.message).toBe(ERRORS.NEEDS_ORG);

@@ -5,11 +5,11 @@ interface DynamoNewStage {
   /**
    * Primary key for creating a stage - takes `orgId`, `openingId`, & `stageId`
    */
-  PK: `${ENTITY_TYPES.ORG}#${string}#${ENTITY_TYPES.OPENING}#${string}${ENTITY_TYPES.STAGE}#${string}`;
+  readonly PK: `${ENTITY_TYPES.ORG}#${string}#${ENTITY_TYPES.OPENING}#${string}${ENTITY_TYPES.STAGE}#${string}`;
   /**
    * Sort key for a stage, it's just the {@link ENTITY_TYPES.STAGE}
    */
-  SK: ENTITY_TYPES.STAGE;
+  readonly SK: ENTITY_TYPES.STAGE;
   /**
    * The stage entity type {@link ENTITY_TYPES.STAGE}
    */

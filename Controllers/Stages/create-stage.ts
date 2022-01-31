@@ -4,6 +4,11 @@ import { DEFAULTS, JOI_SETTINGS } from "../../Config";
 import * as CreateError from "../../utils/createError";
 import * as Openings from "../../models/Openings";
 import * as Stages from "../../models/Stages";
+import { DynamoNewStage } from "../../types/dynamo";
+
+export type APICreateStageOptions = Required<
+  Pick<DynamoNewStage, "openingId" | "GSI1SK">
+>;
 const schema = Joi.object({
   body: {
     // Stage name
