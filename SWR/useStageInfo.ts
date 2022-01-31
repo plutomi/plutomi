@@ -5,7 +5,11 @@ export default function useStageInfo(openingId: string, stageId: string) {
   const shouldFetch = openingId && stageId ? true : false;
 
   const { data, error } = useSWR(
-    shouldFetch && GetStageInfoURL(openingId, stageId),
+    shouldFetch &&
+      GetStageInfoURL({
+        openingId,
+        stageId,
+      }),
     SWRFetcher
   );
 

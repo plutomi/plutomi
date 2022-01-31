@@ -39,7 +39,10 @@ export default function StageSettings() {
       return;
     }
     try {
-      await DeleteStage(openingId, stageId);
+      await DeleteStage({
+        openingId,
+        stageId,
+      });
       router.push(`${WEBSITE_URL}/openings/${openingId}/settings`);
     } catch (error) {
       alert(error.response.data.message);

@@ -19,9 +19,12 @@ export default function Login({ loggedOutPageText }) {
     e.preventDefault();
 
     try {
-      const { data } = await RequestLoginLink(email, window.location.href);
+      const { data } = await RequestLoginLink({
+        email,
+        callbackUrl: window.location.href,
+      });
 
-      setSubmittedText(message);
+      setSubmittedText(data.message);
       setEmailSubmitted(true);
     } catch (error) {
       alert(error.response.data.message);

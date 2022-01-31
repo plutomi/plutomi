@@ -15,7 +15,7 @@ export default function NotFound() {
           </p>
           <div className="mt-6">
             <button
-              onClick={() => router.back()}
+              onClick={router.back}
               type="button"
               className="px-4 inline-flex items-center py-3  transition duration-300 ease-in-out font-medium  bg-emerald-500 hover:bg-emerald-800 rounded-md text-white"
             >

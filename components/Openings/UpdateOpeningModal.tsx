@@ -30,13 +30,16 @@ export default function UpdateOpeningModal({
     e.preventDefault();
 
     try {
-      const input = {
+      const newValues = {
         GSI1SK: opening?.GSI1SK === GSI1SK ? undefined : GSI1SK,
         openingName:
           opening?.openingName == openingName ? undefined : openingName,
       };
 
-      const { data } = await UpdateOpening(opening?.openingId, { ...input });
+      const { data } = await UpdateOpening({
+        openingId: opening.openingId,
+        newValues,
+      });
       mutate(GetOpeningInfoURL(opening?.openingId));
       alert(data.message);
       closeUpdateOpeningModal();

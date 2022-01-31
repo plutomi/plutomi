@@ -13,10 +13,12 @@ interface RequestLoginLinkInput {
 }
 const RequestLoginLink = async (options: RequestLoginLinkInput) => {
   const { email, callbackUrl } = options;
-  const data = await axios.post(
-    `/request-login-link?callbackUrl=${callbackUrl}`,
-    { email }
-  );
+
+  let URL = `/request-login-link`;
+  if (callbackUrl) {
+    URL += `?callbackUrl=${callbackUrl}`;
+  }
+  const data = await axios.post(URL, { email });
   return data;
 };
 
