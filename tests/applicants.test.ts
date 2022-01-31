@@ -99,7 +99,6 @@ describe("Openings", () => {
   it("blocks creating an applicant with a spammy email", async () => {
     expect.assertions(2);
     try {
-      console.log("Trying to create an applicant", applicant);
       await Applicants.CreateApplicant({
         ...applicant,
         email: "test@10minutemail.com",

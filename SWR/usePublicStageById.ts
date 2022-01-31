@@ -10,7 +10,12 @@ export default function usePublicStageById( // TODO i think this can be refactor
   const shouldFetch = orgId && openingId && stageId;
 
   const { data, error } = useSWR(
-    shouldFetch && GetPublicStageInfoURL(orgId, openingId, stageId),
+    shouldFetch &&
+      GetPublicStageInfoURL({
+        orgId,
+        openingId,
+        stageId,
+      }),
     SWRFetcher
   );
 

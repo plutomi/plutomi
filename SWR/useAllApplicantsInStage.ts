@@ -7,7 +7,11 @@ export default function useAllApplicantsInStage(
 ) {
   const shouldFetch = openingId && stageId;
   const { data, error } = useSWR(
-    shouldFetch && GetApplicantsInStageURL(openingId, stageId),
+    shouldFetch &&
+      GetApplicantsInStageURL({
+        openingId,
+        stageId,
+      }),
     SWRFetcher
   );
 
