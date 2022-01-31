@@ -23,10 +23,18 @@ const GetUserInvites = async () => {
   return data;
 };
 
+const GetOrgInvitesURL = (orgId: string) => `/orgs/${orgId}/invites`;
+
+const GetOrgInvites = async (orgId: string) => {
+  const data = await axios.get(GetOrgInvitesURL(orgId));
+  return data;
+};
 export {
   CreateInvite,
   AcceptInvite,
   RejectInvite,
   GetUserInvites,
   GetUserInvitesURL,
+  GetOrgInvites,
+  GetOrgInvitesURL,
 };
