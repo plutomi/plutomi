@@ -51,7 +51,7 @@ describe("Users", () => {
   it("blocks a user from viewing other users", async () => {
     expect.assertions(2);
     try {
-      await Users.GetUserInfo(123);
+      await Users.GetUserInfo("123");
     } catch (error) {
       expect(error.response.status).toBe(403);
       expect(error.response.data.message).toBe(
@@ -66,8 +66,11 @@ describe("Users", () => {
     const setup = await Users.GetSelfInfo();
     const { userId } = setup.data;
 
-    const data = await Users.UpdateUser(userId, {
-      firstName: nanoid(10),
+    const data = await Users.UpdateUser({
+      userId,
+      newValues: {
+        firstName: nanoid(10),
+      },
     });
 
     expect(data.status).toBe(200);
@@ -76,8 +79,11 @@ describe("Users", () => {
   it("blocks updating another user", async () => {
     expect.assertions(2);
     try {
-      await Users.UpdateUser("123", {
-        firstName: nanoid(10),
+      await Users.UpdateUser({
+        userId: "123",
+        newValues: {
+          firstName: nanoid(10),
+        },
       });
     } catch (error) {
       expect(error.response.status).toBe(403);
@@ -88,12 +94,14 @@ describe("Users", () => {
   it("blocks updating forbidden properties", async () => {
     expect.assertions(2);
     try {
-      await Users.UpdateUser("123", {
-        // @ts-ignore - Intentional
-        orgId: nanoid(5),
-        PK: nanoid(5),
-        SK: nanoid(5),
-        createdAt: nanoid(5),
+      await Users.UpdateUser({
+        userId: "123",
+        newValues: {
+          orgId: nanoid(5),
+          PK: nanoid(5),
+          SK: nanoid(5),
+          createdAt: nanoid(5),
+        },
       });
     } catch (error) {
       expect(error.response.status).toBe(400);

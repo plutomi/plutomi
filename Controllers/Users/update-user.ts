@@ -5,9 +5,10 @@ import * as CreateError from "../../utils/createError";
 import { DEFAULTS, JOI_GLOBAL_FORBIDDEN, JOI_SETTINGS } from "../../Config";
 import { DynamoNewUser } from "../../types/dynamo";
 
-export type APIUpdateUserOptions = Partial<
-  Pick<DynamoNewUser, "firstName" | "lastName">
->;
+export interface APIUpdateUserOptions
+  extends Partial<Pick<DynamoNewUser, "firstName" | "lastName">> {
+  [key: string]: any;
+}
 /**
  * When calling PUT /users/:userId, these properties cannot be updated by the user
  */

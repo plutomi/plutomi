@@ -51,16 +51,13 @@ describe("Stages", () => {
 
   it("blocks updating a stage if user is not in an org", async () => {
     try {
-      await Stages.UpdateStage(
-        {
-          openingId: nanoid(3),
-          stageId: nanoid(3),
+      await Stages.UpdateStage({
+        openingId: nanoid(3),
+        stageId: nanoid(3),
+        newValues: {
+          GSI1SK: nanoid(1),
         },
-        {
-          PK: `ORG#123#OPENING#123STAGE#123`,
-          SK: "yeah",
-        }
-      );
+      });
     } catch (error) {
       expect(error.response.status).toBe(403);
       expect(error.response.data.message).toBe(ERRORS.NEEDS_ORG);
