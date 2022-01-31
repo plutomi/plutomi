@@ -1,7 +1,7 @@
 import { AXIOS_INSTANCE as axios } from "../Config";
 import { nanoid } from "nanoid";
 import { DEFAULTS, ENTITY_TYPES, ERRORS } from "../Config";
-
+import * as Users from "../adapters/Users";
 describe("Users", () => {
   /**
    * Creates a session cookie
@@ -9,12 +9,12 @@ describe("Users", () => {
   beforeAll(async () => {
     const data = await axios.post(`/jest-setup`);
     const cookie = data.headers["set-cookie"][0];
-
     axios.defaults.headers.Cookie = cookie;
   });
 
   it("returns my user information with the cookie info", async () => {
-    const data = await axios.get("/users/self");
+    expect.assertions(2);
+    const data = await Users.GetSelfInfo();
     expect(data.status).toBe(200);
     expect(data.data).toMatchObject({
       PK: expect.stringContaining(ENTITY_TYPES.USER),
@@ -39,17 +39,19 @@ describe("Users", () => {
   });
 
   it("returns a user by ID", async () => {
-    const setup = await axios.get("/users/self");
+    expect.assertions(2);
+    const setup = await Users.GetSelfInfo();
     const { userId } = setup.data;
-    const data = await axios.get(`/users/${userId}`);
+    const data = await Users.GetUserInfo(userId);
 
     expect(data.status).toBe(200);
     expect(data.data).toMatchObject(setup.data);
   });
 
   it("blocks a user from viewing other users", async () => {
+    expect.assertions(2);
     try {
-      await axios.get(`/users/123`);
+      await Users.GetUserInfo(123);
     } catch (error) {
       expect(error.response.status).toBe(403);
       expect(error.response.data.message).toBe(
@@ -58,23 +60,23 @@ describe("Users", () => {
     }
   });
 
-  it("Allows updating yourself", async () => {
+  it("allows updating yourself", async () => {
+    expect.assertions(2);
     // Get user ID from session
-    const setup = await axios.get("/users/self");
-    const userId = setup.data.userId;
+    const setup = await Users.GetSelfInfo();
+    const { userId } = setup.data;
 
-    try {
-      await axios.put(`/users/${userId}`, {
-        GSI1SK: nanoid(10),
-      });
-    } catch (error) {
-      expect(error.response.status).toBe(403);
-      expect(error.response.data.message).toBe("You cannot update this user");
-    }
+    const data = await Users.UpdateUser(userId, {
+      firstName: nanoid(10),
+    });
+
+    expect(data.status).toBe(200);
+    expect(data.data.message).toBe("Info updated!");
   });
   it("blocks updating another user", async () => {
+    expect.assertions(2);
     try {
-      await axios.put(`/users/123`, {
+      await Users.UpdateUser("123", {
         firstName: nanoid(10),
       });
     } catch (error) {
@@ -84,8 +86,10 @@ describe("Users", () => {
   });
 
   it("blocks updating forbidden properties", async () => {
+    expect.assertions(2);
     try {
-      await axios.put(`/users/123`, {
+      await Users.UpdateUser("123", {
+        // @ts-ignore - Intentional
         orgId: nanoid(5),
         PK: nanoid(5),
         SK: nanoid(5),
@@ -98,8 +102,9 @@ describe("Users", () => {
   });
 
   it("blocks users without an org from viewing users", async () => {
+    expect.assertions(2);
     try {
-      await axios.get("/users");
+      await Users.GetUsersInOrg();
     } catch (error) {
       expect(error.response.status).toBe(403);
       expect(error.response.data.message).toBe(ERRORS.NEEDS_ORG);
