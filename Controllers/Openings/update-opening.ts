@@ -10,9 +10,12 @@ import {
 import { UpdateOpeningInput } from "../../types/main";
 import { DynamoNewOpening } from "../../types/dynamo";
 
-export type APIUpdateOpeningOptions = Partial<
-  Pick<DynamoNewOpening, "openingName" | "GSI1SK" | "stageOrder">
->;
+export interface APIUpdateOpeningOptions
+  extends Partial<
+    Pick<DynamoNewOpening, "openingName" | "GSI1SK" | "stageOrder">
+  > {
+  [key: string]: any;
+}
 
 const JOI_FORBIDDEN_OPENING = Joi.object({
   ...JOI_GLOBAL_FORBIDDEN,
@@ -20,6 +23,8 @@ const JOI_FORBIDDEN_OPENING = Joi.object({
   GSI1PK: Joi.any().forbidden(),
   totalStages: Joi.any().forbidden(),
   totalApplicants: Joi.any().forbidden(),
+  stageOrder: Joi.any().forbidden(),
+  openingName: Joi.string().optional(),
   GSI1SK: Joi.string()
     .valid(OPENING_STATE.PUBLIC, OPENING_STATE.PRIVATE)
     .optional(),

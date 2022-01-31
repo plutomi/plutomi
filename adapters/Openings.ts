@@ -21,17 +21,18 @@ const GetAllOpeningsInOrg = async () => {
   return data;
 };
 
-const DeleteOpening = async (openingId) => {
+const DeleteOpening = async (openingId: string) => {
   const data = await axios.delete(GetOpeningInfoURL(openingId));
   return data;
 };
 
-const UpdateOpening = async (
-  openingId: string,
-  options: APIUpdateOpeningOptions
-) => {
-  const data = await axios.put(GetOpeningInfoURL(openingId), {
-    ...options,
+interface UpdateOpeningInput {
+  openingId: string;
+  newValues: APIUpdateOpeningOptions;
+}
+const UpdateOpening = async (options: UpdateOpeningInput) => {
+  const data = await axios.put(GetOpeningInfoURL(options.openingId), {
+    ...options.newValues,
   });
   return data;
 };

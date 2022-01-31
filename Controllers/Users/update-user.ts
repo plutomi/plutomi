@@ -19,8 +19,8 @@ export const JOI_FORBIDDEN_USER = {
   orgJoinDate: Joi.any().forbidden(),
   canReceiveEmails: Joi.any().forbidden(),
   GSI1PK: Joi.any().forbidden(), // Org users
-  firstName: Joi.string().invalid(DEFAULTS.FIRST_NAME).optional(),
-  lastName: Joi.string().invalid(DEFAULTS.LAST_NAME).optional(),
+  firstName: Joi.string().invalid(DEFAULTS.FIRST_NAME).optional(), // TODO set max length
+  lastName: Joi.string().invalid(DEFAULTS.LAST_NAME).optional(), // TODO set max length
   unsubscribeKey: Joi.any().forbidden(),
   GSI2PK: Joi.any().forbidden(), // Email
   GSI2SK: Joi.any().forbidden(), // Entity type

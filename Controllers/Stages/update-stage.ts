@@ -6,7 +6,7 @@ import { DynamoNewStage } from "../../types/dynamo";
 import * as CreateError from "../../utils/createError";
 
 export interface APIUpdateStageOptions
-  extends Partial<Pick<DynamoNewStage, "GSI1SK">> {
+  extends Partial<Pick<DynamoNewStage, "GSI1SK" | "questionOrder">> {
   [key: string]: any;
 }
 
@@ -17,6 +17,7 @@ const JOI_FORBIDDEN_STAGE = Joi.object({
   GSI1PK: Joi.any().forbidden(),
   questionOrder: Joi.any().forbidden(),
   totalApplicants: Joi.any().forbidden(),
+  GSI1SK: Joi.string().optional(), // TODO set max length
 });
 
 const schema = Joi.object({
