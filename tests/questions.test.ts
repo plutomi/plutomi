@@ -126,82 +126,44 @@ describe("Openings", () => {
     expect(data.data.message).toBe("Question deleted!");
   });
 
+  let openingId: string;
+  let stageId: string;
+  let questionId = nanoid(20);
   // Questions and stages
   it("adds a question to a stage", async () => {
+    expect.assertions(2);
     // Create an opening
-    let createOpening: AxiosResponse;
-    try {
-      createOpening = await Openings.CreateOpening({
-        openingName: nanoid(10),
-      });
-      expect(createOpening.status).toBe(201);
-      expect(createOpening.data.message).toBe("Opening created!");
-    } catch (error) {
-      console.error(error);
-    }
+    await Openings.CreateOpening({
+      openingName: nanoid(10),
+    });
 
     // Get openings in org
-    let allOpenings: AxiosResponse;
-    try {
-      allOpenings = await Openings.GetAllOpeningsInOrg();
-      expect(allOpenings.status).toBe(200);
-      expect(Array.isArray(allOpenings.data)).toBe(true);
-      expect(allOpenings.data.length).toBeGreaterThanOrEqual(1);
-    } catch (error) {
-      console.error(error);
-    }
+    const allOpenings = await Openings.GetAllOpeningsInOrg();
 
     // Doesn't really matter which opening we get
-    const { openingId } = allOpenings.data[0];
+    openingId = allOpenings.data[0].openingId;
 
-    // Create a stage in an opening
-    let createStage: AxiosResponse;
-
-    try {
-      createStage = await Stages.CreateStage(nanoid(10), openingId);
-      expect(createStage.status).toBe(201);
-      expect(createStage.data.message).toBe("Stage created!");
-    } catch (error) {
-      console.error(error);
-    }
+    // Create a stage in that opening
+    await Stages.CreateStage(nanoid(10), openingId);
 
     // Get our stage
-    let getStagesInOpening: AxiosResponse;
+    const getStagesInOpening = await Stages.GetStagesInOpening(openingId);
 
-    try {
-      getStagesInOpening = await Stages.GetStagesInOpening(openingId);
-      expect(getStagesInOpening.status).toBe(200);
-      expect(Array.isArray(getStagesInOpening.data)).toBe(true);
-      expect(getStagesInOpening.data.length).toBeGreaterThanOrEqual(1);
-    } catch (error) {
-      console.error(error);
-    }
-
-    const { stageId } = getStagesInOpening.data[0];
+    stageId = getStagesInOpening.data[0].stageId;
 
     // Create our question
-    const localQuestionId = nanoid(20); // TODo
-    let createQuestion: AxiosResponse;
-    let result;
-    try {
-      createQuestion = await Questions.CreateQuestion({
-        GSI1SK: nanoid(10),
-        questionId: localQuestionId,
-        description: nanoid(10),
-      });
-      result = createQuestion.data.Item;
-      expect(createQuestion.status).toBe(201);
-      expect(createQuestion.data.message).toBe("Question created!");
-    } catch (error) {
-      console.error(error);
-    }
 
-    let addQuestionToStage: AxiosResponse;
+    await Questions.CreateQuestion({
+      GSI1SK: nanoid(10),
+      questionId,
+      description: nanoid(10),
+    });
+
     try {
-      addQuestionToStage = await Questions.AddQuestionToStage(
+      const addQuestionToStage = await Questions.AddQuestionToStage(
         openingId,
         stageId,
-        localQuestionId
+        questionId
       );
 
       expect(addQuestionToStage.status).toBe(201);
@@ -212,89 +174,8 @@ describe("Openings", () => {
   });
 
   it("blocks a user from adding the same question to a stage twice", async () => {
-    expect.assertions(16);
+    expect.assertions(2);
     // Essentially the same thing as above, but expects an error instead
-    // Create an opening
-    let createOpening: AxiosResponse;
-    try {
-      createOpening = await Openings.CreateOpening({
-        openingName: nanoid(10),
-      });
-      expect(createOpening.status).toBe(201);
-      expect(createOpening.data.message).toBe("Opening created!");
-    } catch (error) {
-      console.error(error);
-    }
-
-    // Get openings in org
-    let allOpenings: AxiosResponse;
-    try {
-      allOpenings = await Openings.GetAllOpeningsInOrg();
-      expect(allOpenings.status).toBe(200);
-      expect(Array.isArray(allOpenings.data)).toBe(true);
-      expect(allOpenings.data.length).toBeGreaterThanOrEqual(1);
-    } catch (error) {
-      console.error(error);
-    }
-
-    // Doesn't really matter which opening we get
-    const { openingId } = allOpenings.data[0];
-
-    // Create a stage in an opening
-    let createStage: AxiosResponse;
-
-    try {
-      createStage = await Stages.CreateStage(nanoid(10), openingId);
-      expect(createStage.status).toBe(201);
-      expect(createStage.data.message).toBe("Stage created!");
-    } catch (error) {
-      console.error(error);
-    }
-
-    // Get our stage
-    let getStagesInOpening: AxiosResponse;
-
-    try {
-      getStagesInOpening = await Stages.GetStagesInOpening(openingId);
-      expect(getStagesInOpening.status).toBe(200);
-      expect(Array.isArray(getStagesInOpening.data)).toBe(true);
-      expect(getStagesInOpening.data.length).toBeGreaterThanOrEqual(1);
-    } catch (error) {
-      console.error(error);
-    }
-
-    const { stageId } = getStagesInOpening.data[0];
-
-    // Create our question
-    const questionId = nanoid(20);
-    let createQuestion: AxiosResponse;
-
-    try {
-      createQuestion = await Questions.CreateQuestion({
-        GSI1SK: nanoid(10),
-        questionId,
-        description: nanoid(10),
-      });
-      expect(createQuestion.status).toBe(201);
-      expect(createQuestion.data.message).toBe("Question created!");
-    } catch (error) {
-      console.error(error);
-    }
-
-    let addQuestionToStage: AxiosResponse;
-    try {
-      addQuestionToStage = await Questions.AddQuestionToStage(
-        openingId,
-        stageId,
-        questionId
-      );
-      expect(addQuestionToStage.status).toBe(201);
-      expect(addQuestionToStage.data.message).toBe("Question added to stage!");
-    } catch (error) {
-      console.error(error);
-    }
-
-    // Try it again
     try {
       await Questions.AddQuestionToStage(openingId, stageId, questionId);
     } catch (error) {
@@ -312,9 +193,7 @@ describe("Openings", () => {
 
   it("blocks adding a question to a stage if the question does not exist", async () => {
     expect.assertions(2);
-
     const questionId = nanoid(50);
-
     try {
       await Questions.AddQuestionToStage(nanoid(10), nanoid(10), questionId);
     } catch (error) {
