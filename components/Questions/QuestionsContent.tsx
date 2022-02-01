@@ -5,25 +5,24 @@ import { DynamoQuestion } from "../../types/dynamo";
 import EmptyQuestionsState from "./EmptyQuestionState";
 import CreateQuestionModal from "./CreateQuestionModal";
 import useStore from "../../utils/store";
-import CustomLink from "../../components/CustomLink";
 import { PlusIcon } from "@heroicons/react/solid";
 import UpdateQuestionModal from "./UpdateQuestionModal";
-import { useState } from "react";
 export default function QuestionsContent() {
-  const { questions, isQuestionsLoading, isQuestionsError } = useAllQuestions();
+  const { allQuestions, isAllQuestionsLoading, isAllQuestionsError } =
+    useAllQuestions();
 
   const openCreateQuestionModal = useStore(
     (state) => state.openCreateQuestionModal
   );
   const currentQuestion = useStore((state) => state.currentQuestion);
-  if (isQuestionsLoading) {
+  if (isAllQuestionsLoading) {
     return <Loader text="Loading questions..." />;
   }
 
   return (
     <div className="">
       <CreateQuestionModal />
-      {questions?.length === 0 ? (
+      {allQuestions?.length === 0 ? (
         <EmptyQuestionsState />
       ) : (
         <div>
@@ -44,7 +43,7 @@ export default function QuestionsContent() {
               role="list"
               className="divide-y divide-gray-200 mx-auto max-w-xl flex-col space-y-4   "
             >
-              {questions?.map((question: DynamoQuestion) => (
+              {allQuestions?.map((question: DynamoQuestion) => (
                 <QuestionItem key={question?.questionId} question={question} />
               ))}
             </ul>

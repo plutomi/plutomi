@@ -7,8 +7,9 @@ import useAllStagesInOpening from "../../SWR/useAllStagesInOpening";
 import useOpeningInfo from "../../SWR/useOpeningInfo";
 import useStageInfo from "../../SWR/useStageInfo";
 import { CUSTOM_QUERY } from "../../types/main";
-import { PlusIcon } from "@heroicons/react/solid";
-import { useState } from "react";
+import { useEffect, useState, Fragment } from "react";
+import { Listbox, Transition } from "@headlessui/react";
+import { CheckIcon, SelectorIcon } from "@heroicons/react/outline";
 
 function classNames(...classes) {
   return classes.filter(Boolean).join(" ");
@@ -20,14 +21,56 @@ const tabs = [
   // { id: 3, name: "Messages" }, // TODO add get messages (Twilio)
 ];
 
+const people = [
+  { id: 1, name: "Wade Cooper" },
+  { id: 2, name: "Arlene Mccoy" },
+  { id: 3, name: "Devon Webb" },
+  { id: 4, name: "Tom Cook" },
+  { id: 5, name: "Tanya Fox" },
+  { id: 6, name: "Hellen Schmidt" },
+  { id: 7, name: "Caroline Schultz" },
+  { id: 8, name: "Mason Heaney" },
+  { id: 9, name: "Claudie Smitham" },
+  { id: 10, name: "Emil Schaefer" },
+];
+
 export default function StageSettingsContent() {
   const router = useRouter();
   const [localSearch, setLocalSearch] = useState("");
   const [currentActive, setCurrentActive] = useState(1); // Id of item
+  const { allQuestions, isAllQuestionsLoading, isAllQuestionsError } =
+    useAllQuestions();
+  const [selected, setSelected] = useState(null);
+  const [open, setOpen] = useState(false);
   const { openingId, stageId } = router.query as Pick<
     CUSTOM_QUERY,
     "openingId" | "stageId"
   >;
+
+  function Search() {
+    return (
+      <input
+        type="text"
+        name="search"
+        id="search"
+        value={localSearch}
+        onClick={() => setOpen(true)}
+        onBlur={() => setOpen(false)}
+        onChange={(e) => setLocalSearch(e.target.value)}
+        placeholder={"Search for a question to add to this stage..."}
+        className=" shadow-sm focus:ring-blue-500 focus:border-blue-500   border sm:text-sm border-gray-300 rounded-md"
+      />
+    );
+  }
+
+  const handleSearch = async () => {
+    // TODO get all questions based on current localSearch text
+    console.log(localSearch);
+  };
+
+  useEffect(() => {
+    handleSearch();
+  }, [localSearch]);
 
   const { user, isUserLoading, isUserError } = useSelf();
   let { opening, isOpeningLoading, isOpeningError } = useOpeningInfo(openingId);
@@ -89,15 +132,75 @@ export default function StageSettingsContent() {
                         </button>
                       ))}
                     </nav>
-                    {/* <input
-                      type="text"
-                      name="search"
-                      id="search"
-                      value={localSearch}
-                      onChange={(e) => setLocalSearch(e.target.value)} // TODO
-                      placeholder={"Search for an question to add to this stage..."}
-                      className="w-2/3 shadow-sm focus:ring-blue-500 focus:border-blue-500 block  border sm:text-sm border-gray-300 rounded-md"
-                    /> */}
+
+                    <div className="w-full mt-4 mx-auto border ">
+                      <Listbox value={selected} onChange={setSelected}>
+                        <>
+                          <Listbox.Button as={Search} />
+                          <Transition
+                            show={open}
+                            as={Fragment}
+                            leave="transition ease-in duration-100"
+                            leaveFrom="opacity-100"
+                            leaveTo="opacity-0"
+                          >
+                            <Listbox.Options className="absolute z-10 mt-1 w-full bg-white shadow-lg max-h-60 rounded-md py-1 text-base ring-1 ring-black ring-opacity-5 overflow-auto focus:outline-none sm:text-sm">
+                              {people.map((person) => (
+                                <Listbox.Option
+                                  key={person.id}
+                                  className={({ active }) =>
+                                    classNames(
+                                      active
+                                        ? "text-white bg-indigo-600"
+                                        : "text-gray-900",
+                                      "cursor-default select-none relative py-2 pl-3 pr-9 hover:bg-red-400"
+                                    )
+                                  }
+                                  value={person}
+                                >
+                                  {({ selected, active }) => (
+                                    <>
+                                      <span
+                                        className={classNames(
+                                          selected
+                                            ? "font-semibold"
+                                            : "font-normal",
+                                          "block truncate"
+                                        )}
+                                      >
+                                        {person.name}
+                                      </span>
+
+                                      {selected ? (
+                                        <span
+                                          className={classNames(
+                                            active
+                                              ? "text-white"
+                                              : "text-indigo-600",
+                                            "absolute inset-y-0 right-0 flex items-center pr-4"
+                                          )}
+                                        >
+                                          <CheckIcon
+                                            className="h-5 w-5"
+                                            aria-hidden="true"
+                                          />
+                                        </span>
+                                      ) : null}
+                                    </>
+                                  )}
+                                </Listbox.Option>
+                              ))}
+                            </Listbox.Options>
+                          </Transition>
+                        </>
+                      </Listbox>
+                    </div>
+
+                    <p>Open state: {open.toString()}</p>
+                    <p>
+                      QUESTIONS:
+                      {JSON.stringify(allQuestions)}
+                    </p>
                   </div>
                 </div>
               </div>
