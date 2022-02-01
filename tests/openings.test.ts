@@ -335,4 +335,61 @@ describe("Openings", () => {
       );
     }
   });
+
+  it("blocks updating the stage order with ID's that do not exist", async () => {
+    expect.assertions(4);
+    const ourOpeningName = nanoid(15);
+
+    await Openings.CreateOpening({
+      openingName: ourOpeningName,
+    });
+
+    // Get openings in an org
+    const data = await Openings.GetAllOpeningsInOrg();
+
+    // Get our opening
+    let ourOpening = data.data.find(
+      (opening: DynamoNewOpening) => opening.openingName === ourOpeningName
+    );
+
+    expect(ourOpening.stageOrder.length).toBe(0);
+
+    // Add a few stages  to our opening
+    await Stages.CreateStage({
+      openingId: ourOpening.openingId,
+      GSI1SK: nanoid(20),
+    });
+    await Stages.CreateStage({
+      openingId: ourOpening.openingId,
+      GSI1SK: nanoid(20),
+    });
+    await Stages.CreateStage({
+      openingId: ourOpening.openingId,
+      GSI1SK: nanoid(20),
+    });
+
+    const updatedOpeningData = await Openings.GetOpeningInfo(
+      ourOpening.openingId
+    );
+    ourOpening = updatedOpeningData.data;
+
+    expect(ourOpening.stageOrder.length).toBe(3);
+
+    // Try to update the stage order with stage IDs that don't exist
+    ourOpening.stageOrder.splice(0, 1, "123");
+    try {
+      await Openings.UpdateOpening({
+        openingId: ourOpening.openingId,
+        newValues: {
+          stageOrder: ourOpening.stageOrder,
+        },
+      });
+    } catch (error) {
+      console.error(error);
+      expect(error.response.status).toBe(400);
+      expect(error.response.data.message).toBe(
+        "The stageIds in the 'stageOrder' property differ than the ones in the opening, please check your request and try again."
+      );
+    }
+  });
 });

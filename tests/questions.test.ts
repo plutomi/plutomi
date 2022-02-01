@@ -205,6 +205,7 @@ describe("Openings", () => {
 
   it.todo("allows adding a question at a specific position in a stage");
 
+  it.todo("blocks updating the question order with ID's that do not exist");
   it("blocks adding a question to a stage if the question does not exist", async () => {
     expect.assertions(2);
     const questionId = nanoid(50);

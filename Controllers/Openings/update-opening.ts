@@ -65,7 +65,6 @@ const main = async (req: Request, res: Response) => {
     return res.status(status).json(body);
   }
 
-  // TODO add this to updating stages with question and rule orders as well
   if (req.body.stageOrder) {
     if (req.body.stageOrder.length != opening.stageOrder.length) {
       return res.status(403).json({
@@ -83,7 +82,7 @@ const main = async (req: Request, res: Response) => {
     if (!containsAll) {
       return res.status(400).json({
         message:
-          "It appears that the stageIds have been modified, please check your request and try again",
+          "The stageIds in the 'stageOrder' property differ than the ones in the opening, please check your request and try again.",
       });
     }
   }
