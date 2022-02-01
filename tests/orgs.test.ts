@@ -73,6 +73,7 @@ describe("Orgs", () => {
     expect(data.data.message).toBe("Org created!");
   });
   it("blocks users in an org from being able to create another one", async () => {
+    expect.assertions(2);
     try {
       await Orgs.CreateOrg({
         orgId: nanoid(10),

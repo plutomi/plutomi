@@ -146,6 +146,7 @@ describe("Openings", () => {
   });
 
   it("fails to make an opening public if there are no stages in it", async () => {
+    expect.assertions(2);
     const openingName = nanoid(20);
 
     // Create the opening

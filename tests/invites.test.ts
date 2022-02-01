@@ -146,6 +146,7 @@ describe("Openings", () => {
   });
 
   it("allows you as a user to view your pending invites", async () => {
+    expect.assertions(3)
     const self = await Users.GetSelfInfo();
     const res = await Invites.GetUserInvites();
     expect(res.status).toBe(200);
