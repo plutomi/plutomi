@@ -57,11 +57,14 @@ export default function QuestionItem({
             {question?.description}
           </p>
         )}
-        <p className="text-md text-light line-clamp-2 mt-1">
-          Attached to <strong>{question?.totalStages}</strong> stages
-        </p>
+
         <p className="text-md text-red-300 line-clamp-2 mt-1">
           ID: {question?.questionId}
+          <span className="text-light">
+            {" "}
+            - used in <strong> {question?.totalStages} </strong>
+            stages
+          </span>
         </p>
       </div>
       <div className="flex justify-center items-center ">
