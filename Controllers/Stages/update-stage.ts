@@ -49,8 +49,7 @@ const main = async (req: Request, res: Response) => {
     return res.status(status).json(body);
   }
   if (req.body.questionOrder) {
-    // TODO - Add a test for this !!!
-    if (req.body.stageOrder.length != stage.questionOrder.length) {
+    if (req.body.questionOrder.length != stage.questionOrder.length) {
       return res.status(403).json({
         message:
           "You cannot add / delete questions this way, please use the proper API methods for those actions",
@@ -58,15 +57,14 @@ const main = async (req: Request, res: Response) => {
     }
 
     // Check if the IDs have been modified
-    // TODO add a test for this
-    const containsAll = stage.questionOrder.every((stageId) => {
-      return req.body.questionOrder.includes(stageId);
+    const containsAll = stage.questionOrder.every((questionId) => {
+      return req.body.questionOrder.includes(questionId);
     });
 
     if (!containsAll) {
       return res.status(400).json({
         message:
-          "It appears that the questionIds have been modified, please check your request and try again",
+          "The questionIds in the 'questionOrder' property differ from the ones in the stage, please check your request and try again.",
       });
     }
   }

@@ -388,7 +388,7 @@ describe("Openings", () => {
       console.error(error);
       expect(error.response.status).toBe(400);
       expect(error.response.data.message).toBe(
-        "The stageIds in the 'stageOrder' property differ than the ones in the opening, please check your request and try again."
+        "The stageIds in the 'stageOrder' property differ from the ones in the opening, please check your request and try again."
       );
     }
   });

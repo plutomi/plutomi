@@ -82,7 +82,7 @@ const main = async (req: Request, res: Response) => {
     if (!containsAll) {
       return res.status(400).json({
         message:
-          "The stageIds in the 'stageOrder' property differ than the ones in the opening, please check your request and try again.",
+          "The stageIds in the 'stageOrder' property differ from the ones in the opening, please check your request and try again.",
       });
     }
   }

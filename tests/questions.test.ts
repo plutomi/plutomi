@@ -6,6 +6,7 @@ import * as Stages from "../adapters/Stages";
 import * as Questions from "../adapters/Questions";
 import * as Orgs from "../adapters/Orgs";
 import { AxiosResponse } from "axios";
+import { DynamoNewOpening } from "../types/dynamo";
 describe("Openings", () => {
   /**
    * Creates a session cookie
@@ -201,11 +202,32 @@ describe("Openings", () => {
     }
   });
 
-  it.todo("allows deleting a question from a stage");
-
   it.todo("allows adding a question at a specific position in a stage");
 
-  it.todo("blocks updating the question order with ID's that do not exist");
+  it("blocks updating the questionOrder with ID's that do not exist", async () => {
+    expect.assertions(2);
+
+    // Attempt to modify the question order with questionIds that don't exist
+    const ourStage = await Stages.GetStageInfo({
+      openingId,
+      stageId,
+    });
+    ourStage.data.questionOrder.splice(0, 1, "123");
+    try {
+      await Stages.UpdateStage({
+        openingId,
+        stageId,
+        newValues: {
+          questionOrder: ourStage.data.questionOrder,
+        },
+      });
+    } catch (error) {
+      expect(error.response.status).toBe(400);
+      expect(error.response.data.message).toBe(
+        "The questionIds in the 'questionOrder' property differ from the ones in the stage, please check your request and try again."
+      );
+    }
+  });
   it("blocks adding a question to a stage if the question does not exist", async () => {
     expect.assertions(2);
     const questionId = nanoid(50);
@@ -223,7 +245,9 @@ describe("Openings", () => {
     }
   });
 
+  it.todo("allows deleting a question from a stage");
+
   it.todo(
-    "TODO - When deleting a question from an org, delete from all stages. Will require a transact write on stage update, and also a GSI to keep track of all staegs that have this question :>"
+    "Async... - When deleting a question from an org, delete from all stages. Will require a transact write on stage update, and also a GSI to keep track of all staegs that have this question :>"
   );
 });

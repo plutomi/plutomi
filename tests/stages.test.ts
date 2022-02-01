@@ -50,6 +50,7 @@ describe("Stages", () => {
   });
 
   it("blocks updating a stage if user is not in an org", async () => {
+    expect.assertions(2);
     try {
       await Stages.UpdateStage({
         openingId: nanoid(3),
@@ -65,6 +66,7 @@ describe("Stages", () => {
   });
 
   it("blocks retrieving stage info if user is not in an org", async () => {
+    expect.assertions(2);
     try {
       await axios.get("/openings/123/stages/123");
     } catch (error) {
@@ -74,6 +76,7 @@ describe("Stages", () => {
   });
 
   it("fails to create a stage without an empty empty values for openingId and stage name", async () => {
+    expect.assertions(4);
     // Create an org
     await axios.post("/orgs", {
       orgId: nanoid(20),
@@ -94,6 +97,7 @@ describe("Stages", () => {
     }
   });
   it("fails to create a stage with a position equal to MAX_CHILD_ITEM_LIMIT", async () => {
+    expect.assertions(3);
     try {
       await axios.post("/stages", {
         openingId: nanoid(10),
@@ -110,6 +114,7 @@ describe("Stages", () => {
   });
 
   it("fails to create a stage with a position greater than MAX_CHILD_ITEM_LIMIT", async () => {
+    expect.assertions(3);
     try {
       await axios.post("/stages", {
         openingId: nanoid(10),
@@ -126,6 +131,7 @@ describe("Stages", () => {
   });
 
   it("fails to create a stage in an opening that does not exist", async () => {
+    expect.assertions(2);
     try {
       await axios.post("/stages", {
         openingId: "1",
@@ -139,8 +145,7 @@ describe("Stages", () => {
   });
 
   it("creates a stage without a position", async () => {
-    // TODO create an opening
-
+    expect.assertions(1);
     const openingName = nanoid(50);
     // Create an opening first
     await axios.post("/openings", {
@@ -161,11 +166,11 @@ describe("Stages", () => {
 
     // Check if our newly added stage is there
     const ourOpening2 = await axios.get(`/openings/${ourOpening.openingId}`);
-
     expect(ourOpening2.data.stageOrder.length).toBe(1);
   });
 
   it("allows deletion of stages", async () => {
+    expect.assertions(4);
     const openingName = nanoid(20);
     // Create an opening first
     await axios.post("/openings", {
@@ -202,6 +207,7 @@ describe("Stages", () => {
   });
 
   it("returns 404 if stage is not found while retrieving info", async () => {
+    expect.assertions(2);
     const openingName = nanoid(20);
     // Create an opening first
     await axios.post("/openings", {
@@ -224,6 +230,7 @@ describe("Stages", () => {
   });
 
   it("retrieves stage info", async () => {
+    expect.assertions(2);
     // Create an opening
     const openingName = nanoid(20);
     await axios.post("/openings", {
@@ -258,6 +265,7 @@ describe("Stages", () => {
   });
 
   it("returns stages in an opening", async () => {
+    expect.assertions(4);
     const openingName = nanoid(20);
     // Create an opening first
     await axios.post("/openings", {
@@ -296,6 +304,7 @@ describe("Stages", () => {
   });
 
   it("blocks updating forbidden properties of a stage", async () => {
+    expect.assertions(2);
     const openingName = nanoid(20);
 
     // Create an opening
@@ -337,6 +346,7 @@ describe("Stages", () => {
   });
 
   it("allows updating a stage", async () => {
+    expect.assertions(3);
     const openingName = nanoid(20);
 
     // Create an opening
@@ -363,10 +373,6 @@ describe("Stages", () => {
     );
 
     const stageid = openingAfterStage.data.stageOrder[0];
-
-    const stageBefore = await axios.get(
-      `/openings/${ourOpening.openingId}/stages/${stageid}`
-    );
 
     const newName = nanoid(20);
 
