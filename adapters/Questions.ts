@@ -38,15 +38,17 @@ interface AddQuestionToStageInput {
   openingId: string;
   stageId: string;
   questionId: string;
+  position?: number;
 }
 const AddQuestionToStage = async (options: AddQuestionToStageInput) => {
-  const { openingId, stageId, questionId } = options;
+  const { openingId, stageId, questionId, position } = options;
   const data = await axios.post(
     `/openings/${openingId}/stages/${stageId}/questions`,
     {
       openingId,
       stageId,
       questionId,
+      position
     }
   );
 

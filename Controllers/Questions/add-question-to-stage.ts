@@ -2,7 +2,6 @@ import { Request, Response } from "express";
 import Joi from "joi";
 import { DEFAULTS, JOI_SETTINGS } from "../../Config";
 import * as CreateError from "../../utils/createError";
-import * as Openings from "../../models/Openings";
 import * as Stages from "../../models/Stages";
 import getNewChildItemOrder from "../../utils/getNewChildItemOrder";
 import * as Questions from "../../models/Questions";

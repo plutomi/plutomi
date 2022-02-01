@@ -198,7 +198,50 @@ describe("Openings", () => {
     }
   });
 
-  it.todo("allows adding a question at a specific position in a stage");
+  it("allows adding a question at a specific position in a stage", async () => {
+    expect.assertions(3);
+
+    // We're going to add question 1 to the END
+    // And question 2 as the first question
+    let questionId1 = nanoid(20);
+    let questionId2 = nanoid(20);
+
+    // Create the questions
+    await Questions.CreateQuestion({
+      GSI1SK: nanoid(10),
+      questionId: questionId1,
+    });
+
+    await Questions.CreateQuestion({
+      GSI1SK: nanoid(10),
+      questionId: questionId2,
+    });
+
+    // Add question 1 to the end
+    await Questions.AddQuestionToStage({
+      openingId,
+      stageId,
+      questionId: questionId1,
+    });
+    // Add question 2 to the beginning
+    await Questions.AddQuestionToStage({
+      openingId,
+      stageId,
+      questionId: questionId2,
+      position: 0,
+    });
+
+    const updatedStage = await Stages.GetStageInfo({
+      openingId,
+      stageId,
+    });
+
+    expect(updatedStage.data.questionOrder.length).toBeGreaterThanOrEqual(2);
+    // Last item
+    expect(updatedStage.data.questionOrder.slice(-1)[0]).toBe(questionId1);
+    // First item
+    expect(updatedStage.data.questionOrder[0]).toBe(questionId2);
+  });
 
   it("blocks updating the questionOrder with ID's that do not exist", async () => {
     expect.assertions(2);
@@ -242,6 +285,16 @@ describe("Openings", () => {
   });
 
   it.todo("allows deleting a question from a stage");
+
+  // TODO see -> Get stages in opening
+  //    const response = await Dynamo.send(new QueryCommand(params));
+  // const allStages = response.Items as DynamoNewStage[];
+
+  // // Orders results in the way the stageOrder is
+  // const result = stageOrder.map((i: string) =>
+  //   allStages.find((j) => j.stageId === i)
+  // );
+  it.todo("returns all questions in a stage, in their actual question order");
 
   it.todo(
     "Async... - When deleting a question from an org, delete from all stages. Will require a transact write on stage update, and also a GSI to keep track of all staegs that have this question :>"
