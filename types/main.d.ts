@@ -152,6 +152,13 @@ export interface UpdateOpeningInput
   newValues: { [key: string]: any };
 }
 
+interface AddQuestionToStageInput
+  extends Pick<
+    DynamoNewStage,
+    "orgId" | "openingId" | "stageId" | "questionOrder"
+  > {
+  questionId: string;
+}
 interface DeleteOrgInviteInput {
   userId: string;
   inviteId: string;

@@ -175,18 +175,14 @@ describe("Openings", () => {
       description: nanoid(10),
     });
 
-    try {
-      const addQuestionToStage = await Questions.AddQuestionToStage({
-        openingId,
-        stageId,
-        questionId,
-      });
+    const addQuestionToStage = await Questions.AddQuestionToStage({
+      openingId,
+      stageId,
+      questionId,
+    });
 
-      expect(addQuestionToStage.status).toBe(201);
-      expect(addQuestionToStage.data.message).toBe("Question added to stage!");
-    } catch (error) {
-      console.error(error);
-    }
+    expect(addQuestionToStage.status).toBe(201);
+    expect(addQuestionToStage.data.message).toBe("Question added to stage!");
   });
 
   it("blocks a user from adding the same question to a stage twice", async () => {

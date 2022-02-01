@@ -385,7 +385,6 @@ describe("Openings", () => {
         },
       });
     } catch (error) {
-      console.error(error);
       expect(error.response.status).toBe(400);
       expect(error.response.data.message).toBe(
         "The stageIds in the 'stageOrder' property differ from the ones in the opening, please check your request and try again."

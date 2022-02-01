@@ -1,6 +1,4 @@
 import {
-  TransactWriteCommandInput,
-  TransactWriteCommand,
   DeleteCommand,
   DeleteCommandInput,
 } from "@aws-sdk/lib-dynamodb";

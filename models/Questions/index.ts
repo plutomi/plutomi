@@ -3,6 +3,7 @@ import DeleteQuestion from "./delete-question";
 import GetQuestionById from "./get-question-by-id";
 import UpdateQuestion from "./update-question";
 import GetQuestionsInOrg from "./get-questions-in-org";
+import AddQuestionToStage from "./add-question-to-stage";
 // import GetQuestionsInStage from "./get-questions-in-stage"; // TODO
 
 export {
@@ -11,4 +12,5 @@ export {
   GetQuestionById,
   UpdateQuestion,
   GetQuestionsInOrg,
+  AddQuestionToStage,
 };

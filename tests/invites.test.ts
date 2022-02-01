@@ -32,7 +32,6 @@ describe("Openings", () => {
     try {
       await Invites.GetOrgInvites("123");
     } catch (error) {
-      console.error(error);
       expect(error.response.status).toBe(403);
       expect(error.response.data.message).toBe(ERRORS.NEEDS_ORG);
     }
@@ -49,7 +48,6 @@ describe("Openings", () => {
     try {
       await Invites.GetOrgInvites("123");
     } catch (error) {
-      console.error(error);
       expect(error.response.status).toBe(403);
       expect(error.response.data.message).toBe(ERRORS.NOT_SAME_ORG);
     }
