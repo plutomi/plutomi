@@ -5,12 +5,12 @@ import { GetOpeningInfoURL, UpdateOpening } from "../../adapters/Openings";
 import useStore from "../../utils/store";
 import { mutate } from "swr";
 import { OPENING_STATE } from "../../Config";
-import { DynamoNewOpening } from "../../types/dynamo";
+import { DynamoOpening } from "../../types/dynamo";
 
 export default function UpdateOpeningModal({
   opening,
 }: {
-  opening: DynamoNewOpening;
+  opening: DynamoOpening;
 }) {
   const [openingName, setOpeningName] = useState(opening?.openingName);
   const [GSI1SK, setGSI1SK] = useState(opening?.GSI1SK);

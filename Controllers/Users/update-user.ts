@@ -3,10 +3,10 @@ import * as Users from "../../models/Users";
 import Joi from "joi";
 import * as CreateError from "../../utils/createError";
 import { DEFAULTS, JOI_GLOBAL_FORBIDDEN, JOI_SETTINGS } from "../../Config";
-import { DynamoNewUser } from "../../types/dynamo";
+import { DynamoUser } from "../../types/dynamo";
 
 export interface APIUpdateUserOptions
-  extends Partial<Pick<DynamoNewUser, "firstName" | "lastName">> {
+  extends Partial<Pick<DynamoUser, "firstName" | "lastName">> {
   [key: string]: any;
 }
 /**

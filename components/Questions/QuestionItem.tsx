@@ -7,13 +7,13 @@ import {
 } from "../../adapters/Questions";
 import useStore from "../../utils/store";
 import { mutate } from "swr";
-import { DynamoNewQuestion } from "../../types/dynamo";
+import { DynamoQuestion } from "../../types/dynamo";
 import UpdateQuestionModal from "./UpdateQuestionModal";
 
 export default function QuestionItem({
   question,
 }: {
-  question: DynamoNewQuestion;
+  question: DynamoQuestion;
 }) {
   const setCurrentQuestion = useStore((state) => state.setCurrentQuestion);
   const openUpdateQuestionModal = useStore(
@@ -33,7 +33,7 @@ export default function QuestionItem({
     }
     try {
       const data = await DeleteQuestionFromOrg(questionId);
-      alert(data.message);
+      alert(data.data.message);
       mutate(GetQuestionsInOrgURL());
     } catch (error) {
       alert(error.response.data.message);
@@ -57,6 +57,9 @@ export default function QuestionItem({
             {question?.description}
           </p>
         )}
+        <p className="text-md text-light line-clamp-2 mt-1">
+          Attached to <strong>{question?.totalStages}</strong> stages
+        </p>
         <p className="text-md text-red-300 line-clamp-2 mt-1">
           ID: {question?.questionId}
         </p>
@@ -75,10 +78,6 @@ export default function QuestionItem({
           <TrashIcon className="w-6 h-6" />
         </button>
       </div>
-
-      {/* {isHovering && (
- TODO
-      )} */}
     </li>
   );
 }

@@ -4,8 +4,14 @@ import {
 } from "@aws-sdk/lib-dynamodb";
 import { nanoid } from "nanoid";
 import { Dynamo } from "../../AWSClients/ddbDocClient";
-import { ID_LENGTHS, ENTITY_TYPES, TIME_UNITS, DEFAULTS, OPENING_STATE } from "../../Config";
-import { DynamoNewApplicant } from "../../types/dynamo";
+import {
+  ID_LENGTHS,
+  ENTITY_TYPES,
+  TIME_UNITS,
+  DEFAULTS,
+  OPENING_STATE,
+} from "../../Config";
+import { DynamoApplicant } from "../../types/dynamo";
 import { CreateApplicantInput, CreateApplicantOutput } from "../../types/main";
 import * as Time from "../../utils/time";
 import { SdkError } from "@aws-sdk/types";
@@ -19,7 +25,7 @@ export default async function Create(
   const now = Time.currentISO();
   const applicantId = nanoid(ID_LENGTHS.APPLICANT);
 
-  const newApplicant: DynamoNewApplicant = {
+  const newApplicant: DynamoApplicant = {
     PK: `${ENTITY_TYPES.ORG}#${orgId}#${ENTITY_TYPES.APPLICANT}#${applicantId}`,
     SK: ENTITY_TYPES.APPLICANT,
     firstName,

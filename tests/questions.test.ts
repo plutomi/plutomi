@@ -402,9 +402,4 @@ describe("Questions", () => {
     expect(questions.length).toBe(4);
     expect(onlyIds).toStrictEqual(properOrder);
   });
-
-  // TODO - Delete the transaction item, and all async updates can be done in the deletion queue
-  it.todo(
-    "Async... - When deleting a question from an org, delete from all stages. Will require a transact write on stage update, and also a GSI to keep track of all staegs that have this question :>"
-  );
 });

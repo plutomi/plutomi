@@ -3,9 +3,9 @@ import { JOI_SETTINGS, DEFAULTS } from "../../Config";
 import * as CreateError from "../../utils/createError";
 import * as Openings from "../../models/Openings";
 import Joi from "joi";
-import { DynamoNewOpening } from "../../types/dynamo";
+import { DynamoOpening } from "../../types/dynamo";
 export type APICreateOpeningOptions = Required<
-  Pick<DynamoNewOpening, "openingName">
+  Pick<DynamoOpening, "openingName">
 >;
 
 const schema = Joi.object({

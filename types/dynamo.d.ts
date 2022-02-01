@@ -93,6 +93,11 @@ interface DynamoQuestion {
    * The question Title
    */
   GSI1SK: string;
+
+  /**
+   * How many stages this question is attached to
+   */
+  totalStages: number;
 }
 
 interface DynamoApplicant {

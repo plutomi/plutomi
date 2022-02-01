@@ -43,7 +43,7 @@ export default async function AddQuestionToStage(
       },
       {
         /**
-         * TODO if adding many questions to a stage,
+         * If adding many questions to a stage,
          * there is a chance that the transaction will fail, make sure to wait in between each call
          * { Code: 'TransactionConflict',
          * Item: undefined,
@@ -58,6 +58,22 @@ export default async function AddQuestionToStage(
           UpdateExpression: "SET questionOrder = :questionOrder",
           ExpressionAttributeValues: {
             ":questionOrder": questionOrder,
+          },
+        },
+      },
+      {
+        // Update the totalStages count on the question
+        Update: {
+          Key: {
+            PK: `${ENTITY_TYPES.ORG}#${orgId}#${ENTITY_TYPES.QUESTION}#${questionId}`,
+            SK: ENTITY_TYPES.QUESTION,
+          },
+          TableName: `${process.env.NODE_ENV}-${DYNAMO_TABLE_NAME}`,
+          UpdateExpression:
+            "SET totalStages = if_not_exists(totalStages, :zero) + :value",
+          ExpressionAttributeValues: {
+            ":zero": 0,
+            ":value": 1,
           },
         },
       },

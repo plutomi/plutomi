@@ -9,11 +9,11 @@ import {
   OPENING_STATE,
 } from "../../Config";
 import { UpdateOpeningInput } from "../../types/main";
-import { DynamoNewOpening } from "../../types/dynamo";
+import { DynamoOpening } from "../../types/dynamo";
 
 export interface APIUpdateOpeningOptions
   extends Partial<
-    Pick<DynamoNewOpening, "openingName" | "GSI1SK" | "stageOrder">
+    Pick<DynamoOpening, "openingName" | "GSI1SK" | "stageOrder">
   > {
   [key: string]: any;
 }

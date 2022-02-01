@@ -20,6 +20,7 @@ export default async function CreateQuestion(
     questionId, // TODO add tag generator
     entityType: ENTITY_TYPES.QUESTION,
     createdAt: now,
+    totalStages: 0,
     // All questions in org
     GSI1PK: `${ENTITY_TYPES.ORG}#${orgId}#${ENTITY_TYPES.QUESTION}S`,
     GSI1SK,

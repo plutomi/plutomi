@@ -40,6 +40,21 @@ export default async function DeleteQuestionFromStage(
           },
         },
       },
+
+      {
+        // Decrement the totalStages count on the question
+        Update: {
+          Key: {
+            PK: `${ENTITY_TYPES.ORG}#${orgId}#${ENTITY_TYPES.QUESTION}#${questionId}`,
+            SK: ENTITY_TYPES.QUESTION,
+          },
+          TableName: `${process.env.NODE_ENV}-${DYNAMO_TABLE_NAME}`,
+          UpdateExpression: "SET totalStages = totalStages - :value",
+          ExpressionAttributeValues: {
+            ":value": 1,
+          },
+        },
+      },
     ],
   };
 

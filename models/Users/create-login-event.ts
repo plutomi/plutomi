@@ -5,7 +5,7 @@ import {
 import { SdkError } from "@aws-sdk/types";
 import { Dynamo } from "../../AWSClients/ddbDocClient";
 import { ENTITY_TYPES, DEFAULTS, TIME_UNITS } from "../../Config";
-import { DynamoNewLoginEvent } from "../../types/dynamo";
+import { DynamoLoginEvent } from "../../types/dynamo";
 import { CreateLoginEventAndDeleteLoginLinkInput } from "../../types/main";
 const { DYNAMO_TABLE_NAME } = process.env;
 import * as Time from "../../utils/time";
@@ -23,7 +23,7 @@ export default async function CreateLoginEvent(
 
   const now = Time.currentISO();
 
-  const newUserLoginEvent: DynamoNewLoginEvent = {
+  const newUserLoginEvent: DynamoLoginEvent = {
     PK: `${ENTITY_TYPES.USER}#${user.userId}`,
     SK: `${ENTITY_TYPES.LOGIN_EVENT}#${now}`,
     user: user,
@@ -36,8 +36,7 @@ export default async function CreateLoginEvent(
     ),
   };
 
-
-  console.log("New user login event", newUserLoginEvent)
+  console.log("New user login event", newUserLoginEvent);
   const newOrgLoginEvent = {
     // TODO types
     PK: `${ENTITY_TYPES.ORG}#${user.orgId}`,

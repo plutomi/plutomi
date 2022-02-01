@@ -2,7 +2,7 @@ import { PutCommandInput, PutCommand } from "@aws-sdk/lib-dynamodb";
 import { nanoid } from "nanoid";
 import { Dynamo } from "../../AWSClients/ddbDocClient";
 import { ID_LENGTHS, ENTITY_TYPES } from "../../Config";
-import { DynamoNewApplicantResponse } from "../../types/dynamo";
+import { DynamoApplicantResponse } from "../../types/dynamo";
 import {
   CreateApplicantResponseInput,
   CreateApplicantResponseOutput,
@@ -16,7 +16,7 @@ export default async function CreateResponse(
   const { orgId, applicantId, questionTitle, description, questionResponse } =
     props;
   const responseId = nanoid(ID_LENGTHS.APPLICANT_RESPONSE);
-  const newApplicantResponse: DynamoNewApplicantResponse = {
+  const newApplicantResponse: DynamoApplicantResponse = {
     PK: `${ENTITY_TYPES.ORG}#${orgId}#${ENTITY_TYPES.APPLICANT}#${applicantId}`,
     SK: `${ENTITY_TYPES.APPLICANT_RESPONSE}#${responseId}`,
     orgId,

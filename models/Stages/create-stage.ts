@@ -6,7 +6,7 @@ import { nanoid } from "nanoid";
 import getNewChildItemOrder from "../../utils/getNewChildItemOrder";
 import { Dynamo } from "../../AWSClients/ddbDocClient";
 import { ID_LENGTHS, ENTITY_TYPES, DEFAULTS, TIME_UNITS } from "../../Config";
-import { DynamoNewStage } from "../../types/dynamo";
+import { DynamoStage } from "../../types/dynamo";
 import { CreateStageInput } from "../../types/main";
 import * as Time from "../../utils/time";
 const { DYNAMO_TABLE_NAME } = process.env;
@@ -16,7 +16,7 @@ export default async function CreateStage(
 ): Promise<[null, null] | [null, SdkError]> {
   const { orgId, GSI1SK, openingId, position, stageOrder } = props;
   const stageId = nanoid(ID_LENGTHS.STAGE);
-  const newStage: DynamoNewStage = {
+  const newStage: DynamoStage = {
     PK: `${ENTITY_TYPES.ORG}#${orgId}#${ENTITY_TYPES.OPENING}#${openingId}#${ENTITY_TYPES.STAGE}#${stageId}`,
     SK: ENTITY_TYPES.STAGE,
     entityType: ENTITY_TYPES.STAGE,

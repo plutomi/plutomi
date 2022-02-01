@@ -1,7 +1,7 @@
-import { DynamoNewUser } from "../../types/dynamo";
+import { DynamoUser } from "../../types/dynamo";
 import * as Time from "../../utils/time";
 // TODO this type should be limited to what info is actually available
-export default function UserCard({ user }: { user: DynamoNewUser }) {
+export default function UserCard({ user }: { user: DynamoUser }) {
   return (
     <div className="border rounded-lg shadow-sm p-4 max-w-lg mx-auto my-4">
       <div className="flex flex-col text-left space-y-1">

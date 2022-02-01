@@ -1,7 +1,7 @@
 import Loader from "../Loader";
 import useAllQuestions from "../../SWR/useAllQuestions";
 import QuestionItem from "./QuestionItem";
-import { DynamoNewQuestion } from "../../types/dynamo";
+import { DynamoQuestion } from "../../types/dynamo";
 import EmptyQuestionsState from "./EmptyQuestionState";
 import CreateQuestionModal from "./CreateQuestionModal";
 import useStore from "../../utils/store";
@@ -44,7 +44,7 @@ export default function QuestionsContent() {
               role="list"
               className="divide-y divide-gray-200 mx-auto max-w-xl flex-col space-y-4   "
             >
-              {questions?.map((question: DynamoNewQuestion) => (
+              {questions?.map((question: DynamoQuestion) => (
                 <QuestionItem key={question?.questionId} question={question} />
               ))}
             </ul>

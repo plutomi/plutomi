@@ -5,17 +5,17 @@ import {
 import { nanoid } from "nanoid";
 import { Dynamo } from "../../AWSClients/ddbDocClient";
 import { ID_LENGTHS, ENTITY_TYPES, OPENING_STATE } from "../../Config";
-import { DynamoNewOpening } from "../../types/dynamo";
+import { DynamoOpening } from "../../types/dynamo";
 import { CreateOpeningInput } from "../../types/main";
 import * as Time from "../../utils/time";
 const { DYNAMO_TABLE_NAME } = process.env;
 import { SdkError } from "@aws-sdk/types";
 export default async function Create(
   props: CreateOpeningInput
-): Promise<[DynamoNewOpening, null] | [null, SdkError]> {
+): Promise<[DynamoOpening, null] | [null, SdkError]> {
   const { orgId, openingName } = props;
   const openingId = nanoid(ID_LENGTHS.OPENING);
-  const newOpening: DynamoNewOpening = {
+  const newOpening: DynamoOpening = {
     PK: `${ENTITY_TYPES.ORG}#${orgId}#${ENTITY_TYPES.OPENING}#${openingId}`,
     SK: ENTITY_TYPES.OPENING,
     entityType: ENTITY_TYPES.OPENING,

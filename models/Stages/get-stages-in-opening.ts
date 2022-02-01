@@ -1,14 +1,14 @@
 import { QueryCommandInput, QueryCommand } from "@aws-sdk/lib-dynamodb";
 import { Dynamo } from "../../AWSClients/ddbDocClient";
 import { ENTITY_TYPES } from "../../Config";
-import { DynamoNewStage } from "../../types/dynamo";
+import { DynamoStage } from "../../types/dynamo";
 import { GetStagesInOpeningInput } from "../../types/main";
 const { DYNAMO_TABLE_NAME } = process.env;
 import { SdkError } from "@aws-sdk/types";
 import * as Openings from ".";
 export default async function GetStages(
   props: GetStagesInOpeningInput
-): Promise<[DynamoNewStage[], null] | [null, SdkError]> {
+): Promise<[DynamoStage[], null] | [null, SdkError]> {
   const { orgId, openingId, stageOrder } = props;
 
   const params: QueryCommandInput = {
@@ -23,13 +23,13 @@ export default async function GetStages(
 
   try {
     const response = await Dynamo.send(new QueryCommand(params));
-    const allStages = response.Items as DynamoNewStage[];
+    const allStages = response.Items as DynamoStage[];
 
     // Orders results in the way the stageOrder is
     const result = stageOrder.map((i: string) =>
       allStages.find((j) => j.stageId === i)
     );
-    return [result as DynamoNewStage[], null];
+    return [result as DynamoStage[], null];
   } catch (error) {
     return [null, error];
   }

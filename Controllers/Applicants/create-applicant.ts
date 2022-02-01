@@ -12,11 +12,11 @@ import {
 } from "../../Config";
 import emailValidator from "deep-email-validator";
 import * as CreateError from "../../utils/createError";
-import { DynamoNewApplicant } from "../../types/dynamo";
+import { DynamoApplicant } from "../../types/dynamo";
 
 export type APICreateApplicantOptions = Required<
   Pick<
-    DynamoNewApplicant,
+    DynamoApplicant,
     "orgId" | "openingId" | "email" | "firstName" | "lastName"
   >
 >;

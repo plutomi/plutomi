@@ -4,7 +4,7 @@ import {
 } from "@aws-sdk/lib-dynamodb";
 import { Dynamo } from "../../AWSClients/ddbDocClient";
 import { DEFAULTS, ENTITY_TYPES, TIME_UNITS } from "../../Config";
-import { DynamoNewOrg } from "../../types/dynamo";
+import { DynamoOrg } from "../../types/dynamo";
 import { CreateAndJoinOrgInput } from "../../types/main";
 import * as Time from "../../utils/time";
 import { SdkError } from "@aws-sdk/types";
@@ -15,7 +15,7 @@ export default async function CreateAndJoinOrg(
   const { userId, orgId, displayName } = props;
   const now = Time.currentISO();
 
-  const newOrg: DynamoNewOrg = {
+  const newOrg: DynamoOrg = {
     PK: `${ENTITY_TYPES.ORG}#${orgId}`,
     SK: ENTITY_TYPES.ORG,
     orgId, // Cannot be changed

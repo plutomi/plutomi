@@ -4,7 +4,7 @@ import { useRouter } from "next/router";
 import Loader from "../Loader";
 import useAllApplicantsInStage from "../../SWR/useAllApplicantsInStage";
 import { CUSTOM_QUERY } from "../../types/main";
-import { DynamoNewApplicant } from "../../types/dynamo";
+import { DynamoApplicant } from "../../types/dynamo";
 export default function ApplicantList() {
   const router = useRouter();
   const { openingId, stageId } = router.query as Pick<
@@ -38,7 +38,7 @@ export default function ApplicantList() {
   return (
     <div className="bg-white shadow overflow-hidden sm:rounded-md">
       <ul role="list" className="divide-y divide-gray-200">
-        {applicants?.map((applicant: DynamoNewApplicant) => (
+        {applicants?.map((applicant: DynamoApplicant) => (
           <ApplicantListItem
             key={applicant.applicantId}
             applicant={applicant}

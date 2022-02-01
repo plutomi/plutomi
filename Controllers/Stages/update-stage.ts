@@ -2,11 +2,11 @@ import { Request, Response } from "express";
 import Joi from "joi";
 import { DEFAULTS, JOI_GLOBAL_FORBIDDEN, JOI_SETTINGS } from "../../Config";
 import * as Stages from "../../models/Stages";
-import { DynamoNewStage } from "../../types/dynamo";
+import { DynamoStage } from "../../types/dynamo";
 import * as CreateError from "../../utils/createError";
 
 export interface APIUpdateStageOptions
-  extends Partial<Pick<DynamoNewStage, "GSI1SK" | "questionOrder">> {
+  extends Partial<Pick<DynamoStage, "GSI1SK" | "questionOrder">> {
   [key: string]: any;
 }
 
