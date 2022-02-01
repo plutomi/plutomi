@@ -170,6 +170,11 @@ app.get(
   [withCleanOrgId, withSession, withHasOrg],
   Applicants.GetApplicantsInStage
 );
+app.get(
+  "/openings/:openingId/stages/:stageId/questions",
+  [withCleanOrgId, withSession, withHasOrg],
+  Questions.GetQuestionsInStage
+);
 
 app.get(
   "/applicants/:applicantId",

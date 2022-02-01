@@ -5,7 +5,6 @@ import UpdateQuestion from "./update-question";
 import GetQuestionsInOrg from "./get-questions-in-org";
 import AddQuestionToStage from "./add-question-to-stage";
 import DeleteQuestionFromStage from "./delete-question-from-stage";
-// import GetQuestionsInStage from "./get-questions-in-stage"; // TODO
 
 export {
   CreateQuestion,

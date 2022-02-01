@@ -23,8 +23,17 @@ const DeleteQuestionFromOrg = async (questionId: string) => {
   return data;
 };
 
-const GetQuestionsInStageURL = ({ openingId, stageId }) =>
-  `/openings/${openingId}/stages/${stageId}/questions`;
+interface GetQuestionsInStageInput {
+  openingId: string;
+  stageId: string;
+}
+const GetQuestionsInStageURL = (options: GetQuestionsInStageInput) =>
+  `/openings/${options.openingId}/stages/${options.stageId}/questions`;
+
+const GetQuestionsInStage = async (options: GetQuestionsInStageInput) => {
+  const data = await axios.get(GetQuestionsInStageURL(options));
+  return data;
+};
 interface DeleteQuestionFromStageInput {
   openingId: string;
   stageId: string;
@@ -73,17 +82,6 @@ const AddQuestionToStage = async (options: AddQuestionToStageInput) => {
   return data;
 };
 
-// // TODO wrong url, also needs revamp with question sets.
-// // TODO move to questions
-// const GetQuestionsInStageURL = (openingId, stageId) =>
-//   `/openings/${openingId}/stages/${stageId}/questions`;
-
-// const GetQuestionsInStage = async (openingId, stageId) => {
-//   const  data  = await axios.get(
-//     GetQuestionsInStageURL(openingId, stageId)
-//   );
-//   return data;
-// };
 export {
   CreateQuestion,
   GetQuestionsInOrgURL,
@@ -94,4 +92,5 @@ export {
   AddQuestionToStage,
   DeleteQuestionFromStage,
   GetQuestionsInStageURL,
+  GetQuestionsInStage,
 };

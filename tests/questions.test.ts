@@ -5,6 +5,7 @@ import * as Openings from "../adapters/Openings";
 import * as Stages from "../adapters/Stages";
 import * as Questions from "../adapters/Questions";
 import * as Orgs from "../adapters/Orgs";
+import { DynamoNewQuestion, DynamoNewStage } from "../types/dynamo";
 
 describe("Questions", () => {
   /**
@@ -328,15 +329,79 @@ describe("Questions", () => {
     );
   });
 
-  // TODO see -> Get stages in opening
-  //    const response = await Dynamo.send(new QueryCommand(params));
-  // const allStages = response.Items as DynamoNewStage[];
+  it("returns all questions in a stage, in their actual question order", async () => {
+    expect.assertions(2);
+    const question1Id = nanoid(15);
+    const question2Id = nanoid(15);
+    const question3Id = nanoid(15);
+    const question4Id = nanoid(15); // Will be placed second
 
-  // // Orders results in the way the stageOrder is
-  // const result = stageOrder.map((i: string) =>
-  //   allStages.find((j) => j.stageId === i)
-  // );
-  it.todo("returns all questions in a stage, in their actual question order");
+    const allQuestionIds = [question1Id, question2Id, question3Id, question4Id];
+
+    // Create the three questions
+    await Promise.all(
+      allQuestionIds.map(async (id) => {
+        await Questions.CreateQuestion({
+          GSI1SK: nanoid(20),
+          questionId: id,
+        });
+      })
+    );
+
+    const allOpenings = await Openings.GetAllOpeningsInOrg();
+
+    const ourOpening = allOpenings.data[0];
+
+    const stageName = nanoid(20);
+    await Stages.CreateStage({
+      GSI1SK: stageName,
+      openingId: ourOpening.openingId,
+    });
+
+    const allStages = await Stages.GetStagesInOpening(ourOpening.openingId);
+    const ourStage = allStages.data.find(
+      (stage: DynamoNewStage) => stage.GSI1SK === stageName
+    );
+
+    try {
+      // if we try to promise.all -> .map this, we get a transaction error
+      // as Dynamo tries to update the stage multiple times in quick succession
+      for await (const id of [question1Id, question2Id, question3Id]) {
+        await Questions.AddQuestionToStage({
+          openingId: ourOpening.openingId,
+          stageId: ourStage.stageId,
+          questionId: id,
+          position: 0, // Each question will be added as the first item
+        });
+      }
+    } catch (error) {
+      console.error(error);
+    }
+
+    await Questions.AddQuestionToStage({
+      openingId: ourOpening.openingId,
+      stageId: ourStage.stageId,
+      questionId: question4Id,
+      position: 1, // Make this one 2nd place
+    });
+    const updatedStage = await Stages.GetStageInfo({
+      openingId: ourOpening.openingId,
+      stageId: ourStage.stageId,
+    });
+
+    const properOrder = [question3Id, question4Id, question2Id, question1Id];
+
+    const response = await Questions.GetQuestionsInStage({
+      openingId: ourOpening.openingId,
+      stageId: ourStage.stageId,
+    });
+    const questions = response.data;
+    const onlyIds = questions.map(
+      (question: DynamoNewQuestion) => question.questionId
+    );
+    expect(questions.length).toBe(4);
+    expect(onlyIds).toStrictEqual(properOrder);
+  });
 
   it.todo(
     "Async... - When deleting a question from an org, delete from all stages. Will require a transact write on stage update, and also a GSI to keep track of all staegs that have this question :>"

@@ -98,6 +98,7 @@ const main = async (req: Request, res: Response) => {
   });
 
   if (stageUpdatedError) {
+    console.error("EEOEOEOE", stageUpdatedError);
     const { status, body } = CreateError.SDK(
       stageError,
       "An error ocurred updating your stage"

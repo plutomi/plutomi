@@ -17,8 +17,6 @@ export default async function GetStages(
     IndexName: "GSI1",
     KeyConditionExpression: "GSI1PK = :GSI1PK",
     ExpressionAttributeValues: {
-      // Sorting is done through a double linked list unfortunately
-      // Since the user can update the order at any time
       ":GSI1PK": `${ENTITY_TYPES.ORG}#${orgId}#${ENTITY_TYPES.OPENING}#${openingId}#${ENTITY_TYPES.STAGE}S`,
     },
   };

@@ -42,7 +42,13 @@ export default async function AddQuestionToStage(
         },
       },
       {
-        // Update the question order on the stage
+        /**
+         * TODO if adding many questions to a stage,
+         * there is a chance that the transaction will fail, make sure to wait in between each call
+         * { Code: 'TransactionConflict',
+         * Item: undefined,
+         * Message: 'Transaction is ongoing for the item'}
+         */
         Update: {
           Key: {
             PK: `${ENTITY_TYPES.ORG}#${orgId}#${ENTITY_TYPES.OPENING}#${openingId}#${ENTITY_TYPES.STAGE}#${stageId}`,
