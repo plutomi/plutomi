@@ -283,9 +283,23 @@ describe("Questions", () => {
     }
   });
 
-  it.todo(
-    "returns an error if attempting to delete a question that doesn't exist in the stage"
-  );
+  it("returns an error if attempting to delete a question that doesn't exist in the stage", async () => {
+    expect.assertions(2);
+    const questionId = nanoid(50);
+
+    try {
+      await Questions.DeleteQuestionFromStage({
+        openingId,
+        questionId,
+        stageId,
+      });
+    } catch (error) {
+      expect(error.response.status).toBe(400);
+      expect(error.response.data.message).toBe(
+        `The question ID '${questionId}' does not exist in this stage`
+      );
+    }
+  });
   it("allows deleting a question from a stage", async () => {
     expect.assertions(2);
     const ourStage = await Stages.GetStageInfo({
