@@ -5,7 +5,7 @@ import * as Openings from "../adapters/Openings";
 import * as Stages from "../adapters/Stages";
 import * as Questions from "../adapters/Questions";
 import * as Orgs from "../adapters/Orgs";
-import { DynamoNewQuestion, DynamoNewStage } from "../types/dynamo";
+import { DynamoQuestion, DynamoStage } from "../types/dynamo";
 
 describe("Questions", () => {
   /**
@@ -360,7 +360,7 @@ describe("Questions", () => {
 
     const allStages = await Stages.GetStagesInOpening(ourOpening.openingId);
     const ourStage = allStages.data.find(
-      (stage: DynamoNewStage) => stage.GSI1SK === stageName
+      (stage: DynamoStage) => stage.GSI1SK === stageName
     );
 
     try {
@@ -397,12 +397,13 @@ describe("Questions", () => {
     });
     const questions = response.data;
     const onlyIds = questions.map(
-      (question: DynamoNewQuestion) => question.questionId
+      (question: DynamoQuestion) => question.questionId
     );
     expect(questions.length).toBe(4);
     expect(onlyIds).toStrictEqual(properOrder);
   });
 
+  // TODO - Delete the transaction item, and all async updates can be done in the deletion queue
   it.todo(
     "Async... - When deleting a question from an org, delete from all stages. Will require a transact write on stage update, and also a GSI to keep track of all staegs that have this question :>"
   );

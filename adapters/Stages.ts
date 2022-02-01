@@ -1,8 +1,8 @@
 import { AXIOS_INSTANCE as axios } from "../Config";
 import { APICreateStageOptions } from "../Controllers/Stages/create-stage";
 import { APIUpdateStageOptions } from "../Controllers/Stages/update-stage";
-import { DynamoNewStage } from "../types/dynamo";
-type OpeningIdAndStageId = Pick<DynamoNewStage, "openingId" | "stageId">;
+import { DynamoStage } from "../types/dynamo";
+type OpeningIdAndStageId = Pick<DynamoStage, "openingId" | "stageId">;
 
 const CreateStage = async (options: APICreateStageOptions) => {
   const data = await axios.post(`/stages`, {

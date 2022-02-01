@@ -1,5 +1,5 @@
 import create from "zustand";
-import { DynamoNewQuestion } from "../types/dynamo";
+import { DynamoQuestion } from "../types/dynamo";
 
 const useStore = create((set) => ({
   /**

@@ -3,10 +3,10 @@ import Joi from "joi";
 import * as CreateError from "../../utils/createError";
 import * as Questions from "../../models/Questions";
 import { DEFAULTS, JOI_GLOBAL_FORBIDDEN, JOI_SETTINGS } from "../../Config";
-import { DynamoNewQuestion } from "../../types/dynamo";
+import { DynamoQuestion } from "../../types/dynamo";
 
 export interface APIUpdateQuestionOptions
-  extends Partial<Pick<DynamoNewQuestion, "GSI1SK" | "description">> {
+  extends Partial<Pick<DynamoQuestion, "GSI1SK" | "description">> {
   [key: string]: any;
 }
 

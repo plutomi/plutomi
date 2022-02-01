@@ -5,7 +5,7 @@ import * as Orgs from "../adapters/Orgs";
 import * as Openings from "../adapters/Openings";
 import * as Stages from "../adapters/Stages";
 import * as Applicants from "../adapters/Applicants";
-import { DynamoNewOpening } from "../types/dynamo";
+import { DynamoOpening } from "../types/dynamo";
 const UrlSafeString = require("url-safe-string"),
   tagGenerator = new UrlSafeString();
 
@@ -38,7 +38,7 @@ describe("Openings", () => {
     // Get public opening
     let openings = await Openings.GetAllOpeningsInOrg();
     const publicOpening = openings.data.find(
-      (opening: DynamoNewOpening) => opening.openingName === publicOpeningName
+      (opening: DynamoOpening) => opening.openingName === publicOpeningName
     );
 
     publicOpeningId = publicOpening.openingId;
@@ -66,7 +66,7 @@ describe("Openings", () => {
     // Get private opening
     openings = await axios.get("/openings");
     const privateOpening = openings.data.find(
-      (opening: DynamoNewOpening) => opening.openingName === privateOpeningName
+      (opening: DynamoOpening) => opening.openingName === privateOpeningName
     );
 
     privateOpeningId = privateOpening.openingId;

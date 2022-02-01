@@ -1,12 +1,12 @@
 import { OPENING_STATE } from "../Config";
 import {
-  DynamoNewApplicant,
-  DynamoNewApplicantResponse,
-  DynamoNewOpening,
-  DynamoNewOrgInvite,
-  DynamoNewStage,
-  DynamoNewQuestion,
-  DynamoNewUser,
+  DynamoApplicant,
+  DynamoApplicantResponse,
+  DynamoOpening,
+  DynamoOrgInvite,
+  DynamoStage,
+  DynamoQuestion,
+  DynamoUser,
 } from "./dynamo";
 type DynamoActions =
   | "dynamodb:GetItem"
@@ -38,7 +38,7 @@ interface CUSTOM_QUERY {
   inviteId: string;
 }
 export interface CreateStageInput
-  extends Pick<DynamoNewStage, "orgId" | "GSI1SK" | "openingId"> {
+  extends Pick<DynamoStage, "orgId" | "GSI1SK" | "openingId"> {
   /**
    * Optional position on where to place the new opening, optional. Added to the end if not provided
    */
@@ -47,114 +47,111 @@ export interface CreateStageInput
   stageOrder: string[];
 }
 interface DeleteStageInput
-  extends Pick<DynamoNewStage, "orgId" | "stageId" | "openingId"> {
+  extends Pick<DynamoStage, "orgId" | "stageId" | "openingId"> {
   stageOrder: string[]; // To delete it from the opening
 }
-type GetStageByIdInput = Pick<
-  DynamoNewStage,
-  "orgId" | "stageId" | "openingId"
->;
-type GetStageByIdOutput = DynamoNewStage;
+type GetStageByIdInput = Pick<DynamoStage, "orgId" | "stageId" | "openingId">;
+type GetStageByIdOutput = DynamoStage;
 type GetApplicantsInStageInput = Pick<
-  DynamoNewStage,
+  DynamoStage,
   "orgId" | "stageId" | "openingId"
 >;
-type GetApplicantsInStageOutput = DynamoNewApplicant[];
+type GetApplicantsInStageOutput = DynamoApplicant[];
 
 export interface UpdateStageInput
-  extends Pick<DynamoNewStage, "orgId" | "stageId" | "openingId"> {
+  extends Pick<DynamoStage, "orgId" | "stageId" | "openingId"> {
   newValues: { [key: string]: any };
 }
 
 export type SessionData = Pick<
-  DynamoNewUser,
+  DynamoUser,
   "firstName" | "lastName" | "orgId" | "email" | "userId" | "canReceiveEmails"
 >;
 
-export interface UpdateUserInput extends Pick<DynamoNewUser, "userId"> {
+export interface UpdateUserInput extends Pick<DynamoUser, "userId"> {
   newValues: { [key: string]: any };
 }
 
 type CreateQuestionInput = Pick<
-  DynamoNewQuestion,
+  DynamoQuestion,
   "orgId" | "GSI1SK" | "description" | "questionId"
 >;
 
 type orgIdAndQuestionId = "orgId" | "questionId";
 
 // TODo remove the below types
-type DeleteQuestionFromOrgInput = Pick<DynamoNewQuestion, orgIdAndQuestionId>;
+type DeleteQuestionFromOrgInput = Pick<DynamoQuestion, orgIdAndQuestionId>;
 
-type GetQuestionInput = Pick<DynamoNewQuestion, orgIdAndQuestionId>;
-type GetQuestionOutput = DynamoNewQuestion;
+type GetQuestionInput = Pick<DynamoQuestion, orgIdAndQuestionId>;
+type GetQuestionOutput = DynamoQuestion;
 
-export type GetQuestionsInOrgInput = Pick<DynamoNewQuestion, "orgId">;
-export type GetQuestionsInOrgOutput = DynamoNewQuestion[];
+export type GetQuestionsInOrgInput = Pick<DynamoQuestion, "orgId">;
+export type GetQuestionsInOrgOutput = DynamoQuestion[];
 
 export interface UpdateQuestionInput
-  extends Pick<DynamoNewQuestion, orgIdAndQuestionId> {
+  extends Pick<DynamoQuestion, orgIdAndQuestionId> {
   newValues: { [key: string]: any };
 }
 
 type GetQuestionsInStageOutput = GetQuestionOutput[];
 
 type CreateApplicantInput = Pick<
-  DynamoNewApplicant,
+  DynamoApplicant,
   "orgId" | "firstName" | "lastName" | "email" | "openingId" | "stageId"
 >;
 
 type orgIdAndApplicantId = "orgId" | "applicantId";
 
-type CreateApplicantOutput = DynamoNewApplicant;
-type GetApplicantByIdInput = Pick<DynamoNewApplicant, "orgId" | "applicantId">;
+type CreateApplicantOutput = DynamoApplicant;
+type GetApplicantByIdInput = Pick<DynamoApplicant, "orgId" | "applicantId">;
 
 type DeleteApplicantInput = Pick<
-  DynamoNewApplicant,
+  DynamoApplicant,
   orgIdAndApplicantId | "openingId" | "stageId" // Last two are needed to decrement the applicant count
 >;
 
 // TODO types for files, etc.
-export interface GetApplicantByIdOutput extends DynamoNewApplicant {
+export interface GetApplicantByIdOutput extends DynamoApplicant {
   responses: Object[]; // TODO fix this type with a response type
 }
 
 export interface UpdateApplicantInput
-  extends Pick<DynamoNewApplicant, orgIdAndApplicantId> {
+  extends Pick<DynamoApplicant, orgIdAndApplicantId> {
   newValues: { [key: string]: any };
 }
 
-export interface UpdateApplicantOutput extends DynamoNewApplicant {
+export interface UpdateApplicantOutput extends DynamoApplicant {
   responses: Object[]; // TODO fix this type with a response type
 }
 
 type CreateApplicantResponseInput = Pick<
-  DynamoNewApplicantResponse,
+  DynamoApplicantResponse,
   "orgId" | "applicantId" | "questionTitle" | "description" | "questionResponse"
 >;
 
-type CreateApplicantResponseOutput = DynamoNewApplicantResponse;
+type CreateApplicantResponseOutput = DynamoApplicantResponse;
 
-type CreateOpeningInput = Pick<DynamoNewOpening, "orgId" | "openingName">;
-type DeleteOpeningInput = Pick<DynamoNewOpening, "orgId" | "openingId">;
+type CreateOpeningInput = Pick<DynamoOpening, "orgId" | "openingName">;
+type DeleteOpeningInput = Pick<DynamoOpening, "orgId" | "openingId">;
 
 // Retrieves all oepnings by default, can filter on public or private
-interface GetOpeningsInOrgInput extends Pick<DynamoNewOpening, "orgId"> {
+interface GetOpeningsInOrgInput extends Pick<DynamoOpening, "orgId"> {
   GSI1SK?: OPENING_STATE;
 }
 
 type GetStagesInOpeningInput = Pick<
-  DynamoNewOpening,
+  DynamoOpening,
   "orgId" | "openingId" | "stageOrder"
 >;
-type GetOpeningByIdInput = Pick<DynamoNewOpening, "orgId" | "openingId">;
+type GetOpeningByIdInput = Pick<DynamoOpening, "orgId" | "openingId">;
 export interface UpdateOpeningInput
-  extends Pick<DynamoNewOpening, "orgId" | "openingId"> {
+  extends Pick<DynamoOpening, "orgId" | "openingId"> {
   newValues: { [key: string]: any };
 }
 
 interface AddQuestionToStageInput
   extends Pick<
-    DynamoNewStage,
+    DynamoStage,
     "orgId" | "openingId" | "stageId" | "questionOrder"
   > {
   questionId: string;
@@ -167,9 +164,9 @@ interface DeleteOrgInviteInput {
 interface CreateOrgInviteInput {
   orgName: string;
   expiresAt: string;
-  createdBy: Pick<DynamoNewUser, "firstName" | "lastName" | "orgId">;
+  createdBy: Pick<DynamoUser, "firstName" | "lastName" | "orgId">;
   recipient: Pick<
-    DynamoNewUser,
+    DynamoUser,
     "userId" | "email" | "unsubscribeKey" | "firstName" | "lastName"
   >;
 }
@@ -191,14 +188,14 @@ type GetOrgInviteInput = {
 
 type JoinOrgFromInviteInput = {
   userId: string;
-  invite: DynamoNewOrgInvite; // TODO I think the invite sent to the client is the clean version, need to verify this and if so make types for the clean version anyway
+  invite: DynamoOrgInvite; // TODO I think the invite sent to the client is the clean version, need to verify this and if so make types for the clean version anyway
 };
 
 type CreateLoginLinkInput = {
   loginLinkId: string;
   loginLinkUrl: string;
   loginLinkExpiry: string;
-  user: DynamoNewUser;
+  user: DynamoUser;
 };
 
 type DeleteLoginLinkInput = {
@@ -243,5 +240,5 @@ interface GetUserByEmailInput {
 
 type CreateLoginEventAndDeleteLoginLinkInput = {
   loginLinkId: string;
-  user: DynamoNewUser;
+  user: DynamoUser;
 };

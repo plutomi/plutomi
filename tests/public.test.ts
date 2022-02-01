@@ -4,7 +4,7 @@ import * as PublicInfo from "../adapters/PublicInfo";
 import * as Orgs from "../adapters/Orgs";
 import * as Openings from "../adapters/Openings";
 import * as Stages from "../adapters/Stages";
-import { DynamoNewOpening } from "../types/dynamo";
+import { DynamoOpening } from "../types/dynamo";
 const UrlSafeString = require("url-safe-string"),
   tagGenerator = new UrlSafeString();
 
@@ -64,7 +64,7 @@ describe("Public", () => {
     expect(allOpenings.status).toBe(200);
     expect(allOpenings.data.length).toBeGreaterThanOrEqual(2);
     const opening1 = allOpenings.data.find(
-      (opening: DynamoNewOpening) => opening.openingName === opening1Name
+      (opening: DynamoOpening) => opening.openingName === opening1Name
     );
 
     // Add a stage to the opening so we can make it public
@@ -106,7 +106,7 @@ describe("Public", () => {
     expect(allOpenings.status).toBe(200);
     expect(allOpenings.data.length).toBeGreaterThanOrEqual(2);
     const opening1 = allOpenings.data.find(
-      (opening: DynamoNewOpening) => opening.openingName === openingName
+      (opening: DynamoOpening) => opening.openingName === openingName
     );
 
     try {
@@ -131,7 +131,7 @@ describe("Public", () => {
 
     expect(allOpenings.status).toBe(200);
     const ourOpening = allOpenings.data.find(
-      (opening: DynamoNewOpening) => opening.openingName === openingName
+      (opening: DynamoOpening) => opening.openingName === openingName
     );
 
     // Add a stage to the opening so we can make it public

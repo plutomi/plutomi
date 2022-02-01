@@ -3,7 +3,7 @@ import { EMAILS, ERRORS, AXIOS_INSTANCE as axios } from "../Config";
 import * as Invites from "../adapters/Invites";
 import * as Orgs from "../adapters/Orgs";
 import * as Users from "../adapters/Users";
-import { DynamoNewOrgInvite } from "../types/dynamo";
+import { DynamoOrgInvite } from "../types/dynamo";
 const UrlSafeString = require("url-safe-string"),
   tagGenerator = new UrlSafeString();
 
@@ -211,7 +211,7 @@ describe("Openings", () => {
     const invites = await Invites.GetUserInvites();
 
     const ourInvite = invites.data.find(
-      (invite: DynamoNewOrgInvite) => invite.orgId === orgId
+      (invite: DynamoOrgInvite) => invite.orgId === orgId
     );
     const accepted = await Invites.AcceptInvite(ourInvite.inviteId);
 
@@ -248,7 +248,7 @@ describe("Openings", () => {
     const invites = await Invites.GetUserInvites();
 
     const ourInvite = invites.data.find(
-      (invite: DynamoNewOrgInvite) => invite.orgId === orgId
+      (invite: DynamoOrgInvite) => invite.orgId === orgId
     );
     const accepted = await Invites.RejectInvite(ourInvite.inviteId);
 

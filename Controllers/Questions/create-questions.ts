@@ -1,12 +1,12 @@
 import { Request, Response } from "express";
 import * as CreateError from "../../utils/createError";
 import * as Questions from "../../models/Questions";
-import { DynamoNewQuestion } from "../../types/dynamo";
+import { DynamoQuestion } from "../../types/dynamo";
 import Joi from "joi";
 import { DEFAULTS, JOI_SETTINGS } from "../../Config";
 
 export type APICreateQuestionOptions = Pick<
-  DynamoNewQuestion,
+  DynamoQuestion,
   "questionId" | "GSI1SK" | "description"
 >;
 const schema = Joi.object({

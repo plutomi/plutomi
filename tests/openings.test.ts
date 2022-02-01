@@ -3,7 +3,7 @@ import { nanoid } from "nanoid";
 import * as Openings from "../adapters/Openings";
 import * as Orgs from "../adapters/Orgs";
 import * as Stages from "../adapters/Stages";
-import { DynamoNewOpening } from "../types/dynamo";
+import { DynamoOpening } from "../types/dynamo";
 describe("Openings", () => {
   /**
    * Creates a session cookie
@@ -155,7 +155,7 @@ describe("Openings", () => {
     const allOpenings = await Openings.GetAllOpeningsInOrg();
 
     const ourOpening = allOpenings.data.find(
-      (opening: DynamoNewOpening) => opening.openingName === openingName
+      (opening: DynamoOpening) => opening.openingName === openingName
     );
 
     // Try to update
@@ -261,7 +261,7 @@ describe("Openings", () => {
 
     // Get our opening
     const ourOpening = data.data.find(
-      (opening: DynamoNewOpening) => opening.openingName === ourOpeningName
+      (opening: DynamoOpening) => opening.openingName === ourOpeningName
     );
 
     expect(ourOpening.stageOrder.length).toBe(0);
@@ -303,7 +303,7 @@ describe("Openings", () => {
 
     // Get our opening
     const ourOpening = data.data.find(
-      (opening: DynamoNewOpening) => opening.openingName === ourOpeningName
+      (opening: DynamoOpening) => opening.openingName === ourOpeningName
     );
 
     expect(ourOpening.stageOrder.length).toBe(0);
@@ -349,7 +349,7 @@ describe("Openings", () => {
 
     // Get our opening
     let ourOpening = data.data.find(
-      (opening: DynamoNewOpening) => opening.openingName === ourOpeningName
+      (opening: DynamoOpening) => opening.openingName === ourOpeningName
     );
 
     expect(ourOpening.stageOrder.length).toBe(0);

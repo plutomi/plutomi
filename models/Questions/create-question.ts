@@ -2,7 +2,7 @@ import { PutCommandInput, PutCommand } from "@aws-sdk/lib-dynamodb";
 import { nanoid } from "nanoid";
 import { Dynamo } from "../../AWSClients/ddbDocClient";
 import { ID_LENGTHS, ENTITY_TYPES } from "../../Config";
-import { DynamoNewQuestion } from "../../types/dynamo";
+import { DynamoQuestion } from "../../types/dynamo";
 import { CreateQuestionInput } from "../../types/main";
 import * as Time from "../../utils/time";
 import { SdkError } from "@aws-sdk/types";
@@ -12,7 +12,7 @@ export default async function CreateQuestion(
 ): Promise<[null, null] | [null, SdkError]> {
   const { orgId, GSI1SK, questionId, description } = props;
   const now = Time.currentISO();
-  const newStageQuestion: DynamoNewQuestion = {
+  const newStageQuestion: DynamoQuestion = {
     PK: `${ENTITY_TYPES.ORG}#${orgId}#${ENTITY_TYPES.QUESTION}#${questionId}`,
     SK: ENTITY_TYPES.QUESTION,
     orgId,
