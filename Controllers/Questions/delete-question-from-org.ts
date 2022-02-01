@@ -4,8 +4,7 @@ import * as CreateError from "../../utils/createError";
 const main = async (req: Request, res: Response) => {
   const { session } = res.locals;
 
-  // TODO this needs major revamp when attached to stages
-  const [success, failure] = await Questions.DeleteQuestion({
+  const [success, failure] = await Questions.DeleteQuestionFromOrg({
     orgId: session.orgId,
     questionId: req.params.questionId,
   });

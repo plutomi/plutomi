@@ -18,10 +18,28 @@ const GetQuestionInfo = async (questionId: string) => {
   return data;
 };
 
-const DeleteQuestion = async (questionId: string) => {
+const DeleteQuestionFromOrg = async (questionId: string) => {
   const data = await axios.delete(GetQuestionInfoURL(questionId));
   return data;
 };
+
+const GetQuestionsInStageURL = ({ openingId, stageId }) =>
+  `/openings/${openingId}/stages/${stageId}/questions`;
+interface DeleteQuestionFromStageInput {
+  openingId: string;
+  stageId: string;
+  questionId: string;
+}
+const DeleteQuestionFromStage = async (
+  options: DeleteQuestionFromStageInput
+) => {
+  const { openingId, stageId, questionId } = options;
+  const data = await axios.delete(
+    `${GetQuestionsInStageURL({ openingId, stageId })}/${questionId}`
+  );
+  return data;
+};
+
 interface UpdateQuestionInput {
   questionId: string;
   newValues: APIUpdateQuestionOptions;
@@ -48,7 +66,7 @@ const AddQuestionToStage = async (options: AddQuestionToStageInput) => {
       openingId,
       stageId,
       questionId,
-      position
+      position,
     }
   );
 
@@ -70,8 +88,10 @@ export {
   CreateQuestion,
   GetQuestionsInOrgURL,
   UpdateQuestion,
-  DeleteQuestion,
+  DeleteQuestionFromOrg,
   GetQuestionInfo,
   GetQuestionInfoURL,
   AddQuestionToStage,
+  DeleteQuestionFromStage,
+  GetQuestionsInStageURL,
 };

@@ -5,9 +5,8 @@ import * as Openings from "../adapters/Openings";
 import * as Stages from "../adapters/Stages";
 import * as Questions from "../adapters/Questions";
 import * as Orgs from "../adapters/Orgs";
-import { AxiosResponse } from "axios";
-import { DynamoNewOpening } from "../types/dynamo";
-describe("Openings", () => {
+
+describe("Questions", () => {
   /**
    * Creates a session cookie
    */
@@ -135,7 +134,7 @@ describe("Openings", () => {
 
   it("allows deleting a question from an org", async () => {
     expect.assertions(2);
-    const data = await Questions.DeleteQuestion(questionId);
+    const data = await Questions.DeleteQuestionFromOrg(questionId);
     expect(data.status).toBe(200);
     expect(data.data.message).toBe("Question deleted!");
   });
@@ -284,7 +283,36 @@ describe("Openings", () => {
     }
   });
 
-  it.todo("allows deleting a question from a stage");
+  it.todo(
+    "returns an error if attempting to delete a question that doesn't exist in the stage"
+  );
+  it("allows deleting a question from a stage", async () => {
+    expect.assertions(2);
+    const ourStage = await Stages.GetStageInfo({
+      openingId,
+      stageId,
+    });
+
+    const oldQuestionOrder = ourStage.data.questionOrder;
+
+    // Delete the last item
+    await Questions.DeleteQuestionFromStage({
+      openingId,
+      stageId,
+      questionId: oldQuestionOrder.slice(-1)[0],
+    });
+
+    const updatedStage = await Stages.GetStageInfo({
+      openingId,
+      stageId,
+    });
+
+    const updatedQuestionOrder = updatedStage.data.questionOrder;
+    expect(updatedQuestionOrder.length).toBe(oldQuestionOrder.length - 1);
+    expect(updatedQuestionOrder.slice(-1)[0]).not.toBe(
+      oldQuestionOrder.slice(-1)[0]
+    );
+  });
 
   // TODO see -> Get stages in opening
   //    const response = await Dynamo.send(new QueryCommand(params));

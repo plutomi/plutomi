@@ -61,7 +61,7 @@ app.use(cookieParser(["sessionpw1"], COOKIE_SETTINGS));
 // TODO rework to use question sets #401 https://github.com/plutomi/plutomi/issues/401
 // app.get("/stages/:stageId/questions", Stages.getQuestionsInStage);
 // app.post("/questions", Questions.create);
-// app.delete("/questions/:questionId", Questions.deleteQuestion);
+// app.delete("/questions/:questionId", Questions.DeleteQuestionFromOrg);
 // app.put("/questions/:questionId", Questions.update);
 
 // TODO rework to add applicant login
@@ -128,6 +128,12 @@ app.put(
   Stages.UpdateStage
 );
 
+app.delete(
+  "/openings/:openingId/stages/:stageId/questions/:questionId",
+  [withSession, withHasOrg],
+  Questions.DeleteQuestionFromStage
+);
+
 app.get(
   "/openings/:openingId/stages",
   [withSession, withHasOrg],
@@ -176,7 +182,7 @@ app.get("/questions", [withSession, withHasOrg], Questions.GetQuestionsInOrg);
 app.delete(
   "/questions/:questionId",
   [withSession, withHasOrg],
-  Questions.DeleteQuestion
+  Questions.DeleteQuestionFromOrg
 );
 app.put(
   "/questions/:questionId",

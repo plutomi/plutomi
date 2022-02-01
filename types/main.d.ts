@@ -83,7 +83,7 @@ type CreateQuestionInput = Pick<
 type orgIdAndQuestionId = "orgId" | "questionId";
 
 // TODo remove the below types
-type DeleteQuestionInput = Pick<DynamoNewQuestion, orgIdAndQuestionId>;
+type DeleteQuestionFromOrgInput = Pick<DynamoNewQuestion, orgIdAndQuestionId>;
 
 type GetQuestionInput = Pick<DynamoNewQuestion, orgIdAndQuestionId>;
 type GetQuestionOutput = DynamoNewQuestion;

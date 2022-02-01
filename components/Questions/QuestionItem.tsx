@@ -1,7 +1,10 @@
 import { useState } from "react";
 import { PencilAltIcon } from "@heroicons/react/outline";
 import { TrashIcon } from "@heroicons/react/outline";
-import { DeleteQuestion, GetQuestionsInOrgURL } from "../../adapters/Questions";
+import {
+  DeleteQuestionFromOrg,
+  GetQuestionsInOrgURL,
+} from "../../adapters/Questions";
 import useStore from "../../utils/store";
 import { mutate } from "swr";
 import { DynamoNewQuestion } from "../../types/dynamo";
@@ -29,7 +32,7 @@ export default function QuestionItem({
       return;
     }
     try {
-      const data = await DeleteQuestion(questionId);
+      const data = await DeleteQuestionFromOrg(questionId);
       alert(data.message);
       mutate(GetQuestionsInOrgURL());
     } catch (error) {

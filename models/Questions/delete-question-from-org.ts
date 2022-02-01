@@ -1,14 +1,11 @@
-import {
-  DeleteCommand,
-  DeleteCommandInput,
-} from "@aws-sdk/lib-dynamodb";
+import { DeleteCommand, DeleteCommandInput } from "@aws-sdk/lib-dynamodb";
 import { Dynamo } from "../../AWSClients/ddbDocClient";
 import { ENTITY_TYPES } from "../../Config";
-import { DeleteQuestionInput } from "../../types/main";
+import { DeleteQuestionFromOrgInput } from "../../types/main";
 const { DYNAMO_TABLE_NAME } = process.env;
 import { SdkError } from "@aws-sdk/types";
-export default async function DeleteQuestion(
-  props: DeleteQuestionInput
+export default async function DeleteQuestionFromOrg(
+  props: DeleteQuestionFromOrgInput
 ): Promise<[null, null] | [null, SdkError]> {
   const { orgId, questionId } = props;
 
@@ -19,7 +16,7 @@ export default async function DeleteQuestion(
       SK: ENTITY_TYPES.QUESTION,
     },
     TableName: `${process.env.NODE_ENV}-${DYNAMO_TABLE_NAME}`,
-    ConditionExpression: "attribute_exists(PK)"
+    ConditionExpression: "attribute_exists(PK)",
   };
 
   try {
