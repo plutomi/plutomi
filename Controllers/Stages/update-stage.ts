@@ -1,6 +1,11 @@
 import { Request, Response } from "express";
 import Joi from "joi";
-import { DEFAULTS, JOI_GLOBAL_FORBIDDEN, JOI_SETTINGS } from "../../Config";
+import {
+  DEFAULTS,
+  JOI_GLOBAL_FORBIDDEN,
+  JOI_SETTINGS,
+  LIMITS,
+} from "../../Config";
 import * as Stages from "../../models/Stages";
 import { DynamoStage } from "../../types/dynamo";
 import * as CreateError from "../../utils/createError";
@@ -17,7 +22,7 @@ const JOI_FORBIDDEN_STAGE = Joi.object({
   GSI1PK: Joi.any().forbidden(),
   questionOrder: Joi.array().items(Joi.string()).optional(),
   totalApplicants: Joi.any().forbidden(),
-  GSI1SK: Joi.string().optional().max(DEFAULTS.MAX_STAGE_NAME_LENGTH),
+  GSI1SK: Joi.string().optional().max(LIMITS.MAX_STAGE_NAME_LENGTH),
 });
 
 const schema = Joi.object({

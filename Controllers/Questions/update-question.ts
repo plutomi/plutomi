@@ -2,7 +2,7 @@ import { Request, Response } from "express";
 import Joi from "joi";
 import * as CreateError from "../../utils/createError";
 import * as Questions from "../../models/Questions";
-import { DEFAULTS, JOI_GLOBAL_FORBIDDEN, JOI_SETTINGS } from "../../Config";
+import { JOI_GLOBAL_FORBIDDEN, JOI_SETTINGS, LIMITS } from "../../Config";
 import { DynamoQuestion } from "../../types/dynamo";
 
 export interface APIUpdateQuestionOptions
@@ -14,10 +14,10 @@ const JOI_FORBIDDEN_OPENING = Joi.object({
   ...JOI_GLOBAL_FORBIDDEN,
   questionId: Joi.any().forbidden(),
   GSI1PK: Joi.any().forbidden(),
-  GSI1SK: Joi.string().optional().max(DEFAULTS.MAX_QUESTION_TITLE_LENGTH),
+  GSI1SK: Joi.string().optional().max(LIMITS.MAX_QUESTION_TITLE_LENGTH),
   description: Joi.string()
     .allow("")
-    .max(DEFAULTS.MAX_QUESTION_DESCRIPTION_LENGTH)
+    .max(LIMITS.MAX_QUESTION_DESCRIPTION_LENGTH)
     .optional(),
 });
 

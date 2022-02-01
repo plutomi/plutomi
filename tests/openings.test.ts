@@ -85,7 +85,7 @@ describe("Openings", () => {
     });
 
     // Get openings in an org
-    const data = await axios.get("/openings");
+    const data = await Openings.GetAllOpeningsInOrg();
     expect(data.status).toBe(200);
     expect(data.data.length).toBeGreaterThanOrEqual(1);
   });

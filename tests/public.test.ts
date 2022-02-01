@@ -110,7 +110,10 @@ describe("Public", () => {
     );
 
     try {
-      await axios.get(`/public/orgs/${orgId}/openings/${opening1.openingId}`);
+      await PublicInfo.GetPublicOpeningInfo({
+        openingId: opening1.openingId,
+        orgId,
+      });
     } catch (error) {
       expect(error.response.status).toBe(403);
       expect(error.response.data.message).toBe(
@@ -127,7 +130,7 @@ describe("Public", () => {
       openingName,
     });
 
-    const allOpenings = await axios.get("/openings");
+    const allOpenings = await Openings.GetAllOpeningsInOrg();
 
     expect(allOpenings.status).toBe(200);
     const ourOpening = allOpenings.data.find(

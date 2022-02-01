@@ -1,8 +1,14 @@
-import { AXIOS_INSTANCE as axios } from "../Config";
 import { nanoid } from "nanoid";
-import { API_URL, DEFAULTS, ERRORS } from "../Config";
+import {
+  API_URL,
+  DEFAULTS,
+  ERRORS,
+  AXIOS_INSTANCE as axios,
+  LIMITS,
+} from "../Config";
 import * as Stages from "../adapters/Stages";
-import { expectCt } from "helmet";
+import * as Orgs from "../adapters/Orgs";
+import * as Openings from "../adapters/Openings";
 describe("Stages", () => {
   /**
    * Creates a session cookie
@@ -68,7 +74,10 @@ describe("Stages", () => {
   it("blocks retrieving stage info if user is not in an org", async () => {
     expect.assertions(2);
     try {
-      await axios.get("/openings/123/stages/123");
+      await Stages.GetStageInfo({
+        openingId: "123",
+        stageId: "123",
+      });
     } catch (error) {
       expect(error.response.status).toBe(403);
       expect(error.response.data.message).toBe(ERRORS.NEEDS_ORG);
@@ -78,12 +87,13 @@ describe("Stages", () => {
   it("fails to create a stage without an empty empty values for openingId and stage name", async () => {
     expect.assertions(4);
     // Create an org
-    await axios.post("/orgs", {
+    await Orgs.CreateOrg({
       orgId: nanoid(20),
       displayName: nanoid(20),
     });
+
     try {
-      await axios.post("/stages", {
+      await Stages.CreateStage({
         openingId: "",
         GSI1SK: null,
       });
@@ -99,16 +109,16 @@ describe("Stages", () => {
   it("fails to create a stage with a position equal to MAX_CHILD_ITEM_LIMIT", async () => {
     expect.assertions(3);
     try {
-      await axios.post("/stages", {
+      await Stages.CreateStage({
         openingId: nanoid(10),
         GSI1SK: nanoid(10),
-        position: DEFAULTS.MAX_CHILD_ITEM_LIMIT,
+        position: LIMITS.MAX_CHILD_ITEM_LIMIT,
       });
     } catch (error) {
       expect(error.response.status).toBe(400);
       expect(error.response.data.message).toContain("body.position");
       expect(error.response.data.message).toContain(
-        `must be less than or equal to ${DEFAULTS.MAX_CHILD_ITEM_LIMIT - 1}`
+        `must be less than or equal to ${LIMITS.MAX_CHILD_ITEM_LIMIT - 1}`
       );
     }
   });
@@ -116,7 +126,7 @@ describe("Stages", () => {
   it("fails to create a stage with a position greater than MAX_CHILD_ITEM_LIMIT", async () => {
     expect.assertions(3);
     try {
-      await axios.post("/stages", {
+      await Stages.CreateStage({
         openingId: nanoid(10),
         GSI1SK: nanoid(10),
         position: 500000,
@@ -125,7 +135,7 @@ describe("Stages", () => {
       expect(error.response.status).toBe(400);
       expect(error.response.data.message).toContain("body.position");
       expect(error.response.data.message).toContain(
-        `must be less than or equal to ${DEFAULTS.MAX_CHILD_ITEM_LIMIT - 1}`
+        `must be less than or equal to ${LIMITS.MAX_CHILD_ITEM_LIMIT - 1}`
       );
     }
   });
@@ -133,7 +143,7 @@ describe("Stages", () => {
   it("fails to create a stage in an opening that does not exist", async () => {
     expect.assertions(2);
     try {
-      await axios.post("/stages", {
+      await Stages.CreateStage({
         openingId: "1",
         GSI1SK: nanoid(10),
         position: 2,
@@ -148,24 +158,24 @@ describe("Stages", () => {
     expect.assertions(1);
     const openingName = nanoid(50);
     // Create an opening first
-    await axios.post("/openings", {
+    await Openings.CreateOpening({
       openingName,
     });
 
     // Get openings in an org
-    const data = await axios.get("/openings");
+    const data = await Openings.GetAllOpeningsInOrg();
 
     const ourOpening = data.data.find(
       (opening) => opening.openingName === openingName
     );
 
-    await axios.post("/stages", {
+    await Stages.CreateStage({
       openingId: ourOpening.openingId,
       GSI1SK: nanoid(10),
     });
 
     // Check if our newly added stage is there
-    const ourOpening2 = await axios.get(`/openings/${ourOpening.openingId}`);
+    const ourOpening2 = await Openings.GetOpeningInfo(ourOpening.openingId);
     expect(ourOpening2.data.stageOrder.length).toBe(1);
   });
 
@@ -173,34 +183,36 @@ describe("Stages", () => {
     expect.assertions(4);
     const openingName = nanoid(20);
     // Create an opening first
-    await axios.post("/openings", {
+    await Openings.CreateOpening({
       openingName,
     });
 
     // Get openings in an org
-    const data = await axios.get("/openings");
+    const data = await Openings.GetAllOpeningsInOrg();
 
     const ourOpening = data.data.find(
       (opening) => opening.openingName === openingName
     );
 
     // Create a stage
-    await axios.post("/stages", {
+    await Stages.CreateStage({
       openingId: ourOpening.openingId,
       GSI1SK: nanoid(10),
     });
 
-    const stageCreated = await axios.get(`/openings/${ourOpening.openingId}`);
-
-    const deleteStageRes = await axios.delete(
-      API_URL +
-        `/openings/${stageCreated.data.openingId}/stages/${stageCreated.data.stageOrder[0]}`
+    const openingWithStage = await Openings.GetOpeningInfo(
+      ourOpening.openingId
     );
+
+    const deleteStageRes = await Stages.DeleteStage({
+      openingId: openingWithStage.data.openingId,
+      stageId: openingWithStage.data.stageOrder[0],
+    });
 
     expect(deleteStageRes.status).toBe(200);
     expect(deleteStageRes.data.message).toBe("Stage deleted!");
 
-    const afterdeletion = await axios.get(`/openings/${ourOpening.openingId}`);
+    const afterdeletion = await Openings.GetOpeningInfo(ourOpening.openingId);
 
     expect(afterdeletion.status).toBe(200);
     expect(afterdeletion.data.stageOrder).toStrictEqual([]);
@@ -210,19 +222,22 @@ describe("Stages", () => {
     expect.assertions(2);
     const openingName = nanoid(20);
     // Create an opening first
-    await axios.post("/openings", {
+    await Openings.CreateOpening({
       openingName,
     });
 
     // Get openings in an org
-    const data = await axios.get("/openings");
+    const data = await Openings.GetAllOpeningsInOrg();
 
     const ourOpening = data.data.find(
       (opening) => opening.openingName === openingName
     );
 
     try {
-      await axios.get(`/openings/${ourOpening.openingId}/stages/1`);
+      await Stages.GetStageInfo({
+        openingId: ourOpening.openingId,
+        stageId: "1",
+      });
     } catch (error) {
       expect(error.response.status).toBe(404);
       expect(error.response.data.message).toBe("Stage not found");
@@ -233,12 +248,12 @@ describe("Stages", () => {
     expect.assertions(2);
     // Create an opening
     const openingName = nanoid(20);
-    await axios.post("/openings", {
+    await Openings.CreateOpening({
       openingName,
     });
 
     // Get openings in org
-    const data = await axios.get("/openings");
+    const data = await Openings.GetAllOpeningsInOrg();
 
     const ourOpening = data.data.find(
       (opening) => opening.openingName === openingName
@@ -246,18 +261,19 @@ describe("Stages", () => {
 
     // Create a stage
     const stageName = nanoid(10);
-    await axios.post("/stages", {
+
+    await Stages.CreateStage({
       openingId: ourOpening.openingId,
       GSI1SK: stageName,
     });
 
-    const updatedOpening = await axios.get(`/openings/${ourOpening.openingId}`);
+    const updatedOpening = await Openings.GetOpeningInfo(ourOpening.openingId);
 
     try {
-      const stage = await axios.get(
-        API_URL +
-          `/openings/${ourOpening.openingId}/stages/${updatedOpening.data.stageOrder[0]}`
-      );
+      const stage = await Stages.GetStageInfo({
+        openingId: ourOpening.openingId,
+        stageId: updatedOpening.data.stageOrder[0],
+      });
 
       expect(stage.status).toBe(200);
       expect(stage.data.GSI1SK).toBe(stageName);
@@ -268,12 +284,12 @@ describe("Stages", () => {
     expect.assertions(4);
     const openingName = nanoid(20);
     // Create an opening first
-    await axios.post("/openings", {
+    await Openings.CreateOpening({
       openingName,
     });
 
     // Get openings in an org
-    const data = await axios.get("/openings");
+    const data = await Openings.GetAllOpeningsInOrg();
 
     const ourOpening = data.data.find(
       (opening) => opening.openingName === openingName
@@ -283,16 +299,16 @@ describe("Stages", () => {
     const stage2Name = nanoid(10);
 
     // Create the two stages
-    await axios.post("/stages", {
+    await Stages.CreateStage({
       openingId: ourOpening.openingId,
       GSI1SK: stage1Name,
     });
-    await axios.post("/stages", {
+    await Stages.CreateStage({
       openingId: ourOpening.openingId,
       GSI1SK: stage2Name,
     });
 
-    const data2 = await axios.get(`/openings/${ourOpening.openingId}/stages`);
+    const data2 = await Stages.GetStagesInOpening(ourOpening.openingId);
 
     expect(data2.status).toBe(200);
     expect(data2.data.length).toBe(2);
@@ -308,12 +324,12 @@ describe("Stages", () => {
     const openingName = nanoid(20);
 
     // Create an opening
-    await axios.post("/openings", {
+    await Openings.CreateOpening({
       openingName,
     });
 
     // Get openings in an org
-    const data = await axios.get("/openings");
+    const data = await Openings.GetAllOpeningsInOrg();
 
     const ourOpening = data.data.find(
       (opening) => opening.openingName === openingName
@@ -321,19 +337,21 @@ describe("Stages", () => {
 
     const stageName = nanoid(10);
     // Add a stage
-    await axios.post("/stages", {
+
+    await Stages.CreateStage({
       openingId: ourOpening.openingId,
       GSI1SK: stageName,
     });
 
-    const openingAfterStage = await axios.get(
-      `/openings/${ourOpening.openingId}`
+    const openingAfterStage = await Openings.GetOpeningInfo(
+      ourOpening.openingId
     );
 
     const stageid = openingAfterStage.data.stageOrder[0];
 
     try {
-      await axios.put(`/openings/${ourOpening.openingId}/stages/${stageid}`, {
+      await Stages.UpdateStage({
+        // @ts-ignore - intentional, this will error
         orgId: nanoid(5),
         PK: nanoid(5),
         SK: nanoid(5),
@@ -350,12 +368,12 @@ describe("Stages", () => {
     const openingName = nanoid(20);
 
     // Create an opening
-    await axios.post("/openings", {
+    await Openings.CreateOpening({
       openingName,
     });
 
     // Get openings in an org
-    const data = await axios.get("/openings");
+    const data = await Openings.GetAllOpeningsInOrg();
 
     const ourOpening = data.data.find(
       (opening) => opening.openingName === openingName
@@ -363,32 +381,34 @@ describe("Stages", () => {
 
     const stageName = nanoid(10);
     // Add a stage
-    await axios.post("/stages", {
+    await Stages.CreateStage({
       openingId: ourOpening.openingId,
       GSI1SK: stageName,
     });
 
-    const openingAfterStage = await axios.get(
-      `/openings/${ourOpening.openingId}`
+    const openingAfterStage = await Openings.GetOpeningInfo(
+      ourOpening.openingId
     );
 
-    const stageid = openingAfterStage.data.stageOrder[0];
+    const stageId = openingAfterStage.data.stageOrder[0];
 
     const newName = nanoid(20);
 
-    const update = await axios.put(
-      `/openings/${ourOpening.openingId}/stages/${stageid}`,
-      {
+    const update = await Stages.UpdateStage({
+      openingId: ourOpening.openingId,
+      stageId,
+      newValues: {
         GSI1SK: newName,
-      }
-    );
+      },
+    });
 
     expect(update.status).toBe(200);
     expect(update.data.message).toBe("Stage updated!");
 
-    const stageAfter = await axios.get(
-      `/openings/${ourOpening.openingId}/stages/${stageid}`
-    );
+    const stageAfter = await Stages.GetStageInfo({
+      openingId: ourOpening.openingId,
+      stageId,
+    });
 
     expect(stageAfter.data.GSI1SK).toBe(newName);
   });

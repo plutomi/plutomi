@@ -187,7 +187,6 @@ describe("Openings", () => {
     });
     const cookie = data.headers["set-cookie"][0];
     axios.defaults.headers.Cookie = cookie;
-    // const self = await axios.get("/users/self");
 
     const orgId = tagGenerator.generate(nanoid(20));
 

@@ -3,7 +3,7 @@ import * as CreateError from "../../utils/createError";
 import * as Questions from "../../models/Questions";
 import { DynamoQuestion } from "../../types/dynamo";
 import Joi from "joi";
-import { DEFAULTS, JOI_SETTINGS } from "../../Config";
+import { JOI_SETTINGS, LIMITS } from "../../Config";
 
 export type APICreateQuestionOptions = Pick<
   DynamoQuestion,
@@ -12,10 +12,10 @@ export type APICreateQuestionOptions = Pick<
 const schema = Joi.object({
   body: {
     questionId: Joi.string().max(50), // TODO joi regex to match tag generator
-    GSI1SK: Joi.string().max(DEFAULTS.MAX_QUESTION_TITLE_LENGTH),
+    GSI1SK: Joi.string().max(LIMITS.MAX_QUESTION_TITLE_LENGTH),
     description: Joi.string()
       .allow("")
-      .max(DEFAULTS.MAX_QUESTION_DESCRIPTION_LENGTH)
+      .max(LIMITS.MAX_QUESTION_DESCRIPTION_LENGTH)
       .optional(),
   },
 }).options(JOI_SETTINGS);

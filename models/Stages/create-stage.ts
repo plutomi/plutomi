@@ -5,7 +5,7 @@ import {
 import { nanoid } from "nanoid";
 import getNewChildItemOrder from "../../utils/getNewChildItemOrder";
 import { Dynamo } from "../../AWSClients/ddbDocClient";
-import { ID_LENGTHS, ENTITY_TYPES, DEFAULTS, TIME_UNITS } from "../../Config";
+import { ID_LENGTHS, ENTITY_TYPES, LIMITS } from "../../Config";
 import { DynamoStage } from "../../types/dynamo";
 import { CreateStageInput } from "../../types/main";
 import * as Time from "../../utils/time";
@@ -60,7 +60,7 @@ export default async function CreateStage(
               ":zero": 0,
               ":value": 1,
               ":stageOrder": newStageOrder,
-              ":maxChildItemLimit": DEFAULTS.MAX_CHILD_ITEM_LIMIT,
+              ":maxChildItemLimit": LIMITS.MAX_CHILD_ITEM_LIMIT,
             },
           },
         },

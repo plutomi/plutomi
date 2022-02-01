@@ -7,6 +7,7 @@ import {
   JOI_GLOBAL_FORBIDDEN,
   JOI_SETTINGS,
   OPENING_STATE,
+  LIMITS,
 } from "../../Config";
 import { UpdateOpeningInput } from "../../types/main";
 import { DynamoOpening } from "../../types/dynamo";
@@ -25,7 +26,7 @@ const JOI_FORBIDDEN_OPENING = Joi.object({
   totalStages: Joi.any().forbidden(),
   totalApplicants: Joi.any().forbidden(),
   stageOrder: Joi.array().items(Joi.string()).optional(),
-  openingName: Joi.string().max(DEFAULTS.MAX_OPENING_NAME_LENGTH).optional(),
+  openingName: Joi.string().max(LIMITS.MAX_OPENING_NAME_LENGTH).optional(),
   GSI1SK: Joi.string()
     .valid(OPENING_STATE.PUBLIC, OPENING_STATE.PRIVATE)
     .optional(),

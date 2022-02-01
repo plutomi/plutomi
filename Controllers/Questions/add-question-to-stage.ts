@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import Joi from "joi";
-import { DEFAULTS, JOI_SETTINGS } from "../../Config";
+import { JOI_SETTINGS, LIMITS } from "../../Config";
 import * as CreateError from "../../utils/createError";
 import * as Stages from "../../models/Stages";
 import getNewChildItemOrder from "../../utils/getNewChildItemOrder";
@@ -14,7 +14,7 @@ const schema = Joi.object({
      */
     position: Joi.number()
       .min(0)
-      .max(DEFAULTS.MAX_CHILD_ITEM_LIMIT - 1)
+      .max(LIMITS.MAX_CHILD_ITEM_LIMIT - 1)
       .optional(),
   },
 }).options(JOI_SETTINGS);

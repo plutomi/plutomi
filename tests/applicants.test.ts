@@ -1,6 +1,11 @@
-import { AXIOS_INSTANCE as axios, DEFAULTS, OPENING_STATE } from "../Config";
+import {
+  AXIOS_INSTANCE as axios,
+  DEFAULTS,
+  OPENING_STATE,
+  EMAILS,
+  ERRORS,
+} from "../Config";
 import { nanoid } from "nanoid";
-import { EMAILS, ERRORS } from "../Config";
 import * as Orgs from "../adapters/Orgs";
 import * as Openings from "../adapters/Openings";
 import * as Stages from "../adapters/Stages";
@@ -64,7 +69,7 @@ describe("Openings", () => {
     });
 
     // Get private opening
-    openings = await axios.get("/openings");
+    openings = await Openings.GetAllOpeningsInOrg();
     const privateOpening = openings.data.find(
       (opening: DynamoOpening) => opening.openingName === privateOpeningName
     );
@@ -84,7 +89,7 @@ describe("Openings", () => {
   it("blocks creating an applicant in private openings", async () => {
     expect.assertions(2);
     try {
-      await axios.post("/applicants", {
+      await Applicants.CreateApplicant({
         ...applicant,
         openingId: privateOpeningId,
       });

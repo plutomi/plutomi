@@ -4,7 +4,12 @@ import {
 } from "@aws-sdk/lib-dynamodb";
 import { SdkError } from "@aws-sdk/types";
 import { Dynamo } from "../../AWSClients/ddbDocClient";
-import { ENTITY_TYPES, DEFAULTS, TIME_UNITS } from "../../Config";
+import {
+  ENTITY_TYPES,
+  DEFAULTS,
+  TIME_UNITS,
+  RETENTION_PERIODS,
+} from "../../Config";
 import { DynamoLoginEvent } from "../../types/dynamo";
 import { CreateLoginEventAndDeleteLoginLinkInput } from "../../types/main";
 const { DYNAMO_TABLE_NAME } = process.env;
@@ -30,13 +35,9 @@ export default async function CreateLoginEvent(
     entityType: ENTITY_TYPES.LOGIN_EVENT,
     // TODO in the future, get more the info about the login event such as IP, headers, device, etc.
     createdAt: now,
-    ttlExpiry: Time.futureUNIX(
-      DEFAULTS.LOGIN_EVENT_RETENTION_PERIOD,
-      TIME_UNITS.DAYS
-    ),
+    ttlExpiry: Time.futureUNIX(RETENTION_PERIODS.LOGIN_EVENT, TIME_UNITS.DAYS),
   };
 
-  console.log("New user login event", newUserLoginEvent);
   const newOrgLoginEvent = {
     // TODO types
     PK: `${ENTITY_TYPES.ORG}#${user.orgId}`,
@@ -44,10 +45,7 @@ export default async function CreateLoginEvent(
     // TODO user info here
     // TODO in the future, get more the info about the login event such as IP, headers, device, etc.
     createdAt: now,
-    ttlExpiry: Time.futureUNIX(
-      DEFAULTS.LOGIN_EVENT_RETENTION_PERIOD,
-      TIME_UNITS.DAYS
-    ),
+    ttlExpiry: Time.futureUNIX(RETENTION_PERIODS.LOGIN_EVENT, TIME_UNITS.DAYS),
   };
 
   try {

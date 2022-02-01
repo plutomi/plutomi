@@ -1,6 +1,5 @@
-import { AXIOS_INSTANCE as axios } from "../Config";
+import { AXIOS_INSTANCE as axios, ERRORS } from "../Config";
 import { nanoid } from "nanoid";
-import { ERRORS } from "../Config";
 import * as Openings from "../adapters/Openings";
 import * as Stages from "../adapters/Stages";
 import * as Questions from "../adapters/Questions";

@@ -1,5 +1,4 @@
 import {
-  API_URL,
   EMAILS,
   ERRORS,
   AXIOS_INSTANCE as axios,
