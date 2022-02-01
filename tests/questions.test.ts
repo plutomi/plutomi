@@ -98,8 +98,11 @@ describe("Openings", () => {
   const newQuestionName = nanoid(20);
   it("allows updating a question", async () => {
     expect.assertions(2);
-    const data = await Questions.UpdateQuestion(questionId, {
-      GSI1SK: newQuestionName,
+    const data = await Questions.UpdateQuestion({
+      questionId,
+      newValues: {
+        GSI1SK: newQuestionName,
+      },
     });
 
     expect(data.status).toBe(200);
@@ -116,9 +119,11 @@ describe("Openings", () => {
   it("blocks updating a question id", async () => {
     expect.assertions(3);
     try {
-      await Questions.UpdateQuestion(questionId, {
-        // @ts-ignore - Intentional
-        questionId: nanoid(10),
+      await Questions.UpdateQuestion({
+        questionId,
+        newValues: {
+          questionId: nanoid(10),
+        },
       });
     } catch (error) {
       expect(error.response.status).toBe(400);
@@ -152,7 +157,10 @@ describe("Openings", () => {
     openingId = allOpenings.data[0].openingId;
 
     // Create a stage in that opening
-    await Stages.CreateStage(nanoid(10), openingId);
+    await Stages.CreateStage({
+      GSI1SK: nanoid(10),
+      openingId,
+    });
 
     // Get our stage
     const getStagesInOpening = await Stages.GetStagesInOpening(openingId);
@@ -167,11 +175,11 @@ describe("Openings", () => {
     });
 
     try {
-      const addQuestionToStage = await Questions.AddQuestionToStage(
+      const addQuestionToStage = await Questions.AddQuestionToStage({
         openingId,
         stageId,
-        questionId
-      );
+        questionId,
+      });
 
       expect(addQuestionToStage.status).toBe(201);
       expect(addQuestionToStage.data.message).toBe("Question added to stage!");
@@ -184,7 +192,7 @@ describe("Openings", () => {
     expect.assertions(2);
     // Essentially the same thing as above, but expects an error instead
     try {
-      await Questions.AddQuestionToStage(openingId, stageId, questionId);
+      await Questions.AddQuestionToStage({ openingId, stageId, questionId });
     } catch (error) {
       expect(error.response.status).toBe(409);
       expect(error.response.data.message).toBe(
@@ -201,7 +209,11 @@ describe("Openings", () => {
     expect.assertions(2);
     const questionId = nanoid(50);
     try {
-      await Questions.AddQuestionToStage(nanoid(10), nanoid(10), questionId);
+      await Questions.AddQuestionToStage({
+        openingId: nanoid(20),
+        stageId: nanoid(20),
+        questionId,
+      });
     } catch (error) {
       expect(error.response.status).toBe(404);
       expect(error.response.data.message).toBe(

@@ -1,6 +1,11 @@
-import { API_URL, EMAILS, ERRORS, AXIOS_INSTANCE as axios } from "../Config";
+import {
+  API_URL,
+  EMAILS,
+  ERRORS,
+  AXIOS_INSTANCE as axios,
+  COOKIE_NAME,
+} from "../Config";
 import * as Auth from "../adapters/Auth";
-const URL = `${API_URL}/request-login-link`;
 
 describe("Request login link", () => {
   it("blocks slightly wrong addresses", async () => {
@@ -48,7 +53,9 @@ describe("Request login link", () => {
     });
 
     expect(data.status).toBe(201);
-    expect(data.data.message).toBe("Login link sent!");
+    expect(data.data.message).toBe(
+      "We've sent a magic login link to your email!"
+    );
   });
 
   it("blocks an invalid callbackUrl", async () => {
@@ -89,15 +96,18 @@ describe("Request login link", () => {
       email: EMAILS.TESTING,
     });
     expect(data.status).toBe(201);
-    expect(data.data.message).toBe("Login link sent!");
-
+    expect(data.data.message).toBe(
+      "We've sent a magic login link to your email!"
+    );
     // Try it again
-    const data2 = await axios.post(URL, {
+    const data2 = await Auth.RequestLoginLink({
       email: EMAILS.TESTING,
     });
 
     expect(data2.status).toBe(201);
-    expect(data2.data.message).toBe("Login link sent!");
+    expect(data2.data.message).toBe(
+      "We've sent a magic login link to your email!"
+    );
   });
 });
 
@@ -135,10 +145,20 @@ describe("Logout", () => {
   });
 
   it("Deletes the session cookie", async () => {
-    expect.assertions(2);
+    expect.assertions(3);
     const data = await Auth.Logout();
-    const cookie = data.headers["set-cookie"][0];
-    expect(cookie).toBe([]);
+    const cookies = data.headers["set-cookie"];
+    /**
+     * Make sure a set-cookie header is returned with an empty cookie and a negative expiry
+     * In the future, the session data will be stored in Dynamo so this won't matter
+     */
+    expect(Array.isArray(cookies)).toBe(true);
+    expect(
+      // If any set-cookie header matches
+      cookies.some((value: string) =>
+        value.startsWith(`${COOKIE_NAME}=; Max-Age=-1;`)
+      )
+    ).toBe(true);
     expect(data.status).toBe(200);
   });
 });

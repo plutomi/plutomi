@@ -306,8 +306,6 @@ describe("Openings", () => {
       (opening: DynamoNewOpening) => opening.openingName === ourOpeningName
     );
 
-    console.log("Our opening", ourOpening);
-
     expect(ourOpening.stageOrder.length).toBe(0);
     // Add a stage to our opening
 
