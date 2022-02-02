@@ -15,14 +15,12 @@ export default function StageCard({
   totalApplicants,
   linkHref,
   draggable,
-  totalQuestions,
 }: {
   name: string;
   stageId: string;
   totalApplicants: number;
   linkHref: string;
   draggable: boolean;
-  totalQuestions?: number;
 }) {
   const urlParams = router.query as Pick<CUSTOM_QUERY, "stageId">;
 
@@ -52,18 +50,6 @@ export default function StageCard({
               displayType={"text"}
             />
           </p>
-          {totalQuestions && (
-            <>
-              <QuestionMarkCircleIcon className="w-5 h-5 0" />
-              <p className="text-md font-semibold ">
-                <NumberFormat
-                  value={totalQuestions}
-                  thousandSeparator={true}
-                  displayType={"text"}
-                />
-              </p>
-            </>
-          )}
         </div>
       </dd>
     </div>

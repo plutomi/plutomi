@@ -2,7 +2,8 @@ import { FormEvent, Fragment, useState } from "react";
 import { Dialog, Transition } from "@headlessui/react";
 import { XIcon, ArrowRightIcon } from "@heroicons/react/outline";
 import useStore from "../../utils/store";
-import { CreateQuestion } from "../../adapters/Questions";
+import { CreateQuestion, GetQuestionsInOrgURL } from "../../adapters/Questions";
+import { mutate } from "swr";
 const UrlSafeString = require("url-safe-string"),
   tagGenerator = new UrlSafeString({ joinString: "_" });
 
@@ -29,6 +30,7 @@ export default function CreateQuestionModal() {
     } catch (error) {
       alert(error.response.data.message);
     }
+    mutate(GetQuestionsInOrgURL());
   };
 
   const visibility = useStore((state) => state.showCreateQuestionModal);

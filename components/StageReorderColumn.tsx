@@ -136,7 +136,6 @@ export default function StageReorderColumn() {
                               stageId={stage.stageId}
                               linkHref={`/openings/${openingId}/stages/${stage.stageId}/settings`}
                               draggable={true}
-                              totalQuestions={stage.questionOrder.length}
                             />
                           </div>
                         )}

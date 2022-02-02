@@ -14,22 +14,20 @@ import { CheckIcon, SelectorIcon } from "@heroicons/react/outline";
 import { DynamoQuestion } from "../../types/dynamo";
 import * as Questions from "../../adapters/Questions";
 import { mutate } from "swr";
-
-function classNames(...classes) {
-  return classes.filter(Boolean).join(" ");
-}
+import combineClassNames from "../../utils/combineClassNames";
+import { loadTest } from "loadtest";
+import * as Stages from "../../adapters/Stages";
 
 const tabs = [
   { id: 1, name: "Questions" },
-  { id: 2, name: "Rules (TODO)?" },
-  // { id: 3, name: "Messages" }, // TODO add get messages (Twilio)
+  { id: 2, name: "Rules (TODO)" },
 ];
 
 export default function StageSettingsContent() {
   const router = useRouter();
   const [localSearch, setLocalSearch] = useState("");
   const [currentActive, setCurrentActive] = useState(1); // Id of item
-  const { orgQuestions, isOrgQuestionsLoading, isOrgQuestionsError } =
+  let { orgQuestions, isOrgQuestionsLoading, isOrgQuestionsError } =
     useQuestionsInOrg();
   const { openingId, stageId } = router.query as Pick<
     CUSTOM_QUERY,
@@ -38,12 +36,13 @@ export default function StageSettingsContent() {
   const { stageQuestions, isStageQuestionsLoading, isStageQuestionsError } =
     useQuestionsInStage({ openingId, stageId });
 
+  const [filteredOrgQuestions, setFilteredOrgQuestions] =
+    useState(orgQuestions);
   const [show, setShow] = useState(false);
   const [selected, setSelected] = useState(null);
 
-  const handleSearch = async () => {
-    // TODO get all questions based on current localSearch text
-    console.log(localSearch);
+  const handleSearch = async (value: string) => {
+    setLocalSearch(value);
   };
 
   const handleAdd = async (question: DynamoQuestion) => {
@@ -58,9 +57,19 @@ export default function StageSettingsContent() {
       });
 
       alert(data.message);
+      setLocalSearch("");
     } catch (error) {
       alert(error.response.data.message);
     }
+    // Refresh the questionOrder and update the search results
+    mutate(
+      Stages.GetStageInfoURL({
+        openingId,
+        stageId,
+      })
+    );
+
+    // Refresh the questions in the stage
     mutate(
       Questions.GetQuestionsInStageURL({
         openingId,
@@ -81,6 +90,16 @@ export default function StageSettingsContent() {
     } catch (error) {
       alert(error.response.data.message);
     }
+
+    // Refresh the questionOrder and update the search results
+    mutate(
+      Stages.GetStageInfoURL({
+        openingId,
+        stageId,
+      })
+    );
+
+    // Refresh the questions in the stage
     mutate(
       Questions.GetQuestionsInStageURL({
         openingId,
@@ -88,9 +107,6 @@ export default function StageSettingsContent() {
       })
     );
   };
-  useEffect(() => {
-    handleSearch();
-  }, [localSearch]);
 
   const { user, isUserLoading, isUserError } = useSelf();
   let { opening, isOpeningLoading, isOpeningError } = useOpeningInfo(openingId);
@@ -103,6 +119,33 @@ export default function StageSettingsContent() {
     stageId
   );
 
+  const handleShow = () => {
+    setShow(true);
+    if (localSearch.toLowerCase().trim() === "") {
+      setFilteredOrgQuestions(orgQuestions);
+    }
+    setFilteredOrgQuestions(
+      orgQuestions?.filter((question) =>
+        question.GSI1SK.toLowerCase()
+          .trim()
+          .includes(localSearch.toLowerCase().trim())
+      )
+    );
+  };
+  const handleOnBlur = () => {
+    setShow(false);
+    setFilteredOrgQuestions(orgQuestions);
+  };
+
+  useEffect(() => {
+    setFilteredOrgQuestions(
+      orgQuestions?.filter((question) =>
+        question.GSI1SK.toLowerCase()
+          .trim()
+          .includes(localSearch.toLowerCase().trim())
+      )
+    );
+  }, [localSearch]);
   if (isOpeningLoading) {
     return <Loader text="Loading opening..." />;
   }
@@ -141,7 +184,7 @@ export default function StageSettingsContent() {
                         <button
                           onClick={() => setCurrentActive(tab.id)}
                           key={tab.name}
-                          className={classNames(
+                          className={combineClassNames(
                             tab.id === currentActive
                               ? "border-blue-500 text-blue-600"
                               : "border-transparent text-normal hover:text-dark hover:border-blue-gray-300 transition ease-in-out duration-200",
@@ -157,10 +200,10 @@ export default function StageSettingsContent() {
                       name="search"
                       id="search"
                       value={localSearch}
-                      onClick={() => setShow(true)}
+                      onClick={handleShow}
                       // onClick={() => setShow(true)}
-                      onBlur={() => setShow(false)}
-                      onChange={(e) => setLocalSearch(e.target.value)}
+                      onBlur={handleOnBlur}
+                      onChange={(e) => handleSearch(e.target.value)}
                       placeholder={
                         "Search for a question to add to this stage..."
                       }
@@ -179,69 +222,67 @@ export default function StageSettingsContent() {
                             leaveTo="opacity-0"
                           >
                             <Listbox.Options className="absolute z-10 mt-1 w-full bg-white shadow-lg max-h-60 rounded-md py-1 text-base ring-1 ring-black ring-opacity-5 overflow-auto focus:outline-none sm:text-sm">
-                              {orgQuestions?.map((question: DynamoQuestion) => (
-                                <Listbox.Option
-                                  key={question.questionId}
-                                  disabled={stage?.questionOrder.includes(
-                                    question.questionId
-                                  )}
-                                  className={classNames(
-                                    stage?.questionOrder.includes(
-                                      question.questionId
-                                    )
-                                      ? "disabled text-gray-400 "
-                                      : "hover:bg-blue-500 hover:text-white hover:cursor-pointer",
-                                    "cursor-default select-none relative py-2 pl-3 pr-9 "
-                                  )}
-                                  value={question}
-                                >
-                                  <>
-                                    <span className="">
-                                      {question.GSI1SK}
-                                      {stage?.questionOrder.includes(
+                              {filteredOrgQuestions?.length === 0 ? (
+                                <p className="disabled  text-gray-400 cursor-default select-none relative py-2 pl-3 pr-9 ">
+                                  Question not found
+                                </p>
+                              ) : (
+                                filteredOrgQuestions?.map(
+                                  (question: DynamoQuestion) => (
+                                    <Listbox.Option
+                                      key={question.questionId}
+                                      disabled={stage?.questionOrder.includes(
                                         question.questionId
-                                      ) && " - Already added"}
-                                    </span>
-
-                                    {stage?.questionOrder.includes(
-                                      question.questionId
-                                    ) && (
-                                      <button
-                                        onClick={() => handleRemove(question)}
-                                        className="ml-8 px-2 py-1 right-0 border border-red-500 rounded-md text-red-500 bg-white hover:text-white hover:bg-red-500 transition ease-in duration-100"
-                                      >
-                                        Remove
-                                      </button>
-                                    )}
-                                  </>
-                                </Listbox.Option>
-                              ))}
+                                      )}
+                                      className={combineClassNames(
+                                        stage?.questionOrder.includes(
+                                          question.questionId
+                                        )
+                                          ? "disabled text-gray-400 "
+                                          : "hover:bg-blue-500 hover:text-white hover:cursor-pointer",
+                                        "cursor-default select-none relative py-2 pl-3 pr-9 "
+                                      )}
+                                      value={question}
+                                    >
+                                      <>
+                                        <span className="">
+                                          {question.GSI1SK}
+                                          {stage?.questionOrder.includes(
+                                            question.questionId
+                                          ) && " - Already added"}
+                                        </span>
+                                      </>
+                                    </Listbox.Option>
+                                  )
+                                )
+                              )}
                             </Listbox.Options>
                           </Transition>
                         </div>
                       </>
                     </Listbox>
-                    <div className="w-full border m-4 bg-blue-50">
-                      <p>ORG QUESTIONS:</p>
-                      <div>
-                        {orgQuestions?.map((question: DynamoQuestion) => {
-                          return (
-                            <p key={question.questionId}>{question.GSI1SK}</p>
-                          );
-                        })}
-                      </div>
+                    <div className="w-full p-4 rounded-md">
+                      <ul role="list" className="space-y-3">
+                        {stageQuestions?.map(
+                          (question: DynamoQuestion, index) => (
+                            <li
+                              key={question.questionId}
+                              className="flex  border justify-between items-center bg-white shadow overflow-hidden px-4 py-4 sm:px-6 sm:rounded-md"
+                            >
+                              <p>
+                                {index + 1}. {question.GSI1SK}
+                              </p>
+                              <button
+                                onClick={() => handleRemove(question)}
+                                className=" ml-8 px-2 py-1 right-0 border border-red-500 rounded-md text-red-500 bg-white hover:text-white hover:bg-red-500 transition ease-in duration-100"
+                              >
+                                Remove
+                              </button>
+                            </li>
+                          )
+                        )}
+                      </ul>
                     </div>
-                    <div className="w-full border p-4 bg-purple-50">
-                      <p>Stage QUESTIONS:</p>
-                      <div>
-                        {stageQuestions?.map((question: DynamoQuestion) => {
-                          return (
-                            <p key={question.questionId}>{question.GSI1SK}</p>
-                          );
-                        })}
-                      </div>
-                    </div>
-                    <p>{JSON.stringify(stage)}</p>
                   </div>
                 </div>
               </div>
