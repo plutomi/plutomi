@@ -24,7 +24,10 @@ export default function AlreadySignedIn() {
   return (
     <section id="login" className="flex  justify-center mx-auto ">
       <div className="mx-auto  flex-col md:flex-wrap text-center space-y-2 md:space-y-0  justify-center space-x-2  items-center text-lg text-blue-gray-600 ">
-        <p className="px-2 py-2"> Signed in as {user?.email}</p>
+        <p className="px-2 py-2">
+          {" "}
+          Signed in as <strong>{user?.email}</strong>
+        </p>
 
         <Link href="/dashboard">
           <a

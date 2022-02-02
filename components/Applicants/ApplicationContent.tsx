@@ -2,7 +2,7 @@ import usePublicApplicant from "../../SWR/usePublicApplicant";
 import { useRouter } from "next/router";
 import Loader from "../Loader";
 import { useState } from "react";
-import useAllQuestions from "../../SWR/useAllQuestions";
+import useQuestionsInOrg from "../../SWR/useQuestionsInOrg";
 import { AnswerQuestions } from "../../adapters/Applicants";
 import { CUSTOM_QUERY } from "../../types/main";
 export default function ApplicationContent() {
@@ -16,9 +16,9 @@ export default function ApplicationContent() {
   const { applicant, isApplicantLoading, isApplicantError } =
     usePublicApplicant(applicantId);
 
-  const { questions, isAllQuestionsLoading, isAllQuestionsError } =
-    useAllQuestions(orgId, applicant?.stageId);
-  if (isAllQuestionsLoading) {
+  const { questions, isOrgQuestionsLoading, isOrgQuestionsError } =
+    useQuestionsInOrg(orgId, applicant?.stageId);
+  if (isOrgQuestionsLoading) {
     return <Loader text="Loading questions..." />;
   }
 

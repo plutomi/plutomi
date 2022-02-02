@@ -26,6 +26,7 @@ export default class DynamoDBStack extends cdk.Stack {
       timeToLiveAttribute: "ttlExpiry",
       billingMode: dynamodb.BillingMode.PAY_PER_REQUEST,
       stream: dynamodb.StreamViewType.NEW_AND_OLD_IMAGES,
+      pointInTimeRecovery: true,
     });
 
     this.table.addGlobalSecondaryIndex({

@@ -144,7 +144,7 @@ export default function SignedInNav({ current }) {
                           ) : (
                             <>
                               <div className=" text-light">
-                                Logged in as {user?.email}
+                                Signed in as <strong>{user?.email}</strong>
                               </div>
                             </>
                           )}

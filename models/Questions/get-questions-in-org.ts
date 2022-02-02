@@ -23,8 +23,8 @@ export default async function GetQuestionsInOrg(
   };
 
   try {
-    const allQuestions = await Dynamo.send(new QueryCommand(params));
-    return [allQuestions.Items as DynamoQuestion[], null];
+    const orgQuestions = await Dynamo.send(new QueryCommand(params));
+    return [orgQuestions.Items as DynamoQuestion[], null];
   } catch (error) {
     return [null, error];
   }

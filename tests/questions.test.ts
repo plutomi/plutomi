@@ -300,8 +300,8 @@ describe("Questions", () => {
       );
     }
   });
-  it("allows deleting a question from a stage", async () => {
-    expect.assertions(2);
+  it("allows removing a question from a stage", async () => {
+    expect.assertions(4);
     const ourStage = await Stages.GetStageInfo({
       openingId,
       stageId,
@@ -310,12 +310,14 @@ describe("Questions", () => {
     const oldQuestionOrder = ourStage.data.questionOrder;
 
     // Delete the last item
-    await Questions.DeleteQuestionFromStage({
+    const deleteSuccess = await Questions.DeleteQuestionFromStage({
       openingId,
       stageId,
       questionId: oldQuestionOrder.slice(-1)[0],
     });
 
+    expect(deleteSuccess.data.status).toBe(200);
+    expect(deleteSuccess.data.message).toBe("Question removed from stage!");
     const updatedStage = await Stages.GetStageInfo({
       openingId,
       stageId,
@@ -401,4 +403,11 @@ describe("Questions", () => {
     expect(questions.length).toBe(4);
     expect(onlyIds).toStrictEqual(properOrder);
   });
+
+  it.todo(
+    "increments the totalStages count on a question when adding it to a stage"
+  );
+  it.todo(
+    "decrements the totalStages count on a question when removing it from a stage"
+  );
 });

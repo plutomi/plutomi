@@ -27,12 +27,14 @@ export default function QuestionItem({
 
   const [isHovering, setIsHovering] = useState(false);
 
-  const handleDelete = async (questionId: string) => {
-    if (!confirm("Are you sure you want to delete this question?")) {
+  const handleDelete = async (question: DynamoQuestion) => {
+    const deleteMessage = "Are you sure you want to delete this question?";
+
+    if (!confirm(deleteMessage)) {
       return;
     }
     try {
-      const data = await DeleteQuestionFromOrg(questionId);
+      const data = await DeleteQuestionFromOrg(question.questionId);
       alert(data.data.message);
       mutate(GetQuestionsInOrgURL());
     } catch (error) {
@@ -75,7 +77,7 @@ export default function QuestionItem({
           <PencilAltIcon className="w-6 h-6" />
         </button>
         <button
-          onClick={() => handleDelete(question?.questionId)}
+          onClick={() => handleDelete(question)}
           className="rounded-full hover:bg-white text-red-500 transition ease-in-out duration-200 px-3 py-3 text-md"
         >
           <TrashIcon className="w-6 h-6" />

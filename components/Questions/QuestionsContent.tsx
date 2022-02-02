@@ -1,5 +1,5 @@
 import Loader from "../Loader";
-import useAllQuestions from "../../SWR/useAllQuestions";
+import useQuestionsInOrg from "../../SWR/useQuestionsInOrg";
 import QuestionItem from "./QuestionItem";
 import { DynamoQuestion } from "../../types/dynamo";
 import EmptyQuestionsState from "./EmptyQuestionState";
@@ -8,21 +8,21 @@ import useStore from "../../utils/store";
 import { PlusIcon } from "@heroicons/react/solid";
 import UpdateQuestionModal from "./UpdateQuestionModal";
 export default function QuestionsContent() {
-  const { allQuestions, isAllQuestionsLoading, isAllQuestionsError } =
-    useAllQuestions();
+  const { orgQuestions, isOrgQuestionsLoading, isOrgQuestionsError } =
+    useQuestionsInOrg();
 
   const openCreateQuestionModal = useStore(
     (state) => state.openCreateQuestionModal
   );
   const currentQuestion = useStore((state) => state.currentQuestion);
-  if (isAllQuestionsLoading) {
+  if (isOrgQuestionsLoading) {
     return <Loader text="Loading questions..." />;
   }
 
   return (
     <div className="">
       <CreateQuestionModal />
-      {allQuestions?.length === 0 ? (
+      {orgQuestions?.length === 0 ? (
         <EmptyQuestionsState />
       ) : (
         <div>
@@ -43,7 +43,7 @@ export default function QuestionsContent() {
               role="list"
               className="divide-y divide-gray-200 mx-auto max-w-xl flex-col space-y-4   "
             >
-              {allQuestions?.map((question: DynamoQuestion) => (
+              {orgQuestions?.map((question: DynamoQuestion) => (
                 <QuestionItem key={question?.questionId} question={question} />
               ))}
             </ul>

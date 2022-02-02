@@ -61,7 +61,7 @@ export default function StageReorderColumn() {
       return;
     }
 
-    let newStageOrder = Array.from(opening.stageOrder);
+    let newStageOrder: string[] = Array.from(opening.stageOrder);
     newStageOrder.splice(source.index, 1);
     newStageOrder.splice(destination.index, 0, draggableId);
     let newOrder = newStageOrder.map((i) =>
@@ -71,8 +71,11 @@ export default function StageReorderColumn() {
     setNewStages(newOrder);
 
     try {
-      await UpdateOpening(openingId, {
-        stageOrder: newStageOrder,
+      await UpdateOpening({
+        openingId,
+        newValues: {
+          stageOrder: newStageOrder,
+        },
       });
     } catch (error) {
       console.error(error.response.data.message);
@@ -133,6 +136,7 @@ export default function StageReorderColumn() {
                               stageId={stage.stageId}
                               linkHref={`/openings/${openingId}/stages/${stage.stageId}/settings`}
                               draggable={true}
+                              totalQuestions={stage.questionOrder.length}
                             />
                           </div>
                         )}

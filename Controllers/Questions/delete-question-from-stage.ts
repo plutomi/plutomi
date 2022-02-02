@@ -47,6 +47,6 @@ const main = async (req: Request, res: Response) => {
     return res.status(status).json(body);
   }
 
-  return res.status(200).json({ message: "Question deleted!" });
+  return res.status(200).json({ message: "Question removed from stage!" });
 };
 export default main;
