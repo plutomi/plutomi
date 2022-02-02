@@ -3,7 +3,7 @@ import { useState } from "react";
 import { RequestLoginLink } from "../adapters/Auth";
 
 export default function Login({ loggedOutPageText }) {
-  const [email, setemail] = useState("");
+  const [email, setEmail] = useState("");
   const [submittedText, setSubmittedText] = useState(
     `We've sent a magic login link to your email!`
   );
@@ -11,7 +11,7 @@ export default function Login({ loggedOutPageText }) {
   const [buttonText, setButtonText] = useState("Send Link");
 
   const handleEmailChange = (newEmail) => {
-    setemail(newEmail);
+    setEmail(newEmail);
   };
 
   const sendEmail = async (e) => {
