@@ -1,6 +1,9 @@
 import React from "react";
 import Link from "next/dist/client/link";
-import { UserGroupIcon } from "@heroicons/react/outline";
+import {
+  UserGroupIcon,
+  QuestionMarkCircleIcon,
+} from "@heroicons/react/outline";
 import NumberFormat from "react-number-format";
 import _ from "lodash";
 import router from "next/router";
@@ -12,14 +15,18 @@ export default function StageCard({
   totalApplicants,
   linkHref,
   draggable,
+}: {
+  name: string;
+  stageId: string;
+  totalApplicants: number;
+  linkHref: string;
+  draggable: boolean;
 }) {
   const urlParams = router.query as Pick<CUSTOM_QUERY, "stageId">;
 
   const content = (
     <div
-      className={`border my-6 shadow-xs py-4 text-center  ${
-        !draggable ? " hover:border-blue-500" : "" // Only show blue border on hover on the stage carousel
-      } transition ease-in-out duration-300 rounded-xl overflow-hidden ${
+      className={`border my-4 shadow-xs py-4 text-center hover:border-blue-500  transition ease-in-out duration-300 rounded-xl overflow-hidden ${
         stageId === urlParams.stageId
           ? " bg-sky-50  border border-t-4 border-t-blue-500"
           : " bg-white"

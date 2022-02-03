@@ -1,4 +1,4 @@
-import StageCard from "./StageCard";
+import DisplayStageCard from "./DisplayStageCard";
 export default function Example({ stages, name }) {
   return (
     <div className="relative my-8 mx-auto text-center lg:max-w-full max-w-sm ">
@@ -8,7 +8,7 @@ export default function Example({ stages, name }) {
 
       <div className="my-4 grid grid-cols-1 gap-4 lg:grid-cols-5 mx-12 lg:mx-auto">
         {stages?.map((stage) => (
-          <StageCard
+          <DisplayStageCard
             className={null}
             key={stage.id}
             stageTitle={stage.name}

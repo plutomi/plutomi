@@ -26,12 +26,11 @@ export default function LoginHomepage({ callbackUrl }: CallbackUrl) {
     e.preventDefault();
 
     try {
-      const { message } = await RequestLoginLink(
+      const { data } = await RequestLoginLink({
         email,
-        window.location.href + DEFAULTS.REDIRECT
-      );
+      });
 
-      setSubmittedText(message);
+      setSubmittedText(data.message);
       setEmailSubmitted(true);
     } catch (error) {
       console.log(error);

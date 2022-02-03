@@ -3,11 +3,12 @@ import { DEFAULTS, JOI_SETTINGS, JoiOrgId } from "../../Config";
 import * as CreateError from "../../utils/createError";
 import * as Users from "../../models/Users";
 import * as Orgs from "../../models/Orgs";
+import * as Invites from "../../models/Invites";
 import Joi from "joi";
-import { DynamoNewOrg } from "../../types/dynamo";
+import { DynamoOrg } from "../../types/dynamo";
 
 export type APICreateOrgOptions = Required<
-  Pick<DynamoNewOrg, "orgId" | "displayName">
+  Pick<DynamoOrg, "orgId" | "displayName">
 >;
 
 const schema = Joi.object({
@@ -31,7 +32,7 @@ const main = async (req: Request, res: Response) => {
     return res.status(403).json({ message: "You already belong to an org!" });
   }
 
-  const [pendingInvites, error] = await Users.GetInvitesForUser({
+  const [pendingInvites, error] = await Invites.GetInvitesForUser({
     userId: session.userId,
   });
 

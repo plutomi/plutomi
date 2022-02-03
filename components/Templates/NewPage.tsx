@@ -15,11 +15,6 @@ export default function NewPage({
   const router = useRouter();
   const { user, isUserLoading, isUserError } = useSelf();
 
-  // When rendering client side don't display anything until loading is complete
-  if (typeof window !== "undefined" && isUserLoading) {
-    return <Loader text="Loading..." />;
-  }
-
   if (isUserError) {
     return <Login loggedOutPageText={loggedOutPageText} />;
   }

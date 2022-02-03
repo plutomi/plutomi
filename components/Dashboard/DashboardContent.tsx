@@ -40,8 +40,8 @@ export default function DashboardContent() {
     }
 
     try {
-      const { message } = await DeleteOrg();
-      alert(message);
+      const { data } = await DeleteOrg();
+      alert(data.message);
     } catch (error) {
       alert(error.response.data.message);
     }

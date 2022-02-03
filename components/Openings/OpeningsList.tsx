@@ -11,7 +11,7 @@ import useSelf from "../../SWR/useSelf";
 import _ from "lodash";
 import useStore from "../../utils/store";
 import { ViewBoardsIcon } from "@heroicons/react/outline";
-import { DOMAIN_NAME, WEBSITE_URL } from "../../Config";
+import { DOMAIN_NAME, OPENING_STATE, WEBSITE_URL } from "../../Config";
 export default function OpeningList() {
   const { user, isUserLoading, isUserError } = useSelf();
   let { openings, isOpeningsLoading, isOpeningsError } = useOpenings();
@@ -49,7 +49,7 @@ export default function OpeningList() {
                         {opening?.openingName}
                       </h1>
                       <div className="ml-2 flex-shrink-0 flex">
-                        {opening?.GSI1SK === "PUBLIC" ? (
+                        {opening?.GSI1SK === OPENING_STATE.PUBLIC ? (
                           <p className="px-2 inline-flex text-sm leading-5 font-semibold rounded-full bg-green-100 text-green-800">
                             Public
                           </p>
@@ -76,7 +76,7 @@ export default function OpeningList() {
                           />
                           {opening?.totalStages}
                         </p>
-                        {opening?.GSI1SK === "PUBLIC" ? (
+                        {opening?.GSI1SK === OPENING_STATE.PUBLIC ? (
                           <p className="mt-2 flex items-center text-lg text-normal sm:mt-0 sm:ml-6">
                             <ClickToCopy
                               showText={"Application Link"}

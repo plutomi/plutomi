@@ -1,13 +1,13 @@
 import { UpdateCommandInput, UpdateCommand } from "@aws-sdk/lib-dynamodb";
 import { Dynamo } from "../../AWSClients/ddbDocClient";
 import { ENTITY_TYPES } from "../../Config";
-import { DynamoNewUser } from "../../types/dynamo";
+import { DynamoUser } from "../../types/dynamo";
 import { UpdateUserInput } from "../../types/main";
 const { DYNAMO_TABLE_NAME } = process.env;
 import { SdkError } from "@aws-sdk/types";
 export default async function Update(
   props: UpdateUserInput
-): Promise<[DynamoNewUser, null] | [null, SdkError]> {
+): Promise<[DynamoUser, null] | [null, SdkError]> {
   const { userId, newValues } = props;
 
   // Build update expression
@@ -31,12 +31,11 @@ export default async function Update(
     UpdateExpression: `SET ` + allUpdateExpressions.join(", "),
     ExpressionAttributeValues: allAttributeValues,
     TableName: `${process.env.NODE_ENV}-${DYNAMO_TABLE_NAME}`,
-
     ConditionExpression: "attribute_exists(PK)",
   };
   try {
     const updatedUser = await Dynamo.send(new UpdateCommand(params));
-    return [updatedUser.Attributes as DynamoNewUser, null];
+    return [updatedUser.Attributes as DynamoUser, null];
   } catch (error) {
     return [null, error];
   }

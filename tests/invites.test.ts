@@ -1,6 +1,9 @@
-import { AXIOS_INSTANCE as axios } from "../Config";
 import { nanoid } from "nanoid";
-import { EMAILS, ERRORS } from "../Config";
+import { EMAILS, ERRORS, AXIOS_INSTANCE as axios } from "../Config";
+import * as Invites from "../adapters/Invites";
+import * as Orgs from "../adapters/Orgs";
+import * as Users from "../adapters/Users";
+import { DynamoOrgInvite } from "../types/dynamo";
 const UrlSafeString = require("url-safe-string"),
   tagGenerator = new UrlSafeString();
 
@@ -11,22 +14,23 @@ describe("Openings", () => {
   beforeAll(async () => {
     const data = await axios.post(`/jest-setup`);
     const cookie = data.headers["set-cookie"][0];
-
     axios.defaults.headers.Cookie = cookie;
   });
 
   it("blocks creating invites if you're not in an org", async () => {
+    expect.assertions(2);
     try {
-      await axios.post("/invites");
+      await Invites.CreateInvite("");
     } catch (error) {
       expect(error.response.status).toBe(403);
       expect(error.response.data.message).toBe(ERRORS.NEEDS_ORG);
     }
   });
 
-  it("blocks viewing your invites if you're not in an org", async () => {
+  it("blocks viewing org invites if a user doesn't have an org", async () => {
+    expect.assertions(2);
     try {
-      await axios.get("/invites");
+      await Invites.GetOrgInvites("123");
     } catch (error) {
       expect(error.response.status).toBe(403);
       expect(error.response.data.message).toBe(ERRORS.NEEDS_ORG);
@@ -34,17 +38,26 @@ describe("Openings", () => {
   });
 
   const orgId = nanoid(20);
-  it("blocks creating invites if recipientEmail is not an email", async () => {
-    // Create an org
-    await axios.post("/orgs", {
+
+  it("blocks viewing org invites for different orgs", async () => {
+    expect.assertions(2);
+    await Orgs.CreateOrg({
       orgId,
       displayName: nanoid(20),
     });
+    try {
+      await Invites.GetOrgInvites("123");
+    } catch (error) {
+      expect(error.response.status).toBe(403);
+      expect(error.response.data.message).toBe(ERRORS.NOT_SAME_ORG);
+    }
+  });
+
+  it("blocks creating invites if recipientEmail is not an email", async () => {
+    expect.assertions(3);
 
     try {
-      await axios.post("/invites", {
-        recipientEmail: "beans",
-      });
+      await Invites.CreateInvite("beans");
     } catch (error) {
       expect(error.response.status).toBe(400);
       expect(error.response.data.message).toContain("body.recipientEmail");
@@ -53,10 +66,9 @@ describe("Openings", () => {
   });
 
   it("blocks creating invites if recipientEmail is a disposable email", async () => {
+    expect.assertions(2);
     try {
-      await axios.post("/invites", {
-        recipientEmail: "test@10minutemail.com",
-      });
+      await Invites.CreateInvite("test@10minutemail.com");
     } catch (error) {
       expect(error.response.status).toBe(400);
       expect(error.response.data.message).toBe(ERRORS.EMAIL_VALIDATION);
@@ -64,12 +76,11 @@ describe("Openings", () => {
   });
 
   it("blocks inviting yourself", async () => {
-    const self = await axios.get("/users/self");
+    expect.assertions(2);
+    const self = await Users.GetSelfInfo();
 
     try {
-      await axios.post("/invites", {
-        recipientEmail: self.data.email,
-      });
+      await Invites.CreateInvite(self.data.email);
     } catch (error) {
       expect(error.response.status).toBe(403);
       expect(error.response.data.message).toBe("You can't invite yourself");
@@ -77,15 +88,13 @@ describe("Openings", () => {
   });
 
   it("blocks inviting someone that already has a pending invite for your org", async () => {
+    expect.assertions(2);
     // Create the invite
-    await axios.post("/invites", {
-      recipientEmail: EMAILS.TESTING2,
-    });
+    await Invites.CreateInvite(EMAILS.TESTING2);
 
     try {
-      await axios.post("/invites", {
-        recipientEmail: EMAILS.TESTING2,
-      });
+      // Try it again
+      await Invites.CreateInvite(EMAILS.TESTING2);
     } catch (error) {
       expect(error.response.status).toBe(403);
       expect(error.response.data.message).toBe(
@@ -95,31 +104,28 @@ describe("Openings", () => {
   });
 
   it("allows creating invites", async () => {
-    const res = await axios.post("/invites", {
-      recipientEmail: EMAILS.TESTING3,
-    });
-
-    expect(res.status).toBe(201);
-    expect(res.data.message).toContain("Invite sent to");
+    expect.assertions(2);
+    const data = await Invites.CreateInvite(EMAILS.TESTING3);
+    expect(data.status).toBe(201);
+    expect(data.data.message).toContain("Invite sent to");
   });
 
   it("allows viewing invites for your org", async () => {
-    const self = await axios.get("/users/self");
+    expect.assertions(3);
+    const self = await Users.GetSelfInfo();
 
     // Create the invite
-    await axios.post("/invites", {
-      recipientEmail: EMAILS.TESTING4,
-    });
+    await Invites.CreateInvite(EMAILS.TESTING4);
 
-    const response = await axios.get(`/orgs/${self.data.orgId}/invites`);
-
+    // TODO this needs to be implemented in the frontend
+    const response = await Invites.GetOrgInvites(self.data.orgId);
     expect(response.status).toBe(200);
     expect(response.data.length).toBeGreaterThanOrEqual(1);
     expect(response.data[0].createdBy.email).toBe(self.data.email);
   });
 
-  // ToDO this returns you already belong to an org as that is the first thing that is checked
   it("blocks you from creating an org if you have pending invites", async () => {
+    expect.assertions(2);
     // Create another user
     const data = await axios.post(`/jest-setup`, {
       email: EMAILS.TESTING3, // invited up above
@@ -128,11 +134,8 @@ describe("Openings", () => {
 
     axios.defaults.headers.Cookie = cookie;
 
-    await axios.get("/users/self");
-
     try {
-      // TODO ORG not joining, causing errors
-      await axios.post("/orgs", {
+      await Orgs.CreateOrg({
         orgId: nanoid(10),
         displayName: nanoid(20),
       });
@@ -143,11 +146,11 @@ describe("Openings", () => {
   });
 
   it("allows you as a user to view your pending invites", async () => {
-    const self = await axios.get("/users/self");
-
-    const res = await axios.get("/invites");
+    expect.assertions(3)
+    const self = await Users.GetSelfInfo();
+    const res = await Invites.GetUserInvites();
     expect(res.status).toBe(200);
-    expect(res.data.length).toBeGreaterThanOrEqual(1); // TODO invites not being created
+    expect(res.data.length).toBeGreaterThanOrEqual(1);
     expect(res.data[0].recipient.email).toBe(self.data.email);
   });
 
@@ -178,24 +181,25 @@ describe("Openings", () => {
   // Sign in as that user
   // Accept / reject
   it("allows you to accept invites", async () => {
+    expect.assertions(3);
     // Create a new user
     const data = await axios.post(`/jest-setup`, {
       email: `${nanoid(7)}+${EMAILS.TESTING}`,
     });
     const cookie = data.headers["set-cookie"][0];
     axios.defaults.headers.Cookie = cookie;
-    // const self = await axios.get("/users/self");
 
     const orgId = tagGenerator.generate(nanoid(20));
 
     // Join org
-    await axios.post("/orgs", { orgId, displayName: nanoid(20) });
+    await Orgs.CreateOrg({
+      orgId,
+      displayName: nanoid(20),
+    });
 
     const otherUserEmail = `${nanoid(7)}+${EMAILS.TESTING3}`;
     // Create an invite for another user
-    await axios.post("/invites", {
-      recipientEmail: otherUserEmail,
-    });
+    await Invites.CreateInvite(otherUserEmail);
 
     // Sign in as that other user
     const data2 = await axios.post(`/jest-setup`, {
@@ -204,18 +208,21 @@ describe("Openings", () => {
     const cookie2 = data2.headers["set-cookie"][0];
     axios.defaults.headers.Cookie = cookie2;
 
-    const invites = await axios.get("/invites");
+    const invites = await Invites.GetUserInvites();
 
-    const ourInvite = invites.data.find((invite) => invite.orgId === orgId);
-    const accepted = await axios.post(`/invites/${ourInvite.inviteId}`);
+    const ourInvite = invites.data.find(
+      (invite: DynamoOrgInvite) => invite.orgId === orgId
+    );
+    const accepted = await Invites.AcceptInvite(ourInvite.inviteId);
 
-    const self = await axios.get("/users/self");
+    const self = await Users.GetSelfInfo();
     expect(accepted.status).toBe(200);
     expect(accepted.data.message).toContain("You've joined the");
     expect(self.data.orgId).toBe(orgId);
   });
 
   it("allows rejecting invites", async () => {
+    expect.assertions(3);
     // Create a new user
     const data = await axios.post(`/jest-setup`, {
       email: `${nanoid(7)}+${EMAILS.TESTING}`,
@@ -225,13 +232,11 @@ describe("Openings", () => {
 
     // Join org
     const orgId = tagGenerator.generate(nanoid(20));
-    await axios.post("/orgs", { orgId, displayName: nanoid(20) });
+    await Orgs.CreateOrg({ orgId, displayName: nanoid(20) });
 
     const otherUserEmail = `${nanoid(7)}+${EMAILS.TESTING4}`;
     // Create an invite for another user
-    await axios.post("/invites", {
-      recipientEmail: otherUserEmail,
-    });
+    await Invites.CreateInvite(otherUserEmail);
 
     // Sign in as that other user
     const data2 = await axios.post(`/jest-setup`, {
@@ -240,12 +245,14 @@ describe("Openings", () => {
     const cookie2 = data2.headers["set-cookie"][0];
     axios.defaults.headers.Cookie = cookie2;
 
-    const invites = await axios.get("/invites");
+    const invites = await Invites.GetUserInvites();
 
-    const ourInvite = invites.data.find((invite) => invite.orgId === orgId);
-    const accepted = await axios.delete(`/invites/${ourInvite.inviteId}`);
+    const ourInvite = invites.data.find(
+      (invite: DynamoOrgInvite) => invite.orgId === orgId
+    );
+    const accepted = await Invites.RejectInvite(ourInvite.inviteId);
 
-    const self = await axios.get("/users/self");
+    const self = await Users.GetSelfInfo();
     expect(accepted.status).toBe(200);
     expect(accepted.data.message).toContain("Invite rejected");
     expect(self.data.orgId).toBe("NO_ORG_ASSIGNED");

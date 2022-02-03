@@ -8,7 +8,7 @@ import useOpeningInfo from "../../SWR/useOpeningInfo";
 import { useRouter } from "next/router";
 import useOpenings from "../../SWR/useOpenings";
 import { CUSTOM_QUERY } from "../../types/main";
-import { WEBSITE_URL } from "../../Config";
+import { OPENING_STATE, WEBSITE_URL } from "../../Config";
 export default function StagesHeader() {
   const router = useRouter();
   const { openingId } = router.query as Pick<CUSTOM_QUERY, "openingId">;
@@ -32,7 +32,7 @@ export default function StagesHeader() {
         )}
       </div>
 
-      {opening?.GSI1SK === "PUBLIC" && (
+      {opening?.GSI1SK === OPENING_STATE.PUBLIC && (
         <p className="mt-2 text-md text-normal sm:mt-0 ">
           <ClickToCopy
             showText={"Application Link"}

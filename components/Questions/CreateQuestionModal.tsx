@@ -2,7 +2,8 @@ import { FormEvent, Fragment, useState } from "react";
 import { Dialog, Transition } from "@headlessui/react";
 import { XIcon, ArrowRightIcon } from "@heroicons/react/outline";
 import useStore from "../../utils/store";
-import { CreateQuestion } from "../../adapters/Questions";
+import { CreateQuestion, GetQuestionsInOrgURL } from "../../adapters/Questions";
+import { mutate } from "swr";
 const UrlSafeString = require("url-safe-string"),
   tagGenerator = new UrlSafeString({ joinString: "_" });
 
@@ -15,17 +16,21 @@ export default function CreateQuestionModal() {
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     try {
-      const { message } = await CreateQuestion({
+      const { data } = await CreateQuestion({
         questionId,
         GSI1SK,
         description,
       });
 
-      alert(message);
+      alert(data.message);
+      setQuestionId("");
+      setGSI1SK("");
+      setDescription("");
       closeCreateQuestionModal();
     } catch (error) {
       alert(error.response.data.message);
     }
+    mutate(GetQuestionsInOrgURL());
   };
 
   const visibility = useStore((state) => state.showCreateQuestionModal);
@@ -86,7 +91,8 @@ export default function CreateQuestionModal() {
                       </div>
                       <div className="mt-1">
                         <p className="text-sm text-blue-300">
-                          Questions will be shown to applicants in this stage
+                          Applicants will answer these questions as they go
+                          through stages
                         </p>
                       </div>
                     </div>
@@ -160,21 +166,22 @@ export default function CreateQuestionModal() {
                                 className="block w-full shadow-sm text-sm focus:ring-blue-500 focus:border-blue-500 border-gray-300 rounded-md"
                               />
                             </div>
-                            <div className="relativeitems-start">
-                              <div>
-                                <p className="block text-light text-sm  mt-2">
-                                  A unique key to match applicant move rules
-                                  against. For example:
-                                </p>
-                              </div>
+                            <div className="relative items-start">
+                              <p className="block text-light text-sm  mt-2">
+                                A <strong>unique ID </strong>to match applicant
+                                rules against. For example:
+                              </p>
 
-                              <p className=" text-light text-sm  mt-2">
+                              <p className=" text-light text-sm  mt-1">
                                 IF <strong>vehicle_type</strong> =
                                 &quot;bike&quot;{" "}
                                 <span className="inline-flex text-center items-center">
                                   <ArrowRightIcon className="w-3 h-3" />
                                 </span>{" "}
                                 Move to &quot;Rejected&quot;
+                              </p>
+                              <p className="text-red-500 bold mt-2">
+                                This cannot be updated so choose carefully.
                               </p>
                             </div>
                           </div>

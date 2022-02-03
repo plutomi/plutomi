@@ -4,10 +4,10 @@ import { XIcon } from "@heroicons/react/outline";
 import useStore from "../../utils/store";
 import { mutate } from "swr";
 import { GetSelfInfoURL, GetUserInfoUrl } from "../../adapters/Users";
-import { DynamoNewUser } from "../../types/dynamo";
+import { DynamoUser } from "../../types/dynamo";
 import { UpdateUser } from "../../adapters/Users";
 
-export default function UserProfileModal({ user }: { user: DynamoNewUser }) {
+export default function UserProfileModal({ user }: { user: DynamoUser }) {
   const [firstName, setFirstName] = useState(user?.firstName);
   const [lastName, setLastName] = useState(user?.lastName);
 
@@ -28,8 +28,8 @@ export default function UserProfileModal({ user }: { user: DynamoNewUser }) {
         firstName: user?.firstName === firstName ? undefined : firstName,
         lastName: user?.lastName === lastName ? undefined : lastName,
       };
-      const { message } = await UpdateUser(user?.userId, { ...input });
-      alert(message);
+      const { data } = await UpdateUser(user?.userId, { ...input });
+      alert(data.message);
       closeUserProfileModal();
       mutate(GetUserInfoUrl(user?.userId));
     } catch (error) {

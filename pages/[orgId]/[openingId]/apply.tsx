@@ -43,7 +43,7 @@ export default function Apply() {
           <OpeningApplyPageHeader />
         </header>
 
-        <main className="">
+        <main >
           <OpeningApplyPageContent />
         </main>
       </div>

@@ -8,18 +8,18 @@ import {
   EMAILS,
   TIME_UNITS,
 } from "../../Config";
-import { DynamoNewUser } from "../../types/dynamo";
+import { DynamoUser } from "../../types/dynamo";
 import { CreateUserInput } from "../../types/main";
 import * as Time from "../../utils/time";
 const { DYNAMO_TABLE_NAME } = process.env;
 import { SdkError } from "@aws-sdk/types";
 export default async function CreateUser(
   props: CreateUserInput
-): Promise<[DynamoNewUser, null] | [null, SdkError]> {
+): Promise<[DynamoUser, null] | [null, SdkError]> {
   const { email, firstName, lastName } = props;
 
   const userId = nanoid(ID_LENGTHS.USER);
-  const newUser: DynamoNewUser = {
+  const newUser: DynamoUser = {
     PK: `${ENTITY_TYPES.USER}#${userId}`,
     SK: ENTITY_TYPES.USER,
     firstName: firstName || DEFAULTS.FIRST_NAME,

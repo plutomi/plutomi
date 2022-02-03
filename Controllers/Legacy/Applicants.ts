@@ -150,7 +150,7 @@ export const answer = async (req: Request, res: Response) => {
           orgId: applicant.orgId, // TODO is this needed?
           applicantId: applicantId,
           questionTitle: questionTitle,
-          description: description,
+          description,
           questionResponse: questionResponse,
         };
 

@@ -1,15 +1,15 @@
 // This file is for the actual DynamoDB entries and their Types - ie: A full object with all properties.
 // All  other types are derivatives with Pick, Omit, etc.
-import { DEFAULTS, ENTITY_TYPES, OPENING_PUBLIC_STATE } from "../Config";
-interface DynamoNewStage {
+import { DEFAULTS, ENTITY_TYPES, OPENING_STATE } from "../Config";
+interface DynamoStage {
   /**
    * Primary key for creating a stage - takes `orgId`, `openingId`, & `stageId`
    */
-  PK: `${ENTITY_TYPES.ORG}#${string}#${ENTITY_TYPES.OPENING}#${string}${ENTITY_TYPES.STAGE}#${string}`;
+  readonly PK: `${ENTITY_TYPES.ORG}#${string}#${ENTITY_TYPES.OPENING}#${string}${ENTITY_TYPES.STAGE}#${string}`;
   /**
    * Sort key for a stage, it's just the {@link ENTITY_TYPES.STAGE}
    */
-  SK: ENTITY_TYPES.STAGE;
+  readonly SK: ENTITY_TYPES.STAGE;
   /**
    * The stage entity type {@link ENTITY_TYPES.STAGE}
    */
@@ -23,6 +23,10 @@ interface DynamoNewStage {
    */
   orgId: string;
 
+  /**
+   * An array of questionIds describing how questions should show up
+   */
+  questionOrder: string[];
   /**
    * The Id for the stage
    */
@@ -45,7 +49,7 @@ interface DynamoNewStage {
   GSI1SK: string;
 }
 
-interface DynamoNewQuestion {
+interface DynamoQuestion {
   /**
    * The primary key for the question. Variables are `orgId` and `questionId`
    */
@@ -89,9 +93,14 @@ interface DynamoNewQuestion {
    * The question Title
    */
   GSI1SK: string;
+
+  /**
+   * How many stages this question is attached to
+   */
+  totalStages: number;
 }
 
-interface DynamoNewApplicant {
+interface DynamoApplicant {
   /**
    * Primary key of the applicant where the inputs are `orgId` and `applicantId`
    */
@@ -165,7 +174,7 @@ interface DynamoNewApplicant {
   GSI1SK: `DATE_LANDED#${string}`;
 }
 
-interface DynamoNewApplicantResponse {
+interface DynamoApplicantResponse {
   /**
    * The primary key for the response - needs an `orgId` and `applicantId`
    */
@@ -216,7 +225,7 @@ interface DynamoNewApplicantResponse {
   GSI1SK: ENTITY_TYPES.APPLICANT_RESPONSE; // TODO add timestmap?
 }
 
-interface DynamoNewOpening {
+interface DynamoOpening {
   /**
    * Primary key for creating an opening. Takes an `orgId`
    */
@@ -259,7 +268,7 @@ interface DynamoNewOpening {
   /**
    * Optional, can filter out PUBLIC or PRIVATE openings
    */
-  GSI1SK: OPENING_PUBLIC_STATE;
+  GSI1SK: OPENING_STATE;
   /**
    * Total stages in opening.
    * @default 0
@@ -273,7 +282,7 @@ interface DynamoNewOpening {
   totalApplicants: number;
 }
 
-interface DynamoNewOrgInvite {
+interface DynamoOrgInvite {
   /**
    * Primary key, requires a `userId`
    */
@@ -293,10 +302,10 @@ interface DynamoNewOrgInvite {
   /**
    * Who created this invite, info comes from their session
    */
-  createdBy: Pick<DynamoNewUser, "firstName" | "lastName" | "orgId">;
+  createdBy: Pick<DynamoUser, "firstName" | "lastName" | "orgId">;
 
   recipient: Pick<
-    DynamoNewUser,
+    DynamoUser,
     "userId" | "email" | "unsubscribeKey" | "firstName" | "lastName"
   >;
   /**
@@ -325,7 +334,7 @@ interface DynamoNewOrgInvite {
   GSI1SK: string;
 }
 
-interface DynamoNewUser {
+interface DynamoUser {
   PK: `${ENTITY_TYPES.USER}#${string}`;
   SK: ENTITY_TYPES.USER;
   /**
@@ -354,13 +363,13 @@ interface DynamoNewUser {
   totalInvites: number;
 }
 
-interface DynamoNewLoginLink {
+interface DynamoLoginLink {
   PK: `${ENTITY_TYPES.USER}#${string}`;
   SK: `${ENTITY_TYPES.LOGIN_LINK}#${string}`;
   entityType: ENTITY_TYPES.LOGIN_LINK;
   createdAt: string;
   relativeExpiry: string;
-  user: DynamoNewUser;
+  user: DynamoUser;
   loginLinkUrl: string;
   /**
    * A UNIX date for which Dynamo will auto delete this link
@@ -370,7 +379,7 @@ interface DynamoNewLoginLink {
   GSI1SK: string; // ISO timestamp
 }
 
-interface DynamoNewOrg {
+interface DynamoOrg {
   PK: `${ENTITY_TYPES.ORG}#${string}`;
   SK: ENTITY_TYPES.ORG;
   orgId: string; // The actual org id
@@ -382,11 +391,11 @@ interface DynamoNewOrg {
   displayName: string;
 }
 
-interface DynamoNewLoginEvent {
+interface DynamoLoginEvent {
   PK: `${ENTITY_TYPES.USER}#${string}`; // TODO set login events as org events if the user has an org
   SK: `${ENTITY_TYPES.LOGIN_EVENT}#${string}`;
   createdAt: string; // ISO timestamp
   ttlExpiry: number; // ttl unix expiry
   entityType: ENTITY_TYPES.LOGIN_EVENT;
-  user: DynamoNewUser;
+  user: DynamoUser;
 }

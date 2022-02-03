@@ -27,14 +27,14 @@ export default function ApplicantInfoForm() {
     }
 
     try {
-      const { message } = await CreateApplicant({
+      const { data } = await CreateApplicant({
         orgId: orgId,
         openingId: openingId,
         firstName: firstName,
         lastName: lastName,
         email: email,
       });
-      alert(message);
+      alert(data.message);
     } catch (error) {
       alert(error.response.data.message);
     }

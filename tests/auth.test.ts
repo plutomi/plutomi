@@ -1,11 +1,16 @@
-import { AXIOS_INSTANCE as axios } from "../Config";
-import { API_URL, EMAILS, ERRORS } from "../Config";
-const URL = `${API_URL}/request-login-link`;
+import {
+  EMAILS,
+  ERRORS,
+  AXIOS_INSTANCE as axios,
+  COOKIE_NAME,
+} from "../Config";
+import * as Auth from "../adapters/Auth";
 
 describe("Request login link", () => {
   it("blocks slightly wrong addresses", async () => {
+    expect.assertions(2);
     try {
-      await axios.post(URL, {
+      await Auth.RequestLoginLink({
         email: "wronggmailtypo@gmaill.com",
       });
     } catch (error) {
@@ -15,8 +20,9 @@ describe("Request login link", () => {
   });
 
   it("blocks known disposable emails", async () => {
+    expect.assertions(2);
     try {
-      await axios.post(URL, {
+      await Auth.RequestLoginLink({
         email: "test@10minutemail.com",
       });
     } catch (error) {
@@ -26,8 +32,9 @@ describe("Request login link", () => {
   });
 
   it("needs an actual email address", async () => {
+    expect.assertions(3);
     try {
-      await axios.post(URL, {
+      await Auth.RequestLoginLink({
         email: "beans.com",
       });
     } catch (error) {
@@ -38,20 +45,24 @@ describe("Request login link", () => {
   });
 
   it("can pass in an undefined callback url", async () => {
-    try {
-      const { status, data } = await axios.post(URL + "?callbackUrl=", {
-        email: EMAILS.TESTING,
-      });
+    expect.assertions(2);
+    const data = await Auth.RequestLoginLink({
+      email: EMAILS.TESTING,
+      callbackUrl: undefined,
+    });
 
-      expect(status).toBe(201);
-      expect(data.message).toBe("Login link sent!");
-    } catch (error) {}
+    expect(data.status).toBe(201);
+    expect(data.data.message).toBe(
+      "We've sent a magic login link to your email!"
+    );
   });
 
   it("blocks an invalid callbackUrl", async () => {
+    expect.assertions(3);
     try {
-      await axios.post(URL + "?callbackUrl=http:mongo.", {
+      await Auth.RequestLoginLink({
         email: EMAILS.TESTING,
+        callbackUrl: "http:mongo.",
       });
     } catch (error) {
       expect(error.response.status).toBe(400);
@@ -61,12 +72,12 @@ describe("Request login link", () => {
   });
 
   it("blocks frequent requests from non-admins", async () => {
+    expect.assertions(2);
     try {
-      await axios.post(URL, {
+      await Auth.RequestLoginLink({
         email: "plutomitesting@gmail.com",
       });
-      //
-      await axios.post(URL, {
+      await Auth.RequestLoginLink({
         email: "plutomitesting@gmail.com",
       });
     } catch (error) {
@@ -78,28 +89,32 @@ describe("Request login link", () => {
   });
 
   it("allows admins to skip the request timer", async () => {
-    try {
-      const data = await axios.post(URL, {
-        email: EMAILS.TESTING,
-      });
+    expect.assertions(4);
 
-      expect(data.status).toBe(201);
-      expect(data.data.message).toBe("Login link sent!");
+    const data = await Auth.RequestLoginLink({
+      email: EMAILS.TESTING,
+    });
+    expect(data.status).toBe(201);
+    expect(data.data.message).toBe(
+      "We've sent a magic login link to your email!"
+    );
+    // Try it again
+    const data2 = await Auth.RequestLoginLink({
+      email: EMAILS.TESTING,
+    });
 
-      const data2 = await axios.post(URL, {
-        email: EMAILS.TESTING,
-      });
-
-      expect(data2.status).toBe(201);
-      expect(data2.data.message).toBe("Login link sent!");
-    } catch (error) {}
+    expect(data2.status).toBe(201);
+    expect(data2.data.message).toBe(
+      "We've sent a magic login link to your email!"
+    );
   });
 });
 
 describe("Login", () => {
-  it("fails with an empty login token", async () => {
+  it("fails without a token", async () => {
+    expect.assertions(3);
     try {
-      await axios.get("/login?token=");
+      await Auth.Login("");
     } catch (error) {
       expect(error.response.status).toBe(400);
       expect(error.response.data.message).toContain("query.token");
@@ -107,19 +122,10 @@ describe("Login", () => {
     }
   });
 
-  it("fails without a token", async () => {
-    try {
-      await axios.get("/login");
-    } catch (error) {
-      expect(error.response.status).toBe(400);
-      expect(error.response.data.message).toContain("query.token");
-      expect(error.response.data.message).toContain("is required");
-    }
-  });
-
   it("fails with a bad token", async () => {
+    expect.assertions(2);
     try {
-      await axios.get("/login?token=123");
+      await Auth.Login("123");
     } catch (error) {
       expect(error.response.status).toBe(401);
       expect(error.response.data.message).toBe("Invalid login link");
@@ -134,17 +140,24 @@ describe("Logout", () => {
   beforeAll(async () => {
     const data = await axios.post(`/jest-setup`);
     const cookie = data.headers["set-cookie"][0];
-
     axios.defaults.headers.Cookie = cookie;
   });
 
   it("Deletes the session cookie", async () => {
-    try {
-      const data = await axios.post("/logout");
-      const cookie = data.headers["set-cookie"][0];
-
-      expect(cookie).toBe([]);
-      expect(data.status).toBe(200);
-    } catch (error) {}
+    expect.assertions(3);
+    const data = await Auth.Logout();
+    const cookies = data.headers["set-cookie"];
+    /**
+     * Make sure a set-cookie header is returned with an empty cookie and a negative expiry
+     * In the future, the session data will be stored in Dynamo so this won't matter
+     */
+    expect(Array.isArray(cookies)).toBe(true);
+    expect(
+      // If any set-cookie header matches
+      cookies.some((value: string) =>
+        value.startsWith(`${COOKIE_NAME}=; Max-Age=-1;`)
+      )
+    ).toBe(true);
+    expect(data.status).toBe(200);
   });
 });

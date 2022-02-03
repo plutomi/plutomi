@@ -1,28 +1,34 @@
 import Loader from "../Loader";
-import useAllQuestions from "../../SWR/useAllQuestions";
+import useQuestionsInOrg from "../../SWR/useQuestionsInOrg";
 import QuestionItem from "./QuestionItem";
-import { DynamoNewQuestion } from "../../types/dynamo";
+import { DynamoQuestion } from "../../types/dynamo";
 import EmptyQuestionsState from "./EmptyQuestionState";
 import CreateQuestionModal from "./CreateQuestionModal";
 import useStore from "../../utils/store";
 import { PlusIcon } from "@heroicons/react/solid";
+import UpdateQuestionModal from "./UpdateQuestionModal";
 export default function QuestionsContent() {
-  const { questions, isQuestionsLoading, isQuestionsError } = useAllQuestions();
+  const { orgQuestions, isOrgQuestionsLoading, isOrgQuestionsError } =
+    useQuestionsInOrg();
+
   const openCreateQuestionModal = useStore(
     (state) => state.openCreateQuestionModal
   );
-  if (isQuestionsLoading) {
+  const currentQuestion = useStore((state) => state.currentQuestion);
+  if (isOrgQuestionsLoading) {
     return <Loader text="Loading questions..." />;
   }
 
   return (
     <div className="">
       <CreateQuestionModal />
-      {questions?.length === 0 ? (
+      {orgQuestions?.length === 0 ? (
         <EmptyQuestionsState />
       ) : (
         <div>
-          <div className="flex-1 my-4 flex md:mt-0  items-center  md:flex-grow justify-center">
+          {" "}
+          <UpdateQuestionModal question={currentQuestion} />
+          <div className="flex-1 my-2 flex md:mt-0  items-center  md:flex-grow justify-center">
             <button
               onClick={openCreateQuestionModal}
               type="button"
@@ -35,9 +41,9 @@ export default function QuestionsContent() {
           <div>
             <ul
               role="list"
-              className="divide-y divide-gray-200 mx-auto max-w-xl flex-col space-y-4 p-20  "
+              className="divide-y divide-gray-200 mx-auto max-w-xl flex-col space-y-4   "
             >
-              {questions?.map((question: DynamoNewQuestion) => (
+              {orgQuestions?.map((question: DynamoQuestion) => (
                 <QuestionItem key={question?.questionId} question={question} />
               ))}
             </ul>

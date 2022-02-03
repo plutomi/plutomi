@@ -24,6 +24,7 @@ import express, { Response } from "express";
 import cors from "cors";
 const morgan = require("morgan");
 import withCleanOrgId from "./middleware/withCleanOrgId";
+import withCleanQuestionId from "./middleware/withCleanQuestionId";
 import timeout from "connect-timeout";
 import { COOKIE_SETTINGS, EXPRESS_PORT, WEBSITE_URL } from "./Config";
 import withSession from "./middleware/withSession";
@@ -47,6 +48,7 @@ app.use(helmet());
 app.set("trust proxy", 1);
 app.use(haltOnTimedout);
 app.use(withCleanOrgId);
+app.use(withCleanQuestionId);
 app.use(cookieParser(["sessionpw1"], COOKIE_SETTINGS));
 
 // // Public info
@@ -56,13 +58,6 @@ app.use(cookieParser(["sessionpw1"], COOKIE_SETTINGS));
 //   "/public/:orgId/stages/:stageId/questions",
 //   PublicInfo.getStageQuestions
 // );
-
-// Questions
-// TODO rework to use question sets #401 https://github.com/plutomi/plutomi/issues/401
-// app.get("/stages/:stageId/questions", Stages.getQuestionsInStage);
-// app.post("/questions", Questions.create);
-// app.delete("/questions/:questionId", Questions.deleteQuestion);
-// app.put("/questions/:questionId", Questions.update);
 
 // TODO rework to add applicant login
 // https://github.com/plutomi/plutomi/issues/467
@@ -111,6 +106,12 @@ app.delete(
   [withSession, withHasOrg],
   Stages.DeleteStage
 );
+
+app.post(
+  "/openings/:openingId/stages/:stageId/questions",
+  [withSession, withHasOrg],
+  Questions.AddQuestionToStage
+);
 app.get(
   "/openings/:openingId/stages/:stageId",
   [withSession, withHasOrg],
@@ -122,22 +123,23 @@ app.put(
   Stages.UpdateStage
 );
 
+app.delete(
+  "/openings/:openingId/stages/:stageId/questions/:questionId",
+  [withSession, withHasOrg],
+  Questions.DeleteQuestionFromStage
+);
+
 app.get(
   "/openings/:openingId/stages",
   [withSession, withHasOrg],
   Stages.GetStagesInOpening
 );
 
-app.get("/public/orgs/:orgId", withCleanOrgId, PublicInfo.GetPublicOrgInfo);
-app.get(
-  "/public/orgs/:orgId/openings",
-  withCleanOrgId,
-  PublicInfo.GetPublicOpeningsInOrg
-);
+app.get("/public/orgs/:orgId", PublicInfo.GetPublicOrgInfo);
+app.get("/public/orgs/:orgId/openings", PublicInfo.GetPublicOpeningsInOrg);
 
 app.get(
   "/public/orgs/:orgId/openings/:openingId",
-  withCleanOrgId,
   PublicInfo.GetPublicOpeningInfo
 );
 
@@ -145,28 +147,48 @@ app.post("/invites", [withSession, withHasOrg], Invites.CreateInvites);
 app.get("/invites", [withSession], Invites.GetUserInvites);
 app.get(
   "/orgs/:orgId/invites",
-  [withCleanOrgId, withSession, withHasOrg, withSameOrg],
+  [withSession, withHasOrg, withSameOrg],
   Invites.GetOrgInvites
 );
 
 app.post("/invites/:inviteId", [withSession], Invites.AcceptInvite);
 app.delete("/invites/:inviteId", [withSession], Invites.RejectInvite);
 
-app.post("/applicants", [withCleanOrgId], Applicants.CreateApplicants);
+app.post("/applicants", Applicants.CreateApplicants);
 app.get(
   "/openings/:openingId/stages/:stageId/applicants",
-  [withCleanOrgId, withSession, withHasOrg],
+  [withSession, withHasOrg],
   Applicants.GetApplicantsInStage
+);
+app.get(
+  "/openings/:openingId/stages/:stageId/questions",
+  [withSession, withHasOrg],
+  Questions.GetQuestionsInStage
 );
 
 app.get(
   "/applicants/:applicantId",
-  [withSession, withCleanOrgId, withHasOrg],
+  [withSession, withHasOrg],
   Applicants.GetApplicantById
 );
 
 app.post("/questions", [withSession, withHasOrg], Questions.CreateQuestions);
 app.get("/questions", [withSession, withHasOrg], Questions.GetQuestionsInOrg);
+app.delete(
+  "/questions/:questionId",
+  [withSession, withHasOrg],
+  Questions.DeleteQuestionFromOrg
+);
+app.put(
+  "/questions/:questionId",
+  [withSession, withHasOrg],
+  Questions.UpdateQuestion
+);
+app.get(
+  "/questions/:questionId",
+  [withSession, withHasOrg],
+  Questions.GetQuestionInfo
+);
 app.get("/", healthcheck);
 function healthcheck(req, res: Response, next) {
   return res.status(200).json({ message: "It's all good man!" });

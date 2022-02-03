@@ -4,13 +4,13 @@ import { XIcon } from "@heroicons/react/outline";
 import { GetOpeningInfoURL, UpdateOpening } from "../../adapters/Openings";
 import useStore from "../../utils/store";
 import { mutate } from "swr";
-import { OPENING_PUBLIC_STATE } from "../../Config";
-import { DynamoNewOpening } from "../../types/dynamo";
+import { OPENING_STATE } from "../../Config";
+import { DynamoOpening } from "../../types/dynamo";
 
 export default function UpdateOpeningModal({
   opening,
 }: {
-  opening: DynamoNewOpening;
+  opening: DynamoOpening;
 }) {
   const [openingName, setOpeningName] = useState(opening?.openingName);
   const [GSI1SK, setGSI1SK] = useState(opening?.GSI1SK);
@@ -30,15 +30,18 @@ export default function UpdateOpeningModal({
     e.preventDefault();
 
     try {
-      const input = {
+      const newValues = {
         GSI1SK: opening?.GSI1SK === GSI1SK ? undefined : GSI1SK,
         openingName:
           opening?.openingName == openingName ? undefined : openingName,
       };
 
-      const { message } = await UpdateOpening(opening?.openingId, { ...input });
+      const { data } = await UpdateOpening({
+        openingId: opening.openingId,
+        newValues,
+      });
       mutate(GetOpeningInfoURL(opening?.openingId));
-      alert(message);
+      alert(data.message);
       closeUpdateOpeningModal();
     } catch (error) {
       alert(error.response.data.message);
@@ -144,14 +147,12 @@ export default function UpdateOpeningModal({
                                     name="comments"
                                     type="checkbox"
                                     // TODO types
-                                    checked={
-                                      GSI1SK === OPENING_PUBLIC_STATE.PUBLIC
-                                    }
+                                    checked={GSI1SK === OPENING_STATE.PUBLIC}
                                     onChange={(e) =>
                                       setGSI1SK(
                                         e.target.checked
-                                          ? OPENING_PUBLIC_STATE.PUBLIC
-                                          : OPENING_PUBLIC_STATE.PRIVATE
+                                          ? OPENING_STATE.PUBLIC
+                                          : OPENING_STATE.PRIVATE
                                       )
                                     }
                                     className="focus:ring-blue-500 h-4 w-4 text-blue-600 border-gray-300 rounded"

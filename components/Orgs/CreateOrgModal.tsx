@@ -31,11 +31,11 @@ export default function CreateOrgModal() {
     }
 
     try {
-      const { message } = await CreateOrg({
+      const { data } = await CreateOrg({
         displayName,
         orgId,
       });
-      alert(message);
+      alert(data.message);
       closeCreateOrgModal();
     } catch (error) {
       alert(error.response.data.message);

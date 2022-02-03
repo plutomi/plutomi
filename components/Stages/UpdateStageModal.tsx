@@ -7,9 +7,9 @@ import { useRouter } from "next/router";
 import { GetOpeningInfoURL } from "../../adapters/Openings";
 import { GetStagesInOpeningURL, UpdateStage } from "../../adapters/Stages";
 import { CUSTOM_QUERY } from "../../types/main";
-import { DynamoNewStage } from "../../types/dynamo";
+import { DynamoStage } from "../../types/dynamo";
 
-export default function UpdateStageModal({ stage }: { stage: DynamoNewStage }) {
+export default function UpdateStageModal({ stage }: { stage: DynamoStage }) {
   const router = useRouter();
 
   const { openingId, stageId } = router.query as Pick<
@@ -30,10 +30,14 @@ export default function UpdateStageModal({ stage }: { stage: DynamoNewStage }) {
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     try {
-      const { message } = await UpdateStage(openingId, stageId, {
-        GSI1SK,
+      const { data } = await UpdateStage({
+        openingId,
+        stageId,
+        newValues: {
+          GSI1SK,
+        },
       });
-      alert(message);
+      alert(data.message);
       setGSI1SK("");
       closeUpdateStageModal();
     } catch (error) {

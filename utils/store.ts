@@ -1,4 +1,5 @@
 import create from "zustand";
+import { DynamoQuestion } from "../types/dynamo";
 
 const useStore = create((set) => ({
   /**
@@ -110,13 +111,21 @@ const useStore = create((set) => ({
     })),
 
   showUpdateQuestionModal: false,
-  openUpdateQuestionmodal: () =>
+  openUpdateQuestionModal: () =>
     set(() => ({
       showUpdateQuestionModal: true,
     })),
-  closeUpdateQuestionmodal: () =>
+  closeUpdateQuestionModal: () =>
     set(() => ({
       showUpdateQuestionModal: false,
+    })),
+
+  // Since questions do not have their own page, we have to do this for passing state around :(
+
+  currentQuestion: {},
+  setCurrentQuestion: (question) =>
+    set(() => ({
+      currentQuestion: question,
     })),
 }));
 export default useStore;

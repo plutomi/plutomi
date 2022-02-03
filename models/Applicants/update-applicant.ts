@@ -1,6 +1,6 @@
 import { UpdateCommandInput, UpdateCommand } from "@aws-sdk/lib-dynamodb";
 import { Dynamo } from "../../AWSClients/ddbDocClient";
-import { FORBIDDEN_PROPERTIES, ENTITY_TYPES, ID_LENGTHS } from "../../Config";
+import { ENTITY_TYPES } from "../../Config";
 import { UpdateApplicantInput } from "../../types/main";
 const { DYNAMO_TABLE_NAME } = process.env;
 import { SdkError } from "@aws-sdk/types";
@@ -13,15 +13,8 @@ export default async function Update(
   let allUpdateExpressions: string[] = [];
   let allAttributeValues: { [key: string]: string } = {};
 
-  // TODO this can be removed, joi handles this
   // Filter out forbidden property
   for (const property in newValues) {
-    if (FORBIDDEN_PROPERTIES.APPLICANT.includes(property)) {
-      // Delete the property so it isn't updated
-      delete newValues[property];
-    }
-
-    // If its a valid property, start creating the new update expression
     // Push each property into the update expression
     allUpdateExpressions.push(`${property} = :${property}`);
 

@@ -1,20 +1,22 @@
 import { Request, Response } from "express";
-import * as Stages from "../../models/Stages";
 import * as CreateError from "../../utils/createError";
 import * as Questions from "../../models/Questions";
-import { DynamoNewQuestion } from "../../types/dynamo";
+import { DynamoQuestion } from "../../types/dynamo";
 import Joi from "joi";
-import { JOI_SETTINGS } from "../../Config";
+import { JOI_SETTINGS, LIMITS } from "../../Config";
 
 export type APICreateQuestionOptions = Pick<
-  DynamoNewQuestion,
+  DynamoQuestion,
   "questionId" | "GSI1SK" | "description"
 >;
 const schema = Joi.object({
   body: {
-    questionId: Joi.string().max(200),
-    GSI1SK: Joi.string().max(100),
-    description: Joi.string().allow("").max(500).optional(),
+    questionId: Joi.string().max(50), // TODO joi regex to match tag generator
+    GSI1SK: Joi.string().max(LIMITS.MAX_QUESTION_TITLE_LENGTH),
+    description: Joi.string()
+      .allow("")
+      .max(LIMITS.MAX_QUESTION_DESCRIPTION_LENGTH)
+      .optional(),
   },
 }).options(JOI_SETTINGS);
 
@@ -37,14 +39,20 @@ const main = async (req: Request, res: Response) => {
   });
 
   if (error) {
-    let customMsg = "An error ocurred creating your question";
     if (error.name === "ConditionalCheckFailedException") {
-      customMsg = "There is already a question with this ID.";
+      return res
+        .status(409)
+        .json({ message: "A question already exists with this ID" });
     }
 
-    const { status, body } = CreateError.SDK(error, customMsg);
+    const { status, body } = CreateError.SDK(
+      error,
+      "An error ocurred creating your question"
+    );
     return res.status(status).json(body);
   }
-  return res.status(201).json({ message: "Question created!" });
+  return res
+    .status(201)
+    .json({ message: "Question created!", question: created });
 };
 export default main;

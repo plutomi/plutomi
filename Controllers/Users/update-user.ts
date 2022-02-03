@@ -3,11 +3,12 @@ import * as Users from "../../models/Users";
 import Joi from "joi";
 import * as CreateError from "../../utils/createError";
 import { DEFAULTS, JOI_GLOBAL_FORBIDDEN, JOI_SETTINGS } from "../../Config";
-import { DynamoNewUser } from "../../types/dynamo";
+import { DynamoUser } from "../../types/dynamo";
 
-export type APIUpdateUserOptions = Partial<
-  Pick<DynamoNewUser, "firstName" | "lastName">
->;
+export interface APIUpdateUserOptions
+  extends Partial<Pick<DynamoUser, "firstName" | "lastName">> {
+  [key: string]: any;
+}
 /**
  * When calling PUT /users/:userId, these properties cannot be updated by the user
  */
@@ -18,8 +19,8 @@ export const JOI_FORBIDDEN_USER = {
   orgJoinDate: Joi.any().forbidden(),
   canReceiveEmails: Joi.any().forbidden(),
   GSI1PK: Joi.any().forbidden(), // Org users
-  firstName: Joi.string().invalid(DEFAULTS.FIRST_NAME).optional(),
-  lastName: Joi.string().invalid(DEFAULTS.LAST_NAME).optional(),
+  firstName: Joi.string().invalid(DEFAULTS.FIRST_NAME).optional(), // TODO set max length
+  lastName: Joi.string().invalid(DEFAULTS.LAST_NAME).optional(), // TODO set max length
   unsubscribeKey: Joi.any().forbidden(),
   GSI2PK: Joi.any().forbidden(), // Email
   GSI2SK: Joi.any().forbidden(), // Entity type

@@ -35,7 +35,7 @@ export const COOKIE_NAME =
 const UrlSafeString = require("url-safe-string"),
   tagGenerator = new UrlSafeString();
 
-export enum OPENING_PUBLIC_STATE {
+export enum OPENING_STATE {
   PUBLIC = "PUBLIC",
   PRIVATE = "PRIVATE",
 }
@@ -48,7 +48,7 @@ export enum ENTITY_TYPES {
   USER = "USER",
   OPENING = "OPENING",
   STAGE = "STAGE",
-  QUESTION = "QUESTION", // TODO question sets
+  QUESTION = "QUESTION",
   STAGE_RULE = "STAGE_RULE",
   LOGIN_LINK = "LOGIN_LINK",
   LOGIN_EVENT = "LOGIN_EVENT",
@@ -75,7 +75,7 @@ export const ERRORS = {
 export const ID_LENGTHS = {
   USER: 35, // Unique to application
   APPLICANT: 35, // Unique to application
-  APPLICANT_RESPONSE: 10, // Unique to applicant
+  APPLICANT_RESPONSE: 10, // Unique to applicant // TODO update with new questions
   ORG_INVITE: 5, // Unique to user & org
   OPENING: 15, // Unique to org
   STAGE: 15, // Unique to opening,
@@ -87,22 +87,6 @@ export enum DEFAULTS {
   LAST_NAME = "NO_LAST_NAME",
   NO_ORG = `NO_ORG_ASSIGNED`,
   /**
-   * How many child items (that can be re-ordered!) is a parent allowed to have.
-   * Stages in an opening, rules in a stage, questions in question sets.
-   * Depending on the ID size you can have more or less but this is a good starting default value.
-   */
-  MAX_CHILD_ITEM_LIMIT = 200,
-  /**
-   * In days, how long should login events be kept
-   */
-  LOGIN_EVENT_RETENTION_PERIOD = 30,
-
-  /**
-   * In days, how long should logout events be kept
-   */
-  LOGOUT_EVENT_RETENTION_PERIOD = 30,
-
-  /**
    * When no callbackUrl is provided on login, what page should users be redirected to
    */
   REDIRECT = "dashboard",
@@ -110,6 +94,32 @@ export enum DEFAULTS {
   NO_LAST_NAME = "NO_LAST_NAME",
 }
 
+export enum LIMITS {
+  MAX_OPENING_NAME_LENGTH = 100,
+  MAX_STAGE_NAME_LENGTH = 100,
+  MAX_QUESTION_TITLE_LENGTH = 100,
+  MAX_QUESTION_DESCRIPTION_LENGTH = 500,
+  MAX_APPLICANT_FIRSTNAME_LENGTH = 20,
+  MAX_APPLICANT_LASTNAME_LENGTH = 20,
+
+  /**
+   * How many child items (that can be re-ordered!) is a parent allowed to have.
+   * Stages in an opening, rules / questions in a stage.
+   */
+  MAX_CHILD_ITEM_LIMIT = 200,
+}
+
+export enum RETENTION_PERIODS {
+  /**
+   * In days, how long should login events be kept
+   */
+  LOGIN_EVENT = 30,
+
+  /**
+   * In days, how long should logout events be kept
+   */
+  LOGOUT_EVENT = 30,
+}
 export const LOGIN_LINK_SETTINGS = {
   password: process.env.LOGIN_LINKS_PASSWORD,
   ttl: 900, // In seconds, how long should login links be valid for
@@ -135,14 +145,6 @@ export const EMAILS = {
  * like when a user joins an org, their orgId is updated then.
  * This prevents calling PUT /users/:userId with a new orgId
  */
-const GLOBAL_FORBIDDEN_PROPERTIES = [
-  "orgId",
-  "PK",
-  "SK",
-  "ttlExpiry",
-  "entityType",
-  "createdAt",
-];
 
 export const JOI_SETTINGS: Joi.ValidationOptions = {
   presence: "required",
@@ -176,26 +178,6 @@ export const AXIOS_INSTANCE = axios.create({
 
 export const SWRFetcher = (url: string) =>
   AXIOS_INSTANCE.get(API_URL + url).then((res) => res.data);
-
-/**
- * Extra properties that cannot be updated per entity type
- */
-// TODO rest of these are on hold as we migrate the data model to something else
-export const FORBIDDEN_PROPERTIES = {
-  /**
-   * {@link DynamoNewApplicant}
-   */
-  APPLICANT: [
-    ...GLOBAL_FORBIDDEN_PROPERTIES,
-    "applicantId",
-    "GSI1PK",
-    "GSI1SK",
-    "GSI2PK",
-    "GSI2SK", // TODO, remove these when advancing / moving applicants!!!!!!!!!
-  ],
-
-  QUESTION: [...GLOBAL_FORBIDDEN_PROPERTIES, "questionId", "GSI1PK", "stageId"],
-};
 
 export const NAVBAR_NAVIGATION = [
   {

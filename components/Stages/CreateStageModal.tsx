@@ -4,7 +4,6 @@ import { XIcon } from "@heroicons/react/outline";
 import useStore from "../../utils/store";
 import { mutate } from "swr";
 import { useRouter } from "next/router";
-
 import { GetOpeningInfoURL } from "../../adapters/Openings";
 import { CreateStage, GetStagesInOpeningURL } from "../../adapters/Stages";
 import { CUSTOM_QUERY } from "../../types/main";
@@ -22,8 +21,11 @@ export default function CreateStageModal() {
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     try {
-      const { message } = await CreateStage(GSI1SK, openingId);
-      alert(message);
+      const { data } = await CreateStage({
+        GSI1SK,
+        openingId,
+      });
+      alert(data.message);
       closeCreateStageModal();
       setGSI1SK("");
     } catch (error) {

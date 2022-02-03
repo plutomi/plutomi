@@ -26,8 +26,8 @@ export default function SignedInNav({ current }) {
 
   const handleLogout = async () => {
     try {
-      const { message } = await Logout();
-      // alert(message);
+      const { data } = await Logout();
+      // alert(data.message);
       // TODO reroute to homepage
     } catch (error) {
       alert(error.response.message);
@@ -144,7 +144,7 @@ export default function SignedInNav({ current }) {
                           ) : (
                             <>
                               <div className=" text-light">
-                                Logged in as {user?.email}
+                                Signed in as <strong>{user?.email}</strong>
                               </div>
                             </>
                           )}
@@ -155,7 +155,7 @@ export default function SignedInNav({ current }) {
                             <div
                               className="cursor-pointer"
                               key={item.name}
-                              onClick={() => handleLogout()}
+                              onClick={handleLogout}
                             >
                               <Menu.Item>
                                 {({ active }) => (
@@ -252,7 +252,7 @@ export default function SignedInNav({ current }) {
 
                   <button
                     type="button"
-                    onClick={() => handleLogout()}
+                    onClick={handleLogout}
                     className="ml-auto bg-white flex-shrink-0 p-1 rounded-full text-light hover:text-normal focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
                   >
                     <span className="sr-only">Log Out</span>
@@ -266,7 +266,7 @@ export default function SignedInNav({ current }) {
                         <a
                           key={item.name}
                           href={item.href}
-                          onClick={() => handleLogout()}
+                          onClick={handleLogout}
                           className="block px-4 py-2 text-base font-medium text-normal hover:text-gray-800 hover:bg-gray-100"
                         >
                           {item.name}

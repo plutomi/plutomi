@@ -2,7 +2,7 @@ import usePublicApplicant from "../../SWR/usePublicApplicant";
 import { useRouter } from "next/router";
 import Loader from "../Loader";
 import { useState } from "react";
-import useAllQuestions from "../../SWR/useAllQuestions";
+import useQuestionsInOrg from "../../SWR/useQuestionsInOrg";
 import { AnswerQuestions } from "../../adapters/Applicants";
 import { CUSTOM_QUERY } from "../../types/main";
 export default function ApplicationContent() {
@@ -16,11 +16,9 @@ export default function ApplicationContent() {
   const { applicant, isApplicantLoading, isApplicantError } =
     usePublicApplicant(applicantId);
 
-  const { questions, isQuestionsLoading, isQuestionsError } = useAllQuestions(
-    orgId,
-    applicant?.stageId
-  );
-  if (isQuestionsLoading) {
+  const { questions, isOrgQuestionsLoading, isOrgQuestionsError } =
+    useQuestionsInOrg(orgId, applicant?.stageId);
+  if (isOrgQuestionsLoading) {
     return <Loader text="Loading questions..." />;
   }
 
@@ -37,7 +35,7 @@ export default function ApplicationContent() {
     const incoming = {
       questionId: questionId,
       questionTitle: questionTitle,
-      description: description,
+      description,
       questionResponse: response,
     };
     const questionOrder = questions.map((a) => a.questionId);
@@ -69,8 +67,8 @@ export default function ApplicationContent() {
   const handleSubmit = async () => {
     try {
       console.log("Responses are", responses);
-      const { message } = await AnswerQuestions(applicantId, responses);
-      alert(message);
+      const { data } = await AnswerQuestions(applicantId, responses);
+      alert(data.message);
     } catch (error) {
       alert(error.response.data.message);
     }

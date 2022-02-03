@@ -8,6 +8,7 @@ import * as Time from "../../utils/time";
 import { CUSTOM_QUERY } from "../../types/main";
 import UpdateStageModal from "./UpdateStageModal";
 import CreateQuestionModal from "../Questions/CreateQuestionModal";
+import CustomLink from "../CustomLink";
 export default function StageSettingsHeader({ deleteStage }) {
   const router = useRouter();
   const { openingId, stageId } = router.query as Pick<
@@ -47,6 +48,7 @@ export default function StageSettingsHeader({ deleteStage }) {
     <div className="md:flex md:items-center md:justify-between ">
       <UpdateStageModal stage={stage} />
       <CreateQuestionModal />
+
       <div className=" min-w-0 flex flex-col items-start ">
         <Breadcrumbs crumbs={crumbs} />
       </div>
@@ -54,6 +56,7 @@ export default function StageSettingsHeader({ deleteStage }) {
       <p className="text-md text-light text-center">
         Created {Time.relative(stage?.createdAt)}
       </p>
+
       <div className="space-x-4 flex items-center">
         <button
           type="button"
@@ -63,14 +66,8 @@ export default function StageSettingsHeader({ deleteStage }) {
           <PencilAltIcon className="-ml-1 mr-3 h-5 w-5" aria-hidden="true" />
           Edit Stage
         </button>
-        <button
-          type="button"
-          onClick={openCreateQuestionModal}
-          className="inline-flex items-center px-4 py-2 border  shadow-sm text-base font-medium rounded-md border-blue-500 text-white bg-blue-500 hover:bg-blue-800 hover:text-white  transition ease-in-out duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
-        >
-          <PlusIcon className="-ml-1 mr-3 h-5 w-5" aria-hidden="true" />
-          Add Question
-        </button>
+
+
         <button
           onClick={() => deleteStage()}
           className="rounded-full hover:bg-red-500 hover:text-white border border-red-500 text-red-500 transition ease-in-out duration-200 px-2 py-2 text-md"

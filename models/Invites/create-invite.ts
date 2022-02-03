@@ -2,7 +2,7 @@ import { PutCommandInput, PutCommand } from "@aws-sdk/lib-dynamodb";
 import { nanoid } from "nanoid";
 import { Dynamo } from "../../AWSClients/ddbDocClient";
 import { ID_LENGTHS, ENTITY_TYPES, TIME_UNITS, DEFAULTS } from "../../Config";
-import { DynamoNewOrgInvite } from "../../types/dynamo";
+import { DynamoOrgInvite } from "../../types/dynamo";
 import { CreateOrgInviteInput } from "../../types/main";
 import * as Time from "../../utils/time";
 import { SdkError } from "@aws-sdk/types";
@@ -24,7 +24,7 @@ export default async function Create(
   try {
     const inviteId = nanoid(ID_LENGTHS.ORG_INVITE);
     const now = Time.currentISO();
-    const newOrgInvite: DynamoNewOrgInvite = {
+    const newOrgInvite: DynamoOrgInvite = {
       PK: `${ENTITY_TYPES.USER}#${recipient.userId}`,
       SK: `${ENTITY_TYPES.ORG_INVITE}#${inviteId}`,
       orgId: createdBy.orgId,

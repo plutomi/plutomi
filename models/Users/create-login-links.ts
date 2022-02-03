@@ -1,7 +1,7 @@
 import { PutCommandInput, PutCommand } from "@aws-sdk/lib-dynamodb";
 import { Dynamo } from "../../AWSClients/ddbDocClient";
 import { ENTITY_TYPES, TIME_UNITS } from "../../Config";
-import { DynamoNewLoginLink } from "../../types/dynamo";
+import { DynamoLoginLink } from "../../types/dynamo";
 import { CreateLoginLinkInput } from "../../types/main";
 const { DYNAMO_TABLE_NAME } = process.env;
 import * as Time from "../../utils/time";
@@ -18,12 +18,12 @@ export default async function CreateLoginLink(
   const { loginLinkId, loginLinkUrl, loginLinkExpiry, user } = props;
   const now = Time.currentISO();
   try {
-    const newLoginLink: DynamoNewLoginLink = {
+    const newLoginLink: DynamoLoginLink = {
       PK: `${ENTITY_TYPES.USER}#${user.userId}`,
       SK: `${ENTITY_TYPES.LOGIN_LINK}#${loginLinkId}`,
-      loginLinkUrl: loginLinkUrl,
+      loginLinkUrl,
       relativeExpiry: Time.relative(new Date(loginLinkExpiry)),
-      user: user, // Contains unsubscribe hash, userId, and their email
+      user,
       entityType: ENTITY_TYPES.LOGIN_LINK,
       createdAt: now,
       ttlExpiry: Time.futureUNIX(15, TIME_UNITS.MINUTES), // Deleted after 15 minutes

@@ -8,7 +8,7 @@ export default function usePublicOpeningById(
   const shouldFetch = orgId && openingId;
 
   const { data, error } = useSWR(
-    shouldFetch && GetPublicOpeningInfoURL(orgId, openingId),
+    shouldFetch && GetPublicOpeningInfoURL({ orgId, openingId }),
 
     SWRFetcher
   );

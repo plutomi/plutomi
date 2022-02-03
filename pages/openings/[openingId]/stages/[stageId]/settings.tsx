@@ -39,7 +39,10 @@ export default function StageSettings() {
       return;
     }
     try {
-      await DeleteStage(openingId, stageId);
+      await DeleteStage({
+        openingId,
+        stageId,
+      });
       router.push(`${WEBSITE_URL}/openings/${openingId}/settings`);
     } catch (error) {
       alert(error.response.data.message);
@@ -57,8 +60,8 @@ export default function StageSettings() {
       loggedOutPageText={"Log in to view your stage settings"}
       currentNavbarItem={"Openings"}
       headerText={
-        isOpeningLoading
-          ? "Settings"
+        isStageLoading
+          ? "Loading settings..."
           : `${opening?.openingName} > ${stage?.GSI1SK} - Settings`
       }
     >

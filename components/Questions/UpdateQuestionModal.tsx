@@ -3,10 +3,6 @@ import { Dialog, Transition } from "@headlessui/react";
 import { XIcon } from "@heroicons/react/outline";
 import useStore from "../../utils/store";
 import { UpdateQuestion } from "../../adapters/Questions";
-import { useRouter } from "next/router";
-import { CUSTOM_QUERY } from "../../types/main";
-import { mutate } from "swr";
-import { GetStageInfoURL } from "../../adapters/Stages";
 
 const descriptionMaxLength = 300; // TODO set this serverside
 export default function UpdateQuestionModal({ question }) {
@@ -20,33 +16,25 @@ export default function UpdateQuestionModal({ question }) {
 
   const visibility = useStore((state) => state.showUpdateQuestionModal);
   const closeUpdateQuestionModal = useStore(
-    (state) => state.closeUpdateQuestionmodal
+    (state) => state.closeUpdateQuestionModal
   );
 
-  const router = useRouter();
-  const { openingId, stageId } = router.query as Pick<
-    CUSTOM_QUERY,
-    "openingId" | "stageId"
-  >;
   const handleSubmit = async (e: FormEvent) => {
+    e.preventDefault();
     try {
-      // TODO
-      const { message } = await UpdateQuestion({
-        GSI1SK,
-        description,
+      const { data } = await UpdateQuestion({
+        questionId: question?.questionId,
+        newValues: {
+          GSI1SK,
+          description,
+        },
       });
 
-      alert(message);
+      alert(data.message);
       closeUpdateQuestionModal();
     } catch (error) {
       alert(error.response.data.message);
     }
-
-    // Refresh the questionOrder
-    mutate(GetStageInfoURL(openingId, stageId));
-
-    // Refresh the question list
-    mutate(GetQuestionsInStageURL(openingId, stageId));
   };
 
   return (
@@ -103,7 +91,8 @@ export default function UpdateQuestionModal({ question }) {
                       </div>
                       <div className="mt-1">
                         <p className="text-sm text-blue-300">
-                          Questions will be shown to applicants in this stage
+                          Applicants will answer these questions as they go
+                          through stages
                         </p>
                       </div>
                     </div>

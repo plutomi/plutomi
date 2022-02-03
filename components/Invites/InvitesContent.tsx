@@ -9,7 +9,7 @@ import {
   GetUserInvitesURL,
 } from "../../adapters/Invites";
 import useUserInvites from "../../SWR/useUserInvites";
-import { DynamoNewOrgInvite } from "../../types/dynamo";
+import { DynamoOrgInvite } from "../../types/dynamo";
 import { GetSelfInfoURL } from "../../adapters/Users";
 export default function InvitesContent() {
   const router = useRouter();
@@ -32,7 +32,7 @@ export default function InvitesContent() {
         role="list"
         className="divide-y divide-gray-200 mx-auto max-w-xl flex-col space-y-4 p-20  "
       >
-        {invites?.map((invite: DynamoNewOrgInvite) => (
+        {invites?.map((invite: DynamoOrgInvite) => (
           <Invite invite={invite} key={invite.inviteId} />
         ))}
       </ul>

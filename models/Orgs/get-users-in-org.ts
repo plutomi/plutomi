@@ -1,14 +1,14 @@
 import { QueryCommandInput, QueryCommand } from "@aws-sdk/lib-dynamodb";
 import { Dynamo } from "../../AWSClients/ddbDocClient";
 import { ENTITY_TYPES } from "../../Config";
-import { DynamoNewUser } from "../../types/dynamo";
+import { DynamoUser } from "../../types/dynamo";
 import { GetUsersInOrgInput } from "../../types/main";
 const { DYNAMO_TABLE_NAME } = process.env;
 import { SdkError } from "@aws-sdk/types";
 
 export default async function GetUsers(
   props: GetUsersInOrgInput
-): Promise<[DynamoNewUser[], null] | [null, SdkError]> {
+): Promise<[DynamoUser[], null] | [null, SdkError]> {
   const { orgId, limit } = props;
   const params: QueryCommandInput = {
     TableName: `${process.env.NODE_ENV}-${DYNAMO_TABLE_NAME}`,
@@ -17,14 +17,13 @@ export default async function GetUsers(
     ExpressionAttributeValues: {
       ":GSI1PK": `${ENTITY_TYPES.ORG}#${orgId}#${ENTITY_TYPES.USER}S`,
     },
-    Limit: limit || null,
   }; // TODO query until all results are returned
 
-  limit && (params.Limit = limit);
+  limit && (params["Limit"] = limit);
 
   try {
     const response = await Dynamo.send(new QueryCommand(params));
-    return [response.Items as DynamoNewUser[], null];
+    return [response.Items as DynamoUser[], null];
   } catch (error) {
     return [null, error];
   }

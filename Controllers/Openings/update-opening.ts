@@ -3,16 +3,21 @@ import Joi from "joi";
 import * as Openings from "../../models/Openings";
 import * as CreateError from "../../utils/createError";
 import {
+  DEFAULTS,
   JOI_GLOBAL_FORBIDDEN,
   JOI_SETTINGS,
-  OPENING_PUBLIC_STATE,
+  OPENING_STATE,
+  LIMITS,
 } from "../../Config";
 import { UpdateOpeningInput } from "../../types/main";
-import { DynamoNewOpening } from "../../types/dynamo";
+import { DynamoOpening } from "../../types/dynamo";
 
-export type APIUpdateOpeningOptions = Partial<
-  Pick<DynamoNewOpening, "openingName" | "GSI1SK" | "stageOrder">
->;
+export interface APIUpdateOpeningOptions
+  extends Partial<
+    Pick<DynamoOpening, "openingName" | "GSI1SK" | "stageOrder">
+  > {
+  [key: string]: any;
+}
 
 const JOI_FORBIDDEN_OPENING = Joi.object({
   ...JOI_GLOBAL_FORBIDDEN,
@@ -20,8 +25,10 @@ const JOI_FORBIDDEN_OPENING = Joi.object({
   GSI1PK: Joi.any().forbidden(),
   totalStages: Joi.any().forbidden(),
   totalApplicants: Joi.any().forbidden(),
+  stageOrder: Joi.array().items(Joi.string()).optional(),
+  openingName: Joi.string().max(LIMITS.MAX_OPENING_NAME_LENGTH).optional(),
   GSI1SK: Joi.string()
-    .valid(OPENING_PUBLIC_STATE.PUBLIC, OPENING_PUBLIC_STATE.PUBLIC)
+    .valid(OPENING_STATE.PUBLIC, OPENING_STATE.PRIVATE)
     .optional(),
 });
 
@@ -59,19 +66,30 @@ const main = async (req: Request, res: Response) => {
     return res.status(status).json(body);
   }
 
-  // https://github.com/plutomi/plutomi/issues/529
-  if (
-    req.body.stageOrder &&
-    req.body.stageOrder.length != opening.stageOrder.length
-  ) {
-    return res.status(403).json({
-      message:
-        "You cannot add / delete stages this way, please use the proper API methods for those actions",
+  if (req.body.stageOrder) {
+    if (req.body.stageOrder.length != opening.stageOrder.length) {
+      return res.status(403).json({
+        message:
+          "You cannot add / delete stages this way, please use the proper API methods for those actions",
+      });
+    }
+
+    // Check if the IDs have been modified
+    // TODO add a test for this
+    const containsAll = opening.stageOrder.every((stageId) => {
+      return req.body.stageOrder.includes(stageId);
     });
+
+    if (!containsAll) {
+      return res.status(400).json({
+        message:
+          "The stageIds in the 'stageOrder' property differ from the ones in the opening, please check your request and try again.",
+      });
+    }
   }
 
   // TODO i think this can be moved into dynamo
-  if (req.body.GSI1SK === "PUBLIC" && opening.totalStages === 0) {
+  if (req.body.GSI1SK === OPENING_STATE.PUBLIC && opening.totalStages === 0) {
     return res.status(403).json({
       message: "An opening needs to have stages before being made public",
     });
