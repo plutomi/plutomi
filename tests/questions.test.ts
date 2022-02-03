@@ -315,8 +315,7 @@ describe("Questions", () => {
       stageId,
       questionId: oldQuestionOrder.slice(-1)[0],
     });
-
-    expect(deleteSuccess.data.status).toBe(200);
+    expect(deleteSuccess.status).toBe(200);
     expect(deleteSuccess.data.message).toBe("Question removed from stage!");
     const updatedStage = await Stages.GetStageInfo({
       openingId,
@@ -385,7 +384,7 @@ describe("Questions", () => {
       questionId: question4Id,
       position: 1, // Make this one 2nd place
     });
-    const updatedStage = await Stages.GetStageInfo({
+    await Stages.GetStageInfo({
       openingId: ourOpening.openingId,
       stageId: ourStage.stageId,
     });
@@ -404,10 +403,46 @@ describe("Questions", () => {
     expect(onlyIds).toStrictEqual(properOrder);
   });
 
-  it.todo(
-    "increments the totalStages count on a question when adding it to a stage"
-  );
-  it.todo(
-    "decrements the totalStages count on a question when removing it from a stage"
-  );
+  it("increments and decrements the totalStages count on a question when adding and removing it from a stage", async () => {
+    expect.assertions(2);
+    const questionId = nanoid(20);
+    await Questions.CreateQuestion({
+      GSI1SK: nanoid(20),
+      questionId,
+    });
+
+    // Doesn't matter which one we get
+    const allOpenings = await Openings.GetAllOpeningsInOrg();
+    const ourOpening = allOpenings.data[0];
+
+    const stageName = nanoid(20);
+    // Just in case there isn't one already
+    await Stages.CreateStage({
+      GSI1SK: stageName,
+      openingId: ourOpening.openingId,
+    });
+
+    const allStages = await Stages.GetStagesInOpening(ourOpening.openingId);
+    const ourStage = allStages.data.find(
+      (stage: DynamoStage) => stage.GSI1SK === stageName
+    );
+
+    await Questions.AddQuestionToStage({
+      openingId,
+      stageId: ourStage.stageId,
+      questionId,
+    });
+
+    const ourQuestion = await Questions.GetQuestionInfo(questionId);
+    expect(ourQuestion.data.totalStages).toBe(1);
+
+    await Questions.DeleteQuestionFromStage({
+      openingId,
+      stageId: ourStage.stageId,
+      questionId,
+    });
+    const updatedQuestion = await Questions.GetQuestionInfo(questionId);
+
+    expect(updatedQuestion.data.totalStages).toBe(0);
+  });
 });

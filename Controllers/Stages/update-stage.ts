@@ -74,16 +74,16 @@ const main = async (req: Request, res: Response) => {
     }
   }
 
-  const [updatedStage, error] = await Stages.UpdateStage({
+  const [updatedStage, updateError] = await Stages.UpdateStage({
     orgId: session.orgId,
     openingId,
     stageId,
     newValues: req.body,
   });
 
-  if (error) {
+  if (updateError) {
     const { status, body } = CreateError.SDK(
-      error,
+      updateError,
       "An error ocurred updating this stage"
     );
     return res.status(status).json(body);

@@ -347,17 +347,22 @@ describe("Stages", () => {
       ourOpening.openingId
     );
 
-    const stageid = openingAfterStage.data.stageOrder[0];
+    const stageId = openingAfterStage.data.stageOrder[0];
 
     try {
       await Stages.UpdateStage({
-        // @ts-ignore - intentional, this will error
-        orgId: nanoid(5),
-        PK: nanoid(5),
-        SK: nanoid(5),
-        createdAt: nanoid(5),
+        stageId,
+        openingId: ourOpening.openingId,
+        newValues: {
+          // @ts-ignore - intentional, this will error
+          orgId: nanoid(5),
+          PK: nanoid(5),
+          SK: nanoid(5),
+          createdAt: nanoid(5),
+        },
       });
     } catch (error) {
+      console.error(error);
       expect(error.response.status).toBe(400);
       expect(error.response.data.message).toContain("is not allowed");
     }
