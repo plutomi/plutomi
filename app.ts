@@ -24,6 +24,7 @@ import express, { Response } from "express";
 import cors from "cors";
 const morgan = require("morgan");
 import withCleanOrgId from "./middleware/withCleanOrgId";
+import withCleanQuestionId from "./middleware/withCleanQuestionId";
 import timeout from "connect-timeout";
 import { COOKIE_SETTINGS, EXPRESS_PORT, WEBSITE_URL } from "./Config";
 import withSession from "./middleware/withSession";
@@ -47,6 +48,7 @@ app.use(helmet());
 app.set("trust proxy", 1);
 app.use(haltOnTimedout);
 app.use(withCleanOrgId);
+app.use(withCleanQuestionId);
 app.use(cookieParser(["sessionpw1"], COOKIE_SETTINGS));
 
 // // Public info
@@ -56,13 +58,6 @@ app.use(cookieParser(["sessionpw1"], COOKIE_SETTINGS));
 //   "/public/:orgId/stages/:stageId/questions",
 //   PublicInfo.getStageQuestions
 // );
-
-// Questions
-// TODO rework to use question sets #401 https://github.com/plutomi/plutomi/issues/401
-// app.get("/stages/:stageId/questions", Stages.getQuestionsInStage);
-// app.post("/questions", Questions.create);
-// app.delete("/questions/:questionId", Questions.DeleteQuestionFromOrg);
-// app.put("/questions/:questionId", Questions.update);
 
 // TODO rework to add applicant login
 // https://github.com/plutomi/plutomi/issues/467
@@ -140,16 +135,11 @@ app.get(
   Stages.GetStagesInOpening
 );
 
-app.get("/public/orgs/:orgId", withCleanOrgId, PublicInfo.GetPublicOrgInfo);
-app.get(
-  "/public/orgs/:orgId/openings",
-  withCleanOrgId,
-  PublicInfo.GetPublicOpeningsInOrg
-);
+app.get("/public/orgs/:orgId", PublicInfo.GetPublicOrgInfo);
+app.get("/public/orgs/:orgId/openings", PublicInfo.GetPublicOpeningsInOrg);
 
 app.get(
   "/public/orgs/:orgId/openings/:openingId",
-  withCleanOrgId,
   PublicInfo.GetPublicOpeningInfo
 );
 
@@ -157,28 +147,28 @@ app.post("/invites", [withSession, withHasOrg], Invites.CreateInvites);
 app.get("/invites", [withSession], Invites.GetUserInvites);
 app.get(
   "/orgs/:orgId/invites",
-  [withCleanOrgId, withSession, withHasOrg, withSameOrg],
+  [withSession, withHasOrg, withSameOrg],
   Invites.GetOrgInvites
 );
 
 app.post("/invites/:inviteId", [withSession], Invites.AcceptInvite);
 app.delete("/invites/:inviteId", [withSession], Invites.RejectInvite);
 
-app.post("/applicants", [withCleanOrgId], Applicants.CreateApplicants);
+app.post("/applicants", Applicants.CreateApplicants);
 app.get(
   "/openings/:openingId/stages/:stageId/applicants",
-  [withCleanOrgId, withSession, withHasOrg],
+  [withSession, withHasOrg],
   Applicants.GetApplicantsInStage
 );
 app.get(
   "/openings/:openingId/stages/:stageId/questions",
-  [withCleanOrgId, withSession, withHasOrg],
+  [withSession, withHasOrg],
   Questions.GetQuestionsInStage
 );
 
 app.get(
   "/applicants/:applicantId",
-  [withSession, withCleanOrgId, withHasOrg],
+  [withSession, withHasOrg],
   Applicants.GetApplicantById
 );
 
