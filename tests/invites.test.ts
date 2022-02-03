@@ -4,6 +4,7 @@ import * as Invites from "../adapters/Invites";
 import * as Orgs from "../adapters/Orgs";
 import * as Users from "../adapters/Users";
 import { DynamoOrgInvite } from "../types/dynamo";
+import * as GenerateID from "../utils/generateIds"
 const UrlSafeString = require("url-safe-string"),
   tagGenerator = new UrlSafeString();
 
@@ -189,7 +190,7 @@ describe("Openings", () => {
     const cookie = data.headers["set-cookie"][0];
     axios.defaults.headers.Cookie = cookie;
 
-    const orgId = tagGenerator.generate(nanoid(20));
+    const orgId = GenerateID.OrgID(20)
 
     // Join org
     await Orgs.CreateOrg({
@@ -231,7 +232,7 @@ describe("Openings", () => {
     axios.defaults.headers.Cookie = cookie;
 
     // Join org
-    const orgId = tagGenerator.generate(nanoid(20));
+    const orgId = GenerateID.OrgID(20)
     await Orgs.CreateOrg({ orgId, displayName: nanoid(20) });
 
     const otherUserEmail = `${nanoid(7)}+${EMAILS.TESTING4}`;
@@ -268,7 +269,7 @@ describe("Openings", () => {
     axios.defaults.headers.Cookie = cookie;
 
     // Join org
-    const orgId = tagGenerator.generate(nanoid(20));
+    const orgId = GenerateID.OrgID(20)
     await Orgs.CreateOrg({ orgId, displayName: nanoid(20) });
 
     const otherUserEmail = `${nanoid(7)}+${EMAILS.TESTING4}`;

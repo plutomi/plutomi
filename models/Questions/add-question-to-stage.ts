@@ -19,6 +19,7 @@ export default async function AddQuestionToStage(
   props: AddQuestionToStageInput
 ): Promise<[null, null] | [null, SdkError]> {
   const { orgId, openingId, stageId, questionId, questionOrder } = props;
+
   const params = {
     PK: `${ENTITY_TYPES.ORG}#${orgId}#${ENTITY_TYPES.QUESTION}#${questionId}#${ENTITY_TYPES.STAGE}S`,
     SK: `${ENTITY_TYPES.OPENING}#${openingId}#${ENTITY_TYPES.STAGE}#${stageId}`,

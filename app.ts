@@ -42,13 +42,13 @@ app.use(
 const morganSettings =
   process.env.NODE_ENV === "development" ? "dev" : "combined";
 
-app.use(morgan(morganSettings));
 app.use(express.json());
 app.use(helmet());
 app.set("trust proxy", 1);
 app.use(haltOnTimedout);
 app.use(withCleanOrgId);
 app.use(withCleanQuestionId);
+app.use(morgan(morganSettings));
 app.use(
   cookieParser([process.env.SESSION_SIGNATURE_SECRET_1], COOKIE_SETTINGS)
 );

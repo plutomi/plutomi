@@ -11,15 +11,13 @@ import * as Openings from "../adapters/Openings";
 import * as Stages from "../adapters/Stages";
 import * as Applicants from "../adapters/Applicants";
 import { DynamoOpening } from "../types/dynamo";
-const UrlSafeString = require("url-safe-string"),
-  tagGenerator = new UrlSafeString();
-
+import * as GenerateID from "../utils/generateIds";
 describe("Openings", () => {
   /**
    * Creates a session cookie
    */
 
-  let orgId = tagGenerator.generate(nanoid(20));
+  let orgId = GenerateID.OrgID(20);
   let publicOpeningId;
   let privateOpeningId;
   let applicant;

@@ -7,6 +7,7 @@ import { CreateQuestionInput } from "../../types/main";
 import * as Time from "../../utils/time";
 import { SdkError } from "@aws-sdk/types";
 const { DYNAMO_TABLE_NAME } = process.env;
+
 export default async function CreateQuestion(
   props: CreateQuestionInput
 ): Promise<[null, null] | [null, SdkError]> {
