@@ -256,7 +256,7 @@ export default function StageSettingsContent() {
                       onBlur={handleOnBlur}
                       onChange={(e) => handleSearch(e.target.value)}
                       placeholder={
-                        "Search for a question to add to this stage?..."
+                        "Search for a question to add to this stage..."
                       }
                       className="border-2 border-blue-300 mt-2 py-4 text-xl w-full shadow-sm focus:ring-blue-500 focus:border-blue-500    sm:text-sm  rounded-md"
                     />

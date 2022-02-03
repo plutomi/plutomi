@@ -5,19 +5,38 @@ import Loader from "../Loader";
 import { PlusIcon } from "@heroicons/react/outline";
 import useStore from "../../utils/store";
 import CreateInviteModal from "../CreateInviteModal";
-import { useRouter } from "next/router";
 import EmptyTeamState from "./EmptyTeamState";
+import usePendingOrgInvites from "../../SWR/usePendingOrgInvites";
+import { DynamoOrgInvite } from "../../types/dynamo";
+import PendingInviteCard from "./PendingInviteCard";
 export default function TeamContent() {
-  const router = useRouter();
   const { user, isUserLoading, isUserError } = useSelf();
   const { orgUsers, isOrgUsersLoading, isOrgUsersError } = useOrgUsers(
     user?.orgId
   );
 
+  const {
+    pendingOrgInvites,
+    isPendingOrgInvitesLoading,
+    isPendingOrgInvitesError,
+  } = usePendingOrgInvites(user?.orgId);
   const openInviteModal = useStore((state) => state.openInviteModal);
   if (isOrgUsersLoading) {
     return <Loader text="Loading team..." />;
   }
+
+  const pendingInvites = isPendingOrgInvitesLoading ? (
+    <h2>Loading pending invites</h2>
+  ) : isPendingOrgInvitesError ? (
+    <h2>An error ocurred retrieving your pending invites</h2>
+  ) : (
+    <ul role="list" className="divide-y divide-gray-200">
+      {pendingOrgInvites.map((invite: DynamoOrgInvite) => (
+        <PendingInviteCard key={invite.inviteId} invite={invite} />
+      ))}
+    </ul>
+  );
+
   return (
     <>
       <CreateInviteModal />
@@ -33,7 +52,7 @@ export default function TeamContent() {
               Add Team member
             </button>
           </div>
-
+          {pendingInvites}
           {orgUsers?.map((user) => (
             <UserCard key={user.userId} user={user} />
           ))}
