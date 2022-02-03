@@ -26,9 +26,7 @@ export default function StageCard({
 
   const content = (
     <div
-      className={`border my-6 shadow-xs py-4 text-center  ${
-        !draggable ? " hover:border-blue-500" : "" // Only show blue border on hover on the stage carousel
-      } transition ease-in-out duration-300 rounded-xl overflow-hidden ${
+      className={`border my-6 shadow-xs py-4 text-center hover:border-blue-500  transition ease-in-out duration-300 rounded-xl overflow-hidden ${
         stageId === urlParams.stageId
           ? " bg-sky-50  border border-t-4 border-t-blue-500"
           : " bg-white"

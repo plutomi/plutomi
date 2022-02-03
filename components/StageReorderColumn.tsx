@@ -4,13 +4,7 @@ import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
 import { mutate } from "swr";
 import { useState } from "react";
 import { useRouter } from "next/router";
-import difference from "../utils/getObjectDifference";
-import {
-  CreateStage,
-  UpdateStage,
-  GetStageInfoURL,
-  GetStagesInOpeningURL,
-} from "../adapters/Stages";
+import { GetStagesInOpeningURL } from "../adapters/Stages";
 import { useEffect } from "react";
 import useOpeningInfo from "../SWR/useOpeningInfo";
 import useAllStagesInOpening from "../SWR/useAllStagesInOpening";
@@ -22,9 +16,6 @@ import CreateStageModal from "./Stages/CreateStageModal";
 
 export default function StageReorderColumn() {
   const openCreateStageModal = useStore((state) => state.openCreateStageModal);
-  const closeCreateStageModal = useStore(
-    (state) => state.closeCreateStageModal
-  );
 
   const router = useRouter();
   const { openingId, stageId } = router.query as Pick<

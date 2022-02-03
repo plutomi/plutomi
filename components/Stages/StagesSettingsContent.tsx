@@ -10,12 +10,11 @@ import useQuestionsInStage from "../../SWR/useQuestionsInStage";
 import { CUSTOM_QUERY } from "../../types/main";
 import { useEffect, useState, Fragment, FormEvent } from "react";
 import { Listbox, Transition } from "@headlessui/react";
-import { CheckIcon, SelectorIcon } from "@heroicons/react/outline";
+import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
 import { DynamoQuestion } from "../../types/dynamo";
 import * as Questions from "../../adapters/Questions";
 import { mutate } from "swr";
 import combineClassNames from "../../utils/combineClassNames";
-import { loadTest } from "loadtest";
 import * as Stages from "../../adapters/Stages";
 
 export default function StageSettingsContent() {
@@ -115,11 +114,11 @@ export default function StageSettingsContent() {
   );
 
   const handleShow = () => {
-    if (localSearch.toLowerCase().trim() === "") {
-      setFilteredOrgQuestions(orgQuestions);
-      setShow(true);
-      return;
-    }
+    // if (localSearch.toLowerCase().trim() === "") {
+    //   setFilteredOrgQuestions(orgQuestions);
+    //   setShow(true);
+    //   return;
+    // }
     setFilteredOrgQuestions(
       orgQuestions?.filter((question) =>
         question.GSI1SK.toLowerCase()
@@ -130,11 +129,11 @@ export default function StageSettingsContent() {
     setShow(true);
   };
   const handleOnBlur = () => {
-    if (localSearch.toLowerCase().trim() === "") {
-      setFilteredOrgQuestions(orgQuestions);
-      setShow(false);
-      return;
-    }
+    // if (localSearch.toLowerCase().trim() === "") {
+    //   setFilteredOrgQuestions(orgQuestions);
+    //   setShow(false);
+    //   return;
+    // }
     setFilteredOrgQuestions(
       orgQuestions?.filter((question) =>
         question.GSI1SK.toLowerCase()
@@ -154,6 +153,71 @@ export default function StageSettingsContent() {
       )
     );
   }, [localSearch]);
+
+  const [newQuestionOrder, setNewQuestionOrder] = useState(stageQuestions);
+  useEffect(() => {
+    setNewQuestionOrder(stageQuestions);
+  }, [stageQuestions]);
+
+  const handleDragEnd = async (result) => {
+    const { destination, source, draggableId } = result;
+    // No change
+    if (!destination) {
+      console.log("Not moved");
+      return;
+    }
+    // If dropped in the same place
+    if (
+      destination.droppableId === source.droppableId &&
+      destination.index === source.index
+    ) {
+      console.log("Dropped in same place");
+
+      return;
+    }
+
+    console.log(result.source);
+    console.log(result.destination);
+
+    let newQuestionOrder: string[] = Array.from(stage.questionOrder);
+    newQuestionOrder.splice(source.index, 1);
+    newQuestionOrder.splice(destination.index, 0, draggableId);
+    let newOrder = newQuestionOrder.map((i) =>
+      stageQuestions.find((j) => j.questionId === i)
+    );
+
+    setNewQuestionOrder(newOrder);
+
+    try {
+      await Stages.UpdateStage({
+        openingId,
+        stageId,
+        newValues: {
+          questionOrder: newQuestionOrder,
+        },
+      });
+    } catch (error) {
+      console.error(error.response.data.message);
+      alert(error.response.data.message);
+    }
+
+    // Refresh stage info (stage order)
+    mutate(
+      Stages.GetStageInfoURL({
+        openingId,
+        stageId,
+      })
+    );
+
+    // Refresh the questions
+    mutate(
+      Questions.GetQuestionsInStageURL({
+        openingId,
+        stageId,
+      })
+    );
+  };
+
   if (isOpeningLoading) {
     return <Loader text="Loading opening..." />;
   }
@@ -262,29 +326,77 @@ export default function StageSettingsContent() {
                       </>
                     </Listbox>
                     <div className="w-full p-4 rounded-md">
-                      <ul role="list" className="space-y-3">
-                        {stageQuestions?.map(
-                          (question: DynamoQuestion, index) => (
-                            <li
-                              key={question.questionId}
-                              className="flex border justify-between items-center bg-white  overflow-hidden px-4 py-4 sm:px-6 sm:rounded-md shadow-md hover:shadow-lg transition ease-in-out duration-300"
-                            >
-                              <p>
-                                {index + 1}. {question.GSI1SK}
-                              </p>
-                              <div className="flex items-center justify-center text-normal">
-                                <p>{question.questionId}</p>
-                                <button
-                                  onClick={() => handleRemove(question)}
-                                  className=" ml-4 px-2 py-1 right-0 border border-red-500 rounded-md text-red-500 bg-white hover:text-white hover:bg-red-500 transition ease-in duration-100"
-                                >
-                                  Remove
-                                </button>
+                      {isStageQuestionsLoading && <h4>Loading questions...</h4>}
+                      {isStageQuestionsError && (
+                        <h4 className="text-red-500">
+                          An error ocurred loading questions for this stage
+                        </h4>
+                      )}
+
+                      {stageQuestions?.length > 0 ? (
+                        <DragDropContext
+                          onDragEnd={handleDragEnd}
+                          onDragStart={() => console.log("Start")}
+                        >
+                          <Droppable droppableId={stage.stageId}>
+                            {(provided) => (
+                              <div
+                                {...provided.droppableProps}
+                                ref={provided.innerRef}
+                              >
+                                {newQuestionOrder?.map((question, index) => {
+                                  return (
+                                    <Draggable
+                                      key={question.questionId}
+                                      draggableId={question.questionId}
+                                      index={index}
+                                      {...provided.droppableProps}
+                                    >
+                                      {(provided) => (
+                                        <ol
+                                          {...provided.draggableProps}
+                                          {...provided.dragHandleProps}
+                                          ref={provided.innerRef}
+                                        >
+                                          <li
+                                            key={question.questionId}
+                                            className="my-2 active:border-blue-500 hover:border-blue-500 flex border justify-between items-center bg-white  overflow-hidden p-4 sm:px-6 sm:rounded-md shadow-md hover:shadow-lg transition ease-in-out duration-300"
+                                          >
+                                            <div>
+                                              {" "}
+                                              <p>
+                                                {index + 1}. {question.GSI1SK}
+                                              </p>
+                                              <p className="text-light text-sm">
+                                                {question.description}
+                                              </p>
+                                            </div>
+
+                                            <div className="flex items-center justify-center text-normal">
+                                              <p>{question.questionId}</p>
+                                              <button
+                                                onClick={() =>
+                                                  handleRemove(question)
+                                                }
+                                                className=" ml-4 px-2 py-1 right-0 border border-red-500 rounded-md text-red-500 bg-white hover:text-white hover:bg-red-500 transition ease-in duration-100"
+                                              >
+                                                Remove
+                                              </button>
+                                            </div>
+                                          </li>
+                                        </ol>
+                                      )}
+                                    </Draggable>
+                                  );
+                                })}
+                                {provided.placeholder}
                               </div>
-                            </li>
-                          )
-                        )}
-                      </ul>
+                            )}
+                          </Droppable>
+                        </DragDropContext>
+                      ) : (
+                        <h4>No questions found</h4>
+                      )}
                     </div>
                   </div>
                 </div>
