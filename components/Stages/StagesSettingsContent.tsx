@@ -18,11 +18,6 @@ import combineClassNames from "../../utils/combineClassNames";
 import { loadTest } from "loadtest";
 import * as Stages from "../../adapters/Stages";
 
-const tabs = [
-  { id: 1, name: "Questions" },
-  { id: 2, name: "Rules (TODO)" },
-];
-
 export default function StageSettingsContent() {
   const router = useRouter();
   const [localSearch, setLocalSearch] = useState("");
@@ -46,7 +41,7 @@ export default function StageSettingsContent() {
   };
 
   const handleAdd = async (question: DynamoQuestion) => {
-    // TODO check if already exists in stage
+    // TODO check if already exists in stage in FE, we check for this in the backend
 
     // If doesnt exist, add it.
     try {
@@ -120,9 +115,10 @@ export default function StageSettingsContent() {
   );
 
   const handleShow = () => {
-    setShow(true);
     if (localSearch.toLowerCase().trim() === "") {
       setFilteredOrgQuestions(orgQuestions);
+      setShow(true);
+      return;
     }
     setFilteredOrgQuestions(
       orgQuestions?.filter((question) =>
@@ -131,10 +127,22 @@ export default function StageSettingsContent() {
           .includes(localSearch.toLowerCase().trim())
       )
     );
+    setShow(true);
   };
   const handleOnBlur = () => {
+    if (localSearch.toLowerCase().trim() === "") {
+      setFilteredOrgQuestions(orgQuestions);
+      setShow(false);
+      return;
+    }
+    setFilteredOrgQuestions(
+      orgQuestions?.filter((question) =>
+        question.GSI1SK.toLowerCase()
+          .trim()
+          .includes(localSearch.toLowerCase().trim())
+      )
+    );
     setShow(false);
-    setFilteredOrgQuestions(orgQuestions);
   };
 
   useEffect(() => {
@@ -175,39 +183,18 @@ export default function StageSettingsContent() {
               <div className="relative h-full" style={{ minHeight: "36rem" }}>
                 <div className=" inset-0  border-gray-200 rounded-lg">
                   <div className="flex flex-col justify-center items-center">
-                    <nav
-                      className="-mb-px flex w-full "
-                      x-descriptions="Tab component"
-                    >
-                      {tabs.map((tab) => (
-                        // TODO this is a mess
-                        <button
-                          onClick={() => setCurrentActive(tab.id)}
-                          key={tab.name}
-                          className={combineClassNames(
-                            tab.id === currentActive
-                              ? "border-blue-500 text-blue-600"
-                              : "border-transparent text-normal hover:text-dark hover:border-blue-gray-300 transition ease-in-out duration-200",
-                            "text-center w-full cursor-pointer whitespace-nowrap pb-4 px-1 border-b-2 font-medium text-lg"
-                          )}
-                        >
-                          {tab.name}
-                        </button>
-                      ))}
-                    </nav>
                     <input
                       type="text"
                       name="search"
                       id="search"
                       value={localSearch}
                       onClick={handleShow}
-                      // onClick={() => setShow(true)}
                       onBlur={handleOnBlur}
                       onChange={(e) => handleSearch(e.target.value)}
                       placeholder={
                         "Search for a question to add to this stage..."
                       }
-                      className="mt-2  w-full shadow-sm focus:ring-blue-500 focus:border-blue-500   border sm:text-sm border-gray-300 rounded-md"
+                      className="border-2 border-blue-300 mt-2 py-4 text-xl w-full shadow-sm focus:ring-blue-500 focus:border-blue-500    sm:text-sm  rounded-md"
                     />
                     <Listbox
                       value={selected}
@@ -245,12 +232,17 @@ export default function StageSettingsContent() {
                                       value={question}
                                     >
                                       <>
-                                        <span className="">
-                                          {question.GSI1SK}
-                                          {stage?.questionOrder.includes(
-                                            question.questionId
-                                          ) && " - Already added"}
-                                        </span>
+                                        <div className="flex items-center justify-between ">
+                                          <p>
+                                            {question.GSI1SK}
+                                            {stage?.questionOrder.includes(
+                                              question.questionId
+                                            ) && " - Already added"}
+                                          </p>
+                                          <p className="">
+                                            {question.questionId}
+                                          </p>
+                                        </div>
                                       </>
                                     </Listbox.Option>
                                   )
@@ -267,7 +259,7 @@ export default function StageSettingsContent() {
                           (question: DynamoQuestion, index) => (
                             <li
                               key={question.questionId}
-                              className="flex  border justify-between items-center bg-white shadow overflow-hidden px-4 py-4 sm:px-6 sm:rounded-md"
+                              className="flex border justify-between items-center bg-white shadow overflow-hidden px-4 py-4 sm:px-6 sm:rounded-md"
                             >
                               <p>
                                 {index + 1}. {question.GSI1SK}
