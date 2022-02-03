@@ -42,13 +42,13 @@ app.use(
 const morganSettings =
   process.env.NODE_ENV === "development" ? "dev" : "combined";
 
-app.use(morgan(morganSettings));
 app.use(express.json());
 app.use(helmet());
 app.set("trust proxy", 1);
 app.use(haltOnTimedout);
 app.use(withCleanOrgId);
 app.use(withCleanQuestionId);
+app.use(morgan(morganSettings));
 app.use(
   cookieParser([process.env.SESSION_SIGNATURE_SECRET_1], COOKIE_SETTINGS)
 );
@@ -153,8 +153,16 @@ app.get(
   Invites.GetOrgInvites
 );
 
-app.post("/invites/:inviteId", [withSession], Invites.AcceptInvite);
+// As an org, cancel invite (if sent by mistake or whatever)
+app.post(
+  "/orgs/:orgId/invites/cancel",
+  [withSession, withHasOrg, withSameOrg],
+  Invites.CancelInvite
+);
+// As a user, reject an invite
 app.delete("/invites/:inviteId", [withSession], Invites.RejectInvite);
+
+app.post("/invites/:inviteId", [withSession], Invites.AcceptInvite);
 
 app.post("/applicants", Applicants.CreateApplicants);
 app.get(

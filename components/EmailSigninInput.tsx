@@ -14,8 +14,8 @@ export default function LoginEmail({ email, onChange, sendEmail, buttonText }) {
         required
         value={email}
         onChange={(e) => onChange(e.target.value)}
-        className="block invalid:text-red-500 invalid:border-red-500 
-        focus:invalid:border-red-500 focus:invalid:ring-red-500 w-full py-3 text-base rounded-md placeholder-normal shadow-sm focus:ring-green-400 focus:border-green-400 sm:flex-1 border-green-400"
+        className="block
+        focus:border-blue-500 focus:ring-blue-500 w-full py-3 text-base rounded-md placeholder-normal shadow-sm  sm:flex-1"
         placeholder="Enter your email"
       />
       <button

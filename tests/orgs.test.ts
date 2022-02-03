@@ -4,6 +4,7 @@ import * as Orgs from "../adapters/Orgs";
 import * as Users from "../adapters/Users";
 import * as Invites from "../adapters/Invites";
 import { DynamoOrgInvite } from "../types/dynamo";
+import * as GenerateID from "../utils/generateIds";
 const UrlSafeString = require("url-safe-string"),
   tagGenerator = new UrlSafeString();
 
@@ -59,7 +60,7 @@ describe("Orgs", () => {
     }
   });
 
-  const orgId = tagGenerator.generate(nanoid(15));
+  const orgId = GenerateID.OrgID(15);
   const displayName = nanoid(10);
 
   it("allows a user to create an org", async () => {
@@ -117,7 +118,7 @@ describe("Orgs", () => {
     const cookie = data.headers["set-cookie"][0];
     axios.defaults.headers.Cookie = cookie;
 
-    const orgId = tagGenerator.generate(nanoid(20));
+    const orgId = GenerateID.OrgID(15);
 
     // Join org
     await Orgs.CreateOrg({ orgId, displayName: nanoid(20) });
@@ -170,7 +171,7 @@ describe("Orgs", () => {
     const cookie = data.headers["set-cookie"][0];
     axios.defaults.headers.Cookie = cookie;
 
-    const orgId = tagGenerator.generate(nanoid(20));
+    const orgId = GenerateID.OrgID(15);
 
     // Join org
     await Orgs.CreateOrg({ orgId, displayName: nanoid(20) });

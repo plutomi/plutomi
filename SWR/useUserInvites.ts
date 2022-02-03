@@ -2,7 +2,7 @@ import useSWR from "swr";
 import { GetUserInvitesURL } from "../adapters/Invites";
 import { SWRFetcher } from "../Config";
 
-export default function useOrgInvites(userId: string) {
+export default function useUserInvites(userId: string) {
   const { data, error } = useSWR(userId && GetUserInvitesURL(), SWRFetcher, {
     refreshInterval: 5000,
   });

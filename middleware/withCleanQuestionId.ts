@@ -5,7 +5,7 @@ const UrlSafeString = require("url-safe-string"),
 /**
  * Cleans up the questionId, whether in body, params, or query, to be URL safe
  */
-export default async function withQuestionId(
+export default async function withCleanQuestionId(
   req: Request,
   res: Response,
   next: NextFunction
@@ -15,13 +15,24 @@ export default async function withQuestionId(
   }
 
   if (req.params.questionId) {
-    req.params.questionId = tagGenerator.generate(req.params.questionId);
+    req.params.questionId = tagGenerator.generate(
+      req.params.questionId.toString()
+    );
   }
 
   if (req.query.questionId) {
-    // TODO types
-    // @ts-ignore
     req.query.questionId = tagGenerator.generate(req.query.questionId);
+  }
+  if (req.body.questionOrder) {
+    try {
+      req.body.questionOrder = req.body.questionOrder.map((id: string) =>
+        tagGenerator.generate(id)
+      );
+    } catch (error) {
+      const message = `An error ocurred cleaning questionIds in the questionOrder body - ${error}`;
+      console.error(message);
+      return res.status(400).json({ message });
+    }
   }
 
   next();
