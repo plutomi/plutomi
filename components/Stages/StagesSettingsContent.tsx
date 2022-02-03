@@ -225,9 +225,9 @@ export default function StageSettingsContent() {
                                         stage?.questionOrder.includes(
                                           question.questionId
                                         )
-                                          ? "disabled text-gray-400 "
+                                          ? "disabled text-disabled"
                                           : "hover:bg-blue-500 hover:text-white hover:cursor-pointer",
-                                        "cursor-default select-none relative py-2 pl-3 pr-9 "
+                                        "cursor-default select-none relative py-2 pl-3 pr-9 group"
                                       )}
                                       value={question}
                                     >
@@ -239,7 +239,15 @@ export default function StageSettingsContent() {
                                               question.questionId
                                             ) && " - Already added"}
                                           </p>
-                                          <p className="">
+                                          <p
+                                            className={combineClassNames(
+                                              stage?.questionOrder.includes(
+                                                question.questionId
+                                              )
+                                                ? "disabled text-disabled"
+                                                : "text-normal group-hover:text-white"
+                                            )}
+                                          >
                                             {question.questionId}
                                           </p>
                                         </div>
@@ -259,17 +267,20 @@ export default function StageSettingsContent() {
                           (question: DynamoQuestion, index) => (
                             <li
                               key={question.questionId}
-                              className="flex border justify-between items-center bg-white shadow overflow-hidden px-4 py-4 sm:px-6 sm:rounded-md"
+                              className="flex border justify-between items-center bg-white  overflow-hidden px-4 py-4 sm:px-6 sm:rounded-md shadow-md hover:shadow-lg transition ease-in-out duration-300"
                             >
                               <p>
                                 {index + 1}. {question.GSI1SK}
                               </p>
-                              <button
-                                onClick={() => handleRemove(question)}
-                                className=" ml-8 px-2 py-1 right-0 border border-red-500 rounded-md text-red-500 bg-white hover:text-white hover:bg-red-500 transition ease-in duration-100"
-                              >
-                                Remove
-                              </button>
+                              <div className="flex items-center justify-center text-normal">
+                                <p>{question.questionId}</p>
+                                <button
+                                  onClick={() => handleRemove(question)}
+                                  className=" ml-4 px-2 py-1 right-0 border border-red-500 rounded-md text-red-500 bg-white hover:text-white hover:bg-red-500 transition ease-in duration-100"
+                                >
+                                  Remove
+                                </button>
+                              </div>
                             </li>
                           )
                         )}

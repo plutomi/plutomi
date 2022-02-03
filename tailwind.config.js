@@ -19,6 +19,7 @@ module.exports = {
         dark: colors.orange[500],
       },
       homepageGradient: "#fffdfa",
+      disabled: colors.gray[400],
       light: colors.blueGray[500],
       normal: colors.blueGray[600],
       dark: colors.blueGray[900],
