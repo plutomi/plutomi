@@ -49,10 +49,12 @@ app.set("trust proxy", 1);
 app.use(haltOnTimedout);
 app.use(withCleanOrgId);
 app.use(withCleanQuestionId);
-app.use(cookieParser(["sessionpw1"], COOKIE_SETTINGS));
+app.use(
+  cookieParser([process.env.SESSION_SIGNATURE_SECRET_1], COOKIE_SETTINGS)
+);
 
 // // Public info
-// TODO based on how questionnaire is setup
+// TODO based on how new questions are setup
 // app.get("/public/:orgId/stages/:stageId", PublicInfo.getStageInfo);
 // app.get(
 //   "/public/:orgId/stages/:stageId/questions",
