@@ -20,7 +20,6 @@ import * as Stages from "../../adapters/Stages";
 export default function StageSettingsContent() {
   const router = useRouter();
   const [localSearch, setLocalSearch] = useState("");
-  const [currentActive, setCurrentActive] = useState(1); // Id of item
   let { orgQuestions, isOrgQuestionsLoading, isOrgQuestionsError } =
     useQuestionsInOrg();
   const { openingId, stageId } = router.query as Pick<

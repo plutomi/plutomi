@@ -28,7 +28,7 @@ export default async function Create(
       PK: `${ENTITY_TYPES.USER}#${recipient.userId}`,
       SK: `${ENTITY_TYPES.ORG_INVITE}#${inviteId}`,
       orgId: createdBy.orgId,
-      orgName, // using orgName here because GSI1SK is taken obv
+      orgName,
       createdBy,
       recipient,
       entityType: ENTITY_TYPES.ORG_INVITE,
@@ -60,7 +60,7 @@ export default async function Create(
             TableName: `${process.env.NODE_ENV}-${DYNAMO_TABLE_NAME}`,
 
             UpdateExpression:
-              "SET totalInvites = if_not_exists(totalApplicants, :zero) + :value",
+              "SET totalInvites = if_not_exists(totalInvites, :zero) + :value",
             ExpressionAttributeValues: {
               ":zero": 0,
               ":value": 1,

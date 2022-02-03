@@ -153,8 +153,16 @@ app.get(
   Invites.GetOrgInvites
 );
 
-app.post("/invites/:inviteId", [withSession], Invites.AcceptInvite);
+// As an org, cancel invite (if sent by mistake or whatever)
+app.post(
+  "/orgs/:orgId/invites/cancel",
+  [withSession, withHasOrg, withSameOrg],
+  Invites.CancelInvite
+);
+// As a user, reject an invite
 app.delete("/invites/:inviteId", [withSession], Invites.RejectInvite);
+
+app.post("/invites/:inviteId", [withSession], Invites.AcceptInvite);
 
 app.post("/applicants", Applicants.CreateApplicants);
 app.get(

@@ -146,7 +146,7 @@ describe("Openings", () => {
   });
 
   it("allows you as a user to view your pending invites", async () => {
-    expect.assertions(3)
+    expect.assertions(3);
     const self = await Users.GetSelfInfo();
     const res = await Invites.GetUserInvites();
     expect(res.status).toBe(200);
@@ -256,5 +256,41 @@ describe("Openings", () => {
     expect(accepted.status).toBe(200);
     expect(accepted.data.message).toContain("Invite rejected");
     expect(self.data.orgId).toBe("NO_ORG_ASSIGNED");
+  });
+
+  it("allows cancelling invites as an org user", async () => {
+    expect.assertions(2);
+    // Create a new user
+    const data = await axios.post(`/jest-setup`, {
+      email: `${nanoid(7)}+${EMAILS.TESTING}`,
+    });
+    const cookie = data.headers["set-cookie"][0];
+    axios.defaults.headers.Cookie = cookie;
+
+    // Join org
+    const orgId = tagGenerator.generate(nanoid(20));
+    await Orgs.CreateOrg({ orgId, displayName: nanoid(20) });
+
+    const otherUserEmail = `${nanoid(7)}+${EMAILS.TESTING4}`;
+
+    // Create an invite for another user
+    await Invites.CreateInvite(otherUserEmail);
+
+    const allOrgInvites = await Invites.GetOrgInvites(orgId);
+
+    const ourInvite: DynamoOrgInvite = allOrgInvites.data.find(
+      (invite: DynamoOrgInvite) => {
+        invite.recipient.email === otherUserEmail;
+      }
+    );
+
+    const cancelStatus = await Invites.CancelInvite({
+      inviteId: ourInvite.inviteId,
+      userId: ourInvite.recipient.userId,
+      orgId: ourInvite.orgId,
+    });
+
+    expect(cancelStatus.status).toBe(200);
+    expect(cancelStatus.data.message).toBe("Invite cancelled");
   });
 });

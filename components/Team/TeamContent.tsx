@@ -10,6 +10,7 @@ import usePendingOrgInvites from "../../SWR/usePendingOrgInvites";
 import { DynamoOrgInvite } from "../../types/dynamo";
 import PendingInviteCard from "./PendingInviteCard";
 export default function TeamContent() {
+  // TODO clean up the pending invites section up
   const { user, isUserLoading, isUserError } = useSelf();
   const { orgUsers, isOrgUsersLoading, isOrgUsersError } = useOrgUsers(
     user?.orgId
@@ -30,7 +31,7 @@ export default function TeamContent() {
   ) : isPendingOrgInvitesError ? (
     <h2>An error ocurred retrieving your pending invites</h2>
   ) : (
-    <ul role="list" className="divide-y divide-gray-200">
+    <ul role="list" className=" divide-y divide-gray-200">
       {pendingOrgInvites.map((invite: DynamoOrgInvite) => (
         <PendingInviteCard key={invite.inviteId} invite={invite} />
       ))}
@@ -53,12 +54,48 @@ export default function TeamContent() {
             </button>
           </div>
           {pendingInvites}
+          {pendingOrgInvites?.length > 0 && (
+            <div className=" mt-8 ">
+              <div className="relative">
+                <div
+                  className="absolute inset-0 flex items-center"
+                  aria-hidden="true"
+                >
+                  <div className="w-full border-t border-gray-300" />
+                </div>
+                <div className="relative flex justify-center">
+                  <span className="px-3 bg-white text-lg font-medium text-gray-900">
+                    Team
+                  </span>
+                </div>
+              </div>{" "}
+            </div>
+          )}
+
           {orgUsers?.map((user) => (
             <UserCard key={user.userId} user={user} />
           ))}
         </div>
       ) : (
-        <EmptyTeamState />
+        <div>
+          <EmptyTeamState />
+          <div className=" mt-8 ">
+            <div className="relative">
+              <div
+                className="absolute inset-0 flex items-center"
+                aria-hidden="true"
+              >
+                <div className="w-full border-t border-gray-300" />
+              </div>
+              <div className="relative flex justify-center">
+                <span className="px-3 bg-white text-lg font-medium text-gray-900">
+                  Pending Invites
+                </span>
+              </div>
+            </div>{" "}
+          </div>
+          {pendingInvites}
+        </div>
       )}
     </>
   );

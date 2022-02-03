@@ -11,8 +11,24 @@ const AcceptInvite = async (inviteId: string) => {
   return data;
 };
 
+// As a recipient, reject this invite
 const RejectInvite = async (inviteId: string) => {
   const data = await axios.delete(`/invites/${inviteId}`);
+  return data;
+};
+
+interface CancelInviteInput {
+  inviteId: string;
+  userId: string;
+  orgId: string;
+}
+// As an org user, cancel a pending invite - // TODO i don't like this route
+const CancelInvite = async (options: CancelInviteInput) => {
+  const { inviteId, userId, orgId } = options;
+  const data = await axios.post(`/orgs/${orgId}/invites/cancel`, {
+    inviteId,
+    userId,
+  });
   return data;
 };
 
@@ -37,4 +53,5 @@ export {
   GetUserInvitesURL,
   GetOrgInvites,
   GetOrgInvitesURL,
+  CancelInvite,
 };

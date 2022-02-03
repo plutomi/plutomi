@@ -3,9 +3,7 @@ import { GetOrgInvitesURL } from "../adapters/Invites";
 import { SWRFetcher } from "../Config";
 
 export default function useOrgInvites(orgId: string) {
-  const { data, error } = useSWR(orgId && GetOrgInvitesURL(orgId), SWRFetcher, {
-    refreshInterval: 5000,
-  });
+  const { data, error } = useSWR(orgId && GetOrgInvitesURL(orgId), SWRFetcher);
 
   return {
     pendingOrgInvites: data,
