@@ -112,6 +112,7 @@ const requestLoginLink = async (req: Request, res: Response) => {
   }
 
   // Create a login link for them
+  // TODO this was used for Google login before and can be moved into the actual Dynamo call again
   const loginLinkId = nanoid();
   const loginLinkExpiry = Time.futureISO(15, TIME_UNITS.MINUTES); // when the link expires
 

@@ -23,6 +23,9 @@ const main = async (req: Request, res: Response) => {
 
   const { questionOrder } = stage;
 
+  if (questionOrder.length === 0) {
+    return res.status(200).json([]);
+  }
   try {
     const results = await Promise.all(
       questionOrder.map(async (id: string) => {

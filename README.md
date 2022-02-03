@@ -18,7 +18,7 @@ Having worked at a company that needed to recruit thousands of contractors every
 
 In your recruiting flow, you can create `openings` which people can apply to. An opening can be anything from a job, a location for a delivery company, or a program like a summer camp.
 
-In these openings, you can create `stages` which are individual steps for your application. You can add questions for applicants to answer, and setup automatic move rules that determine where applicants go next depending on their answers or after a certain time period. A simple ERD can be viewed [here](images/ERD.png) of the current entities.
+In these openings, you can create `stages` which are individual steps for your application. You can add questions for applicants to answer, and setup automatic move rules that determine where applicants go next depending on their answers or after a certain time period.
 
 An _opening_ for a delivery company might look like this:
 
@@ -55,39 +55,17 @@ Stage order:
 
 All infrastructure is managed by CDK and we use [Jest](https://jestjs.io/) for testing. Everything is witten TypeScript and we would appreciate any assistance on types or tests as we're definitely not the best :sweat_smile:
 
-The frontend runs on the [Serverless-Nextjs](https://serverless-nextjs.com/docs/cdkconstruct/) construct. We use [SSG without data + client side data fetching](https://youtu.be/f1rF9YKm1Ms?t=664) for almost all pages.
-
-The API is your typical Express app running on Fargate. _At this time_, we feel it has many of the advantages of something like API Gateway + Lambda without many of the downsides...
+The frontend uses the [Serverless-Nextjs](https://serverless-nextjs.com/docs/cdkconstruct/) CDK construct. The API is your typical Express app running on Fargate. _At this time_, we feel it has more advantages over API Gateway + Lambda (mostly around developer experience & third party tooling) without many of the downsides...
 
 ![werner](images/werner.png)
 
-We also try to avoid the [async try/catch tower of terror](https://www.youtube.com/watch?v=ITogH7lJTyE) by implementing the pattern shown in the video:
+There is a state machine for sending emails that triggers on certain events such as a new `LOGIN_EVENT` or a `LOGIN_LINK` request.
 
-```javascript
-const [user, error] = await Users.GetUserById({ userId });
-
-if (error) {
-  const { status, body } = CreateError.SDK(
-    error,
-    "An error ocurred using your login link"
-  );
-  return res.status(status).json(body);
-}
-
-// continue...
-```
-
-There is a state machine for sending emails that triggers on certain events such as a new `LOGIN_EVENT` or a `LOGIN_LINK` request. We let the state machine decide the path to take instead of having multiple EB rules and multiple state machines. We can then eliminate the myriad of queues and lambda functions polling said queues with the direct SDK calls Step Functions provides.
-
-## DynamoDB Schema
-
-Schema is subject to change but I will try to keep this updated as much as I can.
+## DynamoDB
 
 We're using a single table design for this project. If you're new to DynamoDB, I created [a playlist](https://youtube.com/playlist?list=PL4wKJluo18Z2Nh1QlU0LXKy6EbPwB17xq) that will help you get accustomed to it. There are videos from Alex Debrie, Rick Houlihan, Pete Naylor, and an awesome talk by Kai Zhao on adaptive capacity.
 
-To play around with the data model locally, you can download [NoSQL Workbench](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/workbench.settingup.html) and import the [NoSQLWorkbench.json](schema/NoSQLWorkbench.json) file into it. You can even export the table to your AWS account and generate queries in Python, JavaScript, or Java.
-
-I've created [a spreadsheet](https://docs.google.com/spreadsheets/d/1KZMJt0X2J0s1v8_jz6JC7aiiwYW8qVV9pKWobQ5012Y/edit?usp=sharing) with access patterns and use cases if you prefer that. It helps to follow along with NoSQL Workbench on your own machine or you can view the pictures in the [schema](./schema) folder.
+To play around with the data model locally, you can download [NoSQL Workbench](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/workbench.settingup.html) and import the [NoSQLWorkbench.json](schema/NoSQLWorkbench.json) file into it. You can even export the table to your AWS account directly.
 
 ## Other useful repos:
 

@@ -179,7 +179,7 @@ export default function StageSettingsContent() {
     console.log(result.source);
     console.log(result.destination);
 
-    let newQuestionOrder: string[] = Array.from(stage.questionOrder);
+    let newQuestionOrder: string[] = Array.from(stage?.questionOrder);
     newQuestionOrder.splice(source.index, 1);
     newQuestionOrder.splice(destination.index, 0, draggableId);
     let newOrder = newQuestionOrder.map((i) =>
@@ -256,7 +256,7 @@ export default function StageSettingsContent() {
                       onBlur={handleOnBlur}
                       onChange={(e) => handleSearch(e.target.value)}
                       placeholder={
-                        "Search for a question to add to this stage..."
+                        "Search for a question to add to this stage?..."
                       }
                       className="border-2 border-blue-300 mt-2 py-4 text-xl w-full shadow-sm focus:ring-blue-500 focus:border-blue-500    sm:text-sm  rounded-md"
                     />
@@ -333,12 +333,12 @@ export default function StageSettingsContent() {
                         </h4>
                       )}
 
-                      {stageQuestions?.length > 0 ? (
+                      {stage?.questionOrder.length > 0 ? (
                         <DragDropContext
                           onDragEnd={handleDragEnd}
                           onDragStart={() => console.log("Start")}
                         >
-                          <Droppable droppableId={stage.stageId}>
+                          <Droppable droppableId={stage?.stageId}>
                             {(provided) => (
                               <div
                                 {...provided.droppableProps}
@@ -395,7 +395,7 @@ export default function StageSettingsContent() {
                           </Droppable>
                         </DragDropContext>
                       ) : (
-                        <h4>No questions found</h4>
+                        stageQuestions && <h4>No questions found</h4>
                       )}
                     </div>
                   </div>
