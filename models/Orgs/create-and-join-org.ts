@@ -21,6 +21,7 @@ export default async function CreateAndJoinOrg(
     orgId, // Cannot be changed
     entityType: ENTITY_TYPES.ORG,
     createdAt: now,
+    createdBy: userId,
     totalApplicants: 0,
     totalOpenings: 0,
     totalUsers: 1,

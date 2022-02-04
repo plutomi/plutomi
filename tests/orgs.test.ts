@@ -111,7 +111,7 @@ describe("Orgs", () => {
   it("blocks you from deleting an org if there are other users", async () => {
     expect.assertions(3);
     // Create a new user
-    const firstUserEmail = `${nanoid(7)}+${EMAILS.TESTING}`;
+    const firstUserEmail = `${nanoid(20)}+${EMAILS.TESTING}`;
     const data = await axios.post(`/jest-setup`, {
       email: firstUserEmail,
     });
@@ -123,7 +123,7 @@ describe("Orgs", () => {
     // Join org
     await Orgs.CreateOrg({ orgId, displayName: nanoid(20) });
 
-    const otherUserEmail = `${nanoid(7)}+${EMAILS.TESTING3}`;
+    const otherUserEmail = `${nanoid(20)}+${EMAILS.TESTING3}`;
     // Create an invite for another user
 
     await Invites.CreateInvite({
@@ -166,7 +166,7 @@ describe("Orgs", () => {
   it("deletes an org if you're the only user in it", async () => {
     expect.assertions(2);
     // Create a new user
-    const firstUserEmail = `${nanoid(7)}+${EMAILS.TESTING}`;
+    const firstUserEmail = `${nanoid(20)}+${EMAILS.TESTING}`;
     const data = await axios.post(`/jest-setup`, {
       email: firstUserEmail,
     });
@@ -180,5 +180,157 @@ describe("Orgs", () => {
     const deleteOrg = await Orgs.DeleteOrg();
     expect(deleteOrg.status).toBe(200);
     expect(deleteOrg.data.message).toBe("Org deleted!");
+  });
+
+  // TODO RBAC - only admin who created the org can remove for now
+  it("allows removing users from an org", async () => {
+    expect.assertions(5);
+    // Create a new user
+    const firstUserEmail = `${nanoid(20)}+${EMAILS.TESTING}`;
+    const data = await axios.post(`/jest-setup`, {
+      email: firstUserEmail,
+    });
+    const cookie = data.headers["set-cookie"][0];
+    axios.defaults.headers.Cookie = cookie;
+
+    const orgId = GenerateID.OrgID(15);
+
+    // Join org
+    await Orgs.CreateOrg({ orgId, displayName: nanoid(20) });
+    const originalUser = await Users.GetSelfInfo();
+    const otherUserEmail = `${nanoid(20)}+${EMAILS.TESTING3}`;
+    // Create an invite for another user
+
+    await Invites.CreateInvite({
+      recipientEmail: otherUserEmail,
+    });
+
+    // Sign in as that other user
+    const data2 = await axios.post(`/jest-setup`, {
+      email: otherUserEmail,
+    });
+    const cookie2 = data2.headers["set-cookie"][0];
+    axios.defaults.headers.Cookie = cookie2;
+
+    const invitedUser = await Users.GetSelfInfo();
+
+    const invites = await Invites.GetUserInvites();
+
+    const ourInvite = invites.data.find(
+      (invite: DynamoOrgInvite) => invite.orgId === orgId
+    );
+    // Accept the invite
+    await Invites.AcceptInvite(ourInvite.inviteId);
+
+    // Sign back in as the first user
+    const data3 = await axios.post(`/jest-setup`, {
+      email: firstUserEmail,
+    });
+    const newCookie = data3.headers["set-cookie"][0];
+    axios.defaults.headers.Cookie = newCookie;
+
+    const orgInfo = await Orgs.GetOrgInfo();
+    expect(orgInfo.data.totalUsers).toBe(2);
+
+    const result = await Users.RemoveUserFromOrg({
+      orgId: originalUser.data.orgId,
+      userId: invitedUser.data.userId,
+    });
+    expect(result.status).toBe(200);
+    expect(result.data.message).toBe("User removed!");
+
+    const updatedOrg = await Orgs.GetOrgInfo();
+    expect(updatedOrg.data.totalUsers).toBe(1);
+
+    // Sign in as the  user that was removed
+    await axios.post(`/jest-setup`, {
+      email: otherUserEmail,
+    });
+    const cookie3 = data2.headers["set-cookie"][0];
+    axios.defaults.headers.Cookie = cookie3;
+
+    const updatedUser = await Users.GetSelfInfo();
+    expect(updatedUser.data.orgId).toBe(DEFAULTS.NO_ORG);
+  });
+
+  it("Blocks removing a user from org if person making the request is not the org admin, can be faked by trying to remove onself", async () => {
+    expect.assertions(2);
+    // Create a new user
+    const firstUserEmail = `${nanoid(20)}+${EMAILS.TESTING}`;
+    const data = await axios.post(`/jest-setup`, {
+      email: firstUserEmail,
+    });
+    const cookie = data.headers["set-cookie"][0];
+    axios.defaults.headers.Cookie = cookie;
+
+    const orgId = GenerateID.OrgID(15);
+
+    // Join org
+    await Orgs.CreateOrg({ orgId, displayName: nanoid(20) });
+    const originalUser = await Users.GetSelfInfo();
+    const otherUserEmail = `${nanoid(20)}+${EMAILS.TESTING3}`;
+    // Create an invite for another user
+
+    await Invites.CreateInvite({
+      recipientEmail: otherUserEmail,
+    });
+
+    // Sign in as that other user
+    const data2 = await axios.post(`/jest-setup`, {
+      email: otherUserEmail,
+    });
+    const cookie2 = data2.headers["set-cookie"][0];
+    axios.defaults.headers.Cookie = cookie2;
+
+    const invites = await Invites.GetUserInvites();
+
+    const ourInvite = invites.data.find(
+      (invite: DynamoOrgInvite) => invite.orgId === orgId
+    );
+    // Accept the invite
+    await Invites.AcceptInvite(ourInvite.inviteId);
+
+    // Attempt to remove a user
+    try {
+      await Users.RemoveUserFromOrg({
+        orgId: originalUser.data.orgId,
+        userId: originalUser.data.userId,
+      });
+    } catch (error) {
+      expect(error.response.status).toBe(403);
+      expect(error.response.data.message).toBe(
+        "You must be the creator of the org to remove users"
+      );
+    }
+  });
+
+  it("blocks removing yourself from org", async () => {
+    expect.assertions(2);
+    // Create a new user
+    const firstUserEmail = `${nanoid(20)}+${EMAILS.TESTING}`;
+    const data = await axios.post(`/jest-setup`, {
+      email: firstUserEmail,
+    });
+    const cookie = data.headers["set-cookie"][0];
+    axios.defaults.headers.Cookie = cookie;
+
+    const orgId = GenerateID.OrgID(15);
+
+    // Join org
+    await Orgs.CreateOrg({ orgId, displayName: nanoid(20) });
+    const originalUser = await Users.GetSelfInfo();
+
+    try {
+      await Users.RemoveUserFromOrg({
+        orgId: originalUser.data.orgId,
+        userId: originalUser.data.userId,
+      });
+    } catch (error) {
+      console.error(error);
+      expect(error.response.status).toBe(403);
+      expect(error.response.data.message).toBe(
+        "You cannot remove yourself from an org. If you're the only user, delete the org instead"
+      );
+    }
   });
 });

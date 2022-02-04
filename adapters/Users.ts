@@ -32,6 +32,17 @@ const GetUsersInOrg = async () => {
   return data;
 };
 
+interface RemoveUserFromOrgInput {
+  orgId: string;
+  userId: string;
+}
+const GetRemoveUserFromOrgURL = (options: RemoveUserFromOrgInput) =>
+  `/orgs/${options.orgId}/users/${options.userId}`;
+
+const RemoveUserFromOrg = async (options: RemoveUserFromOrgInput) => {
+  const data = await axios.delete(GetRemoveUserFromOrgURL({ ...options }));
+  return data;
+};
 export {
   GetSelfInfo,
   GetSelfInfoURL,
@@ -40,4 +51,5 @@ export {
   UpdateUser,
   GetUsersInOrg,
   GetUsersInOrgURL,
+  RemoveUserFromOrg,
 };
