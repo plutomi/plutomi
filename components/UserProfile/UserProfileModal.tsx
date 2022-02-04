@@ -28,7 +28,12 @@ export default function UserProfileModal({ user }: { user: DynamoUser }) {
         firstName: user?.firstName === firstName ? undefined : firstName,
         lastName: user?.lastName === lastName ? undefined : lastName,
       };
-      const { data } = await UpdateUser(user?.userId, { ...input });
+      const { data } = await UpdateUser({
+        userId: user?.userId,
+        newValues: {
+          ...input,
+        },
+      });
       alert(data.message);
       closeUserProfileModal();
       mutate(GetUserInfoUrl(user?.userId));

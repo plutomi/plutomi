@@ -1,6 +1,6 @@
-import create from "zustand";
-import { DynamoQuestion } from "../types/dynamo";
+// @ts-nocheck // TODO remove
 
+import create from "zustand";
 const useStore = create((set) => ({
   /**
    * ORGS

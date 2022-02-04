@@ -1,4 +1,3 @@
-import EmptyStagesState from "../../../../../components/Stages/EmptyStagesState";
 import { useEffect } from "react";
 import { useRouter } from "next/router";
 import useStore from "../../../../../utils/store";
@@ -48,14 +47,10 @@ export default function StageApplicants() {
 
         <div className="space-y-10">
           <StagesHeader />
-          {stages?.length === 0 ? (
-            <EmptyStagesState />
-          ) : (
-            <div className="space-y-10">
-              <StageCarousel />
-              <ApplicantList />
-            </div>
-          )}
+          <div className="space-y-10">
+            <StageCarousel />
+            <ApplicantList />
+          </div>
         </div>
       </>
     </NewPage>

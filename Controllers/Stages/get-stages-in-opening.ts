@@ -11,7 +11,6 @@ const main = async (req: Request, res: Response) => {
     openingId,
     orgId: session.orgId,
   });
-  console.log("Opening id", openingId);
 
   if (openingError) {
     const { status, body } = CreateError.SDK(
@@ -19,6 +18,10 @@ const main = async (req: Request, res: Response) => {
       "An error ocurred getting your opening info"
     );
     return res.status(status).json(body);
+  }
+
+  if (!opening) {
+    return res.status(404).json({ message: "Opening does not exist" });
   }
   const [allCurrentStages, allStagesError] = await Stages.GetStagesInOpenings({
     openingId,

@@ -16,13 +16,13 @@ export default function ApplicationContent() {
   const { applicant, isApplicantLoading, isApplicantError } =
     usePublicApplicant(applicantId);
 
-  const { questions, isOrgQuestionsLoading, isOrgQuestionsError } =
-    useQuestionsInOrg(orgId, applicant?.stageId);
+  const { orgQuestions, isOrgQuestionsLoading, isOrgQuestionsError } =
+    useQuestionsInOrg();
   if (isOrgQuestionsLoading) {
     return <Loader text="Loading questions..." />;
   }
 
-  if (questions.length === 0) {
+  if (orgQuestions.length === 0) {
     return <h1>There are no questions in this stage :T</h1>;
   }
 
@@ -38,7 +38,7 @@ export default function ApplicationContent() {
       description,
       questionResponse: response,
     };
-    const questionOrder = questions.map((a) => a.questionId);
+    const questionOrder = orgQuestions.map((a) => a.questionId);
     const questionIndex = questionOrder.indexOf(questionId);
 
     let found = responses.find((answer) => answer.questionId === questionId);
@@ -77,7 +77,7 @@ export default function ApplicationContent() {
   return (
     <div>
       <ul className="my-4 space-y-8">
-        {questions.map((question) => (
+        {orgQuestions.map((question) => (
           <li key={question?.questionId} className="space-y-1 mb-4">
             <label
               htmlFor="email"
