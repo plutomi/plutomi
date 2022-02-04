@@ -1,8 +1,12 @@
 import { AXIOS_INSTANCE as axios } from "../Config";
 // TODO types
 
-const CreateInvite = async (recipientEmail: string) => {
-  const data = await axios.post(`/invites`, { recipientEmail });
+interface CreateInviteInput {
+  recipientEmail: string;
+  expiresInDays?: number;
+}
+const CreateInvite = async (options: CreateInviteInput) => {
+  const data = await axios.post(`/invites`, { ...options });
   return data;
 };
 

@@ -1,6 +1,11 @@
 import { Request, Response } from "express";
 import Joi from "joi";
-import { ERRORS, JOI_SETTINGS, TIME_UNITS } from "../../Config";
+import {
+  ERRORS,
+  JOI_SETTINGS,
+  ORG_INVITE_EXPIRY_DAYS,
+  TIME_UNITS,
+} from "../../Config";
 import * as CreateError from "../../utils/createError";
 import emailValidator from "deep-email-validator";
 import * as Users from "../../models/Users";
@@ -11,6 +16,7 @@ import { pick } from "lodash";
 const schema = Joi.object({
   body: {
     recipientEmail: Joi.string().email().trim(),
+    expiresInDays: Joi.number().min(1).max(365).optional(),
   },
 }).options(JOI_SETTINGS);
 const main = async (req: Request, res: Response) => {
@@ -22,7 +28,7 @@ const main = async (req: Request, res: Response) => {
   }
 
   const { session } = res.locals;
-  const { recipientEmail } = req.body;
+  const { recipientEmail, expiresInDays } = req.body;
 
   const validation = await emailValidator({
     email: recipientEmail,
@@ -95,7 +101,6 @@ const main = async (req: Request, res: Response) => {
     return res.status(status).json(body);
   }
 
-  // .some() returns true if any item matches the condition
   const pendingInvites = recipientInvites.some(
     (invite) => invite.orgId === session.orgId
   );
@@ -116,7 +121,10 @@ const main = async (req: Request, res: Response) => {
       "unsubscribeKey",
     ]),
     orgName: org.displayName,
-    expiresAt: Time.futureISO(3, TIME_UNITS.DAYS), // TODO https://github.com/plutomi/plutomi/issues/333
+    expiresAt: Time.futureISO(
+      expiresInDays || ORG_INVITE_EXPIRY_DAYS,
+      TIME_UNITS.DAYS
+    ), // TODO https://github.com/plutomi/plutomi/issues/333
     createdBy: pick(session, [
       "userId",
       "firstName",

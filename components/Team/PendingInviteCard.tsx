@@ -48,7 +48,7 @@ export default function PendingInviteCard({
               {invite.createdBy.lastName}
             </p>
             <p className="text-sm text-blue-gray-400">
-              Expires in {Time.relative(invite.expiresAt)}
+              Expires {Time.relative(invite.expiresAt)}
             </p>
           </div>
         </div>

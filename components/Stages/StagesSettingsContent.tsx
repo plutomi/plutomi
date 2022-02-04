@@ -271,6 +271,7 @@ export default function StageSettingsContent() {
                             leaveFrom="opacity-100"
                             leaveTo="opacity-0"
                           >
+                            {/* TODO use datalist for this with a regular transition */}
                             <Listbox.Options className="absolute z-10 mt-1 w-full bg-white shadow-lg max-h-60 rounded-md py-1 text-base ring-1 ring-black ring-opacity-5 overflow-auto focus:outline-none sm:text-sm">
                               {filteredOrgQuestions?.length === 0 ? (
                                 <p className="disabled  text-gray-400 cursor-default select-none relative py-2 pl-3 pr-9 ">
