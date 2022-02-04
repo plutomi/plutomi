@@ -4,7 +4,6 @@ import * as Stages from "../../models/Stages";
 import * as CreateError from "../../utils/createError";
 const main = async (req: Request, res: Response) => {
   const { session } = res.locals;
-
   const { openingId, stageId } = req.params;
 
   const [stage, stageError] = await Stages.GetStageById({
@@ -20,7 +19,11 @@ const main = async (req: Request, res: Response) => {
     );
     return res.status(status).json(body);
   }
+  if (!stage) {
+    return res.status(404).json({ message: "Stage not found" });
+  }
 
+  console.log("Stage returning", stage)
   const { questionOrder } = stage;
 
   if (questionOrder.length === 0) {

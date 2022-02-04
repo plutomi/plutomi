@@ -49,9 +49,8 @@ app.use(haltOnTimedout);
 app.use(withCleanOrgId);
 app.use(withCleanQuestionId);
 app.use(morgan(morganSettings));
-app.use(
-  cookieParser([process.env.SESSION_SIGNATURE_SECRET_1], COOKIE_SETTINGS)
-);
+const sessionSecrets = [process.env.SESSION_SIGNATURE_SECRET_1];
+app.use(cookieParser(sessionSecrets, COOKIE_SETTINGS));
 
 // // Public info
 // TODO based on how new questions are setup

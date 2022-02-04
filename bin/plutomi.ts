@@ -5,13 +5,9 @@ import APIStack from "../lib/APIStack";
 import DynamoDBStack from "../lib/DynamoDBStack";
 import FrontendStack from "../lib/FrontendStack";
 import EventBridgeStack from "../lib/EventBridgeStack";
-import CommsMachineStack from "../lib/commsMachineStack";
+import CommsMachineStack from "../lib/CommsMachineStack";
 import StreamProcessorStack from "../lib/StreamProcessorStack";
 import { Builder } from "@sls-next/lambda-at-edge";
-import { nanoid } from "nanoid";
-import { NodejsFunctionProps } from "@aws-cdk/aws-lambda-nodejs";
-import { Architecture, Runtime } from "@aws-cdk/aws-lambda";
-import { RetentionDays } from "@aws-cdk/aws-logs";
 
 // Run the serverless builder before deploying
 const builder = new Builder(".", "./build", { args: ["build"] });

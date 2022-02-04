@@ -99,8 +99,14 @@
     "jsx": "preserve"
   },
   // "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx"],
-  "exclude": ["node_modules", "cdk.out", "**/*.ts", "**/*.tsx"], // TODO TEMPORARY *!!!
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", "functions/openings/delete-openingsts"]
+  // "exclude": ["node_modules", "cdk.out", "**/*.ts", "**/*.tsx"], // TODO TEMPORARY *!!!
+  "include": [
+    "next-env.d.ts",
+    "**/*.ts",
+    "**/*.tsx",
+    "functions/openings/delete-openingsts"
+  ],
+  "exclude": ["node_modules", "cdk.out"]
 }
 // OLD
 // {
