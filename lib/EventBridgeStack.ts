@@ -4,6 +4,7 @@ import { ENTITY_TYPES } from "../Config";
 import { EventBus, Rule } from "@aws-cdk/aws-events";
 import { StateMachine } from "@aws-cdk/aws-stepfunctions";
 import { SfnStateMachine } from "@aws-cdk/aws-events-targets";
+import { Queue } from "@aws-cdk/aws-sqs";
 const resultDotEnv = dotenv.config({
   path: `${process.cwd()}/.env.${process.env.NODE_ENV}`,
 });
@@ -14,6 +15,7 @@ if (resultDotEnv.error) {
 
 interface EventBridgeStackProps extends cdk.StackProps {
   CommsMachine: StateMachine;
+  DeletionQueue: Queue;
 }
 export default class EventBridgeStack extends cdk.Stack {
   /**
