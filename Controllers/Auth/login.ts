@@ -71,10 +71,7 @@ const login = async (req: Request, res: Response) => {
   });
 
   if (failed) {
-    const formattedError = errorFormatter(failed);
-    // If login link has been used, it will throw this error
-    const LOGIN_LINK_ALREADY_USED_ERROR = `Transaction cancelled, please refer cancellation reasons for specific reasons [None, ConditionalCheckFailed]`;
-    if (formattedError.errorMessage === LOGIN_LINK_ALREADY_USED_ERROR) {
+    if (failed.name === "TransactionCanceledException") {
       return res.status(401).json({ message: "Login link no longer valid" });
     }
     const { status, body } = CreateError.SDK(

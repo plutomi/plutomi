@@ -120,7 +120,7 @@ export default function CreateInviteModal() {
                               htmlFor="price"
                               className="block text-sm font-medium text-gray-700"
                             >
-                              Expires in
+                              Invite will expire in
                             </label>
                             <div className="mt-1 relative rounded-md shadow-sm w-2/5">
                               <input

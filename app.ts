@@ -151,6 +151,11 @@ app.get(
   [withSession, withHasOrg, withSameOrg],
   Invites.GetOrgInvites
 );
+app.delete(
+  "/orgs/:orgId/users/:userId",
+  [withSession, withHasOrg, withSameOrg],
+  Users.RemoveUserFromOrg
+);
 
 // As an org, cancel invite (if sent by mistake or whatever)
 app.post(

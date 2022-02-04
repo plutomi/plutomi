@@ -385,6 +385,10 @@ interface DynamoOrg {
   orgId: string; // The actual org id
   entityType: ENTITY_TYPES.ORG;
   createdAt: string; // ISO timestamp
+  /**
+   * userId of the user who created the org
+   */
+  createdBy: string;
   totalApplicants: number;
   totalOpenings: number;
   totalUsers: number;
