@@ -3,9 +3,11 @@ import * as Time from "../../utils/time";
 import * as Users from "../../adapters/Users";
 import { mutate } from "swr";
 import useSelf from "../../SWR/useSelf";
+import useOrgInfo from "../../SWR/useOrgInfo";
 // TODO this type should be limited to what info is actually available
 export default function UserCard({ user }: { user: DynamoUser }) {
   const { isUserLoading, isUserError } = useSelf();
+  const { org, isOrgLoading, isOrgError } = useOrgInfo(user?.orgId);
   const me = useSelf().user;
   const handleRemove = async (user: DynamoUser) => {
     if (
@@ -41,12 +43,15 @@ export default function UserCard({ user }: { user: DynamoUser }) {
           Joined {Time.relative(user?.orgJoinDate)}
         </p>
       </div>
-      <button
-        className="w-1/6 border  rounded-lg rounded-l-none bg-white border-red-500  hover:bg-red-500  text-red-500 hover:text-white  transition ease-in duration-100 "
-        onClick={() => handleRemove(user)}
-      >
-        Remove
-      </button>
+      {/* User is admin */}
+      {me?.userId === org?.createdBy && user?.userId !== me?.userId && (
+        <button
+          className="w-1/6 border  rounded-lg rounded-l-none bg-white border-red-500  hover:bg-red-500  text-red-500 hover:text-white  transition ease-in duration-100 "
+          onClick={() => handleRemove(user)}
+        >
+          Remove
+        </button>
+      )}
     </div>
   );
 }
