@@ -223,6 +223,9 @@ export const JoiOrgId = Joi.string()
   )
   .max(200);
 
+// If not specified, how long should invites be valid for
+export const ORG_INVITE_EXPIRY_DAYS = 3;
+
 export const COOKIE_SETTINGS = {
   httpOnly: true,
   sameSite: true, // (same as strict)

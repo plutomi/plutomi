@@ -126,7 +126,9 @@ describe("Orgs", () => {
     const otherUserEmail = `${nanoid(7)}+${EMAILS.TESTING3}`;
     // Create an invite for another user
 
-    await Invites.CreateInvite(otherUserEmail);
+    await Invites.CreateInvite({
+      recipientEmail: otherUserEmail,
+    });
 
     // Sign in as that other user
     const data2 = await axios.post(`/jest-setup`, {
