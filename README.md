@@ -16,7 +16,7 @@ Having worked at a company that needed to recruit thousands of contractors every
 
 ## Summary
 
-In your recruiting flow, you can create `openings` which people can apply to. An opening can be anything from a job, a location for a delivery company, or a program like a summer camp.
+In your recruiting flow you can create `openings` which people can apply to. An opening can be anything from a job, a location for a delivery company, or a program like a summer camp.
 
 In these openings, you can create `stages` which are individual steps for your application. You can add questions for applicants to answer, and setup automatic move rules that determine where applicants go next depending on their answers or after a certain time period.
 
@@ -53,9 +53,9 @@ Stage order:
 
 ## Language, Tooling, & Infrastructure
 
-All infrastructure is managed by CDK and we use [Jest](https://jestjs.io/) for testing. Everything is witten TypeScript and we would appreciate any assistance on types or tests as we're definitely not the best :sweat_smile:
+All infrastructure is managed by CDK and we use [Jest](https://jestjs.io/) for testing. Everything is written TypeScript and we would appreciate any assistance on types or tests as we're definitely not the best :sweat_smile:
 
-The frontend uses the [Serverless-Nextjs](https://serverless-nextjs.com/docs/cdkconstruct/) CDK construct. The API is your typical Express app running on Fargate. _At this time_, we feel it has more advantages over API Gateway + Lambda (mostly around developer experience & third party tooling) without many of the downsides...
+The frontend uses the [Serverless-Nextjs](https://serverless-nextjs.com/docs/cdkconstruct/) CDK construct. The API is your typical Express app running on Fargate. We would like to migrate this to a full serverless setup with API Gateway + Lambda but, _at this time_, we feel Fargate has more advantages (mostly around developer experience & third party tooling) without many of the downsides...
 
 ![werner](images/werner.png)
 
