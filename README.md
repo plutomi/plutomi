@@ -61,6 +61,8 @@ The frontend uses the [Serverless-Nextjs](https://serverless-nextjs.com/docs/cdk
 
 There is a state machine for sending emails that triggers on certain events such as a new `LOGIN_EVENT` or a `LOGIN_LINK` request.
 
+When deleting an item that has children, such as an org and its openings or a question attached to many stages, the parent is deleted right away but the children will be deleted / updated asynchronously through another state machine.
+
 ## DynamoDB
 
 We're using a single table design for this project. If you're new to DynamoDB, I created [a playlist](https://youtube.com/playlist?list=PL4wKJluo18Z2Nh1QlU0LXKy6EbPwB17xq) that will help you get accustomed to it. There are videos from Alex Debrie, Rick Houlihan, Pete Naylor, and an awesome talk by Kai Zhao on adaptive capacity.

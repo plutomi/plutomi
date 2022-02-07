@@ -4,7 +4,6 @@ import { ENTITY_TYPES } from "../Config";
 import { EventBus, Rule } from "@aws-cdk/aws-events";
 import { StateMachine } from "@aws-cdk/aws-stepfunctions";
 import { SfnStateMachine } from "@aws-cdk/aws-events-targets";
-import { Queue } from "@aws-cdk/aws-sqs";
 const resultDotEnv = dotenv.config({
   path: `${process.cwd()}/.env.${process.env.NODE_ENV}`,
 });
@@ -33,6 +32,13 @@ export default class EventBridgeStack extends cdk.Stack {
       eventBusName: `${process.env.NODE_ENV}-EventBus`,
     });
 
+    bus.archive(`${process.env.NODE_ENV}-EventArchive`, {
+      archiveName: `${process.env.NODE_ENV}-EventArchive`,
+      eventPattern: {
+        account: [cdk.Stack.of(this).account],
+      },
+      retention: cdk.Duration.days(365),
+    });
     // We want to send all communication events to the step function, we can handle routing there
     new Rule(this, "NeedsCommsRule", {
       eventBus: bus,
