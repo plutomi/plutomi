@@ -7,7 +7,6 @@ import { Table } from "@aws-cdk/aws-dynamodb";
 import {
   EMAILS,
   ENTITY_TYPES,
-  API_URL,
   DOMAIN_NAME,
   WEBSITE_URL,
 } from "../Config";

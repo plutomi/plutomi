@@ -45,12 +45,58 @@ export default class DeletionMachineStack extends cdk.Stack {
   constructor(scope: cdk.App, id: string, props: DeletionMachineProps) {
     super(scope, id, props);
 
+    const ORG_DELETED = sfn.Condition.stringEquals(
+      "$.detail.NewImage.entityType",
+      ENTITY_TYPES.ORG
+    );
+
+    const QUESTION_DELETED = sfn.Condition.stringEquals(
+      "$.detail.NewImage.entityType",
+      ENTITY_TYPES.QUESTION
+    );
+
+    const OPENING_DELETED = sfn.Condition.stringEquals(
+      "$.detail.NewImage.entityType",
+      ENTITY_TYPES.OPENING
+    );
+
+    // TODO delete applcicants
+    const STAGE_DELETED = sfn.Condition.stringEquals(
+      "$.detail.NewImage.entityType",
+      ENTITY_TYPES.STAGE
+    );
+
+    const GET_OPENINGS_SETTINGS = {
+      service: "dynamodb",
+      action: "query",
+      iamResources: [
+        `arn:aws:dynamodb:${this.region}:${this.account}:table/${props.table.tableName}`,
+      ],
+    };
+    const GET_OPENINGS = new tasks.CallAwsService(this, "GetOpeningsCall", {
+      ...GET_OPENINGS_SETTINGS,
+      parameters: {
+        TableName: props.table.tableName,
+        IndexName: "GSI1",
+        KeyConditionExpression: "GSI1PK = :GSI1PK",
+        ExpressionAttributeValues: {
+          ":GSI1PK.$": `States.Format('${ENTITY_TYPES.ORG}#{}#${ENTITY_TYPES.OPENING}S', $.detail.NewImage.orgId)`,
+        },
+      },
+      resultPath: "$.DynamoDB",
+    });
+    /**
+     * In parallel:
+     * 1. Get all openings
+     *  - Delete all openings
+     * 2. Get all questions
+     *  - Delete all questions
+     *  TODO get all
+     *
+     */
     const definition = new sfn.Choice(this, "WhichEntity?").when(
-      sfn.Condition.stringEquals(
-        "$.detail.NewImage.entityType",
-        ENTITY_TYPES.QUESTION // TODO
-      ),
-      new sfn.Choice(this, "IsNewUser?")
+      ORG_DELETED,
+      new sfn.Parallel(this, "GetAllOrgItems").branch(GET_OPENINGS)
     );
 
     const log = new LogGroup(
@@ -70,6 +116,7 @@ export default class DeletionMachineStack extends cdk.Stack {
         level: sfn.LogLevel.ALL,
       },
     });
+    // TODO
     props.table.grantWriteData(this.DeletionMachine); // TODO this event should just be update. No need for extra permissions
   }
 }

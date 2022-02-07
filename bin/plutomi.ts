@@ -36,7 +36,7 @@ builder
 
     const { DeletionMachine } = new DeletionMachineStack(
       app,
-      `${process.env.NODE_ENV}-DeletionQueueStack`,
+      `${process.env.NODE_ENV}-DeletionMachineStack`,
       {
         table,
       }
