@@ -226,7 +226,10 @@ export default class CommsMachineStack extends cdk.Stack {
         ),
         sendOrgInvite
       );
-    const log = new LogGroup(this, "CommsMachineLogGroup");
+    const log = new LogGroup(
+      this,
+      `${process.env.NODE_ENV}-CommsMachineLogGroup`
+    );
 
     this.CommsMachine = new sfn.StateMachine(this, "CommsMachine", {
       stateMachineName: `${process.env.NODE_ENV}-CommsMachine`,

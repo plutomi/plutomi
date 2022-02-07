@@ -15,7 +15,7 @@ if (resultDotEnv.error) {
 
 interface EventBridgeStackProps extends cdk.StackProps {
   CommsMachine: StateMachine;
-  DeletionQueue: Queue;
+  DeletionMachine: StateMachine;
 }
 export default class EventBridgeStack extends cdk.Stack {
   /**
