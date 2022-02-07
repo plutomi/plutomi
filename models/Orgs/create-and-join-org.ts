@@ -39,7 +39,6 @@ export default async function CreateAndJoinOrg(
               SK: ENTITY_TYPES.USER,
             },
             TableName: `${process.env.NODE_ENV}-${DYNAMO_TABLE_NAME}`,
-
             UpdateExpression:
               "SET orgId = :orgId, orgJoinDate = :orgJoinDate, GSI1PK = :GSI1PK",
             ExpressionAttributeValues: {
@@ -54,7 +53,6 @@ export default async function CreateAndJoinOrg(
           Put: {
             Item: newOrg,
             TableName: `${process.env.NODE_ENV}-${DYNAMO_TABLE_NAME}`,
-
             ConditionExpression: "attribute_not_exists(PK)",
           },
         },

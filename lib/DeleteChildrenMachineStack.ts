@@ -14,7 +14,7 @@ if (resultDotEnv.error) {
   throw resultDotEnv.error;
 }
 
-interface DeletionMachineProps extends cdk.StackProps {
+interface DeleteChildrenMachineProps extends cdk.StackProps {
   table: Table;
 }
 
@@ -28,15 +28,15 @@ interface DeletionMachineProps extends cdk.StackProps {
  *
  * When deleting an org, start at the top and start deleting everything. Etc. Etc.
  */
-export default class DeletionMachineStack extends cdk.Stack {
-  public DeletionMachine: sfn.StateMachine;
+export default class DeleteChildrenMachineStack extends cdk.Stack {
+  public DeleteChildrenMachine: sfn.StateMachine;
   /**
    * @param {cdk.Construct} scope
    * @param {string} id
    * @param {cdk.StackProps=} props
    */
 
-  constructor(scope: cdk.App, id: string, props: DeletionMachineProps) {
+  constructor(scope: cdk.App, id: string, props: DeleteChildrenMachineProps) {
     super(scope, id, props);
 
     // TODO DRY!!!
@@ -93,16 +93,21 @@ export default class DeletionMachineStack extends cdk.Stack {
     const DeleteStageMap = new sfn.Map(this, "DeleteStagesInOpeningMap", {
       maxConcurrency: 1,
       inputPath: "$[0].stages", // Map converts this to an array for some reason
+      parameters: {
+        // Makes it easier to get these attributes per item
+        "PK.$": `States.Format('${ENTITY_TYPES.ORG}#{}#${ENTITY_TYPES.OPENING}#{}#${ENTITY_TYPES.STAGE}#{}', $$.Map.Item.Value.orgId.S, $$.Map.Item.Value.openingId.S, $$.Map.Item.Value.stageId.S)`,
+        SK: ENTITY_TYPES.STAGE,
+      },
     });
     DeleteStageMap.iterator(
       new tasks.DynamoDeleteItem(this, "DeleteStagesInOpening", {
         table: props.table,
         key: {
           PK: tasks.DynamoAttributeValue.fromString(
-            sfn.JsonPath.stringAt("$.PK.S")
+            sfn.JsonPath.stringAt("$.PK")
           ),
           SK: tasks.DynamoAttributeValue.fromString(
-            sfn.JsonPath.stringAt("$.SK.S")
+            sfn.JsonPath.stringAt("$.SK")
           ),
         },
       })
@@ -119,25 +124,29 @@ export default class DeletionMachineStack extends cdk.Stack {
 
     const log = new LogGroup(
       this,
-      `${process.env.NODE_ENV}-DeletionMachineLogGroup`,
+      `${process.env.NODE_ENV}-DeleteChildrenMachineLogGroup`,
       {
         retention: RetentionDays.ONE_MONTH,
       }
     );
 
-    this.DeletionMachine = new sfn.StateMachine(this, "DeletionMachine", {
-      stateMachineName: `${process.env.NODE_ENV}-DeletionMachine`,
-      definition,
-      timeout: cdk.Duration.minutes(5),
-      stateMachineType: sfn.StateMachineType.EXPRESS,
-      logs: {
-        // Not enabled by default
-        includeExecutionData: true,
-        destination: log,
-        level: sfn.LogLevel.ALL,
-      },
-    });
+    this.DeleteChildrenMachine = new sfn.StateMachine(
+      this,
+      "DeleteChildrenMachine",
+      {
+        stateMachineName: `${process.env.NODE_ENV}-DeleteChildrenMachine`,
+        definition,
+        timeout: cdk.Duration.minutes(5),
+        stateMachineType: sfn.StateMachineType.EXPRESS,
+        logs: {
+          // Not enabled by default
+          includeExecutionData: true,
+          destination: log,
+          level: sfn.LogLevel.ALL,
+        },
+      }
+    );
     // TODO
-    props.table.grantWriteData(this.DeletionMachine); // TODO this event should just be update. No need for extra permissions
+    props.table.grantWriteData(this.DeleteChildrenMachine); // TODO this event should just be update. No need for extra permissions
   }
 }

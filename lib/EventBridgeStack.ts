@@ -14,7 +14,7 @@ if (resultDotEnv.error) {
 
 interface EventBridgeStackProps extends cdk.StackProps {
   CommsMachine: StateMachine;
-  DeletionMachine: StateMachine;
+  DeleteChildrenMachine: StateMachine;
 }
 export default class EventBridgeStack extends cdk.Stack {
   /**
@@ -70,7 +70,7 @@ export default class EventBridgeStack extends cdk.Stack {
       description:
         "Rule that checks if an action needs further comms such as login links or welcome emails. Forwards to the `CommsMachine` step function.",
       ruleName: "DeletionRule",
-      targets: [new SfnStateMachine(props.DeletionMachine)],
+      targets: [new SfnStateMachine(props.DeleteChildrenMachine)],
       eventPattern: {
         source: ["dynamodb.streams"],
         detail: {
