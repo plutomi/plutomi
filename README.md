@@ -59,9 +59,9 @@ The frontend uses the [Serverless-Nextjs](https://serverless-nextjs.com/docs/cdk
 
 ![werner](images/werner.png)
 
-There is a state machine for sending emails that triggers on certain events such as a new `LOGIN_EVENT` or a `LOGIN_LINK` request.
+When deleting an item that has dependencies such as an org and its openings or an opening and its stages, the parent is deleted right away but the children will be deleted asynchronously through a state machine. At the top of the workflow is a `choice` state which figures out which entity was deleted. It then retrieves all of the dependent **_top-level_** items for that entity, maps through them, and deletes them. This causes the state machine to be called again: Dynamo stream -> EventBridge -> StepFunction with the newly deleted entity. It's a cascading flow of deletions.
 
-When deleting an item that has children, such as an org and its openings or a question attached to many stages, the parent is deleted right away but the children will be deleted / updated asynchronously through another state machine.
+There is another state machine for sending emails that triggers on certain events such as a new `LOGIN_EVENT` or a `LOGIN_LINK` request.
 
 ## DynamoDB
 

@@ -75,7 +75,7 @@ export default class EventBridgeStack extends cdk.Stack {
         source: ["dynamodb.streams"],
         detail: {
           eventName: ["REMOVE"],
-          NewImage: {
+          OldImage: {
             entityType: [
               // TODO other entities
               ENTITY_TYPES.ORG,
