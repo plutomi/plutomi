@@ -4,12 +4,15 @@ import {
 } from "@aws-sdk/lib-dynamodb";
 import { SdkError } from "@aws-sdk/types";
 import { Dynamo } from "../../AWSClients/ddbDocClient";
-import { ENTITY_TYPES, DEFAULTS, TIME_UNITS } from "../../Config";
+import {
+  ENTITY_TYPES,
+  DEFAULTS,
+  TIME_UNITS,
+  DYNAMO_TABLE_NAME,
+} from "../../Config";
 import { DynamoLoginEvent } from "../../types/dynamo";
 import { CreateLoginEventAndDeleteLoginLinkInput } from "../../types/main";
-const { DYNAMO_TABLE_NAME } = process.env;
 import { RetentionDays } from "@aws-cdk/aws-logs";
-
 import * as Time from "../../utils/time";
 /**
  * Creates a login event on the user

@@ -1,11 +1,9 @@
 import { QueryCommandInput, QueryCommand } from "@aws-sdk/lib-dynamodb";
 import { Dynamo } from "../../AWSClients/ddbDocClient";
-import { ENTITY_TYPES } from "../../Config";
+import { DYNAMO_TABLE_NAME, ENTITY_TYPES } from "../../Config";
 import { DynamoStage } from "../../types/dynamo";
 import { GetStagesInOpeningInput } from "../../types/main";
-const { DYNAMO_TABLE_NAME } = process.env;
 import { SdkError } from "@aws-sdk/types";
-import * as Openings from ".";
 export default async function GetStages(
   props: GetStagesInOpeningInput
 ): Promise<[DynamoStage[], null] | [null, SdkError]> {
@@ -13,7 +11,6 @@ export default async function GetStages(
 
   const params: QueryCommandInput = {
     TableName: `${process.env.NODE_ENV}-${DYNAMO_TABLE_NAME}`,
-
     IndexName: "GSI1",
     KeyConditionExpression: "GSI1PK = :GSI1PK",
     ExpressionAttributeValues: {

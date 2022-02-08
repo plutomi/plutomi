@@ -1,9 +1,8 @@
 import { UpdateCommandInput, UpdateCommand } from "@aws-sdk/lib-dynamodb";
 import { Dynamo } from "../../AWSClients/ddbDocClient";
-import { ENTITY_TYPES } from "../../Config";
+import { DYNAMO_TABLE_NAME, ENTITY_TYPES } from "../../Config";
 import { DynamoUser } from "../../types/dynamo";
 import { UpdateUserInput } from "../../types/main";
-const { DYNAMO_TABLE_NAME } = process.env;
 import { SdkError } from "@aws-sdk/types";
 export default async function Update(
   props: UpdateUserInput

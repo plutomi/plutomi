@@ -6,12 +6,11 @@ import {
 } from "@aws-sdk/lib-dynamodb";
 import { nanoid } from "nanoid";
 import { Dynamo } from "../../AWSClients/ddbDocClient";
-import { ID_LENGTHS, ENTITY_TYPES } from "../../Config";
+import { ID_LENGTHS, ENTITY_TYPES, DYNAMO_TABLE_NAME } from "../../Config";
 import { DynamoQuestion } from "../../types/dynamo";
 import { CreateQuestionInput } from "../../types/main";
 import * as Time from "../../utils/time";
 import { SdkError } from "@aws-sdk/types";
-const { DYNAMO_TABLE_NAME } = process.env;
 
 export default async function CreateQuestion(
   props: CreateQuestionInput

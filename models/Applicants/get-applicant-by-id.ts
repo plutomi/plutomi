@@ -1,13 +1,12 @@
 import { QueryCommandInput, QueryCommand } from "@aws-sdk/lib-dynamodb";
 import _ from "lodash";
 import { Dynamo } from "../../AWSClients/ddbDocClient";
-import { ENTITY_TYPES } from "../../Config";
+import { DYNAMO_TABLE_NAME, ENTITY_TYPES } from "../../Config";
 import {
   GetApplicantByIdInput,
   GetApplicantByIdOutput,
   CreateApplicantOutput,
 } from "../../types/main";
-const { DYNAMO_TABLE_NAME } = process.env;
 import { SdkError } from "@aws-sdk/types";
 export default async function Get(
   props: GetApplicantByIdInput

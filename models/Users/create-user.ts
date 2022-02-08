@@ -1,11 +1,10 @@
 import { PutCommandInput, PutCommand } from "@aws-sdk/lib-dynamodb";
 import { nanoid } from "nanoid";
 import { Dynamo } from "../../AWSClients/ddbDocClient";
-import { ID_LENGTHS, ENTITY_TYPES, DEFAULTS } from "../../Config";
+import { ID_LENGTHS, ENTITY_TYPES, DEFAULTS, DYNAMO_TABLE_NAME } from "../../Config";
 import { DynamoUser } from "../../types/dynamo";
 import { CreateUserInput } from "../../types/main";
 import * as Time from "../../utils/time";
-const { DYNAMO_TABLE_NAME } = process.env;
 import { SdkError } from "@aws-sdk/types";
 export default async function CreateUser(
   props: CreateUserInput

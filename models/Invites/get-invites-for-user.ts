@@ -1,9 +1,8 @@
 import { QueryCommandInput, QueryCommand } from "@aws-sdk/lib-dynamodb";
 import { Dynamo } from "../../AWSClients/ddbDocClient";
-import { ENTITY_TYPES } from "../../Config";
+import { DYNAMO_TABLE_NAME, ENTITY_TYPES } from "../../Config";
 import { DynamoOrgInvite } from "../../types/dynamo";
 import { GetOrgInvitesForUserInput } from "../../types/main";
-const { DYNAMO_TABLE_NAME } = process.env;
 import { SdkError } from "@aws-sdk/types";
 /**
  * Given a `userId`, returns the user's invites to join an org

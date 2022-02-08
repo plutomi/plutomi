@@ -3,10 +3,9 @@ import {
   TransactWriteCommand,
 } from "@aws-sdk/lib-dynamodb";
 import { Dynamo } from "../../AWSClients/ddbDocClient";
-import { ID_LENGTHS, ENTITY_TYPES, DEFAULTS } from "../../Config";
+import { ENTITY_TYPES, DEFAULTS, DYNAMO_TABLE_NAME } from "../../Config";
 import { SdkError } from "@aws-sdk/types";
 import { LeaveAndDeleteOrgInput } from "../../types/main";
-const { DYNAMO_TABLE_NAME } = process.env;
 
 export default async function Create(
   props: LeaveAndDeleteOrgInput
@@ -42,7 +41,6 @@ export default async function Create(
               SK: ENTITY_TYPES.ORG,
             },
             TableName: `${process.env.NODE_ENV}-${DYNAMO_TABLE_NAME}`,
-
             ConditionExpression: "attribute_exists(PK)",
           },
         },

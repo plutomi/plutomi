@@ -3,10 +3,9 @@ import {
   TransactWriteCommand,
 } from "@aws-sdk/lib-dynamodb";
 import { Dynamo } from "../../AWSClients/ddbDocClient";
-import { ENTITY_TYPES } from "../../Config";
+import { DYNAMO_TABLE_NAME, ENTITY_TYPES } from "../../Config";
 import { JoinOrgFromInviteInput } from "../../types/main";
 import * as Time from "../../utils/time";
-const { DYNAMO_TABLE_NAME } = process.env;
 import { SdkError } from "@aws-sdk/types";
 
 export default async function Join(

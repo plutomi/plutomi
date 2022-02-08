@@ -1,6 +1,7 @@
 import * as cdk from "@aws-cdk/core";
 import * as dotenv from "dotenv";
 import * as dynamodb from "@aws-cdk/aws-dynamodb";
+import { DYNAMO_TABLE_NAME } from "../Config";
 
 const resultDotEnv = dotenv.config({
   path: `${process.cwd()}/.env.${process.env.NODE_ENV}`,
@@ -18,9 +19,8 @@ export default class DynamoDBStack extends cdk.Stack {
   constructor(scope: cdk.Construct, id: string, props?: cdk.StackProps) {
     super(scope, id, props);
 
-    const TABLE_NAME: string = process.env.DYNAMO_TABLE_NAME;
     this.table = new dynamodb.Table(this, "plutomi-dynamo-table", {
-      tableName: `${process.env.NODE_ENV}-${TABLE_NAME}`,
+      tableName: `${process.env.NODE_ENV}-${DYNAMO_TABLE_NAME}`,
       partitionKey: { name: "PK", type: dynamodb.AttributeType.STRING },
       sortKey: { name: "SK", type: dynamodb.AttributeType.STRING },
       timeToLiveAttribute: "ttlExpiry",

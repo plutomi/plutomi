@@ -10,12 +10,12 @@ import {
   TIME_UNITS,
   DEFAULTS,
   OPENING_STATE,
+  DYNAMO_TABLE_NAME,
 } from "../../Config";
 import { DynamoApplicant } from "../../types/dynamo";
 import { CreateApplicantInput, CreateApplicantOutput } from "../../types/main";
 import * as Time from "../../utils/time";
 import { SdkError } from "@aws-sdk/types";
-const { DYNAMO_TABLE_NAME } = process.env;
 
 export default async function Create(
   props: CreateApplicantInput

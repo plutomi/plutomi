@@ -1,8 +1,7 @@
 import { GetCommandInput, GetCommand } from "@aws-sdk/lib-dynamodb";
 import { Dynamo } from "../../AWSClients/ddbDocClient";
-import { ENTITY_TYPES } from "../../Config";
+import { DYNAMO_TABLE_NAME, ENTITY_TYPES } from "../../Config";
 import { GetStageByIdInput, GetStageByIdOutput } from "../../types/main";
-const { DYNAMO_TABLE_NAME } = process.env;
 import { SdkError } from "@aws-sdk/types";
 /**
  * Returns a stage by its ID.
@@ -15,7 +14,6 @@ export default async function Get(
   const { orgId, stageId, openingId } = props;
   const params: GetCommandInput = {
     TableName: `${process.env.NODE_ENV}-${DYNAMO_TABLE_NAME}`,
-
     Key: {
       PK: `${ENTITY_TYPES.ORG}#${orgId}#${ENTITY_TYPES.OPENING}#${openingId}#${ENTITY_TYPES.STAGE}#${stageId}`,
       SK: ENTITY_TYPES.STAGE,

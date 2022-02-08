@@ -40,6 +40,8 @@ export enum OPENING_STATE {
   PRIVATE = "PRIVATE",
 }
 
+export const DYNAMO_TABLE_NAME = "Plutomi";
+
 export enum ENTITY_TYPES {
   APPLICANT = "APPLICANT",
   APPLICANT_RESPONSE = "APPLICANT_RESPONSE",

@@ -1,9 +1,8 @@
 import { PutCommandInput, PutCommand } from "@aws-sdk/lib-dynamodb";
 import { Dynamo } from "../../AWSClients/ddbDocClient";
-import { ENTITY_TYPES, TIME_UNITS } from "../../Config";
+import { DYNAMO_TABLE_NAME, ENTITY_TYPES, TIME_UNITS } from "../../Config";
 import { DynamoLoginLink } from "../../types/dynamo";
 import { CreateLoginLinkInput } from "../../types/main";
-const { DYNAMO_TABLE_NAME } = process.env;
 import * as Time from "../../utils/time";
 import { SdkError } from "@aws-sdk/types";
 
@@ -33,7 +32,6 @@ export default async function CreateLoginLink(
 
     const params: PutCommandInput = {
       TableName: `${process.env.NODE_ENV}-${DYNAMO_TABLE_NAME}`,
-
       Item: newLoginLink,
       ConditionExpression: "attribute_not_exists(PK)",
     };

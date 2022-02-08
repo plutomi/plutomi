@@ -3,12 +3,11 @@ import {
   TransactWriteCommand,
 } from "@aws-sdk/lib-dynamodb";
 import { Dynamo } from "../../AWSClients/ddbDocClient";
-import { DEFAULTS, ENTITY_TYPES, TIME_UNITS } from "../../Config";
+import { DYNAMO_TABLE_NAME, ENTITY_TYPES } from "../../Config";
 import { DynamoOrg } from "../../types/dynamo";
 import { CreateAndJoinOrgInput } from "../../types/main";
 import * as Time from "../../utils/time";
 import { SdkError } from "@aws-sdk/types";
-const { DYNAMO_TABLE_NAME } = process.env;
 export default async function CreateAndJoinOrg(
   props: CreateAndJoinOrgInput
 ): Promise<[null, null] | [null, SdkError]> {

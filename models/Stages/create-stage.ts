@@ -5,11 +5,15 @@ import {
 import { nanoid } from "nanoid";
 import getNewChildItemOrder from "../../utils/getNewChildItemOrder";
 import { Dynamo } from "../../AWSClients/ddbDocClient";
-import { ID_LENGTHS, ENTITY_TYPES, LIMITS } from "../../Config";
+import {
+  ID_LENGTHS,
+  ENTITY_TYPES,
+  LIMITS,
+  DYNAMO_TABLE_NAME,
+} from "../../Config";
 import { DynamoStage } from "../../types/dynamo";
 import { CreateStageInput } from "../../types/main";
 import * as Time from "../../utils/time";
-const { DYNAMO_TABLE_NAME } = process.env;
 import { SdkError } from "@aws-sdk/types";
 export default async function CreateStage(
   props: CreateStageInput

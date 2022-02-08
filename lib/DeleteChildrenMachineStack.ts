@@ -4,7 +4,7 @@ import * as sfn from "@aws-cdk/aws-stepfunctions";
 import * as tasks from "@aws-cdk/aws-stepfunctions-tasks";
 import { LogGroup, RetentionDays } from "@aws-cdk/aws-logs";
 import { Table } from "@aws-cdk/aws-dynamodb";
-import { ENTITY_TYPES } from "../Config";
+import { DYNAMO_TABLE_NAME, ENTITY_TYPES } from "../Config";
 import { Choice, IntegrationPattern } from "@aws-cdk/aws-stepfunctions";
 import { NodejsFunction } from "@aws-cdk/aws-lambda-nodejs";
 import { Architecture, Runtime } from "@aws-cdk/aws-lambda";
@@ -262,7 +262,7 @@ export default class DeleteChildrenMachineStack extends cdk.Stack {
         architecture: Architecture.ARM_64,
         environment: {
           NODE_ENV: process.env.NODE_ENV,
-          DYNAMO_TABLE_NAME: process.env.DYNAMO_TABLE_NAME,
+          DYNAMO_TABLE_NAME,
         },
         bundling: {
           minify: true,
