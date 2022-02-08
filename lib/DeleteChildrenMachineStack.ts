@@ -5,7 +5,10 @@ import * as tasks from "@aws-cdk/aws-stepfunctions-tasks";
 import { LogGroup, RetentionDays } from "@aws-cdk/aws-logs";
 import { Table } from "@aws-cdk/aws-dynamodb";
 import { ENTITY_TYPES } from "../Config";
-import { Choice } from "@aws-cdk/aws-stepfunctions";
+import { Choice, IntegrationPattern } from "@aws-cdk/aws-stepfunctions";
+import { NodejsFunction } from "@aws-cdk/aws-lambda-nodejs";
+import { Architecture, Runtime } from "@aws-cdk/aws-lambda";
+import path from "path";
 
 const resultDotEnv = dotenv.config({
   path: `${process.cwd()}/.env.${process.env.NODE_ENV}`,
@@ -243,16 +246,22 @@ export default class DeleteChildrenMachineStack extends cdk.Stack {
         resultSelector: {
           "stages.$": "$.Items",
         },
+        resultPath: "$.stages",
       }
     );
 
     const GetStageInfoMap = new sfn.Map(this, "GetStageInfoMap", {
       maxConcurrency: 1,
-      inputPath: "$.stages",
+      // TODO if something breaks its this
+      // inputPath: "$.stages.stages", we need the input (questionId) to be passed down
+      itemsPath: "$.stages.stages",
+      // TODO below will need a pass state so that the functiond does nto get multiple .stages passed into it
+
       parameters: {
         // Makes it easier to get these attributes per item
         "PK.$": `States.Format('${ENTITY_TYPES.ORG}#{}#${ENTITY_TYPES.OPENING}#{}#${ENTITY_TYPES.STAGE}#{}', $$.Map.Item.Value.orgId.S, $$.Map.Item.Value.openingId.S, $$.Map.Item.Value.stageId.S)`,
         SK: ENTITY_TYPES.STAGE,
+        "questionId.$": "$.detail.OldImage.questionId", // pass this to the function
       },
     });
 
@@ -288,6 +297,35 @@ export default class DeleteChildrenMachineStack extends cdk.Stack {
     //   ENTITY_TYPES.STAGE // TODO N/A
     // ); // // TODO N/A// TODO N/A
 
+    const RemoveDeletedQuestionFromStageFunction = new NodejsFunction(
+      this,
+      `${process.env.NODE_ENV}-remove-deleted-question-from-stage-function`,
+      {
+        functionName: `${process.env.NODE_ENV}-remove-deleted-question-from-stage-function`,
+        timeout: cdk.Duration.seconds(5),
+        memorySize: 256,
+        logRetention: RetentionDays.ONE_WEEK,
+        runtime: Runtime.NODEJS_14_X,
+        architecture: Architecture.ARM_64,
+        environment: {
+          NODE_ENV: process.env.NODE_ENV,
+          DYNAMO_TABLE_NAME: process.env.DYNAMO_TABLE_NAME,
+        },
+        bundling: {
+          minify: true,
+          externalModules: ["aws-sdk"],
+        },
+        handler: "main",
+        description: "Removes a deleted question from stages.",
+        entry: path.join(
+          __dirname,
+          `/../functions/remove-deleted-question-from-stage.ts`
+        ),
+      }
+    );
+
+    // TODO wrong permissions
+    props.table.grantReadWriteData(RemoveDeletedQuestionFromStageFunction);
     const definition = new Choice(this, "WhichEntity?")
       .when(
         OPENING_DELETED,
@@ -320,7 +358,14 @@ export default class DeleteChildrenMachineStack extends cdk.Stack {
         new Choice(this, "DoesQuestionHaveStages")
           .when(
             QUESTION_HAS_STAGES,
-            GET_STAGES_THAT_HAVE_QUESTIONS.next(GetStageInfoMap)
+            GET_STAGES_THAT_HAVE_QUESTIONS.next(
+              GetStageInfoMap.next(
+                new tasks.LambdaInvoke(this, "UpdateQuestionOrderOnstage", {
+                  lambdaFunction: RemoveDeletedQuestionFromStageFunction,
+                  integrationPattern: IntegrationPattern.REQUEST_RESPONSE,
+                })
+              )
+            )
 
             // Transaction here
           )

@@ -28,6 +28,7 @@ export default async function AddQuestionToStage(
     orgId,
     openingId,
     stageId,
+    questionId,
   };
 
   const transactParams: TransactWriteCommandInput = {

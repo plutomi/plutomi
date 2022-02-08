@@ -27,14 +27,13 @@ const main = async (req: Request, res: Response) => {
   }
 
   // Remove that question
-
   const [updated, updateError] = await Questions.DeleteQuestionFromStage({
     openingId,
     stageId,
     questionId,
     orgId: session.orgId,
-
     deleteIndex: stage.questionOrder.indexOf(questionId),
+    decrementStageCount: true,
   });
 
   if (updateError) {

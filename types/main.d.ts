@@ -160,6 +160,11 @@ interface AddQuestionToStageInput
 interface DeleteQuestionFromStageInput
   extends Pick<DynamoStage, "orgId" | "openingId" | "stageId" | "deleteIndex"> {
   questionId: string;
+  /**
+   * Whether to decrement the stage count on the question.
+   * Set it to FALSE if the question has been deleted form the org.
+   */
+  decrementStageCount: boolean;
 }
 interface DeleteOrgInviteInput {
   userId: string;
