@@ -5,6 +5,7 @@ import * as tasks from "@aws-cdk/aws-stepfunctions-tasks";
 import { LogGroup, RetentionDays } from "@aws-cdk/aws-logs";
 import { Table } from "@aws-cdk/aws-dynamodb";
 import { ENTITY_TYPES } from "../Config";
+import { Choice } from "@aws-cdk/aws-stepfunctions";
 
 const resultDotEnv = dotenv.config({
   path: `${process.cwd()}/.env.${process.env.NODE_ENV}`,
@@ -164,6 +165,57 @@ export default class DeleteChildrenMachineStack extends cdk.Stack {
         },
       })
     );
+
+    const ORG_HAS_QUESTIONS = sfn.Condition.numberGreaterThan(
+      "$.detail.OldImage.totalQuestions",
+      0
+    );
+
+    const GET_QUESTIONS_IN_ORG = new tasks.CallAwsService(
+      this,
+      "GetQuestionsInOrg",
+      {
+        ...DYNAMO_QUERY_SETTINGS,
+        parameters: {
+          TableName: props.table.tableName,
+          IndexName: "GSI1",
+          KeyConditionExpression: "GSI1PK = :GSI1PK",
+          ExpressionAttributeValues: {
+            ":GSI1PK": {
+              "S.$": `States.Format('${ENTITY_TYPES.ORG}#{}#${ENTITY_TYPES.QUESTION}S', $.detail.OldImage.orgId)`,
+            },
+          },
+        },
+        resultSelector: {
+          "questions.$": "$.Items",
+        },
+      }
+    );
+
+    const DeleteQuestionsMap = new sfn.Map(this, "DeleteQuestionsInOrgMap", {
+      maxConcurrency: 1,
+      inputPath: "$.questions",
+      parameters: {
+        // Makes it easier to get these attributes per item
+        "PK.$": `States.Format('${ENTITY_TYPES.ORG}#{}#${ENTITY_TYPES.QUESTION}#{}', $$.Map.Item.Value.orgId.S, $$.Map.Item.Value.questionId.S)`,
+        SK: ENTITY_TYPES.QUESTION,
+      },
+    });
+    DeleteQuestionsMap.iterator(
+      new tasks.DynamoDeleteItem(this, "DeleteQuestionsInOrg", {
+        table: props.table,
+        key: {
+          PK: tasks.DynamoAttributeValue.fromString(
+            sfn.JsonPath.stringAt("$.PK")
+          ),
+          SK: tasks.DynamoAttributeValue.fromString(
+            sfn.JsonPath.stringAt("$.SK")
+          ),
+        },
+      })
+    );
+
+    // TODO
     const QUESTION_DELETED = sfn.Condition.stringEquals(
       "$.detail.OldImage.entityType",
       ENTITY_TYPES.QUESTION
@@ -173,17 +225,34 @@ export default class DeleteChildrenMachineStack extends cdk.Stack {
       "$.detail.OldImage.entityType",
       ENTITY_TYPES.STAGE
     );
+    // TODO
 
-    const definition = new sfn.Choice(this, "WhichEntity?")
+    const definition = new Choice(this, "WhichEntity?")
       .when(
         OPENING_DELETED && OPENING_HAS_STAGES,
         GET_STAGES_IN_OPENING.next(DeleteStagesMap)
       )
       .when(
-        ORG_DELETED && ORG_HAS_OPENINGS,
-        GET_OPENINGS_IN_ORG.next(DeleteOpeningsMap)
+        ORG_DELETED,
+        new sfn.Parallel(this, "OrgCleanup")
+          .branch(
+            new Choice(this, "OrgHasOpenings")
+              .when(
+                ORG_HAS_OPENINGS,
+                GET_OPENINGS_IN_ORG.next(DeleteOpeningsMap)
+              )
+              .otherwise(new sfn.Succeed(this, "Org doesn't have openings"))
+          )
+          .branch(
+            new Choice(this, "OrgHasQuestions")
+              .when(
+                ORG_HAS_QUESTIONS,
+                GET_QUESTIONS_IN_ORG.next(DeleteQuestionsMap)
+              )
+              .otherwise(new sfn.Succeed(this, "Org doesn't have questions"))
+          )
       )
-      .otherwise(new sfn.Succeed(this, "No entity match - TODO remove"));
+      .otherwise(new sfn.Succeed(this, "Nothing to do :)"));
 
     // ----- State Machine Settings -----
     const log = new LogGroup(
