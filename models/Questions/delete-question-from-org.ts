@@ -9,6 +9,7 @@ export default async function DeleteQuestionFromOrg(
 ): Promise<[null, null] | [null, SdkError]> {
   const { orgId, questionId } = props;
 
+  
   // TODO this needs async processing to delete this question from stages that are using it!!!!!!!
   const params: DeleteCommandInput = {
     Key: {

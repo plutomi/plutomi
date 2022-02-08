@@ -229,8 +229,10 @@ export default class DeleteChildrenMachineStack extends cdk.Stack {
 
     const definition = new Choice(this, "WhichEntity?")
       .when(
-        OPENING_DELETED && OPENING_HAS_STAGES,
-        GET_STAGES_IN_OPENING.next(DeleteStagesMap)
+        OPENING_DELETED,
+        new Choice(this, "Does Opening have stages?")
+          .when(OPENING_HAS_STAGES, GET_STAGES_IN_OPENING.next(DeleteStagesMap))
+          .otherwise(new sfn.Succeed(this, "Opening doesn't have stages :)"))
       )
       .when(
         ORG_DELETED,
