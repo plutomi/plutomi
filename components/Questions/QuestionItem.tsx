@@ -28,18 +28,22 @@ export default function QuestionItem({
   const [isHovering, setIsHovering] = useState(false);
 
   const handleDelete = async (question: DynamoQuestion) => {
-    const deleteMessage = "Are you sure you want to delete this question?";
+    let deleteMessage = `Are you sure you want to delete this question?`;
 
+    if (question.totalStages > 0) {
+      deleteMessage += `\n\n\nNOTE: This question is being used in ${question.totalStages} stages and those stages will be updated.`;
+    }
     if (!confirm(deleteMessage)) {
       return;
     }
+
     try {
       const data = await DeleteQuestionFromOrg(question.questionId);
       alert(data.data.message);
-      mutate(GetQuestionsInOrgURL());
     } catch (error) {
       alert(error.response.data.message);
     }
+    mutate(GetQuestionsInOrgURL());
   };
 
   // Essentially fill in all the details of the modal and then open it
