@@ -19,12 +19,13 @@ export default function CreateOpeningModal() {
       const { data } = await CreateOpening({
         openingName,
       });
-      mutate(GetOpeningsInOrgURL());
       alert(data.message);
+      setOpeningName("");
       closeCreateOpeningModal();
     } catch (error) {
       alert(error.response.data.message);
     }
+    mutate(GetOpeningsInOrgURL());
   };
 
   return (

@@ -41,8 +41,3 @@ const main = async (req: Request, res: Response) => {
   return res.status(201).json({ message: "Opening created!" });
 };
 export default main;
-function MAX_OPENING_NAME_LENGTH(
-  MAX_OPENING_NAME_LENGTH: any
-): Joi.SchemaLike | Joi.SchemaLike[] {
-  throw new Error("Function not implemented.");
-}

@@ -38,28 +38,6 @@ export default class DeleteChildrenMachineStack extends cdk.Stack {
 
   constructor(scope: cdk.App, id: string, props: DeleteChildrenMachineProps) {
     super(scope, id, props);
-
-    // TODO DRY!!!
-    const ORG_DELETED = sfn.Condition.stringEquals(
-      "$.detail.OldImage.entityType",
-      ENTITY_TYPES.ORG
-    );
-
-    const QUESTION_DELETED = sfn.Condition.stringEquals(
-      "$.detail.OldImage.entityType",
-      ENTITY_TYPES.QUESTION
-    );
-
-    const OPENING_DELETED = sfn.Condition.stringEquals(
-      "$.detail.OldImage.entityType",
-      ENTITY_TYPES.OPENING
-    );
-
-    const STAGE_DELETED = sfn.Condition.stringEquals(
-      "$.detail.OldImage.entityType",
-      ENTITY_TYPES.STAGE
-    );
-
     const DYNAMO_QUERY_SETTINGS = {
       service: "dynamodb",
       action: "query",
@@ -69,6 +47,16 @@ export default class DeleteChildrenMachineStack extends cdk.Stack {
         props.table.tableArn + "/index/GSI2",
       ],
     };
+
+    /**
+     * When an OPENING is deleted,
+     * delete all stages for it
+     */
+    const OPENING_DELETED = sfn.Condition.stringEquals(
+      "$.detail.OldImage.entityType",
+      ENTITY_TYPES.OPENING
+    );
+
     const GET_STAGES_IN_OPENING = new tasks.CallAwsService(
       this,
       "GetStagesInOpening",
@@ -90,7 +78,7 @@ export default class DeleteChildrenMachineStack extends cdk.Stack {
       }
     );
 
-    const DeleteStageMap = new sfn.Map(this, "DeleteStagesInOpeningMap", {
+    const DeleteStagesMap = new sfn.Map(this, "DeleteStagesInOpeningMap", {
       maxConcurrency: 1,
       inputPath: "$[0].stages", // Map converts this to an array for some reason
       parameters: {
@@ -99,7 +87,7 @@ export default class DeleteChildrenMachineStack extends cdk.Stack {
         SK: ENTITY_TYPES.STAGE,
       },
     });
-    DeleteStageMap.iterator(
+    DeleteStagesMap.iterator(
       new tasks.DynamoDeleteItem(this, "DeleteStagesInOpening", {
         table: props.table,
         key: {
@@ -112,16 +100,77 @@ export default class DeleteChildrenMachineStack extends cdk.Stack {
         },
       })
     );
+    // ------------------------------------------------------------
+    /**
+     *  When an ORG is deleted
+     *  Delete all openings inside the org [ ]
+     *  Delete all questions inside the org [ ]
+     *
+     */
+    const ORG_DELETED = sfn.Condition.stringEquals(
+      "$.detail.OldImage.entityType",
+      ENTITY_TYPES.ORG
+    );
+
+    const GET_OPENINGS_IN_ORG = new tasks.CallAwsService(
+      this,
+      "GetOpeningsInOrg",
+      {
+        ...DYNAMO_QUERY_SETTINGS,
+        parameters: {
+          TableName: props.table.tableName,
+          IndexName: "GSI1",
+          KeyConditionExpression: "GSI1PK = :GSI1PK",
+          ExpressionAttributeValues: {
+            ":GSI1PK": {
+              "S.$": `States.Format('${ENTITY_TYPES.ORG}#{}#${ENTITY_TYPES.OPENING}S', $.detail.OldImage.orgId)`,
+            },
+          },
+        },
+        resultSelector: {
+          "openings.$": "$.Items",
+        },
+      }
+    );
+
+    const DeleteOpeningsMap = new sfn.Map(this, "DeleteOpeningsInOrgMap", {
+      maxConcurrency: 1,
+      inputPath: "$.openings",
+      parameters: {
+        // Makes it easier to get these attributes per item
+        "PK.$": `States.Format('${ENTITY_TYPES.ORG}#{}#${ENTITY_TYPES.OPENING}#{}', $$.Map.Item.Value.orgId.S, $$.Map.Item.Value.openingId.S)`,
+        SK: ENTITY_TYPES.OPENING,
+      },
+    });
+    DeleteOpeningsMap.iterator(
+      new tasks.DynamoDeleteItem(this, "DeleteOpeningsInOrg", {
+        table: props.table,
+        key: {
+          PK: tasks.DynamoAttributeValue.fromString(
+            sfn.JsonPath.stringAt("$.PK")
+          ),
+          SK: tasks.DynamoAttributeValue.fromString(
+            sfn.JsonPath.stringAt("$.SK")
+          ),
+        },
+      })
+    );
+    const QUESTION_DELETED = sfn.Condition.stringEquals(
+      "$.detail.OldImage.entityType",
+      ENTITY_TYPES.QUESTION
+    );
+
+    const STAGE_DELETED = sfn.Condition.stringEquals(
+      "$.detail.OldImage.entityType",
+      ENTITY_TYPES.STAGE
+    );
 
     const definition = new sfn.Choice(this, "WhichEntity?")
-      .when(
-        OPENING_DELETED,
-        new sfn.Parallel(this, "GetTopLevelOpeningItems")
-          .branch(GET_STAGES_IN_OPENING)
-          .next(DeleteStageMap)
-      )
+      .when(OPENING_DELETED, GET_STAGES_IN_OPENING.next(DeleteStagesMap))
+      .when(ORG_DELETED, GET_OPENINGS_IN_ORG.next(DeleteOpeningsMap))
       .otherwise(new sfn.Succeed(this, "No entity match - TODO remove"));
 
+    // ----- State Machine Settings -----
     const log = new LogGroup(
       this,
       `${process.env.NODE_ENV}-DeleteChildrenMachineLogGroup`,
