@@ -32,7 +32,7 @@ describe("Questions", () => {
   });
 
   let questionId = GenerateID.QuestionID(20);
-  it("creates a question", async () => {
+  it("creates a question and increments the totalQuestions count on an org", async () => {
     expect.assertions(3);
 
     await Orgs.CreateOrg({ displayName: nanoid(20), orgId: nanoid(20) });
@@ -140,11 +140,17 @@ describe("Questions", () => {
     }
   });
 
-  it("allows deleting a question from an org", async () => {
-    expect.assertions(2);
+  it("allows deleting a question from an org and decrements the totalQuestions count on the org", async () => {
+    expect.assertions(3);
+    const orgDataBefore = await Orgs.GetOrgInfo();
     const data = await Questions.DeleteQuestionFromOrg(questionId);
     expect(data.status).toBe(200);
     expect(data.data.message).toBe("Question deleted!");
+
+    const orgDataAfter = await Orgs.GetOrgInfo();
+    expect(orgDataAfter.data.totalQuestions).toBe(
+      orgDataBefore.data.totalQuestions - 1
+    );
   });
 
   // Questions and stages

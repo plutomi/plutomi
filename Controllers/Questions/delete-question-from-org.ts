@@ -10,6 +10,12 @@ const main = async (req: Request, res: Response) => {
   });
 
   if (failure) {
+    if (failure.name === "TransactionCanceledException") {
+      return res
+        .status(401)
+        .json({ message: "It seems like that question no longer exists" });
+    }
+
     const { status, body } = CreateError.SDK(
       failure,
       "An error ocurred deleting that question"
