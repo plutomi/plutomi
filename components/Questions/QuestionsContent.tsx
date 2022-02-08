@@ -7,7 +7,11 @@ import CreateQuestionModal from "./CreateQuestionModal";
 import useStore from "../../utils/store";
 import { PlusIcon } from "@heroicons/react/solid";
 import UpdateQuestionModal from "./UpdateQuestionModal";
+import useOrgInfo from "../../SWR/useOrgInfo";
+import useSelf from "../../SWR/useSelf";
 export default function QuestionsContent() {
+  const { user, isUserLoading, isUserError } = useSelf();
+  const { org, isOrgLoading, isOrgError } = useOrgInfo(user?.orgId);
   const { orgQuestions, isOrgQuestionsLoading, isOrgQuestionsError } =
     useQuestionsInOrg();
 
@@ -29,6 +33,9 @@ export default function QuestionsContent() {
           {" "}
           <UpdateQuestionModal question={currentQuestion} />
           <div className="flex-1 my-2 flex md:mt-0  items-center  md:flex-grow justify-center">
+            <p className="mx-12">
+              Total questions: {org?.totalQuestions || orgQuestions?.length}
+            </p>
             <button
               onClick={openCreateQuestionModal}
               type="button"
