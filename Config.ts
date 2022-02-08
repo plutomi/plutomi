@@ -40,6 +40,8 @@ export enum OPENING_STATE {
   PRIVATE = "PRIVATE",
 }
 
+export const DYNAMO_TABLE_NAME = "Plutomi";
+
 export enum ENTITY_TYPES {
   APPLICANT = "APPLICANT",
   APPLICANT_RESPONSE = "APPLICANT_RESPONSE",
@@ -109,17 +111,6 @@ export enum LIMITS {
   MAX_CHILD_ITEM_LIMIT = 200,
 }
 
-export enum RETENTION_PERIODS {
-  /**
-   * In days, how long should login events be kept
-   */
-  LOGIN_EVENT = 30,
-
-  /**
-   * In days, how long should logout events be kept
-   */
-  LOGOUT_EVENT = 30,
-}
 export const LOGIN_LINK_SETTINGS = {
   password: process.env.LOGIN_LINKS_PASSWORD,
   ttl: 900, // In seconds, how long should login links be valid for

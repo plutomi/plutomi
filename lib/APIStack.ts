@@ -50,13 +50,9 @@ export default class APIStack extends cdk.Stack {
       "dynamodb:UpdateItem",
     ];
 
-    const baseTable = `arn:aws:dynamodb:${cdk.Stack.of(this).region}:${
-      cdk.Stack.of(this).account
-    }:table/${props.table.tableName}`;
-
-    const GSI1 = `${baseTable}/index/GSI1`;
-    const GSI2 = `${baseTable}/index/GSI2`;
-    const resources = [baseTable, GSI1, GSI2];
+    const GSI1 = `${props.table.tableArn}/index/GSI1`;
+    const GSI2 = `${props.table.tableArn}/index/GSI2`;
+    const resources = [props.table.tableArn, GSI1, GSI2];
 
     const policyStatement = new PolicyStatement({
       actions,

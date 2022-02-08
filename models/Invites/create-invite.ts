@@ -1,7 +1,7 @@
 import { PutCommandInput, PutCommand } from "@aws-sdk/lib-dynamodb";
 import { nanoid } from "nanoid";
 import { Dynamo } from "../../AWSClients/ddbDocClient";
-import { ID_LENGTHS, ENTITY_TYPES, TIME_UNITS, DEFAULTS } from "../../Config";
+import { ID_LENGTHS, ENTITY_TYPES, TIME_UNITS, DEFAULTS, DYNAMO_TABLE_NAME } from "../../Config";
 import { DynamoOrgInvite } from "../../types/dynamo";
 import { CreateOrgInviteInput } from "../../types/main";
 import * as Time from "../../utils/time";
@@ -11,7 +11,6 @@ import {
   TransactWriteCommandInput,
   TransactWriteCommand,
 } from "@aws-sdk/lib-dynamodb";
-const { DYNAMO_TABLE_NAME } = process.env;
 /**
  * Invites a user to join your org
  * @param props {@link CreateOrgInviteInput}

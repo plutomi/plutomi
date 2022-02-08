@@ -393,6 +393,7 @@ interface DynamoOrg {
   totalOpenings: number;
   totalUsers: number;
   displayName: string;
+  totalQuestions: number;
 }
 
 interface DynamoLoginEvent {

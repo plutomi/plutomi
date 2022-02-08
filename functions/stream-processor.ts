@@ -20,9 +20,9 @@ export async function main(event: DynamoDBStreamEvent) {
     EventBusName: `${process.env.NODE_ENV}-EventBus`,
     DetailType: "stream",
     Detail: JSON.stringify({
-      eventName: eventName,
-      OldImage: OldImage,
-      NewImage: NewImage,
+      eventName,
+      OldImage,
+      NewImage,
     }),
   };
 

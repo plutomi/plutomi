@@ -3,12 +3,11 @@ import {
   TransactWriteCommand,
 } from "@aws-sdk/lib-dynamodb";
 import { Dynamo } from "../../AWSClients/ddbDocClient";
-import { DEFAULTS, ENTITY_TYPES, TIME_UNITS } from "../../Config";
+import { DYNAMO_TABLE_NAME, ENTITY_TYPES } from "../../Config";
 import { DynamoOrg } from "../../types/dynamo";
 import { CreateAndJoinOrgInput } from "../../types/main";
 import * as Time from "../../utils/time";
 import { SdkError } from "@aws-sdk/types";
-const { DYNAMO_TABLE_NAME } = process.env;
 export default async function CreateAndJoinOrg(
   props: CreateAndJoinOrgInput
 ): Promise<[null, null] | [null, SdkError]> {
@@ -25,6 +24,7 @@ export default async function CreateAndJoinOrg(
     totalApplicants: 0,
     totalOpenings: 0,
     totalUsers: 1,
+    totalQuestions: 0,
     displayName,
   };
 
@@ -39,7 +39,6 @@ export default async function CreateAndJoinOrg(
               SK: ENTITY_TYPES.USER,
             },
             TableName: `${process.env.NODE_ENV}-${DYNAMO_TABLE_NAME}`,
-
             UpdateExpression:
               "SET orgId = :orgId, orgJoinDate = :orgJoinDate, GSI1PK = :GSI1PK",
             ExpressionAttributeValues: {
@@ -54,7 +53,6 @@ export default async function CreateAndJoinOrg(
           Put: {
             Item: newOrg,
             TableName: `${process.env.NODE_ENV}-${DYNAMO_TABLE_NAME}`,
-
             ConditionExpression: "attribute_not_exists(PK)",
           },
         },

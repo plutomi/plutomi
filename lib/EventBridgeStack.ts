@@ -14,6 +14,7 @@ if (resultDotEnv.error) {
 
 interface EventBridgeStackProps extends cdk.StackProps {
   CommsMachine: StateMachine;
+  DeleteChildrenMachine: StateMachine;
 }
 export default class EventBridgeStack extends cdk.Stack {
   /**
@@ -31,6 +32,13 @@ export default class EventBridgeStack extends cdk.Stack {
       eventBusName: `${process.env.NODE_ENV}-EventBus`,
     });
 
+    bus.archive(`${process.env.NODE_ENV}-EventArchive`, {
+      archiveName: `${process.env.NODE_ENV}-EventArchive`,
+      eventPattern: {
+        account: [cdk.Stack.of(this).account],
+      },
+      retention: cdk.Duration.days(365),
+    });
     // We want to send all communication events to the step function, we can handle routing there
     new Rule(this, "NeedsCommsRule", {
       eventBus: bus,
@@ -48,6 +56,31 @@ export default class EventBridgeStack extends cdk.Stack {
               ENTITY_TYPES.LOGIN_LINK,
               ENTITY_TYPES.APPLICANT,
               ENTITY_TYPES.ORG_INVITE,
+              ENTITY_TYPES.OPENING,
+              ENTITY_TYPES.STAGE,
+            ],
+          },
+        },
+      },
+    });
+
+    // We want to send all deletion events to the step function, we can handle routing there
+    new Rule(this, "DeletionRule", {
+      eventBus: bus,
+      description:
+        "Rule that checks if an action needs further comms such as login links or welcome emails. Forwards to the `CommsMachine` step function.",
+      ruleName: "DeletionRule",
+      targets: [new SfnStateMachine(props.DeleteChildrenMachine)],
+      eventPattern: {
+        source: ["dynamodb.streams"],
+        detail: {
+          eventName: ["REMOVE"],
+          OldImage: {
+            entityType: [
+              // TODO other entities
+              ENTITY_TYPES.ORG,
+              ENTITY_TYPES.OPENING,
+              ENTITY_TYPES.QUESTION,
             ],
           },
         },

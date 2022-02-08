@@ -23,7 +23,8 @@ const main = async (req: Request, res: Response) => {
     return res.status(404).json({ message: "Stage not found" });
   }
 
-  console.log("Stage returning", stage)
+  console.error("BEANSBEANSBEANSBEANSBEANSBEANSBEANSBEANSBEANSBEANSBEANS");
+  console.log("Stage", stage);
   const { questionOrder } = stage;
 
   if (questionOrder.length === 0) {
@@ -37,10 +38,12 @@ const main = async (req: Request, res: Response) => {
           questionId: id,
         });
 
+        console.log("Question info", question);
         if (error) {
+          console.error(error);
           throw "An error ocurred retrieving the questions for this stage";
         }
-
+        // TODO it is possible that a question was deleted so the question will return undefined
         return question;
       })
     );

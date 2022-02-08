@@ -7,6 +7,7 @@ import FrontendStack from "../lib/FrontendStack";
 import EventBridgeStack from "../lib/EventBridgeStack";
 import CommsMachineStack from "../lib/CommsMachineStack";
 import StreamProcessorStack from "../lib/StreamProcessorStack";
+import DeleteChildrenMachineStack from "../lib/DeleteChildrenMachineStack";
 import { Builder } from "@sls-next/lambda-at-edge";
 
 // Run the serverless builder before deploying
@@ -33,8 +34,17 @@ builder
       }
     );
 
+    const { DeleteChildrenMachine } = new DeleteChildrenMachineStack(
+      app,
+      `${process.env.NODE_ENV}-DeleteChildrenMachineStack`,
+      {
+        table,
+      }
+    );
+
     new EventBridgeStack(app, `${process.env.NODE_ENV}-EventBridgeStack`, {
       CommsMachine,
+      DeleteChildrenMachine,
     });
 
     new StreamProcessorStack(

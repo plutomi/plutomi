@@ -3,8 +3,7 @@ import {
   TransactWriteCommand,
 } from "@aws-sdk/lib-dynamodb";
 import { Dynamo } from "../../AWSClients/ddbDocClient";
-import { DEFAULTS, ENTITY_TYPES } from "../../Config";
-const { DYNAMO_TABLE_NAME } = process.env;
+import { DEFAULTS, DYNAMO_TABLE_NAME, ENTITY_TYPES } from "../../Config";
 import { SdkError } from "@aws-sdk/types";
 
 // TODO move this to types.main

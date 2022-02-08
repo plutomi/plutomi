@@ -3,7 +3,7 @@
   "ModelMetadata": {
     "Author": "Jose Valerio",
     "DateCreated": "Aug 26, 2021, 11:16 AM",
-    "DateLastModified": "Feb 03, 2022, 12:22 PM",
+    "DateLastModified": "Feb 08, 2022, 06:02 PM",
     "Description": "",
     "AWSService": "Amazon DynamoDB",
     "Version": "3.0"
@@ -399,6 +399,17 @@
           },
           "GSI1SK": {
             "S": "How old are you?"
+          }
+        },
+        {
+          "PK": {
+            "S": "ORG#plutomi#QUESTION#experience#STAGES"
+          },
+          "SK": {
+            "S": "ORG#plutomi#OPENING#123#STAGE#123"
+          },
+          "entityType": {
+            "S": "This is for checking which stages are using that question on delete as it could be unbounded."
           }
         }
       ],

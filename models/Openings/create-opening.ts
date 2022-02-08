@@ -4,11 +4,10 @@ import {
 } from "@aws-sdk/lib-dynamodb";
 import { nanoid } from "nanoid";
 import { Dynamo } from "../../AWSClients/ddbDocClient";
-import { ID_LENGTHS, ENTITY_TYPES, OPENING_STATE } from "../../Config";
+import { ID_LENGTHS, ENTITY_TYPES, OPENING_STATE, DYNAMO_TABLE_NAME } from "../../Config";
 import { DynamoOpening } from "../../types/dynamo";
 import { CreateOpeningInput } from "../../types/main";
 import * as Time from "../../utils/time";
-const { DYNAMO_TABLE_NAME } = process.env;
 import { SdkError } from "@aws-sdk/types";
 export default async function Create(
   props: CreateOpeningInput

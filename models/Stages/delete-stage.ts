@@ -5,17 +5,13 @@ import {
   TransactWriteCommand,
 } from "@aws-sdk/lib-dynamodb";
 import { Dynamo } from "../../AWSClients/ddbDocClient";
-import { ENTITY_TYPES } from "../../Config";
+import { DYNAMO_TABLE_NAME, ENTITY_TYPES } from "../../Config";
 import { DeleteStageInput } from "../../types/main";
-const { DYNAMO_TABLE_NAME } = process.env;
 import { SdkError } from "@aws-sdk/types";
 export default async function Remove(
   props: DeleteStageInput
 ): Promise<[null, null] | [null, SdkError]> {
-  const { orgId, stageId, openingId } = props;
-
-  const deletionStageIndex = props.stageOrder.indexOf(stageId);
-  props.stageOrder.splice(deletionStageIndex, 1);
+  const { orgId, stageId, openingId, deleteIndex } = props;
   const transactParams: TransactWriteCommandInput = {
     TransactItems: [
       {
@@ -38,11 +34,8 @@ export default async function Remove(
             SK: ENTITY_TYPES.OPENING,
           },
           TableName: `${process.env.NODE_ENV}-${DYNAMO_TABLE_NAME}`,
-
-          UpdateExpression:
-            "SET stageOrder = :stageOrder, totalStages = totalStages - :value",
+          UpdateExpression: `REMOVE stageOrder[${deleteIndex}] SET totalStages = totalStages - :value`,
           ExpressionAttributeValues: {
-            ":stageOrder": props.stageOrder,
             ":value": 1,
           },
         },
@@ -52,8 +45,6 @@ export default async function Remove(
 
   try {
     await Dynamo.send(new TransactWriteCommand(transactParams));
-    // TODO Qeuery all items that start with PK: stageId & SK: ${ENTITY_TYPES.STAGE}
-    // Maybe background processes can handle this instead
     return [null, null];
   } catch (error) {
     return [null, error];

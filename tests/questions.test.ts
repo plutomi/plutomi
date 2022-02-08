@@ -32,8 +32,8 @@ describe("Questions", () => {
   });
 
   let questionId = GenerateID.QuestionID(20);
-  it("creates a question", async () => {
-    expect.assertions(2);
+  it("creates a question and increments the totalQuestions count on an org", async () => {
+    expect.assertions(3);
 
     await Orgs.CreateOrg({ displayName: nanoid(20), orgId: nanoid(20) });
 
@@ -42,19 +42,27 @@ describe("Questions", () => {
       GSI1SK: nanoid(12),
       questionId,
     });
-
     expect(data.status).toBe(201);
     expect(data.data.message).toBe("Question created!");
+
+    const orgData = await Orgs.GetOrgInfo();
+    expect(orgData.data.totalQuestions).toBe(1);
   });
 
   it("blocks creating a question with the same ID", async () => {
     expect.assertions(2);
+    const questionId = GenerateID.QuestionID(20);
+    await Questions.CreateQuestion({
+      questionId,
+      GSI1SK: nanoid(20),
+    });
     try {
       await Questions.CreateQuestion({
         questionId,
         GSI1SK: nanoid(20),
       });
     } catch (error) {
+      console.error(error);
       expect(error.response.status).toBe(409);
       expect(error.response.data.message).toBe(
         "A question already exists with this ID"
@@ -132,11 +140,17 @@ describe("Questions", () => {
     }
   });
 
-  it("allows deleting a question from an org", async () => {
-    expect.assertions(2);
+  it("allows deleting a question from an org and decrements the totalQuestions count on the org", async () => {
+    expect.assertions(3);
+    const orgDataBefore = await Orgs.GetOrgInfo();
     const data = await Questions.DeleteQuestionFromOrg(questionId);
     expect(data.status).toBe(200);
     expect(data.data.message).toBe("Question deleted!");
+
+    const orgDataAfter = await Orgs.GetOrgInfo();
+    expect(orgDataAfter.data.totalQuestions).toBe(
+      orgDataBefore.data.totalQuestions - 1
+    );
   });
 
   // Questions and stages

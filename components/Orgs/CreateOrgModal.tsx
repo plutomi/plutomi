@@ -118,6 +118,7 @@ export default function CreateOrgModal() {
                                 name="org-name"
                                 id="org-name"
                                 required
+                                placeholder="Plutomi Inc."
                                 onChange={(e) => setDisplayName(e.target.value)}
                                 value={displayName}
                                 className="block w-full shadow-sm sm:text-sm focus:ring-blue-500 focus:border-blue-500 border-gray-300 rounded-md"

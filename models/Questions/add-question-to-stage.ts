@@ -3,9 +3,8 @@ import {
   TransactWriteCommand,
 } from "@aws-sdk/lib-dynamodb";
 import { Dynamo } from "../../AWSClients/ddbDocClient";
-import { ENTITY_TYPES } from "../../Config";
+import { DYNAMO_TABLE_NAME, ENTITY_TYPES } from "../../Config";
 import * as Time from "../../utils/time";
-const { DYNAMO_TABLE_NAME } = process.env;
 import { SdkError } from "@aws-sdk/types";
 import { AddQuestionToStageInput } from "../../types/main";
 
@@ -28,6 +27,7 @@ export default async function AddQuestionToStage(
     orgId,
     openingId,
     stageId,
+    questionId,
   };
 
   const transactParams: TransactWriteCommandInput = {

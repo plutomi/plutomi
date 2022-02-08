@@ -8,11 +8,11 @@ import {
   ENTITY_TYPES,
   DEFAULTS,
   TIME_UNITS,
-  RETENTION_PERIODS,
+  DYNAMO_TABLE_NAME,
 } from "../../Config";
 import { DynamoLoginEvent } from "../../types/dynamo";
 import { CreateLoginEventAndDeleteLoginLinkInput } from "../../types/main";
-const { DYNAMO_TABLE_NAME } = process.env;
+import { RetentionDays } from "@aws-cdk/aws-logs";
 import * as Time from "../../utils/time";
 /**
  * Creates a login event on the user
@@ -35,7 +35,7 @@ export default async function CreateLoginEvent(
     entityType: ENTITY_TYPES.LOGIN_EVENT,
     // TODO in the future, get more the info about the login event such as IP, headers, device, etc.
     createdAt: now,
-    ttlExpiry: Time.futureUNIX(RETENTION_PERIODS.LOGIN_EVENT, TIME_UNITS.DAYS),
+    ttlExpiry: Time.futureUNIX(RetentionDays.ONE_WEEK, TIME_UNITS.DAYS),
   };
 
   const newOrgLoginEvent = {
@@ -45,7 +45,7 @@ export default async function CreateLoginEvent(
     // TODO user info here
     // TODO in the future, get more the info about the login event such as IP, headers, device, etc.
     createdAt: now,
-    ttlExpiry: Time.futureUNIX(RETENTION_PERIODS.LOGIN_EVENT, TIME_UNITS.DAYS),
+    ttlExpiry: Time.futureUNIX(RetentionDays.ONE_WEEK, TIME_UNITS.DAYS),
   };
 
   try {

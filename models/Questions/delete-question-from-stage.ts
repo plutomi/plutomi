@@ -3,17 +3,23 @@ import {
   TransactWriteCommand,
 } from "@aws-sdk/lib-dynamodb";
 import { Dynamo } from "../../AWSClients/ddbDocClient";
-import { ENTITY_TYPES } from "../../Config";
-const { DYNAMO_TABLE_NAME } = process.env;
+import { DYNAMO_TABLE_NAME, ENTITY_TYPES } from "../../Config";
 import { SdkError } from "@aws-sdk/types";
-import { AddQuestionToStageInput } from "../../types/main";
+import { DeleteQuestionFromStageInput } from "../../types/main";
 
 export default async function DeleteQuestionFromStage(
-  props: AddQuestionToStageInput
+  props: DeleteQuestionFromStageInput
 ): Promise<[null, null] | [null, SdkError]> {
-  const { orgId, openingId, stageId, questionId, questionOrder } = props;
+  const {
+    orgId,
+    openingId,
+    stageId,
+    questionId,
+    deleteIndex,
+    decrementStageCount,
+  } = props;
 
-  const transactParams: TransactWriteCommandInput = {
+  let transactParams: TransactWriteCommandInput = {
     TransactItems: [
       {
         // Delete the adjacent item
@@ -34,30 +40,32 @@ export default async function DeleteQuestionFromStage(
             SK: ENTITY_TYPES.STAGE,
           },
           TableName: `${process.env.NODE_ENV}-${DYNAMO_TABLE_NAME}`,
-          UpdateExpression: "SET questionOrder = :questionOrder",
-          ExpressionAttributeValues: {
-            ":questionOrder": questionOrder,
-          },
-        },
-      },
-
-      {
-        // Decrement the totalStages count on the question
-        Update: {
-          Key: {
-            PK: `${ENTITY_TYPES.ORG}#${orgId}#${ENTITY_TYPES.QUESTION}#${questionId}`,
-            SK: ENTITY_TYPES.QUESTION,
-          },
-          TableName: `${process.env.NODE_ENV}-${DYNAMO_TABLE_NAME}`,
-          UpdateExpression: "SET totalStages = totalStages - :value",
-          ExpressionAttributeValues: {
-            ":value": 1,
-          },
+          UpdateExpression: `REMOVE questionOrder[${deleteIndex}]`,
         },
       },
     ],
   };
 
+  // Not needed if the question has been deleted from the org and we just need
+  // to remove it from being used in the stages
+  if (decrementStageCount) {
+    transactParams.TransactItems.push({
+      // Decrement the totalStages count on the question
+      Update: {
+        Key: {
+          PK: `${ENTITY_TYPES.ORG}#${orgId}#${ENTITY_TYPES.QUESTION}#${questionId}`,
+          SK: ENTITY_TYPES.QUESTION,
+        },
+        TableName: `${process.env.NODE_ENV}-${DYNAMO_TABLE_NAME}`,
+        UpdateExpression: "SET totalStages = totalStages - :value",
+        ExpressionAttributeValues: {
+          ":value": 1,
+        },
+      },
+    });
+  }
+
+  console.log("Transaction params", JSON.stringify(transactParams));
   try {
     await Dynamo.send(new TransactWriteCommand(transactParams));
     return [null, null];

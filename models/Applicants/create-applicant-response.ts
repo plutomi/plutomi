@@ -1,7 +1,7 @@
 import { PutCommandInput, PutCommand } from "@aws-sdk/lib-dynamodb";
 import { nanoid } from "nanoid";
 import { Dynamo } from "../../AWSClients/ddbDocClient";
-import { ID_LENGTHS, ENTITY_TYPES } from "../../Config";
+import { ID_LENGTHS, ENTITY_TYPES, DYNAMO_TABLE_NAME } from "../../Config";
 import { DynamoApplicantResponse } from "../../types/dynamo";
 import {
   CreateApplicantResponseInput,
@@ -9,7 +9,6 @@ import {
 } from "../../types/main";
 import * as Time from "../../utils/time";
 import { SdkError } from "@aws-sdk/types";
-const { DYNAMO_TABLE_NAME } = process.env;
 export default async function CreateResponse(
   props: CreateApplicantResponseInput
 ): Promise<[CreateApplicantResponseOutput, null] | [null, SdkError]> {

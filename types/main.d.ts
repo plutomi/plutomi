@@ -48,7 +48,7 @@ export interface CreateStageInput
 }
 interface DeleteStageInput
   extends Pick<DynamoStage, "orgId" | "stageId" | "openingId"> {
-  stageOrder: string[]; // To delete it from the opening
+  deleteIndex: number;
 }
 type GetStageByIdInput = Pick<DynamoStage, "orgId" | "stageId" | "openingId">;
 type GetStageByIdOutput = DynamoStage;
@@ -155,6 +155,16 @@ interface AddQuestionToStageInput
     "orgId" | "openingId" | "stageId" | "questionOrder"
   > {
   questionId: string;
+}
+
+interface DeleteQuestionFromStageInput
+  extends Pick<DynamoStage, "orgId" | "openingId" | "stageId" | "deleteIndex"> {
+  questionId: string;
+  /**
+   * Whether to decrement the stage count on the question.
+   * Set it to FALSE if the question has been deleted form the org.
+   */
+  decrementStageCount: boolean;
 }
 interface DeleteOrgInviteInput {
   userId: string;

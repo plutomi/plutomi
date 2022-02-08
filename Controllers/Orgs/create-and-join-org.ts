@@ -61,6 +61,11 @@ const main = async (req: Request, res: Response) => {
   });
 
   if (failed) {
+    if (failed.name === "TransactionCanceledException") {
+      return res.status(409).json({
+        message: "It appears that that org ID is already taken - try another",
+      });
+    }
     const { status, body } = CreateError.SDK(failed, "Unable to create org");
     return res.status(status).json(body);
   }

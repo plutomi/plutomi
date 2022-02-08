@@ -1,5 +1,5 @@
 import { Dynamo } from "../../AWSClients/ddbDocClient";
-import { ENTITY_TYPES } from "../../Config";
+import { DYNAMO_TABLE_NAME, ENTITY_TYPES } from "../../Config";
 import { SdkError } from "@aws-sdk/types";
 
 import {
@@ -7,7 +7,6 @@ import {
   TransactWriteCommand,
 } from "@aws-sdk/lib-dynamodb";
 import { DeleteOrgInviteInput } from "../../types/main";
-const { DYNAMO_TABLE_NAME } = process.env;
 
 /**
  * 1. Rejecting invite as invitee
