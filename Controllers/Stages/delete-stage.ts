@@ -18,11 +18,17 @@ const main = async (req: Request, res: Response) => {
     return res.status(status).json(body);
   }
 
+  if (!opening) {
+    return res.status(404).json({
+      message: `Hmm... it appears that the opening with ID of '${openingId}' no longer exists`,
+    });
+  }
+
   const [deleted, error] = await Stages.DeleteStage({
     openingId,
     orgId: session.orgId,
     stageId,
-    stageOrder: opening.stageOrder,
+    deleteIndex: opening.stageOrder.indexOf(stageId),
   });
 
   if (error) {

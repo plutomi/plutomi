@@ -23,7 +23,6 @@ const main = async (req: Request, res: Response) => {
     return res.status(404).json({ message: "Stage not found" });
   }
 
-  console.log("Stage returning", stage)
   const { questionOrder } = stage;
 
   if (questionOrder.length === 0) {
