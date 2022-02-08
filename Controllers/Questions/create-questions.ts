@@ -39,7 +39,7 @@ const main = async (req: Request, res: Response) => {
   });
 
   if (error) {
-    if (error.name === "ConditionalCheckFailedException") {
+    if (error.name === "TransactionCanceledException") {
       return res
         .status(409)
         .json({ message: "A question already exists with this ID" });

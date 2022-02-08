@@ -56,6 +56,10 @@ export default class DeleteChildrenMachineStack extends cdk.Stack {
       "$.detail.OldImage.entityType",
       ENTITY_TYPES.OPENING
     );
+    const OPENING_HAS_STAGES = sfn.Condition.numberGreaterThan(
+      "$.detail.OldImage.totalStages",
+      0
+    );
 
     const GET_STAGES_IN_OPENING = new tasks.CallAwsService(
       this,
@@ -80,7 +84,7 @@ export default class DeleteChildrenMachineStack extends cdk.Stack {
 
     const DeleteStagesMap = new sfn.Map(this, "DeleteStagesInOpeningMap", {
       maxConcurrency: 1,
-      inputPath: "$[0].stages", // Map converts this to an array for some reason
+      inputPath: "$.stages",
       parameters: {
         // Makes it easier to get these attributes per item
         "PK.$": `States.Format('${ENTITY_TYPES.ORG}#{}#${ENTITY_TYPES.OPENING}#{}#${ENTITY_TYPES.STAGE}#{}', $$.Map.Item.Value.orgId.S, $$.Map.Item.Value.openingId.S, $$.Map.Item.Value.stageId.S)`,
@@ -103,13 +107,18 @@ export default class DeleteChildrenMachineStack extends cdk.Stack {
     // ------------------------------------------------------------
     /**
      *  When an ORG is deleted
-     *  Delete all openings inside the org [ ]
+     *  Delete all openings inside the org
      *  Delete all questions inside the org [ ]
      *
      */
     const ORG_DELETED = sfn.Condition.stringEquals(
       "$.detail.OldImage.entityType",
       ENTITY_TYPES.ORG
+    );
+
+    const ORG_HAS_OPENINGS = sfn.Condition.numberGreaterThan(
+      "$.detail.OldImage.totalOpenings",
+      0
     );
 
     const GET_OPENINGS_IN_ORG = new tasks.CallAwsService(
@@ -166,8 +175,14 @@ export default class DeleteChildrenMachineStack extends cdk.Stack {
     );
 
     const definition = new sfn.Choice(this, "WhichEntity?")
-      .when(OPENING_DELETED, GET_STAGES_IN_OPENING.next(DeleteStagesMap))
-      .when(ORG_DELETED, GET_OPENINGS_IN_ORG.next(DeleteOpeningsMap))
+      .when(
+        OPENING_DELETED && OPENING_HAS_STAGES,
+        GET_STAGES_IN_OPENING.next(DeleteStagesMap)
+      )
+      .when(
+        ORG_DELETED && ORG_HAS_OPENINGS,
+        GET_OPENINGS_IN_ORG.next(DeleteOpeningsMap)
+      )
       .otherwise(new sfn.Succeed(this, "No entity match - TODO remove"));
 
     // ----- State Machine Settings -----

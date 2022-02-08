@@ -1,4 +1,9 @@
-import { PutCommandInput, PutCommand } from "@aws-sdk/lib-dynamodb";
+import {
+  PutCommandInput,
+  PutCommand,
+  TransactWriteCommand,
+  TransactWriteCommandInput,
+} from "@aws-sdk/lib-dynamodb";
 import { nanoid } from "nanoid";
 import { Dynamo } from "../../AWSClients/ddbDocClient";
 import { ID_LENGTHS, ENTITY_TYPES } from "../../Config";
@@ -27,14 +32,37 @@ export default async function CreateQuestion(
     GSI1SK,
   };
 
-  try {
-    const params: PutCommandInput = {
-      Item: newStageQuestion,
-      TableName: `${process.env.NODE_ENV}-${DYNAMO_TABLE_NAME}`,
-      ConditionExpression: "attribute_not_exists(PK)",
-    };
+  const transactParams: TransactWriteCommandInput = {
+    TransactItems: [
+      {
+        // Create the Question
+        Put: {
+          Item: newStageQuestion,
+          TableName: `${process.env.NODE_ENV}-${DYNAMO_TABLE_NAME}`,
+          ConditionExpression: "attribute_not_exists(PK)",
+        },
+      },
+      {
+        // Increment the org's totalQuestions
+        Update: {
+          Key: {
+            PK: `${ENTITY_TYPES.ORG}#${orgId}`,
+            SK: ENTITY_TYPES.ORG,
+          },
+          TableName: `${process.env.NODE_ENV}-${DYNAMO_TABLE_NAME}`,
+          UpdateExpression:
+            "SET totalQuestions = if_not_exists(totalQuestions, :zero) + :value",
+          ExpressionAttributeValues: {
+            ":zero": 0,
+            ":value": 1,
+          },
+        },
+      },
+    ],
+  };
 
-    await Dynamo.send(new PutCommand(params));
+  try {
+    await Dynamo.send(new TransactWriteCommand(transactParams));
     return [null, null];
   } catch (error) {
     return [null, error];
