@@ -156,6 +156,11 @@ interface AddQuestionToStageInput
   > {
   questionId: string;
 }
+
+interface DeleteQuestionFromStageInput
+  extends Pick<DynamoStage, "orgId" | "openingId" | "stageId" | "deleteIndex"> {
+  questionId: string;
+}
 interface DeleteOrgInviteInput {
   userId: string;
   inviteId: string;

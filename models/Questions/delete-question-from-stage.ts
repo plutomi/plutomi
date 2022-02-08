@@ -6,12 +6,12 @@ import { Dynamo } from "../../AWSClients/ddbDocClient";
 import { ENTITY_TYPES } from "../../Config";
 const { DYNAMO_TABLE_NAME } = process.env;
 import { SdkError } from "@aws-sdk/types";
-import { AddQuestionToStageInput } from "../../types/main";
+import { DeleteQuestionFromStageInput } from "../../types/main";
 
 export default async function DeleteQuestionFromStage(
-  props: AddQuestionToStageInput
+  props: DeleteQuestionFromStageInput
 ): Promise<[null, null] | [null, SdkError]> {
-  const { orgId, openingId, stageId, questionId, questionOrder } = props;
+  const { orgId, openingId, stageId, questionId, deleteIndex } = props;
 
   const transactParams: TransactWriteCommandInput = {
     TransactItems: [
@@ -34,10 +34,7 @@ export default async function DeleteQuestionFromStage(
             SK: ENTITY_TYPES.STAGE,
           },
           TableName: `${process.env.NODE_ENV}-${DYNAMO_TABLE_NAME}`,
-          UpdateExpression: "SET questionOrder = :questionOrder",
-          ExpressionAttributeValues: {
-            ":questionOrder": questionOrder,
-          },
+          UpdateExpression: `REMOVE questionOrder[${deleteIndex}]`,
         },
       },
 

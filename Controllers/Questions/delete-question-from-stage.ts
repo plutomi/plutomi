@@ -11,8 +11,6 @@ const main = async (req: Request, res: Response) => {
     orgId: session.orgId,
   });
 
-  let oldQuestionOrder = stage.questionOrder;
-
   if (error) {
     const { status, body } = CreateError.SDK(
       error,
@@ -22,21 +20,21 @@ const main = async (req: Request, res: Response) => {
   }
 
   // TODO add a test for this
-  if (!oldQuestionOrder.includes(questionId)) {
+  if (!stage.questionOrder.includes(questionId)) {
     return res.status(400).json({
       message: `The question ID '${questionId}' does not exist in this stage`,
     });
   }
 
   // Remove that question
-  oldQuestionOrder.splice(oldQuestionOrder.indexOf(questionId), 1);
 
   const [updated, updateError] = await Questions.DeleteQuestionFromStage({
     openingId,
     stageId,
     questionId,
     orgId: session.orgId,
-    questionOrder: oldQuestionOrder,
+
+    deleteIndex: stage.questionOrder.indexOf(questionId),
   });
 
   if (updateError) {
