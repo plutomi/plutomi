@@ -15,7 +15,7 @@ export default async function DeleteQuestionFromOrg(
   const transactParams: TransactWriteCommandInput = {
     TransactItems: [
       {
-        // Create the Question
+        // Delete question from org
         Delete: {
           Key: {
             PK: `${ENTITY_TYPES.ORG}#${orgId}#${ENTITY_TYPES.QUESTION}#${questionId}`,
