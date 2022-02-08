@@ -250,53 +250,6 @@ export default class DeleteChildrenMachineStack extends cdk.Stack {
       }
     );
 
-    const GetStageInfoMap = new sfn.Map(this, "GetStageInfoMap", {
-      maxConcurrency: 1,
-      // TODO if something breaks its this
-      // inputPath: "$.stages.stages", we need the input (questionId) to be passed down
-      itemsPath: "$.stages.stages",
-      // TODO below will need a pass state so that the functiond does nto get multiple .stages passed into it
-
-      parameters: {
-        // Makes it easier to get these attributes per item
-        "PK.$": `States.Format('${ENTITY_TYPES.ORG}#{}#${ENTITY_TYPES.OPENING}#{}#${ENTITY_TYPES.STAGE}#{}', $$.Map.Item.Value.orgId.S, $$.Map.Item.Value.openingId.S, $$.Map.Item.Value.stageId.S)`,
-        SK: ENTITY_TYPES.STAGE,
-        "questionId.$": "$.detail.OldImage.questionId", // pass this to the function
-      },
-    });
-
-    GetStageInfoMap.iterator(
-      new tasks.DynamoGetItem(this, "GetCurrentStageInfo", {
-        table: props.table,
-        key: {
-          PK: tasks.DynamoAttributeValue.fromString(
-            sfn.JsonPath.stringAt("$.PK")
-          ),
-          SK: tasks.DynamoAttributeValue.fromString(
-            sfn.JsonPath.stringAt("$.SK")
-          ),
-        },
-        resultSelector: {
-          "stage.$": "$.Item",
-        },
-        resultPath: "$.stage",
-      })
-    );
-    // const UpdateStagesWithProperQuestionOrder = new sfn.Map(this, "UpdateStagesWithProperQuestionOrderMap", {
-    //   maxConcurrency: 1,
-    //   inputPath: "$.stages",
-    //   parameters: {
-    //     // Makes it easier to get these attributes per item
-    //     "PK.$": `States.Format('${ENTITY_TYPES.ORG}#{}#${ENTITY_TYPES.QUESTION}#{}', $$.Map.Item.Value.orgId.S, $$.Map.Item.Value.questionId.S)`,
-    //     SK: ENTITY_TYPES.QUESTION,
-    //   },
-    // });
-    // // TODO N/A // TODO N/A  // TODO N/A
-    // const STAGE_DELETED = sfn.Condition.stringEquals(
-    //   "$.detail.OldImage.entityType", // TODO N/A
-    //   ENTITY_TYPES.STAGE // TODO N/A
-    // ); // // TODO N/A// TODO N/A
-
     const RemoveDeletedQuestionFromStageFunction = new NodejsFunction(
       this,
       `${process.env.NODE_ENV}-remove-deleted-question-from-stage-function`,
@@ -323,6 +276,58 @@ export default class DeleteChildrenMachineStack extends cdk.Stack {
         ),
       }
     );
+
+    const UpdateStageInfoMap = new sfn.Map(this, "UpdateStageInfoMap", {
+      maxConcurrency: 1,
+      // TODO if something breaks its this
+      // inputPath: "$.stages.stages", we need the input (questionId) to be passed down
+      itemsPath: "$.stages.stages",
+      // TODO below will need a pass state so that the functiond does nto get multiple .stages passed into it
+
+      parameters: {
+        // Makes it easier to get these attributes per item
+        "PK.$": `States.Format('${ENTITY_TYPES.ORG}#{}#${ENTITY_TYPES.OPENING}#{}#${ENTITY_TYPES.STAGE}#{}', $$.Map.Item.Value.orgId.S, $$.Map.Item.Value.openingId.S, $$.Map.Item.Value.stageId.S)`,
+        SK: ENTITY_TYPES.STAGE,
+        "questionId.$": "$.detail.OldImage.questionId", // pass this to the function
+      },
+    });
+
+    UpdateStageInfoMap.iterator(
+      new tasks.DynamoGetItem(this, "GetCurrentStageInfo", {
+        table: props.table,
+        key: {
+          PK: tasks.DynamoAttributeValue.fromString(
+            sfn.JsonPath.stringAt("$.PK")
+          ),
+          SK: tasks.DynamoAttributeValue.fromString(
+            sfn.JsonPath.stringAt("$.SK")
+          ),
+        },
+        resultSelector: {
+          "stage.$": "$.Item",
+        },
+        resultPath: "$.stage",
+      }).next(
+        new tasks.LambdaInvoke(this, "UpdateQuestionOrderOnStage", {
+          lambdaFunction: RemoveDeletedQuestionFromStageFunction,
+          integrationPattern: IntegrationPattern.REQUEST_RESPONSE,
+        })
+      )
+    );
+    // const UpdateStagesWithProperQuestionOrder = new sfn.Map(this, "UpdateStagesWithProperQuestionOrderMap", {
+    //   maxConcurrency: 1,
+    //   inputPath: "$.stages",
+    //   parameters: {
+    //     // Makes it easier to get these attributes per item
+    //     "PK.$": `States.Format('${ENTITY_TYPES.ORG}#{}#${ENTITY_TYPES.QUESTION}#{}', $$.Map.Item.Value.orgId.S, $$.Map.Item.Value.questionId.S)`,
+    //     SK: ENTITY_TYPES.QUESTION,
+    //   },
+    // });
+    // // TODO N/A // TODO N/A  // TODO N/A
+    // const STAGE_DELETED = sfn.Condition.stringEquals(
+    //   "$.detail.OldImage.entityType", // TODO N/A
+    //   ENTITY_TYPES.STAGE // TODO N/A
+    // ); // // TODO N/A// TODO N/A
 
     // TODO wrong permissions
     props.table.grantReadWriteData(RemoveDeletedQuestionFromStageFunction);
@@ -358,14 +363,7 @@ export default class DeleteChildrenMachineStack extends cdk.Stack {
         new Choice(this, "DoesQuestionHaveStages")
           .when(
             QUESTION_HAS_STAGES,
-            GET_STAGES_THAT_HAVE_QUESTIONS.next(
-              GetStageInfoMap.next(
-                new tasks.LambdaInvoke(this, "UpdateQuestionOrderOnstage", {
-                  lambdaFunction: RemoveDeletedQuestionFromStageFunction,
-                  integrationPattern: IntegrationPattern.REQUEST_RESPONSE,
-                })
-              )
-            )
+            GET_STAGES_THAT_HAVE_QUESTIONS.next(UpdateStageInfoMap)
 
             // Transaction here
           )
