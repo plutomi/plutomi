@@ -1,12 +1,3 @@
-import { DynamoDBStreamEvent } from "aws-lambda";
-import errorFormatter from "../utils/errorFormatter";
-import EBClient from "../AWSClients/eventBridgeClient";
-import {
-  PutEventsCommand,
-  PutEventsCommandInput,
-} from "@aws-sdk/client-eventbridge";
-const processor = require("dynamodb-streams-processor");
-import { PutEventsRequestEntry } from "aws-sdk/clients/eventbridge";
 import * as Questions from "../models/Questions";
 
 /**
