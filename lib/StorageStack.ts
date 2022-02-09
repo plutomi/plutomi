@@ -1,7 +1,5 @@
 import * as cdk from "@aws-cdk/core";
 import * as dotenv from "dotenv";
-import * as dynamodb from "@aws-cdk/aws-dynamodb";
-import { DYNAMO_TABLE_NAME } from "../Config";
 import * as s3 from "@aws-cdk/aws-s3";
 const resultDotEnv = dotenv.config({
   path: `${process.cwd()}/.env.${process.env.NODE_ENV}`,

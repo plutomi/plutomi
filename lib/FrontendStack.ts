@@ -44,6 +44,10 @@ export default class FrontendStack extends cdk.Stack {
         imageLambda: `frontend-image-function`,
         regenerationLambda: `frontend-regeneration-function`,
       },
+      description: `Frontend for the ${DOMAIN_NAME} site`,
+      s3Props: {
+        bucketName: DOMAIN_NAME,
+      },
       memory: {
         defaultLambda: 256,
         imageLambda: 1024,
