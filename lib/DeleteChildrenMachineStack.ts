@@ -8,6 +8,7 @@ import { DYNAMO_TABLE_NAME, ENTITY_TYPES } from "../Config";
 import { Choice, IntegrationPattern } from "@aws-cdk/aws-stepfunctions";
 import { NodejsFunction } from "@aws-cdk/aws-lambda-nodejs";
 import { Architecture, Runtime } from "@aws-cdk/aws-lambda";
+import * as iam from "@aws-cdk/aws-iam";
 import path from "path";
 
 const resultDotEnv = dotenv.config({
@@ -314,23 +315,27 @@ export default class DeleteChildrenMachineStack extends cdk.Stack {
         })
       )
     );
-    // const UpdateStagesWithProperQuestionOrder = new sfn.Map(this, "UpdateStagesWithProperQuestionOrderMap", {
-    //   maxConcurrency: 1,
-    //   inputPath: "$.stages",
-    //   parameters: {
-    //     // Makes it easier to get these attributes per item
-    //     "PK.$": `States.Format('${ENTITY_TYPES.ORG}#{}#${ENTITY_TYPES.QUESTION}#{}', $$.Map.Item.Value.orgId.S, $$.Map.Item.Value.questionId.S)`,
-    //     SK: ENTITY_TYPES.QUESTION,
-    //   },
-    // });
+
     // // TODO N/A // TODO N/A  // TODO N/A
     // const STAGE_DELETED = sfn.Condition.stringEquals(
     //   "$.detail.OldImage.entityType", // TODO N/A
     //   ENTITY_TYPES.STAGE // TODO N/A
     // ); // // TODO N/A// TODO N/A
 
-    // TODO wrong permissions
-    props.table.grantReadWriteData(RemoveDeletedQuestionFromStageFunction);
+    const DynamoDeleteQuestionPolicy = new iam.PolicyStatement({
+      actions: ["dynamodb:DeleteItem", "dynamodb:UpdateItem"],
+      resources: [props.table.tableArn],
+    });
+
+    RemoveDeletedQuestionFromStageFunction.role.attachInlinePolicy(
+      new iam.Policy(
+        this,
+        `${process.env.NODE_ENV}-remove-deleted-question-from-stage-policy`,
+        {
+          statements: [DynamoDeleteQuestionPolicy],
+        }
+      )
+    );
     const definition = new Choice(this, "WhichEntity?")
       .when(
         OPENING_DELETED,
