@@ -69,6 +69,8 @@ We're using a single table design for this project. If you're new to DynamoDB, I
 
 To play around with the data model locally, you can download [NoSQL Workbench](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/workbench.settingup.html) and import the [NoSQLWorkbench.json](schema/NoSQLWorkbench.json) file into it. You can even export the table to your AWS account directly.
 
+We're also using Athena to query Dynamo with plain old SQL using [Federated Queries](https://docs.aws.amazon.com/athena/latest/ug/connect-to-a-data-source.html) - ([video](https://www.youtube.com/watch?v=tZia_5qxPkY)). We haven't figured out how to add a data source using CDK but this is very simple. Once deployed, click [Connect Data Source](https://console.aws.amazon.com/athena/home?region=us-east-1#/data-sources) and select **DynamoDB**. Choose a name and then select the lambda function that is created in the stack: _NODE_ENV_-athena-dynamo-query-function
+
 ## Other useful repos:
 
 - [Serverless Nextjs](https://github.com/serverless-nextjs/serverless-next.js)
