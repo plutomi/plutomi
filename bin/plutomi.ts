@@ -8,8 +8,9 @@ import EventBridgeStack from "../lib/EventBridgeStack";
 import CommsMachineStack from "../lib/CommsMachineStack";
 import StreamProcessorStack from "../lib/StreamProcessorStack";
 import DeleteChildrenMachineStack from "../lib/DeleteChildrenMachineStack";
+import AthenaDynamoQueryStack from "../lib/AthenaDynamoQueryStack";
 import { Builder } from "@sls-next/lambda-at-edge";
-
+import StorageStack from "../lib/StorageStack";
 // Run the serverless builder before deploying
 const builder = new Builder(".", "./build", { args: ["build"] });
 
@@ -17,6 +18,11 @@ builder
   .build()
   .then(() => {
     const app = new cdk.App();
+    const { bucket } = new StorageStack(
+      app,
+      `${process.env.NODE_ENV}-StorageStack`
+    );
+
     const { table } = new DynamoDBStack(
       app,
       `${process.env.NODE_ENV}-DynamoDBStack`
@@ -52,6 +58,14 @@ builder
       `${process.env.NODE_ENV}-StreamProcessorStack`,
       {
         table,
+      }
+    );
+    new AthenaDynamoQueryStack(
+      app,
+      `${process.env.NODE_ENV}-AthenaDynamoQueryStack`,
+      {
+        table,
+        bucket,
       }
     );
 
