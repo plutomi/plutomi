@@ -13,7 +13,7 @@ export async function main(event) {
     (item) => item.S === event.questionId
   );
   const deleteIndex = event.stage.stage.questionOrder.L.indexOf(item);
-  console.log("Delete index", deleteIndex);
+  // TODO types
   const input = {
     decrementStageCount: false,
     openingId: event.stage.stage.openingId.S,

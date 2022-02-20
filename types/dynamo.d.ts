@@ -23,6 +23,8 @@ interface DynamoStage {
    */
   orgId: string;
 
+  totalQuestions: number;
+
   /**
    * An array of questionIds describing how questions should show up
    */

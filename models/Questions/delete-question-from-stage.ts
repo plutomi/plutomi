@@ -33,14 +33,17 @@ export default async function DeleteQuestionFromStage(
         },
       },
       {
-        // Update the question order on the stage
+        // Update the question order on the stage and decrement the total question count
         Update: {
           Key: {
             PK: `${ENTITY_TYPES.ORG}#${orgId}#${ENTITY_TYPES.OPENING}#${openingId}#${ENTITY_TYPES.STAGE}#${stageId}`,
             SK: ENTITY_TYPES.STAGE,
           },
           TableName: `${process.env.NODE_ENV}-${DYNAMO_TABLE_NAME}`,
-          UpdateExpression: `REMOVE questionOrder[${deleteIndex}]`,
+          UpdateExpression: `REMOVE questionOrder[${deleteIndex}] AND SET totalQuestions = totalQuestions - :value`,
+          ExpressionAttributeValues: {
+            ":value": 1,
+          },
         },
       },
     ],
@@ -65,7 +68,6 @@ export default async function DeleteQuestionFromStage(
     });
   }
 
-  console.log("Transaction params", JSON.stringify(transactParams));
   try {
     await Dynamo.send(new TransactWriteCommand(transactParams));
     return [null, null];

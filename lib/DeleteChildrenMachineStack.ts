@@ -230,6 +230,11 @@ export default class DeleteChildrenMachineStack extends cdk.Stack {
       0
     );
 
+    const STAGE_HAS_QUESTIONS = sfn.Condition.(
+      "$.detail.OldImage.totalStages",
+      0
+    );
+
     const GET_STAGES_THAT_HAVE_QUESTIONS = new tasks.CallAwsService(
       this,
       "GetStagesThatHaveQuestion",
@@ -280,11 +285,7 @@ export default class DeleteChildrenMachineStack extends cdk.Stack {
 
     const UpdateStageInfoMap = new sfn.Map(this, "UpdateStageInfoMap", {
       maxConcurrency: 1,
-      // TODO if something breaks its this
-      // inputPath: "$.stages.stages", we need the input (questionId) to be passed down
       itemsPath: "$.stages.stages",
-      // TODO below will need a pass state so that the functiond does nto get multiple .stages passed into it
-
       parameters: {
         // Makes it easier to get these attributes per item
         "PK.$": `States.Format('${ENTITY_TYPES.ORG}#{}#${ENTITY_TYPES.OPENING}#{}#${ENTITY_TYPES.STAGE}#{}', $$.Map.Item.Value.orgId.S, $$.Map.Item.Value.openingId.S, $$.Map.Item.Value.stageId.S)`,
@@ -316,11 +317,11 @@ export default class DeleteChildrenMachineStack extends cdk.Stack {
       )
     );
 
-    // // TODO N/A // TODO N/A  // TODO N/A
-    // const STAGE_DELETED = sfn.Condition.stringEquals(
-    //   "$.detail.OldImage.entityType", // TODO N/A
-    //   ENTITY_TYPES.STAGE // TODO N/A
-    // ); // // TODO N/A// TODO N/A
+    // Delete questions and the adjacency item
+    const STAGE_DELETED = sfn.Condition.stringEquals(
+      "$.detail.OldImage.entityType",
+      ENTITY_TYPES.STAGE
+    );
 
     const DynamoDeleteQuestionPolicy = new iam.PolicyStatement({
       actions: ["dynamodb:DeleteItem", "dynamodb:UpdateItem"],
@@ -362,6 +363,13 @@ export default class DeleteChildrenMachineStack extends cdk.Stack {
               )
               .otherwise(new sfn.Succeed(this, "Org doesn't have questions"))
           )
+      )
+      .when(
+        STAGE_DELETED,
+        new Choice(this, "Does Stage Have Questions?").when(
+          STAGE_HAS_QUESTIONS
+          // TODO map through and delete the adjacency list
+        )
       )
       .when(
         QUESTION_DELETED,
