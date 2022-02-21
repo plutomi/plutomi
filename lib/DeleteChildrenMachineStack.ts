@@ -230,6 +230,11 @@ export default class DeleteChildrenMachineStack extends cdk.Stack {
       0
     );
 
+    const STAGE_HAS_QUESTIONS = sfn.Condition.numberGreaterThan(
+      "$.detail.OldImage.totalQuestions",
+      0
+    );
+
     const GET_STAGES_THAT_HAVE_QUESTIONS = new tasks.CallAwsService(
       this,
       "GetStagesThatHaveQuestion",
@@ -280,18 +285,37 @@ export default class DeleteChildrenMachineStack extends cdk.Stack {
 
     const UpdateStageInfoMap = new sfn.Map(this, "UpdateStageInfoMap", {
       maxConcurrency: 1,
-      // TODO if something breaks its this
-      // inputPath: "$.stages.stages", we need the input (questionId) to be passed down
       itemsPath: "$.stages.stages",
-      // TODO below will need a pass state so that the functiond does nto get multiple .stages passed into it
-
       parameters: {
         // Makes it easier to get these attributes per item
         "PK.$": `States.Format('${ENTITY_TYPES.ORG}#{}#${ENTITY_TYPES.OPENING}#{}#${ENTITY_TYPES.STAGE}#{}', $$.Map.Item.Value.orgId.S, $$.Map.Item.Value.openingId.S, $$.Map.Item.Value.stageId.S)`,
         SK: ENTITY_TYPES.STAGE,
-        "questionId.$": "$.detail.OldImage.questionId", // pass this to the function
+        "questionId.$": "$.detail.OldImage.questionId",
+        /**
+         * If a stage does not exist, and a question was previously attached to it,
+         * this allows retrieving that adjacent item and deleting it.
+         * NOTE: Will require the same setup for webhooks
+         */
+        "adjacenctItemPK.$": `States.Format('${ENTITY_TYPES.ORG}#{}#${ENTITY_TYPES.QUESTION}#{}#${ENTITY_TYPES.STAGE}S', $$.Map.Item.Value.orgId.S, $$.Map.Item.Value.questionId.S)`,
+        "adjacenctItemSK.$": `States.Format('${ENTITY_TYPES.OPENING}#{}#${ENTITY_TYPES.STAGE}#{}', $$.Map.Item.Value.openingId.S, $$.Map.Item.Value.stageId.S)`,
       },
     });
+
+    const DELETE_ADJACENCT_STAGE_QUESTION_ITEM = new tasks.DynamoDeleteItem(
+      this,
+      "DeleteAdjacentStageQuestionItem",
+      {
+        table: props.table,
+        key: {
+          PK: tasks.DynamoAttributeValue.fromString(
+            sfn.JsonPath.stringAt("$.adjacenctItemPK")
+          ),
+          SK: tasks.DynamoAttributeValue.fromString(
+            sfn.JsonPath.stringAt("$.adjacenctItemSK")
+          ),
+        },
+      }
+    );
 
     UpdateStageInfoMap.iterator(
       new tasks.DynamoGetItem(this, "GetCurrentStageInfo", {
@@ -304,23 +328,35 @@ export default class DeleteChildrenMachineStack extends cdk.Stack {
             sfn.JsonPath.stringAt("$.SK")
           ),
         },
-        resultSelector: {
-          "stage.$": "$.Item",
-        },
+        // https://github.com/plutomi/plutomi/issues/570
+        // Needs a check here as this will error
+        // resultSelector: {
+        //   "stage.$": "$.Item",
+        // },
+        // TODO needs the above condition check, if .item exists
         resultPath: "$.stage",
       }).next(
-        new tasks.LambdaInvoke(this, "UpdateQuestionOrderOnStage", {
-          lambdaFunction: RemoveDeletedQuestionFromStageFunction,
-          integrationPattern: IntegrationPattern.REQUEST_RESPONSE,
-        })
+        new sfn.Choice(this, "Does stage exist?")
+          .when(
+            sfn.Condition.isPresent("$.stage.Item"),
+            new tasks.LambdaInvoke(this, "RemoveDeletedQuestionFromStage", {
+              payload: sfn.TaskInput.fromObject({
+                stage: sfn.JsonPath.stringAt("$.stage.Item"),
+                questionId: sfn.JsonPath.stringAt("$.questionId"),
+              }),
+              lambdaFunction: RemoveDeletedQuestionFromStageFunction,
+              integrationPattern: IntegrationPattern.REQUEST_RESPONSE,
+            })
+          )
+          .otherwise(DELETE_ADJACENCT_STAGE_QUESTION_ITEM)
       )
     );
 
-    // // TODO N/A // TODO N/A  // TODO N/A
-    // const STAGE_DELETED = sfn.Condition.stringEquals(
-    //   "$.detail.OldImage.entityType", // TODO N/A
-    //   ENTITY_TYPES.STAGE // TODO N/A
-    // ); // // TODO N/A// TODO N/A
+    // Delete questions and the adjacent item TODO
+    const STAGE_DELETED = sfn.Condition.stringEquals(
+      "$.detail.OldImage.entityType",
+      ENTITY_TYPES.STAGE
+    );
 
     const DynamoDeleteQuestionPolicy = new iam.PolicyStatement({
       actions: ["dynamodb:DeleteItem", "dynamodb:UpdateItem"],
@@ -362,6 +398,13 @@ export default class DeleteChildrenMachineStack extends cdk.Stack {
               )
               .otherwise(new sfn.Succeed(this, "Org doesn't have questions"))
           )
+      )
+      .when(
+        STAGE_DELETED,
+        new Choice(this, "Does Stage Have Questions?").when(
+          STAGE_HAS_QUESTIONS,
+          new sfn.Succeed(this, "TODO delete adjacent item")
+        )
       )
       .when(
         QUESTION_DELETED,

@@ -62,7 +62,6 @@ describe("Questions", () => {
         GSI1SK: nanoid(20),
       });
     } catch (error) {
-      console.error(error);
       expect(error.response.status).toBe(409);
       expect(error.response.data.message).toBe(
         "A question already exists with this ID"
@@ -274,7 +273,6 @@ describe("Questions", () => {
         },
       });
     } catch (error) {
-      console.error(error);
       expect(error.response.status).toBe(400);
       expect(error.response.data.message).toBe(
         "The questionIds in the 'questionOrder' property differ from the ones in the stage, please check your request and try again."
@@ -346,27 +344,22 @@ describe("Questions", () => {
 
   it("returns all questions in a stage, in their actual question order", async () => {
     expect.assertions(2);
-    const question1Id = GenerateID.QuestionID(15);
-    const question2Id = GenerateID.QuestionID(15);
-    const question3Id = GenerateID.QuestionID(15);
-    const question4Id = GenerateID.QuestionID(15); // Will be placed second
+    const q1ID = GenerateID.QuestionID(15);
+    const q2ID = GenerateID.QuestionID(15);
+    const q3ID = GenerateID.QuestionID(15);
+    const q4ID = GenerateID.QuestionID(15); // Will be placed second
 
-    const allQuestionIds = [
-      question1Id,
-      question2Id,
-      question3Id,
-      question4Id,
-    ].map((ids) => ids);
+    const allQuestionIds = [q1ID, q2ID, q3ID, q4ID];
 
-    // Create the three questions
-    await Promise.all(
-      allQuestionIds.map(async (id) => {
-        await Questions.CreateQuestion({
-          GSI1SK: nanoid(20),
-          questionId: id,
-        });
-      })
-    );
+    /**
+     * Create the first three questions, TODO do this in parallel
+     */
+    for await (const id of allQuestionIds) {
+      await Questions.CreateQuestion({
+        GSI1SK: nanoid(20),
+        questionId: id,
+      });
+    }
 
     const allOpenings = await Openings.GetAllOpeningsInOrg();
 
@@ -379,53 +372,43 @@ describe("Questions", () => {
     });
 
     const allStages = await Stages.GetStagesInOpening(ourOpening.openingId);
+
     const ourStage = allStages.data.find(
       (stage: DynamoStage) => stage.GSI1SK === stageName
     );
 
-    try {
-      // if we try to promise.all -> .map this, we get a transaction error
-      // as Dynamo tries to update the stage multiple times in quick succession
-      for await (const id of [question1Id, question2Id, question3Id]) {
-        await Questions.AddQuestionToStage({
-          openingId: ourOpening.openingId,
-          stageId: ourStage.stageId,
-          questionId: id,
-          position: 0, // Each question will be added as the first item
-        });
-      }
-    } catch (error) {
-      console.error(error);
+    /**
+     * If we try to promise.all -> .map this, we get a transaction error
+     * as Dynamo tries to update the same stage multiple times in quick succession
+     */
+    for await (const id of allQuestionIds.slice(0, 3)) {
+      await Questions.AddQuestionToStage({
+        openingId: ourOpening.openingId,
+        stageId: ourStage.stageId,
+        questionId: id,
+        position: 0, // Each question will be added as the first item
+      });
     }
 
     await Questions.AddQuestionToStage({
       openingId: ourOpening.openingId,
       stageId: ourStage.stageId,
-      questionId: question4Id,
+      questionId: q4ID,
       position: 1, // Make this one 2nd place
     });
-    await Stages.GetStageInfo({
-      openingId: ourOpening.openingId,
-      stageId: ourStage.stageId,
-    });
 
-    const properOrder = [
-      question3Id,
-      question4Id,
-      question2Id,
-      question1Id,
-    ].map((ids) => ids);
+    const properOrder = [q3ID, q4ID, q2ID, q1ID];
 
     const response = await Questions.GetQuestionsInStage({
       openingId: ourOpening.openingId,
       stageId: ourStage.stageId,
     });
-    const questions = response.data;
-    const onlyIds = questions.map(
+    const idsOnly = response.data.map(
       (question: DynamoQuestion) => question.questionId
     );
-    expect(questions.length).toBe(4);
-    expect(onlyIds).toStrictEqual(properOrder);
+
+    expect(response.data.length).toBe(4);
+    expect(idsOnly).toStrictEqual(properOrder);
   });
 
   it("increments and decrements the totalStages count on a question when adding and removing it from a stage", async () => {

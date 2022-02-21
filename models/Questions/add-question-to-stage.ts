@@ -56,9 +56,11 @@ export default async function AddQuestionToStage(
             SK: ENTITY_TYPES.STAGE,
           },
           TableName: `${process.env.NODE_ENV}-${DYNAMO_TABLE_NAME}`,
-          UpdateExpression: "SET questionOrder = :questionOrder",
+          UpdateExpression:
+            "SET questionOrder = :questionOrder, totalQuestions = totalQuestions + :value",
           ExpressionAttributeValues: {
             ":questionOrder": questionOrder,
+            ":value": 1,
           },
         },
       },
