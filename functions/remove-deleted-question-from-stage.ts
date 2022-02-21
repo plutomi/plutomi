@@ -9,17 +9,18 @@ export async function main(event) {
   // TODO types
   console.log(JSON.stringify(event));
 
-  const item = event.stage.stage.questionOrder.L.find(
+  const { stage } = event;
+  const item = stage.questionOrder.L.find(
     (item) => item.S === event.questionId
   );
-  const deleteIndex = event.stage.stage.questionOrder.L.indexOf(item);
+  const deleteIndex = stage.questionOrder.L.indexOf(item);
   // TODO types
   const input = {
     decrementStageCount: false,
-    openingId: event.stage.stage.openingId.S,
-    orgId: event.stage.stage.orgId.S,
+    openingId: stage.openingId.S,
+    orgId: stage.orgId.S,
     questionId: event.questionId,
-    stageId: event.stage.stage.stageId.S,
+    stageId: stage.stageId.S,
     deleteIndex,
   };
 

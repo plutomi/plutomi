@@ -296,15 +296,25 @@ export default class DeleteChildrenMachineStack extends cdk.Stack {
          * this allows retrieving that adjacent item and deleting it.
          * NOTE: Will require the same setup for webhooks
          */
-        "adjacencyListPK.$": `States.Format('${ENTITY_TYPES.ORG}#{}#${ENTITY_TYPES.QUESTION}#{}#${ENTITY_TYPES.STAGE}S', $$.Map.Item.Value.orgId.S, $$.Map.Item.Value.questionId.S)`,
-        "adjacencyListSK.$": `States.Format('${ENTITY_TYPES.OPENING}#{}#${ENTITY_TYPES.STAGE}#{}', $$.Map.Item.Value.openingId.S, $$.Map.Item.Value.stageId.S)`,
+        "adjacenctItemPK.$": `States.Format('${ENTITY_TYPES.ORG}#{}#${ENTITY_TYPES.QUESTION}#{}#${ENTITY_TYPES.STAGE}S', $$.Map.Item.Value.orgId.S, $$.Map.Item.Value.questionId.S)`,
+        "adjacenctItemSK.$": `States.Format('${ENTITY_TYPES.OPENING}#{}#${ENTITY_TYPES.STAGE}#{}', $$.Map.Item.Value.openingId.S, $$.Map.Item.Value.stageId.S)`,
       },
     });
 
-    const STAGE_EXISTS = sfn.Condition.isPresent("$.Item");
-    const STAGE_DOES_NOT_EXIST = new sfn.Succeed(
+    const DELETE_ADJACENCT_STAGE_QUESTION_ITEM = new tasks.DynamoDeleteItem(
       this,
-      "Stage does not exist, TODO, delte adjacency item anyway"
+      "DeleteAdjacentStageQuestionItem",
+      {
+        table: props.table,
+        key: {
+          PK: tasks.DynamoAttributeValue.fromString(
+            sfn.JsonPath.stringAt("$.adjacenctItemPK")
+          ),
+          SK: tasks.DynamoAttributeValue.fromString(
+            sfn.JsonPath.stringAt("$.adjacenctItemSK")
+          ),
+        },
+      }
     );
 
     UpdateStageInfoMap.iterator(
@@ -328,20 +338,21 @@ export default class DeleteChildrenMachineStack extends cdk.Stack {
       }).next(
         new sfn.Choice(this, "Does stage exist?")
           .when(
-            STAGE_EXISTS,
-            new tasks.LambdaInvoke(this, "UpdateQuestionOrderOnStage", {
+            sfn.Condition.isPresent("$.stage.Item"),
+            new tasks.LambdaInvoke(this, "RemoveDeletedQuestionFromStage", {
               payload: sfn.TaskInput.fromObject({
                 stage: sfn.JsonPath.stringAt("$.stage.Item"),
+                questionId: sfn.JsonPath.stringAt("$.questionId"),
               }),
               lambdaFunction: RemoveDeletedQuestionFromStageFunction,
               integrationPattern: IntegrationPattern.REQUEST_RESPONSE,
             })
           )
-          .otherwise(STAGE_DOES_NOT_EXIST)
+          .otherwise(DELETE_ADJACENCT_STAGE_QUESTION_ITEM)
       )
     );
 
-    // Delete questions and the adjacency item
+    // Delete questions and the adjacent item TODO
     const STAGE_DELETED = sfn.Condition.stringEquals(
       "$.detail.OldImage.entityType",
       ENTITY_TYPES.STAGE

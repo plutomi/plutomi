@@ -40,7 +40,7 @@ export default async function DeleteQuestionFromStage(
             SK: ENTITY_TYPES.STAGE,
           },
           TableName: `${process.env.NODE_ENV}-${DYNAMO_TABLE_NAME}`,
-          UpdateExpression: `REMOVE questionOrder[${deleteIndex}] AND SET totalQuestions = totalQuestions - :value`,
+          UpdateExpression: `REMOVE questionOrder[${deleteIndex}] SET totalQuestions = totalQuestions - :value`,
           ExpressionAttributeValues: {
             ":value": 1,
           },

@@ -66,6 +66,10 @@ const main = async (req: Request, res: Response) => {
     return res.status(status).json(body);
   }
 
+  if (!opening) {
+    return res.status(404).json({ message: "Opening not found" });
+  }
+
   if (req.body.stageOrder) {
     if (req.body.stageOrder.length != opening.stageOrder.length) {
       return res.status(403).json({
