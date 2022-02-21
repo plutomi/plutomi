@@ -291,10 +291,21 @@ export default class DeleteChildrenMachineStack extends cdk.Stack {
         "PK.$": `States.Format('${ENTITY_TYPES.ORG}#{}#${ENTITY_TYPES.OPENING}#{}#${ENTITY_TYPES.STAGE}#{}', $$.Map.Item.Value.orgId.S, $$.Map.Item.Value.openingId.S, $$.Map.Item.Value.stageId.S)`,
         SK: ENTITY_TYPES.STAGE,
         "questionId.$": "$.detail.OldImage.questionId",
+        /**
+         * If a stage does not exist, and a question was previously attached to it,
+         * this allows retrieving that adjacent item and deleting it.
+         * NOTE: Will require the same setup for webhooks
+         */
         "adjacencyListPK.$": `States.Format('${ENTITY_TYPES.ORG}#{}#${ENTITY_TYPES.QUESTION}#{}#${ENTITY_TYPES.STAGE}S', $$.Map.Item.Value.orgId.S, $$.Map.Item.Value.questionId.S)`,
         "adjacencyListSK.$": `States.Format('${ENTITY_TYPES.OPENING}#{}#${ENTITY_TYPES.STAGE}#{}', $$.Map.Item.Value.openingId.S, $$.Map.Item.Value.stageId.S)`,
       },
     });
+
+    const STAGE_EXISTS = sfn.Condition.isPresent("$.Item");
+    const STAGE_DOES_NOT_EXIST = new sfn.Succeed(
+      this,
+      "Stage does not exist, TODO, delte adjacency item anyway"
+    );
 
     UpdateStageInfoMap.iterator(
       new tasks.DynamoGetItem(this, "GetCurrentStageInfo", {
@@ -307,15 +318,26 @@ export default class DeleteChildrenMachineStack extends cdk.Stack {
             sfn.JsonPath.stringAt("$.SK")
           ),
         },
-        resultSelector: {
-          "stage.$": "$.Item",
-        },
+        // https://github.com/plutomi/plutomi/issues/570
+        // Needs a check here as this will error
+        // resultSelector: {
+        //   "stage.$": "$.Item",
+        // },
+        // TODO needs the above condition check, if .item exists
         resultPath: "$.stage",
       }).next(
-        new tasks.LambdaInvoke(this, "UpdateQuestionOrderOnStage", {
-          lambdaFunction: RemoveDeletedQuestionFromStageFunction,
-          integrationPattern: IntegrationPattern.REQUEST_RESPONSE,
-        })
+        new sfn.Choice(this, "Does stage exist?")
+          .when(
+            STAGE_EXISTS,
+            new tasks.LambdaInvoke(this, "UpdateQuestionOrderOnStage", {
+              payload: sfn.TaskInput.fromObject({
+                stage: sfn.JsonPath.stringAt("$.stage.Item"),
+              }),
+              lambdaFunction: RemoveDeletedQuestionFromStageFunction,
+              integrationPattern: IntegrationPattern.REQUEST_RESPONSE,
+            })
+          )
+          .otherwise(STAGE_DOES_NOT_EXIST)
       )
     );
 
