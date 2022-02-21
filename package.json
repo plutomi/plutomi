@@ -7,7 +7,7 @@
     "lint": "next lint",
     "test": "jest",
     "dev-server": "cross-env NODE_ENV=development nodemon app.ts",
-    "dev": "cross-env NODE_ENV=development cdk deploy development-DynamoDBStack development-StreamProcessorStack development-CommsMachineStack development-EventBridgeStack development-StorageStack development-DeleteChildrenMachineStack development-AthenaDynamoQueryStack&& concurrently \"npm run dev-server\" \"next dev\"",
+    "dev": "cross-env NODE_ENV=development cdk deploy development-DynamoDBStack development-StreamProcessorStack development-CommsMachineStack development-EventBridgeStack development-StorageStack development-DeleteChildrenMachineStack development-AthenaDynamoQueryStack && concurrently \"npm run dev-server\" \"next dev\"",
     "start": "cross-env NODE_ENV=production ts-node --transpile-only app.ts",
     "deploy-prod": "cross-env NODE_ENV=production cdk deploy production-DynamoDBStack production-StreamProcessorStack production-APIStack production-CommsMachineStack production-EventBridgeStack production-StorageStack production-DeleteChildrenMachineStack production-AthenaDynamoQueryStack FrontendStack"
   },

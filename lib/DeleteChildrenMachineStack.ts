@@ -230,8 +230,8 @@ export default class DeleteChildrenMachineStack extends cdk.Stack {
       0
     );
 
-    const STAGE_HAS_QUESTIONS = sfn.Condition.(
-      "$.detail.OldImage.totalStages",
+    const STAGE_HAS_QUESTIONS = sfn.Condition.numberGreaterThan(
+      "$.detail.OldImage.totalQuestions",
       0
     );
 
@@ -290,7 +290,9 @@ export default class DeleteChildrenMachineStack extends cdk.Stack {
         // Makes it easier to get these attributes per item
         "PK.$": `States.Format('${ENTITY_TYPES.ORG}#{}#${ENTITY_TYPES.OPENING}#{}#${ENTITY_TYPES.STAGE}#{}', $$.Map.Item.Value.orgId.S, $$.Map.Item.Value.openingId.S, $$.Map.Item.Value.stageId.S)`,
         SK: ENTITY_TYPES.STAGE,
-        "questionId.$": "$.detail.OldImage.questionId", // pass this to the function
+        "questionId.$": "$.detail.OldImage.questionId",
+        "adjacencyListPK.$": `States.Format('${ENTITY_TYPES.ORG}#{}#${ENTITY_TYPES.QUESTION}#{}#${ENTITY_TYPES.STAGE}S', $$.Map.Item.Value.orgId.S, $$.Map.Item.Value.questionId.S)`,
+        "adjacencyListSK.$": `States.Format('${ENTITY_TYPES.OPENING}#{}#${ENTITY_TYPES.STAGE}#{}', $$.Map.Item.Value.openingId.S, $$.Map.Item.Value.stageId.S)`,
       },
     });
 
@@ -367,8 +369,8 @@ export default class DeleteChildrenMachineStack extends cdk.Stack {
       .when(
         STAGE_DELETED,
         new Choice(this, "Does Stage Have Questions?").when(
-          STAGE_HAS_QUESTIONS
-          // TODO map through and delete the adjacency list
+          STAGE_HAS_QUESTIONS,
+          new sfn.Succeed(this, "TODO delete adjacent item")
         )
       )
       .when(
