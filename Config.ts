@@ -54,6 +54,7 @@ export enum ENTITY_TYPES {
   STAGE_RULE = "STAGE_RULE",
   LOGIN_LINK = "LOGIN_LINK",
   LOGIN_EVENT = "LOGIN_EVENT",
+  WEBHOOK = "WEBHOOK",
 }
 
 export const TIME_UNITS = {

@@ -31,7 +31,7 @@ interface DeleteChildrenMachineProps extends cdk.StackProps {
  *
  * When deleting an applicant, this should delete all files, notes, whatever else.
  *
- * When deleting an org, start at the top and start deleting everything. Etc. Etc.
+ * When deleting an org, start deleting the top level items (openings, webhooks, questions).
  */
 export default class DeleteChildrenMachineStack extends cdk.Stack {
   public DeleteChildrenMachine: sfn.StateMachine;

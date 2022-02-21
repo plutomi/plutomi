@@ -2,7 +2,7 @@ import {
   TransactWriteCommandInput,
   TransactWriteCommand,
 } from "@aws-sdk/lib-dynamodb";
-import { Dynamo } from "../../AWSClients/ddbDocClient";
+import { Dynamo } from "../../awsClients/ddbDocClient";
 import { DYNAMO_TABLE_NAME, ENTITY_TYPES } from "../../Config";
 import * as Time from "../../utils/time";
 import { SdkError } from "@aws-sdk/types";

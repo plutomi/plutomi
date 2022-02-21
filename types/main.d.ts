@@ -7,6 +7,7 @@ import {
   DynamoStage,
   DynamoQuestion,
   DynamoUser,
+  DynamoWebhook,
 } from "./dynamo";
 type DynamoActions =
   | "dynamodb:GetItem"
@@ -95,6 +96,7 @@ export interface UpdateQuestionInput
 
 type GetQuestionsInStageOutput = GetQuestionOutput[];
 
+type CreateWebhookInput = Pick<DynamoWebhook, "url" | "orgId">;
 type CreateApplicantInput = Pick<
   DynamoApplicant,
   "orgId" | "firstName" | "lastName" | "email" | "openingId" | "stageId"
@@ -157,6 +159,7 @@ interface AddQuestionToStageInput
   questionId: string;
 }
 
+type GetWebhooksInOrgInput = Pick<DynamoWebhook, "orgId">;
 interface DeleteQuestionFromStageInput
   extends Pick<DynamoStage, "orgId" | "openingId" | "stageId" | "deleteIndex"> {
   questionId: string;

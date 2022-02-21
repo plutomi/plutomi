@@ -1,6 +1,6 @@
 import { QueryCommandInput, QueryCommand } from "@aws-sdk/lib-dynamodb";
 import _ from "lodash";
-import { Dynamo } from "../../AWSClients/ddbDocClient";
+import { Dynamo } from "../../awsClients/ddbDocClient";
 import { DYNAMO_TABLE_NAME, ENTITY_TYPES } from "../../Config";
 import {
   GetApplicantByIdInput,

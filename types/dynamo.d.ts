@@ -336,6 +336,17 @@ interface DynamoOrgInvite {
   GSI1SK: string;
 }
 
+interface DynamoWebhook {
+  PK: `${ENTITY_TYPES.ORG}#${string}#${ENTITY_TYPES.WEBHOOK}#${string}`;
+  SK: ENTITY_TYPES.WEBHOOK;
+  orgId: string;
+  createdAt: string;
+  url: string;
+  entityType: ENTITY_TYPES.WEBHOOK;
+  // Get all webhooks in org
+  GSI1PK: `${ENTITY_TYPES.ORG}#${orgId}#${ENTITY_TYPES.WEBHOOK}S`;
+  GSI1SK: string;
+}
 interface DynamoUser {
   PK: `${ENTITY_TYPES.USER}#${string}`;
   SK: ENTITY_TYPES.USER;
@@ -394,12 +405,13 @@ interface DynamoOrg {
   totalApplicants: number;
   totalOpenings: number;
   totalUsers: number;
+  totalWebhooks: number;
   displayName: string;
   totalQuestions: number;
 }
 
 interface DynamoLoginEvent {
-  PK: `${ENTITY_TYPES.USER}#${string}`; // TODO set login events as org events if the user has an org
+  PK: `${ENTITY_TYPES.USER}#${string}`;
   SK: `${ENTITY_TYPES.LOGIN_EVENT}#${string}`;
   createdAt: string; // ISO timestamp
   ttlExpiry: number; // ttl unix expiry

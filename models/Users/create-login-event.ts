@@ -3,7 +3,7 @@ import {
   TransactWriteCommand,
 } from "@aws-sdk/lib-dynamodb";
 import { SdkError } from "@aws-sdk/types";
-import { Dynamo } from "../../AWSClients/ddbDocClient";
+import { Dynamo } from "../../awsClients/ddbDocClient";
 import {
   ENTITY_TYPES,
   DEFAULTS,

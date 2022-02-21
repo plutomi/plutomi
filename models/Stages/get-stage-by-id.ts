@@ -1,5 +1,5 @@
 import { GetCommandInput, GetCommand } from "@aws-sdk/lib-dynamodb";
-import { Dynamo } from "../../AWSClients/ddbDocClient";
+import { Dynamo } from "../../awsClients/ddbDocClient";
 import { DYNAMO_TABLE_NAME, ENTITY_TYPES } from "../../Config";
 import { GetStageByIdInput, GetStageByIdOutput } from "../../types/main";
 import { SdkError } from "@aws-sdk/types";

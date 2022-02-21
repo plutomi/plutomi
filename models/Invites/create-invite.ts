@@ -1,7 +1,13 @@
 import { PutCommandInput, PutCommand } from "@aws-sdk/lib-dynamodb";
 import { nanoid } from "nanoid";
-import { Dynamo } from "../../AWSClients/ddbDocClient";
-import { ID_LENGTHS, ENTITY_TYPES, TIME_UNITS, DEFAULTS, DYNAMO_TABLE_NAME } from "../../Config";
+import { Dynamo } from "../../awsClients/ddbDocClient";
+import {
+  ID_LENGTHS,
+  ENTITY_TYPES,
+  TIME_UNITS,
+  DEFAULTS,
+  DYNAMO_TABLE_NAME,
+} from "../../Config";
 import { DynamoOrgInvite } from "../../types/dynamo";
 import { CreateOrgInviteInput } from "../../types/main";
 import * as Time from "../../utils/time";

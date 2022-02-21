@@ -5,7 +5,7 @@ import {
   TransactWriteCommandInput,
 } from "@aws-sdk/lib-dynamodb";
 import { nanoid } from "nanoid";
-import { Dynamo } from "../../AWSClients/ddbDocClient";
+import { Dynamo } from "../../awsClients/ddbDocClient";
 import { ID_LENGTHS, ENTITY_TYPES, DYNAMO_TABLE_NAME } from "../../Config";
 import { DynamoQuestion } from "../../types/dynamo";
 import { CreateQuestionInput } from "../../types/main";

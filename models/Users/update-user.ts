@@ -1,5 +1,5 @@
 import { UpdateCommandInput, UpdateCommand } from "@aws-sdk/lib-dynamodb";
-import { Dynamo } from "../../AWSClients/ddbDocClient";
+import { Dynamo } from "../../awsClients/ddbDocClient";
 import { DYNAMO_TABLE_NAME, ENTITY_TYPES } from "../../Config";
 import { DynamoUser } from "../../types/dynamo";
 import { UpdateUserInput } from "../../types/main";
