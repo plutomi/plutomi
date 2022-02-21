@@ -326,7 +326,6 @@ describe("Orgs", () => {
         userId: originalUser.data.userId,
       });
     } catch (error) {
-      console.error(error);
       expect(error.response.status).toBe(403);
       expect(error.response.data.message).toBe(
         "You cannot remove yourself from an org. If you're the only user, delete the org instead"

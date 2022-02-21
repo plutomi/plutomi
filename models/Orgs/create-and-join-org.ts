@@ -24,6 +24,7 @@ export default async function CreateAndJoinOrg(
     totalApplicants: 0,
     totalOpenings: 0,
     totalUsers: 1,
+    totalWebhooks: 0,
     totalQuestions: 0,
     displayName,
   };

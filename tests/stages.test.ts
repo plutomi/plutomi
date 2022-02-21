@@ -362,7 +362,6 @@ describe("Stages", () => {
         },
       });
     } catch (error) {
-      console.error(error);
       expect(error.response.status).toBe(400);
       expect(error.response.data.message).toContain("is not allowed");
     }
