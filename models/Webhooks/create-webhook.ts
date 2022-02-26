@@ -13,11 +13,13 @@ export default async function CreateWebhook(
   props: CreateWebhookInput
 ): Promise<[DynamoWebhook, null] | [null, SdkError]> {
   const { orgId, url } = props;
+  const webhookId = nanoid(15);
   const newWebhook: DynamoWebhook = {
-    PK: `${ENTITY_TYPES.ORG}#${orgId}#${ENTITY_TYPES.WEBHOOK}#${nanoid(15)}`,
+    PK: `${ENTITY_TYPES.ORG}#${orgId}#${ENTITY_TYPES.WEBHOOK}#${webhookId}`,
     SK: ENTITY_TYPES.WEBHOOK,
     entityType: ENTITY_TYPES.WEBHOOK,
     createdAt: Time.currentISO(),
+    webhookId,
     orgId,
     url,
     GSI1PK: `${ENTITY_TYPES.ORG}#${orgId}#${ENTITY_TYPES.WEBHOOK}S`,

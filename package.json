@@ -51,6 +51,8 @@
     "@kayron013/lexorank": "^2.0.0",
     "@lambda-middleware/compose": "^1.2.0",
     "@lambda-middleware/json-serializer": "^2.1.1",
+    "@mdi/js": "^6.5.95",
+    "@mdi/react": "^1.5.0",
     "@middy/core": "^2.5.4",
     "@middy/http-cors": "^2.5.4",
     "@middy/http-event-normalizer": "^2.5.4",

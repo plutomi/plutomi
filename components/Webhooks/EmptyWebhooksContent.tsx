@@ -1,9 +1,21 @@
 import { PlusIcon } from "@heroicons/react/solid";
 import { UserGroupIcon } from "@heroicons/react/outline";
+import { mdiWebhook } from "@mdi/js";
+import Icon from "@mdi/react";
+
 export default function EmptyWebhooksContent() {
   return (
     <div className="text-center">
-      <UserGroupIcon className="mx-auto h-12 w-12 text-light" />
+      <div className="mx-auto h-12 w-12 text-light">
+        <Icon
+          path={mdiWebhook}
+          title="Webhooks"
+          size={2}
+          horizontal
+          vertical
+        />
+      </div>
+
       <h3 className="mt-2 text-lg font-medium text-dark">
         You don&apos;t have any webhooks
       </h3>

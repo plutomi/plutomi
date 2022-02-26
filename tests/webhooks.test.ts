@@ -37,7 +37,7 @@ describe("Webhooks", () => {
   it("return webhooks for org", async () => {
     expect.assertions(3);
 
-    const { data, status } = await Webhooks.GetAllWebhooksInOrg();
+    const { data, status } = await Webhooks.GetWebhooksInOrg();
     console.log(data);
 
     expect(status).toBe(200);

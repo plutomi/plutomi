@@ -8,9 +8,9 @@ const CreateWebhook = async (options: APICreateWebhookOptions) => {
   return data;
 };
 
-const GetAllWebhooksInOrg = async () => {
+const GetWebhooksInOrg = async () => {
   const data = await axios.get(GetWebhooksInOrgURL());
   return data;
 };
 
-export { CreateWebhook, GetAllWebhooksInOrg };
+export { CreateWebhook, GetWebhooksInOrg, GetWebhooksInOrgURL };
