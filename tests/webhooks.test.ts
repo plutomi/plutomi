@@ -38,4 +38,18 @@ describe("Webhooks", () => {
     expect(Array.isArray(data)).toBe(true);
     expect(data.length).toBe(1);
   });
+
+  it("blocks creating a webhook if url is not a url", async () => {
+    expect.assertions(3);
+
+    try {
+      await Webhooks.CreateWebhook({
+        url: nanoid(20),
+      });
+    } catch (error) {
+      expect(error.response.status).toBe(400);
+      expect(error.response.data.message).toContain("body.url");
+      expect(error.response.data.message).toContain("must be a valid uri");
+    }
+  });
 });
