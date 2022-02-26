@@ -1,48 +1,39 @@
 import { useState } from "react";
 import { PencilAltIcon } from "@heroicons/react/outline";
 import { TrashIcon } from "@heroicons/react/outline";
-import {
-  DeleteQuestionFromOrg,
-  GetQuestionsInOrgURL,
-} from "../../adapters/Questions";
+import { DeleteWebhook, GetWebhooksInOrgURL } from "../../adapters/Webhooks";
 import useStore from "../../utils/store";
 import { mutate } from "swr";
-import { DynamoQuestion } from "../../types/dynamo";
+import { DynamoWebhook } from "../../types/dynamo";
 
-export default function QuestionItem({
-  question,
-}: {
-  question: DynamoQuestion;
-}) {
-  const setCurrentQuestion = useStore((state) => state.setCurrentQuestion);
-  const openUpdateQuestionModal = useStore(
-    (state) => state.openUpdateQuestionModal
+export default function WebhookItem({ webhook }: { webhook: DynamoWebhook }) {
+  const setCurrentWebhook = useStore((state) => state.setCurrentWebhook);
+
+  const openUpdateWebhookModal = useStore(
+    (state) => state.openUpdateWebhookModal
   );
 
   const handleEdit = () => {
-    setCurrentQuestion(question);
-    openUpdateQuestionModal();
+    setCurrentWebhook(webhook);
+    openUpdateWebhookModal();
   };
 
   const [isHovering, setIsHovering] = useState(false);
 
-  const handleDelete = async (question: DynamoQuestion) => {
-    let deleteMessage = `Are you sure you want to delete this question?`;
+  const handleDelete = async (webhook: DynamoWebhook) => {
+    let deleteMessage = `Are you sure you want to delete this webhook?`;
 
-    if (question.totalStages > 0) {
-      deleteMessage += `\n\n\nNOTE: This question is being used in ${question.totalStages} stages and those stages will be updated.`;
-    }
     if (!confirm(deleteMessage)) {
       return;
     }
 
     try {
-      const data = await DeleteQuestionFromOrg(question.questionId);
+      const data = await DeleteWebhook(webhook.webhookId);
       alert(data.data.message);
     } catch (error) {
       alert(error.response.data.message);
     }
-    mutate(GetQuestionsInOrgURL());
+    mutate(GetWebhooksInOrgURL());
   };
 
   // Essentially fill in all the details of the modal and then open it
@@ -55,22 +46,13 @@ export default function QuestionItem({
       <div className=" py-2  h-full relative focus-within:ring-2 focus-within:ring-blue-500">
         <h3 className="text-lg font-semibold text-dark">
           <span className="absolute inset-0" aria-hidden="true" />
-          {question?.GSI1SK}
+          {webhook?.SK}
         </h3>
-        {question?.description && (
+        {webhook?.description && (
           <p className="text-md text-light line-clamp-2 mt-1">
-            {question?.description}
+            {webhook?.description}
           </p>
         )}
-
-        <p className="text-md text-red-300 line-clamp-2 mt-1">
-          ID: {question?.questionId}
-          <span className="text-light">
-            {" "}
-            - used in <strong> {question?.totalStages} </strong>
-            stages
-          </span>
-        </p>
       </div>
       <div className="flex justify-center items-center ">
         <button
@@ -80,7 +62,7 @@ export default function QuestionItem({
           <PencilAltIcon className="w-6 h-6" />
         </button>
         <button
-          onClick={() => handleDelete(question)}
+          onClick={() => handleDelete(webhook)}
           className="rounded-full hover:bg-white text-red-500 transition ease-in-out duration-200 px-3 py-3 text-md"
         >
           <TrashIcon className="w-6 h-6" />

@@ -1,6 +1,7 @@
 // @ts-nocheck // TODO remove
 
 import create from "zustand";
+import { DynamoQuestion, DynamoWebhook } from "../types/dynamo";
 const useStore = create((set) => ({
   /**
    * ORGS
@@ -129,13 +130,27 @@ const useStore = create((set) => ({
     set(() => ({
       showUpdateQuestionModal: false,
     })),
-
   // Since questions do not have their own page, we have to do this for passing state around :(
-
   currentQuestion: {},
-  setCurrentQuestion: (question) =>
+  setCurrentQuestion: (question: DynamoQuestion) =>
     set(() => ({
       currentQuestion: question,
+    })),
+
+  currentWebhook: {},
+  setCurrentWebhook: (webhook: DynamoWebhook) =>
+    set(() => ({
+      currentWebhook: webhook,
+    })),
+
+  showUpdateWebhookModal: false,
+  openUpdateWebhookModal: () =>
+    set(() => ({
+      showUpdateWebhookModal: true,
+    })),
+  closeUpdateWebhookModal: () =>
+    set(() => ({
+      showUpdateWebhookModal: false,
     })),
 }));
 export default useStore;
