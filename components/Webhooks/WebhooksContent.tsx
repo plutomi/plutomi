@@ -2,6 +2,7 @@ import useSelf from "../../SWR/useSelf";
 import { DynamoWebhook } from "../../types/dynamo";
 import EmptyWebhooksContent from "./EmptyWebhooksContent";
 import useWebhooks from "../../SWR/useWebhooks";
+import useStore from "../../utils/store";
 
 export default function WebhooksContent() {
   const { user, isUserLoading, isUserError } = useSelf();

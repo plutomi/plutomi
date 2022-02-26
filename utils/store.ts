@@ -69,6 +69,16 @@ const useStore = create((set) => ({
       showInviteModal: false,
     })),
 
+  showCreateWebhookModal: false,
+  openCreateWebhookModal: () =>
+    set(() => ({
+      showCreateWebhookModal: true,
+    })),
+  closeCreateWebhookModal: () =>
+    set(() => ({
+      showCreateWebhookModal: false,
+    })),
+
   showCreateStageModal: false,
   openCreateStageModal: () =>
     set(() => ({
