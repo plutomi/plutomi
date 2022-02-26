@@ -8,26 +8,32 @@ import CustomLink from "../CustomLink";
 import { LIMITS } from "../../Config";
 
 export default function CreateWebhookModal() {
-  const [name, setname] = useState("");
-  const [webhookUrl, setWebhookUrl] = useState("");
-  const [webhookDescription, setWebhookDescription] = useState("");
+  const [name, setName] = useState("");
+  const [url, setUrl] = useState("");
+  const [description, setDescription] = useState("");
   const visibility = useStore((state) => state.showCreateWebhookModal);
 
   const closeCreateWebhookModal = useStore(
     (state) => state.closeCreateWebhookModal
   );
 
+  const clearModal = () => {
+    setName("");
+    setDescription("");
+    setUrl("");
+  };
+
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
 
     try {
       const { data } = await CreateWebhook({
-        url: webhookUrl,
+        url: url,
         name,
-        description: webhookDescription,
+        description,
       });
       alert(data.message);
-      setname("");
+      clearModal();
       closeCreateWebhookModal();
     } catch (error) {
       alert(error.response.data.message);
@@ -113,7 +119,7 @@ export default function CreateWebhookModal() {
                                 placeholder="New Applicant Notifications"
                                 id="webhook-name"
                                 required
-                                onChange={(e) => setname(e.target.value)}
+                                onChange={(e) => setName(e.target.value)}
                                 value={name}
                                 className="block w-full shadow-sm sm:text-sm focus:ring-blue-500 focus:border-blue-500 border-gray-300 rounded-md"
                               />
@@ -131,10 +137,8 @@ export default function CreateWebhookModal() {
                                 name="webhook-description"
                                 id="webhook-description"
                                 placeholder="Sends a slack message to the #new-applicants slack channel"
-                                onChange={(e) =>
-                                  setWebhookDescription(e.target.value)
-                                }
-                                value={webhookDescription}
+                                onChange={(e) => setDescription(e.target.value)}
+                                value={description}
                                 maxLength={
                                   LIMITS.MAX_WEBHOOK_DESCRIPTION_LENGTH
                                 }
@@ -157,8 +161,8 @@ export default function CreateWebhookModal() {
                                 id="webhook-url"
                                 placeholder="https://domain.com/webhooks"
                                 required
-                                onChange={(e) => setWebhookUrl(e.target.value)}
-                                value={webhookUrl}
+                                onChange={(e) => setUrl(e.target.value)}
+                                value={url}
                                 className="block w-full shadow-sm sm:text-sm focus:ring-blue-500 focus:border-blue-500 border-gray-300 rounded-md"
                               />
                             </div>

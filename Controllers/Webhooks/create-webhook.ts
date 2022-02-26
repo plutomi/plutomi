@@ -1,10 +1,9 @@
 import { Request, Response } from "express";
 import { JOI_SETTINGS, LIMITS } from "../../Config";
 import * as CreateError from "../../utils/createError";
-import * as Openings from "../../models/Openings";
-import Joi from "joi";
 import { DynamoWebhook } from "../../types/dynamo";
 import * as Webhooks from "../../models/Webhooks";
+import Joi from "joi";
 
 export type APICreateWebhookOptions = Pick<
   DynamoWebhook,
@@ -16,6 +15,7 @@ const schema = Joi.object({
     url: Joi.string().uri(),
     name: Joi.string().max(100).min(1),
     description: Joi.string()
+      .allow("")
       .max(LIMITS.MAX_WEBHOOK_DESCRIPTION_LENGTH)
       .optional(),
   },
