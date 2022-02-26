@@ -96,7 +96,10 @@ export interface UpdateQuestionInput
 
 type GetQuestionsInStageOutput = GetQuestionOutput[];
 
-type CreateWebhookInput = Pick<DynamoWebhook, "url" | "orgId">;
+type CreateWebhookInput = Pick<
+  DynamoWebhook,
+  "url" | "orgId" | "url" | "description" | "SK"
+>;
 type CreateApplicantInput = Pick<
   DynamoApplicant,
   "orgId" | "firstName" | "lastName" | "email" | "openingId" | "stageId"

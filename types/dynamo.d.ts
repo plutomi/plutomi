@@ -338,13 +338,16 @@ interface DynamoOrgInvite {
 
 interface DynamoWebhook {
   PK: `${ENTITY_TYPES.ORG}#${string}#${ENTITY_TYPES.WEBHOOK}#${string}`;
-  SK: ENTITY_TYPES.WEBHOOK;
+  /**
+   * The name of the webhook
+   */
+  SK: string;
   orgId: string;
   webhookId: string;
+  description?: string;
   createdAt: string;
   url: string;
   entityType: ENTITY_TYPES.WEBHOOK;
-  // Get all webhooks in org
   GSI1PK: `${ENTITY_TYPES.ORG}#${orgId}#${ENTITY_TYPES.WEBHOOK}S`;
   GSI1SK: string;
 }

@@ -12,11 +12,11 @@ import { CreateWebhookInput } from "../../types/main";
 export default async function CreateWebhook(
   props: CreateWebhookInput
 ): Promise<[DynamoWebhook, null] | [null, SdkError]> {
-  const { orgId, url } = props;
+  const { orgId, SK, url, description } = props;
   const webhookId = nanoid(15);
-  const newWebhook: DynamoWebhook = {
+  let newWebhook: DynamoWebhook = {
     PK: `${ENTITY_TYPES.ORG}#${orgId}#${ENTITY_TYPES.WEBHOOK}#${webhookId}`,
-    SK: ENTITY_TYPES.WEBHOOK,
+    SK,
     entityType: ENTITY_TYPES.WEBHOOK,
     createdAt: Time.currentISO(),
     webhookId,
@@ -25,6 +25,10 @@ export default async function CreateWebhook(
     GSI1PK: `${ENTITY_TYPES.ORG}#${orgId}#${ENTITY_TYPES.WEBHOOK}S`,
     GSI1SK: Time.currentISO(),
   };
+
+  if (description) {
+    newWebhook["description"] = description
+  }
 
   const transactParams: TransactWriteCommandInput = {
     TransactItems: [

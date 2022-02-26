@@ -104,6 +104,7 @@ export enum LIMITS {
   MAX_QUESTION_DESCRIPTION_LENGTH = 500,
   MAX_APPLICANT_FIRSTNAME_LENGTH = 20,
   MAX_APPLICANT_LASTNAME_LENGTH = 20,
+  MAX_WEBHOOK_DESCRIPTION_LENGTH = 300,
 
   /**
    * How many child items (that can be re-ordered!) is a parent allowed to have.

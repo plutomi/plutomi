@@ -25,6 +25,7 @@ describe("Webhooks", () => {
     expect(orgResponse.data.totalWebhooks).toBe(0);
     const { data, status } = await Webhooks.CreateWebhook({
       url: "https://google.com",
+      SK: nanoid(20),
     });
 
     expect(status).toBe(201);
@@ -51,11 +52,26 @@ describe("Webhooks", () => {
     try {
       await Webhooks.CreateWebhook({
         url: nanoid(20),
+        SK: nanoid(20),
       });
     } catch (error) {
       expect(error.response.status).toBe(400);
       expect(error.response.data.message).toContain("body.url");
       expect(error.response.data.message).toContain("must be a valid uri");
+    }
+  });
+
+  it("blocks creating a webhook without a name (SK)", async () => {
+    expect.assertions(3);
+    try {
+      await Webhooks.CreateWebhook({
+        url: "https://google.com",
+        SK: undefined,
+      });
+    } catch (error) {
+      expect(error.response.status).toBe(400);
+      expect(error.response.data.message).toContain("body.SK");
+      expect(error.response.data.message).toContain("is required");
     }
   });
 });

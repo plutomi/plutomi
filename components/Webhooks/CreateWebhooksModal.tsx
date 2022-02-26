@@ -5,6 +5,7 @@ import { CreateWebhook, GetWebhooksInOrgURL } from "../../adapters/Webhooks";
 import useStore from "../../utils/store";
 import { mutate } from "swr";
 import CustomLink from "../CustomLink";
+import { LIMITS } from "../../Config";
 
 export default function CreateWebhookModal() {
   const [webhookName, setWebhookName] = useState("");
@@ -22,6 +23,8 @@ export default function CreateWebhookModal() {
     try {
       const { data } = await CreateWebhook({
         url: webhookUrl,
+        SK: webhookName,
+        description: webhookDescription,
       });
       alert(data.message);
       setWebhookName("");
@@ -88,7 +91,7 @@ export default function CreateWebhookModal() {
                         <p className="text-sm text-blue-300">
                           We can send new applicant events to webhooks that you
                           choose. You can then setup third party integrations
-                          like Zendesk or Slack, or even to your own server for
+                          like Zendesk or Slack, or even your own server for
                           further processing.
                         </p>
                       </div>
@@ -132,7 +135,9 @@ export default function CreateWebhookModal() {
                                   setWebhookDescription(e.target.value)
                                 }
                                 value={webhookDescription}
-                                maxLength={300}
+                                maxLength={
+                                  LIMITS.MAX_WEBHOOK_DESCRIPTION_LENGTH
+                                }
                                 className="block w-full shadow-sm sm:text-sm focus:ring-blue-500 focus:border-blue-500 border-gray-300 rounded-md"
                               />
                             </div>
