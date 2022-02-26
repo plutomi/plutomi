@@ -16,6 +16,7 @@ import * as PublicInfo from "./Controllers/PublicInfo";
 import * as Invites from "./Controllers/Invites";
 import * as Applicants from "./Controllers/Applicants";
 import * as Questions from "./Controllers/Questions";
+import * as Webhooks from "./Controllers/Webhooks";
 import withHasOrg from "./middleware/withHasOrg";
 import withSameOrg from "./middleware/withSameOrg";
 import helmet from "helmet";
@@ -27,7 +28,6 @@ import withCleanOrgId from "./middleware/withCleanOrgId";
 import withCleanQuestionId from "./middleware/withCleanQuestionId";
 import timeout from "connect-timeout";
 import { COOKIE_SETTINGS, EXPRESS_PORT, WEBSITE_URL } from "./Config";
-import * as Webhooks from "./Controllers/Webhooks";
 import withSession from "./middleware/withSession";
 const cookieParser = require("cookie-parser");
 const app = express();
@@ -209,6 +209,11 @@ app.get("/", healthcheck);
 app.post("/webhooks", [withSession, withHasOrg], Webhooks.CreateWebhook);
 app.get("/webhooks", [withSession, withHasOrg], Webhooks.GetWebhooksInOrg);
 
+app.delete(
+  "/webhooks/:webhookId",
+  [withSession, withHasOrg],
+  Webhooks.DeleteWebhookFromOrg
+);
 function healthcheck(req, res: Response, next) {
   return res.status(200).json({ message: "It's all good man!" });
 }

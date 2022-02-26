@@ -8,7 +8,7 @@ import CustomLink from "../CustomLink";
 import { LIMITS } from "../../Config";
 
 export default function CreateWebhookModal() {
-  const [webhookName, setWebhookName] = useState("");
+  const [name, setname] = useState("");
   const [webhookUrl, setWebhookUrl] = useState("");
   const [webhookDescription, setWebhookDescription] = useState("");
   const visibility = useStore((state) => state.showCreateWebhookModal);
@@ -23,11 +23,11 @@ export default function CreateWebhookModal() {
     try {
       const { data } = await CreateWebhook({
         url: webhookUrl,
-        SK: webhookName,
+        name,
         description: webhookDescription,
       });
       alert(data.message);
-      setWebhookName("");
+      setname("");
       closeCreateWebhookModal();
     } catch (error) {
       alert(error.response.data.message);
@@ -113,8 +113,8 @@ export default function CreateWebhookModal() {
                                 placeholder="New Applicant Notifications"
                                 id="webhook-name"
                                 required
-                                onChange={(e) => setWebhookName(e.target.value)}
-                                value={webhookName}
+                                onChange={(e) => setname(e.target.value)}
+                                value={name}
                                 className="block w-full shadow-sm sm:text-sm focus:ring-blue-500 focus:border-blue-500 border-gray-300 rounded-md"
                               />
                             </div>

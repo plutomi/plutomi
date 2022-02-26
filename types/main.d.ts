@@ -82,7 +82,7 @@ type orgIdAndQuestionId = "orgId" | "questionId";
 
 // TODo remove the below types
 type DeleteQuestionFromOrgInput = Pick<DynamoQuestion, orgIdAndQuestionId>;
-
+type DeleteWebhookFromOrgInput = Pick<DynamoWebhook, "webhookId" | "orgId">;
 type GetQuestionInput = Pick<DynamoQuestion, orgIdAndQuestionId>;
 type GetQuestionOutput = DynamoQuestion;
 
@@ -98,7 +98,7 @@ type GetQuestionsInStageOutput = GetQuestionOutput[];
 
 type CreateWebhookInput = Pick<
   DynamoWebhook,
-  "url" | "orgId" | "url" | "description" | "SK"
+  "url" | "orgId" | "description" | "name"
 >;
 type CreateApplicantInput = Pick<
   DynamoApplicant,

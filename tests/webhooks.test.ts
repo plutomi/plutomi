@@ -3,6 +3,7 @@ import * as Webhooks from "../adapters/Webhooks";
 import * as Orgs from "../adapters/Orgs";
 import { nanoid } from "nanoid";
 import * as GenerateID from "../utils/generateIds";
+import { DynamoWebhook } from "../types/dynamo";
 
 describe("Webhooks", () => {
   /**
@@ -25,7 +26,7 @@ describe("Webhooks", () => {
     expect(orgResponse.data.totalWebhooks).toBe(0);
     const { data, status } = await Webhooks.CreateWebhook({
       url: "https://google.com",
-      SK: nanoid(20),
+      name: nanoid(20),
     });
 
     expect(status).toBe(201);
@@ -39,7 +40,6 @@ describe("Webhooks", () => {
     expect.assertions(3);
 
     const { data, status } = await Webhooks.GetWebhooksInOrg();
-    console.log(data);
 
     expect(status).toBe(200);
     expect(Array.isArray(data)).toBe(true);
@@ -52,7 +52,7 @@ describe("Webhooks", () => {
     try {
       await Webhooks.CreateWebhook({
         url: nanoid(20),
-        SK: nanoid(20),
+        name: nanoid(20),
       });
     } catch (error) {
       expect(error.response.status).toBe(400);
@@ -61,17 +61,65 @@ describe("Webhooks", () => {
     }
   });
 
-  it("blocks creating a webhook without a name (SK)", async () => {
+  it("blocks creating a webhook without a name", async () => {
     expect.assertions(3);
     try {
       await Webhooks.CreateWebhook({
         url: "https://google.com",
-        SK: undefined,
+        name: undefined,
       });
     } catch (error) {
       expect(error.response.status).toBe(400);
-      expect(error.response.data.message).toContain("body.SK");
+      expect(error.response.data.message).toContain("body.name");
       expect(error.response.data.message).toContain("is required");
     }
+  });
+
+  it("allows deleting a webhook and decrements the org's total webhooks", async () => {
+    expect.assertions(5);
+    const name = nanoid(30);
+
+    // New user
+    const cookieResult = await axios.post(`/jest-setup`);
+    const cookie = cookieResult.headers["set-cookie"][0];
+    axios.defaults.headers.Cookie = cookie;
+    
+    // New org
+    await Orgs.CreateOrg({
+      displayName: nanoid(20),
+      orgId: GenerateID.OrgID(20),
+    });
+
+    // Create two webhooks
+    await Webhooks.CreateWebhook({
+      url: "https://google.com",
+      name, // This one will be deleted
+    });
+    await Webhooks.CreateWebhook({
+      url: "https://google.com",
+      name: nanoid(20),
+    });
+
+    const originalOrgdata = await Orgs.GetOrgInfo();
+    expect(originalOrgdata.data.totalWebhooks).toBe(2);
+
+    const result = await Webhooks.GetWebhooksInOrg();
+
+    const ourWebhook: DynamoWebhook = result.data.find(
+      (hook: DynamoWebhook) => hook.name === name
+    );
+
+    expect(ourWebhook.name).toBe(name);
+
+    const { status, data } = await Webhooks.DeleteWebhook(ourWebhook.webhookId);
+
+    expect(status).toBe(200);
+    expect(data.message).toBe("Webhook deleted!");
+
+    const orgResult = await Orgs.GetOrgInfo();
+
+    expect(orgResult.data.totalWebhooks).toBe(
+      originalOrgdata.data.totalWebhooks - 1
+    );
   });
 });

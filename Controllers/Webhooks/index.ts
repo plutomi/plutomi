@@ -1,4 +1,4 @@
 import CreateWebhook from "./create-webhook";
 import GetWebhooksInOrg from "./get-webhooks-in-org";
-
-export { CreateWebhook, GetWebhooksInOrg };
+import DeleteWebhookFromOrg from "./delete-webhook-from-org";
+export { CreateWebhook, GetWebhooksInOrg, DeleteWebhookFromOrg };
