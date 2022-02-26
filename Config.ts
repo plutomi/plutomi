@@ -171,11 +171,18 @@ export const AXIOS_INSTANCE = axios.create({
 export const SWRFetcher = (url: string) =>
   AXIOS_INSTANCE.get(API_URL + url).then((res) => res.data);
 
+// TODO add a type for this
 export const NAVBAR_NAVIGATION = [
   {
     name: "Dashboard",
     href: "/dashboard",
     hiddenIfNoOrg: false,
+    hiddenIfOrg: false,
+  },
+  {
+    name: "Webhooks",
+    href: "/webhooks",
+    hiddenIfNoOrg: true,
     hiddenIfOrg: false,
   },
   {
