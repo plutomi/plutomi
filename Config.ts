@@ -179,13 +179,6 @@ export const NAVBAR_NAVIGATION: NavbarItem[] = [
     hiddenIfNoOrg: false,
     hiddenIfOrg: false,
   },
-
-  {
-    name: "Webhooks",
-    href: "/webhooks",
-    hiddenIfNoOrg: true,
-    hiddenIfOrg: false,
-  },
   {
     name: "Openings",
     href: "/openings",
@@ -204,6 +197,12 @@ export const NAVBAR_NAVIGATION: NavbarItem[] = [
     href: "/invites",
     hiddenIfNoOrg: false,
     hiddenIfOrg: true,
+  },
+  {
+    name: "Webhooks",
+    href: "/webhooks",
+    hiddenIfNoOrg: true,
+    hiddenIfOrg: false,
   },
 ];
 export const DROPDOWN_NAVIGATION = [
