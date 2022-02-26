@@ -14,18 +14,24 @@ describe("Webhooks", () => {
     axios.defaults.headers.Cookie = cookie;
   });
 
-  it("add a webhook to an org", async () => {
-    expect.assertions(2);
+  it("add a webhook to an org and increments the webhook count in the org", async () => {
+    expect.assertions(4);
     await Orgs.CreateOrg({
       displayName: nanoid(20),
       orgId: GenerateID.OrgID(20),
     });
+
+    const orgResponse = await Orgs.GetOrgInfo();
+    expect(orgResponse.data.totalWebhooks).toBe(0);
     const { data, status } = await Webhooks.CreateWebhook({
       url: "https://google.com",
     });
 
     expect(status).toBe(201);
     expect(data.message).toBe("Webhook created!");
+
+    const updatedOrgResponse = await Orgs.GetOrgInfo();
+    expect(updatedOrgResponse.data.totalWebhooks).toBe(1);
   });
 
   it("return webhooks for org", async () => {
