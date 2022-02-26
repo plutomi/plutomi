@@ -104,6 +104,27 @@ type CreateApplicantInput = Pick<
 
 type orgIdAndApplicantId = "orgId" | "applicantId";
 
+export type NavbarItem = {
+  /**
+   * The name of the navbar item such as 'Dashboard' or 'Questions'
+   */
+  name: string;
+  /**
+   * The path of the page such as '/dashboard' or '/questions'
+   */
+  href: string;
+  /**
+   * If this item should be hidden when a user is not in an org.
+   */
+  hiddenIfNoOrg: boolean;
+  /**
+   * If this item should be hidden if a user is in an org.  Usually false, but
+   * used for things like Invites in which a user shouldn't be accepting invites
+   * while tey are already in an org
+   */
+  hiddenIfOrg: boolean;
+};
+
 type CreateApplicantOutput = DynamoApplicant;
 type GetApplicantByIdInput = Pick<DynamoApplicant, "orgId" | "applicantId">;
 

@@ -160,6 +160,7 @@ export const JOI_GLOBAL_FORBIDDEN = {
 };
 
 import axios from "axios";
+import { NavbarItem } from "./types/main";
 export const AXIOS_INSTANCE = axios.create({
   withCredentials: true,
   baseURL: API_URL,
@@ -171,14 +172,14 @@ export const AXIOS_INSTANCE = axios.create({
 export const SWRFetcher = (url: string) =>
   AXIOS_INSTANCE.get(API_URL + url).then((res) => res.data);
 
-// TODO add a type for this
-export const NAVBAR_NAVIGATION = [
+export const NAVBAR_NAVIGATION: NavbarItem[] = [
   {
     name: "Dashboard",
     href: "/dashboard",
     hiddenIfNoOrg: false,
     hiddenIfOrg: false,
   },
+
   {
     name: "Webhooks",
     href: "/webhooks",
