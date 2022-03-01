@@ -24,6 +24,7 @@ export default function UpdateQuestionModal({ question }) {
     try {
       const { data } = await UpdateQuestion({
         questionId: question?.questionId,
+        // TODO if the values are the same, we should remove them
         newValues: {
           GSI1SK,
           description,

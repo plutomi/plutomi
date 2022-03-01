@@ -42,4 +42,5 @@ export {
   DeleteWebhook,
   UpdateWebhook,
   GetWebhookInfo,
+  GetWebhookInfoURL,
 };

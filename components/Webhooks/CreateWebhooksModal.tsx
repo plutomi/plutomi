@@ -6,6 +6,7 @@ import useStore from "../../utils/store";
 import { mutate } from "swr";
 import CustomLink from "../CustomLink";
 import { LIMITS } from "../../Config";
+import { GetOrgInfoURL } from "../../adapters/Orgs";
 
 export default function CreateWebhookModal() {
   const [webhookName, setWebhookName] = useState("");
@@ -38,6 +39,8 @@ export default function CreateWebhookModal() {
     } catch (error) {
       alert(error.response.data.message);
     }
+
+    // Refresh the actual webhook list
     mutate(GetWebhooksInOrgURL());
   };
 

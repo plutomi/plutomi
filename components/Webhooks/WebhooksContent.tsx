@@ -8,7 +8,7 @@ import WebhookItem from "./WebhookItem";
 import { PlusIcon } from "@heroicons/react/outline";
 import useOrgInfo from "../../SWR/useOrgInfo";
 import CreateWebhookModal from "./CreateWebhooksModal";
-
+import UpdateWebhookModal from "./UpdateWebhooksModal";
 export default function WebhooksContent() {
   const { user, isUserLoading, isUserError } = useSelf();
   const { org, isOrgLoading, isOrgError } = useOrgInfo(user?.orgId);
@@ -18,6 +18,7 @@ export default function WebhooksContent() {
   const openCreateWebhookModal = useStore(
     (state) => state.openCreateWebhookModal
   );
+  const currentWebhook = useStore((state) => state.currentWebhook);
 
   if (isWebhooksLoading) {
     return <Loader text="Loading webhooks..." />;
@@ -38,10 +39,10 @@ export default function WebhooksContent() {
   return (
     <>
       <CreateWebhookModal />
-      <UpdateWebhookModal />
+      <UpdateWebhookModal webhook={currentWebhook} />
       <div className="flex-1 my-2 flex md:mt-0  items-center  md:flex-grow justify-center">
         <p className="mx-12">
-          Total webhooks: {org?.totalWebhooks || webhooks?.length}
+          Total webhooks: {webhooks?.length || org?.totalWebhooks}
         </p>
         <button
           onClick={openCreateWebhookModal}

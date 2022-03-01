@@ -5,6 +5,7 @@ import { DeleteWebhook, GetWebhooksInOrgURL } from "../../adapters/Webhooks";
 import useStore from "../../utils/store";
 import { mutate } from "swr";
 import { DynamoWebhook } from "../../types/dynamo";
+import { GetOrgInfoURL } from "../../adapters/Orgs";
 
 export default function WebhookItem({ webhook }: { webhook: DynamoWebhook }) {
   const setCurrentWebhook = useStore((state) => state.setCurrentWebhook);
@@ -33,6 +34,8 @@ export default function WebhookItem({ webhook }: { webhook: DynamoWebhook }) {
     } catch (error) {
       alert(error.response.data.message);
     }
+
+    // Refresh the webhooks
     mutate(GetWebhooksInOrgURL());
   };
 

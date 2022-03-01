@@ -1,4 +1,4 @@
-import { FormEvent, Fragment, useState } from "react";
+import { FormEvent, Fragment, useEffect, useState } from "react";
 import { Dialog, Transition } from "@headlessui/react";
 import { XIcon } from "@heroicons/react/outline";
 import { UpdateWebhook, GetWebhooksInOrgURL } from "../../adapters/Webhooks";
@@ -7,10 +7,21 @@ import { mutate } from "swr";
 import CustomLink from "../CustomLink";
 import { LIMITS } from "../../Config";
 
-export default function UpdateWebhookModal() {
-  const [name, setName] = useState("");
-  const [url, setUrl] = useState("");
+export default function UpdateWebhookModal({ webhook }) {
+  const [webhookName, setWebhookName] = useState("");
+  const [webhookUrl, setWebhookUrl] = useState("");
   const [description, setDescription] = useState("");
+
+  useEffect(() => {
+    setWebhookName(webhook?.webhookName);
+    setWebhookUrl(webhook?.webhookUrl);
+    setDescription(webhook?.description);
+  }, [webhook?.webhookName, webhook?.webhookUrl, webhook?.description]);
+
+  const closeUpdateQuestionModal = useStore(
+    (state) => state.closeUpdateQuestionModal
+  );
+
   const visibility = useStore((state) => state.showUpdateWebhookModal);
 
   const closeUpdateWebhookModal = useStore(
@@ -18,23 +29,25 @@ export default function UpdateWebhookModal() {
   );
 
   const clearModal = () => {
-    setName("");
+    setWebhookName("");
     setDescription("");
-    setUrl("");
+    setWebhookUrl("");
   };
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
 
     try {
-      // TODO update this
       const { data } = await UpdateWebhook({
-        webhookUrl,
-        name,
-        description,
+        webhookId: webhook?.webhookId,
+        // TODO if the values are the same, we should remove them
+        newValues: {
+          webhookName,
+          webhookUrl,
+          description,
+        },
       });
       alert(data.message);
-      clearModal();
       closeUpdateWebhookModal();
     } catch (error) {
       alert(error.response.data.message);
@@ -81,7 +94,7 @@ export default function UpdateWebhookModal() {
                     <div className="py-6 px-4 bg-blue-700 sm:px-6">
                       <div className="flex items-center justify-between">
                         <Dialog.Title className="text-lg font-medium text-white">
-                          New Webhook
+                          Editing Webhook
                         </Dialog.Title>
                         <div className="ml-3 h-7 flex items-center">
                           <button
@@ -111,7 +124,7 @@ export default function UpdateWebhookModal() {
                               htmlFor="webhook-name"
                               className="block text-sm font-medium text-dark"
                             >
-                              New Webhook name
+                              Edit Webhook name
                             </label>
                             <div className="mt-1">
                               <input
@@ -120,8 +133,8 @@ export default function UpdateWebhookModal() {
                                 placeholder="New Applicant Notifications"
                                 id="webhook-name"
                                 required
-                                onChange={(e) => setName(e.target.value)}
-                                value={name}
+                                onChange={(e) => setWebhookName(e.target.value)}
+                                value={webhookName}
                                 className="block w-full shadow-sm sm:text-sm focus:ring-blue-500 focus:border-blue-500 border-gray-300 rounded-md"
                               />
                             </div>
@@ -131,7 +144,7 @@ export default function UpdateWebhookModal() {
                               htmlFor="webhook-description"
                               className="block text-sm font-medium text-dark"
                             >
-                              New Description (optional)
+                              Edit Description (optional)
                             </label>
                             <div className="mt-1">
                               <textarea
@@ -153,7 +166,7 @@ export default function UpdateWebhookModal() {
                               htmlFor="webhook-url"
                               className="block text-sm font-medium text-dark"
                             >
-                              New URL
+                              Edit URL
                             </label>
                             <div className="mt-1">
                               <input
@@ -162,8 +175,8 @@ export default function UpdateWebhookModal() {
                                 id="webhook-url"
                                 placeholder="https://domain.com/webhooks"
                                 required
-                                onChange={(e) => setUrl(e.target.value)}
-                                value={url}
+                                onChange={(e) => setWebhookUrl(e.target.value)}
+                                value={webhookUrl}
                                 className="block w-full shadow-sm sm:text-sm focus:ring-blue-500 focus:border-blue-500 border-gray-300 rounded-md"
                               />
                             </div>
