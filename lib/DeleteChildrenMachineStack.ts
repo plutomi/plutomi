@@ -58,11 +58,11 @@ export default class DeleteChildrenMachineStack extends cdk.Stack {
      * delete all stages for it
      */
     const OPENING_DELETED = sfn.Condition.stringEquals(
-      "$.detail.OldImage.entityType",
+      "$.detail.entityType",
       ENTITY_TYPES.OPENING
     );
     const OPENING_HAS_STAGES = sfn.Condition.numberGreaterThan(
-      "$.detail.OldImage.totalStages",
+      "$.detail.totalStages",
       0
     );
 
@@ -117,7 +117,7 @@ export default class DeleteChildrenMachineStack extends cdk.Stack {
      *
      */
     const ORG_DELETED = sfn.Condition.stringEquals(
-      "$.detail.OldImage.entityType",
+      "$.detail.entityType",
       ENTITY_TYPES.ORG
     );
 
@@ -221,7 +221,7 @@ export default class DeleteChildrenMachineStack extends cdk.Stack {
 
     // TODO
     const QUESTION_DELETED = sfn.Condition.stringEquals(
-      "$.detail.OldImage.entityType",
+      "$.detail.entityType",
       ENTITY_TYPES.QUESTION
     );
 
@@ -354,7 +354,7 @@ export default class DeleteChildrenMachineStack extends cdk.Stack {
 
     // Delete questions and the adjacent item TODO
     const STAGE_DELETED = sfn.Condition.stringEquals(
-      "$.detail.OldImage.entityType",
+      "$.detail.entityType",
       ENTITY_TYPES.STAGE
     );
 

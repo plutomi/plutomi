@@ -188,7 +188,7 @@ export default class CommsMachineStack extends cdk.Stack {
     const definition = new sfn.Choice(this, "EventType?")
       .when(
         sfn.Condition.stringEquals(
-          "$.detail.NewImage.entityType",
+          "$.detail.entityType",
           ENTITY_TYPES.LOGIN_EVENT
         ),
         new sfn.Choice(this, "IsNewUser?").when(
@@ -205,7 +205,7 @@ export default class CommsMachineStack extends cdk.Stack {
       )
       .when(
         sfn.Condition.stringEquals(
-          "$.detail.NewImage.entityType",
+          "$.detail.entityType",
           ENTITY_TYPES.LOGIN_LINK
         ),
 
@@ -213,14 +213,14 @@ export default class CommsMachineStack extends cdk.Stack {
       )
       .when(
         sfn.Condition.stringEquals(
-          "$.detail.NewImage.entityType",
+          "$.detail.entityType",
           ENTITY_TYPES.APPLICANT
         ),
         sendApplicationLink
       )
       .when(
         sfn.Condition.stringEquals(
-          "$.detail.NewImage.entityType",
+          "$.detail.entityType",
           ENTITY_TYPES.ORG_INVITE
         ),
         sendOrgInvite

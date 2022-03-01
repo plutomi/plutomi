@@ -33,8 +33,8 @@ export async function main(event: DynamoDBStreamEvent) {
        * to the webhooks step functions. From there, the step function
        * is solely in charge of checking if a message needs to be triggerred.
        *
-       * Ideally, you would be able to filter on NewImage OR OldImage, but if you supply both,
-       * they both have to match. In the case of a NEW APPLICANT event, oldImage does not exist!
+       * Ideally, you would be able to filter on NewImage OR OldImage, but if you supply both in the EB Rule,
+       * they BOTH have to match. In the case of a NEW APPLICANT event, oldImage does not exist!
        */
       entityType: NewImage.entityType || OldImage.entityType,
     }),
