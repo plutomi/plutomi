@@ -96,9 +96,11 @@ export interface UpdateQuestionInput
 
 type GetQuestionsInStageOutput = GetQuestionOutput[];
 
+type GetWebhookByIdInput = Pick<DynamoWebhook, "orgId" | "webhookId">;
+
 type CreateWebhookInput = Pick<
   DynamoWebhook,
-  "url" | "orgId" | "description" | "name"
+  "webhookUrl" | "orgId" | "description" | "webhookName"
 >;
 type CreateApplicantInput = Pick<
   DynamoApplicant,
@@ -172,6 +174,10 @@ type GetStagesInOpeningInput = Pick<
 type GetOpeningByIdInput = Pick<DynamoOpening, "orgId" | "openingId">;
 export interface UpdateOpeningInput
   extends Pick<DynamoOpening, "orgId" | "openingId"> {
+  newValues: { [key: string]: any };
+}
+export interface UpdateWebhookInput
+  extends Pick<DynamoWebhook, "orgId" | "webhookId"> {
   newValues: { [key: string]: any };
 }
 

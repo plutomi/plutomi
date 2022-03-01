@@ -1,5 +1,6 @@
 import { AXIOS_INSTANCE as axios } from "../Config";
 import { APICreateWebhookOptions } from "../Controllers/Webhooks/create-webhook";
+import { APIUpdateWebhookOptions } from "../Controllers/Webhooks/update-webhook";
 
 const GetWebhooksInOrgURL = () => `/webhooks`;
 
@@ -10,6 +11,10 @@ const CreateWebhook = async (options: APICreateWebhookOptions) => {
 
 const GetWebhookInfoURL = (webhookId: string) => `/webhooks/${webhookId}`;
 
+const GetWebhookInfo = async (webhookId: string) => {
+  const data = await axios.get(GetWebhookInfoURL(webhookId));
+  return data;
+};
 const DeleteWebhook = async (webhookId: string) => {
   const data = await axios.delete(GetWebhookInfoURL(webhookId));
   return data;
@@ -20,4 +25,21 @@ const GetWebhooksInOrg = async () => {
   return data;
 };
 
-export { CreateWebhook, GetWebhooksInOrg, GetWebhooksInOrgURL, DeleteWebhook };
+interface UpdateWebhookOptions {
+  webhookId: string;
+  newValues: APIUpdateWebhookOptions;
+}
+const UpdateWebhook = async (options: UpdateWebhookOptions) => {
+  const data = await axios.put(GetWebhookInfoURL(options.webhookId), {
+    ...options.newValues,
+  });
+  return data;
+};
+export {
+  CreateWebhook,
+  GetWebhooksInOrg,
+  GetWebhooksInOrgURL,
+  DeleteWebhook,
+  UpdateWebhook,
+  GetWebhookInfo,
+};

@@ -46,9 +46,11 @@ export default function WebhookItem({ webhook }: { webhook: DynamoWebhook }) {
       <div className=" py-2  h-full relative focus-within:ring-2 focus-within:ring-blue-500">
         <h3 className="text-lg font-semibold text-dark">
           <span className="absolute inset-0" aria-hidden="true" />
-          {webhook?.name}
+          {webhook?.webhookName}
         </h3>
-        <p className="text-md text-light line-clamp-2 mt-1">{webhook?.url}</p>
+        <p className="text-md text-light line-clamp-2 mt-1">
+          {webhook?.webhookUrl}
+        </p>
 
         {webhook?.description && (
           <p className="text-md text-light line-clamp-2 mt-1">

@@ -340,11 +340,11 @@ interface DynamoWebhook {
   PK: `${ENTITY_TYPES.ORG}#${string}#${ENTITY_TYPES.WEBHOOK}#${string}`;
   SK: string;
   orgId: string;
-  name: string;
+  webhookName: string;
   webhookId: string;
   description?: string;
   createdAt: string;
-  url: string;
+  webhookUrl: string;
   entityType: ENTITY_TYPES.WEBHOOK;
   GSI1PK: `${ENTITY_TYPES.ORG}#${orgId}#${ENTITY_TYPES.WEBHOOK}S`;
   GSI1SK: string;

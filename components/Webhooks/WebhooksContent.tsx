@@ -38,7 +38,7 @@ export default function WebhooksContent() {
   return (
     <>
       <CreateWebhookModal />
-
+      <UpdateWebhookModal />
       <div className="flex-1 my-2 flex md:mt-0  items-center  md:flex-grow justify-center">
         <p className="mx-12">
           Total webhooks: {org?.totalWebhooks || webhooks?.length}

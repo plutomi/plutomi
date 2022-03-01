@@ -7,13 +7,13 @@ import Joi from "joi";
 
 export type APICreateWebhookOptions = Pick<
   DynamoWebhook,
-  "url" | "name" | "description"
+  "webhookUrl" | "webhookName" | "description"
 >;
 
 const schema = Joi.object({
   body: {
-    url: Joi.string().uri(),
-    name: Joi.string().max(100).min(1),
+    webhookUrl: Joi.string().uri(),
+    webhookName: Joi.string().max(100).min(1),
     description: Joi.string()
       .allow("")
       .max(LIMITS.MAX_WEBHOOK_DESCRIPTION_LENGTH)
@@ -30,13 +30,14 @@ const main = async (req: Request, res: Response) => {
     return res.status(status).json(body);
   }
 
-  const { url, name, description }: APICreateWebhookOptions = req.body;
+  const { webhookUrl, webhookName, description }: APICreateWebhookOptions =
+    req.body;
 
   const [created, createWebhookError] = await Webhooks.CreateWebhook({
     orgId: session.orgId,
-    url,
+    webhookUrl,
     description,
-    name,
+    webhookName,
   });
 
   if (createWebhookError) {

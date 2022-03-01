@@ -1,40 +1,41 @@
 import { FormEvent, Fragment, useState } from "react";
 import { Dialog, Transition } from "@headlessui/react";
 import { XIcon } from "@heroicons/react/outline";
-import { CreateWebhook, GetWebhooksInOrgURL } from "../../adapters/Webhooks";
+import { UpdateWebhook, GetWebhooksInOrgURL } from "../../adapters/Webhooks";
 import useStore from "../../utils/store";
 import { mutate } from "swr";
 import CustomLink from "../CustomLink";
 import { LIMITS } from "../../Config";
 
-export default function CreateWebhookModal() {
-  const [webhookName, setWebhookName] = useState("");
-  const [webhookUrl, setWebhookUrl] = useState("");
+export default function UpdateWebhookModal() {
+  const [name, setName] = useState("");
+  const [url, setUrl] = useState("");
   const [description, setDescription] = useState("");
-  const visibility = useStore((state) => state.showCreateWebhookModal);
+  const visibility = useStore((state) => state.showUpdateWebhookModal);
 
-  const closeCreateWebhookModal = useStore(
-    (state) => state.closeCreateWebhookModal
+  const closeUpdateWebhookModal = useStore(
+    (state) => state.closeUpdateWebhookModal
   );
 
   const clearModal = () => {
-    setWebhookName("");
+    setName("");
     setDescription("");
-    setWebhookUrl("");
+    setUrl("");
   };
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
 
     try {
-      const { data } = await CreateWebhook({
+      // TODO update this
+      const { data } = await UpdateWebhook({
         webhookUrl,
-        webhookName,
+        name,
         description,
       });
       alert(data.message);
       clearModal();
-      closeCreateWebhookModal();
+      closeUpdateWebhookModal();
     } catch (error) {
       alert(error.response.data.message);
     }
@@ -46,7 +47,7 @@ export default function CreateWebhookModal() {
       <Dialog
         as="div"
         className="fixed inset-0 overflow-hidden "
-        onClose={closeCreateWebhookModal}
+        onClose={closeUpdateWebhookModal}
       >
         <div className="absolute inset-0 overflow-hidden">
           <Transition.Child
@@ -86,7 +87,7 @@ export default function CreateWebhookModal() {
                           <button
                             type="button"
                             className="bg-blue-700 rounded-md text-blue-200 hover:text-white focus:outline-none focus:ring-2 focus:ring-white"
-                            onClick={closeCreateWebhookModal}
+                            onClick={closeUpdateWebhookModal}
                           >
                             <span className="sr-only">Close panel</span>
                             <XIcon className="h-6 w-6" aria-hidden="true" />
@@ -110,7 +111,7 @@ export default function CreateWebhookModal() {
                               htmlFor="webhook-name"
                               className="block text-sm font-medium text-dark"
                             >
-                              Webhook name
+                              New Webhook name
                             </label>
                             <div className="mt-1">
                               <input
@@ -119,8 +120,8 @@ export default function CreateWebhookModal() {
                                 placeholder="New Applicant Notifications"
                                 id="webhook-name"
                                 required
-                                onChange={(e) => setWebhookName(e.target.value)}
-                                value={webhookName}
+                                onChange={(e) => setName(e.target.value)}
+                                value={name}
                                 className="block w-full shadow-sm sm:text-sm focus:ring-blue-500 focus:border-blue-500 border-gray-300 rounded-md"
                               />
                             </div>
@@ -130,7 +131,7 @@ export default function CreateWebhookModal() {
                               htmlFor="webhook-description"
                               className="block text-sm font-medium text-dark"
                             >
-                              Description (optional)
+                              New Description (optional)
                             </label>
                             <div className="mt-1">
                               <textarea
@@ -152,7 +153,7 @@ export default function CreateWebhookModal() {
                               htmlFor="webhook-url"
                               className="block text-sm font-medium text-dark"
                             >
-                              URL
+                              New URL
                             </label>
                             <div className="mt-1">
                               <input
@@ -161,8 +162,8 @@ export default function CreateWebhookModal() {
                                 id="webhook-url"
                                 placeholder="https://domain.com/webhooks"
                                 required
-                                onChange={(e) => setWebhookUrl(e.target.value)}
-                                value={webhookUrl}
+                                onChange={(e) => setUrl(e.target.value)}
+                                value={url}
                                 className="block w-full shadow-sm sm:text-sm focus:ring-blue-500 focus:border-blue-500 border-gray-300 rounded-md"
                               />
                             </div>
@@ -189,7 +190,7 @@ export default function CreateWebhookModal() {
                     <button
                       type="button"
                       className="bg-white py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
-                      onClick={closeCreateWebhookModal}
+                      onClick={closeUpdateWebhookModal}
                     >
                       Cancel
                     </button>
@@ -197,7 +198,7 @@ export default function CreateWebhookModal() {
                       type="submit"
                       className="ml-4 inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
                     >
-                      Create webhook
+                      Update webhook
                     </button>
                   </div>
                 </form>

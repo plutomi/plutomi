@@ -214,7 +214,20 @@ app.delete(
   [withSession, withHasOrg],
   Webhooks.DeleteWebhookFromOrg
 );
-function healthcheck(req, res: Response, next) {
+
+app.get(
+  "/webhooks/:webhookId",
+  [withSession, withHasOrg],
+  Webhooks.GetWebhookById
+);
+
+app.put(
+  "/webhooks/:webhookId",
+  [withSession, withHasOrg],
+  Webhooks.UpdateWebhook
+);
+
+function healthcheck(req, res: Response) {
   return res.status(200).json({ message: "It's all good man!" });
 }
 // Catch timeouts // TODO make this into its own middleware

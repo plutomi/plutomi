@@ -4,6 +4,7 @@ import * as Orgs from "../adapters/Orgs";
 import { nanoid } from "nanoid";
 import * as GenerateID from "../utils/generateIds";
 import { DynamoWebhook } from "../types/dynamo";
+import { APIUpdateWebhookOptions } from "../Controllers/Webhooks/update-webhook";
 
 describe("Webhooks", () => {
   /**
@@ -25,8 +26,8 @@ describe("Webhooks", () => {
     const orgResponse = await Orgs.GetOrgInfo();
     expect(orgResponse.data.totalWebhooks).toBe(0);
     const { data, status } = await Webhooks.CreateWebhook({
-      url: "https://google.com",
-      name: nanoid(20),
+      webhookUrl: "https://google.com",
+      webhookName: nanoid(20),
     });
 
     expect(status).toBe(201);
@@ -51,12 +52,12 @@ describe("Webhooks", () => {
 
     try {
       await Webhooks.CreateWebhook({
-        url: nanoid(20),
-        name: nanoid(20),
+        webhookUrl: nanoid(20),
+        webhookName: nanoid(20),
       });
     } catch (error) {
       expect(error.response.status).toBe(400);
-      expect(error.response.data.message).toContain("body.url");
+      expect(error.response.data.message).toContain("body.webhookUrl");
       expect(error.response.data.message).toContain("must be a valid uri");
     }
   });
@@ -65,16 +66,36 @@ describe("Webhooks", () => {
     expect.assertions(3);
     try {
       await Webhooks.CreateWebhook({
-        url: "https://google.com",
-        name: undefined,
+        webhookUrl: "https://google.com",
+        webhookName: undefined,
       });
     } catch (error) {
       expect(error.response.status).toBe(400);
-      expect(error.response.data.message).toContain("body.name");
+      expect(error.response.data.message).toContain("body.webhookName");
       expect(error.response.data.message).toContain("is required");
     }
   });
 
+  it("returns info for a specific webhook", async () => {
+    expect.assertions(2);
+    const webhookName = nanoid(25);
+    await Webhooks.CreateWebhook({
+      webhookUrl: "https://google.com",
+      webhookName,
+    });
+
+    const allWebhooks = await Webhooks.GetWebhooksInOrg();
+
+    const ourWebhook = allWebhooks.data.find(
+      (webhook: DynamoWebhook) => webhook.webhookName === webhookName
+    );
+
+    const { status, data } = await Webhooks.GetWebhookInfo(
+      ourWebhook.webhookId
+    );
+    expect(status).toBe(200);
+    expect(data.webhookName).toBe(webhookName);
+  });
   it("allows deleting a webhook and decrements the org's total webhooks", async () => {
     expect.assertions(5);
     const name = nanoid(30);
@@ -83,7 +104,7 @@ describe("Webhooks", () => {
     const cookieResult = await axios.post(`/jest-setup`);
     const cookie = cookieResult.headers["set-cookie"][0];
     axios.defaults.headers.Cookie = cookie;
-    
+
     // New org
     await Orgs.CreateOrg({
       displayName: nanoid(20),
@@ -92,12 +113,12 @@ describe("Webhooks", () => {
 
     // Create two webhooks
     await Webhooks.CreateWebhook({
-      url: "https://google.com",
-      name, // This one will be deleted
+      webhookUrl: "https://google.com",
+      webhookName: name, // This one will be deleted
     });
     await Webhooks.CreateWebhook({
-      url: "https://google.com",
-      name: nanoid(20),
+      webhookUrl: "https://google.com",
+      webhookName: nanoid(20),
     });
 
     const originalOrgdata = await Orgs.GetOrgInfo();
@@ -106,10 +127,10 @@ describe("Webhooks", () => {
     const result = await Webhooks.GetWebhooksInOrg();
 
     const ourWebhook: DynamoWebhook = result.data.find(
-      (hook: DynamoWebhook) => hook.name === name
+      (hook: DynamoWebhook) => hook.webhookName === name
     );
 
-    expect(ourWebhook.name).toBe(name);
+    expect(ourWebhook.webhookName).toBe(name);
 
     const { status, data } = await Webhooks.DeleteWebhook(ourWebhook.webhookId);
 
@@ -121,5 +142,47 @@ describe("Webhooks", () => {
     expect(orgResult.data.totalWebhooks).toBe(
       originalOrgdata.data.totalWebhooks - 1
     );
+  });
+
+  it("allows updating a webhook", async () => {
+    expect.assertions(5);
+    const ourWebhookName = nanoid(20);
+    await Webhooks.CreateWebhook({
+      webhookUrl: "https://google.com",
+      webhookName: ourWebhookName,
+    });
+
+    const allWebhooks = await Webhooks.GetWebhooksInOrg();
+    const ourWebhook = allWebhooks.data.find(
+      (webhook: DynamoWebhook) => webhook.webhookName === ourWebhookName
+    );
+
+    const newValues: APIUpdateWebhookOptions = {
+      webhookName: "beans",
+      webhookUrl: "https://plutomi.com",
+      description: nanoid(40),
+    };
+
+    const { status, data } = await Webhooks.UpdateWebhook({
+      webhookId: ourWebhook.webhookId,
+      newValues,
+    });
+    expect(status).toBe(200);
+    expect(data.message).toBe("Webhook updated!");
+
+    const updatedWebhook = await Webhooks.GetWebhookInfo(ourWebhook.webhookId);
+    expect(updatedWebhook.status).toBe(200);
+    expect(updatedWebhook.data.webhookId).toBe(ourWebhook.webhookId);
+    expect(updatedWebhook.data.description).toBe(newValues.description);
+  });
+
+  it("returns a 404 if a webhook is not found", async () => {
+    expect.assertions(2);
+    try {
+      await Webhooks.GetWebhookInfo("beans");
+    } catch (error) {
+      expect(error.response.status).toBe(404);
+      expect(error.response.data.message).toBe("Webhook not found");
+    }
   });
 });
