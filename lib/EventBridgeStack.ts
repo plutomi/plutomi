@@ -1,6 +1,6 @@
 import * as dotenv from "dotenv";
 import * as cdk from "@aws-cdk/core";
-import { ENTITY_TYPES } from "../Config";
+import { DYNAMO_STREAM_TYPES, ENTITY_TYPES } from "../Config";
 import { EventBus, Rule } from "@aws-cdk/aws-events";
 import { StateMachine } from "@aws-cdk/aws-stepfunctions";
 import { SfnStateMachine } from "@aws-cdk/aws-events-targets";
@@ -15,6 +15,7 @@ if (resultDotEnv.error) {
 interface EventBridgeStackProps extends cdk.StackProps {
   CommsMachine: StateMachine;
   DeleteChildrenMachine: StateMachine;
+  WebhooksMachine: StateMachine;
 }
 export default class EventBridgeStack extends cdk.Stack {
   /**
@@ -49,17 +50,13 @@ export default class EventBridgeStack extends cdk.Stack {
       eventPattern: {
         source: ["dynamodb.streams"],
         detail: {
-          eventName: ["INSERT"],
-          NewImage: {
-            entityType: [
-              ENTITY_TYPES.LOGIN_EVENT,
-              ENTITY_TYPES.LOGIN_LINK,
-              ENTITY_TYPES.APPLICANT,
-              ENTITY_TYPES.ORG_INVITE,
-              ENTITY_TYPES.OPENING,
-              ENTITY_TYPES.STAGE,
-            ],
-          },
+          eventName: [DYNAMO_STREAM_TYPES.INSERT],
+          entityType: [
+            ENTITY_TYPES.LOGIN_EVENT,
+            ENTITY_TYPES.LOGIN_LINK,
+            ENTITY_TYPES.APPLICANT, // TODO
+            ENTITY_TYPES.ORG_INVITE,
+          ],
         },
       },
     });
@@ -74,15 +71,33 @@ export default class EventBridgeStack extends cdk.Stack {
       eventPattern: {
         source: ["dynamodb.streams"],
         detail: {
-          eventName: ["REMOVE"],
-          OldImage: {
-            entityType: [
-              // TODO other entities
-              ENTITY_TYPES.ORG,
-              ENTITY_TYPES.OPENING,
-              ENTITY_TYPES.QUESTION,
-            ],
-          },
+          eventName: [DYNAMO_STREAM_TYPES.REMOVE],
+          entityType: [
+            // TODO webhooks
+            // TODO also applicants and their files
+            ENTITY_TYPES.ORG,
+            ENTITY_TYPES.OPENING,
+            ENTITY_TYPES.QUESTION,
+          ],
+        },
+      },
+    });
+
+    // All applicant events are sent to the state machine
+    new Rule(this, "ApplicantWebhooksRule", {
+      eventBus: bus,
+      description: "All applicant events are sent to the webhooks machine",
+      ruleName: "WebhooksRule",
+      targets: [new SfnStateMachine(props.WebhooksMachine)],
+      eventPattern: {
+        source: ["dynamodb.streams"],
+        detail: {
+          eventName: [
+            DYNAMO_STREAM_TYPES.INSERT,
+            DYNAMO_STREAM_TYPES.MODIFY,
+            DYNAMO_STREAM_TYPES.REMOVE,
+          ],
+          entityType: [ENTITY_TYPES.APPLICANT],
         },
       },
     });

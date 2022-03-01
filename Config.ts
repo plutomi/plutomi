@@ -113,6 +113,20 @@ export enum LIMITS {
   MAX_CHILD_ITEM_LIMIT = 200,
 }
 
+export enum DYNAMO_STREAM_TYPES {
+  /**
+   * New items
+   */
+  INSERT = "INSERT",
+  /**
+   * Updated / modified items
+   */
+  MODIFY = "MODIFY",
+  /**
+   * Removed / deleted items
+   */
+  REMOVE = "REMOVE",
+}
 export const LOGIN_LINK_SETTINGS = {
   password: process.env.LOGIN_LINKS_PASSWORD,
   ttl: 900, // In seconds, how long should login links be valid for

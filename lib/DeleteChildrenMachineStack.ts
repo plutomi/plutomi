@@ -444,7 +444,7 @@ export default class DeleteChildrenMachineStack extends cdk.Stack {
         },
       }
     );
-    // TODO
+
     props.table.grantWriteData(this.DeleteChildrenMachine); // TODO this event should just be update. No need for extra permissions
   }
 }

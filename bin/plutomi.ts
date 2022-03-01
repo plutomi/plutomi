@@ -8,6 +8,7 @@ import EventBridgeStack from "../lib/EventBridgeStack";
 import CommsMachineStack from "../lib/CommsMachineStack";
 import StreamProcessorStack from "../lib/StreamProcessorStack";
 import DeleteChildrenMachineStack from "../lib/DeleteChildrenMachineStack";
+import WebhooksMachineStack from "../lib/WebhooksMachineStack";
 import AthenaDynamoQueryStack from "../lib/AthenaDynamoQueryStack";
 import { Builder } from "@sls-next/lambda-at-edge";
 import StorageStack from "../lib/StorageStack";
@@ -48,9 +49,17 @@ builder
       }
     );
 
+    const { WebhooksMachine } = new WebhooksMachineStack(
+      app,
+      `${process.env.NODE_ENV}-WebhooksMachineStack`,
+      {
+        table,
+      }
+    );
     new EventBridgeStack(app, `${process.env.NODE_ENV}-EventBridgeStack`, {
       CommsMachine,
       DeleteChildrenMachine,
+      WebhooksMachine,
     });
 
     new StreamProcessorStack(
