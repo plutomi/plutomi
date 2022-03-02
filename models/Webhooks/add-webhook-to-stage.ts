@@ -36,10 +36,14 @@ export default async function AddWebhookToStage(
     createdAt: Time.currentISO(),
     orgId,
     openingId,
+    webhookId,
     stageId,
-    // TODO this needs a GSI with the stage and an SK of the event type
-
-    // Allows getting all webhooks for a stage and a filter on it as well.
+    /**
+     * Allows getting all webhooks for a stage and a filter on it as well based on when it should trigger.
+     * This is different than the setup for questions because we don't care about the order, we can just query all of them.
+     */
+    GSI1PK: `${ENTITY_TYPES.ORG}#${orgId}#${ENTITY_TYPES.OPENING}#${openingId}#${ENTITY_TYPES.STAGE}#${stageId}#${ENTITY_TYPES.WEBHOOK}S`,
+    GSI1SK: `${ENTITY_TYPES.WEBHOOK}#${webhookId}`, // TODO filter for event type
   };
 
   const transactParams: TransactWriteCommandInput = {

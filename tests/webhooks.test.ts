@@ -247,6 +247,22 @@ describe("Webhooks", () => {
     expect(updatedWebhookData.data.totalStages).toBe(1);
   });
 
+  it("blocks adding the same webhook URL more than once to a stage", async () => {
+    expect.assertions(2);
+    try {
+      await Webhooks.AddWebhookToStage({
+        openingId: ourOpening.openingId,
+        stageId: ourStage.stageId,
+        webhookId: ourWebhook.webhookId,
+      });
+    } catch (error) {
+      expect(error.response.status).toBe(409);
+      expect(error.response.data.message).toBe(
+        `There is already a webhook with this URL (${ourWebhook.webhookUrl}) attached to this stage.`
+      );
+    }
+  });
+
   it("allows retrieving webhooks for a stage (adjacent item like questions)", async () => {
     expect.assertions(4);
 
@@ -255,8 +271,6 @@ describe("Webhooks", () => {
       stageId: ourStage.stageId,
     });
 
-    // Returns the actual webhook data, not just the array of webhook ids
-    // Similar to questions in a stage
     expect(status).toBe(200);
     expect(typeof data).toBe(Array);
     expect(data.length).toBe(1);
@@ -282,6 +296,4 @@ describe("Webhooks", () => {
     const webhookData = await Webhooks.GetWebhookInfo(ourWebhook.webhookId);
     expect(webhookData.data.totalStages).toBe(0);
   });
-
-  it.todo("blocks adding more than N webhooks to a stage");
 });
