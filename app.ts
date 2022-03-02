@@ -227,6 +227,12 @@ app.put(
   Webhooks.UpdateWebhook
 );
 
+app.post(
+  "/openings/:openingId/stages/:stageId/webhooks",
+  [withSession, withHasOrg],
+  Webhooks.AddWebhookToStage
+);
+
 function healthcheck(req, res: Response) {
   return res.status(200).json({ message: "It's all good man!" });
 }

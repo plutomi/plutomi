@@ -53,7 +53,7 @@ const main = async (req: Request, res: Response) => {
 
   if (webhooksInStageError) {
     const { status, body } = CreateError.SDK(
-      stageError,
+      webhooksInStageError,
       "Unable to retrieve the current webhooks for this stage"
     );
     return res.status(status).json(body);

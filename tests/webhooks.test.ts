@@ -232,7 +232,7 @@ describe("Webhooks", () => {
       stageId: ourStage.stageId,
       webhookId: ourWebhook.webhookId,
     });
-    expect(status).toBe(200);
+    expect(status).toBe(201);
     expect(data.message).toBe("Webhook added to stage!");
 
     const updatedStageData = await Stages.GetStageInfo({
@@ -250,6 +250,7 @@ describe("Webhooks", () => {
   it("blocks adding the same webhook URL more than once to a stage", async () => {
     expect.assertions(2);
     try {
+      // Attempt to add it again
       await Webhooks.AddWebhookToStage({
         openingId: ourOpening.openingId,
         stageId: ourStage.stageId,
