@@ -58,6 +58,10 @@ type GetApplicantsInStageInput = Pick<
 >;
 type GetApplicantsInStageOutput = DynamoApplicant[];
 
+type GetWebhooksInStageInput = Pick<
+  DynamoStage,
+  "orgId" | "stageId" | "openingId"
+>;
 export interface UpdateStageInput
   extends Pick<DynamoStage, "orgId" | "stageId" | "openingId"> {
   newValues: { [key: string]: any };

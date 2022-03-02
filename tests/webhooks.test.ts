@@ -258,7 +258,7 @@ describe("Webhooks", () => {
     } catch (error) {
       expect(error.response.status).toBe(409);
       expect(error.response.data.message).toBe(
-        `There is already a webhook with this URL (${ourWebhook.webhookUrl}) attached to this stage.`
+        `A webhook with the URL of '${ourWebhook.webhookUrl}' already exists in this stage.`
       );
     }
   });

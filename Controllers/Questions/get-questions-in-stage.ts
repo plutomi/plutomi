@@ -36,7 +36,6 @@ const main = async (req: Request, res: Response) => {
           questionId: id,
         });
 
-        console.log("Question info", question);
         if (error) {
           console.error(error);
           throw "An error ocurred retrieving the questions for this stage";
