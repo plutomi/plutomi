@@ -19,7 +19,6 @@ const JOI_FORBIDDEN_STAGE = Joi.object({
   totalApplicants: Joi.any().forbidden(),
   totalQuestions: Joi.any().forbidden(),
   totalWebhooks: Joi.any().forbidden(),
-  webhooks: Joi.any().forbidden(),
   GSI1SK: Joi.string().optional().max(LIMITS.MAX_STAGE_NAME_LENGTH),
 });
 

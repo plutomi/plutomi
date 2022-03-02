@@ -29,7 +29,7 @@ export default function DashboardContent() {
   const deleteOrg = async () => {
     if (
       !confirm(
-        "Deleting an org is irreversible and will delete all openings, stages, applicants, questions, rules, etc. inside of it. Do you wish to continue?"
+        "Deleting an org is irreversible and will delete all openings, stages, applicants, questions, rules, webhooks, etc. inside of it. Do you wish to continue?"
       )
     ) {
       return;

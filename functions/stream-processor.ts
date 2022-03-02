@@ -13,6 +13,9 @@ export async function main(event: DynamoDBStreamEvent) {
   const record = processor(event.Records)[0];
   const { eventName } = record;
   const { OldImage, NewImage } = record.dynamodb;
+  console.log(OldImage);
+  console.log(NewImage);
+
   const entry: PutEventsRequestEntry = {
     Source: "dynamodb.streams",
     // Note, if we ever use AWS events directly, they will go to the default event bus and not this one.
@@ -36,7 +39,7 @@ export async function main(event: DynamoDBStreamEvent) {
        * Ideally, you would be able to filter on NewImage OR OldImage, but if you supply both in the EB Rule,
        * they BOTH have to match. In the case of a NEW APPLICANT event, oldImage does not exist!
        */
-      entityType: NewImage.entityType || OldImage.entityType,
+      entityType: NewImage?.entityType || OldImage?.entityType,
     }),
   };
 

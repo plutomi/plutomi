@@ -73,11 +73,11 @@ export default class EventBridgeStack extends cdk.Stack {
         detail: {
           eventName: [DYNAMO_STREAM_TYPES.REMOVE],
           entityType: [
-            // TODO webhooks
             // TODO also applicants and their files
             ENTITY_TYPES.ORG,
             ENTITY_TYPES.OPENING,
             ENTITY_TYPES.QUESTION,
+            ENTITY_TYPES.WEBHOOK,
           ],
         },
       },

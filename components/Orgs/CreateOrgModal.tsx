@@ -36,6 +36,8 @@ export default function CreateOrgModal() {
         orgId,
       });
       alert(data.message);
+      setDisplayName("");
+      setOrgId("");
       closeCreateOrgModal();
     } catch (error) {
       alert(error.response.data.message);

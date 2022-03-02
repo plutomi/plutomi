@@ -338,9 +338,9 @@ export default class DeleteChildrenMachineStack extends cdk.Stack {
 
     const RemoveDeletedQuestionFromStageFunction = new NodejsFunction(
       this,
-      `${process.env.NODE_ENV}-remove-deleted-question-from-stage-function`,
+      `${process.env.NODE_ENV}-remove-deleted-webhook-from-stage-function`,
       {
-        functionName: `${process.env.NODE_ENV}-remove-deleted-question-from-stage-function`,
+        functionName: `${process.env.NODE_ENV}-remove-deleted-webhook-from-stage-function`,
         timeout: cdk.Duration.seconds(5),
         memorySize: 256,
         logRetention: RetentionDays.ONE_WEEK,
@@ -355,10 +355,10 @@ export default class DeleteChildrenMachineStack extends cdk.Stack {
           externalModules: ["aws-sdk"],
         },
         handler: "main",
-        description: "Removes a deleted question from stages.",
+        description: "Removes a deleted webhook from stages.",
         entry: path.join(
           __dirname,
-          `/../functions/remove-deleted-question-from-stage.ts`
+          `/../functions/remove-deleted-webhook-from-stage.ts`
         ),
       }
     );
@@ -452,7 +452,7 @@ export default class DeleteChildrenMachineStack extends cdk.Stack {
         },
         resultPath: "$.stage",
       }).next(
-        new sfn.Choice(this, "Does stage exist?")
+        new sfn.Choice(this, "Does webhook-stage exist?")
           .when(
             sfn.Condition.isPresent("$.stage.Item"),
             // TODO this lambda can be replaced with a direct SDK integration.
@@ -483,7 +483,7 @@ export default class DeleteChildrenMachineStack extends cdk.Stack {
         },
         resultPath: "$.stage",
       }).next(
-        new sfn.Choice(this, "Does stage exist?")
+        new sfn.Choice(this, "Does question-stage exist?")
           .when(
             sfn.Condition.isPresent("$.stage.Item"),
             new tasks.LambdaInvoke(this, "RemoveDeletedQuestionFromStage", {
@@ -564,7 +564,7 @@ export default class DeleteChildrenMachineStack extends cdk.Stack {
       // TODO webhook here
       .when(
         WEBHOOK_DELETED,
-        new Choice(this, "DoesQuestionHaveStages")
+        new Choice(this, "DoesWebhookHaveStages")
           .when(
             WEBHOOK_HAS_STAGES,
             GET_STAGES_THAT_HAVE_DELETED_WEBHOOK.next(
