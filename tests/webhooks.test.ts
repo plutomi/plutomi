@@ -245,6 +245,7 @@ describe("Webhooks", () => {
       ourWebhook.webhookId
     );
     expect(updatedWebhookData.data.totalStages).toBe(1);
+    ourWebhook = updatedWebhookData.data;
   });
 
   it("blocks adding the same webhook URL more than once to a stage", async () => {
@@ -273,9 +274,9 @@ describe("Webhooks", () => {
     });
 
     expect(status).toBe(200);
-    expect(typeof data).toBe(Array);
+    expect(Array.isArray(data)).toBe(true);
     expect(data.length).toBe(1);
-    expect(data).toStrictEqual(ourWebhook);
+    expect(data[0]).toStrictEqual({ ...ourWebhook });
   });
 
   it("allows deleting a webhook from stage and decrements the stage and webhook count", async () => {

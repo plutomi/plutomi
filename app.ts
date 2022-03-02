@@ -227,6 +227,12 @@ app.put(
   Webhooks.UpdateWebhook
 );
 
+app.get(
+  "/openings/:openingId/stages/:stageId/webhooks",
+  [withSession, withHasOrg],
+  Webhooks.GetWebhooksInStage
+);
+
 app.post(
   "/openings/:openingId/stages/:stageId/webhooks",
   [withSession, withHasOrg],

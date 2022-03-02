@@ -1,11 +1,8 @@
 import { QueryCommandInput, QueryCommand } from "@aws-sdk/lib-dynamodb";
 import { Dynamo } from "../../awsClients/ddbDocClient";
 import { DYNAMO_TABLE_NAME, ENTITY_TYPES } from "../../Config";
-import { DynamoOpening, DynamoWebhook } from "../../types/dynamo";
-import {
-  GetOpeningsInOrgInput,
-  GetWebhooksInStageInput,
-} from "../../types/main";
+import { DynamoWebhook } from "../../types/dynamo";
+import { GetWebhooksInStageInput } from "../../types/main";
 import { SdkError } from "@aws-sdk/types";
 
 // TODO this should be used in add webhook to stage call
@@ -19,7 +16,8 @@ interface AdjacentWebhookItem
   GSI1PK: string;
   GSI1SK: string;
 }
-export default async function GetWEbhooksInStage(
+
+export default async function GetWebhooksInStage(
   props: GetWebhooksInStageInput
 ): Promise<[AdjacentWebhookItem[], SdkError]> {
   const { orgId, openingId, stageId } = props;

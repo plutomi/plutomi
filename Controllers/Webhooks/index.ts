@@ -5,6 +5,7 @@ import GetWebhookById from "./get-webhook-by-id";
 import UpdateWebhook from "./update-webhook";
 import AddWebhookToStage from "./add-webhook-to-stage";
 import DeleteWebhookFromStage from "./delete-webhook-from-stage";
+import GetWebhooksInStage from "./get-webhooks-in-stage";
 export {
   CreateWebhook,
   GetWebhooksInOrg,
@@ -13,4 +14,5 @@ export {
   UpdateWebhook,
   AddWebhookToStage,
   DeleteWebhookFromStage,
+  GetWebhooksInStage,
 };
