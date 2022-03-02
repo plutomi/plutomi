@@ -74,7 +74,7 @@ export default async function CreateLoginEvent(
       ],
     };
     // If a user has an orgId, create a login event on the org as well
-    user.orgId != DEFAULTS.NO_ORG ??
+    user.orgId !== DEFAULTS.NO_ORG ??
       transactParams.TransactItems.push({
         // Create a login event on the org
         Put: {

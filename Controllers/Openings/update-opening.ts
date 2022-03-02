@@ -71,7 +71,7 @@ const main = async (req: Request, res: Response) => {
   }
 
   if (req.body.stageOrder) {
-    if (req.body.stageOrder.length != opening.stageOrder.length) {
+    if (req.body.stageOrder.length !== opening.stageOrder.length) {
       return res.status(403).json({
         message:
           "You cannot add / delete stages this way, please use the proper API methods for those actions",

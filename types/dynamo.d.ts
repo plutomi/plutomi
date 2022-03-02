@@ -26,10 +26,7 @@ interface DynamoStage {
   totalQuestions: number;
 
   totalWebhooks: number;
-  /**
-   * An array of webhooks being used in the stage
-   */
-  webhooks: string[];
+
   /**
    * An array of questionIds in the order that the  questions should show up
    */

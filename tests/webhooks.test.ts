@@ -195,7 +195,7 @@ describe("Webhooks", () => {
   let ourOpening: DynamoOpening;
   let ourStage: DynamoStage;
   it("allows adding a webhook to a stage and increments the stage and webhook count", async () => {
-    expect.assertions(6);
+    expect.assertions(4);
 
     // Create an opening
     const openingName = nanoid(15);
@@ -240,8 +240,6 @@ describe("Webhooks", () => {
       stageId: ourStage.stageId,
     });
     expect(updatedStageData.data.totalWebhooks).toBe(1);
-    expect(typeof updatedStageData.data.webhooks).toBe(Array);
-    expect(typeof updatedStageData.data.webhooks[0]).toBe(ourWebhook.webhookId);
 
     const updatedWebhookData = await Webhooks.GetWebhookInfo(
       ourWebhook.webhookId
@@ -266,7 +264,7 @@ describe("Webhooks", () => {
   });
 
   it("allows deleting a webhook from stage and decrements the stage and webhook count", async () => {
-    expect.assertions(3);
+    expect.assertions(2);
 
     await Webhooks.DeleteWebhookFromStage({
       openingId: ourOpening.openingId,
@@ -280,7 +278,6 @@ describe("Webhooks", () => {
     });
 
     expect(stageData.data.totalWebhooks).toBe(0);
-    expect(stageData.data.webhooks.length).toBe(0);
 
     const webhookData = await Webhooks.GetWebhookInfo(ourWebhook.webhookId);
     expect(webhookData.data.totalStages).toBe(0);

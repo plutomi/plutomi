@@ -37,6 +37,9 @@ export default async function AddWebhookToStage(
     orgId,
     openingId,
     stageId,
+    // TODO this needs a GSI with the stage and an SK of the event type
+
+    // Allows getting all webhooks for a stage and a filter on it as well.
   };
 
   const transactParams: TransactWriteCommandInput = {
