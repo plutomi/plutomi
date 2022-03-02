@@ -17,7 +17,7 @@ import * as Time from "../../utils/time";
 import { SdkError } from "@aws-sdk/types";
 export default async function CreateStage(
   props: CreateStageInput
-): Promise<[null, null] | [null, SdkError]> {
+): Promise<[null, SdkError]> {
   const { orgId, GSI1SK, openingId, position, stageOrder } = props;
   const stageId = nanoid(ID_LENGTHS.STAGE);
   const newStage: DynamoStage = {
@@ -31,6 +31,7 @@ export default async function CreateStage(
     totalApplicants: 0,
     totalQuestions: 0,
     totalWebhooks: 0,
+    webhooks: [],
     openingId,
     GSI1PK: `${ENTITY_TYPES.ORG}#${orgId}#${ENTITY_TYPES.OPENING}#${openingId}#${ENTITY_TYPES.STAGE}S`, // Get all stages in an opening
     GSI1SK,

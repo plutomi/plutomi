@@ -19,7 +19,7 @@ import { SdkError } from "@aws-sdk/types";
 
 export default async function Create(
   props: CreateApplicantInput
-): Promise<[CreateApplicantOutput, null] | [null, SdkError]> {
+): Promise<[CreateApplicantOutput, SdkError]> {
   const { orgId, firstName, lastName, email, openingId, stageId } = props;
 
   const now = Time.currentISO();

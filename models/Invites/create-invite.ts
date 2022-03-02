@@ -24,7 +24,7 @@ import {
  */
 export default async function Create(
   props: CreateOrgInviteInput
-): Promise<[null, null] | [null, SdkError]> {
+): Promise<[null, SdkError]> {
   const { expiresAt, createdBy, recipient, orgName } = props;
   try {
     const inviteId = nanoid(ID_LENGTHS.ORG_INVITE);

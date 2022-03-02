@@ -195,26 +195,24 @@ describe("Webhooks", () => {
   let ourOpening: DynamoOpening;
   let ourStage: DynamoStage;
   it("allows adding a webhook to a stage and increments the stage and webhook count", async () => {
-    expect.assertions(5);
+    expect.assertions(6);
 
-    // Create an opneing
+    // Create an opening
     const openingName = nanoid(15);
     await Openings.CreateOpening({
       openingName,
     });
     const openingData = await Openings.GetAllOpeningsInOrg();
-
     ourOpening = openingData.data.find(
       (opening: DynamoOpening) => opening.openingName === openingName
     );
 
-    // Add a stage to that opening and retrieve the stage
+    // Add a stage to that opening
     await Stages.CreateStage({
       openingId: ourOpening.openingId,
       GSI1SK: nanoid(20),
     });
     const stagesData = await Stages.GetStagesInOpening(ourOpening.openingId);
-    expect(stagesData.data.length).toBe(1);
     ourStage = stagesData.data[0];
 
     // Create our webhook
@@ -223,12 +221,12 @@ describe("Webhooks", () => {
       webhookName,
       webhookUrl: "https://google.com",
     });
-
     const webhookData = await Webhooks.GetWebhooksInOrg();
     ourWebhook = await webhookData.data.find(
       (webhook: DynamoWebhook) => webhook.webhookName === webhookName
     );
 
+    // Add it to the stage
     const { status, data } = await Webhooks.AddWebhookToStage({
       openingId: ourOpening.openingId,
       stageId: ourStage.stageId,
@@ -242,6 +240,8 @@ describe("Webhooks", () => {
       stageId: ourStage.stageId,
     });
     expect(updatedStageData.data.totalWebhooks).toBe(1);
+    expect(typeof updatedStageData.data.webhooks).toBe(Array);
+    expect(typeof updatedStageData.data.webhooks[0]).toBe(ourWebhook.webhookId);
 
     const updatedWebhookData = await Webhooks.GetWebhookInfo(
       ourWebhook.webhookId
@@ -257,6 +257,8 @@ describe("Webhooks", () => {
       stageId: ourStage.stageId,
     });
 
+    // Returns the actual webhook data, not just the array of webhook ids
+    // Similar to questions in a stage
     expect(status).toBe(200);
     expect(typeof data).toBe(Array);
     expect(data.length).toBe(1);
@@ -264,7 +266,7 @@ describe("Webhooks", () => {
   });
 
   it("allows deleting a webhook from stage and decrements the stage and webhook count", async () => {
-    expect.assertions(2);
+    expect.assertions(3);
 
     await Webhooks.DeleteWebhookFromStage({
       openingId: ourOpening.openingId,
@@ -278,8 +280,11 @@ describe("Webhooks", () => {
     });
 
     expect(stageData.data.totalWebhooks).toBe(0);
+    expect(stageData.data.webhooks.length).toBe(0);
 
     const webhookData = await Webhooks.GetWebhookInfo(ourWebhook.webhookId);
     expect(webhookData.data.totalStages).toBe(0);
   });
+
+  it.todo("blocks adding more than N webhooks to a stage");
 });

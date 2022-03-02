@@ -6,7 +6,7 @@ import { GetOrgInput } from "../../types/main";
 import { SdkError } from "@aws-sdk/types";
 export default async function GetOrgById(
   props: GetOrgInput
-): Promise<[DynamoOrg, null] | [null, SdkError]> {
+): Promise<[DynamoOrg, SdkError]> {
   // TODO add these types all over the dynamo calls
   const { orgId } = props;
   const params: GetCommandInput = {

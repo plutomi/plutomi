@@ -4,9 +4,9 @@ import { DYNAMO_TABLE_NAME, ENTITY_TYPES } from "../../Config";
 import { DynamoOpening } from "../../types/dynamo";
 import { GetOpeningByIdInput } from "../../types/main";
 import { SdkError } from "@aws-sdk/types";
-export default async function Get(
+export default async function OpeningById(
   props: GetOpeningByIdInput
-): Promise<[DynamoOpening, null] | [null, SdkError]> {
+): Promise<[DynamoOpening, SdkError]> {
   const { orgId, openingId } = props;
   const params: GetCommandInput = {
     TableName: `${process.env.NODE_ENV}-${DYNAMO_TABLE_NAME}`,

@@ -8,7 +8,7 @@ import {
 import { SdkError } from "@aws-sdk/types";
 export default async function GetApplicants(
   props: GetApplicantsInStageInput
-): Promise<[GetApplicantsInStageOutput, null] | [null, SdkError]> {
+): Promise<[GetApplicantsInStageOutput, SdkError]> {
   {
     const { orgId, stageId, openingId } = props;
     const params: QueryCommandInput = {

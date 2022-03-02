@@ -11,7 +11,7 @@ import { SdkError } from "@aws-sdk/types";
  */
 export default async function GetById(
   props: GetUserByIdInput
-): Promise<[DynamoUser, null] | [null, SdkError]> {
+): Promise<[DynamoUser, SdkError]> {
   const { userId } = props;
   const params: GetCommandInput = {
     TableName: `${process.env.NODE_ENV}-${DYNAMO_TABLE_NAME}`,

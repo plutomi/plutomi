@@ -13,7 +13,7 @@ import { SdkError } from "@aws-sdk/types";
  */
 export default async function CreateLoginLink(
   props: CreateLoginLinkInput
-): Promise<[null, null] | [null, SdkError]> {
+): Promise<[null, SdkError]> {
   const { loginLinkId, loginLinkUrl, loginLinkExpiry, user } = props;
   const now = Time.currentISO();
   try {

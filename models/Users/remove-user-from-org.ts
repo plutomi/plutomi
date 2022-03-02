@@ -23,7 +23,7 @@ interface RemoveUserFromOrgInput {
 }
 export default async function RemoveUser(
   props: RemoveUserFromOrgInput
-): Promise<[null, null] | [null, SdkError]> {
+): Promise<[null, SdkError]> {
   const { userId, createdById, orgId } = props;
   // TODO types
   try {

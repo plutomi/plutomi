@@ -16,9 +16,17 @@ import { AddQuestionToStageInput } from "../../types/main";
 
 export default async function AddQuestionToStage(
   props: AddQuestionToStageInput
-): Promise<[null, null] | [null, SdkError]> {
+): Promise<[null, SdkError]> {
   const { orgId, openingId, stageId, questionId, questionOrder } = props;
 
+  /**
+   * This creates an adjacent item so that when a question is deleted,
+   * we have a reference to all the stages that need to be updated asynchronously.
+   *
+   * Note: Exact same setup for webhooks.
+   */
+
+  // TODO types
   const params = {
     PK: `${ENTITY_TYPES.ORG}#${orgId}#${ENTITY_TYPES.QUESTION}#${questionId}#${ENTITY_TYPES.STAGE}S`,
     SK: `${ENTITY_TYPES.OPENING}#${openingId}#${ENTITY_TYPES.STAGE}#${stageId}`,

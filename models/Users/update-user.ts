@@ -6,7 +6,7 @@ import { UpdateUserInput } from "../../types/main";
 import { SdkError } from "@aws-sdk/types";
 export default async function Update(
   props: UpdateUserInput
-): Promise<[DynamoUser, null] | [null, SdkError]> {
+): Promise<[DynamoUser, SdkError]> {
   const { userId, newValues } = props;
 
   // Build update expression

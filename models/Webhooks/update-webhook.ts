@@ -6,7 +6,7 @@ import { SdkError } from "@aws-sdk/types";
 
 export default async function Update(
   props: UpdateWebhookInput
-): Promise<[null, null] | [null, SdkError]> {
+): Promise<[null, SdkError]> {
   const { orgId, webhookId, newValues } = props;
   // Build update expression
   let allUpdateExpressions: string[] = [];

@@ -3,6 +3,7 @@ import * as Questions from "../models/Questions";
 /**
  * MAJOR TODO -
  * I really don't think this lambda is needed.
+ * https://github.com/plutomi/plutomi/issues/566
  * Have to figure out a way to edit an array with JSONPath directly, im sure its possible
  */
 export async function main(event) {

@@ -23,7 +23,7 @@ import * as Time from "../../utils/time";
  */
 export default async function CreateLoginEvent(
   props: CreateLoginEventAndDeleteLoginLinkInput
-): Promise<[null, null] | [null, SdkError]> {
+): Promise<[null, SdkError]> {
   const { loginLinkId, user } = props;
 
   const now = Time.currentISO();

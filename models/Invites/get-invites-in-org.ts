@@ -5,7 +5,7 @@ import { DynamoOrgInvite } from "../../types/dynamo";
 import { SdkError } from "@aws-sdk/types";
 export default async function GetInvitesInOrg(
   props // TODO types
-): Promise<[DynamoOrgInvite[], null] | [null, SdkError]> {
+): Promise<[DynamoOrgInvite[], SdkError]> {
   const { orgId } = props;
   const params: QueryCommandInput = {
     TableName: `${process.env.NODE_ENV}-${DYNAMO_TABLE_NAME}`,

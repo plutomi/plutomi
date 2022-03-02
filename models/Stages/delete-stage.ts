@@ -10,7 +10,7 @@ import { DeleteStageInput } from "../../types/main";
 import { SdkError } from "@aws-sdk/types";
 export default async function Remove(
   props: DeleteStageInput
-): Promise<[null, null] | [null, SdkError]> {
+): Promise<[null, SdkError]> {
   const { orgId, stageId, openingId, deleteIndex } = props;
   const transactParams: TransactWriteCommandInput = {
     TransactItems: [

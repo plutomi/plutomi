@@ -6,7 +6,7 @@ import { GetOpeningsInOrgInput } from "../../types/main";
 import { SdkError } from "@aws-sdk/types";
 export default async function GetOpenings(
   props: GetOpeningsInOrgInput
-): Promise<[DynamoOpening[], null] | [null, SdkError]> {
+): Promise<[DynamoOpening[], SdkError]> {
   const { orgId, GSI1SK } = props;
   const params: QueryCommandInput = {
     TableName: `${process.env.NODE_ENV}-${DYNAMO_TABLE_NAME}`,

@@ -8,7 +8,7 @@ import { DeleteWebhookFromOrgInput } from "../../types/main";
 import { SdkError } from "@aws-sdk/types";
 export default async function DeleteWebhookFromOrg(
   props: DeleteWebhookFromOrgInput
-): Promise<[null, null] | [null, SdkError]> {
+): Promise<[null, SdkError]> {
   const { orgId, webhookId } = props;
 
   const transactParams: TransactWriteCommandInput = {

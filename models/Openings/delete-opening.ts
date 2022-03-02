@@ -8,7 +8,7 @@ import { DeleteOpeningInput } from "../../types/main";
 import { SdkError } from "@aws-sdk/types";
 export default async function remove(
   props: DeleteOpeningInput
-): Promise<[null, null] | [null, SdkError]> {
+): Promise<[null, SdkError]> {
   const { orgId, openingId } = props;
 
   try {

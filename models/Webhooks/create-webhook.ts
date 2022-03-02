@@ -11,7 +11,7 @@ import { SdkError } from "@aws-sdk/types";
 import { CreateWebhookInput } from "../../types/main";
 export default async function CreateWebhook(
   props: CreateWebhookInput
-): Promise<[DynamoWebhook, null] | [null, SdkError]> {
+): Promise<[DynamoWebhook, SdkError]> {
   const { orgId, webhookName, webhookUrl, description } = props;
   const webhookId = nanoid(15);
   let newWebhook: DynamoWebhook = {

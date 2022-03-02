@@ -6,7 +6,7 @@ import { SdkError } from "@aws-sdk/types";
 import { GetWebhooksInOrgInput } from "../../types/main";
 export default async function GetWebhooksInOrg(
   props: GetWebhooksInOrgInput
-): Promise<[DynamoWebhook[], null] | [null, SdkError]> {
+): Promise<[DynamoWebhook[], SdkError]> {
   const { orgId } = props;
   const params: QueryCommandInput = {
     TableName: `${process.env.NODE_ENV}-${DYNAMO_TABLE_NAME}`,

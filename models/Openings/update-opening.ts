@@ -5,7 +5,7 @@ import { UpdateOpeningInput } from "../../types/main";
 import { SdkError } from "@aws-sdk/types";
 export default async function update(
   props: UpdateOpeningInput
-): Promise<[null, null] | [null, SdkError]> {
+): Promise<[null, SdkError]> {
   const { orgId, openingId, newValues } = props;
   // Build update expression
   let allUpdateExpressions: string[] = [];

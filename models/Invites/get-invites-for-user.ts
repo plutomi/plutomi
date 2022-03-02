@@ -12,7 +12,7 @@ import { SdkError } from "@aws-sdk/types";
 
 export default async function getInvites(
   props: GetOrgInvitesForUserInput
-): Promise<[DynamoOrgInvite[], null] | [null, SdkError]> {
+): Promise<[DynamoOrgInvite[], SdkError]> {
   const { userId } = props;
   const params: QueryCommandInput = {
     TableName: `${process.env.NODE_ENV}-${DYNAMO_TABLE_NAME}`,

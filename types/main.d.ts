@@ -52,7 +52,6 @@ interface DeleteStageInput
   deleteIndex: number;
 }
 type GetStageByIdInput = Pick<DynamoStage, "orgId" | "stageId" | "openingId">;
-type GetStageByIdOutput = DynamoStage;
 type GetApplicantsInStageInput = Pick<
   DynamoStage,
   "orgId" | "stageId" | "openingId"
@@ -193,6 +192,9 @@ interface AddWebhookToStageInput
   extends Pick<DynamoStage, "orgId" | "openingId" | "stageId"> {
   webhookId: string;
 }
+
+interface GetQuestionsInStageInput
+  extends Pick<DynamoStage, "orgId" | "openingId" | "stageId"> {}
 
 type GetWebhooksInOrgInput = Pick<DynamoWebhook, "orgId">;
 interface DeleteQuestionFromStageInput

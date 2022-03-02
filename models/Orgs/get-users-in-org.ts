@@ -7,7 +7,7 @@ import { SdkError } from "@aws-sdk/types";
 
 export default async function GetUsers(
   props: GetUsersInOrgInput
-): Promise<[DynamoUser[], null] | [null, SdkError]> {
+): Promise<[DynamoUser[], SdkError]> {
   const { orgId, limit } = props;
   const params: QueryCommandInput = {
     TableName: `${process.env.NODE_ENV}-${DYNAMO_TABLE_NAME}`,

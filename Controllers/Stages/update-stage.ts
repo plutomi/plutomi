@@ -1,11 +1,6 @@
 import { Request, Response } from "express";
 import Joi from "joi";
-import {
-  DEFAULTS,
-  JOI_GLOBAL_FORBIDDEN,
-  JOI_SETTINGS,
-  LIMITS,
-} from "../../Config";
+import { JOI_GLOBAL_FORBIDDEN, JOI_SETTINGS, LIMITS } from "../../Config";
 import * as Stages from "../../models/Stages";
 import { DynamoStage } from "../../types/dynamo";
 import * as CreateError from "../../utils/createError";
@@ -22,6 +17,9 @@ const JOI_FORBIDDEN_STAGE = Joi.object({
   GSI1PK: Joi.any().forbidden(),
   questionOrder: Joi.array().items(Joi.string()).optional(),
   totalApplicants: Joi.any().forbidden(),
+  totalQuestions: Joi.any().forbidden(),
+  totalWebhooks: Joi.any().forbidden(),
+  webhooks: Joi.any().forbidden(),
   GSI1SK: Joi.string().optional().max(LIMITS.MAX_STAGE_NAME_LENGTH),
 });
 
@@ -53,8 +51,17 @@ const main = async (req: Request, res: Response) => {
     );
     return res.status(status).json(body);
   }
+
+  if (!stage) {
+    return res.status(404).json({ message: "Stage not found" });
+  }
+
+  /**
+   * If a user is attempting to update the order of the questions
+   * but the length differs
+   */
   if (req.body.questionOrder) {
-    if (req.body.questionOrder.length != stage.questionOrder.length) {
+    if (req.body.questionOrder.length !== stage.questionOrder.length) {
       return res.status(403).json({
         message:
           "You cannot add / delete questions this way, please use the proper API methods for those actions",

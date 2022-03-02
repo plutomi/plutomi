@@ -10,7 +10,7 @@ import * as Time from "../../utils/time";
 import { SdkError } from "@aws-sdk/types";
 export default async function CreateAndJoinOrg(
   props: CreateAndJoinOrgInput
-): Promise<[null, null] | [null, SdkError]> {
+): Promise<[null, SdkError]> {
   const { userId, orgId, displayName } = props;
   const now = Time.currentISO();
 

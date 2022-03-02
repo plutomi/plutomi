@@ -13,7 +13,7 @@ import * as Time from "../../utils/time";
 import { SdkError } from "@aws-sdk/types";
 export default async function CreateUser(
   props: CreateUserInput
-): Promise<[DynamoUser, null] | [null, SdkError]> {
+): Promise<[DynamoUser, SdkError]> {
   const { email, firstName, lastName } = props;
 
   const userId = nanoid(ID_LENGTHS.USER);

@@ -14,7 +14,7 @@ import { DeleteOrgInviteInput } from "../../types/main";
  */
 export default async function DeleteInvite(
   props: DeleteOrgInviteInput
-): Promise<[null, null] | [null, SdkError]> {
+): Promise<[null, SdkError]> {
   const { userId, inviteId } = props;
   try {
     const transactParams: TransactWriteCommandInput = {

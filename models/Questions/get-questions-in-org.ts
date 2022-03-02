@@ -9,7 +9,7 @@ import { SdkError } from "@aws-sdk/types";
 import { DynamoQuestion } from "../../types/dynamo";
 export default async function GetQuestionsInOrg(
   props: GetQuestionsInOrgInput
-): Promise<[GetQuestionsInOrgOutput, null] | [null, SdkError]> {
+): Promise<[GetQuestionsInOrgOutput, SdkError]> {
   const { orgId } = props;
 
   const params: QueryCommandInput = {

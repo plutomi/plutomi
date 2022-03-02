@@ -6,7 +6,7 @@ import { SdkError } from "@aws-sdk/types";
 
 export default async function Get(
   props: GetQuestionInput
-): Promise<[GetQuestionOutput, null] | [null, SdkError]> {
+): Promise<[GetQuestionOutput, SdkError]> {
   const { orgId, questionId } = props;
   const params: GetCommandInput = {
     TableName: `${process.env.NODE_ENV}-${DYNAMO_TABLE_NAME}`,

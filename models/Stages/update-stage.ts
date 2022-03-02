@@ -5,7 +5,7 @@ import { UpdateStageInput } from "../../types/main";
 import { SdkError } from "@aws-sdk/types";
 export default async function Update(
   props: UpdateStageInput
-): Promise<[null, null] | [null, SdkError]> {
+): Promise<[null, SdkError]> {
   const { orgId, stageId, newValues, openingId } = props;
 
   // Build update expression

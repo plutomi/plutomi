@@ -8,7 +8,7 @@ import { DeleteApplicantInput } from "../../types/main";
 import { SdkError } from "@aws-sdk/types";
 export default async function Remove(
   props: DeleteApplicantInput
-): Promise<[null, null] | [null, SdkError]> {
+): Promise<[null, SdkError]> {
   const { orgId, applicantId, openingId, stageId } = props;
   try {
     const transactParams: TransactWriteCommandInput = {

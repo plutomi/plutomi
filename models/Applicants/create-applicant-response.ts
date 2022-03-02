@@ -11,7 +11,7 @@ import * as Time from "../../utils/time";
 import { SdkError } from "@aws-sdk/types";
 export default async function CreateResponse(
   props: CreateApplicantResponseInput
-): Promise<[CreateApplicantResponseOutput, null] | [null, SdkError]> {
+): Promise<[CreateApplicantResponseOutput, SdkError]> {
   const { orgId, applicantId, questionTitle, description, questionResponse } =
     props;
   const responseId = nanoid(ID_LENGTHS.APPLICANT_RESPONSE);

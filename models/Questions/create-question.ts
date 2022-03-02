@@ -14,7 +14,7 @@ import { SdkError } from "@aws-sdk/types";
 
 export default async function CreateQuestion(
   props: CreateQuestionInput
-): Promise<[null, null] | [null, SdkError]> {
+): Promise<[null, SdkError]> {
   const { orgId, GSI1SK, questionId, description } = props;
   const now = Time.currentISO();
   const newStageQuestion: DynamoQuestion = {

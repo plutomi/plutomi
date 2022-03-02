@@ -6,7 +6,7 @@ import { SdkError } from "@aws-sdk/types";
 
 export default async function Update(
   props: UpdateQuestionInput
-): Promise<[null, null] | [null, SdkError]> {
+): Promise<[null, SdkError]> {
   const { orgId, questionId, newValues } = props;
   // Build update expression
   let allUpdateExpressions: string[] = [];

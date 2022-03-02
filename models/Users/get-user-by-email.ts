@@ -6,7 +6,7 @@ import { GetUserByEmailInput } from "../../types/main";
 import { SdkError } from "@aws-sdk/types";
 export default async function GetByEmail(
   props: GetUserByEmailInput
-): Promise<[DynamoUser, null] | [null, SdkError]> {
+): Promise<[DynamoUser, SdkError]> {
   const { email } = props;
   const params: QueryCommandInput = {
     TableName: `${process.env.NODE_ENV}-${DYNAMO_TABLE_NAME}`,

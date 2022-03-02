@@ -9,7 +9,7 @@ import { LeaveAndDeleteOrgInput } from "../../types/main";
 
 export default async function Create(
   props: LeaveAndDeleteOrgInput
-): Promise<[null, null] | [null, SdkError]> {
+): Promise<[null, SdkError]> {
   const { orgId, userId } = props;
 
   try {

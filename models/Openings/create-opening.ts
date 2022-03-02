@@ -16,7 +16,7 @@ import * as Time from "../../utils/time";
 import { SdkError } from "@aws-sdk/types";
 export default async function CreateOpening(
   props: CreateOpeningInput
-): Promise<[DynamoOpening, null] | [null, SdkError]> {
+): Promise<[DynamoOpening, SdkError]> {
   const { orgId, openingName } = props;
   const openingId = nanoid(ID_LENGTHS.OPENING);
   const newOpening: DynamoOpening = {

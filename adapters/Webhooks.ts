@@ -50,17 +50,11 @@ interface AddWebhookToStageInput {
 }
 const AddWebhookToStage = async (options: AddWebhookToStageInput) => {
   const { openingId, stageId, webhookId } = options;
-  const data = await axios.post(
-    GetWebhooksInStageUrl({
-      openingId,
-      stageId,
-    }),
-    {
-      openingId,
-      stageId,
-      webhookId,
-    }
-  );
+  const data = await axios.post("/webhooks", {
+    openingId,
+    stageId,
+    webhookId,
+  });
   return data;
 };
 

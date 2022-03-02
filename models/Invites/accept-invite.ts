@@ -10,7 +10,7 @@ import { SdkError } from "@aws-sdk/types";
 
 export default async function Join(
   props: JoinOrgFromInviteInput
-): Promise<[null, null] | [null, SdkError]> {
+): Promise<[null, SdkError]> {
   const { userId, invite } = props;
   // TODO types
   try {

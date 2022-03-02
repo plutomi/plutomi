@@ -6,7 +6,7 @@ import { GetStagesInOpeningInput } from "../../types/main";
 import { SdkError } from "@aws-sdk/types";
 export default async function GetStages(
   props: GetStagesInOpeningInput
-): Promise<[DynamoStage[], null] | [null, SdkError]> {
+): Promise<[DynamoStage[], SdkError]> {
   const { orgId, openingId, stageOrder } = props;
 
   const params: QueryCommandInput = {

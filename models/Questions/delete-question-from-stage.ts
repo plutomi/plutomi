@@ -9,7 +9,7 @@ import { DeleteQuestionFromStageInput } from "../../types/main";
 
 export default async function DeleteQuestionFromStage(
   props: DeleteQuestionFromStageInput
-): Promise<[null, null] | [null, SdkError]> {
+): Promise<[null, SdkError]> {
   const {
     orgId,
     openingId,
