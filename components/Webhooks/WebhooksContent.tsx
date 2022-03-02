@@ -1,7 +1,7 @@
 import useSelf from "../../SWR/useSelf";
 import { DynamoWebhook } from "../../types/dynamo";
 import EmptyWebhooksContent from "./EmptyWebhooksContent";
-import useWebhooks from "../../SWR/useWebhooks";
+import useWebhooks from "../../SWR/useWebhooksInOrg";
 import useStore from "../../utils/store";
 import Loader from "../Loader";
 import WebhookItem from "./WebhookItem";

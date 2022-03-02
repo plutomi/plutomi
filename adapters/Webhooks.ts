@@ -40,7 +40,7 @@ interface GetWebhooksInStageInput {
   openingId: string;
   stageId: string;
 }
-const GetWebhooksInStageUrl = (options: GetWebhooksInStageInput) =>
+const GetWebhooksInStageURL = (options: GetWebhooksInStageInput) =>
   `/openings/${options.openingId}/stages/${options.stageId}/webhooks`;
 
 interface AddWebhookToStageInput {
@@ -51,7 +51,7 @@ interface AddWebhookToStageInput {
 const AddWebhookToStage = async (options: AddWebhookToStageInput) => {
   const { openingId, stageId, webhookId } = options;
   const data = await axios.post(
-    GetWebhooksInStageUrl({
+    GetWebhooksInStageURL({
       openingId: options.openingId,
       stageId: options.stageId,
     }),
@@ -65,14 +65,14 @@ const AddWebhookToStage = async (options: AddWebhookToStageInput) => {
 };
 
 const GetWebhooksInStage = async (options: GetWebhooksInStageInput) => {
-  const data = await axios.get(GetWebhooksInStageUrl({ ...options }));
+  const data = await axios.get(GetWebhooksInStageURL({ ...options }));
   return data;
 };
 
 const DeleteWebhookFromStage = async (options: AddWebhookToStageInput) => {
   const { openingId, stageId, webhookId } = options;
   const data = await axios.delete(
-    GetWebhooksInStageUrl({
+    GetWebhooksInStageURL({
       openingId,
       stageId,
     }) + `/${webhookId}`
@@ -81,6 +81,7 @@ const DeleteWebhookFromStage = async (options: AddWebhookToStageInput) => {
 };
 
 export {
+  GetWebhooksInStageURL,
   CreateWebhook,
   GetWebhooksInOrg,
   GetWebhooksInOrgURL,
