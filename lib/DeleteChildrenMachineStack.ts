@@ -175,6 +175,11 @@ export default class DeleteChildrenMachineStack extends cdk.Stack {
       0
     );
 
+    const ORG_HAS_WEBHOOKS = sfn.Condition.numberGreaterThan(
+      "$.detail.OldImage.totalWebhooks",
+      0
+    );
+
     const GET_QUESTIONS_IN_ORG = new tasks.CallAwsService(
       this,
       "GetQuestionsInOrg",
@@ -194,6 +199,51 @@ export default class DeleteChildrenMachineStack extends cdk.Stack {
           "questions.$": "$.Items",
         },
       }
+    );
+
+    const GET_WEBHOOKS_IN_ORG = new tasks.CallAwsService(
+      this,
+      "GetWebhooksInOrg",
+      {
+        ...DYNAMO_QUERY_SETTINGS,
+        parameters: {
+          TableName: props.table.tableName,
+          IndexName: "GSI1",
+          KeyConditionExpression: "GSI1PK = :GSI1PK",
+          ExpressionAttributeValues: {
+            ":GSI1PK": {
+              "S.$": `States.Format('${ENTITY_TYPES.ORG}#{}#${ENTITY_TYPES.WEBHOOK}S', $.detail.OldImage.orgId)`,
+            },
+          },
+        },
+        resultSelector: {
+          "webhooks.$": "$.Items",
+        },
+      }
+    );
+
+    const DeleteWebhooksMap = new sfn.Map(this, "DeleteWebhooksInOrgMap", {
+      maxConcurrency: 1,
+      inputPath: "$.webhooks",
+      parameters: {
+        // Makes it easier to get these attributes per item
+        "PK.$": `States.Format('${ENTITY_TYPES.ORG}#{}#${ENTITY_TYPES.WEBHOOK}#{}', $$.Map.Item.Value.orgId.S, $$.Map.Item.Value.webhookId.S)`,
+        SK: ENTITY_TYPES.WEBHOOK,
+      },
+    });
+
+    DeleteWebhooksMap.iterator(
+      new tasks.DynamoDeleteItem(this, "DeleteWebhooksInOrg", {
+        table: props.table,
+        key: {
+          PK: tasks.DynamoAttributeValue.fromString(
+            sfn.JsonPath.stringAt("$.PK")
+          ),
+          SK: tasks.DynamoAttributeValue.fromString(
+            sfn.JsonPath.stringAt("$.SK")
+          ),
+        },
+      })
     );
 
     const DeleteQuestionsMap = new sfn.Map(this, "DeleteQuestionsInOrgMap", {
@@ -494,6 +544,14 @@ export default class DeleteChildrenMachineStack extends cdk.Stack {
                 GET_QUESTIONS_IN_ORG.next(DeleteQuestionsMap)
               )
               .otherwise(new sfn.Succeed(this, "Org doesn't have questions"))
+          )
+          .branch(
+            new Choice(this, "OrgHasWebhooks")
+              .when(
+                ORG_HAS_WEBHOOKS,
+                GET_WEBHOOKS_IN_ORG.next(DeleteWebhooksMap)
+              )
+              .otherwise(new sfn.Succeed(this, "Org doesn't have webhooks"))
           )
       )
       .when(
