@@ -1,25 +1,20 @@
 import { useRouter } from "next/router";
-import StageReorderColumn from "../StageReorderColumn";
 import useQuestionsInOrg from "../../SWR/useQuestionsInOrg";
-import Loader from "../Loader";
-import useSelf from "../../SWR/useSelf";
-import useAllStagesInOpening from "../../SWR/useAllStagesInOpening";
-import useOpeningInfo from "../../SWR/useOpeningInfo";
 import useStageInfo from "../../SWR/useStageInfo";
 import useQuestionsInStage from "../../SWR/useQuestionsInStage";
 import { CUSTOM_QUERY } from "../../types/main";
-import { useEffect, useState, Fragment, FormEvent } from "react";
+import { useEffect, useState } from "react";
 import { Listbox, Transition } from "@headlessui/react";
-import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
+import { DragDropContext, Droppable } from "react-beautiful-dnd";
 import { DynamoQuestion } from "../../types/dynamo";
 import * as Questions from "../../adapters/Questions";
 import { mutate } from "swr";
 import combineClassNames from "../../utils/combineClassNames";
 import * as Stages from "../../adapters/Stages";
+import DraggableQuestionItem from "./DraggableQuestionItem";
 
 export default function StageSettingsQuestionList() {
   const router = useRouter();
-  const [currentTab, setCurrentTab] = useState("Questions");
   const [localSearch, setLocalSearch] = useState("");
   let { orgQuestions, isOrgQuestionsLoading, isOrgQuestionsError } =
     useQuestionsInOrg();
@@ -31,12 +26,6 @@ export default function StageSettingsQuestionList() {
   const { stageQuestions, isStageQuestionsLoading, isStageQuestionsError } =
     useQuestionsInStage({ openingId, stageId });
 
-  const { user, isUserLoading, isUserError } = useSelf();
-  let { opening, isOpeningLoading, isOpeningError } = useOpeningInfo(openingId);
-
-  let { stages, isStagesLoading, isStagesError } = useAllStagesInOpening(
-    opening?.openingId
-  );
   const { stage, isStageLoading, isStageError } = useStageInfo(
     openingId,
     stageId
@@ -66,36 +55,6 @@ export default function StageSettingsQuestionList() {
     } catch (error) {
       alert(error.response.data.message);
     }
-    // Refresh the questionOrder and update the search results
-    mutate(
-      Stages.GetStageInfoURL({
-        openingId,
-        stageId,
-      })
-    );
-
-    // Refresh the questions in the stage
-    mutate(
-      Questions.GetQuestionsInStageURL({
-        openingId,
-        stageId,
-      })
-    );
-  };
-
-  const handleRemove = async (question: DynamoQuestion) => {
-    try {
-      const { data } = await Questions.DeleteQuestionFromStage({
-        openingId,
-        stageId,
-        questionId: question.questionId,
-      });
-
-      alert(data.message);
-    } catch (error) {
-      alert(error.response.data.message);
-    }
-
     // Refresh the questionOrder and update the search results
     mutate(
       Stages.GetStageInfoURL({
@@ -293,45 +252,12 @@ export default function StageSettingsQuestionList() {
                 <div {...provided.droppableProps} ref={provided.innerRef}>
                   {newQuestionOrder?.map((question, index) => {
                     return (
-                      <Draggable
-                        key={question.questionId}
-                        draggableId={question.questionId}
+                      <DraggableQuestionItem
+                        key={index}
+                        question={question}
                         index={index}
-                        {...provided.droppableProps}
-                      >
-                        {(provided) => (
-                          <ol
-                            {...provided.draggableProps}
-                            {...provided.dragHandleProps}
-                            ref={provided.innerRef}
-                          >
-                            <li
-                              key={question.questionId}
-                              className="my-2 active:border-blue-500 hover:border-blue-500 flex border justify-between items-center bg-white  overflow-hidden p-4 sm:px-6 sm:rounded-md shadow-md hover:shadow-lg transition ease-in-out duration-300"
-                            >
-                              <div>
-                                {" "}
-                                <p>
-                                  {index + 1}. {question.GSI1SK}
-                                </p>
-                                <p className="text-light text-sm">
-                                  {question.description}
-                                </p>
-                              </div>
-
-                              <div className="flex items-center justify-center text-normal">
-                                <p>{question.questionId}</p>
-                                <button
-                                  onClick={() => handleRemove(question)}
-                                  className=" ml-4 px-2 py-1 right-0 border border-red-500 rounded-md text-red-500 bg-white hover:text-white hover:bg-red-500 transition ease-in duration-100"
-                                >
-                                  Remove
-                                </button>
-                              </div>
-                            </li>
-                          </ol>
-                        )}
-                      </Draggable>
+                        provided={provided}
+                      />
                     );
                   })}
                   {provided.placeholder}

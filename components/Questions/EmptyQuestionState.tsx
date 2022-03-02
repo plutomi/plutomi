@@ -1,12 +1,14 @@
 import { PlusIcon } from "@heroicons/react/solid";
 import { QuestionMarkCircleIcon } from "@heroicons/react/outline";
 import useStore from "../../utils/store";
+import CreateQuestionModal from "./CreateQuestionModal";
 export default function EmptyQuestionsState() {
   const openCreateQuestionModal = useStore(
     (state) => state.openCreateQuestionModal
   );
   return (
     <div className="text-center">
+      <CreateQuestionModal />
       <QuestionMarkCircleIcon className="mx-auto h-12 w-12 text-light" />
       <h3 className="mt-2 text-lg font-medium text-dark">
         You don&apos;t have any questions
