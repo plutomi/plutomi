@@ -7,7 +7,7 @@ import { CUSTOM_QUERY } from "../../types/main";
 import StageSettingsQuestionList from "./StageSettingsQuestionList";
 import { useState } from "react";
 import StageSettingsContentTabs from "./StageSettingsContentTabs";
-
+import WebhookList from "./WebhookList";
 export default function StageSettingsContent() {
   const router = useRouter();
   const [currentTab, setCurrentTab] = useState("Questions");
@@ -31,7 +31,9 @@ export default function StageSettingsContent() {
   }
 
   const setNewTab = (value: string) => {
-    setCurrentTab(value);
+    if (value !== currentTab) {
+      setCurrentTab(value);
+    }
   };
   return (
     <>
@@ -59,7 +61,7 @@ export default function StageSettingsContent() {
                   {currentTab === "Questions" ? (
                     <StageSettingsQuestionList />
                   ) : (
-                    <h1>Webhooks</h1>
+                    <WebhookList />
                   )}
                 </div>
               </div>

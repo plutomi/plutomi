@@ -165,7 +165,7 @@ export default function StageSettingsQuestionList() {
   };
 
   return (
-    <div className="flex flex-col justify-center items-center">
+    <div className="flex flex-col justify-center items-center p-2">
       <input
         type="text"
         name="search"
@@ -175,7 +175,7 @@ export default function StageSettingsQuestionList() {
         onBlur={handleOnBlur}
         onChange={(e) => handleSearch(e.target.value)}
         placeholder={"Search for a question to add to this stage..."}
-        className="border-2 border-blue-300 mt-2 py-4 text-xl w-full shadow-sm focus:ring-blue-500 focus:border-blue-500    sm:text-sm  rounded-md"
+        className="border-2 border-blue-300 mt-2 py-3 text-xl w-full shadow-sm focus:ring-blue-500 focus:border-blue-500    sm:text-sm  rounded-md"
       />
       <Listbox value={selected} onChange={(question) => handleAdd(question)}>
         <>
@@ -188,7 +188,12 @@ export default function StageSettingsQuestionList() {
             >
               {/* TODO use datalist for this with a regular transition */}
               <Listbox.Options className="absolute z-10 mt-1 w-full bg-white shadow-lg max-h-60 rounded-md py-1 text-base ring-1 ring-black ring-opacity-5 overflow-auto focus:outline-none sm:text-sm">
-                {filteredOrgQuestions?.length === 0 ? (
+                {orgQuestions?.length === 0 ? (
+                  <p className="disabled  text-gray-400 cursor-default select-none relative py-2 pl-3 pr-9 ">
+                    No questions found
+                  </p>
+                ) : filteredOrgQuestions?.length === 0 &&
+                  orgQuestions?.length > 0 ? (
                   <p className="disabled  text-gray-400 cursor-default select-none relative py-2 pl-3 pr-9 ">
                     Question not found
                   </p>

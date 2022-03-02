@@ -336,7 +336,7 @@ export default class DeleteChildrenMachineStack extends cdk.Stack {
       }
     );
 
-    const RemoveDeletedQuestionFromStageFunction = new NodejsFunction(
+    const RemoveDeletedWebhookFromStageFunction = new NodejsFunction(
       this,
       `${process.env.NODE_ENV}-remove-deleted-webhook-from-stage-function`,
       {
@@ -359,6 +359,33 @@ export default class DeleteChildrenMachineStack extends cdk.Stack {
         entry: path.join(
           __dirname,
           `/../functions/remove-deleted-webhook-from-stage.ts`
+        ),
+      }
+    );
+
+    const RemoveDeletedQuestionFromStageFunction = new NodejsFunction(
+      this,
+      `${process.env.NODE_ENV}-remove-deleted-question-from-stage-function`,
+      {
+        functionName: `${process.env.NODE_ENV}-remove-deleted-question-from-stage-function`,
+        timeout: cdk.Duration.seconds(5),
+        memorySize: 256,
+        logRetention: RetentionDays.ONE_WEEK,
+        runtime: Runtime.NODEJS_14_X,
+        architecture: Architecture.ARM_64,
+        environment: {
+          NODE_ENV: process.env.NODE_ENV,
+          DYNAMO_TABLE_NAME,
+        },
+        bundling: {
+          minify: true,
+          externalModules: ["aws-sdk"],
+        },
+        handler: "main",
+        description: "Removes a deleted question from stages.",
+        entry: path.join(
+          __dirname,
+          `/../functions/remove-deleted-question-from-stage.ts`
         ),
       }
     );
@@ -462,7 +489,8 @@ export default class DeleteChildrenMachineStack extends cdk.Stack {
                 stage: sfn.JsonPath.stringAt("$.stage.Item"),
                 questionId: sfn.JsonPath.stringAt("$.webhookId"),
               }),
-              lambdaFunction: RemoveDeletedQuestionFromStageFunction,
+              lambdaFunction: RemoveDeletedWebhookFromStageFunction,
+              // TODO pretty sure this needs a callback
               integrationPattern: IntegrationPattern.REQUEST_RESPONSE,
             })
           )
@@ -492,6 +520,7 @@ export default class DeleteChildrenMachineStack extends cdk.Stack {
                 questionId: sfn.JsonPath.stringAt("$.questionId"),
               }),
               lambdaFunction: RemoveDeletedQuestionFromStageFunction,
+              // TODO pretty sure this needs a callback
               integrationPattern: IntegrationPattern.REQUEST_RESPONSE,
             })
           )

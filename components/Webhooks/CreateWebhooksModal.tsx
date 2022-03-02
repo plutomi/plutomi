@@ -139,7 +139,7 @@ export default function CreateWebhookModal() {
                               <textarea
                                 name="webhook-description"
                                 id="webhook-description"
-                                placeholder="Sends a slack message to the #new-applicants slack channel"
+                                placeholder="Sends a slack message to the #recruiting channel"
                                 onChange={(e) => setDescription(e.target.value)}
                                 value={description}
                                 maxLength={
