@@ -233,6 +233,12 @@ app.post(
   Webhooks.AddWebhookToStage
 );
 
+app.delete(
+  "/openings/:openingId/stages/:stageId/webhooks/:webhookId",
+  [withSession, withHasOrg],
+  Webhooks.DeleteWebhookFromStage
+);
+
 function healthcheck(req, res: Response) {
   return res.status(200).json({ message: "It's all good man!" });
 }

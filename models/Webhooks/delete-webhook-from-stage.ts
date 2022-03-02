@@ -5,19 +5,12 @@ import {
 import { Dynamo } from "../../awsClients/ddbDocClient";
 import { DYNAMO_TABLE_NAME, ENTITY_TYPES } from "../../Config";
 import { SdkError } from "@aws-sdk/types";
-import { DeleteQuestionFromStageInput } from "../../types/main";
+import { DeleteWebhookFromStageInput } from "../../types/main";
 
-export default async function DeleteQuestionFromStage(
-  props: DeleteQuestionFromStageInput
+export default async function DeleteWebhookFromStage(
+  props: DeleteWebhookFromStageInput
 ): Promise<[null, SdkError]> {
-  const {
-    orgId,
-    openingId,
-    stageId,
-    questionId,
-    deleteIndex,
-    decrementStageCount,
-  } = props;
+  const { orgId, openingId, stageId, webhookId, decrementStageCount } = props;
 
   let transactParams: TransactWriteCommandInput = {
     TransactItems: [
@@ -25,22 +18,22 @@ export default async function DeleteQuestionFromStage(
         // Delete the adjacent item
         Delete: {
           Key: {
-            PK: `${ENTITY_TYPES.ORG}#${orgId}#${ENTITY_TYPES.QUESTION}#${questionId}#${ENTITY_TYPES.STAGE}S`,
+            PK: `${ENTITY_TYPES.ORG}#${orgId}#${ENTITY_TYPES.WEBHOOK}#${webhookId}#${ENTITY_TYPES.WEBHOOK}S`,
             SK: `${ENTITY_TYPES.OPENING}#${openingId}#${ENTITY_TYPES.STAGE}#${stageId}`,
           },
           TableName: `${process.env.NODE_ENV}-${DYNAMO_TABLE_NAME}`,
           ConditionExpression: "attribute_exists(PK)",
         },
       },
+      // Decrement the totalWebhooks count on the stage
       {
-        // Update the question order on the stage and decrement the total question count
         Update: {
           Key: {
             PK: `${ENTITY_TYPES.ORG}#${orgId}#${ENTITY_TYPES.OPENING}#${openingId}#${ENTITY_TYPES.STAGE}#${stageId}`,
             SK: ENTITY_TYPES.STAGE,
           },
           TableName: `${process.env.NODE_ENV}-${DYNAMO_TABLE_NAME}`,
-          UpdateExpression: `REMOVE questionOrder[${deleteIndex}] SET totalQuestions = totalQuestions - :value`,
+          UpdateExpression: "SET totalWebhooks = totalWebhooks - :value",
           ExpressionAttributeValues: {
             ":value": 1,
           },
@@ -53,8 +46,8 @@ export default async function DeleteQuestionFromStage(
     transactParams.TransactItems.push({
       Update: {
         Key: {
-          PK: `${ENTITY_TYPES.ORG}#${orgId}#${ENTITY_TYPES.QUESTION}#${questionId}`,
-          SK: ENTITY_TYPES.QUESTION,
+          PK: `${ENTITY_TYPES.ORG}#${orgId}#${ENTITY_TYPES.WEBHOOK}#${webhookId}`,
+          SK: ENTITY_TYPES.WEBHOOK,
         },
         TableName: `${process.env.NODE_ENV}-${DYNAMO_TABLE_NAME}`,
         UpdateExpression: "SET totalStages = totalStages - :value",

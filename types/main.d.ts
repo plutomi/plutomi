@@ -205,8 +205,22 @@ interface DeleteQuestionFromStageInput
   extends Pick<DynamoStage, "orgId" | "openingId" | "stageId" | "deleteIndex"> {
   questionId: string;
   /**
-   * Whether to decrement the stage count on the question.
+   * When removing a question from a stage, we want to decrement the stage count on the question.
+   * This isn't needed if the question is deleted obviously, and is used in the deletion state machine.
+   * which should only be deleting the adjacent item.
    * Set it to FALSE if the question has been deleted form the org.
+   */
+  decrementStageCount: boolean;
+}
+
+interface DeleteWebhookFromStageInput
+  extends Pick<DynamoStage, "orgId" | "openingId" | "stageId"> {
+  webhookId: string;
+  /**
+   * When removing a webhook from a stage, we want to decrement the stage count on the webhook.
+   * This isn't needed if the webhook is deleted obviously, and is used in the deletion state machine.
+   * which should only be deleting the adjacent item.
+   * Set it to FALSE if the webhook has been deleted form the org.
    */
   decrementStageCount: boolean;
 }
