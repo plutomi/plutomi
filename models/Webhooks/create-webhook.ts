@@ -21,6 +21,7 @@ export default async function CreateWebhook(
     createdAt: Time.currentISO(),
     webhookId,
     webhookName,
+    totalStages: 0,
     orgId,
     webhookUrl,
     GSI1PK: `${ENTITY_TYPES.ORG}#${orgId}#${ENTITY_TYPES.WEBHOOK}S`,

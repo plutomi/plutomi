@@ -30,6 +30,7 @@ export default async function CreateStage(
     orgId,
     totalApplicants: 0,
     totalQuestions: 0,
+    totalWebhooks: 0,
     openingId,
     GSI1PK: `${ENTITY_TYPES.ORG}#${orgId}#${ENTITY_TYPES.OPENING}#${openingId}#${ENTITY_TYPES.STAGE}S`, // Get all stages in an opening
     GSI1SK,

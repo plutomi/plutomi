@@ -1,7 +1,7 @@
 import { QueryCommandInput, QueryCommand } from "@aws-sdk/lib-dynamodb";
 import { Dynamo } from "../../awsClients/ddbDocClient";
 import { DYNAMO_TABLE_NAME, ENTITY_TYPES } from "../../Config";
-import { DynamoOpening, DynamoWebhook } from "../../types/dynamo";
+import { DynamoWebhook } from "../../types/dynamo";
 import { SdkError } from "@aws-sdk/types";
 import { GetWebhooksInOrgInput } from "../../types/main";
 export default async function GetWebhooksInOrg(

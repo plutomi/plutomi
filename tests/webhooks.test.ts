@@ -3,7 +3,9 @@ import * as Webhooks from "../adapters/Webhooks";
 import * as Orgs from "../adapters/Orgs";
 import { nanoid } from "nanoid";
 import * as GenerateID from "../utils/generateIds";
-import { DynamoWebhook } from "../types/dynamo";
+import { DynamoOpening, DynamoStage, DynamoWebhook } from "../types/dynamo";
+import * as Openings from "../adapters/Openings";
+import * as Stages from "../adapters/Stages";
 import { APIUpdateWebhookOptions } from "../Controllers/Webhooks/update-webhook";
 
 describe("Webhooks", () => {
@@ -184,5 +186,53 @@ describe("Webhooks", () => {
       expect(error.response.status).toBe(404);
       expect(error.response.data.message).toBe("Webhook not found");
     }
+  });
+
+  it.todo("allows adding a webhook to a stage", async () => {
+    expect.assertions(2);
+
+    // Create an opneing
+    const openingName = nanoid(15);
+    await Openings.CreateOpening({
+      openingName,
+    });
+    const openingData = await Openings.GetAllOpeningsInOrg();
+
+    let ourOpening: DynamoOpening = openingData.data.find(
+      (opening: DynamoOpening) => opening.openingName === openingName
+    );
+
+    // Add a stage to that opening and retrieve the stage
+    await Stages.CreateStage({
+      openingId: ourOpening.openingId,
+      GSI1SK: nanoid(20),
+    });
+    const stagesData = await Stages.GetStagesInOpening(ourOpening.openingId);
+    expect(stagesData.data.length).toBe(1);
+    const ourStage: DynamoStage = stagesData.data[0];
+
+    // Create our webhook
+    const webhookName = nanoid(20);
+    await Webhooks.CreateWebhook({
+      webhookName,
+      webhookUrl: "https://google.com",
+    });
+
+    const webhookData = await Webhooks.GetWebhooksInOrg();
+    const ourWebhook = await webhookData.data.find(
+      (webhook: DynamoWebhook) => webhook.webhookName === webhookName
+    );
+
+    const { status, data } = await Webhooks.AddWebhookToStage({
+      openingId: ourOpening.openingId,
+      stageId: ourStage.stageId,
+      webhookId: ourWebhook,
+    });
+    expect(status).toBe(200);
+    expect(data.message).toBe("Webhook added to stage!");
+  });
+
+  it.todo("allows deleting a webhook from stage", async () => {
+    expect.assertions(2);
   });
 });

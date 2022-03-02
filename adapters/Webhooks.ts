@@ -35,6 +35,42 @@ const UpdateWebhook = async (options: UpdateWebhookOptions) => {
   });
   return data;
 };
+
+const GetWebhooksInStageUrl = ({ openingId, stageId }) =>
+  `/openings/${openingId}/stages/${stageId}/webhooks`;
+
+interface AddWebhookToStageInput {
+  openingId: string;
+  stageId: string;
+  webhookId: string;
+}
+const AddWebhookToStage = async (options: AddWebhookToStageInput) => {
+  const { openingId, stageId, webhookId } = options;
+  const data = await axios.post(
+    GetWebhooksInStageUrl({
+      openingId,
+      stageId,
+    }),
+    {
+      openingId,
+      stageId,
+      webhookId,
+    }
+  );
+  return data;
+};
+
+const DeleteWebhookFromStage = async (options: AddWebhookToStageInput) => {
+  const { openingId, stageId, webhookId } = options;
+  const data = await axios.delete(
+    GetWebhooksInStageUrl({
+      openingId,
+      stageId,
+    }) + `/${webhookId}`
+  );
+  return data;
+};
+
 export {
   CreateWebhook,
   GetWebhooksInOrg,
@@ -43,4 +79,6 @@ export {
   UpdateWebhook,
   GetWebhookInfo,
   GetWebhookInfoURL,
+  AddWebhookToStage,
+  DeleteWebhookFromStage,
 };
