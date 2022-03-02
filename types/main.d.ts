@@ -189,6 +189,11 @@ interface AddQuestionToStageInput
   questionId: string;
 }
 
+interface AddWebhookToStageInput
+  extends Pick<DynamoStage, "orgId" | "openingId" | "stageId"> {
+  webhookId: string;
+}
+
 type GetWebhooksInOrgInput = Pick<DynamoWebhook, "orgId">;
 interface DeleteQuestionFromStageInput
   extends Pick<DynamoStage, "orgId" | "openingId" | "stageId" | "deleteIndex"> {
