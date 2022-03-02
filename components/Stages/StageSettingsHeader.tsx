@@ -1,4 +1,4 @@
-import { PlusIcon, TrashIcon } from "@heroicons/react/outline";
+import { TrashIcon } from "@heroicons/react/outline";
 import useStore from "../../utils/store";
 import Breadcrumbs from "../Breadcrumbs";
 import { useRouter } from "next/router";
@@ -8,7 +8,6 @@ import * as Time from "../../utils/time";
 import { CUSTOM_QUERY } from "../../types/main";
 import UpdateStageModal from "./UpdateStageModal";
 import CreateQuestionModal from "../Questions/CreateQuestionModal";
-import CustomLink from "../CustomLink";
 export default function StageSettingsHeader({ deleteStage }) {
   const router = useRouter();
   const { openingId, stageId } = router.query as Pick<
@@ -20,10 +19,6 @@ export default function StageSettingsHeader({ deleteStage }) {
   const { stage, isStageLoading, isStageError } = useStageInfo(
     openingId,
     stageId
-  );
-
-  const openCreateQuestionModal = useStore(
-    (state) => state.openCreateQuestionModal
   );
 
   const crumbs = [
@@ -66,7 +61,6 @@ export default function StageSettingsHeader({ deleteStage }) {
           <PencilAltIcon className="-ml-1 mr-3 h-5 w-5" aria-hidden="true" />
           Edit Stage
         </button>
-
 
         <button
           onClick={() => deleteStage()}
