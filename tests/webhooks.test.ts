@@ -249,7 +249,19 @@ describe("Webhooks", () => {
     expect(updatedWebhookData.data.totalStages).toBe(1);
   });
 
-  it("allows retrieving webhooks for a stage (adjacent item like questions)", async () => {});
+  it("allows retrieving webhooks for a stage (adjacent item like questions)", async () => {
+    expect.assertions(4);
+
+    const { status, data } = await Webhooks.GetWebhooksInStage({
+      openingId: ourOpening.openingId,
+      stageId: ourStage.stageId,
+    });
+
+    expect(status).toBe(200);
+    expect(typeof data).toBe(Array);
+    expect(data.length).toBe(1);
+    expect(data).toStrictEqual(ourWebhook);
+  });
 
   it("allows deleting a webhook from stage and decrements the stage and webhook count", async () => {
     expect.assertions(2);
