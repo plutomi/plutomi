@@ -15,7 +15,7 @@ const GetWebhookInfo = async (webhookId: string) => {
   const data = await axios.get(GetWebhookInfoURL(webhookId));
   return data;
 };
-const DeleteWebhook = async (webhookId: string) => {
+const DeleteWebhookFromOrg = async (webhookId: string) => {
   const data = await axios.delete(GetWebhookInfoURL(webhookId));
   return data;
 };
@@ -75,7 +75,7 @@ export {
   CreateWebhook,
   GetWebhooksInOrg,
   GetWebhooksInOrgURL,
-  DeleteWebhook,
+  DeleteWebhookFromOrg,
   UpdateWebhook,
   GetWebhookInfo,
   GetWebhookInfoURL,

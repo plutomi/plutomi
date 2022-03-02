@@ -1,11 +1,10 @@
 import { useState } from "react";
 import { PencilAltIcon } from "@heroicons/react/outline";
 import { TrashIcon } from "@heroicons/react/outline";
-import { DeleteWebhook, GetWebhooksInOrgURL } from "../../adapters/Webhooks";
+import { DeleteWebhookFromOrg, GetWebhooksInOrgURL } from "../../adapters/Webhooks";
 import useStore from "../../utils/store";
 import { mutate } from "swr";
 import { DynamoWebhook } from "../../types/dynamo";
-import { GetOrgInfoURL } from "../../adapters/Orgs";
 
 export default function WebhookItem({ webhook }: { webhook: DynamoWebhook }) {
   const setCurrentWebhook = useStore((state) => state.setCurrentWebhook);
@@ -29,7 +28,7 @@ export default function WebhookItem({ webhook }: { webhook: DynamoWebhook }) {
     }
 
     try {
-      const data = await DeleteWebhook(webhook.webhookId);
+      const data = await DeleteWebhookFromOrg(webhook.webhookId);
       alert(data.data.message);
     } catch (error) {
       alert(error.response.data.message);

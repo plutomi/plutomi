@@ -134,7 +134,9 @@ describe("Webhooks", () => {
 
     expect(ourWebhook.webhookName).toBe(name);
 
-    const { status, data } = await Webhooks.DeleteWebhook(ourWebhook.webhookId);
+    const { status, data } = await Webhooks.DeleteWebhookFromOrg(
+      ourWebhook.webhookId
+    );
 
     expect(status).toBe(200);
     expect(data.message).toBe("Webhook deleted!");
@@ -188,8 +190,12 @@ describe("Webhooks", () => {
     }
   });
 
-  it.todo("allows adding a webhook to a stage", async () => {
-    expect.assertions(2);
+  // Used for subsequent tests
+  let ourWebhook: DynamoWebhook;
+  let ourOpening: DynamoOpening;
+  let ourStage: DynamoStage;
+  it("allows adding a webhook to a stage and increments the stage and webhook count", async () => {
+    expect.assertions(5);
 
     // Create an opneing
     const openingName = nanoid(15);
@@ -198,7 +204,7 @@ describe("Webhooks", () => {
     });
     const openingData = await Openings.GetAllOpeningsInOrg();
 
-    let ourOpening: DynamoOpening = openingData.data.find(
+    ourOpening = openingData.data.find(
       (opening: DynamoOpening) => opening.openingName === openingName
     );
 
@@ -209,7 +215,7 @@ describe("Webhooks", () => {
     });
     const stagesData = await Stages.GetStagesInOpening(ourOpening.openingId);
     expect(stagesData.data.length).toBe(1);
-    const ourStage: DynamoStage = stagesData.data[0];
+    ourStage = stagesData.data[0];
 
     // Create our webhook
     const webhookName = nanoid(20);
@@ -219,20 +225,49 @@ describe("Webhooks", () => {
     });
 
     const webhookData = await Webhooks.GetWebhooksInOrg();
-    const ourWebhook = await webhookData.data.find(
+    ourWebhook = await webhookData.data.find(
       (webhook: DynamoWebhook) => webhook.webhookName === webhookName
     );
 
     const { status, data } = await Webhooks.AddWebhookToStage({
       openingId: ourOpening.openingId,
       stageId: ourStage.stageId,
-      webhookId: ourWebhook,
+      webhookId: ourWebhook.webhookId,
     });
     expect(status).toBe(200);
     expect(data.message).toBe("Webhook added to stage!");
+
+    const updatedStageData = await Stages.GetStageInfo({
+      openingId: ourOpening.openingId,
+      stageId: ourStage.stageId,
+    });
+    expect(updatedStageData.data.totalWebhooks).toBe(1);
+
+    const updatedWebhookData = await Webhooks.GetWebhookInfo(
+      ourWebhook.webhookId
+    );
+    expect(updatedWebhookData.data.totalStages).toBe(1);
   });
 
-  it.todo("allows deleting a webhook from stage", async () => {
+  it("allows retrieving webhooks for a stage (adjacent item like questions)", async () => {});
+
+  it("allows deleting a webhook from stage and decrements the stage and webhook count", async () => {
     expect.assertions(2);
+
+    await Webhooks.DeleteWebhookFromStage({
+      openingId: ourOpening.openingId,
+      stageId: ourStage.stageId,
+      webhookId: ourWebhook.webhookId,
+    });
+
+    const stageData = await Stages.GetStageInfo({
+      openingId: ourOpening.openingId,
+      stageId: ourStage.stageId,
+    });
+
+    expect(stageData.data.totalWebhooks).toBe(0);
+
+    const webhookData = await Webhooks.GetWebhookInfo(ourWebhook.webhookId);
+    expect(webhookData.data.totalStages).toBe(0);
   });
 });
