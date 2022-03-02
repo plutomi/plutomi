@@ -1,7 +1,10 @@
 import { useState } from "react";
 import { PencilAltIcon } from "@heroicons/react/outline";
 import { TrashIcon } from "@heroicons/react/outline";
-import { DeleteWebhookFromOrg, GetWebhooksInOrgURL } from "../../adapters/Webhooks";
+import {
+  DeleteWebhookFromOrg,
+  GetWebhooksInOrgURL,
+} from "../../adapters/Webhooks";
 import useStore from "../../utils/store";
 import { mutate } from "swr";
 import { DynamoWebhook } from "../../types/dynamo";
@@ -54,11 +57,13 @@ export default function WebhookItem({ webhook }: { webhook: DynamoWebhook }) {
           {webhook?.webhookUrl}
         </p>
 
-        {webhook?.description && (
-          <p className="text-md text-light line-clamp-2 mt-1">
-            {webhook?.description}
-          </p>
-        )}
+        <p className="text-md text-light line-clamp-2 mt-1">
+          Used in {webhook.totalStages} stages
+        </p>
+
+        <p className="text-md text-light line-clamp-2 mt-1">
+          {webhook?.description}
+        </p>
       </div>
       <div className="flex justify-center items-center ">
         <button
