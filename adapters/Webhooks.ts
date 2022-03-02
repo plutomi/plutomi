@@ -36,8 +36,12 @@ const UpdateWebhook = async (options: UpdateWebhookOptions) => {
   return data;
 };
 
-const GetWebhooksInStageUrl = ({ openingId, stageId }) =>
-  `/openings/${openingId}/stages/${stageId}/webhooks`;
+interface GetWebhooksInStageInput {
+  openingId: string;
+  stageId: string;
+}
+const GetWebhooksInStageUrl = (options: GetWebhooksInStageInput) =>
+  `/openings/${options.openingId}/stages/${options.stageId}/webhooks`;
 
 interface AddWebhookToStageInput {
   openingId: string;
@@ -57,6 +61,11 @@ const AddWebhookToStage = async (options: AddWebhookToStageInput) => {
       webhookId,
     }
   );
+  return data;
+};
+
+const GetWebhooksInStage = async (options: GetWebhooksInStageInput) => {
+  const data = await axios.get(GetWebhooksInStageUrl({ ...options }));
   return data;
 };
 
@@ -81,4 +90,5 @@ export {
   GetWebhookInfoURL,
   AddWebhookToStage,
   DeleteWebhookFromStage,
+  GetWebhooksInStage,
 };
