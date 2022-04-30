@@ -9,6 +9,7 @@
     "dev-server": "cross-env NODE_ENV=development nodemon app.ts",
     "dev": "cross-env NODE_ENV=development cdk deploy development-DynamoDBStack development-StreamProcessorStack development-CommsMachineStack development-EventBridgeStack development-StorageStack development-DeleteChildrenMachineStack development-AthenaDynamoQueryStack && concurrently \"npm run dev-server\" \"next dev\"",
     "start": "cross-env NODE_ENV=production ts-node --transpile-only app.ts",
+    "prettier": "npx run prettier --write .",
     "deploy-prod": "cross-env NODE_ENV=production cdk deploy production-DynamoDBStack production-StreamProcessorStack production-APIStack production-CommsMachineStack production-EventBridgeStack production-StorageStack production-DeleteChildrenMachineStack production-AthenaDynamoQueryStack FrontendStack"
   },
   "dependencies": {
@@ -124,6 +125,8 @@
     "@types/node": "^16.11.11",
     "@types/react": "^17.0.33",
     "@types/source-map-support": "^0.5.4",
+    "@typescript-eslint/eslint-plugin": "^5.21.0",
+    "@typescript-eslint/parser": "^5.21.0",
     "autoprefixer": "^10.4.0",
     "aws-sdk": "^2.1046.0",
     "concurrently": "^6.5.1",
@@ -132,6 +135,7 @@
     "dotenv": "^10.0.0",
     "eslint": "^8.14.0",
     "eslint-config-airbnb": "^19.0.4",
+    "eslint-config-airbnb-typescript": "^17.0.0",
     "eslint-config-next": "^11.1.0",
     "eslint-config-prettier": "^8.5.0",
     "eslint-plugin-import": "^2.26.0",

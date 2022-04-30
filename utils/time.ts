@@ -6,17 +6,13 @@ dayjs.extend(relativeTime);
  * Gets the current ISO timestamp
  * @returns The current ISO timestamp
  */
-export const currentISO = () => {
-  return dayjs().toISOString();
-};
+export const currentISO = () => dayjs().toISOString();
 
 /**
  * Gets the current UNIX timestamp
  * @returns The current UNIX timestamp
  */
-export const currentUNIX = () => {
-  return dayjs().unix();
-};
+export const currentUNIX = () => dayjs().unix();
 
 /**
  * Returns a string with the relative time to the date provided
@@ -40,9 +36,7 @@ export const relative = (date: string | number | Date): string => {
  * @param unit Which {@link TIME_UNITS} to retrieve
  * @returns A future ISO timestamp
  */
-export const futureISO = (amount: number, unit: string): string => {
-  return dayjs().add(amount, unit).toISOString();
-};
+export const futureISO = (amount: number, unit: string) => dayjs().add(amount, unit).toISOString();
 
 /**
  *

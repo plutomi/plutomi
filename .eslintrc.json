@@ -1,6 +1,17 @@
 {
-  "extends": ["next/core-web-vitals", "airbnb", "airbnb/hooks", "prettier"],
+  "extends": [
+    "next/core-web-vitals",
+    "airbnb",
+    "airbnb/hooks",
+    "airbnb-typescript/base",
+    "prettier"
+  ],
   "rules": {
     "@next/next/no-document-import-in-page": "off" // small bug
+  },
+
+  "parserOptions": {
+    "ecmaVersion": "latest",
+    "project": "./tsconfig.json"
   }
 }
