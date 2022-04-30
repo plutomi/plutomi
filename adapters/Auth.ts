@@ -2,13 +2,7 @@ import { AXIOS_INSTANCE as axios } from "../Config";
 
 // TODO types
 interface RequestLoginLinkInput {
-  /**
-   * The email to send the login link to
-   */
   email: string;
-  /**
-   * The URL to redirect back to
-   */
   callbackUrl?: string;
 }
 const RequestLoginLink = async (options: RequestLoginLinkInput) => {

@@ -3,14 +3,6 @@ import * as dotenv from "dotenv";
 import * as dynamodb from "@aws-cdk/aws-dynamodb";
 import { DYNAMO_TABLE_NAME } from "../Config";
 
-const resultDotEnv = dotenv.config({
-  path: `${process.cwd()}/.env.${process.env.NODE_ENV}`,
-});
-
-if (resultDotEnv.error) {
-  throw resultDotEnv.error;
-}
-
 /**
  * Creates a DynamoDB table with two GSIs
  */

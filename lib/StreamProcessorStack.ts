@@ -7,13 +7,6 @@ import { NodejsFunction } from "@aws-cdk/aws-lambda-nodejs";
 import { DynamoEventSource } from "@aws-cdk/aws-lambda-event-sources";
 import { StartingPosition, Runtime, Architecture } from "@aws-cdk/aws-lambda";
 import { RetentionDays } from "@aws-cdk/aws-logs";
-const resultDotEnv = dotenv.config({
-  path: `${process.cwd()}/.env.${process.env.NODE_ENV}`,
-});
-
-if (resultDotEnv.error) {
-  throw resultDotEnv.error;
-}
 
 interface StreamProcessorStackProps extends cdk.StackProps {
   table: Table;

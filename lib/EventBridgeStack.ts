@@ -4,13 +4,6 @@ import { ENTITY_TYPES } from "../Config";
 import { EventBus, Rule } from "@aws-cdk/aws-events";
 import { StateMachine } from "@aws-cdk/aws-stepfunctions";
 import { SfnStateMachine } from "@aws-cdk/aws-events-targets";
-const resultDotEnv = dotenv.config({
-  path: `${process.cwd()}/.env.${process.env.NODE_ENV}`,
-});
-
-if (resultDotEnv.error) {
-  throw resultDotEnv.error;
-}
 
 interface EventBridgeStackProps extends cdk.StackProps {
   CommsMachine: StateMachine;

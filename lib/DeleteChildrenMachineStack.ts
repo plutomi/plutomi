@@ -11,13 +11,6 @@ import { Architecture, Runtime } from "@aws-cdk/aws-lambda";
 import * as iam from "@aws-cdk/aws-iam";
 import path from "path";
 
-const resultDotEnv = dotenv.config({
-  path: `${process.cwd()}/.env.${process.env.NODE_ENV}`,
-});
-
-if (resultDotEnv.error) {
-  throw resultDotEnv.error;
-}
 
 interface DeleteChildrenMachineProps extends cdk.StackProps {
   table: Table;

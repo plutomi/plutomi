@@ -11,13 +11,7 @@ import {
   WEBSITE_URL,
 } from "../Config";
 
-const resultDotEnv = dotenv.config({
-  path: `${process.cwd()}/.env.${process.env.NODE_ENV}`,
-});
 
-if (resultDotEnv.error) {
-  throw resultDotEnv.error;
-}
 
 interface CommsMachineProps extends cdk.StackProps {
   table: Table;

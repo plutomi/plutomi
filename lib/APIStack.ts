@@ -16,14 +16,6 @@ import { CloudFrontTarget } from "@aws-cdk/aws-route53-targets";
 import { API_DOMAIN, DOMAIN_NAME, EXPRESS_PORT } from "../Config";
 import { Policy, PolicyStatement } from "@aws-cdk/aws-iam";
 import { DynamoActions } from "../types/main";
-import { Duration } from "@aws-cdk/core";
-const resultDotEnv = dotenv.config({
-  path: `${process.cwd()}/.env.${process.env.NODE_ENV}`,
-});
-
-if (resultDotEnv.error) {
-  throw resultDotEnv.error;
-}
 
 interface APIStackServiceProps extends cdk.StackProps {
   table: Table;

@@ -19,7 +19,7 @@ const DeleteApplicant = async (applicantId: string) => {
   return data;
 };
 
-// TODo types - not implemented yet in v2
+// TODO types - not implemented yet in v2
 const UpdateApplicant = async (applicantId, newValues) => {
   const data = await axios.put(GetApplicantByIdURL(applicantId), newValues);
   return data;
