@@ -4,11 +4,10 @@ import { DYNAMO_TABLE_NAME, ENTITY_TYPES } from "../../Config";
 import { DynamoStage } from "../../types/dynamo";
 import { GetStagesInOpeningInput } from "../../types/main";
 import { SdkError } from "@aws-sdk/types";
-export default async function GetStages(
+export default async function GetStagesInOpening(
   props: GetStagesInOpeningInput
 ): Promise<[DynamoStage[], null] | [null, SdkError]> {
   const { orgId, openingId, stageOrder } = props;
-
   const params: QueryCommandInput = {
     TableName: `${process.env.NODE_ENV}-${DYNAMO_TABLE_NAME}`,
     IndexName: "GSI1",

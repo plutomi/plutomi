@@ -4,7 +4,7 @@ import { DYNAMO_TABLE_NAME, ENTITY_TYPES } from "../../Config";
 import { UpdateQuestionInput } from "../../types/main";
 import { SdkError } from "@aws-sdk/types";
 
-export default async function Update(
+export default async function UpdateQuestion(
   props: UpdateQuestionInput
 ): Promise<[null, null] | [null, SdkError]> {
   const { orgId, questionId, newValues } = props;

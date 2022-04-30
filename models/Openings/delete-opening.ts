@@ -6,7 +6,8 @@ import { Dynamo } from "../../AWSClients/ddbDocClient";
 import { DYNAMO_TABLE_NAME, ENTITY_TYPES } from "../../Config";
 import { DeleteOpeningInput } from "../../types/main";
 import { SdkError } from "@aws-sdk/types";
-export default async function remove(
+
+export default async function DeleteOpening(
   props: DeleteOpeningInput
 ): Promise<[null, null] | [null, SdkError]> {
   const { orgId, openingId } = props;

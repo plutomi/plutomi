@@ -8,7 +8,7 @@ import { SdkError } from "@aws-sdk/types";
  * @param props {@link GetStageByIdInput}
  * @returns - {@link GetStageByIdOutput}
  */
-export default async function Get(
+export default async function GetStageByid(
   props: GetStageByIdInput
 ): Promise<[GetStageByIdOutput, null] | [null, SdkError]> {
   const { orgId, stageId, openingId } = props;

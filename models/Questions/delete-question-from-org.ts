@@ -6,6 +6,7 @@ import { Dynamo } from "../../AWSClients/ddbDocClient";
 import { DYNAMO_TABLE_NAME, ENTITY_TYPES } from "../../Config";
 import { DeleteQuestionFromOrgInput } from "../../types/main";
 import { SdkError } from "@aws-sdk/types";
+
 export default async function DeleteQuestionFromOrg(
   props: DeleteQuestionFromOrgInput
 ): Promise<[null, null] | [null, SdkError]> {

@@ -8,6 +8,7 @@ import { DynamoOrg } from "../../types/dynamo";
 import { CreateAndJoinOrgInput } from "../../types/main";
 import * as Time from "../../utils/time";
 import { SdkError } from "@aws-sdk/types";
+
 export default async function CreateAndJoinOrg(
   props: CreateAndJoinOrgInput
 ): Promise<[null, null] | [null, SdkError]> {

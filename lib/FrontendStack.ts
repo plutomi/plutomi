@@ -6,7 +6,6 @@ import { Certificate } from "@aws-cdk/aws-certificatemanager";
 import { DOMAIN_NAME } from "../Config";
 import { Runtime } from "@aws-cdk/aws-lambda";
 
-
 /**
  * Deploys the Nextjs app to cloudfront with a custom domain
  */

@@ -6,6 +6,7 @@ import {
   GetApplicantsInStageOutput,
 } from "../../types/main";
 import { SdkError } from "@aws-sdk/types";
+
 export default async function GetApplicants(
   props: GetApplicantsInStageInput
 ): Promise<[GetApplicantsInStageOutput, null] | [null, SdkError]> {

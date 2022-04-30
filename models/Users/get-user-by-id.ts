@@ -9,7 +9,7 @@ import { SdkError } from "@aws-sdk/types";
  * @param userId The userId you want to find
  * @returns - {@link DynamoUser}
  */
-export default async function GetById(
+export default async function GetUserById(
   props: GetUserByIdInput
 ): Promise<[DynamoUser, null] | [null, SdkError]> {
   const { userId } = props;

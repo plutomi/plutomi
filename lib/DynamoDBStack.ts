@@ -1,5 +1,4 @@
 import * as cdk from "@aws-cdk/core";
-import * as dotenv from "dotenv";
 import * as dynamodb from "@aws-cdk/aws-dynamodb";
 import { DYNAMO_TABLE_NAME } from "../Config";
 

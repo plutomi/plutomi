@@ -9,6 +9,7 @@ import {
 } from "../../types/main";
 import * as Time from "../../utils/time";
 import { SdkError } from "@aws-sdk/types";
+
 export default async function CreateResponse(
   props: CreateApplicantResponseInput
 ): Promise<[CreateApplicantResponseOutput, null] | [null, SdkError]> {

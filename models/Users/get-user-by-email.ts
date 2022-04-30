@@ -4,7 +4,8 @@ import { DYNAMO_TABLE_NAME, ENTITY_TYPES } from "../../Config";
 import { DynamoUser } from "../../types/dynamo";
 import { GetUserByEmailInput } from "../../types/main";
 import { SdkError } from "@aws-sdk/types";
-export default async function GetByEmail(
+
+export default async function GetUserByEmail(
   props: GetUserByEmailInput
 ): Promise<[DynamoUser, null] | [null, SdkError]> {
   const { email } = props;

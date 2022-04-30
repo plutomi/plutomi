@@ -1,4 +1,3 @@
-import * as dotenv from "dotenv";
 import * as cdk from "@aws-cdk/core";
 import { ENTITY_TYPES } from "../Config";
 import { EventBus, Rule } from "@aws-cdk/aws-events";

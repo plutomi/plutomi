@@ -7,6 +7,7 @@ import {
 } from "../../types/main";
 import { SdkError } from "@aws-sdk/types";
 import { DynamoQuestion } from "../../types/dynamo";
+
 export default async function GetQuestionsInOrg(
   props: GetQuestionsInOrgInput
 ): Promise<[GetQuestionsInOrgOutput, null] | [null, SdkError]> {

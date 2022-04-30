@@ -1,4 +1,3 @@
-import * as dotenv from "dotenv";
 import * as path from "path";
 import * as cdk from "@aws-cdk/core";
 import { Table } from "@aws-cdk/aws-dynamodb";

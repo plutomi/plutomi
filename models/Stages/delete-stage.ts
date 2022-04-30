@@ -1,5 +1,3 @@
-// TODO check if stage is empt of appliants first
-
 import {
   TransactWriteCommandInput,
   TransactWriteCommand,
@@ -8,9 +6,12 @@ import { Dynamo } from "../../AWSClients/ddbDocClient";
 import { DYNAMO_TABLE_NAME, ENTITY_TYPES } from "../../Config";
 import { DeleteStageInput } from "../../types/main";
 import { SdkError } from "@aws-sdk/types";
-export default async function Remove(
+
+export default async function DeleteStage(
   props: DeleteStageInput
 ): Promise<[null, null] | [null, SdkError]> {
+  // TODO check if stage is empt of appliants first
+
   const { orgId, stageId, openingId, deleteIndex } = props;
   const transactParams: TransactWriteCommandInput = {
     TransactItems: [

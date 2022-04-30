@@ -1,4 +1,3 @@
-import * as dotenv from "dotenv";
 import * as cdk from "@aws-cdk/core";
 import * as sfn from "@aws-cdk/aws-stepfunctions";
 import * as tasks from "@aws-cdk/aws-stepfunctions-tasks";
@@ -11,11 +10,9 @@ import { Architecture, Runtime } from "@aws-cdk/aws-lambda";
 import * as iam from "@aws-cdk/aws-iam";
 import path from "path";
 
-
 interface DeleteChildrenMachineProps extends cdk.StackProps {
   table: Table;
 }
-
 /**
  * When an item is deleted, this deletes all children in the item or from other items.
  * For example: When deleting a question from an org this should delete the question from all stages.

@@ -8,7 +8,8 @@ import {
   CreateApplicantOutput,
 } from "../../types/main";
 import { SdkError } from "@aws-sdk/types";
-export default async function Get(
+
+export default async function GetApplicantById(
   props: GetApplicantByIdInput
 ): Promise<[GetApplicantByIdOutput, null] | [null, SdkError]> {
   const { orgId, applicantId } = props;

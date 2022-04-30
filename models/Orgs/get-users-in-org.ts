@@ -5,7 +5,7 @@ import { DynamoUser } from "../../types/dynamo";
 import { GetUsersInOrgInput } from "../../types/main";
 import { SdkError } from "@aws-sdk/types";
 
-export default async function GetUsers(
+export default async function GetUsersInOrg(
   props: GetUsersInOrgInput
 ): Promise<[DynamoUser[], null] | [null, SdkError]> {
   const { orgId, limit } = props;

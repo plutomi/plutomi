@@ -3,7 +3,8 @@ import { Dynamo } from "../../AWSClients/ddbDocClient";
 import { DYNAMO_TABLE_NAME, ENTITY_TYPES } from "../../Config";
 import { UpdateOpeningInput } from "../../types/main";
 import { SdkError } from "@aws-sdk/types";
-export default async function update(
+
+export default async function UpdateOpening(
   props: UpdateOpeningInput
 ): Promise<[null, null] | [null, SdkError]> {
   const { orgId, openingId, newValues } = props;

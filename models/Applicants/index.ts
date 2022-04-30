@@ -5,12 +5,11 @@ import UpdateApplicant from "./update-applicant";
 import CreateApplicantResponse from "./create-applicant-response";
 import GetApplicantsInStage from "../Applicants/get-applicants-in-stage";
 
-
 export {
   CreateApplicant,
   GetApplicantById,
   DeleteApplicant,
   UpdateApplicant,
   CreateApplicantResponse,
-  GetApplicantsInStage
+  GetApplicantsInStage,
 };

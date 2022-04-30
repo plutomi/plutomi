@@ -6,7 +6,6 @@ import { Dynamo } from "../../AWSClients/ddbDocClient";
 import { DEFAULTS, DYNAMO_TABLE_NAME, ENTITY_TYPES } from "../../Config";
 import { SdkError } from "@aws-sdk/types";
 
-// TODO move this to types.main
 interface RemoveUserFromOrgInput {
   /**
    * The ID of the org the user is in
@@ -21,7 +20,7 @@ interface RemoveUserFromOrgInput {
    */
   createdById: string;
 }
-export default async function RemoveUser(
+export default async function RemoveUserFromOrg(
   props: RemoveUserFromOrgInput
 ): Promise<[null, null] | [null, SdkError]> {
   const { userId, createdById, orgId } = props;

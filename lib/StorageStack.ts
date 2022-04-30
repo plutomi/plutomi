@@ -1,7 +1,5 @@
 import * as cdk from "@aws-cdk/core";
-import * as dotenv from "dotenv";
 import * as s3 from "@aws-cdk/aws-s3";
-
 
 export default class StorageStack extends cdk.Stack {
   public readonly bucket: s3.Bucket;
