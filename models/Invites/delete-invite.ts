@@ -1,18 +1,15 @@
-import { Dynamo } from "../../AWSClients/ddbDocClient";
-import { DYNAMO_TABLE_NAME, ENTITY_TYPES } from "../../Config";
-import { SdkError } from "@aws-sdk/types";
-import {
-  TransactWriteCommandInput,
-  TransactWriteCommand,
-} from "@aws-sdk/lib-dynamodb";
-import { DeleteOrgInviteInput } from "../../types/main";
+import { Dynamo } from '../../AWSClients/ddbDocClient';
+import { DYNAMO_TABLE_NAME, ENTITY_TYPES } from '../../Config';
+import { SdkError } from '@aws-sdk/types';
+import { TransactWriteCommandInput, TransactWriteCommand } from '@aws-sdk/lib-dynamodb';
+import { DeleteOrgInviteInput } from '../../types/main';
 
 /**
  * 1. Rejecting invite as invitee
  * 2. Deleting invite
  */
 export default async function DeleteInvite(
-  props: DeleteOrgInviteInput
+  props: DeleteOrgInviteInput,
 ): Promise<[null, null] | [null, SdkError]> {
   const { userId, inviteId } = props;
   try {
@@ -26,7 +23,7 @@ export default async function DeleteInvite(
               SK: `${ENTITY_TYPES.ORG_INVITE}#${inviteId}`,
             },
             TableName: `${process.env.NODE_ENV}-${DYNAMO_TABLE_NAME}`,
-            ConditionExpression: "attribute_exists(PK)",
+            ConditionExpression: 'attribute_exists(PK)',
           },
         },
 
@@ -38,11 +35,11 @@ export default async function DeleteInvite(
               SK: ENTITY_TYPES.USER,
             },
             TableName: `${process.env.NODE_ENV}-${DYNAMO_TABLE_NAME}`,
-            UpdateExpression: "SET totalInvites = totalInvites - :value",
+            UpdateExpression: 'SET totalInvites = totalInvites - :value',
             ExpressionAttributeValues: {
-              ":value": 1,
+              ':value': 1,
             },
-            ConditionExpression: "attribute_exists(PK)",
+            ConditionExpression: 'attribute_exists(PK)',
           },
         },
       ],

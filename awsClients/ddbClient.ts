@@ -1,6 +1,6 @@
-import { DynamoDBClient } from "@aws-sdk/client-dynamodb";
+import { DynamoDBClient } from '@aws-sdk/client-dynamodb';
 
-const globalDefault = "us-east-1";
+const globalDefault = 'us-east-1';
 const ddbClient = new DynamoDBClient({
   region: globalDefault,
 });

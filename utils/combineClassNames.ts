@@ -6,8 +6,6 @@
         active ? 'active classes' : 'inactive classes')}>Text</button>
  *  
  */
-export default function combineClassNames(
-  ...classes: (false | null | undefined | string)[]
-) {
-  return classes.filter(Boolean).join(" ");
+export default function combineClassNames(...classes: (false | null | undefined | string)[]) {
+  return classes.filter(Boolean).join(' ');
 }

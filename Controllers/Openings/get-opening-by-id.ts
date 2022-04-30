@@ -1,8 +1,8 @@
-import { Request, Response } from "express";
-import Joi from "joi";
-import { JOI_SETTINGS } from "../../Config";
-import * as Openings from "../../models/Openings";
-import * as CreateError from "../../utils/createError";
+import { Request, Response } from 'express';
+import Joi from 'joi';
+import { JOI_SETTINGS } from '../../Config';
+import * as Openings from '../../models/Openings';
+import * as CreateError from '../../utils/createError';
 
 const schema = Joi.object({
   params: {
@@ -25,15 +25,12 @@ const main = async (req: Request, res: Response) => {
   });
 
   if (error) {
-    const { status, body } = CreateError.SDK(
-      error,
-      "An error ocurred retrieving your opening"
-    );
+    const { status, body } = CreateError.SDK(error, 'An error ocurred retrieving your opening');
 
     return res.status(status).json(body);
   }
   if (!opening) {
-    return res.status(404).json({ message: "Opening not found" });
+    return res.status(404).json({ message: 'Opening not found' });
   }
 
   return res.status(200).json(opening);

@@ -1,18 +1,12 @@
-import {
-  AXIOS_INSTANCE as axios,
-  DEFAULTS,
-  OPENING_STATE,
-  EMAILS,
-  ERRORS,
-} from "../Config";
-import { nanoid } from "nanoid";
-import * as Orgs from "../adapters/Orgs";
-import * as Openings from "../adapters/Openings";
-import * as Stages from "../adapters/Stages";
-import * as Applicants from "../adapters/Applicants";
-import { DynamoOpening } from "../types/dynamo";
-import * as GenerateID from "../utils/generateIds";
-describe("Openings", () => {
+import { AXIOS_INSTANCE as axios, DEFAULTS, OPENING_STATE, EMAILS, ERRORS } from '../Config';
+import { nanoid } from 'nanoid';
+import * as Orgs from '../adapters/Orgs';
+import * as Openings from '../adapters/Openings';
+import * as Stages from '../adapters/Stages';
+import * as Applicants from '../adapters/Applicants';
+import { DynamoOpening } from '../types/dynamo';
+import * as GenerateID from '../utils/generateIds';
+describe('Openings', () => {
   /**
    * Creates a session cookie
    */
@@ -23,13 +17,13 @@ describe("Openings", () => {
   let applicant;
   beforeAll(async () => {
     const data = await axios.post(`/jest-setup`);
-    const cookie = data.headers["set-cookie"][0];
+    const cookie = data.headers['set-cookie'][0];
     axios.defaults.headers.Cookie = cookie;
 
     // Create an org
     await Orgs.CreateOrg({
       orgId,
-      displayName: nanoid(10) + " Inc.",
+      displayName: nanoid(10) + ' Inc.',
     });
 
     // Create a public opening
@@ -41,7 +35,7 @@ describe("Openings", () => {
     // Get public opening
     let openings = await Openings.GetAllOpeningsInOrg();
     const publicOpening = openings.data.find(
-      (opening: DynamoOpening) => opening.openingName === publicOpeningName
+      (opening: DynamoOpening) => opening.openingName === publicOpeningName,
     );
 
     publicOpeningId = publicOpening.openingId;
@@ -69,7 +63,7 @@ describe("Openings", () => {
     // Get private opening
     openings = await Openings.GetAllOpeningsInOrg();
     const privateOpening = openings.data.find(
-      (opening: DynamoOpening) => opening.openingName === privateOpeningName
+      (opening: DynamoOpening) => opening.openingName === privateOpeningName,
     );
 
     privateOpeningId = privateOpening.openingId;
@@ -84,7 +78,7 @@ describe("Openings", () => {
     };
   });
 
-  it("blocks creating an applicant in private openings", async () => {
+  it('blocks creating an applicant in private openings', async () => {
     expect.assertions(2);
     try {
       await Applicants.CreateApplicant({
@@ -93,18 +87,16 @@ describe("Openings", () => {
       });
     } catch (error) {
       expect(error.response.status).toBe(403);
-      expect(error.response.data.message).toContain(
-        "You cannot apply to this opening just yet!"
-      );
+      expect(error.response.data.message).toContain('You cannot apply to this opening just yet!');
     }
   });
 
-  it("blocks creating an applicant with a spammy email", async () => {
+  it('blocks creating an applicant with a spammy email', async () => {
     expect.assertions(2);
     try {
       await Applicants.CreateApplicant({
         ...applicant,
-        email: "test@10minutemail.com",
+        email: 'test@10minutemail.com',
       });
     } catch (error) {
       expect(error.response.status).toBe(400);
@@ -112,7 +104,7 @@ describe("Openings", () => {
     }
   });
 
-  it("blocks creating applicants with long names", async () => {
+  it('blocks creating applicants with long names', async () => {
     expect.assertions(4);
     try {
       await Applicants.CreateApplicant({
@@ -122,29 +114,27 @@ describe("Openings", () => {
       });
     } catch (error) {
       expect(error.response.status).toBe(400);
-      expect(error.response.data.message).toContain("body.firstName");
-      expect(error.response.data.message).toContain("body.lastName");
-      expect(error.response.data.message).toContain(
-        "length must be less than or equal to"
-      );
+      expect(error.response.data.message).toContain('body.firstName');
+      expect(error.response.data.message).toContain('body.lastName');
+      expect(error.response.data.message).toContain('length must be less than or equal to');
     }
   });
 
-  it("blocks creating applicants with invalid emails", async () => {
+  it('blocks creating applicants with invalid emails', async () => {
     expect.assertions(3);
     try {
       await Applicants.CreateApplicant({
         ...applicant,
-        email: "beans",
+        email: 'beans',
       });
     } catch (error) {
       expect(error.response.status).toBe(400);
-      expect(error.response.data.message).toContain("body.email");
-      expect(error.response.data.message).toContain("must be a valid email");
+      expect(error.response.data.message).toContain('body.email');
+      expect(error.response.data.message).toContain('must be a valid email');
     }
   });
 
-  it("blocks creating applicants with the default org", async () => {
+  it('blocks creating applicants with the default org', async () => {
     expect.assertions(3);
     try {
       await Applicants.CreateApplicant({
@@ -153,10 +143,8 @@ describe("Openings", () => {
       });
     } catch (error) {
       expect(error.response.status).toBe(400);
-      expect(error.response.data.message).toContain("body.orgId");
-      expect(error.response.data.message).toContain(
-        "contains an invalid value"
-      );
+      expect(error.response.data.message).toContain('body.orgId');
+      expect(error.response.data.message).toContain('contains an invalid value');
     }
   });
 });

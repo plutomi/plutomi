@@ -1,4 +1,4 @@
-import Link from "next/link";
+import Link from 'next/link';
 export default function WarningBanner() {
   return (
     <div className="relative bg-red-600">
@@ -6,13 +6,11 @@ export default function WarningBanner() {
         <div className="pr-16 sm:text-center sm:px-16">
           <p className="font-medium text-white">
             <span className="md:hidden">Website in development!</span>
-            <span className="hidden md:inline">
-              WARNING: Website is in *active* development.
-            </span>
+            <span className="hidden md:inline">WARNING: Website is in *active* development.</span>
             <span className="block sm:ml-2 sm:inline-block">
               <Link href="/faq">
                 <a className="text-white font-bold underline transition ease-in-out hover:text-blue-gray-200 duration-200">
-                  {" "}
+                  {' '}
                   Learn more <span aria-hidden="true">&rarr;</span>
                 </a>
               </Link>

@@ -1,17 +1,13 @@
-import { FormEvent, Fragment, useEffect, useState } from "react";
-import { Dialog, Transition } from "@headlessui/react";
-import { XIcon } from "@heroicons/react/outline";
-import { GetOpeningInfoURL, UpdateOpening } from "../../adapters/Openings";
-import useStore from "../../utils/store";
-import { mutate } from "swr";
-import { OPENING_STATE } from "../../Config";
-import { DynamoOpening } from "../../types/dynamo";
+import { FormEvent, Fragment, useEffect, useState } from 'react';
+import { Dialog, Transition } from '@headlessui/react';
+import { XIcon } from '@heroicons/react/outline';
+import { GetOpeningInfoURL, UpdateOpening } from '../../adapters/Openings';
+import useStore from '../../utils/store';
+import { mutate } from 'swr';
+import { OPENING_STATE } from '../../Config';
+import { DynamoOpening } from '../../types/dynamo';
 
-export default function UpdateOpeningModal({
-  opening,
-}: {
-  opening: DynamoOpening;
-}) {
+export default function UpdateOpeningModal({ opening }: { opening: DynamoOpening }) {
   const [openingName, setOpeningName] = useState(opening?.openingName);
   const [GSI1SK, setGSI1SK] = useState(opening?.GSI1SK);
 
@@ -22,9 +18,7 @@ export default function UpdateOpeningModal({
 
   const visibility = useStore((state) => state.showUpdateOpeningModal);
 
-  const closeUpdateOpeningModal = useStore(
-    (state) => state.closeUpdateOpeningModal
-  );
+  const closeUpdateOpeningModal = useStore((state) => state.closeUpdateOpeningModal);
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
@@ -32,8 +26,7 @@ export default function UpdateOpeningModal({
     try {
       const newValues = {
         GSI1SK: opening?.GSI1SK === GSI1SK ? undefined : GSI1SK,
-        openingName:
-          opening?.openingName == openingName ? undefined : openingName,
+        openingName: opening?.openingName == openingName ? undefined : openingName,
       };
 
       const { data } = await UpdateOpening({
@@ -50,11 +43,7 @@ export default function UpdateOpeningModal({
 
   return (
     <Transition.Root show={visibility} as={Fragment}>
-      <Dialog
-        as="div"
-        className="fixed inset-0 overflow-hidden "
-        onClose={closeUpdateOpeningModal}
-      >
+      <Dialog as="div" className="fixed inset-0 overflow-hidden " onClose={closeUpdateOpeningModal}>
         <div className="absolute inset-0 overflow-hidden">
           <Transition.Child
             as={Fragment}
@@ -102,10 +91,9 @@ export default function UpdateOpeningModal({
                       </div>
                       <div className="mt-1">
                         <p className="text-sm text-blue-300">
-                          An opening is what you need applicants for. It could
-                          be a job like &apos;Engineer&apos;, a location like
-                          &apos;New York&apos; or &apos;Miami&apos;, or just the
-                          name of your program.
+                          An opening is what you need applicants for. It could be a job like
+                          &apos;Engineer&apos;, a location like &apos;New York&apos; or
+                          &apos;Miami&apos;, or just the name of your program.
                         </p>
                       </div>
                     </div>
@@ -134,12 +122,11 @@ export default function UpdateOpeningModal({
                           <div className="relative flex items-start">
                             {opening?.totalStages === 0 ? (
                               <p className="text-light text-sm ">
-                                You will be able to make this opening public
-                                after adding a stage.
+                                You will be able to make this opening public after adding a stage.
                               </p>
                             ) : (
                               <div>
-                                {" "}
+                                {' '}
                                 <div className="flex items-center h-5">
                                   <input
                                     id="comments"
@@ -152,24 +139,17 @@ export default function UpdateOpeningModal({
                                       setGSI1SK(
                                         e.target.checked
                                           ? OPENING_STATE.PUBLIC
-                                          : OPENING_STATE.PRIVATE
+                                          : OPENING_STATE.PRIVATE,
                                       )
                                     }
                                     className="focus:ring-blue-500 h-4 w-4 text-blue-600 border-gray-300 rounded"
                                   />
                                   <div className="ml-3 text-sm">
-                                    <label
-                                      htmlFor="comments"
-                                      className="font-medium text-gray-700"
-                                    >
+                                    <label htmlFor="comments" className="font-medium text-gray-700">
                                       Public
                                     </label>
-                                    <p
-                                      id="comments-description"
-                                      className="text-normal"
-                                    >
-                                      Make this opening available for everyone
-                                      to apply
+                                    <p id="comments-description" className="text-normal">
+                                      Make this opening available for everyone to apply
                                     </p>
                                   </div>
                                 </div>

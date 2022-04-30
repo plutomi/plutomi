@@ -1,7 +1,7 @@
-import { Request, Response } from "express";
-import * as Openings from "../../models/Openings";
-import * as CreateError from "../../utils/createError";
-import * as Stages from "../../models/Stages";
+import { Request, Response } from 'express';
+import * as Openings from '../../models/Openings';
+import * as CreateError from '../../utils/createError';
+import * as Stages from '../../models/Stages';
 const main = async (req: Request, res: Response) => {
   const { session } = res.locals;
 
@@ -15,13 +15,13 @@ const main = async (req: Request, res: Response) => {
   if (openingError) {
     const { status, body } = CreateError.SDK(
       openingError,
-      "An error ocurred getting your opening info"
+      'An error ocurred getting your opening info',
     );
     return res.status(status).json(body);
   }
 
   if (!opening) {
-    return res.status(404).json({ message: "Opening does not exist" });
+    return res.status(404).json({ message: 'Opening does not exist' });
   }
   const [allCurrentStages, allStagesError] = await Stages.GetStagesInOpenings({
     openingId,
@@ -30,10 +30,10 @@ const main = async (req: Request, res: Response) => {
   });
 
   if (allStagesError) {
-    console.log("All stages error", allStagesError);
+    console.log('All stages error', allStagesError);
     const { status, body } = CreateError.SDK(
       allStagesError,
-      "An error ocurred retrieving all the current stages"
+      'An error ocurred retrieving all the current stages',
     );
 
     return res.status(status).json(body);

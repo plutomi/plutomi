@@ -1,5 +1,5 @@
-import errorFormatter from "./errorFormatter";
-import { SdkError } from "@aws-sdk/types";
+import errorFormatter from './errorFormatter';
+import { SdkError } from '@aws-sdk/types';
 /**
  * Response for AWS SDK calls.
  * @param error - The error object

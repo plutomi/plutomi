@@ -1,8 +1,8 @@
-import { Request, Response } from "express";
-import Joi from "joi";
-import { JOI_SETTINGS } from "../../Config";
-import * as Invites from "../../models/Invites";
-import * as CreateError from "../../utils/createError";
+import { Request, Response } from 'express';
+import Joi from 'joi';
+import { JOI_SETTINGS } from '../../Config';
+import * as Invites from '../../models/Invites';
+import * as CreateError from '../../utils/createError';
 const schema = Joi.object({
   body: {
     inviteId: Joi.string(),
@@ -24,13 +24,10 @@ const main = async (req: Request, res: Response) => {
   });
 
   if (error) {
-    const { status, body } = CreateError.SDK(
-      error,
-      "We were unable to cancel that invite"
-    );
+    const { status, body } = CreateError.SDK(error, 'We were unable to cancel that invite');
     return res.status(status).json(body);
   }
 
-  return res.status(200).json({ message: "Invite cancelled!" });
+  return res.status(200).json({ message: 'Invite cancelled!' });
 };
 export default main;

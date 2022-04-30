@@ -1,4 +1,4 @@
-import { AXIOS_INSTANCE as axios } from "../Config";
+import { AXIOS_INSTANCE as axios } from '../Config';
 
 const GetPublicOrgInfoURL = (orgId: string) => `/public/orgs/${orgId}`;
 
@@ -7,8 +7,7 @@ const GetPublicOrgInfo = async (orgId: string) => {
   return data;
 };
 
-const GetPublicOpeningsURL = (orgId: string) =>
-  `/public/orgs/${orgId}/openings`;
+const GetPublicOpeningsURL = (orgId: string) => `/public/orgs/${orgId}/openings`;
 
 const GetPublicOpenings = async (orgId: string) => {
   const data = await axios.get(GetPublicOpeningsURL(orgId));

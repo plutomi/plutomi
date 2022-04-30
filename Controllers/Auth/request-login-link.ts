@@ -1,6 +1,6 @@
-import { Request, Response } from "express";
-import emailValidator from "deep-email-validator";
-import Joi from "joi";
+import { Request, Response } from 'express';
+import emailValidator from 'deep-email-validator';
+import Joi from 'joi';
 
 import {
   DEFAULTS,
@@ -9,13 +9,13 @@ import {
   JOI_SETTINGS,
   WEBSITE_URL,
   ERRORS,
-} from "../../Config";
-import * as Time from "../../utils/time";
-import * as Users from "../../models/Users";
-import { nanoid } from "nanoid";
-const jwt = require("jsonwebtoken");
-import { API_URL, DOMAIN_NAME } from "../../Config";
-import * as CreateError from "../../utils/createError";
+} from '../../Config';
+import * as Time from '../../utils/time';
+import * as Users from '../../models/Users';
+import { nanoid } from 'nanoid';
+const jwt = require('jsonwebtoken');
+import { API_URL, DOMAIN_NAME } from '../../Config';
+import * as CreateError from '../../utils/createError';
 interface APIRequestLoginLinkBody {
   email?: string;
 }
@@ -57,10 +57,7 @@ const requestLoginLink = async (req: Request, res: Response) => {
   let [user, userError] = await Users.GetUserByEmail({ email });
   if (userError) {
     console.error(userError);
-    const { status, body } = CreateError.SDK(
-      userError,
-      "An error ocurred getting your user info"
-    );
+    const { status, body } = CreateError.SDK(userError, 'An error ocurred getting your user info');
     return res.status(status).json(body);
   }
 
@@ -71,7 +68,7 @@ const requestLoginLink = async (req: Request, res: Response) => {
     if (createUserError) {
       const { status, body } = CreateError.SDK(
         createUserError,
-        "An error ocurred creating your account"
+        'An error ocurred creating your account',
       );
 
       return res.status(status).json(body);
@@ -95,7 +92,7 @@ const requestLoginLink = async (req: Request, res: Response) => {
   if (loginLinkError) {
     const { status, body } = CreateError.SDK(
       loginLinkError,
-      "An error ocurred getting your login link"
+      'An error ocurred getting your login link',
     );
 
     return res.status(status).json(body);
@@ -106,9 +103,7 @@ const requestLoginLink = async (req: Request, res: Response) => {
     latestLink.createdAt >= timeThreshold &&
     !user.email.endsWith(DOMAIN_NAME) // Allow admins to send multiple login links in a short timespan
   ) {
-    return res
-      .status(403)
-      .json({ message: "You're doing that too much, please try again later" });
+    return res.status(403).json({ message: "You're doing that too much, please try again later" });
   }
 
   // Create a login link for them
@@ -121,8 +116,8 @@ const requestLoginLink = async (req: Request, res: Response) => {
       userId: user.userId,
       loginLinkId,
     },
-    "secret",
-    { expiresIn: 900 } // 15 min
+    'secret',
+    { expiresIn: 900 }, // 15 min
   );
 
   const loginLinkUrl = `${API_URL}/login?token=${token}&callbackUrl=${
@@ -141,15 +136,13 @@ const requestLoginLink = async (req: Request, res: Response) => {
   if (creationError) {
     const { status, body } = CreateError.SDK(
       creationError,
-      "An error ocurred creating your login link"
+      'An error ocurred creating your login link',
     );
 
     return res.status(status).json(body);
   }
 
-  return res
-    .status(201)
-    .json({ message: `We've sent a magic login link to your email!` });
+  return res.status(201).json({ message: `We've sent a magic login link to your email!` });
 };
 
 export default requestLoginLink;

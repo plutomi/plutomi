@@ -1,9 +1,6 @@
-import {
-  TransactWriteCommandInput,
-  TransactWriteCommand,
-} from "@aws-sdk/lib-dynamodb";
-import { nanoid } from "nanoid";
-import { Dynamo } from "../../AWSClients/ddbDocClient";
+import { TransactWriteCommandInput, TransactWriteCommand } from '@aws-sdk/lib-dynamodb';
+import { nanoid } from 'nanoid';
+import { Dynamo } from '../../AWSClients/ddbDocClient';
 import {
   ID_LENGTHS,
   ENTITY_TYPES,
@@ -11,14 +8,14 @@ import {
   DEFAULTS,
   OPENING_STATE,
   DYNAMO_TABLE_NAME,
-} from "../../Config";
-import { DynamoApplicant } from "../../types/dynamo";
-import { CreateApplicantInput, CreateApplicantOutput } from "../../types/main";
-import * as Time from "../../utils/time";
-import { SdkError } from "@aws-sdk/types";
+} from '../../Config';
+import { DynamoApplicant } from '../../types/dynamo';
+import { CreateApplicantInput, CreateApplicantOutput } from '../../types/main';
+import * as Time from '../../utils/time';
+import { SdkError } from '@aws-sdk/types';
 
 export default async function Create(
-  props: CreateApplicantInput
+  props: CreateApplicantInput,
 ): Promise<[CreateApplicantOutput, null] | [null, SdkError]> {
   const { orgId, firstName, lastName, email, openingId, stageId } = props;
 
@@ -56,7 +53,7 @@ export default async function Create(
             Item: newApplicant,
             TableName: `${process.env.NODE_ENV}-${DYNAMO_TABLE_NAME}`,
 
-            ConditionExpression: "attribute_not_exists(PK)",
+            ConditionExpression: 'attribute_not_exists(PK)',
           },
         },
         {
@@ -69,18 +66,18 @@ export default async function Create(
             TableName: `${process.env.NODE_ENV}-${DYNAMO_TABLE_NAME}`,
 
             UpdateExpression:
-              "SET totalApplicants = if_not_exists(totalApplicants, :zero) + :value",
+              'SET totalApplicants = if_not_exists(totalApplicants, :zero) + :value',
             /**
              * Opening must exist, be public, & must have stages
              * Since this is a transaction, this whole thing will fail if this check fails
              */
             ConditionExpression:
-              "attribute_exists(PK) AND GSI1SK = :GSI1SK AND totalStages > :totalStages",
+              'attribute_exists(PK) AND GSI1SK = :GSI1SK AND totalStages > :totalStages',
             ExpressionAttributeValues: {
-              ":zero": 0,
-              ":value": 1,
-              ":GSI1SK": OPENING_STATE.PUBLIC,
-              ":totalStages": 0,
+              ':zero': 0,
+              ':value': 1,
+              ':GSI1SK': OPENING_STATE.PUBLIC,
+              ':totalStages': 0,
             },
           },
         },
@@ -93,12 +90,12 @@ export default async function Create(
             },
             TableName: `${process.env.NODE_ENV}-${DYNAMO_TABLE_NAME}`,
 
-            ConditionExpression: "attribute_exists(PK)",
+            ConditionExpression: 'attribute_exists(PK)',
             UpdateExpression:
-              "SET totalApplicants = if_not_exists(totalApplicants, :zero) + :value",
+              'SET totalApplicants = if_not_exists(totalApplicants, :zero) + :value',
             ExpressionAttributeValues: {
-              ":zero": 0,
-              ":value": 1,
+              ':zero': 0,
+              ':value': 1,
             },
           },
         },
@@ -111,12 +108,12 @@ export default async function Create(
             },
             TableName: `${process.env.NODE_ENV}-${DYNAMO_TABLE_NAME}`,
 
-            ConditionExpression: "attribute_exists(PK)",
+            ConditionExpression: 'attribute_exists(PK)',
             UpdateExpression:
-              "SET totalApplicants = if_not_exists(totalApplicants, :zero) + :value",
+              'SET totalApplicants = if_not_exists(totalApplicants, :zero) + :value',
             ExpressionAttributeValues: {
-              ":zero": 0,
-              ":value": 1,
+              ':zero': 0,
+              ':value': 1,
             },
           },
         },

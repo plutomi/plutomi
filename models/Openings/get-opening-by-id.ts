@@ -1,12 +1,12 @@
-import { GetCommandInput, GetCommand } from "@aws-sdk/lib-dynamodb";
-import { Dynamo } from "../../AWSClients/ddbDocClient";
-import { DYNAMO_TABLE_NAME, ENTITY_TYPES } from "../../Config";
-import { DynamoOpening } from "../../types/dynamo";
-import { GetOpeningByIdInput } from "../../types/main";
-import { SdkError } from "@aws-sdk/types";
+import { GetCommandInput, GetCommand } from '@aws-sdk/lib-dynamodb';
+import { Dynamo } from '../../AWSClients/ddbDocClient';
+import { DYNAMO_TABLE_NAME, ENTITY_TYPES } from '../../Config';
+import { DynamoOpening } from '../../types/dynamo';
+import { GetOpeningByIdInput } from '../../types/main';
+import { SdkError } from '@aws-sdk/types';
 
 export default async function GetOpeningById(
-  props: GetOpeningByIdInput
+  props: GetOpeningByIdInput,
 ): Promise<[DynamoOpening, null] | [null, SdkError]> {
   const { orgId, openingId } = props;
   const params: GetCommandInput = {

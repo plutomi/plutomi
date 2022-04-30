@@ -1,4 +1,4 @@
-import { AXIOS_INSTANCE as axios } from "../Config";
+import { AXIOS_INSTANCE as axios } from '../Config';
 
 // TODO types
 interface RequestLoginLinkInput {

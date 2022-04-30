@@ -1,15 +1,15 @@
-import AlreadySignedIn from "../components/AlreadySignedIn";
-import Contact from "../components/Static/ContactUs";
-import LoginHomepage from "../components/LoginHomepage";
-import UseCases from "../components/UseCases";
-import Hero from "../components/Static/Hero";
-import useSelf from "../SWR/useSelf";
-import { AXIOS_INSTANCE as axios } from "../Config";
-import { ChevronRightIcon, MailIcon } from "@heroicons/react/outline";
-import _ from "lodash";
-import * as Time from "../utils/time";
-import { nanoid } from "nanoid";
-import { DOMAIN_NAME } from "../Config";
+import AlreadySignedIn from '../components/AlreadySignedIn';
+import Contact from '../components/Static/ContactUs';
+import LoginHomepage from '../components/LoginHomepage';
+import UseCases from '../components/UseCases';
+import Hero from '../components/Static/Hero';
+import useSelf from '../SWR/useSelf';
+import { AXIOS_INSTANCE as axios } from '../Config';
+import { ChevronRightIcon, MailIcon } from '@heroicons/react/outline';
+import _ from 'lodash';
+import * as Time from '../utils/time';
+import { nanoid } from 'nanoid';
+import { DOMAIN_NAME } from '../Config';
 export default function Main({ commits }) {
   const { user, isUserLoading, isUserError } = useSelf();
   return (
@@ -26,10 +26,7 @@ export default function Main({ commits }) {
       </main>
       <div className="flex-wrap md:flex  justify-center space-x-2">
         <UseCases />
-        <ul
-          role="list"
-          className="divide-y mx-auto max-w-4xl divide-gray-200  mt-12"
-        >
+        <ul role="list" className="divide-y mx-auto max-w-4xl divide-gray-200  mt-12">
           {commits.map((commit) => (
             <li
               key={nanoid(15)}
@@ -39,11 +36,7 @@ export default function Main({ commits }) {
                 <div className="flex items-center px-4 py-4 sm:px-6">
                   <div className="min-w-0 flex-1 flex items-center">
                     <div className="flex-shrink-0">
-                      <img
-                        className="h-16 w-16 rounded-full"
-                        src={commit.image}
-                        alt=""
-                      />
+                      <img className="h-16 w-16 rounded-full" src={commit.image} alt="" />
                     </div>
                     <div className="min-w-0 flex-1 px-4 md:grid md:grid-cols-2 md:gap-4">
                       <div className="">
@@ -71,10 +64,7 @@ export default function Main({ commits }) {
                     </div>
                   </div>
                   <div>
-                    <ChevronRightIcon
-                      className="h-5 w-5 text-gray-400"
-                      aria-hidden="true"
-                    />
+                    <ChevronRightIcon className="h-5 w-5 text-gray-400" aria-hidden="true" />
                   </div>
                 </div>
               </a>
@@ -91,7 +81,7 @@ export async function getStaticProps() {
   const commitsFromEachBranch = 25;
   let allCommits = [];
   const { data } = await axios.get(
-    `https://api.github.com/repos/plutomi/plutomi/branches?u=joswayski`
+    `https://api.github.com/repos/plutomi/plutomi/branches?u=joswayski`,
   );
 
   await Promise.all(
@@ -100,14 +90,14 @@ export async function getStaticProps() {
         `https://api.github.com/repos/plutomi/plutomi/commits?sha=${branch.name}&per_page=${commitsFromEachBranch}&u=joswayski`,
         {
           auth: {
-            username: "joswayski",
-            password: "GithubAccount44!@#",
+            username: 'joswayski',
+            password: 'GithubAccount44!@#',
           },
-        }
+        },
       );
 
       data.map(async (commit) => {
-        if (commit.commit.author.name !== "allcontributors[bot]") {
+        if (commit.commit.author.name !== 'allcontributors[bot]') {
           let customCommit = {
             name: commit.commit.author.name,
             username: commit.author.login,
@@ -120,11 +110,11 @@ export async function getStaticProps() {
           allCommits.push(customCommit);
         }
       });
-    })
+    }),
   );
 
   // Sort by commit timestamp
-  const commits = _.orderBy(allCommits, (commit) => commit.date, ["desc"]);
+  const commits = _.orderBy(allCommits, (commit) => commit.date, ['desc']);
 
   return {
     props: {

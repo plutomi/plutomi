@@ -1,12 +1,12 @@
-import { UpdateCommandInput, UpdateCommand } from "@aws-sdk/lib-dynamodb";
-import { Dynamo } from "../../AWSClients/ddbDocClient";
-import { DYNAMO_TABLE_NAME, ENTITY_TYPES } from "../../Config";
-import { DynamoUser } from "../../types/dynamo";
-import { UpdateUserInput } from "../../types/main";
-import { SdkError } from "@aws-sdk/types";
+import { UpdateCommandInput, UpdateCommand } from '@aws-sdk/lib-dynamodb';
+import { Dynamo } from '../../AWSClients/ddbDocClient';
+import { DYNAMO_TABLE_NAME, ENTITY_TYPES } from '../../Config';
+import { DynamoUser } from '../../types/dynamo';
+import { UpdateUserInput } from '../../types/main';
+import { SdkError } from '@aws-sdk/types';
 
 export default async function UpdateUser(
-  props: UpdateUserInput
+  props: UpdateUserInput,
 ): Promise<[DynamoUser, null] | [null, SdkError]> {
   const { userId, newValues } = props;
 
@@ -27,11 +27,11 @@ export default async function UpdateUser(
       PK: `${ENTITY_TYPES.USER}#${userId}`,
       SK: ENTITY_TYPES.USER,
     },
-    ReturnValues: "ALL_NEW",
-    UpdateExpression: `SET ` + allUpdateExpressions.join(", "),
+    ReturnValues: 'ALL_NEW',
+    UpdateExpression: `SET ` + allUpdateExpressions.join(', '),
     ExpressionAttributeValues: allAttributeValues,
     TableName: `${process.env.NODE_ENV}-${DYNAMO_TABLE_NAME}`,
-    ConditionExpression: "attribute_exists(PK)",
+    ConditionExpression: 'attribute_exists(PK)',
   };
   try {
     const updatedUser = await Dynamo.send(new UpdateCommand(params));

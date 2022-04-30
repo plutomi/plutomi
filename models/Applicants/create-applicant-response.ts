@@ -1,20 +1,16 @@
-import { PutCommandInput, PutCommand } from "@aws-sdk/lib-dynamodb";
-import { nanoid } from "nanoid";
-import { Dynamo } from "../../AWSClients/ddbDocClient";
-import { ID_LENGTHS, ENTITY_TYPES, DYNAMO_TABLE_NAME } from "../../Config";
-import { DynamoApplicantResponse } from "../../types/dynamo";
-import {
-  CreateApplicantResponseInput,
-  CreateApplicantResponseOutput,
-} from "../../types/main";
-import * as Time from "../../utils/time";
-import { SdkError } from "@aws-sdk/types";
+import { PutCommandInput, PutCommand } from '@aws-sdk/lib-dynamodb';
+import { nanoid } from 'nanoid';
+import { Dynamo } from '../../AWSClients/ddbDocClient';
+import { ID_LENGTHS, ENTITY_TYPES, DYNAMO_TABLE_NAME } from '../../Config';
+import { DynamoApplicantResponse } from '../../types/dynamo';
+import { CreateApplicantResponseInput, CreateApplicantResponseOutput } from '../../types/main';
+import * as Time from '../../utils/time';
+import { SdkError } from '@aws-sdk/types';
 
 export default async function CreateResponse(
-  props: CreateApplicantResponseInput
+  props: CreateApplicantResponseInput,
 ): Promise<[CreateApplicantResponseOutput, null] | [null, SdkError]> {
-  const { orgId, applicantId, questionTitle, description, questionResponse } =
-    props;
+  const { orgId, applicantId, questionTitle, description, questionResponse } = props;
   const responseId = nanoid(ID_LENGTHS.APPLICANT_RESPONSE);
   const newApplicantResponse: DynamoApplicantResponse = {
     PK: `${ENTITY_TYPES.ORG}#${orgId}#${ENTITY_TYPES.APPLICANT}#${applicantId}`,
@@ -34,7 +30,7 @@ export default async function CreateResponse(
   const params: PutCommandInput = {
     TableName: `${process.env.NODE_ENV}-${DYNAMO_TABLE_NAME}`,
     Item: newApplicantResponse,
-    ConditionExpression: "attribute_not_exists(PK)",
+    ConditionExpression: 'attribute_not_exists(PK)',
   };
 
   try {

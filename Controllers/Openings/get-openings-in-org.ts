@@ -1,6 +1,6 @@
-import { Request, Response } from "express";
-import * as CreateError from "../../utils/createError";
-import * as Openings from "../../models/Openings";
+import { Request, Response } from 'express';
+import * as CreateError from '../../utils/createError';
+import * as Openings from '../../models/Openings';
 const main = async (req: Request, res: Response) => {
   const { session } = res.locals;
   const [openings, openingsError] = await Openings.GetOpeningsInOrg({
@@ -8,11 +8,8 @@ const main = async (req: Request, res: Response) => {
   });
 
   if (openingsError) {
-    console.error("Openings error");
-    const { status, body } = CreateError.SDK(
-      openingsError,
-      "An error ocurred retrieving openings"
-    );
+    console.error('Openings error');
+    const { status, body } = CreateError.SDK(openingsError, 'An error ocurred retrieving openings');
 
     return res.status(status).json(body);
   }

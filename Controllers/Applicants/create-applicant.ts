@@ -1,7 +1,7 @@
-import { Request, Response } from "express";
-import Joi from "joi";
-import * as Openings from "../../models/Openings";
-import * as Applicants from "../../models/Applicants";
+import { Request, Response } from 'express';
+import Joi from 'joi';
+import * as Openings from '../../models/Openings';
+import * as Applicants from '../../models/Applicants';
 import {
   DEFAULTS,
   ERRORS,
@@ -10,16 +10,13 @@ import {
   JOI_SETTINGS,
   LIMITS,
   OPENING_STATE,
-} from "../../Config";
-import emailValidator from "deep-email-validator";
-import * as CreateError from "../../utils/createError";
-import { DynamoApplicant } from "../../types/dynamo";
+} from '../../Config';
+import emailValidator from 'deep-email-validator';
+import * as CreateError from '../../utils/createError';
+import { DynamoApplicant } from '../../types/dynamo';
 
 export type APICreateApplicantOptions = Required<
-  Pick<
-    DynamoApplicant,
-    "orgId" | "openingId" | "email" | "firstName" | "lastName"
-  >
+  Pick<DynamoApplicant, 'orgId' | 'openingId' | 'email' | 'firstName' | 'lastName'>
 >;
 const schema = Joi.object({
   body: {
@@ -27,12 +24,8 @@ const schema = Joi.object({
     orgId: JoiOrgId,
     openingId: Joi.string(),
     email: Joi.string().email(),
-    firstName: Joi.string()
-      .invalid(DEFAULTS.FIRST_NAME)
-      .max(LIMITS.MAX_APPLICANT_FIRSTNAME_LENGTH),
-    lastName: Joi.string()
-      .invalid(DEFAULTS.LAST_NAME)
-      .max(LIMITS.MAX_APPLICANT_LASTNAME_LENGTH),
+    firstName: Joi.string().invalid(DEFAULTS.FIRST_NAME).max(LIMITS.MAX_APPLICANT_FIRSTNAME_LENGTH),
+    lastName: Joi.string().invalid(DEFAULTS.LAST_NAME).max(LIMITS.MAX_APPLICANT_LASTNAME_LENGTH),
   },
 }).options(JOI_SETTINGS);
 
@@ -66,19 +59,17 @@ const main = async (req: Request, res: Response) => {
   if (openingError) {
     const { status, body } = CreateError.SDK(
       openingError,
-      "An error ocurred getting your opening info"
+      'An error ocurred getting your opening info',
     );
     return res.status(status).json(body);
   }
 
   if (!opening) {
-    return res.status(404).json({ message: "Opening does not exist" });
+    return res.status(404).json({ message: 'Opening does not exist' });
   }
   // Conditional check will also catch this
   if (opening.GSI1SK === OPENING_STATE.PRIVATE || opening.totalStages === 0) {
-    return res
-      .status(403)
-      .json({ message: "You cannot apply to this opening just yet!" });
+    return res.status(403).json({ message: 'You cannot apply to this opening just yet!' });
   }
 
   const [created, failed] = await Applicants.CreateApplicant({
@@ -91,17 +82,13 @@ const main = async (req: Request, res: Response) => {
   });
 
   if (failed) {
-    const { status, body } = CreateError.SDK(
-      failed,
-      "An error ocurred creating your application"
-    );
+    const { status, body } = CreateError.SDK(failed, 'An error ocurred creating your application');
 
     return res.status(status).json(body);
   }
 
   return res.status(200).json({
-    message:
-      "We've sent you a link to your email to complete your application!",
+    message: "We've sent you a link to your email to complete your application!",
   });
 };
 export default main;

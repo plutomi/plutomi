@@ -1,17 +1,12 @@
-import {
-  EMAILS,
-  ERRORS,
-  AXIOS_INSTANCE as axios,
-  COOKIE_NAME,
-} from "../Config";
-import * as Auth from "../adapters/Auth";
+import { EMAILS, ERRORS, AXIOS_INSTANCE as axios, COOKIE_NAME } from '../Config';
+import * as Auth from '../adapters/Auth';
 
-describe("Request login link", () => {
-  it("blocks slightly wrong addresses", async () => {
+describe('Request login link', () => {
+  it('blocks slightly wrong addresses', async () => {
     expect.assertions(2);
     try {
       await Auth.RequestLoginLink({
-        email: "wronggmailtypo@gmaill.com",
+        email: 'wronggmailtypo@gmaill.com',
       });
     } catch (error) {
       expect(error.response.status).toBe(400);
@@ -19,11 +14,11 @@ describe("Request login link", () => {
     }
   });
 
-  it("blocks known disposable emails", async () => {
+  it('blocks known disposable emails', async () => {
     expect.assertions(2);
     try {
       await Auth.RequestLoginLink({
-        email: "test@10minutemail.com",
+        email: 'test@10minutemail.com',
       });
     } catch (error) {
       expect(error.response.status).toBe(400);
@@ -31,20 +26,20 @@ describe("Request login link", () => {
     }
   });
 
-  it("needs an actual email address", async () => {
+  it('needs an actual email address', async () => {
     expect.assertions(3);
     try {
       await Auth.RequestLoginLink({
-        email: "beans.com",
+        email: 'beans.com',
       });
     } catch (error) {
       expect(error.response.status).toBe(400);
-      expect(error.response.data.message).toContain("body.email");
-      expect(error.response.data.message).toContain("must be a valid email");
+      expect(error.response.data.message).toContain('body.email');
+      expect(error.response.data.message).toContain('must be a valid email');
     }
   });
 
-  it("can pass in an undefined callback url", async () => {
+  it('can pass in an undefined callback url', async () => {
     expect.assertions(2);
     const data = await Auth.RequestLoginLink({
       email: EMAILS.TESTING,
@@ -52,101 +47,95 @@ describe("Request login link", () => {
     });
 
     expect(data.status).toBe(201);
-    expect(data.data.message).toBe(
-      "We've sent a magic login link to your email!"
-    );
+    expect(data.data.message).toBe("We've sent a magic login link to your email!");
   });
 
-  it("blocks an invalid callbackUrl", async () => {
+  it('blocks an invalid callbackUrl', async () => {
     expect.assertions(3);
     try {
       await Auth.RequestLoginLink({
         email: EMAILS.TESTING,
-        callbackUrl: "http:mongo.",
+        callbackUrl: 'http:mongo.',
       });
     } catch (error) {
       expect(error.response.status).toBe(400);
-      expect(error.response.data.message).toContain("query.callbackUrl");
-      expect(error.response.data.message).toContain("must be a valid uri");
+      expect(error.response.data.message).toContain('query.callbackUrl');
+      expect(error.response.data.message).toContain('must be a valid uri');
     }
   });
 
-  it("blocks frequent requests from non-admins", async () => {
+  it('blocks frequent requests from non-admins', async () => {
     expect.assertions(2);
     try {
       await Auth.RequestLoginLink({
-        email: "plutomitesting@gmail.com",
+        email: 'plutomitesting@gmail.com',
       });
       await Auth.RequestLoginLink({
-        email: "plutomitesting@gmail.com",
+        email: 'plutomitesting@gmail.com',
       });
     } catch (error) {
       expect(error.response.status).toBe(403);
       expect(error.response.data.message).toBe(
-        "You're doing that too much, please try again later"
+        "You're doing that too much, please try again later",
       );
     }
   });
 
-  it("allows admins to skip the request timer", async () => {
+  it('allows admins to skip the request timer', async () => {
     expect.assertions(4);
 
     const data = await Auth.RequestLoginLink({
       email: EMAILS.TESTING,
     });
     expect(data.status).toBe(201);
-    expect(data.data.message).toBe(
-      "We've sent a magic login link to your email!"
-    );
+    expect(data.data.message).toBe("We've sent a magic login link to your email!");
     // Try it again
     const data2 = await Auth.RequestLoginLink({
       email: EMAILS.TESTING,
     });
 
     expect(data2.status).toBe(201);
-    expect(data2.data.message).toBe(
-      "We've sent a magic login link to your email!"
-    );
+    expect(data2.data.message).toBe("We've sent a magic login link to your email!");
   });
 });
 
-describe("Login", () => {
-  it("fails without a token", async () => {
+describe('Login', () => {
+  it('fails without a token', async () => {
     expect.assertions(3);
     try {
-      await Auth.Login("");
+      await Auth.Login('');
     } catch (error) {
       expect(error.response.status).toBe(400);
-      expect(error.response.data.message).toContain("query.token");
-      expect(error.response.data.message).toContain("not allowed to be empty");
+      expect(error.response.data.message).toContain('query.token');
+      expect(error.response.data.message).toContain('not allowed to be empty');
     }
   });
 
-  it("fails with a bad token", async () => {
+  it('fails with a bad token', async () => {
     expect.assertions(2);
     try {
-      await Auth.Login("123");
+      await Auth.Login('123');
     } catch (error) {
       expect(error.response.status).toBe(401);
-      expect(error.response.data.message).toBe("Invalid login link");
+      expect(error.response.data.message).toBe('Invalid login link');
     }
   });
 });
 
-describe("Logout", () => {
+describe('Logout', () => {
   /**
    * Creates a session cookie
    */
   beforeAll(async () => {
     const data = await axios.post(`/jest-setup`);
-    const cookie = data.headers["set-cookie"][0];
+    const cookie = data.headers['set-cookie'][0];
     axios.defaults.headers.Cookie = cookie;
   });
 
-  it("Deletes the session cookie", async () => {
+  it('Deletes the session cookie', async () => {
     expect.assertions(3);
     const data = await Auth.Logout();
-    const cookies = data.headers["set-cookie"];
+    const cookies = data.headers['set-cookie'];
     /**
      * Make sure a set-cookie header is returned with an empty cookie and a negative expiry
      * In the future, the session data will be stored in Dynamo so this won't matter
@@ -154,9 +143,7 @@ describe("Logout", () => {
     expect(Array.isArray(cookies)).toBe(true);
     expect(
       // If any set-cookie header matches
-      cookies.some((value: string) =>
-        value.startsWith(`${COOKIE_NAME}=; Max-Age=-1;`)
-      )
+      cookies.some((value: string) => value.startsWith(`${COOKIE_NAME}=; Max-Age=-1;`)),
     ).toBe(true);
     expect(data.status).toBe(200);
   });

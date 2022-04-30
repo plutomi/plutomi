@@ -1,14 +1,11 @@
-import {
-  TransactWriteCommand,
-  TransactWriteCommandInput,
-} from "@aws-sdk/lib-dynamodb";
-import { Dynamo } from "../../AWSClients/ddbDocClient";
-import { DYNAMO_TABLE_NAME, ENTITY_TYPES } from "../../Config";
-import { DeleteQuestionFromOrgInput } from "../../types/main";
-import { SdkError } from "@aws-sdk/types";
+import { TransactWriteCommand, TransactWriteCommandInput } from '@aws-sdk/lib-dynamodb';
+import { Dynamo } from '../../AWSClients/ddbDocClient';
+import { DYNAMO_TABLE_NAME, ENTITY_TYPES } from '../../Config';
+import { DeleteQuestionFromOrgInput } from '../../types/main';
+import { SdkError } from '@aws-sdk/types';
 
 export default async function DeleteQuestionFromOrg(
-  props: DeleteQuestionFromOrgInput
+  props: DeleteQuestionFromOrgInput,
 ): Promise<[null, null] | [null, SdkError]> {
   const { orgId, questionId } = props;
 
@@ -22,7 +19,7 @@ export default async function DeleteQuestionFromOrg(
             SK: ENTITY_TYPES.QUESTION,
           },
           TableName: `${process.env.NODE_ENV}-${DYNAMO_TABLE_NAME}`,
-          ConditionExpression: "attribute_exists(PK)",
+          ConditionExpression: 'attribute_exists(PK)',
         },
       },
       {
@@ -33,9 +30,9 @@ export default async function DeleteQuestionFromOrg(
             SK: ENTITY_TYPES.ORG,
           },
           TableName: `${process.env.NODE_ENV}-${DYNAMO_TABLE_NAME}`,
-          UpdateExpression: "SET totalQuestions = totalQuestions - :value",
+          UpdateExpression: 'SET totalQuestions = totalQuestions - :value',
           ExpressionAttributeValues: {
-            ":value": 1,
+            ':value': 1,
           },
         },
       },

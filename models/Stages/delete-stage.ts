@@ -1,14 +1,11 @@
-import {
-  TransactWriteCommandInput,
-  TransactWriteCommand,
-} from "@aws-sdk/lib-dynamodb";
-import { Dynamo } from "../../AWSClients/ddbDocClient";
-import { DYNAMO_TABLE_NAME, ENTITY_TYPES } from "../../Config";
-import { DeleteStageInput } from "../../types/main";
-import { SdkError } from "@aws-sdk/types";
+import { TransactWriteCommandInput, TransactWriteCommand } from '@aws-sdk/lib-dynamodb';
+import { Dynamo } from '../../AWSClients/ddbDocClient';
+import { DYNAMO_TABLE_NAME, ENTITY_TYPES } from '../../Config';
+import { DeleteStageInput } from '../../types/main';
+import { SdkError } from '@aws-sdk/types';
 
 export default async function DeleteStage(
-  props: DeleteStageInput
+  props: DeleteStageInput,
 ): Promise<[null, null] | [null, SdkError]> {
   // TODO check if stage is empt of appliants first
 
@@ -23,7 +20,7 @@ export default async function DeleteStage(
             SK: ENTITY_TYPES.STAGE,
           },
           TableName: `${process.env.NODE_ENV}-${DYNAMO_TABLE_NAME}`,
-          ConditionExpression: "attribute_exists(PK)",
+          ConditionExpression: 'attribute_exists(PK)',
         },
       },
 
@@ -37,7 +34,7 @@ export default async function DeleteStage(
           TableName: `${process.env.NODE_ENV}-${DYNAMO_TABLE_NAME}`,
           UpdateExpression: `REMOVE stageOrder[${deleteIndex}] SET totalStages = totalStages - :value`,
           ExpressionAttributeValues: {
-            ":value": 1,
+            ':value': 1,
           },
         },
       },

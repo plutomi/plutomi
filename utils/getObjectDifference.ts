@@ -1,4 +1,4 @@
-import { transform, isEqual, isArray, isObject } from "lodash";
+import { transform, isEqual, isArray, isObject } from 'lodash';
 /**
  * Find difference between two objects
  * https://davidwells.io/snippets/get-difference-between-two-objects-javascript
@@ -13,9 +13,7 @@ export default function GetObjectDifference(origObj: {}, newObj: {}): {} {
       if (!isEqual(value, origObj[key])) {
         let resultKey = isArray(origObj) ? arrayIndexCounter++ : key;
         result[resultKey] =
-          isObject(value) && isObject(origObj[key])
-            ? changes(value, origObj[key])
-            : value;
+          isObject(value) && isObject(origObj[key]) ? changes(value, origObj[key]) : value;
       }
     });
   }

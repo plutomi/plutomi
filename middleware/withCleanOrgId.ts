@@ -1,15 +1,11 @@
-import { Request, Response, NextFunction } from "express";
-const UrlSafeString = require("url-safe-string"),
+import { Request, Response, NextFunction } from 'express';
+const UrlSafeString = require('url-safe-string'),
   tagGenerator = new UrlSafeString();
 
 /**
  * Cleans up the orgId, whether in body, params, or query, to be URL safe
  */
-export default async function withCleanOrgId(
-  req: Request,
-  res: Response,
-  next: NextFunction
-) {
+export default async function withCleanOrgId(req: Request, res: Response, next: NextFunction) {
   if (req.body.orgId) {
     req.body.orgId = tagGenerator.generate(req.body.orgId);
   }

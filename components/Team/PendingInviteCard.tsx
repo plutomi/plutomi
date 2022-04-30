@@ -1,13 +1,9 @@
-import { DynamoOrgInvite, DynamoUser } from "../../types/dynamo";
-import * as Time from "../../utils/time";
-import * as Invites from "../../adapters/Invites";
-import useSelf from "../../SWR/useSelf";
-import { mutate } from "swr";
-export default function PendingInviteCard({
-  invite,
-}: {
-  invite: DynamoOrgInvite;
-}) {
+import { DynamoOrgInvite, DynamoUser } from '../../types/dynamo';
+import * as Time from '../../utils/time';
+import * as Invites from '../../adapters/Invites';
+import useSelf from '../../SWR/useSelf';
+import { mutate } from 'swr';
+export default function PendingInviteCard({ invite }: { invite: DynamoOrgInvite }) {
   const { user, isUserLoading, isUserError } = useSelf();
 
   const cancelInvite = async (invite: DynamoOrgInvite) => {
@@ -42,14 +38,11 @@ export default function PendingInviteCard({
 
           <p className="text-md">{email}</p>
           <div className=" flex justify-between  items-center">
-            {" "}
+            {' '}
             <p className="text-sm text-blue-gray-400">
-              Created by {invite.createdBy.firstName}{" "}
-              {invite.createdBy.lastName}
+              Created by {invite.createdBy.firstName} {invite.createdBy.lastName}
             </p>
-            <p className="text-sm text-blue-gray-400">
-              Expires {Time.relative(invite.expiresAt)}
-            </p>
+            <p className="text-sm text-blue-gray-400">Expires {Time.relative(invite.expiresAt)}</p>
           </div>
         </div>
       </div>

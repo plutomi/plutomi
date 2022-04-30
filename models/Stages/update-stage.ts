@@ -1,11 +1,11 @@
-import { UpdateCommand } from "@aws-sdk/lib-dynamodb";
-import { Dynamo } from "../../AWSClients/ddbDocClient";
-import { DYNAMO_TABLE_NAME, ENTITY_TYPES } from "../../Config";
-import { UpdateStageInput } from "../../types/main";
-import { SdkError } from "@aws-sdk/types";
+import { UpdateCommand } from '@aws-sdk/lib-dynamodb';
+import { Dynamo } from '../../AWSClients/ddbDocClient';
+import { DYNAMO_TABLE_NAME, ENTITY_TYPES } from '../../Config';
+import { UpdateStageInput } from '../../types/main';
+import { SdkError } from '@aws-sdk/types';
 
 export default async function UpdateStage(
-  props: UpdateStageInput
+  props: UpdateStageInput,
 ): Promise<[null, null] | [null, SdkError]> {
   const { orgId, stageId, newValues, openingId } = props;
 
@@ -26,11 +26,11 @@ export default async function UpdateStage(
       PK: `${ENTITY_TYPES.ORG}#${orgId}#${ENTITY_TYPES.OPENING}#${openingId}#${ENTITY_TYPES.STAGE}#${stageId}`,
       SK: ENTITY_TYPES.STAGE,
     },
-    UpdateExpression: `SET ` + allUpdateExpressions.join(", "),
+    UpdateExpression: `SET ` + allUpdateExpressions.join(', '),
     ExpressionAttributeValues: allAttributeValues,
     TableName: `${process.env.NODE_ENV}-${DYNAMO_TABLE_NAME}`,
 
-    ConditionExpression: "attribute_exists(PK)",
+    ConditionExpression: 'attribute_exists(PK)',
   };
 
   try {

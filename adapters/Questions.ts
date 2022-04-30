@@ -1,6 +1,6 @@
-import { AXIOS_INSTANCE as axios } from "../Config";
-import { APICreateQuestionOptions } from "../Controllers/Questions/create-questions";
-import { APIUpdateQuestionOptions } from "../Controllers/Questions/update-question";
+import { AXIOS_INSTANCE as axios } from '../Config';
+import { APICreateQuestionOptions } from '../Controllers/Questions/create-questions';
+import { APIUpdateQuestionOptions } from '../Controllers/Questions/update-question';
 
 const CreateQuestion = async (options: APICreateQuestionOptions) => {
   const data = await axios.post(`/questions`, {
@@ -9,7 +9,7 @@ const CreateQuestion = async (options: APICreateQuestionOptions) => {
   return data;
 };
 
-const GetQuestionsInOrgURL = () => "/questions";
+const GetQuestionsInOrgURL = () => '/questions';
 const GetQuestionInfoURL = (questionId: string) => {
   return `/questions/${questionId}`;
 };
@@ -39,12 +39,10 @@ interface DeleteQuestionFromStageInput {
   stageId: string;
   questionId: string;
 }
-const DeleteQuestionFromStage = async (
-  options: DeleteQuestionFromStageInput
-) => {
+const DeleteQuestionFromStage = async (options: DeleteQuestionFromStageInput) => {
   const { openingId, stageId, questionId } = options;
   const data = await axios.delete(
-    `${GetQuestionsInStageURL({ openingId, stageId })}/${questionId}`
+    `${GetQuestionsInStageURL({ openingId, stageId })}/${questionId}`,
   );
   return data;
 };
@@ -69,15 +67,12 @@ interface AddQuestionToStageInput {
 }
 const AddQuestionToStage = async (options: AddQuestionToStageInput) => {
   const { openingId, stageId, questionId, position } = options;
-  const data = await axios.post(
-    `/openings/${openingId}/stages/${stageId}/questions`,
-    {
-      openingId,
-      stageId,
-      questionId,
-      position,
-    }
-  );
+  const data = await axios.post(`/openings/${openingId}/stages/${stageId}/questions`, {
+    openingId,
+    stageId,
+    questionId,
+    position,
+  });
 
   return data;
 };

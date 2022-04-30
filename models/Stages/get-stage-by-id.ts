@@ -1,15 +1,15 @@
-import { GetCommandInput, GetCommand } from "@aws-sdk/lib-dynamodb";
-import { Dynamo } from "../../AWSClients/ddbDocClient";
-import { DYNAMO_TABLE_NAME, ENTITY_TYPES } from "../../Config";
-import { GetStageByIdInput, GetStageByIdOutput } from "../../types/main";
-import { SdkError } from "@aws-sdk/types";
+import { GetCommandInput, GetCommand } from '@aws-sdk/lib-dynamodb';
+import { Dynamo } from '../../AWSClients/ddbDocClient';
+import { DYNAMO_TABLE_NAME, ENTITY_TYPES } from '../../Config';
+import { GetStageByIdInput, GetStageByIdOutput } from '../../types/main';
+import { SdkError } from '@aws-sdk/types';
 /**
  * Returns a stage by its ID.
  * @param props {@link GetStageByIdInput}
  * @returns - {@link GetStageByIdOutput}
  */
 export default async function GetStageByid(
-  props: GetStageByIdInput
+  props: GetStageByIdInput,
 ): Promise<[GetStageByIdOutput, null] | [null, SdkError]> {
   const { orgId, stageId, openingId } = props;
   const params: GetCommandInput = {

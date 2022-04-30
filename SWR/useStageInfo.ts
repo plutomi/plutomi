@@ -1,6 +1,6 @@
-import useSWR from "swr";
-import { SWRFetcher } from "../Config";
-import { GetStageInfoURL } from "../adapters/Stages";
+import useSWR from 'swr';
+import { SWRFetcher } from '../Config';
+import { GetStageInfoURL } from '../adapters/Stages';
 export default function useStageInfo(openingId: string, stageId: string) {
   const shouldFetch = openingId && stageId ? true : false;
 
@@ -10,7 +10,7 @@ export default function useStageInfo(openingId: string, stageId: string) {
         openingId,
         stageId,
       }),
-    SWRFetcher
+    SWRFetcher,
   );
 
   return {

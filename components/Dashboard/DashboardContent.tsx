@@ -1,15 +1,15 @@
-import useSelf from "../../SWR/useSelf";
-import Loader from "../Loader";
-import ClickToCopy from "../ClickToCopy";
-import useOrgInfo from "../../SWR/useOrgInfo";
-import { mutate } from "swr";
-import { DeleteOrg } from "../../adapters/Orgs";
-import UserProfileModal from "../UserProfile/UserProfileModal";
-import useStore from "../../utils/store";
-import { OfficeBuildingIcon, PlusIcon } from "@heroicons/react/outline";
-import CreateOrgModal from "../Orgs/CreateOrgModal";
-import { DEFAULTS, WEBSITE_URL } from "../../Config";
-import { GetSelfInfoURL, UpdateUser } from "../../adapters/Users";
+import useSelf from '../../SWR/useSelf';
+import Loader from '../Loader';
+import ClickToCopy from '../ClickToCopy';
+import useOrgInfo from '../../SWR/useOrgInfo';
+import { mutate } from 'swr';
+import { DeleteOrg } from '../../adapters/Orgs';
+import UserProfileModal from '../UserProfile/UserProfileModal';
+import useStore from '../../utils/store';
+import { OfficeBuildingIcon, PlusIcon } from '@heroicons/react/outline';
+import CreateOrgModal from '../Orgs/CreateOrgModal';
+import { DEFAULTS, WEBSITE_URL } from '../../Config';
+import { GetSelfInfoURL, UpdateUser } from '../../adapters/Users';
 export default function DashboardContent() {
   const { user, isUserLoading, isUserError } = useSelf();
   const { org, isOrgLoading, isOrgError } = useOrgInfo(user?.orgId);
@@ -19,23 +19,23 @@ export default function DashboardContent() {
   const openUserProfileModal = useStore((state) => state.openUserProfileModal);
 
   if (isUserLoading) {
-    return <Loader text={"Loading user..."} />;
+    return <Loader text={'Loading user...'} />;
   }
 
   if (user?.orgId !== DEFAULTS.NO_ORG && isOrgLoading) {
-    return <Loader text={"Loading org info..."} />;
+    return <Loader text={'Loading org info...'} />;
   }
 
   const deleteOrg = async () => {
     if (
       !confirm(
-        "Deleting an org is irreversible and will delete all openings, stages, applicants, questions, rules, etc. inside of it. Do you wish to continue?"
+        'Deleting an org is irreversible and will delete all openings, stages, applicants, questions, rules, etc. inside of it. Do you wish to continue?',
       )
     ) {
       return;
     }
 
-    if (!confirm("Are you sure?")) {
+    if (!confirm('Are you sure?')) {
       return;
     }
 
@@ -54,9 +54,7 @@ export default function DashboardContent() {
       <h3 className="mt-2 text-lg font-medium text-dark">
         You don&apos;t belong to an organization.
       </h3>
-      <p className="mt-1 text-lg text-normal">
-        Get started by creating a new one!
-      </p>
+      <p className="mt-1 text-lg text-normal">Get started by creating a new one!</p>
       <div className="mt-6">
         <button
           type="button"
@@ -73,28 +71,23 @@ export default function DashboardContent() {
   const UserInOrg = (
     <>
       <h1 className="text-2xl">
-        You&apos;re in the <strong>{org?.displayName}</strong> org. Feel free to
-        click around!
+        You&apos;re in the <strong>{org?.displayName}</strong> org. Feel free to click around!
       </h1>
       <h1>
         There are <strong>{org?.totalUsers}</strong> users in this org.
       </h1>
 
       <h1>
-        Also, there are <strong>{org?.totalApplicants}</strong> applicants
-        across <strong>{org?.totalOpenings}</strong> openings.
+        Also, there are <strong>{org?.totalApplicants}</strong> applicants across{' '}
+        <strong>{org?.totalOpenings}</strong> openings.
       </h1>
 
       <div className="flex items-center mt-4 -ml-3 text-md">
-        <ClickToCopy
-          showText={"Copy Application Link"}
-          copyText={customApplyLink}
-        />
+        <ClickToCopy showText={'Copy Application Link'} copyText={customApplyLink} />
       </div>
       <div className="flex justify-center mx-auto">
         <UserProfileModal user={user} />
-        {(user?.firstName === DEFAULTS.FIRST_NAME ||
-          user?.lastName === DEFAULTS.LAST_NAME) && (
+        {(user?.firstName === DEFAULTS.FIRST_NAME || user?.lastName === DEFAULTS.LAST_NAME) && (
           <div>
             <h4>We don&apos;t seem to know your name!</h4>
 

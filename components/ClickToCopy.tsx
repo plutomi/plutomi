@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { CheckIcon, ClipboardCopyIcon } from "@heroicons/react/outline";
+import { useState } from 'react';
+import { CheckIcon, ClipboardCopyIcon } from '@heroicons/react/outline';
 
 export default function ClickToCopy({ showText, copyText }) {
   const [copied, setCopied] = useState(false);
@@ -15,7 +15,7 @@ export default function ClickToCopy({ showText, copyText }) {
     <div className="ml-3 inline-flex items-center ">
       {copied ? (
         <p className="  text-light inline-flex space-x-3  items-center px-2 ">
-          Copied{" "}
+          Copied{' '}
           <span className="text-emerald-500 ">
             <CheckIcon className="h-5 w-5 " />
           </span>

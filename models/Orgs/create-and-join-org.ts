@@ -1,16 +1,13 @@
-import {
-  TransactWriteCommandInput,
-  TransactWriteCommand,
-} from "@aws-sdk/lib-dynamodb";
-import { Dynamo } from "../../AWSClients/ddbDocClient";
-import { DYNAMO_TABLE_NAME, ENTITY_TYPES } from "../../Config";
-import { DynamoOrg } from "../../types/dynamo";
-import { CreateAndJoinOrgInput } from "../../types/main";
-import * as Time from "../../utils/time";
-import { SdkError } from "@aws-sdk/types";
+import { TransactWriteCommandInput, TransactWriteCommand } from '@aws-sdk/lib-dynamodb';
+import { Dynamo } from '../../AWSClients/ddbDocClient';
+import { DYNAMO_TABLE_NAME, ENTITY_TYPES } from '../../Config';
+import { DynamoOrg } from '../../types/dynamo';
+import { CreateAndJoinOrgInput } from '../../types/main';
+import * as Time from '../../utils/time';
+import { SdkError } from '@aws-sdk/types';
 
 export default async function CreateAndJoinOrg(
-  props: CreateAndJoinOrgInput
+  props: CreateAndJoinOrgInput,
 ): Promise<[null, null] | [null, SdkError]> {
   const { userId, orgId, displayName } = props;
   const now = Time.currentISO();
@@ -40,12 +37,11 @@ export default async function CreateAndJoinOrg(
               SK: ENTITY_TYPES.USER,
             },
             TableName: `${process.env.NODE_ENV}-${DYNAMO_TABLE_NAME}`,
-            UpdateExpression:
-              "SET orgId = :orgId, orgJoinDate = :orgJoinDate, GSI1PK = :GSI1PK",
+            UpdateExpression: 'SET orgId = :orgId, orgJoinDate = :orgJoinDate, GSI1PK = :GSI1PK',
             ExpressionAttributeValues: {
-              ":orgId": orgId,
-              ":orgJoinDate": now,
-              ":GSI1PK": `${ENTITY_TYPES.ORG}#${orgId}#${ENTITY_TYPES.USER}S`,
+              ':orgId': orgId,
+              ':orgJoinDate': now,
+              ':GSI1PK': `${ENTITY_TYPES.ORG}#${orgId}#${ENTITY_TYPES.USER}S`,
             },
           },
         },
@@ -54,7 +50,7 @@ export default async function CreateAndJoinOrg(
           Put: {
             Item: newOrg,
             TableName: `${process.env.NODE_ENV}-${DYNAMO_TABLE_NAME}`,
-            ConditionExpression: "attribute_not_exists(PK)",
+            ConditionExpression: 'attribute_not_exists(PK)',
           },
         },
       ],

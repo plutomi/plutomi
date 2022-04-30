@@ -1,17 +1,17 @@
-import useSelf from "../../SWR/useSelf";
-import { CogIcon } from "@heroicons/react/outline";
-import useStore from "../../utils/store";
-import ClickToCopy from "../ClickToCopy";
-import Link from "next/dist/client/link";
-import OpeningsDropdown from "../Openings/DropDown";
-import useOpeningInfo from "../../SWR/useOpeningInfo";
-import { useRouter } from "next/router";
-import useOpenings from "../../SWR/useOpenings";
-import { CUSTOM_QUERY } from "../../types/main";
-import { OPENING_STATE, WEBSITE_URL } from "../../Config";
+import useSelf from '../../SWR/useSelf';
+import { CogIcon } from '@heroicons/react/outline';
+import useStore from '../../utils/store';
+import ClickToCopy from '../ClickToCopy';
+import Link from 'next/dist/client/link';
+import OpeningsDropdown from '../Openings/DropDown';
+import useOpeningInfo from '../../SWR/useOpeningInfo';
+import { useRouter } from 'next/router';
+import useOpenings from '../../SWR/useOpenings';
+import { CUSTOM_QUERY } from '../../types/main';
+import { OPENING_STATE, WEBSITE_URL } from '../../Config';
 export default function StagesHeader() {
   const router = useRouter();
-  const { openingId } = router.query as Pick<CUSTOM_QUERY, "openingId">;
+  const { openingId } = router.query as Pick<CUSTOM_QUERY, 'openingId'>;
 
   const { user, isUserLoading, isUserError } = useSelf();
   let { opening, isOpeningLoading, isOpeningError } = useOpeningInfo(openingId);
@@ -23,9 +23,7 @@ export default function StagesHeader() {
         {openings ? (
           <OpeningsDropdown
             openings={openings}
-            index={openings?.indexOf(
-              openings?.find((opening) => opening.openingId === openingId)
-            )}
+            index={openings?.indexOf(openings?.find((opening) => opening.openingId === openingId))}
           />
         ) : (
           <h1>Loading...</h1>
@@ -35,7 +33,7 @@ export default function StagesHeader() {
       {opening?.GSI1SK === OPENING_STATE.PUBLIC && (
         <p className="mt-2 text-md text-normal sm:mt-0 ">
           <ClickToCopy
-            showText={"Application Link"}
+            showText={'Application Link'}
             copyText={`${WEBSITE_URL}/${user?.orgId}/${opening?.openingId}/apply`}
           />
         </p>

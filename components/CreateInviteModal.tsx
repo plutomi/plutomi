@@ -1,11 +1,11 @@
-import { FormEvent, Fragment, useState } from "react";
-import { Dialog, Transition } from "@headlessui/react";
-import { XIcon } from "@heroicons/react/outline";
-import useStore from "../utils/store";
-import { CreateInvite } from "../adapters/Invites";
-import { ORG_INVITE_EXPIRY_DAYS } from "../Config";
+import { FormEvent, Fragment, useState } from 'react';
+import { Dialog, Transition } from '@headlessui/react';
+import { XIcon } from '@heroicons/react/outline';
+import useStore from '../utils/store';
+import { CreateInvite } from '../adapters/Invites';
+import { ORG_INVITE_EXPIRY_DAYS } from '../Config';
 export default function CreateInviteModal() {
-  const [recipientEmail, setRecipientEmail] = useState("");
+  const [recipientEmail, setRecipientEmail] = useState('');
   const [expiresInDays, setExpiresInDays] = useState(ORG_INVITE_EXPIRY_DAYS);
   const visibility = useStore((state) => state.showInviteModal);
   const closeInviteModal = useStore((state) => state.closeInviteModal);
@@ -25,7 +25,7 @@ export default function CreateInviteModal() {
         expiresInDays: final,
       });
       alert(data.message);
-      setRecipientEmail("");
+      setRecipientEmail('');
       setExpiresInDays(ORG_INVITE_EXPIRY_DAYS);
       closeInviteModal();
     } catch (error) {
@@ -35,11 +35,7 @@ export default function CreateInviteModal() {
   };
   return (
     <Transition.Root show={visibility} as={Fragment}>
-      <Dialog
-        as="div"
-        className="fixed inset-0 overflow-hidden "
-        onClose={closeInviteModal}
-      >
+      <Dialog as="div" className="fixed inset-0 overflow-hidden " onClose={closeInviteModal}>
         <div className="absolute inset-0 overflow-hidden">
           <Transition.Child
             as={Fragment}
@@ -107,9 +103,7 @@ export default function CreateInviteModal() {
                                 name="new-user-email"
                                 id="new-user-email"
                                 required
-                                onChange={(e) =>
-                                  setRecipientEmail(e.target.value)
-                                }
+                                onChange={(e) => setRecipientEmail(e.target.value)}
                                 value={recipientEmail}
                                 className="block w-full shadow-sm sm:text-sm focus:ring-blue-500 focus:border-blue-500 border-gray-300 rounded-md"
                               />
@@ -133,15 +127,10 @@ export default function CreateInviteModal() {
                                 className="focus:ring-blue-500 focus:border-blue-500 block w-full  pr-12 sm:text-sm border-gray-300 rounded-md"
                                 placeholder="3"
                                 value={expiresInDays}
-                                onChange={(e) =>
-                                  setExpiresInDays(parseInt(e.target.value))
-                                }
+                                onChange={(e) => setExpiresInDays(parseInt(e.target.value))}
                               />
                               <div className="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
-                                <span
-                                  className="text-light sm:text-sm"
-                                  id="expiry"
-                                >
+                                <span className="text-light sm:text-sm" id="expiry">
                                   days
                                 </span>
                               </div>

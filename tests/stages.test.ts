@@ -1,25 +1,19 @@
-import { nanoid } from "nanoid";
-import {
-  API_URL,
-  DEFAULTS,
-  ERRORS,
-  AXIOS_INSTANCE as axios,
-  LIMITS,
-} from "../Config";
-import * as Stages from "../adapters/Stages";
-import * as Orgs from "../adapters/Orgs";
-import * as Openings from "../adapters/Openings";
-describe("Stages", () => {
+import { nanoid } from 'nanoid';
+import { API_URL, DEFAULTS, ERRORS, AXIOS_INSTANCE as axios, LIMITS } from '../Config';
+import * as Stages from '../adapters/Stages';
+import * as Orgs from '../adapters/Orgs';
+import * as Openings from '../adapters/Openings';
+describe('Stages', () => {
   /**
    * Creates a session cookie
    */
   beforeAll(async () => {
     const data = await axios.post(`/jest-setup`);
-    const cookie = data.headers["set-cookie"][0];
+    const cookie = data.headers['set-cookie'][0];
     axios.defaults.headers.Cookie = cookie;
   });
 
-  it("blocks creating stages if not in an org", async () => {
+  it('blocks creating stages if not in an org', async () => {
     expect.assertions(2);
     try {
       await Stages.CreateStage({
@@ -32,17 +26,17 @@ describe("Stages", () => {
     }
   });
 
-  it("blocks retrieving stages for an opening if not in an org", async () => {
+  it('blocks retrieving stages for an opening if not in an org', async () => {
     expect.assertions(2);
     try {
-      await Stages.GetStagesInOpening("123");
+      await Stages.GetStagesInOpening('123');
     } catch (error) {
       expect(error.response.status).toBe(403);
       expect(error.response.data.message).toBe(ERRORS.NEEDS_ORG);
     }
   });
 
-  it("blocks deletion of stages if user is not in an org", async () => {
+  it('blocks deletion of stages if user is not in an org', async () => {
     expect.assertions(2);
     try {
       await Stages.DeleteStage({
@@ -55,7 +49,7 @@ describe("Stages", () => {
     }
   });
 
-  it("blocks updating a stage if user is not in an org", async () => {
+  it('blocks updating a stage if user is not in an org', async () => {
     expect.assertions(2);
     try {
       await Stages.UpdateStage({
@@ -71,12 +65,12 @@ describe("Stages", () => {
     }
   });
 
-  it("blocks retrieving stage info if user is not in an org", async () => {
+  it('blocks retrieving stage info if user is not in an org', async () => {
     expect.assertions(2);
     try {
       await Stages.GetStageInfo({
-        openingId: "123",
-        stageId: "123",
+        openingId: '123',
+        stageId: '123',
       });
     } catch (error) {
       expect(error.response.status).toBe(403);
@@ -84,7 +78,7 @@ describe("Stages", () => {
     }
   });
 
-  it("fails to create a stage without an empty empty values for openingId and stage name", async () => {
+  it('fails to create a stage without an empty empty values for openingId and stage name', async () => {
     expect.assertions(4);
     // Create an org
     await Orgs.CreateOrg({
@@ -94,19 +88,17 @@ describe("Stages", () => {
 
     try {
       await Stages.CreateStage({
-        openingId: "",
+        openingId: '',
         GSI1SK: null,
       });
     } catch (error) {
       expect(error.response.status).toBe(400);
-      expect(error.response.data.message).toContain("body.openingId");
-      expect(error.response.data.message).toContain(
-        "is not allowed to be empty"
-      );
-      expect(error.response.data.message).toContain("must be a string");
+      expect(error.response.data.message).toContain('body.openingId');
+      expect(error.response.data.message).toContain('is not allowed to be empty');
+      expect(error.response.data.message).toContain('must be a string');
     }
   });
-  it("fails to create a stage with a position equal to MAX_CHILD_ITEM_LIMIT", async () => {
+  it('fails to create a stage with a position equal to MAX_CHILD_ITEM_LIMIT', async () => {
     expect.assertions(3);
     try {
       await Stages.CreateStage({
@@ -116,14 +108,14 @@ describe("Stages", () => {
       });
     } catch (error) {
       expect(error.response.status).toBe(400);
-      expect(error.response.data.message).toContain("body.position");
+      expect(error.response.data.message).toContain('body.position');
       expect(error.response.data.message).toContain(
-        `must be less than or equal to ${LIMITS.MAX_CHILD_ITEM_LIMIT - 1}`
+        `must be less than or equal to ${LIMITS.MAX_CHILD_ITEM_LIMIT - 1}`,
       );
     }
   });
 
-  it("fails to create a stage with a position greater than MAX_CHILD_ITEM_LIMIT", async () => {
+  it('fails to create a stage with a position greater than MAX_CHILD_ITEM_LIMIT', async () => {
     expect.assertions(3);
     try {
       await Stages.CreateStage({
@@ -133,28 +125,28 @@ describe("Stages", () => {
       });
     } catch (error) {
       expect(error.response.status).toBe(400);
-      expect(error.response.data.message).toContain("body.position");
+      expect(error.response.data.message).toContain('body.position');
       expect(error.response.data.message).toContain(
-        `must be less than or equal to ${LIMITS.MAX_CHILD_ITEM_LIMIT - 1}`
+        `must be less than or equal to ${LIMITS.MAX_CHILD_ITEM_LIMIT - 1}`,
       );
     }
   });
 
-  it("fails to create a stage in an opening that does not exist", async () => {
+  it('fails to create a stage in an opening that does not exist', async () => {
     expect.assertions(2);
     try {
       await Stages.CreateStage({
-        openingId: "1",
+        openingId: '1',
         GSI1SK: nanoid(10),
         position: 2,
       });
     } catch (error) {
       expect(error.response.status).toBe(404);
-      expect(error.response.data.message).toBe("Opening does not exist");
+      expect(error.response.data.message).toBe('Opening does not exist');
     }
   });
 
-  it("creates a stage without a position", async () => {
+  it('creates a stage without a position', async () => {
     expect.assertions(1);
     const openingName = nanoid(50);
     // Create an opening first
@@ -165,9 +157,7 @@ describe("Stages", () => {
     // Get openings in an org
     const data = await Openings.GetAllOpeningsInOrg();
 
-    const ourOpening = data.data.find(
-      (opening) => opening.openingName === openingName
-    );
+    const ourOpening = data.data.find((opening) => opening.openingName === openingName);
 
     await Stages.CreateStage({
       openingId: ourOpening.openingId,
@@ -179,7 +169,7 @@ describe("Stages", () => {
     expect(ourOpening2.data.stageOrder.length).toBe(1);
   });
 
-  it("allows deletion of stages", async () => {
+  it('allows deletion of stages', async () => {
     expect.assertions(4);
     const openingName = nanoid(20);
     // Create an opening first
@@ -190,9 +180,7 @@ describe("Stages", () => {
     // Get openings in an org
     const data = await Openings.GetAllOpeningsInOrg();
 
-    const ourOpening = data.data.find(
-      (opening) => opening.openingName === openingName
-    );
+    const ourOpening = data.data.find((opening) => opening.openingName === openingName);
 
     // Create a stage
     await Stages.CreateStage({
@@ -200,9 +188,7 @@ describe("Stages", () => {
       GSI1SK: nanoid(10),
     });
 
-    const openingWithStage = await Openings.GetOpeningInfo(
-      ourOpening.openingId
-    );
+    const openingWithStage = await Openings.GetOpeningInfo(ourOpening.openingId);
 
     const deleteStageRes = await Stages.DeleteStage({
       openingId: openingWithStage.data.openingId,
@@ -210,7 +196,7 @@ describe("Stages", () => {
     });
 
     expect(deleteStageRes.status).toBe(200);
-    expect(deleteStageRes.data.message).toBe("Stage deleted!");
+    expect(deleteStageRes.data.message).toBe('Stage deleted!');
 
     const afterdeletion = await Openings.GetOpeningInfo(ourOpening.openingId);
 
@@ -218,7 +204,7 @@ describe("Stages", () => {
     expect(afterdeletion.data.stageOrder).toStrictEqual([]);
   });
 
-  it("returns 404 if stage is not found while retrieving info", async () => {
+  it('returns 404 if stage is not found while retrieving info', async () => {
     expect.assertions(2);
     const openingName = nanoid(20);
     // Create an opening first
@@ -229,22 +215,20 @@ describe("Stages", () => {
     // Get openings in an org
     const data = await Openings.GetAllOpeningsInOrg();
 
-    const ourOpening = data.data.find(
-      (opening) => opening.openingName === openingName
-    );
+    const ourOpening = data.data.find((opening) => opening.openingName === openingName);
 
     try {
       await Stages.GetStageInfo({
         openingId: ourOpening.openingId,
-        stageId: "1",
+        stageId: '1',
       });
     } catch (error) {
       expect(error.response.status).toBe(404);
-      expect(error.response.data.message).toBe("Stage not found");
+      expect(error.response.data.message).toBe('Stage not found');
     }
   });
 
-  it("retrieves stage info", async () => {
+  it('retrieves stage info', async () => {
     expect.assertions(2);
     // Create an opening
     const openingName = nanoid(20);
@@ -255,9 +239,7 @@ describe("Stages", () => {
     // Get openings in org
     const data = await Openings.GetAllOpeningsInOrg();
 
-    const ourOpening = data.data.find(
-      (opening) => opening.openingName === openingName
-    );
+    const ourOpening = data.data.find((opening) => opening.openingName === openingName);
 
     // Create a stage
     const stageName = nanoid(10);
@@ -280,7 +262,7 @@ describe("Stages", () => {
     } catch (error) {}
   });
 
-  it("returns stages in an opening", async () => {
+  it('returns stages in an opening', async () => {
     expect.assertions(4);
     const openingName = nanoid(20);
     // Create an opening first
@@ -291,9 +273,7 @@ describe("Stages", () => {
     // Get openings in an org
     const data = await Openings.GetAllOpeningsInOrg();
 
-    const ourOpening = data.data.find(
-      (opening) => opening.openingName === openingName
-    );
+    const ourOpening = data.data.find((opening) => opening.openingName === openingName);
 
     const stage1Name = nanoid(10);
     const stage2Name = nanoid(10);
@@ -319,7 +299,7 @@ describe("Stages", () => {
     expect(secondStage.GSI1SK).toBe(stage2Name);
   });
 
-  it("blocks updating forbidden properties of a stage", async () => {
+  it('blocks updating forbidden properties of a stage', async () => {
     expect.assertions(2);
     const openingName = nanoid(20);
 
@@ -331,9 +311,7 @@ describe("Stages", () => {
     // Get openings in an org
     const data = await Openings.GetAllOpeningsInOrg();
 
-    const ourOpening = data.data.find(
-      (opening) => opening.openingName === openingName
-    );
+    const ourOpening = data.data.find((opening) => opening.openingName === openingName);
 
     const stageName = nanoid(10);
     // Add a stage
@@ -343,9 +321,7 @@ describe("Stages", () => {
       GSI1SK: stageName,
     });
 
-    const openingAfterStage = await Openings.GetOpeningInfo(
-      ourOpening.openingId
-    );
+    const openingAfterStage = await Openings.GetOpeningInfo(ourOpening.openingId);
 
     const stageId = openingAfterStage.data.stageOrder[0];
 
@@ -364,11 +340,11 @@ describe("Stages", () => {
     } catch (error) {
       console.error(error);
       expect(error.response.status).toBe(400);
-      expect(error.response.data.message).toContain("is not allowed");
+      expect(error.response.data.message).toContain('is not allowed');
     }
   });
 
-  it("allows updating a stage", async () => {
+  it('allows updating a stage', async () => {
     expect.assertions(3);
     const openingName = nanoid(20);
 
@@ -380,9 +356,7 @@ describe("Stages", () => {
     // Get openings in an org
     const data = await Openings.GetAllOpeningsInOrg();
 
-    const ourOpening = data.data.find(
-      (opening) => opening.openingName === openingName
-    );
+    const ourOpening = data.data.find((opening) => opening.openingName === openingName);
 
     const stageName = nanoid(10);
     // Add a stage
@@ -391,9 +365,7 @@ describe("Stages", () => {
       GSI1SK: stageName,
     });
 
-    const openingAfterStage = await Openings.GetOpeningInfo(
-      ourOpening.openingId
-    );
+    const openingAfterStage = await Openings.GetOpeningInfo(ourOpening.openingId);
 
     const stageId = openingAfterStage.data.stageOrder[0];
 
@@ -408,7 +380,7 @@ describe("Stages", () => {
     });
 
     expect(update.status).toBe(200);
-    expect(update.data.message).toBe("Stage updated!");
+    expect(update.data.message).toBe('Stage updated!');
 
     const stageAfter = await Stages.GetStageInfo({
       openingId: ourOpening.openingId,

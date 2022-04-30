@@ -1,24 +1,24 @@
-import { AXIOS_INSTANCE as axios, ERRORS, OPENING_STATE } from "../Config";
-import { nanoid } from "nanoid";
-import * as Openings from "../adapters/Openings";
-import * as Orgs from "../adapters/Orgs";
-import * as Stages from "../adapters/Stages";
-import { DynamoOpening } from "../types/dynamo";
-describe("Openings", () => {
+import { AXIOS_INSTANCE as axios, ERRORS, OPENING_STATE } from '../Config';
+import { nanoid } from 'nanoid';
+import * as Openings from '../adapters/Openings';
+import * as Orgs from '../adapters/Orgs';
+import * as Stages from '../adapters/Stages';
+import { DynamoOpening } from '../types/dynamo';
+describe('Openings', () => {
   /**
    * Creates a session cookie
    */
   beforeAll(async () => {
     const data = await axios.post(`/jest-setup`);
-    const cookie = data.headers["set-cookie"][0];
+    const cookie = data.headers['set-cookie'][0];
     axios.defaults.headers.Cookie = cookie;
   });
 
-  it("fails to create an opening if a user is not in an org", async () => {
+  it('fails to create an opening if a user is not in an org', async () => {
     expect.assertions(2);
     try {
       await Openings.CreateOpening({
-        openingName: "1",
+        openingName: '1',
       });
     } catch (error) {
       expect(error.response.status).toBe(403);
@@ -26,7 +26,7 @@ describe("Openings", () => {
     }
   });
 
-  it("fails to retrieve openings in an org if a user does not have an org", async () => {
+  it('fails to retrieve openings in an org if a user does not have an org', async () => {
     expect.assertions(2);
     try {
       await Openings.GetAllOpeningsInOrg();
@@ -36,17 +36,17 @@ describe("Openings", () => {
     }
   });
 
-  it("fails to retrieve a specific opening if a user does not have an org", async () => {
+  it('fails to retrieve a specific opening if a user does not have an org', async () => {
     expect.assertions(2);
     try {
-      await Openings.GetOpeningInfo("123");
+      await Openings.GetOpeningInfo('123');
     } catch (error) {
       expect(error.response.status).toBe(403);
       expect(error.response.data.message).toBe(ERRORS.NEEDS_ORG);
     }
   });
 
-  it("fails to create an opening with a large name", async () => {
+  it('fails to create an opening with a large name', async () => {
     expect.assertions(3);
     // Create an org
     await Orgs.CreateOrg({
@@ -60,24 +60,22 @@ describe("Openings", () => {
       });
     } catch (error) {
       expect(error.response.status).toBe(400);
-      expect(error.response.data.message).toContain("body.openingName");
-      expect(error.response.data.message).toContain(
-        "less than or equal to 100"
-      );
+      expect(error.response.data.message).toContain('body.openingName');
+      expect(error.response.data.message).toContain('less than or equal to 100');
     }
   });
 
-  it("creates an opening", async () => {
+  it('creates an opening', async () => {
     expect.assertions(2);
     const data = await Openings.CreateOpening({
       openingName: nanoid(20),
     });
 
     expect(data.status).toBe(201);
-    expect(data.data.message).toBe("Opening created!");
+    expect(data.data.message).toBe('Opening created!');
   });
 
-  it("allows retrieving openings in an org", async () => {
+  it('allows retrieving openings in an org', async () => {
     expect.assertions(2);
     // Create an opening first
     await Openings.CreateOpening({
@@ -90,17 +88,17 @@ describe("Openings", () => {
     expect(data.data.length).toBeGreaterThanOrEqual(1);
   });
 
-  it("returns a 404 if an opening does not exist", async () => {
+  it('returns a 404 if an opening does not exist', async () => {
     expect.assertions(2);
     try {
-      await Openings.GetOpeningInfo("1");
+      await Openings.GetOpeningInfo('1');
     } catch (error) {
       expect(error.response.status).toBe(404);
-      expect(error.response.data.message).toBe("Opening not found");
+      expect(error.response.data.message).toBe('Opening not found');
     }
   });
 
-  it("allows retrieving an opening by id", async () => {
+  it('allows retrieving an opening by id', async () => {
     expect.assertions(2);
     // Create an opening first
     await Openings.CreateOpening({
@@ -119,7 +117,7 @@ describe("Openings", () => {
     expect(data2.data).toStrictEqual(opening);
   });
 
-  it("allows updating an opening", async () => {
+  it('allows updating an opening', async () => {
     expect.assertions(2);
     // Create an opening
     await Openings.CreateOpening({
@@ -142,10 +140,10 @@ describe("Openings", () => {
     });
 
     expect(data2.status).toBe(200);
-    expect(data2.data.message).toBe("Opening updated!");
+    expect(data2.data.message).toBe('Opening updated!');
   });
 
-  it("fails to make an opening public if there are no stages in it", async () => {
+  it('fails to make an opening public if there are no stages in it', async () => {
     expect.assertions(2);
     const openingName = nanoid(20);
 
@@ -156,7 +154,7 @@ describe("Openings", () => {
     const allOpenings = await Openings.GetAllOpeningsInOrg();
 
     const ourOpening = allOpenings.data.find(
-      (opening: DynamoOpening) => opening.openingName === openingName
+      (opening: DynamoOpening) => opening.openingName === openingName,
     );
 
     // Try to update
@@ -170,12 +168,12 @@ describe("Openings", () => {
     } catch (error) {
       expect(error.response.status).toBe(403);
       expect(error.response.data.message).toBe(
-        "An opening needs to have stages before being made public"
+        'An opening needs to have stages before being made public',
       );
     }
   });
 
-  it("blocks updating an opening with an extra long name", async () => {
+  it('blocks updating an opening with an extra long name', async () => {
     expect.assertions(3);
     // Create an opening
     await Openings.CreateOpening({
@@ -197,14 +195,12 @@ describe("Openings", () => {
       });
     } catch (error) {
       expect(error.response.status).toBe(400);
-      expect(error.response.data.message).toContain("body.openingName");
-      expect(error.response.data.message).toContain(
-        "less than or equal to 100"
-      );
+      expect(error.response.data.message).toContain('body.openingName');
+      expect(error.response.data.message).toContain('less than or equal to 100');
     }
   });
 
-  it("blocks editing forbidden properties of an opening", async () => {
+  it('blocks editing forbidden properties of an opening', async () => {
     expect.assertions(2);
     // Create an opening
     await Openings.CreateOpening({
@@ -228,11 +224,11 @@ describe("Openings", () => {
       });
     } catch (error) {
       expect(error.response.status).toBe(400);
-      expect(error.response.data.message).toContain("is not allowed");
+      expect(error.response.data.message).toContain('is not allowed');
     }
   });
 
-  it("allows deleting openings", async () => {
+  it('allows deleting openings', async () => {
     expect.assertions(2);
     // Create an opening
     await Openings.CreateOpening({
@@ -246,10 +242,10 @@ describe("Openings", () => {
 
     const data2 = await Openings.DeleteOpening(opening.openingId);
     expect(data2.status).toBe(200);
-    expect(data2.data.message).toBe("Opening deleted!");
+    expect(data2.data.message).toBe('Opening deleted!');
   });
 
-  it("allows updating stage order", async () => {
+  it('allows updating stage order', async () => {
     expect.assertions(4);
     const ourOpeningName = nanoid(15);
 
@@ -262,7 +258,7 @@ describe("Openings", () => {
 
     // Get our opening
     const ourOpening = data.data.find(
-      (opening: DynamoOpening) => opening.openingName === ourOpeningName
+      (opening: DynamoOpening) => opening.openingName === ourOpeningName,
     );
 
     expect(ourOpening.stageOrder.length).toBe(0);
@@ -289,9 +285,9 @@ describe("Openings", () => {
     });
 
     expect(withNewOrder.status).toBe(200);
-    expect(withNewOrder.data.message).toBe("Opening updated!");
+    expect(withNewOrder.data.message).toBe('Opening updated!');
   });
-  it("blocks removing / adding stages in the stageOrder on the opening", async () => {
+  it('blocks removing / adding stages in the stageOrder on the opening', async () => {
     expect.assertions(4);
     const ourOpeningName = nanoid(15);
 
@@ -304,7 +300,7 @@ describe("Openings", () => {
 
     // Get our opening
     const ourOpening = data.data.find(
-      (opening: DynamoOpening) => opening.openingName === ourOpeningName
+      (opening: DynamoOpening) => opening.openingName === ourOpeningName,
     );
 
     expect(ourOpening.stageOrder.length).toBe(0);
@@ -332,7 +328,7 @@ describe("Openings", () => {
     } catch (error) {
       expect(error.response.status).toBe(403);
       expect(error.response.data.message).toBe(
-        "You cannot add / delete stages this way, please use the proper API methods for those actions"
+        'You cannot add / delete stages this way, please use the proper API methods for those actions',
       );
     }
   });
@@ -350,7 +346,7 @@ describe("Openings", () => {
 
     // Get our opening
     let ourOpening = data.data.find(
-      (opening: DynamoOpening) => opening.openingName === ourOpeningName
+      (opening: DynamoOpening) => opening.openingName === ourOpeningName,
     );
 
     expect(ourOpening.stageOrder.length).toBe(0);
@@ -369,15 +365,13 @@ describe("Openings", () => {
       GSI1SK: nanoid(20),
     });
 
-    const updatedOpeningData = await Openings.GetOpeningInfo(
-      ourOpening.openingId
-    );
+    const updatedOpeningData = await Openings.GetOpeningInfo(ourOpening.openingId);
     ourOpening = updatedOpeningData.data;
 
     expect(ourOpening.stageOrder.length).toBe(3);
 
     // Try to update the stage order with stage IDs that don't exist
-    ourOpening.stageOrder.splice(0, 1, "123");
+    ourOpening.stageOrder.splice(0, 1, '123');
     try {
       await Openings.UpdateOpening({
         openingId: ourOpening.openingId,
@@ -388,7 +382,7 @@ describe("Openings", () => {
     } catch (error) {
       expect(error.response.status).toBe(400);
       expect(error.response.data.message).toBe(
-        "The stageIds in the 'stageOrder' property differ from the ones in the opening, please check your request and try again."
+        "The stageIds in the 'stageOrder' property differ from the ones in the opening, please check your request and try again.",
       );
     }
   });

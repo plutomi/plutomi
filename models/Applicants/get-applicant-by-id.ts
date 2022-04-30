@@ -1,41 +1,39 @@
-import { QueryCommandInput, QueryCommand } from "@aws-sdk/lib-dynamodb";
-import _ from "lodash";
-import { Dynamo } from "../../AWSClients/ddbDocClient";
-import { DYNAMO_TABLE_NAME, ENTITY_TYPES } from "../../Config";
+import { QueryCommandInput, QueryCommand } from '@aws-sdk/lib-dynamodb';
+import _ from 'lodash';
+import { Dynamo } from '../../AWSClients/ddbDocClient';
+import { DYNAMO_TABLE_NAME, ENTITY_TYPES } from '../../Config';
 import {
   GetApplicantByIdInput,
   GetApplicantByIdOutput,
   CreateApplicantOutput,
-} from "../../types/main";
-import { SdkError } from "@aws-sdk/types";
+} from '../../types/main';
+import { SdkError } from '@aws-sdk/types';
 
 export default async function GetApplicantById(
-  props: GetApplicantByIdInput
+  props: GetApplicantByIdInput,
 ): Promise<[GetApplicantByIdOutput, null] | [null, SdkError]> {
   const { orgId, applicantId } = props;
   const responsesParams: QueryCommandInput = {
     TableName: `${process.env.NODE_ENV}-${DYNAMO_TABLE_NAME}`,
-    KeyConditionExpression: "PK = :PK",
+    KeyConditionExpression: 'PK = :PK',
     ExpressionAttributeValues: {
-      ":PK": `${ENTITY_TYPES.ORG}#${orgId}#${ENTITY_TYPES.APPLICANT}#${applicantId}`,
+      ':PK': `${ENTITY_TYPES.ORG}#${orgId}#${ENTITY_TYPES.APPLICANT}#${applicantId}`,
     },
   };
 
   try {
     // TODO refactor for promise all / transact
-    const allApplicantInfo = await Dynamo.send(
-      new QueryCommand(responsesParams)
-    );
+    const allApplicantInfo = await Dynamo.send(new QueryCommand(responsesParams));
 
     if (allApplicantInfo.Count === 0) {
-      throw "Applicant not found";
+      throw 'Applicant not found';
     }
 
     if (allApplicantInfo?.Items?.length === 0) {
-      throw new Error("Applicant not found");
+      throw new Error('Applicant not found');
     }
 
-    const grouped = _.groupBy(allApplicantInfo.Items, "entityType");
+    const grouped = _.groupBy(allApplicantInfo.Items, 'entityType');
 
     const metadata = grouped.APPLICANT[0] as CreateApplicantOutput;
     const responses = grouped.APPLICANT_RESPONSE;

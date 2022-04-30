@@ -1,5 +1,5 @@
-import { ArrowLeftIcon } from "@heroicons/react/outline";
-import { useRouter } from "next/router";
+import { ArrowLeftIcon } from '@heroicons/react/outline';
+import { useRouter } from 'next/router';
 export default function GoBack({ url }) {
   const router = useRouter();
   return (

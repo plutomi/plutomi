@@ -1,31 +1,26 @@
-import { FormEvent, Fragment, useEffect, useState } from "react";
-import { Dialog, Transition } from "@headlessui/react";
-import { XIcon } from "@heroicons/react/outline";
-import useStore from "../../utils/store";
-import { mutate } from "swr";
-import { useRouter } from "next/router";
-import { GetOpeningInfoURL } from "../../adapters/Openings";
-import { GetStagesInOpeningURL, UpdateStage } from "../../adapters/Stages";
-import { CUSTOM_QUERY } from "../../types/main";
-import { DynamoStage } from "../../types/dynamo";
+import { FormEvent, Fragment, useEffect, useState } from 'react';
+import { Dialog, Transition } from '@headlessui/react';
+import { XIcon } from '@heroicons/react/outline';
+import useStore from '../../utils/store';
+import { mutate } from 'swr';
+import { useRouter } from 'next/router';
+import { GetOpeningInfoURL } from '../../adapters/Openings';
+import { GetStagesInOpeningURL, UpdateStage } from '../../adapters/Stages';
+import { CUSTOM_QUERY } from '../../types/main';
+import { DynamoStage } from '../../types/dynamo';
 
 export default function UpdateStageModal({ stage }: { stage: DynamoStage }) {
   const router = useRouter();
 
-  const { openingId, stageId } = router.query as Pick<
-    CUSTOM_QUERY,
-    "openingId" | "stageId"
-  >;
-  const [GSI1SK, setGSI1SK] = useState("");
+  const { openingId, stageId } = router.query as Pick<CUSTOM_QUERY, 'openingId' | 'stageId'>;
+  const [GSI1SK, setGSI1SK] = useState('');
 
   useEffect(() => {
     setGSI1SK(stage?.GSI1SK);
   }, [stage?.GSI1SK]);
 
   const visibility = useStore((state) => state.showUpdateStageModal);
-  const closeUpdateStageModal = useStore(
-    (state) => state.closeUpdateStageModal
-  );
+  const closeUpdateStageModal = useStore((state) => state.closeUpdateStageModal);
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
@@ -38,7 +33,7 @@ export default function UpdateStageModal({ stage }: { stage: DynamoStage }) {
         },
       });
       alert(data.message);
-      setGSI1SK("");
+      setGSI1SK('');
       closeUpdateStageModal();
     } catch (error) {
       alert(error.response.data.message);
@@ -53,11 +48,7 @@ export default function UpdateStageModal({ stage }: { stage: DynamoStage }) {
 
   return (
     <Transition.Root show={visibility} as={Fragment}>
-      <Dialog
-        as="div"
-        className="fixed inset-0 overflow-hidden "
-        onClose={closeUpdateStageModal}
-      >
+      <Dialog as="div" className="fixed inset-0 overflow-hidden " onClose={closeUpdateStageModal}>
         <div className="absolute inset-0 overflow-hidden">
           <Transition.Child
             as={Fragment}
@@ -105,9 +96,9 @@ export default function UpdateStageModal({ stage }: { stage: DynamoStage }) {
                       </div>
                       <div className="mt-1">
                         <p className="text-sm text-blue-300">
-                          Stages are individual steps in your application
-                          process such as &apos;Questionnaire&apos;, &apos;Under
-                          Review&apos;, or &apos;Ready to Drive&apos;.
+                          Stages are individual steps in your application process such as
+                          &apos;Questionnaire&apos;, &apos;Under Review&apos;, or &apos;Ready to
+                          Drive&apos;.
                         </p>
                       </div>
                     </div>

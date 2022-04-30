@@ -1,6 +1,6 @@
-import { Request, Response } from "express";
-import * as CreateError from "../../utils/createError";
-import * as Invites from "../../models/Invites";
+import { Request, Response } from 'express';
+import * as CreateError from '../../utils/createError';
+import * as Invites from '../../models/Invites';
 const main = async (req: Request, res: Response) => {
   const { session } = res.locals;
   const [invites, error] = await Invites.GetInvitesForUser({
@@ -8,10 +8,7 @@ const main = async (req: Request, res: Response) => {
   });
 
   if (error) {
-    const { status, body } = CreateError.SDK(
-      error,
-      "An error ocurred retrieving invites"
-    );
+    const { status, body } = CreateError.SDK(error, 'An error ocurred retrieving invites');
     return res.status(status).json(body);
   }
 

@@ -1,5 +1,5 @@
-import { useRouter } from "next/router";
-import { ArrowLeftIcon } from "@heroicons/react/outline";
+import { useRouter } from 'next/router';
+import { ArrowLeftIcon } from '@heroicons/react/outline';
 export default function NotFound() {
   const router = useRouter();
 
@@ -19,10 +19,7 @@ export default function NotFound() {
               type="button"
               className="px-4 inline-flex items-center py-3  transition duration-300 ease-in-out font-medium  bg-emerald-500 hover:bg-emerald-800 rounded-md text-white"
             >
-              <ArrowLeftIcon
-                className="-ml-1 mr-2 h-5 w-5"
-                aria-hidden="true"
-              />
+              <ArrowLeftIcon className="-ml-1 mr-2 h-5 w-5" aria-hidden="true" />
               Go Back
             </button>
           </div>

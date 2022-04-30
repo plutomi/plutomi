@@ -1,7 +1,7 @@
-import { Request, Response } from "express";
-import * as CreateError from "../../utils/createError";
-import * as Applicants from "../../models/Applicants";
-import * as Openings from "../../models/Openings";
+import { Request, Response } from 'express';
+import * as CreateError from '../../utils/createError';
+import * as Applicants from '../../models/Applicants';
+import * as Openings from '../../models/Openings';
 
 const main = async (req: Request, res: Response) => {
   const { session } = res.locals;
@@ -16,7 +16,7 @@ const main = async (req: Request, res: Response) => {
   if (applicantsError) {
     const { status, body } = CreateError.SDK(
       applicantsError,
-      "An error ocurred retrieving applicants"
+      'An error ocurred retrieving applicants',
     );
 
     return res.status(status).json(body);

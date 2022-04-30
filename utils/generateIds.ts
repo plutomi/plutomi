@@ -1,4 +1,4 @@
-import { nanoid } from "nanoid";
+import { nanoid } from 'nanoid';
 
 /**
  * Generates a clean orgId, used for tests
@@ -7,14 +7,14 @@ import { nanoid } from "nanoid";
  */
 
 const OrgID = (length: number) => {
-  const UrlSafeString = require("url-safe-string"),
+  const UrlSafeString = require('url-safe-string'),
     tagGenerator = new UrlSafeString();
 
   return tagGenerator.generate(nanoid(length));
 };
 const QuestionID = (length: number) => {
-  const UrlSafeString = require("url-safe-string"),
-    tagGenerator = new UrlSafeString({ joinString: "_" });
+  const UrlSafeString = require('url-safe-string'),
+    tagGenerator = new UrlSafeString({ joinString: '_' });
   return tagGenerator.generate(nanoid(length));
 };
 

@@ -1,16 +1,15 @@
-import useApplicantById from "../../SWR/useApplicantById";
-import { useRouter } from "next/router";
-import useStageInfo from "../../SWR/useStageInfo";
-import { CUSTOM_QUERY } from "../../types/main";
+import useApplicantById from '../../SWR/useApplicantById';
+import { useRouter } from 'next/router';
+import useStageInfo from '../../SWR/useStageInfo';
+import { CUSTOM_QUERY } from '../../types/main';
 export default function ApplicationHeader() {
   const router = useRouter();
-  const { applicantId } = router.query as Pick<CUSTOM_QUERY, "applicantId">;
-  const { applicant, isApplicantLoading, isApplicantError } =
-    useApplicantById(applicantId);
+  const { applicantId } = router.query as Pick<CUSTOM_QUERY, 'applicantId'>;
+  const { applicant, isApplicantLoading, isApplicantError } = useApplicantById(applicantId);
 
   const { stage, isStageLoading, isStageError } = useStageInfo(
     applicant?.openingId,
-    applicant?.stageId
+    applicant?.stageId,
   );
   return (
     <div className="md:flex md:items-center md:justify-between">

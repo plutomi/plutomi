@@ -1,6 +1,6 @@
-import { Request, Response } from "express";
-import * as Orgs from "../../models/Orgs";
-import * as CreateError from "../../utils/createError";
+import { Request, Response } from 'express';
+import * as Orgs from '../../models/Orgs';
+import * as CreateError from '../../utils/createError';
 const main = async (req: Request, res: Response) => {
   const { session } = res.locals;
   const { orgId } = session;
@@ -8,19 +8,16 @@ const main = async (req: Request, res: Response) => {
   const [org, error] = await Orgs.GetOrgById({ orgId });
 
   if (error) {
-    const { status, body } = CreateError.SDK(
-      error,
-      "Unable to retrieve org info"
-    );
+    const { status, body } = CreateError.SDK(error, 'Unable to retrieve org info');
     return res.status(status).json(body);
   }
 
   if (!org) {
-    return res.status(404).json({ message: "Org not found" });
+    return res.status(404).json({ message: 'Org not found' });
   }
   if (org.totalUsers > 1) {
     return res.status(403).json({
-      message: "You cannot delete this org as there are other users in it",
+      message: 'You cannot delete this org as there are other users in it',
     });
   }
 
@@ -31,13 +28,10 @@ const main = async (req: Request, res: Response) => {
   });
 
   if (failure) {
-    const { status, body } = CreateError.SDK(
-      failure,
-      "We were unable to remove you from the org"
-    );
+    const { status, body } = CreateError.SDK(failure, 'We were unable to remove you from the org');
     return res.status(status).json(body);
   }
 
-  return res.status(200).json({ message: "Org deleted!" });
+  return res.status(200).json({ message: 'Org deleted!' });
 };
 export default main;

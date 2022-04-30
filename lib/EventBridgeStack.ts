@@ -1,8 +1,8 @@
-import * as cdk from "@aws-cdk/core";
-import { ENTITY_TYPES } from "../Config";
-import { EventBus, Rule } from "@aws-cdk/aws-events";
-import { StateMachine } from "@aws-cdk/aws-stepfunctions";
-import { SfnStateMachine } from "@aws-cdk/aws-events-targets";
+import * as cdk from '@aws-cdk/core';
+import { ENTITY_TYPES } from '../Config';
+import { EventBus, Rule } from '@aws-cdk/aws-events';
+import { StateMachine } from '@aws-cdk/aws-stepfunctions';
+import { SfnStateMachine } from '@aws-cdk/aws-events-targets';
 
 interface EventBridgeStackProps extends cdk.StackProps {
   CommsMachine: StateMachine;
@@ -32,16 +32,16 @@ export default class EventBridgeStack extends cdk.Stack {
       retention: cdk.Duration.days(365),
     });
     // We want to send all communication events to the step function, we can handle routing there
-    new Rule(this, "NeedsCommsRule", {
+    new Rule(this, 'NeedsCommsRule', {
       eventBus: bus,
       description:
-        "Rule that checks if an action needs further comms such as login links or welcome emails. Forwards to the `CommsMachine` step function.",
-      ruleName: "NeedsCommsRule",
+        'Rule that checks if an action needs further comms such as login links or welcome emails. Forwards to the `CommsMachine` step function.',
+      ruleName: 'NeedsCommsRule',
       targets: [new SfnStateMachine(props.CommsMachine)],
       eventPattern: {
-        source: ["dynamodb.streams"],
+        source: ['dynamodb.streams'],
         detail: {
-          eventName: ["INSERT"],
+          eventName: ['INSERT'],
           NewImage: {
             entityType: [
               ENTITY_TYPES.LOGIN_EVENT,
@@ -57,16 +57,16 @@ export default class EventBridgeStack extends cdk.Stack {
     });
 
     // We want to send all deletion events to the step function, we can handle routing there
-    new Rule(this, "DeletionRule", {
+    new Rule(this, 'DeletionRule', {
       eventBus: bus,
       description:
-        "Rule that checks if an action needs further comms such as login links or welcome emails. Forwards to the `CommsMachine` step function.",
-      ruleName: "DeletionRule",
+        'Rule that checks if an action needs further comms such as login links or welcome emails. Forwards to the `CommsMachine` step function.',
+      ruleName: 'DeletionRule',
       targets: [new SfnStateMachine(props.DeleteChildrenMachine)],
       eventPattern: {
-        source: ["dynamodb.streams"],
+        source: ['dynamodb.streams'],
         detail: {
-          eventName: ["REMOVE"],
+          eventName: ['REMOVE'],
           OldImage: {
             entityType: [
               // TODO other entities

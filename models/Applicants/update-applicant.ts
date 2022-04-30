@@ -1,11 +1,11 @@
-import { UpdateCommandInput, UpdateCommand } from "@aws-sdk/lib-dynamodb";
-import { Dynamo } from "../../AWSClients/ddbDocClient";
-import { DYNAMO_TABLE_NAME, ENTITY_TYPES } from "../../Config";
-import { UpdateApplicantInput } from "../../types/main";
-import { SdkError } from "@aws-sdk/types";
+import { UpdateCommandInput, UpdateCommand } from '@aws-sdk/lib-dynamodb';
+import { Dynamo } from '../../AWSClients/ddbDocClient';
+import { DYNAMO_TABLE_NAME, ENTITY_TYPES } from '../../Config';
+import { UpdateApplicantInput } from '../../types/main';
+import { SdkError } from '@aws-sdk/types';
 
 export default async function UpdateApplicant(
-  props: UpdateApplicantInput
+  props: UpdateApplicantInput,
 ): Promise<[null, null] | [null, SdkError]> {
   const { orgId, applicantId, newValues } = props;
 
@@ -27,11 +27,11 @@ export default async function UpdateApplicant(
       PK: `${ENTITY_TYPES.ORG}#${orgId}#${ENTITY_TYPES.APPLICANT}#${applicantId}`,
       SK: ENTITY_TYPES.APPLICANT,
     },
-    UpdateExpression: `SET ` + allUpdateExpressions.join(", "),
+    UpdateExpression: `SET ` + allUpdateExpressions.join(', '),
     ExpressionAttributeValues: allAttributeValues,
     TableName: `${process.env.NODE_ENV}-${DYNAMO_TABLE_NAME}`,
 
-    ConditionExpression: "attribute_exists(PK)",
+    ConditionExpression: 'attribute_exists(PK)',
   };
 
   try {

@@ -1,23 +1,17 @@
-import useSelf from "../../SWR/useSelf";
-import Loader from "../Loader";
-import Invite from "./Invite";
-import { mutate } from "swr";
-import { useRouter } from "next/router";
-import {
-  AcceptInvite,
-  RejectInvite,
-  GetUserInvitesURL,
-} from "../../adapters/Invites";
-import useUserInvites from "../../SWR/useUserInvites";
-import { DynamoOrgInvite } from "../../types/dynamo";
-import { GetSelfInfoURL } from "../../adapters/Users";
+import useSelf from '../../SWR/useSelf';
+import Loader from '../Loader';
+import Invite from './Invite';
+import { mutate } from 'swr';
+import { useRouter } from 'next/router';
+import { AcceptInvite, RejectInvite, GetUserInvitesURL } from '../../adapters/Invites';
+import useUserInvites from '../../SWR/useUserInvites';
+import { DynamoOrgInvite } from '../../types/dynamo';
+import { GetSelfInfoURL } from '../../adapters/Users';
 export default function InvitesContent() {
   const router = useRouter();
   const { user, isUserLoading, isUserError } = useSelf();
   // TODO we don't have to make this call here if a user doesn't have invites
-  const { invites, isInvitesLoading, isInvitesError } = useUserInvites(
-    user?.userId
-  );
+  const { invites, isInvitesLoading, isInvitesError } = useUserInvites(user?.userId);
 
   if (isInvitesLoading) {
     return <Loader text="Loading invites..." />;

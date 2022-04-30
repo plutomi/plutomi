@@ -1,15 +1,13 @@
-import { Request, Response } from "express";
-import { DEFAULTS, JOI_SETTINGS, JoiOrgId } from "../../Config";
-import * as CreateError from "../../utils/createError";
-import * as Users from "../../models/Users";
-import * as Orgs from "../../models/Orgs";
-import * as Invites from "../../models/Invites";
-import Joi from "joi";
-import { DynamoOrg } from "../../types/dynamo";
+import { Request, Response } from 'express';
+import { DEFAULTS, JOI_SETTINGS, JoiOrgId } from '../../Config';
+import * as CreateError from '../../utils/createError';
+import * as Users from '../../models/Users';
+import * as Orgs from '../../models/Orgs';
+import * as Invites from '../../models/Invites';
+import Joi from 'joi';
+import { DynamoOrg } from '../../types/dynamo';
 
-export type APICreateOrgOptions = Required<
-  Pick<DynamoOrg, "orgId" | "displayName">
->;
+export type APICreateOrgOptions = Required<Pick<DynamoOrg, 'orgId' | 'displayName'>>;
 
 const schema = Joi.object({
   body: {
@@ -29,7 +27,7 @@ const main = async (req: Request, res: Response) => {
   }
 
   if (session.orgId !== DEFAULTS.NO_ORG) {
-    return res.status(403).json({ message: "You already belong to an org!" });
+    return res.status(403).json({ message: 'You already belong to an org!' });
   }
 
   const [pendingInvites, error] = await Invites.GetInvitesForUser({
@@ -39,7 +37,7 @@ const main = async (req: Request, res: Response) => {
   if (error) {
     const { status, body } = CreateError.SDK(
       error,
-      "Unable to create org - error retrieving invites"
+      'Unable to create org - error retrieving invites',
     );
 
     return res.status(status).json(body);
@@ -48,7 +46,7 @@ const main = async (req: Request, res: Response) => {
   if (pendingInvites && pendingInvites.length > 0) {
     return res.status(403).json({
       message:
-        "You seem to have pending invites, please accept or reject them before creating an org :)",
+        'You seem to have pending invites, please accept or reject them before creating an org :)',
     });
   }
 
@@ -61,15 +59,15 @@ const main = async (req: Request, res: Response) => {
   });
 
   if (failed) {
-    if (failed.name === "TransactionCanceledException") {
+    if (failed.name === 'TransactionCanceledException') {
       return res.status(409).json({
-        message: "It appears that that org ID is already taken - try another",
+        message: 'It appears that that org ID is already taken - try another',
       });
     }
-    const { status, body } = CreateError.SDK(failed, "Unable to create org");
+    const { status, body } = CreateError.SDK(failed, 'Unable to create org');
     return res.status(status).json(body);
   }
 
-  return res.status(201).json({ message: "Org created!" });
+  return res.status(201).json({ message: 'Org created!' });
 };
 export default main;

@@ -1,41 +1,38 @@
-import { Fragment, useState } from "react";
-import EasyEdit, { Types } from "react-easy-edit";
-import CustomEditableInput from "./CustomEditableInput";
-import { Dialog, Transition } from "@headlessui/react";
-import { XIcon, ChevronDoubleRightIcon } from "@heroicons/react/outline";
-import CustomEditableAction from "./CustomEditableSave";
-import useStore from "../../utils/store";
-import { useRouter } from "next/router";
-import { mutate } from "swr";
-import ClickToCopy from "../ClickToCopy";
-import delay from "delay";
-import useApplicantById from "../../SWR/useApplicantById";
-import {
-  GetApplicantByIdURL,
-  UpdateApplicant,
-} from "../../adapters/Applicants";
-import { CUSTOM_QUERY } from "../../types/main";
-import { WEBSITE_URL } from "../../Config";
+import { Fragment, useState } from 'react';
+import EasyEdit, { Types } from 'react-easy-edit';
+import CustomEditableInput from './CustomEditableInput';
+import { Dialog, Transition } from '@headlessui/react';
+import { XIcon, ChevronDoubleRightIcon } from '@heroicons/react/outline';
+import CustomEditableAction from './CustomEditableSave';
+import useStore from '../../utils/store';
+import { useRouter } from 'next/router';
+import { mutate } from 'swr';
+import ClickToCopy from '../ClickToCopy';
+import delay from 'delay';
+import useApplicantById from '../../SWR/useApplicantById';
+import { GetApplicantByIdURL, UpdateApplicant } from '../../adapters/Applicants';
+import { CUSTOM_QUERY } from '../../types/main';
+import { WEBSITE_URL } from '../../Config';
 const tabs = [
-  { id: 1, name: "Details" },
-  { id: 2, name: "History (todo)" },
+  { id: 1, name: 'Details' },
+  { id: 2, name: 'History (todo)' },
   // { id: 3, name: "Messages" }, // TODO add get messages (Twilio)
 ];
 
 const team = [
   {
-    name: "Leslie Alexander",
-    handle: "lesliealexander",
-    href: "#",
+    name: 'Leslie Alexander',
+    handle: 'lesliealexander',
+    href: '#',
     imageUrl:
-      "https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80",
-    status: "online",
+      'https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80',
+    status: 'online',
   },
   // More people...
 ];
 
 function classNames(...classes) {
-  return classes.filter(Boolean).join(" ");
+  return classes.filter(Boolean).join(' ');
 }
 
 export default function ApplicantProfileModal() {
@@ -44,11 +41,10 @@ export default function ApplicantProfileModal() {
   const router = useRouter();
   const { applicantId, openingId, stageId } = router.query as Pick<
     CUSTOM_QUERY,
-    "openingId" | "stageId" | "applicantId"
+    'openingId' | 'stageId' | 'applicantId'
   >;
 
-  const { applicant, isApplicantLoading, isApplicantError } =
-    useApplicantById(applicantId);
+  const { applicant, isApplicantLoading, isApplicantError } = useApplicantById(applicantId);
 
   const handleNavClick = (e, tabId: number) => {
     e.preventDefault();
@@ -69,9 +65,7 @@ export default function ApplicantProfileModal() {
   };
 
   const visibility = useStore((state) => state.showApplicantProfileModal);
-  const closeApplicantProfileModal = useStore(
-    (state) => state.closeApplicantProfileModal
-  );
+  const closeApplicantProfileModal = useStore((state) => state.closeApplicantProfileModal);
   return (
     <Transition.Root show={visibility} as={Fragment}>
       <Dialog
@@ -106,14 +100,14 @@ export default function ApplicantProfileModal() {
                   <div className="p-6">
                     <div className="flex items-start justify-between">
                       <Dialog.Title className="text-lg font-medium text-dark flex items-center space-x-4">
-                        {isApplicantError && "An error ocurred"}
-                        {isApplicantLoading && "Loading..."}
+                        {isApplicantError && 'An error ocurred'}
+                        {isApplicantLoading && 'Loading...'}
                         <EasyEdit
                           placeholder={null}
                           type={Types.TEXT}
                           value={applicant?.firstName}
                           onSave={(
-                            value // Only update if there's been a change
+                            value, // Only update if there's been a change
                           ) =>
                             value !== applicant?.firstName &&
                             updateApplicant(applicant?.applicantId, {
@@ -123,18 +117,14 @@ export default function ApplicantProfileModal() {
                           }
                           editComponent={
                             <CustomEditableInput
-                              label={"First name"}
-                              placeholder={"Enter a new name"}
+                              label={'First name'}
+                              placeholder={'Enter a new name'}
                               initialValue={applicant?.firstName}
                             />
                           }
-                          saveButtonLabel={
-                            <CustomEditableAction action="SAVE" />
-                          }
-                          cancelButtonLabel={
-                            <CustomEditableAction action="CANCEL" />
-                          }
-                          attributes={{ name: "awesome-input", id: 1 }}
+                          saveButtonLabel={<CustomEditableAction action="SAVE" />}
+                          cancelButtonLabel={<CustomEditableAction action="CANCEL" />}
+                          attributes={{ name: 'awesome-input', id: 1 }}
                         />
                         <EasyEdit
                           placeholder={null}
@@ -149,23 +139,19 @@ export default function ApplicantProfileModal() {
                           }
                           editComponent={
                             <CustomEditableInput
-                              label={"Last name"}
-                              placeholder={"Enter a new name"}
+                              label={'Last name'}
+                              placeholder={'Enter a new name'}
                               initialValue={applicant?.lastName}
                             />
                           }
-                          saveButtonLabel={
-                            <CustomEditableAction action="SAVE" />
-                          }
-                          cancelButtonLabel={
-                            <CustomEditableAction action="CANCEL" />
-                          }
-                          attributes={{ name: "awesome-input", id: 1 }}
+                          saveButtonLabel={<CustomEditableAction action="SAVE" />}
+                          cancelButtonLabel={<CustomEditableAction action="CANCEL" />}
+                          attributes={{ name: 'awesome-input', id: 1 }}
                         />
                       </Dialog.Title>
                       <div className="ml-3 h-7 flex items-center space-x-4">
                         <ClickToCopy
-                          showText={"Copy Application Link"}
+                          showText={'Copy Application Link'}
                           copyText={`${WEBSITE_URL}/${applicant?.orgId}/applicants/${applicant?.applicantId}`}
                         />
                         <button
@@ -179,8 +165,8 @@ export default function ApplicantProfileModal() {
                       </div>
                     </div>
                     <p className="text-md text-light mt-2">
-                      {isApplicantError && "An error ocurred"}
-                      {isApplicantLoading && "Loading..."}
+                      {isApplicantError && 'An error ocurred'}
+                      {isApplicantLoading && 'Loading...'}
                       <EasyEdit
                         placeholder={null}
                         type={Types.TEXT}
@@ -193,26 +179,21 @@ export default function ApplicantProfileModal() {
                         }
                         editComponent={
                           <CustomEditableInput
-                            label={"Email"}
-                            placeholder={"Enter a new email"}
+                            label={'Email'}
+                            placeholder={'Enter a new email'}
                             initialValue={applicant?.email}
                           />
                         }
                         saveButtonLabel={<CustomEditableAction action="SAVE" />}
-                        cancelButtonLabel={
-                          <CustomEditableAction action="CANCEL" />
-                        }
-                        attributes={{ name: "awesome-input", id: 1 }}
+                        cancelButtonLabel={<CustomEditableAction action="CANCEL" />}
+                        attributes={{ name: 'awesome-input', id: 1 }}
                       />
                     </p>
                   </div>
 
                   <div className="border-b border-gray-200  ">
                     <div className="">
-                      <nav
-                        className="-mb-px flex w-full "
-                        x-descriptions="Tab component"
-                      >
+                      <nav className="-mb-px flex w-full " x-descriptions="Tab component">
                         {tabs.map((tab) => (
                           <a
                             onClick={(e) => handleNavClick(e, tab.id)}
@@ -220,9 +201,9 @@ export default function ApplicantProfileModal() {
                             href={null}
                             className={classNames(
                               tab.id === currentActive
-                                ? "border-blue-500 text-blue-600"
-                                : "border-transparent text-normal hover:text-dark hover:border-blue-gray-300 transition ease-in-out duration-200",
-                              "text-center w-full cursor-pointer whitespace-nowrap pb-4 px-1 border-b-2 font-medium text-lg"
+                                ? 'border-blue-500 text-blue-600'
+                                : 'border-transparent text-normal hover:text-dark hover:border-blue-gray-300 transition ease-in-out duration-200',
+                              'text-center w-full cursor-pointer whitespace-nowrap pb-4 px-1 border-b-2 font-medium text-lg',
                             )}
                           >
                             {tab.name}
@@ -245,16 +226,11 @@ export default function ApplicantProfileModal() {
                                   className="pl-3 mt-1 h-full relative focus-within:ring-2 focus-within:ring-blue-500"
                                 >
                                   <h3 className="text-lg font-semibold text-dark">
-                                    <span
-                                      className="absolute inset-0"
-                                      aria-hidden="true"
-                                    />
+                                    <span className="absolute inset-0" aria-hidden="true" />
                                     {response?.questionTitle}
                                   </h3>
                                   {response?.description && (
-                                    <p className="text-md text-light">
-                                      {response?.description}
-                                    </p>
+                                    <p className="text-md text-light">{response?.description}</p>
                                   )}
                                   <span className=" inline-flex justify-center items-center space-x-1">
                                     <ChevronDoubleRightIcon className="h-3 w-3" />

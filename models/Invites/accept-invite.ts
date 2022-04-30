@@ -1,15 +1,12 @@
-import {
-  TransactWriteCommandInput,
-  TransactWriteCommand,
-} from "@aws-sdk/lib-dynamodb";
-import { Dynamo } from "../../AWSClients/ddbDocClient";
-import { DYNAMO_TABLE_NAME, ENTITY_TYPES } from "../../Config";
-import { JoinOrgFromInviteInput } from "../../types/main";
-import * as Time from "../../utils/time";
-import { SdkError } from "@aws-sdk/types";
+import { TransactWriteCommandInput, TransactWriteCommand } from '@aws-sdk/lib-dynamodb';
+import { Dynamo } from '../../AWSClients/ddbDocClient';
+import { DYNAMO_TABLE_NAME, ENTITY_TYPES } from '../../Config';
+import { JoinOrgFromInviteInput } from '../../types/main';
+import * as Time from '../../utils/time';
+import { SdkError } from '@aws-sdk/types';
 
 export default async function Join(
-  props: JoinOrgFromInviteInput
+  props: JoinOrgFromInviteInput,
 ): Promise<[null, null] | [null, SdkError]> {
   const { userId, invite } = props;
   // TODO types
@@ -25,7 +22,7 @@ export default async function Join(
             },
             TableName: `${process.env.NODE_ENV}-${DYNAMO_TABLE_NAME}`,
 
-            ConditionExpression: "attribute_exists(PK)",
+            ConditionExpression: 'attribute_exists(PK)',
           },
         },
 
@@ -39,14 +36,14 @@ export default async function Join(
             TableName: `${process.env.NODE_ENV}-${DYNAMO_TABLE_NAME}`,
 
             UpdateExpression:
-              "SET orgId = :orgId, orgJoinDate = :orgJoinDate, GSI1PK = :GSI1PK, totalInvites = totalInvites - :value",
+              'SET orgId = :orgId, orgJoinDate = :orgJoinDate, GSI1PK = :GSI1PK, totalInvites = totalInvites - :value',
             ExpressionAttributeValues: {
-              ":orgId": invite.orgId,
-              ":orgJoinDate": Time.currentISO(),
-              ":GSI1PK": `${ENTITY_TYPES.ORG}#${invite.orgId}#${ENTITY_TYPES.USER}S`,
-              ":value": 1,
+              ':orgId': invite.orgId,
+              ':orgJoinDate': Time.currentISO(),
+              ':GSI1PK': `${ENTITY_TYPES.ORG}#${invite.orgId}#${ENTITY_TYPES.USER}S`,
+              ':value': 1,
             },
-            ConditionExpression: "attribute_exists(PK)",
+            ConditionExpression: 'attribute_exists(PK)',
           },
         },
         {
@@ -58,11 +55,11 @@ export default async function Join(
             },
             TableName: `${process.env.NODE_ENV}-${DYNAMO_TABLE_NAME}`,
 
-            UpdateExpression: "SET totalUsers = totalUsers + :value",
+            UpdateExpression: 'SET totalUsers = totalUsers + :value',
             ExpressionAttributeValues: {
-              ":value": 1,
+              ':value': 1,
             },
-            ConditionExpression: "attribute_exists(PK)",
+            ConditionExpression: 'attribute_exists(PK)',
           },
         },
       ],

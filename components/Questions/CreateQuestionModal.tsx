@@ -1,17 +1,17 @@
-import { FormEvent, Fragment, useState } from "react";
-import { Dialog, Transition } from "@headlessui/react";
-import { XIcon, ArrowRightIcon } from "@heroicons/react/outline";
-import useStore from "../../utils/store";
-import { CreateQuestion, GetQuestionsInOrgURL } from "../../adapters/Questions";
-import { mutate } from "swr";
-const UrlSafeString = require("url-safe-string"),
-  tagGenerator = new UrlSafeString({ joinString: "_" });
+import { FormEvent, Fragment, useState } from 'react';
+import { Dialog, Transition } from '@headlessui/react';
+import { XIcon, ArrowRightIcon } from '@heroicons/react/outline';
+import useStore from '../../utils/store';
+import { CreateQuestion, GetQuestionsInOrgURL } from '../../adapters/Questions';
+import { mutate } from 'swr';
+const UrlSafeString = require('url-safe-string'),
+  tagGenerator = new UrlSafeString({ joinString: '_' });
 
 const descriptionMaxLength = 300; // TODO set this serverside
 export default function CreateQuestionModal() {
-  const [questionId, setQuestionId] = useState("");
-  const [GSI1SK, setGSI1SK] = useState("");
-  const [description, setDescription] = useState("");
+  const [questionId, setQuestionId] = useState('');
+  const [GSI1SK, setGSI1SK] = useState('');
+  const [description, setDescription] = useState('');
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
@@ -23,9 +23,9 @@ export default function CreateQuestionModal() {
       });
 
       alert(data.message);
-      setQuestionId("");
-      setGSI1SK("");
-      setDescription("");
+      setQuestionId('');
+      setGSI1SK('');
+      setDescription('');
       closeCreateQuestionModal();
     } catch (error) {
       alert(error.response.data.message);
@@ -34,9 +34,7 @@ export default function CreateQuestionModal() {
   };
 
   const visibility = useStore((state) => state.showCreateQuestionModal);
-  const closeCreateQuestionModal = useStore(
-    (state) => state.closeCreateQuestionModal
-  );
+  const closeCreateQuestionModal = useStore((state) => state.closeCreateQuestionModal);
   return (
     <Transition.Root show={visibility} as={Fragment}>
       <Dialog
@@ -91,8 +89,7 @@ export default function CreateQuestionModal() {
                       </div>
                       <div className="mt-1">
                         <p className="text-sm text-blue-300">
-                          Applicants will answer these questions as they go
-                          through stages
+                          Applicants will answer these questions as they go through stages
                         </p>
                       </div>
                     </div>
@@ -100,10 +97,7 @@ export default function CreateQuestionModal() {
                       <div className="px-4 divide-y divide-gray-200 sm:px-6">
                         <div className="space-y-6 pt-6 pb-5">
                           <div>
-                            <label
-                              htmlFor="title"
-                              className="block text-sm font-medium text-dark"
-                            >
+                            <label htmlFor="title" className="block text-sm font-medium text-dark">
                               Question Title
                             </label>
                             <div className="mt-1">
@@ -112,9 +106,7 @@ export default function CreateQuestionModal() {
                                 name="title"
                                 id="title"
                                 required
-                                placeholder={
-                                  "'What is your name?' or 'Tell us about yourself'"
-                                }
+                                placeholder={"'What is your name?' or 'Tell us about yourself'"}
                                 value={GSI1SK}
                                 onChange={(e) => setGSI1SK(e.target.value)}
                                 className="block w-full shadow-sm text-sm focus:ring-blue-500 focus:border-blue-500 border-gray-300 rounded-md"
@@ -142,10 +134,7 @@ export default function CreateQuestionModal() {
                             </div>
                           </div>
                           <div>
-                            <label
-                              htmlFor="title"
-                              className="block text-sm font-medium text-dark"
-                            >
+                            <label htmlFor="title" className="block text-sm font-medium text-dark">
                               Question ID
                             </label>
                             <div className="mt-1">
@@ -154,30 +143,25 @@ export default function CreateQuestionModal() {
                                 name="title"
                                 id="title"
                                 required
-                                placeholder={
-                                  "Use only a-z, 0-9, and underscore '_'"
-                                }
+                                placeholder={"Use only a-z, 0-9, and underscore '_'"}
                                 value={questionId}
                                 onChange={(e) =>
-                                  setQuestionId(
-                                    tagGenerator.generate(e.target.value)
-                                  )
+                                  setQuestionId(tagGenerator.generate(e.target.value))
                                 }
                                 className="block w-full shadow-sm text-sm focus:ring-blue-500 focus:border-blue-500 border-gray-300 rounded-md"
                               />
                             </div>
                             <div className="relative items-start">
                               <p className="block text-light text-sm  mt-2">
-                                A <strong>unique ID </strong>to match applicant
-                                rules against. For example:
+                                A <strong>unique ID </strong>to match applicant rules against. For
+                                example:
                               </p>
 
                               <p className=" text-light text-sm  mt-1">
-                                IF <strong>vehicle_type</strong> =
-                                &quot;bike&quot;{" "}
+                                IF <strong>vehicle_type</strong> = &quot;bike&quot;{' '}
                                 <span className="inline-flex text-center items-center">
                                   <ArrowRightIcon className="w-3 h-3" />
-                                </span>{" "}
+                                </span>{' '}
                                 Move to &quot;Rejected&quot;
                               </p>
                               <p className="text-red-500 bold mt-2">

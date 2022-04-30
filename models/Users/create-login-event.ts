@@ -1,19 +1,11 @@
-import {
-  TransactWriteCommandInput,
-  TransactWriteCommand,
-} from "@aws-sdk/lib-dynamodb";
-import { SdkError } from "@aws-sdk/types";
-import { Dynamo } from "../../AWSClients/ddbDocClient";
-import {
-  ENTITY_TYPES,
-  DEFAULTS,
-  TIME_UNITS,
-  DYNAMO_TABLE_NAME,
-} from "../../Config";
-import { DynamoLoginEvent } from "../../types/dynamo";
-import { CreateLoginEventAndDeleteLoginLinkInput } from "../../types/main";
-import { RetentionDays } from "@aws-cdk/aws-logs";
-import * as Time from "../../utils/time";
+import { TransactWriteCommandInput, TransactWriteCommand } from '@aws-sdk/lib-dynamodb';
+import { SdkError } from '@aws-sdk/types';
+import { Dynamo } from '../../AWSClients/ddbDocClient';
+import { ENTITY_TYPES, DEFAULTS, TIME_UNITS, DYNAMO_TABLE_NAME } from '../../Config';
+import { DynamoLoginEvent } from '../../types/dynamo';
+import { CreateLoginEventAndDeleteLoginLinkInput } from '../../types/main';
+import { RetentionDays } from '@aws-cdk/aws-logs';
+import * as Time from '../../utils/time';
 /**
  * Creates a login event on the user
  * Deletes the login link they used to log in so they can login again or on another device
@@ -22,7 +14,7 @@ import * as Time from "../../utils/time";
  * @returns
  */
 export default async function CreateLoginEvent(
-  props: CreateLoginEventAndDeleteLoginLinkInput
+  props: CreateLoginEventAndDeleteLoginLinkInput,
 ): Promise<[null, null] | [null, SdkError]> {
   const { loginLinkId, user } = props;
 
@@ -56,7 +48,7 @@ export default async function CreateLoginEvent(
           Put: {
             Item: newUserLoginEvent,
             TableName: `${process.env.NODE_ENV}-${DYNAMO_TABLE_NAME}`,
-            ConditionExpression: "attribute_not_exists(PK)",
+            ConditionExpression: 'attribute_not_exists(PK)',
           },
         },
 
@@ -68,7 +60,7 @@ export default async function CreateLoginEvent(
               SK: `${ENTITY_TYPES.LOGIN_LINK}#${loginLinkId}`,
             },
             TableName: `${process.env.NODE_ENV}-${DYNAMO_TABLE_NAME}`,
-            ConditionExpression: "attribute_exists(PK)", // Link MUST exist!!!
+            ConditionExpression: 'attribute_exists(PK)', // Link MUST exist!!!
           },
         },
       ],
@@ -81,7 +73,7 @@ export default async function CreateLoginEvent(
           Item: newOrgLoginEvent,
           TableName: `${process.env.NODE_ENV}-${DYNAMO_TABLE_NAME}`,
 
-          ConditionExpression: "attribute_not_exists(PK)",
+          ConditionExpression: 'attribute_not_exists(PK)',
         },
       });
     await Dynamo.send(new TransactWriteCommand(transactParams));

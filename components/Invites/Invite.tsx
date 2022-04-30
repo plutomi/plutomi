@@ -1,20 +1,16 @@
-import { CheckIcon, XCircleIcon } from "@heroicons/react/outline";
-import { mutate } from "swr";
-import {
-  AcceptInvite,
-  GetUserInvitesURL,
-  RejectInvite,
-} from "../../adapters/Invites";
-import { GetSelfInfoURL } from "../../adapters/Users";
-import * as Time from "../../utils/time";
-import { useRouter } from "next/router";
+import { CheckIcon, XCircleIcon } from '@heroicons/react/outline';
+import { mutate } from 'swr';
+import { AcceptInvite, GetUserInvitesURL, RejectInvite } from '../../adapters/Invites';
+import { GetSelfInfoURL } from '../../adapters/Users';
+import * as Time from '../../utils/time';
+import { useRouter } from 'next/router';
 export default function Invite({ invite }) {
   const router = useRouter();
   const acceptInvite = async (inviteId) => {
     try {
       const { data } = await AcceptInvite(inviteId);
       alert(data.message);
-      router.push("/dashboard");
+      router.push('/dashboard');
     } catch (error) {
       console.error(error);
       alert(error.response.data.message);
@@ -48,16 +44,14 @@ export default function Invite({ invite }) {
       <div className="w-full flex items-center justify-between px-6 py-3 space-x-6">
         <div className="flex-1 truncate">
           <div className="flex items-center space-x-3 justify-between">
-            <h3 className="text-dark text-lg font-semibold truncate">
-              {invite.orgName}
-            </h3>
+            <h3 className="text-dark text-lg font-semibold truncate">{invite.orgName}</h3>
             <span className="flex-shrink-0 inline-block px-2 py-0.5 text-blue-gray-800 text-xs font-medium bg-blue-gray-100 rounded-full">
               Expires {Time.relative(invite.expiresAt)}
             </span>
           </div>
           <p className="mt-2 text-normal text-sm truncate">
-            {" "}
-            Invited by{" "}
+            {' '}
+            Invited by{' '}
             <span className=" text-darkfont-semibold">
               {invite.createdBy.firstName} {invite.createdBy.lastName}
             </span>

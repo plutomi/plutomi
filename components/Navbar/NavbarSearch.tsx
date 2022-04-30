@@ -1,4 +1,4 @@
-import { SortAscendingIcon, UsersIcon } from "@heroicons/react/solid";
+import { SortAscendingIcon, UsersIcon } from '@heroicons/react/solid';
 
 export default function NavbarSearch() {
   return (
@@ -11,8 +11,8 @@ export default function NavbarSearch() {
           type="text"
           name="email"
           id="email"
-          onChange={() => alert("This is not hooked up at the moment")}
-          placeholder={"Search for applicants"}
+          onChange={() => alert('This is not hooked up at the moment')}
+          placeholder={'Search for applicants'}
           className="focus:ring-blue-500 focus:border-blue-500 block w-full rounded-md pl-10 sm:text-sm border-gray-300"
         />
       </div>

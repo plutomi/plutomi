@@ -1,7 +1,7 @@
-import { RequestLoginLink } from "../adapters/Auth";
-import LoginEmail from "./EmailSigninInput";
-import { useState } from "react";
-import { DEFAULTS } from "../Config";
+import { RequestLoginLink } from '../adapters/Auth';
+import LoginEmail from './EmailSigninInput';
+import { useState } from 'react';
+import { DEFAULTS } from '../Config';
 
 interface CallbackUrl {
   callbackUrl?: string;
@@ -10,19 +10,19 @@ interface CallbackUrl {
 // Identical to SignIn, but with less margin/padding to fit in the homepage
 // TODO probably better to refactor this as this is bad practice
 export default function LoginHomepage({ callbackUrl }: CallbackUrl) {
-  const [email, setemail] = useState("");
+  const [email, setemail] = useState('');
   const [submittedText, setSubmittedText] = useState(
-    `We've sent a magic login link to your email!`
+    `We've sent a magic login link to your email!`,
   );
   const [emailSubmitted, setEmailSubmitted] = useState(false);
-  const [buttonText, setButtonText] = useState("Send Link");
+  const [buttonText, setButtonText] = useState('Send Link');
 
   const handleEmailChange = (newEmail) => {
     setemail(newEmail);
   };
 
   const sendEmail = async (e) => {
-    setButtonText("Sending...");
+    setButtonText('Sending...');
     e.preventDefault();
 
     try {
@@ -52,7 +52,7 @@ export default function LoginHomepage({ callbackUrl }: CallbackUrl) {
             email={email}
             buttonText={buttonText}
             sendEmail={sendEmail}
-          />{" "}
+          />{' '}
           <p className=" text-lg text-normal text-center sm:max-w-8xl max-w-sm">
             We will email you a magic link for a password-free log in.
           </p>

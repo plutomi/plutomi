@@ -1,19 +1,14 @@
-import * as Time from "../../utils/time";
-import { CalendarIcon } from "@heroicons/react/outline";
-import ClickToCopy from "../ClickToCopy";
-import { useRouter } from "next/router";
-import useStore from "../../utils/store";
-import { CUSTOM_QUERY } from "../../types/main";
+import * as Time from '../../utils/time';
+import { CalendarIcon } from '@heroicons/react/outline';
+import ClickToCopy from '../ClickToCopy';
+import { useRouter } from 'next/router';
+import useStore from '../../utils/store';
+import { CUSTOM_QUERY } from '../../types/main';
 
 export default function ApplicantListItem({ applicant }) {
   const router = useRouter();
-  const openApplicantProfileModal = useStore(
-    (state) => state.openApplicantProfileModal
-  );
-  const { openingId, stageId } = router.query as Pick<
-    CUSTOM_QUERY,
-    "openingId" | "stageId"
-  >;
+  const openApplicantProfileModal = useStore((state) => state.openApplicantProfileModal);
+  const { openingId, stageId } = router.query as Pick<CUSTOM_QUERY, 'openingId' | 'stageId'>;
   // TODO move this to applicant list item
   const handleApplicantClick = (applicantId: string) => {
     router.push(
@@ -22,16 +17,13 @@ export default function ApplicantListItem({ applicant }) {
         query: { applicantId },
       },
       undefined,
-      { shallow: true }
+      { shallow: true },
     );
     openApplicantProfileModal();
   };
 
   return (
-    <li
-      className="cursor-pointer"
-      onClick={(e) => handleApplicantClick(applicant.applicantId)}
-    >
+    <li className="cursor-pointer" onClick={(e) => handleApplicantClick(applicant.applicantId)}>
       {/* If the opening has stages, go to the first stage and view aplicants. Otherwise, go to the settings page for the opening to create one*/}
       <a className="block hover:bg-gray-50">
         <div className="px-4 py-4 sm:px-6">
@@ -53,15 +45,10 @@ export default function ApplicantListItem({ applicant }) {
           </div>
           <div className="mt-2 sm:flex sm:justify-between">
             <div className="sm:flex">
-              <p className="flex items-center text-lg text-normal">
-                {applicant.email}
-              </p>
+              <p className="flex items-center text-lg text-normal">{applicant.email}</p>
 
               <p className="mt-2 flex items-center text-lg text-normal sm:mt-0 sm:ml-2 ">
-                <ClickToCopy
-                  showText={"Copy Email"}
-                  copyText={applicant.email}
-                />
+                <ClickToCopy showText={'Copy Email'} copyText={applicant.email} />
               </p>
             </div>
             <div className="mt-2 flex items-center text-md text-normal sm:mt-0">
@@ -70,10 +57,8 @@ export default function ApplicantListItem({ applicant }) {
                 aria-hidden="true"
               />
               <p>
-                Applied{" "}
-                <time dateTime={applicant.createdAt}>
-                  {Time.relative(applicant.createdAt)}
-                </time>
+                Applied{' '}
+                <time dateTime={applicant.createdAt}>{Time.relative(applicant.createdAt)}</time>
               </p>
             </div>
           </div>

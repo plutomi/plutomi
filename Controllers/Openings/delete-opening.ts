@@ -1,6 +1,6 @@
-import { Request, Response } from "express";
-import * as Openings from "../../models/Openings";
-import * as CreateError from "../../utils/createError";
+import { Request, Response } from 'express';
+import * as Openings from '../../models/Openings';
+import * as CreateError from '../../utils/createError';
 
 const main = async (req: Request, res: Response) => {
   const { session } = res.locals;
@@ -13,13 +13,10 @@ const main = async (req: Request, res: Response) => {
   });
 
   if (error) {
-    const { status, body } = CreateError.SDK(
-      error,
-      "An error ocurred deleting your opening"
-    );
+    const { status, body } = CreateError.SDK(error, 'An error ocurred deleting your opening');
     return res.status(status).json(body);
   }
 
-  return res.status(200).json({ message: "Opening deleted!" });
+  return res.status(200).json({ message: 'Opening deleted!' });
 };
 export default main;

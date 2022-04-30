@@ -1,9 +1,9 @@
-import { DynamoUser } from "../../types/dynamo";
-import * as Time from "../../utils/time";
-import * as Users from "../../adapters/Users";
-import { mutate } from "swr";
-import useSelf from "../../SWR/useSelf";
-import useOrgInfo from "../../SWR/useOrgInfo";
+import { DynamoUser } from '../../types/dynamo';
+import * as Time from '../../utils/time';
+import * as Users from '../../adapters/Users';
+import { mutate } from 'swr';
+import useSelf from '../../SWR/useSelf';
+import useOrgInfo from '../../SWR/useOrgInfo';
 // TODO this type should be limited to what info is actually available
 export default function UserCard({ user }: { user: DynamoUser }) {
   const { isUserLoading, isUserError } = useSelf();
@@ -12,7 +12,7 @@ export default function UserCard({ user }: { user: DynamoUser }) {
   const handleRemove = async (user: DynamoUser) => {
     if (
       !confirm(
-        `Are you sure you want to remove ${user.firstName} ${user.lastName} - ${user.email}?`
+        `Are you sure you want to remove ${user.firstName} ${user.lastName} - ${user.email}?`,
       )
     ) {
       return;
@@ -35,13 +35,10 @@ export default function UserCard({ user }: { user: DynamoUser }) {
     <div className="border rounded-lg shadow-sm  max-w-lg mx-auto my-4 flex">
       <div className="flex flex-col text-left space-y-1 w-5/6 p-4">
         <h1 className="font-semibold text-md">
-          {user?.firstName} {user?.lastName}{" "}
-          {user.userId === me.userId && "- (YOU)"}
+          {user?.firstName} {user?.lastName} {user.userId === me.userId && '- (YOU)'}
         </h1>
         <p className="text-md">{user?.email}</p>
-        <p className="text-sm text-blue-gray-400">
-          Joined {Time.relative(user?.orgJoinDate)}
-        </p>
+        <p className="text-sm text-blue-gray-400">Joined {Time.relative(user?.orgJoinDate)}</p>
       </div>
       {/* User is admin */}
       {me?.userId === org?.createdBy && user?.userId !== me?.userId && (

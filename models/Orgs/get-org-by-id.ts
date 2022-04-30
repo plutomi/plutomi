@@ -1,12 +1,12 @@
-import { GetCommandInput, GetCommand } from "@aws-sdk/lib-dynamodb";
-import { Dynamo } from "../../AWSClients/ddbDocClient";
-import { DYNAMO_TABLE_NAME, ENTITY_TYPES } from "../../Config";
-import { DynamoOrg } from "../../types/dynamo";
-import { GetOrgInput } from "../../types/main";
-import { SdkError } from "@aws-sdk/types";
+import { GetCommandInput, GetCommand } from '@aws-sdk/lib-dynamodb';
+import { Dynamo } from '../../AWSClients/ddbDocClient';
+import { DYNAMO_TABLE_NAME, ENTITY_TYPES } from '../../Config';
+import { DynamoOrg } from '../../types/dynamo';
+import { GetOrgInput } from '../../types/main';
+import { SdkError } from '@aws-sdk/types';
 
 export default async function GetOrgById(
-  props: GetOrgInput
+  props: GetOrgInput,
 ): Promise<[DynamoOrg, null] | [null, SdkError]> {
   // TODO add these types all over the dynamo calls
   const { orgId } = props;
