@@ -3,9 +3,7 @@ import { Listbox, Transition } from '@headlessui/react';
 import { CheckIcon, SelectorIcon } from '@heroicons/react/solid';
 import { useRouter } from 'next/router';
 import { OPENING_STATE, WEBSITE_URL } from '../../Config';
-function classNames(...classes) {
-  return classes.filter(Boolean).join(' ');
-}
+import combineClassNames from '../../utils/combineClassNames';
 
 export default function OpeningsDropdown({ openings, index }) {
   const router = useRouter();
@@ -31,7 +29,7 @@ export default function OpeningsDropdown({ openings, index }) {
           <div className="flex items-center">
             <span
               aria-label={selected?.GSI1SK === OPENING_STATE.PUBLIC ? 'Online' : 'Offline'}
-              className={classNames(
+              className={combineClassNames(
                 selected?.GSI1SK === OPENING_STATE.PUBLIC ? 'bg-green-400' : 'bg-gray-200',
                 'flex-shrink-0 inline-block h-2 w-2 rounded-full',
               )}
@@ -54,7 +52,7 @@ export default function OpeningsDropdown({ openings, index }) {
               <Listbox.Option
                 key={opening.openingId}
                 className={({ active }) =>
-                  classNames(
+                  combineClassNames(
                     active ? 'text-white bg-blue-600' : 'text-dark',
                     'cursor-default select-none relative py-2 pl-3 pr-9',
                   )
@@ -65,14 +63,14 @@ export default function OpeningsDropdown({ openings, index }) {
                   <>
                     <div className="flex items-center">
                       <span
-                        className={classNames(
+                        className={combineClassNames(
                           opening.GSI1SK === OPENING_STATE.PUBLIC ? 'bg-green-400' : 'bg-gray-200',
                           'flex-shrink-0 inline-block h-2 w-2 rounded-full',
                         )}
                         aria-hidden="true"
                       />
                       <span
-                        className={classNames(
+                        className={combineClassNames(
                           selected ? 'font-semibold' : 'font-normal',
                           'ml-3 block truncate',
                         )}
@@ -87,7 +85,7 @@ export default function OpeningsDropdown({ openings, index }) {
 
                     {selected && (
                       <span
-                        className={classNames(
+                        className={combineClassNames(
                           active ? 'text-white' : 'text-blue-600',
                           'absolute inset-y-0 right-0 flex items-center pr-4',
                         )}

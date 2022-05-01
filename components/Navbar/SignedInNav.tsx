@@ -11,10 +11,7 @@ import Banner from '../BannerTop';
 import { mutate } from 'swr';
 import { DEFAULTS } from '../../Config';
 import { GetSelfInfoURL } from '../../adapters/Users';
-
-function classNames(...classes) {
-  return classes.filter(Boolean).join(' ');
-}
+import combineClassNames from '../../utils/combineClassNames';
 
 export default function SignedInNav({ current }) {
   const { user, isUserLoading, isUserError } = useSelf();
@@ -72,7 +69,7 @@ export default function SignedInNav({ current }) {
                       return (
                         <Link key={item.name} href={item.href}>
                           <a
-                            className={classNames(
+                            className={combineClassNames(
                               current === item.name
                                 ? 'border-blue-500 text-dark'
                                 : 'border-transparent text-light hover:border-blue-gray-300 hover:text-dark',
@@ -143,7 +140,7 @@ export default function SignedInNav({ current }) {
                               <Menu.Item>
                                 {({ active }) => (
                                   <a
-                                    className={classNames(
+                                    className={combineClassNames(
                                       active ? 'bg-blue-gray-100' : '',
                                       'block px-4 py-2 text-md text-dark',
                                     )}
@@ -159,7 +156,7 @@ export default function SignedInNav({ current }) {
                                 <Menu.Item>
                                   {({ active }) => (
                                     <a
-                                      className={classNames(
+                                      className={combineClassNames(
                                         active ? 'bg-blue-gray-100' : '',
                                         'cusror-auto block px-4 py-2 text-md text-dark',
                                       )}
@@ -196,7 +193,7 @@ export default function SignedInNav({ current }) {
                   <a
                     key={item.name}
                     href={item.href}
-                    className={classNames(
+                    className={combineClassNames(
                       current === item.name
                         ? 'bg-blue-50 border-blue-500 text-blue-700'
                         : 'border-transparent text-gray-600 hover:bg-gray-50 hover:border-gray-300 hover:text-gray-800',

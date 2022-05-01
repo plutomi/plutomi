@@ -1,10 +1,8 @@
 import { FormEvent, useState } from 'react';
 import { Switch } from '@headlessui/react';
 import { CreateApplicant } from '../../../adapters/Applicants';
+import combineClassNames from '../../../utils/combineClassNames';
 
-function classNames(...classes) {
-  return classes.filter(Boolean).join(' ');
-}
 import { useRouter } from 'next/router';
 import { CUSTOM_QUERY } from '../../../types/main';
 export default function ApplicantInfoForm() {
@@ -232,7 +230,7 @@ export default function ApplicantInfoForm() {
                   <Switch
                     checked={agreed}
                     onChange={setAgreed}
-                    className={classNames(
+                    className={combineClassNames(
                       agreed ? 'bg-blue-600' : 'bg-gray-200',
                       'relative inline-flex flex-shrink-0 h-6 w-11 border-2 border-transparent rounded-full cursor-pointer transition-colors ease-in-out duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500',
                     )}
@@ -240,7 +238,7 @@ export default function ApplicantInfoForm() {
                     <span className="sr-only">Agree to policies</span>
                     <span
                       aria-hidden="true"
-                      className={classNames(
+                      className={combineClassNames(
                         agreed ? 'translate-x-5' : 'translate-x-0',
                         'inline-block h-5 w-5 rounded-full bg-white shadow transform ring-0 transition ease-in-out duration-200',
                       )}

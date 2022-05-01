@@ -13,6 +13,7 @@ import useApplicantById from '../../SWR/useApplicantById';
 import { GetApplicantByIdURL, UpdateApplicant } from '../../adapters/Applicants';
 import { CUSTOM_QUERY } from '../../types/main';
 import { WEBSITE_URL } from '../../Config';
+import combineClassNames from '../../utils/combineClassNames';
 const tabs = [
   { id: 1, name: 'Details' },
   { id: 2, name: 'History (todo)' },
@@ -30,10 +31,6 @@ const team = [
   },
   // More people...
 ];
-
-function classNames(...classes) {
-  return classes.filter(Boolean).join(' ');
-}
 
 export default function ApplicantProfileModal() {
   const [isEditing, setIsEditing] = useState(false);
@@ -199,7 +196,7 @@ export default function ApplicantProfileModal() {
                             onClick={(e) => handleNavClick(e, tab.id)}
                             key={tab.name}
                             href={null}
-                            className={classNames(
+                            className={combineClassNames(
                               tab.id === currentActive
                                 ? 'border-blue-500 text-blue-600'
                                 : 'border-transparent text-normal hover:text-dark hover:border-blue-gray-300 transition ease-in-out duration-200',
