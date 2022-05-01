@@ -1,7 +1,7 @@
+import { mutate } from 'swr';
 import { DynamoUser } from '../../types/dynamo';
 import * as Time from '../../utils/time';
 import * as Users from '../../adapters/Users';
-import { mutate } from 'swr';
 import useSelf from '../../SWR/useSelf';
 import useOrgInfo from '../../SWR/useOrgInfo';
 // TODO this type should be limited to what info is actually available

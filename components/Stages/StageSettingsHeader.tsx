@@ -1,14 +1,14 @@
-import { PlusIcon, TrashIcon } from '@heroicons/react/outline';
+import { PlusIcon, TrashIcon, PencilAltIcon } from '@heroicons/react/outline';
+import { useRouter } from 'next/router';
 import useStore from '../../utils/store';
 import Breadcrumbs from '../Breadcrumbs';
-import { useRouter } from 'next/router';
-import { PencilAltIcon } from '@heroicons/react/outline';
 import useStageInfo from '../../SWR/useStageInfo';
 import * as Time from '../../utils/time';
 import { CUSTOM_QUERY } from '../../types/main';
 import UpdateStageModal from './UpdateStageModal';
 import CreateQuestionModal from '../Questions/CreateQuestionModal';
 import CustomLink from '../CustomLink';
+
 export default function StageSettingsHeader({ deleteStage }) {
   const router = useRouter();
   const { openingId, stageId } = router.query as Pick<CUSTOM_QUERY, 'openingId' | 'stageId'>;

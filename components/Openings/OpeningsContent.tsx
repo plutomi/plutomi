@@ -1,13 +1,14 @@
-import Loader from '../Loader';
 import { useState } from 'react';
-import OpeningList from './OpeningsList';
 import { PlusIcon } from '@heroicons/react/outline';
+import Loader from '../Loader';
+import OpeningList from './OpeningsList';
 import useStore from '../../utils/store';
 import EmptyOpeningsState from './EmptyOpeningsState';
 import useOpenings from '../../SWR/useOpenings';
 import CreateOpeningModal from './CreateOpeningModal';
+
 export default function OpeningsContent() {
-  let { openings, isOpeningsLoading, isOpeningsError } = useOpenings();
+  const { openings, isOpeningsLoading, isOpeningsError } = useOpenings();
 
   const openCreateOpeningModal = useStore((state) => state.openCreateOpeningModal);
   const [localSearch, setLocalSearch] = useState('');
@@ -34,7 +35,7 @@ export default function OpeningsContent() {
           id="search"
           value={localSearch}
           onChange={(e) => handleSearchChange(e)} // TODO
-          placeholder={'Search for an opening...'}
+          placeholder="Search for an opening..."
           className="w-1/2 shadow-sm focus:ring-blue-500 focus:border-blue-500 block  border sm:text-sm border-gray-300 rounded-md"
         />
         <button

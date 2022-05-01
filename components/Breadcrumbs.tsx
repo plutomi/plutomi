@@ -1,5 +1,6 @@
 import { HomeIcon } from '@heroicons/react/solid';
 import Link from 'next/dist/client/link';
+
 export default function Breadcrumbs({ crumbs }) {
   return (
     <nav className="flex" aria-label="Breadcrumb">

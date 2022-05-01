@@ -1,8 +1,8 @@
 import { UpdateCommand } from '@aws-sdk/lib-dynamodb';
+import { SdkError } from '@aws-sdk/types';
 import { Dynamo } from '../../AWSClients/ddbDocClient';
 import { DYNAMO_TABLE_NAME, ENTITY_TYPES } from '../../Config';
 import { UpdateStageInput } from '../../types/main';
-import { SdkError } from '@aws-sdk/types';
 
 export default async function UpdateStage(
   props: UpdateStageInput,
@@ -10,8 +10,8 @@ export default async function UpdateStage(
   const { orgId, stageId, newValues, openingId } = props;
 
   // Build update expression
-  let allUpdateExpressions: string[] = [];
-  let allAttributeValues: { [key: string]: string } = {};
+  const allUpdateExpressions: string[] = [];
+  const allAttributeValues: { [key: string]: string } = {};
 
   for (const property in newValues) {
     // Push each property into the update expression
@@ -26,7 +26,7 @@ export default async function UpdateStage(
       PK: `${ENTITY_TYPES.ORG}#${orgId}#${ENTITY_TYPES.OPENING}#${openingId}#${ENTITY_TYPES.STAGE}#${stageId}`,
       SK: ENTITY_TYPES.STAGE,
     },
-    UpdateExpression: `SET ` + allUpdateExpressions.join(', '),
+    UpdateExpression: `SET ${allUpdateExpressions.join(', ')}`,
     ExpressionAttributeValues: allAttributeValues,
     TableName: `${process.env.NODE_ENV}-${DYNAMO_TABLE_NAME}`,
 

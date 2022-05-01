@@ -1,12 +1,13 @@
+import { mutate } from 'swr';
+import { useRouter } from 'next/router';
 import useSelf from '../../SWR/useSelf';
 import Loader from '../Loader';
 import Invite from './Invite';
-import { mutate } from 'swr';
-import { useRouter } from 'next/router';
 import { AcceptInvite, RejectInvite, GetUserInvitesURL } from '../../adapters/Invites';
 import useUserInvites from '../../SWR/useUserInvites';
 import { DynamoOrgInvite } from '../../types/dynamo';
 import { GetSelfInfoURL } from '../../adapters/Users';
+
 export default function InvitesContent() {
   const router = useRouter();
   const { user, isUserLoading, isUserError } = useSelf();

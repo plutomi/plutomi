@@ -1,14 +1,15 @@
+import { PlusIcon } from '@heroicons/react/outline';
 import useSelf from '../../SWR/useSelf';
 import useOrgUsers from '../../SWR/useOrgUsers';
 import UserCard from './UserCard';
 import Loader from '../Loader';
-import { PlusIcon } from '@heroicons/react/outline';
 import useStore from '../../utils/store';
 import CreateInviteModal from '../CreateInviteModal';
 import EmptyTeamState from './EmptyTeamState';
 import usePendingOrgInvites from '../../SWR/usePendingOrgInvites';
 import { DynamoOrgInvite } from '../../types/dynamo';
 import PendingInviteCard from './PendingInviteCard';
+
 export default function TeamContent() {
   // TODO clean up the pending invites section up
   const { user, isUserLoading, isUserError } = useSelf();

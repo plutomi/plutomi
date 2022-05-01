@@ -1,11 +1,10 @@
-import useStore from '../utils/store';
 import { PlusIcon } from '@heroicons/react/outline';
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 import { mutate } from 'swr';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import { GetStagesInOpeningURL } from '../adapters/Stages';
-import { useEffect } from 'react';
+import useStore from '../utils/store';
 import useOpeningInfo from '../SWR/useOpeningInfo';
 import useAllStagesInOpening from '../SWR/useAllStagesInOpening';
 import useStageInfo from '../SWR/useStageInfo';
@@ -20,9 +19,9 @@ export default function StageReorderColumn() {
   const router = useRouter();
   const { openingId, stageId } = router.query as Pick<CUSTOM_QUERY, 'openingId' | 'stageId'>;
 
-  let { opening, isOpeningLoading, isOpeningError } = useOpeningInfo(openingId);
+  const { opening, isOpeningLoading, isOpeningError } = useOpeningInfo(openingId);
 
-  let { stages, isStagesLoading, isStagesError } = useAllStagesInOpening(opening?.openingId);
+  const { stages, isStagesLoading, isStagesError } = useAllStagesInOpening(opening?.openingId);
   const { stage, isStageLoading, isStageError } = useStageInfo(openingId, stageId);
 
   const [newStages, setNewStages] = useState(stages);
@@ -41,10 +40,10 @@ export default function StageReorderColumn() {
       return;
     }
 
-    let newStageOrder: string[] = Array.from(opening.stageOrder);
+    const newStageOrder: string[] = Array.from(opening.stageOrder);
     newStageOrder.splice(source.index, 1);
     newStageOrder.splice(destination.index, 0, draggableId);
-    let newOrder = newStageOrder.map((i) => stages.find((j) => j.stageId === i));
+    const newOrder = newStageOrder.map((i) => stages.find((j) => j.stageId === i));
 
     setNewStages(newOrder);
 
@@ -90,33 +89,31 @@ export default function StageReorderColumn() {
             <Droppable droppableId={opening.openingId}>
               {(provided) => (
                 <div {...provided.droppableProps} ref={provided.innerRef}>
-                  {newStages?.map((stage, index) => {
-                    return (
-                      <Draggable
-                        key={stage.stageId}
-                        draggableId={stage.stageId}
-                        index={index}
-                        {...provided.droppableProps}
-                      >
-                        {(provided) => (
-                          <div
-                            {...provided.draggableProps}
-                            {...provided.dragHandleProps}
-                            ref={provided.innerRef}
-                          >
-                            <StageCard
-                              key={stage.stageId}
-                              totalApplicants={stage.totalApplicants}
-                              name={`${stage.GSI1SK}`}
-                              stageId={stage.stageId}
-                              linkHref={`/openings/${openingId}/stages/${stage.stageId}/settings`}
-                              draggable={true}
-                            />
-                          </div>
-                        )}
-                      </Draggable>
-                    );
-                  })}
+                  {newStages?.map((stage, index) => (
+                    <Draggable
+                      key={stage.stageId}
+                      draggableId={stage.stageId}
+                      index={index}
+                      {...provided.droppableProps}
+                    >
+                      {(provided) => (
+                        <div
+                          {...provided.draggableProps}
+                          {...provided.dragHandleProps}
+                          ref={provided.innerRef}
+                        >
+                          <StageCard
+                            key={stage.stageId}
+                            totalApplicants={stage.totalApplicants}
+                            name={`${stage.GSI1SK}`}
+                            stageId={stage.stageId}
+                            linkHref={`/openings/${openingId}/stages/${stage.stageId}/settings`}
+                            draggable
+                          />
+                        </div>
+                      )}
+                    </Draggable>
+                  ))}
                   {provided.placeholder}
                 </div>
               )}

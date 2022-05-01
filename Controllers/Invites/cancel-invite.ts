@@ -3,6 +3,7 @@ import Joi from 'joi';
 import { JOI_SETTINGS } from '../../Config';
 import * as Invites from '../../models/Invites';
 import * as CreateError from '../../utils/createError';
+
 const schema = Joi.object({
   body: {
     inviteId: Joi.string(),

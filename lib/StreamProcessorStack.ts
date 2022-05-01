@@ -17,6 +17,7 @@ export default class StreamProcessorStack extends cdk.Stack {
    * @param {string} id
    * @param {cdk.StackProps=} props
    */
+
   constructor(scope: cdk.App, id: string, props: StreamProcessorStackProps) {
     super(scope, id, props);
 

@@ -4,6 +4,7 @@ import { XIcon } from '@heroicons/react/outline';
 import useStore from '../utils/store';
 import { CreateInvite } from '../adapters/Invites';
 import { ORG_INVITE_EXPIRY_DAYS } from '../Config';
+
 export default function CreateInviteModal() {
   const [recipientEmail, setRecipientEmail] = useState('');
   const [expiresInDays, setExpiresInDays] = useState(ORG_INVITE_EXPIRY_DAYS);

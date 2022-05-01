@@ -1,6 +1,7 @@
 import { PlusIcon } from '@heroicons/react/solid';
 import { UserGroupIcon } from '@heroicons/react/outline';
 import useStore from '../../utils/store';
+
 export default function EmptyTeamState() {
   const openInviteModal = useStore((state) => state.openInviteModal);
   return (

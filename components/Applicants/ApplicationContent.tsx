@@ -1,10 +1,11 @@
-import usePublicApplicant from '../../SWR/usePublicApplicant';
 import { useRouter } from 'next/router';
-import Loader from '../Loader';
 import { useState } from 'react';
+import usePublicApplicant from '../../SWR/usePublicApplicant';
+import Loader from '../Loader';
 import useQuestionsInOrg from '../../SWR/useQuestionsInOrg';
 import { AnswerQuestions } from '../../adapters/Applicants';
 import { CUSTOM_QUERY } from '../../types/main';
+
 export default function ApplicationContent() {
   const [responses, setResponses] = useState([]);
 
@@ -28,16 +29,16 @@ export default function ApplicationContent() {
     response: string,
   ) => {
     const incoming = {
-      questionId: questionId,
-      questionTitle: questionTitle,
+      questionId,
+      questionTitle,
       description,
       questionResponse: response,
     };
     const questionOrder = orgQuestions.map((a) => a.questionId);
     const questionIndex = questionOrder.indexOf(questionId);
 
-    let found = responses.find((answer) => answer.questionId === questionId);
-    let newResponses = [...responses];
+    const found = responses.find((answer) => answer.questionId === questionId);
+    const newResponses = [...responses];
 
     // Add answer
     if (!found) {

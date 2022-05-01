@@ -1,4 +1,8 @@
 import { useRouter } from 'next/router';
+import { useEffect, useState, Fragment, FormEvent } from 'react';
+import { Listbox, Transition } from '@headlessui/react';
+import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
+import { mutate } from 'swr';
 import StageReorderColumn from '../StageReorderColumn';
 import useQuestionsInOrg from '../../SWR/useQuestionsInOrg';
 import Loader from '../Loader';
@@ -8,19 +12,15 @@ import useOpeningInfo from '../../SWR/useOpeningInfo';
 import useStageInfo from '../../SWR/useStageInfo';
 import useQuestionsInStage from '../../SWR/useQuestionsInStage';
 import { CUSTOM_QUERY } from '../../types/main';
-import { useEffect, useState, Fragment, FormEvent } from 'react';
-import { Listbox, Transition } from '@headlessui/react';
-import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 import { DynamoQuestion } from '../../types/dynamo';
 import * as Questions from '../../adapters/Questions';
-import { mutate } from 'swr';
 import combineClassNames from '../../utils/combineClassNames';
 import * as Stages from '../../adapters/Stages';
 
 export default function StageSettingsContent() {
   const router = useRouter();
   const [localSearch, setLocalSearch] = useState('');
-  let { orgQuestions, isOrgQuestionsLoading, isOrgQuestionsError } = useQuestionsInOrg();
+  const { orgQuestions, isOrgQuestionsLoading, isOrgQuestionsError } = useQuestionsInOrg();
   const { openingId, stageId } = router.query as Pick<CUSTOM_QUERY, 'openingId' | 'stageId'>;
   const { stageQuestions, isStageQuestionsLoading, isStageQuestionsError } = useQuestionsInStage({
     openingId,
@@ -99,9 +99,9 @@ export default function StageSettingsContent() {
   };
 
   const { user, isUserLoading, isUserError } = useSelf();
-  let { opening, isOpeningLoading, isOpeningError } = useOpeningInfo(openingId);
+  const { opening, isOpeningLoading, isOpeningError } = useOpeningInfo(openingId);
 
-  let { stages, isStagesLoading, isStagesError } = useAllStagesInOpening(opening?.openingId);
+  const { stages, isStagesLoading, isStagesError } = useAllStagesInOpening(opening?.openingId);
   const { stage, isStageLoading, isStageError } = useStageInfo(openingId, stageId);
 
   const handleShow = () => {
@@ -161,10 +161,10 @@ export default function StageSettingsContent() {
     console.log(result.source);
     console.log(result.destination);
 
-    let newQuestionOrder: string[] = Array.from(stage?.questionOrder);
+    const newQuestionOrder: string[] = Array.from(stage?.questionOrder);
     newQuestionOrder.splice(source.index, 1);
     newQuestionOrder.splice(destination.index, 0, draggableId);
-    let newOrder = newQuestionOrder.map((i) => stageQuestions.find((j) => j.questionId === i));
+    const newOrder = newQuestionOrder.map((i) => stageQuestions.find((j) => j.questionId === i));
 
     setNewQuestionOrder(newOrder);
 
@@ -223,7 +223,7 @@ export default function StageSettingsContent() {
 
           <div className="bg-white lg:min-w-0 lg:flex-1">
             <div className="h-full py-6 px-4 sm:px-6 lg:px-8">
-              {/* Start main area*/}
+              {/* Start main area */}
               <div className="relative h-full" style={{ minHeight: '36rem' }}>
                 <div className=" inset-0  border-gray-200 rounded-lg">
                   <div className="flex flex-col justify-center items-center">
@@ -235,7 +235,7 @@ export default function StageSettingsContent() {
                       onClick={handleShow}
                       onBlur={handleOnBlur}
                       onChange={(e) => handleSearch(e.target.value)}
-                      placeholder={'Search for a question to add to this stage...'}
+                      placeholder="Search for a question to add to this stage..."
                       className="border-2 border-blue-300 mt-2 py-4 text-xl w-full shadow-sm focus:ring-blue-500 focus:border-blue-500    sm:text-sm  rounded-md"
                     />
                     <Listbox value={selected} onChange={(question) => handleAdd(question)}>
@@ -308,49 +308,47 @@ export default function StageSettingsContent() {
                           <Droppable droppableId={stage?.stageId}>
                             {(provided) => (
                               <div {...provided.droppableProps} ref={provided.innerRef}>
-                                {newQuestionOrder?.map((question, index) => {
-                                  return (
-                                    <Draggable
-                                      key={question.questionId}
-                                      draggableId={question.questionId}
-                                      index={index}
-                                      {...provided.droppableProps}
-                                    >
-                                      {(provided) => (
-                                        <ol
-                                          {...provided.draggableProps}
-                                          {...provided.dragHandleProps}
-                                          ref={provided.innerRef}
+                                {newQuestionOrder?.map((question, index) => (
+                                  <Draggable
+                                    key={question.questionId}
+                                    draggableId={question.questionId}
+                                    index={index}
+                                    {...provided.droppableProps}
+                                  >
+                                    {(provided) => (
+                                      <ol
+                                        {...provided.draggableProps}
+                                        {...provided.dragHandleProps}
+                                        ref={provided.innerRef}
+                                      >
+                                        <li
+                                          key={question.questionId}
+                                          className="my-2 active:border-blue-500 hover:border-blue-500 flex border justify-between items-center bg-white  overflow-hidden p-4 sm:px-6 sm:rounded-md shadow-md hover:shadow-lg transition ease-in-out duration-300"
                                         >
-                                          <li
-                                            key={question.questionId}
-                                            className="my-2 active:border-blue-500 hover:border-blue-500 flex border justify-between items-center bg-white  overflow-hidden p-4 sm:px-6 sm:rounded-md shadow-md hover:shadow-lg transition ease-in-out duration-300"
-                                          >
-                                            <div>
-                                              {' '}
-                                              <p>
-                                                {index + 1}. {question.GSI1SK}
-                                              </p>
-                                              <p className="text-light text-sm">
-                                                {question.description}
-                                              </p>
-                                            </div>
+                                          <div>
+                                            {' '}
+                                            <p>
+                                              {index + 1}. {question.GSI1SK}
+                                            </p>
+                                            <p className="text-light text-sm">
+                                              {question.description}
+                                            </p>
+                                          </div>
 
-                                            <div className="flex items-center justify-center text-normal">
-                                              <p>{question.questionId}</p>
-                                              <button
-                                                onClick={() => handleRemove(question)}
-                                                className=" ml-4 px-2 py-1 right-0 border border-red-500 rounded-md text-red-500 bg-white hover:text-white hover:bg-red-500 transition ease-in duration-100"
-                                              >
-                                                Remove
-                                              </button>
-                                            </div>
-                                          </li>
-                                        </ol>
-                                      )}
-                                    </Draggable>
-                                  );
-                                })}
+                                          <div className="flex items-center justify-center text-normal">
+                                            <p>{question.questionId}</p>
+                                            <button
+                                              onClick={() => handleRemove(question)}
+                                              className=" ml-4 px-2 py-1 right-0 border border-red-500 rounded-md text-red-500 bg-white hover:text-white hover:bg-red-500 transition ease-in duration-100"
+                                            >
+                                              Remove
+                                            </button>
+                                          </div>
+                                        </li>
+                                      </ol>
+                                    )}
+                                  </Draggable>
+                                ))}
                                 {provided.placeholder}
                               </div>
                             )}

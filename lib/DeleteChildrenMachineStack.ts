@@ -3,12 +3,12 @@ import * as sfn from '@aws-cdk/aws-stepfunctions';
 import * as tasks from '@aws-cdk/aws-stepfunctions-tasks';
 import { LogGroup, RetentionDays } from '@aws-cdk/aws-logs';
 import { Table } from '@aws-cdk/aws-dynamodb';
-import { DYNAMO_TABLE_NAME, ENTITY_TYPES } from '../Config';
 import { Choice, IntegrationPattern } from '@aws-cdk/aws-stepfunctions';
 import { NodejsFunction } from '@aws-cdk/aws-lambda-nodejs';
 import { Architecture, Runtime } from '@aws-cdk/aws-lambda';
 import * as iam from '@aws-cdk/aws-iam';
 import path from 'path';
+import { DYNAMO_TABLE_NAME, ENTITY_TYPES } from '../Config';
 
 interface DeleteChildrenMachineProps extends cdk.StackProps {
   table: Table;
@@ -38,8 +38,8 @@ export default class DeleteChildrenMachineStack extends cdk.Stack {
       action: 'query',
       iamResources: [
         props.table.tableArn,
-        props.table.tableArn + '/index/GSI1',
-        props.table.tableArn + '/index/GSI2',
+        `${props.table.tableArn}/index/GSI1`,
+        `${props.table.tableArn}/index/GSI2`,
       ],
     };
 

@@ -1,4 +1,5 @@
 import DisplayStageCard from './DisplayStageCard';
+
 export default function Example({ stages, name }) {
   return (
     <div className="relative my-8 mx-auto text-center lg:max-w-full max-w-sm ">

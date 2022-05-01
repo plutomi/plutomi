@@ -1,7 +1,7 @@
-import { Dynamo } from '../../AWSClients/ddbDocClient';
-import { DYNAMO_TABLE_NAME, ENTITY_TYPES } from '../../Config';
 import { SdkError } from '@aws-sdk/types';
 import { TransactWriteCommandInput, TransactWriteCommand } from '@aws-sdk/lib-dynamodb';
+import { Dynamo } from '../../AWSClients/ddbDocClient';
+import { DYNAMO_TABLE_NAME, ENTITY_TYPES } from '../../Config';
 import { DeleteOrgInviteInput } from '../../types/main';
 
 /**

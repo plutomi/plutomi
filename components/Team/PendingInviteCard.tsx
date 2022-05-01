@@ -1,8 +1,9 @@
+import { mutate } from 'swr';
 import { DynamoOrgInvite, DynamoUser } from '../../types/dynamo';
 import * as Time from '../../utils/time';
 import * as Invites from '../../adapters/Invites';
 import useSelf from '../../SWR/useSelf';
-import { mutate } from 'swr';
+
 export default function PendingInviteCard({ invite }: { invite: DynamoOrgInvite }) {
   const { user, isUserLoading, isUserError } = useSelf();
 

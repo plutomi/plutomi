@@ -3,6 +3,7 @@ import usePublicOrgById from '../../../SWR/usePublicOrgById';
 import usePublicOpeningById from '../../../SWR/usePublicOpeningById';
 import Loader from '../../Loader';
 import { CUSTOM_QUERY } from '../../../types/main';
+
 export default function OpeningApplyPageHeader() {
   const router = useRouter();
   const { orgId, openingId } = router.query as Pick<CUSTOM_QUERY, 'openingId' | 'orgId'>;
@@ -10,7 +11,7 @@ export default function OpeningApplyPageHeader() {
   const { opening, isOpeningLoading, isOpeningError } = usePublicOpeningById(orgId, openingId);
 
   if (isOrgLoading) {
-    return <Loader text={'Loading...'} />;
+    return <Loader text="Loading..." />;
   }
 
   return (

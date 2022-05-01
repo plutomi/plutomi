@@ -1,5 +1,6 @@
 import relativeTime from 'dayjs/plugin/relativeTime';
 import dayjs from 'dayjs';
+
 dayjs.extend(relativeTime);
 
 /**
@@ -23,7 +24,7 @@ export const currentUNIX = () => dayjs().unix();
  */
 export const relative = (date: string | number | Date): string => {
   try {
-    let convertedDate = dayjs(date).toDate();
+    const convertedDate = dayjs(date).toDate();
     return dayjs().to(convertedDate);
   } catch (error) {
     throw `The date you provided appears to be invalid`;

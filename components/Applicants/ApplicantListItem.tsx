@@ -1,7 +1,7 @@
-import * as Time from '../../utils/time';
 import { CalendarIcon } from '@heroicons/react/outline';
-import ClickToCopy from '../ClickToCopy';
 import { useRouter } from 'next/router';
+import * as Time from '../../utils/time';
+import ClickToCopy from '../ClickToCopy';
 import useStore from '../../utils/store';
 import { CUSTOM_QUERY } from '../../types/main';
 
@@ -24,7 +24,7 @@ export default function ApplicantListItem({ applicant }) {
 
   return (
     <li className="cursor-pointer" onClick={(e) => handleApplicantClick(applicant.applicantId)}>
-      {/* If the opening has stages, go to the first stage and view aplicants. Otherwise, go to the settings page for the opening to create one*/}
+      {/* If the opening has stages, go to the first stage and view aplicants. Otherwise, go to the settings page for the opening to create one */}
       <a className="block hover:bg-gray-50">
         <div className="px-4 py-4 sm:px-6">
           <div className="flex items-center justify-between">
@@ -48,7 +48,7 @@ export default function ApplicantListItem({ applicant }) {
               <p className="flex items-center text-lg text-normal">{applicant.email}</p>
 
               <p className="mt-2 flex items-center text-lg text-normal sm:mt-0 sm:ml-2 ">
-                <ClickToCopy showText={'Copy Email'} copyText={applicant.email} />
+                <ClickToCopy showText="Copy Email" copyText={applicant.email} />
               </p>
             </div>
             <div className="mt-2 flex items-center text-md text-normal sm:mt-0">

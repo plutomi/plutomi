@@ -1,24 +1,24 @@
-import Breadcrumbs from '../Breadcrumbs';
-import { PencilAltIcon } from '@heroicons/react/outline';
-import useStore from '../../utils/store';
+import { PencilAltIcon, TrashIcon } from '@heroicons/react/outline';
 import { mutate } from 'swr';
-import { TrashIcon } from '@heroicons/react/outline';
-import useOpeningInfo from '../../SWR/useOpeningInfo';
 import { useRouter } from 'next/router';
+import useStore from '../../utils/store';
+import useOpeningInfo from '../../SWR/useOpeningInfo';
+import Breadcrumbs from '../Breadcrumbs';
 import Loader from '../Loader';
 import { DeleteOpening, GetOpeningsInOrgURL } from '../../adapters/Openings';
 import * as Time from '../../utils/time';
 import { CUSTOM_QUERY } from '../../types/main';
 import { OPENING_STATE, WEBSITE_URL } from '../../Config';
+
 export default function OpeningSettingsHeader() {
   const router = useRouter();
   const { openingId } = router.query as Pick<CUSTOM_QUERY, 'openingId'>;
   const openUpdateOpeningModal = useStore((state) => state.openUpdateOpeningModal);
 
-  let { opening, isOpeningLoading, isOpeningError } = useOpeningInfo(openingId);
+  const { opening, isOpeningLoading, isOpeningError } = useOpeningInfo(openingId);
 
   if (isOpeningLoading) {
-    return <Loader text={'Loading opening...'} />;
+    return <Loader text="Loading opening..." />;
   }
 
   const crumbs = [

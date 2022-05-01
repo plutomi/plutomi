@@ -8,6 +8,7 @@ import {
   DynamoQuestion,
   DynamoUser,
 } from './dynamo';
+
 type DynamoActions =
   | 'dynamodb:GetItem'
   | 'dynamodb:BatchGetItem'

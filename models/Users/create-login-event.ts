@@ -1,10 +1,10 @@
 import { TransactWriteCommandInput, TransactWriteCommand } from '@aws-sdk/lib-dynamodb';
 import { SdkError } from '@aws-sdk/types';
+import { RetentionDays } from '@aws-cdk/aws-logs';
 import { Dynamo } from '../../AWSClients/ddbDocClient';
 import { ENTITY_TYPES, DEFAULTS, TIME_UNITS, DYNAMO_TABLE_NAME } from '../../Config';
 import { DynamoLoginEvent } from '../../types/dynamo';
 import { CreateLoginEventAndDeleteLoginLinkInput } from '../../types/main';
-import { RetentionDays } from '@aws-cdk/aws-logs';
 import * as Time from '../../utils/time';
 /**
  * Creates a login event on the user
@@ -23,7 +23,7 @@ export default async function CreateLoginEvent(
   const newUserLoginEvent: DynamoLoginEvent = {
     PK: `${ENTITY_TYPES.USER}#${user.userId}`,
     SK: `${ENTITY_TYPES.LOGIN_EVENT}#${now}`,
-    user: user,
+    user,
     entityType: ENTITY_TYPES.LOGIN_EVENT,
     // TODO in the future, get more the info about the login event such as IP, headers, device, etc.
     createdAt: now,

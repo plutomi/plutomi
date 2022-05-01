@@ -1,15 +1,14 @@
 import { Fragment } from 'react';
-import useSelf from '../../SWR/useSelf';
-import NavbarSearch from './NavbarSearch';
-import { Logout } from '../../adapters/Auth';
 import { Disclosure, Menu, Transition } from '@headlessui/react';
-import { NAVBAR_NAVIGATION, DROPDOWN_NAVIGATION } from '../../Config';
 import { useRouter } from 'next/router';
 import { BellIcon, DotsHorizontalIcon, MenuIcon, XIcon } from '@heroicons/react/outline';
 import Link from 'next/dist/client/link';
-import Banner from '../BannerTop';
 import { mutate } from 'swr';
-import { DEFAULTS } from '../../Config';
+import useSelf from '../../SWR/useSelf';
+import NavbarSearch from './NavbarSearch';
+import { Logout } from '../../adapters/Auth';
+import { NAVBAR_NAVIGATION, DROPDOWN_NAVIGATION, DEFAULTS } from '../../Config';
+import Banner from '../BannerTop';
 import { GetSelfInfoURL } from '../../adapters/Users';
 import combineClassNames from '../../utils/combineClassNames';
 
@@ -34,8 +33,8 @@ export default function SignedInNav({ current }) {
         <Banner
           msgSmall={"You've been invited!"}
           msgLarge={"You've been invited to join an organization!"}
-          btnText={'View invites'}
-          href={'/invites'}
+          btnText="View invites"
+          href="/invites"
         />
       )}
 
@@ -45,7 +44,7 @@ export default function SignedInNav({ current }) {
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
               <div className="flex justify-between h-16 ">
                 <div className="flex justify-between  w-2/3">
-                  {/*<div className="flex-shrink-0 flex items-center">
+                  {/* <div className="flex-shrink-0 flex items-center">
                   <img
                     className="block lg:hidden h-8 w-auto"
                     src="https://tailwindui.com/img/logos/workflow-mark-blue-600.svg"
@@ -56,7 +55,7 @@ export default function SignedInNav({ current }) {
                     src="https://tailwindui.com/img/logos/workflow-logo-blue-600-mark-gray-800-text.svg"
                     alt="Workflow"
                   /> 
-                  </div>*/}
+                  </div> */}
                   <div className="hidden sm:-my-px sm:ml-6 sm:flex sm:space-x-8">
                     {NAVBAR_NAVIGATION.map((item) => {
                       if (user?.orgId === DEFAULTS.NO_ORG && item.hiddenIfNoOrg) {
@@ -126,11 +125,9 @@ export default function SignedInNav({ current }) {
                           {isUserLoading ? (
                             'Loading user info...'
                           ) : (
-                            <>
-                              <div className=" text-light">
-                                Signed in as <strong>{user?.email}</strong>
-                              </div>
-                            </>
+                            <div className=" text-light">
+                              Signed in as <strong>{user?.email}</strong>
+                            </div>
                           )}
                         </div>
 
@@ -218,14 +215,12 @@ export default function SignedInNav({ current }) {
                   {isUserLoading ? (
                     'Loading user info...'
                   ) : (
-                    <>
-                      <div className="ml-3">
-                        <div className="text-base font-medium text-gray-800">
-                          {user?.firstName} {user?.lastname}
-                        </div>
-                        <div className="text-md font-medium text-normal">{user?.email}</div>
+                    <div className="ml-3">
+                      <div className="text-base font-medium text-gray-800">
+                        {user?.firstName} {user?.lastname}
                       </div>
-                    </>
+                      <div className="text-md font-medium text-normal">{user?.email}</div>
+                    </div>
                   )}
 
                   <button

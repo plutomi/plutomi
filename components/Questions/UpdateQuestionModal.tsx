@@ -130,7 +130,7 @@ export default function UpdateQuestionModal({ question }) {
                                 rows={5}
                                 value={description}
                                 onChange={(e) => setDescription(e.target.value)}
-                              ></textarea>
+                              />
                             </div>
                           </div>
                         </div>

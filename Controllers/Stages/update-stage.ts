@@ -57,9 +57,9 @@ const main = async (req: Request, res: Response) => {
     }
 
     // Check if the IDs have been modified
-    const containsAll = stage.questionOrder.every((questionId) => {
-      return req.body.questionOrder.includes(questionId);
-    });
+    const containsAll = stage.questionOrder.every((questionId) =>
+      req.body.questionOrder.includes(questionId),
+    );
 
     if (!containsAll) {
       return res.status(400).json({

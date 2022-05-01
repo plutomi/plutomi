@@ -70,9 +70,9 @@ const main = async (req: Request, res: Response) => {
 
     // Check if the IDs have been modified
     // TODO add a test for this
-    const containsAll = opening.stageOrder.every((stageId) => {
-      return req.body.stageOrder.includes(stageId);
-    });
+    const containsAll = opening.stageOrder.every((stageId) =>
+      req.body.stageOrder.includes(stageId),
+    );
 
     if (!containsAll) {
       return res.status(400).json({

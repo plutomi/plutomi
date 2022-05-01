@@ -1,9 +1,10 @@
 import { useRouter } from 'next/router';
 import Link from 'next/link';
+import { mutate } from 'swr';
 import useSelf from '../SWR/useSelf';
 import { Logout } from '../adapters/Auth';
-import { mutate } from 'swr';
 import { GetSelfInfoURL } from '../adapters/Users';
+
 const handleLogout = async (isHomepage: boolean) => {
   try {
     const { data } = await Logout(); // TODO logout to same page

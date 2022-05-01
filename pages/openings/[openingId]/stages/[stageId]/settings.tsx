@@ -1,6 +1,6 @@
 import { mutate } from 'swr';
-import useOpeningInfo from '../../../../../SWR/useOpeningInfo';
 import { useRouter } from 'next/router';
+import useOpeningInfo from '../../../../../SWR/useOpeningInfo';
 import StageSettingsHeader from '../../../../../components/Stages/StageSettingsHeader';
 import StageSettingsContent from '../../../../../components/Stages/StagesSettingsContent';
 import NewPage from '../../../../../components/Templates/NewPage';
@@ -13,8 +13,8 @@ import { WEBSITE_URL } from '../../../../../Config';
 export default function StageSettings() {
   const router = useRouter();
   const { openingId, stageId } = router.query as Pick<CUSTOM_QUERY, 'openingId' | 'stageId'>;
-  let { opening, isOpeningLoading, isOpeningError } = useOpeningInfo(openingId);
-  let { stage, isStageLoading, isStageError } = useStageInfo(openingId, stageId);
+  const { opening, isOpeningLoading, isOpeningError } = useOpeningInfo(openingId);
+  const { stage, isStageLoading, isStageError } = useStageInfo(openingId, stageId);
 
   // Update this to use the new update syntax with diff
   const deleteStage = async () => {
@@ -44,8 +44,8 @@ export default function StageSettings() {
 
   return (
     <NewPage
-      loggedOutPageText={'Log in to view your stage settings'}
-      currentNavbarItem={'Openings'}
+      loggedOutPageText="Log in to view your stage settings"
+      currentNavbarItem="Openings"
       headerText={
         isStageLoading
           ? 'Loading settings...'

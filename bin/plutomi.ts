@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 import 'source-map-support';
 import * as cdk from '@aws-cdk/core';
+import { Builder } from '@sls-next/lambda-at-edge';
 import APIStack from '../lib/APIStack';
 import DynamoDBStack from '../lib/DynamoDBStack';
 import FrontendStack from '../lib/FrontendStack';
@@ -9,7 +10,6 @@ import CommsMachineStack from '../lib/CommsMachineStack';
 import StreamProcessorStack from '../lib/StreamProcessorStack';
 import DeleteChildrenMachineStack from '../lib/DeleteChildrenMachineStack';
 import AthenaDynamoQueryStack from '../lib/AthenaDynamoQueryStack';
-import { Builder } from '@sls-next/lambda-at-edge';
 import StorageStack from '../lib/StorageStack';
 // Run the serverless builder before deploying
 const builder = new Builder('.', './build', { args: ['build'] });

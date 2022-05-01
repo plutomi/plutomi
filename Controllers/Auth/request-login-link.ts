@@ -2,6 +2,7 @@ import { Request, Response } from 'express';
 import emailValidator from 'deep-email-validator';
 import Joi from 'joi';
 
+import { nanoid } from 'nanoid';
 import {
   DEFAULTS,
   LOGIN_LINK_SETTINGS,
@@ -9,13 +10,15 @@ import {
   JOI_SETTINGS,
   WEBSITE_URL,
   ERRORS,
+  API_URL,
+  DOMAIN_NAME,
 } from '../../Config';
 import * as Time from '../../utils/time';
 import * as Users from '../../models/Users';
-import { nanoid } from 'nanoid';
-const jwt = require('jsonwebtoken');
-import { API_URL, DOMAIN_NAME } from '../../Config';
 import * as CreateError from '../../utils/createError';
+
+const jwt = require('jsonwebtoken');
+
 interface APIRequestLoginLinkBody {
   email?: string;
 }
@@ -121,7 +124,7 @@ const requestLoginLink = async (req: Request, res: Response) => {
   );
 
   const loginLinkUrl = `${API_URL}/login?token=${token}&callbackUrl=${
-    callbackUrl ? callbackUrl : `${WEBSITE_URL}/${DEFAULTS.REDIRECT}`
+    callbackUrl || `${WEBSITE_URL}/${DEFAULTS.REDIRECT}`
   }`;
   /**
    * Email will be sent asynchronously

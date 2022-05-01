@@ -1,5 +1,6 @@
 import { Request, Response } from 'express';
 import Joi from 'joi';
+import emailValidator from 'deep-email-validator';
 import * as Openings from '../../models/Openings';
 import * as Applicants from '../../models/Applicants';
 import {
@@ -11,7 +12,6 @@ import {
   LIMITS,
   OPENING_STATE,
 } from '../../Config';
-import emailValidator from 'deep-email-validator';
 import * as CreateError from '../../utils/createError';
 import { DynamoApplicant } from '../../types/dynamo';
 

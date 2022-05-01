@@ -3,6 +3,7 @@ import * as s3 from '@aws-cdk/aws-s3';
 
 export default class StorageStack extends cdk.Stack {
   public readonly bucket: s3.Bucket;
+
   constructor(scope: cdk.Construct, id: string, props?: cdk.StackProps) {
     super(scope, id, props);
 

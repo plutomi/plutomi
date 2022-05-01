@@ -10,9 +10,7 @@ const CreateQuestion = async (options: APICreateQuestionOptions) => {
 };
 
 const GetQuestionsInOrgURL = () => '/questions';
-const GetQuestionInfoURL = (questionId: string) => {
-  return `/questions/${questionId}`;
-};
+const GetQuestionInfoURL = (questionId: string) => `/questions/${questionId}`;
 const GetQuestionInfo = async (questionId: string) => {
   const data = await axios.get(GetQuestionInfoURL(questionId));
   return data;

@@ -1,6 +1,7 @@
 import { Request, Response } from 'express';
 import * as Orgs from '../../models/Orgs';
 import * as CreateError from '../../utils/createError';
+
 const main = async (req: Request, res: Response) => {
   const { session } = res.locals;
   const { orgId } = req.params;

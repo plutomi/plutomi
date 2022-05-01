@@ -1,5 +1,5 @@
-import { AXIOS_INSTANCE as axios, OPENING_STATE } from '../Config';
 import { nanoid } from 'nanoid';
+import { AXIOS_INSTANCE as axios, OPENING_STATE } from '../Config';
 import * as PublicInfo from '../adapters/PublicInfo';
 import * as Orgs from '../adapters/Orgs';
 import * as Openings from '../adapters/Openings';

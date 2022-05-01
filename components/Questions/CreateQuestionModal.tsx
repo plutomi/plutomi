@@ -1,12 +1,14 @@
 import { FormEvent, Fragment, useState } from 'react';
 import { Dialog, Transition } from '@headlessui/react';
 import { XIcon, ArrowRightIcon } from '@heroicons/react/outline';
+import { mutate } from 'swr';
 import useStore from '../../utils/store';
 import { CreateQuestion, GetQuestionsInOrgURL } from '../../adapters/Questions';
-import { mutate } from 'swr';
 import TagGenerator from '../../utils/tagGenerator';
-const UrlSafeString = require('url-safe-string'),
-  tagGenerator = new UrlSafeString({ joinString: '_' });
+
+const UrlSafeString = require('url-safe-string');
+
+const tagGenerator = new UrlSafeString({ joinString: '_' });
 
 const descriptionMaxLength = 300; // TODO set this serverside
 export default function CreateQuestionModal() {
@@ -131,7 +133,7 @@ export default function CreateQuestionModal() {
                                 rows={5}
                                 value={description}
                                 onChange={(e) => setDescription(e.target.value)}
-                              ></textarea>
+                              />
                             </div>
                           </div>
                           <div>

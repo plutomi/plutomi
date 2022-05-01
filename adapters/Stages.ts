@@ -2,6 +2,7 @@ import { AXIOS_INSTANCE as axios } from '../Config';
 import { APICreateStageOptions } from '../Controllers/Stages/create-stage';
 import { APIUpdateStageOptions } from '../Controllers/Stages/update-stage';
 import { DynamoStage } from '../types/dynamo';
+
 type OpeningIdAndStageId = Pick<DynamoStage, 'openingId' | 'stageId'>;
 
 const CreateStage = async (options: APICreateStageOptions) => {

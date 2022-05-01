@@ -1,6 +1,6 @@
+import { useState } from 'react';
 import { RequestLoginLink } from '../adapters/Auth';
 import LoginEmail from './EmailSigninInput';
-import { useState } from 'react';
 import { DEFAULTS } from '../Config';
 
 interface CallbackUrl {

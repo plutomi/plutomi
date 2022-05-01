@@ -1,12 +1,12 @@
 import { nanoid } from 'nanoid';
+import { SdkError } from '@aws-sdk/types';
+import { TransactWriteCommandInput, TransactWriteCommand } from '@aws-sdk/lib-dynamodb';
 import { Dynamo } from '../../AWSClients/ddbDocClient';
 import { ID_LENGTHS, ENTITY_TYPES, DYNAMO_TABLE_NAME } from '../../Config';
 import { DynamoOrgInvite } from '../../types/dynamo';
 import { CreateOrgInviteInput } from '../../types/main';
 import * as Time from '../../utils/time';
-import { SdkError } from '@aws-sdk/types';
 
-import { TransactWriteCommandInput, TransactWriteCommand } from '@aws-sdk/lib-dynamodb';
 /**
  * Invites a user to join your org
  * @param props {@link CreateOrgInviteInput}

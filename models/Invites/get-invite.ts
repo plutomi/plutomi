@@ -1,9 +1,9 @@
 import { GetCommandInput, GetCommand } from '@aws-sdk/lib-dynamodb';
+import { SdkError } from '@aws-sdk/types';
 import { Dynamo } from '../../AWSClients/ddbDocClient';
 import { DYNAMO_TABLE_NAME, ENTITY_TYPES } from '../../Config';
 import { DynamoOrgInvite } from '../../types/dynamo';
 import { GetOrgInviteInput } from '../../types/main';
-import { SdkError } from '@aws-sdk/types';
 
 export default async function Get(
   props: GetOrgInviteInput,

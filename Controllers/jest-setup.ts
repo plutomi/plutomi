@@ -1,8 +1,8 @@
-import * as Users from '../models/Users';
 import { Request, Response } from 'express';
+import { nanoid } from 'nanoid';
+import * as Users from '../models/Users';
 import * as CreateError from '../utils/createError';
 import { COOKIE_NAME, COOKIE_SETTINGS, EMAILS } from '../Config';
-import { nanoid } from 'nanoid';
 /**
  * Creates a random test user and sends a session cookie to the client
  * @param req

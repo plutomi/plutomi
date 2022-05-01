@@ -1,5 +1,5 @@
-import LoginEmail from './EmailSigninInput';
 import { useState } from 'react';
+import LoginEmail from './EmailSigninInput';
 import { RequestLoginLink } from '../adapters/Auth';
 
 export default function Login({ loggedOutPageText }) {

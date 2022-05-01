@@ -1,5 +1,5 @@
-import { AXIOS_INSTANCE as axios, DEFAULTS, OPENING_STATE, EMAILS, ERRORS } from '../Config';
 import { nanoid } from 'nanoid';
+import { AXIOS_INSTANCE as axios, DEFAULTS, OPENING_STATE, EMAILS, ERRORS } from '../Config';
 import * as Orgs from '../adapters/Orgs';
 import * as Openings from '../adapters/Openings';
 import * as Stages from '../adapters/Stages';
@@ -12,7 +12,7 @@ describe('Openings', () => {
    * Creates a session cookie
    */
 
-  let orgId = TagGenerator({
+  const orgId = TagGenerator({
     value: 20,
   });
   let publicOpeningId;
@@ -26,7 +26,7 @@ describe('Openings', () => {
     // Create an org
     await Orgs.CreateOrg({
       orgId,
-      displayName: nanoid(10) + ' Inc.',
+      displayName: `${nanoid(10)} Inc.`,
     });
 
     // Create a public opening

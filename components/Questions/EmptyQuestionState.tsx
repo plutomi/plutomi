@@ -1,6 +1,7 @@
 import { PlusIcon } from '@heroicons/react/solid';
 import { QuestionMarkCircleIcon } from '@heroicons/react/outline';
 import useStore from '../../utils/store';
+
 export default function EmptyQuestionsState() {
   const openCreateQuestionModal = useStore((state) => state.openCreateQuestionModal);
   return (

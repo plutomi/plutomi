@@ -9,9 +9,9 @@ import { transform, isEqual, isArray, isObject } from 'lodash';
 export default function GetObjectDifference(origObj: {}, newObj: {}): {} {
   function changes(newObj: {}, origObj: {}) {
     let arrayIndexCounter = 0;
-    return transform(newObj, function (result, value, key) {
+    return transform(newObj, (result, value, key) => {
       if (!isEqual(value, origObj[key])) {
-        let resultKey = isArray(origObj) ? (arrayIndexCounter += 1) : key;
+        const resultKey = isArray(origObj) ? (arrayIndexCounter += 1) : key;
         result[resultKey] =
           isObject(value) && isObject(origObj[key]) ? changes(value, origObj[key]) : value;
       }

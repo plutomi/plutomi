@@ -1,5 +1,8 @@
 import Joi from 'joi';
 
+import axios from 'axios';
+import TagGenerator from './utils/tagGenerator';
+
 /**
  * Some backend dependencies (SES, ACM, Route53, etc..) depend on
  * DOMAIN_NAME being the actual domain name, do not change!
@@ -23,8 +26,6 @@ export const API_URL =
 
 export const COOKIE_NAME =
   process.env.NODE_ENV === 'production' ? 'plutomi-cookie' : 'DEV-plutomi-cookie';
-
-import TagGenerator from './utils/tagGenerator';
 
 export enum OPENING_STATE {
   PUBLIC = 'PUBLIC',
@@ -148,8 +149,6 @@ export const JOI_GLOBAL_FORBIDDEN = {
   entityType: Joi.any().forbidden(),
   createdAt: Joi.any().forbidden(),
 };
-
-import axios from 'axios';
 export const AXIOS_INSTANCE = axios.create({
   withCredentials: true,
   baseURL: API_URL,

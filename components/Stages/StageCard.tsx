@@ -34,7 +34,7 @@ export default function StageCard({
         <div className="space-x-2 flex  mt-1 items-center text-blue-gray-500">
           <UserGroupIcon className="w-5 h-5 0" />
           <p className="text-md font-semibold ">
-            <NumberFormat value={totalApplicants} thousandSeparator={true} displayType={'text'} />
+            <NumberFormat value={totalApplicants} thousandSeparator displayType="text" />
           </p>
         </div>
       </dd>

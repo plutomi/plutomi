@@ -1,15 +1,16 @@
 import { CalendarIcon, UsersIcon } from '@heroicons/react/solid';
+import Link from 'next/dist/client/link';
+import { ViewBoardsIcon } from '@heroicons/react/outline';
 import ClickToCopy from '../ClickToCopy';
 import * as Time from '../../utils/time';
-import Link from 'next/dist/client/link';
 import useOpenings from '../../SWR/useOpenings';
 import useSelf from '../../SWR/useSelf';
 import useStore from '../../utils/store';
-import { ViewBoardsIcon } from '@heroicons/react/outline';
 import { DOMAIN_NAME, OPENING_STATE, WEBSITE_URL } from '../../Config';
+
 export default function OpeningList() {
   const { user, isUserLoading, isUserError } = useSelf();
-  let { openings, isOpeningsLoading, isOpeningsError } = useOpenings();
+  const { openings, isOpeningsLoading, isOpeningsError } = useOpenings();
 
   const search = useStore((state) => state.openingsSearchInput);
 
@@ -71,7 +72,7 @@ export default function OpeningList() {
                         {opening?.GSI1SK === OPENING_STATE.PUBLIC ? (
                           <p className="mt-2 flex items-center text-lg text-normal sm:mt-0 sm:ml-6">
                             <ClickToCopy
-                              showText={'Application Link'}
+                              showText="Application Link"
                               copyText={`${WEBSITE_URL}/${user?.orgId}/${opening?.openingId}/apply`}
                             />
                           </p>

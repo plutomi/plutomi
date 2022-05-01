@@ -1,9 +1,10 @@
 import { Request, Response } from 'express';
+import Joi from 'joi';
 import { JOI_SETTINGS, LIMITS } from '../../Config';
 import * as CreateError from '../../utils/createError';
 import * as Openings from '../../models/Openings';
-import Joi from 'joi';
 import { DynamoOpening } from '../../types/dynamo';
+
 export type APICreateOpeningOptions = Required<Pick<DynamoOpening, 'openingName'>>;
 
 const schema = Joi.object({

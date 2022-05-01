@@ -1,9 +1,10 @@
 import { DynamoDBStreamEvent } from 'aws-lambda';
+import { PutEventsCommand, PutEventsCommandInput } from '@aws-sdk/client-eventbridge';
+import { PutEventsRequestEntry } from 'aws-sdk/clients/eventbridge';
 import errorFormatter from '../utils/errorFormatter';
 import EBClient from '../AWSClients/eventBridgeClient';
-import { PutEventsCommand, PutEventsCommandInput } from '@aws-sdk/client-eventbridge';
+
 const processor = require('dynamodb-streams-processor');
-import { PutEventsRequestEntry } from 'aws-sdk/clients/eventbridge';
 
 export async function main(event: DynamoDBStreamEvent) {
   // Was reading a bit and this came up https://github.com/aws/aws-sdk-js/issues/2486
@@ -35,6 +36,5 @@ export async function main(event: DynamoDBStreamEvent) {
   } catch (error) {
     console.error('Unable to send message to EventBridge');
     console.error(errorFormatter(error));
-    return;
   }
 }

@@ -7,6 +7,7 @@ import { DYNAMO_TABLE_NAME } from '../Config';
  */
 export default class DynamoDBStack extends cdk.Stack {
   public readonly table: dynamodb.Table;
+
   constructor(scope: cdk.Construct, id: string, props?: cdk.StackProps) {
     super(scope, id, props);
 

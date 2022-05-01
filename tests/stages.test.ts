@@ -3,6 +3,7 @@ import { ERRORS, AXIOS_INSTANCE as axios, LIMITS } from '../Config';
 import * as Stages from '../adapters/Stages';
 import * as Orgs from '../adapters/Orgs';
 import * as Openings from '../adapters/Openings';
+
 describe('Stages', () => {
   /**
    * Creates a session cookie

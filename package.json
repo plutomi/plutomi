@@ -4,14 +4,12 @@
   "private": true,
   "scripts": {
     "build": "next build",
-    "lint": "next lint && eslint .",
+    "lint": "next lint && eslint . --fix",
+    "prettier": "prettier --write .",
     "test": "jest",
     "dev-server": "cross-env NODE_ENV=development nodemon app.ts",
     "dev": "cross-env NODE_ENV=development cdk deploy development-DynamoDBStack development-StreamProcessorStack development-CommsMachineStack development-EventBridgeStack development-StorageStack development-DeleteChildrenMachineStack development-AthenaDynamoQueryStack && concurrently \"npm run dev-server\" \"next dev\"",
     "start": "cross-env NODE_ENV=production ts-node --transpile-only app.ts",
-    "prettier": "prettier --write .",
-    "fix": "eslint . --fix-dry-run",
-    "clean": "npm run lint && npm run prettier && npm run fix",
     "deploy-prod": "cross-env NODE_ENV=production cdk deploy production-DynamoDBStack production-StreamProcessorStack production-APIStack production-CommsMachineStack production-EventBridgeStack production-StorageStack production-DeleteChildrenMachineStack production-AthenaDynamoQueryStack FrontendStack"
   },
   "dependencies": {

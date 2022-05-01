@@ -1,3 +1,4 @@
+import { PlusIcon } from '@heroicons/react/solid';
 import Loader from '../Loader';
 import useQuestionsInOrg from '../../SWR/useQuestionsInOrg';
 import QuestionItem from './QuestionItem';
@@ -5,10 +6,10 @@ import { DynamoQuestion } from '../../types/dynamo';
 import EmptyQuestionsState from './EmptyQuestionState';
 import CreateQuestionModal from './CreateQuestionModal';
 import useStore from '../../utils/store';
-import { PlusIcon } from '@heroicons/react/solid';
 import UpdateQuestionModal from './UpdateQuestionModal';
 import useOrgInfo from '../../SWR/useOrgInfo';
 import useSelf from '../../SWR/useSelf';
+
 export default function QuestionsContent() {
   const { user, isUserLoading, isUserError } = useSelf();
   const { org, isOrgLoading, isOrgError } = useOrgInfo(user?.orgId);

@@ -1,10 +1,12 @@
 import { Request, Response } from 'express';
 import Joi from 'joi';
 import { JOI_SETTINGS, WEBSITE_URL, COOKIE_NAME, COOKIE_SETTINGS } from '../../Config';
-const jwt = require('jsonwebtoken');
 import * as Users from '../../models/Users';
 import * as CreateError from '../../utils/createError';
 import errorFormatter from '../../utils/errorFormatter';
+
+const jwt = require('jsonwebtoken');
+
 interface APILoginQuery {
   callbackUrl?: string;
   token?: string;

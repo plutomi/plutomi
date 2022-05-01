@@ -1,9 +1,8 @@
 import { useState } from 'react';
-import { PencilAltIcon } from '@heroicons/react/outline';
-import { TrashIcon } from '@heroicons/react/outline';
+import { PencilAltIcon, TrashIcon } from '@heroicons/react/outline';
+import { mutate } from 'swr';
 import { DeleteQuestionFromOrg, GetQuestionsInOrgURL } from '../../adapters/Questions';
 import useStore from '../../utils/store';
-import { mutate } from 'swr';
 import { DynamoQuestion } from '../../types/dynamo';
 import UpdateQuestionModal from './UpdateQuestionModal';
 

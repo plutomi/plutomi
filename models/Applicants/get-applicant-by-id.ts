@@ -1,5 +1,6 @@
 import { QueryCommandInput, QueryCommand } from '@aws-sdk/lib-dynamodb';
 import _ from 'lodash';
+import { SdkError } from '@aws-sdk/types';
 import { Dynamo } from '../../AWSClients/ddbDocClient';
 import { DYNAMO_TABLE_NAME, ENTITY_TYPES } from '../../Config';
 import {
@@ -7,7 +8,6 @@ import {
   GetApplicantByIdOutput,
   CreateApplicantOutput,
 } from '../../types/main';
-import { SdkError } from '@aws-sdk/types';
 
 export default async function GetApplicantById(
   props: GetApplicantByIdInput,
@@ -41,7 +41,7 @@ export default async function GetApplicantById(
 
     const applicant: GetApplicantByIdOutput = {
       ...metadata,
-      responses: responses,
+      responses,
       // TODO files
     };
     return [applicant, null]; // TODO TYPEs!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!

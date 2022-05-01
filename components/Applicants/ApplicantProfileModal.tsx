@@ -1,19 +1,20 @@
 import { Fragment, useState } from 'react';
 import EasyEdit, { Types } from 'react-easy-edit';
-import CustomEditableInput from './CustomEditableInput';
 import { Dialog, Transition } from '@headlessui/react';
 import { XIcon, ChevronDoubleRightIcon } from '@heroicons/react/outline';
-import CustomEditableAction from './CustomEditableSave';
-import useStore from '../../utils/store';
 import { useRouter } from 'next/router';
 import { mutate } from 'swr';
-import ClickToCopy from '../ClickToCopy';
 import delay from 'delay';
+import CustomEditableAction from './CustomEditableSave';
+import useStore from '../../utils/store';
+import ClickToCopy from '../ClickToCopy';
+import CustomEditableInput from './CustomEditableInput';
 import useApplicantById from '../../SWR/useApplicantById';
 import { GetApplicantByIdURL, UpdateApplicant } from '../../adapters/Applicants';
 import { CUSTOM_QUERY } from '../../types/main';
 import { WEBSITE_URL } from '../../Config';
 import combineClassNames from '../../utils/combineClassNames';
+
 const tabs = [
   { id: 1, name: 'Details' },
   { id: 2, name: 'History (todo)' },
@@ -114,8 +115,8 @@ export default function ApplicantProfileModal() {
                           }
                           editComponent={
                             <CustomEditableInput
-                              label={'First name'}
-                              placeholder={'Enter a new name'}
+                              label="First name"
+                              placeholder="Enter a new name"
                               initialValue={applicant?.firstName}
                             />
                           }
@@ -136,8 +137,8 @@ export default function ApplicantProfileModal() {
                           }
                           editComponent={
                             <CustomEditableInput
-                              label={'Last name'}
-                              placeholder={'Enter a new name'}
+                              label="Last name"
+                              placeholder="Enter a new name"
                               initialValue={applicant?.lastName}
                             />
                           }
@@ -148,7 +149,7 @@ export default function ApplicantProfileModal() {
                       </Dialog.Title>
                       <div className="ml-3 h-7 flex items-center space-x-4">
                         <ClickToCopy
-                          showText={'Copy Application Link'}
+                          showText="Copy Application Link"
                           copyText={`${WEBSITE_URL}/${applicant?.orgId}/applicants/${applicant?.applicantId}`}
                         />
                         <button
@@ -176,8 +177,8 @@ export default function ApplicantProfileModal() {
                         }
                         editComponent={
                           <CustomEditableInput
-                            label={'Email'}
-                            placeholder={'Enter a new email'}
+                            label="Email"
+                            placeholder="Enter a new email"
                             initialValue={applicant?.email}
                           />
                         }
@@ -216,28 +217,26 @@ export default function ApplicantProfileModal() {
                         {/* TODO refactor this to its own component */}
                         {applicant?.responses?.length ? (
                           <ul className="py-4  space-y-8">
-                            {applicant?.responses.map((response) => {
-                              return (
-                                <div
-                                  key={response?.responseId}
-                                  className="pl-3 mt-1 h-full relative focus-within:ring-2 focus-within:ring-blue-500"
-                                >
-                                  <h3 className="text-lg font-semibold text-dark">
-                                    <span className="absolute inset-0" aria-hidden="true" />
-                                    {response?.questionTitle}
-                                  </h3>
-                                  {response?.description && (
-                                    <p className="text-md text-light">{response?.description}</p>
-                                  )}
-                                  <span className=" inline-flex justify-center items-center space-x-1">
-                                    <ChevronDoubleRightIcon className="h-3 w-3" />
-                                    <p className="text-lg text-normal font-bold line-clamp-2 ">
-                                      {response?.questionResponse}
-                                    </p>
-                                  </span>
-                                </div>
-                              );
-                            })}
+                            {applicant?.responses.map((response) => (
+                              <div
+                                key={response?.responseId}
+                                className="pl-3 mt-1 h-full relative focus-within:ring-2 focus-within:ring-blue-500"
+                              >
+                                <h3 className="text-lg font-semibold text-dark">
+                                  <span className="absolute inset-0" aria-hidden="true" />
+                                  {response?.questionTitle}
+                                </h3>
+                                {response?.description && (
+                                  <p className="text-md text-light">{response?.description}</p>
+                                )}
+                                <span className=" inline-flex justify-center items-center space-x-1">
+                                  <ChevronDoubleRightIcon className="h-3 w-3" />
+                                  <p className="text-lg text-normal font-bold line-clamp-2 ">
+                                    {response?.questionResponse}
+                                  </p>
+                                </span>
+                              </div>
+                            ))}
                           </ul>
                         ) : (
                           <h1 className="py-4 text-lg text-dark">

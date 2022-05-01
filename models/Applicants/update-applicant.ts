@@ -1,8 +1,8 @@
 import { UpdateCommandInput, UpdateCommand } from '@aws-sdk/lib-dynamodb';
+import { SdkError } from '@aws-sdk/types';
 import { Dynamo } from '../../AWSClients/ddbDocClient';
 import { DYNAMO_TABLE_NAME, ENTITY_TYPES } from '../../Config';
 import { UpdateApplicantInput } from '../../types/main';
-import { SdkError } from '@aws-sdk/types';
 
 export default async function UpdateApplicant(
   props: UpdateApplicantInput,
@@ -10,8 +10,8 @@ export default async function UpdateApplicant(
   const { orgId, applicantId, newValues } = props;
 
   // Build update expression
-  let allUpdateExpressions: string[] = [];
-  let allAttributeValues: { [key: string]: string } = {};
+  const allUpdateExpressions: string[] = [];
+  const allAttributeValues: { [key: string]: string } = {};
 
   // Filter out forbidden property
   for (const property of Object.keys(newValues)) {
@@ -27,7 +27,7 @@ export default async function UpdateApplicant(
       PK: `${ENTITY_TYPES.ORG}#${orgId}#${ENTITY_TYPES.APPLICANT}#${applicantId}`,
       SK: ENTITY_TYPES.APPLICANT,
     },
-    UpdateExpression: `SET ` + allUpdateExpressions.join(', '),
+    UpdateExpression: `SET ${allUpdateExpressions.join(', ')}`,
     ExpressionAttributeValues: allAttributeValues,
     TableName: `${process.env.NODE_ENV}-${DYNAMO_TABLE_NAME}`,
 

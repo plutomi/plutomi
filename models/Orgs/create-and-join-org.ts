@@ -1,10 +1,10 @@
 import { TransactWriteCommandInput, TransactWriteCommand } from '@aws-sdk/lib-dynamodb';
+import { SdkError } from '@aws-sdk/types';
 import { Dynamo } from '../../AWSClients/ddbDocClient';
 import { DYNAMO_TABLE_NAME, ENTITY_TYPES } from '../../Config';
 import { DynamoOrg } from '../../types/dynamo';
 import { CreateAndJoinOrgInput } from '../../types/main';
 import * as Time from '../../utils/time';
-import { SdkError } from '@aws-sdk/types';
 
 export default async function CreateAndJoinOrg(
   props: CreateAndJoinOrgInput,

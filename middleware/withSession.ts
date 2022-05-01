@@ -1,6 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
 import { COOKIE_NAME, COOKIE_SETTINGS } from '../Config';
 import * as Users from '../models/Users';
+
 export default async function withSession(req: Request, res: Response, next: NextFunction) {
   const userId = req.signedCookies[COOKIE_NAME];
   if (!userId) {

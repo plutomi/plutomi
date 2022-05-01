@@ -47,7 +47,8 @@ export default class CommsMachineStack extends cdk.Stack {
     };
 
     const notifyAdmin = new tasks.CallAwsService(this, 'NotifyAdminOfNewUser', {
-      //TODO update once native integration is implemented
+      // TODO update once native integration is implemented
+
       ...SES_SETTINGS,
       parameters: {
         Source: `Plutomi <${EMAILS.ADMIN}>`,
@@ -68,7 +69,8 @@ export default class CommsMachineStack extends cdk.Stack {
     });
 
     const welcomeNewUser = new tasks.CallAwsService(this, 'WelcomeNewUser', {
-      //TODO update once native integration is implemented
+      // TODO update once native integration is implemented
+
       ...SES_SETTINGS,
       parameters: {
         Source: `Jose Valerio <${EMAILS.GENERAL}>`,
@@ -91,7 +93,8 @@ export default class CommsMachineStack extends cdk.Stack {
     });
 
     const sendLoginLink = new tasks.CallAwsService(this, 'SendLoginLink', {
-      //TODO update once native integration is implemented
+      // TODO update once native integration is implemented
+
       ...SES_SETTINGS,
       parameters: {
         Source: `Plutomi <${EMAILS.GENERAL}>`,
@@ -114,7 +117,8 @@ export default class CommsMachineStack extends cdk.Stack {
     });
 
     const sendApplicationLink = new tasks.CallAwsService(this, 'SendApplicationLink', {
-      //TODO update once native integration is implemented
+      // TODO update once native integration is implemented
+
       ...SES_SETTINGS,
       parameters: {
         Source: `Plutomi <${EMAILS.GENERAL}>`,
@@ -137,7 +141,8 @@ export default class CommsMachineStack extends cdk.Stack {
     });
 
     const sendOrgInvite = new tasks.CallAwsService(this, 'SendOrgInvite', {
-      //TODO update once native integration is implemented
+      // TODO update once native integration is implemented
+
       ...SES_SETTINGS,
       parameters: {
         Source: `Plutomi <${EMAILS.JOIN}>`,

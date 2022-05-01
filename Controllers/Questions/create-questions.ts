@@ -1,8 +1,8 @@
 import { Request, Response } from 'express';
+import Joi from 'joi';
 import * as CreateError from '../../utils/createError';
 import * as Questions from '../../models/Questions';
 import { DynamoQuestion } from '../../types/dynamo';
-import Joi from 'joi';
 import { JOI_SETTINGS, LIMITS } from '../../Config';
 
 export type APICreateQuestionOptions = Pick<

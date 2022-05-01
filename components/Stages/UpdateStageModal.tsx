@@ -1,9 +1,9 @@
 import { FormEvent, Fragment, useEffect, useState } from 'react';
 import { Dialog, Transition } from '@headlessui/react';
 import { XIcon } from '@heroicons/react/outline';
-import useStore from '../../utils/store';
 import { mutate } from 'swr';
 import { useRouter } from 'next/router';
+import useStore from '../../utils/store';
 import { GetOpeningInfoURL } from '../../adapters/Openings';
 import { GetStagesInOpeningURL, UpdateStage } from '../../adapters/Stages';
 import { CUSTOM_QUERY } from '../../types/main';
@@ -117,7 +117,7 @@ export default function UpdateStageModal({ stage }: { stage: DynamoStage }) {
                                 type="text"
                                 name="opening-name"
                                 id="opening-name"
-                                placeholder={`What is the overall purpose of this stage?`}
+                                placeholder="What is the overall purpose of this stage?"
                                 required
                                 onChange={(e) => setGSI1SK(e.target.value)}
                                 value={GSI1SK}

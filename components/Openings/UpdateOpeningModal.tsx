@@ -1,9 +1,9 @@
 import { FormEvent, Fragment, useEffect, useState } from 'react';
 import { Dialog, Transition } from '@headlessui/react';
 import { XIcon } from '@heroicons/react/outline';
+import { mutate } from 'swr';
 import { GetOpeningInfoURL, UpdateOpening } from '../../adapters/Openings';
 import useStore from '../../utils/store';
-import { mutate } from 'swr';
 import { OPENING_STATE } from '../../Config';
 import { DynamoOpening } from '../../types/dynamo';
 

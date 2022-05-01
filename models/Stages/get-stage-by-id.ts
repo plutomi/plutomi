@@ -1,8 +1,8 @@
 import { GetCommandInput, GetCommand } from '@aws-sdk/lib-dynamodb';
+import { SdkError } from '@aws-sdk/types';
 import { Dynamo } from '../../AWSClients/ddbDocClient';
 import { DYNAMO_TABLE_NAME, ENTITY_TYPES } from '../../Config';
 import { GetStageByIdInput, GetStageByIdOutput } from '../../types/main';
-import { SdkError } from '@aws-sdk/types';
 /**
  * Returns a stage by its ID.
  * @param props {@link GetStageByIdInput}

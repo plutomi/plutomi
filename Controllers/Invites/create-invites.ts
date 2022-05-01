@@ -1,13 +1,14 @@
 import { Request, Response } from 'express';
 import Joi from 'joi';
+import emailValidator from 'deep-email-validator';
+import { pick } from 'lodash';
 import { ERRORS, JOI_SETTINGS, ORG_INVITE_EXPIRY_DAYS, TIME_UNITS } from '../../Config';
 import * as CreateError from '../../utils/createError';
-import emailValidator from 'deep-email-validator';
 import * as Users from '../../models/Users';
 import * as Orgs from '../../models/Orgs';
 import * as Time from '../../utils/time';
 import * as Invites from '../../models/Invites';
-import { pick } from 'lodash';
+
 const schema = Joi.object({
   body: {
     recipientEmail: Joi.string().email().trim(),

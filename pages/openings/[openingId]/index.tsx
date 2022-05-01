@@ -1,18 +1,19 @@
+import { useRouter } from 'next/router';
+import { useEffect } from 'react';
 import useSelf from '../../../SWR/useSelf';
 import Loader from '../../../components/Loader';
-import { useRouter } from 'next/router';
 import useAllStagesInOpening from '../../../SWR/useAllStagesInOpening';
 import useOpeningInfo from '../../../SWR/useOpeningInfo';
 import { CUSTOM_QUERY } from '../../../types/main';
-import { useEffect } from 'react';
 import { DOMAIN_NAME } from '../../../Config';
+
 export default function Openings() {
   const router = useRouter();
   const { openingId } = router.query as Pick<CUSTOM_QUERY, 'openingId'>;
 
-  let { opening, isOpeningLoading, isOpeningError } = useOpeningInfo(openingId);
+  const { opening, isOpeningLoading, isOpeningError } = useOpeningInfo(openingId);
 
-  let { stages, isStagesLoading, isStagesError } = useAllStagesInOpening(opening?.openingId);
+  const { stages, isStagesLoading, isStagesError } = useAllStagesInOpening(opening?.openingId);
 
   // This page just redirects to the specified pages below !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 

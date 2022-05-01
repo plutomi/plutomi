@@ -1,6 +1,7 @@
 import { useRouter } from 'next/router';
 import usePublicOrgById from '../../../SWR/usePublicOrgById';
 import { CUSTOM_QUERY } from '../../../types/main';
+
 export default function OrgApplyPageHeader() {
   const router = useRouter();
   const { orgId } = router.query as Pick<CUSTOM_QUERY, 'orgId'>;

@@ -7,6 +7,7 @@ import OpeningApplyPageContent from '../../../components/Openings/Public/Opening
 import OpeningApplyPageHeader from '../../../components/Openings/Public/OpeningApplyPageHeader';
 import { CUSTOM_QUERY } from '../../../types/main';
 import { DOMAIN_NAME, WEBSITE_URL } from '../../../Config';
+
 export default function Apply() {
   const router = useRouter();
   const { orgId, openingId } = router.query as Pick<CUSTOM_QUERY, 'openingId' | 'orgId'>;

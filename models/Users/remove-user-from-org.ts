@@ -1,7 +1,7 @@
 import { TransactWriteCommandInput, TransactWriteCommand } from '@aws-sdk/lib-dynamodb';
+import { SdkError } from '@aws-sdk/types';
 import { Dynamo } from '../../AWSClients/ddbDocClient';
 import { DEFAULTS, DYNAMO_TABLE_NAME, ENTITY_TYPES } from '../../Config';
-import { SdkError } from '@aws-sdk/types';
 
 interface RemoveUserFromOrgInput {
   /**

@@ -37,7 +37,7 @@ const main = async (req: Request, res: Response) => {
     return res.status(status).json(body);
   }
 
-  let { GSI1SK, openingId, position } = req.body;
+  const { GSI1SK, openingId, position } = req.body;
 
   const [opening, openingError] = await Openings.GetOpeningById({
     openingId,

@@ -9,10 +9,11 @@ import ApplicantProfileModal from '../../../../../components/Applicants/Applican
 import NewPage from '../../../../../components/Templates/NewPage';
 import useOpeningInfo from '../../../../../SWR/useOpeningInfo';
 import { CUSTOM_QUERY } from '../../../../../types/main';
+
 export default function StageApplicants() {
   const router = useRouter();
   const { openingId, stageId } = router.query as Pick<CUSTOM_QUERY, 'openingId' | 'stageId'>;
-  let { opening, isOpeningLoading, isOpeningError } = useOpeningInfo(openingId);
+  const { opening, isOpeningLoading, isOpeningError } = useOpeningInfo(openingId);
 
   const { stages, isStagesLoading, isStagesError } = useAllStagesInOpening(opening?.openingId);
 
@@ -29,8 +30,8 @@ export default function StageApplicants() {
 
   return (
     <NewPage
-      loggedOutPageText={'Log in to view your applicants'}
-      currentNavbarItem={'Openings'}
+      loggedOutPageText="Log in to view your applicants"
+      currentNavbarItem="Openings"
       headerText={isOpeningLoading ? 'Applicants' : `${opening?.openingName} - Applicants`}
     >
       <>

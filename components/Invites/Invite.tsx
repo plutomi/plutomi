@@ -1,9 +1,10 @@
 import { CheckIcon, XCircleIcon } from '@heroicons/react/outline';
 import { mutate } from 'swr';
+import { useRouter } from 'next/router';
 import { AcceptInvite, GetUserInvitesURL, RejectInvite } from '../../adapters/Invites';
 import { GetSelfInfoURL } from '../../adapters/Users';
 import * as Time from '../../utils/time';
-import { useRouter } from 'next/router';
+
 export default function Invite({ invite }) {
   const router = useRouter();
   const acceptInvite = async (inviteId) => {

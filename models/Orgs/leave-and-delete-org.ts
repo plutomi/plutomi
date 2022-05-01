@@ -1,7 +1,7 @@
 import { TransactWriteCommandInput, TransactWriteCommand } from '@aws-sdk/lib-dynamodb';
+import { SdkError } from '@aws-sdk/types';
 import { Dynamo } from '../../AWSClients/ddbDocClient';
 import { ENTITY_TYPES, DEFAULTS, DYNAMO_TABLE_NAME } from '../../Config';
-import { SdkError } from '@aws-sdk/types';
 import { LeaveAndDeleteOrgInput } from '../../types/main';
 
 export default async function Create(

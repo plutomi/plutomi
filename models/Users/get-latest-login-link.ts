@@ -1,9 +1,9 @@
 import { QueryCommandInput, QueryCommand } from '@aws-sdk/lib-dynamodb';
+import { SdkError } from '@aws-sdk/types';
 import { Dynamo } from '../../AWSClients/ddbDocClient';
 import { DYNAMO_TABLE_NAME, ENTITY_TYPES } from '../../Config';
 import { DynamoLoginLink } from '../../types/dynamo';
 import { GetLatestLoginLinkInput } from '../../types/main';
-import { SdkError } from '@aws-sdk/types';
 
 export default async function GetLatestLink(
   props: GetLatestLoginLinkInput,

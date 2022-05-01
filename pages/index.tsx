@@ -1,15 +1,15 @@
+import { ChevronRightIcon, MailIcon } from '@heroicons/react/outline';
+import _ from 'lodash';
+import { nanoid } from 'nanoid';
 import AlreadySignedIn from '../components/AlreadySignedIn';
 import Contact from '../components/Static/ContactUs';
 import LoginHomepage from '../components/LoginHomepage';
 import UseCases from '../components/UseCases';
 import Hero from '../components/Static/Hero';
 import useSelf from '../SWR/useSelf';
-import { AXIOS_INSTANCE as axios } from '../Config';
-import { ChevronRightIcon, MailIcon } from '@heroicons/react/outline';
-import _ from 'lodash';
+import { AXIOS_INSTANCE as axios, DOMAIN_NAME } from '../Config';
 import * as Time from '../utils/time';
-import { nanoid } from 'nanoid';
-import { DOMAIN_NAME } from '../Config';
+
 export default function Main({ commits }) {
   const { user, isUserLoading, isUserError } = useSelf();
   return (
@@ -79,7 +79,7 @@ export default function Main({ commits }) {
 
 export async function getStaticProps() {
   const commitsFromEachBranch = 25;
-  let allCommits = [];
+  const allCommits = [];
   const { data } = await axios.get(
     `https://api.github.com/repos/plutomi/plutomi/branches?u=joswayski`,
   );
@@ -98,7 +98,7 @@ export async function getStaticProps() {
 
       data.map(async (commit) => {
         if (commit.commit.author.name !== 'allcontributors[bot]') {
-          let customCommit = {
+          const customCommit = {
             name: commit.commit.author.name,
             username: commit.author.login,
             image: commit.author.avatar_url,

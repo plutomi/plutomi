@@ -1,7 +1,7 @@
 import { TransactWriteCommandInput, TransactWriteCommand } from '@aws-sdk/lib-dynamodb';
+import { SdkError } from '@aws-sdk/types';
 import { Dynamo } from '../../AWSClients/ddbDocClient';
 import { DYNAMO_TABLE_NAME, ENTITY_TYPES } from '../../Config';
-import { SdkError } from '@aws-sdk/types';
 import { DeleteQuestionFromStageInput } from '../../types/main';
 
 export default async function DeleteQuestionFromStage(
@@ -9,7 +9,7 @@ export default async function DeleteQuestionFromStage(
 ): Promise<[null, null] | [null, SdkError]> {
   const { orgId, openingId, stageId, questionId, deleteIndex, decrementStageCount } = props;
 
-  let transactParams: TransactWriteCommandInput = {
+  const transactParams: TransactWriteCommandInput = {
     TransactItems: [
       {
         // Delete the adjacent item

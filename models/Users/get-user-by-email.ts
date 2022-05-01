@@ -1,9 +1,9 @@
 import { QueryCommandInput, QueryCommand } from '@aws-sdk/lib-dynamodb';
+import { SdkError } from '@aws-sdk/types';
 import { Dynamo } from '../../AWSClients/ddbDocClient';
 import { DYNAMO_TABLE_NAME, ENTITY_TYPES } from '../../Config';
 import { DynamoUser } from '../../types/dynamo';
 import { GetUserByEmailInput } from '../../types/main';
-import { SdkError } from '@aws-sdk/types';
 
 export default async function GetUserByEmail(
   props: GetUserByEmailInput,

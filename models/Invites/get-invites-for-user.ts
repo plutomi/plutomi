@@ -1,9 +1,9 @@
 import { QueryCommandInput, QueryCommand } from '@aws-sdk/lib-dynamodb';
+import { SdkError } from '@aws-sdk/types';
 import { Dynamo } from '../../AWSClients/ddbDocClient';
 import { DYNAMO_TABLE_NAME, ENTITY_TYPES } from '../../Config';
 import { DynamoOrgInvite } from '../../types/dynamo';
 import { GetOrgInvitesForUserInput } from '../../types/main';
-import { SdkError } from '@aws-sdk/types';
 /**
  * Given a `userId`, returns the user's invites to join an org
  * @param props {@link GetOrgInvitesForUserInput}

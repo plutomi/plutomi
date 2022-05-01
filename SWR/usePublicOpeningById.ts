@@ -1,6 +1,7 @@
 import useSWR from 'swr';
 import { SWRFetcher } from '../Config';
 import { GetPublicOpeningInfoURL } from '../adapters/PublicInfo';
+
 export default function usePublicOpeningById(orgId?: string, openingId?: string) {
   const shouldFetch = orgId && openingId;
 

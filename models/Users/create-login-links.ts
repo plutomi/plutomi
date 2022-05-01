@@ -1,10 +1,10 @@
 import { PutCommandInput, PutCommand } from '@aws-sdk/lib-dynamodb';
+import { SdkError } from '@aws-sdk/types';
 import { Dynamo } from '../../AWSClients/ddbDocClient';
 import { DYNAMO_TABLE_NAME, ENTITY_TYPES, TIME_UNITS } from '../../Config';
 import { DynamoLoginLink } from '../../types/dynamo';
 import { CreateLoginLinkInput } from '../../types/main';
 import * as Time from '../../utils/time';
-import { SdkError } from '@aws-sdk/types';
 
 /**
  * Creates a login link for the requested user

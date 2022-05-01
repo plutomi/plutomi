@@ -4,10 +4,11 @@ import Loader from '../Loader';
 import useOpeningInfo from '../../SWR/useOpeningInfo';
 import { CUSTOM_QUERY } from '../../types/main';
 import UpdateOpeningModal from './UpdateOpeningModal';
+
 export default function OpeningSettingsContent() {
   const router = useRouter();
   const { openingId } = router.query as Pick<CUSTOM_QUERY, 'openingId'>;
-  let { opening, isOpeningLoading, isOpeningError } = useOpeningInfo(openingId);
+  const { opening, isOpeningLoading, isOpeningError } = useOpeningInfo(openingId);
 
   if (isOpeningLoading) {
     return <Loader text="Loading opening settings..." />;
@@ -30,7 +31,7 @@ export default function OpeningSettingsContent() {
 
           <div className="bg-white lg:min-w-0 lg:flex-1">
             <div className="h-full py-6 px-4 sm:px-6 lg:px-8">
-              {/* Start main area*/}
+              {/* Start main area */}
               <div className="relative h-full" style={{ minHeight: '36rem' }}>
                 <div className=" inset-0  border-gray-200 rounded-lg">
                   <div className="flex flex-col justify-center items-center">Main area</div>

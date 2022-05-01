@@ -4,6 +4,7 @@ import Link from '../components/CustomLink';
 import LoginHomepage from '../components/LoginHomepage';
 import { DOMAIN_NAME } from '../Config';
 import useSelf from '../SWR/useSelf';
+
 const faqs = [
   {
     question: 'What does *active* development mean?',
@@ -23,7 +24,7 @@ const faqs = [
     question: 'How do I give feedback / submit feature requests?',
     answer: (
       <p>
-        <CustomLink url={'https://github.com/plutomi/plutomi/issues'} text={'Create an issue'} /> on
+        <CustomLink url="https://github.com/plutomi/plutomi/issues" text="Create an issue" /> on
         GitHub or send us an email at contact@plutomi.com
       </p>
     ),
@@ -33,7 +34,7 @@ const faqs = [
     answer: (
       <p>
         Yes! Feel free to make a PR into the <strong>main</strong> branch on{' '}
-        <CustomLink url={'https://github.com/plutomi/plutomi'} text={'GitHub'} />
+        <CustomLink url="https://github.com/plutomi/plutomi" text="GitHub" />
       </p>
     ),
   },
@@ -43,8 +44,8 @@ const faqs = [
       <p>
         The project is licensed under the{' '}
         <CustomLink
-          url={'https://tldrlegal.com/license/apache-license-2.0-(apache-2.0)'}
-          text={'Apache 2.0 license'}
+          url="https://tldrlegal.com/license/apache-license-2.0-(apache-2.0)"
+          text="Apache 2.0 license"
         />
       </p>
     ),

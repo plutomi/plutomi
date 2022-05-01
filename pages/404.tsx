@@ -1,5 +1,6 @@
 import { useRouter } from 'next/router';
 import { ArrowLeftIcon } from '@heroicons/react/outline';
+
 export default function NotFound() {
   const router = useRouter();
 

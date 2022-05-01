@@ -1,8 +1,8 @@
 import { QueryCommandInput, QueryCommand } from '@aws-sdk/lib-dynamodb';
+import { SdkError } from '@aws-sdk/types';
 import { Dynamo } from '../../AWSClients/ddbDocClient';
 import { DYNAMO_TABLE_NAME, ENTITY_TYPES } from '../../Config';
 import { GetQuestionsInOrgInput, GetQuestionsInOrgOutput } from '../../types/main';
-import { SdkError } from '@aws-sdk/types';
 import { DynamoQuestion } from '../../types/dynamo';
 
 export default async function GetQuestionsInOrg(

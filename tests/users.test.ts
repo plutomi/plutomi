@@ -1,7 +1,7 @@
-import { AXIOS_INSTANCE as axios } from '../Config';
 import { nanoid } from 'nanoid';
-import { DEFAULTS, ENTITY_TYPES, ERRORS } from '../Config';
+import { AXIOS_INSTANCE as axios, DEFAULTS, ENTITY_TYPES, ERRORS } from '../Config';
 import * as Users from '../adapters/Users';
+
 describe('Users', () => {
   /**
    * Creates a session cookie

@@ -1,6 +1,7 @@
 import { Request, Response } from 'express';
 import * as Stages from '../../models/Stages';
 import * as CreateError from '../../utils/createError';
+
 const main = async (req: Request, res: Response) => {
   const { session } = res.locals;
 

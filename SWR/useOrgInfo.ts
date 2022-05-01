@@ -1,7 +1,6 @@
 import useSWR from 'swr';
-import { DEFAULTS } from '../Config';
+import { DEFAULTS, SWRFetcher } from '../Config';
 import { GetOrgInfoURL } from '../adapters/Orgs';
-import { SWRFetcher } from '../Config';
 import TagGenerator from '../utils/tagGenerator';
 
 const bannedOrgValues = [DEFAULTS.NO_ORG, TagGenerator({ value: DEFAULTS.NO_ORG })];

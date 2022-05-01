@@ -1,11 +1,10 @@
 import { FormEvent, Fragment, useEffect, useState } from 'react';
 import { Dialog, Transition } from '@headlessui/react';
 import { XIcon } from '@heroicons/react/outline';
-import useStore from '../../utils/store';
 import { mutate } from 'swr';
-import { GetSelfInfoURL, GetUserInfoUrl } from '../../adapters/Users';
+import useStore from '../../utils/store';
+import { GetSelfInfoURL, GetUserInfoUrl, UpdateUser } from '../../adapters/Users';
 import { DynamoUser } from '../../types/dynamo';
-import { UpdateUser } from '../../adapters/Users';
 
 export default function UserProfileModal({ user }: { user: DynamoUser }) {
   const [firstName, setFirstName] = useState(user?.firstName);
@@ -136,7 +135,7 @@ export default function UserProfileModal({ user }: { user: DynamoUser }) {
                               />
                             </div>
                           </div>
-                          <div className="relative flex items-start"></div>
+                          <div className="relative flex items-start" />
                         </div>
                       </div>
                     </div>

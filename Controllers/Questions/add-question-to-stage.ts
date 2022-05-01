@@ -5,6 +5,7 @@ import * as CreateError from '../../utils/createError';
 import * as Stages from '../../models/Stages';
 import getNewChildItemOrder from '../../utils/getNewChildItemOrder';
 import * as Questions from '../../models/Questions';
+
 const schema = Joi.object({
   body: {
     questionId: Joi.string(),
@@ -29,7 +30,7 @@ const main = async (req: Request, res: Response) => {
   }
 
   // TODO types
-  let { questionId, position }: { questionId: string; position?: number } = req.body;
+  const { questionId, position }: { questionId: string; position?: number } = req.body;
   const { openingId, stageId } = req.params;
 
   const [question, getQuestionError] = await Questions.GetQuestionById({

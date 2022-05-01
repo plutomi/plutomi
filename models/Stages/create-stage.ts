@@ -1,12 +1,12 @@
 import { TransactWriteCommandInput, TransactWriteCommand } from '@aws-sdk/lib-dynamodb';
 import { nanoid } from 'nanoid';
+import { SdkError } from '@aws-sdk/types';
 import getNewChildItemOrder from '../../utils/getNewChildItemOrder';
 import { Dynamo } from '../../AWSClients/ddbDocClient';
 import { ID_LENGTHS, ENTITY_TYPES, LIMITS, DYNAMO_TABLE_NAME } from '../../Config';
 import { DynamoStage } from '../../types/dynamo';
 import { CreateStageInput } from '../../types/main';
 import * as Time from '../../utils/time';
-import { SdkError } from '@aws-sdk/types';
 
 export default async function CreateStage(
   props: CreateStageInput,
@@ -31,7 +31,7 @@ export default async function CreateStage(
   const newStageOrder = getNewChildItemOrder(stageId, stageOrder, position);
 
   try {
-    let transactParams: TransactWriteCommandInput = {
+    const transactParams: TransactWriteCommandInput = {
       TransactItems: [
         {
           // Add the new stage

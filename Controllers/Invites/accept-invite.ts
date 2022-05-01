@@ -3,6 +3,7 @@ import { DEFAULTS } from '../../Config';
 import * as Invites from '../../models/Invites';
 import * as CreateError from '../../utils/createError';
 import * as Time from '../../utils/time';
+
 const main = async (req: Request, res: Response) => {
   const { session } = res.locals;
   const { inviteId } = req.params;

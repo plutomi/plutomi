@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
-import * as Users from '../../models/Users';
 import Joi from 'joi';
+import * as Users from '../../models/Users';
 import * as CreateError from '../../utils/createError';
 import { DEFAULTS, JOI_GLOBAL_FORBIDDEN, JOI_SETTINGS } from '../../Config';
 import { DynamoUser } from '../../types/dynamo';

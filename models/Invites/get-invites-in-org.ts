@@ -1,8 +1,9 @@
 import { QueryCommandInput, QueryCommand } from '@aws-sdk/lib-dynamodb';
+import { SdkError } from '@aws-sdk/types';
 import { Dynamo } from '../../AWSClients/ddbDocClient';
 import { DYNAMO_TABLE_NAME, ENTITY_TYPES } from '../../Config';
 import { DynamoOrgInvite } from '../../types/dynamo';
-import { SdkError } from '@aws-sdk/types';
+
 export default async function GetInvitesInOrg(
   props, // TODO types
 ): Promise<[DynamoOrgInvite[], null] | [null, SdkError]> {

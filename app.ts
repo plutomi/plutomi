@@ -1,12 +1,9 @@
 import * as dotenv from 'dotenv';
-const resultDotEnv = dotenv.config({
-  path: `./.env.${process.env.NODE_ENV}`,
-});
 
-if (resultDotEnv.error) {
-  throw resultDotEnv.error;
-}
-
+import helmet from 'helmet';
+import express, { Response } from 'express';
+import cors from 'cors';
+import timeout from 'connect-timeout';
 import * as Auth from './Controllers/Auth';
 import * as Users from './Controllers/Users';
 import * as Orgs from './Controllers/Orgs';
@@ -18,17 +15,22 @@ import * as Applicants from './Controllers/Applicants';
 import * as Questions from './Controllers/Questions';
 import withHasOrg from './middleware/withHasOrg';
 import withSameOrg from './middleware/withSameOrg';
-import helmet from 'helmet';
 import * as Jest from './Controllers/jest-setup';
-import express, { Response } from 'express';
-import cors from 'cors';
-const morgan = require('morgan');
 import withCleanOrgId from './middleware/withCleanOrgId';
 import withCleanQuestionId from './middleware/withCleanQuestionId';
-import timeout from 'connect-timeout';
 import { COOKIE_SETTINGS, EXPRESS_PORT, WEBSITE_URL } from './Config';
 import withSession from './middleware/withSession';
+
+const resultDotEnv = dotenv.config({
+  path: `./.env.${process.env.NODE_ENV}`,
+});
+
+if (resultDotEnv.error) {
+  throw resultDotEnv.error;
+}
+const morgan = require('morgan');
 const cookieParser = require('cookie-parser');
+
 const app = express();
 app.use(timeout('5s'));
 

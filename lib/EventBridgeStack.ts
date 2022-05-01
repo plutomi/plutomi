@@ -1,8 +1,8 @@
 import * as cdk from '@aws-cdk/core';
-import { ENTITY_TYPES } from '../Config';
 import { EventBus, Rule } from '@aws-cdk/aws-events';
 import { StateMachine } from '@aws-cdk/aws-stepfunctions';
 import { SfnStateMachine } from '@aws-cdk/aws-events-targets';
+import { ENTITY_TYPES } from '../Config';
 
 interface EventBridgeStackProps extends cdk.StackProps {
   CommsMachine: StateMachine;

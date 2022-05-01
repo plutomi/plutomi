@@ -1,8 +1,9 @@
-import useSelf from '../../SWR/useSelf';
 import { PencilAltIcon } from '@heroicons/react/outline';
+import useSelf from '../../SWR/useSelf';
 import Loader from '../Loader';
 import { DEFAULTS } from '../../Config';
 import useStore from '../../utils/store';
+
 export default function UserProfileHeader() {
   const { user, isUserLoading, isUserError } = useSelf();
 

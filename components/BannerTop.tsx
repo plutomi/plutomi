@@ -1,5 +1,6 @@
 import { BellIcon } from '@heroicons/react/outline';
 import Link from 'next/dist/client/link';
+
 export default function Banner({ msgSmall, msgLarge, btnText, href }) {
   return (
     <div className="bg-blue-600">

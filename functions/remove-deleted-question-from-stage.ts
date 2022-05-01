@@ -31,5 +31,4 @@ export async function main(event) {
   }
 
   console.log('Removed!');
-  return;
 }

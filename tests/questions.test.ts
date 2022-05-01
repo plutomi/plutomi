@@ -1,11 +1,12 @@
-import { AXIOS_INSTANCE as axios, ERRORS } from '../Config';
 import { nanoid } from 'nanoid';
+import { AXIOS_INSTANCE as axios, ERRORS } from '../Config';
 import * as Openings from '../adapters/Openings';
 import * as Stages from '../adapters/Stages';
 import * as Questions from '../adapters/Questions';
 import * as Orgs from '../adapters/Orgs';
 import { DynamoQuestion, DynamoStage } from '../types/dynamo';
 import TagGenerator from '../utils/tagGenerator';
+
 describe('Questions', () => {
   /**
    * Creates a session cookie
@@ -225,11 +226,11 @@ describe('Questions', () => {
 
     // We're going to add question 1 to the END
     // And question 2 as the first question
-    let questionId1 = TagGenerator({
+    const questionId1 = TagGenerator({
       value: 20,
       joinString: '_',
     });
-    let questionId2 = TagGenerator({
+    const questionId2 = TagGenerator({
       value: 20,
       joinString: '_',
     });

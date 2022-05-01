@@ -1,9 +1,9 @@
 import { FormEvent, Fragment, useState } from 'react';
 import { Dialog, Transition } from '@headlessui/react';
 import { XIcon } from '@heroicons/react/outline';
+import { mutate } from 'swr';
 import useStore from '../../utils/store';
 import { CreateOrg } from '../../adapters/Orgs';
-import { mutate } from 'swr';
 import { GetSelfInfoURL } from '../../adapters/Users';
 import TagGenerator from '../../utils/tagGenerator';
 

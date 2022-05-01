@@ -1,9 +1,10 @@
-import { AXIOS_INSTANCE as axios, ERRORS, OPENING_STATE } from '../Config';
 import { nanoid } from 'nanoid';
+import { AXIOS_INSTANCE as axios, ERRORS, OPENING_STATE } from '../Config';
 import * as Openings from '../adapters/Openings';
 import * as Orgs from '../adapters/Orgs';
 import * as Stages from '../adapters/Stages';
 import { DynamoOpening } from '../types/dynamo';
+
 describe('Openings', () => {
   /**
    * Creates a session cookie

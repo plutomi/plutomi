@@ -1,4 +1,5 @@
 import Link from 'next/link';
+
 export default function WarningBanner() {
   return (
     <div className="relative bg-red-600">

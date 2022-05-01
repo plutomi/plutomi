@@ -40,9 +40,7 @@ const GetPublicStageInfo = async (options: GetPublicStageInfoInput) => {
 };
 
 // TODO remove this once applicant login portal is in
-const GetPublicApplicantInfoURL = (applicantId: string) => {
-  return `/applicants/${applicantId}`;
-};
+const GetPublicApplicantInfoURL = (applicantId: string) => `/applicants/${applicantId}`;
 const GetPublicApplicantInfo = async (applicantId: string) => {
   const data = await axios.get(GetPublicApplicantInfoURL(applicantId));
   return data;

@@ -2,18 +2,19 @@
 // Such as filtering of openings, their public / private status,
 // And how many applicants there are
 import { CalendarIcon, LocationMarkerIcon } from '@heroicons/react/solid';
-import * as Time from '../../../utils/time';
 import Link from 'next/dist/client/link';
 
 import _ from 'lodash';
 import { useRouter } from 'next/router';
+import * as Time from '../../../utils/time';
 import useAllPublicOpenings from '../../../SWR/useAllPublicOpenings';
 import { CUSTOM_QUERY } from '../../../types/main';
+
 export default function PublicOpeningsList() {
   const router = useRouter();
   const { orgId } = router.query as Pick<CUSTOM_QUERY, 'orgId'>;
 
-  let { publicOpenings, isPublicOpeningsLoading, isPublicOpeningsError } =
+  const { publicOpenings, isPublicOpeningsLoading, isPublicOpeningsError } =
     useAllPublicOpenings(orgId);
 
   return (

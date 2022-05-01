@@ -1,9 +1,10 @@
 import { Request, Response } from 'express';
+import { pick } from 'lodash';
 import * as Orgs from '../../models/Orgs';
 import * as Openings from '../../models/Openings';
 import * as CreateError from '../../utils/createError';
-import { pick } from 'lodash';
 import { OPENING_STATE } from '../../Config';
+
 const main = async (req: Request, res: Response) => {
   const { orgId, openingId } = req.params;
 

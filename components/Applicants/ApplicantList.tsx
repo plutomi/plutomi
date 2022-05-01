@@ -1,10 +1,11 @@
-import ApplicantListItem from './ApplicantListItem';
 import _ from 'lodash';
 import { useRouter } from 'next/router';
+import ApplicantListItem from './ApplicantListItem';
 import Loader from '../Loader';
 import useAllApplicantsInStage from '../../SWR/useAllApplicantsInStage';
 import { CUSTOM_QUERY } from '../../types/main';
 import { DynamoApplicant } from '../../types/dynamo';
+
 export default function ApplicantList() {
   const router = useRouter();
   const { openingId, stageId } = router.query as Pick<CUSTOM_QUERY, 'openingId' | 'stageId'>;

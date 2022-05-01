@@ -1,10 +1,11 @@
 import { FormEvent, useState } from 'react';
 import { Switch } from '@headlessui/react';
+import { useRouter } from 'next/router';
 import { CreateApplicant } from '../../../adapters/Applicants';
 import combineClassNames from '../../../utils/combineClassNames';
 
-import { useRouter } from 'next/router';
 import { CUSTOM_QUERY } from '../../../types/main';
+
 export default function ApplicantInfoForm() {
   const router = useRouter();
   const { orgId, openingId } = router.query as Pick<CUSTOM_QUERY, 'openingId' | 'orgId'>;
@@ -23,11 +24,11 @@ export default function ApplicantInfoForm() {
 
     try {
       const { data } = await CreateApplicant({
-        orgId: orgId,
-        openingId: openingId,
-        firstName: firstName,
-        lastName: lastName,
-        email: email,
+        orgId,
+        openingId,
+        firstName,
+        lastName,
+        email,
       });
       alert(data.message);
     } catch (error) {

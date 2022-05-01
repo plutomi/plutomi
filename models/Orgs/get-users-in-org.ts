@@ -1,9 +1,9 @@
 import { QueryCommandInput, QueryCommand } from '@aws-sdk/lib-dynamodb';
+import { SdkError } from '@aws-sdk/types';
 import { Dynamo } from '../../AWSClients/ddbDocClient';
 import { DYNAMO_TABLE_NAME, ENTITY_TYPES } from '../../Config';
 import { DynamoUser } from '../../types/dynamo';
 import { GetUsersInOrgInput } from '../../types/main';
-import { SdkError } from '@aws-sdk/types';
 
 export default async function GetUsersInOrg(
   props: GetUsersInOrgInput,
@@ -18,7 +18,7 @@ export default async function GetUsersInOrg(
     },
   }; // TODO query until all results are returned
 
-  limit && (params['Limit'] = limit);
+  limit && (params.Limit = limit);
 
   try {
     const response = await Dynamo.send(new QueryCommand(params));

@@ -3,6 +3,7 @@ import { DEFAULTS } from '../../Config';
 import * as Orgs from '../../models/Orgs';
 import * as CreateError from '../../utils/createError';
 import * as Users from '../../models/Users';
+
 const main = async (req: Request, res: Response) => {
   const { session } = res.locals;
   const { orgId, userId } = req.params;

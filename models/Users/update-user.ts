@@ -1,9 +1,9 @@
 import { UpdateCommandInput, UpdateCommand } from '@aws-sdk/lib-dynamodb';
+import { SdkError } from '@aws-sdk/types';
 import { Dynamo } from '../../AWSClients/ddbDocClient';
 import { DYNAMO_TABLE_NAME, ENTITY_TYPES } from '../../Config';
 import { DynamoUser } from '../../types/dynamo';
 import { UpdateUserInput } from '../../types/main';
-import { SdkError } from '@aws-sdk/types';
 
 export default async function UpdateUser(
   props: UpdateUserInput,
@@ -11,8 +11,8 @@ export default async function UpdateUser(
   const { userId, newValues } = props;
 
   // Build update expression
-  let allUpdateExpressions: string[] = [];
-  let allAttributeValues: { [key: string]: string } = {};
+  const allUpdateExpressions: string[] = [];
+  const allAttributeValues: { [key: string]: string } = {};
 
   for (const property of Object.keys(newValues)) {
     // Push each property into the update expression
@@ -28,7 +28,7 @@ export default async function UpdateUser(
       SK: ENTITY_TYPES.USER,
     },
     ReturnValues: 'ALL_NEW',
-    UpdateExpression: `SET ` + allUpdateExpressions.join(', '),
+    UpdateExpression: `SET ${allUpdateExpressions.join(', ')}`,
     ExpressionAttributeValues: allAttributeValues,
     TableName: `${process.env.NODE_ENV}-${DYNAMO_TABLE_NAME}`,
     ConditionExpression: 'attribute_exists(PK)',

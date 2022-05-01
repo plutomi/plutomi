@@ -2,6 +2,7 @@ import { Request, Response } from 'express';
 import * as Openings from '../../models/Openings';
 import * as CreateError from '../../utils/createError';
 import * as Stages from '../../models/Stages';
+
 const main = async (req: Request, res: Response) => {
   const { session } = res.locals;
 

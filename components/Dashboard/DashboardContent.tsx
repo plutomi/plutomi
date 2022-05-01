@@ -1,15 +1,16 @@
+import { mutate } from 'swr';
+import { OfficeBuildingIcon, PlusIcon } from '@heroicons/react/outline';
 import useSelf from '../../SWR/useSelf';
 import Loader from '../Loader';
 import ClickToCopy from '../ClickToCopy';
 import useOrgInfo from '../../SWR/useOrgInfo';
-import { mutate } from 'swr';
 import { DeleteOrg } from '../../adapters/Orgs';
 import UserProfileModal from '../UserProfile/UserProfileModal';
 import useStore from '../../utils/store';
-import { OfficeBuildingIcon, PlusIcon } from '@heroicons/react/outline';
 import CreateOrgModal from '../Orgs/CreateOrgModal';
 import { DEFAULTS, WEBSITE_URL } from '../../Config';
 import { GetSelfInfoURL, UpdateUser } from '../../adapters/Users';
+
 export default function DashboardContent() {
   const { user, isUserLoading, isUserError } = useSelf();
   const { org, isOrgLoading, isOrgError } = useOrgInfo(user?.orgId);
@@ -19,11 +20,11 @@ export default function DashboardContent() {
   const openUserProfileModal = useStore((state) => state.openUserProfileModal);
 
   if (isUserLoading) {
-    return <Loader text={'Loading user...'} />;
+    return <Loader text="Loading user..." />;
   }
 
   if (user?.orgId !== DEFAULTS.NO_ORG && isOrgLoading) {
-    return <Loader text={'Loading org info...'} />;
+    return <Loader text="Loading org info..." />;
   }
 
   const deleteOrg = async () => {
@@ -83,7 +84,7 @@ export default function DashboardContent() {
       </h1>
 
       <div className="flex items-center mt-4 -ml-3 text-md">
-        <ClickToCopy showText={'Copy Application Link'} copyText={customApplyLink} />
+        <ClickToCopy showText="Copy Application Link" copyText={customApplyLink} />
       </div>
       <div className="flex justify-center mx-auto">
         <UserProfileModal user={user} />

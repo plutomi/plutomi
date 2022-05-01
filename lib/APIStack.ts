@@ -13,8 +13,8 @@ import { Table } from '@aws-cdk/aws-dynamodb';
 import { Certificate } from '@aws-cdk/aws-certificatemanager';
 import { ARecord, RecordTarget } from '@aws-cdk/aws-route53';
 import { CloudFrontTarget } from '@aws-cdk/aws-route53-targets';
-import { API_DOMAIN, DOMAIN_NAME, EXPRESS_PORT } from '../Config';
 import { Policy, PolicyStatement } from '@aws-cdk/aws-iam';
+import { API_DOMAIN, DOMAIN_NAME, EXPRESS_PORT } from '../Config';
 import { DynamoActions } from '../types/main';
 
 interface APIStackServiceProps extends cdk.StackProps {
@@ -25,7 +25,7 @@ export default class APIStack extends cdk.Stack {
   constructor(scope: cdk.Construct, id: string, props?: APIStackServiceProps) {
     super(scope, id, props);
 
-    const HOSTED_ZONE_ID: string = process.env.HOSTED_ZONE_ID;
+    const { HOSTED_ZONE_ID } = process.env;
 
     // IAM inline role - the service principal is required
     const taskRole = new iam.Role(this, 'plutomi-api-fargate-role', {
