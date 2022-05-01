@@ -1,10 +1,9 @@
 import SignedInNav from '../../components/Navbar/SignedInNav';
 import useSelf from '../../SWR/useSelf';
-import Loader from '../../components/Loader';
 import Login from '../../components/Login';
 import PageHeader from './PageHeader';
 import { useRouter } from 'next/router';
-import { DOMAIN_NAME, NAVBAR_NAVIGATION, WEBSITE_URL } from '../../Config';
+import { NAVBAR_NAVIGATION, WEBSITE_URL } from '../../Config';
 import { DEFAULTS } from '../../Config';
 export default function NewPage({ headerText, loggedOutPageText, currentNavbarItem, children }) {
   const router = useRouter();

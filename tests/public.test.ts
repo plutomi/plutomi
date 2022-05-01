@@ -6,8 +6,6 @@ import * as Openings from '../adapters/Openings';
 import * as Stages from '../adapters/Stages';
 import { DynamoOpening } from '../types/dynamo';
 import * as GenerateID from '../utils/generateIds';
-const UrlSafeString = require('url-safe-string'),
-  tagGenerator = new UrlSafeString();
 
 describe('Public', () => {
   /**

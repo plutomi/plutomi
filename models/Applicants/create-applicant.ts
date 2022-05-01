@@ -1,14 +1,7 @@
 import { TransactWriteCommandInput, TransactWriteCommand } from '@aws-sdk/lib-dynamodb';
 import { nanoid } from 'nanoid';
 import { Dynamo } from '../../AWSClients/ddbDocClient';
-import {
-  ID_LENGTHS,
-  ENTITY_TYPES,
-  TIME_UNITS,
-  DEFAULTS,
-  OPENING_STATE,
-  DYNAMO_TABLE_NAME,
-} from '../../Config';
+import { ID_LENGTHS, ENTITY_TYPES, OPENING_STATE, DYNAMO_TABLE_NAME } from '../../Config';
 import { DynamoApplicant } from '../../types/dynamo';
 import { CreateApplicantInput, CreateApplicantOutput } from '../../types/main';
 import * as Time from '../../utils/time';

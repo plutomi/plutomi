@@ -14,7 +14,7 @@ export default async function UpdateApplicant(
   let allAttributeValues: { [key: string]: string } = {};
 
   // Filter out forbidden property
-  for (const property in newValues) {
+  for (const property of Object.keys(newValues)) {
     // Push each property into the update expression
     allUpdateExpressions.push(`${property} = :${property}`);
 

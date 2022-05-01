@@ -81,10 +81,9 @@ export default function TeamContent() {
                     Pending Invites
                   </span>
                 </div>
-              </div>{' '}
+              </div>
             </div>
           )}
-
           {pendingInvites}
         </div>
       )}

@@ -12,7 +12,7 @@ export default async function UpdateOpening(
   let allUpdateExpressions: string[] = [];
   let allAttributeValues: { [key: string]: string } = {};
 
-  for (const property in newValues) {
+  for (const property of Object.keys(newValues)) {
     // Push each property into the update expression
     allUpdateExpressions.push(`${property} = :${property}`);
 

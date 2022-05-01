@@ -1,10 +1,9 @@
-import { CalendarIcon, LocationMarkerIcon, UsersIcon } from '@heroicons/react/solid';
+import { CalendarIcon, UsersIcon } from '@heroicons/react/solid';
 import ClickToCopy from '../ClickToCopy';
 import * as Time from '../../utils/time';
 import Link from 'next/dist/client/link';
 import useOpenings from '../../SWR/useOpenings';
 import useSelf from '../../SWR/useSelf';
-import _ from 'lodash';
 import useStore from '../../utils/store';
 import { ViewBoardsIcon } from '@heroicons/react/outline';
 import { DOMAIN_NAME, OPENING_STATE, WEBSITE_URL } from '../../Config';

@@ -7,11 +7,23 @@
     "prettier"
   ],
   "rules": {
-    "@next/next/no-document-import-in-page": "off" // small bug
+    "@next/next/no-document-import-in-page": "off", // small bug
+    "react/react-in-jsx-scope": "off",
+    "@typescript-eslint/no-unused-vars": "warn",
+    "@typescript-eslint/no-shadow": "warn",
+    "react/jsx-filename-extension": [2, { "extensions": [".js", ".jsx", ".ts", ".tsx"] }]
   },
 
   "parserOptions": {
     "ecmaVersion": "latest",
     "project": "./tsconfig.json"
-  }
+  },
+  "overrides": [
+    {
+      "files": ["tests/**/*"],
+      "rules": {
+        "@typescript-eslint/no-shadow": ["off"]
+      }
+    }
+  ]
 }

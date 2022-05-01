@@ -45,9 +45,7 @@ export const futureISO = (amount: number, unit: string) => dayjs().add(amount, u
  * @returns A future UNIX timestamp
  */
 
-export const futureUNIX = (amount: number, unit: string): number => {
-  return dayjs().add(amount, unit).unix();
-};
+export const futureUNIX = (amount: number, unit: string) => dayjs().add(amount, unit).unix();
 
 /**
  *
@@ -56,16 +54,13 @@ export const futureUNIX = (amount: number, unit: string): number => {
  * @returns A past ISO timestamp
  */
 
-export const pastISO = (amount: number, unit: string): string => {
-  return dayjs().subtract(amount, unit).toISOString();
-};
+export const pastISO = (amount: number, unit: string) =>
+  dayjs().subtract(amount, unit).toISOString();
 
-export const pastUNIX = (amount: number, unit: string): number => {
-  /**
-   *
-   * @param amount *Amount* of {@link TIME_UNITS} to get in the past
-   * @param unit Which {@link TIME_UNITS} to retrieve
-   * @returns A past UNIX timestamp
-   */
-  return dayjs().subtract(amount, unit).unix();
-};
+/**
+ *
+ * @param amount *Amount* of {@link TIME_UNITS} to get in the past
+ * @param unit Which {@link TIME_UNITS} to retrieve
+ * @returns A past UNIX timestamp
+ */
+export const pastUNIX = (amount: number, unit: string) => dayjs().subtract(amount, unit).unix();

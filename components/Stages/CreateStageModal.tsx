@@ -27,7 +27,6 @@ export default function CreateStageModal() {
       closeCreateStageModal();
       setGSI1SK('');
     } catch (error) {
-      console.error('Error creating stage', error);
       alert(error.response.data.message);
     }
     // Refresh stage order

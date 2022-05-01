@@ -1,5 +1,5 @@
 import useSelf from '../../SWR/useSelf';
-import { PencilAltIcon, PlusIcon } from '@heroicons/react/outline';
+import { PencilAltIcon } from '@heroicons/react/outline';
 import Loader from '../Loader';
 import { DEFAULTS } from '../../Config';
 import useStore from '../../utils/store';

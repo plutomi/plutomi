@@ -10,7 +10,7 @@ export default function getNewChildItemOrder(
   childItemOrder: string[],
   position?: number,
 ) {
-  const newPosition = !isNaN(position) ? position : childItemOrder.length;
+  const newPosition = !Number.isNaN(position) ? position : childItemOrder.length;
   childItemOrder.splice(newPosition, 0, newItemId);
   return childItemOrder;
 }

@@ -11,7 +11,7 @@ export default function GetObjectDifference(origObj: {}, newObj: {}): {} {
     let arrayIndexCounter = 0;
     return transform(newObj, function (result, value, key) {
       if (!isEqual(value, origObj[key])) {
-        let resultKey = isArray(origObj) ? arrayIndexCounter++ : key;
+        let resultKey = isArray(origObj) ? (arrayIndexCounter += 1) : key;
         result[resultKey] =
           isObject(value) && isObject(origObj[key]) ? changes(value, origObj[key]) : value;
       }

@@ -1,6 +1,5 @@
 import useSelf from '../../SWR/useSelf';
 import { CogIcon } from '@heroicons/react/outline';
-import useStore from '../../utils/store';
 import ClickToCopy from '../ClickToCopy';
 import Link from 'next/dist/client/link';
 import OpeningsDropdown from '../Openings/DropDown';

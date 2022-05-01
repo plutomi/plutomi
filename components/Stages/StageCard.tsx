@@ -1,8 +1,7 @@
 import React from 'react';
 import Link from 'next/dist/client/link';
-import { UserGroupIcon, QuestionMarkCircleIcon } from '@heroicons/react/outline';
+import { UserGroupIcon } from '@heroicons/react/outline';
 import NumberFormat from 'react-number-format';
-import _ from 'lodash';
 import router from 'next/router';
 import { CUSTOM_QUERY } from '../../types/main';
 

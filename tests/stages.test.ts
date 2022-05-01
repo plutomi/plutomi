@@ -1,5 +1,5 @@
 import { nanoid } from 'nanoid';
-import { API_URL, DEFAULTS, ERRORS, AXIOS_INSTANCE as axios, LIMITS } from '../Config';
+import { ERRORS, AXIOS_INSTANCE as axios, LIMITS } from '../Config';
 import * as Stages from '../adapters/Stages';
 import * as Orgs from '../adapters/Orgs';
 import * as Openings from '../adapters/Openings';
@@ -251,15 +251,13 @@ describe('Stages', () => {
 
     const updatedOpening = await Openings.GetOpeningInfo(ourOpening.openingId);
 
-    try {
-      const stage = await Stages.GetStageInfo({
-        openingId: ourOpening.openingId,
-        stageId: updatedOpening.data.stageOrder[0],
-      });
+    const stage = await Stages.GetStageInfo({
+      openingId: ourOpening.openingId,
+      stageId: updatedOpening.data.stageOrder[0],
+    });
 
-      expect(stage.status).toBe(200);
-      expect(stage.data.GSI1SK).toBe(stageName);
-    } catch (error) {}
+    expect(stage.status).toBe(200);
+    expect(stage.data.GSI1SK).toBe(stageName);
   });
 
   it('returns stages in an opening', async () => {
@@ -338,7 +336,6 @@ describe('Stages', () => {
         },
       });
     } catch (error) {
-      console.error(error);
       expect(error.response.status).toBe(400);
       expect(error.response.data.message).toContain('is not allowed');
     }

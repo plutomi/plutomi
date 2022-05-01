@@ -1,10 +1,9 @@
-import * as dotenv from 'dotenv';
 import * as cdk from '@aws-cdk/core';
 import { HostedZone } from '@aws-cdk/aws-route53';
 import { NextJSLambdaEdge } from '@sls-next/cdk-construct';
 import { Certificate } from '@aws-cdk/aws-certificatemanager';
-import { DOMAIN_NAME } from '../Config';
 import { Runtime } from '@aws-cdk/aws-lambda';
+import { DOMAIN_NAME } from '../Config';
 
 /**
  * Deploys the Nextjs app to cloudfront with a custom domain

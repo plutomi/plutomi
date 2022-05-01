@@ -1,12 +1,6 @@
-import {
-  PutCommandInput,
-  PutCommand,
-  TransactWriteCommand,
-  TransactWriteCommandInput,
-} from '@aws-sdk/lib-dynamodb';
-import { nanoid } from 'nanoid';
+import { TransactWriteCommand, TransactWriteCommandInput } from '@aws-sdk/lib-dynamodb';
 import { Dynamo } from '../../AWSClients/ddbDocClient';
-import { ID_LENGTHS, ENTITY_TYPES, DYNAMO_TABLE_NAME } from '../../Config';
+import { ENTITY_TYPES, DYNAMO_TABLE_NAME } from '../../Config';
 import { DynamoQuestion } from '../../types/dynamo';
 import { CreateQuestionInput } from '../../types/main';
 import * as Time from '../../utils/time';

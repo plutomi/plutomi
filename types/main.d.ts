@@ -68,18 +68,18 @@ export interface UpdateUserInput extends Pick<DynamoUser, 'userId'> {
 
 type CreateQuestionInput = Pick<DynamoQuestion, 'orgId' | 'GSI1SK' | 'description' | 'questionId'>;
 
-type orgIdAndQuestionId = 'orgId' | 'questionId';
+type OrgIdAndQuestionId = 'orgId' | 'questionId';
 
 // TODo remove the below types
-type DeleteQuestionFromOrgInput = Pick<DynamoQuestion, orgIdAndQuestionId>;
+type DeleteQuestionFromOrgInput = Pick<DynamoQuestion, OrgIdAndQuestionId>;
 
-type GetQuestionInput = Pick<DynamoQuestion, orgIdAndQuestionId>;
+type GetQuestionInput = Pick<DynamoQuestion, OrgIdAndQuestionId>;
 type GetQuestionOutput = DynamoQuestion;
 
 export type GetQuestionsInOrgInput = Pick<DynamoQuestion, 'orgId'>;
 export type GetQuestionsInOrgOutput = DynamoQuestion[];
 
-export interface UpdateQuestionInput extends Pick<DynamoQuestion, orgIdAndQuestionId> {
+export interface UpdateQuestionInput extends Pick<DynamoQuestion, OrgIdAndQuestionId> {
   newValues: { [key: string]: any };
 }
 
@@ -90,14 +90,14 @@ type CreateApplicantInput = Pick<
   'orgId' | 'firstName' | 'lastName' | 'email' | 'openingId' | 'stageId'
 >;
 
-type orgIdAndApplicantId = 'orgId' | 'applicantId';
+type OrgIdAndApplicantId = 'orgId' | 'applicantId';
 
 type CreateApplicantOutput = DynamoApplicant;
 type GetApplicantByIdInput = Pick<DynamoApplicant, 'orgId' | 'applicantId'>;
 
 type DeleteApplicantInput = Pick<
   DynamoApplicant,
-  orgIdAndApplicantId | 'openingId' | 'stageId' // Last two are needed to decrement the applicant count
+  OrgIdAndApplicantId | 'openingId' | 'stageId' // Last two are needed to decrement the applicant count
 >;
 
 // TODO types for files, etc.
@@ -105,7 +105,7 @@ export interface GetApplicantByIdOutput extends DynamoApplicant {
   responses: Object[]; // TODO fix this type with a response type
 }
 
-export interface UpdateApplicantInput extends Pick<DynamoApplicant, orgIdAndApplicantId> {
+export interface UpdateApplicantInput extends Pick<DynamoApplicant, OrgIdAndApplicantId> {
   newValues: { [key: string]: any };
 }
 

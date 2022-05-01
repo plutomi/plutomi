@@ -5,8 +5,6 @@ import * as Orgs from '../adapters/Orgs';
 import * as Users from '../adapters/Users';
 import { DynamoOrgInvite } from '../types/dynamo';
 import * as GenerateID from '../utils/generateIds';
-const UrlSafeString = require('url-safe-string'),
-  tagGenerator = new UrlSafeString();
 
 describe('Openings', () => {
   /**
@@ -301,7 +299,6 @@ describe('Openings', () => {
       (invite: DynamoOrgInvite) => invite.recipient.email === otherUserEmail,
     );
 
-    console.log('Our invite');
     const cancelStatus = await Invites.CancelInvite({
       inviteId: ourInvite.inviteId,
       userId: ourInvite.recipient.userId,

@@ -4,12 +4,14 @@
   "private": true,
   "scripts": {
     "build": "next build",
-    "lint": "next lint",
+    "lint": "next lint && eslint .",
     "test": "jest",
     "dev-server": "cross-env NODE_ENV=development nodemon app.ts",
     "dev": "cross-env NODE_ENV=development cdk deploy development-DynamoDBStack development-StreamProcessorStack development-CommsMachineStack development-EventBridgeStack development-StorageStack development-DeleteChildrenMachineStack development-AthenaDynamoQueryStack && concurrently \"npm run dev-server\" \"next dev\"",
     "start": "cross-env NODE_ENV=production ts-node --transpile-only app.ts",
-    "prettier": "npx run prettier --write .",
+    "prettier": "prettier --write .",
+    "fix": "eslint . --fix-dry-run",
+    "clean": "npm run lint && npm run prettier && npm run fix",
     "deploy-prod": "cross-env NODE_ENV=production cdk deploy production-DynamoDBStack production-StreamProcessorStack production-APIStack production-CommsMachineStack production-EventBridgeStack production-StorageStack production-DeleteChildrenMachineStack production-AthenaDynamoQueryStack FrontendStack"
   },
   "dependencies": {
@@ -31,6 +33,7 @@
     "@aws-cdk/aws-logs": "^1.134.0",
     "@aws-cdk/aws-route53": "1.134.0",
     "@aws-cdk/aws-route53-targets": "^1.134.0",
+    "@aws-cdk/aws-s3": "^1.154.0",
     "@aws-cdk/aws-s3-deployment": "1.134.0",
     "@aws-cdk/aws-sam": "^1.134.0",
     "@aws-cdk/aws-sns": "1.134.0",
@@ -44,6 +47,7 @@
     "@aws-sdk/client-eventbridge": "^3.43.0",
     "@aws-sdk/client-ses": "^3.43.0",
     "@aws-sdk/client-sns": "^3.43.0",
+    "@aws-sdk/types": "^3.78.0",
     "@faker-js/faker": "^6.0.0-alpha.3",
     "@hapi/iron": "^6.0.0",
     "@hapi/joi": "^17.1.1",
@@ -111,7 +115,7 @@
   "devDependencies": {
     "@aws-sdk/client-dynamodb": "^3.44.0",
     "@aws-sdk/client-ssm": "^3.44.0",
-    "@aws-sdk/lib-dynamodb": "^3.44.0",
+    "@aws-sdk/lib-dynamodb": "^3.81.0",
     "@aws-sdk/util-dynamodb": "^3.44.0",
     "@commitlint/cli": "^13.2.1",
     "@commitlint/config-conventional": "^13.2.0",
