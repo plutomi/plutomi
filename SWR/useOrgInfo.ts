@@ -2,10 +2,9 @@ import useSWR from 'swr';
 import { DEFAULTS } from '../Config';
 import { GetOrgInfoURL } from '../adapters/Orgs';
 import { SWRFetcher } from '../Config';
-const UrlSafeString = require('url-safe-string'),
-  tagGenerator = new UrlSafeString();
+import TagGenerator from '../utils/tagGenerator';
 
-const bannedOrgValues = [DEFAULTS.NO_ORG, tagGenerator.generate(DEFAULTS.NO_ORG)];
+const bannedOrgValues = [DEFAULTS.NO_ORG, TagGenerator({ value: DEFAULTS.NO_ORG })];
 export default function useOrgInfo(orgId?: string) {
   const shouldFetch = !bannedOrgValues.includes(orgId);
 

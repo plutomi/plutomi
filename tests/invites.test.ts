@@ -4,7 +4,7 @@ import * as Invites from '../adapters/Invites';
 import * as Orgs from '../adapters/Orgs';
 import * as Users from '../adapters/Users';
 import { DynamoOrgInvite } from '../types/dynamo';
-import * as GenerateID from '../utils/generateIds';
+import TagGenerator from '../utils/tagGenerator';
 
 describe('Openings', () => {
   /**
@@ -204,7 +204,9 @@ describe('Openings', () => {
     const cookie = data.headers['set-cookie'][0];
     axios.defaults.headers.Cookie = cookie;
 
-    const orgId = GenerateID.OrgID(20);
+    const orgId = TagGenerator({
+      value: 20,
+    });
 
     // Join org
     await Orgs.CreateOrg({
@@ -246,7 +248,9 @@ describe('Openings', () => {
     axios.defaults.headers.Cookie = cookie;
 
     // Join org
-    const orgId = GenerateID.OrgID(20);
+    const orgId = TagGenerator({
+      value: 20,
+    });
     await Orgs.CreateOrg({ orgId, displayName: nanoid(20) });
 
     const otherUserEmail = `${nanoid(20)}+${EMAILS.TESTING4}`;
@@ -283,7 +287,9 @@ describe('Openings', () => {
     axios.defaults.headers.Cookie = cookie;
 
     // Join org
-    const orgId = GenerateID.OrgID(20);
+    const orgId = TagGenerator({
+      value: 20,
+    });
     await Orgs.CreateOrg({ orgId, displayName: nanoid(20) });
 
     const otherUserEmail = `${nanoid(20)}+${EMAILS.TESTING4}`.toLowerCase();
@@ -319,7 +325,9 @@ describe('Openings', () => {
     axios.defaults.headers.Cookie = cookie;
 
     // Join org
-    const orgId = GenerateID.OrgID(20);
+    const orgId = TagGenerator({
+      value: 20,
+    });
     await Orgs.CreateOrg({ orgId, displayName: nanoid(20) });
 
     const otherUserEmail = `${nanoid(20)}+${EMAILS.TESTING4}`;
@@ -343,7 +351,9 @@ describe('Openings', () => {
     axios.defaults.headers.Cookie = cookie;
 
     // Join org
-    const orgId = GenerateID.OrgID(20);
+    const orgId = TagGenerator({
+      value: 20,
+    });
     await Orgs.CreateOrg({ orgId, displayName: nanoid(20) });
 
     const otherUserEmail = `${nanoid(20)}+${EMAILS.TESTING4}`;
@@ -370,7 +380,9 @@ describe('Openings', () => {
     axios.defaults.headers.Cookie = cookie;
 
     // Join org
-    const orgId = GenerateID.OrgID(20);
+    const orgId = TagGenerator({
+      value: 20,
+    });
     await Orgs.CreateOrg({ orgId, displayName: nanoid(20) });
 
     const otherUserEmail = `${nanoid(20)}+${EMAILS.TESTING4}`;

@@ -5,13 +5,16 @@ import * as Openings from '../adapters/Openings';
 import * as Stages from '../adapters/Stages';
 import * as Applicants from '../adapters/Applicants';
 import { DynamoOpening } from '../types/dynamo';
-import * as GenerateID from '../utils/generateIds';
+import TagGenerator from '../utils/tagGenerator';
+
 describe('Openings', () => {
   /**
    * Creates a session cookie
    */
 
-  let orgId = GenerateID.OrgID(20);
+  let orgId = TagGenerator({
+    value: 20,
+  });
   let publicOpeningId;
   let privateOpeningId;
   let applicant;

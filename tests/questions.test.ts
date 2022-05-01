@@ -5,7 +5,7 @@ import * as Stages from '../adapters/Stages';
 import * as Questions from '../adapters/Questions';
 import * as Orgs from '../adapters/Orgs';
 import { DynamoQuestion, DynamoStage } from '../types/dynamo';
-import * as GenerateID from '../utils/generateIds';
+import TagGenerator from '../utils/tagGenerator';
 describe('Questions', () => {
   /**
    * Creates a session cookie
@@ -23,7 +23,10 @@ describe('Questions', () => {
     try {
       await Questions.CreateQuestion({
         GSI1SK: nanoid(1),
-        questionId: GenerateID.QuestionID(10),
+        questionId: TagGenerator({
+          value: 20,
+          joinString: '_',
+        }),
       });
     } catch (error) {
       expect(error.response.status).toBe(403);
@@ -31,7 +34,10 @@ describe('Questions', () => {
     }
   });
 
-  let questionId = GenerateID.QuestionID(20);
+  let questionId = TagGenerator({
+    value: 20,
+    joinString: '_',
+  });
   it('creates a question and increments the totalQuestions count on an org', async () => {
     expect.assertions(3);
 
@@ -51,7 +57,10 @@ describe('Questions', () => {
 
   it('blocks creating a question with the same ID', async () => {
     expect.assertions(2);
-    const questionId = GenerateID.QuestionID(20);
+    const questionId = TagGenerator({
+      value: 20,
+      joinString: '_',
+    });
     await Questions.CreateQuestion({
       questionId,
       GSI1SK: nanoid(20),
@@ -86,7 +95,10 @@ describe('Questions', () => {
     expect.assertions(3);
     try {
       await Questions.CreateQuestion({
-        questionId: GenerateID.QuestionID(20),
+        questionId: TagGenerator({
+          value: 20,
+          joinString: '_',
+        }),
         GSI1SK: '',
       });
     } catch (error) {
@@ -123,7 +135,10 @@ describe('Questions', () => {
       await Questions.UpdateQuestion({
         questionId,
         newValues: {
-          questionId: GenerateID.QuestionID(10),
+          questionId: TagGenerator({
+            value: 20,
+            joinString: '_',
+          }),
         },
       });
     } catch (error) {
@@ -147,7 +162,10 @@ describe('Questions', () => {
   // Questions and stages
   let openingId: string;
   let stageId: string;
-  questionId = GenerateID.QuestionID(20);
+  questionId = TagGenerator({
+    value: 20,
+    joinString: '_',
+  });
   it('adds a question to a stage', async () => {
     expect.assertions(2);
     // Create an opening
@@ -207,8 +225,14 @@ describe('Questions', () => {
 
     // We're going to add question 1 to the END
     // And question 2 as the first question
-    let questionId1 = GenerateID.QuestionID(20);
-    let questionId2 = GenerateID.QuestionID(20);
+    let questionId1 = TagGenerator({
+      value: 20,
+      joinString: '_',
+    });
+    let questionId2 = TagGenerator({
+      value: 20,
+      joinString: '_',
+    });
 
     // Create the questions
     await Questions.CreateQuestion({
@@ -273,7 +297,10 @@ describe('Questions', () => {
   });
   it('blocks adding a question to a stage if the question does not exist', async () => {
     expect.assertions(2);
-    const questionId = GenerateID.QuestionID(20);
+    const questionId = TagGenerator({
+      value: 20,
+      joinString: '_',
+    });
     try {
       await Questions.AddQuestionToStage({
         openingId: nanoid(20),
@@ -290,8 +317,10 @@ describe('Questions', () => {
 
   it("returns an error if attempting to delete a question that doesn't exist in the stage", async () => {
     expect.assertions(2);
-    const questionId = GenerateID.QuestionID(20);
-
+    const questionId = TagGenerator({
+      value: 20,
+      joinString: '_',
+    });
     try {
       await Questions.DeleteQuestionFromStage({
         openingId,
@@ -334,10 +363,22 @@ describe('Questions', () => {
 
   it('returns all questions in a stage, in their actual question order', async () => {
     expect.assertions(2);
-    const q1ID = GenerateID.QuestionID(15);
-    const q2ID = GenerateID.QuestionID(15);
-    const q3ID = GenerateID.QuestionID(15);
-    const q4ID = GenerateID.QuestionID(15); // Will be placed second
+    const q1ID = TagGenerator({
+      value: 20,
+      joinString: '_',
+    });
+    const q2ID = TagGenerator({
+      value: 20,
+      joinString: '_',
+    });
+    const q3ID = TagGenerator({
+      value: 20,
+      joinString: '_',
+    });
+    const q4ID = TagGenerator({
+      value: 20,
+      joinString: '_',
+    }); // Will be placed second
 
     const allQuestionIds = [q1ID, q2ID, q3ID, q4ID];
 
@@ -399,7 +440,10 @@ describe('Questions', () => {
 
   it('increments and decrements the totalStages count on a question when adding and removing it from a stage', async () => {
     expect.assertions(2);
-    const questionId = GenerateID.QuestionID(20);
+    const questionId = TagGenerator({
+      value: 20,
+      joinString: '_',
+    });
     await Questions.CreateQuestion({
       GSI1SK: nanoid(20),
       questionId,

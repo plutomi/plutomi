@@ -5,7 +5,7 @@ import * as Orgs from '../adapters/Orgs';
 import * as Openings from '../adapters/Openings';
 import * as Stages from '../adapters/Stages';
 import { DynamoOpening } from '../types/dynamo';
-import * as GenerateID from '../utils/generateIds';
+import TagGenerator from '../utils/tagGenerator';
 
 describe('Public', () => {
   /**
@@ -17,7 +17,9 @@ describe('Public', () => {
     axios.defaults.headers.Cookie = cookie;
   });
 
-  const orgId = GenerateID.OrgID(30);
+  const orgId = TagGenerator({
+    value: 30,
+  });
   const displayName = nanoid(20);
   it('returns a 404 if org not found', async () => {
     expect.assertions(2);

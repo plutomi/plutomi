@@ -4,9 +4,7 @@ import * as Orgs from '../adapters/Orgs';
 import * as Users from '../adapters/Users';
 import * as Invites from '../adapters/Invites';
 import { DynamoOrgInvite } from '../types/dynamo';
-import * as GenerateID from '../utils/generateIds';
-const UrlSafeString = require('url-safe-string'),
-  tagGenerator = new UrlSafeString();
+import TagGenerator from '../utils/tagGenerator';
 
 describe('Orgs', () => {
   /**
@@ -23,7 +21,7 @@ describe('Orgs', () => {
     try {
       await Orgs.CreateOrg({
         displayName: 'Beans',
-        orgId: tagGenerator.generate(DEFAULTS.NO_ORG),
+        orgId: TagGenerator({ value: DEFAULTS.NO_ORG }),
       });
     } catch (error) {
       expect(error.response.status).toBe(400);
@@ -36,7 +34,7 @@ describe('Orgs', () => {
     expect.assertions(3);
     try {
       await Orgs.CreateOrg({
-        orgId: tagGenerator.generate(DEFAULTS.NO_ORG),
+        orgId: TagGenerator({ value: DEFAULTS.NO_ORG }),
         displayName: 'Beans',
       });
     } catch (error) {
@@ -56,7 +54,9 @@ describe('Orgs', () => {
     }
   });
 
-  const orgId = GenerateID.OrgID(15);
+  const orgId = TagGenerator({
+    value: 15,
+  });
   const displayName = nanoid(10);
 
   it('allows a user to create an org', async () => {
@@ -114,7 +114,9 @@ describe('Orgs', () => {
     const cookie = data.headers['set-cookie'][0];
     axios.defaults.headers.Cookie = cookie;
 
-    const orgId = GenerateID.OrgID(15);
+    const orgId = TagGenerator({
+      value: 15,
+    });
 
     // Join org
     await Orgs.CreateOrg({ orgId, displayName: nanoid(20) });
@@ -167,7 +169,9 @@ describe('Orgs', () => {
     const cookie = data.headers['set-cookie'][0];
     axios.defaults.headers.Cookie = cookie;
 
-    const orgId = GenerateID.OrgID(15);
+    const orgId = TagGenerator({
+      value: 15,
+    });
 
     // Join org
     await Orgs.CreateOrg({ orgId, displayName: nanoid(20) });
@@ -187,7 +191,9 @@ describe('Orgs', () => {
     const cookie = data.headers['set-cookie'][0];
     axios.defaults.headers.Cookie = cookie;
 
-    const orgId = GenerateID.OrgID(15);
+    const orgId = TagGenerator({
+      value: 15,
+    });
 
     // Join org
     await Orgs.CreateOrg({ orgId, displayName: nanoid(20) });
@@ -255,7 +261,9 @@ describe('Orgs', () => {
     const cookie = data.headers['set-cookie'][0];
     axios.defaults.headers.Cookie = cookie;
 
-    const orgId = GenerateID.OrgID(15);
+    const orgId = TagGenerator({
+      value: 15,
+    });
 
     // Join org
     await Orgs.CreateOrg({ orgId, displayName: nanoid(20) });
@@ -304,7 +312,9 @@ describe('Orgs', () => {
     const cookie = data.headers['set-cookie'][0];
     axios.defaults.headers.Cookie = cookie;
 
-    const orgId = GenerateID.OrgID(15);
+    const orgId = TagGenerator({
+      value: 15,
+    });
 
     // Join org
     await Orgs.CreateOrg({ orgId, displayName: nanoid(20) });

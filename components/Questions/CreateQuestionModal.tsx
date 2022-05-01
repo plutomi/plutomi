@@ -4,6 +4,7 @@ import { XIcon, ArrowRightIcon } from '@heroicons/react/outline';
 import useStore from '../../utils/store';
 import { CreateQuestion, GetQuestionsInOrgURL } from '../../adapters/Questions';
 import { mutate } from 'swr';
+import TagGenerator from '../../utils/tagGenerator';
 const UrlSafeString = require('url-safe-string'),
   tagGenerator = new UrlSafeString({ joinString: '_' });
 
@@ -146,7 +147,9 @@ export default function CreateQuestionModal() {
                                 placeholder={"Use only a-z, 0-9, and underscore '_'"}
                                 value={questionId}
                                 onChange={(e) =>
-                                  setQuestionId(tagGenerator.generate(e.target.value))
+                                  setQuestionId(
+                                    TagGenerator({ value: e.target.value, joinString: '_' }),
+                                  )
                                 }
                                 className="block w-full shadow-sm text-sm focus:ring-blue-500 focus:border-blue-500 border-gray-300 rounded-md"
                               />

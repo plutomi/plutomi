@@ -2,7 +2,6 @@ import OpeningSettingsHeader from '../../../components/Openings/OpeningSettingsH
 import OpeningSettingsContent from '../../../components/Openings/OpeningSettingsContent';
 import NewPage from '../../../components/Templates/NewPage';
 import { useRouter } from 'next/router';
-import useSelf from '../../../SWR/useSelf';
 import useOpeningInfo from '../../../SWR/useOpeningInfo';
 import { CUSTOM_QUERY } from '../../../types/main';
 export default function OpeningSettings() {

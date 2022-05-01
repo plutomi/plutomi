@@ -24,8 +24,7 @@ export const API_URL =
 export const COOKIE_NAME =
   process.env.NODE_ENV === 'production' ? 'plutomi-cookie' : 'DEV-plutomi-cookie';
 
-const UrlSafeString = require('url-safe-string'),
-  tagGenerator = new UrlSafeString();
+import TagGenerator from './utils/tagGenerator';
 
 export enum OPENING_STATE {
   PUBLIC = 'PUBLIC',
@@ -198,7 +197,9 @@ export const DROPDOWN_NAVIGATION = [
 export const JoiOrgId = Joi.string()
   .invalid(
     DEFAULTS.NO_ORG,
-    tagGenerator.generate(DEFAULTS.NO_ORG),
+    TagGenerator({
+      value: DEFAULTS.NO_ORG,
+    }),
     'plutomi',
     'plutomi-',
     'plutomi-inc',
