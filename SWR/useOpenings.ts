@@ -1,6 +1,6 @@
-import useSWR from "swr";
-import { GetOpeningsInOrgURL } from "../adapters/Openings";
-import { SWRFetcher } from "../Config";
+import useSWR from 'swr';
+import { GetOpeningsInOrgURL } from '../adapters/Openings';
+import { SWRFetcher } from '../Config';
 
 export default function useOpenings() {
   const { data, error } = useSWR(GetOpeningsInOrgURL(), SWRFetcher);

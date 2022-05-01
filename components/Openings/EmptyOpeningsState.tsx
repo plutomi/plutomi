@@ -1,19 +1,14 @@
-import { PlusIcon } from "@heroicons/react/solid";
-import { BriefcaseIcon } from "@heroicons/react/outline";
-import useStore from "../../utils/store";
+import { PlusIcon } from '@heroicons/react/solid';
+import { BriefcaseIcon } from '@heroicons/react/outline';
+import useStore from '../../utils/store';
+
 export default function EmptyOpeningsState() {
-  const openCreateOpeningModal = useStore(
-    (state) => state.openCreateOpeningModal
-  );
+  const openCreateOpeningModal = useStore((state) => state.openCreateOpeningModal);
   return (
     <div className="text-center">
       <BriefcaseIcon className="mx-auto h-12 w-12 text-light" />
-      <h3 className="mt-2 text-lg font-medium text-dark">
-        You don&apos;t have any openings
-      </h3>
-      <p className="mt-1 text-lg text-normal">
-        Get started by creating a new one!
-      </p>
+      <h3 className="mt-2 text-lg font-medium text-dark">You don&apos;t have any openings</h3>
+      <p className="mt-1 text-lg text-normal">Get started by creating a new one!</p>
       <div className="mt-6">
         <button
           type="button"

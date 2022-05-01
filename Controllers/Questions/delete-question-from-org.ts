@@ -1,6 +1,7 @@
-import { Request, Response } from "express";
-import * as Questions from "../../models/Questions";
-import * as CreateError from "../../utils/createError";
+import { Request, Response } from 'express';
+import * as Questions from '../../models/Questions';
+import * as CreateError from '../../utils/createError';
+
 const main = async (req: Request, res: Response) => {
   const { session } = res.locals;
 
@@ -10,19 +11,14 @@ const main = async (req: Request, res: Response) => {
   });
 
   if (failure) {
-    if (failure.name === "TransactionCanceledException") {
-      return res
-        .status(401)
-        .json({ message: "It seems like that question no longer exists" });
+    if (failure.name === 'TransactionCanceledException') {
+      return res.status(401).json({ message: 'It seems like that question no longer exists' });
     }
 
-    const { status, body } = CreateError.SDK(
-      failure,
-      "An error ocurred deleting that question"
-    );
+    const { status, body } = CreateError.SDK(failure, 'An error ocurred deleting that question');
     return res.status(status).json(body);
   }
 
-  return res.status(200).json({ message: "Question deleted!" });
+  return res.status(200).json({ message: 'Question deleted!' });
 };
 export default main;

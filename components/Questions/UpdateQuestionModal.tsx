@@ -1,13 +1,13 @@
-import { FormEvent, Fragment, useEffect, useState } from "react";
-import { Dialog, Transition } from "@headlessui/react";
-import { XIcon } from "@heroicons/react/outline";
-import useStore from "../../utils/store";
-import { UpdateQuestion } from "../../adapters/Questions";
+import { FormEvent, Fragment, useEffect, useState } from 'react';
+import { Dialog, Transition } from '@headlessui/react';
+import { XIcon } from '@heroicons/react/outline';
+import useStore from '../../utils/store';
+import { UpdateQuestion } from '../../adapters/Questions';
 
 const descriptionMaxLength = 300; // TODO set this serverside
 export default function UpdateQuestionModal({ question }) {
-  const [GSI1SK, setGSI1SK] = useState("");
-  const [description, setDescription] = useState("");
+  const [GSI1SK, setGSI1SK] = useState('');
+  const [description, setDescription] = useState('');
 
   useEffect(() => {
     setGSI1SK(question?.GSI1SK);
@@ -15,9 +15,7 @@ export default function UpdateQuestionModal({ question }) {
   }, [question?.GSI1SK, question?.description]);
 
   const visibility = useStore((state) => state.showUpdateQuestionModal);
-  const closeUpdateQuestionModal = useStore(
-    (state) => state.closeUpdateQuestionModal
-  );
+  const closeUpdateQuestionModal = useStore((state) => state.closeUpdateQuestionModal);
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
@@ -91,8 +89,7 @@ export default function UpdateQuestionModal({ question }) {
                       </div>
                       <div className="mt-1">
                         <p className="text-sm text-blue-300">
-                          Applicants will answer these questions as they go
-                          through stages
+                          Applicants will answer these questions as they go through stages
                         </p>
                       </div>
                     </div>
@@ -100,10 +97,7 @@ export default function UpdateQuestionModal({ question }) {
                       <div className="px-4 divide-y divide-gray-200 sm:px-6">
                         <div className="space-y-6 pt-6 pb-5">
                           <div>
-                            <label
-                              htmlFor="title"
-                              className="block text-sm font-medium text-dark"
-                            >
+                            <label htmlFor="title" className="block text-sm font-medium text-dark">
                               New Question Title
                             </label>
                             <div className="mt-1">
@@ -112,9 +106,7 @@ export default function UpdateQuestionModal({ question }) {
                                 name="title"
                                 id="title"
                                 required
-                                placeholder={
-                                  "'What is your name?' or 'Tell us about yourself'"
-                                }
+                                placeholder={"'What is your name?' or 'Tell us about yourself'"}
                                 value={GSI1SK}
                                 onChange={(e) => setGSI1SK(e.target.value)}
                                 className="block w-full shadow-sm text-sm focus:ring-blue-500 focus:border-blue-500 border-gray-300 rounded-md"
@@ -138,7 +130,7 @@ export default function UpdateQuestionModal({ question }) {
                                 rows={5}
                                 value={description}
                                 onChange={(e) => setDescription(e.target.value)}
-                              ></textarea>
+                              />
                             </div>
                           </div>
                         </div>

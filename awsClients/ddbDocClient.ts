@@ -1,5 +1,6 @@
-import { DynamoDBDocumentClient } from "@aws-sdk/lib-dynamodb";
-import { ddbClient } from "./ddbClient";
+import { DynamoDBDocumentClient } from '@aws-sdk/lib-dynamodb';
+import { ddbClient } from './ddbClient';
+
 const marshallOptions = {
   // Whether to automatically convert empty strings, blobs, and sets to `null`.
   convertEmptyValues: false, // false, by default.

@@ -1,25 +1,23 @@
-import React, { useState } from "react";
-import ItemsCarousel from "react-items-carousel";
-import { ArrowLeftIcon } from "@heroicons/react/outline";
-import { ArrowRightIcon } from "@heroicons/react/outline";
-import { useRouter } from "next/router";
-import useAllStagesInOpening from "../../SWR/useAllStagesInOpening";
-import StageCard from "./StageCard";
-import Loader from "../Loader";
-import useOpeningInfo from "../../SWR/useOpeningInfo";
-import { CUSTOM_QUERY } from "../../types/main";
+import React, { useState } from 'react';
+import ItemsCarousel from 'react-items-carousel';
+import { ArrowLeftIcon, ArrowRightIcon } from '@heroicons/react/outline';
+import { useRouter } from 'next/router';
+import useAllStagesInOpening from '../../SWR/useAllStagesInOpening';
+import StageCard from './StageCard';
+import Loader from '../Loader';
+import useOpeningInfo from '../../SWR/useOpeningInfo';
+import { CUSTOM_QUERY } from '../../types/main';
+
 export default function StageCarousel() {
   const router = useRouter();
   const [activeItemIndex, setActiveItemIndex] = useState(0);
   const chevronWidth = 60;
 
-  const { openingId } = router.query as Pick<CUSTOM_QUERY, "openingId">;
+  const { openingId } = router.query as Pick<CUSTOM_QUERY, 'openingId'>;
 
-  let { opening, isOpeningLoading, isOpeningError } = useOpeningInfo(openingId);
+  const { opening, isOpeningLoading, isOpeningError } = useOpeningInfo(openingId);
 
-  let { stages, isStagesLoading, isStagesError } = useAllStagesInOpening(
-    opening?.openingId
-  );
+  const { stages, isStagesLoading, isStagesError } = useAllStagesInOpening(opening?.openingId);
 
   if (isStagesLoading) {
     return <Loader text="Loading stages..." />;
@@ -46,7 +44,7 @@ export default function StageCarousel() {
           </button>
         }
         outsideChevron
-        firstAndLastGutter={true}
+        firstAndLastGutter
       >
         {stages?.map((stage) => (
           <StageCard

@@ -1,31 +1,29 @@
-import Breadcrumbs from "../Breadcrumbs";
-import { PencilAltIcon } from "@heroicons/react/outline";
-import useStore from "../../utils/store";
-import { mutate } from "swr";
-import { TrashIcon } from "@heroicons/react/outline";
-import useOpeningInfo from "../../SWR/useOpeningInfo";
-import { useRouter } from "next/router";
-import Loader from "../Loader";
-import { DeleteOpening, GetOpeningsInOrgURL } from "../../adapters/Openings";
-import * as Time from "../../utils/time";
-import { CUSTOM_QUERY } from "../../types/main";
-import { OPENING_STATE, WEBSITE_URL } from "../../Config";
+import { PencilAltIcon, TrashIcon } from '@heroicons/react/outline';
+import { mutate } from 'swr';
+import { useRouter } from 'next/router';
+import useStore from '../../utils/store';
+import useOpeningInfo from '../../SWR/useOpeningInfo';
+import Breadcrumbs from '../Breadcrumbs';
+import Loader from '../Loader';
+import { DeleteOpening, GetOpeningsInOrgURL } from '../../adapters/Openings';
+import * as Time from '../../utils/time';
+import { CUSTOM_QUERY } from '../../types/main';
+import { OPENING_STATE, WEBSITE_URL } from '../../Config';
+
 export default function OpeningSettingsHeader() {
   const router = useRouter();
-  const { openingId } = router.query as Pick<CUSTOM_QUERY, "openingId">;
-  const openUpdateOpeningModal = useStore(
-    (state) => state.openUpdateOpeningModal
-  );
+  const { openingId } = router.query as Pick<CUSTOM_QUERY, 'openingId'>;
+  const openUpdateOpeningModal = useStore((state) => state.openUpdateOpeningModal);
 
-  let { opening, isOpeningLoading, isOpeningError } = useOpeningInfo(openingId);
+  const { opening, isOpeningLoading, isOpeningError } = useOpeningInfo(openingId);
 
   if (isOpeningLoading) {
-    return <Loader text={"Loading opening..."} />;
+    return <Loader text="Loading opening..." />;
   }
 
   const crumbs = [
     {
-      name: "Opening Settings",
+      name: 'Opening Settings',
       href: `/openings/${openingId}/settings`,
       current: true,
     },
@@ -34,7 +32,7 @@ export default function OpeningSettingsHeader() {
   // Hide applicant crumb if opening has no stages
   if (opening?.totalStages > 0) {
     crumbs.unshift({
-      name: "Applicants",
+      name: 'Applicants',
       href: `/openings/${openingId}/stages/${opening?.stageOrder[0]}/applicants`, // TODO should this end with /applicants?
       current: false,
     });
@@ -43,13 +41,13 @@ export default function OpeningSettingsHeader() {
   const deleteOpening = async () => {
     if (
       !confirm(
-        "Are you sure you want to delete this opening? All stages inside of it will also be deleted. This action cannot be reversed!"
+        'Are you sure you want to delete this opening? All stages inside of it will also be deleted. This action cannot be reversed!',
       )
     ) {
       return;
     }
 
-    if (!confirm("Are you sure?")) {
+    if (!confirm('Are you sure?')) {
       return;
     }
 
@@ -73,23 +71,19 @@ export default function OpeningSettingsHeader() {
       <div className="flex justify-center space-x-4 py-2 items-center">
         <span
           className={` inline-flex items-center px-2.5 py-0.5 rounded-md text-sm font-medium ${
-            opening?.GSI1SK === OPENING_STATE.PUBLIC
-              ? "bg-green-100"
-              : "bg-blue-gray-100"
+            opening?.GSI1SK === OPENING_STATE.PUBLIC ? 'bg-green-100' : 'bg-blue-gray-100'
           }`}
         >
           <svg
             className={`-ml-0.5 mr-1.5 h-2 w-2 ${
-              opening?.GSI1SK === OPENING_STATE.PUBLIC
-                ? "text-green-800"
-                : "text-blue-gray-800"
+              opening?.GSI1SK === OPENING_STATE.PUBLIC ? 'text-green-800' : 'text-blue-gray-800'
             }`}
             fill="currentColor"
             viewBox="0 0 8 8"
           >
             <circle cx={4} cy={4} r={3} />
           </svg>
-          {opening?.GSI1SK === OPENING_STATE.PUBLIC ? "Public" : "Private"}
+          {opening?.GSI1SK === OPENING_STATE.PUBLIC ? 'Public' : 'Private'}
         </span>
         <p className="text-md text-light text-center">
           Created {Time.relative(opening?.createdAt)}

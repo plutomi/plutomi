@@ -1,13 +1,11 @@
-import {
-  TransactWriteCommandInput,
-  TransactWriteCommand,
-} from "@aws-sdk/lib-dynamodb";
-import { Dynamo } from "../../AWSClients/ddbDocClient";
-import { DYNAMO_TABLE_NAME, ENTITY_TYPES } from "../../Config";
-import { DeleteOpeningInput } from "../../types/main";
-import { SdkError } from "@aws-sdk/types";
-export default async function remove(
-  props: DeleteOpeningInput
+import { TransactWriteCommandInput, TransactWriteCommand } from '@aws-sdk/lib-dynamodb';
+import { SdkError } from '@aws-sdk/types';
+import { Dynamo } from '../../AWSClients/ddbDocClient';
+import { DYNAMO_TABLE_NAME, ENTITY_TYPES } from '../../Config';
+import { DeleteOpeningInput } from '../../types/main';
+
+export default async function DeleteOpening(
+  props: DeleteOpeningInput,
 ): Promise<[null, null] | [null, SdkError]> {
   const { orgId, openingId } = props;
 
@@ -23,7 +21,7 @@ export default async function remove(
             },
             TableName: `${process.env.NODE_ENV}-${DYNAMO_TABLE_NAME}`,
 
-            ConditionExpression: "attribute_exists(PK)",
+            ConditionExpression: 'attribute_exists(PK)',
           },
         },
         {
@@ -35,11 +33,11 @@ export default async function remove(
             },
             TableName: `${process.env.NODE_ENV}-${DYNAMO_TABLE_NAME}`,
 
-            UpdateExpression: "SET totalOpenings = totalOpenings - :value",
+            UpdateExpression: 'SET totalOpenings = totalOpenings - :value',
             ExpressionAttributeValues: {
-              ":value": 1,
+              ':value': 1,
             },
-            ConditionExpression: "attribute_exists(PK)",
+            ConditionExpression: 'attribute_exists(PK)',
           },
         },
       ],

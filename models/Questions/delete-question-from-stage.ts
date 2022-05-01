@@ -1,25 +1,15 @@
-import {
-  TransactWriteCommandInput,
-  TransactWriteCommand,
-} from "@aws-sdk/lib-dynamodb";
-import { Dynamo } from "../../AWSClients/ddbDocClient";
-import { DYNAMO_TABLE_NAME, ENTITY_TYPES } from "../../Config";
-import { SdkError } from "@aws-sdk/types";
-import { DeleteQuestionFromStageInput } from "../../types/main";
+import { TransactWriteCommandInput, TransactWriteCommand } from '@aws-sdk/lib-dynamodb';
+import { SdkError } from '@aws-sdk/types';
+import { Dynamo } from '../../AWSClients/ddbDocClient';
+import { DYNAMO_TABLE_NAME, ENTITY_TYPES } from '../../Config';
+import { DeleteQuestionFromStageInput } from '../../types/main';
 
 export default async function DeleteQuestionFromStage(
-  props: DeleteQuestionFromStageInput
+  props: DeleteQuestionFromStageInput,
 ): Promise<[null, null] | [null, SdkError]> {
-  const {
-    orgId,
-    openingId,
-    stageId,
-    questionId,
-    deleteIndex,
-    decrementStageCount,
-  } = props;
+  const { orgId, openingId, stageId, questionId, deleteIndex, decrementStageCount } = props;
 
-  let transactParams: TransactWriteCommandInput = {
+  const transactParams: TransactWriteCommandInput = {
     TransactItems: [
       {
         // Delete the adjacent item
@@ -29,7 +19,7 @@ export default async function DeleteQuestionFromStage(
             SK: `${ENTITY_TYPES.OPENING}#${openingId}#${ENTITY_TYPES.STAGE}#${stageId}`,
           },
           TableName: `${process.env.NODE_ENV}-${DYNAMO_TABLE_NAME}`,
-          ConditionExpression: "attribute_exists(PK)",
+          ConditionExpression: 'attribute_exists(PK)',
         },
       },
       {
@@ -42,7 +32,7 @@ export default async function DeleteQuestionFromStage(
           TableName: `${process.env.NODE_ENV}-${DYNAMO_TABLE_NAME}`,
           UpdateExpression: `REMOVE questionOrder[${deleteIndex}] SET totalQuestions = totalQuestions - :value`,
           ExpressionAttributeValues: {
-            ":value": 1,
+            ':value': 1,
           },
         },
       },
@@ -60,9 +50,9 @@ export default async function DeleteQuestionFromStage(
           SK: ENTITY_TYPES.QUESTION,
         },
         TableName: `${process.env.NODE_ENV}-${DYNAMO_TABLE_NAME}`,
-        UpdateExpression: "SET totalStages = totalStages - :value",
+        UpdateExpression: 'SET totalStages = totalStages - :value',
         ExpressionAttributeValues: {
-          ":value": 1,
+          ':value': 1,
         },
       },
     });

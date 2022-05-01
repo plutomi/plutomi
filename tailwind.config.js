@@ -1,16 +1,16 @@
-const colors = require("tailwindcss/colors");
+const colors = require('tailwindcss/colors');
 
 module.exports = {
-  mode: "jit",
-  purge: ["./pages/**/*.{js,ts,jsx,tsx}", "./components/**/*.{js,ts,jsx,tsx}"],
+  mode: 'jit',
+  purge: ['./pages/**/*.{js,ts,jsx,tsx}', './components/**/*.{js,ts,jsx,tsx}'],
   darkMode: false, // or 'media' or 'class'
   theme: {
     extend: {
       fontFamily: {
-        sans: ["Inter", "sans-serif"],
+        sans: ['Inter', 'sans-serif'],
       },
       borderWidth: {
-        oneFive: "1.5px",
+        oneFive: '1.5px',
       },
     },
     colors: {
@@ -18,18 +18,18 @@ module.exports = {
         light: colors.blueGray[50],
         dark: colors.orange[500],
       },
-      homepageGradient: "#fffdfa",
+      homepageGradient: '#fffdfa',
       disabled: colors.gray[400],
       light: colors.blueGray[500],
       normal: colors.blueGray[600],
       dark: colors.blueGray[900],
-      transparent: "transparent",
-      current: "currentColor",
-      "blue-gray": colors.blueGray,
-      "cool-gray": colors.coolGray,
+      transparent: 'transparent',
+      current: 'currentColor',
+      'blue-gray': colors.blueGray,
+      'cool-gray': colors.coolGray,
       gray: colors.gray,
-      "true-gray": colors.trueGray,
-      "warm-gray": colors.warmGray,
+      'true-gray': colors.trueGray,
+      'warm-gray': colors.warmGray,
       red: colors.red,
       orange: colors.orange,
       amber: colors.amber,
@@ -56,7 +56,7 @@ module.exports = {
   plugins: [
     // ...
 
-    require("@tailwindcss/forms"),
-    require("@tailwindcss/aspect-ratio"),
+    require('@tailwindcss/forms'),
+    require('@tailwindcss/aspect-ratio'),
   ],
 };

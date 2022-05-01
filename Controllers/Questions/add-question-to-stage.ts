@@ -1,10 +1,11 @@
-import { Request, Response } from "express";
-import Joi from "joi";
-import { JOI_SETTINGS, LIMITS } from "../../Config";
-import * as CreateError from "../../utils/createError";
-import * as Stages from "../../models/Stages";
-import getNewChildItemOrder from "../../utils/getNewChildItemOrder";
-import * as Questions from "../../models/Questions";
+import { Request, Response } from 'express';
+import Joi from 'joi';
+import { JOI_SETTINGS, LIMITS } from '../../Config';
+import * as CreateError from '../../utils/createError';
+import * as Stages from '../../models/Stages';
+import getNewChildItemOrder from '../../utils/getNewChildItemOrder';
+import * as Questions from '../../models/Questions';
+
 const schema = Joi.object({
   body: {
     questionId: Joi.string(),
@@ -29,8 +30,7 @@ const main = async (req: Request, res: Response) => {
   }
 
   // TODO types
-  let { questionId, position }: { questionId: string; position?: number } =
-    req.body;
+  const { questionId, position }: { questionId: string; position?: number } = req.body;
   const { openingId, stageId } = req.params;
 
   const [question, getQuestionError] = await Questions.GetQuestionById({
@@ -41,7 +41,7 @@ const main = async (req: Request, res: Response) => {
   if (getQuestionError) {
     const { status, body } = CreateError.SDK(
       getQuestionError,
-      "An error ocurred retrieving info for that question"
+      'An error ocurred retrieving info for that question',
     );
     return res.status(status).json(body);
   }
@@ -59,16 +59,13 @@ const main = async (req: Request, res: Response) => {
   });
 
   if (stageError) {
-    const { status, body } = CreateError.SDK(
-      stageError,
-      "Unable to retrieve stage info"
-    );
+    const { status, body } = CreateError.SDK(stageError, 'Unable to retrieve stage info');
 
     return res.status(status).json(body);
   }
 
   if (!stage) {
-    return res.status(404).json({ message: "Stage does not exist" });
+    return res.status(404).json({ message: 'Stage does not exist' });
   }
 
   // Block questions from being added to a stage if it already exists in the stage
@@ -79,11 +76,7 @@ const main = async (req: Request, res: Response) => {
   }
 
   // Update the stage with the new questionOrder
-  const questionOrder = getNewChildItemOrder(
-    questionId,
-    stage.questionOrder,
-    position
-  );
+  const questionOrder = getNewChildItemOrder(questionId, stage.questionOrder, position);
 
   // TODO this needs to be a transaction (done!) so when a question is deleted
   // TODO in the org, we can recursively loop through all stages that have this question and update them
@@ -98,14 +91,11 @@ const main = async (req: Request, res: Response) => {
   });
 
   if (stageUpdatedError) {
-    console.error("EEOEOEOE", stageUpdatedError);
-    const { status, body } = CreateError.SDK(
-      stageError,
-      "An error ocurred updating your stage"
-    );
+    console.error('EEOEOEOE', stageUpdatedError);
+    const { status, body } = CreateError.SDK(stageError, 'An error ocurred updating your stage');
     return res.status(status).json(body);
   }
 
-  return res.status(201).json({ message: "Question added to stage!" });
+  return res.status(201).json({ message: 'Question added to stage!' });
 };
 export default main;

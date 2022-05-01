@@ -1,17 +1,11 @@
-import SignedInNav from "../../components/Navbar/SignedInNav";
-import useSelf from "../../SWR/useSelf";
-import Loader from "../../components/Loader";
-import Login from "../../components/Login";
-import PageHeader from "./PageHeader";
-import { useRouter } from "next/router";
-import { DOMAIN_NAME, NAVBAR_NAVIGATION, WEBSITE_URL } from "../../Config";
-import { DEFAULTS } from "../../Config";
-export default function NewPage({
-  headerText,
-  loggedOutPageText,
-  currentNavbarItem,
-  children,
-}) {
+import { useRouter } from 'next/router';
+import SignedInNav from '../Navbar/SignedInNav';
+import useSelf from '../../SWR/useSelf';
+import Login from '../Login';
+import PageHeader from './PageHeader';
+import { NAVBAR_NAVIGATION, WEBSITE_URL, DEFAULTS } from '../../Config';
+
+export default function NewPage({ headerText, loggedOutPageText, currentNavbarItem, children }) {
   const router = useRouter();
   const { user, isUserLoading, isUserError } = useSelf();
 
@@ -19,15 +13,13 @@ export default function NewPage({
     return <Login loggedOutPageText={loggedOutPageText} />;
   }
 
-  const currentNavItem = NAVBAR_NAVIGATION.find(
-    (navItem) => navItem.name === currentNavbarItem
-  );
+  const currentNavItem = NAVBAR_NAVIGATION.find((navItem) => navItem.name === currentNavbarItem);
 
   // Redirect on no org
   // TODO i believe this is triggering twice...
   if (currentNavItem.hiddenIfNoOrg && user?.orgId === DEFAULTS.NO_ORG) {
     alert(
-      `You must create an org or join one before viewing the ${currentNavItem.name} page. If you have pending invites, you can view them at ${WEBSITE_URL}/invites`
+      `You must create an org or join one before viewing the ${currentNavItem.name} page. If you have pending invites, you can view them at ${WEBSITE_URL}/invites`,
     );
     router.push(`${WEBSITE_URL}/dashboard`);
 

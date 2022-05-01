@@ -12,8 +12,7 @@ export default function Hero() {
           at any scale
         </h1>
         <p className="mt-3 mx-auto text-xl text-center text-normal sm:text-2xl md:mt-5">
-          Plutomi streamlines your entire application process with automated
-          workflows
+          Plutomi streamlines your entire application process with automated workflows
         </p>
       </div>
     </div>

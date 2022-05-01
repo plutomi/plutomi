@@ -1,22 +1,15 @@
-import {
-  TransactWriteCommandInput,
-  TransactWriteCommand,
-} from "@aws-sdk/lib-dynamodb";
-import { nanoid } from "nanoid";
-import getNewChildItemOrder from "../../utils/getNewChildItemOrder";
-import { Dynamo } from "../../AWSClients/ddbDocClient";
-import {
-  ID_LENGTHS,
-  ENTITY_TYPES,
-  LIMITS,
-  DYNAMO_TABLE_NAME,
-} from "../../Config";
-import { DynamoStage } from "../../types/dynamo";
-import { CreateStageInput } from "../../types/main";
-import * as Time from "../../utils/time";
-import { SdkError } from "@aws-sdk/types";
+import { TransactWriteCommandInput, TransactWriteCommand } from '@aws-sdk/lib-dynamodb';
+import { nanoid } from 'nanoid';
+import { SdkError } from '@aws-sdk/types';
+import getNewChildItemOrder from '../../utils/getNewChildItemOrder';
+import { Dynamo } from '../../AWSClients/ddbDocClient';
+import { ID_LENGTHS, ENTITY_TYPES, LIMITS, DYNAMO_TABLE_NAME } from '../../Config';
+import { DynamoStage } from '../../types/dynamo';
+import { CreateStageInput } from '../../types/main';
+import * as Time from '../../utils/time';
+
 export default async function CreateStage(
-  props: CreateStageInput
+  props: CreateStageInput,
 ): Promise<[null, null] | [null, SdkError]> {
   const { orgId, GSI1SK, openingId, position, stageOrder } = props;
   const stageId = nanoid(ID_LENGTHS.STAGE);
@@ -38,14 +31,14 @@ export default async function CreateStage(
   const newStageOrder = getNewChildItemOrder(stageId, stageOrder, position);
 
   try {
-    let transactParams: TransactWriteCommandInput = {
+    const transactParams: TransactWriteCommandInput = {
       TransactItems: [
         {
           // Add the new stage
           Put: {
             Item: newStage,
             TableName: `${process.env.NODE_ENV}-${DYNAMO_TABLE_NAME}`,
-            ConditionExpression: "attribute_not_exists(PK)",
+            ConditionExpression: 'attribute_not_exists(PK)',
           },
         },
         {
@@ -57,15 +50,14 @@ export default async function CreateStage(
             },
             TableName: `${process.env.NODE_ENV}-${DYNAMO_TABLE_NAME}`,
 
-            ConditionExpression:
-              "totalStages < :maxChildItemLimit AND attribute_exists(PK)",
+            ConditionExpression: 'totalStages < :maxChildItemLimit AND attribute_exists(PK)',
             UpdateExpression:
-              "SET totalStages = if_not_exists(totalStages, :zero) + :value, stageOrder = :stageOrder",
+              'SET totalStages = if_not_exists(totalStages, :zero) + :value, stageOrder = :stageOrder',
             ExpressionAttributeValues: {
-              ":zero": 0,
-              ":value": 1,
-              ":stageOrder": newStageOrder,
-              ":maxChildItemLimit": LIMITS.MAX_CHILD_ITEM_LIMIT,
+              ':zero': 0,
+              ':value': 1,
+              ':stageOrder': newStageOrder,
+              ':maxChildItemLimit': LIMITS.MAX_CHILD_ITEM_LIMIT,
             },
           },
         },

@@ -1,4 +1,4 @@
-import { Request, Response } from "express";
+import { Request, Response } from 'express';
 
 const main = async (req: Request, res: Response) => {
   const { session } = res.locals;

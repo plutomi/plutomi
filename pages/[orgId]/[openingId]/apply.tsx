@@ -1,23 +1,18 @@
-import { useRouter } from "next/router";
-import GoBack from "../../../components/Buttons/GoBackButton";
-import Loader from "../../../components/Loader";
-import usePublicOrgById from "../../../SWR/usePublicOrgById";
-import usePublicOpeningById from "../../../SWR/usePublicOpeningById";
-import OpeningApplyPageContent from "../../../components/Openings/Public/OpeningApplyPageContent";
-import OpeningApplyPageHeader from "../../../components/Openings/Public/OpeningApplyPageHeader";
-import { CUSTOM_QUERY } from "../../../types/main";
-import { DOMAIN_NAME, WEBSITE_URL } from "../../../Config";
+import { useRouter } from 'next/router';
+import GoBack from '../../../components/Buttons/GoBackButton';
+import Loader from '../../../components/Loader';
+import usePublicOrgById from '../../../SWR/usePublicOrgById';
+import usePublicOpeningById from '../../../SWR/usePublicOpeningById';
+import OpeningApplyPageContent from '../../../components/Openings/Public/OpeningApplyPageContent';
+import OpeningApplyPageHeader from '../../../components/Openings/Public/OpeningApplyPageHeader';
+import { CUSTOM_QUERY } from '../../../types/main';
+import { DOMAIN_NAME, WEBSITE_URL } from '../../../Config';
+
 export default function Apply() {
   const router = useRouter();
-  const { orgId, openingId } = router.query as Pick<
-    CUSTOM_QUERY,
-    "openingId" | "orgId"
-  >;
+  const { orgId, openingId } = router.query as Pick<CUSTOM_QUERY, 'openingId' | 'orgId'>;
   const { org, isOrgLoading, isOrgError } = usePublicOrgById(orgId);
-  const { opening, isOpeningLoading, isOpeningError } = usePublicOpeningById(
-    orgId,
-    openingId
-  );
+  const { opening, isOpeningLoading, isOpeningError } = usePublicOpeningById(orgId, openingId);
 
   if (isOrgLoading) {
     return <Loader text="Loading..." />;
@@ -43,7 +38,7 @@ export default function Apply() {
           <OpeningApplyPageHeader />
         </header>
 
-        <main >
+        <main>
           <OpeningApplyPageContent />
         </main>
       </div>

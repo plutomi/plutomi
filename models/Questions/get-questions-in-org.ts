@@ -1,23 +1,21 @@
-import { QueryCommandInput, QueryCommand } from "@aws-sdk/lib-dynamodb";
-import { Dynamo } from "../../AWSClients/ddbDocClient";
-import { DYNAMO_TABLE_NAME, ENTITY_TYPES } from "../../Config";
-import {
-  GetQuestionsInOrgInput,
-  GetQuestionsInOrgOutput,
-} from "../../types/main";
-import { SdkError } from "@aws-sdk/types";
-import { DynamoQuestion } from "../../types/dynamo";
+import { QueryCommandInput, QueryCommand } from '@aws-sdk/lib-dynamodb';
+import { SdkError } from '@aws-sdk/types';
+import { Dynamo } from '../../AWSClients/ddbDocClient';
+import { DYNAMO_TABLE_NAME, ENTITY_TYPES } from '../../Config';
+import { GetQuestionsInOrgInput, GetQuestionsInOrgOutput } from '../../types/main';
+import { DynamoQuestion } from '../../types/dynamo';
+
 export default async function GetQuestionsInOrg(
-  props: GetQuestionsInOrgInput
+  props: GetQuestionsInOrgInput,
 ): Promise<[GetQuestionsInOrgOutput, null] | [null, SdkError]> {
   const { orgId } = props;
 
   const params: QueryCommandInput = {
-    IndexName: "GSI1",
+    IndexName: 'GSI1',
     TableName: `${process.env.NODE_ENV}-${DYNAMO_TABLE_NAME}`,
-    KeyConditionExpression: "GSI1PK = :GSI1PK",
+    KeyConditionExpression: 'GSI1PK = :GSI1PK',
     ExpressionAttributeValues: {
-      ":GSI1PK": `${ENTITY_TYPES.ORG}#${orgId}#${ENTITY_TYPES.QUESTION}S`,
+      ':GSI1PK': `${ENTITY_TYPES.ORG}#${orgId}#${ENTITY_TYPES.QUESTION}S`,
     },
   };
 

@@ -1,11 +1,10 @@
-import { FormEvent, Fragment, useEffect, useState } from "react";
-import { Dialog, Transition } from "@headlessui/react";
-import { XIcon } from "@heroicons/react/outline";
-import useStore from "../../utils/store";
-import { mutate } from "swr";
-import { GetSelfInfoURL, GetUserInfoUrl } from "../../adapters/Users";
-import { DynamoUser } from "../../types/dynamo";
-import { UpdateUser } from "../../adapters/Users";
+import { FormEvent, Fragment, useEffect, useState } from 'react';
+import { Dialog, Transition } from '@headlessui/react';
+import { XIcon } from '@heroicons/react/outline';
+import { mutate } from 'swr';
+import useStore from '../../utils/store';
+import { GetSelfInfoURL, GetUserInfoUrl, UpdateUser } from '../../adapters/Users';
+import { DynamoUser } from '../../types/dynamo';
 
 export default function UserProfileModal({ user }: { user: DynamoUser }) {
   const [firstName, setFirstName] = useState(user?.firstName);
@@ -17,9 +16,7 @@ export default function UserProfileModal({ user }: { user: DynamoUser }) {
   }, [user?.firstName, user?.lastName]);
 
   const visibility = useStore((state) => state.showUserProfileModal);
-  const closeUserProfileModal = useStore(
-    (state) => state.closeUserProfileModal
-  );
+  const closeUserProfileModal = useStore((state) => state.closeUserProfileModal);
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
 
@@ -45,11 +42,7 @@ export default function UserProfileModal({ user }: { user: DynamoUser }) {
 
   return (
     <Transition.Root show={visibility} as={Fragment}>
-      <Dialog
-        as="div"
-        className="fixed inset-0 overflow-hidden "
-        onClose={closeUserProfileModal}
-      >
+      <Dialog as="div" className="fixed inset-0 overflow-hidden " onClose={closeUserProfileModal}>
         <div className="absolute inset-0 overflow-hidden">
           <Transition.Child
             as={Fragment}
@@ -142,7 +135,7 @@ export default function UserProfileModal({ user }: { user: DynamoUser }) {
                               />
                             </div>
                           </div>
-                          <div className="relative flex items-start"></div>
+                          <div className="relative flex items-start" />
                         </div>
                       </div>
                     </div>

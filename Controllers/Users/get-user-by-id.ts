@@ -1,8 +1,9 @@
-import { Request, Response } from "express";
-import Joi from "joi";
-import * as Users from "../../models/Users";
-import { DEFAULTS, JOI_SETTINGS } from "../../Config";
-import * as CreateError from "../../utils/createError";
+import { Request, Response } from 'express';
+import Joi from 'joi';
+import * as Users from '../../models/Users';
+import { DEFAULTS, JOI_SETTINGS } from '../../Config';
+import * as CreateError from '../../utils/createError';
+
 interface APIGetUserByIdParameters {
   userId?: string;
 }
@@ -26,7 +27,7 @@ const main = async (req: Request, res: Response) => {
   if (session.userId !== userId) {
     // TODO RBAC
     return res.status(403).json({
-      message: "You are not authorized to view this user",
+      message: 'You are not authorized to view this user',
     });
   }
 
@@ -35,23 +36,19 @@ const main = async (req: Request, res: Response) => {
   });
 
   if (error) {
-    const { status, body } = CreateError.SDK(
-      error,
-      "An error ocurred retrieving user info by id"
-    );
+    const { status, body } = CreateError.SDK(error, 'An error ocurred retrieving user info by id');
 
     return res.status(status).json(body);
   }
   if (!requestedUser) {
-    return res.status(404).json({ message: "User not found" });
+    return res.status(404).json({ message: 'User not found' });
   }
 
   // TODO RBAC here
   // Only allow viewing users in the same org
   if (session.orgId !== requestedUser.orgId) {
     return res.status(403).json({
-      message:
-        "You are not authorized to view this user since you are not in the same org",
+      message: 'You are not authorized to view this user since you are not in the same org',
     });
   }
 

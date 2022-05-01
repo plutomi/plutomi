@@ -1,19 +1,20 @@
-import { UpdateCommandInput, UpdateCommand } from "@aws-sdk/lib-dynamodb";
-import { Dynamo } from "../../AWSClients/ddbDocClient";
-import { DYNAMO_TABLE_NAME, ENTITY_TYPES } from "../../Config";
-import { UpdateApplicantInput } from "../../types/main";
-import { SdkError } from "@aws-sdk/types";
-export default async function Update(
-  props: UpdateApplicantInput
+import { UpdateCommandInput, UpdateCommand } from '@aws-sdk/lib-dynamodb';
+import { SdkError } from '@aws-sdk/types';
+import { Dynamo } from '../../AWSClients/ddbDocClient';
+import { DYNAMO_TABLE_NAME, ENTITY_TYPES } from '../../Config';
+import { UpdateApplicantInput } from '../../types/main';
+
+export default async function UpdateApplicant(
+  props: UpdateApplicantInput,
 ): Promise<[null, null] | [null, SdkError]> {
   const { orgId, applicantId, newValues } = props;
 
   // Build update expression
-  let allUpdateExpressions: string[] = [];
-  let allAttributeValues: { [key: string]: string } = {};
+  const allUpdateExpressions: string[] = [];
+  const allAttributeValues: { [key: string]: string } = {};
 
   // Filter out forbidden property
-  for (const property in newValues) {
+  for (const property of Object.keys(newValues)) {
     // Push each property into the update expression
     allUpdateExpressions.push(`${property} = :${property}`);
 
@@ -26,11 +27,11 @@ export default async function Update(
       PK: `${ENTITY_TYPES.ORG}#${orgId}#${ENTITY_TYPES.APPLICANT}#${applicantId}`,
       SK: ENTITY_TYPES.APPLICANT,
     },
-    UpdateExpression: `SET ` + allUpdateExpressions.join(", "),
+    UpdateExpression: `SET ${allUpdateExpressions.join(', ')}`,
     ExpressionAttributeValues: allAttributeValues,
     TableName: `${process.env.NODE_ENV}-${DYNAMO_TABLE_NAME}`,
 
-    ConditionExpression: "attribute_exists(PK)",
+    ConditionExpression: 'attribute_exists(PK)',
   };
 
   try {

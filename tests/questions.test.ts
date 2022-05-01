@@ -1,29 +1,33 @@
-import { AXIOS_INSTANCE as axios, ERRORS } from "../Config";
-import { nanoid } from "nanoid";
-import * as Openings from "../adapters/Openings";
-import * as Stages from "../adapters/Stages";
-import * as Questions from "../adapters/Questions";
-import * as Orgs from "../adapters/Orgs";
-import { DynamoQuestion, DynamoStage } from "../types/dynamo";
-import * as GenerateID from "../utils/generateIds";
-describe("Questions", () => {
+import { nanoid } from 'nanoid';
+import { AXIOS_INSTANCE as axios, ERRORS } from '../Config';
+import * as Openings from '../adapters/Openings';
+import * as Stages from '../adapters/Stages';
+import * as Questions from '../adapters/Questions';
+import * as Orgs from '../adapters/Orgs';
+import { DynamoQuestion, DynamoStage } from '../types/dynamo';
+import TagGenerator from '../utils/tagGenerator';
+
+describe('Questions', () => {
   /**
    * Creates a session cookie
    */
   beforeAll(async () => {
     const data = await axios.post(`/jest-setup`);
-    const cookie = data.headers["set-cookie"][0];
+    const cookie = data.headers['set-cookie'][0];
 
     axios.defaults.headers.Cookie = cookie;
   });
 
-  it("blocks creating a question if not in org", async () => {
+  it('blocks creating a question if not in org', async () => {
     expect.assertions(2);
 
     try {
       await Questions.CreateQuestion({
         GSI1SK: nanoid(1),
-        questionId: GenerateID.QuestionID(10),
+        questionId: TagGenerator({
+          value: 20,
+          joinString: '_',
+        }),
       });
     } catch (error) {
       expect(error.response.status).toBe(403);
@@ -31,8 +35,11 @@ describe("Questions", () => {
     }
   });
 
-  let questionId = GenerateID.QuestionID(20);
-  it("creates a question and increments the totalQuestions count on an org", async () => {
+  let questionId = TagGenerator({
+    value: 20,
+    joinString: '_',
+  });
+  it('creates a question and increments the totalQuestions count on an org', async () => {
     expect.assertions(3);
 
     await Orgs.CreateOrg({ displayName: nanoid(20), orgId: nanoid(20) });
@@ -43,15 +50,18 @@ describe("Questions", () => {
       questionId,
     });
     expect(data.status).toBe(201);
-    expect(data.data.message).toBe("Question created!");
+    expect(data.data.message).toBe('Question created!');
 
     const orgData = await Orgs.GetOrgInfo();
     expect(orgData.data.totalQuestions).toBe(1);
   });
 
-  it("blocks creating a question with the same ID", async () => {
+  it('blocks creating a question with the same ID', async () => {
     expect.assertions(2);
-    const questionId = GenerateID.QuestionID(20);
+    const questionId = TagGenerator({
+      value: 20,
+      joinString: '_',
+    });
     await Questions.CreateQuestion({
       questionId,
       GSI1SK: nanoid(20),
@@ -63,47 +73,44 @@ describe("Questions", () => {
       });
     } catch (error) {
       expect(error.response.status).toBe(409);
-      expect(error.response.data.message).toBe(
-        "A question already exists with this ID"
-      );
+      expect(error.response.data.message).toBe('A question already exists with this ID');
     }
   });
 
-  it("blocks creating questions with an empty id", async () => {
+  it('blocks creating questions with an empty id', async () => {
     expect.assertions(3);
 
     try {
       await Questions.CreateQuestion({
-        questionId: "",
+        questionId: '',
         GSI1SK: nanoid(5),
       });
     } catch (error) {
       expect(error.response.status).toBe(400);
-      expect(error.response.data.message).toContain("body.questionId");
-      expect(error.response.data.message).toContain(
-        "is not allowed to be empty"
-      );
+      expect(error.response.data.message).toContain('body.questionId');
+      expect(error.response.data.message).toContain('is not allowed to be empty');
     }
   });
 
-  it("blocks creating questions with an empty title", async () => {
+  it('blocks creating questions with an empty title', async () => {
     expect.assertions(3);
     try {
       await Questions.CreateQuestion({
-        questionId: GenerateID.QuestionID(20),
-        GSI1SK: "",
+        questionId: TagGenerator({
+          value: 20,
+          joinString: '_',
+        }),
+        GSI1SK: '',
       });
     } catch (error) {
       expect(error.response.status).toBe(400);
-      expect(error.response.data.message).toContain("body.GSI1SK");
-      expect(error.response.data.message).toContain(
-        "is not allowed to be empty"
-      );
+      expect(error.response.data.message).toContain('body.GSI1SK');
+      expect(error.response.data.message).toContain('is not allowed to be empty');
     }
   });
 
   const newQuestionName = nanoid(20);
-  it("allows updating a question", async () => {
+  it('allows updating a question', async () => {
     expect.assertions(2);
     const data = await Questions.UpdateQuestion({
       questionId,
@@ -113,7 +120,7 @@ describe("Questions", () => {
     });
 
     expect(data.status).toBe(200);
-    expect(data.data.message).toBe("Question updated!");
+    expect(data.data.message).toBe('Question updated!');
   });
 
   it("allows returning a question's info", async () => {
@@ -123,40 +130,44 @@ describe("Questions", () => {
     expect(data.data.GSI1SK).toBe(newQuestionName);
   });
 
-  it("blocks updating a question id", async () => {
+  it('blocks updating a question id', async () => {
     expect.assertions(3);
     try {
       await Questions.UpdateQuestion({
         questionId,
         newValues: {
-          questionId: GenerateID.QuestionID(10),
+          questionId: TagGenerator({
+            value: 20,
+            joinString: '_',
+          }),
         },
       });
     } catch (error) {
       expect(error.response.status).toBe(400);
-      expect(error.response.data.message).toContain("body.questionId");
-      expect(error.response.data.message).toContain("is not allowed");
+      expect(error.response.data.message).toContain('body.questionId');
+      expect(error.response.data.message).toContain('is not allowed');
     }
   });
 
-  it("allows deleting a question from an org and decrements the totalQuestions count on the org", async () => {
+  it('allows deleting a question from an org and decrements the totalQuestions count on the org', async () => {
     expect.assertions(3);
     const orgDataBefore = await Orgs.GetOrgInfo();
     const data = await Questions.DeleteQuestionFromOrg(questionId);
     expect(data.status).toBe(200);
-    expect(data.data.message).toBe("Question deleted!");
+    expect(data.data.message).toBe('Question deleted!');
 
     const orgDataAfter = await Orgs.GetOrgInfo();
-    expect(orgDataAfter.data.totalQuestions).toBe(
-      orgDataBefore.data.totalQuestions - 1
-    );
+    expect(orgDataAfter.data.totalQuestions).toBe(orgDataBefore.data.totalQuestions - 1);
   });
 
   // Questions and stages
   let openingId: string;
   let stageId: string;
-  questionId = GenerateID.QuestionID(20);
-  it("adds a question to a stage", async () => {
+  questionId = TagGenerator({
+    value: 20,
+    joinString: '_',
+  });
+  it('adds a question to a stage', async () => {
     expect.assertions(2);
     // Create an opening
     await Openings.CreateOpening({
@@ -194,10 +205,10 @@ describe("Questions", () => {
     });
 
     expect(addQuestionToStage.status).toBe(201);
-    expect(addQuestionToStage.data.message).toBe("Question added to stage!");
+    expect(addQuestionToStage.data.message).toBe('Question added to stage!');
   });
 
-  it("blocks a user from adding the same question to a stage twice", async () => {
+  it('blocks a user from adding the same question to a stage twice', async () => {
     expect.assertions(2);
     // Essentially the same thing as above, but expects an error instead
     try {
@@ -205,18 +216,24 @@ describe("Questions", () => {
     } catch (error) {
       expect(error.response.status).toBe(409);
       expect(error.response.data.message).toBe(
-        `A question with the ID of '${questionId}' already exists in this stage. Please use a different question ID or delete the old one.`
+        `A question with the ID of '${questionId}' already exists in this stage. Please use a different question ID or delete the old one.`,
       );
     }
   });
 
-  it("allows adding a question at a specific position in a stage", async () => {
+  it('allows adding a question at a specific position in a stage', async () => {
     expect.assertions(3);
 
     // We're going to add question 1 to the END
     // And question 2 as the first question
-    let questionId1 = GenerateID.QuestionID(20);
-    let questionId2 = GenerateID.QuestionID(20);
+    const questionId1 = TagGenerator({
+      value: 20,
+      joinString: '_',
+    });
+    const questionId2 = TagGenerator({
+      value: 20,
+      joinString: '_',
+    });
 
     // Create the questions
     await Questions.CreateQuestion({
@@ -263,7 +280,7 @@ describe("Questions", () => {
       openingId,
       stageId,
     });
-    ourStage.data.questionOrder.splice(0, 1, "123");
+    ourStage.data.questionOrder.splice(0, 1, '123');
     try {
       await Stages.UpdateStage({
         openingId,
@@ -275,13 +292,16 @@ describe("Questions", () => {
     } catch (error) {
       expect(error.response.status).toBe(400);
       expect(error.response.data.message).toBe(
-        "The questionIds in the 'questionOrder' property differ from the ones in the stage, please check your request and try again."
+        "The questionIds in the 'questionOrder' property differ from the ones in the stage, please check your request and try again.",
       );
     }
   });
-  it("blocks adding a question to a stage if the question does not exist", async () => {
+  it('blocks adding a question to a stage if the question does not exist', async () => {
     expect.assertions(2);
-    const questionId = GenerateID.QuestionID(20);
+    const questionId = TagGenerator({
+      value: 20,
+      joinString: '_',
+    });
     try {
       await Questions.AddQuestionToStage({
         openingId: nanoid(20),
@@ -291,15 +311,17 @@ describe("Questions", () => {
     } catch (error) {
       expect(error.response.status).toBe(404);
       expect(error.response.data.message).toBe(
-        `A question with the ID of '${questionId}' does not exist in this org`
+        `A question with the ID of '${questionId}' does not exist in this org`,
       );
     }
   });
 
   it("returns an error if attempting to delete a question that doesn't exist in the stage", async () => {
     expect.assertions(2);
-    const questionId = GenerateID.QuestionID(20);
-
+    const questionId = TagGenerator({
+      value: 20,
+      joinString: '_',
+    });
     try {
       await Questions.DeleteQuestionFromStage({
         openingId,
@@ -309,11 +331,11 @@ describe("Questions", () => {
     } catch (error) {
       expect(error.response.status).toBe(400);
       expect(error.response.data.message).toBe(
-        `The question ID '${questionId}' does not exist in this stage`
+        `The question ID '${questionId}' does not exist in this stage`,
       );
     }
   });
-  it("allows removing a question from a stage", async () => {
+  it('allows removing a question from a stage', async () => {
     expect.assertions(4);
     const ourStage = await Stages.GetStageInfo({
       openingId,
@@ -329,7 +351,7 @@ describe("Questions", () => {
       questionId: oldQuestionOrder.slice(-1)[0],
     });
     expect(deleteSuccess.status).toBe(200);
-    expect(deleteSuccess.data.message).toBe("Question removed from stage!");
+    expect(deleteSuccess.data.message).toBe('Question removed from stage!');
     const updatedStage = await Stages.GetStageInfo({
       openingId,
       stageId,
@@ -337,17 +359,27 @@ describe("Questions", () => {
 
     const updatedQuestionOrder = updatedStage.data.questionOrder;
     expect(updatedQuestionOrder.length).toBe(oldQuestionOrder.length - 1);
-    expect(updatedQuestionOrder.slice(-1)[0]).not.toBe(
-      oldQuestionOrder.slice(-1)[0]
-    );
+    expect(updatedQuestionOrder.slice(-1)[0]).not.toBe(oldQuestionOrder.slice(-1)[0]);
   });
 
-  it("returns all questions in a stage, in their actual question order", async () => {
+  it('returns all questions in a stage, in their actual question order', async () => {
     expect.assertions(2);
-    const q1ID = GenerateID.QuestionID(15);
-    const q2ID = GenerateID.QuestionID(15);
-    const q3ID = GenerateID.QuestionID(15);
-    const q4ID = GenerateID.QuestionID(15); // Will be placed second
+    const q1ID = TagGenerator({
+      value: 20,
+      joinString: '_',
+    });
+    const q2ID = TagGenerator({
+      value: 20,
+      joinString: '_',
+    });
+    const q3ID = TagGenerator({
+      value: 20,
+      joinString: '_',
+    });
+    const q4ID = TagGenerator({
+      value: 20,
+      joinString: '_',
+    }); // Will be placed second
 
     const allQuestionIds = [q1ID, q2ID, q3ID, q4ID];
 
@@ -373,9 +405,7 @@ describe("Questions", () => {
 
     const allStages = await Stages.GetStagesInOpening(ourOpening.openingId);
 
-    const ourStage = allStages.data.find(
-      (stage: DynamoStage) => stage.GSI1SK === stageName
-    );
+    const ourStage = allStages.data.find((stage: DynamoStage) => stage.GSI1SK === stageName);
 
     /**
      * If we try to promise.all -> .map this, we get a transaction error
@@ -403,17 +433,18 @@ describe("Questions", () => {
       openingId: ourOpening.openingId,
       stageId: ourStage.stageId,
     });
-    const idsOnly = response.data.map(
-      (question: DynamoQuestion) => question.questionId
-    );
+    const idsOnly = response.data.map((question: DynamoQuestion) => question.questionId);
 
     expect(response.data.length).toBe(4);
     expect(idsOnly).toStrictEqual(properOrder);
   });
 
-  it("increments and decrements the totalStages count on a question when adding and removing it from a stage", async () => {
+  it('increments and decrements the totalStages count on a question when adding and removing it from a stage', async () => {
     expect.assertions(2);
-    const questionId = GenerateID.QuestionID(20);
+    const questionId = TagGenerator({
+      value: 20,
+      joinString: '_',
+    });
     await Questions.CreateQuestion({
       GSI1SK: nanoid(20),
       questionId,
@@ -431,9 +462,7 @@ describe("Questions", () => {
     });
 
     const allStages = await Stages.GetStagesInOpening(ourOpening.openingId);
-    const ourStage = allStages.data.find(
-      (stage: DynamoStage) => stage.GSI1SK === stageName
-    );
+    const ourStage = allStages.data.find((stage: DynamoStage) => stage.GSI1SK === stageName);
 
     await Questions.AddQuestionToStage({
       openingId,

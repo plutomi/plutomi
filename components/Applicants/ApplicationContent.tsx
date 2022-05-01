@@ -1,23 +1,19 @@
-import usePublicApplicant from "../../SWR/usePublicApplicant";
-import { useRouter } from "next/router";
-import Loader from "../Loader";
-import { useState } from "react";
-import useQuestionsInOrg from "../../SWR/useQuestionsInOrg";
-import { AnswerQuestions } from "../../adapters/Applicants";
-import { CUSTOM_QUERY } from "../../types/main";
+import { useRouter } from 'next/router';
+import { useState } from 'react';
+import usePublicApplicant from '../../SWR/usePublicApplicant';
+import Loader from '../Loader';
+import useQuestionsInOrg from '../../SWR/useQuestionsInOrg';
+import { AnswerQuestions } from '../../adapters/Applicants';
+import { CUSTOM_QUERY } from '../../types/main';
+
 export default function ApplicationContent() {
   const [responses, setResponses] = useState([]);
 
   const router = useRouter();
-  const { orgId, applicantId } = router.query as Pick<
-    CUSTOM_QUERY,
-    "orgId" | "applicantId"
-  >;
-  const { applicant, isApplicantLoading, isApplicantError } =
-    usePublicApplicant(applicantId);
+  const { orgId, applicantId } = router.query as Pick<CUSTOM_QUERY, 'orgId' | 'applicantId'>;
+  const { applicant, isApplicantLoading, isApplicantError } = usePublicApplicant(applicantId);
 
-  const { orgQuestions, isOrgQuestionsLoading, isOrgQuestionsError } =
-    useQuestionsInOrg();
+  const { orgQuestions, isOrgQuestionsLoading, isOrgQuestionsError } = useQuestionsInOrg();
   if (isOrgQuestionsLoading) {
     return <Loader text="Loading questions..." />;
   }
@@ -30,19 +26,19 @@ export default function ApplicationContent() {
     questionId: string,
     questionTitle: string,
     description: string,
-    response: string
+    response: string,
   ) => {
     const incoming = {
-      questionId: questionId,
-      questionTitle: questionTitle,
+      questionId,
+      questionTitle,
       description,
       questionResponse: response,
     };
     const questionOrder = orgQuestions.map((a) => a.questionId);
     const questionIndex = questionOrder.indexOf(questionId);
 
-    let found = responses.find((answer) => answer.questionId === questionId);
-    let newResponses = [...responses];
+    const found = responses.find((answer) => answer.questionId === questionId);
+    const newResponses = [...responses];
 
     // Add answer
     if (!found) {
@@ -66,7 +62,7 @@ export default function ApplicationContent() {
 
   const handleSubmit = async () => {
     try {
-      console.log("Responses are", responses);
+      console.log('Responses are', responses);
       const { data } = await AnswerQuestions(applicantId, responses);
       alert(data.message);
     } catch (error) {
@@ -79,10 +75,7 @@ export default function ApplicationContent() {
       <ul className="my-4 space-y-8">
         {orgQuestions.map((question) => (
           <li key={question?.questionId} className="space-y-1 mb-4">
-            <label
-              htmlFor="email"
-              className="block text-lg font-medium text-dark"
-            >
+            <label htmlFor="email" className="block text-lg font-medium text-dark">
               {question?.GSI1SK}
             </label>
             <div className="mt-1">
@@ -95,7 +88,7 @@ export default function ApplicationContent() {
                     question?.questionId,
                     question?.GSI1SK,
                     question?.description,
-                    e.target.value
+                    e.target.value,
                   )
                 }
                 className="shadow-sm focus:ring-blue-500 focus:border-blue-500 block w-full sm:text-sm border-gray-300 rounded-md"

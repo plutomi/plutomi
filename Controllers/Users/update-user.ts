@@ -1,12 +1,11 @@
-import { Request, Response } from "express";
-import * as Users from "../../models/Users";
-import Joi from "joi";
-import * as CreateError from "../../utils/createError";
-import { DEFAULTS, JOI_GLOBAL_FORBIDDEN, JOI_SETTINGS } from "../../Config";
-import { DynamoUser } from "../../types/dynamo";
+import { Request, Response } from 'express';
+import Joi from 'joi';
+import * as Users from '../../models/Users';
+import * as CreateError from '../../utils/createError';
+import { DEFAULTS, JOI_GLOBAL_FORBIDDEN, JOI_SETTINGS } from '../../Config';
+import { DynamoUser } from '../../types/dynamo';
 
-export interface APIUpdateUserOptions
-  extends Partial<Pick<DynamoUser, "firstName" | "lastName">> {
+export interface APIUpdateUserOptions extends Partial<Pick<DynamoUser, 'firstName' | 'lastName'>> {
   [key: string]: any;
 }
 /**
@@ -48,7 +47,7 @@ const main = async (req: Request, res: Response) => {
 
   // TODO RBAC will go here, right now you can only update yourself
   if (userId !== session.userId) {
-    return res.status(403).json({ message: "You cannot update this user" });
+    return res.status(403).json({ message: 'You cannot update this user' });
   }
 
   const [updatedUser, error] = await Users.UpdateUser({
@@ -57,16 +56,13 @@ const main = async (req: Request, res: Response) => {
   });
 
   if (error) {
-    const { status, body } = CreateError.SDK(
-      error,
-      "An error ocurred updating user info"
-    );
+    const { status, body } = CreateError.SDK(error, 'An error ocurred updating user info');
     return res.status(status).json(body);
   }
 
   return res.status(200).json({
     // TODO RBAC is not implemented yet so this won't trigger
-    message: userId === session.userId ? "Info updated!" : "User updated!",
+    message: userId === session.userId ? 'Info updated!' : 'User updated!',
   });
 };
 

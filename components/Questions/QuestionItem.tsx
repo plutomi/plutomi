@@ -1,24 +1,14 @@
-import { useState } from "react";
-import { PencilAltIcon } from "@heroicons/react/outline";
-import { TrashIcon } from "@heroicons/react/outline";
-import {
-  DeleteQuestionFromOrg,
-  GetQuestionsInOrgURL,
-} from "../../adapters/Questions";
-import useStore from "../../utils/store";
-import { mutate } from "swr";
-import { DynamoQuestion } from "../../types/dynamo";
-import UpdateQuestionModal from "./UpdateQuestionModal";
+import { useState } from 'react';
+import { PencilAltIcon, TrashIcon } from '@heroicons/react/outline';
+import { mutate } from 'swr';
+import { DeleteQuestionFromOrg, GetQuestionsInOrgURL } from '../../adapters/Questions';
+import useStore from '../../utils/store';
+import { DynamoQuestion } from '../../types/dynamo';
+import UpdateQuestionModal from './UpdateQuestionModal';
 
-export default function QuestionItem({
-  question,
-}: {
-  question: DynamoQuestion;
-}) {
+export default function QuestionItem({ question }: { question: DynamoQuestion }) {
   const setCurrentQuestion = useStore((state) => state.setCurrentQuestion);
-  const openUpdateQuestionModal = useStore(
-    (state) => state.openUpdateQuestionModal
-  );
+  const openUpdateQuestionModal = useStore((state) => state.openUpdateQuestionModal);
 
   const handleEdit = () => {
     setCurrentQuestion(question);
@@ -59,15 +49,13 @@ export default function QuestionItem({
           {question?.GSI1SK}
         </h3>
         {question?.description && (
-          <p className="text-md text-light line-clamp-2 mt-1">
-            {question?.description}
-          </p>
+          <p className="text-md text-light line-clamp-2 mt-1">{question?.description}</p>
         )}
 
         <p className="text-md text-red-300 line-clamp-2 mt-1">
           ID: {question?.questionId}
           <span className="text-light">
-            {" "}
+            {' '}
             - used in <strong> {question?.totalStages} </strong>
             stages
           </span>

@@ -1,8 +1,9 @@
-import { AXIOS_INSTANCE as axios } from "../Config";
-import { APICreateStageOptions } from "../Controllers/Stages/create-stage";
-import { APIUpdateStageOptions } from "../Controllers/Stages/update-stage";
-import { DynamoStage } from "../types/dynamo";
-type OpeningIdAndStageId = Pick<DynamoStage, "openingId" | "stageId">;
+import { AXIOS_INSTANCE as axios } from '../Config';
+import { APICreateStageOptions } from '../Controllers/Stages/create-stage';
+import { APIUpdateStageOptions } from '../Controllers/Stages/update-stage';
+import { DynamoStage } from '../types/dynamo';
+
+type OpeningIdAndStageId = Pick<DynamoStage, 'openingId' | 'stageId'>;
 
 const CreateStage = async (options: APICreateStageOptions) => {
   const data = await axios.post(`/stages`, {
@@ -35,8 +36,7 @@ const UpdateStage = async (options: UpdateStageInput) => {
   return data;
 };
 
-const GetStagesInOpeningURL = (openingId: string) =>
-  `/openings/${openingId}/stages`;
+const GetStagesInOpeningURL = (openingId: string) => `/openings/${openingId}/stages`;
 
 const GetStagesInOpening = async (openingId: string) => {
   const data = await axios.get(GetStagesInOpeningURL(openingId));

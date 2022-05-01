@@ -1,16 +1,14 @@
-import { FormEvent, Fragment, useState } from "react";
-import { Dialog, Transition } from "@headlessui/react";
-import { XIcon } from "@heroicons/react/outline";
-import { CreateOpening, GetOpeningsInOrgURL } from "../../adapters/Openings";
-import useStore from "../../utils/store";
-import { mutate } from "swr";
+import { FormEvent, Fragment, useState } from 'react';
+import { Dialog, Transition } from '@headlessui/react';
+import { XIcon } from '@heroicons/react/outline';
+import { mutate } from 'swr';
+import { CreateOpening, GetOpeningsInOrgURL } from '../../adapters/Openings';
+import useStore from '../../utils/store';
 
 export default function CreateOpeningModal() {
-  const [openingName, setOpeningName] = useState("");
+  const [openingName, setOpeningName] = useState('');
   const visibility = useStore((state) => state.showCreateOpeningModal);
-  const closeCreateOpeningModal = useStore(
-    (state) => state.closeCreateOpeningModal
-  );
+  const closeCreateOpeningModal = useStore((state) => state.closeCreateOpeningModal);
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
@@ -20,7 +18,7 @@ export default function CreateOpeningModal() {
         openingName,
       });
       alert(data.message);
-      setOpeningName("");
+      setOpeningName('');
       closeCreateOpeningModal();
     } catch (error) {
       alert(error.response.data.message);
@@ -30,11 +28,7 @@ export default function CreateOpeningModal() {
 
   return (
     <Transition.Root show={visibility} as={Fragment}>
-      <Dialog
-        as="div"
-        className="fixed inset-0 overflow-hidden "
-        onClose={closeCreateOpeningModal}
-      >
+      <Dialog as="div" className="fixed inset-0 overflow-hidden " onClose={closeCreateOpeningModal}>
         <div className="absolute inset-0 overflow-hidden">
           <Transition.Child
             as={Fragment}
@@ -82,10 +76,9 @@ export default function CreateOpeningModal() {
                       </div>
                       <div className="mt-1">
                         <p className="text-sm text-blue-300">
-                          An opening is what you need applicants for. It could
-                          be a job like &apos;Engineer&apos;, a location like
-                          &apos;New York&apos; or &apos;Miami&apos;, or just the
-                          name of your program.
+                          An opening is what you need applicants for. It could be a job like
+                          &apos;Engineer&apos;, a location like &apos;New York&apos; or
+                          &apos;Miami&apos;, or just the name of your program.
                         </p>
                       </div>
                     </div>
@@ -113,8 +106,7 @@ export default function CreateOpeningModal() {
                           </div>
                           <div className="relative flex items-start">
                             <p className="text-light text-sm ">
-                              You will be able to make this opening public after
-                              adding a stage.
+                              You will be able to make this opening public after adding a stage.
                             </p>
                           </div>
                         </div>

@@ -1,22 +1,20 @@
-import SignedInNav from "../components/Navbar/SignedInNav";
-import useSelf from "../SWR/useSelf";
-import UserProfileHeader from "../components/UserProfile/UserProfileHeader";
-import { mutate } from "swr";
-import UserProfileModal from "../components/UserProfile/UserProfileModal";
-import Loader from "../components/Loader";
-import Login from "../components/Login";
-import useStore from "../utils/store";
-import { UpdateUser, GetSelfInfoURL } from "../adapters/Users";
+import SignedInNav from '../components/Navbar/SignedInNav';
+import useSelf from '../SWR/useSelf';
+import UserProfileHeader from '../components/UserProfile/UserProfileHeader';
+import UserProfileModal from '../components/UserProfile/UserProfileModal';
+import Loader from '../components/Loader';
+import Login from '../components/Login';
+
 export default function Team() {
   const { user, isUserLoading, isUserError } = useSelf();
 
   // When rendering client side don't display anything until loading is complete
-  if (typeof window !== "undefined" && isUserLoading) {
+  if (typeof window !== 'undefined' && isUserLoading) {
     return <Loader text="Loading..." />;
   }
 
   if (isUserError) {
-    return <Login loggedOutPageText={"Log in to view your profile"} />;
+    return <Login loggedOutPageText="Log in to view your profile" />;
   }
 
   if (isUserLoading) {
@@ -33,9 +31,7 @@ export default function Team() {
         </header>
 
         <main className="mt-5">
-          <h1 className="text-2xl font-bold text-dark">
-            There&apos;s not much here... yet!
-          </h1>
+          <h1 className="text-2xl font-bold text-dark">There&apos;s not much here... yet!</h1>
         </main>
       </div>
     </>

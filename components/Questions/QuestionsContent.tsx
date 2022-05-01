@@ -1,23 +1,21 @@
-import Loader from "../Loader";
-import useQuestionsInOrg from "../../SWR/useQuestionsInOrg";
-import QuestionItem from "./QuestionItem";
-import { DynamoQuestion } from "../../types/dynamo";
-import EmptyQuestionsState from "./EmptyQuestionState";
-import CreateQuestionModal from "./CreateQuestionModal";
-import useStore from "../../utils/store";
-import { PlusIcon } from "@heroicons/react/solid";
-import UpdateQuestionModal from "./UpdateQuestionModal";
-import useOrgInfo from "../../SWR/useOrgInfo";
-import useSelf from "../../SWR/useSelf";
+import { PlusIcon } from '@heroicons/react/solid';
+import Loader from '../Loader';
+import useQuestionsInOrg from '../../SWR/useQuestionsInOrg';
+import QuestionItem from './QuestionItem';
+import { DynamoQuestion } from '../../types/dynamo';
+import EmptyQuestionsState from './EmptyQuestionState';
+import CreateQuestionModal from './CreateQuestionModal';
+import useStore from '../../utils/store';
+import UpdateQuestionModal from './UpdateQuestionModal';
+import useOrgInfo from '../../SWR/useOrgInfo';
+import useSelf from '../../SWR/useSelf';
+
 export default function QuestionsContent() {
   const { user, isUserLoading, isUserError } = useSelf();
   const { org, isOrgLoading, isOrgError } = useOrgInfo(user?.orgId);
-  const { orgQuestions, isOrgQuestionsLoading, isOrgQuestionsError } =
-    useQuestionsInOrg();
+  const { orgQuestions, isOrgQuestionsLoading, isOrgQuestionsError } = useQuestionsInOrg();
 
-  const openCreateQuestionModal = useStore(
-    (state) => state.openCreateQuestionModal
-  );
+  const openCreateQuestionModal = useStore((state) => state.openCreateQuestionModal);
   const currentQuestion = useStore((state) => state.currentQuestion);
   if (isOrgQuestionsLoading) {
     return <Loader text="Loading questions..." />;
@@ -30,12 +28,10 @@ export default function QuestionsContent() {
         <EmptyQuestionsState />
       ) : (
         <div>
-          {" "}
+          {' '}
           <UpdateQuestionModal question={currentQuestion} />
           <div className="flex-1 my-2 flex md:mt-0  items-center  md:flex-grow justify-center">
-            <p className="mx-12">
-              Total questions: {org?.totalQuestions || orgQuestions?.length}
-            </p>
+            <p className="mx-12">Total questions: {org?.totalQuestions || orgQuestions?.length}</p>
             <button
               onClick={openCreateQuestionModal}
               type="button"

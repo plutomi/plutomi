@@ -1,9 +1,9 @@
-import { Request, Response } from "express";
-import { COOKIE_NAME, COOKIE_SETTINGS } from "../../Config";
+import { Request, Response } from 'express';
+import { COOKIE_NAME, COOKIE_SETTINGS } from '../../Config';
 
 // TODO create logout event in Dynamo
 const logout = async (req: Request, res: Response) => {
-  res.cookie(COOKIE_NAME, "", {
+  res.cookie(COOKIE_NAME, '', {
     ...COOKIE_SETTINGS,
     signed: false,
     maxAge: -1,

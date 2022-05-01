@@ -1,15 +1,12 @@
-import { Request, Response } from "express";
-import Joi from "joi";
-import {
-  JOI_SETTINGS,
-  WEBSITE_URL,
-  COOKIE_NAME,
-  COOKIE_SETTINGS,
-} from "../../Config";
-const jwt = require("jsonwebtoken");
-import * as Users from "../../models/Users";
-import * as CreateError from "../../utils/createError";
-import errorFormatter from "../../utils/errorFormatter";
+import { Request, Response } from 'express';
+import Joi from 'joi';
+import { JOI_SETTINGS, WEBSITE_URL, COOKIE_NAME, COOKIE_SETTINGS } from '../../Config';
+import * as Users from '../../models/Users';
+import * as CreateError from '../../utils/createError';
+import errorFormatter from '../../utils/errorFormatter';
+
+const jwt = require('jsonwebtoken');
+
 interface APILoginQuery {
   callbackUrl?: string;
   token?: string;
@@ -34,24 +31,21 @@ const login = async (req: Request, res: Response) => {
   let loginLinkId: string;
 
   try {
-    const data = await jwt.verify(token, "secret");
+    const data = await jwt.verify(token, 'secret');
 
     userId = data.userId;
     loginLinkId = data.loginLinkId;
   } catch (error) {
-    if (error.name === "TokenExpiredError") {
-      return res.status(401).json({ message: "Login link expired :(" });
+    if (error.name === 'TokenExpiredError') {
+      return res.status(401).json({ message: 'Login link expired :(' });
     }
-    return res.status(401).json({ message: "Invalid login link" });
+    return res.status(401).json({ message: 'Invalid login link' });
   }
 
   const [user, error] = await Users.GetUserById({ userId });
 
   if (error) {
-    const { status, body } = CreateError.SDK(
-      error,
-      "An error ocurred using your login link"
-    );
+    const { status, body } = CreateError.SDK(error, 'An error ocurred using your login link');
     return res.status(status).json(body);
   }
 
@@ -71,29 +65,26 @@ const login = async (req: Request, res: Response) => {
   });
 
   if (failed) {
-    if (failed.name === "TransactionCanceledException") {
-      return res.status(401).json({ message: "Login link no longer valid" });
+    if (failed.name === 'TransactionCanceledException') {
+      return res.status(401).json({ message: 'Login link no longer valid' });
     }
-    const { status, body } = CreateError.SDK(
-      error,
-      "Unable to create login event"
-    );
+    const { status, body } = CreateError.SDK(error, 'Unable to create login event');
 
     return res.status(status).json(body);
   }
 
   res.cookie(COOKIE_NAME, user.userId, COOKIE_SETTINGS);
-  res.header("Location", callbackUrl);
+  res.header('Location', callbackUrl);
 
   /**
    * If a user has invites, redirect them to the invites page
    * on login regardless of the callback url
    */
   if (user.totalInvites > 0) {
-    res.header("Location", `${WEBSITE_URL}/invites`);
+    res.header('Location', `${WEBSITE_URL}/invites`);
   }
 
-  return res.status(307).json({ message: "Login success!" });
+  return res.status(307).json({ message: 'Login success!' });
 };
 
 export default login;

@@ -1,6 +1,7 @@
-import { Request, Response } from "express";
-import * as Questions from "../../models/Questions";
-import * as CreateError from "../../utils/createError";
+import { Request, Response } from 'express';
+import * as Questions from '../../models/Questions';
+import * as CreateError from '../../utils/createError';
+
 const main = async (req: Request, res: Response) => {
   const { session } = res.locals;
   const { questionId } = req.params;
@@ -12,7 +13,7 @@ const main = async (req: Request, res: Response) => {
   if (questionError) {
     const { status, body } = CreateError.SDK(
       questionError,
-      "An error ocurred retrieving that question"
+      'An error ocurred retrieving that question',
     );
     return res.status(status).json(body);
   }

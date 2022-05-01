@@ -1,25 +1,16 @@
-import { Fragment } from "react";
-import useSelf from "../../SWR/useSelf";
-import NavbarSearch from "./NavbarSearch";
-import { Logout } from "../../adapters/Auth";
-import { Disclosure, Menu, Transition } from "@headlessui/react";
-import { NAVBAR_NAVIGATION, DROPDOWN_NAVIGATION } from "../../Config";
-import { useRouter } from "next/router";
-import {
-  BellIcon,
-  DotsHorizontalIcon,
-  MenuIcon,
-  XIcon,
-} from "@heroicons/react/outline";
-import Link from "next/dist/client/link";
-import Banner from "../BannerTop";
-import { mutate } from "swr";
-import { DEFAULTS } from "../../Config";
-import { GetSelfInfoURL } from "../../adapters/Users";
-
-function classNames(...classes) {
-  return classes.filter(Boolean).join(" ");
-}
+import { Fragment } from 'react';
+import { Disclosure, Menu, Transition } from '@headlessui/react';
+import { useRouter } from 'next/router';
+import { BellIcon, DotsHorizontalIcon, MenuIcon, XIcon } from '@heroicons/react/outline';
+import Link from 'next/dist/client/link';
+import { mutate } from 'swr';
+import useSelf from '../../SWR/useSelf';
+import NavbarSearch from './NavbarSearch';
+import { Logout } from '../../adapters/Auth';
+import { NAVBAR_NAVIGATION, DROPDOWN_NAVIGATION, DEFAULTS } from '../../Config';
+import Banner from '../BannerTop';
+import { GetSelfInfoURL } from '../../adapters/Users';
+import combineClassNames from '../../utils/combineClassNames';
 
 export default function SignedInNav({ current }) {
   const { user, isUserLoading, isUserError } = useSelf();
@@ -38,12 +29,12 @@ export default function SignedInNav({ current }) {
 
   return (
     <>
-      {user?.totalInvites > 0 && current !== "Invites" && (
+      {user?.totalInvites > 0 && current !== 'Invites' && (
         <Banner
           msgSmall={"You've been invited!"}
           msgLarge={"You've been invited to join an organization!"}
-          btnText={"View invites"}
-          href={"/invites"}
+          btnText="View invites"
+          href="/invites"
         />
       )}
 
@@ -53,7 +44,7 @@ export default function SignedInNav({ current }) {
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
               <div className="flex justify-between h-16 ">
                 <div className="flex justify-between  w-2/3">
-                  {/*<div className="flex-shrink-0 flex items-center">
+                  {/* <div className="flex-shrink-0 flex items-center">
                   <img
                     className="block lg:hidden h-8 w-auto"
                     src="https://tailwindui.com/img/logos/workflow-mark-blue-600.svg"
@@ -64,13 +55,10 @@ export default function SignedInNav({ current }) {
                     src="https://tailwindui.com/img/logos/workflow-logo-blue-600-mark-gray-800-text.svg"
                     alt="Workflow"
                   /> 
-                  </div>*/}
+                  </div> */}
                   <div className="hidden sm:-my-px sm:ml-6 sm:flex sm:space-x-8">
                     {NAVBAR_NAVIGATION.map((item) => {
-                      if (
-                        user?.orgId === DEFAULTS.NO_ORG &&
-                        item.hiddenIfNoOrg
-                      ) {
+                      if (user?.orgId === DEFAULTS.NO_ORG && item.hiddenIfNoOrg) {
                         return null;
                       }
 
@@ -80,15 +68,13 @@ export default function SignedInNav({ current }) {
                       return (
                         <Link key={item.name} href={item.href}>
                           <a
-                            className={classNames(
+                            className={combineClassNames(
                               current === item.name
-                                ? "border-blue-500 text-dark"
-                                : "border-transparent text-light hover:border-blue-gray-300 hover:text-dark",
-                              "inline-flex items-center px-1 pt-1 border-b-2 text-md font-medium"
+                                ? 'border-blue-500 text-dark'
+                                : 'border-transparent text-light hover:border-blue-gray-300 hover:text-dark',
+                              'inline-flex items-center px-1 pt-1 border-b-2 text-md font-medium',
                             )}
-                            aria-current={
-                              current === item.name ? "page" : undefined
-                            }
+                            aria-current={current === item.name ? 'page' : undefined}
                           >
                             {item.name}
                           </a>
@@ -121,10 +107,7 @@ export default function SignedInNav({ current }) {
                           alt=""
                         /> */}
                         <button>
-                          <DotsHorizontalIcon
-                            className="block h-6 w-6"
-                            aria-hidden="true"
-                          />
+                          <DotsHorizontalIcon className="block h-6 w-6" aria-hidden="true" />
                         </button>
                       </Menu.Button>
                     </div>
@@ -140,29 +123,23 @@ export default function SignedInNav({ current }) {
                       <Menu.Items className="origin-top-right absolute right-0 mt-2 w-96 rounded-md shadow-lg py-1 bg-white ring-1 ring-black ring-opacity-5 focus:outline-none">
                         <div className="px-4 py-2 text-md border-dashed border-b-2">
                           {isUserLoading ? (
-                            "Loading user info..."
+                            'Loading user info...'
                           ) : (
-                            <>
-                              <div className=" text-light">
-                                Signed in as <strong>{user?.email}</strong>
-                              </div>
-                            </>
+                            <div className=" text-light">
+                              Signed in as <strong>{user?.email}</strong>
+                            </div>
                           )}
                         </div>
 
                         {DROPDOWN_NAVIGATION.map((item) =>
-                          item.name === "Log Out" ? (
-                            <div
-                              className="cursor-pointer"
-                              key={item.name}
-                              onClick={handleLogout}
-                            >
+                          item.name === 'Log Out' ? (
+                            <div className="cursor-pointer" key={item.name} onClick={handleLogout}>
                               <Menu.Item>
                                 {({ active }) => (
                                   <a
-                                    className={classNames(
-                                      active ? "bg-blue-gray-100" : "",
-                                      "block px-4 py-2 text-md text-dark"
+                                    className={combineClassNames(
+                                      active ? 'bg-blue-gray-100' : '',
+                                      'block px-4 py-2 text-md text-dark',
                                     )}
                                   >
                                     {item.name}
@@ -176,9 +153,9 @@ export default function SignedInNav({ current }) {
                                 <Menu.Item>
                                   {({ active }) => (
                                     <a
-                                      className={classNames(
-                                        active ? "bg-blue-gray-100" : "",
-                                        "cusror-auto block px-4 py-2 text-md text-dark"
+                                      className={combineClassNames(
+                                        active ? 'bg-blue-gray-100' : '',
+                                        'cusror-auto block px-4 py-2 text-md text-dark',
                                       )}
                                     >
                                       {item.name}
@@ -187,7 +164,7 @@ export default function SignedInNav({ current }) {
                                 </Menu.Item>
                               </div>
                             </Link>
-                          )
+                          ),
                         )}
                       </Menu.Items>
                     </Transition>
@@ -213,13 +190,13 @@ export default function SignedInNav({ current }) {
                   <a
                     key={item.name}
                     href={item.href}
-                    className={classNames(
+                    className={combineClassNames(
                       current === item.name
-                        ? "bg-blue-50 border-blue-500 text-blue-700"
-                        : "border-transparent text-gray-600 hover:bg-gray-50 hover:border-gray-300 hover:text-gray-800",
-                      "block pl-3 pr-4 py-2 border-l-4 text-base font-medium"
+                        ? 'bg-blue-50 border-blue-500 text-blue-700'
+                        : 'border-transparent text-gray-600 hover:bg-gray-50 hover:border-gray-300 hover:text-gray-800',
+                      'block pl-3 pr-4 py-2 border-l-4 text-base font-medium',
                     )}
-                    aria-current={current === item.name ? "page" : undefined}
+                    aria-current={current === item.name ? 'page' : undefined}
                   >
                     {item.name}
                   </a>
@@ -236,18 +213,14 @@ export default function SignedInNav({ current }) {
                   </div>
 
                   {isUserLoading ? (
-                    "Loading user info..."
+                    'Loading user info...'
                   ) : (
-                    <>
-                      <div className="ml-3">
-                        <div className="text-base font-medium text-gray-800">
-                          {user?.firstName} {user?.lastname}
-                        </div>
-                        <div className="text-md font-medium text-normal">
-                          {user?.email}
-                        </div>
+                    <div className="ml-3">
+                      <div className="text-base font-medium text-gray-800">
+                        {user?.firstName} {user?.lastname}
                       </div>
-                    </>
+                      <div className="text-md font-medium text-normal">{user?.email}</div>
+                    </div>
                   )}
 
                   <button
@@ -262,7 +235,7 @@ export default function SignedInNav({ current }) {
                 <div className="mt-3 space-y-1">
                   {DROPDOWN_NAVIGATION.map((item) => {
                     {
-                      item.name === "Log Out" ? (
+                      item.name === 'Log Out' ? (
                         <a
                           key={item.name}
                           href={item.href}

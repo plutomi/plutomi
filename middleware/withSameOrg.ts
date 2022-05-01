@@ -1,12 +1,8 @@
-import { Request, Response, NextFunction } from "express";
-import { ERRORS } from "../Config";
+import { Request, Response, NextFunction } from 'express';
+import { ERRORS } from '../Config';
 
 // Blocks the request if a user is not in the same org as the orgId parameter
-export default async function withSameOrg(
-  req: Request,
-  res: Response,
-  next: NextFunction
-) {
+export default async function withSameOrg(req: Request, res: Response, next: NextFunction) {
   const { session } = res.locals;
 
   if (session.orgId !== req.params.orgId) {
