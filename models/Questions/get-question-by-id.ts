@@ -1,12 +1,12 @@
-import { GetCommandInput, GetCommand } from "@aws-sdk/lib-dynamodb";
-import { Dynamo } from "../../awsClients/ddbDocClient";
-import { DYNAMO_TABLE_NAME, ENTITY_TYPES } from "../../Config";
-import { GetQuestionInput, GetQuestionOutput } from "../../types/main";
-import { SdkError } from "@aws-sdk/types";
+import { GetCommandInput, GetCommand } from '@aws-sdk/lib-dynamodb';
+import { SdkError } from '@aws-sdk/types';
+import { Dynamo } from '../../awsClients/ddbDocClient';
+import { DYNAMO_TABLE_NAME, ENTITY_TYPES } from '../../Config';
+import { GetQuestionInput, GetQuestionOutput } from '../../types/main';
 
 export default async function Get(
-  props: GetQuestionInput
-): Promise<[GetQuestionOutput, SdkError]> {
+  props: GetQuestionInput,
+): Promise<[GetQuestionOutput, null] | [null, SdkError]> {
   const { orgId, questionId } = props;
   const params: GetCommandInput = {
     TableName: `${process.env.NODE_ENV}-${DYNAMO_TABLE_NAME}`,

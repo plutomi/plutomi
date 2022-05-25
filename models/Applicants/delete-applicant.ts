@@ -1,14 +1,12 @@
-import {
-  TransactWriteCommandInput,
-  TransactWriteCommand,
-} from "@aws-sdk/lib-dynamodb";
-import { Dynamo } from "../../awsClients/ddbDocClient";
-import { DYNAMO_TABLE_NAME, ENTITY_TYPES } from "../../Config";
-import { DeleteApplicantInput } from "../../types/main";
-import { SdkError } from "@aws-sdk/types";
+import { TransactWriteCommandInput, TransactWriteCommand } from '@aws-sdk/lib-dynamodb';
+import { SdkError } from '@aws-sdk/types';
+import { Dynamo } from '../../awsClients/ddbDocClient';
+import { DYNAMO_TABLE_NAME, ENTITY_TYPES } from '../../Config';
+import { DeleteApplicantInput } from '../../types/main';
+
 export default async function Remove(
-  props: DeleteApplicantInput
-): Promise<[null, SdkError]> {
+  props: DeleteApplicantInput,
+): Promise<[null, null] | [null, SdkError]> {
   const { orgId, applicantId, openingId, stageId } = props;
   try {
     const transactParams: TransactWriteCommandInput = {
@@ -33,9 +31,9 @@ export default async function Remove(
             },
             TableName: `${process.env.NODE_ENV}-${DYNAMO_TABLE_NAME}`,
 
-            UpdateExpression: "SET totalApplicants = totalApplicants - :value",
+            UpdateExpression: 'SET totalApplicants = totalApplicants - :value',
             ExpressionAttributeValues: {
-              ":value": 1,
+              ':value': 1,
             },
           },
         },
@@ -48,9 +46,9 @@ export default async function Remove(
             },
             TableName: `${process.env.NODE_ENV}-${DYNAMO_TABLE_NAME}`,
 
-            UpdateExpression: "SET totalApplicants = totalApplicants - :value",
+            UpdateExpression: 'SET totalApplicants = totalApplicants - :value',
             ExpressionAttributeValues: {
-              ":value": 1,
+              ':value': 1,
             },
           },
         },
@@ -63,9 +61,9 @@ export default async function Remove(
             },
             TableName: `${process.env.NODE_ENV}-${DYNAMO_TABLE_NAME}`,
 
-            UpdateExpression: "SET totalApplicants = totalApplicants - :value",
+            UpdateExpression: 'SET totalApplicants = totalApplicants - :value',
             ExpressionAttributeValues: {
-              ":value": 1,
+              ':value': 1,
             },
           },
         },

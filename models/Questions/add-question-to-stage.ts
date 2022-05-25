@@ -1,12 +1,9 @@
-import {
-  TransactWriteCommandInput,
-  TransactWriteCommand,
-} from "@aws-sdk/lib-dynamodb";
-import { Dynamo } from "../../awsClients/ddbDocClient";
-import { DYNAMO_TABLE_NAME, ENTITY_TYPES } from "../../Config";
-import * as Time from "../../utils/time";
-import { SdkError } from "@aws-sdk/types";
-import { AddQuestionToStageInput } from "../../types/main";
+import { TransactWriteCommandInput, TransactWriteCommand } from '@aws-sdk/lib-dynamodb';
+import { SdkError } from '@aws-sdk/types';
+import { Dynamo } from '../../awsClients/ddbDocClient';
+import { DYNAMO_TABLE_NAME, ENTITY_TYPES } from '../../Config';
+import * as Time from '../../utils/time';
+import { AddQuestionToStageInput } from '../../types/main';
 
 /**
  * Updates the questionOrder on the stage and creates another item
@@ -15,8 +12,8 @@ import { AddQuestionToStageInput } from "../../types/main";
  */
 
 export default async function AddQuestionToStage(
-  props: AddQuestionToStageInput
-): Promise<[null, SdkError]> {
+  props: AddQuestionToStageInput,
+): Promise<[null, null] | [null, SdkError]> {
   const { orgId, openingId, stageId, questionId, questionOrder } = props;
 
   /**
@@ -47,7 +44,7 @@ export default async function AddQuestionToStage(
           TableName: `${process.env.NODE_ENV}-${DYNAMO_TABLE_NAME}`,
           // This should never conflict because we check
           // that a stage doesn't already have a question by this ID
-          ConditionExpression: "attribute_not_exists(PK)",
+          ConditionExpression: 'attribute_not_exists(PK)',
         },
       },
       {
@@ -65,10 +62,10 @@ export default async function AddQuestionToStage(
           },
           TableName: `${process.env.NODE_ENV}-${DYNAMO_TABLE_NAME}`,
           UpdateExpression:
-            "SET questionOrder = :questionOrder, totalQuestions = totalQuestions + :value",
+            'SET questionOrder = :questionOrder, totalQuestions = totalQuestions + :value',
           ExpressionAttributeValues: {
-            ":questionOrder": questionOrder,
-            ":value": 1,
+            ':questionOrder': questionOrder,
+            ':value': 1,
           },
         },
       },
@@ -80,11 +77,10 @@ export default async function AddQuestionToStage(
             SK: ENTITY_TYPES.QUESTION,
           },
           TableName: `${process.env.NODE_ENV}-${DYNAMO_TABLE_NAME}`,
-          UpdateExpression:
-            "SET totalStages = if_not_exists(totalStages, :zero) + :value",
+          UpdateExpression: 'SET totalStages = if_not_exists(totalStages, :zero) + :value',
           ExpressionAttributeValues: {
-            ":zero": 0,
-            ":value": 1,
+            ':zero': 0,
+            ':value': 1,
           },
         },
       },

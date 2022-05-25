@@ -1,9 +1,10 @@
-import * as dotenv from "dotenv";
-import * as cdk from "@aws-cdk/core";
-import { DYNAMO_STREAM_TYPES, ENTITY_TYPES } from "../Config";
-import { EventBus, Rule } from "@aws-cdk/aws-events";
-import { StateMachine } from "@aws-cdk/aws-stepfunctions";
-import { SfnStateMachine } from "@aws-cdk/aws-events-targets";
+import * as dotenv from 'dotenv';
+import * as cdk from '@aws-cdk/core';
+import { EventBus, Rule } from '@aws-cdk/aws-events';
+import { StateMachine } from '@aws-cdk/aws-stepfunctions';
+import { SfnStateMachine } from '@aws-cdk/aws-events-targets';
+import { DYNAMO_STREAM_TYPES, ENTITY_TYPES } from '../Config';
+
 const resultDotEnv = dotenv.config({
   path: `${process.cwd()}/.env.${process.env.NODE_ENV}`,
 });
@@ -38,17 +39,17 @@ export default class EventBridgeStack extends cdk.Stack {
       eventPattern: {
         account: [cdk.Stack.of(this).account],
       },
-      retention: cdk.Duration.days(365),
+      retention: cdk.Duration.days(3),
     });
     // We want to send all communication events to the step function, we can handle routing there
-    new Rule(this, "NeedsCommsRule", {
+    const rule1 = new Rule(this, 'NeedsCommsRule', {
       eventBus: bus,
       description:
-        "Rule that checks if an action needs further comms such as login links or welcome emails. Forwards to the `CommsMachine` step function.",
-      ruleName: "NeedsCommsRule",
+        'Rule that checks if an action needs further comms such as login links or welcome emails. Forwards to the `CommsMachine` step function.',
+      ruleName: 'NeedsCommsRule',
       targets: [new SfnStateMachine(props.CommsMachine)],
       eventPattern: {
-        source: ["dynamodb.streams"],
+        source: ['dynamodb.streams'],
         detail: {
           eventName: [DYNAMO_STREAM_TYPES.INSERT],
           entityType: [
@@ -62,14 +63,14 @@ export default class EventBridgeStack extends cdk.Stack {
     });
 
     // We want to send all deletion events to the step function, we can handle routing there
-    new Rule(this, "DeletionRule", {
+    const rule2 = new Rule(this, 'DeletionRule', {
       eventBus: bus,
       description:
-        "Rule that checks if an action needs further comms such as login links or welcome emails. Forwards to the `CommsMachine` step function.",
-      ruleName: "DeletionRule",
+        'Rule that checks if an action needs further comms such as login links or welcome emails. Forwards to the `CommsMachine` step function.',
+      ruleName: 'DeletionRule',
       targets: [new SfnStateMachine(props.DeleteChildrenMachine)],
       eventPattern: {
-        source: ["dynamodb.streams"],
+        source: ['dynamodb.streams'],
         detail: {
           eventName: [DYNAMO_STREAM_TYPES.REMOVE],
           entityType: [
@@ -84,13 +85,13 @@ export default class EventBridgeStack extends cdk.Stack {
     });
 
     // All applicant events are sent to the state machine
-    new Rule(this, "ApplicantWebhooksRule", {
+    const rule3 = new Rule(this, 'ApplicantWebhooksRule', {
       eventBus: bus,
-      description: "All applicant events are sent to the webhooks machine",
-      ruleName: "WebhooksRule",
+      description: 'All applicant events are sent to the webhooks machine',
+      ruleName: 'WebhooksRule',
       targets: [new SfnStateMachine(props.WebhooksMachine)],
       eventPattern: {
-        source: ["dynamodb.streams"],
+        source: ['dynamodb.streams'],
         detail: {
           eventName: [
             DYNAMO_STREAM_TYPES.INSERT,

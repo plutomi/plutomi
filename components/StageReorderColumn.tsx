@@ -1,37 +1,28 @@
-import useStore from "../utils/store";
-import { PlusIcon } from "@heroicons/react/outline";
-import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
-import { mutate } from "swr";
-import { useState } from "react";
-import { useRouter } from "next/router";
-import { GetStagesInOpeningURL } from "../adapters/Stages";
-import { useEffect } from "react";
-import useOpeningInfo from "../SWR/useOpeningInfo";
-import useAllStagesInOpening from "../SWR/useAllStagesInOpening";
-import useStageInfo from "../SWR/useStageInfo";
-import { UpdateOpening, GetOpeningInfoURL } from "../adapters/Openings";
-import { CUSTOM_QUERY } from "../types/main";
-import StageCard from "./Stages/StageCard";
-import CreateStageModal from "./Stages/CreateStageModal";
+import { PlusIcon } from '@heroicons/react/outline';
+import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
+import { mutate } from 'swr';
+import { useState, useEffect } from 'react';
+import { useRouter } from 'next/router';
+import { GetStagesInOpeningURL } from '../adapters/Stages';
+import useStore from '../utils/store';
+import useOpeningInfo from '../SWR/useOpeningInfo';
+import useAllStagesInOpening from '../SWR/useAllStagesInOpening';
+import useStageInfo from '../SWR/useStageInfo';
+import { UpdateOpening, GetOpeningInfoURL } from '../adapters/Openings';
+import { CustomQuery } from '../types/main';
+import StageCard from './Stages/StageCard';
+import CreateStageModal from './Stages/CreateStageModal';
 
 export default function StageReorderColumn() {
   const openCreateStageModal = useStore((state) => state.openCreateStageModal);
 
   const router = useRouter();
-  const { openingId, stageId } = router.query as Pick<
-    CUSTOM_QUERY,
-    "openingId" | "stageId"
-  >;
+  const { openingId, stageId } = router.query as Pick<CustomQuery, 'openingId' | 'stageId'>;
 
-  let { opening, isOpeningLoading, isOpeningError } = useOpeningInfo(openingId);
+  const { opening, isOpeningLoading, isOpeningError } = useOpeningInfo(openingId);
 
-  let { stages, isStagesLoading, isStagesError } = useAllStagesInOpening(
-    opening?.openingId
-  );
-  const { stage, isStageLoading, isStageError } = useStageInfo(
-    openingId,
-    stageId
-  );
+  const { stages, isStagesLoading, isStagesError } = useAllStagesInOpening(opening?.openingId);
+  const { stage, isStageLoading, isStageError } = useStageInfo(openingId, stageId);
 
   const [newStages, setNewStages] = useState(stages);
   useEffect(() => {
@@ -45,19 +36,14 @@ export default function StageReorderColumn() {
       return;
     }
     // If dropped in the same place
-    if (
-      destination.droppableId === source.droppableId &&
-      destination.index === source.index
-    ) {
+    if (destination.droppableId === source.droppableId && destination.index === source.index) {
       return;
     }
 
-    let newStageOrder: string[] = Array.from(opening.stageOrder);
+    const newStageOrder: string[] = Array.from(opening.stageOrder);
     newStageOrder.splice(source.index, 1);
     newStageOrder.splice(destination.index, 0, draggableId);
-    let newOrder = newStageOrder.map((i) =>
-      stages.find((j) => j.stageId === i)
-    );
+    const newOrder = newStageOrder.map((i) => stages.find((j) => j.stageId === i));
 
     setNewStages(newOrder);
 
@@ -81,7 +67,7 @@ export default function StageReorderColumn() {
   };
 
   return (
-    <div className="h-full relative" style={{ minHeight: "12rem" }}>
+    <div className="h-full relative" style={{ minHeight: '12rem' }}>
       <CreateStageModal />
       <div className=" inset-0  border-gray-200 rounded-lg  ">
         <div className="flex flex-col justify-center items-center space-y-4 ">
@@ -95,44 +81,39 @@ export default function StageReorderColumn() {
           </button>
         </div>
         <h1 className="text-center text-xl font-semibold my-4">
-          {opening?.totalStages === 0 ? "No stages found" : "Stage Order"}
+          {opening?.totalStages === 0 ? 'No stages found' : 'Stage Order'}
         </h1>
 
         {opening?.totalStages > 0 && (
-          <DragDropContext
-            onDragEnd={handleDragEnd}
-            onDragStart={() => console.log("Start")}
-          >
+          <DragDropContext onDragEnd={handleDragEnd} onDragStart={() => console.log('Start')}>
             <Droppable droppableId={opening.openingId}>
               {(provided) => (
                 <div {...provided.droppableProps} ref={provided.innerRef}>
-                  {newStages?.map((stage, index) => {
-                    return (
-                      <Draggable
-                        key={stage.stageId}
-                        draggableId={stage.stageId}
-                        index={index}
-                        {...provided.droppableProps}
-                      >
-                        {(provided) => (
-                          <div
-                            {...provided.draggableProps}
-                            {...provided.dragHandleProps}
-                            ref={provided.innerRef}
-                          >
-                            <StageCard
-                              key={stage.stageId}
-                              totalApplicants={stage.totalApplicants}
-                              name={`${stage.GSI1SK}`}
-                              stageId={stage.stageId}
-                              linkHref={`/openings/${openingId}/stages/${stage.stageId}/settings`}
-                              draggable={true}
-                            />
-                          </div>
-                        )}
-                      </Draggable>
-                    );
-                  })}
+                  {newStages?.map((stage, index) => (
+                    <Draggable
+                      key={stage.stageId}
+                      draggableId={stage.stageId}
+                      index={index}
+                      {...provided.droppableProps}
+                    >
+                      {(provided) => (
+                        <div
+                          {...provided.draggableProps}
+                          {...provided.dragHandleProps}
+                          ref={provided.innerRef}
+                        >
+                          <StageCard
+                            key={stage.stageId}
+                            totalApplicants={stage.totalApplicants}
+                            name={`${stage.GSI1SK}`}
+                            stageId={stage.stageId}
+                            linkHref={`/openings/${openingId}/stages/${stage.stageId}/settings`}
+                            draggable
+                          />
+                        </div>
+                      )}
+                    </Draggable>
+                  ))}
                   {provided.placeholder}
                 </div>
               )}

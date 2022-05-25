@@ -1,19 +1,16 @@
-import { useRouter } from "next/router";
-import { CUSTOM_QUERY } from "../../types/main";
-import { Draggable } from "react-beautiful-dnd";
-import { DynamoQuestion } from "../../types/dynamo";
-import * as Questions from "../../adapters/Questions";
-import { mutate } from "swr";
-import combineClassNames from "../../utils/combineClassNames";
-import * as Stages from "../../adapters/Stages";
+import { useRouter } from 'next/router';
+import { CustomQuery } from '../../types/main';
+import { Draggable } from 'react-beautiful-dnd';
+import { DynamoQuestion } from '../../types/dynamo';
+import * as Questions from '../../adapters/Questions';
+import { mutate } from 'swr';
+import combineClassNames from '../../utils/combineClassNames';
+import * as Stages from '../../adapters/Stages';
 
 export default function DraggableQuestionItem({ question, index, provided }) {
   const router = useRouter();
 
-  const { openingId, stageId } = router.query as Pick<
-    CUSTOM_QUERY,
-    "openingId" | "stageId"
-  >;
+  const { openingId, stageId } = router.query as Pick<CustomQuery, 'openingId' | 'stageId'>;
 
   const handleRemove = async (question: DynamoQuestion) => {
     try {
@@ -33,7 +30,7 @@ export default function DraggableQuestionItem({ question, index, provided }) {
       Stages.GetStageInfoURL({
         openingId,
         stageId,
-      })
+      }),
     );
 
     // Refresh the questions in the stage
@@ -41,7 +38,7 @@ export default function DraggableQuestionItem({ question, index, provided }) {
       Questions.GetQuestionsInStageURL({
         openingId,
         stageId,
-      })
+      }),
     );
   };
 
@@ -53,17 +50,13 @@ export default function DraggableQuestionItem({ question, index, provided }) {
       {...provided.droppableProps}
     >
       {(provided) => (
-        <ol
-          {...provided.draggableProps}
-          {...provided.dragHandleProps}
-          ref={provided.innerRef}
-        >
+        <ol {...provided.draggableProps} {...provided.dragHandleProps} ref={provided.innerRef}>
           <li
             key={question.questionId}
             className="my-2 active:border-blue-500 hover:border-blue-500 flex border justify-between items-center bg-white  overflow-hidden p-4 sm:px-6 sm:rounded-md shadow-md hover:shadow-lg transition ease-in-out duration-300"
           >
             <div>
-              {" "}
+              {' '}
               <p>
                 {index + 1}. {question.GSI1SK}
               </p>

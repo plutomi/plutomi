@@ -1,15 +1,12 @@
-import {
-  TransactWriteCommandInput,
-  TransactWriteCommand,
-} from "@aws-sdk/lib-dynamodb";
-import { Dynamo } from "../../awsClients/ddbDocClient";
-import { ENTITY_TYPES, DEFAULTS, DYNAMO_TABLE_NAME } from "../../Config";
-import { SdkError } from "@aws-sdk/types";
-import { LeaveAndDeleteOrgInput } from "../../types/main";
+import { TransactWriteCommandInput, TransactWriteCommand } from '@aws-sdk/lib-dynamodb';
+import { SdkError } from '@aws-sdk/types';
+import { Dynamo } from '../../awsClients/ddbDocClient';
+import { ENTITY_TYPES, DEFAULTS, DYNAMO_TABLE_NAME } from '../../Config';
+import { LeaveAndDeleteOrgInput } from '../../types/main';
 
 export default async function Create(
-  props: LeaveAndDeleteOrgInput
-): Promise<[null, SdkError]> {
+  props: LeaveAndDeleteOrgInput,
+): Promise<[null, null] | [null, SdkError]> {
   const { orgId, userId } = props;
 
   try {
@@ -23,14 +20,13 @@ export default async function Create(
               SK: ENTITY_TYPES.USER,
             },
             TableName: `${process.env.NODE_ENV}-${DYNAMO_TABLE_NAME}`,
-            UpdateExpression:
-              "SET orgId = :orgId, orgJoinDate = :orgJoinDate, GSI1PK = :GSI1PK",
+            UpdateExpression: 'SET orgId = :orgId, orgJoinDate = :orgJoinDate, GSI1PK = :GSI1PK',
             ExpressionAttributeValues: {
-              ":orgId": DEFAULTS.NO_ORG,
-              ":orgJoinDate": DEFAULTS.NO_ORG,
-              ":GSI1PK": DEFAULTS.NO_ORG,
+              ':orgId': DEFAULTS.NO_ORG,
+              ':orgJoinDate': DEFAULTS.NO_ORG,
+              ':GSI1PK': DEFAULTS.NO_ORG,
             },
-            ConditionExpression: "attribute_exists(PK)",
+            ConditionExpression: 'attribute_exists(PK)',
           },
         },
         {
@@ -41,7 +37,7 @@ export default async function Create(
               SK: ENTITY_TYPES.ORG,
             },
             TableName: `${process.env.NODE_ENV}-${DYNAMO_TABLE_NAME}`,
-            ConditionExpression: "attribute_exists(PK)",
+            ConditionExpression: 'attribute_exists(PK)',
           },
         },
       ],

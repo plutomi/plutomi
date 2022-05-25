@@ -1,23 +1,13 @@
-import { useState } from "react";
-import { PencilAltIcon } from "@heroicons/react/outline";
-import { TrashIcon } from "@heroicons/react/outline";
-import {
-  DeleteQuestionFromOrg,
-  GetQuestionsInOrgURL,
-} from "../../adapters/Questions";
-import useStore from "../../utils/store";
-import { mutate } from "swr";
-import { DynamoQuestion } from "../../types/dynamo";
+import { useState } from 'react';
+import { PencilAltIcon, TrashIcon } from '@heroicons/react/outline';
+import { mutate } from 'swr';
+import { DeleteQuestionFromOrg, GetQuestionsInOrgURL } from '../../adapters/Questions';
+import useStore from '../../utils/store';
+import { DynamoQuestion } from '../../types/dynamo';
 
-export default function QuestionItem({
-  question,
-}: {
-  question: DynamoQuestion;
-}) {
+export default function QuestionItem({ question }: { question: DynamoQuestion }) {
   const setCurrentQuestion = useStore((state) => state.setCurrentQuestion);
-  const openUpdateQuestionModal = useStore(
-    (state) => state.openUpdateQuestionModal
-  );
+  const openUpdateQuestionModal = useStore((state) => state.openUpdateQuestionModal);
 
   const handleEdit = () => {
     setCurrentQuestion(question);
@@ -32,6 +22,8 @@ export default function QuestionItem({
     if (question.totalStages > 0) {
       deleteMessage += `\n\n\nNOTE: This question is being used in ${question.totalStages} stages and those stages will be updated.`;
     }
+
+    // eslint-disable-next-line no-restricted-globals
     if (!confirm(deleteMessage)) {
       return;
     }
@@ -58,15 +50,13 @@ export default function QuestionItem({
           {question?.GSI1SK}
         </h3>
         {question?.description && (
-          <p className="text-md text-light line-clamp-2 mt-1">
-            {question?.description}
-          </p>
+          <p className="text-md text-light line-clamp-2 mt-1">{question?.description}</p>
         )}
 
         <p className="text-md text-red-300 line-clamp-2 mt-1">
           ID: {question?.questionId}
           <span className="text-light">
-            {" "}
+            {' '}
             - used in <strong> {question?.totalStages} </strong>
             stages
           </span>
@@ -74,12 +64,14 @@ export default function QuestionItem({
       </div>
       <div className="flex justify-center items-center ">
         <button
+          type="button"
           onClick={handleEdit}
           className="rounded-full hover:bg-white text-blue-500 transition ease-in-out duration-200 px-3 py-3 text-md"
         >
           <PencilAltIcon className="w-6 h-6" />
         </button>
         <button
+          type="submit"
           onClick={() => handleDelete(question)}
           className="rounded-full hover:bg-white text-red-500 transition ease-in-out duration-200 px-3 py-3 text-md"
         >

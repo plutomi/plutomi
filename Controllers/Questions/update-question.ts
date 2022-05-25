@@ -1,12 +1,12 @@
-import { Request, Response } from "express";
-import Joi from "joi";
-import * as CreateError from "../../utils/createError";
-import * as Questions from "../../models/Questions";
-import { JOI_GLOBAL_FORBIDDEN, JOI_SETTINGS, LIMITS } from "../../Config";
-import { DynamoQuestion } from "../../types/dynamo";
+import { Request, Response } from 'express';
+import Joi from 'joi';
+import * as CreateError from '../../utils/createError';
+import * as Questions from '../../models/Questions';
+import { JOI_GLOBAL_FORBIDDEN, JOI_SETTINGS, LIMITS } from '../../Config';
+import { DynamoQuestion } from '../../types/dynamo';
 
 export interface APIUpdateQuestionOptions
-  extends Partial<Pick<DynamoQuestion, "GSI1SK" | "description">> {
+  extends Partial<Pick<DynamoQuestion, 'GSI1SK' | 'description'>> {
   [key: string]: any;
 }
 
@@ -15,10 +15,7 @@ const JOI_FORBIDDEN_OPENING = Joi.object({
   questionId: Joi.any().forbidden(),
   GSI1PK: Joi.any().forbidden(),
   GSI1SK: Joi.string().optional().max(LIMITS.MAX_QUESTION_TITLE_LENGTH),
-  description: Joi.string()
-    .allow("")
-    .max(LIMITS.MAX_QUESTION_DESCRIPTION_LENGTH)
-    .optional(),
+  description: Joi.string().allow('').max(LIMITS.MAX_QUESTION_DESCRIPTION_LENGTH).optional(),
 });
 
 const schema = Joi.object({
@@ -45,13 +42,13 @@ const main = async (req: Request, res: Response) => {
   if (questionError) {
     const { status, body } = CreateError.SDK(
       questionError,
-      "An error ocurred updating this question"
+      'An error ocurred updating this question',
     );
     return res.status(status).json(body);
   }
 
   return res.status(200).json({
-    message: "Question updated!",
+    message: 'Question updated!',
   });
 };
 

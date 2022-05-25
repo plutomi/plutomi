@@ -1,41 +1,41 @@
-import Link from "next/dist/client/link";
-import { ArrowLeftIcon } from "@heroicons/react/outline";
+import Link from 'next/dist/client/link';
+import { ArrowLeftIcon } from '@heroicons/react/outline';
 
 const products = [
   {
     id: 1,
-    name: "awsbits.com",
-    category: "Host: AWS (Route53)",
-    href: "https://buy.stripe.com/6oE7ti9eG59mdHibIJ",
-    price: "$39",
+    name: 'awsbits.com',
+    category: 'Host: AWS (Route53)',
+    href: 'https://buy.stripe.com/6oE7ti9eG59mdHibIJ',
+    price: '$39',
   },
   {
     id: 2,
-    name: "creditcardhoroscope.com",
-    category: "Host: AWS (Route53)",
-    href: "https://buy.stripe.com/aEU7tiduW8lyeLm9AC",
-    price: "$20",
+    name: 'creditcardhoroscope.com',
+    category: 'Host: AWS (Route53)',
+    href: 'https://buy.stripe.com/aEU7tiduW8lyeLm9AC',
+    price: '$20',
   },
   {
     id: 3,
-    name: "gelgy.com",
-    category: "Host: AWS (Route53)",
-    href: "https://buy.stripe.com/00g00QcqS59mgTu28b",
-    price: "$49",
+    name: 'gelgy.com',
+    category: 'Host: AWS (Route53)',
+    href: 'https://buy.stripe.com/00g00QcqS59mgTu28b',
+    price: '$49',
   },
   {
     id: 4,
-    name: "kajua.com",
-    category: "Host: AWS (Route53)",
-    href: "https://buy.stripe.com/28o7ti76ydFSav66os",
-    price: "$49",
+    name: 'kajua.com',
+    category: 'Host: AWS (Route53)',
+    href: 'https://buy.stripe.com/28o7ti76ydFSav66os',
+    price: '$49',
   },
   {
     id: 5,
-    name: "serverlessasaservice.com",
-    category: "Host: Google Domains",
-    href: "https://buy.stripe.com/7sI7ti8aC8lyeLm5kp",
-    price: "$29",
+    name: 'serverlessasaservice.com',
+    category: 'Host: Google Domains',
+    href: 'https://buy.stripe.com/7sI7ti8aC8lyeLm5kp',
+    price: '$29',
   },
 ];
 
@@ -49,16 +49,13 @@ export default function Domains() {
             className="my-10 inline-flex items-center px-4 py-2  border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500"
           >
             <ArrowLeftIcon className="-ml-1 mr-2 h-5 w-5" aria-hidden="true" />
-            Go back home{" "}
+            Go back home{' '}
           </button>
         </Link>
-        <h2 className="text-lg font-medium text-dark block">
-          Domains for sale by Plutomi Inc.
-        </h2>
+        <h2 className="text-lg font-medium text-dark block">Domains for sale by Plutomi Inc.</h2>
         <p className="text-md font-normal text-normal">
-          We will reach out immediately after purchase to confirm the details on
-          where you&apos;d like your domain to be transferred to. (Google
-          Domains, GoDaddy, Route53, etc.)
+          We will reach out immediately after purchase to confirm the details on where you&apos;d
+          like your domain to be transferred to. (Google Domains, GoDaddy, Route53, etc.)
         </p>
         <div className="mt-6 grid grid-cols-1 gap-x-8 gap-y-8 sm:grid-cols-2 sm:gap-y-10 lg:grid-cols-4">
           {products.map((product) => (

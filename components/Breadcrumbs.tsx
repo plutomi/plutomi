@@ -1,5 +1,6 @@
-import { HomeIcon } from "@heroicons/react/solid";
-import Link from "next/dist/client/link";
+import { HomeIcon } from '@heroicons/react/solid';
+import Link from 'next/dist/client/link';
+
 export default function Breadcrumbs({ crumbs }) {
   return (
     <nav className="flex" aria-label="Breadcrumb">
@@ -8,10 +9,7 @@ export default function Breadcrumbs({ crumbs }) {
           <div>
             <Link href="/dashboard">
               <a className="text-light hover:text-normal transition ease-in-out duration-200">
-                <HomeIcon
-                  className="flex-shrink-0 h-5 w-5"
-                  aria-hidden="true"
-                />
+                <HomeIcon className="flex-shrink-0 h-5 w-5" aria-hidden="true" />
                 <span className="sr-only">Home</span>
               </a>
             </Link>
@@ -32,7 +30,7 @@ export default function Breadcrumbs({ crumbs }) {
               <Link href={crumb.href}>
                 <a
                   className={`ml-4 text-md  text-normal hover:text-dark transition ease-in-out duration-200 ${
-                    crumb.current ? "font-semibold" : "font-normal"
+                    crumb.current ? 'font-semibold' : 'font-normal'
                   }`}
                 >
                   {crumb.name}

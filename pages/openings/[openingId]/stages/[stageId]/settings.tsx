@@ -1,41 +1,28 @@
-import { mutate } from "swr";
-import useOpeningInfo from "../../../../../SWR/useOpeningInfo";
-import { useRouter } from "next/router";
-import StageSettingsHeader from "../../../../../components/Stages/StageSettingsHeader";
-import StageSettingsContent from "../../../../../components/Stages/StagesSettingsContent";
-import NewPage from "../../../../../components/Templates/NewPage";
-import useStageInfo from "../../../../../SWR/useStageInfo";
-import { CUSTOM_QUERY } from "../../../../../types/main";
-import { GetOpeningInfoURL } from "../../../../../adapters/Openings";
-import {
-  GetStagesInOpeningURL,
-  DeleteStage,
-} from "../../../../../adapters/Stages";
-import { WEBSITE_URL } from "../../../../../Config";
+import { mutate } from 'swr';
+import { useRouter } from 'next/router';
+import useOpeningInfo from '../../../../../SWR/useOpeningInfo';
+import StageSettingsHeader from '../../../../../components/Stages/StageSettingsHeader';
+import StageSettingsContent from '../../../../../components/Stages/StagesSettingsContent';
+import NewPage from '../../../../../components/Templates/NewPage';
+import useStageInfo from '../../../../../SWR/useStageInfo';
+import { CustomQuery } from '../../../../../types/main';
+import { GetOpeningInfoURL } from '../../../../../adapters/Openings';
+import { GetStagesInOpeningURL, DeleteStage } from '../../../../../adapters/Stages';
+import { WEBSITE_URL } from '../../../../../Config';
 
 export default function StageSettings() {
   const router = useRouter();
-  const { openingId, stageId } = router.query as Pick<
-    CUSTOM_QUERY,
-    "openingId" | "stageId"
-  >;
-  let { opening, isOpeningLoading, isOpeningError } = useOpeningInfo(openingId);
-  let { stage, isStageLoading, isStageError } = useStageInfo(
-    openingId,
-    stageId
-  );
+  const { openingId, stageId } = router.query as Pick<CustomQuery, 'openingId' | 'stageId'>;
+  const { opening, isOpeningLoading, isOpeningError } = useOpeningInfo(openingId);
+  const { stage, isStageLoading, isStageError } = useStageInfo(openingId, stageId);
 
   // Update this to use the new update syntax with diff
   const deleteStage = async () => {
-    if (
-      !confirm(
-        "Are you sure you want to delete this stage? This action cannot be reversed!"
-      )
-    ) {
+    if (!confirm('Are you sure you want to delete this stage? This action cannot be reversed!')) {
       return;
     }
 
-    if (!confirm("Are you sure?")) {
+    if (!confirm('Are you sure?')) {
       return;
     }
     try {
@@ -57,11 +44,11 @@ export default function StageSettings() {
 
   return (
     <NewPage
-      loggedOutPageText={"Log in to view your stage settings"}
-      currentNavbarItem={"Openings"}
+      loggedOutPageText="Log in to view your stage settings"
+      currentNavbarItem="Openings"
       headerText={
         isStageLoading
-          ? "Loading settings..."
+          ? 'Loading settings...'
           : `${opening?.openingName} > ${stage?.GSI1SK} - Settings`
       }
     >

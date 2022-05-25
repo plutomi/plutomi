@@ -1,26 +1,22 @@
-import useSelf from "../../SWR/useSelf";
-import useOrgUsers from "../../SWR/useOrgUsers";
-import UserCard from "./UserCard";
-import Loader from "../Loader";
-import { PlusIcon } from "@heroicons/react/outline";
-import useStore from "../../utils/store";
-import CreateInviteModal from "../CreateInviteModal";
-import EmptyTeamState from "./EmptyTeamState";
-import usePendingOrgInvites from "../../SWR/usePendingOrgInvites";
-import { DynamoOrgInvite } from "../../types/dynamo";
-import PendingInviteCard from "./PendingInviteCard";
+import { PlusIcon } from '@heroicons/react/outline';
+import useSelf from '../../SWR/useSelf';
+import useOrgUsers from '../../SWR/useOrgUsers';
+import UserCard from './UserCard';
+import Loader from '../Loader';
+import useStore from '../../utils/store';
+import CreateInviteModal from '../CreateInviteModal';
+import EmptyTeamState from './EmptyTeamState';
+import usePendingOrgInvites from '../../SWR/usePendingOrgInvites';
+import { DynamoOrgInvite } from '../../types/dynamo';
+import PendingInviteCard from './PendingInviteCard';
+
 export default function TeamContent() {
   // TODO clean up the pending invites section up
   const { user, isUserLoading, isUserError } = useSelf();
-  const { orgUsers, isOrgUsersLoading, isOrgUsersError } = useOrgUsers(
-    user?.orgId
-  );
+  const { orgUsers, isOrgUsersLoading, isOrgUsersError } = useOrgUsers(user?.orgId);
 
-  const {
-    pendingOrgInvites,
-    isPendingOrgInvitesLoading,
-    isPendingOrgInvitesError,
-  } = usePendingOrgInvites(user?.orgId);
+  const { pendingOrgInvites, isPendingOrgInvitesLoading, isPendingOrgInvitesError } =
+    usePendingOrgInvites(user?.orgId);
   const openInviteModal = useStore((state) => state.openInviteModal);
   if (isOrgUsersLoading) {
     return <Loader text="Loading team..." />;
@@ -57,18 +53,13 @@ export default function TeamContent() {
           {pendingOrgInvites?.length > 0 && (
             <div className=" mt-8 ">
               <div className="relative">
-                <div
-                  className="absolute inset-0 flex items-center"
-                  aria-hidden="true"
-                >
+                <div className="absolute inset-0 flex items-center" aria-hidden="true">
                   <div className="w-full border-t border-gray-300" />
                 </div>
                 <div className="relative flex justify-center">
-                  <span className="px-3 bg-white text-lg font-medium text-gray-900">
-                    Team
-                  </span>
+                  <span className="px-3 bg-white text-lg font-medium text-gray-900">Team</span>
                 </div>
-              </div>{" "}
+              </div>{' '}
             </div>
           )}
 
@@ -83,10 +74,7 @@ export default function TeamContent() {
           {pendingOrgInvites?.length > 0 && (
             <div className=" mt-8 ">
               <div className="relative">
-                <div
-                  className="absolute inset-0 flex items-center"
-                  aria-hidden="true"
-                >
+                <div className="absolute inset-0 flex items-center" aria-hidden="true">
                   <div className="w-full border-t border-gray-300" />
                 </div>
                 <div className="relative flex justify-center">
@@ -94,10 +82,9 @@ export default function TeamContent() {
                     Pending Invites
                   </span>
                 </div>
-              </div>{" "}
+              </div>
             </div>
           )}
-
           {pendingInvites}
         </div>
       )}

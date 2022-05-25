@@ -1,6 +1,7 @@
 // This file is for the actual DynamoDB entries and their Types - ie: A full object with all properties.
 // All  other types are derivatives with Pick, Omit, etc.
-import { DEFAULTS, ENTITY_TYPES, OPENING_STATE } from "../Config";
+import { DEFAULTS, ENTITY_TYPES, OPENING_STATE } from '../Config';
+
 interface DynamoStage {
   /**
    * Primary key for creating a stage - takes `orgId`, `openingId`, & `stageId`
@@ -306,12 +307,9 @@ interface DynamoOrgInvite {
   /**
    * Who created this invite, info comes from their session
    */
-  createdBy: Pick<DynamoUser, "firstName" | "lastName" | "orgId">;
+  createdBy: Pick<DynamoUser, 'firstName' | 'lastName' | 'orgId'>;
 
-  recipient: Pick<
-    DynamoUser,
-    "userId" | "email" | "unsubscribeKey" | "firstName" | "lastName"
-  >;
+  recipient: Pick<DynamoUser, 'userId' | 'email' | 'unsubscribeKey' | 'firstName' | 'lastName'>;
   /**
    * The entity type, see {@link ENTITY_TYPES.ORG_INVITE}
    */

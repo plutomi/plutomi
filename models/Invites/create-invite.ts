@@ -1,30 +1,20 @@
-import { PutCommandInput, PutCommand } from "@aws-sdk/lib-dynamodb";
-import { nanoid } from "nanoid";
-import { Dynamo } from "../../awsClients/ddbDocClient";
-import {
-  ID_LENGTHS,
-  ENTITY_TYPES,
-  TIME_UNITS,
-  DEFAULTS,
-  DYNAMO_TABLE_NAME,
-} from "../../Config";
-import { DynamoOrgInvite } from "../../types/dynamo";
-import { CreateOrgInviteInput } from "../../types/main";
-import * as Time from "../../utils/time";
-import { SdkError } from "@aws-sdk/types";
+import { nanoid } from 'nanoid';
+import { SdkError } from '@aws-sdk/types';
+import { TransactWriteCommandInput, TransactWriteCommand } from '@aws-sdk/lib-dynamodb';
+import { Dynamo } from '../../awsClients/ddbDocClient';
+import { ID_LENGTHS, ENTITY_TYPES, DYNAMO_TABLE_NAME } from '../../Config';
+import { DynamoOrgInvite } from '../../types/dynamo';
+import { CreateOrgInviteInput } from '../../types/main';
+import * as Time from '../../utils/time';
 
-import {
-  TransactWriteCommandInput,
-  TransactWriteCommand,
-} from "@aws-sdk/lib-dynamodb";
 /**
  * Invites a user to join your org
  * @param props {@link CreateOrgInviteInput}
  * @returns
  */
 export default async function Create(
-  props: CreateOrgInviteInput
-): Promise<[null, SdkError]> {
+  props: CreateOrgInviteInput,
+): Promise<[null, null] | [null, SdkError]> {
   const { expiresAt, createdBy, recipient, orgName } = props;
   try {
     const inviteId = nanoid(ID_LENGTHS.ORG_INVITE);
@@ -51,7 +41,7 @@ export default async function Create(
           Put: {
             Item: newOrgInvite,
             TableName: `${process.env.NODE_ENV}-${DYNAMO_TABLE_NAME}`,
-            ConditionExpression: "attribute_not_exists(PK)",
+            ConditionExpression: 'attribute_not_exists(PK)',
           },
         },
 
@@ -64,13 +54,12 @@ export default async function Create(
             },
             TableName: `${process.env.NODE_ENV}-${DYNAMO_TABLE_NAME}`,
 
-            UpdateExpression:
-              "SET totalInvites = if_not_exists(totalInvites, :zero) + :value",
+            UpdateExpression: 'SET totalInvites = if_not_exists(totalInvites, :zero) + :value',
             ExpressionAttributeValues: {
-              ":zero": 0,
-              ":value": 1,
+              ':zero': 0,
+              ':value': 1,
             },
-            ConditionExpression: "attribute_exists(PK)",
+            ConditionExpression: 'attribute_exists(PK)',
           },
         },
       ],

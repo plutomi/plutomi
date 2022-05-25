@@ -1,13 +1,12 @@
-import { AXIOS_INSTANCE as axios } from "../Config";
-import { APICreateApplicantOptions } from "../Controllers/Applicants/create-applicant";
+import { AXIOS_INSTANCE as axios } from '../Config';
+import { APICreateApplicantOptions } from '../Controllers/Applicants/create-applicant';
 
 const CreateApplicant = async (options: APICreateApplicantOptions) => {
   const data = await axios.post(`/applicants`, { ...options });
   return data;
 };
 
-const GetApplicantByIdURL = (applicantId: string) =>
-  `/applicants/${applicantId}`;
+const GetApplicantByIdURL = (applicantId: string) => `/applicants/${applicantId}`;
 
 const GetApplicantById = async (applicantId: string) => {
   const data = await axios.get(GetApplicantByIdURL(applicantId));
@@ -19,15 +18,14 @@ const DeleteApplicant = async (applicantId: string) => {
   return data;
 };
 
-// TODo types - not implemented yet in v2
+// TODO types - not implemented yet in v2
 const UpdateApplicant = async (applicantId, newValues) => {
   const data = await axios.put(GetApplicantByIdURL(applicantId), newValues);
   return data;
 };
 
 // TODO rework this one
-const AnswerQuestionsURL = (applicantId: string) =>
-  `/applicants/${applicantId}/answer`; // TODO applicantId is being used in query as well as body. TODO maybe add unique question ids?
+const AnswerQuestionsURL = (applicantId: string) => `/applicants/${applicantId}/answer`; // TODO applicantId is being used in query as well as body. TODO maybe add unique question ids?
 const AnswerQuestions = async (applicantId, responses) => {
   const data = await axios.post(AnswerQuestionsURL(applicantId), {
     applicantId,

@@ -1,4 +1,4 @@
-import { AXIOS_INSTANCE as axios } from "../Config";
+import { AXIOS_INSTANCE as axios } from '../Config';
 
 const GetPublicOrgInfoURL = (orgId: string) => `/public/orgs/${orgId}`;
 
@@ -7,8 +7,7 @@ const GetPublicOrgInfo = async (orgId: string) => {
   return data;
 };
 
-const GetPublicOpeningsURL = (orgId: string) =>
-  `/public/orgs/${orgId}/openings`;
+const GetPublicOpeningsURL = (orgId: string) => `/public/orgs/${orgId}/openings`;
 
 const GetPublicOpenings = async (orgId: string) => {
   const data = await axios.get(GetPublicOpeningsURL(orgId));
@@ -41,9 +40,7 @@ const GetPublicStageInfo = async (options: GetPublicStageInfoInput) => {
 };
 
 // TODO remove this once applicant login portal is in
-const GetPublicApplicantInfoURL = (applicantId: string) => {
-  return `/applicants/${applicantId}`;
-};
+const GetPublicApplicantInfoURL = (applicantId: string) => `/applicants/${applicantId}`;
 const GetPublicApplicantInfo = async (applicantId: string) => {
   const data = await axios.get(GetPublicApplicantInfoURL(applicantId));
   return data;

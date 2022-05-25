@@ -1,15 +1,15 @@
-import { FormEvent, Fragment, useState } from "react";
-import { Dialog, Transition } from "@headlessui/react";
-import { XIcon } from "@heroicons/react/outline";
-import useStore from "../../utils/store";
-import { CreateOrg } from "../../adapters/Orgs";
-const UrlSafeString = require("url-safe-string"),
-  tagGenerator = new UrlSafeString();
-import { mutate } from "swr";
-import { GetSelfInfoURL } from "../../adapters/Users";
+import { FormEvent, Fragment, useState } from 'react';
+import { Dialog, Transition } from '@headlessui/react';
+import { XIcon } from '@heroicons/react/outline';
+import { mutate } from 'swr';
+import useStore from '../../utils/store';
+import { CreateOrg } from '../../adapters/Orgs';
+import { GetSelfInfoURL } from '../../adapters/Users';
+import TagGenerator from '../../utils/tagGenerator';
+
 export default function CreateOrgModal() {
-  const [displayName, setDisplayName] = useState("");
-  const [orgId, setOrgId] = useState("");
+  const [displayName, setDisplayName] = useState('');
+  const [orgId, setOrgId] = useState('');
 
   const closeCreateOrgModal = useStore((state) => state.closeCreateOrgModal);
   const visibility = useStore((state) => state.showCreateOrgModal);
@@ -22,9 +22,9 @@ export default function CreateOrgModal() {
     });
     if (
       !confirm(
-        `Your org id will be '${tagGenerator.generate(
-          orgId
-        )}', this CANNOT be changed. Do you want to continue?`
+        `Your org id will be '${TagGenerator({
+          value: orgId,
+        })}', this CANNOT be changed. Do you want to continue?`,
       )
     ) {
       return;
@@ -47,11 +47,7 @@ export default function CreateOrgModal() {
   };
   return (
     <Transition.Root show={visibility || false} as={Fragment}>
-      <Dialog
-        as="div"
-        className="fixed inset-0 overflow-hidden "
-        onClose={closeCreateOrgModal}
-      >
+      <Dialog as="div" className="fixed inset-0 overflow-hidden " onClose={closeCreateOrgModal}>
         <div className="absolute inset-0 overflow-hidden">
           <Transition.Child
             as={Fragment}
@@ -99,8 +95,8 @@ export default function CreateOrgModal() {
                       </div>
                       <div className="mt-1">
                         <p className="text-sm text-blue-300">
-                          Get started by creating an organization which will
-                          contain your openings and users
+                          Get started by creating an organization which will contain your openings
+                          and users
                         </p>
                       </div>
                     </div>
@@ -128,10 +124,7 @@ export default function CreateOrgModal() {
                             </div>
                           </div>
                           <div>
-                            <label
-                              htmlFor="org-id"
-                              className="block text-sm font-medium text-dark"
-                            >
+                            <label htmlFor="org-id" className="block text-sm font-medium text-dark">
                               Custom ID
                             </label>
                             <div className="mt-1 flex rounded-md shadow-sm">
@@ -144,11 +137,7 @@ export default function CreateOrgModal() {
                                 id="org-id"
                                 required
                                 maxLength={30}
-                                onChange={(e) =>
-                                  setOrgId(
-                                    tagGenerator.generate(e.target.value)
-                                  )
-                                }
+                                onChange={(e) => setOrgId(TagGenerator({ value: e.target.value }))}
                                 value={orgId}
                                 className="flex-1 min-w-0 block w-full px-3 py-2 rounded-none rounded-r-md focus:ring-blue-500 focus:border-blue-500 sm:text-sm border-gray-300"
                                 placeholder="Use only a-z, 0-9, and dash '-'"
@@ -156,15 +145,13 @@ export default function CreateOrgModal() {
                             </div>
                             {orgId && (
                               <p className="mt-2 text-blue-gray-500 text-md">
-                                Your ID will be:{" "}
-                                <span className="font-bold text-dark">
-                                  {orgId}
-                                </span>
+                                Your ID will be:{' '}
+                                <span className="font-bold text-dark">{orgId}</span>
                               </p>
                             )}
                             <p className="text-red-400 mt-2 text-md">
-                              Your ID <span className="font-bold">cannot</span>{" "}
-                              be changed, please choose carefully.
+                              Your ID <span className="font-bold">cannot</span> be changed, please
+                              choose carefully.
                             </p>
                           </div>
                         </div>

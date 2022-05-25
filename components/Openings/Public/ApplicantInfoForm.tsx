@@ -1,25 +1,21 @@
-import { FormEvent, useState } from "react";
-import { Switch } from "@headlessui/react";
-import { CreateApplicant } from "../../../adapters/Applicants";
+import { FormEvent, useState } from 'react';
+import { Switch } from '@headlessui/react';
+import { useRouter } from 'next/router';
+import { CreateApplicant } from '../../../adapters/Applicants';
+import combineClassNames from '../../../utils/combineClassNames';
 
-function classNames(...classes) {
-  return classes.filter(Boolean).join(" ");
-}
-import { useRouter } from "next/router";
-import { CUSTOM_QUERY } from "../../../types/main";
+import { CustomQuery } from '../../../types/main';
+
 export default function ApplicantInfoForm() {
   const router = useRouter();
-  const { orgId, openingId } = router.query as Pick<
-    CUSTOM_QUERY,
-    "openingId" | "orgId"
-  >;
+  const { orgId, openingId } = router.query as Pick<CustomQuery, 'openingId' | 'orgId'>;
   const [agreed, setAgreed] = useState(false);
-  const [firstName, setFirstName] = useState("");
-  const [lastName, setLastName] = useState("");
-  const [email, setEmail] = useState("");
-  const [buttonText, setButtonText] = useState("Apply");
+  const [firstName, setFirstName] = useState('');
+  const [lastName, setLastName] = useState('');
+  const [email, setEmail] = useState('');
+  const [buttonText, setButtonText] = useState('Apply');
   const handleSubmit = async (e: FormEvent) => {
-    setButtonText("Submitting...");
+    setButtonText('Submitting...');
     e.preventDefault();
     if (!agreed) {
       alert(`You must agree to the privacy and cookie policy`);
@@ -28,17 +24,17 @@ export default function ApplicantInfoForm() {
 
     try {
       const { data } = await CreateApplicant({
-        orgId: orgId,
-        openingId: openingId,
-        firstName: firstName,
-        lastName: lastName,
-        email: email,
+        orgId,
+        openingId,
+        firstName,
+        lastName,
+        email,
       });
       alert(data.message);
     } catch (error) {
       alert(error.response.data.message);
     }
-    setButtonText("Apply");
+    setButtonText('Apply');
   };
   return (
     <div className="bg-white py-8 px-4 overflow-hidden sm:px-6 lg:px-8 ">
@@ -70,11 +66,7 @@ export default function ApplicantInfoForm() {
               />
             </pattern>
           </defs>
-          <rect
-            width={404}
-            height={404}
-            fill="url(#85737c0e-0916-41d7-917f-596dc7edfa27)"
-          />
+          <rect width={404} height={404} fill="url(#85737c0e-0916-41d7-917f-596dc7edfa27)" />
         </svg>
         <svg
           className="absolute right-full bottom-0 transform -translate-x-1/2"
@@ -103,11 +95,7 @@ export default function ApplicantInfoForm() {
               />
             </pattern>
           </defs>
-          <rect
-            width={404}
-            height={404}
-            fill="url(#85737c0e-0916-41d7-917f-596dc7edfa27)"
-          />
+          <rect width={404} height={404} fill="url(#85737c0e-0916-41d7-917f-596dc7edfa27)" />
         </svg>
         <div className="text-center">
           {/* <h2 className="text-2xl font-semibold tracking-tight text-dark">
@@ -121,10 +109,7 @@ export default function ApplicantInfoForm() {
             className="grid grid-cols-1 gap-y-6 sm:grid-cols-2 sm:gap-x-8"
           >
             <div>
-              <label
-                htmlFor="first-name"
-                className="block text-sm font-medium text-normal"
-              >
+              <label htmlFor="first-name" className="block text-sm font-medium text-normal">
                 First name
               </label>
               <div className="mt-1">
@@ -141,10 +126,7 @@ export default function ApplicantInfoForm() {
               </div>
             </div>
             <div>
-              <label
-                htmlFor="last-name"
-                className="block text-sm font-medium text-normal"
-              >
+              <label htmlFor="last-name" className="block text-sm font-medium text-normal">
                 Last name
               </label>
               <div className="mt-1">
@@ -178,10 +160,7 @@ export default function ApplicantInfoForm() {
               </div>
             </div> */}
             <div className="sm:col-span-2">
-              <label
-                htmlFor="email"
-                className="block text-sm font-medium text-normal"
-              >
+              <label htmlFor="email" className="block text-sm font-medium text-normal">
                 Email
               </label>
               <div className="mt-1">
@@ -252,17 +231,17 @@ export default function ApplicantInfoForm() {
                   <Switch
                     checked={agreed}
                     onChange={setAgreed}
-                    className={classNames(
-                      agreed ? "bg-blue-600" : "bg-gray-200",
-                      "relative inline-flex flex-shrink-0 h-6 w-11 border-2 border-transparent rounded-full cursor-pointer transition-colors ease-in-out duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+                    className={combineClassNames(
+                      agreed ? 'bg-blue-600' : 'bg-gray-200',
+                      'relative inline-flex flex-shrink-0 h-6 w-11 border-2 border-transparent rounded-full cursor-pointer transition-colors ease-in-out duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500',
                     )}
                   >
                     <span className="sr-only">Agree to policies</span>
                     <span
                       aria-hidden="true"
-                      className={classNames(
-                        agreed ? "translate-x-5" : "translate-x-0",
-                        "inline-block h-5 w-5 rounded-full bg-white shadow transform ring-0 transition ease-in-out duration-200"
+                      className={combineClassNames(
+                        agreed ? 'translate-x-5' : 'translate-x-0',
+                        'inline-block h-5 w-5 rounded-full bg-white shadow transform ring-0 transition ease-in-out duration-200',
                       )}
                     />
                   </Switch>
@@ -270,14 +249,14 @@ export default function ApplicantInfoForm() {
                 <div className="ml-3">
                   {/* TODO add these links */}
                   <p className="text-base text-light">
-                    By selecting this, you agree to the Plutomi Inc.{" "}
+                    By selecting this, you agree to the Plutomi Inc.{' '}
                     <a
                       href="#"
                       className="font-medium text-normal underline hover:text-dark transition ease-in-out duration-200"
                     >
                       Privacy Policy
-                    </a>{" "}
-                    and{" "}
+                    </a>{' '}
+                    and{' '}
                     <a
                       href="#"
                       className="font-medium text-normal underline hover:text-dark transition ease-in-out duration-200"

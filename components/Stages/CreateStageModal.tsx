@@ -1,23 +1,21 @@
-import { FormEvent, Fragment, useState } from "react";
-import { Dialog, Transition } from "@headlessui/react";
-import { XIcon } from "@heroicons/react/outline";
-import useStore from "../../utils/store";
-import { mutate } from "swr";
-import { useRouter } from "next/router";
-import { GetOpeningInfoURL } from "../../adapters/Openings";
-import { CreateStage, GetStagesInOpeningURL } from "../../adapters/Stages";
-import { CUSTOM_QUERY } from "../../types/main";
+import { FormEvent, Fragment, useState } from 'react';
+import { Dialog, Transition } from '@headlessui/react';
+import { XIcon } from '@heroicons/react/outline';
+import { mutate } from 'swr';
+import { useRouter } from 'next/router';
+import useStore from '../../utils/store';
+import { GetOpeningInfoURL } from '../../adapters/Openings';
+import { CreateStage, GetStagesInOpeningURL } from '../../adapters/Stages';
+import { CustomQuery } from '../../types/main';
 
 export default function CreateStageModal() {
   const router = useRouter();
 
-  const { openingId } = router.query as Pick<CUSTOM_QUERY, "openingId">;
-  const [GSI1SK, setGSI1SK] = useState("");
+  const { openingId } = router.query as Pick<CustomQuery, 'openingId'>;
+  const [GSI1SK, setGSI1SK] = useState('');
 
   const visibility = useStore((state) => state.showCreateStageModal);
-  const closeCreateStageModal = useStore(
-    (state) => state.closeCreateStageModal
-  );
+  const closeCreateStageModal = useStore((state) => state.closeCreateStageModal);
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     try {
@@ -27,9 +25,8 @@ export default function CreateStageModal() {
       });
       alert(data.message);
       closeCreateStageModal();
-      setGSI1SK("");
+      setGSI1SK('');
     } catch (error) {
-      console.error("Error creating stage", error);
       alert(error.response.data.message);
     }
     // Refresh stage order
@@ -42,11 +39,7 @@ export default function CreateStageModal() {
 
   return (
     <Transition.Root show={visibility} as={Fragment}>
-      <Dialog
-        as="div"
-        className="fixed inset-0 overflow-hidden "
-        onClose={closeCreateStageModal}
-      >
+      <Dialog as="div" className="fixed inset-0 overflow-hidden " onClose={closeCreateStageModal}>
         <div className="absolute inset-0 overflow-hidden">
           <Transition.Child
             as={Fragment}
@@ -94,9 +87,9 @@ export default function CreateStageModal() {
                       </div>
                       <div className="mt-1">
                         <p className="text-sm text-blue-300">
-                          Stages are individual steps in your application
-                          process such as &apos;Questionnaire&apos;, &apos;Under
-                          Review&apos;, or &apos;Ready to Drive&apos;.
+                          Stages are individual steps in your application process such as
+                          &apos;Questionnaire&apos;, &apos;Under Review&apos;, or &apos;Ready to
+                          Drive&apos;.
                         </p>
                       </div>
                     </div>
@@ -115,7 +108,7 @@ export default function CreateStageModal() {
                                 type="text"
                                 name="opening-name"
                                 id="opening-name"
-                                placeholder={`What is the overall purpose of this stage?`}
+                                placeholder="What is the overall purpose of this stage?"
                                 required
                                 onChange={(e) => setGSI1SK(e.target.value)}
                                 value={GSI1SK}

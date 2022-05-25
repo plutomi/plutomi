@@ -1,19 +1,15 @@
-import { PutCommandInput, PutCommand } from "@aws-sdk/lib-dynamodb";
-import { nanoid } from "nanoid";
-import { Dynamo } from "../../awsClients/ddbDocClient";
-import {
-  ID_LENGTHS,
-  ENTITY_TYPES,
-  DEFAULTS,
-  DYNAMO_TABLE_NAME,
-} from "../../Config";
-import { DynamoUser } from "../../types/dynamo";
-import { CreateUserInput } from "../../types/main";
-import * as Time from "../../utils/time";
-import { SdkError } from "@aws-sdk/types";
+import { PutCommandInput, PutCommand } from '@aws-sdk/lib-dynamodb';
+import { nanoid } from 'nanoid';
+import { SdkError } from '@aws-sdk/types';
+import { Dynamo } from '../../awsClients/ddbDocClient';
+import { ID_LENGTHS, ENTITY_TYPES, DEFAULTS, DYNAMO_TABLE_NAME } from '../../Config';
+import { DynamoUser } from '../../types/dynamo';
+import { CreateUserInput } from '../../types/main';
+import * as Time from '../../utils/time';
+
 export default async function CreateUser(
-  props: CreateUserInput
-): Promise<[DynamoUser, SdkError]> {
+  props: CreateUserInput,
+): Promise<[DynamoUser, null] | [null, SdkError]> {
   const { email, firstName, lastName } = props;
 
   const userId = nanoid(ID_LENGTHS.USER);
@@ -23,7 +19,7 @@ export default async function CreateUser(
     firstName: firstName || DEFAULTS.FIRST_NAME,
     lastName: lastName || DEFAULTS.LAST_NAME,
     email: email.toLowerCase().trim(),
-    userId: userId,
+    userId,
     entityType: ENTITY_TYPES.USER,
     createdAt: Time.currentISO(),
     orgId: DEFAULTS.NO_ORG,
@@ -43,7 +39,7 @@ export default async function CreateUser(
   const params: PutCommandInput = {
     TableName: `${process.env.NODE_ENV}-${DYNAMO_TABLE_NAME}`,
     Item: newUser,
-    ConditionExpression: "attribute_not_exists(PK)",
+    ConditionExpression: 'attribute_not_exists(PK)',
   };
 
   try {

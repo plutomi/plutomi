@@ -1,5 +1,5 @@
 config:
-  target: "https://api.plutomi.com"
+  target: 'https://api.plutomi.com'
   phases:
     # - duration: 60
     #   arrivalRate: 5
@@ -26,7 +26,7 @@ config:
     #   rampTo: 0
     #   name: Ramp down
 scenarios:
-  - name: "test"
+  - name: 'test'
     flow:
       - get:
-          url: "/public/orgs/plutohmi"
+          url: '/public/orgs/plutohmi'

@@ -1,32 +1,33 @@
-import { Request, Response, NextFunction } from "express";
-const UrlSafeString = require("url-safe-string"),
-  tagGenerator = new UrlSafeString({ joinString: "_" });
-
+import { Request, Response, NextFunction } from 'express';
+import TagGenerator from '../utils/tagGenerator';
 /**
  * Cleans up the questionId, whether in body, params, or query, to be URL safe
  */
-export default async function withCleanQuestionId(
-  req: Request,
-  res: Response,
-  next: NextFunction
-) {
+export default async function withCleanQuestionId(req: Request, res: Response, next: NextFunction) {
   if (req.body.questionId) {
-    req.body.questionId = tagGenerator.generate(req.body.questionId);
+    req.body.questionId = TagGenerator({
+      value: req.params.questionId,
+      joinString: '_',
+    });
   }
 
   if (req.params.questionId) {
-    req.params.questionId = tagGenerator.generate(
-      req.params.questionId.toString()
-    );
+    req.params.questionId = TagGenerator({
+      value: req.params.questionId,
+      joinString: '_',
+    });
   }
 
   if (req.query.questionId) {
-    req.query.questionId = tagGenerator.generate(req.query.questionId);
+    req.query.questionId = TagGenerator({
+      value: req.params.questionId,
+      joinString: '_',
+    });
   }
   if (req.body.questionOrder) {
     try {
       req.body.questionOrder = req.body.questionOrder.map((id: string) =>
-        tagGenerator.generate(id)
+        TagGenerator({ value: id, joinString: '_' }),
       );
     } catch (error) {
       const message = `An error ocurred cleaning questionIds in the questionOrder body - ${error}`;

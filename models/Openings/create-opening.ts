@@ -1,22 +1,15 @@
-import {
-  TransactWriteCommandInput,
-  TransactWriteCommand,
-} from "@aws-sdk/lib-dynamodb";
-import { nanoid } from "nanoid";
-import { Dynamo } from "../../awsClients/ddbDocClient";
-import {
-  ID_LENGTHS,
-  ENTITY_TYPES,
-  OPENING_STATE,
-  DYNAMO_TABLE_NAME,
-} from "../../Config";
-import { DynamoOpening } from "../../types/dynamo";
-import { CreateOpeningInput } from "../../types/main";
-import * as Time from "../../utils/time";
-import { SdkError } from "@aws-sdk/types";
+import { TransactWriteCommandInput, TransactWriteCommand } from '@aws-sdk/lib-dynamodb';
+import { nanoid } from 'nanoid';
+import { SdkError } from '@aws-sdk/types';
+import { Dynamo } from '../../awsClients/ddbDocClient';
+import { ID_LENGTHS, ENTITY_TYPES, OPENING_STATE, DYNAMO_TABLE_NAME } from '../../Config';
+import { DynamoOpening } from '../../types/dynamo';
+import { CreateOpeningInput } from '../../types/main';
+import * as Time from '../../utils/time';
+
 export default async function CreateOpening(
-  props: CreateOpeningInput
-): Promise<[DynamoOpening, SdkError]> {
+  props: CreateOpeningInput,
+): Promise<[DynamoOpening, null] | [null, SdkError]> {
   const { orgId, openingName } = props;
   const openingId = nanoid(ID_LENGTHS.OPENING);
   const newOpening: DynamoOpening = {
@@ -41,7 +34,7 @@ export default async function CreateOpening(
         Put: {
           Item: newOpening,
           TableName: `${process.env.NODE_ENV}-${DYNAMO_TABLE_NAME}`,
-          ConditionExpression: "attribute_not_exists(PK)",
+          ConditionExpression: 'attribute_not_exists(PK)',
         },
       },
       {
@@ -52,11 +45,10 @@ export default async function CreateOpening(
             SK: ENTITY_TYPES.ORG,
           },
           TableName: `${process.env.NODE_ENV}-${DYNAMO_TABLE_NAME}`,
-          UpdateExpression:
-            "SET totalOpenings = if_not_exists(totalOpenings, :zero) + :value",
+          UpdateExpression: 'SET totalOpenings = if_not_exists(totalOpenings, :zero) + :value',
           ExpressionAttributeValues: {
-            ":zero": 0,
-            ":value": 1,
+            ':zero': 0,
+            ':value': 1,
           },
         },
       },

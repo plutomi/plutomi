@@ -1,8 +1,9 @@
-import { Request, Response } from "express";
-import * as CreateError from "../../utils/createError";
-import * as Openings from "../../models/Openings";
-import { pick } from "lodash";
-import { OPENING_STATE } from "../../Config";
+import { Request, Response } from 'express';
+import { pick } from 'lodash';
+import * as CreateError from '../../utils/createError';
+import * as Openings from '../../models/Openings';
+import { OPENING_STATE } from '../../Config';
+
 const main = async (req: Request, res: Response) => {
   const { orgId } = req.params;
 
@@ -14,13 +15,13 @@ const main = async (req: Request, res: Response) => {
   if (openingsError) {
     const { status, body } = CreateError.SDK(
       openingsError,
-      "An error ocurred retrieving openings for this org"
+      'An error ocurred retrieving openings for this org',
     );
     return res.status(status).json(body);
   }
 
   const modifiedOpenings = openings.map((opening) =>
-    pick(opening, ["openingName", "createdAt", "openingId"])
+    pick(opening, ['openingName', 'createdAt', 'openingId']),
   );
 
   return res.status(200).json(modifiedOpenings);

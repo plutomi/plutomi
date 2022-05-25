@@ -1,6 +1,6 @@
-import useSWR from "swr";
-import { GetUserInvitesURL } from "../adapters/Invites";
-import { SWRFetcher } from "../Config";
+import useSWR from 'swr';
+import { GetUserInvitesURL } from '../adapters/Invites';
+import { SWRFetcher } from '../Config';
 
 export default function useUserInvites(userId: string) {
   const { data, error } = useSWR(userId && GetUserInvitesURL(), SWRFetcher, {

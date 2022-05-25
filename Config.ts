@@ -1,4 +1,7 @@
-import Joi from "joi";
+import Joi from 'joi';
+
+import axios from 'axios';
+import TagGenerator from './utils/tagGenerator';
 
 /**
  * Some backend dependencies (SES, ACM, Route53, etc..) depend on
@@ -11,65 +14,54 @@ export const DOMAIN_NAME = `plutomi.com`;
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 export const WEBSITE_URL =
-  process.env.NODE_ENV === "production"
-    ? `https://${DOMAIN_NAME}`
-    : `http://localhost:3000`;
+  process.env.NODE_ENV === 'production' ? `https://${DOMAIN_NAME}` : `http://localhost:3000`;
 
 export const EXPRESS_PORT = 4000;
 
 export const API_DOMAIN =
-  process.env.NODE_ENV === "production"
-    ? `api.${DOMAIN_NAME}`
-    : `localhost:${EXPRESS_PORT}`;
+  process.env.NODE_ENV === 'production' ? `api.${DOMAIN_NAME}` : `localhost:${EXPRESS_PORT}`;
 
 export const API_URL =
-  process.env.NODE_ENV === "production"
-    ? `https://${API_DOMAIN}`
-    : `http://${API_DOMAIN}`;
+  process.env.NODE_ENV === 'production' ? `https://${API_DOMAIN}` : `http://${API_DOMAIN}`;
 
 export const COOKIE_NAME =
-  process.env.NODE_ENV === "production"
-    ? "plutomi-cookie"
-    : "DEV-plutomi-cookie";
-
-const UrlSafeString = require("url-safe-string"),
-  tagGenerator = new UrlSafeString();
+  process.env.NODE_ENV === 'production' ? 'plutomi-cookie' : 'DEV-plutomi-cookie';
 
 export enum OPENING_STATE {
-  PUBLIC = "PUBLIC",
-  PRIVATE = "PRIVATE",
+  PUBLIC = 'PUBLIC',
+  PRIVATE = 'PRIVATE',
 }
 
-export const DYNAMO_TABLE_NAME = "Plutomi";
+export const DYNAMO_TABLE_NAME = 'Plutomi';
 
 export enum ENTITY_TYPES {
-  APPLICANT = "APPLICANT",
-  APPLICANT_RESPONSE = "APPLICANT_RESPONSE",
-  ORG = "ORG",
-  ORG_INVITE = "ORG_INVITE",
-  USER = "USER",
-  OPENING = "OPENING",
-  STAGE = "STAGE",
-  QUESTION = "QUESTION",
-  STAGE_RULE = "STAGE_RULE",
-  LOGIN_LINK = "LOGIN_LINK",
-  LOGIN_EVENT = "LOGIN_EVENT",
-  WEBHOOK = "WEBHOOK",
+  APPLICANT = 'APPLICANT',
+  APPLICANT_RESPONSE = 'APPLICANT_RESPONSE',
+  ORG = 'ORG',
+  ORG_INVITE = 'ORG_INVITE',
+  USER = 'USER',
+  OPENING = 'OPENING',
+  STAGE = 'STAGE',
+  QUESTION = 'QUESTION',
+  STAGE_RULE = 'STAGE_RULE',
+  LOGIN_LINK = 'LOGIN_LINK',
+  LOGIN_EVENT = 'LOGIN_EVENT',
+  WEBHOOK = 'WEBHOOK',
 }
 
 export const TIME_UNITS = {
-  MILLISECONDS: "milliseconds",
-  SECONDS: "seconds",
-  MINUTES: "minutes",
-  HOURS: "hours",
-  DAYS: "days",
-  WEEKS: "weeks",
-  MONTHS: "months",
-  YEARS: "years",
+  MILLISECONDS: 'milliseconds',
+  SECONDS: 'seconds',
+  MINUTES: 'minutes',
+  HOURS: 'hours',
+  DAYS: 'days',
+  WEEKS: 'weeks',
+  MONTHS: 'months',
+  YEARS: 'years',
 };
 
 export const ERRORS = {
-  NOT_SAME_ORG: "You must belong to this org to perform that action",
+  NOT_SAME_ORG: 'You must belong to this org to perform that action',
   NEEDS_ORG: `You must create or join an organization to perform this action`,
   HAS_PENDING_INVITES: `You seem to have pending invites, please accept or reject them before creating an org :)`,
   EMAIL_VALIDATION: `Hmm... that email doesn't seem quite right. Check it again.`,
@@ -86,15 +78,15 @@ export const ID_LENGTHS = {
 };
 
 export enum DEFAULTS {
-  FIRST_NAME = "NO_FIRST_NAME",
-  LAST_NAME = "NO_LAST_NAME",
+  FIRST_NAME = 'NO_FIRST_NAME',
+  LAST_NAME = 'NO_LAST_NAME',
   NO_ORG = `NO_ORG_ASSIGNED`,
   /**
    * When no callbackUrl is provided on login, what page should users be redirected to
    */
-  REDIRECT = "dashboard",
-  NO_FIRST_NAME = "NO_FIRST_NAME",
-  NO_LAST_NAME = "NO_LAST_NAME",
+  REDIRECT = 'dashboard',
+  NO_FIRST_NAME = 'NO_FIRST_NAME',
+  NO_LAST_NAME = 'NO_LAST_NAME',
 }
 
 export enum LIMITS {
@@ -117,15 +109,15 @@ export enum DYNAMO_STREAM_TYPES {
   /**
    * New items
    */
-  INSERT = "INSERT",
+  INSERT = 'INSERT',
   /**
    * Updated / modified items
    */
-  MODIFY = "MODIFY",
+  MODIFY = 'MODIFY',
   /**
    * Removed / deleted items
    */
-  REMOVE = "REMOVE",
+  REMOVE = 'REMOVE',
 }
 export const LOGIN_LINK_SETTINGS = {
   password: process.env.LOGIN_LINKS_PASSWORD,
@@ -133,17 +125,17 @@ export const LOGIN_LINK_SETTINGS = {
 };
 
 export const EMAILS = {
-  SUPPORT: "support@plutomi.com",
-  GENERAL: "contact@plutomi.com",
-  INVEST: "ir@plutomi.com",
-  ADMIN: "admin@plutomi.com",
-  LOGIN: "login@plutomi.com", // Login links
-  JOIN: "join@plutomi.com", // Org invites
+  SUPPORT: 'support@plutomi.com',
+  GENERAL: 'contact@plutomi.com',
+  INVEST: 'ir@plutomi.com',
+  ADMIN: 'admin@plutomi.com',
+  LOGIN: 'login@plutomi.com', // Login links
+  JOIN: 'join@plutomi.com', // Org invites
   // Jest test accounts
-  TESTING: "testing@plutomi.com",
-  TESTING2: "testing2@plutomi.com",
-  TESTING3: "testing3@plutomi.com",
-  TESTING4: "testing4@plutomi.com",
+  TESTING: 'testing@plutomi.com',
+  TESTING2: 'testing2@plutomi.com',
+  TESTING3: 'testing3@plutomi.com',
+  TESTING4: 'testing4@plutomi.com',
 };
 
 /**
@@ -154,7 +146,7 @@ export const EMAILS = {
  */
 
 export const JOI_SETTINGS: Joi.ValidationOptions = {
-  presence: "required",
+  presence: 'required',
   abortEarly: false,
   stripUnknown: true,
 };
@@ -174,66 +166,87 @@ export const JOI_GLOBAL_FORBIDDEN = {
   createdAt: Joi.any().forbidden(),
 };
 
-import axios from "axios";
-import { NavbarItem } from "./types/main";
 export const AXIOS_INSTANCE = axios.create({
   withCredentials: true,
   baseURL: API_URL,
   headers: {
-    "Content-Type": "application/json",
+    'Content-Type': 'application/json',
   },
 });
 
 export const SWRFetcher = (url: string) =>
   AXIOS_INSTANCE.get(API_URL + url).then((res) => res.data);
 
+export type NavbarItem = {
+  /**
+   * The name of the navbar item such as 'Dashboard' or 'Questions'
+   */
+  name: string;
+  /**
+   * The path of the page such as '/dashboard' or '/questions'
+   */
+  href: string;
+  /**
+   * If this item should be hidden when a user is not in an org.
+   */
+  hiddenIfNoOrg: boolean;
+  /**
+   * If this item should be hidden if a user is in an org.  Usually false, but
+   * used for things like Invites in which a user shouldn't be accepting invites
+   * while tey are already in an org
+   */
+  hiddenIfOrg: boolean;
+};
+
 export const NAVBAR_NAVIGATION: NavbarItem[] = [
   {
-    name: "Dashboard",
-    href: "/dashboard",
+    name: 'Dashboard',
+    href: '/dashboard',
     hiddenIfNoOrg: false,
     hiddenIfOrg: false,
   },
   {
-    name: "Openings",
-    href: "/openings",
+    name: 'Openings',
+    href: '/openings',
     hiddenIfNoOrg: true,
     hiddenIfOrg: false,
   },
   {
-    name: "Questions",
-    href: "/questions",
+    name: 'Questions',
+    href: '/questions',
     hiddenIfNoOrg: true,
     hiddenIfOrg: false,
   },
-  { name: "Team", href: "/team", hiddenIfNoOrg: true, hiddenIfOrg: false },
+  { name: 'Team', href: '/team', hiddenIfNoOrg: true, hiddenIfOrg: false },
   {
-    name: "Invites",
-    href: "/invites",
+    name: 'Invites',
+    href: '/invites',
     hiddenIfNoOrg: false,
     hiddenIfOrg: true,
   },
   {
-    name: "Webhooks",
-    href: "/webhooks",
+    name: 'Webhooks',
+    href: '/webhooks',
     hiddenIfNoOrg: true,
     hiddenIfOrg: false,
   },
 ];
 export const DROPDOWN_NAVIGATION = [
-  { name: "Your Profile", href: "/profile" },
-  { name: "Log Out", href: "#" },
+  { name: 'Your Profile', href: '/profile' },
+  { name: 'Log Out', href: '#' },
 ];
 
 // Schema to validate orgIds against in joi
 export const JoiOrgId = Joi.string()
   .invalid(
     DEFAULTS.NO_ORG,
-    tagGenerator.generate(DEFAULTS.NO_ORG),
-    "plutomi",
-    "plutomi-",
-    "plutomi-inc",
-    "plutomiinc"
+    TagGenerator({
+      value: DEFAULTS.NO_ORG,
+    }),
+    'plutomi',
+    'plutomi-',
+    'plutomi-inc',
+    'plutomiinc',
   )
   .max(200);
 

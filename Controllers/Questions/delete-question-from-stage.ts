@@ -1,7 +1,8 @@
-import { Request, Response } from "express";
-import * as Questions from "../../models/Questions";
-import * as Stages from "../../models/Stages";
-import * as CreateError from "../../utils/createError";
+import { Request, Response } from 'express';
+import * as Questions from '../../models/Questions';
+import * as Stages from '../../models/Stages';
+import * as CreateError from '../../utils/createError';
+
 const main = async (req: Request, res: Response) => {
   const { session } = res.locals;
   const { openingId, stageId, questionId } = req.params;
@@ -14,7 +15,7 @@ const main = async (req: Request, res: Response) => {
   if (error) {
     const { status, body } = CreateError.SDK(
       error,
-      "An error ocurred deleting that question from this stage"
+      'An error ocurred deleting that question from this stage',
     );
     return res.status(status).json(body);
   }
@@ -39,11 +40,11 @@ const main = async (req: Request, res: Response) => {
   if (updateError) {
     const { status, body } = CreateError.SDK(
       updateError,
-      "An error ocurred deleting that question"
+      'An error ocurred deleting that question',
     );
     return res.status(status).json(body);
   }
 
-  return res.status(200).json({ message: "Question removed from stage!" });
+  return res.status(200).json({ message: 'Question removed from stage!' });
 };
 export default main;

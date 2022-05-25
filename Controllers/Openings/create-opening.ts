@@ -1,12 +1,11 @@
-import { Request, Response } from "express";
-import { JOI_SETTINGS, LIMITS } from "../../Config";
-import * as CreateError from "../../utils/createError";
-import * as Openings from "../../models/Openings";
-import Joi from "joi";
-import { DynamoOpening } from "../../types/dynamo";
-export type APICreateOpeningOptions = Required<
-  Pick<DynamoOpening, "openingName">
->;
+import { Request, Response } from 'express';
+import Joi from 'joi';
+import { JOI_SETTINGS, LIMITS } from '../../Config';
+import * as CreateError from '../../utils/createError';
+import * as Openings from '../../models/Openings';
+import { DynamoOpening } from '../../types/dynamo';
+
+export type APICreateOpeningOptions = Required<Pick<DynamoOpening, 'openingName'>>;
 
 const schema = Joi.object({
   body: {
@@ -33,11 +32,11 @@ const main = async (req: Request, res: Response) => {
   if (createOpeningError) {
     const { status, body } = CreateError.SDK(
       createOpeningError,
-      "An error ocurred creating that opening"
+      'An error ocurred creating that opening',
     );
     return res.status(status).json(body);
   }
 
-  return res.status(201).json({ message: "Opening created!" });
+  return res.status(201).json({ message: 'Opening created!' });
 };
 export default main;

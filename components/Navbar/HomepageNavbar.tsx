@@ -1,8 +1,8 @@
-import { Fragment } from "react";
-import { Popover, Transition } from "@headlessui/react";
-import { MenuIcon, XIcon } from "@heroicons/react/outline";
+import { Fragment } from 'react';
+import { Popover, Transition } from '@headlessui/react';
+import { MenuIcon, XIcon } from '@heroicons/react/outline';
 
-const navigation = [{ name: "Pricing", href: "#pricing" }];
+const navigation = [{ name: 'Pricing', href: '#pricing' }];
 
 export default function Navbar() {
   return (

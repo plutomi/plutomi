@@ -1,26 +1,25 @@
-import { QueryCommandInput, QueryCommand } from "@aws-sdk/lib-dynamodb";
-import { Dynamo } from "../../awsClients/ddbDocClient";
-import { DYNAMO_TABLE_NAME, ENTITY_TYPES } from "../../Config";
-import { DynamoOrgInvite } from "../../types/dynamo";
-import { GetOrgInvitesForUserInput } from "../../types/main";
-import { SdkError } from "@aws-sdk/types";
+import { QueryCommandInput, QueryCommand } from '@aws-sdk/lib-dynamodb';
+import { SdkError } from '@aws-sdk/types';
+import { Dynamo } from '../../awsClients/ddbDocClient';
+import { DYNAMO_TABLE_NAME, ENTITY_TYPES } from '../../Config';
+import { DynamoOrgInvite } from '../../types/dynamo';
+import { GetOrgInvitesForUserInput } from '../../types/main';
 /**
  * Given a `userId`, returns the user's invites to join an org
  * @param props {@link GetOrgInvitesForUserInput}
  * @returns - {@link DynamoOrgInvite[]}
  */
 
-export default async function getInvites(
-  props: GetOrgInvitesForUserInput
-): Promise<[DynamoOrgInvite[], SdkError]> {
+export default async function getInvitesForUser(
+  props: GetOrgInvitesForUserInput,
+): Promise<[DynamoOrgInvite[], null] | [null, SdkError]> {
   const { userId } = props;
   const params: QueryCommandInput = {
     TableName: `${process.env.NODE_ENV}-${DYNAMO_TABLE_NAME}`,
-
-    KeyConditionExpression: "PK = :PK AND begins_with(SK, :SK)",
+    KeyConditionExpression: 'PK = :PK AND begins_with(SK, :SK)',
     ExpressionAttributeValues: {
-      ":PK": `${ENTITY_TYPES.USER}#${userId}`,
-      ":SK": ENTITY_TYPES.ORG_INVITE,
+      ':PK': `${ENTITY_TYPES.USER}#${userId}`,
+      ':SK': ENTITY_TYPES.ORG_INVITE,
     },
   };
 

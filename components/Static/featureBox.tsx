@@ -3,36 +3,37 @@ import {
   CodeIcon,
   LockClosedIcon,
   ViewGridAddIcon,
-} from "@heroicons/react/outline";
-import CustomLink from "../CustomLink";
+} from '@heroicons/react/outline';
+import CustomLink from '../CustomLink';
+
 const features = [
   {
-    name: "Open Source",
+    name: 'Open Source',
     icon: CodeIcon,
     color: `bg-gradient-to-br from-cyan-400 to-blue-500`,
     isGithub: true,
-    description: "Read, inspect, and contribute to our GitHub repository",
+    description: 'Read, inspect, and contribute to our GitHub repository',
   },
   {
-    name: "Never settle",
+    name: 'Never settle',
     icon: ArrowsExpandIcon,
-    description: "Unlimited users, applicants, and openings",
+    description: 'Unlimited users, applicants, and openings',
     color: `bg-gradient-to-br from-green-400 to-emerald-500`,
   },
 
   {
-    name: "Third Party Apps",
+    name: 'Third Party Apps',
     icon: ViewGridAddIcon,
     color: `bg-gradient-to-br from-rose-400 to-red-500`,
 
-    description: "Easy integrations with tools like Slack and Zendesk",
+    description: 'Easy integrations with tools like Slack and Zendesk',
   },
 
   {
-    name: "Stay in control",
+    name: 'Stay in control',
     icon: LockClosedIcon,
     color: `bg-gradient-to-br from-purple-300 to-violet-500`,
-    description: "Role based access to all of your resources",
+    description: 'Role based access to all of your resources',
   },
 ];
 export default function Features() {
@@ -48,14 +49,12 @@ export default function Features() {
                 >
                   <feature.icon className="h-6 w-6 " aria-hidden="true" />
                 </div>
-                <p className="ml-16 text-xl leading-6 font-bold text-dark">
-                  {feature.name}
-                </p>
+                <p className="ml-16 text-xl leading-6 font-bold text-dark">{feature.name}</p>
               </dt>
               <dd className="mt-2 ml-16 text-xl text-normal">
                 {feature.isGithub ? (
                   <p>
-                    Read, inspect, and contribute to{" "}
+                    Read, inspect, and contribute to{' '}
                     <CustomLink
                       url="https://github.com/plutomi/plutomi"
                       text="our GitHub repository"

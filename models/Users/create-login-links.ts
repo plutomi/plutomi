@@ -1,10 +1,10 @@
-import { PutCommandInput, PutCommand } from "@aws-sdk/lib-dynamodb";
-import { Dynamo } from "../../awsClients/ddbDocClient";
-import { DYNAMO_TABLE_NAME, ENTITY_TYPES, TIME_UNITS } from "../../Config";
-import { DynamoLoginLink } from "../../types/dynamo";
-import { CreateLoginLinkInput } from "../../types/main";
-import * as Time from "../../utils/time";
-import { SdkError } from "@aws-sdk/types";
+import { PutCommandInput, PutCommand } from '@aws-sdk/lib-dynamodb';
+import { SdkError } from '@aws-sdk/types';
+import { Dynamo } from '../../awsClients/ddbDocClient';
+import { DYNAMO_TABLE_NAME, ENTITY_TYPES, TIME_UNITS } from '../../Config';
+import { DynamoLoginLink } from '../../types/dynamo';
+import { CreateLoginLinkInput } from '../../types/main';
+import * as Time from '../../utils/time';
 
 /**
  * Creates a login link for the requested user
@@ -12,8 +12,8 @@ import { SdkError } from "@aws-sdk/types";
  * @returns
  */
 export default async function CreateLoginLink(
-  props: CreateLoginLinkInput
-): Promise<[null, SdkError]> {
+  props: CreateLoginLinkInput,
+): Promise<[null, null] | [null, SdkError]> {
   const { loginLinkId, loginLinkUrl, loginLinkExpiry, user } = props;
   const now = Time.currentISO();
   try {
@@ -33,7 +33,7 @@ export default async function CreateLoginLink(
     const params: PutCommandInput = {
       TableName: `${process.env.NODE_ENV}-${DYNAMO_TABLE_NAME}`,
       Item: newLoginLink,
-      ConditionExpression: "attribute_not_exists(PK)",
+      ConditionExpression: 'attribute_not_exists(PK)',
     };
 
     await Dynamo.send(new PutCommand(params));

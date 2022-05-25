@@ -1,39 +1,33 @@
-import { TrashIcon } from "@heroicons/react/outline";
-import useStore from "../../utils/store";
-import Breadcrumbs from "../Breadcrumbs";
-import { useRouter } from "next/router";
-import { PencilAltIcon } from "@heroicons/react/outline";
-import useStageInfo from "../../SWR/useStageInfo";
-import * as Time from "../../utils/time";
-import { CUSTOM_QUERY } from "../../types/main";
-import UpdateStageModal from "./UpdateStageModal";
-import CreateQuestionModal from "../Questions/CreateQuestionModal";
-export default function StageSettingsHeader({ deleteStage }) {
+import { TrashIcon, PencilAltIcon } from '@heroicons/react/outline';
+import { useRouter } from 'next/router';
+import useStore from '../../utils/store';
+import Breadcrumbs from '../Breadcrumbs';
+import useStageInfo from '../../SWR/useStageInfo';
+import * as Time from '../../utils/time';
+import { CustomQuery } from '../../types/main';
+import UpdateStageModal from './UpdateStageModal';
+import CreateQuestionModal from '../Questions/CreateQuestionModal';
+
+export default function StageSettingsHeader({ deleteStage }: { deleteStage: () => {} }) {
   const router = useRouter();
-  const { openingId, stageId } = router.query as Pick<
-    CUSTOM_QUERY,
-    "openingId" | "stageId"
-  >;
+  const { openingId, stageId } = router.query as Pick<CustomQuery, 'openingId' | 'stageId'>;
 
   const openUpdateStageModal = useStore((state) => state.openUpdateStageModal);
-  const { stage, isStageLoading, isStageError } = useStageInfo(
-    openingId,
-    stageId
-  );
+  const { stage, isStageLoading, isStageError } = useStageInfo(openingId, stageId);
 
   const crumbs = [
     {
-      name: "Applicants",
+      name: 'Applicants',
       href: `/openings/${openingId}/stages/${stageId}/applicants`,
       current: false,
     },
     {
-      name: "Opening Settings",
+      name: 'Opening Settings',
       href: `/openings/${openingId}/settings`,
       current: false,
     },
     {
-      name: "Stage Settings",
+      name: 'Stage Settings',
       href: `/openings/${openingId}/stages/${stageId}/settings`,
       current: true,
     },
@@ -48,9 +42,7 @@ export default function StageSettingsHeader({ deleteStage }) {
         <Breadcrumbs crumbs={crumbs} />
       </div>
 
-      <p className="text-md text-light text-center">
-        Created {Time.relative(stage?.createdAt)}
-      </p>
+      <p className="text-md text-light text-center">Created {Time.relative(stage?.createdAt)}</p>
 
       <div className="space-x-4 flex items-center">
         <button
@@ -63,6 +55,7 @@ export default function StageSettingsHeader({ deleteStage }) {
         </button>
 
         <button
+          type="submit"
           onClick={() => deleteStage()}
           className="rounded-full hover:bg-red-500 hover:text-white border border-red-500 text-red-500 transition ease-in-out duration-200 px-2 py-2 text-md"
         >

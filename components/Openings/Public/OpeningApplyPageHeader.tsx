@@ -1,22 +1,17 @@
-import { useRouter } from "next/router";
-import usePublicOrgById from "../../../SWR/usePublicOrgById";
-import usePublicOpeningById from "../../../SWR/usePublicOpeningById";
-import Loader from "../../Loader";
-import { CUSTOM_QUERY } from "../../../types/main";
+import { useRouter } from 'next/router';
+import usePublicOrgById from '../../../SWR/usePublicOrgById';
+import usePublicOpeningById from '../../../SWR/usePublicOpeningById';
+import Loader from '../../Loader';
+import { CustomQuery } from '../../../types/main';
+
 export default function OpeningApplyPageHeader() {
   const router = useRouter();
-  const { orgId, openingId } = router.query as Pick<
-    CUSTOM_QUERY,
-    "openingId" | "orgId"
-  >;
+  const { orgId, openingId } = router.query as Pick<CustomQuery, 'openingId' | 'orgId'>;
   const { org, isOrgLoading, isOrgError } = usePublicOrgById(orgId);
-  const { opening, isOpeningLoading, isOpeningError } = usePublicOpeningById(
-    orgId,
-    openingId
-  );
+  const { opening, isOpeningLoading, isOpeningError } = usePublicOpeningById(orgId, openingId);
 
   if (isOrgLoading) {
-    return <Loader text={"Loading..."} />;
+    return <Loader text="Loading..." />;
   }
 
   return (

@@ -1,4 +1,4 @@
-import * as Questions from "../models/Questions";
+import * as Questions from '../models/Questions';
 
 /**
  * MAJOR TODO -
@@ -11,9 +11,7 @@ export async function main(event) {
   console.log(JSON.stringify(event));
 
   const { stage } = event;
-  const item = stage.questionOrder.L.find(
-    (item) => item.S === event.questionId
-  );
+  const item = stage.questionOrder.L.find((item) => item.S === event.questionId);
   const deleteIndex = stage.questionOrder.L.indexOf(item);
   // TODO types
   const input = {
@@ -33,6 +31,5 @@ export async function main(event) {
     return;
   }
 
-  console.log("Removed!");
-  return;
+  console.log('Removed!');
 }

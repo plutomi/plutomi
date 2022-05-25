@@ -1,7 +1,7 @@
 // @ts-nocheck // TODO remove
 
-import create from "zustand";
-import { DynamoQuestion, DynamoWebhook } from "../types/dynamo";
+import create from 'zustand';
+import { DynamoQuestion, DynamoWebhook } from '../types/dynamo';
 const useStore = create((set) => ({
   /**
    * ORGS
@@ -52,7 +52,7 @@ const useStore = create((set) => ({
       showUserProfileModal: false,
     })),
 
-  openingsSearchInput: "",
+  openingsSearchInput: '',
   setOpeningsSearchInput: (input: string) =>
     set((state) => ({
       openingsSearchInput: input,
