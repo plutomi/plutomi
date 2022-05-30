@@ -1,12 +1,12 @@
-import { createUser } from './CreateUser';
-import { getUserByEmail } from './GetUserByEmail';
-import { getUserById } from './GetUserById';
-import { updateUser } from './UpdateUser';
-import { createLoginLink } from './CreateLoginLink';
-import { getLatestLoginLink } from './GetLatestLoginLink';
-import { createLoginEvent } from './CreateLoginEvent';
-import { removeUserFromOrg } from './RemoveUserFromOrg';
-import { getUsersInOrg } from './GetUsersInOrg';
+import { createUser } from './createUser';
+import { getUserByEmail } from './getUserByEmail';
+import { getUserById } from './getUserById';
+import { updateUser } from './updateUser';
+import { createLoginLink } from './createLoginLink';
+import { getLatestLoginLink } from './getLatestLoginLink';
+import { createLoginEvent } from './createLoginEvent';
+import { removeUserFromOrg } from './removeUserFromOrg';
+import { getUsersInOrg } from './getUsersInOrg';
 
 export {
   createUser,

@@ -1,8 +1,8 @@
-import { deleteInvite } from './DeleteInvite';
-import { getInvite } from './GetInvite';
-import { createInvite } from './CreateInvite';
-import { acceptInvite } from './AcceptInvite';
-import { getInvitesForUser } from './GetInvitesForUser';
-import { getInvitesForOrg } from './GetInvitesForOrg';
+import { deleteInvite } from './deleteInvite';
+import { getInvite } from './getInvite';
+import { createInvite } from './createInvite';
+import { acceptInvite } from './acceptInvite';
+import { getInvitesForUser } from './getInvitesForUser';
+import { getInvitesForOrg } from './getInvitesForOrg';
 
 export { getInvite, deleteInvite, createInvite, acceptInvite, getInvitesForUser, getInvitesForOrg };

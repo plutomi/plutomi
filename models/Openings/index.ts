@@ -1,7 +1,7 @@
-import { getOpening } from './GetOpening';
-import { createOpening } from './CreateOpening';
-import { deleteOpening } from './DeleteOpening';
-import { updateOpening } from './UpdateOpening';
-import { getOpeningsInOrg } from './GetOpeningsInOrg';
+import { getOpening } from './getOpening';
+import { createOpening } from './createOpening';
+import { deleteOpening } from './deleteOpening';
+import { updateOpening } from './updateOpening';
+import { getOpeningsInOrg } from './getOpeningsInOrg';
 
 export { getOpening, createOpening, deleteOpening, updateOpening, getOpeningsInOrg };

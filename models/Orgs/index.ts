@@ -1,5 +1,5 @@
-import { getOrg } from './GetOrg';
-import { createAndJoinOrg } from './CreateAndJoinOrg';
-import { leaveAndDeleteOrg } from './LeaveAndDeleteOrg';
+import { getOrg } from './getOrg';
+import { createAndJoinOrg } from './createAndJoinOrg';
+import { leaveAndDeleteOrg } from './leaveAndDeleteOrg';
 
 export { getOrg, createAndJoinOrg, leaveAndDeleteOrg };

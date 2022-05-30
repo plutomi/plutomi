@@ -1,9 +1,9 @@
-import { createApplicant } from './CreateApplicant';
-import { getApplicant } from './GetApplicant';
-import { deleteApplicant } from './DeleteApplicant';
-import { updateApplicant } from './UpdateApplicant';
-import { createApplicantResponse } from './CreateApplicantResponse';
-import { getApplicantsInStage } from './GetApplicantsInStage';
+import { createApplicant } from './createApplicant';
+import { getApplicant } from './getApplicant';
+import { deleteApplicant } from './deleteApplicant';
+import { updateApplicant } from './updateApplicant';
+import { createApplicantResponse } from './createApplicantResponse';
+import { getApplicantsInStage } from './getApplicantsInStage';
 
 export {
   createApplicant,
