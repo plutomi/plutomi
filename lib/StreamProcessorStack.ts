@@ -20,12 +20,12 @@ export default class StreamProcessorStack extends cdk.Stack {
 
   constructor(scope: cdk.App, id: string, props: StreamProcessorStackProps) {
     super(scope, id, props);
-
+    const FUNCTION_NAME = 'stream-processor-function';
     this.StreamProcessorFunction = new NodejsFunction(
       this,
-      `${process.env.NODE_ENV}-stream-processor-function`,
+      `${process.env.NODE_ENV}-${FUNCTION_NAME}`,
       {
-        functionName: `${process.env.NODE_ENV}-stream-processor-function`,
+        functionName: `${process.env.NODE_ENV}-${FUNCTION_NAME}`,
         environment: {
           NODE_ENV: process.env.NODE_ENV, // To get the dynamic event bus name // TODO this is silly
         },
