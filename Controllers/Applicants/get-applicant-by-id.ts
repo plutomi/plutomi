@@ -1,12 +1,12 @@
 import { Request, Response } from 'express';
 import * as CreateError from '../../utils/createError';
-import * as Applicants from '../../models/Applicants';
+import { getApplicant } from '../../models/Applicants/GetApplicant';
 
 const main = async (req: Request, res: Response) => {
   const { session } = res.locals;
   const { applicantId } = req.params;
 
-  const [applicant, error] = await Applicants.GetApplicantById({
+  const [applicant, error] = await getApplicant({
     orgId: session.orgId,
     applicantId,
   });

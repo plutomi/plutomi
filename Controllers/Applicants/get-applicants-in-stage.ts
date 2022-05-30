@@ -1,12 +1,12 @@
 import { Request, Response } from 'express';
 import * as CreateError from '../../utils/createError';
-import * as Applicants from '../../models/Applicants';
+import { getApplicantsInStage } from '../../models/Applicants/GetApplicantsInStage';
 
 const main = async (req: Request, res: Response) => {
   const { session } = res.locals;
   const { openingId, stageId } = req.params;
 
-  const [applicants, applicantsError] = await Applicants.GetApplicantsInStage({
+  const [applicants, applicantsError] = await getApplicantsInStage({
     orgId: session.orgId,
     openingId,
     stageId,

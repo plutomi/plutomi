@@ -1,8 +1,7 @@
 import { Request, Response } from 'express';
 import Joi from 'joi';
 import emailValidator from 'deep-email-validator';
-import * as Openings from '../../models/Openings';
-import * as Applicants from '../../models/Applicants';
+import { getOpening } from '../../models/Openings/GetOpening';
 import {
   DEFAULTS,
   ERRORS,
@@ -14,6 +13,7 @@ import {
 } from '../../Config';
 import * as CreateError from '../../utils/createError';
 import { DynamoApplicant } from '../../types/dynamo';
+import * as Applicants from '../../models/Applicants';
 
 export type APICreateApplicantOptions = Required<
   Pick<DynamoApplicant, 'orgId' | 'openingId' | 'email' | 'firstName' | 'lastName'>
@@ -51,7 +51,7 @@ const main = async (req: Request, res: Response) => {
   }
   const { openingId, orgId, firstName, lastName, email } = req.body;
 
-  const [opening, openingError] = await Openings.GetOpeningById({
+  const [opening, openingError] = await getOpening({
     openingId,
     orgId,
   });
@@ -71,8 +71,9 @@ const main = async (req: Request, res: Response) => {
   if (opening.GSI1SK === OpeningState.PRIVATE || opening.totalStages === 0) {
     return res.status(403).json({ message: 'You cannot apply to this opening just yet!' });
   }
-
-  const [created, failed] = await Applicants.CreateApplicant({
+  const [created, failed] = await Applicants.CreateApplicant.createApplicant()
+  
+  createApplicant({
     firstName,
     lastName,
     openingId,

@@ -1,15 +1,15 @@
-import * as RejectInvite from './RejectInvite';
-import * as GetInvite from './GetInvite';
-import * as CreateInvite from './CreateInvite';
-import * as AcceptInvite from './AcceptInvite';
-import * as GetInvitesForUser from './GetInvitesForUser';
-import * as GetPendingOrgInvites from './GetPendingOrgInvites';
+import { rejectInvite } from './RejectInvite';
+import { getInvite } from './GetInvite';
+import { createInvite } from './CreateInvite';
+import { acceptInvite } from './AcceptInvite';
+import { getInvitesForUser } from './GetInvitesForUser';
+import { getPendingOrgInvites } from './GetPendingOrgInvites';
 
 export {
-  CreateInvite,
-  RejectInvite,
-  GetInvite,
-  AcceptInvite,
-  GetInvitesForUser,
-  GetPendingOrgInvites,
+  getInvite,
+  rejectInvite,
+  createInvite,
+  acceptInvite,
+  getInvitesForUser,
+  getPendingOrgInvites,
 };

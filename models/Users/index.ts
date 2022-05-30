@@ -1,19 +1,19 @@
-import * as CreateUser from './CreateUser';
-import * as GetUserByEmail from './GetUserByEmail';
-import * as GetUserById from './GetUserById';
-import * as UpdateUser from './UpdateUser';
-import * as CreateLoginLink from './CreateLoginLink';
-import * as GetLatestLoginLink from './GetLatestLoginLink';
-import * as CreateLoginEvent from './CreateLoginEvent';
-import * as RemoveUserFromOrg from './RemoveUserFromOrg';
+import { createUser } from './CreateUser';
+import { getUserByEmail } from './GetUserByEmail';
+import { getUserById } from './GetUserById';
+import { updateUser } from './UpdateUser';
+import { createLoginLink } from './CreateLoginLink';
+import { getLatestLoginLink } from './GetLatestLoginLink';
+import { createLoginEvent } from './CreateLoginEvent';
+import { removeUserFromOrg } from './RemoveUserFromOrg';
 
 export {
-  CreateUser,
-  GetUserByEmail,
-  GetUserById,
-  UpdateUser,
-  CreateLoginEvent,
-  CreateLoginLink,
-  GetLatestLoginLink,
-  RemoveUserFromOrg,
+  createUser,
+  getUserByEmail,
+  getUserById,
+  updateUser,
+  createLoginEvent,
+  createLoginLink,
+  getLatestLoginLink,
+  removeUserFromOrg,
 };

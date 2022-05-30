@@ -5,7 +5,7 @@ import { DYNAMO_TABLE_NAME, Entities } from '../../../Config';
 import { DynamoOrgInvite } from '../../../types/dynamo';
 import * as Time from '../../../utils/time';
 
-type JoinOrgFromInviteInput = {
+type AcceptInviteInput = {
   userId: string;
   invite: DynamoOrgInvite; // TODO I think the invite sent to the client is the clean version, need to verify this and if so make types for the clean version anyway
 };
@@ -15,7 +15,7 @@ type JoinOrgFromInviteInput = {
  */
 
 export const acceptInvite = async (
-  props: JoinOrgFromInviteInput,
+  props: AcceptInviteInput,
 ): Promise<[null, null] | [null, SdkError]> => {
   const { userId, invite } = props;
 
