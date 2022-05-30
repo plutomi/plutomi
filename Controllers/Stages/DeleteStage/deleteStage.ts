@@ -1,9 +1,9 @@
 import { Request, Response } from 'express';
-import { getOpening } from '../../models/Openings';
-import { deleteStage } from '../../models/Stages';
-import * as CreateError from '../../utils/createError';
+import { getOpening } from '../../../models/Openings';
+import { deleteStage } from '../../../models/Stages';
+import * as CreateError from '../../../utils/createError';
 
-const main = async (req: Request, res: Response) => {
+export const main = async (req: Request, res: Response) => {
   const { session } = res.locals;
   const { openingId, stageId } = req.params;
   const [opening, openingError] = await getOpening({
@@ -39,4 +39,3 @@ const main = async (req: Request, res: Response) => {
 
   return res.status(200).json({ message: 'Stage deleted!' });
 };
-export default main;

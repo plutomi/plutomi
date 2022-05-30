@@ -1,9 +1,9 @@
 import { Request, Response } from 'express';
 import Joi from 'joi';
-import { JOI_GLOBAL_FORBIDDEN, JOI_SETTINGS, LIMITS } from '../../Config';
-import { getStage, updateStage } from '../../models/Stages';
-import { DynamoStage } from '../../types/dynamo';
-import * as CreateError from '../../utils/createError';
+import { JOI_GLOBAL_FORBIDDEN, JOI_SETTINGS, LIMITS } from '../../../Config';
+import { getStage, updateStage } from '../../../models/Stages';
+import { DynamoStage } from '../../../types/dynamo';
+import * as CreateError from '../../../utils/createError';
 
 export interface APIUpdateStageOptions
   extends Partial<Pick<DynamoStage, 'GSI1SK' | 'questionOrder'>> {
@@ -25,7 +25,7 @@ const schema = Joi.object({
   body: JOI_FORBIDDEN_STAGE,
 }).options(JOI_SETTINGS);
 
-const main = async (req: Request, res: Response) => {
+export const main = async (req: Request, res: Response) => {
   try {
     await schema.validateAsync(req);
   } catch (error) {
@@ -95,4 +95,3 @@ const main = async (req: Request, res: Response) => {
     message: 'Stage updated!',
   });
 };
-export default main;

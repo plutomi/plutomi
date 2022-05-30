@@ -1,10 +1,10 @@
 import { Request, Response } from 'express';
 import Joi from 'joi';
-import { JOI_SETTINGS, LIMITS } from '../../Config';
-import * as CreateError from '../../utils/createError';
-import { DynamoStage } from '../../types/dynamo';
-import { getOpening } from '../../models/Openings';
-import { createStage } from '../../models/Stages';
+import { JOI_SETTINGS, LIMITS } from '../../../Config';
+import * as CreateError from '../../../utils/createError';
+import { DynamoStage } from '../../../types/dynamo';
+import { getOpening } from '../../../models/Openings';
+import { createStage } from '../../../models/Stages';
 
 export interface APICreateStageOptions extends Required<Pick<DynamoStage, 'openingId' | 'GSI1SK'>> {
   /**
@@ -28,7 +28,7 @@ const schema = Joi.object({
   },
 }).options(JOI_SETTINGS);
 
-const main = async (req: Request, res: Response) => {
+export const main = async (req: Request, res: Response) => {
   const { session } = res.locals;
   try {
     await schema.validateAsync(req);
@@ -70,4 +70,3 @@ const main = async (req: Request, res: Response) => {
 
   return res.status(201).json({ message: 'Stage created!' });
 };
-export default main;
