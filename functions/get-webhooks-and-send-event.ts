@@ -37,6 +37,7 @@ export async function main(event: EventBridgeEvent<'stream', ApplicantWebhookEve
         axios.post(webhook.webhookUrl, event.detail);
       }),
     );
+    console.log('Webhooks sent!');
   } catch (error) {
     console.error(`An error ocurred sending webhooks to org ${event.detail.orgId} --- ${webhooks}`);
   }

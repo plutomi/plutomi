@@ -36,28 +36,6 @@ export default class WebhooksMachine extends cdk.Stack {
   constructor(scope: cdk.App, id: string, props: WebhooksMachineProps) {
     super(scope, id, props);
 
-    const DYNAMO_QUERY_SETTINGS = {
-      service: 'dynamodb',
-      action: 'query',
-      iamResources: [
-        props.table.tableArn,
-        `${props.table.tableArn}/index/GSI1`,
-        `${props.table.tableArn}/index/GSI2`,
-      ],
-    };
-
-    const GET_ORG_INFO = new tasks.DynamoGetItem(this, 'Get Item', {
-      key: {
-        PK: tasks.DynamoAttributeValue.fromString(
-          `${Entities.ORG}#${sfn.JsonPath.stringAt('$.detail.PK')}`,
-        ),
-        SK: tasks.DynamoAttributeValue.fromString(Entities.ORG),
-      },
-      table: props.table,
-    });
-    sfn.Condition.numberGreaterThan('$.detail.OldImage.totalWebhooks', 0);
-    const SUCCESS = new sfn.Succeed(this, 'No webhooks in org :)');
-
     const FUNCTION_NAME = 'get-webhooks-and-send-event-function';
     const GetWebhooksAndSendEventFunction = new NodejsFunction(
       this,
@@ -111,5 +89,6 @@ export default class WebhooksMachine extends cdk.Stack {
     });
 
     props.table.grantWriteData(this.WebhooksMachine); // TODO this event should just be update. No need for extra permissions
+    props.table.grantReadData(GetWebhooksAndSendEventFunction); // TODO too broad
   }
 }
