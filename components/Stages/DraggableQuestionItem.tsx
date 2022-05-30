@@ -1,13 +1,22 @@
 import { useRouter } from 'next/router';
-import { CustomQuery } from '../../types/main';
+import { mutate } from 'swr';
 import { Draggable } from 'react-beautiful-dnd';
+import { CustomQuery } from '../../types/main';
 import { DynamoQuestion } from '../../types/dynamo';
 import * as Questions from '../../adapters/Questions';
-import { mutate } from 'swr';
 import combineClassNames from '../../utils/combineClassNames';
 import * as Stages from '../../adapters/Stages';
 
-export default function DraggableQuestionItem({ question, index, provided }) {
+interface DraggableQuestionItemProps {
+  question: DynamoQuestion;
+  index: number;
+  provided: any; // TODO
+}
+export default function DraggableQuestionItem({
+  question,
+  index,
+  provided,
+}: DraggableQuestionItemProps) {
   const router = useRouter();
 
   const { openingId, stageId } = router.query as Pick<CustomQuery, 'openingId' | 'stageId'>;
@@ -66,6 +75,7 @@ export default function DraggableQuestionItem({ question, index, provided }) {
             <div className="flex items-center justify-center text-normal">
               <p>{question.questionId}</p>
               <button
+                type="button"
                 onClick={() => handleRemove(question)}
                 className=" ml-4 px-2 py-1 right-0 border border-red-500 rounded-md text-red-500 bg-white hover:text-white hover:bg-red-500 transition ease-in duration-100"
               >

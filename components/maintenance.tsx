@@ -1,7 +1,7 @@
 import { ChevronRightIcon, MailIcon } from '@heroicons/react/solid';
 import * as Time from '../utils/time';
 
-export default function MaintenanceList({ commits }) {
+export default function MaintenanceList() {
   return (
     <div className="bg-white shadow overflow-hidden sm:rounded-md mx-auto max-w-5xl">
       {/* <ul className="divide-y divide-gray-200">

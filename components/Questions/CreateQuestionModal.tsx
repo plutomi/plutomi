@@ -15,6 +15,8 @@ export default function CreateQuestionModal() {
   const [questionId, setQuestionId] = useState('');
   const [GSI1SK, setGSI1SK] = useState('');
   const [description, setDescription] = useState('');
+  const visibility = useStore((state) => state.showCreateQuestionModal);
+  const closeCreateQuestionModal = useStore((state) => state.closeCreateQuestionModal);
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
@@ -36,8 +38,6 @@ export default function CreateQuestionModal() {
     mutate(GetQuestionsInOrgURL());
   };
 
-  const visibility = useStore((state) => state.showCreateQuestionModal);
-  const closeCreateQuestionModal = useStore((state) => state.closeCreateQuestionModal);
   return (
     <Transition.Root show={visibility} as={Fragment}>
       <Dialog
@@ -102,8 +102,6 @@ export default function CreateQuestionModal() {
                           <div>
                             <label htmlFor="title" className="block text-sm font-medium text-dark">
                               Question Title
-                            </label>
-                            <div className="mt-1">
                               <input
                                 type="text"
                                 name="title"
@@ -114,7 +112,7 @@ export default function CreateQuestionModal() {
                                 onChange={(e) => setGSI1SK(e.target.value)}
                                 className="block w-full shadow-sm text-sm focus:ring-blue-500 focus:border-blue-500 border-gray-300 rounded-md"
                               />
-                            </div>
+                            </label>
                           </div>
                           <div>
                             <label
@@ -122,8 +120,6 @@ export default function CreateQuestionModal() {
                               className="block text-sm font-medium text-dark"
                             >
                               Description
-                            </label>
-                            <div className="mt-1 flex rounded-md shadow-sm w-full">
                               <textarea
                                 name="description"
                                 id="description"
@@ -134,13 +130,11 @@ export default function CreateQuestionModal() {
                                 value={description}
                                 onChange={(e) => setDescription(e.target.value)}
                               />
-                            </div>
+                            </label>
                           </div>
                           <div>
                             <label htmlFor="title" className="block text-sm font-medium text-dark">
                               Question ID
-                            </label>
-                            <div className="mt-1">
                               <input
                                 type="text"
                                 name="title"
@@ -155,7 +149,7 @@ export default function CreateQuestionModal() {
                                 }
                                 className="block w-full shadow-sm text-sm focus:ring-blue-500 focus:border-blue-500 border-gray-300 rounded-md"
                               />
-                            </div>
+                            </label>
                             <div className="relative items-start">
                               <p className="block text-light text-sm  mt-2">
                                 A <strong>unique ID </strong>to match applicant rules against. For

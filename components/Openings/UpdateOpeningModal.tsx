@@ -26,7 +26,7 @@ export default function UpdateOpeningModal({ opening }: { opening: DynamoOpening
     try {
       const newValues = {
         GSI1SK: opening?.GSI1SK === GSI1SK ? undefined : GSI1SK,
-        openingName: opening?.openingName == openingName ? undefined : openingName,
+        openingName: opening?.openingName === openingName ? undefined : openingName,
       };
 
       const { data } = await UpdateOpening({
@@ -106,8 +106,6 @@ export default function UpdateOpeningModal({ opening }: { opening: DynamoOpening
                               className="block text-sm font-medium text-dark"
                             >
                               Edit name
-                            </label>
-                            <div className="mt-1">
                               <input
                                 type="text"
                                 name="opening-name"
@@ -117,7 +115,7 @@ export default function UpdateOpeningModal({ opening }: { opening: DynamoOpening
                                 value={openingName}
                                 className="block w-full shadow-sm sm:text-sm focus:ring-blue-500 focus:border-blue-500 border-gray-300 rounded-md"
                               />
-                            </div>
+                            </label>
                           </div>
                           <div className="relative flex items-start">
                             {opening?.totalStages === 0 ? (
@@ -145,9 +143,7 @@ export default function UpdateOpeningModal({ opening }: { opening: DynamoOpening
                                     className="focus:ring-blue-500 h-4 w-4 text-blue-600 border-gray-300 rounded"
                                   />
                                   <div className="ml-3 text-sm">
-                                    <label htmlFor="comments" className="font-medium text-gray-700">
-                                      Public
-                                    </label>
+                                    <p className="font-medium text-gray-700">Public</p>
                                     <p id="comments-description" className="text-normal">
                                       Make this opening available for everyone to apply
                                     </p>

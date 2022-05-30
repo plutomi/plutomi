@@ -4,8 +4,14 @@ import { CheckIcon, SelectorIcon } from '@heroicons/react/solid';
 import { useRouter } from 'next/router';
 import { OPENING_STATE, WEBSITE_URL } from '../../Config';
 import combineClassNames from '../../utils/combineClassNames';
+import { DynamoOpening } from '../../types/dynamo';
 
-export default function OpeningsDropdown({ openings, index }) {
+interface OpenignsDropdownProps {
+  openings: DynamoOpening[];
+  index: number;
+}
+
+export default function OpeningsDropdown({ openings, index }: OpenignsDropdownProps) {
   const router = useRouter();
   const [selected, setSelected] = useState(openings[index]);
 

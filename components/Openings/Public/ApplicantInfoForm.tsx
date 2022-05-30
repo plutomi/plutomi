@@ -1,9 +1,9 @@
 import { FormEvent, useState } from 'react';
 import { Switch } from '@headlessui/react';
+import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { CreateApplicant } from '../../../adapters/Applicants';
 import combineClassNames from '../../../utils/combineClassNames';
-
 import { CustomQuery } from '../../../types/main';
 
 export default function ApplicantInfoForm() {
@@ -111,8 +111,6 @@ export default function ApplicantInfoForm() {
             <div>
               <label htmlFor="first-name" className="block text-sm font-medium text-normal">
                 First name
-              </label>
-              <div className="mt-1">
                 <input
                   type="text"
                   name="first-name"
@@ -123,13 +121,11 @@ export default function ApplicantInfoForm() {
                   autoComplete="given-name"
                   className="py-3 px-4 block w-full shadow-sm focus:ring-blue-500 focus:border-blue-500 border-gray-300 rounded-md"
                 />
-              </div>
+              </label>
             </div>
             <div>
               <label htmlFor="last-name" className="block text-sm font-medium text-normal">
                 Last name
-              </label>
-              <div className="mt-1">
                 <input
                   type="text"
                   name="last-name"
@@ -140,7 +136,7 @@ export default function ApplicantInfoForm() {
                   autoComplete="family-name"
                   className="py-3 px-4 block w-full shadow-sm focus:ring-blue-500 focus:border-blue-500 border-gray-300 rounded-md"
                 />
-              </div>
+              </label>
             </div>
             {/* <div className="sm:col-span-2">
               <label
@@ -162,8 +158,6 @@ export default function ApplicantInfoForm() {
             <div className="sm:col-span-2">
               <label htmlFor="email" className="block text-sm font-medium text-normal">
                 Email
-              </label>
-              <div className="mt-1">
                 <input
                   id="email"
                   name="email"
@@ -174,7 +168,7 @@ export default function ApplicantInfoForm() {
                   autoComplete="email"
                   className="py-3 px-4 block w-full shadow-sm focus:ring-blue-500 focus:border-blue-500 border-gray-300 rounded-md"
                 />
-              </div>
+              </label>
             </div>
             {/* <div className="sm:col-span-2">
               <label
@@ -250,19 +244,25 @@ export default function ApplicantInfoForm() {
                   {/* TODO add these links */}
                   <p className="text-base text-light">
                     By selecting this, you agree to the Plutomi Inc.{' '}
-                    <a
-                      href="#"
-                      className="font-medium text-normal underline hover:text-dark transition ease-in-out duration-200"
-                    >
-                      Privacy Policy
-                    </a>{' '}
+                    <Link href="##" passHref>
+                      {/*  eslint-disable-next-line jsx-a11y/anchor-is-valid */}
+                      <a
+                        href="#"
+                        className="font-medium text-normal underline hover:text-dark transition ease-in-out duration-200"
+                      >
+                        Privacy Policy
+                      </a>{' '}
+                    </Link>
                     and{' '}
-                    <a
-                      href="#"
-                      className="font-medium text-normal underline hover:text-dark transition ease-in-out duration-200"
-                    >
-                      Cookie Policy
-                    </a>
+                    <Link href="##" passHref>
+                      {/*  eslint-disable-next-line jsx-a11y/anchor-is-valid */}
+                      <a
+                        href="#"
+                        className="font-medium text-normal underline hover:text-dark transition ease-in-out duration-200"
+                      >
+                        Cookie Policy
+                      </a>
+                    </Link>
                     .
                   </p>
                 </div>

@@ -2,7 +2,10 @@ import { useState } from 'react';
 import LoginEmail from './EmailSigninInput';
 import { RequestLoginLink } from '../adapters/Auth';
 
-export default function Login({ loggedOutPageText }) {
+interface LoginPageProps {
+  loggedOutPageText: string;
+}
+export default function Login({ loggedOutPageText }: LoginPageProps) {
   const [email, setEmail] = useState('');
   const [submittedText, setSubmittedText] = useState(
     `We've sent a magic login link to your email!`,

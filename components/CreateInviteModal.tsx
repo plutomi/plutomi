@@ -97,8 +97,6 @@ export default function CreateInviteModal() {
                               className="block text-sm font-medium text-dark"
                             >
                               What is their email?
-                            </label>
-                            <div className="mt-1">
                               <input
                                 type="text"
                                 name="new-user-email"
@@ -108,7 +106,7 @@ export default function CreateInviteModal() {
                                 value={recipientEmail}
                                 className="block w-full shadow-sm sm:text-sm focus:ring-blue-500 focus:border-blue-500 border-gray-300 rounded-md"
                               />
-                            </div>
+                            </label>
                           </div>
                           <div>
                             <label
@@ -116,8 +114,6 @@ export default function CreateInviteModal() {
                               className="block text-sm font-medium text-gray-700"
                             >
                               Invite will expire in
-                            </label>
-                            <div className="mt-1 relative rounded-md shadow-sm w-2/5">
                               <input
                                 type="number"
                                 name="expiry-days"
@@ -128,13 +124,14 @@ export default function CreateInviteModal() {
                                 className="focus:ring-blue-500 focus:border-blue-500 block w-full  pr-12 sm:text-sm border-gray-300 rounded-md"
                                 placeholder="3"
                                 value={expiresInDays}
-                                onChange={(e) => setExpiresInDays(parseInt(e.target.value))}
+                                onChange={(e) => setExpiresInDays(parseInt(e.target.value, 10))}
                               />
-                              <div className="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
-                                <span className="text-light sm:text-sm" id="expiry">
-                                  days
-                                </span>
-                              </div>
+                            </label>
+
+                            <div className="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
+                              <span className="text-light sm:text-sm" id="expiry">
+                                days
+                              </span>
                             </div>
                           </div>
                         </div>

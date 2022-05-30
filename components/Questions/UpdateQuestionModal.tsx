@@ -3,9 +3,14 @@ import { Dialog, Transition } from '@headlessui/react';
 import { XIcon } from '@heroicons/react/outline';
 import useStore from '../../utils/store';
 import { UpdateQuestion } from '../../adapters/Questions';
+import { DynamoQuestion } from '../../types/dynamo';
 
 const descriptionMaxLength = 300; // TODO set this serverside
-export default function UpdateQuestionModal({ question }) {
+
+interface UpdateQuestionModalProps {
+  question: DynamoQuestion;
+}
+export default function UpdateQuestionModal({ question }: UpdateQuestionModalProps) {
   const [GSI1SK, setGSI1SK] = useState('');
   const [description, setDescription] = useState('');
 
@@ -100,8 +105,6 @@ export default function UpdateQuestionModal({ question }) {
                           <div>
                             <label htmlFor="title" className="block text-sm font-medium text-dark">
                               New Question Title
-                            </label>
-                            <div className="mt-1">
                               <input
                                 type="text"
                                 name="title"
@@ -112,7 +115,7 @@ export default function UpdateQuestionModal({ question }) {
                                 onChange={(e) => setGSI1SK(e.target.value)}
                                 className="block w-full shadow-sm text-sm focus:ring-blue-500 focus:border-blue-500 border-gray-300 rounded-md"
                               />
-                            </div>
+                            </label>
                           </div>
                           <div>
                             <label
@@ -120,8 +123,6 @@ export default function UpdateQuestionModal({ question }) {
                               className="block text-sm font-medium text-dark"
                             >
                               New Description
-                            </label>
-                            <div className="mt-1 flex rounded-md shadow-sm w-full">
                               <textarea
                                 name="description"
                                 id="description"
@@ -132,7 +133,7 @@ export default function UpdateQuestionModal({ question }) {
                                 value={description}
                                 onChange={(e) => setDescription(e.target.value)}
                               />
-                            </div>
+                            </label>
                           </div>
                         </div>
                       </div>
