@@ -152,10 +152,6 @@ type CreateUserInput = {
   lastName?: string;
 };
 
-type GetOrgInvitesForUserInput = {
-  userId: string;
-};
-
 type CreateLoginLinkInput = {
   loginLinkId: string;
   loginLinkUrl: string;

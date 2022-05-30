@@ -99,6 +99,6 @@
     "jsx": "preserve"
   },
 
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx"],
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", "models/Invites/CreateInvite"],
   "exclude": ["node_modules", "cdk.out"]
 }

@@ -1,7 +1,15 @@
-import CreateInvite from './CreateInvite.ts/createInvite';
-import DeleteInvite from './RejectInvite/rejectInvite';
-import GetInvite from './GetInvite/getInvite';
-import AcceptInvite from './AcceptInvite/acceptInvite';
-import GetInvitesForUser from './get-invites-for-user';
+import * as RejectInvite from './RejectInvite';
+import * as GetInvite from './GetInvite';
+import * as CreateInvite from './CreateInvite';
+import * as AcceptInvite from './AcceptInvite';
+import * as GetInvitesForUser from './GetInvitesForUser';
+import * as GetPendingOrgInvites from './GetPendingOrgInvites';
 
-export { CreateInvite, DeleteInvite, GetInvite, AcceptInvite, GetInvitesForUser };
+export {
+  CreateInvite,
+  RejectInvite,
+  GetInvite,
+  AcceptInvite,
+  GetInvitesForUser,
+  GetPendingOrgInvites,
+};
