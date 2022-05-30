@@ -1,11 +1,12 @@
 import DisplayStageCard, { UseCaseExampleStageCardProps } from './DisplayStageCard';
 
 export interface UseCaseExampleProps {
+  id: string | number;
   name: string;
   stages: UseCaseExampleStageCardProps[];
 }
 
-export default function Example({ stages, name }: UseCaseExampleProps) {
+export default function Example({ stages, name, id }: UseCaseExampleProps) {
   return (
     <div className="relative my-8 mx-auto text-center lg:max-w-full max-w-sm ">
       <h3 className="text-2xl leading-6 font-medium text-blue-gray-900">{name}</h3>

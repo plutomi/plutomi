@@ -7,7 +7,7 @@
     "prettier"
   ],
   "rules": {
-    "@next/next/no-document-import-in-page": "off", // small bug
+    "@next/next/no-document-import-in-page": "warn", // small bug
     "react/react-in-jsx-scope": "off",
     "@typescript-eslint/no-unused-vars": "warn",
     "@typescript-eslint/no-shadow": "warn",
@@ -30,7 +30,7 @@
     {
       "files": ["tests/**/*"],
       "rules": {
-        "@typescript-eslint/no-shadow": ["off"]
+        "@typescript-eslint/no-shadow": ["warn"]
       }
     }
   ]

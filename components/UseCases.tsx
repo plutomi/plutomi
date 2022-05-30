@@ -4,11 +4,11 @@ export default function UseCases() {
   const AllUseCases: UseCaseExampleProps[] = [
     {
       id: 1,
-      stageTitle: 'Employee hiring',
+      name: 'Employee hiring',
       stages: [
         {
           id: '1',
-          stagestageTitle: 'Resume Upload',
+          stageTitle: 'Resume Upload',
           totalApplicants: 2,
         },
         {
@@ -35,7 +35,7 @@ export default function UseCases() {
     },
     {
       id: '3',
-      stageTitle: 'Social services programs',
+      name: 'Social services programs',
       stages: [
         {
           id: '1',
@@ -67,7 +67,7 @@ export default function UseCases() {
     },
     {
       id: 4,
-      stageTitle: 'Large scale contracting',
+      name: 'Large scale contracting',
       stages: [
         {
           id: '1',
@@ -103,7 +103,12 @@ export default function UseCases() {
     <div className=" ">
       <div className="max-w-7xl mx-auto py-8 space-y-24">
         {AllUseCases.map((example) => (
-          <PricingExample key={example.id} stages={example.stages} name={example.name} />
+          <PricingExample
+            key={example.id}
+            id={example.id}
+            stages={example.stages}
+            name={example.name}
+          />
         ))}
       </div>
     </div>

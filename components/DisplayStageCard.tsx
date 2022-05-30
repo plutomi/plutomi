@@ -2,9 +2,9 @@ import { UserGroupIcon } from '@heroicons/react/outline';
 import NumberFormat from 'react-number-format';
 
 export interface UseCaseExampleStageCardProps {
-  id: string;
+  id: string | number;
   stageTitle: string;
-  totalApplicants: string;
+  totalApplicants: number;
   className?: string;
 }
 
