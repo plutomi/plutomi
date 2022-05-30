@@ -1,7 +1,6 @@
 import { Request, Response } from 'express';
-import { getOrg } from '../../../models/Orgs';
-import { removeUserFromOrg } from '../../../models/Users';
 import * as CreateError from '../../../utils/createError';
+import DB from '../../../models';
 
 export const main = async (req: Request, res: Response) => {
   const { session } = res.locals;
@@ -13,7 +12,7 @@ export const main = async (req: Request, res: Response) => {
         "You cannot remove yourself from an org. If you're the only user, delete the org instead",
     });
   }
-  const [org, orgError] = await getOrg({
+  const [org, orgError] = await DB.Orgs.getOrg({
     orgId,
   });
 
@@ -30,7 +29,7 @@ export const main = async (req: Request, res: Response) => {
     return res.status(404).json({ message: `No org found with id of '${orgId}` });
   }
 
-  const [removed, removeError] = await removeUserFromOrg({
+  const [removed, removeError] = await DB.Users.removeUserFromOrg({
     // if this doesn't match the createdBy ID on the org,
     // Dynamo will error
     createdById: session.userId,

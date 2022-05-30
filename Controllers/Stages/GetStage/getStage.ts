@@ -1,12 +1,12 @@
 import { Request, Response } from 'express';
-import * as Stages from '../../../models/Stages';
+import DB from '../../../models';
 import * as CreateError from '../../../utils/createError';
 
 export const main = async (req: Request, res: Response) => {
   const { session } = res.locals;
 
   const { openingId, stageId } = req.params;
-  const [stage, stageError] = await Stages.getStage({
+  const [stage, stageError] = await DB.Stages.getStage({
     orgId: session.orgId,
     stageId,
     openingId,

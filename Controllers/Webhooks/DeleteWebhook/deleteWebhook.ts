@@ -1,11 +1,11 @@
 import { Request, Response } from 'express';
-import { deleteWebhook } from '../../../models/Webhooks';
+import DB from '../../../models';
 import * as CreateError from '../../../utils/createError';
 
 export const main = async (req: Request, res: Response) => {
   const { session } = res.locals;
 
-  const [success, failure] = await deleteWebhook({
+  const [success, failure] = await DB.Webhooks.deleteWebhook({
     orgId: session.orgId,
     webhookId: req.params.webhookId,
   });

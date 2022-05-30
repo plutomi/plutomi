@@ -6,9 +6,11 @@ import { createLoginLink } from './CreateLoginLink';
 import { getLatestLoginLink } from './GetLatestLoginLink';
 import { createLoginEvent } from './CreateLoginEvent';
 import { removeUserFromOrg } from './RemoveUserFromOrg';
+import { getUsersInOrg } from './GetUsersInOrg';
 
 export {
   createUser,
+  getUsersInOrg,
   getUserByEmail,
   getUserById,
   updateUser,

@@ -1,9 +1,9 @@
 import { Request, Response } from 'express';
 import Joi from 'joi';
 import { JOI_GLOBAL_FORBIDDEN, JOI_SETTINGS, LIMITS } from '../../../Config';
-import { getStage, updateStage } from '../../../models/Stages';
 import { DynamoStage } from '../../../types/dynamo';
 import * as CreateError from '../../../utils/createError';
+import DB from '../../../models';
 
 export interface APIUpdateStageOptions
   extends Partial<Pick<DynamoStage, 'GSI1SK' | 'questionOrder'>> {
@@ -36,7 +36,7 @@ export const main = async (req: Request, res: Response) => {
   const { session } = res.locals;
   const { openingId, stageId } = req.params;
 
-  const [stage, stageError] = await getStage({
+  const [stage, stageError] = await DB.Stages.getStage({
     openingId,
     stageId,
     orgId: session.orgId,
@@ -79,7 +79,7 @@ export const main = async (req: Request, res: Response) => {
     }
   }
 
-  const [updatedStage, updateError] = await updateStage({
+  const [updatedStage, updateError] = await DB.Stages.updateStage({
     orgId: session.orgId,
     openingId,
     stageId,

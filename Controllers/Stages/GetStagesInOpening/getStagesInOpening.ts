@@ -1,6 +1,5 @@
 import { Request, Response } from 'express';
-import { getOpening } from '../../../models/Openings';
-import { getStagesInOpening } from '../../../models/Stages';
+import DB from '../../../models';
 import * as CreateError from '../../../utils/createError';
 
 export const main = async (req: Request, res: Response) => {
@@ -8,7 +7,7 @@ export const main = async (req: Request, res: Response) => {
 
   const { openingId } = req.params;
 
-  const [opening, openingError] = await getOpening({
+  const [opening, openingError] = await DB.Openings.getOpening({
     openingId,
     orgId: session.orgId,
   });
@@ -24,7 +23,7 @@ export const main = async (req: Request, res: Response) => {
   if (!opening) {
     return res.status(404).json({ message: 'Opening does not exist' });
   }
-  const [allCurrentStages, allStagesError] = await getStagesInOpening({
+  const [allCurrentStages, allStagesError] = await DB.Stages.getStagesInOpening({
     openingId,
     orgId: session.orgId,
     stageOrder: opening.stageOrder, // To order them correctly

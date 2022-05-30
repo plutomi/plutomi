@@ -1,10 +1,10 @@
 import { Request, Response } from 'express';
-import { getWebhooksInOrg } from '../../../models/Webhooks';
+import DB from '../../../models';
 import * as CreateError from '../../../utils/createError';
 
 export const main = async (req: Request, res: Response) => {
   const { session } = res.locals;
-  const [webhooks, webhooksError] = await getWebhooksInOrg({
+  const [webhooks, webhooksError] = await DB.Webhooks.getWebhooksInOrg({
     orgId: session.orgId,
   });
 

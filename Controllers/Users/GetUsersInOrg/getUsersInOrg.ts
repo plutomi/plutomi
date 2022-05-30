@@ -1,12 +1,12 @@
 import { Request, Response } from 'express';
 import { pick } from 'lodash';
-import { getUsersInOrg } from '../../../models/Users/GetUsersInOrg';
+import DB from '../../../models';
 import * as CreateError from '../../../utils/createError';
 
 export const main = async (req: Request, res: Response) => {
   const { session } = res.locals;
 
-  const [users, error] = await getUsersInOrg({
+  const [users, error] = await DB.Users.getUsersInOrg({
     orgId: session.orgId,
   });
 

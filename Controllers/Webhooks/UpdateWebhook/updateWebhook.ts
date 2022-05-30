@@ -3,7 +3,7 @@ import Joi from 'joi';
 import * as CreateError from '../../../utils/createError';
 import { JOI_GLOBAL_FORBIDDEN, JOI_SETTINGS, LIMITS } from '../../../Config';
 import { DynamoWebhook } from '../../../types/dynamo';
-import { updateWebhook } from '../../../models/Webhooks';
+import DB from '../../../models';
 import { UpdateWebhookInput } from '../../../models/Webhooks/UpdateWebhook';
 
 export interface APIUpdateWebhookOptions
@@ -42,7 +42,7 @@ export const main = async (req: Request, res: Response) => {
     newValues: req.body,
   };
 
-  const [updatedWebhook, error] = await updateWebhook(updateWebhookInput);
+  const [updatedWebhook, error] = await DB.Webhooks.updateWebhook(updateWebhookInput);
 
   if (error) {
     const { status, body } = CreateError.SDK(error, 'An error ocurred updating this webhook');

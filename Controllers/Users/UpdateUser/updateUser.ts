@@ -3,7 +3,7 @@ import Joi from 'joi';
 import * as CreateError from '../../../utils/createError';
 import { DEFAULTS, JOI_GLOBAL_FORBIDDEN, JOI_SETTINGS } from '../../../Config';
 import { DynamoUser } from '../../../types/dynamo';
-import { updateUser } from '../../../models/Users';
+import DB from '../../../models';
 
 export interface APIUpdateUserOptions extends Partial<Pick<DynamoUser, 'firstName' | 'lastName'>> {
   [key: string]: any;
@@ -51,7 +51,7 @@ export const main = async (req: Request, res: Response) => {
     return res.status(403).json({ message: 'You cannot update this user' });
   }
 
-  const [updatedUser, error] = await updateUser({
+  const [updatedUser, error] = await DB.Users.updateUser({
     userId: session.userId,
     newValues: req.body,
   });
