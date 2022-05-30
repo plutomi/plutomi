@@ -15,7 +15,7 @@ const schema = Joi.object({
   },
 }).options(JOI_SETTINGS);
 
-export const main = async (req: Request, res: Response) => {
+export const createInvite = async (req: Request, res: Response) => {
   try {
     await schema.validateAsync(req);
   } catch (error) {

@@ -4,7 +4,7 @@ import * as CreateError from '../../utils/createError';
 import { OpeningState } from '../../Config';
 import DB from '../../models';
 
-export const main = async (req: Request, res: Response) => {
+export const getOpening = async (req: Request, res: Response) => {
   const { orgId, openingId } = req.params;
 
   const [opening, openingsError] = await DB.Openings.getOpening({

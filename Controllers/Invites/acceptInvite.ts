@@ -4,7 +4,7 @@ import * as CreateError from '../../utils/createError';
 import * as Time from '../../utils/time';
 import DB from '../../models';
 
-export const main = async (req: Request, res: Response) => {
+export const acceptInvite = async (req: Request, res: Response) => {
   const { session } = res.locals;
   const { inviteId } = req.params;
 

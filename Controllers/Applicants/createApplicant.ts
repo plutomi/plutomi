@@ -28,7 +28,7 @@ const schema = Joi.object({
   },
 }).options(JOI_SETTINGS);
 
-export const main = async (req: Request, res: Response) => {
+export const createApplicant = async (req: Request, res: Response) => {
   // TODO implement only one application per email
   // https://github.com/plutomi/plutomi/issues/521
   try {

@@ -10,7 +10,7 @@ const schema = Joi.object({
     userId: Joi.string(),
   },
 }).options(JOI_SETTINGS);
-export const main = async (req: Request, res: Response) => {
+export const cancelInvite = async (req: Request, res: Response) => {
   try {
     await schema.validateAsync(req);
   } catch (error) {

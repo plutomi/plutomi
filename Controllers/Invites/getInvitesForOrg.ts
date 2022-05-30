@@ -2,7 +2,7 @@ import { Request, Response } from 'express';
 import DB from '../../models';
 import * as CreateError from '../../utils/createError';
 
-export const main = async (req: Request, res: Response) => {
+export const getInvitesForOrg = async (req: Request, res: Response) => {
   const { orgId } = req.params;
 
   const [invites, error] = await DB.Invites.getInvitesForOrg({ orgId });

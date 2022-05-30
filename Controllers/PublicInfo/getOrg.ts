@@ -3,7 +3,7 @@ import { pick } from 'lodash';
 import DB from '../../models';
 import * as CreateError from '../../utils/createError';
 
-export const main = async (req: Request, res: Response) => {
+export const getOrg = async (req: Request, res: Response) => {
   const { orgId } = req.params;
 
   const [org, orgError] = await DB.Orgs.getOrg({ orgId });

@@ -3,16 +3,6 @@ import helmet from 'helmet';
 import express, { Response } from 'express';
 import cors from 'cors';
 import timeout from 'connect-timeout';
-import * as Auth from './Controllers/Auth';
-import * as Users from './Controllers/Users';
-import * as Orgs from './Controllers/Orgs';
-import * as Openings from './Controllers/Openings';
-import * as Stages from './Controllers/Stages';
-import * as PublicInfo from './Controllers/PublicInfo';
-import * as Invites from './Controllers/Invites';
-import * as Applicants from './Controllers/Applicants';
-import * as Questions from './Controllers/Questions';
-import * as Webhooks from './Controllers/Webhooks';
 import withHasOrg from './middleware/withHasOrg';
 import withSameOrg from './middleware/withSameOrg';
 import * as Jest from './Controllers/jest-setup';
@@ -20,6 +10,7 @@ import withCleanOrgId from './middleware/withCleanOrgId';
 import withCleanQuestionId from './middleware/withCleanQuestionId';
 import { COOKIE_SETTINGS, EXPRESS_PORT, WEBSITE_URL } from './Config';
 import withSession from './middleware/withSession';
+import API from './Controllers';
 
 const resultDotEnv = dotenv.config({
   path: `./.env.${process.env.NODE_ENV}`,
@@ -75,7 +66,7 @@ if (process.env.NODE_ENV === 'development') {
   app.post('/jest-setup', Jest.setup);
 }
 
-app.post('/request-login-link', Auth.RequestLoginLink);
+app.post('/request-login-link', API.Auth.RequestLoginLink);
 app.get('/login', Auth.Login);
 app.post('/logout', withSession, Auth.Logout);
 
