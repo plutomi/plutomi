@@ -1,12 +1,13 @@
 import { Request, Response } from 'express';
-import * as Questions from '../../models/Questions';
-import * as Stages from '../../models/Stages';
+import { deleteQuestionFromStage } from '../../models/Questions';
+import { getStage } from '../../models/Stages';
+
 import * as CreateError from '../../utils/createError';
 
 const main = async (req: Request, res: Response) => {
   const { session } = res.locals;
   const { openingId, stageId, questionId } = req.params;
-  const [stage, error] = await Stages.GetStageById({
+  const [stage, error] = await getStage({
     openingId,
     stageId,
     orgId: session.orgId,
@@ -20,6 +21,10 @@ const main = async (req: Request, res: Response) => {
     return res.status(status).json(body);
   }
 
+  if (!stage) {
+    return res.status(400).json({ message: 'Stage not found' });
+  }
+
   // TODO add a test for this
   if (!stage.questionOrder.includes(questionId)) {
     return res.status(400).json({
@@ -28,7 +33,7 @@ const main = async (req: Request, res: Response) => {
   }
 
   // Remove that question
-  const [updated, updateError] = await Questions.DeleteQuestionFromStage({
+  const [updated, updateError] = await deleteQuestionFromStage({
     openingId,
     stageId,
     questionId,

@@ -3,7 +3,7 @@ import Joi from 'joi';
 import { JOI_SETTINGS, LIMITS } from '../../Config';
 import * as CreateError from '../../utils/createError';
 import { DynamoWebhook } from '../../types/dynamo';
-import * as Webhooks from '../../models/Webhooks';
+import { createWebhook } from '../../models/Webhooks';
 
 export type APICreateWebhookOptions = Pick<
   DynamoWebhook,
@@ -29,7 +29,7 @@ const main = async (req: Request, res: Response) => {
 
   const { webhookUrl, webhookName, description }: APICreateWebhookOptions = req.body;
 
-  const [created, createWebhookError] = await Webhooks.CreateWebhook({
+  const [created, createWebhookError] = await createWebhook({
     orgId: session.orgId,
     webhookUrl,
     description,

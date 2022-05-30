@@ -2,9 +2,9 @@ import { Request, Response } from 'express';
 import Joi from 'joi';
 import { JOI_SETTINGS, LIMITS } from '../../Config';
 import * as CreateError from '../../utils/createError';
-import * as Openings from '../../models/Openings';
-import * as Stages from '../../models/Stages';
 import { DynamoStage } from '../../types/dynamo';
+import { getOpening } from '../../models/Openings';
+import { createStage } from '../../models/Stages';
 
 export interface APICreateStageOptions extends Required<Pick<DynamoStage, 'openingId' | 'GSI1SK'>> {
   /**
@@ -39,7 +39,7 @@ const main = async (req: Request, res: Response) => {
 
   const { GSI1SK, openingId, position } = req.body;
 
-  const [opening, openingError] = await Openings.GetOpeningById({
+  const [opening, openingError] = await getOpening({
     openingId,
     orgId: session.orgId,
   });
@@ -55,7 +55,7 @@ const main = async (req: Request, res: Response) => {
   }
 
   // Create the stage and update the stage order, model will handle where to place it
-  const [created, stageError] = await Stages.CreateStage({
+  const [created, stageError] = await createStage({
     orgId: session.orgId,
     GSI1SK,
     openingId,

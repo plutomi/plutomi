@@ -1,9 +1,9 @@
 import { Request, Response } from 'express';
 import Joi from 'joi';
 import * as CreateError from '../../utils/createError';
-import * as Questions from '../../models/Questions';
 import { JOI_GLOBAL_FORBIDDEN, JOI_SETTINGS, LIMITS } from '../../Config';
 import { DynamoQuestion } from '../../types/dynamo';
+import { updateQuestion } from '../../models/Questions';
 
 export interface APIUpdateQuestionOptions
   extends Partial<Pick<DynamoQuestion, 'GSI1SK' | 'description'>> {
@@ -33,7 +33,7 @@ const main = async (req: Request, res: Response) => {
   const { session } = res.locals;
   const { questionId } = req.params;
 
-  const [question, questionError] = await Questions.UpdateQuestion({
+  const [question, questionError] = await updateQuestion({
     orgId: session.orgId,
     questionId,
     newValues: req.body,

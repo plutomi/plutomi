@@ -1,14 +1,14 @@
 import { Request, Response } from 'express';
-import * as Openings from '../../models/Openings';
+import { getOpening } from '../../models/Openings';
+import { getStagesInOpening } from '../../models/Stages';
 import * as CreateError from '../../utils/createError';
-import * as Stages from '../../models/Stages';
 
 const main = async (req: Request, res: Response) => {
   const { session } = res.locals;
 
   const { openingId } = req.params;
 
-  const [opening, openingError] = await Openings.GetOpeningById({
+  const [opening, openingError] = await getOpening({
     openingId,
     orgId: session.orgId,
   });
@@ -24,7 +24,7 @@ const main = async (req: Request, res: Response) => {
   if (!opening) {
     return res.status(404).json({ message: 'Opening does not exist' });
   }
-  const [allCurrentStages, allStagesError] = await Stages.GetStagesInOpenings({
+  const [allCurrentStages, allStagesError] = await getStagesInOpening({
     openingId,
     orgId: session.orgId,
     stageOrder: opening.stageOrder, // To order them correctly

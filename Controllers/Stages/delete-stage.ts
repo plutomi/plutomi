@@ -1,12 +1,12 @@
 import { Request, Response } from 'express';
-import * as Openings from '../../models/Openings';
+import { getOpening } from '../../models/Openings';
+import { deleteStage } from '../../models/Stages';
 import * as CreateError from '../../utils/createError';
-import * as Stages from '../../models/Stages';
 
 const main = async (req: Request, res: Response) => {
   const { session } = res.locals;
   const { openingId, stageId } = req.params;
-  const [opening, openingError] = await Openings.GetOpeningById({
+  const [opening, openingError] = await getOpening({
     openingId,
     orgId: session.orgId,
   });
@@ -25,7 +25,7 @@ const main = async (req: Request, res: Response) => {
     });
   }
 
-  const [deleted, error] = await Stages.DeleteStage({
+  const [deleted, error] = await deleteStage({
     openingId,
     orgId: session.orgId,
     stageId,

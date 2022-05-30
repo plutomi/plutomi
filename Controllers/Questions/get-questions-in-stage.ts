@@ -1,13 +1,13 @@
 import { Request, Response } from 'express';
-import * as Questions from '../../models/Questions';
-import * as Stages from '../../models/Stages';
+import { getQuestion } from '../../models/Questions';
+import { getStage } from '../../models/Stages';
 import * as CreateError from '../../utils/createError';
 
 const main = async (req: Request, res: Response) => {
   const { session } = res.locals;
   const { openingId, stageId } = req.params;
 
-  const [stage, stageError] = await Stages.GetStageById({
+  const [stage, stageError] = await getStage({
     openingId,
     stageId,
     orgId: session.orgId,
@@ -32,7 +32,7 @@ const main = async (req: Request, res: Response) => {
   try {
     const results = await Promise.all(
       questionOrder.map(async (id: string) => {
-        const [question, error] = await Questions.GetQuestionById({
+        const [question, error] = await getQuestion({
           orgId: session.orgId,
           questionId: id,
         });

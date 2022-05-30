@@ -1,9 +1,9 @@
 import { Request, Response } from 'express';
 import Joi from 'joi';
 import * as CreateError from '../../utils/createError';
-import * as Questions from '../../models/Questions';
 import { DynamoQuestion } from '../../types/dynamo';
 import { JOI_SETTINGS, LIMITS } from '../../Config';
+import { createQuestion } from '../../models/Questions';
 
 export type APICreateQuestionOptions = Pick<
   DynamoQuestion,
@@ -27,7 +27,7 @@ const main = async (req: Request, res: Response) => {
   }
   const { questionId, description, GSI1SK }: APICreateQuestionOptions = req.body;
 
-  const [created, error] = await Questions.CreateQuestion({
+  const [created, error] = await createQuestion({
     questionId,
     orgId: session.orgId,
     GSI1SK,

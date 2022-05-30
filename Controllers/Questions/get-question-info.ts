@@ -1,11 +1,11 @@
 import { Request, Response } from 'express';
-import * as Questions from '../../models/Questions';
+import { getQuestion } from '../../models/Questions';
 import * as CreateError from '../../utils/createError';
 
 const main = async (req: Request, res: Response) => {
   const { session } = res.locals;
   const { questionId } = req.params;
-  const [question, questionError] = await Questions.GetQuestionById({
+  const [question, questionError] = await getQuestion({
     orgId: session.orgId,
     questionId,
   });

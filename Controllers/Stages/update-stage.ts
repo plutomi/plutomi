@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
 import Joi from 'joi';
 import { JOI_GLOBAL_FORBIDDEN, JOI_SETTINGS, LIMITS } from '../../Config';
-import * as Stages from '../../models/Stages';
+import { getStage, updateStage } from '../../models/Stages';
 import { DynamoStage } from '../../types/dynamo';
 import * as CreateError from '../../utils/createError';
 
@@ -36,7 +36,7 @@ const main = async (req: Request, res: Response) => {
   const { session } = res.locals;
   const { openingId, stageId } = req.params;
 
-  const [stage, stageError] = await Stages.GetStageById({
+  const [stage, stageError] = await getStage({
     openingId,
     stageId,
     orgId: session.orgId,
@@ -79,7 +79,7 @@ const main = async (req: Request, res: Response) => {
     }
   }
 
-  const [updatedStage, updateError] = await Stages.UpdateStage({
+  const [updatedStage, updateError] = await updateStage({
     orgId: session.orgId,
     openingId,
     stageId,

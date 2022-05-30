@@ -1,10 +1,10 @@
 import { Request, Response } from 'express';
 import Joi from 'joi';
 import { JOI_SETTINGS, LIMITS } from '../../Config';
+import { addQuestionToStage, getQuestion } from '../../models/Questions';
+import { getStage } from '../../models/Stages';
 import * as CreateError from '../../utils/createError';
-import * as Stages from '../../models/Stages';
 import getNewChildItemOrder from '../../utils/getNewChildItemOrder';
-import * as Questions from '../../models/Questions';
 
 const schema = Joi.object({
   body: {
@@ -33,7 +33,7 @@ const main = async (req: Request, res: Response) => {
   const { questionId, position }: { questionId: string; position?: number } = req.body;
   const { openingId, stageId } = req.params;
 
-  const [question, getQuestionError] = await Questions.GetQuestionById({
+  const [question, getQuestionError] = await getQuestion({
     orgId: session.orgId,
     questionId,
   });
@@ -52,7 +52,7 @@ const main = async (req: Request, res: Response) => {
     });
   }
 
-  const [stage, stageError] = await Stages.GetStageById({
+  const [stage, stageError] = await getStage({
     openingId,
     stageId,
     orgId: session.orgId,
@@ -78,7 +78,7 @@ const main = async (req: Request, res: Response) => {
   // Update the stage with the new questionOrder
   const questionOrder = getNewChildItemOrder(questionId, stage.questionOrder, position);
 
-  const [stageUpdated, stageUpdatedError] = await Questions.AddQuestionToStage({
+  const [stageUpdated, stageUpdatedError] = await addQuestionToStage({
     openingId,
     stageId,
     orgId: session.orgId,

@@ -1,10 +1,10 @@
 import { Request, Response } from 'express';
 import Joi from 'joi';
-import * as Webhooks from '../../models/Webhooks';
 import * as CreateError from '../../utils/createError';
 import { JOI_GLOBAL_FORBIDDEN, JOI_SETTINGS, LIMITS } from '../../Config';
-import { UpdateWebhookInput } from '../../types/main';
 import { DynamoWebhook } from '../../types/dynamo';
+import { updateWebhook } from '../../models/Webhooks';
+import { UpdateWebhookInput } from '../../models/Webhooks/UpdateWebhook';
 
 export interface APIUpdateWebhookOptions
   extends Partial<Pick<DynamoWebhook, 'webhookName' | 'webhookUrl' | 'description'>> {
@@ -42,7 +42,7 @@ const main = async (req: Request, res: Response) => {
     newValues: req.body,
   };
 
-  const [updatedWebhook, error] = await Webhooks.UpdateWebhook(updateWebhookInput);
+  const [updatedWebhook, error] = await updateWebhook(updateWebhookInput);
 
   if (error) {
     const { status, body } = CreateError.SDK(error, 'An error ocurred updating this webhook');
