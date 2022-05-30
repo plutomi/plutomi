@@ -40,9 +40,10 @@ export default function UserCard({ user }: { user: DynamoUser }) {
         <p className="text-md">{user?.email}</p>
         <p className="text-sm text-blue-gray-400">Joined {Time.relative(user?.orgJoinDate)}</p>
       </div>
-      {/* User is admin */}
+      {/* User is admin // TODO clean up */}
       {me?.userId === org?.createdBy && user?.userId !== me?.userId && (
         <button
+          type="submit"
           className="w-1/6 border  rounded-lg rounded-l-none bg-white border-red-500  hover:bg-red-500  text-red-500 hover:text-white  transition ease-in duration-100 "
           onClick={() => handleRemove(user)}
         >

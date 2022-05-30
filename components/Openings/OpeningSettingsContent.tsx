@@ -2,12 +2,12 @@ import { useRouter } from 'next/router';
 import StageReorderColumn from '../StageReorderColumn';
 import Loader from '../Loader';
 import useOpeningInfo from '../../SWR/useOpeningInfo';
-import { CUSTOM_QUERY } from '../../types/main';
+import { CustomQuery } from '../../types/main';
 import UpdateOpeningModal from './UpdateOpeningModal';
 
 export default function OpeningSettingsContent() {
   const router = useRouter();
-  const { openingId } = router.query as Pick<CUSTOM_QUERY, 'openingId'>;
+  const { openingId } = router.query as Pick<CustomQuery, 'openingId'>;
   const { opening, isOpeningLoading, isOpeningError } = useOpeningInfo(openingId);
 
   if (isOpeningLoading) {

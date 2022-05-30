@@ -6,7 +6,7 @@ import * as Time from '../../utils/time';
 import useOpenings from '../../SWR/useOpenings';
 import useSelf from '../../SWR/useSelf';
 import useStore from '../../utils/store';
-import { DOMAIN_NAME, OPENING_STATE, WEBSITE_URL } from '../../Config';
+import { DOMAIN_NAME, OpeningState, WEBSITE_URL } from '../../Config';
 
 export default function OpeningList() {
   const { user, isUserLoading, isUserError } = useSelf();
@@ -20,7 +20,7 @@ export default function OpeningList() {
 
   return (
     <div className="bg-white shadow overflow-hidden sm:rounded-md">
-      <ul role="list" className="divide-y divide-gray-200">
+      <ul className="divide-y divide-gray-200">
         {filteredOpenings?.map((opening) => {
           /**
            * If the opening has stages, go to the first stage and view aplicants.
@@ -35,6 +35,7 @@ export default function OpeningList() {
           return (
             <li key={opening.openingId}>
               <Link href={`/openings/${opening.openingId}/${endingUrl}`}>
+                {/* eslint-disable-next-line jsx-a11y/anchor-is-valid */}
                 <a className="block hover:bg-gray-50">
                   <div className="px-4 py-4 sm:px-6">
                     <div className="flex items-center justify-between">
@@ -42,7 +43,7 @@ export default function OpeningList() {
                         {opening?.openingName}
                       </h1>
                       <div className="ml-2 flex-shrink-0 flex">
-                        {opening?.GSI1SK === OPENING_STATE.PUBLIC ? (
+                        {opening?.GSI1SK === OpeningState.PUBLIC ? (
                           <p className="px-2 inline-flex text-sm leading-5 font-semibold rounded-full bg-green-100 text-green-800">
                             Public
                           </p>
@@ -69,7 +70,7 @@ export default function OpeningList() {
                           />
                           {opening?.totalStages}
                         </p>
-                        {opening?.GSI1SK === OPENING_STATE.PUBLIC ? (
+                        {opening?.GSI1SK === OpeningState.PUBLIC ? (
                           <p className="mt-2 flex items-center text-lg text-normal sm:mt-0 sm:ml-6">
                             <ClickToCopy
                               showText="Application Link"

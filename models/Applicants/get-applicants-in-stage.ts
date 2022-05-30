@@ -1,7 +1,7 @@
 import { QueryCommandInput, QueryCommand } from '@aws-sdk/lib-dynamodb';
 import { SdkError } from '@aws-sdk/types';
-import { Dynamo } from '../../AWSClients/ddbDocClient';
-import { DYNAMO_TABLE_NAME, ENTITY_TYPES } from '../../Config';
+import { Dynamo } from '../../awsClients/ddbDocClient';
+import { DYNAMO_TABLE_NAME, Entities } from '../../Config';
 import { GetApplicantsInStageInput, GetApplicantsInStageOutput } from '../../types/main';
 
 export default async function GetApplicants(
@@ -14,7 +14,7 @@ export default async function GetApplicants(
     IndexName: 'GSI1',
     KeyConditionExpression: 'GSI1PK = :GSI1PK',
     ExpressionAttributeValues: {
-      ':GSI1PK': `${ENTITY_TYPES.ORG}#${orgId}#${ENTITY_TYPES.OPENING}#${openingId}#${ENTITY_TYPES.STAGE}#${stageId}`,
+      ':GSI1PK': `${Entities.ORG}#${orgId}#${Entities.OPENING}#${openingId}#${Entities.STAGE}#${stageId}`,
     },
     ScanIndexForward: false,
   };

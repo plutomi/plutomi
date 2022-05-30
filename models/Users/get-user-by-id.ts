@@ -1,7 +1,7 @@
 import { GetCommandInput, GetCommand } from '@aws-sdk/lib-dynamodb';
 import { SdkError } from '@aws-sdk/types';
-import { Dynamo } from '../../AWSClients/ddbDocClient';
-import { DYNAMO_TABLE_NAME, ENTITY_TYPES } from '../../Config';
+import { Dynamo } from '../../awsClients/ddbDocClient';
+import { DYNAMO_TABLE_NAME, Entities } from '../../Config';
 import { DynamoUser } from '../../types/dynamo';
 import { GetUserByIdInput } from '../../types/main';
 /**
@@ -17,8 +17,8 @@ export default async function GetUserById(
     TableName: `${process.env.NODE_ENV}-${DYNAMO_TABLE_NAME}`,
 
     Key: {
-      PK: `${ENTITY_TYPES.USER}#${userId}`,
-      SK: ENTITY_TYPES.USER,
+      PK: `${Entities.USER}#${userId}`,
+      SK: Entities.USER,
     },
   };
 

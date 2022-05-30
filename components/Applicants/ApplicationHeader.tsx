@@ -1,11 +1,11 @@
 import { useRouter } from 'next/router';
 import useApplicantById from '../../SWR/useApplicantById';
 import useStageInfo from '../../SWR/useStageInfo';
-import { CUSTOM_QUERY } from '../../types/main';
+import { CustomQuery } from '../../types/main';
 
 export default function ApplicationHeader() {
   const router = useRouter();
-  const { applicantId } = router.query as Pick<CUSTOM_QUERY, 'applicantId'>;
+  const { applicantId } = router.query as Pick<CustomQuery, 'applicantId'>;
   const { applicant, isApplicantLoading, isApplicantError } = useApplicantById(applicantId);
 
   const { stage, isStageLoading, isStageError } = useStageInfo(

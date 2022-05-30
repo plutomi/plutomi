@@ -1,10 +1,10 @@
 import { ChevronRightIcon, MailIcon } from '@heroicons/react/solid';
 import * as Time from '../utils/time';
 
-export default function MaintenanceList({ commits }) {
+export default function MaintenanceList() {
   return (
     <div className="bg-white shadow overflow-hidden sm:rounded-md mx-auto max-w-5xl">
-      <ul role="list" className="divide-y divide-gray-200">
+      {/* <ul className="divide-y divide-gray-200">
         {commits.map((commit) => (
           <li key={commit.sha}>
             <a
@@ -52,7 +52,7 @@ export default function MaintenanceList({ commits }) {
             </a>
           </li>
         ))}
-      </ul>
+      </ul> */}
     </div>
   );
 }

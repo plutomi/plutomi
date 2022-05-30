@@ -23,10 +23,7 @@ export default function InvitesContent() {
   }
   return (
     <div className="">
-      <ul
-        role="list"
-        className="divide-y divide-gray-200 mx-auto max-w-xl flex-col space-y-4 p-20  "
-      >
+      <ul className="divide-y divide-gray-200 mx-auto max-w-xl flex-col space-y-4 p-20  ">
         {invites?.map((invite: DynamoOrgInvite) => (
           <Invite invite={invite} key={invite.inviteId} />
         ))}

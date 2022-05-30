@@ -9,7 +9,7 @@ import useOpeningInfo from '../SWR/useOpeningInfo';
 import useAllStagesInOpening from '../SWR/useAllStagesInOpening';
 import useStageInfo from '../SWR/useStageInfo';
 import { UpdateOpening, GetOpeningInfoURL } from '../adapters/Openings';
-import { CUSTOM_QUERY } from '../types/main';
+import { CustomQuery } from '../types/main';
 import StageCard from './Stages/StageCard';
 import CreateStageModal from './Stages/CreateStageModal';
 
@@ -17,7 +17,7 @@ export default function StageReorderColumn() {
   const openCreateStageModal = useStore((state) => state.openCreateStageModal);
 
   const router = useRouter();
-  const { openingId, stageId } = router.query as Pick<CUSTOM_QUERY, 'openingId' | 'stageId'>;
+  const { openingId, stageId } = router.query as Pick<CustomQuery, 'openingId' | 'stageId'>;
 
   const { opening, isOpeningLoading, isOpeningError } = useOpeningInfo(openingId);
 

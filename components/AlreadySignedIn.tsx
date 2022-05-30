@@ -8,7 +8,10 @@ import { GetSelfInfoURL } from '../adapters/Users';
 const handleLogout = async (isHomepage: boolean) => {
   try {
     const { data } = await Logout(); // TODO logout to same page
-    isHomepage ? window.location.reload() : null;
+    if (isHomepage) {
+      window.location.reload();
+    }
+    return;
     // alert(data.message);
     // TODO reroute to homepage
   } catch (error) {
@@ -30,9 +33,10 @@ export default function AlreadySignedIn() {
           Signed in as <strong>{user?.email}</strong>
         </p>
 
-        <Link href="/dashboard">
+        <Link href="/dashboard" passHref>
+          {/* eslint-disable-next-line @next/next/no-html-link-for-pages */}
           <a
-            type="button"
+            href="/dashboard"
             className="px-4 py-2 bg-normal hover:bg-dark  transition ease-in-out duration-200 text-white rounded-md"
           >
             Go to Dashboard &rarr;
@@ -40,6 +44,7 @@ export default function AlreadySignedIn() {
         </Link>
 
         <button
+          type="submit"
           className=" items-center px-4 py-2 border border-gray-300 shadow-sm text-base font-medium rounded-md text-dark bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
           onClick={() => handleLogout(router.asPath === '/' && true)}
         >

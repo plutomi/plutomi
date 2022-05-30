@@ -10,7 +10,20 @@ import useSelf from '../SWR/useSelf';
 import { AXIOS_INSTANCE as axios, DOMAIN_NAME } from '../Config';
 import * as Time from '../utils/time';
 
-export default function Main({ commits }) {
+interface Commit {
+  url: string;
+  username: string;
+  name: string;
+  image: string;
+  date: Date;
+  email: string;
+  message: string;
+}
+
+interface HomepageProps {
+  commits: Commit[];
+}
+export default function Main({ commits }: HomepageProps) {
   const { user, isUserLoading, isUserError } = useSelf();
   return (
     <>
@@ -26,7 +39,7 @@ export default function Main({ commits }) {
       </main>
       <div className="flex-wrap md:flex  justify-center space-x-2">
         <UseCases />
-        <ul role="list" className="divide-y mx-auto max-w-4xl divide-gray-200  mt-12">
+        <ul className="divide-y mx-auto max-w-4xl divide-gray-200  mt-12">
           {commits.map((commit) => (
             <li
               key={nanoid(15)}

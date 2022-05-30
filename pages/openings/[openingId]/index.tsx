@@ -4,12 +4,12 @@ import useSelf from '../../../SWR/useSelf';
 import Loader from '../../../components/Loader';
 import useAllStagesInOpening from '../../../SWR/useAllStagesInOpening';
 import useOpeningInfo from '../../../SWR/useOpeningInfo';
-import { CUSTOM_QUERY } from '../../../types/main';
+import { CustomQuery } from '../../../types/main';
 import { DOMAIN_NAME } from '../../../Config';
 
 export default function Openings() {
   const router = useRouter();
-  const { openingId } = router.query as Pick<CUSTOM_QUERY, 'openingId'>;
+  const { openingId } = router.query as Pick<CustomQuery, 'openingId'>;
 
   const { opening, isOpeningLoading, isOpeningError } = useOpeningInfo(openingId);
 
@@ -29,7 +29,7 @@ export default function Openings() {
       // Redirect to opening settings if no stages
       router.push(`${DOMAIN_NAME}/openings/${openingId}/settings`);
     }
-  }, [router.isReady]);
+  }, [router.isReady, opening?.totalStages, openingId, router, stages]);
 
   return <Loader text="Redirecting..." />;
 }

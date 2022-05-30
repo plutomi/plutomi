@@ -1,7 +1,7 @@
 import { TransactWriteCommandInput, TransactWriteCommand } from '@aws-sdk/lib-dynamodb';
 import { SdkError } from '@aws-sdk/types';
-import { Dynamo } from '../../AWSClients/ddbDocClient';
-import { DYNAMO_TABLE_NAME, ENTITY_TYPES } from '../../Config';
+import { Dynamo } from '../../awsClients/ddbDocClient';
+import { DYNAMO_TABLE_NAME, Entities } from '../../Config';
 import { DynamoOrg } from '../../types/dynamo';
 import { CreateAndJoinOrgInput } from '../../types/main';
 import * as Time from '../../utils/time';
@@ -13,15 +13,16 @@ export default async function CreateAndJoinOrg(
   const now = Time.currentISO();
 
   const newOrg: DynamoOrg = {
-    PK: `${ENTITY_TYPES.ORG}#${orgId}`,
-    SK: ENTITY_TYPES.ORG,
+    PK: `${Entities.ORG}#${orgId}`,
+    SK: Entities.ORG,
     orgId, // Cannot be changed
-    entityType: ENTITY_TYPES.ORG,
+    entityType: Entities.ORG,
     createdAt: now,
     createdBy: userId,
     totalApplicants: 0,
     totalOpenings: 0,
     totalUsers: 1,
+    totalWebhooks: 0,
     totalQuestions: 0,
     displayName,
   };
@@ -33,15 +34,15 @@ export default async function CreateAndJoinOrg(
           // Update user with the new org
           Update: {
             Key: {
-              PK: `${ENTITY_TYPES.USER}#${userId}`,
-              SK: ENTITY_TYPES.USER,
+              PK: `${Entities.USER}#${userId}`,
+              SK: Entities.USER,
             },
             TableName: `${process.env.NODE_ENV}-${DYNAMO_TABLE_NAME}`,
             UpdateExpression: 'SET orgId = :orgId, orgJoinDate = :orgJoinDate, GSI1PK = :GSI1PK',
             ExpressionAttributeValues: {
               ':orgId': orgId,
               ':orgJoinDate': now,
-              ':GSI1PK': `${ENTITY_TYPES.ORG}#${orgId}#${ENTITY_TYPES.USER}S`,
+              ':GSI1PK': `${Entities.ORG}#${orgId}#${Entities.USER}S`,
             },
           },
         },

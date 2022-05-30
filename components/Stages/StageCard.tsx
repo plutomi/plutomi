@@ -3,7 +3,7 @@ import Link from 'next/dist/client/link';
 import { UserGroupIcon } from '@heroicons/react/outline';
 import NumberFormat from 'react-number-format';
 import router from 'next/router';
-import { CUSTOM_QUERY } from '../../types/main';
+import { CustomQuery } from '../../types/main';
 
 export default function StageCard({
   name,
@@ -18,7 +18,7 @@ export default function StageCard({
   linkHref: string;
   draggable: boolean;
 }) {
-  const urlParams = router.query as Pick<CUSTOM_QUERY, 'stageId'>;
+  const urlParams = router.query as Pick<CustomQuery, 'stageId'>;
 
   const content = (
     <div
@@ -43,6 +43,7 @@ export default function StageCard({
 
   return (
     <Link href={linkHref}>
+      {/* eslint-disable-next-line jsx-a11y/anchor-is-valid */}
       <a>{content}</a>
     </Link>
   );

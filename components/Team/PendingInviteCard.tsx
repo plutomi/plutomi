@@ -48,6 +48,7 @@ export default function PendingInviteCard({ invite }: { invite: DynamoOrgInvite 
         </div>
       </div>
       <button
+        type="submit"
         onClick={() => cancelInvite(invite)}
         className="w-1/6 border  rounded-lg rounded-l-none bg-white border-red-500  hover:bg-red-500  text-red-500 hover:text-white justify-center items-center flex transition ease-in duration-100 "
       >

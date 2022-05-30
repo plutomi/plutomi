@@ -13,6 +13,7 @@ import * as PublicInfo from './Controllers/PublicInfo';
 import * as Invites from './Controllers/Invites';
 import * as Applicants from './Controllers/Applicants';
 import * as Questions from './Controllers/Questions';
+import * as Webhooks from './Controllers/Webhooks';
 import withHasOrg from './middleware/withHasOrg';
 import withSameOrg from './middleware/withSameOrg';
 import * as Jest from './Controllers/jest-setup';
@@ -32,6 +33,7 @@ const morgan = require('morgan');
 const cookieParser = require('cookie-parser');
 
 const app = express();
+
 app.use(timeout('5s'));
 
 app.use(
@@ -46,6 +48,8 @@ const morganSettings = process.env.NODE_ENV === 'development' ? 'dev' : 'combine
 app.use(express.json());
 app.use(helmet());
 app.set('trust proxy', 1);
+// TODO
+// eslint-disable-next-line @typescript-eslint/no-use-before-define
 app.use(haltOnTimedout);
 app.use(withCleanOrgId);
 app.use(withCleanQuestionId);
@@ -153,10 +157,19 @@ app.get('/questions', [withSession, withHasOrg], Questions.GetQuestionsInOrg);
 app.delete('/questions/:questionId', [withSession, withHasOrg], Questions.DeleteQuestionFromOrg);
 app.put('/questions/:questionId', [withSession, withHasOrg], Questions.UpdateQuestion);
 app.get('/questions/:questionId', [withSession, withHasOrg], Questions.GetQuestionInfo);
-app.get('/', healthcheck);
-function healthcheck(req, res: Response, next) {
+
+function healthcheck(req, res: Response) {
   return res.status(200).json({ message: "It's all good man!" });
 }
+
+app.get('/', healthcheck);
+
+app.post('/webhooks', [withSession, withHasOrg], Webhooks.CreateWebhook);
+app.get('/webhooks', [withSession, withHasOrg], Webhooks.GetWebhooksInOrg);
+app.delete('/webhooks/:webhookId', [withSession, withHasOrg], Webhooks.DeleteWebhookFromOrg);
+app.get('/webhooks/:webhookId', [withSession, withHasOrg], Webhooks.GetWebhookById);
+app.put('/webhooks/:webhookId', [withSession, withHasOrg], Webhooks.UpdateWebhook);
+
 // Catch timeouts // TODO make this into its own middleware
 function haltOnTimedout(req, res, next) {
   if (!req.timedout) next();

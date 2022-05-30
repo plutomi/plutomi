@@ -9,6 +9,7 @@ import EventBridgeStack from '../lib/EventBridgeStack';
 import CommsMachineStack from '../lib/CommsMachineStack';
 import StreamProcessorStack from '../lib/StreamProcessorStack';
 import DeleteChildrenMachineStack from '../lib/DeleteChildrenMachineStack';
+import WebhooksMachineStack from '../lib/WebhooksMachineStack';
 import AthenaDynamoQueryStack from '../lib/AthenaDynamoQueryStack';
 import StorageStack from '../lib/StorageStack';
 // Run the serverless builder before deploying
@@ -22,7 +23,7 @@ builder
 
     const { table } = new DynamoDBStack(app, `${process.env.NODE_ENV}-DynamoDBStack`);
 
-    new APIStack(app, `${process.env.NODE_ENV}-APIStack`, {
+     new APIStack(app, `${process.env.NODE_ENV}-APIStack`, {
       table,
     });
 
@@ -42,23 +43,43 @@ builder
       },
     );
 
-    new EventBridgeStack(app, `${process.env.NODE_ENV}-EventBridgeStack`, {
-      CommsMachine,
-      DeleteChildrenMachine,
-    });
+    const { WebhooksMachine } = new WebhooksMachineStack(
+      app,
+      `${process.env.NODE_ENV}-WebhooksMachineStack`,
+      {
+        table,
+      },
+    );
+    new EventBridgeStack(
+      app,
+      `${process.env.NODE_ENV}-EventBridgeStack`,
+      {
+        CommsMachine,
+        DeleteChildrenMachine,
+        WebhooksMachine,
+      },
+    );
 
-    new StreamProcessorStack(app, `${process.env.NODE_ENV}-StreamProcessorStack`, {
-      table,
-    });
-    new AthenaDynamoQueryStack(app, `${process.env.NODE_ENV}-AthenaDynamoQueryStack`, {
-      table,
-      bucket,
-    });
+    new StreamProcessorStack(
+      app,
+      `${process.env.NODE_ENV}-StreamProcessorStack`,
+      {
+        table,
+      },
+    );
+     new AthenaDynamoQueryStack(
+      app,
+      `${process.env.NODE_ENV}-AthenaDynamoQueryStack`,
+      {
+        table,
+        bucket,
+      },
+    );
 
     // Run FE locally, no need to deploy
-    new FrontendStack(app, `FrontendStack`);
+   new FrontendStack(app, `FrontendStack`);
   })
   .catch((e) => {
-    console.log(e);
+    console.error(e);
     process.exit(1);
   });

@@ -5,7 +5,18 @@ import Login from '../Login';
 import PageHeader from './PageHeader';
 import { NAVBAR_NAVIGATION, WEBSITE_URL, DEFAULTS } from '../../Config';
 
-export default function NewPage({ headerText, loggedOutPageText, currentNavbarItem, children }) {
+interface NewPageProps {
+  headerText: string;
+  loggedOutPageText: string;
+  currentNavbarItem: string;
+  children: React.ReactElement;
+}
+export default function NewPage({
+  headerText,
+  loggedOutPageText,
+  currentNavbarItem,
+  children,
+}: NewPageProps) {
   const router = useRouter();
   const { user, isUserLoading, isUserError } = useSelf();
 

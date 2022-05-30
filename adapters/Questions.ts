@@ -56,7 +56,6 @@ const UpdateQuestion = async (options: UpdateQuestionInput) => {
   return data;
 };
 
-// TODO types
 interface AddQuestionToStageInput {
   openingId: string;
   stageId: string;

@@ -1,24 +1,21 @@
-import { PlusIcon, TrashIcon, PencilAltIcon } from '@heroicons/react/outline';
+import { TrashIcon, PencilAltIcon } from '@heroicons/react/outline';
 import { useRouter } from 'next/router';
 import useStore from '../../utils/store';
 import Breadcrumbs from '../Breadcrumbs';
 import useStageInfo from '../../SWR/useStageInfo';
 import * as Time from '../../utils/time';
-import { CUSTOM_QUERY } from '../../types/main';
+import { CustomQuery, SettingsCrumbsProps } from '../../types/main';
 import UpdateStageModal from './UpdateStageModal';
 import CreateQuestionModal from '../Questions/CreateQuestionModal';
-import CustomLink from '../CustomLink';
 
-export default function StageSettingsHeader({ deleteStage }) {
+export default function StageSettingsHeader({ deleteStage }: { deleteStage: () => {} }) {
   const router = useRouter();
-  const { openingId, stageId } = router.query as Pick<CUSTOM_QUERY, 'openingId' | 'stageId'>;
+  const { openingId, stageId } = router.query as Pick<CustomQuery, 'openingId' | 'stageId'>;
 
   const openUpdateStageModal = useStore((state) => state.openUpdateStageModal);
   const { stage, isStageLoading, isStageError } = useStageInfo(openingId, stageId);
 
-  const openCreateQuestionModal = useStore((state) => state.openCreateQuestionModal);
-
-  const crumbs = [
+  const crumbs: SettingsCrumbsProps[] = [
     {
       name: 'Applicants',
       href: `/openings/${openingId}/stages/${stageId}/applicants`,
@@ -58,6 +55,7 @@ export default function StageSettingsHeader({ deleteStage }) {
         </button>
 
         <button
+          type="submit"
           onClick={() => deleteStage()}
           className="rounded-full hover:bg-red-500 hover:text-white border border-red-500 text-red-500 transition ease-in-out duration-200 px-2 py-2 text-md"
         >

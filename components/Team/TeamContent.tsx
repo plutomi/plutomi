@@ -22,21 +22,25 @@ export default function TeamContent() {
     return <Loader text="Loading team..." />;
   }
 
-  const pendingInvites = isPendingOrgInvitesLoading ? (
-    <h2>Loading pending invites</h2>
-  ) : isPendingOrgInvitesError ? (
-    <h2>An error ocurred retrieving your pending invites</h2>
-  ) : (
-    <ul role="list" className=" divide-y divide-gray-200">
+  if (isPendingOrgInvitesLoading) {
+    return <h2>Loading pending invites</h2>;
+  }
+
+  if (isPendingOrgInvitesError) {
+    return <h2>An error ocurred retrieving your pending invites</h2>;
+  }
+
+  const pendingInvites = (
+    <ul className="divide-y divide-gray-200">
       {pendingOrgInvites.map((invite: DynamoOrgInvite) => (
         <PendingInviteCard key={invite.inviteId} invite={invite} />
       ))}
     </ul>
   );
-
   return (
     <>
       <CreateInviteModal />
+
       {orgUsers?.length > 1 ? (
         <div className="">
           <div className="flex justify-end">

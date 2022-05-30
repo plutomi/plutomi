@@ -4,13 +4,13 @@ import usePublicApplicant from '../../SWR/usePublicApplicant';
 import Loader from '../Loader';
 import useQuestionsInOrg from '../../SWR/useQuestionsInOrg';
 import { AnswerQuestions } from '../../adapters/Applicants';
-import { CUSTOM_QUERY } from '../../types/main';
+import { CustomQuery } from '../../types/main';
 
 export default function ApplicationContent() {
   const [responses, setResponses] = useState([]);
 
   const router = useRouter();
-  const { orgId, applicantId } = router.query as Pick<CUSTOM_QUERY, 'orgId' | 'applicantId'>;
+  const { orgId, applicantId } = router.query as Pick<CustomQuery, 'orgId' | 'applicantId'>;
   const { applicant, isApplicantLoading, isApplicantError } = usePublicApplicant(applicantId);
 
   const { orgQuestions, isOrgQuestionsLoading, isOrgQuestionsError } = useQuestionsInOrg();

@@ -1,7 +1,7 @@
 import { QueryCommandInput, QueryCommand } from '@aws-sdk/lib-dynamodb';
 import { SdkError } from '@aws-sdk/types';
-import { Dynamo } from '../../AWSClients/ddbDocClient';
-import { DYNAMO_TABLE_NAME, ENTITY_TYPES } from '../../Config';
+import { Dynamo } from '../../awsClients/ddbDocClient';
+import { DYNAMO_TABLE_NAME, Entities } from '../../Config';
 import { DynamoUser } from '../../types/dynamo';
 import { GetUserByEmailInput } from '../../types/main';
 
@@ -15,7 +15,7 @@ export default async function GetUserByEmail(
     KeyConditionExpression: 'GSI2PK = :GSI2PK AND GSI2SK = :GSI2SK',
     ExpressionAttributeValues: {
       ':GSI2PK': email.toLowerCase().trim(),
-      ':GSI2SK': ENTITY_TYPES.USER,
+      ':GSI2SK': Entities.USER,
     },
   };
 

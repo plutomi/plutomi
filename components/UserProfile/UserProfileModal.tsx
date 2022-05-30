@@ -104,17 +104,15 @@ export default function UserProfileModal({ user }: { user: DynamoUser }) {
                             >
                               First name
                             </label>
-                            <div className="mt-1">
-                              <input
-                                type="text"
-                                name="first-name"
-                                id="first-name"
-                                required
-                                onChange={(e) => setFirstName(e.target.value)}
-                                value={firstName}
-                                className="block w-full shadow-sm sm:text-sm focus:ring-blue-500 focus:border-blue-500 border-gray-300 rounded-md"
-                              />
-                            </div>
+                            <input
+                              type="text"
+                              name="first-name"
+                              id="first-name"
+                              required
+                              onChange={(e) => setFirstName(e.target.value)}
+                              value={firstName}
+                              className="block w-full shadow-sm sm:text-sm focus:ring-blue-500 focus:border-blue-500 border-gray-300 rounded-md"
+                            />
                           </div>
                           <div>
                             <label
@@ -123,17 +121,15 @@ export default function UserProfileModal({ user }: { user: DynamoUser }) {
                             >
                               Last name
                             </label>
-                            <div className="mt-1">
-                              <input
-                                type="text"
-                                name="last-name"
-                                id="last-name"
-                                required
-                                onChange={(e) => setLastName(e.target.value)}
-                                value={lastName}
-                                className="block w-full shadow-sm sm:text-sm focus:ring-blue-500 focus:border-blue-500 border-gray-300 rounded-md"
-                              />
-                            </div>
+                            <input
+                              type="text"
+                              name="last-name"
+                              id="last-name"
+                              required
+                              onChange={(e) => setLastName(e.target.value)}
+                              value={lastName}
+                              className="block w-full shadow-sm sm:text-sm focus:ring-blue-500 focus:border-blue-500 border-gray-300 rounded-md"
+                            />
                           </div>
                           <div className="relative flex items-start" />
                         </div>

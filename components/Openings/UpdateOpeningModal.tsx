@@ -4,7 +4,7 @@ import { XIcon } from '@heroicons/react/outline';
 import { mutate } from 'swr';
 import { GetOpeningInfoURL, UpdateOpening } from '../../adapters/Openings';
 import useStore from '../../utils/store';
-import { OPENING_STATE } from '../../Config';
+import { OpeningState } from '../../Config';
 import { DynamoOpening } from '../../types/dynamo';
 
 export default function UpdateOpeningModal({ opening }: { opening: DynamoOpening }) {
@@ -26,7 +26,7 @@ export default function UpdateOpeningModal({ opening }: { opening: DynamoOpening
     try {
       const newValues = {
         GSI1SK: opening?.GSI1SK === GSI1SK ? undefined : GSI1SK,
-        openingName: opening?.openingName == openingName ? undefined : openingName,
+        openingName: opening?.openingName === openingName ? undefined : openingName,
       };
 
       const { data } = await UpdateOpening({
@@ -107,17 +107,15 @@ export default function UpdateOpeningModal({ opening }: { opening: DynamoOpening
                             >
                               Edit name
                             </label>
-                            <div className="mt-1">
-                              <input
-                                type="text"
-                                name="opening-name"
-                                id="opening-name"
-                                required
-                                onChange={(e) => setOpeningName(e.target.value)}
-                                value={openingName}
-                                className="block w-full shadow-sm sm:text-sm focus:ring-blue-500 focus:border-blue-500 border-gray-300 rounded-md"
-                              />
-                            </div>
+                            <input
+                              type="text"
+                              name="opening-name"
+                              id="opening-name"
+                              required
+                              onChange={(e) => setOpeningName(e.target.value)}
+                              value={openingName}
+                              className="block w-full shadow-sm sm:text-sm focus:ring-blue-500 focus:border-blue-500 border-gray-300 rounded-md"
+                            />
                           </div>
                           <div className="relative flex items-start">
                             {opening?.totalStages === 0 ? (
@@ -134,20 +132,18 @@ export default function UpdateOpeningModal({ opening }: { opening: DynamoOpening
                                     name="comments"
                                     type="checkbox"
                                     // TODO types
-                                    checked={GSI1SK === OPENING_STATE.PUBLIC}
+                                    checked={GSI1SK === OpeningState.PUBLIC}
                                     onChange={(e) =>
                                       setGSI1SK(
                                         e.target.checked
-                                          ? OPENING_STATE.PUBLIC
-                                          : OPENING_STATE.PRIVATE,
+                                          ? OpeningState.PUBLIC
+                                          : OpeningState.PRIVATE,
                                       )
                                     }
                                     className="focus:ring-blue-500 h-4 w-4 text-blue-600 border-gray-300 rounded"
                                   />
                                   <div className="ml-3 text-sm">
-                                    <label htmlFor="comments" className="font-medium text-gray-700">
-                                      Public
-                                    </label>
+                                    <p className="font-medium text-gray-700">Public</p>
                                     <p id="comments-description" className="text-normal">
                                       Make this opening available for everyone to apply
                                     </p>

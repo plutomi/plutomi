@@ -6,14 +6,14 @@ import useAllStagesInOpening from '../../SWR/useAllStagesInOpening';
 import StageCard from './StageCard';
 import Loader from '../Loader';
 import useOpeningInfo from '../../SWR/useOpeningInfo';
-import { CUSTOM_QUERY } from '../../types/main';
+import { CustomQuery } from '../../types/main';
 
 export default function StageCarousel() {
   const router = useRouter();
   const [activeItemIndex, setActiveItemIndex] = useState(0);
   const chevronWidth = 60;
 
-  const { openingId } = router.query as Pick<CUSTOM_QUERY, 'openingId'>;
+  const { openingId } = router.query as Pick<CustomQuery, 'openingId'>;
 
   const { opening, isOpeningLoading, isOpeningError } = useOpeningInfo(openingId);
 
@@ -34,12 +34,18 @@ export default function StageCarousel() {
         gutter={10}
         chevronWidth={chevronWidth}
         leftChevron={
-          <button className="inline-flex  border rounded-l-xl bg-blue-300   hover:bg-blue-500  transition ease-in-out duration-200 w-full mx-1 px-2 justify-center items-center h-4/5 text-white">
+          <button
+            type="button"
+            className="inline-flex  border rounded-l-xl bg-blue-300   hover:bg-blue-500  transition ease-in-out duration-200 w-full mx-1 px-2 justify-center items-center h-4/5 text-white"
+          >
             <ArrowLeftIcon className="h-10 w-10" aria-hidden="true" />
           </button>
         }
         rightChevron={
-          <button className="inline-flex  border rounded-r-xl  bg-gradient-to-r  bg-blue-300 hover:bg-blue-500  transition ease-in-out duration-200 w-full mx-1 px-2 justify-center items-center h-4/5 text-white">
+          <button
+            type="button"
+            className="inline-flex  border rounded-r-xl  bg-gradient-to-r  bg-blue-300 hover:bg-blue-500  transition ease-in-out duration-200 w-full mx-1 px-2 justify-center items-center h-4/5 text-white"
+          >
             <ArrowRightIcon className="h-10 w-10" aria-hidden="true" />
           </button>
         }

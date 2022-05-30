@@ -6,12 +6,12 @@ import { useRouter } from 'next/router';
 import useStore from '../../utils/store';
 import { GetOpeningInfoURL } from '../../adapters/Openings';
 import { CreateStage, GetStagesInOpeningURL } from '../../adapters/Stages';
-import { CUSTOM_QUERY } from '../../types/main';
+import { CustomQuery } from '../../types/main';
 
 export default function CreateStageModal() {
   const router = useRouter();
 
-  const { openingId } = router.query as Pick<CUSTOM_QUERY, 'openingId'>;
+  const { openingId } = router.query as Pick<CustomQuery, 'openingId'>;
   const [GSI1SK, setGSI1SK] = useState('');
 
   const visibility = useStore((state) => state.showCreateStageModal);
@@ -103,18 +103,16 @@ export default function CreateStageModal() {
                             >
                               Stage Name
                             </label>
-                            <div className="mt-1">
-                              <input
-                                type="text"
-                                name="opening-name"
-                                id="opening-name"
-                                placeholder="What is the overall purpose of this stage?"
-                                required
-                                onChange={(e) => setGSI1SK(e.target.value)}
-                                value={GSI1SK}
-                                className="block w-full shadow-sm sm:text-sm focus:ring-blue-500 focus:border-blue-500 border-gray-300 rounded-md"
-                              />
-                            </div>
+                            <input
+                              type="text"
+                              name="opening-name"
+                              id="opening-name"
+                              placeholder="What is the overall purpose of this stage?"
+                              required
+                              onChange={(e) => setGSI1SK(e.target.value)}
+                              value={GSI1SK}
+                              className="block w-full shadow-sm sm:text-sm focus:ring-blue-500 focus:border-blue-500 border-gray-300 rounded-md"
+                            />
                           </div>
                         </div>
                       </div>

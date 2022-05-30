@@ -1,5 +1,5 @@
 import { nanoid } from 'nanoid';
-import { AXIOS_INSTANCE as axios, DEFAULTS, ENTITY_TYPES, ERRORS } from '../Config';
+import { AXIOS_INSTANCE as axios, DEFAULTS, Entities, ERRORS } from '../Config';
 import * as Users from '../adapters/Users';
 
 describe('Users', () => {
@@ -17,14 +17,14 @@ describe('Users', () => {
     const data = await Users.GetSelfInfo();
     expect(data.status).toBe(200);
     expect(data.data).toMatchObject({
-      PK: expect.stringContaining(ENTITY_TYPES.USER),
-      SK: ENTITY_TYPES.USER,
+      PK: expect.stringContaining(Entities.USER),
+      SK: Entities.USER,
       userId: expect.any(String),
       createdAt: expect.any(String), // TODO there probably a better way to test ISO dates
-      GSI1PK: `${ENTITY_TYPES.ORG}#${DEFAULTS.NO_ORG}#${ENTITY_TYPES.USER}S`,
+      GSI1PK: `${Entities.ORG}#${DEFAULTS.NO_ORG}#${Entities.USER}S`,
       verifiedEmail: false,
       email: expect.any(String),
-      entityType: ENTITY_TYPES.USER,
+      entityType: Entities.USER,
       totalInvites: 0,
       firstName: DEFAULTS.FIRST_NAME,
       lastName: DEFAULTS.LAST_NAME,
@@ -34,7 +34,7 @@ describe('Users', () => {
       unsubscribeKey: expect.any(String),
       GSI1SK: `${DEFAULTS.NO_FIRST_NAME} ${DEFAULTS.NO_LAST_NAME}`,
       GSI2PK: expect.any(String),
-      GSI2SK: ENTITY_TYPES.USER,
+      GSI2SK: Entities.USER,
     });
   });
 

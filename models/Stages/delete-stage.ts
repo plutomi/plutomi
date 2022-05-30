@@ -1,13 +1,14 @@
 import { TransactWriteCommandInput, TransactWriteCommand } from '@aws-sdk/lib-dynamodb';
 import { SdkError } from '@aws-sdk/types';
-import { Dynamo } from '../../AWSClients/ddbDocClient';
-import { DYNAMO_TABLE_NAME, ENTITY_TYPES } from '../../Config';
+import { Dynamo } from '../../awsClients/ddbDocClient';
+import { DYNAMO_TABLE_NAME, Entities } from '../../Config';
 import { DeleteStageInput } from '../../types/main';
 
 export default async function DeleteStage(
   props: DeleteStageInput,
 ): Promise<[null, null] | [null, SdkError]> {
-  // TODO check if stage is empt of appliants first
+  // TODO check if stage is empty of applicants first
+  // Double // TODO - webhooks should delete applicants inside?
 
   const { orgId, stageId, openingId, deleteIndex } = props;
   const transactParams: TransactWriteCommandInput = {
@@ -16,8 +17,8 @@ export default async function DeleteStage(
         // Delete stage
         Delete: {
           Key: {
-            PK: `${ENTITY_TYPES.ORG}#${orgId}#${ENTITY_TYPES.OPENING}#${openingId}#${ENTITY_TYPES.STAGE}#${stageId}`,
-            SK: ENTITY_TYPES.STAGE,
+            PK: `${Entities.ORG}#${orgId}#${Entities.OPENING}#${openingId}#${Entities.STAGE}#${stageId}`,
+            SK: Entities.STAGE,
           },
           TableName: `${process.env.NODE_ENV}-${DYNAMO_TABLE_NAME}`,
           ConditionExpression: 'attribute_exists(PK)',
@@ -28,8 +29,8 @@ export default async function DeleteStage(
       {
         Update: {
           Key: {
-            PK: `${ENTITY_TYPES.ORG}#${orgId}#${ENTITY_TYPES.OPENING}#${openingId}`,
-            SK: ENTITY_TYPES.OPENING,
+            PK: `${Entities.ORG}#${orgId}#${Entities.OPENING}#${openingId}`,
+            SK: Entities.OPENING,
           },
           TableName: `${process.env.NODE_ENV}-${DYNAMO_TABLE_NAME}`,
           UpdateExpression: `REMOVE stageOrder[${deleteIndex}] SET totalStages = totalStages - :value`,

@@ -1,8 +1,8 @@
 import { TransactWriteCommandInput, TransactWriteCommand } from '@aws-sdk/lib-dynamodb';
 import { nanoid } from 'nanoid';
 import { SdkError } from '@aws-sdk/types';
-import { Dynamo } from '../../AWSClients/ddbDocClient';
-import { ID_LENGTHS, ENTITY_TYPES, OPENING_STATE, DYNAMO_TABLE_NAME } from '../../Config';
+import { Dynamo } from '../../awsClients/ddbDocClient';
+import { ID_LENGTHS, Entities, OpeningState, DYNAMO_TABLE_NAME } from '../../Config';
 import { DynamoApplicant } from '../../types/dynamo';
 import { CreateApplicantInput, CreateApplicantOutput } from '../../types/main';
 import * as Time from '../../utils/time';
@@ -16,22 +16,22 @@ export default async function Create(
   const applicantId = nanoid(ID_LENGTHS.APPLICANT);
 
   const newApplicant: DynamoApplicant = {
-    PK: `${ENTITY_TYPES.ORG}#${orgId}#${ENTITY_TYPES.APPLICANT}#${applicantId}`,
-    SK: ENTITY_TYPES.APPLICANT,
+    PK: `${Entities.ORG}#${orgId}#${Entities.APPLICANT}#${applicantId}`,
+    SK: Entities.APPLICANT,
     firstName,
     lastName,
     email: email.toLowerCase().trim(),
     isEmailVerified: false,
     orgId,
     applicantId,
-    entityType: ENTITY_TYPES.APPLICANT,
+    entityType: Entities.APPLICANT,
     createdAt: now,
     // TODO add phone number
     openingId,
     stageId,
     unsubscribeKey: nanoid(10),
     canReceiveEmails: true,
-    GSI1PK: `${ENTITY_TYPES.ORG}#${orgId}#${ENTITY_TYPES.OPENING}#${openingId}#${ENTITY_TYPES.STAGE}#${stageId}`,
+    GSI1PK: `${Entities.ORG}#${orgId}#${Entities.OPENING}#${openingId}#${Entities.STAGE}#${stageId}`,
     GSI1SK: `DATE_LANDED#${now}`,
     // TODO add another GSI here for getting all applications by email
     // Fulfills searching easily and for the applicant portal
@@ -53,8 +53,8 @@ export default async function Create(
           // Increment the opening's totalApplicants
           Update: {
             Key: {
-              PK: `${ENTITY_TYPES.ORG}#${orgId}#${ENTITY_TYPES.OPENING}#${openingId}`,
-              SK: ENTITY_TYPES.OPENING,
+              PK: `${Entities.ORG}#${orgId}#${Entities.OPENING}#${openingId}`,
+              SK: Entities.OPENING,
             },
             TableName: `${process.env.NODE_ENV}-${DYNAMO_TABLE_NAME}`,
 
@@ -69,7 +69,7 @@ export default async function Create(
             ExpressionAttributeValues: {
               ':zero': 0,
               ':value': 1,
-              ':GSI1SK': OPENING_STATE.PUBLIC,
+              ':GSI1SK': OpeningState.PUBLIC,
               ':totalStages': 0,
             },
           },
@@ -78,8 +78,8 @@ export default async function Create(
           // Increment the stage's total applicants
           Update: {
             Key: {
-              PK: `${ENTITY_TYPES.ORG}#${orgId}#${ENTITY_TYPES.OPENING}#${openingId}#${ENTITY_TYPES.STAGE}#${stageId}`,
-              SK: ENTITY_TYPES.STAGE,
+              PK: `${Entities.ORG}#${orgId}#${Entities.OPENING}#${openingId}#${Entities.STAGE}#${stageId}`,
+              SK: Entities.STAGE,
             },
             TableName: `${process.env.NODE_ENV}-${DYNAMO_TABLE_NAME}`,
 
@@ -96,8 +96,8 @@ export default async function Create(
           // Increment the org's total applicants
           Update: {
             Key: {
-              PK: `${ENTITY_TYPES.ORG}#${orgId}`,
-              SK: ENTITY_TYPES.ORG,
+              PK: `${Entities.ORG}#${orgId}`,
+              SK: Entities.ORG,
             },
             TableName: `${process.env.NODE_ENV}-${DYNAMO_TABLE_NAME}`,
 

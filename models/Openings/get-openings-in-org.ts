@@ -1,7 +1,7 @@
 import { QueryCommandInput, QueryCommand } from '@aws-sdk/lib-dynamodb';
 import { SdkError } from '@aws-sdk/types';
-import { Dynamo } from '../../AWSClients/ddbDocClient';
-import { DYNAMO_TABLE_NAME, ENTITY_TYPES } from '../../Config';
+import { Dynamo } from '../../awsClients/ddbDocClient';
+import { DYNAMO_TABLE_NAME, Entities } from '../../Config';
 import { DynamoOpening } from '../../types/dynamo';
 import { GetOpeningsInOrgInput } from '../../types/main';
 
@@ -14,7 +14,7 @@ export default async function GetOpeningsInOrg(
     IndexName: 'GSI1',
     KeyConditionExpression: 'GSI1PK = :GSI1PK',
     ExpressionAttributeValues: {
-      ':GSI1PK': `${ENTITY_TYPES.ORG}#${orgId}#${ENTITY_TYPES.OPENING}S`,
+      ':GSI1PK': `${Entities.ORG}#${orgId}#${Entities.OPENING}S`,
     },
   };
 

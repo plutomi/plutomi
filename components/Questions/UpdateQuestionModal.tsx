@@ -3,9 +3,14 @@ import { Dialog, Transition } from '@headlessui/react';
 import { XIcon } from '@heroicons/react/outline';
 import useStore from '../../utils/store';
 import { UpdateQuestion } from '../../adapters/Questions';
+import { DynamoQuestion } from '../../types/dynamo';
 
 const descriptionMaxLength = 300; // TODO set this serverside
-export default function UpdateQuestionModal({ question }) {
+
+interface UpdateQuestionModalProps {
+  question: DynamoQuestion;
+}
+export default function UpdateQuestionModal({ question }: UpdateQuestionModalProps) {
   const [GSI1SK, setGSI1SK] = useState('');
   const [description, setDescription] = useState('');
 
@@ -22,6 +27,7 @@ export default function UpdateQuestionModal({ question }) {
     try {
       const { data } = await UpdateQuestion({
         questionId: question?.questionId,
+        // TODO if the values are the same, we should remove them
         newValues: {
           GSI1SK,
           description,
@@ -100,18 +106,16 @@ export default function UpdateQuestionModal({ question }) {
                             <label htmlFor="title" className="block text-sm font-medium text-dark">
                               New Question Title
                             </label>
-                            <div className="mt-1">
-                              <input
-                                type="text"
-                                name="title"
-                                id="title"
-                                required
-                                placeholder={"'What is your name?' or 'Tell us about yourself'"}
-                                value={GSI1SK}
-                                onChange={(e) => setGSI1SK(e.target.value)}
-                                className="block w-full shadow-sm text-sm focus:ring-blue-500 focus:border-blue-500 border-gray-300 rounded-md"
-                              />
-                            </div>
+                            <input
+                              type="text"
+                              name="title"
+                              id="title"
+                              required
+                              placeholder={"'What is your name?' or 'Tell us about yourself'"}
+                              value={GSI1SK}
+                              onChange={(e) => setGSI1SK(e.target.value)}
+                              className="block w-full shadow-sm text-sm focus:ring-blue-500 focus:border-blue-500 border-gray-300 rounded-md"
+                            />
                           </div>
                           <div>
                             <label
@@ -120,18 +124,16 @@ export default function UpdateQuestionModal({ question }) {
                             >
                               New Description
                             </label>
-                            <div className="mt-1 flex rounded-md shadow-sm w-full">
-                              <textarea
-                                name="description"
-                                id="description"
-                                placeholder="Optional helper text for your applicants."
-                                className="p-2 text-sm focus:ring-blue-500 focus:border-blue-500 border-gray-300 rounded-md w-full block resize"
-                                maxLength={descriptionMaxLength} // TODO add counter
-                                rows={5}
-                                value={description}
-                                onChange={(e) => setDescription(e.target.value)}
-                              />
-                            </div>
+                            <textarea
+                              name="description"
+                              id="description"
+                              placeholder="Optional helper text for your applicants."
+                              className="p-2 text-sm focus:ring-blue-500 focus:border-blue-500 border-gray-300 rounded-md w-full block resize"
+                              maxLength={descriptionMaxLength} // TODO add counter
+                              rows={5}
+                              value={description}
+                              onChange={(e) => setDescription(e.target.value)}
+                            />
                           </div>
                         </div>
                       </div>

@@ -29,6 +29,7 @@ export default function DashboardContent() {
 
   const deleteOrg = async () => {
     if (
+      // eslint-disable-next-line no-restricted-globals
       !confirm(
         'Deleting an org is irreversible and will delete all openings, stages, applicants, questions, rules, etc. inside of it. Do you wish to continue?',
       )
@@ -36,6 +37,7 @@ export default function DashboardContent() {
       return;
     }
 
+    // eslint-disable-next-line no-restricted-globals
     if (!confirm('Are you sure?')) {
       return;
     }

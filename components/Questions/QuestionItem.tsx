@@ -4,7 +4,6 @@ import { mutate } from 'swr';
 import { DeleteQuestionFromOrg, GetQuestionsInOrgURL } from '../../adapters/Questions';
 import useStore from '../../utils/store';
 import { DynamoQuestion } from '../../types/dynamo';
-import UpdateQuestionModal from './UpdateQuestionModal';
 
 export default function QuestionItem({ question }: { question: DynamoQuestion }) {
   const setCurrentQuestion = useStore((state) => state.setCurrentQuestion);
@@ -23,6 +22,8 @@ export default function QuestionItem({ question }: { question: DynamoQuestion })
     if (question.totalStages > 0) {
       deleteMessage += `\n\n\nNOTE: This question is being used in ${question.totalStages} stages and those stages will be updated.`;
     }
+
+    // eslint-disable-next-line no-restricted-globals
     if (!confirm(deleteMessage)) {
       return;
     }
@@ -63,12 +64,14 @@ export default function QuestionItem({ question }: { question: DynamoQuestion })
       </div>
       <div className="flex justify-center items-center ">
         <button
+          type="button"
           onClick={handleEdit}
           className="rounded-full hover:bg-white text-blue-500 transition ease-in-out duration-200 px-3 py-3 text-md"
         >
           <PencilAltIcon className="w-6 h-6" />
         </button>
         <button
+          type="submit"
           onClick={() => handleDelete(question)}
           className="rounded-full hover:bg-white text-red-500 transition ease-in-out duration-200 px-3 py-3 text-md"
         >

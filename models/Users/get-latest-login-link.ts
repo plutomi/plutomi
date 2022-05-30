@@ -1,7 +1,7 @@
 import { QueryCommandInput, QueryCommand } from '@aws-sdk/lib-dynamodb';
 import { SdkError } from '@aws-sdk/types';
-import { Dynamo } from '../../AWSClients/ddbDocClient';
-import { DYNAMO_TABLE_NAME, ENTITY_TYPES } from '../../Config';
+import { Dynamo } from '../../awsClients/ddbDocClient';
+import { DYNAMO_TABLE_NAME, Entities } from '../../Config';
 import { DynamoLoginLink } from '../../types/dynamo';
 import { GetLatestLoginLinkInput } from '../../types/main';
 
@@ -14,7 +14,7 @@ export default async function GetLatestLink(
     IndexName: 'GSI1',
     KeyConditionExpression: 'GSI1PK = :GSI1PK',
     ExpressionAttributeValues: {
-      ':GSI1PK': `${ENTITY_TYPES.USER}#${userId}#${ENTITY_TYPES.LOGIN_LINK}S`, // TODO login links dont need GSIs, begins_with login link
+      ':GSI1PK': `${Entities.USER}#${userId}#${Entities.LOGIN_LINK}S`, // TODO login links dont need GSIs, begins_with login link
     },
     ScanIndexForward: false,
     Limit: 1,

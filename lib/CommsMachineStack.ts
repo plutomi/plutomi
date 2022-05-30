@@ -3,7 +3,7 @@ import * as sfn from '@aws-cdk/aws-stepfunctions';
 import * as tasks from '@aws-cdk/aws-stepfunctions-tasks';
 import { LogGroup } from '@aws-cdk/aws-logs';
 import { Table } from '@aws-cdk/aws-dynamodb';
-import { EMAILS, ENTITY_TYPES, DOMAIN_NAME, WEBSITE_URL } from '../Config';
+import { EMAILS, Entities, DOMAIN_NAME, WEBSITE_URL } from '../Config';
 
 interface CommsMachineProps extends cdk.StackProps {
   table: Table;
@@ -23,8 +23,7 @@ export default class CommsMachineStack extends cdk.Stack {
     const setEmailToVerified = new tasks.DynamoUpdateItem(this, 'UpdateVerifiedEmailStatus', {
       key: {
         PK: tasks.DynamoAttributeValue.fromString(sfn.JsonPath.stringAt('$.detail.NewImage.PK')),
-
-        SK: tasks.DynamoAttributeValue.fromString('USER'),
+        SK: tasks.DynamoAttributeValue.fromString(Entities.USER),
       },
       table: props.table,
       updateExpression: 'SET verifiedEmail = :newValue',
@@ -38,6 +37,7 @@ export default class CommsMachineStack extends cdk.Stack {
        */
       resultPath: sfn.JsonPath.DISCARD,
     });
+
     setEmailToVerified.addRetry({ maxAttempts: 2 });
 
     const SES_SETTINGS = {
@@ -91,6 +91,7 @@ export default class CommsMachineStack extends cdk.Stack {
         },
       },
     });
+    // TODO export this to its own file
 
     const sendLoginLink = new tasks.CallAwsService(this, 'SendLoginLink', {
       // TODO update once native integration is implemented
@@ -115,6 +116,7 @@ export default class CommsMachineStack extends cdk.Stack {
         },
       },
     });
+    // TODO export this to its own file
 
     const sendApplicationLink = new tasks.CallAwsService(this, 'SendApplicationLink', {
       // TODO update once native integration is implemented
@@ -140,6 +142,7 @@ export default class CommsMachineStack extends cdk.Stack {
       },
     });
 
+    // TODO export this to its own file
     const sendOrgInvite = new tasks.CallAwsService(this, 'SendOrgInvite', {
       // TODO update once native integration is implemented
 
@@ -166,7 +169,7 @@ export default class CommsMachineStack extends cdk.Stack {
 
     const definition = new sfn.Choice(this, 'EventType?')
       .when(
-        sfn.Condition.stringEquals('$.detail.NewImage.entityType', ENTITY_TYPES.LOGIN_EVENT),
+        sfn.Condition.stringEquals('$.detail.NewImage.entityType', Entities.LOGIN_EVENT),
         new sfn.Choice(this, 'IsNewUser?').when(
           sfn.Condition.booleanEquals('$.detail.NewImage.user.verifiedEmail', false),
           setEmailToVerified.next(
@@ -175,16 +178,16 @@ export default class CommsMachineStack extends cdk.Stack {
         ),
       )
       .when(
-        sfn.Condition.stringEquals('$.detail.NewImage.entityType', ENTITY_TYPES.LOGIN_LINK),
+        sfn.Condition.stringEquals('$.detail.NewImage.entityType', Entities.LOGIN_LINK),
 
         sendLoginLink,
       )
       .when(
-        sfn.Condition.stringEquals('$.detail.NewImage.entityType', ENTITY_TYPES.APPLICANT),
+        sfn.Condition.stringEquals('$.detail.NewImage.entityType', Entities.APPLICANT),
         sendApplicationLink,
       )
       .when(
-        sfn.Condition.stringEquals('$.detail.NewImage.entityType', ENTITY_TYPES.ORG_INVITE),
+        sfn.Condition.stringEquals('$.detail.NewImage.entityType', Entities.ORG_INVITE),
         sendOrgInvite,
       );
     const log = new LogGroup(this, `${process.env.NODE_ENV}-CommsMachineLogGroup`);

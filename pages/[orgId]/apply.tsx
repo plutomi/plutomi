@@ -3,11 +3,11 @@ import Loader from '../../components/Loader';
 import usePublicOrgById from '../../SWR/usePublicOrgById';
 import OrgApplyPageHeader from '../../components/Orgs/Public/OrgApplyPageHeader';
 import OrgApplyPageContent from '../../components/Orgs/Public/OrgApplyPageContent';
-import { CUSTOM_QUERY } from '../../types/main';
+import { CustomQuery } from '../../types/main';
 
 export default function Apply() {
   const router = useRouter();
-  const { orgId } = router.query as Pick<CUSTOM_QUERY, 'orgId'>;
+  const { orgId } = router.query as Pick<CustomQuery, 'orgId'>;
   const { org, isOrgLoading, isOrgError } = usePublicOrgById(orgId);
 
   if (isOrgLoading) {

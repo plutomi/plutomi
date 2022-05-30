@@ -5,14 +5,14 @@ import StageSettingsHeader from '../../../../../components/Stages/StageSettingsH
 import StageSettingsContent from '../../../../../components/Stages/StagesSettingsContent';
 import NewPage from '../../../../../components/Templates/NewPage';
 import useStageInfo from '../../../../../SWR/useStageInfo';
-import { CUSTOM_QUERY } from '../../../../../types/main';
+import { CustomQuery } from '../../../../../types/main';
 import { GetOpeningInfoURL } from '../../../../../adapters/Openings';
 import { GetStagesInOpeningURL, DeleteStage } from '../../../../../adapters/Stages';
 import { WEBSITE_URL } from '../../../../../Config';
 
 export default function StageSettings() {
   const router = useRouter();
-  const { openingId, stageId } = router.query as Pick<CUSTOM_QUERY, 'openingId' | 'stageId'>;
+  const { openingId, stageId } = router.query as Pick<CustomQuery, 'openingId' | 'stageId'>;
   const { opening, isOpeningLoading, isOpeningError } = useOpeningInfo(openingId);
   const { stage, isStageLoading, isStageError } = useStageInfo(openingId, stageId);
 

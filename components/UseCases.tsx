@@ -1,67 +1,67 @@
-import PricingExample from './UseCaseExample';
+import PricingExample, { UseCaseExampleProps } from './UseCaseExample';
 
 export default function UseCases() {
-  const AllUseCases = [
+  const AllUseCases: UseCaseExampleProps[] = [
     {
       id: 1,
       name: 'Employee hiring',
       stages: [
         {
-          id: 1,
-          name: 'Resume Upload',
-          applicants: 2,
+          id: '1',
+          stageTitle: 'Resume Upload',
+          totalApplicants: 2,
         },
         {
-          id: 2,
-          name: 'Resume Review',
-          applicants: 7,
+          id: '2',
+          stageTitle: 'Resume Review',
+          totalApplicants: 7,
         },
         {
-          id: 3,
-          name: 'Interviewing',
-          applicants: 5,
+          id: '3',
+          stageTitle: 'Interviewing',
+          totalApplicants: 5,
         },
         {
           id: 4,
-          name: 'Hired',
-          applicants: 1,
+          stageTitle: 'Hired',
+          totalApplicants: 1,
         },
         {
-          id: 5,
-          name: 'Rejected',
-          applicants: 14,
+          id: '5',
+          stageTitle: 'Rejected',
+          totalApplicants: 14,
         },
       ],
     },
     {
-      id: 3,
+      id: '3',
       name: 'Social services programs',
       stages: [
         {
-          id: 1,
-          name: 'Registration',
-          applicants: 430,
+          id: '1',
+          stageTitle: 'Registration',
+          totalApplicants: 430,
         },
         {
-          id: 2,
-          name: 'ID Upload',
-          applicants: 31,
+          id: '2',
+          stageTitle: 'ID Upload',
+          totalApplicants: 31,
         },
 
         {
-          id: 3,
-          name: 'ID Verification',
-          applicants: 63,
+          id: '3',
+          stageTitle: 'ID Verification',
+          totalApplicants: 63,
         },
         {
-          id: 4,
-          name: 'Registered',
-          applicants: 258,
+          id: '4',
+          stageTitle: 'Registered',
+          totalApplicants: 258,
         },
         {
-          id: 5,
-          name: 'Did Not Qualify',
-          applicants: 216,
+          id: '5',
+          stageTitle: 'Did Not Qualify',
+          totalApplicants: 216,
         },
       ],
     },
@@ -70,30 +70,30 @@ export default function UseCases() {
       name: 'Large scale contracting',
       stages: [
         {
-          id: 1,
-          name: 'Waiting List',
-          applicants: 89587,
+          id: '1',
+          stageTitle: 'Waiting List',
+          totalApplicants: 89587,
         },
         {
-          id: 2,
-          name: 'Set Up Profile',
-          applicants: 12615,
+          id: '2',
+          stageTitle: 'Set Up Profile',
+          totalApplicants: 12615,
         },
 
         {
-          id: 3,
-          name: 'Background Check',
-          applicants: 948,
+          id: '3',
+          stageTitle: 'Background Check',
+          totalApplicants: 948,
         },
         {
-          id: 4,
-          name: 'Failed Check',
-          applicants: 27,
+          id: '4',
+          stageTitle: 'Failed Check',
+          totalApplicants: 27,
         },
         {
-          id: 5,
-          name: 'Ready to Drive',
-          applicants: 3926,
+          id: '5',
+          stageTitle: 'Ready to Drive',
+          totalApplicants: 3926,
         },
       ],
     },
@@ -103,7 +103,12 @@ export default function UseCases() {
     <div className=" ">
       <div className="max-w-7xl mx-auto py-8 space-y-24">
         {AllUseCases.map((example) => (
-          <PricingExample key={example.id} stages={example.stages} name={example.name} />
+          <PricingExample
+            key={example.id}
+            id={example.id}
+            stages={example.stages}
+            name={example.name}
+          />
         ))}
       </div>
     </div>

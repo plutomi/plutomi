@@ -1,11 +1,11 @@
 import { useRouter } from 'next/router';
 import useAllPublicOpenings from '../../../SWR/useAllPublicOpenings';
-import { CUSTOM_QUERY } from '../../../types/main';
+import { CustomQuery } from '../../../types/main';
 import PublicOpeningsList from '../../Openings/Public/PublicOpeningsList';
 
 export default function OrgApplyPageContent() {
   const router = useRouter();
-  const { orgId } = router.query as Pick<CUSTOM_QUERY, 'orgId'>;
+  const { orgId } = router.query as Pick<CustomQuery, 'orgId'>;
   const { publicOpenings, isPublicOpeningsLoading, isPublicOpeningsError } =
     useAllPublicOpenings(orgId);
 

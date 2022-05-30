@@ -6,12 +6,12 @@ import ClickToCopy from '../ClickToCopy';
 import OpeningsDropdown from '../Openings/DropDown';
 import useOpeningInfo from '../../SWR/useOpeningInfo';
 import useOpenings from '../../SWR/useOpenings';
-import { CUSTOM_QUERY } from '../../types/main';
-import { OPENING_STATE, WEBSITE_URL } from '../../Config';
+import { CustomQuery } from '../../types/main';
+import { OpeningState, WEBSITE_URL } from '../../Config';
 
 export default function StagesHeader() {
   const router = useRouter();
-  const { openingId } = router.query as Pick<CUSTOM_QUERY, 'openingId'>;
+  const { openingId } = router.query as Pick<CustomQuery, 'openingId'>;
 
   const { user, isUserLoading, isUserError } = useSelf();
   const { opening, isOpeningLoading, isOpeningError } = useOpeningInfo(openingId);
@@ -30,7 +30,7 @@ export default function StagesHeader() {
         )}
       </div>
 
-      {opening?.GSI1SK === OPENING_STATE.PUBLIC && (
+      {opening?.GSI1SK === OpeningState.PUBLIC && (
         <p className="mt-2 text-md text-normal sm:mt-0 ">
           <ClickToCopy
             showText="Application Link"

@@ -1,4 +1,5 @@
-import { OPENING_STATE } from '../Config';
+import { OpeningState } from '../Config';
+
 import {
   DynamoApplicant,
   DynamoApplicantResponse,
@@ -7,6 +8,7 @@ import {
   DynamoStage,
   DynamoQuestion,
   DynamoUser,
+  DynamoWebhook,
 } from './dynamo';
 
 type DynamoActions =
@@ -23,7 +25,7 @@ type CreateApplicantAPIBody = Omit<CreateApplicantInput, 'stageId'>;
 /**
  * All possible parameters in the URL
  */
-interface CUSTOM_QUERY {
+interface CustomQuery {
   orgId: string;
   openingId: string;
   userId: string;
@@ -31,7 +33,7 @@ interface CUSTOM_QUERY {
 
   applicantId: string;
   /**
-   * The token to for the {@link ENTITY_TYPES.LOGIN_LINK} that contains the user id
+   * The token to for the {@link Entities.LOGIN_LINK} that contains the user id
    */
   token: string;
   callbackUrl: string;
@@ -50,12 +52,17 @@ interface DeleteStageInput extends Pick<DynamoStage, 'orgId' | 'stageId' | 'open
   deleteIndex: number;
 }
 type GetStageByIdInput = Pick<DynamoStage, 'orgId' | 'stageId' | 'openingId'>;
-type GetStageByIdOutput = DynamoStage;
 type GetApplicantsInStageInput = Pick<DynamoStage, 'orgId' | 'stageId' | 'openingId'>;
 type GetApplicantsInStageOutput = DynamoApplicant[];
 
 export interface UpdateStageInput extends Pick<DynamoStage, 'orgId' | 'stageId' | 'openingId'> {
   newValues: { [key: string]: any };
+}
+
+export interface SettingsCrumbsProps {
+  name: string;
+  href: string;
+  current: boolean;
 }
 
 export type SessionData = Pick<
@@ -72,9 +79,9 @@ type CreateQuestionInput = Pick<DynamoQuestion, 'orgId' | 'GSI1SK' | 'descriptio
 type OrgIdAndQuestionId = 'orgId' | 'questionId';
 
 // TODo remove the below types
-type DeleteQuestionFromOrgInput = Pick<DynamoQuestion, OrgIdAndQuestionId>;
-
-type GetQuestionInput = Pick<DynamoQuestion, OrgIdAndQuestionId>;
+type DeleteQuestionFromOrgInput = Pick<DynamoQuestion, orgIdAndQuestionId>;
+type DeleteWebhookFromOrgInput = Pick<DynamoWebhook, 'webhookId' | 'orgId'>;
+type GetQuestionInput = Pick<DynamoQuestion, orgIdAndQuestionId>;
 type GetQuestionOutput = DynamoQuestion;
 
 export type GetQuestionsInOrgInput = Pick<DynamoQuestion, 'orgId'>;
@@ -86,6 +93,12 @@ export interface UpdateQuestionInput extends Pick<DynamoQuestion, OrgIdAndQuesti
 
 type GetQuestionsInStageOutput = GetQuestionOutput[];
 
+type GetWebhookByIdInput = Pick<DynamoWebhook, 'orgId' | 'webhookId'>;
+
+type CreateWebhookInput = Pick<
+  DynamoWebhook,
+  'webhookUrl' | 'orgId' | 'description' | 'webhookName'
+>;
 type CreateApplicantInput = Pick<
   DynamoApplicant,
   'orgId' | 'firstName' | 'lastName' | 'email' | 'openingId' | 'stageId'
@@ -126,12 +139,15 @@ type DeleteOpeningInput = Pick<DynamoOpening, 'orgId' | 'openingId'>;
 
 // Retrieves all oepnings by default, can filter on public or private
 interface GetOpeningsInOrgInput extends Pick<DynamoOpening, 'orgId'> {
-  GSI1SK?: OPENING_STATE;
+  GSI1SK?: OpeningState;
 }
 
 type GetStagesInOpeningInput = Pick<DynamoOpening, 'orgId' | 'openingId' | 'stageOrder'>;
 type GetOpeningByIdInput = Pick<DynamoOpening, 'orgId' | 'openingId'>;
 export interface UpdateOpeningInput extends Pick<DynamoOpening, 'orgId' | 'openingId'> {
+  newValues: { [key: string]: any };
+}
+export interface UpdateWebhookInput extends Pick<DynamoWebhook, 'orgId' | 'webhookId'> {
   newValues: { [key: string]: any };
 }
 
@@ -140,15 +156,21 @@ interface AddQuestionToStageInput
   questionId: string;
 }
 
+interface GetQuestionsInStageInput extends Pick<DynamoStage, 'orgId' | 'openingId' | 'stageId'> {}
+
+type GetWebhooksInOrgInput = Pick<DynamoWebhook, 'orgId'>;
 interface DeleteQuestionFromStageInput
   extends Pick<DynamoStage, 'orgId' | 'openingId' | 'stageId' | 'deleteIndex'> {
   questionId: string;
   /**
-   * Whether to decrement the stage count on the question.
+   * When removing a question from a stage, we want to decrement the stage count on the question.
+   * This isn't needed if the question is deleted obviously, and is used in the deletion state machine.
+   * which should only be deleting the adjacent item.
    * Set it to FALSE if the question has been deleted form the org.
    */
   decrementStageCount: boolean;
 }
+
 interface DeleteOrgInviteInput {
   userId: string;
   inviteId: string;

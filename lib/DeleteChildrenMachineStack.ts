@@ -8,7 +8,7 @@ import { NodejsFunction } from '@aws-cdk/aws-lambda-nodejs';
 import { Architecture, Runtime } from '@aws-cdk/aws-lambda';
 import * as iam from '@aws-cdk/aws-iam';
 import path from 'path';
-import { DYNAMO_TABLE_NAME, ENTITY_TYPES } from '../Config';
+import { DYNAMO_TABLE_NAME, Entities } from '../Config';
 
 interface DeleteChildrenMachineProps extends cdk.StackProps {
   table: Table;
@@ -21,7 +21,7 @@ interface DeleteChildrenMachineProps extends cdk.StackProps {
  *
  * When deleting an applicant, this should delete all files, notes, whatever else.
  *
- * When deleting an org, start at the top and start deleting everything. Etc. Etc.
+ * When deleting an org, start deleting the top level items (openings, webhooks, questions).
  */
 export default class DeleteChildrenMachineStack extends cdk.Stack {
   public DeleteChildrenMachine: sfn.StateMachine;
@@ -49,7 +49,7 @@ export default class DeleteChildrenMachineStack extends cdk.Stack {
      */
     const OPENING_DELETED = sfn.Condition.stringEquals(
       '$.detail.OldImage.entityType',
-      ENTITY_TYPES.OPENING,
+      Entities.OPENING,
     );
     const OPENING_HAS_STAGES = sfn.Condition.numberGreaterThan('$.detail.OldImage.totalStages', 0);
 
@@ -61,7 +61,7 @@ export default class DeleteChildrenMachineStack extends cdk.Stack {
         KeyConditionExpression: 'GSI1PK = :GSI1PK',
         ExpressionAttributeValues: {
           ':GSI1PK': {
-            'S.$': `States.Format('${ENTITY_TYPES.ORG}#{}#${ENTITY_TYPES.OPENING}#{}#${ENTITY_TYPES.STAGE}S', $.detail.OldImage.orgId, $.detail.OldImage.openingId)`,
+            'S.$': `States.Format('${Entities.ORG}#{}#${Entities.OPENING}#{}#${Entities.STAGE}S', $.detail.OldImage.orgId, $.detail.OldImage.openingId)`,
           },
         },
       },
@@ -75,8 +75,8 @@ export default class DeleteChildrenMachineStack extends cdk.Stack {
       inputPath: '$.stages',
       parameters: {
         // Makes it easier to get these attributes per item
-        'PK.$': `States.Format('${ENTITY_TYPES.ORG}#{}#${ENTITY_TYPES.OPENING}#{}#${ENTITY_TYPES.STAGE}#{}', $$.Map.Item.Value.orgId.S, $$.Map.Item.Value.openingId.S, $$.Map.Item.Value.stageId.S)`,
-        SK: ENTITY_TYPES.STAGE,
+        'PK.$': `States.Format('${Entities.ORG}#{}#${Entities.OPENING}#{}#${Entities.STAGE}#{}', $$.Map.Item.Value.orgId.S, $$.Map.Item.Value.openingId.S, $$.Map.Item.Value.stageId.S)`,
+        SK: Entities.STAGE,
       },
     });
     DeleteStagesMap.iterator(
@@ -95,10 +95,7 @@ export default class DeleteChildrenMachineStack extends cdk.Stack {
      *  Delete all questions inside the org
      *
      */
-    const ORG_DELETED = sfn.Condition.stringEquals(
-      '$.detail.OldImage.entityType',
-      ENTITY_TYPES.ORG,
-    );
+    const ORG_DELETED = sfn.Condition.stringEquals('$.detail.OldImage.entityType', Entities.ORG);
 
     const ORG_HAS_OPENINGS = sfn.Condition.numberGreaterThan('$.detail.OldImage.totalOpenings', 0);
 
@@ -110,7 +107,7 @@ export default class DeleteChildrenMachineStack extends cdk.Stack {
         KeyConditionExpression: 'GSI1PK = :GSI1PK',
         ExpressionAttributeValues: {
           ':GSI1PK': {
-            'S.$': `States.Format('${ENTITY_TYPES.ORG}#{}#${ENTITY_TYPES.OPENING}S', $.detail.OldImage.orgId)`,
+            'S.$': `States.Format('${Entities.ORG}#{}#${Entities.OPENING}S', $.detail.OldImage.orgId)`,
           },
         },
       },
@@ -124,8 +121,8 @@ export default class DeleteChildrenMachineStack extends cdk.Stack {
       inputPath: '$.openings',
       parameters: {
         // Makes it easier to get these attributes per item
-        'PK.$': `States.Format('${ENTITY_TYPES.ORG}#{}#${ENTITY_TYPES.OPENING}#{}', $$.Map.Item.Value.orgId.S, $$.Map.Item.Value.openingId.S)`,
-        SK: ENTITY_TYPES.OPENING,
+        'PK.$': `States.Format('${Entities.ORG}#{}#${Entities.OPENING}#{}', $$.Map.Item.Value.orgId.S, $$.Map.Item.Value.openingId.S)`,
+        SK: Entities.OPENING,
       },
     });
     DeleteOpeningsMap.iterator(
@@ -138,10 +135,13 @@ export default class DeleteChildrenMachineStack extends cdk.Stack {
       }),
     );
 
+    // TODO not being used
     const ORG_HAS_QUESTIONS = sfn.Condition.numberGreaterThan(
       '$.detail.OldImage.totalQuestions',
       0,
     );
+
+    const ORG_HAS_WEBHOOKS = sfn.Condition.numberGreaterThan('$.detail.OldImage.totalWebhooks', 0);
 
     const GET_QUESTIONS_IN_ORG = new tasks.CallAwsService(this, 'GetQuestionsInOrg', {
       ...DYNAMO_QUERY_SETTINGS,
@@ -151,7 +151,7 @@ export default class DeleteChildrenMachineStack extends cdk.Stack {
         KeyConditionExpression: 'GSI1PK = :GSI1PK',
         ExpressionAttributeValues: {
           ':GSI1PK': {
-            'S.$': `States.Format('${ENTITY_TYPES.ORG}#{}#${ENTITY_TYPES.QUESTION}S', $.detail.OldImage.orgId)`,
+            'S.$': `States.Format('${Entities.ORG}#{}#${Entities.QUESTION}S', $.detail.OldImage.orgId)`,
           },
         },
       },
@@ -160,13 +160,50 @@ export default class DeleteChildrenMachineStack extends cdk.Stack {
       },
     });
 
+    const GET_WEBHOOKS_IN_ORG = new tasks.CallAwsService(this, 'GetWebhooksInOrg', {
+      ...DYNAMO_QUERY_SETTINGS,
+      parameters: {
+        TableName: props.table.tableName,
+        IndexName: 'GSI1',
+        KeyConditionExpression: 'GSI1PK = :GSI1PK',
+        ExpressionAttributeValues: {
+          ':GSI1PK': {
+            'S.$': `States.Format('${Entities.ORG}#{}#${Entities.WEBHOOK}S', $.detail.OldImage.orgId)`,
+          },
+        },
+      },
+      resultSelector: {
+        'webhooks.$': '$.Items',
+      },
+    });
+
+    const DeleteWebhooksMap = new sfn.Map(this, 'DeleteWebhooksInOrgMap', {
+      maxConcurrency: 1,
+      inputPath: '$.webhooks',
+      parameters: {
+        // Makes it easier to get these attributes per item
+        'PK.$': `States.Format('${Entities.ORG}#{}#${Entities.WEBHOOK}#{}', $$.Map.Item.Value.orgId.S, $$.Map.Item.Value.webhookId.S)`,
+        SK: Entities.WEBHOOK,
+      },
+    });
+
+    DeleteWebhooksMap.iterator(
+      new tasks.DynamoDeleteItem(this, 'DeleteWebhooksInOrg', {
+        table: props.table,
+        key: {
+          PK: tasks.DynamoAttributeValue.fromString(sfn.JsonPath.stringAt('$.PK')),
+          SK: tasks.DynamoAttributeValue.fromString(sfn.JsonPath.stringAt('$.SK')),
+        },
+      }),
+    );
+
     const DeleteQuestionsMap = new sfn.Map(this, 'DeleteQuestionsInOrgMap', {
       maxConcurrency: 1,
       inputPath: '$.questions',
       parameters: {
         // Makes it easier to get these attributes per item
-        'PK.$': `States.Format('${ENTITY_TYPES.ORG}#{}#${ENTITY_TYPES.QUESTION}#{}', $$.Map.Item.Value.orgId.S, $$.Map.Item.Value.questionId.S)`,
-        SK: ENTITY_TYPES.QUESTION,
+        'PK.$': `States.Format('${Entities.ORG}#{}#${Entities.QUESTION}#{}', $$.Map.Item.Value.orgId.S, $$.Map.Item.Value.questionId.S)`,
+        SK: Entities.QUESTION,
       },
     });
     DeleteQuestionsMap.iterator(
@@ -179,11 +216,7 @@ export default class DeleteChildrenMachineStack extends cdk.Stack {
       }),
     );
 
-    // TODO
-    const QUESTION_DELETED = sfn.Condition.stringEquals(
-      '$.detail.OldImage.entityType',
-      ENTITY_TYPES.QUESTION,
-    );
+    const QUESTION_DELETED = sfn.Condition.stringEquals('$.detail.entityType', Entities.QUESTION);
 
     const QUESTION_HAS_STAGES = sfn.Condition.numberGreaterThan('$.detail.OldImage.totalStages', 0);
 
@@ -192,9 +225,9 @@ export default class DeleteChildrenMachineStack extends cdk.Stack {
       0,
     );
 
-    const GET_STAGES_THAT_HAVE_QUESTIONS = new tasks.CallAwsService(
+    const GET_STAGES_THAT_HAVE_DELETED_QUESTION = new tasks.CallAwsService(
       this,
-      'GetStagesThatHaveQuestion',
+      'GetStagesThatHaveDeletedQuestion',
       {
         ...DYNAMO_QUERY_SETTINGS,
         parameters: {
@@ -202,7 +235,7 @@ export default class DeleteChildrenMachineStack extends cdk.Stack {
           KeyConditionExpression: 'PK = :PK',
           ExpressionAttributeValues: {
             ':PK': {
-              'S.$': `States.Format('${ENTITY_TYPES.ORG}#{}#${ENTITY_TYPES.QUESTION}#{}#${ENTITY_TYPES.STAGE}S', $.detail.OldImage.orgId, $.detail.OldImage.questionId)`,
+              'S.$': `States.Format('${Entities.ORG}#{}#${Entities.QUESTION}#{}#${Entities.STAGE}S', $.detail.OldImage.orgId, $.detail.OldImage.questionId)`,
             },
           },
         },
@@ -237,52 +270,50 @@ export default class DeleteChildrenMachineStack extends cdk.Stack {
       },
     );
 
-    const UpdateStageInfoMap = new sfn.Map(this, 'UpdateStageInfoMap', {
-      maxConcurrency: 1,
-      itemsPath: '$.stages.stages',
-      parameters: {
-        // Makes it easier to get these attributes per item
-        'PK.$': `States.Format('${ENTITY_TYPES.ORG}#{}#${ENTITY_TYPES.OPENING}#{}#${ENTITY_TYPES.STAGE}#{}', $$.Map.Item.Value.orgId.S, $$.Map.Item.Value.openingId.S, $$.Map.Item.Value.stageId.S)`,
-        SK: ENTITY_TYPES.STAGE,
-        'questionId.$': '$.detail.OldImage.questionId',
-        /**
-         * If a stage does not exist, and a question was previously attached to it,
-         * this allows retrieving that adjacent item and deleting it.
-         * NOTE: Will require the same setup for webhooks
-         */
-        'adjacenctItemPK.$': `States.Format('${ENTITY_TYPES.ORG}#{}#${ENTITY_TYPES.QUESTION}#{}#${ENTITY_TYPES.STAGE}S', $$.Map.Item.Value.orgId.S, $$.Map.Item.Value.questionId.S)`,
-        'adjacenctItemSK.$': `States.Format('${ENTITY_TYPES.OPENING}#{}#${ENTITY_TYPES.STAGE}#{}', $$.Map.Item.Value.openingId.S, $$.Map.Item.Value.stageId.S)`,
+    const QUESTION_DELETED_UPDATE_STAGE_INFO_MAP = new sfn.Map(
+      this,
+      'QuestionDeletedUpdateStageInfoMap',
+      {
+        maxConcurrency: 1,
+        itemsPath: '$.stages.stages',
+        parameters: {
+          // Makes it easier to get these attributes per item
+          'PK.$': `States.Format('${Entities.ORG}#{}#${Entities.OPENING}#{}#${Entities.STAGE}#{}', $$.Map.Item.Value.orgId.S, $$.Map.Item.Value.openingId.S, $$.Map.Item.Value.stageId.S)`,
+          SK: Entities.STAGE,
+          'questionId.$': '$.detail.OldImage.questionId',
+          /**
+           * If a stage does not exist, and a question was previously attached to it,
+           * this allows retrieving that adjacent item and deleting it.
+           * NOTE: Will require the same setup for webhooks
+           */
+          'adjacentItemPK.$': `States.Format('${Entities.ORG}#{}#${Entities.QUESTION}#{}#${Entities.STAGE}S', $$.Map.Item.Value.orgId.S, $$.Map.Item.Value.questionId.S)`,
+          'adjacentItemSK.$': `States.Format('${Entities.OPENING}#{}#${Entities.STAGE}#{}', $$.Map.Item.Value.openingId.S, $$.Map.Item.Value.stageId.S)`,
+        },
       },
-    });
+    );
 
-    const DELETE_ADJACENCT_STAGE_QUESTION_ITEM = new tasks.DynamoDeleteItem(
+    const DELETE_ADJACENT_STAGE_QUESTION_ITEM = new tasks.DynamoDeleteItem(
       this,
       'DeleteAdjacentStageQuestionItem',
       {
         table: props.table,
         key: {
-          PK: tasks.DynamoAttributeValue.fromString(sfn.JsonPath.stringAt('$.adjacenctItemPK')),
-          SK: tasks.DynamoAttributeValue.fromString(sfn.JsonPath.stringAt('$.adjacenctItemSK')),
+          PK: tasks.DynamoAttributeValue.fromString(sfn.JsonPath.stringAt('$.adjacentItemPK')),
+          SK: tasks.DynamoAttributeValue.fromString(sfn.JsonPath.stringAt('$.adjacentItemSK')),
         },
       },
     );
 
-    UpdateStageInfoMap.iterator(
-      new tasks.DynamoGetItem(this, 'GetCurrentStageInfo', {
+    QUESTION_DELETED_UPDATE_STAGE_INFO_MAP.iterator(
+      new tasks.DynamoGetItem(this, 'GetCurrentStageInfoForQuestions', {
         table: props.table,
         key: {
           PK: tasks.DynamoAttributeValue.fromString(sfn.JsonPath.stringAt('$.PK')),
           SK: tasks.DynamoAttributeValue.fromString(sfn.JsonPath.stringAt('$.SK')),
         },
-        // https://github.com/plutomi/plutomi/issues/570
-        // Needs a check here as this will error
-        // resultSelector: {
-        //   "stage.$": "$.Item",
-        // },
-        // TODO needs the above condition check, if .item exists
         resultPath: '$.stage',
       }).next(
-        new sfn.Choice(this, 'Does stage exist?')
+        new sfn.Choice(this, 'Does question-stage exist?')
           .when(
             sfn.Condition.isPresent('$.stage.Item'),
             new tasks.LambdaInvoke(this, 'RemoveDeletedQuestionFromStage', {
@@ -291,17 +322,18 @@ export default class DeleteChildrenMachineStack extends cdk.Stack {
                 questionId: sfn.JsonPath.stringAt('$.questionId'),
               }),
               lambdaFunction: RemoveDeletedQuestionFromStageFunction,
+              // TODO pretty sure this needs a callback
               integrationPattern: IntegrationPattern.REQUEST_RESPONSE,
             }),
           )
-          .otherwise(DELETE_ADJACENCT_STAGE_QUESTION_ITEM),
+          .otherwise(DELETE_ADJACENT_STAGE_QUESTION_ITEM),
       ),
     );
 
     // Delete questions and the adjacent item TODO
     const STAGE_DELETED = sfn.Condition.stringEquals(
       '$.detail.OldImage.entityType',
-      ENTITY_TYPES.STAGE,
+      Entities.STAGE,
     );
 
     const DynamoDeleteQuestionPolicy = new iam.PolicyStatement({
@@ -333,6 +365,11 @@ export default class DeleteChildrenMachineStack extends cdk.Stack {
             new Choice(this, 'OrgHasQuestions')
               .when(ORG_HAS_QUESTIONS, GET_QUESTIONS_IN_ORG.next(DeleteQuestionsMap))
               .otherwise(new sfn.Succeed(this, "Org doesn't have questions")),
+          )
+          .branch(
+            new Choice(this, 'OrgHasWebhooks')
+              .when(ORG_HAS_WEBHOOKS, GET_WEBHOOKS_IN_ORG.next(DeleteWebhooksMap))
+              .otherwise(new sfn.Succeed(this, "Org doesn't have webhooks")),
           ),
       )
       .when(
@@ -347,7 +384,7 @@ export default class DeleteChildrenMachineStack extends cdk.Stack {
         new Choice(this, 'DoesQuestionHaveStages')
           .when(
             QUESTION_HAS_STAGES,
-            GET_STAGES_THAT_HAVE_QUESTIONS.next(UpdateStageInfoMap),
+            GET_STAGES_THAT_HAVE_DELETED_QUESTION.next(QUESTION_DELETED_UPDATE_STAGE_INFO_MAP),
 
             // Transaction here
           )
@@ -372,7 +409,7 @@ export default class DeleteChildrenMachineStack extends cdk.Stack {
         level: sfn.LogLevel.ALL,
       },
     });
-    // TODO
+
     props.table.grantWriteData(this.DeleteChildrenMachine); // TODO this event should just be update. No need for extra permissions
   }
 }

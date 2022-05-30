@@ -3,11 +3,11 @@ import ApplicationContent from '../../../../components/Applicants/ApplicationCon
 import Loader from '../../../../components/Loader';
 import useApplicantById from '../../../../SWR/useApplicantById';
 import ApplicationHeader from '../../../../components/Applicants/ApplicationHeader';
-import { CUSTOM_QUERY } from '../../../../types/main';
+import { CustomQuery } from '../../../../types/main';
 
 export default function Application() {
   const router = useRouter();
-  const { applicantId } = router.query as Pick<CUSTOM_QUERY, 'applicantId'>;
+  const { applicantId } = router.query as Pick<CustomQuery, 'applicantId'>;
   const { applicant, isApplicantLoading, isApplicantError } = useApplicantById(applicantId);
 
   // When rendering client side don't display anything until loading is complete

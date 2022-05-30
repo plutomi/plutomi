@@ -1,20 +1,20 @@
 // This file is for the actual DynamoDB entries and their Types - ie: A full object with all properties.
 // All  other types are derivatives with Pick, Omit, etc.
-import { DEFAULTS, ENTITY_TYPES, OPENING_STATE } from '../Config';
+import { DEFAULTS, Entities, OpeningState } from '../Config';
 
 interface DynamoStage {
   /**
    * Primary key for creating a stage - takes `orgId`, `openingId`, & `stageId`
    */
-  readonly PK: `${ENTITY_TYPES.ORG}#${string}#${ENTITY_TYPES.OPENING}#${string}${ENTITY_TYPES.STAGE}#${string}`;
+  readonly PK: `${Entities.ORG}#${string}#${Entities.OPENING}#${string}${Entities.STAGE}#${string}`;
   /**
-   * Sort key for a stage, it's just the {@link ENTITY_TYPES.STAGE}
+   * Sort key for a stage, it's just the {@link Entities.STAGE}
    */
-  readonly SK: ENTITY_TYPES.STAGE;
+  readonly SK: Entities.STAGE;
   /**
-   * The stage entity type {@link ENTITY_TYPES.STAGE}
+   * The stage entity type {@link Entities.STAGE}
    */
-  entityType: ENTITY_TYPES.STAGE;
+  entityType: Entities.STAGE;
   /**
    * ISO timestamp of when the stage was created
    */
@@ -27,7 +27,7 @@ interface DynamoStage {
   totalQuestions: number;
 
   /**
-   * An array of questionIds describing how questions should show up
+   * An array of questionIds in the order that the  questions should show up
    */
   questionOrder: string[];
   /**
@@ -45,7 +45,7 @@ interface DynamoStage {
   /**
    * The index key to get all stages in an opening. Requires `orgId` and `openingId`
    */
-  GSI1PK: `${ENTITY_TYPES.ORG}#${string}#${ENTITY_TYPES.OPENING}#${string}#${ENTITY_TYPES.STAGE}S`;
+  GSI1PK: `${Entities.ORG}#${string}#${Entities.OPENING}#${string}#${Entities.STAGE}S`;
   /**
    * The stage name
    */
@@ -56,11 +56,11 @@ interface DynamoQuestion {
   /**
    * The primary key for the question. Variables are `orgId` and `questionId`
    */
-  PK: `${ENTITY_TYPES.ORG}#${string}#${ENTITY_TYPES.QUESTION}#${string}`;
+  PK: `${Entities.ORG}#${string}#${Entities.QUESTION}#${string}`;
   /**
-   * Sort key for the question. In this case, it's just the {@link ENTITY_TYPES.QUESTION}
+   * Sort key for the question. In this case, it's just the {@link Entities.QUESTION}
    */
-  SK: ENTITY_TYPES.QUESTION;
+  SK: Entities.QUESTION;
   /**
    * The custom ID of the question, where rules will be evaluated agains
    */
@@ -79,9 +79,9 @@ interface DynamoQuestion {
   orgId: string;
 
   /**
-   * The entityType {@link ENTITY_TYPES.QUESTION}
+   * The entityType {@link Entities.QUESTION}
    */
-  entityType: ENTITY_TYPES.QUESTION;
+  entityType: Entities.QUESTION;
   /**
    * ISO timestamp of when this question was created
    */
@@ -90,7 +90,7 @@ interface DynamoQuestion {
   /**
    * Get all questions in org & get question by key
    */
-  GSI1PK: `${ENTITY_TYPES.ORG}#${string}#${ENTITY_TYPES.QUESTION}S`;
+  GSI1PK: `${Entities.ORG}#${string}#${Entities.QUESTION}S`;
 
   /**
    * The question Title
@@ -107,11 +107,11 @@ interface DynamoApplicant {
   /**
    * Primary key of the applicant where the inputs are `orgId` and `applicantId`
    */
-  PK: `${ENTITY_TYPES.ORG}#${string}#${ENTITY_TYPES.APPLICANT}#${string}`;
+  PK: `${Entities.ORG}#${string}#${Entities.APPLICANT}#${string}`;
   /**
-   * The {@link ENTITY_TYPES.APPLICANT}
+   * The {@link Entities.APPLICANT}
    */
-  SK: ENTITY_TYPES.APPLICANT;
+  SK: Entities.APPLICANT;
   /**
    * First name of the applicant
    * @default - {@link DEFAULTS.FIRST_NAME}
@@ -143,7 +143,7 @@ interface DynamoApplicant {
   /**
    * The entity type of the applicant
    */
-  entityType: ENTITY_TYPES.APPLICANT;
+  entityType: Entities.APPLICANT;
   /**
    * When this applicant was created
    */
@@ -170,7 +170,7 @@ interface DynamoApplicant {
   /**
    * The current opening and stage the applicant is in
    */
-  GSI1PK: `${ENTITY_TYPES.ORG}#${string}#${ENTITY_TYPES.OPENING}#${string}#${ENTITY_TYPES.STAGE}#${string}`;
+  GSI1PK: `${Entities.ORG}#${string}#${Entities.OPENING}#${string}#${Entities.STAGE}#${string}`;
   /**
    * The date the applicant landed on this stage - ISO timestamp
    */
@@ -181,11 +181,11 @@ interface DynamoApplicantResponse {
   /**
    * The primary key for the response - needs an `orgId` and `applicantId`
    */
-  PK: `${ENTITY_TYPES.ORG}#${string}#${ENTITY_TYPES.APPLICANT}#${string}`;
+  PK: `${Entities.ORG}#${string}#${Entities.APPLICANT}#${string}`;
   /**
    * The sort key for the response - needs `responseId`
    */
-  SK: `${ENTITY_TYPES.APPLICANT_RESPONSE}#${string}`;
+  SK: `${Entities.APPLICANT_RESPONSE}#${string}`;
   /**
    * The orgId this applicant response belongs to
    */
@@ -195,9 +195,9 @@ interface DynamoApplicantResponse {
    */
   applicantId: string;
   /**
-   * The entity of the response {@link ENTITY_TYPES.APPLICANT_RESPONSE}
+   * The entity of the response {@link Entities.APPLICANT_RESPONSE}
    */
-  entityType: ENTITY_TYPES.APPLICANT_RESPONSE;
+  entityType: Entities.APPLICANT_RESPONSE;
   /**
    * The ISO timestamp of when the response was created
    */
@@ -221,22 +221,22 @@ interface DynamoApplicantResponse {
   /**
    * Primary key to retrieve all responses for an applicant - takes `orgId` and `applicantId`
    */
-  GSI1PK: `${ENTITY_TYPES.ORG}#${string}#${ENTITY_TYPES.APPLICANT}#${string}`;
+  GSI1PK: `${Entities.ORG}#${string}#${Entities.APPLICANT}#${string}`;
   /**
    * Sort key to retrieve all responses for an applicant
    */
-  GSI1SK: ENTITY_TYPES.APPLICANT_RESPONSE; // TODO add timestmap?
+  GSI1SK: Entities.APPLICANT_RESPONSE; // TODO add timestmap?
 }
 
 interface DynamoOpening {
   /**
    * Primary key for creating an opening. Takes an `orgId`
    */
-  PK: `${ENTITY_TYPES.ORG}#${string}#${ENTITY_TYPES.OPENING}#${string}`;
+  PK: `${Entities.ORG}#${string}#${Entities.OPENING}#${string}`;
   /**
-   * {@link ENTITY_TYPES.OPENING}
+   * {@link Entities.OPENING}
    */
-  SK: ENTITY_TYPES.OPENING;
+  SK: Entities.OPENING;
 
   /**
    * The org this opening belongs to
@@ -244,9 +244,9 @@ interface DynamoOpening {
 
   orgId: string;
   /**
-   * {@link ENTITY_TYPES.OPENING}
+   * {@link Entities.OPENING}
    */
-  entityType: ENTITY_TYPES.OPENING;
+  entityType: Entities.OPENING;
   /**
    * ISO Timestamp of when the opening was created
    */
@@ -267,11 +267,11 @@ interface DynamoOpening {
   /**
    * GSIPK to retrieve all openings in an org. Takes an `orgId`
    */
-  GSI1PK: `${ENTITY_TYPES.ORG}#${string}#${ENTITY_TYPES.OPENING}S`;
+  GSI1PK: `${Entities.ORG}#${string}#${Entities.OPENING}S`;
   /**
    * Optional, can filter out PUBLIC or PRIVATE openings
    */
-  GSI1SK: OPENING_STATE;
+  GSI1SK: OpeningState;
   /**
    * Total stages in opening.
    * @default 0
@@ -289,11 +289,11 @@ interface DynamoOrgInvite {
   /**
    * Primary key, requires a `userId`
    */
-  PK: `${ENTITY_TYPES.USER}#${string}`;
+  PK: `${Entities.USER}#${string}`;
   /**
    * Sort key, takes in an `inviteId`
    */
-  SK: `${ENTITY_TYPES.ORG_INVITE}#${string}`;
+  SK: `${Entities.ORG_INVITE}#${string}`;
   /**
    * The orgId this invite is for
    */
@@ -309,9 +309,9 @@ interface DynamoOrgInvite {
 
   recipient: Pick<DynamoUser, 'userId' | 'email' | 'unsubscribeKey' | 'firstName' | 'lastName'>;
   /**
-   * The entity type, see {@link ENTITY_TYPES.ORG_INVITE}
+   * The entity type, see {@link Entities.ORG_INVITE}
    */
-  entityType: ENTITY_TYPES.ORG_INVITE;
+  entityType: Entities.ORG_INVITE;
   /**
    * ISO string timestamp of when this invite was created
    */
@@ -327,16 +327,29 @@ interface DynamoOrgInvite {
   /**
    * PK for the GSI, takes an 'orgId' to be able to retrieve all invites for an org
    */
-  GSI1PK: `${ENTITY_TYPES.ORG}#${string}#${ENTITY_TYPES.ORG_INVITE}S`;
+  GSI1PK: `${Entities.ORG}#${string}#${Entities.ORG_INVITE}S`;
   /**
    * Current ISO timestamp, same as when createdAt
    */
   GSI1SK: string;
 }
 
+interface DynamoWebhook {
+  PK: `${Entities.ORG}#${string}#${Entities.WEBHOOK}#${string}`;
+  SK: string;
+  orgId: string;
+  webhookName: string;
+  webhookId: string;
+  description?: string;
+  createdAt: string;
+  webhookUrl: string;
+  entityType: Entities.WEBHOOK;
+  GSI1PK: `${Entities.ORG}#${orgId}#${Entities.WEBHOOK}S`;
+  GSI1SK: string;
+}
 interface DynamoUser {
-  PK: `${ENTITY_TYPES.USER}#${string}`;
-  SK: ENTITY_TYPES.USER;
+  PK: `${Entities.USER}#${string}`;
+  SK: Entities.USER;
   /**
    * The given `firstName`
    * @default DEFAULTS.FIRST_NAME
@@ -349,14 +362,14 @@ interface DynamoUser {
   lastName: string | DEFAULTS.LAST_NAME;
   email: string;
   userId: string;
-  entityType: ENTITY_TYPES.USER;
+  entityType: Entities.USER;
   createdAt: string;
   orgId: DEFAULTS.NO_ORG;
   orgJoinDate: DEFAULTS.NO_ORG;
-  GSI1PK: `${ENTITY_TYPES.ORG}#${DEFAULTS.NO_ORG}#${ENTITY_TYPES.USER}S`;
+  GSI1PK: `${Entities.ORG}#${DEFAULTS.NO_ORG}#${Entities.USER}S`;
   GSI1SK: string; // first & last name
   GSI2PK: string;
-  GSI2SK: ENTITY_TYPES.USER;
+  GSI2SK: Entities.USER;
   unsubscribeKey: string;
   canReceiveEmails: boolean;
   verifiedEmail: boolean;
@@ -364,9 +377,9 @@ interface DynamoUser {
 }
 
 interface DynamoLoginLink {
-  PK: `${ENTITY_TYPES.USER}#${string}`;
-  SK: `${ENTITY_TYPES.LOGIN_LINK}#${string}`;
-  entityType: ENTITY_TYPES.LOGIN_LINK;
+  PK: `${Entities.USER}#${string}`;
+  SK: `${Entities.LOGIN_LINK}#${string}`;
+  entityType: Entities.LOGIN_LINK;
   createdAt: string;
   relativeExpiry: string;
   user: DynamoUser;
@@ -375,15 +388,15 @@ interface DynamoLoginLink {
    * A UNIX date for which Dynamo will auto delete this link
    */
   ttlExpiry: number;
-  GSI1PK: `${ENTITY_TYPES.USER}#${string}#${ENTITY_TYPES.LOGIN_LINK}S`; // Get latest login link(s) for a user for throttling
+  GSI1PK: `${Entities.USER}#${string}#${Entities.LOGIN_LINK}S`; // Get latest login link(s) for a user for throttling
   GSI1SK: string; // ISO timestamp
 }
 
 interface DynamoOrg {
-  PK: `${ENTITY_TYPES.ORG}#${string}`;
-  SK: ENTITY_TYPES.ORG;
+  PK: `${Entities.ORG}#${string}`;
+  SK: Entities.ORG;
   orgId: string; // The actual org id
-  entityType: ENTITY_TYPES.ORG;
+  entityType: Entities.ORG;
   createdAt: string; // ISO timestamp
   /**
    * userId of the user who created the org
@@ -392,15 +405,16 @@ interface DynamoOrg {
   totalApplicants: number;
   totalOpenings: number;
   totalUsers: number;
+  totalWebhooks: number;
   displayName: string;
   totalQuestions: number;
 }
 
 interface DynamoLoginEvent {
-  PK: `${ENTITY_TYPES.USER}#${string}`; // TODO set login events as org events if the user has an org
-  SK: `${ENTITY_TYPES.LOGIN_EVENT}#${string}`;
+  PK: `${Entities.USER}#${string}`;
+  SK: `${Entities.LOGIN_EVENT}#${string}`;
   createdAt: string; // ISO timestamp
   ttlExpiry: number; // ttl unix expiry
-  entityType: ENTITY_TYPES.LOGIN_EVENT;
+  entityType: Entities.LOGIN_EVENT;
   user: DynamoUser;
 }

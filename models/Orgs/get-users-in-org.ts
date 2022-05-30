@@ -1,7 +1,7 @@
 import { QueryCommandInput, QueryCommand } from '@aws-sdk/lib-dynamodb';
 import { SdkError } from '@aws-sdk/types';
-import { Dynamo } from '../../AWSClients/ddbDocClient';
-import { DYNAMO_TABLE_NAME, ENTITY_TYPES } from '../../Config';
+import { Dynamo } from '../../awsClients/ddbDocClient';
+import { DYNAMO_TABLE_NAME, Entities } from '../../Config';
 import { DynamoUser } from '../../types/dynamo';
 import { GetUsersInOrgInput } from '../../types/main';
 
@@ -14,11 +14,13 @@ export default async function GetUsersInOrg(
     IndexName: 'GSI1',
     KeyConditionExpression: 'GSI1PK = :GSI1PK',
     ExpressionAttributeValues: {
-      ':GSI1PK': `${ENTITY_TYPES.ORG}#${orgId}#${ENTITY_TYPES.USER}S`,
+      ':GSI1PK': `${Entities.ORG}#${orgId}#${Entities.USER}S`,
     },
   }; // TODO query until all results are returned
 
-  limit && (params.Limit = limit);
+  if (limit) {
+    params.Limit = limit;
+  }
 
   try {
     const response = await Dynamo.send(new QueryCommand(params));

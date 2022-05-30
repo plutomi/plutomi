@@ -78,10 +78,6 @@ const main = async (req: Request, res: Response) => {
   // Update the stage with the new questionOrder
   const questionOrder = getNewChildItemOrder(questionId, stage.questionOrder, position);
 
-  // TODO this needs to be a transaction (done!) so when a question is deleted
-  // TODO in the org, we can recursively loop through all stages that have this question and update them
-  // TODO requires deletion queue
-  // https://github.com/plutomi/plutomi/issues/152
   const [stageUpdated, stageUpdatedError] = await Questions.AddQuestionToStage({
     openingId,
     stageId,
@@ -91,7 +87,6 @@ const main = async (req: Request, res: Response) => {
   });
 
   if (stageUpdatedError) {
-    console.error('EEOEOEOE', stageUpdatedError);
     const { status, body } = CreateError.SDK(stageError, 'An error ocurred updating your stage');
     return res.status(status).json(body);
   }

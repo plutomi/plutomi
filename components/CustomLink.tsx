@@ -1,4 +1,9 @@
-export default function CustomLink({ url, text }) {
+interface CustomLinkProps {
+  url: string;
+  text: string;
+}
+
+export default function CustomLink({ url, text }: CustomLinkProps) {
   return (
     <a
       href={url}

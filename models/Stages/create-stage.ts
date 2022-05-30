@@ -1,9 +1,9 @@
-import { TransactWriteCommandInput, TransactWriteCommand } from '@aws-sdk/lib-dynamodb';
 import { nanoid } from 'nanoid';
 import { SdkError } from '@aws-sdk/types';
+import { TransactWriteCommand, TransactWriteCommandInput } from '@aws-sdk/lib-dynamodb';
 import getNewChildItemOrder from '../../utils/getNewChildItemOrder';
-import { Dynamo } from '../../AWSClients/ddbDocClient';
-import { ID_LENGTHS, ENTITY_TYPES, LIMITS, DYNAMO_TABLE_NAME } from '../../Config';
+import { Dynamo } from '../../awsClients/ddbDocClient';
+import { ID_LENGTHS, Entities, LIMITS, DYNAMO_TABLE_NAME } from '../../Config';
 import { DynamoStage } from '../../types/dynamo';
 import { CreateStageInput } from '../../types/main';
 import * as Time from '../../utils/time';
@@ -14,9 +14,9 @@ export default async function CreateStage(
   const { orgId, GSI1SK, openingId, position, stageOrder } = props;
   const stageId = nanoid(ID_LENGTHS.STAGE);
   const newStage: DynamoStage = {
-    PK: `${ENTITY_TYPES.ORG}#${orgId}#${ENTITY_TYPES.OPENING}#${openingId}#${ENTITY_TYPES.STAGE}#${stageId}`,
-    SK: ENTITY_TYPES.STAGE,
-    entityType: ENTITY_TYPES.STAGE,
+    PK: `${Entities.ORG}#${orgId}#${Entities.OPENING}#${openingId}#${Entities.STAGE}#${stageId}`,
+    SK: Entities.STAGE,
+    entityType: Entities.STAGE,
     createdAt: Time.currentISO(),
     stageId,
     questionOrder: [],
@@ -24,7 +24,7 @@ export default async function CreateStage(
     totalApplicants: 0,
     totalQuestions: 0,
     openingId,
-    GSI1PK: `${ENTITY_TYPES.ORG}#${orgId}#${ENTITY_TYPES.OPENING}#${openingId}#${ENTITY_TYPES.STAGE}S`, // Get all stages in an opening
+    GSI1PK: `${Entities.ORG}#${orgId}#${Entities.OPENING}#${openingId}#${Entities.STAGE}S`, // Get all stages in an opening
     GSI1SK,
   };
 
@@ -45,8 +45,8 @@ export default async function CreateStage(
           // Increment stage count on the opening and update the newStageOrder
           Update: {
             Key: {
-              PK: `${ENTITY_TYPES.ORG}#${orgId}#${ENTITY_TYPES.OPENING}#${openingId}`,
-              SK: ENTITY_TYPES.OPENING,
+              PK: `${Entities.ORG}#${orgId}#${Entities.OPENING}#${openingId}`,
+              SK: Entities.OPENING,
             },
             TableName: `${process.env.NODE_ENV}-${DYNAMO_TABLE_NAME}`,
 

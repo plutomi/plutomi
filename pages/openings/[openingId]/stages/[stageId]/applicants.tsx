@@ -8,11 +8,11 @@ import ApplicantList from '../../../../../components/Applicants/ApplicantList';
 import ApplicantProfileModal from '../../../../../components/Applicants/ApplicantProfileModal';
 import NewPage from '../../../../../components/Templates/NewPage';
 import useOpeningInfo from '../../../../../SWR/useOpeningInfo';
-import { CUSTOM_QUERY } from '../../../../../types/main';
+import { CustomQuery } from '../../../../../types/main';
 
 export default function StageApplicants() {
   const router = useRouter();
-  const { openingId, stageId } = router.query as Pick<CUSTOM_QUERY, 'openingId' | 'stageId'>;
+  const { openingId, stageId } = router.query as Pick<CustomQuery, 'openingId' | 'stageId'>;
   const { opening, isOpeningLoading, isOpeningError } = useOpeningInfo(openingId);
 
   const { stages, isStagesLoading, isStagesError } = useAllStagesInOpening(opening?.openingId);
@@ -21,12 +21,12 @@ export default function StageApplicants() {
   // Allows for copying the URL of the applicant directly directly
   useEffect(() => {
     if (!router.isReady) return;
-    const { applicantId } = router.query as Pick<CUSTOM_QUERY, 'applicantId'>;
+    const { applicantId } = router.query as Pick<CustomQuery, 'applicantId'>;
 
     if (applicantId && typeof applicantId === 'string' && applicantId !== '') {
       openApplicantProfileModal();
     }
-  }, [router.isReady]);
+  }, [router.isReady, openApplicantProfileModal, router.query]);
 
   return (
     <NewPage

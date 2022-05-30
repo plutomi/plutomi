@@ -1,7 +1,12 @@
 import { useState } from 'react';
 import { CheckIcon, ClipboardCopyIcon } from '@heroicons/react/outline';
 
-export default function ClickToCopy({ showText, copyText }) {
+interface ClickToCopyProps {
+  showText: string;
+  copyText: string;
+}
+
+export default function ClickToCopy({ showText, copyText }: ClickToCopyProps) {
   const [copied, setCopied] = useState(false);
 
   const handleCopy = (e) => {
@@ -22,6 +27,7 @@ export default function ClickToCopy({ showText, copyText }) {
         </p>
       ) : (
         <button
+          type="button"
           className="underline inline-flex items-center rounded-full text-blue-500 hover:text-blue-800 transition ease-in duration-200 hover:bg-blue-100 px-2"
           onClick={(e) => handleCopy(e)}
         >

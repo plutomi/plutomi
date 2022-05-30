@@ -98,17 +98,15 @@ export default function CreateInviteModal() {
                             >
                               What is their email?
                             </label>
-                            <div className="mt-1">
-                              <input
-                                type="text"
-                                name="new-user-email"
-                                id="new-user-email"
-                                required
-                                onChange={(e) => setRecipientEmail(e.target.value)}
-                                value={recipientEmail}
-                                className="block w-full shadow-sm sm:text-sm focus:ring-blue-500 focus:border-blue-500 border-gray-300 rounded-md"
-                              />
-                            </div>
+                            <input
+                              type="text"
+                              name="new-user-email"
+                              id="new-user-email"
+                              required
+                              onChange={(e) => setRecipientEmail(e.target.value)}
+                              value={recipientEmail}
+                              className="block w-full shadow-sm sm:text-sm focus:ring-blue-500 focus:border-blue-500 border-gray-300 rounded-md"
+                            />
                           </div>
                           <div>
                             <label
@@ -117,24 +115,23 @@ export default function CreateInviteModal() {
                             >
                               Invite will expire in
                             </label>
-                            <div className="mt-1 relative rounded-md shadow-sm w-2/5">
-                              <input
-                                type="number"
-                                name="expiry-days"
-                                id="expiry"
-                                min={1}
-                                max={365}
-                                defaultValue={ORG_INVITE_EXPIRY_DAYS}
-                                className="focus:ring-blue-500 focus:border-blue-500 block w-full  pr-12 sm:text-sm border-gray-300 rounded-md"
-                                placeholder="3"
-                                value={expiresInDays}
-                                onChange={(e) => setExpiresInDays(parseInt(e.target.value))}
-                              />
-                              <div className="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
-                                <span className="text-light sm:text-sm" id="expiry">
-                                  days
-                                </span>
-                              </div>
+                            <input
+                              type="number"
+                              name="expiry-days"
+                              id="expiry"
+                              min={1}
+                              max={365}
+                              defaultValue={ORG_INVITE_EXPIRY_DAYS}
+                              className="focus:ring-blue-500 focus:border-blue-500 block w-full  pr-12 sm:text-sm border-gray-300 rounded-md"
+                              placeholder="3"
+                              value={expiresInDays}
+                              onChange={(e) => setExpiresInDays(parseInt(e.target.value, 10))}
+                            />
+
+                            <div className="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
+                              <span className="text-light sm:text-sm" id="expiry">
+                                days
+                              </span>
                             </div>
                           </div>
                         </div>

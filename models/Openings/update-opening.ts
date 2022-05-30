@@ -1,7 +1,7 @@
 import { UpdateCommandInput, UpdateCommand } from '@aws-sdk/lib-dynamodb';
 import { SdkError } from '@aws-sdk/types';
-import { Dynamo } from '../../AWSClients/ddbDocClient';
-import { DYNAMO_TABLE_NAME, ENTITY_TYPES } from '../../Config';
+import { Dynamo } from '../../awsClients/ddbDocClient';
+import { DYNAMO_TABLE_NAME, Entities } from '../../Config';
 import { UpdateOpeningInput } from '../../types/main';
 
 export default async function UpdateOpening(
@@ -12,6 +12,8 @@ export default async function UpdateOpening(
   const allUpdateExpressions: string[] = [];
   const allAttributeValues: { [key: string]: string } = {};
 
+  // https://github.com/plutomi/plutomi/issues/594
+  // eslint-disable-next-line no-restricted-syntax
   for (const property of Object.keys(newValues)) {
     // Push each property into the update expression
     allUpdateExpressions.push(`${property} = :${property}`);
@@ -22,8 +24,8 @@ export default async function UpdateOpening(
 
   const params: UpdateCommandInput = {
     Key: {
-      PK: `${ENTITY_TYPES.ORG}#${orgId}#${ENTITY_TYPES.OPENING}#${openingId}`,
-      SK: ENTITY_TYPES.OPENING,
+      PK: `${Entities.ORG}#${orgId}#${Entities.OPENING}#${openingId}`,
+      SK: Entities.OPENING,
     },
     UpdateExpression: `SET ${allUpdateExpressions.join(', ')}`,
     ExpressionAttributeValues: allAttributeValues,

@@ -21,6 +21,9 @@ export default function QuestionsContent() {
     return <Loader text="Loading questions..." />;
   }
 
+  if (orgQuestions?.length === 0) {
+    return <EmptyQuestionsState />;
+  }
   return (
     <div className="">
       <CreateQuestionModal />
@@ -28,7 +31,6 @@ export default function QuestionsContent() {
         <EmptyQuestionsState />
       ) : (
         <div>
-          {' '}
           <UpdateQuestionModal question={currentQuestion} />
           <div className="flex-1 my-2 flex md:mt-0  items-center  md:flex-grow justify-center">
             <p className="mx-12">Total questions: {org?.totalQuestions || orgQuestions?.length}</p>
@@ -42,10 +44,7 @@ export default function QuestionsContent() {
             </button>
           </div>
           <div>
-            <ul
-              role="list"
-              className="divide-y divide-gray-200 mx-auto max-w-xl flex-col space-y-4   "
-            >
+            <ul className="divide-y divide-gray-200 mx-auto max-w-xl flex-col space-y-4   ">
               {orgQuestions?.map((question: DynamoQuestion) => (
                 <QuestionItem key={question?.questionId} question={question} />
               ))}

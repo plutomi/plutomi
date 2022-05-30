@@ -9,11 +9,10 @@ export default function WarningBanner() {
             <span className="md:hidden">Website in development!</span>
             <span className="hidden md:inline">WARNING: Website is in *active* development.</span>
             <span className="block sm:ml-2 sm:inline-block">
-              <Link href="/faq">
-                <a className="text-white font-bold underline transition ease-in-out hover:text-blue-gray-200 duration-200">
-                  {' '}
+              <Link passHref href="/faq">
+                <p className="text-white font-bold underline transition ease-in-out hover:text-blue-gray-200 duration-200">
                   Learn more <span aria-hidden="true">&rarr;</span>
-                </a>
+                </p>
               </Link>
             </span>
           </p>

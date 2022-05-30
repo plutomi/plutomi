@@ -1,7 +1,11 @@
 import { ArrowLeftIcon } from '@heroicons/react/outline';
 import { useRouter } from 'next/router';
 
-export default function GoBack({ url }) {
+interface GoBackButtonProps {
+  url: string;
+}
+
+export default function GoBack({ url }: GoBackButtonProps) {
   const router = useRouter();
   return (
     <button

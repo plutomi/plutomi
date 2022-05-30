@@ -27,14 +27,14 @@ export const API_URL =
 export const COOKIE_NAME =
   process.env.NODE_ENV === 'production' ? 'plutomi-cookie' : 'DEV-plutomi-cookie';
 
-export enum OPENING_STATE {
+export enum OpeningState {
   PUBLIC = 'PUBLIC',
   PRIVATE = 'PRIVATE',
 }
 
 export const DYNAMO_TABLE_NAME = 'Plutomi';
 
-export enum ENTITY_TYPES {
+export enum Entities {
   APPLICANT = 'APPLICANT',
   APPLICANT_RESPONSE = 'APPLICANT_RESPONSE',
   ORG = 'ORG',
@@ -46,6 +46,7 @@ export enum ENTITY_TYPES {
   STAGE_RULE = 'STAGE_RULE',
   LOGIN_LINK = 'LOGIN_LINK',
   LOGIN_EVENT = 'LOGIN_EVENT',
+  WEBHOOK = 'WEBHOOK',
 }
 
 export const TIME_UNITS = {
@@ -95,6 +96,7 @@ export enum LIMITS {
   MAX_QUESTION_DESCRIPTION_LENGTH = 500,
   MAX_APPLICANT_FIRSTNAME_LENGTH = 20,
   MAX_APPLICANT_LASTNAME_LENGTH = 20,
+  MAX_WEBHOOK_DESCRIPTION_LENGTH = 300,
 
   /**
    * How many child items (that can be re-ordered!) is a parent allowed to have.
@@ -103,6 +105,11 @@ export enum LIMITS {
   MAX_CHILD_ITEM_LIMIT = 200,
 }
 
+export enum DynamoStreamTypes {
+  INSERT = 'INSERT',
+  MODIFY = 'MODIFY',
+  REMOVE = 'REMOVE',
+}
 export const LOGIN_LINK_SETTINGS = {
   password: process.env.LOGIN_LINKS_PASSWORD,
   ttl: 900, // In seconds, how long should login links be valid for
@@ -149,6 +156,7 @@ export const JOI_GLOBAL_FORBIDDEN = {
   entityType: Joi.any().forbidden(),
   createdAt: Joi.any().forbidden(),
 };
+
 export const AXIOS_INSTANCE = axios.create({
   withCredentials: true,
   baseURL: API_URL,
@@ -160,7 +168,28 @@ export const AXIOS_INSTANCE = axios.create({
 export const SWRFetcher = (url: string) =>
   AXIOS_INSTANCE.get(API_URL + url).then((res) => res.data);
 
-export const NAVBAR_NAVIGATION = [
+export type NavbarItem = {
+  /**
+   * The name of the navbar item such as 'Dashboard' or 'Questions'
+   */
+  name: string;
+  /**
+   * The path of the page such as '/dashboard' or '/questions'
+   */
+  href: string;
+  /**
+   * If this item should be hidden when a user is not in an org.
+   */
+  hiddenIfNoOrg: boolean;
+  /**
+   * If this item should be hidden if a user is in an org.  Usually false, but
+   * used for things like Invites in which a user shouldn't be accepting invites
+   * while tey are already in an org
+   */
+  hiddenIfOrg: boolean;
+};
+
+export const NAVBAR_NAVIGATION: NavbarItem[] = [
   {
     name: 'Dashboard',
     href: '/dashboard',
@@ -185,6 +214,12 @@ export const NAVBAR_NAVIGATION = [
     href: '/invites',
     hiddenIfNoOrg: false,
     hiddenIfOrg: true,
+  },
+  {
+    name: 'Webhooks',
+    href: '/webhooks',
+    hiddenIfNoOrg: true,
+    hiddenIfOrg: false,
   },
 ];
 export const DROPDOWN_NAVIGATION = [
