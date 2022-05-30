@@ -1,4 +1,7 @@
-export default function PageHeader({ headerText }) {
+interface PageHeaderProps {
+  headerText: string;
+}
+export default function PageHeader({ headerText }: PageHeaderProps) {
   return (
     <div className="md:flex md:items-center md:justify-between ">
       <div className=" min-w-0 ">

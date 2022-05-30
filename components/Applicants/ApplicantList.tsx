@@ -29,7 +29,7 @@ export default function ApplicantList() {
 
   return (
     <div className="bg-white shadow overflow-hidden sm:rounded-md">
-      <ul role="list" className="divide-y divide-gray-200">
+      <ul className="divide-y divide-gray-200">
         {applicants?.map((applicant: DynamoApplicant) => (
           <ApplicantListItem key={applicant.applicantId} applicant={applicant} />
         ))}

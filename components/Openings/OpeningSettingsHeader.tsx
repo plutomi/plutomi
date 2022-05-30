@@ -7,7 +7,7 @@ import Breadcrumbs from '../Breadcrumbs';
 import Loader from '../Loader';
 import { DeleteOpening, GetOpeningsInOrgURL } from '../../adapters/Openings';
 import * as Time from '../../utils/time';
-import { CustomQuery } from '../../types/main';
+import { CustomQuery, SettingsCrumbsProps } from '../../types/main';
 import { OPENING_STATE, WEBSITE_URL } from '../../Config';
 
 export default function OpeningSettingsHeader() {
@@ -21,7 +21,7 @@ export default function OpeningSettingsHeader() {
     return <Loader text="Loading opening..." />;
   }
 
-  const crumbs = [
+  const crumbs: SettingsCrumbsProps[] = [
     {
       name: 'Opening Settings',
       href: `/openings/${openingId}/settings`,
@@ -99,6 +99,7 @@ export default function OpeningSettingsHeader() {
           Edit Opening
         </button>
         <button
+          type="button"
           onClick={deleteOpening}
           className="rounded-full hover:bg-red-500 hover:text-white border border-red-500 text-red-500 transition ease-in-out duration-200 px-2 py-2 text-md"
         >

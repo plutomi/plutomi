@@ -26,7 +26,7 @@ export default function Main({ commits }) {
       </main>
       <div className="flex-wrap md:flex  justify-center space-x-2">
         <UseCases />
-        <ul role="list" className="divide-y mx-auto max-w-4xl divide-gray-200  mt-12">
+        <ul className="divide-y mx-auto max-w-4xl divide-gray-200  mt-12">
           {commits.map((commit) => (
             <li
               key={nanoid(15)}

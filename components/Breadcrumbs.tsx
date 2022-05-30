@@ -1,7 +1,8 @@
 import { HomeIcon } from '@heroicons/react/solid';
 import Link from 'next/dist/client/link';
+import { SettingsCrumbsProps } from '../types/main';
 
-export default function Breadcrumbs({ crumbs }: SettingsCrumbsProps) {
+export default function Breadcrumbs({ crumbs }: { crumbs: SettingsCrumbsProps[] }) {
   return (
     <nav className="flex" aria-label="Breadcrumb">
       <ol className="flex items-center space-x-4">

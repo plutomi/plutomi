@@ -9,7 +9,7 @@ interface NewPageProps {
   headerText: string;
   loggedOutPageText: string;
   currentNavbarItem: string;
-  children: React.FC;
+  children: React.ReactElement;
 }
 export default function NewPage({
   headerText,

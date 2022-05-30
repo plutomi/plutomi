@@ -20,7 +20,7 @@ export default function OpeningList() {
 
   return (
     <div className="bg-white shadow overflow-hidden sm:rounded-md">
-      <ul role="list" className="divide-y divide-gray-200">
+      <ul className="divide-y divide-gray-200">
         {filteredOpenings?.map((opening) => {
           /**
            * If the opening has stages, go to the first stage and view aplicants.
