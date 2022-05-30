@@ -1,9 +1,9 @@
 import { Request, Response } from 'express';
 import Joi from 'joi';
-import * as CreateError from '../../utils/createError';
-import { JOI_GLOBAL_FORBIDDEN, JOI_SETTINGS, LIMITS } from '../../Config';
-import { DynamoQuestion } from '../../types/dynamo';
-import { updateQuestion } from '../../models/Questions';
+import * as CreateError from '../../../utils/createError';
+import { JOI_GLOBAL_FORBIDDEN, JOI_SETTINGS, LIMITS } from '../../../Config';
+import { DynamoQuestion } from '../../../types/dynamo';
+import { updateQuestion } from '../../../models/Questions';
 
 export interface APIUpdateQuestionOptions
   extends Partial<Pick<DynamoQuestion, 'GSI1SK' | 'description'>> {
@@ -22,7 +22,7 @@ const schema = Joi.object({
   body: JOI_FORBIDDEN_OPENING,
 }).options(JOI_SETTINGS);
 
-const main = async (req: Request, res: Response) => {
+export const main = async (req: Request, res: Response) => {
   try {
     await schema.validateAsync(req);
   } catch (error) {
@@ -51,5 +51,3 @@ const main = async (req: Request, res: Response) => {
     message: 'Question updated!',
   });
 };
-
-export default main;

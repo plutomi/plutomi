@@ -1,18 +1,18 @@
-import CreateQuestions from './create-questions';
-import GetQuestionsInOrg from './get-questions-in-org';
-import DeleteQuestionFromOrg from './delete-question-from-org';
-import UpdateQuestion from './update-question';
-import GetQuestionInfo from './get-question-info';
-import AddQuestionToStage from './add-question-to-stage';
-import DeleteQuestionFromStage from './delete-question-from-stage';
-import GetQuestionsInStage from './get-questions-in-stage';
+import * as CreateQuestion from './CreateQuestion';
+import * as GetQuestionsInOrg from './GetQuestionsInOrg';
+import * as DeleteQuestionFromOrg from './DeleteQuestionFromOrg';
+import * as UpdateQuestion from './UpdateQuestion';
+import * as GetQuestion from './GetQuestion';
+import * as AddQuestionToStage from './AddQuestionToStage';
+import * as DeleteQuestionFromStage from './DeleteQuestionFromStage';
+import * as GetQuestionsInStage from './GetQuestionsInStage';
 
 export {
-  CreateQuestions,
+  CreateQuestion,
   GetQuestionsInOrg,
   DeleteQuestionFromOrg,
   UpdateQuestion,
-  GetQuestionInfo,
+  GetQuestion,
   AddQuestionToStage,
   DeleteQuestionFromStage,
   GetQuestionsInStage,

@@ -1,10 +1,10 @@
 import { Request, Response } from 'express';
-import { deleteQuestionFromStage } from '../../models/Questions';
-import { getStage } from '../../models/Stages';
+import { deleteQuestionFromStage } from '../../../models/Questions';
+import { getStage } from '../../../models/Stages';
 
-import * as CreateError from '../../utils/createError';
+import * as CreateError from '../../../utils/createError';
 
-const main = async (req: Request, res: Response) => {
+export const main = async (req: Request, res: Response) => {
   const { session } = res.locals;
   const { openingId, stageId, questionId } = req.params;
   const [stage, error] = await getStage({
@@ -52,4 +52,3 @@ const main = async (req: Request, res: Response) => {
 
   return res.status(200).json({ message: 'Question removed from stage!' });
 };
-export default main;

@@ -1,9 +1,9 @@
 import { Request, Response } from 'express';
 import Joi from 'joi';
-import * as CreateError from '../../utils/createError';
-import { DynamoQuestion } from '../../types/dynamo';
-import { JOI_SETTINGS, LIMITS } from '../../Config';
-import { createQuestion } from '../../models/Questions';
+import * as CreateError from '../../../utils/createError';
+import { DynamoQuestion } from '../../../types/dynamo';
+import { JOI_SETTINGS, LIMITS } from '../../../Config';
+import { createQuestion } from '../../../models/Questions';
 
 export type APICreateQuestionOptions = Pick<
   DynamoQuestion,
@@ -17,7 +17,7 @@ const schema = Joi.object({
   },
 }).options(JOI_SETTINGS);
 
-const main = async (req: Request, res: Response) => {
+export const main = async (req: Request, res: Response) => {
   const { session } = res.locals;
   try {
     await schema.validateAsync(req);
@@ -44,4 +44,3 @@ const main = async (req: Request, res: Response) => {
   }
   return res.status(201).json({ message: 'Question created!', question: created });
 };
-export default main;

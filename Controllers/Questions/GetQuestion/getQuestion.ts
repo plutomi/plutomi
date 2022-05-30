@@ -1,8 +1,8 @@
 import { Request, Response } from 'express';
-import { getQuestion } from '../../models/Questions';
-import * as CreateError from '../../utils/createError';
+import { getQuestion } from '../../../models/Questions';
+import * as CreateError from '../../../utils/createError';
 
-const main = async (req: Request, res: Response) => {
+export const main = async (req: Request, res: Response) => {
   const { session } = res.locals;
   const { questionId } = req.params;
   const [question, questionError] = await getQuestion({
@@ -19,4 +19,3 @@ const main = async (req: Request, res: Response) => {
   }
   return res.status(200).json(question);
 };
-export default main;

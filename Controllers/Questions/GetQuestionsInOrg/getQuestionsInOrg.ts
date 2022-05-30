@@ -1,8 +1,8 @@
 import { Request, Response } from 'express';
-import { getQuestionsInOrg } from '../../models/Questions';
-import * as CreateError from '../../utils/createError';
+import { getQuestionsInOrg } from '../../../models/Questions';
+import * as CreateError from '../../../utils/createError';
 
-const main = async (req: Request, res: Response) => {
+export const main = async (req: Request, res: Response) => {
   const { session } = res.locals;
 
   const [questions, questionsError] = await getQuestionsInOrg({
@@ -18,4 +18,3 @@ const main = async (req: Request, res: Response) => {
   }
   return res.status(200).json(questions);
 };
-export default main;
