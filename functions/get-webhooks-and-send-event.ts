@@ -25,7 +25,7 @@ export async function main(event: EventBridgeEvent<'stream', ApplicantWebhookEve
     return;
   }
 
-  if (!success.length) {
+  if (!webhooks.length) {
     console.log('No webhooks found in org');
     return;
   }
