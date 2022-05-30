@@ -1,6 +1,6 @@
 import { AXIOS_INSTANCE as axios } from '../Config';
-import { APICreateStageOptions } from '../Controllers/Stages/CreateStage/createStage';
-import { APIUpdateStageOptions } from '../Controllers/Stages/UpdateStage/updateStage';
+import { APICreateStageOptions } from '../Controllers/Stages/createStage';
+import { APIUpdateStageOptions } from '../Controllers/Stages/updateStage';
 import { DynamoStage } from '../types/dynamo';
 
 type OpeningIdAndStageId = Pick<DynamoStage, 'openingId' | 'stageId'>;

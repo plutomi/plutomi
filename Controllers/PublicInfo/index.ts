@@ -1,5 +1,5 @@
-import * as GetOrg from './GetOrg';
-import * as GetOpeningsInOrg from './GetOpeningsInOrg';
-import * as GetOpening from './GetOpening';
+import * as GetOrg from './getOrg';
+import * as GetOpeningsInOrg from './getOpeningsInOrg';
+import * as GetOpening from './getOpening';
 
 export { GetOpening, GetOpeningsInOrg, GetOrg };

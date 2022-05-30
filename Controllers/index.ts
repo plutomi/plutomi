@@ -9,7 +9,7 @@ import * as Stages from './Stages';
 import * as Users from './Users';
 import * as Webhooks from './Webhooks';
 
-export default {
+const API = {
   Applicants,
   Auth,
   Invites,
@@ -21,3 +21,5 @@ export default {
   Webhooks,
   Questions,
 };
+
+export default API;
