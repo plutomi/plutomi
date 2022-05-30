@@ -34,7 +34,7 @@ enum Rules {
 }
 
 enum Source {
-  DynamoStream = 'dynamo.stream',
+  DynamoStream = 'dynamo.streams',
 }
 
 interface EventBridgeStackProps extends cdk.StackProps {
@@ -96,7 +96,6 @@ export default class EventBridgeStack extends cdk.Stack {
         source: [Source.DynamoStream],
         detail: {
           eventName: [DynamoStreamTypes.REMOVE],
-          entityType: Object.values(Entities),
         },
       },
     });
@@ -109,7 +108,6 @@ export default class EventBridgeStack extends cdk.Stack {
       eventPattern: {
         source: [Source.DynamoStream],
         detail: {
-          // eventName: [DynamoStreamTypes.INSERT, DynamoStreamTypes.MODIFY, DynamoStreamTypes.REMOVE],
           entityType: [Entities.APPLICANT],
         },
       },
