@@ -34,7 +34,7 @@ enum Rules {
 }
 
 enum Source {
-  DynamoStream = 'dynamo.streams',
+  DynamoStream = 'dynamodb.streams',
 }
 
 interface EventBridgeStackProps extends cdk.StackProps {
