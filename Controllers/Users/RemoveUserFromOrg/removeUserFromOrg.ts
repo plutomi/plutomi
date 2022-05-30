@@ -1,9 +1,9 @@
 import { Request, Response } from 'express';
-import { getOrg } from '../../models/Orgs';
-import { removeUserFromOrg } from '../../models/Users';
-import * as CreateError from '../../utils/createError';
+import { getOrg } from '../../../models/Orgs';
+import { removeUserFromOrg } from '../../../models/Users';
+import * as CreateError from '../../../utils/createError';
 
-const main = async (req: Request, res: Response) => {
+export const main = async (req: Request, res: Response) => {
   const { session } = res.locals;
   const { orgId, userId } = req.params;
 
@@ -55,4 +55,3 @@ const main = async (req: Request, res: Response) => {
 
   return res.status(200).json({ message: 'User removed!' });
 };
-export default main;

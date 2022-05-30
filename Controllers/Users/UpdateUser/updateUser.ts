@@ -1,15 +1,16 @@
 import { Request, Response } from 'express';
 import Joi from 'joi';
-import * as CreateError from '../../utils/createError';
-import { DEFAULTS, JOI_GLOBAL_FORBIDDEN, JOI_SETTINGS } from '../../Config';
-import { DynamoUser } from '../../types/dynamo';
-import { updateUser } from '../../models/Users';
+import * as CreateError from '../../../utils/createError';
+import { DEFAULTS, JOI_GLOBAL_FORBIDDEN, JOI_SETTINGS } from '../../../Config';
+import { DynamoUser } from '../../../types/dynamo';
+import { updateUser } from '../../../models/Users';
 
 export interface APIUpdateUserOptions extends Partial<Pick<DynamoUser, 'firstName' | 'lastName'>> {
   [key: string]: any;
 }
 /**
  * When calling PUT /users/:userId, these properties cannot be updated by the user
+ *  TODO use new update pattern https://github.com/plutomi/plutomi/issues/594
  */
 export const JOI_FORBIDDEN_USER = {
   ...JOI_GLOBAL_FORBIDDEN,
@@ -34,7 +35,7 @@ const schema = Joi.object({
   body: JOI_FORBIDDEN_USER,
 }).options(JOI_SETTINGS);
 
-const main = async (req: Request, res: Response) => {
+export const main = async (req: Request, res: Response) => {
   try {
     await schema.validateAsync(req);
   } catch (error) {
@@ -65,5 +66,3 @@ const main = async (req: Request, res: Response) => {
     message: userId === session.userId ? 'Info updated!' : 'User updated!',
   });
 };
-
-export default main;

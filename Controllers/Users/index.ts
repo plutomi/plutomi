@@ -1,7 +1,7 @@
-import Self from './self';
-import GetUserById from './get-user-by-id';
-import UpdateUser from './update-user';
-import GetUsersInOrg from './get-users-in-org';
-import RemoveUserFromOrg from './remove-user-from-org';
+import * as Self from './GetSelf';
+import * as GetUser from './GetUser';
+import * as UpdateUser from './UpdateUser';
+import * as GetUsersInOrg from './GetUsersInOrg';
+import * as RemoveUserFromOrg from './RemoveUserFromOrg';
 
-export { Self, GetUserById, UpdateUser, GetUsersInOrg, RemoveUserFromOrg };
+export { Self, GetUser, UpdateUser, GetUsersInOrg, RemoveUserFromOrg };

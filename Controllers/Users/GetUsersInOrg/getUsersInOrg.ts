@@ -1,9 +1,9 @@
 import { Request, Response } from 'express';
 import { pick } from 'lodash';
-import { getUsersInOrg } from '../../models/Users/GetUsersInOrg';
-import * as CreateError from '../../utils/createError';
+import { getUsersInOrg } from '../../../models/Users/GetUsersInOrg';
+import * as CreateError from '../../../utils/createError';
 
-const main = async (req: Request, res: Response) => {
+export const main = async (req: Request, res: Response) => {
   const { session } = res.locals;
 
   const [users, error] = await getUsersInOrg({
@@ -25,4 +25,3 @@ const main = async (req: Request, res: Response) => {
 
   return res.status(200).json(cleanUsers);
 };
-export default main;
