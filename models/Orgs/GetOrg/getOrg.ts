@@ -1,18 +1,17 @@
 import { GetCommandInput, GetCommand } from '@aws-sdk/lib-dynamodb';
 import { SdkError } from '@aws-sdk/types';
-import { Dynamo } from '../../awsClients/ddbDocClient';
-import { DYNAMO_TABLE_NAME, Entities } from '../../Config';
-import { DynamoOrg } from '../../types/dynamo';
-import { GetOrgInput } from '../../types/main';
+import { Dynamo } from '../../../awsClients/ddbDocClient';
+import { DYNAMO_TABLE_NAME, Entities } from '../../../Config';
+import { DynamoOrg } from '../../../types/dynamo';
 
-export default async function GetOrgById(
-  props: GetOrgInput,
-): Promise<[DynamoOrg, null] | [null, SdkError]> {
-  // TODO add these types all over the dynamo calls
+interface GetOrgInput {
+  orgId: string;
+}
+
+export const getOrg = async (props: GetOrgInput): Promise<[DynamoOrg, null] | [null, SdkError]> => {
   const { orgId } = props;
   const params: GetCommandInput = {
     TableName: `${process.env.NODE_ENV}-${DYNAMO_TABLE_NAME}`,
-
     Key: {
       PK: `${Entities.ORG}#${orgId}`,
       SK: Entities.ORG,
@@ -25,4 +24,4 @@ export default async function GetOrgById(
   } catch (error) {
     return [null, error];
   }
-}
+};

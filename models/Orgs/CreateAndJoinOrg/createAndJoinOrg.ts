@@ -1,21 +1,26 @@
 import { TransactWriteCommandInput, TransactWriteCommand } from '@aws-sdk/lib-dynamodb';
 import { SdkError } from '@aws-sdk/types';
-import { Dynamo } from '../../awsClients/ddbDocClient';
-import { DYNAMO_TABLE_NAME, Entities } from '../../Config';
-import { DynamoOrg } from '../../types/dynamo';
-import { CreateAndJoinOrgInput } from '../../types/main';
-import * as Time from '../../utils/time';
+import { Dynamo } from '../../../awsClients/ddbDocClient';
+import { DYNAMO_TABLE_NAME, Entities } from '../../../Config';
+import { DynamoOrg } from '../../../types/dynamo';
+import * as Time from '../../../utils/time';
 
-export default async function CreateAndJoinOrg(
+interface CreateAndJoinOrgInput {
+  userId: string;
+  orgId: string;
+  displayName: string;
+}
+
+export const createAndJoinOrg = async (
   props: CreateAndJoinOrgInput,
-): Promise<[null, null] | [null, SdkError]> {
+): Promise<[null, null] | [null, SdkError]> => {
   const { userId, orgId, displayName } = props;
   const now = Time.currentISO();
 
   const newOrg: DynamoOrg = {
     PK: `${Entities.ORG}#${orgId}`,
     SK: Entities.ORG,
-    orgId, // Cannot be changed
+    orgId,
     entityType: Entities.ORG,
     createdAt: now,
     createdBy: userId,
@@ -58,9 +63,8 @@ export default async function CreateAndJoinOrg(
     };
 
     await Dynamo.send(new TransactWriteCommand(transactParams));
-
     return [null, null];
   } catch (error) {
     return [null, error];
   }
-}
+};

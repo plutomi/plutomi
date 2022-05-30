@@ -157,27 +157,12 @@ type GetLatestLoginLinkInput = {
   userId: string;
 };
 
-type CreateAndJoinOrgInput = {
-  userId: string;
-  orgId: string;
-  displayName: string;
-};
-
-type LeaveAndDeleteOrgInput = {
-  orgId: string;
-  userId: string;
-};
-
 type GetUsersInOrgInput = {
   orgId: string;
   /**
    * Optional limit to only return a certain number of users
    */
   limit?: number;
-};
-
-type GetOrgInput = {
-  orgId: string;
 };
 
 type GetUserByIdInput = {

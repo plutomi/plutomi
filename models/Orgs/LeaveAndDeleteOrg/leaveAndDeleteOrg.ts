@@ -1,19 +1,23 @@
 import { TransactWriteCommandInput, TransactWriteCommand } from '@aws-sdk/lib-dynamodb';
 import { SdkError } from '@aws-sdk/types';
-import { Dynamo } from '../../awsClients/ddbDocClient';
-import { Entities, DEFAULTS, DYNAMO_TABLE_NAME } from '../../Config';
-import { LeaveAndDeleteOrgInput } from '../../types/main';
+import { Dynamo } from '../../../awsClients/ddbDocClient';
+import { Entities, DEFAULTS, DYNAMO_TABLE_NAME } from '../../../Config';
 
-export default async function Create(
+interface LeaveAndDeleteOrgInput {
+  orgId: string;
+  userId: string;
+}
+
+export const leaveAndDeleteOrg = async (
   props: LeaveAndDeleteOrgInput,
-): Promise<[null, null] | [null, SdkError]> {
+): Promise<[null, null] | [null, SdkError]> => {
   const { orgId, userId } = props;
 
   try {
     const transactParams: TransactWriteCommandInput = {
       TransactItems: [
         {
-          // Update user with new org
+          // Update user with "new" org (default)
           Update: {
             Key: {
               PK: `${Entities.USER}#${userId}`,
@@ -48,4 +52,4 @@ export default async function Create(
   } catch (error) {
     return [null, error];
   }
-}
+};
