@@ -1,27 +1,5 @@
 import { OpeningState } from '../Config';
 
-import {
-  DynamoApplicant,
-  DynamoApplicantResponse,
-  DynamoOpening,
-  DynamoOrgInvite,
-  DynamoStage,
-  DynamoQuestion,
-  DynamoUser,
-  DynamoWebhook,
-} from './dynamo';
-
-type DynamoActions =
-  | 'dynamodb:GetItem'
-  | 'dynamodb:BatchGetItem'
-  | 'dynamodb:Query'
-  | 'dynamodb:PutItem'
-  | 'dynamodb:UpdateItem'
-  | 'dynamodb:DeleteItem'
-  | 'dynamodb:BatchWriteItem';
-
-type CreateApplicantAPIBody = Omit<CreateApplicantInput, 'stageId'>;
-
 /**
  * All possible parameters in the URL
  */
@@ -41,23 +19,6 @@ interface CustomQuery {
   inviteId: string;
 }
 
-export interface SettingsCrumbsProps {
-  name: string;
-  href: string;
-  current: boolean;
-}
-
-export type SessionData = Pick<
-  DynamoUser,
-  'firstName' | 'lastName' | 'orgId' | 'email' | 'userId' | 'canReceiveEmails'
->;
-
-type OrgIdAndQuestionId = 'orgId' | 'questionId';
-
-type GetQuestionsInStageOutput = GetQuestionOutput[];
-
-type OrgIdAndApplicantId = 'orgId' | 'applicantId';
-
 // TODO types for files, etc.
 export interface GetApplicantByIdOutput extends DynamoApplicant {
   responses: Object[]; // TODO fix this type with a response type
@@ -66,8 +27,3 @@ export interface GetApplicantByIdOutput extends DynamoApplicant {
 export interface UpdateApplicantOutput extends DynamoApplicant {
   responses: Object[]; // TODO fix this type with a response type
 }
-
-type DeleteLoginLinkInput = {
-  userId: string;
-  loginLinkTimestmap: string;
-};

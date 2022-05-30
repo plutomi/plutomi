@@ -4,9 +4,15 @@ import useStore from '../../utils/store';
 import Breadcrumbs from '../Breadcrumbs';
 import useStageInfo from '../../SWR/useStageInfo';
 import * as Time from '../../utils/time';
-import { CustomQuery, SettingsCrumbsProps } from '../../types/main';
+import { CustomQuery } from '../../types/main';
 import UpdateStageModal from './UpdateStageModal';
 import CreateQuestionModal from '../Questions/CreateQuestionModal';
+
+export interface SettingsCrumbsProps {
+  name: string;
+  href: string;
+  current: boolean;
+}
 
 export default function StageSettingsHeader({ deleteStage }: { deleteStage: () => {} }) {
   const router = useRouter();
