@@ -109,7 +109,7 @@ export default class EventBridgeStack extends cdk.Stack {
       eventPattern: {
         source: [Source.DynamoStream],
         detail: {
-          eventName: Object.values(DynamoStreamTypes),
+          // eventName: [DynamoStreamTypes.INSERT, DynamoStreamTypes.MODIFY, DynamoStreamTypes.REMOVE],
           entityType: [Entities.APPLICANT],
         },
       },

@@ -47,7 +47,7 @@ export async function main(event: DynamoDBStreamEvent) {
   try {
     console.log(entry);
     await EBClient.send(new PutEventsCommand(newEvent));
-    console.log('Message sent to EventBridge!');
+    console.log('Message sent to EventBridge!', newEvent);
 
     return;
   } catch (error) {

@@ -247,12 +247,12 @@ export default function ApplicantInfoForm() {
                     <Link href="##" passHref>
                       {/*  eslint-disable-next-line jsx-a11y/anchor-is-valid */}
                       <a
-                        href="#"
+                        href="##"
                         className="font-medium text-normal underline hover:text-dark transition ease-in-out duration-200"
                       >
                         Privacy Policy
-                      </a>{' '}
-                    </Link>
+                      </a>
+                    </Link>{' '}
                     and{' '}
                     <Link href="##" passHref>
                       {/*  eslint-disable-next-line jsx-a11y/anchor-is-valid */}
