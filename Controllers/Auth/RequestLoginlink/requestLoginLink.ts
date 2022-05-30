@@ -10,15 +10,15 @@ import {
   ERRORS,
   API_URL,
   DOMAIN_NAME,
-} from '../../Config';
-import * as Time from '../../utils/time';
-import * as CreateError from '../../utils/createError';
+} from '../../../Config';
+import * as Time from '../../../utils/time';
+import * as CreateError from '../../../utils/createError';
 import {
   createLoginLink,
   createUser,
   getLatestLoginLink,
   getUserByEmail,
-} from '../../models/Users';
+} from '../../../models/Users';
 
 const jwt = require('jsonwebtoken');
 
@@ -37,7 +37,7 @@ const schema = Joi.object({
     callbackUrl: Joi.string().uri().optional(),
   },
 }).options(JOI_SETTINGS);
-const requestLoginLink = async (req: Request, res: Response) => {
+export const requestLoginLink = async (req: Request, res: Response) => {
   try {
     await schema.validateAsync(req);
   } catch (error) {
@@ -151,5 +151,3 @@ const requestLoginLink = async (req: Request, res: Response) => {
 
   return res.status(201).json({ message: `We've sent a magic login link to your email!` });
 };
-
-export default requestLoginLink;

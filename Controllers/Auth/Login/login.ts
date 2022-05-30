@@ -1,8 +1,8 @@
 import { Request, Response } from 'express';
 import Joi from 'joi';
-import { JOI_SETTINGS, WEBSITE_URL, COOKIE_NAME, COOKIE_SETTINGS } from '../../Config';
-import { createLoginEvent, getUserById } from '../../models/Users';
-import * as CreateError from '../../utils/createError';
+import { JOI_SETTINGS, WEBSITE_URL, COOKIE_NAME, COOKIE_SETTINGS } from '../../../Config';
+import { createLoginEvent, getUserById } from '../../../models/Users';
+import * as CreateError from '../../../utils/createError';
 
 const jwt = require('jsonwebtoken');
 
@@ -17,7 +17,7 @@ const schema = Joi.object({
     token: Joi.string(),
   },
 }).options(JOI_SETTINGS);
-const login = async (req: Request, res: Response) => {
+export const login = async (req: Request, res: Response) => {
   try {
     await schema.validateAsync(req);
   } catch (error) {
@@ -85,5 +85,3 @@ const login = async (req: Request, res: Response) => {
 
   return res.status(307).json({ message: 'Login success!' });
 };
-
-export default login;
