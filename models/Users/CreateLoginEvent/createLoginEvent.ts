@@ -1,26 +1,24 @@
 import { TransactWriteCommandInput, TransactWriteCommand } from '@aws-sdk/lib-dynamodb';
 import { SdkError } from '@aws-sdk/types';
 import { RetentionDays } from '@aws-cdk/aws-logs';
-import { Dynamo } from '../../awsClients/ddbDocClient';
-import { Entities, DEFAULTS, TIME_UNITS, DYNAMO_TABLE_NAME } from '../../Config';
-import { DynamoLoginEvent } from '../../types/dynamo';
-import { CreateLoginEventAndDeleteLoginLinkInput } from '../../types/main';
-import * as Time from '../../utils/time';
-/**
- * Creates a login event on the user
- * Deletes the login link they used to log in so they can login again or on another device
- * If `orgId` is provided, it will also create a `LOGIN_EVENT` on the org
- * @param props
- * @returns
- */
-export default async function CreateLoginEvent(
+import { Dynamo } from '../../../awsClients/ddbDocClient';
+import { Entities, DEFAULTS, TIME_UNITS, DYNAMO_TABLE_NAME } from '../../../Config';
+import { DynamoUserLoginEvent, DynamoUser, DynamoOrgLoginEvent } from '../../../types/dynamo';
+import * as Time from '../../../utils/time';
+
+interface CreateLoginEventAndDeleteLoginLinkInput {
+  loginLinkId: string;
+  user: DynamoUser;
+}
+
+export const createLoginEvent = async (
   props: CreateLoginEventAndDeleteLoginLinkInput,
-): Promise<[null, null] | [null, SdkError]> {
+): Promise<[null, null] | [null, SdkError]> => {
   const { loginLinkId, user } = props;
 
   const now = Time.currentISO();
 
-  const newUserLoginEvent: DynamoLoginEvent = {
+  const newUserLoginEvent: DynamoUserLoginEvent = {
     PK: `${Entities.USER}#${user.userId}`,
     SK: `${Entities.LOGIN_EVENT}#${now}`,
     user,
@@ -30,8 +28,7 @@ export default async function CreateLoginEvent(
     ttlExpiry: Time.futureUNIX(RetentionDays.ONE_WEEK, TIME_UNITS.DAYS),
   };
 
-  const newOrgLoginEvent = {
-    // TODO types
+  const newOrgLoginEvent: DynamoOrgLoginEvent = {
     PK: `${Entities.ORG}#${user.orgId}`,
     SK: `${Entities.LOGIN_EVENT}#${now}`,
     // TODO user info here
@@ -82,4 +79,4 @@ export default async function CreateLoginEvent(
   } catch (error) {
     return [null, error];
   }
-}
+};

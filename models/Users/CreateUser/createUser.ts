@@ -1,15 +1,20 @@
 import { PutCommandInput, PutCommand } from '@aws-sdk/lib-dynamodb';
 import { nanoid } from 'nanoid';
 import { SdkError } from '@aws-sdk/types';
-import { Dynamo } from '../../awsClients/ddbDocClient';
-import { ID_LENGTHS, Entities, DEFAULTS, DYNAMO_TABLE_NAME } from '../../Config';
-import { DynamoUser } from '../../types/dynamo';
-import { CreateUserInput } from '../../types/main';
-import * as Time from '../../utils/time';
+import { Dynamo } from '../../../awsClients/ddbDocClient';
+import { ID_LENGTHS, Entities, DEFAULTS, DYNAMO_TABLE_NAME } from '../../../Config';
+import { DynamoUser } from '../../../types/dynamo';
+import * as Time from '../../../utils/time';
 
-export default async function CreateUser(
+interface CreateUserInput {
+  email: string;
+  firstName?: string;
+  lastName?: string;
+}
+
+export const createUser = async (
   props: CreateUserInput,
-): Promise<[DynamoUser, null] | [null, SdkError]> {
+): Promise<[DynamoUser, null] | [null, SdkError]> => {
   const { email, firstName, lastName } = props;
 
   const userId = nanoid(ID_LENGTHS.USER);
@@ -48,4 +53,4 @@ export default async function CreateUser(
   } catch (error) {
     return [null, error];
   }
-}
+};

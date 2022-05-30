@@ -86,26 +86,9 @@ export interface UpdateWebhookInput extends Pick<DynamoWebhook, 'orgId' | 'webho
 
 type GetWebhooksInOrgInput = Pick<DynamoWebhook, 'orgId'>;
 
-type CreateUserInput = {
-  email: string;
-  firstName?: string;
-  lastName?: string;
-};
-
-type CreateLoginLinkInput = {
-  loginLinkId: string;
-  loginLinkUrl: string;
-  loginLinkExpiry: string;
-  user: DynamoUser;
-};
-
 type DeleteLoginLinkInput = {
   userId: string;
   loginLinkTimestmap: string;
-};
-
-type GetLatestLoginLinkInput = {
-  userId: string;
 };
 
 type GetUsersInOrgInput = {
@@ -123,8 +106,3 @@ type GetUserByIdInput = {
 interface GetUserByEmailInput {
   email: string;
 }
-
-type CreateLoginEventAndDeleteLoginLinkInput = {
-  loginLinkId: string;
-  user: DynamoUser;
-};

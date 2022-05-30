@@ -1,19 +1,20 @@
 import { PutCommandInput, PutCommand } from '@aws-sdk/lib-dynamodb';
 import { SdkError } from '@aws-sdk/types';
-import { Dynamo } from '../../awsClients/ddbDocClient';
-import { DYNAMO_TABLE_NAME, Entities, TIME_UNITS } from '../../Config';
-import { DynamoLoginLink } from '../../types/dynamo';
-import { CreateLoginLinkInput } from '../../types/main';
-import * as Time from '../../utils/time';
+import { Dynamo } from '../../../awsClients/ddbDocClient';
+import { DYNAMO_TABLE_NAME, Entities, TIME_UNITS } from '../../../Config';
+import { DynamoLoginLink, DynamoUser } from '../../../types/dynamo';
+import * as Time from '../../../utils/time';
 
-/**
- * Creates a login link for the requested user
- * @param props {@link CreateLoginLinkInput}
- * @returns
- */
-export default async function CreateLoginLink(
+interface CreateLoginLinkInput {
+  loginLinkId: string;
+  loginLinkUrl: string;
+  loginLinkExpiry: string;
+  user: DynamoUser;
+}
+
+export const createLoginLink = async (
   props: CreateLoginLinkInput,
-): Promise<[null, null] | [null, SdkError]> {
+): Promise<[null, null] | [null, SdkError]> => {
   const { loginLinkId, loginLinkUrl, loginLinkExpiry, user } = props;
   const now = Time.currentISO();
   try {
@@ -41,4 +42,4 @@ export default async function CreateLoginLink(
   } catch (error) {
     return [null, error];
   }
-}
+};

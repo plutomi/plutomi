@@ -1,10 +1,10 @@
-import CreateUser from './create-user';
+import CreateUser from './CreateUser/createUser';
 import GetUserByEmail from './get-user-by-email';
 import GetUserById from './get-user-by-id';
 import UpdateUser from './update-user';
-import CreateLoginLink from './create-login-links';
-import GetUsersLatestLoginLink from './get-latest-login-link';
-import CreateLoginEvent from './create-login-event';
+import CreateLoginLink from './CreateLoginLink/createLoginLink';
+import GetUsersLatestLoginLink from './GetLatestLoginLink/getLatestLoginLink';
+import CreateLoginEvent from './CreateLoginEvent/createLoginEvent';
 import RemoveUserFromOrg from './remove-user-from-org';
 
 export {
