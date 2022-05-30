@@ -1,15 +1,19 @@
 import { TransactWriteCommandInput, TransactWriteCommand } from '@aws-sdk/lib-dynamodb';
 import { nanoid } from 'nanoid';
 import { SdkError } from '@aws-sdk/types';
-import { Dynamo } from '../../awsClients/ddbDocClient';
-import { ID_LENGTHS, Entities, OpeningState, DYNAMO_TABLE_NAME } from '../../Config';
-import { DynamoApplicant } from '../../types/dynamo';
-import { CreateApplicantInput, CreateApplicantOutput } from '../../types/main';
-import * as Time from '../../utils/time';
+import { Dynamo } from '../../../awsClients/ddbDocClient';
+import { ID_LENGTHS, Entities, OpeningState, DYNAMO_TABLE_NAME } from '../../../Config';
+import { DynamoApplicant } from '../../../types/dynamo';
+import * as Time from '../../../utils/time';
 
-export default async function Create(
-  props: CreateApplicantInput,
-): Promise<[CreateApplicantOutput, null] | [null, SdkError]> {
+export type CreateDynamoApplicantInput = Pick<
+  DynamoApplicant,
+  'orgId' | 'firstName' | 'lastName' | 'email' | 'openingId' | 'stageId'
+>;
+
+export const createApplicant = async (
+  props: CreateDynamoApplicantInput,
+): Promise<[DynamoApplicant, null] | [null, SdkError]> => {
   const { orgId, firstName, lastName, email, openingId, stageId } = props;
 
   const now = Time.currentISO();
@@ -118,4 +122,4 @@ export default async function Create(
   } catch (error) {
     return [null, error];
   }
-}
+};

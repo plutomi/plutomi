@@ -99,20 +99,10 @@ type CreateWebhookInput = Pick<
   DynamoWebhook,
   'webhookUrl' | 'orgId' | 'description' | 'webhookName'
 >;
-type CreateApplicantInput = Pick<
-  DynamoApplicant,
-  'orgId' | 'firstName' | 'lastName' | 'email' | 'openingId' | 'stageId'
->;
 
 type OrgIdAndApplicantId = 'orgId' | 'applicantId';
 
-type CreateApplicantOutput = DynamoApplicant;
 type GetApplicantByIdInput = Pick<DynamoApplicant, 'orgId' | 'applicantId'>;
-
-type DeleteApplicantInput = Pick<
-  DynamoApplicant,
-  OrgIdAndApplicantId | 'openingId' | 'stageId' // Last two are needed to decrement the applicant count
->;
 
 // TODO types for files, etc.
 export interface GetApplicantByIdOutput extends DynamoApplicant {

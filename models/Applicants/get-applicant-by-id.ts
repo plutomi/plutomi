@@ -3,11 +3,8 @@ import _ from 'lodash';
 import { SdkError } from '@aws-sdk/types';
 import { Dynamo } from '../../awsClients/ddbDocClient';
 import { DYNAMO_TABLE_NAME, Entities } from '../../Config';
-import {
-  GetApplicantByIdInput,
-  GetApplicantByIdOutput,
-  CreateApplicantOutput,
-} from '../../types/main';
+import { GetApplicantByIdInput, GetApplicantByIdOutput } from '../../types/main';
+import { DynamoApplicant } from '../../types/dynamo';
 
 export default async function GetApplicantById(
   props: GetApplicantByIdInput,
@@ -35,7 +32,7 @@ export default async function GetApplicantById(
 
     const grouped = _.groupBy(allApplicantInfo.Items, 'entityType');
 
-    const metadata = grouped.APPLICANT[0] as CreateApplicantOutput;
+    const metadata = grouped.APPLICANT[0] as DynamoApplicant;
     const responses = grouped.APPLICANT_RESPONSE;
     // TODO files
 
