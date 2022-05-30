@@ -49,8 +49,6 @@ export default function WebhookItem({ webhook }: { webhook: DynamoWebhook }) {
         </h3>
         <p className="text-md text-light line-clamp-2 mt-1">{webhook?.webhookUrl}</p>
 
-        <p className="text-md text-light line-clamp-2 mt-1">Used in {webhook.totalStages} stages</p>
-
         <p className="text-md text-light line-clamp-2 mt-1">{webhook?.description}</p>
       </div>
       <div className="flex justify-center items-center ">

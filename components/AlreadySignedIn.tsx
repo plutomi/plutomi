@@ -34,7 +34,11 @@ export default function AlreadySignedIn() {
         </p>
 
         <Link href="/dashboard" passHref>
-          <a className="px-4 py-2 bg-normal hover:bg-dark  transition ease-in-out duration-200 text-white rounded-md">
+          {/* eslint-disable-next-line @next/next/no-html-link-for-pages */}
+          <a
+            href="/dashboard"
+            className="px-4 py-2 bg-normal hover:bg-dark  transition ease-in-out duration-200 text-white rounded-md"
+          >
             Go to Dashboard &rarr;
           </a>
         </Link>
