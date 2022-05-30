@@ -14,8 +14,23 @@ if (resultDotEnv.error) {
 }
 
 enum Rules {
+  /**
+   * Any events that require extra communication to be sent such as an email
+   */
   NeedsComms = 'NeedsCommsRule',
+  /**
+   * Any entity that might have children that need to be deleted when the top level entity is deleted.
+   * For example: An org being deleted requires that all openings be deleted. When an opening is deleted,
+   * we need to delete all stages in the opening.
+   */
   DeleteChildren = 'DeleteChildrenRule',
+
+  /**
+   * All applicant events of {@link DynamoStreamTypes} are sent to the webhook machine.
+   *
+   */
+
+  ApplicantEventsRule = 'ApplicantEventsRule',
 }
 
 enum Source {
@@ -37,8 +52,10 @@ export default class EventBridgeStack extends cdk.Stack {
   constructor(scope: cdk.App, id: string, props: EventBridgeStackProps) {
     super(scope, id, props);
 
-    // Note, if we ever use AWS events directly, they will go to the default event bus and not this one.
-    // This is for easy dev / prod testing
+    /**
+     * Note, if we ever use AWS events directly, they will go to the default event bus and not this one.
+     * This is for easy dev / prod testing
+     */
     const bus = new EventBus(this, `${process.env.NODE_ENV}-EventBus`, {
       eventBusName: `${process.env.NODE_ENV}-EventBus`,
     });
@@ -50,57 +67,49 @@ export default class EventBridgeStack extends cdk.Stack {
       },
       retention: cdk.Duration.days(3),
     });
+
     // We want to send all communication events to the step function, we can handle routing there
     new Rule(this, Rules.NeedsComms, {
       eventBus: bus,
-      description:
-        'Rule that checks if an action needs further comms such as login links or welcome emails. Forwards to the `CommsMachine` step function.',
+      description: 'Rule for actions that might require further comms.',
       ruleName: Rules.NeedsComms,
       targets: [new SfnStateMachine(props.CommsMachine)],
       eventPattern: {
         source: [Source.DynamoStream],
         detail: {
-          eventName: [DynamoStreamTypes.INSERT],
+          eventName: [DynamoStreamTypes.INSERT, DynamoStreamTypes.MODIFY],
           entityType: [
             Entities.LOGIN_EVENT,
             Entities.LOGIN_LINK,
-            Entities.APPLICANT, // TODO
+            Entities.APPLICANT,
             Entities.ORG_INVITE,
           ],
         },
       },
     });
 
-    // We want to send all deletion events to the step function, we can handle routing there
     new Rule(this, Rules.DeleteChildren, {
       eventBus: bus,
-      description:
-        'Rule that checks if an action needs further comms such as login links or welcome emails. Forwards to the `CommsMachine` step function.',
+      description: 'Rule for deleting any child items.',
       ruleName: Rules.DeleteChildren,
       targets: [new SfnStateMachine(props.DeleteChildrenMachine)],
       eventPattern: {
         source: [Source.DynamoStream],
         detail: {
           eventName: [DynamoStreamTypes.REMOVE],
-          entityType: [
-            // TODO also applicants and their files
-            Entities.ORG,
-            Entities.OPENING,
-            Entities.QUESTION,
-            Entities.WEBHOOK,
-          ],
+          entityType: Object.values(Entities),
         },
       },
     });
 
     // All applicant events are sent to the state machine
-    new Rule(this, 'ApplicantWebhooksRule', {
+    new Rule(this, Rules.ApplicantEventsRule, {
       eventBus: bus,
       description: 'All applicant events are sent to the webhooks machine',
-      ruleName: 'WebhooksRule',
+      ruleName: Rules.ApplicantEventsRule,
       targets: [new SfnStateMachine(props.WebhooksMachine)],
       eventPattern: {
-        source: ['dynamodb.streams'],
+        source: [Source.DynamoStream],
         detail: {
           eventName: Object.values(DynamoStreamTypes),
           entityType: [Entities.APPLICANT],

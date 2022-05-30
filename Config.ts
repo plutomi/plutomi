@@ -106,17 +106,8 @@ export enum LIMITS {
 }
 
 export enum DynamoStreamTypes {
-  /**
-   * New items
-   */
   INSERT = 'INSERT',
-  /**
-   * Updated / modified items
-   */
   MODIFY = 'MODIFY',
-  /**
-   * Removed / deleted items
-   */
   REMOVE = 'REMOVE',
 }
 export const LOGIN_LINK_SETTINGS = {
