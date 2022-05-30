@@ -1,12 +1,17 @@
 import { UpdateCommand } from '@aws-sdk/lib-dynamodb';
 import { SdkError } from '@aws-sdk/types';
-import { Dynamo } from '../../awsClients/ddbDocClient';
-import { DYNAMO_TABLE_NAME, Entities } from '../../Config';
-import { UpdateQuestionInput } from '../../types/main';
+import { Dynamo } from '../../../awsClients/ddbDocClient';
+import { DYNAMO_TABLE_NAME, Entities } from '../../../Config';
+import { DynamoQuestion } from '../../../types/dynamo';
 
-export default async function UpdateQuestion(
+export interface UpdateQuestionInput extends Pick<DynamoQuestion, 'orgId' | 'questionId'> {
+  newValues: { [key: string]: any };
+}
+
+// TODO new udpate method https://github.com/plutomi/plutomi/issues/594
+export const updateQuestion = async (
   props: UpdateQuestionInput,
-): Promise<[null, null] | [null, SdkError]> {
+): Promise<[null, null] | [null, SdkError]> => {
   const { orgId, questionId, newValues } = props;
   // Build update expression
   const allUpdateExpressions: string[] = [];
@@ -39,4 +44,4 @@ export default async function UpdateQuestion(
   } catch (error) {
     return [null, error];
   }
-}
+};

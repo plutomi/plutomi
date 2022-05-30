@@ -75,15 +75,6 @@ export interface UpdateUserInput extends Pick<DynamoUser, 'userId'> {
 type OrgIdAndQuestionId = 'orgId' | 'questionId';
 
 type DeleteWebhookFromOrgInput = Pick<DynamoWebhook, 'webhookId' | 'orgId'>;
-type GetQuestionInput = Pick<DynamoQuestion, orgIdAndQuestionId>;
-type GetQuestionOutput = DynamoQuestion;
-
-export type GetQuestionsInOrgInput = Pick<DynamoQuestion, 'orgId'>;
-export type GetQuestionsInOrgOutput = DynamoQuestion[];
-
-export interface UpdateQuestionInput extends Pick<DynamoQuestion, OrgIdAndQuestionId> {
-  newValues: { [key: string]: any };
-}
 
 type GetQuestionsInStageOutput = GetQuestionOutput[];
 
@@ -110,8 +101,6 @@ type GetStagesInOpeningInput = Pick<DynamoOpening, 'orgId' | 'openingId' | 'stag
 export interface UpdateWebhookInput extends Pick<DynamoWebhook, 'orgId' | 'webhookId'> {
   newValues: { [key: string]: any };
 }
-
-interface GetQuestionsInStageInput extends Pick<DynamoStage, 'orgId' | 'openingId' | 'stageId'> {}
 
 type GetWebhooksInOrgInput = Pick<DynamoWebhook, 'orgId'>;
 

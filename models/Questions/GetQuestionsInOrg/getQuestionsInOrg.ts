@@ -1,13 +1,14 @@
 import { QueryCommandInput, QueryCommand } from '@aws-sdk/lib-dynamodb';
 import { SdkError } from '@aws-sdk/types';
-import { Dynamo } from '../../awsClients/ddbDocClient';
-import { DYNAMO_TABLE_NAME, Entities } from '../../Config';
-import { GetQuestionsInOrgInput, GetQuestionsInOrgOutput } from '../../types/main';
-import { DynamoQuestion } from '../../types/dynamo';
+import { Dynamo } from '../../../awsClients/ddbDocClient';
+import { DYNAMO_TABLE_NAME, Entities } from '../../../Config';
+import { DynamoQuestion } from '../../../types/dynamo';
 
-export default async function GetQuestionsInOrg(
+export type GetQuestionsInOrgInput = Pick<DynamoQuestion, 'orgId'>;
+
+export const getQuestionsInOrg = async (
   props: GetQuestionsInOrgInput,
-): Promise<[GetQuestionsInOrgOutput, null] | [null, SdkError]> {
+): Promise<[DynamoQuestion[], null] | [null, SdkError]> => {
   const { orgId } = props;
 
   const params: QueryCommandInput = {
@@ -25,4 +26,4 @@ export default async function GetQuestionsInOrg(
   } catch (error) {
     return [null, error];
   }
-}
+};
