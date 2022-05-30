@@ -1,5 +1,5 @@
-import * as RequestLoginLink from './RequestLoginlink';
-import * as Login from './Login';
-import * as Logout from './Logout';
+import * as RequestLoginLink from './requestLoginLink';
+import * as Login from './login';
+import * as Logout from './logout';
 
 export { RequestLoginLink, Login, Logout };

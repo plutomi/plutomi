@@ -1,5 +1,5 @@
 import { AXIOS_INSTANCE as axios } from '../Config';
-import { APICreateApplicantOptions } from '../Controllers/Applicants/CreateApplicant/createApplicant';
+import { APICreateApplicantOptions } from '../Controllers/Applicants/createApplicant';
 
 const CreateApplicant = async (options: APICreateApplicantOptions) => {
   const data = await axios.post(`/applicants`, { ...options });

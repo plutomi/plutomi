@@ -1,8 +1,8 @@
 import { Request, Response } from 'express';
 import Joi from 'joi';
-import { JOI_SETTINGS } from '../../../Config';
-import * as CreateError from '../../../utils/createError';
-import DB from '../../../models';
+import { JOI_SETTINGS } from '../../Config';
+import * as CreateError from '../../utils/createError';
+import DB from '../../models';
 
 const schema = Joi.object({
   body: {

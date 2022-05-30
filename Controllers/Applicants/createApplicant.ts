@@ -1,7 +1,6 @@
 import { Request, Response } from 'express';
 import Joi from 'joi';
 import emailValidator from 'deep-email-validator';
-import { getOpening } from '../../../models/Openings/GetOpening';
 import {
   DEFAULTS,
   ERRORS,
@@ -10,10 +9,10 @@ import {
   JOI_SETTINGS,
   LIMITS,
   OpeningState,
-} from '../../../Config';
-import * as CreateError from '../../../utils/createError';
-import { DynamoApplicant } from '../../../types/dynamo';
-import DB from '../../../models';
+} from '../../Config';
+import * as CreateError from '../../utils/createError';
+import { DynamoApplicant } from '../../types/dynamo';
+import DB from '../../models';
 
 export type APICreateApplicantOptions = Required<
   Pick<DynamoApplicant, 'orgId' | 'openingId' | 'email' | 'firstName' | 'lastName'>
@@ -51,7 +50,7 @@ export const main = async (req: Request, res: Response) => {
   }
   const { openingId, orgId, firstName, lastName, email } = req.body;
 
-  const [opening, openingError] = await getOpening({
+  const [opening, openingError] = await DB.Openings.getOpening({
     openingId,
     orgId,
   });

@@ -1,8 +1,8 @@
-import * as CreateInvite from './CreateInvite';
-import * as GetUserInvites from './GetInvitesForUser';
-import * as GetOrgInvites from './GetInvitesForOrg';
-import * as AcceptInvite from './AcceptInvite';
-import * as RejectInvite from './RejectInvite';
-import * as CancelInvite from './CancelInvite';
+import * as CreateInvite from './createInvite';
+import * as GetUserInvites from './getInvitesForUser';
+import * as GetOrgInvites from './getInvitesForOrg';
+import * as AcceptInvite from './acceptInvite';
+import * as RejectInvite from './rejectInvite';
+import * as CancelInvite from './cancelInvite';
 
 export { CreateInvite, GetUserInvites, GetOrgInvites, AcceptInvite, RejectInvite, CancelInvite };

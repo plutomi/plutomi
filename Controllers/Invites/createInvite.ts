@@ -2,11 +2,11 @@ import { Request, Response } from 'express';
 import Joi from 'joi';
 import emailValidator from 'deep-email-validator';
 import { pick } from 'lodash';
-import { ERRORS, JOI_SETTINGS, ORG_INVITE_EXPIRY_DAYS, TIME_UNITS } from '../../../Config';
-import * as CreateError from '../../../utils/createError';
-import * as Time from '../../../utils/time';
-import { getOrg } from '../../../models/Orgs';
-import DB from '../../../models';
+import { ERRORS, JOI_SETTINGS, ORG_INVITE_EXPIRY_DAYS, TIME_UNITS } from '../../Config';
+import * as CreateError from '../../utils/createError';
+import * as Time from '../../utils/time';
+import { getOrg } from '../../models/Orgs';
+import DB from '../../models';
 
 const schema = Joi.object({
   body: {

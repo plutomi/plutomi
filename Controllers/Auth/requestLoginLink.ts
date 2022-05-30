@@ -10,10 +10,10 @@ import {
   ERRORS,
   API_URL,
   DOMAIN_NAME,
-} from '../../../Config';
-import * as Time from '../../../utils/time';
-import * as CreateError from '../../../utils/createError';
-import DB from '../../../models';
+} from '../../Config';
+import * as Time from '../../utils/time';
+import * as CreateError from '../../utils/createError';
+import DB from '../../models';
 
 const jwt = require('jsonwebtoken');
 

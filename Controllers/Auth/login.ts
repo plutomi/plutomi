@@ -1,8 +1,8 @@
 import { Request, Response } from 'express';
 import Joi from 'joi';
-import { JOI_SETTINGS, WEBSITE_URL, COOKIE_NAME, COOKIE_SETTINGS } from '../../../Config';
-import * as CreateError from '../../../utils/createError';
-import DB from '../../../models';
+import { JOI_SETTINGS, WEBSITE_URL, COOKIE_NAME, COOKIE_SETTINGS } from '../../Config';
+import * as CreateError from '../../utils/createError';
+import DB from '../../models';
 
 const jwt = require('jsonwebtoken');
 

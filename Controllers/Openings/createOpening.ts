@@ -1,9 +1,9 @@
 import { Request, Response } from 'express';
 import Joi from 'joi';
-import { JOI_SETTINGS, LIMITS } from '../../../Config';
-import * as CreateError from '../../../utils/createError';
-import { DynamoOpening } from '../../../types/dynamo';
-import DB from '../../../models';
+import { JOI_SETTINGS, LIMITS } from '../../Config';
+import * as CreateError from '../../utils/createError';
+import { DynamoOpening } from '../../types/dynamo';
+import DB from '../../models';
 
 export type APICreateOpeningOptions = Required<Pick<DynamoOpening, 'openingName'>>;
 
