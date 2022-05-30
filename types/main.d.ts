@@ -1,4 +1,4 @@
-import { OPENING_STATE } from '../Config';
+import { OpeningState } from '../Config';
 
 import {
   DynamoApplicant,
@@ -33,7 +33,7 @@ interface CustomQuery {
 
   applicantId: string;
   /**
-   * The token to for the {@link ENTITY_TYPES.LOGIN_LINK} that contains the user id
+   * The token to for the {@link Entities.LOGIN_LINK} that contains the user id
    */
   token: string;
   callbackUrl: string;
@@ -139,7 +139,7 @@ type DeleteOpeningInput = Pick<DynamoOpening, 'orgId' | 'openingId'>;
 
 // Retrieves all oepnings by default, can filter on public or private
 interface GetOpeningsInOrgInput extends Pick<DynamoOpening, 'orgId'> {
-  GSI1SK?: OPENING_STATE;
+  GSI1SK?: OpeningState;
 }
 
 type GetStagesInOpeningInput = Pick<DynamoOpening, 'orgId' | 'openingId' | 'stageOrder'>;

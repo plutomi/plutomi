@@ -1,5 +1,5 @@
 import { nanoid } from 'nanoid';
-import { AXIOS_INSTANCE as axios, OPENING_STATE } from '../Config';
+import { AXIOS_INSTANCE as axios, OpeningState } from '../Config';
 import * as PublicInfo from '../adapters/PublicInfo';
 import * as Orgs from '../adapters/Orgs';
 import * as Openings from '../adapters/Openings';
@@ -78,7 +78,7 @@ describe('Public', () => {
     await Openings.UpdateOpening({
       openingId: opening1.openingId,
       newValues: {
-        GSI1SK: OPENING_STATE.PUBLIC,
+        GSI1SK: OpeningState.PUBLIC,
       },
     });
 
@@ -142,7 +142,7 @@ describe('Public', () => {
     await Openings.UpdateOpening({
       openingId: ourOpening.openingId,
       newValues: {
-        GSI1SK: OPENING_STATE.PUBLIC,
+        GSI1SK: OpeningState.PUBLIC,
       },
     });
 

@@ -2,7 +2,7 @@ import { QueryCommandInput, QueryCommand } from '@aws-sdk/lib-dynamodb';
 import _ from 'lodash';
 import { SdkError } from '@aws-sdk/types';
 import { Dynamo } from '../../awsClients/ddbDocClient';
-import { DYNAMO_TABLE_NAME, ENTITY_TYPES } from '../../Config';
+import { DYNAMO_TABLE_NAME, Entities } from '../../Config';
 import {
   GetApplicantByIdInput,
   GetApplicantByIdOutput,
@@ -17,7 +17,7 @@ export default async function GetApplicantById(
     TableName: `${process.env.NODE_ENV}-${DYNAMO_TABLE_NAME}`,
     KeyConditionExpression: 'PK = :PK',
     ExpressionAttributeValues: {
-      ':PK': `${ENTITY_TYPES.ORG}#${orgId}#${ENTITY_TYPES.APPLICANT}#${applicantId}`,
+      ':PK': `${Entities.ORG}#${orgId}#${Entities.APPLICANT}#${applicantId}`,
     },
   };
 

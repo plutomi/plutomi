@@ -1,7 +1,7 @@
 import { QueryCommandInput, QueryCommand } from '@aws-sdk/lib-dynamodb';
 import { SdkError } from '@aws-sdk/types';
 import { Dynamo } from '../../awsClients/ddbDocClient';
-import { DYNAMO_TABLE_NAME, ENTITY_TYPES } from '../../Config';
+import { DYNAMO_TABLE_NAME, Entities } from '../../Config';
 import { DynamoStage } from '../../types/dynamo';
 import { GetStagesInOpeningInput } from '../../types/main';
 
@@ -14,7 +14,7 @@ export default async function GetStagesInOpening(
     IndexName: 'GSI1',
     KeyConditionExpression: 'GSI1PK = :GSI1PK',
     ExpressionAttributeValues: {
-      ':GSI1PK': `${ENTITY_TYPES.ORG}#${orgId}#${ENTITY_TYPES.OPENING}#${openingId}#${ENTITY_TYPES.STAGE}S`,
+      ':GSI1PK': `${Entities.ORG}#${orgId}#${Entities.OPENING}#${openingId}#${Entities.STAGE}S`,
     },
   };
 

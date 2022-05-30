@@ -1,7 +1,7 @@
 import { UpdateCommand } from '@aws-sdk/lib-dynamodb';
 import { SdkError } from '@aws-sdk/types';
 import { Dynamo } from '../../awsClients/ddbDocClient';
-import { DYNAMO_TABLE_NAME, ENTITY_TYPES } from '../../Config';
+import { DYNAMO_TABLE_NAME, Entities } from '../../Config';
 import { UpdateQuestionInput } from '../../types/main';
 
 export default async function UpdateQuestion(
@@ -24,8 +24,8 @@ export default async function UpdateQuestion(
 
   const params = {
     Key: {
-      PK: `${ENTITY_TYPES.ORG}#${orgId}#${ENTITY_TYPES.QUESTION}#${questionId}`,
-      SK: ENTITY_TYPES.QUESTION,
+      PK: `${Entities.ORG}#${orgId}#${Entities.QUESTION}#${questionId}`,
+      SK: Entities.QUESTION,
     },
     UpdateExpression: `SET ${allUpdateExpressions.join(', ')}`,
     ExpressionAttributeValues: allAttributeValues,

@@ -2,7 +2,7 @@ import { nanoid } from 'nanoid';
 import { SdkError } from '@aws-sdk/types';
 import { TransactWriteCommandInput, TransactWriteCommand } from '@aws-sdk/lib-dynamodb';
 import { Dynamo } from '../../awsClients/ddbDocClient';
-import { ID_LENGTHS, ENTITY_TYPES, DYNAMO_TABLE_NAME } from '../../Config';
+import { ID_LENGTHS, Entities, DYNAMO_TABLE_NAME } from '../../Config';
 import { DynamoOrgInvite } from '../../types/dynamo';
 import { CreateOrgInviteInput } from '../../types/main';
 import * as Time from '../../utils/time';
@@ -20,18 +20,18 @@ export default async function Create(
     const inviteId = nanoid(ID_LENGTHS.ORG_INVITE);
     const now = Time.currentISO();
     const newOrgInvite: DynamoOrgInvite = {
-      PK: `${ENTITY_TYPES.USER}#${recipient.userId}`,
-      SK: `${ENTITY_TYPES.ORG_INVITE}#${inviteId}`,
+      PK: `${Entities.USER}#${recipient.userId}`,
+      SK: `${Entities.ORG_INVITE}#${inviteId}`,
       orgId: createdBy.orgId,
       orgName,
       createdBy,
       recipient,
-      entityType: ENTITY_TYPES.ORG_INVITE,
+      entityType: Entities.ORG_INVITE,
       createdAt: now,
       expiresAt,
       inviteId,
       // TODO TTL
-      GSI1PK: `${ENTITY_TYPES.ORG}#${createdBy.orgId}#${ENTITY_TYPES.ORG_INVITE}S`, // Returns all invites sent by an org
+      GSI1PK: `${Entities.ORG}#${createdBy.orgId}#${Entities.ORG_INVITE}S`, // Returns all invites sent by an org
       GSI1SK: now,
     };
     const transactParams: TransactWriteCommandInput = {
@@ -49,8 +49,8 @@ export default async function Create(
           // Increment the recipient's total invites
           Update: {
             Key: {
-              PK: `${ENTITY_TYPES.USER}#${recipient.userId}`,
-              SK: ENTITY_TYPES.USER,
+              PK: `${Entities.USER}#${recipient.userId}`,
+              SK: Entities.USER,
             },
             TableName: `${process.env.NODE_ENV}-${DYNAMO_TABLE_NAME}`,
 

@@ -8,7 +8,7 @@ import { Choice, IntegrationPattern } from '@aws-cdk/aws-stepfunctions';
 import { NodejsFunction } from '@aws-cdk/aws-lambda-nodejs';
 import { Architecture, Runtime } from '@aws-cdk/aws-lambda';
 import path from 'path';
-import { ENTITY_TYPES, DYNAMO_TABLE_NAME } from '../Config';
+import { Entities, DYNAMO_TABLE_NAME } from '../Config';
 
 const resultDotEnv = dotenv.config({
   path: `${process.cwd()}/.env.${process.env.NODE_ENV}`,

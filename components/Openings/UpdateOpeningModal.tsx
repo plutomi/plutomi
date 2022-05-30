@@ -4,7 +4,7 @@ import { XIcon } from '@heroicons/react/outline';
 import { mutate } from 'swr';
 import { GetOpeningInfoURL, UpdateOpening } from '../../adapters/Openings';
 import useStore from '../../utils/store';
-import { OPENING_STATE } from '../../Config';
+import { OpeningState } from '../../Config';
 import { DynamoOpening } from '../../types/dynamo';
 
 export default function UpdateOpeningModal({ opening }: { opening: DynamoOpening }) {
@@ -132,12 +132,12 @@ export default function UpdateOpeningModal({ opening }: { opening: DynamoOpening
                                     name="comments"
                                     type="checkbox"
                                     // TODO types
-                                    checked={GSI1SK === OPENING_STATE.PUBLIC}
+                                    checked={GSI1SK === OpeningState.PUBLIC}
                                     onChange={(e) =>
                                       setGSI1SK(
                                         e.target.checked
-                                          ? OPENING_STATE.PUBLIC
-                                          : OPENING_STATE.PRIVATE,
+                                          ? OpeningState.PUBLIC
+                                          : OpeningState.PRIVATE,
                                       )
                                     }
                                     className="focus:ring-blue-500 h-4 w-4 text-blue-600 border-gray-300 rounded"

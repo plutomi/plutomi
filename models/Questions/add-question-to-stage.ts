@@ -1,7 +1,7 @@
 import { TransactWriteCommandInput, TransactWriteCommand } from '@aws-sdk/lib-dynamodb';
 import { SdkError } from '@aws-sdk/types';
 import { Dynamo } from '../../awsClients/ddbDocClient';
-import { DYNAMO_TABLE_NAME, ENTITY_TYPES } from '../../Config';
+import { DYNAMO_TABLE_NAME, Entities } from '../../Config';
 import * as Time from '../../utils/time';
 import { AddQuestionToStageInput } from '../../types/main';
 
@@ -24,9 +24,9 @@ export default async function AddQuestionToStage(
 
   // TODO types
   const params = {
-    PK: `${ENTITY_TYPES.ORG}#${orgId}#${ENTITY_TYPES.QUESTION}#${questionId}#${ENTITY_TYPES.STAGE}S`,
-    SK: `${ENTITY_TYPES.OPENING}#${openingId}#${ENTITY_TYPES.STAGE}#${stageId}`,
-    entityType: ENTITY_TYPES.QUESTION,
+    PK: `${Entities.ORG}#${orgId}#${Entities.QUESTION}#${questionId}#${Entities.STAGE}S`,
+    SK: `${Entities.OPENING}#${openingId}#${Entities.STAGE}#${stageId}`,
+    entityType: Entities.QUESTION,
     createdAt: Time.currentISO(),
     orgId,
     openingId,
@@ -56,8 +56,8 @@ export default async function AddQuestionToStage(
          */
         Update: {
           Key: {
-            PK: `${ENTITY_TYPES.ORG}#${orgId}#${ENTITY_TYPES.OPENING}#${openingId}#${ENTITY_TYPES.STAGE}#${stageId}`,
-            SK: ENTITY_TYPES.STAGE,
+            PK: `${Entities.ORG}#${orgId}#${Entities.OPENING}#${openingId}#${Entities.STAGE}#${stageId}`,
+            SK: Entities.STAGE,
           },
           TableName: `${process.env.NODE_ENV}-${DYNAMO_TABLE_NAME}`,
           UpdateExpression:
@@ -72,8 +72,8 @@ export default async function AddQuestionToStage(
         // Update the totalStages count on the question
         Update: {
           Key: {
-            PK: `${ENTITY_TYPES.ORG}#${orgId}#${ENTITY_TYPES.QUESTION}#${questionId}`,
-            SK: ENTITY_TYPES.QUESTION,
+            PK: `${Entities.ORG}#${orgId}#${Entities.QUESTION}#${questionId}`,
+            SK: Entities.QUESTION,
           },
           TableName: `${process.env.NODE_ENV}-${DYNAMO_TABLE_NAME}`,
           UpdateExpression: 'SET totalStages = if_not_exists(totalStages, :zero) + :value',

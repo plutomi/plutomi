@@ -27,14 +27,14 @@ export const API_URL =
 export const COOKIE_NAME =
   process.env.NODE_ENV === 'production' ? 'plutomi-cookie' : 'DEV-plutomi-cookie';
 
-export enum OPENING_STATE {
+export enum OpeningState {
   PUBLIC = 'PUBLIC',
   PRIVATE = 'PRIVATE',
 }
 
 export const DYNAMO_TABLE_NAME = 'Plutomi';
 
-export enum ENTITY_TYPES {
+export enum Entities {
   APPLICANT = 'APPLICANT',
   APPLICANT_RESPONSE = 'APPLICANT_RESPONSE',
   ORG = 'ORG',
@@ -105,7 +105,7 @@ export enum LIMITS {
   MAX_CHILD_ITEM_LIMIT = 200,
 }
 
-export enum DYNAMO_STREAM_TYPES {
+export enum DynamoStreamTypes {
   /**
    * New items
    */

@@ -1,7 +1,7 @@
 import { TransactWriteCommand, TransactWriteCommandInput } from '@aws-sdk/lib-dynamodb';
 import { SdkError } from '@aws-sdk/types';
 import { Dynamo } from '../../awsClients/ddbDocClient';
-import { DYNAMO_TABLE_NAME, ENTITY_TYPES } from '../../Config';
+import { DYNAMO_TABLE_NAME, Entities } from '../../Config';
 import { DeleteQuestionFromOrgInput } from '../../types/main';
 
 export default async function DeleteQuestionFromOrg(
@@ -15,8 +15,8 @@ export default async function DeleteQuestionFromOrg(
         // Delete question from org
         Delete: {
           Key: {
-            PK: `${ENTITY_TYPES.ORG}#${orgId}#${ENTITY_TYPES.QUESTION}#${questionId}`,
-            SK: ENTITY_TYPES.QUESTION,
+            PK: `${Entities.ORG}#${orgId}#${Entities.QUESTION}#${questionId}`,
+            SK: Entities.QUESTION,
           },
           TableName: `${process.env.NODE_ENV}-${DYNAMO_TABLE_NAME}`,
           ConditionExpression: 'attribute_exists(PK)',
@@ -26,8 +26,8 @@ export default async function DeleteQuestionFromOrg(
         // Decrement the org's totalQuestions
         Update: {
           Key: {
-            PK: `${ENTITY_TYPES.ORG}#${orgId}`,
-            SK: ENTITY_TYPES.ORG,
+            PK: `${Entities.ORG}#${orgId}`,
+            SK: Entities.ORG,
           },
           TableName: `${process.env.NODE_ENV}-${DYNAMO_TABLE_NAME}`,
           UpdateExpression: 'SET totalQuestions = totalQuestions - :value',

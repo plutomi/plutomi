@@ -2,7 +2,7 @@ import { TransactWriteCommandInput, TransactWriteCommand } from '@aws-sdk/lib-dy
 import { nanoid } from 'nanoid';
 import { SdkError } from '@aws-sdk/types';
 import { Dynamo } from '../../awsClients/ddbDocClient';
-import { ENTITY_TYPES, DYNAMO_TABLE_NAME } from '../../Config';
+import { Entities, DYNAMO_TABLE_NAME } from '../../Config';
 import { DynamoWebhook } from '../../types/dynamo';
 import * as Time from '../../utils/time';
 import { CreateWebhookInput } from '../../types/main';
@@ -13,15 +13,15 @@ export default async function CreateWebhook(
   const { orgId, webhookName, webhookUrl, description } = props;
   const webhookId = nanoid(15);
   const newWebhook: DynamoWebhook = {
-    PK: `${ENTITY_TYPES.ORG}#${orgId}#${ENTITY_TYPES.WEBHOOK}#${webhookId}`,
-    SK: ENTITY_TYPES.WEBHOOK,
-    entityType: ENTITY_TYPES.WEBHOOK,
+    PK: `${Entities.ORG}#${orgId}#${Entities.WEBHOOK}#${webhookId}`,
+    SK: Entities.WEBHOOK,
+    entityType: Entities.WEBHOOK,
     createdAt: Time.currentISO(),
     webhookId,
     webhookName,
     orgId,
     webhookUrl,
-    GSI1PK: `${ENTITY_TYPES.ORG}#${orgId}#${ENTITY_TYPES.WEBHOOK}S`,
+    GSI1PK: `${Entities.ORG}#${orgId}#${Entities.WEBHOOK}S`,
     GSI1SK: Time.currentISO(),
   };
 
@@ -43,8 +43,8 @@ export default async function CreateWebhook(
         // Increment the org's total webhooks
         Update: {
           Key: {
-            PK: `${ENTITY_TYPES.ORG}#${orgId}`,
-            SK: ENTITY_TYPES.ORG,
+            PK: `${Entities.ORG}#${orgId}`,
+            SK: Entities.ORG,
           },
           TableName: `${process.env.NODE_ENV}-${DYNAMO_TABLE_NAME}`,
           UpdateExpression: 'SET totalWebhooks = if_not_exists(totalWebhooks, :zero) + :value',

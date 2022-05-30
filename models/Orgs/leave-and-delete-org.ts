@@ -1,7 +1,7 @@
 import { TransactWriteCommandInput, TransactWriteCommand } from '@aws-sdk/lib-dynamodb';
 import { SdkError } from '@aws-sdk/types';
 import { Dynamo } from '../../awsClients/ddbDocClient';
-import { ENTITY_TYPES, DEFAULTS, DYNAMO_TABLE_NAME } from '../../Config';
+import { Entities, DEFAULTS, DYNAMO_TABLE_NAME } from '../../Config';
 import { LeaveAndDeleteOrgInput } from '../../types/main';
 
 export default async function Create(
@@ -16,8 +16,8 @@ export default async function Create(
           // Update user with new org
           Update: {
             Key: {
-              PK: `${ENTITY_TYPES.USER}#${userId}`,
-              SK: ENTITY_TYPES.USER,
+              PK: `${Entities.USER}#${userId}`,
+              SK: Entities.USER,
             },
             TableName: `${process.env.NODE_ENV}-${DYNAMO_TABLE_NAME}`,
             UpdateExpression: 'SET orgId = :orgId, orgJoinDate = :orgJoinDate, GSI1PK = :GSI1PK',
@@ -33,8 +33,8 @@ export default async function Create(
           // Delete the org - // TODO delete all children asynchronously
           Delete: {
             Key: {
-              PK: `${ENTITY_TYPES.ORG}#${orgId}`,
-              SK: ENTITY_TYPES.ORG,
+              PK: `${Entities.ORG}#${orgId}`,
+              SK: Entities.ORG,
             },
             TableName: `${process.env.NODE_ENV}-${DYNAMO_TABLE_NAME}`,
             ConditionExpression: 'attribute_exists(PK)',

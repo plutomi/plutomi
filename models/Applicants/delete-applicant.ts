@@ -1,7 +1,7 @@
 import { TransactWriteCommandInput, TransactWriteCommand } from '@aws-sdk/lib-dynamodb';
 import { SdkError } from '@aws-sdk/types';
 import { Dynamo } from '../../awsClients/ddbDocClient';
-import { DYNAMO_TABLE_NAME, ENTITY_TYPES } from '../../Config';
+import { DYNAMO_TABLE_NAME, Entities } from '../../Config';
 import { DeleteApplicantInput } from '../../types/main';
 
 export default async function Remove(
@@ -15,8 +15,8 @@ export default async function Remove(
           // Delete the applicant
           Delete: {
             Key: {
-              PK: `${ENTITY_TYPES.ORG}#${orgId}#${ENTITY_TYPES.APPLICANT}#${applicantId}`,
-              SK: ENTITY_TYPES.APPLICANT,
+              PK: `${Entities.ORG}#${orgId}#${Entities.APPLICANT}#${applicantId}`,
+              SK: Entities.APPLICANT,
             },
             TableName: `${process.env.NODE_ENV}-${DYNAMO_TABLE_NAME}`,
           },
@@ -26,8 +26,8 @@ export default async function Remove(
           // Decrement opening's totalApplicants
           Update: {
             Key: {
-              PK: `${ENTITY_TYPES.ORG}#${orgId}#${ENTITY_TYPES.OPENING}#${openingId}`,
-              SK: ENTITY_TYPES.OPENING,
+              PK: `${Entities.ORG}#${orgId}#${Entities.OPENING}#${openingId}`,
+              SK: Entities.OPENING,
             },
             TableName: `${process.env.NODE_ENV}-${DYNAMO_TABLE_NAME}`,
 
@@ -41,8 +41,8 @@ export default async function Remove(
           // Decrement stage's totalApplicants
           Update: {
             Key: {
-              PK: `${ENTITY_TYPES.ORG}#${orgId}#${ENTITY_TYPES.STAGE}#${stageId}`,
-              SK: ENTITY_TYPES.STAGE,
+              PK: `${Entities.ORG}#${orgId}#${Entities.STAGE}#${stageId}`,
+              SK: Entities.STAGE,
             },
             TableName: `${process.env.NODE_ENV}-${DYNAMO_TABLE_NAME}`,
 
@@ -56,8 +56,8 @@ export default async function Remove(
           // Decrement the org's total applicants
           Update: {
             Key: {
-              PK: `${ENTITY_TYPES.ORG}#${orgId}`,
-              SK: ENTITY_TYPES.ORG,
+              PK: `${Entities.ORG}#${orgId}`,
+              SK: Entities.ORG,
             },
             TableName: `${process.env.NODE_ENV}-${DYNAMO_TABLE_NAME}`,
 

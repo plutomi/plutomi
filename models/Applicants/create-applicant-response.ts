@@ -2,7 +2,7 @@ import { PutCommandInput, PutCommand } from '@aws-sdk/lib-dynamodb';
 import { nanoid } from 'nanoid';
 import { SdkError } from '@aws-sdk/types';
 import { Dynamo } from '../../awsClients/ddbDocClient';
-import { ID_LENGTHS, ENTITY_TYPES, DYNAMO_TABLE_NAME } from '../../Config';
+import { ID_LENGTHS, Entities, DYNAMO_TABLE_NAME } from '../../Config';
 import { DynamoApplicantResponse } from '../../types/dynamo';
 import { CreateApplicantResponseInput, CreateApplicantResponseOutput } from '../../types/main';
 import * as Time from '../../utils/time';
@@ -13,18 +13,18 @@ export default async function CreateResponse(
   const { orgId, applicantId, questionTitle, description, questionResponse } = props;
   const responseId = nanoid(ID_LENGTHS.APPLICANT_RESPONSE);
   const newApplicantResponse: DynamoApplicantResponse = {
-    PK: `${ENTITY_TYPES.ORG}#${orgId}#${ENTITY_TYPES.APPLICANT}#${applicantId}`,
-    SK: `${ENTITY_TYPES.APPLICANT_RESPONSE}#${responseId}`,
+    PK: `${Entities.ORG}#${orgId}#${Entities.APPLICANT}#${applicantId}`,
+    SK: `${Entities.APPLICANT_RESPONSE}#${responseId}`,
     orgId,
     applicantId,
-    entityType: ENTITY_TYPES.APPLICANT_RESPONSE,
+    entityType: Entities.APPLICANT_RESPONSE,
     createdAt: Time.currentISO(),
     responseId,
     questionTitle,
     description,
     questionResponse,
-    GSI1PK: `${ENTITY_TYPES.ORG}#${orgId}#${ENTITY_TYPES.APPLICANT}#${applicantId}`,
-    GSI1SK: ENTITY_TYPES.APPLICANT_RESPONSE, // TODO add timestmap?
+    GSI1PK: `${Entities.ORG}#${orgId}#${Entities.APPLICANT}#${applicantId}`,
+    GSI1SK: Entities.APPLICANT_RESPONSE, // TODO add timestmap?
   };
 
   const params: PutCommandInput = {

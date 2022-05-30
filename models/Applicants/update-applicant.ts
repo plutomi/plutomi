@@ -1,7 +1,7 @@
 import { UpdateCommandInput, UpdateCommand } from '@aws-sdk/lib-dynamodb';
 import { SdkError } from '@aws-sdk/types';
 import { Dynamo } from '../../awsClients/ddbDocClient';
-import { DYNAMO_TABLE_NAME, ENTITY_TYPES } from '../../Config';
+import { DYNAMO_TABLE_NAME, Entities } from '../../Config';
 import { UpdateApplicantInput } from '../../types/main';
 
 export default async function UpdateApplicant(
@@ -25,8 +25,8 @@ export default async function UpdateApplicant(
 
   const params: UpdateCommandInput = {
     Key: {
-      PK: `${ENTITY_TYPES.ORG}#${orgId}#${ENTITY_TYPES.APPLICANT}#${applicantId}`,
-      SK: ENTITY_TYPES.APPLICANT,
+      PK: `${Entities.ORG}#${orgId}#${Entities.APPLICANT}#${applicantId}`,
+      SK: Entities.APPLICANT,
     },
     UpdateExpression: `SET ${allUpdateExpressions.join(', ')}`,
     ExpressionAttributeValues: allAttributeValues,

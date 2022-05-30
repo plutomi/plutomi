@@ -27,8 +27,8 @@ export async function main(event: DynamoDBStreamEvent) {
       /**
        * Entity types can never be updated by the user so..
        * adding this extra field here allows creating rules in EventBridge
-       * for specific event types {@link DYNAMO_STREAM_TYPES} and a
-       * specific {@link ENTITY_TYPES}.
+       * for specific event types {@link DynamoStreamTypes} and a
+       * specific {@link Entities}.
        *
        * The use case for this is, send *all* applicant events (insert, update, delete)
        * to the webhooks step functions. From there, the step function

@@ -2,7 +2,7 @@ import { TransactWriteCommandInput, TransactWriteCommand } from '@aws-sdk/lib-dy
 import { nanoid } from 'nanoid';
 import { SdkError } from '@aws-sdk/types';
 import { Dynamo } from '../../awsClients/ddbDocClient';
-import { ID_LENGTHS, ENTITY_TYPES, OPENING_STATE, DYNAMO_TABLE_NAME } from '../../Config';
+import { ID_LENGTHS, Entities, OpeningState, DYNAMO_TABLE_NAME } from '../../Config';
 import { DynamoOpening } from '../../types/dynamo';
 import { CreateOpeningInput } from '../../types/main';
 import * as Time from '../../utils/time';
@@ -13,15 +13,15 @@ export default async function CreateOpening(
   const { orgId, openingName } = props;
   const openingId = nanoid(ID_LENGTHS.OPENING);
   const newOpening: DynamoOpening = {
-    PK: `${ENTITY_TYPES.ORG}#${orgId}#${ENTITY_TYPES.OPENING}#${openingId}`,
-    SK: ENTITY_TYPES.OPENING,
-    entityType: ENTITY_TYPES.OPENING,
+    PK: `${Entities.ORG}#${orgId}#${Entities.OPENING}#${openingId}`,
+    SK: Entities.OPENING,
+    entityType: Entities.OPENING,
     createdAt: Time.currentISO(),
     orgId,
     openingId,
     openingName,
-    GSI1PK: `${ENTITY_TYPES.ORG}#${orgId}#${ENTITY_TYPES.OPENING}S`,
-    GSI1SK: OPENING_STATE.PRIVATE, // All openings are private by default
+    GSI1PK: `${Entities.ORG}#${orgId}#${Entities.OPENING}S`,
+    GSI1SK: OpeningState.PRIVATE, // All openings are private by default
     totalStages: 0,
     stageOrder: [],
     totalApplicants: 0,
@@ -41,8 +41,8 @@ export default async function CreateOpening(
         // Increment the org's total openings
         Update: {
           Key: {
-            PK: `${ENTITY_TYPES.ORG}#${orgId}`,
-            SK: ENTITY_TYPES.ORG,
+            PK: `${Entities.ORG}#${orgId}`,
+            SK: Entities.ORG,
           },
           TableName: `${process.env.NODE_ENV}-${DYNAMO_TABLE_NAME}`,
           UpdateExpression: 'SET totalOpenings = if_not_exists(totalOpenings, :zero) + :value',

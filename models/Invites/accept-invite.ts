@@ -1,7 +1,7 @@
 import { TransactWriteCommandInput, TransactWriteCommand } from '@aws-sdk/lib-dynamodb';
 import { SdkError } from '@aws-sdk/types';
 import { Dynamo } from '../../awsClients/ddbDocClient';
-import { DYNAMO_TABLE_NAME, ENTITY_TYPES } from '../../Config';
+import { DYNAMO_TABLE_NAME, Entities } from '../../Config';
 import { JoinOrgFromInviteInput } from '../../types/main';
 import * as Time from '../../utils/time';
 
@@ -17,8 +17,8 @@ export default async function Join(
           // Delete org invite
           Delete: {
             Key: {
-              PK: `${ENTITY_TYPES.USER}#${userId}`,
-              SK: `${ENTITY_TYPES.ORG_INVITE}#${invite.inviteId}`,
+              PK: `${Entities.USER}#${userId}`,
+              SK: `${Entities.ORG_INVITE}#${invite.inviteId}`,
             },
             TableName: `${process.env.NODE_ENV}-${DYNAMO_TABLE_NAME}`,
 
@@ -30,8 +30,8 @@ export default async function Join(
           // Update the user with the new org
           Update: {
             Key: {
-              PK: `${ENTITY_TYPES.USER}#${userId}`,
-              SK: ENTITY_TYPES.USER,
+              PK: `${Entities.USER}#${userId}`,
+              SK: Entities.USER,
             },
             TableName: `${process.env.NODE_ENV}-${DYNAMO_TABLE_NAME}`,
 
@@ -40,7 +40,7 @@ export default async function Join(
             ExpressionAttributeValues: {
               ':orgId': invite.orgId,
               ':orgJoinDate': Time.currentISO(),
-              ':GSI1PK': `${ENTITY_TYPES.ORG}#${invite.orgId}#${ENTITY_TYPES.USER}S`,
+              ':GSI1PK': `${Entities.ORG}#${invite.orgId}#${Entities.USER}S`,
               ':value': 1,
             },
             ConditionExpression: 'attribute_exists(PK)',
@@ -50,8 +50,8 @@ export default async function Join(
           // Increment the org with the new user
           Update: {
             Key: {
-              PK: `${ENTITY_TYPES.ORG}#${invite.orgId}`,
-              SK: ENTITY_TYPES.ORG,
+              PK: `${Entities.ORG}#${invite.orgId}`,
+              SK: Entities.ORG,
             },
             TableName: `${process.env.NODE_ENV}-${DYNAMO_TABLE_NAME}`,
 

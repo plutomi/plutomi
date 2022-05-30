@@ -1,7 +1,7 @@
 import { UpdateCommand } from '@aws-sdk/lib-dynamodb';
 import { SdkError } from '@aws-sdk/types';
 import { Dynamo } from '../../awsClients/ddbDocClient';
-import { DYNAMO_TABLE_NAME, ENTITY_TYPES } from '../../Config';
+import { DYNAMO_TABLE_NAME, Entities } from '../../Config';
 import { UpdateWebhookInput } from '../../types/main';
 
 export default async function Update(props: UpdateWebhookInput): Promise<[null, SdkError]> {
@@ -20,8 +20,8 @@ export default async function Update(props: UpdateWebhookInput): Promise<[null, 
 
   const params = {
     Key: {
-      PK: `${ENTITY_TYPES.ORG}#${orgId}#${ENTITY_TYPES.WEBHOOK}#${webhookId}`,
-      SK: ENTITY_TYPES.WEBHOOK,
+      PK: `${Entities.ORG}#${orgId}#${Entities.WEBHOOK}#${webhookId}`,
+      SK: Entities.WEBHOOK,
     },
     UpdateExpression: `SET ` + allUpdateExpressions.join(', '),
     ExpressionAttributeValues: allAttributeValues,

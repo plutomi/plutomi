@@ -1,7 +1,7 @@
 import { GetCommandInput, GetCommand } from '@aws-sdk/lib-dynamodb';
 import { SdkError } from '@aws-sdk/types';
 import { Dynamo } from '../../awsClients/ddbDocClient';
-import { DYNAMO_TABLE_NAME, ENTITY_TYPES } from '../../Config';
+import { DYNAMO_TABLE_NAME, Entities } from '../../Config';
 import { DynamoOrgInvite } from '../../types/dynamo';
 import { GetOrgInviteInput } from '../../types/main';
 
@@ -13,8 +13,8 @@ export default async function Get(
     TableName: `${process.env.NODE_ENV}-${DYNAMO_TABLE_NAME}`,
 
     Key: {
-      PK: `${ENTITY_TYPES.USER}#${userId}`,
-      SK: `${ENTITY_TYPES.ORG_INVITE}#${inviteId}`,
+      PK: `${Entities.USER}#${userId}`,
+      SK: `${Entities.ORG_INVITE}#${inviteId}`,
     },
   };
 

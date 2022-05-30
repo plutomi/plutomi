@@ -7,7 +7,7 @@ import OpeningsDropdown from '../Openings/DropDown';
 import useOpeningInfo from '../../SWR/useOpeningInfo';
 import useOpenings from '../../SWR/useOpenings';
 import { CustomQuery } from '../../types/main';
-import { OPENING_STATE, WEBSITE_URL } from '../../Config';
+import { OpeningState, WEBSITE_URL } from '../../Config';
 
 export default function StagesHeader() {
   const router = useRouter();
@@ -30,7 +30,7 @@ export default function StagesHeader() {
         )}
       </div>
 
-      {opening?.GSI1SK === OPENING_STATE.PUBLIC && (
+      {opening?.GSI1SK === OpeningState.PUBLIC && (
         <p className="mt-2 text-md text-normal sm:mt-0 ">
           <ClickToCopy
             showText="Application Link"

@@ -3,7 +3,7 @@ import * as sfn from '@aws-cdk/aws-stepfunctions';
 import * as tasks from '@aws-cdk/aws-stepfunctions-tasks';
 import { LogGroup } from '@aws-cdk/aws-logs';
 import { Table } from '@aws-cdk/aws-dynamodb';
-import { EMAILS, ENTITY_TYPES, DOMAIN_NAME, WEBSITE_URL } from '../Config';
+import { EMAILS, Entities, DOMAIN_NAME, WEBSITE_URL } from '../Config';
 
 interface CommsMachineProps extends cdk.StackProps {
   table: Table;
@@ -166,7 +166,7 @@ export default class CommsMachineStack extends cdk.Stack {
 
     const definition = new sfn.Choice(this, 'EventType?')
       .when(
-        sfn.Condition.stringEquals('$.detail.NewImage.entityType', ENTITY_TYPES.LOGIN_EVENT),
+        sfn.Condition.stringEquals('$.detail.NewImage.entityType', Entities.LOGIN_EVENT),
         new sfn.Choice(this, 'IsNewUser?').when(
           sfn.Condition.booleanEquals('$.detail.NewImage.user.verifiedEmail', false),
           setEmailToVerified.next(
@@ -175,16 +175,16 @@ export default class CommsMachineStack extends cdk.Stack {
         ),
       )
       .when(
-        sfn.Condition.stringEquals('$.detail.NewImage.entityType', ENTITY_TYPES.LOGIN_LINK),
+        sfn.Condition.stringEquals('$.detail.NewImage.entityType', Entities.LOGIN_LINK),
 
         sendLoginLink,
       )
       .when(
-        sfn.Condition.stringEquals('$.detail.NewImage.entityType', ENTITY_TYPES.APPLICANT),
+        sfn.Condition.stringEquals('$.detail.NewImage.entityType', Entities.APPLICANT),
         sendApplicationLink,
       )
       .when(
-        sfn.Condition.stringEquals('$.detail.NewImage.entityType', ENTITY_TYPES.ORG_INVITE),
+        sfn.Condition.stringEquals('$.detail.NewImage.entityType', Entities.ORG_INVITE),
         sendOrgInvite,
       );
     const log = new LogGroup(this, `${process.env.NODE_ENV}-CommsMachineLogGroup`);

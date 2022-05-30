@@ -1,7 +1,7 @@
 import { GetCommandInput, GetCommand } from '@aws-sdk/lib-dynamodb';
 import { SdkError } from '@aws-sdk/types';
 import { Dynamo } from '../../awsClients/ddbDocClient';
-import { DYNAMO_TABLE_NAME, ENTITY_TYPES } from '../../Config';
+import { DYNAMO_TABLE_NAME, Entities } from '../../Config';
 import { DynamoWebhook } from '../../types/dynamo';
 import { GetWebhookByIdInput } from '../../types/main';
 
@@ -10,8 +10,8 @@ export default async function Get(props: GetWebhookByIdInput): Promise<[DynamoWe
   const params: GetCommandInput = {
     TableName: `${process.env.NODE_ENV}-${DYNAMO_TABLE_NAME}`,
     Key: {
-      PK: `${ENTITY_TYPES.ORG}#${orgId}#${ENTITY_TYPES.WEBHOOK}#${webhookId}`,
-      SK: ENTITY_TYPES.WEBHOOK,
+      PK: `${Entities.ORG}#${orgId}#${Entities.WEBHOOK}#${webhookId}`,
+      SK: Entities.WEBHOOK,
     },
   };
 

@@ -2,7 +2,7 @@ import { Fragment, useState } from 'react';
 import { Listbox, Transition } from '@headlessui/react';
 import { CheckIcon, SelectorIcon } from '@heroicons/react/solid';
 import { useRouter } from 'next/router';
-import { OPENING_STATE, WEBSITE_URL } from '../../Config';
+import { OpeningState, WEBSITE_URL } from '../../Config';
 import combineClassNames from '../../utils/combineClassNames';
 import { DynamoOpening } from '../../types/dynamo';
 
@@ -34,9 +34,9 @@ export default function OpeningsDropdown({ openings, index }: OpenignsDropdownPr
         <Listbox.Button className="relative w-full bg-white border border-gray-300 rounded-md shadow-sm pl-3 pr-10 py-2 text-left cursor-default focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500 sm:text-lg">
           <div className="flex items-center">
             <span
-              aria-label={selected?.GSI1SK === OPENING_STATE.PUBLIC ? 'Online' : 'Offline'}
+              aria-label={selected?.GSI1SK === OpeningState.PUBLIC ? 'Online' : 'Offline'}
               className={combineClassNames(
-                selected?.GSI1SK === OPENING_STATE.PUBLIC ? 'bg-green-400' : 'bg-gray-200',
+                selected?.GSI1SK === OpeningState.PUBLIC ? 'bg-green-400' : 'bg-gray-200',
                 'flex-shrink-0 inline-block h-2 w-2 rounded-full',
               )}
             />
@@ -70,7 +70,7 @@ export default function OpeningsDropdown({ openings, index }: OpenignsDropdownPr
                     <div className="flex items-center">
                       <span
                         className={combineClassNames(
-                          opening.GSI1SK === OPENING_STATE.PUBLIC ? 'bg-green-400' : 'bg-gray-200',
+                          opening.GSI1SK === OpeningState.PUBLIC ? 'bg-green-400' : 'bg-gray-200',
                           'flex-shrink-0 inline-block h-2 w-2 rounded-full',
                         )}
                         aria-hidden="true"
@@ -84,7 +84,7 @@ export default function OpeningsDropdown({ openings, index }: OpenignsDropdownPr
                         {opening?.openingName}
                         <span className="sr-only">
                           {' '}
-                          is {opening.GSI1SK === OPENING_STATE.PUBLIC ? 'online' : 'offline'}
+                          is {opening.GSI1SK === OpeningState.PUBLIC ? 'online' : 'offline'}
                         </span>
                       </span>
                     </div>

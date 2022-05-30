@@ -8,7 +8,7 @@ import Loader from '../Loader';
 import { DeleteOpening, GetOpeningsInOrgURL } from '../../adapters/Openings';
 import * as Time from '../../utils/time';
 import { CustomQuery, SettingsCrumbsProps } from '../../types/main';
-import { OPENING_STATE, WEBSITE_URL } from '../../Config';
+import { OpeningState, WEBSITE_URL } from '../../Config';
 
 export default function OpeningSettingsHeader() {
   const router = useRouter();
@@ -71,19 +71,19 @@ export default function OpeningSettingsHeader() {
       <div className="flex justify-center space-x-4 py-2 items-center">
         <span
           className={` inline-flex items-center px-2.5 py-0.5 rounded-md text-sm font-medium ${
-            opening?.GSI1SK === OPENING_STATE.PUBLIC ? 'bg-green-100' : 'bg-blue-gray-100'
+            opening?.GSI1SK === OpeningState.PUBLIC ? 'bg-green-100' : 'bg-blue-gray-100'
           }`}
         >
           <svg
             className={`-ml-0.5 mr-1.5 h-2 w-2 ${
-              opening?.GSI1SK === OPENING_STATE.PUBLIC ? 'text-green-800' : 'text-blue-gray-800'
+              opening?.GSI1SK === OpeningState.PUBLIC ? 'text-green-800' : 'text-blue-gray-800'
             }`}
             fill="currentColor"
             viewBox="0 0 8 8"
           >
             <circle cx={4} cy={4} r={3} />
           </svg>
-          {opening?.GSI1SK === OPENING_STATE.PUBLIC ? 'Public' : 'Private'}
+          {opening?.GSI1SK === OpeningState.PUBLIC ? 'Public' : 'Private'}
         </span>
         <p className="text-md text-light text-center">
           Created {Time.relative(opening?.createdAt)}

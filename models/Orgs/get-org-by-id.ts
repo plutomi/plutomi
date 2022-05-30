@@ -1,7 +1,7 @@
 import { GetCommandInput, GetCommand } from '@aws-sdk/lib-dynamodb';
 import { SdkError } from '@aws-sdk/types';
 import { Dynamo } from '../../awsClients/ddbDocClient';
-import { DYNAMO_TABLE_NAME, ENTITY_TYPES } from '../../Config';
+import { DYNAMO_TABLE_NAME, Entities } from '../../Config';
 import { DynamoOrg } from '../../types/dynamo';
 import { GetOrgInput } from '../../types/main';
 
@@ -14,8 +14,8 @@ export default async function GetOrgById(
     TableName: `${process.env.NODE_ENV}-${DYNAMO_TABLE_NAME}`,
 
     Key: {
-      PK: `${ENTITY_TYPES.ORG}#${orgId}`,
-      SK: ENTITY_TYPES.ORG,
+      PK: `${Entities.ORG}#${orgId}`,
+      SK: Entities.ORG,
     },
   };
 

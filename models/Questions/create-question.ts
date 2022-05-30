@@ -1,7 +1,7 @@
 import { TransactWriteCommand, TransactWriteCommandInput } from '@aws-sdk/lib-dynamodb';
 import { SdkError } from '@aws-sdk/types';
 import { Dynamo } from '../../awsClients/ddbDocClient';
-import { ENTITY_TYPES, DYNAMO_TABLE_NAME } from '../../Config';
+import { Entities, DYNAMO_TABLE_NAME } from '../../Config';
 import { DynamoQuestion } from '../../types/dynamo';
 import { CreateQuestionInput } from '../../types/main';
 import * as Time from '../../utils/time';
@@ -12,16 +12,16 @@ export default async function CreateQuestion(
   const { orgId, GSI1SK, questionId, description } = props;
   const now = Time.currentISO();
   const newStageQuestion: DynamoQuestion = {
-    PK: `${ENTITY_TYPES.ORG}#${orgId}#${ENTITY_TYPES.QUESTION}#${questionId}`,
-    SK: ENTITY_TYPES.QUESTION,
+    PK: `${Entities.ORG}#${orgId}#${Entities.QUESTION}#${questionId}`,
+    SK: Entities.QUESTION,
     orgId,
     description: description || '',
     questionId, // TODO add tag generator
-    entityType: ENTITY_TYPES.QUESTION,
+    entityType: Entities.QUESTION,
     createdAt: now,
     totalStages: 0,
     // All questions in org
-    GSI1PK: `${ENTITY_TYPES.ORG}#${orgId}#${ENTITY_TYPES.QUESTION}S`,
+    GSI1PK: `${Entities.ORG}#${orgId}#${Entities.QUESTION}S`,
     GSI1SK,
   };
 
@@ -39,8 +39,8 @@ export default async function CreateQuestion(
         // Increment the org's totalQuestions
         Update: {
           Key: {
-            PK: `${ENTITY_TYPES.ORG}#${orgId}`,
-            SK: ENTITY_TYPES.ORG,
+            PK: `${Entities.ORG}#${orgId}`,
+            SK: Entities.ORG,
           },
           TableName: `${process.env.NODE_ENV}-${DYNAMO_TABLE_NAME}`,
           UpdateExpression: 'SET totalQuestions = if_not_exists(totalQuestions, :zero) + :value',

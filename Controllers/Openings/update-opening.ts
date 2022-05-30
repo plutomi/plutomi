@@ -2,7 +2,7 @@ import { Request, Response } from 'express';
 import Joi from 'joi';
 import * as Openings from '../../models/Openings';
 import * as CreateError from '../../utils/createError';
-import { DEFAULTS, JOI_GLOBAL_FORBIDDEN, JOI_SETTINGS, OPENING_STATE, LIMITS } from '../../Config';
+import { DEFAULTS, JOI_GLOBAL_FORBIDDEN, JOI_SETTINGS, OpeningState, LIMITS } from '../../Config';
 import { UpdateOpeningInput } from '../../types/main';
 import { DynamoOpening } from '../../types/dynamo';
 
@@ -19,7 +19,7 @@ const JOI_FORBIDDEN_OPENING = Joi.object({
   totalApplicants: Joi.any().forbidden(),
   stageOrder: Joi.array().items(Joi.string()).optional(),
   openingName: Joi.string().max(LIMITS.MAX_OPENING_NAME_LENGTH).optional(),
-  GSI1SK: Joi.string().valid(OPENING_STATE.PUBLIC, OPENING_STATE.PRIVATE).optional(),
+  GSI1SK: Joi.string().valid(OpeningState.PUBLIC, OpeningState.PRIVATE).optional(),
 });
 
 const schema = Joi.object({
@@ -83,7 +83,7 @@ const main = async (req: Request, res: Response) => {
   }
 
   // TODO i think this can be moved into dynamo
-  if (req.body.GSI1SK === OPENING_STATE.PUBLIC && opening.totalStages === 0) {
+  if (req.body.GSI1SK === OpeningState.PUBLIC && opening.totalStages === 0) {
     return res.status(403).json({
       message: 'An opening needs to have stages before being made public',
     });

@@ -2,7 +2,7 @@ import { PutCommandInput, PutCommand } from '@aws-sdk/lib-dynamodb';
 import { nanoid } from 'nanoid';
 import { SdkError } from '@aws-sdk/types';
 import { Dynamo } from '../../awsClients/ddbDocClient';
-import { ID_LENGTHS, ENTITY_TYPES, DEFAULTS, DYNAMO_TABLE_NAME } from '../../Config';
+import { ID_LENGTHS, Entities, DEFAULTS, DYNAMO_TABLE_NAME } from '../../Config';
 import { DynamoUser } from '../../types/dynamo';
 import { CreateUserInput } from '../../types/main';
 import * as Time from '../../utils/time';
@@ -14,24 +14,24 @@ export default async function CreateUser(
 
   const userId = nanoid(ID_LENGTHS.USER);
   const newUser: DynamoUser = {
-    PK: `${ENTITY_TYPES.USER}#${userId}`,
-    SK: ENTITY_TYPES.USER,
+    PK: `${Entities.USER}#${userId}`,
+    SK: Entities.USER,
     firstName: firstName || DEFAULTS.FIRST_NAME,
     lastName: lastName || DEFAULTS.LAST_NAME,
     email: email.toLowerCase().trim(),
     userId,
-    entityType: ENTITY_TYPES.USER,
+    entityType: Entities.USER,
     createdAt: Time.currentISO(),
     orgId: DEFAULTS.NO_ORG,
     totalInvites: 0, // TODO when creating an invite, a user is created. We should set this to 1!
     orgJoinDate: DEFAULTS.NO_ORG,
-    GSI1PK: `${ENTITY_TYPES.ORG}#${DEFAULTS.NO_ORG}#${ENTITY_TYPES.USER}S`,
+    GSI1PK: `${Entities.ORG}#${DEFAULTS.NO_ORG}#${Entities.USER}S`,
     GSI1SK:
       firstName && lastName
         ? `${firstName} ${lastName}`
         : `${DEFAULTS.FIRST_NAME} ${DEFAULTS.LAST_NAME}`,
     GSI2PK: email.toLowerCase().trim(),
-    GSI2SK: ENTITY_TYPES.USER,
+    GSI2SK: Entities.USER,
     unsubscribeKey: nanoid(10),
     canReceiveEmails: true,
     verifiedEmail: false,
