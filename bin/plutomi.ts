@@ -13,6 +13,7 @@ import DeleteChildrenMachineStack from '../lib/DeleteChildrenMachineStack';
 import WebhooksMachineStack from '../lib/WebhooksMachineStack';
 import AthenaDynamoQueryStack from '../lib/AthenaDynamoQueryStack';
 import StorageStack from '../lib/StorageStack';
+
 // Run the serverless builder before deploying
 const builder = new Builder('.', './build', { args: ['build'] });
 

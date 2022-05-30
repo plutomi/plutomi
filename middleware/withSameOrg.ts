@@ -2,6 +2,7 @@ import { Request, Response, NextFunction } from 'express';
 import { ERRORS } from '../Config';
 
 // Blocks the request if a user is not in the same org as the orgId parameter
+// eslint-disable-next-line consistent-return
 export default async function withSameOrg(req: Request, res: Response, next: NextFunction) {
   const { session } = res.locals;
 
