@@ -13,6 +13,7 @@
     "@typescript-eslint/no-shadow": "warn",
     "no-new": "warn",
     "react/require-default-props": "warn",
+    "react/jsx-props-no-spreading": "warn",
     "import/no-extraneous-dependencies": [
       "error",
       { "devDependencies": false, "optionalDependencies": false, "peerDependencies": false }

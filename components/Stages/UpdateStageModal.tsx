@@ -111,8 +111,6 @@ export default function UpdateStageModal({ stage }: { stage: DynamoStage }) {
                               className="block text-sm font-medium text-dark"
                             >
                               New Stage Name
-                            </label>
-                            <div className="mt-1">
                               <input
                                 type="text"
                                 name="opening-name"
@@ -123,7 +121,7 @@ export default function UpdateStageModal({ stage }: { stage: DynamoStage }) {
                                 value={GSI1SK}
                                 className="block w-full shadow-sm sm:text-sm focus:ring-blue-500 focus:border-blue-500 border-gray-300 rounded-md"
                               />
-                            </div>
+                            </label>
                           </div>
                         </div>
                       </div>

@@ -73,7 +73,7 @@ export default function StageSettingsQuestionList() {
         question.GSI1SK.toLowerCase().trim().includes(localSearch.toLowerCase().trim()),
       ),
     );
-  }, [localSearch]);
+  }, [localSearch, orgQuestions]);
 
   const [newQuestionOrder, setNewQuestionOrder] = useState(stageQuestions);
   useEffect(() => {
@@ -94,10 +94,10 @@ export default function StageSettingsQuestionList() {
       return;
     }
 
-    let newQuestionOrder: string[] = Array.from(stage?.questionOrder);
+    const newQuestionOrder: string[] = Array.from(stage?.questionOrder);
     newQuestionOrder.splice(source.index, 1);
     newQuestionOrder.splice(destination.index, 0, draggableId);
-    let newOrder = newQuestionOrder.map((i) => stageQuestions.find((j) => j.questionId === i));
+    const newOrder = newQuestionOrder.map((i) => stageQuestions.find((j) => j.questionId === i));
 
     setNewQuestionOrder(newOrder);
 
@@ -148,6 +148,54 @@ export default function StageSettingsQuestionList() {
     setShow(false);
   };
 
+  const listBoxOptions = (): React.ReactElement => {
+    if (orgQuestions?.length === 0) {
+      return (
+        <p className="disabled  text-gray-400 cursor-default select-none relative py-2 pl-3 pr-9 ">
+          No questions found
+        </p>
+      );
+    }
+
+    if (filteredOrgQuestions?.length === 0 && orgQuestions?.length > 0) {
+      return (
+        <p className="disabled  text-gray-400 cursor-default select-none relative py-2 pl-3 pr-9 ">
+          Question not found
+        </p>
+      );
+    }
+
+    return filteredOrgQuestions?.map((question: DynamoQuestion) => (
+      <Listbox.Option
+        key={question.questionId}
+        disabled={stage?.questionOrder.includes(question.questionId)}
+        className={combineClassNames(
+          stage?.questionOrder.includes(question.questionId)
+            ? 'disabled text-disabled'
+            : 'hover:bg-blue-500 hover:text-white hover:cursor-pointer',
+          'cursor-default select-none relative py-2 pl-3 pr-9 group',
+        )}
+        value={question}
+      >
+        <div className="flex items-center justify-between ">
+          <p>
+            {question.GSI1SK}
+            {stage?.questionOrder.includes(question.questionId) && ' - Already added'}
+          </p>
+          <p
+            className={combineClassNames(
+              stage?.questionOrder.includes(question.questionId)
+                ? 'disabled text-disabled'
+                : 'text-normal group-hover:text-white',
+            )}
+          >
+            {question.questionId}
+          </p>
+        </div>
+      </Listbox.Option>
+    ));
+  };
+
   return (
     <div className="flex flex-col justify-center items-center p-2">
       <input
@@ -158,7 +206,7 @@ export default function StageSettingsQuestionList() {
         onClick={handleShow}
         onBlur={handleOnBlur}
         onChange={(e) => handleSearch(e.target.value)}
-        placeholder={'Search for a question to add to this stage...'}
+        placeholder="Search for a question to add to this stage..."
         className="border-2 border-blue-300 mt-2 py-3 text-xl w-full shadow-sm focus:ring-blue-500 focus:border-blue-500    sm:text-sm  rounded-md"
       />
       <Listbox value={selected} onChange={(question) => handleAdd(question)}>
@@ -171,47 +219,7 @@ export default function StageSettingsQuestionList() {
           >
             {/* TODO use datalist for this with a regular transition */}
             <Listbox.Options className="absolute z-10 mt-1 w-full bg-white shadow-lg max-h-60 rounded-md py-1 text-base ring-1 ring-black ring-opacity-5 overflow-auto focus:outline-none sm:text-sm">
-              {orgQuestions?.length === 0 ? (
-                <p className="disabled  text-gray-400 cursor-default select-none relative py-2 pl-3 pr-9 ">
-                  No questions found
-                </p>
-              ) : filteredOrgQuestions?.length === 0 && orgQuestions?.length > 0 ? (
-                <p className="disabled  text-gray-400 cursor-default select-none relative py-2 pl-3 pr-9 ">
-                  Question not found
-                </p>
-              ) : (
-                filteredOrgQuestions?.map((question: DynamoQuestion) => (
-                  <Listbox.Option
-                    key={question.questionId}
-                    disabled={stage?.questionOrder.includes(question.questionId)}
-                    className={combineClassNames(
-                      stage?.questionOrder.includes(question.questionId)
-                        ? 'disabled text-disabled'
-                        : 'hover:bg-blue-500 hover:text-white hover:cursor-pointer',
-                      'cursor-default select-none relative py-2 pl-3 pr-9 group',
-                    )}
-                    value={question}
-                  >
-                    <>
-                      <div className="flex items-center justify-between ">
-                        <p>
-                          {question.GSI1SK}
-                          {stage?.questionOrder.includes(question.questionId) && ' - Already added'}
-                        </p>
-                        <p
-                          className={combineClassNames(
-                            stage?.questionOrder.includes(question.questionId)
-                              ? 'disabled text-disabled'
-                              : 'text-normal group-hover:text-white',
-                          )}
-                        >
-                          {question.questionId}
-                        </p>
-                      </div>
-                    </>
-                  </Listbox.Option>
-                ))
-              )}
+              {listBoxOptions}
             </Listbox.Options>
           </Transition>
         </div>
