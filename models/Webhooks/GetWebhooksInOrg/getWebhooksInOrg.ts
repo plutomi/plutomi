@@ -1,13 +1,14 @@
 import { QueryCommandInput, QueryCommand } from '@aws-sdk/lib-dynamodb';
 import { SdkError } from '@aws-sdk/types';
-import { Dynamo } from '../../awsClients/ddbDocClient';
-import { DYNAMO_TABLE_NAME, Entities } from '../../Config';
-import { DynamoWebhook } from '../../types/dynamo';
-import { GetWebhooksInOrgInput } from '../../types/main';
+import { Dynamo } from '../../../awsClients/ddbDocClient';
+import { DYNAMO_TABLE_NAME, Entities } from '../../../Config';
+import { DynamoWebhook } from '../../../types/dynamo';
 
-export default async function GetWebhooksInOrg(
+type GetWebhooksInOrgInput = Pick<DynamoWebhook, 'orgId'>;
+
+export const getWebhooksInOrg = async (
   props: GetWebhooksInOrgInput,
-): Promise<[DynamoWebhook[], SdkError]> {
+): Promise<[DynamoWebhook[], SdkError]> => {
   const { orgId } = props;
   const params: QueryCommandInput = {
     TableName: `${process.env.NODE_ENV}-${DYNAMO_TABLE_NAME}`,
@@ -24,4 +25,4 @@ export default async function GetWebhooksInOrg(
   } catch (error) {
     return [null, error];
   }
-}
+};

@@ -54,16 +54,7 @@ export type SessionData = Pick<
 
 type OrgIdAndQuestionId = 'orgId' | 'questionId';
 
-type DeleteWebhookFromOrgInput = Pick<DynamoWebhook, 'webhookId' | 'orgId'>;
-
 type GetQuestionsInStageOutput = GetQuestionOutput[];
-
-type GetWebhookByIdInput = Pick<DynamoWebhook, 'orgId' | 'webhookId'>;
-
-type CreateWebhookInput = Pick<
-  DynamoWebhook,
-  'webhookUrl' | 'orgId' | 'description' | 'webhookName'
->;
 
 type OrgIdAndApplicantId = 'orgId' | 'applicantId';
 
@@ -75,12 +66,6 @@ export interface GetApplicantByIdOutput extends DynamoApplicant {
 export interface UpdateApplicantOutput extends DynamoApplicant {
   responses: Object[]; // TODO fix this type with a response type
 }
-
-export interface UpdateWebhookInput extends Pick<DynamoWebhook, 'orgId' | 'webhookId'> {
-  newValues: { [key: string]: any };
-}
-
-type GetWebhooksInOrgInput = Pick<DynamoWebhook, 'orgId'>;
 
 type DeleteLoginLinkInput = {
   userId: string;

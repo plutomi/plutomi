@@ -1,15 +1,19 @@
 import { TransactWriteCommandInput, TransactWriteCommand } from '@aws-sdk/lib-dynamodb';
 import { nanoid } from 'nanoid';
 import { SdkError } from '@aws-sdk/types';
-import { Dynamo } from '../../awsClients/ddbDocClient';
-import { Entities, DYNAMO_TABLE_NAME } from '../../Config';
-import { DynamoWebhook } from '../../types/dynamo';
-import * as Time from '../../utils/time';
-import { CreateWebhookInput } from '../../types/main';
+import { Dynamo } from '../../../awsClients/ddbDocClient';
+import { Entities, DYNAMO_TABLE_NAME } from '../../../Config';
+import { DynamoWebhook } from '../../../types/dynamo';
+import * as Time from '../../../utils/time';
 
-export default async function CreateWebhook(
+type CreateWebhookInput = Pick<
+  DynamoWebhook,
+  'webhookUrl' | 'orgId' | 'description' | 'webhookName'
+>;
+
+export const createWebhook = async (
   props: CreateWebhookInput,
-): Promise<[DynamoWebhook, SdkError]> {
+): Promise<[DynamoWebhook, SdkError]> => {
   const { orgId, webhookName, webhookUrl, description } = props;
   const webhookId = nanoid(15);
   const newWebhook: DynamoWebhook = {
@@ -63,4 +67,4 @@ export default async function CreateWebhook(
   } catch (error) {
     return [null, error];
   }
-}
+};

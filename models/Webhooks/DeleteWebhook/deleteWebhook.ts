@@ -1,12 +1,14 @@
 import { TransactWriteCommand, TransactWriteCommandInput } from '@aws-sdk/lib-dynamodb';
 import { SdkError } from '@aws-sdk/types';
-import { Dynamo } from '../../awsClients/ddbDocClient';
-import { DYNAMO_TABLE_NAME, Entities } from '../../Config';
-import { DeleteWebhookFromOrgInput } from '../../types/main';
+import { Dynamo } from '../../../awsClients/ddbDocClient';
+import { DYNAMO_TABLE_NAME, Entities } from '../../../Config';
+import { DynamoWebhook } from '../../../types/dynamo';
 
-export default async function DeleteWebhookFromOrg(
+type DeleteWebhookFromOrgInput = Pick<DynamoWebhook, 'webhookId' | 'orgId'>;
+
+export const deleteWebhook = async (
   props: DeleteWebhookFromOrgInput,
-): Promise<[null, SdkError]> {
+): Promise<[null, SdkError]> => {
   const { orgId, webhookId } = props;
 
   const transactParams: TransactWriteCommandInput = {
@@ -44,4 +46,4 @@ export default async function DeleteWebhookFromOrg(
   } catch (error) {
     return [null, error];
   }
-}
+};
