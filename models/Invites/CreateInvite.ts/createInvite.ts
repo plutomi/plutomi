@@ -1,20 +1,21 @@
 import { nanoid } from 'nanoid';
 import { SdkError } from '@aws-sdk/types';
 import { TransactWriteCommandInput, TransactWriteCommand } from '@aws-sdk/lib-dynamodb';
-import { Dynamo } from '../../awsClients/ddbDocClient';
-import { ID_LENGTHS, Entities, DYNAMO_TABLE_NAME } from '../../Config';
-import { DynamoOrgInvite } from '../../types/dynamo';
-import { CreateOrgInviteInput } from '../../types/main';
-import * as Time from '../../utils/time';
+import { Dynamo } from '../../../awsClients/ddbDocClient';
+import { ID_LENGTHS, Entities, DYNAMO_TABLE_NAME } from '../../../Config';
+import { DynamoOrgInvite, DynamoUser } from '../../../types/dynamo';
+import * as Time from '../../../utils/time';
 
-/**
- * Invites a user to join your org
- * @param props {@link CreateOrgInviteInput}
- * @returns
- */
-export default async function Create(
+interface CreateOrgInviteInput {
+  orgName: string;
+  expiresAt: string;
+  createdBy: Pick<DynamoUser, 'firstName' | 'lastName' | 'orgId'>;
+  recipient: Pick<DynamoUser, 'userId' | 'email' | 'unsubscribeKey' | 'firstName' | 'lastName'>;
+}
+
+export const createInvite = async (
   props: CreateOrgInviteInput,
-): Promise<[null, null] | [null, SdkError]> {
+): Promise<[null, null] | [null, SdkError]> => {
   const { expiresAt, createdBy, recipient, orgName } = props;
   try {
     const inviteId = nanoid(ID_LENGTHS.ORG_INVITE);
@@ -44,7 +45,6 @@ export default async function Create(
             ConditionExpression: 'attribute_not_exists(PK)',
           },
         },
-
         {
           // Increment the recipient's total invites
           Update: {
@@ -53,7 +53,6 @@ export default async function Create(
               SK: Entities.USER,
             },
             TableName: `${process.env.NODE_ENV}-${DYNAMO_TABLE_NAME}`,
-
             UpdateExpression: 'SET totalInvites = if_not_exists(totalInvites, :zero) + :value',
             ExpressionAttributeValues: {
               ':zero': 0,
@@ -66,9 +65,8 @@ export default async function Create(
     };
 
     await Dynamo.send(new TransactWriteCommand(transactParams));
-
     return [null, null];
   } catch (error) {
     return [null, error];
   }
-}
+};

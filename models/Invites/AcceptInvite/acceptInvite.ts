@@ -1,15 +1,24 @@
 import { TransactWriteCommandInput, TransactWriteCommand } from '@aws-sdk/lib-dynamodb';
 import { SdkError } from '@aws-sdk/types';
-import { Dynamo } from '../../awsClients/ddbDocClient';
-import { DYNAMO_TABLE_NAME, Entities } from '../../Config';
-import { JoinOrgFromInviteInput } from '../../types/main';
-import * as Time from '../../utils/time';
+import { Dynamo } from '../../../awsClients/ddbDocClient';
+import { DYNAMO_TABLE_NAME, Entities } from '../../../Config';
+import { DynamoOrgInvite } from '../../../types/dynamo';
+import * as Time from '../../../utils/time';
 
-export default async function Join(
+type JoinOrgFromInviteInput = {
+  userId: string;
+  invite: DynamoOrgInvite; // TODO I think the invite sent to the client is the clean version, need to verify this and if so make types for the clean version anyway
+};
+
+/**
+ * Accepts an invite and joins an org
+ */
+
+export const acceptInvite = async (
   props: JoinOrgFromInviteInput,
-): Promise<[null, null] | [null, SdkError]> {
+): Promise<[null, null] | [null, SdkError]> => {
   const { userId, invite } = props;
-  // TODO types
+
   try {
     const transactParams: TransactWriteCommandInput = {
       TransactItems: [
@@ -21,7 +30,6 @@ export default async function Join(
               SK: `${Entities.ORG_INVITE}#${invite.inviteId}`,
             },
             TableName: `${process.env.NODE_ENV}-${DYNAMO_TABLE_NAME}`,
-
             ConditionExpression: 'attribute_exists(PK)',
           },
         },
@@ -34,7 +42,6 @@ export default async function Join(
               SK: Entities.USER,
             },
             TableName: `${process.env.NODE_ENV}-${DYNAMO_TABLE_NAME}`,
-
             UpdateExpression:
               'SET orgId = :orgId, orgJoinDate = :orgJoinDate, GSI1PK = :GSI1PK, totalInvites = totalInvites - :value',
             ExpressionAttributeValues: {
@@ -54,7 +61,6 @@ export default async function Join(
               SK: Entities.ORG,
             },
             TableName: `${process.env.NODE_ENV}-${DYNAMO_TABLE_NAME}`,
-
             UpdateExpression: 'SET totalUsers = totalUsers + :value',
             ExpressionAttributeValues: {
               ':value': 1,
@@ -70,4 +76,4 @@ export default async function Join(
   } catch (error) {
     return [null, error];
   }
-}
+};

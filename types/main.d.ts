@@ -109,7 +109,6 @@ export interface UpdateApplicantOutput extends DynamoApplicant {
   responses: Object[]; // TODO fix this type with a response type
 }
 
-
 type CreateOpeningInput = Pick<DynamoOpening, 'orgId' | 'openingName'>;
 type DeleteOpeningInput = Pick<DynamoOpening, 'orgId' | 'openingId'>;
 
@@ -152,13 +151,6 @@ interface DeleteOrgInviteInput {
   inviteId: string;
 }
 
-interface CreateOrgInviteInput {
-  orgName: string;
-  expiresAt: string;
-  createdBy: Pick<DynamoUser, 'firstName' | 'lastName' | 'orgId'>;
-  recipient: Pick<DynamoUser, 'userId' | 'email' | 'unsubscribeKey' | 'firstName' | 'lastName'>;
-}
-
 type CreateUserInput = {
   email: string;
   firstName?: string;
@@ -172,11 +164,6 @@ type GetOrgInvitesForUserInput = {
 type GetOrgInviteInput = {
   userId: string;
   inviteId: string;
-};
-
-type JoinOrgFromInviteInput = {
-  userId: string;
-  invite: DynamoOrgInvite; // TODO I think the invite sent to the client is the clean version, need to verify this and if so make types for the clean version anyway
 };
 
 type CreateLoginLinkInput = {
