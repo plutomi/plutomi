@@ -105,17 +105,17 @@ export default function UpdateQuestionModal({ question }: UpdateQuestionModalPro
                           <div>
                             <label htmlFor="title" className="block text-sm font-medium text-dark">
                               New Question Title
-                              <input
-                                type="text"
-                                name="title"
-                                id="title"
-                                required
-                                placeholder={"'What is your name?' or 'Tell us about yourself'"}
-                                value={GSI1SK}
-                                onChange={(e) => setGSI1SK(e.target.value)}
-                                className="block w-full shadow-sm text-sm focus:ring-blue-500 focus:border-blue-500 border-gray-300 rounded-md"
-                              />
                             </label>
+                            <input
+                              type="text"
+                              name="title"
+                              id="title"
+                              required
+                              placeholder={"'What is your name?' or 'Tell us about yourself'"}
+                              value={GSI1SK}
+                              onChange={(e) => setGSI1SK(e.target.value)}
+                              className="block w-full shadow-sm text-sm focus:ring-blue-500 focus:border-blue-500 border-gray-300 rounded-md"
+                            />
                           </div>
                           <div>
                             <label
@@ -123,17 +123,17 @@ export default function UpdateQuestionModal({ question }: UpdateQuestionModalPro
                               className="block text-sm font-medium text-dark"
                             >
                               New Description
-                              <textarea
-                                name="description"
-                                id="description"
-                                placeholder="Optional helper text for your applicants."
-                                className="p-2 text-sm focus:ring-blue-500 focus:border-blue-500 border-gray-300 rounded-md w-full block resize"
-                                maxLength={descriptionMaxLength} // TODO add counter
-                                rows={5}
-                                value={description}
-                                onChange={(e) => setDescription(e.target.value)}
-                              />
                             </label>
+                            <textarea
+                              name="description"
+                              id="description"
+                              placeholder="Optional helper text for your applicants."
+                              className="p-2 text-sm focus:ring-blue-500 focus:border-blue-500 border-gray-300 rounded-md w-full block resize"
+                              maxLength={descriptionMaxLength} // TODO add counter
+                              rows={5}
+                              value={description}
+                              onChange={(e) => setDescription(e.target.value)}
+                            />
                           </div>
                         </div>
                       </div>

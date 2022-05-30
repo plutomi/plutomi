@@ -10,7 +10,20 @@ import useSelf from '../SWR/useSelf';
 import { AXIOS_INSTANCE as axios, DOMAIN_NAME } from '../Config';
 import * as Time from '../utils/time';
 
-export default function Main({ commits }) {
+interface Commit {
+  url: string;
+  username: string;
+  name: string;
+  image: string;
+  date: Date;
+  email: string;
+  message: string;
+}
+
+interface HomepageProps {
+  commits: Commit[];
+}
+export default function Main({ commits }: HomepageProps) {
   const { user, isUserLoading, isUserError } = useSelf();
   return (
     <>

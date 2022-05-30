@@ -102,17 +102,17 @@ export default function CreateQuestionModal() {
                           <div>
                             <label htmlFor="title" className="block text-sm font-medium text-dark">
                               Question Title
-                              <input
-                                type="text"
-                                name="title"
-                                id="title"
-                                required
-                                placeholder={"'What is your name?' or 'Tell us about yourself'"}
-                                value={GSI1SK}
-                                onChange={(e) => setGSI1SK(e.target.value)}
-                                className="block w-full shadow-sm text-sm focus:ring-blue-500 focus:border-blue-500 border-gray-300 rounded-md"
-                              />
                             </label>
+                            <input
+                              type="text"
+                              name="title"
+                              id="title"
+                              required
+                              placeholder={"'What is your name?' or 'Tell us about yourself'"}
+                              value={GSI1SK}
+                              onChange={(e) => setGSI1SK(e.target.value)}
+                              className="block w-full shadow-sm text-sm focus:ring-blue-500 focus:border-blue-500 border-gray-300 rounded-md"
+                            />
                           </div>
                           <div>
                             <label
@@ -120,36 +120,36 @@ export default function CreateQuestionModal() {
                               className="block text-sm font-medium text-dark"
                             >
                               Description
-                              <textarea
-                                name="description"
-                                id="description"
-                                placeholder="Optional helper text for your applicants."
-                                className="p-2 text-sm focus:ring-blue-500 focus:border-blue-500 border-gray-300 rounded-md w-full block resize"
-                                maxLength={descriptionMaxLength} // TODO add counter
-                                rows={5}
-                                value={description}
-                                onChange={(e) => setDescription(e.target.value)}
-                              />
                             </label>
+                            <textarea
+                              name="description"
+                              id="description"
+                              placeholder="Optional helper text for your applicants."
+                              className="p-2 text-sm focus:ring-blue-500 focus:border-blue-500 border-gray-300 rounded-md w-full block resize"
+                              maxLength={descriptionMaxLength} // TODO add counter
+                              rows={5}
+                              value={description}
+                              onChange={(e) => setDescription(e.target.value)}
+                            />
                           </div>
                           <div>
                             <label htmlFor="title" className="block text-sm font-medium text-dark">
                               Question ID
-                              <input
-                                type="text"
-                                name="title"
-                                id="title"
-                                required
-                                placeholder={"Use only a-z, 0-9, and underscore '_'"}
-                                value={questionId}
-                                onChange={(e) =>
-                                  setQuestionId(
-                                    TagGenerator({ value: e.target.value, joinString: '_' }),
-                                  )
-                                }
-                                className="block w-full shadow-sm text-sm focus:ring-blue-500 focus:border-blue-500 border-gray-300 rounded-md"
-                              />
                             </label>
+                            <input
+                              type="text"
+                              name="title"
+                              id="title"
+                              required
+                              placeholder={"Use only a-z, 0-9, and underscore '_'"}
+                              value={questionId}
+                              onChange={(e) =>
+                                setQuestionId(
+                                  TagGenerator({ value: e.target.value, joinString: '_' }),
+                                )
+                              }
+                              className="block w-full shadow-sm text-sm focus:ring-blue-500 focus:border-blue-500 border-gray-300 rounded-md"
+                            />
                             <div className="relative items-start">
                               <p className="block text-light text-sm  mt-2">
                                 A <strong>unique ID </strong>to match applicant rules against. For

@@ -29,7 +29,7 @@ export default function Openings() {
       // Redirect to opening settings if no stages
       router.push(`${DOMAIN_NAME}/openings/${openingId}/settings`);
     }
-  }, [router.isReady]);
+  }, [router.isReady, opening?.totalStages, openingId, router, stages]);
 
   return <Loader text="Redirecting..." />;
 }

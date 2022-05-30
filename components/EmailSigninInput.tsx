@@ -15,18 +15,18 @@ export default function LoginEmail({ email, onChange, sendEmail, buttonText }: L
     >
       <label htmlFor="email" className="sr-only">
         Email
-        <input
-          type="email"
-          name="email"
-          id="email"
-          required
-          value={email}
-          onChange={(e) => onChange(e.target.value)}
-          className="block
-        focus:border-blue-500 focus:ring-blue-500 w-full py-3 text-base rounded-md placeholder-normal shadow-sm  sm:flex-1"
-          placeholder="Enter your email"
-        />
       </label>
+      <input
+        type="email"
+        name="email"
+        id="email"
+        required
+        value={email}
+        onChange={(e) => onChange(e.target.value)}
+        className="block
+        focus:border-blue-500 focus:ring-blue-500 w-full py-3 text-base rounded-md placeholder-normal shadow-sm  sm:flex-1"
+        placeholder="Enter your email"
+      />
 
       <button
         type="submit"

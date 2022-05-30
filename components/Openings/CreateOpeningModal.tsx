@@ -91,16 +91,16 @@ export default function CreateOpeningModal() {
                               className="block text-sm font-medium text-dark"
                             >
                               Opening name
-                              <input
-                                type="text"
-                                name="opening-name"
-                                id="opening-name"
-                                required
-                                onChange={(e) => setOpeningName(e.target.value)}
-                                value={openingName}
-                                className="block w-full shadow-sm sm:text-sm focus:ring-blue-500 focus:border-blue-500 border-gray-300 rounded-md"
-                              />
                             </label>
+                            <input
+                              type="text"
+                              name="opening-name"
+                              id="opening-name"
+                              required
+                              onChange={(e) => setOpeningName(e.target.value)}
+                              value={openingName}
+                              className="block w-full shadow-sm sm:text-sm focus:ring-blue-500 focus:border-blue-500 border-gray-300 rounded-md"
+                            />
                           </div>
                           <div className="relative flex items-start">
                             <p className="text-light text-sm ">

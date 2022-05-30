@@ -109,33 +109,33 @@ export default function CreateOrgModal() {
                               className="block text-sm font-medium text-dark"
                             >
                               Organization name
-                              <input
-                                type="text"
-                                name="org-name"
-                                id="org-name"
-                                required
-                                placeholder="Plutomi Inc."
-                                onChange={(e) => setDisplayName(e.target.value)}
-                                value={displayName}
-                                className="block w-full shadow-sm sm:text-sm focus:ring-blue-500 focus:border-blue-500 border-gray-300 rounded-md"
-                              />
                             </label>
+                            <input
+                              type="text"
+                              name="org-name"
+                              id="org-name"
+                              required
+                              placeholder="Plutomi Inc."
+                              onChange={(e) => setDisplayName(e.target.value)}
+                              value={displayName}
+                              className="block w-full shadow-sm sm:text-sm focus:ring-blue-500 focus:border-blue-500 border-gray-300 rounded-md"
+                            />
                           </div>
                           <div>
                             <label htmlFor="org-id" className="block text-sm font-medium text-dark">
                               Custom ID
-                              <input
-                                type="text"
-                                name="org-id"
-                                id="org-id"
-                                required
-                                maxLength={30}
-                                onChange={(e) => setOrgId(TagGenerator({ value: e.target.value }))}
-                                value={orgId}
-                                className="flex-1 min-w-0 block w-full px-3 py-2 rounded-none rounded-r-md focus:ring-blue-500 focus:border-blue-500 sm:text-sm border-gray-300"
-                                placeholder="Use only a-z, 0-9, and dash '-'"
-                              />
                             </label>
+                            <input
+                              type="text"
+                              name="org-id"
+                              id="org-id"
+                              required
+                              maxLength={30}
+                              onChange={(e) => setOrgId(TagGenerator({ value: e.target.value }))}
+                              value={orgId}
+                              className="flex-1 min-w-0 block w-full px-3 py-2 rounded-none rounded-r-md focus:ring-blue-500 focus:border-blue-500 sm:text-sm border-gray-300"
+                              placeholder="Use only a-z, 0-9, and dash '-'"
+                            />
 
                             {orgId && (
                               <p className="mt-2 text-blue-gray-500 text-md">

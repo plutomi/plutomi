@@ -111,32 +111,32 @@ export default function ApplicantInfoForm() {
             <div>
               <label htmlFor="first-name" className="block text-sm font-medium text-normal">
                 First name
-                <input
-                  type="text"
-                  name="first-name"
-                  id="first-name"
-                  placeholder="John"
-                  value={firstName}
-                  onChange={(e) => setFirstName(e.target.value)}
-                  autoComplete="given-name"
-                  className="py-3 px-4 block w-full shadow-sm focus:ring-blue-500 focus:border-blue-500 border-gray-300 rounded-md"
-                />
               </label>
+              <input
+                type="text"
+                name="first-name"
+                id="first-name"
+                placeholder="John"
+                value={firstName}
+                onChange={(e) => setFirstName(e.target.value)}
+                autoComplete="given-name"
+                className="py-3 px-4 block w-full shadow-sm focus:ring-blue-500 focus:border-blue-500 border-gray-300 rounded-md"
+              />
             </div>
             <div>
               <label htmlFor="last-name" className="block text-sm font-medium text-normal">
                 Last name
-                <input
-                  type="text"
-                  name="last-name"
-                  id="last-name"
-                  placeholder="Smith"
-                  value={lastName}
-                  onChange={(e) => setLastName(e.target.value)}
-                  autoComplete="family-name"
-                  className="py-3 px-4 block w-full shadow-sm focus:ring-blue-500 focus:border-blue-500 border-gray-300 rounded-md"
-                />
               </label>
+              <input
+                type="text"
+                name="last-name"
+                id="last-name"
+                placeholder="Smith"
+                value={lastName}
+                onChange={(e) => setLastName(e.target.value)}
+                autoComplete="family-name"
+                className="py-3 px-4 block w-full shadow-sm focus:ring-blue-500 focus:border-blue-500 border-gray-300 rounded-md"
+              />
             </div>
             {/* <div className="sm:col-span-2">
               <label
@@ -158,17 +158,17 @@ export default function ApplicantInfoForm() {
             <div className="sm:col-span-2">
               <label htmlFor="email" className="block text-sm font-medium text-normal">
                 Email
-                <input
-                  id="email"
-                  name="email"
-                  placeholder="johnsmith@gmail.com"
-                  type="email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  autoComplete="email"
-                  className="py-3 px-4 block w-full shadow-sm focus:ring-blue-500 focus:border-blue-500 border-gray-300 rounded-md"
-                />
               </label>
+              <input
+                id="email"
+                name="email"
+                placeholder="johnsmith@gmail.com"
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                autoComplete="email"
+                className="py-3 px-4 block w-full shadow-sm focus:ring-blue-500 focus:border-blue-500 border-gray-300 rounded-md"
+              />
             </div>
             {/* <div className="sm:col-span-2">
               <label

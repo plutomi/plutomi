@@ -1,6 +1,5 @@
 import AlreadySignedIn from '../components/AlreadySignedIn';
 import CustomLink from '../components/CustomLink';
-import Link from '../components/CustomLink';
 import LoginHomepage from '../components/LoginHomepage';
 import { DOMAIN_NAME } from '../Config';
 import useSelf from '../SWR/useSelf';

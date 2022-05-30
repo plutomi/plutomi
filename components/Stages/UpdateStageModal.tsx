@@ -111,17 +111,17 @@ export default function UpdateStageModal({ stage }: { stage: DynamoStage }) {
                               className="block text-sm font-medium text-dark"
                             >
                               New Stage Name
-                              <input
-                                type="text"
-                                name="opening-name"
-                                id="opening-name"
-                                placeholder="What is the overall purpose of this stage?"
-                                required
-                                onChange={(e) => setGSI1SK(e.target.value)}
-                                value={GSI1SK}
-                                className="block w-full shadow-sm sm:text-sm focus:ring-blue-500 focus:border-blue-500 border-gray-300 rounded-md"
-                              />
                             </label>
+                            <input
+                              type="text"
+                              name="opening-name"
+                              id="opening-name"
+                              placeholder="What is the overall purpose of this stage?"
+                              required
+                              onChange={(e) => setGSI1SK(e.target.value)}
+                              value={GSI1SK}
+                              className="block w-full shadow-sm sm:text-sm focus:ring-blue-500 focus:border-blue-500 border-gray-300 rounded-md"
+                            />
                           </div>
                         </div>
                       </div>

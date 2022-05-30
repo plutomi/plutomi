@@ -1,5 +1,6 @@
 import WebhooksContent from '../components/Webhooks/WebhooksContent';
 import NewPage from '../components/Templates/NewPage';
+
 export default function Team() {
   return (
     <NewPage

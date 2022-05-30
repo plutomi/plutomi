@@ -14,6 +14,12 @@
     "no-new": "warn",
     "react/require-default-props": "warn",
     "react/jsx-props-no-spreading": "warn",
+    "jsx-a11y/label-has-associated-control": [
+      2,
+      {
+        "assert": "either" // either check for `htmlFor` or `nesting`
+      }
+    ],
     "import/no-extraneous-dependencies": [
       "error",
       { "devDependencies": false, "optionalDependencies": false, "peerDependencies": false }

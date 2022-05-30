@@ -107,17 +107,17 @@ export default function CreateWebhookModal() {
                               className="block text-sm font-medium text-dark"
                             >
                               Webhook name
-                              <input
-                                type="text"
-                                name="webhook-name"
-                                placeholder="New Applicant Notifications"
-                                id="webhook-name"
-                                required
-                                onChange={(e) => setWebhookName(e.target.value)}
-                                value={webhookName}
-                                className="block w-full shadow-sm sm:text-sm focus:ring-blue-500 focus:border-blue-500 border-gray-300 rounded-md"
-                              />
                             </label>
+                            <input
+                              type="text"
+                              name="webhook-name"
+                              placeholder="New Applicant Notifications"
+                              id="webhook-name"
+                              required
+                              onChange={(e) => setWebhookName(e.target.value)}
+                              value={webhookName}
+                              className="block w-full shadow-sm sm:text-sm focus:ring-blue-500 focus:border-blue-500 border-gray-300 rounded-md"
+                            />
                           </div>
                           <div>
                             <label
@@ -125,16 +125,16 @@ export default function CreateWebhookModal() {
                               className="block text-sm font-medium text-dark"
                             >
                               Description (optional)
-                              <textarea
-                                name="webhook-description"
-                                id="webhook-description"
-                                placeholder="Sends a slack message to the #recruiting channel"
-                                onChange={(e) => setDescription(e.target.value)}
-                                value={description}
-                                maxLength={LIMITS.MAX_WEBHOOK_DESCRIPTION_LENGTH}
-                                className="block w-full shadow-sm sm:text-sm focus:ring-blue-500 focus:border-blue-500 border-gray-300 rounded-md"
-                              />
                             </label>
+                            <textarea
+                              name="webhook-description"
+                              id="webhook-description"
+                              placeholder="Sends a slack message to the #recruiting channel"
+                              onChange={(e) => setDescription(e.target.value)}
+                              value={description}
+                              maxLength={LIMITS.MAX_WEBHOOK_DESCRIPTION_LENGTH}
+                              className="block w-full shadow-sm sm:text-sm focus:ring-blue-500 focus:border-blue-500 border-gray-300 rounded-md"
+                            />
                           </div>
 
                           <div>
@@ -143,17 +143,17 @@ export default function CreateWebhookModal() {
                               className="block text-sm font-medium text-dark"
                             >
                               URL
-                              <input
-                                type="url"
-                                name="webhook-url"
-                                id="webhook-url"
-                                placeholder="https://domain.com/webhooks"
-                                required
-                                onChange={(e) => setWebhookUrl(e.target.value)}
-                                value={webhookUrl}
-                                className="block w-full shadow-sm sm:text-sm focus:ring-blue-500 focus:border-blue-500 border-gray-300 rounded-md"
-                              />
                             </label>
+                            <input
+                              type="url"
+                              name="webhook-url"
+                              id="webhook-url"
+                              placeholder="https://domain.com/webhooks"
+                              required
+                              onChange={(e) => setWebhookUrl(e.target.value)}
+                              value={webhookUrl}
+                              className="block w-full shadow-sm sm:text-sm focus:ring-blue-500 focus:border-blue-500 border-gray-300 rounded-md"
+                            />
                           </div>
                           <div className="relative flex items-start">
                             <p className="text-light text-sm ">

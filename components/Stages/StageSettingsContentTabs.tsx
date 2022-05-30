@@ -17,17 +17,17 @@ export default function StageSettingsContentTabs({
         <label htmlFor="tabs" className="sr-only">
           Select a tab
           {/* Use an "onChange" listener to redirect the user to the selected tab URL. */}
-          <select
-            id="tabs"
-            name="tabs"
-            className="block w-full focus:ring-blue-500 focus:border-blue-500 border-gray-300 rounded-md"
-            defaultValue={tabs.find((tab) => tab.name === currentTab).name}
-          >
-            {tabs.map((tab) => (
-              <option key={tab.name}>{tab.name}</option>
-            ))}
-          </select>
         </label>
+        <select
+          id="tabs"
+          name="tabs"
+          className="block w-full focus:ring-blue-500 focus:border-blue-500 border-gray-300 rounded-md"
+          defaultValue={tabs.find((tab) => tab.name === currentTab).name}
+        >
+          {tabs.map((tab) => (
+            <option key={tab.name}>{tab.name}</option>
+          ))}
+        </select>
       </div>
       <div className="hidden sm:block">
         <div className="border-b border-gray-200">
