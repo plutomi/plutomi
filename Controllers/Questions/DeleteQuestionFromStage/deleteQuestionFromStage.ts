@@ -1,13 +1,12 @@
 import { Request, Response } from 'express';
-import { deleteQuestionFromStage } from '../../../models/Questions';
-import { getStage } from '../../../models/Stages';
+import DB from '../../../models';
 
 import * as CreateError from '../../../utils/createError';
 
 export const main = async (req: Request, res: Response) => {
   const { session } = res.locals;
   const { openingId, stageId, questionId } = req.params;
-  const [stage, error] = await getStage({
+  const [stage, error] = await DB.Stages.getStage({
     openingId,
     stageId,
     orgId: session.orgId,
@@ -33,7 +32,7 @@ export const main = async (req: Request, res: Response) => {
   }
 
   // Remove that question
-  const [updated, updateError] = await deleteQuestionFromStage({
+  const [updated, updateError] = await DB.Questions.deleteQuestionFromStage({
     openingId,
     stageId,
     questionId,

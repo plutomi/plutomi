@@ -3,7 +3,7 @@ import Joi from 'joi';
 import * as CreateError from '../../../utils/createError';
 import { DynamoQuestion } from '../../../types/dynamo';
 import { JOI_SETTINGS, LIMITS } from '../../../Config';
-import { createQuestion } from '../../../models/Questions';
+import DB from '../../../models';
 
 export type APICreateQuestionOptions = Pick<
   DynamoQuestion,
@@ -27,7 +27,7 @@ export const main = async (req: Request, res: Response) => {
   }
   const { questionId, description, GSI1SK }: APICreateQuestionOptions = req.body;
 
-  const [created, error] = await createQuestion({
+  const [created, error] = await DB.Questions.createQuestion({
     questionId,
     orgId: session.orgId,
     GSI1SK,

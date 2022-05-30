@@ -1,11 +1,11 @@
 import { Request, Response } from 'express';
-import { getOrg } from '../../../models/Orgs';
+import DB from '../../../models';
 import * as CreateError from '../../../utils/createError';
 
 export const main = async (req: Request, res: Response) => {
   const { session } = res.locals;
 
-  const [org, error] = await getOrg({ orgId: session.orgId });
+  const [org, error] = await DB.Orgs.getOrg({ orgId: session.orgId });
 
   if (error) {
     const { status, body } = CreateError.SDK(error, 'Unable to retrieve org info');

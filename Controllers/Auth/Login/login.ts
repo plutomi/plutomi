@@ -1,8 +1,8 @@
 import { Request, Response } from 'express';
 import Joi from 'joi';
 import { JOI_SETTINGS, WEBSITE_URL, COOKIE_NAME, COOKIE_SETTINGS } from '../../../Config';
-import { createLoginEvent, getUserById } from '../../../models/Users';
 import * as CreateError from '../../../utils/createError';
+import DB from '../../../models';
 
 const jwt = require('jsonwebtoken');
 
@@ -41,7 +41,7 @@ export const login = async (req: Request, res: Response) => {
     return res.status(401).json({ message: 'Invalid login link' });
   }
 
-  const [user, error] = await getUserById({ userId });
+  const [user, error] = await DB.Users.getUserById({ userId });
 
   if (error) {
     const { status, body } = CreateError.SDK(error, 'An error ocurred using your login link');
@@ -58,7 +58,7 @@ export const login = async (req: Request, res: Response) => {
 
   // If this is a new user, an asynchronous welcome email is sent through step functions
   // It triggers if the user.verifiedEmail is false
-  const [success, failed] = await createLoginEvent({
+  const [success, failed] = await DB.Users.createLoginEvent({
     loginLinkId,
     user,
   });

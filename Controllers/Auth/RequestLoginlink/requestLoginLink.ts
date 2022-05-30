@@ -13,12 +13,7 @@ import {
 } from '../../../Config';
 import * as Time from '../../../utils/time';
 import * as CreateError from '../../../utils/createError';
-import {
-  createLoginLink,
-  createUser,
-  getLatestLoginLink,
-  getUserByEmail,
-} from '../../../models/Users';
+import DB from '../../../models';
 
 const jwt = require('jsonwebtoken');
 
@@ -61,7 +56,7 @@ export const requestLoginLink = async (req: Request, res: Response) => {
 
   // If a user is signing in for the first time, create an account for them
   // eslint-disable-next-line prefer-const
-  let [user, userError] = await getUserByEmail({ email });
+  let [user, userError] = await DB.Users.getUserByEmail({ email });
   if (userError) {
     console.error(userError);
     const { status, body } = CreateError.SDK(userError, 'An error ocurred getting your user info');
@@ -69,7 +64,7 @@ export const requestLoginLink = async (req: Request, res: Response) => {
   }
 
   if (!user) {
-    const [createdUser, createUserError] = await createUser({
+    const [createdUser, createUserError] = await DB.Users.getUserByEmail({
       email,
     });
     if (createUserError) {
@@ -92,7 +87,7 @@ export const requestLoginLink = async (req: Request, res: Response) => {
   }
 
   // Check if a user is  making too many requests for a login link by comparing the time of their last link
-  const [latestLink, loginLinkError] = await getLatestLoginLink({
+  const [latestLink, loginLinkError] = await DB.Users.getLatestLoginLink({
     userId: user.userId,
   });
 
@@ -133,7 +128,7 @@ export const requestLoginLink = async (req: Request, res: Response) => {
   /**
    * Email will be sent asynchronously
    */
-  const [success, creationError] = await createLoginLink({
+  const [success, creationError] = await DB.Users.createLoginLink({
     loginLinkId,
     loginLinkUrl,
     loginLinkExpiry,

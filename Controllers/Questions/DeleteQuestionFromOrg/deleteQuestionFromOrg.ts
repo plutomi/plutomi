@@ -1,11 +1,11 @@
 import { Request, Response } from 'express';
-import { deleteQuestionFromOrg } from '../../../models/Questions';
+import DB from '../../../models';
 import * as CreateError from '../../../utils/createError';
 
 export const main = async (req: Request, res: Response) => {
   const { session } = res.locals;
 
-  const [success, failure] = await deleteQuestionFromOrg({
+  const [success, failure] = await DB.Questions.deleteQuestionFromOrg({
     orgId: session.orgId,
     questionId: req.params.questionId,
   });

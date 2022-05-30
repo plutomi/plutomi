@@ -4,7 +4,7 @@ import { DEFAULTS, JOI_SETTINGS, JoiOrgId } from '../../../Config';
 import * as CreateError from '../../../utils/createError';
 import { DynamoOrg } from '../../../types/dynamo';
 import { getInvitesForUser } from '../../../models/Invites';
-import { createAndJoinOrg } from '../../../models/Orgs';
+import DB from '../../../models';
 
 export type APICreateOrgOptions = Required<Pick<DynamoOrg, 'orgId' | 'displayName'>>;
 
@@ -51,7 +51,7 @@ export const main = async (req: Request, res: Response) => {
 
   const { displayName, orgId }: APICreateOrgOptions = req.body;
 
-  const [created, failed] = await createAndJoinOrg({
+  const [created, failed] = await DB.Orgs.createAndJoinOrg({
     userId: session.userId,
     orgId,
     displayName,

@@ -11,7 +11,7 @@ interface RejectOrgInviteInput {
 /**
  * Rejects an invite and deletes it
  */
-export const rejectInvite = async (
+export const deleteInvite = async (
   props: RejectOrgInviteInput,
 ): Promise<[undefined, undefined] | [undefined, SdkError]> => {
   const { userId, inviteId } = props;

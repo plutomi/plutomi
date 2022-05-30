@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import { deleteOpening } from '../../../models/Openings';
+import DB from '../../../models';
 import * as CreateError from '../../../utils/createError';
 
 export const main = async (req: Request, res: Response) => {
@@ -7,7 +7,7 @@ export const main = async (req: Request, res: Response) => {
   const { orgId } = session;
   const { openingId } = req.params;
 
-  const [opening, error] = await deleteOpening({
+  const [opening, error] = await DB.Openings.deleteOpening({
     openingId,
     orgId,
   });

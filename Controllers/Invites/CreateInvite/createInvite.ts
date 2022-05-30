@@ -6,8 +6,7 @@ import { ERRORS, JOI_SETTINGS, ORG_INVITE_EXPIRY_DAYS, TIME_UNITS } from '../../
 import * as CreateError from '../../../utils/createError';
 import * as Time from '../../../utils/time';
 import { getOrg } from '../../../models/Orgs';
-import { createUser, getUserByEmail } from '../../../models/Users';
-import { createInvite, getInvitesForUser } from '../../../models/Invites';
+import DB from '../../../models';
 
 const schema = Joi.object({
   body: {
@@ -52,7 +51,7 @@ export const main = async (req: Request, res: Response) => {
   }
 
   // eslint-disable-next-line prefer-const
-  let [recipient, recipientError] = await getUserByEmail({
+  let [recipient, recipientError] = await DB.Users.getUserByEmail({
     email: recipientEmail,
   });
 
@@ -66,7 +65,7 @@ export const main = async (req: Request, res: Response) => {
 
   // Invite is for a user that doesn't exist
   if (!recipient) {
-    const [createdUser, createUserError] = await createUser({
+    const [createdUser, createUserError] = await DB.Users.createUser({
       email: recipientEmail,
     });
 
@@ -86,7 +85,7 @@ export const main = async (req: Request, res: Response) => {
   }
 
   // Check if the user we are inviting already has pending invites for the current org
-  const [recipientInvites, recipientInvitesError] = await getInvitesForUser({
+  const [recipientInvites, recipientInvitesError] = await DB.Invites.getInvitesForUser({
     userId: recipient.userId,
   });
 
@@ -106,7 +105,7 @@ export const main = async (req: Request, res: Response) => {
     });
   }
 
-  const [inviteCreated, inviteError] = await createInvite({
+  const [inviteCreated, inviteError] = await DB.Invites.createInvite({
     recipient: pick(recipient, ['userId', 'email', 'firstName', 'lastName', 'unsubscribeKey']),
     orgName: org.displayName,
     expiresAt: Time.futureISO(expiresInDays || ORG_INVITE_EXPIRY_DAYS, TIME_UNITS.DAYS), // TODO https://github.com/plutomi/plutomi/issues/333

@@ -1,11 +1,11 @@
 import { Request, Response } from 'express';
-import { getQuestionsInOrg } from '../../../models/Questions';
+import DB from '../../../models';
 import * as CreateError from '../../../utils/createError';
 
 export const main = async (req: Request, res: Response) => {
   const { session } = res.locals;
 
-  const [questions, questionsError] = await getQuestionsInOrg({
+  const [questions, questionsError] = await DB.Questions.getQuestionsInOrg({
     orgId: session.orgId,
   });
 

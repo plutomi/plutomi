@@ -1,12 +1,12 @@
 import { Request, Response } from 'express';
-import { rejectInvite } from '../../../models/Invites';
+import DB from '../../../models';
 import * as CreateError from '../../../utils/createError';
 
 export const main = async (req: Request, res: Response) => {
   const { session } = res.locals;
   const { inviteId } = req.params;
 
-  const [deleted, error] = await rejectInvite({
+  const [deleted, error] = await DB.Invites.deleteInvite({
     inviteId,
     userId: session.userId,
   });

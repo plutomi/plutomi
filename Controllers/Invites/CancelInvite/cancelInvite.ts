@@ -1,8 +1,8 @@
 import { Request, Response } from 'express';
 import Joi from 'joi';
 import { JOI_SETTINGS } from '../../../Config';
-import { rejectInvite } from '../../../models/Invites';
 import * as CreateError from '../../../utils/createError';
+import DB from '../../../models';
 
 const schema = Joi.object({
   body: {
@@ -19,7 +19,7 @@ export const main = async (req: Request, res: Response) => {
   }
   const { inviteId, userId } = req.body;
 
-  const [deleted, error] = await rejectInvite({
+  const [deleted, error] = await DB.Invites.deleteInvite({
     inviteId,
     userId,
   });
