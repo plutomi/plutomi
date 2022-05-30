@@ -26,7 +26,7 @@ export default function StageApplicants() {
     if (applicantId && typeof applicantId === 'string' && applicantId !== '') {
       openApplicantProfileModal();
     }
-  }, [router.isReady]);
+  }, [router.isReady, openApplicantProfileModal, router.query]);
 
   return (
     <NewPage

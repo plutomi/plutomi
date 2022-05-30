@@ -102,8 +102,6 @@ export default function CreateStageModal() {
                               className="block text-sm font-medium text-dark"
                             >
                               Stage Name
-                            </label>
-                            <div className="mt-1">
                               <input
                                 type="text"
                                 name="opening-name"
@@ -114,7 +112,7 @@ export default function CreateStageModal() {
                                 value={GSI1SK}
                                 className="block w-full shadow-sm sm:text-sm focus:ring-blue-500 focus:border-blue-500 border-gray-300 rounded-md"
                               />
-                            </div>
+                            </label>
                           </div>
                         </div>
                       </div>

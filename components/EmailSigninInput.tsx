@@ -1,7 +1,7 @@
 import { FormEvent } from 'react';
 
 interface LoginEmailprops {
-  email: `${string}@${string}.${string}`;
+  email: string;
   onChange: (value: string) => void;
   sendEmail: (e: FormEvent<HTMLFormElement>) => void;
   buttonText: string;

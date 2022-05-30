@@ -193,10 +193,10 @@ export default function ApplicantProfileModal() {
                     <div className="">
                       <nav className="-mb-px flex w-full " x-descriptions="Tab component">
                         {tabs.map((tab) => (
-                          <a
+                          <button
+                            type="button"
                             onClick={(e) => handleNavClick(e, tab.id)}
                             key={tab.name}
-                            href={null}
                             className={combineClassNames(
                               tab.id === currentActive
                                 ? 'border-blue-500 text-blue-600'
@@ -205,14 +205,14 @@ export default function ApplicantProfileModal() {
                             )}
                           >
                             {tab.name}
-                          </a>
+                          </button>
                         ))}
                       </nav>
                     </div>
                   </div>
 
                   <div className="p-4 ">
-                    {currentActive === 1 ? (
+                    {currentActive === 1 && (
                       <>
                         {/* TODO refactor this to its own component */}
                         {applicant?.responses?.length ? (
@@ -244,13 +244,10 @@ export default function ApplicantProfileModal() {
                           </h1>
                         )}
                       </>
-                    ) : currentActive === 2 ? (
-                      <h1>Viewing History</h1>
-                    ) : currentActive === 3 ? (
-                      <h1>Viewing messages</h1>
-                    ) : (
-                      <h1>Invalid nav index</h1>
                     )}
+                    {currentActive === 2 && <h1>Viewing History</h1>}
+                    {currentActive === 3 && <h1>Viewing messages</h1>}
+                    {currentActive === 4 && <h1>Invalid nav index</h1>}
                   </div>
                 </div>
               </div>

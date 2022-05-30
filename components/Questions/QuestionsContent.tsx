@@ -31,7 +31,6 @@ export default function QuestionsContent() {
         <EmptyQuestionsState />
       ) : (
         <div>
-          {' '}
           <UpdateQuestionModal question={currentQuestion} />
           <div className="flex-1 my-2 flex md:mt-0  items-center  md:flex-grow justify-center">
             <p className="mx-12">Total questions: {org?.totalQuestions || orgQuestions?.length}</p>

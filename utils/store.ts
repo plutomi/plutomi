@@ -132,7 +132,7 @@ const useStore = create((set) => ({
       showUpdateQuestionModal: false,
     })),
   // Since questions do not have their own page, we have to do this for passing state around :(
-  currentQuestion: {},
+  currentQuestion: undefined,
   setCurrentQuestion: (question: DynamoQuestion) =>
     set(() => ({
       currentQuestion: question,
