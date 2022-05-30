@@ -1,9 +1,9 @@
 import { Request, Response } from 'express';
 import Joi from 'joi';
-import { JOI_SETTINGS, LIMITS } from '../../Config';
-import * as CreateError from '../../utils/createError';
-import { DynamoWebhook } from '../../types/dynamo';
-import { createWebhook } from '../../models/Webhooks';
+import { JOI_SETTINGS, LIMITS } from '../../../Config';
+import * as CreateError from '../../../utils/createError';
+import { DynamoWebhook } from '../../../types/dynamo';
+import { createWebhook } from '../../../models/Webhooks';
 
 export type APICreateWebhookOptions = Pick<
   DynamoWebhook,
@@ -18,7 +18,7 @@ const schema = Joi.object({
   },
 }).options(JOI_SETTINGS);
 
-const main = async (req: Request, res: Response) => {
+export const main = async (req: Request, res: Response) => {
   const { session } = res.locals;
   try {
     await schema.validateAsync(req);
@@ -46,4 +46,3 @@ const main = async (req: Request, res: Response) => {
 
   return res.status(201).json({ message: 'Webhook created!' });
 };
-export default main;

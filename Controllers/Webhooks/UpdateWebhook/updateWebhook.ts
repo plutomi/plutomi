@@ -1,10 +1,10 @@
 import { Request, Response } from 'express';
 import Joi from 'joi';
-import * as CreateError from '../../utils/createError';
-import { JOI_GLOBAL_FORBIDDEN, JOI_SETTINGS, LIMITS } from '../../Config';
-import { DynamoWebhook } from '../../types/dynamo';
-import { updateWebhook } from '../../models/Webhooks';
-import { UpdateWebhookInput } from '../../models/Webhooks/UpdateWebhook';
+import * as CreateError from '../../../utils/createError';
+import { JOI_GLOBAL_FORBIDDEN, JOI_SETTINGS, LIMITS } from '../../../Config';
+import { DynamoWebhook } from '../../../types/dynamo';
+import { updateWebhook } from '../../../models/Webhooks';
+import { UpdateWebhookInput } from '../../../models/Webhooks/UpdateWebhook';
 
 export interface APIUpdateWebhookOptions
   extends Partial<Pick<DynamoWebhook, 'webhookName' | 'webhookUrl' | 'description'>> {
@@ -25,7 +25,7 @@ const schema = Joi.object({
   body: JOI_FORBIDDEN_WEBHOOK,
 }).options(JOI_SETTINGS);
 
-const main = async (req: Request, res: Response) => {
+export const main = async (req: Request, res: Response) => {
   try {
     await schema.validateAsync(req);
   } catch (error) {
@@ -54,5 +54,3 @@ const main = async (req: Request, res: Response) => {
     message: 'Webhook updated!',
   });
 };
-
-export default main;
