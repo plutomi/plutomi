@@ -1,12 +1,14 @@
 import { QueryCommandInput, QueryCommand } from '@aws-sdk/lib-dynamodb';
 import { SdkError } from '@aws-sdk/types';
-import { Dynamo } from '../../awsClients/ddbDocClient';
-import { DYNAMO_TABLE_NAME, Entities } from '../../Config';
-import { GetApplicantsInStageInput, GetApplicantsInStageOutput } from '../../types/main';
+import { Dynamo } from '../../../awsClients/ddbDocClient';
+import { DYNAMO_TABLE_NAME, Entities } from '../../../Config';
+import { DynamoApplicant, DynamoStage } from '../../../types/dynamo';
 
-export default async function GetApplicants(
+type GetApplicantsInStageInput = Pick<DynamoStage, 'orgId' | 'stageId' | 'openingId'>;
+
+export const getApplicantsInStage = async (
   props: GetApplicantsInStageInput,
-): Promise<[GetApplicantsInStageOutput, null] | [null, SdkError]> {
+): Promise<[DynamoApplicant[], null] | [null, SdkError]> => {
   const { orgId, stageId, openingId } = props;
 
   const params: QueryCommandInput = {
@@ -21,10 +23,10 @@ export default async function GetApplicants(
   try {
     // TODO - Query until ALL items returned!
     const response = await Dynamo.send(new QueryCommand(params));
-    const allApplicants = response.Items as GetApplicantsInStageOutput;
+    const allApplicants = response.Items;
 
-    return [allApplicants, null];
+    return [allApplicants as DynamoApplicant[], null];
   } catch (error) {
     return [null, error];
   }
-}
+};

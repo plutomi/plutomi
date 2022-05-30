@@ -6,10 +6,10 @@ import { DYNAMO_TABLE_NAME, Entities } from '../../../Config';
 import { GetApplicantByIdOutput } from '../../../types/main';
 import { DynamoApplicant } from '../../../types/dynamo';
 
-export type GetDynamoApplicantInput = Pick<DynamoApplicant, 'orgId' | 'applicantId'>;
+export type GetApplicantInput = Pick<DynamoApplicant, 'orgId' | 'applicantId'>;
 
 export const getApplicant = async (
-  props: GetDynamoApplicantInput,
+  props: GetApplicantInput,
 ): Promise<[DynamoApplicant, null] | [null, SdkError]> => {
   const { orgId, applicantId } = props;
   const responsesParams: QueryCommandInput = {
@@ -36,7 +36,7 @@ export const getApplicant = async (
 
     const metadata = grouped.APPLICANT[0] as DynamoApplicant;
     const responses = grouped.APPLICANT_RESPONSE;
-    
+
     // TODO files
     const applicant: GetApplicantByIdOutput = {
       ...metadata,

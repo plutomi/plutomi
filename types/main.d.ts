@@ -52,8 +52,6 @@ interface DeleteStageInput extends Pick<DynamoStage, 'orgId' | 'stageId' | 'open
   deleteIndex: number;
 }
 type GetStageByIdInput = Pick<DynamoStage, 'orgId' | 'stageId' | 'openingId'>;
-type GetApplicantsInStageInput = Pick<DynamoStage, 'orgId' | 'stageId' | 'openingId'>;
-type GetApplicantsInStageOutput = DynamoApplicant[];
 
 export interface UpdateStageInput extends Pick<DynamoStage, 'orgId' | 'stageId' | 'openingId'> {
   newValues: { [key: string]: any };
@@ -111,12 +109,6 @@ export interface UpdateApplicantOutput extends DynamoApplicant {
   responses: Object[]; // TODO fix this type with a response type
 }
 
-type CreateApplicantResponseInput = Pick<
-  DynamoApplicantResponse,
-  'orgId' | 'applicantId' | 'questionTitle' | 'description' | 'questionResponse'
->;
-
-type CreateApplicantResponseOutput = DynamoApplicantResponse;
 
 type CreateOpeningInput = Pick<DynamoOpening, 'orgId' | 'openingName'>;
 type DeleteOpeningInput = Pick<DynamoOpening, 'orgId' | 'openingId'>;

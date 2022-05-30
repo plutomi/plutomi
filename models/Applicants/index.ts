@@ -1,13 +1,13 @@
-import CreateApplicant from './CreateApplicant/createApplicant';
-import GetApplicantById from './GetApplicant/getApplicant';
-import DeleteApplicant from './DeleteApplicant/deleteApplicant';
-import UpdateApplicant from './UpdateApplicant/updateApplicant';
-import CreateApplicantResponse from './create-applicant-response';
-import GetApplicantsInStage from './get-applicants-in-stage';
+import * as CreateApplicant from './CreateApplicant';
+import * as GetApplicant from './GetApplicant';
+import * as DeleteApplicant from './DeleteApplicant';
+import * as UpdateApplicant from './UpdateApplicant';
+import * as CreateApplicantResponse from './CreateApplicantResponse';
+import * as GetApplicantsInStage from './GetApplicantsInStage';
 
 export {
   CreateApplicant,
-  GetApplicantById,
+  GetApplicant,
   DeleteApplicant,
   UpdateApplicant,
   CreateApplicantResponse,

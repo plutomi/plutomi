@@ -6,13 +6,13 @@ import { ID_LENGTHS, Entities, OpeningState, DYNAMO_TABLE_NAME } from '../../../
 import { DynamoApplicant } from '../../../types/dynamo';
 import * as Time from '../../../utils/time';
 
-export type CreateDynamoApplicantInput = Pick<
+export type CreateApplicantInput = Pick<
   DynamoApplicant,
   'orgId' | 'firstName' | 'lastName' | 'email' | 'openingId' | 'stageId'
 >;
 
 export const createApplicant = async (
-  props: CreateDynamoApplicantInput,
+  props: CreateApplicantInput,
 ): Promise<[DynamoApplicant, null] | [null, SdkError]> => {
   const { orgId, firstName, lastName, email, openingId, stageId } = props;
 

@@ -4,13 +4,13 @@ import { Dynamo } from '../../../awsClients/ddbDocClient';
 import { DYNAMO_TABLE_NAME, Entities } from '../../../Config';
 import { DynamoApplicant } from '../../../types/dynamo';
 
-export type DeleteDynamoApplicantInput = Pick<
+export type DeleteApplicantInput = Pick<
   DynamoApplicant,
   'orgId' | 'applicantId' | 'openingId' | 'stageId' // Last two are needed to decrement the applicant count
 >;
 
 export const deleteApplicant = async (
-  props: DeleteDynamoApplicantInput,
+  props: DeleteApplicantInput,
 ): Promise<[null, null] | [null, SdkError]> => {
   const { orgId, applicantId, openingId, stageId } = props;
   try {
