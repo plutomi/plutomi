@@ -40,22 +40,6 @@ interface CustomQuery {
   questionId: string;
   inviteId: string;
 }
-export interface CreateStageInput extends Pick<DynamoStage, 'orgId' | 'GSI1SK' | 'openingId'> {
-  /**
-   * Optional position on where to place the new opening, optional. Added to the end if not provided
-   */
-  position?: number;
-  // To figure out where to place it
-  stageOrder: string[];
-}
-interface DeleteStageInput extends Pick<DynamoStage, 'orgId' | 'stageId' | 'openingId'> {
-  deleteIndex: number;
-}
-type GetStageByIdInput = Pick<DynamoStage, 'orgId' | 'stageId' | 'openingId'>;
-
-export interface UpdateStageInput extends Pick<DynamoStage, 'orgId' | 'stageId' | 'openingId'> {
-  newValues: { [key: string]: any };
-}
 
 export interface SettingsCrumbsProps {
   name: string;
@@ -95,8 +79,6 @@ export interface GetApplicantByIdOutput extends DynamoApplicant {
 export interface UpdateApplicantOutput extends DynamoApplicant {
   responses: Object[]; // TODO fix this type with a response type
 }
-
-type GetStagesInOpeningInput = Pick<DynamoOpening, 'orgId' | 'openingId' | 'stageOrder'>;
 
 export interface UpdateWebhookInput extends Pick<DynamoWebhook, 'orgId' | 'webhookId'> {
   newValues: { [key: string]: any };

@@ -1,13 +1,14 @@
 import { QueryCommandInput, QueryCommand } from '@aws-sdk/lib-dynamodb';
 import { SdkError } from '@aws-sdk/types';
-import { Dynamo } from '../../awsClients/ddbDocClient';
-import { DYNAMO_TABLE_NAME, Entities } from '../../Config';
-import { DynamoStage } from '../../types/dynamo';
-import { GetStagesInOpeningInput } from '../../types/main';
+import { Dynamo } from '../../../awsClients/ddbDocClient';
+import { DYNAMO_TABLE_NAME, Entities } from '../../../Config';
+import { DynamoOpening, DynamoStage } from '../../../types/dynamo';
 
-export default async function GetStagesInOpening(
+type GetStagesInOpeningInput = Pick<DynamoOpening, 'orgId' | 'openingId' | 'stageOrder'>;
+
+export const getStagesInOpening = async (
   props: GetStagesInOpeningInput,
-): Promise<[DynamoStage[], null] | [null, SdkError]> {
+): Promise<[DynamoStage[], null] | [null, SdkError]> => {
   const { orgId, openingId, stageOrder } = props;
   const params: QueryCommandInput = {
     TableName: `${process.env.NODE_ENV}-${DYNAMO_TABLE_NAME}`,
@@ -28,4 +29,4 @@ export default async function GetStagesInOpening(
   } catch (error) {
     return [null, error];
   }
-}
+};

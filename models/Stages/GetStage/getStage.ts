@@ -1,17 +1,14 @@
 import { GetCommandInput, GetCommand } from '@aws-sdk/lib-dynamodb';
 import { SdkError } from '@aws-sdk/types';
-import { Dynamo } from '../../awsClients/ddbDocClient';
-import { DYNAMO_TABLE_NAME, Entities } from '../../Config';
-import { GetStageByIdInput } from '../../types/main';
-import { DynamoStage } from '../../types/dynamo';
-/**
- * Returns a stage by its ID.
- * @param props {@link GetStageByIdInput}
- * @returns - {@link GetStageByIdOutput}
- */
-export default async function GetStageById(
+import { Dynamo } from '../../../awsClients/ddbDocClient';
+import { DYNAMO_TABLE_NAME, Entities } from '../../../Config';
+import { DynamoStage } from '../../../types/dynamo';
+
+type GetStageByIdInput = Pick<DynamoStage, 'orgId' | 'stageId' | 'openingId'>;
+
+export const getStage = async (
   props: GetStageByIdInput,
-): Promise<[DynamoStage, null] | [null, SdkError]> {
+): Promise<[DynamoStage, null] | [null, SdkError]> => {
   const { orgId, stageId, openingId } = props;
   const params: GetCommandInput = {
     TableName: `${process.env.NODE_ENV}-${DYNAMO_TABLE_NAME}`,
@@ -27,4 +24,4 @@ export default async function GetStageById(
   } catch (error) {
     return [null, error];
   }
-}
+};
