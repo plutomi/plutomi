@@ -1,10 +1,10 @@
 import { Request, Response } from 'express';
-import { DEFAULTS } from '../../Config';
-import { acceptInvite, getInvite } from '../../models/Invites';
-import * as CreateError from '../../utils/createError';
-import * as Time from '../../utils/time';
+import { DEFAULTS } from '../../../Config';
+import { acceptInvite, getInvite } from '../../../models/Invites';
+import * as CreateError from '../../../utils/createError';
+import * as Time from '../../../utils/time';
 
-const main = async (req: Request, res: Response) => {
+export const main = async (req: Request, res: Response) => {
   const { session } = res.locals;
   const { inviteId } = req.params;
 
@@ -55,4 +55,3 @@ const main = async (req: Request, res: Response) => {
 
   return res.status(200).json({ message: `You've joined the ${invite.orgName} org!` });
 };
-export default main;

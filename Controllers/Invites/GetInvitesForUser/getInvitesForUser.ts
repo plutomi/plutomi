@@ -1,8 +1,8 @@
 import { Request, Response } from 'express';
-import { getInvitesForUser } from '../../models/Invites';
-import * as CreateError from '../../utils/createError';
+import { getInvitesForUser } from '../../../models/Invites';
+import * as CreateError from '../../../utils/createError';
 
-const main = async (req: Request, res: Response) => {
+export const main = async (req: Request, res: Response) => {
   const { session } = res.locals;
   const [invites, error] = await getInvitesForUser({
     userId: session.userId,
@@ -15,4 +15,3 @@ const main = async (req: Request, res: Response) => {
 
   return res.status(200).json(invites);
 };
-export default main;

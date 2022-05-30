@@ -2,12 +2,12 @@ import { Request, Response } from 'express';
 import Joi from 'joi';
 import emailValidator from 'deep-email-validator';
 import { pick } from 'lodash';
-import { ERRORS, JOI_SETTINGS, ORG_INVITE_EXPIRY_DAYS, TIME_UNITS } from '../../Config';
-import * as CreateError from '../../utils/createError';
-import * as Time from '../../utils/time';
-import { getOrg } from '../../models/Orgs';
-import { createUser, getUserByEmail } from '../../models/Users';
-import { createInvite, getInvitesForUser } from '../../models/Invites';
+import { ERRORS, JOI_SETTINGS, ORG_INVITE_EXPIRY_DAYS, TIME_UNITS } from '../../../Config';
+import * as CreateError from '../../../utils/createError';
+import * as Time from '../../../utils/time';
+import { getOrg } from '../../../models/Orgs';
+import { createUser, getUserByEmail } from '../../../models/Users';
+import { createInvite, getInvitesForUser } from '../../../models/Invites';
 
 const schema = Joi.object({
   body: {
@@ -15,7 +15,8 @@ const schema = Joi.object({
     expiresInDays: Joi.number().min(1).max(365).optional(),
   },
 }).options(JOI_SETTINGS);
-const main = async (req: Request, res: Response) => {
+
+export const main = async (req: Request, res: Response) => {
   try {
     await schema.validateAsync(req);
   } catch (error) {
@@ -121,4 +122,3 @@ const main = async (req: Request, res: Response) => {
   // Email sent asynchronously through step functions
   return res.status(201).json({ message: `Invite sent to '${recipientEmail}'` });
 };
-export default main;

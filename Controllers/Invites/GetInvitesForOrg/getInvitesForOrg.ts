@@ -1,8 +1,8 @@
 import { Request, Response } from 'express';
-import { getInvitesForOrg } from '../../models/Invites';
-import * as CreateError from '../../utils/createError';
+import { getInvitesForOrg } from '../../../models/Invites';
+import * as CreateError from '../../../utils/createError';
 
-const main = async (req: Request, res: Response) => {
+export const main = async (req: Request, res: Response) => {
   const { orgId } = req.params;
 
   const [invites, error] = await getInvitesForOrg({ orgId });
@@ -14,4 +14,3 @@ const main = async (req: Request, res: Response) => {
 
   return res.status(200).json(invites);
 };
-export default main;

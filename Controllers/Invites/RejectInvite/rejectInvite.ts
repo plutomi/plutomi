@@ -1,8 +1,8 @@
 import { Request, Response } from 'express';
-import { rejectInvite } from '../../models/Invites';
-import * as CreateError from '../../utils/createError';
+import { rejectInvite } from '../../../models/Invites';
+import * as CreateError from '../../../utils/createError';
 
-const main = async (req: Request, res: Response) => {
+export const main = async (req: Request, res: Response) => {
   const { session } = res.locals;
   const { inviteId } = req.params;
 
@@ -18,4 +18,3 @@ const main = async (req: Request, res: Response) => {
 
   return res.status(200).json({ message: 'Invite rejected!' });
 };
-export default main;

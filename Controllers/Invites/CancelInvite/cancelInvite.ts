@@ -1,8 +1,8 @@
 import { Request, Response } from 'express';
 import Joi from 'joi';
-import { JOI_SETTINGS } from '../../Config';
-import { rejectInvite } from '../../models/Invites';
-import * as CreateError from '../../utils/createError';
+import { JOI_SETTINGS } from '../../../Config';
+import { rejectInvite } from '../../../models/Invites';
+import * as CreateError from '../../../utils/createError';
 
 const schema = Joi.object({
   body: {
@@ -10,7 +10,7 @@ const schema = Joi.object({
     userId: Joi.string(),
   },
 }).options(JOI_SETTINGS);
-const main = async (req: Request, res: Response) => {
+export const main = async (req: Request, res: Response) => {
   try {
     await schema.validateAsync(req);
   } catch (error) {
@@ -31,4 +31,3 @@ const main = async (req: Request, res: Response) => {
 
   return res.status(200).json({ message: 'Invite cancelled!' });
 };
-export default main;
