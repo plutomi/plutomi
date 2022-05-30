@@ -1,13 +1,14 @@
 import { GetCommandInput, GetCommand } from '@aws-sdk/lib-dynamodb';
 import { SdkError } from '@aws-sdk/types';
-import { Dynamo } from '../../awsClients/ddbDocClient';
-import { DYNAMO_TABLE_NAME, Entities } from '../../Config';
-import { DynamoOpening } from '../../types/dynamo';
-import { GetOpeningByIdInput } from '../../types/main';
+import { Dynamo } from '../../../awsClients/ddbDocClient';
+import { DYNAMO_TABLE_NAME, Entities } from '../../../Config';
+import { DynamoOpening } from '../../../types/dynamo';
 
-export default async function GetOpeningById(
+type GetOpeningByIdInput = Pick<DynamoOpening, 'orgId' | 'openingId'>;
+
+export const getOpening = async (
   props: GetOpeningByIdInput,
-): Promise<[DynamoOpening, null] | [null, SdkError]> {
+): Promise<[DynamoOpening, null] | [null, SdkError]> => {
   const { orgId, openingId } = props;
   const params: GetCommandInput = {
     TableName: `${process.env.NODE_ENV}-${DYNAMO_TABLE_NAME}`,
@@ -23,4 +24,4 @@ export default async function GetOpeningById(
   } catch (error) {
     return [null, error];
   }
-}
+};

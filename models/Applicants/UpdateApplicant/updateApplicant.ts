@@ -8,6 +8,7 @@ export interface UpdateDynamoApplicantInput extends Pick<DynamoApplicant, 'orgId
   newValues: { [key: string]: any };
 }
 
+// TODO new udpate method https://github.com/plutomi/plutomi/issues/594
 export const updateApplicant = async (
   props: UpdateDynamoApplicantInput,
 ): Promise<[null, null] | [null, SdkError]> => {

@@ -1,13 +1,21 @@
 import { QueryCommandInput, QueryCommand } from '@aws-sdk/lib-dynamodb';
 import { SdkError } from '@aws-sdk/types';
-import { Dynamo } from '../../awsClients/ddbDocClient';
-import { DYNAMO_TABLE_NAME, Entities } from '../../Config';
-import { DynamoOpening } from '../../types/dynamo';
-import { GetOpeningsInOrgInput } from '../../types/main';
+import { Dynamo } from '../../../awsClients/ddbDocClient';
+import { DYNAMO_TABLE_NAME, Entities, OpeningState } from '../../../Config';
+import { DynamoOpening } from '../../../types/dynamo';
 
-export default async function GetOpeningsInOrg(
+interface GetOpeningsInOrgInput extends Pick<DynamoOpening, 'orgId'> {
+  GSI1SK?: OpeningState;
+}
+
+/**
+ * Retrieves openings in an org. Provide a `GSI1SK` to filter on public or private
+ * @param props
+ * @returns
+ */
+export const getOpeningsInOrg = async (
   props: GetOpeningsInOrgInput,
-): Promise<[DynamoOpening[], null] | [null, SdkError]> {
+): Promise<[DynamoOpening[], null] | [null, SdkError]> => {
   const { orgId, GSI1SK } = props;
   const params: QueryCommandInput = {
     TableName: `${process.env.NODE_ENV}-${DYNAMO_TABLE_NAME}`,
@@ -30,4 +38,4 @@ export default async function GetOpeningsInOrg(
   } catch (error) {
     return [null, error];
   }
-}
+};

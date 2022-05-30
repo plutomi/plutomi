@@ -1,15 +1,16 @@
 import { TransactWriteCommandInput, TransactWriteCommand } from '@aws-sdk/lib-dynamodb';
 import { nanoid } from 'nanoid';
 import { SdkError } from '@aws-sdk/types';
-import { Dynamo } from '../../awsClients/ddbDocClient';
-import { ID_LENGTHS, Entities, OpeningState, DYNAMO_TABLE_NAME } from '../../Config';
-import { DynamoOpening } from '../../types/dynamo';
-import { CreateOpeningInput } from '../../types/main';
-import * as Time from '../../utils/time';
+import { Dynamo } from '../../../awsClients/ddbDocClient';
+import { ID_LENGTHS, Entities, OpeningState, DYNAMO_TABLE_NAME } from '../../../Config';
+import { DynamoOpening } from '../../../types/dynamo';
+import * as Time from '../../../utils/time';
 
-export default async function CreateOpening(
+type CreateOpeningInput = Pick<DynamoOpening, 'orgId' | 'openingName'>;
+
+export const createOpening = async (
   props: CreateOpeningInput,
-): Promise<[DynamoOpening, null] | [null, SdkError]> {
+): Promise<[DynamoOpening, null] | [null, SdkError]> => {
   const { orgId, openingName } = props;
   const openingId = nanoid(ID_LENGTHS.OPENING);
   const newOpening: DynamoOpening = {
@@ -61,4 +62,4 @@ export default async function CreateOpening(
   } catch (error) {
     return [null, error];
   }
-}
+};

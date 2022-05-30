@@ -109,19 +109,8 @@ export interface UpdateApplicantOutput extends DynamoApplicant {
   responses: Object[]; // TODO fix this type with a response type
 }
 
-type CreateOpeningInput = Pick<DynamoOpening, 'orgId' | 'openingName'>;
-type DeleteOpeningInput = Pick<DynamoOpening, 'orgId' | 'openingId'>;
-
-// Retrieves all oepnings by default, can filter on public or private
-interface GetOpeningsInOrgInput extends Pick<DynamoOpening, 'orgId'> {
-  GSI1SK?: OpeningState;
-}
-
 type GetStagesInOpeningInput = Pick<DynamoOpening, 'orgId' | 'openingId' | 'stageOrder'>;
-type GetOpeningByIdInput = Pick<DynamoOpening, 'orgId' | 'openingId'>;
-export interface UpdateOpeningInput extends Pick<DynamoOpening, 'orgId' | 'openingId'> {
-  newValues: { [key: string]: any };
-}
+
 export interface UpdateWebhookInput extends Pick<DynamoWebhook, 'orgId' | 'webhookId'> {
   newValues: { [key: string]: any };
 }

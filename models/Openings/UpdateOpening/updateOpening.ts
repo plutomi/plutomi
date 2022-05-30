@@ -1,12 +1,17 @@
 import { UpdateCommandInput, UpdateCommand } from '@aws-sdk/lib-dynamodb';
 import { SdkError } from '@aws-sdk/types';
-import { Dynamo } from '../../awsClients/ddbDocClient';
-import { DYNAMO_TABLE_NAME, Entities } from '../../Config';
-import { UpdateOpeningInput } from '../../types/main';
+import { Dynamo } from '../../../awsClients/ddbDocClient';
+import { DYNAMO_TABLE_NAME, Entities } from '../../../Config';
+import { DynamoOpening } from '../../../types/dynamo';
 
-export default async function UpdateOpening(
+export interface UpdateOpeningInput extends Pick<DynamoOpening, 'orgId' | 'openingId'> {
+  newValues: { [key: string]: any };
+}
+
+// TODO new udpate method https://github.com/plutomi/plutomi/issues/594
+export const updateOpening = async (
   props: UpdateOpeningInput,
-): Promise<[null, null] | [null, SdkError]> {
+): Promise<[null, null] | [null, SdkError]> => {
   const { orgId, openingId, newValues } = props;
   // Build update expression
   const allUpdateExpressions: string[] = [];
@@ -30,7 +35,6 @@ export default async function UpdateOpening(
     UpdateExpression: `SET ${allUpdateExpressions.join(', ')}`,
     ExpressionAttributeValues: allAttributeValues,
     TableName: `${process.env.NODE_ENV}-${DYNAMO_TABLE_NAME}`,
-
     ConditionExpression: 'attribute_exists(PK)',
   };
 
@@ -40,4 +44,4 @@ export default async function UpdateOpening(
   } catch (error) {
     return [null, error];
   }
-}
+};

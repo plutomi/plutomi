@@ -1,12 +1,14 @@
 import { TransactWriteCommandInput, TransactWriteCommand } from '@aws-sdk/lib-dynamodb';
 import { SdkError } from '@aws-sdk/types';
-import { Dynamo } from '../../awsClients/ddbDocClient';
-import { DYNAMO_TABLE_NAME, Entities } from '../../Config';
-import { DeleteOpeningInput } from '../../types/main';
+import { Dynamo } from '../../../awsClients/ddbDocClient';
+import { DYNAMO_TABLE_NAME, Entities } from '../../../Config';
+import { DynamoOpening } from '../../../types/dynamo';
 
-export default async function DeleteOpening(
+type DeleteOpeningInput = Pick<DynamoOpening, 'orgId' | 'openingId'>;
+
+export const deleteOpening = async (
   props: DeleteOpeningInput,
-): Promise<[null, null] | [null, SdkError]> {
+): Promise<[null, null] | [null, SdkError]> => {
   const { orgId, openingId } = props;
 
   try {
@@ -20,7 +22,6 @@ export default async function DeleteOpening(
               SK: Entities.OPENING,
             },
             TableName: `${process.env.NODE_ENV}-${DYNAMO_TABLE_NAME}`,
-
             ConditionExpression: 'attribute_exists(PK)',
           },
         },
@@ -32,7 +33,6 @@ export default async function DeleteOpening(
               SK: Entities.ORG,
             },
             TableName: `${process.env.NODE_ENV}-${DYNAMO_TABLE_NAME}`,
-
             UpdateExpression: 'SET totalOpenings = totalOpenings - :value',
             ExpressionAttributeValues: {
               ':value': 1,
@@ -48,4 +48,4 @@ export default async function DeleteOpening(
   } catch (error) {
     return [null, error];
   }
-}
+};
