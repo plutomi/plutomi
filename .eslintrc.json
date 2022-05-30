@@ -13,6 +13,7 @@
     "@typescript-eslint/no-shadow": "warn",
     "no-new": "warn",
     "react/require-default-props": "warn",
+    "import/prefer-default-import": "warn",
     "react/jsx-props-no-spreading": "warn",
     "jsx-a11y/label-has-associated-control": [
       2,

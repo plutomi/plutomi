@@ -6,7 +6,7 @@ import EBClient from '../awsClients/eventBridgeClient';
 
 const processor = require('dynamodb-streams-processor');
 
-export default async function main(event: DynamoDBStreamEvent) {
+export async function main(event: DynamoDBStreamEvent) {
   // Was reading a bit and this came up https://github.com/aws/aws-sdk-js/issues/2486
   const record = processor(event.Records)[0];
   const { eventName } = record;
