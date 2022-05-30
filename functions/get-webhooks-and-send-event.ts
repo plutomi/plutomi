@@ -32,11 +32,7 @@ export async function main(event: EventBridgeEvent<'stream', ApplicantWebhookEve
 
   console.log('Sending webhooks...');
   try {
-    await Promise.all(
-      webhooks.map((webhook) => {
-        axios.post(webhook.webhookUrl, event.detail);
-      }),
-    );
+    await Promise.all(webhooks.map((hook) => axios.post(hook.webhookUrl, { ...event.detail })));
     console.log('Webhooks sent!');
   } catch (error) {
     console.error(`An error ocurred sending webhooks to org ${event.detail.orgId} --- ${webhooks}`);
