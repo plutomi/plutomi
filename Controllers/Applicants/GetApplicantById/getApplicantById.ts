@@ -1,8 +1,8 @@
 import { Request, Response } from 'express';
-import * as CreateError from '../../utils/createError';
-import { getApplicant } from '../../models/Applicants/GetApplicant';
+import * as CreateError from '../../../utils/createError';
+import { getApplicant } from '../../../models/Applicants/GetApplicant';
 
-const main = async (req: Request, res: Response) => {
+export const main = async (req: Request, res: Response) => {
   const { session } = res.locals;
   const { applicantId } = req.params;
 
@@ -23,4 +23,3 @@ const main = async (req: Request, res: Response) => {
   }
   return res.status(200).json(applicant);
 };
-export default main;

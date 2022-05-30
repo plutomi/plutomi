@@ -4,13 +4,16 @@ import { SdkError } from '@aws-sdk/types';
 import { Dynamo } from '../../../awsClients/ddbDocClient';
 import { DYNAMO_TABLE_NAME, Entities } from '../../../Config';
 import { GetApplicantByIdOutput } from '../../../types/main';
-import { DynamoApplicant } from '../../../types/dynamo';
+import { DynamoApplicant, DynamoApplicantResponse } from '../../../types/dynamo';
 
 export type GetApplicantInput = Pick<DynamoApplicant, 'orgId' | 'applicantId'>;
+export interface DynamoApplicantWithResponses extends DynamoApplicant {
+  responses: DynamoApplicantResponse[];
+}
 
 export const getApplicant = async (
   props: GetApplicantInput,
-): Promise<[DynamoApplicant, undefined] | [undefined, SdkError]> => {
+): Promise<[DynamoApplicantWithResponses, undefined] | [undefined, SdkError]> => {
   const { orgId, applicantId } = props;
   const responsesParams: QueryCommandInput = {
     TableName: `${process.env.NODE_ENV}-${DYNAMO_TABLE_NAME}`,
@@ -43,7 +46,8 @@ export const getApplicant = async (
       responses, // TODO rework responses
       // TODO files
     };
-    return [applicant, undefined];
+    // TODO types
+    return [applicant as DynamoApplicantWithResponses, undefined];
   } catch (error) {
     return [undefined, error];
   }

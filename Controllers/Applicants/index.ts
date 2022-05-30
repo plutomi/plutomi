@@ -1,5 +1,5 @@
-import CreateApplicants from './create-applicant';
-import GetApplicantsInStage from './get-applicants-in-stage';
-import GetApplicantById from './get-applicant-by-id';
+import * as GetApplicantsInStage from './GetApplicantsInStage/getApplicantsInStage';
+import * as GetApplicantById from './GetApplicantById/getApplicantById';
+import * as CreateApplicant from './CreateApplicant';
 
-export { CreateApplicants, GetApplicantsInStage, GetApplicantById };
+export { CreateApplicant, GetApplicantsInStage, GetApplicantById };

@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
 import Joi from 'joi';
 import emailValidator from 'deep-email-validator';
-import { getOpening } from '../../models/Openings/GetOpening';
+import { getOpening } from '../../../models/Openings/GetOpening';
 import {
   DEFAULTS,
   ERRORS,
@@ -10,10 +10,10 @@ import {
   JOI_SETTINGS,
   LIMITS,
   OpeningState,
-} from '../../Config';
-import * as CreateError from '../../utils/createError';
-import { DynamoApplicant } from '../../types/dynamo';
-import { createApplicant } from '../../models/Applicants';
+} from '../../../Config';
+import * as CreateError from '../../../utils/createError';
+import { DynamoApplicant } from '../../../types/dynamo';
+import { createApplicant } from '../../../models/Applicants';
 
 export type APICreateApplicantOptions = Required<
   Pick<DynamoApplicant, 'orgId' | 'openingId' | 'email' | 'firstName' | 'lastName'>
@@ -29,7 +29,7 @@ const schema = Joi.object({
   },
 }).options(JOI_SETTINGS);
 
-const main = async (req: Request, res: Response) => {
+export const main = async (req: Request, res: Response) => {
   // TODO implement only one application per email
   // https://github.com/plutomi/plutomi/issues/521
   try {
@@ -89,4 +89,3 @@ const main = async (req: Request, res: Response) => {
     message: "We've sent you a link to your email to complete your application!",
   });
 };
-export default main;
