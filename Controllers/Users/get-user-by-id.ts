@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
 import Joi from 'joi';
 import * as Users from '../../models/Users';
-import { DEFAULTS, JOI_SETTINGS } from '../../Config';
+import { JOI_SETTINGS } from '../../Config';
 import * as CreateError from '../../utils/createError';
 
 interface APIGetUserByIdParameters {

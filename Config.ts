@@ -130,6 +130,7 @@ export const EMAILS = {
 };
 
 /**
+ *  TODO rework this to update on a case by case basis
  * Properties that cannot be updated no matter the entity type once created
  * This is only for UpdateItem expressions and does not apply for transactions
  * like when a user joins an org, their orgId is updated then.

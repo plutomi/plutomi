@@ -26,7 +26,6 @@ const main = async (req: Request, res: Response) => {
 
   if (error) {
     const { status, body } = CreateError.SDK(error, 'An error ocurred retrieving your opening');
-
     return res.status(status).json(body);
   }
   if (!opening) {

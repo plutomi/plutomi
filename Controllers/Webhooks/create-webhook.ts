@@ -1,23 +1,20 @@
-import { Request, Response } from "express";
-import { JOI_SETTINGS, LIMITS } from "../../Config";
-import * as CreateError from "../../utils/createError";
-import { DynamoWebhook } from "../../types/dynamo";
-import * as Webhooks from "../../models/Webhooks";
-import Joi from "joi";
+import { Request, Response } from 'express';
+import Joi from 'joi';
+import { JOI_SETTINGS, LIMITS } from '../../Config';
+import * as CreateError from '../../utils/createError';
+import { DynamoWebhook } from '../../types/dynamo';
+import * as Webhooks from '../../models/Webhooks';
 
 export type APICreateWebhookOptions = Pick<
   DynamoWebhook,
-  "webhookUrl" | "webhookName" | "description"
+  'webhookUrl' | 'webhookName' | 'description'
 >;
 
 const schema = Joi.object({
   body: {
     webhookUrl: Joi.string().uri(),
     webhookName: Joi.string().max(100).min(1),
-    description: Joi.string()
-      .allow("")
-      .max(LIMITS.MAX_WEBHOOK_DESCRIPTION_LENGTH)
-      .optional(),
+    description: Joi.string().allow('').max(LIMITS.MAX_WEBHOOK_DESCRIPTION_LENGTH).optional(),
   },
 }).options(JOI_SETTINGS);
 
@@ -30,8 +27,7 @@ const main = async (req: Request, res: Response) => {
     return res.status(status).json(body);
   }
 
-  const { webhookUrl, webhookName, description }: APICreateWebhookOptions =
-    req.body;
+  const { webhookUrl, webhookName, description }: APICreateWebhookOptions = req.body;
 
   const [created, createWebhookError] = await Webhooks.CreateWebhook({
     orgId: session.orgId,
@@ -43,11 +39,11 @@ const main = async (req: Request, res: Response) => {
   if (createWebhookError) {
     const { status, body } = CreateError.SDK(
       createWebhookError,
-      "An error ocurred creating that webhook"
+      'An error ocurred creating that webhook',
     );
     return res.status(status).json(body);
   }
 
-  return res.status(201).json({ message: "Webhook created!" });
+  return res.status(201).json({ message: 'Webhook created!' });
 };
 export default main;

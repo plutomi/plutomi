@@ -50,6 +50,7 @@ const main = async (req: Request, res: Response) => {
     return res.status(status).json(body);
   }
 
+  // eslint-disable-next-line prefer-const
   let [recipient, recipientError] = await Users.GetUserByEmail({
     email: recipientEmail,
   });

@@ -1,5 +1,4 @@
 import { Request, Response } from 'express';
-import session from 'express-session';
 import * as CreateError from '../../utils/createError';
 import * as Applicants from '../../models/Applicants';
 
@@ -7,7 +6,6 @@ const main = async (req: Request, res: Response) => {
   const { session } = res.locals;
   const { applicantId } = req.params;
 
-  // TODO gather child items here
   const [applicant, error] = await Applicants.GetApplicantById({
     orgId: session.orgId,
     applicantId,
