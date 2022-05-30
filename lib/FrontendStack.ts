@@ -11,7 +11,7 @@ import { DOMAIN_NAME } from '../Config';
 export default class FrontendStack extends cdk.Stack {
   constructor(scope: cdk.Construct, id: string, props?: cdk.StackProps) {
     super(scope, id, props);
-    new NextJSLambdaEdge(this, 'NextJsApp', {
+  new NextJSLambdaEdge(this, 'NextJsApp', {
       serverlessBuildOutDir: './build',
 
       // `HostedZone.fromHostedZoneAttributes` & `Certificate.fromCertificateArn`

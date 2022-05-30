@@ -23,7 +23,7 @@ builder
 
     const { table } = new DynamoDBStack(app, `${process.env.NODE_ENV}-DynamoDBStack`);
 
-    const API_STACK = new APIStack(app, `${process.env.NODE_ENV}-APIStack`, {
+     new APIStack(app, `${process.env.NODE_ENV}-APIStack`, {
       table,
     });
 
@@ -50,7 +50,7 @@ builder
         table,
       },
     );
-    const EVENT_BRIDGE_STACK = new EventBridgeStack(
+    new EventBridgeStack(
       app,
       `${process.env.NODE_ENV}-EventBridgeStack`,
       {
@@ -60,14 +60,14 @@ builder
       },
     );
 
-    const STREAM_PROCESSOR_STACK = new StreamProcessorStack(
+    new StreamProcessorStack(
       app,
       `${process.env.NODE_ENV}-StreamProcessorStack`,
       {
         table,
       },
     );
-    const ATHENA_DYNAMO_QUERY_STACK = new AthenaDynamoQueryStack(
+     new AthenaDynamoQueryStack(
       app,
       `${process.env.NODE_ENV}-AthenaDynamoQueryStack`,
       {
@@ -77,7 +77,7 @@ builder
     );
 
     // Run FE locally, no need to deploy
-    const FRONTEND_STACK = new FrontendStack(app, `FrontendStack`);
+   new FrontendStack(app, `FrontendStack`);
   })
   .catch((e) => {
     console.error(e);

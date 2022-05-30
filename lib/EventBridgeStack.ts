@@ -42,7 +42,7 @@ export default class EventBridgeStack extends cdk.Stack {
       retention: cdk.Duration.days(3),
     });
     // We want to send all communication events to the step function, we can handle routing there
-    const rule1 = new Rule(this, 'NeedsCommsRule', {
+     new Rule(this, 'NeedsCommsRule', {
       eventBus: bus,
       description:
         'Rule that checks if an action needs further comms such as login links or welcome emails. Forwards to the `CommsMachine` step function.',
@@ -63,7 +63,7 @@ export default class EventBridgeStack extends cdk.Stack {
     });
 
     // We want to send all deletion events to the step function, we can handle routing there
-    const rule2 = new Rule(this, 'DeletionRule', {
+     new Rule(this, 'DeletionRule', {
       eventBus: bus,
       description:
         'Rule that checks if an action needs further comms such as login links or welcome emails. Forwards to the `CommsMachine` step function.',
@@ -85,7 +85,7 @@ export default class EventBridgeStack extends cdk.Stack {
     });
 
     // All applicant events are sent to the state machine
-    const rule3 = new Rule(this, 'ApplicantWebhooksRule', {
+    new Rule(this, 'ApplicantWebhooksRule', {
       eventBus: bus,
       description: 'All applicant events are sent to the webhooks machine',
       ruleName: 'WebhooksRule',

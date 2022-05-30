@@ -103,8 +103,6 @@ export default function UserProfileModal({ user }: { user: DynamoUser }) {
                               className="block text-sm font-medium text-dark"
                             >
                               First name
-                            </label>
-                            <div className="mt-1">
                               <input
                                 type="text"
                                 name="first-name"
@@ -114,7 +112,7 @@ export default function UserProfileModal({ user }: { user: DynamoUser }) {
                                 value={firstName}
                                 className="block w-full shadow-sm sm:text-sm focus:ring-blue-500 focus:border-blue-500 border-gray-300 rounded-md"
                               />
-                            </div>
+                            </label>
                           </div>
                           <div>
                             <label
@@ -122,8 +120,6 @@ export default function UserProfileModal({ user }: { user: DynamoUser }) {
                               className="block text-sm font-medium text-dark"
                             >
                               Last name
-                            </label>
-                            <div className="mt-1">
                               <input
                                 type="text"
                                 name="last-name"
@@ -133,7 +129,7 @@ export default function UserProfileModal({ user }: { user: DynamoUser }) {
                                 value={lastName}
                                 className="block w-full shadow-sm sm:text-sm focus:ring-blue-500 focus:border-blue-500 border-gray-300 rounded-md"
                               />
-                            </div>
+                            </label>
                           </div>
                           <div className="relative flex items-start" />
                         </div>

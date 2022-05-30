@@ -1,27 +1,25 @@
-import { FormEvent, Fragment, useState } from "react";
-import { Dialog, Transition } from "@headlessui/react";
-import { XIcon } from "@heroicons/react/outline";
-import { CreateWebhook, GetWebhooksInOrgURL } from "../../adapters/Webhooks";
-import useStore from "../../utils/store";
-import { mutate } from "swr";
-import CustomLink from "../CustomLink";
-import { LIMITS } from "../../Config";
-import { GetOrgInfoURL } from "../../adapters/Orgs";
+import { FormEvent, Fragment, useState } from 'react';
+import { Dialog, Transition } from '@headlessui/react';
+import { mutate } from 'swr';
+import { XIcon } from '@heroicons/react/outline';
+import { CreateWebhook, GetWebhooksInOrgURL } from '../../adapters/Webhooks';
+import useStore from '../../utils/store';
+import CustomLink from '../CustomLink';
+import { LIMITS } from '../../Config';
+import { GetOrgInfoURL } from '../../adapters/Orgs';
 
 export default function CreateWebhookModal() {
-  const [webhookName, setWebhookName] = useState("");
-  const [webhookUrl, setWebhookUrl] = useState("");
-  const [description, setDescription] = useState("");
+  const [webhookName, setWebhookName] = useState('');
+  const [webhookUrl, setWebhookUrl] = useState('');
+  const [description, setDescription] = useState('');
   const visibility = useStore((state) => state.showCreateWebhookModal);
 
-  const closeCreateWebhookModal = useStore(
-    (state) => state.closeCreateWebhookModal
-  );
+  const closeCreateWebhookModal = useStore((state) => state.closeCreateWebhookModal);
 
   const clearModal = () => {
-    setWebhookName("");
-    setDescription("");
-    setWebhookUrl("");
+    setWebhookName('');
+    setDescription('');
+    setWebhookUrl('');
   };
 
   const handleSubmit = async (e: FormEvent) => {
@@ -46,11 +44,7 @@ export default function CreateWebhookModal() {
 
   return (
     <Transition.Root show={visibility} as={Fragment}>
-      <Dialog
-        as="div"
-        className="fixed inset-0 overflow-hidden "
-        onClose={closeCreateWebhookModal}
-      >
+      <Dialog as="div" className="fixed inset-0 overflow-hidden " onClose={closeCreateWebhookModal}>
         <div className="absolute inset-0 overflow-hidden">
           <Transition.Child
             as={Fragment}
@@ -98,10 +92,9 @@ export default function CreateWebhookModal() {
                       </div>
                       <div className="mt-1">
                         <p className="text-sm text-blue-300">
-                          We can send new applicant events to webhooks that you
-                          choose. You can then setup third party integrations
-                          like Zendesk or Slack, or even your own server for
-                          further processing.
+                          We can send new applicant events to webhooks that you choose. You can then
+                          setup third party integrations like Zendesk or Slack, or even your own
+                          server for further processing.
                         </p>
                       </div>
                     </div>
@@ -114,8 +107,6 @@ export default function CreateWebhookModal() {
                               className="block text-sm font-medium text-dark"
                             >
                               Webhook name
-                            </label>
-                            <div className="mt-1">
                               <input
                                 type="text"
                                 name="webhook-name"
@@ -126,7 +117,7 @@ export default function CreateWebhookModal() {
                                 value={webhookName}
                                 className="block w-full shadow-sm sm:text-sm focus:ring-blue-500 focus:border-blue-500 border-gray-300 rounded-md"
                               />
-                            </div>
+                            </label>
                           </div>
                           <div>
                             <label
@@ -134,20 +125,16 @@ export default function CreateWebhookModal() {
                               className="block text-sm font-medium text-dark"
                             >
                               Description (optional)
-                            </label>
-                            <div className="mt-1">
                               <textarea
                                 name="webhook-description"
                                 id="webhook-description"
                                 placeholder="Sends a slack message to the #recruiting channel"
                                 onChange={(e) => setDescription(e.target.value)}
                                 value={description}
-                                maxLength={
-                                  LIMITS.MAX_WEBHOOK_DESCRIPTION_LENGTH
-                                }
+                                maxLength={LIMITS.MAX_WEBHOOK_DESCRIPTION_LENGTH}
                                 className="block w-full shadow-sm sm:text-sm focus:ring-blue-500 focus:border-blue-500 border-gray-300 rounded-md"
                               />
-                            </div>
+                            </label>
                           </div>
 
                           <div>
@@ -156,8 +143,6 @@ export default function CreateWebhookModal() {
                               className="block text-sm font-medium text-dark"
                             >
                               URL
-                            </label>
-                            <div className="mt-1">
                               <input
                                 type="url"
                                 name="webhook-url"
@@ -168,19 +153,18 @@ export default function CreateWebhookModal() {
                                 value={webhookUrl}
                                 className="block w-full shadow-sm sm:text-sm focus:ring-blue-500 focus:border-blue-500 border-gray-300 rounded-md"
                               />
-                            </div>
+                            </label>
                           </div>
                           <div className="relative flex items-start">
                             <p className="text-light text-sm ">
-                              A <code>POST</code> event with the
-                              applicant&apos;s information will be sent. You can
-                              see what info is in the event by viewing the{" "}
+                              A <code>POST</code> event with the applicant&apos;s information will
+                              be sent. You can see what info is in the event by viewing the{' '}
                               <span className="text-white">
                                 <CustomLink
                                   text="DynamoApplicant.d.ts"
                                   url="https://github.com/plutomi/plutomi/blob/main/types/dynamo.d.ts#L105"
                                 />
-                              </span>{" "}
+                              </span>{' '}
                               file.
                             </p>
                           </div>

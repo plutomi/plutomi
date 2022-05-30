@@ -43,6 +43,7 @@ export default function StageCard({
 
   return (
     <Link href={linkHref}>
+      {/* eslint-disable-next-line jsx-a11y/anchor-is-valid */}
       <a>{content}</a>
     </Link>
   );

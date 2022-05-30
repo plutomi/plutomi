@@ -137,7 +137,7 @@ const useStore = create((set) => ({
       currentQuestion: question,
     })),
 
-  currentWebhook: {},
+  currentWebhook: undefined,
   setCurrentWebhook: (webhook: DynamoWebhook) =>
     set(() => ({
       currentWebhook: webhook,

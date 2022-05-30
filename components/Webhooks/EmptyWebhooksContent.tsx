@@ -1,13 +1,12 @@
-import { PlusIcon } from "@heroicons/react/solid";
-import { UserGroupIcon } from "@heroicons/react/outline";
-import { mdiWebhook } from "@mdi/js";
-import Icon from "@mdi/react";
-import useStore from "../../utils/store";
-import CreateWebhookModal from "./CreateWebhooksModal";
+import { PlusIcon } from '@heroicons/react/solid';
+import { UserGroupIcon } from '@heroicons/react/outline';
+import { mdiWebhook } from '@mdi/js';
+import Icon from '@mdi/react';
+import useStore from '../../utils/store';
+import CreateWebhookModal from './CreateWebhooksModal';
+
 export default function EmptyWebhooksContent() {
-  const openCreateWebhookModal = useStore(
-    (state) => state.openCreateWebhookModal
-  );
+  const openCreateWebhookModal = useStore((state) => state.openCreateWebhookModal);
   return (
     <div className="text-center">
       <CreateWebhookModal />
@@ -15,12 +14,8 @@ export default function EmptyWebhooksContent() {
         <Icon path={mdiWebhook} title="Webhooks" size={2} horizontal vertical />
       </div>
 
-      <h3 className="mt-2 text-lg font-medium text-dark">
-        You don&apos;t have any webhooks
-      </h3>
-      <p className="mt-1 text-lg text-normal">
-        Get started by adding your first one!
-      </p>
+      <h3 className="mt-2 text-lg font-medium text-dark">You don&apos;t have any webhooks</h3>
+      <p className="mt-1 text-lg text-normal">Get started by adding your first one!</p>
       <div className="mt-6">
         <button
           type="button"

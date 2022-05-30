@@ -1,23 +1,20 @@
-import useSelf from "../../SWR/useSelf";
-import { DynamoWebhook } from "../../types/dynamo";
-import EmptyWebhooksContent from "./EmptyWebhooksContent";
-import useWebhooks from "../../SWR/useWebhooksInOrg";
-import useStore from "../../utils/store";
-import Loader from "../Loader";
-import WebhookItem from "./WebhookItem";
-import { PlusIcon } from "@heroicons/react/outline";
-import useOrgInfo from "../../SWR/useOrgInfo";
-import CreateWebhookModal from "./CreateWebhooksModal";
-import UpdateWebhookModal from "./UpdateWebhooksModal";
+import { PlusIcon } from '@heroicons/react/outline';
+import useSelf from '../../SWR/useSelf';
+import { DynamoWebhook } from '../../types/dynamo';
+import EmptyWebhooksContent from './EmptyWebhooksContent';
+import useWebhooks from '../../SWR/useWebhooksInOrg';
+import useStore from '../../utils/store';
+import Loader from '../Loader';
+import WebhookItem from './WebhookItem';
+import useOrgInfo from '../../SWR/useOrgInfo';
+import CreateWebhookModal from './CreateWebhooksModal';
+import UpdateWebhookModal from './UpdateWebhooksModal';
+
 export default function WebhooksContent() {
   const { user, isUserLoading, isUserError } = useSelf();
   const { org, isOrgLoading, isOrgError } = useOrgInfo(user?.orgId);
-  const { webhooks, isWebhooksLoading, isWebhooksError } = useWebhooks(
-    user?.orgId
-  );
-  const openCreateWebhookModal = useStore(
-    (state) => state.openCreateWebhookModal
-  );
+  const { webhooks, isWebhooksLoading, isWebhooksError } = useWebhooks(user?.orgId);
+  const openCreateWebhookModal = useStore((state) => state.openCreateWebhookModal);
   const currentWebhook = useStore((state) => state.currentWebhook);
 
   if (isWebhooksLoading) {
@@ -25,11 +22,7 @@ export default function WebhooksContent() {
   }
 
   if (isWebhooksError) {
-    return (
-      <h1 className="text-lg text-red-500">
-        An error ocurred retrieving webhooks
-      </h1>
-    );
+    return <h1 className="text-lg text-red-500">An error ocurred retrieving webhooks</h1>;
   }
 
   if (webhooks?.length === 0) {
@@ -41,9 +34,7 @@ export default function WebhooksContent() {
       <CreateWebhookModal />
       <UpdateWebhookModal webhook={currentWebhook} />
       <div className="flex-1 my-2 flex md:mt-0  items-center  md:flex-grow justify-center">
-        <p className="mx-12">
-          Total webhooks: {webhooks?.length || org?.totalWebhooks}
-        </p>
+        <p className="mx-12">Total webhooks: {webhooks?.length || org?.totalWebhooks}</p>
         <button
           onClick={openCreateWebhookModal}
           type="button"
@@ -54,10 +45,7 @@ export default function WebhooksContent() {
         </button>
       </div>
       <div>
-        <ul
-          role="list"
-          className="divide-y divide-gray-200 mx-auto max-w-xl flex-col space-y-4   "
-        >
+        <ul className="divide-y divide-gray-200 mx-auto max-w-xl flex-col space-y-4   ">
           {webhooks?.map((webhook: DynamoWebhook) => (
             <WebhookItem key={webhook?.webhookId} webhook={webhook} />
           ))}

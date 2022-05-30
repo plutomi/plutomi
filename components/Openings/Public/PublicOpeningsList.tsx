@@ -19,11 +19,12 @@ export default function PublicOpeningsList() {
 
   return (
     <div className="bg-white shadow overflow-hidden sm:rounded-md">
-      <ul role="list" className="divide-y divide-gray-200">
+      <ul className="divide-y divide-gray-200">
         {publicOpenings?.map((opening) => (
           <li key={opening.openingId}>
             {/* Take applicant to opening info page */}
             <Link href={`/${orgId}/${opening?.openingId}/apply`}>
+              {/* eslint-disable-next-line jsx-a11y/anchor-is-valid */}
               <a className="block hover:bg-gray-50">
                 <div className="px-4 py-4 sm:px-6">
                   <div className="flex items-center justify-between">

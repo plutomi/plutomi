@@ -301,7 +301,7 @@
     "@aws-cdk/custom-resources" "1.134.0"
     "constructs" "^3.3.69"
 
-"@aws-cdk/aws-ec2@1.134.0":
+"@aws-cdk/aws-ec2@^1.134.0", "@aws-cdk/aws-ec2@1.134.0":
   "integrity" "sha512-4HPDl0tzkkKhEn4ja8E9r8WgRIyzd2suZCdRYVONC9A5KO8Rhgld8NIf/+WpDTZvlh01o/vYH/zONodJS2rkjw=="
   "resolved" "https://registry.npmjs.org/@aws-cdk/aws-ec2/-/aws-ec2-1.134.0.tgz"
   "version" "1.134.0"
@@ -365,7 +365,7 @@
     "@aws-cdk/cx-api" "1.134.0"
     "constructs" "^3.3.69"
 
-"@aws-cdk/aws-ecs@1.134.0":
+"@aws-cdk/aws-ecs@^1.134.0", "@aws-cdk/aws-ecs@1.134.0":
   "integrity" "sha512-BjdBKydt0SpCzty96QVEajlpbKCidygznbR8OAyBSKv3nupcATtJ7U1d63u6lmzlVwOAVui6piWoWdpybPelwA=="
   "resolved" "https://registry.npmjs.org/@aws-cdk/aws-ecs/-/aws-ecs-1.134.0.tgz"
   "version" "1.134.0"
@@ -438,7 +438,7 @@
     "@aws-cdk/core" "1.134.0"
     "constructs" "^3.3.69"
 
-"@aws-cdk/aws-elasticloadbalancingv2@1.134.0":
+"@aws-cdk/aws-elasticloadbalancingv2@^1.134.0", "@aws-cdk/aws-elasticloadbalancingv2@1.134.0":
   "integrity" "sha512-+IrGm5SGjibKPaLb/7+s28caOrRRkEQMlyk5bqWd1quVwZpepN1929UpgFD7NQwlDpUwFM0QvuB0uOLeNwNzBw=="
   "resolved" "https://registry.npmjs.org/@aws-cdk/aws-elasticloadbalancingv2/-/aws-elasticloadbalancingv2-1.134.0.tgz"
   "version" "1.134.0"

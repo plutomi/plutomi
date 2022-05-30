@@ -35,6 +35,7 @@ export default function OpeningList() {
           return (
             <li key={opening.openingId}>
               <Link href={`/openings/${opening.openingId}/${endingUrl}`}>
+                {/* eslint-disable-next-line jsx-a11y/anchor-is-valid */}
                 <a className="block hover:bg-gray-50">
                   <div className="px-4 py-4 sm:px-6">
                     <div className="flex items-center justify-between">

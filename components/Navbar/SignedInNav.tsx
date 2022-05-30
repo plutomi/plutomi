@@ -12,7 +12,7 @@ import Banner from '../BannerTop';
 import { GetSelfInfoURL } from '../../adapters/Users';
 import combineClassNames from '../../utils/combineClassNames';
 
-export default function SignedInNav({ current }) {
+export default function SignedInNav({ current }: { current: string }) {
   const { user, isUserLoading, isUserError } = useSelf();
 
   const handleLogout = async () => {
@@ -66,8 +66,9 @@ export default function SignedInNav({ current }) {
                         return null;
                       }
                       return (
-                        <Link key={item.name} href={item.href}>
+                        <Link key={item.name} href={item.href} passHref>
                           <a
+                            href={item.href}
                             className={combineClassNames(
                               current === item.name
                                 ? 'border-blue-500 text-dark'
@@ -106,7 +107,7 @@ export default function SignedInNav({ current }) {
                           src={user?.imageUrl}
                           alt=""
                         /> */}
-                        <button>
+                        <button type="button">
                           <DotsHorizontalIcon className="block h-6 w-6" aria-hidden="true" />
                         </button>
                       </Menu.Button>
@@ -133,9 +134,15 @@ export default function SignedInNav({ current }) {
 
                         {DROPDOWN_NAVIGATION.map((item) =>
                           item.name === 'Log Out' ? (
-                            <div className="cursor-pointer" key={item.name} onClick={handleLogout}>
+                            <button
+                              type="submit"
+                              className="cursor-pointer"
+                              key={item.name}
+                              onClick={handleLogout}
+                            >
                               <Menu.Item>
                                 {({ active }) => (
+                                  // eslint-disable-next-line jsx-a11y/anchor-is-valid
                                   <a
                                     className={combineClassNames(
                                       active ? 'bg-blue-gray-100' : '',
@@ -146,12 +153,13 @@ export default function SignedInNav({ current }) {
                                   </a>
                                 )}
                               </Menu.Item>
-                            </div>
+                            </button>
                           ) : (
                             <Link href={item.href}>
                               <div className="cursor-pointer" key={item.name}>
                                 <Menu.Item>
                                   {({ active }) => (
+                                    //  eslint-disable-next-line jsx-a11y/anchor-is-valid
                                     <a
                                       className={combineClassNames(
                                         active ? 'bg-blue-gray-100' : '',
@@ -234,24 +242,31 @@ export default function SignedInNav({ current }) {
                 </div>
                 <div className="mt-3 space-y-1">
                   {DROPDOWN_NAVIGATION.map((item) => {
-                    {
-                      item.name === 'Log Out' ? (
-                        <a
-                          key={item.name}
-                          href={item.href}
-                          onClick={handleLogout}
-                          className="block px-4 py-2 text-base font-medium text-normal hover:text-gray-800 hover:bg-gray-100"
-                        >
-                          {item.name}
-                        </a>
-                      ) : (
-                        <Link key={item.name} href={item.href}>
-                          <a className="block px-4 py-2 text-base font-medium text-normal hover:text-gray-800 hover:bg-gray-100">
+                    if (item.name === 'Log Out') {
+                      return (
+                        <Link key={item.name} href={item.href} passHref>
+                          <a
+                            key={item.name}
+                            href={item.href}
+                            onClick={handleLogout}
+                            className="block px-4 py-2 text-base font-medium text-normal hover:text-gray-800 hover:bg-gray-100"
+                          >
                             {item.name}
                           </a>
                         </Link>
                       );
                     }
+
+                    return (
+                      <Link key={item.name} href={item.href} passHref>
+                        <a
+                          href={item.href}
+                          className="block px-4 py-2 text-base font-medium text-normal hover:text-gray-800 hover:bg-gray-100"
+                        >
+                          {item.name}
+                        </a>
+                      </Link>
+                    );
                   })}
                 </div>
               </div>

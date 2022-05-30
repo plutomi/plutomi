@@ -4,7 +4,7 @@ import useStore from '../../utils/store';
 import Breadcrumbs from '../Breadcrumbs';
 import useStageInfo from '../../SWR/useStageInfo';
 import * as Time from '../../utils/time';
-import { CustomQuery } from '../../types/main';
+import { CustomQuery, SettingsCrumbsProps } from '../../types/main';
 import UpdateStageModal from './UpdateStageModal';
 import CreateQuestionModal from '../Questions/CreateQuestionModal';
 
@@ -15,7 +15,7 @@ export default function StageSettingsHeader({ deleteStage }: { deleteStage: () =
   const openUpdateStageModal = useStore((state) => state.openUpdateStageModal);
   const { stage, isStageLoading, isStageError } = useStageInfo(openingId, stageId);
 
-  const crumbs = [
+  const crumbs: SettingsCrumbsProps[] = [
     {
       name: 'Applicants',
       href: `/openings/${openingId}/stages/${stageId}/applicants`,

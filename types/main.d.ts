@@ -60,6 +60,12 @@ export interface UpdateStageInput extends Pick<DynamoStage, 'orgId' | 'stageId' 
   newValues: { [key: string]: any };
 }
 
+export interface SettingsCrumbsProps {
+  name: string;
+  href: string;
+  current: boolean;
+}
+
 export type SessionData = Pick<
   DynamoUser,
   'firstName' | 'lastName' | 'orgId' | 'email' | 'userId' | 'canReceiveEmails'

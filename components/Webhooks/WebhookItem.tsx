@@ -1,20 +1,14 @@
-import { useState } from "react";
-import { PencilAltIcon } from "@heroicons/react/outline";
-import { TrashIcon } from "@heroicons/react/outline";
-import {
-  DeleteWebhookFromOrg,
-  GetWebhooksInOrgURL,
-} from "../../adapters/Webhooks";
-import useStore from "../../utils/store";
-import { mutate } from "swr";
-import { DynamoWebhook } from "../../types/dynamo";
+import { useState } from 'react';
+import { PencilAltIcon, TrashIcon } from '@heroicons/react/outline';
+import { mutate } from 'swr';
+import { DeleteWebhookFromOrg, GetWebhooksInOrgURL } from '../../adapters/Webhooks';
+import useStore from '../../utils/store';
+import { DynamoWebhook } from '../../types/dynamo';
 
 export default function WebhookItem({ webhook }: { webhook: DynamoWebhook }) {
   const setCurrentWebhook = useStore((state) => state.setCurrentWebhook);
 
-  const openUpdateWebhookModal = useStore(
-    (state) => state.openUpdateWebhookModal
-  );
+  const openUpdateWebhookModal = useStore((state) => state.openUpdateWebhookModal);
 
   const handleEdit = () => {
     setCurrentWebhook(webhook);
@@ -24,7 +18,7 @@ export default function WebhookItem({ webhook }: { webhook: DynamoWebhook }) {
   const [isHovering, setIsHovering] = useState(false);
 
   const handleDelete = async (webhook: DynamoWebhook) => {
-    let deleteMessage = `Are you sure you want to delete this webhook?`;
+    const deleteMessage = `Are you sure you want to delete this webhook?`;
 
     if (!confirm(deleteMessage)) {
       return;
@@ -53,26 +47,22 @@ export default function WebhookItem({ webhook }: { webhook: DynamoWebhook }) {
           <span className="absolute inset-0" aria-hidden="true" />
           {webhook?.webhookName}
         </h3>
-        <p className="text-md text-light line-clamp-2 mt-1">
-          {webhook?.webhookUrl}
-        </p>
+        <p className="text-md text-light line-clamp-2 mt-1">{webhook?.webhookUrl}</p>
 
-        <p className="text-md text-light line-clamp-2 mt-1">
-          Used in {webhook.totalStages} stages
-        </p>
+        <p className="text-md text-light line-clamp-2 mt-1">Used in {webhook.totalStages} stages</p>
 
-        <p className="text-md text-light line-clamp-2 mt-1">
-          {webhook?.description}
-        </p>
+        <p className="text-md text-light line-clamp-2 mt-1">{webhook?.description}</p>
       </div>
       <div className="flex justify-center items-center ">
         <button
+          type="button"
           onClick={handleEdit}
           className="rounded-full hover:bg-white text-blue-500 transition ease-in-out duration-200 px-3 py-3 text-md"
         >
           <PencilAltIcon className="w-6 h-6" />
         </button>
         <button
+          type="submit"
           onClick={() => handleDelete(webhook)}
           className="rounded-full hover:bg-white text-red-500 transition ease-in-out duration-200 px-3 py-3 text-md"
         >
