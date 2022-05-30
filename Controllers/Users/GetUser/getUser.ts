@@ -1,8 +1,8 @@
 import { Request, Response } from 'express';
 import Joi from 'joi';
 import { JOI_SETTINGS } from '../../../Config';
-import { getUserById } from '../../../models/Users';
 import * as CreateError from '../../../utils/createError';
+import DB from '../../../models';
 
 interface APIGetUserByIdParameters {
   userId?: string;
@@ -31,7 +31,7 @@ export const main = async (req: Request, res: Response) => {
     });
   }
 
-  const [requestedUser, error] = await getUserById({
+  const [requestedUser, error] = await DB.Users.getUserById({
     userId,
   });
 
