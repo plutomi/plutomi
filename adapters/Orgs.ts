@@ -1,5 +1,5 @@
 import { AXIOS_INSTANCE as axios } from '../Config';
-import { APICreateOrgOptions } from '../Controllers/Orgs/create-and-join-org';
+import { APICreateOrgOptions } from '../Controllers/Orgs/CreateAndJoinOrg/createAndJoinOrg';
 
 const GetOrgInfoURL = () => `/orgs`;
 

@@ -1,10 +1,10 @@
 import { Request, Response } from 'express';
 import Joi from 'joi';
-import { DEFAULTS, JOI_SETTINGS, JoiOrgId } from '../../Config';
-import * as CreateError from '../../utils/createError';
-import { DynamoOrg } from '../../types/dynamo';
-import { getInvitesForUser } from '../../models/Invites';
-import { createAndJoinOrg } from '../../models/Orgs';
+import { DEFAULTS, JOI_SETTINGS, JoiOrgId } from '../../../Config';
+import * as CreateError from '../../../utils/createError';
+import { DynamoOrg } from '../../../types/dynamo';
+import { getInvitesForUser } from '../../../models/Invites';
+import { createAndJoinOrg } from '../../../models/Orgs';
 
 export type APICreateOrgOptions = Required<Pick<DynamoOrg, 'orgId' | 'displayName'>>;
 
@@ -15,7 +15,7 @@ const schema = Joi.object({
   },
 }).options(JOI_SETTINGS);
 
-const main = async (req: Request, res: Response) => {
+export const main = async (req: Request, res: Response) => {
   const { session } = res.locals;
   try {
     await schema.validateAsync(req);
@@ -69,4 +69,3 @@ const main = async (req: Request, res: Response) => {
 
   return res.status(201).json({ message: 'Org created!' });
 };
-export default main;
