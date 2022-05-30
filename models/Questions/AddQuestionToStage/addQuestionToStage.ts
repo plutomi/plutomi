@@ -1,9 +1,18 @@
 import { TransactWriteCommandInput, TransactWriteCommand } from '@aws-sdk/lib-dynamodb';
 import { SdkError } from '@aws-sdk/types';
-import { Dynamo } from '../../awsClients/ddbDocClient';
-import { DYNAMO_TABLE_NAME, Entities } from '../../Config';
-import * as Time from '../../utils/time';
-import { AddQuestionToStageInput } from '../../types/main';
+import { Dynamo } from '../../../awsClients/ddbDocClient';
+import { DYNAMO_TABLE_NAME, Entities } from '../../../Config';
+import {
+  DynamoQuestion,
+  DynamoQuestionStageAdjacentItem,
+  DynamoStage,
+} from '../../../types/dynamo';
+import * as Time from '../../../utils/time';
+
+interface AddQuestionToStageInput
+  extends Pick<DynamoStage, 'orgId' | 'openingId' | 'stageId' | 'questionOrder'> {
+  questionId: string;
+}
 
 /**
  * Updates the questionOrder on the stage and creates another item
@@ -11,9 +20,9 @@ import { AddQuestionToStageInput } from '../../types/main';
  * get all stages that had this question and update them as well
  */
 
-export default async function AddQuestionToStage(
+export const addQuestionToStage = async (
   props: AddQuestionToStageInput,
-): Promise<[null, null] | [null, SdkError]> {
+): Promise<[null, null] | [null, SdkError]> => {
   const { orgId, openingId, stageId, questionId, questionOrder } = props;
 
   /**
@@ -21,9 +30,7 @@ export default async function AddQuestionToStage(
    * we have a reference to all the stages that need to be updated asynchronously.
    *
    */
-
-  // TODO types
-  const params = {
+  const params: DynamoQuestionStageAdjacentItem = {
     PK: `${Entities.ORG}#${orgId}#${Entities.QUESTION}#${questionId}#${Entities.STAGE}S`,
     SK: `${Entities.OPENING}#${openingId}#${Entities.STAGE}#${stageId}`,
     entityType: Entities.QUESTION,
@@ -92,4 +99,4 @@ export default async function AddQuestionToStage(
   } catch (error) {
     return [null, error];
   }
-}
+};

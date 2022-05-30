@@ -1,12 +1,25 @@
 import { TransactWriteCommandInput, TransactWriteCommand } from '@aws-sdk/lib-dynamodb';
 import { SdkError } from '@aws-sdk/types';
-import { Dynamo } from '../../awsClients/ddbDocClient';
-import { DYNAMO_TABLE_NAME, Entities } from '../../Config';
-import { DeleteQuestionFromStageInput } from '../../types/main';
+import { Dynamo } from '../../../awsClients/ddbDocClient';
+import { DYNAMO_TABLE_NAME, Entities } from '../../../Config';
+import { DynamoStage } from '../../../types/dynamo';
 
-export default async function DeleteQuestionFromStage(
+interface DeleteQuestionFromStageInput
+  extends Pick<DynamoStage, 'orgId' | 'openingId' | 'stageId'> {
+  questionId: string;
+  deleteIndex: number; // TODO check if this type is broken
+  /**
+   * When removing a question from a stage, we want to decrement the stage count on the question.
+   * This isn't needed if the question is deleted obviously, and is used in the deletion state machine.
+   * which should only be deleting the adjacent item.
+   * Set it to FALSE if the question has been deleted form the org.
+   */
+  decrementStageCount: boolean;
+}
+
+export const deleteQuestionFromStage = async (
   props: DeleteQuestionFromStageInput,
-): Promise<[null, null] | [null, SdkError]> {
+): Promise<[null, null] | [null, SdkError]> => {
   const { orgId, openingId, stageId, questionId, deleteIndex, decrementStageCount } = props;
 
   const transactParams: TransactWriteCommandInput = {
@@ -61,4 +74,4 @@ export default async function DeleteQuestionFromStage(
   } catch (error) {
     return [null, error];
   }
-}
+};

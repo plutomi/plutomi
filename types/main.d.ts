@@ -72,12 +72,8 @@ export interface UpdateUserInput extends Pick<DynamoUser, 'userId'> {
   newValues: { [key: string]: any };
 }
 
-type CreateQuestionInput = Pick<DynamoQuestion, 'orgId' | 'GSI1SK' | 'description' | 'questionId'>;
-
 type OrgIdAndQuestionId = 'orgId' | 'questionId';
 
-// TODo remove the below types
-type DeleteQuestionFromOrgInput = Pick<DynamoQuestion, orgIdAndQuestionId>;
 type DeleteWebhookFromOrgInput = Pick<DynamoWebhook, 'webhookId' | 'orgId'>;
 type GetQuestionInput = Pick<DynamoQuestion, orgIdAndQuestionId>;
 type GetQuestionOutput = DynamoQuestion;
@@ -115,25 +111,9 @@ export interface UpdateWebhookInput extends Pick<DynamoWebhook, 'orgId' | 'webho
   newValues: { [key: string]: any };
 }
 
-interface AddQuestionToStageInput
-  extends Pick<DynamoStage, 'orgId' | 'openingId' | 'stageId' | 'questionOrder'> {
-  questionId: string;
-}
-
 interface GetQuestionsInStageInput extends Pick<DynamoStage, 'orgId' | 'openingId' | 'stageId'> {}
 
 type GetWebhooksInOrgInput = Pick<DynamoWebhook, 'orgId'>;
-interface DeleteQuestionFromStageInput
-  extends Pick<DynamoStage, 'orgId' | 'openingId' | 'stageId' | 'deleteIndex'> {
-  questionId: string;
-  /**
-   * When removing a question from a stage, we want to decrement the stage count on the question.
-   * This isn't needed if the question is deleted obviously, and is used in the deletion state machine.
-   * which should only be deleting the adjacent item.
-   * Set it to FALSE if the question has been deleted form the org.
-   */
-  decrementStageCount: boolean;
-}
 
 type CreateUserInput = {
   email: string;

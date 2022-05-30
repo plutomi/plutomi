@@ -52,6 +52,17 @@ interface DynamoStage {
   GSI1SK: string;
 }
 
+interface DynamoQuestionStageAdjacentItem {
+  PK: `${Entities.ORG}#${string}#${Entities.QUESTION}#${string}#${Entities.STAGE}S`;
+  SK: `${Entities.OPENING}#${string}#${Entities.STAGE}#${string}`;
+  entityType: Entities.QUESTION;
+  createdAt: string;
+  orgId: string;
+  openingId: string;
+  stageId: string;
+  questionId: string;
+}
+
 interface DynamoQuestion {
   /**
    * The primary key for the question. Variables are `orgId` and `questionId`

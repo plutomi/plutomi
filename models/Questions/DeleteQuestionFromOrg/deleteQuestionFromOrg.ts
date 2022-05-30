@@ -1,12 +1,14 @@
 import { TransactWriteCommand, TransactWriteCommandInput } from '@aws-sdk/lib-dynamodb';
 import { SdkError } from '@aws-sdk/types';
-import { Dynamo } from '../../awsClients/ddbDocClient';
-import { DYNAMO_TABLE_NAME, Entities } from '../../Config';
-import { DeleteQuestionFromOrgInput } from '../../types/main';
+import { Dynamo } from '../../../awsClients/ddbDocClient';
+import { DYNAMO_TABLE_NAME, Entities } from '../../../Config';
+import { DynamoQuestion } from '../../../types/dynamo';
 
-export default async function DeleteQuestionFromOrg(
+type DeleteQuestionFromOrgInput = Pick<DynamoQuestion, 'orgId' | 'questionId'>;
+
+export const deleteQuestionFromOrg = async (
   props: DeleteQuestionFromOrgInput,
-): Promise<[null, null] | [null, SdkError]> {
+): Promise<[null, null] | [null, SdkError]> => {
   const { orgId, questionId } = props;
 
   const transactParams: TransactWriteCommandInput = {
@@ -44,4 +46,4 @@ export default async function DeleteQuestionFromOrg(
   } catch (error) {
     return [null, error];
   }
-}
+};

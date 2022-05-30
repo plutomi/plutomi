@@ -1,10 +1,10 @@
-import CreateQuestion from './create-question';
-import DeleteQuestionFromOrg from './delete-question-from-org';
+import CreateQuestion from './CreateQuestion/createQuestion';
+import DeleteQuestionFromOrg from './DeleteQuestionFromOrg/deleteQuestionFromOrg';
 import GetQuestionById from './get-question-by-id';
 import UpdateQuestion from './update-question';
 import GetQuestionsInOrg from './get-questions-in-org';
-import AddQuestionToStage from './add-question-to-stage';
-import DeleteQuestionFromStage from './delete-question-from-stage';
+import AddQuestionToStage from './AddQuestionToStage/addQuestionToStage';
+import DeleteQuestionFromStage from './DeleteQuestionFromStage/deleteQuestionFromStage';
 
 export {
   CreateQuestion,

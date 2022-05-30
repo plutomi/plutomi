@@ -1,14 +1,15 @@
 import { TransactWriteCommand, TransactWriteCommandInput } from '@aws-sdk/lib-dynamodb';
 import { SdkError } from '@aws-sdk/types';
-import { Dynamo } from '../../awsClients/ddbDocClient';
-import { Entities, DYNAMO_TABLE_NAME } from '../../Config';
-import { DynamoQuestion } from '../../types/dynamo';
-import { CreateQuestionInput } from '../../types/main';
-import * as Time from '../../utils/time';
+import { Dynamo } from '../../../awsClients/ddbDocClient';
+import { Entities, DYNAMO_TABLE_NAME } from '../../../Config';
+import { DynamoQuestion } from '../../../types/dynamo';
+import * as Time from '../../../utils/time';
 
-export default async function CreateQuestion(
+type CreateQuestionInput = Pick<DynamoQuestion, 'orgId' | 'GSI1SK' | 'description' | 'questionId'>;
+
+export const createQuestion = async (
   props: CreateQuestionInput,
-): Promise<[null, null] | [null, SdkError]> {
+): Promise<[null, null] | [null, SdkError]> => {
   const { orgId, GSI1SK, questionId, description } = props;
   const now = Time.currentISO();
   const newStageQuestion: DynamoQuestion = {
@@ -59,4 +60,4 @@ export default async function CreateQuestion(
   } catch (error) {
     return [null, error];
   }
-}
+};
