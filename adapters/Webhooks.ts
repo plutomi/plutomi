@@ -1,6 +1,6 @@
-import { AXIOS_INSTANCE as axios } from "../Config";
-import { APICreateWebhookOptions } from "../Controllers/Webhooks/create-webhook";
-import { APIUpdateWebhookOptions } from "../Controllers/Webhooks/update-webhook";
+import { AXIOS_INSTANCE as axios } from '../Config';
+import { APICreateWebhookOptions } from '../Controllers/Webhooks/create-webhook';
+import { APIUpdateWebhookOptions } from '../Controllers/Webhooks/update-webhook';
 
 const GetWebhooksInOrgURL = () => `/webhooks`;
 
@@ -40,48 +40,8 @@ interface GetWebhooksInStageInput {
   openingId: string;
   stageId: string;
 }
-const GetWebhooksInStageURL = (options: GetWebhooksInStageInput) =>
-  `/openings/${options.openingId}/stages/${options.stageId}/webhooks`;
-
-interface AddWebhookToStageInput {
-  openingId: string;
-  stageId: string;
-  webhookId: string;
-}
-const AddWebhookToStage = async (options: AddWebhookToStageInput) => {
-  const { openingId, stageId, webhookId } = options;
-  const data = await axios.post(
-    GetWebhooksInStageURL({
-      openingId: options.openingId,
-      stageId: options.stageId,
-    }),
-    {
-      openingId,
-      stageId,
-      webhookId,
-    }
-  );
-  return data;
-};
-
-const GetWebhooksInStage = async (options: GetWebhooksInStageInput) => {
-  const data = await axios.get(GetWebhooksInStageURL({ ...options }));
-  return data;
-};
-
-const DeleteWebhookFromStage = async (options: AddWebhookToStageInput) => {
-  const { openingId, stageId, webhookId } = options;
-  const data = await axios.delete(
-    GetWebhooksInStageURL({
-      openingId,
-      stageId,
-    }) + `/${webhookId}`
-  );
-  return data;
-};
 
 export {
-  GetWebhooksInStageURL,
   CreateWebhook,
   GetWebhooksInOrg,
   GetWebhooksInOrgURL,
@@ -89,7 +49,4 @@ export {
   UpdateWebhook,
   GetWebhookInfo,
   GetWebhookInfoURL,
-  AddWebhookToStage,
-  DeleteWebhookFromStage,
-  GetWebhooksInStage,
 };

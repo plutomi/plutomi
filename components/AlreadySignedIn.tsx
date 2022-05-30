@@ -34,9 +34,9 @@ export default function AlreadySignedIn() {
         </p>
 
         <Link href="/dashboard" passHref>
-          <p className="px-4 py-2 bg-normal hover:bg-dark  transition ease-in-out duration-200 text-white rounded-md">
+          <a className="px-4 py-2 bg-normal hover:bg-dark  transition ease-in-out duration-200 text-white rounded-md">
             Go to Dashboard &rarr;
-          </p>
+          </a>
         </Link>
 
         <button

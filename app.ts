@@ -166,30 +166,9 @@ app.get('/', healthcheck);
 
 app.post('/webhooks', [withSession, withHasOrg], Webhooks.CreateWebhook);
 app.get('/webhooks', [withSession, withHasOrg], Webhooks.GetWebhooksInOrg);
-
 app.delete('/webhooks/:webhookId', [withSession, withHasOrg], Webhooks.DeleteWebhookFromOrg);
-
 app.get('/webhooks/:webhookId', [withSession, withHasOrg], Webhooks.GetWebhookById);
-
 app.put('/webhooks/:webhookId', [withSession, withHasOrg], Webhooks.UpdateWebhook);
-
-app.get(
-  '/openings/:openingId/stages/:stageId/webhooks',
-  [withSession, withHasOrg],
-  Webhooks.GetWebhooksInStage,
-);
-
-app.post(
-  '/openings/:openingId/stages/:stageId/webhooks',
-  [withSession, withHasOrg],
-  Webhooks.AddWebhookToStage,
-);
-
-app.delete(
-  '/openings/:openingId/stages/:stageId/webhooks/:webhookId',
-  [withSession, withHasOrg],
-  Webhooks.DeleteWebhookFromStage,
-);
 
 // Catch timeouts // TODO make this into its own middleware
 function haltOnTimedout(req, res, next) {

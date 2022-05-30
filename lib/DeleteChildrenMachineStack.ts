@@ -224,36 +224,11 @@ export default class DeleteChildrenMachineStack extends cdk.Stack {
       ENTITY_TYPES.QUESTION,
     );
 
-    const WEBHOOK_DELETED = sfn.Condition.stringEquals('$.detail.entityType', ENTITY_TYPES.WEBHOOK);
-
     const QUESTION_HAS_STAGES = sfn.Condition.numberGreaterThan('$.detail.OldImage.totalStages', 0);
-
-    const WEBHOOK_HAS_STAGES = sfn.Condition.numberGreaterThan('$.detail.OldImage.totalStages', 0);
 
     const STAGE_HAS_QUESTIONS = sfn.Condition.numberGreaterThan(
       '$.detail.OldImage.totalQuestions',
       0,
-    );
-
-    const GET_STAGES_THAT_HAVE_DELETED_WEBHOOK = new tasks.CallAwsService(
-      this,
-      'GetStagesThatHaveDeletedWebhook',
-      {
-        ...DYNAMO_QUERY_SETTINGS,
-        parameters: {
-          TableName: props.table.tableName,
-          KeyConditionExpression: 'PK = :PK',
-          ExpressionAttributeValues: {
-            ':PK': {
-              'S.$': `States.Format('${ENTITY_TYPES.ORG}#{}#${ENTITY_TYPES.WEBHOOK}#{}#${ENTITY_TYPES.WEBHOOK}S', $.detail.OldImage.orgId, $.detail.OldImage.webhookId)`,
-            },
-          },
-        },
-        resultSelector: {
-          'stages.$': '$.Items',
-        },
-        resultPath: '$.stages',
-      },
     );
 
     const GET_STAGES_THAT_HAVE_DELETED_QUESTION = new tasks.CallAwsService(
@@ -274,30 +249,6 @@ export default class DeleteChildrenMachineStack extends cdk.Stack {
           'stages.$': '$.Items',
         },
         resultPath: '$.stages',
-      },
-    );
-
-    const RemoveDeletedWebhookFromStageFunction = new NodejsFunction(
-      this,
-      `${process.env.NODE_ENV}-remove-deleted-webhook-from-stage-function`,
-      {
-        functionName: `${process.env.NODE_ENV}-remove-deleted-webhook-from-stage-function`,
-        timeout: cdk.Duration.seconds(5),
-        memorySize: 256,
-        logRetention: RetentionDays.ONE_WEEK,
-        runtime: Runtime.NODEJS_14_X,
-        architecture: Architecture.ARM_64,
-        environment: {
-          NODE_ENV: process.env.NODE_ENV,
-          DYNAMO_TABLE_NAME,
-        },
-        bundling: {
-          minify: true,
-          externalModules: ['aws-sdk'],
-        },
-        handler: 'main',
-        description: 'Removes a deleted webhook from stages.',
-        entry: path.join(__dirname, `/../functions/remove-deleted-webhook-from-stage.ts`),
       },
     );
 
@@ -322,28 +273,6 @@ export default class DeleteChildrenMachineStack extends cdk.Stack {
         handler: 'main',
         description: 'Removes a deleted question from stages.',
         entry: path.join(__dirname, `/../functions/remove-deleted-question-from-stage.ts`),
-      },
-    );
-
-    const WEBHOOK_DELETED_UPDATE_STAGE_INFO_MAP = new sfn.Map(
-      this,
-      'WebhookDeletedUpdateStageInfoMap',
-      {
-        maxConcurrency: 1,
-        itemsPath: '$.stages.stages',
-        parameters: {
-          // Makes it easier to get these attributes per item
-          'PK.$': `States.Format('${ENTITY_TYPES.ORG}#{}#${ENTITY_TYPES.OPENING}#{}#${ENTITY_TYPES.STAGE}#{}', $$.Map.Item.Value.orgId.S, $$.Map.Item.Value.openingId.S, $$.Map.Item.Value.stageId.S)`,
-          SK: ENTITY_TYPES.STAGE,
-          'webhookId.$': '$.detail.OldImage.webhookId',
-          /**
-           * If a stage does not exist, and a webhook was previously attached to it,
-           * this allows retrieving that adjacent item and deleting it.
-           * NOTE: Will require the same setup for questions
-           */
-          'adjacentItemPK.$': `States.Format('${ENTITY_TYPES.ORG}#{}#${ENTITY_TYPES.WEBHOOK}#{}#${ENTITY_TYPES.STAGE}S', $$.Map.Item.Value.orgId.S, $$.Map.Item.Value.webhookId.S)`,
-          'adjacentItemSK.$': `States.Format('${ENTITY_TYPES.OPENING}#{}#${ENTITY_TYPES.STAGE}#{}', $$.Map.Item.Value.openingId.S, $$.Map.Item.Value.stageId.S)`,
-        },
       },
     );
 
@@ -391,34 +320,6 @@ export default class DeleteChildrenMachineStack extends cdk.Stack {
           SK: tasks.DynamoAttributeValue.fromString(sfn.JsonPath.stringAt('$.adjacentItemSK')),
         },
       },
-    );
-
-    WEBHOOK_DELETED_UPDATE_STAGE_INFO_MAP.iterator(
-      new tasks.DynamoGetItem(this, 'GetCurrentStageInfoForWebhooks', {
-        table: props.table,
-        key: {
-          PK: tasks.DynamoAttributeValue.fromString(sfn.JsonPath.stringAt('$.PK')),
-          SK: tasks.DynamoAttributeValue.fromString(sfn.JsonPath.stringAt('$.SK')),
-        },
-        resultPath: '$.stage',
-      }).next(
-        new sfn.Choice(this, 'Does webhook-stage exist?')
-          .when(
-            sfn.Condition.isPresent('$.stage.Item'),
-            // TODO this lambda can be replaced with a direct SDK integration.
-            // All it is doing is a transaction, no fancy json path like the questionOrder lambda
-            new tasks.LambdaInvoke(this, 'RemoveDeletedWebhookFromStage', {
-              payload: sfn.TaskInput.fromObject({
-                stage: sfn.JsonPath.stringAt('$.stage.Item'),
-                questionId: sfn.JsonPath.stringAt('$.webhookId'),
-              }),
-              lambdaFunction: RemoveDeletedWebhookFromStageFunction,
-              // TODO pretty sure this needs a callback
-              integrationPattern: IntegrationPattern.REQUEST_RESPONSE,
-            }),
-          )
-          .otherwise(DELETE_ADJACENT_STAGE_WEBHOOK_ITEM),
-      ),
     );
 
     QUESTION_DELETED_UPDATE_STAGE_INFO_MAP.iterator(
@@ -495,16 +396,6 @@ export default class DeleteChildrenMachineStack extends cdk.Stack {
           STAGE_HAS_QUESTIONS,
           new sfn.Succeed(this, 'TODO delete adjacent item'),
         ),
-      )
-      // TODO webhook here
-      .when(
-        WEBHOOK_DELETED,
-        new Choice(this, 'DoesWebhookHaveStages')
-          .when(
-            WEBHOOK_HAS_STAGES,
-            GET_STAGES_THAT_HAVE_DELETED_WEBHOOK.next(WEBHOOK_DELETED_UPDATE_STAGE_INFO_MAP),
-          )
-          .otherwise(new sfn.Succeed(this, 'Webhook does not have stages :)')),
       )
       .when(
         QUESTION_DELETED,

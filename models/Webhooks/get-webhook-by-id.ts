@@ -1,12 +1,11 @@
-import { GetCommandInput, GetCommand } from "@aws-sdk/lib-dynamodb";
-import { Dynamo } from "../../awsClients/ddbDocClient";
-import { DYNAMO_TABLE_NAME, ENTITY_TYPES } from "../../Config";
-import { DynamoOpening, DynamoWebhook } from "../../types/dynamo";
-import { SdkError } from "@aws-sdk/types";
-import { GetWebhookByIdInput } from "../../types/main";
-export default async function Get(
-  props: GetWebhookByIdInput
-): Promise<[DynamoWebhook, SdkError]> {
+import { GetCommandInput, GetCommand } from '@aws-sdk/lib-dynamodb';
+import { SdkError } from '@aws-sdk/types';
+import { Dynamo } from '../../awsClients/ddbDocClient';
+import { DYNAMO_TABLE_NAME, ENTITY_TYPES } from '../../Config';
+import { DynamoWebhook } from '../../types/dynamo';
+import { GetWebhookByIdInput } from '../../types/main';
+
+export default async function Get(props: GetWebhookByIdInput): Promise<[DynamoWebhook, SdkError]> {
   const { orgId, webhookId } = props;
   const params: GetCommandInput = {
     TableName: `${process.env.NODE_ENV}-${DYNAMO_TABLE_NAME}`,

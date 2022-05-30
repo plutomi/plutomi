@@ -1,12 +1,10 @@
-import { UpdateCommand } from "@aws-sdk/lib-dynamodb";
-import { Dynamo } from "../../awsClients/ddbDocClient";
-import { DYNAMO_TABLE_NAME, ENTITY_TYPES } from "../../Config";
-import { UpdateWebhookInput } from "../../types/main";
-import { SdkError } from "@aws-sdk/types";
+import { UpdateCommand } from '@aws-sdk/lib-dynamodb';
+import { SdkError } from '@aws-sdk/types';
+import { Dynamo } from '../../awsClients/ddbDocClient';
+import { DYNAMO_TABLE_NAME, ENTITY_TYPES } from '../../Config';
+import { UpdateWebhookInput } from '../../types/main';
 
-export default async function Update(
-  props: UpdateWebhookInput
-): Promise<[null, SdkError]> {
+export default async function Update(props: UpdateWebhookInput): Promise<[null, SdkError]> {
   const { orgId, webhookId, newValues } = props;
   // Build update expression
   let allUpdateExpressions: string[] = [];
@@ -25,10 +23,10 @@ export default async function Update(
       PK: `${ENTITY_TYPES.ORG}#${orgId}#${ENTITY_TYPES.WEBHOOK}#${webhookId}`,
       SK: ENTITY_TYPES.WEBHOOK,
     },
-    UpdateExpression: `SET ` + allUpdateExpressions.join(", "),
+    UpdateExpression: `SET ` + allUpdateExpressions.join(', '),
     ExpressionAttributeValues: allAttributeValues,
     TableName: `${process.env.NODE_ENV}-${DYNAMO_TABLE_NAME}`,
-    ConditionExpression: "attribute_exists(PK)",
+    ConditionExpression: 'attribute_exists(PK)',
   };
 
   try {

@@ -7,7 +7,6 @@ import useOpeningInfo from '../../SWR/useOpeningInfo';
 import { CustomQuery } from '../../types/main';
 import StageSettingsQuestionList from './StageSettingsQuestionList';
 import StageSettingsContentTabs from './StageSettingsContentTabs';
-import WebhookList from './WebhookList';
 
 export default function StageSettingsContent() {
   const router = useRouter();
@@ -51,7 +50,7 @@ export default function StageSettingsContent() {
               <StageSettingsContentTabs currentTab={currentTab} setCurrentTab={setNewTab} />
               <div className="relative h-full" style={{ minHeight: '36rem' }}>
                 <div className=" inset-0  border-gray-200 rounded-lg">
-                  {currentTab === 'Questions' ? <StageSettingsQuestionList /> : <WebhookList />}
+                  {currentTab === 'Questions' && <StageSettingsQuestionList />}
                 </div>
               </div>
               {/* End main area */}

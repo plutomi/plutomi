@@ -26,8 +26,6 @@ interface DynamoStage {
 
   totalQuestions: number;
 
-  totalWebhooks: number;
-
   /**
    * An array of questionIds in the order that the  questions should show up
    */
@@ -345,7 +343,6 @@ interface DynamoWebhook {
   description?: string;
   createdAt: string;
   webhookUrl: string;
-  totalStages: number;
   entityType: ENTITY_TYPES.WEBHOOK;
   GSI1PK: `${ENTITY_TYPES.ORG}#${orgId}#${ENTITY_TYPES.WEBHOOK}S`;
   GSI1SK: string;

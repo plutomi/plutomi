@@ -20,7 +20,6 @@ export default async function AddQuestionToStage(
    * This creates an adjacent item so that when a question is deleted,
    * we have a reference to all the stages that need to be updated asynchronously.
    *
-   * Note: Exact same setup for webhooks.
    */
 
   // TODO types

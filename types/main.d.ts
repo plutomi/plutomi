@@ -55,7 +55,6 @@ type GetStageByIdInput = Pick<DynamoStage, 'orgId' | 'stageId' | 'openingId'>;
 type GetApplicantsInStageInput = Pick<DynamoStage, 'orgId' | 'stageId' | 'openingId'>;
 type GetApplicantsInStageOutput = DynamoApplicant[];
 
-type GetWebhooksInStageInput = Pick<DynamoStage, 'orgId' | 'stageId' | 'openingId'>;
 export interface UpdateStageInput extends Pick<DynamoStage, 'orgId' | 'stageId' | 'openingId'> {
   newValues: { [key: string]: any };
 }
@@ -157,10 +156,6 @@ interface AddQuestionToStageInput
   questionId: string;
 }
 
-interface AddWebhookToStageInput extends Pick<DynamoStage, 'orgId' | 'openingId' | 'stageId'> {
-  webhookId: string;
-}
-
 interface GetQuestionsInStageInput extends Pick<DynamoStage, 'orgId' | 'openingId' | 'stageId'> {}
 
 type GetWebhooksInOrgInput = Pick<DynamoWebhook, 'orgId'>;
@@ -176,16 +171,6 @@ interface DeleteQuestionFromStageInput
   decrementStageCount: boolean;
 }
 
-interface DeleteWebhookFromStageInput extends Pick<DynamoStage, 'orgId' | 'openingId' | 'stageId'> {
-  webhookId: string;
-  /**
-   * When removing a webhook from a stage, we want to decrement the stage count on the webhook.
-   * This isn't needed if the webhook is deleted obviously, and is used in the deletion state machine.
-   * which should only be deleting the adjacent item.
-   * Set it to FALSE if the webhook has been deleted form the org.
-   */
-  decrementStageCount: boolean;
-}
 interface DeleteOrgInviteInput {
   userId: string;
   inviteId: string;

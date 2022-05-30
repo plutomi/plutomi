@@ -9,7 +9,7 @@ export default function StageSettingsContentTabs({
   currentTab,
   setCurrentTab,
 }: StageSettingsContentTabsProps) {
-  const tabs = [{ name: 'Questions' }, { name: 'Webhooks' }];
+  const tabs = [{ name: 'Questions' }];
 
   return (
     <div>
