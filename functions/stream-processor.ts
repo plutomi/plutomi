@@ -37,7 +37,10 @@ export async function main(event: DynamoDBStreamEvent) {
        * Ideally, you would be able to filter on NewImage OR OldImage, but if you supply both in the EB Rule,
        * they BOTH have to match. In the case of a NEW APPLICANT event, oldImage does not exist!
        */
+      PK: NewImage?.PK || OldImage?.PK,
+      SK: NewImage?.orgId || OldImage?.SK,
       entityType: NewImage?.entityType || OldImage?.entityType,
+      orgId: NewImage?.orgId || OldImage?.orgId,
     }),
   };
 

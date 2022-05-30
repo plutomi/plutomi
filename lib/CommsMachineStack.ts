@@ -23,8 +23,7 @@ export default class CommsMachineStack extends cdk.Stack {
     const setEmailToVerified = new tasks.DynamoUpdateItem(this, 'UpdateVerifiedEmailStatus', {
       key: {
         PK: tasks.DynamoAttributeValue.fromString(sfn.JsonPath.stringAt('$.detail.NewImage.PK')),
-
-        SK: tasks.DynamoAttributeValue.fromString('USER'),
+        SK: tasks.DynamoAttributeValue.fromString(Entities.USER),
       },
       table: props.table,
       updateExpression: 'SET verifiedEmail = :newValue',
@@ -38,6 +37,7 @@ export default class CommsMachineStack extends cdk.Stack {
        */
       resultPath: sfn.JsonPath.DISCARD,
     });
+
     setEmailToVerified.addRetry({ maxAttempts: 2 });
 
     const SES_SETTINGS = {
@@ -91,6 +91,7 @@ export default class CommsMachineStack extends cdk.Stack {
         },
       },
     });
+    // TODO export this to its own file
 
     const sendLoginLink = new tasks.CallAwsService(this, 'SendLoginLink', {
       // TODO update once native integration is implemented
@@ -115,6 +116,7 @@ export default class CommsMachineStack extends cdk.Stack {
         },
       },
     });
+    // TODO export this to its own file
 
     const sendApplicationLink = new tasks.CallAwsService(this, 'SendApplicationLink', {
       // TODO update once native integration is implemented
@@ -140,6 +142,7 @@ export default class CommsMachineStack extends cdk.Stack {
       },
     });
 
+    // TODO export this to its own file
     const sendOrgInvite = new tasks.CallAwsService(this, 'SendOrgInvite', {
       // TODO update once native integration is implemented
 

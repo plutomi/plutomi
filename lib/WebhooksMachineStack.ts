@@ -46,14 +46,24 @@ export default class WebhooksMachine extends cdk.Stack {
       ],
     };
 
-    const ORG_HAS_WEBHOOKS = sfn.Condition.numberGreaterThan('$.detail.OldImage.totalWebhooks', 0);
+    const GET_ORG_INFO = new tasks.DynamoGetItem(this, 'Get Item', {
+      key: {
+        PK: tasks.DynamoAttributeValue.fromString(
+          `${Entities.ORG}#${sfn.JsonPath.stringAt('$.detail.PK')}`,
+        ),
+        SK: tasks.DynamoAttributeValue.fromString(Entities.ORG),
+      },
+      table: props.table,
+    });
+    sfn.Condition.numberGreaterThan('$.detail.OldImage.totalWebhooks', 0);
     const SUCCESS = new sfn.Succeed(this, 'No webhooks in org :)');
 
+    const FUNCTION_NAME = 'get-webhooks-and-send-event-function';
     const GetWebhooksAndSendEventFunction = new NodejsFunction(
       this,
-      `${process.env.NODE_ENV}-get-webhooks-and-send-event-function`,
+      `${process.env.NODE_ENV}-${FUNCTION_NAME}`,
       {
-        functionName: `${process.env.NODE_ENV}-get-webhooks-and-send-event-function`,
+        functionName: `${process.env.NODE_ENV}-${FUNCTION_NAME}`,
         timeout: cdk.Duration.seconds(5),
         memorySize: 256,
         logRetention: RetentionDays.ONE_WEEK,
@@ -69,23 +79,18 @@ export default class WebhooksMachine extends cdk.Stack {
         },
         handler: 'main',
         description: 'Sends events to URL in the configured webhook',
-        entry: path.join(__dirname, `/../functions/remove-deleted-question-from-stage.ts`),
+        entry: path.join(__dirname, `/../functions/get-webhooks-and-send-event.ts`),
       },
     );
 
-    const definition = new Choice(this, 'Org Has Webhooks?')
-      .when(
-        ORG_HAS_WEBHOOKS,
-        new tasks.LambdaInvoke(this, 'GetWebhooksAndSendEventFunction', {
-          // payload: sfn.TaskInput.fromObject({
-          //   stage: sfn.JsonPath.stringAt('$.stage.Item'),
-          //   questionId: sfn.JsonPath.stringAt('$.questionId'),
-          // }),
-          lambdaFunction: GetWebhooksAndSendEventFunction,
-          integrationPattern: IntegrationPattern.REQUEST_RESPONSE,
-        }),
-      )
-      .otherwise(SUCCESS);
+    const definition = new tasks.LambdaInvoke(this, 'GetWebhooksAndSendEventFunction', {
+      // payload: sfn.TaskInput.fromObject({
+      //   stage: sfn.JsonPath.stringAt('$.stage.Item'),
+      //   questionId: sfn.JsonPath.stringAt('$.questionId'),
+      // }),
+      lambdaFunction: GetWebhooksAndSendEventFunction,
+      integrationPattern: IntegrationPattern.REQUEST_RESPONSE,
+    }).addRetry({ maxAttempts: 2 });
 
     // ----- State Machine Settings -----
     const log = new LogGroup(this, `${process.env.NODE_ENV}-WebhooksMachineLogGroup`, {
