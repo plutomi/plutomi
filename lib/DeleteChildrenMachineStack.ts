@@ -310,18 +310,6 @@ export default class DeleteChildrenMachineStack extends cdk.Stack {
       },
     );
 
-    const DELETE_ADJACENT_STAGE_WEBHOOK_ITEM = new tasks.DynamoDeleteItem(
-      this,
-      'DeleteAdjacentStageWebhookItem',
-      {
-        table: props.table,
-        key: {
-          PK: tasks.DynamoAttributeValue.fromString(sfn.JsonPath.stringAt('$.adjacentItemPK')),
-          SK: tasks.DynamoAttributeValue.fromString(sfn.JsonPath.stringAt('$.adjacentItemSK')),
-        },
-      },
-    );
-
     QUESTION_DELETED_UPDATE_STAGE_INFO_MAP.iterator(
       new tasks.DynamoGetItem(this, 'GetCurrentStageInfoForQuestions', {
         table: props.table,
