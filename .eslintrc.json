@@ -15,6 +15,7 @@
     "react/require-default-props": "warn",
     "import/prefer-default-import": 0,
     "react/jsx-props-no-spreading": "warn",
+    "no-useless-return": "error",
     "jsx-a11y/label-has-associated-control": [
       2,
       {

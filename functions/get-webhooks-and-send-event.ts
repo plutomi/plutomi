@@ -1,35 +1,12 @@
 import { StepFunctionsInvokeActivity } from '@aws-cdk/aws-stepfunctions-tasks';
 import { EventBridgeEvent } from 'aws-lambda';
-import { Entities } from '../Config';
+import { DynamoStreamTypes, Entities } from '../Config';
 import { DynamoApplicant } from '../types/dynamo';
-
-const obj = {
-  eventName: 'INSERT',
-  NewImage: {
-    lastName: 'aasd',
-    canReceiveEmails: true,
-    entityType: 'APPLICANT',
-    openingId: '8FpOarWNsOan7Id',
-    isEmailVerified: false,
-    orgId: 'a',
-    createdAt: '2022-05-30T08:05:44.074Z',
-    firstName: 'aa',
-    GSI1PK: 'ORG#a#OPENING#8FpOarWNsOan7Id#STAGE#Wx_hqA2AXKW13En',
-    GSI1SK: 'DATE_LANDED#2022-05-30T08:05:44.074Z',
-    SK: 'APPLICANT',
-    PK: 'ORG#a#APPLICANT#mQUJdGC-rOZdVXMMqqRUlri866ibl8kPnM4',
-    applicantId: 'mQUJdGC-rOZdVXMMqqRUlri866ibl8kPnM4',
-    unsubscribeKey: 'E1inVUxWcq',
-    email: 'contact+aojsidasojid@josevalerio.com',
-    stageId: 'Wx_hqA2AXKW13En',
-  },
-  PK: 'ORG#a#APPLICANT#mQUJdGC-rOZdVXMMqqRUlri866ibl8kPnM4',
-  SK: 'a',
-  entityType: 'APPLICANT',
-  orgId: 'a',
-};
+import * as Webhooks from '../models/Webhooks';
+import axios from 'axios';
 
 interface ApplicantWebhookEvent {
+  eventName: DynamoStreamTypes;
   NewImage?: DynamoApplicant;
   OldImage?: DynamoApplicant;
   PK: `${Entities.ORG}#${string}#${Entities.APPLICANT}#${string}`;
@@ -39,8 +16,30 @@ interface ApplicantWebhookEvent {
 }
 
 export async function main(event: EventBridgeEvent<'stream', ApplicantWebhookEvent>) {
-  console.log('IN WEBHOOKS SENDING FUNCTION');
-  console.log(JSON.stringify(event));
+  const [webhooks, error] = await Webhooks.GetWebhooksInOrg({
+    orgId: event.detail.orgId,
+  });
+
+  if (error) {
+    console.error(`Unable to retrieve webhooks in org`, error);
+    return;
+  }
+
+  if (!success.length) {
+    console.log('No webhooks found in org');
+    return;
+  }
+
+  console.log('Sending webhooks...');
+  try {
+    await Promise.all(
+      webhooks.map((webhook) => {
+        axios.post(webhook.webhookUrl, event.detail);
+      }),
+    );
+  } catch (error) {
+    console.error(`An error ocurred sending webhooks to org ${event.detail.orgId} --- ${webhooks}`);
+  }
 
   return;
 }
