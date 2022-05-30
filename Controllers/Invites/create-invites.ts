@@ -4,10 +4,10 @@ import emailValidator from 'deep-email-validator';
 import { pick } from 'lodash';
 import { ERRORS, JOI_SETTINGS, ORG_INVITE_EXPIRY_DAYS, TIME_UNITS } from '../../Config';
 import * as CreateError from '../../utils/createError';
-import * as Users from '../../models/Users';
-import * as Orgs from '../../models/Orgs';
 import * as Time from '../../utils/time';
-import * as Invites from '../../models/Invites';
+import { getOrg } from '../../models/Orgs';
+import { createUser, getUserByEmail } from '../../models/Users';
+import { createInvite, getInvitesForUser } from '../../models/Invites';
 
 const schema = Joi.object({
   body: {
@@ -40,7 +40,7 @@ const main = async (req: Request, res: Response) => {
     return res.status(403).json({ message: `You can't invite yourself` });
   }
 
-  const [org, error] = await Orgs.GetOrgById({ orgId: session.orgId });
+  const [org, error] = await getOrg({ orgId: session.orgId });
 
   if (error) {
     const { status, body } = CreateError.SDK(
@@ -51,7 +51,7 @@ const main = async (req: Request, res: Response) => {
   }
 
   // eslint-disable-next-line prefer-const
-  let [recipient, recipientError] = await Users.GetUserByEmail({
+  let [recipient, recipientError] = await getUserByEmail({
     email: recipientEmail,
   });
 
@@ -65,7 +65,7 @@ const main = async (req: Request, res: Response) => {
 
   // Invite is for a user that doesn't exist
   if (!recipient) {
-    const [createdUser, createUserError] = await Users.CreateUser({
+    const [createdUser, createUserError] = await createUser({
       email: recipientEmail,
     });
 
@@ -85,7 +85,7 @@ const main = async (req: Request, res: Response) => {
   }
 
   // Check if the user we are inviting already has pending invites for the current org
-  const [recipientInvites, recipientInvitesError] = await Invites.GetInvitesForUser({
+  const [recipientInvites, recipientInvitesError] = await getInvitesForUser({
     userId: recipient.userId,
   });
 
@@ -105,7 +105,7 @@ const main = async (req: Request, res: Response) => {
     });
   }
 
-  const [inviteCreated, inviteError] = await Invites.CreateInvite({
+  const [inviteCreated, inviteError] = await createInvite({
     recipient: pick(recipient, ['userId', 'email', 'firstName', 'lastName', 'unsubscribeKey']),
     orgName: org.displayName,
     expiresAt: Time.futureISO(expiresInDays || ORG_INVITE_EXPIRY_DAYS, TIME_UNITS.DAYS), // TODO https://github.com/plutomi/plutomi/issues/333

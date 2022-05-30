@@ -13,7 +13,7 @@ import {
 } from '../../Config';
 import * as CreateError from '../../utils/createError';
 import { DynamoApplicant } from '../../types/dynamo';
-import * as Applicants from '../../models/Applicants';
+import { createApplicant } from '../../models/Applicants';
 
 export type APICreateApplicantOptions = Required<
   Pick<DynamoApplicant, 'orgId' | 'openingId' | 'email' | 'firstName' | 'lastName'>
@@ -71,9 +71,7 @@ const main = async (req: Request, res: Response) => {
   if (opening.GSI1SK === OpeningState.PRIVATE || opening.totalStages === 0) {
     return res.status(403).json({ message: 'You cannot apply to this opening just yet!' });
   }
-  const [created, failed] = await Applicants.CreateApplicant.createApplicant()
-  
-  createApplicant({
+  const [created, failed] = await createApplicant({
     firstName,
     lastName,
     openingId,

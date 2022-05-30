@@ -4,10 +4,10 @@ import { Dynamo } from '../../../awsClients/ddbDocClient';
 import { DYNAMO_TABLE_NAME, Entities } from '../../../Config';
 import { DynamoOrg, DynamoOrgInvite } from '../../../types/dynamo';
 
-type GetPendingOrgInvitesInput = Pick<DynamoOrg, 'orgId'>;
+type GetInvitesForOrgInput = Pick<DynamoOrg, 'orgId'>;
 
-export const getPendingOrgInvites = async (
-  props: GetPendingOrgInvitesInput,
+export const getInvitesForOrg = async (
+  props: GetInvitesForOrgInput,
 ): Promise<[DynamoOrgInvite[], null] | [null, SdkError]> => {
   const { orgId } = props;
   const params: QueryCommandInput = {

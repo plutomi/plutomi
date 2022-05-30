@@ -1,13 +1,13 @@
 import { Request, Response } from 'express';
 import { pick } from 'lodash';
-import * as Openings from '../../models/Openings';
 import * as CreateError from '../../utils/createError';
 import { OpeningState } from '../../Config';
+import { getOpening } from '../../models/Openings';
 
 const main = async (req: Request, res: Response) => {
   const { orgId, openingId } = req.params;
 
-  const [opening, openingsError] = await Openings.GetOpeningById({
+  const [opening, openingsError] = await getOpening({
     orgId,
     openingId,
   });

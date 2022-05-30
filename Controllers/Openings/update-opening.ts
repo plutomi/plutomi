@@ -1,10 +1,10 @@
 import { Request, Response } from 'express';
 import Joi from 'joi';
-import * as Openings from '../../models/Openings';
 import * as CreateError from '../../utils/createError';
 import { JOI_GLOBAL_FORBIDDEN, JOI_SETTINGS, OpeningState, LIMITS } from '../../Config';
-import { UpdateOpeningInput } from '../../types/main';
 import { DynamoOpening } from '../../types/dynamo';
+import { UpdateOpeningInput } from '../../models/Openings/UpdateOpening';
+import { getOpening, updateOpening } from '../../models/Openings';
 
 export interface APIUpdateOpeningOptions
   extends Partial<Pick<DynamoOpening, 'openingName' | 'GSI1SK' | 'stageOrder'>> {
@@ -43,7 +43,7 @@ const main = async (req: Request, res: Response) => {
     newValues: req.body,
   };
 
-  const [opening, openingError] = await Openings.GetOpeningById({
+  const [opening, openingError] = await getOpening({
     orgId: session.orgId,
     openingId,
   });
@@ -88,7 +88,7 @@ const main = async (req: Request, res: Response) => {
       message: 'An opening needs to have stages before being made public',
     });
   }
-  const [updatedOpening, error] = await Openings.UpdateOpening(updateOpeningInput);
+  const [updatedOpening, error] = await updateOpening(updateOpeningInput);
 
   if (error) {
     const { status, body } = CreateError.SDK(error, 'An error ocurred updating this opening');

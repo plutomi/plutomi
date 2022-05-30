@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 import { DEFAULTS } from '../../Config';
-import * as Invites from '../../models/Invites';
+import { acceptInvite, getInvite } from '../../models/Invites';
 import * as CreateError from '../../utils/createError';
 import * as Time from '../../utils/time';
 
@@ -14,7 +14,7 @@ const main = async (req: Request, res: Response) => {
     });
   }
 
-  const [invite, error] = await Invites.GetInvite({
+  const [invite, error] = await getInvite({
     inviteId,
     userId: session.userId,
   });
@@ -43,7 +43,7 @@ const main = async (req: Request, res: Response) => {
     });
   }
 
-  const [joined, joinError] = await Invites.AcceptInvite({
+  const [joined, joinError] = await acceptInvite({
     userId: session.userId,
     invite,
   });

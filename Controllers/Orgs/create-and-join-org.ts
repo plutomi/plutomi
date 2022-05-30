@@ -2,9 +2,9 @@ import { Request, Response } from 'express';
 import Joi from 'joi';
 import { DEFAULTS, JOI_SETTINGS, JoiOrgId } from '../../Config';
 import * as CreateError from '../../utils/createError';
-import * as Orgs from '../../models/Orgs';
-import * as Invites from '../../models/Invites';
 import { DynamoOrg } from '../../types/dynamo';
+import { getInvitesForUser } from '../../models/Invites';
+import { createAndJoinOrg } from '../../models/Orgs';
 
 export type APICreateOrgOptions = Required<Pick<DynamoOrg, 'orgId' | 'displayName'>>;
 
@@ -29,7 +29,7 @@ const main = async (req: Request, res: Response) => {
     return res.status(403).json({ message: 'You already belong to an org!' });
   }
 
-  const [pendingInvites, error] = await Invites.GetInvitesForUser({
+  const [pendingInvites, error] = await getInvitesForUser({
     userId: session.userId,
   });
 
@@ -51,7 +51,7 @@ const main = async (req: Request, res: Response) => {
 
   const { displayName, orgId }: APICreateOrgOptions = req.body;
 
-  const [created, failed] = await Orgs.CreateAndJoinOrg({
+  const [created, failed] = await createAndJoinOrg({
     userId: session.userId,
     orgId,
     displayName,

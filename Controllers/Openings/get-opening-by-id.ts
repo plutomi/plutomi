@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
 import Joi from 'joi';
 import { JOI_SETTINGS } from '../../Config';
-import * as Openings from '../../models/Openings';
+import { getOpening } from '../../models/Openings';
 import * as CreateError from '../../utils/createError';
 
 const schema = Joi.object({
@@ -19,7 +19,7 @@ const main = async (req: Request, res: Response) => {
   const { session } = res.locals;
   const { openingId } = req.params;
 
-  const [opening, error] = await Openings.GetOpeningById({
+  const [opening, error] = await getOpening({
     openingId,
     orgId: session.orgId,
   });

@@ -2,8 +2,8 @@ import { Request, Response } from 'express';
 import Joi from 'joi';
 import { JOI_SETTINGS, LIMITS } from '../../Config';
 import * as CreateError from '../../utils/createError';
-import * as Openings from '../../models/Openings';
 import { DynamoOpening } from '../../types/dynamo';
+import { createOpening } from '../../models/Openings';
 
 export type APICreateOpeningOptions = Required<Pick<DynamoOpening, 'openingName'>>;
 
@@ -24,7 +24,7 @@ const main = async (req: Request, res: Response) => {
 
   const { openingName }: APICreateOpeningOptions = req.body;
 
-  const [created, createOpeningError] = await Openings.CreateOpening({
+  const [created, createOpeningError] = await createOpening({
     orgId: session.orgId,
     openingName,
   });

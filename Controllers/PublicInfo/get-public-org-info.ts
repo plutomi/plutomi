@@ -1,12 +1,12 @@
 import { Request, Response } from 'express';
 import { pick } from 'lodash';
-import * as Orgs from '../../models/Orgs';
+import { getOrg } from '../../models/Orgs';
 import * as CreateError from '../../utils/createError';
 
 const main = async (req: Request, res: Response) => {
   const { orgId } = req.params;
 
-  const [org, orgError] = await Orgs.GetOrgById({ orgId });
+  const [org, orgError] = await getOrg({ orgId });
 
   if (orgError) {
     const { status, body } = CreateError.SDK(orgError, 'Unable to retrieve org info');

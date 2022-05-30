@@ -1,12 +1,12 @@
 import { Request, Response } from 'express';
-import * as Invites from '../../models/Invites';
+import { rejectInvite } from '../../models/Invites';
 import * as CreateError from '../../utils/createError';
 
 const main = async (req: Request, res: Response) => {
   const { session } = res.locals;
   const { inviteId } = req.params;
 
-  const [deleted, error] = await Invites.DeleteInvite({
+  const [deleted, error] = await rejectInvite({
     inviteId,
     userId: session.userId,
   });
