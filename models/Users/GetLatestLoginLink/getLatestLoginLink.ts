@@ -10,7 +10,7 @@ interface GetLatestLoginLinkInput {
 
 export const getLatestLoginLink = async (
   props: GetLatestLoginLinkInput,
-): Promise<[DynamoLoginLink, null] | [null, SdkError]> => {
+): Promise<[DynamoLoginLink, undefined] | [undefined, SdkError]> => {
   const { userId } = props;
   const params: QueryCommandInput = {
     TableName: `${process.env.NODE_ENV}-${DYNAMO_TABLE_NAME}`,
@@ -25,8 +25,8 @@ export const getLatestLoginLink = async (
 
   try {
     const response = await Dynamo.send(new QueryCommand(params));
-    return [response.Items[0] as DynamoLoginLink, null];
+    return [response.Items[0] as DynamoLoginLink, undefined];
   } catch (error) {
-    return [null, error];
+    return [undefined, error];
   }
 };

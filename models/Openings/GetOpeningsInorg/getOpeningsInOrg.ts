@@ -15,7 +15,7 @@ interface GetOpeningsInOrgInput extends Pick<DynamoOpening, 'orgId'> {
  */
 export const getOpeningsInOrg = async (
   props: GetOpeningsInOrgInput,
-): Promise<[DynamoOpening[], null] | [null, SdkError]> => {
+): Promise<[DynamoOpening[], undefined] | [undefined, SdkError]> => {
   const { orgId, GSI1SK } = props;
   const params: QueryCommandInput = {
     TableName: `${process.env.NODE_ENV}-${DYNAMO_TABLE_NAME}`,
@@ -34,8 +34,8 @@ export const getOpeningsInOrg = async (
 
   try {
     const response = await Dynamo.send(new QueryCommand(params));
-    return [response.Items as DynamoOpening[], null];
+    return [response.Items as DynamoOpening[], undefined];
   } catch (error) {
-    return [null, error];
+    return [undefined, error];
   }
 };

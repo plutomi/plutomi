@@ -10,7 +10,7 @@ export type GetApplicantInput = Pick<DynamoApplicant, 'orgId' | 'applicantId'>;
 
 export const getApplicant = async (
   props: GetApplicantInput,
-): Promise<[DynamoApplicant, null] | [null, SdkError]> => {
+): Promise<[DynamoApplicant, undefined] | [undefined, SdkError]> => {
   const { orgId, applicantId } = props;
   const responsesParams: QueryCommandInput = {
     TableName: `${process.env.NODE_ENV}-${DYNAMO_TABLE_NAME}`,
@@ -43,8 +43,8 @@ export const getApplicant = async (
       responses, // TODO rework responses
       // TODO files
     };
-    return [applicant, null];
+    return [applicant, undefined];
   } catch (error) {
-    return [null, error];
+    return [undefined, error];
   }
 };

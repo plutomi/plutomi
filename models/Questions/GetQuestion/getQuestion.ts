@@ -8,7 +8,7 @@ type GetQuestionInput = Pick<DynamoQuestion, 'orgId' | 'questionId'>;
 
 export const getQuestion = async (
   props: GetQuestionInput,
-): Promise<[DynamoQuestion, null] | [null, SdkError]> => {
+): Promise<[DynamoQuestion, undefined] | [undefined, SdkError]> => {
   const { orgId, questionId } = props;
   const params: GetCommandInput = {
     TableName: `${process.env.NODE_ENV}-${DYNAMO_TABLE_NAME}`,
@@ -20,8 +20,8 @@ export const getQuestion = async (
 
   try {
     const response = await Dynamo.send(new GetCommand(params));
-    return [response.Item as DynamoQuestion, null];
+    return [response.Item as DynamoQuestion, undefined];
   } catch (error) {
-    return [null, error];
+    return [undefined, error];
   }
 };

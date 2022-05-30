@@ -8,7 +8,7 @@ type DeleteQuestionFromOrgInput = Pick<DynamoQuestion, 'orgId' | 'questionId'>;
 
 export const deleteQuestionFromOrg = async (
   props: DeleteQuestionFromOrgInput,
-): Promise<[null, null] | [null, SdkError]> => {
+): Promise<[undefined, undefined] | [undefined, SdkError]> => {
   const { orgId, questionId } = props;
 
   const transactParams: TransactWriteCommandInput = {
@@ -42,8 +42,8 @@ export const deleteQuestionFromOrg = async (
   };
   try {
     await Dynamo.send(new TransactWriteCommand(transactParams));
-    return [null, null];
+    return [undefined, undefined];
   } catch (error) {
-    return [null, error];
+    return [undefined, error];
   }
 };

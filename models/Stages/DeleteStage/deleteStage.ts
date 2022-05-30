@@ -10,7 +10,7 @@ interface DeleteStageInput extends Pick<DynamoStage, 'orgId' | 'stageId' | 'open
 
 export const deleteStage = async (
   props: DeleteStageInput,
-): Promise<[null, null] | [null, SdkError]> => {
+): Promise<[undefined, undefined] | [undefined, SdkError]> => {
   // TODO check if stage is empty of applicants first ---> Delete children machine should take care of this now
   // Double // TODO - webhooks should delete applicants inside?
   const { orgId, stageId, openingId, deleteIndex } = props;
@@ -47,8 +47,8 @@ export const deleteStage = async (
 
   try {
     await Dynamo.send(new TransactWriteCommand(transactParams));
-    return [null, null];
+    return [undefined, undefined];
   } catch (error) {
-    return [null, error];
+    return [undefined, error];
   }
 };

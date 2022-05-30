@@ -8,7 +8,7 @@ type GetApplicantsInStageInput = Pick<DynamoStage, 'orgId' | 'stageId' | 'openin
 
 export const getApplicantsInStage = async (
   props: GetApplicantsInStageInput,
-): Promise<[DynamoApplicant[], null] | [null, SdkError]> => {
+): Promise<[DynamoApplicant[], undefined] | [undefined, SdkError]> => {
   const { orgId, stageId, openingId } = props;
 
   const params: QueryCommandInput = {
@@ -25,8 +25,8 @@ export const getApplicantsInStage = async (
     const response = await Dynamo.send(new QueryCommand(params));
     const allApplicants = response.Items;
 
-    return [allApplicants as DynamoApplicant[], null];
+    return [allApplicants as DynamoApplicant[], undefined];
   } catch (error) {
-    return [null, error];
+    return [undefined, error];
   }
 };

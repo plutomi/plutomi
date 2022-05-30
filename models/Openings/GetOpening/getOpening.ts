@@ -8,7 +8,7 @@ type GetOpeningByIdInput = Pick<DynamoOpening, 'orgId' | 'openingId'>;
 
 export const getOpening = async (
   props: GetOpeningByIdInput,
-): Promise<[DynamoOpening, null] | [null, SdkError]> => {
+): Promise<[DynamoOpening, undefined] | [undefined, SdkError]> => {
   const { orgId, openingId } = props;
   const params: GetCommandInput = {
     TableName: `${process.env.NODE_ENV}-${DYNAMO_TABLE_NAME}`,
@@ -20,8 +20,8 @@ export const getOpening = async (
 
   try {
     const response = await Dynamo.send(new GetCommand(params));
-    return [response.Item as DynamoOpening, null];
+    return [response.Item as DynamoOpening, undefined];
   } catch (error) {
-    return [null, error];
+    return [undefined, error];
   }
 };

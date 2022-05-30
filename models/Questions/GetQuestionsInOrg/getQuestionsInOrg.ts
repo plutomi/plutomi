@@ -8,7 +8,7 @@ export type GetQuestionsInOrgInput = Pick<DynamoQuestion, 'orgId'>;
 
 export const getQuestionsInOrg = async (
   props: GetQuestionsInOrgInput,
-): Promise<[DynamoQuestion[], null] | [null, SdkError]> => {
+): Promise<[DynamoQuestion[], undefined] | [undefined, SdkError]> => {
   const { orgId } = props;
 
   const params: QueryCommandInput = {
@@ -22,8 +22,8 @@ export const getQuestionsInOrg = async (
 
   try {
     const orgQuestions = await Dynamo.send(new QueryCommand(params));
-    return [orgQuestions.Items as DynamoQuestion[], null];
+    return [orgQuestions.Items as DynamoQuestion[], undefined];
   } catch (error) {
-    return [null, error];
+    return [undefined, error];
   }
 };

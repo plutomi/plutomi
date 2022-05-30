@@ -15,7 +15,7 @@ interface CreateOrgInviteInput {
 
 export const createInvite = async (
   props: CreateOrgInviteInput,
-): Promise<[null, null] | [null, SdkError]> => {
+): Promise<[undefined, undefined] | [undefined, SdkError]> => {
   const { expiresAt, createdBy, recipient, orgName } = props;
   try {
     const inviteId = nanoid(ID_LENGTHS.ORG_INVITE);
@@ -65,8 +65,8 @@ export const createInvite = async (
     };
 
     await Dynamo.send(new TransactWriteCommand(transactParams));
-    return [null, null];
+    return [undefined, undefined];
   } catch (error) {
-    return [null, error];
+    return [undefined, error];
   }
 };

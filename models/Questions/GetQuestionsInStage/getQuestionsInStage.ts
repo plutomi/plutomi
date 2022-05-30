@@ -21,8 +21,8 @@ export const getQuestionsInStage = async (
 
   try {
     const response = await Dynamo.send(new QueryCommand(params));
-    return [response.Items as DynamoQuestion[], null];
+    return [response.Items as DynamoQuestion[], undefined];
   } catch (error) {
-    return [null, error];
+    return [undefined, error];
   }
 };

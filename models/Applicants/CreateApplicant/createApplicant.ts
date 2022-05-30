@@ -13,7 +13,7 @@ export type CreateApplicantInput = Pick<
 
 export const createApplicant = async (
   props: CreateApplicantInput,
-): Promise<[DynamoApplicant, null] | [null, SdkError]> => {
+): Promise<[DynamoApplicant, undefined] | [undefined, SdkError]> => {
   const { orgId, firstName, lastName, email, openingId, stageId } = props;
 
   const now = Time.currentISO();
@@ -118,8 +118,8 @@ export const createApplicant = async (
     };
 
     await Dynamo.send(new TransactWriteCommand(transactParams));
-    return [newApplicant, null];
+    return [newApplicant, undefined];
   } catch (error) {
-    return [null, error];
+    return [undefined, error];
   }
 };

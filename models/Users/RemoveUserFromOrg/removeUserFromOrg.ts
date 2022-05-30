@@ -20,7 +20,7 @@ interface RemoveUserFromOrgInput {
 
 export const removeUserFromOrg = async (
   props: RemoveUserFromOrgInput,
-): Promise<[null, null] | [null, SdkError]> => {
+): Promise<[undefined, undefined] | [undefined, SdkError]> => {
   const { userId, createdById, orgId } = props;
   try {
     const transactParams: TransactWriteCommandInput = {
@@ -62,8 +62,8 @@ export const removeUserFromOrg = async (
     };
 
     await Dynamo.send(new TransactWriteCommand(transactParams));
-    return [null, null];
+    return [undefined, undefined];
   } catch (error) {
-    return [null, error];
+    return [undefined, error];
   }
 };

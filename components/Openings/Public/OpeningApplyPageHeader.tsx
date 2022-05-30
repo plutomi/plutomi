@@ -21,7 +21,7 @@ export default function OpeningApplyPageHeader() {
           {org?.displayName}
         </h2>
         <h2 className=" text-2xl font-semibold leading-7 text-light  sm:truncate">
-          {isOpeningLoading ? null : `${opening?.openingName}`}
+          {isOpeningLoading ? '' : `${opening?.openingName}`}
         </h2>
       </div>
     </div>

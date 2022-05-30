@@ -90,7 +90,7 @@ describe('Stages', () => {
     try {
       await Stages.CreateStage({
         openingId: '',
-        GSI1SK: null,
+        GSI1SK: undefined,
       });
     } catch (error) {
       expect(error.response.status).toBe(400);

@@ -14,7 +14,7 @@ interface CreateLoginLinkInput {
 
 export const createLoginLink = async (
   props: CreateLoginLinkInput,
-): Promise<[null, null] | [null, SdkError]> => {
+): Promise<[undefined, undefined] | [undefined, SdkError]> => {
   const { loginLinkId, loginLinkUrl, loginLinkExpiry, user } = props;
   const now = Time.currentISO();
   try {
@@ -38,8 +38,8 @@ export const createLoginLink = async (
     };
 
     await Dynamo.send(new PutCommand(params));
-    return [null, null];
+    return [undefined, undefined];
   } catch (error) {
-    return [null, error];
+    return [undefined, error];
   }
 };

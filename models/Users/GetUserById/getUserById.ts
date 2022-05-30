@@ -10,7 +10,7 @@ interface GetUserByIdInput {
 
 export const getUserById = async (
   props: GetUserByIdInput,
-): Promise<[DynamoUser, null] | [null, SdkError]> => {
+): Promise<[DynamoUser, undefined] | [undefined, SdkError]> => {
   const { userId } = props;
   const params: GetCommandInput = {
     TableName: `${process.env.NODE_ENV}-${DYNAMO_TABLE_NAME}`,
@@ -22,8 +22,8 @@ export const getUserById = async (
 
   try {
     const response = await Dynamo.send(new GetCommand(params));
-    return [response.Item as DynamoUser, null];
+    return [response.Item as DynamoUser, undefined];
   } catch (error) {
-    return [null, error];
+    return [undefined, error];
   }
 };

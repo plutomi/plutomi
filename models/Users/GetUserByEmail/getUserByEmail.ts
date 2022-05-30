@@ -10,7 +10,7 @@ interface GetUserByEmailInput {
 
 export const getUserByEmail = async (
   props: GetUserByEmailInput,
-): Promise<[DynamoUser, null] | [null, SdkError]> => {
+): Promise<[DynamoUser, undefined] | [undefined, SdkError]> => {
   const { email } = props;
   const params: QueryCommandInput = {
     TableName: `${process.env.NODE_ENV}-${DYNAMO_TABLE_NAME}`,
@@ -24,9 +24,9 @@ export const getUserByEmail = async (
 
   try {
     const response = await Dynamo.send(new QueryCommand(params));
-    return [response.Items[0] as DynamoUser, null];
+    return [response.Items[0] as DynamoUser, undefined];
     // TODO are we sure the first item will be the user? Switch this to .find
   } catch (error) {
-    return [null, error];
+    return [undefined, error];
   }
 };

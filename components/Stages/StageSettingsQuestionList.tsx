@@ -28,7 +28,7 @@ export default function StageSettingsQuestionList() {
   const { stage, isStageLoading, isStageError } = useStageInfo(openingId, stageId);
   const [filteredOrgQuestions, setFilteredOrgQuestions] = useState(orgQuestions);
   const [show, setShow] = useState(false);
-  const [selected, setSelected] = useState(null);
+  const [selected, setSelected] = useState(undefined);
 
   const handleSearch = async (value: string) => {
     setLocalSearch(value);

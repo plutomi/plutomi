@@ -8,7 +8,7 @@ type GetInvitesForOrgInput = Pick<DynamoOrg, 'orgId'>;
 
 export const getInvitesForOrg = async (
   props: GetInvitesForOrgInput,
-): Promise<[DynamoOrgInvite[], null] | [null, SdkError]> => {
+): Promise<[DynamoOrgInvite[], undefined] | [undefined, SdkError]> => {
   const { orgId } = props;
   const params: QueryCommandInput = {
     TableName: `${process.env.NODE_ENV}-${DYNAMO_TABLE_NAME}`,
@@ -22,8 +22,8 @@ export const getInvitesForOrg = async (
 
   try {
     const response = await Dynamo.send(new QueryCommand(params));
-    return [response.Items as DynamoOrgInvite[], null];
+    return [response.Items as DynamoOrgInvite[], undefined];
   } catch (error) {
-    return [null, error];
+    return [undefined, error];
   }
 };

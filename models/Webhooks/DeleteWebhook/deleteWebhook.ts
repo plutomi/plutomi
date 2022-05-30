@@ -8,7 +8,7 @@ type DeleteWebhookFromOrgInput = Pick<DynamoWebhook, 'webhookId' | 'orgId'>;
 
 export const deleteWebhook = async (
   props: DeleteWebhookFromOrgInput,
-): Promise<[null, SdkError]> => {
+): Promise<[undefined, SdkError]> => {
   const { orgId, webhookId } = props;
 
   const transactParams: TransactWriteCommandInput = {
@@ -42,8 +42,8 @@ export const deleteWebhook = async (
   };
   try {
     await Dynamo.send(new TransactWriteCommand(transactParams));
-    return [null, null];
+    return [undefined, undefined];
   } catch (error) {
-    return [null, error];
+    return [undefined, error];
   }
 };

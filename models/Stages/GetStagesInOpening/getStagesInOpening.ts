@@ -8,7 +8,7 @@ type GetStagesInOpeningInput = Pick<DynamoOpening, 'orgId' | 'openingId' | 'stag
 
 export const getStagesInOpening = async (
   props: GetStagesInOpeningInput,
-): Promise<[DynamoStage[], null] | [null, SdkError]> => {
+): Promise<[DynamoStage[], undefined] | [undefined, SdkError]> => {
   const { orgId, openingId, stageOrder } = props;
   const params: QueryCommandInput = {
     TableName: `${process.env.NODE_ENV}-${DYNAMO_TABLE_NAME}`,
@@ -25,8 +25,8 @@ export const getStagesInOpening = async (
 
     // Orders results in the way the stageOrder is
     const result = stageOrder.map((i: string) => allStages.find((j) => j.stageId === i));
-    return [result as DynamoStage[], null];
+    return [result as DynamoStage[], undefined];
   } catch (error) {
-    return [null, error];
+    return [undefined, error];
   }
 };

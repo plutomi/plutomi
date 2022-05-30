@@ -11,7 +11,7 @@ export interface UpdateOpeningInput extends Pick<DynamoOpening, 'orgId' | 'openi
 // TODO new udpate method https://github.com/plutomi/plutomi/issues/594
 export const updateOpening = async (
   props: UpdateOpeningInput,
-): Promise<[null, null] | [null, SdkError]> => {
+): Promise<[undefined, undefined] | [undefined, SdkError]> => {
   const { orgId, openingId, newValues } = props;
   // Build update expression
   const allUpdateExpressions: string[] = [];
@@ -40,8 +40,8 @@ export const updateOpening = async (
 
   try {
     await Dynamo.send(new UpdateCommand(params));
-    return [null, null];
+    return [undefined, undefined];
   } catch (error) {
-    return [null, error];
+    return [undefined, error];
   }
 };

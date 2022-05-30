@@ -11,7 +11,7 @@ export interface UpdateWebhookInput extends Pick<DynamoWebhook, 'orgId' | 'webho
 }
 
 // TODO new udpate method https://github.com/plutomi/plutomi/issues/594
-export const updateWebhook = async (props: UpdateWebhookInput): Promise<[null, SdkError]> => {
+export const updateWebhook = async (props: UpdateWebhookInput): Promise<[undefined, SdkError]> => {
   const { orgId, webhookId, newValues } = props;
   // Build update expression
   let allUpdateExpressions: string[] = [];
@@ -40,8 +40,8 @@ export const updateWebhook = async (props: UpdateWebhookInput): Promise<[null, S
 
   try {
     await Dynamo.send(new UpdateCommand(params));
-    return [null, null];
+    return [undefined, undefined];
   } catch (error) {
-    return [null, error];
+    return [undefined, error];
   }
 };

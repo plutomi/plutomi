@@ -11,7 +11,7 @@ export interface UpdateUserInput extends Pick<DynamoUser, 'userId'> {
 // TODO new udpate method https://github.com/plutomi/plutomi/issues/594
 export const updateUser = async (
   props: UpdateUserInput,
-): Promise<[DynamoUser, null] | [null, SdkError]> => {
+): Promise<[DynamoUser, undefined] | [undefined, SdkError]> => {
   const { userId, newValues } = props;
 
   // Build update expression
@@ -41,8 +41,8 @@ export const updateUser = async (
   };
   try {
     const updatedUser = await Dynamo.send(new UpdateCommand(params));
-    return [updatedUser.Attributes as DynamoUser, null];
+    return [updatedUser.Attributes as DynamoUser, undefined];
   } catch (error) {
-    return [null, error];
+    return [undefined, error];
   }
 };

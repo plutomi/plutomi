@@ -21,8 +21,8 @@ export const getWebhooksInOrg = async (
 
   try {
     const response = await Dynamo.send(new QueryCommand(params));
-    return [response.Items as DynamoWebhook[], null];
+    return [response.Items as DynamoWebhook[], undefined];
   } catch (error) {
-    return [null, error];
+    return [undefined, error];
   }
 };

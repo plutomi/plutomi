@@ -22,7 +22,7 @@ interface AddQuestionToStageInput
 
 export const addQuestionToStage = async (
   props: AddQuestionToStageInput,
-): Promise<[null, null] | [null, SdkError]> => {
+): Promise<[undefined, undefined] | [undefined, SdkError]> => {
   const { orgId, openingId, stageId, questionId, questionOrder } = props;
 
   /**
@@ -95,8 +95,8 @@ export const addQuestionToStage = async (
 
   try {
     await Dynamo.send(new TransactWriteCommand(transactParams));
-    return [null, null];
+    return [undefined, undefined];
   } catch (error) {
-    return [null, error];
+    return [undefined, error];
   }
 };

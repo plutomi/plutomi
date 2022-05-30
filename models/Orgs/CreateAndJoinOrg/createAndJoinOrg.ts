@@ -13,7 +13,7 @@ interface CreateAndJoinOrgInput {
 
 export const createAndJoinOrg = async (
   props: CreateAndJoinOrgInput,
-): Promise<[null, null] | [null, SdkError]> => {
+): Promise<[undefined, undefined] | [undefined, SdkError]> => {
   const { userId, orgId, displayName } = props;
   const now = Time.currentISO();
 
@@ -63,8 +63,8 @@ export const createAndJoinOrg = async (
     };
 
     await Dynamo.send(new TransactWriteCommand(transactParams));
-    return [null, null];
+    return [undefined, undefined];
   } catch (error) {
-    return [null, error];
+    return [undefined, error];
   }
 };

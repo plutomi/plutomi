@@ -11,7 +11,7 @@ export type DeleteApplicantInput = Pick<
 
 export const deleteApplicant = async (
   props: DeleteApplicantInput,
-): Promise<[null, null] | [null, SdkError]> => {
+): Promise<[undefined, undefined] | [undefined, SdkError]> => {
   const { orgId, applicantId, openingId, stageId } = props;
   try {
     const transactParams: TransactWriteCommandInput = {
@@ -72,8 +72,8 @@ export const deleteApplicant = async (
     };
 
     await Dynamo.send(new TransactWriteCommand(transactParams));
-    return [null, null];
+    return [undefined, undefined];
   } catch (error) {
-    return [null, error];
+    return [undefined, error];
   }
 };
