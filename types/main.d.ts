@@ -146,11 +146,6 @@ interface DeleteQuestionFromStageInput
   decrementStageCount: boolean;
 }
 
-interface DeleteOrgInviteInput {
-  userId: string;
-  inviteId: string;
-}
-
 type CreateUserInput = {
   email: string;
   firstName?: string;
@@ -159,11 +154,6 @@ type CreateUserInput = {
 
 type GetOrgInvitesForUserInput = {
   userId: string;
-};
-
-type GetOrgInviteInput = {
-  userId: string;
-  inviteId: string;
 };
 
 type CreateLoginLinkInput = {

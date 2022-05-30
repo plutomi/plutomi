@@ -1,16 +1,19 @@
 import { SdkError } from '@aws-sdk/types';
 import { TransactWriteCommandInput, TransactWriteCommand } from '@aws-sdk/lib-dynamodb';
-import { Dynamo } from '../../awsClients/ddbDocClient';
-import { DYNAMO_TABLE_NAME, Entities } from '../../Config';
-import { DeleteOrgInviteInput } from '../../types/main';
+import { Dynamo } from '../../../awsClients/ddbDocClient';
+import { DYNAMO_TABLE_NAME, Entities } from '../../../Config';
+
+interface RejectOrgInviteInput {
+  userId: string;
+  inviteId: string;
+}
 
 /**
- * 1. Rejecting invite as invitee
- * 2. Deleting invite
+ * Rejects an invite and deletes it
  */
-export default async function DeleteInvite(
-  props: DeleteOrgInviteInput,
-): Promise<[null, null] | [null, SdkError]> {
+export const rejectInvite = async (
+  props: RejectOrgInviteInput,
+): Promise<[null, null] | [null, SdkError]> => {
   const { userId, inviteId } = props;
   try {
     const transactParams: TransactWriteCommandInput = {
@@ -26,7 +29,6 @@ export default async function DeleteInvite(
             ConditionExpression: 'attribute_exists(PK)',
           },
         },
-
         {
           // Decrement the recipient's total invites
           Update: {
@@ -46,9 +48,8 @@ export default async function DeleteInvite(
     };
 
     await Dynamo.send(new TransactWriteCommand(transactParams));
-
     return [null, null];
   } catch (error) {
     return [null, error];
   }
-}
+};

@@ -1,17 +1,20 @@
 import { GetCommandInput, GetCommand } from '@aws-sdk/lib-dynamodb';
 import { SdkError } from '@aws-sdk/types';
-import { Dynamo } from '../../awsClients/ddbDocClient';
-import { DYNAMO_TABLE_NAME, Entities } from '../../Config';
-import { DynamoOrgInvite } from '../../types/dynamo';
-import { GetOrgInviteInput } from '../../types/main';
+import { Dynamo } from '../../../awsClients/ddbDocClient';
+import { DYNAMO_TABLE_NAME, Entities } from '../../../Config';
+import { DynamoOrgInvite } from '../../../types/dynamo';
 
-export default async function Get(
+type GetOrgInviteInput = {
+  userId: string;
+  inviteId: string;
+};
+
+export const getInvite = async (
   props: GetOrgInviteInput,
-): Promise<[DynamoOrgInvite, null] | [null, SdkError]> {
+): Promise<[DynamoOrgInvite, null] | [null, SdkError]> => {
   const { userId, inviteId } = props;
   const params: GetCommandInput = {
     TableName: `${process.env.NODE_ENV}-${DYNAMO_TABLE_NAME}`,
-
     Key: {
       PK: `${Entities.USER}#${userId}`,
       SK: `${Entities.ORG_INVITE}#${inviteId}`,
@@ -24,4 +27,4 @@ export default async function Get(
   } catch (error) {
     return [null, error];
   }
-}
+};
