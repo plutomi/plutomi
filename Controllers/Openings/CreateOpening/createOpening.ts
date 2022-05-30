@@ -1,9 +1,9 @@
 import { Request, Response } from 'express';
 import Joi from 'joi';
-import { JOI_SETTINGS, LIMITS } from '../../Config';
-import * as CreateError from '../../utils/createError';
-import { DynamoOpening } from '../../types/dynamo';
-import { createOpening } from '../../models/Openings';
+import { JOI_SETTINGS, LIMITS } from '../../../Config';
+import * as CreateError from '../../../utils/createError';
+import { DynamoOpening } from '../../../types/dynamo';
+import { createOpening } from '../../../models/Openings';
 
 export type APICreateOpeningOptions = Required<Pick<DynamoOpening, 'openingName'>>;
 
@@ -13,7 +13,7 @@ const schema = Joi.object({
   },
 }).options(JOI_SETTINGS);
 
-const main = async (req: Request, res: Response) => {
+export const main = async (req: Request, res: Response) => {
   const { session } = res.locals;
   try {
     await schema.validateAsync(req);
@@ -39,4 +39,3 @@ const main = async (req: Request, res: Response) => {
 
   return res.status(201).json({ message: 'Opening created!' });
 };
-export default main;

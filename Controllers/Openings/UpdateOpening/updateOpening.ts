@@ -1,10 +1,10 @@
 import { Request, Response } from 'express';
 import Joi from 'joi';
-import * as CreateError from '../../utils/createError';
-import { JOI_GLOBAL_FORBIDDEN, JOI_SETTINGS, OpeningState, LIMITS } from '../../Config';
-import { DynamoOpening } from '../../types/dynamo';
-import { UpdateOpeningInput } from '../../models/Openings/UpdateOpening';
-import { getOpening, updateOpening } from '../../models/Openings';
+import * as CreateError from '../../../utils/createError';
+import { JOI_GLOBAL_FORBIDDEN, JOI_SETTINGS, OpeningState, LIMITS } from '../../../Config';
+import { DynamoOpening } from '../../../types/dynamo';
+import { UpdateOpeningInput } from '../../../models/Openings/UpdateOpening';
+import { getOpening, updateOpening } from '../../../models/Openings';
 
 export interface APIUpdateOpeningOptions
   extends Partial<Pick<DynamoOpening, 'openingName' | 'GSI1SK' | 'stageOrder'>> {
@@ -26,7 +26,7 @@ const schema = Joi.object({
   body: JOI_FORBIDDEN_OPENING,
 }).options(JOI_SETTINGS);
 
-const main = async (req: Request, res: Response) => {
+export const main = async (req: Request, res: Response) => {
   try {
     await schema.validateAsync(req);
   } catch (error) {
@@ -100,5 +100,3 @@ const main = async (req: Request, res: Response) => {
     message: 'Opening updated!',
   });
 };
-
-export default main;

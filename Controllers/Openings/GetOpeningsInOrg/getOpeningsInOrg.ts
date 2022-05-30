@@ -1,8 +1,8 @@
 import { Request, Response } from 'express';
-import { getOpeningsInOrg } from '../../models/Openings';
-import * as CreateError from '../../utils/createError';
+import { getOpeningsInOrg } from '../../../models/Openings';
+import * as CreateError from '../../../utils/createError';
 
-const main = async (req: Request, res: Response) => {
+export const main = async (req: Request, res: Response) => {
   const { session } = res.locals;
   const [openings, openingsError] = await getOpeningsInOrg({
     orgId: session.orgId,
@@ -17,4 +17,3 @@ const main = async (req: Request, res: Response) => {
 
   return res.status(200).json(openings);
 };
-export default main;
