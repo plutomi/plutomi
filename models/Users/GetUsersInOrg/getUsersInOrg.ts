@@ -1,13 +1,20 @@
 import { QueryCommandInput, QueryCommand } from '@aws-sdk/lib-dynamodb';
 import { SdkError } from '@aws-sdk/types';
-import { Dynamo } from '../../awsClients/ddbDocClient';
-import { DYNAMO_TABLE_NAME, Entities } from '../../Config';
-import { DynamoUser } from '../../types/dynamo';
-import { GetUsersInOrgInput } from '../../types/main';
+import { Dynamo } from '../../../awsClients/ddbDocClient';
+import { DYNAMO_TABLE_NAME, Entities } from '../../../Config';
+import { DynamoUser } from '../../../types/dynamo';
 
-export default async function GetUsersInOrg(
+interface GetUsersInOrgInput {
+  orgId: string;
+  /**
+   * Optional limit to only return a certain number of users
+   */
+  limit?: number;
+}
+
+export const getUsersInOrg = async (
   props: GetUsersInOrgInput,
-): Promise<[DynamoUser[], null] | [null, SdkError]> {
+): Promise<[DynamoUser[], null] | [null, SdkError]> => {
   const { orgId, limit } = props;
   const params: QueryCommandInput = {
     TableName: `${process.env.NODE_ENV}-${DYNAMO_TABLE_NAME}`,
@@ -28,4 +35,4 @@ export default async function GetUsersInOrg(
   } catch (error) {
     return [null, error];
   }
-}
+};

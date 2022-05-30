@@ -52,10 +52,6 @@ export type SessionData = Pick<
   'firstName' | 'lastName' | 'orgId' | 'email' | 'userId' | 'canReceiveEmails'
 >;
 
-export interface UpdateUserInput extends Pick<DynamoUser, 'userId'> {
-  newValues: { [key: string]: any };
-}
-
 type OrgIdAndQuestionId = 'orgId' | 'questionId';
 
 type DeleteWebhookFromOrgInput = Pick<DynamoWebhook, 'webhookId' | 'orgId'>;
@@ -90,19 +86,3 @@ type DeleteLoginLinkInput = {
   userId: string;
   loginLinkTimestmap: string;
 };
-
-type GetUsersInOrgInput = {
-  orgId: string;
-  /**
-   * Optional limit to only return a certain number of users
-   */
-  limit?: number;
-};
-
-type GetUserByIdInput = {
-  userId: string;
-};
-
-interface GetUserByEmailInput {
-  email: string;
-}

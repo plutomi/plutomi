@@ -1,7 +1,7 @@
 import { TransactWriteCommandInput, TransactWriteCommand } from '@aws-sdk/lib-dynamodb';
 import { SdkError } from '@aws-sdk/types';
-import { Dynamo } from '../../awsClients/ddbDocClient';
-import { DEFAULTS, DYNAMO_TABLE_NAME, Entities } from '../../Config';
+import { Dynamo } from '../../../awsClients/ddbDocClient';
+import { DEFAULTS, DYNAMO_TABLE_NAME, Entities } from '../../../Config';
 
 interface RemoveUserFromOrgInput {
   /**
@@ -17,11 +17,11 @@ interface RemoveUserFromOrgInput {
    */
   createdById: string;
 }
-export default async function RemoveUserFromOrg(
+
+export const removeUserFromOrg = async (
   props: RemoveUserFromOrgInput,
-): Promise<[null, null] | [null, SdkError]> {
+): Promise<[null, null] | [null, SdkError]> => {
   const { userId, createdById, orgId } = props;
-  // TODO types
   try {
     const transactParams: TransactWriteCommandInput = {
       TransactItems: [
@@ -66,4 +66,4 @@ export default async function RemoveUserFromOrg(
   } catch (error) {
     return [null, error];
   }
-}
+};

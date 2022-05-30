@@ -1,13 +1,16 @@
 import { QueryCommandInput, QueryCommand } from '@aws-sdk/lib-dynamodb';
 import { SdkError } from '@aws-sdk/types';
-import { Dynamo } from '../../awsClients/ddbDocClient';
-import { DYNAMO_TABLE_NAME, Entities } from '../../Config';
-import { DynamoUser } from '../../types/dynamo';
-import { GetUserByEmailInput } from '../../types/main';
+import { Dynamo } from '../../../awsClients/ddbDocClient';
+import { DYNAMO_TABLE_NAME, Entities } from '../../../Config';
+import { DynamoUser } from '../../../types/dynamo';
 
-export default async function GetUserByEmail(
+interface GetUserByEmailInput {
+  email: string;
+}
+
+export const getUserByEmail = async (
   props: GetUserByEmailInput,
-): Promise<[DynamoUser, null] | [null, SdkError]> {
+): Promise<[DynamoUser, null] | [null, SdkError]> => {
   const { email } = props;
   const params: QueryCommandInput = {
     TableName: `${process.env.NODE_ENV}-${DYNAMO_TABLE_NAME}`,
@@ -26,4 +29,4 @@ export default async function GetUserByEmail(
   } catch (error) {
     return [null, error];
   }
-}
+};
