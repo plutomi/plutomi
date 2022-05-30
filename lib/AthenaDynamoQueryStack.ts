@@ -1,16 +1,7 @@
-import * as dotenv from 'dotenv';
 import * as cdk from '@aws-cdk/core';
 import { Table } from '@aws-cdk/aws-dynamodb';
 import * as sam from '@aws-cdk/aws-sam';
 import * as s3 from '@aws-cdk/aws-s3';
-
-const resultDotEnv = dotenv.config({
-  path: `${process.cwd()}/.env.${process.env.NODE_ENV}`,
-});
-
-if (resultDotEnv.error) {
-  throw resultDotEnv.error;
-}
 
 interface AthenaDynamoQueryStackProps extends cdk.StackProps {
   table: Table;

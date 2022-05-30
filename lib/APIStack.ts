@@ -1,4 +1,3 @@
-import * as dotenv from 'dotenv';
 import * as cf from '@aws-cdk/aws-cloudfront';
 import * as waf from '@aws-cdk/aws-wafv2';
 import * as cdk from '@aws-cdk/core';

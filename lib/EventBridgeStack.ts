@@ -1,17 +1,8 @@
-import * as dotenv from 'dotenv';
 import * as cdk from '@aws-cdk/core';
 import { EventBus, Rule } from '@aws-cdk/aws-events';
 import { StateMachine } from '@aws-cdk/aws-stepfunctions';
 import { SfnStateMachine } from '@aws-cdk/aws-events-targets';
 import { DynamoStreamTypes, Entities } from '../Config';
-
-const resultDotEnv = dotenv.config({
-  path: `${process.cwd()}/.env.${process.env.NODE_ENV}`,
-});
-
-if (resultDotEnv.error) {
-  throw resultDotEnv.error;
-}
 
 enum Rules {
   /**
