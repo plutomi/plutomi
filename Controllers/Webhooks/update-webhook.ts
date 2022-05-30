@@ -1,15 +1,13 @@
-import { Request, Response } from "express";
-import Joi from "joi";
-import * as Webhooks from "../../models/Webhooks";
-import * as CreateError from "../../utils/createError";
-import { JOI_GLOBAL_FORBIDDEN, JOI_SETTINGS, LIMITS } from "../../Config";
-import { UpdateWebhookInput } from "../../types/main";
-import { DynamoWebhook } from "../../types/dynamo";
+import { Request, Response } from 'express';
+import Joi from 'joi';
+import * as Webhooks from '../../models/Webhooks';
+import * as CreateError from '../../utils/createError';
+import { JOI_GLOBAL_FORBIDDEN, JOI_SETTINGS, LIMITS } from '../../Config';
+import { UpdateWebhookInput } from '../../types/main';
+import { DynamoWebhook } from '../../types/dynamo';
 
 export interface APIUpdateWebhookOptions
-  extends Partial<
-    Pick<DynamoWebhook, "webhookName" | "webhookUrl" | "description">
-  > {
+  extends Partial<Pick<DynamoWebhook, 'webhookName' | 'webhookUrl' | 'description'>> {
   [key: string]: any;
 }
 
@@ -20,10 +18,7 @@ const JOI_FORBIDDEN_WEBHOOK = Joi.object({
   GSI1SK: Joi.any().forbidden(),
   url: Joi.string().uri().optional(),
   webhookName: Joi.string().max(100).min(1).optional(),
-  description: Joi.string()
-    .allow("")
-    .max(LIMITS.MAX_WEBHOOK_DESCRIPTION_LENGTH)
-    .optional(),
+  description: Joi.string().allow('').max(LIMITS.MAX_WEBHOOK_DESCRIPTION_LENGTH).optional(),
 });
 
 const schema = Joi.object({
@@ -47,21 +42,16 @@ const main = async (req: Request, res: Response) => {
     newValues: req.body,
   };
 
-  const [updatedWebhook, error] = await Webhooks.UpdateWebhook(
-    updateWebhookInput
-  );
+  const [updatedWebhook, error] = await Webhooks.UpdateWebhook(updateWebhookInput);
 
   if (error) {
-    const { status, body } = CreateError.SDK(
-      error,
-      "An error ocurred updating this webhook"
-    );
+    const { status, body } = CreateError.SDK(error, 'An error ocurred updating this webhook');
 
     return res.status(status).json(body);
   }
 
   return res.status(200).json({
-    message: "Webhook updated!",
+    message: 'Webhook updated!',
   });
 };
 

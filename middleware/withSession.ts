@@ -2,6 +2,7 @@ import { Request, Response, NextFunction } from 'express';
 import { COOKIE_NAME, COOKIE_SETTINGS } from '../Config';
 import * as Users from '../models/Users';
 
+// eslint-disable-next-line consistent-return
 export default async function withSession(req: Request, res: Response, next: NextFunction) {
   const userId = req.signedCookies[COOKIE_NAME];
   if (!userId) {

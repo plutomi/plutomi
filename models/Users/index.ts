@@ -1,11 +1,11 @@
-import CreateUser from './create-user';
-import GetUserByEmail from './get-user-by-email';
-import GetUserById from './get-user-by-id';
-import UpdateUser from './update-user';
-import CreateLoginLink from './create-login-links';
-import GetUsersLatestLoginLink from './get-latest-login-link';
-import CreateLoginEvent from './create-login-event';
-import RemoveUserFromOrg from './remove-user-from-org';
+import * as CreateUser from './CreateUser';
+import * as GetUserByEmail from './GetUserByEmail';
+import * as GetUserById from './GetUserById';
+import * as UpdateUser from './UpdateUser';
+import * as CreateLoginLink from './CreateLoginLink';
+import * as GetLatestLoginLink from './GetLatestLoginLink';
+import * as CreateLoginEvent from './CreateLoginEvent';
+import * as RemoveUserFromOrg from './RemoveUserFromOrg';
 
 export {
   CreateUser,
@@ -14,6 +14,6 @@ export {
   UpdateUser,
   CreateLoginEvent,
   CreateLoginLink,
-  GetUsersLatestLoginLink,
+  GetLatestLoginLink,
   RemoveUserFromOrg,
 };

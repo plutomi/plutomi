@@ -1,6 +1,7 @@
-import { Request, Response } from "express";
-import * as CreateError from "../../utils/createError";
-import * as Webhooks from "../../models/Webhooks";
+import { Request, Response } from 'express';
+import * as CreateError from '../../utils/createError';
+import * as Webhooks from '../../models/Webhooks';
+
 const main = async (req: Request, res: Response) => {
   const { session } = res.locals;
   const [webhooks, webhooksError] = await Webhooks.GetWebhooksInOrg({
@@ -8,10 +9,7 @@ const main = async (req: Request, res: Response) => {
   });
 
   if (webhooksError) {
-    const { status, body } = CreateError.SDK(
-      webhooksError,
-      "An error ocurred retrieving webhooks"
-    );
+    const { status, body } = CreateError.SDK(webhooksError, 'An error ocurred retrieving webhooks');
 
     return res.status(status).json(body);
   }

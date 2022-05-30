@@ -1,7 +1,6 @@
 import { Request, Response } from 'express';
 import * as CreateError from '../../utils/createError';
 import * as Applicants from '../../models/Applicants';
-import * as Openings from '../../models/Openings';
 
 const main = async (req: Request, res: Response) => {
   const { session } = res.locals;
@@ -24,4 +23,5 @@ const main = async (req: Request, res: Response) => {
 
   return res.status(200).json(applicants);
 };
+
 export default main;

@@ -83,7 +83,6 @@ const main = async (req: Request, res: Response) => {
 
   if (failed) {
     const { status, body } = CreateError.SDK(failed, 'An error ocurred creating your application');
-
     return res.status(status).json(body);
   }
 

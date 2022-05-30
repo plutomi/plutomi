@@ -1,8 +1,9 @@
-import { Request, Response } from "express";
-import Joi from "joi";
-import { JOI_SETTINGS } from "../../Config";
-import * as CreateError from "../../utils/createError";
-import * as Webhooks from "../../models/Webhooks";
+import { Request, Response } from 'express';
+import Joi from 'joi';
+import { JOI_SETTINGS } from '../../Config';
+import * as CreateError from '../../utils/createError';
+import * as Webhooks from '../../models/Webhooks';
+
 const schema = Joi.object({
   params: {
     webhookId: Joi.string(),
@@ -24,15 +25,12 @@ const main = async (req: Request, res: Response) => {
   });
 
   if (error) {
-    const { status, body } = CreateError.SDK(
-      error,
-      "An error ocurred retrieving your webhook"
-    );
+    const { status, body } = CreateError.SDK(error, 'An error ocurred retrieving your webhook');
 
     return res.status(status).json(body);
   }
   if (!webhook) {
-    return res.status(404).json({ message: "Webhook not found" });
+    return res.status(404).json({ message: 'Webhook not found' });
   }
 
   return res.status(200).json(webhook);

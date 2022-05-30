@@ -1,11 +1,9 @@
 import { Request, Response } from 'express';
 import emailValidator from 'deep-email-validator';
 import Joi from 'joi';
-
 import { nanoid } from 'nanoid';
 import {
   DEFAULTS,
-  LOGIN_LINK_SETTINGS,
   TIME_UNITS,
   JOI_SETTINGS,
   WEBSITE_URL,
@@ -57,6 +55,7 @@ const requestLoginLink = async (req: Request, res: Response) => {
   }
 
   // If a user is signing in for the first time, create an account for them
+  // eslint-disable-next-line prefer-const
   let [user, userError] = await Users.GetUserByEmail({ email });
   if (userError) {
     console.error(userError);

@@ -3,7 +3,6 @@ import Joi from 'joi';
 import { JOI_SETTINGS, WEBSITE_URL, COOKIE_NAME, COOKIE_SETTINGS } from '../../Config';
 import * as Users from '../../models/Users';
 import * as CreateError from '../../utils/createError';
-import errorFormatter from '../../utils/errorFormatter';
 
 const jwt = require('jsonwebtoken');
 

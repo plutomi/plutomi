@@ -1,6 +1,5 @@
 import { Request, Response } from 'express';
 import { pick } from 'lodash';
-import { DEFAULTS } from '../../Config';
 import * as Orgs from '../../models/Orgs';
 import * as CreateError from '../../utils/createError';
 

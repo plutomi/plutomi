@@ -3,6 +3,7 @@ import TagGenerator from '../utils/tagGenerator';
 /**
  * Cleans up the questionId, whether in body, params, or query, to be URL safe
  */
+// eslint-disable-next-line consistent-return
 export default async function withCleanQuestionId(req: Request, res: Response, next: NextFunction) {
   if (req.body.questionId) {
     req.body.questionId = TagGenerator({

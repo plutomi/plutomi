@@ -52,6 +52,17 @@ interface DynamoStage {
   GSI1SK: string;
 }
 
+interface DynamoQuestionStageAdjacentItem {
+  PK: `${Entities.ORG}#${string}#${Entities.QUESTION}#${string}#${Entities.STAGE}S`;
+  SK: `${Entities.OPENING}#${string}#${Entities.STAGE}#${string}`;
+  entityType: Entities.QUESTION;
+  createdAt: string;
+  orgId: string;
+  openingId: string;
+  stageId: string;
+  questionId: string;
+}
+
 interface DynamoQuestion {
   /**
    * The primary key for the question. Variables are `orgId` and `questionId`
@@ -410,11 +421,20 @@ interface DynamoOrg {
   totalQuestions: number;
 }
 
-interface DynamoLoginEvent {
+interface DynamoUserLoginEvent {
   PK: `${Entities.USER}#${string}`;
   SK: `${Entities.LOGIN_EVENT}#${string}`;
   createdAt: string; // ISO timestamp
   ttlExpiry: number; // ttl unix expiry
   entityType: Entities.LOGIN_EVENT;
   user: DynamoUser;
+}
+
+interface DynamoOrgLoginEvent {
+  PK: `${Entities.ORG}#${string}`;
+  SK: `${Entities.LOGIN_EVENT}#${string}`;
+  // TODO user info here
+  // TODO in the future, get more the info about the login event such as IP, headers, device, etc.
+  createdAt: now;
+  ttlExpiry: number;
 }

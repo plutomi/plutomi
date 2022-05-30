@@ -1,9 +1,8 @@
-import { StepFunctionsInvokeActivity } from '@aws-cdk/aws-stepfunctions-tasks';
 import { EventBridgeEvent } from 'aws-lambda';
+import axios from 'axios';
 import { DynamoStreamTypes, Entities } from '../Config';
 import { DynamoApplicant } from '../types/dynamo';
 import * as Webhooks from '../models/Webhooks';
-import axios from 'axios';
 
 interface ApplicantWebhookEvent {
   eventName: DynamoStreamTypes;
@@ -26,7 +25,7 @@ export async function main(event: EventBridgeEvent<'stream', ApplicantWebhookEve
   }
 
   if (!webhooks.length) {
-    console.log('No webhooks found in org');
+    console.info('No webhooks found in org');
     return;
   }
 
@@ -34,9 +33,10 @@ export async function main(event: EventBridgeEvent<'stream', ApplicantWebhookEve
   try {
     await Promise.all(webhooks.map((hook) => axios.post(hook.webhookUrl, { ...event.detail })));
     console.log('Webhooks sent!');
-  } catch (error) {
-    console.error(`An error ocurred sending webhooks to org ${event.detail.orgId} --- ${webhooks}`);
+  } catch (err) {
+    console.error(
+      `An error ocurred sending webhooks to org ${event.detail.orgId} --- ${webhooks}`,
+      err,
+    );
   }
-
-  return;
 }
