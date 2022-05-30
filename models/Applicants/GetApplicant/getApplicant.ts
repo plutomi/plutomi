@@ -1,14 +1,16 @@
 import { QueryCommandInput, QueryCommand } from '@aws-sdk/lib-dynamodb';
 import _ from 'lodash';
 import { SdkError } from '@aws-sdk/types';
-import { Dynamo } from '../../awsClients/ddbDocClient';
-import { DYNAMO_TABLE_NAME, Entities } from '../../Config';
-import { GetApplicantByIdInput, GetApplicantByIdOutput } from '../../types/main';
-import { DynamoApplicant } from '../../types/dynamo';
+import { Dynamo } from '../../../awsClients/ddbDocClient';
+import { DYNAMO_TABLE_NAME, Entities } from '../../../Config';
+import { GetApplicantByIdOutput } from '../../../types/main';
+import { DynamoApplicant } from '../../../types/dynamo';
 
-export default async function GetApplicantById(
-  props: GetApplicantByIdInput,
-): Promise<[GetApplicantByIdOutput, null] | [null, SdkError]> {
+export type GetDynamoApplicantInput = Pick<DynamoApplicant, 'orgId' | 'applicantId'>;
+
+export const getApplicant = async (
+  props: GetDynamoApplicantInput,
+): Promise<[DynamoApplicant, null] | [null, SdkError]> => {
   const { orgId, applicantId } = props;
   const responsesParams: QueryCommandInput = {
     TableName: `${process.env.NODE_ENV}-${DYNAMO_TABLE_NAME}`,
@@ -34,15 +36,15 @@ export default async function GetApplicantById(
 
     const metadata = grouped.APPLICANT[0] as DynamoApplicant;
     const responses = grouped.APPLICANT_RESPONSE;
+    
     // TODO files
-
     const applicant: GetApplicantByIdOutput = {
       ...metadata,
-      responses,
+      responses, // TODO rework responses
       // TODO files
     };
-    return [applicant, null]; // TODO TYPEs!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    return [applicant, null];
   } catch (error) {
     return [null, error];
   }
-}
+};

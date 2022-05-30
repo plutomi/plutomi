@@ -102,15 +102,9 @@ type CreateWebhookInput = Pick<
 
 type OrgIdAndApplicantId = 'orgId' | 'applicantId';
 
-type GetApplicantByIdInput = Pick<DynamoApplicant, 'orgId' | 'applicantId'>;
-
 // TODO types for files, etc.
 export interface GetApplicantByIdOutput extends DynamoApplicant {
   responses: Object[]; // TODO fix this type with a response type
-}
-
-export interface UpdateApplicantInput extends Pick<DynamoApplicant, OrgIdAndApplicantId> {
-  newValues: { [key: string]: any };
 }
 
 export interface UpdateApplicantOutput extends DynamoApplicant {

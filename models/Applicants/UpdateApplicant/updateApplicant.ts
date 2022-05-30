@@ -1,14 +1,17 @@
 import { UpdateCommandInput, UpdateCommand } from '@aws-sdk/lib-dynamodb';
 import { SdkError } from '@aws-sdk/types';
-import { Dynamo } from '../../awsClients/ddbDocClient';
-import { DYNAMO_TABLE_NAME, Entities } from '../../Config';
-import { UpdateApplicantInput } from '../../types/main';
+import { Dynamo } from '../../../awsClients/ddbDocClient';
+import { DYNAMO_TABLE_NAME, Entities } from '../../../Config';
+import { DynamoApplicant } from '../../../types/dynamo';
 
-export default async function UpdateApplicant(
-  props: UpdateApplicantInput,
-): Promise<[null, null] | [null, SdkError]> {
+export interface UpdateDynamoApplicantInput extends Pick<DynamoApplicant, 'orgId' | 'applicantId'> {
+  newValues: { [key: string]: any };
+}
+
+export const updateApplicant = async (
+  props: UpdateDynamoApplicantInput,
+): Promise<[null, null] | [null, SdkError]> => {
   const { orgId, applicantId, newValues } = props;
-
   // Build update expression
   const allUpdateExpressions: string[] = [];
   const allAttributeValues: { [key: string]: string } = {};
@@ -41,4 +44,4 @@ export default async function UpdateApplicant(
   } catch (error) {
     return [null, error];
   }
-}
+};
