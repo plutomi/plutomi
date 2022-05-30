@@ -68,20 +68,19 @@ export default class EventBridgeStack extends cdk.Stack {
       retention: cdk.Duration.days(3),
     });
 
-    // We want to send all communication events to the step function, we can handle routing there
     new Rule(this, Rules.NeedsComms, {
       eventBus: bus,
-      description: 'Rule for actions that might require further comms.',
+      description: 'Rule for actions that will require further comms.',
       ruleName: Rules.NeedsComms,
       targets: [new SfnStateMachine(props.CommsMachine)],
       eventPattern: {
         source: [Source.DynamoStream],
         detail: {
-          eventName: [DynamoStreamTypes.INSERT, DynamoStreamTypes.MODIFY],
+          eventName: [DynamoStreamTypes.INSERT],
           entityType: [
             Entities.LOGIN_EVENT,
             Entities.LOGIN_LINK,
-            Entities.APPLICANT,
+            Entities.APPLICANT, // TODO welcome applicant
             Entities.ORG_INVITE,
           ],
         },
@@ -102,7 +101,6 @@ export default class EventBridgeStack extends cdk.Stack {
       },
     });
 
-    // All applicant events are sent to the state machine
     new Rule(this, Rules.ApplicantEventsRule, {
       eventBus: bus,
       description: 'All applicant events are sent to the webhooks machine',
