@@ -1,10 +1,10 @@
 import { Request, Response } from 'express';
 import { pick } from 'lodash';
-import * as CreateError from '../../utils/createError';
-import { OpeningState } from '../../Config';
-import { getOpeningsInOrg } from '../../models/Openings';
+import * as CreateError from '../../../utils/createError';
+import { OpeningState } from '../../../Config';
+import { getOpeningsInOrg } from '../../../models/Openings';
 
-const main = async (req: Request, res: Response) => {
+export const main = async (req: Request, res: Response) => {
   const { orgId } = req.params;
 
   const [openings, openingsError] = await getOpeningsInOrg({
@@ -26,4 +26,3 @@ const main = async (req: Request, res: Response) => {
 
   return res.status(200).json(modifiedOpenings);
 };
-export default main;
