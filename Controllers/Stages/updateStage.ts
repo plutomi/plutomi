@@ -25,7 +25,7 @@ const schema = Joi.object({
   body: JOI_FORBIDDEN_STAGE,
 }).options(JOI_SETTINGS);
 
-export const main = async (req: Request, res: Response) => {
+export const updateStage = async (req: Request, res: Response) => {
   try {
     await schema.validateAsync(req);
   } catch (error) {

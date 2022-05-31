@@ -3,7 +3,7 @@ import { pick } from 'lodash';
 import DB from '../../models';
 import * as CreateError from '../../utils/createError';
 
-export const main = async (req: Request, res: Response) => {
+export const getUsersInOrg = async (req: Request, res: Response) => {
   const { session } = res.locals;
 
   const [users, error] = await DB.Users.getUsersInOrg({

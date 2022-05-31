@@ -1,19 +1,19 @@
-import * as CreateQuestion from './createQuestion';
-import * as GetQuestionsInOrg from './getQuestionsInOrg';
-import * as DeleteQuestionFromOrg from './deleteQuestionFromOrg';
-import * as UpdateQuestion from './updateQuestion';
-import * as GetQuestion from './getQuestion';
-import * as AddQuestionToStage from './addQuestionToStage';
-import * as DeleteQuestionFromStage from './deleteQuestionFromStage';
-import * as GetQuestionsInStage from './getQuestionsInStage';
+import { createQuestion } from './createQuestion';
+import { getQuestionsInOrg } from './getQuestionsInOrg';
+import { deleteQuestionFromOrg } from './deleteQuestionFromOrg';
+import { updateQuestion } from './updateQuestion';
+import { getQuestion } from './getQuestion';
+import { addQuestionToStage } from './addQuestionToStage';
+import { deleteQuestionFromStage } from './deleteQuestionFromStage';
+import { getQuestionsInStage } from './getQuestionsInStage';
 
 export {
-  CreateQuestion,
-  GetQuestionsInOrg,
-  DeleteQuestionFromOrg,
-  UpdateQuestion,
-  GetQuestion,
-  AddQuestionToStage,
-  DeleteQuestionFromStage,
-  GetQuestionsInStage,
+  createQuestion,
+  getQuestionsInOrg,
+  deleteQuestionFromOrg,
+  updateQuestion,
+  getQuestion,
+  addQuestionToStage,
+  deleteQuestionFromStage,
+  getQuestionsInStage,
 };

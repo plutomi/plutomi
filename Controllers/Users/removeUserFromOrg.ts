@@ -2,7 +2,7 @@ import { Request, Response } from 'express';
 import * as CreateError from '../../utils/createError';
 import DB from '../../models';
 
-export const main = async (req: Request, res: Response) => {
+export const removeUserFromOrg = async (req: Request, res: Response) => {
   const { session } = res.locals;
   const { orgId, userId } = req.params;
 

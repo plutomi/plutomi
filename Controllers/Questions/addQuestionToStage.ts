@@ -19,7 +19,7 @@ const schema = Joi.object({
   },
 }).options(JOI_SETTINGS);
 
-export const main = async (req: Request, res: Response) => {
+export const addQuestionToStage = async (req: Request, res: Response) => {
   const { session } = res.locals;
   try {
     await schema.validateAsync(req);

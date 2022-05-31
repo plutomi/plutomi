@@ -22,7 +22,7 @@ const schema = Joi.object({
   body: JOI_FORBIDDEN_OPENING,
 }).options(JOI_SETTINGS);
 
-export const main = async (req: Request, res: Response) => {
+export const updateQuestion = async (req: Request, res: Response) => {
   try {
     await schema.validateAsync(req);
   } catch (error) {
