@@ -70,14 +70,14 @@ export default function OpeningList() {
                           />
                           {opening?.totalStages}
                         </p>
-                        {opening?.GSI1SK === OpeningState.PUBLIC ? (
+                        {opening?.GSI1SK === OpeningState.PUBLIC && (
                           <p className="mt-2 flex items-center text-lg text-normal sm:mt-0 sm:ml-6">
                             <ClickToCopy
                               showText="Application Link"
                               copyText={`${WEBSITE_URL}/${user?.orgId}/${opening?.openingId}/apply`}
                             />
                           </p>
-                        ) : null}
+                        )}
                       </div>
                       <div className="mt-2 flex items-center text-md text-normal sm:mt-0">
                         <CalendarIcon

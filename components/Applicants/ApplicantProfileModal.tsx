@@ -101,7 +101,7 @@ export default function ApplicantProfileModal() {
                         {isApplicantError && 'An error ocurred'}
                         {isApplicantLoading && 'Loading...'}
                         <EasyEdit
-                          placeholder={null}
+                          placeholder=""
                           type={Types.TEXT}
                           value={applicant?.firstName}
                           onSave={(
@@ -125,7 +125,7 @@ export default function ApplicantProfileModal() {
                           attributes={{ name: 'awesome-input', id: 1 }}
                         />
                         <EasyEdit
-                          placeholder={null}
+                          placeholder=""
                           type={Types.TEXT}
                           value={applicant?.lastName}
                           onSave={(value) =>
@@ -166,7 +166,7 @@ export default function ApplicantProfileModal() {
                       {isApplicantError && 'An error ocurred'}
                       {isApplicantLoading && 'Loading...'}
                       <EasyEdit
-                        placeholder={null}
+                        placeholder=""
                         type={Types.TEXT}
                         value={applicant?.email}
                         onSave={(value) =>

@@ -1,8 +1,15 @@
-import CreateInvites from './create-invites';
-import GetUserInvites from './get-user-invites';
-import GetOrgInvites from './get-org-invites';
-import AcceptInvite from './accept-invite';
-import RejectInvite from './reject-invite';
-import CancelInvite from './cancel-invite';
+import { createInvite } from './createInvite';
+import { getInvitesForUser } from './getInvitesForUser';
+import { getInvitesForOrg } from './getInvitesForOrg';
+import { acceptInvite } from './acceptInvite';
+import { rejectInvite } from './rejectInvite';
+import { cancelInvite } from './cancelInvite';
 
-export { CreateInvites, GetUserInvites, GetOrgInvites, AcceptInvite, RejectInvite, CancelInvite };
+export {
+  cancelInvite,
+  rejectInvite,
+  acceptInvite,
+  getInvitesForOrg,
+  getInvitesForUser,
+  createInvite,
+};

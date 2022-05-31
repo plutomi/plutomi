@@ -1,7 +1,7 @@
-import * as CreateWebhook from './CreateWebhook';
-import * as GetWebhooksInOrg from './GetWebhooksInOrg';
-import * as DeleteWebhook from './DeleteWebhook';
-import * as UpdateWebhook from './UpdateWebhook';
-import * as GetWebhook from './GetWebhook';
+import { createWebhook } from './createWebhook';
+import { getWebhooksInOrg } from './getWebhooksInOrg';
+import { deleteWebhook } from './deleteWebhook';
+import { updateWebhook } from './updateWebhook';
+import { getWebhook } from './getWebhook';
 
-export { CreateWebhook, GetWebhooksInOrg, DeleteWebhook, GetWebhook, UpdateWebhook };
+export { createWebhook, getWebhooksInOrg, deleteWebhook, getWebhook, updateWebhook };

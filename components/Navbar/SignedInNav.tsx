@@ -58,13 +58,13 @@ export default function SignedInNav({ current }: { current: string }) {
                   </div> */}
                   <div className="hidden sm:-my-px sm:ml-6 sm:flex sm:space-x-8">
                     {NAVBAR_NAVIGATION.map((item) => {
-                      if (user?.orgId === DEFAULTS.NO_ORG && item.hiddenIfNoOrg) {
+                      if (
+                        (user?.orgId === DEFAULTS.NO_ORG && item.hiddenIfNoOrg) ||
+                        (user?.orgId !== DEFAULTS.NO_ORG && item.hiddenIfOrg)
+                      ) {
                         return null;
                       }
 
-                      if (user?.orgId !== DEFAULTS.NO_ORG && item.hiddenIfOrg) {
-                        return null;
-                      }
                       return (
                         <Link key={item.name} href={item.href} passHref>
                           <a

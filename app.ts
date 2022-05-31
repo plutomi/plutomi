@@ -3,16 +3,6 @@ import helmet from 'helmet';
 import express, { Response } from 'express';
 import cors from 'cors';
 import timeout from 'connect-timeout';
-import * as Auth from './Controllers/Auth';
-import * as Users from './Controllers/Users';
-import * as Orgs from './Controllers/Orgs';
-import * as Openings from './Controllers/Openings';
-import * as Stages from './Controllers/Stages';
-import * as PublicInfo from './Controllers/PublicInfo';
-import * as Invites from './Controllers/Invites';
-import * as Applicants from './Controllers/Applicants';
-import * as Questions from './Controllers/Questions';
-import * as Webhooks from './Controllers/Webhooks';
 import withHasOrg from './middleware/withHasOrg';
 import withSameOrg from './middleware/withSameOrg';
 import * as Jest from './Controllers/jest-setup';
@@ -20,6 +10,7 @@ import withCleanOrgId from './middleware/withCleanOrgId';
 import withCleanQuestionId from './middleware/withCleanQuestionId';
 import { COOKIE_SETTINGS, EXPRESS_PORT, WEBSITE_URL } from './Config';
 import withSession from './middleware/withSession';
+import API from './Controllers';
 
 const resultDotEnv = dotenv.config({
   path: `./.env.${process.env.NODE_ENV}`,
@@ -75,99 +66,106 @@ if (process.env.NODE_ENV === 'development') {
   app.post('/jest-setup', Jest.setup);
 }
 
-app.post('/request-login-link', Auth.RequestLoginLink);
-app.get('/login', Auth.Login);
-app.post('/logout', withSession, Auth.Logout);
+app.post('/request-login-link', API.Auth.requestLoginLink);
+app.get('/login', API.Auth.login);
+app.post('/logout', withSession, API.Auth.logout);
 
-app.get('/users', [withSession, withHasOrg], Users.GetUsersInOrg);
-app.get('/users/self', withSession, Users.Self);
-app.get('/users/:userId', withSession, Users.GetUserById);
-app.put('/users/:userId', withSession, Users.UpdateUser);
+app.get('/users', [withSession, withHasOrg], API.Users.getUsersInOrg);
+app.get('/users/self', withSession, API.Users.self);
+app.get('/users/:userId', withSession, API.Users.getUser);
+app.put('/users/:userId', withSession, API.Users.updateUser);
 
-app.get('/orgs', [withSession, withHasOrg], Orgs.GetOrgInfo);
-app.post('/orgs', withSession, Orgs.CreateAndJoinOrg);
-app.delete('/orgs', [withSession, withHasOrg], Orgs.DeleteOrg);
-app.post('/openings', [withSession, withHasOrg], Openings.CreateOpening);
-app.get('/openings', [withSession, withHasOrg], Openings.GetOpeningsInOrg);
-app.get('/openings/:openingId', [withSession, withHasOrg], Openings.GetOpeningById);
-app.delete('/openings/:openingId', [withSession, withHasOrg], Openings.DeleteOpening);
-app.put('/openings/:openingId', [withSession, withHasOrg], Openings.UpdateOpening);
+app.get('/orgs', [withSession, withHasOrg], API.Orgs.getOrg);
+app.post('/orgs', withSession, API.Orgs.createAndJoinOrg);
+app.delete('/orgs', [withSession, withHasOrg], API.Orgs.leaveAndDeleteOrg);
 
-app.post('/stages', [withSession, withHasOrg], Stages.CreateStage);
-app.delete('/openings/:openingId/stages/:stageId', [withSession, withHasOrg], Stages.DeleteStage);
+app.post('/openings', [withSession, withHasOrg], API.Openings.createOpening);
+app.get('/openings', [withSession, withHasOrg], API.Openings.getOpeningsInOrg);
+app.get('/openings/:openingId', [withSession, withHasOrg], API.Openings.getOpening);
+app.delete('/openings/:openingId', [withSession, withHasOrg], API.Openings.deleteOpening);
+app.put('/openings/:openingId', [withSession, withHasOrg], API.Openings.updateOpening);
 
+app.post('/stages', [withSession, withHasOrg], API.Stages.createStage);
+app.delete('/openings/:openingId/stages/:stageId', [withSession, withHasOrg], API.Stages.getStage);
 app.post(
   '/openings/:openingId/stages/:stageId/questions',
   [withSession, withHasOrg],
-  Questions.AddQuestionToStage,
+  API.Questions.addQuestionToStage,
 );
-app.get('/openings/:openingId/stages/:stageId', [withSession, withHasOrg], Stages.GetStageById);
-app.put('/openings/:openingId/stages/:stageId', [withSession, withHasOrg], Stages.UpdateStage);
+
+app.get('/openings/:openingId/stages/:stageId', [withSession, withHasOrg], API.Stages.getStage);
+app.put('/openings/:openingId/stages/:stageId', [withSession, withHasOrg], API.Stages.updateStage);
 
 app.delete(
   '/openings/:openingId/stages/:stageId/questions/:questionId',
   [withSession, withHasOrg],
-  Questions.DeleteQuestionFromStage,
+  API.Questions.deleteQuestionFromStage,
 );
 
-app.get('/openings/:openingId/stages', [withSession, withHasOrg], Stages.GetStagesInOpening);
+app.get('/openings/:openingId/stages', [withSession, withHasOrg], API.Stages.getStagesInOpening);
 
-app.get('/public/orgs/:orgId', PublicInfo.GetPublicOrgInfo);
-app.get('/public/orgs/:orgId/openings', PublicInfo.GetPublicOpeningsInOrg);
+app.get('/public/orgs/:orgId', API.PublicInfo.getOrg);
+app.get('/public/orgs/:orgId/openings', API.PublicInfo.getOpeningsInOrg);
+app.get('/public/orgs/:orgId/openings/:openingId', API.PublicInfo.getOpening);
 
-app.get('/public/orgs/:orgId/openings/:openingId', PublicInfo.GetPublicOpeningInfo);
-
-app.post('/invites', [withSession, withHasOrg], Invites.CreateInvites);
-app.get('/invites', [withSession], Invites.GetUserInvites);
-app.get('/orgs/:orgId/invites', [withSession, withHasOrg, withSameOrg], Invites.GetOrgInvites);
+app.post('/invites', [withSession, withHasOrg], API.Invites.createInvite);
+app.get('/invites', [withSession], API.Invites.getInvitesForUser);
+app.get(
+  '/orgs/:orgId/invites',
+  [withSession, withHasOrg, withSameOrg],
+  API.Invites.getInvitesForOrg,
+);
 app.delete(
   '/orgs/:orgId/users/:userId',
   [withSession, withHasOrg, withSameOrg],
-  Users.RemoveUserFromOrg,
+  API.Users.removeUserFromOrg,
 );
 
 // As an org, cancel invite (if sent by mistake or whatever)
 app.post(
   '/orgs/:orgId/invites/cancel',
   [withSession, withHasOrg, withSameOrg],
-  Invites.CancelInvite,
+  API.Invites.cancelInvite,
 );
 // As a user, reject an invite
-app.delete('/invites/:inviteId', [withSession], Invites.RejectInvite);
+app.delete('/invites/:inviteId', [withSession], API.Invites.rejectInvite);
+app.post('/invites/:inviteId', [withSession], API.Invites.acceptInvite);
 
-app.post('/invites/:inviteId', [withSession], Invites.AcceptInvite);
-
-app.post('/applicants', Applicants.CreateApplicants);
+app.post('/applicants', API.Applicants.createApplicant);
 app.get(
   '/openings/:openingId/stages/:stageId/applicants',
   [withSession, withHasOrg],
-  Applicants.GetApplicantsInStage,
+  API.Applicants.getApplicantsInStage,
 );
 app.get(
   '/openings/:openingId/stages/:stageId/questions',
   [withSession, withHasOrg],
-  Questions.GetQuestionsInStage,
+  API.Questions.getQuestionsInStage,
 );
 
-app.get('/applicants/:applicantId', [withSession, withHasOrg], Applicants.GetApplicantById);
+app.get('/applicants/:applicantId', [withSession, withHasOrg], API.Applicants.getApplicantById);
 
-app.post('/questions', [withSession, withHasOrg], Questions.CreateQuestions);
-app.get('/questions', [withSession, withHasOrg], Questions.GetQuestionsInOrg);
-app.delete('/questions/:questionId', [withSession, withHasOrg], Questions.DeleteQuestionFromOrg);
-app.put('/questions/:questionId', [withSession, withHasOrg], Questions.UpdateQuestion);
-app.get('/questions/:questionId', [withSession, withHasOrg], Questions.GetQuestionInfo);
+app.post('/questions', [withSession, withHasOrg], API.Questions.createQuestion);
+app.get('/questions', [withSession, withHasOrg], API.Questions.getQuestionsInOrg);
+app.delete(
+  '/questions/:questionId',
+  [withSession, withHasOrg],
+  API.Questions.deleteQuestionFromOrg,
+);
+app.put('/questions/:questionId', [withSession, withHasOrg], API.Questions.updateQuestion);
+app.get('/questions/:questionId', [withSession, withHasOrg], API.Questions.getQuestion);
+
+app.post('/webhooks', [withSession, withHasOrg], API.Webhooks.createWebhook);
+app.get('/webhooks', [withSession, withHasOrg], API.Webhooks.getWebhooksInOrg);
+app.delete('/webhooks/:webhookId', [withSession, withHasOrg], API.Webhooks.deleteWebhook);
+app.get('/webhooks/:webhookId', [withSession, withHasOrg], API.Webhooks.getWebhook);
+app.put('/webhooks/:webhookId', [withSession, withHasOrg], API.Webhooks.updateWebhook);
 
 function healthcheck(req, res: Response) {
   return res.status(200).json({ message: "It's all good man!" });
 }
 
 app.get('/', healthcheck);
-
-app.post('/webhooks', [withSession, withHasOrg], Webhooks.CreateWebhook);
-app.get('/webhooks', [withSession, withHasOrg], Webhooks.GetWebhooksInOrg);
-app.delete('/webhooks/:webhookId', [withSession, withHasOrg], Webhooks.DeleteWebhookFromOrg);
-app.get('/webhooks/:webhookId', [withSession, withHasOrg], Webhooks.GetWebhookById);
-app.put('/webhooks/:webhookId', [withSession, withHasOrg], Webhooks.UpdateWebhook);
 
 // Catch timeouts // TODO make this into its own middleware
 function haltOnTimedout(req, res, next) {

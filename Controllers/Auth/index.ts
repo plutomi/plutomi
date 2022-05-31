@@ -1,5 +1,5 @@
-import RequestLoginLink from './request-login-link';
-import Login from './login';
-import Logout from './logout';
+import { requestLoginLink } from './requestLoginLink';
+import { login } from './login';
+import { logout } from './logout';
 
-export { RequestLoginLink, Login, Logout };
+export { requestLoginLink, login, logout };

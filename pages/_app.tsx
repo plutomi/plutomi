@@ -7,7 +7,7 @@ export default function App({ Component, pageProps }: AppProps) {
   const router = useRouter();
   return (
     <div>
-      {router.asPath === '/faq' ? null : <WarningBanner />}
+      {router.asPath !== '/faq' && <WarningBanner />}
       <Component {...pageProps} />
     </div>
   );

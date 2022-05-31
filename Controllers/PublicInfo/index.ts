@@ -1,5 +1,5 @@
-import GetPublicOrgInfo from './get-public-org-info';
-import GetPublicOpeningsInOrg from './get-public-openings-in-org';
-import GetPublicOpeningInfo from './get-public-opening-info';
+import { getOrg } from './getOrg';
+import { getOpeningsInOrg } from './getOpeningsInOrg';
+import { getOpening } from './getOpening';
 
-export { GetPublicOrgInfo, GetPublicOpeningsInOrg, GetPublicOpeningInfo };
+export { getOpening, getOpeningsInOrg, getOrg };

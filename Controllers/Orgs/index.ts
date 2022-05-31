@@ -1,5 +1,5 @@
-import CreateAndJoinOrg from './create-and-join-org';
-import GetOrgInfo from './get-org-info';
-import DeleteOrg from './delete-org';
+import { createAndJoinOrg } from './createAndJoinOrg';
+import { getOrg } from './getOrg';
+import { leaveAndDeleteOrg } from './leaveAndDeleteOrg';
 
-export { CreateAndJoinOrg, GetOrgInfo, DeleteOrg };
+export { createAndJoinOrg, getOrg, leaveAndDeleteOrg };

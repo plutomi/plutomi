@@ -1,6 +1,6 @@
 import { AXIOS_INSTANCE as axios } from '../Config';
-import { APICreateOpeningOptions } from '../Controllers/Openings/create-opening';
-import { APIUpdateOpeningOptions } from '../Controllers/Openings/update-opening';
+import { APICreateOpeningOptions } from '../Controllers/Openings/createOpening';
+import { APIUpdateOpeningOptions } from '../Controllers/Openings/updateOpening';
 
 const CreateOpening = async (options: APICreateOpeningOptions) => {
   const data = await axios.post(`/openings`, { ...options });

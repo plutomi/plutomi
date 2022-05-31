@@ -1,15 +1,15 @@
-import * as CreateApplicant from './CreateApplicant';
-import * as GetApplicant from './GetApplicant';
-import * as DeleteApplicant from './DeleteApplicant';
-import * as UpdateApplicant from './UpdateApplicant';
-import * as CreateApplicantResponse from './CreateApplicantResponse';
-import * as GetApplicantsInStage from './GetApplicantsInStage';
+import { createApplicant } from './createApplicant';
+import { getApplicant } from './getApplicant';
+import { deleteApplicant } from './deleteApplicant';
+import { updateApplicant } from './updateApplicant';
+import { createApplicantResponse } from './createApplicantResponse';
+import { getApplicantsInStage } from './getApplicantsInStage';
 
 export {
-  CreateApplicant,
-  GetApplicant,
-  DeleteApplicant,
-  UpdateApplicant,
-  CreateApplicantResponse,
-  GetApplicantsInStage,
+  createApplicant,
+  getApplicant,
+  deleteApplicant,
+  updateApplicant,
+  createApplicantResponse,
+  getApplicantsInStage,
 };

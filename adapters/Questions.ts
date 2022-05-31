@@ -1,6 +1,6 @@
 import { AXIOS_INSTANCE as axios } from '../Config';
-import { APICreateQuestionOptions } from '../Controllers/Questions/create-questions';
-import { APIUpdateQuestionOptions } from '../Controllers/Questions/update-question';
+import { APICreateQuestionOptions } from '../Controllers/Questions/createQuestion';
+import { APIUpdateQuestionOptions } from '../Controllers/Questions/updateQuestion';
 
 const CreateQuestion = async (options: APICreateQuestionOptions) => {
   const data = await axios.post(`/questions`, {

@@ -9,7 +9,7 @@ export default function handler(error: SdkError) {
   return {
     error: error?.name || error || 'ERROR',
     errorMessage: error?.message || 'An error ocurred',
-    requestId: error?.$metadata?.requestId || null,
+    requestId?: error?.$metadata?.requestId || undefined,
     httpStatusCode: error?.$metadata?.httpStatusCode || 500,
   };
 }

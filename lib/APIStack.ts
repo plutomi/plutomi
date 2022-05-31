@@ -14,7 +14,15 @@ import { ARecord, RecordTarget } from '@aws-cdk/aws-route53';
 import { CloudFrontTarget } from '@aws-cdk/aws-route53-targets';
 import { Policy, PolicyStatement } from '@aws-cdk/aws-iam';
 import { API_DOMAIN, DOMAIN_NAME, EXPRESS_PORT } from '../Config';
-import { DynamoActions } from '../types/main';
+
+type DynamoActions =
+  | 'dynamodb:GetItem'
+  | 'dynamodb:BatchGetItem'
+  | 'dynamodb:Query'
+  | 'dynamodb:PutItem'
+  | 'dynamodb:UpdateItem'
+  | 'dynamodb:DeleteItem'
+  | 'dynamodb:BatchWriteItem';
 
 interface APIStackServiceProps extends cdk.StackProps {
   table: Table;

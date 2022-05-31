@@ -1,7 +1,7 @@
-import * as CreateStage from './CreateStage';
-import * as DeleteStage from './DeleteStage';
-import * as UpdateStage from './UpdateStage';
-import * as GetStageById from './GetStage';
-import * as GetStagesInOpenings from './GetStagesInOpening';
+import { createStage } from './createStage';
+import { deleteStage } from './deleteStage';
+import { updateStage } from './updateStage';
+import { getStage } from './getStage';
+import { getStagesInOpening } from './getStagesInOpening';
 
-export { CreateStage, DeleteStage, UpdateStage, GetStageById, GetStagesInOpenings };
+export { createStage, deleteStage, updateStage, getStage, getStagesInOpening };
