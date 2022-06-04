@@ -1,5 +1,4 @@
 import Joi from 'joi';
-
 import axios from 'axios';
 import TagGenerator from './utils/tagGenerator';
 
