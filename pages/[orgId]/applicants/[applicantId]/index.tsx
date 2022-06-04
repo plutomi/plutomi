@@ -1,8 +1,8 @@
 import { useRouter } from 'next/router';
-import ApplicationContent from '../../../../components/Applicants/ApplicationContent';
-import Loader from '../../../../components/Loader';
+import { Loader } from '../../../../components/Loader';
+import { PublicApplicationPageContent } from '../../../../components/PublicApplicationPageContent';
+import { PublicApplicationPageHeader } from '../../../../components/PublicApplicationPageHeader';
 import useApplicantById from '../../../../SWR/useApplicantById';
-import ApplicationHeader from '../../../../components/Applicants/ApplicationHeader';
 import { CustomQuery } from '../../../../types/main';
 
 export default function Application() {
@@ -28,11 +28,11 @@ export default function Application() {
       ) : (
         <>
           <header>
-            <ApplicationHeader />
+            <PublicApplicationPageHeader />
           </header>
 
           <main className="mt-5">
-            <ApplicationContent />
+            <PublicApplicationPageContent />
           </main>
         </>
       )}

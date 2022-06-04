@@ -1,7 +1,7 @@
 import { useRouter } from 'next/router';
 import { AppProps } from 'next/app';
-import WarningBanner from '../components/WarningBanner';
 import '../styles/globals.css';
+import { WarningBanner } from '../components/WarningBanner';
 
 export default function App({ Component, pageProps }: AppProps) {
   const router = useRouter();

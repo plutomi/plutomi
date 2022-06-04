@@ -1,11 +1,10 @@
 import { useRouter } from 'next/router';
 import { useEffect } from 'react';
-import useSelf from '../../../SWR/useSelf';
-import Loader from '../../../components/Loader';
 import useAllStagesInOpening from '../../../SWR/useAllStagesInOpening';
 import useOpeningInfo from '../../../SWR/useOpeningInfo';
 import { CustomQuery } from '../../../types/main';
 import { DOMAIN_NAME } from '../../../Config';
+import { Loader } from '../../../components/Loader';
 
 export default function Openings() {
   const router = useRouter();

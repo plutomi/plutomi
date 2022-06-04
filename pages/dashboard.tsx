@@ -1,14 +1,14 @@
-import NewPage from '../components/Templates/NewPage';
-import DashboardContent from '../components/Dashboard/DashboardContent';
+import { DashboardPageContent } from '../components/DashboardPageContent';
+import { NewPageLayout } from '../components/NewPageLayout';
 
 export default function Dashboard() {
   return (
-    <NewPage
+    <NewPageLayout
       loggedOutPageText="Log in to view your dashboard"
       currentNavbarItem="Dashboard"
       headerText="Dashboard"
     >
-      <DashboardContent />
-    </NewPage>
+      <DashboardPageContent />
+    </NewPageLayout>
   );
 }

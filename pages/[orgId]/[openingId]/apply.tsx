@@ -1,12 +1,12 @@
 import { useRouter } from 'next/router';
-import GoBack from '../../../components/Buttons/GoBackButton';
-import Loader from '../../../components/Loader';
 import usePublicOrgById from '../../../SWR/usePublicOrgById';
 import usePublicOpeningById from '../../../SWR/usePublicOpeningById';
-import OpeningApplyPageContent from '../../../components/Openings/Public/OpeningApplyPageContent';
-import OpeningApplyPageHeader from '../../../components/Openings/Public/OpeningApplyPageHeader';
 import { CustomQuery } from '../../../types/main';
-import { DOMAIN_NAME, WEBSITE_URL } from '../../../Config';
+import { WEBSITE_URL } from '../../../Config';
+import { Loader } from '../../../components/Loader';
+import { PublicOpeningPageHeader } from '../../../components/PublicOpeningPageHeader';
+import { PublicOpeningPageContent } from '../../../components/PublicOpeningPageContent';
+import { GoBackButton } from '../../../components/GoBackButton';
 
 export default function Apply() {
   const router = useRouter();
@@ -27,7 +27,7 @@ export default function Apply() {
         <h1 className="text-2xl text-center font-bold">
           Unfortunately, you cannot apply to this opening.
         </h1>
-        <GoBack url={`${WEBSITE_URL}/${orgId}/apply`} />
+        <GoBackButton url={`${WEBSITE_URL}/${orgId}/apply`} />
       </div>
     );
   }
@@ -35,11 +35,11 @@ export default function Apply() {
     <div className="max-w-7xl mx-auto p-4 my-12 rounded-lg min-h-screen ">
       <div>
         <header>
-          <OpeningApplyPageHeader />
+          <PublicOpeningPageHeader />
         </header>
 
         <main>
-          <OpeningApplyPageContent />
+          <PublicOpeningPageContent />
         </main>
       </div>
     </div>

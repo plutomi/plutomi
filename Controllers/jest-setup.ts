@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
 import { nanoid } from 'nanoid';
-import * as Users from '../models/Users';
 import * as CreateError from '../utils/createError';
+import DB from '../models';
 import { COOKIE_NAME, COOKIE_SETTINGS, EMAILS } from '../Config';
 
 /**
@@ -19,7 +19,7 @@ export const setup = async (req: Request, res: Response) => {
   // like in the regular createUser flow
   const userEmail = req.body.email || `${nanoid(15)}+${EMAILS.TESTING}`;
   // eslint-disable-next-line prefer-const
-  let [user, userError] = await Users.GetUserByEmail({
+  let [user, userError] = await DB.Users.getUserByEmail({
     email: userEmail,
   });
 
@@ -29,7 +29,7 @@ export const setup = async (req: Request, res: Response) => {
   }
 
   if (!user) {
-    const [newUser, newUserError] = await Users.CreateUser({
+    const [newUser, newUserError] = await DB.Users.createUser({
       email: userEmail,
     });
 

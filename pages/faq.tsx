@@ -1,6 +1,6 @@
-import AlreadySignedIn from '../components/AlreadySignedIn';
-import CustomLink from '../components/CustomLink';
-import LoginHomepage from '../components/LoginHomepage';
+import { AlreadyLoggedIn } from '../components/AlreadyLoggedIn';
+import { CustomLink } from '../components/CustomLink';
+import { LoginHomepage } from '../components/LoginHomepage';
 import { DOMAIN_NAME } from '../Config';
 import useSelf from '../SWR/useSelf';
 
@@ -88,7 +88,7 @@ export default function FAQ() {
                 callbackUrl={`${DOMAIN_NAME}/dashboard`} // TODO fallback url is already set im pretty sure
               />
             ) : (
-              <AlreadySignedIn />
+              <AlreadyLoggedIn />
             )}
           </div>
         </div>

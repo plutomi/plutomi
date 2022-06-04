@@ -10,6 +10,7 @@
     "@next/next/no-document-import-in-page": "warn", // small bug
     "react/react-in-jsx-scope": "off",
     "@typescript-eslint/no-unused-vars": "warn",
+    "react/function-component-definition": "off",
     "@typescript-eslint/no-shadow": "warn",
     "no-new": "off",
     "react/require-default-props": "warn",

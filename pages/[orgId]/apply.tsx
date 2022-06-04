@@ -1,8 +1,8 @@
 import { useRouter } from 'next/router';
-import Loader from '../../components/Loader';
+import { Loader } from '../../components/Loader';
+import { PublicOrgPageContent } from '../../components/PublicOrgPageContent';
+import { PublicOrgPageHeader } from '../../components/PublicOrgPageHeader';
 import usePublicOrgById from '../../SWR/usePublicOrgById';
-import OrgApplyPageHeader from '../../components/Orgs/Public/OrgApplyPageHeader';
-import OrgApplyPageContent from '../../components/Orgs/Public/OrgApplyPageContent';
 import { CustomQuery } from '../../types/main';
 
 export default function Apply() {
@@ -24,11 +24,11 @@ export default function Apply() {
   return (
     <div className="max-w-7xl mx-auto p-4 my-12 rounded-lg min-h-screen ">
       <header>
-        <OrgApplyPageHeader />
+        <PublicOrgPageHeader />
       </header>
 
       <main className="mt-5">
-        <OrgApplyPageContent />
+        <PublicOrgPageContent />
       </main>
     </div>
   );

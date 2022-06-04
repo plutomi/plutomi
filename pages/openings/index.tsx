@@ -1,14 +1,14 @@
-import NewPage from '../../components/Templates/NewPage';
-import OpeningsContent from '../../components/Openings/OpeningsContent';
+import { NewPageLayout } from '../../components/NewPageLayout';
+import { OpeningsPageContent } from '../../components/OpeningsPageContent';
 
 export default function Openings() {
   return (
-    <NewPage
+    <NewPageLayout
       loggedOutPageText="Log in to view your openings"
       currentNavbarItem="Openings"
       headerText="Openings"
     >
-      <OpeningsContent />
-    </NewPage>
+      <OpeningsPageContent />
+    </NewPageLayout>
   );
 }

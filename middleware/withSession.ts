@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
 import { COOKIE_NAME, COOKIE_SETTINGS } from '../Config';
-import * as Users from '../models/Users';
+import DB from '../models';
 
 // eslint-disable-next-line consistent-return
 export default async function withSession(req: Request, res: Response, next: NextFunction) {
@@ -9,7 +9,7 @@ export default async function withSession(req: Request, res: Response, next: Nex
     return res.status(401).json({ message: 'Please log in again' });
   }
 
-  const [user, userError] = await Users.GetUserById({
+  const [user, userError] = await DB.Users.getUserById({
     userId,
   });
 

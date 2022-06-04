@@ -1,4 +1,4 @@
-import * as Questions from '../models/Questions';
+import DB from '../models';
 
 /**
  * MAJOR TODO -
@@ -24,7 +24,7 @@ export async function main(event) {
   };
 
   console.log(input);
-  const [removed, error] = await Questions.DeleteQuestionFromStage(input);
+  const [removed, error] = await DB.Questions.deleteQuestionFromStage(input);
 
   if (error) {
     console.error(error);

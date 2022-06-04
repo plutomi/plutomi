@@ -1,13 +1,13 @@
-import { ChevronRightIcon, MailIcon } from '@heroicons/react/outline';
 import _ from 'lodash';
+import { ChevronRightIcon, MailIcon } from '@heroicons/react/outline';
 import { nanoid } from 'nanoid';
-import AlreadySignedIn from '../components/AlreadySignedIn';
-import Contact from '../components/Static/ContactUs';
-import LoginHomepage from '../components/LoginHomepage';
-import UseCases from '../components/UseCases';
-import Hero from '../components/Static/Hero';
 import useSelf from '../SWR/useSelf';
 import { AXIOS_INSTANCE as axios, DOMAIN_NAME } from '../Config';
+import { ContactUs } from '../components/ContactUs';
+import { Hero } from '../components/Hero';
+import { LoginHomepage } from '../components/LoginHomepage';
+import { AlreadyLoggedIn } from '../components/AlreadyLoggedIn';
+import { UseCaseList } from '../components/UseCaseList';
 import * as Time from '../utils/time';
 
 interface Commit {
@@ -23,6 +23,8 @@ interface Commit {
 interface HomepageProps {
   commits: Commit[];
 }
+// TODO types
+
 export default function Main({ commits }: HomepageProps) {
   const { user, isUserLoading, isUserError } = useSelf();
   return (
@@ -34,11 +36,11 @@ export default function Main({ commits }: HomepageProps) {
             callbackUrl={`${DOMAIN_NAME}/dashboard`} // TODO fallback url is already set im pretty sure
           />
         ) : (
-          <AlreadySignedIn />
+          <AlreadyLoggedIn />
         )}
       </main>
       <div className="flex-wrap md:flex  justify-center space-x-2">
-        <UseCases />
+        <UseCaseList />
         <ul className="divide-y mx-auto max-w-4xl divide-gray-200  mt-12">
           {commits.map((commit) => (
             <li
@@ -85,7 +87,7 @@ export default function Main({ commits }: HomepageProps) {
           ))}
         </ul>
       </div>
-      <Contact />
+      <ContactUs />
     </>
   );
 }
@@ -103,8 +105,9 @@ export async function getStaticProps() {
         `https://api.github.com/repos/plutomi/plutomi/commits?sha=${branch.name}&per_page=${commitsFromEachBranch}&u=joswayski`,
         {
           auth: {
-            username: 'joswayski',
-            password: 'GithubAccount44!@#',
+            // TODO this is dumb
+            username: process.env.GITHUB_USERNAME,
+            password: process.env.GITHUB_PASSWORD,
           },
         },
       );

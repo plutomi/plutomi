@@ -1,14 +1,14 @@
-import WebhooksContent from '../components/Webhooks/WebhooksContent';
-import NewPage from '../components/Templates/NewPage';
+import { NewPageLayout } from '../components/NewPageLayout';
+import { WebhooksList } from '../components/WebhooksList';
 
 export default function Team() {
   return (
-    <NewPage
+    <NewPageLayout
       loggedOutPageText="Log in to view your webhooks"
       currentNavbarItem="Webhooks"
       headerText="Webhooks"
     >
-      <WebhooksContent />
-    </NewPage>
+      <WebhooksList />
+    </NewPageLayout>
   );
 }

@@ -1,15 +1,14 @@
-import TeamContent from '../components/Team/TeamContent';
-
-import NewPage from '../components/Templates/NewPage';
+import { NewPageLayout } from '../components/NewPageLayout';
+import { TeamPageContent } from '../components/TeamPageContent';
 
 export default function Team() {
   return (
-    <NewPage
+    <NewPageLayout
       loggedOutPageText="Log in to view your team"
       currentNavbarItem="Team"
       headerText="Team"
     >
-      <TeamContent />
-    </NewPage>
+      <TeamPageContent />
+    </NewPageLayout>
   );
 }
