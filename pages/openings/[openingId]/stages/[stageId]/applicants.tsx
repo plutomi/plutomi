@@ -1,14 +1,15 @@
 import { useEffect } from 'react';
 import { useRouter } from 'next/router';
 import useStore from '../../../../../utils/store';
-import StagesHeader from '../../../../../components/Stages/StagesHeader';
-import StageCarousel from '../../../../../components/Stages/StagesCarousel';
 import useAllStagesInOpening from '../../../../../SWR/useAllStagesInOpening';
-import ApplicantList from '../../../../../components/Applicants/ApplicantList';
-import ApplicantProfileModal from '../../../../../components/Applicants/ApplicantProfileModal';
-import NewPage from '../../../../../components/Templates/NewPage';
 import useOpeningInfo from '../../../../../SWR/useOpeningInfo';
 import { CustomQuery } from '../../../../../types/main';
+import { NewPageLayout } from '../../../../../components/NewPageLayout';
+import { ApplicantProfileModal } from '../../../../../components/ApplicantProfileModal';
+import { StageSettingsHeader } from '../../../../../components/StageSettingsHeader';
+import { ApplicantList } from '../../../../../components/ApplicantList';
+import { StageCarousel } from '../../../../../components/StageCarousel';
+import { APplicantsPageHeader } from '../../../../../components/ApplicantsPageHeader';
 
 export default function StageApplicants() {
   const router = useRouter();
@@ -29,7 +30,7 @@ export default function StageApplicants() {
   }, [router.isReady, openApplicantProfileModal, router.query]);
 
   return (
-    <NewPage
+    <NewPageLayout
       loggedOutPageText="Log in to view your applicants"
       currentNavbarItem="Openings"
       headerText={isOpeningLoading ? 'Applicants' : `${opening?.openingName} - Applicants`}
@@ -38,13 +39,13 @@ export default function StageApplicants() {
         <ApplicantProfileModal />
 
         <div className="space-y-10">
-          <StagesHeader />
+          <APplicantsPageHeader />
           <div className="space-y-10">
             <StageCarousel />
             <ApplicantList />
           </div>
         </div>
       </>
-    </NewPage>
+    </NewPageLayout>
   );
 }

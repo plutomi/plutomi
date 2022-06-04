@@ -1,14 +1,14 @@
-import NewPage from '../components/Templates/NewPage';
-import QuestionsContent from '../components/Questions/QuestionsContent';
+import { NewPageLayout } from '../components/NewPageLayout';
+import { QuestionsContent } from '../components/QuestionsContent';
 
 export default function Questions() {
   return (
-    <NewPage
+    <NewPageLayout
       loggedOutPageText="Log in to view your questions"
       currentNavbarItem="Questions"
       headerText="Questions"
     >
       <QuestionsContent />
-    </NewPage>
+    </NewPageLayout>
   );
 }

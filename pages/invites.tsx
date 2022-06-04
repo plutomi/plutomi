@@ -1,14 +1,14 @@
-import NewPage from '../components/Templates/NewPage';
-import InvitesContent from '../components/Invites/InvitesContent';
+import { InvitesPageContent } from '../components/InvitesPageContent/InvitesPageContent';
+import { NewPageLayout } from '../components/NewPageLayout';
 
 export default function Invites() {
   return (
-    <NewPage
+    <NewPageLayout
       loggedOutPageText="Log in to view your invites"
       currentNavbarItem="Invites"
       headerText="Invites"
     >
-      <InvitesContent />
-    </NewPage>
+      <InvitesPageContent />
+    </NewPageLayout>
   );
 }

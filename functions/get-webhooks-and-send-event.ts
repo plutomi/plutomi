@@ -2,7 +2,7 @@ import { EventBridgeEvent } from 'aws-lambda';
 import axios from 'axios';
 import { DynamoStreamTypes, Entities } from '../Config';
 import { DynamoApplicant } from '../types/dynamo';
-import * as Webhooks from '../models/Webhooks';
+import DB from '../models';
 
 interface ApplicantWebhookEvent {
   eventName: DynamoStreamTypes;
@@ -15,7 +15,7 @@ interface ApplicantWebhookEvent {
 }
 
 export async function main(event: EventBridgeEvent<'stream', ApplicantWebhookEvent>) {
-  const [webhooks, error] = await Webhooks.GetWebhooksInOrg({
+  const [webhooks, error] = await DB.Webhooks.getWebhooksInOrg({
     orgId: event.detail.orgId,
   });
 

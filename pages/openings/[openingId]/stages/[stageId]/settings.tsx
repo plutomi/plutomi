@@ -1,14 +1,14 @@
 import { mutate } from 'swr';
 import { useRouter } from 'next/router';
 import useOpeningInfo from '../../../../../SWR/useOpeningInfo';
-import StageSettingsHeader from '../../../../../components/Stages/StageSettingsHeader';
-import StageSettingsContent from '../../../../../components/Stages/StagesSettingsContent';
-import NewPage from '../../../../../components/Templates/NewPage';
 import useStageInfo from '../../../../../SWR/useStageInfo';
 import { CustomQuery } from '../../../../../types/main';
 import { GetOpeningInfoURL } from '../../../../../adapters/Openings';
 import { GetStagesInOpeningURL, DeleteStage } from '../../../../../adapters/Stages';
 import { WEBSITE_URL } from '../../../../../Config';
+import { NewPageLayout } from '../../../../../components/NewPageLayout';
+import { StageSettingsHeader } from '../../../../../components/StageSettingsHeader';
+import { StageSettingsContent } from '../../../../../components/StageSettingsContent';
 
 export default function StageSettings() {
   const router = useRouter();
@@ -43,7 +43,7 @@ export default function StageSettings() {
   };
 
   return (
-    <NewPage
+    <NewPageLayout
       loggedOutPageText="Log in to view your stage settings"
       currentNavbarItem="Openings"
       headerText={
@@ -54,9 +54,8 @@ export default function StageSettings() {
     >
       <>
         <StageSettingsHeader deleteStage={deleteStage} />
-
         <StageSettingsContent />
       </>
-    </NewPage>
+    </NewPageLayout>
   );
 }

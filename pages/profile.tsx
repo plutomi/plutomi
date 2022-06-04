@@ -1,9 +1,10 @@
-import SignedInNav from '../components/Navbar/SignedInNav';
+import { Login } from '../adapters/Auth';
+import { Loader } from '../components/Loader';
 import useSelf from '../SWR/useSelf';
-import UserProfileHeader from '../components/UserProfile/UserProfileHeader';
-import UserProfileModal from '../components/UserProfile/UserProfileModal';
-import Loader from '../components/Loader';
-import Login from '../components/Login';
+import * as LoginComponent from '../components/Login';
+import { EditUserProfileModal } from '../components/EditUserInfoModal';
+import { SignedInNav } from '../components/SignedInNavbar';
+import { UserProfilePageHeader } from '../components/UserProfilePageHeader';
 
 export default function Team() {
   const { user, isUserLoading, isUserError } = useSelf();
@@ -14,7 +15,7 @@ export default function Team() {
   }
 
   if (isUserError) {
-    return <Login loggedOutPageText="Log in to view your profile" />;
+    return <LoginComponent.Login loggedOutPageText="Log in to view your profile" />;
   }
 
   if (isUserLoading) {
@@ -23,11 +24,11 @@ export default function Team() {
 
   return (
     <>
-      <UserProfileModal user={user} />
+      <EditUserProfileModal user={user} />
       <SignedInNav current="PLACEHOLDER" />
       <div className="max-w-7xl mx-auto p-4 my-12 rounded-lg min-h-screen ">
         <header>
-          <UserProfileHeader />
+          <UserProfilePageHeader />
         </header>
 
         <main className="mt-5">

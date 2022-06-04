@@ -1,7 +1,7 @@
 import { useRouter } from 'next/router';
-import OpeningSettingsHeader from '../../../components/Openings/OpeningSettingsHeader';
-import OpeningSettingsContent from '../../../components/Openings/OpeningSettingsContent';
-import NewPage from '../../../components/Templates/NewPage';
+import { NewPageLayout } from '../../../components/NewPageLayout';
+import { OpeningSettingsContent } from '../../../components/OpeningSettingsContent';
+import { OpeningSettingsHeader } from '../../../components/OpeningSettingsHeader';
 import useOpeningInfo from '../../../SWR/useOpeningInfo';
 import { CustomQuery } from '../../../types/main';
 
@@ -10,7 +10,7 @@ export default function OpeningSettings() {
   const { openingId } = router.query as Pick<CustomQuery, 'openingId'>;
   const { opening, isOpeningLoading, isOpeningError } = useOpeningInfo(openingId);
   return (
-    <NewPage
+    <NewPageLayout
       loggedOutPageText="Log in to view your opening settings"
       currentNavbarItem="Openings"
       headerText={
@@ -21,6 +21,6 @@ export default function OpeningSettings() {
         <OpeningSettingsHeader />
         <OpeningSettingsContent />
       </>
-    </NewPage>
+    </NewPageLayout>
   );
 }
