@@ -31,7 +31,7 @@ export const OpeningsDropdown = ({ openings, index }: OpeningsDropdownProps) => 
   return (
     <Listbox value={selected} onChange={handleChange}>
       <div className=" relative w-full ">
-        <Listbox.Button className="relative w-full bg-white border border-gray-300 rounded-md shadow-sm pl-3 pr-10 py-2 text-left cursor-default focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500 sm:text-lg">
+        <Listbox.Button className="relative w-full curse-pointer bg-white border border-gray-300 rounded-md shadow-sm pl-3 pr-10 py-2 text-left focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500 sm:text-lg">
           <div className="flex items-center">
             <span
               aria-label={selected?.GSI1SK === OpeningState.PUBLIC ? 'Online' : 'Offline'}
@@ -60,7 +60,7 @@ export const OpeningsDropdown = ({ openings, index }: OpeningsDropdownProps) => 
                 className={({ active }) =>
                   combineClassNames(
                     active ? 'text-white bg-blue-600' : 'text-dark',
-                    'cursor-default select-none relative py-2 pl-3 pr-9',
+                    'cursor-pointer select-none relative py-2 pl-3 pr-9',
                   )
                 }
                 value={opening}
