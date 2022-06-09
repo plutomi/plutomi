@@ -36,6 +36,15 @@
         "maintenance",
         "bug"
       ]
+    },
+    {
+      "login": "Jeremyjay121",
+      "name": "Jeremy Trenchard",
+      "avatar_url": "https://avatars.githubusercontent.com/u/94778748?v=4",
+      "profile": "https://github.com/Jeremyjay121",
+      "contributions": [
+        "code"
+      ]
     }
   ],
   "contributorsPerLine": 7,
