@@ -6,7 +6,7 @@ Make sure all of your `@aws-cdk/*` dependencies are running the same version + m
 
 > ERROR [internal] load metadata for public.ecr.aws/sam/build-nodejs (...) failed to solve with frontend dockerfile.v0: failed to create LLB definition: unexpected status code [manifests latest]: 403 Forbidden
 
-Try running this command to log in again: `aws ecr-public get-login-password --region us-east-1 | docker login --username AWS --password-stdin public.ecr.aws/sam/build-nodejs`
+Try running this command to log in again: `aws ecr-public get-login-password --region us-east-1 | docker login --username AWS --password-stdin public.ecr.aws/sam/build-nodejs` OR `npm run docker-fix`
 
 > Error: Cannot perform an interactive login from a non TTY device
 
