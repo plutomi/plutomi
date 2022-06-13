@@ -55,13 +55,13 @@ Stage order:
 
 All infrastructure is managed by CDK and we use [Jest](https://jestjs.io/) for testing. Everything is written TypeScript and we would appreciate any assistance on types or tests as we're definitely not the best :sweat_smile:
 
-The frontend uses the [Serverless-Nextjs](https://serverless-nextjs.com/docs/cdkconstruct/) CDK construct. The API is your typical Express app running on Fargate. We would like to migrate this to a full serverless setup with API Gateway + Lambda but, _at this time_, we feel Fargate has more advantages (mostly around developer experience & third party libraries) without many of the downsides...
+The frontend uses the [Serverless-Nextjs](https://serverless-nextjs.com/docs/cdkconstruct/) CDK construct. The API is your typical Express app running on Fargate. There are various asynchronous events that are made possible by the Dynamo streams:
 
-![werner](images/werner.png)
+1. When deleting an entity that has child items such as an org and its openings or an opening and its stages, the parent is deleted right away but the children will be deleted asynchronously with a state machine. [At the top of the workflow](images/DeleteChildrenStepFunction.png) there is a `choice` state which figures out which entity was deleted. It then retrieves all of the **_top-level_** child items for that entity (deleting an opening only retrieves the stages, but not the applicants in those stages). The state machine maps through each item and deletes them. This causes the state machine to be called again: Dynamo stream -> EventBridge -> StepFunction with the newly deleted entity. It's a cascading flow of deletions.
 
-When deleting an entity that has child items such as an org and its openings or an opening and its stages, the parent is deleted right away but the children will be deleted asynchronously with a state machine. [At the top of the workflow](images/DeleteChildrenStepFunction.png) there is a `choice` state which figures out which entity was deleted. It then retrieves all of the **_top-level_** child items for that entity (deleting an opening only retrieves the stages, but not the applicants in those stages). The state machine maps through each item and deletes them. This causes the state machine to be called again: Dynamo stream -> EventBridge -> StepFunction with the newly deleted entity. It's a cascading flow of deletions.
+2. Another [state machine](images/CommsStepFunction.png) for sending emails on triggers for certain events such as a new `LOGIN_EVENT` or a `LOGIN_LINK` request.
 
-There is [another state machine](images/CommsStepFunction.png) for sending emails that triggers on certain events such as a new `LOGIN_EVENT` or a `LOGIN_LINK` request and [another one](images/WebhooksStepFunction.png) for handling webhooks. This last one is just calls a lambda function that retrieves all webhooks for an org, and if it has webhooks, sends a `POST` request with the event details.
+3. Another [state machine](images/WebhooksStepFunction.png) for sending all applicant events to your configured webhooks. This is any `INSERT`, `MODIFY`, or `DELETE` event and you get the full payload that we receive from Dynamo, which means the before **and** after image if it was modified or deleted. This last one is simpler than the rest as it calls a lambda function that retrieves all webhooks for an org, and if it has webhooks, sends a `POST` request to the URL.
 
 ## DynamoDB
 
