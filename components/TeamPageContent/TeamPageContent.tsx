@@ -27,7 +27,7 @@ export const TeamPageContent = () => {
   }
 
   if (isPendingOrgInvitesError) {
-    return <h2>An error ocurred retrieving your pending invites</h2>;
+    return <h2>{ isPendingOrgInvitesError.response.data.message ?? 'An error ocurred retrieving your pending invites' }</h2>;
   }
 
   const pendingInvites = (

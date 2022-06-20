@@ -12,16 +12,14 @@ export const DOMAIN_NAME = `plutomi.com`;
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+export const EXPRESS_PORT = 3000;
+
 export const WEBSITE_URL =
-  process.env.NODE_ENV === 'production' ? `https://${DOMAIN_NAME}` : `http://localhost:3000`;
+  process.env.NODE_ENV === 'production'
+    ? `https://${DOMAIN_NAME}`
+    : `http://localhost:${EXPRESS_PORT}`;
 
-export const EXPRESS_PORT = 4000;
-
-export const API_DOMAIN =
-  process.env.NODE_ENV === 'production' ? `api.${DOMAIN_NAME}` : `localhost:${EXPRESS_PORT}`;
-
-export const API_URL =
-  process.env.NODE_ENV === 'production' ? `https://${API_DOMAIN}` : `http://${API_DOMAIN}`;
+export const API_URL = `${WEBSITE_URL}/api`;
 
 export const COOKIE_NAME =
   process.env.NODE_ENV === 'production' ? 'plutomi-cookie' : 'DEV-plutomi-cookie';
@@ -83,7 +81,7 @@ export enum DEFAULTS {
   /**
    * When no callbackUrl is provided on login, what page should users be redirected to
    */
-  REDIRECT = 'dashboard',
+  REDIRECT = 'dashboard', // TODO make this an enum / typ;e
   NO_FIRST_NAME = 'NO_FIRST_NAME',
   NO_LAST_NAME = 'NO_LAST_NAME',
 }
@@ -104,11 +102,12 @@ export enum LIMITS {
   MAX_CHILD_ITEM_LIMIT = 200,
 }
 
-export enum DynamoStreamTypes {
+export enum DynamoStreamTypes { // TODO possible default type in Dynamo?
   INSERT = 'INSERT',
   MODIFY = 'MODIFY',
   REMOVE = 'REMOVE',
 }
+
 export const LOGIN_LINK_SETTINGS = {
   password: process.env.LOGIN_LINKS_PASSWORD,
   ttl: 900, // In seconds, how long should login links be valid for
@@ -169,6 +168,7 @@ export const SWRFetcher = (url: string) =>
   AXIOS_INSTANCE.get(API_URL + url).then((res) => res.data);
 
 export type NavbarItem = {
+  // TODO move this type out of here into the actual navbar
   /**
    * The name of the navbar item such as 'Dashboard' or 'Questions'
    */
@@ -189,6 +189,7 @@ export type NavbarItem = {
   hiddenIfOrg: boolean;
 };
 
+// TODO move this out of here lol
 export const NAVBAR_NAVIGATION: NavbarItem[] = [
   {
     name: 'Dashboard',
@@ -222,6 +223,7 @@ export const NAVBAR_NAVIGATION: NavbarItem[] = [
     hiddenIfOrg: false,
   },
 ];
+// TODO move this out of here
 export const DROPDOWN_NAVIGATION = [
   { name: 'Your Profile', href: '/profile' },
   { name: 'Log Out', href: '#' },
@@ -238,8 +240,9 @@ export const JoiOrgId = Joi.string()
     'plutomi-',
     'plutomi-inc',
     'plutomiinc',
+    'api', // For express server, although the route will catch it first
   )
-  .max(200);
+  .max(100);
 
 // If not specified, how long should invites be valid for
 export const ORG_INVITE_EXPIRY_DAYS = 3;

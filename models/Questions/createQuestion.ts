@@ -9,15 +9,15 @@ type CreateQuestionInput = Pick<DynamoQuestion, 'orgId' | 'GSI1SK' | 'descriptio
 
 export const createQuestion = async (
   props: CreateQuestionInput,
-): Promise<[undefined, undefined] | [undefined, SdkError]> => {
+): Promise<[DynamoQuestion, undefined] | [undefined, SdkError]> => {
   const { orgId, GSI1SK, questionId, description } = props;
   const now = Time.currentISO();
-  const newStageQuestion: DynamoQuestion = {
+  const newQuestion: DynamoQuestion = {
     PK: `${Entities.ORG}#${orgId}#${Entities.QUESTION}#${questionId}`,
     SK: Entities.QUESTION,
     orgId,
     description: description || '',
-    questionId, // TODO add tag generator
+    questionId,
     entityType: Entities.QUESTION,
     createdAt: now,
     totalStages: 0,
@@ -31,7 +31,7 @@ export const createQuestion = async (
       {
         // Create the Question
         Put: {
-          Item: newStageQuestion,
+          Item: newQuestion,
           TableName: `${process.env.NODE_ENV}-${DYNAMO_TABLE_NAME}`,
           ConditionExpression: 'attribute_not_exists(PK)',
         },
@@ -56,7 +56,7 @@ export const createQuestion = async (
 
   try {
     await Dynamo.send(new TransactWriteCommand(transactParams));
-    return [undefined, undefined];
+    return [newQuestion, undefined];
   } catch (error) {
     return [undefined, error];
   }

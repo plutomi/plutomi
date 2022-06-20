@@ -122,7 +122,8 @@ export const requestLoginLink = async (req: Request, res: Response) => {
     { expiresIn: 900 }, // 15 min
   );
 
-  const loginLinkUrl = `${API_URL}/login?token=${token}&callbackUrl=${
+  // TODO this will braeak due to new routes
+  const loginLinkUrl = `${API_URL}/auth/login?token=${token}&callbackUrl=${
     callbackUrl || `${WEBSITE_URL}/${DEFAULTS.REDIRECT}`
   }`;
   /**

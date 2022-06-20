@@ -8,6 +8,7 @@ import * as Questions from './Questions';
 import * as Stages from './Stages';
 import * as Users from './Users';
 import * as Webhooks from './Webhooks';
+import * as Misc from './Misc';
 
 const API = {
   Applicants,
@@ -20,6 +21,7 @@ const API = {
   Stages,
   Webhooks,
   Questions,
+  Misc,
 };
 
 export default API;

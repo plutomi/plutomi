@@ -8,7 +8,7 @@ interface RequestLoginLinkInput {
 const RequestLoginLink = async (options: RequestLoginLinkInput) => {
   const { email, callbackUrl } = options;
 
-  let URL = `/request-login-link`;
+  let URL = `/auth/request-login-link`;
   if (callbackUrl) {
     URL += `?callbackUrl=${callbackUrl}`;
   }
@@ -17,12 +17,12 @@ const RequestLoginLink = async (options: RequestLoginLinkInput) => {
 };
 
 const Logout = async () => {
-  const data = await axios.post(`/logout`);
+  const data = await axios.post(`/auth/logout`);
   return data;
 };
 
 const Login = async (token: string) => {
-  const data = await axios.get(`/login?token=${token}`);
+  const data = await axios.get(`/auth/login?token=${token}`);
   return data;
 };
 

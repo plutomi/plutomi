@@ -1,15 +1,15 @@
 import { Request, Response } from 'express';
 import { nanoid } from 'nanoid';
-import * as CreateError from '../utils/createError';
-import DB from '../models';
-import { COOKIE_NAME, COOKIE_SETTINGS, EMAILS } from '../Config';
+import * as CreateError from '../../utils/createError';
+import DB from '../../models';
+import { COOKIE_NAME, COOKIE_SETTINGS, EMAILS } from '../../Config';
 
 /**
  * Creates a random test user and sends a session cookie to the client
  * @param req
  * @param res
  */
-export const setup = async (req: Request, res: Response) => {
+export const jestSetup = async (req: Request, res: Response) => {
   if (process.env.NODE_ENV !== 'development') {
     // TODO add a key for another layer of security here
     return res.status(401).json({ message: 'NODE_ENV is not development' });

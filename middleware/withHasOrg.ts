@@ -10,6 +10,7 @@ export default async function withHasOrg(req: Request, res: Response, next: Next
     session.orgId === DEFAULTS.NO_ORG ||
     session.orgId === TagGenerator({ value: DEFAULTS.NO_ORG })
   ) {
+    console.log('needs org');
     return res.status(403).json({
       message: ERRORS.NEEDS_ORG,
     });

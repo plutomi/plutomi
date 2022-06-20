@@ -19,6 +19,7 @@ const schema = Joi.object({
 
 export const createQuestion = async (req: Request, res: Response) => {
   const { session } = res.locals;
+
   try {
     await schema.validateAsync(req);
   } catch (error) {
