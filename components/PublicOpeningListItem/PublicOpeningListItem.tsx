@@ -8,6 +8,7 @@ interface PublicOpeningListItemProps {
 }
 
 export const PublicOpeningListItem = ({ opening }: PublicOpeningListItemProps) => (
+  
   <li key={opening.openingId}>
     {/* Take applicant to opening info page */}
     <Link href={`/${opening?.orgId}/${opening?.openingId}/apply`}>

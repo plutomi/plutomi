@@ -3,6 +3,7 @@ import { pick } from 'lodash';
 import * as CreateError from '../../utils/createError';
 import { OpeningState } from '../../Config';
 import DB from '../../models';
+import { DynamoOpening } from '../../types/dynamo';
 
 export const getOpeningsInOrg = async (req: Request, res: Response) => {
   const { orgId } = req.params;
@@ -20,8 +21,8 @@ export const getOpeningsInOrg = async (req: Request, res: Response) => {
     return res.status(status).json(body);
   }
 
-  const modifiedOpenings = openings.map((opening) =>
-    pick(opening, ['openingName', 'createdAt', 'openingId']),
+  const modifiedOpenings = openings.map((opening: DynamoOpening) =>
+    pick(opening, ['openingName', 'createdAt', 'openingId', 'orgId']),
   );
 
   return res.status(200).json(modifiedOpenings);
