@@ -7,7 +7,7 @@ import TagGenerator from '../utils/tagGenerator';
 export default async function withCleanQuestionId(req: Request, res: Response, next: NextFunction) {
   if (req.body.questionId) {
     req.body.questionId = TagGenerator({
-      value: req.params.questionId,
+      value: req.body.questionId,
       joinString: '_',
     });
   }
@@ -25,6 +25,8 @@ export default async function withCleanQuestionId(req: Request, res: Response, n
       joinString: '_',
     });
   }
+
+  // TODO make sure its an array
   if (req.body.questionOrder) {
     try {
       req.body.questionOrder = req.body.questionOrder.map((id: string) =>

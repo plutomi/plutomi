@@ -16,7 +16,7 @@ Having worked at a company that needed to recruit thousands of contractors every
 
 ## Summary
 
-In your recruiting flow you can create `openings` which people can apply to. An opening can be anything from a job, a location for a delivery company, or a program like a summer camp.
+You can create `openings` which people can apply to. An opening can be anything from a job, a location for a delivery company, or a program like a summer camp.
 
 In these openings, you can create `stages` which are individual steps for your application. You can add questions for applicants to answer, and setup automatic move rules that determine where applicants go next depending on their answers or after a certain time period.
 
@@ -40,8 +40,6 @@ Stage order:
 - Create a [verified identity](https://docs.aws.amazon.com/ses/latest/DeveloperGuide/verify-domain-procedure.html) with your domain in SES
 - Create a [certificate for your domain](https://docs.aws.amazon.com/acm/latest/userguide/gs-acm-request-public.html#request-public-console) in AWS Certificate Manager
 
-> :point_up: Will try to add the Route53 / ACM / SES setup to CDK eventually [#390](https://github.com/plutomi/plutomi/issues/390)
-
 ## Useful commands
 
 | Command                                                                                                 | Function                                                                                                                                           |
@@ -55,7 +53,13 @@ Stage order:
 
 All infrastructure is managed by CDK and we use [Jest](https://jestjs.io/) for testing. Everything is written TypeScript and we would appreciate any assistance on types or tests as we're definitely not the best :sweat_smile:
 
-The frontend uses the [Serverless-Nextjs](https://serverless-nextjs.com/docs/cdkconstruct/) CDK construct. The API is your typical Express app running on [AWS Fargate](https://aws.amazon.com/fargate/). There are various asynchronous events that are made possible by the Dynamo streams:
+The frontend is using [NextJS](https://nextjs.org/) and we have an [Express](https://expressjs.com/) app serving it from [AWS Fargate](https://aws.amazon.com/fargate/).
+
+#### DynamoDB
+
+We're using a single table design for this project. If you're new to DynamoDB, I created [a playlist](https://youtube.com/playlist?list=PL4wKJluo18Z2Nh1QlU0LXKy6EbPwB17xq) that will help you get accustomed to it. There are videos from Alex Debrie, Rick Houlihan, Pete Naylor, and an awesome talk by Kai Zhao on adaptive capacity.
+
+There are various asynchronous events that are made possible by the Dynamo streams:
 
 1. When deleting an entity that has child items such as an org and its openings or an opening and its stages, the [parent is deleted right away but the children will be deleted asynchronously](images/DeleteChildrenStepFunction.png) with a state machine. At the top of the workflow there is a `choice` state which figures out which entity was deleted. It then retrieves all of the **_top-level_** child items for that entity (deleting an opening only retrieves the stages, but not the applicants in those stages). The state machine maps through each item and deletes them. This causes the state machine to be called again: Dynamo stream -> EventBridge -> StepFunction with the newly deleted entity. It's a cascading flow of deletions.
 
@@ -63,17 +67,10 @@ The frontend uses the [Serverless-Nextjs](https://serverless-nextjs.com/docs/cdk
 
 3. Another state machine for [sending all applicant events to your configured webhooks](images/WebhooksStepFunction.png). This is any `INSERT`, `MODIFY`, or `DELETE` event and you get the full payload that we receive from Dynamo, which means the before **and** after image if it was modified or deleted. This last one is simpler than the rest as it calls a lambda function that retrieves all webhooks for an org, and if it has webhooks, sends a `POST` request to the URL.
 
-## DynamoDB
-
-We're using a single table design for this project. If you're new to DynamoDB, I created [a playlist](https://youtube.com/playlist?list=PL4wKJluo18Z2Nh1QlU0LXKy6EbPwB17xq) that will help you get accustomed to it. There are videos from Alex Debrie, Rick Houlihan, Pete Naylor, and an awesome talk by Kai Zhao on adaptive capacity.
-
-To play around with the data model locally, you can download [NoSQL Workbench](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/workbench.settingup.html) and import the [NoSQLWorkbench.json](Schema/NoSQLWorkbench.json) file into it. You can even export the table to your AWS account directly.
-
 We're also using Athena to query Dynamo with plain old SQL using [Federated Queries](https://docs.aws.amazon.com/athena/latest/ug/connect-to-a-data-source.html) - ([video](https://www.youtube.com/watch?v=tZia_5qxPkY)). We haven't figured out how to add a data source using CDK but this is very simple. Once deployed, click [Connect Data Source](https://console.aws.amazon.com/athena/home?region=us-east-1#/data-sources) and select **DynamoDB**. Choose a name and then select the lambda function that is created in the stack: _NODE_ENV_-athena-dynamo-query-function
 
 ## Other useful repos:
 
-- [Serverless Nextjs](https://github.com/serverless-nextjs/serverless-next.js)
 - [AWS ECS Patterns](https://github.com/aws/aws-cdk/tree/master/packages/%40aws-cdk/aws-ecs-patterns)
 - [Serverless CDK Patterns](https://github.com/cdk-patterns/serverless)
 

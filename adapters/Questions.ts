@@ -1,15 +1,15 @@
 import { AXIOS_INSTANCE as axios } from '../Config';
 import { APICreateQuestionOptions } from '../Controllers/Questions/createQuestion';
 import { APIUpdateQuestionOptions } from '../Controllers/Questions/updateQuestion';
+const GetQuestionsInOrgURL = () => '/questions';
 
 const CreateQuestion = async (options: APICreateQuestionOptions) => {
-  const data = await axios.post(`/questions`, {
+  const data = await axios.post(GetQuestionsInOrgURL(), {
     ...options,
   });
   return data;
 };
 
-const GetQuestionsInOrgURL = () => '/questions';
 const GetQuestionInfoURL = (questionId: string) => `/questions/${questionId}`;
 const GetQuestionInfo = async (questionId: string) => {
   const data = await axios.get(GetQuestionInfoURL(questionId));

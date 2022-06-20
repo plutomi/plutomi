@@ -13,7 +13,7 @@ import { Certificate } from '@aws-cdk/aws-certificatemanager';
 import { ARecord, RecordTarget } from '@aws-cdk/aws-route53';
 import { CloudFrontTarget } from '@aws-cdk/aws-route53-targets';
 import { Policy, PolicyStatement } from '@aws-cdk/aws-iam';
-import { API_DOMAIN, DOMAIN_NAME, EXPRESS_PORT } from '../Config';
+import { DOMAIN_NAME, EXPRESS_PORT } from '../Config';
 
 type DynamoActions =
   | 'dynamodb:GetItem'
@@ -24,12 +24,12 @@ type DynamoActions =
   | 'dynamodb:DeleteItem'
   | 'dynamodb:BatchWriteItem';
 
-interface APIStackServiceProps extends cdk.StackProps {
+interface AppStackServiceProps extends cdk.StackProps {
   table: Table;
 }
 
-export default class APIStack extends cdk.Stack {
-  constructor(scope: cdk.Construct, id: string, props?: APIStackServiceProps) {
+export default class AppStack extends cdk.Stack {
+  constructor(scope: cdk.Construct, id: string, props?: AppStackServiceProps) {
     super(scope, id, props);
 
     const { HOSTED_ZONE_ID } = process.env;
@@ -40,7 +40,7 @@ export default class APIStack extends cdk.Stack {
     });
 
     // Allows Fargate to access DynamoDB
-
+    // TODO i think this is being used somewhere else with a different type
     const actions: DynamoActions[] = [
       'dynamodb:GetItem',
       'dynamodb:DeleteItem',
@@ -82,8 +82,9 @@ export default class APIStack extends cdk.Stack {
       }),
     });
 
+    // API
     container.addPortMappings({
-      containerPort: EXPRESS_PORT || 4000,
+      containerPort: EXPRESS_PORT || 3000,
       protocol: ecs.Protocol.TCP,
     });
 
@@ -120,15 +121,14 @@ export default class APIStack extends cdk.Stack {
         cluster, // Required
         certificate: apiCert,
         taskDefinition,
-        desiredCount: 1,
-        // domainName: API_DOMAIN,
-        // domainZone: hostedZone,
+        desiredCount: 3,
         listenerPort: 443,
         protocol: protocol.ApplicationProtocol.HTTPS,
         redirectHTTP: true,
         assignPublicIp: true, // TODO revisit this
       },
     );
+
     /**
      * Reduce deploy time by:
      * 1. Lowering the deregistration delay from 300 seconds to 30
@@ -152,22 +152,21 @@ export default class APIStack extends cdk.Stack {
 
     // Auto scaling
     const scalableTarget = loadBalancedFargateService.service.autoScaleTaskCount({
-      minCapacity: 1,
-      maxCapacity: 10,
+      minCapacity: 3,
+      maxCapacity: 5,
     });
 
     /**
-     * Good reading  on fargate 25% time :>
+     * Good reading on fargate 25% time :>
      * https://github.com/aws/containers-roadmap/issues/163
      */
     scalableTarget.scaleOnCpuUtilization('CpuScaling', {
-      targetUtilizationPercent: 40,
+      targetUtilizationPercent: 15,
     });
 
     // Create the WAF & its rules
     const API_WAF = new waf.CfnWebACL(this, `${process.env.NODE_ENV}-API-WAF`, {
       name: `${process.env.NODE_ENV}-API-WAF`,
-
       description: 'Blocks IPs that make too many requests',
       defaultAction: {
         allow: {},
@@ -180,11 +179,48 @@ export default class APIStack extends cdk.Stack {
       },
       rules: [
         {
-          name: `too-many-requests-rule`,
+          name: `too-many-api-requests-rule`,
           priority: 0,
           statement: {
             rateBasedStatement: {
               limit: 1000, // In a 5 minute period
+              aggregateKeyType: 'IP',
+              scopeDownStatement: {
+                byteMatchStatement: {
+                  fieldToMatch: {
+                    uriPath: {},
+                  },
+                  positionalConstraint: 'CONTAINS',
+                  textTransformations: [
+                    {
+                      priority: 0,
+                      type: 'LOWERCASE',
+                    },
+                  ],
+                  searchString: '/api/',
+                },
+              },
+            },
+          },
+          action: {
+            block: {
+              customResponse: {
+                responseCode: 429,
+              },
+            },
+          },
+          visibilityConfig: {
+            sampledRequestsEnabled: true,
+            cloudWatchMetricsEnabled: true,
+            metricName: `${process.env.NODE_ENV}-WAF-API-BLOCKED-IPs`,
+          },
+        },
+        {
+          name: `too-many-web-requests-rule`,
+          priority: 1,
+          statement: {
+            rateBasedStatement: {
+              limit: 2000, // In a 5 minute period
               aggregateKeyType: 'IP',
             },
           },
@@ -198,7 +234,7 @@ export default class APIStack extends cdk.Stack {
           visibilityConfig: {
             sampledRequestsEnabled: true,
             cloudWatchMetricsEnabled: true,
-            metricName: `${process.env.NODE_ENV}-WAF-BLOCKED-IPs`,
+            metricName: `${process.env.NODE_ENV}-WAF-GENERAL-BLOCKED-IPs`,
           },
         },
         // { // TODO this is blocking postman requests :/
@@ -265,10 +301,11 @@ export default class APIStack extends cdk.Stack {
       minTtl: cdk.Duration.seconds(0),
       maxTtl: cdk.Duration.seconds(0),
     });
+
     const distribution = new cf.Distribution(this, `${process.env.NODE_ENV}-CF-API-Distribution`, {
       certificate: apiCert,
       webAclId: API_WAF.attrArn,
-      domainNames: [API_DOMAIN],
+      domainNames: [DOMAIN_NAME],
       defaultBehavior: {
         origin: new origins.LoadBalancerV2Origin(loadBalancedFargateService.loadBalancer),
 
@@ -286,7 +323,6 @@ export default class APIStack extends cdk.Stack {
     //  Creates an A record that points our API domain to Cloudfront
     new ARecord(this, `APIAlias`, {
       zone: hostedZone,
-      recordName: 'api',
       target: RecordTarget.fromAlias(new CloudFrontTarget(distribution)),
     });
   }

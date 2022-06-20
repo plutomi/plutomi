@@ -3,6 +3,7 @@ FROM node:16
 # Setting working directory
 WORKDIR /usr/src/app
 
+
 # Installing dependencies
 COPY package*.json ./
 RUN npm install
@@ -12,7 +13,7 @@ COPY . .
 
 # Building app
 RUN npm run build
-EXPOSE 4000
+EXPOSE 3000 
 
 # Running the app
 CMD [ "npm", "start" ]
