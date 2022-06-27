@@ -5,6 +5,7 @@ import { Dynamo } from '../../awsClients/ddbDocClient';
 import { Entities, DYNAMO_TABLE_NAME } from '../../Config';
 import { DynamoWebhook } from '../../types/dynamo';
 import * as Time from '../../utils/time';
+import TagGenerator from '../../utils/tagGenerator';
 
 type CreateWebhookInput = Pick<
   DynamoWebhook,
@@ -15,7 +16,11 @@ export const createWebhook = async (
   props: CreateWebhookInput,
 ): Promise<[DynamoWebhook, SdkError]> => {
   const { orgId, webhookName, webhookUrl, description } = props;
-  const webhookId = nanoid(15);
+  const webhookId = TagGenerator({
+    value: nanoid(15),
+    joinString: '_',
+  });
+
   const newWebhook: DynamoWebhook = {
     PK: `${Entities.ORG}#${orgId}#${Entities.WEBHOOK}#${webhookId}`,
     SK: Entities.WEBHOOK,

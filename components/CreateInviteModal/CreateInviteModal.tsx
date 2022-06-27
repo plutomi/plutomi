@@ -108,30 +108,32 @@ export const CreateInviteModal = () => {
                               className="block w-full shadow-sm sm:text-sm focus:ring-blue-500 focus:border-blue-500 border-gray-300 rounded-md"
                             />
                           </div>
-                          <div>
+                          <div className="mt-1 relative rounded-md shadow-sm">
                             <label
                               htmlFor="price"
                               className="block text-sm font-medium text-gray-700"
                             >
                               Invite will expire in
                             </label>
-                            <input
-                              type="number"
-                              name="expiry-days"
-                              id="expiry"
-                              min={1}
-                              max={365}
-                              defaultValue={ORG_INVITE_EXPIRY_DAYS}
-                              className="focus:ring-blue-500 focus:border-blue-500 block w-full  pr-12 sm:text-sm border-gray-300 rounded-md"
-                              placeholder="3"
-                              value={expiresInDays}
-                              onChange={(e) => setExpiresInDays(parseInt(e.target.value, 10))}
-                            />
-
-                            <div className="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
-                              <span className="text-light sm:text-sm" id="expiry">
-                                days
-                              </span>
+                            <div className="mt-1 relative rounded-md shadow-sm">
+                              <input
+                                type="number"
+                                name="expiry-days"
+                                id="expiry"
+                                min={1}
+                                max={365}
+                                placeholder="3"
+                                value={expiresInDays}
+                                defaultValue={ORG_INVITE_EXPIRY_DAYS}
+                                onChange={(e) => setExpiresInDays(parseInt(e.target.value, 10))}
+                                className="focus:ring-blue-500 focus:border-blue-500 block w-full  pr-12 sm:text-sm border-gray-300 rounded-md"
+                                aria-describedby="invite-days-expiry-currency"
+                              />
+                              <div className="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
+                                <span className="text-gray-500 sm:text-sm" id="price-currency">
+                                  days
+                                </span>
+                              </div>
                             </div>
                           </div>
                         </div>

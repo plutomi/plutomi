@@ -7,9 +7,6 @@ import DB from '../../models';
 export const getOpening = async (req: Request, res: Response) => {
   const { orgId, openingId } = req.params;
 
-  if (!orgId || !openingId) {
-    return res.sendStatus(400);
-  }
   const [opening, openingsError] = await DB.Openings.getOpening({
     orgId,
     openingId,
@@ -23,12 +20,8 @@ export const getOpening = async (req: Request, res: Response) => {
     return res.status(status).json(body);
   }
 
-  if (!opening) {
+  if (!opening || opening.GSI1SK === OpeningState.PRIVATE) {
     return res.status(404).json({ message: 'Opening does not exist' });
-  }
-
-  if (opening.GSI1SK === OpeningState.PRIVATE) {
-    return res.status(403).json({ message: 'You cannot view this opening at this time' });
   }
 
   const modifiedOpening = pick(opening, ['openingName', 'createdAt', 'openingId']);
