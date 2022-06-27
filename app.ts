@@ -5,6 +5,7 @@ import cors from 'cors';
 import timeout from 'connect-timeout';
 import withCleanOrgId from './middleware/withCleanOrgId';
 import withCleanQuestionId from './middleware/withCleanQuestionId';
+import withCleanWebhookId from './middleware/withCleanWebhookId';
 import { COOKIE_SETTINGS, EXPRESS_PORT, WEBSITE_URL } from './Config';
 import next from 'next';
 // TODO clean up all routes
@@ -59,6 +60,7 @@ app.prepare().then(() => {
     helmet(),
     withCleanOrgId,
     withCleanQuestionId,
+    withCleanWebhookId,
     morgan(morganSettings),
     cookieParser(sessionSecrets, COOKIE_SETTINGS),
   ]);
