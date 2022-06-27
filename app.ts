@@ -8,7 +8,6 @@ import withCleanQuestionId from './middleware/withCleanQuestionId';
 import withCleanWebhookId from './middleware/withCleanWebhookId';
 import { COOKIE_SETTINGS, EXPRESS_PORT, WEBSITE_URL } from './Config';
 import next from 'next';
-// TODO clean up all routes
 import { openings } from './routes/openings';
 import { orgs } from './routes/orgs';
 import { questions } from './routes/questions';
