@@ -35,7 +35,7 @@ Stage order:
 ## Prerequisites
 
 - Install [Docker](https://docs.docker.com/get-docker/)
-- Create `.env.development` & `.env.production` files, see `.env.sample` for the values required
+- Create `.env.development` & `.env.production` files, see the [.env.sample](.env.sample) for the values required
 - Create a [Hosted Zone](https://docs.aws.amazon.com/Route53/latest/DeveloperGuide/CreatingHostedZone.html) in Route53 with your domain
 - Create a [verified identity](https://docs.aws.amazon.com/ses/latest/DeveloperGuide/verify-domain-procedure.html) with your domain in SES
 - Create a [certificate for your domain](https://docs.aws.amazon.com/acm/latest/userguide/gs-acm-request-public.html#request-public-console) in AWS Certificate Manager
