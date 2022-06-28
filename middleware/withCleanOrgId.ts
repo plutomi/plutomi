@@ -8,7 +8,8 @@ export default async function withCleanOrgId(req: Request, res: Response, next: 
     try {
       req.body.orgId = TagGenerator({ value: req.body.orgId });
     } catch (error) {
-      return res.status(400).json({ message: 'An error curred parsing req.body.orgId' });
+      const message = `An error ocurred parsing req.body.orgId - ${error}`;
+      return res.status(400).json({ message });
     }
   }
 
@@ -16,7 +17,8 @@ export default async function withCleanOrgId(req: Request, res: Response, next: 
     try {
       req.params.orgId = TagGenerator({ value: req.params.orgId });
     } catch (error) {
-      return res.status(400).json({ message: 'An error curred parsing req.params.orgId' });
+      const message = `An error ocurred parsing req.params.orgId - ${error}`;
+      return res.status(400).json({ message });
     }
   }
 
@@ -24,7 +26,8 @@ export default async function withCleanOrgId(req: Request, res: Response, next: 
     try {
       req.query.orgId = TagGenerator({ value: req.query.orgId as string });
     } catch (error) {
-      return res.status(400).json({ message: 'An error curred parsing req.query.orgId' });
+      const message = `An error ocurred parsing req.query.orgId - ${error}`;
+      return res.status(400).json({ message });
     }
   }
 
