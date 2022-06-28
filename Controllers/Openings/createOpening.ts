@@ -37,9 +37,5 @@ export const createOpening = async (req: Request, res: Response) => {
     return res.status(status).json(body);
   }
 
-  if (!created) {
-    return;
-  }
-
   return res.status(201).json({ message: 'Opening created!' });
 };

@@ -7,6 +7,7 @@ type GetStagesInOpeningInput = Pick<DynamoOpening, 'orgId' | 'openingId' | 'stag
 
 export const getStagesInOpening = async (
   props: GetStagesInOpeningInput,
+  // TODO replace any with actual dynamo error type,
 ): Promise<[DynamoStage[], null] | [null, any]> => {
   const { orgId, openingId, stageOrder } = props;
   const params: QueryCommandInput = {
