@@ -24,7 +24,7 @@ export const getOpening = async (req: Request, res: Response) => {
     return res.status(404).json({ message: 'Opening does not exist' });
   }
 
-  const modifiedOpening = pick(opening, ['openingName', 'createdAt', 'openingId']);
+  const modifiedOpening = pick(opening, ['openingName', 'createdAt', 'openingId', 'orgId']);
 
   return res.status(200).json(modifiedOpening);
 };

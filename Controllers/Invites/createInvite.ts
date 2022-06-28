@@ -109,7 +109,7 @@ export const createInvite = async (req: Request, res: Response) => {
     recipient: pick(recipient, ['userId', 'email', 'firstName', 'lastName', 'unsubscribeKey']),
     orgName: org.displayName,
     expiresAt: Time.futureISO(expiresInDays || ORG_INVITE_EXPIRY_DAYS, TIME_UNITS.DAYS), // TODO https://github.com/plutomi/plutomi/issues/333
-    createdBy: pick(session, ['userId', 'firstName', 'lastName', 'orgId', 'email']),
+    createdBy: pick(session, ['userId', 'firstName', 'lastName', 'orgId', 'email']
   });
 
   if (inviteError) {
