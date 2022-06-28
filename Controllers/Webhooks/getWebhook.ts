@@ -17,11 +17,11 @@ export const getWebhook = async (req: Request, res: Response) => {
     const { status, body } = CreateError.JOI(error);
     return res.status(status).json(body);
   }
-  const { session } = res.locals;
+  const { user } = req;
   const { webhookId } = req.params;
 
   const [webhook, error] = await DB.Webhooks.getWebhook({
-    orgId: session.orgId,
+    orgId: user.orgId,
     webhookId,
   });
 

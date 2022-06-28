@@ -3,10 +3,10 @@ import { DB } from '../../models';
 import * as CreateError from '../../utils/createError';
 
 export const getQuestionsInOrg = async (req: Request, res: Response) => {
-  const { session } = res.locals;
+  const { user } = req;
 
   const [questions, questionsError] = await DB.Questions.getQuestionsInOrg({
-    orgId: session.orgId,
+    orgId: user.orgId,
   });
 
   if (questionsError) {

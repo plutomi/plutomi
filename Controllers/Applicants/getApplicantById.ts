@@ -3,11 +3,11 @@ import * as CreateError from '../../utils/createError';
 import { DB } from '../../models';
 
 export const getApplicantById = async (req: Request, res: Response) => {
-  const { session } = res.locals;
   const { applicantId } = req.params;
+  const { user } = req;
 
   const [applicant, error] = await DB.Applicants.getApplicant({
-    orgId: session.orgId,
+    orgId: user.orgId,
     applicantId,
   });
 

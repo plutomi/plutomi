@@ -3,9 +3,9 @@ import { DB } from '../../models';
 import * as CreateError from '../../utils/createError';
 
 export const getOrg = async (req: Request, res: Response) => {
-  const { session } = res.locals;
+  const { user } = req;
 
-  const [org, error] = await DB.Orgs.getOrg({ orgId: session.orgId });
+  const [org, error] = await DB.Orgs.getOrg({ orgId: user.orgId });
 
   if (error) {
     const { status, body } = CreateError.SDK(error, 'Unable to retrieve org info');

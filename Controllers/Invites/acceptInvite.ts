@@ -5,18 +5,18 @@ import * as Time from '../../utils/time';
 import { DB } from '../../models';
 
 export const acceptInvite = async (req: Request, res: Response) => {
-  const { session } = res.locals;
   const { inviteId } = req.params;
+  const { user } = req;
 
-  if (session.orgId !== DEFAULTS.NO_ORG) {
+  if (user.orgId !== DEFAULTS.NO_ORG) {
     return res.status(403).json({
-      message: `You already belong to an org: ${session.orgId} - delete it before joining another one!`,
+      message: `You already belong to an org: ${user.orgId} - delete it before joining another one!`,
     });
   }
 
   const [invite, error] = await DB.Invites.getInvite({
     inviteId,
-    userId: session.userId,
+    userId: user.userId,
   });
 
   if (error) {
@@ -33,7 +33,7 @@ export const acceptInvite = async (req: Request, res: Response) => {
   }
   // Not sure how this would happen as we do a check before the invite
   // is sent to prevent this...
-  if (invite.orgId === session.orgId) {
+  if (invite.orgId === user.orgId) {
     return res.status(400).json({ message: "It appears that you're already in this org!" });
   }
 
@@ -44,7 +44,7 @@ export const acceptInvite = async (req: Request, res: Response) => {
   }
 
   const [joined, joinError] = await DB.Invites.acceptInvite({
-    userId: session.userId,
+    userId: user.userId,
     invite,
   });
 

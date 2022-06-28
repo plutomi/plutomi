@@ -3,11 +3,11 @@ import { DB } from '../../models';
 import * as CreateError from '../../utils/createError';
 
 export const deleteStage = async (req: Request, res: Response) => {
-  const { session } = res.locals;
+  const { user } = req;
   const { openingId, stageId } = req.params;
   const [opening, openingError] = await DB.Openings.getOpening({
     openingId,
-    orgId: session.orgId,
+    orgId: user.orgId,
   });
 
   if (openingError) {
@@ -26,7 +26,7 @@ export const deleteStage = async (req: Request, res: Response) => {
 
   const [deleted, error] = await DB.Stages.deleteStage({
     openingId,
-    orgId: session.orgId,
+    orgId: user.orgId,
     stageId,
     deleteIndex: opening.stageOrder.indexOf(stageId),
   });

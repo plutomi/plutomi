@@ -18,7 +18,7 @@ const schema = Joi.object({
 }).options(JOI_SETTINGS);
 
 export const createQuestion = async (req: Request, res: Response) => {
-  const { session } = res.locals;
+  const { user } = req;
 
   try {
     await schema.validateAsync(req);
@@ -30,7 +30,7 @@ export const createQuestion = async (req: Request, res: Response) => {
 
   const [created, error] = await DB.Questions.createQuestion({
     questionId,
-    orgId: session.orgId,
+    orgId: user.orgId,
     GSI1SK,
     description,
   });

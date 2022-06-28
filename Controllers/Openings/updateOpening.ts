@@ -34,17 +34,17 @@ export const updateOpening = async (req: Request, res: Response) => {
     return res.status(status).json(body);
   }
 
-  const { session } = res.locals;
+  const { user } = req;
   const { openingId } = req.params;
 
   const updateOpeningInput: UpdateOpeningInput = {
     openingId,
-    orgId: session.orgId,
+    orgId: user.orgId,
     newValues: req.body,
   };
 
   const [opening, openingError] = await DB.Openings.getOpening({
-    orgId: session.orgId,
+    orgId: user.orgId,
     openingId,
   });
 

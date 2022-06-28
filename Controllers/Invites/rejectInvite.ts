@@ -3,12 +3,11 @@ import { DB } from '../../models';
 import * as CreateError from '../../utils/createError';
 
 export const rejectInvite = async (req: Request, res: Response) => {
-  const { session } = res.locals;
   const { inviteId } = req.params;
-
+  const { user } = req;
   const [deleted, error] = await DB.Invites.deleteInvite({
     inviteId,
-    userId: session.userId,
+    userId: user.userId,
   });
 
   if (error) {

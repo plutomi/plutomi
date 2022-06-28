@@ -28,7 +28,7 @@ const schema = Joi.object({
 }).options(JOI_SETTINGS);
 
 export const createStage = async (req: Request, res: Response) => {
-  const { session } = res.locals;
+  const { user } = req;
   try {
     await schema.validateAsync(req);
   } catch (error) {
@@ -40,7 +40,7 @@ export const createStage = async (req: Request, res: Response) => {
 
   const [opening, openingError] = await DB.Openings.getOpening({
     openingId,
-    orgId: session.orgId,
+    orgId: user.orgId,
   });
 
   if (openingError) {
@@ -55,7 +55,7 @@ export const createStage = async (req: Request, res: Response) => {
 
   // Create the stage and update the stage order, model will handle where to place it
   const [created, stageError] = await DB.Stages.createStage({
-    orgId: session.orgId,
+    orgId: user.orgId,
     GSI1SK,
     openingId,
     position,

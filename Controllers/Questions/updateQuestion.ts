@@ -30,11 +30,11 @@ export const updateQuestion = async (req: Request, res: Response) => {
     return res.status(status).json(body);
   }
 
-  const { session } = res.locals;
+  const { user } = req;
   const { questionId } = req.params;
 
   const [question, questionError] = await DB.Questions.updateQuestion({
-    orgId: session.orgId,
+    orgId: user.orgId,
     questionId,
     newValues: req.body,
   });

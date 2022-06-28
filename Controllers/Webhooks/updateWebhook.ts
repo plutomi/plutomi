@@ -32,12 +32,12 @@ export const updateWebhook = async (req: Request, res: Response) => {
     return res.status(status).json(body);
   }
 
-  const { session } = res.locals;
+  const { user } = req;
   const { webhookId } = req.params;
 
   const [updatedWebhook, error] = await DB.Webhooks.updateWebhook({
     webhookId,
-    orgId: session.orgId,
+    orgId: user.orgId,
     newValues: req.body,
   });
 

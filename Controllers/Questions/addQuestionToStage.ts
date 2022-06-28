@@ -20,7 +20,7 @@ const schema = Joi.object({
 }).options(JOI_SETTINGS);
 
 export const addQuestionToStage = async (req: Request, res: Response) => {
-  const { session } = res.locals;
+  const { user } = req;
   try {
     await schema.validateAsync(req);
   } catch (error) {
@@ -33,7 +33,7 @@ export const addQuestionToStage = async (req: Request, res: Response) => {
   const { openingId, stageId } = req.params;
 
   const [question, getQuestionError] = await DB.Questions.getQuestion({
-    orgId: session.orgId,
+    orgId: user.orgId,
     questionId,
   });
 

@@ -3,11 +3,11 @@ import * as CreateError from '../../utils/createError';
 import { DB } from '../../models';
 
 export const getApplicantsInStage = async (req: Request, res: Response) => {
-  const { session } = res.locals;
   const { openingId, stageId } = req.params;
+  const { user } = req;
 
   const [applicants, applicantsError] = await DB.Applicants.getApplicantsInStage({
-    orgId: session.orgId,
+    orgId: user.orgId,
     openingId,
     stageId,
   });

@@ -33,13 +33,13 @@ export const updateStage = async (req: Request, res: Response) => {
     return res.status(status).json(body);
   }
 
-  const { session } = res.locals;
+  const { user } = req;
   const { openingId, stageId } = req.params;
 
   const [stage, stageError] = await DB.Stages.getStage({
     openingId,
     stageId,
-    orgId: session.orgId,
+    orgId: user.orgId,
   });
 
   if (stageError) {
@@ -80,7 +80,7 @@ export const updateStage = async (req: Request, res: Response) => {
   }
 
   const [updatedStage, updateError] = await DB.Stages.updateStage({
-    orgId: session.orgId,
+    orgId: user.orgId,
     openingId,
     stageId,
     newValues: req.body,

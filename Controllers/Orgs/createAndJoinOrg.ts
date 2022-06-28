@@ -16,7 +16,7 @@ const schema = Joi.object({
 }).options(JOI_SETTINGS);
 
 export const createAndJoinOrg = async (req: Request, res: Response) => {
-  const { session } = res.locals;
+  const { user } = req;
   try {
     await schema.validateAsync(req);
   } catch (error) {
@@ -25,12 +25,12 @@ export const createAndJoinOrg = async (req: Request, res: Response) => {
     return res.status(status).json(body);
   }
 
-  if (session.orgId !== DEFAULTS.NO_ORG) {
+  if (user.orgId !== DEFAULTS.NO_ORG) {
     return res.status(403).json({ message: 'You already belong to an org!' });
   }
 
   const [pendingInvites, error] = await getInvitesForUser({
-    userId: session.userId,
+    userId: user.userId,
   });
 
   if (error) {
@@ -52,7 +52,7 @@ export const createAndJoinOrg = async (req: Request, res: Response) => {
   const { displayName, orgId }: APICreateOrgOptions = req.body;
 
   const [created, failed] = await DB.Orgs.createAndJoinOrg({
-    userId: session.userId,
+    userId: user.userId,
     orgId,
     displayName,
   });

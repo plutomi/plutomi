@@ -3,9 +3,9 @@ import { DB } from '../../models';
 import * as CreateError from '../../utils/createError';
 
 export const getWebhooksInOrg = async (req: Request, res: Response) => {
-  const { session } = res.locals;
+  const { user } = req;
   const [webhooks, webhooksError] = await DB.Webhooks.getWebhooksInOrg({
-    orgId: session.orgId,
+    orgId: user.orgId,
   });
 
   if (webhooksError) {
