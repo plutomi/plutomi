@@ -125,7 +125,7 @@ export const SignedInNav = ({ current }: SignedInNavProps) => {
                       leaveFrom="transform opacity-100 scale-100"
                       leaveTo="transform opacity-0 scale-95"
                     >
-                      <Menu.Items className="origin-top-right absolute right-0 mt-2 w-96 rounded-md shadow-lg py-1 bg-white ring-1 ring-black ring-opacity-5 focus:outline-none">
+                      <Menu.Items className="origin-top-right absolute right-0 mt-2 w-96 rounded-md shadow-lg  bg-white ring-1 ring-black ring-opacity-5 focus:outline-none">
                         <div className="px-4 py-2 text-md border-dashed border-b-2">
                           {isUserLoading ? (
                             'Loading user info...'
@@ -140,7 +140,7 @@ export const SignedInNav = ({ current }: SignedInNavProps) => {
                           item.name === 'Log Out' ? (
                             <button
                               type="submit"
-                              className="cursor-pointer"
+                              className="cursor-pointer w-full"
                               key={item.name}
                               onClick={handleLogout}
                             >
@@ -150,7 +150,7 @@ export const SignedInNav = ({ current }: SignedInNavProps) => {
                                   <a
                                     className={combineClassNames(
                                       active ? 'bg-blue-gray-100' : '',
-                                      'block px-4 py-2 text-md text-dark',
+                                      'block px-4 py-2 text-md text-dark text-left',
                                     )}
                                   >
                                     {item.name}
