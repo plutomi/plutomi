@@ -12,7 +12,7 @@ interface RejectOrgInviteInput {
  */
 export const deleteInvite = async (
   props: RejectOrgInviteInput,
-): Promise<[undefined, null] | [null, any]> => {
+): Promise<[null, null] | [null, any]> => {
   const { userId, inviteId } = props;
   try {
     const transactParams: TransactWriteCommandInput = {

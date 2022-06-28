@@ -14,7 +14,7 @@ interface CreateLoginLinkInput {
 
 export const createLoginLink = async (
   props: CreateLoginLinkInput,
-): Promise<[undefined, null] | [null, any]> => {
+): Promise<[null, null] | [null, any]> => {
   const { loginLinkId, loginLinkUrl, loginLinkExpiry, user } = props;
   const now = Time.currentISO();
   try {

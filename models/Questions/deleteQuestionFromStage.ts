@@ -18,7 +18,7 @@ interface DeleteQuestionFromStageInput
 
 export const deleteQuestionFromStage = async (
   props: DeleteQuestionFromStageInput,
-): Promise<[undefined, null] | [null, any]> => {
+): Promise<[null, null] | [null, any]> => {
   const { orgId, openingId, stageId, questionId, deleteIndex, decrementStageCount } = props;
 
   const transactParams: TransactWriteCommandInput = {

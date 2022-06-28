@@ -14,7 +14,7 @@ interface CreateOrgInviteInput {
 
 export const createInvite = async (
   props: CreateOrgInviteInput,
-): Promise<[undefined, null] | [null, any]> => {
+): Promise<[null, null] | [null, any]> => {
   const { expiresAt, createdBy, recipient, orgName } = props;
   try {
     const inviteId = nanoid(ID_LENGTHS.ORG_INVITE);

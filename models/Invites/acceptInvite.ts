@@ -15,7 +15,7 @@ type AcceptInviteInput = {
 
 export const acceptInvite = async (
   props: AcceptInviteInput,
-): Promise<[undefined, null] | [null, any]> => {
+): Promise<[null, null] | [null, any]> => {
   const { userId, invite } = props;
 
   try {

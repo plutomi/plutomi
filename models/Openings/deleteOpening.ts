@@ -7,7 +7,7 @@ type DeleteOpeningInput = Pick<DynamoOpening, 'orgId' | 'openingId'>;
 
 export const deleteOpening = async (
   props: DeleteOpeningInput,
-): Promise<[undefined, null] | [null, any]> => {
+): Promise<[null, null] | [null, any]> => {
   const { orgId, openingId } = props;
 
   try {

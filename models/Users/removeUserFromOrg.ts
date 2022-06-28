@@ -20,7 +20,7 @@ interface RemoveUserFromOrgInput {
 
 export const removeUserFromOrg = async (
   props: RemoveUserFromOrgInput,
-): Promise<[undefined, null] | [null, any]> => {
+): Promise<[null, null] | [null, any]> => {
   const { userId, createdById, orgId } = props;
   try {
     const transactParams: TransactWriteCommandInput = {

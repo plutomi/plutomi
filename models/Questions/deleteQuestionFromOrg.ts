@@ -7,7 +7,7 @@ type DeleteQuestionFromOrgInput = Pick<DynamoQuestion, 'orgId' | 'questionId'>;
 
 export const deleteQuestionFromOrg = async (
   props: DeleteQuestionFromOrgInput,
-): Promise<[undefined, null] | [null, any]> => {
+): Promise<[null, null] | [null, any]> => {
   const { orgId, questionId } = props;
 
   const transactParams: TransactWriteCommandInput = {

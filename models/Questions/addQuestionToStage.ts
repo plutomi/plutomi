@@ -17,7 +17,7 @@ interface AddQuestionToStageInput
 
 export const addQuestionToStage = async (
   props: AddQuestionToStageInput,
-): Promise<[undefined, null] | [null, any]> => {
+): Promise<[null, null] | [null, any]> => {
   const { orgId, openingId, stageId, questionId, questionOrder } = props;
 
   /**

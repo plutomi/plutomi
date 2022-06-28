@@ -13,7 +13,7 @@ interface CreateLoginEventAndDeleteLoginLinkInput {
 
 export const createLoginEvent = async (
   props: CreateLoginEventAndDeleteLoginLinkInput,
-): Promise<[undefined, null] | [null, any]> => {
+): Promise<[null, null] | [null, any]> => {
   const { loginLinkId, user } = props;
 
   const now = Time.currentISO();

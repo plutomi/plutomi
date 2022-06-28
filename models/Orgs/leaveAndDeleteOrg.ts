@@ -9,7 +9,7 @@ interface LeaveAndDeleteOrgInput {
 
 export const leaveAndDeleteOrg = async (
   props: LeaveAndDeleteOrgInput,
-): Promise<[undefined, null] | [null, any]> => {
+): Promise<[null, null] | [null, any]> => {
   const { orgId, userId } = props;
 
   try {

@@ -12,7 +12,7 @@ interface CreateAndJoinOrgInput {
 
 export const createAndJoinOrg = async (
   props: CreateAndJoinOrgInput,
-): Promise<[undefined, null] | [null, any]> => {
+): Promise<[null, null] | [null, any]> => {
   const { userId, orgId, displayName } = props;
   const now = Time.currentISO();
 

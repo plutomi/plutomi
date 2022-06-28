@@ -6,9 +6,7 @@ import { DynamoWebhook } from '../../types/dynamo';
 
 type DeleteWebhookFromOrgInput = Pick<DynamoWebhook, 'webhookId' | 'orgId'>;
 
-export const deleteWebhook = async (
-  props: DeleteWebhookFromOrgInput,
-): Promise<[undefined, any]> => {
+export const deleteWebhook = async (props: DeleteWebhookFromOrgInput): Promise<[null, any]> => {
   const { orgId, webhookId } = props;
 
   const transactParams: TransactWriteCommandInput = {

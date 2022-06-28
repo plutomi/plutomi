@@ -9,9 +9,7 @@ export interface UpdateStageInput extends Pick<DynamoStage, 'orgId' | 'stageId' 
 }
 
 // TODO new update method https://github.com/plutomi/plutomi/issues/594
-export const updateStage = async (
-  props: UpdateStageInput,
-): Promise<[undefined, null] | [null, any]> => {
+export const updateStage = async (props: UpdateStageInput): Promise<[null, null] | [null, any]> => {
   const { orgId, stageId, newValues, openingId } = props;
 
   // Build update expression

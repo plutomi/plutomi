@@ -10,7 +10,7 @@ export interface UpdateQuestionInput extends Pick<DynamoQuestion, 'orgId' | 'que
 // TODO new udpate method https://github.com/plutomi/plutomi/issues/594
 export const updateQuestion = async (
   props: UpdateQuestionInput,
-): Promise<[undefined, null] | [null, any]> => {
+): Promise<[null, null] | [null, any]> => {
   const { orgId, questionId, newValues } = props;
   // Build update expression
   const allUpdateExpressions: string[] = [];
