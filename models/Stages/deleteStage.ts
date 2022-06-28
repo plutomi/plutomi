@@ -1,5 +1,4 @@
 import { TransactWriteCommandInput, TransactWriteCommand } from '@aws-sdk/lib-dynamodb';
-import { SdkError } from '@aws-sdk/types';
 import { Dynamo } from '../../awsClients/ddbDocClient';
 import { DYNAMO_TABLE_NAME, Entities } from '../../Config';
 import { DynamoStage } from '../../types/dynamo';
@@ -10,7 +9,7 @@ interface DeleteStageInput extends Pick<DynamoStage, 'orgId' | 'stageId' | 'open
 
 export const deleteStage = async (
   props: DeleteStageInput,
-): Promise<[undefined, null] | [null, SdkError]> => {
+): Promise<[undefined, null] | [null, any]> => {
   // TODO check if stage is empty of applicants first ---> Delete children machine should take care of this now
   // Double // TODO - webhooks should delete applicants inside?
   const { orgId, stageId, openingId, deleteIndex } = props;

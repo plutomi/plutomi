@@ -1,5 +1,5 @@
 import { QueryCommandInput, QueryCommand } from '@aws-sdk/lib-dynamodb';
-import { SdkError } from '@aws-sdk/types';
+
 import { Dynamo } from '../../awsClients/ddbDocClient';
 import { DYNAMO_TABLE_NAME, Entities } from '../../Config';
 import { DynamoLoginLink } from '../../types/dynamo';
@@ -10,7 +10,7 @@ interface GetLatestLoginLinkInput {
 
 export const getLatestLoginLink = async (
   props: GetLatestLoginLinkInput,
-): Promise<[DynamoLoginLink, null] | [null, SdkError]> => {
+): Promise<[DynamoLoginLink, null] | [null, any]> => {
   const { userId } = props;
   const params: QueryCommandInput = {
     TableName: `${process.env.NODE_ENV}-${DYNAMO_TABLE_NAME}`,

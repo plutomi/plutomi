@@ -1,5 +1,4 @@
 import { TransactWriteCommandInput, TransactWriteCommand } from '@aws-sdk/lib-dynamodb';
-import { SdkError } from '@aws-sdk/types';
 import { Dynamo } from '../../awsClients/ddbDocClient';
 import { DYNAMO_TABLE_NAME, Entities } from '../../Config';
 import { DynamoQuestion, DynamoQuestionStageAdjacentItem, DynamoStage } from '../../types/dynamo';
@@ -18,7 +17,7 @@ interface AddQuestionToStageInput
 
 export const addQuestionToStage = async (
   props: AddQuestionToStageInput,
-): Promise<[undefined, null] | [null, SdkError]> => {
+): Promise<[undefined, null] | [null, any]> => {
   const { orgId, openingId, stageId, questionId, questionOrder } = props;
 
   /**

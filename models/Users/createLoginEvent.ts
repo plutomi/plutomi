@@ -1,5 +1,5 @@
 import { TransactWriteCommandInput, TransactWriteCommand } from '@aws-sdk/lib-dynamodb';
-import { SdkError } from '@aws-sdk/types';
+
 import { RetentionDays } from '@aws-cdk/aws-logs';
 import { Dynamo } from '../../awsClients/ddbDocClient';
 import { Entities, DEFAULTS, TIME_UNITS, DYNAMO_TABLE_NAME } from '../../Config';
@@ -13,7 +13,7 @@ interface CreateLoginEventAndDeleteLoginLinkInput {
 
 export const createLoginEvent = async (
   props: CreateLoginEventAndDeleteLoginLinkInput,
-): Promise<[undefined, null] | [null, SdkError]> => {
+): Promise<[undefined, null] | [null, any]> => {
   const { loginLinkId, user } = props;
 
   const now = Time.currentISO();

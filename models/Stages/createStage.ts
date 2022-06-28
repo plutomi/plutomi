@@ -1,5 +1,4 @@
 import { nanoid } from 'nanoid';
-import { SdkError } from '@aws-sdk/types';
 import { TransactWriteCommand, TransactWriteCommandInput } from '@aws-sdk/lib-dynamodb';
 import getNewChildItemOrder from '../../utils/getNewChildItemOrder';
 import { Dynamo } from '../../awsClients/ddbDocClient';
@@ -18,7 +17,7 @@ export interface CreateStageInput extends Pick<DynamoStage, 'orgId' | 'GSI1SK' |
 
 export const createStage = async (
   props: CreateStageInput,
-): Promise<[undefined, null] | [null, SdkError]> => {
+): Promise<[undefined, null] | [null, any]> => {
   const { orgId, GSI1SK, openingId, position, stageOrder } = props;
   const stageId = nanoid(ID_LENGTHS.STAGE);
   const newStage: DynamoStage = {

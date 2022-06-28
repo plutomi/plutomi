@@ -1,6 +1,5 @@
 import { QueryCommandInput, QueryCommand } from '@aws-sdk/lib-dynamodb';
 import _ from 'lodash';
-import { SdkError } from '@aws-sdk/types';
 import { Dynamo } from '../../awsClients/ddbDocClient';
 import { DYNAMO_TABLE_NAME, Entities } from '../../Config';
 import { GetApplicantByIdOutput } from '../../types/main';
@@ -13,7 +12,7 @@ export interface DynamoApplicantWithResponses extends DynamoApplicant {
 
 export const getApplicant = async (
   props: GetApplicantInput,
-): Promise<[DynamoApplicantWithResponses, null] | [null, SdkError]> => {
+): Promise<[DynamoApplicantWithResponses, null] | [null, any]> => {
   const { orgId, applicantId } = props;
   const responsesParams: QueryCommandInput = {
     TableName: `${process.env.NODE_ENV}-${DYNAMO_TABLE_NAME}`,

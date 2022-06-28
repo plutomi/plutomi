@@ -1,5 +1,4 @@
 import { nanoid } from 'nanoid';
-import { SdkError } from '@aws-sdk/types';
 import { TransactWriteCommandInput, TransactWriteCommand } from '@aws-sdk/lib-dynamodb';
 import { Dynamo } from '../../awsClients/ddbDocClient';
 import { ID_LENGTHS, Entities, DYNAMO_TABLE_NAME } from '../../Config';
@@ -15,7 +14,7 @@ interface CreateOrgInviteInput {
 
 export const createInvite = async (
   props: CreateOrgInviteInput,
-): Promise<[undefined, null] | [null, SdkError]> => {
+): Promise<[undefined, null] | [null, any]> => {
   const { expiresAt, createdBy, recipient, orgName } = props;
   try {
     const inviteId = nanoid(ID_LENGTHS.ORG_INVITE);

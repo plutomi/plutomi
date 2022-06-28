@@ -1,4 +1,3 @@
-import { SdkError } from '@aws-sdk/types';
 import { TransactWriteCommandInput, TransactWriteCommand } from '@aws-sdk/lib-dynamodb';
 import { Dynamo } from '../../awsClients/ddbDocClient';
 import { DYNAMO_TABLE_NAME, Entities } from '../../Config';
@@ -13,7 +12,7 @@ interface RejectOrgInviteInput {
  */
 export const deleteInvite = async (
   props: RejectOrgInviteInput,
-): Promise<[undefined, null] | [null, SdkError]> => {
+): Promise<[undefined, null] | [null, any]> => {
   const { userId, inviteId } = props;
   try {
     const transactParams: TransactWriteCommandInput = {

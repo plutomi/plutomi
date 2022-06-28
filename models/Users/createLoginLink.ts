@@ -1,5 +1,5 @@
 import { PutCommandInput, PutCommand } from '@aws-sdk/lib-dynamodb';
-import { SdkError } from '@aws-sdk/types';
+
 import { Dynamo } from '../../awsClients/ddbDocClient';
 import { DYNAMO_TABLE_NAME, Entities, TIME_UNITS } from '../../Config';
 import { DynamoLoginLink, DynamoUser } from '../../types/dynamo';
@@ -14,7 +14,7 @@ interface CreateLoginLinkInput {
 
 export const createLoginLink = async (
   props: CreateLoginLinkInput,
-): Promise<[undefined, null] | [null, SdkError]> => {
+): Promise<[undefined, null] | [null, any]> => {
   const { loginLinkId, loginLinkUrl, loginLinkExpiry, user } = props;
   const now = Time.currentISO();
   try {

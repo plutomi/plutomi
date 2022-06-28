@@ -1,5 +1,4 @@
 import { GetCommandInput, GetCommand } from '@aws-sdk/lib-dynamodb';
-import { SdkError } from '@aws-sdk/types';
 import { Dynamo } from '../../awsClients/ddbDocClient';
 import { DYNAMO_TABLE_NAME, Entities } from '../../Config';
 import { DynamoQuestion } from '../../types/dynamo';
@@ -8,7 +7,7 @@ type GetQuestionInput = Pick<DynamoQuestion, 'orgId' | 'questionId'>;
 
 export const getQuestion = async (
   props: GetQuestionInput,
-): Promise<[DynamoQuestion, null] | [null, SdkError]> => {
+): Promise<[DynamoQuestion, null] | [null, any]> => {
   const { orgId, questionId } = props;
   const params: GetCommandInput = {
     TableName: `${process.env.NODE_ENV}-${DYNAMO_TABLE_NAME}`,
