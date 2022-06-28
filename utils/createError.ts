@@ -1,12 +1,13 @@
+import errorFormatter from "./errorFormatter";
+
 export const SDK = (error: any, message: string): { status: number; body: any } => {
   console.error(error, message);
+
+  const formattedError = errorFormatter(error);
   const status = error?.$metadata?.httpStatusCode || 500;
   const body = {
     message,
-    error: error?.name || error || 'ERROR',
-    errorMessage: error?.message || 'An error ocurred',
-    requestId: error?.$metadata?.requestId || undefined,
-    httpStatusCode: status,
+    ...formattedError
   };
   return { status, body };
 };
