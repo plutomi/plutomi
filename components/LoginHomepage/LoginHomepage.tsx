@@ -15,7 +15,7 @@ export const LoginHomepage = ({ callbackUrl }: LoginHomepageProps) => {
     `We've sent a magic login link to your email!`,
   );
   const [emailSubmitted, setEmailSubmitted] = useState(false);
-  const [buttonText, setButtonText] = useState('Send Link');
+  const [buttonText, setButtonText] = useState('Login');
 
   const handleEmailChange = (newEmail) => {
     setEmail(newEmail);
