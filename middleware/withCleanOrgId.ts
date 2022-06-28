@@ -1,5 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
 import TagGenerator from '../utils/tagGenerator';
+
 /**
  * Cleans up the orgId, whether in body, params, or query, to be URL safe
  */
