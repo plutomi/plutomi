@@ -68,8 +68,8 @@ export const createWebhook = async (
 
   try {
     await Dynamo.send(new TransactWriteCommand(transactParams));
-    return [newWebhook, undefined];
+    return [newWebhook, null];
   } catch (error) {
-    return [undefined, error];
+    return [null, error];
   }
 };

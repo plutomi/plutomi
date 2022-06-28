@@ -8,9 +8,7 @@ interface GetOrgInput {
   orgId: string;
 }
 
-export const getOrg = async (
-  props: GetOrgInput,
-): Promise<[DynamoOrg, undefined] | [undefined, SdkError]> => {
+export const getOrg = async (props: GetOrgInput): Promise<[DynamoOrg, null] | [null, SdkError]> => {
   const { orgId } = props;
   const params: GetCommandInput = {
     TableName: `${process.env.NODE_ENV}-${DYNAMO_TABLE_NAME}`,
@@ -22,8 +20,8 @@ export const getOrg = async (
 
   try {
     const response = await Dynamo.send(new GetCommand(params));
-    return [response.Item as DynamoOrg, undefined];
+    return [response.Item as DynamoOrg, null];
   } catch (error) {
-    return [undefined, error];
+    return [null, error];
   }
 };

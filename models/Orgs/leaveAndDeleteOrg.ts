@@ -10,7 +10,7 @@ interface LeaveAndDeleteOrgInput {
 
 export const leaveAndDeleteOrg = async (
   props: LeaveAndDeleteOrgInput,
-): Promise<[undefined, undefined] | [undefined, SdkError]> => {
+): Promise<[undefined, null] | [null, SdkError]> => {
   const { orgId, userId } = props;
 
   try {
@@ -48,8 +48,8 @@ export const leaveAndDeleteOrg = async (
     };
 
     await Dynamo.send(new TransactWriteCommand(transactParams));
-    return [undefined, undefined];
+    return [null, null];
   } catch (error) {
-    return [undefined, error];
+    return [null, error];
   }
 };

@@ -19,7 +19,7 @@ interface DeleteQuestionFromStageInput
 
 export const deleteQuestionFromStage = async (
   props: DeleteQuestionFromStageInput,
-): Promise<[undefined, undefined] | [undefined, SdkError]> => {
+): Promise<[undefined, null] | [null, SdkError]> => {
   const { orgId, openingId, stageId, questionId, deleteIndex, decrementStageCount } = props;
 
   const transactParams: TransactWriteCommandInput = {
@@ -70,8 +70,8 @@ export const deleteQuestionFromStage = async (
 
   try {
     await Dynamo.send(new TransactWriteCommand(transactParams));
-    return [undefined, undefined];
+    return [null, null];
   } catch (error) {
-    return [undefined, error];
+    return [null, error];
   }
 };

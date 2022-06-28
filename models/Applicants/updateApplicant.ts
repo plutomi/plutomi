@@ -11,7 +11,7 @@ export interface UpdateDynamoApplicantInput extends Pick<DynamoApplicant, 'orgId
 // TODO new udpate method https://github.com/plutomi/plutomi/issues/594
 export const updateApplicant = async (
   props: UpdateDynamoApplicantInput,
-): Promise<[undefined, undefined] | [undefined, SdkError]> => {
+): Promise<[undefined, null] | [null, SdkError]> => {
   const { orgId, applicantId, newValues } = props;
   // Build update expression
   const allUpdateExpressions: string[] = [];
@@ -41,8 +41,8 @@ export const updateApplicant = async (
 
   try {
     await Dynamo.send(new UpdateCommand(params));
-    return [undefined, undefined];
+    return [null, null];
   } catch (error) {
-    return [undefined, error];
+    return [null, error];
   }
 };

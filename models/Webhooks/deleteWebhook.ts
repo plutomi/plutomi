@@ -42,8 +42,8 @@ export const deleteWebhook = async (
   };
   try {
     await Dynamo.send(new TransactWriteCommand(transactParams));
-    return [undefined, undefined];
+    return [null, null];
   } catch (error) {
-    return [undefined, error];
+    return [null, error];
   }
 };

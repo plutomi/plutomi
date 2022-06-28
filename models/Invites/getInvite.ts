@@ -11,7 +11,7 @@ type GetOrgInviteInput = {
 
 export const getInvite = async (
   props: GetOrgInviteInput,
-): Promise<[DynamoOrgInvite, undefined] | [undefined, SdkError]> => {
+): Promise<[DynamoOrgInvite, null] | [null, SdkError]> => {
   const { userId, inviteId } = props;
   const params: GetCommandInput = {
     TableName: `${process.env.NODE_ENV}-${DYNAMO_TABLE_NAME}`,
@@ -23,8 +23,8 @@ export const getInvite = async (
 
   try {
     const response = await Dynamo.send(new GetCommand(params));
-    return [response.Item as DynamoOrgInvite, undefined];
+    return [response.Item as DynamoOrgInvite, null];
   } catch (error) {
-    return [undefined, error];
+    return [null, error];
   }
 };

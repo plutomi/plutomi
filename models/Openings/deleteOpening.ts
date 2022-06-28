@@ -8,7 +8,7 @@ type DeleteOpeningInput = Pick<DynamoOpening, 'orgId' | 'openingId'>;
 
 export const deleteOpening = async (
   props: DeleteOpeningInput,
-): Promise<[undefined, undefined] | [undefined, SdkError]> => {
+): Promise<[undefined, null] | [null, SdkError]> => {
   const { orgId, openingId } = props;
 
   try {
@@ -44,8 +44,8 @@ export const deleteOpening = async (
     };
 
     await Dynamo.send(new TransactWriteCommand(transactParams));
-    return [undefined, undefined];
+    return [null, null];
   } catch (error) {
-    return [undefined, error];
+    return [null, error];
   }
 };

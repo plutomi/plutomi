@@ -1,7 +1,8 @@
 import { TransactWriteCommandInput, TransactWriteCommand } from '@aws-sdk/lib-dynamodb';
 import { nanoid } from 'nanoid';
-import { SdkError } from '@aws-sdk/types';
 import { Dynamo } from '../../awsClients/ddbDocClient';
+import { FailureException } from '@aws-sdk/client-dynamodb';
+
 import { ID_LENGTHS, Entities, OpeningState, DYNAMO_TABLE_NAME } from '../../Config';
 import { DynamoApplicant } from '../../types/dynamo';
 import * as Time from '../../utils/time';
@@ -13,7 +14,7 @@ export type CreateApplicantInput = Pick<
 
 export const createApplicant = async (
   props: CreateApplicantInput,
-): Promise<[DynamoApplicant, undefined] | [undefined, SdkError]> => {
+): Promise<[DynamoApplicant, null] | [null, FailureException]> => {
   const { orgId, firstName, lastName, email, openingId, stageId } = props;
 
   const now = Time.currentISO();
@@ -118,8 +119,8 @@ export const createApplicant = async (
     };
 
     await Dynamo.send(new TransactWriteCommand(transactParams));
-    return [newApplicant, undefined];
+    return [newApplicant, null];
   } catch (error) {
-    return [undefined, error];
+    return [null, error];
   }
 };

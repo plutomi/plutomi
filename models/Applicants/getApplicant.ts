@@ -13,7 +13,7 @@ export interface DynamoApplicantWithResponses extends DynamoApplicant {
 
 export const getApplicant = async (
   props: GetApplicantInput,
-): Promise<[DynamoApplicantWithResponses, undefined] | [undefined, SdkError]> => {
+): Promise<[DynamoApplicantWithResponses, null] | [null, SdkError]> => {
   const { orgId, applicantId } = props;
   const responsesParams: QueryCommandInput = {
     TableName: `${process.env.NODE_ENV}-${DYNAMO_TABLE_NAME}`,
@@ -47,8 +47,8 @@ export const getApplicant = async (
       // TODO files
     };
     // TODO types
-    return [applicant as DynamoApplicantWithResponses, undefined];
+    return [applicant as DynamoApplicantWithResponses, null];
   } catch (error) {
-    return [undefined, error];
+    return [null, error];
   }
 };

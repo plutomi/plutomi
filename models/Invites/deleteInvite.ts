@@ -13,7 +13,7 @@ interface RejectOrgInviteInput {
  */
 export const deleteInvite = async (
   props: RejectOrgInviteInput,
-): Promise<[undefined, undefined] | [undefined, SdkError]> => {
+): Promise<[undefined, null] | [null, SdkError]> => {
   const { userId, inviteId } = props;
   try {
     const transactParams: TransactWriteCommandInput = {
@@ -48,8 +48,8 @@ export const deleteInvite = async (
     };
 
     await Dynamo.send(new TransactWriteCommand(transactParams));
-    return [undefined, undefined];
+    return [null, null];
   } catch (error) {
-    return [undefined, error];
+    return [null, error];
   }
 };

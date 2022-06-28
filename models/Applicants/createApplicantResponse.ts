@@ -13,7 +13,7 @@ type CreateApplicantResponseInput = Pick<
 
 export const createApplicantResponse = async (
   props: CreateApplicantResponseInput,
-): Promise<[DynamoApplicantResponse, undefined] | [undefined, SdkError]> => {
+): Promise<[DynamoApplicantResponse, null] | [null, SdkError]> => {
   const { orgId, applicantId, questionTitle, description, questionResponse } = props;
   const responseId = nanoid(ID_LENGTHS.APPLICANT_RESPONSE);
   const newApplicantResponse: DynamoApplicantResponse = {
@@ -39,7 +39,7 @@ export const createApplicantResponse = async (
 
   try {
     await Dynamo.send(new PutCommand(params));
-    return [newApplicantResponse, undefined];
+    return [newApplicantResponse, null];
   } catch (error) {
     return [undefined, error];
   }

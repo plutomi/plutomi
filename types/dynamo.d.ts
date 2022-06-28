@@ -2,7 +2,7 @@
 // All  other types are derivatives with Pick, Omit, etc.
 import { DEFAULTS, Entities, OpeningState } from '../Config';
 
-interface DynamoStage {
+export interface DynamoStage {
   /**
    * Primary key for creating a stage - takes `orgId`, `openingId`, & `stageId`
    */
@@ -52,7 +52,7 @@ interface DynamoStage {
   GSI1SK: string;
 }
 
-interface DynamoQuestionStageAdjacentItem {
+export interface DynamoQuestionStageAdjacentItem {
   PK: `${Entities.ORG}#${string}#${Entities.QUESTION}#${string}#${Entities.STAGE}S`;
   SK: `${Entities.OPENING}#${string}#${Entities.STAGE}#${string}`;
   entityType: Entities.QUESTION;
@@ -63,7 +63,7 @@ interface DynamoQuestionStageAdjacentItem {
   questionId: string;
 }
 
-interface DynamoQuestion {
+export interface DynamoQuestion {
   /**
    * The primary key for the question. Variables are `orgId` and `questionId`
    */
@@ -114,7 +114,7 @@ interface DynamoQuestion {
   totalStages: number;
 }
 
-interface DynamoApplicant {
+export interface DynamoApplicant {
   /**
    * Primary key of the applicant where the inputs are `orgId` and `applicantId`
    */
@@ -188,7 +188,7 @@ interface DynamoApplicant {
   GSI1SK: `DATE_LANDED#${string}`;
 }
 
-interface DynamoApplicantResponse {
+export interface DynamoApplicantResponse {
   /**
    * The primary key for the response - needs an `orgId` and `applicantId`
    */
@@ -239,7 +239,7 @@ interface DynamoApplicantResponse {
   GSI1SK: Entities.APPLICANT_RESPONSE; // TODO add timestmap?
 }
 
-interface DynamoOpening {
+export interface DynamoOpening {
   /**
    * Primary key for creating an opening. Takes an `orgId`
    */
@@ -296,7 +296,7 @@ interface DynamoOpening {
   totalApplicants: number;
 }
 
-interface DynamoOrgInvite {
+export interface DynamoOrgInvite {
   /**
    * Primary key, requires a `userId`
    */
@@ -345,7 +345,7 @@ interface DynamoOrgInvite {
   GSI1SK: string;
 }
 
-interface DynamoWebhook {
+export interface DynamoWebhook {
   PK: `${Entities.ORG}#${string}#${Entities.WEBHOOK}#${string}`;
   SK: string;
   orgId: string;
@@ -358,7 +358,7 @@ interface DynamoWebhook {
   GSI1PK: `${Entities.ORG}#${orgId}#${Entities.WEBHOOK}S`;
   GSI1SK: string;
 }
-interface DynamoUser {
+export interface DynamoUser {
   PK: `${Entities.USER}#${string}`;
   SK: Entities.USER;
   /**
@@ -387,7 +387,7 @@ interface DynamoUser {
   totalInvites: number;
 }
 
-interface DynamoLoginLink {
+export interface DynamoLoginLink {
   PK: `${Entities.USER}#${string}`;
   SK: `${Entities.LOGIN_LINK}#${string}`;
   entityType: Entities.LOGIN_LINK;
@@ -403,7 +403,7 @@ interface DynamoLoginLink {
   GSI1SK: string; // ISO timestamp
 }
 
-interface DynamoOrg {
+export interface DynamoOrg {
   PK: `${Entities.ORG}#${string}`;
   SK: Entities.ORG;
   orgId: string; // The actual org id
@@ -421,7 +421,7 @@ interface DynamoOrg {
   totalQuestions: number;
 }
 
-interface DynamoUserLoginEvent {
+export interface DynamoUserLoginEvent {
   PK: `${Entities.USER}#${string}`;
   SK: `${Entities.LOGIN_EVENT}#${string}`;
   createdAt: string; // ISO timestamp
@@ -430,7 +430,7 @@ interface DynamoUserLoginEvent {
   user: DynamoUser;
 }
 
-interface DynamoOrgLoginEvent {
+export interface DynamoOrgLoginEvent {
   PK: `${Entities.ORG}#${string}`;
   SK: `${Entities.LOGIN_EVENT}#${string}`;
   // TODO user info here

@@ -16,7 +16,7 @@ type AcceptInviteInput = {
 
 export const acceptInvite = async (
   props: AcceptInviteInput,
-): Promise<[undefined, undefined] | [undefined, SdkError]> => {
+): Promise<[undefined, null] | [null, SdkError]> => {
   const { userId, invite } = props;
 
   try {
@@ -72,8 +72,8 @@ export const acceptInvite = async (
     };
 
     await Dynamo.send(new TransactWriteCommand(transactParams));
-    return [undefined, undefined];
+    return [null, null];
   } catch (error) {
-    return [undefined, error];
+    return [null, error];
   }
 };

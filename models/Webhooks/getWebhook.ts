@@ -20,8 +20,8 @@ export const getWebhook = async (
 
   try {
     const response = await Dynamo.send(new GetCommand(params));
-    return [response.Item as DynamoWebhook, undefined];
+    return [response.Item as DynamoWebhook, null];
   } catch (error) {
-    return [undefined, error];
+    return [null, error];
   }
 };

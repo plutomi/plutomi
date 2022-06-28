@@ -7,7 +7,7 @@ import * as Stages from './Stages';
 import * as Users from './Users';
 import * as Webhooks from './Webhooks';
 
-const DB = {
+export const DB = {
   Applicants,
   Invites,
   Openings,
@@ -17,5 +17,3 @@ const DB = {
   Stages,
   Webhooks,
 };
-
-export default DB;

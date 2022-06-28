@@ -6,7 +6,7 @@ import { ERRORS, JOI_SETTINGS, ORG_INVITE_EXPIRY_DAYS, TIME_UNITS } from '../../
 import * as CreateError from '../../utils/createError';
 import * as Time from '../../utils/time';
 import { getOrg } from '../../models/Orgs';
-import DB from '../../models';
+import { DB } from '../../models';
 
 const schema = Joi.object({
   body: {
@@ -48,6 +48,11 @@ export const createInvite = async (req: Request, res: Response) => {
       'An error ocurred retrieving your org information',
     );
     return res.status(status).json(body);
+  }
+
+
+  if (!org) {
+    return res.status(404).json({message: "Org does not exist"})
   }
 
   // eslint-disable-next-line prefer-const
@@ -96,6 +101,8 @@ export const createInvite = async (req: Request, res: Response) => {
     );
     return res.status(status).json(body);
   }
+
+  
 
   const pendingInvites = recipientInvites.some((invite) => invite.orgId === session.orgId);
 

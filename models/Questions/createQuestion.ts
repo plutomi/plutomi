@@ -9,7 +9,7 @@ type CreateQuestionInput = Pick<DynamoQuestion, 'orgId' | 'GSI1SK' | 'descriptio
 
 export const createQuestion = async (
   props: CreateQuestionInput,
-): Promise<[DynamoQuestion, undefined] | [undefined, SdkError]> => {
+): Promise<[DynamoQuestion, null] | [null, SdkError]> => {
   const { orgId, GSI1SK, questionId, description } = props;
   const now = Time.currentISO();
   const newQuestion: DynamoQuestion = {
@@ -56,8 +56,8 @@ export const createQuestion = async (
 
   try {
     await Dynamo.send(new TransactWriteCommand(transactParams));
-    return [newQuestion, undefined];
+    return [newQuestion, null];
   } catch (error) {
-    return [undefined, error];
+    return [null, error];
   }
 };

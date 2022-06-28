@@ -13,7 +13,7 @@ interface CreateLoginEventAndDeleteLoginLinkInput {
 
 export const createLoginEvent = async (
   props: CreateLoginEventAndDeleteLoginLinkInput,
-): Promise<[undefined, undefined] | [undefined, SdkError]> => {
+): Promise<[undefined, null] | [null, SdkError]> => {
   const { loginLinkId, user } = props;
 
   const now = Time.currentISO();
@@ -75,8 +75,8 @@ export const createLoginEvent = async (
     }
 
     await Dynamo.send(new TransactWriteCommand(transactParams));
-    return [undefined, undefined];
+    return [null, null];
   } catch (error) {
-    return [undefined, error];
+    return [null, error];
   }
 };

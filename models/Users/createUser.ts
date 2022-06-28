@@ -14,7 +14,7 @@ interface CreateUserInput {
 
 export const createUser = async (
   props: CreateUserInput,
-): Promise<[DynamoUser, undefined] | [undefined, SdkError]> => {
+): Promise<[DynamoUser, null] | [null, SdkError]> => {
   const { email, firstName, lastName } = props;
 
   const userId = nanoid(ID_LENGTHS.USER);
@@ -49,8 +49,8 @@ export const createUser = async (
 
   try {
     await Dynamo.send(new PutCommand(params));
-    return [newUser, undefined];
+    return [newUser, null];
   } catch (error) {
-    return [undefined, error];
+    return [null, error];
   }
 };

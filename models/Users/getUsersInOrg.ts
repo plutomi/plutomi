@@ -14,7 +14,7 @@ interface GetUsersInOrgInput {
 
 export const getUsersInOrg = async (
   props: GetUsersInOrgInput,
-): Promise<[DynamoUser[], undefined] | [undefined, SdkError]> => {
+): Promise<[DynamoUser[], null] | [null, SdkError]> => {
   const { orgId, limit } = props;
   const params: QueryCommandInput = {
     TableName: `${process.env.NODE_ENV}-${DYNAMO_TABLE_NAME}`,
@@ -31,8 +31,8 @@ export const getUsersInOrg = async (
 
   try {
     const response = await Dynamo.send(new QueryCommand(params));
-    return [response.Items as DynamoUser[], undefined];
+    return [response.Items as DynamoUser[], null];
   } catch (error) {
-    return [undefined, error];
+    return [null, error];
   }
 };

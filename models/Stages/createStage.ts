@@ -18,7 +18,7 @@ export interface CreateStageInput extends Pick<DynamoStage, 'orgId' | 'GSI1SK' |
 
 export const createStage = async (
   props: CreateStageInput,
-): Promise<[undefined, undefined] | [undefined, SdkError]> => {
+): Promise<[undefined, null] | [null, SdkError]> => {
   const { orgId, GSI1SK, openingId, position, stageOrder } = props;
   const stageId = nanoid(ID_LENGTHS.STAGE);
   const newStage: DynamoStage = {
@@ -72,8 +72,8 @@ export const createStage = async (
     };
 
     await Dynamo.send(new TransactWriteCommand(transactParams));
-    return [undefined, undefined];
+    return [null, null];
   } catch (error) {
-    return [undefined, error];
+    return [null, error];
   }
 };
