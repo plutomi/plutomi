@@ -1,6 +1,5 @@
 import { TransactWriteCommandInput, TransactWriteCommand } from '@aws-sdk/lib-dynamodb';
 import { nanoid } from 'nanoid';
-import { SdkError } from '@aws-sdk/types';
 import { Dynamo } from '../../awsClients/ddbDocClient';
 import { ID_LENGTHS, Entities, OpeningState, DYNAMO_TABLE_NAME } from '../../Config';
 import { DynamoOpening } from '../../types/dynamo';
@@ -10,7 +9,7 @@ type CreateOpeningInput = Pick<DynamoOpening, 'orgId' | 'openingName'>;
 
 export const createOpening = async (
   props: CreateOpeningInput,
-): Promise<[DynamoOpening, undefined] | [undefined, SdkError]> => {
+): Promise<[DynamoOpening, null] | [null, any]> => {
   const { orgId, openingName } = props;
   const openingId = nanoid(ID_LENGTHS.OPENING);
   const newOpening: DynamoOpening = {
@@ -58,8 +57,8 @@ export const createOpening = async (
 
   try {
     await Dynamo.send(new TransactWriteCommand(transactParams));
-    return [newOpening, undefined];
+    return [newOpening, null];
   } catch (error) {
-    return [undefined, error];
+    return [null, error];
   }
 };

@@ -1,12 +1,12 @@
 import { Request, Response } from 'express';
-import DB from '../../models';
+import { DB } from '../../models';
 import * as CreateError from '../../utils/createError';
 
 export const getQuestion = async (req: Request, res: Response) => {
-  const { session } = res.locals;
+  const { user } = req;
   const { questionId } = req.params;
   const [question, questionError] = await DB.Questions.getQuestion({
-    orgId: session.orgId,
+    orgId: user.orgId,
     questionId,
   });
 

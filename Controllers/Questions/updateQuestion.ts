@@ -3,7 +3,7 @@ import Joi from 'joi';
 import * as CreateError from '../../utils/createError';
 import { JOI_GLOBAL_FORBIDDEN, JOI_SETTINGS, LIMITS } from '../../Config';
 import { DynamoQuestion } from '../../types/dynamo';
-import DB from '../../models';
+import { DB } from '../../models';
 
 export interface APIUpdateQuestionOptions
   extends Partial<Pick<DynamoQuestion, 'GSI1SK' | 'description'>> {
@@ -30,11 +30,11 @@ export const updateQuestion = async (req: Request, res: Response) => {
     return res.status(status).json(body);
   }
 
-  const { session } = res.locals;
+  const { user } = req;
   const { questionId } = req.params;
 
   const [question, questionError] = await DB.Questions.updateQuestion({
-    orgId: session.orgId,
+    orgId: user.orgId,
     questionId,
     newValues: req.body,
   });

@@ -1,12 +1,10 @@
 import { Request, Response } from 'express';
-import DB from '../../models';
+import { DB } from '../../models';
 import * as CreateError from '../../utils/createError';
 
 export const leaveAndDeleteOrg = async (req: Request, res: Response) => {
-  const { session } = res.locals;
-  const { orgId } = session;
-
-  const [org, error] = await DB.Orgs.getOrg({ orgId });
+  const { user } = req;
+  const [org, error] = await DB.Orgs.getOrg({ orgId: user.orgId });
 
   if (error) {
     const { status, body } = CreateError.SDK(error, 'Unable to retrieve org info');
@@ -24,8 +22,8 @@ export const leaveAndDeleteOrg = async (req: Request, res: Response) => {
 
   // Transaction - updates the user with default org values
   const [success, failure] = await DB.Orgs.leaveAndDeleteOrg({
-    orgId,
-    userId: session.userId,
+    orgId: user.orgId,
+    userId: user.userId,
   });
 
   if (failure) {

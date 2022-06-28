@@ -1,12 +1,12 @@
 import { Request, Response } from 'express';
 import * as CreateError from '../../utils/createError';
-import DB from '../../models';
+import { DB } from '../../models';
 
 export const removeUserFromOrg = async (req: Request, res: Response) => {
-  const { session } = res.locals;
+  const { user } = req;
   const { orgId, userId } = req.params;
 
-  if (userId === session.userId) {
+  if (userId === user.userId) {
     return res.status(403).json({
       message:
         "You cannot remove yourself from an org. If you're the only user, delete the org instead",
@@ -32,7 +32,7 @@ export const removeUserFromOrg = async (req: Request, res: Response) => {
   const [removed, removeError] = await DB.Users.removeUserFromOrg({
     // if this doesn't match the createdBy ID on the org,
     // Dynamo will error
-    createdById: session.userId,
+    createdById: user.userId,
     orgId: org.orgId,
     userId,
   });

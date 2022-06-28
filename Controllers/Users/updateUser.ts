@@ -3,7 +3,7 @@ import Joi from 'joi';
 import * as CreateError from '../../utils/createError';
 import { DEFAULTS, JOI_GLOBAL_FORBIDDEN, JOI_SETTINGS } from '../../Config';
 import { DynamoUser } from '../../types/dynamo';
-import DB from '../../models';
+import { DB } from '../../models';
 
 export interface APIUpdateUserOptions extends Partial<Pick<DynamoUser, 'firstName' | 'lastName'>> {
   [key: string]: any;
@@ -43,16 +43,15 @@ export const updateUser = async (req: Request, res: Response) => {
     return res.status(status).json(body);
   }
 
-  const { session } = res.locals;
-  const { userId } = req.params;
+  const { user } = req;
 
   // TODO RBAC will go here, right now you can only update yourself
-  if (userId !== session.userId) {
+  if (req.params.userId !== user.userId) {
     return res.status(403).json({ message: 'You cannot update this user' });
   }
 
   const [updatedUser, error] = await DB.Users.updateUser({
-    userId: session.userId,
+    userId: user.userId,
     newValues: req.body,
   });
 
@@ -63,6 +62,6 @@ export const updateUser = async (req: Request, res: Response) => {
 
   return res.status(200).json({
     // TODO RBAC is not implemented yet so this won't trigger
-    message: userId === session.userId ? 'Info updated!' : 'User updated!',
+    message: req.params.userId === user.userId ? 'Info updated!' : 'User updated!',
   });
 };

@@ -99,7 +99,7 @@ export const CreateInviteModal = () => {
                               What is their email?
                             </label>
                             <input
-                              type="text"
+                              type="email"
                               name="new-user-email"
                               id="new-user-email"
                               required

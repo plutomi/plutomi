@@ -3,7 +3,7 @@ import Joi from 'joi';
 import * as CreateError from '../../utils/createError';
 import { JOI_GLOBAL_FORBIDDEN, JOI_SETTINGS, LIMITS } from '../../Config';
 import { DynamoWebhook } from '../../types/dynamo';
-import DB from '../../models';
+import { DB } from '../../models';
 
 export interface APIUpdateWebhookOptions
   extends Partial<Pick<DynamoWebhook, 'webhookName' | 'webhookUrl' | 'description'>> {
@@ -32,12 +32,12 @@ export const updateWebhook = async (req: Request, res: Response) => {
     return res.status(status).json(body);
   }
 
-  const { session } = res.locals;
+  const { user } = req;
   const { webhookId } = req.params;
 
   const [updatedWebhook, error] = await DB.Webhooks.updateWebhook({
     webhookId,
-    orgId: session.orgId,
+    orgId: user.orgId,
     newValues: req.body,
   });
 

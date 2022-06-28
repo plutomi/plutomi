@@ -4,7 +4,7 @@ import * as CreateError from '../../utils/createError';
 import { JOI_GLOBAL_FORBIDDEN, JOI_SETTINGS, OpeningState, LIMITS } from '../../Config';
 import { DynamoOpening } from '../../types/dynamo';
 import { UpdateOpeningInput } from '../../models/Openings/updateOpening';
-import DB from '../../models';
+import { DB } from '../../models';
 
 export interface APIUpdateOpeningOptions
   extends Partial<Pick<DynamoOpening, 'openingName' | 'GSI1SK' | 'stageOrder'>> {
@@ -34,17 +34,17 @@ export const updateOpening = async (req: Request, res: Response) => {
     return res.status(status).json(body);
   }
 
-  const { session } = res.locals;
+  const { user } = req;
   const { openingId } = req.params;
 
   const updateOpeningInput: UpdateOpeningInput = {
     openingId,
-    orgId: session.orgId,
+    orgId: user.orgId,
     newValues: req.body,
   };
 
   const [opening, openingError] = await DB.Openings.getOpening({
-    orgId: session.orgId,
+    orgId: user.orgId,
     openingId,
   });
 

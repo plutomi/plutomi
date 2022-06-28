@@ -1,4 +1,3 @@
-import { SdkError } from '@aws-sdk/types';
 import { TransactWriteCommandInput, TransactWriteCommand } from '@aws-sdk/lib-dynamodb';
 import { Dynamo } from '../../awsClients/ddbDocClient';
 import { DYNAMO_TABLE_NAME, Entities } from '../../Config';
@@ -13,7 +12,7 @@ interface RejectOrgInviteInput {
  */
 export const deleteInvite = async (
   props: RejectOrgInviteInput,
-): Promise<[undefined, undefined] | [undefined, SdkError]> => {
+): Promise<[null, null] | [null, any]> => {
   const { userId, inviteId } = props;
   try {
     const transactParams: TransactWriteCommandInput = {
@@ -48,8 +47,8 @@ export const deleteInvite = async (
     };
 
     await Dynamo.send(new TransactWriteCommand(transactParams));
-    return [undefined, undefined];
+    return [null, null];
   } catch (error) {
-    return [undefined, error];
+    return [null, error];
   }
 };

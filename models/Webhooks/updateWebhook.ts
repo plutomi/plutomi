@@ -1,7 +1,7 @@
 /* eslint-disable no-restricted-syntax */
 /* eslint-disable prefer-const */
 import { UpdateCommand } from '@aws-sdk/lib-dynamodb';
-import { SdkError } from '@aws-sdk/types';
+
 import { Dynamo } from '../../awsClients/ddbDocClient';
 import { DYNAMO_TABLE_NAME, Entities } from '../../Config';
 import { DynamoWebhook } from '../../types/dynamo';
@@ -11,7 +11,7 @@ export interface UpdateWebhookInput extends Pick<DynamoWebhook, 'orgId' | 'webho
 }
 
 // TODO new udpate method https://github.com/plutomi/plutomi/issues/594
-export const updateWebhook = async (props: UpdateWebhookInput): Promise<[undefined, SdkError]> => {
+export const updateWebhook = async (props: UpdateWebhookInput): Promise<[null, any]> => {
   const { orgId, webhookId, newValues } = props;
   // Build update expression
   let allUpdateExpressions: string[] = [];
@@ -40,8 +40,8 @@ export const updateWebhook = async (props: UpdateWebhookInput): Promise<[undefin
 
   try {
     await Dynamo.send(new UpdateCommand(params));
-    return [undefined, undefined];
+    return [null, null];
   } catch (error) {
-    return [undefined, error];
+    return [null, error];
   }
 };

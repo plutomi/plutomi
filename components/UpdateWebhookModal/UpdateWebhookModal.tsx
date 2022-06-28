@@ -105,9 +105,9 @@ export const UpdateWebhookModal = ({ webhook }: UpdateWebhookModalProps) => {
                       </div>
                       <div className="mt-1">
                         <p className="text-sm text-blue-300">
-                          We can send new applicant events to webhooks that you choose. You can then
-                          setup third party integrations like Zendesk or Slack, or even your own
-                          server for further processing.
+                          We can send <strong>all</strong> applicant events to webhooks that you
+                          choose. You can then setup third party integrations like Zendesk, Slack,
+                          Zapier, or even your own server for further processing.
                         </p>
                       </div>
                     </div>
@@ -178,7 +178,7 @@ export const UpdateWebhookModal = ({ webhook }: UpdateWebhookModalProps) => {
                                   url="https://github.com/plutomi/plutomi/blob/main/types/dynamo.d.ts#L105"
                                 />
                               </span>{' '}
-                              file.
+                              entity.
                             </p>
                           </div>
                         </div>

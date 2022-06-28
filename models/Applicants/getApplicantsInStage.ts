@@ -1,5 +1,4 @@
 import { QueryCommandInput, QueryCommand } from '@aws-sdk/lib-dynamodb';
-import { SdkError } from '@aws-sdk/types';
 import { Dynamo } from '../../awsClients/ddbDocClient';
 import { DYNAMO_TABLE_NAME, Entities } from '../../Config';
 import { DynamoApplicant, DynamoStage } from '../../types/dynamo';
@@ -8,7 +7,7 @@ type GetApplicantsInStageInput = Pick<DynamoStage, 'orgId' | 'stageId' | 'openin
 
 export const getApplicantsInStage = async (
   props: GetApplicantsInStageInput,
-): Promise<[DynamoApplicant[], undefined] | [undefined, SdkError]> => {
+): Promise<[DynamoApplicant[], null] | [null, any]> => {
   const { orgId, stageId, openingId } = props;
 
   const params: QueryCommandInput = {
@@ -25,8 +24,8 @@ export const getApplicantsInStage = async (
     const response = await Dynamo.send(new QueryCommand(params));
     const allApplicants = response.Items;
 
-    return [allApplicants as DynamoApplicant[], undefined];
+    return [allApplicants as DynamoApplicant[], null];
   } catch (error) {
-    return [undefined, error];
+    return [null, error];
   }
 };

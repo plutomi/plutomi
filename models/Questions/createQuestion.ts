@@ -1,5 +1,4 @@
 import { TransactWriteCommand, TransactWriteCommandInput } from '@aws-sdk/lib-dynamodb';
-import { SdkError } from '@aws-sdk/types';
 import { Dynamo } from '../../awsClients/ddbDocClient';
 import { Entities, DYNAMO_TABLE_NAME } from '../../Config';
 import { DynamoQuestion } from '../../types/dynamo';
@@ -9,7 +8,7 @@ type CreateQuestionInput = Pick<DynamoQuestion, 'orgId' | 'GSI1SK' | 'descriptio
 
 export const createQuestion = async (
   props: CreateQuestionInput,
-): Promise<[DynamoQuestion, undefined] | [undefined, SdkError]> => {
+): Promise<[DynamoQuestion, null] | [null, any]> => {
   const { orgId, GSI1SK, questionId, description } = props;
   const now = Time.currentISO();
   const newQuestion: DynamoQuestion = {
@@ -56,8 +55,8 @@ export const createQuestion = async (
 
   try {
     await Dynamo.send(new TransactWriteCommand(transactParams));
-    return [newQuestion, undefined];
+    return [newQuestion, null];
   } catch (error) {
-    return [undefined, error];
+    return [null, error];
   }
 };

@@ -1,5 +1,4 @@
 import { TransactWriteCommandInput, TransactWriteCommand } from '@aws-sdk/lib-dynamodb';
-import { SdkError } from '@aws-sdk/types';
 import { Dynamo } from '../../awsClients/ddbDocClient';
 import { Entities, DEFAULTS, DYNAMO_TABLE_NAME } from '../../Config';
 
@@ -10,7 +9,7 @@ interface LeaveAndDeleteOrgInput {
 
 export const leaveAndDeleteOrg = async (
   props: LeaveAndDeleteOrgInput,
-): Promise<[undefined, undefined] | [undefined, SdkError]> => {
+): Promise<[null, null] | [null, any]> => {
   const { orgId, userId } = props;
 
   try {
@@ -48,8 +47,8 @@ export const leaveAndDeleteOrg = async (
     };
 
     await Dynamo.send(new TransactWriteCommand(transactParams));
-    return [undefined, undefined];
+    return [null, null];
   } catch (error) {
-    return [undefined, error];
+    return [null, error];
   }
 };

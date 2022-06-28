@@ -1,5 +1,4 @@
 import { UpdateCommandInput, UpdateCommand } from '@aws-sdk/lib-dynamodb';
-import { SdkError } from '@aws-sdk/types';
 import { Dynamo } from '../../awsClients/ddbDocClient';
 import { DYNAMO_TABLE_NAME, Entities } from '../../Config';
 import { DynamoOpening } from '../../types/dynamo';
@@ -11,7 +10,7 @@ export interface UpdateOpeningInput extends Pick<DynamoOpening, 'orgId' | 'openi
 // TODO new udpate method https://github.com/plutomi/plutomi/issues/594
 export const updateOpening = async (
   props: UpdateOpeningInput,
-): Promise<[undefined, undefined] | [undefined, SdkError]> => {
+): Promise<[null, null] | [null, any]> => {
   const { orgId, openingId, newValues } = props;
   // Build update expression
   const allUpdateExpressions: string[] = [];
@@ -40,8 +39,8 @@ export const updateOpening = async (
 
   try {
     await Dynamo.send(new UpdateCommand(params));
-    return [undefined, undefined];
+    return [null, null];
   } catch (error) {
-    return [undefined, error];
+    return [null, error];
   }
 };

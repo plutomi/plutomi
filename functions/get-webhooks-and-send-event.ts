@@ -2,7 +2,7 @@ import { EventBridgeEvent } from 'aws-lambda';
 import axios from 'axios';
 import { DynamoStreamTypes, Entities } from '../Config';
 import { DynamoApplicant } from '../types/dynamo';
-import DB from '../models';
+import { DB } from '../models';
 
 interface ApplicantWebhookEvent {
   eventName: DynamoStreamTypes;

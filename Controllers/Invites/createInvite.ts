@@ -6,7 +6,7 @@ import { ERRORS, JOI_SETTINGS, ORG_INVITE_EXPIRY_DAYS, TIME_UNITS } from '../../
 import * as CreateError from '../../utils/createError';
 import * as Time from '../../utils/time';
 import { getOrg } from '../../models/Orgs';
-import DB from '../../models';
+import { DB } from '../../models';
 
 const schema = Joi.object({
   body: {
@@ -23,7 +23,7 @@ export const createInvite = async (req: Request, res: Response) => {
     return res.status(status).json(body);
   }
 
-  const { session } = res.locals;
+  const { user } = req;
   const { recipientEmail, expiresInDays } = req.body;
 
   const validation = await emailValidator({
@@ -36,11 +36,11 @@ export const createInvite = async (req: Request, res: Response) => {
     });
   }
 
-  if (session.email === recipientEmail) {
+  if (user.email === recipientEmail) {
     return res.status(403).json({ message: `You can't invite yourself` });
   }
 
-  const [org, error] = await getOrg({ orgId: session.orgId });
+  const [org, error] = await getOrg({ orgId: user.orgId });
 
   if (error) {
     const { status, body } = CreateError.SDK(
@@ -48,6 +48,10 @@ export const createInvite = async (req: Request, res: Response) => {
       'An error ocurred retrieving your org information',
     );
     return res.status(status).json(body);
+  }
+
+  if (!org) {
+    return res.status(404).json({ message: 'Org does not exist' });
   }
 
   // eslint-disable-next-line prefer-const
@@ -80,7 +84,7 @@ export const createInvite = async (req: Request, res: Response) => {
     recipient = createdUser;
   }
 
-  if (recipient.orgId === session.orgId) {
+  if (recipient.orgId === user.orgId) {
     return res.status(403).json({ message: 'User is already in your org!' });
   }
 
@@ -97,7 +101,7 @@ export const createInvite = async (req: Request, res: Response) => {
     return res.status(status).json(body);
   }
 
-  const pendingInvites = recipientInvites.some((invite) => invite.orgId === session.orgId);
+  const pendingInvites = recipientInvites.some((invite) => invite.orgId === user.orgId);
 
   if (pendingInvites) {
     return res.status(403).json({
@@ -109,7 +113,7 @@ export const createInvite = async (req: Request, res: Response) => {
     recipient: pick(recipient, ['userId', 'email', 'firstName', 'lastName', 'unsubscribeKey']),
     orgName: org.displayName,
     expiresAt: Time.futureISO(expiresInDays || ORG_INVITE_EXPIRY_DAYS, TIME_UNITS.DAYS), // TODO https://github.com/plutomi/plutomi/issues/333
-    createdBy: pick(session, ['userId', 'firstName', 'lastName', 'orgId', 'email']),
+    createdBy: pick(user, ['userId', 'firstName', 'lastName', 'orgId', 'email']),
   });
 
   if (inviteError) {

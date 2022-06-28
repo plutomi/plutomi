@@ -1,15 +1,15 @@
 import { Request, Response } from 'express';
-import DB from '../../models';
+import { DB } from '../../models';
 
 import * as CreateError from '../../utils/createError';
 
 export const deleteQuestionFromStage = async (req: Request, res: Response) => {
-  const { session } = res.locals;
+  const { user } = req;
   const { openingId, stageId, questionId } = req.params;
   const [stage, error] = await DB.Stages.getStage({
     openingId,
     stageId,
-    orgId: session.orgId,
+    orgId: user.orgId,
   });
 
   if (error) {
@@ -36,7 +36,7 @@ export const deleteQuestionFromStage = async (req: Request, res: Response) => {
     openingId,
     stageId,
     questionId,
-    orgId: session.orgId,
+    orgId: user.orgId,
     deleteIndex: stage.questionOrder.indexOf(questionId),
     decrementStageCount: true,
   });

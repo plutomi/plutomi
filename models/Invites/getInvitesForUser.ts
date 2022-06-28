@@ -1,5 +1,4 @@
 import { QueryCommandInput, QueryCommand } from '@aws-sdk/lib-dynamodb';
-import { SdkError } from '@aws-sdk/types';
 import { Dynamo } from '../../awsClients/ddbDocClient';
 import { DYNAMO_TABLE_NAME, Entities } from '../../Config';
 import { DynamoOrgInvite, DynamoUser } from '../../types/dynamo';
@@ -8,7 +7,7 @@ type GetInvitesForUserInput = Pick<DynamoUser, 'userId'>;
 
 export const getInvitesForUser = async (
   props: GetInvitesForUserInput,
-): Promise<[DynamoOrgInvite[], undefined] | [undefined, SdkError]> => {
+): Promise<[DynamoOrgInvite[], null] | [null, Error]> => {
   const { userId } = props;
   const params: QueryCommandInput = {
     TableName: `${process.env.NODE_ENV}-${DYNAMO_TABLE_NAME}`,
@@ -21,8 +20,8 @@ export const getInvitesForUser = async (
 
   try {
     const response = await Dynamo.send(new QueryCommand(params));
-    return [response.Items as DynamoOrgInvite[], undefined];
+    return [response.Items as DynamoOrgInvite[], null];
   } catch (error) {
-    return [undefined, error];
+    return [null, error];
   }
 };

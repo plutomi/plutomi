@@ -1,11 +1,11 @@
 import { Request, Response } from 'express';
-import DB from '../../models';
+import { DB } from '../../models';
 import * as CreateError from '../../utils/createError';
 
 export const getOpeningsInOrg = async (req: Request, res: Response) => {
-  const { session } = res.locals;
+  const { user } = req;
   const [openings, openingsError] = await DB.Openings.getOpeningsInOrg({
-    orgId: session.orgId,
+    orgId: user.orgId,
   });
 
   if (openingsError) {

@@ -1,31 +1,20 @@
-import { SdkError } from '@aws-sdk/types';
-import errorFormatter from './errorFormatter';
-/**
- * Response for AWS SDK calls.
- * @param error - The error object
- * @param message - Your custom message describing what happened
- * @returns
- */
-export function SDK(error: SdkError, message: string) {
+export const SDK = (error: any, message: string): { status: number; body: any } => {
   console.error(error, message);
-  const formattedError = errorFormatter(error);
-  const status = formattedError.httpStatusCode;
+  const status = error?.$metadata?.httpStatusCode || 500;
   const body = {
     message,
-    ...formattedError,
+    error: error?.name || error || 'ERROR',
+    errorMessage: error?.message || 'An error ocurred',
+    requestId: error?.$metadata?.requestId || undefined,
+    httpStatusCode: status,
   };
   return { status, body };
-}
+};
 
-/**
- * Response for Joi errors
- * @param error
- * @returns
- */
-export function JOI(error: Error) {
+export const JOI = (error: Error): { status: 400; body: { message: string } } => {
   console.error(error);
   return {
     status: 400,
     body: { message: `${error.message}` },
   };
-}
+};

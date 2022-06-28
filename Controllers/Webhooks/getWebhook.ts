@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
 import Joi from 'joi';
 import { JOI_SETTINGS } from '../../Config';
-import DB from '../../models';
+import { DB } from '../../models';
 import * as CreateError from '../../utils/createError';
 
 const schema = Joi.object({
@@ -17,11 +17,11 @@ export const getWebhook = async (req: Request, res: Response) => {
     const { status, body } = CreateError.JOI(error);
     return res.status(status).json(body);
   }
-  const { session } = res.locals;
+  const { user } = req;
   const { webhookId } = req.params;
 
   const [webhook, error] = await DB.Webhooks.getWebhook({
-    orgId: session.orgId,
+    orgId: user.orgId,
     webhookId,
   });
 

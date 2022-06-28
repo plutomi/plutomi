@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
 import { COOKIE_NAME, COOKIE_SETTINGS } from '../Config';
-import DB from '../models';
+import { DB } from '../models';
 
 // eslint-disable-next-line consistent-return
 export default async function withSession(req: Request, res: Response, next: NextFunction) {
@@ -34,7 +34,7 @@ export default async function withSession(req: Request, res: Response, next: Nex
     });
   }
 
-  res.locals.session = user;
+  req.user = user;
 
   next();
 }

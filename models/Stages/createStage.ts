@@ -1,5 +1,4 @@
 import { nanoid } from 'nanoid';
-import { SdkError } from '@aws-sdk/types';
 import { TransactWriteCommand, TransactWriteCommandInput } from '@aws-sdk/lib-dynamodb';
 import getNewChildItemOrder from '../../utils/getNewChildItemOrder';
 import { Dynamo } from '../../awsClients/ddbDocClient';
@@ -16,9 +15,7 @@ export interface CreateStageInput extends Pick<DynamoStage, 'orgId' | 'GSI1SK' |
   stageOrder: string[];
 }
 
-export const createStage = async (
-  props: CreateStageInput,
-): Promise<[undefined, undefined] | [undefined, SdkError]> => {
+export const createStage = async (props: CreateStageInput): Promise<[null, null] | [null, any]> => {
   const { orgId, GSI1SK, openingId, position, stageOrder } = props;
   const stageId = nanoid(ID_LENGTHS.STAGE);
   const newStage: DynamoStage = {
@@ -72,8 +69,8 @@ export const createStage = async (
     };
 
     await Dynamo.send(new TransactWriteCommand(transactParams));
-    return [undefined, undefined];
+    return [null, null];
   } catch (error) {
-    return [undefined, error];
+    return [null, error];
   }
 };

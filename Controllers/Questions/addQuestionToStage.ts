@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
 import Joi from 'joi';
 import { JOI_SETTINGS, LIMITS } from '../../Config';
-import DB from '../../models';
+import { DB } from '../../models';
 import * as CreateError from '../../utils/createError';
 import getNewChildItemOrder from '../../utils/getNewChildItemOrder';
 
@@ -20,7 +20,7 @@ const schema = Joi.object({
 }).options(JOI_SETTINGS);
 
 export const addQuestionToStage = async (req: Request, res: Response) => {
-  const { session } = res.locals;
+  const { user } = req;
   try {
     await schema.validateAsync(req);
   } catch (error) {
@@ -33,7 +33,7 @@ export const addQuestionToStage = async (req: Request, res: Response) => {
   const { openingId, stageId } = req.params;
 
   const [question, getQuestionError] = await DB.Questions.getQuestion({
-    orgId: session.orgId,
+    orgId: user.orgId,
     questionId,
   });
 
@@ -54,7 +54,7 @@ export const addQuestionToStage = async (req: Request, res: Response) => {
   const [stage, stageError] = await DB.Stages.getStage({
     openingId,
     stageId,
-    orgId: session.orgId,
+    orgId: user.orgId,
   });
 
   if (stageError) {
@@ -80,7 +80,7 @@ export const addQuestionToStage = async (req: Request, res: Response) => {
   const [stageUpdated, stageUpdatedError] = await DB.Questions.addQuestionToStage({
     openingId,
     stageId,
-    orgId: session.orgId,
+    orgId: user.orgId,
     questionId,
     questionOrder,
   });

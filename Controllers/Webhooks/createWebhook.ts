@@ -3,7 +3,7 @@ import Joi from 'joi';
 import { JOI_SETTINGS, LIMITS } from '../../Config';
 import * as CreateError from '../../utils/createError';
 import { DynamoWebhook } from '../../types/dynamo';
-import DB from '../../models';
+import { DB } from '../../models';
 
 export type APICreateWebhookOptions = Pick<
   DynamoWebhook,
@@ -19,7 +19,7 @@ const schema = Joi.object({
 }).options(JOI_SETTINGS);
 
 export const createWebhook = async (req: Request, res: Response) => {
-  const { session } = res.locals;
+  const { user } = req;
   try {
     await schema.validateAsync(req);
   } catch (error) {
@@ -30,7 +30,7 @@ export const createWebhook = async (req: Request, res: Response) => {
   const { webhookUrl, webhookName, description }: APICreateWebhookOptions = req.body;
 
   const [created, createWebhookError] = await DB.Webhooks.createWebhook({
-    orgId: session.orgId,
+    orgId: user.orgId,
     webhookUrl,
     description,
     webhookName,

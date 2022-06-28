@@ -1,15 +1,15 @@
 import { Request, Response } from 'express';
-import DB from '../../models';
+import { DB } from '../../models';
 import * as CreateError from '../../utils/createError';
 
 export const getQuestionsInStage = async (req: Request, res: Response) => {
-  const { session } = res.locals;
+  const { user } = req;
   const { openingId, stageId } = req.params;
 
   const [stage, stageError] = await DB.Stages.getStage({
     openingId,
     stageId,
-    orgId: session.orgId,
+    orgId: user.orgId,
   });
 
   if (stageError) {
@@ -32,7 +32,7 @@ export const getQuestionsInStage = async (req: Request, res: Response) => {
     const results = await Promise.all(
       questionOrder.map(async (id: string) => {
         const [question, error] = await DB.Questions.getQuestion({
-          orgId: session.orgId,
+          orgId: user.orgId,
           questionId: id,
         });
 

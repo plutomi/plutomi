@@ -1,5 +1,5 @@
 import { UpdateCommandInput, UpdateCommand } from '@aws-sdk/lib-dynamodb';
-import { SdkError } from '@aws-sdk/types';
+
 import { Dynamo } from '../../awsClients/ddbDocClient';
 import { DYNAMO_TABLE_NAME, Entities } from '../../Config';
 import { DynamoUser } from '../../types/dynamo';
@@ -11,7 +11,7 @@ export interface UpdateUserInput extends Pick<DynamoUser, 'userId'> {
 // TODO new udpate method https://github.com/plutomi/plutomi/issues/594
 export const updateUser = async (
   props: UpdateUserInput,
-): Promise<[DynamoUser, undefined] | [undefined, SdkError]> => {
+): Promise<[DynamoUser, null] | [null, any]> => {
   const { userId, newValues } = props;
 
   // Build update expression
@@ -41,8 +41,8 @@ export const updateUser = async (
   };
   try {
     const updatedUser = await Dynamo.send(new UpdateCommand(params));
-    return [updatedUser.Attributes as DynamoUser, undefined];
+    return [updatedUser.Attributes as DynamoUser, null];
   } catch (error) {
-    return [undefined, error];
+    return [null, error];
   }
 };

@@ -1,6 +1,6 @@
 import { TransactWriteCommandInput, TransactWriteCommand } from '@aws-sdk/lib-dynamodb';
 import { nanoid } from 'nanoid';
-import { SdkError } from '@aws-sdk/types';
+
 import { Dynamo } from '../../awsClients/ddbDocClient';
 import { Entities, DYNAMO_TABLE_NAME } from '../../Config';
 import { DynamoWebhook } from '../../types/dynamo';
@@ -12,9 +12,7 @@ type CreateWebhookInput = Pick<
   'webhookUrl' | 'orgId' | 'description' | 'webhookName'
 >;
 
-export const createWebhook = async (
-  props: CreateWebhookInput,
-): Promise<[DynamoWebhook, SdkError]> => {
+export const createWebhook = async (props: CreateWebhookInput): Promise<[DynamoWebhook, any]> => {
   const { orgId, webhookName, webhookUrl, description } = props;
   const webhookId = TagGenerator({
     value: nanoid(15),
@@ -68,8 +66,8 @@ export const createWebhook = async (
 
   try {
     await Dynamo.send(new TransactWriteCommand(transactParams));
-    return [newWebhook, undefined];
+    return [newWebhook, null];
   } catch (error) {
-    return [undefined, error];
+    return [null, error];
   }
 };

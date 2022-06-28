@@ -1,15 +1,15 @@
 import { Request, Response } from 'express';
-import DB from '../../models';
+import { DB } from '../../models';
 import * as CreateError from '../../utils/createError';
 
 export const getStagesInOpening = async (req: Request, res: Response) => {
-  const { session } = res.locals;
+  const { user } = req;
 
   const { openingId } = req.params;
 
   const [opening, openingError] = await DB.Openings.getOpening({
     openingId,
-    orgId: session.orgId,
+    orgId: user.orgId,
   });
 
   if (openingError) {
@@ -25,7 +25,7 @@ export const getStagesInOpening = async (req: Request, res: Response) => {
   }
   const [allCurrentStages, allStagesError] = await DB.Stages.getStagesInOpening({
     openingId,
-    orgId: session.orgId,
+    orgId: user.orgId,
     stageOrder: opening.stageOrder, // To order them correctly
   });
 

@@ -1,5 +1,4 @@
 import { TransactWriteCommandInput, TransactWriteCommand } from '@aws-sdk/lib-dynamodb';
-import { SdkError } from '@aws-sdk/types';
 import { Dynamo } from '../../awsClients/ddbDocClient';
 import { DYNAMO_TABLE_NAME, Entities } from '../../Config';
 import { DynamoOrg } from '../../types/dynamo';
@@ -13,7 +12,7 @@ interface CreateAndJoinOrgInput {
 
 export const createAndJoinOrg = async (
   props: CreateAndJoinOrgInput,
-): Promise<[undefined, undefined] | [undefined, SdkError]> => {
+): Promise<[null, null] | [null, any]> => {
   const { userId, orgId, displayName } = props;
   const now = Time.currentISO();
 
@@ -63,8 +62,8 @@ export const createAndJoinOrg = async (
     };
 
     await Dynamo.send(new TransactWriteCommand(transactParams));
-    return [undefined, undefined];
+    return [null, null];
   } catch (error) {
-    return [undefined, error];
+    return [null, error];
   }
 };

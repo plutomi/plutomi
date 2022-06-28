@@ -2,7 +2,7 @@ import { Request, Response } from 'express';
 import { pick } from 'lodash';
 import * as CreateError from '../../utils/createError';
 import { OpeningState } from '../../Config';
-import DB from '../../models';
+import { DB } from '../../models';
 
 export const getOpening = async (req: Request, res: Response) => {
   const { orgId, openingId } = req.params;
@@ -24,7 +24,7 @@ export const getOpening = async (req: Request, res: Response) => {
     return res.status(404).json({ message: 'Opening does not exist' });
   }
 
-  const modifiedOpening = pick(opening, ['openingName', 'createdAt', 'openingId']);
+  const modifiedOpening = pick(opening, ['openingName', 'createdAt', 'openingId', 'orgId']);
 
   return res.status(200).json(modifiedOpening);
 };

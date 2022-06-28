@@ -91,9 +91,9 @@ export const CreateWebhookModal = () => {
                       </div>
                       <div className="mt-1">
                         <p className="text-sm text-blue-300">
-                          We can send new applicant events to webhooks that you choose. You can then
-                          setup third party integrations like Zendesk or Slack, or even your own
-                          server for further processing.
+                          We can send <strong>all</strong> applicant events to webhooks that you
+                          choose. You can then setup third party integrations like Zendesk, Slack,
+                          Zapier, or even your own server for further processing.
                         </p>
                       </div>
                     </div>
@@ -160,11 +160,11 @@ export const CreateWebhookModal = () => {
                               be sent. You can see what info is in the event by viewing the{' '}
                               <span className="text-white">
                                 <CustomLink
-                                  text="DynamoApplicant.d.ts"
-                                  url="https://github.com/plutomi/plutomi/blob/main/types/dynamo.d.ts#L105"
+                                  text="DynamoApplicant"
+                                  url="https://github.com/plutomi/plutomi/blob/main/types/dynamo.d.ts#L107"
                                 />
                               </span>{' '}
-                              file.
+                              entity.
                             </p>
                           </div>
                         </div>

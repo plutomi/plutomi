@@ -1,5 +1,5 @@
 import { UpdateCommand } from '@aws-sdk/lib-dynamodb';
-import { SdkError } from '@aws-sdk/types';
+
 import { Dynamo } from '../../awsClients/ddbDocClient';
 import { DYNAMO_TABLE_NAME, Entities } from '../../Config';
 import { DynamoStage } from '../../types/dynamo';
@@ -9,9 +9,7 @@ export interface UpdateStageInput extends Pick<DynamoStage, 'orgId' | 'stageId' 
 }
 
 // TODO new update method https://github.com/plutomi/plutomi/issues/594
-export const updateStage = async (
-  props: UpdateStageInput,
-): Promise<[undefined, undefined] | [undefined, SdkError]> => {
+export const updateStage = async (props: UpdateStageInput): Promise<[null, null] | [null, any]> => {
   const { orgId, stageId, newValues, openingId } = props;
 
   // Build update expression
@@ -42,8 +40,8 @@ export const updateStage = async (
 
   try {
     await Dynamo.send(new UpdateCommand(params));
-    return [undefined, undefined];
+    return [null, null];
   } catch (error) {
-    return [undefined, error];
+    return [null, error];
   }
 };

@@ -1,15 +1,14 @@
 import { Request, Response } from 'express';
-import DB from '../../models';
+import { DB } from '../../models';
 import * as CreateError from '../../utils/createError';
 
 export const deleteOpening = async (req: Request, res: Response) => {
-  const { session } = res.locals;
-  const { orgId } = session;
   const { openingId } = req.params;
+  const { user } = req;
 
   const [opening, error] = await DB.Openings.deleteOpening({
     openingId,
-    orgId,
+    orgId: user.orgId,
   });
 
   if (error) {

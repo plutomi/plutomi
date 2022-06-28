@@ -3,7 +3,7 @@ import Joi from 'joi';
 import { JOI_SETTINGS, LIMITS } from '../../Config';
 import * as CreateError from '../../utils/createError';
 import { DynamoOpening } from '../../types/dynamo';
-import DB from '../../models';
+import { DB } from '../../models';
 
 export type APICreateOpeningOptions = Required<Pick<DynamoOpening, 'openingName'>>;
 
@@ -14,7 +14,7 @@ const schema = Joi.object({
 }).options(JOI_SETTINGS);
 
 export const createOpening = async (req: Request, res: Response) => {
-  const { session } = res.locals;
+  const { user } = req;
   try {
     await schema.validateAsync(req);
   } catch (error) {
@@ -25,7 +25,7 @@ export const createOpening = async (req: Request, res: Response) => {
   const { openingName }: APICreateOpeningOptions = req.body;
 
   const [created, createOpeningError] = await DB.Openings.createOpening({
-    orgId: session.orgId,
+    orgId: user.orgId,
     openingName,
   });
 
