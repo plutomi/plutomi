@@ -54,7 +54,7 @@ export const addQuestionToStage = async (req: Request, res: Response) => {
   const [stage, stageError] = await DB.Stages.getStage({
     openingId,
     stageId,
-    orgId: session.orgId,
+    orgId: user.orgId,
   });
 
   if (stageError) {
@@ -80,7 +80,7 @@ export const addQuestionToStage = async (req: Request, res: Response) => {
   const [stageUpdated, stageUpdatedError] = await DB.Questions.addQuestionToStage({
     openingId,
     stageId,
-    orgId: session.orgId,
+    orgId: user.orgId,
     questionId,
     questionOrder,
   });

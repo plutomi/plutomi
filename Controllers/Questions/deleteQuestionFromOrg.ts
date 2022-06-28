@@ -6,7 +6,7 @@ export const deleteQuestionFromOrg = async (req: Request, res: Response) => {
   const { user } = req;
 
   const [success, failure] = await DB.Questions.deleteQuestionFromOrg({
-    orgId: session.orgId,
+    orgId: user.orgId,
     questionId: req.params.questionId,
   });
 
