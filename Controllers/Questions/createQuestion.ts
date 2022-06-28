@@ -3,7 +3,7 @@ import Joi from 'joi';
 import * as CreateError from '../../utils/createError';
 import { DynamoQuestion } from '../../types/dynamo';
 import { JOI_SETTINGS, LIMITS } from '../../Config';
-import DB from '../../models';
+import { DB } from '../../models';
 
 export type APICreateQuestionOptions = Pick<
   DynamoQuestion,

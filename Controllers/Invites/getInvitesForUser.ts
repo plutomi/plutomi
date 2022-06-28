@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 import * as CreateError from '../../utils/createError';
-import DB from '../../models';
+import { DB } from '../../models';
 
 export const getInvitesForUser = async (req: Request, res: Response) => {
   const { session } = res.locals;

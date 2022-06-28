@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import DB from '../../models';
+import { DB } from '../../models';
 import * as CreateError from '../../utils/createError';
 
 export const leaveAndDeleteOrg = async (req: Request, res: Response) => {

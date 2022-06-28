@@ -4,7 +4,7 @@ import { DEFAULTS, JOI_SETTINGS, JoiOrgId } from '../../Config';
 import * as CreateError from '../../utils/createError';
 import { DynamoOrg } from '../../types/dynamo';
 import { getInvitesForUser } from '../../models/Invites';
-import DB from '../../models';
+import { DB } from '../../models';
 
 export type APICreateOrgOptions = Required<Pick<DynamoOrg, 'orgId' | 'displayName'>>;
 

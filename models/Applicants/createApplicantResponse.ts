@@ -1,7 +1,6 @@
 import { PutCommandInput, PutCommand } from '@aws-sdk/lib-dynamodb';
 import { nanoid } from 'nanoid';
-import { SdkError } from '@aws-sdk/types';
-import { Dynamo } from '../../awsClients/ddbDocClient';
+import { Dynamo, DynamoExceptions } from '../../awsClients/ddbDocClient';
 import { ID_LENGTHS, Entities, DYNAMO_TABLE_NAME } from '../../Config';
 import { DynamoApplicantResponse } from '../../types/dynamo';
 import * as Time from '../../utils/time';
@@ -13,7 +12,7 @@ type CreateApplicantResponseInput = Pick<
 
 export const createApplicantResponse = async (
   props: CreateApplicantResponseInput,
-): Promise<[DynamoApplicantResponse, null] | [null, SdkError]> => {
+): Promise<[DynamoApplicantResponse, null] | [null, typeof DynamoExceptions]> => {
   const { orgId, applicantId, questionTitle, description, questionResponse } = props;
   const responseId = nanoid(ID_LENGTHS.APPLICANT_RESPONSE);
   const newApplicantResponse: DynamoApplicantResponse = {
@@ -41,6 +40,6 @@ export const createApplicantResponse = async (
     await Dynamo.send(new PutCommand(params));
     return [newApplicantResponse, null];
   } catch (error) {
-    return [undefined, error];
+    return [null, error];
   }
 };

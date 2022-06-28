@@ -3,7 +3,7 @@ import Joi from 'joi';
 import * as CreateError from '../../utils/createError';
 import { JOI_GLOBAL_FORBIDDEN, JOI_SETTINGS, LIMITS } from '../../Config';
 import { DynamoWebhook } from '../../types/dynamo';
-import DB from '../../models';
+import { DB } from '../../models';
 
 export interface APIUpdateWebhookOptions
   extends Partial<Pick<DynamoWebhook, 'webhookName' | 'webhookUrl' | 'description'>> {

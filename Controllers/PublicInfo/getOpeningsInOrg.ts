@@ -2,7 +2,7 @@ import { Request, Response } from 'express';
 import { pick } from 'lodash';
 import * as CreateError from '../../utils/createError';
 import { OpeningState } from '../../Config';
-import DB from '../../models';
+import { DB } from '../../models';
 import { DynamoOpening } from '../../types/dynamo';
 
 export const getOpeningsInOrg = async (req: Request, res: Response) => {

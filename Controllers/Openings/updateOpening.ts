@@ -4,7 +4,7 @@ import * as CreateError from '../../utils/createError';
 import { JOI_GLOBAL_FORBIDDEN, JOI_SETTINGS, OpeningState, LIMITS } from '../../Config';
 import { DynamoOpening } from '../../types/dynamo';
 import { UpdateOpeningInput } from '../../models/Openings/updateOpening';
-import DB from '../../models';
+import { DB } from '../../models';
 
 export interface APIUpdateOpeningOptions
   extends Partial<Pick<DynamoOpening, 'openingName' | 'GSI1SK' | 'stageOrder'>> {

@@ -12,7 +12,7 @@ import {
 } from '../../Config';
 import * as CreateError from '../../utils/createError';
 import { DynamoApplicant } from '../../types/dynamo';
-import DB from '../../models';
+import { DB } from '../../models';
 
 export type APICreateApplicantOptions = Required<
   Pick<DynamoApplicant, 'orgId' | 'openingId' | 'email' | 'firstName' | 'lastName'>

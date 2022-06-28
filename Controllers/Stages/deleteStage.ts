@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import DB from '../../models';
+import { DB } from '../../models';
 import * as CreateError from '../../utils/createError';
 
 export const deleteStage = async (req: Request, res: Response) => {

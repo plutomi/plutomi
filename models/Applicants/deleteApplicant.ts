@@ -1,6 +1,5 @@
 import { TransactWriteCommandInput, TransactWriteCommand } from '@aws-sdk/lib-dynamodb';
-import { SdkError } from '@aws-sdk/types';
-import { Dynamo } from '../../awsClients/ddbDocClient';
+import { Dynamo, DynamoExceptions } from '../../awsClients/ddbDocClient';
 import { DYNAMO_TABLE_NAME, Entities } from '../../Config';
 import { DynamoApplicant } from '../../types/dynamo';
 
@@ -11,7 +10,7 @@ export type DeleteApplicantInput = Pick<
 
 export const deleteApplicant = async (
   props: DeleteApplicantInput,
-): Promise<[undefined, null] | [null, SdkError]> => {
+): Promise<[undefined, null] | [null, typeof DynamoExceptions]> => {
   const { orgId, applicantId, openingId, stageId } = props;
   try {
     const transactParams: TransactWriteCommandInput = {

@@ -3,7 +3,7 @@ import Joi from 'joi';
 import { JOI_SETTINGS, LIMITS } from '../../Config';
 import * as CreateError from '../../utils/createError';
 import { DynamoStage } from '../../types/dynamo';
-import DB from '../../models';
+import { DB } from '../../models';
 
 export interface APICreateStageOptions extends Required<Pick<DynamoStage, 'openingId' | 'GSI1SK'>> {
   /**
