@@ -5,15 +5,27 @@ import TagGenerator from '../utils/tagGenerator';
  */
 export default async function withCleanOrgId(req: Request, res: Response, next: NextFunction) {
   if (req.body.orgId) {
-    req.body.orgId = TagGenerator({ value: req.body.orgId });
+    try {
+      req.body.orgId = TagGenerator({ value: req.body.orgId });
+    } catch (error) {
+      return res.status(400).json({ message: 'An error curred parsing req.body.orgId' });
+    }
   }
 
   if (req.params.orgId) {
-    req.params.orgId = TagGenerator({ value: req.params.orgId });
+    try {
+      req.params.orgId = TagGenerator({ value: req.params.orgId });
+    } catch (error) {
+      return res.status(400).json({ message: 'An error curred parsing req.params.orgId' });
+    }
   }
 
   if (req.query.orgId) {
-    req.query.orgId = TagGenerator({ value: req.query.orgId as string });
+    try {
+      req.query.orgId = TagGenerator({ value: req.query.orgId as string });
+    } catch (error) {
+      return res.status(400).json({ message: 'An error curred parsing req.query.orgId' });
+    }
   }
 
   next();
