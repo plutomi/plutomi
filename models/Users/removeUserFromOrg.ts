@@ -1,8 +1,7 @@
 import { TransactWriteCommandInput, TransactWriteCommand } from '@aws-sdk/lib-dynamodb';
-
 import { Dynamo } from '../../awsClients/ddbDocClient';
 import { DEFAULTS, DYNAMO_TABLE_NAME, Entities } from '../../Config';
-
+import * as Time from '../../utils/time';
 interface RemoveUserFromOrgInput {
   /**
    * The ID of the org the user is in
@@ -22,6 +21,7 @@ export const removeUserFromOrg = async (
   props: RemoveUserFromOrgInput,
 ): Promise<[null, null] | [null, any]> => {
   const { userId, createdById, orgId } = props;
+  const now = Time.currentISO();
   try {
     const transactParams: TransactWriteCommandInput = {
       TransactItems: [
@@ -33,11 +33,13 @@ export const removeUserFromOrg = async (
               SK: Entities.USER,
             },
             TableName: `${process.env.NODE_ENV}-${DYNAMO_TABLE_NAME}`,
-            UpdateExpression: 'SET orgId = :orgId, orgJoinDate = :orgJoinDate, GSI1PK = :GSI1PK',
+            UpdateExpression:
+              'SET orgId = :orgId, orgJoinDate = :orgJoinDate, GSI1PK = :GSI1PK, updatedAt = :updatedAt',
             ExpressionAttributeValues: {
               ':orgId': DEFAULTS.NO_ORG,
               ':orgJoinDate': DEFAULTS.NO_ORG,
               ':GSI1PK': `${Entities.ORG}#${DEFAULTS.NO_ORG}#${Entities.USER}S`,
+              ':updatedAt': now,
             },
           },
         },
@@ -49,10 +51,11 @@ export const removeUserFromOrg = async (
               SK: Entities.ORG,
             },
             TableName: `${process.env.NODE_ENV}-${DYNAMO_TABLE_NAME}`,
-            UpdateExpression: 'SET totalUsers = totalUsers - :value',
+            UpdateExpression: 'SET totalUsers = totalUsers - :value, updatedAt = :updatedAt',
             ExpressionAttributeValues: {
               ':value': 1,
               ':createdBy': createdById,
+              ':updatedAt': now,
             },
             // Only allow the org creator to remove users // TODO RBAC
             ConditionExpression: 'attribute_exists(PK) AND createdBy = :createdBy',

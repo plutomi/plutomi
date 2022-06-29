@@ -26,6 +26,7 @@ export const createLoginLink = async (
       user,
       entityType: Entities.LOGIN_LINK,
       createdAt: now,
+      updatedAt: now,
       ttlExpiry: Time.futureUNIX(15, TIME_UNITS.MINUTES),
       GSI1PK: `${Entities.USER}#${user.userId}#${Entities.LOGIN_LINK}S`, // Get latest login link(s) for a user for throttling
       GSI1SK: now,

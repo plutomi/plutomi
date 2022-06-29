@@ -16,8 +16,8 @@ export const createUser = async (
   props: CreateUserInput,
 ): Promise<[DynamoUser, null] | [null, any]> => {
   const { email, firstName, lastName } = props;
-
   const userId = nanoid(ID_LENGTHS.USER);
+  const now = Time.currentISO();
   const newUser: DynamoUser = {
     PK: `${Entities.USER}#${userId}`,
     SK: Entities.USER,
@@ -26,7 +26,8 @@ export const createUser = async (
     email: email.toLowerCase().trim(),
     userId,
     entityType: Entities.USER,
-    createdAt: Time.currentISO(),
+    createdAt: now,
+    updatedAt: now,
     orgId: DEFAULTS.NO_ORG,
     totalInvites: 0, // TODO when creating an invite, a user is created. We should set this to 1!
     orgJoinDate: DEFAULTS.NO_ORG,

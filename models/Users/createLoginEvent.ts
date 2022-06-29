@@ -25,6 +25,7 @@ export const createLoginEvent = async (
     entityType: Entities.LOGIN_EVENT,
     // TODO in the future, get more the info about the login event such as IP, headers, device, etc.
     createdAt: now,
+    updatedAt: now,
     ttlExpiry: Time.futureUNIX(RetentionDays.ONE_WEEK, TIME_UNITS.DAYS),
   };
 
@@ -34,6 +35,7 @@ export const createLoginEvent = async (
     // TODO user info here
     // TODO in the future, get more the info about the login event such as IP, headers, device, etc.
     createdAt: now,
+    updatedAt: now,
     ttlExpiry: Time.futureUNIX(RetentionDays.ONE_WEEK, TIME_UNITS.DAYS),
   };
 

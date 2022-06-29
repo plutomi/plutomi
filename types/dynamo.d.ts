@@ -360,6 +360,7 @@ export interface DynamoWebhook {
   webhookId: string;
   description?: string;
   createdAt: string;
+  updatedAt: string;
   webhookUrl: string;
   entityType: Entities.WEBHOOK;
   GSI1PK: `${Entities.ORG}#${orgId}#${Entities.WEBHOOK}S`;
@@ -382,6 +383,7 @@ export interface DynamoUser {
   userId: string;
   entityType: Entities.USER;
   createdAt: string;
+  updatedAt: string;
   orgId: DEFAULTS.NO_ORG;
   orgJoinDate: DEFAULTS.NO_ORG;
   GSI1PK: `${Entities.ORG}#${DEFAULTS.NO_ORG}#${Entities.USER}S`;
@@ -399,6 +401,7 @@ export interface DynamoLoginLink {
   SK: `${Entities.LOGIN_LINK}#${string}`;
   entityType: Entities.LOGIN_LINK;
   createdAt: string;
+  updatedAt: string;
   relativeExpiry: string;
   user: DynamoUser;
   loginLinkUrl: string;
@@ -433,6 +436,7 @@ export interface DynamoUserLoginEvent {
   PK: `${Entities.USER}#${string}`;
   SK: `${Entities.LOGIN_EVENT}#${string}`;
   createdAt: string; // ISO timestamp
+  updatedAt: string;
   ttlExpiry: number; // ttl unix expiry
   entityType: Entities.LOGIN_EVENT;
   user: DynamoUser;
@@ -444,5 +448,6 @@ export interface DynamoOrgLoginEvent {
   // TODO user info here
   // TODO in the future, get more the info about the login event such as IP, headers, device, etc.
   createdAt: now;
+  updatedAt: string;
   ttlExpiry: number;
 }

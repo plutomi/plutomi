@@ -1,14 +1,13 @@
 import { TransactWriteCommand, TransactWriteCommandInput } from '@aws-sdk/lib-dynamodb';
-
 import { Dynamo } from '../../awsClients/ddbDocClient';
 import { DYNAMO_TABLE_NAME, Entities } from '../../Config';
 import { DynamoWebhook } from '../../types/dynamo';
-
+import * as Time from '../../utils/time';
 type DeleteWebhookFromOrgInput = Pick<DynamoWebhook, 'webhookId' | 'orgId'>;
 
 export const deleteWebhook = async (props: DeleteWebhookFromOrgInput): Promise<[null, any]> => {
   const { orgId, webhookId } = props;
-
+  const now = Time.currentISO();
   const transactParams: TransactWriteCommandInput = {
     TransactItems: [
       {
@@ -30,9 +29,10 @@ export const deleteWebhook = async (props: DeleteWebhookFromOrgInput): Promise<[
             SK: Entities.ORG,
           },
           TableName: `${process.env.NODE_ENV}-${DYNAMO_TABLE_NAME}`,
-          UpdateExpression: 'SET totalWebhooks = totalWebhooks - :value',
+          UpdateExpression: 'SET totalWebhooks = totalWebhooks - :value, updatedAt = :updatedAt',
           ExpressionAttributeValues: {
             ':value': 1,
+            ':updatedAt': now,
           },
         },
       },
