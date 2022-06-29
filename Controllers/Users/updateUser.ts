@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
 import Joi from 'joi';
 import * as CreateError from '../../utils/createError';
-import { DEFAULTS, JOI_GLOBAL_FORBIDDEN, JOI_SETTINGS } from '../../Config';
+import { DEFAULTS,  JOI_SETTINGS } from '../../Config';
 import { DynamoUser } from '../../types/dynamo';
 import { DB } from '../../models';
 
@@ -13,7 +13,6 @@ export interface APIUpdateUserOptions extends Partial<Pick<DynamoUser, 'firstNam
  *  TODO use new update pattern https://github.com/plutomi/plutomi/issues/594
  */
 export const JOI_FORBIDDEN_USER = {
-  ...JOI_GLOBAL_FORBIDDEN,
   userId: Joi.any().forbidden(),
   userRole: Joi.any().forbidden(), // TODO rbac
   orgJoinDate: Joi.any().forbidden(),

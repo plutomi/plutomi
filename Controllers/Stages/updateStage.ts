@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 import Joi from 'joi';
-import { JOI_GLOBAL_FORBIDDEN, JOI_SETTINGS, LIMITS } from '../../Config';
+import {  JOI_SETTINGS, LIMITS } from '../../Config';
 import { DynamoStage } from '../../types/dynamo';
 import * as CreateError from '../../utils/createError';
 import { DB } from '../../models';
@@ -11,7 +11,6 @@ export interface APIUpdateStageOptions
 }
 
 const JOI_FORBIDDEN_STAGE = Joi.object({
-  ...JOI_GLOBAL_FORBIDDEN,
   openingId: Joi.any().forbidden(),
   stageId: Joi.any().forbidden(),
   GSI1PK: Joi.any().forbidden(),

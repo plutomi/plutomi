@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
 import Joi from 'joi';
 import * as CreateError from '../../utils/createError';
-import { JOI_GLOBAL_FORBIDDEN, JOI_SETTINGS, LIMITS } from '../../Config';
+import { JOI_SETTINGS, LIMITS } from '../../Config';
 import { DynamoWebhook } from '../../types/dynamo';
 import { DB } from '../../models';
 
@@ -11,7 +11,6 @@ export interface APIUpdateWebhookOptions
 }
 
 const JOI_FORBIDDEN_WEBHOOK = Joi.object({
-  ...JOI_GLOBAL_FORBIDDEN,
   webhookId: Joi.any().forbidden(),
   GSI1PK: Joi.any().forbidden(),
   GSI1SK: Joi.any().forbidden(),

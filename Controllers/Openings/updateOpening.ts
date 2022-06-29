@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
 import Joi from 'joi';
 import * as CreateError from '../../utils/createError';
-import { JOI_GLOBAL_FORBIDDEN, JOI_SETTINGS, OpeningState, LIMITS } from '../../Config';
+import { JOI_SETTINGS, OpeningState, LIMITS } from '../../Config';
 import { DynamoOpening } from '../../types/dynamo';
 import { UpdateOpeningInput } from '../../models/Openings/updateOpening';
 import { DB } from '../../models';
@@ -11,24 +11,15 @@ export interface APIUpdateOpeningOptions
   [key: string]: any;
 }
 
-const JOI_FORBIDDEN_OPENING = Joi.object({
-  ...JOI_GLOBAL_FORBIDDEN,
-  openingId: Joi.any().forbidden(),
-  GSI1PK: Joi.any().forbidden(),
-  totalStages: Joi.any().forbidden(),
-  totalApplicants: Joi.any().forbidden(),
+const schema = Joi.object({
   stageOrder: Joi.array().items(Joi.string()).optional(),
   openingName: Joi.string().max(LIMITS.MAX_OPENING_NAME_LENGTH).optional(),
   GSI1SK: Joi.string().valid(OpeningState.PUBLIC, OpeningState.PRIVATE).optional(),
-});
-
-const schema = Joi.object({
-  body: JOI_FORBIDDEN_OPENING,
 }).options(JOI_SETTINGS);
 
 export const updateOpening = async (req: Request, res: Response) => {
   try {
-    await schema.validateAsync(req);
+    await schema.validateAsync(req.body);
   } catch (error) {
     const { status, body } = CreateError.JOI(error);
     return res.status(status).json(body);

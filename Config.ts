@@ -127,33 +127,9 @@ export const EMAILS = {
   TESTING4: 'testing4@plutomi.com',
 };
 
-/**
- *  TODO rework this to update on a case by case basis
- * Properties that cannot be updated no matter the entity type once created
- * This is only for UpdateItem expressions and does not apply for transactions
- * like when a user joins an org, their orgId is updated then.
- * This prevents calling PUT /users/:userId with a new orgId
- */
-
 export const JOI_SETTINGS: Joi.ValidationOptions = {
-  presence: 'required',
   abortEarly: false,
   stripUnknown: true,
-};
-
-/**
- * Global forbidden properties. Cannot be updated, regardless of entity. 
- * undefined keys are stripped
- * https://joi.dev/api/?v=15.1.1#anyforbidden
-
- */
-export const JOI_GLOBAL_FORBIDDEN = {
-  orgId: Joi.any().forbidden(),
-  PK: Joi.any().forbidden(),
-  SK: Joi.any().forbidden(),
-  ttlExpiry: Joi.any().forbidden(),
-  entityType: Joi.any().forbidden(),
-  createdAt: Joi.any().forbidden(),
 };
 
 export const AXIOS_INSTANCE = axios.create({
