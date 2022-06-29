@@ -4,29 +4,21 @@ import { UpdateCommand } from '@aws-sdk/lib-dynamodb';
 
 import { Dynamo } from '../../awsClients/ddbDocClient';
 import { DYNAMO_TABLE_NAME, Entities } from '../../Config';
+import { APIUpdateWebhookOptions } from '../../Controllers/Webhooks/updateWebhook';
 import { DynamoWebhook } from '../../types/dynamo';
+import { createDynamoUpdateExpression } from '../../utils/createDynamoUpdateExpression';
 
 export interface UpdateWebhookInput extends Pick<DynamoWebhook, 'orgId' | 'webhookId'> {
-  newValues: { [key: string]: any };
+  updatedValues: APIUpdateWebhookOptions;
 }
 
-// TODO new udpate method https://github.com/plutomi/plutomi/issues/594
 export const updateWebhook = async (props: UpdateWebhookInput): Promise<[null, any]> => {
-  const { orgId, webhookId, newValues } = props;
-  // Build update expression
-  let allUpdateExpressions: string[] = [];
-  let allAttributeValues: { [key: string]: string } = {};
+  const { orgId, webhookId, updatedValues } = props;
 
-  // eslint-disable-next-line guard-for-in
-  for (const property in newValues) {
-    // Push each property into the update expression
-    allUpdateExpressions.push(`${property} = :${property}`);
+  const { allUpdateExpressions, allAttributeValues } = createDynamoUpdateExpression({
+    updatedValues,
+  });
 
-    // Create values for each attribute
-    allAttributeValues[`:${property}`] = newValues[property];
-  }
-
-  // TODO lots of eslint disabled up above
   const params = {
     Key: {
       PK: `${Entities.ORG}#${orgId}#${Entities.WEBHOOK}#${webhookId}`,
@@ -42,6 +34,7 @@ export const updateWebhook = async (props: UpdateWebhookInput): Promise<[null, a
     await Dynamo.send(new UpdateCommand(params));
     return [null, null];
   } catch (error) {
+    console.error(error);
     return [null, error];
   }
 };
