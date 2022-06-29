@@ -2,7 +2,7 @@ import { TransactWriteCommandInput, TransactWriteCommand } from '@aws-sdk/lib-dy
 import { Dynamo } from '../../awsClients/ddbDocClient';
 import { DYNAMO_TABLE_NAME, Entities } from '../../Config';
 import { DynamoStage } from '../../types/dynamo';
-
+import * as Time from '../../utils/time';
 interface DeleteStageInput extends Pick<DynamoStage, 'orgId' | 'stageId' | 'openingId'> {
   deleteIndex: number;
 }
@@ -11,6 +11,7 @@ export const deleteStage = async (props: DeleteStageInput): Promise<[null, null]
   // TODO check if stage is empty of applicants first ---> Delete children machine should take care of this now
   // Double // TODO - webhooks should delete applicants inside?
   const { orgId, stageId, openingId, deleteIndex } = props;
+  const now = Time.currentISO();
   const transactParams: TransactWriteCommandInput = {
     TransactItems: [
       {
@@ -33,9 +34,10 @@ export const deleteStage = async (props: DeleteStageInput): Promise<[null, null]
             SK: Entities.OPENING,
           },
           TableName: `${process.env.NODE_ENV}-${DYNAMO_TABLE_NAME}`,
-          UpdateExpression: `REMOVE stageOrder[${deleteIndex}] SET totalStages = totalStages - :value`,
+          UpdateExpression: `REMOVE stageOrder[${deleteIndex}] SET totalStages = totalStages - :value, updatedAt = :updatedAt`,
           ExpressionAttributeValues: {
             ':value': 1,
+            ':updatedAt': now,
           },
         },
       },

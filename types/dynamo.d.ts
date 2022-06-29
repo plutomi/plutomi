@@ -19,6 +19,7 @@ export interface DynamoStage {
    * ISO timestamp of when the stage was created
    */
   createdAt: string;
+  updatedAt: string;
   /**
    * The org this stage belongs to
    */
