@@ -2,13 +2,14 @@ import { TransactWriteCommand, TransactWriteCommandInput } from '@aws-sdk/lib-dy
 import { Dynamo } from '../../awsClients/ddbDocClient';
 import { DYNAMO_TABLE_NAME, Entities } from '../../Config';
 import { DynamoQuestion } from '../../types/dynamo';
-
+import * as Time from '../../utils/time';
 type DeleteQuestionFromOrgInput = Pick<DynamoQuestion, 'orgId' | 'questionId'>;
 
 export const deleteQuestionFromOrg = async (
   props: DeleteQuestionFromOrgInput,
 ): Promise<[null, null] | [null, any]> => {
   const { orgId, questionId } = props;
+  const now = Time.currentISO();
 
   const transactParams: TransactWriteCommandInput = {
     TransactItems: [
@@ -31,9 +32,10 @@ export const deleteQuestionFromOrg = async (
             SK: Entities.ORG,
           },
           TableName: `${process.env.NODE_ENV}-${DYNAMO_TABLE_NAME}`,
-          UpdateExpression: 'SET totalQuestions = totalQuestions - :value',
+          UpdateExpression: 'SET totalQuestions = totalQuestions - :value, updatedAt = :updatedAt',
           ExpressionAttributeValues: {
             ':value': 1,
+            ':updatedAt': now,
           },
         },
       },

@@ -19,6 +19,7 @@ export const createQuestion = async (
     questionId,
     entityType: Entities.QUESTION,
     createdAt: now,
+    updatedAt: now,
     totalStages: 0,
     // All questions in org
     GSI1PK: `${Entities.ORG}#${orgId}#${Entities.QUESTION}S`,
@@ -43,10 +44,12 @@ export const createQuestion = async (
             SK: Entities.ORG,
           },
           TableName: `${process.env.NODE_ENV}-${DYNAMO_TABLE_NAME}`,
-          UpdateExpression: 'SET totalQuestions = if_not_exists(totalQuestions, :zero) + :value',
+          UpdateExpression:
+            'SET totalQuestions = if_not_exists(totalQuestions, :zero) + :value, updatedAt = :updatedAt',
           ExpressionAttributeValues: {
             ':zero': 0,
             ':value': 1,
+            ':updatedAt': now,
           },
         },
       },
