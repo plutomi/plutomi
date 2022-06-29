@@ -57,6 +57,7 @@ export interface DynamoQuestionStageAdjacentItem {
   SK: `${Entities.OPENING}#${string}#${Entities.STAGE}#${string}`;
   entityType: Entities.QUESTION;
   createdAt: string;
+  updatedAt: string;
   orgId: string;
   openingId: string;
   stageId: string;
@@ -76,6 +77,7 @@ export interface DynamoQuestion {
    * The custom ID of the question, where rules will be evaluated agains
    */
   questionId: string;
+  updatedAt: string;
 
   /**
    * The description of the question
