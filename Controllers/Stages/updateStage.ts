@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 import Joi from 'joi';
-import {  JOI_SETTINGS, LIMITS } from '../../Config';
+import { JOI_SETTINGS, LIMITS } from '../../Config';
 import { DynamoStage } from '../../types/dynamo';
 import * as CreateError from '../../utils/createError';
 import { DB } from '../../models';
@@ -10,23 +10,14 @@ export interface APIUpdateStageOptions
   [key: string]: any;
 }
 
-const JOI_FORBIDDEN_STAGE = Joi.object({
-  openingId: Joi.any().forbidden(),
-  stageId: Joi.any().forbidden(),
-  GSI1PK: Joi.any().forbidden(),
-  questionOrder: Joi.array().items(Joi.string()).optional(),
-  totalApplicants: Joi.any().forbidden(),
-  totalQuestions: Joi.any().forbidden(),
-  GSI1SK: Joi.string().optional().max(LIMITS.MAX_STAGE_NAME_LENGTH),
-});
-
 const schema = Joi.object({
-  body: JOI_FORBIDDEN_STAGE,
+  questionOrder: Joi.array().items(Joi.string()),
+  GSI1SK: Joi.string().max(LIMITS.MAX_STAGE_NAME_LENGTH),
 }).options(JOI_SETTINGS);
 
 export const updateStage = async (req: Request, res: Response) => {
   try {
-    await schema.validateAsync(req);
+    await schema.validateAsync(req.body);
   } catch (error) {
     const { status, body } = CreateError.JOI(error);
     return res.status(status).json(body);
