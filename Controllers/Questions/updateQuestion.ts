@@ -6,9 +6,7 @@ import { DynamoQuestion } from '../../types/dynamo';
 import { DB } from '../../models';
 
 export interface APIUpdateQuestionOptions
-  extends Partial<Pick<DynamoQuestion, 'GSI1SK' | 'description'>> {
-  [key: string]: any;
-}
+  extends Partial<Pick<DynamoQuestion, 'GSI1SK' | 'description'>> {}
 
 const schema = Joi.object({
   GSI1SK: Joi.string().max(LIMITS.MAX_QUESTION_TITLE_LENGTH),
@@ -23,13 +21,23 @@ export const updateQuestion = async (req: Request, res: Response) => {
     return res.status(status).json(body);
   }
 
+  console.log(`REQ BODY`, req.body);
+
   const { user } = req;
   const { questionId } = req.params;
+  let updatedValues: APIUpdateQuestionOptions = {};
 
+  if (req.body.GSI1SK) {
+    updatedValues.GSI1SK = req.body.GSI1SK;
+  }
+
+  if (req.body.description || req.body.description === '') {
+    updatedValues.description = req.body.description;
+  }
   const [question, questionError] = await DB.Questions.updateQuestion({
     orgId: user.orgId,
     questionId,
-    newValues: req.body,
+    updatedValues,
   });
 
   if (questionError) {
