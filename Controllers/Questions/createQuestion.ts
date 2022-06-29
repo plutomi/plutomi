@@ -13,7 +13,7 @@ const schema = Joi.object({
   body: {
     questionId: Joi.string().max(50), // TODO joi regex to match tag generator
     GSI1SK: Joi.string().max(LIMITS.MAX_QUESTION_TITLE_LENGTH),
-    description: Joi.string().allow('').max(LIMITS.MAX_QUESTION_DESCRIPTION_LENGTH).optional(),
+    description: Joi.string().allow('').max(LIMITS.MAX_QUESTION_DESCRIPTION_LENGTH),
   },
 }).options(JOI_SETTINGS);
 

@@ -3,8 +3,11 @@ import { Dynamo } from '../../awsClients/ddbDocClient';
 import { DYNAMO_TABLE_NAME, Entities } from '../../Config';
 import { DynamoOpening } from '../../types/dynamo';
 
+interface APIUpdateOpeningOptions
+  extends Partial<Pick<DynamoOpening, 'openingName' | 'GSI1SK' | 'stageOrder'>> {}
+
 export interface UpdateOpeningInput extends Pick<DynamoOpening, 'orgId' | 'openingId'> {
-  newValues: { [key: string]: any };
+  newValues: APIUpdateOpeningOptions;
 }
 
 // TODO new udpate method https://github.com/plutomi/plutomi/issues/594

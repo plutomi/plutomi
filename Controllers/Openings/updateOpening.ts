@@ -6,15 +6,10 @@ import { DynamoOpening } from '../../types/dynamo';
 import { UpdateOpeningInput } from '../../models/Openings/updateOpening';
 import { DB } from '../../models';
 
-export interface APIUpdateOpeningOptions
-  extends Partial<Pick<DynamoOpening, 'openingName' | 'GSI1SK' | 'stageOrder'>> {
-  [key: string]: any;
-}
-
 const schema = Joi.object({
-  stageOrder: Joi.array().items(Joi.string()).optional(),
-  openingName: Joi.string().max(LIMITS.MAX_OPENING_NAME_LENGTH).optional(),
-  GSI1SK: Joi.string().valid(OpeningState.PUBLIC, OpeningState.PRIVATE).optional(),
+  stageOrder: Joi.array().items(Joi.string()),
+  openingName: Joi.string().max(LIMITS.MAX_OPENING_NAME_LENGTH),
+  GSI1SK: Joi.string().valid(OpeningState.PUBLIC, OpeningState.PRIVATE),
 }).options(JOI_SETTINGS);
 
 export const updateOpening = async (req: Request, res: Response) => {
@@ -31,7 +26,7 @@ export const updateOpening = async (req: Request, res: Response) => {
   const updateOpeningInput: UpdateOpeningInput = {
     openingId,
     orgId: user.orgId,
-    newValues: req.body,
+    newValues: {},
   };
 
   const [opening, openingError] = await DB.Openings.getOpening({

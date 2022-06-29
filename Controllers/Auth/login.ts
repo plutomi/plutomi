@@ -13,7 +13,7 @@ interface APILoginQuery {
 
 const schema = Joi.object({
   query: {
-    callbackUrl: Joi.string().uri().optional(),
+    callbackUrl: Joi.string().uri(),
     token: Joi.string(),
   },
 }).options(JOI_SETTINGS);
