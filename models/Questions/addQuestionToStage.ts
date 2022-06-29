@@ -1,7 +1,7 @@
 import { TransactWriteCommandInput, TransactWriteCommand } from '@aws-sdk/lib-dynamodb';
 import { Dynamo } from '../../awsClients/ddbDocClient';
 import { DYNAMO_TABLE_NAME, Entities } from '../../Config';
-import { DynamoQuestion, DynamoQuestionStageAdjacentItem, DynamoStage } from '../../types/dynamo';
+import { DynamoQuestionStageAdjacentItem, DynamoStage } from '../../types/dynamo';
 import * as Time from '../../utils/time';
 
 interface AddQuestionToStageInput
@@ -19,7 +19,7 @@ export const addQuestionToStage = async (
   props: AddQuestionToStageInput,
 ): Promise<[null, null] | [null, any]> => {
   const { orgId, openingId, stageId, questionId, questionOrder } = props;
-
+  const now = Time.currentISO();
   /**
    * This creates an adjacent item so that when a question is deleted,
    * we have a reference to all the stages that need to be updated asynchronously.
@@ -29,7 +29,8 @@ export const addQuestionToStage = async (
     PK: `${Entities.ORG}#${orgId}#${Entities.QUESTION}#${questionId}#${Entities.STAGE}S`,
     SK: `${Entities.OPENING}#${openingId}#${Entities.STAGE}#${stageId}`,
     entityType: Entities.QUESTION,
-    createdAt: Time.currentISO(),
+    createdAt: now,
+    updatedAt: now,
     orgId,
     openingId,
     stageId,
@@ -63,10 +64,11 @@ export const addQuestionToStage = async (
           },
           TableName: `${process.env.NODE_ENV}-${DYNAMO_TABLE_NAME}`,
           UpdateExpression:
-            'SET questionOrder = :questionOrder, totalQuestions = totalQuestions + :value',
+            'SET questionOrder = :questionOrder, totalQuestions = totalQuestions + :value, updatedAt = :updatedAt',
           ExpressionAttributeValues: {
             ':questionOrder': questionOrder,
             ':value': 1,
+            ':updatedAt': now,
           },
         },
       },
@@ -78,10 +80,12 @@ export const addQuestionToStage = async (
             SK: Entities.QUESTION,
           },
           TableName: `${process.env.NODE_ENV}-${DYNAMO_TABLE_NAME}`,
-          UpdateExpression: 'SET totalStages = if_not_exists(totalStages, :zero) + :value',
+          UpdateExpression:
+            'SET totalStages = if_not_exists(totalStages, :zero) + :value, updatedAt = :updatedAt',
           ExpressionAttributeValues: {
             ':zero': 0,
             ':value': 1,
+            ':updatedAt': now,
           },
         },
       },

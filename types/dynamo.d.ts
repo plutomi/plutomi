@@ -19,6 +19,7 @@ export interface DynamoStage {
    * ISO timestamp of when the stage was created
    */
   createdAt: string;
+  updatedAt: string;
   /**
    * The org this stage belongs to
    */
@@ -57,6 +58,7 @@ export interface DynamoQuestionStageAdjacentItem {
   SK: `${Entities.OPENING}#${string}#${Entities.STAGE}#${string}`;
   entityType: Entities.QUESTION;
   createdAt: string;
+  updatedAt: string;
   orgId: string;
   openingId: string;
   stageId: string;
@@ -76,6 +78,7 @@ export interface DynamoQuestion {
    * The custom ID of the question, where rules will be evaluated agains
    */
   questionId: string;
+  updatedAt: string;
 
   /**
    * The description of the question
@@ -159,6 +162,7 @@ export interface DynamoApplicant {
    * When this applicant was created
    */
   createdAt: string;
+  updatedAt: string;
   /**
    * ID of the applicant
    */
@@ -213,6 +217,7 @@ export interface DynamoApplicantResponse {
    * The ISO timestamp of when the response was created
    */
   createdAt: string;
+  updatedAt: string;
   /**
    * The ID of the response
    */
@@ -262,6 +267,7 @@ export interface DynamoOpening {
    * ISO Timestamp of when the opening was created
    */
   createdAt: string;
+  updatedAt: string;
   /**
    * The order of the stages in this opening
    */
@@ -327,6 +333,7 @@ export interface DynamoOrgInvite {
    * ISO string timestamp of when this invite was created
    */
   createdAt: string;
+  updatedAt: string;
   /**
    * ISO string timestamp of when this invite becomes invalid
    */
@@ -353,6 +360,7 @@ export interface DynamoWebhook {
   webhookId: string;
   description?: string;
   createdAt: string;
+  updatedAt: string;
   webhookUrl: string;
   entityType: Entities.WEBHOOK;
   GSI1PK: `${Entities.ORG}#${orgId}#${Entities.WEBHOOK}S`;
@@ -375,6 +383,7 @@ export interface DynamoUser {
   userId: string;
   entityType: Entities.USER;
   createdAt: string;
+  updatedAt: string;
   orgId: DEFAULTS.NO_ORG;
   orgJoinDate: DEFAULTS.NO_ORG;
   GSI1PK: `${Entities.ORG}#${DEFAULTS.NO_ORG}#${Entities.USER}S`;
@@ -392,6 +401,7 @@ export interface DynamoLoginLink {
   SK: `${Entities.LOGIN_LINK}#${string}`;
   entityType: Entities.LOGIN_LINK;
   createdAt: string;
+  updatedAt: string;
   relativeExpiry: string;
   user: DynamoUser;
   loginLinkUrl: string;
@@ -409,6 +419,7 @@ export interface DynamoOrg {
   orgId: string; // The actual org id
   entityType: Entities.ORG;
   createdAt: string; // ISO timestamp
+  updatedAt: string;
   /**
    * userId of the user who created the org
    */
@@ -425,6 +436,7 @@ export interface DynamoUserLoginEvent {
   PK: `${Entities.USER}#${string}`;
   SK: `${Entities.LOGIN_EVENT}#${string}`;
   createdAt: string; // ISO timestamp
+  updatedAt: string;
   ttlExpiry: number; // ttl unix expiry
   entityType: Entities.LOGIN_EVENT;
   user: DynamoUser;
@@ -436,5 +448,6 @@ export interface DynamoOrgLoginEvent {
   // TODO user info here
   // TODO in the future, get more the info about the login event such as IP, headers, device, etc.
   createdAt: now;
+  updatedAt: string;
   ttlExpiry: number;
 }

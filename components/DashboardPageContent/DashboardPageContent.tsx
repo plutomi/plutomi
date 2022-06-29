@@ -9,7 +9,7 @@ import { GetSelfInfoURL, UpdateUser } from '../../adapters/Users';
 import { ClickToCopy } from '../ClickToCopy';
 import { CreateOrgModal } from '../CreateOrgModal';
 import { Loader } from '../Loader/Loader';
-import { EditUserProfileModal } from '../EditUserInfoModal';
+import { UpdateUserProfileModal } from '../UpdateUserInfoModal';
 
 export const DashboardPageContent = () => {
   const { user, isUserLoading, isUserError } = useSelf();
@@ -89,7 +89,7 @@ export const DashboardPageContent = () => {
         <ClickToCopy showText="Copy Application Link" copyText={customApplyLink} />
       </div>
       <div className="flex justify-center mx-auto">
-        <EditUserProfileModal user={user} />
+        <UpdateUserProfileModal user={user} />
         {(user?.firstName === DEFAULTS.FIRST_NAME || user?.lastName === DEFAULTS.LAST_NAME) && (
           <div>
             <h4>We don&apos;t seem to know your name!</h4>

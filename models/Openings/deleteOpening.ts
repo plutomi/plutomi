@@ -2,6 +2,7 @@ import { TransactWriteCommandInput, TransactWriteCommand } from '@aws-sdk/lib-dy
 import { Dynamo } from '../../awsClients/ddbDocClient';
 import { DYNAMO_TABLE_NAME, Entities } from '../../Config';
 import { DynamoOpening } from '../../types/dynamo';
+import * as Time from '../../utils/time';
 
 type DeleteOpeningInput = Pick<DynamoOpening, 'orgId' | 'openingId'>;
 
@@ -10,6 +11,7 @@ export const deleteOpening = async (
 ): Promise<[null, null] | [null, any]> => {
   const { orgId, openingId } = props;
 
+  const now = Time.currentISO();
   try {
     const transactParams: TransactWriteCommandInput = {
       TransactItems: [
@@ -32,9 +34,10 @@ export const deleteOpening = async (
               SK: Entities.ORG,
             },
             TableName: `${process.env.NODE_ENV}-${DYNAMO_TABLE_NAME}`,
-            UpdateExpression: 'SET totalOpenings = totalOpenings - :value',
+            UpdateExpression: 'SET totalOpenings = totalOpenings - :value, updatedAt = :updatedAt',
             ExpressionAttributeValues: {
               ':value': 1,
+              ':updatedAt': now,
             },
             ConditionExpression: 'attribute_exists(PK)',
           },

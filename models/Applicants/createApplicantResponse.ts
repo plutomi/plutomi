@@ -15,13 +15,16 @@ export const createApplicantResponse = async (
 ): Promise<[DynamoApplicantResponse, null] | [null, any]> => {
   const { orgId, applicantId, questionTitle, description, questionResponse } = props;
   const responseId = nanoid(ID_LENGTHS.APPLICANT_RESPONSE);
+
+  const now = Time.currentISO();
   const newApplicantResponse: DynamoApplicantResponse = {
     PK: `${Entities.ORG}#${orgId}#${Entities.APPLICANT}#${applicantId}`,
     SK: `${Entities.APPLICANT_RESPONSE}#${responseId}`,
     orgId,
     applicantId,
     entityType: Entities.APPLICANT_RESPONSE,
-    createdAt: Time.currentISO(),
+    createdAt: now,
+    updatedAt: now,
     responseId,
     questionTitle,
     description,

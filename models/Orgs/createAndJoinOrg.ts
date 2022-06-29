@@ -22,6 +22,7 @@ export const createAndJoinOrg = async (
     orgId,
     entityType: Entities.ORG,
     createdAt: now,
+    updatedAt: now,
     createdBy: userId,
     totalApplicants: 0,
     totalOpenings: 0,
@@ -42,11 +43,13 @@ export const createAndJoinOrg = async (
               SK: Entities.USER,
             },
             TableName: `${process.env.NODE_ENV}-${DYNAMO_TABLE_NAME}`,
-            UpdateExpression: 'SET orgId = :orgId, orgJoinDate = :orgJoinDate, GSI1PK = :GSI1PK',
+            UpdateExpression:
+              'SET orgId = :orgId, orgJoinDate = :orgJoinDate, GSI1PK = :GSI1PK, updatedAt = :updatedAt',
             ExpressionAttributeValues: {
               ':orgId': orgId,
               ':orgJoinDate': now,
               ':GSI1PK': `${Entities.ORG}#${orgId}#${Entities.USER}S`,
+              ':updatedAt': now,
             },
           },
         },

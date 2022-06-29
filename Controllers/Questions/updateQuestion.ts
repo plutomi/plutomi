@@ -1,42 +1,43 @@
 import { Request, Response } from 'express';
 import Joi from 'joi';
 import * as CreateError from '../../utils/createError';
-import { JOI_GLOBAL_FORBIDDEN, JOI_SETTINGS, LIMITS } from '../../Config';
+import { JOI_SETTINGS, LIMITS } from '../../Config';
 import { DynamoQuestion } from '../../types/dynamo';
 import { DB } from '../../models';
 
 export interface APIUpdateQuestionOptions
-  extends Partial<Pick<DynamoQuestion, 'GSI1SK' | 'description'>> {
-  [key: string]: any;
-}
-
-const JOI_FORBIDDEN_OPENING = Joi.object({
-  ...JOI_GLOBAL_FORBIDDEN,
-  questionId: Joi.any().forbidden(),
-  GSI1PK: Joi.any().forbidden(),
-  GSI1SK: Joi.string().optional().max(LIMITS.MAX_QUESTION_TITLE_LENGTH),
-  description: Joi.string().allow('').max(LIMITS.MAX_QUESTION_DESCRIPTION_LENGTH).optional(),
-});
+  extends Partial<Pick<DynamoQuestion, 'GSI1SK' | 'description'>> {}
 
 const schema = Joi.object({
-  body: JOI_FORBIDDEN_OPENING,
+  GSI1SK: Joi.string().max(LIMITS.MAX_QUESTION_TITLE_LENGTH),
+  description: Joi.string().allow('').max(LIMITS.MAX_QUESTION_DESCRIPTION_LENGTH),
 }).options(JOI_SETTINGS);
 
 export const updateQuestion = async (req: Request, res: Response) => {
   try {
-    await schema.validateAsync(req);
+    await schema.validateAsync(req.body);
   } catch (error) {
     const { status, body } = CreateError.JOI(error);
     return res.status(status).json(body);
   }
 
+  console.log(`REQ BODY`, req.body);
+
   const { user } = req;
   const { questionId } = req.params;
+  let updatedValues: APIUpdateQuestionOptions = {};
 
+  if (req.body.GSI1SK) {
+    updatedValues.GSI1SK = req.body.GSI1SK;
+  }
+
+  if (req.body.description || req.body.description === '') {
+    updatedValues.description = req.body.description;
+  }
   const [question, questionError] = await DB.Questions.updateQuestion({
     orgId: user.orgId,
     questionId,
-    newValues: req.body,
+    updatedValues,
   });
 
   if (questionError) {

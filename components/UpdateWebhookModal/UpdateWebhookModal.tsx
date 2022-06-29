@@ -8,38 +8,28 @@ import { LIMITS } from '../../Config';
 import { DynamoWebhook } from '../../types/dynamo';
 import { CustomLink } from '../CustomLink';
 
-interface UpdateWebhookModalProps {
-  webhook: DynamoWebhook;
-}
-export const UpdateWebhookModal = ({ webhook }: UpdateWebhookModalProps) => {
+export const UpdateWebhookModal = () => {
   const [webhookName, setWebhookName] = useState('');
   const [webhookUrl, setWebhookUrl] = useState('');
   const [description, setDescription] = useState('');
 
-  useEffect(() => {
-    setWebhookName(webhook?.webhookName);
-    setWebhookUrl(webhook?.webhookUrl);
-    setDescription(webhook?.description);
-  }, [webhook?.webhookName, webhook?.webhookUrl, webhook?.description]);
+  const currentWebhook = useStore((state) => state.currentWebhook);
 
-  const closeUpdateQuestionModal = useStore((state) => state.closeUpdateQuestionModal);
+  useEffect(() => {
+    setWebhookName(currentWebhook?.webhookName);
+    setWebhookUrl(currentWebhook?.webhookUrl);
+    setDescription(currentWebhook?.description);
+  }, [currentWebhook]);
 
   const visibility = useStore((state) => state.showUpdateWebhookModal);
-
   const closeUpdateWebhookModal = useStore((state) => state.closeUpdateWebhookModal);
-
-  const clearModal = () => {
-    setWebhookName('');
-    setDescription('');
-    setWebhookUrl('');
-  };
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
 
     try {
       const { data } = await UpdateWebhook({
-        webhookId: webhook?.webhookId,
+        webhookId: currentWebhook?.webhookId,
         // TODO if the values are the same, we should remove them
         newValues: {
           webhookName,
@@ -47,12 +37,12 @@ export const UpdateWebhookModal = ({ webhook }: UpdateWebhookModalProps) => {
           description,
         },
       });
+      mutate(GetWebhooksInOrgURL());
       alert(data.message);
       closeUpdateWebhookModal();
     } catch (error) {
       alert(error.response.data.message);
     }
-    mutate(GetWebhooksInOrgURL());
   };
 
   return (

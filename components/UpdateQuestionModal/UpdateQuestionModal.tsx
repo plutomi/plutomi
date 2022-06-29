@@ -2,8 +2,9 @@ import { FormEvent, Fragment, useEffect, useState } from 'react';
 import { Dialog, Transition } from '@headlessui/react';
 import { XIcon } from '@heroicons/react/outline';
 import useStore from '../../utils/store';
-import { UpdateQuestion } from '../../adapters/Questions';
+import { GetQuestionsInOrgURL, UpdateQuestion } from '../../adapters/Questions';
 import { DynamoQuestion } from '../../types/dynamo';
+import { mutate } from 'swr';
 
 const descriptionMaxLength = 300; // TODO set this serverside
 
@@ -40,6 +41,8 @@ export const UpdateQuestionModal = ({ question }: UpdateQuestionModalProps) => {
     } catch (error) {
       alert(error.response.data.message);
     }
+
+    mutate(GetQuestionsInOrgURL());
   };
 
   return (

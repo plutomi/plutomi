@@ -2,7 +2,7 @@ import { TransactWriteCommandInput, TransactWriteCommand } from '@aws-sdk/lib-dy
 import { Dynamo } from '../../awsClients/ddbDocClient';
 import { DYNAMO_TABLE_NAME, Entities } from '../../Config';
 import { DynamoStage } from '../../types/dynamo';
-
+import * as Time from '../../utils/time';
 interface DeleteQuestionFromStageInput
   extends Pick<DynamoStage, 'orgId' | 'openingId' | 'stageId'> {
   questionId: string;
@@ -21,6 +21,7 @@ export const deleteQuestionFromStage = async (
 ): Promise<[null, null] | [null, any]> => {
   const { orgId, openingId, stageId, questionId, deleteIndex, decrementStageCount } = props;
 
+  const now = Time.currentISO();
   const transactParams: TransactWriteCommandInput = {
     TransactItems: [
       {
@@ -42,9 +43,10 @@ export const deleteQuestionFromStage = async (
             SK: Entities.STAGE,
           },
           TableName: `${process.env.NODE_ENV}-${DYNAMO_TABLE_NAME}`,
-          UpdateExpression: `REMOVE questionOrder[${deleteIndex}] SET totalQuestions = totalQuestions - :value`,
+          UpdateExpression: `REMOVE questionOrder[${deleteIndex}] SET totalQuestions = totalQuestions - :value, updatedAt = :updatedAt`,
           ExpressionAttributeValues: {
             ':value': 1,
+            ':updatedAt': now,
           },
         },
       },
@@ -59,9 +61,10 @@ export const deleteQuestionFromStage = async (
           SK: Entities.QUESTION,
         },
         TableName: `${process.env.NODE_ENV}-${DYNAMO_TABLE_NAME}`,
-        UpdateExpression: 'SET totalStages = totalStages - :value',
+        UpdateExpression: 'SET totalStages = totalStages - :value, updatedAt = :updatedAt',
         ExpressionAttributeValues: {
           ':value': 1,
+          ':updatedAt': now,
         },
       },
     });

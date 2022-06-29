@@ -29,7 +29,7 @@ const schema = Joi.object({
     email: Joi.string().email(),
   },
   query: {
-    callbackUrl: Joi.string().uri().optional(),
+    callbackUrl: Joi.string().uri(),
   },
 }).options(JOI_SETTINGS);
 export const requestLoginLink = async (req: Request, res: Response) => {

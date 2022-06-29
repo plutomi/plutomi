@@ -18,11 +18,13 @@ export interface CreateStageInput extends Pick<DynamoStage, 'orgId' | 'GSI1SK' |
 export const createStage = async (props: CreateStageInput): Promise<[null, null] | [null, any]> => {
   const { orgId, GSI1SK, openingId, position, stageOrder } = props;
   const stageId = nanoid(ID_LENGTHS.STAGE);
+  const now = Time.currentISO();
   const newStage: DynamoStage = {
     PK: `${Entities.ORG}#${orgId}#${Entities.OPENING}#${openingId}#${Entities.STAGE}#${stageId}`,
     SK: Entities.STAGE,
     entityType: Entities.STAGE,
-    createdAt: Time.currentISO(),
+    createdAt: now,
+    updatedAt: now,
     stageId,
     questionOrder: [],
     orgId,
@@ -56,12 +58,13 @@ export const createStage = async (props: CreateStageInput): Promise<[null, null]
             TableName: `${process.env.NODE_ENV}-${DYNAMO_TABLE_NAME}`,
             ConditionExpression: 'totalStages < :maxChildItemLimit AND attribute_exists(PK)',
             UpdateExpression:
-              'SET totalStages = if_not_exists(totalStages, :zero) + :value, stageOrder = :stageOrder',
+              'SET totalStages = if_not_exists(totalStages, :zero) + :value, stageOrder = :stageOrder, updatedAt = :updatedAt',
             ExpressionAttributeValues: {
               ':zero': 0,
               ':value': 1,
               ':stageOrder': newStageOrder,
               ':maxChildItemLimit': LIMITS.MAX_CHILD_ITEM_LIMIT,
+              ':updatedAt': now,
             },
           },
         },

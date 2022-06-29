@@ -28,6 +28,7 @@ export const createInvite = async (
       recipient,
       entityType: Entities.ORG_INVITE,
       createdAt: now,
+      updatedAt: now,
       expiresAt,
       inviteId,
       // TODO TTL
@@ -52,10 +53,12 @@ export const createInvite = async (
               SK: Entities.USER,
             },
             TableName: `${process.env.NODE_ENV}-${DYNAMO_TABLE_NAME}`,
-            UpdateExpression: 'SET totalInvites = if_not_exists(totalInvites, :zero) + :value',
+            UpdateExpression:
+              'SET totalInvites = if_not_exists(totalInvites, :zero) + :value, updatedAt = :updatedAt',
             ExpressionAttributeValues: {
               ':zero': 0,
               ':value': 1,
+              ':updatedAt': now,
             },
             ConditionExpression: 'attribute_exists(PK)',
           },

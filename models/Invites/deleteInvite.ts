@@ -1,7 +1,7 @@
 import { TransactWriteCommandInput, TransactWriteCommand } from '@aws-sdk/lib-dynamodb';
 import { Dynamo } from '../../awsClients/ddbDocClient';
 import { DYNAMO_TABLE_NAME, Entities } from '../../Config';
-
+import * as Time from '../../utils/time';
 interface RejectOrgInviteInput {
   userId: string;
   inviteId: string;
@@ -14,6 +14,7 @@ export const deleteInvite = async (
   props: RejectOrgInviteInput,
 ): Promise<[null, null] | [null, any]> => {
   const { userId, inviteId } = props;
+  const now = Time.currentISO();
   try {
     const transactParams: TransactWriteCommandInput = {
       TransactItems: [
@@ -36,9 +37,10 @@ export const deleteInvite = async (
               SK: Entities.USER,
             },
             TableName: `${process.env.NODE_ENV}-${DYNAMO_TABLE_NAME}`,
-            UpdateExpression: 'SET totalInvites = totalInvites - :value',
+            UpdateExpression: 'SET totalInvites = totalInvites - :value, updatedAt = :updatedAt',
             ExpressionAttributeValues: {
               ':value': 1,
+              ':updatedAt': now,
             },
             ConditionExpression: 'attribute_exists(PK)',
           },

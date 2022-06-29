@@ -20,8 +20,6 @@ export const WebhookListItem = ({ webhook }: WebhookListItemProps) => {
     openUpdateWebhookModal();
   };
 
-  const [isHovering, setIsHovering] = useState(false);
-
   const handleDelete = async (webhook: DynamoWebhook) => {
     const deleteMessage = `Are you sure you want to delete this webhook?`;
 
@@ -42,12 +40,7 @@ export const WebhookListItem = ({ webhook }: WebhookListItemProps) => {
 
   // Essentially fill in all the details of the modal and then open it
   return (
-    <li
-      onMouseEnter={() => setIsHovering(true)}
-      onMouseLeave={() => setIsHovering(false)}
-      className="border rounded-lg shadow-sm px-4 py-2max-w-lg mx-auto my-2 bg-white hover:bg-sky-50 transition ease-in-out duration-300 flex justify-between"
-    >
-      <UpdateWebhookModal webhook={webhook} />
+    <li className="border rounded-lg shadow-sm px-4 py-2max-w-lg mx-auto my-2 bg-white hover:bg-sky-50 transition ease-in-out duration-300 flex justify-between">
       <div className=" py-2  h-full relative focus-within:ring-2 focus-within:ring-blue-500">
         <h3 className="text-lg font-semibold text-dark">
           <span className="absolute inset-0" aria-hidden="true" />

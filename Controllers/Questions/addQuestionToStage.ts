@@ -14,8 +14,7 @@ const schema = Joi.object({
      */
     position: Joi.number()
       .min(0)
-      .max(LIMITS.MAX_CHILD_ITEM_LIMIT - 1)
-      .optional(),
+      .max(LIMITS.MAX_CHILD_ITEM_LIMIT - 1),
   },
 }).options(JOI_SETTINGS);
 

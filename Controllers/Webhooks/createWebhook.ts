@@ -14,7 +14,7 @@ const schema = Joi.object({
   body: {
     webhookUrl: Joi.string().uri(),
     webhookName: Joi.string().max(100).min(1),
-    description: Joi.string().allow('').max(LIMITS.MAX_WEBHOOK_DESCRIPTION_LENGTH).optional(),
+    description: Joi.string().allow('').max(LIMITS.MAX_WEBHOOK_DESCRIPTION_LENGTH),
   },
 }).options(JOI_SETTINGS);
 

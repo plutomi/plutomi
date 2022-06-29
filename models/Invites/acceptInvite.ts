@@ -18,6 +18,7 @@ export const acceptInvite = async (
 ): Promise<[null, null] | [null, any]> => {
   const { userId, invite } = props;
 
+  const now = Time.currentISO();
   try {
     const transactParams: TransactWriteCommandInput = {
       TransactItems: [
@@ -42,12 +43,13 @@ export const acceptInvite = async (
             },
             TableName: `${process.env.NODE_ENV}-${DYNAMO_TABLE_NAME}`,
             UpdateExpression:
-              'SET orgId = :orgId, orgJoinDate = :orgJoinDate, GSI1PK = :GSI1PK, totalInvites = totalInvites - :value',
+              'SET orgId = :orgId, orgJoinDate = :orgJoinDate, GSI1PK = :GSI1PK, totalInvites = totalInvites - :value, updatedAt = :updatedAt',
             ExpressionAttributeValues: {
               ':orgId': invite.orgId,
               ':orgJoinDate': Time.currentISO(),
               ':GSI1PK': `${Entities.ORG}#${invite.orgId}#${Entities.USER}S`,
               ':value': 1,
+              ':updatedAt': now,
             },
             ConditionExpression: 'attribute_exists(PK)',
           },
@@ -60,9 +62,10 @@ export const acceptInvite = async (
               SK: Entities.ORG,
             },
             TableName: `${process.env.NODE_ENV}-${DYNAMO_TABLE_NAME}`,
-            UpdateExpression: 'SET totalUsers = totalUsers + :value',
+            UpdateExpression: 'SET totalUsers = totalUsers + :value, updatedAt = :updatedAt',
             ExpressionAttributeValues: {
               ':value': 1,
+              ':updatedAt': now,
             },
             ConditionExpression: 'attribute_exists(PK)',
           },

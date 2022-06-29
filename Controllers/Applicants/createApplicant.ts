@@ -1,15 +1,7 @@
 import { Request, Response } from 'express';
 import Joi from 'joi';
 import emailValidator from 'deep-email-validator';
-import {
-  DEFAULTS,
-  ERRORS,
-  JoiOrgId,
-  JOI_GLOBAL_FORBIDDEN,
-  JOI_SETTINGS,
-  LIMITS,
-  OpeningState,
-} from '../../Config';
+import { DEFAULTS, ERRORS, JoiOrgId, JOI_SETTINGS, LIMITS, OpeningState } from '../../Config';
 import * as CreateError from '../../utils/createError';
 import { DynamoApplicant } from '../../types/dynamo';
 import { DB } from '../../models';
@@ -19,7 +11,6 @@ export type APICreateApplicantOptions = Required<
 >;
 const schema = Joi.object({
   body: {
-    ...JOI_GLOBAL_FORBIDDEN,
     orgId: JoiOrgId,
     openingId: Joi.string(),
     email: Joi.string().email(),

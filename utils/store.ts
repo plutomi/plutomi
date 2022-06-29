@@ -149,9 +149,11 @@ const useStore = create((set) => ({
     set(() => ({
       showUpdateWebhookModal: true,
     })),
-  closeUpdateWebhookModal: () =>
+  closeUpdateWebhookModal: () => {
+    console.log('CLOSING update webhook modal');
     set(() => ({
       showUpdateWebhookModal: false,
-    })),
+    }));
+  },
 }));
 export default useStore;

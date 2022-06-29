@@ -8,6 +8,7 @@ import { CreateWebhookModal } from '../CreateWebhookModal';
 import { WebhookListItem } from '../WebhookListItem/WebhookListItem';
 import { EmptyWebhooksContent } from '../EmptyWebhooksContent';
 import { Loader } from '../Loader/Loader';
+import { UpdateWebhookModal } from '../UpdateWebhookModal';
 
 export const WebhooksList = () => {
   const { user, isUserLoading, isUserError } = useSelf();
@@ -40,6 +41,7 @@ export const WebhooksList = () => {
           <PlusIcon className="-ml-1 mr-2 h-5 w-5" aria-hidden="true" />
           New Webhook
         </button>
+        <UpdateWebhookModal />
       </div>
       <div>
         <ul className="divide-y divide-gray-200 mx-auto max-w-xl flex-col space-y-4   ">

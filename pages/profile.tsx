@@ -2,7 +2,7 @@ import { Login } from '../adapters/Auth';
 import { Loader } from '../components/Loader';
 import useSelf from '../SWR/useSelf';
 import * as LoginComponent from '../components/Login';
-import { EditUserProfileModal } from '../components/EditUserInfoModal';
+import { UpdateUserProfileModal } from '../components/UpdateUserInfoModal';
 import { SignedInNav } from '../components/SignedInNavbar';
 import { UserProfilePageHeader } from '../components/UserProfilePageHeader';
 
@@ -24,7 +24,7 @@ export default function Team() {
 
   return (
     <>
-      <EditUserProfileModal user={user} />
+      <UpdateUserProfileModal user={user} />
       <SignedInNav current="PLACEHOLDER" />
       <div className="max-w-7xl mx-auto p-4 my-12 rounded-lg min-h-screen ">
         <header>

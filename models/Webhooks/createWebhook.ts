@@ -19,17 +19,19 @@ export const createWebhook = async (props: CreateWebhookInput): Promise<[DynamoW
     joinString: '_',
   });
 
+  const now = Time.currentISO();
   const newWebhook: DynamoWebhook = {
     PK: `${Entities.ORG}#${orgId}#${Entities.WEBHOOK}#${webhookId}`,
     SK: Entities.WEBHOOK,
     entityType: Entities.WEBHOOK,
-    createdAt: Time.currentISO(),
+    createdAt: now,
+    updatedAt: now,
     webhookId,
     webhookName,
     orgId,
     webhookUrl,
     GSI1PK: `${Entities.ORG}#${orgId}#${Entities.WEBHOOK}S`,
-    GSI1SK: Time.currentISO(),
+    GSI1SK: now,
   };
 
   if (description) {
@@ -54,10 +56,12 @@ export const createWebhook = async (props: CreateWebhookInput): Promise<[DynamoW
             SK: Entities.ORG,
           },
           TableName: `${process.env.NODE_ENV}-${DYNAMO_TABLE_NAME}`,
-          UpdateExpression: 'SET totalWebhooks = if_not_exists(totalWebhooks, :zero) + :value',
+          UpdateExpression:
+            'SET totalWebhooks = if_not_exists(totalWebhooks, :zero) + :value, updatedAt = :updatedAt',
           ExpressionAttributeValues: {
             ':zero': 0,
             ':value': 1,
+            ':updatedAt': now,
           },
         },
       },

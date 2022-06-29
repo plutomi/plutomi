@@ -11,7 +11,7 @@ import { DB } from '../../models';
 const schema = Joi.object({
   body: {
     recipientEmail: Joi.string().email().trim(),
-    expiresInDays: Joi.number().min(1).max(365).optional(),
+    expiresInDays: Joi.number().min(1).max(365),
   },
 }).options(JOI_SETTINGS);
 
