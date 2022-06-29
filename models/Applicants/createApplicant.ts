@@ -31,6 +31,7 @@ export const createApplicant = async (
     applicantId,
     entityType: Entities.APPLICANT,
     createdAt: now,
+    updatedAt: now,
     // TODO add phone number
     openingId,
     stageId,

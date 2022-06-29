@@ -159,6 +159,7 @@ export interface DynamoApplicant {
    * When this applicant was created
    */
   createdAt: string;
+  updatedAt: string;
   /**
    * ID of the applicant
    */
