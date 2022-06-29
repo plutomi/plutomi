@@ -214,6 +214,7 @@ export interface DynamoApplicantResponse {
    * The ISO timestamp of when the response was created
    */
   createdAt: string;
+  updatedAt: string;
   /**
    * The ID of the response
    */
