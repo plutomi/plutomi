@@ -1,42 +1,22 @@
 import { Request, Response } from 'express';
 import Joi from 'joi';
 import * as CreateError from '../../utils/createError';
-import { DEFAULTS,  JOI_SETTINGS } from '../../Config';
+import { DEFAULTS, JOI_SETTINGS } from '../../Config';
 import { DynamoUser } from '../../types/dynamo';
 import { DB } from '../../models';
 
 export interface APIUpdateUserOptions extends Partial<Pick<DynamoUser, 'firstName' | 'lastName'>> {
   [key: string]: any;
 }
-/**
- * When calling PUT /users/:userId, these properties cannot be updated by the user
- *  TODO use new update pattern https://github.com/plutomi/plutomi/issues/594
- */
-export const JOI_FORBIDDEN_USER = {
-  userId: Joi.any().forbidden(),
-  userRole: Joi.any().forbidden(), // TODO rbac
-  orgJoinDate: Joi.any().forbidden(),
-  canReceiveEmails: Joi.any().forbidden(),
-  GSI1PK: Joi.any().forbidden(), // Org users
-  firstName: Joi.string().invalid(DEFAULTS.FIRST_NAME).optional(), // TODO set max length
-  lastName: Joi.string().invalid(DEFAULTS.LAST_NAME).optional(), // TODO set max length
-  unsubscribeKey: Joi.any().forbidden(),
-  GSI2PK: Joi.any().forbidden(), // Email
-  GSI2SK: Joi.any().forbidden(), // Entity type
-  totalInvites: Joi.any().forbidden(),
-  verifiedEmail: Joi.any().forbidden(), // Updated asynchronously (step functions) on 1st login
-};
 
 const schema = Joi.object({
-  params: {
-    userId: Joi.string(),
-  },
-  body: JOI_FORBIDDEN_USER,
+  firstName: Joi.string().invalid(DEFAULTS.FIRST_NAME), // TODO set max length
+  lastName: Joi.string().invalid(DEFAULTS.LAST_NAME), // TODO set max length
 }).options(JOI_SETTINGS);
 
 export const updateUser = async (req: Request, res: Response) => {
   try {
-    await schema.validateAsync(req);
+    await schema.validateAsync(req.body);
   } catch (error) {
     const { status, body } = CreateError.JOI(error);
     return res.status(status).json(body);
