@@ -6,9 +6,7 @@ import * as CreateError from '../../utils/createError';
 import { DB } from '../../models';
 
 export interface APIUpdateStageOptions
-  extends Partial<Pick<DynamoStage, 'GSI1SK' | 'questionOrder'>> {
-  [key: string]: any;
-}
+  extends Partial<Pick<DynamoStage, 'GSI1SK' | 'questionOrder'>> {}
 
 const schema = Joi.object({
   questionOrder: Joi.array().items(Joi.string()),
@@ -23,6 +21,7 @@ export const updateStage = async (req: Request, res: Response) => {
     return res.status(status).json(body);
   }
 
+  let updatedValues: APIUpdateStageOptions = {};
   const { user } = req;
   const { openingId, stageId } = req.params;
 
@@ -67,13 +66,19 @@ export const updateStage = async (req: Request, res: Response) => {
           "The questionIds in the 'questionOrder' property differ from the ones in the stage, please check your request and try again.",
       });
     }
+
+    updatedValues.questionOrder = req.body.questionOrder;
+  }
+
+  if (req.body.GSI1SK) {
+    updatedValues.GSI1SK = req.body.GSI1SK;
   }
 
   const [updatedStage, updateError] = await DB.Stages.updateStage({
     orgId: user.orgId,
     openingId,
     stageId,
-    newValues: req.body,
+    updatedValues,
   });
 
   if (updateError) {
