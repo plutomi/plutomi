@@ -329,6 +329,7 @@ export interface DynamoOrgInvite {
    * ISO string timestamp of when this invite was created
    */
   createdAt: string;
+  updatedAt: string;
   /**
    * ISO string timestamp of when this invite becomes invalid
    */
