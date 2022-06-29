@@ -10,22 +10,15 @@ export interface APIUpdateWebhookOptions
   [key: string]: any;
 }
 
-const JOI_FORBIDDEN_WEBHOOK = Joi.object({
-  webhookId: Joi.any().forbidden(),
-  GSI1PK: Joi.any().forbidden(),
-  GSI1SK: Joi.any().forbidden(),
-  url: Joi.string().uri().optional(),
-  webhookName: Joi.string().max(100).min(1).optional(),
-  description: Joi.string().allow('').max(LIMITS.MAX_WEBHOOK_DESCRIPTION_LENGTH).optional(),
-});
-
 const schema = Joi.object({
-  body: JOI_FORBIDDEN_WEBHOOK,
+  url: Joi.string().uri(),
+  webhookName: Joi.string().max(100).min(1),
+  description: Joi.string().allow('').max(LIMITS.MAX_WEBHOOK_DESCRIPTION_LENGTH),
 }).options(JOI_SETTINGS);
 
 export const updateWebhook = async (req: Request, res: Response) => {
   try {
-    await schema.validateAsync(req);
+    await schema.validateAsync(req.body);
   } catch (error) {
     const { status, body } = CreateError.JOI(error);
     return res.status(status).json(body);
