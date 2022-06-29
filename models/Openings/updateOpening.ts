@@ -3,6 +3,7 @@ import { Dynamo } from '../../awsClients/ddbDocClient';
 import { DYNAMO_TABLE_NAME, Entities } from '../../Config';
 import { APIUpdateOpeningOptions } from '../../Controllers/Openings/updateOpening';
 import { DynamoOpening } from '../../types/dynamo';
+import { createDynamoUpdateExpression } from '../../utils/createDynamoUpdateExpression';
 
 export interface UpdateOpeningInput extends Pick<DynamoOpening, 'orgId' | 'openingId'> {
   updatedValues: APIUpdateOpeningOptions;
@@ -11,20 +12,11 @@ export interface UpdateOpeningInput extends Pick<DynamoOpening, 'orgId' | 'openi
 export const updateOpening = async (
   props: UpdateOpeningInput,
 ): Promise<[null, null] | [null, any]> => {
-  const { orgId, openingId } = props;
+  const { orgId, openingId, updatedValues } = props;
 
-  // TODO convert this to a function
-  // Build update expression
-  const allUpdateExpressions: string[] = [];
-  const allAttributeValues: { [key: string]: string } = {};
-
-  for (const property of Object.keys(props.updatedValues)) {
-    // Push each property into the update expression
-    allUpdateExpressions.push(`${property} = :${property}`);
-
-    // Create values for each attribute
-    allAttributeValues[`:${property}`] = props.updatedValues[property];
-  }
+  const { allUpdateExpressions, allAttributeValues } = createDynamoUpdateExpression({
+    updatedValues,
+  });
 
   const params: UpdateCommandInput = {
     Key: {
