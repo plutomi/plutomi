@@ -1,5 +1,4 @@
 import { UpdateCommand } from '@aws-sdk/lib-dynamodb';
-
 import { Dynamo } from '../../awsClients/ddbDocClient';
 import { DYNAMO_TABLE_NAME, Entities } from '../../Config';
 import { APIUpdateStageOptions } from '../../Controllers/Stages/updateStage';
@@ -10,14 +9,13 @@ export interface UpdateStageInput extends Pick<DynamoStage, 'orgId' | 'stageId' 
   updatedValues: APIUpdateStageOptions;
 }
 
-// TODO new update method https://github.com/plutomi/plutomi/issues/594
 export const updateStage = async (props: UpdateStageInput): Promise<[null, null] | [null, any]> => {
   const { orgId, stageId, updatedValues, openingId } = props;
 
   const { allUpdateExpressions, allAttributeValues } = createDynamoUpdateExpression({
     updatedValues,
   });
-  
+
   const params = {
     Key: {
       PK: `${Entities.ORG}#${orgId}#${Entities.OPENING}#${openingId}#${Entities.STAGE}#${stageId}`,

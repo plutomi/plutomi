@@ -5,9 +5,7 @@ import { DEFAULTS, JOI_SETTINGS } from '../../Config';
 import { DynamoUser } from '../../types/dynamo';
 import { DB } from '../../models';
 
-export interface APIUpdateUserOptions extends Partial<Pick<DynamoUser, 'firstName' | 'lastName'>> {
-  [key: string]: any;
-}
+export interface APIUpdateUserOptions extends Partial<Pick<DynamoUser, 'firstName' | 'lastName'>> {}
 
 const schema = Joi.object({
   firstName: Joi.string().invalid(DEFAULTS.FIRST_NAME), // TODO set max length
@@ -22,6 +20,7 @@ export const updateUser = async (req: Request, res: Response) => {
     return res.status(status).json(body);
   }
 
+  let updatedValues: APIUpdateUserOptions = {};
   const { user } = req;
 
   // TODO RBAC will go here, right now you can only update yourself
@@ -29,9 +28,17 @@ export const updateUser = async (req: Request, res: Response) => {
     return res.status(403).json({ message: 'You cannot update this user' });
   }
 
+  if (req.body.firstName) {
+    updatedValues.firstName = req.body.firstName;
+  }
+
+  if (req.body.lastName) {
+    updatedValues = req.body.lastName;
+  }
+
   const [updatedUser, error] = await DB.Users.updateUser({
     userId: user.userId,
-    newValues: req.body,
+    updatedValues,
   });
 
   if (error) {
