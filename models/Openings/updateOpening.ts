@@ -4,7 +4,6 @@ import { DYNAMO_TABLE_NAME, Entities } from '../../Config';
 import { APIUpdateOpeningOptions } from '../../Controllers/Openings/updateOpening';
 import { DynamoOpening } from '../../types/dynamo';
 import { createDynamoUpdateExpression } from '../../utils/createDynamoUpdateExpression';
-
 export interface UpdateOpeningInput extends Pick<DynamoOpening, 'orgId' | 'openingId'> {
   updatedValues: APIUpdateOpeningOptions;
 }
@@ -13,7 +12,6 @@ export const updateOpening = async (
   props: UpdateOpeningInput,
 ): Promise<[null, null] | [null, any]> => {
   const { orgId, openingId, updatedValues } = props;
-
   const { allUpdateExpressions, allAttributeValues } = createDynamoUpdateExpression({
     updatedValues,
   });

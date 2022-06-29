@@ -413,6 +413,7 @@ export interface DynamoOrg {
   orgId: string; // The actual org id
   entityType: Entities.ORG;
   createdAt: string; // ISO timestamp
+  updatedAt: string;
   /**
    * userId of the user who created the org
    */

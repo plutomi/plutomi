@@ -1,7 +1,7 @@
 import { TransactWriteCommandInput, TransactWriteCommand } from '@aws-sdk/lib-dynamodb';
 import { Dynamo } from '../../awsClients/ddbDocClient';
 import { Entities, DEFAULTS, DYNAMO_TABLE_NAME } from '../../Config';
-
+import * as Time from '../../utils/time';
 interface LeaveAndDeleteOrgInput {
   orgId: string;
   userId: string;
@@ -12,6 +12,7 @@ export const leaveAndDeleteOrg = async (
 ): Promise<[null, null] | [null, any]> => {
   const { orgId, userId } = props;
 
+  const now = Time.currentISO();
   try {
     const transactParams: TransactWriteCommandInput = {
       TransactItems: [
@@ -23,11 +24,13 @@ export const leaveAndDeleteOrg = async (
               SK: Entities.USER,
             },
             TableName: `${process.env.NODE_ENV}-${DYNAMO_TABLE_NAME}`,
-            UpdateExpression: 'SET orgId = :orgId, orgJoinDate = :orgJoinDate, GSI1PK = :GSI1PK',
+            UpdateExpression:
+              'SET orgId = :orgId, orgJoinDate = :orgJoinDate, GSI1PK = :GSI1PK, updatedAt = :updatedAt',
             ExpressionAttributeValues: {
               ':orgId': DEFAULTS.NO_ORG,
               ':orgJoinDate': DEFAULTS.NO_ORG,
               ':GSI1PK': DEFAULTS.NO_ORG,
+              ':updatedAt': now,
             },
             ConditionExpression: 'attribute_exists(PK)',
           },
