@@ -6,10 +6,10 @@ import useStore from '../../utils/store';
 import { GetSelfInfoURL, GetUserInfoUrl, UpdateUser } from '../../adapters/Users';
 import { DynamoUser } from '../../types/dynamo';
 
-interface EditUserProfileModalProps {
+interface UpdateUserProfileModalProps {
   user: DynamoUser;
 }
-export const EditUserProfileModal = ({ user }: EditUserProfileModalProps) => {
+export const UpdateUserProfileModal = ({ user }: UpdateUserProfileModalProps) => {
   const [firstName, setFirstName] = useState(user?.firstName);
   const [lastName, setLastName] = useState(user?.lastName);
 
