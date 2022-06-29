@@ -12,11 +12,14 @@ export const createOpening = async (
 ): Promise<[DynamoOpening, null] | [null, any]> => {
   const { orgId, openingName } = props;
   const openingId = nanoid(ID_LENGTHS.OPENING);
+
+  const now = Time.currentISO();
   const newOpening: DynamoOpening = {
     PK: `${Entities.ORG}#${orgId}#${Entities.OPENING}#${openingId}`,
     SK: Entities.OPENING,
     entityType: Entities.OPENING,
-    createdAt: Time.currentISO(),
+    createdAt: now,
+    updatedAt: now,
     orgId,
     openingId,
     openingName,
@@ -45,10 +48,12 @@ export const createOpening = async (
             SK: Entities.ORG,
           },
           TableName: `${process.env.NODE_ENV}-${DYNAMO_TABLE_NAME}`,
-          UpdateExpression: 'SET totalOpenings = if_not_exists(totalOpenings, :zero) + :value',
+          UpdateExpression:
+            'SET totalOpenings = if_not_exists(totalOpenings, :zero) + :value, updatedAt = :updatedAt',
           ExpressionAttributeValues: {
             ':zero': 0,
             ':value': 1,
+            ':updatedAt': now,
           },
         },
       },

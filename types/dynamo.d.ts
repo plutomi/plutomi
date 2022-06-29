@@ -264,6 +264,7 @@ export interface DynamoOpening {
    * ISO Timestamp of when the opening was created
    */
   createdAt: string;
+  updatedAt: string;
   /**
    * The order of the stages in this opening
    */
