@@ -37,12 +37,12 @@ export const UpdateWebhookModal = () => {
           description,
         },
       });
+      mutate(GetWebhooksInOrgURL());
       alert(data.message);
       closeUpdateWebhookModal();
     } catch (error) {
       alert(error.response.data.message);
     }
-    mutate(GetWebhooksInOrgURL());
   };
 
   return (
