@@ -64,7 +64,7 @@ export const requestLoginLink = async (req: Request, res: Response) => {
   }
 
   if (!user) {
-    const [createdUser, createUserError] = await DB.Users.getUserByEmail({
+    const [createdUser, createUserError] = await DB.Users.createUser({
       email,
     });
     if (createUserError) {
