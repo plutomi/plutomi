@@ -37,6 +37,7 @@ export const createStage = async (req: Request, res: Response) => {
 
   const { GSI1SK, openingId, position } = req.body;
 
+  console.log(`CREATING STAGE BODY`, req.body);
   const [opening, openingError] = await DB.Openings.getOpening({
     openingId,
     orgId: user.orgId,
@@ -44,7 +45,6 @@ export const createStage = async (req: Request, res: Response) => {
 
   if (openingError) {
     const { status, body } = CreateError.SDK(openingError, 'Unable to retrieve opening info');
-
     return res.status(status).json(body);
   }
 
