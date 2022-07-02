@@ -135,7 +135,7 @@ export default class CommsMachineStack extends cdk.Stack {
             Html: {
               // TODO add unsubscribe
               'Data.$': `States.Format('<h1><a href="${WEBSITE_URL}/{}/applicants/{}" rel=noreferrer target="_blank" >Click this link to view your application!</a></h1><p>If you did not request this link, you can safely ignore it.</p>', 
-                $.detail.NewImage.orgId, $.detail.NewImage.applicantId)`,
+                $.orgId, $.detail.NewImage.applicantId)`,
             },
           },
         },
@@ -169,7 +169,7 @@ export default class CommsMachineStack extends cdk.Stack {
 
     const definition = new sfn.Choice(this, 'EventType?')
       .when(
-        sfn.Condition.stringEquals('$.detail.NewImage.entityType', Entities.LOGIN_EVENT),
+        sfn.Condition.stringEquals('$.entityType', Entities.LOGIN_EVENT),
         new sfn.Choice(this, 'IsNewUser?').when(
           sfn.Condition.booleanEquals('$.detail.NewImage.user.verifiedEmail', false),
           setEmailToVerified.next(
@@ -178,18 +178,12 @@ export default class CommsMachineStack extends cdk.Stack {
         ),
       )
       .when(
-        sfn.Condition.stringEquals('$.detail.NewImage.entityType', Entities.LOGIN_LINK),
+        sfn.Condition.stringEquals('$.entityType', Entities.LOGIN_LINK),
 
         sendLoginLink,
       )
-      .when(
-        sfn.Condition.stringEquals('$.detail.NewImage.entityType', Entities.APPLICANT),
-        sendApplicationLink,
-      )
-      .when(
-        sfn.Condition.stringEquals('$.detail.NewImage.entityType', Entities.ORG_INVITE),
-        sendOrgInvite,
-      );
+      .when(sfn.Condition.stringEquals('$.entityType', Entities.APPLICANT), sendApplicationLink)
+      .when(sfn.Condition.stringEquals('$.entityType', Entities.ORG_INVITE), sendOrgInvite);
     const log = new LogGroup(this, `${process.env.NODE_ENV}-CommsMachineLogGroup`);
 
     this.CommsMachine = new sfn.StateMachine(this, 'CommsMachine', {

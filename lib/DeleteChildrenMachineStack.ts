@@ -47,10 +47,7 @@ export default class DeleteChildrenMachineStack extends cdk.Stack {
      * When an OPENING is deleted,
      * delete all stages for it
      */
-    const OPENING_DELETED = sfn.Condition.stringEquals(
-      '$.detail.OldImage.entityType',
-      Entities.OPENING,
-    );
+    const OPENING_DELETED = sfn.Condition.stringEquals('$.entityType', Entities.OPENING);
     const OPENING_HAS_STAGES = sfn.Condition.numberGreaterThan('$.detail.OldImage.totalStages', 0);
 
     const GET_STAGES_IN_OPENING = new tasks.CallAwsService(this, 'GetStagesInOpening', {
@@ -61,7 +58,7 @@ export default class DeleteChildrenMachineStack extends cdk.Stack {
         KeyConditionExpression: 'GSI1PK = :GSI1PK',
         ExpressionAttributeValues: {
           ':GSI1PK': {
-            'S.$': `States.Format('${Entities.ORG}#{}#${Entities.OPENING}#{}#${Entities.STAGE}S', $.detail.OldImage.orgId, $.detail.OldImage.openingId)`,
+            'S.$': `States.Format('${Entities.ORG}#{}#${Entities.OPENING}#{}#${Entities.STAGE}S', $.orgId, $.detail.OldImage.openingId)`,
           },
         },
       },
@@ -95,7 +92,7 @@ export default class DeleteChildrenMachineStack extends cdk.Stack {
      *  Delete all questions inside the org
      *
      */
-    const ORG_DELETED = sfn.Condition.stringEquals('$.detail.OldImage.entityType', Entities.ORG);
+    const ORG_DELETED = sfn.Condition.stringEquals('$.entityType', Entities.ORG);
 
     const ORG_HAS_OPENINGS = sfn.Condition.numberGreaterThan('$.detail.OldImage.totalOpenings', 0);
 
@@ -107,7 +104,7 @@ export default class DeleteChildrenMachineStack extends cdk.Stack {
         KeyConditionExpression: 'GSI1PK = :GSI1PK',
         ExpressionAttributeValues: {
           ':GSI1PK': {
-            'S.$': `States.Format('${Entities.ORG}#{}#${Entities.OPENING}S', $.detail.OldImage.orgId)`,
+            'S.$': `States.Format('${Entities.ORG}#{}#${Entities.OPENING}S', $.orgId)`,
           },
         },
       },
@@ -151,7 +148,7 @@ export default class DeleteChildrenMachineStack extends cdk.Stack {
         KeyConditionExpression: 'GSI1PK = :GSI1PK',
         ExpressionAttributeValues: {
           ':GSI1PK': {
-            'S.$': `States.Format('${Entities.ORG}#{}#${Entities.QUESTION}S', $.detail.OldImage.orgId)`,
+            'S.$': `States.Format('${Entities.ORG}#{}#${Entities.QUESTION}S', $.orgId)`,
           },
         },
       },
@@ -168,7 +165,7 @@ export default class DeleteChildrenMachineStack extends cdk.Stack {
         KeyConditionExpression: 'GSI1PK = :GSI1PK',
         ExpressionAttributeValues: {
           ':GSI1PK': {
-            'S.$': `States.Format('${Entities.ORG}#{}#${Entities.WEBHOOK}S', $.detail.OldImage.orgId)`,
+            'S.$': `States.Format('${Entities.ORG}#{}#${Entities.WEBHOOK}S', $.orgId)`,
           },
         },
       },
@@ -235,7 +232,7 @@ export default class DeleteChildrenMachineStack extends cdk.Stack {
           KeyConditionExpression: 'PK = :PK',
           ExpressionAttributeValues: {
             ':PK': {
-              'S.$': `States.Format('${Entities.ORG}#{}#${Entities.QUESTION}#{}#${Entities.STAGE}S', $.detail.OldImage.orgId, $.detail.OldImage.questionId)`,
+              'S.$': `States.Format('${Entities.ORG}#{}#${Entities.QUESTION}#{}#${Entities.STAGE}S', $.orgId, $.detail.OldImage.questionId)`,
             },
           },
         },
@@ -331,10 +328,7 @@ export default class DeleteChildrenMachineStack extends cdk.Stack {
     );
 
     // Delete questions and the adjacent item TODO
-    const STAGE_DELETED = sfn.Condition.stringEquals(
-      '$.detail.OldImage.entityType',
-      Entities.STAGE,
-    );
+    const STAGE_DELETED = sfn.Condition.stringEquals('$.entityType', Entities.STAGE);
 
     const DynamoDeleteQuestionPolicy = new iam.PolicyStatement({
       actions: ['dynamodb:DeleteItem', 'dynamodb:UpdateItem'],
