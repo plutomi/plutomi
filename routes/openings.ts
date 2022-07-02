@@ -13,7 +13,7 @@ openings.get('', API.Openings.getOpeningsInOrg);
 openings.get('/:openingId', API.Openings.getOpening);
 openings.delete('/:openingId', API.Openings.deleteOpening);
 openings.put('/:openingId', API.Openings.updateOpening);
-openings.delete('/:openingId/stages/:stageId', API.Stages.getStage);
+openings.delete('/:openingId/stages/:stageId', API.Stages.deleteStage);
 openings.post(
   '/:openingId/stages/:stageId/questions',
 
