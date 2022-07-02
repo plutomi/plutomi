@@ -30,7 +30,7 @@ export const login = async (req: Request, res: Response) => {
   let loginLinkId: string;
 
   try {
-    const data = await jwt.verify(token, 'secret');
+    const data = await jwt.verify(token, process.env.LOGIN_LINKS_PASSWORD);
 
     userId = data.userId;
     loginLinkId = data.loginLinkId;

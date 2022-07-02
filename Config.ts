@@ -108,11 +108,6 @@ export enum DynamoStreamTypes { // TODO possible default type in Dynamo?
   REMOVE = 'REMOVE',
 }
 
-export const LOGIN_LINK_SETTINGS = {
-  password: process.env.LOGIN_LINKS_PASSWORD,
-  ttl: 900, // In seconds, how long should login links be valid for
-};
-
 export const EMAILS = {
   SUPPORT: 'support@plutomi.com',
   GENERAL: 'contact@plutomi.com',

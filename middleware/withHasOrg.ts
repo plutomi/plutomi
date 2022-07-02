@@ -7,7 +7,6 @@ export default async function withHasOrg(req: Request, res: Response, next: Next
   const { user } = req;
 
   if (user.orgId === DEFAULTS.NO_ORG || user.orgId === TagGenerator({ value: DEFAULTS.NO_ORG })) {
-    console.log('User is not in an org', user);
     return res.status(403).json({
       message: ERRORS.NEEDS_ORG,
     });

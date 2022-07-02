@@ -118,7 +118,7 @@ export const requestLoginLink = async (req: Request, res: Response) => {
       userId: user.userId,
       loginLinkId,
     },
-    'secret',
+    process.env.LOGIN_LINKS_PASSWORD,
     { expiresIn: 900 }, // 15 min
   );
 
