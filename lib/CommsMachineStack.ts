@@ -22,7 +22,7 @@ export default class CommsMachineStack extends cdk.Stack {
 
     const setEmailToVerified = new tasks.DynamoUpdateItem(this, 'UpdateVerifiedEmailStatus', {
       key: {
-        PK: tasks.DynamoAttributeValue.fromString(sfn.JsonPath.stringAt('$.detail.NewImage.PK')),
+        PK: tasks.DynamoAttributeValue.fromString(sfn.JsonPath.stringAt('$.PK')),
         SK: tasks.DynamoAttributeValue.fromString(Entities.USER),
       },
       table: props.table,
