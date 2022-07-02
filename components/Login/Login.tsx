@@ -31,6 +31,7 @@ export const Login = ({ loggedOutPageText }: LoginPageProps) => {
       setSubmittedText(data.message);
       setEmailSubmitted(true);
     } catch (error) {
+      setButtonText('Login');
       alert(error.response.data.message);
     }
   };

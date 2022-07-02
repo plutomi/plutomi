@@ -33,7 +33,7 @@ export const LoginHomepage = ({ callbackUrl }: LoginHomepageProps) => {
       setSubmittedText(data.message);
       setEmailSubmitted(true);
     } catch (error) {
-      console.log(error);
+      setButtonText('Login');
       alert(error.response.data.message);
     }
   };
