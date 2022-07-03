@@ -6,10 +6,6 @@ import { DynamoStreamTypes, Entities } from '../Config';
 
 enum Rules {
   /**
-   * Any events that require extra communication to be sent such as an email
-   */
-  NeedsComms = 'NeedsCommsRule',
-  /**
    * Any entity that might have children that need to be deleted when the top level entity is deleted.
    * For example: An org being deleted requires that all openings be deleted. When an opening is deleted,
    * we need to delete all stages in the opening.

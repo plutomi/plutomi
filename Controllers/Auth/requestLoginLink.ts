@@ -80,7 +80,6 @@ export const requestLoginLink = async (req: Request, res: Response) => {
     user = createdUser;
   }
 
-  // TODO move this to comms machine? This would be for login links and its pretty crucial to know if I unsubscribed
   // TODO add a test for this @jest
   if (!user.canReceiveEmails) {
     return res.status(403).json({
