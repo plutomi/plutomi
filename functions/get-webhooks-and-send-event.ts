@@ -1,12 +1,9 @@
 import { EventBridgeEvent } from 'aws-lambda';
 import axios from 'axios';
-import { DynamoApplicant } from '../types/dynamo';
 import { DB } from '../models';
-import { BaseEvent, ExtendedEventKeys } from './stream-processor';
+import { CustomEventBridgeEvent } from './stream-processor';
 
-interface ApplicantWebhookEvent extends BaseEvent, Pick<DynamoApplicant, ExtendedEventKeys> {}
-
-export async function main(event: EventBridgeEvent<'stream', ApplicantWebhookEvent>) {
+export async function main(event: EventBridgeEvent<'stream', CustomEventBridgeEvent>) {
   const [webhooks, error] = await DB.Webhooks.getWebhooksInOrg({
     orgId: event.detail.orgId,
   });
