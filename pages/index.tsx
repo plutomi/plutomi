@@ -130,8 +130,13 @@ export async function getStaticProps() {
   );
 
   // Sort by commit timestamp
-  const commits = _.orderBy(allCommits, (commit) => commit.date, ['desc']);
+  const orderedCommits = _.orderBy(allCommits, (commit) => commit.date, ['desc']);
 
+  // Remove duplicates
+  const commits = orderedCommits.filter(
+    (value, index, self) =>
+      index === self.findIndex((t) => t.url === value.url && t.date === value.date),
+  );
   return {
     props: {
       commits,
