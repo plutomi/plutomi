@@ -7,3 +7,4 @@
 // if (
 //     event.detail.NewImage.entityType === Entities.USER_LOGIN_EVENT &&
 //     event.detail.NewImage.user.verifiedEmail
+export {};

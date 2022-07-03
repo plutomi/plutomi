@@ -2,9 +2,8 @@ import { SES } from '../../awsClients/sesClient';
 import { SendEmailCommand } from '@aws-sdk/client-ses';
 import { Emails } from '../../Config';
 
-export type emailFormat = `${string}@${string}.${string}`;
 export interface SendEmailProps {
-  to: emailFormat;
+  to: string;
   /**
    * Plutomi <admin@plutomi.com>
    * Header: Plutomi
@@ -17,6 +16,8 @@ export interface SendEmailProps {
   subject: string;
   body: string;
 }
+
+// TODO throw error if email format is wrong
 export const sendEmail = async ({ to, from, subject, body }: SendEmailProps) => {
   await SES.send(
     new SendEmailCommand({

@@ -6,7 +6,6 @@ import { FailureException } from '@aws-sdk/client-dynamodb';
 import { ID_LENGTHS, Entities, OpeningState, DYNAMO_TABLE_NAME } from '../../Config';
 import { DynamoApplicant } from '../../types/dynamo';
 import * as Time from '../../utils/time';
-import { emailFormat } from '../Emails/sendEmail';
 
 export type CreateApplicantInput = Pick<
   DynamoApplicant,
@@ -26,7 +25,7 @@ export const createApplicant = async (
     SK: Entities.APPLICANT,
     firstName,
     lastName,
-    email: email.toLowerCase().trim() as emailFormat,
+    email: email.toLowerCase().trim(),
     isEmailVerified: false,
     orgId,
     applicantId,
