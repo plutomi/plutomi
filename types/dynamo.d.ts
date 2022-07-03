@@ -438,6 +438,7 @@ export interface DynamoUserLoginEvent {
   SK: `${Entities.USER_LOGIN_EVENT}#${string}`;
   createdAt: string; // ISO timestamp
   updatedAt: string;
+  orgId: string;
   ttlExpiry: number; // ttl unix expiry
   entityType: Entities.USER_LOGIN_EVENT;
   user: DynamoUser;
@@ -449,6 +450,7 @@ export interface DynamoOrgLoginEvent {
   // TODO user info here
   // TODO in the future, get more the info about the login event such as IP, headers, device, etc.
   createdAt: now;
+  orgId: string;
   updatedAt: string;
   ttlExpiry: number;
   entityType: Entities.ORG_LOGIN_EVENT;

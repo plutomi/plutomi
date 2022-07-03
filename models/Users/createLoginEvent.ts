@@ -23,6 +23,7 @@ export const createLoginEvent = async (
     SK: `${Entities.USER_LOGIN_EVENT}#${now}`,
     user,
     entityType: Entities.USER_LOGIN_EVENT,
+    orgId: user.orgId,
     // TODO in the future, get more the info about the login event such as IP, headers, device, etc.
     createdAt: now,
     updatedAt: now,
@@ -33,6 +34,7 @@ export const createLoginEvent = async (
     PK: `${Entities.ORG}#${user.orgId}`,
     SK: `${Entities.ORG_LOGIN_EVENT}#${now}`,
     entityType: Entities.ORG_LOGIN_EVENT,
+    orgId: user.orgId,
     // TODO user info here
     // TODO in the future, get more the info about the login event such as IP, headers, device, etc.
     createdAt: now,
