@@ -1,6 +1,7 @@
 // This file is for the actual DynamoDB entries and their Types - ie: A full object with all properties.
 // All  other types are derivatives with Pick, Omit, etc.
 import { DEFAULTS, Entities, OpeningState } from '../Config';
+import { emailFormat } from '../models/Emails/sendEmail';
 
 export interface DynamoStage {
   /**
@@ -153,7 +154,7 @@ export interface DynamoApplicant {
   /**
    * The applicant's email address
    */
-  email: string;
+  email: emailFormat;
   /**
    * The entity type of the applicant
    */
@@ -378,7 +379,7 @@ export interface DynamoUser {
    * @default DEFAULTS.LAST_NAME
    */
   lastName: string | DEFAULTS.LAST_NAME;
-  email: string;
+  email: emailFormat;
   userId: string;
   entityType: Entities.USER;
   createdAt: string;

@@ -109,19 +109,19 @@ export enum DynamoStreamTypes { // TODO possible default type in Dynamo?
   REMOVE = 'REMOVE',
 }
 
-export const EMAILS = {
-  SUPPORT: 'support@plutomi.com',
-  GENERAL: 'contact@plutomi.com',
-  INVEST: 'ir@plutomi.com',
-  ADMIN: 'admin@plutomi.com',
-  LOGIN: 'login@plutomi.com', // Login links
-  JOIN: 'join@plutomi.com', // Org invites
+export enum Emails {
+  SUPPORT = 'support@plutomi.com',
+  GENERAL = 'contact@plutomi.com',
+  INVEST = 'ir@plutomi.com',
+  ADMIN = 'admin@plutomi.com',
+  LOGIN = 'login@plutomi.com', // Login links
+  JOIN = 'join@plutomi.com', // Org invites
   // Jest test accounts
-  TESTING: 'testing@plutomi.com',
-  TESTING2: 'testing2@plutomi.com',
-  TESTING3: 'testing3@plutomi.com',
-  TESTING4: 'testing4@plutomi.com',
-};
+  TESTING = 'testing@plutomi.com',
+  TESTING2 = 'testing2@plutomi.com',
+  TESTING3 = 'testing3@plutomi.com',
+  TESTING4 = 'testing4@plutomi.com',
+}
 
 export const JOI_SETTINGS: Joi.ValidationOptions = {
   abortEarly: false,
