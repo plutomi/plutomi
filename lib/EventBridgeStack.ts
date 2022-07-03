@@ -29,7 +29,6 @@ enum Source {
 }
 
 interface EventBridgeStackProps extends cdk.StackProps {
-  CommsMachine: StateMachine;
   DeleteChildrenMachine: StateMachine;
   WebhooksMachine: StateMachine;
 }

@@ -27,7 +27,10 @@ export const createLoginEvent = async (
     // TODO in the future, get more the info about the login event such as IP, headers, device, etc.
     createdAt: now,
     updatedAt: now,
-    ttlExpiry: Time.futureUNIX(RetentionDays.ONE_WEEK, TIME_UNITS.DAYS),
+    ttlExpiry: Time.futureUNIX({
+      amount: RetentionDays.ONE_WEEK,
+      unit: TIME_UNITS.DAYS,
+    }),
   };
 
   const newOrgLoginEvent: DynamoOrgLoginEvent = {
@@ -39,7 +42,10 @@ export const createLoginEvent = async (
     // TODO in the future, get more the info about the login event such as IP, headers, device, etc.
     createdAt: now,
     updatedAt: now,
-    ttlExpiry: Time.futureUNIX(RetentionDays.ONE_WEEK, TIME_UNITS.DAYS),
+    ttlExpiry: Time.futureUNIX({
+      amount: RetentionDays.ONE_WEEK,
+      unit: TIME_UNITS.DAYS,
+    }),
   };
 
   try {

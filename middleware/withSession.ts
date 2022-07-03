@@ -24,7 +24,6 @@ export default async function withSession(req: Request, res: Response, next: Nex
   }
 
   if (!user) {
-    console.log('User deleted');
     res.cookie(COOKIE_NAME, '', {
       ...COOKIE_SETTINGS,
       maxAge: -1,

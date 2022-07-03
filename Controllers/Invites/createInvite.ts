@@ -122,7 +122,10 @@ export const createInvite = async (req: Request, res: Response) => {
   const [inviteCreated, inviteError] = await DB.Invites.createInvite({
     recipient: pick(recipient, ['userId', 'email', 'firstName', 'lastName', 'unsubscribeKey']),
     orgName: org.displayName,
-    expiresAt: Time.futureISO(expiresInDays || ORG_INVITE_EXPIRY_DAYS, TIME_UNITS.DAYS),
+    expiresAt: Time.futureISO({
+      amount: expiresInDays || ORG_INVITE_EXPIRY_DAYS,
+      unit: TIME_UNITS.DAYS,
+    }),
     createdBy: pick(user, ['userId', 'firstName', 'lastName', 'orgId', 'email']),
   });
 

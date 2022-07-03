@@ -32,7 +32,7 @@ export const relative = (date: string | number | Date): string => {
   }
 };
 
-interface ChangingTimeProps {
+export interface ChangingTimeProps {
   amount: number;
   unit: TIME_UNITS;
 }

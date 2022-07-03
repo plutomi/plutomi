@@ -5,7 +5,6 @@ import * as dotenv from 'dotenv';
 import AppStack from '../lib/AppStack';
 import DynamoDBStack from '../lib/DynamoDBStack';
 import EventBridgeStack from '../lib/EventBridgeStack';
-import CommsMachineStack from '../lib/CommsMachineStack';
 import StreamProcessorStack from '../lib/StreamProcessorStack';
 import DeleteChildrenMachineStack from '../lib/DeleteChildrenMachineStack';
 import WebhooksMachineStack from '../lib/WebhooksMachineStack';
@@ -29,10 +28,6 @@ new AppStack(app, `${process.env.NODE_ENV}-AppStack`, {
   table,
 });
 
-const { CommsMachine } = new CommsMachineStack(app, `${process.env.NODE_ENV}-CommsMachineStack`, {
-  table,
-});
-
 const { DeleteChildrenMachine } = new DeleteChildrenMachineStack(
   app,
   `${process.env.NODE_ENV}-DeleteChildrenMachineStack`,
@@ -49,7 +44,6 @@ const { WebhooksMachine } = new WebhooksMachineStack(
   },
 );
 new EventBridgeStack(app, `${process.env.NODE_ENV}-EventBridgeStack`, {
-  CommsMachine,
   DeleteChildrenMachine,
   WebhooksMachine,
 });

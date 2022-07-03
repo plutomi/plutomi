@@ -21,9 +21,9 @@ export const sendEmail = async ({ to, from, subject, body }: SendEmailProps) => 
   await SES.send(
     new SendEmailCommand({
       Destination: {
-        ToAddresses: [to],
+        ToAddresses: [to.toLowerCase().trim()],
       },
-      Source: `${from.header} <${from.email}>`,
+      Source: `${from.header} <${from.email.toLowerCase().trim()}>`,
       Message: {
         Subject: {
           Data: subject,

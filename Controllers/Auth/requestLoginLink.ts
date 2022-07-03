@@ -101,7 +101,11 @@ export const requestLoginLink = async (req: Request, res: Response) => {
 
     return res.status(status).json(body);
   }
-  const timeThreshold = Time.pastISO(10, TIME_UNITS.MINUTES);
+  const timeThreshold = Time.pastISO({
+    amount: 10,
+    unit: TIME_UNITS.MINUTES,
+  });
+
   if (
     latestLink &&
     latestLink.createdAt >= timeThreshold &&
@@ -110,11 +114,15 @@ export const requestLoginLink = async (req: Request, res: Response) => {
     return res.status(403).json({ message: "You're doing that too much, please try again later" });
   }
 
+  const validFor: Time.ChangingTimeProps = {
+    amount: 15,
+    unit: TIME_UNITS.MINUTES,
+  };
   const now = Time.currentUNIX();
-  const loginLinkId = nanoid();
-  const ttlExpiry = Time.futureUNIX(15, TIME_UNITS.MINUTES); // when the link expires and is deleted from Dynamo
-  const relativeExpiry = Time.relative(new Date(ttlExpiry));
+  const ttlExpiry = Time.futureUNIX(validFor); // when the link expires and is deleted from Dynamo
+  const relativeExpiry = Time.relative(Time.futureISO(validFor));
 
+  const loginLinkId = nanoid();
   const token = await jwt.sign(
     {
       userId: user.userId,
