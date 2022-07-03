@@ -3,16 +3,24 @@ import axios from 'axios';
 import { DynamoStreamTypes, Entities } from '../Config';
 import { DynamoApplicant, DynamoLoginLink, DynamoOrgLoginEvent, DynamoUser, DynamoUserLoginEvent } from '../types/dynamo';
 import { DB } from '../models';
-import { BaseEvent, ExtendedEvent, ExtendedEventKeys } from './stream-processor';
+import { CustomEventBridgeEvent } from './stream-processor';
 
-type EntitiesToTriggerComms = DynamoLoginLink | DynamoUser | DynamoUserLoginEvent | DynamoOrgLoginEvent | DynamoApplicant
-interface CommsMachineEvents extends BaseEvent, Pick<EntitiesToTriggerComms, ExtendedEventKeys> {}
 
-export async function main(event: EventBridgeEvent<'stream', CommsMachineEvents>) {
 
-  if (event.detail.entityType ===  Entities.USER_LOGIN_EVENT) {
+export async function main(event: EventBridgeEvent<'stream', CustomEventBridgeEvent>) {
+
+
+  
+  if (event.detail.NewImage.entityType === Entities.USER_LOGIN_EVENT) {
     
-    if (event.detail.PK === "beans")
+    if (!event.detail.NewImage.user.verifiedEmail) {
+      
+    }
+  }
+
+  if (typeof event.detail.NewImage === Entities.USER_LOGIN_EVENT) {
+    event.detail.NewImage.
+
     // TODO update the verified email status on the user
     
     const [updated, failed] = await DB.Users.updateUser({

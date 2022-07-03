@@ -243,7 +243,6 @@ export interface DynamoApplicantResponse {
    */
   GSI1SK: Entities.APPLICANT_RESPONSE; // TODO add timestmap?
 }
-
 export interface DynamoOpening {
   /**
    * Primary key for creating an opening. Takes an `orgId`
@@ -455,3 +454,18 @@ export interface DynamoOrgLoginEvent {
   ttlExpiry: number;
   entityType: Entities.ORG_LOGIN_EVENT;
 }
+
+type AllDynamoEntities =
+  | DynamoOrgLoginEvent
+  | DynamoUserLoginEvent
+  | DynamoOrg
+  | DynamoLoginLink
+  | DynamoUser
+  | DynamoWebhook
+  | DynamoOrgInvite
+  | DynamoOpening
+  | DynamoApplicantResponse
+  | DynamoApplicant
+  | DynamoQuestion
+  | DynamoQuestionStageAdjacentItem
+  | DynamoStage;

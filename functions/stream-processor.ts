@@ -4,22 +4,19 @@ import { PutEventsRequestEntry } from 'aws-sdk/clients/eventbridge';
 import errorFormatter from '../utils/errorFormatter';
 import EBClient from '../awsClients/eventBridgeClient';
 import { DynamoStreamTypes, Entities } from '../Config';
+import { AllDynamoEntities } from '../types/dynamo';
 
 const processor = require('dynamodb-streams-processor');
 
-export interface BaseEvent {
+export interface CustomEventBridgeEvent {
   eventName: DynamoStreamTypes;
-  OldImage: Entities;
-  NewImage: Entities;
-}
-export interface ExtendedEvent {
+  OldImage: AllDynamoEntities;
+  NewImage: AllDynamoEntities;
   PK: string;
   SK: string;
   entityType: Entities;
   orgId: string;
 }
-
-export type ExtendedEventKeys = 'PK' | 'SK' | 'entityType' | 'orgId';
 
 export const main = async (event: DynamoDBStreamEvent) => {
   // Was reading a bit and this came up https://github.com/aws/aws-sdk-js/issues/2486
