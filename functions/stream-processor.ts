@@ -9,8 +9,14 @@ const processor = require('dynamodb-streams-processor');
 
 export interface BaseEvent {
   eventName: DynamoStreamTypes;
-  OldImage: typeof Entities;
-  NewImage: typeof Entities;
+  OldImage: Entities;
+  NewImage: Entities;
+}
+export interface ExtendedEvent {
+  PK: string;
+  SK: string;
+  entityType: Entities;
+  orgId: string;
 }
 
 export type ExtendedEventKeys = 'PK' | 'SK' | 'entityType' | 'orgId';
