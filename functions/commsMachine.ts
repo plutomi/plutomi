@@ -43,17 +43,4 @@ export async function main(event: EventBridgeEvent<'stream', CustomEventBridgeEv
       console.error('Error ocurred sending new user emails', error);
     }
   }
-
-  if (event.detail.NewImage.entityType === Entities.LOGIN_LINK) {
-    console.log(`User requested a login link`);
-
-    const { user, loginLinkUrl, relativeExpiry } = event.detail.NewImage;
-
-    try {
-
-      return;
-    } catch (error) {
-      console.error('An error ocurred sending a login link', error);
-    }
-  }
 }

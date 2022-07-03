@@ -13,7 +13,7 @@ interface CreateLoginEventAndDeleteLoginLinkInput {
 
 export const createLoginEvent = async (
   props: CreateLoginEventAndDeleteLoginLinkInput,
-): Promise<[null, null] | [null, any]> => {
+): Promise<[DynamoUserLoginEvent, null] | [null, any]> => {
   const { loginLinkId, user } = props;
 
   const now = Time.currentISO();
@@ -80,10 +80,27 @@ export const createLoginEvent = async (
       });
     }
 
-    // A user's `verifiedEmail` property is done asynchronously via a step function. We send the welcome email as well
+    // If a user is logging in for the first time, verify their email
+    if (!user.verifiedEmail) {
+      transactParams.TransactItems.push({
+        Update: {
+          Key: {
+            PK: `${Entities.USER}#${user.userId}`,
+            SK: Entities.USER,
+          },
+          TableName: `${process.env.NODE_ENV}-${DYNAMO_TABLE_NAME}`,
+          UpdateExpression: 'SET updatedAt = :updatedAt, verifiedEmail = :verifiedEmail',
+          ConditionExpression: 'attribute_exists(PK) ',
+          ExpressionAttributeValues: {
+            ':updatedAt': now,
+            ':verifiedEmail': true,
+          },
+        },
+      });
+    }
 
     await Dynamo.send(new TransactWriteCommand(transactParams));
-    return [null, null];
+    return [newUserLoginEvent, null];
   } catch (error) {
     return [null, error];
   }

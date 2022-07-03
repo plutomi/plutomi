@@ -83,5 +83,19 @@ export const login = async (req: Request, res: Response) => {
     res.header('Location', `${WEBSITE_URL}/invites`);
   }
 
-  return res.status(307).json({ message: 'Login success!' });
+  res.status(307).json({ message: 'Login success!' });
+
+  // User logged in for the first time
+  if (success && !user.verifiedEmail) {
+    try {
+      await DB.Users.updateUser({
+        userId: user.userId,
+        updatedValues: {
+          verifiedEmail: true,
+        },
+      });
+    } catch (error) {
+      console.error(`An error ocurred updating the user's 'verifiedEmail' status`);
+    }
+  }
 };
