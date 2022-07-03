@@ -6,8 +6,10 @@ import { APIUpdateUserOptions } from '../../Controllers/Users/updateUser';
 import { DynamoUser } from '../../types/dynamo';
 import { createDynamoUpdateExpression } from '../../utils/createDynamoUpdateExpression';
 
+interface UpdateableUserValues
+  extends Partial<Pick<DynamoUser, 'verifiedEmail' | 'firstName' | 'lastName'>> {}
 export interface UpdateUserInput extends Pick<DynamoUser, 'userId'> {
-  updatedValues: APIUpdateUserOptions;
+  updatedValues: UpdateableUserValues;
 }
 
 export const updateUser = async (

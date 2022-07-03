@@ -8,7 +8,7 @@ export async function main(event: EventBridgeEvent<'stream', CustomEventBridgeEv
 
   if (
     event.detail.NewImage.entityType === Entities.USER_LOGIN_EVENT &&
-    !event.detail.NewImage.user.verifiedEmail // TODO this isnt working!!!!!!!
+    !event.detail.NewImage.user.verifiedEmail
   ) {
     console.log(`User is logging in for the first time`);
     const { user } = event.detail.NewImage;
@@ -59,6 +59,9 @@ export async function main(event: EventBridgeEvent<'stream', CustomEventBridgeEv
         subject: `Your magic login link is here!`,
         body: `<h1>Click <a href="${loginLinkUrl}" noreferrer target="_blank" >this link</a> to log in!</h1><p>It will expire ${relativeExpiry} so you better hurry.</p><p>If you did not request this link you can safely ignore it.</p>`,
       });
-    } catch (error) {}
+      return;
+    } catch (error) {
+      console.error('An error ocurred sending a login link', error);
+    }
   }
 }
