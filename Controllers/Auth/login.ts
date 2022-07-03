@@ -57,8 +57,7 @@ export const login = async (req: Request, res: Response) => {
     });
   }
 
-  // If this is a new user, an asynchronous welcome email is sent through step functions
-  // It triggers if the user.verifiedEmail is false
+  // Marks the user's email as verified if its the first time logging in
   const [success, failed] = await DB.Users.createLoginEvent({
     loginLinkId,
     user,
@@ -89,13 +88,6 @@ export const login = async (req: Request, res: Response) => {
   // User logged in for the first time
   if (success && !user.verifiedEmail) {
     try {
-      await DB.Users.updateUser({
-        userId: user.userId,
-        updatedValues: {
-          verifiedEmail: true,
-        },
-      });
-
       const emailsToSend: SendEmailProps[] = [
         {
           to: user.email,
