@@ -1,20 +1,9 @@
 import { EventBridgeEvent } from 'aws-lambda';
 import axios from 'axios';
-import { DynamoStreamTypes, Entities } from '../Config';
-import { DynamoApplicant } from '../types/dynamo';
 import { DB } from '../models';
+import { CustomEventBridgeEvent } from './stream-processor';
 
-interface ApplicantWebhookEvent {
-  eventName: DynamoStreamTypes;
-  NewImage?: DynamoApplicant;
-  OldImage?: DynamoApplicant;
-  PK: `${Entities.ORG}#${string}#${Entities.APPLICANT}#${string}`;
-  SK: string;
-  entityType: Entities.APPLICANT;
-  orgId: string;
-}
-
-export async function main(event: EventBridgeEvent<'stream', ApplicantWebhookEvent>) {
+export async function main(event: EventBridgeEvent<'stream', CustomEventBridgeEvent>) {
   const [webhooks, error] = await DB.Webhooks.getWebhooksInOrg({
     orgId: event.detail.orgId,
   });

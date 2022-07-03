@@ -2,11 +2,20 @@ import { Request, Response } from 'express';
 import Joi from 'joi';
 import emailValidator from 'deep-email-validator';
 import { pick } from 'lodash';
-import { ERRORS, JOI_SETTINGS, ORG_INVITE_EXPIRY_DAYS, TIME_UNITS } from '../../Config';
+import {
+  DEFAULTS,
+  Emails,
+  ERRORS,
+  JOI_SETTINGS,
+  ORG_INVITE_EXPIRY_DAYS,
+  TIME_UNITS,
+  WEBSITE_URL,
+} from '../../Config';
 import * as CreateError from '../../utils/createError';
 import * as Time from '../../utils/time';
 import { getOrg } from '../../models/Orgs';
 import { DB } from '../../models';
+import { sendEmail, SendEmailProps } from '../../models/Emails/sendEmail';
 
 const schema = Joi.object({
   body: {
@@ -109,10 +118,14 @@ export const createInvite = async (req: Request, res: Response) => {
     });
   }
 
+  // TODO this can get reworked with the new syncrhonous emails
   const [inviteCreated, inviteError] = await DB.Invites.createInvite({
     recipient: pick(recipient, ['userId', 'email', 'firstName', 'lastName', 'unsubscribeKey']),
     orgName: org.displayName,
-    expiresAt: Time.futureISO(expiresInDays || ORG_INVITE_EXPIRY_DAYS, TIME_UNITS.DAYS), // TODO https://github.com/plutomi/plutomi/issues/333
+    expiresAt: Time.futureISO({
+      amount: expiresInDays || ORG_INVITE_EXPIRY_DAYS,
+      unit: TIME_UNITS.DAYS,
+    }),
     createdBy: pick(user, ['userId', 'firstName', 'lastName', 'orgId', 'email']),
   });
 
@@ -122,6 +135,25 @@ export const createInvite = async (req: Request, res: Response) => {
     return res.status(status).json(body);
   }
 
-  // Email sent asynchronously through step functions
-  return res.status(201).json({ message: `Invite sent to '${recipientEmail}'` });
+  res.status(201).json({ message: `Invite sent to '${recipientEmail}'` });
+
+  const userHasntUpdatedName =
+    user.firstName === DEFAULTS.FIRST_NAME || user.lastName === DEFAULTS.LAST_NAME;
+  const subject = userHasntUpdatedName
+    ? `You've been invited to join ${org.displayName} on Plutomi!`
+    : `${user.firstName} ${user.lastName} has invited you to join them on ${org.displayName}`;
+  try {
+    await sendEmail({
+      from: {
+        header: `Plutomi`,
+        email: Emails.JOIN,
+      },
+      to: recipient.email,
+      subject,
+      body: `<h4>You can log in at <a href="${WEBSITE_URL}" target="_blank" rel=noreferrer>${WEBSITE_URL}</a> to accept their invite!</h4><p>If you believe this email was received in error, you can safely ignore it.</p>`,
+    });
+    return;
+  } catch (error) {
+    console.error('Error ocurred inviting a user to an org', error);
+  }
 };

@@ -1,11 +1,7 @@
 import { DB } from '../models';
 
-/**
- * MAJOR TODO -
- * I really don't think this lambda is needed.
- * https://github.com/plutomi/plutomi/issues/566
- * Have to figure out a way to edit an array with JSONPath directly, im sure its possible
- */
+// TODO CLEAN THIS UP
+
 export async function main(event) {
   // TODO types
   console.log(JSON.stringify(event));

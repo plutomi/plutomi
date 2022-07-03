@@ -2,7 +2,7 @@ import { Request, Response } from 'express';
 import { nanoid } from 'nanoid';
 import * as CreateError from '../../utils/createError';
 import { DB } from '../../models';
-import { COOKIE_NAME, COOKIE_SETTINGS, EMAILS } from '../../Config';
+import { COOKIE_NAME, COOKIE_SETTINGS, Emails } from '../../Config';
 
 /**
  * Creates a random test user and sends a session cookie to the client
@@ -17,7 +17,7 @@ export const jestSetup = async (req: Request, res: Response) => {
 
   // TODO this is creating two users under TESTING2 because theres no check to see if email exists
   // like in the regular createUser flow
-  const userEmail = req.body.email || `${nanoid(15)}+${EMAILS.TESTING}`;
+  const userEmail = req.body.email || `${nanoid(15)}+${Emails.TESTING}`;
   // eslint-disable-next-line prefer-const
   let [user, userError] = await DB.Users.getUserByEmail({
     email: userEmail,

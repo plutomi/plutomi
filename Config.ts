@@ -42,20 +42,21 @@ export enum Entities {
   QUESTION = 'QUESTION',
   STAGE_RULE = 'STAGE_RULE',
   LOGIN_LINK = 'LOGIN_LINK',
-  LOGIN_EVENT = 'LOGIN_EVENT',
+  USER_LOGIN_EVENT = 'USER_LOGIN_EVENT',
+  ORG_LOGIN_EVENT = 'ORG_LOGIN_EVENT',
   WEBHOOK = 'WEBHOOK',
 }
 
-export const TIME_UNITS = {
-  MILLISECONDS: 'milliseconds',
-  SECONDS: 'seconds',
-  MINUTES: 'minutes',
-  HOURS: 'hours',
-  DAYS: 'days',
-  WEEKS: 'weeks',
-  MONTHS: 'months',
-  YEARS: 'years',
-};
+export enum TIME_UNITS {
+  MILLISECONDS = 'milliseconds',
+  SECONDS = 'seconds',
+  MINUTES = 'minutes',
+  HOURS = 'hours',
+  DAYS = 'days',
+  WEEKS = 'weeks',
+  MONTHS = 'months',
+  YEARS = 'years',
+}
 
 export const ERRORS = {
   NOT_SAME_ORG: 'You must belong to this org to perform that action',
@@ -82,8 +83,6 @@ export enum DEFAULTS {
    * When no callbackUrl is provided on login, what page should users be redirected to
    */
   REDIRECT = 'dashboard', // TODO make this an enum / typ;e
-  NO_FIRST_NAME = 'NO_FIRST_NAME',
-  NO_LAST_NAME = 'NO_LAST_NAME',
 }
 
 export enum LIMITS {
@@ -108,19 +107,19 @@ export enum DynamoStreamTypes { // TODO possible default type in Dynamo?
   REMOVE = 'REMOVE',
 }
 
-export const EMAILS = {
-  SUPPORT: 'support@plutomi.com',
-  GENERAL: 'contact@plutomi.com',
-  INVEST: 'ir@plutomi.com',
-  ADMIN: 'admin@plutomi.com',
-  LOGIN: 'login@plutomi.com', // Login links
-  JOIN: 'join@plutomi.com', // Org invites
+export enum Emails {
+  SUPPORT = 'support@plutomi.com',
+  GENERAL = 'contact@plutomi.com',
+  INVEST = 'ir@plutomi.com',
+  ADMIN = 'admin@plutomi.com',
+  LOGIN = 'login@plutomi.com', // Login links
+  JOIN = 'join@plutomi.com', // Org invites
   // Jest test accounts
-  TESTING: 'testing@plutomi.com',
-  TESTING2: 'testing2@plutomi.com',
-  TESTING3: 'testing3@plutomi.com',
-  TESTING4: 'testing4@plutomi.com',
-};
+  TESTING = 'testing@plutomi.com',
+  TESTING2 = 'testing2@plutomi.com',
+  TESTING3 = 'testing3@plutomi.com',
+  TESTING4 = 'testing4@plutomi.com',
+}
 
 export const JOI_SETTINGS: Joi.ValidationOptions = {
   abortEarly: false,

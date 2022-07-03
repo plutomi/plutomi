@@ -5,6 +5,7 @@ import { Dynamo } from '../../awsClients/ddbDocClient';
 import { ID_LENGTHS, Entities, DEFAULTS, DYNAMO_TABLE_NAME } from '../../Config';
 import { DynamoUser } from '../../types/dynamo';
 import * as Time from '../../utils/time';
+import { emailFormat } from '../Emails/sendEmail';
 
 interface CreateUserInput {
   email: string;
@@ -23,7 +24,7 @@ export const createUser = async (
     SK: Entities.USER,
     firstName: firstName || DEFAULTS.FIRST_NAME,
     lastName: lastName || DEFAULTS.LAST_NAME,
-    email: email.toLowerCase().trim(),
+    email: email.toLowerCase().trim() as emailFormat,
     userId,
     entityType: Entities.USER,
     createdAt: now,

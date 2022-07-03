@@ -3,8 +3,20 @@ import { PutEventsCommand, PutEventsCommandInput } from '@aws-sdk/client-eventbr
 import { PutEventsRequestEntry } from 'aws-sdk/clients/eventbridge';
 import errorFormatter from '../utils/errorFormatter';
 import EBClient from '../awsClients/eventBridgeClient';
+import { DynamoStreamTypes, Entities } from '../Config';
+import { AllDynamoEntities } from '../types/dynamo';
 
 const processor = require('dynamodb-streams-processor');
+
+export interface CustomEventBridgeEvent {
+  eventName: DynamoStreamTypes;
+  OldImage: AllDynamoEntities;
+  NewImage: AllDynamoEntities;
+  PK: string;
+  SK: string;
+  entityType: Entities;
+  orgId: string;
+}
 
 export const main = async (event: DynamoDBStreamEvent) => {
   // Was reading a bit and this came up https://github.com/aws/aws-sdk-js/issues/2486
@@ -24,19 +36,6 @@ export const main = async (event: DynamoDBStreamEvent) => {
       eventName,
       OldImage,
       NewImage,
-      /**
-       * Entity types can never be updated by the user so..
-       * adding this extra field here allows creating rules in EventBridge
-       * for specific event types {@link DynamoStreamTypes} and a
-       * specific {@link Entities}.
-       *
-       * The use case for this is, send *all* applicant events (insert, update, delete)
-       * to the webhooks step functions. From there, the step function
-       * is solely in charge of checking if a message needs to be triggerred.
-       *
-       * Ideally, you would be able to filter on NewImage OR OldImage, but if you supply both in the EB Rule,
-       * they BOTH have to match. In the case of a NEW APPLICANT event, oldImage does not exist!
-       */
       PK: NewImage?.PK || OldImage?.PK,
       SK: NewImage?.orgId || OldImage?.SK,
       entityType: NewImage?.entityType || OldImage?.entityType,

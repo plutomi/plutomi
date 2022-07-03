@@ -1,5 +1,5 @@
 import { nanoid } from 'nanoid';
-import { EMAILS, ERRORS, AXIOS_INSTANCE as axios } from '../Config';
+import { Emails, ERRORS, AXIOS_INSTANCE as axios } from '../Config';
 import * as Invites from '../adapters/Invites';
 import * as Orgs from '../adapters/Orgs';
 import * as Users from '../adapters/Users';
@@ -98,13 +98,13 @@ describe('Openings', () => {
     expect.assertions(2);
     // Create the invite
     await Invites.CreateInvite({
-      recipientEmail: EMAILS.TESTING2,
+      recipientEmail: Emails.TESTING2,
     });
 
     try {
       // Try it again
       await Invites.CreateInvite({
-        recipientEmail: EMAILS.TESTING2,
+        recipientEmail: Emails.TESTING2,
       });
     } catch (error) {
       expect(error.response.status).toBe(403);
@@ -117,7 +117,7 @@ describe('Openings', () => {
   it('allows creating invites', async () => {
     expect.assertions(2);
     const data = await Invites.CreateInvite({
-      recipientEmail: EMAILS.TESTING3,
+      recipientEmail: Emails.TESTING3,
     });
     expect(data.status).toBe(201);
     expect(data.data.message).toContain('Invite sent to');
@@ -129,7 +129,7 @@ describe('Openings', () => {
 
     // Create the invite
     await Invites.CreateInvite({
-      recipientEmail: EMAILS.TESTING4,
+      recipientEmail: Emails.TESTING4,
     });
 
     // TODO this needs to be implemented in the frontend
@@ -143,7 +143,7 @@ describe('Openings', () => {
     expect.assertions(2);
     // Create another user
     const data = await axios.post(`/jest-setup`, {
-      email: EMAILS.TESTING3, // invited up above
+      email: Emails.TESTING3, // invited up above
     });
     const cookie = data.headers['set-cookie'][0];
 
@@ -199,7 +199,7 @@ describe('Openings', () => {
     expect.assertions(3);
     // Create a new user
     const data = await axios.post(`/jest-setup`, {
-      email: `${nanoid(20)}+${EMAILS.TESTING}`,
+      email: `${nanoid(20)}+${Emails.TESTING}`,
     });
     const cookie = data.headers['set-cookie'][0];
     axios.defaults.headers.Cookie = cookie;
@@ -214,7 +214,7 @@ describe('Openings', () => {
       displayName: nanoid(20),
     });
 
-    const otherUserEmail = `${nanoid(20)}+${EMAILS.TESTING3}`;
+    const otherUserEmail = `${nanoid(20)}+${Emails.TESTING3}`;
     // Create an invite for another user
     await Invites.CreateInvite({
       recipientEmail: otherUserEmail,
@@ -242,7 +242,7 @@ describe('Openings', () => {
     expect.assertions(3);
     // Create a new user
     const data = await axios.post(`/jest-setup`, {
-      email: `${nanoid(20)}+${EMAILS.TESTING}`,
+      email: `${nanoid(20)}+${Emails.TESTING}`,
     });
     const cookie = data.headers['set-cookie'][0];
     axios.defaults.headers.Cookie = cookie;
@@ -253,7 +253,7 @@ describe('Openings', () => {
     });
     await Orgs.CreateOrg({ orgId, displayName: nanoid(20) });
 
-    const otherUserEmail = `${nanoid(20)}+${EMAILS.TESTING4}`;
+    const otherUserEmail = `${nanoid(20)}+${Emails.TESTING4}`;
     // Create an invite for another user
     await Invites.CreateInvite({
       recipientEmail: otherUserEmail,
@@ -281,7 +281,7 @@ describe('Openings', () => {
     expect.assertions(2);
     // Create a new user
     const data = await axios.post(`/jest-setup`, {
-      email: `${nanoid(20)}+${EMAILS.TESTING}`,
+      email: `${nanoid(20)}+${Emails.TESTING}`,
     });
     const cookie = data.headers['set-cookie'][0];
     axios.defaults.headers.Cookie = cookie;
@@ -292,7 +292,7 @@ describe('Openings', () => {
     });
     await Orgs.CreateOrg({ orgId, displayName: nanoid(20) });
 
-    const otherUserEmail = `${nanoid(20)}+${EMAILS.TESTING4}`.toLowerCase();
+    const otherUserEmail = `${nanoid(20)}+${Emails.TESTING4}`.toLowerCase();
 
     // Create an invite for another user
     await Invites.CreateInvite({
@@ -319,7 +319,7 @@ describe('Openings', () => {
     expect.assertions(2);
     // Create a new user
     const data = await axios.post(`/jest-setup`, {
-      email: `${nanoid(20)}+${EMAILS.TESTING}`,
+      email: `${nanoid(20)}+${Emails.TESTING}`,
     });
     const cookie = data.headers['set-cookie'][0];
     axios.defaults.headers.Cookie = cookie;
@@ -330,7 +330,7 @@ describe('Openings', () => {
     });
     await Orgs.CreateOrg({ orgId, displayName: nanoid(20) });
 
-    const otherUserEmail = `${nanoid(20)}+${EMAILS.TESTING4}`;
+    const otherUserEmail = `${nanoid(20)}+${Emails.TESTING4}`;
     // Create an invite for another user
     const result = await Invites.CreateInvite({
       recipientEmail: otherUserEmail,
@@ -345,7 +345,7 @@ describe('Openings', () => {
     expect.assertions(3);
     // Create a new user
     const data = await axios.post(`/jest-setup`, {
-      email: `${nanoid(20)}+${EMAILS.TESTING}`,
+      email: `${nanoid(20)}+${Emails.TESTING}`,
     });
     const cookie = data.headers['set-cookie'][0];
     axios.defaults.headers.Cookie = cookie;
@@ -356,7 +356,7 @@ describe('Openings', () => {
     });
     await Orgs.CreateOrg({ orgId, displayName: nanoid(20) });
 
-    const otherUserEmail = `${nanoid(20)}+${EMAILS.TESTING4}`;
+    const otherUserEmail = `${nanoid(20)}+${Emails.TESTING4}`;
     // Create an invite for another user
     try {
       await Invites.CreateInvite({
@@ -374,7 +374,7 @@ describe('Openings', () => {
     expect.assertions(3);
     // Create a new user
     const data = await axios.post(`/jest-setup`, {
-      email: `${nanoid(20)}+${EMAILS.TESTING}`,
+      email: `${nanoid(20)}+${Emails.TESTING}`,
     });
     const cookie = data.headers['set-cookie'][0];
     axios.defaults.headers.Cookie = cookie;
@@ -385,7 +385,7 @@ describe('Openings', () => {
     });
     await Orgs.CreateOrg({ orgId, displayName: nanoid(20) });
 
-    const otherUserEmail = `${nanoid(20)}+${EMAILS.TESTING4}`;
+    const otherUserEmail = `${nanoid(20)}+${Emails.TESTING4}`;
     // Create an invite for another user
     try {
       await Invites.CreateInvite({

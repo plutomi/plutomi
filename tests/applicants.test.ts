@@ -1,5 +1,5 @@
 import { nanoid } from 'nanoid';
-import { AXIOS_INSTANCE as axios, DEFAULTS, OpeningState, EMAILS, ERRORS } from '../Config';
+import { AXIOS_INSTANCE as axios, DEFAULTS, OpeningState, Emails, ERRORS } from '../Config';
 import * as Orgs from '../adapters/Orgs';
 import * as Openings from '../adapters/Openings';
 import * as Stages from '../adapters/Stages';
@@ -75,7 +75,7 @@ describe('Openings', () => {
     applicant = {
       orgId,
       openingId: publicOpeningId,
-      email: EMAILS.GENERAL,
+      email: Emails.GENERAL,
       firstName: nanoid(4),
       lastName: nanoid(4),
     };

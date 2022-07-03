@@ -1,7 +1,7 @@
 import { AXIOS_INSTANCE as axios } from '../Config';
 import { APIUpdateUserOptions } from '../Controllers/Users/updateUser';
 
-export const GetSelfInfoURL = () => `/users/self`;
+export const GetSelfInfoURL = () => `/users/me`;
 
 export const GetSelfInfo = async () => {
   const data = await axios.get(GetSelfInfoURL());

@@ -1,8 +1,9 @@
 import { Request, Response } from 'express';
 import Joi from 'joi';
-import { JOI_SETTINGS, WEBSITE_URL, COOKIE_NAME, COOKIE_SETTINGS } from '../../Config';
+import { JOI_SETTINGS, WEBSITE_URL, COOKIE_NAME, COOKIE_SETTINGS, Emails } from '../../Config';
 import * as CreateError from '../../utils/createError';
 import { DB } from '../../models';
+import { sendEmail, SendEmailProps } from '../../models/Emails/sendEmail';
 
 const jwt = require('jsonwebtoken');
 
@@ -56,8 +57,7 @@ export const login = async (req: Request, res: Response) => {
     });
   }
 
-  // If this is a new user, an asynchronous welcome email is sent through step functions
-  // It triggers if the user.verifiedEmail is false
+  // Marks the user's email as verified if its the first time logging in
   const [success, failed] = await DB.Users.createLoginEvent({
     loginLinkId,
     user,
@@ -83,5 +83,42 @@ export const login = async (req: Request, res: Response) => {
     res.header('Location', `${WEBSITE_URL}/invites`);
   }
 
-  return res.status(307).json({ message: 'Login success!' });
+  res.status(307).json({ message: 'Login success!' });
+
+  // User logged in for the first time
+  if (success && !user.verifiedEmail) {
+    try {
+      const emailsToSend: SendEmailProps[] = [
+        {
+          to: user.email,
+          from: {
+            header: 'Plutomi',
+            email: Emails.GENERAL,
+          },
+          subject: 'Welcome to Plutomi!',
+          body: `<h1>Hello there!</h1><p>Just wanted to make you aware that this website is still in active development and <strong>you will lose your data!</strong><br><br>
+            This project is completely open source - please let us know if you have any questions, concerns, or feature requests by replying to this email or <a href="https://github.com/plutomi/plutomi" rel=noreferrer target="_blank" >creating an issue on Github</a>!</p>`,
+        },
+        {
+          from: {
+            header: `Plutomi`,
+            email: Emails.ADMIN,
+          },
+          to: Emails.ADMIN,
+          subject: `New user has joined! - ${user.email}`,
+          body: `<h1>Their ID is ${user.userId}</h1>`,
+        },
+      ];
+
+      try {
+        console.log(`Sending emails:`, emailsToSend);
+        await Promise.all(emailsToSend.map((email) => sendEmail(email)));
+        return;
+      } catch (error) {
+        console.error('Error ocurred sending new user emails', error);
+      }
+    } catch (error) {
+      console.error(`An error ocurred updating the user's 'verifiedEmail' status`);
+    }
+  }
 };

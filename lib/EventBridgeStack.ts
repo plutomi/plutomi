@@ -6,10 +6,6 @@ import { DynamoStreamTypes, Entities } from '../Config';
 
 enum Rules {
   /**
-   * Any events that require extra communication to be sent such as an email
-   */
-  NeedsComms = 'NeedsCommsRule',
-  /**
    * Any entity that might have children that need to be deleted when the top level entity is deleted.
    * For example: An org being deleted requires that all openings be deleted. When an opening is deleted,
    * we need to delete all stages in the opening.
@@ -29,7 +25,6 @@ enum Source {
 }
 
 interface EventBridgeStackProps extends cdk.StackProps {
-  CommsMachine: StateMachine;
   DeleteChildrenMachine: StateMachine;
   WebhooksMachine: StateMachine;
 }
@@ -57,25 +52,6 @@ export default class EventBridgeStack extends cdk.Stack {
         account: [cdk.Stack.of(this).account],
       },
       retention: cdk.Duration.days(3),
-    });
-
-    new Rule(this, Rules.NeedsComms, {
-      eventBus: bus,
-      description: 'Rule for actions that will require further comms.',
-      ruleName: Rules.NeedsComms,
-      targets: [new SfnStateMachine(props.CommsMachine)],
-      eventPattern: {
-        source: [Source.DynamoStream],
-        detail: {
-          eventName: [DynamoStreamTypes.INSERT],
-          entityType: [
-            Entities.LOGIN_EVENT,
-            Entities.LOGIN_LINK,
-            Entities.APPLICANT, // TODO welcome applicant
-            Entities.ORG_INVITE,
-          ],
-        },
-      },
     });
 
     new Rule(this, Rules.DeleteChildren, {

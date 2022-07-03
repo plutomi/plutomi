@@ -1,6 +1,7 @@
 // This file is for the actual DynamoDB entries and their Types - ie: A full object with all properties.
 // All  other types are derivatives with Pick, Omit, etc.
 import { DEFAULTS, Entities, OpeningState } from '../Config';
+import { emailFormat } from '../models/Emails/sendEmail';
 
 export interface DynamoStage {
   /**
@@ -153,7 +154,7 @@ export interface DynamoApplicant {
   /**
    * The applicant's email address
    */
-  email: string;
+  email: emailFormat;
   /**
    * The entity type of the applicant
    */
@@ -243,7 +244,6 @@ export interface DynamoApplicantResponse {
    */
   GSI1SK: Entities.APPLICANT_RESPONSE; // TODO add timestmap?
 }
-
 export interface DynamoOpening {
   /**
    * Primary key for creating an opening. Takes an `orgId`
@@ -379,7 +379,7 @@ export interface DynamoUser {
    * @default DEFAULTS.LAST_NAME
    */
   lastName: string | DEFAULTS.LAST_NAME;
-  email: string;
+  email: emailFormat;
   userId: string;
   entityType: Entities.USER;
   createdAt: string;
@@ -402,9 +402,7 @@ export interface DynamoLoginLink {
   entityType: Entities.LOGIN_LINK;
   createdAt: string;
   updatedAt: string;
-  relativeExpiry: string;
   user: DynamoUser;
-  loginLinkUrl: string;
   /**
    * A UNIX date for which Dynamo will auto delete this link
    */
@@ -434,20 +432,38 @@ export interface DynamoOrg {
 
 export interface DynamoUserLoginEvent {
   PK: `${Entities.USER}#${string}`;
-  SK: `${Entities.LOGIN_EVENT}#${string}`;
+  SK: `${Entities.USER_LOGIN_EVENT}#${string}`;
   createdAt: string; // ISO timestamp
   updatedAt: string;
+  orgId: string;
   ttlExpiry: number; // ttl unix expiry
-  entityType: Entities.LOGIN_EVENT;
+  entityType: Entities.USER_LOGIN_EVENT;
   user: DynamoUser;
 }
 
 export interface DynamoOrgLoginEvent {
   PK: `${Entities.ORG}#${string}`;
-  SK: `${Entities.LOGIN_EVENT}#${string}`;
+  SK: `${Entities.ORG_LOGIN_EVENT}#${string}`;
   // TODO user info here
   // TODO in the future, get more the info about the login event such as IP, headers, device, etc.
   createdAt: now;
+  orgId: string;
   updatedAt: string;
   ttlExpiry: number;
+  entityType: Entities.ORG_LOGIN_EVENT;
 }
+
+type AllDynamoEntities =
+  | DynamoOrgLoginEvent
+  | DynamoUserLoginEvent
+  | DynamoOrg
+  | DynamoLoginLink
+  | DynamoUser
+  | DynamoWebhook
+  | DynamoOrgInvite
+  | DynamoOpening
+  | DynamoApplicantResponse
+  | DynamoApplicant
+  | DynamoQuestion
+  | DynamoQuestionStageAdjacentItem
+  | DynamoStage;
