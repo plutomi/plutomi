@@ -40,63 +40,19 @@ export default class CommsMachineStack extends cdk.Stack {
 
     setEmailToVerified.addRetry({ maxAttempts: 2 });
 
-    const SES_SETTINGS = {
-      service: 'ses',
-      action: 'sendEmail',
-      iamResources: [`arn:aws:ses:${this.region}:${this.account}:identity/${DOMAIN_NAME}`],
-    };
+    // TODO SES FOR NOTIFYING ADMIN
+    // New user signed up - $.detail.NewImage.user.email
+    // User ID:  $.detail.NewImage.user.userId
 
-    const notifyAdmin = new tasks.CallAwsService(this, 'NotifyAdminOfNewUser', {
-      // TODO update once native integration is implemented
-
-      ...SES_SETTINGS,
-      parameters: {
-        Source: `Plutomi <${EMAILS.ADMIN}>`,
-        Destination: {
-          ToAddresses: [EMAILS.ADMIN],
-        },
-        Message: {
-          Subject: {
-            'Data.$': `States.Format('New user signed up - {}', $.detail.NewImage.user.email)`,
-          },
-          Body: {
-            Html: {
-              'Data.$': `States.Format('<h1>User ID: {}</h1>', $.detail.NewImage.user.userId)`,
-            },
-          },
-        },
-      },
-    });
-
-    const welcomeNewUser = new tasks.CallAwsService(this, 'WelcomeNewUser', {
-      // TODO update once native integration is implemented
-
-      ...SES_SETTINGS,
-      parameters: {
-        Source: `Jose Valerio <${EMAILS.GENERAL}>`,
-        Destination: {
-          'ToAddresses.$': `States.Array($.detail.NewImage.user.email)`,
-        },
-        Message: {
-          Subject: {
-            Data: `Welcome to Plutomi!`,
-          },
-          Body: {
-            Html: {
-              Data: `<h1>Hello there!</h1><p>Just wanted to make you aware that this website is still in active development and <strong>you will lose your data!</strong><br><br>
-                This project is completely open source -
-              please let us know if you have any questions, concerns, or feature requests by replying to this email or <a href="https://github.com/plutomi/plutomi" rel=noreferrer target="_blank" >creating an issue on Github</a>!</p>`,
-            },
-          },
-        },
-      },
-    });
-    // TODO export this to its own file
+    // TODO SES FOR WELCOMING NEW USER
+    // Welcome to plutomi!
+    // <h1>Hello there!</h1><p>Just wanted to make you aware that this website is still in active development and <strong>you will lose your data!</strong><br><br>
+    //                 This project is completely open source -
+    //               please let us know if you have any questions, concerns, or feature requests by replying to this email or <a href="https://github.com/plutomi/plutomi" rel=noreferrer target="_blank" >creating an issue on Github</a>!</p>
 
     const sendLoginLink = new tasks.CallAwsService(this, 'SendLoginLink', {
       // TODO update once native integration is implemented
 
-      ...SES_SETTINGS,
       parameters: {
         Source: `Plutomi <${EMAILS.GENERAL}>`,
         Destination: {
@@ -172,9 +128,7 @@ export default class CommsMachineStack extends cdk.Stack {
         sfn.Condition.stringEquals('$.entityType', Entities.LOGIN_EVENT),
         new sfn.Choice(this, 'IsNewUser?').when(
           sfn.Condition.booleanEquals('$.detail.NewImage.user.verifiedEmail', false),
-          setEmailToVerified.next(
-            new sfn.Parallel(this, 'SendNewUserComms').branch(notifyAdmin).branch(welcomeNewUser),
-          ),
+          setEmailToVerified,
         ),
       )
       .when(

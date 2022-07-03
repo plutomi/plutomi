@@ -3,8 +3,15 @@ import { PutEventsCommand, PutEventsCommandInput } from '@aws-sdk/client-eventbr
 import { PutEventsRequestEntry } from 'aws-sdk/clients/eventbridge';
 import errorFormatter from '../utils/errorFormatter';
 import EBClient from '../awsClients/eventBridgeClient';
+import { DynamoStreamTypes, Entities } from '../Config';
 
 const processor = require('dynamodb-streams-processor');
+
+export interface BaseEvent {
+  eventName: DynamoStreamTypes;
+  OldImage: typeof Entities;
+  NewImage: typeof Entities;
+}
 
 export const main = async (event: DynamoDBStreamEvent) => {
   // Was reading a bit and this came up https://github.com/aws/aws-sdk-js/issues/2486
