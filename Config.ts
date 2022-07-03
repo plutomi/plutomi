@@ -47,16 +47,16 @@ export enum Entities {
   WEBHOOK = 'WEBHOOK',
 }
 
-export const TIME_UNITS = {
-  MILLISECONDS: 'milliseconds',
-  SECONDS: 'seconds',
-  MINUTES: 'minutes',
-  HOURS: 'hours',
-  DAYS: 'days',
-  WEEKS: 'weeks',
-  MONTHS: 'months',
-  YEARS: 'years',
-};
+export enum TIME_UNITS {
+  MILLISECONDS = 'milliseconds',
+  SECONDS = 'seconds',
+  MINUTES = 'minutes',
+  HOURS = 'hours',
+  DAYS = 'days',
+  WEEKS = 'weeks',
+  MONTHS = 'months',
+  YEARS = 'years',
+}
 
 export const ERRORS = {
   NOT_SAME_ORG: 'You must belong to this org to perform that action',

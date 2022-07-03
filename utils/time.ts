@@ -1,5 +1,6 @@
 import relativeTime from 'dayjs/plugin/relativeTime';
 import dayjs from 'dayjs';
+import { TIME_UNITS } from '../Config';
 
 dayjs.extend(relativeTime);
 
@@ -31,37 +32,18 @@ export const relative = (date: string | number | Date): string => {
   }
 };
 
-/**
- *
- * @param amount *Amount* of {@link TIME_UNITS} to get in the future
- * @param unit Which {@link TIME_UNITS} to retrieve
- * @returns A future ISO timestamp
- */
-export const futureISO = (amount: number, unit: string) => dayjs().add(amount, unit).toISOString();
+interface ChangingTimeProps {
+  amount: number;
+  unit: TIME_UNITS;
+}
 
-/**
- *
- * @param amount *Amount* of {@link TIME_UNITS} to get in the future
- * @param unit Which {@link TIME_UNITS} to retrieve
- * @returns A future UNIX timestamp
- */
+export const futureISO = ({ amount, unit }: ChangingTimeProps) =>
+  dayjs().add(amount, unit).toISOString();
 
-export const futureUNIX = (amount: number, unit: string) => dayjs().add(amount, unit).unix();
+export const futureUNIX = ({ amount, unit }: ChangingTimeProps) => dayjs().add(amount, unit).unix();
 
-/**
- *
- * @param amount *Amount* of {@link TIME_UNITS} to get in the past
- * @param unit Which {@link TIME_UNITS} to retrieve
- * @returns A past ISO timestamp
- */
-
-export const pastISO = (amount: number, unit: string) =>
+export const pastISO = ({ amount, unit }: ChangingTimeProps) =>
   dayjs().subtract(amount, unit).toISOString();
 
-/**
- *
- * @param amount *Amount* of {@link TIME_UNITS} to get in the past
- * @param unit Which {@link TIME_UNITS} to retrieve
- * @returns A past UNIX timestamp
- */
-export const pastUNIX = (amount: number, unit: string) => dayjs().subtract(amount, unit).unix();
+export const pastUNIX = ({ amount, unit }: ChangingTimeProps) =>
+  dayjs().subtract(amount, unit).unix();
