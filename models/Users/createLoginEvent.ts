@@ -67,6 +67,7 @@ export const createLoginEvent = async (
         },
       ],
     };
+
     // If a user has an orgId, create a login event on the org as well
     if (user.orgId !== DEFAULTS.NO_ORG) {
       transactParams.TransactItems.push({
@@ -79,6 +80,24 @@ export const createLoginEvent = async (
       });
     }
 
+    // If a user is logging in for the first time, verify their email
+    if (!user.verifiedEmail) {
+      transactParams.TransactItems.push({
+        Update: {
+          Key: {
+            PK: `${Entities.USER}#${user.userId}`,
+            SK: Entities.USER,
+          },
+          TableName: `${process.env.NODE_ENV}-${DYNAMO_TABLE_NAME}`,
+          UpdateExpression: 'SET updatedAt =  :updatedAt, verifiedEmail = :verifiedEmail',
+          ConditionExpression: 'attribute_exists(PK) ',
+          ExpressionAttributeValues: {
+            ':updatedAt': now,
+            ':verifiedEmail': true,
+          },
+        },
+      });
+    }
     await Dynamo.send(new TransactWriteCommand(transactParams));
     return [null, null];
   } catch (error) {
