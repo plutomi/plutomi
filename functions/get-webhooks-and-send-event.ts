@@ -4,6 +4,7 @@ import { DynamoStreamTypes, Entities } from '../Config';
 import { DynamoApplicant } from '../types/dynamo';
 import { DB } from '../models';
 
+// TODO this type needs to be extended and create a base type
 interface ApplicantWebhookEvent {
   eventName: DynamoStreamTypes;
   NewImage?: DynamoApplicant;

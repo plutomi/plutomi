@@ -6,7 +6,7 @@ import * as Time from '../../utils/time';
 interface DeleteQuestionFromStageInput
   extends Pick<DynamoStage, 'orgId' | 'openingId' | 'stageId'> {
   questionId: string;
-  deleteIndex: number; // TODO check if this type is broken
+  deleteIndex: number; 
   /**
    * When removing a question from a stage, we want to decrement the stage count on the question.
    * This isn't needed if the question is deleted obviously, and is used in the deletion state machine.
