@@ -13,6 +13,8 @@ export interface BaseEvent {
   NewImage: typeof Entities;
 }
 
+export type ExtendedEventKeys = 'PK' | 'SK' | 'entityType' | 'orgId';
+
 export const main = async (event: DynamoDBStreamEvent) => {
   // Was reading a bit and this came up https://github.com/aws/aws-sdk-js/issues/2486
   const record = processor(event.Records)[0];

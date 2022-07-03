@@ -20,9 +20,9 @@ export const createLoginEvent = async (
 
   const newUserLoginEvent: DynamoUserLoginEvent = {
     PK: `${Entities.USER}#${user.userId}`,
-    SK: `${Entities.LOGIN_EVENT}#${now}`,
+    SK: `${Entities.USER_LOGIN_EVENT}#${now}`,
     user,
-    entityType: Entities.LOGIN_EVENT,
+    entityType: Entities.USER_LOGIN_EVENT,
     // TODO in the future, get more the info about the login event such as IP, headers, device, etc.
     createdAt: now,
     updatedAt: now,
@@ -31,7 +31,8 @@ export const createLoginEvent = async (
 
   const newOrgLoginEvent: DynamoOrgLoginEvent = {
     PK: `${Entities.ORG}#${user.orgId}`,
-    SK: `${Entities.LOGIN_EVENT}#${now}`,
+    SK: `${Entities.ORG_LOGIN_EVENT}#${now}`,
+    entityType: Entities.ORG_LOGIN_EVENT,
     // TODO user info here
     // TODO in the future, get more the info about the login event such as IP, headers, device, etc.
     createdAt: now,

@@ -125,7 +125,7 @@ export default class CommsMachineStack extends cdk.Stack {
 
     const definition = new sfn.Choice(this, 'EventType?')
       .when(
-        sfn.Condition.stringEquals('$.entityType', Entities.LOGIN_EVENT),
+        sfn.Condition.stringEquals('$.entityType', Entities.USER_LOGIN_EVENT),
         new sfn.Choice(this, 'IsNewUser?').when(
           sfn.Condition.booleanEquals('$.detail.NewImage.user.verifiedEmail', false),
           setEmailToVerified,

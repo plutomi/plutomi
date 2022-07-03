@@ -69,7 +69,7 @@ export default class EventBridgeStack extends cdk.Stack {
         detail: {
           eventName: [DynamoStreamTypes.INSERT],
           entityType: [
-            Entities.LOGIN_EVENT,
+            Entities.USER_LOGIN_EVENT,
             Entities.LOGIN_LINK,
             Entities.APPLICANT, // TODO welcome applicant
             Entities.ORG_INVITE,

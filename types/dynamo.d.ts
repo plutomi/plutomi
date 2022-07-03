@@ -404,6 +404,7 @@ export interface DynamoLoginLink {
   updatedAt: string;
   relativeExpiry: string;
   user: DynamoUser;
+  orgId?: string;
   loginLinkUrl: string;
   /**
    * A UNIX date for which Dynamo will auto delete this link
@@ -434,20 +435,21 @@ export interface DynamoOrg {
 
 export interface DynamoUserLoginEvent {
   PK: `${Entities.USER}#${string}`;
-  SK: `${Entities.LOGIN_EVENT}#${string}`;
+  SK: `${Entities.USER_LOGIN_EVENT}#${string}`;
   createdAt: string; // ISO timestamp
   updatedAt: string;
   ttlExpiry: number; // ttl unix expiry
-  entityType: Entities.LOGIN_EVENT;
+  entityType: Entities.USER_LOGIN_EVENT;
   user: DynamoUser;
 }
 
 export interface DynamoOrgLoginEvent {
   PK: `${Entities.ORG}#${string}`;
-  SK: `${Entities.LOGIN_EVENT}#${string}`;
+  SK: `${Entities.ORG_LOGIN_EVENT}#${string}`;
   // TODO user info here
   // TODO in the future, get more the info about the login event such as IP, headers, device, etc.
   createdAt: now;
   updatedAt: string;
   ttlExpiry: number;
+  entityType: Entities.ORG_LOGIN_EVENT;
 }

@@ -25,6 +25,7 @@ export const createLoginLink = async (
       relativeExpiry: Time.relative(new Date(loginLinkExpiry)),
       user,
       entityType: Entities.LOGIN_LINK,
+      orgId: user.orgId,
       createdAt: now,
       updatedAt: now,
       ttlExpiry: Time.futureUNIX(15, TIME_UNITS.MINUTES),

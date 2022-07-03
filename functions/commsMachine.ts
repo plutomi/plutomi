@@ -1,12 +1,30 @@
 import { EventBridgeEvent } from 'aws-lambda';
 import axios from 'axios';
-import { DynamoApplicant } from '../types/dynamo';
+import { DynamoStreamTypes, Entities } from '../Config';
+import { DynamoApplicant, DynamoLoginLink, DynamoOrgLoginEvent, DynamoUser, DynamoUserLoginEvent } from '../types/dynamo';
 import { DB } from '../models';
 import { BaseEvent, ExtendedEventKeys } from './stream-processor';
 
-interface ApplicantWebhookEvent extends BaseEvent, Pick<DynamoApplicant, ExtendedEventKeys> {}
+type EntitiesToTriggerComms = DynamoLoginLink | DynamoUser | DynamoUserLoginEvent | DynamoOrgLoginEvent | DynamoApplicant
 
-export async function main(event: EventBridgeEvent<'stream', ApplicantWebhookEvent>) {
+interface CommsMachineEvents extends BaseEvent, Pick<EntitiesToTriggerComms, ExtendedEventKeys> {}
+
+export async function main(event: EventBridgeEvent<'stream', CommsMachineEvents>) {
+
+  if (event.detail.orgId)
+
+    // TODO update the verified email status on the user
+
+
+    // TODO send an email to the admin letting them know
+
+
+    // TODO send an email to the user welcoming them
+
+
+    const [updatedUser, error] = await DB.Users.updateUser({
+        userId: event.detail.
+    })
   const [webhooks, error] = await DB.Webhooks.getWebhooksInOrg({
     orgId: event.detail.orgId,
   });
