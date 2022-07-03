@@ -32,7 +32,7 @@ describe('Users', () => {
       orgJoinDate: DEFAULTS.NO_ORG,
       canReceiveEmails: true,
       unsubscribeKey: expect.any(String),
-      GSI1SK: `${DEFAULTS.NO_FIRST_NAME} ${DEFAULTS.NO_LAST_NAME}`,
+      GSI1SK: `${DEFAULTS.FIRST_NAME} ${DEFAULTS.LAST_NAME}`,
       GSI2PK: expect.any(String),
       GSI2SK: Entities.USER,
     });

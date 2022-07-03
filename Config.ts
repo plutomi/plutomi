@@ -83,8 +83,6 @@ export enum DEFAULTS {
    * When no callbackUrl is provided on login, what page should users be redirected to
    */
   REDIRECT = 'dashboard', // TODO make this an enum / typ;e
-  NO_FIRST_NAME = 'NO_FIRST_NAME',
-  NO_LAST_NAME = 'NO_LAST_NAME',
 }
 
 export enum LIMITS {

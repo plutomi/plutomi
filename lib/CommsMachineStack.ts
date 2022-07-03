@@ -25,48 +25,10 @@ export default class CommsMachineStack extends cdk.Stack {
   constructor(scope: cdk.App, id: string, props: CommsMachineProps) {
     super(scope, id, props);
 
-    // const setEmailToVerified = new tasks.DynamoUpdateItem(this, 'UpdateVerifiedEmailStatus', {
-    //   key: {
-    //     PK: tasks.DynamoAttributeValue.fromString(sfn.JsonPath.stringAt('$.PK')),
-    //     SK: tasks.DynamoAttributeValue.fromString(Entities.USER),
-    //   },
-    //   table: props.table,
-    //   updateExpression: 'SET verifiedEmail = :newValue',
-    //   expressionAttributeValues: {
-    //     ':newValue': tasks.DynamoAttributeValue.fromBoolean(true),
-    //   },
-    //   /**
-    //    * If the value of ResultPath is null, that means that the state’s own raw output is discarded and its raw input becomes its result.
-    //    * https://states-language.net/spec.html#filters
-    //    * We want the original input to be passed down to the next tasks so that we can format emails
-    //    */
-    //   resultPath: sfn.JsonPath.DISCARD,
+Path: sfn.JsonPath.DISCARD,
     // });
 
-    // setEmailToVerified.addRetry({ maxAttempts: 2 });
 
-    // const sendLoginLink = new tasks.CallAwsService(this, 'SendLoginLink', {
-    //   // TODO update once native integration is implemented
-
-    //   parameters: {
-    //     Source: `Plutomi <${Emails.GENERAL}>`,
-    //     Destination: {
-    //       'ToAddresses.$': `States.Array($.detail.NewImage.user.email)`,
-    //     },
-    //     Message: {
-    //       Subject: {
-    //         Data: ,
-    //       },
-    //       Body: {
-    //         Html: {
-    //           // TODO add unsubscribe key
-    //           'Data.$': `States.Format('<h1>Click <a href="{}" noreferrer target="_blank" >this link</a> to log in!</h1><p>It will expire {} so you better hurry.</p><p>If you did not request this link you can safely ignore it.',
-    //           $.detail.NewImage.loginLinkUrl, $.detail.NewImage.relativeExpiry)`,
-    //         },
-    //       },
-    //     },
-    //   },
-    // });
     // // TODO export this to its own file
 
     // const sendApplicationLink = new tasks.CallAwsService(this, 'SendApplicationLink', {
@@ -111,7 +73,7 @@ export default class CommsMachineStack extends cdk.Stack {
     //       Body: {
     //         Html: {
     //           // TODO add unsubscribe
-    //           Data: `<h4>You can log in at <a href="${WEBSITE_URL}" target="_blank" rel=noreferrer>${WEBSITE_URL}</a> to accept their invite!</h4><p>If you believe this email was received in error, you can safely ignore it.</p>`,
+    //           Data: ,
     //         },
     //       },
     //     },

@@ -4,6 +4,7 @@ import { Dynamo } from '../../awsClients/ddbDocClient';
 import { ID_LENGTHS, Entities, DYNAMO_TABLE_NAME } from '../../Config';
 import { DynamoOrgInvite, DynamoUser } from '../../types/dynamo';
 import * as Time from '../../utils/time';
+import dayjs from 'dayjs';
 
 interface CreateOrgInviteInput {
   orgName: string;
@@ -31,8 +32,8 @@ export const createInvite = async (
       updatedAt: now,
       expiresAt,
       inviteId,
-      // TODO TTL
-      GSI1PK: `${Entities.ORG}#${createdBy.orgId}#${Entities.ORG_INVITE}S`, // Returns all invites sent by an org
+      // TODO add ttl?
+      GSI1PK: `${Entities.ORG}#${createdBy.orgId}#${Entities.ORG_INVITE}S`, // Allows retrieving all invites sent by an org // TODO list this on org page
       GSI1SK: now,
     };
     const transactParams: TransactWriteCommandInput = {
