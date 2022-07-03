@@ -23,7 +23,7 @@ export const sendEmail = async ({ to, from, subject, body }: SendEmailProps) => 
       Destination: {
         ToAddresses: [to],
       },
-      Source: `${from.header} <${from.email}`,
+      Source: `${from.header} <${from.email}>`,
       Message: {
         Subject: {
           Data: subject,

@@ -4,15 +4,13 @@ import { CustomEventBridgeEvent } from './stream-processor';
 import { sendEmail, SendEmailProps } from '../models/Emails/sendEmail';
 
 export async function main(event: EventBridgeEvent<'stream', CustomEventBridgeEvent>) {
-  console.log('LAMBDA EVENT', event);
+  console.log('Incoming event:', JSON.stringify(event));
 
-  console.log('Stringified', JSON.stringify(event));
-
-  // New user logging in for the first time
   if (
     event.detail.NewImage.entityType === Entities.USER_LOGIN_EVENT &&
-    !event.detail.NewImage.user.verifiedEmail
+    !event.detail.NewImage.user.verifiedEmail // TODO this isnt working!!!!!!!
   ) {
+    console.log(`User is logging in for the first time`);
     const { user } = event.detail.NewImage;
 
     const emailsToSend: SendEmailProps[] = [
@@ -40,8 +38,27 @@ export async function main(event: EventBridgeEvent<'stream', CustomEventBridgeEv
     try {
       console.log(`Sending emails:`, emailsToSend);
       await Promise.all(emailsToSend.map((email) => sendEmail(email)));
+      return;
     } catch (error) {
-      console.error('Error ocurred sending emails', error);
+      console.error('Error ocurred sending new user emails', error);
     }
+  }
+
+  if (event.detail.NewImage.entityType === Entities.LOGIN_LINK) {
+    console.log(`User requested a login link`);
+
+    const { user, loginLinkUrl, relativeExpiry } = event.detail.NewImage;
+
+    try {
+      await sendEmail({
+        to: user.email,
+        from: {
+          header: 'Plutomi',
+          email: Emails.LOGIN,
+        },
+        subject: `Your magic login link is here!`,
+        body: `<h1>Click <a href="${loginLinkUrl}" noreferrer target="_blank" >this link</a> to log in!</h1><p>It will expire ${relativeExpiry} so you better hurry.</p><p>If you did not request this link you can safely ignore it.</p>`,
+      });
+    } catch (error) {}
   }
 }

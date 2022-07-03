@@ -55,7 +55,7 @@ export default class CommsMachineStack extends cdk.Stack {
     //     },
     //     Message: {
     //       Subject: {
-    //         Data: `Your magic login link is here!`,
+    //         Data: ,
     //       },
     //       Body: {
     //         Html: {
@@ -152,7 +152,7 @@ export default class CommsMachineStack extends cdk.Stack {
       }),
     );
 
-    const definition = new tasks.LambdaInvoke(this, 'SendNewUserEmails', {
+    const definition = new tasks.LambdaInvoke(this, 'SendComms', {
       lambdaFunction: commsMachineFunction,
     });
 

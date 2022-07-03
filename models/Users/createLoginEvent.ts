@@ -89,7 +89,7 @@ export const createLoginEvent = async (
             SK: Entities.USER,
           },
           TableName: `${process.env.NODE_ENV}-${DYNAMO_TABLE_NAME}`,
-          UpdateExpression: 'SET updatedAt =  :updatedAt, verifiedEmail = :verifiedEmail',
+          UpdateExpression: 'SET updatedAt = :updatedAt, verifiedEmail = :verifiedEmail',
           ConditionExpression: 'attribute_exists(PK) ',
           ExpressionAttributeValues: {
             ':updatedAt': now,
