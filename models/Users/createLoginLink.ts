@@ -1,35 +1,31 @@
 import { PutCommandInput, PutCommand } from '@aws-sdk/lib-dynamodb';
+import { nanoid } from 'nanoid';
 
 import { Dynamo } from '../../awsClients/ddbDocClient';
 import { DYNAMO_TABLE_NAME, Entities, TIME_UNITS } from '../../Config';
 import { DynamoLoginLink, DynamoUser } from '../../types/dynamo';
 import * as Time from '../../utils/time';
 
-interface CreateLoginLinkInput {
+interface CreateLoginLinkInput extends Pick<DynamoLoginLink, 'user'> {
   loginLinkId: string;
-  loginLinkUrl: string;
-  loginLinkExpiry: string;
-  user: DynamoUser;
+  ttlExpiry: number; // Unix timestamp for TTL
 }
 
 export const createLoginLink = async (
   props: CreateLoginLinkInput,
 ): Promise<[null, null] | [null, any]> => {
-  const { loginLinkId, loginLinkUrl, loginLinkExpiry, user } = props;
+  const { user, ttlExpiry, loginLinkId } = props;
   const now = Time.currentISO();
   try {
     const newLoginLink: DynamoLoginLink = {
       PK: `${Entities.USER}#${user.userId}`,
       SK: `${Entities.LOGIN_LINK}#${loginLinkId}`,
-      loginLinkUrl,
-      relativeExpiry: Time.relative(new Date(loginLinkExpiry)),
       user,
       entityType: Entities.LOGIN_LINK,
-      orgId: user.orgId,
       createdAt: now,
       updatedAt: now,
-      ttlExpiry: Time.futureUNIX(15, TIME_UNITS.MINUTES),
-      GSI1PK: `${Entities.USER}#${user.userId}#${Entities.LOGIN_LINK}S`, // Get latest login link(s) for a user for throttling
+      ttlExpiry,
+      GSI1PK: `${Entities.USER}#${user.userId}#${Entities.LOGIN_LINK}S`, // To be able to get the latest login link(s) for a user for throttling
       GSI1SK: now,
     };
 

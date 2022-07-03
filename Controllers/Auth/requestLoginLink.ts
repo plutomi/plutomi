@@ -10,10 +10,12 @@ import {
   ERRORS,
   API_URL,
   DOMAIN_NAME,
+  Emails,
 } from '../../Config';
 import * as Time from '../../utils/time';
 import * as CreateError from '../../utils/createError';
 import { DB } from '../../models';
+import { sendEmail } from '../../models/Emails/sendEmail';
 
 const jwt = require('jsonwebtoken');
 
@@ -108,10 +110,10 @@ export const requestLoginLink = async (req: Request, res: Response) => {
     return res.status(403).json({ message: "You're doing that too much, please try again later" });
   }
 
-  // Create a login link for them
-  // TODO this was used for Google login before and can be moved into the actual Dynamo call again
+  const now = Time.currentUNIX();
   const loginLinkId = nanoid();
-  const loginLinkExpiry = Time.futureISO(15, TIME_UNITS.MINUTES); // when the link expires
+  const ttlExpiry = Time.futureUNIX(15, TIME_UNITS.MINUTES); // when the link expires and is deleted from Dynamo
+  const relativeExpiry = Time.relative(new Date(ttlExpiry));
 
   const token = await jwt.sign(
     {
@@ -119,21 +121,18 @@ export const requestLoginLink = async (req: Request, res: Response) => {
       loginLinkId,
     },
     process.env.LOGIN_LINKS_PASSWORD,
-    { expiresIn: 900 }, // 15 min
+    { expiresIn: ttlExpiry - now },
   );
 
-  // TODO this will braeak due to new routes
+  // TODO enums
   const loginLinkUrl = `${API_URL}/auth/login?token=${token}&callbackUrl=${
     callbackUrl || `${WEBSITE_URL}/${DEFAULTS.REDIRECT}`
   }`;
-  /**
-   * Email will be sent asynchronously
-   */
+
   const [success, creationError] = await DB.Users.createLoginLink({
-    loginLinkId,
-    loginLinkUrl,
-    loginLinkExpiry,
     user,
+    loginLinkId,
+    ttlExpiry,
   });
 
   if (creationError) {
@@ -145,5 +144,23 @@ export const requestLoginLink = async (req: Request, res: Response) => {
     return res.status(status).json(body);
   }
 
+  try {
+    await sendEmail({
+      to: user.email,
+      from: {
+        header: 'Plutomi',
+        email: Emails.LOGIN,
+      },
+      subject: `Your magic login link is here!`,
+      body: `<h1>Click <a href="${loginLinkUrl}" noreferrer target="_blank" >this link</a> to log in!</h1><p>It will expire ${relativeExpiry} so you better hurry.</p><p>If you did not request this link you can safely ignore it.</p>`,
+    });
+  } catch (error) {
+    // TODO delete login link and prompt the user to try again
+    const { status, body } = CreateError.SDK(
+      creationError,
+      'An error ocurred sending your email :(',
+    );
+    return res.status(status).json(body);
+  }
   return res.status(201).json({ message: `We've sent a magic login link to your email!` });
 };

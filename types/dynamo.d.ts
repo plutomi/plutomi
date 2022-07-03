@@ -402,10 +402,7 @@ export interface DynamoLoginLink {
   entityType: Entities.LOGIN_LINK;
   createdAt: string;
   updatedAt: string;
-  relativeExpiry: string;
   user: DynamoUser;
-  orgId?: string;
-  loginLinkUrl: string;
   /**
    * A UNIX date for which Dynamo will auto delete this link
    */

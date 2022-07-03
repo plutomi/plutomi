@@ -50,15 +50,7 @@ export async function main(event: EventBridgeEvent<'stream', CustomEventBridgeEv
     const { user, loginLinkUrl, relativeExpiry } = event.detail.NewImage;
 
     try {
-      await sendEmail({
-        to: user.email,
-        from: {
-          header: 'Plutomi',
-          email: Emails.LOGIN,
-        },
-        subject: `Your magic login link is here!`,
-        body: `<h1>Click <a href="${loginLinkUrl}" noreferrer target="_blank" >this link</a> to log in!</h1><p>It will expire ${relativeExpiry} so you better hurry.</p><p>If you did not request this link you can safely ignore it.</p>`,
-      });
+
       return;
     } catch (error) {
       console.error('An error ocurred sending a login link', error);
