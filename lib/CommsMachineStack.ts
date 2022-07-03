@@ -25,60 +25,6 @@ export default class CommsMachineStack extends cdk.Stack {
   constructor(scope: cdk.App, id: string, props: CommsMachineProps) {
     super(scope, id, props);
 
-Path: sfn.JsonPath.DISCARD,
-    // });
-
-
-    // // TODO export this to its own file
-
-    // const sendApplicationLink = new tasks.CallAwsService(this, 'SendApplicationLink', {
-    //   // TODO update once native integration is implemented
-
-    //   ...SES_SETTINGS,
-    //   parameters: {
-    //     Source: `Plutomi <${Emails.GENERAL}>`,
-    //     Destination: {
-    //       'ToAddresses.$': `States.Array($.detail.NewImage.email)`,
-    //     },
-    //     Message: {
-    //       Subject: {
-    //         Data: `Here is a link to your application!`,
-    //       },
-    //       Body: {
-    //         Html: {
-    //           // TODO add unsubscribe
-    //           'Data.$': `States.Format('<h1><a href="${WEBSITE_URL}/{}/applicants/{}" rel=noreferrer target="_blank" >Click this link to view your application!</a></h1><p>If you did not request this link, you can safely ignore it.</p>',
-    //             $.orgId, $.detail.NewImage.applicantId)`,
-    //         },
-    //       },
-    //     },
-    //   },
-    // });
-
-    // // TODO export this to its own file
-    // const sendOrgInvite = new tasks.CallAwsService(this, 'SendOrgInvite', {
-    //   // TODO update once native integration is implemented
-
-    //   ...SES_SETTINGS,
-    //   parameters: {
-    //     Source: `Plutomi <${Emails.JOIN}>`,
-    //     Destination: {
-    //       'ToAddresses.$': `States.Array($.detail.NewImage.recipient.email)`,
-    //     },
-    //     Message: {
-    //       Subject: {
-    //         'Data.$': `States.Format('{} {} has invited you to join them on {}!',
-    //         $.detail.NewImage.createdBy.firstName, $.detail.NewImage.createdBy.lastName, $.detail.NewImage.orgName)`,
-    //       },
-    //       Body: {
-    //         Html: {
-    //           // TODO add unsubscribe
-    //           Data: ,
-    //         },
-    //       },
-    //     },
-    //   },
-    // });
 
     const FUNCTION_NAME = 'comms-machine-function';
     const commsMachineFunction = new NodejsFunction(
