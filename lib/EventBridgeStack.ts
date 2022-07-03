@@ -59,25 +59,6 @@ export default class EventBridgeStack extends cdk.Stack {
       retention: cdk.Duration.days(3),
     });
 
-    new Rule(this, Rules.NeedsComms, {
-      eventBus: bus,
-      description: 'Rule for actions that will require further comms.',
-      ruleName: Rules.NeedsComms,
-      targets: [new SfnStateMachine(props.CommsMachine)],
-      eventPattern: {
-        source: [Source.DynamoStream],
-        detail: {
-          eventName: [DynamoStreamTypes.INSERT],
-          entityType: [
-            Entities.USER_LOGIN_EVENT,
-            Entities.LOGIN_LINK,
-            Entities.APPLICANT, // TODO welcome applicant
-            Entities.ORG_INVITE,
-          ],
-        },
-      },
-    });
-
     new Rule(this, Rules.DeleteChildren, {
       eventBus: bus,
       description: 'Rule for deleting any child items.',
