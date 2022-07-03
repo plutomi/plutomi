@@ -7,7 +7,7 @@ export const users = Router();
 
 users.use(withSession);
 
-users.get('/self', API.Users.self);
+users.get('/me', API.Users.me);
 users.get('/:userId', API.Users.getUser);
 users.put('/:userId', API.Users.updateUser);
 
