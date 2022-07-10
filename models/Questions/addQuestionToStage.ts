@@ -26,9 +26,9 @@ export const addQuestionToStage = async (
    *
    */
   const params: DynamoQuestionStageAdjacentItem = {
-    PK: `${Entities.ORG}#${orgId}#${Entities.QUESTION}#${questionId}#${Entities.STAGE}S`,
-    SK: `${Entities.OPENING}#${openingId}#${Entities.STAGE}#${stageId}`,
-    entityType: Entities.QUESTION,
+    PK: `${Entities.ORG}#${orgId}#${Entities.QUESTION}#${questionId}`,
+    SK: `${Entities.QUESTION_ADJACENT_STAGE_ITEM}#${Entities.OPENING}#${openingId}#${Entities.STAGE}#${stageId}`,
+    entityType: Entities.QUESTION_ADJACENT_STAGE_ITEM,
     createdAt: now,
     updatedAt: now,
     orgId,

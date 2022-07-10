@@ -15,9 +15,14 @@
     "no-new": "off",
     "react/require-default-props": "warn",
     "import/prefer-default-export": "off",
+    "no-unused-vars": "error",
     "no-console": "off",
+    "no-void": "off",
     "react/jsx-props-no-spreading": "warn",
     "no-useless-return": "error",
+    "prefer-template": "error",
+    "no-nested-ternary": "error",
+    "no-plusplus": "error",
     "jsx-a11y/label-has-associated-control": [
       2,
       {

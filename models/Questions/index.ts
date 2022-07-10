@@ -5,6 +5,7 @@ import { updateQuestion } from './updateQuestion';
 import { getQuestionsInOrg } from './getQuestionsInOrg';
 import { addQuestionToStage } from './addQuestionToStage';
 import { deleteQuestionFromStage } from './deleteQuestionFromStage';
+import { getAdjacentStageItemsForQuestion } from './getAdjacentStageItemsForQuestion';
 
 export {
   createQuestion,
@@ -14,4 +15,5 @@ export {
   getQuestionsInOrg,
   addQuestionToStage,
   deleteQuestionFromStage,
+  getAdjacentStageItemsForQuestion,
 };

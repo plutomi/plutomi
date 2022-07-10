@@ -15,15 +15,6 @@ import { CloudFrontTarget } from '@aws-cdk/aws-route53-targets';
 import { Policy, PolicyStatement } from '@aws-cdk/aws-iam';
 import { DOMAIN_NAME, EXPRESS_PORT } from '../Config';
 
-type DynamoActions =
-  | 'dynamodb:GetItem'
-  | 'dynamodb:BatchGetItem'
-  | 'dynamodb:Query'
-  | 'dynamodb:PutItem'
-  | 'dynamodb:UpdateItem'
-  | 'dynamodb:DeleteItem'
-  | 'dynamodb:BatchWriteItem';
-
 interface AppStackServiceProps extends cdk.StackProps {
   table: Table;
 }
@@ -40,26 +31,32 @@ export default class AppStack extends cdk.Stack {
     });
 
     // Allows Fargate to access DynamoDB
-    // TODO i think this is being used somewhere else with a different type
-    const actions: DynamoActions[] = [
-      'dynamodb:GetItem',
-      'dynamodb:DeleteItem',
-      'dynamodb:PutItem',
-      'dynamodb:Query',
-      'dynamodb:UpdateItem',
-    ];
+    const dynamoAccessPolicyStatement = new PolicyStatement({
+      actions: [
+        'dynamodb:GetItem',
+        'dynamodb:DeleteItem',
+        'dynamodb:PutItem',
+        'dynamodb:Query',
+        'dynamodb:UpdateItem',
+      ],
+      resources: [
+        props.table.tableArn,
+        `${props.table.tableArn}/index/GSI1`,
+        `${props.table.tableArn}/index/GSI2`,
+      ],
+    });
 
-    const GSI1 = `${props.table.tableArn}/index/GSI1`;
-    const GSI2 = `${props.table.tableArn}/index/GSI2`;
-    const resources = [props.table.tableArn, GSI1, GSI2];
-
-    const policyStatement = new PolicyStatement({
-      actions,
-      resources,
+    // Allows fargate to send emails
+    const sesSendEmailPolicy = new iam.PolicyStatement({
+      effect: iam.Effect.ALLOW,
+      actions: ['ses:SendEmail', 'ses:SendRawEmail', 'ses:SendTemplatedEmail'],
+      resources: [
+        `arn:aws:ses:${this.region}:${cdk.Stack.of(this).account}:identity/${DOMAIN_NAME}`,
+      ],
     });
 
     const policy = new Policy(this, `${process.env.NODE_ENV}-plutomi-api-policy`, {
-      statements: [policyStatement],
+      statements: [dynamoAccessPolicyStatement, sesSendEmailPolicy],
     });
     taskRole.attachInlinePolicy(policy);
     // Define a fargate task with the newly created execution and task roles

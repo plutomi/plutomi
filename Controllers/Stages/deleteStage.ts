@@ -29,6 +29,7 @@ export const deleteStage = async (req: Request, res: Response) => {
     orgId: user.orgId,
     stageId,
     deleteIndex: opening.stageOrder.indexOf(stageId),
+    updateOpening: true,
   });
 
   if (error) {

@@ -6,7 +6,7 @@ import * as Time from '../../utils/time';
 interface DeleteQuestionFromStageInput
   extends Pick<DynamoStage, 'orgId' | 'openingId' | 'stageId'> {
   questionId: string;
-  deleteIndex: number; 
+  deleteIndex: number;
   /**
    * When removing a question from a stage, we want to decrement the stage count on the question.
    * This isn't needed if the question is deleted obviously, and is used in the deletion state machine.
@@ -28,8 +28,8 @@ export const deleteQuestionFromStage = async (
         // Delete the adjacent item
         Delete: {
           Key: {
-            PK: `${Entities.ORG}#${orgId}#${Entities.QUESTION}#${questionId}#${Entities.STAGE}S`,
-            SK: `${Entities.OPENING}#${openingId}#${Entities.STAGE}#${stageId}`,
+            PK: `${Entities.ORG}#${orgId}#${Entities.QUESTION}#${questionId}`,
+            SK: `${Entities.QUESTION_ADJACENT_STAGE_ITEM}#${Entities.OPENING}#${openingId}#${Entities.STAGE}#${stageId}`,
           },
           TableName: `${process.env.NODE_ENV}-${DYNAMO_TABLE_NAME}`,
           ConditionExpression: 'attribute_exists(PK)',
