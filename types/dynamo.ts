@@ -12,6 +12,22 @@ export enum DynamoIAM {
   BatchWriteItem = 'dynamodb:BatchWriteItem',
 }
 
+
+export type AllDynamoEntities =
+  | DynamoOrgLoginEvent
+  | DynamoUserLoginEvent
+  | DynamoOrg
+  | DynamoLoginLink
+  | DynamoUser
+  | DynamoWebhook
+  | DynamoOrgInvite
+  | DynamoOpening
+  | DynamoApplicantResponse
+  | DynamoApplicant
+  | DynamoQuestion
+  | DynamoQuestionStageAdjacentItem
+  | DynamoStage;
+
 export interface DynamoStage {
   /**
    * Primary key for creating a stage - takes `orgId`, `openingId`, & `stageId`
