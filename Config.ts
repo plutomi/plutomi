@@ -40,6 +40,8 @@ export enum Entities {
   OPENING = 'OPENING',
   STAGE = 'STAGE',
   QUESTION = 'QUESTION',
+  // For keeping track of how many stages a question is in, see
+  QUESTION_ADJACENT_STAGE_ITEM = 'QUESTION_ADJACENT_STAGE_ITEM',
   STAGE_RULE = 'STAGE_RULE',
   LOGIN_LINK = 'LOGIN_LINK',
   USER_LOGIN_EVENT = 'USER_LOGIN_EVENT',
@@ -114,6 +116,7 @@ export enum Emails {
   ADMIN = 'admin@plutomi.com',
   LOGIN = 'login@plutomi.com', // Login links
   JOIN = 'join@plutomi.com', // Org invites
+  JOSE = 'jose@plutomi.com', // Welcome messages
   // Jest test accounts
   TESTING = 'testing@plutomi.com',
   TESTING2 = 'testing2@plutomi.com',

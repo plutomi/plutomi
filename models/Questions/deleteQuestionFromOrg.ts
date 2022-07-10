@@ -3,12 +3,17 @@ import { Dynamo } from '../../awsClients/ddbDocClient';
 import { DYNAMO_TABLE_NAME, Entities } from '../../Config';
 import { DynamoQuestion } from '../../types/dynamo';
 import * as Time from '../../utils/time';
-type DeleteQuestionFromOrgInput = Pick<DynamoQuestion, 'orgId' | 'questionId'>;
+interface DeleteQuestionFromOrgInput extends Pick<DynamoQuestion, 'orgId' | 'questionId'> {
+  /**
+   * Whether to decrement the org's total question count
+   */
+  updateOrg: boolean;
+}
 
 export const deleteQuestionFromOrg = async (
   props: DeleteQuestionFromOrgInput,
 ): Promise<[null, null] | [null, any]> => {
-  const { orgId, questionId } = props;
+  const { orgId, questionId, updateOrg } = props;
   const now = Time.currentISO();
 
   const transactParams: TransactWriteCommandInput = {
@@ -24,23 +29,26 @@ export const deleteQuestionFromOrg = async (
           ConditionExpression: 'attribute_exists(PK)',
         },
       },
-      {
-        // Decrement the org's totalQuestions
-        Update: {
-          Key: {
-            PK: `${Entities.ORG}#${orgId}`,
-            SK: Entities.ORG,
-          },
-          TableName: `${process.env.NODE_ENV}-${DYNAMO_TABLE_NAME}`,
-          UpdateExpression: 'SET totalQuestions = totalQuestions - :value, updatedAt = :updatedAt',
-          ExpressionAttributeValues: {
-            ':value': 1,
-            ':updatedAt': now,
-          },
-        },
-      },
     ],
   };
+
+  if (updateOrg) {
+    transactParams.TransactItems.push({
+      // Decrement the org's totalQuestions
+      Update: {
+        Key: {
+          PK: `${Entities.ORG}#${orgId}`,
+          SK: Entities.ORG,
+        },
+        TableName: `${process.env.NODE_ENV}-${DYNAMO_TABLE_NAME}`,
+        UpdateExpression: 'SET totalQuestions = totalQuestions - :value, updatedAt = :updatedAt',
+        ExpressionAttributeValues: {
+          ':value': 1,
+          ':updatedAt': now,
+        },
+      },
+    });
+  }
   try {
     await Dynamo.send(new TransactWriteCommand(transactParams));
     return [null, null];

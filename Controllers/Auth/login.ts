@@ -93,11 +93,11 @@ export const login = async (req: Request, res: Response) => {
           to: user.email,
           from: {
             header: 'Plutomi',
-            email: Emails.GENERAL,
+            email: Emails.JOSE,
           },
           subject: 'Welcome to Plutomi!',
-          body: `<h1>Hello there!</h1><p>Just wanted to make you aware that this website is still in active development and <strong>you will lose your data!</strong><br><br>
-            This project is completely open source - please let us know if you have any questions, concerns, or feature requests by replying to this email or <a href="https://github.com/plutomi/plutomi" rel=noreferrer target="_blank" >creating an issue on Github</a>!</p>`,
+          body: `<h1>Hello there!</h1><p>Jose here, CEO of Plutomi.<br></br>Just wanted to make you aware that this website is still in active development and <strong>you will lose your data!</strong><br><br>
+            This project is completely open source - please let us know if you have any questions, concerns, or feature requests by <a href="https://github.com/plutomi/plutomi" rel=noreferrer target="_blank" >creating an issue on Github</a> or replying to this email! <br></br><br></br><strong>I answer all emails!</strong> <i>Seriously</i>, try me :)</p>`,
         },
         {
           from: {
@@ -112,7 +112,8 @@ export const login = async (req: Request, res: Response) => {
 
       try {
         console.log(`Sending emails:`, emailsToSend);
-        await Promise.all(emailsToSend.map((email) => sendEmail(email)));
+        await Promise.all(emailsToSend.map(async (email) => sendEmail(email)));
+        console.log('All emails sent!');
         return;
       } catch (error) {
         console.error('Error ocurred sending new user emails', error);

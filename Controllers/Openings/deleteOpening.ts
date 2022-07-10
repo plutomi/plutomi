@@ -9,6 +9,7 @@ export const deleteOpening = async (req: Request, res: Response) => {
   const [opening, error] = await DB.Openings.deleteOpening({
     openingId,
     orgId: user.orgId,
+    updateOrg: true,
   });
 
   if (error) {

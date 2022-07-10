@@ -3,10 +3,15 @@ import { Dynamo } from '../../awsClients/ddbDocClient';
 import { DYNAMO_TABLE_NAME, Entities } from '../../Config';
 import { DynamoWebhook } from '../../types/dynamo';
 import * as Time from '../../utils/time';
-type DeleteWebhookFromOrgInput = Pick<DynamoWebhook, 'webhookId' | 'orgId'>;
 
+interface DeleteWebhookFromOrgInput extends Pick<DynamoWebhook, 'webhookId' | 'orgId'> {
+  /**
+   * Whether to update the org's total webhooks count
+   */
+  updateOrg: boolean;
+}
 export const deleteWebhook = async (props: DeleteWebhookFromOrgInput): Promise<[null, any]> => {
-  const { orgId, webhookId } = props;
+  const { orgId, webhookId, updateOrg } = props;
   const now = Time.currentISO();
   const transactParams: TransactWriteCommandInput = {
     TransactItems: [
@@ -21,23 +26,26 @@ export const deleteWebhook = async (props: DeleteWebhookFromOrgInput): Promise<[
           ConditionExpression: 'attribute_exists(PK)',
         },
       },
-      {
-        // Decrement the org's totalWebhooks
-        Update: {
-          Key: {
-            PK: `${Entities.ORG}#${orgId}`,
-            SK: Entities.ORG,
-          },
-          TableName: `${process.env.NODE_ENV}-${DYNAMO_TABLE_NAME}`,
-          UpdateExpression: 'SET totalWebhooks = totalWebhooks - :value, updatedAt = :updatedAt',
-          ExpressionAttributeValues: {
-            ':value': 1,
-            ':updatedAt': now,
-          },
-        },
-      },
     ],
   };
+
+  if (updateOrg) {
+    transactParams.TransactItems.push({
+      // Decrement the org's totalWebhooks
+      Update: {
+        Key: {
+          PK: `${Entities.ORG}#${orgId}`,
+          SK: Entities.ORG,
+        },
+        TableName: `${process.env.NODE_ENV}-${DYNAMO_TABLE_NAME}`,
+        UpdateExpression: 'SET totalWebhooks = totalWebhooks - :value, updatedAt = :updatedAt',
+        ExpressionAttributeValues: {
+          ':value': 1,
+          ':updatedAt': now,
+        },
+      },
+    });
+  }
   try {
     await Dynamo.send(new TransactWriteCommand(transactParams));
     return [null, null];

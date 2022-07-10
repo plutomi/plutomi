@@ -2,6 +2,16 @@
 // All  other types are derivatives with Pick, Omit, etc.
 import { DEFAULTS, Entities, OpeningState } from '../Config';
 
+export enum DynamoIAM {
+  DeleteItem = 'dynamodb:DeleteItem',
+  GetItem = 'dynamodb:GetItem',
+  BatchGetItem = 'dynamodb:BatchGetItem',
+  Query = 'dynamodb:Query',
+  PutItem = 'dynamodb:PutItem',
+  UpdateItem = 'dynamodb:UpdateItem',
+  BatchWriteItem = 'dynamodb:BatchWriteItem',
+}
+
 export interface DynamoStage {
   /**
    * Primary key for creating a stage - takes `orgId`, `openingId`, & `stageId`
@@ -54,9 +64,9 @@ export interface DynamoStage {
 }
 
 export interface DynamoQuestionStageAdjacentItem {
-  PK: `${Entities.ORG}#${string}#${Entities.QUESTION}#${string}#${Entities.STAGE}S`;
-  SK: `${Entities.OPENING}#${string}#${Entities.STAGE}#${string}`;
-  entityType: Entities.QUESTION;
+  PK: `${Entities.ORG}#${string}#${Entities.QUESTION}#${string}`;
+  SK: `${Entities.QUESTION_ADJACENT_STAGE_ITEM}#${Entities.OPENING}#${string}#${Entities.STAGE}#${string}`;
+  entityType: Entities.QUESTION_ADJACENT_STAGE_ITEM;
   createdAt: string;
   updatedAt: string;
   orgId: string;
@@ -362,7 +372,7 @@ export interface DynamoWebhook {
   updatedAt: string;
   webhookUrl: string;
   entityType: Entities.WEBHOOK;
-  GSI1PK: `${Entities.ORG}#${orgId}#${Entities.WEBHOOK}S`;
+  GSI1PK: `${Entities.ORG}#${string}#${Entities.WEBHOOK}S`;
   GSI1SK: string;
 }
 export interface DynamoUser {
@@ -445,24 +455,9 @@ export interface DynamoOrgLoginEvent {
   SK: `${Entities.ORG_LOGIN_EVENT}#${string}`;
   // TODO user info here
   // TODO in the future, get more the info about the login event such as IP, headers, device, etc.
-  createdAt: now;
+  createdAt: string;
   orgId: string;
   updatedAt: string;
   ttlExpiry: number;
   entityType: Entities.ORG_LOGIN_EVENT;
 }
-
-type AllDynamoEntities =
-  | DynamoOrgLoginEvent
-  | DynamoUserLoginEvent
-  | DynamoOrg
-  | DynamoLoginLink
-  | DynamoUser
-  | DynamoWebhook
-  | DynamoOrgInvite
-  | DynamoOpening
-  | DynamoApplicantResponse
-  | DynamoApplicant
-  | DynamoQuestion
-  | DynamoQuestionStageAdjacentItem
-  | DynamoStage;

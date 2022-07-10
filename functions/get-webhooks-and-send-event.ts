@@ -20,7 +20,9 @@ export async function main(event: EventBridgeEvent<'stream', CustomEventBridgeEv
 
   console.log('Sending webhooks...');
   try {
-    await Promise.all(webhooks.map((hook) => axios.post(hook.webhookUrl, { ...event.detail })));
+    await Promise.all(
+      webhooks.map(async (hook) => axios.post(hook.webhookUrl, { ...event.detail })),
+    );
     console.log('Webhooks sent!');
   } catch (err) {
     console.error(

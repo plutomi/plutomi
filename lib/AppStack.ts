@@ -15,15 +15,6 @@ import { CloudFrontTarget } from '@aws-cdk/aws-route53-targets';
 import { Policy, PolicyStatement } from '@aws-cdk/aws-iam';
 import { DOMAIN_NAME, EXPRESS_PORT } from '../Config';
 
-type DynamoActions =
-  | 'dynamodb:GetItem'
-  | 'dynamodb:BatchGetItem'
-  | 'dynamodb:Query'
-  | 'dynamodb:PutItem'
-  | 'dynamodb:UpdateItem'
-  | 'dynamodb:DeleteItem'
-  | 'dynamodb:BatchWriteItem';
-
 interface AppStackServiceProps extends cdk.StackProps {
   table: Table;
 }

@@ -29,6 +29,7 @@ export const getQuestionsInStage = async (req: Request, res: Response) => {
     return res.status(200).json([]);
   }
   try {
+    // TODO promise all here should be updated to not await this
     const results = await Promise.all(
       questionOrder.map(async (id: string) => {
         const [question, error] = await DB.Questions.getQuestion({

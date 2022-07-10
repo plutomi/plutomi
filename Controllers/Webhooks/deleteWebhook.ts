@@ -8,6 +8,7 @@ export const deleteWebhook = async (req: Request, res: Response) => {
   const [success, failure] = await DB.Webhooks.deleteWebhook({
     orgId: user.orgId,
     webhookId: req.params.webhookId,
+    updateOrg: true,
   });
 
   if (failure) {

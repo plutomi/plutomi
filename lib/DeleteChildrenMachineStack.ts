@@ -5,10 +5,22 @@ import { LogGroup, RetentionDays } from '@aws-cdk/aws-logs';
 import { Table } from '@aws-cdk/aws-dynamodb';
 import { Choice, IntegrationPattern } from '@aws-cdk/aws-stepfunctions';
 import { NodejsFunction } from '@aws-cdk/aws-lambda-nodejs';
-import { Architecture, Runtime } from '@aws-cdk/aws-lambda';
+import { Architecture, Runtime, Function } from '@aws-cdk/aws-lambda';
 import * as iam from '@aws-cdk/aws-iam';
 import path from 'path';
 import { DYNAMO_TABLE_NAME, Entities } from '../Config';
+import { DynamoIAM } from '../types/dynamo';
+
+interface CustomLambdaFunction {
+  functionName: string;
+  /**
+   * Under /functions, what is the file name
+   */
+  fileName: string;
+  description: string;
+  permissions: DynamoIAM[];
+  permissionArns: string[];
+}
 
 interface DeleteChildrenMachineProps extends cdk.StackProps {
   table: Table;
@@ -33,104 +45,24 @@ export default class DeleteChildrenMachineStack extends cdk.Stack {
 
   constructor(scope: cdk.App, id: string, props: DeleteChildrenMachineProps) {
     super(scope, id, props);
-    const DYNAMO_QUERY_SETTINGS = {
-      service: 'dynamodb',
-      action: 'query',
-      iamResources: [
-        props.table.tableArn,
-        `${props.table.tableArn}/index/GSI1`,
-        `${props.table.tableArn}/index/GSI2`,
-      ],
-    };
 
     /**
      * When an OPENING is deleted,
      * delete all stages for it
      */
-    const OPENING_DELETED = sfn.Condition.stringEquals('$.entityType', Entities.OPENING);
+    const OPENING_DELETED = sfn.Condition.stringEquals('$.detail.entityType', Entities.OPENING);
     const OPENING_HAS_STAGES = sfn.Condition.numberGreaterThan('$.detail.OldImage.totalStages', 0);
 
-    const GET_STAGES_IN_OPENING = new tasks.CallAwsService(this, 'GetStagesInOpening', {
-      ...DYNAMO_QUERY_SETTINGS,
-      parameters: {
-        TableName: props.table.tableName,
-        IndexName: 'GSI1',
-        KeyConditionExpression: 'GSI1PK = :GSI1PK',
-        ExpressionAttributeValues: {
-          ':GSI1PK': {
-            'S.$': `States.Format('${Entities.ORG}#{}#${Entities.OPENING}#{}#${Entities.STAGE}S', $.orgId, $.detail.OldImage.openingId)`,
-          },
-        },
-      },
-      resultSelector: {
-        'stages.$': '$.Items',
-      },
-    });
-
-    const DeleteStagesMap = new sfn.Map(this, 'DeleteStagesInOpeningMap', {
-      maxConcurrency: 1,
-      inputPath: '$.stages',
-      parameters: {
-        // Makes it easier to get these attributes per item
-        'PK.$': `States.Format('${Entities.ORG}#{}#${Entities.OPENING}#{}#${Entities.STAGE}#{}', $$.Map.Item.Value.orgId.S, $$.Map.Item.Value.openingId.S, $$.Map.Item.Value.stageId.S)`,
-        SK: Entities.STAGE,
-      },
-    });
-    DeleteStagesMap.iterator(
-      new tasks.DynamoDeleteItem(this, 'DeleteStagesInOpening', {
-        table: props.table,
-        key: {
-          PK: tasks.DynamoAttributeValue.fromString(sfn.JsonPath.stringAt('$.PK')),
-          SK: tasks.DynamoAttributeValue.fromString(sfn.JsonPath.stringAt('$.SK')),
-        },
-      }),
-    );
     // ------------------------------------------------------------
     /**
      *  When an ORG is deleted
      *  Delete all openings inside the org
      *  Delete all questions inside the org
+     *  Delete all webhooks inside the org
      *
      */
-    const ORG_DELETED = sfn.Condition.stringEquals('$.entityType', Entities.ORG);
-
+    const ORG_DELETED = sfn.Condition.stringEquals('$.detail.entityType', Entities.ORG);
     const ORG_HAS_OPENINGS = sfn.Condition.numberGreaterThan('$.detail.OldImage.totalOpenings', 0);
-
-    const GET_OPENINGS_IN_ORG = new tasks.CallAwsService(this, 'GetOpeningsInOrg', {
-      ...DYNAMO_QUERY_SETTINGS,
-      parameters: {
-        TableName: props.table.tableName,
-        IndexName: 'GSI1',
-        KeyConditionExpression: 'GSI1PK = :GSI1PK',
-        ExpressionAttributeValues: {
-          ':GSI1PK': {
-            'S.$': `States.Format('${Entities.ORG}#{}#${Entities.OPENING}S', $.orgId)`,
-          },
-        },
-      },
-      resultSelector: {
-        'openings.$': '$.Items',
-      },
-    });
-
-    const DeleteOpeningsMap = new sfn.Map(this, 'DeleteOpeningsInOrgMap', {
-      maxConcurrency: 1,
-      inputPath: '$.openings',
-      parameters: {
-        // Makes it easier to get these attributes per item
-        'PK.$': `States.Format('${Entities.ORG}#{}#${Entities.OPENING}#{}', $$.Map.Item.Value.orgId.S, $$.Map.Item.Value.openingId.S)`,
-        SK: Entities.OPENING,
-      },
-    });
-    DeleteOpeningsMap.iterator(
-      new tasks.DynamoDeleteItem(this, 'DeleteOpeningsInOrg', {
-        table: props.table,
-        key: {
-          PK: tasks.DynamoAttributeValue.fromString(sfn.JsonPath.stringAt('$.PK')),
-          SK: tasks.DynamoAttributeValue.fromString(sfn.JsonPath.stringAt('$.SK')),
-        },
-      }),
-    );
 
     // TODO not being used
     const ORG_HAS_QUESTIONS = sfn.Condition.numberGreaterThan(
@@ -139,79 +71,6 @@ export default class DeleteChildrenMachineStack extends cdk.Stack {
     );
 
     const ORG_HAS_WEBHOOKS = sfn.Condition.numberGreaterThan('$.detail.OldImage.totalWebhooks', 0);
-
-    const GET_QUESTIONS_IN_ORG = new tasks.CallAwsService(this, 'GetQuestionsInOrg', {
-      ...DYNAMO_QUERY_SETTINGS,
-      parameters: {
-        TableName: props.table.tableName,
-        IndexName: 'GSI1',
-        KeyConditionExpression: 'GSI1PK = :GSI1PK',
-        ExpressionAttributeValues: {
-          ':GSI1PK': {
-            'S.$': `States.Format('${Entities.ORG}#{}#${Entities.QUESTION}S', $.orgId)`,
-          },
-        },
-      },
-      resultSelector: {
-        'questions.$': '$.Items',
-      },
-    });
-
-    const GET_WEBHOOKS_IN_ORG = new tasks.CallAwsService(this, 'GetWebhooksInOrg', {
-      ...DYNAMO_QUERY_SETTINGS,
-      parameters: {
-        TableName: props.table.tableName,
-        IndexName: 'GSI1',
-        KeyConditionExpression: 'GSI1PK = :GSI1PK',
-        ExpressionAttributeValues: {
-          ':GSI1PK': {
-            'S.$': `States.Format('${Entities.ORG}#{}#${Entities.WEBHOOK}S', $.orgId)`,
-          },
-        },
-      },
-      resultSelector: {
-        'webhooks.$': '$.Items',
-      },
-    });
-
-    const DeleteWebhooksMap = new sfn.Map(this, 'DeleteWebhooksInOrgMap', {
-      maxConcurrency: 1,
-      inputPath: '$.webhooks',
-      parameters: {
-        // Makes it easier to get these attributes per item
-        'PK.$': `States.Format('${Entities.ORG}#{}#${Entities.WEBHOOK}#{}', $$.Map.Item.Value.orgId.S, $$.Map.Item.Value.webhookId.S)`,
-        SK: Entities.WEBHOOK,
-      },
-    });
-
-    DeleteWebhooksMap.iterator(
-      new tasks.DynamoDeleteItem(this, 'DeleteWebhooksInOrg', {
-        table: props.table,
-        key: {
-          PK: tasks.DynamoAttributeValue.fromString(sfn.JsonPath.stringAt('$.PK')),
-          SK: tasks.DynamoAttributeValue.fromString(sfn.JsonPath.stringAt('$.SK')),
-        },
-      }),
-    );
-
-    const DeleteQuestionsMap = new sfn.Map(this, 'DeleteQuestionsInOrgMap', {
-      maxConcurrency: 1,
-      inputPath: '$.questions',
-      parameters: {
-        // Makes it easier to get these attributes per item
-        'PK.$': `States.Format('${Entities.ORG}#{}#${Entities.QUESTION}#{}', $$.Map.Item.Value.orgId.S, $$.Map.Item.Value.questionId.S)`,
-        SK: Entities.QUESTION,
-      },
-    });
-    DeleteQuestionsMap.iterator(
-      new tasks.DynamoDeleteItem(this, 'DeleteQuestionsInOrg', {
-        table: props.table,
-        key: {
-          PK: tasks.DynamoAttributeValue.fromString(sfn.JsonPath.stringAt('$.PK')),
-          SK: tasks.DynamoAttributeValue.fromString(sfn.JsonPath.stringAt('$.SK')),
-        },
-      }),
-    );
 
     const QUESTION_DELETED = sfn.Condition.stringEquals('$.detail.entityType', Entities.QUESTION);
 
@@ -222,32 +81,18 @@ export default class DeleteChildrenMachineStack extends cdk.Stack {
       0,
     );
 
-    const GET_STAGES_THAT_HAVE_DELETED_QUESTION = new tasks.CallAwsService(
-      this,
-      'GetStagesThatHaveDeletedQuestion',
-      {
-        ...DYNAMO_QUERY_SETTINGS,
-        parameters: {
-          TableName: props.table.tableName,
-          KeyConditionExpression: 'PK = :PK',
-          ExpressionAttributeValues: {
-            ':PK': {
-              'S.$': `States.Format('${Entities.ORG}#{}#${Entities.QUESTION}#{}#${Entities.STAGE}S', $.orgId, $.detail.OldImage.questionId)`,
-            },
-          },
-        },
-        resultSelector: {
-          'stages.$': '$.Items',
-        },
-        resultPath: '$.stages',
-      },
-    );
+    // Delete questions and the adjacent item TODO
+    const STAGE_DELETED = sfn.Condition.stringEquals('$.detail.entityType', Entities.STAGE);
 
-    const RemoveDeletedQuestionFromStageFunction = new NodejsFunction(
-      this,
-      `${process.env.NODE_ENV}-remove-deleted-question-from-stage-function`,
-      {
-        functionName: `${process.env.NODE_ENV}-remove-deleted-question-from-stage-function`,
+    const createFunctions = ({
+      permissions,
+      permissionArns,
+      functionName,
+      fileName,
+      description,
+    }: CustomLambdaFunction) => {
+      const createdFunction = new NodejsFunction(this, `${process.env.NODE_ENV}-${functionName}`, {
+        functionName: `${process.env.NODE_ENV}-${functionName}`,
         timeout: cdk.Duration.seconds(5),
         memorySize: 256,
         logRetention: RetentionDays.ONE_WEEK,
@@ -262,89 +107,82 @@ export default class DeleteChildrenMachineStack extends cdk.Stack {
           externalModules: ['aws-sdk'],
         },
         handler: 'main',
-        description: 'Removes a deleted question from stages.',
-        entry: path.join(__dirname, `/../functions/remove-deleted-question-from-stage.ts`),
-      },
-    );
+        description,
+        entry: path.join(__dirname, `/../functions/${fileName}`),
+      });
 
-    const QUESTION_DELETED_UPDATE_STAGE_INFO_MAP = new sfn.Map(
-      this,
-      'QuestionDeletedUpdateStageInfoMap',
-      {
-        maxConcurrency: 1,
-        itemsPath: '$.stages.stages',
-        parameters: {
-          // Makes it easier to get these attributes per item
-          'PK.$': `States.Format('${Entities.ORG}#{}#${Entities.OPENING}#{}#${Entities.STAGE}#{}', $$.Map.Item.Value.orgId.S, $$.Map.Item.Value.openingId.S, $$.Map.Item.Value.stageId.S)`,
-          SK: Entities.STAGE,
-          'questionId.$': '$.detail.OldImage.questionId',
-          /**
-           * If a stage does not exist, and a question was previously attached to it,
-           * this allows retrieving that adjacent item and deleting it.
-           * NOTE: Will require the same setup for webhooks
-           */
-          'adjacentItemPK.$': `States.Format('${Entities.ORG}#{}#${Entities.QUESTION}#{}#${Entities.STAGE}S', $$.Map.Item.Value.orgId.S, $$.Map.Item.Value.questionId.S)`,
-          'adjacentItemSK.$': `States.Format('${Entities.OPENING}#{}#${Entities.STAGE}#{}', $$.Map.Item.Value.openingId.S, $$.Map.Item.Value.stageId.S)`,
-        },
-      },
-    );
+      const functionPolicy = new iam.PolicyStatement({
+        actions: permissions,
+        resources: permissionArns,
+      });
 
-    const DELETE_ADJACENT_STAGE_QUESTION_ITEM = new tasks.DynamoDeleteItem(
-      this,
-      'DeleteAdjacentStageQuestionItem',
-      {
-        table: props.table,
-        key: {
-          PK: tasks.DynamoAttributeValue.fromString(sfn.JsonPath.stringAt('$.adjacentItemPK')),
-          SK: tasks.DynamoAttributeValue.fromString(sfn.JsonPath.stringAt('$.adjacentItemSK')),
-        },
-      },
-    );
+      createdFunction.role.attachInlinePolicy(
+        new iam.Policy(this, `${process.env.NODE_ENV}-${functionName}-policy`, {
+          statements: [functionPolicy],
+        }),
+      );
 
-    QUESTION_DELETED_UPDATE_STAGE_INFO_MAP.iterator(
-      new tasks.DynamoGetItem(this, 'GetCurrentStageInfoForQuestions', {
-        table: props.table,
-        key: {
-          PK: tasks.DynamoAttributeValue.fromString(sfn.JsonPath.stringAt('$.PK')),
-          SK: tasks.DynamoAttributeValue.fromString(sfn.JsonPath.stringAt('$.SK')),
-        },
-        resultPath: '$.stage',
-      }).next(
-        new sfn.Choice(this, 'Does question-stage exist?')
-          .when(
-            sfn.Condition.isPresent('$.stage.Item'),
-            new tasks.LambdaInvoke(this, 'RemoveDeletedQuestionFromStage', {
-              payload: sfn.TaskInput.fromObject({
-                stage: sfn.JsonPath.stringAt('$.stage.Item'),
-                questionId: sfn.JsonPath.stringAt('$.questionId'),
-              }),
-              lambdaFunction: RemoveDeletedQuestionFromStageFunction,
-              // TODO pretty sure this needs a callback
-              integrationPattern: IntegrationPattern.REQUEST_RESPONSE,
-            }),
-          )
-          .otherwise(DELETE_ADJACENT_STAGE_QUESTION_ITEM),
-      ),
-    );
+      return createdFunction;
+    };
 
-    // Delete questions and the adjacent item TODO
-    const STAGE_DELETED = sfn.Condition.stringEquals('$.entityType', Entities.STAGE);
-
-    const DynamoDeleteQuestionPolicy = new iam.PolicyStatement({
-      actions: ['dynamodb:DeleteItem', 'dynamodb:UpdateItem'],
-      resources: [props.table.tableArn],
+    const deleteStagesFromOpeningFunction = createFunctions({
+      functionName: `delete-stages-from-opening-function`,
+      description: 'Removes stages from an opening that was recently deleted',
+      fileName: 'cascadingDeletions/delete-stages-from-opening.ts',
+      permissions: [DynamoIAM.DeleteItem],
+      permissionArns: [props.table.tableArn],
     });
 
-    RemoveDeletedQuestionFromStageFunction.role.attachInlinePolicy(
-      new iam.Policy(this, `${process.env.NODE_ENV}-remove-deleted-question-from-stage-policy`, {
-        statements: [DynamoDeleteQuestionPolicy],
-      }),
-    );
+    const removeDeletedQuestionFromStageFunction = createFunctions({
+      functionName: `remove-deleted-question-from-stages-function`,
+      description: 'Removes questions from a stage once a question is deleted',
+      fileName: 'cascadingDeletions/remove-deleted-question-from-stage.ts',
+      permissions: [DynamoIAM.Query, DynamoIAM.GetItem, DynamoIAM.DeleteItem, DynamoIAM.UpdateItem],
+      permissionArns: [props.table.tableArn, `${props.table.tableArn}/index/GSI1`],
+    });
+
+    const deleteOpeningsFromOrgFunction = createFunctions({
+      functionName: `delete-openings-from-org-function`,
+      description: 'Removes openings from an org when an org is deleted',
+      fileName: 'cascadingDeletions/delete-openings-from-org.ts',
+      permissions: [DynamoIAM.DeleteItem, DynamoIAM.Query],
+      permissionArns: [props.table.tableArn, `${props.table.tableArn}/index/GSI1`],
+    });
+
+    const deleteQuestionsFromOrgFunction = createFunctions({
+      functionName: `delete-questions-from-org-function`,
+      description: 'Removes questions from an org when an org is deleted',
+      fileName: 'cascadingDeletions/delete-questions-from-org.ts',
+      permissions: [DynamoIAM.DeleteItem, DynamoIAM.Query],
+      permissionArns: [props.table.tableArn, `${props.table.tableArn}/index/GSI1`],
+    });
+
+    const deleteWebhooksFromOrgFunction = createFunctions({
+      functionName: `delete-webhooks-from-org-function`,
+      description: 'Removes webhooks from an org when an org is deleted',
+      fileName: 'cascadingDeletions/delete-webhooks-from-org.ts',
+      permissions: [DynamoIAM.DeleteItem, DynamoIAM.Query],
+      permissionArns: [props.table.tableArn, `${props.table.tableArn}/index/GSI1`],
+    });
+
+    const deleteQuestionStageAdjacentIteFunction = createFunctions({
+      functionName: `delete-question-stage-adjacent-item`,
+      description: 'Handles deleting adjacent stage items when stages are deleted.',
+      fileName: 'cascadingDeletions/delete-question-stage-adjacent-item.ts',
+      permissions: [DynamoIAM.DeleteItem, DynamoIAM.UpdateItem],
+      permissionArns: [props.table.tableArn],
+    });
+
     const definition = new Choice(this, 'WhichEntity?')
       .when(
         OPENING_DELETED,
         new Choice(this, 'Does Opening have stages?')
-          .when(OPENING_HAS_STAGES, GET_STAGES_IN_OPENING.next(DeleteStagesMap))
+          .when(
+            OPENING_HAS_STAGES,
+            new tasks.LambdaInvoke(this, 'DeleteStagesFromOpening', {
+              lambdaFunction: deleteStagesFromOpeningFunction,
+            }),
+          )
           .otherwise(new sfn.Succeed(this, "Opening doesn't have stages :)")),
       )
       .when(
@@ -352,35 +190,54 @@ export default class DeleteChildrenMachineStack extends cdk.Stack {
         new sfn.Parallel(this, 'OrgCleanup')
           .branch(
             new Choice(this, 'OrgHasOpenings')
-              .when(ORG_HAS_OPENINGS, GET_OPENINGS_IN_ORG.next(DeleteOpeningsMap))
+              .when(
+                ORG_HAS_OPENINGS,
+                new tasks.LambdaInvoke(this, 'DeleteOpeningsFromOrg', {
+                  lambdaFunction: deleteOpeningsFromOrgFunction,
+                }),
+              )
               .otherwise(new sfn.Succeed(this, "Org doesn't have openings")),
           )
           .branch(
             new Choice(this, 'OrgHasQuestions')
-              .when(ORG_HAS_QUESTIONS, GET_QUESTIONS_IN_ORG.next(DeleteQuestionsMap))
+              .when(
+                ORG_HAS_QUESTIONS,
+                new tasks.LambdaInvoke(this, 'DeleteQuestionsFromOrg', {
+                  lambdaFunction: deleteQuestionsFromOrgFunction,
+                }),
+              )
               .otherwise(new sfn.Succeed(this, "Org doesn't have questions")),
           )
           .branch(
             new Choice(this, 'OrgHasWebhooks')
-              .when(ORG_HAS_WEBHOOKS, GET_WEBHOOKS_IN_ORG.next(DeleteWebhooksMap))
+              .when(
+                ORG_HAS_WEBHOOKS,
+                new tasks.LambdaInvoke(this, 'DeleteWebhooksFromOrg', {
+                  lambdaFunction: deleteWebhooksFromOrgFunction,
+                }),
+              )
               .otherwise(new sfn.Succeed(this, "Org doesn't have webhooks")),
           ),
       )
       .when(
         STAGE_DELETED,
-        new Choice(this, 'Does Stage Have Questions?').when(
-          STAGE_HAS_QUESTIONS,
-          new sfn.Succeed(this, 'TODO delete adjacent item'),
-        ),
+        new Choice(this, 'Does Stage Have Questions?')
+          .when(
+            STAGE_HAS_QUESTIONS,
+            new tasks.LambdaInvoke(this, 'DeleteQuestionStageAdjacentItem', {
+              lambdaFunction: deleteQuestionStageAdjacentIteFunction,
+            }),
+          )
+          .otherwise(new sfn.Succeed(this, "Stage doesn't have questions")),
       )
       .when(
         QUESTION_DELETED,
         new Choice(this, 'DoesQuestionHaveStages')
           .when(
             QUESTION_HAS_STAGES,
-            GET_STAGES_THAT_HAVE_DELETED_QUESTION.next(QUESTION_DELETED_UPDATE_STAGE_INFO_MAP),
-
-            // Transaction here
+            new tasks.LambdaInvoke(this, 'RemoveDeletedQuestionFromStages', {
+              lambdaFunction: removeDeletedQuestionFromStageFunction,
+            }),
           )
           .otherwise(new sfn.Succeed(this, 'Question does not have stages :)')),
       )
