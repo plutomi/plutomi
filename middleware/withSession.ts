@@ -13,17 +13,7 @@ export default async function withSession(req: Request, res: Response, next: Nex
     userId,
   });
 
-  if (userError) {
-    res.cookie(COOKIE_NAME, '', {
-      ...COOKIE_SETTINGS,
-      maxAge: -1,
-    });
-    return res.status(401).json({
-      message: 'An error ocurred retrieving your info, please log in again',
-    });
-  }
-
-  if (!user) {
+  if (userError || !user) {
     res.cookie(COOKIE_NAME, '', {
       ...COOKIE_SETTINGS,
       maxAge: -1,
