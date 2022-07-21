@@ -3,7 +3,7 @@ import Link from 'next/dist/client/link';
 import { useRouter } from 'next/router';
 import useSelf from '../../SWR/useSelf';
 import { useOpeningInfo } from '../../SWR/useOpeningInfo';
-import useOpenings from '../../SWR/useOpenings';
+import { useOpeningsInOrg } from '../../SWR/useOpeningsInOrg';
 import { CustomQuery } from '../../types/main';
 import { OpeningState, WEBSITE_URL } from '../../Config';
 import { OpeningsDropdown } from '../OpeningsDropdown';
@@ -16,18 +16,21 @@ export const ApplicantsPageHeader = () => {
 
   const { user, isUserLoading, isUserError } = useSelf();
   const { opening, isOpeningLoading, isOpeningError } = useOpeningInfo({ openingId });
-  const { openings, isOpeningsLoading, isOpeningsError } = useOpenings();
+  const { openingsInOrg, isOpeningsInOrgLoading, isOpeningsInOrgError } = useOpeningsInOrg();
 
-  if (isOpeningsError) return <h1>An error ocurred loading openings in this org</h1>;
+  if (isOpeningsInOrgError) return <h1>An error ocurred loading openings in this org</h1>;
   if (isOpeningError) return <h1>An error ocurred retrieving info for this opening</h1>;
-  if (isOpeningLoading || isOpeningLoading) return <Loader text="Loading opening info..."></Loader>;
+  if (isOpeningLoading || isOpeningsInOrgLoading)
+    return <Loader text="Loading opening(s) info..."></Loader>;
 
   return (
     <div className="md:flex md:items-center md:justify-between  ">
       <div className=" min-w-0 w-2/3 inline-flex justify-between items-center ">
         <OpeningsDropdown
-          openings={openings}
-          index={openings?.indexOf(openings?.find((opening) => opening.openingId === openingId))}
+          openings={openingsInOrg}
+          index={openingsInOrg?.indexOf(
+            openingsInOrg?.find((opening) => opening.openingId === openingId),
+          )}
         />
       </div>
 

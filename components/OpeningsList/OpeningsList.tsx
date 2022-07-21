@@ -1,4 +1,4 @@
-import useOpenings from '../../SWR/useOpenings';
+import { useOpeningsInOrg } from '../../SWR/useOpeningsInOrg';
 import useSelf from '../../SWR/useSelf';
 import { DynamoOpening } from '../../types/dynamo';
 import useStore from '../../utils/store';
@@ -7,15 +7,16 @@ import { OpeningsListItem } from '../OpeningsListItem';
 
 export const OpeningsList = () => {
   const { user, isUserLoading, isUserError } = useSelf();
-  const { openings, isOpeningsLoading, isOpeningsError } = useOpenings();
+  const { openingsInOrg, isOpeningsInOrgLoading, isOpeningsInOrgError } = useOpeningsInOrg();
 
   const search = useStore((state) => state.openingsSearchInput);
 
-  const filteredOpenings = openings?.filter((opening: DynamoOpening) =>
+  const filteredOpenings = openingsInOrg?.filter((opening: DynamoOpening) =>
     opening?.openingName?.toLowerCase().trim().includes(search.toLowerCase().trim()),
   );
 
-  if (isOpeningsLoading) return <Loader text="Loading openings..." />;
+  if (isOpeningsInOrgError) return <h1>An error ocurred returning openings in the org</h1>;
+  if (isOpeningsInOrgLoading) return <Loader text="Loading openings..." />;
 
   return (
     <div className="bg-white shadow overflow-hidden sm:rounded-md">

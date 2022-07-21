@@ -1,14 +1,14 @@
 import { useState } from 'react';
 import { PlusIcon } from '@heroicons/react/outline';
 import useStore from '../../utils/store';
-import useOpenings from '../../SWR/useOpenings';
+import { useOpeningsInOrg } from '../../SWR/useOpeningsInOrg';
 import { Loader } from '../Loader/Loader';
 import { CreateOpeningModal } from '../CreateOpeningModal';
 import { EmptyOpeningsContent } from '../EmptyOpeningsContent';
 import { OpeningsList } from '../OpeningsList';
 
 export const OpeningsPageContent = () => {
-  const { openings, isOpeningsLoading, isOpeningsError } = useOpenings();
+  const { openingsInOrg, isOpeningsInOrgLoading, isOpeningsInOrgError } = useOpeningsInOrg();
 
   const openCreateOpeningModal = useStore((state) => state.openCreateOpeningModal);
   const [localSearch, setLocalSearch] = useState('');
@@ -16,9 +16,8 @@ export const OpeningsPageContent = () => {
   const setOpeningsSearch = useStore((state) => state.setOpeningsSearchInput);
   const search = useStore((state) => state.openingsSearchInput);
 
-  if (isOpeningsLoading) {
-    return <Loader text="Loading openings..." />;
-  }
+  if (isOpeningsInOrgError) return <h1>An error ocurred retrieving openings in org</h1>;
+  if (isOpeningsInOrgLoading) return <Loader text="Loading openings..." />;
 
   const handleSearchChange = (e) => {
     setLocalSearch(e.target.value);
@@ -52,7 +51,7 @@ export const OpeningsPageContent = () => {
   return (
     <>
       <CreateOpeningModal />
-      {!openings?.length ? <EmptyOpeningsContent /> : OrgHasOpenings}
+      {!openingsInOrg?.length ? <EmptyOpeningsContent /> : OrgHasOpenings}
     </>
   );
 };
