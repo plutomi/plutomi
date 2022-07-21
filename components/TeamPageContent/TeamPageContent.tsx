@@ -1,6 +1,6 @@
 import { PlusIcon } from '@heroicons/react/outline';
 import useSelf from '../../SWR/useSelf';
-import useOrgUsers from '../../SWR/useOrgUsers';
+import { useOrgUsers } from '../../SWR/useOrgUsers';
 import useStore from '../../utils/store';
 import usePendingOrgInvites from '../../SWR/usePendingOrgInvites';
 import { DynamoOrgInvite } from '../../types/dynamo';
@@ -11,20 +11,17 @@ import { CreateInviteModal } from '../CreateInviteModal';
 import { UserCard } from '../UserCard';
 
 export const TeamPageContent = () => {
-  // TODO clean up the pending invites section up
   const { user, isUserLoading, isUserError } = useSelf();
-  const { orgUsers, isOrgUsersLoading, isOrgUsersError } = useOrgUsers(user?.orgId);
+  const { orgUsers, isOrgUsersLoading, isOrgUsersError } = useOrgUsers({
+    orgId: user?.orgId,
+  });
 
   const { pendingOrgInvites, isPendingOrgInvitesLoading, isPendingOrgInvitesError } =
     usePendingOrgInvites(user?.orgId);
   const openInviteModal = useStore((state) => state.openInviteModal);
-  if (isOrgUsersLoading) {
-    return <Loader text="Loading team..." />;
-  }
-
-  if (isPendingOrgInvitesLoading) {
-    return <h2>Loading pending invites</h2>;
-  }
+  if (isOrgUsersError) return <h1>An error ocurred returning your orgs users</h1>;
+  if (isOrgUsersLoading) return <Loader text="Loading team..." />;
+  if (isPendingOrgInvitesLoading) return <h2>Loading pending invites</h2>;
 
   if (isPendingOrgInvitesError) {
     return (

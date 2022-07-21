@@ -2,7 +2,10 @@ import useSWR from 'swr';
 import { GetUsersInOrgURL } from '../adapters/Users';
 import { SWRFetcher } from '../Config';
 
-export default function useOrgUsers(orgId?: string) {
+interface UseOrgUsersProps {
+  orgId: string;
+}
+export const useOrgUsers = ({ orgId }: UseOrgUsersProps) => {
   const { data, error } = useSWR(orgId && GetUsersInOrgURL(), SWRFetcher);
 
   return {
@@ -10,4 +13,4 @@ export default function useOrgUsers(orgId?: string) {
     isOrgUsersLoading: !error && !data,
     isOrgUsersError: error,
   };
-}
+};
