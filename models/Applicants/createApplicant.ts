@@ -29,6 +29,7 @@ export const createApplicant = async (
     isEmailVerified: false,
     orgId,
     applicantId,
+    applicantData: {},
     entityType: Entities.APPLICANT,
     createdAt: now,
     updatedAt: now,
