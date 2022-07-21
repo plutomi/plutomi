@@ -2,7 +2,7 @@ import { PlusIcon } from '@heroicons/react/outline';
 import useSelf from '../../SWR/useSelf';
 import { useOrgUsers } from '../../SWR/useOrgUsers';
 import useStore from '../../utils/store';
-import usePendingOrgInvites from '../../SWR/usePendingOrgInvites';
+import { usePendingOrgInvites } from '../../SWR/usePendingOrgInvites';
 import { DynamoOrgInvite } from '../../types/dynamo';
 import { Loader } from '../Loader';
 import { EmptyTeamContent } from '../EmptyTeamContent';
@@ -17,20 +17,14 @@ export const TeamPageContent = () => {
   });
 
   const { pendingOrgInvites, isPendingOrgInvitesLoading, isPendingOrgInvitesError } =
-    usePendingOrgInvites(user?.orgId);
+    usePendingOrgInvites({
+      orgId: user?.orgId,
+    });
   const openInviteModal = useStore((state) => state.openInviteModal);
   if (isOrgUsersError) return <h1>An error ocurred returning your orgs users</h1>;
+  if (isPendingOrgInvitesError) return <h1>An error ocurred retrieving your pending invites</h1>;
   if (isOrgUsersLoading) return <Loader text="Loading team..." />;
   if (isPendingOrgInvitesLoading) return <h2>Loading pending invites</h2>;
-
-  if (isPendingOrgInvitesError) {
-    return (
-      <h2>
-        {isPendingOrgInvitesError.response.data.message ??
-          'An error ocurred retrieving your pending invites'}
-      </h2>
-    );
-  }
 
   const dividerWithText = (text: string) => {
     return (
