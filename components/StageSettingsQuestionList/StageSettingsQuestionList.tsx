@@ -5,7 +5,7 @@ import { Listbox, Transition } from '@headlessui/react';
 import { DragDropContext, Droppable } from 'react-beautiful-dnd';
 import { useQuestionsInOrg } from '../../SWR/useQuestionsInOrg';
 import useStageInfo from '../../SWR/useStageInfo';
-import useQuestionsInStage from '../../SWR/useQuestionsInStage';
+import { useQuestionsInStage } from '../../SWR/useQuestionsInStage';
 import { CustomQuery } from '../../types/main';
 import { DynamoQuestion } from '../../types/dynamo';
 import * as Questions from '../../adapters/Questions';

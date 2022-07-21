@@ -1,6 +1,5 @@
 import { useRouter } from 'next/router';
 import { useState } from 'react';
-import usePublicApplicant from '../../SWR/usePublicApplicant';
 import { useQuestionsInOrg } from '../../SWR/useQuestionsInOrg';
 import { AnswerQuestions } from '../../adapters/Applicants';
 import { CustomQuery } from '../../types/main';
