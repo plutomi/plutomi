@@ -1,11 +1,11 @@
 import { mutate } from 'swr';
 import { OfficeBuildingIcon, PlusIcon } from '@heroicons/react/outline';
-import useSelf from '../../SWR/useSelf';
-import useOrgInfo from '../../SWR/useOrgInfo';
+import { useSelf } from '../../SWR/useSelf';
+import { useOrgInfo } from '../../SWR/useOrgInfo';
 import { DeleteOrg } from '../../adapters/Orgs';
 import useStore from '../../utils/store';
 import { DEFAULTS, WEBSITE_URL } from '../../Config';
-import { GetSelfInfoURL, UpdateUser } from '../../adapters/Users';
+import { GetSelfInfoURL } from '../../adapters/Users';
 import { ClickToCopy } from '../ClickToCopy';
 import { CreateOrgModal } from '../CreateOrgModal';
 import { Loader } from '../Loader/Loader';
@@ -13,15 +13,17 @@ import { UpdateUserProfileModal } from '../UpdateUserInfoModal';
 
 export const DashboardPageContent = () => {
   const { user, isUserLoading, isUserError } = useSelf();
-  const { org, isOrgLoading, isOrgError } = useOrgInfo(user?.orgId);
+  const { org, isOrgLoading, isOrgError } = useOrgInfo({
+    orgId: user?.orgId,
+  });
   const customApplyLink = `${WEBSITE_URL}/${org?.orgId}/apply`;
 
   const openCreateOrgModal = useStore((state) => state.openCreateOrgModal);
   const openUserProfileModal = useStore((state) => state.openUserProfileModal);
 
-  if (isUserLoading) {
-    return <Loader text="Loading user..." />;
-  }
+  if (isUserError || isOrgError) return <h1>An error ocurred returning your info</h1>;
+
+  if (isUserLoading) return <Loader text="Loading user..." />;
 
   if (user?.orgId !== DEFAULTS.NO_ORG && isOrgLoading) {
     return <Loader text="Loading org info..." />;

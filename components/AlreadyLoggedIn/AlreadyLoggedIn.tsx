@@ -1,7 +1,7 @@
 import { useRouter } from 'next/router';
 import Link from 'next/link';
 import { mutate } from 'swr';
-import useSelf from '../../SWR/useSelf';
+import { useSelf } from '../../SWR/useSelf';
 import { Logout } from '../../adapters/Auth';
 import { GetSelfInfoURL } from '../../adapters/Users';
 

@@ -2,7 +2,7 @@ import { PencilAltIcon, TrashIcon } from '@heroicons/react/outline';
 import { mutate } from 'swr';
 import { useRouter } from 'next/router';
 import useStore from '../../utils/store';
-import useOpeningInfo from '../../SWR/useOpeningInfo';
+import { useOpeningInfo } from '../../SWR/useOpeningInfo';
 import { DeleteOpening, GetOpeningsInOrgURL } from '../../adapters/Openings';
 import * as Time from '../../utils/time';
 import { CustomQuery } from '../../types/main';
@@ -16,11 +16,11 @@ export const OpeningSettingsHeader = () => {
   const { openingId } = router.query as Pick<CustomQuery, 'openingId'>;
   const openUpdateOpeningModal = useStore((state) => state.openUpdateOpeningModal);
 
-  const { opening, isOpeningLoading, isOpeningError } = useOpeningInfo(openingId);
+  const { opening, isOpeningLoading, isOpeningError } = useOpeningInfo({ openingId });
 
-  if (isOpeningLoading) {
-    return <Loader text="Loading opening..." />;
-  }
+  if (isOpeningError) return <h1>An error ocurred retrieving info for this opening</h1>;
+
+  if (isOpeningLoading) return <Loader text="Loading opening..." />;
 
   const crumbs: CrumbProps[] = [
     {

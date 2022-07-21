@@ -1,7 +1,6 @@
 import { useRouter } from 'next/router';
 import { useState } from 'react';
-import usePublicApplicant from '../../SWR/usePublicApplicant';
-import useQuestionsInOrg from '../../SWR/useQuestionsInOrg';
+import { useQuestionsInOrg } from '../../SWR/useQuestionsInOrg';
 import { AnswerQuestions } from '../../adapters/Applicants';
 import { CustomQuery } from '../../types/main';
 import { Loader } from '../Loader/Loader';
@@ -11,16 +10,11 @@ export const PublicApplicationPageContent = () => {
 
   const router = useRouter();
   const { orgId, applicantId } = router.query as Pick<CustomQuery, 'orgId' | 'applicantId'>;
-  const { applicant, isApplicantLoading, isApplicantError } = usePublicApplicant(applicantId);
 
   const { orgQuestions, isOrgQuestionsLoading, isOrgQuestionsError } = useQuestionsInOrg();
-  if (isOrgQuestionsLoading) {
-    return <Loader text="Loading questions..." />;
-  }
-
-  if (orgQuestions.length === 0) {
-    return <h1>There are no questions in this stage :T</h1>;
-  }
+  if (isOrgQuestionsError) return <h1>An error ocurred retrieving questions in org</h1>;
+  if (isOrgQuestionsLoading) return <Loader text="Loading questions..." />;
+  if (!orgQuestions.length) return <h1>There are no questions in this stage :T</h1>;
 
   const handleAnswerChange = async (
     questionId: string,
@@ -49,7 +43,7 @@ export const PublicApplicationPageContent = () => {
     const responseIndex = responses.indexOf(found);
 
     // Delete answer
-    if (!response || response.length === 0) {
+    if (!response || !response.length) {
       newResponses.splice(responseIndex, 1);
       setResponses(newResponses);
       return;

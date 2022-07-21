@@ -3,9 +3,9 @@ import { mutate } from 'swr';
 import { useEffect, useState } from 'react';
 import { Listbox, Transition } from '@headlessui/react';
 import { DragDropContext, Droppable } from 'react-beautiful-dnd';
-import useQuestionsInOrg from '../../SWR/useQuestionsInOrg';
-import useStageInfo from '../../SWR/useStageInfo';
-import useQuestionsInStage from '../../SWR/useQuestionsInStage';
+import { useQuestionsInOrg } from '../../SWR/useQuestionsInOrg';
+import { useStageInfo } from '../../SWR/useStageInfo';
+import { useQuestionsInStage } from '../../SWR/useQuestionsInStage';
 import { CustomQuery } from '../../types/main';
 import { DynamoQuestion } from '../../types/dynamo';
 import * as Questions from '../../adapters/Questions';
@@ -24,7 +24,7 @@ export const StageSettingsQuestionList = () => {
     stageId,
   });
 
-  const { stage, isStageLoading, isStageError } = useStageInfo(openingId, stageId);
+  const { stage, isStageLoading, isStageError } = useStageInfo({ openingId, stageId });
   const [filteredOrgQuestions, setFilteredOrgQuestions] = useState(orgQuestions);
   const [show, setShow] = useState(false);
   const [selected, setSelected] = useState(undefined);
@@ -148,7 +148,7 @@ export const StageSettingsQuestionList = () => {
   };
 
   const listBoxOptions = (): React.ReactElement => {
-    if (orgQuestions?.length === 0) {
+    if (!orgQuestions?.length) {
       return (
         <p className="disabled  text-gray-400 cursor-default select-none relative py-2 pl-3 pr-9 ">
           No questions found
@@ -156,7 +156,7 @@ export const StageSettingsQuestionList = () => {
       );
     }
 
-    if (filteredOrgQuestions?.length === 0 && orgQuestions?.length > 0) {
+    if (!filteredOrgQuestions?.length && orgQuestions?.length > 0) {
       return (
         <p className="disabled  text-gray-400 cursor-default select-none relative py-2 pl-3 pr-9 ">
           Question not found
@@ -164,7 +164,7 @@ export const StageSettingsQuestionList = () => {
       );
     }
 
-    return filteredOrgQuestions?.map((question: DynamoQuestion) => (
+    filteredOrgQuestions?.map((question) => (
       <Listbox.Option
         key={question.questionId}
         disabled={stage?.questionOrder.includes(question.questionId)}
@@ -236,7 +236,7 @@ export const StageSettingsQuestionList = () => {
                 <div {...provided.droppableProps} ref={provided.innerRef}>
                   {newQuestionOrder?.map((question, index) => (
                     <DraggableQuestionItem
-                      key={question.id}
+                      key={question.questionId}
                       question={question}
                       index={index}
                       provided={provided}

@@ -1,16 +1,19 @@
 import useSWR from 'swr';
-import { GetOpeningInfoURL } from '../adapters/Openings';
 import { SWRFetcher } from '../Config';
+import { GetPublicOpeningInfoURL } from '../adapters/PublicInfo';
 import { DynamoOpening } from '../types/dynamo';
 import { APIErrorResponse } from '../types/main';
 
-interface UseOpeningInfoProps {
+interface UsePublicOpeningProps {
+  orgId?: string;
   openingId?: string;
 }
 
-export const useOpeningInfo = ({ openingId }: UseOpeningInfoProps) => {
+export const usePublicOpening = ({ orgId, openingId }: UsePublicOpeningProps) => {
+  const shouldFetch = orgId && openingId;
+  // TODO replace with public opening type
   const { data, error } = useSWR<DynamoOpening, APIErrorResponse>(
-    openingId && GetOpeningInfoURL(openingId),
+    shouldFetch && GetPublicOpeningInfoURL({ orgId, openingId }),
     SWRFetcher,
   );
 

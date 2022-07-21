@@ -2,12 +2,19 @@
 import useSWR from 'swr';
 import { SWRFetcher } from '../Config';
 import { GetPublicStageInfoURL } from '../adapters/PublicInfo';
+import { DynamoStage } from '../types/dynamo';
+import { APIErrorResponse } from '../types/main';
 
-export default function usePublicStageById(orgId?: string, openingId?: string, stageId?: string) {
-  // TODO i think this can be refactored since we no longer need th eopening ID
+interface usePublicStageByIdProps {
+  orgId?: string;
+  openingId?: string;
+  stageId?: string;
+}
+
+export const usePublicStageById = ({ orgId, openingId, stageId }: usePublicStageByIdProps) => {
   const shouldFetch = orgId && openingId && stageId;
 
-  const { data, error } = useSWR(
+  const { data, error } = useSWR<DynamoStage, APIErrorResponse>(
     shouldFetch &&
       GetPublicStageInfoURL({
         orgId,
@@ -22,4 +29,4 @@ export default function usePublicStageById(orgId?: string, openingId?: string, s
     isStageLoading: !error && !data,
     isStageError: error,
   };
-}
+};

@@ -12,7 +12,6 @@ export enum DynamoIAM {
   BatchWriteItem = 'dynamodb:BatchWriteItem',
 }
 
-
 export type AllDynamoEntities =
   | DynamoOrgLoginEvent
   | DynamoUserLoginEvent
@@ -21,12 +20,12 @@ export type AllDynamoEntities =
   | DynamoUser
   | DynamoWebhook
   | DynamoOrgInvite
-  | DynamoOpening
+  | DynamoOpening // TODO public variant
   | DynamoApplicantResponse
-  | DynamoApplicant
-  | DynamoQuestion
+  | DynamoApplicant // TODO public variant
+  | DynamoQuestion // TODO public variant?
   | DynamoQuestionStageAdjacentItem
-  | DynamoStage;
+  | DynamoStage; // TODO public variant
 
 export interface DynamoStage {
   /**
@@ -215,7 +214,9 @@ export interface DynamoApplicant {
   /**
    * The date the applicant landed on this stage - ISO timestamp
    */
-  GSI1SK: `DATE_LANDED#${string}`;
+  GSI1SK: `DATE_LANDED#${string}`; // TODO ehh..
+
+  applicantData: {}; // TODO ES
 }
 
 export interface DynamoApplicantResponse {

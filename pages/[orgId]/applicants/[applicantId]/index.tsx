@@ -2,22 +2,21 @@ import { useRouter } from 'next/router';
 import { Loader } from '../../../../components/Loader';
 import { PublicApplicationPageContent } from '../../../../components/PublicApplicationPageContent';
 import { PublicApplicationPageHeader } from '../../../../components/PublicApplicationPageHeader';
-import useApplicantById from '../../../../SWR/useApplicantById';
+import { useApplicantById } from '../../../../SWR/useApplicantById';
 import { CustomQuery } from '../../../../types/main';
 
 export default function Application() {
   const router = useRouter();
   const { applicantId } = router.query as Pick<CustomQuery, 'applicantId'>;
-  const { applicant, isApplicantLoading, isApplicantError } = useApplicantById(applicantId);
+  const { applicant, isApplicantLoading, isApplicantError } = useApplicantById({ applicantId });
 
   // When rendering client side don't display anything until loading is complete
   if (typeof window !== 'undefined') {
     <Loader text="Loading ..." />;
   }
 
-  if (isApplicantLoading) {
-    return <Loader text="Loading info..." />;
-  }
+  if (isApplicantError) return <h1>An error ocurred loading your info</h1>;
+  if (isApplicantLoading) return <Loader text="Loading info..." />;
 
   return (
     <div className="max-w-7xl mx-auto p-4 my-12 rounded-lg min-h-screen ">

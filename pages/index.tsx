@@ -1,7 +1,7 @@
 import _ from 'lodash';
 import { ChevronRightIcon, MailIcon } from '@heroicons/react/outline';
 import { nanoid } from 'nanoid';
-import useSelf from '../SWR/useSelf';
+import { useSelf } from '../SWR/useSelf';
 import { AXIOS_INSTANCE as axios, DOMAIN_NAME } from '../Config';
 import { ContactUs } from '../components/ContactUs';
 import { Hero } from '../components/Hero';

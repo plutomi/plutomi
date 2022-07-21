@@ -1,9 +1,8 @@
 import { useRouter } from 'next/router';
-import useSelf from '../../SWR/useSelf';
+import { useSelf } from '../../SWR/useSelf';
 import { NAVBAR_NAVIGATION, WEBSITE_URL, DEFAULTS } from '../../Config';
 import { NewPageHeader } from '../PageHeader';
 import { Login } from '../Login';
-import { NavbarSearch } from '../NavbarSearch';
 import { SignedInNav } from '../SignedInNavbar';
 
 interface NewPageProps {

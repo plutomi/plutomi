@@ -2,17 +2,16 @@ import { useRouter } from 'next/router';
 import { Loader } from '../../components/Loader';
 import { PublicOrgPageContent } from '../../components/PublicOrgPageContent';
 import { PublicOrgPageHeader } from '../../components/PublicOrgPageHeader';
-import usePublicOrgById from '../../SWR/usePublicOrgById';
+import { usePublicOrgById } from '../../SWR/usePublicOrgById';
 import { CustomQuery } from '../../types/main';
 
 export default function Apply() {
   const router = useRouter();
   const { orgId } = router.query as Pick<CustomQuery, 'orgId'>;
-  const { org, isOrgLoading, isOrgError } = usePublicOrgById(orgId);
+  const { org, isOrgLoading, isOrgError } = usePublicOrgById({ orgId });
 
-  if (isOrgLoading) {
-    return <Loader text="Loading..." />;
-  }
+  if (isOrgError) return <h1>An error ocurred retrieving org info</h1>;
+  if (isOrgLoading) return <Loader text="Loading..." />;
 
   if (!org) {
     return (

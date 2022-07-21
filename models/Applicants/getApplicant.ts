@@ -26,11 +26,11 @@ export const getApplicant = async (
     // TODO refactor for promise all / transact
     const allApplicantInfo = await Dynamo.send(new QueryCommand(responsesParams));
 
-    if (allApplicantInfo.Count === 0) {
+    if (!allApplicantInfo.Count) {
       throw new Error('Applicant not found');
     }
 
-    if (allApplicantInfo?.Items?.length === 0) {
+    if (!allApplicantInfo?.Items?.length) {
       throw new Error('Applicant not found');
     }
 

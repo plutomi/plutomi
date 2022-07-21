@@ -5,9 +5,8 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import { GetStagesInOpeningURL } from '../../adapters/Stages';
 import useStore from '../../utils/store';
-import useOpeningInfo from '../../SWR/useOpeningInfo';
-import useAllStagesInOpening from '../../SWR/useAllStagesInOpening';
-import useStageInfo from '../../SWR/useStageInfo';
+import { useOpeningInfo } from '../../SWR/useOpeningInfo';
+import { useAllStagesInOpening } from '../../SWR/useAllStagesInOpening';
 import { UpdateOpening, GetOpeningInfoURL } from '../../adapters/Openings';
 import { CustomQuery } from '../../types/main';
 import { CreateStageModal } from '../CreateStageModal';
@@ -18,11 +17,10 @@ export const StageReorderColumn = () => {
 
   const router = useRouter();
   const { openingId, stageId } = router.query as Pick<CustomQuery, 'openingId' | 'stageId'>;
-
-  const { opening, isOpeningLoading, isOpeningError } = useOpeningInfo(openingId);
-
-  const { stages, isStagesLoading, isStagesError } = useAllStagesInOpening(opening?.openingId);
-  const { stage, isStageLoading, isStageError } = useStageInfo(openingId, stageId);
+  const { opening, isOpeningLoading, isOpeningError } = useOpeningInfo({ openingId });
+  const { stages, isStagesLoading, isStagesError } = useAllStagesInOpening({
+    openingId,
+  });
 
   const [newStages, setNewStages] = useState(stages);
   useEffect(() => {

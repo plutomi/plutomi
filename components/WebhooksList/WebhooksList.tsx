@@ -1,9 +1,9 @@
 import { PlusIcon } from '@heroicons/react/outline';
-import useSelf from '../../SWR/useSelf';
+import { useSelf } from '../../SWR/useSelf';
 import { DynamoWebhook } from '../../types/dynamo';
-import useWebhooks from '../../SWR/useWebhooksInOrg';
+import { useWebhooksInOrg } from '../../SWR/useWebhooksInOrg';
 import useStore from '../../utils/store';
-import useOrgInfo from '../../SWR/useOrgInfo';
+import { useOrgInfo } from '../../SWR/useOrgInfo';
 import { CreateWebhookModal } from '../CreateWebhookModal';
 import { WebhookListItem } from '../WebhookListItem/WebhookListItem';
 import { EmptyWebhooksContent } from '../EmptyWebhooksContent';
@@ -12,21 +12,21 @@ import { UpdateWebhookModal } from '../UpdateWebhookModal';
 
 export const WebhooksList = () => {
   const { user, isUserLoading, isUserError } = useSelf();
-  const { org, isOrgLoading, isOrgError } = useOrgInfo(user?.orgId);
-  const { webhooks, isWebhooksLoading, isWebhooksError } = useWebhooks(user?.orgId);
+  const { org, isOrgLoading, isOrgError } = useOrgInfo({
+    orgId: user.orgId,
+  });
+  // TODO error and loading
+  const { webhooks, isWebhooksLoading, isWebhooksError } = useWebhooksInOrg({
+    orgId: user?.orgId,
+  });
   const openCreateWebhookModal = useStore((state) => state.openCreateWebhookModal);
 
-  if (isWebhooksLoading) {
-    return <Loader text="Loading webhooks..." />;
-  }
+  if (isWebhooksLoading) return <Loader text="Loading webhooks..." />;
 
-  if (isWebhooksError) {
+  if (isWebhooksError)
     return <h1 className="text-lg text-red-500">An error ocurred retrieving webhooks</h1>;
-  }
 
-  if (webhooks?.length === 0) {
-    return <EmptyWebhooksContent />;
-  }
+  if (!webhooks?.length) return <EmptyWebhooksContent />;
 
   return (
     <>

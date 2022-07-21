@@ -24,6 +24,9 @@ export interface GetApplicantByIdOutput extends DynamoApplicant {
   responses: Object[]; // TODO fix this type with a response type
 }
 
+export interface APIErrorResponse {
+  message: string;
+}
 declare global {
   namespace Express {
     export interface Request {

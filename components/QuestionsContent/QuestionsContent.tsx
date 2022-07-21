@@ -1,9 +1,9 @@
 import { PlusIcon } from '@heroicons/react/solid';
-import useQuestionsInOrg from '../../SWR/useQuestionsInOrg';
+import { useQuestionsInOrg } from '../../SWR/useQuestionsInOrg';
 import { DynamoQuestion } from '../../types/dynamo';
 import useStore from '../../utils/store';
-import useOrgInfo from '../../SWR/useOrgInfo';
-import useSelf from '../../SWR/useSelf';
+import { useOrgInfo } from '../../SWR/useOrgInfo';
+import { useSelf } from '../../SWR/useSelf';
 import { Loader } from '../Loader';
 import { EmptyQuestionContent } from '../EmptyQuestionContent';
 import { CreateQuestionModal } from '../CreateQuestionModal';
@@ -12,23 +12,24 @@ import { QuestionItem } from '../QuestionItem';
 
 export const QuestionsContent = () => {
   const { user, isUserLoading, isUserError } = useSelf();
-  const { org, isOrgLoading, isOrgError } = useOrgInfo(user?.orgId);
+  const { org, isOrgLoading, isOrgError } = useOrgInfo({
+    orgId: user.orgId,
+  });
   const { orgQuestions, isOrgQuestionsLoading, isOrgQuestionsError } = useQuestionsInOrg();
 
   const openCreateQuestionModal = useStore((state) => state.openCreateQuestionModal);
   const currentQuestion = useStore((state) => state.currentQuestion);
-  if (isOrgQuestionsLoading) {
-    return <Loader text="Loading questions..." />;
-  }
 
-  if (orgQuestions?.length === 0) {
-    // eslint-disable-next-line react/jsx-no-undef
-    return <EmptyQuestionContent />;
-  }
+  if (isUserError || isOrgError || isOrgQuestionsError)
+    return <h1>An error ocurred returning your info</h1>;
+  if (isOrgQuestionsLoading) return <Loader text="Loading questions..." />;
+
+  if (!orgQuestions?.length) return <EmptyQuestionContent />;
+
   return (
     <div className="">
       <CreateQuestionModal />
-      {orgQuestions?.length === 0 ? (
+      {!orgQuestions?.length ? (
         <EmptyQuestionContent />
       ) : (
         <div>

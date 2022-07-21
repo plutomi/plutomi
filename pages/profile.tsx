@@ -1,6 +1,6 @@
 import { Login } from '../adapters/Auth';
 import { Loader } from '../components/Loader';
-import useSelf from '../SWR/useSelf';
+import { useSelf } from '../SWR/useSelf';
 import * as LoginComponent from '../components/Login';
 import { UpdateUserProfileModal } from '../components/UpdateUserInfoModal';
 import { SignedInNav } from '../components/SignedInNavbar';
@@ -10,17 +10,11 @@ export default function Team() {
   const { user, isUserLoading, isUserError } = useSelf();
 
   // When rendering client side don't display anything until loading is complete
-  if (typeof window !== 'undefined' && isUserLoading) {
-    return <Loader text="Loading..." />;
-  }
+  if (typeof window !== 'undefined' && isUserLoading) return <Loader text="Loading..." />;
 
-  if (isUserError) {
-    return <LoginComponent.Login loggedOutPageText="Log in to view your profile" />;
-  }
+  if (isUserError) return <LoginComponent.Login loggedOutPageText="Log in to view your profile" />;
 
-  if (isUserLoading) {
-    return <Loader text="Loading user..." />;
-  }
+  if (isUserLoading) return <Loader text="Loading user..." />;
 
   return (
     <>
