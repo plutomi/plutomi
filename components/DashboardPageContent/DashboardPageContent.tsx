@@ -1,6 +1,6 @@
 import { mutate } from 'swr';
 import { OfficeBuildingIcon, PlusIcon } from '@heroicons/react/outline';
-import useSelf from '../../SWR/useSelf';
+import { useSelf } from '../../SWR/useSelf';
 import { useOrgInfo } from '../../SWR/useOrgInfo';
 import { DeleteOrg } from '../../adapters/Orgs';
 import useStore from '../../utils/store';

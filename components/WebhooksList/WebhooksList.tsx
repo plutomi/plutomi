@@ -1,5 +1,5 @@
 import { PlusIcon } from '@heroicons/react/outline';
-import useSelf from '../../SWR/useSelf';
+import { useSelf } from '../../SWR/useSelf';
 import { DynamoWebhook } from '../../types/dynamo';
 import useWebhooks from '../../SWR/useWebhooksInOrg';
 import useStore from '../../utils/store';
@@ -15,6 +15,7 @@ export const WebhooksList = () => {
   const { org, isOrgLoading, isOrgError } = useOrgInfo({
     orgId: user.orgId,
   });
+  // TODO error and loading
   const { webhooks, isWebhooksLoading, isWebhooksError } = useWebhooks(user?.orgId);
   const openCreateWebhookModal = useStore((state) => state.openCreateWebhookModal);
 

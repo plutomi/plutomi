@@ -1,9 +1,11 @@
 import useSWR from 'swr';
 import { SWRFetcher } from '../Config';
 import { GetSelfInfoURL } from '../adapters/Users';
+import { DynamoUser } from '../types/dynamo';
+import { APIErrorResponse } from '../types/main';
 
-export default function useSelf() {
-  const { data, error } = useSWR(GetSelfInfoURL(), SWRFetcher, {
+export const useSelf = () => {
+  const { data, error } = useSWR<DynamoUser, APIErrorResponse>(GetSelfInfoURL(), SWRFetcher, {
     shouldRetryOnError: false,
   });
   return {
@@ -11,4 +13,4 @@ export default function useSelf() {
     isUserLoading: !error && !data,
     isUserError: error,
   };
-}
+};

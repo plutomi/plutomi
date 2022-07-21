@@ -3,7 +3,7 @@ import { useQuestionsInOrg } from '../../SWR/useQuestionsInOrg';
 import { DynamoQuestion } from '../../types/dynamo';
 import useStore from '../../utils/store';
 import { useOrgInfo } from '../../SWR/useOrgInfo';
-import useSelf from '../../SWR/useSelf';
+import { useSelf } from '../../SWR/useSelf';
 import { Loader } from '../Loader';
 import { EmptyQuestionContent } from '../EmptyQuestionContent';
 import { CreateQuestionModal } from '../CreateQuestionModal';
@@ -12,7 +12,9 @@ import { QuestionItem } from '../QuestionItem';
 
 export const QuestionsContent = () => {
   const { user, isUserLoading, isUserError } = useSelf();
-  const { org, isOrgLoading, isOrgError } = useOrgInfo(user?.orgId);
+  const { org, isOrgLoading, isOrgError } = useOrgInfo({
+    orgId: user.orgId,
+  });
   const { orgQuestions, isOrgQuestionsLoading, isOrgQuestionsError } = useQuestionsInOrg();
 
   const openCreateQuestionModal = useStore((state) => state.openCreateQuestionModal);

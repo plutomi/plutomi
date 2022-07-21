@@ -1,12 +1,11 @@
 import { useRouter } from 'next/router';
-import useSelf from '../../SWR/useSelf';
+import { useSelf } from '../../SWR/useSelf';
 import useUserInvites from '../../SWR/useUserInvites';
 import { DynamoOrgInvite } from '../../types/dynamo';
 import { Invite } from '../Invite/Invite';
 import { Loader } from '../Loader/Loader';
 
 export const InvitesPageContent = () => {
-  const router = useRouter();
   const { user, isUserLoading, isUserError } = useSelf();
   // TODO we don't have to make this call here if a user doesn't have invites
   const { invites, isInvitesLoading, isInvitesError } = useUserInvites(user?.userId);

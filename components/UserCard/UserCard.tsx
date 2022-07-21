@@ -2,7 +2,7 @@ import { mutate } from 'swr';
 import { DynamoUser } from '../../types/dynamo';
 import * as Time from '../../utils/time';
 import * as Users from '../../adapters/Users';
-import useSelf from '../../SWR/useSelf';
+import { useSelf } from '../../SWR/useSelf';
 import { useOrgInfo } from '../../SWR/useOrgInfo';
 
 interface UserCardProps {
@@ -11,8 +11,10 @@ interface UserCardProps {
 export const UserCard = ({ user }: UserCardProps) => {
   const { isUserLoading, isUserError } = useSelf();
   const { org, isOrgLoading, isOrgError } = useOrgInfo({
-    orgId: user?.orgId
+    orgId: user?.orgId,
   });
+
+  // TODO error & loading handling
   const me = useSelf().user;
   const handleRemove = async (user: DynamoUser) => {
     if (

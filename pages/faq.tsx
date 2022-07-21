@@ -2,7 +2,7 @@ import { AlreadyLoggedIn } from '../components/AlreadyLoggedIn';
 import { CustomLink } from '../components/CustomLink';
 import { LoginHomepage } from '../components/LoginHomepage';
 import { DOMAIN_NAME } from '../Config';
-import useSelf from '../SWR/useSelf';
+import { useSelf } from '../SWR/useSelf';
 
 const faqs = [
   {

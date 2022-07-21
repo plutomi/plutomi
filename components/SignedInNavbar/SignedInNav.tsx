@@ -4,7 +4,7 @@ import { useRouter } from 'next/router';
 import { BellIcon, DotsHorizontalIcon, MenuIcon, XIcon } from '@heroicons/react/outline';
 import Link from 'next/dist/client/link';
 import { mutate } from 'swr';
-import useSelf from '../../SWR/useSelf';
+import { useSelf } from '../../SWR/useSelf';
 import { Logout } from '../../adapters/Auth';
 import { NAVBAR_NAVIGATION, DROPDOWN_NAVIGATION, DEFAULTS } from '../../Config';
 import { GetSelfInfoURL } from '../../adapters/Users';

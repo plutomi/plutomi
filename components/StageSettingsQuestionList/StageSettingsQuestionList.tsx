@@ -236,7 +236,7 @@ export const StageSettingsQuestionList = () => {
                 <div {...provided.droppableProps} ref={provided.innerRef}>
                   {newQuestionOrder?.map((question, index) => (
                     <DraggableQuestionItem
-                      key={question.id}
+                      key={question.questionId}
                       question={question}
                       index={index}
                       provided={provided}

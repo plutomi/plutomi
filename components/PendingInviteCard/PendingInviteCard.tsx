@@ -2,7 +2,7 @@ import { mutate } from 'swr';
 import { DynamoOrgInvite } from '../../types/dynamo';
 import * as Time from '../../utils/time';
 import * as Invites from '../../adapters/Invites';
-import useSelf from '../../SWR/useSelf';
+import { useSelf } from '../../SWR/useSelf';
 
 interface PendingInviteCardProps {
   invite: DynamoOrgInvite;

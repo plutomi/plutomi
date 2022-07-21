@@ -1,5 +1,5 @@
 import { useOpeningsInOrg } from '../../SWR/useOpeningsInOrg';
-import useSelf from '../../SWR/useSelf';
+import { useSelf } from '../../SWR/useSelf';
 import { DynamoOpening } from '../../types/dynamo';
 import useStore from '../../utils/store';
 import { Loader } from '../Loader/Loader';

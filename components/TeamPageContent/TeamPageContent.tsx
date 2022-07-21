@@ -1,5 +1,5 @@
 import { PlusIcon } from '@heroicons/react/outline';
-import useSelf from '../../SWR/useSelf';
+import { useSelf } from '../../SWR/useSelf';
 import { useOrgUsers } from '../../SWR/useOrgUsers';
 import useStore from '../../utils/store';
 import { usePendingOrgInvites } from '../../SWR/usePendingOrgInvites';

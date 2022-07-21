@@ -1,7 +1,7 @@
 import { CogIcon } from '@heroicons/react/outline';
 import Link from 'next/dist/client/link';
 import { useRouter } from 'next/router';
-import useSelf from '../../SWR/useSelf';
+import { useSelf } from '../../SWR/useSelf';
 import { useOpeningInfo } from '../../SWR/useOpeningInfo';
 import { useOpeningsInOrg } from '../../SWR/useOpeningsInOrg';
 import { CustomQuery } from '../../types/main';
