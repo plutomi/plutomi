@@ -5,7 +5,7 @@ import { DynamoApplicant } from '../types/dynamo';
 import { APIErrorResponse } from '../types/main';
 
 interface UseApplicantByIdProps {
-  applicantId: string;
+  applicantId?: string;
 }
 
 export const useApplicantById = ({ applicantId }: UseApplicantByIdProps) => {

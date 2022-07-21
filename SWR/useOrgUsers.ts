@@ -5,7 +5,7 @@ import { DynamoUser } from '../types/dynamo';
 import { APIErrorResponse } from '../types/main';
 
 interface UseOrgUsersProps {
-  orgId: string;
+  orgId?: string;
 }
 export const useOrgUsers = ({ orgId }: UseOrgUsersProps) => {
   const { data, error } = useSWR<DynamoUser[], APIErrorResponse>(

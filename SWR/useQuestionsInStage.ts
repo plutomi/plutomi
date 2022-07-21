@@ -5,8 +5,8 @@ import { DynamoQuestion } from '../types/dynamo';
 import { APIErrorResponse } from '../types/main';
 
 interface UseQuestionsInStageProps {
-  openingId: string;
-  stageId: string;
+  openingId?: string;
+  stageId?: string;
 }
 
 export const useQuestionsInStage = ({ openingId, stageId }: UseQuestionsInStageProps) => {

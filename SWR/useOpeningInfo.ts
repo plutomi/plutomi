@@ -5,7 +5,7 @@ import { DynamoOpening } from '../types/dynamo';
 import { APIErrorResponse } from '../types/main';
 
 interface UseOpeningInfoProps {
-  openingId: string;
+  openingId?: string;
 }
 
 export const useOpeningInfo = ({ openingId }: UseOpeningInfoProps) => {

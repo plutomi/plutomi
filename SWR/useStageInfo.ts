@@ -5,8 +5,8 @@ import { DynamoStage } from '../types/dynamo';
 import { APIErrorResponse } from '../types/main';
 
 interface UseStageInfoProps {
-  openingId: string;
-  stageId: string;
+  openingId?: string;
+  stageId?: string;
 }
 export const useStageInfo = ({ openingId, stageId }: UseStageInfoProps) => {
   const shouldFetch = openingId && stageId;

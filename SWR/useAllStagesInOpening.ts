@@ -5,7 +5,7 @@ import { DynamoStage } from '../types/dynamo';
 import { APIErrorResponse } from '../types/main';
 
 interface UseAllStagesInOpeningProps {
-  openingId: string;
+  openingId?: string;
 }
 
 export const useAllStagesInOpening = ({ openingId }: UseAllStagesInOpeningProps) => {

@@ -5,7 +5,7 @@ import { DynamoOrg } from '../types/dynamo';
 import { APIErrorResponse } from '../types/main';
 
 interface UseOrgInfoProps {
-  orgId: string;
+  orgId?: string;
 }
 
 export const useOrgInfo = ({ orgId }: UseOrgInfoProps) => {

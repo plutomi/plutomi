@@ -5,7 +5,7 @@ import { DynamoOrgInvite } from '../types/dynamo';
 import { APIErrorResponse } from '../types/main';
 
 interface UseOrgInviteProps {
-  orgId: string;
+  orgId?: string;
 }
 export const usePendingOrgInvites = ({ orgId }: UseOrgInviteProps) => {
   const { data, error } = useSWR<DynamoOrgInvite[], APIErrorResponse>(
