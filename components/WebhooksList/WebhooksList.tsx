@@ -3,7 +3,7 @@ import useSelf from '../../SWR/useSelf';
 import { DynamoWebhook } from '../../types/dynamo';
 import useWebhooks from '../../SWR/useWebhooksInOrg';
 import useStore from '../../utils/store';
-import useOrgInfo from '../../SWR/useOrgInfo';
+import { useOrgInfo } from '../../SWR/useOrgInfo';
 import { CreateWebhookModal } from '../CreateWebhookModal';
 import { WebhookListItem } from '../WebhookListItem/WebhookListItem';
 import { EmptyWebhooksContent } from '../EmptyWebhooksContent';
@@ -12,7 +12,9 @@ import { UpdateWebhookModal } from '../UpdateWebhookModal';
 
 export const WebhooksList = () => {
   const { user, isUserLoading, isUserError } = useSelf();
-  const { org, isOrgLoading, isOrgError } = useOrgInfo(user?.orgId);
+  const { org, isOrgLoading, isOrgError } = useOrgInfo({
+    orgId: user.orgId,
+  });
   const { webhooks, isWebhooksLoading, isWebhooksError } = useWebhooks(user?.orgId);
   const openCreateWebhookModal = useStore((state) => state.openCreateWebhookModal);
 
