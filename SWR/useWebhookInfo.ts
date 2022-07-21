@@ -1,13 +1,17 @@
-import useSWR from "swr";
-import { GetWebhookInfoURL } from "../adapters/Webhooks";
-import { SWRFetcher } from "../Config";
+import useSWR from 'swr';
+import { GetWebhookInfoURL } from '../adapters/Webhooks';
+import { SWRFetcher } from '../Config';
+import { DynamoWebhook } from '../types/dynamo';
+import { APIErrorResponse } from '../types/main';
 
-export default function useWebhookInfo(webhookId: string) {
-  const shouldFetch = webhookId ? true : false;
+interface UseWebhookInfoProps {
+  webhookId?: string;
+}
 
-  const { data, error } = useSWR(
-    shouldFetch && GetWebhookInfoURL(webhookId),
-    SWRFetcher
+export const useWebhookInfo = ({ webhookId }: UseWebhookInfoProps) => {
+  const { data, error } = useSWR<DynamoWebhook, APIErrorResponse>(
+    webhookId && GetWebhookInfoURL(webhookId),
+    SWRFetcher,
   );
 
   return {
@@ -15,4 +19,4 @@ export default function useWebhookInfo(webhookId: string) {
     isWebhookLoading: !error && !data,
     isWebhookError: error,
   };
-}
+};
