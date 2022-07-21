@@ -18,9 +18,7 @@ export const PublicApplicationPageContent = () => {
     return <Loader text="Loading questions..." />;
   }
 
-  if (orgQuestions.length === 0) {
-    return <h1>There are no questions in this stage :T</h1>;
-  }
+  if (!orgQuestions.length) return <h1>There are no questions in this stage :T</h1>;
 
   const handleAnswerChange = async (
     questionId: string,
@@ -49,7 +47,7 @@ export const PublicApplicationPageContent = () => {
     const responseIndex = responses.indexOf(found);
 
     // Delete answer
-    if (!response || response.length === 0) {
+    if (!response || !response.length) {
       newResponses.splice(responseIndex, 1);
       setResponses(newResponses);
       return;

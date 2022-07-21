@@ -25,7 +25,6 @@ export const OpeningsPageContent = () => {
     setOpeningsSearch(e.target.value);
   };
 
-  const noOpenings = openings?.length === 0;
   const OrgHasOpenings = (
     <>
       <div className="flex-1 my-4 flex md:mt-0  items-center  md:flex-grow justify-center">
@@ -53,7 +52,7 @@ export const OpeningsPageContent = () => {
   return (
     <>
       <CreateOpeningModal />
-      {noOpenings ? <EmptyOpeningsContent /> : OrgHasOpenings}
+      {!openings?.length ? <EmptyOpeningsContent /> : OrgHasOpenings}
     </>
   );
 };

@@ -17,7 +17,7 @@ export const PublicOrgPageContent = () => {
 
   return (
     <div className="mt-6">
-      {publicOpenings.length === 0 ? (
+      {!publicOpenings.length ? (
         <h1 className="text-xl font-semibold">There aren&apos;t any openings right now :(</h1>
       ) : (
         <PublicOpeningList />

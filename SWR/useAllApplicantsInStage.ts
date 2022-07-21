@@ -1,7 +1,7 @@
 import useSWR, { Fetcher, Key } from 'swr';
 import { GetApplicantsInStageURL } from '../adapters/Applicants';
-import { API_URL, AXIOS_INSTANCE, SWRFetcher } from '../Config';
-import { AllDynamoEntities, DynamoApplicant } from '../types/dynamo';
+import { SWRFetcher } from '../Config';
+import { DynamoApplicant } from '../types/dynamo';
 import { APIErrorResponse } from '../types/main';
 
 interface UseAllApplicantsInStageProps {

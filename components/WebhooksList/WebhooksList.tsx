@@ -16,17 +16,12 @@ export const WebhooksList = () => {
   const { webhooks, isWebhooksLoading, isWebhooksError } = useWebhooks(user?.orgId);
   const openCreateWebhookModal = useStore((state) => state.openCreateWebhookModal);
 
-  if (isWebhooksLoading) {
-    return <Loader text="Loading webhooks..." />;
-  }
+  if (isWebhooksLoading) return <Loader text="Loading webhooks..." />;
 
-  if (isWebhooksError) {
+  if (isWebhooksError)
     return <h1 className="text-lg text-red-500">An error ocurred retrieving webhooks</h1>;
-  }
 
-  if (webhooks?.length === 0) {
-    return <EmptyWebhooksContent />;
-  }
+  if (!webhooks?.length) return <EmptyWebhooksContent />;
 
   return (
     <>

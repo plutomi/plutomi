@@ -1,7 +1,6 @@
 import { useRouter } from 'next/router';
 import { useState } from 'react';
-
-import useAllStagesInOpening from '../../SWR/useAllStagesInOpening';
+import { useAllStagesInOpening } from '../../SWR/useAllStagesInOpening';
 import useOpeningInfo from '../../SWR/useOpeningInfo';
 import { CustomQuery } from '../../types/main';
 import { Loader } from '../Loader';
@@ -17,6 +16,10 @@ export const StageSettingsContent = () => {
   const { opening, isOpeningLoading, isOpeningError } = useOpeningInfo(openingId);
   const { stages, isStagesLoading, isStagesError } = useAllStagesInOpening(opening?.openingId);
 
+  if (isOpeningError || isStagesError) {
+    return <h1>An error ocurred loading the stage settings content</h1>;
+  }
+  
   if (isOpeningLoading) {
     return <Loader text="Loading opening..." />;
   }

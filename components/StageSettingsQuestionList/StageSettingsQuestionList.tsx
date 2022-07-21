@@ -148,7 +148,7 @@ export const StageSettingsQuestionList = () => {
   };
 
   const listBoxOptions = (): React.ReactElement => {
-    if (orgQuestions?.length === 0) {
+    if (!orgQuestions?.length) {
       return (
         <p className="disabled  text-gray-400 cursor-default select-none relative py-2 pl-3 pr-9 ">
           No questions found
@@ -156,7 +156,7 @@ export const StageSettingsQuestionList = () => {
       );
     }
 
-    if (filteredOrgQuestions?.length === 0 && orgQuestions?.length > 0) {
+    if (!filteredOrgQuestions?.length && orgQuestions?.length > 0) {
       return (
         <p className="disabled  text-gray-400 cursor-default select-none relative py-2 pl-3 pr-9 ">
           Question not found

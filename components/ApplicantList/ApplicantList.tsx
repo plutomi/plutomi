@@ -14,17 +14,13 @@ export const ApplicantList = () => {
     stageId,
   });
 
-  if (isApplicantsError) {
+  if (isApplicantsError)
     return <h1>An error ocurred retrieving your applicants: {isApplicantsError.message}</h1>;
-  }
 
-  if (isApplicantsLoading) {
-    return <Loader text="Loading applicants..." />;
-  }
+  if (isApplicantsLoading) return <Loader text="Loading applicants..." />;
 
-  if (applicants.length === 0) {
+  if (!applicants.length)
     return <h1 className="text-2xl font-semibold text-normal">No applicants in this stage</h1>;
-  }
 
   return (
     <div className="bg-white shadow overflow-hidden sm:rounded-md">

@@ -21,14 +21,12 @@ export const QuestionsContent = () => {
     return <Loader text="Loading questions..." />;
   }
 
-  if (orgQuestions?.length === 0) {
-    // eslint-disable-next-line react/jsx-no-undef
-    return <EmptyQuestionContent />;
-  }
+  if (!orgQuestions?.length) return <EmptyQuestionContent />;
+
   return (
     <div className="">
       <CreateQuestionModal />
-      {orgQuestions?.length === 0 ? (
+      {!orgQuestions?.length ? (
         <EmptyQuestionContent />
       ) : (
         <div>

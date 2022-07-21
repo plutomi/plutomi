@@ -15,9 +15,8 @@ export const InvitesPageContent = () => {
     return <Loader text="Loading invites..." />;
   }
 
-  if (invites?.length === 0) {
-    return <h1>You don&apos;t have any invites :(</h1>;
-  }
+  if (!invites?.length) return <h1>You don&apos;t have any invites :(</h1>;
+
   return (
     <div className="">
       <ul className="divide-y divide-gray-200 mx-auto max-w-xl flex-col space-y-4 p-20  ">

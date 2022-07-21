@@ -2,8 +2,7 @@ import React, { useState } from 'react';
 import ItemsCarousel from 'react-items-carousel';
 import { ArrowLeftIcon, ArrowRightIcon } from '@heroicons/react/outline';
 import { useRouter } from 'next/router';
-import useAllStagesInOpening from '../../SWR/useAllStagesInOpening';
-import useOpeningInfo from '../../SWR/useOpeningInfo';
+import { useAllStagesInOpening } from '../../SWR/useAllStagesInOpening';
 import { CustomQuery } from '../../types/main';
 import { StageCard } from '../StageCard';
 import { Loader } from '../Loader';
@@ -15,14 +14,14 @@ export const StageCarousel = () => {
 
   const { openingId } = router.query as Pick<CustomQuery, 'openingId'>;
 
-  const { opening, isOpeningLoading, isOpeningError } = useOpeningInfo(openingId);
+  const { stages, isStagesLoading, isStagesError } = useAllStagesInOpening({
+    openingId,
+  });
 
-  const { stages, isStagesLoading, isStagesError } = useAllStagesInOpening(opening?.openingId);
-
-  if (isStagesLoading) {
-    return <Loader text="Loading stages..." />;
-  }
-
+  if (isStagesError) return <h1>An error ocurred returning stages for this opening</h1>;
+  if (isStagesLoading) return <Loader text="Loading stages..." />;
+  if (!stages.length) return <h1>No stages found for this opening!</h1>;
+  
   return (
     <div className="max-w-8xl border -py-4 rounded-xl">
       <ItemsCarousel

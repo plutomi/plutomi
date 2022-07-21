@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 import { useRouter } from 'next/router';
 import useStore from '../../../../../utils/store';
-import useAllStagesInOpening from '../../../../../SWR/useAllStagesInOpening';
+import { useAllStagesInOpening } from '../../../../../SWR/useAllStagesInOpening';
 import useOpeningInfo from '../../../../../SWR/useOpeningInfo';
 import { CustomQuery } from '../../../../../types/main';
 import { NewPageLayout } from '../../../../../components/NewPageLayout';
