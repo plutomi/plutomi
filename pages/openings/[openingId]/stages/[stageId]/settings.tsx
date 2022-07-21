@@ -1,6 +1,6 @@
 import { mutate } from 'swr';
 import { useRouter } from 'next/router';
-import useOpeningInfo from '../../../../../SWR/useOpeningInfo';
+import { useOpeningInfo } from '../../../../../SWR/useOpeningInfo';
 import useStageInfo from '../../../../../SWR/useStageInfo';
 import { CustomQuery } from '../../../../../types/main';
 import { GetOpeningInfoURL } from '../../../../../adapters/Openings';
@@ -13,7 +13,7 @@ import { StageSettingsContent } from '../../../../../components/StageSettingsCon
 export default function StageSettings() {
   const router = useRouter();
   const { openingId, stageId } = router.query as Pick<CustomQuery, 'openingId' | 'stageId'>;
-  const { opening, isOpeningLoading, isOpeningError } = useOpeningInfo(openingId);
+  const { opening, isOpeningLoading, isOpeningError } = useOpeningInfo({ openingId });
   const { stage, isStageLoading, isStageError } = useStageInfo(openingId, stageId);
 
   // Update this to use the new update syntax with diff

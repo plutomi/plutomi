@@ -1,7 +1,7 @@
 import { useRouter } from 'next/router';
 import { useEffect } from 'react';
 import { useAllStagesInOpening } from '../../../SWR/useAllStagesInOpening';
-import useOpeningInfo from '../../../SWR/useOpeningInfo';
+import { useOpeningInfo } from '../../../SWR/useOpeningInfo';
 import { CustomQuery } from '../../../types/main';
 import { DOMAIN_NAME } from '../../../Config';
 import { Loader } from '../../../components/Loader';
@@ -12,9 +12,9 @@ export default function Openings() {
   const router = useRouter();
   const { openingId } = router.query as Pick<CustomQuery, 'openingId'>;
 
-  const { opening, isOpeningLoading, isOpeningError } = useOpeningInfo(openingId);
+  const { opening, isOpeningLoading, isOpeningError } = useOpeningInfo({ openingId });
 
-  const { stages, isStagesLoading, isStagesError } = useAllStagesInOpening(opening?.openingId);
+  const { stages, isStagesLoading, isStagesError } = useAllStagesInOpening({ openingId });
 
   useEffect(() => {
     if (!router.isReady) return;

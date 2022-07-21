@@ -2,7 +2,7 @@ import useSWR from 'swr';
 import { GetOpeningsInOrgURL } from '../adapters/Openings';
 import { SWRFetcher } from '../Config';
 
-export default function useOpenings() {
+export default function useOpenings() { // TODO rename to useOepningsInOrg
   const { data, error } = useSWR(GetOpeningsInOrgURL(), SWRFetcher);
 
   return {

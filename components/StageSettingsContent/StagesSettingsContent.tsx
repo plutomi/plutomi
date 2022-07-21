@@ -1,7 +1,7 @@
 import { useRouter } from 'next/router';
 import { useState } from 'react';
 import { useAllStagesInOpening } from '../../SWR/useAllStagesInOpening';
-import useOpeningInfo from '../../SWR/useOpeningInfo';
+import { useOpeningInfo } from '../../SWR/useOpeningInfo';
 import { CustomQuery } from '../../types/main';
 import { Loader } from '../Loader';
 import { StageReorderColumn } from '../StageReorderColumn';
@@ -13,13 +13,13 @@ export const StageSettingsContent = () => {
   const [currentTab, setCurrentTab] = useState('Questions');
   const { openingId, stageId } = router.query as Pick<CustomQuery, 'openingId' | 'stageId'>;
 
-  const { opening, isOpeningLoading, isOpeningError } = useOpeningInfo(openingId);
-  const { stages, isStagesLoading, isStagesError } = useAllStagesInOpening(opening?.openingId);
+  const { opening, isOpeningLoading, isOpeningError } = useOpeningInfo({ openingId });
+  const { stages, isStagesLoading, isStagesError } = useAllStagesInOpening({ openingId });
 
   if (isOpeningError || isStagesError) {
     return <h1>An error ocurred loading the stage settings content</h1>;
   }
-  
+
   if (isOpeningLoading) {
     return <Loader text="Loading opening..." />;
   }

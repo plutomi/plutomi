@@ -1,5 +1,5 @@
 import { useRouter } from 'next/router';
-import useOpeningInfo from '../../SWR/useOpeningInfo';
+import { useOpeningInfo } from '../../SWR/useOpeningInfo';
 import { CustomQuery } from '../../types/main';
 import { Loader } from '../Loader';
 import { StageReorderColumn } from '../StageReorderColumn';
@@ -8,11 +8,10 @@ import { UpdateOpeningModal } from '../UpdateOpeningModal';
 export const OpeningSettingsContent = () => {
   const router = useRouter();
   const { openingId } = router.query as Pick<CustomQuery, 'openingId'>;
-  const { opening, isOpeningLoading, isOpeningError } = useOpeningInfo(openingId);
+  const { opening, isOpeningLoading, isOpeningError } = useOpeningInfo({ openingId });
 
-  if (isOpeningLoading) {
-    return <Loader text="Loading opening settings..." />;
-  }
+  if (isOpeningError) return <h1>An error ocurred retrieving info for this opening</h1>;
+  if (isOpeningLoading) return <Loader text="Loading opening settings..." />;
 
   return (
     <>
