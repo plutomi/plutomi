@@ -5,7 +5,7 @@ import { XIcon, ChevronDoubleRightIcon } from '@heroicons/react/outline';
 import { useRouter } from 'next/router';
 import { mutate } from 'swr';
 import useStore from '../../utils/store';
-import useApplicantById from '../../SWR/useApplicantById';
+import { useApplicantById } from '../../SWR/useApplicantById';
 import { GetApplicantByIdURL, UpdateApplicant } from '../../adapters/Applicants';
 import { CustomQuery } from '../../types/main';
 import { WEBSITE_URL } from '../../Config';
@@ -36,12 +36,9 @@ export const ApplicantProfileModal = () => {
   const [isEditing, setIsEditing] = useState(false);
   const [currentActive, setCurrentActive] = useState(1); // Id of item
   const router = useRouter();
-  const { applicantId, openingId, stageId } = router.query as Pick<
-    CustomQuery,
-    'openingId' | 'stageId' | 'applicantId'
-  >;
+  const { applicantId } = router.query as Pick<CustomQuery, 'applicantId'>;
 
-  const { applicant, isApplicantLoading, isApplicantError } = useApplicantById(applicantId);
+  const { applicant, isApplicantLoading, isApplicantError } = useApplicantById({ applicantId });
 
   const handleNavClick = (e, tabId: number) => {
     e.preventDefault();
@@ -212,39 +209,7 @@ export const ApplicantProfileModal = () => {
                   </div>
 
                   <div className="p-4 ">
-                    {currentActive === 1 && (
-                      <>
-                        {/* TODO refactor this to its own component */}
-                        {applicant?.responses?.length ? (
-                          <ul className="py-4  space-y-8">
-                            {applicant?.responses.map((response) => (
-                              <div
-                                key={response?.responseId}
-                                className="pl-3 mt-1 h-full relative focus-within:ring-2 focus-within:ring-blue-500"
-                              >
-                                <h3 className="text-lg font-semibold text-dark">
-                                  <span className="absolute inset-0" aria-hidden="true" />
-                                  {response?.questionTitle}
-                                </h3>
-                                {response?.description && (
-                                  <p className="text-md text-light">{response?.description}</p>
-                                )}
-                                <span className=" inline-flex justify-center items-center space-x-1">
-                                  <ChevronDoubleRightIcon className="h-3 w-3" />
-                                  <p className="text-lg text-normal font-bold line-clamp-2 ">
-                                    {response?.questionResponse}
-                                  </p>
-                                </span>
-                              </div>
-                            ))}
-                          </ul>
-                        ) : (
-                          <h1 className="py-4 text-lg text-dark">
-                            This applicant has not answered any questions yet!
-                          </h1>
-                        )}
-                      </>
-                    )}
+                    {currentActive === 1 && <h1>Viewing Applicant data</h1>}
                     {currentActive === 2 && <h1>Viewing History</h1>}
                     {currentActive === 3 && <h1>Viewing messages</h1>}
                     {currentActive === 4 && <h1>Invalid nav index</h1>}
