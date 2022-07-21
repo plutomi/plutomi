@@ -229,7 +229,7 @@ export const SignedInNav = ({ current }: SignedInNavProps) => {
                   ) : (
                     <div className="ml-3">
                       <div className="text-base font-medium text-gray-800">
-                        {user?.firstName} {user?.lastname}
+                        {user?.firstName} {user?.lastName}
                       </div>
                       <div className="text-md font-medium text-normal">{user?.email}</div>
                     </div>

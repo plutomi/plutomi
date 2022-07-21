@@ -13,7 +13,7 @@ import { UpdateWebhookModal } from '../UpdateWebhookModal';
 export const WebhooksList = () => {
   const { user, isUserLoading, isUserError } = useSelf();
   const { org, isOrgLoading, isOrgError } = useOrgInfo({
-    orgId: user.orgId,
+    orgId: user?.orgId,
   });
   // TODO error and loading
   const { webhooks, isWebhooksLoading, isWebhooksError } = useWebhooksInOrg({
