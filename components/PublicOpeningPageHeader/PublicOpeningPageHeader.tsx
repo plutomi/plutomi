@@ -1,18 +1,17 @@
 import { useRouter } from 'next/router';
-import usePublicOrgById from '../../SWR/usePublicOrgById';
-import usePublicOpeningById from '../../SWR/usePublicOpeningById';
+import { usePublicOrgById } from '../../SWR/usePublicOrgById';
+import { usePublicOpening } from '../../SWR/usePublicOpening';
 import { CustomQuery } from '../../types/main';
 import { Loader } from '../Loader';
 
 export const PublicOpeningPageHeader = () => {
   const router = useRouter();
   const { orgId, openingId } = router.query as Pick<CustomQuery, 'openingId' | 'orgId'>;
-  const { org, isOrgLoading, isOrgError } = usePublicOrgById(orgId);
-  const { opening, isOpeningLoading, isOpeningError } = usePublicOpeningById(orgId, openingId);
+  const { org, isOrgLoading, isOrgError } = usePublicOrgById({ orgId });
+  const { opening, isOpeningLoading, isOpeningError } = usePublicOpening({ orgId, openingId });
 
-  if (isOrgLoading) {
-    return <Loader text="Loading..." />;
-  }
+  if (isOrgError || isOpeningError) return <h1>An error ocurred retrieving org data</h1>;
+  if (isOrgLoading) return <Loader text="Loading..." />;
 
   return (
     <div className="md:flex md:items-center md:justify-between">

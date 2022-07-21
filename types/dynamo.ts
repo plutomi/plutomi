@@ -20,12 +20,12 @@ export type AllDynamoEntities =
   | DynamoUser
   | DynamoWebhook
   | DynamoOrgInvite
-  | DynamoOpening
+  | DynamoOpening // TODO public variant
   | DynamoApplicantResponse
-  | DynamoApplicant
-  | DynamoQuestion
+  | DynamoApplicant // TODO public variant
+  | DynamoQuestion // TODO public variant?
   | DynamoQuestionStageAdjacentItem
-  | DynamoStage;
+  | DynamoStage; // TODO public variant
 
 export interface DynamoStage {
   /**
