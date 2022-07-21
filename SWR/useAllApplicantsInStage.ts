@@ -1,10 +1,16 @@
-import useSWR from 'swr';
+import useSWR, { Fetcher, Key } from 'swr';
 import { GetApplicantsInStageURL } from '../adapters/Applicants';
-import { SWRFetcher } from '../Config';
+import { API_URL, AXIOS_INSTANCE, SWRFetcher } from '../Config';
+import { AllDynamoEntities, DynamoApplicant } from '../types/dynamo';
+import { APIErrorResponse } from '../types/main';
 
-export default function useAllApplicantsInStage(openingId?: string, stageId?: string) {
+interface UseAllApplicantsInStageProps {
+  openingId?: string;
+  stageId?: string;
+}
+export const useAllApplicantsInStage = ({ openingId, stageId }: UseAllApplicantsInStageProps) => {
   const shouldFetch = openingId && stageId;
-  const { data, error } = useSWR(
+  const { data, error } = useSWR<DynamoApplicant[], APIErrorResponse>(
     shouldFetch &&
       GetApplicantsInStageURL({
         openingId,
@@ -18,4 +24,4 @@ export default function useAllApplicantsInStage(openingId?: string, stageId?: st
     isApplicantsLoading: !error && !data,
     isApplicantsError: error,
   };
-}
+};
