@@ -1,6 +1,6 @@
 import { useRouter } from 'next/router';
 import { useApplicantById } from '../../SWR/useApplicantById';
-import useStageInfo from '../../SWR/useStageInfo';
+import { useStageInfo } from '../../SWR/useStageInfo';
 import { CustomQuery } from '../../types/main';
 import { Loader } from '../Loader';
 
@@ -9,10 +9,10 @@ export const PublicApplicationPageHeader = () => {
   const { applicantId } = router.query as Pick<CustomQuery, 'applicantId'>;
   const { applicant, isApplicantLoading, isApplicantError } = useApplicantById({ applicantId });
 
-  const { stage, isStageLoading, isStageError } = useStageInfo(
-    applicant?.openingId, // TODO needs refactoring
-    applicant?.stageId, // TODO needs refactoring
-  );
+  const { stage, isStageLoading, isStageError } = useStageInfo({
+    openingId: applicant?.openingId, // TODO needs refactoring
+    stageId: applicant?.stageId, // TODO needs refactoring
+  });
 
   if (isApplicantError) return <h1>An error ocurred loading your info</h1>;
   if (isStageError) return <h1>An error ocurred loading your current stage info</h1>;

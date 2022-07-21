@@ -1,7 +1,7 @@
 import { TrashIcon, PencilAltIcon } from '@heroicons/react/outline';
 import { useRouter } from 'next/router';
 import useStore from '../../utils/store';
-import useStageInfo from '../../SWR/useStageInfo';
+import { useStageInfo } from '../../SWR/useStageInfo';
 import * as Time from '../../utils/time';
 import { CustomQuery } from '../../types/main';
 import { CreateQuestionModal } from '../CreateQuestionModal';
@@ -18,7 +18,10 @@ export const StageSettingsHeader = ({ deleteStage }: StageSettingsHeaderProps) =
   const { openingId, stageId } = router.query as Pick<CustomQuery, 'openingId' | 'stageId'>;
 
   const openUpdateStageModal = useStore((state) => state.openUpdateStageModal);
-  const { stage, isStageLoading, isStageError } = useStageInfo(openingId, stageId);
+  const { stage, isStageLoading, isStageError } = useStageInfo({
+    openingId,
+    stageId,
+  });
 
   const crumbs: CrumbProps[] = [
     {

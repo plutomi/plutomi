@@ -7,7 +7,6 @@ import { GetStagesInOpeningURL } from '../../adapters/Stages';
 import useStore from '../../utils/store';
 import { useOpeningInfo } from '../../SWR/useOpeningInfo';
 import { useAllStagesInOpening } from '../../SWR/useAllStagesInOpening';
-import useStageInfo from '../../SWR/useStageInfo';
 import { UpdateOpening, GetOpeningInfoURL } from '../../adapters/Openings';
 import { CustomQuery } from '../../types/main';
 import { CreateStageModal } from '../CreateStageModal';

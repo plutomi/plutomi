@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import { Listbox, Transition } from '@headlessui/react';
 import { DragDropContext, Droppable } from 'react-beautiful-dnd';
 import { useQuestionsInOrg } from '../../SWR/useQuestionsInOrg';
-import useStageInfo from '../../SWR/useStageInfo';
+import { useStageInfo } from '../../SWR/useStageInfo';
 import { useQuestionsInStage } from '../../SWR/useQuestionsInStage';
 import { CustomQuery } from '../../types/main';
 import { DynamoQuestion } from '../../types/dynamo';
@@ -24,7 +24,7 @@ export const StageSettingsQuestionList = () => {
     stageId,
   });
 
-  const { stage, isStageLoading, isStageError } = useStageInfo(openingId, stageId);
+  const { stage, isStageLoading, isStageError } = useStageInfo({ openingId, stageId });
   const [filteredOrgQuestions, setFilteredOrgQuestions] = useState(orgQuestions);
   const [show, setShow] = useState(false);
   const [selected, setSelected] = useState(undefined);

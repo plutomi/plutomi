@@ -1,11 +1,17 @@
 import useSWR from 'swr';
 import { SWRFetcher } from '../Config';
 import { GetStageInfoURL } from '../adapters/Stages';
+import { DynamoStage } from '../types/dynamo';
+import { APIErrorResponse } from '../types/main';
 
-export default function useStageInfo(openingId: string, stageId: string) {
-  const shouldFetch = !!(openingId && stageId);
+interface UseStageInfoProps {
+  openingId: string;
+  stageId: string;
+}
+export const useStageInfo = ({ openingId, stageId }: UseStageInfoProps) => {
+  const shouldFetch = openingId && stageId;
 
-  const { data, error } = useSWR(
+  const { data, error } = useSWR<DynamoStage, APIErrorResponse>(
     shouldFetch &&
       GetStageInfoURL({
         openingId,
@@ -19,4 +25,4 @@ export default function useStageInfo(openingId: string, stageId: string) {
     isStageLoading: !error && !data,
     isStageError: error,
   };
-}
+};
