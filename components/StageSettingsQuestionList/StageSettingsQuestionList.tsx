@@ -3,7 +3,7 @@ import { mutate } from 'swr';
 import { useEffect, useState } from 'react';
 import { Listbox, Transition } from '@headlessui/react';
 import { DragDropContext, Droppable } from 'react-beautiful-dnd';
-import useQuestionsInOrg from '../../SWR/useQuestionsInOrg';
+import { useQuestionsInOrg } from '../../SWR/useQuestionsInOrg';
 import useStageInfo from '../../SWR/useStageInfo';
 import useQuestionsInStage from '../../SWR/useQuestionsInStage';
 import { CustomQuery } from '../../types/main';
@@ -164,7 +164,7 @@ export const StageSettingsQuestionList = () => {
       );
     }
 
-    return filteredOrgQuestions?.map((question: DynamoQuestion) => (
+    filteredOrgQuestions?.map((question) => (
       <Listbox.Option
         key={question.questionId}
         disabled={stage?.questionOrder.includes(question.questionId)}

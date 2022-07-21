@@ -1,5 +1,5 @@
 import { PlusIcon } from '@heroicons/react/solid';
-import useQuestionsInOrg from '../../SWR/useQuestionsInOrg';
+import { useQuestionsInOrg } from '../../SWR/useQuestionsInOrg';
 import { DynamoQuestion } from '../../types/dynamo';
 import useStore from '../../utils/store';
 import { useOrgInfo } from '../../SWR/useOrgInfo';
@@ -18,7 +18,8 @@ export const QuestionsContent = () => {
   const openCreateQuestionModal = useStore((state) => state.openCreateQuestionModal);
   const currentQuestion = useStore((state) => state.currentQuestion);
 
-  if (isUserError || isOrgError) return <h1>An error ocurred returning your info</h1>;
+  if (isUserError || isOrgError || isOrgQuestionsError)
+    return <h1>An error ocurred returning your info</h1>;
   if (isOrgQuestionsLoading) return <Loader text="Loading questions..." />;
 
   if (!orgQuestions?.length) return <EmptyQuestionContent />;
