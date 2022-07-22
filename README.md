@@ -6,7 +6,7 @@
 
 ### [Website / Live Demo](https://plutomi.com)
 
-Plutomi is an [applicant tracking system](https://en.wikipedia.org/wiki/Applicant_tracking_system) that streamlines your entire application process with automated workflows at any scale.
+Plutomi is an multi-tenant [applicant tracking system](https://en.wikipedia.org/wiki/Applicant_tracking_system) that streamlines your entire application process with automated workflows at any scale.
 
 ![infra](images/infra.png)
 
