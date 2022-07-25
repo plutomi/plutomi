@@ -667,7 +667,7 @@
     "@aws-cdk/core" "1.134.0"
     "constructs" "^3.3.69"
 
-"@aws-cdk/aws-s3@^1.134.0", "@aws-cdk/aws-s3@1.134.0":
+"@aws-cdk/aws-s3@1.134.0":
   "integrity" "sha512-HhVITjecHzJSf1eH5JqphvQBAaSXSDdbNQMNSX/qmMnhorsvOuU/vSmn4mmPTOUnbR6NP4k51WotVZ9qmMCaow=="
   "resolved" "https://registry.npmjs.org/@aws-cdk/aws-s3/-/aws-s3-1.134.0.tgz"
   "version" "1.134.0"
@@ -679,7 +679,7 @@
     "@aws-cdk/cx-api" "1.134.0"
     "constructs" "^3.3.69"
 
-"@aws-cdk/aws-sam@^1.134.0", "@aws-cdk/aws-sam@1.134.0":
+"@aws-cdk/aws-sam@1.134.0":
   "integrity" "sha512-OEsPH6rFwOCRXOWxTfv7ryI6juH9bTzFKOU8nsWIpeTplU80X2o4bU4MOrDRlEBKosazt7yQvmitJRjqNBBzIA=="
   "resolved" "https://registry.npmjs.org/@aws-cdk/aws-sam/-/aws-sam-1.134.0.tgz"
   "version" "1.134.0"
