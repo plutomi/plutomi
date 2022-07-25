@@ -9,14 +9,14 @@ import { EmptyTeamContent } from '../EmptyTeamContent';
 import { PendingInviteCard } from '../PendingInviteCard';
 import { CreateInviteModal } from '../CreateInviteModal';
 import { UserCard } from '../UserCard';
-import { nameIsDefault } from '../../utils/nameIsDefault';
+import { nameIsDefault } from '../../utils/compareStrings/nameIsDefault';
 
 export const TeamPageContent = () => {
   const { user, isUserLoading, isUserError } = useSelf();
   const { orgUsers, isOrgUsersLoading, isOrgUsersError } = useOrgUsers({
     orgId: user?.orgId,
   });
-
+  const openInviteModal = useStore((state) => state.openInviteModal);
   const { pendingOrgInvites, isPendingOrgInvitesLoading, isPendingOrgInvitesError } =
     usePendingOrgInvites({
       orgId: user?.orgId,
@@ -26,20 +26,6 @@ export const TeamPageContent = () => {
   if (isOrgUsersLoading) return <Loader text="Loading team..." />;
   if (isPendingOrgInvitesLoading) return <h2>Loading pending invites</h2>;
 
-  const handleOpenInviteModal = () => {
-    // If name is default, ask user to update first
-
-    if (
-      nameIsDefault({
-        firstName: user.firstName,
-        lastName: user.lastName,
-      })
-    ) {
-      useStore((state) => state.openUserProfileModal);
-    } else {
-      useStore((state) => state.openInviteModal);
-    }
-  };
   const dividerWithText = (text: string) => {
     return (
       <div className="relative">
@@ -68,7 +54,7 @@ export const TeamPageContent = () => {
           <div className="flex justify-end">
             <button
               type="button"
-              onClick={handleOpenInviteModal}
+              onClick={openInviteModal}
               className="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-lg font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
             >
               <PlusIcon className="-ml-1 mr-2 h-5 w-5" aria-hidden="true" />

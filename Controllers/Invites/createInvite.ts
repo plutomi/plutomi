@@ -15,9 +15,9 @@ import * as CreateError from '../../utils/createError';
 import * as Time from '../../utils/time';
 import { getOrg } from '../../models/Orgs';
 import { DB } from '../../models';
-import { sendEmail, SendEmailProps } from '../../models/Emails/sendEmail';
-import { nameIsDefault } from '../../utils/nameIsDefault';
-import { emailIsTheSame } from '../../utils/emailIsTheSame';
+import { sendEmail } from '../../models/Emails/sendEmail';
+import { nameIsDefault } from '../../utils/compareStrings/nameIsDefault';
+import { twoStringsMatch } from '../../utils/compareStrings';
 
 const schema = Joi.object({
   body: {
@@ -48,9 +48,9 @@ export const createInvite = async (req: Request, res: Response) => {
   }
 
   if (
-    emailIsTheSame({
-      email1: user.firstName,
-      email2: recipientEmail,
+    twoStringsMatch({
+      string1: user.firstName,
+      string2: recipientEmail,
     })
   ) {
     return res.status(403).json({ message: `You can't invite yourself` });
@@ -60,11 +60,12 @@ export const createInvite = async (req: Request, res: Response) => {
     firstName: user.firstName,
     lastName: user.lastName,
   });
-  if (userUsingDefaultName) {
-    return res.status(403).json({
-      message: `Please update your first and last name before sending invites to team members. You can do this at ${WEBSITE_URL}/profile`,
-    });
-  }
+
+  // if (userUsingDefaultName) {
+  //   return res.status(403).json({
+  //     message: `Please update your first and last name before sending invites to team members. You can do this at ${WEBSITE_URL}/profile`,
+  //   });
+  // }
   const [org, error] = await getOrg({ orgId: user.orgId });
 
   if (error) {
