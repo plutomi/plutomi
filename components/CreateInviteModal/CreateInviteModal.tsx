@@ -4,6 +4,7 @@ import { XIcon } from '@heroicons/react/outline';
 import useStore from '../../utils/store';
 import { CreateInvite } from '../../adapters/Invites';
 import { ORG_INVITE_EXPIRY_DAYS } from '../../Config';
+import { message } from 'antd';
 
 export const CreateInviteModal = () => {
   const [recipientEmail, setRecipientEmail] = useState('');
@@ -25,13 +26,12 @@ export const CreateInviteModal = () => {
         recipientEmail,
         expiresInDays: final,
       });
-      alert(data.message);
+      message.success(data.message);
       setRecipientEmail('');
       setExpiresInDays(ORG_INVITE_EXPIRY_DAYS);
       closeInviteModal();
     } catch (error) {
-      console.error(error);
-      alert(error.response.data.message);
+      message.error(error.response.data.message);
     }
   };
   return (

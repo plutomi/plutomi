@@ -11,6 +11,7 @@ import { CreateOrgModal } from '../CreateOrgModal';
 import { Loader } from '../Loader/Loader';
 import { UpdateUserProfileModal } from '../UpdateUserInfoModal';
 import { nameIsDefault } from '../../utils/compareStrings/nameIsDefault';
+import { message } from 'antd';
 
 export const DashboardPageContent = () => {
   const { user, isUserLoading, isUserError } = useSelf();
@@ -47,9 +48,9 @@ export const DashboardPageContent = () => {
 
     try {
       const { data } = await DeleteOrg();
-      alert(data.message);
+      message.success(data.message);
     } catch (error) {
-      alert(error.response.data.message);
+      message.error(error.response.data.message);
     }
     mutate(GetSelfInfoURL()); // Refresh user state
   };

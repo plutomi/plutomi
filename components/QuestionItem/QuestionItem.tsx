@@ -4,6 +4,7 @@ import { mutate } from 'swr';
 import { DeleteQuestionFromOrg, GetQuestionsInOrgURL } from '../../adapters/Questions';
 import useStore from '../../utils/store';
 import { DynamoQuestion } from '../../types/dynamo';
+import { message } from 'antd';
 
 interface QuestionItemProps {
   question: DynamoQuestion;
@@ -33,10 +34,10 @@ export const QuestionItem = ({ question }: QuestionItemProps) => {
     }
 
     try {
-      const data = await DeleteQuestionFromOrg(question.questionId);
-      alert(data.data.message);
+      const { data } = await DeleteQuestionFromOrg(question.questionId);
+      message.success(data.message);
     } catch (error) {
-      alert(error.response.data.message);
+      message.error(error.response.data.message);
     }
     mutate(GetQuestionsInOrgURL());
   };

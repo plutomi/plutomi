@@ -1,3 +1,4 @@
+import { message } from 'antd';
 import { useState } from 'react';
 import { RequestLoginLink } from '../../adapters/Auth';
 import { DEFAULTS } from '../../Config';
@@ -34,7 +35,7 @@ export const LoginHomepage = ({ callbackUrl }: LoginHomepageProps) => {
       setEmailSubmitted(true);
     } catch (error) {
       setButtonText('Login');
-      alert(error.response.data.message);
+      message.error(error.response.data.message);
     }
   };
 

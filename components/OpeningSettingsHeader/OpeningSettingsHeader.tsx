@@ -10,6 +10,7 @@ import { OpeningState, WEBSITE_URL } from '../../Config';
 import { Loader } from '../Loader';
 import { OpeningSettingsBreadcrumbs } from '../OpeningSettingsBreadcrumbs';
 import { CrumbProps } from '../types';
+import { message } from 'antd';
 
 export const OpeningSettingsHeader = () => {
   const router = useRouter();
@@ -56,7 +57,7 @@ export const OpeningSettingsHeader = () => {
       await DeleteOpening(openingId);
       router.push(`${WEBSITE_URL}/openings`);
     } catch (error) {
-      alert(error.response.data.message);
+      message.error(error.response.data.message);
     }
 
     // Refresh openings

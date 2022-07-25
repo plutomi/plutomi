@@ -7,6 +7,7 @@ import useStore from '../../utils/store';
 import { LIMITS } from '../../Config';
 import { DynamoWebhook } from '../../types/dynamo';
 import { CustomLink } from '../CustomLink';
+import { message } from 'antd';
 
 export const UpdateWebhookModal = () => {
   const [webhookName, setWebhookName] = useState('');
@@ -38,10 +39,11 @@ export const UpdateWebhookModal = () => {
         },
       });
       mutate(GetWebhooksInOrgURL());
-      alert(data.message);
+      message.success(data.message);
+
       closeUpdateWebhookModal();
     } catch (error) {
-      alert(error.response.data.message);
+      message.error(error.response.data.message);
     }
   };
 

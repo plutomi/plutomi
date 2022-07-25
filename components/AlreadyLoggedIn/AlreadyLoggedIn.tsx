@@ -4,6 +4,7 @@ import { mutate } from 'swr';
 import { useSelf } from '../../SWR/useSelf';
 import { Logout } from '../../adapters/Auth';
 import { GetSelfInfoURL } from '../../adapters/Users';
+import { message } from 'antd';
 
 const handleLogout = async (isHomepage: boolean) => {
   try {
@@ -15,7 +16,7 @@ const handleLogout = async (isHomepage: boolean) => {
     // alert(data.message);
     // TODO reroute to homepage
   } catch (error) {
-    alert(error.response.message);
+    message.error(error.response.data.message);
   }
 
   mutate(GetSelfInfoURL());

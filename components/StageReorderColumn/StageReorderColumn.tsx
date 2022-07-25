@@ -11,6 +11,7 @@ import { UpdateOpening, GetOpeningInfoURL } from '../../adapters/Openings';
 import { CustomQuery } from '../../types/main';
 import { CreateStageModal } from '../CreateStageModal';
 import { StageCard } from '../StageCard';
+import { message } from 'antd';
 
 export const StageReorderColumn = () => {
   const openCreateStageModal = useStore((state) => state.openCreateStageModal);
@@ -53,8 +54,7 @@ export const StageReorderColumn = () => {
         },
       });
     } catch (error) {
-      console.error(error.response.data.message);
-      alert(error.response.data.message);
+      message.error(error.response.data.message);
     }
 
     // Refresh the stage order

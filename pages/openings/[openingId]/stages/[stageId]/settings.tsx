@@ -9,6 +9,7 @@ import { WEBSITE_URL } from '../../../../../Config';
 import { NewPageLayout } from '../../../../../components/NewPageLayout';
 import { StageSettingsHeader } from '../../../../../components/StageSettingsHeader';
 import { StageSettingsContent } from '../../../../../components/StageSettingsContent';
+import { message } from 'antd';
 
 export default function StageSettings() {
   const router = useRouter();
@@ -32,7 +33,7 @@ export default function StageSettings() {
       });
       router.push(`${WEBSITE_URL}/openings/${openingId}/settings`);
     } catch (error) {
-      alert(error.response.data.message);
+      message.error(error.response.data.message);
     }
 
     // Refresh the stageOrder

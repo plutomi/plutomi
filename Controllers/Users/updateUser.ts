@@ -33,7 +33,7 @@ export const updateUser = async (req: Request, res: Response) => {
   }
 
   if (req.body.lastName) {
-    updatedValues = req.body.lastName;
+    updatedValues.lastName = req.body.lastName;
   }
 
   const [updatedUser, error] = await DB.Users.updateUser({

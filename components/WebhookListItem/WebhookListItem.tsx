@@ -5,6 +5,7 @@ import { DeleteWebhookFromOrg, GetWebhooksInOrgURL } from '../../adapters/Webhoo
 import useStore from '../../utils/store';
 import { DynamoWebhook } from '../../types/dynamo';
 import { UpdateWebhookModal } from '../UpdateWebhookModal';
+import { message } from 'antd';
 
 interface WebhookListItemProps {
   webhook: DynamoWebhook;
@@ -28,10 +29,10 @@ export const WebhookListItem = ({ webhook }: WebhookListItemProps) => {
     }
 
     try {
-      const data = await DeleteWebhookFromOrg(webhook.webhookId);
-      alert(data.data.message);
+      const { data } = await DeleteWebhookFromOrg(webhook.webhookId);
+      message.success(data.message);
     } catch (error) {
-      alert(error.response.data.message);
+      message.error(error.response.data.message);
     }
 
     // Refresh the webhooks

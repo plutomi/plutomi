@@ -5,6 +5,7 @@ import { mutate } from 'swr';
 import useStore from '../../utils/store';
 import { GetSelfInfoURL, GetUserInfoUrl, UpdateUser } from '../../adapters/Users';
 import { DynamoUser } from '../../types/dynamo';
+import { message } from 'antd';
 
 interface UpdateUserProfileModalProps {
   user: DynamoUser;
@@ -34,11 +35,11 @@ export const UpdateUserProfileModal = ({ user }: UpdateUserProfileModalProps) =>
           ...input,
         },
       });
-      alert(data.message);
+      message.success(data.message);
       closeUserProfileModal();
       mutate(GetUserInfoUrl(user?.userId));
     } catch (error) {
-      alert(error.response.data.message);
+      message.error(error.response.data.message);
     }
     mutate(GetSelfInfoURL());
   };

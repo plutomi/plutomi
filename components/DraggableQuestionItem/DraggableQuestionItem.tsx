@@ -5,6 +5,7 @@ import { CustomQuery } from '../../types/main';
 import { DynamoQuestion } from '../../types/dynamo';
 import * as Questions from '../../adapters/Questions';
 import * as Stages from '../../adapters/Stages';
+import { message } from 'antd';
 
 interface DraggableQuestionItemProps {
   question: DynamoQuestion;
@@ -29,9 +30,9 @@ export const DraggableQuestionItem = ({
         questionId: question.questionId,
       });
 
-      alert(data.message);
+      message.success(data.message);
     } catch (error) {
-      alert(error.response.data.message);
+      message.error(error.response.data.message);
     }
 
     // Refresh the questionOrder and update the search results

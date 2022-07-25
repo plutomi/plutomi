@@ -13,6 +13,7 @@ import combineClassNames from '../../utils/combineClassNames';
 import { ClickToCopy } from '../ClickToCopy';
 import { ClickToEditSave } from '../ClickToEditSave';
 import { ClickToEditInput } from '../ClickToEditInput';
+import { message } from 'antd';
 
 const tabs = [
   { id: 1, name: 'Details' },
@@ -48,10 +49,9 @@ export const ApplicantProfileModal = () => {
   const updateApplicant = async (applicantId: string, changes: {}) => {
     try {
       const { data } = await UpdateApplicant(applicantId, changes);
-
-      alert(data.message);
+      message.success(data.message);
     } catch (error) {
-      alert(error.response.data.message);
+      message.error(error.response.data.message);
     }
 
     // TODO NOTE updating that single applicant wont update the applicant list since the list is rendering old data

@@ -4,6 +4,7 @@ import { useQuestionsInOrg } from '../../SWR/useQuestionsInOrg';
 import { AnswerQuestions } from '../../adapters/Applicants';
 import { CustomQuery } from '../../types/main';
 import { Loader } from '../Loader/Loader';
+import { message } from 'antd';
 
 export const PublicApplicationPageContent = () => {
   const [responses, setResponses] = useState([]);
@@ -58,9 +59,9 @@ export const PublicApplicationPageContent = () => {
     try {
       console.log('Responses are', responses);
       const { data } = await AnswerQuestions(applicantId, responses);
-      alert(data.message);
+      message.success(data.message);
     } catch (error) {
-      alert(error.response.data.message);
+      message.error(error.response.data.message);
     }
   };
 

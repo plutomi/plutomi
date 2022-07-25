@@ -5,6 +5,7 @@ import useStore from '../../utils/store';
 import { GetQuestionsInOrgURL, UpdateQuestion } from '../../adapters/Questions';
 import { DynamoQuestion } from '../../types/dynamo';
 import { mutate } from 'swr';
+import { message } from 'antd';
 
 const descriptionMaxLength = 300; // TODO set this serverside
 
@@ -36,10 +37,10 @@ export const UpdateQuestionModal = ({ question }: UpdateQuestionModalProps) => {
         },
       });
 
-      alert(data.message);
+      message.success(data.message);
       closeUpdateQuestionModal();
     } catch (error) {
-      alert(error.response.data.message);
+      message.error(error.response.data.message);
     }
 
     mutate(GetQuestionsInOrgURL());

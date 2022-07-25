@@ -3,6 +3,7 @@ import { DynamoOrgInvite } from '../../types/dynamo';
 import * as Time from '../../utils/time';
 import * as Invites from '../../adapters/Invites';
 import { useSelf } from '../../SWR/useSelf';
+import { message } from 'antd';
 
 interface PendingInviteCardProps {
   invite: DynamoOrgInvite;
@@ -13,14 +14,14 @@ export const PendingInviteCard = ({ invite }: PendingInviteCardProps) => {
 
   const cancelInvite = async (invite: DynamoOrgInvite) => {
     try {
-      const data = await Invites.CancelInvite({
+      const { data } = await Invites.CancelInvite({
         inviteId: invite.inviteId,
         orgId: user?.orgId,
         userId: invite.recipient.userId,
       });
-      alert(data.data.message);
+      message.success(data.message);
     } catch (error) {
-      alert(error.response.message);
+      message.error(error.response.data.message);
     }
 
     // Refresh the pending invites

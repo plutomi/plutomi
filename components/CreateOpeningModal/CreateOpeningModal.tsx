@@ -4,6 +4,7 @@ import { XIcon } from '@heroicons/react/outline';
 import { mutate } from 'swr';
 import { CreateOpening, GetOpeningsInOrgURL } from '../../adapters/Openings';
 import useStore from '../../utils/store';
+import { message } from 'antd';
 
 export const CreateOpeningModal = () => {
   const [openingName, setOpeningName] = useState('');
@@ -17,11 +18,11 @@ export const CreateOpeningModal = () => {
       const { data } = await CreateOpening({
         openingName,
       });
-      alert(data.message);
+      message.success(data.message);
       setOpeningName('');
       closeCreateOpeningModal();
     } catch (error) {
-      alert(error.response.data.message);
+      message.error(error.response.data.message);
     }
     mutate(GetOpeningsInOrgURL());
   };

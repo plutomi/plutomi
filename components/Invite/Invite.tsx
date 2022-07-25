@@ -5,6 +5,7 @@ import { AcceptInvite, GetUserInvitesURL, RejectInvite } from '../../adapters/In
 import { GetSelfInfoURL } from '../../adapters/Users';
 import * as Time from '../../utils/time';
 import { DynamoOrgInvite } from '../../types/dynamo';
+import { message } from 'antd';
 
 interface InviteProps {
   invite: DynamoOrgInvite;
@@ -15,11 +16,10 @@ export const Invite = ({ invite }: InviteProps) => {
   const acceptInvite = async (inviteId: string) => {
     try {
       const { data } = await AcceptInvite(inviteId);
-      alert(data.message);
+      message.success(data.message);
       router.push('/dashboard');
     } catch (error) {
-      console.error(error);
-      alert(error.response.data.message);
+      message.error(error.response.data.message);
     }
 
     // Refresh the user's orgId
@@ -33,10 +33,9 @@ export const Invite = ({ invite }: InviteProps) => {
     try {
       const { data } = await RejectInvite(invite.inviteId);
 
-      alert(data.message);
+      message.success(data.message);
     } catch (error) {
-      console.error(error);
-      alert(error.response.data.message);
+      message.error(error.response.data.message);
     }
 
     mutate(GetUserInvitesURL());

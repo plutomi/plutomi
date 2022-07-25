@@ -1,3 +1,4 @@
+import { message } from 'antd';
 import { useState } from 'react';
 import { RequestLoginLink } from '../../adapters/Auth';
 import { EmailLoginInput } from '../EmailLoginInput';
@@ -32,8 +33,7 @@ export const Login = ({ loggedOutPageText }: LoginPageProps) => {
       setEmailSubmitted(true);
     } catch (error) {
       setButtonText('Login');
-      alert(error.response.data.message);
-    }
+      message.error(error.response.data.message);    }
   };
 
   return (

@@ -5,6 +5,7 @@ import { useRouter } from 'next/router';
 import { CreateApplicant } from '../../adapters/Applicants';
 import combineClassNames from '../../utils/combineClassNames';
 import { CustomQuery } from '../../types/main';
+import { message } from 'antd';
 
 export const PublicApplicantInfoForm = () => {
   const router = useRouter();
@@ -30,9 +31,9 @@ export const PublicApplicantInfoForm = () => {
         lastName,
         email,
       });
-      alert(data.message);
+      message.success(data.message);
     } catch (error) {
-      alert(error.response.data.message);
+      message.error(error.response.data.message);
     }
     setButtonText('Apply');
   };

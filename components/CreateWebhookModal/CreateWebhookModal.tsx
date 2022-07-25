@@ -6,6 +6,7 @@ import { CreateWebhook, GetWebhooksInOrgURL } from '../../adapters/Webhooks';
 import useStore from '../../utils/store';
 import { LIMITS } from '../../Config';
 import { CustomLink } from '../CustomLink';
+import { message } from 'antd';
 
 export const CreateWebhookModal = () => {
   const [webhookName, setWebhookName] = useState('');
@@ -30,11 +31,11 @@ export const CreateWebhookModal = () => {
         webhookName,
         description,
       });
-      alert(data.message);
+      message.success(data.message);
       clearModal();
       closeCreateWebhookModal();
     } catch (error) {
-      alert(error.response.data.message);
+      message.error(error.response.data.message);
     }
 
     // Refresh the actual webhook list

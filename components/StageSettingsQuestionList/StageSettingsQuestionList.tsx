@@ -12,6 +12,7 @@ import * as Questions from '../../adapters/Questions';
 import combineClassNames from '../../utils/combineClassNames';
 import * as Stages from '../../adapters/Stages';
 import { DraggableQuestionItem } from '../DraggableQuestionItem';
+import { message } from 'antd';
 
 export const StageSettingsQuestionList = () => {
   const router = useRouter();
@@ -44,10 +45,10 @@ export const StageSettingsQuestionList = () => {
         questionId: question.questionId,
       });
 
-      alert(data.message);
+      message.success(data.message);
       setLocalSearch('');
     } catch (error) {
-      alert(error.response.data.message);
+      message.error(error.response.data.message);
     }
     // Refresh the questionOrder and update the search results
     mutate(
@@ -109,8 +110,7 @@ export const StageSettingsQuestionList = () => {
         },
       });
     } catch (error) {
-      console.error(error.response.data.message);
-      alert(error.response.data.message);
+      message.error(error.response.data.message);
     }
 
     // Refresh stage info (stage order)

@@ -5,6 +5,7 @@ import { mutate } from 'swr';
 import useStore from '../../utils/store';
 import { CreateQuestion, GetQuestionsInOrgURL } from '../../adapters/Questions';
 import TagGenerator from '../../utils/tagGenerator';
+import { message } from 'antd';
 
 const descriptionMaxLength = 300; // TODO set this serverside
 
@@ -24,13 +25,13 @@ export const CreateQuestionModal = () => {
         description,
       });
 
-      alert(data.message);
+      message.success(data.message);
       setQuestionId('');
       setGSI1SK('');
       setDescription('');
       closeCreateQuestionModal();
     } catch (error) {
-      alert(error.response.data.message);
+      message.error(error.response.data.message);
     }
     mutate(GetQuestionsInOrgURL());
   };

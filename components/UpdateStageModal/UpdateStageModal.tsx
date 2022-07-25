@@ -8,6 +8,7 @@ import { GetOpeningInfoURL } from '../../adapters/Openings';
 import { GetStagesInOpeningURL, UpdateStage } from '../../adapters/Stages';
 import { CustomQuery } from '../../types/main';
 import { DynamoStage } from '../../types/dynamo';
+import { message } from 'antd';
 
 interface UpdateStageModalProps {
   stage: DynamoStage;
@@ -36,11 +37,11 @@ export const UpdateStageModal = ({ stage }: UpdateStageModalProps) => {
           GSI1SK,
         },
       });
-      alert(data.message);
+      message.success(data.message);
       setGSI1SK('');
       closeUpdateStageModal();
     } catch (error) {
-      alert(error.response.data.message);
+      message.error(error.response.data.message);
     }
     // Refresh stage order
     mutate(GetOpeningInfoURL(openingId));

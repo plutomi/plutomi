@@ -7,6 +7,7 @@ import useStore from '../../utils/store';
 import { GetOpeningInfoURL } from '../../adapters/Openings';
 import { CreateStage, GetStagesInOpeningURL } from '../../adapters/Stages';
 import { CustomQuery } from '../../types/main';
+import { message } from 'antd';
 
 export const CreateStageModal = () => {
   const router = useRouter();
@@ -23,11 +24,11 @@ export const CreateStageModal = () => {
         GSI1SK,
         openingId,
       });
-      alert(data.message);
+      message.success(data.message);
       closeCreateStageModal();
       setGSI1SK('');
     } catch (error) {
-      alert(error.response.data.message);
+      message.error(error.response.data.message);
     }
     // Refresh stage order
     mutate(GetOpeningInfoURL(openingId));

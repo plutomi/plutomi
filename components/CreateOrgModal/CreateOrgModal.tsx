@@ -6,6 +6,7 @@ import useStore from '../../utils/store';
 import { CreateOrg } from '../../adapters/Orgs';
 import { GetSelfInfoURL } from '../../adapters/Users';
 import TagGenerator from '../../utils/tagGenerator';
+import { message } from 'antd';
 
 export const CreateOrgModal = () => {
   const [displayName, setDisplayName] = useState('');
@@ -35,12 +36,12 @@ export const CreateOrgModal = () => {
         displayName,
         orgId,
       });
-      alert(data.message);
+      message.success(data.message);
       setDisplayName('');
       setOrgId('');
       closeCreateOrgModal();
     } catch (error) {
-      alert(error.response.data.message);
+      message.error(error.response.data.message);
     }
 
     mutate(GetSelfInfoURL());

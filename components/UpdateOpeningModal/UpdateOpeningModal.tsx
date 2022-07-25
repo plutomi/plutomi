@@ -6,6 +6,7 @@ import { GetOpeningInfoURL, UpdateOpening } from '../../adapters/Openings';
 import useStore from '../../utils/store';
 import { OpeningState } from '../../Config';
 import { DynamoOpening } from '../../types/dynamo';
+import { message } from 'antd';
 
 export const UpdateOpeningModal = ({ opening }: { opening: DynamoOpening }) => {
   const [openingName, setOpeningName] = useState(opening?.openingName);
@@ -34,10 +35,10 @@ export const UpdateOpeningModal = ({ opening }: { opening: DynamoOpening }) => {
         newValues,
       });
       mutate(GetOpeningInfoURL(opening?.openingId));
-      alert(data.message);
+      message.success(data.message);
       closeUpdateOpeningModal();
     } catch (error) {
-      alert(error.response.data.message);
+      message.error(error.response.data.message);
     }
   };
 

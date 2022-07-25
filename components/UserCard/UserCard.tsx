@@ -4,6 +4,7 @@ import * as Time from '../../utils/time';
 import * as Users from '../../adapters/Users';
 import { useSelf } from '../../SWR/useSelf';
 import { useOrgInfo } from '../../SWR/useOrgInfo';
+import { message } from 'antd';
 
 interface UserCardProps {
   user: DynamoUser;
@@ -30,9 +31,9 @@ export const UserCard = ({ user }: UserCardProps) => {
         userId: user.userId,
       });
       console.log(data);
-      alert(data.message);
+      message.success(data.message);
     } catch (error) {
-      alert(error.response.data.message);
+      message.error(error.response.data.message);
     }
 
     // Refresh users

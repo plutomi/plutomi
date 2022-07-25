@@ -11,6 +11,7 @@ import { GetSelfInfoURL } from '../../adapters/Users';
 import combineClassNames from '../../utils/combineClassNames';
 import { Banner } from '../Banner';
 import { NavbarSearch } from '../NavbarSearch';
+import { message } from 'antd';
 
 interface SignedInNavProps {
   current: string;
@@ -25,7 +26,7 @@ export const SignedInNav = ({ current }: SignedInNavProps) => {
       // alert(data.message);
       // TODO reroute to homepage
     } catch (error) {
-      alert(error.response.message);
+      message.error(error.response.data.message);
     }
 
     mutate(GetSelfInfoURL()); // Refresh login state - shows login page
