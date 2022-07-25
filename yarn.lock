@@ -385,25 +385,6 @@
     "@aws-cdk/cx-api" "1.134.0"
     "constructs" "^3.3.69"
 
-"@aws-cdk/aws-eks@1.134.0":
-  "integrity" "sha512-kfyAKRM9mmFO8tEcsTqkdsMduAuAGhPSR79cQeWM+BOT/+BpUWteoJr0Q/zol/yTowCZxBemjQE9J9LD9YrmsQ=="
-  "resolved" "https://registry.npmjs.org/@aws-cdk/aws-eks/-/aws-eks-1.134.0.tgz"
-  "version" "1.134.0"
-  dependencies:
-    "@aws-cdk/aws-autoscaling" "1.134.0"
-    "@aws-cdk/aws-ec2" "1.134.0"
-    "@aws-cdk/aws-iam" "1.134.0"
-    "@aws-cdk/aws-kms" "1.134.0"
-    "@aws-cdk/aws-lambda" "1.134.0"
-    "@aws-cdk/aws-ssm" "1.134.0"
-    "@aws-cdk/core" "1.134.0"
-    "@aws-cdk/custom-resources" "1.134.0"
-    "@aws-cdk/lambda-layer-awscli" "1.134.0"
-    "@aws-cdk/lambda-layer-kubectl" "1.134.0"
-    "@aws-cdk/lambda-layer-node-proxy-agent" "1.134.0"
-    "constructs" "^3.3.69"
-    "yaml" "1.10.2"
-
 "@aws-cdk/aws-elasticloadbalancing@1.134.0":
   "integrity" "sha512-eVQmn39enzFT5n6e/DOcZnRXLbBxPWw0q0DhXJrOY1DAIXUO6Ba7X64al7YdQ+aDs/RZ9Rao9L4Ok9lWxJgWdw=="
   "resolved" "https://registry.npmjs.org/@aws-cdk/aws-elasticloadbalancing/-/aws-elasticloadbalancing-1.134.0.tgz"
@@ -545,15 +526,6 @@
     "@aws-cdk/core" "1.134.0"
     "constructs" "^3.3.69"
 
-"@aws-cdk/aws-lambda-nodejs@^1.134.0":
-  "integrity" "sha512-tAlyH9/h3EEDtxTSnFW7E5HtkDHpdnamnW3VjF3BQOPz7W6ZhMG2XWVd+byFJg0/xgIeiIGjkaBTY1Pcxnc78Q=="
-  "resolved" "https://registry.npmjs.org/@aws-cdk/aws-lambda-nodejs/-/aws-lambda-nodejs-1.134.0.tgz"
-  "version" "1.134.0"
-  dependencies:
-    "@aws-cdk/aws-lambda" "1.134.0"
-    "@aws-cdk/core" "1.134.0"
-    "constructs" "^3.3.69"
-
 "@aws-cdk/aws-lambda@1.134.0":
   "integrity" "sha512-RGxPEPw2twJzcllNSNkHSLjgntuT8JQ5Sphiuyk3EZayPDPYUCbkEVWhmkHoLP5KnZprn2GIPaknSGnOVB7TBQ=="
   "resolved" "https://registry.npmjs.org/@aws-cdk/aws-lambda/-/aws-lambda-1.134.0.tgz"
@@ -579,7 +551,7 @@
     "@aws-cdk/region-info" "1.134.0"
     "constructs" "^3.3.69"
 
-"@aws-cdk/aws-logs@^1.134.0", "@aws-cdk/aws-logs@1.134.0":
+"@aws-cdk/aws-logs@1.134.0":
   "integrity" "sha512-XolgIfT8vamdlVy7TAtHvhX7BFeJrg37pEur0CAiuzROipnBGwHc63K4QqJYlA0QDEsLXn8BupUV76jBHr3wvQ=="
   "resolved" "https://registry.npmjs.org/@aws-cdk/aws-logs/-/aws-logs-1.134.0.tgz"
   "version" "1.134.0"
@@ -769,32 +741,7 @@
     "@aws-cdk/core" "1.134.0"
     "constructs" "^3.3.69"
 
-"@aws-cdk/aws-stepfunctions-tasks@^1.134.0":
-  "integrity" "sha512-ChzBXMt4xJv/RieWcOtEYDX+FKwwsBHK+rcB28ocqRRGLFUOUsIQI6BCgxTqQ/nYyTBjmiQQ87fywAPkqvJ9Tw=="
-  "resolved" "https://registry.npmjs.org/@aws-cdk/aws-stepfunctions-tasks/-/aws-stepfunctions-tasks-1.134.0.tgz"
-  "version" "1.134.0"
-  dependencies:
-    "@aws-cdk/aws-apigateway" "1.134.0"
-    "@aws-cdk/aws-cloudwatch" "1.134.0"
-    "@aws-cdk/aws-codebuild" "1.134.0"
-    "@aws-cdk/aws-dynamodb" "1.134.0"
-    "@aws-cdk/aws-ec2" "1.134.0"
-    "@aws-cdk/aws-ecr" "1.134.0"
-    "@aws-cdk/aws-ecr-assets" "1.134.0"
-    "@aws-cdk/aws-ecs" "1.134.0"
-    "@aws-cdk/aws-eks" "1.134.0"
-    "@aws-cdk/aws-events" "1.134.0"
-    "@aws-cdk/aws-iam" "1.134.0"
-    "@aws-cdk/aws-kms" "1.134.0"
-    "@aws-cdk/aws-lambda" "1.134.0"
-    "@aws-cdk/aws-s3" "1.134.0"
-    "@aws-cdk/aws-sns" "1.134.0"
-    "@aws-cdk/aws-sqs" "1.134.0"
-    "@aws-cdk/aws-stepfunctions" "1.134.0"
-    "@aws-cdk/core" "1.134.0"
-    "constructs" "^3.3.69"
-
-"@aws-cdk/aws-stepfunctions@^1.134.0", "@aws-cdk/aws-stepfunctions@1.134.0":
+"@aws-cdk/aws-stepfunctions@1.134.0":
   "integrity" "sha512-EwcA1O5kz9SJGLoc+j6G3e8fKIXttQ4/+hr0gk4mCAOrJODmzjzIEKrM8GX8XrzknHiW39sOc5lPavVoFkuP+Q=="
   "resolved" "https://registry.npmjs.org/@aws-cdk/aws-stepfunctions/-/aws-stepfunctions-1.134.0.tgz"
   "version" "1.134.0"
@@ -875,24 +822,6 @@
 "@aws-cdk/lambda-layer-awscli@1.134.0":
   "integrity" "sha512-LXzfg3aadSHkSeefMnGveIDXj+K7/79Ug19Sm4Vp0CZXAykkUco1RWk9TZ/dKoEPxGC8MhYoQYxxZegjUlMmzw=="
   "resolved" "https://registry.npmjs.org/@aws-cdk/lambda-layer-awscli/-/lambda-layer-awscli-1.134.0.tgz"
-  "version" "1.134.0"
-  dependencies:
-    "@aws-cdk/aws-lambda" "1.134.0"
-    "@aws-cdk/core" "1.134.0"
-    "constructs" "^3.3.69"
-
-"@aws-cdk/lambda-layer-kubectl@1.134.0":
-  "integrity" "sha512-FrzgFgLzZkDEzCJfRs0ig7JzkrXfbx+aSPh/aVROr98wlSPoMWFiavGBRS0BIB5JK7eXxpg7I0VPvMFzEx96OA=="
-  "resolved" "https://registry.npmjs.org/@aws-cdk/lambda-layer-kubectl/-/lambda-layer-kubectl-1.134.0.tgz"
-  "version" "1.134.0"
-  dependencies:
-    "@aws-cdk/aws-lambda" "1.134.0"
-    "@aws-cdk/core" "1.134.0"
-    "constructs" "^3.3.69"
-
-"@aws-cdk/lambda-layer-node-proxy-agent@1.134.0":
-  "integrity" "sha512-5l3BmgI5H3nq8+FWK/2W9T8bqbmsyJ4bhCswao6xZ3I2LT2iKPs2Gw0oXPhDc6xakdy2DglSlOUx9kM9ZvWW4w=="
-  "resolved" "https://registry.npmjs.org/@aws-cdk/lambda-layer-node-proxy-agent/-/lambda-layer-node-proxy-agent-1.134.0.tgz"
   "version" "1.134.0"
   dependencies:
     "@aws-cdk/aws-lambda" "1.134.0"
