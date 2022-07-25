@@ -1,6 +1,5 @@
 import { TransactWriteCommandInput, TransactWriteCommand } from '@aws-sdk/lib-dynamodb';
-
-import { RetentionDays } from '@aws-cdk/aws-logs';
+import { RetentionDays } from 'aws-cdk-lib/aws-logs';
 import { Dynamo } from '../../awsClients/ddbDocClient';
 import { Entities, DEFAULTS, TIME_UNITS, DYNAMO_TABLE_NAME } from '../../Config';
 import { DynamoUserLoginEvent, DynamoUser, DynamoOrgLoginEvent } from '../../types/dynamo';

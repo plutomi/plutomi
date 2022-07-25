@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 import 'source-map-support';
-import * as cdk from '@aws-cdk/core';
+import * as cdk from 'aws-cdk-lib';
 import * as dotenv from 'dotenv';
 import AppStack from '../lib/AppStack';
 import DynamoDBStack from '../lib/DynamoDBStack';
