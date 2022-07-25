@@ -70,7 +70,7 @@
     "middy-console-logger": "^1.0.0",
     "morgan": "^1.10.0",
     "nanoid": "^3.1.31",
-    "next": "^12.0.7",
+    "next": "^12.1.0",
     "nodemon": "^2.0.15",
     "npm": "^8.11.0",
     "react": "^17.0.2",
