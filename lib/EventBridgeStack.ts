@@ -1,7 +1,7 @@
-import * as cdk from '@aws-cdk/core';
-import { EventBus, Rule } from '@aws-cdk/aws-events';
-import { StateMachine } from '@aws-cdk/aws-stepfunctions';
-import { SfnStateMachine } from '@aws-cdk/aws-events-targets';
+import * as cdk from 'aws-cdk-lib';
+import { EventBus, Rule } from 'aws-cdk-lib/aws-events';
+import { StateMachine } from 'aws-cdk-lib/aws-stepfunctions';
+import { SfnStateMachine } from 'aws-cdk-lib/aws-events-targets';
 import { DynamoStreamTypes, Entities } from '../Config';
 
 enum Rules {
