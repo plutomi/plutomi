@@ -17,6 +17,7 @@ import { getOrg } from '../../models/Orgs';
 import { DB } from '../../models';
 import { sendEmail, SendEmailProps } from '../../models/Emails/sendEmail';
 import { nameIsDefault } from '../../utils/nameIsDefault';
+import { emailIsTheSame } from '../../utils/emailIsTheSame';
 
 const schema = Joi.object({
   body: {
@@ -46,7 +47,12 @@ export const createInvite = async (req: Request, res: Response) => {
     });
   }
 
-  if (user.email === recipientEmail) {
+  if (
+    emailIsTheSame({
+      email1: user.firstName,
+      email2: recipientEmail,
+    })
+  ) {
     return res.status(403).json({ message: `You can't invite yourself` });
   }
 
