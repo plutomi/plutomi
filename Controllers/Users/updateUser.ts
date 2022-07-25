@@ -4,12 +4,13 @@ import * as CreateError from '../../utils/createError';
 import { DEFAULTS, JOI_SETTINGS } from '../../Config';
 import { DynamoUser } from '../../types/dynamo';
 import { DB } from '../../models';
+import { cleanup } from '../../utils/compareStrings/cleanup';
 
 export interface APIUpdateUserOptions extends Partial<Pick<DynamoUser, 'firstName' | 'lastName'>> {}
 
 const schema = Joi.object({
-  firstName: Joi.string().invalid(DEFAULTS.FIRST_NAME), // TODO set max length
-  lastName: Joi.string().invalid(DEFAULTS.LAST_NAME), // TODO set max length
+  firstName: Joi.string().invalid(DEFAULTS.FIRST_NAME, cleanup(DEFAULTS.FIRST_NAME)), // TODO set max length
+  lastName: Joi.string().invalid(DEFAULTS.LAST_NAME, cleanup(DEFAULTS.LAST_NAME)), // TODO set max length
 }).options(JOI_SETTINGS);
 
 export const updateUser = async (req: Request, res: Response) => {
