@@ -104,10 +104,8 @@ export async function getStaticProps() {
       const { data } = await axios.get(
         `https://api.github.com/repos/plutomi/plutomi/commits?sha=${branch.name}&per_page=${commitsFromEachBranch}&u=joswayski`,
         {
-          auth: {
-            // TODO this is dumb
-            username: process.env.GITHUB_USERNAME,
-            password: process.env.GITHUB_PASSWORD,
+          headers: {
+            Authorization: `token ${process.env.GITHUB_TOKEN}`,
           },
         },
       );
