@@ -10,6 +10,7 @@ import { ClickToCopy } from '../ClickToCopy';
 import { CreateOrgModal } from '../CreateOrgModal';
 import { Loader } from '../Loader/Loader';
 import { UpdateUserProfileModal } from '../UpdateUserInfoModal';
+import { nameIsDefault } from '../../utils/nameIsDefault';
 
 export const DashboardPageContent = () => {
   const { user, isUserLoading, isUserError } = useSelf();
@@ -92,7 +93,10 @@ export const DashboardPageContent = () => {
       </div>
       <div className="flex justify-center mx-auto">
         <UpdateUserProfileModal user={user} />
-        {(user?.firstName === DEFAULTS.FIRST_NAME || user?.lastName === DEFAULTS.LAST_NAME) && (
+        {nameIsDefault({
+          firstName: user.firstName,
+          lastName: user.lastName,
+        }) && (
           <div>
             <h4>We don&apos;t seem to know your name!</h4>
 
