@@ -1,26 +1,26 @@
-import * as cf from '@aws-cdk/aws-cloudfront';
-import * as waf from '@aws-cdk/aws-wafv2';
-import * as cdk from '@aws-cdk/core';
-import * as iam from '@aws-cdk/aws-iam';
-import * as ecs from '@aws-cdk/aws-ecs';
-import * as protocol from '@aws-cdk/aws-elasticloadbalancingv2';
-import * as ec2 from '@aws-cdk/aws-ec2';
-import * as route53 from '@aws-cdk/aws-route53';
-import * as ecsPatterns from '@aws-cdk/aws-ecs-patterns';
-import * as origins from '@aws-cdk/aws-cloudfront-origins';
-import { Table } from '@aws-cdk/aws-dynamodb';
-import { Certificate } from '@aws-cdk/aws-certificatemanager';
-import { ARecord, RecordTarget } from '@aws-cdk/aws-route53';
-import { CloudFrontTarget } from '@aws-cdk/aws-route53-targets';
-import { Policy, PolicyStatement } from '@aws-cdk/aws-iam';
+import * as cf from 'aws-cdk-lib/aws-cloudfront';
+import * as ecsPatterns from 'aws-cdk-lib/aws-ecs-patterns';
+import * as cdk from 'aws-cdk-lib';
+import * as ecs from 'aws-cdk-lib/aws-ecs';
+import * as protocol from 'aws-cdk-lib/aws-elasticloadbalancingv2';
+import * as ec2 from 'aws-cdk-lib/aws-ec2';
+import * as iam from 'aws-cdk-lib/aws-iam';
+import * as route53 from 'aws-cdk-lib/aws-route53';
+import * as origins from 'aws-cdk-lib/aws-cloudfront-origins';
+import { Table } from 'aws-cdk-lib/aws-dynamodb';
+import { Certificate } from 'aws-cdk-lib/aws-certificatemanager';
+import { ARecord, RecordTarget } from 'aws-cdk-lib/aws-route53';
+import { CloudFrontTarget } from 'aws-cdk-lib/aws-route53-targets';
+import { Policy, PolicyStatement } from 'aws-cdk-lib/aws-iam';
 import { DOMAIN_NAME, EXPRESS_PORT } from '../Config';
+import * as waf from 'aws-cdk-lib/aws-wafv2';
 
 interface AppStackServiceProps extends cdk.StackProps {
   table: Table;
 }
 
 export default class AppStack extends cdk.Stack {
-  constructor(scope: cdk.Construct, id: string, props?: AppStackServiceProps) {
+  constructor(scope: cdk.App, id: string, props?: AppStackServiceProps) {
     super(scope, id, props);
 
     const { HOSTED_ZONE_ID } = process.env;
