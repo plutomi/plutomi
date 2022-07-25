@@ -10,7 +10,7 @@ import { ClickToCopy } from '../ClickToCopy';
 import { CreateOrgModal } from '../CreateOrgModal';
 import { Loader } from '../Loader/Loader';
 import { UpdateUserProfileModal } from '../UpdateUserInfoModal';
-import { nameIsDefault } from '../../utils/nameIsDefault';
+import { nameIsDefault } from '../../utils/compareStrings/nameIsDefault';
 
 export const DashboardPageContent = () => {
   const { user, isUserLoading, isUserError } = useSelf();
