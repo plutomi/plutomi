@@ -1,11 +1,11 @@
 import * as path from 'path';
-import * as cdk from '@aws-cdk/core';
-import { Table } from '@aws-cdk/aws-dynamodb';
-import { EventBus } from '@aws-cdk/aws-events';
-import { NodejsFunction } from '@aws-cdk/aws-lambda-nodejs';
-import { DynamoEventSource } from '@aws-cdk/aws-lambda-event-sources';
-import { StartingPosition, Runtime, Architecture } from '@aws-cdk/aws-lambda';
-import { RetentionDays } from '@aws-cdk/aws-logs';
+import * as cdk from 'aws-cdk-lib';
+import { Table } from 'aws-cdk-lib/aws-dynamodb';
+import { EventBus } from 'aws-cdk-lib/aws-events';
+import { NodejsFunction } from 'aws-cdk-lib/aws-lambda-nodejs';
+import { DynamoEventSource } from 'aws-cdk-lib/aws-lambda-event-sources';
+import { StartingPosition, Runtime, Architecture } from 'aws-cdk-lib/aws-lambda';
+import { RetentionDays } from 'aws-cdk-lib/aws-logs';
 
 interface StreamProcessorStackProps extends cdk.StackProps {
   table: Table;

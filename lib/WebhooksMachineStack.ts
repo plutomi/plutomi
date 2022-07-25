@@ -1,11 +1,11 @@
-import * as cdk from '@aws-cdk/core';
-import * as sfn from '@aws-cdk/aws-stepfunctions';
-import * as tasks from '@aws-cdk/aws-stepfunctions-tasks';
-import { LogGroup, RetentionDays } from '@aws-cdk/aws-logs';
-import { Table } from '@aws-cdk/aws-dynamodb';
-import { IntegrationPattern } from '@aws-cdk/aws-stepfunctions';
-import { NodejsFunction } from '@aws-cdk/aws-lambda-nodejs';
-import { Architecture, Runtime } from '@aws-cdk/aws-lambda';
+import * as cdk from 'aws-cdk-lib';
+import * as sfn from 'aws-cdk-lib/aws-stepfunctions';
+import * as tasks from 'aws-cdk-lib/aws-stepfunctions-tasks';
+import { LogGroup, RetentionDays } from 'aws-cdk-lib/aws-logs';
+import { Table } from 'aws-cdk-lib/aws-dynamodb';
+import { IntegrationPattern } from 'aws-cdk-lib/aws-stepfunctions';
+import { NodejsFunction } from 'aws-cdk-lib/aws-lambda-nodejs';
+import { Architecture, Runtime } from 'aws-cdk-lib/aws-lambda';
 import path from 'path';
 import { DYNAMO_TABLE_NAME } from '../Config';
 
