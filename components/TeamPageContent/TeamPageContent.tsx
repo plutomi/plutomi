@@ -9,6 +9,7 @@ import { EmptyTeamContent } from '../EmptyTeamContent';
 import { PendingInviteCard } from '../PendingInviteCard';
 import { CreateInviteModal } from '../CreateInviteModal';
 import { UserCard } from '../UserCard';
+import { nameIsDefault } from '../../utils/nameIsDefault';
 
 export const TeamPageContent = () => {
   const { user, isUserLoading, isUserError } = useSelf();
@@ -20,12 +21,25 @@ export const TeamPageContent = () => {
     usePendingOrgInvites({
       orgId: user?.orgId,
     });
-  const openInviteModal = useStore((state) => state.openInviteModal);
   if (isOrgUsersError) return <h1>An error ocurred returning your orgs users</h1>;
   if (isPendingOrgInvitesError) return <h1>An error ocurred retrieving your pending invites</h1>;
   if (isOrgUsersLoading) return <Loader text="Loading team..." />;
   if (isPendingOrgInvitesLoading) return <h2>Loading pending invites</h2>;
 
+  const handleOpenInviteModal = () => {
+    // If name is default, ask user to update first
+
+    if (
+      nameIsDefault({
+        firstName: user.firstName,
+        lastName: user.lastName,
+      })
+    ) {
+      useStore((state) => state.openUserProfileModal);
+    } else {
+      useStore((state) => state.openInviteModal);
+    }
+  };
   const dividerWithText = (text: string) => {
     return (
       <div className="relative">
@@ -49,13 +63,12 @@ export const TeamPageContent = () => {
   return (
     <>
       <CreateInviteModal />
-
       {orgUsers?.length > 1 ? (
         <div className="">
           <div className="flex justify-end">
             <button
               type="button"
-              onClick={openInviteModal}
+              onClick={handleOpenInviteModal}
               className="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-lg font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
             >
               <PlusIcon className="-ml-1 mr-2 h-5 w-5" aria-hidden="true" />

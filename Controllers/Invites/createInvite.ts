@@ -16,6 +16,7 @@ import * as Time from '../../utils/time';
 import { getOrg } from '../../models/Orgs';
 import { DB } from '../../models';
 import { sendEmail, SendEmailProps } from '../../models/Emails/sendEmail';
+import { nameIsDefault } from '../../utils/nameIsDefault';
 
 const schema = Joi.object({
   body: {
@@ -49,6 +50,16 @@ export const createInvite = async (req: Request, res: Response) => {
     return res.status(403).json({ message: `You can't invite yourself` });
   }
 
+  if (
+    nameIsDefault({
+      firstName: user.firstName,
+      lastName: user.lastName,
+    })
+  ) {
+    return res.status(403).json({
+      message: 'Please update your first and last name before sending invites to team members',
+    });
+  }
   const [org, error] = await getOrg({ orgId: user.orgId });
 
   if (error) {
