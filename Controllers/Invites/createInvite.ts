@@ -56,14 +56,13 @@ export const createInvite = async (req: Request, res: Response) => {
     return res.status(403).json({ message: `You can't invite yourself` });
   }
 
-  if (
-    nameIsDefault({
-      firstName: user.firstName,
-      lastName: user.lastName,
-    })
-  ) {
+  const userUsingDefaultName = nameIsDefault({
+    firstName: user.firstName,
+    lastName: user.lastName,
+  });
+  if (userUsingDefaultName) {
     return res.status(403).json({
-      message: 'Please update your first and last name before sending invites to team members',
+      message: `Please update your first and last name before sending invites to team members. You can do this at ${WEBSITE_URL}/profile`,
     });
   }
   const [org, error] = await getOrg({ orgId: user.orgId });
@@ -154,9 +153,7 @@ export const createInvite = async (req: Request, res: Response) => {
 
   res.status(201).json({ message: `Invite sent to '${recipientEmail}'` });
 
-  const userHasntUpdatedName =
-    user.firstName === DEFAULTS.FIRST_NAME || user.lastName === DEFAULTS.LAST_NAME;
-  const subject = userHasntUpdatedName
+  const subject = userUsingDefaultName
     ? `You've been invited to join ${org.displayName} on Plutomi!`
     : `${user.firstName} ${user.lastName} has invited you to join them on ${org.displayName}`;
   try {
