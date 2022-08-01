@@ -91,7 +91,7 @@ export const requestLoginLink = async (req: Request, res: Response) => {
     }
   }
 
-  // TODO add a test for this @jest
+  // TODO remove this and add unsubscribes
   // if (!user.canReceiveEmails) {
   //   return res.status(403).json({
   //     message: `'${user.email}' is unable to receive emails, please reach out to support@plutomi.com to opt back in!`,

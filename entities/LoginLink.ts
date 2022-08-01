@@ -4,15 +4,16 @@ import dayjs from 'dayjs';
 import { User } from './User';
 
 export interface ILoginLink extends IBase {
-  expiresAt: Date;
+  expireAt: Date;
   user: Schema.Types.ObjectId;
 }
 
 export const loginLinkSchema = new Schema<ILoginLink>({
   ...baseSchema.obj,
-  expiresAt: {
+  createdAt: {
     type: Date,
-    default: () => dayjs(Date.now()).add(15, 'minutes'),
+    default: () => Date.now(),
+    expires: 60 * 15, // 15 min
   },
   user: { type: Schema.Types.ObjectId, ref: User },
 });
