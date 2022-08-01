@@ -17,10 +17,6 @@ export const baseSchema = new Schema<IBase>({
     type: Date,
     default: () => Date.now(),
   },
-  orgId: {
-    type: String,
-    default: DEFAULTS.NO_ORG,
-  },
 });
 
 baseSchema.pre('save', function (next) {

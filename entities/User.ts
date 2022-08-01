@@ -18,6 +18,10 @@ export const userSchema = new Schema<IUser>({
     lowercase: true,
     trim: true,
   },
+  orgId: {
+    type: String,
+    default: DEFAULTS.NO_ORG,
+  },
 });
 
 export const User = model<IUser>('User', userSchema);
