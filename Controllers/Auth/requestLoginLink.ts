@@ -17,6 +17,8 @@ import * as CreateError from '../../utils/createError';
 import { DB } from '../../models';
 import { sendEmail } from '../../models/Emails/sendEmail';
 import { IUser, User } from '../../entities/User';
+import { LoginLink } from '../../entities/LoginLink';
+import dayjs from 'dayjs';
 
 const jwt = require('jsonwebtoken');
 
@@ -64,7 +66,7 @@ export const requestLoginLink = async (req: Request, res: Response) => {
     const foundUser = await User.findOne({
       email: email.toLowerCase().trim(),
     });
-    console.log("Found user? ", foundUser)
+    console.log('Found user? ', foundUser);
 
     if (foundUser) {
       existingUser = foundUser;
@@ -75,21 +77,20 @@ export const requestLoginLink = async (req: Request, res: Response) => {
 
   // If a user does not exist, we should create them in the database
   if (!existingUser) {
-    console.log("Existing user not found.. creating one...")
+    console.log('Existing user not found.. creating one...');
     const newUser = new User({
       email,
     });
 
     try {
       await newUser.save();
-      console.log("Saved!", newUser)
+      console.log('Saved!', newUser);
       existingUser = newUser;
     } catch (error) {
       return res.status(500).json({ message: 'An error ocurred creating your user account' });
     }
   }
 
-  return res.status(200).json({ message: 'Success' });
   // TODO add a test for this @jest
   // if (!user.canReceiveEmails) {
   //   return res.status(403).json({
@@ -98,86 +99,72 @@ export const requestLoginLink = async (req: Request, res: Response) => {
   // }
 
   // Check if a user is  making too many requests for a login link by comparing the time of their last link
-  // const [latestLink, loginLinkError] = await DB.Users.getLatestLoginLink({
-  //   userId: user.userId,
-  // });
 
-  // if (loginLinkError) {
-  //   const { status, body } = CreateError.SDK(
-  //     loginLinkError,
-  //     'An error ocurred getting your login link',
-  //   );
+  const latestLinks = await LoginLink.find(
+    {
+      user: existingUser,
+    },
+    {},
+    {
+      limit: 1,
+      sort: {
+        createdAt: -1,
+      },
+    },
+  );
 
-  //   return res.status(status).json(body);
-  // }
-  // const timeThreshold = Time.pastISO({
-  //   amount: 10,
-  //   unit: TIME_UNITS.MINUTES,
-  // });
+  const latestLink = latestLinks[0];
 
-  // if (
-  //   latestLink &&
-  //   latestLink.createdAt >= timeThreshold &&
-  //   !user.email.endsWith(DOMAIN_NAME) // Allow admins to send multiple login links in a short timespan
-  // ) {
-  //   return res.status(403).json({ message: "You're doing that too much, please try again later" });
-  // }
+  const now = new Date();
+  // If it exists
+  if (latestLink && latestLink.createdAt >= dayjs(now).subtract(15, 'minutes').toDate()) {
+    return res
+      .status(429)
+      .json({ message: "You're doing that too much, try again in a few minutes" });
+  }
 
-  // const validFor: Time.ChangingTimeProps = {
-  //   amount: 15,
-  //   unit: TIME_UNITS.MINUTES,
-  // };
-  // const now = Time.currentUNIX();
-  // const ttlExpiry = Time.futureUNIX(validFor); // when the link expires and is deleted from Dynamo
-  // const relativeExpiry = Time.relative(Time.futureISO(validFor));
+  // Create a login link for the user
+  console.log('Creating a new login link');
 
-  // const loginLinkId = nanoid();
-  // const token = await jwt.sign(
-  //   {
-  //     userId: user.userId,
-  //     loginLinkId,
-  //   },
-  //   process.env.LOGIN_LINKS_PASSWORD,
-  //   { expiresIn: ttlExpiry - now },
-  // );
+  const newLink = new LoginLink({
+    user: existingUser,
+  });
 
-  // // TODO enums
-  // const loginLinkUrl = `${API_URL}/auth/login?token=${token}&callbackUrl=${
-  //   callbackUrl || `${WEBSITE_URL}/${DEFAULTS.REDIRECT}`
-  // }`;
+  const savedLink = await newLink.save();
 
-  // const [success, creationError] = await DB.Users.createLoginLink({
-  //   user,
-  //   loginLinkId,
-  //   ttlExpiry,
-  // });
+  console.log('Saved new link');
 
-  // if (creationError) {
-  //   const { status, body } = CreateError.SDK(
-  //     creationError,
-  //     'An error ocurred creating your login link',
-  //   );
+  const token = await jwt.sign(
+    {
+      userId: existingUser._id,
+      loginLinkId: savedLink._id,
+    },
+    process.env.LOGIN_LINKS_PASSWORD,
+    { expiresIn: '15m' },
+  );
 
-  //   return res.status(status).json(body);
-  // }
+  // TODO enums
+  const loginLinkUrl = `${API_URL}/auth/login?token=${token}&callbackUrl=${
+    callbackUrl || `${WEBSITE_URL}/${DEFAULTS.REDIRECT}`
+  }`;
 
-  // try {
-  //   await sendEmail({
-  //     to: user.email,
-  //     from: {
-  //       header: 'Plutomi',
-  //       email: Emails.LOGIN,
-  //     },
-  //     subject: `Your magic login link is here!`,
-  //     body: `<h1>Click <a href="${loginLinkUrl}" noreferrer target="_blank" >this link</a> to log in!</h1><p>It will expire ${relativeExpiry} so you better hurry.</p><p>If you did not request this link you can safely ignore it.</p>`,
-  //   });
-  // } catch (error) {
-  //   // TODO delete login link and prompt the user to try again
-  //   const { status, body } = CreateError.SDK(
-  //     creationError,
-  //     'An error ocurred sending your email :(',
-  //   );
-  //   return res.status(status).json(body);
-  // }
-  // return res.status(201).json({ message: `We've sent a magic login link to your email!` });
+  try {
+    await sendEmail({
+      to: existingUser.email,
+      from: {
+        header: 'Plutomi',
+        email: Emails.LOGIN,
+      },
+      subject: `Your magic login link is here!`, // TODO add back relative expiry
+      body: `<h1>Click <a href="${loginLinkUrl}" noreferrer target="_blank" >this link</a> to log in!</h1><p>It will expire in about 15 minutes so you better hurry.</p><p>If you did not request this link you can safely ignore it.</p>`,
+    });
+  } catch (error) {
+    // TODO delete login link and prompt the user to try again
+    const { status, body } = CreateError.SDK(
+      error,
+      'An error ocurred sending your email :(',
+    );
+    return res.status(status).json(body);
+  }
+  return res.status(201).json({ message: `We've sent a magic login link to your email!` });
 };
