@@ -1,7 +1,8 @@
 import { MongoClient, ServerApiVersion } from 'mongodb';
+require('dotenv').config({ path: '.env.local' });
 
-
-const client = new MongoClient(process.env.MONGO_CONNECTION, {
+const mongoURL = process.env.MONGO_CONNECTION;
+const client = new MongoClient(mongoURL, {
   keepAlive: true,
   serverApi: ServerApiVersion.v1,
 });
