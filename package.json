@@ -69,6 +69,7 @@
     "lodash": "^4.17.21",
     "middy-console-logger": "^1.0.0",
     "mongodb": "^4.8.1",
+    "mongoose": "^6.5.0",
     "morgan": "^1.10.0",
     "nanoid": "^3.1.31",
     "next": "^12.1.0",
