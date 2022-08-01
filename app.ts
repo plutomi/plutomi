@@ -19,6 +19,7 @@ import { publicInfo } from './routes/public';
 import { auth } from './routes/auth';
 import { applicants } from './routes/applicants';
 import API from './Controllers';
+import mongoose from 'mongoose';
 
 const resultDotEnv = dotenv.config({
   path: `./.env.${process.env.NODE_ENV}`,
@@ -27,6 +28,9 @@ const resultDotEnv = dotenv.config({
 if (resultDotEnv.error) {
   throw resultDotEnv.error;
 }
+
+const mongoURL = process.env.MONGO_CONNECTION;
+
 const morgan = require('morgan');
 const cookieParser = require('cookie-parser');
 
@@ -34,7 +38,7 @@ const dev = process.env.NODE_ENV !== 'production';
 const app = next({ dev });
 const handle = app.getRequestHandler();
 
-app.prepare().then(() => {
+app.prepare().then(async () => {
   const server = express();
 
   server.use(timeout('5s'));
@@ -66,6 +70,16 @@ app.prepare().then(() => {
 
   if (process.env.NODE_ENV === 'development') {
     server.post('/jest-setup', API.Misc.jestSetup);
+  }
+
+  try {
+    console.log('Connecting to DB...');
+    await mongoose.connect(mongoURL, {
+      dbName: 'Plutomi',
+    });
+    console.log('Connected!');
+  } catch (error) {
+    console.error(`ERROR CONNECTING TO MONGO`, error);
   }
 
   server.get('/api', API.Misc.healthCheck);

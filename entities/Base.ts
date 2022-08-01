@@ -1,7 +1,13 @@
 import { Schema } from 'mongoose';
 import { DEFAULTS } from '../Config';
 
-export const baseSchema = new Schema({
+export interface IBase {
+  createdAt: Date;
+  updatedAt: Date;
+  orgId: string;
+}
+
+export const baseSchema = new Schema<IBase>({
   createdAt: {
     type: Date,
     immutable: true,

@@ -1,11 +1,9 @@
 import mongoose from 'mongoose';
-import { userSchema } from './entities/User';
+import { User } from './entities/User';
 
 require('dotenv').config({ path: '.env.development' }); // TODO
 
 const mongoURL = process.env.MONGO_CONNECTION;
-
-const User = mongoose.model('User', userSchema);
 
 const main = async () => {
   try {
