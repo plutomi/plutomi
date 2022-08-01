@@ -1,60 +1,34 @@
-import { MongoClient, ServerApiVersion } from 'mongodb';
-import mongoose, { Model, Schema } from 'mongoose';
-const { ObjectId } = Schema.Types;
+import mongoose from 'mongoose';
+import { userSchema } from './entities/User';
 
-require('dotenv').config({ path: '.env.local' });
+require('dotenv').config({ path: '.env.development' });
 
 const mongoURL = process.env.MONGO_CONNECTION;
 
-const UserSchema = new Schema({
-  _id: ObjectId,
-  firstName: { type: String, default: 'FIRST_NAME' },
-  lastName: { type: String, default: 'LAST_NAME' },
-  email: {
-    type: String,
-    required: true,
-  },
-});
+const User = mongoose.model('User', userSchema);
 
-const UserModel = mongoose.model('User', UserSchema);
-
-const client = new MongoClient(mongoURL, {
-  keepAlive: true,
-  serverApi: ServerApiVersion.v1,
-});
-
-const dbName = 'Plutomi';
 const main = async () => {
   try {
     await mongoose.connect(mongoURL);
 
-    const jose = new UserModel({ email: undefined });
+    const jose = new User({
+      firstName: 'Jose',
+      lastName: 'Valerio',
+      email: 'joseyvalerio@gmail.com',
+    });
 
-    console.log('Attempting to connect...');
-    await client.connect();
-    console.log('Connected!');
+    const me = await User.findById('62e7570ff6d02dffa6213021');
+    // await jose.save();
+    // const users = await User.find();
 
-    console.log('Creating DB');
-    const db = client.db(dbName);
-
-    console.log('DB created');
-
-    const userCollection = db.collection('Users');
-
-    console.log('Created users collection');
-
-    console.log('Creating user');
-
-    await userCollection.insertOne({ name: 'Jose', age: 24 });
-    console.log('User created');
-
-    const results = await userCollection.find().toArray();
-
-    console.log('Results', results);
-
-    await client.close();
+    me.firstName = 'Jose 2';
+    await me.save();
+    const users = await User.find();
+    console.log('Updated me', users);
   } catch (error) {
-    console.error('Error connecting', error);
+    console.error('Error connecting', error.message);
+  } finally {
+    await mongoose.disconnect();
   }
 };
 
