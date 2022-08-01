@@ -60,10 +60,11 @@ export const requestLoginLink = async (req: Request, res: Response) => {
   let existingUser: IUser | undefined;
 
   try {
-    // TODO add custom query
+    // TODO add custom query to lowercase and trim emails
     const foundUser = await User.findOne({
       email: email.toLowerCase().trim(),
     });
+    console.log("Found user? ", foundUser)
 
     if (foundUser) {
       existingUser = foundUser;
@@ -74,12 +75,14 @@ export const requestLoginLink = async (req: Request, res: Response) => {
 
   // If a user does not exist, we should create them in the database
   if (!existingUser) {
+    console.log("Existing user not found.. creating one...")
     const newUser = new User({
       email,
     });
 
     try {
       await newUser.save();
+      console.log("Saved!", newUser)
       existingUser = newUser;
     } catch (error) {
       return res.status(500).json({ message: 'An error ocurred creating your user account' });

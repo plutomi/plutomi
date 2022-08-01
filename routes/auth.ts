@@ -6,6 +6,6 @@ export const auth = Router();
 
 auth.post('/request-login-link', API.Auth.requestLoginLink);
 auth.get('/login', API.Auth.login);
-
+auth.post('/test', API.Auth.testt);
 auth.use(withSession);
 auth.post('/logout', API.Auth.logout);
