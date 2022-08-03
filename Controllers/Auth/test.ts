@@ -5,15 +5,19 @@ export const testt = async (req: Request, res: Response) => {
   try {
     const q = await User.updateOne(
       {
-        email: 'contact@josevalerio.com',
+        _id: '62e767485bd43a1e465d9141',
       },
       {
-        firstName: 'eee',
+        verifiedEmail: true,
+      },
+      {
+        upsert: true,
       },
     );
-    console.log(q.modifiedCount);
+    console.log(q);
+    return res.status(200).json({ user: q });
   } catch (error) {
-    console.error(`ERROR UPDATING`, error);
+    console.error(`ERROR RETRIEVING`, error);
     return res.status(500).json({ message: 'DB error' });
   }
 

@@ -4,6 +4,7 @@ import { JOI_SETTINGS, WEBSITE_URL, COOKIE_NAME, COOKIE_SETTINGS, Emails } from 
 import * as CreateError from '../../utils/createError';
 import { DB } from '../../models';
 import { sendEmail, SendEmailProps } from '../../models/Emails/sendEmail';
+import { IUser, User } from '../../entities/User';
 
 const jwt = require('jsonwebtoken');
 
@@ -42,11 +43,16 @@ export const login = async (req: Request, res: Response) => {
     return res.status(401).json({ message: 'Invalid login link' });
   }
 
-  const [user, error] = await DB.Users.getUserById({ userId });
+  let user: IUser | undefined;
 
-  if (error) {
-    const { status, body } = CreateError.SDK(error, 'An error ocurred using your login link');
-    return res.status(status).json(body);
+  try {
+    const result = await User.findById(userId);
+
+    if (result) {
+      user = result;
+    }
+  } catch (error) {
+    return res.status(500).json({ message: 'An error ocurred retrieving your user' });
   }
 
   // If a user is deleted between when they made they requested the login link
@@ -57,22 +63,12 @@ export const login = async (req: Request, res: Response) => {
     });
   }
 
-  // Marks the user's email as verified if its the first time logging in
-  const [success, failed] = await DB.Users.createLoginEvent({
-    loginLinkId,
-    user,
-  });
+  // TODO create login event
 
-  if (failed) {
-    if (failed.name === 'TransactionCanceledException') {
-      return res.status(401).json({ message: 'Login link no longer valid' });
-    }
-    const { status, body } = CreateError.SDK(error, 'Unable to create login event');
+  // TODO create login event if user is in org
 
-    return res.status(status).json(body);
-  }
-
-  res.cookie(COOKIE_NAME, user.userId, COOKIE_SETTINGS);
+  // TODO MAJOR - Delete login link!
+  res.cookie(COOKIE_NAME, user._id, COOKIE_SETTINGS);
   res.header('Location', callbackUrl);
 
   /**
@@ -85,9 +81,26 @@ export const login = async (req: Request, res: Response) => {
 
   res.status(307).json({ message: 'Login success!' });
 
+  console.log(`LOGGIN USER`, user);
   // User logged in for the first time
-  if (success && !user.verifiedEmail) {
+  if (!user.verifiedEmail) {
     try {
+      try {
+        const res = await User.updateOne(
+          {
+            _id: user._id,
+          },
+          {
+            $set: {
+              verifiedEmail: true,
+            },
+          },
+        );
+        console.log(`RESULT`, res);
+      } catch (error) {
+        console.error('ERROR UPDATING EMAIL VERIFIED', error);
+      }
+
       const emailsToSend: SendEmailProps[] = [
         {
           to: user.email,
@@ -106,7 +119,7 @@ export const login = async (req: Request, res: Response) => {
           },
           to: Emails.ADMIN,
           subject: `New user has joined! - ${user.email}`,
-          body: `<h1>Their ID is ${user.userId}</h1>`,
+          body: `<h1>Their ID is ${user._id}</h1>`,
         },
       ];
 
