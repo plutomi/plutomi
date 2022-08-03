@@ -68,6 +68,7 @@ export const login = async (req: Request, res: Response) => {
   // TODO create login event if user is in org
 
   // TODO MAJOR - Delete login link!
+  // https://blog.tericcabrel.com/how-to-use-mongodb-transaction-in-node-js/
   res.cookie(COOKIE_NAME, user._id, COOKIE_SETTINGS);
   res.header('Location', callbackUrl);
 
