@@ -1,4 +1,6 @@
 import { Request, Response } from 'express';
+import { Opening } from '../../entities/Opening';
+import { Org } from '../../entities/Org';
 import { DB } from '../../models';
 import * as CreateError from '../../utils/createError';
 
@@ -6,16 +8,27 @@ export const deleteOpening = async (req: Request, res: Response) => {
   const { openingId } = req.params;
   const { user } = req;
 
-  const [opening, error] = await DB.Openings.deleteOpening({
-    openingId,
-    orgId: user.orgId,
-    updateOrg: true,
-  });
+  try {
+    await Opening.findByIdAndDelete(openingId);
 
-  if (error) {
-    const { status, body } = CreateError.SDK(error, 'An error ocurred deleting your opening');
-    return res.status(status).json(body);
+    try {
+      await Org.updateOne(
+        {
+          _id: user.orgId,
+        },
+        {
+          $inc: {
+            totalOpenings: -1,
+          },
+        },
+      );
+      return res.status(200).json({ message: 'Opening deleted!' });
+    } catch (error) {
+      return res
+        .status(200)
+        .json({ message: 'Opening deleted, but unable to decrement opening count in org' });
+    }
+  } catch (error) {
+    return res.status(500).json({ message: 'Error deleting opening' });
   }
-
-  return res.status(200).json({ message: 'Opening deleted!' });
 };
