@@ -9,6 +9,8 @@ export interface IUser extends IBase {
   lastName: string;
   totalInvites: number;
   verifiedEmail: boolean;
+  orgId: string;
+  orgJoinDate: Date;
 }
 
 export const userSchema = new Schema<IUser>({
@@ -27,6 +29,7 @@ export const userSchema = new Schema<IUser>({
     type: String,
     default: DEFAULTS.NO_ORG,
   },
+  orgJoinDate: Date,
 });
 
 export const User = model<IUser>('User', userSchema);

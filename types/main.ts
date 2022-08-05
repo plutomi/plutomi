@@ -1,5 +1,5 @@
-import { DynamoApplicant, DynamoUser } from './dynamo';
-
+import { DynamoApplicant } from './dynamo';
+import { IUser } from '../entities/User';
 /**
  * All possible parameters in the URL
  */
@@ -8,7 +8,6 @@ export interface CustomQuery {
   openingId: string;
   userId: string;
   stageId: string;
-
   applicantId: string;
   /**
    * The token to for the {@link Entities.LOGIN_LINK} that contains the user id
@@ -30,7 +29,7 @@ export interface APIErrorResponse {
 declare global {
   namespace Express {
     export interface Request {
-      user: DynamoUser;
+      user: IUser;
     }
   }
 }

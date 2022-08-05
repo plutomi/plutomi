@@ -1,5 +1,4 @@
 import { Schema, model } from 'mongoose';
-import { DEFAULTS } from '../Config';
 import { baseSchema, IBase } from './Base';
 
 export interface IOrg extends IBase {
@@ -21,4 +20,4 @@ export const orgSchema = new Schema<IOrg>({
   displayName: String,
 });
 
-export const User = model<IOrg>('Org', orgSchema);
+export const Org = model<IOrg>('Org', orgSchema);

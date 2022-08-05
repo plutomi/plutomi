@@ -3,8 +3,9 @@ import Joi from 'joi';
 import { DEFAULTS, JOI_SETTINGS, JoiOrgId } from '../../Config';
 import * as CreateError from '../../utils/createError';
 import { DynamoOrg } from '../../types/dynamo';
-import { getInvitesForUser } from '../../models/Invites';
 import { DB } from '../../models';
+import { Org } from '../../entities/Org';
+import { User } from '../../entities/User';
 
 export type APICreateOrgOptions = Required<Pick<DynamoOrg, 'orgId' | 'displayName'>>;
 
@@ -29,42 +30,57 @@ export const createAndJoinOrg = async (req: Request, res: Response) => {
     return res.status(403).json({ message: 'You already belong to an org!' });
   }
 
-  const [pendingInvites, error] = await getInvitesForUser({
-    userId: user.userId,
-  });
+  // TODO TODO
+  // const [pendingInvites, error] = await getInvitesForUser({
+  //   userId: user.userId,
+  // });
 
-  if (error) {
-    const { status, body } = CreateError.SDK(
-      error,
-      'Unable to create org - error retrieving invites',
-    );
+  // if (error) {
+  //   const { status, body } = CreateError.SDK(
+  //     error,
+  //     'Unable to create org - error retrieving invites',
+  //   );
 
-    return res.status(status).json(body);
-  }
+  //   return res.status(status).json(body);
+  // }
 
-  if (pendingInvites && pendingInvites.length > 0) {
-    return res.status(403).json({
-      message:
-        'You seem to have pending invites, please accept or reject them before creating an org :)',
-    });
-  }
+  // if (pendingInvites && pendingInvites.length > 0) {
+  //   return res.status(403).json({
+  //     message:
+  //       'You seem to have pending invites, please accept or reject them before creating an org :)',
+  //   });
+  // }
 
   const { displayName, orgId }: APICreateOrgOptions = req.body;
 
-  const [created, failed] = await DB.Orgs.createAndJoinOrg({
-    userId: user.userId,
+  const newOrg = new Org({
     orgId,
     displayName,
   });
 
-  if (failed) {
-    if (failed.name === 'TransactionCanceledException') {
-      return res.status(409).json({
-        message: 'It appears that that org ID is already taken - try another',
-      });
+  // TODO this needs to be a transaction
+  try {
+    await newOrg.save();
+
+    try {
+      await User.updateOne(
+        {
+          _id: user._id,
+        },
+        {
+          $set: {
+            orgId,
+            orgJoinDate: new Date(),
+          },
+        },
+      );
+      return res.status(201).json({ message: 'Org joined!' });
+    } catch (error) {
+      return res.status(500).json({ message: 'Unable to update user to join org' });
     }
-    const { status, body } = CreateError.SDK(failed, 'Unable to create org');
-    return res.status(status).json(body);
+  } catch (error) {
+    console.error(`An error ocurred creating that org`);
+    return res.status(500).json({ message: 'Unable to create org' });
   }
 
   return res.status(201).json({ message: 'Org created!' });
