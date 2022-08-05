@@ -1,6 +1,7 @@
 // This file is for the actual DynamoDB entries and their Types - ie: A full object with all properties.
 // All  other types are derivatives with Pick, Omit, etc.
 import { DEFAULTS, Entities, OpeningState } from '../Config';
+import { IUser } from '../entities/User';
 
 export enum DynamoIAM {
   DeleteItem = 'dynamodb:DeleteItem',
@@ -348,9 +349,9 @@ export interface DynamoOrgInvite {
   /**
    * Who created this invite, info comes from their session
    */
-  createdBy: Pick<DynamoUser, 'firstName' | 'lastName' | 'orgId'>;
+  createdBy: IUser;
 
-  recipient: Pick<DynamoUser, 'userId' | 'email' | 'unsubscribeKey' | 'firstName' | 'lastName'>;
+  recipient: IUser;
   /**
    * The entity type, see {@link Entities.ORG_INVITE}
    */

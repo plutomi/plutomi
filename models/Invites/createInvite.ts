@@ -2,15 +2,16 @@ import { nanoid } from 'nanoid';
 import { TransactWriteCommandInput, TransactWriteCommand } from '@aws-sdk/lib-dynamodb';
 import { Dynamo } from '../../awsClients/ddbDocClient';
 import { ID_LENGTHS, Entities, DYNAMO_TABLE_NAME } from '../../Config';
-import { DynamoOrgInvite, DynamoUser } from '../../types/dynamo';
+import { DynamoOrgInvite } from '../../types/dynamo';
 import * as Time from '../../utils/time';
 import dayjs from 'dayjs';
+import { IUser } from '../../entities/User';
 
 interface CreateOrgInviteInput {
   orgName: string;
   expiresAt: string;
-  createdBy: Pick<DynamoUser, 'firstName' | 'lastName' | 'orgId'>;
-  recipient: Pick<DynamoUser, 'userId' | 'email' | 'unsubscribeKey' | 'firstName' | 'lastName'>;
+  createdBy: IUser; // TODO this doesn't need all the properties
+  recipient: IUser; // TODO this doesnt need all the properties
 }
 
 export const createInvite = async (
@@ -21,7 +22,7 @@ export const createInvite = async (
     const inviteId = nanoid(ID_LENGTHS.ORG_INVITE);
     const now = Time.currentISO();
     const newOrgInvite: DynamoOrgInvite = {
-      PK: `${Entities.USER}#${recipient.userId}`,
+      PK: `${Entities.USER}#${recipient._id}`,
       SK: `${Entities.ORG_INVITE}#${inviteId}`,
       orgId: createdBy.orgId,
       orgName,
@@ -50,7 +51,7 @@ export const createInvite = async (
           // Increment the recipient's total invites
           Update: {
             Key: {
-              PK: `${Entities.USER}#${recipient.userId}`,
+              PK: `${Entities.USER}#${recipient._id}`,
               SK: Entities.USER,
             },
             TableName: `${process.env.NODE_ENV}-${DYNAMO_TABLE_NAME}`,

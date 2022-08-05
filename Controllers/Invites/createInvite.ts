@@ -18,6 +18,7 @@ import { DB } from '../../models';
 import { sendEmail } from '../../models/Emails/sendEmail';
 import { nameIsDefault } from '../../utils/compareStrings/nameIsDefault';
 import { twoStringsMatch } from '../../utils/compareStrings';
+import { IUser } from 'aws-cdk-lib/aws-iam';
 
 const schema = Joi.object({
   body: {
@@ -116,7 +117,7 @@ export const createInvite = async (req: Request, res: Response) => {
 
   // Check if the user we are inviting already has pending invites for the current org
   const [recipientInvites, recipientInvitesError] = await DB.Invites.getInvitesForUser({
-    userId: recipient.userId,
+    _id: recipient._id,
   });
 
   if (recipientInvitesError) {
@@ -137,13 +138,13 @@ export const createInvite = async (req: Request, res: Response) => {
 
   // TODO this can get reworked with the new syncrhonous emails
   const [inviteCreated, inviteError] = await DB.Invites.createInvite({
-    recipient: pick(recipient, ['userId', 'email', 'firstName', 'lastName', 'unsubscribeKey']),
+    recipient: recipient, // TODO type is wrong
     orgName: org.displayName,
     expiresAt: Time.futureISO({
       amount: expiresInDays || ORG_INVITE_EXPIRY_DAYS,
       unit: TIME_UNITS.DAYS,
     }),
-    createdBy: pick(user, ['userId', 'firstName', 'lastName', 'orgId', 'email']),
+    createdBy: user, // TODO type is wrong
   });
 
   if (inviteError) {

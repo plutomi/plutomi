@@ -160,10 +160,7 @@ export const requestLoginLink = async (req: Request, res: Response) => {
     });
   } catch (error) {
     // TODO delete login link and prompt the user to try again
-    const { status, body } = CreateError.SDK(
-      error,
-      'An error ocurred sending your email :(',
-    );
+    const { status, body } = CreateError.SDK(error, 'An error ocurred sending your email :(');
     return res.status(status).json(body);
   }
   return res.status(201).json({ message: `We've sent a magic login link to your email!` });

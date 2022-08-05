@@ -2,6 +2,7 @@ import { QueryCommandInput, QueryCommand } from '@aws-sdk/lib-dynamodb';
 
 import { Dynamo } from '../../awsClients/ddbDocClient';
 import { DYNAMO_TABLE_NAME, Entities } from '../../Config';
+import { IUser } from '../../entities/User';
 import { DynamoUser } from '../../types/dynamo';
 
 interface GetUserByEmailInput {
@@ -10,7 +11,7 @@ interface GetUserByEmailInput {
 
 export const getUserByEmail = async (
   props: GetUserByEmailInput,
-): Promise<[DynamoUser, null] | [null, any]> => {
+): Promise<[IUser, null] | [null, any]> => {
   const { email } = props;
   const params: QueryCommandInput = {
     TableName: `${process.env.NODE_ENV}-${DYNAMO_TABLE_NAME}`,
@@ -24,7 +25,7 @@ export const getUserByEmail = async (
 
   try {
     const response = await Dynamo.send(new QueryCommand(params));
-    return [response.Items[0] as DynamoUser, null];
+    return [response.Items[0] as IUser, null];
     // TODO are we sure the first item will be the user? Switch this to .find
   } catch (error) {
     return [null, error];

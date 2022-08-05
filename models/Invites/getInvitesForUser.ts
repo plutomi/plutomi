@@ -1,19 +1,20 @@
 import { QueryCommandInput, QueryCommand } from '@aws-sdk/lib-dynamodb';
 import { Dynamo } from '../../awsClients/ddbDocClient';
 import { DYNAMO_TABLE_NAME, Entities } from '../../Config';
-import { DynamoOrgInvite, DynamoUser } from '../../types/dynamo';
+import { IUser } from '../../entities/User';
+import { DynamoOrgInvite } from '../../types/dynamo';
 
-type GetInvitesForUserInput = Pick<DynamoUser, 'userId'>;
+type GetInvitesForUserInput = Pick<IUser, '_id'>;
 
 export const getInvitesForUser = async (
   props: GetInvitesForUserInput,
 ): Promise<[DynamoOrgInvite[], null] | [null, Error]> => {
-  const { userId } = props;
+  const { _id } = props;
   const params: QueryCommandInput = {
     TableName: `${process.env.NODE_ENV}-${DYNAMO_TABLE_NAME}`,
     KeyConditionExpression: 'PK = :PK AND begins_with(SK, :SK)',
     ExpressionAttributeValues: {
-      ':PK': `${Entities.USER}#${userId}`,
+      ':PK': `${Entities.USER}#${_id}`,
       ':SK': Entities.ORG_INVITE,
     },
   };

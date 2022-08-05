@@ -3,7 +3,7 @@ import { nanoid } from 'nanoid';
 
 import { Dynamo } from '../../awsClients/ddbDocClient';
 import { ID_LENGTHS, Entities, DEFAULTS, DYNAMO_TABLE_NAME } from '../../Config';
-import { DynamoUser } from '../../types/dynamo';
+import { IUser } from '../../entities/User';
 import * as Time from '../../utils/time';
 
 interface CreateUserInput {
@@ -14,11 +14,11 @@ interface CreateUserInput {
 
 export const createUser = async (
   props: CreateUserInput,
-): Promise<[DynamoUser, null] | [null, any]> => {
+): Promise<[IUser, null] | [null, any]> => {
   const { email, firstName, lastName } = props;
   const userId = nanoid(ID_LENGTHS.USER);
   const now = Time.currentISO();
-  const newUser: DynamoUser = {
+  const newUser: IUser = {
     PK: `${Entities.USER}#${userId}`,
     SK: Entities.USER,
     firstName: firstName || DEFAULTS.FIRST_NAME,
