@@ -30,7 +30,7 @@ export const createOpening = async (req: Request, res: Response) => {
   try {
     const newOpening = new Opening({
       name: openingName,
-      orgId: user.orgId,
+      orgId: user.org,
     });
 
     await newOpening.save();
@@ -38,7 +38,7 @@ export const createOpening = async (req: Request, res: Response) => {
     try {
       await Org.updateOne(
         {
-          _id: user.orgId,
+          _id: user.org,
         },
         {
           $inc: {

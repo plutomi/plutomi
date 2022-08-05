@@ -2,6 +2,7 @@ import { number } from 'joi';
 import { Schema, model } from 'mongoose';
 import { DEFAULTS } from '../Config';
 import { baseSchema, IBase } from './Base';
+import { Org } from './Org';
 
 export interface IUser extends IBase {
   email: string;
@@ -9,7 +10,7 @@ export interface IUser extends IBase {
   lastName: string;
   totalInvites: number;
   verifiedEmail: boolean;
-  orgId: string;
+  org: Schema.Types.ObjectId | DEFAULTS.NO_ORG;
   orgJoinDate: Date;
 }
 
@@ -25,10 +26,7 @@ export const userSchema = new Schema<IUser>({
     lowercase: true,
     trim: true,
   },
-  orgId: {
-    type: String,
-    default: DEFAULTS.NO_ORG,
-  },
+  org: { type: Schema.Types.ObjectId, ref: Org },
   orgJoinDate: Date,
 });
 

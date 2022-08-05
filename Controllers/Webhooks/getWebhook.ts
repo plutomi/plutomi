@@ -21,7 +21,7 @@ export const getWebhook = async (req: Request, res: Response) => {
   const { webhookId } = req.params;
 
   const [webhook, error] = await DB.Webhooks.getWebhook({
-    orgId: user.orgId,
+    orgId: user.org,
     webhookId,
   });
 

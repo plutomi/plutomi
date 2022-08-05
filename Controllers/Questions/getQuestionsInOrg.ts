@@ -6,7 +6,7 @@ export const getQuestionsInOrg = async (req: Request, res: Response) => {
   const { user } = req;
 
   const [questions, questionsError] = await DB.Questions.getQuestionsInOrg({
-    orgId: user.orgId,
+    orgId: user.org,
   });
 
   if (questionsError) {

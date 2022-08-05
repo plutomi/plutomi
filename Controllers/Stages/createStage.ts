@@ -40,7 +40,7 @@ export const createStage = async (req: Request, res: Response) => {
   console.log(`CREATING STAGE BODY`, req.body);
   const [opening, openingError] = await DB.Openings.getOpening({
     openingId,
-    orgId: user.orgId,
+    orgId: user.org,
   });
 
   if (openingError) {
@@ -54,7 +54,7 @@ export const createStage = async (req: Request, res: Response) => {
 
   // Create the stage and update the stage order, model will handle where to place it
   const [created, stageError] = await DB.Stages.createStage({
-    orgId: user.orgId,
+    orgId: user.org,
     GSI1SK,
     openingId,
     position,

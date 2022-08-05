@@ -7,7 +7,7 @@ export const getStage = async (req: Request, res: Response) => {
 
   const { openingId, stageId } = req.params;
   const [stage, stageError] = await DB.Stages.getStage({
-    orgId: user.orgId,
+    orgId: user.org,
     stageId,
     openingId,
   });

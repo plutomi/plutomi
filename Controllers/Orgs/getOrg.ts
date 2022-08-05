@@ -5,7 +5,7 @@ export const getOrg = async (req: Request, res: Response) => {
   const { user } = req;
 
   try {
-    const org = await Org.findById(user.orgId);
+    const org = await Org.findById(user.org);
 
     if (!org) {
       // Not sure how this would be possible

@@ -5,7 +5,7 @@ import * as CreateError from '../../utils/createError';
 export const getWebhooksInOrg = async (req: Request, res: Response) => {
   const { user } = req;
   const [webhooks, webhooksError] = await DB.Webhooks.getWebhooksInOrg({
-    orgId: user.orgId,
+    orgId: user.org,
   });
 
   if (webhooksError) {

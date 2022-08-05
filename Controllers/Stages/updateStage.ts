@@ -28,7 +28,7 @@ export const updateStage = async (req: Request, res: Response) => {
   const [stage, stageError] = await DB.Stages.getStage({
     openingId,
     stageId,
-    orgId: user.orgId,
+    orgId: user.org,
   });
 
   if (stageError) {
@@ -75,7 +75,7 @@ export const updateStage = async (req: Request, res: Response) => {
   }
 
   const [updatedStage, updateError] = await DB.Stages.updateStage({
-    orgId: user.orgId,
+    orgId: user.org,
     openingId,
     stageId,
     updatedValues,

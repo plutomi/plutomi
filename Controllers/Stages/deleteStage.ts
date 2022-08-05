@@ -7,7 +7,7 @@ export const deleteStage = async (req: Request, res: Response) => {
   const { openingId, stageId } = req.params;
   const [opening, openingError] = await DB.Openings.getOpening({
     openingId,
-    orgId: user.orgId,
+    orgId: user.org,
   });
 
   if (openingError) {
@@ -26,7 +26,7 @@ export const deleteStage = async (req: Request, res: Response) => {
 
   const [deleted, error] = await DB.Stages.deleteStage({
     openingId,
-    orgId: user.orgId,
+    orgId: user.org,
     stageId,
     deleteIndex: opening.stageOrder.indexOf(stageId),
     updateOpening: true,

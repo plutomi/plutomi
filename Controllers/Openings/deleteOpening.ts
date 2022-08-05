@@ -14,7 +14,7 @@ export const deleteOpening = async (req: Request, res: Response) => {
     try {
       await Org.updateOne(
         {
-          _id: user.orgId,
+          _id: user.org,
         },
         {
           $inc: {

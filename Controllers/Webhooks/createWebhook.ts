@@ -30,7 +30,7 @@ export const createWebhook = async (req: Request, res: Response) => {
   const { webhookUrl, webhookName, description }: APICreateWebhookOptions = req.body;
 
   const [created, createWebhookError] = await DB.Webhooks.createWebhook({
-    orgId: user.orgId,
+    orgId: user.org,
     webhookUrl,
     description,
     webhookName,

@@ -7,7 +7,7 @@ export const getApplicantsInStage = async (req: Request, res: Response) => {
   const { user } = req;
 
   const [applicants, applicantsError] = await DB.Applicants.getApplicantsInStage({
-    orgId: user.orgId,
+    orgId: user.org,
     openingId,
     stageId,
   });

@@ -15,7 +15,7 @@ export interface IOrgInvite extends IBase {
 
 export const orgInviteSchema = new Schema<IOrgInvite>({
   ...baseSchema.obj,
-  org: { type: Schema.Types.ObjectId, ref: 'Org' },
+  org: { type: Schema.Types.ObjectId, ref: Org },
   createdBy: { type: Schema.Types.ObjectId, ref: User },
   recipient: { type: Schema.Types.ObjectId, ref: User },
   expiresAt: { type: Date, default: () => dayjs(new Date()).add(3, 'days').toDate() },

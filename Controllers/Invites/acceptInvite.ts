@@ -1,7 +1,5 @@
 import { Request, Response } from 'express';
 import { DEFAULTS } from '../../Config';
-import * as CreateError from '../../utils/createError';
-import { DB } from '../../models';
 import { OrgInvite } from '../../entities/Invites';
 import { IOrg, Org } from '../../entities/Org';
 import { User } from '../../entities/User';
@@ -10,9 +8,9 @@ export const acceptInvite = async (req: Request, res: Response) => {
   const { inviteId } = req.params;
   const { user } = req;
 
-  if (user.orgId !== DEFAULTS.NO_ORG) {
+  if (user.org !== DEFAULTS.NO_ORG) {
     return res.status(403).json({
-      message: `You already belong to an org: ${user.orgId} - delete it before joining another one!`,
+      message: `You already belong to an org: ${user.org} - delete it before joining another one!`,
     });
   }
 
@@ -25,9 +23,8 @@ export const acceptInvite = async (req: Request, res: Response) => {
 
     // Not sure how this would happen as we do a check before the invite
     // is sent to prevent this...
-
-    await invite.populate('org');
-    if (invite.org.orgId === user.orgId) {
+    // @ts-ignore // TODO
+    if (invite.org._id === user.org) {
       return res.status(400).json({ message: "It appears that you're already in this org!" });
     }
 
@@ -84,7 +81,9 @@ export const acceptInvite = async (req: Request, res: Response) => {
           .json({ message: 'Invite deleted, but unable to update user org ID' });
       }
     } catch (error) {
-      return res.status(500).json({ message: 'An error ocurred accepting your org invite: Deletion step' });
+      return res
+        .status(500)
+        .json({ message: 'An error ocurred accepting your org invite: Deletion step' });
     }
   } catch (error) {
     return res.status(500).json({ message: 'An error ocurred retrieving your invites' });

@@ -26,7 +26,7 @@ export const updateOpening = async (req: Request, res: Response) => {
   const { openingId } = req.params;
 
   const [opening, openingError] = await DB.Openings.getOpening({
-    orgId: user.orgId,
+    orgId: user.org,
     openingId,
   });
 
@@ -82,7 +82,7 @@ export const updateOpening = async (req: Request, res: Response) => {
   }
 
   const [updatedOpening, error] = await DB.Openings.updateOpening({
-    orgId: user.orgId,
+    orgId: user.org,
     openingId: req.params.openingId,
     updatedValues,
   });

@@ -9,7 +9,7 @@ export const deleteQuestionFromStage = async (req: Request, res: Response) => {
   const [stage, error] = await DB.Stages.getStage({
     openingId,
     stageId,
-    orgId: user.orgId,
+    orgId: user.org,
   });
 
   if (error) {
@@ -36,7 +36,7 @@ export const deleteQuestionFromStage = async (req: Request, res: Response) => {
     openingId,
     stageId,
     questionId,
-    orgId: user.orgId,
+    orgId: user.org,
     deleteIndex: stage.questionOrder.indexOf(questionId),
     decrementStageCount: true,
   });

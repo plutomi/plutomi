@@ -8,7 +8,7 @@ import * as CreateError from '../../utils/createError';
 export const leaveAndDeleteOrg = async (req: Request, res: Response) => {
   const { user } = req;
   try {
-    const org = await Org.findById(user.orgId);
+    const org = await Org.findById(user.org);
     if (!org) {
       // Not sure how this would happen
       return res.status(404).json({ message: 'Org does not exist' });

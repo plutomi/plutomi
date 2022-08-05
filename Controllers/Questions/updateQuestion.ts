@@ -35,7 +35,7 @@ export const updateQuestion = async (req: Request, res: Response) => {
     updatedValues.description = req.body.description;
   }
   const [question, questionError] = await DB.Questions.updateQuestion({
-    orgId: user.orgId,
+    orgId: user.org,
     questionId,
     updatedValues,
   });

@@ -30,7 +30,7 @@ export const createQuestion = async (req: Request, res: Response) => {
 
   const [created, error] = await DB.Questions.createQuestion({
     questionId,
-    orgId: user.orgId,
+    orgId: user.org,
     GSI1SK,
     description,
   });

@@ -9,7 +9,7 @@ export const getStagesInOpening = async (req: Request, res: Response) => {
 
   const [opening, openingError] = await DB.Openings.getOpening({
     openingId,
-    orgId: user.orgId,
+    orgId: user.org,
   });
 
   if (openingError) {
@@ -25,7 +25,7 @@ export const getStagesInOpening = async (req: Request, res: Response) => {
   }
   const [allCurrentStages, allStagesError] = await DB.Stages.getStagesInOpening({
     openingId,
-    orgId: user.orgId,
+    orgId: user.org,
     stageOrder: opening.stageOrder, // To order them correctly
   });
 

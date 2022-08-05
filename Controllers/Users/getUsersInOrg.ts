@@ -7,7 +7,7 @@ export const getUsersInOrg = async (req: Request, res: Response) => {
   const { user } = req;
 
   const [users, error] = await DB.Users.getUsersInOrg({
-    orgId: user.orgId,
+    orgId: user.org,
   });
 
   if (error) {

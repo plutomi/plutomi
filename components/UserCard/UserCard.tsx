@@ -26,7 +26,7 @@ export const UserCard = ({ user }: UserCardProps) => {
     }
     try {
       const { data } = await Users.RemoveUserFromOrg({
-        orgId: user.orgId,
+        orgId: user.org,
         userId: user.userId,
       });
       console.log(data);

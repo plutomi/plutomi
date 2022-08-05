@@ -26,7 +26,7 @@ export const createAndJoinOrg = async (req: Request, res: Response) => {
     return res.status(status).json(body);
   }
 
-  if (user.orgId !== DEFAULTS.NO_ORG) {
+  if (user.org !== DEFAULTS.NO_ORG) {
     return res.status(403).json({ message: 'You already belong to an org!' });
   }
 

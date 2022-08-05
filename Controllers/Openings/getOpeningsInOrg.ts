@@ -8,7 +8,7 @@ export const getOpeningsInOrg = async (req: Request, res: Response) => {
 
   try {
     const openings = await Opening.find({
-      orgId: user.orgId,
+      orgId: user.org,
     });
 
     return res.status(200).json(openings);

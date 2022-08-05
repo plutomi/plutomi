@@ -22,7 +22,7 @@ export const createLoginEvent = async (
     SK: `${Entities.USER_LOGIN_EVENT}#${now}`,
     user,
     entityType: Entities.USER_LOGIN_EVENT,
-    orgId: user.orgId,
+    orgId: user.org,
     // TODO in the future, get more the info about the login event such as IP, headers, device, etc.
     createdAt: now,
     updatedAt: now,
@@ -33,10 +33,10 @@ export const createLoginEvent = async (
   };
 
   const newOrgLoginEvent: DynamoOrgLoginEvent = {
-    PK: `${Entities.ORG}#${user.orgId}`,
+    PK: `${Entities.ORG}#${user.org}`,
     SK: `${Entities.ORG_LOGIN_EVENT}#${now}`,
     entityType: Entities.ORG_LOGIN_EVENT,
-    orgId: user.orgId,
+    orgId: user.org,
     // TODO user info here
     // TODO in the future, get more the info about the login event such as IP, headers, device, etc.
     createdAt: now,
@@ -74,7 +74,7 @@ export const createLoginEvent = async (
     };
 
     // If a user has an orgId, create a login event on the org as well
-    if (user.orgId !== DEFAULTS.NO_ORG) {
+    if (user.org !== DEFAULTS.NO_ORG) {
       transactParams.TransactItems.push({
         // Create a login event on the org
         Put: {

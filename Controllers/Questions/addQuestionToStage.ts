@@ -32,7 +32,7 @@ export const addQuestionToStage = async (req: Request, res: Response) => {
   const { openingId, stageId } = req.params;
 
   const [question, getQuestionError] = await DB.Questions.getQuestion({
-    orgId: user.orgId,
+    orgId: user.org,
     questionId,
   });
 
@@ -53,7 +53,7 @@ export const addQuestionToStage = async (req: Request, res: Response) => {
   const [stage, stageError] = await DB.Stages.getStage({
     openingId,
     stageId,
-    orgId: user.orgId,
+    orgId: user.org,
   });
 
   if (stageError) {
@@ -79,7 +79,7 @@ export const addQuestionToStage = async (req: Request, res: Response) => {
   const [stageUpdated, stageUpdatedError] = await DB.Questions.addQuestionToStage({
     openingId,
     stageId,
-    orgId: user.orgId,
+    orgId: user.org,
     questionId,
     questionOrder,
   });

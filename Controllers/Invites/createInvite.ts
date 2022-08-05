@@ -67,7 +67,7 @@ export const createInvite = async (req: Request, res: Response) => {
   //     message: `Please update your first and last name before sending invites to team members. You can do this at ${WEBSITE_URL}/profile`,
   //   });
   // }
-  const [org, error] = await getOrg({ orgId: user.orgId });
+  const [org, error] = await getOrg({ orgId: user.org });
 
   if (error) {
     const { status, body } = CreateError.SDK(
@@ -109,7 +109,7 @@ export const createInvite = async (req: Request, res: Response) => {
     recipient = newUser;
   }
 
-  if (recipient.orgId === user.orgId) {
+  if (recipient.org === user.org) {
     return res.status(403).json({ message: 'User is already in your org!' });
   }
 
@@ -126,7 +126,7 @@ export const createInvite = async (req: Request, res: Response) => {
     return res.status(status).json(body);
   }
 
-  const pendingInvites = recipientInvites.some((invite) => invite.orgId === user.orgId);
+  const pendingInvites = recipientInvites.some((invite) => invite.orgId === user.org);
 
   if (pendingInvites) {
     return res.status(403).json({

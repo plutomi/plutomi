@@ -1,5 +1,4 @@
 import { Schema } from 'mongoose';
-import { DEFAULTS } from '../Config';
 
 export interface IBase {
   _id: Schema.Types.ObjectId;

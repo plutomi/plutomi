@@ -7,7 +7,7 @@ import { ERRORS } from '../Config';
 export default async function withSameOrg(req: Request, res: Response, next: NextFunction) {
   const { user } = req;
 
-  if (user.orgId !== req.params.orgId) {
+  if (user.org !== req.params.orgId) {
     return res.status(403).json({
       message: ERRORS.NOT_SAME_ORG,
     });

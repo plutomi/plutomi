@@ -6,7 +6,7 @@ export const getQuestion = async (req: Request, res: Response) => {
   const { user } = req;
   const { questionId } = req.params;
   const [question, questionError] = await DB.Questions.getQuestion({
-    orgId: user.orgId,
+    orgId: user.org,
     questionId,
   });
 
