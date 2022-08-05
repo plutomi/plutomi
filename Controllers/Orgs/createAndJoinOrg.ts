@@ -56,6 +56,7 @@ export const createAndJoinOrg = async (req: Request, res: Response) => {
   const newOrg = new Org({
     orgId,
     displayName,
+    totalApplicants: 1,
   });
 
   // TODO this needs to be a transaction

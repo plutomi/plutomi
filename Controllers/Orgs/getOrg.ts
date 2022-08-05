@@ -1,22 +1,19 @@
 import { Request, Response } from 'express';
-import { DB } from '../../models';
-import * as CreateError from '../../utils/createError';
+import { Org } from '../../entities/Org';
 
 export const getOrg = async (req: Request, res: Response) => {
   const { user } = req;
 
-  const [org, error] = await DB.Orgs.getOrg({ orgId: user.orgId });
+  try {
+    const org = await Org.findById(user.orgId);
 
-  if (error) {
-    const { status, body } = CreateError.SDK(error, 'Unable to retrieve org info');
+    if (!org) {
+      // Not sure how this would be possible
+      return res.status(404).json({ message: 'Org not found' }); //
+    }
 
-    return res.status(status).json(body);
+    return res.status(200).json(org);
+  } catch (error) {
+    return res.status(500).json({ message: 'An error ocurred retrieving an org' });
   }
-
-  // Not sure how this would be possible but :)
-  if (!org) {
-    return res.status(404).json({ message: 'Org not found' });
-  }
-
-  return res.status(200).json(org);
 };
