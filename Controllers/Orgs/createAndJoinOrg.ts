@@ -31,17 +31,6 @@ export const createAndJoinOrg = async (req: Request, res: Response) => {
     return res.status(403).json({ message: 'You already belong to an org!' });
   }
 
-  try {
-    const userInvites = await OrgInvite.find(
-      {},
-      {
-        recipient: user,
-      },
-    );
-  } catch (error) {
-    return res.status(500).json({ message: 'An error ocurred retrieving your current invites' });
-  }
-
   if (user.totalInvites) {
     return res.status(403).json({
       message:
@@ -81,6 +70,4 @@ export const createAndJoinOrg = async (req: Request, res: Response) => {
     console.error(`An error ocurred creating that org`);
     return res.status(500).json({ message: 'Unable to create org' });
   }
-
-  return res.status(201).json({ message: 'Org created!' });
 };

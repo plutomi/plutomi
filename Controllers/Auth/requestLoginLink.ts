@@ -100,18 +100,11 @@ export const requestLoginLink = async (req: Request, res: Response) => {
 
   // Check if a user is  making too many requests for a login link by comparing the time of their last link
 
-  const latestLinks = await LoginLink.find(
-    {
-      user: existingUser,
-    },
-    {},
-    {
-      limit: 1,
-      sort: {
-        createdAt: -1,
-      },
-    },
-  );
+  const latestLinks = await LoginLink.find({
+    user: existingUser,
+  })
+    .limit(1)
+    .sort({ createdAt: 'desc' });
 
   const latestLink = latestLinks[0];
 
