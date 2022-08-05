@@ -26,13 +26,11 @@ export const rejectInvite = async (req: Request, res: Response) => {
           },
         },
       );
-      return res.status(200).json({message: "Invite delted!"})
+      return res.status(200).json({ message: 'Invite rejected!' });
     } catch (error) {
-      return res
-        .status(500)
-        .json({
-          message: 'Invite was deleted, but unable to decrement totalInvites property on user',
-        });
+      return res.status(500).json({
+        message: 'Invite was rejected, but unable to decrement totalInvites property on user',
+      });
     }
   } catch (error) {
     return res.status(500).json({ message: 'An error ocurred deleting that invite' });
