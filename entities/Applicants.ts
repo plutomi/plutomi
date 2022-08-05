@@ -13,4 +13,4 @@ export const applicantSchema = new Schema<IApplicant>({
   org: { type: Schema.Types.ObjectId, ref: Org },
 });
 
-export const User = model<IApplicant>('Applicant', applicantSchema);
+export const Applicant = model<IApplicant>('Applicant', applicantSchema);

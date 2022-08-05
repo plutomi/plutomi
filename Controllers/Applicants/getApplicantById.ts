@@ -1,25 +1,19 @@
 import { Request, Response } from 'express';
 import * as CreateError from '../../utils/createError';
 import { DB } from '../../models';
+import { Applicant } from '../../entities/Applicants';
 
 export const getApplicantById = async (req: Request, res: Response) => {
   const { applicantId } = req.params;
   const { user } = req;
 
-  const [applicant, error] = await DB.Applicants.getApplicant({
-    orgId: user.org,
-    applicantId,
-  });
-
-  if (error) {
-    const { status, body } = CreateError.SDK(
-      error,
-      "An error ocurred retrieving this applicant's info",
-    );
-    return res.status(status).json(body);
+  try {
+    const applicants = await Applicant.findById({
+      _id: applicantId,
+      org: user.org,
+    });
+    return res.status(200).json(applicants);
+  } catch (error) {
+    return res.status(500).json({ message: 'An error ocurred retrieving applicants' });
   }
-  if (!applicant) {
-    return res.status(404).json({ message: 'Applicant not found' });
-  }
-  return res.status(200).json(applicant);
 };

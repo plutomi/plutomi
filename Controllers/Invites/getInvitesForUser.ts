@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
 import * as CreateError from '../../utils/createError';
 import { DB } from '../../models';
-import { OrgInvite } from '../../entities/Invites';
+import { OrgInvite } from '../../entities/OrgInvite';
 
 export const getInvitesForUser = async (req: Request, res: Response) => {
   const { user } = req;

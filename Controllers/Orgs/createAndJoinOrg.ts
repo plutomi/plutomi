@@ -6,7 +6,7 @@ import { DynamoOrg } from '../../types/dynamo';
 import { DB } from '../../models';
 import { Org } from '../../entities/Org';
 import { User } from '../../entities/User';
-import { OrgInvite } from '../../entities/Invites';
+import { OrgInvite } from '../../entities/OrgInvite';
 
 export type APICreateOrgOptions = Required<Pick<DynamoOrg, 'orgId' | 'displayName'>>;
 
@@ -48,7 +48,7 @@ export const createAndJoinOrg = async (req: Request, res: Response) => {
         'You seem to have pending invites, please accept or reject them before creating an org :)',
     });
   }
-  
+
   const { displayName, orgId }: APICreateOrgOptions = req.body;
 
   const newOrg = new Org({
