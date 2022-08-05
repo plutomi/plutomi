@@ -7,7 +7,7 @@ export interface IOrg extends IBase {
   totalUsers: number;
   totalWebhooks: number;
   totalQuestions: number;
-  displayName: string;
+  name: string;
 }
 
 export const orgSchema = new Schema<IOrg>({
@@ -17,7 +17,7 @@ export const orgSchema = new Schema<IOrg>({
   totalUsers: { type: Number, default: 0 },
   totalQuestions: { type: Number, default: 0 },
   totalWebhooks: { type: Number, default: 0 },
-  displayName: String,
+  name: String,
 });
 
 export const Org = model<IOrg>('Org', orgSchema);

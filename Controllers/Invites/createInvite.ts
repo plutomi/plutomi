@@ -137,7 +137,7 @@ export const createInvite = async (req: Request, res: Response) => {
   // TODO this can get reworked with the new syncrhonous emails
   const [inviteCreated, inviteError] = await DB.Invites.createInvite({
     recipient: recipient, // TODO type is wrong
-    orgName: org.displayName,
+    orgName: org.name,
     expiresAt: Time.futureISO({
       amount: expiresInDays || ORG_INVITE_EXPIRY_DAYS,
       unit: TIME_UNITS.DAYS,
