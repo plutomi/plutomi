@@ -1,7 +1,6 @@
 import { Request, Response } from 'express';
 import Joi from 'joi';
 import emailValidator from 'deep-email-validator';
-import { pick } from 'lodash';
 import {
   DEFAULTS,
   Emails,
@@ -19,6 +18,7 @@ import { sendEmail } from '../../models/Emails/sendEmail';
 import { nameIsDefault } from '../../utils/compareStrings/nameIsDefault';
 import { twoStringsMatch } from '../../utils/compareStrings';
 import { IUser } from 'aws-cdk-lib/aws-iam';
+import { User } from '../../entities/User';
 
 const schema = Joi.object({
   body: {
@@ -96,19 +96,17 @@ export const createInvite = async (req: Request, res: Response) => {
 
   // Invite is for a user that doesn't exist
   if (!recipient) {
-    const [createdUser, createUserError] = await DB.Users.createUser({
+    const newUser = new User({
       email: recipientEmail,
     });
 
-    if (createUserError) {
-      const { status, body } = CreateError.SDK(
-        createUserError,
-        'An error ocurred creating an account for your invitee',
-      );
-
-      return res.status(status).json(body);
+    try {
+      await newUser.save();
+    } catch (error) {
+      return res.status(500).json({ message: 'An error ocurred creating the new user' });
     }
-    recipient = createdUser;
+
+    recipient = newUser;
   }
 
   if (recipient.orgId === user.orgId) {

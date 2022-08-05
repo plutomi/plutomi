@@ -4,7 +4,6 @@ import dayjs from 'dayjs';
 import { User } from './User';
 
 export interface ILoginLink extends IBase {
-  expireAt: Date;
   user: Schema.Types.ObjectId;
 }
 

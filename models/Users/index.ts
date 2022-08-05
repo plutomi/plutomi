@@ -1,4 +1,3 @@
-import { createUser } from './createUser';
 import { getUserByEmail } from './getUserByEmail';
 import { getUserById } from './getUserById';
 import { updateUser } from './updateUser';
@@ -9,7 +8,6 @@ import { removeUserFromOrg } from './removeUserFromOrg';
 import { getUsersInOrg } from './getUsersInOrg';
 
 export {
-  createUser,
   getUsersInOrg,
   getUserByEmail,
   getUserById,
