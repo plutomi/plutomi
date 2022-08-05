@@ -5,7 +5,6 @@ export interface IBase {
   _id: Schema.Types.ObjectId;
   createdAt: Date;
   updatedAt: Date;
-  orgId: string;
 }
 
 export const baseSchema = new Schema<IBase>({
