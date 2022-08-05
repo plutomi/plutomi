@@ -6,6 +6,7 @@ import { DynamoOrg } from '../../types/dynamo';
 import { DB } from '../../models';
 import { Org } from '../../entities/Org';
 import { User } from '../../entities/User';
+import { OrgInvite } from '../../entities/Invites';
 
 export type APICreateOrgOptions = Required<Pick<DynamoOrg, 'orgId' | 'displayName'>>;
 
@@ -30,27 +31,24 @@ export const createAndJoinOrg = async (req: Request, res: Response) => {
     return res.status(403).json({ message: 'You already belong to an org!' });
   }
 
-  // TODO TODO
-  // const [pendingInvites, error] = await getInvitesForUser({
-  //   userId: user.userId,
-  // });
+  try {
+    const userInvites = await OrgInvite.find(
+      {},
+      {
+        recipient: user,
+      },
+    );
+  } catch (error) {
+    return res.status(500).json({ message: 'An error ocurred retrieving your current invites' });
+  }
 
-  // if (error) {
-  //   const { status, body } = CreateError.SDK(
-  //     error,
-  //     'Unable to create org - error retrieving invites',
-  //   );
-
-  //   return res.status(status).json(body);
-  // }
-
-  // if (pendingInvites && pendingInvites.length > 0) {
-  //   return res.status(403).json({
-  //     message:
-  //       'You seem to have pending invites, please accept or reject them before creating an org :)',
-  //   });
-  // }
-
+  if (user.totalInvites) {
+    return res.status(403).json({
+      message:
+        'You seem to have pending invites, please accept or reject them before creating an org :)',
+    });
+  }
+  
   const { displayName, orgId }: APICreateOrgOptions = req.body;
 
   const newOrg = new Org({
