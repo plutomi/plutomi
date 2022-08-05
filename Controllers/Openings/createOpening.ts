@@ -4,6 +4,8 @@ import { JOI_SETTINGS, LIMITS } from '../../Config';
 import * as CreateError from '../../utils/createError';
 import { DynamoOpening } from '../../types/dynamo';
 import { DB } from '../../models';
+import { Opening } from '../../entities/Opening';
+import { Org } from '../../entities/Org';
 
 export type APICreateOpeningOptions = Required<Pick<DynamoOpening, 'openingName'>>;
 
@@ -24,18 +26,31 @@ export const createOpening = async (req: Request, res: Response) => {
 
   const { openingName }: APICreateOpeningOptions = req.body;
 
-  const [created, createOpeningError] = await DB.Openings.createOpening({
-    orgId: user.orgId,
-    openingName,
-  });
+  // TODO needs to be a transaction
+  try {
+    const newOpening = new Opening({
+      name: openingName,
+      orgId: user.orgId,
+    });
 
-  if (createOpeningError) {
-    const { status, body } = CreateError.SDK(
-      createOpeningError,
-      'An error ocurred creating that opening',
-    );
-    return res.status(status).json(body);
+    await newOpening.save();
+
+    try {
+      await Org.updateOne(
+        {
+          _id: user.orgId,
+        },
+        {
+          $inc: {
+            totalOpenings: 1,
+          },
+        },
+      );
+      return res.status(200).json({ message: 'Opening created' });
+    } catch (error) {
+      return res.status(500).json({ message: 'An error ocurred incrementing openings in the org' });
+    }
+  } catch (error) {
+    return res.status(500).json({ message: 'Error creating opening!' });
   }
-
-  return res.status(201).json({ message: 'Opening created!' });
 };
