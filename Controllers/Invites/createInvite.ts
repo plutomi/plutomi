@@ -19,6 +19,9 @@ import { nameIsDefault } from '../../utils/compareStrings/nameIsDefault';
 import { twoStringsMatch } from '../../utils/compareStrings';
 import { IUser } from 'aws-cdk-lib/aws-iam';
 import { User } from '../../entities/User';
+import { Org } from '../../entities/Org';
+import { OrgInvite } from '../../entities/OrgInvite';
+import dayjs from 'dayjs';
 
 const schema = Joi.object({
   body: {
@@ -62,112 +65,99 @@ export const createInvite = async (req: Request, res: Response) => {
     lastName: user.lastName,
   });
 
-  // if (userUsingDefaultName) {
-  //   return res.status(403).json({
-  //     message: `Please update your first and last name before sending invites to team members. You can do this at ${WEBSITE_URL}/profile`,
-  //   });
-  // }
-  const [org, error] = await getOrg({ orgId: user.org });
+  try {
+    const org = await Org.findById(user.org);
 
-  if (error) {
-    const { status, body } = CreateError.SDK(
-      error,
-      'An error ocurred retrieving your org information',
-    );
-    return res.status(status).json(body);
-  }
-
-  if (!org) {
-    return res.status(404).json({ message: 'Org does not exist' });
-  }
-
-  // eslint-disable-next-line prefer-const
-  let [recipient, recipientError] = await DB.Users.getUserByEmail({
-    email: recipientEmail,
-  });
-
-  if (recipientError) {
-    const { status, body } = CreateError.SDK(
-      error,
-      "An error ocurred getting your invitee's information",
-    );
-    return res.status(status).json(body);
-  }
-
-  // Invite is for a user that doesn't exist
-  if (!recipient) {
-    const newUser = new User({
-      email: recipientEmail,
-    });
-
-    try {
-      await newUser.save();
-    } catch (error) {
-      return res.status(500).json({ message: 'An error ocurred creating the new user' });
+    if (!org) {
+      return res.status(404).json({ message: 'Org does not exist' });
     }
 
-    recipient = newUser;
-  }
+    // HERE AND BELOW
+    try {
+      let recipient = await User.findOne({
+        email: recipientEmail,
+      });
 
-  if (recipient.org === user.org) {
-    return res.status(403).json({ message: 'User is already in your org!' });
-  }
+      // Invite is for a user that doesn't exist
+      if (!recipient) {
+        const newUser = new User({
+          email: recipientEmail,
+        });
 
-  // Check if the user we are inviting already has pending invites for the current org
-  const [recipientInvites, recipientInvitesError] = await DB.Invites.getInvitesForUser({
-    _id: recipient._id,
-  });
+        try {
+          await newUser.save();
+        } catch (error) {
+          return res.status(500).json({ message: 'An error ocurred creating the new user' });
+        }
 
-  if (recipientInvitesError) {
-    const { status, body } = CreateError.SDK(
-      recipientInvitesError,
-      'An error ocurred while checking to see if your invitee has pending invites',
-    );
-    return res.status(status).json(body);
-  }
+        recipient = newUser;
+      }
 
-  const pendingInvites = recipientInvites.some((invite) => invite.orgId === user.org);
+      if (recipient.org === user.org) {
+        return res.status(403).json({ message: 'User is already in your org!' });
+      }
 
-  if (pendingInvites) {
-    return res.status(403).json({
-      message: 'This user already has a pending invite to your org! They can log in to claim it.',
-    });
-  }
+      // Check if the recipient already has a pending invite to this org
 
-  // TODO this can get reworked with the new syncrhonous emails
-  const [inviteCreated, inviteError] = await DB.Invites.createInvite({
-    recipient: recipient, // TODO type is wrong
-    orgName: org.name,
-    expiresAt: Time.futureISO({
-      amount: expiresInDays || ORG_INVITE_EXPIRY_DAYS,
-      unit: TIME_UNITS.DAYS,
-    }),
-    createdBy: user, // TODO type is wrong
-  });
+      try {
+        const pendingInvite = await OrgInvite.findOne({
+          recipient,
+          org: user.org,
+        });
 
-  if (inviteError) {
-    const { status, body } = CreateError.SDK(inviteError, 'An error ocurred creating your invite');
+        if (pendingInvite) {
+          return res
+            .status(403)
+            .json({ message: 'This user already has a pending invite to your org!' });
+        }
 
-    return res.status(status).json(body);
-  }
+        try {
+          const newInvite = new OrgInvite({
+            org: user.org,
+            createdBy: user,
+            recipient,
+            expiresAt: dayjs(new Date()).add(expiresInDays, 'days').toDate(),
+          });
 
-  res.status(201).json({ message: `Invite sent to '${recipientEmail}'` });
+          await newInvite.save();
 
-  const subject = userUsingDefaultName
-    ? `You've been invited to join ${org.displayName} on Plutomi!`
-    : `${user.firstName} ${user.lastName} has invited you to join them on ${org.displayName}`;
-  try {
-    await sendEmail({
-      from: {
-        header: `Plutomi`,
-        email: Emails.JOIN,
-      },
-      to: recipient.email,
-      subject,
-      body: `<h4>You can log in at <a href="${WEBSITE_URL}" target="_blank" rel=noreferrer>${WEBSITE_URL}</a> to accept their invite!</h4><p>If you believe this email was received in error, you can safely ignore it.</p>`,
-    });
-    return;
+          const subject = userUsingDefaultName
+            ? `You've been invited to join ${org.name} on Plutomi!`
+            : `${user.firstName} ${user.lastName} has invited you to join them on ${org.name}`;
+          try {
+            await sendEmail({
+              from: {
+                header: `Plutomi`,
+                email: Emails.JOIN,
+              },
+              to: recipient.email,
+              subject,
+              body: `<h4>You can log in at <a href="${WEBSITE_URL}" target="_blank" rel=noreferrer>${WEBSITE_URL}</a> to accept their invite!</h4><p>If you believe this email was received in error, you can safely ignore it.</p>`,
+            });
+            return res.status(201).json({ message: `Invite sent to '${recipientEmail}'` });
+          } catch (error) {
+            return res.status(500).json({
+              message:
+                'Invite created in DB but failed to send to email to user. They can log in to claim it!',
+            });
+          }
+        } catch (error) {
+          return res
+            .status(500)
+            .json({ message: 'An error ocurred creating the invite for that user' });
+        }
+      } catch (error) {
+        return res.status(500).json({
+          message:
+            'An error ocurred checking if the recipient already has pending invites to your org',
+        });
+      }
+    } catch (error) {
+      return res
+        .status(500)
+        .json({ message: 'An error ocurred checking if that recipient exists' });
+    }
   } catch (error) {
-    console.error('Error ocurred inviting a user to an org', error);
+    return res.status(500).json({ message: 'An error ocurred getting org info' });
   }
 };

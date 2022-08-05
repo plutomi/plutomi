@@ -1,6 +1,4 @@
 import { Request, Response } from 'express';
-import * as CreateError from '../../utils/createError';
-import { DB } from '../../models';
 import { Applicant } from '../../entities/Applicants';
 
 export const getApplicantById = async (req: Request, res: Response) => {
