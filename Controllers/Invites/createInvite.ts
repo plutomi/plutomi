@@ -120,26 +120,41 @@ export const createInvite = async (req: Request, res: Response) => {
           });
 
           await newInvite.save();
-
-          const subject = userUsingDefaultName
-            ? `You've been invited to join ${org.name} on Plutomi!`
-            : `${user.firstName} ${user.lastName} has invited you to join them on ${org.name}`;
+          // TODO TRANSACTION!!!!!!!!!!!
           try {
-            await sendEmail({
-              from: {
-                header: `Plutomi`,
-                email: Emails.JOIN,
+            await User.updateOne(
+              { _id: user._id },
+              {
+                $inc: {
+                  totalInvites: 1,
+                },
               },
-              to: recipient.email,
-              subject,
-              body: `<h4>You can log in at <a href="${WEBSITE_URL}" target="_blank" rel=noreferrer>${WEBSITE_URL}</a> to accept their invite!</h4><p>If you believe this email was received in error, you can safely ignore it.</p>`,
-            });
-            return res.status(201).json({ message: `Invite sent to '${recipientEmail}'` });
+            );
+
+            const subject = userUsingDefaultName
+              ? `You've been invited to join ${org.name} on Plutomi!`
+              : `${user.firstName} ${user.lastName} has invited you to join them on ${org.name}`;
+            try {
+              await sendEmail({
+                from: {
+                  header: `Plutomi`,
+                  email: Emails.JOIN,
+                },
+                to: recipient.email,
+                subject,
+                body: `<h4>You can log in at <a href="${WEBSITE_URL}" target="_blank" rel=noreferrer>${WEBSITE_URL}</a> to accept their invite!</h4><p>If you believe this email was received in error, you can safely ignore it.</p>`,
+              });
+              return res.status(201).json({ message: `Invite sent to '${recipientEmail}'` });
+            } catch (error) {
+              return res.status(500).json({
+                message:
+                  'Invite created in DB but failed to send to email to user. They can log in to claim it!',
+              });
+            }
           } catch (error) {
-            return res.status(500).json({
-              message:
-                'Invite created in DB but failed to send to email to user. They can log in to claim it!',
-            });
+            return res
+              .status(500)
+              .json({ message: 'Unable to increment totalInvites property on recipient' });
           }
         } catch (error) {
           return res

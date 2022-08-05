@@ -5,6 +5,8 @@ import * as CreateError from '../../utils/createError';
 export const rejectInvite = async (req: Request, res: Response) => {
   const { inviteId } = req.params;
   const { user } = req;
+
+  tryca
   const [deleted, error] = await DB.Invites.deleteInvite({
     inviteId,
     userId: user.userId,
