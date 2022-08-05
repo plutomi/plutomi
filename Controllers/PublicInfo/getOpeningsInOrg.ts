@@ -4,26 +4,22 @@ import * as CreateError from '../../utils/createError';
 import { OpeningState } from '../../Config';
 import { DB } from '../../models';
 import { DynamoOpening } from '../../types/dynamo';
+import { Opening } from '../../entities/Opening';
 
 export const getOpeningsInOrg = async (req: Request, res: Response) => {
   const { orgId } = req.params;
 
-  const [openings, openingsError] = await DB.Openings.getOpeningsInOrg({
-    orgId,
-    GSI1SK: OpeningState.PUBLIC,
-  });
+  try {
+    const openings = await Opening.find(
+      {},
+      {
+        org: orgId,
+        visibility: OpeningState.PUBLIC,
+      },
+    ).select('org name createdAt');
 
-  if (openingsError) {
-    const { status, body } = CreateError.SDK(
-      openingsError,
-      'An error ocurred retrieving openings for this org',
-    );
-    return res.status(status).json(body);
+    return res.status(200).json(openings);
+  } catch (error) {
+    return res.status(500).json({ message: 'An error ocurred retrieving that opening' });
   }
-
-  const modifiedOpenings = openings.map((opening: DynamoOpening) =>
-    pick(opening, ['openingName', 'createdAt', 'openingId', 'orgId']),
-  );
-
-  return res.status(200).json(modifiedOpenings);
 };
