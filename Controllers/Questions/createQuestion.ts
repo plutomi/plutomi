@@ -4,6 +4,7 @@ import * as CreateError from '../../utils/createError';
 import { DynamoQuestion } from '../../types/dynamo';
 import { JOI_SETTINGS, LIMITS } from '../../Config';
 import { DB } from '../../models';
+import { Question } from '../../entities/Question';
 
 export type APICreateQuestionOptions = Pick<
   DynamoQuestion,
@@ -28,20 +29,17 @@ export const createQuestion = async (req: Request, res: Response) => {
   }
   const { questionId, description, GSI1SK }: APICreateQuestionOptions = req.body;
 
-  const [created, error] = await DB.Questions.createQuestion({
-    questionId,
-    orgId: user.org,
-    GSI1SK,
-    description,
-  });
+  try {
+    const newQuestion = new Question({
+      _id: questionId,
+      title: GSI1SK, // TODO update this to be title,
+      description,
+      org: user.org,
+    });
 
-  if (error) {
-    if (error.name === 'TransactionCanceledException') {
-      return res.status(409).json({ message: 'A question already exists with this ID' });
-    }
-
-    const { status, body } = CreateError.SDK(error, 'An error ocurred creating your question');
-    return res.status(status).json(body);
+    await newQuestion.save();
+    return res.status(201).json({ message: 'Question created!' });
+  } catch (error) {
+    return res.status(500).json({ message: 'An error curred saving question' });
   }
-  return res.status(201).json({ message: 'Question created!', question: created });
 };
