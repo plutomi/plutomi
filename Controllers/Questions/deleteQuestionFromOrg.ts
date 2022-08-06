@@ -4,6 +4,7 @@ import * as CreateError from '../../utils/createError';
 
 export const deleteQuestionFromOrg = async (req: Request, res: Response) => {
   const { user } = req;
+  return res.status(403).json({ message: 'this is currently disabled TODO' }); // TODO;
 
   const [success, failure] = await DB.Questions.deleteQuestionFromOrg({
     orgId: user.org,

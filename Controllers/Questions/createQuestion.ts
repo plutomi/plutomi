@@ -5,6 +5,7 @@ import { DynamoQuestion } from '../../types/dynamo';
 import { JOI_SETTINGS, LIMITS } from '../../Config';
 import { DB } from '../../models';
 import { Question } from '../../entities/Question';
+import { Org } from '../../entities/Org';
 
 export type APICreateQuestionOptions = Pick<
   DynamoQuestion,
@@ -37,7 +38,27 @@ export const createQuestion = async (req: Request, res: Response) => {
       org: user.org,
     });
 
+    // TODO transactionm
+
     await newQuestion.save();
+
+    try {
+      await Org.updateOne(
+        {
+          _id: user.org,
+        },
+        {
+          $inc: {
+            totalQuestions: 1,
+          },
+        },
+      );
+      return res.status(201).json({ message: 'Question created!' });
+    } catch (error) {
+      return res
+        .status(200)
+        .json({ message: 'Question created but unable to update question conut on org' });
+    }
     return res.status(201).json({ message: 'Question created!' });
   } catch (error) {
     return res.status(500).json({ message: 'An error curred saving question' });
