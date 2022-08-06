@@ -1,25 +1,37 @@
 import { Request, Response } from 'express';
+import { Org } from '../../entities/Org';
+import { Question } from '../../entities/Question';
 import { DB } from '../../models';
 import * as CreateError from '../../utils/createError';
 
 export const deleteQuestionFromOrg = async (req: Request, res: Response) => {
   const { user } = req;
-  return res.status(403).json({ message: 'this is currently disabled TODO' }); // TODO;
+  try {
+    await Question.deleteOne({
+      _id: req.params.questionId,
+      org: user.org,
+    });
 
-  const [success, failure] = await DB.Questions.deleteQuestionFromOrg({
-    orgId: user.org,
-    questionId: req.params.questionId,
-    updateOrg: true,
-  });
+    try {
+      await Org.updateOne(
+        {
+          _id: user.org,
+        },
+        {
+          $inc: {
+            totalQuestions: -1,
+          },
+        },
+      );
 
-  if (failure) {
-    if (failure.name === 'TransactionCanceledException') {
-      return res.status(401).json({ message: 'It seems like that question no longer exists' });
+      return res.status(200).json({ message: 'Question deleted!' });
+    } catch (error) {
+      return res
+        .status(200)
+        .json({ message: "Question deleted but unable to decrement org's question count" });
     }
-
-    const { status, body } = CreateError.SDK(failure, 'An error ocurred deleting that question');
-    return res.status(status).json(body);
+  } catch (error) {
+    return res.status(500).json({ message: 'An error curred deleting that question' });
   }
 
-  return res.status(200).json({ message: 'Question deleted!' });
 };
