@@ -21,8 +21,6 @@ export const updateUser = async (req: Request, res: Response) => {
     const { status, body } = CreateError.JOI(error);
     return res.status(status).json(body);
   }
-
-  let updatedValues: APIUpdateUserOptions = {};
   const { user } = req;
 
   // TODO RBAC will go here, right now you can only update yourself

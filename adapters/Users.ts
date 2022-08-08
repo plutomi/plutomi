@@ -1,3 +1,4 @@
+import { Schema } from 'mongoose';
 import { AXIOS_INSTANCE as axios } from '../Config';
 import { APIUpdateUserOptions } from '../Controllers/Users/updateUser';
 
@@ -8,19 +9,19 @@ export const GetSelfInfo = async () => {
   return data;
 };
 
-export const GetUserInfoUrl = (userId: string) => `/users/${userId}`;
+export const GetUserInfoUrl = (userId: Schema.Types.ObjectId) => `/users/${userId}`;
 
-export const GetUserInfo = async (userId: string) => {
+export const GetUserInfo = async (userId: Schema.Types.ObjectId) => {
   const data = await axios.get(GetUserInfoUrl(userId));
   return data;
 };
 
 interface UpdateUserInput {
-  userId: string;
+  _id: Schema.Types.ObjectId;
   newValues: APIUpdateUserOptions;
 }
 export const UpdateUser = async (options: UpdateUserInput) => {
-  const data = await axios.put(GetUserInfoUrl(options.userId), {
+  const data = await axios.put(GetUserInfoUrl(options._id)), {
     ...options.newValues,
   });
   return data;

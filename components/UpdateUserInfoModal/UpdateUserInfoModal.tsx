@@ -5,9 +5,10 @@ import { mutate } from 'swr';
 import useStore from '../../utils/store';
 import { GetSelfInfoURL, GetUserInfoUrl, UpdateUser } from '../../adapters/Users';
 import { DynamoUser } from '../../types/dynamo';
+import { IUser } from '../../entities/User';
 
 interface UpdateUserProfileModalProps {
-  user: DynamoUser;
+  user: IUser;
 }
 export const UpdateUserProfileModal = ({ user }: UpdateUserProfileModalProps) => {
   const [firstName, setFirstName] = useState(user?.firstName);
@@ -29,14 +30,14 @@ export const UpdateUserProfileModal = ({ user }: UpdateUserProfileModalProps) =>
         lastName: user?.lastName === lastName ? undefined : lastName,
       };
       const { data } = await UpdateUser({
-        userId: user?.userId,
+        userId: user?._id,
         newValues: {
           ...input,
         },
       });
       alert(data.message);
       closeUserProfileModal();
-      mutate(GetUserInfoUrl(user?.userId));
+      mutate(GetUserInfoUrl(user?._id));
     } catch (error) {
       alert(error.response.data.message);
     }
