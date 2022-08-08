@@ -4,6 +4,10 @@ import { JOI_SETTINGS, LIMITS } from '../../Config';
 import * as CreateError from '../../utils/createError';
 import { DynamoStage } from '../../types/dynamo';
 import { DB } from '../../models';
+import { Opening } from '../../entities/Opening';
+import { Stage } from '../../entities/Stage';
+import getNewChildItemOrder from '../../utils/getNewChildItemOrder';
+import { Schema } from 'mongoose';
 
 export interface APICreateStageOptions extends Required<Pick<DynamoStage, 'openingId' | 'GSI1SK'>> {
   /**
@@ -37,34 +41,60 @@ export const createStage = async (req: Request, res: Response) => {
 
   const { GSI1SK, openingId, position } = req.body;
 
-  console.log(`CREATING STAGE BODY`, req.body);
-  const [opening, openingError] = await DB.Openings.getOpening({
-    openingId,
-    orgId: user.org,
-  });
+  try {
+    const opening = await Opening.findOne(openingId, {
+      org: user.org,
+    });
+    // TODO this should be a transaction
+    // TODO create stage, and if position, insert it there
 
-  if (openingError) {
-    const { status, body } = CreateError.SDK(openingError, 'Unable to retrieve opening info');
-    return res.status(status).json(body);
+    // TODO increment totalStages on opening
+    if (!opening) {
+      return res.status(404).json({ message: 'Opening not found' });
+    }
+
+    try {
+      const newStage = new Stage({
+        org: user.org,
+        openingId,
+        name: GSI1SK, // TODO update this
+      });
+
+      await newStage.save();
+
+      let newStageOrder: Schema.Types.ObjectId[] | undefined;
+
+      if (position) {
+        newStageOrder = getNewChildItemOrder(
+          newStage._id,
+          opening.stageOrder as unknown as Schema.Types.ObjectId[], // TODO fix types
+          position,
+        );
+      }
+
+      try {
+        await Opening.updateOne(
+          {
+            _id: openingId,
+            org: user.org,
+          },
+          {
+            $inc: {
+              totalStages: 1,
+            },
+          },
+        );
+
+        return res.status(201).json({ message: 'Stage created!' });
+      } catch (error) {
+        return res
+          .status(500)
+          .json({ message: 'An error ocurred updating the opening totalStages count' });
+      }
+    } catch (error) {
+      return res.status(500).json({ message: 'An error ocurred creating that stage' });
+    }
+  } catch (error) {
+    return res.status(500).json({ message: 'An error ocurred retrieving opening info' });
   }
-
-  if (!opening) {
-    return res.status(404).json({ message: 'Opening does not exist' });
-  }
-
-  // Create the stage and update the stage order, model will handle where to place it
-  const [created, stageError] = await DB.Stages.createStage({
-    orgId: user.org,
-    GSI1SK,
-    openingId,
-    position,
-    stageOrder: opening.stageOrder,
-  });
-
-  if (stageError) {
-    const { status, body } = CreateError.SDK(stageError, 'An error ocurred creating your stage');
-    return res.status(status).json(body);
-  }
-
-  return res.status(201).json({ message: 'Stage created!' });
 };
