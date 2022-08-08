@@ -8,7 +8,7 @@ export interface IStage extends IBase {
   totalQuestions: number;
   name: string;
   openingId: Schema.Types.ObjectId;
-  questionOrder: string[]; // TODO ids of questions, should be linked list in another pr
+  questionOrder: Schema.Types.ObjectId[]; // TODO ids of questions, should be linked list in another pr
   org: Schema.Types.ObjectId;
 }
 

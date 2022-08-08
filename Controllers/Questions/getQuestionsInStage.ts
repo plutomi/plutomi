@@ -1,4 +1,7 @@
 import { Request, Response } from 'express';
+import { Schema } from 'mongoose';
+import { Question } from '../../entities/Question';
+import { Stage } from '../../entities/Stage';
 import { DB } from '../../models';
 import * as CreateError from '../../utils/createError';
 
@@ -6,54 +9,45 @@ export const getQuestionsInStage = async (req: Request, res: Response) => {
   const { user } = req;
   const { openingId, stageId } = req.params;
 
-  const [stage, stageError] = await DB.Stages.getStage({
-    openingId,
-    stageId,
-    orgId: user.org,
-  });
-
-  if (stageError) {
-    const { status, body } = CreateError.SDK(
-      stageError,
-      'An error ocurred retrieving your stage info',
-    );
-    return res.status(status).json(body);
-  }
-  if (!stage) {
-    return res.status(404).json({ message: 'Stage not found' });
-  }
-
-  const { questionOrder } = stage;
-
-  if (!questionOrder.length) return res.status(200).json([]);
-
   try {
-    // TODO promise all here should be updated to not await this
-    const results = await Promise.all(
-      questionOrder.map(async (id: string) => {
-        const [question, error] = await DB.Questions.getQuestion({
-          orgId: user.org,
-          questionId: id,
-        });
+    const stage = await Stage.findById(stageId, {
+      org: user.org,
+      openingId,
+    });
 
-        if (error) {
-          console.error(error);
-          throw new Error('An error ocurred retrieving the questions for this stage');
-        }
-        // TODO it is possible that a question was deleted so the question will return undefined
-        return question;
-      }),
-    );
+    if (!stage) {
+      return res.status(404).json({ message: 'Stage not found' });
+    }
 
-    const sortedQuestions = questionOrder.map((i: string) =>
-      results.find((j) => j.questionId === i),
-    );
-    return res.status(200).json(sortedQuestions);
+    const { questionOrder } = stage;
+
+    if (!questionOrder.length) return res.status(200).json([]);
+
+    try {
+      // TODO ... ehh. should be cleaned up
+      const results = await Promise.all(
+        questionOrder.map(async (id: Schema.Types.ObjectId) => {
+          const question = await Question.findOne(id, {
+            org: user.org,
+          });
+
+          // TODO it is possible that a question was deleted so the question will return undefined
+          return question;
+        }),
+      );
+
+      const sortedQuestions = questionOrder.map((i: Schema.Types.ObjectId) =>
+        results.find((j) => j._id === i),
+      );
+      return res.status(200).json(sortedQuestions);
+    } catch (error) {
+      const { status, body } = CreateError.SDK(
+        error,
+        'An error ocurred retrieving the questions for this stage',
+      );
+      return res.status(status).json(body);
+    }
   } catch (error) {
-    const { status, body } = CreateError.SDK(
-      error,
-      'An error ocurred retrieving the questions for this stage',
-    );
-    return res.status(status).json(body);
+    return res.status(500).json({ message: 'An error ocurred retrieving stage info' });
   }
 };
