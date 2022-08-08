@@ -1,8 +1,13 @@
 import { Request, Response } from 'express';
+import { DEFAULTS } from '../../Config';
 import { Org } from '../../entities/Org';
 
 export const getOrg = async (req: Request, res: Response) => {
   const { user } = req;
+
+  if (user.org === DEFAULTS.NO_ORG) {
+    return res.status(200).json({ message: "You're not in an org :)" });
+  }
 
   try {
     const org = await Org.findById(user.org);
