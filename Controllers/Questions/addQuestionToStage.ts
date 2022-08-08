@@ -1,6 +1,7 @@
 import { Request, Response } from 'express';
 import Joi from 'joi';
 import { JOI_SETTINGS, LIMITS } from '../../Config';
+import { Question } from '../../entities/Question';
 import { DB } from '../../models';
 import * as CreateError from '../../utils/createError';
 import getNewChildItemOrder from '../../utils/getNewChildItemOrder';
@@ -31,23 +32,21 @@ export const addQuestionToStage = async (req: Request, res: Response) => {
   const { questionId, position }: { questionId: string; position?: number } = req.body;
   const { openingId, stageId } = req.params;
 
-  const [question, getQuestionError] = await DB.Questions.getQuestion({
-    orgId: user.org,
-    questionId,
-  });
-
-  if (getQuestionError) {
-    const { status, body } = CreateError.SDK(
-      getQuestionError,
-      'An error ocurred retrieving info for that question',
-    );
-    return res.status(status).json(body);
-  }
-
-  if (!question) {
-    return res.status(404).json({
-      message: `A question with the ID of '${questionId}' does not exist in this org`,
+  try {
+    const question = await Question.findById({
+      _id: questionId,
+      orgId: user.org,
     });
+
+    if (!question) {
+      return res.status(404).json({
+        message: `A question with the ID of '${questionId}' does not exist in this org`,
+      });
+    }
+
+    
+  } catch (error) {
+    return res.status(500).json({ message: 'An error ocurred retrieving question info' });
   }
 
   const [stage, stageError] = await DB.Stages.getStage({
