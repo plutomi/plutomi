@@ -3,6 +3,7 @@ import { nanoid } from 'nanoid';
 import * as CreateError from '../../utils/createError';
 import { DB } from '../../models';
 import { COOKIE_NAME, COOKIE_SETTINGS, Emails } from '../../Config';
+import { IUser, User } from '../../entities/User';
 
 /**
  * Creates a random test user and sends a session cookie to the client
@@ -18,30 +19,31 @@ export const jestSetup = async (req: Request, res: Response) => {
   // TODO this is creating two users under TESTING2 because theres no check to see if email exists
   // like in the regular createUser flow
   const userEmail = req.body.email || `${nanoid(15)}+${Emails.TESTING}`;
-  // eslint-disable-next-line prefer-const
-  let [user, userError] = await DB.Users.getUserByEmail({
-    email: userEmail,
-  });
 
-  if (userError) {
-    const { status, body } = CreateError.SDK(userError, 'An error ocurred creating your jest user');
-    return res.status(status).json(body);
-  }
-
-  if (!user) {
-    const [newUser, newUserError] = await DB.Users.createUser({
+  try {
+    const user = await User.findOne({
       email: userEmail,
     });
 
-    if (newUserError) {
-      const { status, body } = CreateError.SDK(newUserError, 'Error ocurred creating test user');
-      return res.status(status).json(body);
+    let createdUser: IUser | undefined;
+
+    if (!user) {
+      try {
+        const newUser = new User({
+          email: userEmail,
+        });
+
+        await newUser.save();
+        createdUser = newUser;
+      } catch (error) {
+        return res.status(500).json({ message: 'An error ocurred creating a new user for jest' });
+      }
     }
 
-    user = newUser;
+    res.cookie(COOKIE_NAME, createdUser._id, COOKIE_SETTINGS);
+
+    return res.status(201).json(user);
+  } catch (error) {
+    return res.status(500).json({ message: 'Unable to retrieve user by email' });
   }
-
-  res.cookie(COOKIE_NAME, user.userId, COOKIE_SETTINGS);
-
-  return res.status(201).json(user);
 };
