@@ -62,12 +62,6 @@ export const deleteQuestionFromStage = async (req: Request, res: Response) => {
         .status(500)
         .json({ message: 'An error ocurred removing the question from the stage' });
     }
-
-    try {
-      return res.status(200).json({ message: 'Question removed from stage!' });
-    } catch (error) {
-      return res.status(500).json({ message: 'An error ocurred deleting question from stage' });
-    }
   } catch (error) {
     return res.status(500).json({ message: 'An error ocurred retrieving stage info' });
   }
