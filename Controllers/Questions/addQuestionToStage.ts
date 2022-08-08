@@ -1,5 +1,6 @@
 import { Request, Response } from 'express';
 import Joi from 'joi';
+import { Schema } from 'mongoose';
 import { JOI_SETTINGS, LIMITS } from '../../Config';
 import { Question } from '../../entities/Question';
 import { Stage } from '../../entities/Stage';
@@ -57,14 +58,20 @@ export const addQuestionToStage = async (req: Request, res: Response) => {
       }
 
       // Block questions from being added to a stage if it already exists in the stage
-      if (stage.questionOrder.includes(questionId)) {
+      if (stage.questionOrder.includes(questionId as unknown as Schema.Types.ObjectId)) {
+        // TODo improve this type
         return res.status(409).json({
           message: `A question with the ID of '${questionId}' already exists in this stage. Please use a different question ID or delete the old one.`,
         });
       }
 
       // Update the stage with the new questionOrder
-      const questionOrder = getNewChildItemOrder(questionId, stage.questionOrder, position);
+      const questionOrder = getNewChildItemOrder(
+        // TODo improve this type
+        questionId as unknown as Schema.Types.ObjectId,
+        stage.questionOrder,
+        position,
+      );
 
       try {
         await Stage.updateOne(

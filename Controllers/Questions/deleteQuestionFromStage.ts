@@ -1,4 +1,5 @@
 import { Request, Response } from 'express';
+import { Schema } from 'mongoose';
 import { Stage } from '../../entities/Stage';
 import { StageQuestionAdjacentItem } from '../../entities/StageQuestionAdjacentItem';
 import { DB } from '../../models';
@@ -21,7 +22,9 @@ export const deleteQuestionFromStage = async (req: Request, res: Response) => {
 
     // TODO delete question from stage
 
-    const questionToRemoveIndex = stage.questionOrder.indexOf(questionId);
+    const questionToRemoveIndex = stage.questionOrder.indexOf(
+      questionId as unknown as Schema.Types.ObjectId,
+    ); // TODO improve this type
     if (questionToRemoveIndex < 0) {
       return res.status(400).json({ message: 'Question not found on stage ' });
     }

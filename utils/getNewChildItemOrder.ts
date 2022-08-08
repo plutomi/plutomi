@@ -1,3 +1,5 @@
+import { Schema } from 'mongoose';
+
 /**
  * Given an array of child item ids and a position, this splices the array of
  * child item id's and returns the new order of the child items.
@@ -6,8 +8,8 @@
  * Used for: Adding new stages to an opening, adding questions and rules to a stage.
  */
 export default function getNewChildItemOrder(
-  newItemId: string,
-  childItemOrder: string[],
+  newItemId: Schema.Types.ObjectId,
+  childItemOrder: Schema.Types.ObjectId[],
   position?: number,
 ) {
   const newPosition = !Number.isNaN(position) && position ? position : childItemOrder.length;
