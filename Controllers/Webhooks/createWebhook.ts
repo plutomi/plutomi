@@ -4,6 +4,7 @@ import { JOI_SETTINGS, LIMITS } from '../../Config';
 import * as CreateError from '../../utils/createError';
 import { DynamoWebhook } from '../../types/dynamo';
 import { DB } from '../../models';
+import { Webhook } from '../../entities/Webhooks';
 
 export type APICreateWebhookOptions = Pick<
   DynamoWebhook,
@@ -29,20 +30,17 @@ export const createWebhook = async (req: Request, res: Response) => {
 
   const { webhookUrl, webhookName, description }: APICreateWebhookOptions = req.body;
 
-  const [created, createWebhookError] = await DB.Webhooks.createWebhook({
-    orgId: user.org,
-    webhookUrl,
-    description,
-    webhookName,
-  });
+  try {
+    const newWebhook = new Webhook({
+      org: user.org,
+      url: webhookUrl,
+      description,
+      name: webhookName,
+    });
 
-  if (createWebhookError) {
-    const { status, body } = CreateError.SDK(
-      createWebhookError,
-      'An error ocurred creating that webhook',
-    );
-    return res.status(status).json(body);
+    await newWebhook.save();
+    return res.status(201).json({ message: 'Webhook created!' });
+  } catch (error) {
+    return res.status(500).json({ message: 'An errror ocurred creating webhook' });
   }
-
-  return res.status(201).json({ message: 'Webhook created!' });
 };
