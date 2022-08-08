@@ -4,6 +4,8 @@ import * as CreateError from '../../utils/createError';
 import { DEFAULTS, JOI_SETTINGS } from '../../Config';
 import { DynamoUser } from '../../types/dynamo';
 import { DB } from '../../models';
+import { Schema } from 'mongoose';
+import { User } from '../../entities/User';
 
 export interface APIUpdateUserOptions extends Partial<Pick<DynamoUser, 'firstName' | 'lastName'>> {}
 
@@ -24,30 +26,42 @@ export const updateUser = async (req: Request, res: Response) => {
   const { user } = req;
 
   // TODO RBAC will go here, right now you can only update yourself
-  if (req.params.userId !== user.userId) {
+  if ((req.params.userId as unknown as Schema.Types.ObjectId) !== user._id) {
+    // TODO types
     return res.status(403).json({ message: 'You cannot update this user' });
   }
 
+  const updatedUser = await User.findById(user._id);
+
+  if (!updatedUser) {
+    // Not sure how this would happen but whatever
+    return res.status(404).json({ message: 'User not found' });
+  }
+
   if (req.body.firstName) {
-    updatedValues.firstName = req.body.firstName;
+    updatedUser.firstName = req.body.firstName;
   }
 
   if (req.body.lastName) {
-    updatedValues = req.body.lastName;
+    updatedUser.lastName = req.body.lastName;
   }
 
-  const [updatedUser, error] = await DB.Users.updateUser({
-    userId: user.userId,
-    updatedValues,
-  });
-
-  if (error) {
-    const { status, body } = CreateError.SDK(error, 'An error ocurred updating user info');
-    return res.status(status).json(body);
-  }
-
-  return res.status(200).json({
+  try {
+    await updatedUser.save();
     // TODO RBAC is not implemented yet so this won't trigger
-    message: req.params.userId === user.userId ? 'Info updated!' : 'User updated!',
-  });
+
+    return (
+      res
+        .status(200)
+        // TODO types
+        .json({
+          message:
+            (req.params.userId as unknown as Schema.Types.ObjectId) === user._id
+              ? 'Info updated!'
+              : 'User updated!',
+        })
+    );
+  } catch (error) {
+    return res.status(500).json({ message: 'An error ocurred updating user' });
+  }
 };
