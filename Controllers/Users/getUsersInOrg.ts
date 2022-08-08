@@ -1,27 +1,33 @@
 import { Request, Response } from 'express';
 import { pick } from 'lodash';
+import { DEFAULTS } from '../../Config';
+import { User } from '../../entities/User';
 import { DB } from '../../models';
 import * as CreateError from '../../utils/createError';
 
 export const getUsersInOrg = async (req: Request, res: Response) => {
   const { user } = req;
 
-  const [users, error] = await DB.Users.getUsersInOrg({
-    orgId: user.org,
-  });
-
-  if (error) {
-    const { status, body } = CreateError.SDK(
-      error,
-      'An error ocurred getting the users in your org',
+  if (user.org === DEFAULTS.NO_ORG) {
+    return res.status(400).json({ message: 'You are not in an org' });
+  }
+  try {
+    const users = await User.find(
+      {
+        org: user.org,
+      },
+      {
+        _id: 1,
+        org: 1,
+        firstName: 1,
+        lastName: 1,
+        email: 1,
+        orgJoinDate: 1,
+      },
     );
 
-    return res.status(status).json(body);
+    return res.status(200).json(users);
+  } catch (error) {
+    return res.status(500).json({ message: 'An error ocurred retrieving users in org' });
   }
-
-  const cleanUsers = users.map((user) =>
-    pick(user, ['userId', 'orgId', 'firstName', 'lastName', 'email', 'orgJoinDate']),
-  );
-
-  return res.status(200).json(cleanUsers);
 };
