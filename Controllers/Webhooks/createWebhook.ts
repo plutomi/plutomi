@@ -5,6 +5,7 @@ import * as CreateError from '../../utils/createError';
 import { DynamoWebhook } from '../../types/dynamo';
 import { DB } from '../../models';
 import { Webhook } from '../../entities/Webhooks';
+import { Org } from '../../entities/Org';
 
 export type APICreateWebhookOptions = Pick<
   DynamoWebhook,
@@ -39,7 +40,25 @@ export const createWebhook = async (req: Request, res: Response) => {
     });
 
     await newWebhook.save();
-    return res.status(201).json({ message: 'Webhook created!' });
+
+    try {
+      await Org.updateOne(
+        {
+          _id: user.org,
+        },
+        {
+          $inc: {
+            totalWebhooks: 1,
+          },
+        },
+      );
+
+      return res.status(201).json({message: "Webhook created!"})
+    } catch (error) {
+      return res
+        .status(201)
+        .json({ message: 'Webhook created but unable to update totalWebhook count on org' });
+    }
   } catch (error) {
     return res.status(500).json({ message: 'An errror ocurred creating webhook' });
   }
