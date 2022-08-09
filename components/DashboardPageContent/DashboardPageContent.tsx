@@ -26,7 +26,7 @@ export const DashboardPageContent = () => {
 
   if (isUserLoading) return <Loader text="Loading user..." />;
 
-  if (user?.org !== DEFAULTS.NO_ORG && isOrgLoading) {
+  if (isOrgLoading) {
     return <Loader text="Loading org info..." />;
   }
 
@@ -77,7 +77,7 @@ export const DashboardPageContent = () => {
   const UserInOrg = (
     <>
       <h1 className="text-2xl">
-        You&apos;re in the <strong>{org?.displayName}</strong> org. Feel free to click around!
+        You&apos;re in the <strong>{org?.name}</strong> org. Feel free to click around!
       </h1>
       <h1>
         There are <strong>{org?.totalUsers}</strong> users in this org.

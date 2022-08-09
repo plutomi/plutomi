@@ -26,7 +26,7 @@ export const userSchema = new Schema<IUser>({
     lowercase: true,
     trim: true,
   },
-  org: { type: Schema.Types.ObjectId, ref: Org },
+  org: { type: Schema.Types.ObjectId, ref: Org, default: DEFAULTS.NO_ORG },
   orgJoinDate: Date,
 });
 
