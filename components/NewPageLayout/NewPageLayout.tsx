@@ -29,7 +29,7 @@ export const NewPageLayout = ({
 
   // Redirect on no org
   // TODO i believe this is triggering twice...
-  if (currentNavItem.hiddenIfNoOrg && user?.orgId === DEFAULTS.NO_ORG) {
+  if (currentNavItem.hiddenIfNoOrg && user?.org === DEFAULTS.NO_ORG) {
     alert(
       `You must create an org or join one before viewing the ${currentNavItem.name} page. If you have pending invites, you can view them at ${WEBSITE_URL}/invites`,
     );

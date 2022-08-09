@@ -11,7 +11,7 @@ interface UserCardProps {
 export const UserCard = ({ user }: UserCardProps) => {
   const { isUserLoading, isUserError } = useSelf();
   const { org, isOrgLoading, isOrgError } = useOrgInfo({
-    orgId: user?.orgId,
+    orgId: user?.org,
   });
 
   // TODO error & loading handling

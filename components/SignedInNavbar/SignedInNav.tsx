@@ -63,8 +63,8 @@ export const SignedInNav = ({ current }: SignedInNavProps) => {
                   <div className="hidden sm:-my-px sm:ml-6 sm:flex sm:space-x-8">
                     {NAVBAR_NAVIGATION.map((item) => {
                       if (
-                        (user?.orgId === DEFAULTS.NO_ORG && item.hiddenIfNoOrg) ||
-                        (user?.orgId !== DEFAULTS.NO_ORG && item.hiddenIfOrg)
+                        (user?.org === DEFAULTS.NO_ORG && item.hiddenIfNoOrg) ||
+                        (user?.org !== DEFAULTS.NO_ORG && item.hiddenIfOrg)
                       ) {
                         return null;
                       }

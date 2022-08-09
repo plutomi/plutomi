@@ -30,7 +30,7 @@ export const UpdateUserProfileModal = ({ user }: UpdateUserProfileModalProps) =>
         lastName: user?.lastName === lastName ? undefined : lastName,
       };
       const { data } = await UpdateUser({
-        userId: user?._id,
+        _id: user?._id,
         newValues: {
           ...input,
         },

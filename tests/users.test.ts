@@ -78,7 +78,7 @@ describe('Users', () => {
     expect.assertions(2);
     try {
       await Users.UpdateUser({
-        userId: '123',
+        _id: '123',
         newValues: {
           firstName: nanoid(10),
         },

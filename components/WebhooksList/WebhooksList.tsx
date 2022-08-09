@@ -13,11 +13,11 @@ import { UpdateWebhookModal } from '../UpdateWebhookModal';
 export const WebhooksList = () => {
   const { user, isUserLoading, isUserError } = useSelf();
   const { org, isOrgLoading, isOrgError } = useOrgInfo({
-    orgId: user?.orgId,
+    orgId: user?.org,
   });
   // TODO error and loading
   const { webhooks, isWebhooksLoading, isWebhooksError } = useWebhooksInOrg({
-    orgId: user?.orgId,
+    orgId: user?.org,
   });
   const openCreateWebhookModal = useStore((state) => state.openCreateWebhookModal);
 

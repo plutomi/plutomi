@@ -62,7 +62,7 @@ export const OpeningsListItem = ({ opening, user }: OpeningsListItemProps) => {
                   <p className="mt-2 flex items-center text-lg text-normal sm:mt-0 sm:ml-6">
                     <ClickToCopy
                       showText="Application Link"
-                      copyText={`${WEBSITE_URL}/${user?.orgId}/${opening?.openingId}/apply`}
+                      copyText={`${WEBSITE_URL}/${user?.org}/${opening?.openingId}/apply`}
                     />
                   </p>
                 )}

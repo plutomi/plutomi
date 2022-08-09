@@ -20,8 +20,9 @@ interface UpdateUserInput {
   _id: Schema.Types.ObjectId;
   newValues: APIUpdateUserOptions;
 }
+
 export const UpdateUser = async (options: UpdateUserInput) => {
-  const data = await axios.put(GetUserInfoUrl(options._id)), {
+  const data = await axios.put(GetUserInfoUrl(options._id), {
     ...options.newValues,
   });
   return data;

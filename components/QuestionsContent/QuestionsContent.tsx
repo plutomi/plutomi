@@ -13,7 +13,7 @@ import { QuestionItem } from '../QuestionItem';
 export const QuestionsContent = () => {
   const { user, isUserLoading, isUserError } = useSelf();
   const { org, isOrgLoading, isOrgError } = useOrgInfo({
-    orgId: user?.orgId,
+    orgId: user?.org,
   });
   const { orgQuestions, isOrgQuestionsLoading, isOrgQuestionsError } = useQuestionsInOrg();
 

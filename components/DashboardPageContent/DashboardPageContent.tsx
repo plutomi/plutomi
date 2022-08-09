@@ -15,9 +15,9 @@ import { nameIsDefault } from '../../utils/compareStrings/nameIsDefault';
 export const DashboardPageContent = () => {
   const { user, isUserLoading, isUserError } = useSelf();
   const { org, isOrgLoading, isOrgError } = useOrgInfo({
-    orgId: user?.orgId,
+    orgId: user?.org,
   });
-  const customApplyLink = `${WEBSITE_URL}/${org?.orgId}/apply`;
+  const customApplyLink = `${WEBSITE_URL}/${org?._id}/apply`;
 
   const openCreateOrgModal = useStore((state) => state.openCreateOrgModal);
   const openUserProfileModal = useStore((state) => state.openUserProfileModal);
@@ -26,7 +26,7 @@ export const DashboardPageContent = () => {
 
   if (isUserLoading) return <Loader text="Loading user..." />;
 
-  if (user?.orgId !== DEFAULTS.NO_ORG && isOrgLoading) {
+  if (user?.org !== DEFAULTS.NO_ORG && isOrgLoading) {
     return <Loader text="Loading org info..." />;
   }
 
@@ -125,7 +125,7 @@ export const DashboardPageContent = () => {
   return (
     <>
       <CreateOrgModal />
-      {user?.orgId === DEFAULTS.NO_ORG ? UserNotInOrg : UserInOrg}
+      {user?.org === DEFAULTS.NO_ORG ? UserNotInOrg : UserInOrg}
     </>
   );
 };

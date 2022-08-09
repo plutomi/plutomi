@@ -38,7 +38,7 @@ export const ApplicantsPageHeader = () => {
         <p className="mt-2 text-md text-normal sm:mt-0 ">
           <ClickToCopy
             showText="Application Link"
-            copyText={`${WEBSITE_URL}/${user?.orgId}/${opening?.openingId}/apply`}
+            copyText={`${WEBSITE_URL}/${user?.org}/${opening?.openingId}/apply`}
           />
         </p>
       )}

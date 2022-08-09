@@ -15,7 +15,7 @@ export const PendingInviteCard = ({ invite }: PendingInviteCardProps) => {
     try {
       const data = await Invites.CancelInvite({
         inviteId: invite.inviteId,
-        orgId: user?.orgId,
+        orgId: user?.org,
         userId: invite.recipient.userId,
       });
       alert(data.data.message);
@@ -24,7 +24,7 @@ export const PendingInviteCard = ({ invite }: PendingInviteCardProps) => {
     }
 
     // Refresh the pending invites
-    mutate(Invites.GetOrgInvitesURL(user?.orgId));
+    mutate(Invites.GetOrgInvitesURL(user?.org));
   };
   const { firstName, lastName, email } = invite.recipient;
   return (

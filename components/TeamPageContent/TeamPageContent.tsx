@@ -14,12 +14,12 @@ import { nameIsDefault } from '../../utils/compareStrings/nameIsDefault';
 export const TeamPageContent = () => {
   const { user, isUserLoading, isUserError } = useSelf();
   const { orgUsers, isOrgUsersLoading, isOrgUsersError } = useOrgUsers({
-    orgId: user?.orgId,
+    orgId: user?.org,
   });
   const openInviteModal = useStore((state) => state.openInviteModal);
   const { pendingOrgInvites, isPendingOrgInvitesLoading, isPendingOrgInvitesError } =
     usePendingOrgInvites({
-      orgId: user?.orgId,
+      orgId: user?.org,
     });
   if (isOrgUsersError) return <h1>An error ocurred returning your orgs users</h1>;
   if (isPendingOrgInvitesError) return <h1>An error ocurred retrieving your pending invites</h1>;
