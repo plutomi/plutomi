@@ -10,7 +10,7 @@ export interface IUser extends IBase {
   lastName: string;
   totalInvites: number;
   verifiedEmail: boolean;
-  org: Schema.Types.ObjectId | DEFAULTS.NO_ORG;
+  org: Schema.Types.ObjectId; // TODO requires null check for defauilts.no_org
   orgJoinDate: Date;
 }
 
@@ -26,8 +26,8 @@ export const userSchema = new Schema<IUser>({
     lowercase: true,
     trim: true,
   },
-  org: { type: Schema.Types.ObjectId, ref: Org, default: DEFAULTS.NO_ORG },
-  orgJoinDate: Date,
+  org: { type: Schema.Types.ObjectId, ref: Org, default: null },
+  orgJoinDate: { type: Date },
 });
 
 export const User = model<IUser>('User', userSchema);

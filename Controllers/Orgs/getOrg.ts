@@ -1,11 +1,10 @@
 import { Request, Response } from 'express';
-import { DEFAULTS } from '../../Config';
 import { Org } from '../../entities/Org';
 
 export const getOrg = async (req: Request, res: Response) => {
   const { user } = req;
 
-  if (user.org === DEFAULTS.NO_ORG) {
+  if (!user.org) {
     return res.status(200).json({ message: "You're not in an org :)" });
   }
 

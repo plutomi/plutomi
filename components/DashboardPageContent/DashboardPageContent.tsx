@@ -125,7 +125,7 @@ export const DashboardPageContent = () => {
   return (
     <>
       <CreateOrgModal />
-      {user?.org === DEFAULTS.NO_ORG ? UserNotInOrg : UserInOrg}
+      {!user?.org ? UserNotInOrg : UserInOrg}
     </>
   );
 };

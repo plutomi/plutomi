@@ -8,7 +8,7 @@ import * as CreateError from '../../utils/createError';
 export const getUsersInOrg = async (req: Request, res: Response) => {
   const { user } = req;
 
-  if (user.org === DEFAULTS.NO_ORG) {
+  if (!user.org) {
     return res.status(400).json({ message: 'You are not in an org' });
   }
   try {

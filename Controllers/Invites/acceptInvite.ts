@@ -8,7 +8,7 @@ export const acceptInvite = async (req: Request, res: Response) => {
   const { inviteId } = req.params;
   const { user } = req;
 
-  if (user.org !== DEFAULTS.NO_ORG) {
+  if (!user.org) {
     return res.status(403).json({
       message: `You already belong to an org: ${user.org} - delete it before joining another one!`,
     });

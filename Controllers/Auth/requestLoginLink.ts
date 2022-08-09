@@ -83,10 +83,12 @@ export const requestLoginLink = async (req: Request, res: Response) => {
     });
 
     try {
+      console.log('Attempting to save user', newUser);
       await newUser.save();
       console.log('Saved!', newUser);
       existingUser = newUser;
     } catch (error) {
+      console.error(error);
       return res.status(500).json({ message: 'An error ocurred creating your user account' });
     }
   }

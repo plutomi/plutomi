@@ -6,7 +6,7 @@ import TagGenerator from '../utils/tagGenerator';
 export default async function withHasOrg(req: Request, res: Response, next: NextFunction) {
   const { user } = req;
 
-  if (user.org === DEFAULTS.NO_ORG || user.org === TagGenerator({ value: DEFAULTS.NO_ORG })) {
+  if (!user.org) {
     return res.status(403).json({
       message: ERRORS.NEEDS_ORG,
     });
