@@ -26,7 +26,7 @@ export const DashboardPageContent = () => {
 
   if (isUserLoading) return <Loader text="Loading user..." />;
 
-  if (isOrgLoading) {
+  if (isOrgLoading && user.org) {
     return <Loader text="Loading org info..." />;
   }
 
