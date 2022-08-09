@@ -5,7 +5,6 @@ import { JOI_SETTINGS, LIMITS } from '../../Config';
 import { Question } from '../../entities/Question';
 import { Stage } from '../../entities/Stage';
 import { StageQuestionAdjacentItem } from '../../entities/StageQuestionAdjacentItem';
-import { DB } from '../../models';
 import * as CreateError from '../../utils/createError';
 import getNewChildItemOrder from '../../utils/getNewChildItemOrder';
 

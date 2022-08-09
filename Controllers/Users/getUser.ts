@@ -3,7 +3,6 @@ import Joi from 'joi';
 import { Schema } from 'mongoose';
 import { JOI_SETTINGS } from '../../Config';
 import { User } from '../../entities/User';
-import { DB } from '../../models';
 import * as CreateError from '../../utils/createError';
 
 interface APIGetUserByIdParameters {
@@ -54,7 +53,4 @@ export const getUser = async (req: Request, res: Response) => {
   } catch (error) {
     return res.status(500).json({ message: 'An error ocurred retrieving user info' });
   }
-  const [requestedUser, error] = await DB.Users.getUserById({
-    userId,
-  });
 };

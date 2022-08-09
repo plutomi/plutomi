@@ -3,7 +3,6 @@ import Joi from 'joi';
 import { JOI_SETTINGS, LIMITS } from '../../Config';
 import * as CreateError from '../../utils/createError';
 import { DynamoOpening } from '../../types/dynamo';
-import { DB } from '../../models';
 import { Opening } from '../../entities/Opening';
 import { Org } from '../../entities/Org';
 

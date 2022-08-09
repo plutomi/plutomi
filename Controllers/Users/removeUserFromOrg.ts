@@ -1,6 +1,4 @@
 import { Request, Response } from 'express';
-import * as CreateError from '../../utils/createError';
-import { DB } from '../../models';
 import { Schema } from 'mongoose';
 import { Org } from '../../entities/Org';
 import { DEFAULTS } from '../../Config';

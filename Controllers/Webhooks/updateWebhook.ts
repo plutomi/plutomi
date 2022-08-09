@@ -3,7 +3,6 @@ import Joi from 'joi';
 import * as CreateError from '../../utils/createError';
 import { JOI_SETTINGS, LIMITS } from '../../Config';
 import { DynamoWebhook } from '../../types/dynamo';
-import { DB } from '../../models';
 import { Webhook } from '../../entities/Webhooks';
 
 export interface APIUpdateWebhookOptions

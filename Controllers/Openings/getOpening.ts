@@ -2,7 +2,6 @@ import { Request, Response } from 'express';
 import Joi from 'joi';
 import { JOI_SETTINGS } from '../../Config';
 import { Opening } from '../../entities/Opening';
-import { DB } from '../../models';
 import * as CreateError from '../../utils/createError';
 
 const schema = Joi.object({

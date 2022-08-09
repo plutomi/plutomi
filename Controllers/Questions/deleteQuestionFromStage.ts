@@ -2,9 +2,6 @@ import { Request, Response } from 'express';
 import { Schema } from 'mongoose';
 import { Stage } from '../../entities/Stage';
 import { StageQuestionAdjacentItem } from '../../entities/StageQuestionAdjacentItem';
-import { DB } from '../../models';
-
-import * as CreateError from '../../utils/createError';
 
 export const deleteQuestionFromStage = async (req: Request, res: Response) => {
   const { user } = req;

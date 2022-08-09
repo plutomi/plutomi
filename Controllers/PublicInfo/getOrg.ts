@@ -1,8 +1,5 @@
 import { Request, Response } from 'express';
-import { pick } from 'lodash';
 import { Org } from '../../entities/Org';
-import { DB } from '../../models';
-import * as CreateError from '../../utils/createError';
 
 export const getOrg = async (req: Request, res: Response) => {
   const { orgId } = req.params;

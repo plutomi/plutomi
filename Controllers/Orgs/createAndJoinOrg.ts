@@ -1,12 +1,10 @@
 import { Request, Response } from 'express';
 import Joi from 'joi';
-import { DEFAULTS, JOI_SETTINGS, JoiOrgId } from '../../Config';
+import {  JOI_SETTINGS, JoiOrgId } from '../../Config';
 import * as CreateError from '../../utils/createError';
 import { DynamoOrg } from '../../types/dynamo';
-import { DB } from '../../models';
 import { Org } from '../../entities/Org';
 import { User } from '../../entities/User';
-import { OrgInvite } from '../../entities/OrgInvite';
 
 export type APICreateOrgOptions = Required<Pick<DynamoOrg, 'orgId' | 'displayName'>>;
 

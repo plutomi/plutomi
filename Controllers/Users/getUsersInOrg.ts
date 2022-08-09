@@ -1,9 +1,5 @@
 import { Request, Response } from 'express';
-import { pick } from 'lodash';
-import { DEFAULTS } from '../../Config';
 import { User } from '../../entities/User';
-import { DB } from '../../models';
-import * as CreateError from '../../utils/createError';
 
 export const getUsersInOrg = async (req: Request, res: Response) => {
   const { user } = req;

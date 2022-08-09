@@ -1,20 +1,15 @@
 import { Request, Response } from 'express';
 import emailValidator from 'deep-email-validator';
 import Joi from 'joi';
-import { nanoid } from 'nanoid';
 import {
   DEFAULTS,
-  TIME_UNITS,
   JOI_SETTINGS,
   WEBSITE_URL,
   ERRORS,
   API_URL,
-  DOMAIN_NAME,
   Emails,
 } from '../../Config';
-import * as Time from '../../utils/time';
 import * as CreateError from '../../utils/createError';
-import { DB } from '../../models';
 import { sendEmail } from '../../models/Emails/sendEmail';
 import { IUser, User } from '../../entities/User';
 import { LoginLink } from '../../entities/LoginLink';

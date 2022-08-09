@@ -1,8 +1,6 @@
 import { Request, Response } from 'express';
 import { Opening } from '../../entities/Opening';
 import { Stage } from '../../entities/Stage';
-import { DB } from '../../models';
-import * as CreateError from '../../utils/createError';
 
 export const getStagesInOpening = async (req: Request, res: Response) => {
   const { user } = req;

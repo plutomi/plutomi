@@ -2,9 +2,6 @@ import { Request, Response } from 'express';
 import { Schema } from 'mongoose';
 import { Opening } from '../../entities/Opening';
 import { Stage } from '../../entities/Stage';
-import { DB } from '../../models';
-import * as CreateError from '../../utils/createError';
-import getNewChildItemOrder from '../../utils/getNewChildItemOrder';
 
 export const deleteStage = async (req: Request, res: Response) => {
   const { user } = req;

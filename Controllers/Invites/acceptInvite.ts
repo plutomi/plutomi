@@ -1,5 +1,4 @@
 import { Request, Response } from 'express';
-import { DEFAULTS } from '../../Config';
 import { OrgInvite } from '../../entities/OrgInvite';
 import { IOrg, Org } from '../../entities/Org';
 import { User } from '../../entities/User';

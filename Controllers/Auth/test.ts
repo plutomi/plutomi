@@ -1,6 +1,7 @@
 import { User } from '../../entities/User';
 import { Request, Response } from 'express';
 
+// TODO DELETE THIS!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 export const testt = async (req: Request, res: Response) => {
   try {
     const q = await User.updateOne(

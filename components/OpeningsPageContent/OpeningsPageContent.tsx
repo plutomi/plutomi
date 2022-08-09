@@ -6,8 +6,10 @@ import { Loader } from '../Loader/Loader';
 import { CreateOpeningModal } from '../CreateOpeningModal';
 import { EmptyOpeningsContent } from '../EmptyOpeningsContent';
 import { OpeningsList } from '../OpeningsList';
+import { useSelf } from '../../SWR/useSelf';
 
 export const OpeningsPageContent = () => {
+  const { user, isUserLoading, isUserError } = useSelf();
   const { openingsInOrg, isOpeningsInOrgLoading, isOpeningsInOrgError } = useOpeningsInOrg();
 
   const openCreateOpeningModal = useStore((state) => state.openCreateOpeningModal);

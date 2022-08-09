@@ -2,7 +2,6 @@ import { Request, Response } from 'express';
 import Joi from 'joi';
 import * as CreateError from '../../utils/createError';
 import { JOI_SETTINGS, OpeningState, LIMITS } from '../../Config';
-import { DB } from '../../models';
 import { DynamoOpening } from '../../types/dynamo';
 import { Opening } from '../../entities/Opening';
 

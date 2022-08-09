@@ -3,7 +3,6 @@ import Joi from 'joi';
 import * as CreateError from '../../utils/createError';
 import { JOI_SETTINGS, LIMITS } from '../../Config';
 import { DynamoQuestion } from '../../types/dynamo';
-import { DB } from '../../models';
 import { Question } from '../../entities/Question';
 
 export interface APIUpdateQuestionOptions

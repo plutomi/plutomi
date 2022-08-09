@@ -1,7 +1,5 @@
 import { Request, Response } from 'express';
 import { Opening } from '../../entities/Opening';
-import { DB } from '../../models';
-import * as CreateError from '../../utils/createError';
 
 export const getOpeningsInOrg = async (req: Request, res: Response) => {
   const { user } = req;

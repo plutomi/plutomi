@@ -2,7 +2,6 @@ import { Request, Response } from 'express';
 import { Schema } from 'mongoose';
 import { Question } from '../../entities/Question';
 import { Stage } from '../../entities/Stage';
-import { DB } from '../../models';
 import * as CreateError from '../../utils/createError';
 
 export const getQuestionsInStage = async (req: Request, res: Response) => {

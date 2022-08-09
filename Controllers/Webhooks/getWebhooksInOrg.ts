@@ -1,7 +1,5 @@
 import { Request, Response } from 'express';
 import { Webhook } from '../../entities/Webhooks';
-import { DB } from '../../models';
-import * as CreateError from '../../utils/createError';
 
 export const getWebhooksInOrg = async (req: Request, res: Response) => {
   const { user } = req;
