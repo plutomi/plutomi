@@ -20,6 +20,8 @@
     "no-void": "off",
     "react/jsx-props-no-spreading": "warn",
     "no-useless-return": "error",
+    "no-floating-promises": "error",
+    "no-misused-promises": "error",
     "prefer-template": "error",
     "no-nested-ternary": "error",
     "no-plusplus": "error",
