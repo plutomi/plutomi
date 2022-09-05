@@ -22,9 +22,7 @@ import CiCdPipelineStack from '../lib/CiCdPipelineStack';
 // }
 
 const app = new cdk.App();
-new CiCdPipelineStack(app, `${process.env.NODE_ENV}-CiCdPipelineStack`);
-
-app.synth(); // TODO move this down? Don't think this is needed
+const pipeline = new CiCdPipelineStack(app, `${process.env.NODE_ENV}-CiCdPipelineStack`);
 
 const { bucket } = new StorageStack(app, `${process.env.NODE_ENV}-StorageStack`);
 
