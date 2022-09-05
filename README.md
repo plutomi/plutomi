@@ -42,12 +42,10 @@ Stage order:
 
 ## Useful commands
 
-| Command                                                                                                 | Function                                                                                                                                           |
-| ------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------- |
-| npm run dev                                                                                             | Will deploy a copy of **most** the backend to AWS (Dynamo, Event Bridge, SQS, Step Functions, etc). The frontend & Express server run in localhost |
-| npm run test                                                                                            | Will run tests                                                                                                                                     |
-| npm run deploy-prod                                                                                     | Will deploy everything to your production environment                                                                                              |
-| npx cross-env NODE_ENV=(development or production) cdk deploy -e (development or production)-STACK_NAME | Will deploy a specific stack in the desired environment                                                                                            |
+| Command      | Function                                                                                                                                           |
+| ------------ | -------------------------------------------------------------------------------------------------------------------------------------------------- |
+| npm run dev  | Will deploy a copy of **most** the backend to AWS (Dynamo, Event Bridge, SQS, Step Functions, etc). The frontend & Express server run in localhost |
+| npm run test | Will run tests                                                                                                                                     |
 
 ## Language, Tooling, & Infrastructure
 
