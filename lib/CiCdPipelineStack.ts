@@ -14,7 +14,7 @@ export default class AppStack extends cdk.Stack {
     new CodePipeline(this, `${process.env.NODE_ENV}-CiCdPipeline`, {
       pipelineName: `${process.env.NODE_ENV}-CiCdPipeline`,
       synth: new ShellStep(`${process.env.NODE_ENV}-PlutomiSynth`, {
-        input: CodePipelineSource.gitHub(`joswayski/plutomi`, 'main'),
+        input: CodePipelineSource.gitHub(`plutomi/plutomi`, 'main'),
         commands: [`npm ci`, `npm run build`, `npx cdk synth`],
       }),
     });
