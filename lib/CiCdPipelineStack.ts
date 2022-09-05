@@ -32,6 +32,9 @@ export default class AppStack extends cdk.Stack {
       }),
       codeBuildDefaults: {
         buildEnvironment: {
+          // Required for bundling lambdas with the aws-lambda-nodejs package
+          // https://github.com/aws/aws-cdk/issues/9217
+          privileged: true,
           // Manually add these variables to Secrets Manager / Parameter Store
           // https://docs.aws.amazon.com/codebuild/latest/userguide/build-spec-ref.html#build-spec.env.secrets-manager
           environmentVariables: {
