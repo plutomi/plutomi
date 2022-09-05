@@ -29,9 +29,9 @@ export default class CiCdPipelineStack extends cdk.Stack {
     const pipeline = new CodePipeline(this, `PlutomiCiCdPipeline`, {
       pipelineName: `PlutomiCiCdPipeline`, //
       synth: new ShellStep(`PlutomiSynth`, {
-        input: CodePipelineSource.gitHub(`plutomi/plutomi`, 'cicd'), // TODO create new prod branch
-        commands: [`npm ci`, 'node --version', `npm run build`], // TODO remove ls, only for checking where cdk.out is
-        // primaryOutputDirectory: 'mysubdir/cdk.out',
+        input: CodePipelineSource.gitHub(`plutomi/plutomi`, 'cicd'), // todo set to main
+        commands: [`npm ci`, 'node --version', `npm run build`], 
+        // TODO use correct node version https://github.com/serverless/serverless/issues/8794
       }),
       codeBuildDefaults: {
         buildEnvironment: {
