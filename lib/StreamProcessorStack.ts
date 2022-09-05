@@ -16,28 +16,24 @@ export default class StreamProcessorStack extends cdk.Stack {
   constructor(scope: Construct, id: string, props: StreamProcessorStackProps) {
     super(scope, id, props);
     const FUNCTION_NAME = 'stream-processor-function';
-    this.StreamProcessorFunction = new NodejsFunction(
-      this,
-      `${process.env.NODE_ENV}-${FUNCTION_NAME}`,
-      {
-        functionName: `${process.env.NODE_ENV}-${FUNCTION_NAME}`,
-        environment: {
-          NODE_ENV: process.env.NODE_ENV, // To get the dynamic event bus name // TODO this is silly
-        },
-        timeout: cdk.Duration.seconds(5),
-        memorySize: 256,
-        logRetention: RetentionDays.ONE_WEEK,
-        runtime: Runtime.NODEJS_14_X,
-        architecture: Architecture.X86_64, // TODO switch back to arm once codebuild issues are fixed!
-        bundling: {
-          minify: true,
-          externalModules: ['aws-sdk'],
-        },
-        handler: 'main',
-        description: 'Processes table changes from DynamoDB streams and sends them to EventBridge',
-        entry: path.join(__dirname, `/../functions/stream-processor.ts`),
+    this.StreamProcessorFunction = new NodejsFunction(this, FUNCTION_NAME, {
+      functionName: `${process.env.NODE_ENV}-${FUNCTION_NAME}`,
+      environment: {
+        NODE_ENV: process.env.NODE_ENV, // To get the dynamic event bus name
       },
-    );
+      timeout: cdk.Duration.seconds(5),
+      memorySize: 256,
+      logRetention: RetentionDays.ONE_WEEK,
+      runtime: Runtime.NODEJS_14_X,
+      architecture: Architecture.X86_64, // TODO switch back to arm once codebuild issues are fixed!
+      bundling: {
+        minify: true,
+        externalModules: ['aws-sdk'],
+      },
+      handler: 'main',
+      description: 'Processes table changes from DynamoDB streams and sends them to EventBridge',
+      entry: path.join(__dirname, `/../functions/stream-processor.ts`),
+    });
 
     const dynamoStreams = new DynamoEventSource(props.table, {
       startingPosition: StartingPosition.LATEST,
