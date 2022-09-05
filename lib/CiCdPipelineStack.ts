@@ -30,14 +30,7 @@ export default class AppStack extends cdk.Stack {
       pipelineName: `PlutomiCiCdPipeline`, //
       synth: new ShellStep(`PlutomiSynth`, {
         input: CodePipelineSource.gitHub(`plutomi/plutomi`, 'cicd'), // TODO create new prod branch
-        commands: [
-          `npm ci`,
-          'ls',
-          'rm -r cdk.out/cache', // For when a non empty zip is created... sigh  // https://github.com/aws/aws-cdk/issues/18459
-          'npx cdk ls',
-          'ls',
-          `npm run build`,
-        ], // TODO remove ls, only for checking where cdk.out is
+        commands: [`npm ci`, 'ls', 'npx cdk ls', 'ls', `npm run build`], // TODO remove ls, only for checking where cdk.out is
         // primaryOutputDirectory: 'mysubdir/cdk.out',
       }),
       codeBuildDefaults: {

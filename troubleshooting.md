@@ -27,7 +27,8 @@ https://stackoverflow.com/questions/48668660/docker-no-space-left-on-device-maco
 
 Make sure Docker is actually running lol
 
-> Uploaded file must be a non-empty zip
+> Uploaded file must be a non-empty zip OR 🚨 WARNING: EMPTY ZIP FILE 🚨
 
+https://github.com/aws/aws-cdk/issues/18459
 Delete `cdk.out/cache`
 Usually happens when stop a deployment half way. See also: https://github.com/aws/aws-cdk/issues/12536
