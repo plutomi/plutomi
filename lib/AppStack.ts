@@ -299,10 +299,17 @@ export default class AppStack extends cdk.Stack {
       maxTtl: cdk.Duration.seconds(0),
     });
 
+    let CF_DOMAINS = [DOMAIN_NAME];
+
+    // @ts-ignore TODO
+    if (process.env.NODE_ENV === 'staging') {
+      CF_DOMAINS = [`stage.${DOMAIN_NAME}`];
+    }
+
     const distribution = new cf.Distribution(this, `${process.env.NODE_ENV}-CF-API-Distribution`, {
       certificate: apiCert,
       webAclId: API_WAF.attrArn,
-      domainNames: [DOMAIN_NAME],
+      domainNames: CF_DOMAINS,
       defaultBehavior: {
         origin: new origins.LoadBalancerV2Origin(loadBalancedFargateService.loadBalancer),
 

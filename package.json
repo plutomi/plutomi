@@ -12,6 +12,7 @@
     "dev-server": "npm run docker-fix && cross-env NODE_ENV=development nodemon app.ts",
     "dev": "npm run docker-fix && cross-env NODE_ENV=development cdk deploy development-CiCdPipelineStack development-DynamoDBStack development-StreamProcessorStack development-EventBridgeStack development-StorageStack development-DeleteChildrenMachineStack development-AthenaDynamoQueryStack development-WebhooksMachineStack && npm run dev-server",
     "start": "cross-env NODE_ENV=production ts-node --transpile-only app.ts",
+    "deploy-staging": "npm run docker-fix && cross-env NODE_ENV=staging cdk deploy staging-CiCdPipelineStack staging-DynamoDBStack staging-StreamProcessorStack staging-AppStack staging-EventBridgeStack staging-StorageStack staging-DeleteChildrenMachineStack staging-AthenaDynamoQueryStack staging-WebhooksMachineStack",
     "deploy-prod": "npm run docker-fix && cross-env NODE_ENV=production cdk deploy production-CiCdPipelineStack production-DynamoDBStack production-StreamProcessorStack production-AppStack production-EventBridgeStack production-StorageStack production-DeleteChildrenMachineStack production-AthenaDynamoQueryStack production-WebhooksMachineStack"
   },
   "dependencies": {
