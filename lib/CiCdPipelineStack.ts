@@ -8,6 +8,7 @@ import {
 } from 'aws-cdk-lib/pipelines';
 
 import * as sm from 'aws-cdk-lib/aws-secretsmanager';
+import PipelineStage from './Stage';
 
 interface CiCdPipelineStackProps {}
 
@@ -20,14 +21,14 @@ export default class AppStack extends cdk.Stack {
     const PLUTOMI_DEV_ENV_VARS = sm.Secret.fromSecretNameV2(
       this,
       `PLUTOMI_DEV_ENV_VARS`,
-      'plutomi/development/env',
+      'plutomi/development/env', // TODO update to staging"
     );
 
     // TODO cdk synth runs build beforehand
 
-    new CodePipeline(this, `${process.env.NODE_ENV}-CiCdPipeline`, {
-      pipelineName: `${process.env.NODE_ENV}-CiCdPipeline`, //
-      synth: new ShellStep(`${process.env.NODE_ENV}-PlutomiSynth`, {
+    const pipeline = new CodePipeline(this, `PlutomiCiCdPipeline`, {
+      pipelineName: `PlutomiCiCdPipeline`, //
+      synth: new ShellStep(`PlutomiSynth`, {
         input: CodePipelineSource.gitHub(`plutomi/plutomi`, 'cicd'), // TODO create new prod branch
         commands: [
           `npm ci`,
@@ -48,7 +49,6 @@ export default class AppStack extends cdk.Stack {
           // Manually add these variables to Secrets Manager / Parameter Store
           // https://docs.aws.amazon.com/codebuild/latest/userguide/build-spec-ref.html#build-spec.env.secrets-manager
           environmentVariables: {
-            // TODO set NODE_ENV
             HOSTED_ZONE_ID: {
               type: BuildEnvironmentVariableType.SECRETS_MANAGER,
               value: `${PLUTOMI_DEV_ENV_VARS.secretArn}:HOSTED_ZONE_ID`,
@@ -82,5 +82,10 @@ export default class AppStack extends cdk.Stack {
         },
       },
     });
+
+    const stagingStage = pipeline.addStage(new PipelineStage(this, 'staging'));
+
+    // stagingStage.addPost(new ManualApprovalStep(`Manual approval before production deployment`));
+    // const productionStage = pipeline.addStage(new PipelineStage(this, 'production'));
   }
 }

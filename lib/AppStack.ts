@@ -14,13 +14,14 @@ import { CloudFrontTarget } from 'aws-cdk-lib/aws-route53-targets';
 import { Policy, PolicyStatement } from 'aws-cdk-lib/aws-iam';
 import { DOMAIN_NAME, EXPRESS_PORT } from '../Config';
 import * as waf from 'aws-cdk-lib/aws-wafv2';
+import { Construct } from 'constructs';
 
 interface AppStackServiceProps extends cdk.StackProps {
   table: Table;
 }
 
 export default class AppStack extends cdk.Stack {
-  constructor(scope: cdk.App, id: string, props?: AppStackServiceProps) {
+  constructor(scope: Construct, id: string, props?: AppStackServiceProps) {
     super(scope, id, props);
 
     const { HOSTED_ZONE_ID } = process.env;

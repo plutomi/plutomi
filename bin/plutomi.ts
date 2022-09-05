@@ -22,7 +22,7 @@ import CiCdPipelineStack from '../lib/CiCdPipelineStack';
 // }
 
 const app = new cdk.App();
-const pipeline = new CiCdPipelineStack(app, `${process.env.NODE_ENV}-CiCdPipelineStack`);
+const pipeline = new CiCdPipelineStack(app, `PlutomiCiCdPipelineStack`);
 
 const { bucket } = new StorageStack(app, `${process.env.NODE_ENV}-StorageStack`);
 

@@ -1,5 +1,6 @@
 import * as cdk from 'aws-cdk-lib';
 import * as dynamodb from 'aws-cdk-lib/aws-dynamodb';
+import { Construct } from 'constructs';
 import { DYNAMO_TABLE_NAME } from '../Config';
 
 /**
@@ -8,7 +9,7 @@ import { DYNAMO_TABLE_NAME } from '../Config';
 export default class DynamoDBStack extends cdk.Stack {
   public readonly table: dynamodb.Table;
 
-  constructor(scope: cdk.App, id: string, props?: cdk.StackProps) {
+  constructor(scope: Construct, id: string, props?: cdk.StackProps) {
     super(scope, id, props);
 
     this.table = new dynamodb.Table(this, 'plutomi-dynamo-table', {
