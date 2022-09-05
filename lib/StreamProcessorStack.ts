@@ -6,19 +6,14 @@ import { NodejsFunction } from 'aws-cdk-lib/aws-lambda-nodejs';
 import { DynamoEventSource } from 'aws-cdk-lib/aws-lambda-event-sources';
 import { StartingPosition, Runtime, Architecture } from 'aws-cdk-lib/aws-lambda';
 import { RetentionDays } from 'aws-cdk-lib/aws-logs';
+import { Construct } from 'constructs';
 
 interface StreamProcessorStackProps extends cdk.StackProps {
   table: Table;
 }
 export default class StreamProcessorStack extends cdk.Stack {
   StreamProcessorFunction: NodejsFunction;
-  /**
-   * @param {cdk.Construct} scope
-   * @param {string} id
-   * @param {cdk.StackProps=} props
-   */
-
-  constructor(scope: cdk.App, id: string, props: StreamProcessorStackProps) {
+  constructor(scope: Construct, id: string, props: StreamProcessorStackProps) {
     super(scope, id, props);
     const FUNCTION_NAME = 'stream-processor-function';
     this.StreamProcessorFunction = new NodejsFunction(

@@ -8,7 +8,6 @@ import EventBridgeStack from '../lib/EventBridgeStack';
 import StreamProcessorStack from '../lib/StreamProcessorStack';
 import DeleteChildrenMachineStack from '../lib/DeleteChildrenMachineStack';
 import WebhooksMachineStack from '../lib/WebhooksMachineStack';
-import AthenaDynamoQueryStack from '../lib/AthenaDynamoQueryStack';
 import StorageStack from '../lib/StorageStack';
 import CiCdPipelineStack from '../lib/CiCdPipelineStack';
 
@@ -55,7 +54,4 @@ new EventBridgeStack(app, `${process.env.NODE_ENV}-EventBridgeStack`, {
 new StreamProcessorStack(app, `${process.env.NODE_ENV}-StreamProcessorStack`, {
   table,
 });
-new AthenaDynamoQueryStack(app, `${process.env.NODE_ENV}-AthenaDynamoQueryStack`, {
-  table,
-  bucket,
-});
+

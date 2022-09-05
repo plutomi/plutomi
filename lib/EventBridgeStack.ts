@@ -3,6 +3,7 @@ import { EventBus, Rule } from 'aws-cdk-lib/aws-events';
 import { StateMachine } from 'aws-cdk-lib/aws-stepfunctions';
 import { SfnStateMachine } from 'aws-cdk-lib/aws-events-targets';
 import { DynamoStreamTypes, Entities } from '../Config';
+import { Construct } from 'constructs';
 
 enum Rules {
   /**
@@ -35,7 +36,7 @@ export default class EventBridgeStack extends cdk.Stack {
    * @param {string} id
    * @param {cdk.StackProps=} props
    */
-  constructor(scope: cdk.App, id: string, props: EventBridgeStackProps) {
+  constructor(scope: Construct, id: string, props: EventBridgeStackProps) {
     super(scope, id, props);
 
     /**

@@ -8,6 +8,7 @@ import { NodejsFunction } from 'aws-cdk-lib/aws-lambda-nodejs';
 import { Architecture, Runtime } from 'aws-cdk-lib/aws-lambda';
 import path from 'path';
 import { DYNAMO_TABLE_NAME } from '../Config';
+import { Construct } from 'constructs';
 
 interface WebhooksMachineProps extends cdk.StackProps {
   table: Table;
@@ -18,13 +19,7 @@ interface WebhooksMachineProps extends cdk.StackProps {
  */
 export default class WebhooksMachine extends cdk.Stack {
   public WebhooksMachine: sfn.StateMachine;
-  /**
-   * @param {cdk.Construct} scope
-   * @param {string} id
-   * @param {cdk.StackProps=} props
-   */
-
-  constructor(scope: cdk.App, id: string, props: WebhooksMachineProps) {
+  constructor(scope: Construct, id: string, props: WebhooksMachineProps) {
     super(scope, id, props);
 
     const FUNCTION_NAME = 'get-webhooks-and-send-event-function';
