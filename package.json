@@ -9,9 +9,9 @@
     "test": "jest",
     "docker-fix": "aws ecr-public get-login-password --region us-east-1 | docker login --username AWS --password-stdin public.ecr.aws/sam/build-nodejs",
     "dev-server": "npm run docker-fix && cross-env NODE_ENV=development nodemon app.ts",
-    "dev": "npm run docker-fix && cross-env NODE_ENV=development cdk deploy development-DynamoDBStack development-StreamProcessorStack development-EventBridgeStack development-StorageStack development-DeleteChildrenMachineStack development-AthenaDynamoQueryStack development-WebhooksMachineStack && npm run dev-server",
+    "dev": "npm run docker-fix && cross-env NODE_ENV=development cdk deploy development-CiCdPipelineStack development-DynamoDBStack development-StreamProcessorStack development-EventBridgeStack development-StorageStack development-DeleteChildrenMachineStack development-AthenaDynamoQueryStack development-WebhooksMachineStack && npm run dev-server",
     "start": "cross-env NODE_ENV=production ts-node --transpile-only app.ts",
-    "deploy-prod": "npm run docker-fix && cross-env NODE_ENV=production cdk deploy production-DynamoDBStack production-StreamProcessorStack production-AppStack production-EventBridgeStack production-StorageStack production-DeleteChildrenMachineStack production-AthenaDynamoQueryStack production-WebhooksMachineStack"
+    "deploy-prod": "npm run docker-fix && cross-env NODE_ENV=production cdk deploy production-CiCdPipelineStack production-DynamoDBStack production-StreamProcessorStack production-AppStack production-EventBridgeStack production-StorageStack production-DeleteChildrenMachineStack production-AthenaDynamoQueryStack production-WebhooksMachineStack"
   },
   "dependencies": {
     "@aws-cdk/assert": "^2.33.0",

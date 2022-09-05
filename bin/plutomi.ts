@@ -23,10 +23,10 @@ if (resultDotEnv.error) {
 
 const app = new cdk.App();
 new CiCdPipelineStack(app, `${process.env.NODE_ENV}-CiCdPipelineStack`, {
-  env: {
-    account: this.account,
-    region: this.region,
-  },
+  // env: { // TODO pretty sure this isn't needed!
+  //   account: app.account,
+  //   region: app.region,
+  // },
 });
 
 app.synth(); // TODO move this down? Don't think this is needed
