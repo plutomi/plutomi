@@ -74,7 +74,7 @@ export default class CiCdPipelineStack extends cdk.Stack {
         },
       },
     }); //
-
+//
     const stagingStage = pipeline.addStage(new PipelineStage(this, 'staging'));
 
     // stagingStage.addPost(new ManualApprovalStep(`Manual approval before production deployment`));
