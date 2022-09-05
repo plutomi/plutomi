@@ -12,7 +12,7 @@ import PipelineStage from './Stage';
 
 interface CiCdPipelineStackProps {}
 
-export default class AppStack extends cdk.Stack {
+export default class CiCdPipelineStack extends cdk.Stack {
   constructor(scope: cdk.App, id: string, props?: CiCdPipelineStackProps) {
     super(scope, id, props);
 
@@ -30,7 +30,7 @@ export default class AppStack extends cdk.Stack {
       pipelineName: `PlutomiCiCdPipeline`, //
       synth: new ShellStep(`PlutomiSynth`, {
         input: CodePipelineSource.gitHub(`plutomi/plutomi`, 'cicd'), // TODO create new prod branch
-        commands: [`npm ci`, 'ls', 'npx cdk ls', 'ls', `npm run build`], // TODO remove ls, only for checking where cdk.out is
+        commands: [`npm ci`, 'node --version', `npm run build`], // TODO remove ls, only for checking where cdk.out is
         // primaryOutputDirectory: 'mysubdir/cdk.out',
       }),
       codeBuildDefaults: {
