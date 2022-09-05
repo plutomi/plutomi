@@ -15,29 +15,21 @@ export default class PipelineStage extends cdk.Stage {
     super(scope, stageName, props);
 
     // const appStack = new AppStack(this, `${stageName}-AppStack`);
-    const { table } = new DynamoDBStack(this, `${stageName}-DynamoDBStack`);
-    const storageStack = new StorageStack(this, `${stageName}-StorageStack`);
-    const streamProcessorStack = new StreamProcessorStack(
-      this,
-      `${stageName}-SteamProcessorStack`,
-      { table },
-    );
+    const { table } = new DynamoDBStack(this, `DynamoDBStack`);
+    const storageStack = new StorageStack(this, `StorageStack`);
+    const streamProcessorStack = new StreamProcessorStack(this, `SteamProcessorStack`, { table });
 
     const { DeleteChildrenMachine } = new DeleteChildrenMachineStack(
       this,
-      `${stageName}-DeleteChildrenMachineStack`,
+      `DeleteChildrenMachineStack`,
       {
         table,
       },
     );
 
-    const { WebhooksMachine } = new WebhooksMachineStack(
-      this,
-      `${stageName}-WebhooksMachineStack`,
-      {
-        table,
-      },
-    );
+    const { WebhooksMachine } = new WebhooksMachineStack(this, `WebhooksMachineStack`, {
+      table,
+    });
     //
     const eventBridgeStack = new EventBridgeStack(this, `EventBridgeStack`, {
       WebhooksMachine,
