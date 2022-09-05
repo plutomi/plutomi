@@ -1,0 +1,22 @@
+import * as cdk from 'aws-cdk-lib';
+import {
+  CodePipeline,
+  CodePipelineSource,
+  ShellStep,
+  ManualApprovalStep,
+} from 'aws-cdk-lib/pipelines';
+
+interface CiCdPipelineStackProps {}
+export default class AppStack extends cdk.Stack {
+  constructor(scope: cdk.App, id: string, props?: CiCdPipelineStackProps) {
+    super(scope, id, props);
+
+    const pipeline = new CodePipeline(this, `${process.env.NODE_ENV}-CiCdPipeline`, {
+      pipelineName: `${process.env.NODE_ENV}-CiCdPipeline`,
+      synth: new ShellStep(`${process.env.NODE_ENV}-PlutomiSynth`, {
+        input: CodePipelineSource.gitHub(`joswayski/plutomi`, 'main'),
+        commands: [`npm ci`, `npm run build`, `npx cdk synth`],
+      }),
+    });
+  }
+}

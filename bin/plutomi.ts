@@ -10,6 +10,8 @@ import DeleteChildrenMachineStack from '../lib/DeleteChildrenMachineStack';
 import WebhooksMachineStack from '../lib/WebhooksMachineStack';
 import AthenaDynamoQueryStack from '../lib/AthenaDynamoQueryStack';
 import StorageStack from '../lib/StorageStack';
+import CiCdPipelineStack from '../lib/CiCdPipelineStack';
+
 // TODO use relative path
 const resultDotEnv = dotenv.config({
   path: `${process.cwd()}\\.env.${process.env.NODE_ENV}`,
@@ -20,6 +22,15 @@ if (resultDotEnv.error) {
 }
 
 const app = new cdk.App();
+new CiCdPipelineStack(app, `${process.env.NODE_ENV}-CiCdPipelineStack`, {
+  env: {
+    account: this.account,
+    region: this.region,
+  },
+});
+
+app.synth(); // TODO move this down? Don't think this is needed
+
 const { bucket } = new StorageStack(app, `${process.env.NODE_ENV}-StorageStack`);
 
 const { table } = new DynamoDBStack(app, `${process.env.NODE_ENV}-DynamoDBStack`);
