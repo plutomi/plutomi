@@ -38,8 +38,8 @@ export default class PipelineStage extends cdk.Stage {
         table,
       },
     );
-    // 
-    const eventBridgeStack = new EventBridgeStack(this, `${stageName}-EventBridgeStack`, {
+    //
+    const eventBridgeStack = new EventBridgeStack(this, `EventBridgeStack`, {
       WebhooksMachine,
       DeleteChildrenMachine,
     });
