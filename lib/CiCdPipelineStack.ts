@@ -26,7 +26,7 @@ export default class AppStack extends cdk.Stack {
     new CodePipeline(this, `${process.env.NODE_ENV}-CiCdPipeline`, {
       pipelineName: `${process.env.NODE_ENV}-CiCdPipeline`,
       synth: new ShellStep(`${process.env.NODE_ENV}-PlutomiSynth`, {
-        input: CodePipelineSource.gitHub(`plutomi/plutomi`, 'main'), // TODO create new prod branch
+        input: CodePipelineSource.gitHub(`plutomi/plutomi`, 'cicd'), // TODO create new prod branch
         commands: [`npm ci`, 'ls', `npm run build`, `npx cdk synth`], // TODO remove ls, only for checking where cdk.out is
         // primaryOutputDirectory: 'mysubdir/cdk.out',
       }),
