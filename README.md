@@ -6,7 +6,7 @@
 
 ### [Website / Live Demo](https://plutomi.com)
 
-Plutomi is a *multi-tenant* [applicant tracking system](https://en.wikipedia.org/wiki/Applicant_tracking_system) that streamlines your entire application process with automated workflows at any scale.
+Plutomi is a _multi-tenant_ [applicant tracking system](https://en.wikipedia.org/wiki/Applicant_tracking_system) that streamlines your entire application process with automated workflows at any scale.
 
 ![infra](images/infra.png)
 
@@ -88,6 +88,10 @@ Your PR _title_ should have the following format:
 | chore:                | Maintenance, refactoring, etc. If it doesn't fit above, it goes here |
 
 Example: _fix: Removed the double modals popping up on login_
+
+# CI/CD
+
+This is managed by CDK Pipelines. You need to create a personal access token in GitHub with the `admin:repo_hook` and `repo` scopes. Then, create a secret in AWS Secrets Manager with the name of `github-token` and the value of the GitHub access token. It is recommended to manually create this secret in the AWS console.
 
 ## License
 
