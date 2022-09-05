@@ -32,7 +32,7 @@ export default class AppStack extends cdk.Stack {
         commands: [
           `npm ci`,
           'ls',
-          'npm run docker-cdk-test',
+          // 'npm run docker-cdk-test',
           `npx cdk synth`,
           'ls',
           `npm run build`,
