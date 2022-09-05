@@ -34,6 +34,7 @@ export default class AppStack extends cdk.Stack {
           'ls',
           // 'npm run docker-cdk-test',
           `npx cdk synth`,
+          'npx cdk ls',
           'ls',
           `npm run build`,
         ], // TODO remove ls, only for checking where cdk.out is
