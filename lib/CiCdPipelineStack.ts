@@ -49,7 +49,7 @@ export default class AppStack extends cdk.Stack {
               type: BuildEnvironmentVariableType.SECRETS_MANAGER,
               value: `${PLUTOMI_DEV_ENV_VARS.secretArn}:ACM_CERTIFICATE_ID`,
             },
-
+            //
             GITHUB_COMMITS_TOKEN: {
               // For getting all commits on the FE, see `pages/index.ts`
               type: BuildEnvironmentVariableType.SECRETS_MANAGER,
