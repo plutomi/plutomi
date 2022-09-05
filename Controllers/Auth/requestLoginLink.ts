@@ -108,7 +108,7 @@ export const requestLoginLink = async (req: Request, res: Response) => {
   if (
     latestLink &&
     latestLink.createdAt >= timeThreshold &&
-    !user.email.endsWith(DOMAIN_NAME) // Allow admins to send multiple login links in a short timespan
+    !user.email.endsWith('plutomi.com') // Allow admins to send multiple login links in a short timespan // TODO make this a config var, 1 of 2 places where doot is required
   ) {
     return res.status(403).json({ message: "You're doing that too much, please try again later" });
   }

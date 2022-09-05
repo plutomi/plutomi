@@ -6,7 +6,8 @@ import TagGenerator from './utils/tagGenerator';
  * Some backend dependencies (SES, ACM, Route53, etc..) depend on
  * DOMAIN_NAME being the actual domain name, do not change!
  */
-export const DOMAIN_NAME = `plutomi.com`;
+export const DOMAIN_NAME =
+  process.env.NODE_ENV === 'production' ? `plutomi.com` : 'stage.plutomi.com';
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

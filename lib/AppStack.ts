@@ -100,7 +100,7 @@ export default class AppStack extends cdk.Stack {
     // Get a reference to AN EXISTING hosted zone
     const hostedZone = route53.HostedZone.fromHostedZoneAttributes(this, 'plutomi-hosted-zone', {
       hostedZoneId: HOSTED_ZONE_ID,
-      zoneName: DOMAIN_NAME,
+      zoneName: 'plutomi.com', // TODO make this a config var as its the only place where the root is required
     });
 
     // Retrieves the certificate that we are using for our domain
@@ -299,17 +299,10 @@ export default class AppStack extends cdk.Stack {
       maxTtl: cdk.Duration.seconds(0),
     });
 
-    let CF_DOMAINS = [DOMAIN_NAME];
-
-    // @ts-ignore TODO
-    if (process.env.NODE_ENV === 'staging') {
-      CF_DOMAINS = [`stage.${DOMAIN_NAME}`];
-    }
-
     const distribution = new cf.Distribution(this, `${process.env.NODE_ENV}-CF-API-Distribution`, {
       certificate: apiCert,
       webAclId: API_WAF.attrArn,
-      domainNames: CF_DOMAINS,
+      domainNames: [DOMAIN_NAME],
       defaultBehavior: {
         origin: new origins.LoadBalancerV2Origin(loadBalancedFargateService.loadBalancer),
 
