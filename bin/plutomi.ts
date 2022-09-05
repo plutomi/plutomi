@@ -12,22 +12,17 @@ import AthenaDynamoQueryStack from '../lib/AthenaDynamoQueryStack';
 import StorageStack from '../lib/StorageStack';
 import CiCdPipelineStack from '../lib/CiCdPipelineStack';
 
-// TODO use relative path
-const resultDotEnv = dotenv.config({
-  path: `${process.cwd()}\\.env.${process.env.NODE_ENV}`,
-});
+// // TODO use relative path
+// const resultDotEnv = dotenv.config({
+//   path: `${process.cwd()}\\.env.${process.env.NODE_ENV}`,
+// });
 
-if (resultDotEnv.error) {
-  throw resultDotEnv.error;
-}
+// if (resultDotEnv.error) {
+//   throw resultDotEnv.error;
+// }
 
 const app = new cdk.App();
-new CiCdPipelineStack(app, `${process.env.NODE_ENV}-CiCdPipelineStack`, {
-  // env: { // TODO pretty sure this isn't needed!
-  //   account: app.account,
-  //   region: app.region,
-  // },
-});
+new CiCdPipelineStack(app, `${process.env.NODE_ENV}-CiCdPipelineStack`);
 
 app.synth(); // TODO move this down? Don't think this is needed
 

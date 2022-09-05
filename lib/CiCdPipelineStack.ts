@@ -5,7 +5,9 @@ import {
   ShellStep,
   ManualApprovalStep,
 } from 'aws-cdk-lib/pipelines';
+
 interface CiCdPipelineStackProps {}
+
 export default class AppStack extends cdk.Stack {
   constructor(scope: cdk.App, id: string, props?: CiCdPipelineStackProps) {
     super(scope, id, props);
