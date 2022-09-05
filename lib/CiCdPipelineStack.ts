@@ -33,8 +33,7 @@ export default class AppStack extends cdk.Stack {
         commands: [
           `npm ci`,
           'ls',
-          // 'npm run docker-cdk-test',
-          `npx cdk synth`,
+          'rm -r cdk.out/cache', // For when a non empty zip is created... sigh  // https://github.com/aws/aws-cdk/issues/18459
           'npx cdk ls',
           'ls',
           `npm run build`,

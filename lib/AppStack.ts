@@ -56,8 +56,9 @@ export default class AppStack extends cdk.Stack {
       ],
     });
 
-    const policy = new Policy(this, `${process.env.NODE_ENV}-plutomi-api-policy`, {
+    const policy = new Policy(this, `plutomi-api-policy`, {
       statements: [dynamoAccessPolicyStatement, sesSendEmailPolicy],
+      policyName: `${process.env.NODE_ENV}-plutom-api-policy`,
     });
     taskRole.attachInlinePolicy(policy);
     // Define a fargate task with the newly created execution and task roles
@@ -75,8 +76,9 @@ export default class AppStack extends cdk.Stack {
     const container = taskDefinition.addContainer('plutomi-api-fargate-container', {
       // Get the local docker image, build and deploy it
       image: ecs.ContainerImage.fromAsset('.'),
+
       logging: new ecs.AwsLogDriver({
-        streamPrefix: 'plutomi-api-fargate',
+        streamPrefix: `${process.env.NODE_ENV}-plutomi-api-fargate`,
       }),
     });
 
@@ -160,10 +162,11 @@ export default class AppStack extends cdk.Stack {
      */
     scalableTarget.scaleOnCpuUtilization('CpuScaling', {
       targetUtilizationPercent: 15,
+      policyName: `${process.env.NODE_ENV}-plutomi-cpu-scaling-policy`,
     });
 
     // Create the WAF & its rules
-    const API_WAF = new waf.CfnWebACL(this, `${process.env.NODE_ENV}-API-WAF`, {
+    const API_WAF = new waf.CfnWebACL(this, `plutomi-api-waf`, {
       name: `${process.env.NODE_ENV}-API-WAF`,
       description: 'Blocks IPs that make too many requests',
       defaultAction: {
@@ -294,10 +297,11 @@ export default class AppStack extends cdk.Stack {
     });
 
     // No caching! We're using Cloudfront for its global network and WAF
-    const cachePolicy = new cf.CachePolicy(this, `${process.env.NODE_ENV}-Cache-Policy`, {
+    const cachePolicy = new cf.CachePolicy(this, `CachePlolicy`, {
       defaultTtl: cdk.Duration.seconds(0),
       minTtl: cdk.Duration.seconds(0),
       maxTtl: cdk.Duration.seconds(0),
+      cachePolicyName: `${process.env.NODE_ENV}-plutomi-cache-policy`,
     });
 
     const distribution = new cf.Distribution(this, `${process.env.NODE_ENV}-CF-API-Distribution`, {
