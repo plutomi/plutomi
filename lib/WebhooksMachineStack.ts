@@ -17,35 +17,31 @@ interface WebhooksMachineProps extends cdk.StackProps {
 /**
  * Sends a POST event with applicant info on certain applicant events
  */
-export default class WebhooksMachine extends cdk.Stack {
+export default class WebhooksMachineStack extends cdk.Stack {
   public WebhooksMachine: sfn.StateMachine;
   constructor(scope: Construct, id: string, props: WebhooksMachineProps) {
     super(scope, id, props);
 
     const FUNCTION_NAME = 'get-webhooks-and-send-event-function';
-    const GetWebhooksAndSendEventFunction = new NodejsFunction(
-      this,
-      `${process.env.NODE_ENV}-${FUNCTION_NAME}`,
-      {
-        functionName: `${process.env.NODE_ENV}-${FUNCTION_NAME}`,
-        timeout: cdk.Duration.seconds(5),
-        memorySize: 256,
-        logRetention: RetentionDays.ONE_WEEK,
-        runtime: Runtime.NODEJS_14_X,
-        architecture: Architecture.X86_64, // TODO switch back to arm once codebuild issues are fixed!
-        environment: {
-          NODE_ENV: process.env.NODE_ENV,
-          DYNAMO_TABLE_NAME,
-        },
-        bundling: {
-          minify: true,
-          externalModules: ['aws-sdk'],
-        },
-        handler: 'main',
-        description: 'Sends events to URL in the configured webhook',
-        entry: path.join(__dirname, `/../functions/get-webhooks-and-send-event.ts`),
+    const GetWebhooksAndSendEventFunction = new NodejsFunction(this, FUNCTION_NAME, {
+      functionName: `${process.env.NODE_ENV}-${FUNCTION_NAME}`,
+      timeout: cdk.Duration.seconds(5),
+      memorySize: 256,
+      logRetention: RetentionDays.ONE_WEEK,
+      runtime: Runtime.NODEJS_14_X,
+      architecture: Architecture.X86_64, // TODO switch back to arm once codebuild issues are fixed!
+      environment: {
+        NODE_ENV: process.env.NODE_ENV,
+        DYNAMO_TABLE_NAME,
       },
-    );
+      bundling: {
+        minify: true,
+        externalModules: ['aws-sdk'],
+      },
+      handler: 'main',
+      description: 'Sends events to URL in the configured webhook',
+      entry: path.join(__dirname, `/../functions/get-webhooks-and-send-event.ts`),
+    });
 
     const definition = new tasks.LambdaInvoke(this, 'GetWebhooksAndSendEventFunction', {
       // payload: sfn.TaskInput.fromObject({
@@ -57,8 +53,9 @@ export default class WebhooksMachine extends cdk.Stack {
     }).addRetry({ maxAttempts: 2 });
 
     // ----- State Machine Settings -----
-    const log = new LogGroup(this, `${process.env.NODE_ENV}-WebhooksMachineLogGroup`, {
+    const log = new LogGroup(this, `WebhooksMachineLogGroup`, {
       retention: RetentionDays.ONE_MONTH,
+      logGroupName: `${process.env.NODE_ENV}-WebhooksMachineLogGroup`,
     });
 
     this.WebhooksMachine = new sfn.StateMachine(this, 'WebhooksMachine', {

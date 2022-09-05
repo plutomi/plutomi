@@ -30,12 +30,6 @@ interface EventBridgeStackProps extends cdk.StackProps {
   WebhooksMachine: StateMachine;
 }
 export default class EventBridgeStack extends cdk.Stack {
-  /**
-   *
-   * @param {cdk.Construct} scope
-   * @param {string} id
-   * @param {cdk.StackProps=} props
-   */
   constructor(scope: Construct, id: string, props: EventBridgeStackProps) {
     super(scope, id, props);
 
@@ -43,11 +37,11 @@ export default class EventBridgeStack extends cdk.Stack {
      * Note, if we ever use AWS events directly, they will go to the default event bus and not this one.
      * This is for easy dev / prod testing
      */
-    const bus = new EventBus(this, `${process.env.NODE_ENV}-EventBus`, {
+    const bus = new EventBus(this, `EventBus`, {
       eventBusName: `${process.env.NODE_ENV}-EventBus`,
     });
 
-    bus.archive(`${process.env.NODE_ENV}-EventArchive`, {
+    bus.archive(`EventArchive`, {
       archiveName: `${process.env.NODE_ENV}-EventArchive`,
       eventPattern: {
         account: [cdk.Stack.of(this).account],

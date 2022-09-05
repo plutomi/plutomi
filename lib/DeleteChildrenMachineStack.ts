@@ -10,6 +10,7 @@ import * as iam from 'aws-cdk-lib/aws-iam';
 import path from 'path';
 import { DYNAMO_TABLE_NAME, Entities } from '../Config';
 import { DynamoIAM } from '../types/dynamo';
+import { Construct } from 'constructs';
 
 interface CustomLambdaFunction {
   functionName: string;
@@ -37,13 +38,7 @@ interface DeleteChildrenMachineProps extends cdk.StackProps {
  */
 export default class DeleteChildrenMachineStack extends cdk.Stack {
   public DeleteChildrenMachine: sfn.StateMachine;
-  /**
-   * @param {cdk.Construct} scope
-   * @param {string} id
-   * @param {cdk.StackProps=} props
-   */
-
-  constructor(scope: cdk.App, id: string, props: DeleteChildrenMachineProps) {
+  constructor(scope: Construct, id: string, props: DeleteChildrenMachineProps) {
     super(scope, id, props);
 
     /**
@@ -91,7 +86,7 @@ export default class DeleteChildrenMachineStack extends cdk.Stack {
       fileName,
       description,
     }: CustomLambdaFunction) => {
-      const createdFunction = new NodejsFunction(this, `${process.env.NODE_ENV}-${functionName}`, {
+      const createdFunction = new NodejsFunction(this, functionName, {
         functionName: `${process.env.NODE_ENV}-${functionName}`,
         timeout: cdk.Duration.seconds(5),
         memorySize: 256,
@@ -117,8 +112,9 @@ export default class DeleteChildrenMachineStack extends cdk.Stack {
       });
 
       createdFunction.role.attachInlinePolicy(
-        new iam.Policy(this, `${process.env.NODE_ENV}-${functionName}-policy`, {
+        new iam.Policy(this, `${functionName}-policy`, {
           statements: [functionPolicy],
+          policyName: `${process.env.NODE_ENV}-${functionName}-policy`,
         }),
       );
 
@@ -244,8 +240,9 @@ export default class DeleteChildrenMachineStack extends cdk.Stack {
       .otherwise(new sfn.Succeed(this, 'Nothing to do :)'));
 
     // ----- State Machine Settings -----
-    const log = new LogGroup(this, `${process.env.NODE_ENV}-DeleteChildrenMachineLogGroup`, {
+    const log = new LogGroup(this, `DeleteChildrenMachineLogGroup`, {
       retention: RetentionDays.ONE_MONTH,
+      logGroupName: `${process.env.NODE_ENV}-DeleteChildrenMachineLogGroup`,
     });
 
     this.DeleteChildrenMachine = new sfn.StateMachine(this, 'DeleteChildrenMachine', {
