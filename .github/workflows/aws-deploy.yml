@@ -19,6 +19,8 @@ jobs:
         run: npm i
       - name: Running Build
         run: npm run build
+        env:
+          GITHUB_COMMITS_TOKEN: ${{ secrets.GITHUB_COMMITS_TOKEN }}
 
   STAGING:
     runs-on: ubuntu-latest
