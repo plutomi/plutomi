@@ -6,9 +6,6 @@ env:
 jobs:
   INIT:
     runs-on: ubuntu-latest
-    environment: staging # TODO
-    env:
-      COMMITS_TOKEN: ${{ secrets.COMMITS_TOKEN }}
     steps:
       - name: Print Destination
         run: |
