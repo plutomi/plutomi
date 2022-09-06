@@ -3,6 +3,7 @@ FROM node:16
 # Setting working directory
 WORKDIR /usr/src/app
 
+ARG COMMITS_TOKEN
 
 # Installing dependencies
 COPY package*.json ./
