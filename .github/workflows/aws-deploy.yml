@@ -9,7 +9,7 @@ jobs:
     steps:
       - name: Print Destination
         run: |
-          echo "Deploying to: ${{ env.ENVIRONMET_NAME }}"
+          echo "Deploying to: ${{ env.ENVIRONMENT_NAME }}"
 
       - name: Checkout repo
         uses: actions/checkout@v3
