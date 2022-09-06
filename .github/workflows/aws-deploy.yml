@@ -24,7 +24,7 @@ jobs:
     runs-on: ubuntu-latest
     environment: staging
     needs: INIT
-
+      steps:
       - name: Configure aws credentials
         uses: aws-actions/configure-aws-credentials@master
         with:
