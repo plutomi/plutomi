@@ -7,7 +7,7 @@ env:
   ACM_CERTIFICATE_ID: ${{ secrets.ACM_CERTIFICATE_ID }}
   LOGIN_LINKS_PASSWORD: ${{ secrets.LOGIN_LINKS_PASSWORD }}
   SESSION_SIGNATURE_SECRET_1: ${{ secrets.SESSION_SIGNATURE_SECRET_1 }}
-  
+
 jobs:
   STAGING:
     runs-on: ubuntu-latest
@@ -29,15 +29,15 @@ jobs:
       - name: Print destination
         run: echo "Deploying to staging environment"
 
-      - name: Listing directory
-        run: ls
-
       - name: Configure aws credentials
         uses: aws-actions/configure-aws-credentials@master
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ${{ secrets.AWS_REGION }}
+
+      - name: Logging in to Docker
+        run: npm run docker-fix
 
       - name: Deploy stack
         run: npm run deploy-staging

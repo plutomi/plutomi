@@ -33,7 +33,7 @@ export default class StreamProcessorStack extends cdk.Stack {
         memorySize: 256,
         logRetention: RetentionDays.ONE_WEEK,
         runtime: Runtime.NODEJS_14_X,
-        architecture: Architecture.ARM_64,
+        architecture: Architecture.X86_64, // TODO fix deploy issues ina ctions
         bundling: {
           minify: true,
           externalModules: ['aws-sdk'],

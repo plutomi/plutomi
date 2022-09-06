@@ -37,7 +37,7 @@ export default class WebhooksMachine extends cdk.Stack {
         memorySize: 256,
         logRetention: RetentionDays.ONE_WEEK,
         runtime: Runtime.NODEJS_14_X,
-        architecture: Architecture.ARM_64,
+        architecture: Architecture.X86_64, // TODO fix deploy issues in actions
         environment: {
           NODE_ENV: process.env.NODE_ENV,
           DYNAMO_TABLE_NAME,
