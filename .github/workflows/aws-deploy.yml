@@ -3,7 +3,11 @@ on: [push, workflow_dispatch]
 env:
   COMMITS_TOKEN: ${{ secrets.COMMITS_TOKEN }}
   NODE_ENV: ${{ secrets.NODE_ENV }}
-
+  HOSTED_ZONE_ID: ${{ secrets.HOSTED_ZONE_ID }}
+  ACM_CERTIFICATE_ID: ${{ secrets.ACM_CERTIFICATE_ID }}
+  LOGIN_LINKS_PASSWORD: ${{ secrets.LOGIN_LINKS_PASSWORD }}
+  SESSION_SIGNATURE_SECRET_1: ${{ secrets.SESSION_SIGNATURE_SECRET_1 }}
+  
 jobs:
   STAGING:
     runs-on: ubuntu-latest

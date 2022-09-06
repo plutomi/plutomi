@@ -10,14 +10,6 @@ import DeleteChildrenMachineStack from '../lib/DeleteChildrenMachineStack';
 import WebhooksMachineStack from '../lib/WebhooksMachineStack';
 import AthenaDynamoQueryStack from '../lib/AthenaDynamoQueryStack';
 import StorageStack from '../lib/StorageStack';
-// TODO use relative path
-const resultDotEnv = dotenv.config({
-  path: `${process.cwd()}\\.env.${process.env.NODE_ENV}`,
-});
-
-if (resultDotEnv.error) {
-  throw resultDotEnv.error;
-}
 
 const app = new cdk.App();
 const { bucket } = new StorageStack(app, `${process.env.NODE_ENV}-StorageStack`);
