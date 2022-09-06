@@ -34,7 +34,5 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ${{ secrets.AWS_REGION }}
 
-      - name: Synth stack
-        run: npx cdk synth
       - name: Deploy stack
         run: npm run deploy-staging
