@@ -15,7 +15,7 @@ import { Policy, PolicyStatement } from 'aws-cdk-lib/aws-iam';
 import { DOMAIN_NAME, EXPRESS_PORT } from '../Config';
 import * as waf from 'aws-cdk-lib/aws-wafv2';
 import { Construct } from 'constructs';
-import * as ssm from 'aws-cdk-lib/aws-secretsmanager'
+import * as ssm from 'aws-cdk-lib/aws-secretsmanager';
 
 interface AppStackServiceProps extends cdk.StackProps {
   table: Table;
@@ -82,8 +82,12 @@ export default class AppStack extends cdk.Stack {
         streamPrefix: `${process.env.NODE_ENV}-plutomi-api-fargate`,
       }),
       // TODO add this!
+      // TODO use .env package
       environment: {
-        GITHUB_COMMITS_TOKEN: ""
+        GITHUB_COMMITS_TOKEN: process.env.GITHUB_COMMITS_TOKEN,
+        LOGIN_LINKS_PASSWORD: process.env.LOGIN_LINKS_PASSWORD,
+        SESSION_SIGNATURE_SECRET_1: process.env.SESSION_SIGNATURE_SECRET_1,
+        // TODO add mongo connection
       },
     });
 
