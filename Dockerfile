@@ -3,9 +3,6 @@ FROM node:16
 # Setting working directory
 WORKDIR /usr/src/app
 
-
-ARG GITHUB_COMMITS_TOKEN 
-
 # Installing dependencies
 COPY package*.json ./
 RUN npm install

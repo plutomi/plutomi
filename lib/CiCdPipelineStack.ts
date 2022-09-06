@@ -32,6 +32,9 @@ export default class CiCdPipelineStack extends cdk.Stack {
         input: CodePipelineSource.gitHub(`plutomi/plutomi`, 'cicd'), // todo set to main
         commands: [`npm ci`, `npm run build`, `npx cdk synth`],
         // TODO use correct node version https://github.com/serverless/serverless/issues/8794
+        env: {
+          GITHUB_COMMITS_TOKEN: process.env.GITHUB_COMMITS_TOKEN, // TODO for docker building!!!!!!!
+        },
       }),
       codeBuildDefaults: {
         buildEnvironment: {

@@ -83,12 +83,12 @@ export default class AppStack extends cdk.Stack {
       }),
       // TODO add this!
       // TODO use .env package
-      environment: {
-        GITHUB_COMMITS_TOKEN: process.env.GITHUB_COMMITS_TOKEN,
-        LOGIN_LINKS_PASSWORD: process.env.LOGIN_LINKS_PASSWORD,
-        SESSION_SIGNATURE_SECRET_1: process.env.SESSION_SIGNATURE_SECRET_1,
-        // TODO add mongo connection
-      },
+      // environment: {
+      //   GITHUB_COMMITS_TOKEN: process.env.GITHUB_COMMITS_TOKEN,
+      //   LOGIN_LINKS_PASSWORD: process.env.LOGIN_LINKS_PASSWORD,
+      //   SESSION_SIGNATURE_SECRET_1: process.env.SESSION_SIGNATURE_SECRET_1,
+      //   // TODO add mongo connection
+      // },
     });
 
     // API
