@@ -1,15 +1,12 @@
 on: [push, workflow_dispatch]
 
-env:
-  ENVIRONMENT_NAME: ${{ github.event.inputs.environment }}
-
 jobs:
-  aws_cdk:
+  INIT: 
     runs-on: ubuntu-latest
     steps:
       - name: Print Destination
         run: |
-          echo "Deploying to: ${{ env.ENVIRONMENT_NAME }}"
+          echo "Deploying to staging environment"
 
       - name: Checkout repo
         uses: actions/checkout@v3
@@ -18,6 +15,16 @@ jobs:
         with:
           node-version: '14'
 
+      - name: Install dependencies
+        run: npm i
+      - name: Running Build
+        run: npm run build
+  
+  STAGING:
+    runs-on: ubuntu-latest
+    environment: staging
+    needs: INIT
+
       - name: Configure aws credentials
         uses: aws-actions/configure-aws-credentials@master
         with:
@@ -25,11 +32,7 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_KEY }}
           aws-region: ${{ secrets.AWS_REGION }}
 
-      - name: Install dependencies
-        run: npm i
-      - name: Running Build
-        run: npm run build
       - name: Synth stack
         run: npx cdk synth
       - name: Deploy stack
-        run: npm run deploy-${{ env.ENVIRONMENT_NAME }}
+        run: npm run deploy-staging
