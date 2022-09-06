@@ -27,6 +27,9 @@ jobs:
       - name: Print destination
         run: echo "Deploying to staging environment"
 
+      - name: List stack
+        run: ls
+
       - name: Configure aws credentials
         uses: aws-actions/configure-aws-credentials@master
         with:
