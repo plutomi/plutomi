@@ -9,18 +9,22 @@ jobs:
     steps:
       - name: Print Destination
         run: |
-          echo "Deploying to: ${{ env.ENVIRONMNET_NAME }}"
+          echo "Deploying to: ${{ env.ENVIRONMET_NAME }}"
+
       - name: Checkout repo
         uses: actions/checkout@v3
+
       - uses: actions/setup-node@v2
         with:
           node-version: '14'
+
       - name: Configure aws credentials
         uses: aws-actions/configure-aws-credentials@master
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_KEY }}
           aws-region: ${{ secrets.AWS_REGION }}
+
       - name: Install dependencies
         run: npm i
       - name: Running Build
