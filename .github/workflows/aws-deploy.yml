@@ -6,12 +6,14 @@ env:
 jobs:
   INIT:
     runs-on: ubuntu-latest
+    environment: staging # TODO
     env:
       COMMITS_TOKEN: ${{ secrets.COMMITS_TOKEN }}
     steps:
       - name: Print Destination
         run: |
           echo "Deploying to staging environment"
+          echo ${{ secrets.DEV_SERVER_URL_FROM_ENVIRONMENT_SECRETS }}
 
       - name: Checkout repo
         uses: actions/checkout@v3
