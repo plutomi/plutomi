@@ -76,7 +76,7 @@ export default class AppStack extends cdk.Stack {
 
     const container = taskDefinition.addContainer('plutomi-api-fargate-container', {
       // Get the local docker image, build and deploy it
-      image: ecs.ContainerImage.fromAsset('.'),
+      image: ecs.ContainerImage.fromAsset('.'), // note needs cdk* in .dockerignore https://github.com/aws/aws-cdk/issues/3899#issuecomment-580394612
 
       logging: new ecs.AwsLogDriver({
         streamPrefix: `${process.env.NODE_ENV}-plutomi-api-fargate`,
