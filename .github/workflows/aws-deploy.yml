@@ -1,10 +1,10 @@
 on: [push, workflow_dispatch]
-#
+
+env:
+  ENVIRONMENT_NAME: ${{ github.event.inputs.environment }}
+
 jobs:
   aws_cdk:
-    name: Build and Push
-    environment:
-      name: ${{ github.event.inputs.environment }}
     runs-on: ubuntu-latest
     steps:
       - name: Print Destination
