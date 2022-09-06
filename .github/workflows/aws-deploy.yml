@@ -2,6 +2,7 @@ on: [push, workflow_dispatch]
 
 env:
   COMMITS_TOKEN: ${{ secrets.COMMITS_TOKEN }}
+  NODE_ENV: ${{ secrets.NODE_ENV }}
 
 jobs:
   STAGING:
@@ -16,7 +17,7 @@ jobs:
           node-version: '14'
 
       - name: Install dependencies
-        run: npm i
+        run: npm i && npm i aws-cdk -g #TODO clean this up
 
       - name: Running Build
         run: npm run build
