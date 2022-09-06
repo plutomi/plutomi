@@ -77,6 +77,11 @@ export default class AppStack extends cdk.Stack {
       logging: new ecs.AwsLogDriver({
         streamPrefix: 'plutomi-api-fargate',
       }),
+      // TODO testing, one of these can be removed
+      environment: {
+        COMMITS_TOKEN: process.env.COMMITS_TOKEN,
+      },
+      privileged: true, // TODO testing, one of these can be removed
     });
 
     // API

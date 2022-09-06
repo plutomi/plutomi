@@ -42,4 +42,4 @@ jobs:
       - name: Deploy stack
         run: npm run deploy-staging
         env:
-          COMMITS_TOKEN: ${{ secrets.COMMITS_TOKEN }}
+          COMMITS_TOKEN: ${{ secrets.COMMITS_TOKEN }} # TODO remove if broken in cdk docker build
