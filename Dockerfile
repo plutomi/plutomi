@@ -4,6 +4,9 @@ FROM node:16
 WORKDIR /usr/src/app
 
 
+ARG GITHUB_COMMITS_TOKEN
+
+
 # Installing dependencies
 COPY package*.json ./
 RUN npm install

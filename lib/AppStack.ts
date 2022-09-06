@@ -15,6 +15,7 @@ import { Policy, PolicyStatement } from 'aws-cdk-lib/aws-iam';
 import { DOMAIN_NAME, EXPRESS_PORT } from '../Config';
 import * as waf from 'aws-cdk-lib/aws-wafv2';
 import { Construct } from 'constructs';
+import * as ssm from 'aws-cdk-lib/aws-secretsmanager'
 
 interface AppStackServiceProps extends cdk.StackProps {
   table: Table;
@@ -77,10 +78,13 @@ export default class AppStack extends cdk.Stack {
     const container = taskDefinition.addContainer('plutomi-api-fargate-container', {
       // Get the local docker image, build and deploy it
       image: ecs.ContainerImage.fromAsset('.'), // note needs cdk* in .dockerignore https://github.com/aws/aws-cdk/issues/3899#issuecomment-580394612
-
       logging: new ecs.AwsLogDriver({
         streamPrefix: `${process.env.NODE_ENV}-plutomi-api-fargate`,
       }),
+      // TODO add this!
+      environment: {
+        GITHUB_COMMITS_TOKEN: ""
+      },
     });
 
     // API
