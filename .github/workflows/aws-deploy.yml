@@ -4,8 +4,9 @@ env:
   COMMITS_TOKEN: ${{ secrets.COMMITS_TOKEN }}
 
 jobs:
-  INIT:
+  STAGING:
     runs-on: ubuntu-latest
+    environment: staging
     steps:
       - name: Checkout repo
         uses: actions/checkout@v3
@@ -16,18 +17,14 @@ jobs:
 
       - name: Install dependencies
         run: npm i
+
       - name: Running Build
         run: npm run build
 
-  STAGING:
-    runs-on: ubuntu-latest
-    environment: staging
-    needs: INIT
-    steps:
       - name: Print destination
         run: echo "Deploying to staging environment"
 
-      - name: List stack
+      - name: Listing directory
         run: ls
 
       - name: Configure aws credentials
