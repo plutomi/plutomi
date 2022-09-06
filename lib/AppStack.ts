@@ -18,6 +18,7 @@ import { Construct } from 'constructs';
 
 interface AppStackServiceProps extends cdk.StackProps {
   table: Table;
+  stageName: 'staging' | 'production'; // TODO add a type
 }
 
 export default class AppStack extends cdk.Stack {
@@ -113,6 +114,7 @@ export default class AppStack extends cdk.Stack {
       `arn:aws:acm:${this.region}:${this.account}:certificate/${process.env.ACM_CERTIFICATE_ID}`,
     );
 
+    // TODO unrelated, make domain name a var depending on the curren stage IN the email templates
     // Create a load-balanced Fargate service and make it public with HTTPS traffic only
     const loadBalancedFargateService = new ecsPatterns.ApplicationLoadBalancedFargateService(
       this,
@@ -160,7 +162,7 @@ export default class AppStack extends cdk.Stack {
      * Good reading on fargate 25% time :>
      * https://github.com/aws/containers-roadmap/issues/163
      */
-    scalableTarget.scaleOnCpuUtilization('CpuScaling', {
+    scalableTarget.scaleOnCpuUtilization('plutomi-cpu-scaling', {
       targetUtilizationPercent: 15,
       policyName: `${process.env.NODE_ENV}-plutomi-cpu-scaling-policy`,
     });
@@ -297,7 +299,7 @@ export default class AppStack extends cdk.Stack {
     });
 
     // No caching! We're using Cloudfront for its global network and WAF
-    const cachePolicy = new cf.CachePolicy(this, `CachePlolicy`, {
+    const cachePolicy = new cf.CachePolicy(this, `plutomi-cache-policy`, {
       defaultTtl: cdk.Duration.seconds(0),
       minTtl: cdk.Duration.seconds(0),
       maxTtl: cdk.Duration.seconds(0),
@@ -307,7 +309,8 @@ export default class AppStack extends cdk.Stack {
     const distribution = new cf.Distribution(this, `${process.env.NODE_ENV}-CF-API-Distribution`, {
       certificate: apiCert,
       webAclId: API_WAF.attrArn,
-      domainNames: [DOMAIN_NAME],
+      // TODO add a type here for stage name
+      domainNames: [props.stageName === 'staging' ? `staging.${DOMAIN_NAME}` : DOMAIN_NAME],
       defaultBehavior: {
         origin: new origins.LoadBalancerV2Origin(loadBalancedFargateService.loadBalancer),
 

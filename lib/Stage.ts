@@ -10,8 +10,9 @@ import StreamProcessorStack from './StreamProcessorStack';
 import WebhooksMachineStack from './WebhooksMachineStack';
 import WebhooksMachine from './WebhooksMachineStack';
 
+// TODO stagename type
 export default class PipelineStage extends cdk.Stage {
-  constructor(scope: Construct, stageName: string, props?: cdk.StageProps) {
+  constructor(scope: Construct, stageName: 'staging' | 'production', props?: cdk.StageProps) {
     super(scope, stageName, props);
 
     // const appStack = new AppStack(this, `${stageName}-AppStack`);
@@ -34,6 +35,11 @@ export default class PipelineStage extends cdk.Stage {
     const eventBridgeStack = new EventBridgeStack(this, `EventBridgeStack`, {
       WebhooksMachine,
       DeleteChildrenMachine,
+    });
+
+    const appStack = new AppStack(this, `AppStack`, {
+      table,
+      stageName,
     });
   }
 }

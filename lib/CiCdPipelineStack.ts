@@ -30,7 +30,7 @@ export default class CiCdPipelineStack extends cdk.Stack {
       pipelineName: `PlutomiCiCdPipeline`, //
       synth: new ShellStep(`PlutomiSynth`, {
         input: CodePipelineSource.gitHub(`plutomi/plutomi`, 'cicd'), // todo set to main
-        commands: [`npm ci`, `npx cdk synth`, `npm run build`],
+        commands: [`npm ci`, `npm run build`, `npx cdk synth`],
         // TODO use correct node version https://github.com/serverless/serverless/issues/8794
       }),
       codeBuildDefaults: {
@@ -74,7 +74,7 @@ export default class CiCdPipelineStack extends cdk.Stack {
         },
       },
     }); //
-//
+    //
     const stagingStage = pipeline.addStage(new PipelineStage(this, 'staging'));
 
     // stagingStage.addPost(new ManualApprovalStep(`Manual approval before production deployment`));
