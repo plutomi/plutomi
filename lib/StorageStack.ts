@@ -12,6 +12,6 @@ export default class StorageStack extends cdk.Stack {
       blockPublicAccess: s3.BlockPublicAccess.BLOCK_ALL,
       bucketName: `${process.env.NODE_ENV}-plutomi-assets`,
       versioned: true,
-    });
+    }); 
   }
 }

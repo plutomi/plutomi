@@ -80,11 +80,13 @@ export default class AppStack extends cdk.Stack {
           COMMITS_TOKEN: process.env.COMMITS_TOKEN,
         },
       }),
-      // Test
+
       logging: new ecs.AwsLogDriver({
         streamPrefix: 'plutomi-api-fargate',
       }),
-      // TODO test environment variables here for backend!
+      environment: {
+        STATUS_CHECK: `Setting in CDK stack`,
+      },
     });
 
     // API
