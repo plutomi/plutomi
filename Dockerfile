@@ -10,6 +10,8 @@ RUN npm install
 # Copying source files
 COPY . .
 
+ARG COMMITS_TOKEN
+
 # Building app
 RUN npm run build
 EXPOSE 3000 
