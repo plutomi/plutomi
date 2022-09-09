@@ -75,16 +75,15 @@ export default class AppStack extends cdk.Stack {
 
     const container = taskDefinition.addContainer('plutomi-api-fargate-container', {
       // Get the local docker image, build and deploy it
-      image: ecs.ContainerImage.fromAsset('.'),
+      image: ecs.ContainerImage.fromAsset('.', {
+        buildArgs: {
+          COMMITS_TOKEN: process.env.COMMITS_TOKEN,
+        },
+      }),
       logging: new ecs.AwsLogDriver({
         streamPrefix: 'plutomi-api-fargate',
       }),
-      secrets: {
-        COMMITS_TOKEN: ecs.Secret.fromSecretsManager(tokenTest, 'COMMITS_TOKEN'),
-      },
-
-      // command  // TODO try commands
-      // TODO testing, one of these can be removed
+      // TODO test environment variables here for backend!
     });
 
     // API
