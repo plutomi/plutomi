@@ -81,7 +81,7 @@ export default class AppStack extends cdk.Stack {
 
       logging: new ecs.AwsLogDriver({
         streamPrefix: 'plutomi-api-fargate',
-      }),
+      }), //
       environment: {
         STATUS_CHECK: `Setting in CDK stack`,
         NODE_ENV: process.env.NODE_ENV,
