@@ -40,4 +40,5 @@ jobs:
         run: npm run docker-fix
 
       - name: Deploy stack
-        env: COMMITS_TOKEN="${{ secrets.COMMITS_TOKEN }}"
+        env:
+          COMMITS_TOKEN: ${{ secrets.COMMITS_TOKEN }}
