@@ -11,7 +11,7 @@
     "dev-server": "npm run docker-fix && cross-env NODE_ENV=development nodemon app.ts",
     "dev": "npm run docker-fix && cross-env NODE_ENV=development cdk deploy development-DynamoDBStack development-StreamProcessorStack development-EventBridgeStack development-StorageStack development-DeleteChildrenMachineStack development-AthenaDynamoQueryStack development-WebhooksMachineStack && npm run dev-server",
     "start": "cross-env NODE_ENV=production ts-node --transpile-only app.ts",
-    "deploy-staging": "COMMITS_TOKEN=process.env.COMMITS_TOKEN cdk deploy  staging-DynamoDBStack staging-StreamProcessorStack staging-AppStack staging-EventBridgeStack staging-StorageStack staging-DeleteChildrenMachineStack staging-AthenaDynamoQueryStack staging-WebhooksMachineStack --verbose",
+    "deploy-staging": " cdk deploy  staging-DynamoDBStack staging-StreamProcessorStack staging-AppStack staging-EventBridgeStack staging-StorageStack staging-DeleteChildrenMachineStack staging-AthenaDynamoQueryStack staging-WebhooksMachineStack --verbose",
     "deploy-production": "npm run docker-fix && cross-env NODE_ENV=production cdk deploy production-DynamoDBStack production-StreamProcessorStack production-AppStack production-EventBridgeStack production-StorageStack production-DeleteChildrenMachineStack production-AthenaDynamoQueryStack production-WebhooksMachineStack --verbose"
   },
   "dependencies": {
