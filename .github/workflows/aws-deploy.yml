@@ -46,6 +46,3 @@ jobs:
 
           echo "ENV vars set! Deploying to stage..."
           npm run deploy-staging
-
-        env:
-          COMMITS_TOKEN: ${{ secrets.COMMITS_TOKEN }} # TODO remove if broken in cdk docker build

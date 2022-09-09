@@ -14,6 +14,7 @@ import { CloudFrontTarget } from 'aws-cdk-lib/aws-route53-targets';
 import { Policy, PolicyStatement } from 'aws-cdk-lib/aws-iam';
 import { DOMAIN_NAME, EXPRESS_PORT } from '../Config';
 import * as waf from 'aws-cdk-lib/aws-wafv2';
+import * as sm from 'aws-cdk-lib/aws-secretsmanager';
 
 interface AppStackServiceProps extends cdk.StackProps {
   table: Table;
@@ -30,6 +31,7 @@ export default class AppStack extends cdk.Stack {
       assumedBy: new iam.ServicePrincipal('ecs-tasks.amazonaws.com'),
     });
 
+    const tokenTest = sm.Secret.fromSecretNameV2(this, 'testsecret', '/example/testing/secret');
     // Allows Fargate to access DynamoDB
     const dynamoAccessPolicyStatement = new PolicyStatement({
       actions: [
@@ -77,8 +79,8 @@ export default class AppStack extends cdk.Stack {
       logging: new ecs.AwsLogDriver({
         streamPrefix: 'plutomi-api-fargate',
       }),
-      environment: {
-        COMMITS_TOKEN: process.env.COMMITS_TOKEN,
+      secrets: {
+        COMMITS_TOKEN: ecs.Secret.fromSecretsManager(tokenTest, 'COMMITS_TOKEN'),
       },
 
       // command  // TODO try commands
