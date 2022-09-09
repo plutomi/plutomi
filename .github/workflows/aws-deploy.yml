@@ -40,9 +40,4 @@ jobs:
         run: npm run docker-fix
 
       - name: Deploy stack
-        run: |
-          echo "Setting environment variables"
-          COMMITS_TOKEN="${{ secrets.COMMITS_TOKEN }}"
-
-          echo "ENV vars set! Deploying to stage..."
-          npm run deploy-staging
+        env: COMMITS_TOKEN="${{ secrets.COMMITS_TOKEN }}"
