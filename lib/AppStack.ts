@@ -125,7 +125,7 @@ export default class AppStack extends cdk.Stack {
       this,
       'PlutomiApi',
       {
-        cluster, // Required
+        cluster,
         certificate: apiCert,
         taskDefinition,
         desiredCount: 3,
@@ -312,7 +312,8 @@ export default class AppStack extends cdk.Stack {
     const distribution = new cf.Distribution(this, `${process.env.NODE_ENV}-CF-API-Distribution`, {
       certificate: apiCert,
       webAclId: API_WAF.attrArn,
-      domainNames: [DOMAIN_NAME],
+      // @ts-ignore // TODO: Add a type for NODE_ENV for staging!!!!!!
+      domainNames: [process.env.NODE_ENV === 'staging' ? `staging.${DOMAIN_NAME}` : DOMAIN_NAME],
       defaultBehavior: {
         origin: new origins.LoadBalancerV2Origin(loadBalancedFargateService.loadBalancer),
 
