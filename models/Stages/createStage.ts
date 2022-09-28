@@ -27,13 +27,28 @@ const getAdjacentStagesBasedOnPosition = ({
   position,
   otherStages,
 }: GetAdjacentStagesBasedOnPositionProps): AdjacentStagesResult => {
-  if (position !== 0 && !position) {
+  if (position === undefined) {
     // Position not provided, add it to the end
     return {
       nextStageId: undefined,
       previousStageId: otherStages[otherStages.length - 1]?.stageId ?? undefined,
     };
   }
+
+  if (position === 0) {
+    // First in the list, get the current first stage
+    return {
+      previousStageId: undefined,
+      nextStageId:
+        otherStages.find((stage) => stage.previousStageId === undefined)?.stageId ?? undefined,
+    };
+  }
+
+  // Somewhere in the middle
+
+  // TODO needs function to sort all stages in an opening using hash map
+  // Then, get stage at specific position
+  return {};
 };
 // TODO this should take a position OR a nextStageId OR previousStageId
 // For now, this will only take a position and we will handle it
