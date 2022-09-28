@@ -35,8 +35,10 @@ export interface DynamoStage {
   updatedAt: string;
   orgId: string;
   totalQuestions: number;
-  questionOrder: string[]; // TODO remove for linked list
+  questionOrder: string[]; // TODO remove for linked list instead
   stageId: string;
+  nextStageId: string;
+  previousStageId: string;
   totalApplicants: number;
   openingId: string;
   GSI1PK: `${Entities.ORG}#${string}#${Entities.OPENING}#${string}#${Entities.STAGE}S`;
@@ -112,7 +114,6 @@ export interface DynamoOpening {
   entityType: Entities.OPENING;
   createdAt: string;
   updatedAt: string;
-  stageOrder: string[];
   openingId: string;
   openingName: string;
   GSI1PK: `${Entities.ORG}#${string}#${Entities.OPENING}S`;
