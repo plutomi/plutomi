@@ -58,7 +58,6 @@ export const createStage = async (req: Request, res: Response) => {
     GSI1SK,
     openingId,
     position,
-    stageOrder: opening.stageOrder,
   });
 
   if (stageError) {
