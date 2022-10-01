@@ -3,11 +3,11 @@ import { ddbClient } from './ddbClient';
 
 const marshallOptions = {
   // Whether to automatically convert empty strings, blobs, and sets to `null`.
-  convertEmptyValues: false, // false, by default.
+  convertEmptyValues: false,
   // Whether to remove undefined values while marshalling.
-  removeUndefinedValues: false, // false, by default.
+  removeUndefinedValues: true,
   // Whether to convert typeof object to map attribute.
-  convertClassInstanceToMap: false, // false, by default.
+  convertClassInstanceToMap: false,
 };
 
 const unmarshallOptions = {

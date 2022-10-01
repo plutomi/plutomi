@@ -59,13 +59,20 @@ export const createStage = async (req: Request, res: Response) => {
   });
 
   if (failedToGetStages) {
+    console.log(`Erro getting stages`, failedToGetStages);
     return res.status(500).json({ message: 'An error ocurred retrieving opening info' });
   }
+
+  console.log(`Stages in opening`, stagesInOpening);
 
   const { nextStageId, previousStageId } = getAdjacentStagesBasedOnPosition({
     position,
     otherStages: stagesInOpening,
   });
+
+  console.log(`Next stage ID`, nextStageId);
+  console.log(`Previous stage id`, previousStageId);
+
   // Create the stage and update the stage order, model will handle where to place it
   const [created, stageError] = await DB.Stages.createStage({
     orgId: user.orgId,
@@ -77,6 +84,7 @@ export const createStage = async (req: Request, res: Response) => {
   });
 
   if (stageError) {
+    console.error(`Error creating stage`);
     const { status, body } = CreateError.SDK(stageError, 'An error ocurred creating your stage');
     return res.status(status).json(body);
   }

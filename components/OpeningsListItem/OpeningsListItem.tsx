@@ -5,6 +5,8 @@ import { OpeningState, WEBSITE_URL } from '../../Config';
 import { DynamoOpening, DynamoUser } from '../../types/dynamo';
 import * as Time from '../../utils/time';
 import { ClickToCopy } from '../ClickToCopy';
+import { useAllStagesInOpening } from '../../SWR/useAllStagesInOpening';
+import { Loader } from '../Loader';
 
 interface OpeningsListItemProps {
   opening: DynamoOpening;
@@ -12,6 +14,16 @@ interface OpeningsListItemProps {
 }
 
 export const OpeningsListItem = ({ opening, user }: OpeningsListItemProps) => {
+  const { stages, isStagesError, isStagesLoading } = useAllStagesInOpening({
+    openingId: opening.openingId,
+  });
+
+  if (isStagesLoading) {
+    return <Loader text="Loading openings..."></Loader>;
+  }
+
+  if (isStagesError) return <h1>An error ocurred retrieving info for this opening</h1>;
+
   /**
    * If the opening has stages, go to the first stage and view aplicants.
    * Otherwise, go to the settings page for the opening to create one
@@ -19,7 +31,7 @@ export const OpeningsListItem = ({ opening, user }: OpeningsListItemProps) => {
 
   const endingUrl =
     opening?.totalStages > 0
-      ? `stages/${opening.stageOrder[0]}/applicants` // TODO should this end with applicants?
+      ? `stages/${stages[0]}/applicants` // TODO should this end with applicants?
       : `settings`;
 
   return (
