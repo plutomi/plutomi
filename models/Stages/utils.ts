@@ -10,6 +10,7 @@ interface AdjacentStagesResult {
 }
 
 export const sortStages = (unsortedStagesInOpening: DynamoStage[]): DynamoStage[] => {
+  console.log(`Sorting stages`, unsortedStagesInOpening);
   if (!unsortedStagesInOpening.length) return [];
   if (unsortedStagesInOpening.length === 1) return unsortedStagesInOpening; // No need to sort
 

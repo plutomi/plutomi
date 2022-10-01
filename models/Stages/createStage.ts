@@ -39,7 +39,7 @@ export const createStage = async (props: CreateStageInput): Promise<[null, null]
   };
 
   try {
-    const transactParams: TransactWriteCommandInput = {
+    let transactParams: TransactWriteCommandInput = {
       TransactItems: [
         {
           // Add the new stage
@@ -70,6 +70,39 @@ export const createStage = async (props: CreateStageInput): Promise<[null, null]
         },
       ],
     };
+
+    // If our newly created stage has a nextStageId, we need to set previousStageId on that nextStage to be our newly created stageId
+    if (nextStageId) {
+      transactParams.TransactItems.push({
+        Update: {
+          Key: {
+            PK: `${Entities.ORG}#${orgId}#${Entities.OPENING}#${openingId}#${Entities.STAGE}#${nextStageId}`,
+            SK: Entities.STAGE,
+          },
+          TableName: `${process.env.NODE_ENV}-${DYNAMO_TABLE_NAME}`,
+          UpdateExpression: 'SET previousStageId = :previousStageId',
+          ExpressionAttributeValues: {
+            ':previousStageId': stageId,
+          },
+        },
+      });
+    }
+    // If our newly created stage has a previousStageId, we need to set nextStageId on that previousStage to be our newly created stageId
+    if (previousStageId) {
+      transactParams.TransactItems.push({
+        Update: {
+          Key: {
+            PK: `${Entities.ORG}#${orgId}#${Entities.OPENING}#${openingId}#${Entities.STAGE}#${nextStageId}`,
+            SK: Entities.STAGE,
+          },
+          TableName: `${process.env.NODE_ENV}-${DYNAMO_TABLE_NAME}`,
+          UpdateExpression: 'SET nextStageId = :nextStageId',
+          ExpressionAttributeValues: {
+            ':nextStageId': stageId,
+          },
+        },
+      });
+    }
 
     await Dynamo.send(new TransactWriteCommand(transactParams));
     return [null, null];
