@@ -88,7 +88,7 @@ export const createStage = async (props: CreateStageInput): Promise<[null, null]
       transactParams.TransactItems.push({
         Update: {
           Key: {
-            PK: `${Entities.ORG}#${orgId}#${Entities.OPENING}#${openingId}#${Entities.STAGE}#${nextStageId}`,
+            PK: `${Entities.ORG}#${orgId}#${Entities.OPENING}#${openingId}#${Entities.STAGE}#${previousStageId}`,
             SK: Entities.STAGE,
           },
           TableName: `${process.env.NODE_ENV}-${DYNAMO_TABLE_NAME}`,
