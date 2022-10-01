@@ -23,42 +23,25 @@ interface AdjacentStagesResult {
   previousStageId?: string;
 }
 
-// TODO make this a reusable function so that it can be used for questions
 const sortStages = (unsortedStagesInOpening: DynamoStage[]) => {
   if (!unsortedStagesInOpening.length) return [];
-  // 1. Find the current first stage
-  // 2. Create an object with all of the stages
-  // 3. Sort the Object.values by traversing the nextStageId starting with the first node
+  if (!unsortedStagesInOpening.length) return unsortedStagesInOpening; // No need to sort
 
   const mapWithStages = {};
   const firstStage = unsortedStagesInOpening.find((stage) => stage.previousStageId === undefined);
-  mapWithStages['0'] = firstStage;
 
-  const moreThanOneStage = unsortedStagesInOpening.length > 1;
-
-  if (!moreThanOneStage) {
-    return [firstStage];
-  }
-
-  // Get the rest of the stages and add them to the object, the sort order does not matter here
   const sortedStages = [];
-  const restOfStages = unsortedStagesInOpening.slice(1);
+  sortedStages.push(firstStage);
 
-  // Push them into the object
-  restOfStages.map((stage) => {
+  // Push all but the first stage into an object so we can vet *almost* O(1) queries
+  unsortedStagesInOpening.slice(1).map((stage) => {
     mapWithStages[stage.stageId] = stage;
   });
-
-  // At this point our map will be full of stages, and we can easily traverse it at *almost* O(1)
-  // instead of filtering the list each time
-
-  sortedStages.push(firstStage);
 
   let reachedTheEnd = false;
 
   while (!reachedTheEnd) {
-    let nextStageId = firstStage.nextStageId;
-    const nextStage = mapWithStages[nextStageId];
+    const nextStage = mapWithStages[firstStage.nextStageId];
     sortedStages.push(nextStage);
 
     if (!nextStage.nextStageId) {
@@ -66,6 +49,7 @@ const sortStages = (unsortedStagesInOpening: DynamoStage[]) => {
     }
     // Continue loop until all stages are sorted
   }
+  return sortedStages;
 };
 
 const getAdjacentStagesBasedOnPosition = ({
