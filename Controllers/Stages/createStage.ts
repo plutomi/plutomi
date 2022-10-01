@@ -4,6 +4,7 @@ import { JOI_SETTINGS, LIMITS } from '../../Config';
 import * as CreateError from '../../utils/createError';
 import { DynamoStage } from '../../types/dynamo';
 import { DB } from '../../models';
+import { getAdjacentStagesBasedOnPosition } from '../../models/Stages/utils';
 
 export interface APICreateStageOptions extends Required<Pick<DynamoStage, 'openingId' | 'GSI1SK'>> {
   /**
@@ -52,12 +53,27 @@ export const createStage = async (req: Request, res: Response) => {
     return res.status(404).json({ message: 'Opening does not exist' });
   }
 
+  const [stagesInOpening, failedToGetStages] = await DB.Stages.getStagesInOpening({
+    openingId,
+    orgId: user.orgId,
+  });
+
+  if (failedToGetStages) {
+    return res.status(500).json({ message: 'An error ocurred retrieving opening info' });
+  }
+
+  const { nextStageId, previousStageId } = getAdjacentStagesBasedOnPosition({
+    position,
+    otherStages: stagesInOpening,
+  });
   // Create the stage and update the stage order, model will handle where to place it
   const [created, stageError] = await DB.Stages.createStage({
     orgId: user.orgId,
     GSI1SK,
     openingId,
     position,
+    nextStageId,
+    previousStageId,
   });
 
   if (stageError) {

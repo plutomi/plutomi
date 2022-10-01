@@ -67,6 +67,10 @@ export const createApplicant = async (req: Request, res: Response) => {
     openingId,
   });
 
+  if (failedToGetStages) {
+    return res.status(500).json({ message: 'An error ocurred retrieving opening info' });
+  }
+
   const [created, failed] = await DB.Applicants.createApplicant({
     firstName,
     lastName,
