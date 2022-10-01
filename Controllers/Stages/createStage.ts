@@ -78,7 +78,6 @@ export const createStage = async (req: Request, res: Response) => {
     orgId: user.orgId,
     GSI1SK,
     openingId,
-    position,
     nextStageId,
     previousStageId,
   });

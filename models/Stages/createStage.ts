@@ -6,17 +6,13 @@ import { DynamoStage } from '../../types/dynamo';
 import * as Time from '../../utils/time';
 
 export interface CreateStageInput
-  extends Pick<DynamoStage, 'orgId' | 'GSI1SK' | 'openingId' | 'nextStageId' | 'previousStageId'> {
-  /**
-   * Optional position on where to place the new opening, optional. Added to the end if not provided
-   */
-  position?: number;
-}
+  extends Pick<DynamoStage, 'orgId' | 'GSI1SK' | 'openingId' | 'nextStageId' | 'previousStageId'> {}
 
 // TODO this should take a position OR a nextStageId OR previousStageId
 // For now, this will only take a position and we will handle it
 export const createStage = async (props: CreateStageInput): Promise<[null, null] | [null, any]> => {
-  const { orgId, GSI1SK, openingId, position, nextStageId, previousStageId } = props;
+  const { orgId, GSI1SK, openingId, nextStageId, previousStageId } = props;
+  // TODO allow creating stages in a specific position!!!!!!!
   const stageId = nanoid(ID_LENGTHS.STAGE);
   const now = Time.currentISO();
 
