@@ -23,7 +23,7 @@ interface AdjacentStagesResult {
   previousStageId?: string;
 }
 
-const sortStages = (unsortedStagesInOpening: DynamoStage[]) => {
+const sortStages = (unsortedStagesInOpening: DynamoStage[]): DynamoStage[] => {
   if (!unsortedStagesInOpening.length) return [];
   if (unsortedStagesInOpening.length === 1) return unsortedStagesInOpening; // No need to sort
 
@@ -33,7 +33,7 @@ const sortStages = (unsortedStagesInOpening: DynamoStage[]) => {
   const sortedStages = [];
   sortedStages.push(firstStage);
 
-  // Push all but the first stage into an object so we can vet *almost* O(1) queries
+  // Push all but the first stage into an object so we can get *almost* O(1) queries
   unsortedStagesInOpening.slice(1).map((stage) => {
     mapWithStages[stage.stageId] = stage;
   });
@@ -54,7 +54,7 @@ const sortStages = (unsortedStagesInOpening: DynamoStage[]) => {
 
 const getAdjacentStagesBasedOnPosition = ({
   position,
-  otherStages, // Make sure these are sorted!!!!!!!!!!!!
+  otherStages,
 }: GetAdjacentStagesBasedOnPositionProps): AdjacentStagesResult => {
   if (position === undefined) {
     // Position not provided, add it to the end
@@ -72,12 +72,15 @@ const getAdjacentStagesBasedOnPosition = ({
     };
   }
 
-  // Somewhere in the middle
+  const sortedStages = sortStages(otherStages);
 
-  // TODO needs function to sort all stages in an opening using hash map
-  // Then, get stage at specific position
-  return {};
+  return {
+    previousStageId: sortedStages[position]?.stageId ?? undefined,
+    nextStageId: sortedStages[position]?.stageId ?? undefined,
+  };
 };
+
+
 // TODO this should take a position OR a nextStageId OR previousStageId
 // For now, this will only take a position and we will handle it
 export const createStage = async (props: CreateStageInput): Promise<[null, null] | [null, any]> => {
