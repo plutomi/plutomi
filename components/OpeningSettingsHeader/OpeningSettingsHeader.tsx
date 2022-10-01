@@ -10,6 +10,7 @@ import { OpeningState, WEBSITE_URL } from '../../Config';
 import { Loader } from '../Loader';
 import { OpeningSettingsBreadcrumbs } from '../OpeningSettingsBreadcrumbs';
 import { CrumbProps } from '../types';
+import { useAllStagesInOpening } from '../../SWR/useAllStagesInOpening';
 
 export const OpeningSettingsHeader = () => {
   const router = useRouter();
@@ -21,6 +22,7 @@ export const OpeningSettingsHeader = () => {
   if (isOpeningError) return <h1>An error ocurred retrieving info for this opening</h1>;
 
   if (isOpeningLoading) return <Loader text="Loading opening..." />;
+  const { stages, isStagesLoading, isStagesError } = useAllStagesInOpening({ openingId });
 
   const crumbs: CrumbProps[] = [
     {
@@ -34,7 +36,7 @@ export const OpeningSettingsHeader = () => {
   if (opening?.totalStages > 0) {
     crumbs.unshift({
       name: 'Applicants',
-      href: `/openings/${openingId}/stages/${opening?.stageOrder[0]}/applicants`, // TODO should this end with /applicants?
+      href: `/openings/${openingId}/stages/${stages[0].stageId}/applicants`, // TODO should this end with /applicants?
       current: false,
     });
   }
