@@ -21,9 +21,10 @@ export const OpeningSettingsHeader = () => {
   const { stages, isStagesLoading, isStagesError } = useAllStagesInOpening({
     openingId,
   });
-  if (isOpeningError) return <h1>An error ocurred retrieving info for this opening</h1>;
+  if (isOpeningError || isStagesError)
+    return <h1>An error ocurred retrieving info for this opening</h1>;
 
-  if (isOpeningLoading) return <Loader text="Loading opening..." />;
+  if (isOpeningLoading || isStagesLoading) return <Loader text="Loading opening..." />;
 
   const crumbs: CrumbProps[] = [
     {
@@ -33,6 +34,7 @@ export const OpeningSettingsHeader = () => {
     },
   ];
 
+  console.log(`RETURNED STAGES FE`, stages);
   // Hide applicant crumb if opening has no stages
   if (opening?.totalStages > 0) {
     crumbs.unshift({
