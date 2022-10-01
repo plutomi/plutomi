@@ -36,7 +36,7 @@ export const OpeningSettingsHeader = () => {
 
   console.log(`RETURNED STAGES FE`, stages);
   // Hide applicant crumb if opening has no stages
-  if (opening?.totalStages > 0) {
+  if (stages.length) {
     crumbs.unshift({
       name: 'Applicants',
       href: `/openings/${openingId}/stages/${stages[0].stageId}/applicants`, // TODO should this end with /applicants?
