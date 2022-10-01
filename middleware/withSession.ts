@@ -6,6 +6,7 @@ import { DB } from '../models';
 export default async function withSession(req: Request, res: Response, next: NextFunction) {
   const userId = req.signedCookies[COOKIE_NAME];
   if (!userId) {
+    res.location(WEBSITE_URL);
     return res.status(401).json({ message: 'Please log in again' });
   }
 
