@@ -25,7 +25,7 @@ interface AdjacentStagesResult {
 
 const sortStages = (unsortedStagesInOpening: DynamoStage[]) => {
   if (!unsortedStagesInOpening.length) return [];
-  if (!unsortedStagesInOpening.length) return unsortedStagesInOpening; // No need to sort
+  if (unsortedStagesInOpening.length === 1) return unsortedStagesInOpening; // No need to sort
 
   const mapWithStages = {};
   const firstStage = unsortedStagesInOpening.find((stage) => stage.previousStageId === undefined);
@@ -54,7 +54,7 @@ const sortStages = (unsortedStagesInOpening: DynamoStage[]) => {
 
 const getAdjacentStagesBasedOnPosition = ({
   position,
-  otherStages,
+  otherStages, // Make sure these are sorted!!!!!!!!!!!!
 }: GetAdjacentStagesBasedOnPositionProps): AdjacentStagesResult => {
   if (position === undefined) {
     // Position not provided, add it to the end
