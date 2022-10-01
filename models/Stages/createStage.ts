@@ -23,6 +23,45 @@ interface AdjacentStagesResult {
   previousStageId?: string;
 }
 
+const sortStages = (unsortedStagesInOpening: DynamoStage[]) => {
+  if (!unsortedStagesInOpening.length) return [];
+
+  // 1. Find the current first stage
+  // 2. Create a hash map with all of the stages
+  // 3. Sort the Object.values()
+
+  const mapWithStages = {};
+
+  const firstStage = unsortedStagesInOpening.find((stage) => stage.previousStageId === undefined);
+
+  mapWithStages['0'] = firstStage;
+
+  // Get the rest of the stages and add them to the object, the sort order does not matter!!!!!!!
+  if (unsortedStagesInOpening.length > 1) {
+    const restOfStages = unsortedStagesInOpening.slice(1);
+
+    // Push them into the hash map
+    restOfStages.map((stage, idx) => {
+      // +1 Required since we already have the other stage
+      mapWithStages[idx + 1] = stage;
+    });
+  }
+
+  // At this point our map will be full of stages, and we can easily traverse it at *almost* O(1)
+  // instead of filtering the list each time
+
+  const sortedStages = [];
+
+  sortedStages.push(firstStage);
+
+  
+  if (firstStage.nextStageId) {
+    while (true) {
+      // Traverse the entire object
+    }
+  }
+};
+
 const getAdjacentStagesBasedOnPosition = ({
   position,
   otherStages,
@@ -39,8 +78,7 @@ const getAdjacentStagesBasedOnPosition = ({
     // First in the list, get the current first stage
     return {
       previousStageId: undefined,
-      nextStageId:
-        otherStages.find((stage) => stage.previousStageId === undefined)?.stageId ?? undefined,
+      nextStageId: otherStages[0]?.stageId ?? undefined,
     };
   }
 
@@ -57,7 +95,6 @@ export const createStage = async (props: CreateStageInput): Promise<[null, null]
   const stageId = nanoid(ID_LENGTHS.STAGE);
   const now = Time.currentISO();
 
-  const;
   const newStage: DynamoStage = {
     PK: `${Entities.ORG}#${orgId}#${Entities.OPENING}#${openingId}#${Entities.STAGE}#${stageId}`,
     SK: Entities.STAGE,
