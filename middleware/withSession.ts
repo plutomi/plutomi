@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from 'express';
-import { COOKIE_NAME, COOKIE_SETTINGS } from '../Config';
+import { COOKIE_NAME, COOKIE_SETTINGS, WEBSITE_URL } from '../Config';
 import { DB } from '../models';
 
 // eslint-disable-next-line consistent-return
