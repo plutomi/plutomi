@@ -14,73 +14,6 @@ export interface CreateStageInput
   position?: number;
 }
 
-// TODO move this to utils
-interface GetAdjacentStagesBasedOnPositionProps {
-  position?: number;
-  otherStages: DynamoStage[];
-}
-interface AdjacentStagesResult {
-  nextStageId?: string;
-  previousStageId?: string;
-}
-
-const sortStages = (unsortedStagesInOpening: DynamoStage[]): DynamoStage[] => {
-  if (!unsortedStagesInOpening.length) return [];
-  if (unsortedStagesInOpening.length === 1) return unsortedStagesInOpening; // No need to sort
-
-  const mapWithStages = {};
-  const firstStage = unsortedStagesInOpening.find((stage) => stage.previousStageId === undefined);
-
-  const sortedStages = [];
-  sortedStages.push(firstStage);
-
-  // Push all but the first stage into an object so we can get *almost* O(1) queries
-  unsortedStagesInOpening.slice(1).map((stage) => {
-    mapWithStages[stage.stageId] = stage;
-  });
-
-  let reachedTheEnd = false;
-
-  while (!reachedTheEnd) {
-    const nextStage = mapWithStages[firstStage.nextStageId];
-    sortedStages.push(nextStage);
-
-    if (!nextStage.nextStageId) {
-      reachedTheEnd = true;
-    }
-    // Continue loop until all stages are sorted
-  }
-  return sortedStages;
-};
-
-export const getAdjacentStagesBasedOnPosition = ({
-  position,
-  otherStages,
-}: GetAdjacentStagesBasedOnPositionProps): AdjacentStagesResult => {
-  if (position === undefined) {
-    // Position not provided, add it to the end
-    return {
-      nextStageId: undefined,
-      previousStageId: otherStages[otherStages.length - 1]?.stageId ?? undefined,
-    };
-  }
-
-  if (position === 0) {
-    // First in the list, get the current first stage
-    return {
-      previousStageId: undefined,
-      nextStageId: otherStages[0]?.stageId ?? undefined,
-    };
-  }
-
-  const sortedStages = sortStages(otherStages);
-
-  return {
-    previousStageId: sortedStages[position]?.stageId ?? undefined,
-    nextStageId: sortedStages[position]?.stageId ?? undefined,
-  };
-};
-
 // TODO this should take a position OR a nextStageId OR previousStageId
 // For now, this will only take a position and we will handle it
 export const createStage = async (props: CreateStageInput): Promise<[null, null] | [null, any]> => {
@@ -106,8 +39,6 @@ export const createStage = async (props: CreateStageInput): Promise<[null, null]
     GSI1SK,
   };
 
-  const newStageOrder = getNewChildItemOrder(stageId, stageOrder, position);
-
   try {
     const transactParams: TransactWriteCommandInput = {
       TransactItems: [
@@ -120,7 +51,7 @@ export const createStage = async (props: CreateStageInput): Promise<[null, null]
           },
         },
         {
-          // Increment stage count on the opening and update the newStageOrder
+          // Increment stage count on the opening
           Update: {
             Key: {
               PK: `${Entities.ORG}#${orgId}#${Entities.OPENING}#${openingId}`,
@@ -129,11 +60,10 @@ export const createStage = async (props: CreateStageInput): Promise<[null, null]
             TableName: `${process.env.NODE_ENV}-${DYNAMO_TABLE_NAME}`,
             ConditionExpression: 'totalStages < :maxChildItemLimit AND attribute_exists(PK)',
             UpdateExpression:
-              'SET totalStages = if_not_exists(totalStages, :zero) + :value, stageOrder = :stageOrder, updatedAt = :updatedAt',
+              'SET totalStages = if_not_exists(totalStages, :zero) + :value, updatedAt = :updatedAt',
             ExpressionAttributeValues: {
               ':zero': 0,
               ':value': 1,
-              ':stageOrder': newStageOrder,
               ':maxChildItemLimit': LIMITS.MAX_CHILD_ITEM_LIMIT,
               ':updatedAt': now,
             },

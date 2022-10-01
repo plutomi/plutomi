@@ -2,14 +2,15 @@ import { QueryCommandInput, QueryCommand } from '@aws-sdk/lib-dynamodb';
 import { Dynamo } from '../../awsClients/ddbDocClient';
 import { DYNAMO_TABLE_NAME, Entities } from '../../Config';
 import { DynamoOpening, DynamoStage } from '../../types/dynamo';
+import { sortStages } from './utils';
 
-type GetStagesInOpeningInput = Pick<DynamoOpening, 'orgId' | 'openingId' | 'stageOrder'>;
+type GetStagesInOpeningInput = Pick<DynamoOpening, 'orgId' | 'openingId'>;
 
 export const getStagesInOpening = async (
   props: GetStagesInOpeningInput,
   // TODO replace any with actual dynamo error type,
 ): Promise<[DynamoStage[], null] | [null, any]> => {
-  const { orgId, openingId, stageOrder } = props;
+  const { orgId, openingId } = props;
   const params: QueryCommandInput = {
     TableName: `${process.env.NODE_ENV}-${DYNAMO_TABLE_NAME}`,
     IndexName: 'GSI1',
@@ -23,8 +24,7 @@ export const getStagesInOpening = async (
     const response = await Dynamo.send(new QueryCommand(params));
     const allStages = response.Items as DynamoStage[];
 
-    // Orders results in the way the stageOrder is
-    const result = stageOrder.map((i: string) => allStages.find((j) => j.stageId === i));
+    const result = sortStages(allStages);
     return [result as DynamoStage[], null];
   } catch (error) {
     return [null, error];

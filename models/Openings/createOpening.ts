@@ -26,7 +26,6 @@ export const createOpening = async (
     GSI1PK: `${Entities.ORG}#${orgId}#${Entities.OPENING}S`,
     GSI1SK: OpeningState.PRIVATE, // All openings are private by default
     totalStages: 0,
-    stageOrder: [],
     totalApplicants: 0,
   };
 
