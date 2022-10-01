@@ -6,6 +6,9 @@ import { sortStages } from './utils';
 
 type GetStagesInOpeningInput = Pick<DynamoOpening, 'orgId' | 'openingId'>;
 
+/**
+ * Returns a sorted array of all stages in an opening
+ */
 export const getStagesInOpening = async (
   props: GetStagesInOpeningInput,
   // TODO replace any with actual dynamo error type,

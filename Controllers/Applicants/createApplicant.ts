@@ -61,13 +61,19 @@ export const createApplicant = async (req: Request, res: Response) => {
   if (opening.GSI1SK === OpeningState.PRIVATE || opening.totalStages === 0) {
     return res.status(403).json({ message: 'You cannot apply to this opening just yet!' });
   }
+
+  const [stagesInOpening, failedToGetStages] = await DB.Stages.getStagesInOpening({
+    orgId,
+    openingId,
+  });
+
   const [created, failed] = await DB.Applicants.createApplicant({
     firstName,
     lastName,
     openingId,
     orgId,
     email,
-    stageId: opening.stageOrder[0],
+    stageId: stagesInOpening[0].stageId,
   });
 
   if (failed) {

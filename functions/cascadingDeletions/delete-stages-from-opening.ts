@@ -1,5 +1,4 @@
 import { EventBridgeEvent } from 'aws-lambda';
-import axios from 'axios';
 import { Entities } from '../../Config';
 import { DB } from '../../models';
 import { CustomEventBridgeEvent } from '../stream-processor';
@@ -28,18 +27,27 @@ export async function main(event: EventBridgeEvent<'stream', CustomEventBridgeEv
 
   if (deletedEntity.entityType === Entities.OPENING && deletedEntity.totalStages > 0) {
     console.log('Opening has stages, attempting to delete...');
-    const stagesToDelete = deletedEntity.stageOrder;
+    // TODO this might require more permissions
+    const [stagesToDelete, error] = await DB.Stages.getStagesInOpening({
+      orgId: deletedEntity.orgId,
+      openingId: deletedEntity.openingId,
+    });
+
+    if (error) {
+      console.log(`Failed fetching stages in an opening`, error);
+      return;
+    }
 
     try {
       await Promise.all(
-        stagesToDelete.map(async (stage, index) =>
-          DB.Stages.deleteStage({
-            orgId: deletedEntity.orgId,
-            openingId: deletedEntity.openingId,
-            stageId: stage,
-            deleteIndex: index,
-            updateOpening: false,
-          }),
+        stagesToDelete.map(
+          async (stage) =>
+            await DB.Stages.deleteStage({
+              orgId: deletedEntity.orgId,
+              openingId: deletedEntity.openingId,
+              stageId: stage.stageId,
+              updateOpening: false,
+            }),
         ),
       );
       console.log('All stages deleted!');

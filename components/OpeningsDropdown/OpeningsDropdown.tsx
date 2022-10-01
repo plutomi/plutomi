@@ -14,18 +14,19 @@ interface OpeningsDropdownProps {
 export const OpeningsDropdown = ({ openings, index }: OpeningsDropdownProps) => {
   const router = useRouter();
   const [selected, setSelected] = useState(openings[index]);
-
-  const handleChange = (newValue) => {
-    if (selected === newValue) {
-      return;
-    }
-    setSelected(newValue);
-    if (newValue.stageOrder[0] !== undefined) {
-      router.push(
-        `${WEBSITE_URL}/openings/${newValue.openingId}/stages/${newValue.stageOrder[0]}/applicants`,
-      );
-      return;
-    }
+  const handleChange = (newValue: DynamoOpening) => {
+    // TODO NOT WORKING
+    alert(`StageOrder on openings is disabled!`);
+    // if (selected === newValue) {
+    //   return;
+    // }
+    // setSelected(newValue);
+    // if (newValue.stageOrder[0] !== undefined) {
+    //   router.push(
+    //     `${WEBSITE_URL}/openings/${newValue.openingId}/stages/${newValue.stageOrder[0]}/applicants`, // TODO this will break
+    //   );
+    //   return;
+    // }
     router.push(`${WEBSITE_URL}/openings/${newValue.openingId}/settings`);
   };
   return (

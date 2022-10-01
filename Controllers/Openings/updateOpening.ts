@@ -6,13 +6,12 @@ import { DB } from '../../models';
 import { DynamoOpening } from '../../types/dynamo';
 
 const schema = Joi.object({
-  stageOrder: Joi.array().items(Joi.string()),
   openingName: Joi.string().max(LIMITS.MAX_OPENING_NAME_LENGTH),
   GSI1SK: Joi.string().valid(OpeningState.PUBLIC, OpeningState.PRIVATE),
 }).options(JOI_SETTINGS);
 
 export interface APIUpdateOpeningOptions
-  extends Partial<Pick<DynamoOpening, 'openingName' | 'GSI1SK' | 'stageOrder'>> {}
+  extends Partial<Pick<DynamoOpening, 'openingName' | 'GSI1SK'>> {}
 
 export const updateOpening = async (req: Request, res: Response) => {
   try {
@@ -42,29 +41,30 @@ export const updateOpening = async (req: Request, res: Response) => {
     return res.status(404).json({ message: 'Opening not found' });
   }
 
-  if (req.body.stageOrder) {
-    if (req.body.stageOrder.length !== opening.stageOrder.length) {
-      return res.status(403).json({
-        message:
-          'You cannot add / delete stages this way, please use the proper API methods for those actions',
-      });
-    }
+  // TODO allow users to update stage order again
+  // if (req.body.stageOrder) {
+  //   if (req.body.stageOrder.length !== opening.stageOrder.length) {
+  //     return res.status(403).json({
+  //       message:
+  //         'You cannot add / delete stages this way, please use the proper API methods for those actions',
+  //     });
+  //   }
 
-    // Check if the IDs have been modified
-    // TODO add a test for this
-    const containsAll = opening.stageOrder.every((stageId) =>
-      req.body.stageOrder.includes(stageId),
-    );
+  //   // Check if the IDs have been modified
+  //   // TODO add a test for this
+  //   const containsAll = opening.stageOrder.every((stageId) =>
+  //     req.body.stageOrder.includes(stageId),
+  //   );
 
-    if (!containsAll) {
-      return res.status(400).json({
-        message:
-          "The stageIds in the 'stageOrder' property differ from the ones in the opening, please check your request and try again.",
-      });
-    }
+  //   if (!containsAll) {
+  //     return res.status(400).json({
+  //       message:
+  //         "The stageIds in the 'stageOrder' property differ from the ones in the opening, please check your request and try again.",
+  //     });
+  //   }
 
-    updatedValues.stageOrder = req.body.stageOrder;
-  }
+  //   updatedValues.stageOrder = req.body.stageOrder;
+  // }
   // Public or private
   if (req.body.GSI1SK) {
     // TODO i think this can be moved into dynamo

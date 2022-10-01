@@ -1,9 +1,8 @@
 import { nanoid } from 'nanoid';
 import { TransactWriteCommand, TransactWriteCommandInput } from '@aws-sdk/lib-dynamodb';
-import getNewChildItemOrder from '../../utils/getNewChildItemOrder';
 import { Dynamo } from '../../awsClients/ddbDocClient';
 import { ID_LENGTHS, Entities, LIMITS, DYNAMO_TABLE_NAME } from '../../Config';
-import { DynamoOpening, DynamoStage } from '../../types/dynamo';
+import { DynamoStage } from '../../types/dynamo';
 import * as Time from '../../utils/time';
 
 export interface CreateStageInput

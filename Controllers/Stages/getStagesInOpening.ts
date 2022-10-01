@@ -26,7 +26,6 @@ export const getStagesInOpening = async (req: Request, res: Response) => {
   const [allCurrentStages, allStagesError] = await DB.Stages.getStagesInOpening({
     openingId,
     orgId: user.orgId,
-    stageOrder: opening.stageOrder, // To order them correctly
   });
 
   if (allStagesError) {
