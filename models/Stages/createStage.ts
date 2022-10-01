@@ -6,7 +6,8 @@ import { ID_LENGTHS, Entities, LIMITS, DYNAMO_TABLE_NAME } from '../../Config';
 import { DynamoOpening, DynamoStage } from '../../types/dynamo';
 import * as Time from '../../utils/time';
 
-export interface CreateStageInput extends Pick<DynamoStage, 'orgId' | 'GSI1SK' | 'openingId'> {
+export interface CreateStageInput
+  extends Pick<DynamoStage, 'orgId' | 'GSI1SK' | 'openingId' | 'nextStageId' | 'previousStageId'> {
   /**
    * Optional position on where to place the new opening, optional. Added to the end if not provided
    */
@@ -52,7 +53,7 @@ const sortStages = (unsortedStagesInOpening: DynamoStage[]): DynamoStage[] => {
   return sortedStages;
 };
 
-const getAdjacentStagesBasedOnPosition = ({
+export const getAdjacentStagesBasedOnPosition = ({
   position,
   otherStages,
 }: GetAdjacentStagesBasedOnPositionProps): AdjacentStagesResult => {
@@ -80,11 +81,10 @@ const getAdjacentStagesBasedOnPosition = ({
   };
 };
 
-
 // TODO this should take a position OR a nextStageId OR previousStageId
 // For now, this will only take a position and we will handle it
 export const createStage = async (props: CreateStageInput): Promise<[null, null] | [null, any]> => {
-  const { orgId, GSI1SK, openingId, position } = props;
+  const { orgId, GSI1SK, openingId, position, nextStageId, previousStageId } = props;
   const stageId = nanoid(ID_LENGTHS.STAGE);
   const now = Time.currentISO();
 
@@ -95,8 +95,8 @@ export const createStage = async (props: CreateStageInput): Promise<[null, null]
     createdAt: now,
     updatedAt: now,
     stageId,
-    nextStageId: 'TOOOODOO',
-    previousStageId: 'TODOOOOOO',
+    nextStageId,
+    previousStageId,
     questionOrder: [],
     orgId,
     totalApplicants: 0,
