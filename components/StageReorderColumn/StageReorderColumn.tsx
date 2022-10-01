@@ -3,14 +3,15 @@ import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 import { mutate } from 'swr';
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
-import { GetStagesInOpeningURL } from '../../adapters/Stages';
+import { GetStagesInOpeningURL, UpdateStage } from '../../adapters/Stages';
 import useStore from '../../utils/store';
 import { useOpeningInfo } from '../../SWR/useOpeningInfo';
 import { useAllStagesInOpening } from '../../SWR/useAllStagesInOpening';
-import { UpdateOpening, GetOpeningInfoURL } from '../../adapters/Openings';
+import { GetOpeningInfoURL } from '../../adapters/Openings';
 import { CustomQuery } from '../../types/main';
 import { CreateStageModal } from '../CreateStageModal';
 import { StageCard } from '../StageCard';
+import { getAdjacentStagesBasedOnPosition } from '../../models/Stages/utils';
 
 export const StageReorderColumn = () => {
   const openCreateStageModal = useStore((state) => state.openCreateStageModal);
@@ -19,7 +20,7 @@ export const StageReorderColumn = () => {
   const { openingId, stageId } = router.query as Pick<CustomQuery, 'openingId' | 'stageId'>;
   const { opening, isOpeningLoading, isOpeningError } = useOpeningInfo({ openingId });
   const { stages, isStagesLoading, isStagesError } = useAllStagesInOpening({
-    openingId,
+    openingId: opening.openingId,
   });
 
   const [newStages, setNewStages] = useState(stages);
@@ -27,6 +28,7 @@ export const StageReorderColumn = () => {
     setNewStages(stages);
   }, [stages]);
 
+  // TODO types
   const handleDragEnd = async (result) => {
     const { destination, source, draggableId } = result;
     // No change
@@ -38,18 +40,24 @@ export const StageReorderColumn = () => {
       return;
     }
 
-    const newStageOrder: string[] = Array.from(opening.stageOrder);
+    const newStageOrder: string[] = Array.from(stages.map((stage) => stage.stageId));
     newStageOrder.splice(source.index, 1);
     newStageOrder.splice(destination.index, 0, draggableId);
     const newOrder = newStageOrder.map((i) => stages.find((j) => j.stageId === i));
 
     setNewStages(newOrder);
 
+    const { nextStageId, previousStageId } = getAdjacentStagesBasedOnPosition({
+      position: destination.index,
+      otherStages: stages,
+    });
     try {
-      await UpdateOpening({
+      await UpdateStage({
         openingId,
+        stageId: source.stageId, // TODO types,
         newValues: {
-          stageOrder: newStageOrder,
+          nextStageId,
+          previousStageId,
         },
       });
     } catch (error) {

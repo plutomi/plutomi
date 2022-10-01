@@ -18,11 +18,12 @@ export const OpeningSettingsHeader = () => {
   const openUpdateOpeningModal = useStore((state) => state.openUpdateOpeningModal);
 
   const { opening, isOpeningLoading, isOpeningError } = useOpeningInfo({ openingId });
-
+  const { stages, isStagesLoading, isStagesError } = useAllStagesInOpening({
+    openingId,
+  });
   if (isOpeningError) return <h1>An error ocurred retrieving info for this opening</h1>;
 
   if (isOpeningLoading) return <Loader text="Loading opening..." />;
-  const { stages, isStagesLoading, isStagesError } = useAllStagesInOpening({ openingId });
 
   const crumbs: CrumbProps[] = [
     {

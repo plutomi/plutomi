@@ -6,7 +6,9 @@ import * as CreateError from '../../utils/createError';
 import { DB } from '../../models';
 
 export interface APIUpdateStageOptions
-  extends Partial<Pick<DynamoStage, 'GSI1SK' | 'questionOrder'>> {}
+  extends Partial<
+    Pick<DynamoStage, 'GSI1SK' | 'questionOrder' | 'nextStageId' | 'previousStageId'>
+  > {}
 
 const schema = Joi.object({
   questionOrder: Joi.array().items(Joi.string()),
