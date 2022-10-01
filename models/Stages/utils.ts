@@ -30,13 +30,21 @@ export const sortStages = (unsortedStagesInOpening: DynamoStage[]): DynamoStage[
   console.log(`All other stages`, mapWithStages);
   let reachedTheEnd = false;
 
+  // TODO infinite loop bug!!!!!!!!!!!!!!!
   while (!reachedTheEnd) {
-    const nextStage = mapWithStages[firstStage.nextStageId];
+    let startingStage = firstStage;
+    console.log(`While loop starting`);
+    console.log(`First stage's next stage id =`, startingStage.nextStageId);
+
+    const nextStage = mapWithStages[startingStage.nextStageId];
+    console.log(`The next stage is`, nextStage);
     sortedStages.push(nextStage);
+    console.log(`Current state of sorted stages`);
 
     if (!nextStage.nextStageId) {
       reachedTheEnd = true;
     }
+    startingStage = nextStage;
     // Continue loop until all stages are sorted
   }
   return sortedStages;
