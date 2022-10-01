@@ -42,13 +42,11 @@ const sortStages = (unsortedStagesInOpening: DynamoStage[]) => {
 
   // Get the rest of the stages and add them to the object, the sort order does not matter here
   const sortedStages = [];
-
   const restOfStages = unsortedStagesInOpening.slice(1);
 
   // Push them into the object
-  restOfStages.map((stage, idx) => {
-    // +1 Required since we already have the first stage
-    mapWithStages[idx + 1] = stage;
+  restOfStages.map((stage) => {
+    mapWithStages[stage.stageId] = stage;
   });
 
   // At this point our map will be full of stages, and we can easily traverse it at *almost* O(1)
@@ -59,7 +57,14 @@ const sortStages = (unsortedStagesInOpening: DynamoStage[]) => {
   let reachedTheEnd = false;
 
   while (!reachedTheEnd) {
-    // TODO cleanup
+    let nextStageId = firstStage.nextStageId;
+    const nextStage = mapWithStages[nextStageId];
+    sortedStages.push(nextStage);
+
+    if (!nextStage.nextStageId) {
+      reachedTheEnd = true;
+    }
+    // Continue loop until all stages are sorted
   }
 };
 
