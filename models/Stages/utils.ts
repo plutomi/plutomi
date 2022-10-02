@@ -10,36 +10,26 @@ interface AdjacentStagesResult {
 }
 
 export const sortStages = (unsortedStagesInOpening: DynamoStage[]): DynamoStage[] => {
-  console.log(`Sorting stages`, unsortedStagesInOpening);
   if (!unsortedStagesInOpening.length) return [];
   if (unsortedStagesInOpening.length === 1) return unsortedStagesInOpening; // No need to sort
 
   const mapWithStages: Record<string, DynamoStage> = {};
   const firstStage = unsortedStagesInOpening.find((stage) => stage.previousStageId === undefined);
 
-  console.log(`In sort, first stage`, firstStage);
   const sortedStages = [];
   sortedStages.push(firstStage);
 
-  console.log(`Sorted stages array, should just be the first stage`, firstStage);
   // Push all but the first stage into an object so we can get *almost* O(1) queries
   unsortedStagesInOpening.slice(1).map((stage) => {
     mapWithStages[stage.stageId] = stage;
   });
 
-  console.log(`All other stages`, mapWithStages);
   let reachedTheEnd = false;
   let startingStage = firstStage;
 
-  // TODO infinite loop bug!!!!!!!!!!!!!!!
   while (!reachedTheEnd) {
-    console.log(`While loop starting`);
-    console.log(`First stage's next stage id =`, startingStage.nextStageId);
-
     const nextStage = mapWithStages[startingStage.nextStageId];
-    console.log(`The next stage is`, nextStage);
     sortedStages.push(nextStage);
-    console.log(`Current state of sorted stages`, sortedStages);
 
     if (!nextStage.nextStageId) {
       reachedTheEnd = true;
