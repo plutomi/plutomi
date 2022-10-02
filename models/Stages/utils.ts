@@ -13,13 +13,13 @@ export const sortStages = (unsortedStagesInOpening: DynamoStage[]): DynamoStage[
   if (!unsortedStagesInOpening.length) return [];
   if (unsortedStagesInOpening.length === 1) return unsortedStagesInOpening; // No need to sort
 
-  const mapWithStages: Record<string, DynamoStage> = {};
   const firstStage = unsortedStagesInOpening.find((stage) => stage.previousStageId === undefined);
 
   const sortedStages = [];
   sortedStages.push(firstStage);
 
   // Push all but the first stage into an object so we can get *almost* O(1) queries
+  const mapWithStages: Record<string, DynamoStage> = {};
   unsortedStagesInOpening.slice(1).map((stage) => {
     mapWithStages[stage.stageId] = stage;
   });
