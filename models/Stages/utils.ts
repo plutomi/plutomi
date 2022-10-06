@@ -47,25 +47,15 @@ export const sortStages = (unsortedStagesInOpening: DynamoStage[]): DynamoStage[
 
   console.log(`Starting sort... first stage`, firstStage);
   while (!reachedTheEnd) {
-    // This is due to stupid Dynamo shit where you cant set values as undefined. So we're also handling empty strings. FFS.
-    const noNextStage = startingStage.nextStageId === NO_STAGE;
-    console.log(`No next stage:`, noNextStage);
-
-    if (noNextStage) {
-      reachedTheEnd = true;
-      break;
-    }
-
     const nextStage = mapWithStages[startingStage.nextStageId];
     sortedStages.push(nextStage);
-    console.log(`Designated next stage`, nextStage);
-    console.log(`Sorted stages at this point`, sortedStages);
+    startingStage = nextStage;
+
     // Dynamo doesn't allow undefined -_-
     if (nextStage.nextStageId === NO_STAGE) {
       reachedTheEnd = true;
-      break;
     }
-    startingStage = nextStage;
+
     // Continue loop until all stages are sorted
   }
   return sortedStages;
