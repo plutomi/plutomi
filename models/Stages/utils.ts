@@ -16,16 +16,15 @@ export const sortStages = (unsortedStagesInOpening: DynamoStage[]): DynamoStage[
 
   let firstStage: DynamoStage;
   let firstStageIndex: number;
-  const findFirstStage = (unsortedStagesInOpening: DynamoStage[]) => {
-    unsortedStagesInOpening.find((stage, idx) => {
-      if (stage.previousStageId === NO_STAGE) {
-        firstStage = stage;
-        firstStageIndex = idx;
-      }
-    });
-  };
 
-  findFirstStage(unsortedStagesInOpening);
+  // TODO we could make this faster by mapping through all the stages  and adding them to the map, and skip it only if .previousStageId === NO_STAGE
+  unsortedStagesInOpening.find((stage, idx) => {
+    if (stage.previousStageId === NO_STAGE) {
+      firstStage = stage;
+      firstStageIndex = idx;
+    }
+  });
+
   const sortedStages = [];
   sortedStages.push(firstStage);
 
