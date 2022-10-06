@@ -66,9 +66,10 @@ export const updateStage = async (props: UpdateStageInput): Promise<[null, null]
           SK: Entities.STAGE,
         },
         TableName: `${process.env.NODE_ENV}-${DYNAMO_TABLE_NAME}`,
-        UpdateExpression: 'SET nextStageId = :nextStageId',
+        UpdateExpression: 'SET nextStageId = :nextStageId, previousStageId = :previousStageId',
         ExpressionAttributeValues: {
           ':nextStageId': oldNextStageId,
+          ':previousStageId': stageId,
         },
       },
     });
@@ -87,7 +88,7 @@ export const updateStage = async (props: UpdateStageInput): Promise<[null, null]
           SK: Entities.STAGE,
         },
         TableName: `${process.env.NODE_ENV}-${DYNAMO_TABLE_NAME}`,
-        UpdateExpression: 'SET previousStageId = :previousStageId',
+        UpdateExpression: 'SET previousStageId = :previousStageId, nextStageId = :nextStageId',
         ExpressionAttributeValues: {
           ':previousStageId': oldPreviousStageId,
           ':nextStageId': stageId,
