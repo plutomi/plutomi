@@ -68,7 +68,8 @@ export const updateStage = async (props: UpdateStageInput): Promise<[null, null]
       },
     });
 
-    if (thereWasAnOldNextStage) {
+    if (thereWasAnOldNextStage && oldNextStageId !== updatedValues.nextStageId) {
+      // Dynamo preventing double updates, and if its already being update theres no need
       transactParams.TransactItems.push({
         Update: {
           Key: {
@@ -102,7 +103,9 @@ export const updateStage = async (props: UpdateStageInput): Promise<[null, null]
       },
     });
 
-    if (thereWasAnOldPreviousStage) {
+    if (thereWasAnOldPreviousStage && oldPreviousStageId !== updatedValues.nextStageId) {
+      // Dynamo preventing double updates, and if its already being update theres no need
+
       transactParams.TransactItems.push({
         Update: {
           Key: {
