@@ -65,6 +65,34 @@ export const updateStage = async (props: UpdateStageInput): Promise<[null, null]
           },
         },
       });
+    } else {
+      transactParams.TransactItems.push({
+        Update: {
+          Key: {
+            PK: `${Entities.ORG}#${orgId}#${Entities.OPENING}#${openingId}#${Entities.STAGE}#${updatedValues.nextStageId}`,
+            SK: Entities.STAGE,
+          },
+          TableName: `${process.env.NODE_ENV}-${DYNAMO_TABLE_NAME}`,
+          UpdateExpression: 'SET previousStageId = :previousStageId',
+          ExpressionAttributeValues: {
+            ':previousStageId': stageId,
+          },
+        },
+      });
+
+      transactParams.TransactItems.push({
+        Update: {
+          Key: {
+            PK: `${Entities.ORG}#${orgId}#${Entities.OPENING}#${openingId}#${Entities.STAGE}#${oldPreviousStageId}`,
+            SK: Entities.STAGE,
+          },
+          TableName: `${process.env.NODE_ENV}-${DYNAMO_TABLE_NAME}`,
+          UpdateExpression: 'SET nextStageId = :nextStageId',
+          ExpressionAttributeValues: {
+            ':nextStageId': oldNextStageId,
+          },
+        },
+      });
     }
   }
 
@@ -82,6 +110,34 @@ export const updateStage = async (props: UpdateStageInput): Promise<[null, null]
           ExpressionAttributeValues: {
             ':previousStageId': oldPreviousStageId,
             ':nextStageId': stageId,
+          },
+        },
+      });
+    } else {
+      transactParams.TransactItems.push({
+        Update: {
+          Key: {
+            PK: `${Entities.ORG}#${orgId}#${Entities.OPENING}#${openingId}#${Entities.STAGE}#${updatedValues.previousStageId}`,
+            SK: Entities.STAGE,
+          },
+          TableName: `${process.env.NODE_ENV}-${DYNAMO_TABLE_NAME}`,
+          UpdateExpression: 'SET nextStageId = :nextStageId',
+          ExpressionAttributeValues: {
+            ':nextStageId': stageId,
+          },
+        },
+      });
+
+      transactParams.TransactItems.push({
+        Update: {
+          Key: {
+            PK: `${Entities.ORG}#${orgId}#${Entities.OPENING}#${openingId}#${Entities.STAGE}#${oldNextStageId}`,
+            SK: Entities.STAGE,
+          },
+          TableName: `${process.env.NODE_ENV}-${DYNAMO_TABLE_NAME}`,
+          UpdateExpression: 'SET previousStageId = :previousStageId',
+          ExpressionAttributeValues: {
+            ':previousStageId': oldPreviousStageId,
           },
         },
       });
