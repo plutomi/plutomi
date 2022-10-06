@@ -28,17 +28,18 @@ export const StageReorderColumn = () => {
     setNewStages(stages);
   }, [stages]);
 
-  // TODO types
+  // TODO types!!!!!!!
   const handleDragEnd = async (result) => {
     const { destination, source, draggableId } = result;
     // No change
     if (!destination) {
       return;
     }
+
+    console.log(`Result of drop`, result);
     // If dropped in the same place
-    if (destination.droppableId === source.droppableId && destination.index === source.index) {
+    if (destination.droppableId === source.droppableId && destination.index === source.index)
       return;
-    }
 
     const newStageOrder: string[] = Array.from(stages.map((stage) => stage.stageId));
     newStageOrder.splice(source.index, 1);
@@ -52,12 +53,15 @@ export const StageReorderColumn = () => {
       otherStages: stages,
     });
     try {
+      console.log(`Attempting to update stage in FE destination`, destination);
+      console.log(`SOurce`, source);
       await UpdateStage({
         openingId,
-        stageId: source.stageId, // TODO types,
+        stageId: draggableId,
         newValues: {
-          nextStageId,
-          previousStageId,
+          position: destination.index,
+          // nextStageId, // TODO:  https://github.com/plutomi/plutomi/issues/741
+          // previousStageId,
         },
       });
     } catch (error) {
@@ -69,7 +73,7 @@ export const StageReorderColumn = () => {
     mutate(GetOpeningInfoURL(openingId));
 
     // Refresh the stages
-    mutate(GetStagesInOpeningURL(openingId));
+    mutate(GetStagesInOpeningURL(openingId)); // TODO: Don't think this is needed
   };
 
   return (

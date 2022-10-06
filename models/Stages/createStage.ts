@@ -1,7 +1,7 @@
 import { nanoid } from 'nanoid';
 import { TransactWriteCommand, TransactWriteCommandInput } from '@aws-sdk/lib-dynamodb';
 import { Dynamo } from '../../awsClients/ddbDocClient';
-import { ID_LENGTHS, Entities, LIMITS, DYNAMO_TABLE_NAME } from '../../Config';
+import { ID_LENGTHS, Entities, LIMITS, DYNAMO_TABLE_NAME, NO_STAGE } from '../../Config';
 import { DynamoStage } from '../../types/dynamo';
 import * as Time from '../../utils/time';
 
@@ -68,7 +68,7 @@ export const createStage = async (props: CreateStageInput): Promise<[null, null]
     };
 
     // If our newly created stage has a nextStageId, we need to set previousStageId on that nextStage to be our newly created stageId
-    if (nextStageId) {
+    if (nextStageId && nextStageId !== NO_STAGE) {
       transactParams.TransactItems.push({
         Update: {
           Key: {
@@ -84,7 +84,7 @@ export const createStage = async (props: CreateStageInput): Promise<[null, null]
       });
     }
     // If our newly created stage has a previousStageId, we need to set nextStageId on that previousStage to be our newly created stageId
-    if (previousStageId) {
+    if (previousStageId && previousStageId !== NO_STAGE) {
       transactParams.TransactItems.push({
         Update: {
           Key: {

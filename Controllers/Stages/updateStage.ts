@@ -4,15 +4,19 @@ import { JOI_SETTINGS, LIMITS } from '../../Config';
 import { DynamoStage } from '../../types/dynamo';
 import * as CreateError from '../../utils/createError';
 import { DB } from '../../models';
+import { getAdjacentStagesBasedOnPosition } from '../../models/Stages/utils';
 
 export interface APIUpdateStageOptions
   extends Partial<
     Pick<DynamoStage, 'GSI1SK' | 'questionOrder' | 'nextStageId' | 'previousStageId'>
-  > {}
+  > {
+  position?: number; // Allow updating position by providing an index until https://github.com/plutomi/plutomi/issues/741
+}
 
 const schema = Joi.object({
   questionOrder: Joi.array().items(Joi.string()),
   GSI1SK: Joi.string().max(LIMITS.MAX_STAGE_NAME_LENGTH),
+  position: Joi.number().min(0).max(10000), // TODO lol
 }).options(JOI_SETTINGS);
 
 export const updateStage = async (req: Request, res: Response) => {
@@ -76,11 +80,33 @@ export const updateStage = async (req: Request, res: Response) => {
     updatedValues.GSI1SK = req.body.GSI1SK;
   }
 
+  if (req.body.position || req.body.position === 0) {
+    const [stagesInOpening, failedToGetStages] = await DB.Stages.getStagesInOpening({
+      openingId,
+      orgId: user.orgId,
+    });
+
+    if (failedToGetStages) {
+      console.log(`Error getting stages`, failedToGetStages);
+      return res.status(500).json({ message: 'An error ocurred retrieving opening info' });
+    }
+
+    const { nextStageId, previousStageId } = getAdjacentStagesBasedOnPosition({
+      position: req.body.position,
+      otherStages: stagesInOpening,
+    });
+
+    updatedValues.nextStageId = nextStageId;
+    updatedValues.previousStageId = previousStageId;
+  }
   const [updatedStage, updateError] = await DB.Stages.updateStage({
     orgId: user.orgId,
     openingId,
     stageId,
     updatedValues,
+    // Old values. Sigh. this is so dumb i dont care!!!!!!!
+    nextStageId: stage.nextStageId,
+    previousStageId: stage.previousStageId,
   });
 
   if (updateError) {

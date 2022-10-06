@@ -137,6 +137,9 @@ export const AXIOS_INSTANCE = axios.create({
   },
 });
 
+// Cannot set dynamo properties to undefined!!!!! FFS.
+export const NO_STAGE = 'NO_STAGE';
+
 export const SWRFetcher = (url: string) =>
   AXIOS_INSTANCE.get(API_URL + url).then((res) => res.data);
 

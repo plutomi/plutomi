@@ -7,7 +7,7 @@ import { sortStages } from './utils';
 type GetStagesInOpeningInput = Pick<DynamoOpening, 'orgId' | 'openingId'>;
 
 /**
- * Returns a sorted array of all stages in an opening
+ * Returns a `sorted` array of all stages in an opening
  */
 export const getStagesInOpening = async (
   props: GetStagesInOpeningInput,
@@ -26,6 +26,7 @@ export const getStagesInOpening = async (
     const response = await Dynamo.send(new QueryCommand(params));
     const allStages = response.Items as DynamoStage[];
 
+    console.log(`All stages as returned from Dynamo, attempting to sort`, allStages);
     const result = sortStages(allStages);
     return [result as DynamoStage[], null];
   } catch (error) {
