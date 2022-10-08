@@ -53,6 +53,7 @@ export const updateStage = async (props: UpdateStageInput): Promise<[null, null]
   const startedAtTheEnd = oldNextStageId === NO_STAGE;
   const endedAtTheBeginning = updatedValues.previousStageId === NO_STAGE;
   const endedAtTheEnd = updatedValues.nextStageId === NO_STAGE;
+  const startedInTheMiddle = !startedAtTheBeginning && !startedAtTheEnd;
 
   // Many scenarios are now possible
   // https://github.com/plutomi/plutomi/pull/738
@@ -389,6 +390,53 @@ export const updateStage = async (props: UpdateStageInput): Promise<[null, null]
         UpdateExpression: `SET nextStageId = :nextStageId`,
         ExpressionAttributeValues: {
           ':nextStageId': oldNextStageId,
+        },
+        TableName: `${process.env.NODE_ENV}-${DYNAMO_TABLE_NAME}`,
+      },
+    });
+  }
+
+  /**
+   * Scenario 9
+   * Starting in the middle, moved to the beginning, one stage move (swap)
+   *
+   *     OLD --- NEW
+   * Stage 1 --- Stage 2 <-- Moved
+   * Stage 2 --- Stage 1
+   * Stage 3 --- Stage 3
+   */
+
+  if (
+    startedInTheMiddle &&
+    endedAtTheBeginning &&
+    oldPreviousStageId === updatedValues.nextStageId
+  ) {
+    transactParams.TransactItems.push({
+      Update: {
+        // Stage 1
+        Key: {
+          PK: `${Entities.ORG}#${orgId}#${Entities.OPENING}#${openingId}#${Entities.STAGE}#${updatedValues.nextStageId}`,
+          SK: Entities.STAGE,
+        },
+        UpdateExpression: `SET nextStageId = :nextStageId, previousStageId = :previousStageId`,
+        ExpressionAttributeValues: {
+          ':nextStageId': oldNextStageId,
+          ':previousStageId': stageId,
+        },
+        TableName: `${process.env.NODE_ENV}-${DYNAMO_TABLE_NAME}`,
+      },
+    });
+
+    transactParams.TransactItems.push({
+      Update: {
+        // Stage 3
+        Key: {
+          PK: `${Entities.ORG}#${orgId}#${Entities.OPENING}#${openingId}#${Entities.STAGE}#${oldNextStageId}`,
+          SK: Entities.STAGE,
+        },
+        UpdateExpression: `SET previousStageId = :previousStageId`,
+        ExpressionAttributeValues: {
+          ':previousStageId': oldPreviousStageId,
         },
         TableName: `${process.env.NODE_ENV}-${DYNAMO_TABLE_NAME}`,
       },
