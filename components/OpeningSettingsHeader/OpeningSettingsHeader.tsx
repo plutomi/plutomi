@@ -34,7 +34,6 @@ export const OpeningSettingsHeader = () => {
     },
   ];
 
-  console.log(`RETURNED STAGES FE`, stages);
   // Hide applicant crumb if opening has no stages
   if (stages.length) {
     crumbs.unshift({

@@ -47,6 +47,7 @@ export const sortStages = (unsortedStagesInOpening: DynamoStage[]): DynamoStage[
   console.log(`Starting sort... first stage`, firstStage);
   while (!reachedTheEnd) {
     const nextStage = mapWithStages[startingStage.nextStageId];
+    console.log(`In loop, next stage is`, nextStage);
     sortedStages.push(nextStage);
     startingStage = nextStage;
 
@@ -57,6 +58,8 @@ export const sortStages = (unsortedStagesInOpening: DynamoStage[]): DynamoStage[
 
     // Continue loop until all stages are sorted
   }
+
+  console.log(`Exiting loop. Sorted stages`, sortedStages);
   return sortedStages;
 };
 

@@ -36,7 +36,6 @@ export const StageReorderColumn = () => {
       return;
     }
 
-    console.log(`Result of drop`, result);
     // If dropped in the same place
     if (destination.droppableId === source.droppableId && destination.index === source.index)
       return;
@@ -53,8 +52,6 @@ export const StageReorderColumn = () => {
       otherStages: stages,
     });
     try {
-      console.log(`Attempting to update stage in FE destination`, destination);
-      console.log(`SOurce`, source);
       await UpdateStage({
         openingId,
         stageId: draggableId,
@@ -95,7 +92,7 @@ export const StageReorderColumn = () => {
         </h1>
 
         {opening?.totalStages > 0 && (
-          <DragDropContext onDragEnd={handleDragEnd} onDragStart={() => console.log('Start')}>
+          <DragDropContext onDragEnd={handleDragEnd}>
             <Droppable droppableId={opening.openingId}>
               {(provided) => (
                 <div {...provided.droppableProps} ref={provided.innerRef}>
