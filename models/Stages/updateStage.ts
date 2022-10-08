@@ -2,6 +2,7 @@ import {
   TransactWriteCommand,
   TransactWriteCommandInput,
   UpdateCommand,
+  UpdateCommandInput,
 } from '@aws-sdk/lib-dynamodb';
 import { Dynamo } from '../../awsClients/ddbDocClient';
 import { DYNAMO_TABLE_NAME, Entities, NO_STAGE } from '../../Config';
@@ -28,206 +29,106 @@ export const updateStage = async (props: UpdateStageInput): Promise<[null, null]
     updatedValues,
   });
 
-  const transactParams: TransactWriteCommandInput = {
-    TransactItems: [
-      // Update our stage with new values
-      {
-        Update: {
-          Key: {
-            PK: `${Entities.ORG}#${orgId}#${Entities.OPENING}#${openingId}#${Entities.STAGE}#${stageId}`,
-            SK: Entities.STAGE,
-          },
-          UpdateExpression: `SET ${allUpdateExpressions.join(', ')}`,
-          ExpressionAttributeValues: allAttributeValues,
-          TableName: `${process.env.NODE_ENV}-${DYNAMO_TABLE_NAME}`,
-          ConditionExpression: 'attribute_exists(PK)',
-        },
-      },
-    ],
+  const updateOperations: UpdateCommandInput[] = [];
+
+  // TODO: Move this to a transaction eventually... :/
+  // This is stupid inefficient but were migrating off of this piece of trash anyway
+  const firstParams: UpdateCommandInput = {
+    Key: {
+      PK: `${Entities.ORG}#${orgId}#${Entities.OPENING}#${openingId}#${Entities.STAGE}#${stageId}`,
+      SK: Entities.STAGE,
+    },
+    UpdateExpression: `SET ${allUpdateExpressions.join(', ')}`,
+    ExpressionAttributeValues: allAttributeValues,
+    TableName: `${process.env.NODE_ENV}-${DYNAMO_TABLE_NAME}`,
+    ConditionExpression: 'attribute_exists(PK)',
   };
 
-  const startedAtTheBeginning = oldPreviousStageId === NO_STAGE;
-  const startedAtTheEnd = oldNextStageId === NO_STAGE;
-  const endedAtTheBeginning = updatedValues.previousStageId === NO_STAGE;
-  const endedAtTheEnd = updatedValues.nextStageId === NO_STAGE;
-  const swappedPlacesIsNowAfter = oldNextStageId === updatedValues.previousStageId;
-  const swappedPlacesIsNowBefore = oldPreviousStageId === updatedValues.nextStageId;
-  
-  // Many scenarios are now possible
-  // https://github.com/plutomi/plutomi/pull/738
-  /**
-   * Scenario 1
-   * Starting at the beginning, moved to the end, only two stages
-   *
-   *     OLD --- NEW
-   * Stage 1 --- Stage 2
-   * Stage 2 --- Stage 1 <-- Moved
-   */
-  if (startedAtTheBeginning && endedAtTheEnd && swappedPlacesIsNowAfter) {
-    transactParams.TransactItems.push({
-      Update: {
-        Key: {
-          PK: `${Entities.ORG}#${orgId}#${Entities.OPENING}#${openingId}#${Entities.STAGE}#${updatedValues.previousStageId}`,
-          SK: Entities.STAGE,
-        },
-        TableName: `${process.env.NODE_ENV}-${DYNAMO_TABLE_NAME}`,
-        UpdateExpression: 'SET previousStageId = :previousStageId, nextStageId = :nextStageId',
-        ExpressionAttributeValues: {
-          ':previousStageId': oldPreviousStageId,
-          ':nextStageId': stageId,
-        },
+  updateOperations.push(firstParams);
+
+  const newNextStageExists = updatedValues.nextStageId !== NO_STAGE;
+  const newPreviousStageExists = updatedValues.previousStageId !== NO_STAGE;
+  const oldPreviousStageExists = oldPreviousStageId !== NO_STAGE;
+  const oldNextStageExists = oldNextStageId !== NO_STAGE;
+
+  if (newNextStageExists) {
+    const param1: UpdateCommandInput = {
+      Key: {
+        PK: `${Entities.ORG}#${orgId}#${Entities.OPENING}#${openingId}#${Entities.STAGE}#${updatedValues.nextStageId}`,
+        SK: Entities.STAGE,
       },
-    });
+      UpdateExpression: `SET previousStageId = :previousStageId`,
+      ExpressionAttributeValues: {
+        ':previousStageId': stageId,
+      },
+      TableName: `${process.env.NODE_ENV}-${DYNAMO_TABLE_NAME}`,
+    };
+    updateOperations.push(param1);
+  }
+  if (newPreviousStageExists) {
+    const param1: UpdateCommandInput = {
+      Key: {
+        PK: `${Entities.ORG}#${orgId}#${Entities.OPENING}#${openingId}#${Entities.STAGE}#${updatedValues.previousStageId}`,
+        SK: Entities.STAGE,
+      },
+      UpdateExpression: `SET nextStageId = :nextStageId`,
+      ExpressionAttributeValues: {
+        ':nextStageId': stageId,
+      },
+      TableName: `${process.env.NODE_ENV}-${DYNAMO_TABLE_NAME}`,
+    };
+    updateOperations.push(param1);
   }
 
-  /**
-   * Scenario 2
-   * Starting at the beginning, moved to the end, more than two stages
-   *
-   * OLD --- NEW
-   *
-   * Stage 1 --- Stage 2
-   * Stage 2 --- Stage 3
-   * Stage 3 --- Stage 1 <-- Moved
-   */
-
-  if (startedAtTheBeginning && endedAtTheEnd && oldNextStageId === updatedValues.previousStageId) {
-    transactParams.TransactItems.push({
-      Update: {
-        Key: {
-          PK: `${Entities.ORG}#${orgId}#${Entities.OPENING}#${openingId}#${Entities.STAGE}#${oldNextStageId}`,
-          SK: Entities.STAGE,
-        },
-        TableName: `${process.env.NODE_ENV}-${DYNAMO_TABLE_NAME}`,
-        UpdateExpression: 'SET previousStageId = :previousStageId',
-        ExpressionAttributeValues: {
-          ':previousStageId': oldPreviousStageId,
-        },
+  if (oldPreviousStageExists) {
+    const param1: UpdateCommandInput = {
+      Key: {
+        PK: `${Entities.ORG}#${orgId}#${Entities.OPENING}#${openingId}#${Entities.STAGE}#${oldPreviousStageExists}`,
+        SK: Entities.STAGE,
       },
-    });
-
-    transactParams.TransactItems.push({
-      Update: {
-        Key: {
-          PK: `${Entities.ORG}#${orgId}#${Entities.OPENING}#${openingId}#${Entities.STAGE}#${updatedValues.previousStageId}`,
-          SK: Entities.STAGE,
-        },
-        TableName: `${process.env.NODE_ENV}-${DYNAMO_TABLE_NAME}`,
-        UpdateExpression: 'SET nextStageId = :nextStageId',
-        ExpressionAttributeValues: {
-          ':nextStageId': stageId,
-        },
+      UpdateExpression: `SET nextStageId = :nextStageId`,
+      ExpressionAttributeValues: {
+        ':nextStageId': oldNextStageId,
       },
-    });
+      TableName: `${process.env.NODE_ENV}-${DYNAMO_TABLE_NAME}`,
+    };
+    updateOperations.push(param1);
   }
 
-  /**
-   * Scenario 3
-   * Starting at the beginning, moved to the middle, more than two stages
-   *
-   * OLD --- NEW
-   *
-   * Stage 1 --- Stage 2
-   * Stage 2 --- Stage 3
-   * Stage 3 --- Stage 1 <-- Moved
-   * Stage 4 --- Stage 4
-   */
-
-  if (
-    startedAtTheBeginning &&
-    !endedAtTheEnd &&
-    updatedValues.nextStageId !== oldPreviousStageId &&
-    updatedValues.previousStageId !== oldNextStageId
-  ) {
-    transactParams.TransactItems.push({
-      Update: {
-        Key: {
-          PK: `${Entities.ORG}#${orgId}#${Entities.OPENING}#${openingId}#${Entities.STAGE}#${updatedValues.nextStageId}`,
-          SK: Entities.STAGE,
-        },
-        TableName: `${process.env.NODE_ENV}-${DYNAMO_TABLE_NAME}`,
-        UpdateExpression: 'SET previousStageId = :previousStageId',
-        ExpressionAttributeValues: {
-          ':previousStageId': stageId,
-        },
+  if (oldNextStageExists) {
+    const param1: UpdateCommandInput = {
+      Key: {
+        PK: `${Entities.ORG}#${orgId}#${Entities.OPENING}#${openingId}#${Entities.STAGE}#${oldNextStageId}`,
+        SK: Entities.STAGE,
       },
-    });
-
-    transactParams.TransactItems.push({
-      Update: {
-        Key: {
-          PK: `${Entities.ORG}#${orgId}#${Entities.OPENING}#${openingId}#${Entities.STAGE}#${updatedValues.previousStageId}`,
-          SK: Entities.STAGE,
-        },
-        TableName: `${process.env.NODE_ENV}-${DYNAMO_TABLE_NAME}`,
-        UpdateExpression: 'SET nextStageId = :nextStageId',
-        ExpressionAttributeValues: {
-          ':nextStageId': stageId,
-        },
+      UpdateExpression: `SET previousStageId = :previousStageId`,
+      ExpressionAttributeValues: {
+        ':previousStageId': oldPreviousStageId,
       },
-    });
+      TableName: `${process.env.NODE_ENV}-${DYNAMO_TABLE_NAME}`,
+    };
+    updateOperations.push(param1);
   }
 
-  /**
-   * Scenario 4
-   * Starting at the end, moved to the beginning, only two stages
-   *
-   * OLD --- NEW
-   *
-   * Stage 1 --- Stage 2 <-- Moved
-   * Stage 2 --- Stage 1
-   */
+  let response = [null, null];
+  let errors = [];
+  await Promise.all(
+    updateOperations.map(async (params) => {
+      console.log(`Attempting to update `, params);
+      try {
+        await Dynamo.send(new UpdateCommand(params));
+        console.log(`Updated properly!`);
+      } catch (error) {
+        console.error(`An error ocurred updating params`, params);
+        errors.push({
+          params,
+          error,
+        });
+        response = [null, { message: 'An error ocurred updating params', errors }];
+      }
+    }),
+  );
 
-  if (startedAtTheEnd && endedAtTheBeginning && oldPreviousStageId === updatedValues.nextStageId) {
-    transactParams.TransactItems.push({
-      Update: {
-        Key: {
-          PK: `${Entities.ORG}#${orgId}#${Entities.OPENING}#${openingId}#${Entities.STAGE}#${updatedValues.nextStageId}`,
-          SK: Entities.STAGE,
-        },
-        TableName: `${process.env.NODE_ENV}-${DYNAMO_TABLE_NAME}`,
-        UpdateExpression: 'SET previousStageId = :previousStageId',
-        ExpressionAttributeValues: {
-          ':previousStageId': stageId,
-          ':nextStageId': oldNextStageId,
-        },
-      },
-    });
-  }
-
-  if (startedAtTheEnd && endedAtTheBeginning && oldPreviousStageId !== updatedValues.nextStageId) {
-    transactParams.TransactItems.push({
-      Update: {
-        Key: {
-          PK: `${Entities.ORG}#${orgId}#${Entities.OPENING}#${openingId}#${Entities.STAGE}#${oldPreviousStageId}`,
-          SK: Entities.STAGE,
-        },
-        TableName: `${process.env.NODE_ENV}-${DYNAMO_TABLE_NAME}`,
-        UpdateExpression: 'SET nextStageId = :nextStageId',
-        ExpressionAttributeValues: {
-          ':nextStageId': oldNextStageId,
-        },
-      },
-    });
-
-    transactParams.TransactItems.push({
-      Update: {
-        Key: {
-          PK: `${Entities.ORG}#${orgId}#${Entities.OPENING}#${openingId}#${Entities.STAGE}#${updatedValues.nextStageId}`,
-          SK: Entities.STAGE,
-        },
-        TableName: `${process.env.NODE_ENV}-${DYNAMO_TABLE_NAME}`,
-        UpdateExpression: 'SET previousStageId = :previousStageId',
-        ExpressionAttributeValues: {
-          ':previousStageId': stageId,
-        },
-      },
-    });
-  }
-  try {
-    await Dynamo.send(new TransactWriteCommand(transactParams));
-    return [null, null];
-  } catch (error) {
-    return [null, error];
-  }
+  // SIGHJGHHHHHHHHHHHHHHH TODO
+  return response as unknown as Promise<[null, null] | [null, any]
 };
