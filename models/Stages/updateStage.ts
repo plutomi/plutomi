@@ -192,6 +192,36 @@ export const updateStage = async (props: UpdateStageInput): Promise<[null, null]
       },
     });
   }
+
+  if (startedAtTheEnd && endedAtTheBeginning && oldPreviousStageId !== updatedValues.nextStageId) {
+    transactParams.TransactItems.push({
+      Update: {
+        Key: {
+          PK: `${Entities.ORG}#${orgId}#${Entities.OPENING}#${openingId}#${Entities.STAGE}#${oldPreviousStageId}`,
+          SK: Entities.STAGE,
+        },
+        TableName: `${process.env.NODE_ENV}-${DYNAMO_TABLE_NAME}`,
+        UpdateExpression: 'SET nextStageId = :nextStageId',
+        ExpressionAttributeValues: {
+          ':nextStageId': oldNextStageId,
+        },
+      },
+    });
+
+    transactParams.TransactItems.push({
+      Update: {
+        Key: {
+          PK: `${Entities.ORG}#${orgId}#${Entities.OPENING}#${openingId}#${Entities.STAGE}#${updatedValues.nextStageId}`,
+          SK: Entities.STAGE,
+        },
+        TableName: `${process.env.NODE_ENV}-${DYNAMO_TABLE_NAME}`,
+        UpdateExpression: 'SET previousStageId = :previousStageId',
+        ExpressionAttributeValues: {
+          ':previousStageId': stageId,
+        },
+      },
+    });
+  }
   try {
     await Dynamo.send(new TransactWriteCommand(transactParams));
     return [null, null];
