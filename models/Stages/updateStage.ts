@@ -50,7 +50,9 @@ export const updateStage = async (props: UpdateStageInput): Promise<[null, null]
   const startedAtTheEnd = oldNextStageId === NO_STAGE;
   const endedAtTheBeginning = updatedValues.previousStageId === NO_STAGE;
   const endedAtTheEnd = updatedValues.nextStageId === NO_STAGE;
-
+  const swappedPlacesIsNowAfter = oldNextStageId === updatedValues.previousStageId;
+  const swappedPlacesIsNowBefore = oldPreviousStageId === updatedValues.nextStageId;
+  
   // Many scenarios are now possible
   // https://github.com/plutomi/plutomi/pull/738
   /**
@@ -61,7 +63,7 @@ export const updateStage = async (props: UpdateStageInput): Promise<[null, null]
    * Stage 1 --- Stage 2
    * Stage 2 --- Stage 1 <-- Moved
    */
-  if (startedAtTheBeginning && endedAtTheEnd && oldNextStageId === updatedValues.previousStageId) {
+  if (startedAtTheBeginning && endedAtTheEnd && swappedPlacesIsNowAfter) {
     transactParams.TransactItems.push({
       Update: {
         Key: {
