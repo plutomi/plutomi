@@ -57,20 +57,37 @@ export const updateStage = async (props: UpdateStageInput): Promise<[null, null]
   let response = [null, null];
   let errors = [];
 
- // Many scenarios are now possible
+  // Many scenarios are now possible
   // https://github.com/plutomi/plutomi/pull/738
   /**
    * Scenario 1
-   * Starting at the beginning, moved to the end, only two stages
+   * Starting at the beginning, only two stages, moved to the end
    *
    *     OLD --- NEW
    * Stage 1 --- Stage 2
    * Stage 2 --- Stage 1 <-- Moved
    */
 
+  if (startedAtTheBeginning && endedAtTheEnd && oldNextStageId === updatedValues.previousStageId) {
+    transactParams.TransactItems.push({
+      Update: {
+        // Stage 2
+        Key: {
+          PK: `${Entities.ORG}#${orgId}#${Entities.OPENING}#${openingId}#${Entities.STAGE}#${updatedValues.previousStageId}`,
+          SK: Entities.STAGE,
+        },
+        UpdateExpression: `SET nextStageId = :nextStageId`,
+        ExpressionAttributeValues: {
+          ':nextStageId': stageId,
+        },
+        TableName: `${process.env.NODE_ENV}-${DYNAMO_TABLE_NAME}`,
+      },
+    });
+  }
   try {
     await Dynamo.send(new TransactWriteCommand(transactParams));
     return [null, null];
   } catch (error) {
     return [null, error];
-  }};
+  }
+};
