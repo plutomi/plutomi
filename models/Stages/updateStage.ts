@@ -783,7 +783,71 @@ export const updateStage = async (props: UpdateStageInput): Promise<[null, null]
       },
     });
   }
+
+  /**
+   * Scenario 16
+   * Starting in the middle, moved multiple stages up, end at the beginning
+   *
+   *     OLD --- NEW
+   * Stage 1 --- Stage 4 <-- Moved up
+   * Stage 2 --- Stage 1
+   * Stage 3 --- Stage 2
+   * Stage 4 --- Stage 3
+   * Stage 5 --- Stage 5
+   */
+
+  if (
+    startedInTheMiddle &&
+    endedAtTheBeginning &&
+    updatedValues.nextStageId !== oldPreviousStageId
+  ) {
+    transactParams.TransactItems.push({
+      Update: {
+        // Stage 1
+        Key: {
+          PK: `${Entities.ORG}#${orgId}#${Entities.OPENING}#${openingId}#${Entities.STAGE}#${updatedValues.nextStageId}`,
+          SK: Entities.STAGE,
+        },
+        UpdateExpression: `SET previousStageId = :previousStageId`,
+        ExpressionAttributeValues: {
+          ':previousStageId': stageId,
+        },
+        TableName: `${process.env.NODE_ENV}-${DYNAMO_TABLE_NAME}`,
+      },
+    });
+
+    transactParams.TransactItems.push({
+      Update: {
+        // Stage 3
+        Key: {
+          PK: `${Entities.ORG}#${orgId}#${Entities.OPENING}#${openingId}#${Entities.STAGE}#${oldPreviousStageId}`,
+          SK: Entities.STAGE,
+        },
+        UpdateExpression: `SET nextStageId = :nextStageId`,
+        ExpressionAttributeValues: {
+          ':nextStageId': oldNextStageId,
+        },
+        TableName: `${process.env.NODE_ENV}-${DYNAMO_TABLE_NAME}`,
+      },
+    });
+
+    transactParams.TransactItems.push({
+      Update: {
+        // Stage 5
+        Key: {
+          PK: `${Entities.ORG}#${orgId}#${Entities.OPENING}#${openingId}#${Entities.STAGE}#${oldNextStageId}`,
+          SK: Entities.STAGE,
+        },
+        UpdateExpression: `SET previousStageId = :previousStageId`,
+        ExpressionAttributeValues: {
+          ':previousStageId': oldPreviousStageId,
+        },
+        TableName: `${process.env.NODE_ENV}-${DYNAMO_TABLE_NAME}`,
+      },
+    });
+  }
   try {
+    // TODO might need starting in the middle, moved two stages up (not a swap), ended at the beginnig?
     await Dynamo.send(new TransactWriteCommand(transactParams));
     return [null, null];
   } catch (error) {
