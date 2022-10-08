@@ -84,6 +84,52 @@ export const updateStage = async (props: UpdateStageInput): Promise<[null, null]
       },
     });
   }
+
+  /**
+   * Scenario 2
+   * Starting at the beginning, moved one stage down to the middle, not the end
+   *
+   *     OLD --- NEW
+   * Stage 1 --- Stage 2
+   * Stage 2 --- Stage 1 <-- Moved
+   * Stage 3 --- Stage 3
+   */
+
+  if (
+    startedAtTheBeginning &&
+    updatedValues.previousStageId === oldNextStageId &&
+    updatedValues.nextStageId !== NO_STAGE
+  ) {
+    transactParams.TransactItems.push({
+      Update: {
+        // Stage 2
+        Key: {
+          PK: `${Entities.ORG}#${orgId}#${Entities.OPENING}#${openingId}#${Entities.STAGE}#${updatedValues.previousStageId}`,
+          SK: Entities.STAGE,
+        },
+        UpdateExpression: `SET nextStageId = :nextStageId`,
+        ExpressionAttributeValues: {
+          ':nextStageId': stageId,
+        },
+        TableName: `${process.env.NODE_ENV}-${DYNAMO_TABLE_NAME}`,
+      },
+    });
+
+    transactParams.TransactItems.push({
+      Update: {
+        // Stage 3
+        Key: {
+          PK: `${Entities.ORG}#${orgId}#${Entities.OPENING}#${openingId}#${Entities.STAGE}#${updatedValues.nextStageId}`,
+          SK: Entities.STAGE,
+        },
+        UpdateExpression: `SET previousStageId = :previousStageId`,
+        ExpressionAttributeValues: {
+          ':previousStageId': stageId,
+        },
+        TableName: `${process.env.NODE_ENV}-${DYNAMO_TABLE_NAME}`,
+      },
+    });
+  }
   try {
     await Dynamo.send(new TransactWriteCommand(transactParams));
     return [null, null];
