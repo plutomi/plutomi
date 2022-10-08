@@ -610,7 +610,7 @@ export const updateStage = async (props: UpdateStageInput): Promise<[null, null]
 
   /**
    * Scenario 13
-   * Starting in the middle, moved multiple stage down, not at the end
+   * Starting in the middle, moved multiples stage down, not at the end
    *
    *     OLD --- NEW
    * Stage 1 --- Stage 1
@@ -669,7 +669,7 @@ export const updateStage = async (props: UpdateStageInput): Promise<[null, null]
 
   /**
    * Scenario 14
-   * Starting in the middle, moved multiple stage down, not at the end
+   * Starting in the middle, moved multiple stages down, at the end
    *
    *     OLD --- NEW
    * Stage 1 --- Stage 1
