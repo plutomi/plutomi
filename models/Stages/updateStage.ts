@@ -86,7 +86,7 @@ export const updateStage = async (props: UpdateStageInput): Promise<[null, null]
    *
    * Stage 1 --- Stage 2
    * Stage 2 --- Stage 3
-   * Stage 3 --- Stage 1
+   * Stage 3 --- Stage 1 <-- Moved
    */
 
   if (startedAtTheBeginning && endedAtTheEnd && oldNextStageId === updatedValues.previousStageId) {
@@ -127,7 +127,7 @@ export const updateStage = async (props: UpdateStageInput): Promise<[null, null]
    *
    * Stage 1 --- Stage 2
    * Stage 2 --- Stage 3
-   * Stage 3 --- Stage 1
+   * Stage 3 --- Stage 1 <-- Moved
    * Stage 4 --- Stage 4
    */
 
@@ -161,6 +161,33 @@ export const updateStage = async (props: UpdateStageInput): Promise<[null, null]
         UpdateExpression: 'SET nextStageId = :nextStageId',
         ExpressionAttributeValues: {
           ':nextStageId': stageId,
+        },
+      },
+    });
+  }
+
+  /**
+   * Scenario 4
+   * Starting at the end, moved to the beginning, only two stages
+   *
+   * OLD --- NEW
+   *
+   * Stage 1 --- Stage 2 <-- Moved
+   * Stage 2 --- Stage 1
+   */
+
+  if (startedAtTheEnd && endedAtTheBeginning && oldPreviousStageId === updatedValues.nextStageId) {
+    transactParams.TransactItems.push({
+      Update: {
+        Key: {
+          PK: `${Entities.ORG}#${orgId}#${Entities.OPENING}#${openingId}#${Entities.STAGE}#${updatedValues.nextStageId}`,
+          SK: Entities.STAGE,
+        },
+        TableName: `${process.env.NODE_ENV}-${DYNAMO_TABLE_NAME}`,
+        UpdateExpression: 'SET previousStageId = :previousStageId',
+        ExpressionAttributeValues: {
+          ':previousStageId': stageId,
+          ':nextStageId': oldNextStageId,
         },
       },
     });
