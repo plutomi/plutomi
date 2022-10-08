@@ -130,5 +130,5 @@ export const updateStage = async (props: UpdateStageInput): Promise<[null, null]
   );
 
   // SIGHJGHHHHHHHHHHHHHHH TODO
-  return response as unknown as Promise<[null, null] | [null, any]
+  return response as unknown as Promise<[null, null] | [null, any]>;
 };
