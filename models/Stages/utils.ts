@@ -31,7 +31,6 @@ export const sortStages = (unsortedStagesInOpening: DynamoStage[]): DynamoStage[
   // Remove the first stage from the unsorted list, it is no longer needed
   unsortedStagesInOpening.splice(firstStageIndex, 1);
 
-  console.log(`REST OF UNSORTED STAGES`, unsortedStagesInOpening);
   // Push all but the first stage into an object so we can get *almost* O(1) queries
 
   const mapWithStages: Record<string, DynamoStage> = {};
@@ -39,15 +38,11 @@ export const sortStages = (unsortedStagesInOpening: DynamoStage[]): DynamoStage[
     mapWithStages[stage.stageId] = stage;
   });
 
-  console.log(`map with stages`, mapWithStages);
-
   let reachedTheEnd = false;
   let startingStage = firstStage;
 
-  console.log(`Starting sort... first stage`, firstStage);
   while (!reachedTheEnd) {
     const nextStage = mapWithStages[startingStage.nextStageId];
-    console.log(`In loop, next stage is`, nextStage);
     sortedStages.push(nextStage);
     startingStage = nextStage;
 
@@ -59,7 +54,6 @@ export const sortStages = (unsortedStagesInOpening: DynamoStage[]): DynamoStage[
     // Continue loop until all stages are sorted
   }
 
-  console.log(`Exiting loop. Sorted stages`, sortedStages);
   return sortedStages;
 };
 

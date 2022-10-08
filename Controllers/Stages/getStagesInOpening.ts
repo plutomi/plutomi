@@ -28,7 +28,6 @@ export const getStagesInOpening = async (req: Request, res: Response) => {
     orgId: user.orgId,
   });
 
-  console.log('IN API ENDPOINT ALL STAGES', allCurrentStages);
   if (allStagesError) {
     console.log('All stages error', allStagesError);
     const { status, body } = CreateError.SDK(

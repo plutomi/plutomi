@@ -67,7 +67,8 @@ export const updateStage = async (props: UpdateStageInput): Promise<[null, null]
    * Stage 2 --- Stage 1 <-- Moved
    */
 
-  if (startedAtTheBeginning && endedAtTheEnd && oldNextStageId === updatedValues.previousStageId) {
+  if (startedAtTheBeginning && endedAtTheEnd && updatedValues.previousStageId === oldNextStageId) {
+    console.log(`SCENARIO 1 TRIGGERED`);
     transactParams.TransactItems.push({
       Update: {
         // Stage 2
@@ -95,7 +96,12 @@ export const updateStage = async (props: UpdateStageInput): Promise<[null, null]
    * Stage 3 --- Stage 3
    */
 
-  if (startedAtTheBeginning && !endedAtTheEnd && updatedValues.previousStageId === oldNextStageId) {
+  if (
+    startedAtTheBeginning &&
+    endedInTheMiddle &&
+    updatedValues.previousStageId === oldNextStageId
+  ) {
+    console.log(`SCENARIO 2 TRIGGERED`);
     transactParams.TransactItems.push({
       Update: {
         // Stage 2
@@ -139,6 +145,8 @@ export const updateStage = async (props: UpdateStageInput): Promise<[null, null]
    */
 
   if (startedAtTheBeginning && endedAtTheEnd && updatedValues.previousStageId !== oldNextStageId) {
+    console.log(`SCENARIO 3 TRIGGERED`);
+
     transactParams.TransactItems.push({
       Update: {
         // Stage 2
@@ -181,6 +189,8 @@ export const updateStage = async (props: UpdateStageInput): Promise<[null, null]
    */
 
   if (startedAtTheBeginning && !endedAtTheEnd && updatedValues.previousStageId !== oldNextStageId) {
+    console.log(`SCENARIO 4 TRIGGERED`);
+
     transactParams.TransactItems.push({
       Update: {
         // Stage 2
@@ -237,6 +247,8 @@ export const updateStage = async (props: UpdateStageInput): Promise<[null, null]
    */
 
   if (startedAtTheEnd && endedAtTheBeginning && oldPreviousStageId === updatedValues.nextStageId) {
+    console.log(`SCENARIO 5 TRIGGERED`);
+
     transactParams.TransactItems.push({
       Update: {
         // Stage 1
@@ -265,6 +277,8 @@ export const updateStage = async (props: UpdateStageInput): Promise<[null, null]
    */
 
   if (startedAtTheEnd && !endedAtTheBeginning && updatedValues.nextStageId === oldPreviousStageId) {
+    console.log(`SCENARIO 6 TRIGGERED`);
+
     transactParams.TransactItems.push({
       Update: {
         // Stage 1
@@ -308,6 +322,8 @@ export const updateStage = async (props: UpdateStageInput): Promise<[null, null]
    */
 
   if (startedAtTheEnd && endedAtTheBeginning && updatedValues.nextStageId !== oldPreviousStageId) {
+    console.log(`SCENARIO 7 TRIGGERED`);
+
     transactParams.TransactItems.push({
       Update: {
         // Stage 1
@@ -351,6 +367,8 @@ export const updateStage = async (props: UpdateStageInput): Promise<[null, null]
    */
 
   if (startedAtTheEnd && !endedAtTheBeginning && updatedValues.nextStageId !== oldPreviousStageId) {
+    console.log(`SCENARIO 8 TRIGGERED`);
+
     transactParams.TransactItems.push({
       Update: {
         // Stage 1
@@ -412,6 +430,8 @@ export const updateStage = async (props: UpdateStageInput): Promise<[null, null]
     endedAtTheBeginning &&
     oldPreviousStageId === updatedValues.nextStageId
   ) {
+    console.log(`SCENARIO 9 TRIGGERED`);
+
     transactParams.TransactItems.push({
       Update: {
         // Stage 1
@@ -455,6 +475,8 @@ export const updateStage = async (props: UpdateStageInput): Promise<[null, null]
    */
 
   if (startedInTheMiddle && endedAtTheEnd && oldNextStageId === updatedValues.previousStageId) {
+    console.log(`SCENARIO 10 TRIGGERED`);
+
     transactParams.TransactItems.push({
       Update: {
         // Stage 1
@@ -499,6 +521,8 @@ export const updateStage = async (props: UpdateStageInput): Promise<[null, null]
    */
 
   if (startedInTheMiddle && !endedAtTheEnd && updatedValues.previousStageId === oldNextStageId) {
+    console.log(`SCENARIO 11 TRIGGERED`);
+
     transactParams.TransactItems.push({
       Update: {
         // Stage 1
@@ -561,6 +585,8 @@ export const updateStage = async (props: UpdateStageInput): Promise<[null, null]
     !endedAtTheBeginning &&
     oldPreviousStageId === updatedValues.nextStageId
   ) {
+    console.log(`SCENARIO 12 TRIGGERED`);
+
     transactParams.TransactItems.push({
       Update: {
         // Stage 1
@@ -621,6 +647,8 @@ export const updateStage = async (props: UpdateStageInput): Promise<[null, null]
    */
 
   if (startedInTheMiddle && endedInTheMiddle && oldNextStageId !== updatedValues.previousStageId) {
+    console.log(`SCENARIO 13 TRIGGERED`);
+
     transactParams.TransactItems.push({
       Update: {
         // Stage 3
@@ -680,6 +708,8 @@ export const updateStage = async (props: UpdateStageInput): Promise<[null, null]
    */
 
   if (startedInTheMiddle && endedAtTheEnd && oldNextStageId !== updatedValues.previousStageId) {
+    console.log(`SCENARIO 14 TRIGGERED`);
+
     transactParams.TransactItems.push({
       Update: {
         // Stage 3
@@ -723,6 +753,8 @@ export const updateStage = async (props: UpdateStageInput): Promise<[null, null]
    * Stage 5 --- Stage 5
    */
   if (startedInTheMiddle && endedInTheMiddle && updatedValues.nextStageId !== oldPreviousStageId) {
+    console.log(`SCENARIO 15 TRIGGERED`);
+
     transactParams.TransactItems.push({
       Update: {
         // Stage 1
@@ -801,6 +833,8 @@ export const updateStage = async (props: UpdateStageInput): Promise<[null, null]
     endedAtTheBeginning &&
     updatedValues.nextStageId !== oldPreviousStageId
   ) {
+    console.log(`SCENARIO 16 TRIGGERED`);
+
     transactParams.TransactItems.push({
       Update: {
         // Stage 1
