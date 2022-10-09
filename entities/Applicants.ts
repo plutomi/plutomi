@@ -11,11 +11,14 @@ export interface IApplicant extends IBase {
 
 export const applicantSchema = new Schema<IApplicant>({
   ...baseSchema.obj,
-  target: [
-    { org: { type: Schema.Types.ObjectId, ref: Org } },
-    { opening: { type: Schema.Types.ObjectId, ref: Opening } },
-    { stage: { type: Schema.Types.ObjectId, ref: Stage } },
-  ],
+  target: {
+    type: [
+      { org: { type: Schema.Types.ObjectId, ref: Org } },
+      { opening: { type: Schema.Types.ObjectId, ref: Opening } },
+      { stage: { type: Schema.Types.ObjectId, ref: Stage } },
+    ],
+    index: true,
+  },
   verifiedEmail: { type: Boolean, default: false },
 });
 

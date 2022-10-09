@@ -15,11 +15,14 @@ export interface IOrgInvite extends IBase {
 
 export const orgInviteSchema = new Schema<IOrgInvite>({
   ...baseSchema.obj,
-  target: [
-    { org: { type: Schema.Types.ObjectId, ref: Org } },
-    { createdBy: { type: Schema.Types.ObjectId, ref: User } },
-    { recipient: { type: Schema.Types.ObjectId, ref: User } },
-  ],
+  target: {
+    type: [
+      { org: { type: Schema.Types.ObjectId, ref: Org } },
+      { createdBy: { type: Schema.Types.ObjectId, ref: User } },
+      { recipient: { type: Schema.Types.ObjectId, ref: User } },
+    ],
+    index: true,
+  },
   expiresAt: { type: Date, default: () => dayjs(new Date()).add(3, 'days').toDate() },
 });
 

@@ -15,17 +15,21 @@ export interface IOpening extends IBase {
 
 export const openingSchema = new Schema<IOpening>({
   ...baseSchema.obj,
-  target: [
-    {
-      id: Schema.Types.ObjectId,
-      org: { type: Schema.Types.ObjectId, ref: Org },
-      visibility: {
-        type: String,
-        enum: OpeningState,
-        default: OpeningState.PRIVATE,
+  target: {
+    type: [
+      {
+        id: Schema.Types.ObjectId,
+        org: { type: Schema.Types.ObjectId, ref: Org },
+        visibility: {
+          type: String,
+          enum: OpeningState,
+          default: OpeningState.PRIVATE,
+        },
       },
-    },
-  ],
+    ],
+    index: true,
+  },
+
   totalApplicants: { type: Number, default: 0 },
   totalStages: { type: Number, default: 0 },
   stageOrder: [{ type: Schema.Types.ObjectId, ref: Stage }],

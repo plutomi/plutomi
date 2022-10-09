@@ -11,7 +11,10 @@ export interface IQuestion extends IBase {
 
 export const questionSchema = new Schema<IQuestion>({
   ...baseSchema.obj,
-  target: [{ org: { type: Schema.Types.ObjectId, ref: Org } }],
+  target: {
+    type: [{ org: { type: Schema.Types.ObjectId, ref: Org } }],
+    index: true,
+  },
   totalStages: { type: Number, default: 0 },
   title: { type: String, required: true },
   description: String,

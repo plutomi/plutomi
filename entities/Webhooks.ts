@@ -11,7 +11,10 @@ export interface IWebhook extends IBase {
 
 export const webhookSchema = new Schema<IWebhook>({
   ...baseSchema.obj,
-  target: [{ org: { type: Schema.Types.ObjectId, ref: Org } }],
+  target: {
+    type: [{ org: { type: Schema.Types.ObjectId, ref: Org } }],
+    index: true,
+  },
   name: String,
   description: String,
   url: String,

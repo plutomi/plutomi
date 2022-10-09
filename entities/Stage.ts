@@ -15,11 +15,14 @@ export interface IStage extends IBase {
 
 export const stageSchema = new Schema<IStage>({
   ...baseSchema.obj,
-  target: [
-    { org: { type: Schema.Types.ObjectId, ref: Org } },
-    { openingId: { type: Schema.Types.openingId, ref: Opening } },
-    { totalApplicants: { type: Number, default: 0 } },
-  ],
+  target: {
+    type: [
+      { org: { type: Schema.Types.ObjectId, ref: Org } },
+      { openingId: { type: Schema.Types.openingId, ref: Opening } },
+      { totalApplicants: { type: Number, default: 0 } },
+    ],
+    index: true,
+  },
   totalQuestions: { type: Number, default: 0 },
   questionOrder: [{ type: Schema.Types.ObjectId, ref: Question }],
 });

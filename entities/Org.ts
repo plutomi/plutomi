@@ -12,7 +12,10 @@ export interface IOrg extends IBase {
 
 export const orgSchema = new Schema<IOrg>({
   ...baseSchema.obj,
-  target: [{ name: String }],
+  target: {
+    type: [{ name: String }],
+    index: true,
+  },
   totalApplicants: { type: Number, default: 0 },
   totalOpenings: { type: Number, default: 0 },
   totalUsers: { type: Number, default: 0 },
