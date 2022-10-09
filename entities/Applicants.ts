@@ -1,6 +1,8 @@
 import { Schema, model } from 'mongoose';
 import { baseSchema, IBase } from './Base';
+import { Opening } from './Opening';
 import { Org } from './Org';
+import { Stage } from './Stage';
 
 export interface IApplicant extends IBase {
   verifiedEmail: boolean;
@@ -9,8 +11,12 @@ export interface IApplicant extends IBase {
 
 export const applicantSchema = new Schema<IApplicant>({
   ...baseSchema.obj,
+  target: [
+    { org: { type: Schema.Types.ObjectId, ref: Org } },
+    { opening: { type: Schema.Types.ObjectId, ref: Opening } },
+    { stage: { type: Schema.Types.ObjectId, ref: Stage } },
+  ],
   verifiedEmail: { type: Boolean, default: false },
-  org: { type: Schema.Types.ObjectId, ref: Org },
 });
 
 export const Applicant = model<IApplicant>('Applicant', applicantSchema);

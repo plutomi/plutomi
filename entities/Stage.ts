@@ -1,5 +1,6 @@
 import { Schema, model } from 'mongoose';
 import { baseSchema, IBase } from './Base';
+import { Opening } from './Opening';
 import { Org } from './Org';
 import { Question } from './Question';
 
@@ -14,10 +15,12 @@ export interface IStage extends IBase {
 
 export const stageSchema = new Schema<IStage>({
   ...baseSchema.obj,
-  totalApplicants: { type: Number, default: 0 },
+  target: [
+    { org: { type: Schema.Types.ObjectId, ref: Org } },
+    { openingId: { type: Schema.Types.openingId, ref: Opening } },
+    { totalApplicants: { type: Number, default: 0 } },
+  ],
   totalQuestions: { type: Number, default: 0 },
-  name: { type: String, required: true },
-  org: { type: Schema.Types.ObjectId, ref: Org },
   questionOrder: [{ type: Schema.Types.ObjectId, ref: Question }],
 });
 

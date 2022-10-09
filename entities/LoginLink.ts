@@ -9,12 +9,12 @@ export interface ILoginLink extends IBase {
 
 export const loginLinkSchema = new Schema<ILoginLink>({
   ...baseSchema.obj,
+  target: [{ user: { type: Schema.Types.ObjectId, ref: User } }],
   createdAt: {
     type: Date,
     default: () => Date.now(),
     expires: 60 * 15, // 15 min
   },
-  user: { type: Schema.Types.ObjectId, ref: User },
 });
 
 export const LoginLink = model<ILoginLink>('LoginLink', loginLinkSchema);

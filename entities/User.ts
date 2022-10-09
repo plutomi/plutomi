@@ -16,17 +16,24 @@ export interface IUser extends IBase {
 
 export const userSchema = new Schema<IUser>({
   ...baseSchema.obj,
+  target: [
+    {
+      email: {
+        type: String,
+        required: true,
+        lowercase: true,
+        trim: true,
+      },
+    },
+    {
+      org: { type: Schema.Types.ObjectId, ref: Org, default: null },
+    },
+  ],
   firstName: { type: String, default: DEFAULTS.FIRST_NAME, trim: true },
   lastName: { type: String, default: DEFAULTS.LAST_NAME, trim: true },
   totalInvites: { type: Number, default: 0 },
   verifiedEmail: { type: Boolean, default: false },
-  email: {
-    type: String,
-    required: true,
-    lowercase: true,
-    trim: true,
-  },
-  org: { type: Schema.Types.ObjectId, ref: Org, default: null },
+
   orgJoinDate: { type: Date },
 });
 
