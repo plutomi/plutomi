@@ -4,6 +4,7 @@ import { DynamoStage } from '../../types/dynamo';
 interface GetAdjacentStagesBasedOnPositionProps {
   position?: number;
   otherStages: DynamoStage[];
+  stageIdWeAreMoving: string;
 }
 interface AdjacentStagesResult {
   nextStageId?: string;
@@ -61,6 +62,7 @@ export const sortStages = (unsortedStagesInOpening: DynamoStage[]): DynamoStage[
 export const getAdjacentStagesBasedOnPosition = ({
   position,
   otherStages,
+  stageIdWeAreMoving,
 }: GetAdjacentStagesBasedOnPositionProps): AdjacentStagesResult => {
   if (position === undefined) {
     // Position not provided, add it to the end
@@ -78,10 +80,63 @@ export const getAdjacentStagesBasedOnPosition = ({
     };
   }
 
-  const sortedStages = sortStages(otherStages);
+  const sortedStages = sortStages(otherStages); // TODO move this out!!!!!!!!
 
-  return {
-    previousStageId: sortedStages[position]?.stageId ?? NO_STAGE, // Dynamo doesn't allow undefined,
-    nextStageId: sortedStages[position]?.stageId ?? NO_STAGE, // Dynamo doesn't allow undefined,
-  };
+  const currentIndex = sortedStages.findIndex((stage) => stage.stageId === stageIdWeAreMoving);
+
+  /**
+   * OLD --- NEW
+   * New position: 1
+   * Moving Stage One to the middle
+   *
+   * Stage 1                    -----  Stage 2
+   * previous: NO_STAGE                previous: NO_STAGE
+   * next: Stage 2                     next: Stage 1
+   *
+   * Stage 2                    ----- Stage 1
+   * previous: Stage 1                previous: Stage 2 <------
+   * next: Stage3                     next: Stage 3 <------
+   *
+   * Stage 3                    ----- Stage 3
+   * previous: Stage 2                previous: Stage 1
+   * next: NO_STAGE                   next: NO_STAGE
+   *
+   */
+
+  /**
+   * Stage is currently index 0, moving to position 1 above (2nd place) ie moving it "DOWN" the column
+   */
+  if (position >= currentIndex) {
+    return {
+      previousStageId: sortedStages[position]?.stageId ?? NO_STAGE, // We took this place and are now after it
+      nextStageId: sortedStages[position + 1]?.stageId ?? NO_STAGE, // The old next stage
+    };
+  } else {
+    /**
+     * OLD --- NEW
+     * New position: 1
+     * Moving Stage One to the middle
+     *
+     * Stage 2                    -----  Stage 2
+     * previous: NO_STAGE                previous: NO_STAGE
+     * next: Stage 2                     next: Stage 1
+     *
+     * Stage 3                    ----- Stage 1
+     * previous: Stage 1                previous: Stage 2 <------
+     * next: Stage3                     next: Stage 3 <------
+     *
+     * Stage 1                    ----- Stage 3
+     * previous: Stage 2                previous: Stage 1
+     * next: NO_STAGE                   next: NO_STAGE
+     *
+     */
+    /**
+     * Stage is currently index 0, moving to position 1 above (2nd place) ie moving it "DOWN" the column
+     */
+    return {
+      previousStageId: sortedStages[position - 1]?.stageId ?? NO_STAGE, // The old previous stage
+      nextStageId: sortedStages[position]?.stageId ?? NO_STAGE, // We took this place and are now after it
+    };
+  }
+  // Also dynamod doesn't allow undefined, hence the NO_STAGE
 };
