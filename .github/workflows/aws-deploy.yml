@@ -15,8 +15,10 @@ jobs:
       - name: Install dependencies
         run: npm i && npm i aws-cdk -g #TODO clean this up
 
-      - name: Running Build
+      - name: Running Build # TODO is this needed? Don't think so as CDK builds it for us
         run: npm run build
+        env:
+          COMMITS_TOKEN: ${{ secrets.COMMITS_TOKEN }}
 
       - name: Print destination
         run: echo "Deploying to staging environment"
