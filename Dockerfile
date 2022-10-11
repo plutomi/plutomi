@@ -4,7 +4,7 @@ FROM node:16
 WORKDIR /usr/src/app
 
 # Installing dependencies
-COPY package*.json ./
+COPY package.json ./
 RUN npm install
 
 

@@ -97,7 +97,7 @@ export default class DeleteChildrenMachineStack extends cdk.Stack {
         timeout: cdk.Duration.seconds(5),
         memorySize: 256,
         logRetention: RetentionDays.ONE_WEEK,
-        runtime: Runtime.NODEJS_14_X,
+        runtime: Runtime.NODEJS_16_X,
         architecture: Architecture.X86_64, // TODO fix deploy issues in actions
         environment: { ...ENVIRONMENT, DYNAMO_TABLE_NAME },
         bundling: {

@@ -31,7 +31,7 @@ export default class StreamProcessorStack extends cdk.Stack {
         timeout: cdk.Duration.seconds(5),
         memorySize: 256,
         logRetention: RetentionDays.ONE_WEEK,
-        runtime: Runtime.NODEJS_14_X,
+        runtime: Runtime.NODEJS_16_X,
         architecture: Architecture.X86_64, // TODO fix deploy issues ina ctions
         bundling: {
           minify: true,

@@ -19,18 +19,16 @@ interface AppStackServiceProps extends cdk.StackProps {
   table: Table;
 }
 
-
- export const ENVIRONMENT = {
+export const ENVIRONMENT = {
   HOSTED_ZONE_ID: process.env.HOSTED_ZONE_ID,
   ACM_CERTIFICATE_ID: process.env.ACM_CERTIFICATE_ID,
   LOGIN_LINKS_PASSWORD: process.env.LOGIN_LINKS_PASSWORD,
   SESSION_SIGNATURE_SECRET_1: process.env.SESSION_SIGNATURE_SECRET_1,
   COMMITS_TOKEN: process.env.COMMITS_TOKEN,
   MONGO_CONNECTION: 'NOT_SET_NEEDS_OTHER_PR',
-  DEPLOYMENT_ENVIRONMENT: process.env.DEPLOYMENT_ENVIRONMENT,
-  NODE_ENV: process.env.NODE_ENV,
+  DEPLOYMENT_ENVIRONMENT: process.env.DEPLOYMENT_ENVIRONMENT ?? 'NOT_SET',
+  NODE_ENV: process.env.NODE_ENV ?? 'NOT_SET',
 };
-
 
 export default class AppStack extends cdk.Stack {
   constructor(scope: cdk.App, id: string, props?: AppStackServiceProps) {
@@ -141,6 +139,7 @@ export default class AppStack extends cdk.Stack {
         cluster,
         certificate: apiCert,
         taskDefinition,
+
         desiredCount: 1, // TODO revert back
         listenerPort: 443,
         protocol: protocol.ApplicationProtocol.HTTPS,
