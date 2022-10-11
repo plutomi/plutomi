@@ -10,6 +10,7 @@ import * as iam from 'aws-cdk-lib/aws-iam';
 import path from 'path';
 import { DYNAMO_TABLE_NAME, Entities } from '../Config';
 import { DynamoIAM } from '../types/dynamo';
+import { ENVIRONMENT } from './consts';
 
 interface CustomLambdaFunction {
   functionName: string;
@@ -98,10 +99,7 @@ export default class DeleteChildrenMachineStack extends cdk.Stack {
         logRetention: RetentionDays.ONE_WEEK,
         runtime: Runtime.NODEJS_14_X,
         architecture: Architecture.X86_64, // TODO fix deploy issues in actions
-        environment: {
-          NODE_ENV: process.env.NODE_ENV,
-          DYNAMO_TABLE_NAME,
-        },
+        environment: { ...ENVIRONMENT, DYNAMO_TABLE_NAME },
         bundling: {
           minify: true,
           externalModules: ['aws-sdk'],

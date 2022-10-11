@@ -6,6 +6,7 @@ import { NodejsFunction } from 'aws-cdk-lib/aws-lambda-nodejs';
 import { DynamoEventSource } from 'aws-cdk-lib/aws-lambda-event-sources';
 import { StartingPosition, Runtime, Architecture } from 'aws-cdk-lib/aws-lambda';
 import { RetentionDays } from 'aws-cdk-lib/aws-logs';
+import { ENVIRONMENT } from './consts';
 
 interface StreamProcessorStackProps extends cdk.StackProps {
   table: Table;
@@ -26,9 +27,7 @@ export default class StreamProcessorStack extends cdk.Stack {
       `${process.env.NODE_ENV}-${FUNCTION_NAME}`,
       {
         functionName: `${process.env.NODE_ENV}-${FUNCTION_NAME}`,
-        environment: {
-          NODE_ENV: process.env.NODE_ENV, // To get the dynamic event bus name // TODO this is silly
-        },
+        environment: { ...ENVIRONMENT },
         timeout: cdk.Duration.seconds(5),
         memorySize: 256,
         logRetention: RetentionDays.ONE_WEEK,
