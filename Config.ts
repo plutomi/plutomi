@@ -24,7 +24,7 @@ if (process.env.NODE_ENV === 'staging') {
 }
 
 export const API_URL = `${WEBSITE_URL}/api`;
-
+//
 export const COOKIE_NAME =
   process.env.NODE_ENV === 'production' ? 'plutomi-cookie' : 'DEV-plutomi-cookie';
 
