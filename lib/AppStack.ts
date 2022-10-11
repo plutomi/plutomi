@@ -345,7 +345,8 @@ export default class AppStack extends cdk.Stack {
     //  Creates an A record that points our API domain to Cloudfront
     new ARecord(this, `APIAlias`, {
       // @ts-ignore TODO fixup type for node env!!!!!
-      recordName: process.env.NODE_ENV === 'staging' ? `staging.${DOMAIN_NAME}` : DOMAIN_NAME,
+      recordName:
+        process.env.DEPLOYMENT_ENVIRONMENT === 'staging' ? `staging.${DOMAIN_NAME}` : DOMAIN_NAME,
       zone: hostedZone,
       target: RecordTarget.fromAlias(new CloudFrontTarget(distribution)),
     });
