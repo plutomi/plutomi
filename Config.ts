@@ -16,11 +16,16 @@ export const EXPRESS_PORT = 3000;
 
 export let WEBSITE_URL = `https://${DOMAIN_NAME}`;
 
+console.log(`WEBSITE URL STARTRING`, WEBSITE_URL);
 // @ts-ignore // TODO sighhhhhh
 if (process.env.NODE_ENV === 'staging') {
   WEBSITE_URL = `https://staging.plutomi.com`;
+  console.log(`WEBSITE URL STAGING`, WEBSITE_URL);
 } else {
   WEBSITE_URL = `http://localhost:${EXPRESS_PORT}`;
+  console.log(`WEBSITE URL ELSE`, WEBSITE_URL);
+
+  console.log(`NODE ENV`, process.env.NODE_ENV);
 }
 
 export const API_URL = `${WEBSITE_URL}/api`;
