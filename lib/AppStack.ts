@@ -325,7 +325,9 @@ export default class AppStack extends cdk.Stack {
       certificate: apiCert,
       webAclId: API_WAF.attrArn,
       // @ts-ignore // TODO: Add a type for NODE_ENV for staging!!!!!!
-      domainNames: [process.env.NODE_ENV === 'staging' ? `staging.${DOMAIN_NAME}` : DOMAIN_NAME],
+      domainNames: [
+        process.env.DEPLOYMENT_ENVIRONMENT === 'staging' ? `staging.${DOMAIN_NAME}` : DOMAIN_NAME,
+      ],
       defaultBehavior: {
         origin: new origins.LoadBalancerV2Origin(loadBalancedFargateService.loadBalancer),
 
