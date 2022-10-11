@@ -25,6 +25,19 @@ export default class AppStack extends cdk.Stack {
 
     const { HOSTED_ZONE_ID } = process.env;
 
+    const NEXT_ENVIRONMENT = {
+      COMMITS_TOKEN: process.env.COMMITS_TOKEN ?? 'NOT_SET',
+    };
+
+    const ENVIRONMENT = {
+      HOSTED_ZONE_ID: process.env.HOSTED_ZONE_ID,
+      ACM_CERTIFICATE_ID: process.env.ACM_CERTIFICATE_ID,
+      LOGIN_LINKS_PASSWORD: process.env.LOGIN_LINKS_PASSWORD,
+      SESSION_SIGNATURE_SECRET_1: process.env.SESSION_SIGNATURE_SECRET_1,
+      COMMITS_TOKEN: process.env.COMMITS_TOKEN,
+      MONGO_CONNECTION: 'NOT_SET_NEEDS_OTHER_PR',
+      NODE_ENV: process.env.NODE_ENV,
+    };
     // IAM inline role - the service principal is required
     const taskRole = new iam.Role(this, 'plutomi-api-fargate-role', {
       assumedBy: new iam.ServicePrincipal('ecs-tasks.amazonaws.com'),
@@ -74,18 +87,13 @@ export default class AppStack extends cdk.Stack {
     const container = taskDefinition.addContainer('plutomi-api-fargate-container', {
       // Get the local docker image, build and deploy it
       image: ecs.ContainerImage.fromAsset('.', {
-        buildArgs: {
-          COMMITS_TOKEN: process.env.COMMITS_TOKEN,
-        },
+        buildArgs: NEXT_ENVIRONMENT, // Pass any variables to the front end
       }),
 
       logging: new ecs.AwsLogDriver({
         streamPrefix: 'plutomi-api-fargate',
       }), //
-      environment: {
-        STATUS_CHECK: `Setting in CDK stack`,
-        NODE_ENV: process.env.NODE_ENV,
-      },
+      environment: ENVIRONMENT,
     });
 
     // API
