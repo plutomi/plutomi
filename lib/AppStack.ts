@@ -14,11 +14,23 @@ import { CloudFrontTarget } from 'aws-cdk-lib/aws-route53-targets';
 import { Policy, PolicyStatement } from 'aws-cdk-lib/aws-iam';
 import { DOMAIN_NAME, EXPRESS_PORT } from '../Config';
 import * as waf from 'aws-cdk-lib/aws-wafv2';
-import { ENVIRONMENT } from './consts';
 
 interface AppStackServiceProps extends cdk.StackProps {
   table: Table;
 }
+
+
+ export const ENVIRONMENT = {
+  HOSTED_ZONE_ID: process.env.HOSTED_ZONE_ID,
+  ACM_CERTIFICATE_ID: process.env.ACM_CERTIFICATE_ID,
+  LOGIN_LINKS_PASSWORD: process.env.LOGIN_LINKS_PASSWORD,
+  SESSION_SIGNATURE_SECRET_1: process.env.SESSION_SIGNATURE_SECRET_1,
+  COMMITS_TOKEN: process.env.COMMITS_TOKEN,
+  MONGO_CONNECTION: 'NOT_SET_NEEDS_OTHER_PR',
+  DEPLOYMENT_ENVIRONMENT: process.env.DEPLOYMENT_ENVIRONMENT,
+  NODE_ENV: process.env.NODE_ENV,
+};
+
 
 export default class AppStack extends cdk.Stack {
   constructor(scope: cdk.App, id: string, props?: AppStackServiceProps) {

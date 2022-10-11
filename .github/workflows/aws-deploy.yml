@@ -1,5 +1,9 @@
 on: [push, workflow_dispatch]
 
+# I can't set this in the actual deploy action
+env:
+  DEPLOYMENT_ENVIRONMENT: staging
+
 jobs:
   STAGING:
     runs-on: ubuntu-latest
@@ -10,7 +14,7 @@ jobs:
 
       - uses: actions/setup-node@v3
         with:
-          node-version: '14'
+          node-version: '14' # TODO bump this up
 
       - name: Install dependencies
         run: npm i && npm i aws-cdk -g #TODO clean this up

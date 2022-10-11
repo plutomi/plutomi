@@ -10,7 +10,7 @@ import * as iam from 'aws-cdk-lib/aws-iam';
 import path from 'path';
 import { DYNAMO_TABLE_NAME, Entities } from '../Config';
 import { DynamoIAM } from '../types/dynamo';
-import { ENVIRONMENT } from './consts';
+import { ENVIRONMENT } from './AppStack';
 
 interface CustomLambdaFunction {
   functionName: string;

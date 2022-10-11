@@ -6,7 +6,7 @@ import { NodejsFunction } from 'aws-cdk-lib/aws-lambda-nodejs';
 import { DynamoEventSource } from 'aws-cdk-lib/aws-lambda-event-sources';
 import { StartingPosition, Runtime, Architecture } from 'aws-cdk-lib/aws-lambda';
 import { RetentionDays } from 'aws-cdk-lib/aws-logs';
-import { ENVIRONMENT } from './consts';
+import { ENVIRONMENT } from './AppStack';
 
 interface StreamProcessorStackProps extends cdk.StackProps {
   table: Table;
