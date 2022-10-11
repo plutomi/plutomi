@@ -9,7 +9,7 @@ type GetWebhookByIdInput = Pick<DynamoWebhook, 'orgId' | 'webhookId'>;
 export const getWebhook = async (props: GetWebhookByIdInput): Promise<[DynamoWebhook, any]> => {
   const { orgId, webhookId } = props;
   const params: GetCommandInput = {
-    TableName: `${process.env.NODE_ENV}-${DYNAMO_TABLE_NAME}`,
+    TableName: `${process.env.DEPLOYMENT_ENVIRONMENT}-${DYNAMO_TABLE_NAME}`,
     Key: {
       PK: `${Entities.ORG}#${orgId}#${Entities.WEBHOOK}#${webhookId}`,
       SK: Entities.WEBHOOK,

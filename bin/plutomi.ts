@@ -11,17 +11,17 @@ import AthenaDynamoQueryStack from '../lib/AthenaDynamoQueryStack';
 import StorageStack from '../lib/StorageStack';
 
 const app = new cdk.App();
-const { bucket } = new StorageStack(app, `${process.env.NODE_ENV}-StorageStack`);
+const { bucket } = new StorageStack(app, `${process.env.DEPLOYMENT_ENVIRONMENT}-StorageStack`);
 
-const { table } = new DynamoDBStack(app, `${process.env.NODE_ENV}-DynamoDBStack`);
+const { table } = new DynamoDBStack(app, `${process.env.DEPLOYMENT_ENVIRONMENT}-DynamoDBStack`);
 
-new AppStack(app, `${process.env.NODE_ENV}-AppStack`, {
+new AppStack(app, `${process.env.DEPLOYMENT_ENVIRONMENT}-AppStack`, {
   table,
 });
 
 const { DeleteChildrenMachine } = new DeleteChildrenMachineStack(
   app,
-  `${process.env.NODE_ENV}-DeleteChildrenMachineStack`,
+  `${process.env.DEPLOYMENT_ENVIRONMENT}-DeleteChildrenMachineStack`,
   {
     table,
   },
@@ -29,20 +29,20 @@ const { DeleteChildrenMachine } = new DeleteChildrenMachineStack(
 
 const { WebhooksMachine } = new WebhooksMachineStack(
   app,
-  `${process.env.NODE_ENV}-WebhooksMachineStack`,
+  `${process.env.DEPLOYMENT_ENVIRONMENT}-WebhooksMachineStack`,
   {
     table,
   },
 );
-new EventBridgeStack(app, `${process.env.NODE_ENV}-EventBridgeStack`, {
+new EventBridgeStack(app, `${process.env.DEPLOYMENT_ENVIRONMENT}-EventBridgeStack`, {
   DeleteChildrenMachine,
   WebhooksMachine,
 });
 
-new StreamProcessorStack(app, `${process.env.NODE_ENV}-StreamProcessorStack`, {
+new StreamProcessorStack(app, `${process.env.DEPLOYMENT_ENVIRONMENT}-StreamProcessorStack`, {
   table,
 });
-new AthenaDynamoQueryStack(app, `${process.env.NODE_ENV}-AthenaDynamoQueryStack`, {
+new AthenaDynamoQueryStack(app, `${process.env.DEPLOYMENT_ENVIRONMENT}-AthenaDynamoQueryStack`, {
   table,
   bucket,
 });

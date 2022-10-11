@@ -24,9 +24,9 @@ export default class StreamProcessorStack extends cdk.Stack {
     const FUNCTION_NAME = 'stream-processor-function';
     this.StreamProcessorFunction = new NodejsFunction(
       this,
-      `${process.env.NODE_ENV}-${FUNCTION_NAME}`,
+      `${process.env.DEPLOYMENT_ENVIRONMENT}-${FUNCTION_NAME}`,
       {
-        functionName: `${process.env.NODE_ENV}-${FUNCTION_NAME}`,
+        functionName: `${process.env.DEPLOYMENT_ENVIRONMENT}-${FUNCTION_NAME}`,
         environment: { ...ENVIRONMENT },
         timeout: cdk.Duration.seconds(5),
         memorySize: 256,
@@ -55,8 +55,8 @@ export default class StreamProcessorStack extends cdk.Stack {
     // Give our lambda acccess to the push events into EB
     const bus = EventBus.fromEventBusName(
       this,
-      `${process.env.NODE_ENV}-EventBus`,
-      `${process.env.NODE_ENV}-EventBus`,
+      `${process.env.DEPLOYMENT_ENVIRONMENT}-EventBus`,
+      `${process.env.DEPLOYMENT_ENVIRONMENT}-EventBus`,
     );
 
     bus.grantPutEventsTo(this.StreamProcessorFunction);

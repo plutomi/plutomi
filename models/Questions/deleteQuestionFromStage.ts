@@ -31,7 +31,7 @@ export const deleteQuestionFromStage = async (
             PK: `${Entities.ORG}#${orgId}#${Entities.QUESTION}#${questionId}`,
             SK: `${Entities.QUESTION_ADJACENT_STAGE_ITEM}#${Entities.OPENING}#${openingId}#${Entities.STAGE}#${stageId}`,
           },
-          TableName: `${process.env.NODE_ENV}-${DYNAMO_TABLE_NAME}`,
+          TableName: `${process.env.DEPLOYMENT_ENVIRONMENT}-${DYNAMO_TABLE_NAME}`,
           ConditionExpression: 'attribute_exists(PK)',
         },
       },
@@ -42,7 +42,7 @@ export const deleteQuestionFromStage = async (
             PK: `${Entities.ORG}#${orgId}#${Entities.OPENING}#${openingId}#${Entities.STAGE}#${stageId}`,
             SK: Entities.STAGE,
           },
-          TableName: `${process.env.NODE_ENV}-${DYNAMO_TABLE_NAME}`,
+          TableName: `${process.env.DEPLOYMENT_ENVIRONMENT}-${DYNAMO_TABLE_NAME}`,
           UpdateExpression: `REMOVE questionOrder[${deleteIndex}] SET totalQuestions = totalQuestions - :value, updatedAt = :updatedAt`,
           ExpressionAttributeValues: {
             ':value': 1,
@@ -60,7 +60,7 @@ export const deleteQuestionFromStage = async (
           PK: `${Entities.ORG}#${orgId}#${Entities.QUESTION}#${questionId}`,
           SK: Entities.QUESTION,
         },
-        TableName: `${process.env.NODE_ENV}-${DYNAMO_TABLE_NAME}`,
+        TableName: `${process.env.DEPLOYMENT_ENVIRONMENT}-${DYNAMO_TABLE_NAME}`,
         UpdateExpression: 'SET totalStages = totalStages - :value, updatedAt = :updatedAt',
         ExpressionAttributeValues: {
           ':value': 1,

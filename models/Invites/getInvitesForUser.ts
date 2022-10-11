@@ -10,7 +10,7 @@ export const getInvitesForUser = async (
 ): Promise<[DynamoOrgInvite[], null] | [null, Error]> => {
   const { userId } = props;
   const params: QueryCommandInput = {
-    TableName: `${process.env.NODE_ENV}-${DYNAMO_TABLE_NAME}`,
+    TableName: `${process.env.DEPLOYMENT_ENVIRONMENT}-${DYNAMO_TABLE_NAME}`,
     KeyConditionExpression: 'PK = :PK AND begins_with(SK, :SK)',
     ExpressionAttributeValues: {
       ':PK': `${Entities.USER}#${userId}`,

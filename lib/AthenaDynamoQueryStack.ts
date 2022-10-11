@@ -12,19 +12,23 @@ export default class AthenaDynamoQueryStack extends cdk.Stack {
   constructor(scope: cdk.App, id: string, props?: AthenaDynamoQueryStackProps) {
     super(scope, id, props);
 
-    new sam.CfnApplication(this, `${process.env.NODE_ENV}-AthenaDynamoQueryApplication`, {
-      location: {
-        applicationId: `arn:aws:serverlessrepo:us-east-1:292517598671:applications/AthenaDynamoDBConnector`,
-        semanticVersion: '2022.4.1',
+    new sam.CfnApplication(
+      this,
+      `${process.env.DEPLOYMENT_ENVIRONMENT}-AthenaDynamoQueryApplication`,
+      {
+        location: {
+          applicationId: `arn:aws:serverlessrepo:us-east-1:292517598671:applications/AthenaDynamoDBConnector`,
+          semanticVersion: '2022.4.1',
+        },
+        // https://github.com/awslabs/aws-athena-query-federation/blob/master/athena-dynamodb/athena-dynamodb.yaml
+        parameters: {
+          SpillBucket: props.bucket.bucketName,
+          AthenaCatalogName: `${process.env.DEPLOYMENT_ENVIRONMENT}-athena-dynamo-query-function`,
+          // Gotta love it, must be strings! :D
+          LambdaTimeout: '900',
+          LambdaMemory: '10000',
+        },
       },
-      // https://github.com/awslabs/aws-athena-query-federation/blob/master/athena-dynamodb/athena-dynamodb.yaml
-      parameters: {
-        SpillBucket: props.bucket.bucketName,
-        AthenaCatalogName: `${process.env.NODE_ENV}-athena-dynamo-query-function`,
-        // Gotta love it, must be strings! :D
-        LambdaTimeout: '900',
-        LambdaMemory: '10000',
-      },
-    });
+    );
   }
 }

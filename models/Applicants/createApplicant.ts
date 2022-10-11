@@ -51,7 +51,7 @@ export const createApplicant = async (
           // Add an applicant item
           Put: {
             Item: newApplicant,
-            TableName: `${process.env.NODE_ENV}-${DYNAMO_TABLE_NAME}`,
+            TableName: `${process.env.DEPLOYMENT_ENVIRONMENT}-${DYNAMO_TABLE_NAME}`,
 
             ConditionExpression: 'attribute_not_exists(PK)',
           },
@@ -63,7 +63,7 @@ export const createApplicant = async (
               PK: `${Entities.ORG}#${orgId}#${Entities.OPENING}#${openingId}`,
               SK: Entities.OPENING,
             },
-            TableName: `${process.env.NODE_ENV}-${DYNAMO_TABLE_NAME}`,
+            TableName: `${process.env.DEPLOYMENT_ENVIRONMENT}-${DYNAMO_TABLE_NAME}`,
 
             UpdateExpression:
               'SET totalApplicants = if_not_exists(totalApplicants, :zero) + :value',
@@ -88,7 +88,7 @@ export const createApplicant = async (
               PK: `${Entities.ORG}#${orgId}#${Entities.OPENING}#${openingId}#${Entities.STAGE}#${stageId}`,
               SK: Entities.STAGE,
             },
-            TableName: `${process.env.NODE_ENV}-${DYNAMO_TABLE_NAME}`,
+            TableName: `${process.env.DEPLOYMENT_ENVIRONMENT}-${DYNAMO_TABLE_NAME}`,
 
             ConditionExpression: 'attribute_exists(PK)',
             UpdateExpression:
@@ -106,7 +106,7 @@ export const createApplicant = async (
               PK: `${Entities.ORG}#${orgId}`,
               SK: Entities.ORG,
             },
-            TableName: `${process.env.NODE_ENV}-${DYNAMO_TABLE_NAME}`,
+            TableName: `${process.env.DEPLOYMENT_ENVIRONMENT}-${DYNAMO_TABLE_NAME}`,
 
             ConditionExpression: 'attribute_exists(PK)',
             UpdateExpression:

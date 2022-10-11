@@ -31,9 +31,9 @@ export default class WebhooksMachine extends cdk.Stack {
     const FUNCTION_NAME = 'get-webhooks-and-send-event-function';
     const GetWebhooksAndSendEventFunction = new NodejsFunction(
       this,
-      `${process.env.NODE_ENV}-${FUNCTION_NAME}`,
+      `${process.env.DEPLOYMENT_ENVIRONMENT}-${FUNCTION_NAME}`,
       {
-        functionName: `${process.env.NODE_ENV}-${FUNCTION_NAME}`,
+        functionName: `${process.env.DEPLOYMENT_ENVIRONMENT}-${FUNCTION_NAME}`,
         timeout: cdk.Duration.seconds(5),
         memorySize: 256,
         logRetention: RetentionDays.ONE_WEEK,
@@ -60,12 +60,16 @@ export default class WebhooksMachine extends cdk.Stack {
     }).addRetry({ maxAttempts: 2 });
 
     // ----- State Machine Settings -----
-    const log = new LogGroup(this, `${process.env.NODE_ENV}-WebhooksMachineLogGroup`, {
-      retention: RetentionDays.ONE_MONTH,
-    });
+    const log = new LogGroup(
+      this,
+      `${process.env.DEPLOYMENT_ENVIRONMENT}-WebhooksMachineLogGroup`,
+      {
+        retention: RetentionDays.ONE_MONTH,
+      },
+    );
 
     this.WebhooksMachine = new sfn.StateMachine(this, 'WebhooksMachine', {
-      stateMachineName: `${process.env.NODE_ENV}-WebhooksMachine`,
+      stateMachineName: `${process.env.DEPLOYMENT_ENVIRONMENT}-WebhooksMachine`,
       definition,
       timeout: cdk.Duration.minutes(5),
       stateMachineType: sfn.StateMachineType.EXPRESS,

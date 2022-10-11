@@ -22,7 +22,7 @@ export const deleteApplicant = async (
               PK: `${Entities.ORG}#${orgId}#${Entities.APPLICANT}#${applicantId}`,
               SK: Entities.APPLICANT,
             },
-            TableName: `${process.env.NODE_ENV}-${DYNAMO_TABLE_NAME}`,
+            TableName: `${process.env.DEPLOYMENT_ENVIRONMENT}-${DYNAMO_TABLE_NAME}`,
           },
         },
         {
@@ -32,7 +32,7 @@ export const deleteApplicant = async (
               PK: `${Entities.ORG}#${orgId}#${Entities.OPENING}#${openingId}`,
               SK: Entities.OPENING,
             },
-            TableName: `${process.env.NODE_ENV}-${DYNAMO_TABLE_NAME}`,
+            TableName: `${process.env.DEPLOYMENT_ENVIRONMENT}-${DYNAMO_TABLE_NAME}`,
             UpdateExpression: 'SET totalApplicants = totalApplicants - :value',
             ExpressionAttributeValues: {
               ':value': 1,
@@ -46,7 +46,7 @@ export const deleteApplicant = async (
               PK: `${Entities.ORG}#${orgId}#${Entities.STAGE}#${stageId}`,
               SK: Entities.STAGE,
             },
-            TableName: `${process.env.NODE_ENV}-${DYNAMO_TABLE_NAME}`,
+            TableName: `${process.env.DEPLOYMENT_ENVIRONMENT}-${DYNAMO_TABLE_NAME}`,
             UpdateExpression: 'SET totalApplicants = totalApplicants - :value',
             ExpressionAttributeValues: {
               ':value': 1,
@@ -60,7 +60,7 @@ export const deleteApplicant = async (
               PK: `${Entities.ORG}#${orgId}`,
               SK: Entities.ORG,
             },
-            TableName: `${process.env.NODE_ENV}-${DYNAMO_TABLE_NAME}`,
+            TableName: `${process.env.DEPLOYMENT_ENVIRONMENT}-${DYNAMO_TABLE_NAME}`,
             UpdateExpression: 'SET totalApplicants = totalApplicants - :value',
             ExpressionAttributeValues: {
               ':value': 1,

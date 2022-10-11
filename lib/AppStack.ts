@@ -72,7 +72,7 @@ export default class AppStack extends cdk.Stack {
       ],
     });
 
-    const policy = new Policy(this, `${process.env.NODE_ENV}-plutomi-api-policy`, {
+    const policy = new Policy(this, `${process.env.DEPLOYMENT_ENVIRONMENT}-plutomi-api-policy`, {
       statements: [dynamoAccessPolicyStatement, sesSendEmailPolicy],
     });
     taskRole.attachInlinePolicy(policy);
@@ -184,8 +184,8 @@ export default class AppStack extends cdk.Stack {
     });
 
     // Create the WAF & its rules
-    const API_WAF = new waf.CfnWebACL(this, `${process.env.NODE_ENV}-API-WAF`, {
-      name: `${process.env.NODE_ENV}-API-WAF`,
+    const API_WAF = new waf.CfnWebACL(this, `${process.env.DEPLOYMENT_ENVIRONMENT}-API-WAF`, {
+      name: `${process.env.DEPLOYMENT_ENVIRONMENT}-API-WAF`,
       description: 'Blocks IPs that make too many requests',
       defaultAction: {
         allow: {},
@@ -231,7 +231,7 @@ export default class AppStack extends cdk.Stack {
           visibilityConfig: {
             sampledRequestsEnabled: true,
             cloudWatchMetricsEnabled: true,
-            metricName: `${process.env.NODE_ENV}-WAF-API-BLOCKED-IPs`,
+            metricName: `${process.env.DEPLOYMENT_ENVIRONMENT}-WAF-API-BLOCKED-IPs`,
           },
         },
         {
@@ -253,7 +253,7 @@ export default class AppStack extends cdk.Stack {
           visibilityConfig: {
             sampledRequestsEnabled: true,
             cloudWatchMetricsEnabled: true,
-            metricName: `${process.env.NODE_ENV}-WAF-GENERAL-BLOCKED-IPs`,
+            metricName: `${process.env.DEPLOYMENT_ENVIRONMENT}-WAF-GENERAL-BLOCKED-IPs`,
           },
         },
         // { // TODO this is blocking postman requests :/
@@ -315,32 +315,40 @@ export default class AppStack extends cdk.Stack {
     });
 
     // No caching! We're using Cloudfront for its global network and WAF
-    const cachePolicy = new cf.CachePolicy(this, `${process.env.NODE_ENV}-Cache-Policy`, {
-      defaultTtl: cdk.Duration.seconds(0),
-      minTtl: cdk.Duration.seconds(0),
-      maxTtl: cdk.Duration.seconds(0),
-    });
-
-    const distribution = new cf.Distribution(this, `${process.env.NODE_ENV}-CF-API-Distribution`, {
-      certificate: apiCert,
-      webAclId: API_WAF.attrArn,
-      // @ts-ignore // TODO: Add a type for NODE_ENV for staging!!!!!!
-      domainNames: [
-        process.env.DEPLOYMENT_ENVIRONMENT === 'staging' ? `staging.${DOMAIN_NAME}` : DOMAIN_NAME,
-      ],
-      defaultBehavior: {
-        origin: new origins.LoadBalancerV2Origin(loadBalancedFargateService.loadBalancer),
-
-        // Must be enabled!
-        // https://www.reddit.com/r/aws/comments/rhckdm/comment/hoqrjmm/?utm_source=share&utm_medium=web2x&context=3
-        originRequestPolicy: cf.OriginRequestPolicy.ALL_VIEWER,
-        cachePolicy,
-        allowedMethods: cf.AllowedMethods.ALLOW_ALL,
+    const cachePolicy = new cf.CachePolicy(
+      this,
+      `${process.env.DEPLOYMENT_ENVIRONMENT}-Cache-Policy`,
+      {
+        defaultTtl: cdk.Duration.seconds(0),
+        minTtl: cdk.Duration.seconds(0),
+        maxTtl: cdk.Duration.seconds(0),
       },
-      // additionalBehaviors: {
-      // TODO add /public caching behaviors here
-      // }, //
-    });
+    );
+
+    const distribution = new cf.Distribution(
+      this,
+      `${process.env.DEPLOYMENT_ENVIRONMENT}-CF-API-Distribution`,
+      {
+        certificate: apiCert,
+        webAclId: API_WAF.attrArn,
+        // @ts-ignore // TODO: Add a type for NODE_ENV for staging!!!!!!
+        domainNames: [
+          process.env.DEPLOYMENT_ENVIRONMENT === 'staging' ? `staging.${DOMAIN_NAME}` : DOMAIN_NAME,
+        ],
+        defaultBehavior: {
+          origin: new origins.LoadBalancerV2Origin(loadBalancedFargateService.loadBalancer),
+
+          // Must be enabled!
+          // https://www.reddit.com/r/aws/comments/rhckdm/comment/hoqrjmm/?utm_source=share&utm_medium=web2x&context=3
+          originRequestPolicy: cf.OriginRequestPolicy.ALL_VIEWER,
+          cachePolicy,
+          allowedMethods: cf.AllowedMethods.ALLOW_ALL,
+        },
+        // additionalBehaviors: {
+        // TODO add /public caching behaviors here
+        // }, //
+      },
+    );
 
     //  Creates an A record that points our API domain to Cloudfront
     new ARecord(this, `APIAlias`, {

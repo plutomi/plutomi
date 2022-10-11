@@ -10,7 +10,7 @@ interface GetOrgInput {
 export const getOrg = async (props: GetOrgInput): Promise<[DynamoOrg, null] | [null, any]> => {
   const { orgId } = props;
   const params: GetCommandInput = {
-    TableName: `${process.env.NODE_ENV}-${DYNAMO_TABLE_NAME}`,
+    TableName: `${process.env.DEPLOYMENT_ENVIRONMENT}-${DYNAMO_TABLE_NAME}`,
     Key: {
       PK: `${Entities.ORG}#${orgId}`,
       SK: Entities.ORG,

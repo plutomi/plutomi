@@ -25,7 +25,7 @@ export const deleteQuestionFromOrg = async (
             PK: `${Entities.ORG}#${orgId}#${Entities.QUESTION}#${questionId}`,
             SK: Entities.QUESTION,
           },
-          TableName: `${process.env.NODE_ENV}-${DYNAMO_TABLE_NAME}`,
+          TableName: `${process.env.DEPLOYMENT_ENVIRONMENT}-${DYNAMO_TABLE_NAME}`,
           ConditionExpression: 'attribute_exists(PK)',
         },
       },
@@ -40,7 +40,7 @@ export const deleteQuestionFromOrg = async (
           PK: `${Entities.ORG}#${orgId}`,
           SK: Entities.ORG,
         },
-        TableName: `${process.env.NODE_ENV}-${DYNAMO_TABLE_NAME}`,
+        TableName: `${process.env.DEPLOYMENT_ENVIRONMENT}-${DYNAMO_TABLE_NAME}`,
         UpdateExpression: 'SET totalQuestions = totalQuestions - :value, updatedAt = :updatedAt',
         ExpressionAttributeValues: {
           ':value': 1,

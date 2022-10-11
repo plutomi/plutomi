@@ -29,7 +29,7 @@ export const acceptInvite = async (
               PK: `${Entities.USER}#${userId}`,
               SK: `${Entities.ORG_INVITE}#${invite.inviteId}`,
             },
-            TableName: `${process.env.NODE_ENV}-${DYNAMO_TABLE_NAME}`,
+            TableName: `${process.env.DEPLOYMENT_ENVIRONMENT}-${DYNAMO_TABLE_NAME}`,
             ConditionExpression: 'attribute_exists(PK)',
           },
         },
@@ -41,7 +41,7 @@ export const acceptInvite = async (
               PK: `${Entities.USER}#${userId}`,
               SK: Entities.USER,
             },
-            TableName: `${process.env.NODE_ENV}-${DYNAMO_TABLE_NAME}`,
+            TableName: `${process.env.DEPLOYMENT_ENVIRONMENT}-${DYNAMO_TABLE_NAME}`,
             UpdateExpression:
               'SET orgId = :orgId, orgJoinDate = :orgJoinDate, GSI1PK = :GSI1PK, totalInvites = totalInvites - :value, updatedAt = :updatedAt',
             ExpressionAttributeValues: {
@@ -61,7 +61,7 @@ export const acceptInvite = async (
               PK: `${Entities.ORG}#${invite.orgId}`,
               SK: Entities.ORG,
             },
-            TableName: `${process.env.NODE_ENV}-${DYNAMO_TABLE_NAME}`,
+            TableName: `${process.env.DEPLOYMENT_ENVIRONMENT}-${DYNAMO_TABLE_NAME}`,
             UpdateExpression: 'SET totalUsers = totalUsers + :value, updatedAt = :updatedAt',
             ExpressionAttributeValues: {
               ':value': 1,

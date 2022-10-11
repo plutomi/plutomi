@@ -25,7 +25,7 @@ export const deleteInvite = async (
               PK: `${Entities.USER}#${userId}`,
               SK: `${Entities.ORG_INVITE}#${inviteId}`,
             },
-            TableName: `${process.env.NODE_ENV}-${DYNAMO_TABLE_NAME}`,
+            TableName: `${process.env.DEPLOYMENT_ENVIRONMENT}-${DYNAMO_TABLE_NAME}`,
             ConditionExpression: 'attribute_exists(PK)',
           },
         },
@@ -36,7 +36,7 @@ export const deleteInvite = async (
               PK: `${Entities.USER}#${userId}`,
               SK: Entities.USER,
             },
-            TableName: `${process.env.NODE_ENV}-${DYNAMO_TABLE_NAME}`,
+            TableName: `${process.env.DEPLOYMENT_ENVIRONMENT}-${DYNAMO_TABLE_NAME}`,
             UpdateExpression: 'SET totalInvites = totalInvites - :value, updatedAt = :updatedAt',
             ExpressionAttributeValues: {
               ':value': 1,

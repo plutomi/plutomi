@@ -44,7 +44,7 @@ export const createStage = async (props: CreateStageInput): Promise<[null, null]
           // Add the new stage
           Put: {
             Item: newStage,
-            TableName: `${process.env.NODE_ENV}-${DYNAMO_TABLE_NAME}`,
+            TableName: `${process.env.DEPLOYMENT_ENVIRONMENT}-${DYNAMO_TABLE_NAME}`,
             ConditionExpression: 'attribute_not_exists(PK)',
           },
         },
@@ -55,7 +55,7 @@ export const createStage = async (props: CreateStageInput): Promise<[null, null]
               PK: `${Entities.ORG}#${orgId}#${Entities.OPENING}#${openingId}`,
               SK: Entities.OPENING,
             },
-            TableName: `${process.env.NODE_ENV}-${DYNAMO_TABLE_NAME}`,
+            TableName: `${process.env.DEPLOYMENT_ENVIRONMENT}-${DYNAMO_TABLE_NAME}`,
             ConditionExpression: 'totalStages < :maxChildItemLimit AND attribute_exists(PK)',
             UpdateExpression:
               'SET totalStages = if_not_exists(totalStages, :zero) + :value, stageOrder = :stageOrder, updatedAt = :updatedAt',

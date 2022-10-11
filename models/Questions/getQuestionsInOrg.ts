@@ -12,7 +12,7 @@ export const getQuestionsInOrg = async (
 
   const params: QueryCommandInput = {
     IndexName: 'GSI1',
-    TableName: `${process.env.NODE_ENV}-${DYNAMO_TABLE_NAME}`,
+    TableName: `${process.env.DEPLOYMENT_ENVIRONMENT}-${DYNAMO_TABLE_NAME}`,
     KeyConditionExpression: 'GSI1PK = :GSI1PK',
     ExpressionAttributeValues: {
       ':GSI1PK': `${Entities.ORG}#${orgId}#${Entities.QUESTION}S`,

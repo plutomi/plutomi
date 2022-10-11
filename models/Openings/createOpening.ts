@@ -36,7 +36,7 @@ export const createOpening = async (
         // Create the opening
         Put: {
           Item: newOpening,
-          TableName: `${process.env.NODE_ENV}-${DYNAMO_TABLE_NAME}`,
+          TableName: `${process.env.DEPLOYMENT_ENVIRONMENT}-${DYNAMO_TABLE_NAME}`,
           ConditionExpression: 'attribute_not_exists(PK)',
         },
       },
@@ -47,7 +47,7 @@ export const createOpening = async (
             PK: `${Entities.ORG}#${orgId}`,
             SK: Entities.ORG,
           },
-          TableName: `${process.env.NODE_ENV}-${DYNAMO_TABLE_NAME}`,
+          TableName: `${process.env.DEPLOYMENT_ENVIRONMENT}-${DYNAMO_TABLE_NAME}`,
           UpdateExpression:
             'SET totalOpenings = if_not_exists(totalOpenings, :zero) + :value, updatedAt = :updatedAt',
           ExpressionAttributeValues: {

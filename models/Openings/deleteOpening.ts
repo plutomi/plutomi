@@ -27,7 +27,7 @@ export const deleteOpening = async (
               PK: `${Entities.ORG}#${orgId}#${Entities.OPENING}#${openingId}`,
               SK: Entities.OPENING,
             },
-            TableName: `${process.env.NODE_ENV}-${DYNAMO_TABLE_NAME}`,
+            TableName: `${process.env.DEPLOYMENT_ENVIRONMENT}-${DYNAMO_TABLE_NAME}`,
             ConditionExpression: 'attribute_exists(PK)',
           },
         },
@@ -42,7 +42,7 @@ export const deleteOpening = async (
             PK: `${Entities.ORG}#${orgId}`,
             SK: Entities.ORG,
           },
-          TableName: `${process.env.NODE_ENV}-${DYNAMO_TABLE_NAME}`,
+          TableName: `${process.env.DEPLOYMENT_ENVIRONMENT}-${DYNAMO_TABLE_NAME}`,
           UpdateExpression: 'SET totalOpenings = totalOpenings - :value, updatedAt = :updatedAt',
           ExpressionAttributeValues: {
             ':value': 1,

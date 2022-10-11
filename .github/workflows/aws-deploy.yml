@@ -36,6 +36,6 @@ jobs:
           ACM_CERTIFICATE_ID: ${{ secrets.ACM_CERTIFICATE_ID }}
           LOGIN_LINKS_PASSWORD: ${{ secrets.LOGIN_LINKS_PASSWORD }}
           SESSION_SIGNATURE_SECRET_1: ${{ secrets.SESSION_SIGNATURE_SECRET_1 }}
-          NODE_ENV: production
+          NODE_ENV: production # TODO change
           DEPLOYMENT_ENVIRONMENT: staging
           MONGO_CONNECTION: NOT_SET_NEEDS_OTHER_PR

@@ -43,7 +43,7 @@ export const addQuestionToStage = async (
         // Create the adjacent item
         Put: {
           Item: params,
-          TableName: `${process.env.NODE_ENV}-${DYNAMO_TABLE_NAME}`,
+          TableName: `${process.env.DEPLOYMENT_ENVIRONMENT}-${DYNAMO_TABLE_NAME}`,
           // This should never conflict because we check
           // that a stage doesn't already have a question by this ID
           ConditionExpression: 'attribute_not_exists(PK)',
@@ -62,7 +62,7 @@ export const addQuestionToStage = async (
             PK: `${Entities.ORG}#${orgId}#${Entities.OPENING}#${openingId}#${Entities.STAGE}#${stageId}`,
             SK: Entities.STAGE,
           },
-          TableName: `${process.env.NODE_ENV}-${DYNAMO_TABLE_NAME}`,
+          TableName: `${process.env.DEPLOYMENT_ENVIRONMENT}-${DYNAMO_TABLE_NAME}`,
           UpdateExpression:
             'SET questionOrder = :questionOrder, totalQuestions = totalQuestions + :value, updatedAt = :updatedAt',
           ExpressionAttributeValues: {
@@ -79,7 +79,7 @@ export const addQuestionToStage = async (
             PK: `${Entities.ORG}#${orgId}#${Entities.QUESTION}#${questionId}`,
             SK: Entities.QUESTION,
           },
-          TableName: `${process.env.NODE_ENV}-${DYNAMO_TABLE_NAME}`,
+          TableName: `${process.env.DEPLOYMENT_ENVIRONMENT}-${DYNAMO_TABLE_NAME}`,
           UpdateExpression:
             'SET totalStages = if_not_exists(totalStages, :zero) + :value, updatedAt = :updatedAt',
           ExpressionAttributeValues: {

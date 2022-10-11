@@ -10,7 +10,7 @@ export const getQuestionsInStage = async (
 ): Promise<[DynamoQuestion[], any]> => {
   const { orgId, openingId, stageId } = props;
   const params: QueryCommandInput = {
-    TableName: `${process.env.NODE_ENV}-${DYNAMO_TABLE_NAME}`,
+    TableName: `${process.env.DEPLOYMENT_ENVIRONMENT}-${DYNAMO_TABLE_NAME}`,
     IndexName: 'GSI1',
     KeyConditionExpression: 'GSI1PK = :GSI1PK',
     ExpressionAttributeValues: {

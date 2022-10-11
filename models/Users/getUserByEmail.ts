@@ -13,7 +13,7 @@ export const getUserByEmail = async (
 ): Promise<[DynamoUser, null] | [null, any]> => {
   const { email } = props;
   const params: QueryCommandInput = {
-    TableName: `${process.env.NODE_ENV}-${DYNAMO_TABLE_NAME}`,
+    TableName: `${process.env.DEPLOYMENT_ENVIRONMENT}-${DYNAMO_TABLE_NAME}`,
     IndexName: 'GSI2',
     KeyConditionExpression: 'GSI2PK = :GSI2PK AND GSI2SK = :GSI2SK',
     ExpressionAttributeValues: {

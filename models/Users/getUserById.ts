@@ -13,7 +13,7 @@ export const getUserById = async (
 ): Promise<[DynamoUser, null] | [null, any]> => {
   const { userId } = props;
   const params: GetCommandInput = {
-    TableName: `${process.env.NODE_ENV}-${DYNAMO_TABLE_NAME}`,
+    TableName: `${process.env.DEPLOYMENT_ENVIRONMENT}-${DYNAMO_TABLE_NAME}`,
     Key: {
       PK: `${Entities.USER}#${userId}`,
       SK: Entities.USER,

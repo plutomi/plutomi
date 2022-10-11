@@ -42,7 +42,7 @@ export const createInvite = async (
           // Create the org invite
           Put: {
             Item: newOrgInvite,
-            TableName: `${process.env.NODE_ENV}-${DYNAMO_TABLE_NAME}`,
+            TableName: `${process.env.DEPLOYMENT_ENVIRONMENT}-${DYNAMO_TABLE_NAME}`,
             ConditionExpression: 'attribute_not_exists(PK)',
           },
         },
@@ -53,7 +53,7 @@ export const createInvite = async (
               PK: `${Entities.USER}#${recipient.userId}`,
               SK: Entities.USER,
             },
-            TableName: `${process.env.NODE_ENV}-${DYNAMO_TABLE_NAME}`,
+            TableName: `${process.env.DEPLOYMENT_ENVIRONMENT}-${DYNAMO_TABLE_NAME}`,
             UpdateExpression:
               'SET totalInvites = if_not_exists(totalInvites, :zero) + :value, updatedAt = :updatedAt',
             ExpressionAttributeValues: {

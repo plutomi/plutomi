@@ -15,7 +15,7 @@ export const getApplicant = async (
 ): Promise<[DynamoApplicantWithResponses, null] | [null, any]> => {
   const { orgId, applicantId } = props;
   const responsesParams: QueryCommandInput = {
-    TableName: `${process.env.NODE_ENV}-${DYNAMO_TABLE_NAME}`,
+    TableName: `${process.env.DEPLOYMENT_ENVIRONMENT}-${DYNAMO_TABLE_NAME}`,
     KeyConditionExpression: 'PK = :PK',
     ExpressionAttributeValues: {
       ':PK': `${Entities.ORG}#${orgId}#${Entities.APPLICANT}#${applicantId}`,

@@ -10,7 +10,7 @@ export const getQuestion = async (
 ): Promise<[DynamoQuestion, null] | [null, any]> => {
   const { orgId, questionId } = props;
   const params: GetCommandInput = {
-    TableName: `${process.env.NODE_ENV}-${DYNAMO_TABLE_NAME}`,
+    TableName: `${process.env.DEPLOYMENT_ENVIRONMENT}-${DYNAMO_TABLE_NAME}`,
     Key: {
       PK: `${Entities.ORG}#${orgId}#${Entities.QUESTION}#${questionId}`,
       SK: Entities.QUESTION,

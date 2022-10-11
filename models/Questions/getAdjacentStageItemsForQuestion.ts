@@ -13,7 +13,7 @@ export const getAdjacentStageItemsForQuestion = async (
 ): Promise<[DynamoQuestionStageAdjacentItem[], any]> => {
   const { orgId, questionId } = props;
   const params: QueryCommandInput = {
-    TableName: `${process.env.NODE_ENV}-${DYNAMO_TABLE_NAME}`,
+    TableName: `${process.env.DEPLOYMENT_ENVIRONMENT}-${DYNAMO_TABLE_NAME}`,
     KeyConditionExpression: 'PK = :PK AND begins_with(SK, :SK)',
     ExpressionAttributeValues: {
       ':PK': `${Entities.ORG}#${orgId}#${Entities.QUESTION}#${questionId}`,

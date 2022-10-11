@@ -32,7 +32,7 @@ export const createQuestion = async (
         // Create the Question
         Put: {
           Item: newQuestion,
-          TableName: `${process.env.NODE_ENV}-${DYNAMO_TABLE_NAME}`,
+          TableName: `${process.env.DEPLOYMENT_ENVIRONMENT}-${DYNAMO_TABLE_NAME}`,
           ConditionExpression: 'attribute_not_exists(PK)',
         },
       },
@@ -43,7 +43,7 @@ export const createQuestion = async (
             PK: `${Entities.ORG}#${orgId}`,
             SK: Entities.ORG,
           },
-          TableName: `${process.env.NODE_ENV}-${DYNAMO_TABLE_NAME}`,
+          TableName: `${process.env.DEPLOYMENT_ENVIRONMENT}-${DYNAMO_TABLE_NAME}`,
           UpdateExpression:
             'SET totalQuestions = if_not_exists(totalQuestions, :zero) + :value, updatedAt = :updatedAt',
           ExpressionAttributeValues: {

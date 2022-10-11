@@ -22,7 +22,7 @@ export const deleteWebhook = async (props: DeleteWebhookFromOrgInput): Promise<[
             PK: `${Entities.ORG}#${orgId}#${Entities.WEBHOOK}#${webhookId}`,
             SK: Entities.WEBHOOK,
           },
-          TableName: `${process.env.NODE_ENV}-${DYNAMO_TABLE_NAME}`,
+          TableName: `${process.env.DEPLOYMENT_ENVIRONMENT}-${DYNAMO_TABLE_NAME}`,
           ConditionExpression: 'attribute_exists(PK)',
         },
       },
@@ -37,7 +37,7 @@ export const deleteWebhook = async (props: DeleteWebhookFromOrgInput): Promise<[
           PK: `${Entities.ORG}#${orgId}`,
           SK: Entities.ORG,
         },
-        TableName: `${process.env.NODE_ENV}-${DYNAMO_TABLE_NAME}`,
+        TableName: `${process.env.DEPLOYMENT_ENVIRONMENT}-${DYNAMO_TABLE_NAME}`,
         UpdateExpression: 'SET totalWebhooks = totalWebhooks - :value, updatedAt = :updatedAt',
         ExpressionAttributeValues: {
           ':value': 1,

@@ -23,7 +23,7 @@ export const updateStage = async (props: UpdateStageInput): Promise<[null, null]
     },
     UpdateExpression: `SET ${allUpdateExpressions.join(', ')}`,
     ExpressionAttributeValues: allAttributeValues,
-    TableName: `${process.env.NODE_ENV}-${DYNAMO_TABLE_NAME}`,
+    TableName: `${process.env.DEPLOYMENT_ENVIRONMENT}-${DYNAMO_TABLE_NAME}`,
 
     ConditionExpression: 'attribute_exists(PK)',
   };

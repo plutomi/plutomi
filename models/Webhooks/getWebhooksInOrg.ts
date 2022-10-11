@@ -11,7 +11,7 @@ export const getWebhooksInOrg = async (
 ): Promise<[DynamoWebhook[], any]> => {
   const { orgId } = props;
   const params: QueryCommandInput = {
-    TableName: `${process.env.NODE_ENV}-${DYNAMO_TABLE_NAME}`,
+    TableName: `${process.env.DEPLOYMENT_ENVIRONMENT}-${DYNAMO_TABLE_NAME}`,
     IndexName: 'GSI1',
     KeyConditionExpression: 'GSI1PK = :GSI1PK',
     ExpressionAttributeValues: {

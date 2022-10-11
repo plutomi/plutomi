@@ -22,7 +22,7 @@ export const deleteStage = async (props: DeleteStageInput): Promise<[null, null]
             PK: `${Entities.ORG}#${orgId}#${Entities.OPENING}#${openingId}#${Entities.STAGE}#${stageId}`,
             SK: Entities.STAGE,
           },
-          TableName: `${process.env.NODE_ENV}-${DYNAMO_TABLE_NAME}`,
+          TableName: `${process.env.DEPLOYMENT_ENVIRONMENT}-${DYNAMO_TABLE_NAME}`,
           ConditionExpression: 'attribute_exists(PK)',
         },
       },
@@ -38,7 +38,7 @@ export const deleteStage = async (props: DeleteStageInput): Promise<[null, null]
           PK: `${Entities.ORG}#${orgId}#${Entities.OPENING}#${openingId}`,
           SK: Entities.OPENING,
         },
-        TableName: `${process.env.NODE_ENV}-${DYNAMO_TABLE_NAME}`,
+        TableName: `${process.env.DEPLOYMENT_ENVIRONMENT}-${DYNAMO_TABLE_NAME}`,
         UpdateExpression: `REMOVE stageOrder[${deleteIndex}] SET totalStages = totalStages - :value, updatedAt = :updatedAt`,
         ExpressionAttributeValues: {
           ':value': 1,

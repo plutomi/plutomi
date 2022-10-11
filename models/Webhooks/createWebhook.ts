@@ -44,7 +44,7 @@ export const createWebhook = async (props: CreateWebhookInput): Promise<[DynamoW
         // Create the webhook
         Put: {
           Item: newWebhook,
-          TableName: `${process.env.NODE_ENV}-${DYNAMO_TABLE_NAME}`,
+          TableName: `${process.env.DEPLOYMENT_ENVIRONMENT}-${DYNAMO_TABLE_NAME}`,
           ConditionExpression: 'attribute_not_exists(PK)',
         },
       },
@@ -55,7 +55,7 @@ export const createWebhook = async (props: CreateWebhookInput): Promise<[DynamoW
             PK: `${Entities.ORG}#${orgId}`,
             SK: Entities.ORG,
           },
-          TableName: `${process.env.NODE_ENV}-${DYNAMO_TABLE_NAME}`,
+          TableName: `${process.env.DEPLOYMENT_ENVIRONMENT}-${DYNAMO_TABLE_NAME}`,
           UpdateExpression:
             'SET totalWebhooks = if_not_exists(totalWebhooks, :zero) + :value, updatedAt = :updatedAt',
           ExpressionAttributeValues: {
