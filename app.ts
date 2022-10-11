@@ -20,13 +20,6 @@ import { auth } from './routes/auth';
 import { applicants } from './routes/applicants';
 import API from './Controllers';
 
-const resultDotEnv = dotenv.config({
-  path: `./.env.${process.env.NODE_ENV}`,
-});
-
-if (resultDotEnv.error) {
-  throw resultDotEnv.error;
-}
 const morgan = require('morgan');
 const cookieParser = require('cookie-parser');
 
