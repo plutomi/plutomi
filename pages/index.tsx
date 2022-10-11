@@ -41,7 +41,8 @@ export default function Main({ commits }: HomepageProps) {
       </main>
       <div className="flex-wrap md:flex  justify-center space-x-2">
         <UseCaseList />
-        <ul className="divide-y mx-auto max-w-4xl divide-gray-200  mt-12">
+        <h5>Commits Section Disabled</h5>
+        {/* <ul className="divide-y mx-auto max-w-4xl divide-gray-200  mt-12">
           {commits.map((commit) => (
             <li
               key={nanoid(15)}
@@ -85,7 +86,7 @@ export default function Main({ commits }: HomepageProps) {
               </a>
             </li>
           ))}
-        </ul>
+        </ul> */}
       </div>
       <ContactUs />
     </>
@@ -101,29 +102,35 @@ export async function getStaticProps() {
 
   await Promise.all(
     data.map(async (branch) => {
-      const { data } = await axios.get(
-        `https://api.github.com/repos/plutomi/plutomi/commits?sha=${branch.name}&per_page=${commitsFromEachBranch}&u=joswayski`,
-        {
-          headers: {
-            Authorization: `token ${process.env.COMMITS_TOKEN}`,
+      try {
+        const { data } = await axios.get(
+          `https://api.github.com/repos/plutomi/plutomi/commits?sha=${branch.name}&per_page=${commitsFromEachBranch}&u=joswayski`,
+          {
+            headers: {
+              Authorization: `token ${process.env.COMMITS_TOKEN}`,
+            },
           },
-        },
-      );
+        );
 
-      data.map(async (commit) => {
-        if (commit.commit.author.name !== 'allcontributors[bot]') {
-          const customCommit = {
-            name: commit.commit.author.name,
-            username: commit.author.login,
-            image: commit.author.avatar_url,
-            email: commit.commit.author.email,
-            date: commit.commit.author.date,
-            message: commit.commit.message,
-            url: commit.html_url,
-          };
-          allCommits.push(customCommit);
-        }
-      });
+        data.map(async (commit) => {
+          if (commit.commit.author.name !== 'allcontributors[bot]') {
+            const customCommit = {
+              name: commit.commit.author.name,
+              username: commit.author.login,
+              image: commit.author.avatar_url,
+              email: commit.commit.author.email,
+              date: commit.commit.author.date,
+              message: commit.commit.message,
+              url: commit.html_url,
+            };
+            allCommits.push(customCommit);
+          }
+        });
+      } catch (error) {
+        console.error(`Error fetching commits`, error.response.data);
+        console.error(`Get Commits Token`, process.env.COMMITS_TOKEN);
+        console.error(`ENV`, process.env.NODE_ENV);
+      }
     }),
   );
 
