@@ -14,10 +14,14 @@ export const DOMAIN_NAME = `plutomi.com`;
 
 export const EXPRESS_PORT = 3000;
 
-export const WEBSITE_URL =
-  process.env.NODE_ENV === 'production'
-    ? `https://${DOMAIN_NAME}`
-    : `http://localhost:${EXPRESS_PORT}`;
+export let WEBSITE_URL = `https://${DOMAIN_NAME}`;
+
+// @ts-ignore // TODO sighhhhhh
+if (process.env.NODE_ENV === 'staging') {
+  WEBSITE_URL = `https://staging.plutomi.com`;
+} else {
+  WEBSITE_URL = `http://localhost:${EXPRESS_PORT}`;
+}
 
 export const API_URL = `${WEBSITE_URL}/api`;
 

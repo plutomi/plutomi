@@ -7,10 +7,14 @@ WORKDIR /usr/src/app
 COPY package*.json ./
 RUN npm install
 
+
+# Setting any environment variables that Next needs
+ARG COMMITS_TOKEN
+
+
 # Copying source files
 COPY . .
 
-ARG COMMITS_TOKEN
 
 # Building app
 RUN npm run build
