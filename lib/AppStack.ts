@@ -324,7 +324,7 @@ export default class AppStack extends cdk.Stack {
       },
       // additionalBehaviors: {
       // TODO add /public caching behaviors here
-      // },
+      // }, //
     });
 
     //  Creates an A record that points our API domain to Cloudfront
