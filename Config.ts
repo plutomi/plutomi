@@ -16,6 +16,7 @@ export const EXPRESS_PORT = 3000;
 
 export let WEBSITE_URL = `https://${DOMAIN_NAME}`;
 
+// TODO: Types not working in this file
 console.log(`WEBSITE URL STARTRING`, WEBSITE_URL);
 // @ts-ignore // TODO sighhhhhh
 if (process.env.DEPLOYMENT_ENVIRONMENT === 'staging') {
@@ -138,6 +139,7 @@ export const JOI_SETTINGS: Joi.ValidationOptions = {
   stripUnknown: true,
 };
 
+console.log(`Setting axios instance with API url`, API_URL);
 export const AXIOS_INSTANCE = axios.create({
   withCredentials: true,
   baseURL: API_URL,
