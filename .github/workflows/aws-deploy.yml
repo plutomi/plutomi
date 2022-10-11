@@ -15,11 +15,6 @@ jobs:
       - name: Install dependencies
         run: npm i && npm i aws-cdk -g #TODO clean this up
 
-      - name: Running Build # TODO is this needed? Don't think so as CDK builds it for us
-        run: npm run build
-        env:
-          COMMITS_TOKEN: ${{ secrets.COMMITS_TOKEN }}
-
       - name: Print destination
         run: echo "Deploying to staging environment"
 
@@ -41,5 +36,5 @@ jobs:
           ACM_CERTIFICATE_ID: ${{ secrets.ACM_CERTIFICATE_ID }}
           LOGIN_LINKS_PASSWORD: ${{ secrets.LOGIN_LINKS_PASSWORD }}
           SESSION_SIGNATURE_SECRET_1: ${{ secrets.SESSION_SIGNATURE_SECRET_1 }}
-          NODE_ENV: ${{ secrets.NODE_ENV }} # TODO remove in https://github.com/plutomi/plutomi/issues/737 - needed for DNS stuff
+          NODE_ENV: staging # TODO remove in https://github.com/plutomi/plutomi/issues/737 - needed for DNS stuff
           MONGO_CONNECTION: 'NOT_SET_NEEDS_OTHER_PR'
