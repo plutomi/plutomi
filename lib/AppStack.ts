@@ -28,7 +28,8 @@ export default class AppStack extends cdk.Stack {
 
     const NEXT_ENVIRONMENT = {
       COMMITS_TOKEN: process.env.COMMITS_TOKEN ?? 'NOT_SET',
-      NODE_ENV: process.env.NODE_ENV ?? 'development-2',
+      NODE_ENV: process.env.NODE_ENV ?? 'development',
+      DEPLOYMENT_ENVIRONMENT: process.env.DEPLOYMENT_ENVIRONMENT ?? 'NOT_SET',
     };
 
     // IAM inline role - the service principal is required

@@ -37,4 +37,5 @@ jobs:
           LOGIN_LINKS_PASSWORD: ${{ secrets.LOGIN_LINKS_PASSWORD }}
           SESSION_SIGNATURE_SECRET_1: ${{ secrets.SESSION_SIGNATURE_SECRET_1 }}
           NODE_ENV: staging # TODO remove in https://github.com/plutomi/plutomi/issues/737 - needed for DNS stuff
-          MONGO_CONNECTION: 'NOT_SET_NEEDS_OTHER_PR'
+          DEPLOYMENT_ENVIRONMENT: staging
+          MONGO_CONNECTION: NOT_SET_NEEDS_OTHER_PR
