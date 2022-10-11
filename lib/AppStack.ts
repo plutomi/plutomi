@@ -71,8 +71,8 @@ export default class AppStack extends cdk.Stack {
       {
         taskRole,
         executionRole: taskRole,
-        cpu: 256,
-        memoryLimitMiB: 512,
+        cpu: 1024, // TODO revert back
+        memoryLimitMiB: 2048,
       },
     );
 
@@ -127,7 +127,7 @@ export default class AppStack extends cdk.Stack {
         cluster,
         certificate: apiCert,
         taskDefinition,
-        desiredCount: 3,
+        desiredCount: 1, // TODO revert back
         listenerPort: 443,
         protocol: protocol.ApplicationProtocol.HTTPS,
         redirectHTTP: true,
@@ -158,8 +158,8 @@ export default class AppStack extends cdk.Stack {
 
     // Auto scaling
     const scalableTarget = loadBalancedFargateService.service.autoScaleTaskCount({
-      minCapacity: 3,
-      maxCapacity: 5,
+      minCapacity: 1, // TODO revert back
+      maxCapacity: 2,
     });
 
     /**
