@@ -1,9 +1,5 @@
 on: [push, workflow_dispatch]
 
-# I can't set this in the actual deploy action
-env:
-  DEPLOYMENT_ENVIRONMENT: staging
-
 jobs:
   STAGING:
     runs-on: ubuntu-latest
