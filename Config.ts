@@ -2,14 +2,12 @@ import Joi from 'joi';
 import axios from 'axios';
 import TagGenerator from './utils/tagGenerator';
 import { env } from './env';
-import { WEBSITE_URL } from './lib/AppStack';
-export { WEBSITE_URL }; // TODO update these imports!
 /**
  * Some backend dependencies (SES, ACM, Route53, etc..) depend on
  * DOMAIN_NAME being the actual domain name, do not change!
  */
 
-console.log('IN CONFIG', env); // TODO move this to app stack??
+console.log('IN CONFIG', env);
 export const DOMAIN_NAME = `plutomi.com`;
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -17,6 +15,19 @@ export const DOMAIN_NAME = `plutomi.com`;
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 export const EXPRESS_PORT = 3000;
+
+export let WEBSITE_URL = `https://localhost:3000`;
+
+// CANNOT USE `env` util!!!!!!! Will get passed in the github action as config is called first
+if (process.env.DEPLOYMENT_ENVIRONMENT === 'staging') {
+  WEBSITE_URL = `https://staging.${DOMAIN_NAME}.com`;
+  console.log('SET dep env URL to staging\n\n\n\n');
+} else if (process.env.DEPLOYMENT_ENVIRONMENT === 'production') {
+  WEBSITE_URL = `https://${DOMAIN_NAME}`;
+  console.log('SET dep env URL to production\n\n\n\n');
+}
+
+console.log('URL INIT DONE');
 
 export const API_URL = `${WEBSITE_URL}/api`;
 //

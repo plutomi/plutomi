@@ -16,23 +16,6 @@ import { DOMAIN_NAME, EXPRESS_PORT } from '../Config';
 import * as waf from 'aws-cdk-lib/aws-wafv2';
 import { env } from '../env';
 
-console.log('IN APP STACK');
-// TODO this needs to be in here because when we run the deployment,
-// It was checking the config.ts file first, but no .env vars were loaded yet
-// TLDR: Leave this here, clean up in the future
-export let WEBSITE_URL = `https://localhost:3000`;
-
-if (process.env.DEPLOYMENT_ENVIRONMENT === 'staging') {
-  WEBSITE_URL = `https://staging.${DOMAIN_NAME}.com`;
-  console.log('SET dep env URL to staging\n\n\n\n');
-}
-
-if (process.env.DEPLOYMENT_ENVIRONMENT === 'production') {
-  WEBSITE_URL = `https://${DOMAIN_NAME}`;
-  console.log('SET dep env URL to production\n\n\n\n');
-}
-
-console.log('URL INIT DONE');
 
 interface AppStackServiceProps extends cdk.StackProps {
   table: Table;
