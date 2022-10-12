@@ -21,7 +21,7 @@ interface AppStackServiceProps extends cdk.StackProps {
 }
 const baseEnv = {
   NODE_ENV: env.nodeEnv ?? 'development',
-  WEBSITE_URL: env.websiteUrl ?? 'NOT_SET',
+  NEXT_PUBLIC_WEBSITE_URL: env.websiteUrl ?? 'NOT_SET',
 };
 
 export const ENVIRONMENT = {
