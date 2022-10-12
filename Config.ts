@@ -19,6 +19,7 @@ export let WEBSITE_URL = `https://${DOMAIN_NAME}`;
 
 // TODO: Types not working in this file
 console.log(`WEBSITE URL STARTRING`, WEBSITE_URL);
+console.log(`ALL ENV`, env);
 // @ts-ignore // TODO sighhhhhh
 if (env.deploymentEnvironment === 'staging') {
   WEBSITE_URL = `https://staging.plutomi.com`;
