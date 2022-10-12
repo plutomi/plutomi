@@ -29,7 +29,7 @@ jobs:
         run: npm run docker-fix
 
       - name: Deploy stack
-        run: cdk deploy staging-DynamoDBStack staging-StreamProcessorStack staging-AppStack staging-EventBridgeStack staging-StorageStack staging-DeleteChildrenMachineStack staging-AthenaDynamoQueryStack staging-WebhooksMachineStack --verbose --require-approval never
+        run: cdk deploy --all --verbose --require-approval never
         env:
           COMMITS_TOKEN: ${{ secrets.COMMITS_TOKEN }}
           HOSTED_ZONE_ID: ${{ secrets.HOSTED_ZONE_ID }}

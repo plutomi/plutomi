@@ -16,12 +16,30 @@ import { DOMAIN_NAME, EXPRESS_PORT } from '../Config';
 import * as waf from 'aws-cdk-lib/aws-wafv2';
 import { env } from '../env';
 
+console.log('IN APP STACK');
+// TODO this needs to be in here because when we run the deployment,
+// It was checking the config.ts file first, but no .env vars were loaded yet
+// TLDR: Leave this here, clean up in the future
+export let WEBSITE_URL = `https://localhost:3000`;
+
+if (process.env.DEPLOYMENT_ENVIRONMENT === 'staging') {
+  WEBSITE_URL = `https://staging.${DOMAIN_NAME}.com`;
+  console.log('SET dep env URL to staging\n\n\n\n');
+}
+
+if (process.env.DEPLOYMENT_ENVIRONMENT === 'production') {
+  WEBSITE_URL = `https://${DOMAIN_NAME}`;
+  console.log('SET dep env URL to production\n\n\n\n');
+}
+
+console.log('URL INIT DONE');
+
 interface AppStackServiceProps extends cdk.StackProps {
   table: Table;
 }
 const baseEnv = {
   NODE_ENV: process.env.NODE_ENV ?? 'development',
-  NEXT_PUBLIC_WEBSITE_URL: process.env.NEXT_PUBLIC_WEBSITE_URL ?? 'NOT_SET',
+  DEPLOYMENT_ENVIRONMENT: process.env.DEPLOYMENT_ENVIRONMENT ?? 'NOT_SET',
 };
 
 export const ENVIRONMENT = {
@@ -30,7 +48,6 @@ export const ENVIRONMENT = {
   ACM_CERTIFICATE_ID: process.env.ACM_CERTIFICATE_ID ?? 'NOT_SET',
   LOGIN_LINKS_PASSWORD: process.env.LOGIN_LINKS_PASSWORD ?? 'NOT_SET',
   SESSION_SIGNATURE_SECRET_1: process.env.SESSION_SIGNATURE_SECRET_1 ?? 'NOT_SET',
-  DEPLOYMENT_ENVIRONMENT: process.env.DEPLOYMENT_ENVIRONMENT ?? 'NOT_SET',
   MONGO_CONNECTION: 'NOT_SET_NEEDS_OTHER_PR',
 };
 

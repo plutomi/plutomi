@@ -10,7 +10,7 @@ RUN npm install
 
 # Setting any environment variables that Next needs
 ARG COMMITS_TOKEN
-ARG NEXT_PUBLIC_WEBSITE_URL
+ARG DEPLOYMENT_ENVIRONMENT
 
 ARG NODE_ENV 
 

@@ -2,11 +2,14 @@ import Joi from 'joi';
 import axios from 'axios';
 import TagGenerator from './utils/tagGenerator';
 import { env } from './env';
-
+import { WEBSITE_URL } from './lib/AppStack';
+export { WEBSITE_URL }; // TODO update these imports!
 /**
  * Some backend dependencies (SES, ACM, Route53, etc..) depend on
  * DOMAIN_NAME being the actual domain name, do not change!
  */
+
+console.log('IN CONFIG', env); // TODO move this to app stack??
 export const DOMAIN_NAME = `plutomi.com`;
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -15,20 +18,11 @@ export const DOMAIN_NAME = `plutomi.com`;
 
 export const EXPRESS_PORT = 3000;
 
-export let WEBSITE_URL = `https://localhost:3000`;
-
-if (env.deploymentEnvironment === 'staging') {
-  WEBSITE_URL = 'https://staging.plutomi.com';
-}
-
-if (env.deploymentEnvironment === 'production') {
-  WEBSITE_URL = 'https://plutomi.com';
-}
-
 export const API_URL = `${WEBSITE_URL}/api`;
 //
 export const COOKIE_NAME = env.nodeEnv === 'production' ? 'plutomi-cookie' : 'DEV-plutomi-cookie';
 
+console.log('CONFIG setup done');
 export enum OpeningState {
   PUBLIC = 'PUBLIC',
   PRIVATE = 'PRIVATE',
