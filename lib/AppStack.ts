@@ -22,6 +22,7 @@ interface AppStackServiceProps extends cdk.StackProps {
 const baseEnv = {
   NODE_ENV: process.env.NODE_ENV ?? 'development',
   NEXT_PUBLIC_DEPLOYMENT_ENVIRONMENT: process.env.NEXT_PUBLIC_DEPLOYMENT_ENVIRONMENT ?? 'NOT_SET',
+  NEXT_PUBLIC_WEBSITE_URL: process.env.NEXT_PUBLIC_WEBSITE_URL, // If none is set, defaults to localhost. Override in config.ts
 };
 
 export const ENVIRONMENT = {
