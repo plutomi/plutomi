@@ -5,6 +5,7 @@ import { Dynamo } from '../../awsClients/ddbDocClient';
 import { ID_LENGTHS, Entities, LIMITS, DYNAMO_TABLE_NAME } from '../../Config';
 import { DynamoStage } from '../../types/dynamo';
 import * as Time from '../../utils/time';
+import { env } from '../../env';
 
 export interface CreateStageInput extends Pick<DynamoStage, 'orgId' | 'GSI1SK' | 'openingId'> {
   /**
@@ -44,7 +45,7 @@ export const createStage = async (props: CreateStageInput): Promise<[null, null]
           // Add the new stage
           Put: {
             Item: newStage,
-            TableName: `${process.env.DEPLOYMENT_ENVIRONMENT}-${DYNAMO_TABLE_NAME}`,
+            TableName: `${env.deploymentEnvironment}-${DYNAMO_TABLE_NAME}`,
             ConditionExpression: 'attribute_not_exists(PK)',
           },
         },
@@ -55,7 +56,7 @@ export const createStage = async (props: CreateStageInput): Promise<[null, null]
               PK: `${Entities.ORG}#${orgId}#${Entities.OPENING}#${openingId}`,
               SK: Entities.OPENING,
             },
-            TableName: `${process.env.DEPLOYMENT_ENVIRONMENT}-${DYNAMO_TABLE_NAME}`,
+            TableName: `${env.deploymentEnvironment}-${DYNAMO_TABLE_NAME}`,
             ConditionExpression: 'totalStages < :maxChildItemLimit AND attribute_exists(PK)',
             UpdateExpression:
               'SET totalStages = if_not_exists(totalStages, :zero) + :value, stageOrder = :stageOrder, updatedAt = :updatedAt',

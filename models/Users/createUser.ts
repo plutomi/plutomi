@@ -3,6 +3,7 @@ import { nanoid } from 'nanoid';
 
 import { Dynamo } from '../../awsClients/ddbDocClient';
 import { ID_LENGTHS, Entities, DEFAULTS, DYNAMO_TABLE_NAME } from '../../Config';
+import { env } from '../../env';
 import { DynamoUser } from '../../types/dynamo';
 import * as Time from '../../utils/time';
 
@@ -43,7 +44,7 @@ export const createUser = async (
     verifiedEmail: false,
   };
   const params: PutCommandInput = {
-    TableName: `${process.env.DEPLOYMENT_ENVIRONMENT}-${DYNAMO_TABLE_NAME}`,
+    TableName: `${env.deploymentEnvironment}-${DYNAMO_TABLE_NAME}`,
     Item: newUser,
     ConditionExpression: 'attribute_not_exists(PK)',
   };

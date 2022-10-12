@@ -11,6 +11,7 @@ import path from 'path';
 import { DYNAMO_TABLE_NAME, Entities } from '../Config';
 import { DynamoIAM } from '../types/dynamo';
 import { ENVIRONMENT } from './AppStack';
+import { env } from '../env';
 
 interface CustomLambdaFunction {
   functionName: string;
@@ -94,9 +95,9 @@ export default class DeleteChildrenMachineStack extends cdk.Stack {
     }: CustomLambdaFunction) => {
       const createdFunction = new NodejsFunction(
         this,
-        `${process.env.DEPLOYMENT_ENVIRONMENT}-${functionName}`,
+        `${env.deploymentEnvironment}-${functionName}`,
         {
-          functionName: `${process.env.DEPLOYMENT_ENVIRONMENT}-${functionName}`,
+          functionName: `${env.deploymentEnvironment}-${functionName}`,
           timeout: cdk.Duration.seconds(5),
           memorySize: 256,
           logRetention: RetentionDays.ONE_WEEK,
@@ -119,7 +120,7 @@ export default class DeleteChildrenMachineStack extends cdk.Stack {
       });
 
       createdFunction.role.attachInlinePolicy(
-        new iam.Policy(this, `${process.env.DEPLOYMENT_ENVIRONMENT}-${functionName}-policy`, {
+        new iam.Policy(this, `${env.deploymentEnvironment}-${functionName}-policy`, {
           statements: [functionPolicy],
         }),
       );
@@ -246,16 +247,12 @@ export default class DeleteChildrenMachineStack extends cdk.Stack {
       .otherwise(new sfn.Succeed(this, 'Nothing to do :)'));
 
     // ----- State Machine Settings -----
-    const log = new LogGroup(
-      this,
-      `${process.env.DEPLOYMENT_ENVIRONMENT}-DeleteChildrenMachineLogGroup`,
-      {
-        retention: RetentionDays.ONE_MONTH,
-      },
-    );
+    const log = new LogGroup(this, `${env.deploymentEnvironment}-DeleteChildrenMachineLogGroup`, {
+      retention: RetentionDays.ONE_MONTH,
+    });
 
     this.DeleteChildrenMachine = new sfn.StateMachine(this, 'DeleteChildrenMachine', {
-      stateMachineName: `${process.env.DEPLOYMENT_ENVIRONMENT}-DeleteChildrenMachine`,
+      stateMachineName: `${env.deploymentEnvironment}-DeleteChildrenMachine`,
       definition,
       timeout: cdk.Duration.minutes(5),
       stateMachineType: sfn.StateMachineType.EXPRESS,

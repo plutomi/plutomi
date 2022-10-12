@@ -1,6 +1,7 @@
 import { GetCommandInput, GetCommand } from '@aws-sdk/lib-dynamodb';
 import { Dynamo } from '../../awsClients/ddbDocClient';
 import { DYNAMO_TABLE_NAME, Entities } from '../../Config';
+import { env } from '../../env';
 import { DynamoOrgInvite } from '../../types/dynamo';
 
 type GetOrgInviteInput = {
@@ -13,7 +14,7 @@ export const getInvite = async (
 ): Promise<[DynamoOrgInvite, null] | [null, any]> => {
   const { userId, inviteId } = props;
   const params: GetCommandInput = {
-    TableName: `${process.env.DEPLOYMENT_ENVIRONMENT}-${DYNAMO_TABLE_NAME}`,
+    TableName: `${env.deploymentEnvironment}-${DYNAMO_TABLE_NAME}`,
     Key: {
       PK: `${Entities.USER}#${userId}`,
       SK: `${Entities.ORG_INVITE}#${inviteId}`,

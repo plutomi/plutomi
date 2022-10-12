@@ -1,6 +1,7 @@
 import { QueryCommandInput, QueryCommand } from '@aws-sdk/lib-dynamodb';
 import { Dynamo } from '../../awsClients/ddbDocClient';
 import { DYNAMO_TABLE_NAME, Entities } from '../../Config';
+import { env } from '../../env';
 import { DynamoQuestion } from '../../types/dynamo';
 
 export type GetQuestionsInOrgInput = Pick<DynamoQuestion, 'orgId'>;
@@ -12,7 +13,7 @@ export const getQuestionsInOrg = async (
 
   const params: QueryCommandInput = {
     IndexName: 'GSI1',
-    TableName: `${process.env.DEPLOYMENT_ENVIRONMENT}-${DYNAMO_TABLE_NAME}`,
+    TableName: `${env.deploymentEnvironment}-${DYNAMO_TABLE_NAME}`,
     KeyConditionExpression: 'GSI1PK = :GSI1PK',
     ExpressionAttributeValues: {
       ':GSI1PK': `${Entities.ORG}#${orgId}#${Entities.QUESTION}S`,

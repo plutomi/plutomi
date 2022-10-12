@@ -1,6 +1,7 @@
 import { TransactWriteCommand, TransactWriteCommandInput } from '@aws-sdk/lib-dynamodb';
 import { Dynamo } from '../../awsClients/ddbDocClient';
 import { Entities, DYNAMO_TABLE_NAME } from '../../Config';
+import { env } from '../../env';
 import { DynamoQuestion } from '../../types/dynamo';
 import * as Time from '../../utils/time';
 
@@ -32,7 +33,7 @@ export const createQuestion = async (
         // Create the Question
         Put: {
           Item: newQuestion,
-          TableName: `${process.env.DEPLOYMENT_ENVIRONMENT}-${DYNAMO_TABLE_NAME}`,
+          TableName: `${env.deploymentEnvironment}-${DYNAMO_TABLE_NAME}`,
           ConditionExpression: 'attribute_not_exists(PK)',
         },
       },
@@ -43,7 +44,7 @@ export const createQuestion = async (
             PK: `${Entities.ORG}#${orgId}`,
             SK: Entities.ORG,
           },
-          TableName: `${process.env.DEPLOYMENT_ENVIRONMENT}-${DYNAMO_TABLE_NAME}`,
+          TableName: `${env.deploymentEnvironment}-${DYNAMO_TABLE_NAME}`,
           UpdateExpression:
             'SET totalQuestions = if_not_exists(totalQuestions, :zero) + :value, updatedAt = :updatedAt',
           ExpressionAttributeValues: {

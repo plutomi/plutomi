@@ -18,11 +18,12 @@ import { publicInfo } from './routes/public';
 import { auth } from './routes/auth';
 import { applicants } from './routes/applicants';
 import API from './Controllers';
+import { env } from './env';
 
 const morgan = require('morgan');
 const cookieParser = require('cookie-parser');
 
-const dev = process.env.NODE_ENV !== 'production';
+const dev = env.nodeEnv !== 'production';
 const app = next({ dev });
 const handle = app.getRequestHandler();
 
@@ -40,7 +41,7 @@ app
       }),
     );
 
-    const morganSettings = process.env.NODE_ENV === 'development' ? 'dev' : 'combined';
+    const morganSettings = env.nodeEnv === 'development' ? 'dev' : 'combined';
     const sessionSecrets = [process.env.SESSION_SIGNATURE_SECRET_1];
 
     server.set('trust proxy', 1);
@@ -58,7 +59,7 @@ app
       cookieParser(sessionSecrets, COOKIE_SETTINGS),
     ]);
 
-    if (process.env.NODE_ENV === 'development') {
+    if (env.nodeEnv === 'development') {
       server.post('/jest-setup', API.Misc.jestSetup);
     }
 

@@ -2,6 +2,7 @@ import { UpdateCommandInput, UpdateCommand } from '@aws-sdk/lib-dynamodb';
 import { Dynamo } from '../../awsClients/ddbDocClient';
 import { DYNAMO_TABLE_NAME, Entities } from '../../Config';
 import { APIUpdateOpeningOptions } from '../../Controllers/Openings/updateOpening';
+import { env } from '../../env';
 import { DynamoOpening } from '../../types/dynamo';
 import { createDynamoUpdateExpression } from '../../utils/createDynamoUpdateExpression';
 export interface UpdateOpeningInput extends Pick<DynamoOpening, 'orgId' | 'openingId'> {
@@ -23,7 +24,7 @@ export const updateOpening = async (
     },
     UpdateExpression: `SET ${allUpdateExpressions.join(', ')}`,
     ExpressionAttributeValues: allAttributeValues,
-    TableName: `${process.env.DEPLOYMENT_ENVIRONMENT}-${DYNAMO_TABLE_NAME}`,
+    TableName: `${env.deploymentEnvironment}-${DYNAMO_TABLE_NAME}`,
     ConditionExpression: 'attribute_exists(PK)',
   };
 

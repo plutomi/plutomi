@@ -1,6 +1,7 @@
 import Joi from 'joi';
 import axios from 'axios';
 import TagGenerator from './utils/tagGenerator';
+import { env } from './env';
 
 /**
  * Some backend dependencies (SES, ACM, Route53, etc..) depend on
@@ -19,20 +20,19 @@ export let WEBSITE_URL = `https://${DOMAIN_NAME}`;
 // TODO: Types not working in this file
 console.log(`WEBSITE URL STARTRING`, WEBSITE_URL);
 // @ts-ignore // TODO sighhhhhh
-if (process.env.DEPLOYMENT_ENVIRONMENT === 'staging') {
+if (env.deploymentEnvironment === 'staging') {
   WEBSITE_URL = `https://staging.plutomi.com`;
   console.log(`WEBSITE URL STAGING`, WEBSITE_URL);
-  console.log(`DEPLOYMENT_ENVIRONMENT`, process.env.DEPLOYMENT_ENVIRONMENT);
+  console.log(`DEPLOYMENT_ENVIRONMENT`, env.deploymentEnvironment);
 } else {
   WEBSITE_URL = `http://localhost:${EXPRESS_PORT}`;
   console.log(`WEBSITE URL ELSE`, WEBSITE_URL);
-  console.log(`DEPLOYMENT_ENVIRONMENT`, process.env.DEPLOYMENT_ENVIRONMENT);
+  console.log(`DEPLOYMENT_ENVIRONMENT`, env.deploymentEnvironment);
 }
 
 export const API_URL = `${WEBSITE_URL}/api`;
 //
-export const COOKIE_NAME =
-  process.env.NODE_ENV === 'production' ? 'plutomi-cookie' : 'DEV-plutomi-cookie';
+export const COOKIE_NAME = env.nodeEnv === 'production' ? 'plutomi-cookie' : 'DEV-plutomi-cookie';
 
 export enum OpeningState {
   PUBLIC = 'PUBLIC',

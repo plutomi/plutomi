@@ -1,6 +1,7 @@
 import { TransactWriteCommandInput, TransactWriteCommand } from '@aws-sdk/lib-dynamodb';
 import { Dynamo } from '../../awsClients/ddbDocClient';
 import { DYNAMO_TABLE_NAME, Entities } from '../../Config';
+import { env } from '../../env';
 import { DynamoOpening } from '../../types/dynamo';
 import * as Time from '../../utils/time';
 
@@ -27,7 +28,7 @@ export const deleteOpening = async (
               PK: `${Entities.ORG}#${orgId}#${Entities.OPENING}#${openingId}`,
               SK: Entities.OPENING,
             },
-            TableName: `${process.env.DEPLOYMENT_ENVIRONMENT}-${DYNAMO_TABLE_NAME}`,
+            TableName: `${env.deploymentEnvironment}-${DYNAMO_TABLE_NAME}`,
             ConditionExpression: 'attribute_exists(PK)',
           },
         },
@@ -42,7 +43,7 @@ export const deleteOpening = async (
             PK: `${Entities.ORG}#${orgId}`,
             SK: Entities.ORG,
           },
-          TableName: `${process.env.DEPLOYMENT_ENVIRONMENT}-${DYNAMO_TABLE_NAME}`,
+          TableName: `${env.deploymentEnvironment}-${DYNAMO_TABLE_NAME}`,
           UpdateExpression: 'SET totalOpenings = totalOpenings - :value, updatedAt = :updatedAt',
           ExpressionAttributeValues: {
             ':value': 1,

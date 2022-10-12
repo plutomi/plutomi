@@ -1,6 +1,7 @@
 import { GetCommandInput, GetCommand } from '@aws-sdk/lib-dynamodb';
 import { Dynamo } from '../../awsClients/ddbDocClient';
 import { DYNAMO_TABLE_NAME, Entities } from '../../Config';
+import { env } from '../../env';
 import { DynamoOpening } from '../../types/dynamo';
 
 type GetOpeningByIdInput = Pick<DynamoOpening, 'orgId' | 'openingId'>;
@@ -10,7 +11,7 @@ export const getOpening = async (
 ): Promise<[DynamoOpening, null] | [null, any]> => {
   const { orgId, openingId } = props;
   const params: GetCommandInput = {
-    TableName: `${process.env.DEPLOYMENT_ENVIRONMENT}-${DYNAMO_TABLE_NAME}`,
+    TableName: `${env.deploymentEnvironment}-${DYNAMO_TABLE_NAME}`,
     Key: {
       PK: `${Entities.ORG}#${orgId}#${Entities.OPENING}#${openingId}`,
       SK: Entities.OPENING,

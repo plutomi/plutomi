@@ -1,5 +1,6 @@
 import * as cdk from 'aws-cdk-lib';
 import * as s3 from 'aws-cdk-lib/aws-s3';
+import { env } from '../env';
 
 export default class StorageStack extends cdk.Stack {
   public readonly bucket: s3.Bucket;
@@ -7,10 +8,10 @@ export default class StorageStack extends cdk.Stack {
   constructor(scope: cdk.App, id: string, props?: cdk.StackProps) {
     super(scope, id, props);
 
-    this.bucket = new s3.Bucket(this, `${process.env.DEPLOYMENT_ENVIRONMENT}-plutomi-assets`, {
+    this.bucket = new s3.Bucket(this, `${env.deploymentEnvironment}-plutomi-assets`, {
       enforceSSL: true,
       blockPublicAccess: s3.BlockPublicAccess.BLOCK_ALL,
-      bucketName: `${process.env.DEPLOYMENT_ENVIRONMENT}-plutomi-assets`,
+      bucketName: `${env.deploymentEnvironment}-plutomi-assets`,
       versioned: true,
     });
   }

@@ -1,6 +1,7 @@
 import { QueryCommandInput, QueryCommand } from '@aws-sdk/lib-dynamodb';
 import { Dynamo } from '../../awsClients/ddbDocClient';
 import { DYNAMO_TABLE_NAME, Entities } from '../../Config';
+import { env } from '../../env';
 import { DynamoQuestion, DynamoQuestionStageAdjacentItem, DynamoStage } from '../../types/dynamo';
 
 interface GetAdjacentStageItemsForQuestionProps
@@ -13,7 +14,7 @@ export const getAdjacentStageItemsForQuestion = async (
 ): Promise<[DynamoQuestionStageAdjacentItem[], any]> => {
   const { orgId, questionId } = props;
   const params: QueryCommandInput = {
-    TableName: `${process.env.DEPLOYMENT_ENVIRONMENT}-${DYNAMO_TABLE_NAME}`,
+    TableName: `${env.deploymentEnvironment}-${DYNAMO_TABLE_NAME}`,
     KeyConditionExpression: 'PK = :PK AND begins_with(SK, :SK)',
     ExpressionAttributeValues: {
       ':PK': `${Entities.ORG}#${orgId}#${Entities.QUESTION}#${questionId}`,

@@ -1,6 +1,7 @@
 import { TransactWriteCommandInput, TransactWriteCommand } from '@aws-sdk/lib-dynamodb';
 import { Dynamo } from '../../awsClients/ddbDocClient';
 import { Entities, DEFAULTS, DYNAMO_TABLE_NAME } from '../../Config';
+import { env } from '../../env';
 import * as Time from '../../utils/time';
 interface LeaveAndDeleteOrgInput {
   orgId: string;
@@ -23,7 +24,7 @@ export const leaveAndDeleteOrg = async (
               PK: `${Entities.USER}#${userId}`,
               SK: Entities.USER,
             },
-            TableName: `${process.env.DEPLOYMENT_ENVIRONMENT}-${DYNAMO_TABLE_NAME}`,
+            TableName: `${env.deploymentEnvironment}-${DYNAMO_TABLE_NAME}`,
             UpdateExpression:
               'SET orgId = :orgId, orgJoinDate = :orgJoinDate, GSI1PK = :GSI1PK, updatedAt = :updatedAt',
             ExpressionAttributeValues: {
@@ -42,7 +43,7 @@ export const leaveAndDeleteOrg = async (
               PK: `${Entities.ORG}#${orgId}`,
               SK: Entities.ORG,
             },
-            TableName: `${process.env.DEPLOYMENT_ENVIRONMENT}-${DYNAMO_TABLE_NAME}`,
+            TableName: `${env.deploymentEnvironment}-${DYNAMO_TABLE_NAME}`,
             ConditionExpression: 'attribute_exists(PK)',
           },
         },
