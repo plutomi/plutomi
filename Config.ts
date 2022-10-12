@@ -15,7 +15,15 @@ export const DOMAIN_NAME = `plutomi.com`;
 
 export const EXPRESS_PORT = 3000;
 
-export const WEBSITE_URL = env.websiteUrl;
+export let WEBSITE_URL = `https://localhost:3000`;
+
+if (env.deploymentEnvironment === 'staging') {
+  WEBSITE_URL = 'https://staging.plutomi.com';
+}
+
+if (env.deploymentEnvironment === 'production') {
+  WEBSITE_URL = 'https://plutomi.com';
+}
 
 export const API_URL = `${WEBSITE_URL}/api`;
 //

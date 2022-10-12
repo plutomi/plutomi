@@ -92,13 +92,13 @@ export default class AppStack extends cdk.Stack {
     const container = taskDefinition.addContainer('plutomi-api-fargate-container', {
       // Get the local docker image, build and deploy it
       image: ecs.ContainerImage.fromAsset('.', {
-        buildArgs: NEXT_ENVIRONMENT, // Pass any variables to the front end
+        buildArgs: { ...NEXT_ENVIRONMENT }, // Pass any variables to the front end
       }),
 
       logging: new ecs.AwsLogDriver({
         streamPrefix: 'plutomi-api-fargate',
       }), //
-      environment: ENVIRONMENT,
+      environment: { ...ENVIRONMENT },
     });
 
     // API
@@ -140,7 +140,6 @@ export default class AppStack extends cdk.Stack {
         cluster,
         certificate: apiCert,
         taskDefinition,
-
         desiredCount: 1, // TODO revert back
         listenerPort: 443,
         protocol: protocol.ApplicationProtocol.HTTPS,
