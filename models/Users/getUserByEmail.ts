@@ -2,6 +2,7 @@ import { QueryCommandInput, QueryCommand } from '@aws-sdk/lib-dynamodb';
 
 import { Dynamo } from '../../awsClients/ddbDocClient';
 import { DYNAMO_TABLE_NAME, Entities } from '../../Config';
+import { env } from '../../env';
 import { DynamoUser } from '../../types/dynamo';
 
 interface GetUserByEmailInput {
@@ -13,7 +14,7 @@ export const getUserByEmail = async (
 ): Promise<[DynamoUser, null] | [null, any]> => {
   const { email } = props;
   const params: QueryCommandInput = {
-    TableName: `${process.env.NODE_ENV}-${DYNAMO_TABLE_NAME}`,
+    TableName: `${env.deploymentEnvironment}-${DYNAMO_TABLE_NAME}`,
     IndexName: 'GSI2',
     KeyConditionExpression: 'GSI2PK = :GSI2PK AND GSI2SK = :GSI2SK',
     ExpressionAttributeValues: {

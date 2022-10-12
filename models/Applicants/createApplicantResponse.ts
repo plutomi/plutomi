@@ -2,6 +2,7 @@ import { PutCommandInput, PutCommand } from '@aws-sdk/lib-dynamodb';
 import { nanoid } from 'nanoid';
 import { Dynamo } from '../../awsClients/ddbDocClient';
 import { ID_LENGTHS, Entities, DYNAMO_TABLE_NAME } from '../../Config';
+import { env } from '../../env';
 import { DynamoApplicantResponse } from '../../types/dynamo';
 import * as Time from '../../utils/time';
 
@@ -34,7 +35,7 @@ export const createApplicantResponse = async (
   };
 
   const params: PutCommandInput = {
-    TableName: `${process.env.NODE_ENV}-${DYNAMO_TABLE_NAME}`,
+    TableName: `${env.deploymentEnvironment}-${DYNAMO_TABLE_NAME}`,
     Item: newApplicantResponse,
     ConditionExpression: 'attribute_not_exists(PK)',
   };

@@ -2,6 +2,7 @@ import { QueryCommandInput, QueryCommand } from '@aws-sdk/lib-dynamodb';
 
 import { Dynamo } from '../../awsClients/ddbDocClient';
 import { DYNAMO_TABLE_NAME, Entities } from '../../Config';
+import { env } from '../../env';
 import { DynamoUser } from '../../types/dynamo';
 
 interface GetUsersInOrgInput {
@@ -17,7 +18,7 @@ export const getUsersInOrg = async (
 ): Promise<[DynamoUser[], null] | [null, any]> => {
   const { orgId, limit } = props;
   const params: QueryCommandInput = {
-    TableName: `${process.env.NODE_ENV}-${DYNAMO_TABLE_NAME}`,
+    TableName: `${env.deploymentEnvironment}-${DYNAMO_TABLE_NAME}`,
     IndexName: 'GSI1',
     KeyConditionExpression: 'GSI1PK = :GSI1PK',
     ExpressionAttributeValues: {

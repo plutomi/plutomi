@@ -1,6 +1,7 @@
 import { TransactWriteCommandInput, TransactWriteCommand } from '@aws-sdk/lib-dynamodb';
 import { Dynamo } from '../../awsClients/ddbDocClient';
 import { DYNAMO_TABLE_NAME, Entities } from '../../Config';
+import { env } from '../../env';
 import { DynamoQuestionStageAdjacentItem, DynamoStage } from '../../types/dynamo';
 import * as Time from '../../utils/time';
 interface DeleteQuestionStageAdjacentItemInput
@@ -20,7 +21,7 @@ export const deleteStageQuestionAdjacentItem = async (
             PK: `${Entities.ORG}#${orgId}#${Entities.QUESTION}#${questionId}`,
             SK: `${Entities.QUESTION_ADJACENT_STAGE_ITEM}#${Entities.OPENING}#${openingId}#${Entities.STAGE}#${stageId}`,
           },
-          TableName: `${process.env.NODE_ENV}-${DYNAMO_TABLE_NAME}`,
+          TableName: `${env.deploymentEnvironment}-${DYNAMO_TABLE_NAME}`,
           ConditionExpression: 'attribute_exists(PK)',
         },
       },
@@ -31,7 +32,7 @@ export const deleteStageQuestionAdjacentItem = async (
             PK: `${Entities.ORG}#${orgId}#${Entities.QUESTION}#${questionId}`,
             SK: Entities.QUESTION,
           },
-          TableName: `${process.env.NODE_ENV}-${DYNAMO_TABLE_NAME}`,
+          TableName: `${env.deploymentEnvironment}-${DYNAMO_TABLE_NAME}`,
           UpdateExpression: `SET totalStages = totalStages - :value, updatedAt = :updatedAt`,
           ExpressionAttributeValues: {
             ':value': 1,

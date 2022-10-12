@@ -5,6 +5,7 @@ import errorFormatter from '../utils/errorFormatter';
 import EBClient from '../awsClients/eventBridgeClient';
 import { DynamoStreamTypes, Entities } from '../Config';
 import { AllDynamoEntities } from '../types/dynamo';
+import { env } from '../env';
 
 const processor = require('dynamodb-streams-processor');
 
@@ -30,7 +31,7 @@ export const main = async (event: DynamoDBStreamEvent) => {
     Source: 'dynamodb.streams',
     // Note, if we ever use AWS events directly, they will go to the default event bus and not this one.
     // This is for easy dev / prod testing
-    EventBusName: `${process.env.NODE_ENV}-EventBus`,
+    EventBusName: `${env.deploymentEnvironment}-EventBus`,
     DetailType: 'stream',
     Detail: JSON.stringify({
       eventName,

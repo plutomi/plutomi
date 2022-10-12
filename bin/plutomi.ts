@@ -1,7 +1,6 @@
 #!/usr/bin/env node
 import 'source-map-support';
 import * as cdk from 'aws-cdk-lib';
-import * as dotenv from 'dotenv';
 import AppStack from '../lib/AppStack';
 import DynamoDBStack from '../lib/DynamoDBStack';
 import EventBridgeStack from '../lib/EventBridgeStack';
@@ -10,27 +9,20 @@ import DeleteChildrenMachineStack from '../lib/DeleteChildrenMachineStack';
 import WebhooksMachineStack from '../lib/WebhooksMachineStack';
 import AthenaDynamoQueryStack from '../lib/AthenaDynamoQueryStack';
 import StorageStack from '../lib/StorageStack';
-// TODO use relative path
-const resultDotEnv = dotenv.config({
-  path: `${process.cwd()}\\.env.${process.env.NODE_ENV}`,
-});
-
-if (resultDotEnv.error) {
-  throw resultDotEnv.error;
-}
+import { env } from '../env';
 
 const app = new cdk.App();
-const { bucket } = new StorageStack(app, `${process.env.NODE_ENV}-StorageStack`);
+const { bucket } = new StorageStack(app, `${env.deploymentEnvironment}-StorageStack`);
 
-const { table } = new DynamoDBStack(app, `${process.env.NODE_ENV}-DynamoDBStack`);
+const { table } = new DynamoDBStack(app, `${env.deploymentEnvironment}-DynamoDBStack`);
 
-new AppStack(app, `${process.env.NODE_ENV}-AppStack`, {
+new AppStack(app, `${env.deploymentEnvironment}-AppStack`, {
   table,
 });
 
 const { DeleteChildrenMachine } = new DeleteChildrenMachineStack(
   app,
-  `${process.env.NODE_ENV}-DeleteChildrenMachineStack`,
+  `${env.deploymentEnvironment}-DeleteChildrenMachineStack`,
   {
     table,
   },
@@ -38,20 +30,20 @@ const { DeleteChildrenMachine } = new DeleteChildrenMachineStack(
 
 const { WebhooksMachine } = new WebhooksMachineStack(
   app,
-  `${process.env.NODE_ENV}-WebhooksMachineStack`,
+  `${env.deploymentEnvironment}-WebhooksMachineStack`,
   {
     table,
   },
 );
-new EventBridgeStack(app, `${process.env.NODE_ENV}-EventBridgeStack`, {
+new EventBridgeStack(app, `${env.deploymentEnvironment}-EventBridgeStack`, {
   DeleteChildrenMachine,
   WebhooksMachine,
 });
 
-new StreamProcessorStack(app, `${process.env.NODE_ENV}-StreamProcessorStack`, {
+new StreamProcessorStack(app, `${env.deploymentEnvironment}-StreamProcessorStack`, {
   table,
 });
-new AthenaDynamoQueryStack(app, `${process.env.NODE_ENV}-AthenaDynamoQueryStack`, {
+new AthenaDynamoQueryStack(app, `${env.deploymentEnvironment}-AthenaDynamoQueryStack`, {
   table,
   bucket,
 });

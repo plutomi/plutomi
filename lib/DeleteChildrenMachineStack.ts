@@ -10,6 +10,8 @@ import * as iam from 'aws-cdk-lib/aws-iam';
 import path from 'path';
 import { DYNAMO_TABLE_NAME, Entities } from '../Config';
 import { DynamoIAM } from '../types/dynamo';
+import { ENVIRONMENT } from './AppStack';
+import { env } from '../env';
 
 interface CustomLambdaFunction {
   functionName: string;
@@ -91,25 +93,26 @@ export default class DeleteChildrenMachineStack extends cdk.Stack {
       fileName,
       description,
     }: CustomLambdaFunction) => {
-      const createdFunction = new NodejsFunction(this, `${process.env.NODE_ENV}-${functionName}`, {
-        functionName: `${process.env.NODE_ENV}-${functionName}`,
-        timeout: cdk.Duration.seconds(5),
-        memorySize: 256,
-        logRetention: RetentionDays.ONE_WEEK,
-        runtime: Runtime.NODEJS_14_X,
-        architecture: Architecture.ARM_64,
-        environment: {
-          NODE_ENV: process.env.NODE_ENV,
-          DYNAMO_TABLE_NAME,
+      const createdFunction = new NodejsFunction(
+        this,
+        `${env.deploymentEnvironment}-${functionName}`,
+        {
+          functionName: `${env.deploymentEnvironment}-${functionName}`,
+          timeout: cdk.Duration.seconds(5),
+          memorySize: 256,
+          logRetention: RetentionDays.ONE_WEEK,
+          runtime: Runtime.NODEJS_16_X,
+          architecture: Architecture.X86_64, // TODO fix deploy issues in actions
+          environment: { ...ENVIRONMENT, DYNAMO_TABLE_NAME },
+          bundling: {
+            minify: true,
+            externalModules: ['aws-sdk'],
+          },
+          handler: 'main',
+          description,
+          entry: path.join(__dirname, `/../functions/${fileName}`),
         },
-        bundling: {
-          minify: true,
-          externalModules: ['aws-sdk'],
-        },
-        handler: 'main',
-        description,
-        entry: path.join(__dirname, `/../functions/${fileName}`),
-      });
+      );
 
       const functionPolicy = new iam.PolicyStatement({
         actions: permissions,
@@ -117,7 +120,7 @@ export default class DeleteChildrenMachineStack extends cdk.Stack {
       });
 
       createdFunction.role.attachInlinePolicy(
-        new iam.Policy(this, `${process.env.NODE_ENV}-${functionName}-policy`, {
+        new iam.Policy(this, `${env.deploymentEnvironment}-${functionName}-policy`, {
           statements: [functionPolicy],
         }),
       );
@@ -244,12 +247,12 @@ export default class DeleteChildrenMachineStack extends cdk.Stack {
       .otherwise(new sfn.Succeed(this, 'Nothing to do :)'));
 
     // ----- State Machine Settings -----
-    const log = new LogGroup(this, `${process.env.NODE_ENV}-DeleteChildrenMachineLogGroup`, {
+    const log = new LogGroup(this, `${env.deploymentEnvironment}-DeleteChildrenMachineLogGroup`, {
       retention: RetentionDays.ONE_MONTH,
     });
 
     this.DeleteChildrenMachine = new sfn.StateMachine(this, 'DeleteChildrenMachine', {
-      stateMachineName: `${process.env.NODE_ENV}-DeleteChildrenMachine`,
+      stateMachineName: `${env.deploymentEnvironment}-DeleteChildrenMachine`,
       definition,
       timeout: cdk.Duration.minutes(5),
       stateMachineType: sfn.StateMachineType.EXPRESS,

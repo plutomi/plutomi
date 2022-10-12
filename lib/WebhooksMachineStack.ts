@@ -8,6 +8,8 @@ import { NodejsFunction } from 'aws-cdk-lib/aws-lambda-nodejs';
 import { Architecture, Runtime } from 'aws-cdk-lib/aws-lambda';
 import path from 'path';
 import { DYNAMO_TABLE_NAME } from '../Config';
+import { ENVIRONMENT } from './AppStack';
+import { env } from '../env';
 
 interface WebhooksMachineProps extends cdk.StackProps {
   table: Table;
@@ -30,18 +32,15 @@ export default class WebhooksMachine extends cdk.Stack {
     const FUNCTION_NAME = 'get-webhooks-and-send-event-function';
     const GetWebhooksAndSendEventFunction = new NodejsFunction(
       this,
-      `${process.env.NODE_ENV}-${FUNCTION_NAME}`,
+      `${env.deploymentEnvironment}-${FUNCTION_NAME}`,
       {
-        functionName: `${process.env.NODE_ENV}-${FUNCTION_NAME}`,
+        functionName: `${env.deploymentEnvironment}-${FUNCTION_NAME}`,
         timeout: cdk.Duration.seconds(5),
         memorySize: 256,
         logRetention: RetentionDays.ONE_WEEK,
-        runtime: Runtime.NODEJS_14_X,
-        architecture: Architecture.ARM_64,
-        environment: {
-          NODE_ENV: process.env.NODE_ENV,
-          DYNAMO_TABLE_NAME,
-        },
+        runtime: Runtime.NODEJS_16_X,
+        architecture: Architecture.X86_64, // TODO fix deploy issues in actions
+        environment: { ...ENVIRONMENT, DYNAMO_TABLE_NAME },
         bundling: {
           minify: true,
           externalModules: ['aws-sdk'],
@@ -62,12 +61,12 @@ export default class WebhooksMachine extends cdk.Stack {
     }).addRetry({ maxAttempts: 2 });
 
     // ----- State Machine Settings -----
-    const log = new LogGroup(this, `${process.env.NODE_ENV}-WebhooksMachineLogGroup`, {
+    const log = new LogGroup(this, `${env.deploymentEnvironment}-WebhooksMachineLogGroup`, {
       retention: RetentionDays.ONE_MONTH,
     });
 
     this.WebhooksMachine = new sfn.StateMachine(this, 'WebhooksMachine', {
-      stateMachineName: `${process.env.NODE_ENV}-WebhooksMachine`,
+      stateMachineName: `${env.deploymentEnvironment}-WebhooksMachine`,
       definition,
       timeout: cdk.Duration.minutes(5),
       stateMachineType: sfn.StateMachineType.EXPRESS,

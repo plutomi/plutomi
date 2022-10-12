@@ -1,6 +1,7 @@
 import { TransactWriteCommandInput, TransactWriteCommand } from '@aws-sdk/lib-dynamodb';
 import { Dynamo } from '../../awsClients/ddbDocClient';
 import { DYNAMO_TABLE_NAME, Entities } from '../../Config';
+import { env } from '../../env';
 import * as Time from '../../utils/time';
 interface RejectOrgInviteInput {
   userId: string;
@@ -25,7 +26,7 @@ export const deleteInvite = async (
               PK: `${Entities.USER}#${userId}`,
               SK: `${Entities.ORG_INVITE}#${inviteId}`,
             },
-            TableName: `${process.env.NODE_ENV}-${DYNAMO_TABLE_NAME}`,
+            TableName: `${env.deploymentEnvironment}-${DYNAMO_TABLE_NAME}`,
             ConditionExpression: 'attribute_exists(PK)',
           },
         },
@@ -36,7 +37,7 @@ export const deleteInvite = async (
               PK: `${Entities.USER}#${userId}`,
               SK: Entities.USER,
             },
-            TableName: `${process.env.NODE_ENV}-${DYNAMO_TABLE_NAME}`,
+            TableName: `${env.deploymentEnvironment}-${DYNAMO_TABLE_NAME}`,
             UpdateExpression: 'SET totalInvites = totalInvites - :value, updatedAt = :updatedAt',
             ExpressionAttributeValues: {
               ':value': 1,

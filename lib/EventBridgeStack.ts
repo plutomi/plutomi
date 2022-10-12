@@ -3,6 +3,7 @@ import { EventBus, Rule } from 'aws-cdk-lib/aws-events';
 import { StateMachine } from 'aws-cdk-lib/aws-stepfunctions';
 import { SfnStateMachine } from 'aws-cdk-lib/aws-events-targets';
 import { DynamoStreamTypes, Entities } from '../Config';
+import { env } from '../env';
 
 enum Rules {
   /**
@@ -42,12 +43,12 @@ export default class EventBridgeStack extends cdk.Stack {
      * Note, if we ever use AWS events directly, they will go to the default event bus and not this one.
      * This is for easy dev / prod testing
      */
-    const bus = new EventBus(this, `${process.env.NODE_ENV}-EventBus`, {
-      eventBusName: `${process.env.NODE_ENV}-EventBus`,
+    const bus = new EventBus(this, `${env.deploymentEnvironment}-EventBus`, {
+      eventBusName: `${env.deploymentEnvironment}-EventBus`,
     });
 
-    bus.archive(`${process.env.NODE_ENV}-EventArchive`, {
-      archiveName: `${process.env.NODE_ENV}-EventArchive`,
+    bus.archive(`${env.deploymentEnvironment}-EventArchive`, {
+      archiveName: `${env.deploymentEnvironment}-EventArchive`,
       eventPattern: {
         account: [cdk.Stack.of(this).account],
       },

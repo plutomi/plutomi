@@ -6,6 +6,7 @@ import { FailureException } from '@aws-sdk/client-dynamodb';
 import { ID_LENGTHS, Entities, OpeningState, DYNAMO_TABLE_NAME } from '../../Config';
 import { DynamoApplicant } from '../../types/dynamo';
 import * as Time from '../../utils/time';
+import { env } from '../../env';
 
 export type CreateApplicantInput = Pick<
   DynamoApplicant,
@@ -51,7 +52,7 @@ export const createApplicant = async (
           // Add an applicant item
           Put: {
             Item: newApplicant,
-            TableName: `${process.env.NODE_ENV}-${DYNAMO_TABLE_NAME}`,
+            TableName: `${env.deploymentEnvironment}-${DYNAMO_TABLE_NAME}`,
 
             ConditionExpression: 'attribute_not_exists(PK)',
           },
@@ -63,7 +64,7 @@ export const createApplicant = async (
               PK: `${Entities.ORG}#${orgId}#${Entities.OPENING}#${openingId}`,
               SK: Entities.OPENING,
             },
-            TableName: `${process.env.NODE_ENV}-${DYNAMO_TABLE_NAME}`,
+            TableName: `${env.deploymentEnvironment}-${DYNAMO_TABLE_NAME}`,
 
             UpdateExpression:
               'SET totalApplicants = if_not_exists(totalApplicants, :zero) + :value',
@@ -88,7 +89,7 @@ export const createApplicant = async (
               PK: `${Entities.ORG}#${orgId}#${Entities.OPENING}#${openingId}#${Entities.STAGE}#${stageId}`,
               SK: Entities.STAGE,
             },
-            TableName: `${process.env.NODE_ENV}-${DYNAMO_TABLE_NAME}`,
+            TableName: `${env.deploymentEnvironment}-${DYNAMO_TABLE_NAME}`,
 
             ConditionExpression: 'attribute_exists(PK)',
             UpdateExpression:
@@ -106,7 +107,7 @@ export const createApplicant = async (
               PK: `${Entities.ORG}#${orgId}`,
               SK: Entities.ORG,
             },
-            TableName: `${process.env.NODE_ENV}-${DYNAMO_TABLE_NAME}`,
+            TableName: `${env.deploymentEnvironment}-${DYNAMO_TABLE_NAME}`,
 
             ConditionExpression: 'attribute_exists(PK)',
             UpdateExpression:
