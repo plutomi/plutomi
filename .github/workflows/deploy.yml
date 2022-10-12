@@ -17,20 +17,28 @@ env:
   DEPLOYMENT_ENVIRONMENT: ${{ github.event.inputs.environment || 'staging' }}
   NODE_VERSION: 16
 
+concurrency:
+  group: ${{ github.event.inputs.environment || 'staging' }}
+  cancel-in-progress: false
+
 jobs:
-  STAGING:
+  release:
     runs-on: ubuntu-latest
-    environment: staging
+    environment: ${{ github.event.inputs.environment || 'staging' }}
     steps:
+      - name: Print Deployment Target
+        run: |
+          echo "Deployment Target: ${{ env.DEPLOYMENT_ENVIRONMENT }}"
+
       - name: Checkout repo
         uses: actions/checkout@v3
 
       - uses: actions/setup-node@v3
         with:
-          node-version: '16'
+          node-version: ${{ env.NODE_VERSION }}
 
       - name: Install dependencies
-        run: npm i && npm i aws-cdk -g #TODO clean this up
+        run: npm i && npm i aws-cdk -g
 
       - name: Print destination
         run: echo "Deploying to staging environment"
