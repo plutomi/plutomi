@@ -20,23 +20,22 @@ interface AppStackServiceProps extends cdk.StackProps {
   table: Table;
 }
 const baseEnv = {
-  NODE_ENV: env.nodeEnv ?? 'development',
-  NEXT_PUBLIC_WEBSITE_URL: env.websiteUrl ?? 'NOT_SET',
+  NODE_ENV: process.env.NODE_ENV ?? 'development',
+  NEXT_PUBLIC_WEBSITE_URL: process.env.NEXT_PUBLIC_WEBSITE_URL ?? 'NOT_SET',
 };
 
 export const ENVIRONMENT = {
   ...baseEnv,
-  HOSTED_ZONE_ID: env.hostedZoneId,
-  ACM_CERTIFICATE_ID: env.acmCertificateId,
-  LOGIN_LINKS_PASSWORD: env.loginLinksPassword,
-  SESSION_SIGNATURE_SECRET_1: env.sessionSignatureSecret1,
-  COMMITS_TOKEN: env.commitsToken,
+  HOSTED_ZONE_ID: process.env.HOSTED_ZONE_ID ?? 'NOT_SET',
+  ACM_CERTIFICATE_ID: process.env.ACM_CERTIFICATE_ID ?? 'NOT_SET',
+  LOGIN_LINKS_PASSWORD: process.env.LOGIN_LINKS_PASSWORD ?? 'NOT_SET',
+  SESSION_SIGNATURE_SECRET_1: process.env.SESSION_SIGNATURE_SECRET_1 ?? 'NOT_SET',
   MONGO_CONNECTION: 'NOT_SET_NEEDS_OTHER_PR',
 };
 
 const NEXT_ENVIRONMENT = {
   ...baseEnv,
-  COMMITS_TOKEN: env.commitsToken ?? 'NOT_SET',
+  COMMITS_TOKEN: process.env.COMMITS_TOKEN ?? 'NOT_SET',
 };
 
 export default class AppStack extends cdk.Stack {
