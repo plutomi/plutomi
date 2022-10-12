@@ -15,21 +15,7 @@ export const DOMAIN_NAME = `plutomi.com`;
 
 export const EXPRESS_PORT = 3000;
 
-export let WEBSITE_URL = `https://${DOMAIN_NAME}`;
-
-// TODO: Types not working in this file
-console.log(`WEBSITE URL STARTRING`, WEBSITE_URL);
-console.log(`ALL ENV`, env);
-// @ts-ignore // TODO sighhhhhh
-if (env.deploymentEnvironment === 'staging') {
-  WEBSITE_URL = `https://staging.plutomi.com`;
-  console.log(`WEBSITE URL STAGING`, WEBSITE_URL);
-  console.log(`DEPLOYMENT_ENVIRONMENT`, env.deploymentEnvironment);
-} else {
-  WEBSITE_URL = `http://localhost:${EXPRESS_PORT}`;
-  console.log(`WEBSITE URL ELSE`, WEBSITE_URL);
-  console.log(`DEPLOYMENT_ENVIRONMENT`, env.deploymentEnvironment);
-}
+export const WEBSITE_URL = env.websiteUrl;
 
 export const API_URL = `${WEBSITE_URL}/api`;
 //
