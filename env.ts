@@ -3,8 +3,8 @@ import setEnv from '@americanairlines/simple-env';
 export const env = setEnv({
   required: {
     nodeEnv: 'NODE_ENV',
-    websiteUrl: 'NEXT_PUBLIC_WEBSITE_URL', // ! Must be visible to the front end with NEXT_PUBLIC
-    deploymentEnvironment: 'DEPLOYMENT_ENVIRONMENT',
+    websiteUrl: 'NEXT_PUBLIC_WEBSITE_URL', 
+    deploymentEnvironment: 'NEXT_PUBLIC_DEPLOYMENT_ENVIRONMENT',
     commitsToken: 'COMMITS_TOKEN',
     loginLinksPassword: 'LOGIN_LINKS_PASSWORD',
     acmCertificateId: 'ACM_CERTIFICATE_ID',

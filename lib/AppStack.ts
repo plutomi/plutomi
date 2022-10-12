@@ -16,13 +16,12 @@ import { DOMAIN_NAME, EXPRESS_PORT } from '../Config';
 import * as waf from 'aws-cdk-lib/aws-wafv2';
 import { env } from '../env';
 
-
 interface AppStackServiceProps extends cdk.StackProps {
   table: Table;
 }
 const baseEnv = {
   NODE_ENV: process.env.NODE_ENV ?? 'development',
-  DEPLOYMENT_ENVIRONMENT: process.env.DEPLOYMENT_ENVIRONMENT ?? 'NOT_SET',
+  NEXT_PUBLIC_DEPLOYMENT_ENVIRONMENT: process.env.NEXT_PUBLIC_DEPLOYMENT_ENVIRONMENT ?? 'NOT_SET',
 };
 
 export const ENVIRONMENT = {
@@ -34,6 +33,7 @@ export const ENVIRONMENT = {
   MONGO_CONNECTION: 'NOT_SET_NEEDS_OTHER_PR',
 };
 
+// ! Must match what is in the Docker container
 const NEXT_ENVIRONMENT = {
   ...baseEnv,
   COMMITS_TOKEN: process.env.COMMITS_TOKEN ?? 'NOT_SET',

@@ -25,10 +25,10 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ${{ secrets.AWS_REGION }}
 
-      - name: Logging in to Docker
+      - name: Fixing lambda permissions
         run: npm run docker-fix
 
-      - name: Deploy stack
+      - name: Deploying to AWS...
         run: cdk deploy --all --verbose --require-approval never
         env:
           COMMITS_TOKEN: ${{ secrets.COMMITS_TOKEN }}
@@ -36,7 +36,7 @@ jobs:
           ACM_CERTIFICATE_ID: ${{ secrets.ACM_CERTIFICATE_ID }}
           LOGIN_LINKS_PASSWORD: ${{ secrets.LOGIN_LINKS_PASSWORD }}
           SESSION_SIGNATURE_SECRET_1: ${{ secrets.SESSION_SIGNATURE_SECRET_1 }}
-          NODE_ENV: production # TODO change
-          DEPLOYMENT_ENVIRONMENT: staging
+          NODE_ENV: production
+          NEXT_PUBLIC_DEPLOYMENT_ENVIRONMENT: staging # TODO reference from above
           NEXT_PUBLIC_WEBSITE_URL: https://staging.plutomi.com
           MONGO_CONNECTION: NOT_SET_NEEDS_OTHER_PR
