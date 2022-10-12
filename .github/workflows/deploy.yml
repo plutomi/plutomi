@@ -1,4 +1,21 @@
-on: [push, workflow_dispatch]
+name: Release
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Deployment Environment (production / staging)'
+        type: environment
+        required: true
+      notes:
+        description: 'What are you deploying?'
+        type: text
+
+env:
+  DEPLOYMENT_ENVIRONMENT: ${{ github.event.inputs.environment || 'staging' }}
+  NODE_VERSION: 16
 
 jobs:
   STAGING:
@@ -10,7 +27,7 @@ jobs:
 
       - uses: actions/setup-node@v3
         with:
-          node-version: '16' # TODO bump this up
+          node-version: '16'
 
       - name: Install dependencies
         run: npm i && npm i aws-cdk -g #TODO clean this up
@@ -37,6 +54,6 @@ jobs:
           LOGIN_LINKS_PASSWORD: ${{ secrets.LOGIN_LINKS_PASSWORD }}
           SESSION_SIGNATURE_SECRET_1: ${{ secrets.SESSION_SIGNATURE_SECRET_1 }}
           NODE_ENV: production
-          NEXT_PUBLIC_DEPLOYMENT_ENVIRONMENT: staging # TODO reference from above
+          NEXT_PUBLIC_DEPLOYMENT_ENVIRONMENT: ${{ env.DEPLOYMENT_ENVIRONMENT }}
           NEXT_PUBLIC_WEBSITE_URL: https://staging.plutomi.com
           MONGO_CONNECTION: NOT_SET_NEEDS_OTHER_PR
