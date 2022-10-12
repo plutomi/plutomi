@@ -4,6 +4,7 @@ import { JOI_SETTINGS, WEBSITE_URL, COOKIE_NAME, COOKIE_SETTINGS, Emails } from 
 import * as CreateError from '../../utils/createError';
 import { DB } from '../../models';
 import { sendEmail, SendEmailProps } from '../../models/Emails/sendEmail';
+import { env } from '../../env';
 
 const jwt = require('jsonwebtoken');
 
@@ -31,7 +32,7 @@ export const login = async (req: Request, res: Response) => {
   let loginLinkId: string;
 
   try {
-    const data = await jwt.verify(token, process.env.LOGIN_LINKS_PASSWORD);
+    const data = await jwt.verify(token, env.loginLinksPassword);
 
     userId = data.userId;
     loginLinkId = data.loginLinkId;

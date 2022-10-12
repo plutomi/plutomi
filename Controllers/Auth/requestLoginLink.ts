@@ -16,6 +16,7 @@ import * as Time from '../../utils/time';
 import * as CreateError from '../../utils/createError';
 import { DB } from '../../models';
 import { sendEmail } from '../../models/Emails/sendEmail';
+import { env } from '../../env';
 
 const jwt = require('jsonwebtoken');
 
@@ -127,7 +128,7 @@ export const requestLoginLink = async (req: Request, res: Response) => {
       userId: user.userId,
       loginLinkId,
     },
-    process.env.LOGIN_LINKS_PASSWORD,
+    env.loginLinksPassword,
     { expiresIn: ttlExpiry - now },
   );
 

@@ -9,6 +9,7 @@ import { LoginHomepage } from '../components/LoginHomepage';
 import { AlreadyLoggedIn } from '../components/AlreadyLoggedIn';
 import { UseCaseList } from '../components/UseCaseList';
 import * as Time from '../utils/time';
+import { env } from '../env';
 
 interface Commit {
   url: string;
@@ -107,7 +108,7 @@ export async function getStaticProps() {
           `https://api.github.com/repos/plutomi/plutomi/commits?sha=${branch.name}&per_page=${commitsFromEachBranch}&u=joswayski`,
           {
             headers: {
-              Authorization: `token ${process.env.COMMITS_TOKEN}`,
+              Authorization: `token ${env.commitsToken}`,
             },
           },
         );
@@ -128,8 +129,8 @@ export async function getStaticProps() {
         });
       } catch (error) {
         console.error(`Error fetching commits`, error.response.data);
-        console.error(`Get Commits Token`, process.env.COMMITS_TOKEN);
-        console.error(`ENV`, process.env.NODE_ENV);
+        console.error(`Get Commits Token`, env.commitsToken);
+        console.error(`ENV`, env.nodeEnv);
       }
     }),
   );

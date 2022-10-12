@@ -1,4 +1,5 @@
 import { Request, Response } from 'express';
+import { env } from '../../env';
 import { DB } from '../../models';
 
 export const healthCheck = async (req: Request, res: Response) => {
@@ -9,13 +10,11 @@ export const healthCheck = async (req: Request, res: Response) => {
       orgId: 'beans',
     });
     console.log(`Got org!`, org);
-    return res
-      .status(200)
-      .json({
-        message: "It's all good man!",
-        env: `COMMITS_TOKEN: ${process.env.COMMITS_TOKEN}`,
-        org,
-      });
+    return res.status(200).json({
+      message: "It's all good man!",
+      env: `COMMITS_TOKEN: ${env.commitsToken}`,
+      org,
+    });
   } catch (error) {
     console.error(`Error ocurred getting org`, error);
     return res.status(500).json({ message: 'Error ocurred getting org', error });

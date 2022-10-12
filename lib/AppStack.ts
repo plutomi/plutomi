@@ -14,32 +14,31 @@ import { CloudFrontTarget } from 'aws-cdk-lib/aws-route53-targets';
 import { Policy, PolicyStatement } from 'aws-cdk-lib/aws-iam';
 import { DOMAIN_NAME, EXPRESS_PORT } from '../Config';
 import * as waf from 'aws-cdk-lib/aws-wafv2';
+import { env } from '../env';
 
 interface AppStackServiceProps extends cdk.StackProps {
   table: Table;
 }
 
 export const ENVIRONMENT = {
-  HOSTED_ZONE_ID: process.env.HOSTED_ZONE_ID,
-  ACM_CERTIFICATE_ID: process.env.ACM_CERTIFICATE_ID,
-  LOGIN_LINKS_PASSWORD: process.env.LOGIN_LINKS_PASSWORD,
-  SESSION_SIGNATURE_SECRET_1: process.env.SESSION_SIGNATURE_SECRET_1,
-  COMMITS_TOKEN: process.env.COMMITS_TOKEN,
+  HOSTED_ZONE_ID: env.hostedZoneId,
+  ACM_CERTIFICATE_ID: env.acmCertificateId,
+  LOGIN_LINKS_PASSWORD: env.loginLinksPassword,
+  SESSION_SIGNATURE_SECRET_1: env.sessionSignatureSecret1,
+  COMMITS_TOKEN: env.commitsToken,
   MONGO_CONNECTION: 'NOT_SET_NEEDS_OTHER_PR',
-  DEPLOYMENT_ENVIRONMENT: process.env.DEPLOYMENT_ENVIRONMENT ?? 'NOT_SET',
-  NODE_ENV: process.env.NODE_ENV ?? 'NOT_SET',
+  DEPLOYMENT_ENVIRONMENT: env.deploymentEnvironment ?? 'NOT_SET',
+  NODE_ENV: env.nodeEnv ?? 'NOT_SET',
 };
 
 export default class AppStack extends cdk.Stack {
   constructor(scope: cdk.App, id: string, props?: AppStackServiceProps) {
     super(scope, id, props);
 
-    const { HOSTED_ZONE_ID } = process.env;
-
     const NEXT_ENVIRONMENT = {
-      COMMITS_TOKEN: process.env.COMMITS_TOKEN ?? 'NOT_SET',
-      NODE_ENV: process.env.NODE_ENV ?? 'development',
-      DEPLOYMENT_ENVIRONMENT: process.env.DEPLOYMENT_ENVIRONMENT ?? 'NOT_SET',
+      COMMITS_TOKEN: env.commitsToken ?? 'NOT_SET',
+      NODE_ENV: env.nodeEnv ?? 'development',
+      DEPLOYMENT_ENVIRONMENT: env.deploymentEnvironment ?? 'NOT_SET',
     };
 
     // IAM inline role - the service principal is required
@@ -72,7 +71,7 @@ export default class AppStack extends cdk.Stack {
       ],
     });
 
-    const policy = new Policy(this, `${process.env.DEPLOYMENT_ENVIRONMENT}-plutomi-api-policy`, {
+    const policy = new Policy(this, `${env.deploymentEnvironment}-plutomi-api-policy`, {
       statements: [dynamoAccessPolicyStatement, sesSendEmailPolicy],
     });
     taskRole.attachInlinePolicy(policy);
@@ -120,7 +119,7 @@ export default class AppStack extends cdk.Stack {
 
     // Get a reference to AN EXISTING hosted zone
     const hostedZone = route53.HostedZone.fromHostedZoneAttributes(this, 'plutomi-hosted-zone', {
-      hostedZoneId: HOSTED_ZONE_ID,
+      hostedZoneId: env.hostedZoneId,
       zoneName: DOMAIN_NAME,
     });
 
@@ -128,7 +127,7 @@ export default class AppStack extends cdk.Stack {
     const apiCert = Certificate.fromCertificateArn(
       this,
       `CertificateArn`,
-      `arn:aws:acm:${this.region}:${this.account}:certificate/${process.env.ACM_CERTIFICATE_ID}`,
+      `arn:aws:acm:${this.region}:${this.account}:certificate/${env.acmCertificateId}`,
     );
 
     // Create a load-balanced Fargate service and make it public with HTTPS traffic only
@@ -184,8 +183,8 @@ export default class AppStack extends cdk.Stack {
     });
 
     // Create the WAF & its rules
-    const API_WAF = new waf.CfnWebACL(this, `${process.env.DEPLOYMENT_ENVIRONMENT}-API-WAF`, {
-      name: `${process.env.DEPLOYMENT_ENVIRONMENT}-API-WAF`,
+    const API_WAF = new waf.CfnWebACL(this, `${env.deploymentEnvironment}-API-WAF`, {
+      name: `${env.deploymentEnvironment}-API-WAF`,
       description: 'Blocks IPs that make too many requests',
       defaultAction: {
         allow: {},
@@ -231,7 +230,7 @@ export default class AppStack extends cdk.Stack {
           visibilityConfig: {
             sampledRequestsEnabled: true,
             cloudWatchMetricsEnabled: true,
-            metricName: `${process.env.DEPLOYMENT_ENVIRONMENT}-WAF-API-BLOCKED-IPs`,
+            metricName: `${env.deploymentEnvironment}-WAF-API-BLOCKED-IPs`,
           },
         },
         {
@@ -253,7 +252,7 @@ export default class AppStack extends cdk.Stack {
           visibilityConfig: {
             sampledRequestsEnabled: true,
             cloudWatchMetricsEnabled: true,
-            metricName: `${process.env.DEPLOYMENT_ENVIRONMENT}-WAF-GENERAL-BLOCKED-IPs`,
+            metricName: `${env.deploymentEnvironment}-WAF-GENERAL-BLOCKED-IPs`,
           },
         },
         // { // TODO this is blocking postman requests :/
@@ -315,25 +314,21 @@ export default class AppStack extends cdk.Stack {
     });
 
     // No caching! We're using Cloudfront for its global network and WAF
-    const cachePolicy = new cf.CachePolicy(
-      this,
-      `${process.env.DEPLOYMENT_ENVIRONMENT}-Cache-Policy`,
-      {
-        defaultTtl: cdk.Duration.seconds(0),
-        minTtl: cdk.Duration.seconds(0),
-        maxTtl: cdk.Duration.seconds(0),
-      },
-    );
+    const cachePolicy = new cf.CachePolicy(this, `${env.deploymentEnvironment}-Cache-Policy`, {
+      defaultTtl: cdk.Duration.seconds(0),
+      minTtl: cdk.Duration.seconds(0),
+      maxTtl: cdk.Duration.seconds(0),
+    });
 
     const distribution = new cf.Distribution(
       this,
-      `${process.env.DEPLOYMENT_ENVIRONMENT}-CF-API-Distribution`,
+      `${env.deploymentEnvironment}-CF-API-Distribution`,
       {
         certificate: apiCert,
         webAclId: API_WAF.attrArn,
         // @ts-ignore // TODO: Add a type for NODE_ENV for staging!!!!!!
         domainNames: [
-          process.env.DEPLOYMENT_ENVIRONMENT === 'staging' ? `staging.${DOMAIN_NAME}` : DOMAIN_NAME,
+          env.deploymentEnvironment === 'staging' ? `staging.${DOMAIN_NAME}` : DOMAIN_NAME,
         ],
         defaultBehavior: {
           origin: new origins.LoadBalancerV2Origin(loadBalancedFargateService.loadBalancer),
@@ -353,8 +348,7 @@ export default class AppStack extends cdk.Stack {
     //  Creates an A record that points our API domain to Cloudfront
     new ARecord(this, `APIAlias`, {
       // @ts-ignore TODO fixup type for node env!!!!!
-      recordName:
-        process.env.DEPLOYMENT_ENVIRONMENT === 'staging' ? `staging.${DOMAIN_NAME}` : DOMAIN_NAME,
+      recordName: env.deploymentEnvironment === 'staging' ? `staging.${DOMAIN_NAME}` : DOMAIN_NAME,
       zone: hostedZone,
       target: RecordTarget.fromAlias(new CloudFrontTarget(distribution)),
     });

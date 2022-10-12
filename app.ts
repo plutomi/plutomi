@@ -42,7 +42,7 @@ app
     );
 
     const morganSettings = env.nodeEnv === 'development' ? 'dev' : 'combined';
-    const sessionSecrets = [process.env.SESSION_SIGNATURE_SECRET_1];
+    const sessionSecrets = [env.sessionSignatureSecret1];
 
     server.set('trust proxy', 1);
 

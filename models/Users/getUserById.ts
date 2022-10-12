@@ -2,6 +2,7 @@ import { GetCommandInput, GetCommand } from '@aws-sdk/lib-dynamodb';
 
 import { Dynamo } from '../../awsClients/ddbDocClient';
 import { DYNAMO_TABLE_NAME, Entities } from '../../Config';
+import { env } from '../../env';
 import { DynamoUser } from '../../types/dynamo';
 
 interface GetUserByIdInput {
@@ -13,7 +14,7 @@ export const getUserById = async (
 ): Promise<[DynamoUser, null] | [null, any]> => {
   const { userId } = props;
   const params: GetCommandInput = {
-    TableName: `${process.env.DEPLOYMENT_ENVIRONMENT}-${DYNAMO_TABLE_NAME}`,
+    TableName: `${env.deploymentEnvironment}-${DYNAMO_TABLE_NAME}`,
     Key: {
       PK: `${Entities.USER}#${userId}`,
       SK: Entities.USER,

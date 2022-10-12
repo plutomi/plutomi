@@ -4,6 +4,7 @@ import { Dynamo } from '../../awsClients/ddbDocClient';
 import { DYNAMO_TABLE_NAME, Entities } from '../../Config';
 import { GetApplicantByIdOutput } from '../../types/main';
 import { DynamoApplicant, DynamoApplicantResponse } from '../../types/dynamo';
+import { env } from '../../env';
 
 export type GetApplicantInput = Pick<DynamoApplicant, 'orgId' | 'applicantId'>;
 export interface DynamoApplicantWithResponses extends DynamoApplicant {
@@ -15,7 +16,7 @@ export const getApplicant = async (
 ): Promise<[DynamoApplicantWithResponses, null] | [null, any]> => {
   const { orgId, applicantId } = props;
   const responsesParams: QueryCommandInput = {
-    TableName: `${process.env.DEPLOYMENT_ENVIRONMENT}-${DYNAMO_TABLE_NAME}`,
+    TableName: `${env.deploymentEnvironment}-${DYNAMO_TABLE_NAME}`,
     KeyConditionExpression: 'PK = :PK',
     ExpressionAttributeValues: {
       ':PK': `${Entities.ORG}#${orgId}#${Entities.APPLICANT}#${applicantId}`,

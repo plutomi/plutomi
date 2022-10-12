@@ -5,6 +5,7 @@ import { UpdateCommand } from '@aws-sdk/lib-dynamodb';
 import { Dynamo } from '../../awsClients/ddbDocClient';
 import { DYNAMO_TABLE_NAME, Entities } from '../../Config';
 import { APIUpdateWebhookOptions } from '../../Controllers/Webhooks/updateWebhook';
+import { env } from '../../env';
 import { DynamoWebhook } from '../../types/dynamo';
 import { createDynamoUpdateExpression } from '../../utils/createDynamoUpdateExpression';
 
@@ -26,7 +27,7 @@ export const updateWebhook = async (props: UpdateWebhookInput): Promise<[null, a
     },
     UpdateExpression: `SET ${allUpdateExpressions.join(', ')}`,
     ExpressionAttributeValues: allAttributeValues,
-    TableName: `${process.env.DEPLOYMENT_ENVIRONMENT}-${DYNAMO_TABLE_NAME}`,
+    TableName: `${env.deploymentEnvironment}-${DYNAMO_TABLE_NAME}`,
     ConditionExpression: 'attribute_exists(PK)',
   };
 
