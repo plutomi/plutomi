@@ -37,6 +37,5 @@ jobs:
           LOGIN_LINKS_PASSWORD: ${{ secrets.LOGIN_LINKS_PASSWORD }}
           SESSION_SIGNATURE_SECRET_1: ${{ secrets.SESSION_SIGNATURE_SECRET_1 }}
           NODE_ENV: production # TODO change
-          DEPLOYMENT_ENVIRONMENT: staging
-          NEXT_PUBLIC_BASE_URL: staging.plutomi.com
+          NEXT_PUBLIC_DEPLOYMENT_ENVIRONMENT: staging # Must be visible to the FE
           MONGO_CONNECTION: NOT_SET_NEEDS_OTHER_PR

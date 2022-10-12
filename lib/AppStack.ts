@@ -19,27 +19,28 @@ import { env } from '../env';
 interface AppStackServiceProps extends cdk.StackProps {
   table: Table;
 }
-
+const baseEnv = {
+  NODE_ENV: env.nodeEnv ?? 'development',
+  NEXT_PUBLIC_DEPLOYMENT_ENVIRONMENT: env.deploymentEnvironment ?? 'NOT_SET',
+};
 export const ENVIRONMENT = {
+  ...baseEnv,
   HOSTED_ZONE_ID: env.hostedZoneId,
   ACM_CERTIFICATE_ID: env.acmCertificateId,
   LOGIN_LINKS_PASSWORD: env.loginLinksPassword,
   SESSION_SIGNATURE_SECRET_1: env.sessionSignatureSecret1,
   COMMITS_TOKEN: env.commitsToken,
   MONGO_CONNECTION: 'NOT_SET_NEEDS_OTHER_PR',
-  DEPLOYMENT_ENVIRONMENT: env.deploymentEnvironment ?? 'NOT_SET',
-  NODE_ENV: env.nodeEnv ?? 'NOT_SET',
+};
+
+const NEXT_ENVIRONMENT = {
+  ...baseEnv,
+  COMMITS_TOKEN: env.commitsToken ?? 'NOT_SET',
 };
 
 export default class AppStack extends cdk.Stack {
   constructor(scope: cdk.App, id: string, props?: AppStackServiceProps) {
     super(scope, id, props);
-
-    const NEXT_ENVIRONMENT = {
-      COMMITS_TOKEN: env.commitsToken ?? 'NOT_SET',
-      NODE_ENV: env.nodeEnv ?? 'development',
-      DEPLOYMENT_ENVIRONMENT: env.deploymentEnvironment ?? 'NOT_SET',
-    };
 
     // IAM inline role - the service principal is required
     const taskRole = new iam.Role(this, 'plutomi-api-fargate-role', {
