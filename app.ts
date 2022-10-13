@@ -1,5 +1,5 @@
 import helmet from 'helmet';
-import express from 'express';
+import express, { Handler } from 'express';
 import cors from 'cors';
 import timeout from 'connect-timeout';
 import withCleanOrgId from './middleware/withCleanOrgId';
@@ -23,10 +23,13 @@ import type { MongoDriver } from '@mikro-orm/mongodb'; // or any other SQL drive
 import { MikroORM } from '@mikro-orm/core';
 import mikroOrmOptions from './mikro-orm.config';
 import { User } from './entities/User';
+import { withEntityManager } from './middleware/withEntityManager';
+import { initializeDb } from './utils/initializeDb';
 
 const morgan = require('morgan');
 const cookieParser = require('cookie-parser');
-
+const morganSettings = env.nodeEnv === 'development' ? 'dev' : 'combined';
+const sessionSecrets = [env.sessionSignatureSecret1];
 const dev = env.nodeEnv !== 'production';
 const app = next({ dev });
 const handle = app.getRequestHandler();
@@ -35,27 +38,9 @@ app
   .prepare()
   .then(async () => {
     const server = express();
-    let orm: MikroORM<MongoDriver>;
-    try {
-      console.log('Attempting to connect to mongodb');
-      orm = await MikroORM.init<MongoDriver>(mikroOrmOptions);
-    } catch (error) {
-      console.error(`Error ocurred connecting to MONGO`, error);
-    }
-
-    const includeEntityManager: express.Handler = (req, _res, next) => {
-      req.entityManager = orm.em.fork();
-      next();
-    };
-
-    server.use(includeEntityManager);
-
-    const em = orm.em;
-    const res = await em.find(User, {});
-
-    console.log(`RESSSSSS`, res);
+    await initializeDb();
+    server.use(helmet());
     server.use(timeout('5s'));
-
     server.use(
       cors({
         credentials: true,
@@ -63,22 +48,19 @@ app
       }),
     );
 
-    const morganSettings = env.nodeEnv === 'development' ? 'dev' : 'combined';
-    const sessionSecrets = [env.sessionSignatureSecret1];
-
     server.set('trust proxy', 1);
 
     // TODO
     // eslint-disable-next-line @typescript-eslint/no-use-before-define
     server.use(API.Misc.haltOnTimeout);
     server.use('/api', [
-      express.json(),
-      helmet(),
-      withCleanOrgId,
-      withCleanQuestionId,
-      withCleanWebhookId,
       morgan(morganSettings),
       cookieParser(sessionSecrets, COOKIE_SETTINGS),
+      express.json(),
+      withCleanOrgId, // TODO make these all one middleware
+      withCleanQuestionId,
+      withCleanWebhookId,
+      withEntityManager,
     ]);
 
     if (env.nodeEnv === 'development') {
