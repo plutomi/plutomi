@@ -1,5 +1,6 @@
-import { Entity, OneToMany, Property } from '@mikro-orm/core';
+import { Cascade, Collection, Entity, OneToMany, Property } from '@mikro-orm/core';
 import { BaseEntity } from './BaseEntity';
+import { UserLoginLink } from './UserLoginLink';
 
 @Entity()
 export class User extends BaseEntity {
@@ -26,6 +27,9 @@ export class User extends BaseEntity {
 
   @Property({ columnType: 'integer', default: 0 })
   totalInvites: number;
+
+  @OneToMany(() => UserLoginLink, (b) => b.user, { cascade: [Cascade.ALL] })
+  loginLinks = new Collection<UserLoginLink>(this);
 
   constructor(firstName: string, lastName: string, email: string) {
     super();
