@@ -3,6 +3,8 @@ import { BaseEntity } from './BaseEntity';
 import { User } from './User';
 import dayjs from 'dayjs';
 
+export type UserLoginLinkConstructorValues = Pick<UserLoginLink, 'user'>;
+
 @Entity()
 export class UserLoginLink extends BaseEntity {
   @ManyToOne(() => User)
@@ -12,7 +14,7 @@ export class UserLoginLink extends BaseEntity {
   @Property({ columnType: 'date' })
   ttlExpiry = dayjs().add(15, 'minutes').toDate();
 
-  constructor(user: User) {
+  constructor({ user }: UserLoginLinkConstructorValues) {
     super();
     this.user = user;
   }

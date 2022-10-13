@@ -1,6 +1,8 @@
-import { Collection, Entity, ManyToMany, OneToMany, OneToOne, Property } from '@mikro-orm/core';
+import { Collection, Entity, OneToMany, OneToOne, Property } from '@mikro-orm/core';
 import { BaseEntity } from './BaseEntity';
 import { User } from './User';
+
+export type OrgConstructorValues = Pick<Org, 'createdBy' | 'orgId' | 'displayName'>;
 
 @Entity()
 export class Org extends BaseEntity {
@@ -31,7 +33,7 @@ export class Org extends BaseEntity {
   @Property({ type: 'integer', default: 1 })
   totalQuestions!: number;
 
-  constructor(createdBy: User, orgId: string, displayName: string) {
+  constructor({ orgId, createdBy, displayName }: OrgConstructorValues) {
     super();
     this.createdBy = createdBy;
     this.orgId = orgId;

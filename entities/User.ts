@@ -1,15 +1,9 @@
-import {
-  Cascade,
-  Collection,
-  Entity,
-  ManyToMany,
-  ManyToOne,
-  OneToMany,
-  Property,
-} from '@mikro-orm/core';
+import { Cascade, Collection, Entity, ManyToOne, OneToMany, Property } from '@mikro-orm/core';
 import { BaseEntity } from './BaseEntity';
 import { Org } from './Org';
 import { UserLoginLink } from './UserLoginLink';
+
+export type UserConstructorValues = Pick<User, 'firstName' | 'lastName' | 'email'>;
 
 @Entity()
 export class User extends BaseEntity {
@@ -40,7 +34,7 @@ export class User extends BaseEntity {
   @OneToMany(() => UserLoginLink, (b) => b.user, { cascade: [Cascade.ALL] })
   loginLinks = new Collection<UserLoginLink>(this);
 
-  constructor(email: string, firstName?: string, lastName?: string) {
+  constructor({ firstName, lastName, email }: UserConstructorValues) {
     super();
     this.firstName = firstName;
     this.lastName = lastName;
