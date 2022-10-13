@@ -38,6 +38,8 @@
     "@middy/http-json-body-parser": "^2.5.4",
     "@middy/http-response-serializer": "^2.5.4",
     "@middy/input-output-logger": "^2.5.4",
+    "@mikro-orm/core": "^5.4.2",
+    "@mikro-orm/mongodb": "^5.4.2",
     "@reduxjs/toolkit": "^1.7.1",
     "@tailwindcss/aspect-ratio": "^0.2.2",
     "@tailwindcss/forms": "^0.3.4",
