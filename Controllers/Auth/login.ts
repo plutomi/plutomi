@@ -32,9 +32,10 @@ export const login = async (req: Request, res: Response) => {
   let loginLinkId: string;
 
   try {
+    // TODO add types for this
     const data = await jwt.verify(token, env.loginLinksPassword);
 
-    userId = data.userId;
+    userId = data.id;
     loginLinkId = data.loginLinkId;
   } catch (error) {
     if (error.name === 'TokenExpiredError') {
@@ -42,6 +43,7 @@ export const login = async (req: Request, res: Response) => {
     }
     return res.status(401).json({ message: 'Invalid login link' });
   }
+  console.log(`Trying to find user with ID of `, userId);
 
   let user: User;
 
