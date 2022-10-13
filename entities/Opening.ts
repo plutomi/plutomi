@@ -15,14 +15,14 @@ export class Opening extends BaseEntity {
   org: Org;
 
   // TODO allow creating public openings through the API
-  @Enum({ items: () => OpeningState, default: OpeningState.PRIVATE })
-  state!: OpeningState;
+  @Enum({ items: () => OpeningState })
+  state: OpeningState = OpeningState.PRIVATE;
 
-  @Property({ type: 'integer', default: 0 })
-  totalApplicants!: number;
+  @Property({ type: 'integer' })
+  totalApplicants: number = 0;
 
-  @Property({ type: 'integer', default: 0 })
-  totalStages!: number;
+  @Property({ type: 'integer' })
+  totalStages: number = 0;
 
   @OneToMany(() => Stage, (b) => b.opening, { cascade: [Cascade.ALL] })
   stages = new Collection<Stage>(this);

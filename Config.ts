@@ -15,7 +15,7 @@ export const DOMAIN_NAME = `plutomi.com`; // TODO move this to deplo ycommand???
 
 export const EXPRESS_PORT = 3000;
 
-export let WEBSITE_URL = `https://localhost:3000`;
+export let WEBSITE_URL = `http://localhost:3000`;
 
 // CANNOT USE `env` util!!!!!!! Will get passed in the github action as config is called first
 if (process.env.NEXT_PUBLIC_WEBSITE_URL) {

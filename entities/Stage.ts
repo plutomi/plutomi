@@ -7,7 +7,7 @@ export type StageConstructorValues = Pick<Stage, 'name' | 'org'>;
 
 @Entity()
 export class Stage extends BaseEntity {
-  @Property({ type: 'text', nullable: false })
+  @Property({ type: 'text' })
   name: string;
 
   @ManyToOne(() => Org)
@@ -16,11 +16,11 @@ export class Stage extends BaseEntity {
   @ManyToOne(() => Opening)
   opening: Opening;
 
-  @Property({ type: 'integer', default: 0 })
-  totalApplicants!: number;
+  @Property({ type: 'integer' })
+  totalApplicants: number = 0;
 
-  @Property({ type: 'integer', default: 0 })
-  totalQuestions!: number;
+  @Property({ type: 'integer' })
+  totalQuestions: number = 0;
 
   // TODO questions
 

@@ -66,7 +66,7 @@ export const requestLoginLink = async (req: Request, res: Response) => {
       email,
     });
   } catch (error) {
-    console.error(`Error retrieving user info`);
+    console.error(`Error retrieving user info`, error);
     return res.status(500).json({
       message: `Error retrieving user info`,
       error,
@@ -83,7 +83,10 @@ export const requestLoginLink = async (req: Request, res: Response) => {
         email,
       });
 
+      console.log(`Persisiting!!`);
       await req.entityManager.persistAndFlush(newUser);
+      console.log(`Persisted`);
+      console.log(`New user after`, newUser);
       user = newUser;
     } catch (error) {
       console.error(`An error ocurred creating your account`);

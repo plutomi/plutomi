@@ -22,14 +22,14 @@ export class User extends BaseEntity {
   @Property({ type: 'date', nullable: true })
   orgJoinDate?: Date;
 
-  @Property({ type: 'bool', default: false })
-  emailVerified!: boolean;
+  @Property({ type: 'bool' })
+  emailVerified: boolean = false;
 
-  @Property({ type: 'bool', default: true })
-  canReceiveEmails!: boolean;
+  @Property({ type: 'bool' })
+  canReceiveEmails: boolean = true;
 
-  @Property({ type: 'integer', default: 0 })
-  totalInvites!: number;
+  @Property({ type: 'integer' })
+  totalInvites: number = 0;
 
   @OneToMany(() => UserLoginLink, (b) => b.user, { cascade: [Cascade.ALL] })
   loginLinks = new Collection<UserLoginLink>(this);

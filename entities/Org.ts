@@ -12,10 +12,10 @@ export class Org extends BaseEntity {
   @OneToOne(() => User)
   createdBy: User;
 
-  @Property({ type: 'text', nullable: false })
+  @Property({ type: 'text' })
   orgId: string;
 
-  @Property({ type: 'text', nullable: false })
+  @Property({ type: 'text' })
   displayName: string;
 
   @Property({ type: 'integer', default: 0 })
@@ -27,10 +27,10 @@ export class Org extends BaseEntity {
   @Property({ type: 'integer', default: 1 })
   totalUsers!: number;
 
-  @Property({ type: 'integer', default: 1 })
+  @Property({ type: 'integer', default: 0 })
   totalWebhooks!: number;
 
-  @Property({ type: 'integer', default: 1 })
+  @Property({ type: 'integer', default: 0 })
   totalQuestions!: number;
 
   constructor({ orgId, createdBy, displayName }: OrgConstructorValues) {

@@ -34,13 +34,13 @@ const handle = app.getRequestHandler();
 
 app
   .prepare()
-  .then(() => {
+  .then(async () => {
     const server = express();
-    // const orm = await initializeDb();
-    // const includeEntityManager: express.Handler = (req, _res, next) => {
-    //   req.entityManager = orm.em.fork();
-    //   next();
-    // };
+    const orm = await initializeDb();
+    const includeEntityManager: express.Handler = (req, _res, next) => {
+      req.entityManager = orm.em.fork();
+      next();
+    };
 
     server.use(timeout('5s'));
     server.use(
@@ -63,7 +63,7 @@ app
       withCleanOrgId, // TODO make these all one middleware
       withCleanQuestionId,
       withCleanWebhookId,
-      // includeEntityManager,
+      includeEntityManager,
     ]);
 
     if (env.nodeEnv === 'development') {
