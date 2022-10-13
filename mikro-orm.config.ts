@@ -1,9 +1,7 @@
 import { Options } from '@mikro-orm/core';
 import { MongoHighlighter } from '@mikro-orm/mongo-highlighter';
 import { MongoDriver } from '@mikro-orm/mongodb';
-import { Org } from './entities/Org';
-import { User } from './entities/User';
-import { UserLoginLink } from './entities/UserLoginLink';
+import { Org, User, UserLoginLink } from './entities';
 
 const mikroOrmOptions: Options<MongoDriver> = {
   type: 'mongo',

@@ -1,6 +1,6 @@
 import { EntityManager, MongoDriver } from '@mikro-orm/mongodb';
-import { User } from '../entities/User';
-import { DynamoApplicant, DynamoUser } from './dynamo';
+import { User } from '../entities';
+import { DynamoApplicant } from './dynamo';
 
 /**
  * All possible parameters in the URL

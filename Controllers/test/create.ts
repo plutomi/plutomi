@@ -1,6 +1,6 @@
 import { Handler, Request, Response } from 'express';
 import { nanoid } from 'nanoid';
-import { User } from '../../entities/User';
+import { User } from '../../entities';
 
 export const createUser: Handler = async (req: Request, res: Response) => {
   const newUser = new User(nanoid(12), nanoid(12), nanoid(12));
