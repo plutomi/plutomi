@@ -8,6 +8,7 @@ const options: Options = {
   dbName: 'mikro-orm-express-ts',
   highlighter: new MongoHighlighter(),
   debug: true,
+  ensureIndexes: true,
 };
 
 export default options;
