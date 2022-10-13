@@ -2,8 +2,9 @@ import { Cascade, Collection, Entity, Enum, ManyToOne, OneToMany, Property } fro
 import { OpeningState } from '../Config';
 import { BaseEntity } from './BaseEntity';
 import { Org } from './Org';
+import { Stage } from './Stage';
 
-export type OpeningConstructorValues = Pick<Opening, 'name' | 'state'>;
+export type OpeningConstructorValues = Pick<Opening, 'name' | 'state' | 'org'>;
 
 @Entity()
 export class Opening extends BaseEntity {
@@ -13,8 +14,9 @@ export class Opening extends BaseEntity {
   @ManyToOne(() => Org)
   org: Org;
 
+  // TODO allow creating public openings through the API
   @Enum({ items: () => OpeningState, default: OpeningState.PRIVATE })
-  state: OpeningState = OpeningState.PRIVATE;
+  state!: OpeningState;
 
   @Property({ type: 'integer', default: 0 })
   totalApplicants!: number;
@@ -22,17 +24,13 @@ export class Opening extends BaseEntity {
   @Property({ type: 'integer', default: 0 })
   totalStages!: number;
 
-  // TODO stages
+  @OneToMany(() => Stage, (b) => b.opening, { cascade: [Cascade.ALL] })
+  stages = new Collection<Stage>(this);
 
-  //   @OneToMany(() => UserLoginLink, (b) => b.user, { cascade: [Cascade.ALL] })
-  //   loginLinks = new Collection<UserLoginLink>(this);
-
-  //   @OneToMany(() => UserLoginLink, (b) => b.user, { cascade: [Cascade.ALL] })
-  //   loginLinks = new Collection<UserLoginLink>(this);
-
-  constructor({ name, state }: OpeningConstructorValues) {
+  constructor({ name, state, org }: OpeningConstructorValues) {
     super();
     this.name = name;
     this.state = state;
+    this.org = org;
   }
 }
