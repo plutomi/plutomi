@@ -11,4 +11,9 @@ export class UserLoginLink extends BaseEntity {
   // TODO: Add mongodb TTL
   @Property({ columnType: 'date' })
   ttlExpiry = dayjs().add(15, 'minutes').toDate();
+
+  constructor(user: User) {
+    super();
+    this.user = user;
+  }
 }
