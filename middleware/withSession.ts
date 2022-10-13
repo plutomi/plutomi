@@ -1,5 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
 import { COOKIE_NAME, COOKIE_SETTINGS } from '../Config';
+import { User } from '../entities';
 import { DB } from '../models';
 
 // eslint-disable-next-line consistent-return
@@ -9,11 +10,18 @@ export default async function withSession(req: Request, res: Response, next: Nex
     return res.status(401).json({ message: 'Please log in again' });
   }
 
-  const [user, userError] = await DB.Users.getUserById({
-    userId,
-  });
+  let user: User;
+  let error: any;
+  try {
+    user = await req.entityManager.findOne(User, {
+      id: userId,
+    });
+  } catch (err) {
+    console.error(`User not found due to error`, error);
+    error = err;
+  }
 
-  if (userError || !user) {
+  if (!user || error) {
     res.cookie(COOKIE_NAME, '', {
       ...COOKIE_SETTINGS,
       maxAge: -1,
