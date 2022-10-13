@@ -99,12 +99,6 @@
     "jsx": "preserve"
   },
 
-  "include": [
-    "next-env.d.ts",
-    "**/*.ts",
-    "**/*.tsx",
-    "models/Invites/CreateInvite",
-    "Controllers/Questions/DeleteQuestionFromStage/deleteQuestionFromStage"
-  ],
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx"],
   "exclude": ["node_modules", "cdk.out"]
 }

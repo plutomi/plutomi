@@ -7,11 +7,6 @@ import { env } from './env';
  * DOMAIN_NAME being the actual domain name, do not change!
  */
 
-console.log('IN CONFIG', env);
-console.log(`ENV LOGGING`, process.env.NODE_ENV);
-console.log(`DEPLOYMENT_ENVIRONMENT LOGGING`, process.env.NEXT_PUBLIC_DEPLOYMENT_ENVIRONMENT);
-console.log(`WEBSITE_URL LOGGING`, process.env.NEXT_PUBLIC_WEBSITE_URL);
-
 export const DOMAIN_NAME = `plutomi.com`; // TODO move this to deplo ycommand???
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

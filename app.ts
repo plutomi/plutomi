@@ -27,19 +27,20 @@ const morgan = require('morgan');
 const cookieParser = require('cookie-parser');
 const morganSettings = env.nodeEnv === 'development' ? 'dev' : 'combined';
 const sessionSecrets = [env.sessionSignatureSecret1];
+console.log(`NODE NEV`, env.nodeEnv);
 const dev = env.nodeEnv !== 'production';
 const app = next({ dev });
 const handle = app.getRequestHandler();
 
 app
   .prepare()
-  .then(async () => {
+  .then(() => {
     const server = express();
-    const orm = await initializeDb();
-    const includeEntityManager: express.Handler = (req, _res, next) => {
-      req.entityManager = orm.em.fork();
-      next();
-    };
+    // const orm = await initializeDb();
+    // const includeEntityManager: express.Handler = (req, _res, next) => {
+    //   req.entityManager = orm.em.fork();
+    //   next();
+    // };
 
     server.use(helmet());
     server.use(timeout('5s'));
@@ -62,7 +63,7 @@ app
       withCleanOrgId, // TODO make these all one middleware
       withCleanQuestionId,
       withCleanWebhookId,
-      includeEntityManager,
+      // includeEntityManager,
     ]);
 
     if (env.nodeEnv === 'development') {
