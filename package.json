@@ -101,6 +101,7 @@
     "@aws-sdk/util-dynamodb": "^3.44.0",
     "@commitlint/cli": "^13.2.1",
     "@commitlint/config-conventional": "^13.2.0",
+    "@mikro-orm/mongo-highlighter": "^1.0.0",
     "@types/cors": "^2.8.12",
     "@types/express": "^4.17.13",
     "@types/express-list-endpoints": "^6.0.0",

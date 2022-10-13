@@ -19,7 +19,6 @@ import { auth } from './routes/auth';
 import { applicants } from './routes/applicants';
 import API from './Controllers';
 import { env } from './env';
-
 const morgan = require('morgan');
 const cookieParser = require('cookie-parser');
 
