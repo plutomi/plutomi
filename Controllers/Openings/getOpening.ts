@@ -1,6 +1,7 @@
 import { Request, Response } from 'express';
 import Joi from 'joi';
 import { JOI_SETTINGS } from '../../Config';
+import { Opening } from '../../entities';
 import { DB } from '../../models';
 import * as CreateError from '../../utils/createError';
 
@@ -17,18 +18,22 @@ export const getOpening = async (req: Request, res: Response) => {
     const { status, body } = CreateError.JOI(error);
     return res.status(status).json(body);
   }
-  const { user } = req;
+  const { user, entityManager } = req;
   const { openingId } = req.params;
 
-  const [opening, error] = await DB.Openings.getOpening({
-    openingId,
-    orgId: user.orgId,
-  });
+  let opening: Opening;
 
-  if (error) {
-    const { status, body } = CreateError.SDK(error, 'An error ocurred retrieving your opening');
-    return res.status(status).json(body);
+  try {
+    opening = await entityManager.findOne(Opening, {
+      org: user.org,
+      id: openingId,
+    });
+  } catch (error) {
+    const message = 'Error ocurred retrieving opening info';
+    console.error(message, error);
+    return res.status(500).json({ message, error });
   }
+
   if (!opening) {
     return res.status(404).json({ message: 'Opening not found' });
   }

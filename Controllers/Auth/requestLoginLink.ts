@@ -159,7 +159,7 @@ export const requestLoginLink = async (req: Request, res: Response) => {
 
   try {
     const newLoginLink = new UserLoginLink({
-      user,
+      user: user,
     });
     await req.entityManager.persistAndFlush(newLoginLink);
   } catch (error) {

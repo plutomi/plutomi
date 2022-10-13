@@ -9,7 +9,7 @@
     "test": "jest",
     "docker-fix": "aws ecr-public get-login-password --region us-east-1 | docker login --username AWS --password-stdin public.ecr.aws/sam/build-nodejs",
     "dev-server": "cross-env NODE_ENV=development nodemon app.ts",
-    "dev": "npm run docker-fix && cross-env NODE_ENV=development cdk deploy development-DynamoDBStack development-StreamProcessorStack development-EventBridgeStack development-StorageStack development-DeleteChildrenMachineStack development-AthenaDynamoQueryStack development-WebhooksMachineStack --verbose && npm run dev-server",
+    "dev": "npm run docker-fix && cross-env NODE_ENV=development NEXT_PUBLIC_DEPLOYMENT_ENVIRONMENT=development cdk deploy development-DynamoDBStack development-StreamProcessorStack development-EventBridgeStack development-StorageStack development-DeleteChildrenMachineStack development-AthenaDynamoQueryStack development-WebhooksMachineStack --verbose && npm run dev-server",
     "start": "cross-env NODE_ENV=development ts-node --transpile-only app.ts",
     "deploy-production": "cdk deploy production-DynamoDBStack production-StreamProcessorStack production-AppStack production-EventBridgeStack production-StorageStack production-DeleteChildrenMachineStack production-AthenaDynamoQueryStack production-WebhooksMachineStack --verbose --require-approval never"
   },
