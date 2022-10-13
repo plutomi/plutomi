@@ -15,9 +15,9 @@ export enum DynamoIAM {
 export type AllDynamoEntities =
   | DynamoOrgLoginEvent
   | DynamoUserLoginEvent
-  | DynamoOrg
-  | DynamoLoginLink
-  | DynamoUser
+  | DynamoOrg // ! Done
+  | DynamoLoginLink // ! Done
+  | DynamoUser // ! Done
   | DynamoWebhook
   | DynamoOrgInvite
   | DynamoOpening // TODO public variant
