@@ -15,6 +15,7 @@ import { users } from './routes/users';
 import { stages } from './routes/stages';
 import { invites } from './routes/invites';
 import { publicInfo } from './routes/public';
+import { testing } from './routes/testing';
 import { auth } from './routes/auth';
 import { applicants } from './routes/applicants';
 import API from './Controllers';
@@ -70,6 +71,7 @@ app
     server.get('/api', API.Misc.healthCheck);
 
     // Routers
+    server.use('/api/test', testing);
     server.use('/api/openings', openings);
     server.use('/api/orgs', orgs);
     server.use('/api/questions', questions);
