@@ -1,11 +1,11 @@
 import { Options } from '@mikro-orm/core';
 import { MongoHighlighter } from '@mikro-orm/mongo-highlighter';
 import { MongoDriver } from '@mikro-orm/mongodb';
-import { Org, User, UserLoginLink } from './entities';
+import { Opening, Org, Stage, User, UserLoginLink } from './entities';
 
 const mikroOrmOptions: Options<MongoDriver> = {
   type: 'mongo',
-  entities: [User, Org, UserLoginLink],
+  entities: [User, Org, UserLoginLink, Stage, Opening],
   dbName: 'staging', // TODO get from .env
   highlighter: new MongoHighlighter(),
   debug: true,
