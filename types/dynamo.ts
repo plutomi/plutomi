@@ -392,6 +392,8 @@ export interface DynamoWebhook {
   GSI1PK: `${Entities.ORG}#${string}#${Entities.WEBHOOK}S`;
   GSI1SK: string;
 }
+
+// ! DONE
 export interface DynamoUser {
   PK: `${Entities.USER}#${string}`;
   SK: Entities.USER;
@@ -422,6 +424,8 @@ export interface DynamoUser {
   totalInvites: number;
 }
 
+// ! DONE
+
 export interface DynamoLoginLink {
   PK: `${Entities.USER}#${string}`;
   SK: `${Entities.LOGIN_LINK}#${string}`;
@@ -436,6 +440,8 @@ export interface DynamoLoginLink {
   GSI1PK: `${Entities.USER}#${string}#${Entities.LOGIN_LINK}S`; // Get latest login link(s) for a user for throttling
   GSI1SK: string; // ISO timestamp
 }
+
+// ! DONE
 
 export interface DynamoOrg {
   PK: `${Entities.ORG}#${string}`;

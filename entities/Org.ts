@@ -1,11 +1,11 @@
-import { Entity, ManyToMany, OneToOne, Property } from '@mikro-orm/core';
+import { Collection, Entity, ManyToMany, OneToMany, OneToOne, Property } from '@mikro-orm/core';
 import { BaseEntity } from './BaseEntity';
 import { User } from './User';
 
 @Entity()
 export class Org extends BaseEntity {
-  @ManyToMany()
-  user: User;
+  @OneToMany(() => User, (User) => User.org)
+  user = new Collection<User>(this);
 
   @OneToOne()
   createdBy: User;

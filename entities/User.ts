@@ -1,23 +1,32 @@
-import { Cascade, Collection, Entity, OneToMany, Property } from '@mikro-orm/core';
+import {
+  Cascade,
+  Collection,
+  Entity,
+  ManyToMany,
+  ManyToOne,
+  OneToMany,
+  Property,
+} from '@mikro-orm/core';
 import { BaseEntity } from './BaseEntity';
+import { Org } from './Org';
 import { UserLoginLink } from './UserLoginLink';
 
 @Entity()
 export class User extends BaseEntity {
   @Property({ columnType: 'text', nullable: true })
-  firstName: string;
+  firstName?: string;
 
   @Property({ columnType: 'text', nullable: true })
-  lastName: string;
+  lastName?: string;
 
   @Property({ columnType: 'text', unique: true, nullable: false })
   email: string;
 
-  //   @OneToMany({})
-  //   org: 'asd', // TODO
+  @ManyToOne(() => Org, { nullable: true })
+  org?: Org;
 
   @Property({ columnType: 'date', nullable: true })
-  orgJoinDate: Date;
+  orgJoinDate?: Date;
 
   @Property({ columnType: 'bool', default: false })
   emailVerified: boolean;
