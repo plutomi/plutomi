@@ -64,7 +64,7 @@ export const requestLoginLink = async (req: Request, res: Response) => {
   let user: User;
   try {
     user = await req.entityManager.findOne(User, {
-      target: { $elemMatch: { id: email, type: 'email' } } as any,
+      target: { id: email, type: 'email' },
     });
   } catch (error) {
     console.error(`Error retrieving user info`, error);
@@ -75,10 +75,8 @@ export const requestLoginLink = async (req: Request, res: Response) => {
   }
 
   if (!user) {
-    let createdUser: User;
-
     try {
-      createdUser = new User({
+      const createdUser = new User({
         firstName: DEFAULTS.FIRST_NAME,
         lastName: DEFAULTS.LAST_NAME,
         target: [
@@ -89,10 +87,7 @@ export const requestLoginLink = async (req: Request, res: Response) => {
         ],
       });
 
-      console.log(`Persisiting!!`);
       await req.entityManager.persistAndFlush(createdUser);
-      console.log(`Persisted`);
-      console.log(`New user after`, createdUser);
       user = createdUser;
     } catch (error) {
       console.error(`An error ocurred creating your account`);
