@@ -1,4 +1,12 @@
-import { Cascade, Collection, Entity, ManyToOne, OneToMany, Property } from '@mikro-orm/core';
+import {
+  Cascade,
+  Collection,
+  Entity,
+  IdentifiedReference,
+  ManyToOne,
+  OneToMany,
+  Property,
+} from '@mikro-orm/core';
 import { BaseEntity } from './BaseEntity';
 import { Org } from './Org';
 import { UserLoginLink } from './UserLoginLink';
@@ -16,8 +24,8 @@ export class User extends BaseEntity {
   @Property({ type: 'text', unique: true, nullable: false })
   email: string;
 
-  @ManyToOne(() => Org, { nullable: true })
-  org?: Org;
+  @ManyToOne(() => Org, { nullable: true, wrappedReference: true })
+  org?: IdentifiedReference<Org>;
 
   @Property({ type: 'date', nullable: true })
   orgJoinDate?: Date;

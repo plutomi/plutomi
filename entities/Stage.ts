@@ -1,4 +1,4 @@
-import { Entity, Enum, ManyToOne, Property } from '@mikro-orm/core';
+import { Entity, Enum, IdentifiedReference, ManyToOne, Property } from '@mikro-orm/core';
 import { BaseEntity } from './BaseEntity';
 import { Opening } from './Opening';
 import { Org } from './Org';
@@ -10,8 +10,8 @@ export class Stage extends BaseEntity {
   @Property({ type: 'text' })
   name: string;
 
-  @ManyToOne(() => Org)
-  org: Org;
+  @ManyToOne(() => Org, { wrappedReference: true })
+  org: IdentifiedReference<Org>;
 
   @ManyToOne(() => Opening)
   opening: Opening;

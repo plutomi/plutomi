@@ -1,22 +1,29 @@
 import { Request, Response } from 'express';
+import { Org } from '../../entities';
 import { DB } from '../../models';
 import * as CreateError from '../../utils/createError';
 
 export const getOrg = async (req: Request, res: Response) => {
-  const { user } = req;
+  const { user, entityManager } = req;
 
-  const [org, error] = await DB.Orgs.getOrg({ orgId: user.orgId });
+  let org: Org;
 
-  if (error) {
-    const { status, body } = CreateError.SDK(error, 'Unable to retrieve org info');
+  // try {
+  //   await entityManager.findOne(Org, {
+  //     id: user.org.u,
+  //   });
+  // } catch (error) {}
 
-    return res.status(status).json(body);
-  }
+  // if (error) {
+  //   const { status, body } = CreateError.SDK(error, 'Unable to retrieve org info');
 
-  // Not sure how this would be possible but :)
-  if (!org) {
-    return res.status(404).json({ message: 'Org not found' });
-  }
+  //   return res.status(status).json(body);
+  // }
+
+  // // Not sure how this would be possible but :)
+  // if (!org) {
+  //   return res.status(404).json({ message: 'Org not found' });
+  // }
 
   return res.status(200).json(org);
 };

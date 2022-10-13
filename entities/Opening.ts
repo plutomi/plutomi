@@ -1,4 +1,13 @@
-import { Cascade, Collection, Entity, Enum, ManyToOne, OneToMany, Property } from '@mikro-orm/core';
+import {
+  Cascade,
+  Collection,
+  Entity,
+  Enum,
+  IdentifiedReference,
+  ManyToOne,
+  OneToMany,
+  Property,
+} from '@mikro-orm/core';
 import { OpeningState } from '../Config';
 import { BaseEntity } from './BaseEntity';
 import { Org } from './Org';
@@ -11,8 +20,8 @@ export class Opening extends BaseEntity {
   @Property({ type: 'text', nullable: false })
   name: string;
 
-  @ManyToOne(() => Org)
-  org: Org;
+  @ManyToOne(() => Org, { wrappedReference: true })
+  org: IdentifiedReference<Org>;
 
   // TODO allow creating public openings through the API
   @Enum({ items: () => OpeningState })
