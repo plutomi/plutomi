@@ -77,25 +77,24 @@ export const requestLoginLink = async (req: Request, res: Response) => {
     let createdUser: User;
 
     try {
-      const newUser = new User({
+      createdUser = new User({
         firstName: DEFAULTS.FIRST_NAME,
         lastName: DEFAULTS.LAST_NAME,
         email,
       });
 
       console.log(`Persisiting!!`);
-      await req.entityManager.persistAndFlush(newUser);
+      await req.entityManager.persistAndFlush(createdUser);
       console.log(`Persisted`);
-      console.log(`New user after`, newUser);
-      user = newUser;
+      console.log(`New user after`, createdUser);
+      user = createdUser;
     } catch (error) {
       console.error(`An error ocurred creating your account`);
       return res.status(500).json({ message: 'An error ocurred creating your account' });
     }
-
-    user = createdUser;
   }
 
+  console.log(`Outside of loop, user is`, user);
   // TODO add a test for this @jest
   if (!user.canReceiveEmails) {
     return res.status(403).json({
@@ -105,6 +104,7 @@ export const requestLoginLink = async (req: Request, res: Response) => {
 
   let latestLoginLink: UserLoginLink;
 
+  console.log(`Getting latest lgin link`);
   try {
     latestLoginLink = await req.entityManager.findOne(
       UserLoginLink,
@@ -117,6 +117,7 @@ export const requestLoginLink = async (req: Request, res: Response) => {
         },
       },
     );
+    console.log(`got it`);
   } catch (error) {
     console.error(`An error ocurred finding your info (login links error)`);
     return res
@@ -137,6 +138,7 @@ export const requestLoginLink = async (req: Request, res: Response) => {
     unit: TIME_UNITS.MINUTES,
   };
   const now = Time.currentUNIX();
+  // TODO should match what is on the entity
   const ttlExpiry = Time.futureUNIX(validFor); // when the link expires and is deleted from Dynamo
   const relativeExpiry = Time.relative(Time.futureISO(validFor));
 
