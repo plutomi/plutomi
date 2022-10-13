@@ -58,13 +58,13 @@ app
     // eslint-disable-next-line @typescript-eslint/no-use-before-define
     server.use(API.Misc.haltOnTimeout);
     server.use('/api', [
-      helmet(),
-      morgan(morganSettings),
-      cookieParser(sessionSecrets, COOKIE_SETTINGS),
       express.json(),
+      helmet(),
       withCleanOrgId, // TODO make these all one middleware
       withCleanQuestionId,
       withCleanWebhookId,
+      morgan(morganSettings),
+      cookieParser(sessionSecrets, COOKIE_SETTINGS),
       includeEntityManager,
     ]);
 
