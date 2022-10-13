@@ -19,6 +19,11 @@ import { auth } from './routes/auth';
 import { applicants } from './routes/applicants';
 import API from './Controllers';
 import { env } from './env';
+import type { MongoDriver } from '@mikro-orm/mongodb'; // or any other SQL driver package
+import { MikroORM } from '@mikro-orm/core';
+import mikroOrmOptions from './mikro-orm.config';
+import { User } from './entities/User';
+
 const morgan = require('morgan');
 const cookieParser = require('cookie-parser');
 
@@ -28,9 +33,22 @@ const handle = app.getRequestHandler();
 
 app
   .prepare()
-  .then(() => {
+  .then(async () => {
     const server = express();
+    let orm: MikroORM<MongoDriver>;
+    try {
+      console.log('Attempting to connect to mongodb');
+      orm = await MikroORM.init<MongoDriver>(mikroOrmOptions);
+    } catch (error) {
+      console.error(`Error ocurred connecting to MONGO`, error);
+    }
 
+    console.log(`Is connected?`, orm.isConnected());
+
+    const em = orm.em;
+    const res = await em.find(User, {});
+
+    console.log(`RESSSSSS`, res);
     server.use(timeout('5s'));
 
     server.use(

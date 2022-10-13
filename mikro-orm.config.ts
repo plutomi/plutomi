@@ -1,14 +1,17 @@
 import { Options } from '@mikro-orm/core';
 import { MongoHighlighter } from '@mikro-orm/mongo-highlighter';
-import { Author, Book, BookTag, Publisher, BaseEntity } from './entities';
+import { MongoDriver } from '@mikro-orm/mongodb';
+import { Org } from './entities/Org';
+import { User } from './entities/User';
+import { UserLoginLink } from './entities/UserLoginLink';
 
-const options: Options = {
+const mikroOrmOptions: Options<MongoDriver> = {
   type: 'mongo',
-  entities: [Author, Book, BookTag, Publisher, BaseEntity],
-  dbName: 'mikro-orm-express-ts',
+  entities: [User, Org, UserLoginLink],
+  dbName: 'staging', // TODO get from .env
   highlighter: new MongoHighlighter(),
   debug: true,
   ensureIndexes: true,
 };
 
-export default options;
+export default mikroOrmOptions;
