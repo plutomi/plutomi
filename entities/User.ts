@@ -8,18 +8,11 @@ import {
   OneToMany,
   Property,
 } from '@mikro-orm/core';
-import { IndexedTargetArrayEntities } from '../types/main';
+import { IndexedTargetArray, IndexedTargetArrayEntities } from '../types/main';
 import { BaseEntity } from './BaseEntity';
 import { UserLoginLink } from './UserLoginLink';
 
 export type UserConstructorValues = Pick<User, 'firstName' | 'lastName' | 'target'>;
-
-@Embeddable()
-export class TargetObject {
-  @Property()
-  id: string; // Actual value, like an email
-  type: string;
-}
 
 @Entity()
 @Index({ name: 'target_array', options: { target: 1 } })
@@ -45,8 +38,8 @@ export class User extends BaseEntity {
   @Property({ type: 'integer' })
   totalInvites: number = 0;
 
-  @Embedded(() => TargetObject, { array: true })
-  target: Array<TargetObject>;
+  @Property({ type: 'array' })
+  target: IndexedTargetArray;
 
   constructor({ firstName, lastName, target }: UserConstructorValues) {
     super();

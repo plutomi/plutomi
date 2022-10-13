@@ -4,8 +4,8 @@ import { nanoid } from 'nanoid';
 import { User } from '../../entities';
 
 export const createUser: Handler = async (req: Request, res: Response) => {
-  const key = 'emsaasail';
-  const email = nanoid(12);
+  const key = 'email';
+  const email = 'joseyvalerio@gmail.com';
   const newUser = new User({
     firstName: nanoid(12),
     lastName: nanoid(12),
@@ -19,9 +19,9 @@ export const createUser: Handler = async (req: Request, res: Response) => {
     console.log('Caved new user', newUser);
 
     const foundUser = await req.entityManager.findOne(User, {
-      _id: newUser._id,
+      id: newUser.id,
     });
-    res.status(200).json({ message: 'User created!' , user: foundUser});
+    res.status(200).json({ message: 'User created!', user: foundUser, newUser });
     console.log('After foundUser', foundUser);
     return;
   } catch (error) {
