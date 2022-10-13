@@ -1,4 +1,4 @@
-import { Collection, Entity, OneToMany, OneToOne, Property } from '@mikro-orm/core';
+import { Collection, Entity, OneToMany, OneToOne, Property, Reference } from '@mikro-orm/core';
 import { BaseEntity } from './BaseEntity';
 import { User } from './User';
 
@@ -6,13 +6,10 @@ export type OrgConstructorValues = Pick<Org, 'createdBy' | 'orgId' | 'displayNam
 
 @Entity()
 export class Org extends BaseEntity {
-  @OneToMany(() => User, (User) => User.org)
-  user = new Collection<User>(this);
-
   @OneToOne(() => User)
   createdBy: User;
 
-  @Property({ type: 'text' })
+  @Property({ type: 'text', unique: true })
   orgId: string;
 
   @Property({ type: 'text' })
@@ -35,7 +32,7 @@ export class Org extends BaseEntity {
 
   constructor({ orgId, createdBy, displayName }: OrgConstructorValues) {
     super();
-    this.createdBy = createdBy;
+    this.createdBy = Reference.create(createdBy);
     this.orgId = orgId;
     this.displayName = displayName;
   }

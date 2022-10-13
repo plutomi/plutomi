@@ -1,31 +1,37 @@
 import {
   Cascade,
   Collection,
+  Embeddable,
+  Embedded,
   Entity,
-  IdentifiedReference,
-  ManyToOne,
+  Index,
   OneToMany,
   Property,
 } from '@mikro-orm/core';
+import { IndexedTargetArrayEntities } from '../types/main';
 import { BaseEntity } from './BaseEntity';
-import { Org } from './Org';
 import { UserLoginLink } from './UserLoginLink';
 
-export type UserConstructorValues = Pick<User, 'firstName' | 'lastName' | 'email'>;
+export type UserConstructorValues = Pick<User, 'firstName' | 'lastName' | 'target'>;
+
+@Embeddable()
+export class TargetObject {
+  @Property()
+  id: string; // Actual value, like an email
+  type: string;
+}
 
 @Entity()
+@Index({ name: 'target_array', options: { target: 1 } })
 export class User extends BaseEntity {
+  @OneToMany(() => UserLoginLink, (b) => b.user, { cascade: [Cascade.ALL] })
+  loginLinks = new Collection<UserLoginLink>(this);
+
   @Property({ type: 'text', nullable: true })
   firstName?: string;
 
   @Property({ type: 'text', nullable: true })
   lastName?: string;
-
-  @Property({ type: 'text', unique: true, nullable: false })
-  email: string;
-
-  @ManyToOne(() => Org, { nullable: true, wrappedReference: true })
-  org?: IdentifiedReference<Org>;
 
   @Property({ type: 'date', nullable: true })
   orgJoinDate?: Date;
@@ -39,13 +45,13 @@ export class User extends BaseEntity {
   @Property({ type: 'integer' })
   totalInvites: number = 0;
 
-  @OneToMany(() => UserLoginLink, (b) => b.user, { cascade: [Cascade.ALL] })
-  loginLinks = new Collection<UserLoginLink>(this);
+  @Embedded(() => TargetObject, { array: true })
+  target: Array<TargetObject>;
 
-  constructor({ firstName, lastName, email }: UserConstructorValues) {
+  constructor({ firstName, lastName, target }: UserConstructorValues) {
     super();
     this.firstName = firstName;
     this.lastName = lastName;
-    this.email = email;
+    this.target = target;
   }
 }

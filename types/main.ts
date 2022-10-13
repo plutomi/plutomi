@@ -39,3 +39,16 @@ declare global {
     }
   }
 }
+
+export type IndexedTargetArrayEntities =
+  | 'user'
+  | 'org'
+  | 'orgInvite'
+  | 'opening'
+  | 'stage'
+  | 'userLoginLink'
+  | 'opening'
+  | 'question'
+  | 'webhooks'
+  | 'email';
+export type IndexedTargetArray = Array<{ id: string; type: IndexedTargetArrayEntities }>;

@@ -7,13 +7,14 @@ import {
   ManyToOne,
   OneToMany,
   Property,
+  Reference,
 } from '@mikro-orm/core';
 import { OpeningState } from '../Config';
 import { BaseEntity } from './BaseEntity';
 import { Org } from './Org';
 import { Stage } from './Stage';
 
-export type OpeningConstructorValues = Pick<Opening, 'name' |  'org'>;
+export type OpeningConstructorValues = Pick<Opening, 'name' | 'org'>;
 
 @Entity()
 export class Opening extends BaseEntity {
@@ -39,6 +40,6 @@ export class Opening extends BaseEntity {
   constructor({ name, org }: OpeningConstructorValues) {
     super();
     this.name = name;
-    this.org = org;
+    this.org = Reference.create(org);
   }
 }

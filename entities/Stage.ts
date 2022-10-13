@@ -1,9 +1,9 @@
-import { Entity, Enum, IdentifiedReference, ManyToOne, Property } from '@mikro-orm/core';
+import { Entity, Enum, IdentifiedReference, ManyToOne, Property, Reference } from '@mikro-orm/core';
 import { BaseEntity } from './BaseEntity';
 import { Opening } from './Opening';
 import { Org } from './Org';
 
-export type StageConstructorValues = Pick<Stage, 'name' | 'org'>;
+export type StageConstructorValues = Pick<Stage, 'name' | 'org' | 'opening'>;
 
 @Entity()
 export class Stage extends BaseEntity {
@@ -13,8 +13,8 @@ export class Stage extends BaseEntity {
   @ManyToOne(() => Org, { wrappedReference: true })
   org: IdentifiedReference<Org>;
 
-  @ManyToOne(() => Opening)
-  opening: Opening;
+  @ManyToOne(() => Opening, { wrappedReference: true })
+  opening: IdentifiedReference<Opening>;
 
   @Property({ type: 'integer' })
   totalApplicants: number = 0;
@@ -27,9 +27,10 @@ export class Stage extends BaseEntity {
   // @OneToMany(() => UserLoginLink, (b) => b.user, { cascade: [Cascade.ALL] })
   // loginLinks = new Collection<UserLoginLink>(this);
 
-  constructor({ name, org }: StageConstructorValues) {
+  constructor({ name, org, opening }: StageConstructorValues) {
     super();
     this.name = name;
-    this.org = org;
+    this.org = Reference.create(org);
+    this.opening = Reference.create(opening);
   }
 }

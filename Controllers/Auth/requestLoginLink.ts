@@ -19,6 +19,7 @@ import { env } from '../../env';
 import { User, UserLoginLink } from '../../entities';
 import { QueryOrder } from '@mikro-orm/core';
 import dayjs from 'dayjs';
+import { IndexedTargetArray } from '../../types/main';
 
 const jwt = require('jsonwebtoken');
 
@@ -63,7 +64,7 @@ export const requestLoginLink = async (req: Request, res: Response) => {
   let user: User;
   try {
     user = await req.entityManager.findOne(User, {
-      email,
+      target: { $elemMatch: { id: email, type: 'email' } } as any,
     });
   } catch (error) {
     console.error(`Error retrieving user info`, error);
@@ -80,7 +81,12 @@ export const requestLoginLink = async (req: Request, res: Response) => {
       createdUser = new User({
         firstName: DEFAULTS.FIRST_NAME,
         lastName: DEFAULTS.LAST_NAME,
-        email,
+        target: [
+          {
+            id: email,
+            type: 'email',
+          },
+        ],
       });
 
       console.log(`Persisiting!!`);
@@ -94,11 +100,12 @@ export const requestLoginLink = async (req: Request, res: Response) => {
     }
   }
 
+  const userEmail = user.target.find((values) => values.type === 'email').id;
   console.log(`Outside of loop, user is`, user);
   // TODO add a test for this @jest
   if (!user.canReceiveEmails) {
     return res.status(403).json({
-      message: `'${user.email}' is unable to receive emails, please reach out to support@plutomi.com to opt back in!`,
+      message: `'${userEmail}' is unable to receive emails, please reach out to support@plutomi.com to opt back in!`,
     });
   }
 
@@ -128,7 +135,7 @@ export const requestLoginLink = async (req: Request, res: Response) => {
   if (
     latestLoginLink &&
     latestLoginLink.createdAt >= dayjs().subtract(10, 'minutes').toDate() &&
-    !user.email.endsWith(DOMAIN_NAME) // Allow admins to send multiple login links in a short timespan
+    !userEmail.endsWith(DOMAIN_NAME) // Allow admins to send multiple login links in a short timespan
   ) {
     return res.status(403).json({ message: "You're doing that too much, please try again later" });
   }
@@ -159,7 +166,7 @@ export const requestLoginLink = async (req: Request, res: Response) => {
 
   try {
     const newLoginLink = new UserLoginLink({
-      user: user,
+      user,
     });
     await req.entityManager.persistAndFlush(newLoginLink);
   } catch (error) {
@@ -169,7 +176,7 @@ export const requestLoginLink = async (req: Request, res: Response) => {
 
   try {
     await sendEmail({
-      to: user.email,
+      to: userEmail,
       from: {
         header: 'Plutomi',
         email: Emails.LOGIN,
