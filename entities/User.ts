@@ -23,10 +23,10 @@ export class User extends BaseEntity {
   orgJoinDate?: Date;
 
   @Property({ type: 'bool', default: false })
-  emailVerified!: number;
+  emailVerified!: boolean;
 
   @Property({ type: 'bool', default: true })
-  canReceiveEmails!: number;
+  canReceiveEmails!: boolean;
 
   @Property({ type: 'integer', default: 0 })
   totalInvites!: number;

@@ -14,9 +14,11 @@ import {
 } from '../../Config';
 import * as Time from '../../utils/time';
 import * as CreateError from '../../utils/createError';
-import { DB } from '../../models';
 import { sendEmail } from '../../models/Emails/sendEmail';
 import { env } from '../../env';
+import { User, UserLoginLink } from '../../entities';
+import { QueryOrder } from '@mikro-orm/core';
+import dayjs from 'dayjs';
 
 const jwt = require('jsonwebtoken');
 
@@ -58,26 +60,36 @@ export const requestLoginLink = async (req: Request, res: Response) => {
   }
 
   // If a user is signing in for the first time, create an account for them
-  // eslint-disable-next-line prefer-const
-  let [user, userError] = await DB.Users.getUserByEmail({ email });
-  if (userError) {
-    console.error(userError);
-    const { status, body } = CreateError.SDK(userError, 'An error ocurred getting your user info');
-    return res.status(status).json(body);
+  let user: User;
+  try {
+    user = await req.entityManager.findOne(User, {
+      email,
+    });
+  } catch (error) {
+    console.error(`Error retrieving user info`);
+    return res.status(500).json({
+      message: `Error retrieving user info`,
+      error,
+    });
   }
 
   if (!user) {
-    const [createdUser, createUserError] = await DB.Users.createUser({
-      email,
-    });
-    if (createUserError) {
-      const { status, body } = CreateError.SDK(
-        createUserError,
-        'An error ocurred creating your account',
-      );
+    let createdUser: User;
 
-      return res.status(status).json(body);
+    try {
+      const newUser = new User({
+        firstName: DEFAULTS.FIRST_NAME,
+        lastName: DEFAULTS.LAST_NAME,
+        email,
+      });
+
+      await req.entityManager.persistAndFlush(newUser);
+      user = newUser;
+    } catch (error) {
+      console.error(`An error ocurred creating your account`);
+      return res.status(500).json({ message: 'An error ocurred creating your account' });
     }
+
     user = createdUser;
   }
 
@@ -88,27 +100,30 @@ export const requestLoginLink = async (req: Request, res: Response) => {
     });
   }
 
-  // Check if a user is  making too many requests for a login link by comparing the time of their last link
-  const [latestLink, loginLinkError] = await DB.Users.getLatestLoginLink({
-    userId: user.userId,
-  });
+  let latestLoginLink: UserLoginLink;
 
-  if (loginLinkError) {
-    const { status, body } = CreateError.SDK(
-      loginLinkError,
-      'An error ocurred getting your login link',
+  try {
+    latestLoginLink = await req.entityManager.findOne(
+      UserLoginLink,
+      {
+        user,
+      },
+      {
+        orderBy: {
+          ttlExpiry: QueryOrder.DESC,
+        },
+      },
     );
-
-    return res.status(status).json(body);
+  } catch (error) {
+    console.error(`An error ocurred finding your info (login links error)`);
+    return res
+      .status(500)
+      .json({ message: 'An error ocurred finding your info (login links error)' });
   }
-  const timeThreshold = Time.pastISO({
-    amount: 10,
-    unit: TIME_UNITS.MINUTES,
-  });
 
   if (
-    latestLink &&
-    latestLink.createdAt >= timeThreshold &&
+    latestLoginLink &&
+    latestLoginLink.createdAt >= dayjs().subtract(10, 'minutes').toDate() &&
     !user.email.endsWith(DOMAIN_NAME) // Allow admins to send multiple login links in a short timespan
   ) {
     return res.status(403).json({ message: "You're doing that too much, please try again later" });
@@ -125,7 +140,7 @@ export const requestLoginLink = async (req: Request, res: Response) => {
   const loginLinkId = nanoid();
   const token = await jwt.sign(
     {
-      userId: user.userId,
+      id: user.id,
       loginLinkId,
     },
     env.loginLinksPassword,
@@ -137,19 +152,14 @@ export const requestLoginLink = async (req: Request, res: Response) => {
     callbackUrl || `${WEBSITE_URL}/${DEFAULTS.REDIRECT}`
   }`;
 
-  const [success, creationError] = await DB.Users.createLoginLink({
-    user,
-    loginLinkId,
-    ttlExpiry,
-  });
-
-  if (creationError) {
-    const { status, body } = CreateError.SDK(
-      creationError,
-      'An error ocurred creating your login link',
-    );
-
-    return res.status(status).json(body);
+  try {
+    const newLoginLink = new UserLoginLink({
+      user,
+    });
+    await req.entityManager.persistAndFlush(newLoginLink);
+  } catch (error) {
+    console.error(`An error ocurred creating your login link`);
+    return res.status(500).json({ message: 'An error ocurred creating your login link' });
   }
 
   try {
@@ -163,12 +173,8 @@ export const requestLoginLink = async (req: Request, res: Response) => {
       body: `<h1>Click <a href="${loginLinkUrl}" noreferrer target="_blank" >this link</a> to log in!</h1><p>It will expire ${relativeExpiry} so you better hurry.</p><p>If you did not request this link you can safely ignore it.</p>`,
     });
   } catch (error) {
-    // TODO delete login link and prompt the user to try again
-    const { status, body } = CreateError.SDK(
-      creationError,
-      'An error ocurred sending your email :(',
-    );
-    return res.status(status).json(body);
+    console.error(`Error sending login link email`, error);
+    return res.status(500).json({ message: 'Error sending login link email', error });
   }
   return res.status(201).json({ message: `We've sent a magic login link to your email!` });
 };

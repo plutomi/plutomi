@@ -11,8 +11,8 @@ export class UserLoginLink extends BaseEntity {
   user: User;
 
   // TODO: Add mongodb TTL
-  @Property({ columnType: 'date' })
-  ttlExpiry = dayjs().add(15, 'minutes').toDate();
+  @Property({ type: 'date' })
+  ttlExpiry: Date = dayjs().add(15, 'minutes').toDate(); // How long login links are valid for
 
   constructor({ user }: UserLoginLinkConstructorValues) {
     super();

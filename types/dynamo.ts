@@ -25,7 +25,8 @@ export type AllDynamoEntities =
   | DynamoApplicant // TODO public variant
   | DynamoQuestion // TODO public variant?
   | DynamoQuestionStageAdjacentItem
-  | DynamoStage; // TODO public variant
+  | DynamoStage; // !Done
+// TODO public variant
 
 export interface DynamoStage {
   /**
