@@ -1,5 +1,6 @@
+import 'reflect-metadata';
 import helmet from 'helmet';
-import express, { Handler } from 'express';
+import express from 'express';
 import cors from 'cors';
 import timeout from 'connect-timeout';
 import withCleanOrgId from './middleware/withCleanOrgId';
@@ -20,11 +21,6 @@ import { auth } from './routes/auth';
 import { applicants } from './routes/applicants';
 import API from './Controllers';
 import { env } from './env';
-import type { MongoDriver } from '@mikro-orm/mongodb'; // or any other SQL driver package
-import { MikroORM } from '@mikro-orm/core';
-import mikroOrmOptions from './mikro-orm.config';
-import { User } from './entities/User';
-import { withEntityManager } from './middleware/withEntityManager';
 import { initializeDb } from './utils/initializeDb';
 
 const morgan = require('morgan');
@@ -39,7 +35,12 @@ app
   .prepare()
   .then(async () => {
     const server = express();
-    await initializeDb();
+    const orm = await initializeDb();
+    const includeEntityManager: express.Handler = (req, _res, next) => {
+      req.entityManager = orm.em.fork();
+      next();
+    };
+
     server.use(helmet());
     server.use(timeout('5s'));
     server.use(
@@ -61,7 +62,7 @@ app
       withCleanOrgId, // TODO make these all one middleware
       withCleanQuestionId,
       withCleanWebhookId,
-      withEntityManager,
+      includeEntityManager,
     ]);
 
     if (env.nodeEnv === 'development') {

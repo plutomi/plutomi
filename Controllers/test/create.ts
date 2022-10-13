@@ -8,8 +8,8 @@ export const createUser: Handler = async (req: Request, res: Response) => {
   try {
     console.log(`Attempting to save user`, newUser);
 
-    await req.entityManager.persistAndFlush(newUser);
-    res.status(200).json({ message: 'User created!', newUser });
+    const user = await req.entityManager.persistAndFlush(newUser);
+    res.status(200).json({ message: 'User created!', user });
   } catch (error) {
     console.error(`Error saving user`, error);
     res.status(500).json({ message: 'Error saving user', error });

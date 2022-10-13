@@ -7,29 +7,29 @@ export class Org extends BaseEntity {
   @OneToMany(() => User, (User) => User.org)
   user = new Collection<User>(this);
 
-  @OneToOne()
+  @OneToOne(() => User)
   createdBy: User;
 
-  @Property({ columnType: 'text', nullable: false })
+  @Property({ type: 'text', nullable: false })
   orgId: string;
 
-  @Property({ columnType: 'text', nullable: false })
+  @Property({ type: 'text', nullable: false })
   displayName: string;
 
-  @Property({ columnType: 'integer', default: 0 })
-  totalApplicants = 0;
+  @Property({ type: 'integer', default: 0 })
+  totalApplicants!: number;
 
-  @Property({ columnType: 'integer', default: 0 })
-  totalOpenings = 0;
+  @Property({ type: 'integer', default: 0 })
+  totalOpenings!: number;
 
-  @Property({ columnType: 'integer', default: 1 })
-  totalUsers = 1;
+  @Property({ type: 'integer', default: 1 })
+  totalUsers!: number;
 
-  @Property({ columnType: 'integer', default: 1 })
-  totalWebhooks = 0;
+  @Property({ type: 'integer', default: 1 })
+  totalWebhooks!: number;
 
-  @Property({ columnType: 'integer', default: 1 })
-  totalQuestions = 0;
+  @Property({ type: 'integer', default: 1 })
+  totalQuestions!: number;
 
   constructor(createdBy: User, orgId: string, displayName: string) {
     super();

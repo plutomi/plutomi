@@ -7,6 +7,7 @@ export const initializeDb = async () => {
   try {
     console.log('Attempting to connect to mongodb');
     orm = await MikroORM.init<MongoDriver>(mikroOrmOptions);
+    return orm;
   } catch (error) {
     console.error(`Error ocurred connecting to MONGO`, error);
     throw new Error('Crashing');
