@@ -19,9 +19,9 @@ export const createUser: Handler = async (req: Request, res: Response) => {
     console.log('Caved new user', newUser);
 
     const foundUser = await req.entityManager.findOne(User, {
-      id: newUser.id,
+      _id: newUser._id,
     });
-    res.status(200).json({ message: 'User created!' });
+    res.status(200).json({ message: 'User created!' , user: foundUser});
     console.log('After foundUser', foundUser);
     return;
   } catch (error) {
