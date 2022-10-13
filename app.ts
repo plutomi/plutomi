@@ -43,7 +43,12 @@ app
       console.error(`Error ocurred connecting to MONGO`, error);
     }
 
-    console.log(`Is connected?`, orm.isConnected());
+    const includeEntityManager: express.Handler = (req, _res, next) => {
+      req.entityManager = orm.em.fork();
+      next();
+    };
+
+    server.use(includeEntityManager);
 
     const em = orm.em;
     const res = await em.find(User, {});

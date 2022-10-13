@@ -5,7 +5,7 @@ import dayjs from 'dayjs';
 
 @Entity()
 export class UserLoginLink extends BaseEntity {
-  @ManyToOne()
+  @ManyToOne(() => User)
   user: User;
 
   // TODO: Add mongodb TTL
