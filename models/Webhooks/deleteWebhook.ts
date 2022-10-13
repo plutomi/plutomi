@@ -1,6 +1,7 @@
 import { TransactWriteCommand, TransactWriteCommandInput } from '@aws-sdk/lib-dynamodb';
 import { Dynamo } from '../../awsClients/ddbDocClient';
 import { DYNAMO_TABLE_NAME, Entities } from '../../Config';
+import { env } from '../../env';
 import { DynamoWebhook } from '../../types/dynamo';
 import * as Time from '../../utils/time';
 
@@ -22,7 +23,7 @@ export const deleteWebhook = async (props: DeleteWebhookFromOrgInput): Promise<[
             PK: `${Entities.ORG}#${orgId}#${Entities.WEBHOOK}#${webhookId}`,
             SK: Entities.WEBHOOK,
           },
-          TableName: `${process.env.NODE_ENV}-${DYNAMO_TABLE_NAME}`,
+          TableName: `${env.deploymentEnvironment}-${DYNAMO_TABLE_NAME}`,
           ConditionExpression: 'attribute_exists(PK)',
         },
       },
@@ -37,7 +38,7 @@ export const deleteWebhook = async (props: DeleteWebhookFromOrgInput): Promise<[
           PK: `${Entities.ORG}#${orgId}`,
           SK: Entities.ORG,
         },
-        TableName: `${process.env.NODE_ENV}-${DYNAMO_TABLE_NAME}`,
+        TableName: `${env.deploymentEnvironment}-${DYNAMO_TABLE_NAME}`,
         UpdateExpression: 'SET totalWebhooks = totalWebhooks - :value, updatedAt = :updatedAt',
         ExpressionAttributeValues: {
           ':value': 1,

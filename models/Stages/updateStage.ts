@@ -2,6 +2,7 @@ import { UpdateCommand } from '@aws-sdk/lib-dynamodb';
 import { Dynamo } from '../../awsClients/ddbDocClient';
 import { DYNAMO_TABLE_NAME, Entities } from '../../Config';
 import { APIUpdateStageOptions } from '../../Controllers/Stages/updateStage';
+import { env } from '../../env';
 import { DynamoStage } from '../../types/dynamo';
 import { createDynamoUpdateExpression } from '../../utils/createDynamoUpdateExpression';
 
@@ -23,7 +24,7 @@ export const updateStage = async (props: UpdateStageInput): Promise<[null, null]
     },
     UpdateExpression: `SET ${allUpdateExpressions.join(', ')}`,
     ExpressionAttributeValues: allAttributeValues,
-    TableName: `${process.env.NODE_ENV}-${DYNAMO_TABLE_NAME}`,
+    TableName: `${env.deploymentEnvironment}-${DYNAMO_TABLE_NAME}`,
 
     ConditionExpression: 'attribute_exists(PK)',
   };

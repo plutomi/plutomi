@@ -1,6 +1,7 @@
 import { TransactWriteCommandInput, TransactWriteCommand } from '@aws-sdk/lib-dynamodb';
 import { Dynamo } from '../../awsClients/ddbDocClient';
 import { DEFAULTS, DYNAMO_TABLE_NAME, Entities } from '../../Config';
+import { env } from '../../env';
 import * as Time from '../../utils/time';
 interface RemoveUserFromOrgInput {
   /**
@@ -32,7 +33,7 @@ export const removeUserFromOrg = async (
               PK: `${Entities.USER}#${userId}`,
               SK: Entities.USER,
             },
-            TableName: `${process.env.NODE_ENV}-${DYNAMO_TABLE_NAME}`,
+            TableName: `${env.deploymentEnvironment}-${DYNAMO_TABLE_NAME}`,
             UpdateExpression:
               'SET orgId = :orgId, orgJoinDate = :orgJoinDate, GSI1PK = :GSI1PK, updatedAt = :updatedAt',
             ExpressionAttributeValues: {
@@ -50,7 +51,7 @@ export const removeUserFromOrg = async (
               PK: `${Entities.ORG}#${orgId}`,
               SK: Entities.ORG,
             },
-            TableName: `${process.env.NODE_ENV}-${DYNAMO_TABLE_NAME}`,
+            TableName: `${env.deploymentEnvironment}-${DYNAMO_TABLE_NAME}`,
             UpdateExpression: 'SET totalUsers = totalUsers - :value, updatedAt = :updatedAt',
             ExpressionAttributeValues: {
               ':value': 1,

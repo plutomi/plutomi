@@ -3,6 +3,7 @@ import { UpdateCommandInput, UpdateCommand } from '@aws-sdk/lib-dynamodb';
 import { Dynamo } from '../../awsClients/ddbDocClient';
 import { DYNAMO_TABLE_NAME, Entities } from '../../Config';
 import { APIUpdateUserOptions } from '../../Controllers/Users/updateUser';
+import { env } from '../../env';
 import { DynamoUser } from '../../types/dynamo';
 import { createDynamoUpdateExpression } from '../../utils/createDynamoUpdateExpression';
 
@@ -27,7 +28,7 @@ export const updateUser = async (
     ReturnValues: 'ALL_NEW',
     UpdateExpression: `SET ${allUpdateExpressions.join(', ')}`,
     ExpressionAttributeValues: allAttributeValues,
-    TableName: `${process.env.NODE_ENV}-${DYNAMO_TABLE_NAME}`,
+    TableName: `${env.deploymentEnvironment}-${DYNAMO_TABLE_NAME}`,
     ConditionExpression: 'attribute_exists(PK)',
   };
   try {

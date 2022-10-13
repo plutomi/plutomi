@@ -1,6 +1,7 @@
 import * as cdk from 'aws-cdk-lib';
 import * as dynamodb from 'aws-cdk-lib/aws-dynamodb';
 import { DYNAMO_TABLE_NAME } from '../Config';
+import { env } from '../env';
 
 /**
  * Creates a DynamoDB table with two GSIs
@@ -12,7 +13,7 @@ export default class DynamoDBStack extends cdk.Stack {
     super(scope, id, props);
 
     this.table = new dynamodb.Table(this, 'plutomi-dynamo-table', {
-      tableName: `${process.env.NODE_ENV}-${DYNAMO_TABLE_NAME}`,
+      tableName: `${env.deploymentEnvironment}-${DYNAMO_TABLE_NAME}`,
       partitionKey: { name: 'PK', type: dynamodb.AttributeType.STRING },
       sortKey: { name: 'SK', type: dynamodb.AttributeType.STRING },
       timeToLiveAttribute: 'ttlExpiry',

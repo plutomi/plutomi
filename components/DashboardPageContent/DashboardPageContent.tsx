@@ -22,7 +22,7 @@ export const DashboardPageContent = () => {
   const openCreateOrgModal = useStore((state) => state.openCreateOrgModal);
   const openUserProfileModal = useStore((state) => state.openUserProfileModal);
 
-  if (isUserError || isOrgError) return <h1>An error ocurred returning your info</h1>;
+  if (isUserError) return <h1>An error ocurred returning your info</h1>;
 
   if (isUserLoading) return <Loader text="Loading user..." />;
 

@@ -1,6 +1,7 @@
 import { QueryCommandInput, QueryCommand } from '@aws-sdk/lib-dynamodb';
 import { Dynamo } from '../../awsClients/ddbDocClient';
 import { DYNAMO_TABLE_NAME, Entities, OpeningState } from '../../Config';
+import { env } from '../../env';
 import { DynamoOpening } from '../../types/dynamo';
 
 interface GetOpeningsInOrgInput extends Pick<DynamoOpening, 'orgId'> {
@@ -17,7 +18,7 @@ export const getOpeningsInOrg = async (
 ): Promise<[DynamoOpening[], null] | [null, any]> => {
   const { orgId, GSI1SK } = props;
   const params: QueryCommandInput = {
-    TableName: `${process.env.NODE_ENV}-${DYNAMO_TABLE_NAME}`,
+    TableName: `${env.deploymentEnvironment}-${DYNAMO_TABLE_NAME}`,
     IndexName: 'GSI1',
     KeyConditionExpression: 'GSI1PK = :GSI1PK',
     ExpressionAttributeValues: {

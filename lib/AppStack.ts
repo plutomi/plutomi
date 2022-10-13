@@ -14,16 +14,35 @@ import { CloudFrontTarget } from 'aws-cdk-lib/aws-route53-targets';
 import { Policy, PolicyStatement } from 'aws-cdk-lib/aws-iam';
 import { DOMAIN_NAME, EXPRESS_PORT } from '../Config';
 import * as waf from 'aws-cdk-lib/aws-wafv2';
+import { env } from '../env';
 
 interface AppStackServiceProps extends cdk.StackProps {
   table: Table;
 }
+const baseEnv = {
+  NODE_ENV: process.env.NODE_ENV ?? 'development',
+  NEXT_PUBLIC_DEPLOYMENT_ENVIRONMENT: process.env.NEXT_PUBLIC_DEPLOYMENT_ENVIRONMENT ?? 'NOT_SET',
+  NEXT_PUBLIC_WEBSITE_URL: process.env.NEXT_PUBLIC_WEBSITE_URL, // If none is set, defaults to localhost. Override in config.ts
+};
+
+export const ENVIRONMENT = {
+  ...baseEnv,
+  HOSTED_ZONE_ID: process.env.HOSTED_ZONE_ID ?? 'NOT_SET',
+  ACM_CERTIFICATE_ID: process.env.ACM_CERTIFICATE_ID ?? 'NOT_SET',
+  LOGIN_LINKS_PASSWORD: process.env.LOGIN_LINKS_PASSWORD ?? 'NOT_SET',
+  SESSION_SIGNATURE_SECRET_1: process.env.SESSION_SIGNATURE_SECRET_1 ?? 'NOT_SET',
+  MONGO_CONNECTION: 'NOT_SET_NEEDS_OTHER_PR',
+};
+
+// ! Must match what is in the Docker container
+const NEXT_ENVIRONMENT = {
+  ...baseEnv,
+  COMMITS_TOKEN: process.env.COMMITS_TOKEN ?? 'NOT_SET',
+};
 
 export default class AppStack extends cdk.Stack {
   constructor(scope: cdk.App, id: string, props?: AppStackServiceProps) {
     super(scope, id, props);
-
-    const { HOSTED_ZONE_ID } = process.env;
 
     // IAM inline role - the service principal is required
     const taskRole = new iam.Role(this, 'plutomi-api-fargate-role', {
@@ -55,7 +74,7 @@ export default class AppStack extends cdk.Stack {
       ],
     });
 
-    const policy = new Policy(this, `${process.env.NODE_ENV}-plutomi-api-policy`, {
+    const policy = new Policy(this, `${env.deploymentEnvironment}-plutomi-api-policy`, {
       statements: [dynamoAccessPolicyStatement, sesSendEmailPolicy],
     });
     taskRole.attachInlinePolicy(policy);
@@ -66,17 +85,21 @@ export default class AppStack extends cdk.Stack {
       {
         taskRole,
         executionRole: taskRole,
-        cpu: 256,
-        memoryLimitMiB: 512,
+        cpu: 1024, // TODO revert back
+        memoryLimitMiB: 2048,
       },
     );
 
     const container = taskDefinition.addContainer('plutomi-api-fargate-container', {
       // Get the local docker image, build and deploy it
-      image: ecs.ContainerImage.fromAsset('.'),
+      image: ecs.ContainerImage.fromAsset('.', {
+        buildArgs: { ...NEXT_ENVIRONMENT }, // Pass any variables to the front end
+      }),
+
       logging: new ecs.AwsLogDriver({
         streamPrefix: 'plutomi-api-fargate',
-      }),
+      }), //
+      environment: { ...ENVIRONMENT },
     });
 
     // API
@@ -99,7 +122,7 @@ export default class AppStack extends cdk.Stack {
 
     // Get a reference to AN EXISTING hosted zone
     const hostedZone = route53.HostedZone.fromHostedZoneAttributes(this, 'plutomi-hosted-zone', {
-      hostedZoneId: HOSTED_ZONE_ID,
+      hostedZoneId: env.hostedZoneId,
       zoneName: DOMAIN_NAME,
     });
 
@@ -107,7 +130,7 @@ export default class AppStack extends cdk.Stack {
     const apiCert = Certificate.fromCertificateArn(
       this,
       `CertificateArn`,
-      `arn:aws:acm:${this.region}:${this.account}:certificate/${process.env.ACM_CERTIFICATE_ID}`,
+      `arn:aws:acm:${this.region}:${this.account}:certificate/${env.acmCertificateId}`,
     );
 
     // Create a load-balanced Fargate service and make it public with HTTPS traffic only
@@ -115,10 +138,10 @@ export default class AppStack extends cdk.Stack {
       this,
       'PlutomiApi',
       {
-        cluster, // Required
+        cluster,
         certificate: apiCert,
         taskDefinition,
-        desiredCount: 3,
+        desiredCount: 1, // TODO revert back
         listenerPort: 443,
         protocol: protocol.ApplicationProtocol.HTTPS,
         redirectHTTP: true,
@@ -149,8 +172,8 @@ export default class AppStack extends cdk.Stack {
 
     // Auto scaling
     const scalableTarget = loadBalancedFargateService.service.autoScaleTaskCount({
-      minCapacity: 3,
-      maxCapacity: 5,
+      minCapacity: 1, // TODO revert back
+      maxCapacity: 2,
     });
 
     /**
@@ -162,8 +185,8 @@ export default class AppStack extends cdk.Stack {
     });
 
     // Create the WAF & its rules
-    const API_WAF = new waf.CfnWebACL(this, `${process.env.NODE_ENV}-API-WAF`, {
-      name: `${process.env.NODE_ENV}-API-WAF`,
+    const API_WAF = new waf.CfnWebACL(this, `${env.deploymentEnvironment}-API-WAF`, {
+      name: `${env.deploymentEnvironment}-API-WAF`,
       description: 'Blocks IPs that make too many requests',
       defaultAction: {
         allow: {},
@@ -209,7 +232,7 @@ export default class AppStack extends cdk.Stack {
           visibilityConfig: {
             sampledRequestsEnabled: true,
             cloudWatchMetricsEnabled: true,
-            metricName: `${process.env.NODE_ENV}-WAF-API-BLOCKED-IPs`,
+            metricName: `${env.deploymentEnvironment}-WAF-API-BLOCKED-IPs`,
           },
         },
         {
@@ -231,7 +254,7 @@ export default class AppStack extends cdk.Stack {
           visibilityConfig: {
             sampledRequestsEnabled: true,
             cloudWatchMetricsEnabled: true,
-            metricName: `${process.env.NODE_ENV}-WAF-GENERAL-BLOCKED-IPs`,
+            metricName: `${env.deploymentEnvironment}-WAF-GENERAL-BLOCKED-IPs`,
           },
         },
         // { // TODO this is blocking postman requests :/
@@ -293,32 +316,41 @@ export default class AppStack extends cdk.Stack {
     });
 
     // No caching! We're using Cloudfront for its global network and WAF
-    const cachePolicy = new cf.CachePolicy(this, `${process.env.NODE_ENV}-Cache-Policy`, {
+    const cachePolicy = new cf.CachePolicy(this, `${env.deploymentEnvironment}-Cache-Policy`, {
       defaultTtl: cdk.Duration.seconds(0),
       minTtl: cdk.Duration.seconds(0),
       maxTtl: cdk.Duration.seconds(0),
     });
 
-    const distribution = new cf.Distribution(this, `${process.env.NODE_ENV}-CF-API-Distribution`, {
-      certificate: apiCert,
-      webAclId: API_WAF.attrArn,
-      domainNames: [DOMAIN_NAME],
-      defaultBehavior: {
-        origin: new origins.LoadBalancerV2Origin(loadBalancedFargateService.loadBalancer),
+    const distribution = new cf.Distribution(
+      this,
+      `${env.deploymentEnvironment}-CF-API-Distribution`,
+      {
+        certificate: apiCert,
+        webAclId: API_WAF.attrArn,
+        // @ts-ignore // TODO: Add a type for NODE_ENV for staging!!!!!!
+        domainNames: [
+          env.deploymentEnvironment === 'staging' ? `staging.${DOMAIN_NAME}` : DOMAIN_NAME,
+        ],
+        defaultBehavior: {
+          origin: new origins.LoadBalancerV2Origin(loadBalancedFargateService.loadBalancer),
 
-        // Must be enabled!
-        // https://www.reddit.com/r/aws/comments/rhckdm/comment/hoqrjmm/?utm_source=share&utm_medium=web2x&context=3
-        originRequestPolicy: cf.OriginRequestPolicy.ALL_VIEWER,
-        cachePolicy,
-        allowedMethods: cf.AllowedMethods.ALLOW_ALL,
+          // Must be enabled!
+          // https://www.reddit.com/r/aws/comments/rhckdm/comment/hoqrjmm/?utm_source=share&utm_medium=web2x&context=3
+          originRequestPolicy: cf.OriginRequestPolicy.ALL_VIEWER,
+          cachePolicy,
+          allowedMethods: cf.AllowedMethods.ALLOW_ALL,
+        },
+        // additionalBehaviors: {
+        // TODO add /public caching behaviors here
+        // }, //
       },
-      // additionalBehaviors: {
-      // TODO add /public caching behaviors here
-      // },
-    });
+    );
 
     //  Creates an A record that points our API domain to Cloudfront
     new ARecord(this, `APIAlias`, {
+      // @ts-ignore TODO fixup type for node env!!!!!
+      recordName: env.deploymentEnvironment === 'staging' ? `staging.${DOMAIN_NAME}` : DOMAIN_NAME,
       zone: hostedZone,
       target: RecordTarget.fromAlias(new CloudFrontTarget(distribution)),
     });

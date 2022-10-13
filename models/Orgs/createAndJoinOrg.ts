@@ -1,6 +1,7 @@
 import { TransactWriteCommandInput, TransactWriteCommand } from '@aws-sdk/lib-dynamodb';
 import { Dynamo } from '../../awsClients/ddbDocClient';
 import { DYNAMO_TABLE_NAME, Entities } from '../../Config';
+import { env } from '../../env';
 import { DynamoOrg } from '../../types/dynamo';
 import * as Time from '../../utils/time';
 
@@ -42,7 +43,7 @@ export const createAndJoinOrg = async (
               PK: `${Entities.USER}#${userId}`,
               SK: Entities.USER,
             },
-            TableName: `${process.env.NODE_ENV}-${DYNAMO_TABLE_NAME}`,
+            TableName: `${env.deploymentEnvironment}-${DYNAMO_TABLE_NAME}`,
             UpdateExpression:
               'SET orgId = :orgId, orgJoinDate = :orgJoinDate, GSI1PK = :GSI1PK, updatedAt = :updatedAt',
             ExpressionAttributeValues: {
@@ -57,7 +58,7 @@ export const createAndJoinOrg = async (
           // Create the org
           Put: {
             Item: newOrg,
-            TableName: `${process.env.NODE_ENV}-${DYNAMO_TABLE_NAME}`,
+            TableName: `${env.deploymentEnvironment}-${DYNAMO_TABLE_NAME}`,
             ConditionExpression: 'attribute_not_exists(PK)',
           },
         },

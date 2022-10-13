@@ -3,6 +3,7 @@ import { nanoid } from 'nanoid';
 
 import { Dynamo } from '../../awsClients/ddbDocClient';
 import { DYNAMO_TABLE_NAME, Entities, TIME_UNITS } from '../../Config';
+import { env } from '../../env';
 import { DynamoLoginLink, DynamoUser } from '../../types/dynamo';
 import * as Time from '../../utils/time';
 
@@ -30,7 +31,7 @@ export const createLoginLink = async (
     };
 
     const params: PutCommandInput = {
-      TableName: `${process.env.NODE_ENV}-${DYNAMO_TABLE_NAME}`,
+      TableName: `${env.deploymentEnvironment}-${DYNAMO_TABLE_NAME}`,
       Item: newLoginLink,
       ConditionExpression: 'attribute_not_exists(PK)',
     };

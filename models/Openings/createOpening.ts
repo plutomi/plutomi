@@ -2,6 +2,7 @@ import { TransactWriteCommandInput, TransactWriteCommand } from '@aws-sdk/lib-dy
 import { nanoid } from 'nanoid';
 import { Dynamo } from '../../awsClients/ddbDocClient';
 import { ID_LENGTHS, Entities, OpeningState, DYNAMO_TABLE_NAME } from '../../Config';
+import { env } from '../../env';
 import { DynamoOpening } from '../../types/dynamo';
 import * as Time from '../../utils/time';
 
@@ -36,7 +37,7 @@ export const createOpening = async (
         // Create the opening
         Put: {
           Item: newOpening,
-          TableName: `${process.env.NODE_ENV}-${DYNAMO_TABLE_NAME}`,
+          TableName: `${env.deploymentEnvironment}-${DYNAMO_TABLE_NAME}`,
           ConditionExpression: 'attribute_not_exists(PK)',
         },
       },
@@ -47,7 +48,7 @@ export const createOpening = async (
             PK: `${Entities.ORG}#${orgId}`,
             SK: Entities.ORG,
           },
-          TableName: `${process.env.NODE_ENV}-${DYNAMO_TABLE_NAME}`,
+          TableName: `${env.deploymentEnvironment}-${DYNAMO_TABLE_NAME}`,
           UpdateExpression:
             'SET totalOpenings = if_not_exists(totalOpenings, :zero) + :value, updatedAt = :updatedAt',
           ExpressionAttributeValues: {

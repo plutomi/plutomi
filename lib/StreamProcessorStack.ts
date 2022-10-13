@@ -6,6 +6,8 @@ import { NodejsFunction } from 'aws-cdk-lib/aws-lambda-nodejs';
 import { DynamoEventSource } from 'aws-cdk-lib/aws-lambda-event-sources';
 import { StartingPosition, Runtime, Architecture } from 'aws-cdk-lib/aws-lambda';
 import { RetentionDays } from 'aws-cdk-lib/aws-logs';
+import { ENVIRONMENT } from './AppStack';
+import { env } from '../env';
 
 interface StreamProcessorStackProps extends cdk.StackProps {
   table: Table;
@@ -23,17 +25,15 @@ export default class StreamProcessorStack extends cdk.Stack {
     const FUNCTION_NAME = 'stream-processor-function';
     this.StreamProcessorFunction = new NodejsFunction(
       this,
-      `${process.env.NODE_ENV}-${FUNCTION_NAME}`,
+      `${env.deploymentEnvironment}-${FUNCTION_NAME}`,
       {
-        functionName: `${process.env.NODE_ENV}-${FUNCTION_NAME}`,
-        environment: {
-          NODE_ENV: process.env.NODE_ENV, // To get the dynamic event bus name // TODO this is silly
-        },
+        functionName: `${env.deploymentEnvironment}-${FUNCTION_NAME}`,
+        environment: { ...ENVIRONMENT },
         timeout: cdk.Duration.seconds(5),
         memorySize: 256,
         logRetention: RetentionDays.ONE_WEEK,
-        runtime: Runtime.NODEJS_14_X,
-        architecture: Architecture.ARM_64,
+        runtime: Runtime.NODEJS_16_X,
+        architecture: Architecture.X86_64, // TODO fix deploy issues ina ctions
         bundling: {
           minify: true,
           externalModules: ['aws-sdk'],
@@ -56,8 +56,8 @@ export default class StreamProcessorStack extends cdk.Stack {
     // Give our lambda acccess to the push events into EB
     const bus = EventBus.fromEventBusName(
       this,
-      `${process.env.NODE_ENV}-EventBus`,
-      `${process.env.NODE_ENV}-EventBus`,
+      `${env.deploymentEnvironment}-EventBus`,
+      `${env.deploymentEnvironment}-EventBus`,
     );
 
     bus.grantPutEventsTo(this.StreamProcessorFunction);
