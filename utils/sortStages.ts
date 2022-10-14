@@ -103,31 +103,45 @@ export const getAdjacentStagesBasedOnPosition = ({
 
   //   }
 
-  const currentIndex = otherSortedStages.findIndex((item) => item.id === stageIdBeingMoved)
+  const currentIndex = otherSortedStages.findIndex((item) => item.id === stageIdBeingMoved);
 
   /**
    * We have to check if we are moving the stage:
-   * 
+   *
    * 1. DOWN
-   * 
+   *
    * OLD --- NEW
-   * 
+   *
    * Stage 1 --- Stage 2
    * Stage 2 --- Stage 3
    * Stage 3 --- Stage 1 <-- Moved
-   * 
-   * 
+   *
+   *
    * 2. UOR
-   * 
+   *
    * OLD --- NEW
-   * 
+   *
    * Stage 1 --- Stage 3 <-- Moved
    * Stage 2 --- Stage 2
    * Stage 3 --- Stage 1
    */
-  if 
-  return {
-    newPreviousStageId: otherSortedStages[position]?.id,
-    newNextStageId: otherSortedStages[position + 1]?.id,
-  };
+
+  // If we moved it down
+  if (position > currentIndex) {
+    return {
+      newPreviousStageId: otherSortedStages[position]?.id,
+      newNextStageId: otherSortedStages[position + 1]?.id,
+    };
+  }
+
+  // If we moved it up
+  if (position < currentIndex) {
+    return {
+      newPreviousStageId: otherSortedStages[position - 1]?.id,
+      newNextStageId: otherSortedStages[position]?.id,
+    };
+  }
+
+  // No same place movement should be
+  throw new Error(`Uncaught index movement!!!!!!!!!!! ${position} - ${currentIndex} `);
 };
