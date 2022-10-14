@@ -62,12 +62,7 @@ export const createStage = async (req: Request, res: Response) => {
   // Get current last stage
 
   let lastStage: Stage;
-  {
-    $and: [
-      { target: { id: undefined, type: 'PreviousStage' } },
-      { target: { id: undefined, type: 'NextStage' } },
-    ];
-  }
+
   try {
     lastStage = await entityManager.findOne(Stage, {
       $and: [
@@ -104,7 +99,7 @@ export const createStage = async (req: Request, res: Response) => {
   try {
     console.log(`Creating new stage`, newStage);
 
-    await entityManager.persistAndFlush(newStage); // TODO check if we can remove
+    await entityManager.persistAndFlush(newStage); // TODO check if we can remove and do this all at once
     console.log('New stage created!');
   } catch (error) {
     const message = 'An error ocurred creating that stage';

@@ -84,7 +84,10 @@ export const deleteStage = async (req: Request, res: Response) => {
           type: IndexedEntities.NextStage,
         };
       } else {
-        oldPreviousStage.target.splice(oldPreviousStageNextStageIndex, 1);
+        oldPreviousStage.target[oldPreviousStageNextStageIndex] = {
+          id: undefined,
+          type: IndexedEntities.NextStage,
+        };
       }
 
       entityManager.persist(oldPreviousStage);
@@ -116,7 +119,10 @@ export const deleteStage = async (req: Request, res: Response) => {
           type: IndexedEntities.PreviousStage,
         };
       } else {
-        oldNextStage.target.splice(oldNextStagePreviousStageIndex, 1);
+        oldNextStage.target[oldNextStagePreviousStageIndex] = {
+          id: undefined,
+          type: IndexedEntities.PreviousStage,
+        };
       }
 
       entityManager.persist(oldNextStage);
