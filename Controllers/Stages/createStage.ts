@@ -60,7 +60,6 @@ export const createStage = async (req: Request, res: Response) => {
   }
 
   // Get current last stage
-
   let lastStage: Stage;
 
   try {
@@ -114,7 +113,10 @@ export const createStage = async (req: Request, res: Response) => {
       (item) => item.type === IndexedEntities.NextStage,
     );
     // Cannot use .id as it returns undefined after creating a new entity
-    lastStage.target[indexOfNextStage] = { id: newStage._id, type: IndexedEntities.NextStage };
+    lastStage.target[indexOfNextStage] = {
+      id: newStage._id.toString(),
+      type: IndexedEntities.NextStage,
+    };
 
     const indexOfPreviousStage = newStage.target.findIndex(
       (item) => item.type === IndexedEntities.PreviousStage,

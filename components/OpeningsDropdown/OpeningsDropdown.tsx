@@ -21,16 +21,17 @@ export const OpeningsDropdown = ({ openings, index }: OpeningsDropdownProps) => 
   alert(`StageOrder on openings is disabled!`);
 
   const handleChange = (newValue) => {
-    if (selected === newValue) {
-      return;
-    }
-    setSelected(newValue);
-    if (newValue.stageOrder[0] !== undefined) {
-      router.push(
-        `${WEBSITE_URL}/openings/${newValue.openingId}/stages/${newValue.stageOrder[0]}/applicants`,
-      );
-      return;
-    }
+    // if (selected === newValue) {
+    //   return;
+    // }
+    // setSelected(newValue);
+    // if (newValue.stageOrder[0] !== undefined) {
+    //   router.push(
+    //     `${WEBSITE_URL}/openings/${newValue.openingId}/stages/${newValue.stageOrder[0]}/applicants`,
+    //   );
+    //   return;
+    // }
+    // router.push(`${WEBSITE_URL}/openings/${newValue.openingId}/settings`);
     router.push(`${WEBSITE_URL}/openings/${newValue.openingId}/settings`);
   };
 

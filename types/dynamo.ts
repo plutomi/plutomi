@@ -1,6 +1,7 @@
 // This file is for the actual DynamoDB entries and their Types - ie: A full object with all properties.
 // All  other types are derivatives with Pick, Omit, etc.
 import { DEFAULTS, Entities, OpeningState } from '../Config';
+import { Opening, Stage } from '../entities';
 
 export enum DynamoIAM {
   DeleteItem = 'dynamodb:DeleteItem',
@@ -12,7 +13,7 @@ export enum DynamoIAM {
   BatchWriteItem = 'dynamodb:BatchWriteItem',
 }
 
-export type AllDynamoEntities =
+export type AllEntities =
   | DynamoOrgLoginEvent
   | DynamoUserLoginEvent
   | DynamoOrg // ! Done
@@ -25,7 +26,9 @@ export type AllDynamoEntities =
   | DynamoApplicant // TODO public variant
   | DynamoQuestion // TODO public variant?
   | DynamoQuestionStageAdjacentItem
-  | DynamoStage; // !Done
+  | DynamoStage // !Done
+  | Opening
+  | Stage;
 // TODO public variant
 
 export interface DynamoStage {
