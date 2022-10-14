@@ -7,6 +7,8 @@ import { ClickToCopy } from '../ClickToCopy';
 import { Opening } from '../../entities';
 import { findInTargetArray } from '../../utils/findInTargetArray';
 import { IndexedEntities } from '../../types/main';
+import { useAllStagesInOpening } from '../../SWR/useAllStagesInOpening';
+import { Loader } from '../Loader';
 
 interface OpeningsListItemProps {
   opening: Opening;
@@ -18,13 +20,20 @@ export const OpeningsListItem = ({ opening }: OpeningsListItemProps) => {
    * Otherwise, go to the settings page for the opening to create one
    */
 
-  // TODO stage order crap
-  // const endingUrl =
-  //   opening?.totalStages > 0
-  //     ? `stages/${opening.stageOrder[0]}/applicants` // TODO should this end with applicants?
-  //     : `settings`;
+  const { stages, isStagesError, isStagesLoading } = useAllStagesInOpening({
+    openingId: opening.id,
+  });
 
-  const endingUrl = 'settings';
+  if (isStagesLoading) {
+    return <Loader text="Loading stages..."></Loader>;
+  }
+
+  if (isStagesError) return <h1>An error ocurred retrieving info for this opening</h1>;
+
+  const endingUrl =
+    opening?.totalStages > 0
+      ? `stages/${stages}/applicants` // TODO should this end with applicants?
+      : `settings`;
 
   const openingState = findInTargetArray({
     entity: IndexedEntities.OpeningState,

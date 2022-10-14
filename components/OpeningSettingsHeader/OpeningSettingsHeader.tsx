@@ -11,6 +11,7 @@ import { Loader } from '../Loader';
 import { OpeningSettingsBreadcrumbs } from '../OpeningSettingsBreadcrumbs';
 import { CrumbProps } from '../types';
 import { findInTargetArray } from '../../utils/findInTargetArray';
+import { useAllStagesInOpening } from '../../SWR/useAllStagesInOpening';
 
 export const OpeningSettingsHeader = () => {
   const router = useRouter();
@@ -18,6 +19,13 @@ export const OpeningSettingsHeader = () => {
   const openUpdateOpeningModal = useStore((state) => state.openUpdateOpeningModal);
 
   const { opening, isOpeningLoading, isOpeningError } = useOpeningInfo({ openingId });
+  const { stages, isStagesLoading, isStagesError } = useAllStagesInOpening({
+    openingId,
+  });
+  if (isOpeningError || isStagesError)
+    return <h1>An error ocurred retrieving info for this opening</h1>;
+
+  if (isOpeningLoading || isStagesLoading) return <Loader text="Loading opening..." />;
 
   if (isOpeningError) return <h1>An error ocurred retrieving info for this opening</h1>;
 
@@ -34,13 +42,13 @@ export const OpeningSettingsHeader = () => {
   // TODO !!!! Stage order crap
 
   // Hide applicant crumb if opening has no stages
-  // if (opening?.totalStages > 0) {
-  //   crumbs.unshift({
-  //     name: 'Applicants',
-  //     href: `/openings/${openingId}/stages/${opening?.stageOrder[0]}/applicants`, // TODO should this end with /applicants?
-  //     current: false,
-  //   });
-  // }
+  if (stages.length > 0) {
+    crumbs.unshift({
+      name: 'Applicants',
+      href: `/openings/${openingId}/stages/${stages[0].id}/applicants`, // TODO should this end with /applicants?
+      current: false,
+    });
+  }
 
   const deleteOpening = async () => {
     if (
