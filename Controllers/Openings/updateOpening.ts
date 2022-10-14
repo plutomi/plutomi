@@ -3,6 +3,8 @@ import Joi from 'joi';
 import * as CreateError from '../../utils/createError';
 import { JOI_SETTINGS, OpeningState, LIMITS } from '../../Config';
 import { Opening } from '../../entities';
+import { findInTargetArray } from '../../utils/findInTargetArray';
+import { IndexedEntities } from '../../types/main';
 
 const schema = Joi.object({
   stageOrder: Joi.array().items(Joi.string()),
@@ -21,10 +23,10 @@ export const updateOpening = async (req: Request, res: Response) => {
   const { openingId } = req.params;
 
   let opening: Opening;
-
+  const orgId = findInTargetArray({ entity: IndexedEntities.Org, targetArray: user.target });
   try {
     opening = await entityManager.findOne(Opening, {
-      org: user.org,
+      target: { id: orgId, type: IndexedEntities.Org },
       id: openingId,
     });
   } catch (error) {
@@ -73,7 +75,12 @@ export const updateOpening = async (req: Request, res: Response) => {
       });
     }
 
-    opening.state = req.body.GSI1SK;
+    opening.target = opening.target.map((item) => {
+      if (item.type === IndexedEntities.OpeningState) {
+        item.id = req.body.GSI1SK;
+      }
+      return item;
+    });
   }
 
   // TODO update this

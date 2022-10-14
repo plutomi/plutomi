@@ -40,15 +40,17 @@ declare global {
   }
 }
 
-export type IndexedTargetArrayEntities =
-  | 'user'
-  | 'org'
-  | 'orgInvite'
-  | 'opening'
-  | 'stage'
-  | 'userLoginLink'
-  | 'opening'
-  | 'question'
-  | 'webhooks'
-  | 'email';
-export type IndexedTargetArray = Array<{ id: string; type: IndexedTargetArrayEntities }>;
+export enum IndexedEntities {
+  User = 'User',
+  Org = 'Org',
+  OrgInvite = 'OrgInvite',
+  Opening = 'Opening',
+  OpeningState = 'OpeningState',
+  Stage = 'Stage',
+  UserLoginLink = 'UserLoginLink',
+  Question = 'Question',
+  Webhook = 'Webhook',
+  Email = 'Email',
+}
+
+export type IndexedTargetArray = Array<{ id: string; type: IndexedEntities }>;

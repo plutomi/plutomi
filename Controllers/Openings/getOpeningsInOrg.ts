@@ -1,16 +1,24 @@
+import { FilterQuery } from '@mikro-orm/core';
 import { Request, Response } from 'express';
 import { Opening } from '../../entities';
 import { DB } from '../../models';
+import { IndexedEntities } from '../../types/main';
 import * as CreateError from '../../utils/createError';
+import { findInTargetArray } from '../../utils/findInTargetArray';
 
 export const getOpeningsInOrg = async (req: Request, res: Response) => {
   const { user, entityManager } = req;
 
+  const orgId = findInTargetArray({ entity: IndexedEntities.Org, targetArray: user.target });
   let openings: Opening[];
 
   try {
+    // TODO: Add type safety on this search
     openings = await entityManager.find(Opening, {
-      org: user.org,
+      target: {
+        id: orgId,
+        type: IndexedEntities.Org,
+      },
     });
   } catch (error) {
     const message = 'An error ocurred retrieving openings in your org';

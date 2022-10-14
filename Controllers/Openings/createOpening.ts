@@ -1,9 +1,11 @@
 import { Request, Response } from 'express';
 import Joi from 'joi';
-import { JOI_SETTINGS, LIMITS } from '../../Config';
+import { JOI_SETTINGS, LIMITS, OpeningState } from '../../Config';
 import * as CreateError from '../../utils/createError';
 import { DynamoOpening } from '../../types/dynamo';
 import { Opening } from '../../entities';
+import { findInTargetArray } from '../../utils/findInTargetArray';
+import { IndexedEntities } from '../../types/main';
 
 export type APICreateOpeningOptions = Required<Pick<DynamoOpening, 'openingName'>>;
 
@@ -23,10 +25,18 @@ export const createOpening = async (req: Request, res: Response) => {
   }
 
   const { openingName }: APICreateOpeningOptions = req.body;
+  const orgId = findInTargetArray({ entity: IndexedEntities.Org, targetArray: user.target });
 
   const newOpening = new Opening({
     name: openingName,
-    org: user.org,
+    target: [
+      {
+        // Should be redundant
+        id: orgId,
+        type: IndexedEntities.Org,
+      },
+      { id: OpeningState.PRIVATE, type: IndexedEntities.OpeningState },
+    ],
   });
 
   try {

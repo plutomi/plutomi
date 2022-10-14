@@ -1,14 +1,5 @@
-import {
-  Cascade,
-  Collection,
-  Embeddable,
-  Embedded,
-  Entity,
-  Index,
-  OneToMany,
-  Property,
-} from '@mikro-orm/core';
-import { IndexedTargetArray, IndexedTargetArrayEntities } from '../types/main';
+import { Cascade, Collection, Entity, Index, OneToMany, Property } from '@mikro-orm/core';
+import { IndexedTargetArray, IndexedEntities } from '../types/main';
 import { BaseEntity } from './BaseEntity';
 import { UserLoginLink } from './UserLoginLink';
 

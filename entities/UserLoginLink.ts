@@ -8,7 +8,7 @@ export type UserLoginLinkConstructorValues = Pick<UserLoginLink, 'user'>;
 @Entity()
 export class UserLoginLink extends BaseEntity {
   @ManyToOne(() => User) // TODO  wrapped reference?
-  user: User;
+  user: User; // TODO make this an index target array
 
   // TODO: Add mongodb TTL
   @Property({ type: 'date' })

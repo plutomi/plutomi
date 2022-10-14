@@ -10,23 +10,17 @@ import {
   Reference,
 } from '@mikro-orm/core';
 import { OpeningState } from '../Config';
+import { IndexedTargetArray } from '../types/main';
 import { BaseEntity } from './BaseEntity';
 import { Org } from './Org';
 import { Stage } from './Stage';
 
-export type OpeningConstructorValues = Pick<Opening, 'name' | 'org'>;
+export type OpeningConstructorValues = Pick<Opening, 'name' | 'target'>;
 
 @Entity()
 export class Opening extends BaseEntity {
   @Property({ type: 'text', nullable: false })
   name: string;
-
-  @ManyToOne(() => Org, { wrappedReference: true })
-  org: IdentifiedReference<Org>;
-
-  // TODO allow creating public openings through the API
-  @Enum({ items: () => OpeningState })
-  state: OpeningState = OpeningState.PRIVATE;
 
   @Property({ type: 'integer' })
   totalApplicants: number = 0;
@@ -34,12 +28,12 @@ export class Opening extends BaseEntity {
   @Property({ type: 'integer' })
   totalStages: number = 0;
 
-  @OneToMany(() => Stage, (b) => b.opening, { cascade: [Cascade.ALL] })
-  stages = new Collection<Stage>(this);
+  @Property({ type: 'array' })
+  target: IndexedTargetArray;
 
-  constructor({ name, org }: OpeningConstructorValues) {
+  constructor({ name, target }: OpeningConstructorValues) {
     super();
     this.name = name;
-    this.org = Reference.create(org);
+    this.target = target;
   }
 }

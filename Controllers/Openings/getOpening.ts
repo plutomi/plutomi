@@ -3,7 +3,9 @@ import Joi from 'joi';
 import { JOI_SETTINGS } from '../../Config';
 import { Opening } from '../../entities';
 import { DB } from '../../models';
+import { IndexedEntities } from '../../types/main';
 import * as CreateError from '../../utils/createError';
+import { findInTargetArray } from '../../utils/findInTargetArray';
 
 const schema = Joi.object({
   params: {
@@ -25,8 +27,11 @@ export const getOpening = async (req: Request, res: Response) => {
 
   try {
     opening = await entityManager.findOne(Opening, {
-      org: user.org,
       id: openingId,
+      target: {
+        id: findInTargetArray({ entity: IndexedEntities.Org, targetArray: user.target }),
+        type: IndexedEntities.Org,
+      },
     });
   } catch (error) {
     const message = 'Error ocurred retrieving opening info';

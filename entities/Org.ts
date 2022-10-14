@@ -1,4 +1,5 @@
 import { Collection, Entity, OneToMany, OneToOne, Property, Reference } from '@mikro-orm/core';
+import { IndexedTargetArray } from '../types/main';
 import { BaseEntity } from './BaseEntity';
 import { User } from './User';
 
@@ -29,6 +30,9 @@ export class Org extends BaseEntity {
 
   @Property({ type: 'integer', default: 0 })
   totalQuestions!: number;
+
+  @Property({ type: 'array' })
+  target: IndexedTargetArray;
 
   constructor({ orgId, createdBy, displayName }: OrgConstructorValues) {
     super();
