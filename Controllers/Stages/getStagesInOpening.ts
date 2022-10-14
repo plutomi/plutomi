@@ -1,43 +1,46 @@
 import { Request, Response } from 'express';
+import { Opening, Stage } from '../../entities';
 import { DB } from '../../models';
+import { IndexedEntities } from '../../types/main';
 import * as CreateError from '../../utils/createError';
+import { findInTargetArray } from '../../utils/findInTargetArray';
 
 export const getStagesInOpening = async (req: Request, res: Response) => {
-  const { user } = req;
-
+  const { user, entityManager } = req;
+  const orgId = findInTargetArray({ entity: IndexedEntities.Org, targetArray: user.target });
   const { openingId } = req.params;
 
-  const [opening, openingError] = await DB.Openings.getOpening({
-    openingId,
-    orgId: user.orgId,
-  });
+  let opening: Opening;
 
-  if (openingError) {
-    const { status, body } = CreateError.SDK(
-      openingError,
-      'An error ocurred getting your opening info',
-    );
-    return res.status(status).json(body);
+  try {
+    opening = await entityManager.findOne(Opening, {
+      id: openingId,
+      $and: [{ target: { id: orgId, type: IndexedEntities.Org } }],
+    });
+  } catch (error) {
+    const message = 'An error ocurred retrieving opening info';
+    console.error(message, error);
+    return res.status(500).json({ message, error });
   }
 
   if (!opening) {
     return res.status(404).json({ message: 'Opening does not exist' });
   }
-  const [allCurrentStages, allStagesError] = await DB.Stages.getStagesInOpening({
-    openingId,
-    orgId: user.orgId,
-    stageOrder: opening.stageOrder, // To order them correctly
-  });
 
-  if (allStagesError) {
-    console.log('All stages error', allStagesError);
-    const { status, body } = CreateError.SDK(
-      allStagesError,
-      'An error ocurred retrieving all the current stages',
-    );
+  let allStages: Stage[];
 
-    return res.status(status).json(body);
+  try {
+    allStages = await entityManager.find(Stage, {
+      $and: [
+        { target: { id: orgId, type: IndexedEntities.Org } },
+        { target: { id: openingId, type: IndexedEntities.Opening } },
+      ],
+    });
+  } catch (error) {
+    const message = 'An error ocurred retrieving all the current stages';
+    console.error(message, error);
+    return res.status(500).json({ message, error });
   }
 
-  return res.status(200).json(allCurrentStages);
+  return res.status(200).json(allStages);
 };
