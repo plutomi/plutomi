@@ -1,24 +1,31 @@
 import { Request, Response } from 'express';
-import { DB } from '../../models';
-import * as CreateError from '../../utils/createError';
+import { Stage } from '../../entities';
+import { IndexedEntities } from '../../types/main';
+import { findInTargetArray } from '../../utils/findInTargetArray';
 
 export const getStage = async (req: Request, res: Response) => {
-  const { user } = req;
-
+  const { user, entityManager } = req;
   const { openingId, stageId } = req.params;
-  const [stage, stageError] = await DB.Stages.getStage({
-    orgId: user.orgId,
-    stageId,
-    openingId,
-  });
+  const orgId = findInTargetArray({ entity: IndexedEntities.Org, targetArray: user.target });
 
-  if (stageError) {
-    const { status, body } = CreateError.SDK(
-      stageError,
-      'An error ocurred retrieving that stage info',
-    );
+  let stage: Stage;
 
-    return res.status(status).json(body);
+  try {
+    stage = await entityManager.findOne(Stage, {
+      id: stageId,
+      $and: [
+        {
+          target: { id: orgId, type: IndexedEntities.Org },
+        },
+        {
+          target: { id: openingId, type: IndexedEntities.Opening },
+        },
+      ],
+    });
+  } catch (error) {
+    const message = 'An error ocurred retrieving stage info';
+    console.error(message, error);
+    return res.status(500).json({ message, error });
   }
 
   if (!stage) {

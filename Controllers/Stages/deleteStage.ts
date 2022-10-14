@@ -66,10 +66,10 @@ export const deleteStage = async (req: Request, res: Response) => {
   if (oldPreviousStageId) {
     try {
       oldPreviousStage = await entityManager.findOne(Stage, {
-        id: oldNextStageId,
+        id: oldPreviousStageId,
         $and: [
           { target: { id: orgId, type: IndexedEntities.Org } },
-          { target: { id: orgId, type: IndexedEntities.Opening } },
+          { target: { id: openingId, type: IndexedEntities.Opening } },
         ],
       });
 
@@ -77,11 +77,16 @@ export const deleteStage = async (req: Request, res: Response) => {
         (item) => item.type === IndexedEntities.NextStage,
       );
 
-      // Set the previous stage's next stage Id to be the stage that is being deleted's next stage Id
-      oldPreviousStage.target[oldPreviousStageNextStageIndex] = {
-        id: oldNextStageId,
-        type: IndexedEntities.NextStage,
-      };
+      if (oldNextStageId) {
+        // Set the previous stage's next stage Id to be the stage that is being deleted's next stage Id
+        oldPreviousStage.target[oldPreviousStageNextStageIndex] = {
+          id: oldNextStageId,
+          type: IndexedEntities.NextStage,
+        };
+      } else {
+        oldPreviousStage.target.splice(oldPreviousStageNextStageIndex, 1);
+      }
+
       entityManager.persist(oldPreviousStage);
     } catch (error) {
       const message = 'An error ocurred finding the previous stage info';
@@ -90,24 +95,29 @@ export const deleteStage = async (req: Request, res: Response) => {
     }
   }
 
-  if (oldNextStage) {
+  if (oldNextStageId) {
     try {
       oldNextStage = await entityManager.findOne(Stage, {
         id: oldNextStageId,
         $and: [
           { target: { id: orgId, type: IndexedEntities.Org } },
-          { target: { id: orgId, type: IndexedEntities.Opening } },
+          { target: { id: openingId, type: IndexedEntities.Opening } },
         ],
       });
 
       const oldNextStagePreviousStageIndex = oldNextStage.target.findIndex(
         (item) => item.type === IndexedEntities.PreviousStage,
       );
-      // Set the next stage's previous stage Id to be the stage that is being deleted's previous stage Id
-      oldNextStage.target[oldNextStagePreviousStageIndex] = {
-        id: oldPreviousStageId,
-        type: IndexedEntities.PreviousStage,
-      };
+
+      if (oldPreviousStage) {
+        // Set the next stage's previous stage Id to be the stage that is being deleted's previous stage Id
+        oldNextStage.target[oldNextStagePreviousStageIndex] = {
+          id: oldPreviousStageId,
+          type: IndexedEntities.PreviousStage,
+        };
+      } else {
+        oldNextStage.target.splice(oldNextStagePreviousStageIndex, 1);
+      }
 
       entityManager.persist(oldNextStage);
     } catch (error) {

@@ -47,7 +47,7 @@ export default function StageSettings() {
       loggedOutPageText="Log in to view your stage settings"
       currentNavbarItem="Openings"
       headerText={
-        isStageLoading ? 'Loading settings...' : `${opening?.name} > ${stage?.GSI1SK} - Settings`
+        isStageLoading ? 'Loading settings...' : `${opening?.name} > ${stage?.name} - Settings`
       }
     >
       <>
