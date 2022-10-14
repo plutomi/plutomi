@@ -1,3 +1,4 @@
+import { ObjectId } from '@mikro-orm/mongodb';
 import { Stage } from '../entities';
 import { IndexedEntities } from '../types/main';
 import { findInTargetArray } from './findInTargetArray';
@@ -34,4 +35,39 @@ export const sortStages = (unsortedStagesInOpening: Stage[]): Stage[] => {
 
   const sortedStages: Stage[] = [];
   sortedStages.push(firstStage);
+
+  // Remove the first stage from the unsorted list, it is no longer needed
+  unsortedStagesInOpening.splice(firstStageIndex, 1);
+
+  // Push all but the first stage into an object so we can get *almost* O(1) queries
+  const mapWithStages: Record<string, Stage> = {};
+  unsortedStagesInOpening.map((stage) => {
+    mapWithStages[stage.id] = stage;
+  });
+
+  let reachedTheEnd = false;
+  let startingStage = firstStage;
+
+  while (!reachedTheEnd) {
+    const nextStageId = findInTargetArray({
+      entity: IndexedEntities.NextStage,
+      targetArray: startingStage.target,
+    });
+    const nextStage = mapWithStages[nextStageId.toString()];
+    sortedStages.push(nextStage);
+    startingStage = nextStage;
+
+    // Check if the next stage has it's own next stage
+    const nextStageHasANextStage = findInTargetArray({
+      entity: IndexedEntities.NextStage,
+      targetArray: nextStage.target,
+    });
+    if (nextStageHasANextStage) {
+      reachedTheEnd = true;
+    }
+
+    // Continue loop until all stages are sorted
+  }
+
+  return sortedStages;
 };
