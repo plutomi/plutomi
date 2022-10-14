@@ -1,9 +1,11 @@
-import { Entity, IdentifiedReference, ManyToOne, Property } from '@mikro-orm/core';
+import { Entity, ManyToOne, Property } from '@mikro-orm/core';
 import { BaseEntity } from './BaseEntity';
 import { User } from './User';
 import dayjs from 'dayjs';
 
 export type UserLoginLinkConstructorValues = Pick<UserLoginLink, 'user'>;
+
+// TODO make login links an embedded document as a user will never have more than a handful with propert TTL
 
 @Entity()
 export class UserLoginLink extends BaseEntity {

@@ -5,6 +5,7 @@ import { UserLoginLink } from './UserLoginLink';
 
 export type UserConstructorValues = Pick<User, 'firstName' | 'lastName' | 'target'>;
 
+// TODO make login links an embedded document as a user will never have more than a handful with propert TTL
 @Entity()
 @Index({ name: 'target_array', options: { target: 1 } })
 export class User extends BaseEntity {

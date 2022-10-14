@@ -152,26 +152,31 @@ export const requestLoginLink = async (req: Request, res: Response) => {
 
   console.log(`Creating a login link with THIS user`, user);
   console.log(`USER ID`, user.id);
-  const loginLinkId = nanoid();
-  const token = await jwt.sign(
-    {
-      id: user.id,
-      loginLinkId,
-    },
-    env.loginLinksPassword,
-    { expiresIn: ttlExpiry - now },
-  );
+  let token: string;
+  // TODO types
 
-  // TODO enums
-  const loginLinkUrl = `${API_URL}/auth/login?token=${token}&callbackUrl=${
-    callbackUrl || `${WEBSITE_URL}/${DEFAULTS.REDIRECT}`
-  }`;
+  let loginLinkUrl: string;
 
   try {
     const newLoginLink = new UserLoginLink({
       user,
     });
     await req.entityManager.persistAndFlush(newLoginLink);
+
+    console.log(`NEWLY CREATEDED LOGIN LINK`, newLoginLink);
+
+    const tokenData = {
+      userId: user.id,
+      loginLinkId: newLoginLink._id,
+    };
+
+    console.log(`TOKIEN DATA WHEN CREATING IT`, tokenData);
+    token = await jwt.sign(tokenData, env.loginLinksPassword, { expiresIn: ttlExpiry - now });
+
+    // TODO enums
+    loginLinkUrl = `${API_URL}/auth/login?token=${token}&callbackUrl=${
+      callbackUrl || `${WEBSITE_URL}/${DEFAULTS.REDIRECT}`
+    }`;
   } catch (error) {
     console.error(`An error ocurred creating your login link`);
     return res.status(500).json({ message: 'An error ocurred creating your login link' });

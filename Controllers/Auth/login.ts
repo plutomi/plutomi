@@ -5,6 +5,7 @@ import * as CreateError from '../../utils/createError';
 import { sendEmail, SendEmailProps } from '../../models/Emails/sendEmail';
 import { env } from '../../env';
 import { User, UserLoginLink } from '../../entities';
+import { Reference } from '@mikro-orm/core';
 
 const jwt = require('jsonwebtoken');
 
@@ -27,6 +28,7 @@ export const login = async (req: Request, res: Response) => {
     return res.status(status).json(body);
   }
   const { callbackUrl, token }: APILoginQuery = req.query;
+  const { entityManager } = req;
 
   let userId: string;
   let loginLinkId: string;
@@ -36,7 +38,8 @@ export const login = async (req: Request, res: Response) => {
     const data = await jwt.verify(token, env.loginLinksPassword);
 
     console.log(`Token data`, data);
-    userId = data.id;
+
+    userId = data.userId;
     loginLinkId = data.loginLinkId;
   } catch (error) {
     if (error.name === 'TokenExpiredError') {
@@ -51,10 +54,12 @@ export const login = async (req: Request, res: Response) => {
   let user: User;
 
   try {
-    loginLink = await req.entityManager.findOne(UserLoginLink, {
+    loginLink = await entityManager.findOne(UserLoginLink, {
       id: loginLinkId,
     });
-    user = loginLink.user;
+    console.log(loginLink);
+
+    user = Reference.unwrapReference(loginLink.user);
   } catch (error) {
     console.error(`ERROR retrieving login link`, error);
     return res.status(500).json({ message: 'An error ocurred retrieving login link data', error });
@@ -63,6 +68,10 @@ export const login = async (req: Request, res: Response) => {
   if (!loginLink) {
     return res.status(401).json({ message: 'Invalid login link' });
   }
+
+  // TODO delete login link
+  entityManager.remove(loginLink);
+  await entityManager.flush();
 
   // TODO Create login event
 
