@@ -13,8 +13,8 @@ interface GetAdjacentStagesBasedOnPositionProps {
   stageIdBeingMoved: string;
 }
 interface AdjacentStagesResult {
-  nextStageId?: string;
-  previousStageId?: string;
+  newNextStageId?: string;
+  newPreviousStageId?: string;
 }
 
 export const sortStages = (unsortedStagesInOpening: Stage[]): Stage[] => {
@@ -53,11 +53,11 @@ export const sortStages = (unsortedStagesInOpening: Stage[]): Stage[] => {
   let startingStage = firstStage;
 
   while (!reachedTheEnd) {
-    const nextStageId = findInTargetArray({
+    const newNextStageId = findInTargetArray({
       entity: IndexedEntities.NextStage,
       targetArray: startingStage.target,
     });
-    const nextStage = mapWithStages[nextStageId.toString()];
+    const nextStage = mapWithStages[newNextStageId.toString()];
     sortedStages.push(nextStage);
     startingStage = nextStage;
 
@@ -84,16 +84,16 @@ export const getAdjacentStagesBasedOnPosition = ({
   if (!position && position !== 0) {
     // Position not provided, add it to the end
     return {
-      nextStageId: undefined,
-      previousStageId: otherSortedStages[otherSortedStages.length - 1]?.id,
+      newNextStageId: undefined,
+      newPreviousStageId: otherSortedStages[otherSortedStages.length - 1]?.id,
     };
   }
 
   if (position === 0) {
     // First in the list, get the current first stage
     return {
-      previousStageId: undefined,
-      nextStageId: otherSortedStages[0]?.id,
+      newPreviousStageId: undefined,
+      newNextStageId: otherSortedStages[0]?.id,
     };
   }
 };
