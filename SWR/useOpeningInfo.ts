@@ -1,7 +1,7 @@
 import useSWR from 'swr';
 import { GetOpeningInfoURL } from '../adapters/Openings';
 import { SWRFetcher } from '../Config';
-import { DynamoOpening } from '../types/dynamo';
+import { Opening } from '../entities';
 import { APIErrorResponse } from '../types/main';
 
 interface UseOpeningInfoProps {
@@ -9,7 +9,7 @@ interface UseOpeningInfoProps {
 }
 
 export const useOpeningInfo = ({ openingId }: UseOpeningInfoProps) => {
-  const { data, error } = useSWR<DynamoOpening, APIErrorResponse>(
+  const { data, error } = useSWR<Opening, APIErrorResponse>(
     openingId && GetOpeningInfoURL(openingId),
     SWRFetcher,
   );
