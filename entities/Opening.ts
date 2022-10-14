@@ -1,23 +1,11 @@
-import {
-  Cascade,
-  Collection,
-  Entity,
-  Enum,
-  IdentifiedReference,
-  ManyToOne,
-  OneToMany,
-  Property,
-  Reference,
-} from '@mikro-orm/core';
-import { OpeningState } from '../Config';
+import { Entity, Index, Property } from '@mikro-orm/core';
 import { IndexedTargetArray } from '../types/main';
 import { BaseEntity } from './BaseEntity';
-import { Org } from './Org';
-import { Stage } from './Stage';
 
 export type OpeningConstructorValues = Pick<Opening, 'name' | 'target'>;
 
 @Entity()
+@Index({ name: 'target_array', options: { target: 1 } })
 export class Opening extends BaseEntity {
   @Property({ type: 'text', nullable: false })
   name: string;

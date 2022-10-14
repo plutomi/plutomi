@@ -2,11 +2,10 @@ import { Request, Response } from 'express';
 import Joi from 'joi';
 import { JOI_SETTINGS, JoiOrgId } from '../../Config';
 import * as CreateError from '../../utils/createError';
-import { DynamoOrg } from '../../types/dynamo';
 import { Org } from '../../entities';
 import { IndexedEntities } from '../../types/main';
 
-export type APICreateOrgOptions = Required<Pick<DynamoOrg, 'orgId' | 'displayName'>>;
+export type APICreateOrgOptions = Required<Pick<Org, 'orgId' | 'displayName'>>;
 
 const schema = Joi.object({
   body: {
@@ -52,30 +51,44 @@ export const createAndJoinOrg = async (req: Request, res: Response) => {
 
   const { displayName, orgId }: APICreateOrgOptions = req.body;
 
+  let org: Org;
+
+  try {
+    org = await req.entityManager.findOne(Org, {
+      orgId, // TODO use target array !!!
+    });
+  } catch (error) {
+    const message = `Error ocurred checking if that org already exists`;
+    console.error(message, error);
+    return res.status(500).json({ message, error });
+  }
+
+  if (org) {
+    return res.status(403).json({
+      message: `An org already exists with this ID ('${orgId}'), please choose another!`,
+    });
+  }
+
+  // TODO make this a transaction
   const newOrg = new Org({
     orgId,
     displayName,
     target: [{ id: user.id, type: IndexedEntities.CreatedBy }],
   });
 
+  user.target.push({ id: orgId, type: IndexedEntities.Org });
+  user.orgJoinDate = new Date();
   entityManager.persist(newOrg);
-
-  user.target = user.target.map((item) => {
-    if (item.type === IndexedEntities.Org) {
-      item.id = newOrg.id;
-    }
-    return item;
-  });
   entityManager.persist(user);
 
-  // TODO make this a transaction
   try {
     await entityManager.flush();
+
+    console.log(`saved user with new org`);
+    return res.status(201).json({ message: 'Org created!', org: newOrg });
   } catch (error) {
     const message = 'Error ocurred creating the org';
     console.error(message, error);
     return res.status(500).json({ message, error });
   }
-
-  return res.status(201).json({ message: 'Org created!', org: newOrg });
 };

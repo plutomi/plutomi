@@ -2,9 +2,10 @@ import { EntityTransformer } from '@mikro-orm/core';
 import { Handler, Request, Response } from 'express';
 import { nanoid } from 'nanoid';
 import { User } from '../../entities';
+import { IndexedEntities } from '../../types/main';
 
 export const createUser: Handler = async (req: Request, res: Response) => {
-  const key = 'email';
+  const key = IndexedEntities.Email;
   const email = 'joseyvalerio@gmail.com';
   const newUser = new User({
     firstName: nanoid(12),

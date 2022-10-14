@@ -1,32 +1,32 @@
-import { Entity, Property, Reference } from '@mikro-orm/core';
+import { Entity, Index, Property } from '@mikro-orm/core';
 import { IndexedTargetArray } from '../types/main';
 import { BaseEntity } from './BaseEntity';
-import { User } from './User';
 
 export type OrgConstructorValues = Pick<Org, 'orgId' | 'displayName' | 'target'>;
 
 @Entity()
+@Index({ name: 'target_array', options: { target: 1 } })
 export class Org extends BaseEntity {
   @Property({ type: 'text', unique: true })
-  orgId: string;
+  orgId: string; // TODO move this to target array
 
   @Property({ type: 'text' })
   displayName: string;
 
-  @Property({ type: 'integer', default: 0 })
-  totalApplicants!: number;
+  @Property({ type: 'integer' })
+  totalApplicants: number = 0;
 
-  @Property({ type: 'integer', default: 0 })
-  totalOpenings!: number;
+  @Property({ type: 'integer' })
+  totalOpenings: number = 0;
 
-  @Property({ type: 'integer', default: 1 })
-  totalUsers!: number;
+  @Property({ type: 'integer' })
+  totalUsers: number = 1;
 
-  @Property({ type: 'integer', default: 0 })
-  totalWebhooks!: number;
+  @Property({ type: 'integer' })
+  totalWebhooks: number = 0;
 
-  @Property({ type: 'integer', default: 0 })
-  totalQuestions!: number;
+  @Property({ type: 'integer' })
+  totalQuestions: number = 0;
 
   @Property({ type: 'array' })
   target: IndexedTargetArray;

@@ -167,7 +167,7 @@ export const requestLoginLink = async (req: Request, res: Response) => {
 
     const tokenData = {
       userId: user.id,
-      loginLinkId: newLoginLink._id,
+      loginLinkId: newLoginLink._id, // TODO Using regular .id here returns undefined????
     };
 
     console.log(`TOKIEN DATA WHEN CREATING IT`, tokenData);
