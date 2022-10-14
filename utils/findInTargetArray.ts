@@ -1,4 +1,4 @@
-import { IndexedTargetArray, IndexedEntities } from '../types/main';
+import { IndexedTargetArray, IndexedEntities, IndexIdTypes } from '../types/main';
 
 interface FindInTargetArrayProps {
   entity: IndexedEntities;
@@ -10,5 +10,5 @@ interface FindInTargetArrayProps {
  *
  * @returns string - ID of the entity
  */
-export const findInTargetArray = ({ entity, targetArray }: FindInTargetArrayProps): string =>
+export const findInTargetArray = ({ entity, targetArray }: FindInTargetArrayProps): IndexIdTypes =>
   targetArray.find((item) => item.type === entity)?.id;

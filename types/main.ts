@@ -56,5 +56,6 @@ export enum IndexedEntities {
   NextStage = 'NextStage',
 }
 
-export type IndexedTargetArrayItem = { id: string | ObjectId; type: IndexedEntities };
+export type IndexIdTypes = string | ObjectId | null;
+export type IndexedTargetArrayItem = { id: IndexIdTypes; type: IndexedEntities };
 export type IndexedTargetArray = Array<IndexedTargetArrayItem>;
