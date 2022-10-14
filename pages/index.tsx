@@ -96,44 +96,44 @@ export default function Main({ commits }: HomepageProps) {
 
 export async function getStaticProps() {
   const commitsFromEachBranch = 25;
-  const allCommits = [];
-  const { data } = await axios.get(
-    `https://api.github.com/repos/plutomi/plutomi/branches?u=joswayski`,
-  );
+  const allCommits = []; // TODO enable
+  // const { data } = await axios.get(
+  //   `https://api.github.com/repos/plutomi/plutomi/branches?u=joswayski`,
+  // );
 
-  await Promise.all(
-    data.map(async (branch) => {
-      try {
-        const { data } = await axios.get(
-          `https://api.github.com/repos/plutomi/plutomi/commits?sha=${branch.name}&per_page=${commitsFromEachBranch}&u=joswayski`,
-          {
-            headers: {
-              Authorization: `token ${env.commitsToken}`,
-            },
-          },
-        );
+  // await Promise.all(
+  //   data.map(async (branch) => {
+  //     try {
+  //       const { data } = await axios.get(
+  //         `https://api.github.com/repos/plutomi/plutomi/commits?sha=${branch.name}&per_page=${commitsFromEachBranch}&u=joswayski`,
+  //         {
+  //           headers: {
+  //             Authorization: `token ${env.commitsToken}`,
+  //           },
+  //         },
+  //       );
 
-        data.map(async (commit) => {
-          if (commit.commit.author.name !== 'allcontributors[bot]') {
-            const customCommit = {
-              name: commit.commit.author.name,
-              username: commit.author.login,
-              image: commit.author.avatar_url,
-              email: commit.commit.author.email,
-              date: commit.commit.author.date,
-              message: commit.commit.message,
-              url: commit.html_url,
-            };
-            allCommits.push(customCommit);
-          }
-        });
-      } catch (error) {
-        console.error(`Error fetching commits`, error.response.data);
-        console.error(`Get Commits Token`, env.commitsToken);
-        console.error(`ENV`, env.nodeEnv);
-      }
-    }),
-  );
+  //       data.map(async (commit) => {
+  //         if (commit.commit.author.name !== 'allcontributors[bot]') {
+  //           const customCommit = {
+  //             name: commit.commit.author.name,
+  //             username: commit.author.login,
+  //             image: commit.author.avatar_url,
+  //             email: commit.commit.author.email,
+  //             date: commit.commit.author.date,
+  //             message: commit.commit.message,
+  //             url: commit.html_url,
+  //           };
+  //           allCommits.push(customCommit);
+  //         }
+  //       });
+  //     } catch (error) {
+  //       console.error(`Error fetching commits`, error.response.data);
+  //       console.error(`Get Commits Token`, env.commitsToken);
+  //       console.error(`ENV`, env.nodeEnv);
+  //     }
+  //   }),
+  // );
 
   // Sort by commit timestamp
   const orderedCommits = _.orderBy(allCommits, (commit) => commit.date, ['desc']);

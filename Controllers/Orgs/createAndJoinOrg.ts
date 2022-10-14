@@ -53,10 +53,12 @@ export const createAndJoinOrg = async (req: Request, res: Response) => {
   const { displayName, orgId }: APICreateOrgOptions = req.body;
 
   const newOrg = new Org({
-    createdBy: user,
     orgId,
     displayName,
+    target: [{ id: user.id, type: IndexedEntities.CreatedBy }],
   });
+
+  entityManager.persist(newOrg);
 
   user.target = user.target.map((item) => {
     if (item.type === IndexedEntities.Org) {
@@ -65,7 +67,6 @@ export const createAndJoinOrg = async (req: Request, res: Response) => {
     return item;
   });
   entityManager.persist(user);
-  entityManager.persist(newOrg);
 
   // TODO make this a transaction
   try {
@@ -76,5 +77,5 @@ export const createAndJoinOrg = async (req: Request, res: Response) => {
     return res.status(500).json({ message, error });
   }
 
-  return res.status(201).json({ message: 'Org created!' });
+  return res.status(201).json({ message: 'Org created!', org: newOrg });
 };

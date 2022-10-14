@@ -51,6 +51,7 @@ export enum IndexedEntities {
   Question = 'Question',
   Webhook = 'Webhook',
   Email = 'Email',
+  CreatedBy = 'CreatedBy',
 }
 
 export type IndexedTargetArrayItem = { id: string; type: IndexedEntities };

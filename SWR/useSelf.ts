@@ -1,11 +1,11 @@
 import useSWR from 'swr';
 import { SWRFetcher } from '../Config';
 import { GetSelfInfoURL } from '../adapters/Users';
-import { DynamoUser } from '../types/dynamo';
 import { APIErrorResponse } from '../types/main';
+import { User } from '../entities';
 
 export const useSelf = () => {
-  const { data, error } = useSWR<DynamoUser, APIErrorResponse>(GetSelfInfoURL(), SWRFetcher, {
+  const { data, error } = useSWR<User, APIErrorResponse>(GetSelfInfoURL(), SWRFetcher, {
     shouldRetryOnError: false,
   });
   return {

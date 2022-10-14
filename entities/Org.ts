@@ -1,15 +1,12 @@
-import { Collection, Entity, OneToMany, OneToOne, Property, Reference } from '@mikro-orm/core';
+import { Entity, Property, Reference } from '@mikro-orm/core';
 import { IndexedTargetArray } from '../types/main';
 import { BaseEntity } from './BaseEntity';
 import { User } from './User';
 
-export type OrgConstructorValues = Pick<Org, 'createdBy' | 'orgId' | 'displayName'>;
+export type OrgConstructorValues = Pick<Org, 'orgId' | 'displayName' | 'target'>;
 
 @Entity()
 export class Org extends BaseEntity {
-  @OneToOne(() => User)
-  createdBy: User;
-
   @Property({ type: 'text', unique: true })
   orgId: string;
 
@@ -34,10 +31,10 @@ export class Org extends BaseEntity {
   @Property({ type: 'array' })
   target: IndexedTargetArray;
 
-  constructor({ orgId, createdBy, displayName }: OrgConstructorValues) {
+  constructor({ orgId, displayName, target }: OrgConstructorValues) {
     super();
-    this.createdBy = Reference.create(createdBy);
     this.orgId = orgId;
     this.displayName = displayName;
+    this.target = target;
   }
 }

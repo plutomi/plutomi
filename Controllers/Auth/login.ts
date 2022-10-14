@@ -4,7 +4,7 @@ import { JOI_SETTINGS, WEBSITE_URL, COOKIE_NAME, COOKIE_SETTINGS, Emails } from 
 import * as CreateError from '../../utils/createError';
 import { sendEmail, SendEmailProps } from '../../models/Emails/sendEmail';
 import { env } from '../../env';
-import { User } from '../../entities';
+import { User, UserLoginLink } from '../../entities';
 
 const jwt = require('jsonwebtoken');
 
@@ -35,6 +35,7 @@ export const login = async (req: Request, res: Response) => {
     // TODO add types for this
     const data = await jwt.verify(token, env.loginLinksPassword);
 
+    console.log(`Token data`, data);
     userId = data.id;
     loginLinkId = data.loginLinkId;
   } catch (error) {
@@ -45,23 +46,22 @@ export const login = async (req: Request, res: Response) => {
   }
   console.log(`Trying to find user with ID of `, userId);
 
+  let loginLink: UserLoginLink;
+
   let user: User;
 
   try {
-    user = await req.entityManager.findOne(User, {
-      id: userId,
+    loginLink = await req.entityManager.findOne(UserLoginLink, {
+      id: loginLinkId,
     });
+    user = loginLink.user;
   } catch (error) {
-    console.error(`ERROR retrieving user`, error);
-    return res.status(500).json({ message: 'An error ocurred retrieving that user', error });
+    console.error(`ERROR retrieving login link`, error);
+    return res.status(500).json({ message: 'An error ocurred retrieving login link data', error });
   }
 
-  // If a user is deleted between when they made they requested the login link
-  // and when they attempted to sign in... somehow
-  if (!user) {
-    return res.status(401).json({
-      message: `Please contact support, your user account appears to be deleted.`,
-    });
+  if (!loginLink) {
+    return res.status(401).json({ message: 'Invalid login link' });
   }
 
   // TODO Create login event

@@ -150,6 +150,8 @@ export const requestLoginLink = async (req: Request, res: Response) => {
   const ttlExpiry = Time.futureUNIX(validFor); // when the link expires and is deleted from Dynamo
   const relativeExpiry = Time.relative(Time.futureISO(validFor));
 
+  console.log(`Creating a login link with THIS user`, user);
+  console.log(`USER ID`, user.id);
   const loginLinkId = nanoid();
   const token = await jwt.sign(
     {

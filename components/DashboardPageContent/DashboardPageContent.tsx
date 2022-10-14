@@ -11,11 +11,16 @@ import { CreateOrgModal } from '../CreateOrgModal';
 import { Loader } from '../Loader/Loader';
 import { UpdateUserProfileModal } from '../UpdateUserInfoModal';
 import { nameIsDefault } from '../../utils/compareStrings/nameIsDefault';
+import { findInTargetArray } from '../../utils/findInTargetArray';
+import { IndexedEntities } from '../../types/main';
 
 export const DashboardPageContent = () => {
   const { user, isUserLoading, isUserError } = useSelf();
+  const orgId = user
+    ? findInTargetArray({ entity: IndexedEntities.Org, targetArray: user.target })
+    : undefined;
   const { org, isOrgLoading, isOrgError } = useOrgInfo({
-    orgId: user?.orgId,
+    orgId,
   });
   const customApplyLink = `${WEBSITE_URL}/${org?.orgId}/apply`;
 
@@ -26,7 +31,8 @@ export const DashboardPageContent = () => {
 
   if (isUserLoading) return <Loader text="Loading user..." />;
 
-  if (user?.orgId !== DEFAULTS.NO_ORG && isOrgLoading) {
+  console.log(`ORG ID IS`, orgId);
+  if (orgId && isOrgLoading) {
     return <Loader text="Loading org info..." />;
   }
 
@@ -125,7 +131,7 @@ export const DashboardPageContent = () => {
   return (
     <>
       <CreateOrgModal />
-      {user?.orgId === DEFAULTS.NO_ORG ? UserNotInOrg : UserInOrg}
+      {!orgId ? UserNotInOrg : UserInOrg}
     </>
   );
 };

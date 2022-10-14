@@ -11,4 +11,4 @@ interface FindInTargetArrayProps {
  * @returns string - ID of the entity
  */
 export const findInTargetArray = ({ entity, targetArray }: FindInTargetArrayProps): string =>
-  targetArray.find((item) => item.type === entity).id;
+  targetArray.find((item) => item.type === entity)?.id;
