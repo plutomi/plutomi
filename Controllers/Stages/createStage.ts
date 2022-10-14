@@ -114,13 +114,21 @@ export const createStage = async (req: Request, res: Response) => {
 
   if (lastStage) {
     // Set the last stage's nextStage to be our newly created stage
-    lastStage.target = [...lastStage.target, { id: newStage.id, type: IndexedEntities.NextStage }];
+    const indexOfNextStage = lastStage.target.findIndex(
+      (item) => item.type === IndexedEntities.NextStage,
+    );
+    lastStage.target[indexOfNextStage] = { id: newStage.id, type: IndexedEntities.NextStage };
 
-    // Set our stage's previousStage to be the last stage
-    newStage.target = [
-      ...newStage.target,
-      { id: lastStage.id, type: IndexedEntities.PreviousStage },
-    ];
+    const indexOfPreviousStage = newStage.target.findIndex(
+      (item) => item.type === IndexedEntities.PreviousStage,
+    );
+
+    // Set our new stage's previousStage to be the last stage
+    newStage.target[indexOfPreviousStage] = {
+      id: lastStage.id,
+      type: IndexedEntities.PreviousStage,
+    };
+
     entityManager.persist(lastStage);
     entityManager.persist(newStage);
   }
