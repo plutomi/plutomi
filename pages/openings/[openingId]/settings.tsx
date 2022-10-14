@@ -13,7 +13,7 @@ export default function OpeningSettings() {
     <NewPageLayout
       loggedOutPageText="Log in to view your opening settings"
       currentNavbarItem="Openings"
-      headerText={isOpeningLoading ? 'Loading opening settings...' : `${opening.name} - Settings`}
+      headerText={isOpeningLoading ? 'Loading opening settings...' : `${opening?.name} - Settings`}
     >
       <>
         <OpeningSettingsHeader />
