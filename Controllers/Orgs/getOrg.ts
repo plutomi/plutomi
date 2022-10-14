@@ -12,7 +12,7 @@ export const getOrg = async (req: Request, res: Response) => {
 
   try {
     org = await entityManager.findOne(Org, {
-      id: orgId,
+      orgId: orgId,
     });
   } catch (error) {
     console.error(`An error ocurred returning org info`, error);
