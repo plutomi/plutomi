@@ -4,6 +4,9 @@ import { JOI_SETTINGS, LIMITS } from '../../Config';
 import { DynamoStage } from '../../types/dynamo';
 import * as CreateError from '../../utils/createError';
 import { DB } from '../../models';
+import { Stage } from '../../entities';
+import { IndexedEntities } from '../../types/main';
+import { findInTargetArray } from '../../utils/findInTargetArray';
 
 export interface APIUpdateStageOptions
   extends Partial<Pick<DynamoStage, 'GSI1SK' | 'questionOrder'>> {}
@@ -21,22 +24,27 @@ export const updateStage = async (req: Request, res: Response) => {
     return res.status(status).json(body);
   }
 
-  let updatedValues: APIUpdateStageOptions = {};
-  const { user } = req;
+  const { user, entityManager } = req;
   const { openingId, stageId } = req.params;
 
-  const [stage, stageError] = await DB.Stages.getStage({
-    openingId,
-    stageId,
-    orgId: user.orgId,
+  const orgId = findInTargetArray({
+    entity: IndexedEntities.Org,
+    targetArray: user.target,
   });
 
-  if (stageError) {
-    const { status, body } = CreateError.SDK(
-      stageError,
-      'An error ocurred retrieving your stage info',
-    );
-    return res.status(status).json(body);
+  let stage: Stage;
+  try {
+    await entityManager.findOne(Stage, {
+      id: stageId,
+      $and: [
+        { target: { id: openingId, type: IndexedEntities.Opening } },
+        { target: { id: orgId, type: IndexedEntities.Org } },
+      ],
+    });
+  } catch (error) {
+    const message = 'An error ocurred retrieving stage info';
+    console.error(message, error);
+    return res.status(500).json({ message, error });
   }
 
   if (!stage) {
@@ -67,26 +75,19 @@ export const updateStage = async (req: Request, res: Response) => {
       });
     }
 
-    updatedValues.questionOrder = req.body.questionOrder;
+    stage.questionOrder = req.body.questionOrder;
   }
 
   if (req.body.GSI1SK) {
-    updatedValues.GSI1SK = req.body.GSI1SK;
+    stage.name = req.body.GSI1SK;
   }
 
-  const [updatedStage, updateError] = await DB.Stages.updateStage({
-    orgId: user.orgId,
-    openingId,
-    stageId,
-    updatedValues,
-  });
-
-  if (updateError) {
-    const { status, body } = CreateError.SDK(updateError, 'An error ocurred updating this stage');
-    return res.status(status).json(body);
+  try {
+    await entityManager.flush();
+    return res.status(200).json({ message: 'Stage updated', stage });
+  } catch (error) {
+    const message = 'An error ocurred updating that stage';
+    console.error(error, message);
+    return res.status(500).json({ message, error });
   }
-
-  return res.status(200).json({
-    message: 'Stage updated!',
-  });
 };
