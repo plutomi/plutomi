@@ -5,8 +5,12 @@ import { findInTargetArray } from './findInTargetArray';
 
 interface GetAdjacentStagesBasedOnPositionProps {
   position?: number;
-  otherStages: Stage[];
-  stageIdWeAreMoving: string;
+
+  /**
+   * This must be a *SORTED* list of the other stages
+   */
+  otherSortedStages: Stage[];
+  stageIdBeingMoved: string;
 }
 interface AdjacentStagesResult {
   nextStageId?: string;
@@ -70,4 +74,26 @@ export const sortStages = (unsortedStagesInOpening: Stage[]): Stage[] => {
   }
 
   return sortedStages;
+};
+
+export const getAdjacentStagesBasedOnPosition = ({
+  position,
+  otherSortedStages,
+  stageIdBeingMoved,
+}: GetAdjacentStagesBasedOnPositionProps): AdjacentStagesResult => {
+  if (!position && position !== 0) {
+    // Position not provided, add it to the end
+    return {
+      nextStageId: undefined,
+      previousStageId: otherSortedStages[otherSortedStages.length - 1]?.id,
+    };
+  }
+
+  if (position === 0) {
+    // First in the list, get the current first stage
+    return {
+      previousStageId: undefined,
+      nextStageId: otherSortedStages[0]?.id,
+    };
+  }
 };
