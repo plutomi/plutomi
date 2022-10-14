@@ -19,7 +19,7 @@ import { env } from '../../env';
 import { User, UserLoginLink } from '../../entities';
 import { QueryOrder } from '@mikro-orm/core';
 import dayjs from 'dayjs';
-import { IndexedEntities, IndexedTargetArray } from '../../types/main';
+import { IndexedEntities } from '../../types/main';
 import { findInTargetArray } from '../../utils/findInTargetArray';
 
 const jwt = require('jsonwebtoken');
@@ -63,9 +63,10 @@ export const requestLoginLink = async (req: Request, res: Response) => {
 
   // If a user is signing in for the first time, create an account for them
   let user: User;
+  console.log(`Attempting to find user with email`, email);
   try {
     user = await req.entityManager.findOne(User, {
-      target: { id: email, type: 'email' },
+      target: { id: email, type: IndexedEntities.Email },
     });
   } catch (error) {
     console.error(`Error retrieving user info`, error);
@@ -77,6 +78,7 @@ export const requestLoginLink = async (req: Request, res: Response) => {
 
   if (!user) {
     try {
+      console.log(`Creating new user`);
       const createdUser = new User({
         firstName: DEFAULTS.FIRST_NAME,
         lastName: DEFAULTS.LAST_NAME,
@@ -87,20 +89,23 @@ export const requestLoginLink = async (req: Request, res: Response) => {
           },
         ],
       });
+      console.log(`Creating new user`, createdUser);
 
       await req.entityManager.persistAndFlush(createdUser);
+      console.log(`User created`);
       user = createdUser;
     } catch (error) {
-      console.error(`An error ocurred creating your account`);
-      return res.status(500).json({ message: 'An error ocurred creating your account' });
+      console.error(`An error ocurred creating your account`, error);
+      return res.status(500).json({ message: 'An error ocurred creating your account', error });
     }
   }
 
   const userEmail = findInTargetArray({ entity: IndexedEntities.Email, targetArray: user.target });
+  console.log(`User created, finding in target array`, userEmail);
   // TODO add a test for this @jest
   if (!user.canReceiveEmails) {
     return res.status(403).json({
-      message: `'${userEmail}' is unable to receive emails, please reach out to support@plutomi.com to opt back in!`,
+      message: `'${email}' is unable to receive emails, please reach out to support@plutomi.com to opt back in!`,
     });
   }
 
@@ -109,6 +114,7 @@ export const requestLoginLink = async (req: Request, res: Response) => {
   console.log(`Getting latest lgin link`);
   try {
     latestLoginLink = await req.entityManager.findOne(
+      // TODO idnex lookup
       UserLoginLink,
       {
         user,

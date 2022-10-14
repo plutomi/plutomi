@@ -1,9 +1,6 @@
-import { FilterQuery } from '@mikro-orm/core';
 import { Request, Response } from 'express';
 import { Opening } from '../../entities';
-import { DB } from '../../models';
 import { IndexedEntities } from '../../types/main';
-import * as CreateError from '../../utils/createError';
 import { findInTargetArray } from '../../utils/findInTargetArray';
 
 export const getOpeningsInOrg = async (req: Request, res: Response) => {
