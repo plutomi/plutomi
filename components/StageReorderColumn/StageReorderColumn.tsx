@@ -38,24 +38,25 @@ export const StageReorderColumn = () => {
       return;
     }
 
-    const newStageOrder: string[] = Array.from(opening.stageOrder);
-    newStageOrder.splice(source.index, 1);
-    newStageOrder.splice(destination.index, 0, draggableId);
-    const newOrder = newStageOrder.map((i) => stages.find((j) => j.stageId === i));
+    alert('STAGE REORDER ORDER HERE');
+    // const newStageOrder: string[] = Array.from(opening.stageOrder);
+    // newStageOrder.splice(source.index, 1);
+    // newStageOrder.splice(destination.index, 0, draggableId);
+    // const newOrder = newStageOrder.map((i) => stages.find((j) => j.stageId === i));
 
-    setNewStages(newOrder);
+    // setNewStages(newOrder);
 
-    try {
-      await UpdateOpening({
-        openingId,
-        newValues: {
-          stageOrder: newStageOrder,
-        },
-      });
-    } catch (error) {
-      console.error(error.response.data.message);
-      alert(error.response.data.message);
-    }
+    // try {
+    //   await UpdateOpening({
+    //     openingId,
+    //     newValues: {
+    //       stageOrder: newStageOrder,
+    //     },
+    //   });
+    // } catch (error) {
+    //   console.error(error.response.data.message);
+    //   alert(error.response.data.message);
+    // }
 
     // Refresh the stage order
     mutate(GetOpeningInfoURL(openingId));
@@ -82,15 +83,15 @@ export const StageReorderColumn = () => {
           {opening?.totalStages === 0 ? 'No stages found' : 'Stage Order'}
         </h1>
 
-        {opening?.totalStages > 0 && (
+        {opening.totalStages > 0 && (
           <DragDropContext onDragEnd={handleDragEnd} onDragStart={() => console.log('Start')}>
-            <Droppable droppableId={opening.openingId}>
+            <Droppable droppableId={opening.id}>
               {(provided) => (
                 <div {...provided.droppableProps} ref={provided.innerRef}>
                   {newStages?.map((stage, index) => (
                     <Draggable
-                      key={stage.stageId}
-                      draggableId={stage.stageId}
+                      key={stage.id}
+                      draggableId={stage.id}
                       index={index}
                       {...provided.droppableProps}
                     >
@@ -101,11 +102,11 @@ export const StageReorderColumn = () => {
                           ref={provided.innerRef}
                         >
                           <StageCard
-                            key={stage.stageId}
+                            key={stage.id}
                             totalApplicants={stage.totalApplicants}
-                            name={`${stage.GSI1SK}`}
-                            stageId={stage.stageId}
-                            linkHref={`/openings/${openingId}/stages/${stage.stageId}/settings`}
+                            name={stage.name}
+                            stageId={stage.id}
+                            linkHref={`/openings/${openingId}/stages/${stage.id}/settings`}
                             draggable
                           />
                         </div>

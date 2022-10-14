@@ -89,6 +89,8 @@ export const createStage = async (req: Request, res: Response) => {
 
   opening.totalStages = opening.totalStages += 1;
 
+  entityManager.persist(opening);
+
   let newStage = new Stage({
     name: GSI1SK,
     target: [
@@ -99,15 +101,38 @@ export const createStage = async (req: Request, res: Response) => {
     ],
   });
 
-  // Set the last stage's nextStage to be our newly created stage
-  lastStage.target = [...lastStage.target, { id: newStage.id, type: IndexedEntities.NextStage }];
+  try {
+    console.log(`Creating new stage`, newStage);
+
+    await entityManager.persistAndFlush(newStage); // TODO check if we can remove
+    console.log('New stage created!');
+  } catch (error) {
+    const message = 'An error ocurred creating that stage';
+    console.error(message, error);
+    return res.status(500).json({ message, error });
+  }
+
+  if (lastStage) {
+    // Set the last stage's nextStage to be our newly created stage
+    lastStage.target = [...lastStage.target, { id: newStage.id, type: IndexedEntities.NextStage }];
+
+    // Set our stage's previousStage to be the last stage
+    newStage.target = [
+      ...newStage.target,
+      { id: lastStage.id, type: IndexedEntities.PreviousStage },
+    ];
+    entityManager.persist(lastStage);
+    entityManager.persist(newStage);
+  }
+
+  console.log(`LAST STAGE CURRENT`, lastStage);
+  console.log(`NEW STAGE CURRENT`, newStage);
 
   // TODO wrap all of this in a transaction
   try {
-    entityManager.persist([opening, newStage, lastStage]);
     await entityManager.flush();
   } catch (error) {
-    const message = 'An error ocurred creating that stage';
+    const message = 'An error ocurred updating opening stages';
     console.error(message, error);
     return res.status(500).json({ message, error });
   }
