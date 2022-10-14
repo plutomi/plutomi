@@ -53,4 +53,5 @@ export enum IndexedEntities {
   Email = 'Email',
 }
 
-export type IndexedTargetArray = Array<{ id: string; type: IndexedEntities }>;
+export type IndexedTargetArrayItem = { id: string; type: IndexedEntities };
+export type IndexedTargetArray = Array<IndexedTargetArrayItem>;

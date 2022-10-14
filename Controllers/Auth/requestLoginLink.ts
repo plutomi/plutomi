@@ -19,7 +19,8 @@ import { env } from '../../env';
 import { User, UserLoginLink } from '../../entities';
 import { QueryOrder } from '@mikro-orm/core';
 import dayjs from 'dayjs';
-import { IndexedTargetArray } from '../../types/main';
+import { IndexedEntities, IndexedTargetArray } from '../../types/main';
+import { findInTargetArray } from '../../utils/findInTargetArray';
 
 const jwt = require('jsonwebtoken');
 
@@ -82,7 +83,7 @@ export const requestLoginLink = async (req: Request, res: Response) => {
         target: [
           {
             id: email,
-            type: 'email',
+            type: IndexedEntities.Email,
           },
         ],
       });
@@ -95,8 +96,7 @@ export const requestLoginLink = async (req: Request, res: Response) => {
     }
   }
 
-  const userEmail = user.target.find((values) => values.type === 'email').id;
-  console.log(`Outside of loop, user is`, user);
+  const userEmail = findInTargetArray({ entity: IndexedEntities.Email, targetArray: user.target });
   // TODO add a test for this @jest
   if (!user.canReceiveEmails) {
     return res.status(403).json({

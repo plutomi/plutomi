@@ -1,29 +1,28 @@
 import { Request, Response } from 'express';
 import { Org } from '../../entities';
-import { DB } from '../../models';
-import * as CreateError from '../../utils/createError';
+import { IndexedEntities } from '../../types/main';
+import { findInTargetArray } from '../../utils/findInTargetArray';
 
 export const getOrg = async (req: Request, res: Response) => {
   const { user, entityManager } = req;
 
   let org: Org;
 
-  // try {
-  //   await entityManager.findOne(Org, {
-  //     id: user.org.u,
-  //   });
-  // } catch (error) {}
+  const orgId = findInTargetArray({ entity: IndexedEntities.Org, targetArray: user.target });
 
-  // if (error) {
-  //   const { status, body } = CreateError.SDK(error, 'Unable to retrieve org info');
+  try {
+    org = await entityManager.findOne(Org, {
+      id: orgId,
+    });
+  } catch (error) {
+    console.error(`An error ocurred returning org info`, error);
+    return res.status(500).json({ message: 'An error ocurred returning org info', error });
+  }
 
-  //   return res.status(status).json(body);
-  // }
-
-  // // Not sure how this would be possible but :)
-  // if (!org) {
-  //   return res.status(404).json({ message: 'Org not found' });
-  // }
+  // Not sure how this would be possible but :)
+  if (!org) {
+    return res.status(404).json({ message: 'Org not found' });
+  }
 
   return res.status(200).json(org);
 };

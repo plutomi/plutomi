@@ -1,11 +1,10 @@
 import { Request, Response } from 'express';
 import Joi from 'joi';
-import { DEFAULTS, JOI_SETTINGS, JoiOrgId } from '../../Config';
+import { JOI_SETTINGS, JoiOrgId } from '../../Config';
 import * as CreateError from '../../utils/createError';
 import { DynamoOrg } from '../../types/dynamo';
-import { getInvitesForUser } from '../../models/Invites';
-import { DB } from '../../models';
 import { Org } from '../../entities';
+import { IndexedEntities } from '../../types/main';
 
 export type APICreateOrgOptions = Required<Pick<DynamoOrg, 'orgId' | 'displayName'>>;
 
@@ -26,7 +25,7 @@ export const createAndJoinOrg = async (req: Request, res: Response) => {
     return res.status(status).json(body);
   }
 
-  if (user.org) {
+  if (user.orgJoinDate) {
     return res.status(403).json({ message: 'You already belong to an org!' });
   }
 
@@ -59,11 +58,18 @@ export const createAndJoinOrg = async (req: Request, res: Response) => {
     displayName,
   });
 
-  newOrg.users.add(user);
+  user.target = user.target.map((item) => {
+    if (item.type === IndexedEntities.Org) {
+      item.id = newOrg.id;
+    }
+    return item;
+  });
+  entityManager.persist(user);
+  entityManager.persist(newOrg);
 
   // TODO make this a transaction
   try {
-    await entityManager.persistAndFlush(newOrg);
+    await entityManager.flush();
   } catch (error) {
     const message = 'Error ocurred creating the org';
     console.error(message, error);
