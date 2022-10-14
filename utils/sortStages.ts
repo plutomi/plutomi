@@ -13,8 +13,8 @@ interface GetAdjacentStagesBasedOnPositionProps {
   stageIdBeingMoved: string;
 }
 interface AdjacentStagesResult {
-  newNextStageId?: string;
-  newPreviousStageId?: string;
+  newNextStageId: string | undefined;
+  newPreviousStageId: string | undefined;
 }
 
 export const sortStages = (unsortedStagesInOpening: Stage[]): Stage[] => {
@@ -96,4 +96,38 @@ export const getAdjacentStagesBasedOnPosition = ({
       newNextStageId: otherSortedStages[0]?.id,
     };
   }
+
+  // We didn't really move it anywhere this shouldn't be possible // TODO add it here
+  // const currentIndex = otherSortedStages.findIndex((item) => item.id === stageIdBeingMoved);
+  //   if (currentIndex === position) {
+
+  //   }
+
+  const currentIndex = otherSortedStages.findIndex((item) => item.id === stageIdBeingMoved)
+
+  /**
+   * We have to check if we are moving the stage:
+   * 
+   * 1. DOWN
+   * 
+   * OLD --- NEW
+   * 
+   * Stage 1 --- Stage 2
+   * Stage 2 --- Stage 3
+   * Stage 3 --- Stage 1 <-- Moved
+   * 
+   * 
+   * 2. UOR
+   * 
+   * OLD --- NEW
+   * 
+   * Stage 1 --- Stage 3 <-- Moved
+   * Stage 2 --- Stage 2
+   * Stage 3 --- Stage 1
+   */
+  if 
+  return {
+    newPreviousStageId: otherSortedStages[position]?.id,
+    newNextStageId: otherSortedStages[position + 1]?.id,
+  };
 };
