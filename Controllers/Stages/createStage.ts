@@ -112,12 +112,14 @@ export const createStage = async (req: Request, res: Response) => {
     return res.status(500).json({ message, error });
   }
 
+  console.log(`New stage that was created`, newStage);
   if (lastStage) {
     // Set the last stage's nextStage to be our newly created stage
     const indexOfNextStage = lastStage.target.findIndex(
       (item) => item.type === IndexedEntities.NextStage,
     );
-    lastStage.target[indexOfNextStage] = { id: newStage.id, type: IndexedEntities.NextStage };
+    // Cannot use .id as it returns undefined after creating a new entity
+    lastStage.target[indexOfNextStage] = { id: newStage._id, type: IndexedEntities.NextStage };
 
     const indexOfPreviousStage = newStage.target.findIndex(
       (item) => item.type === IndexedEntities.PreviousStage,
@@ -130,11 +132,9 @@ export const createStage = async (req: Request, res: Response) => {
     };
 
     entityManager.persist(lastStage);
-    entityManager.persist(newStage);
   }
 
-  console.log(`LAST STAGE CURRENT`, lastStage);
-  console.log(`NEW STAGE CURRENT`, newStage);
+  entityManager.persist(newStage);
 
   // TODO wrap all of this in a transaction
   try {
