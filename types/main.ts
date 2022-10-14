@@ -1,4 +1,4 @@
-import { EntityManager, MongoDriver } from '@mikro-orm/mongodb';
+import { EntityManager, MongoDriver, ObjectId } from '@mikro-orm/mongodb';
 import { User } from '../entities';
 import { DynamoApplicant } from './dynamo';
 
@@ -52,7 +52,9 @@ export enum IndexedEntities {
   Webhook = 'Webhook',
   Email = 'Email',
   CreatedBy = 'CreatedBy',
+  PreviousStage = 'PreviousStage',
+  NextStage = 'NextStage',
 }
 
-export type IndexedTargetArrayItem = { id: string; type: IndexedEntities };
+export type IndexedTargetArrayItem = { id: string | ObjectId; type: IndexedEntities };
 export type IndexedTargetArray = Array<IndexedTargetArrayItem>;

@@ -22,14 +22,14 @@ export const getOpening = async (req: Request, res: Response) => {
   }
   const { user, entityManager } = req;
   const { openingId } = req.params;
-
+  const orgId = findInTargetArray({ entity: IndexedEntities.Org, targetArray: user.target });
   let opening: Opening;
 
   try {
     opening = await entityManager.findOne(Opening, {
       id: openingId,
       target: {
-        id: findInTargetArray({ entity: IndexedEntities.Org, targetArray: user.target }),
+        id: orgId,
         type: IndexedEntities.Org,
       },
     });

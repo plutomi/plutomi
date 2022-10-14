@@ -1,20 +1,14 @@
-import { Entity, Enum, IdentifiedReference, ManyToOne, Property, Reference } from '@mikro-orm/core';
+import { Entity, Enum, IdentifiedReference, Index, ManyToOne, Property, Reference } from '@mikro-orm/core';
+import { IndexedTargetArray } from '../types/main';
 import { BaseEntity } from './BaseEntity';
-import { Opening } from './Opening';
-import { Org } from './Org';
 
-export type StageConstructorValues = Pick<Stage, 'name' | 'org' | 'opening'>;
+export type StageConstructorValues = Pick<Stage, 'name' | 'target'>;
 
 @Entity()
+@Index({ name: 'target_array', options: { target: 1 } })
 export class Stage extends BaseEntity {
   @Property({ type: 'text' })
   name: string;
-
-  @ManyToOne(() => Org, { wrappedReference: true })
-  org: IdentifiedReference<Org>;
-
-  @ManyToOne(() => Opening, { wrappedReference: true })
-  opening: IdentifiedReference<Opening>;
 
   @Property({ type: 'integer' })
   totalApplicants: number = 0;
@@ -22,15 +16,15 @@ export class Stage extends BaseEntity {
   @Property({ type: 'integer' })
   totalQuestions: number = 0;
 
-  // TODO questions
+  @Property({ type: 'array' })
+  target: IndexedTargetArray;
 
-  // @OneToMany(() => UserLoginLink, (b) => b.user, { cascade: [Cascade.ALL] })
-  // loginLinks = new Collection<UserLoginLink>(this);
+  @Property({ type: 'array' }) // TODO replace with nextQuestionId and previousQuestionId
+  questionOrder: string[] = [];
 
-  constructor({ name, org, opening }: StageConstructorValues) {
+  constructor({ name, target }: StageConstructorValues) {
     super();
     this.name = name;
-    this.org = Reference.create(org);
-    this.opening = Reference.create(opening);
+    this.target = target;
   }
 }
