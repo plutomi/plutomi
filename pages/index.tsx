@@ -112,9 +112,7 @@ export async function getStaticProps() {
           },
         );
 
-        console.log(`DATA FE`, data);
         data.map(async (commit) => {
-          console.log(`Commit`, commit);
           if (commit.commit.author.name !== 'allcontributors[bot]') {
             const customCommit = {
               name: commit.commit.author.name,
