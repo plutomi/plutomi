@@ -118,18 +118,17 @@ export const updateStage = async (req: Request, res: Response) => {
 
       // If there was a previous stage before we moved, we want to update that stage
       if (oldPreviousStageId) {
-        // Find it
         oldPreviousStage = allStagesInOpening.find((stage) => stage.id === oldPreviousStageId);
 
-        // Get it's nextstage in the target array
         oldPreviousStagesNextStageIndex = oldPreviousStage.target.findIndex(
           (item) => item.type === IndexedEntities.NextStage,
         );
 
-        // Set the old previous stage's nextStage to be the old next stage of the stage we are currently moving
         /**
-         * OLD --- NEW
-         * Stage 1 --- Stage 1 <-- It's next stage property gets updated to Stage 3, which was our stage's old next stage
+         * Set the old previous stage's nextStage to be the old next stage of the stage we are currently moving
+         *
+         *     OLD --- NEW
+         * Stage 1 --- Stage 1 <-- It's next stage property gets updated to Stage 3, which was Stage 2's old next stage
          * Stage 2 --- Stage 3
          * Stage 3 --- Stage 2 <-- Moved
          */
@@ -139,9 +138,9 @@ export const updateStage = async (req: Request, res: Response) => {
       } else {
         /**
          * Set our old next stage's previous stage to be undefined.
-         * This scenario:
+    
          *
-         * OLD --- NEW
+         *     OLD --- NEW
          * Stage 1 --- Stage 2 <-- Previous stage is now undefined
          * Stage 2 --- Stage 1 <-- Moved
          *
@@ -152,7 +151,7 @@ export const updateStage = async (req: Request, res: Response) => {
         updateOldNextStage = true;
       }
 
-      // If there *was* a next stage before we moved, we need to update that stage
+      // If there was a next stage before we moved, we need to update that stage's previous stage
       if (oldNextStageId) {
         oldNextStage = allStagesInOpening.find((stage) => stage.id === oldNextStageId);
 
@@ -160,19 +159,35 @@ export const updateStage = async (req: Request, res: Response) => {
           (item) => item.type === IndexedEntities.PreviousStage,
         );
 
-        // Set our old next stage's previous stage to be our old previous stage
-
-        // Set our old next stage's previous stage to be our old previous stage (since we swapped places with them essentially)
+        /**
+         * We need to set Stage 2's previous stage to our stage's old previous stage
+         *
+         *     OLD --- NEW
+         * Stage 1 --- Stage 2 <-- Previous stage gets updated to undefined
+         * Stage 2 --- Stage 3
+         * Stage 3 --- Stage 1 <--- Moved
+         *
+         */
         oldNextStage.target[oldNextStagesPreviousStageIndex] = stage.target.find(
           (item) => item.type === IndexedEntities.PreviousStage,
         );
       } else {
-        // Set or old previous stage's next stage to be undefined
-        // We can't do it here because we don't know if it exists yet, and we can reuse the variables on lines 111
+        /**
+         *  If there is no old next stage, we need to update our old previous stage's next stage ID to be undefined.
+         *
+         * OLD --- NEW
+         *
+         * Stage 1 --- Stage 2 <-- Moved
+         * Stage 2 --- Stage 1 <-- Needs their next stage to be undefined
+         *
+         *
+         * Same case as above, we don't really know if we had a previous check, this logic statement is not responsible for that.
+         * We are setting a reminder for us to check it a little bit below to prevent duplicate logic
+         */
         updateOldPreviousStage = true;
       }
 
-      // No next stage exists after the update
+      // Update the relevant stages if needed
       if (oldPreviousStage && updateOldPreviousStage) {
         oldPreviousStage.target[oldPreviousStagesNextStageIndex] = {
           id: undefined,
@@ -180,7 +195,6 @@ export const updateStage = async (req: Request, res: Response) => {
         };
       }
 
-      // No previous stage exists after the update
       if (oldNextStage && updateOldNextStage) {
         oldNextStage.target[oldNextStagesPreviousStageIndex] = {
           id: undefined,
@@ -188,9 +202,19 @@ export const updateStage = async (req: Request, res: Response) => {
         };
       }
 
+      // Queue them up to be saved into the DB
       entityManager.persist(oldPreviousStage);
       entityManager.persist(oldNextStage);
 
+      /**
+       * Now we move on to update the new stages, after moving our stage to it's desired spot. Note that these stages can be a combination of the "old" stages.. Example:
+       *
+       * OLD --- NEW
+       *
+       * Stage 1 --- Stage 2 <-- It's old previous stage is now its new next stage, and its previous stage is now undefined!
+       * Stage 2 --- Stage 1 <-- Moved, it's old next stage is now its new previous stage!
+       * Stage 3 --- Stage 3
+       */
       const { newNextStageId, newPreviousStageId } = getAdjacentStagesBasedOnPosition({
         position: req.body.position,
         otherSortedStages: allStagesInOpening,
