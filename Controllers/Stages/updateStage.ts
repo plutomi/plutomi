@@ -206,7 +206,14 @@ export const updateStage = async (req: Request, res: Response) => {
         entityManager.persist(stage);
       }
 
-      // TODO update the old previous and next stages
+      try {
+        await entityManager.flush();
+        return res.status(200).json({ message: 'Stages updated!' });
+      } catch (error) {
+        const message = 'Error updating stage order';
+        console.error(message, error);
+        return res.status(500).json({ message, error });
+      }
     } catch (error) {
       const message = 'Error retrieving other stages in opening';
       console.error(message, error);
