@@ -3,14 +3,15 @@ import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 import { mutate } from 'swr';
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
-import { GetStagesInOpeningURL } from '../../adapters/Stages';
+import { GetStagesInOpeningURL, UpdateStage } from '../../adapters/Stages';
 import useStore from '../../utils/store';
 import { useOpeningInfo } from '../../SWR/useOpeningInfo';
 import { useAllStagesInOpening } from '../../SWR/useAllStagesInOpening';
-import { UpdateOpening, GetOpeningInfoURL } from '../../adapters/Openings';
+import { GetOpeningInfoURL } from '../../adapters/Openings';
 import { CustomQuery } from '../../types/main';
 import { CreateStageModal } from '../CreateStageModal';
 import { StageCard } from '../StageCard';
+import { getAdjacentStagesBasedOnPosition, sortStages } from '../../utils/sortStages';
 
 export const StageReorderColumn = () => {
   const openCreateStageModal = useStore((state) => state.openCreateStageModal);
@@ -19,7 +20,7 @@ export const StageReorderColumn = () => {
   const { openingId, stageId } = router.query as Pick<CustomQuery, 'openingId' | 'stageId'>;
   const { opening, isOpeningLoading, isOpeningError } = useOpeningInfo({ openingId });
   const { stages, isStagesLoading, isStagesError } = useAllStagesInOpening({
-    openingId,
+    openingId: opening.id,
   });
 
   const [newStages, setNewStages] = useState(stages);
@@ -27,6 +28,7 @@ export const StageReorderColumn = () => {
     setNewStages(stages);
   }, [stages]);
 
+  // TODO types!!!!!!!
   const handleDragEnd = async (result) => {
     const { destination, source, draggableId } = result;
     // No change
@@ -34,17 +36,23 @@ export const StageReorderColumn = () => {
       return;
     }
     // If dropped in the same place
-    if (destination.droppableId === source.droppableId && destination.index === source.index) {
+    if (destination.droppableId === source.droppableId && destination.index === source.index)
       return;
-    }
 
-    alert('STAGE REORDER ORDER HERE');
-    // const newStageOrder: string[] = Array.from(opening.stageOrder);
-    // newStageOrder.splice(source.index, 1);
-    // newStageOrder.splice(destination.index, 0, draggableId);
-    // const newOrder = newStageOrder.map((i) => stages.find((j) => j.stageId === i));
+    alert('STAGE REORDER ORDER HERE'); // These are for the local stages in teh draggable
+    const newStageOrder: string[] = Array.from(stages.map((stage) => stage.id));
+    console.log(`New stage order ids`, newStageOrder);
+    newStageOrder.splice(source.index, 1);
+    newStageOrder.splice(destination.index, 0, draggableId);
+    const newOrder = newStageOrder.map((i) => stages.find((j) => j.id === i));
 
-    // setNewStages(newOrder);
+    setNewStages(newOrder);
+
+    const { newNextStageId, newPreviousStageId } = getAdjacentStagesBasedOnPosition({
+      position: destination.index,
+      otherSortedStages: sortStages(stages),
+      stageIdBeingMoved: draggableId,
+    });
 
     // try {
     //   await UpdateOpening({
@@ -62,7 +70,7 @@ export const StageReorderColumn = () => {
     mutate(GetOpeningInfoURL(openingId));
 
     // Refresh the stages
-    mutate(GetStagesInOpeningURL(openingId));
+    mutate(GetStagesInOpeningURL(openingId)); // TODO: Don't think this is needed
   };
 
   return (
@@ -84,7 +92,7 @@ export const StageReorderColumn = () => {
         </h1>
 
         {opening.totalStages > 0 && (
-          <DragDropContext onDragEnd={handleDragEnd} onDragStart={() => console.log('Start')}>
+          <DragDropContext onDragEnd={handleDragEnd}>
             <Droppable droppableId={opening.id}>
               {(provided) => (
                 <div {...provided.droppableProps} ref={provided.innerRef}>
