@@ -26,23 +26,24 @@ export const createWebhook = async (req: Request, res: Response) => {
     const { status, body } = CreateError.JOI(error);
     return res.status(status).json(body);
   }
+  return res.status(200).json({ message: 'TODO Endpoint temporarily disabled!' });
 
-  const { webhookUrl, webhookName, description }: APICreateWebhookOptions = req.body;
+  // const { webhookUrl, webhookName, description }: APICreateWebhookOptions = req.body;
 
-  const [created, createWebhookError] = await DB.Webhooks.createWebhook({
-    orgId: user.orgId,
-    webhookUrl,
-    description,
-    webhookName,
-  });
+  // const [created, createWebhookError] = await DB.Webhooks.createWebhook({
+  //   orgId: user.orgId,
+  //   webhookUrl,
+  //   description,
+  //   webhookName,
+  // });
 
-  if (createWebhookError) {
-    const { status, body } = CreateError.SDK(
-      createWebhookError,
-      'An error ocurred creating that webhook',
-    );
-    return res.status(status).json(body);
-  }
+  // if (createWebhookError) {
+  //   const { status, body } = CreateError.SDK(
+  //     createWebhookError,
+  //     'An error ocurred creating that webhook',
+  //   );
+  //   return res.status(status).json(body);
+  // }
 
-  return res.status(201).json({ message: 'Webhook created!' });
+  // return res.status(201).json({ message: 'Webhook created!' });
 };

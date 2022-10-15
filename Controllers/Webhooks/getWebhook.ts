@@ -20,19 +20,20 @@ export const getWebhook = async (req: Request, res: Response) => {
   const { user } = req;
   const { webhookId } = req.params;
 
-  const [webhook, error] = await DB.Webhooks.getWebhook({
-    orgId: user.orgId,
-    webhookId,
-  });
+  return res.status(200).json({ message: 'TODO endpoint temporary disabled' });
+  // const [webhook, error] = await DB.Webhooks.getWebhook({
+  //   orgId: user.orgId,
+  //   webhookId,
+  // });
 
-  if (error) {
-    const { status, body } = CreateError.SDK(error, 'An error ocurred retrieving your webhook');
+  // if (error) {
+  //   const { status, body } = CreateError.SDK(error, 'An error ocurred retrieving your webhook');
 
-    return res.status(status).json(body);
-  }
-  if (!webhook) {
-    return res.status(404).json({ message: 'Webhook not found' });
-  }
+  //   return res.status(status).json(body);
+  // }
+  // if (!webhook) {
+  //   return res.status(404).json({ message: 'Webhook not found' });
+  // }
 
-  return res.status(200).json(webhook);
+  // return res.status(200).json(webhook);
 };

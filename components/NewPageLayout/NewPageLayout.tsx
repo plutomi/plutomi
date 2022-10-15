@@ -4,6 +4,8 @@ import { NAVBAR_NAVIGATION, WEBSITE_URL, DEFAULTS } from '../../Config';
 import { NewPageHeader } from '../PageHeader';
 import { Login } from '../Login';
 import { SignedInNav } from '../SignedInNavbar';
+import { findInTargetArray } from '../../utils/findInTargetArray';
+import { IndexedEntities } from '../../types/main';
 
 interface NewPageProps {
   headerText: string;
@@ -27,9 +29,10 @@ export const NewPageLayout = ({
 
   const currentNavItem = NAVBAR_NAVIGATION.find((navItem) => navItem.name === currentNavbarItem);
 
+  const orgId = findInTargetArray({ entity: IndexedEntities.Org, targetArray: user.target });
   // Redirect on no org
   // TODO i believe this is triggering twice...
-  if (currentNavItem.hiddenIfNoOrg && user?.orgId === DEFAULTS.NO_ORG) {
+  if (currentNavItem.hiddenIfNoOrg && !orgId) {
     alert(
       `You must create an org or join one before viewing the ${currentNavItem.name} page. If you have pending invites, you can view them at ${WEBSITE_URL}/invites`,
     );

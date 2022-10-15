@@ -21,5 +21,5 @@ export const getApplicantById = async (req: Request, res: Response) => {
   // if (!applicant) {
   //   return res.status(404).json({ message: 'Applicant not found' });
   // }
-  return res.status(200).json([]);
+  return res.status(200).json({ message: 'TODO Endpoint temporarily disabled!' });
 };

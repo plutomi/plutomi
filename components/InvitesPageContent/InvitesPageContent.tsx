@@ -8,7 +8,7 @@ export const InvitesPageContent = () => {
   const { user, isUserLoading, isUserError } = useSelf();
   // TODO we don't have to make this call here if a user doesn't have invites
   const { invites, isInvitesLoading, isInvitesError } = useUserInvites({
-    userId: user?.userId,
+    userId: user?.id,
   });
 
   if (isInvitesError) {

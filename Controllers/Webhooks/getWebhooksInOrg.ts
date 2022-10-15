@@ -4,15 +4,17 @@ import * as CreateError from '../../utils/createError';
 
 export const getWebhooksInOrg = async (req: Request, res: Response) => {
   const { user } = req;
-  const [webhooks, webhooksError] = await DB.Webhooks.getWebhooksInOrg({
-    orgId: user.orgId,
-  });
+  return res.status(200).json({ message: 'TODO Endpoint temporarily disabled!' });
 
-  if (webhooksError) {
-    const { status, body } = CreateError.SDK(webhooksError, 'An error ocurred retrieving webhooks');
+  // const [webhooks, webhooksError] = await DB.Webhooks.getWebhooksInOrg({
+  //   orgId: user.orgId,
+  // });
 
-    return res.status(status).json(body);
-  }
+  // if (webhooksError) {
+  //   const { status, body } = CreateError.SDK(webhooksError, 'An error ocurred retrieving webhooks');
 
-  return res.status(200).json(webhooks);
+  //   return res.status(status).json(body);
+  // }
+
+  // return res.status(200).json(webhooks);
 };

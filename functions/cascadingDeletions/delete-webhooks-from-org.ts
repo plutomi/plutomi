@@ -33,34 +33,35 @@ export async function main(event: EventBridgeEvent<'stream', CustomEventBridgeEv
   console.log('Incoming event: ', JSON.stringify(event));
   const deletedEntity = event.detail.OldImage;
 
-  if (deletedEntity.entityType === Entities.ORG && deletedEntity.totalWebhooks > 0) {
-    console.log('Org has questions, deleting...');
+  // TODO temporarily disabled
+  // if (deletedEntity.entityType === Entities.ORG && deletedEntity.totalWebhooks > 0) {
+  //   console.log('Org has questions, deleting...');
 
-    const [allWebhooks, allWebhooksError] = await DB.Webhooks.getWebhooksInOrg({
-      orgId: event.detail.orgId,
-    });
+  //   const [allWebhooks, allWebhooksError] = await DB.Webhooks.getWebhooksInOrg({
+  //     orgId: event.detail.orgId,
+  //   });
 
-    if (allWebhooksError) {
-      console.error(
-        'An error ocurred retrieving webhooks in an org to delete...',
-        allWebhooksError,
-      );
-      return;
-    }
+  //   if (allWebhooksError) {
+  //     console.error(
+  //       'An error ocurred retrieving webhooks in an org to delete...',
+  //       allWebhooksError,
+  //     );
+  //     return;
+  //   }
 
-    try {
-      await Promise.all(
-        allWebhooks.map(async (webhook) =>
-          DB.Webhooks.deleteWebhook({
-            orgId: event.detail.orgId,
-            webhookId: webhook.webhookId,
-            updateOrg: false,
-          }),
-        ),
-      );
-      console.log('All webhooks deleted!');
-    } catch (error) {
-      console.log('An error ocurred deleting webhooks in org', error);
-    }
-  }
+  //   try {
+  //     await Promise.all(
+  //       allWebhooks.map(async (webhook) =>
+  //         DB.Webhooks.deleteWebhook({
+  //           orgId: event.detail.orgId,
+  //           webhookId: webhook.webhookId,
+  //           updateOrg: false,
+  //         }),
+  //       ),
+  //     );
+  //     console.log('All webhooks deleted!');
+  //   } catch (error) {
+  //     console.log('An error ocurred deleting webhooks in org', error);
+  //   }
+  // }
 }

@@ -231,7 +231,7 @@ export const StageSettingsQuestionList = () => {
 
         {stage?.questionOrder.length > 0 ? (
           <DragDropContext onDragEnd={handleDragEnd} onDragStart={() => console.log('Start')}>
-            <Droppable droppableId={stage?.stageId}>
+            <Droppable droppableId={stage?.id}>
               {(provided) => (
                 <div {...provided.droppableProps} ref={provided.innerRef}>
                   {newQuestionOrder?.map((question, index) => (

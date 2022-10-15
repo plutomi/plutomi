@@ -19,15 +19,17 @@ export const cancelInvite = async (req: Request, res: Response) => {
   }
   const { inviteId, userId } = req.body;
 
-  const [deleted, error] = await DB.Invites.deleteInvite({
-    inviteId,
-    userId,
-  });
+  return res.status(200).json({ message: 'TODO Endpoint temporarily disabled!' });
 
-  if (error) {
-    const { status, body } = CreateError.SDK(error, 'We were unable to cancel that invite');
-    return res.status(status).json(body);
-  }
+  // const [deleted, error] = await DB.Invites.deleteInvite({
+  //   inviteId,
+  //   userId,
+  // });
 
-  return res.status(200).json({ message: 'Invite cancelled!' });
+  // if (error) {
+  //   const { status, body } = CreateError.SDK(error, 'We were unable to cancel that invite');
+  //   return res.status(status).json(body);
+  // }
+
+  // return res.status(200).json({ message: 'Invite cancelled!' });
 };

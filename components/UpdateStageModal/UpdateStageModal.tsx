@@ -7,10 +7,10 @@ import useStore from '../../utils/store';
 import { GetOpeningInfoURL } from '../../adapters/Openings';
 import { GetStagesInOpeningURL, UpdateStage } from '../../adapters/Stages';
 import { CustomQuery } from '../../types/main';
-import { DynamoStage } from '../../types/dynamo';
+import { Stage } from '../../entities';
 
 interface UpdateStageModalProps {
-  stage: DynamoStage;
+  stage: Stage;
 }
 
 export const UpdateStageModal = ({ stage }: UpdateStageModalProps) => {
@@ -20,8 +20,8 @@ export const UpdateStageModal = ({ stage }: UpdateStageModalProps) => {
   const [GSI1SK, setGSI1SK] = useState('');
 
   useEffect(() => {
-    setGSI1SK(stage?.GSI1SK);
-  }, [stage?.GSI1SK]);
+    setGSI1SK(stage?.name);
+  }, [stage?.name]);
 
   const visibility = useStore((state) => state.showUpdateStageModal);
   const closeUpdateStageModal = useStore((state) => state.closeUpdateStageModal);

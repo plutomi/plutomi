@@ -36,26 +36,28 @@ export async function main(event: EventBridgeEvent<'stream', CustomEventBridgeEv
   console.log('Incoming event: ', JSON.stringify(event));
   const deletedEntity = event.detail.OldImage;
 
-  if (deletedEntity.entityType === Entities.STAGE && deletedEntity.totalQuestions > 0) {
-    console.log('Stage has questions, deleting...');
+  return;
+  // TODO temporarily disabled
+  // if (deletedEntity.entityType === Entities.STAGE && deletedEntity.totalQuestions > 0) {
+  //   console.log('Stage has questions, deleting...');
 
-    // TODO rework with linked list
-    for (const question of deletedEntity.questionOrder) {
-      const [success, error] = await DB.Stages.deleteStageQuestionAdjacentItem({
-        openingId: deletedEntity.openingId,
-        stageId: deletedEntity.stageId,
-        orgId: deletedEntity.orgId,
-        questionId: question,
-      });
+  //   // TODO rework with linked list
+  //   for (const question of deletedEntity.questionOrder) {
+  //     const [success, error] = await DB.Stages.deleteStageQuestionAdjacentItem({
+  //       openingId: deletedEntity.openingId,
+  //       stageId: deletedEntity.stageId,
+  //       orgId: deletedEntity.orgId,
+  //       questionId: question,
+  //     });
 
-      if (error) {
-        console.error(
-          'An error ocurred deleting question',
-          question,
-          'once stage was deleted. Stage',
-          deletedEntity,
-        );
-      }
-    }
-  }
+  //     if (error) {
+  //       console.error(
+  //         'An error ocurred deleting question',
+  //         question,
+  //         'once stage was deleted. Stage',
+  //         deletedEntity,
+  //       );
+  //     }
+  //   }
+  // }
 }

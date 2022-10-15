@@ -33,34 +33,36 @@ export async function main(event: EventBridgeEvent<'stream', CustomEventBridgeEv
   console.log('Incoming event: ', JSON.stringify(event));
   const deletedEntity = event.detail.OldImage;
 
-  if (deletedEntity.entityType === Entities.ORG && deletedEntity.totalOpenings > 0) {
-    console.log('Org has openings, deleting...');
+  return;
+  // TODO temporarily disabled
+  // if (deletedEntity.entityType === Entities.ORG && deletedEntity.totalOpenings > 0) {
+  //   console.log('Org has openings, deleting...');
 
-    const [allOpenings, allOpeningsError] = await DB.Openings.getOpeningsInOrg({
-      orgId: event.detail.orgId,
-    });
+  //   const [allOpenings, allOpeningsError] = await DB.Openings.getOpeningsInOrg({
+  //     orgId: event.detail.orgId,
+  //   });
 
-    if (allOpeningsError) {
-      console.error(
-        'An error ocurred retrieving openings in an org to delete...',
-        allOpeningsError,
-      );
-      return;
-    }
+  //   if (allOpeningsError) {
+  //     console.error(
+  //       'An error ocurred retrieving openings in an org to delete...',
+  //       allOpeningsError,
+  //     );
+  //     return;
+  //   }
 
-    try {
-      await Promise.all(
-        allOpenings.map(async (opening) =>
-          DB.Openings.deleteOpening({
-            orgId: deletedEntity.orgId,
-            openingId: opening.openingId,
-            updateOrg: false,
-          }),
-        ),
-      );
-      console.log('All openings deleted!');
-    } catch (error) {
-      console.log('An error ocurred deleting openings in org', error);
-    }
-  }
+  //   try {
+  //     await Promise.all(
+  //       allOpenings.map(async (opening) =>
+  //         DB.Openings.deleteOpening({
+  //           orgId: deletedEntity.orgId,
+  //           openingId: opening.openingId,
+  //           updateOrg: false,
+  //         }),
+  //       ),
+  //     );
+  //     console.log('All openings deleted!');
+  //   } catch (error) {
+  //     console.log('An error ocurred deleting openings in org', error);
+  //   }
+  // }
 }
