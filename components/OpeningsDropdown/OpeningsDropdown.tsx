@@ -18,7 +18,7 @@ export const OpeningsDropdown = ({ openings, index }: OpeningsDropdownProps) => 
   const [selected, setSelected] = useState(openings[index]);
 
   // TODO handle change not working
-  alert(`StageOrder on openings is disabled!`);
+  // alert(`StageOrder on openings is disabled!`);
 
   const handleChange = (newValue: Opening) => {
     // if (selected === newValue) {
@@ -37,12 +37,12 @@ export const OpeningsDropdown = ({ openings, index }: OpeningsDropdownProps) => 
 
   let openingState: OpeningState | undefined;
 
-  if (selected) {
-    findInTargetArray({
-      entity: IndexedEntities.OpeningState,
-      targetArray: selected.target,
-    });
-  }
+  // if (selected) {
+  //   findInTargetArray({
+  //     entity: IndexedEntities.OpeningState,
+  //     targetArray: selected.target,
+  //   });
+  // }
 
   return (
     <Listbox value={selected} onChange={handleChange}>
