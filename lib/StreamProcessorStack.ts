@@ -8,6 +8,7 @@ import { StartingPosition, Runtime, Architecture } from 'aws-cdk-lib/aws-lambda'
 import { RetentionDays } from 'aws-cdk-lib/aws-logs';
 import { ENVIRONMENT } from './AppStack';
 import { env } from '../env';
+import { getLambdaConfig } from '../functions/utils/getLambdaConfig';
 
 interface StreamProcessorStackProps extends cdk.StackProps {
   table: Table;
@@ -27,20 +28,14 @@ export default class StreamProcessorStack extends cdk.Stack {
       this,
       `${env.deploymentEnvironment}-${FUNCTION_NAME}`,
       {
-        functionName: `${env.deploymentEnvironment}-${FUNCTION_NAME}`,
+        ...getLambdaConfig({
+          functionName: `${env.deploymentEnvironment}-${FUNCTION_NAME}`,
+          functionDescription:
+            'Processes table changes from DynamoDB streams and sends them to EventBridge',
+          fileName: 'stream-processor.ts',
+          cascadingDeletion: false,
+        }),
         environment: { ...ENVIRONMENT },
-        timeout: cdk.Duration.seconds(5),
-        memorySize: 256,
-        logRetention: RetentionDays.ONE_WEEK,
-        runtime: Runtime.NODEJS_16_X,
-        architecture: Architecture.X86_64, // TODO fix deploy issues ina ctions
-        bundling: {
-          minify: true,
-          externalModules: ['aws-sdk'],
-        },
-        handler: 'main',
-        description: 'Processes table changes from DynamoDB streams and sends them to EventBridge',
-        entry: path.join(__dirname, `/../functions/stream-processor.ts`),
       },
     );
 

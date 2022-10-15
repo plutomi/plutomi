@@ -12,6 +12,7 @@ import { DYNAMO_TABLE_NAME, Entities } from '../Config';
 import { DynamoIAM } from '../types/dynamo';
 import { ENVIRONMENT } from './AppStack';
 import { env } from '../env';
+import { getLambdaConfig } from '../functions/utils/getLambdaConfig';
 
 interface CustomLambdaFunction {
   functionName: string;
@@ -97,20 +98,13 @@ export default class DeleteChildrenMachineStack extends cdk.Stack {
         this,
         `${env.deploymentEnvironment}-${functionName}`,
         {
-          functionName: `${env.deploymentEnvironment}-${functionName}`,
-          timeout: cdk.Duration.seconds(5),
-          memorySize: 256,
-          logRetention: RetentionDays.ONE_WEEK,
-          runtime: Runtime.NODEJS_16_X,
-          architecture: Architecture.X86_64, // TODO fix deploy issues in actions
+          ...getLambdaConfig({
+            functionName: `${env.deploymentEnvironment}-${functionName}`,
+            functionDescription: description,
+            fileName,
+            cascadingDeletion: functionName.includes('delete-'),
+          }),
           environment: { ...ENVIRONMENT, DYNAMO_TABLE_NAME },
-          bundling: {
-            minify: true,
-            externalModules: ['aws-sdk'],
-          },
-          handler: 'main',
-          description,
-          entry: path.join(__dirname, `/../functions/${fileName}`),
         },
       );
 
