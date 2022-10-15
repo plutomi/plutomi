@@ -16,6 +16,7 @@ ARG NEXT_PUBLIC_WEBSITE_URL
 ARG NODE_ENV 
 
 ENV NODE_ENV=$NODE_ENV
+
 # Copying source files
 COPY . .
 

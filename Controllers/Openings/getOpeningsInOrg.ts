@@ -1,19 +1,25 @@
 import { Request, Response } from 'express';
-import { DB } from '../../models';
-import * as CreateError from '../../utils/createError';
+import { Opening } from '../../entities';
+import { IndexedEntities } from '../../types/main';
+import { findInTargetArray } from '../../utils/findInTargetArray';
 
 export const getOpeningsInOrg = async (req: Request, res: Response) => {
-  const { user } = req;
-  const [openings, openingsError] = await DB.Openings.getOpeningsInOrg({
-    orgId: user.orgId,
-  });
+  const { user, entityManager } = req;
 
-  if (openingsError) {
-    console.error('Openings error');
-    const { status, body } = CreateError.SDK(openingsError, 'An error ocurred retrieving openings');
+  const orgId = findInTargetArray({ entity: IndexedEntities.Org, targetArray: user.target });
 
-    return res.status(status).json(body);
+  try {
+    // TODO: Add type safety on this search
+    const openings = await entityManager.find(Opening, {
+      target: {
+        id: orgId,
+        type: IndexedEntities.Org,
+      },
+    });
+    return res.status(200).json(openings);
+  } catch (error) {
+    const message = 'An error ocurred retrieving openings in your org';
+    console.error(message, error);
+    return res.status(500).json({ message, error });
   }
-
-  return res.status(200).json(openings);
 };

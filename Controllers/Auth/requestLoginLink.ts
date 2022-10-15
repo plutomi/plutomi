@@ -14,9 +14,13 @@ import {
 } from '../../Config';
 import * as Time from '../../utils/time';
 import * as CreateError from '../../utils/createError';
-import { DB } from '../../models';
 import { sendEmail } from '../../models/Emails/sendEmail';
 import { env } from '../../env';
+import { User, UserLoginLink } from '../../entities';
+import { QueryOrder } from '@mikro-orm/core';
+import dayjs from 'dayjs';
+import { IndexedEntities } from '../../types/main';
+import { findInTargetArray } from '../../utils/findInTargetArray';
 
 const jwt = require('jsonwebtoken');
 
@@ -58,58 +62,81 @@ export const requestLoginLink = async (req: Request, res: Response) => {
   }
 
   // If a user is signing in for the first time, create an account for them
-  // eslint-disable-next-line prefer-const
-  let [user, userError] = await DB.Users.getUserByEmail({ email });
-  if (userError) {
-    console.error(userError);
-    const { status, body } = CreateError.SDK(userError, 'An error ocurred getting your user info');
-    return res.status(status).json(body);
+  let user: User;
+  console.log(`Attempting to find user with email`, email);
+  try {
+    user = await req.entityManager.findOne(User, {
+      target: { id: email, type: IndexedEntities.Email },
+    });
+  } catch (error) {
+    console.error(`Error retrieving user info`, error);
+    return res.status(500).json({
+      message: `Error retrieving user info`,
+      error,
+    });
   }
 
   if (!user) {
-    const [createdUser, createUserError] = await DB.Users.createUser({
-      email,
-    });
-    if (createUserError) {
-      const { status, body } = CreateError.SDK(
-        createUserError,
-        'An error ocurred creating your account',
-      );
+    try {
+      console.log(`Creating new user`);
+      const createdUser = new User({
+        firstName: DEFAULTS.FIRST_NAME,
+        lastName: DEFAULTS.LAST_NAME,
+        target: [
+          {
+            id: email,
+            type: IndexedEntities.Email,
+          },
+        ],
+      });
+      console.log(`Creating new user`, createdUser);
 
-      return res.status(status).json(body);
+      await req.entityManager.persistAndFlush(createdUser);
+      console.log(`User created`);
+      user = createdUser;
+    } catch (error) {
+      console.error(`An error ocurred creating your account`, error);
+      return res.status(500).json({ message: 'An error ocurred creating your account', error });
     }
-    user = createdUser;
   }
 
+  const userEmail = findInTargetArray({ entity: IndexedEntities.Email, targetArray: user.target });
+  console.log(`User created, finding in target array`, userEmail);
   // TODO add a test for this @jest
   if (!user.canReceiveEmails) {
     return res.status(403).json({
-      message: `'${user.email}' is unable to receive emails, please reach out to support@plutomi.com to opt back in!`,
+      message: `'${email}' is unable to receive emails, please reach out to support@plutomi.com to opt back in!`,
     });
   }
 
-  // Check if a user is  making too many requests for a login link by comparing the time of their last link
-  const [latestLink, loginLinkError] = await DB.Users.getLatestLoginLink({
-    userId: user.userId,
-  });
+  let latestLoginLink: UserLoginLink;
 
-  if (loginLinkError) {
-    const { status, body } = CreateError.SDK(
-      loginLinkError,
-      'An error ocurred getting your login link',
+  console.log(`Getting latest lgin link`);
+  try {
+    latestLoginLink = await req.entityManager.findOne(
+      // TODO idnex lookup
+      UserLoginLink,
+      {
+        user,
+      },
+      {
+        orderBy: {
+          ttlExpiry: QueryOrder.DESC,
+        },
+      },
     );
-
-    return res.status(status).json(body);
+    console.log(`got it`);
+  } catch (error) {
+    console.error(`An error ocurred finding your info (login links error)`);
+    return res
+      .status(500)
+      .json({ message: 'An error ocurred finding your info (login links error)' });
   }
-  const timeThreshold = Time.pastISO({
-    amount: 10,
-    unit: TIME_UNITS.MINUTES,
-  });
 
   if (
-    latestLink &&
-    latestLink.createdAt >= timeThreshold &&
-    !user.email.endsWith(DOMAIN_NAME) // Allow admins to send multiple login links in a short timespan
+    latestLoginLink &&
+    latestLoginLink.createdAt >= dayjs().subtract(10, 'minutes').toDate() &&
+    !userEmail.endsWith(DOMAIN_NAME) // Allow admins to send multiple login links in a short timespan
   ) {
     return res.status(403).json({ message: "You're doing that too much, please try again later" });
   }
@@ -119,42 +146,45 @@ export const requestLoginLink = async (req: Request, res: Response) => {
     unit: TIME_UNITS.MINUTES,
   };
   const now = Time.currentUNIX();
+  // TODO should match what is on the entity
   const ttlExpiry = Time.futureUNIX(validFor); // when the link expires and is deleted from Dynamo
   const relativeExpiry = Time.relative(Time.futureISO(validFor));
 
-  const loginLinkId = nanoid();
-  const token = await jwt.sign(
-    {
-      userId: user.userId,
-      loginLinkId,
-    },
-    env.loginLinksPassword,
-    { expiresIn: ttlExpiry - now },
-  );
+  console.log(`Creating a login link with THIS user`, user);
+  console.log(`USER ID`, user.id);
+  let token: string;
+  // TODO types
 
-  // TODO enums
-  const loginLinkUrl = `${API_URL}/auth/login?token=${token}&callbackUrl=${
-    callbackUrl || `${WEBSITE_URL}/${DEFAULTS.REDIRECT}`
-  }`;
+  let loginLinkUrl: string;
 
-  const [success, creationError] = await DB.Users.createLoginLink({
-    user,
-    loginLinkId,
-    ttlExpiry,
-  });
+  try {
+    const newLoginLink = new UserLoginLink({
+      user,
+    });
+    await req.entityManager.persistAndFlush(newLoginLink);
 
-  if (creationError) {
-    const { status, body } = CreateError.SDK(
-      creationError,
-      'An error ocurred creating your login link',
-    );
+    console.log(`NEWLY CREATEDED LOGIN LINK`, newLoginLink);
 
-    return res.status(status).json(body);
+    const tokenData = {
+      userId: user.id,
+      loginLinkId: newLoginLink._id, // TODO Using regular .id here returns undefined????     // Cannot use .id as it returns undefined after creating a new entity possible mikro-orm bug
+    };
+
+    console.log(`TOKIEN DATA WHEN CREATING IT`, tokenData);
+    token = await jwt.sign(tokenData, env.loginLinksPassword, { expiresIn: ttlExpiry - now });
+
+    // TODO enums
+    loginLinkUrl = `${API_URL}/auth/login?token=${token}&callbackUrl=${
+      callbackUrl || `${WEBSITE_URL}/${DEFAULTS.REDIRECT}`
+    }`;
+  } catch (error) {
+    console.error(`An error ocurred creating your login link`);
+    return res.status(500).json({ message: 'An error ocurred creating your login link' });
   }
 
   try {
     await sendEmail({
-      to: user.email,
+      to: userEmail,
       from: {
         header: 'Plutomi',
         email: Emails.LOGIN,
@@ -163,12 +193,8 @@ export const requestLoginLink = async (req: Request, res: Response) => {
       body: `<h1>Click <a href="${loginLinkUrl}" noreferrer target="_blank" >this link</a> to log in!</h1><p>It will expire ${relativeExpiry} so you better hurry.</p><p>If you did not request this link you can safely ignore it.</p>`,
     });
   } catch (error) {
-    // TODO delete login link and prompt the user to try again
-    const { status, body } = CreateError.SDK(
-      creationError,
-      'An error ocurred sending your email :(',
-    );
-    return res.status(status).json(body);
+    console.error(`Error sending login link email`, error);
+    return res.status(500).json({ message: 'Error sending login link email', error });
   }
   return res.status(201).json({ message: `We've sent a magic login link to your email!` });
 };

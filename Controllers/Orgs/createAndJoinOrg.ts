@@ -1,12 +1,11 @@
 import { Request, Response } from 'express';
 import Joi from 'joi';
-import { DEFAULTS, JOI_SETTINGS, JoiOrgId } from '../../Config';
+import { JOI_SETTINGS, JoiOrgId } from '../../Config';
 import * as CreateError from '../../utils/createError';
-import { DynamoOrg } from '../../types/dynamo';
-import { getInvitesForUser } from '../../models/Invites';
-import { DB } from '../../models';
+import { Org } from '../../entities';
+import { IndexedEntities } from '../../types/main';
 
-export type APICreateOrgOptions = Required<Pick<DynamoOrg, 'orgId' | 'displayName'>>;
+export type APICreateOrgOptions = Required<Pick<Org, 'orgId' | 'displayName'>>;
 
 const schema = Joi.object({
   body: {
@@ -16,7 +15,7 @@ const schema = Joi.object({
 }).options(JOI_SETTINGS);
 
 export const createAndJoinOrg = async (req: Request, res: Response) => {
-  const { user } = req;
+  const { user, entityManager } = req;
   try {
     await schema.validateAsync(req);
   } catch (error) {
@@ -25,47 +24,71 @@ export const createAndJoinOrg = async (req: Request, res: Response) => {
     return res.status(status).json(body);
   }
 
-  if (user.orgId !== DEFAULTS.NO_ORG) {
+  if (user.orgJoinDate) {
     return res.status(403).json({ message: 'You already belong to an org!' });
   }
 
-  const [pendingInvites, error] = await getInvitesForUser({
-    userId: user.userId,
-  });
+  // TODO get pending invites!!!!!!!!!!
+  // const [pendingInvites, error] = await getInvitesForUser({
+  //   userId: user.userId,
+  // });
 
-  if (error) {
-    const { status, body } = CreateError.SDK(
-      error,
-      'Unable to create org - error retrieving invites',
-    );
+  // if (error) {
+  //   const { status, body } = CreateError.SDK(
+  //     error,
+  //     'Unable to create org - error retrieving invites',
+  //   );
 
-    return res.status(status).json(body);
-  }
+  //   return res.status(status).json(body);
+  // }
 
-  if (pendingInvites && pendingInvites.length > 0) {
-    return res.status(403).json({
-      message:
-        'You seem to have pending invites, please accept or reject them before creating an org :)',
-    });
-  }
+  // if (pendingInvites && pendingInvites.length > 0) {
+  //   return res.status(403).json({
+  //     message:
+  //       'You seem to have pending invites, please accept or reject them before creating an org :)',
+  //   });
+  // }
 
   const { displayName, orgId }: APICreateOrgOptions = req.body;
 
-  const [created, failed] = await DB.Orgs.createAndJoinOrg({
-    userId: user.userId,
-    orgId,
-    displayName,
-  });
+  let org: Org;
 
-  if (failed) {
-    if (failed.name === 'TransactionCanceledException') {
-      return res.status(409).json({
-        message: 'It appears that that org ID is already taken - try another',
-      });
-    }
-    const { status, body } = CreateError.SDK(failed, 'Unable to create org');
-    return res.status(status).json(body);
+  try {
+    org = await req.entityManager.findOne(Org, {
+      orgId, // TODO use target array !!!
+    });
+  } catch (error) {
+    const message = `Error ocurred checking if that org already exists`;
+    console.error(message, error);
+    return res.status(500).json({ message, error });
   }
 
-  return res.status(201).json({ message: 'Org created!' });
+  if (org) {
+    return res.status(403).json({
+      message: `An org already exists with this ID ('${orgId}'), please choose another!`,
+    });
+  }
+
+  // TODO make this a transaction
+  const newOrg = new Org({
+    orgId,
+    displayName,
+    target: [{ id: user.id, type: IndexedEntities.CreatedBy }],
+  });
+
+  user.target.push({ id: orgId, type: IndexedEntities.Org });
+  user.orgJoinDate = new Date();
+  entityManager.persist(newOrg);
+  entityManager.persist(user);
+
+  try {
+    await entityManager.flush();
+
+    console.log(`saved user with new org`);
+    return res.status(201).json({ message: 'Org created!', org: newOrg });
+  } catch (error) {
+    const message = 'Error ocurred creating the org';
+    console.error(message, error);
+    return res.status(500).json({ message, error });
+  }
 };

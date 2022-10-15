@@ -1,14 +1,23 @@
 import { Request, Response } from 'express';
+import { Org } from '../../entities';
 import { DB } from '../../models';
+import { IndexedEntities, IndexedTargetArray, IndexedTargetArrayItem } from '../../types/main';
 import * as CreateError from '../../utils/createError';
+import { findInTargetArray } from '../../utils/findInTargetArray';
 
 export const leaveAndDeleteOrg = async (req: Request, res: Response) => {
-  const { user } = req;
-  const [org, error] = await DB.Orgs.getOrg({ orgId: user.orgId });
+  const { user, entityManager } = req;
+  const orgId = findInTargetArray({ entity: IndexedEntities.Org, targetArray: user.target });
 
-  if (error) {
-    const { status, body } = CreateError.SDK(error, 'Unable to retrieve org info');
-    return res.status(status).json(body);
+  let org: Org;
+
+  try {
+    org = await req.entityManager.findOne(Org, {
+      id: orgId,
+    });
+  } catch (error) {
+    console.error(`Error retrieving org info`, error);
+    return res.status(500).json({ message: 'An error ocurred retrieving your org info', error });
   }
 
   if (!org) {
@@ -20,15 +29,17 @@ export const leaveAndDeleteOrg = async (req: Request, res: Response) => {
     });
   }
 
-  // Transaction - updates the user with default org values
-  const [success, failure] = await DB.Orgs.leaveAndDeleteOrg({
-    orgId: user.orgId,
-    userId: user.userId,
-  });
+  user.orgJoinDate = undefined;
+  const indexOfOrg = user.target.findIndex((item) => item.type === IndexedEntities.Org);
+  user.target.splice(indexOfOrg, 1); // Removing the org from the user
+  user.orgJoinDate = undefined;
+  entityManager.remove(org); // TODO cascading deletions!
 
-  if (failure) {
-    const { status, body } = CreateError.SDK(failure, 'We were unable to remove you from the org');
-    return res.status(status).json(body);
+  try {
+    await entityManager.flush();
+  } catch (error) {
+    console.error(`An error ocurred deleting your org`, error);
+    return res.status(500).json({ message: 'An error ocurred deleting your org', error });
   }
 
   return res.status(200).json({ message: 'Org deleted!' });

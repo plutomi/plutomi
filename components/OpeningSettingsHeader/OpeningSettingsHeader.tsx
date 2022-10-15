@@ -5,11 +5,13 @@ import useStore from '../../utils/store';
 import { useOpeningInfo } from '../../SWR/useOpeningInfo';
 import { DeleteOpening, GetOpeningsInOrgURL } from '../../adapters/Openings';
 import * as Time from '../../utils/time';
-import { CustomQuery } from '../../types/main';
+import { CustomQuery, IndexedEntities } from '../../types/main';
 import { OpeningState, WEBSITE_URL } from '../../Config';
 import { Loader } from '../Loader';
 import { OpeningSettingsBreadcrumbs } from '../OpeningSettingsBreadcrumbs';
 import { CrumbProps } from '../types';
+import { findInTargetArray } from '../../utils/findInTargetArray';
+import { useAllStagesInOpening } from '../../SWR/useAllStagesInOpening';
 
 export const OpeningSettingsHeader = () => {
   const router = useRouter();
@@ -17,6 +19,13 @@ export const OpeningSettingsHeader = () => {
   const openUpdateOpeningModal = useStore((state) => state.openUpdateOpeningModal);
 
   const { opening, isOpeningLoading, isOpeningError } = useOpeningInfo({ openingId });
+  const { stages, isStagesLoading, isStagesError } = useAllStagesInOpening({
+    openingId,
+  });
+  if (isOpeningError || isStagesError)
+    return <h1>An error ocurred retrieving info for this opening</h1>;
+
+  if (isOpeningLoading || isStagesLoading) return <Loader text="Loading opening..." />;
 
   if (isOpeningError) return <h1>An error ocurred retrieving info for this opening</h1>;
 
@@ -30,11 +39,13 @@ export const OpeningSettingsHeader = () => {
     },
   ];
 
+  // TODO !!!! Stage order crap
+
   // Hide applicant crumb if opening has no stages
-  if (opening?.totalStages > 0) {
+  if (stages.length > 0) {
     crumbs.unshift({
       name: 'Applicants',
-      href: `/openings/${openingId}/stages/${opening?.stageOrder[0]}/applicants`, // TODO should this end with /applicants?
+      href: `/openings/${openingId}/stages/${stages[0].id}/applicants`, // TODO should this end with /applicants?
       current: false,
     });
   }
@@ -63,6 +74,11 @@ export const OpeningSettingsHeader = () => {
     mutate(GetOpeningsInOrgURL());
   };
 
+  const openingState = findInTargetArray({
+    entity: IndexedEntities.OpeningState,
+    targetArray: opening.target,
+  });
+
   return (
     <div className="md:flex md:items-center md:justify-between ">
       <div className=" min-w-0 flex flex-col items-start ">
@@ -72,19 +88,19 @@ export const OpeningSettingsHeader = () => {
       <div className="flex justify-center space-x-4 py-2 items-center">
         <span
           className={` inline-flex items-center px-2.5 py-0.5 rounded-md text-sm font-medium ${
-            opening?.GSI1SK === OpeningState.PUBLIC ? 'bg-green-100' : 'bg-blue-gray-100'
+            openingState === OpeningState.PUBLIC ? 'bg-green-100' : 'bg-blue-gray-100'
           }`}
         >
           <svg
             className={`-ml-0.5 mr-1.5 h-2 w-2 ${
-              opening?.GSI1SK === OpeningState.PUBLIC ? 'text-green-800' : 'text-blue-gray-800'
+              openingState === OpeningState.PUBLIC ? 'text-green-800' : 'text-blue-gray-800'
             }`}
             fill="currentColor"
             viewBox="0 0 8 8"
           >
             <circle cx={4} cy={4} r={3} />
           </svg>
-          {opening?.GSI1SK === OpeningState.PUBLIC ? 'Public' : 'Private'}
+          {openingState === OpeningState.PUBLIC ? 'Public' : 'Private'}
         </span>
         <p className="text-md text-light text-center">
           Created {Time.relative(opening?.createdAt)}

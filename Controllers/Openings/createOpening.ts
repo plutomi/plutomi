@@ -1,9 +1,11 @@
 import { Request, Response } from 'express';
 import Joi from 'joi';
-import { JOI_SETTINGS, LIMITS } from '../../Config';
+import { JOI_SETTINGS, LIMITS, OpeningState } from '../../Config';
 import * as CreateError from '../../utils/createError';
 import { DynamoOpening } from '../../types/dynamo';
-import { DB } from '../../models';
+import { Opening } from '../../entities';
+import { findInTargetArray } from '../../utils/findInTargetArray';
+import { IndexedEntities } from '../../types/main';
 
 export type APICreateOpeningOptions = Required<Pick<DynamoOpening, 'openingName'>>;
 
@@ -14,7 +16,7 @@ const schema = Joi.object({
 }).options(JOI_SETTINGS);
 
 export const createOpening = async (req: Request, res: Response) => {
-  const { user } = req;
+  const { user, entityManager } = req;
   try {
     await schema.validateAsync(req);
   } catch (error) {
@@ -23,19 +25,26 @@ export const createOpening = async (req: Request, res: Response) => {
   }
 
   const { openingName }: APICreateOpeningOptions = req.body;
+  const orgId = findInTargetArray({ entity: IndexedEntities.Org, targetArray: user.target });
 
-  const [created, createOpeningError] = await DB.Openings.createOpening({
-    orgId: user.orgId,
-    openingName,
+  const newOpening = new Opening({
+    name: openingName,
+    target: [
+      {
+        // Should be redundant
+        id: orgId,
+        type: IndexedEntities.Org,
+      },
+      { id: OpeningState.PRIVATE, type: IndexedEntities.OpeningState },
+    ],
   });
 
-  if (createOpeningError) {
-    const { status, body } = CreateError.SDK(
-      createOpeningError,
-      'An error ocurred creating that opening',
-    );
-    return res.status(status).json(body);
+  try {
+    await entityManager.persistAndFlush(newOpening);
+  } catch (error) {
+    console.error(`An error ocurred creating your opening`, error);
+    return res.status(500).json({ message: 'An error ocurred creating your opening' });
   }
 
-  return res.status(201).json({ message: 'Opening created!' });
+  return res.status(201).json({ message: 'Opening created!', opening: newOpening });
 };

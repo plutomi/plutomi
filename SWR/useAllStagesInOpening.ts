@@ -1,7 +1,7 @@
 import useSWR from 'swr';
 import { GetStagesInOpeningURL } from '../adapters/Stages';
 import { SWRFetcher } from '../Config';
-import { DynamoStage } from '../types/dynamo';
+import { Stage } from '../entities';
 import { APIErrorResponse } from '../types/main';
 
 interface UseAllStagesInOpeningProps {
@@ -9,7 +9,7 @@ interface UseAllStagesInOpeningProps {
 }
 
 export const useAllStagesInOpening = ({ openingId }: UseAllStagesInOpeningProps) => {
-  const { data, error } = useSWR<DynamoStage[], APIErrorResponse>(
+  const { data, error } = useSWR<Stage[], APIErrorResponse>(
     openingId && GetStagesInOpeningURL(openingId),
     SWRFetcher,
   );
