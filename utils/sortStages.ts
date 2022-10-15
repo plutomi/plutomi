@@ -31,7 +31,7 @@ export const sortStages = (unsortedStagesInOpening: Stage[]): Stage[] => {
       targetArray: stage.target,
     });
 
-    if (previousStage) {
+    if (!previousStage) {
       firstStage = stage;
       firstStageIndex = idx;
     }
@@ -49,6 +49,8 @@ export const sortStages = (unsortedStagesInOpening: Stage[]): Stage[] => {
     mapWithStages[stage.id] = stage;
   });
 
+  console.log(`FIRST STAGE`, firstStage);
+  console.log(`Map with stages`, mapWithStages);
   let reachedTheEnd = false;
   let startingStage = firstStage;
 
@@ -58,26 +60,17 @@ export const sortStages = (unsortedStagesInOpening: Stage[]): Stage[] => {
       targetArray: startingStage.target,
     });
 
-    let nextStage: Stage;
+    let nextStage: Stage | undefined;
+
     if (newNextStageId) {
-      const nextStage = mapWithStages[newNextStageId.toString()];
+      nextStage = mapWithStages[newNextStageId.toString()];
       sortedStages.push(nextStage);
       startingStage = nextStage;
+      // Continue loop until all stages are sorted
     } else {
       reachedTheEnd = true;
       break;
     }
-
-    // Check if the next stage has it's own next stage
-    const nextStageHasANextStage = findInTargetArray({
-      entity: IndexedEntities.NextStage,
-      targetArray: nextStage.target,
-    });
-    if (nextStageHasANextStage) {
-      reachedTheEnd = true;
-    }
-
-    // Continue loop until all stages are sorted
   }
 
   return sortedStages;

@@ -39,7 +39,7 @@ export const StageReorderColumn = () => {
     if (destination.droppableId === source.droppableId && destination.index === source.index)
       return;
 
-    alert('STAGE REORDER ORDER HERE'); // These are for the local stages in teh draggable
+    // alert('STAGE REORDER ORDER HERE'); // These are for the local stages in teh draggable
     const newStageOrder: string[] = Array.from(stages.map((stage) => stage.id));
     console.log(`New stage order ids`, newStageOrder);
     newStageOrder.splice(source.index, 1);
