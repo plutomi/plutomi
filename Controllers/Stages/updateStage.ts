@@ -56,7 +56,7 @@ export const updateStage = async (req: Request, res: Response) => {
 
   /**
    * If a user is attempting to update the order of the questions
-   * but the length differs
+   * but the length differs // TODO doubly linked list
    */
   if (req.body.questionOrder) {
     if (req.body.questionOrder.length !== stage.questionOrder.length) {
@@ -85,7 +85,7 @@ export const updateStage = async (req: Request, res: Response) => {
     stage.name = req.body.GSI1SK;
   }
 
-  if (req.body.position || req.body.position === 0) {
+  if (req.body.position >= 0) {
     let allStagesInOpening: Stage[];
 
     try {
@@ -116,29 +116,44 @@ export const updateStage = async (req: Request, res: Response) => {
       let updateOldNextStage = false;
       let updateOldPreviousStage = false;
 
-      // Update the old previous stage
+      // If there was a previous stage before we moved, we want to update that stage
       if (oldPreviousStageId) {
-        // console.log(`\nThere is an old PREVIOUS stage ID`);
+        // Find it
         oldPreviousStage = allStagesInOpening.find((stage) => stage.id === oldPreviousStageId);
 
+        // Get it's nextstage in the target array
         oldPreviousStagesNextStageIndex = oldPreviousStage.target.findIndex(
           (item) => item.type === IndexedEntities.NextStage,
         );
 
-        // Set our old previous stage's next stage to be our old next stage
+        // Set the old previous stage's nextStage to be the old next stage of the stage we are currently moving
+        /**
+         * OLD --- NEW
+         * Stage 1 --- Stage 1 <-- It's next stage property gets updated to Stage 3, which was our stage's old next stage
+         * Stage 2 --- Stage 3
+         * Stage 3 --- Stage 2 <-- Moved
+         */
         oldPreviousStage.target[oldPreviousStagesNextStageIndex] = stage.target.find(
           (item) => item.type === IndexedEntities.NextStage,
         );
       } else {
-        // Set our old next stage's previous stage to be undefined
-        // We can't do it here because we don't know if it exists yet, and we can reuse the variables on lines 111
+        /**
+         * Set our old next stage's previous stage to be undefined.
+         * This scenario:
+         *
+         * OLD --- NEW
+         * Stage 1 --- Stage 2 <-- Previous stage is now undefined
+         * Stage 2 --- Stage 1 <-- Moved
+         *
+         *
+         * We can't do the update here because we don't know if that next stage exists yet - we are doing that down below so...
+         * to prevent duplicate checks for that next stage, we are setting a reminder for us to update that stage later once we verified that it exists
+         */
         updateOldNextStage = true;
       }
 
-      // Update the old next stage's previous stage to be our old previous stage
+      // If there *was* a next stage before we moved, we need to update that stage
       if (oldNextStageId) {
-        // console.log(`\nThere is an old NEXT stage ID`);
-
         oldNextStage = allStagesInOpening.find((stage) => stage.id === oldNextStageId);
 
         oldNextStagesPreviousStageIndex = oldNextStage.target.findIndex(
@@ -147,6 +162,7 @@ export const updateStage = async (req: Request, res: Response) => {
 
         // Set our old next stage's previous stage to be our old previous stage
 
+        // Set our old next stage's previous stage to be our old previous stage (since we swapped places with them essentially)
         oldNextStage.target[oldNextStagesPreviousStageIndex] = stage.target.find(
           (item) => item.type === IndexedEntities.PreviousStage,
         );

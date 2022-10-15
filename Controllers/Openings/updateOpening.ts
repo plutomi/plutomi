@@ -39,33 +39,6 @@ export const updateOpening = async (req: Request, res: Response) => {
     return res.status(404).json({ message: 'Opening not found' });
   }
 
-  // TODO
-  // if (req.body.stageOrder) {
-  //   if (req.body.stageOrder.length !== opening.stageOrder.length) {
-  //     return res.status(403).json({
-  //       message:
-  //         'You cannot add / delete stages this way, please use the proper API methods for those actions',
-  //     });
-  //   }
-
-  //   // Check if the IDs have been modified
-  //   // TODO add a test for this
-  //   const containsAll = opening.stageOrder.every((stageId) =>
-  //     req.body.stageOrder.includes(stageId),
-  //   );
-
-  //   if (!containsAll) {
-  //     return res.status(400).json({
-  //       message:
-  //         "The stageIds in the 'stageOrder' property differ from the ones in the opening, please check your request and try again.",
-  //     });
-  //   }
-
-  //   updatedValues.stageOrder = req.body.stageOrder;
-  // }
-
-  // TODO CHANGE THIS PROPERTY ON THE FE
-
   // Public or private
   if (req.body.GSI1SK) {
     // TODO i think this can be moved into dynamo
