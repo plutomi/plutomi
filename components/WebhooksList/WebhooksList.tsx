@@ -9,15 +9,18 @@ import { WebhookListItem } from '../WebhookListItem/WebhookListItem';
 import { EmptyWebhooksContent } from '../EmptyWebhooksContent';
 import { Loader } from '../Loader/Loader';
 import { UpdateWebhookModal } from '../UpdateWebhookModal';
+import { findInTargetArray } from '../../utils/findInTargetArray';
+import { IndexedEntities } from '../../types/main';
 
 export const WebhooksList = () => {
   const { user, isUserLoading, isUserError } = useSelf();
+  const orgId = findInTargetArray({ entity: IndexedEntities.Org, targetArray: user.target });
   const { org, isOrgLoading, isOrgError } = useOrgInfo({
-    orgId: user?.orgId,
+    orgId,
   });
   // TODO error and loading
   const { webhooks, isWebhooksLoading, isWebhooksError } = useWebhooksInOrg({
-    orgId: user?.orgId,
+    orgId,
   });
   const openCreateWebhookModal = useStore((state) => state.openCreateWebhookModal);
 

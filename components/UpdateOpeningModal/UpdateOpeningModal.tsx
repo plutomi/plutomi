@@ -5,16 +5,22 @@ import { mutate } from 'swr';
 import { GetOpeningInfoURL, UpdateOpening } from '../../adapters/Openings';
 import useStore from '../../utils/store';
 import { OpeningState } from '../../Config';
-import { DynamoOpening } from '../../types/dynamo';
+import { Opening } from '../../entities';
+import { findInTargetArray } from '../../utils/findInTargetArray';
+import { IndexedEntities } from '../../types/main';
 
-export const UpdateOpeningModal = ({ opening }: { opening: DynamoOpening }) => {
-  const [openingName, setOpeningName] = useState(opening?.openingName);
-  const [GSI1SK, setGSI1SK] = useState(opening?.GSI1SK);
+export const UpdateOpeningModal = ({ opening }: { opening: Opening }) => {
+  const [openingName, setOpeningName] = useState(opening?.name);
+  const openingState = findInTargetArray({
+    entity: IndexedEntities.OpeningState,
+    targetArray: opening.target,
+  });
+  const [GSI1SK, setGSI1SK] = useState('');
 
   useEffect(() => {
-    setOpeningName(opening?.openingName);
-    setGSI1SK(opening?.GSI1SK);
-  }, [opening?.openingName, opening?.GSI1SK]);
+    setOpeningName(opening?.name);
+    setGSI1SK(openingState);
+  }, [opening?.name, openingState]);
 
   const visibility = useStore((state) => state.showUpdateOpeningModal);
 
@@ -25,15 +31,15 @@ export const UpdateOpeningModal = ({ opening }: { opening: DynamoOpening }) => {
 
     try {
       const newValues = {
-        GSI1SK: opening?.GSI1SK === GSI1SK ? undefined : GSI1SK,
-        openingName: opening?.openingName === openingName ? undefined : openingName,
+        GSI1SK: openingState === GSI1SK ? undefined : GSI1SK,
+        openingName: opening?.name === openingName ? undefined : openingName,
       };
 
       const { data } = await UpdateOpening({
-        openingId: opening.openingId,
+        openingId: opening.id,
         newValues,
       });
-      mutate(GetOpeningInfoURL(opening?.openingId));
+      mutate(GetOpeningInfoURL(opening?.id));
       alert(data.message);
       closeUpdateOpeningModal();
     } catch (error) {

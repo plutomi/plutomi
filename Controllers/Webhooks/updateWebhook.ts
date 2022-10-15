@@ -22,34 +22,36 @@ export const updateWebhook = async (req: Request, res: Response) => {
     return res.status(status).json(body);
   }
 
-  let updatedValues: APIUpdateWebhookOptions = {};
-  const { user } = req;
-  const { webhookId } = req.params;
+  return res.status(200).json({ message: 'TODO Endpoint temporarily disabled!' });
 
-  if (req.body.webhookUrl) {
-    updatedValues.webhookUrl = req.body.webhookUrl;
-  }
+  // let updatedValues: APIUpdateWebhookOptions = {};
+  // const { user } = req;
+  // const { webhookId } = req.params;
 
-  if (req.body.webhookName) {
-    updatedValues.webhookName = req.body.webhookName;
-  }
+  // if (req.body.webhookUrl) {
+  //   updatedValues.webhookUrl = req.body.webhookUrl;
+  // }
 
-  if (req.body.description || req.body.description === '') {
-    updatedValues.description = req.body.description;
-  }
+  // if (req.body.webhookName) {
+  //   updatedValues.webhookName = req.body.webhookName;
+  // }
 
-  const [updatedWebhook, error] = await DB.Webhooks.updateWebhook({
-    webhookId,
-    orgId: user.orgId,
-    updatedValues,
-  });
+  // if (req.body.description || req.body.description === '') {
+  //   updatedValues.description = req.body.description;
+  // }
 
-  if (error) {
-    const { status, body } = CreateError.SDK(error, 'An error ocurred updating this webhook');
-    return res.status(status).json(body);
-  }
+  // const [updatedWebhook, error] = await DB.Webhooks.updateWebhook({
+  //   webhookId,
+  //   orgId: user.orgId,
+  //   updatedValues,
+  // });
 
-  return res.status(200).json({
-    message: 'Webhook updated!',
-  });
+  // if (error) {
+  //   const { status, body } = CreateError.SDK(error, 'An error ocurred updating this webhook');
+  //   return res.status(status).json(body);
+  // }
+
+  // return res.status(200).json({
+  //   message: 'Webhook updated!',
+  // });
 };

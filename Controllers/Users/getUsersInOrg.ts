@@ -1,13 +1,17 @@
 import { Request, Response } from 'express';
 import { pick } from 'lodash';
 import { DB } from '../../models';
+import { IndexedEntities } from '../../types/main';
 import * as CreateError from '../../utils/createError';
+import { findInTargetArray } from '../../utils/findInTargetArray';
 
 export const getUsersInOrg = async (req: Request, res: Response) => {
   const { user } = req;
 
+  const orgId = findInTargetArray({ entity: IndexedEntities.Org, targetArray: user.target });
+
   const [users, error] = await DB.Users.getUsersInOrg({
-    orgId: user.orgId,
+    orgId,
   });
 
   if (error) {

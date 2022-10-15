@@ -20,35 +20,34 @@ export const updateQuestion = async (req: Request, res: Response) => {
     const { status, body } = CreateError.JOI(error);
     return res.status(status).json(body);
   }
+  return res.status(200).json({ message: 'TODO Endpoint temporarily disabled!' });
 
-  console.log(`REQ BODY`, req.body);
+  // const { user } = req;
+  // const { questionId } = req.params;
+  // let updatedValues: APIUpdateQuestionOptions = {};
 
-  const { user } = req;
-  const { questionId } = req.params;
-  let updatedValues: APIUpdateQuestionOptions = {};
+  // if (req.body.GSI1SK) {
+  //   updatedValues.GSI1SK = req.body.GSI1SK;
+  // }
 
-  if (req.body.GSI1SK) {
-    updatedValues.GSI1SK = req.body.GSI1SK;
-  }
+  // if (req.body.description || req.body.description === '') {
+  //   updatedValues.description = req.body.description;
+  // }
+  // const [question, questionError] = await DB.Questions.updateQuestion({
+  //   orgId: user.orgId,
+  //   questionId,
+  //   updatedValues,
+  // });
 
-  if (req.body.description || req.body.description === '') {
-    updatedValues.description = req.body.description;
-  }
-  const [question, questionError] = await DB.Questions.updateQuestion({
-    orgId: user.orgId,
-    questionId,
-    updatedValues,
-  });
+  // if (questionError) {
+  //   const { status, body } = CreateError.SDK(
+  //     questionError,
+  //     'An error ocurred updating this question',
+  //   );
+  //   return res.status(status).json(body);
+  // }
 
-  if (questionError) {
-    const { status, body } = CreateError.SDK(
-      questionError,
-      'An error ocurred updating this question',
-    );
-    return res.status(status).json(body);
-  }
-
-  return res.status(200).json({
-    message: 'Question updated!',
-  });
+  // return res.status(200).json({
+  //   message: 'Question updated!',
+  // });
 };

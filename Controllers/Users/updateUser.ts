@@ -19,35 +19,36 @@ export const updateUser = async (req: Request, res: Response) => {
     const { status, body } = CreateError.JOI(error);
     return res.status(status).json(body);
   }
+  return res.status(200).json({ message: 'TODO Endpoint temporarily disabled!' });
 
-  let updatedValues: APIUpdateUserOptions = {};
-  const { user } = req;
+  // let updatedValues: APIUpdateUserOptions = {};
+  // const { user } = req;
 
-  // TODO RBAC will go here, right now you can only update yourself
-  if (req.params.userId !== user.userId) {
-    return res.status(403).json({ message: 'You cannot update this user' });
-  }
+  // // TODO RBAC will go here, right now you can only update yourself
+  // if (req.params.userId !== user.userId) {
+  //   return res.status(403).json({ message: 'You cannot update this user' });
+  // }
 
-  if (req.body.firstName) {
-    updatedValues.firstName = req.body.firstName;
-  }
+  // if (req.body.firstName) {
+  //   updatedValues.firstName = req.body.firstName;
+  // }
 
-  if (req.body.lastName) {
-    updatedValues = req.body.lastName;
-  }
+  // if (req.body.lastName) {
+  //   updatedValues = req.body.lastName;
+  // }
 
-  const [updatedUser, error] = await DB.Users.updateUser({
-    userId: user.userId,
-    updatedValues,
-  });
+  // const [updatedUser, error] = await DB.Users.updateUser({
+  //   userId: user.userId,
+  //   updatedValues,
+  // });
 
-  if (error) {
-    const { status, body } = CreateError.SDK(error, 'An error ocurred updating user info');
-    return res.status(status).json(body);
-  }
+  // if (error) {
+  //   const { status, body } = CreateError.SDK(error, 'An error ocurred updating user info');
+  //   return res.status(status).json(body);
+  // }
 
-  return res.status(200).json({
-    // TODO RBAC is not implemented yet so this won't trigger
-    message: req.params.userId === user.userId ? 'Info updated!' : 'User updated!',
-  });
+  // return res.status(200).json({
+  //   // TODO RBAC is not implemented yet so this won't trigger
+  //   message: req.params.userId === user.userId ? 'Info updated!' : 'User updated!',
+  // });
 };

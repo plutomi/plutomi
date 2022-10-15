@@ -6,7 +6,7 @@ export const removeUserFromOrg = async (req: Request, res: Response) => {
   const { user } = req;
   const { orgId, userId } = req.params;
 
-  if (userId === user.userId) {
+  if (userId === user.id) {
     return res.status(403).json({
       message:
         "You cannot remove yourself from an org. If you're the only user, delete the org instead",
@@ -32,7 +32,7 @@ export const removeUserFromOrg = async (req: Request, res: Response) => {
   const [removed, removeError] = await DB.Users.removeUserFromOrg({
     // if this doesn't match the createdBy ID on the org,
     // Dynamo will error
-    createdById: user.userId,
+    createdById: user.id,
     orgId: org.orgId,
     userId,
   });

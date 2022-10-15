@@ -2,7 +2,9 @@ import { Request, Response } from 'express';
 import Joi from 'joi';
 import { JOI_SETTINGS } from '../../Config';
 import { DB } from '../../models';
+import { IndexedEntities } from '../../types/main';
 import * as CreateError from '../../utils/createError';
+import { findInTargetArray } from '../../utils/findInTargetArray';
 
 interface APIGetUserByIdParameters {
   userId?: string;
@@ -24,7 +26,7 @@ export const getUser = async (req: Request, res: Response) => {
   }
 
   const { userId }: APIGetUserByIdParameters = req.params;
-  if (user.userId !== userId) {
+  if (user.id !== userId) {
     // TODO RBAC
     return res.status(403).json({
       message: 'You are not authorized to view this user',
@@ -46,7 +48,8 @@ export const getUser = async (req: Request, res: Response) => {
 
   // TODO RBAC here
   // Only allow viewing users in the same org
-  if (user.orgId !== requestedUser.orgId) {
+  const orgId = findInTargetArray({ entity: IndexedEntities.Org, targetArray: user.target });
+  if (orgId !== requestedUser.orgId) {
     return res.status(403).json({
       message: 'You are not authorized to view this user since you are not in the same org',
     });
