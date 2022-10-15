@@ -1,4 +1,3 @@
-import { ObjectId } from '@mikro-orm/mongodb';
 import { Stage } from '../entities';
 import { IndexedEntities } from '../types/main';
 import { findInTargetArray } from './findInTargetArray';
@@ -88,7 +87,7 @@ export const getAdjacentStagesBasedOnPosition = ({
   }
 
   if (position === 0) {
-    // First in the list, get the current first stage
+    // Stage wants to be first
     return {
       newPreviousStageId: undefined,
       newNextStageId: otherSortedStages[0]?.id,
