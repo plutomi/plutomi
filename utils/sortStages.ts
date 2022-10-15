@@ -49,8 +49,6 @@ export const sortStages = (unsortedStagesInOpening: Stage[]): Stage[] => {
     mapWithStages[stage.id] = stage;
   });
 
-  console.log(`FIRST STAGE`, firstStage);
-  console.log(`Map with stages`, mapWithStages);
   let reachedTheEnd = false;
   let startingStage = firstStage;
 
