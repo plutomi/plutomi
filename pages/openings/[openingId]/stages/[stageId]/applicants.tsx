@@ -12,7 +12,7 @@ import { ApplicantsPageHeader } from '../../../../../components/ApplicantsPageHe
 
 export default function StageApplicants() {
   const router = useRouter();
-  const { openingId } = router.query as Pick<CustomQuery, 'openingId' >;
+  const { openingId } = router.query as Pick<CustomQuery, 'openingId'>;
   const { opening, isOpeningLoading, isOpeningError } = useOpeningInfo({ openingId });
 
   const openApplicantProfileModal = useStore((state) => state.openApplicantProfileModal);
@@ -30,7 +30,7 @@ export default function StageApplicants() {
     <NewPageLayout
       loggedOutPageText="Log in to view your applicants"
       currentNavbarItem="Openings"
-      headerText={isOpeningLoading ? 'Applicants' : `${opening?.openingName} - Applicants`}
+      headerText={isOpeningLoading ? 'Applicants' : `${opening?.name} - Applicants`}
     >
       <>
         <ApplicantProfileModal />

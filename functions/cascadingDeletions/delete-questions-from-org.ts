@@ -32,35 +32,36 @@ import { CustomEventBridgeEvent } from '../stream-processor';
 export async function main(event: EventBridgeEvent<'stream', CustomEventBridgeEvent>) {
   console.log('Incoming event: ', JSON.stringify(event));
   const deletedEntity = event.detail.OldImage;
+  return;
+  // TODO temporarily disabled
+  // if (deletedEntity.entityType === Entities.ORG && deletedEntity.totalQuestions > 0) {
+  //   console.log('Org has questions, deleting...');
 
-  if (deletedEntity.entityType === Entities.ORG && deletedEntity.totalQuestions > 0) {
-    console.log('Org has questions, deleting...');
+  //   const [allQuestions, allQuestionsError] = await DB.Questions.getQuestionsInOrg({
+  //     orgId: event.detail.orgId,
+  //   });
 
-    const [allQuestions, allQuestionsError] = await DB.Questions.getQuestionsInOrg({
-      orgId: event.detail.orgId,
-    });
+  //   if (allQuestionsError) {
+  //     console.error(
+  //       'An error ocurred retrieving questions in an org to delete...',
+  //       allQuestionsError,
+  //     );
+  //     return;
+  //   }
 
-    if (allQuestionsError) {
-      console.error(
-        'An error ocurred retrieving questions in an org to delete...',
-        allQuestionsError,
-      );
-      return;
-    }
-
-    try {
-      await Promise.all(
-        allQuestions.map(async (question) =>
-          DB.Questions.deleteQuestionFromOrg({
-            orgId: deletedEntity.orgId,
-            questionId: question.questionId,
-            updateOrg: false,
-          }),
-        ),
-      );
-      console.log('All questions deleted!');
-    } catch (error) {
-      console.log('An error ocurred deleting questions in org', error);
-    }
-  }
+  //   try {
+  //     await Promise.all(
+  //       allQuestions.map(async (question) =>
+  //         DB.Questions.deleteQuestionFromOrg({
+  //           orgId: deletedEntity.orgId,
+  //           questionId: question.questionId,
+  //           updateOrg: false,
+  //         }),
+  //       ),
+  //     );
+  //     console.log('All questions deleted!');
+  //   } catch (error) {
+  //     console.log('An error ocurred deleting questions in org', error);
+  //   }
+  // }
 }

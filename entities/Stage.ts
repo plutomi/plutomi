@@ -1,5 +1,10 @@
-import { Entity, Enum, IdentifiedReference, Index, ManyToOne, Property, Reference } from '@mikro-orm/core';
-import { IndexedTargetArray } from '../types/main';
+import {
+  Entity,
+
+  Index,
+  Property,
+} from '@mikro-orm/core';
+import type { IndexedTargetArray } from '../types/main';
 import { BaseEntity } from './BaseEntity';
 
 export type StageConstructorValues = Pick<Stage, 'name' | 'target'>;

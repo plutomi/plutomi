@@ -26,68 +26,69 @@ export const addQuestionToStage = async (req: Request, res: Response) => {
     const { status, body } = CreateError.JOI(error);
     return res.status(status).json(body);
   }
+  return res.status(200).json({ message: 'TODO Endpoint temporarily disabled!' });
 
-  // TODO types
-  const { questionId, position }: { questionId: string; position?: number } = req.body;
-  const { openingId, stageId } = req.params;
+  // // TODO types
+  // const { questionId, position }: { questionId: string; position?: number } = req.body;
+  // const { openingId, stageId } = req.params;
 
-  const [question, getQuestionError] = await DB.Questions.getQuestion({
-    orgId: user.orgId,
-    questionId,
-  });
+  // const [question, getQuestionError] = await DB.Questions.getQuestion({
+  //   orgId: user.orgId,
+  //   questionId,
+  // });
 
-  if (getQuestionError) {
-    const { status, body } = CreateError.SDK(
-      getQuestionError,
-      'An error ocurred retrieving info for that question',
-    );
-    return res.status(status).json(body);
-  }
+  // if (getQuestionError) {
+  //   const { status, body } = CreateError.SDK(
+  //     getQuestionError,
+  //     'An error ocurred retrieving info for that question',
+  //   );
+  //   return res.status(status).json(body);
+  // }
 
-  if (!question) {
-    return res.status(404).json({
-      message: `A question with the ID of '${questionId}' does not exist in this org`,
-    });
-  }
+  // if (!question) {
+  //   return res.status(404).json({
+  //     message: `A question with the ID of '${questionId}' does not exist in this org`,
+  //   });
+  // }
 
-  const [stage, stageError] = await DB.Stages.getStage({
-    openingId,
-    stageId,
-    orgId: user.orgId,
-  });
+  // const [stage, stageError] = await DB.Stages.getStage({
+  //   openingId,
+  //   stageId,
+  //   orgId: user.orgId,
+  // });
 
-  if (stageError) {
-    const { status, body } = CreateError.SDK(stageError, 'Unable to retrieve stage info');
+  // if (stageError) {
+  //   const { status, body } = CreateError.SDK(stageError, 'Unable to retrieve stage info');
 
-    return res.status(status).json(body);
-  }
+  //   return res.status(status).json(body);
+  // }
 
-  if (!stage) {
-    return res.status(404).json({ message: 'Stage does not exist' });
-  }
+  // if (!stage) {
+  //   return res.status(404).json({ message: 'Stage does not exist' });
+  // }
 
-  // Block questions from being added to a stage if it already exists in the stage
-  if (stage.questionOrder.includes(questionId)) {
-    return res.status(409).json({
-      message: `A question with the ID of '${questionId}' already exists in this stage. Please use a different question ID or delete the old one.`,
-    });
-  }
+  // // Block questions from being added to a stage if it already exists in the stage
+  // if (stage.questionOrder.includes(questionId)) {
+  //   return res.status(409).json({
+  //     message: `A question with the ID of '${questionId}' already exists in this stage. Please use a different question ID or delete the old one.`,
+  //   });
+  // }
 
-  // Update the stage with the new questionOrder
-  const questionOrder = getNewChildItemOrder(questionId, stage.questionOrder, position);
+  // // Update the stage with the new questionOrder
+  // const questionOrder = getNewChildItemOrder(questionId, stage.questionOrder, position);
 
-  const [stageUpdated, stageUpdatedError] = await DB.Questions.addQuestionToStage({
-    openingId,
-    stageId,
-    orgId: user.orgId,
-    questionId,
-    questionOrder,
-  });
+  // const [stageUpdated, stageUpdatedError] = await DB.Questions.addQuestionToStage({
+  //   openingId,
+  //   stageId,
+  //   orgId: user.orgId,
+  //   questionId,
+  //   questionOrder,
+  // });
 
-  if (stageUpdatedError) {
-    const { status, body } = CreateError.SDK(stageError, 'An error ocurred updating your stage');
-    return res.status(status).json(body);
-  }
+  // if (stageUpdatedError) {
+  //   const { status, body } = CreateError.SDK(stageError, 'An error ocurred updating your stage');
+  //   return res.status(status).json(body);
+  // }
 
-  return res.status(201).json({ message: 'Question added to stage!' });
+  // return res.status(201).json({ message: 'Question added to stage!' });
 };

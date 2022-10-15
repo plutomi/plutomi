@@ -19,29 +19,30 @@ const schema = Joi.object({
 
 export const createQuestion = async (req: Request, res: Response) => {
   const { user } = req;
+  return res.status(200).json({ message: 'TODO Endpoint temporarily disabled!' });
 
-  try {
-    await schema.validateAsync(req);
-  } catch (error) {
-    const { status, body } = CreateError.JOI(error);
-    return res.status(status).json(body);
-  }
-  const { questionId, description, GSI1SK }: APICreateQuestionOptions = req.body;
+  // try {
+  //   await schema.validateAsync(req);
+  // } catch (error) {
+  //   const { status, body } = CreateError.JOI(error);
+  //   return res.status(status).json(body);
+  // }
+  // const { questionId, description, GSI1SK }: APICreateQuestionOptions = req.body;
 
-  const [created, error] = await DB.Questions.createQuestion({
-    questionId,
-    orgId: user.orgId,
-    GSI1SK,
-    description,
-  });
+  // const [created, error] = await DB.Questions.createQuestion({
+  //   questionId,
+  //   orgId: user.orgId,
+  //   GSI1SK,
+  //   description,
+  // });
 
-  if (error) {
-    if (error.name === 'TransactionCanceledException') {
-      return res.status(409).json({ message: 'A question already exists with this ID' });
-    }
+  // if (error) {
+  //   if (error.name === 'TransactionCanceledException') {
+  //     return res.status(409).json({ message: 'A question already exists with this ID' });
+  //   }
 
-    const { status, body } = CreateError.SDK(error, 'An error ocurred creating your question');
-    return res.status(status).json(body);
-  }
-  return res.status(201).json({ message: 'Question created!', question: created });
+  //   const { status, body } = CreateError.SDK(error, 'An error ocurred creating your question');
+  //   return res.status(status).json(body);
+  // }
+  // return res.status(201).json({ message: 'Question created!', question: created });
 };

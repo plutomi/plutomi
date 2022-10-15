@@ -1,6 +1,5 @@
 import { AXIOS_INSTANCE as axios } from '../Config';
 import { APICreateOpeningOptions } from '../Controllers/Openings/createOpening';
-import { APIUpdateOpeningOptions } from '../Controllers/Openings/updateOpening';
 
 export const CreateOpening = async (options: APICreateOpeningOptions) => {
   const data = await axios.post(`/openings`, { ...options });
@@ -28,7 +27,7 @@ export const DeleteOpening = async (openingId: string) => {
 
 interface UpdateOpeningInput {
   openingId: string;
-  newValues: APIUpdateOpeningOptions;
+  newValues: Object; // TODO types!
 }
 export const UpdateOpening = async (options: UpdateOpeningInput) => {
   const data = await axios.put(GetOpeningInfoURL(options.openingId), {

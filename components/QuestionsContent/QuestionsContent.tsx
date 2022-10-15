@@ -9,11 +9,14 @@ import { EmptyQuestionContent } from '../EmptyQuestionContent';
 import { CreateQuestionModal } from '../CreateQuestionModal';
 import { UpdateQuestionModal } from '../UpdateQuestionModal';
 import { QuestionItem } from '../QuestionItem';
+import { findInTargetArray } from '../../utils/findInTargetArray';
+import { IndexedEntities } from '../../types/main';
 
 export const QuestionsContent = () => {
   const { user, isUserLoading, isUserError } = useSelf();
+  const orgId = findInTargetArray({ entity: IndexedEntities.Org, targetArray: user.target });
   const { org, isOrgLoading, isOrgError } = useOrgInfo({
-    orgId: user?.orgId,
+    orgId,
   });
   const { orgQuestions, isOrgQuestionsLoading, isOrgQuestionsError } = useQuestionsInOrg();
 

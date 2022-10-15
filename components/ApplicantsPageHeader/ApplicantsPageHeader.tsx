@@ -4,11 +4,12 @@ import { useRouter } from 'next/router';
 import { useSelf } from '../../SWR/useSelf';
 import { useOpeningInfo } from '../../SWR/useOpeningInfo';
 import { useOpeningsInOrg } from '../../SWR/useOpeningsInOrg';
-import { CustomQuery } from '../../types/main';
+import { CustomQuery, IndexedEntities } from '../../types/main';
 import { OpeningState, WEBSITE_URL } from '../../Config';
 import { OpeningsDropdown } from '../OpeningsDropdown';
 import { ClickToCopy } from '../ClickToCopy';
 import { Loader } from '../Loader';
+import { findInTargetArray } from '../../utils/findInTargetArray';
 
 export const ApplicantsPageHeader = () => {
   const router = useRouter();
@@ -23,22 +24,26 @@ export const ApplicantsPageHeader = () => {
   if (isOpeningLoading || isOpeningsInOrgLoading)
     return <Loader text="Loading opening(s) info..."></Loader>;
 
+  const orgId = findInTargetArray({ entity: IndexedEntities.Org, targetArray: opening.target });
+  const openingState = findInTargetArray({
+    entity: IndexedEntities.OpeningState,
+    targetArray: opening.target,
+  });
+
   return (
     <div className="md:flex md:items-center md:justify-between  ">
       <div className=" min-w-0 w-2/3 inline-flex justify-between items-center ">
         <OpeningsDropdown
           openings={openingsInOrg}
-          index={openingsInOrg?.indexOf(
-            openingsInOrg?.find((opening) => opening.openingId === openingId),
-          )}
+          index={openingsInOrg?.indexOf(openingsInOrg?.find((opening) => opening.id === openingId))}
         />
       </div>
 
-      {opening?.GSI1SK === OpeningState.PUBLIC && (
+      {openingState === OpeningState.PUBLIC && (
         <p className="mt-2 text-md text-normal sm:mt-0 ">
           <ClickToCopy
             showText="Application Link"
-            copyText={`${WEBSITE_URL}/${user?.orgId}/${opening?.openingId}/apply`}
+            copyText={`${WEBSITE_URL}/${orgId}/${opening?.id}/apply`}
           />
         </p>
       )}

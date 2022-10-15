@@ -21,5 +21,5 @@ export const getApplicantsInStage = async (req: Request, res: Response) => {
   //   return res.status(status).json(body);
   // }
 
-  return res.status(200).json([]);
+  return res.status(200).json({message: "Endpoint temporarily disabled!"})
 };

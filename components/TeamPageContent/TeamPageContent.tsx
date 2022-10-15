@@ -10,16 +10,19 @@ import { PendingInviteCard } from '../PendingInviteCard';
 import { CreateInviteModal } from '../CreateInviteModal';
 import { UserCard } from '../UserCard';
 import { nameIsDefault } from '../../utils/compareStrings/nameIsDefault';
+import { findInTargetArray } from '../../utils/findInTargetArray';
+import { IndexedEntities } from '../../types/main';
 
 export const TeamPageContent = () => {
   const { user, isUserLoading, isUserError } = useSelf();
+  const orgId = findInTargetArray({ entity: IndexedEntities.Org, targetArray: user.target });
   const { orgUsers, isOrgUsersLoading, isOrgUsersError } = useOrgUsers({
-    orgId: user?.orgId,
+    orgId,
   });
   const openInviteModal = useStore((state) => state.openInviteModal);
   const { pendingOrgInvites, isPendingOrgInvitesLoading, isPendingOrgInvitesError } =
     usePendingOrgInvites({
-      orgId: user?.orgId,
+      orgId,
     });
   if (isOrgUsersError) return <h1>An error ocurred returning your orgs users</h1>;
   if (isPendingOrgInvitesError) return <h1>An error ocurred retrieving your pending invites</h1>;
@@ -71,7 +74,7 @@ export const TeamPageContent = () => {
           )}
 
           {orgUsers?.map((user) => (
-            <UserCard key={user.userId} user={user} />
+            <UserCard key={user.id} user={user} />
           ))}
         </div>
       ) : (

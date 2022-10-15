@@ -3,6 +3,8 @@ import { DynamoOrgInvite } from '../../types/dynamo';
 import * as Time from '../../utils/time';
 import * as Invites from '../../adapters/Invites';
 import { useSelf } from '../../SWR/useSelf';
+import { findInTargetArray } from '../../utils/findInTargetArray';
+import { IndexedEntities } from '../../types/main';
 
 interface PendingInviteCardProps {
   invite: DynamoOrgInvite;
@@ -10,12 +12,13 @@ interface PendingInviteCardProps {
 
 export const PendingInviteCard = ({ invite }: PendingInviteCardProps) => {
   const { user, isUserLoading, isUserError } = useSelf();
+  const orgId = findInTargetArray({ entity: IndexedEntities.Org, targetArray: user.target });
 
   const cancelInvite = async (invite: DynamoOrgInvite) => {
     try {
       const data = await Invites.CancelInvite({
         inviteId: invite.inviteId,
-        orgId: user?.orgId,
+        orgId,
         userId: invite.recipient.userId,
       });
       alert(data.data.message);
@@ -24,7 +27,7 @@ export const PendingInviteCard = ({ invite }: PendingInviteCardProps) => {
     }
 
     // Refresh the pending invites
-    mutate(Invites.GetOrgInvitesURL(user?.orgId));
+    mutate(Invites.GetOrgInvitesURL(orgId));
   };
   const { firstName, lastName, email } = invite.recipient;
   return (
