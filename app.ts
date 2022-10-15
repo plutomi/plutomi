@@ -38,11 +38,12 @@ app
     const sessionSecrets = [env.sessionSignatureSecret1];
 
     const server = express();
-    const orm = await initializeDb();
-    const includeEntityManager: express.Handler = (req, _res, next) => {
-      req.entityManager = orm.em.fork();
-      next();
-    };
+    console.log(`\n\n\nTEMPORARILY DISABLED MONGODB CONNECTIOn\n\n\n`);
+    // const orm = await initializeDb();
+    // const includeEntityManager: express.Handler = (req, _res, next) => {
+    //   req.entityManager = orm.em.fork();
+    //   next();
+    // };
 
     server.use(timeout('5s'));
     server.use(
@@ -65,7 +66,7 @@ app
       withCleanWebhookId,
       morgan(morganSettings),
       cookieParser(sessionSecrets, COOKIE_SETTINGS),
-      includeEntityManager,
+      // includeEntityManager,
     ]);
 
     if (env.nodeEnv === 'development') {

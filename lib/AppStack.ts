@@ -112,6 +112,9 @@ export default class AppStack extends cdk.Stack {
     const vpc = new ec2.Vpc(this, 'plutomi-api-fargate-vpc', {
       maxAzs: 3,
       natGateways: 0, // Very pricy! https://www.lastweekinaws.com/blog/the-aws-managed-nat-gateway-is-unpleasant-and-not-recommended/
+      // Required for MongoDB https://www.mongodb.com/docs/atlas/security-vpc-peering/
+      enableDnsHostnames: true,
+      enableDnsSupport: true,
     });
 
     // Create the cluster
