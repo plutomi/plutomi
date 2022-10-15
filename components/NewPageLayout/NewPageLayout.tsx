@@ -1,11 +1,12 @@
 import { useRouter } from 'next/router';
 import { useSelf } from '../../SWR/useSelf';
-import { NAVBAR_NAVIGATION, WEBSITE_URL, DEFAULTS } from '../../Config';
+import { NAVBAR_NAVIGATION, WEBSITE_URL } from '../../Config';
 import { NewPageHeader } from '../PageHeader';
 import { Login } from '../Login';
 import { SignedInNav } from '../SignedInNavbar';
 import { findInTargetArray } from '../../utils/findInTargetArray';
 import { IndexedEntities } from '../../types/main';
+import { Loader } from '../Loader';
 
 interface NewPageProps {
   headerText: string;
@@ -23,6 +24,10 @@ export const NewPageLayout = ({
   const router = useRouter();
   const { user, isUserLoading, isUserError } = useSelf();
 
+  if (isUserLoading) {
+    return <Loader text="Loading user..."></Loader>;
+  }
+  
   if (isUserError) {
     return <Login loggedOutPageText={loggedOutPageText} />;
   }

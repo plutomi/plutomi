@@ -4,7 +4,7 @@ import { useSelf } from '../../SWR/useSelf';
 import { useOrgInfo } from '../../SWR/useOrgInfo';
 import { DeleteOrg } from '../../adapters/Orgs';
 import useStore from '../../utils/store';
-import { DEFAULTS, WEBSITE_URL } from '../../Config';
+import { WEBSITE_URL } from '../../Config';
 import { GetSelfInfoURL } from '../../adapters/Users';
 import { ClickToCopy } from '../ClickToCopy';
 import { CreateOrgModal } from '../CreateOrgModal';
@@ -16,9 +16,12 @@ import { IndexedEntities } from '../../types/main';
 
 export const DashboardPageContent = () => {
   const { user, isUserLoading, isUserError } = useSelf();
-  const orgId = user
-    ? findInTargetArray({ entity: IndexedEntities.Org, targetArray: user.target })
-    : undefined;
+
+  if (isUserError) return <h1>An error ocurred returning your info</h1>;
+
+  if (isUserLoading) return <Loader text="Loading user..." />;
+
+  const orgId = findInTargetArray({ entity: IndexedEntities.Org, targetArray: user.target });
   const { org, isOrgLoading, isOrgError } = useOrgInfo({
     orgId,
   });
@@ -26,10 +29,6 @@ export const DashboardPageContent = () => {
 
   const openCreateOrgModal = useStore((state) => state.openCreateOrgModal);
   const openUserProfileModal = useStore((state) => state.openUserProfileModal);
-
-  if (isUserError) return <h1>An error ocurred returning your info</h1>;
-
-  if (isUserLoading) return <Loader text="Loading user..." />;
 
   console.log(`ORG ID IS`, orgId);
   if (orgId && isOrgLoading) {
