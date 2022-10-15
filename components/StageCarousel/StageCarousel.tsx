@@ -21,7 +21,7 @@ export const StageCarousel = () => {
   if (isStagesError) return <h1>An error ocurred returning stages for this opening</h1>;
   if (isStagesLoading) return <Loader text="Loading stages..." />;
   if (!stages.length) return <h1>No stages found for this opening!</h1>;
-  
+
   return (
     <div className="max-w-8xl border -py-4 rounded-xl">
       <ItemsCarousel
@@ -53,12 +53,12 @@ export const StageCarousel = () => {
       >
         {stages?.map((stage) => (
           <StageCard
-            key={stage.stageId}
-            name={stage.GSI1SK}
-            stageId={stage.stageId}
+            key={stage.id}
+            name={stage.name}
+            stageId={stage.id}
             totalApplicants={stage.totalApplicants}
             draggable={false}
-            linkHref={`/openings/${openingId}/stages/${stage.stageId}/applicants`}
+            linkHref={`/openings/${openingId}/stages/${stage.id}/applicants`}
           />
         ))}
       </ItemsCarousel>

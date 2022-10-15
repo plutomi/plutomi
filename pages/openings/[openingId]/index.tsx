@@ -22,7 +22,7 @@ export default function Openings() {
     // Redirect to the first stage
     if (opening?.totalStages > 0) {
       router.push(
-        `${DOMAIN_NAME}/openings/${openingId}/stages/${stages[0].stageId}/applicants`, // TODO should this end with applicants?
+        `${DOMAIN_NAME}/openings/${openingId}/stages/${stages[0].id}/applicants`, // TODO should this end with applicants?
       );
     } else {
       // Redirect to opening settings if no stages
