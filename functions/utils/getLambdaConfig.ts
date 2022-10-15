@@ -9,6 +9,7 @@ interface GetFunctionConfigProps {
   fileName: string;
   functionName: string;
   functionDescription: string;
+  cascadingDeletion: boolean;
 }
 
 /**
@@ -18,13 +19,19 @@ export const getLambdaConfig = ({
   functionName,
   functionDescription,
   fileName,
+  cascadingDeletion,
 }: GetFunctionConfigProps): Partial<NodejsFunctionProps> => {
+  const dir = cascadingDeletion
+    ? `/../functions/cascadingDeletions/${fileName}.ts`
+    : `/../functions/${fileName}.ts`;
+
   const logRetention =
     env.deploymentEnvironment === 'production' ? RetentionDays.ONE_MONTH : RetentionDays.ONE_WEEK;
+
   return {
     functionName,
     timeout: Duration.seconds(30),
-    memorySize: 1024,
+    memorySize: 512,
     logRetention,
     runtime: Runtime.NODEJS_16_X,
     architecture: Architecture.X86_64, // TODO: Test out ARM
@@ -55,6 +62,6 @@ export const getLambdaConfig = ({
     },
     handler: 'main',
     description: functionDescription,
-    entry: path.join(__dirname, `/../functions/${fileName}.ts`),
+    entry: path.join(__dirname, dir),
   };
 };
