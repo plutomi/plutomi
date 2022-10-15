@@ -16,7 +16,6 @@ on:
 env:
   DEPLOYMENT_ENVIRONMENT: ${{ github.event.inputs.environment || 'staging' }}
   NODE_VERSION: 16
-  NODE_ENV: production # Always production
 
 concurrency:
   group: ${{ github.event.inputs.environment || 'staging' }}
@@ -62,7 +61,7 @@ jobs:
           ACM_CERTIFICATE_ID: ${{ secrets.ACM_CERTIFICATE_ID }}
           LOGIN_LINKS_PASSWORD: ${{ secrets.LOGIN_LINKS_PASSWORD }}
           SESSION_SIGNATURE_SECRET_1: ${{ secrets.SESSION_SIGNATURE_SECRET_1 }}
-          NODE_ENV: ${{ env.NODE_ENV }}
+          NODE_ENV: production
           NEXT_PUBLIC_DEPLOYMENT_ENVIRONMENT: ${{ env.DEPLOYMENT_ENVIRONMENT }}
           NEXT_PUBLIC_WEBSITE_URL: ${{ secrets.NEXT_PUBLIC_WEBSITE_URL }}
           MONGO_CONNECTION: ${{ secrets.MONGO_CONNECTION }}
