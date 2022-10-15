@@ -32,7 +32,7 @@ export const StageReorderColumn = () => {
   // TODO types!!!!!!!
 
   const handleOnDragEnd = async (result) => {
-    const { draggableId: stageId, source, destination } = result;
+    const { draggableId, source, destination } = result;
     if (!destination) {
       console.log('user dropped outside of list');
       return;
@@ -43,21 +43,27 @@ export const StageReorderColumn = () => {
       return;
     }
 
-    const newStagesOrderIds = Array.from(stages.map((stage) => stage.id));
+    console.log(`RESULT`, result);
+    let newStageOrder = [...newStages];
+    console.log(`New stage order IDS`, newStageOrder);
 
     // Remove our stage it from the old location
-    newStagesOrderIds.splice(source.index, 1);
-    // Add it to the new location
-    newStagesOrderIds.splice(destination.index, 0, stageId);
+    newStageOrder.splice(source.index, 1); // TODO this isn't splicing!
 
-    // Should already be sorted!
-    const newStageOrder = newStagesOrderIds.map((id) => stages.find((stage) => stage.id === id));
+    console.log(`NEW ORDER`, newStageOrder);
+    const ourStage = newStages.find((stage) => stage.id === draggableId);
+    // Add it to the new location
+    newStageOrder.splice(destination.index, 0, ourStage);
+    console.log(`Added it to a new location`, newStageOrder);
+
+    console.log(`New Stage Order`, newStageOrder);
+
     setNewStages(newStageOrder);
 
     try {
       await UpdateStage({
         openingId,
-        stageId,
+        stageId: ourStage.id,
         newValues: {
           position: destination.index,
         },
@@ -82,7 +88,6 @@ export const StageReorderColumn = () => {
     return <h1>An error ocurred loading your stages</h1>;
   }
 
-  console.log(`newwww stages`, newStages);
   return (
     <div className="h-full relative" style={{ minHeight: '12rem' }}>
       <CreateStageModal />
@@ -106,7 +111,7 @@ export const StageReorderColumn = () => {
               <Droppable droppableId={openingId}>
                 {(provided) => (
                   <div {...provided.droppableProps} ref={provided.innerRef}>
-                    {newStages.map((stage, index) => (
+                    {newStages?.map((stage, index) => (
                       <DraggableStageCard
                         key={stage.id}
                         stage={stage}
