@@ -7,6 +7,7 @@ import { DB } from '../../models';
 import { Stage } from '../../entities';
 import { IndexedEntities } from '../../types/main';
 import { findInTargetArray } from '../../utils/findInTargetArray';
+import { getAdjacentStagesBasedOnPosition, sortStages } from '../../utils/sortStages';
 
 export interface APIUpdateStageOptions
   extends Partial<Pick<DynamoStage, 'GSI1SK' | 'questionOrder'>> {}
@@ -82,8 +83,57 @@ export const updateStage = async (req: Request, res: Response) => {
     stage.name = req.body.GSI1SK;
   }
 
+  if (req.body.position || req.body.position === 0) {
+    let allStagesInOpening: Stage[];
+
+    try {
+      allStagesInOpening = await entityManager.find(Stage, {
+        $and: [
+          { target: { id: orgId, type: IndexedEntities.Org } },
+          { target: { id: openingId, type: IndexedEntities.Opening } },
+        ],
+      });
+
+      allStagesInOpening = sortStages(allStagesInOpening);
+
+      const { newNextStageId, newPreviousStageId } = getAdjacentStagesBasedOnPosition({
+        position: req.body.position,
+        otherSortedStages: allStagesInOpening,
+        stageIdBeingMoved: stage.id,
+      });
+
+      const indexOfNextStage = stage.target.findIndex(
+        (item) => item.type === IndexedEntities.NextStage,
+      );
+      if (newNextStageId) {
+        stage.target[indexOfNextStage] = { id: newNextStageId, type: IndexedEntities.NextStage };
+      } else {
+        stage.target[indexOfNextStage] = { id: undefined, type: IndexedEntities.NextStage };
+      }
+
+      const indexOfPreviousStage = stage.target.findIndex(
+        (item) => item.type === IndexedEntities.PreviousStage,
+      );
+
+      if (newPreviousStageId) {
+        stage.target[indexOfPreviousStage] = {
+          id: newNextStageId,
+          type: IndexedEntities.NextStage,
+        };
+      } else {
+        stage.target[indexOfPreviousStage] = { id: undefined, type: IndexedEntities.NextStage };
+      }
+
+
+      // TODO update the previous and next stages
+    } catch (error) {
+      const message = 'Error retrieving other stages in opening';
+      console.error(message, error);
+      return res.status(500).json({ message, error });
+    }
+  }
+
   try {
-    await entityManager.flush();
     return res.status(200).json({ message: 'Stage updated', stage });
   } catch (error) {
     const message = 'An error ocurred updating that stage';
