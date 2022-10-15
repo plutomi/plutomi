@@ -193,6 +193,9 @@ export const updateStage = async (req: Request, res: Response) => {
         stageIdBeingMoved: stage.id,
       });
 
+      console.log(`New previous stage id`, newPreviousStageId);
+      console.log(`New next stage id`, newNextStageId);
+
       const indexOfNextStage = stage.target.findIndex(
         (item) => item.type === IndexedEntities.NextStage,
       );
@@ -200,7 +203,7 @@ export const updateStage = async (req: Request, res: Response) => {
       if (newNextStageId) {
         stage.target[indexOfNextStage] = { id: newNextStageId, type: IndexedEntities.NextStage };
 
-        // Update the new previous stage
+        // Update the next stage's previous stage id
         const newNextStage = allStagesInOpening.find((stage) => stage.id === newNextStageId);
 
         const nextStagePreviousStageIndex = newNextStage.target.findIndex(
@@ -222,12 +225,13 @@ export const updateStage = async (req: Request, res: Response) => {
       );
 
       if (newPreviousStageId) {
+        // Update our stage's previous stage
         stage.target[indexOfPreviousStage] = {
           id: newNextStageId,
-          type: IndexedEntities.NextStage,
+          type: IndexedEntities.PreviousStage,
         };
 
-        // Update the new previous stage
+        // Update the new previous stage's next stage ID with our stage
         const newPreviousStage = allStagesInOpening.find(
           (stage) => stage.id === newPreviousStageId,
         );
