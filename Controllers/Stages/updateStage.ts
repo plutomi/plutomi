@@ -10,7 +10,9 @@ import { findInTargetArray } from '../../utils/findInTargetArray';
 import { getAdjacentStagesBasedOnPosition, sortStages } from '../../utils/sortStages';
 
 export interface APIUpdateStageOptions
-  extends Partial<Pick<DynamoStage, 'GSI1SK' | 'questionOrder'>> {}
+  extends Partial<Pick<DynamoStage, 'GSI1SK' | 'questionOrder'>> {
+  position?: number;
+}
 
 const schema = Joi.object({
   questionOrder: Joi.array().items(Joi.string()),
@@ -35,7 +37,7 @@ export const updateStage = async (req: Request, res: Response) => {
 
   let stage: Stage;
   try {
-    await entityManager.findOne(Stage, {
+    stage = await entityManager.findOne(Stage, {
       id: stageId,
       $and: [
         { target: { id: openingId, type: IndexedEntities.Opening } },
@@ -49,7 +51,7 @@ export const updateStage = async (req: Request, res: Response) => {
   }
 
   if (!stage) {
-    return res.status(404).json({ message: 'Stage not found' });
+    return res.status(404).json({ message: 'Stage not found while trying to update stage' });
   }
 
   /**
@@ -106,46 +108,68 @@ export const updateStage = async (req: Request, res: Response) => {
         targetArray: stage.target,
       });
 
-      const oldPreviousStage = allStagesInOpening.find((stage) => stage.id === oldPreviousStageId);
+      let oldPreviousStage: Stage | undefined;
+      let oldPreviousStagesNextStageIndex: number | undefined;
+      let oldNextStage: Stage | undefined;
+      let oldNextStagesPreviousStageIndex: number | undefined;
 
-      const oldPreviousStagesNextStageIndex = oldPreviousStage.target.findIndex(
-        (item) => item.type === IndexedEntities.NextStage,
-      );
-
-      const oldNextStage = allStagesInOpening.find((stage) => stage.id === oldNextStageId);
-
-      const oldNextStagesPreviousStageIndex = oldNextStage.target.findIndex(
-        (item) => item.type === IndexedEntities.PreviousStage,
-      );
+      let updateOldNextStage = false;
+      let updateOldPreviousStage = false;
 
       // Update the old previous stage
       if (oldPreviousStageId) {
+        oldPreviousStage = allStagesInOpening.find((stage) => stage.id === oldPreviousStageId);
+
+        oldPreviousStagesNextStageIndex = oldPreviousStage.target.findIndex(
+          (item) => item.type === IndexedEntities.NextStage,
+        );
+
         // Set our old previous stage's next stage to be our old next stage
         oldPreviousStage.target[oldPreviousStagesNextStageIndex] = stage.target.find(
           (item) => item.type === IndexedEntities.NextStage,
         );
       } else {
-        oldPreviousStage.target[oldPreviousStagesNextStageIndex] = {
-          id: undefined,
-          type: IndexedEntities.NextStage,
-        };
+        // Set our old next stage's previous stage to be undefined
+        // We can't do it here because we don't know if it exists yet, and we can reuse the variables on lines 111
+        updateOldNextStage = true;
       }
 
-      entityManager.persist(oldPreviousStage);
-
+      // Update the old next stage's previous stage to be our old previous stage
       if (oldNextStageId) {
+        oldNextStage = allStagesInOpening.find((stage) => stage.id === oldNextStageId);
+
+        oldNextStagesPreviousStageIndex = oldNextStage.target.findIndex(
+          (item) => item.type === IndexedEntities.PreviousStage,
+        );
+
         // Set our old next stage's previous stage to be our old previous stage
 
         oldNextStage.target[oldNextStagesPreviousStageIndex] = stage.target.find(
           (item) => item.type === IndexedEntities.PreviousStage,
         );
       } else {
+        // Set or old previous stage's next stage to be undefined
+        // We can't do it here because we don't know if it exists yet, and we can reuse the variables on lines 111
+        updateOldPreviousStage = true;
+      }
+
+      // No next stage exists after the update
+      if (oldPreviousStage && updateOldPreviousStage) {
+        oldPreviousStage.target[oldPreviousStagesNextStageIndex] = {
+          id: undefined,
+          type: IndexedEntities.NextStage,
+        };
+      }
+
+      // No previous stage exists after the update
+      if (oldNextStage && updateOldNextStage) {
         oldNextStage.target[oldNextStagesPreviousStageIndex] = {
           id: undefined,
           type: IndexedEntities.PreviousStage,
         };
       }
 
+      entityManager.persist(oldPreviousStage);
       entityManager.persist(oldNextStage);
 
       const { newNextStageId, newPreviousStageId } = getAdjacentStagesBasedOnPosition({

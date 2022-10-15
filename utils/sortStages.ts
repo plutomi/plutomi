@@ -57,9 +57,16 @@ export const sortStages = (unsortedStagesInOpening: Stage[]): Stage[] => {
       entity: IndexedEntities.NextStage,
       targetArray: startingStage.target,
     });
-    const nextStage = mapWithStages[newNextStageId.toString()];
-    sortedStages.push(nextStage);
-    startingStage = nextStage;
+
+    let nextStage: Stage;
+    if (newNextStageId) {
+      const nextStage = mapWithStages[newNextStageId.toString()];
+      sortedStages.push(nextStage);
+      startingStage = nextStage;
+    } else {
+      reachedTheEnd = true;
+      break;
+    }
 
     // Check if the next stage has it's own next stage
     const nextStageHasANextStage = findInTargetArray({

@@ -54,17 +54,18 @@ export const StageReorderColumn = () => {
       stageIdBeingMoved: draggableId,
     });
 
-    // try {
-    //   await UpdateOpening({
-    //     openingId,
-    //     newValues: {
-    //       stageOrder: newStageOrder,
-    //     },
-    //   });
-    // } catch (error) {
-    //   console.error(error.response.data.message);
-    //   alert(error.response.data.message);
-    // }
+    try {
+      await UpdateStage({
+        openingId,
+        stageId: draggableId,
+        newValues: {
+          position: destination.index,
+        },
+      });
+    } catch (error) {
+      console.error(error.response.data.message);
+      alert(error.response.data.message);
+    }
 
     // Refresh the stage order
     mutate(GetOpeningInfoURL(openingId));
