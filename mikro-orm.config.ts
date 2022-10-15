@@ -7,7 +7,7 @@ import { env } from './env';
 const mikroOrmOptions: Options<MongoDriver> = {
   type: 'mongo',
   entities: [User, Org, UserLoginLink, Stage, Opening],
-  dbName: env.deploymentEnvironment, // TODO get from .env
+  dbName: env.deploymentEnvironment,
   highlighter: new MongoHighlighter(),
   debug: true,
   ensureIndexes: true,
