@@ -8,7 +8,7 @@ import { StartingPosition, Runtime, Architecture } from 'aws-cdk-lib/aws-lambda'
 import { RetentionDays } from 'aws-cdk-lib/aws-logs';
 import { ENVIRONMENT } from './AppStack';
 import { env } from '../env';
-import { getLambdaConfig } from '../functions/utils/getLambdaConfig';
+import { getLambdaConfig } from '../utils/getLambdaConfig';
 
 interface StreamProcessorStackProps extends cdk.StackProps {
   table: Table;

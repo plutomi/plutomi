@@ -12,7 +12,7 @@ import { DYNAMO_TABLE_NAME, Entities } from '../Config';
 import { DynamoIAM } from '../types/dynamo';
 import { ENVIRONMENT } from './AppStack';
 import { env } from '../env';
-import { getLambdaConfig } from '../functions/utils/getLambdaConfig';
+import { getLambdaConfig } from '../utils/getLambdaConfig';
 
 interface CustomLambdaFunction {
   functionName: string;
