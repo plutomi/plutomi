@@ -107,7 +107,7 @@ export async function getStaticProps() {
           `https://api.github.com/repos/plutomi/plutomi/commits?sha=${branch.name}&per_page=${commitsFromEachBranch}&u=joswayski`,
           {
             headers: {
-              Authorization: `token ${env.commitsToken}`,
+              Authorization: `${process.env.COMMITS_TOKEN}`,
             },
           },
         );
