@@ -4,6 +4,7 @@ import { DB } from '../../models';
 import { IndexedEntities } from '../../types/main';
 import * as CreateError from '../../utils/createError';
 import { findInTargetArray } from '../../utils/findInTargetArray';
+import { sortStages } from '../../utils/sortStages';
 
 export const getStagesInOpening = async (req: Request, res: Response) => {
   const { user, entityManager } = req;
@@ -36,11 +37,16 @@ export const getStagesInOpening = async (req: Request, res: Response) => {
         { target: { id: openingId, type: IndexedEntities.Opening } },
       ],
     });
+
+    console.log(`All stages in opening`, allStages);
+
+    const sorted = sortStages(allStages);
+    console.log(`All stages sorted `, sorted);
+
+    return res.status(200).json(sorted);
   } catch (error) {
     const message = 'An error ocurred retrieving all the current stages';
     console.error(message, error);
     return res.status(500).json({ message, error });
   }
-
-  return res.status(200).json(allStages);
 };

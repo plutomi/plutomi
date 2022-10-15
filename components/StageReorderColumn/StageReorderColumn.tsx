@@ -25,7 +25,10 @@ export const StageReorderColumn = () => {
 
   const [newStages, setNewStages] = useState(stages);
   useEffect(() => {
-    setNewStages(stages);
+    if (stages) {
+      const sortedStages = sortStages(stages);
+      setNewStages(sortedStages);
+    }
   }, [stages]);
 
   // TODO types!!!!!!!
@@ -46,13 +49,8 @@ export const StageReorderColumn = () => {
     newStageOrder.splice(destination.index, 0, draggableId);
     const newOrder = newStageOrder.map((i) => stages.find((j) => j.id === i));
 
+    // TODO remove duplicates from this!!!!!!!
     setNewStages(newOrder);
-
-    const { newNextStageId, newPreviousStageId } = getAdjacentStagesBasedOnPosition({
-      position: destination.index,
-      otherSortedStages: sortStages(stages),
-      stageIdBeingMoved: draggableId,
-    });
 
     try {
       await UpdateStage({
@@ -99,8 +97,8 @@ export const StageReorderColumn = () => {
                 <div {...provided.droppableProps} ref={provided.innerRef}>
                   {newStages?.map((stage, index) => (
                     <Draggable
-                      key={stage.id}
-                      draggableId={stage.id}
+                      key={stage?.id}
+                      draggableId={stage?.id}
                       index={index}
                       {...provided.droppableProps}
                     >
@@ -111,11 +109,11 @@ export const StageReorderColumn = () => {
                           ref={provided.innerRef}
                         >
                           <StageCard
-                            key={stage.id}
-                            totalApplicants={stage.totalApplicants}
-                            name={stage.name}
-                            stageId={stage.id}
-                            linkHref={`/openings/${openingId}/stages/${stage.id}/settings`}
+                            key={stage?.id}
+                            totalApplicants={stage?.totalApplicants}
+                            name={stage?.name}
+                            stageId={stage?.id}
+                            linkHref={`/openings/${openingId}/stages/${stage?.id}/settings`}
                             draggable
                           />
                         </div>
