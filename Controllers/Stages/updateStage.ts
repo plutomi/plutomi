@@ -98,6 +98,23 @@ export const updateStage = async (req: Request, res: Response) => {
 
       allStagesInOpening = sortStages(allStagesInOpening);
 
+      /**
+       * Whenever you see  findInTargetArray & findIndex checks, this is retrieving the pointer(s) for
+       * the doubly linked list in that stage's `target` array
+       *
+       * Example:
+       *
+       * target: [
+       * { id: "nd19723jd298", type: "NextStage"},
+       * { id: "nd19780247g", type: "PreviousStage"}
+       *
+       * Along with other indexed properties such as the org and opening they are in
+       *
+       * { id: "New York City", type: "Opening"}
+       * { id: "Org", type: "Food Delivery App LLC"}
+       * ]
+       */
+
       const oldPreviousStageId = findInTargetArray({
         entity: IndexedEntities.PreviousStage,
         targetArray: stage.target,
@@ -128,7 +145,7 @@ export const updateStage = async (req: Request, res: Response) => {
          * Set the old previous stage's nextStage to be the old next stage of the stage we are currently moving
          *
          *     OLD --- NEW
-         * Stage 1 --- Stage 1 <-- It's next stage property gets updated to Stage 3, which was Stage 2's old next stage
+         * Stage 1 --- Stage 1 <-- Its next stage property gets updated to Stage 3, which was Stage 2's old next stage
          * Stage 2 --- Stage 3
          * Stage 3 --- Stage 2 <-- Moved
          */
@@ -187,7 +204,7 @@ export const updateStage = async (req: Request, res: Response) => {
         updateOldPreviousStage = true;
       }
 
-      // Update the relevant stages if needed
+      // Update the relevant stages if needed (the two else checks above)
       if (oldPreviousStage && updateOldPreviousStage) {
         oldPreviousStage.target[oldPreviousStagesNextStageIndex] = {
           id: undefined,
@@ -207,13 +224,15 @@ export const updateStage = async (req: Request, res: Response) => {
       entityManager.persist(oldNextStage);
 
       /**
-       * Now we move on to update the new stages, after moving our stage to it's desired spot. Note that these stages can be a combination of the "old" stages.. Example:
+       * Now we move on to update the new stages after moving our stage to its desired spot. Note that these stages can be a combination of the "old" stages.. Example:
        *
        * OLD --- NEW
        *
-       * Stage 1 --- Stage 2 <-- It's old previous stage is now its new next stage, and its previous stage is now undefined!
-       * Stage 2 --- Stage 1 <-- Moved, it's old next stage is now its new previous stage!
+       * Stage 1 --- Stage 2 <-- Its old previous stage is now its new next stage, and its previous stage is now undefined!
+       * Stage 2 --- Stage 1 <-- Moved, its old next stage is now its new previous stage!
        * Stage 3 --- Stage 3
+       *
+       * The function below retrieves the IDs / pointers to the new stages
        */
       const { newNextStageId, newPreviousStageId } = getAdjacentStagesBasedOnPosition({
         position: req.body.position,
