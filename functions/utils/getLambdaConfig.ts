@@ -21,7 +21,7 @@ export const getLambdaConfig = ({
   fileName,
   cascadingDeletion,
 }: GetFunctionConfigProps): Partial<NodejsFunctionProps> => {
-  const dir = cascadingDeletion ? `./cascadingDeletions/${fileName}.ts` : `./${fileName}.ts`;
+  const dir = cascadingDeletion ? `../cascadingDeletions/${fileName}.ts` : `../${fileName}.ts`;
 
   const logRetention =
     env.deploymentEnvironment === 'production' ? RetentionDays.ONE_MONTH : RetentionDays.ONE_WEEK;
