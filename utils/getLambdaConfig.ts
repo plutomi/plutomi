@@ -6,7 +6,7 @@ import { Duration } from 'aws-cdk-lib';
 import { env } from '../env';
 
 interface GetFunctionConfigProps {
-  fileName: string;
+  fileName: `${string}.ts`;
   functionName: string;
   functionDescription: string;
   cascadingDeletion: boolean;
@@ -22,8 +22,8 @@ export const getLambdaConfig = ({
   cascadingDeletion,
 }: GetFunctionConfigProps): Partial<NodejsFunctionProps> => {
   const dir = cascadingDeletion
-    ? `../functions/cascadingDeletions/${fileName}.ts`
-    : `../functions/${fileName}.ts`;
+    ? `../functions/cascadingDeletions/${fileName}`
+    : `../functions/${fileName}`;
 
   const logRetention =
     env.deploymentEnvironment === 'production' ? RetentionDays.ONE_MONTH : RetentionDays.ONE_WEEK;

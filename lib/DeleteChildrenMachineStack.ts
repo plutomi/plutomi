@@ -5,9 +5,7 @@ import { LogGroup, RetentionDays } from 'aws-cdk-lib/aws-logs';
 import { Table } from 'aws-cdk-lib/aws-dynamodb';
 import { Choice } from 'aws-cdk-lib/aws-stepfunctions';
 import { NodejsFunction } from 'aws-cdk-lib/aws-lambda-nodejs';
-import { Architecture, Runtime } from 'aws-cdk-lib/aws-lambda';
 import * as iam from 'aws-cdk-lib/aws-iam';
-import path from 'path';
 import { DYNAMO_TABLE_NAME, Entities } from '../Config';
 import { DynamoIAM } from '../types/dynamo';
 import { ENVIRONMENT } from './AppStack';
@@ -19,7 +17,7 @@ interface CustomLambdaFunction {
   /**
    * Under /functions, what is the file name
    */
-  fileName: string;
+  fileName: `${string}.ts`;
   description: string;
   permissions: DynamoIAM[];
   permissionArns: string[];
