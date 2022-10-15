@@ -28,6 +28,13 @@ export const AlreadyLoggedIn = () => {
 
   const { user, isUserLoading, isUserError } = useSelf();
 
+  if (isUserLoading) {
+    return <></>;
+  }
+
+  if (isUserError) {
+    return <h1>An error ocurred loading your user info</h1>;
+  }
   const userEmail = findInTargetArray({
     entity: IndexedEntities.Email,
     targetArray: user.target,
@@ -49,13 +56,13 @@ export const AlreadyLoggedIn = () => {
           </a>
         </Link>
 
-        <button
+        {/* <button
           type="submit"
           className=" items-center px-4 py-2 border border-gray-300 shadow-sm text-base font-medium rounded-md text-dark bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
           onClick={() => handleLogout(router.asPath === '/' && true)}
         >
           Log out
-        </button>
+        </button> */}
       </div>
     </section>
   );
