@@ -118,7 +118,7 @@ export const updateStage = async (req: Request, res: Response) => {
 
       // Update the old previous stage
       if (oldPreviousStageId) {
-        console.log(`\nThere is an old PREVIOUS stage ID`);
+        // console.log(`\nThere is an old PREVIOUS stage ID`);
         oldPreviousStage = allStagesInOpening.find((stage) => stage.id === oldPreviousStageId);
 
         oldPreviousStagesNextStageIndex = oldPreviousStage.target.findIndex(
@@ -131,7 +131,7 @@ export const updateStage = async (req: Request, res: Response) => {
           (item) => item.type === IndexedEntities.NextStage,
         );
       } else {
-        console.log(`\nThere is NOT old PREVIOUS stage ID`);
+        // console.log(`\nThere is NOT old PREVIOUS stage ID`);
 
         // Set our old next stage's previous stage to be undefined
         // We can't do it here because we don't know if it exists yet, and we can reuse the variables on lines 111
@@ -140,7 +140,7 @@ export const updateStage = async (req: Request, res: Response) => {
 
       // Update the old next stage's previous stage to be our old previous stage
       if (oldNextStageId) {
-        console.log(`\nThere is an old NEXT stage ID`);
+        // console.log(`\nThere is an old NEXT stage ID`);
 
         oldNextStage = allStagesInOpening.find((stage) => stage.id === oldNextStageId);
 
@@ -154,7 +154,7 @@ export const updateStage = async (req: Request, res: Response) => {
           (item) => item.type === IndexedEntities.PreviousStage,
         );
       } else {
-        console.log(`\nThere is NOT an old NEXT stage ID`);
+        // console.log(`\nThere is NOT an old NEXT stage ID`);
 
         // Set or old previous stage's next stage to be undefined
         // We can't do it here because we don't know if it exists yet, and we can reuse the variables on lines 111
@@ -163,9 +163,9 @@ export const updateStage = async (req: Request, res: Response) => {
 
       // No next stage exists after the update
       if (oldPreviousStage && updateOldPreviousStage) {
-        console.log(
-          `There is an old PREVIOUS stage ID and we need to update it's NEXT stage to undefined`,
-        );
+        // console.log(
+        //   `There is an old PREVIOUS stage ID and we need to update it's NEXT stage to undefined`,
+        // );
 
         oldPreviousStage.target[oldPreviousStagesNextStageIndex] = {
           id: undefined,
@@ -175,9 +175,9 @@ export const updateStage = async (req: Request, res: Response) => {
 
       // No previous stage exists after the update
       if (oldNextStage && updateOldNextStage) {
-        console.log(
-          `There is an old NEXT stage ID and we need to update it's PREVIOUS stage to undefined`,
-        );
+        // console.log(
+        //   `There is an old NEXT stage ID and we need to update it's PREVIOUS stage to undefined`,
+        // );
         oldNextStage.target[oldNextStagesPreviousStageIndex] = {
           id: undefined,
           type: IndexedEntities.PreviousStage,
@@ -193,15 +193,15 @@ export const updateStage = async (req: Request, res: Response) => {
         stageIdBeingMoved: stage.id,
       });
 
-      console.log(`\nNew previous stage id:`, newPreviousStageId);
-      console.log(`\nNew next stage id:`, newNextStageId);
+      // console.log(`\nNew previous stage id:`, newPreviousStageId);
+      // console.log(`\nNew next stage id:`, newNextStageId);
 
       const indexOfNextStage = stage.target.findIndex(
         (item) => item.type === IndexedEntities.NextStage,
       );
 
       if (newNextStageId) {
-        console.log(`\nThere is an new NEXT stage ID`);
+        // console.log(`\nThere is an new NEXT stage ID`);
 
         stage.target[indexOfNextStage] = { id: newNextStageId, type: IndexedEntities.NextStage };
 
@@ -219,7 +219,7 @@ export const updateStage = async (req: Request, res: Response) => {
         entityManager.persist(stage);
         entityManager.persist(newNextStage);
       } else {
-        console.log(`\nThere is NOT a new NEXT stage ID`);
+        // console.log(`\nThere is NOT a new NEXT stage ID`);
         stage.target[indexOfNextStage] = { id: undefined, type: IndexedEntities.NextStage };
         entityManager.persist(stage);
       }
@@ -229,7 +229,7 @@ export const updateStage = async (req: Request, res: Response) => {
       );
 
       if (newPreviousStageId) {
-        console.log(`\nThere is a new PREVIOUS stage ID`);
+        // console.log(`\nThere is a new PREVIOUS stage ID`);
 
         // Update our stage's previous stage
         stage.target[indexOfPreviousStage] = {
@@ -252,7 +252,7 @@ export const updateStage = async (req: Request, res: Response) => {
         entityManager.persist(stage);
         entityManager.persist(newPreviousStage);
       } else {
-        console.log(`\nThere is NOT a new PREVIOUS stage ID`);
+        // console.log(`\nThere is NOT a new PREVIOUS stage ID`);
 
         stage.target[indexOfPreviousStage] = { id: undefined, type: IndexedEntities.PreviousStage };
         entityManager.persist(stage);

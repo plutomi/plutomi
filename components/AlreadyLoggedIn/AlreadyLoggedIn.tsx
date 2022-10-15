@@ -4,6 +4,8 @@ import { mutate } from 'swr';
 import { useSelf } from '../../SWR/useSelf';
 import { Logout } from '../../adapters/Auth';
 import { GetSelfInfoURL } from '../../adapters/Users';
+import { findInTargetArray } from '../../utils/findInTargetArray';
+import { IndexedEntities } from '../../types/main';
 
 const handleLogout = async (isHomepage: boolean) => {
   try {
@@ -26,11 +28,15 @@ export const AlreadyLoggedIn = () => {
 
   const { user, isUserLoading, isUserError } = useSelf();
 
+  const userEmail = findInTargetArray({
+    entity: IndexedEntities.Email,
+    targetArray: user.target,
+  });
   return (
     <section id="login" className="flex  justify-center mx-auto ">
       <div className="mx-auto  flex-col md:flex-wrap text-center space-y-2 md:space-y-0  justify-center space-x-2  items-center text-lg text-blue-gray-600 ">
         <p className="px-2 py-2">
-          Signed in as <strong>{user?.email}</strong>
+          Signed in as <strong>{userEmail}</strong>
         </p>
 
         <Link href="/dashboard" passHref>

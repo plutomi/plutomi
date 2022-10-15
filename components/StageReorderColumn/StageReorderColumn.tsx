@@ -12,6 +12,7 @@ import { CustomQuery } from '../../types/main';
 import { CreateStageModal } from '../CreateStageModal';
 import { StageCard } from '../StageCard';
 import { getAdjacentStagesBasedOnPosition, sortStages } from '../../utils/sortStages';
+import { Loader } from '../Loader';
 
 export const StageReorderColumn = () => {
   const openCreateStageModal = useStore((state) => state.openCreateStageModal);
@@ -24,12 +25,12 @@ export const StageReorderColumn = () => {
   });
 
   const [newStages, setNewStages] = useState(stages);
-  useEffect(() => {
-    if (stages) {
-      const sortedStages = sortStages(stages);
-      setNewStages(sortedStages);
-    }
-  }, [stages]);
+  // useEffect(() => {
+  //   if (stages) {
+  //     const sortedStages = sortStages(stages);
+  //     setNewStages(sortedStages);
+  //   }
+  // }, [stages]);
 
   // TODO types!!!!!!!
   const handleDragEnd = async (result) => {
@@ -39,12 +40,24 @@ export const StageReorderColumn = () => {
       return;
     }
     // If dropped in the same place
-    if (destination.droppableId === source.droppableId && destination.index === source.index)
+    if (destination.droppableId === source.droppableId && destination.index === source.index) {
+      console.log('Dropped in the same place');
       return;
+    }
+
+    console.log(`Current stages`, stages);
 
     // alert('STAGE REORDER ORDER HERE'); // These are for the local stages in teh draggable
     const newStageOrder: string[] = Array.from(stages.map((stage) => stage.id));
+
     console.log(`New stage order ids`, newStageOrder);
+
+    // Logging new order names for clarify
+    newStageOrder.map((id) => {
+      const stage = stages.find((stage) => stage.id === id);
+      console.log(stage.name);
+    });
+
     newStageOrder.splice(source.index, 1);
     newStageOrder.splice(destination.index, 0, draggableId);
     const newOrder = newStageOrder.map((i) => stages.find((j) => j.id === i));
@@ -69,8 +82,16 @@ export const StageReorderColumn = () => {
     mutate(GetOpeningInfoURL(openingId));
 
     // Refresh the stages
-    mutate(GetStagesInOpeningURL(openingId)); // TODO: Don't think this is needed
+    // mutate(GetStagesInOpeningURL(openingId)); // TODO: Don't think this is needed
   };
+
+  if (isStagesLoading) {
+    return <Loader text=">Loading stages..."></Loader>;
+  }
+
+  if (isStagesError) {
+    return <h1>An error ocurred loading your stages</h1>;
+  }
 
   return (
     <div className="h-full relative" style={{ minHeight: '12rem' }}>
@@ -90,42 +111,12 @@ export const StageReorderColumn = () => {
           {opening?.totalStages === 0 ? 'No stages found' : 'Stage Order'}
         </h1>
 
-        {opening.totalStages > 0 && (
-          <DragDropContext onDragEnd={handleDragEnd}>
-            <Droppable droppableId={opening.id}>
-              {(provided) => (
-                <div {...provided.droppableProps} ref={provided.innerRef}>
-                  {newStages?.map((stage, index) => (
-                    <Draggable
-                      key={stage?.id}
-                      draggableId={stage?.id}
-                      index={index}
-                      {...provided.droppableProps}
-                    >
-                      {(provided) => (
-                        <div
-                          {...provided.draggableProps}
-                          {...provided.dragHandleProps}
-                          ref={provided.innerRef}
-                        >
-                          <StageCard
-                            key={stage?.id}
-                            totalApplicants={stage?.totalApplicants}
-                            name={stage?.name}
-                            stageId={stage?.id}
-                            linkHref={`/openings/${openingId}/stages/${stage?.id}/settings`}
-                            draggable
-                          />
-                        </div>
-                      )}
-                    </Draggable>
-                  ))}
-                  {provided.placeholder}
-                </div>
-              )}
-            </Droppable>
-          </DragDropContext>
-        )}
+        {!stages.length ? <h1>No stages found!</h1> : null}
+        {stages.map((stage) => (
+          <div className="p-8 my-2 border-4 rounded-lg">
+            <h1>{stage.name}</h1>
+          </div>
+        ))}
       </div>
     </div>
   );

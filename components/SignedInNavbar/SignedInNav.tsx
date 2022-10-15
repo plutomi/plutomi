@@ -11,6 +11,8 @@ import { GetSelfInfoURL } from '../../adapters/Users';
 import combineClassNames from '../../utils/combineClassNames';
 import { Banner } from '../Banner';
 import { NavbarSearch } from '../NavbarSearch';
+import { findInTargetArray } from '../../utils/findInTargetArray';
+import { IndexedEntities } from '../../types/main';
 
 interface SignedInNavProps {
   current: string;
@@ -30,6 +32,20 @@ export const SignedInNav = ({ current }: SignedInNavProps) => {
 
     mutate(GetSelfInfoURL()); // Refresh login state - shows login page
   };
+
+  let userEmail: string | undefined;
+  let orgId: string | undefined;
+
+  if (user) {
+    userEmail = findInTargetArray({
+      entity: IndexedEntities.Email,
+      targetArray: user.target,
+    });
+    orgId = findInTargetArray({
+      entity: IndexedEntities.Org,
+      targetArray: user.target,
+    });
+  }
 
   return (
     <>
@@ -63,8 +79,9 @@ export const SignedInNav = ({ current }: SignedInNavProps) => {
                   <div className="hidden sm:-my-px sm:ml-6 sm:flex sm:space-x-8">
                     {NAVBAR_NAVIGATION.map((item) => {
                       if (
-                        (user?.orgId === DEFAULTS.NO_ORG && item.hiddenIfNoOrg) ||
-                        (user?.orgId !== DEFAULTS.NO_ORG && item.hiddenIfOrg)
+                        // TODO what is happening here??? lol
+                        (orgId === DEFAULTS.NO_ORG && item.hiddenIfNoOrg) ||
+                        (orgId !== DEFAULTS.NO_ORG && item.hiddenIfOrg)
                       ) {
                         return null;
                       }
@@ -131,7 +148,7 @@ export const SignedInNav = ({ current }: SignedInNavProps) => {
                             'Loading user info...'
                           ) : (
                             <div className=" text-light">
-                              Signed in as <strong>{user?.email}</strong>
+                              Signed in as <strong>{userEmail}</strong>
                             </div>
                           )}
                         </div>
@@ -231,7 +248,7 @@ export const SignedInNav = ({ current }: SignedInNavProps) => {
                       <div className="text-base font-medium text-gray-800">
                         {user?.firstName} {user?.lastName}
                       </div>
-                      <div className="text-md font-medium text-normal">{user?.email}</div>
+                      <div className="text-md font-medium text-normal">{userEmail}</div>
                     </div>
                   )}
 

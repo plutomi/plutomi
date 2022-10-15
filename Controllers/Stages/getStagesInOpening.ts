@@ -1,8 +1,6 @@
 import { Request, Response } from 'express';
 import { Opening, Stage } from '../../entities';
-import { DB } from '../../models';
 import { IndexedEntities } from '../../types/main';
-import * as CreateError from '../../utils/createError';
 import { findInTargetArray } from '../../utils/findInTargetArray';
 import { sortStages } from '../../utils/sortStages';
 
@@ -38,10 +36,10 @@ export const getStagesInOpening = async (req: Request, res: Response) => {
       ],
     });
 
-    console.log(`All stages in opening`, allStages);
+    // console.log(`All stages in opening`, allStages);
 
     const sorted = sortStages(allStages);
-    console.log(`All stages sorted `, sorted);
+    // console.log(`All stages sorted `, sorted);
 
     return res.status(200).json(sorted);
   } catch (error) {

@@ -32,7 +32,7 @@ export const OpeningsListItem = ({ opening }: OpeningsListItemProps) => {
 
   const endingUrl =
     opening?.totalStages > 0
-      ? `stages/${stages}/applicants` // TODO should this end with applicants?
+      ? `stages/${stages[0].id}/applicants` // TODO should this end with applicants?
       : `settings`;
 
   const openingState = findInTargetArray({

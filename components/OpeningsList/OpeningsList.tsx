@@ -6,7 +6,6 @@ import { Loader } from '../Loader/Loader';
 import { OpeningsListItem } from '../OpeningsListItem';
 
 export const OpeningsList = () => {
-  const { user, isUserLoading, isUserError } = useSelf();
   const { openingsInOrg, isOpeningsInOrgLoading, isOpeningsInOrgError } = useOpeningsInOrg();
 
   const search = useStore((state) => state.openingsSearchInput);

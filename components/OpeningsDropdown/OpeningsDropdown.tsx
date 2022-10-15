@@ -20,7 +20,7 @@ export const OpeningsDropdown = ({ openings, index }: OpeningsDropdownProps) => 
   // TODO handle change not working
   alert(`StageOrder on openings is disabled!`);
 
-  const handleChange = (newValue) => {
+  const handleChange = (newValue: Opening) => {
     // if (selected === newValue) {
     //   return;
     // }
@@ -32,13 +32,17 @@ export const OpeningsDropdown = ({ openings, index }: OpeningsDropdownProps) => 
     //   return;
     // }
     // router.push(`${WEBSITE_URL}/openings/${newValue.openingId}/settings`);
-    router.push(`${WEBSITE_URL}/openings/${newValue.openingId}/settings`);
+    router.push(`${WEBSITE_URL}/openings/${newValue.id}/settings`);
   };
 
-  const openingState = findInTargetArray({
-    entity: IndexedEntities.OpeningState,
-    targetArray: selected.target,
-  });
+  let openingState: OpeningState | undefined;
+
+  if (selected) {
+    findInTargetArray({
+      entity: IndexedEntities.OpeningState,
+      targetArray: selected.target,
+    });
+  }
 
   return (
     <Listbox value={selected} onChange={handleChange}>
