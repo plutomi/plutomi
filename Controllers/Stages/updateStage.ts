@@ -125,6 +125,7 @@ export const updateStage = async (req: Request, res: Response) => {
           (item) => item.type === IndexedEntities.NextStage,
         );
 
+        // TODO this is if it moved more than two places. If our old next stage is now our previous, we need to set our oldPrevious stage's next stage
         // Set our old previous stage's next stage to be our old next stage
         oldPreviousStage.target[oldPreviousStagesNextStageIndex] = stage.target.find(
           (item) => item.type === IndexedEntities.NextStage,
