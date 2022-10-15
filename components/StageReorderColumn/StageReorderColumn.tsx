@@ -13,6 +13,7 @@ import { CreateStageModal } from '../CreateStageModal';
 import { StageCard } from '../StageCard';
 import { getAdjacentStagesBasedOnPosition, sortStages } from '../../utils/sortStages';
 import { Loader } from '../Loader';
+import { DraggableStageCard } from '../DraggableStageCard';
 
 export const StageReorderColumn = () => {
   const openCreateStageModal = useStore((state) => state.openCreateStageModal);
@@ -108,15 +109,25 @@ export const StageReorderColumn = () => {
           </button>
         </div>
         <h1 className="text-center text-xl font-semibold my-4">
-          {opening?.totalStages === 0 ? 'No stages found' : 'Stage Order'}
+          {!stages.length ? 'No stages found' : 'Stage Order'}
         </h1>
 
-        {!stages.length ? <h1>No stages found!</h1> : null}
-        {stages.map((stage) => (
-          <div className="p-8 my-2 border-4 rounded-lg">
-            <h1>{stage.name}</h1>
-          </div>
-        ))}
+        {stages.length ? (
+          <DragDropContext onDragEnd={handleDragEnd}>
+            <Droppable droppableId={openingId}>
+              {(provided) => (
+                <div className="bg-blue-50 h-full p-4 rounded-md">
+                  <div ref={provided.innerRef} {...provided.droppableProps}>
+                    {stages.map((stage, index) => (
+                      <DraggableStageCard stage={stage} index={index} linkHref={'TODO'} />
+                    ))}
+                    {provided.placeholder}
+                  </div>
+                </div>
+              )}
+            </Droppable>
+          </DragDropContext>
+        ) : null}
       </div>
     </div>
   );
