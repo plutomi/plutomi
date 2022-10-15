@@ -43,6 +43,8 @@ export const getLambdaConfig = ({
          * https://github.com/mikro-orm/mikro-orm/discussions/2219#discussioncomment-1983334
          */
         'aws-sdk',
+        '@mikro-orm/seeder',
+        '@mikro-orm/migrations-mongodb',
         '@mikro-orm/mysql',
         '@mikro-orm/mariadb',
         '@mikro-orm/sqlite',
