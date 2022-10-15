@@ -1,15 +1,15 @@
 import useSWR from 'swr';
 import { SWRFetcher } from '../Config';
 import { GetOrgInfoURL } from '../adapters/Orgs';
-import { DynamoOrg } from '../types/dynamo';
 import { APIErrorResponse } from '../types/main';
+import { Org } from '../entities';
 
 interface UseOrgInfoProps {
   orgId?: string;
 }
 
 export const useOrgInfo = ({ orgId }: UseOrgInfoProps) => {
-  const { data, error } = useSWR<DynamoOrg, APIErrorResponse>(orgId && GetOrgInfoURL(), SWRFetcher);
+  const { data, error } = useSWR<Org, APIErrorResponse>(orgId && GetOrgInfoURL(), SWRFetcher);
 
   return {
     org: data,

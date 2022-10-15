@@ -46,6 +46,10 @@ export const UserCard = ({ user }: UserCardProps) => {
   };
 
   const userEmail = findInTargetArray({ entity: IndexedEntities.Email, targetArray: user.target });
+  const createdBy = findInTargetArray({
+    entity: IndexedEntities.CreatedBy,
+    targetArray: user.target,
+  });
   return (
     <div className="border rounded-lg shadow-sm  max-w-lg mx-auto my-4 flex">
       <div className="flex flex-col text-left space-y-1 w-5/6 p-4">
@@ -56,7 +60,7 @@ export const UserCard = ({ user }: UserCardProps) => {
         <p className="text-sm text-blue-gray-400">Joined {Time.relative(user?.orgJoinDate)}</p>
       </div>
       {/* User is admin // TODO clean up */}
-      {me?.id === org?.createdBy && user?.id !== me?.id && (
+      {me?.id === createdBy && user?.id !== me?.id && (
         <button
           type="submit"
           className="w-1/6 border  rounded-lg rounded-l-none bg-white border-red-500  hover:bg-red-500  text-red-500 hover:text-white  transition ease-in duration-100 "
