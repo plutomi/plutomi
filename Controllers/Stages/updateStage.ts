@@ -107,6 +107,19 @@ export const updateStage = async (req: Request, res: Response) => {
       );
       if (newNextStageId) {
         stage.target[indexOfNextStage] = { id: newNextStageId, type: IndexedEntities.NextStage };
+
+        // Update thew new next stage
+        const newNextStage = allStagesInOpening.find((stage) => stage.id === newNextStageId);
+
+        const nextStagePreviousStageIndex = newNextStage.target.findIndex(
+          (item) => item.type === IndexedEntities.PreviousStage,
+        );
+
+        newNextStage.target[nextStagePreviousStageIndex] = {
+          id: stage.id,
+          type: IndexedEntities.PreviousStage,
+        };
+        entityManager.persist(newNextStage);
       } else {
         stage.target[indexOfNextStage] = { id: undefined, type: IndexedEntities.NextStage };
       }
@@ -123,7 +136,6 @@ export const updateStage = async (req: Request, res: Response) => {
       } else {
         stage.target[indexOfPreviousStage] = { id: undefined, type: IndexedEntities.NextStage };
       }
-
 
       // TODO update the previous and next stages
     } catch (error) {
