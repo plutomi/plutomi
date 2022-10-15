@@ -43,16 +43,16 @@ export const StageReorderColumn = () => {
       return;
     }
 
-    // const newStagesOrderIds = Array.from(stages.map((stage) => stage.id));
+    const newStagesOrderIds = Array.from(stages.map((stage) => stage.id));
 
-    // // Remove our stage it from the old location
-    // newStagesOrderIds.splice(source.index, 1);
-    // // Add it to the new location
-    // newStagesOrderIds.splice(destination.index, 0, stageId);
+    // Remove our stage it from the old location
+    newStagesOrderIds.splice(source.index, 1);
+    // Add it to the new location
+    newStagesOrderIds.splice(destination.index, 0, stageId);
 
-    // // Should already be sorted!
-    // const newStageOrder = newStagesOrderIds.map((id) => stages.find((stage) => stage.id === id));
-    // setNewStages(newStageOrder);
+    // Should already be sorted!
+    const newStageOrder = newStagesOrderIds.map((id) => stages.find((stage) => stage.id === id));
+    setNewStages(newStageOrder);
 
     try {
       await UpdateStage({
@@ -68,7 +68,7 @@ export const StageReorderColumn = () => {
     }
 
     // Refresh the stages
-    mutate(GetStagesInOpeningURL(openingId)); // TODO: Don't think this is needed
+    // mutate(GetStagesInOpeningURL(openingId)); // TODO: Don't think this is needed
   };
 
   // Refresh the stage order
