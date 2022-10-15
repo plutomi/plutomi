@@ -95,18 +95,16 @@ export const getAdjacentStagesBasedOnPosition = ({
     };
   }
 
-  // We didn't really move it anywhere this shouldn't be possible // TODO add it here
-  // const currentIndex = otherSortedStages.findIndex((item) => item.id === stageIdBeingMoved);
-  //   if (currentIndex === position) {
-
-  //   }
-
+  /**
+   * ! Note: We are not allowing stage updates if the stage is dropped in the same position as it's redundant.
+   * if (currentIndex === position)
+   */
   const currentIndex = otherSortedStages.findIndex((item) => item.id === stageIdBeingMoved);
 
   /**
    * We have to check if we are moving the stage:
    *
-   * 1. DOWN
+   * * DOWN *
    *
    * OLD --- NEW
    *
@@ -115,16 +113,9 @@ export const getAdjacentStagesBasedOnPosition = ({
    * Stage 3 --- Stage 1 <-- Moved
    *
    *
-   * 2. UOR
-   *
-   * OLD --- NEW
-   *
-   * Stage 1 --- Stage 3 <-- Moved
-   * Stage 2 --- Stage 2
-   * Stage 3 --- Stage 1
+   *  or...
    */
 
-  // If we moved it down
   if (position > currentIndex) {
     return {
       newPreviousStageId: otherSortedStages[position]?.id,
@@ -132,14 +123,19 @@ export const getAdjacentStagesBasedOnPosition = ({
     };
   }
 
-  // If we moved it up
+  /**
+   *  * UP *
+   *
+   * OLD --- NEW
+   *
+   * Stage 1 --- Stage 3 <-- Moved
+   * Stage 2 --- Stage 2
+   * Stage 3 --- Stage 1
+   */
   if (position < currentIndex) {
     return {
       newPreviousStageId: otherSortedStages[position - 1]?.id,
       newNextStageId: otherSortedStages[position]?.id,
     };
   }
-
-  // No same place movement should be
-  throw new Error(`Uncaught index movement!!!!!!!!!!! ${position} - ${currentIndex} `);
 };
