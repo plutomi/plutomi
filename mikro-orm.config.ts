@@ -18,4 +18,5 @@ const mikroOrmOptions: Options<MongoDriver> = {
   clientUrl: env.mongoConnection,
 };
 
+console.log(`Mikro orm options`, mikroOrmOptions);
 export default mikroOrmOptions;
