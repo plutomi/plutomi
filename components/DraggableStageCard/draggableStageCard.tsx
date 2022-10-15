@@ -15,6 +15,8 @@ interface StageCardProps {
 export const DraggableStageCard = ({ linkHref, stage, index }: StageCardProps) => {
   const urlParams = router.query as Pick<CustomQuery, 'stageId'>;
 
+  // Note: If using a transition: transition ease-in-out duration-300 for like the background
+  // https://stackoverflow.com/questions/59130533/items-jumping-when-dropping-on-react-beautiful-dnd
   const content = (
     <Draggable draggableId={stage.id} index={index}>
       {(provided) => (
@@ -22,7 +24,7 @@ export const DraggableStageCard = ({ linkHref, stage, index }: StageCardProps) =
           {...provided.draggableProps}
           {...provided.dragHandleProps}
           ref={provided.innerRef}
-          className={`border my-4 shadow-xs py-4 text-center hover:border-blue-500   rounded-xl overflow-hidden shadow-md hover:shadow-lg transition ease-in-out duration-300 ${
+          className={`border my-4 shadow-xs py-4 text-center hover:border-blue-500   rounded-xl overflow-hidden shadow-md hover:shadow-lg  ${
             stage.id === urlParams.stageId
               ? ' bg-sky-50  border border-t-4 border-t-blue-500'
               : ' bg-white'

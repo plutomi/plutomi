@@ -25,6 +25,7 @@ export const StageReorderColumn = () => {
     openingId: opening.id,
   });
   const [newStages, setNewStages] = useState(stages);
+
   useEffect(() => {
     setNewStages(stages);
   }, [stages]);
@@ -45,19 +46,13 @@ export const StageReorderColumn = () => {
 
     console.log(`RESULT`, result);
     let newStageOrder = [...newStages];
-    console.log(`New stage order IDS`, newStageOrder);
 
     // Remove our stage it from the old location
     newStageOrder.splice(source.index, 1); // TODO this isn't splicing!
 
-    console.log(`NEW ORDER`, newStageOrder);
     const ourStage = newStages.find((stage) => stage.id === draggableId);
     // Add it to the new location
     newStageOrder.splice(destination.index, 0, ourStage);
-    console.log(`Added it to a new location`, newStageOrder);
-
-    console.log(`New Stage Order`, newStageOrder);
-
     setNewStages(newStageOrder);
 
     try {
@@ -76,9 +71,6 @@ export const StageReorderColumn = () => {
     // Refresh the stages
     // mutate(GetStagesInOpeningURL(openingId)); // TODO: Don't think this is needed
   };
-
-  // Refresh the stage order
-  // mutate(GetOpeningInfoURL(openingId));
 
   if (isStagesLoading) {
     return <Loader text=">Loading stages..."></Loader>;
@@ -110,13 +102,13 @@ export const StageReorderColumn = () => {
             <DragDropContext onDragEnd={handleOnDragEnd}>
               <Droppable droppableId={openingId}>
                 {(provided) => (
-                  <div {...provided.droppableProps} ref={provided.innerRef}>
+                  <div {...provided.droppableProps} ref={provided.innerRef} className={'my-4'}>
                     {newStages?.map((stage, index) => (
                       <DraggableStageCard
                         key={stage.id}
                         stage={stage}
                         index={index}
-                        linkHref={'TODO'}
+                        linkHref={`/openings/${openingId}/stages/${stage.id}/settings`}
                       />
                     ))}
                     {provided.placeholder}
