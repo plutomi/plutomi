@@ -1,8 +1,6 @@
 import { Request, Response } from 'express';
 import { Org } from '../../entities';
-import { DB } from '../../models';
-import { IndexedEntities, IndexedTargetArray, IndexedTargetArrayItem } from '../../types/main';
-import * as CreateError from '../../utils/createError';
+import { IndexedEntities } from '../../types/main';
 import { findInTargetArray } from '../../utils/findInTargetArray';
 
 export const leaveAndDeleteOrg = async (req: Request, res: Response) => {

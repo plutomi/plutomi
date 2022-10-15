@@ -1,5 +1,5 @@
 import { Entity, Index, Property } from '@mikro-orm/core';
-import { IndexedTargetArray } from '../types/main';
+import type { IndexedTargetArray } from '../types/main';
 import { BaseEntity } from './BaseEntity';
 
 export type OrgConstructorValues = Pick<Org, 'orgId' | 'displayName' | 'target'>;

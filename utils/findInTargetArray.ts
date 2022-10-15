@@ -1,4 +1,4 @@
-import { IndexedTargetArray, IndexedEntities, IndexIdTypes } from '../types/main';
+import type { IndexedTargetArray, IndexedEntities, IndexIdTypes } from '../types/main';
 
 interface FindInTargetArrayProps {
   entity: IndexedEntities;
