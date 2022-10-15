@@ -96,6 +96,58 @@ export const updateStage = async (req: Request, res: Response) => {
 
       allStagesInOpening = sortStages(allStagesInOpening);
 
+      const oldPreviousStageId = findInTargetArray({
+        entity: IndexedEntities.PreviousStage,
+        targetArray: stage.target,
+      });
+
+      const oldNextStageId = findInTargetArray({
+        entity: IndexedEntities.NextStage,
+        targetArray: stage.target,
+      });
+
+      const oldPreviousStage = allStagesInOpening.find((stage) => stage.id === oldPreviousStageId);
+
+      const oldPreviousStagesNextStageIndex = oldPreviousStage.target.findIndex(
+        (item) => item.type === IndexedEntities.NextStage,
+      );
+
+      const oldNextStage = allStagesInOpening.find((stage) => stage.id === oldNextStageId);
+
+      const oldNextStagesPreviousStageIndex = oldNextStage.target.findIndex(
+        (item) => item.type === IndexedEntities.PreviousStage,
+      );
+
+      // Update the old previous stage
+      if (oldPreviousStageId) {
+        // Set our old previous stage's next stage to be our old next stage
+        oldPreviousStage.target[oldPreviousStagesNextStageIndex] = stage.target.find(
+          (item) => item.type === IndexedEntities.NextStage,
+        );
+      } else {
+        oldPreviousStage.target[oldPreviousStagesNextStageIndex] = {
+          id: undefined,
+          type: IndexedEntities.NextStage,
+        };
+      }
+
+      entityManager.persist(oldPreviousStage);
+
+      if (oldNextStageId) {
+        // Set our old next stage's previous stage to be our old previous stage
+
+        oldNextStage.target[oldNextStagesPreviousStageIndex] = stage.target.find(
+          (item) => item.type === IndexedEntities.PreviousStage,
+        );
+      } else {
+        oldNextStage.target[oldNextStagesPreviousStageIndex] = {
+          id: undefined,
+          type: IndexedEntities.PreviousStage,
+        };
+      }
+
+      entityManager.persist(oldNextStage);
+
       const { newNextStageId, newPreviousStageId } = getAdjacentStagesBasedOnPosition({
         position: req.body.position,
         otherSortedStages: allStagesInOpening,
@@ -105,6 +157,7 @@ export const updateStage = async (req: Request, res: Response) => {
       const indexOfNextStage = stage.target.findIndex(
         (item) => item.type === IndexedEntities.NextStage,
       );
+
       if (newNextStageId) {
         stage.target[indexOfNextStage] = { id: newNextStageId, type: IndexedEntities.NextStage };
 
@@ -122,6 +175,7 @@ export const updateStage = async (req: Request, res: Response) => {
         entityManager.persist(newNextStage);
       } else {
         stage.target[indexOfNextStage] = { id: undefined, type: IndexedEntities.NextStage };
+        entityManager.persist(stage);
       }
 
       const indexOfPreviousStage = stage.target.findIndex(
@@ -149,9 +203,10 @@ export const updateStage = async (req: Request, res: Response) => {
         entityManager.persist(newPreviousStage);
       } else {
         stage.target[indexOfPreviousStage] = { id: undefined, type: IndexedEntities.NextStage };
+        entityManager.persist(stage);
       }
 
-      // TODO update the previous and next stages
+      // TODO update the old previous and next stages
     } catch (error) {
       const message = 'Error retrieving other stages in opening';
       console.error(message, error);
