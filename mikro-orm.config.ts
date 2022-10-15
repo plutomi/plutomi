@@ -2,11 +2,12 @@ import { Options } from '@mikro-orm/core';
 import { MongoHighlighter } from '@mikro-orm/mongo-highlighter';
 import { MongoDriver } from '@mikro-orm/mongodb';
 import { Opening, Org, Stage, User, UserLoginLink } from './entities';
+import { env } from './env';
 
 const mikroOrmOptions: Options<MongoDriver> = {
   type: 'mongo',
   entities: [User, Org, UserLoginLink, Stage, Opening],
-  dbName: 'staging', // TODO get from .env
+  dbName: env.deploymentEnvironment, // TODO get from .env
   highlighter: new MongoHighlighter(),
   debug: true,
   ensureIndexes: true,
@@ -14,8 +15,7 @@ const mikroOrmOptions: Options<MongoDriver> = {
     min: 20,
     max: 50,
   },
-  clientUrl:
-    'mongodb+srv://IupGDoGWC2J24qK0RWYi0X5Tzqk9qqc1sLXc:ywSUZLI1wmevGTCf8cjZXuu2tgnVnOHSx79V7MmW6icoVeeTrE@staging.pd4tt.mongodb.net/?retryWrites=true&w=majority',
+  clientUrl: env.mongoConnection,
 };
 
 export default mikroOrmOptions;
