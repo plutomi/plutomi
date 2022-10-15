@@ -3,8 +3,8 @@ import setEnv from '@americanairlines/simple-env';
 export const env = setEnv({
   required: {},
   optional: {
-    // TODO figure out a way to have separate FE and BE variables some are only needed for BE stuff. ughhh F this issue man
     nodeEnv: 'NODE_ENV',
+    mongoConnection: 'MONGO_CONNECTION',
     websiteUrl: 'NEXT_PUBLIC_WEBSITE_URL',
     deploymentEnvironment: 'NEXT_PUBLIC_DEPLOYMENT_ENVIRONMENT',
     commitsToken: 'COMMITS_TOKEN',
