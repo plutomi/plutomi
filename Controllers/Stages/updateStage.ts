@@ -282,13 +282,13 @@ export const updateStage = async (req: Request, res: Response) => {
       /**
        * If there is a new previous stage, we want to:
        *
-       * 1. Update our stage's previous stage to be that stage's new next id
+       * 1. Update our stage's previous stage to be that stage's next id
        * 2. Update that new previous stage's next stage to be our stage
        *
        * OLD --- NEW
        *
        * Stage 1 --- Stage 2 <-- Next stage needs updating to be our stage
-       * Stage 2 --- Stage 1 <-- Moved, needs it's next stage updated
+       * Stage 2 --- Stage 1 <-- Moved, needs it's previous stage updated
        * Stage 3 --- Stage 3
        */
 
