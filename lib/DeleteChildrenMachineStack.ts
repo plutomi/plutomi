@@ -125,7 +125,7 @@ export default class DeleteChildrenMachineStack extends cdk.Stack {
     const deleteStagesFromOpeningFunction = createFunctions({
       functionName: `delete-stages-from-opening-function`,
       description: 'Removes stages from an opening that was recently deleted',
-      fileName: 'cascadingDeletions/delete-stages-from-opening.ts',
+      fileName: 'delete-stages-from-opening.ts',
       permissions: [DynamoIAM.DeleteItem],
       permissionArns: [props.table.tableArn],
     });
@@ -133,7 +133,7 @@ export default class DeleteChildrenMachineStack extends cdk.Stack {
     const removeDeletedQuestionFromStageFunction = createFunctions({
       functionName: `remove-deleted-question-from-stages-function`,
       description: 'Removes questions from a stage once a question is deleted',
-      fileName: 'cascadingDeletions/remove-deleted-question-from-stage.ts',
+      fileName: 'remove-deleted-question-from-stage.ts',
       permissions: [DynamoIAM.Query, DynamoIAM.GetItem, DynamoIAM.DeleteItem, DynamoIAM.UpdateItem],
       permissionArns: [props.table.tableArn, `${props.table.tableArn}/index/GSI1`],
     });
@@ -141,7 +141,7 @@ export default class DeleteChildrenMachineStack extends cdk.Stack {
     const deleteOpeningsFromOrgFunction = createFunctions({
       functionName: `delete-openings-from-org-function`,
       description: 'Removes openings from an org when an org is deleted',
-      fileName: 'cascadingDeletions/delete-openings-from-org.ts',
+      fileName: 'delete-openings-from-org.ts',
       permissions: [DynamoIAM.DeleteItem, DynamoIAM.Query],
       permissionArns: [props.table.tableArn, `${props.table.tableArn}/index/GSI1`],
     });
@@ -149,7 +149,7 @@ export default class DeleteChildrenMachineStack extends cdk.Stack {
     const deleteQuestionsFromOrgFunction = createFunctions({
       functionName: `delete-questions-from-org-function`,
       description: 'Removes questions from an org when an org is deleted',
-      fileName: 'cascadingDeletions/delete-questions-from-org.ts',
+      fileName: 'delete-questions-from-org.ts',
       permissions: [DynamoIAM.DeleteItem, DynamoIAM.Query],
       permissionArns: [props.table.tableArn, `${props.table.tableArn}/index/GSI1`],
     });
@@ -157,7 +157,7 @@ export default class DeleteChildrenMachineStack extends cdk.Stack {
     const deleteWebhooksFromOrgFunction = createFunctions({
       functionName: `delete-webhooks-from-org-function`,
       description: 'Removes webhooks from an org when an org is deleted',
-      fileName: 'cascadingDeletions/delete-webhooks-from-org.ts',
+      fileName: 'delete-webhooks-from-org.ts',
       permissions: [DynamoIAM.DeleteItem, DynamoIAM.Query],
       permissionArns: [props.table.tableArn, `${props.table.tableArn}/index/GSI1`],
     });
@@ -165,7 +165,7 @@ export default class DeleteChildrenMachineStack extends cdk.Stack {
     const deleteQuestionStageAdjacentIteFunction = createFunctions({
       functionName: `delete-question-stage-adjacent-item`,
       description: 'Handles deleting adjacent stage items when stages are deleted.',
-      fileName: 'cascadingDeletions/delete-question-stage-adjacent-item.ts',
+      fileName: 'delete-question-stage-adjacent-item.ts',
       permissions: [DynamoIAM.DeleteItem, DynamoIAM.UpdateItem],
       permissionArns: [props.table.tableArn],
     });

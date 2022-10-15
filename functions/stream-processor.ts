@@ -4,15 +4,15 @@ import { PutEventsRequestEntry } from 'aws-sdk/clients/eventbridge';
 import errorFormatter from '../utils/errorFormatter';
 import EBClient from '../awsClients/eventBridgeClient';
 import { DynamoStreamTypes, Entities } from '../Config';
-import { AllDynamoEntities } from '../types/dynamo';
 import { env } from '../env';
+import { AllEntities } from '../types/dynamo';
 
 const processor = require('dynamodb-streams-processor');
 
 export interface CustomEventBridgeEvent {
   eventName: DynamoStreamTypes;
-  OldImage: AllDynamoEntities;
-  NewImage: AllDynamoEntities;
+  OldImage: AllEntities;
+  NewImage: AllEntities;
   PK: string;
   SK: string;
   entityType: Entities;
