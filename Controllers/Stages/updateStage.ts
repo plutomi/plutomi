@@ -96,6 +96,7 @@ export const updateStage = async (req: Request, res: Response) => {
         ],
       });
 
+      // We must sort it first to be able to get the proper previous and next stage IDs
       allStagesInOpening = sortStages(allStagesInOpening);
 
       /**
@@ -232,13 +233,26 @@ export const updateStage = async (req: Request, res: Response) => {
        * Stage 2 --- Stage 1 <-- Moved, its old next stage is now its new previous stage!
        * Stage 3 --- Stage 3
        *
-       * The function below retrieves the IDs / pointers to the new stages
+       * The function below retrieves the IDs of the new stages from the current state of the stages
        */
       const { newNextStageId, newPreviousStageId } = getAdjacentStagesBasedOnPosition({
         position: req.body.position,
         otherSortedStages: allStagesInOpening,
         stageIdBeingMoved: stage.id,
       });
+
+      /**
+       * If there is a new next stage, we want to:
+       *
+       * 1. Update our stage's next stage to be that stage new next id
+       * 2. Update that new next stage's previous stage to be our stage
+       *
+       * OLD --- NEW
+       *
+       * Stage 1 --- Stage 2
+       * Stage 2 --- Stage 1 <-- Moved, needs it's next stage updated
+       * Stage 3 --- Stage 3 <-- Previous stage needs updating to be our stage
+       */
 
       const indexOfNextStage = stage.target.findIndex(
         (item) => item.type === IndexedEntities.NextStage,
@@ -260,22 +274,34 @@ export const updateStage = async (req: Request, res: Response) => {
         entityManager.persist(stage);
         entityManager.persist(newNextStage);
       } else {
+        // If there is no new next stage, our stage is being placed at the end. Next stage is therefore undefined!
         stage.target[indexOfNextStage] = { id: undefined, type: IndexedEntities.NextStage };
         entityManager.persist(stage);
       }
+
+      /**
+       * If there is a new previous stage, we want to:
+       *
+       * 1. Update our stage's previous stage to be that stage's new next id
+       * 2. Update that new previous stage's next stage to be our stage
+       *
+       * OLD --- NEW
+       *
+       * Stage 1 --- Stage 2 <-- Next stage needs updating to be our stage
+       * Stage 2 --- Stage 1 <-- Moved, needs it's next stage updated
+       * Stage 3 --- Stage 3
+       */
 
       const indexOfPreviousStage = stage.target.findIndex(
         (item) => item.type === IndexedEntities.PreviousStage,
       );
 
       if (newPreviousStageId) {
-        // Update our stage's previous stage
         stage.target[indexOfPreviousStage] = {
           id: newPreviousStageId,
           type: IndexedEntities.PreviousStage,
         };
 
-        // Update the new previous stage's next stage ID with our stage
         const newPreviousStage = allStagesInOpening.find(
           (stage) => stage.id === newPreviousStageId,
         );
@@ -290,6 +316,7 @@ export const updateStage = async (req: Request, res: Response) => {
         entityManager.persist(stage);
         entityManager.persist(newPreviousStage);
       } else {
+        // If there is no previous stage, our stage is therefore at the beginning and previous stage is undefined!
         stage.target[indexOfPreviousStage] = { id: undefined, type: IndexedEntities.PreviousStage };
         entityManager.persist(stage);
       }
