@@ -100,7 +100,7 @@ export default class DeleteChildrenMachineStack extends cdk.Stack {
             functionName: `${env.deploymentEnvironment}-${functionName}`,
             functionDescription: description,
             fileName,
-            cascadingDeletion: functionName.includes('delete-'),
+            cascadingDeletion: functionName.includes('delete-') || functionName.includes('remove-'),
           }),
           environment: { ...ENVIRONMENT, DYNAMO_TABLE_NAME },
         },
