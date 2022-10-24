@@ -49,10 +49,11 @@ export async function connectToDatabase() {
   console.log(`Creating necessary indexes`);
   const allCollections = Object.values(collections).map(async (collection) => {
     try {
-      console.log(`Creating targer index on ${collection.collectionName}`);
+      console.log(`Creating target index on ${collection.collectionName}`);
       await collection.createIndex(indexKey, indexOptions);
     } catch (error) {
-      console.error(`Error creating index!`, error)
+      console.error(`Error creating index!`, error);
+    }
   });
 
   console.log(`Created!`);
