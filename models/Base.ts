@@ -1,8 +1,11 @@
+import { ObjectId } from 'mongodb';
+
 export interface BaseEntity {
   createdAt: Date;
   updatedAt: Date;
   /**
-   * Shard key
+   * Hashed Shard key
    */
-  id: string;
+  shardKey: string;
+  _id?: ObjectId;
 }

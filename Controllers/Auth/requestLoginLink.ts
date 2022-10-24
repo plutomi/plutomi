@@ -1,5 +1,6 @@
 import { Request, Response } from 'express';
 import emailValidator from 'deep-email-validator';
+import * as crypto from 'crypto';
 import Joi from 'joi';
 import { nanoid } from 'nanoid';
 import {
@@ -17,11 +18,11 @@ import * as CreateError from '../../utils/createError';
 import { env } from '../../env';
 // import { User, UserLoginLink } from '../../entities';
 import dayjs from 'dayjs';
-import { IndexedEntities } from '../../types/main';
 import { findInTargetArray } from '../../utils/findInTargetArray';
 import { collections } from '../../utils/connectToDatabase';
 import { UserEntity, UserShardKey } from '../../models';
 import { Filter, ObjectId } from 'mongodb';
+import { IdxTypes } from '../../types/main';
 
 const jwt = require('jsonwebtoken');
 
@@ -71,9 +72,9 @@ export const requestLoginLink = async (req: Request, res: Response) => {
   console.log(`Attempting to find user with email`, email);
 
   try {
-    user = await collections.users.findOne({
-      target: { type: 'Emassil', value: email, re: 'as' },
-    } as Filter<UserEntity>);
+    user = (await collections.users.findOne({
+      target: { type: 'Email', value: email },
+    } as Filter<UserEntity>)) as UserEntity;
   } catch (error) {
     const msg = `Error retrieving user info`;
     console.error(msg, error);
@@ -90,7 +91,9 @@ export const requestLoginLink = async (req: Request, res: Response) => {
 
       const now = new Date();
       const customId = nanoid(50);
-      const shardKey: UserShardKey = `USER#${customId}`;
+      const userShardKey: UserShardKey = `USER#${customId}`;
+      const shardKey = crypto.createHash('sha256').update(userShardKey).digest('base64url');
+      console.log(`HASH`, shardKey);
       const newUser: UserEntity = {
         shardKey,
         createdAt: now,
@@ -100,7 +103,11 @@ export const requestLoginLink = async (req: Request, res: Response) => {
         lastName: Defaults.LastName,
         emailVerified: false,
         canReceiveEmails: false,
-        target: [{ type: 'Id', value: customId }],
+        target: [
+          { type: IdxTypes.Email, value: email },
+          { type: IdxTypes.Org, value: null },
+          { type: IdxTypes.Id, value: customId },
+        ],
       };
 
       console.log(`Creating new user`, newUser);

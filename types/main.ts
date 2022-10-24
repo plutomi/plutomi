@@ -43,22 +43,23 @@ export enum Collections {
   Openings = 'Opening',
 }
 
-export type IndexedEntities =
-  | 'User'
-  | 'Org'
-  | 'OrgInvite'
-  | 'Opening'
-  | 'OpeningState'
-  | 'Stage'
-  | 'UserLoginLink'
-  | 'Question'
-  | 'Webhook'
-  | 'Email'
-  | 'CreatedBy'
-  | 'PreviousStage'
-  | 'NextStage'
-  | 'Id';
+export enum IdxTypes {
+  User = 'User',
+  Org = 'Org',
+  OrgInvite = 'OrgInvite',
+  Opening = 'Opening',
+  OpeningState = 'OpeningState',
+  Stage = 'Stage',
+  UserLoginLink = 'UserLoginLink',
+  Question = 'Question',
+  Webhook = 'Webhook',
+  Email = 'Email',
+  CreatedBy = 'CreatedBy',
+  PreviousStage = 'PreviousStage',
+  NextStage = 'NextStage',
+  Id = 'Id',
+}
 
 export type IndexIdTypes = string | null;
-export type IndexedTargetArrayItem = { type: IndexedEntities; value: IndexIdTypes };
+export type IndexedTargetArrayItem = { type: IdxTypes; value: IndexIdTypes };
 export type IndexedTargetArray = Array<IndexedTargetArrayItem>;
