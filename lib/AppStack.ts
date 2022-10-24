@@ -7,37 +7,34 @@ import * as ec2 from 'aws-cdk-lib/aws-ec2';
 import * as iam from 'aws-cdk-lib/aws-iam';
 import * as route53 from 'aws-cdk-lib/aws-route53';
 import * as origins from 'aws-cdk-lib/aws-cloudfront-origins';
-import { Table } from 'aws-cdk-lib/aws-dynamodb';
 import { Certificate } from 'aws-cdk-lib/aws-certificatemanager';
 import { ARecord, RecordTarget } from 'aws-cdk-lib/aws-route53';
 import { CloudFrontTarget } from 'aws-cdk-lib/aws-route53-targets';
-import { Policy, PolicyStatement } from 'aws-cdk-lib/aws-iam';
-import { DOMAIN_NAME, EXPRESS_PORT } from '../Config';
+import { Policy } from 'aws-cdk-lib/aws-iam';
+import { DOMAIN_NAME, EXPRESS_PORT, NOT_SET, Policies, Servers } from '../Config';
 import * as waf from 'aws-cdk-lib/aws-wafv2';
 import { env } from '../env';
 
-interface AppStackServiceProps extends cdk.StackProps {
-  table: Table;
-}
+interface AppStackServiceProps extends cdk.StackProps {}
 const baseEnv = {
   NODE_ENV: process.env.NODE_ENV ?? 'development',
-  NEXT_PUBLIC_DEPLOYMENT_ENVIRONMENT: process.env.NEXT_PUBLIC_DEPLOYMENT_ENVIRONMENT ?? 'NOT_SET',
+  NEXT_PUBLIC_DEPLOYMENT_ENVIRONMENT: process.env.NEXT_PUBLIC_DEPLOYMENT_ENVIRONMENT ?? NOT_SET,
   NEXT_PUBLIC_WEBSITE_URL: process.env.NEXT_PUBLIC_WEBSITE_URL, // If none is set, defaults to localhost. Override in config.ts
 };
 
 export const ENVIRONMENT = {
   ...baseEnv,
-  HOSTED_ZONE_ID: process.env.HOSTED_ZONE_ID ?? 'NOT_SET',
-  ACM_CERTIFICATE_ID: process.env.ACM_CERTIFICATE_ID ?? 'NOT_SET',
-  LOGIN_LINKS_PASSWORD: process.env.LOGIN_LINKS_PASSWORD ?? 'NOT_SET',
-  SESSION_SIGNATURE_SECRET_1: process.env.SESSION_SIGNATURE_SECRET_1 ?? 'NOT_SET',
-  MONGO_CONNECTION: process.env.MONGO_CONNECTION ?? 'NOT_SET',
+  HOSTED_ZONE_ID: process.env.HOSTED_ZONE_ID ?? NOT_SET,
+  ACM_CERTIFICATE_ID: process.env.ACM_CERTIFICATE_ID ?? NOT_SET,
+  LOGIN_LINKS_PASSWORD: process.env.LOGIN_LINKS_PASSWORD ?? NOT_SET,
+  SESSION_SIGNATURE_SECRET_1: process.env.SESSION_SIGNATURE_SECRET_1 ?? NOT_SET,
+  MONGO_CONNECTION: process.env.MONGO_CONNECTION ?? NOT_SET,
 };
 
 // ! Must match what is in the Docker container
 const NEXT_ENVIRONMENT = {
   ...baseEnv,
-  COMMITS_TOKEN: process.env.COMMITS_TOKEN ?? 'NOT_SET',
+  COMMITS_TOKEN: process.env.COMMITS_TOKEN ?? NOT_SET,
 };
 
 export default class AppStack extends cdk.Stack {
@@ -49,33 +46,17 @@ export default class AppStack extends cdk.Stack {
       assumedBy: new iam.ServicePrincipal('ecs-tasks.amazonaws.com'),
     });
 
-    // Allows Fargate to access DynamoDB
-    const dynamoAccessPolicyStatement = new PolicyStatement({
-      actions: [
-        'dynamodb:GetItem',
-        'dynamodb:DeleteItem',
-        'dynamodb:PutItem',
-        'dynamodb:Query',
-        'dynamodb:UpdateItem',
-      ],
-      resources: [
-        props.table.tableArn,
-        `${props.table.tableArn}/index/GSI1`,
-        `${props.table.tableArn}/index/GSI2`,
-      ],
-    });
-
     // Allows fargate to send emails
     const sesSendEmailPolicy = new iam.PolicyStatement({
       effect: iam.Effect.ALLOW,
-      actions: ['ses:SendEmail', 'ses:SendRawEmail', 'ses:SendTemplatedEmail'],
+      actions: [Policies.SendEmail, Policies.SendRawEmail, Policies.SendTemplatedEmail],
       resources: [
         `arn:aws:ses:${this.region}:${cdk.Stack.of(this).account}:identity/${DOMAIN_NAME}`,
       ],
     });
 
     const policy = new Policy(this, `${env.deploymentEnvironment}-plutomi-api-policy`, {
-      statements: [dynamoAccessPolicyStatement, sesSendEmailPolicy],
+      statements: [sesSendEmailPolicy],
     });
     taskRole.attachInlinePolicy(policy);
     // Define a fargate task with the newly created execution and task roles
@@ -85,8 +66,8 @@ export default class AppStack extends cdk.Stack {
       {
         taskRole,
         executionRole: taskRole,
-        cpu: 1024, // TODO revert back
-        memoryLimitMiB: 2048,
+        cpu: Servers.cpu, // TODO revert back
+        memoryLimitMiB: Servers.memory,
       },
     );
 
@@ -141,11 +122,11 @@ export default class AppStack extends cdk.Stack {
         cluster,
         certificate: apiCert,
         taskDefinition,
-        desiredCount: 1, // TODO revert back
+        desiredCount: Servers.count.min,
         listenerPort: 443,
         protocol: protocol.ApplicationProtocol.HTTPS,
         redirectHTTP: true,
-        assignPublicIp: true, // TODO revisit this
+        assignPublicIp: true,
       },
     );
 
@@ -160,7 +141,7 @@ export default class AppStack extends cdk.Stack {
     // Deregistration delay
     loadBalancedFargateService.targetGroup.setAttribute(
       'deregistration_delay.timeout_seconds',
-      '30',
+      '10',
     );
     // Healthcheck thresholds
     loadBalancedFargateService.targetGroup.configureHealthCheck({
@@ -172,8 +153,8 @@ export default class AppStack extends cdk.Stack {
 
     // Auto scaling
     const scalableTarget = loadBalancedFargateService.service.autoScaleTaskCount({
-      minCapacity: 1, // TODO revert back
-      maxCapacity: 2,
+      minCapacity: Servers.count.min,
+      maxCapacity: Servers.count.max,
     });
 
     /**
@@ -181,7 +162,7 @@ export default class AppStack extends cdk.Stack {
      * https://github.com/aws/containers-roadmap/issues/163
      */
     scalableTarget.scaleOnCpuUtilization('CpuScaling', {
-      targetUtilizationPercent: 15,
+      targetUtilizationPercent: Servers.targetUtilizationPct,
     });
 
     // Create the WAF & its rules
@@ -203,7 +184,7 @@ export default class AppStack extends cdk.Stack {
           priority: 0,
           statement: {
             rateBasedStatement: {
-              limit: 1000, // In a 5 minute period
+              limit: Servers.rateLimit.api, // In a 5 minute period
               aggregateKeyType: 'IP',
               scopeDownStatement: {
                 byteMatchStatement: {
@@ -240,7 +221,7 @@ export default class AppStack extends cdk.Stack {
           priority: 1,
           statement: {
             rateBasedStatement: {
-              limit: 2000, // In a 5 minute period
+              limit: Servers.rateLimit.web, // In a 5 minute period
               aggregateKeyType: 'IP',
             },
           },

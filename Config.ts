@@ -238,3 +238,28 @@ export const COOKIE_SETTINGS = {
   maxAge: 1000 * 60 * 60 * 12, // 12 hours
   signed: true,
 };
+
+export const Servers = {
+  // Fargate task count
+  count: { min: 1, max: 2 },
+  // FargateTaskDefinitionProps.cpu?
+  cpu: 256,
+  // In mb, how much memory
+  memory: 512,
+
+  targetUtilizationPct: 15,
+
+  // Per 5 minutes
+  rateLimit: {
+    web: 2000,
+    api: 1000,
+  },
+};
+
+export const NOT_SET = 'NOT_SET';
+
+export enum Policies {
+  SendEmail = 'ses:SendEmail',
+  SendRawEmail = 'ses:SendRawEmail',
+  SendTemplatedEmail = 'ses:SendTemplatedEmail',
+}
