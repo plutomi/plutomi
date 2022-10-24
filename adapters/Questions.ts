@@ -1,6 +1,6 @@
 import { AXIOS_INSTANCE as axios } from '../Config';
-import { APICreateQuestionOptions } from '../Controllers/Questions/createQuestion';
-import { APIUpdateQuestionOptions } from '../Controllers/Questions/updateQuestion';
+import { APICreateQuestionOptions } from '../controllers/questions/createQuestion';
+import { APIUpdateQuestionOptions } from '../controllers/questions/updateQuestion';
 
 export const GetQuestionsInOrgURL = () => '/questions';
 

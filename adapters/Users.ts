@@ -1,5 +1,5 @@
 import { AXIOS_INSTANCE as axios } from '../Config';
-import { APIUpdateUserOptions } from '../Controllers/Users/updateUser';
+import { APIUpdateUserOptions } from '../controllers/users/updateUser';
 
 export const GetSelfInfoURL = () => `/users/me`;
 

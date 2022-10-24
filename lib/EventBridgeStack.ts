@@ -30,18 +30,12 @@ interface EventBridgeStackProps extends cdk.StackProps {
   WebhooksMachine: StateMachine;
 }
 export default class EventBridgeStack extends cdk.Stack {
-  /**
-   *
-   * @param {cdk.Construct} scope
-   * @param {string} id
-   * @param {cdk.StackProps=} props
-   */
   constructor(scope: cdk.App, id: string, props: EventBridgeStackProps) {
     super(scope, id, props);
 
     /**
      * Note, if we ever use AWS events directly, they will go to the default event bus and not this one.
-     * This is for easy dev / prod testing
+     * This is for easy dev / stage / prod testing
      */
     const bus = new EventBus(this, `${env.deploymentEnvironment}-EventBus`, {
       eventBusName: `${env.deploymentEnvironment}-EventBus`,

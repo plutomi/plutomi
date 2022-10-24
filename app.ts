@@ -18,7 +18,7 @@ import { invites } from './routes/invites';
 import { publicInfo } from './routes/public';
 import { auth } from './routes/auth';
 import { applicants } from './routes/applicants';
-import API from './Controllers';
+import API from './controllers';
 import { env } from './env';
 import { initializeDb } from './utils/initializeDb';
 

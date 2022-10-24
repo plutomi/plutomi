@@ -1,6 +1,6 @@
 import { AXIOS_INSTANCE as axios } from '../Config';
-import { APICreateWebhookOptions } from '../Controllers/Webhooks/createWebhook';
-import { APIUpdateWebhookOptions } from '../Controllers/Webhooks/updateWebhook';
+import { APICreateWebhookOptions } from '../controllers/webhooks/createWebhook';
+import { APIUpdateWebhookOptions } from '../controllers/webhooks/updateWebhook';
 
 export const GetWebhooksInOrgURL = () => `/webhooks`;
 

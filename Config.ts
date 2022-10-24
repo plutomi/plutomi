@@ -254,6 +254,11 @@ export const Servers = {
     web: 2000,
     api: 1000,
   },
+
+  vpc: {
+    az: 3,
+    natGateways: 0,
+  },
 };
 
 export const NOT_SET = 'NOT_SET';

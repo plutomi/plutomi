@@ -83,19 +83,16 @@ export default class AppStack extends cdk.Stack {
       environment: { ...ENVIRONMENT },
     });
 
-    // API
     container.addPortMappings({
       containerPort: EXPRESS_PORT || 3000,
       protocol: ecs.Protocol.TCP,
     });
 
-    // Create a VPC
     const vpc = new ec2.Vpc(this, 'plutomi-api-fargate-vpc', {
-      maxAzs: 3,
-      natGateways: 0, // Very pricy! https://www.lastweekinaws.com/blog/the-aws-managed-nat-gateway-is-unpleasant-and-not-recommended/
+      maxAzs: Servers.vpc.az,
+      natGateways: Servers.vpc.natGateways, // Very pricy! https://www.lastweekinaws.com/blog/the-aws-managed-nat-gateway-is-unpleasant-and-not-recommended/
     });
 
-    // Create the cluster
     const cluster = new ecs.Cluster(this, 'plutomi-api-fargate-cluster', {
       vpc,
       containerInsights: true,

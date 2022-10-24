@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import API from '../Controllers';
+import API from '../controllers';
 import withSession from '../middleware/withSession';
 import withHasOrg from '../middleware/withHasOrg';
 

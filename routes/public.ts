@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import API from '../Controllers';
+import API from '../controllers';
 
 export const publicInfo = Router();
 

@@ -1,14 +1,14 @@
-import * as Applicants from './Applicants';
-import * as Auth from './Auth';
-import * as Invites from './Invites';
-import * as Openings from './Openings';
-import * as Orgs from './Orgs';
-import * as PublicInfo from './PublicInfo';
-import * as Questions from './Questions';
-import * as Stages from './Stages';
-import * as Users from './Users';
-import * as Webhooks from './Webhooks';
-import * as Misc from './Misc';
+import * as Applicants from './applicants';
+import * as Auth from './auth';
+import * as Invites from './invites';
+import * as Openings from './openings';
+import * as Orgs from './orgs';
+import * as PublicInfo from './publicInfo';
+import * as Questions from './questions';
+import * as Stages from './stages';
+import * as Users from './users';
+import * as Webhooks from './webhooks';
+import * as Misc from './misc';
 
 const API = {
   Applicants,

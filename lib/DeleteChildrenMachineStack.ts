@@ -100,7 +100,7 @@ export default class DeleteChildrenMachineStack extends cdk.Stack {
             functionName: `${env.deploymentEnvironment}-${functionName}`,
             functionDescription: description,
             fileName,
-            cascadingDeletion: functionName.includes('delete-') || functionName.includes('remove-'),
+            cascadingDeletion: functionName.includes('delete-'),
           }),
           environment: { ...ENVIRONMENT, DYNAMO_TABLE_NAME },
         },
@@ -129,9 +129,9 @@ export default class DeleteChildrenMachineStack extends cdk.Stack {
     });
 
     const removeDeletedQuestionFromStageFunction = createFunctions({
-      functionName: `remove-deleted-question-from-stages-function`,
+      functionName: `delete-deleted-question-from-stages-function`,
       description: 'Removes questions from a stage once a question is deleted',
-      fileName: 'remove-deleted-question-from-stage.ts',
+      fileName: 'delete-deleted-question-from-stage.ts',
       permissions: [DynamoIAM.Query, DynamoIAM.GetItem, DynamoIAM.DeleteItem, DynamoIAM.UpdateItem],
       permissionArns: [props.table.tableArn, `${props.table.tableArn}/index/GSI1`],
     });
