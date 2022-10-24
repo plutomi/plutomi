@@ -35,15 +35,30 @@ export async function connectToDatabase() {
   const applicantsCollection: mongoDB.Collection = db.collection(Collections.Applicants);
 
   collections.users = usersCollection;
-  collections.loginLinks = loginLinksCollection;
-  collections.orgs = orgsCollection;
-  collections.openings = openingsCollection;
-  collections.stages = stagesCollection;
-  collections.questions = questionsCollection;
-  collections.webhooks = webhooksCollection;
-  collections.applicants = applicantsCollection;
+  await collections.users.createIndex({ target: 1 });
 
-  console.log(
-    `Successfully connected to database: ${db.databaseName}. \n Collections: ${collections}`,
-  );
+  collections.loginLinks = loginLinksCollection;
+  await collections.loginLinks.createIndex({ target: 1 });
+
+  collections.orgs = orgsCollection;
+  await collections.orgs.createIndex({ target: 1 });
+
+  collections.openings = openingsCollection;
+  await collections.openings.createIndex({ target: 1 });
+
+  collections.stages = stagesCollection;
+  await collections.stages.createIndex({ target: 1 });
+
+  collections.questions = questionsCollection;
+  await collections.questions.createIndex({ target: 1 });
+
+  collections.webhooks = webhooksCollection;
+  await collections.webhooks.createIndex({ target: 1 });
+
+  collections.applicants = applicantsCollection;
+  await collections.applicants.createIndex({ target: 1 });
+
+  // TODO create target array index
+
+  console.log(`Successfully connected to database: ${db.databaseName}.`);
 }
