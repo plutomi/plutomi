@@ -20,7 +20,7 @@ export const getPublicOpening = async (req: Request, res: Response) => {
   //   return res.status(status).json(body);
   // }
 
-  // if (!opening || opening.GSI1SK === OpeningState.PRIVATE) {
+  // if (!opening || opening.GSI1SK === OpeningState.Private) {
   //   return res.status(404).json({ message: 'Opening does not exist' });
   // }
 

@@ -20,7 +20,7 @@
 //   /**
 //    * Indexed target array for the opening. Indexed properties are:
 //    *
-//    * {@link OpeningState} - You can make Openings {@link OpeningState.PUBLIC} or {@link OpeningState.PRIVATE}
+//    * {@link OpeningState} - You can make Openings {@link OpeningState.Public} or {@link OpeningState.Private}
 //    *
 //    *  Org - @string - ID of the org this opening belongs to. Type of {@link IndexedEntities.Org}
 //    */

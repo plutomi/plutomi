@@ -2,10 +2,9 @@ import { Request, Response } from 'express';
 import Joi from 'joi';
 import * as CreateError from '../../utils/createError';
 import { JOI_SETTINGS, LIMITS } from '../../Config';
-import { DynamoQuestion } from '../../types/dynamo';
 
-export interface APIUpdateQuestionOptions
-  extends Partial<Pick<DynamoQuestion, 'GSI1SK' | 'description'>> {}
+// export interface APIUpdateQuestionOptions
+//   extends Partial<Pick<DynamoQuestion, 'GSI1SK' | 'description'>> {}
 
 const schema = Joi.object({
   GSI1SK: Joi.string().max(LIMITS.MAX_QUESTION_TITLE_LENGTH),

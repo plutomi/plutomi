@@ -2,14 +2,13 @@ import { Request, Response } from 'express';
 import { pick } from 'lodash';
 import * as CreateError from '../../utils/createError';
 import { OpeningState } from '../../Config';
-import { DynamoOpening } from '../../types/dynamo';
 
 export const getPublicOpeningsInOrg = async (req: Request, res: Response) => {
   const { orgId } = req.params;
 
   // const [openings, openingsError] = await DB.Openings.getOpeningsInOrg({
   //   orgId,
-  //   GSI1SK: OpeningState.PUBLIC,
+  //   GSI1SK: OpeningState.Public,
   // });
 
   // if (openingsError) {

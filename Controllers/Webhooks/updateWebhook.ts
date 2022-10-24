@@ -2,10 +2,10 @@ import { Request, Response } from 'express';
 import Joi from 'joi';
 import * as CreateError from '../../utils/createError';
 import { JOI_SETTINGS, LIMITS } from '../../Config';
-import { DynamoWebhook } from '../../types/dynamo';
+// import { DynamoWebhook } from '../../types/dynamo';
 
-export interface APIUpdateWebhookOptions
-  extends Partial<Pick<DynamoWebhook, 'webhookName' | 'webhookUrl' | 'description'>> {}
+// export interface APIUpdateWebhookOptions
+//   extends Partial<Pick<DynamoWebhook, 'webhookName' | 'webhookUrl' | 'description'>> {}
 
 const schema = Joi.object({
   webhookUrl: Joi.string().uri(),

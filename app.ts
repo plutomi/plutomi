@@ -22,7 +22,7 @@ import { auth } from './routes/auth';
 import { applicants } from './routes/applicants';
 import API from './controllers';
 import { env } from './env';
-import { connectToDatabase } from './mongo/utils';
+import { connectToDatabase } from './utils/connectToDatabase';
 
 const morgan = require('morgan');
 const cookieParser = require('cookie-parser');

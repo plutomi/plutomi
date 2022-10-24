@@ -1,13 +1,12 @@
 import { Request, Response } from 'express';
 import Joi from 'joi';
 import * as CreateError from '../../utils/createError';
-import { DynamoQuestion } from '../../types/dynamo';
 import { JOI_SETTINGS, LIMITS } from '../../Config';
 
-export type APICreateQuestionOptions = Pick<
-  DynamoQuestion,
-  'questionId' | 'GSI1SK' | 'description'
->;
+// export type APICreateQuestionOptions = Pick<
+//   DynamoQuestion,
+//   'questionId' | 'GSI1SK' | 'description'
+// >;
 const schema = Joi.object({
   body: {
     questionId: Joi.string().max(50), // TODO joi regex to match tag generator

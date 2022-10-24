@@ -1,6 +1,6 @@
 import * as mongoDB from 'mongodb';
-import { env } from '../../env';
-import { Collections } from '../@types/mongo';
+import { Collections } from '../Config';
+import { env } from '../env';
 
 export const collections: {
   users?: mongoDB.Collection;

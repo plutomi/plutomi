@@ -88,19 +88,19 @@ export const OpeningSettingsHeader = () => {
       <div className="flex justify-center space-x-4 py-2 items-center">
         <span
           className={` inline-flex items-center px-2.5 py-0.5 rounded-md text-sm font-medium ${
-            openingState === OpeningState.PUBLIC ? 'bg-green-100' : 'bg-blue-gray-100'
+            openingState === OpeningState.Public ? 'bg-green-100' : 'bg-blue-gray-100'
           }`}
         >
           <svg
             className={`-ml-0.5 mr-1.5 h-2 w-2 ${
-              openingState === OpeningState.PUBLIC ? 'text-green-800' : 'text-blue-gray-800'
+              openingState === OpeningState.Public ? 'text-green-800' : 'text-blue-gray-800'
             }`}
             fill="currentColor"
             viewBox="0 0 8 8"
           >
             <circle cx={4} cy={4} r={3} />
           </svg>
-          {openingState === OpeningState.PUBLIC ? 'Public' : 'Private'}
+          {openingState === OpeningState.Public ? 'Public' : 'Private'}
         </span>
         <p className="text-md text-light text-center">
           Created {Time.relative(opening?.createdAt)}

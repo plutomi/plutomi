@@ -53,7 +53,7 @@ export const OpeningsListItem = ({ opening }: OpeningsListItemProps) => {
             <div className="flex items-center justify-between">
               <h1 className="text-lg font-medium text-blue-600 truncate">{opening.name}</h1>
               <div className="ml-2 flex-shrink-0 flex">
-                {openingState === OpeningState.PUBLIC ? (
+                {openingState === OpeningState.Public ? (
                   <p className="px-2 inline-flex text-sm leading-5 font-semibold rounded-full bg-green-100 text-green-800">
                     Public
                   </p>
@@ -80,7 +80,7 @@ export const OpeningsListItem = ({ opening }: OpeningsListItemProps) => {
                   />
                   {opening?.totalStages}
                 </p>
-                {openingState === OpeningState.PUBLIC && (
+                {openingState === OpeningState.Public && (
                   <p className="mt-2 flex items-center text-lg text-normal sm:mt-0 sm:ml-6">
                     <ClickToCopy
                       showText="Application Link"

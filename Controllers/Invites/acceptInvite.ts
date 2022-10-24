@@ -1,14 +1,14 @@
 import { Request, Response } from 'express';
-import { DEFAULTS } from '../../Config';
+import { Defaults } from '../../Config';
 import * as CreateError from '../../utils/createError';
 import * as Time from '../../utils/time';
 
 export const acceptInvite = async (req: Request, res: Response) => {
   const { inviteId } = req.params;
   const { user } = req;
-  return res.status(200).json({message: "Endpoint temporarily disabled!"})
+  return res.status(200).json({ message: 'Endpoint temporarily disabled!' });
 
-  // if (user.orgId !== DEFAULTS.NO_ORG) {
+  // if (user.orgId !== Defaults.Org) {
   //   return res.status(403).json({
   //     message: `You already belong to an org: ${user.orgId} - delete it before joining another one!`,
   //   });

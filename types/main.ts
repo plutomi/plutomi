@@ -1,5 +1,3 @@
-import { DynamoApplicant } from './dynamo';
-
 /**
  * All possible parameters in the URL
  */ // TODO use url path params
@@ -20,9 +18,6 @@ export interface CustomQuery {
 }
 
 // TODO types for files, etc.
-export interface GetApplicantByIdOutput extends DynamoApplicant {
-  responses: Object[]; // TODO fix this type with a response type
-}
 
 // TODO fix this type and add it to the response
 export interface APIErrorResponse {
@@ -37,6 +32,18 @@ declare global {
   }
 }
 
+export enum Collections {
+  Orgs = 'Orgs',
+  Applicants = 'Applicants',
+  Questions = 'Questions',
+  Stages = 'Stages',
+  Users = 'Users',
+  Webhooks = 'Webhooks',
+  LoginLinks = 'LoginLinks',
+  Openings = 'Opening',
+}
+
+// In the `target` array, these are the types of entities that can be indexed
 export enum IndexedEntities {
   User = 'User',
   Org = 'Org',

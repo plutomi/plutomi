@@ -2,12 +2,12 @@ import { Request, Response } from 'express';
 import Joi from 'joi';
 import { JOI_SETTINGS, LIMITS, OpeningState } from '../../Config';
 import * as CreateError from '../../utils/createError';
-import { DynamoOpening } from '../../types/dynamo';
+// import { DynamoOpening } from '../../types/dynamo';
 // import { Opening, Org } from '../../entities';
 import { findInTargetArray } from '../../utils/findInTargetArray';
 import { IndexedEntities } from '../../types/main';
 
-export type APICreateOpeningOptions = Required<Pick<DynamoOpening, 'openingName'>>;
+// export type APICreateOpeningOptions = Required<Pick<DynamoOpening, 'openingName'>>;
 
 const schema = Joi.object({
   body: {
@@ -51,7 +51,7 @@ export const createOpening = async (req: Request, res: Response) => {
   //       id: orgId,
   //       type: IndexedEntities.Org,
   //     },
-  //     { id: OpeningState.PRIVATE, type: IndexedEntities.OpeningState },
+  //     { id: OpeningState.Private, type: IndexedEntities.OpeningState },
   //   ],
   // });
 

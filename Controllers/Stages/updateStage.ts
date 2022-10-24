@@ -1,16 +1,16 @@
 import { Request, Response } from 'express';
 import Joi from 'joi';
 import { JOI_SETTINGS, LIMITS } from '../../Config';
-import { DynamoStage } from '../../types/dynamo';
+// import { DynamoStage } from '../../types/dynamo';
 import * as CreateError from '../../utils/createError';
 import { IndexedEntities } from '../../types/main';
 import { findInTargetArray } from '../../utils/findInTargetArray';
 import { getAdjacentStagesBasedOnPosition, sortStages } from '../../utils/sortStages';
 
-export interface APIUpdateStageOptions
-  extends Partial<Pick<DynamoStage, 'GSI1SK' | 'questionOrder'>> {
-  position?: number;
-}
+// export interface APIUpdateStageOptions
+//   extends Partial<Pick<DynamoStage, 'GSI1SK' | 'questionOrder'>> {
+//   position?: number;
+// }
 
 const schema = Joi.object({
   questionOrder: Joi.array().items(Joi.string()),

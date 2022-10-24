@@ -1,5 +1,5 @@
 import { nanoid } from 'nanoid';
-import { AXIOS_INSTANCE as axios, DEFAULTS, OpeningState, Emails, ERRORS } from '../Config';
+import { AXIOS_INSTANCE as axios, Defaults, OpeningState, Emails, ERRORS } from '../Config';
 import * as Orgs from '../adapters/Orgs';
 import * as Openings from '../adapters/Openings';
 import * as Stages from '../adapters/Stages';
@@ -52,7 +52,7 @@ describe('Openings', () => {
     await Openings.UpdateOpening({
       openingId: publicOpening.openingId,
       newValues: {
-        GSI1SK: OpeningState.PUBLIC,
+        GSI1SK: OpeningState.Public,
       },
     });
 
@@ -142,7 +142,7 @@ describe('Openings', () => {
     try {
       await Applicants.CreateApplicant({
         ...applicant,
-        orgId: DEFAULTS.NO_ORG,
+        orgId: Defaults.Org,
       });
     } catch (error) {
       expect(error.response.status).toBe(400);

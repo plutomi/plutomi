@@ -6,7 +6,7 @@ import Link from 'next/dist/client/link';
 import { mutate } from 'swr';
 import { useSelf } from '../../SWR/useSelf';
 import { Logout } from '../../adapters/Auth';
-import { NAVBAR_NAVIGATION, DROPDOWN_NAVIGATION, DEFAULTS } from '../../Config';
+import { NAVBAR_NAVIGATION, DROPDOWN_NAVIGATION, Defaults } from '../../Config';
 import { GetSelfInfoURL } from '../../adapters/Users';
 import combineClassNames from '../../utils/combineClassNames';
 import { Banner } from '../Banner';
@@ -80,8 +80,8 @@ export const SignedInNav = ({ current }: SignedInNavProps) => {
                     {NAVBAR_NAVIGATION.map((item) => {
                       if (
                         // TODO what is happening here??? lol
-                        (orgId === DEFAULTS.NO_ORG && item.hiddenIfNoOrg) ||
-                        (orgId !== DEFAULTS.NO_ORG && item.hiddenIfOrg)
+                        (orgId === Defaults.Org && item.hiddenIfNoOrg) ||
+                        (orgId !== Defaults.Org && item.hiddenIfOrg)
                       ) {
                         return null;
                       }

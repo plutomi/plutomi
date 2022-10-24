@@ -1,22 +1,23 @@
 import { Request, Response } from 'express';
 import Joi from 'joi';
 import emailValidator from 'deep-email-validator';
-import { DEFAULTS, ERRORS, JoiOrgId, JOI_SETTINGS, LIMITS, OpeningState } from '../../Config';
+import { Defaults, ERRORS, JoiOrgId, JOI_SETTINGS, LIMITS, OpeningState } from '../../Config';
 import * as CreateError from '../../utils/createError';
-import { DynamoApplicant } from '../../types/dynamo';
+// import { DynamoApplicant } from '../../types/dynamo';
 import { IndexedEntities } from '../../types/main';
 import { findInTargetArray } from '../../utils/findInTargetArray';
 
-export type APICreateApplicantOptions = Required<
-  Pick<DynamoApplicant, 'orgId' | 'openingId' | 'email' | 'firstName' | 'lastName'>
->;
+// export type APICreateApplicantOptions = Required<
+//   Pick<DynamoApplicant, 'orgId' | 'openingId' | 'email' | 'firstName' | 'lastName'>
+// >;
+
 const schema = Joi.object({
   body: {
     orgId: JoiOrgId,
     openingId: Joi.string(),
     email: Joi.string().email(),
-    firstName: Joi.string().invalid(DEFAULTS.FIRST_NAME).max(LIMITS.MAX_APPLICANT_FIRSTNAME_LENGTH),
-    lastName: Joi.string().invalid(DEFAULTS.LAST_NAME).max(LIMITS.MAX_APPLICANT_LASTNAME_LENGTH),
+    firstName: Joi.string().invalid(Defaults.FirstName).max(LIMITS.MAX_APPLICANT_FIRSTNAME_LENGTH),
+    lastName: Joi.string().invalid(Defaults.LastName).max(LIMITS.MAX_APPLICANT_LASTNAME_LENGTH),
   },
 }).options(JOI_SETTINGS);
 
@@ -65,7 +66,7 @@ export const createApplicant = async (req: Request, res: Response) => {
   //   targetArray: opening.target,
   // });
   // // Conditional check will also catch this
-  // if (openingState === OpeningState.PRIVATE || opening.totalStages === 0) {
+  // if (openingState === OpeningState.Private || opening.totalStages === 0) {
   //   return res.status(403).json({ message: 'You cannot apply to this opening just yet!' });
   // }
 

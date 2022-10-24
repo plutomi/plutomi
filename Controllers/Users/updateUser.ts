@@ -1,14 +1,13 @@
 import { Request, Response } from 'express';
 import Joi from 'joi';
 import * as CreateError from '../../utils/createError';
-import { DEFAULTS, JOI_SETTINGS } from '../../Config';
-import { DynamoUser } from '../../types/dynamo';
+import { Defaults, JOI_SETTINGS } from '../../Config';
 
-export interface APIUpdateUserOptions extends Partial<Pick<DynamoUser, 'firstName' | 'lastName'>> {}
+// export interface APIUpdateUserOptions extends Partial<Pick<DynamoUser, 'firstName' | 'lastName'>> {}
 
 const schema = Joi.object({
-  firstName: Joi.string().invalid(DEFAULTS.FIRST_NAME), // TODO set max length
-  lastName: Joi.string().invalid(DEFAULTS.LAST_NAME), // TODO set max length
+  firstName: Joi.string().invalid(Defaults.FirstName), // TODO set max length
+  lastName: Joi.string().invalid(Defaults.LastName), // TODO set max length
 }).options(JOI_SETTINGS);
 
 export const updateUser = async (req: Request, res: Response) => {

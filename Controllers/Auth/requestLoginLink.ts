@@ -3,7 +3,7 @@ import emailValidator from 'deep-email-validator';
 import Joi from 'joi';
 import { nanoid } from 'nanoid';
 import {
-  DEFAULTS,
+  Defaults,
   TIME_UNITS,
   JOI_SETTINGS,
   WEBSITE_URL,
@@ -79,8 +79,8 @@ export const requestLoginLink = async (req: Request, res: Response) => {
   //   try {
   //     console.log(`Creating new user`);
   //     const createdUser = new User({
-  //       firstName: DEFAULTS.FIRST_NAME,
-  //       lastName: DEFAULTS.LAST_NAME,
+  //       firstName: Defaults.FirstName,
+  //       lastName: Defaults.LastName,
   //       target: [
   //         {
   //           id: email,
@@ -174,7 +174,7 @@ export const requestLoginLink = async (req: Request, res: Response) => {
 
   //   // TODO enums
   //   loginLinkUrl = `${API_URL}/auth/login?token=${token}&callbackUrl=${
-  //     callbackUrl || `${WEBSITE_URL}/${DEFAULTS.REDIRECT}`
+  //     callbackUrl || `${WEBSITE_URL}/${Defaults.Redirect}`
   //   }`;
   // } catch (error) {
   //   console.error(`An error ocurred creating your login link`);

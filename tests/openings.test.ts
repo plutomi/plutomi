@@ -163,7 +163,7 @@ describe('Openings', () => {
       await Openings.UpdateOpening({
         openingId: ourOpening.openingId,
         newValues: {
-          GSI1SK: OpeningState.PUBLIC,
+          GSI1SK: OpeningState.Public,
         },
       });
     } catch (error) {

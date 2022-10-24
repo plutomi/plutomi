@@ -78,7 +78,7 @@ describe('Public', () => {
     await Openings.UpdateOpening({
       openingId: opening1.openingId,
       newValues: {
-        GSI1SK: OpeningState.PUBLIC,
+        GSI1SK: OpeningState.Public,
       },
     });
 
@@ -142,7 +142,7 @@ describe('Public', () => {
     await Openings.UpdateOpening({
       openingId: ourOpening.openingId,
       newValues: {
-        GSI1SK: OpeningState.PUBLIC,
+        GSI1SK: OpeningState.Public,
       },
     });
 

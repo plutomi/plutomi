@@ -1,4 +1,4 @@
-import { DEFAULTS } from '../../Config';
+import { Defaults } from '../../Config';
 import { cleanup } from './cleanup';
 
 interface NameIsDefaultProps {
@@ -6,8 +6,8 @@ interface NameIsDefaultProps {
   lastName: string;
 }
 export const nameIsDefault = ({ firstName, lastName }: NameIsDefaultProps) => {
-  const firstNameDefault = cleanup(firstName) === cleanup(DEFAULTS.FIRST_NAME);
-  const lastNameDefault = cleanup(lastName) === cleanup(DEFAULTS.LAST_NAME);
+  const firstNameDefault = cleanup(firstName) === cleanup(Defaults.FirstName);
+  const lastNameDefault = cleanup(lastName) === cleanup(Defaults.LastName);
   if (firstNameDefault && lastNameDefault) {
     return true;
   } else {

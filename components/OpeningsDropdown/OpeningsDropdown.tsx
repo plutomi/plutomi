@@ -50,9 +50,9 @@ export const OpeningsDropdown = ({ openings, index }: OpeningsDropdownProps) => 
         <Listbox.Button className="relative w-full curse-pointer bg-white border border-gray-300 rounded-md shadow-sm pl-3 pr-10 py-2 text-left focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500 sm:text-lg">
           <div className="flex items-center">
             <span
-              aria-label={openingState === OpeningState.PUBLIC ? 'Online' : 'Offline'}
+              aria-label={openingState === OpeningState.Public ? 'Online' : 'Offline'}
               className={combineClassNames(
-                openingState === OpeningState.PUBLIC ? 'bg-green-400' : 'bg-gray-200',
+                openingState === OpeningState.Public ? 'bg-green-400' : 'bg-gray-200',
                 'flex-shrink-0 inline-block h-2 w-2 rounded-full',
               )}
             />
@@ -92,7 +92,7 @@ export const OpeningsDropdown = ({ openings, index }: OpeningsDropdownProps) => 
                       <div className="flex items-center">
                         <span
                           className={combineClassNames(
-                            currentOpeningState === OpeningState.PUBLIC
+                            currentOpeningState === OpeningState.Public
                               ? 'bg-green-400'
                               : 'bg-gray-200',
                             'flex-shrink-0 inline-block h-2 w-2 rounded-full',
@@ -108,7 +108,7 @@ export const OpeningsDropdown = ({ openings, index }: OpeningsDropdownProps) => 
                           {opening.name}
                           <span className="sr-only">
                             {' '}
-                            is {currentOpeningState === OpeningState.PUBLIC ? 'online' : 'offline'}
+                            is {currentOpeningState === OpeningState.Public ? 'online' : 'offline'}
                           </span>
                         </span>
                       </div>

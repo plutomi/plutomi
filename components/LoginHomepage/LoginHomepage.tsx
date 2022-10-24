@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { RequestLoginLink } from '../../adapters/Auth';
-import { DEFAULTS } from '../../Config';
+import { Defaults } from '../../Config';
 import { EmailLoginInput } from '../EmailLoginInput';
 
 interface LoginHomepageProps {

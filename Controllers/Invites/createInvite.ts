@@ -3,7 +3,7 @@ import Joi from 'joi';
 import emailValidator from 'deep-email-validator';
 import { pick } from 'lodash';
 import {
-  DEFAULTS,
+  Defaults,
   Emails,
   ERRORS,
   JOI_SETTINGS,

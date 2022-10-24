@@ -39,7 +39,7 @@ export const ApplicantsPageHeader = () => {
         />
       </div>
 
-      {openingState === OpeningState.PUBLIC && (
+      {openingState === OpeningState.Public && (
         <p className="mt-2 text-md text-normal sm:mt-0 ">
           <ClickToCopy
             showText="Application Link"

@@ -9,7 +9,7 @@ import { IndexedEntities } from '../../types/main';
 const schema = Joi.object({
   stageOrder: Joi.array().items(Joi.string()),
   openingName: Joi.string().max(LIMITS.MAX_OPENING_NAME_LENGTH),
-  GSI1SK: Joi.string().valid(OpeningState.PUBLIC, OpeningState.PRIVATE),
+  GSI1SK: Joi.string().valid(OpeningState.Public, OpeningState.Private),
 }).options(JOI_SETTINGS);
 
 export const updateOpening = async (req: Request, res: Response) => {
@@ -43,7 +43,7 @@ export const updateOpening = async (req: Request, res: Response) => {
   // // Public or private
   // if (req.body.GSI1SK) {
   //   // TODO i think this can be moved into dynamo
-  //   if (req.body.GSI1SK === OpeningState.PUBLIC && opening.totalStages === 0) {
+  //   if (req.body.GSI1SK === OpeningState.Public && opening.totalStages === 0) {
   //     return res.status(403).json({
   //       message: 'An opening needs to have stages before being made public',
   //     });

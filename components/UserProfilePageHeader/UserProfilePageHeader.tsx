@@ -1,6 +1,6 @@
 import { PencilAltIcon } from '@heroicons/react/outline';
 import { useSelf } from '../../SWR/useSelf';
-import { DEFAULTS } from '../../Config';
+import { Defaults } from '../../Config';
 import useStore from '../../utils/store';
 import { Loader } from '../Loader';
 
@@ -15,7 +15,7 @@ export const UserProfilePageHeader = () => {
   const greeting = (
     <h2 className="text-2xl font-bold leading-7 text-dark sm:text-3xl sm:truncate">
       Welcome to your profile
-      {user?.firstName === DEFAULTS.FIRST_NAME ? '!' : `, ${user?.firstName}!`}
+      {user?.firstName === Defaults.FirstName ? '!' : `, ${user?.firstName}!`}
     </h2>
   );
   return (

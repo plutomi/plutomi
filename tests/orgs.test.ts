@@ -1,5 +1,5 @@
 import { nanoid } from 'nanoid';
-import { DEFAULTS, Emails, ERRORS, AXIOS_INSTANCE as axios } from '../Config';
+import { Defaults, Emails, ERRORS, AXIOS_INSTANCE as axios } from '../Config';
 import * as Orgs from '../adapters/Orgs';
 import * as Users from '../adapters/Users';
 import * as Invites from '../adapters/Invites';
@@ -21,7 +21,7 @@ describe('Orgs', () => {
     try {
       await Orgs.CreateOrg({
         displayName: 'Beans',
-        orgId: TagGenerator({ value: DEFAULTS.NO_ORG }),
+        orgId: TagGenerator({ value: Defaults.Org }),
       });
     } catch (error) {
       expect(error.response.status).toBe(400);
@@ -34,7 +34,7 @@ describe('Orgs', () => {
     expect.assertions(3);
     try {
       await Orgs.CreateOrg({
-        orgId: TagGenerator({ value: DEFAULTS.NO_ORG }),
+        orgId: TagGenerator({ value: Defaults.Org }),
         displayName: 'Beans',
       });
     } catch (error) {
@@ -248,7 +248,7 @@ describe('Orgs', () => {
     axios.defaults.headers.Cookie = cookie3;
 
     const updatedUser = await Users.GetSelfInfo();
-    expect(updatedUser.data.orgId).toBe(DEFAULTS.NO_ORG);
+    expect(updatedUser.data.orgId).toBe(Defaults.Org);
   });
 
   it('Blocks removing a user from org if person making the request is not the org admin, can be faked by trying to remove onself', async () => {

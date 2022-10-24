@@ -2,12 +2,12 @@ import { Request, Response } from 'express';
 import Joi from 'joi';
 import { JOI_SETTINGS, LIMITS } from '../../Config';
 import * as CreateError from '../../utils/createError';
-import { DynamoWebhook } from '../../types/dynamo';
+// import { DynamoWebhook } from '../../types/dynamo';
 
-export type APICreateWebhookOptions = Pick<
-  DynamoWebhook,
-  'webhookUrl' | 'webhookName' | 'description'
->;
+// export type APICreateWebhookOptions = Pick<
+//   DynamoWebhook,
+//   'webhookUrl' | 'webhookName' | 'description'
+// >;
 
 const schema = Joi.object({
   body: {

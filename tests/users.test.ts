@@ -1,5 +1,5 @@
 import { nanoid } from 'nanoid';
-import { AXIOS_INSTANCE as axios, DEFAULTS, Entities, ERRORS } from '../Config';
+import { AXIOS_INSTANCE as axios, Defaults, Entities, ERRORS } from '../Config';
 import * as Users from '../adapters/Users';
 
 describe('Users', () => {
@@ -21,18 +21,18 @@ describe('Users', () => {
       SK: Entities.USER,
       userId: expect.any(String),
       createdAt: expect.any(String), // TODO there probably a better way to test ISO dates
-      GSI1PK: `${Entities.ORG}#${DEFAULTS.NO_ORG}#${Entities.USER}S`,
+      GSI1PK: `${Entities.ORG}#${Defaults.Org}#${Entities.USER}S`,
       verifiedEmail: false,
       email: expect.any(String),
       entityType: Entities.USER,
       totalInvites: 0,
-      firstName: DEFAULTS.FIRST_NAME,
-      lastName: DEFAULTS.LAST_NAME,
-      orgId: DEFAULTS.NO_ORG,
-      orgJoinDate: DEFAULTS.NO_ORG,
+      firstName: Defaults.FirstName,
+      lastName: Defaults.LastName,
+      orgId: Defaults.Org,
+      orgJoinDate: Defaults.Org,
       canReceiveEmails: true,
       unsubscribeKey: expect.any(String),
-      GSI1SK: `${DEFAULTS.FIRST_NAME} ${DEFAULTS.LAST_NAME}`,
+      GSI1SK: `${Defaults.FirstName} ${Defaults.LastName}`,
       GSI2PK: expect.any(String),
       GSI2SK: Entities.USER,
     });

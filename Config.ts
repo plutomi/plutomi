@@ -34,31 +34,13 @@ console.log('API URL', API_URL);
 export const COOKIE_NAME = env.nodeEnv === 'production' ? 'plutomi-cookie' : 'DEV-plutomi-cookie';
 
 console.log('CONFIG setup done');
+
 export enum OpeningState {
-  PUBLIC = 'PUBLIC',
-  PRIVATE = 'PRIVATE',
+  Public = 'Public',
+  Private = 'Private',
 }
 
-export const DYNAMO_TABLE_NAME = 'Plutomi';
-
-export enum Entities {
-  APPLICANT = 'APPLICANT',
-  APPLICANT_RESPONSE = 'APPLICANT_RESPONSE',
-  ORG = 'ORG',
-  ORG_INVITE = 'ORG_INVITE',
-  USER = 'USER',
-  OPENING = 'OPENING',
-  STAGE = 'STAGE',
-  QUESTION = 'QUESTION',
-  // For keeping track of how many stages a question is in, see
-  QUESTION_ADJACENT_STAGE_ITEM = 'QUESTION_ADJACENT_STAGE_ITEM',
-  STAGE_RULE = 'STAGE_RULE',
-  LOGIN_LINK = 'LOGIN_LINK',
-  USER_LOGIN_EVENT = 'USER_LOGIN_EVENT',
-  ORG_LOGIN_EVENT = 'ORG_LOGIN_EVENT',
-  WEBHOOK = 'WEBHOOK',
-}
-
+// TODO use dayjs type
 export enum TIME_UNITS {
   MILLISECONDS = 'milliseconds',
   SECONDS = 'seconds',
@@ -68,6 +50,17 @@ export enum TIME_UNITS {
   WEEKS = 'weeks',
   MONTHS = 'months',
   YEARS = 'years',
+}
+
+export enum Collections {
+  Orgs = 'Orgs',
+  Applicants = 'Applicants',
+  Questions = 'Questions',
+  Stages = 'Stages',
+  Users = 'Users',
+  Webhooks = 'Webhooks',
+  LoginLinks = 'LoginLinks',
+  Openings = 'Opening',
 }
 
 export const ERRORS = {
@@ -87,14 +80,14 @@ export const ID_LENGTHS = {
   STAGE_RULE: 10, // TODO, unique to stage
 };
 
-export enum DEFAULTS {
-  FIRST_NAME = 'NO_FIRST_NAME',
-  LAST_NAME = 'NO_LAST_NAME',
-  NO_ORG = `NO_ORG_ASSIGNED`,
+export enum Defaults {
+  FirstName = 'NO_FIRST_NAME',
+  LastName = 'NO_LAST_NAME',
+  Org = `NO_ORG_ASSIGNED`,
   /**
    * When no callbackUrl is provided on login, what page should users be redirected to
    */
-  REDIRECT = 'dashboard', // TODO make this an enum / typ;e
+  Redirect = 'dashboard', // TODO make this an enum / typ;e
 }
 
 export enum LIMITS {
@@ -216,9 +209,9 @@ export const DROPDOWN_NAVIGATION = [
 // Schema to validate orgIds against in joi
 export const JoiOrgId = Joi.string()
   .invalid(
-    DEFAULTS.NO_ORG,
+    Defaults.Org,
     TagGenerator({
-      value: DEFAULTS.NO_ORG,
+      value: Defaults.Org,
     }),
     'plutomi',
     'plutomi-',

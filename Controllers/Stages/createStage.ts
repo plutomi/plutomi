@@ -2,16 +2,16 @@ import { Request, Response } from 'express';
 import Joi from 'joi';
 import { JOI_SETTINGS, LIMITS } from '../../Config';
 import * as CreateError from '../../utils/createError';
-import { DynamoStage } from '../../types/dynamo';
+// import { DynamoStage } from '../../types/dynamo';
 import { findInTargetArray } from '../../utils/findInTargetArray';
 import { IndexedEntities } from '../../types/main';
 
-export interface APICreateStageOptions extends Required<Pick<DynamoStage, 'openingId' | 'GSI1SK'>> {
-  /**
-   * 0 based index on where the newly created stage should be placed
-   */
-  position?: number;
-}
+// export interface APICreateStageOptions extends Required<Pick<DynamoStage, 'openingId' | 'GSI1SK'>> {
+//   /**
+//    * 0 based index on where the newly created stage should be placed
+//    */
+//   position?: number;
+
 const schema = Joi.object({
   body: {
     // Stage name

@@ -138,12 +138,12 @@ export const UpdateOpeningModal = ({ opening }: { opening: Opening }) => {
                                     name="comments"
                                     type="checkbox"
                                     // TODO types
-                                    checked={GSI1SK === OpeningState.PUBLIC}
+                                    checked={GSI1SK === OpeningState.Public}
                                     onChange={(e) =>
                                       setGSI1SK(
                                         e.target.checked
-                                          ? OpeningState.PUBLIC
-                                          : OpeningState.PRIVATE,
+                                          ? OpeningState.Public
+                                          : OpeningState.Private,
                                       )
                                     }
                                     className="focus:ring-blue-500 h-4 w-4 text-blue-600 border-gray-300 rounded"
