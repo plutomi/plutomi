@@ -24,5 +24,5 @@ export const getOpeningsInOrg = async (req: Request, res: Response) => {
   //   pick(opening, ['openingName', 'createdAt', 'openingId', 'orgId']),
   // );
 
-  return res.status(200).json(modifiedOpenings);
+  return res.status(200).json({ message: 'Endpoint temp disabled' });
 };

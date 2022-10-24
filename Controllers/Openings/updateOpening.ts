@@ -2,7 +2,7 @@ import { Request, Response } from 'express';
 import Joi from 'joi';
 import * as CreateError from '../../utils/createError';
 import { JOI_SETTINGS, OpeningState, LIMITS } from '../../Config';
-import { Opening } from '../../entities';
+// import { Opening } from '../../entities';
 import { findInTargetArray } from '../../utils/findInTargetArray';
 import { IndexedEntities } from '../../types/main';
 
@@ -21,56 +21,57 @@ export const updateOpening = async (req: Request, res: Response) => {
   }
   const { user, entityManager } = req;
   const { openingId } = req.params;
+  return res.status(200).json({ message: 'Endpoint temp disabled' });
 
-  let opening: Opening;
-  const orgId = findInTargetArray({ entity: IndexedEntities.Org, targetArray: user.target });
-  try {
-    opening = await entityManager.findOne(Opening, {
-      target: { id: orgId, type: IndexedEntities.Org },
-      id: openingId,
-    });
-  } catch (error) {
-    const message = 'Error ocurred retrieving opening info';
-    console.error(message, error);
-    return res.status(500).json({ message, error });
-  }
+  // let opening: Opening;
+  // const orgId = findInTargetArray({ entity: IndexedEntities.Org, targetArray: user.target });
+  // try {
+  //   opening = await entityManager.findOne(Opening, {
+  //     target: { id: orgId, type: IndexedEntities.Org },
+  //     id: openingId,
+  //   });
+  // } catch (error) {
+  //   const message = 'Error ocurred retrieving opening info';
+  //   console.error(message, error);
+  //   return res.status(500).json({ message, error });
+  // }
 
-  if (!opening) {
-    return res.status(404).json({ message: 'Opening not found' });
-  }
+  // if (!opening) {
+  //   return res.status(404).json({ message: 'Opening not found' });
+  // }
 
-  // Public or private
-  if (req.body.GSI1SK) {
-    // TODO i think this can be moved into dynamo
-    if (req.body.GSI1SK === OpeningState.PUBLIC && opening.totalStages === 0) {
-      return res.status(403).json({
-        message: 'An opening needs to have stages before being made public',
-      });
-    }
+  // // Public or private
+  // if (req.body.GSI1SK) {
+  //   // TODO i think this can be moved into dynamo
+  //   if (req.body.GSI1SK === OpeningState.PUBLIC && opening.totalStages === 0) {
+  //     return res.status(403).json({
+  //       message: 'An opening needs to have stages before being made public',
+  //     });
+  //   }
 
-    opening.target = opening.target.map((item) => {
-      if (item.type === IndexedEntities.OpeningState) {
-        item.id = req.body.GSI1SK;
-      }
-      return item;
-    });
-  }
+  //   opening.target = opening.target.map((item) => {
+  //     if (item.type === IndexedEntities.OpeningState) {
+  //       item.id = req.body.GSI1SK;
+  //     }
+  //     return item;
+  //   });
+  // }
 
-  // TODO update this
-  if (req.body.openingName) {
-    opening.name = req.body.openingName;
-  }
+  // // TODO update this
+  // if (req.body.openingName) {
+  //   opening.name = req.body.openingName;
+  // }
 
-  try {
-    await entityManager.persistAndFlush(opening);
-  } catch (error) {
-    const message = 'Error updating opening';
-    console.error(message, error);
-    return res.status(500).json({ message, error });
-  }
+  // try {
+  //   await entityManager.persistAndFlush(opening);
+  // } catch (error) {
+  //   const message = 'Error updating opening';
+  //   console.error(message, error);
+  //   return res.status(500).json({ message, error });
+  // }
 
-  return res.status(200).json({
-    message: 'Opening updated!',
-    opening,
-  });
+  // return res.status(200).json({
+  //   message: 'Opening updated!',
+  //   opening,
+  // });
 };

@@ -1,7 +1,7 @@
 import { EventBridgeEvent } from 'aws-lambda';
 import axios from 'axios';
 import { Entities } from '../../Config';
-import { Opening, Stage } from '../../entities';
+// import { Opening, Stage } from '../../entities';
 import { IndexedEntities } from '../../types/main';
 import { findInTargetArray } from '../../utils/findInTargetArray';
 import { getEntityManager } from '../../utils/getEntityManager';
@@ -27,7 +27,7 @@ import { CustomEventBridgeEvent } from '../stream-processor';
  */
 export async function main(event: EventBridgeEvent<'stream', CustomEventBridgeEvent>) {
   console.log('Incoming event: ', JSON.stringify(event));
-  const deletedEntity = event.detail.OldImage as Opening;
+  const deletedEntity = event.detail.OldImage ;
   const orgId = findInTargetArray({
     entity: IndexedEntities.Org,
     targetArray: deletedEntity.target,
@@ -38,43 +38,43 @@ export async function main(event: EventBridgeEvent<'stream', CustomEventBridgeEv
   });
 
   return;
-  if (deletedEntity.totalStages > 0) {
-    console.log('Opening has stages, attempting to delete...');
+  // if (deletedEntity.totalStages > 0) {
+  //   console.log('Opening has stages, attempting to delete...');
 
-    let entityManager: EntityManager<MongoDriver>;
-    try {
-      console.log('Getting entity manager');
-      entityManager = await getEntityManager();
-      console.log('Got entity manager');
-    } catch (error) {
-      const message =
-        'An error ocurred retrieving the entity manager in delete stages from opening function';
-      console.log(message, error);
-      return;
-    }
+  //   let entityManager: EntityManager<MongoDriver>;
+  //   try {
+  //     console.log('Getting entity manager');
+  //     entityManager = await getEntityManager();
+  //     console.log('Got entity manager');
+  //   } catch (error) {
+  //     const message =
+  //       'An error ocurred retrieving the entity manager in delete stages from opening function';
+  //     console.log(message, error);
+  //     return;
+  //   }
 
-    let stagesToDelete: Stage[];
+  //   let stagesToDelete: Stage[];
 
-    try {
-      stagesToDelete = await entityManager.find(Stage, {
-        $and: [
-          { target: { id: orgId, type: IndexedEntities.Org } },
-          { target: { id: deletedEntity.id, type: IndexedEntities.Opening } },
-        ],
-      });
-    } catch (error) {
-      const message = 'Error ocurred retrieving stages that we need to delete';
-      console.error(message, error);
-      return;
-    }
+  //   try {
+  //     stagesToDelete = await entityManager.find(Stage, {
+  //       $and: [
+  //         { target: { id: orgId, type: IndexedEntities.Org } },
+  //         { target: { id: deletedEntity.id, type: IndexedEntities.Opening } },
+  //       ],
+  //     });
+  //   } catch (error) {
+  //     const message = 'Error ocurred retrieving stages that we need to delete';
+  //     console.error(message, error);
+  //     return;
+  //   }
 
-    try {
-      await Promise.all(
-        stagesToDelete.map(async (stage) => await entityManager.removeAndFlush(stage)),
-      );
-      console.log('All stages deleted!');
-    } catch (error) {
-      console.log('An error ocurred deleting stages', error);
-    }
-  }
+  //   try {
+  //     await Promise.all(
+  //       stagesToDelete.map(async (stage) => await entityManager.removeAndFlush(stage)),
+  //     );
+  //     console.log('All stages deleted!');
+  //   } catch (error) {
+  //     console.log('An error ocurred deleting stages', error);
+  //   }
+  // }
 }

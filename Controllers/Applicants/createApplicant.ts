@@ -5,7 +5,6 @@ import { DEFAULTS, ERRORS, JoiOrgId, JOI_SETTINGS, LIMITS, OpeningState } from '
 import * as CreateError from '../../utils/createError';
 import { DynamoApplicant } from '../../types/dynamo';
 import { IndexedEntities } from '../../types/main';
-import { Opening, Stage } from '../../entities';
 import { findInTargetArray } from '../../utils/findInTargetArray';
 
 export type APICreateApplicantOptions = Required<

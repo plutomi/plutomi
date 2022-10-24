@@ -3,7 +3,7 @@ import Joi from 'joi';
 import { JOI_SETTINGS, WEBSITE_URL, COOKIE_NAME, COOKIE_SETTINGS, Emails } from '../../Config';
 import * as CreateError from '../../utils/createError';
 import { env } from '../../env';
-import { User, UserLoginLink } from '../../entities';
+// import { User, UserLoginLink } from '../../entities';
 
 const jwt = require('jsonwebtoken');
 
@@ -25,51 +25,54 @@ export const login = async (req: Request, res: Response) => {
     const { status, body } = CreateError.JOI(error);
     return res.status(status).json(body);
   }
-  const { callbackUrl, token }: APILoginQuery = req.query;
-  const { entityManager } = req;
 
-  let userId: string;
-  let loginLinkId: string;
+  return res.status(200).json({ message: 'Endpoint temp disabled' });
 
-  try {
-    // TODO add types for this
-    const data = await jwt.verify(token, env.loginLinksPassword);
+  // const { callbackUrl, token }: APILoginQuery = req.query;
+  // const { entityManager } = req;
 
-    console.log(`Token data`, data);
+  // let userId: string;
+  // let loginLinkId: string;
 
-    userId = data.userId;
-    loginLinkId = data.loginLinkId;
-  } catch (error) {
-    if (error.name === 'TokenExpiredError') {
-      return res.status(401).json({ message: 'Login link expired :(' });
-    }
-    return res.status(401).json({ message: 'Invalid login link' });
-  }
-  console.log(`Trying to find user with ID of `, userId);
+  // try {
+  //   // TODO add types for this
+  //   const data = await jwt.verify(token, env.loginLinksPassword);
 
-  let loginLink: UserLoginLink;
+  //   console.log(`Token data`, data);
 
-  let user: User;
+  //   userId = data.userId;
+  //   loginLinkId = data.loginLinkId;
+  // } catch (error) {
+  //   if (error.name === 'TokenExpiredError') {
+  //     return res.status(401).json({ message: 'Login link expired :(' });
+  //   }
+  //   return res.status(401).json({ message: 'Invalid login link' });
+  // }
+  // console.log(`Trying to find user with ID of `, userId);
 
-  try {
-    loginLink = await entityManager.findOne(UserLoginLink, {
-      id: loginLinkId,
-    });
-    console.log(loginLink);
+  // let loginLink: UserLoginLink;
 
-    user = Reference.unwrapReference(loginLink.user);
-  } catch (error) {
-    console.error(`ERROR retrieving login link`, error);
-    return res.status(500).json({ message: 'An error ocurred retrieving login link data', error });
-  }
+  // let user: User;
 
-  if (!loginLink) {
-    return res.status(401).json({ message: 'Invalid login link' });
-  }
+  // try {
+  //   loginLink = await entityManager.findOne(UserLoginLink, {
+  //     id: loginLinkId,
+  //   });
+  //   console.log(loginLink);
 
-  // TODO delete login link
-  entityManager.remove(loginLink);
-  await entityManager.flush();
+  //   user = Reference.unwrapReference(loginLink.user);
+  // } catch (error) {
+  //   console.error(`ERROR retrieving login link`, error);
+  //   return res.status(500).json({ message: 'An error ocurred retrieving login link data', error });
+  // }
+
+  // if (!loginLink) {
+  //   return res.status(401).json({ message: 'Invalid login link' });
+  // }
+
+  // // TODO delete login link
+  // entityManager.remove(loginLink);
+  // await entityManager.flush();
 
   // TODO Create login event
 
@@ -88,18 +91,18 @@ export const login = async (req: Request, res: Response) => {
   //   return res.status(status).json(body);
   // }
 
-  res.cookie(COOKIE_NAME, user.id, COOKIE_SETTINGS);
-  res.header('Location', callbackUrl);
+  // res.cookie(COOKIE_NAME, user.id, COOKIE_SETTINGS);
+  // res.header('Location', callbackUrl);
 
   /**
    * If a user has invites, redirect them to the invites page
    * on login regardless of the callback url
    */
-  if (user.totalInvites > 0) {
-    res.header('Location', `${WEBSITE_URL}/invites`);
-  }
+  // if (user.totalInvites > 0) {
+  //   res.header('Location', `${WEBSITE_URL}/invites`);
+  // }
 
-  res.status(307).json({ message: 'Login success!' });
+  // res.status(307).json({ message: 'Login success!' });
 
   // TODO - POST MONGO
   // TODO send emails!

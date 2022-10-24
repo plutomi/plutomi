@@ -8,24 +8,24 @@ export const getUsersInOrg = async (req: Request, res: Response) => {
   const { user } = req;
   return res.status(200).json({ message: 'Endpoint temp disabled' });
 
-  const orgId = findInTargetArray({ entity: IndexedEntities.Org, targetArray: user.target });
+  // const orgId = findInTargetArray({ entity: IndexedEntities.Org, targetArray: user.target });
 
-  const [users, error] = await DB.Users.getUsersInOrg({
-    orgId,
-  });
+  // const [users, error] = await DB.Users.getUsersInOrg({
+  //   orgId,
+  // });
 
-  if (error) {
-    const { status, body } = CreateError.SDK(
-      error,
-      'An error ocurred getting the users in your org',
-    );
+  // if (error) {
+  //   const { status, body } = CreateError.SDK(
+  //     error,
+  //     'An error ocurred getting the users in your org',
+  //   );
 
-    return res.status(status).json(body);
-  }
+  //   return res.status(status).json(body);
+  // }
 
-  const cleanUsers = users.map((user) =>
-    pick(user, ['userId', 'orgId', 'firstName', 'lastName', 'email', 'orgJoinDate']),
-  );
+  // const cleanUsers = users.map((user) =>
+  //   pick(user, ['userId', 'orgId', 'firstName', 'lastName', 'email', 'orgJoinDate']),
+  // );
 
-  return res.status(200).json(cleanUsers);
+  // return res.status(200).json(cleanUsers);
 };

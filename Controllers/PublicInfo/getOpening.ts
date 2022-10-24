@@ -5,6 +5,7 @@ import { OpeningState } from '../../Config';
 
 export const getOpening = async (req: Request, res: Response) => {
   const { orgId, openingId } = req.params;
+  return res.status(200).json({ message: 'Endpoint temp disabled' });
 
   // const [opening, openingsError] = await DB.Openings.getOpening({
   //   orgId,
@@ -25,5 +26,5 @@ export const getOpening = async (req: Request, res: Response) => {
 
   // const modifiedOpening = pick(opening, ['openingName', 'createdAt', 'openingId', 'orgId']);
 
-  return res.status(200).json(modifiedOpening);
+  // return res.status(200).json(modifiedOpening);
 };

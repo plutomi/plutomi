@@ -1,6 +1,5 @@
-import { jestSetup } from './jest-setup';
 import { haltOnTimeout } from './timeout';
+import { jestSetup } from './jest-setup';
 import { healthCheck } from './healthCheck';
 
-// test
-export { jestSetup, healthCheck, haltOnTimeout };
+export { haltOnTimeout, jestSetup, healthCheck };

@@ -2,6 +2,7 @@ import setEnv from '@americanairlines/simple-env';
 
 export const env = setEnv({
   required: {},
+  // TODO make these required
   optional: {
     nodeEnv: 'NODE_ENV',
     mongoConnection: 'MONGO_CONNECTION',

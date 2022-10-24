@@ -1,5 +1,5 @@
-import { requestLoginLink } from './requestLoginLink';
 import { login } from './login';
 import { logout } from './logout';
+import { requestLoginLink } from './requestLoginLink';
 
-export { requestLoginLink, login, logout };
+export { login, logout, requestLoginLink };
