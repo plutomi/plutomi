@@ -4,7 +4,7 @@ import * as CreateError from '../../utils/createError';
 import { OpeningState } from '../../Config';
 import { DynamoOpening } from '../../types/dynamo';
 
-export const getOpeningsInOrg = async (req: Request, res: Response) => {
+export const getPublicOpeningsInOrg = async (req: Request, res: Response) => {
   const { orgId } = req.params;
 
   // const [openings, openingsError] = await DB.Openings.getOpeningsInOrg({

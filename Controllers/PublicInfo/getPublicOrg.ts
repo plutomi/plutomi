@@ -2,7 +2,7 @@ import { Request, Response } from 'express';
 import { pick } from 'lodash';
 import * as CreateError from '../../utils/createError';
 
-export const getOrg = async (req: Request, res: Response) => {
+export const getPublicOrg = async (req: Request, res: Response) => {
   // const { orgId } = req.params;
 
   // const [org, orgError] = await DB.Orgs.getOrg({ orgId });

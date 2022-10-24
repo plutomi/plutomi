@@ -3,7 +3,7 @@ import { pick } from 'lodash';
 import * as CreateError from '../../utils/createError';
 import { OpeningState } from '../../Config';
 
-export const getOpening = async (req: Request, res: Response) => {
+export const getPublicOpening = async (req: Request, res: Response) => {
   const { orgId, openingId } = req.params;
   return res.status(200).json({ message: 'Endpoint temp disabled' });
 
