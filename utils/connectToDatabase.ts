@@ -34,29 +34,32 @@ export async function connectToDatabase() {
   const webhooksCollection: mongoDB.Collection = db.collection(Collections.Webhooks);
   const applicantsCollection: mongoDB.Collection = db.collection(Collections.Applicants);
 
+  const indexKey: mongoDB.IndexSpecification = { target: 1 };
+  const indexOptions: mongoDB.CreateIndexesOptions = { unique: true };
+
   collections.users = usersCollection;
-  await collections.users.createIndex({ target: 1 });
+  await collections.users.createIndex(indexKey, indexOptions);
 
   collections.loginLinks = loginLinksCollection;
-  await collections.loginLinks.createIndex({ target: 1 });
+  await collections.loginLinks.createIndex(indexKey, indexOptions);
 
   collections.orgs = orgsCollection;
-  await collections.orgs.createIndex({ target: 1 });
+  await collections.orgs.createIndex(indexKey, indexOptions);
 
   collections.openings = openingsCollection;
-  await collections.openings.createIndex({ target: 1 });
+  await collections.openings.createIndex(indexKey, indexOptions);
 
   collections.stages = stagesCollection;
-  await collections.stages.createIndex({ target: 1 });
+  await collections.stages.createIndex(indexKey, indexOptions);
 
   collections.questions = questionsCollection;
-  await collections.questions.createIndex({ target: 1 });
+  await collections.questions.createIndex(indexKey, indexOptions);
 
   collections.webhooks = webhooksCollection;
-  await collections.webhooks.createIndex({ target: 1 });
+  await collections.webhooks.createIndex(indexKey, indexOptions);
 
   collections.applicants = applicantsCollection;
-  await collections.applicants.createIndex({ target: 1 });
+  await collections.applicants.createIndex(indexKey, indexOptions);
 
   // TODO create target array index
 

@@ -91,9 +91,7 @@ export const requestLoginLink = async (req: Request, res: Response) => {
 
       const now = new Date();
       const customId = nanoid(50);
-      const userShardKey: UserShardKey = `USER#${customId}`;
-      const shardKey = crypto.createHash('sha256').update(userShardKey).digest('base64url');
-      console.log(`HASH`, shardKey);
+      const shardKey: UserShardKey = `USER#${customId}`;
       const newUser: UserEntity = {
         shardKey,
         createdAt: now,
