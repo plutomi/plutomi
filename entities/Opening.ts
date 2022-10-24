@@ -1,6 +1,7 @@
 import { Entity, Index, Property } from '@mikro-orm/core';
-import type { IndexedTargetArray } from '../types/main';
+import type { IndexedTargetArray, IndexedEntities } from '../types/main';
 import { BaseEntity } from './BaseEntity';
+import { OpeningState } from '../Config';
 
 export type OpeningConstructorValues = Pick<Opening, 'name' | 'target'>;
 
@@ -16,6 +17,13 @@ export class Opening extends BaseEntity {
   @Property({ type: 'integer' })
   totalStages: number = 0;
 
+  /**
+   * Indexed target array for the opening. Indexed properties are:
+   *
+   * {@link OpeningState} - You can make Openings {@link OpeningState.PUBLIC} or {@link OpeningState.PRIVATE}
+   *
+   *  Org - @string - ID of the org this opening belongs to. Type of {@link IndexedEntities.Org}
+   */
   @Property({ type: 'array' })
   target: IndexedTargetArray;
 

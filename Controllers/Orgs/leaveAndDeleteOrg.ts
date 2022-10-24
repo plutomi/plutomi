@@ -11,7 +11,7 @@ export const leaveAndDeleteOrg = async (req: Request, res: Response) => {
 
   try {
     org = await req.entityManager.findOne(Org, {
-      id: orgId,
+      orgId,
     });
   } catch (error) {
     console.error(`Error retrieving org info`, error);

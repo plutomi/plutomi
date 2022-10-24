@@ -1,5 +1,5 @@
 import { Cascade, Collection, Entity, Index, OneToMany, Property } from '@mikro-orm/core';
-import type { IndexedTargetArray } from '../types/main';
+import type { IndexedTargetArray, IndexedEntities } from '../types/main';
 import { BaseEntity } from './BaseEntity';
 import { UserLoginLink } from './UserLoginLink';
 
@@ -29,6 +29,12 @@ export class User extends BaseEntity {
 
   @Property({ type: 'integer' })
   totalInvites: number = 0;
+
+  /**
+   * Indexed target array for the user. Indexed properties are:
+   *
+   * Email - @string - Email of the user. Type of {@link IndexedEntities.Email}
+   */
 
   @Property({ type: 'array' })
   target: IndexedTargetArray;

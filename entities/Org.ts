@@ -1,7 +1,7 @@
 import { Entity, Index, Property } from '@mikro-orm/core';
 import type { IndexedTargetArray } from '../types/main';
 import { BaseEntity } from './BaseEntity';
-
+import { User } from '../entities';
 export type OrgConstructorValues = Pick<Org, 'orgId' | 'displayName' | 'target'>;
 
 @Entity()
@@ -27,6 +27,12 @@ export class Org extends BaseEntity {
 
   @Property({ type: 'integer' })
   totalQuestions: number = 0;
+
+  /**
+   * Indexed target array for the Org. Indexed properties are:
+   *
+   *  CreatedBy - @string - ID of the {@link User} that created this org
+   */
 
   @Property({ type: 'array' })
   target: IndexedTargetArray;
