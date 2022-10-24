@@ -13,9 +13,7 @@ import {
 } from '../../Config';
 import * as CreateError from '../../utils/createError';
 import * as Time from '../../utils/time';
-import { getOrg } from '../../models/Orgs';
-import { DB } from '../../models';
-import { sendEmail } from '../../models/Emails/sendEmail';
+
 import { nameIsDefault } from '../../utils/compareStrings/nameIsDefault';
 import { twoStringsMatch } from '../../utils/compareStrings';
 

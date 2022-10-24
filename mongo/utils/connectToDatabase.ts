@@ -16,7 +16,12 @@ export const collections: {
 export async function connectToDatabase() {
   const client: mongoDB.MongoClient = new mongoDB.MongoClient(env.mongoConnection);
 
-  await client.connect();
+  try {
+    console.log('Attempting to connect to MongoDB.');
+    await client.connect();
+  } catch (error) {
+    console.error(`Error connecting to MongoDB!`, error);
+  }
 
   const db: mongoDB.Db = client.db(env.deploymentEnvironment);
 

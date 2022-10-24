@@ -1,6 +1,5 @@
 import { Request, Response } from 'express';
 import { env } from '../../env';
-import { DB } from '../../models';
 
 export const healthCheck = async (req: Request, res: Response) => {
   console.log(`Health check hit, trying to get org`);

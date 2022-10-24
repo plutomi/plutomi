@@ -1,5 +1,4 @@
 import { Request, Response } from 'express';
-import { DB } from '../../models';
 
 import * as CreateError from '../../utils/createError';
 

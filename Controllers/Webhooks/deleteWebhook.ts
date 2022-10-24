@@ -1,5 +1,4 @@
 import { Request, Response } from 'express';
-import { DB } from '../../models';
 import { IndexedEntities } from '../../types/main';
 import * as CreateError from '../../utils/createError';
 import { findInTargetArray } from '../../utils/findInTargetArray';
@@ -10,6 +9,9 @@ export const deleteWebhook = async (req: Request, res: Response) => {
     entity: IndexedEntities.Org,
     targetArray: user.target,
   });
+
+  return res.status(200).json({ message: 'Endpoint temp disabled' });
+
   const [success, failure] = await DB.Webhooks.deleteWebhook({
     orgId,
     webhookId: req.params.webhookId,

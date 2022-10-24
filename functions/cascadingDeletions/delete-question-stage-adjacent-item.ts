@@ -1,6 +1,4 @@
 import { EventBridgeEvent } from 'aws-lambda';
-import { Entities } from '../../Config';
-import { DB } from '../../models';
 import { CustomEventBridgeEvent } from '../stream-processor';
 
 /**

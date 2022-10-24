@@ -3,7 +3,6 @@ import Joi from 'joi';
 import * as CreateError from '../../utils/createError';
 import { DEFAULTS, JOI_SETTINGS } from '../../Config';
 import { DynamoUser } from '../../types/dynamo';
-import { DB } from '../../models';
 
 export interface APIUpdateUserOptions extends Partial<Pick<DynamoUser, 'firstName' | 'lastName'>> {}
 

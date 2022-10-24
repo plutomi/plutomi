@@ -1,9 +1,7 @@
 import { Request, Response } from 'express';
 import Joi from 'joi';
 import { JOI_SETTINGS, LIMITS } from '../../Config';
-import { DB } from '../../models';
 import * as CreateError from '../../utils/createError';
-import getNewChildItemOrder from '../../utils/getNewChildItemOrder';
 
 const schema = Joi.object({
   body: {

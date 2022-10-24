@@ -2,10 +2,8 @@ import { Request, Response } from 'express';
 import Joi from 'joi';
 import { JOI_SETTINGS, WEBSITE_URL, COOKIE_NAME, COOKIE_SETTINGS, Emails } from '../../Config';
 import * as CreateError from '../../utils/createError';
-import { sendEmail, SendEmailProps } from '../../models/Emails/sendEmail';
 import { env } from '../../env';
 import { User, UserLoginLink } from '../../entities';
-import { Reference } from '@mikro-orm/core';
 
 const jwt = require('jsonwebtoken');
 

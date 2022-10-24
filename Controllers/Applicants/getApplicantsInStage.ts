@@ -1,6 +1,4 @@
 import { Request, Response } from 'express';
-import * as CreateError from '../../utils/createError';
-import { DB } from '../../models';
 
 export const getApplicantsInStage = async (req: Request, res: Response) => {
   const { openingId, stageId } = req.params;

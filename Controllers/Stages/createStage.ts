@@ -3,7 +3,6 @@ import Joi from 'joi';
 import { JOI_SETTINGS, LIMITS } from '../../Config';
 import * as CreateError from '../../utils/createError';
 import { DynamoStage } from '../../types/dynamo';
-import { DB } from '../../models';
 import { Opening, Stage } from '../../entities';
 import { findInTargetArray } from '../../utils/findInTargetArray';
 import { IndexedEntities } from '../../types/main';

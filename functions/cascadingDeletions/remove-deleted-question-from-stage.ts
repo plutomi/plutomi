@@ -1,7 +1,6 @@
 import { EventBridgeEvent } from 'aws-lambda';
 import axios from 'axios';
 import { Entities } from '../../Config';
-import { DB } from '../../models';
 import { CustomEventBridgeEvent } from '../stream-processor';
 
 /**

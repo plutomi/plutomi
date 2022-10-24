@@ -1,10 +1,7 @@
-import { EntityManager } from '@mikro-orm/core';
-import { MongoDriver } from '@mikro-orm/mongodb';
 import { EventBridgeEvent } from 'aws-lambda';
 import axios from 'axios';
 import { Entities } from '../../Config';
 import { Opening, Stage } from '../../entities';
-import { DB } from '../../models';
 import { IndexedEntities } from '../../types/main';
 import { findInTargetArray } from '../../utils/findInTargetArray';
 import { getEntityManager } from '../../utils/getEntityManager';
@@ -40,6 +37,7 @@ export async function main(event: EventBridgeEvent<'stream', CustomEventBridgeEv
     targetArray: deletedEntity.target,
   });
 
+  return;
   if (deletedEntity.totalStages > 0) {
     console.log('Opening has stages, attempting to delete...');
 

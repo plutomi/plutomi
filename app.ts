@@ -1,4 +1,3 @@
-import 'reflect-metadata';
 import helmet from 'helmet';
 import express from 'express';
 import cors from 'cors';
@@ -20,7 +19,7 @@ import { auth } from './routes/auth';
 import { applicants } from './routes/applicants';
 import API from './controllers';
 import { env } from './env';
-import { initializeDb } from './utils/initializeDb';
+import { connectToDatabase } from './mongo/utils';
 
 const morgan = require('morgan');
 const cookieParser = require('cookie-parser');
@@ -37,11 +36,7 @@ app
     const sessionSecrets = [env.sessionSignatureSecret1];
 
     const server = express();
-    const orm = await initializeDb();
-    const includeEntityManager: express.Handler = (req, _res, next) => {
-      req.entityManager = orm.em.fork();
-      next();
-    };
+    await connectToDatabase();
 
     server.use(timeout('5s'));
     server.use(
@@ -64,7 +59,6 @@ app
       withCleanWebhookId,
       morgan(morganSettings),
       cookieParser(sessionSecrets, COOKIE_SETTINGS),
-      includeEntityManager,
     ]);
 
     if (env.nodeEnv === 'development') {

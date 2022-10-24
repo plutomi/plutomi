@@ -1,7 +1,6 @@
 import { Request, Response } from 'express';
 import Joi from 'joi';
 import { JOI_SETTINGS } from '../../Config';
-import { DB } from '../../models';
 import * as CreateError from '../../utils/createError';
 
 const schema = Joi.object({
@@ -17,6 +16,9 @@ export const getWebhook = async (req: Request, res: Response) => {
     const { status, body } = CreateError.JOI(error);
     return res.status(status).json(body);
   }
+
+  return res.status(200).json({ message: 'Endpoint temp disabled' });
+
   const { user } = req;
   const { webhookId } = req.params;
 
