@@ -4,10 +4,10 @@ import { IndexedEntities } from '../../types/main';
 import { findInTargetArray } from '../../utils/findInTargetArray';
 
 export const getOpeningsInOrg = async (req: Request, res: Response) => {
-  const { user, entityManager } = req;
-
-  const orgId = findInTargetArray({ entity: IndexedEntities.Org, targetArray: user.target });
+  const { user } = req;
   return res.status(200).json({ message: 'Endpoint temp disabled' });
+
+  // const orgId = findInTargetArray({ entity: IndexedEntities.Org, targetArray: user.target });
 
   // try {
   //   // TODO: Add type safety on this search

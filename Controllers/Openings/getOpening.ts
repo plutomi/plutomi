@@ -22,7 +22,7 @@ export const getOpening = async (req: Request, res: Response) => {
 
   return res.status(200).json({ message: 'Endpoint temp disabled' });
 
-  // const { user, entityManager } = req;
+  // const { user } = req;
   // const { openingId } = req.params;
   // const orgId = findInTargetArray({ entity: IndexedEntities.Org, targetArray: user.target });
   // let opening: Opening;

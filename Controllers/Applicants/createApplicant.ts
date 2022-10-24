@@ -41,7 +41,7 @@ export const createApplicant = async (req: Request, res: Response) => {
   //     message: ERRORS.EMAIL_VALIDATION,
   //   });
   // }
-  // const { body, entityManager } = req;
+  // const { body } = req;
   // const { openingId, orgId, firstName, lastName, email } = body;
 
   // let opening: Opening;

@@ -26,7 +26,7 @@ export const updateStage = async (req: Request, res: Response) => {
   }
   return res.status(200).json({ message: 'Endpoint temp disabled' });
 
-  // const { user, entityManager } = req;
+  // const { user } = req;
   // const { openingId, stageId } = req.params;
 
   // const orgId = findInTargetArray({
@@ -155,7 +155,7 @@ export const updateStage = async (req: Request, res: Response) => {
   //     } else {
   //       /**
   //        * Set our old next stage's previous stage to be undefined.
-    
+
   //        *
   //        *     OLD --- NEW
   //        * Stage 1 --- Stage 2 <-- Previous stage is now undefined

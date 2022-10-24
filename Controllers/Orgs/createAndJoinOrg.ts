@@ -20,7 +20,7 @@ const schema = Joi.object({
 }).options(JOI_SETTINGS);
 
 export const createAndJoinOrg = async (req: Request, res: Response) => {
-  const { user, entityManager } = req;
+  const { user } = req;
   try {
     await schema.validateAsync(req);
   } catch (error) {

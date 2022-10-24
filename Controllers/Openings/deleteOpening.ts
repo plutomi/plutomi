@@ -5,7 +5,7 @@ import { findInTargetArray } from '../../utils/findInTargetArray';
 
 export const deleteOpening = async (req: Request, res: Response) => {
   const { openingId } = req.params;
-  const { user, entityManager } = req;
+  const { user } = req;
 
   return res.status(200).json({ message: 'Endpoint temp disabled' });
   // let openingToDelete: Opening;

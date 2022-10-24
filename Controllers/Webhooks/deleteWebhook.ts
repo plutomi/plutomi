@@ -5,10 +5,10 @@ import { findInTargetArray } from '../../utils/findInTargetArray';
 
 export const deleteWebhook = async (req: Request, res: Response) => {
   const { user } = req;
-  const orgId = findInTargetArray({
-    entity: IndexedEntities.Org,
-    targetArray: user.target,
-  });
+  // const orgId = findInTargetArray({
+  //   entity: IndexedEntities.Org,
+  //   targetArray: user.target,
+  // });
 
   return res.status(200).json({ message: 'Endpoint temp disabled' });
 

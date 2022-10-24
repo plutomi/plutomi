@@ -1,5 +1,3 @@
-import { EntityManager, MongoDriver } from '@mikro-orm/mongodb';
-import { User } from '../entities';
 import { DynamoApplicant } from './dynamo';
 
 /**
@@ -34,8 +32,7 @@ export interface APIErrorResponse {
 declare global {
   namespace Express {
     export interface Request {
-      user: User;
-      entityManager: EntityManager<MongoDriver>;
+      user: {}; // TODO types
     }
   }
 }

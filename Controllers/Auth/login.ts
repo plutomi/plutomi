@@ -29,7 +29,6 @@ export const login = async (req: Request, res: Response) => {
   return res.status(200).json({ message: 'Endpoint temp disabled' });
 
   // const { callbackUrl, token }: APILoginQuery = req.query;
-  // const { entityManager } = req;
 
   // let userId: string;
   // let loginLinkId: string;

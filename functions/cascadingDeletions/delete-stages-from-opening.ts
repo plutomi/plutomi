@@ -4,7 +4,6 @@ import { Entities } from '../../Config';
 // import { Opening, Stage } from '../../entities';
 import { IndexedEntities } from '../../types/main';
 import { findInTargetArray } from '../../utils/findInTargetArray';
-import { getEntityManager } from '../../utils/getEntityManager';
 import { CustomEventBridgeEvent } from '../stream-processor';
 
 /**

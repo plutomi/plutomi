@@ -9,12 +9,12 @@ import { findInTargetArray } from '../utils/findInTargetArray';
 export default async function withSameOrg(req: Request, res: Response, next: NextFunction) {
   const { user } = req;
 
-  const orgId = findInTargetArray({ entity: IndexedEntities.Org, targetArray: user.target });
+  // const orgId = findInTargetArray({ entity: IndexedEntities.Org, targetArray: user.target });
 
-  if (orgId !== req.params.orgId) {
-    return res.status(403).json({
-      message: ERRORS.NOT_SAME_ORG,
-    });
-  }
+  // if (orgId !== req.params.orgId) {
+  //   return res.status(403).json({
+  //     message: ERRORS.NOT_SAME_ORG,
+  //   });
+  // }
   next();
 }

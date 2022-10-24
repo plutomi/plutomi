@@ -19,7 +19,7 @@ export const updateOpening = async (req: Request, res: Response) => {
     const { status, body } = CreateError.JOI(error);
     return res.status(status).json(body);
   }
-  const { user, entityManager } = req;
+  const { user } = req;
   const { openingId } = req.params;
   return res.status(200).json({ message: 'Endpoint temp disabled' });
 
