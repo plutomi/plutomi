@@ -43,23 +43,22 @@ export enum Collections {
   Openings = 'Opening',
 }
 
-// In the `target` array, these are the types of entities that can be indexed
-export enum IndexedEntities {
-  User = 'User',
-  Org = 'Org',
-  OrgInvite = 'OrgInvite',
-  Opening = 'Opening',
-  OpeningState = 'OpeningState',
-  Stage = 'Stage',
-  UserLoginLink = 'UserLoginLink',
-  Question = 'Question',
-  Webhook = 'Webhook',
-  Email = 'Email',
-  CreatedBy = 'CreatedBy',
-  PreviousStage = 'PreviousStage',
-  NextStage = 'NextStage',
-}
+export type IndexedEntities =
+  | 'User'
+  | 'Org'
+  | 'OrgInvite'
+  | 'Opening'
+  | 'OpeningState'
+  | 'Stage'
+  | 'UserLoginLink'
+  | 'Question'
+  | 'Webhook'
+  | 'Email'
+  | 'CreatedBy'
+  | 'PreviousStage'
+  | 'NextStage'
+  | 'Id';
 
 export type IndexIdTypes = string | null;
-export type IndexedTargetArrayItem = { id: IndexIdTypes; type: IndexedEntities };
+export type IndexedTargetArrayItem = { type: IndexedEntities; value: IndexIdTypes };
 export type IndexedTargetArray = Array<IndexedTargetArrayItem>;

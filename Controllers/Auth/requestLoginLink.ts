@@ -19,6 +19,9 @@ import { env } from '../../env';
 import dayjs from 'dayjs';
 import { IndexedEntities } from '../../types/main';
 import { findInTargetArray } from '../../utils/findInTargetArray';
+import { collections } from '../../utils/connectToDatabase';
+import { UserEntity, UserShardKey } from '../../models';
+import { Filter, ObjectId } from 'mongodb';
 
 const jwt = require('jsonwebtoken');
 
@@ -45,7 +48,9 @@ export const requestLoginLink = async (req: Request, res: Response) => {
     return res.status(status).json(body);
   }
 
-  return res.status(200).json({ message: 'Endpoint temp disabled' });
+  const { email } = req.body;
+
+  console.log(`Incoming email`, email);
   // const { email }: APIRequestLoginLinkBody = req.body;
   // const { callbackUrl }: APIRequestLoginLinkQuery = req.query;
 
@@ -60,44 +65,63 @@ export const requestLoginLink = async (req: Request, res: Response) => {
   //   });
   // }
 
-  // // If a user is signing in for the first time, create an account for them
-  // let user: User;
-  // console.log(`Attempting to find user with email`, email);
-  // try {
+  // If a user is signing in for the first time, create an account for them
+  let user: UserEntity | undefined;
+
   //   user = await req.entityManager.findOne(User, {
   //     target: { id: email, type: IndexedEntities.Email },
   //   });
-  // } catch (error) {
-  //   console.error(`Error retrieving user info`, error);
-  //   return res.status(500).json({
-  //     message: `Error retrieving user info`,
-  //     error,
-  //   });
-  // }
 
-  // if (!user) {
-  //   try {
-  //     console.log(`Creating new user`);
-  //     const createdUser = new User({
-  //       firstName: Defaults.FirstName,
-  //       lastName: Defaults.LastName,
-  //       target: [
-  //         {
-  //           id: email,
-  //           type: IndexedEntities.Email,
-  //         },
-  //       ],
-  //     });
-  //     console.log(`Creating new user`, createdUser);
+  console.log(`Attempting to find user with email`, email);
 
-  //     await req.entityManager.persistAndFlush(createdUser);
-  //     console.log(`User created`);
-  //     user = createdUser;
-  //   } catch (error) {
-  //     console.error(`An error ocurred creating your account`, error);
-  //     return res.status(500).json({ message: 'An error ocurred creating your account', error });
-  //   }
-  // }
+  try {
+    user = await collections.users.findOne({
+      target: {type: }
+    });
+  } catch (error) {
+    const msg = `Error retrieving user info`;
+    console.error(msg, error);
+    return res.status(500).json({
+      message: msg,
+      error,
+    });
+  }
+
+  if (!user) {
+    console.log('User not found');
+    try {
+      console.log(`Creating new user`);
+
+      const now = new Date();
+      const customId = nanoid(50);
+      const shardKey: UserShardKey = `USER#${customId}`;
+      const newUser: UserEntity = {
+        shardKey,
+        createdAt: now,
+        updatedAt: now,
+        totalInvites: 0,
+        firstName: Defaults.FirstName,
+        lastName: Defaults.LastName,
+        emailVerified: false,
+        canReceiveEmails: false,
+        target: [
+          { type: 'Id', value: customId },
+        ],
+      };
+
+      console.log(`Creating new user`, newUser);
+
+      await collections.users.insertOne(newUser);
+      console.log(`User created!`);
+      user = newUser;
+    } catch (error) {
+      const errMsg = `An error ocurred creating your account`;
+      console.error(errMsg, error);
+      return res.status(500).json({ message: errMsg, error });
+    }
+  }
+
+  return res.status(200).json(user);
 
   // const userEmail = findInTargetArray({ entity: IndexedEntities.Email, targetArray: user.target });
   // console.log(`User created, finding in target array`, userEmail);

@@ -1,14 +1,19 @@
-import { ObjectId } from 'mongodb';
+import { IndexedEntities } from '../types/main';
+import { BaseEntity } from './Base';
 
-export default class User {
-  constructor(
-    public firstName: string,
-    public lastName: number,
-    public emailVerified: boolean,
-    public canReceiveEmails: boolean,
-    public totalInvites: number,
-    public target: Object[],
-    public orgJoinDate?: Date,
-    public id?: ObjectId,
-  ) {}
+type UserIndexedProperties = Extract<IndexedEntities, 'Org' | 'Email' | 'Id'>;
+type UserTargetArrayItem = { type: UserIndexedProperties; value: string | null };
+export type UserTargetArray = Array<UserTargetArrayItem>;
+
+export type UserShardKey = `USER#${string}`;
+
+export interface UserEntity extends BaseEntity {
+  shardKey: UserShardKey;
+  firstName: string;
+  lastName: string;
+  emailVerified: boolean;
+  canReceiveEmails: boolean;
+  totalInvites: number;
+  orgJoinDate?: Date;
+  target: UserTargetArray;
 }
