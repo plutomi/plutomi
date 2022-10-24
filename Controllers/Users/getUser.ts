@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
 import Joi from 'joi';
 import { JOI_SETTINGS } from '../../Config';
-import { IndexedEntities } from '../../types/main';
+import { IdxTypes } from '../../types/main';
 import * as CreateError from '../../utils/createError';
 import { findInTargetArray } from '../../utils/findInTargetArray';
 
@@ -48,7 +48,7 @@ export const getUser = async (req: Request, res: Response) => {
 
   // // TODO RBAC here
   // // Only allow viewing users in the same org
-  // const orgId = findInTargetArray({ entity: IndexedEntities.Org, targetArray: user.target });
+  // const orgId = findInTargetArray({ entity: IdxTypes.Org, targetArray: user.target });
   // if (orgId !== requestedUser.orgId) {
   //   return res.status(403).json({
   //     message: 'You are not authorized to view this user since you are not in the same org',

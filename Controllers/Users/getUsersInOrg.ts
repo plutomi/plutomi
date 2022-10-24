@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 import { pick } from 'lodash';
-import { IndexedEntities } from '../../types/main';
+import { IdxTypes } from '../../types/main';
 import * as CreateError from '../../utils/createError';
 import { findInTargetArray } from '../../utils/findInTargetArray';
 
@@ -8,7 +8,7 @@ export const getUsersInOrg = async (req: Request, res: Response) => {
   const { user } = req;
   return res.status(200).json({ message: 'Endpoint temp disabled' });
 
-  // const orgId = findInTargetArray({ entity: IndexedEntities.Org, targetArray: user.target });
+  // const orgId = findInTargetArray({ entity: IdxTypes.Org, targetArray: user.target });
 
   // const [users, error] = await DB.Users.getUsersInOrg({
   //   orgId,

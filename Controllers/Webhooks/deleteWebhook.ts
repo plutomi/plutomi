@@ -1,12 +1,12 @@
 import { Request, Response } from 'express';
-import { IndexedEntities } from '../../types/main';
+import { IdxTypes } from '../../types/main';
 import * as CreateError from '../../utils/createError';
 import { findInTargetArray } from '../../utils/findInTargetArray';
 
 export const deleteWebhook = async (req: Request, res: Response) => {
   const { user } = req;
   // const orgId = findInTargetArray({
-  //   entity: IndexedEntities.Org,
+  //   entity: IdxTypes.Org,
   //   targetArray: user.target,
   // });
 

@@ -4,7 +4,7 @@ import * as Time from '../../utils/time';
 import * as Users from '../../adapters/Users';
 import { useSelf } from '../../SWR/useSelf';
 import { useOrgInfo } from '../../SWR/useOrgInfo';
-import { IndexedEntities } from '../../types/main';
+import { IdxTypes } from '../../types/main';
 import { findInTargetArray } from '../../utils/findInTargetArray';
 import { User, UserConstructorValues } from '../../entities';
 
@@ -12,7 +12,7 @@ interface UserCardProps {
   user: User;
 }
 export const UserCard = ({ user }: UserCardProps) => {
-  const orgId = findInTargetArray({ entity: IndexedEntities.Org, targetArray: user.target });
+  const orgId = findInTargetArray({ entity: IdxTypes.Org, targetArray: user.target });
   const { org, isOrgLoading, isOrgError } = useOrgInfo({
     orgId,
   });
@@ -21,7 +21,7 @@ export const UserCard = ({ user }: UserCardProps) => {
   const me = useSelf().user;
   const handleRemove = async (user: User) => {
     const userEmail = findInTargetArray({
-      entity: IndexedEntities.Email,
+      entity: IdxTypes.Email,
       targetArray: user.target,
     });
 
@@ -45,9 +45,9 @@ export const UserCard = ({ user }: UserCardProps) => {
     mutate(Users.GetUsersInOrgURL());
   };
 
-  const userEmail = findInTargetArray({ entity: IndexedEntities.Email, targetArray: user.target });
+  const userEmail = findInTargetArray({ entity: IdxTypes.Email, targetArray: user.target });
   const createdBy = findInTargetArray({
-    entity: IndexedEntities.CreatedBy,
+    entity: IdxTypes.CreatedBy,
     targetArray: user.target,
   });
   return (

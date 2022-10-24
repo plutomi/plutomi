@@ -4,7 +4,7 @@ import emailValidator from 'deep-email-validator';
 import { Defaults, ERRORS, JoiOrgId, JOI_SETTINGS, LIMITS, OpeningState } from '../../Config';
 import * as CreateError from '../../utils/createError';
 // import { DynamoApplicant } from '../../types/dynamo';
-import { IndexedEntities } from '../../types/main';
+import { IdxTypes } from '../../types/main';
 import { findInTargetArray } from '../../utils/findInTargetArray';
 
 // export type APICreateApplicantOptions = Required<
@@ -50,7 +50,7 @@ export const createApplicant = async (req: Request, res: Response) => {
   // try {
   //   opening = await entityManager.findOne(Opening, {
   //     id: openingId,
-  //     $and: [{ target: { id: orgId, type: IndexedEntities.Org } }],
+  //     $and: [{ target: { id: orgId, type: IdxTypes.Org } }],
   //   });
   // } catch (error) {
   //   const message = 'Error retrieving opening info';
@@ -62,7 +62,7 @@ export const createApplicant = async (req: Request, res: Response) => {
   //   return res.status(404).json({ message: 'Opening does not exist' });
   // }
   // const openingState = findInTargetArray({
-  //   entity: IndexedEntities.OpeningState,
+  //   entity: IdxTypes.OpeningState,
   //   targetArray: opening.target,
   // });
   // // Conditional check will also catch this
@@ -75,9 +75,9 @@ export const createApplicant = async (req: Request, res: Response) => {
   // try {
   //   firstStage = await entityManager.findOne(Stage, {
   //     $and: [
-  //       { target: { id: orgId, type: IndexedEntities.Org } },
-  //       { target: { id: openingId, type: IndexedEntities.Opening } },
-  //       { target: { id: undefined, type: IndexedEntities.PreviousStage } },
+  //       { target: { id: orgId, type: IdxTypes.Org } },
+  //       { target: { id: openingId, type: IdxTypes.Opening } },
+  //       { target: { id: undefined, type: IdxTypes.PreviousStage } },
   //     ],
   //   });
   // } catch (error) {

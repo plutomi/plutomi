@@ -6,7 +6,7 @@ import { OpeningState, WEBSITE_URL } from '../../Config';
 import combineClassNames from '../../utils/combineClassNames';
 import { Opening } from '../../entities';
 import { findInTargetArray } from '../../utils/findInTargetArray';
-import { IndexedEntities } from '../../types/main';
+import { IdxTypes } from '../../types/main';
 
 interface OpeningsDropdownProps {
   openings: Opening[];
@@ -39,7 +39,7 @@ export const OpeningsDropdown = ({ openings, index }: OpeningsDropdownProps) => 
 
   // if (selected) {
   //   findInTargetArray({
-  //     entity: IndexedEntities.OpeningState,
+  //     entity: IdxTypes.OpeningState,
   //     targetArray: selected.target,
   //   });
   // }
@@ -84,7 +84,7 @@ export const OpeningsDropdown = ({ openings, index }: OpeningsDropdownProps) => 
                 {({ selected, active }) => {
                   const currentOpening = opening;
                   const currentOpeningState = findInTargetArray({
-                    entity: IndexedEntities.OpeningState,
+                    entity: IdxTypes.OpeningState,
                     targetArray: currentOpening.target,
                   });
                   return (

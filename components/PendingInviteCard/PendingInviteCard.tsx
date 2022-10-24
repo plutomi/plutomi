@@ -4,7 +4,7 @@ import * as Time from '../../utils/time';
 import * as Invites from '../../adapters/Invites';
 import { useSelf } from '../../SWR/useSelf';
 import { findInTargetArray } from '../../utils/findInTargetArray';
-import { IndexedEntities } from '../../types/main';
+import { IdxTypes } from '../../types/main';
 
 interface PendingInviteCardProps {
   invite: DynamoOrgInvite;
@@ -12,7 +12,7 @@ interface PendingInviteCardProps {
 
 export const PendingInviteCard = ({ invite }: PendingInviteCardProps) => {
   const { user, isUserLoading, isUserError } = useSelf();
-  const orgId = findInTargetArray({ entity: IndexedEntities.Org, targetArray: user.target });
+  const orgId = findInTargetArray({ entity: IdxTypes.Org, targetArray: user.target });
 
   const cancelInvite = async (invite: DynamoOrgInvite) => {
     try {

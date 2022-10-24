@@ -1,20 +1,20 @@
 import { Request, Response } from 'express';
 // import { Opening } from '../../entities';
-import { IndexedEntities } from '../../types/main';
+import { IdxTypes } from '../../types/main';
 import { findInTargetArray } from '../../utils/findInTargetArray';
 
 export const getOpeningsInOrg = async (req: Request, res: Response) => {
   const { user } = req;
   return res.status(200).json({ message: 'Endpoint temp disabled' });
 
-  // const orgId = findInTargetArray({ entity: IndexedEntities.Org, targetArray: user.target });
+  // const orgId = findInTargetArray({ entity: IdxTypes.Org, targetArray: user.target });
 
   // try {
   //   // TODO: Add type safety on this search
   //   const openings = await entityManager.find(Opening, {
   //     target: {
   //       id: orgId,
-  //       type: IndexedEntities.Org,
+  //       type: IdxTypes.Org,
   //     },
   //   });
 

@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
 import { ERRORS } from '../Config';
-import { IndexedEntities } from '../types/main';
+import { IdxTypes } from '../types/main';
 import { findInTargetArray } from '../utils/findInTargetArray';
 
 // ! NOTE - Middleware requires to be used inline as req.params are not available in middleware in nested routes
@@ -9,7 +9,7 @@ import { findInTargetArray } from '../utils/findInTargetArray';
 export default async function withSameOrg(req: Request, res: Response, next: NextFunction) {
   const { user } = req;
 
-  // const orgId = findInTargetArray({ entity: IndexedEntities.Org, targetArray: user.target });
+  // const orgId = findInTargetArray({ entity: IdxTypes.Org, targetArray: user.target });
 
   // if (orgId !== req.params.orgId) {
   //   return res.status(403).json({

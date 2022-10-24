@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 // import { Opening } from '../../entities';
-import { IndexedEntities } from '../../types/main';
+import { IdxTypes } from '../../types/main';
 import { findInTargetArray } from '../../utils/findInTargetArray';
 
 export const deleteOpening = async (req: Request, res: Response) => {
@@ -9,14 +9,14 @@ export const deleteOpening = async (req: Request, res: Response) => {
 
   return res.status(200).json({ message: 'Endpoint temp disabled' });
   // let openingToDelete: Opening;
-  // const orgId = findInTargetArray({ entity: IndexedEntities.Org, targetArray: user.target });
+  // const orgId = findInTargetArray({ entity: IdxTypes.Org, targetArray: user.target });
   // try {
   //   openingToDelete = await entityManager.findOne(Opening, {
   //     id: openingId,
   //     target: {
   //       // Should be redundant
   //       id: orgId,
-  //       type: IndexedEntities.Org,
+  //       type: IdxTypes.Org,
   //     },
   //   });
 

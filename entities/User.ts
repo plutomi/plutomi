@@ -1,5 +1,5 @@
 // import { Cascade, Collection, Entity, Index, OneToMany, Property } from '@mikro-orm/core';
-// import type { IndexedTargetArray, IndexedEntities } from '../types/main';
+// import type { IndexedTargetArray, IdxTypes } from '../types/main';
 // import { BaseEntity } from './BaseEntity';
 // import { UserLoginLink } from './UserLoginLink';
 
@@ -33,7 +33,7 @@
 //   /**
 //    * Indexed target array for the user. Indexed properties are:
 //    *
-//    * Email - @string - Email of the user. Type of {@link IndexedEntities.Email}
+//    * Email - @string - Email of the user. Type of {@link IdxTypes.Email}
 //    */
 
 //   @Property({ type: 'array' })

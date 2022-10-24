@@ -4,7 +4,7 @@ import * as CreateError from '../../utils/createError';
 import { JOI_SETTINGS, OpeningState, LIMITS } from '../../Config';
 // import { Opening } from '../../entities';
 import { findInTargetArray } from '../../utils/findInTargetArray';
-import { IndexedEntities } from '../../types/main';
+import { IdxTypes } from '../../types/main';
 
 const schema = Joi.object({
   stageOrder: Joi.array().items(Joi.string()),
@@ -24,10 +24,10 @@ export const updateOpening = async (req: Request, res: Response) => {
   return res.status(200).json({ message: 'Endpoint temp disabled' });
 
   // let opening: Opening;
-  // const orgId = findInTargetArray({ entity: IndexedEntities.Org, targetArray: user.target });
+  // const orgId = findInTargetArray({ entity: IdxTypes.Org, targetArray: user.target });
   // try {
   //   opening = await entityManager.findOne(Opening, {
-  //     target: { id: orgId, type: IndexedEntities.Org },
+  //     target: { id: orgId, type: IdxTypes.Org },
   //     id: openingId,
   //   });
   // } catch (error) {
@@ -50,7 +50,7 @@ export const updateOpening = async (req: Request, res: Response) => {
   //   }
 
   //   opening.target = opening.target.map((item) => {
-  //     if (item.type === IndexedEntities.OpeningState) {
+  //     if (item.type === IdxTypes.OpeningState) {
   //       item.id = req.body.GSI1SK;
   //     }
   //     return item;

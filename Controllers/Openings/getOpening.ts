@@ -2,7 +2,7 @@ import { Request, Response } from 'express';
 import Joi from 'joi';
 import { JOI_SETTINGS } from '../../Config';
 // import { Opening } from '../../entities';
-import { IndexedEntities } from '../../types/main';
+import { IdxTypes } from '../../types/main';
 import * as CreateError from '../../utils/createError';
 import { findInTargetArray } from '../../utils/findInTargetArray';
 
@@ -24,7 +24,7 @@ export const getOpening = async (req: Request, res: Response) => {
 
   // const { user } = req;
   // const { openingId } = req.params;
-  // const orgId = findInTargetArray({ entity: IndexedEntities.Org, targetArray: user.target });
+  // const orgId = findInTargetArray({ entity: IdxTypes.Org, targetArray: user.target });
   // let opening: Opening;
 
   // try {
@@ -32,7 +32,7 @@ export const getOpening = async (req: Request, res: Response) => {
   //     id: openingId,
   //     target: {
   //       id: orgId,
-  //       type: IndexedEntities.Org,
+  //       type: IdxTypes.Org,
   //     },
   //   });
   // } catch (error) {

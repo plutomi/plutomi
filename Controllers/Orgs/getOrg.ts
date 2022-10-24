@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 // import { Org } from '../../entities';
-import { IndexedEntities } from '../../types/main';
+import { IdxTypes } from '../../types/main';
 import { findInTargetArray } from '../../utils/findInTargetArray';
 
 export const getOrg = async (req: Request, res: Response) => {
@@ -9,7 +9,7 @@ export const getOrg = async (req: Request, res: Response) => {
 
   // let org: Org;
 
-  // const orgId = findInTargetArray({ entity: IndexedEntities.Org, targetArray: user.target });
+  // const orgId = findInTargetArray({ entity: IdxTypes.Org, targetArray: user.target });
 
   // try {
   //   org = await entityManager.findOne(Org, {

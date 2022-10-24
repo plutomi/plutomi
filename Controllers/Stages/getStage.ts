@@ -1,12 +1,12 @@
 import { Request, Response } from 'express';
 // import { Stage } from '../../entities';
-import { IndexedEntities } from '../../types/main';
+import { IdxTypes } from '../../types/main';
 import { findInTargetArray } from '../../utils/findInTargetArray';
 
 export const getStage = async (req: Request, res: Response) => {
   const { user } = req;
   const { openingId, stageId } = req.params;
-  // const orgId = findInTargetArray({ entity: IndexedEntities.Org, targetArray: user.target });
+  // const orgId = findInTargetArray({ entity: IdxTypes.Org, targetArray: user.target });
 
   return res.status(200).json({ message: 'Endpoint temp disabled' });
   // let stage: Stage;
@@ -16,10 +16,10 @@ export const getStage = async (req: Request, res: Response) => {
   //     id: stageId,
   //     $and: [
   //       {
-  //         target: { id: orgId, type: IndexedEntities.Org },
+  //         target: { id: orgId, type: IdxTypes.Org },
   //       },
   //       {
-  //         target: { id: openingId, type: IndexedEntities.Opening },
+  //         target: { id: openingId, type: IdxTypes.Opening },
   //       },
   //     ],
   //   });

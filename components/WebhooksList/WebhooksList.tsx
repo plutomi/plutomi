@@ -10,11 +10,11 @@ import { EmptyWebhooksContent } from '../EmptyWebhooksContent';
 import { Loader } from '../Loader/Loader';
 import { UpdateWebhookModal } from '../UpdateWebhookModal';
 import { findInTargetArray } from '../../utils/findInTargetArray';
-import { IndexedEntities } from '../../types/main';
+import { IdxTypes } from '../../types/main';
 
 export const WebhooksList = () => {
   const { user, isUserLoading, isUserError } = useSelf();
-  const orgId = findInTargetArray({ entity: IndexedEntities.Org, targetArray: user.target });
+  const orgId = findInTargetArray({ entity: IdxTypes.Org, targetArray: user.target });
   const { org, isOrgLoading, isOrgError } = useOrgInfo({
     orgId,
   });

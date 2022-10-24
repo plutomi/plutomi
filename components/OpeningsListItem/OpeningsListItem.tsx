@@ -6,7 +6,7 @@ import * as Time from '../../utils/time';
 import { ClickToCopy } from '../ClickToCopy';
 import { Opening } from '../../entities';
 import { findInTargetArray } from '../../utils/findInTargetArray';
-import { IndexedEntities } from '../../types/main';
+import { IdxTypes } from '../../types/main';
 import { useAllStagesInOpening } from '../../SWR/useAllStagesInOpening';
 import { Loader } from '../Loader';
 
@@ -36,12 +36,12 @@ export const OpeningsListItem = ({ opening }: OpeningsListItemProps) => {
       : `settings`;
 
   const openingState = findInTargetArray({
-    entity: IndexedEntities.OpeningState,
+    entity: IdxTypes.OpeningState,
     targetArray: opening.target,
   });
 
   const orgId = findInTargetArray({
-    entity: IndexedEntities.Org,
+    entity: IdxTypes.Org,
     targetArray: opening.target,
   });
   return (

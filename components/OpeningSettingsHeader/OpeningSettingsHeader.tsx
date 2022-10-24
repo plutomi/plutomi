@@ -5,7 +5,7 @@ import useStore from '../../utils/store';
 import { useOpeningInfo } from '../../SWR/useOpeningInfo';
 import { DeleteOpening, GetOpeningsInOrgURL } from '../../adapters/Openings';
 import * as Time from '../../utils/time';
-import { CustomQuery, IndexedEntities } from '../../types/main';
+import { CustomQuery, IdxTypes } from '../../types/main';
 import { OpeningState, WEBSITE_URL } from '../../Config';
 import { Loader } from '../Loader';
 import { OpeningSettingsBreadcrumbs } from '../OpeningSettingsBreadcrumbs';
@@ -75,7 +75,7 @@ export const OpeningSettingsHeader = () => {
   };
 
   const openingState = findInTargetArray({
-    entity: IndexedEntities.OpeningState,
+    entity: IdxTypes.OpeningState,
     targetArray: opening.target,
   });
 

@@ -5,7 +5,7 @@ import * as CreateError from '../../utils/createError';
 // import { DynamoOpening } from '../../types/dynamo';
 // import { Opening, Org } from '../../entities';
 import { findInTargetArray } from '../../utils/findInTargetArray';
-import { IndexedEntities } from '../../types/main';
+import { IdxTypes } from '../../types/main';
 
 // export type APICreateOpeningOptions = Required<Pick<DynamoOpening, 'openingName'>>;
 
@@ -26,7 +26,7 @@ export const createOpening = async (req: Request, res: Response) => {
 
   return res.status(200).json({ message: 'Endpoint temp disabled' });
   // const { openingName }: APICreateOpeningOptions = req.body;
-  // const orgId = findInTargetArray({ entity: IndexedEntities.Org, targetArray: user.target });
+  // const orgId = findInTargetArray({ entity: IdxTypes.Org, targetArray: user.target });
 
   // let org: Org | undefined;
 
@@ -49,9 +49,9 @@ export const createOpening = async (req: Request, res: Response) => {
   //     {
   //       // Should be redundant
   //       id: orgId,
-  //       type: IndexedEntities.Org,
+  //       type: IdxTypes.Org,
   //     },
-  //     { id: OpeningState.Private, type: IndexedEntities.OpeningState },
+  //     { id: OpeningState.Private, type: IdxTypes.OpeningState },
   //   ],
   // });
 

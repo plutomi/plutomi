@@ -5,7 +5,7 @@ import { useSelf } from '../../SWR/useSelf';
 import { Logout } from '../../adapters/Auth';
 import { GetSelfInfoURL } from '../../adapters/Users';
 import { findInTargetArray } from '../../utils/findInTargetArray';
-import { IndexedEntities } from '../../types/main';
+import { IdxTypes } from '../../types/main';
 
 const handleLogout = async (isHomepage: boolean) => {
   try {
@@ -36,7 +36,7 @@ export const AlreadyLoggedIn = () => {
     return <h1>An error ocurred loading your user info</h1>;
   }
   const userEmail = findInTargetArray({
-    entity: IndexedEntities.Email,
+    entity: IdxTypes.Email,
     targetArray: user.target,
   });
   return (

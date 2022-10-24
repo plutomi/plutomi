@@ -4,7 +4,7 @@ import { JOI_SETTINGS, LIMITS } from '../../Config';
 import * as CreateError from '../../utils/createError';
 // import { DynamoStage } from '../../types/dynamo';
 import { findInTargetArray } from '../../utils/findInTargetArray';
-import { IndexedEntities } from '../../types/main';
+import { IdxTypes } from '../../types/main';
 
 // export interface APICreateStageOptions extends Required<Pick<DynamoStage, 'openingId' | 'GSI1SK'>> {
 //   /**
@@ -39,14 +39,14 @@ export const createStage = async (req: Request, res: Response) => {
 
   // const { GSI1SK, openingId, position } = req.body;
 
-  // const orgId = findInTargetArray({ entity: IndexedEntities.Org, targetArray: user.target });
+  // const orgId = findInTargetArray({ entity: IdxTypes.Org, targetArray: user.target });
   // console.log(`CREATING STAGE BODY`, req.body);
   // let opening: Opening;
 
   // try {
   //   opening = await entityManager.findOne(Opening, {
   //     id: openingId,
-  //     target: [{ id: orgId, type: IndexedEntities.Org }],
+  //     target: [{ id: orgId, type: IdxTypes.Org }],
   //   });
   // } catch (error) {
   //   const message = 'An error ocurred retrieving opening info';
@@ -65,11 +65,11 @@ export const createStage = async (req: Request, res: Response) => {
   //   lastStage = await entityManager.findOne(Stage, {
   //     $and: [
   //       {
-  //         target: [{ id: orgId, type: IndexedEntities.Org }],
+  //         target: [{ id: orgId, type: IdxTypes.Org }],
   //       },
-  //       { target: [{ id: openingId, type: IndexedEntities.Opening }] },
+  //       { target: [{ id: openingId, type: IdxTypes.Opening }] },
   //       // Get the last stage
-  //       { target: [{ id: undefined, type: IndexedEntities.NextStage }] },
+  //       { target: [{ id: undefined, type: IdxTypes.NextStage }] },
   //     ],
   //   });
   // } catch (error) {
@@ -87,10 +87,10 @@ export const createStage = async (req: Request, res: Response) => {
   // let newStage = new Stage({
   //   name: GSI1SK,
   //   target: [
-  //     { id: opening.id, type: IndexedEntities.Opening },
-  //     { id: orgId, type: IndexedEntities.Org },
-  //     { id: undefined, type: IndexedEntities.PreviousStage },
-  //     { id: undefined, type: IndexedEntities.NextStage },
+  //     { id: opening.id, type: IdxTypes.Opening },
+  //     { id: orgId, type: IdxTypes.Org },
+  //     { id: undefined, type: IdxTypes.PreviousStage },
+  //     { id: undefined, type: IdxTypes.NextStage },
   //   ],
   // });
 
@@ -109,22 +109,22 @@ export const createStage = async (req: Request, res: Response) => {
   // if (lastStage) {
   //   // Set the last stage's nextStage to be our newly created stage
   //   const indexOfNextStage = lastStage.target.findIndex(
-  //     (item) => item.type === IndexedEntities.NextStage,
+  //     (item) => item.type === IdxTypes.NextStage,
   //   );
   //   // Cannot use .id as it returns undefined after creating a new entity
   //   lastStage.target[indexOfNextStage] = {
   //     id: newStage._id.toString(),
-  //     type: IndexedEntities.NextStage,
+  //     type: IdxTypes.NextStage,
   //   };
 
   //   const indexOfPreviousStage = newStage.target.findIndex(
-  //     (item) => item.type === IndexedEntities.PreviousStage,
+  //     (item) => item.type === IdxTypes.PreviousStage,
   //   );
 
   //   // Set our new stage's previousStage to be the last stage
   //   newStage.target[indexOfPreviousStage] = {
   //     id: lastStage.id,
-  //     type: IndexedEntities.PreviousStage,
+  //     type: IdxTypes.PreviousStage,
   //   };
 
   //   entityManager.persist(lastStage);

@@ -5,7 +5,7 @@ import { NewPageHeader } from '../PageHeader';
 import { Login } from '../Login';
 import { SignedInNav } from '../SignedInNavbar';
 import { findInTargetArray } from '../../utils/findInTargetArray';
-import { IndexedEntities } from '../../types/main';
+import { IdxTypes } from '../../types/main';
 import { Loader } from '../Loader';
 
 interface NewPageProps {
@@ -27,14 +27,14 @@ export const NewPageLayout = ({
   if (isUserLoading) {
     return <Loader text="Loading user..."></Loader>;
   }
-  
+
   if (isUserError) {
     return <Login loggedOutPageText={loggedOutPageText} />;
   }
 
   const currentNavItem = NAVBAR_NAVIGATION.find((navItem) => navItem.name === currentNavbarItem);
 
-  const orgId = findInTargetArray({ entity: IndexedEntities.Org, targetArray: user.target });
+  const orgId = findInTargetArray({ entity: IdxTypes.Org, targetArray: user.target });
   // Redirect on no org
   // TODO i believe this is triggering twice...
   if (currentNavItem.hiddenIfNoOrg && !orgId) {

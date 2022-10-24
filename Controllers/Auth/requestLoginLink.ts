@@ -104,8 +104,8 @@ export const requestLoginLink = async (req: Request, res: Response) => {
         emailVerified: false,
         canReceiveEmails: false,
         target: [
-          { type: IdxTypes.Email, value: email },
-          { type: IdxTypes.Org, value: null },
+          { type: IdxTypes.Org, value: email },
+          { type: IdxTypes.Email, value: null },
           { type: IdxTypes.Id, value: customId },
         ],
       };
@@ -124,7 +124,7 @@ export const requestLoginLink = async (req: Request, res: Response) => {
 
   return res.status(200).json(user);
 
-  // const userEmail = findInTargetArray({ entity: IndexedEntities.Email, targetArray: user.target });
+  // const userEmail = findInTargetArray({ entity: IdxTypes.Email, targetArray: user.target });
   // console.log(`User created, finding in target array`, userEmail);
   // // TODO add a test for this @jest
   // if (!user.canReceiveEmails) {

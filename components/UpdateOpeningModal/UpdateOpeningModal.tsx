@@ -7,12 +7,12 @@ import useStore from '../../utils/store';
 import { OpeningState } from '../../Config';
 import { Opening } from '../../entities';
 import { findInTargetArray } from '../../utils/findInTargetArray';
-import { IndexedEntities } from '../../types/main';
+import { IdxTypes } from '../../types/main';
 
 export const UpdateOpeningModal = ({ opening }: { opening: Opening }) => {
   const [openingName, setOpeningName] = useState(opening?.name);
   const openingState = findInTargetArray({
-    entity: IndexedEntities.OpeningState,
+    entity: IdxTypes.OpeningState,
     targetArray: opening.target,
   });
   const [GSI1SK, setGSI1SK] = useState('');

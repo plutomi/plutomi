@@ -12,7 +12,7 @@ import { Loader } from '../Loader/Loader';
 import { UpdateUserProfileModal } from '../UpdateUserInfoModal';
 import { nameIsDefault } from '../../utils/compareStrings/nameIsDefault';
 import { findInTargetArray } from '../../utils/findInTargetArray';
-import { IndexedEntities } from '../../types/main';
+import { IdxTypes } from '../../types/main';
 
 export const DashboardPageContent = () => {
   const { user, isUserLoading, isUserError } = useSelf();
@@ -21,7 +21,7 @@ export const DashboardPageContent = () => {
 
   if (isUserLoading) return <Loader text="Loading user..." />;
 
-  const orgId = findInTargetArray({ entity: IndexedEntities.Org, targetArray: user.target });
+  const orgId = findInTargetArray({ entity: IdxTypes.Org, targetArray: user.target });
   const { org, isOrgLoading, isOrgError } = useOrgInfo({
     orgId,
   });

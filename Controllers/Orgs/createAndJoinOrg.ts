@@ -3,7 +3,7 @@ import Joi from 'joi';
 import { JOI_SETTINGS, JoiOrgId } from '../../Config';
 import * as CreateError from '../../utils/createError';
 // import { Org } from '../../entities';
-import { IndexedEntities } from '../../types/main';
+import { IdxTypes } from '../../types/main';
 
 interface aa {
   orgId: string;
@@ -79,10 +79,10 @@ export const createAndJoinOrg = async (req: Request, res: Response) => {
   // const newOrg = new Org({
   //   orgId,
   //   displayName,
-  //   target: [{ id: user.id, type: IndexedEntities.CreatedBy }],
+  //   target: [{ id: user.id, type: IdxTypes.CreatedBy }],
   // });
 
-  // user.target.push({ id: orgId, type: IndexedEntities.Org });
+  // user.target.push({ id: orgId, type: IdxTypes.Org });
   // user.orgJoinDate = new Date();
   // entityManager.persist(newOrg);
   // entityManager.persist(user);

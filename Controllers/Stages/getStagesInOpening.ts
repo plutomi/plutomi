@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import { IndexedEntities } from '../../types/main';
+import { IdxTypes } from '../../types/main';
 import { findInTargetArray } from '../../utils/findInTargetArray';
 import { sortStages } from '../../utils/sortStages';
 
@@ -7,7 +7,7 @@ export const getStagesInOpening = async (req: Request, res: Response) => {
   const { user } = req;
 
   return res.status(200).json({ message: 'Endpoint temp disabled' });
-  // const orgId = findInTargetArray({ entity: IndexedEntities.Org, targetArray: user.target });
+  // const orgId = findInTargetArray({ entity: IdxTypes.Org, targetArray: user.target });
   // const { openingId } = req.params;
 
   // let opening: Opening;
@@ -15,7 +15,7 @@ export const getStagesInOpening = async (req: Request, res: Response) => {
   // try {
   //   opening = await entityManager.findOne(Opening, {
   //     id: openingId,
-  //     $and: [{ target: { id: orgId, type: IndexedEntities.Org } }],
+  //     $and: [{ target: { id: orgId, type: IdxTypes.Org } }],
   //   });
   // } catch (error) {
   //   const message = 'An error ocurred retrieving opening info';
@@ -32,8 +32,8 @@ export const getStagesInOpening = async (req: Request, res: Response) => {
   // try {
   //   allStages = await entityManager.find(Stage, {
   //     $and: [
-  //       { target: { id: orgId, type: IndexedEntities.Org } },
-  //       { target: { id: openingId, type: IndexedEntities.Opening } },
+  //       { target: { id: orgId, type: IdxTypes.Org } },
+  //       { target: { id: openingId, type: IdxTypes.Opening } },
   //     ],
   //   });
 

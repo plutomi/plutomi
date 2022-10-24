@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 // import { Org } from '../../entities';
-import { IndexedEntities } from '../../types/main';
+import { IdxTypes } from '../../types/main';
 import { findInTargetArray } from '../../utils/findInTargetArray';
 
 export const leaveAndDeleteOrg = async (req: Request, res: Response) => {
@@ -8,7 +8,7 @@ export const leaveAndDeleteOrg = async (req: Request, res: Response) => {
 
   return res.status(200).json({ message: 'Endpoint temp disabled' });
 
-  // const orgId = findInTargetArray({ entity: IndexedEntities.Org, targetArray: user.target });
+  // const orgId = findInTargetArray({ entity: IdxTypes.Org, targetArray: user.target });
 
   // let org: Org;
 
@@ -31,7 +31,7 @@ export const leaveAndDeleteOrg = async (req: Request, res: Response) => {
   // }
 
   // user.orgJoinDate = undefined;
-  // const indexOfOrg = user.target.findIndex((item) => item.type === IndexedEntities.Org);
+  // const indexOfOrg = user.target.findIndex((item) => item.type === IdxTypes.Org);
   // user.target.splice(indexOfOrg, 1); // Removing the org from the user
   // user.orgJoinDate = undefined;
   // entityManager.remove(org); // TODO cascading deletions!

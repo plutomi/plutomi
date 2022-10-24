@@ -2,7 +2,7 @@ import { EventBridgeEvent } from 'aws-lambda';
 import axios from 'axios';
 import { Entities } from '../../Config';
 // import { Opening, Stage } from '../../entities';
-import { IndexedEntities } from '../../types/main';
+import { IdxTypes } from '../../types/main';
 import { findInTargetArray } from '../../utils/findInTargetArray';
 import { CustomEventBridgeEvent } from '../stream-processor';
 
@@ -26,13 +26,13 @@ import { CustomEventBridgeEvent } from '../stream-processor';
  */
 export async function main(event: EventBridgeEvent<'stream', CustomEventBridgeEvent>) {
   console.log('Incoming event: ', JSON.stringify(event));
-  const deletedEntity = event.detail.OldImage ;
+  const deletedEntity = event.detail.OldImage;
   const orgId = findInTargetArray({
-    entity: IndexedEntities.Org,
+    entity: IdxTypes.Org,
     targetArray: deletedEntity.target,
   });
   const openingState = findInTargetArray({
-    entity: IndexedEntities.OpeningState,
+    entity: IdxTypes.OpeningState,
     targetArray: deletedEntity.target,
   });
 
@@ -57,8 +57,8 @@ export async function main(event: EventBridgeEvent<'stream', CustomEventBridgeEv
   //   try {
   //     stagesToDelete = await entityManager.find(Stage, {
   //       $and: [
-  //         { target: { id: orgId, type: IndexedEntities.Org } },
-  //         { target: { id: deletedEntity.id, type: IndexedEntities.Opening } },
+  //         { target: { id: orgId, type: IdxTypes.Org } },
+  //         { target: { id: deletedEntity.id, type: IdxTypes.Opening } },
   //       ],
   //     });
   //   } catch (error) {

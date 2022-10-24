@@ -4,7 +4,7 @@ import { useRouter } from 'next/router';
 import { useSelf } from '../../SWR/useSelf';
 import { useOpeningInfo } from '../../SWR/useOpeningInfo';
 import { useOpeningsInOrg } from '../../SWR/useOpeningsInOrg';
-import { CustomQuery, IndexedEntities } from '../../types/main';
+import { CustomQuery, IdxTypes } from '../../types/main';
 import { OpeningState, WEBSITE_URL } from '../../Config';
 import { OpeningsDropdown } from '../OpeningsDropdown';
 import { ClickToCopy } from '../ClickToCopy';
@@ -24,9 +24,9 @@ export const ApplicantsPageHeader = () => {
   if (isOpeningLoading || isOpeningsInOrgLoading)
     return <Loader text="Loading opening(s) info..."></Loader>;
 
-  const orgId = findInTargetArray({ entity: IndexedEntities.Org, targetArray: opening.target });
+  const orgId = findInTargetArray({ entity: IdxTypes.Org, targetArray: opening.target });
   const openingState = findInTargetArray({
-    entity: IndexedEntities.OpeningState,
+    entity: IdxTypes.OpeningState,
     targetArray: opening.target,
   });
 

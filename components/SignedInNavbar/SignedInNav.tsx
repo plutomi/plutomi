@@ -12,7 +12,7 @@ import combineClassNames from '../../utils/combineClassNames';
 import { Banner } from '../Banner';
 import { NavbarSearch } from '../NavbarSearch';
 import { findInTargetArray } from '../../utils/findInTargetArray';
-import { IndexedEntities } from '../../types/main';
+import { IdxTypes } from '../../types/main';
 
 interface SignedInNavProps {
   current: string;
@@ -38,11 +38,11 @@ export const SignedInNav = ({ current }: SignedInNavProps) => {
 
   if (user) {
     userEmail = findInTargetArray({
-      entity: IndexedEntities.Email,
+      entity: IdxTypes.Email,
       targetArray: user.target,
     });
     orgId = findInTargetArray({
-      entity: IndexedEntities.Org,
+      entity: IdxTypes.Org,
       targetArray: user.target,
     });
   }

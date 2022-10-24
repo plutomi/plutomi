@@ -1,12 +1,12 @@
 import { Request, Response } from 'express';
 // import { Opening, Stage } from '../../entities';
-import { IndexedEntities } from '../../types/main';
+import { IdxTypes } from '../../types/main';
 import { findInTargetArray } from '../../utils/findInTargetArray';
 
 export const deleteStage = async (req: Request, res: Response) => {
   const { user } = req;
   const { openingId, stageId } = req.params;
-  // const orgId = findInTargetArray({ entity: IndexedEntities.Org, targetArray: user.target });
+  // const orgId = findInTargetArray({ entity: IdxTypes.Org, targetArray: user.target });
 
   return res.status(200).json({ message: 'Endpoint temp disabled' });
   // let opening: Opening;
@@ -14,7 +14,7 @@ export const deleteStage = async (req: Request, res: Response) => {
   // try {
   //   opening = await entityManager.findOne(Opening, {
   //     id: openingId,
-  //     $and: [{ target: { id: orgId, type: IndexedEntities.Org } }],
+  //     $and: [{ target: { id: orgId, type: IdxTypes.Org } }],
   //   });
   // } catch (error) {
   //   const message = 'An error ocurred finding opening info';
@@ -34,8 +34,8 @@ export const deleteStage = async (req: Request, res: Response) => {
   //   ourStage = await entityManager.findOne(Stage, {
   //     id: stageId,
   //     $and: [
-  //       { target: { id: orgId, type: IndexedEntities.Org } },
-  //       { target: { id: opening.id, type: IndexedEntities.Opening } },
+  //       { target: { id: orgId, type: IdxTypes.Org } },
+  //       { target: { id: opening.id, type: IdxTypes.Opening } },
   //     ],
   //   });
   // } catch (error) {
@@ -51,12 +51,12 @@ export const deleteStage = async (req: Request, res: Response) => {
   // }
 
   // const oldPreviousStageId = findInTargetArray({
-  //   entity: IndexedEntities.PreviousStage,
+  //   entity: IdxTypes.PreviousStage,
   //   targetArray: ourStage.target,
   // });
 
   // const oldNextStageId = findInTargetArray({
-  //   entity: IndexedEntities.NextStage,
+  //   entity: IdxTypes.NextStage,
   //   targetArray: ourStage.target,
   // });
 
@@ -69,25 +69,25 @@ export const deleteStage = async (req: Request, res: Response) => {
   //     oldPreviousStage = await entityManager.findOne(Stage, {
   //       id: oldPreviousStageId,
   //       $and: [
-  //         { target: { id: orgId, type: IndexedEntities.Org } },
-  //         { target: { id: openingId, type: IndexedEntities.Opening } },
+  //         { target: { id: orgId, type: IdxTypes.Org } },
+  //         { target: { id: openingId, type: IdxTypes.Opening } },
   //       ],
   //     });
 
   //     const oldPreviousStageNextStageIndex = oldPreviousStage.target.findIndex(
-  //       (item) => item.type === IndexedEntities.NextStage,
+  //       (item) => item.type === IdxTypes.NextStage,
   //     );
 
   //     if (oldNextStageId) {
   //       // Set the previous stage's next stage Id to be the stage that is being deleted's next stage Id
   //       oldPreviousStage.target[oldPreviousStageNextStageIndex] = {
   //         id: oldNextStageId,
-  //         type: IndexedEntities.NextStage,
+  //         type: IdxTypes.NextStage,
   //       };
   //     } else {
   //       oldPreviousStage.target[oldPreviousStageNextStageIndex] = {
   //         id: undefined,
-  //         type: IndexedEntities.NextStage,
+  //         type: IdxTypes.NextStage,
   //       };
   //     }
 
@@ -104,25 +104,25 @@ export const deleteStage = async (req: Request, res: Response) => {
   //     oldNextStage = await entityManager.findOne(Stage, {
   //       id: oldNextStageId,
   //       $and: [
-  //         { target: { id: orgId, type: IndexedEntities.Org } },
-  //         { target: { id: openingId, type: IndexedEntities.Opening } },
+  //         { target: { id: orgId, type: IdxTypes.Org } },
+  //         { target: { id: openingId, type: IdxTypes.Opening } },
   //       ],
   //     });
 
   //     const oldNextStagePreviousStageIndex = oldNextStage.target.findIndex(
-  //       (item) => item.type === IndexedEntities.PreviousStage,
+  //       (item) => item.type === IdxTypes.PreviousStage,
   //     );
 
   //     if (oldPreviousStage) {
   //       // Set the next stage's previous stage Id to be the stage that is being deleted's previous stage Id
   //       oldNextStage.target[oldNextStagePreviousStageIndex] = {
   //         id: oldPreviousStageId,
-  //         type: IndexedEntities.PreviousStage,
+  //         type: IdxTypes.PreviousStage,
   //       };
   //     } else {
   //       oldNextStage.target[oldNextStagePreviousStageIndex] = {
   //         id: undefined,
-  //         type: IndexedEntities.PreviousStage,
+  //         type: IdxTypes.PreviousStage,
   //       };
   //     }
 

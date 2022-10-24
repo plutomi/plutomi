@@ -3,7 +3,7 @@ import Joi from 'joi';
 import { JOI_SETTINGS, LIMITS } from '../../Config';
 // import { DynamoStage } from '../../types/dynamo';
 import * as CreateError from '../../utils/createError';
-import { IndexedEntities } from '../../types/main';
+import { IdxTypes } from '../../types/main';
 import { findInTargetArray } from '../../utils/findInTargetArray';
 import { getAdjacentStagesBasedOnPosition, sortStages } from '../../utils/sortStages';
 
@@ -30,7 +30,7 @@ export const updateStage = async (req: Request, res: Response) => {
   // const { openingId, stageId } = req.params;
 
   // const orgId = findInTargetArray({
-  //   entity: IndexedEntities.Org,
+  //   entity: IdxTypes.Org,
   //   targetArray: user.target,
   // });
 
@@ -39,8 +39,8 @@ export const updateStage = async (req: Request, res: Response) => {
   //   stage = await entityManager.findOne(Stage, {
   //     id: stageId,
   //     $and: [
-  //       { target: { id: openingId, type: IndexedEntities.Opening } },
-  //       { target: { id: orgId, type: IndexedEntities.Org } },
+  //       { target: { id: openingId, type: IdxTypes.Opening } },
+  //       { target: { id: orgId, type: IdxTypes.Org } },
   //     ],
   //   });
   // } catch (error) {
@@ -90,8 +90,8 @@ export const updateStage = async (req: Request, res: Response) => {
   //   try {
   //     allStagesInOpening = await entityManager.find(Stage, {
   //       $and: [
-  //         { target: { id: orgId, type: IndexedEntities.Org } },
-  //         { target: { id: openingId, type: IndexedEntities.Opening } },
+  //         { target: { id: orgId, type: IdxTypes.Org } },
+  //         { target: { id: openingId, type: IdxTypes.Opening } },
   //       ],
   //     });
 
@@ -116,12 +116,12 @@ export const updateStage = async (req: Request, res: Response) => {
   //      */
 
   //     const oldPreviousStageId = findInTargetArray({
-  //       entity: IndexedEntities.PreviousStage,
+  //       entity: IdxTypes.PreviousStage,
   //       targetArray: stage.target,
   //     });
 
   //     const oldNextStageId = findInTargetArray({
-  //       entity: IndexedEntities.NextStage,
+  //       entity: IdxTypes.NextStage,
   //       targetArray: stage.target,
   //     });
 
@@ -138,7 +138,7 @@ export const updateStage = async (req: Request, res: Response) => {
   //       oldPreviousStage = allStagesInOpening.find((stage) => stage.id === oldPreviousStageId);
 
   //       oldPreviousStagesNextStageIndex = oldPreviousStage.target.findIndex(
-  //         (item) => item.type === IndexedEntities.NextStage,
+  //         (item) => item.type === IdxTypes.NextStage,
   //       );
 
   //       /**
@@ -150,7 +150,7 @@ export const updateStage = async (req: Request, res: Response) => {
   //        * Stage 3 --- Stage 2 <-- Moved
   //        */
   //       oldPreviousStage.target[oldPreviousStagesNextStageIndex] = stage.target.find(
-  //         (item) => item.type === IndexedEntities.NextStage,
+  //         (item) => item.type === IdxTypes.NextStage,
   //       );
   //     } else {
   //       /**
@@ -173,7 +173,7 @@ export const updateStage = async (req: Request, res: Response) => {
   //       oldNextStage = allStagesInOpening.find((stage) => stage.id === oldNextStageId);
 
   //       oldNextStagesPreviousStageIndex = oldNextStage.target.findIndex(
-  //         (item) => item.type === IndexedEntities.PreviousStage,
+  //         (item) => item.type === IdxTypes.PreviousStage,
   //       );
 
   //       /**
@@ -186,7 +186,7 @@ export const updateStage = async (req: Request, res: Response) => {
   //        *
   //        */
   //       oldNextStage.target[oldNextStagesPreviousStageIndex] = stage.target.find(
-  //         (item) => item.type === IndexedEntities.PreviousStage,
+  //         (item) => item.type === IdxTypes.PreviousStage,
   //       );
   //     } else {
   //       /**
@@ -208,14 +208,14 @@ export const updateStage = async (req: Request, res: Response) => {
   //     if (oldPreviousStage && updateOldPreviousStage) {
   //       oldPreviousStage.target[oldPreviousStagesNextStageIndex] = {
   //         id: undefined,
-  //         type: IndexedEntities.NextStage,
+  //         type: IdxTypes.NextStage,
   //       };
   //     }
 
   //     if (oldNextStage && updateOldNextStage) {
   //       oldNextStage.target[oldNextStagesPreviousStageIndex] = {
   //         id: undefined,
-  //         type: IndexedEntities.PreviousStage,
+  //         type: IdxTypes.PreviousStage,
   //       };
   //     }
 
@@ -254,27 +254,27 @@ export const updateStage = async (req: Request, res: Response) => {
   //      */
 
   //     const indexOfNextStage = stage.target.findIndex(
-  //       (item) => item.type === IndexedEntities.NextStage,
+  //       (item) => item.type === IdxTypes.NextStage,
   //     );
 
   //     if (newNextStageId) {
-  //       stage.target[indexOfNextStage] = { id: newNextStageId, type: IndexedEntities.NextStage };
+  //       stage.target[indexOfNextStage] = { id: newNextStageId, type: IdxTypes.NextStage };
 
   //       const newNextStage = allStagesInOpening.find((stage) => stage.id === newNextStageId);
 
   //       const nextStagePreviousStageIndex = newNextStage.target.findIndex(
-  //         (item) => item.type === IndexedEntities.PreviousStage,
+  //         (item) => item.type === IdxTypes.PreviousStage,
   //       );
 
   //       newNextStage.target[nextStagePreviousStageIndex] = {
   //         id: stage.id,
-  //         type: IndexedEntities.PreviousStage,
+  //         type: IdxTypes.PreviousStage,
   //       };
   //       entityManager.persist(stage);
   //       entityManager.persist(newNextStage);
   //     } else {
   //       // If there is no new next stage, our stage is being placed at the end. Next stage is therefore undefined!
-  //       stage.target[indexOfNextStage] = { id: undefined, type: IndexedEntities.NextStage };
+  //       stage.target[indexOfNextStage] = { id: undefined, type: IdxTypes.NextStage };
   //       entityManager.persist(stage);
   //     }
 
@@ -292,31 +292,31 @@ export const updateStage = async (req: Request, res: Response) => {
   //      */
 
   //     const indexOfPreviousStage = stage.target.findIndex(
-  //       (item) => item.type === IndexedEntities.PreviousStage,
+  //       (item) => item.type === IdxTypes.PreviousStage,
   //     );
 
   //     if (newPreviousStageId) {
   //       stage.target[indexOfPreviousStage] = {
   //         id: newPreviousStageId,
-  //         type: IndexedEntities.PreviousStage,
+  //         type: IdxTypes.PreviousStage,
   //       };
 
   //       const newPreviousStage = allStagesInOpening.find(
   //         (stage) => stage.id === newPreviousStageId,
   //       );
   //       const previousStageNextStageIndex = newPreviousStage.target.findIndex(
-  //         (item) => item.type === IndexedEntities.NextStage,
+  //         (item) => item.type === IdxTypes.NextStage,
   //       );
 
   //       newPreviousStage.target[previousStageNextStageIndex] = {
   //         id: stage.id,
-  //         type: IndexedEntities.NextStage,
+  //         type: IdxTypes.NextStage,
   //       };
   //       entityManager.persist(stage);
   //       entityManager.persist(newPreviousStage);
   //     } else {
   //       // If there is no previous stage, our stage is therefore at the beginning and previous stage is undefined!
-  //       stage.target[indexOfPreviousStage] = { id: undefined, type: IndexedEntities.PreviousStage };
+  //       stage.target[indexOfPreviousStage] = { id: undefined, type: IdxTypes.PreviousStage };
   //       entityManager.persist(stage);
   //     }
 

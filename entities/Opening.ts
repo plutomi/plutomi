@@ -1,5 +1,5 @@
 // import { Entity, Index, Property } from '@mikro-orm/core';
-// import type { IndexedTargetArray, IndexedEntities } from '../types/main';
+// import type { IndexedTargetArray, IdxTypes } from '../types/main';
 // import { BaseEntity } from './BaseEntity';
 // import { OpeningState } from '../Config';
 
@@ -22,7 +22,7 @@
 //    *
 //    * {@link OpeningState} - You can make Openings {@link OpeningState.Public} or {@link OpeningState.Private}
 //    *
-//    *  Org - @string - ID of the org this opening belongs to. Type of {@link IndexedEntities.Org}
+//    *  Org - @string - ID of the org this opening belongs to. Type of {@link IdxTypes.Org}
 //    */
 //   @Property({ type: 'array' })
 //   target: IndexedTargetArray;

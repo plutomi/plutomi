@@ -1,5 +1,5 @@
 // import { Entity, Index, Property } from '@mikro-orm/core';
-// import type { IndexedTargetArray, IndexedEntities } from '../types/main';
+// import type { IndexedTargetArray, IdxTypes } from '../types/main';
 // import { BaseEntity } from './BaseEntity';
 
 // export type StageConstructorValues = Pick<Stage, 'name' | 'target'>;
@@ -22,13 +22,13 @@
 //   /**
 //    * Indexed target array for the stage. Indexed properties are:
 //    *
-//    *  NextStage - @string - If it exists, it's the ID of the stage that comes *after* this stage.  Type of {@link IndexedEntities.NextStage}
+//    *  NextStage - @string - If it exists, it's the ID of the stage that comes *after* this stage.  Type of {@link IdxTypes.NextStage}
 //    *
-//    *  PreviousStage - @string  - If it exists, it's the ID of the stage that comes *before* this stage.  Type of {@link IndexedEntities.PreviousStage}
+//    *  PreviousStage - @string  - If it exists, it's the ID of the stage that comes *before* this stage.  Type of {@link IdxTypes.PreviousStage}
 //    *
-//    *  Org - @string - ID of the org this stage belongs to.  {@link IndexedEntities.Org}
+//    *  Org - @string - ID of the org this stage belongs to.  {@link IdxTypes.Org}
 //    *
-//    *  Opening - @string - ID of the opening this stage belongs to. Type of {@link IndexedEntities.Opening}
+//    *  Opening - @string - ID of the opening this stage belongs to. Type of {@link IdxTypes.Opening}
 //    */
 //   @Property({ type: 'array' })
 //   target: IndexedTargetArray;
