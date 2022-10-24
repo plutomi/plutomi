@@ -1,7 +1,7 @@
 import { IndexedEntities } from '../types/main';
 import { BaseEntity } from './Base';
 
-type UserIndexedProperties = Extract<IndexedEntities, 'Org' | 'Email' | 'Id'>;
+type UserIndexedProperties = 'Org' | 'Email' | 'Id';
 type UserTargetArrayItem = { type: UserIndexedProperties; value: string | null };
 export type UserTargetArray = Array<UserTargetArrayItem>;
 

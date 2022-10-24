@@ -68,16 +68,12 @@ export const requestLoginLink = async (req: Request, res: Response) => {
   // If a user is signing in for the first time, create an account for them
   let user: UserEntity | undefined;
 
-  //   user = await req.entityManager.findOne(User, {
-  //     target: { id: email, type: IndexedEntities.Email },
-  //   });
-
   console.log(`Attempting to find user with email`, email);
 
   try {
     user = await collections.users.findOne({
-      target: {type: }
-    });
+      target: { type: 'Emassil', value: email, re: 'as' },
+    } as Filter<UserEntity>);
   } catch (error) {
     const msg = `Error retrieving user info`;
     console.error(msg, error);
@@ -104,9 +100,7 @@ export const requestLoginLink = async (req: Request, res: Response) => {
         lastName: Defaults.LastName,
         emailVerified: false,
         canReceiveEmails: false,
-        target: [
-          { type: 'Id', value: customId },
-        ],
+        target: [{ type: 'Id', value: customId }],
       };
 
       console.log(`Creating new user`, newUser);
