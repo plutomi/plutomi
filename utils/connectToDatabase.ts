@@ -46,11 +46,12 @@ export async function connectToDatabase() {
   collections.webhooks = webhooksCollection;
   collections.applicants = applicantsCollection;
 
+  // TODO create index on shardKey
   console.log(`Creating necessary indexes`);
   const allCollections = Object.values(collections).map(async (collection) => {
     try {
       console.log(`Creating target index on ${collection.collectionName}`);
-      await collection.createIndex(indexKey, indexOptions);
+      await collection.createIndex(indexKey);
     } catch (error) {
       console.error(`Error creating index!`, error);
     }
