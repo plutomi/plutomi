@@ -4,7 +4,7 @@ import { Extends } from '../@types/extends';
 
 export type OpeningTargetArray = Array<
   Omit<IndexedTargetArrayItem, 'property'> & {
-    property: Extends<keyof typeof IndexableProperties, 'Id' | 'OpeningState'>;
+    property: Extends<keyof typeof IndexableProperties, 'Id' | 'OpeningState' | 'Org'>;
   }
 >;
 
