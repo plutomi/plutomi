@@ -2,7 +2,7 @@ import { Request, Response } from 'express';
 import emailValidator from 'deep-email-validator';
 import * as crypto from 'crypto';
 import Joi from 'joi';
-import { Filter } from 'mongodb';
+import { Filter, FindOptions } from 'mongodb';
 import { nanoid } from 'nanoid';
 import {
   Defaults,
@@ -139,15 +139,17 @@ export const requestLoginLink = async (req: Request, res: Response) => {
       value: findInTargetArray(IndexableProperties.Id, user),
     },
   };
-  console.log('Filter', loginLinkFilter);
+
+  const loginLinkFindOptions: FindOptions<UserLoginLinkEntity> = {
+    sort: {
+      createdAt: -1,
+    },
+    limit: 1,
+  };
+
   try {
     const latestLinkArray = await collections.loginLinks
-      .find(loginLinkFilter, {
-        sort: {
-          createdAt: -1,
-        },
-        limit: 1,
-      })
+      .find(loginLinkFilter, loginLinkFindOptions)
       .toArray();
 
     latestLoginLink = latestLinkArray[0] as UserLoginLinkEntity;
