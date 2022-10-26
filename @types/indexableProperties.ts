@@ -1,20 +1,22 @@
 import { UserTargetArray } from '../models';
 
 export enum IndexableProperties {
+  /**
+   * Self referential ID of the entity, can also be a custom ID that is not Mongo's _id
+   */
+  Id = 'Id',
   User = 'User',
+  UserLoginLink = 'UserLoginLink',
   Org = 'Org',
   OrgInvite = 'OrgInvite',
   Opening = 'Opening',
   OpeningState = 'OpeningState',
   Stage = 'Stage',
-  UserLoginLink = 'UserLoginLink',
+  PreviousStage = 'PreviousStage',
+  NextStage = 'NextStage',
   Question = 'Question',
   Webhook = 'Webhook',
   Email = 'Email',
-  CreatedBy = 'CreatedBy',
-  PreviousStage = 'PreviousStage',
-  NextStage = 'NextStage',
-  Id = 'Id',
   CreatedAt = 'CreatedAt',
   UpdatedAt = 'UpdatedAt',
   ExpiresAt = 'ExpiresAt',

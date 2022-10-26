@@ -14,9 +14,12 @@ export const collections: {
   applicants?: mongoDB.Collection;
 } = {};
 
-export async function connectToDatabase() {
-  const client: mongoDB.MongoClient = new mongoDB.MongoClient(env.mongoConnection);
+let mongoClient: mongoDB.MongoClient | undefined;
 
+export async function connectToDatabase() {
+  const client = new mongoDB.MongoClient(env.mongoConnection);
+
+  mongoClient = client;
   try {
     console.log('Attempting to connect to MongoDB.');
     await client.connect();
@@ -60,3 +63,5 @@ export async function connectToDatabase() {
 
   console.log(`Successfully connected to database: ${db.databaseName}.`);
 }
+
+export { mongoClient };

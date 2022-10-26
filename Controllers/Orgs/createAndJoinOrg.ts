@@ -3,6 +3,12 @@ import Joi from 'joi';
 import { JOI_SETTINGS, JoiOrgId } from '../../Config';
 import * as CreateError from '../../utils/createError';
 // import { Org } from '../../entities';
+import { Filter, FindOptions, UpdateFilter } from 'mongodb';
+import { OrgEntity, UserEntity } from '../../models';
+import { collections } from '../../utils/connectToDatabase';
+import { IndexableProperties } from '../../@types/indexableProperties';
+import { mongoClient } from '../../utils/connectToDatabase';
+import { findInTargetArray } from '../../utils/findInTargetArray';
 
 interface aa {
   orgId: string;
@@ -27,73 +33,116 @@ export const createAndJoinOrg = async (req: Request, res: Response) => {
 
     return res.status(status).json(body);
   }
-  return res.status(200).json({ message: 'Endpoint temp disabled' });
 
-  // if (user.orgJoinDate) {
-  //   return res.status(403).json({ message: 'You already belong to an org!' });
-  // }
+  const currentUserOrg = findInTargetArray(IndexableProperties.Org, user);
 
-  // // TODO get pending invites!!!!!!!!!!
-  // // const [pendingInvites, error] = await getInvitesForUser({
-  // //   userId: user.userId,
-  // // });
+  if (user.orgJoinDate || currentUserOrg) {
+    return res.status(403).json({ message: 'You already belong to an org!' });
+  }
 
-  // // if (error) {
-  // //   const { status, body } = CreateError.SDK(
-  // //     error,
-  // //     'Unable to create org - error retrieving invites',
-  // //   );
-
-  // //   return res.status(status).json(body);
-  // // }
-
-  // // if (pendingInvites && pendingInvites.length > 0) {
-  // //   return res.status(403).json({
-  // //     message:
-  // //       'You seem to have pending invites, please accept or reject them before creating an org :)',
-  // //   });
-  // // }
-
-  // const { displayName, orgId }: APICreateOrgOptions = req.body;
-
-  // let org: Org;
-
-  // try {
-  //   org = await req.entityManager.findOne(Org, {
-  //     orgId, // TODO use target array !!!
-  //   });
-  // } catch (error) {
-  //   const message = `Error ocurred checking if that org already exists`;
-  //   console.error(message, error);
-  //   return res.status(500).json({ message, error });
-  // }
-
-  // if (org) {
-  //   return res.status(403).json({
-  //     message: `An org already exists with this ID ('${orgId}'), please choose another!`,
-  //   });
-  // }
-
-  // // TODO make this a transaction
-  // const newOrg = new Org({
-  //   orgId,
-  //   displayName,
-  //   target: [{ id: user.id, type: IdxTypes.CreatedBy }],
+  // TODO get pending invites!!!!!!!!!!
+  // const [pendingInvites, error] = await getInvitesForUser({
+  //   userId: user.userId,
   // });
 
-  // user.target.push({ id: orgId, type: IdxTypes.Org });
-  // user.orgJoinDate = new Date();
-  // entityManager.persist(newOrg);
-  // entityManager.persist(user);
+  // if (error) {
+  //   const { status, body } = CreateError.SDK(
+  //     error,
+  //     'Unable to create org - error retrieving invites',
+  //   );
 
-  // try {
-  //   await entityManager.flush();
-
-  //   console.log(`saved user with new org`);
-  //   return res.status(201).json({ message: 'Org created!', org: newOrg });
-  // } catch (error) {
-  //   const message = 'Error ocurred creating the org';
-  //   console.error(message, error);
-  //   return res.status(500).json({ message, error });
+  //   return res.status(status).json(body);
   // }
+
+  // if (pendingInvites && pendingInvites.length > 0) {
+  //   return res.status(403).json({
+  //     message:
+  //       'You seem to have pending invites, please accept or reject them before creating an org :)',
+  //   });
+  // }
+
+  const { displayName, orgId }: APICreateOrgOptions = req.body;
+
+  let org: OrgEntity | undefined;
+
+  const orgFilter: Filter<OrgEntity> = {
+    target: { property: IndexableProperties.Id, value: orgId },
+  };
+  try {
+    org = (await collections.orgs.findOne(orgFilter)) as OrgEntity;
+  } catch (error) {
+    const msg = `Error ocurred checking if that org already exists`;
+    console.error(msg, error);
+    return res.status(500).json({ msg, error });
+  }
+
+  if (org) {
+    return res.status(403).json({
+      message: `An org already exists with this ID ('${orgId}'), please choose another!`,
+    });
+  }
+
+  const userFilter: Filter<UserEntity> = {
+    $and: [
+      {
+        target: {
+          property: IndexableProperties.Id,
+          value: findInTargetArray(IndexableProperties.Id, req.user),
+        },
+      },
+      {
+        target: {
+          property: IndexableProperties.Org,
+          value: undefined,
+        },
+      },
+    ],
+  };
+
+  const session = mongoClient.startSession();
+
+  let transactionResults;
+  try {
+    transactionResults = await session.withTransaction(async () => {
+      const userUpdateFilter: UpdateFilter<UserEntity> = {
+        $set: { 'target.$.value': orgId, orgJoinDate: new Date() },
+      };
+
+      const updatedUser = await collections.users.updateOne(userFilter, userUpdateFilter, {
+        session,
+      });
+
+      const now = new Date();
+      const newOrg: OrgEntity = {
+        createdAt: now,
+        updatedAt: now,
+        totalStages: 0,
+        totalOpenings: 0,
+        totalApplicants: 0,
+        totalQuestions: 0,
+        totalUsers: 1,
+        totalWebhooks: 0,
+        target: [
+          {
+            property: IndexableProperties.Id,
+            value: orgId,
+          },
+        ],
+        displayName,
+      };
+      const createdOrg = await collections.orgs.insertOne(newOrg, { session });
+      console.log(`CREATED ORG`, createdOrg);
+      console.log(`NEW USER`, updatedUser);
+      await session.commitTransaction();
+    });
+  } catch (error) {
+    const msg = 'Error ocurred joining org';
+    console.error(msg, error);
+    return res.status(500).json({ message: msg });
+  } finally {
+    await session.endSession();
+  }
+
+  console.log(transactionResults);
+  return res.status(201).json({ message: 'Org created!' });
 };
