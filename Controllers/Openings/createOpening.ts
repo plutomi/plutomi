@@ -2,11 +2,14 @@ import { Request, Response } from 'express';
 import Joi from 'joi';
 import { JOI_SETTINGS, LIMITS, OpeningState } from '../../Config';
 import * as CreateError from '../../utils/createError';
-// import { DynamoOpening } from '../../types/dynamo';
-// import { Opening, Org } from '../../entities';
+import { Filter } from 'mongodb';
 import { findInTargetArray } from '../../utils/findInTargetArray';
+import { OpeningEntity } from '../../models/Opening';
+import { OrgEntity } from '../../models';
+import { IndexableProperties } from '../../@types/indexableProperties';
+import { collections } from '../../utils/connectToDatabase';
 
-// export type APICreateOpeningOptions = Required<Pick<DynamoOpening, 'openingName'>>;
+export type APICreateOpeningOptions = Required<Pick<OpeningEntity, 'name'>>;
 
 const schema = Joi.object({
   body: {
@@ -23,24 +26,28 @@ export const createOpening = async (req: Request, res: Response) => {
     return res.status(status).json(body);
   }
 
-  return res.status(200).json({ message: 'Endpoint temp disabled' });
-  // const { openingName }: APICreateOpeningOptions = req.body;
-  // const orgId = findInTargetArray({ entity: IdxTypes.Org, targetArray: user.target });
+  const { name }: APICreateOpeningOptions = req.body;
+  const orgId = findInTargetArray(IndexableProperties.Org, user);
 
-  // let org: Org | undefined;
+  let org: OrgEntity | undefined;
 
-  // try {
-  //   org = await entityManager.findOne(Org, {
-  //     orgId,
-  //   });
-  // } catch (error) {
-  //   console.error(`Error ocurred finding that org`, error);
-  //   return res.status(500).json({ message: 'An error ocurred finding that org' });
-  // }
+  const orgFilter: Filter<OrgEntity> = {
+    target: { property: IndexableProperties.Org, value: orgId },
+  };
+  try {
+    org = (await collections.orgs.findOne(orgFilter)) as OrgEntity;
+  } catch (error) {
+    const message = `An error ocurred finding that org`;
+    console.error(message, error);
+    return res.status(500).json({ message });
+  }
 
-  // if (!org) {
-  //   return res.status(404).json({ message: 'Org not found' });
-  // }
+  if (!org) {
+    return res.status(404).json({ message: 'Org not found' });
+  }
+
+
+  
   // //
   // const newOpening = new Opening({
   //   name: openingName,
