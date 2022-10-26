@@ -16,7 +16,6 @@ import {
 import * as Time from '../../utils/time';
 import * as CreateError from '../../utils/createError';
 import { env } from '../../env';
-// import { User, UserLoginLink } from '../../entities';
 import dayjs from 'dayjs';
 import { findInTargetArray } from '../../utils/findInTargetArray';
 import { collections } from '../../utils/connectToDatabase';
@@ -24,6 +23,7 @@ import { UserEntity } from '../../models';
 import { UserLoginLinkEntity } from '../../models';
 import { Filter } from 'mongodb';
 import { IndexableProperties } from '../../types/indexableProperties';
+import { sendEmail } from '../../utils/sendEmail';
 
 // TODO add types
 // https://www.npmjs.com/package/@types/jsonwebtoken
@@ -55,8 +55,7 @@ export const requestLoginLink = async (req: Request, res: Response) => {
   const { email } = req.body;
 
   console.log(`Incoming email`, email);
-  // const { email }: APIRequestLoginLinkBody = req.body;
-  // const { callbackUrl }: APIRequestLoginLinkQuery = req.query;
+  const { callbackUrl }: APIRequestLoginLinkQuery = req.query;
 
   // const emailValidation = await emailValidator({
   //   email,
@@ -166,60 +165,72 @@ export const requestLoginLink = async (req: Request, res: Response) => {
     return res.status(403).json({ message: "You're doing that too much, please try again later" });
   }
 
-  // const validFor: Time.ChangingTimeProps = {
-  //   amount: 15,
-  //   unit: TIME_UNITS.MINUTES,
-  // };
-  // const now = Time.currentUNIX();
-  // // TODO should match what is on the entity
-  // const ttlExpiry = Time.futureUNIX(validFor); // when the link expires and is deleted from Dynamo
-  // const relativeExpiry = Time.relative(Time.futureISO(validFor));
+  const validFor: Time.ChangingTimeProps = {
+    amount: 10,
+    unit: TIME_UNITS.MINUTES,
+  };
+  const now = new Date();
 
-  // console.log(`Creating a login link with THIS user`, user);
-  // console.log(`USER ID`, user.id);
-  // let token: string;
-  // // TODO types
+  const nowAsUnix = Time.currentUNIX();
+  // TODO should match what is on the entity
+  const ttlExpiry = Time.futureUNIX(validFor); // when the link expires and is deleted from Dynamo
+  const relativeExpiry = Time.relative(Time.futureISO(validFor));
 
-  // let loginLinkUrl: string;
+  console.log(`Creating a login link with THIS user`, user);
+  let token: string;
+  // TODO types
 
-  // try {
-  //   const newLoginLink = new UserLoginLink({
-  //     user,
-  //   });
-  //   await req.entityManager.persistAndFlush(newLoginLink);
+  let loginLinkUrl: string;
+  let loginLink: UserLoginLinkEntity | undefined;
+  const userId = findInTargetArray(user, IndexableProperties.Id);
 
-  //   console.log(`NEWLY CREATEDED LOGIN LINK`, newLoginLink);
+  try {
+    const newLoginLink: UserLoginLinkEntity = {
+      createdAt: now,
+      updatedAt: now,
+      target: [
+        {
+          property: IndexableProperties.User,
+          value: userId,
+        },
+      ],
+    };
+    await collections.loginLinks.insertOne(newLoginLink);
 
-  //   const tokenData = {
-  //     userId: user.id,
-  //     loginLinkId: newLoginLink._id, // TODO Using regular .id here returns undefined????     // Cannot use .id as it returns undefined after creating a new entity possible mikro-orm bug
-  //   };
+    console.log(`NEWLY CREATED LOGIN LINK`, newLoginLink);
+    loginLink = newLoginLink;
 
-  //   console.log(`TOKIEN DATA WHEN CREATING IT`, tokenData);
-  //   token = await jwt.sign(tokenData, env.loginLinksPassword, { expiresIn: ttlExpiry - now });
+    // TODO types
+    const tokenData = {
+      userId: userId,
+      loginLinkId: newLoginLink._id,
+    };
 
-  //   // TODO enums
-  //   loginLinkUrl = `${API_URL}/auth/login?token=${token}&callbackUrl=${
-  //     callbackUrl || `${WEBSITE_URL}/${Defaults.Redirect}`
-  //   }`;
-  // } catch (error) {
-  //   console.error(`An error ocurred creating your login link`);
-  //   return res.status(500).json({ message: 'An error ocurred creating your login link' });
-  // }
+    console.log(`TOKIEN DATA WHEN CREATING IT`, tokenData);
+    token = await jwt.sign(tokenData, env.loginLinksPassword, { expiresIn: ttlExpiry - nowAsUnix });
 
-  // try {
-  //   await sendEmail({
-  //     to: userEmail,
-  //     from: {
-  //       header: 'Plutomi',
-  //       email: Emails.LOGIN,
-  //     },
-  //     subject: `Your magic login link is here!`,
-  //     body: `<h1>Click <a href="${loginLinkUrl}" noreferrer target="_blank" >this link</a> to log in!</h1><p>It will expire ${relativeExpiry} so you better hurry.</p><p>If you did not request this link you can safely ignore it.</p>`,
-  //   });
-  // } catch (error) {
-  //   console.error(`Error sending login link email`, error);
-  //   return res.status(500).json({ message: 'Error sending login link email', error });
-  // }
-  // return res.status(201).json({ message: `We've sent a magic login link to your email!` });
+    // TODO enums
+    loginLinkUrl = `${API_URL}/auth/login?token=${token}&callbackUrl=${
+      callbackUrl || `${WEBSITE_URL}/${Defaults.Redirect}`
+    }`;
+  } catch (error) {
+    console.error(`An error ocurred creating your login link`);
+    return res.status(500).json({ message: 'An error ocurred creating your login link' });
+  }
+
+  try {
+    await sendEmail({
+      to: userEmail,
+      from: {
+        header: 'Plutomi',
+        email: Emails.LOGIN,
+      },
+      subject: `Your magic login link is here!`,
+      body: `<h1>Click <a href="${loginLinkUrl}" noreferrer target="_blank" >this link</a> to log in!</h1><p>It will expire ${relativeExpiry} so you better hurry.</p><p>If you did not request this link you can safely ignore it.</p>`,
+    });
+  } catch (error) {
+    console.error(`Error sending login link email`, error);
+    return res.status(500).json({ message: 'Error sending login link email', error });
+  }
+  return res.status(201).json({ message: `We've sent a magic login link to your email!` });
 };

@@ -4,7 +4,7 @@ import { Extends } from '../types/extends';
 
 export type UserLoginLinkTargetArray = Array<
   Omit<IndexedTargetArrayItem, 'property'> & {
-    property: Extends<keyof typeof IndexableProperties, 'User' | 'CreatedAt' | 'ExpiresAt'>;
+    property: Extends<keyof typeof IndexableProperties, 'User'>;
   }
 >;
 
