@@ -98,10 +98,11 @@ export const login = async (req: Request, res: Response) => {
 
   console.log(`Trying to find user with ID of `, userId);
 
+  const userFilter: Filter<UserEntity> = {
+    target: { property: IndexableProperties.Id, value: userId },
+  };
   try {
-    user = (await collections.users.findOne({
-      target: { property: IndexableProperties.Id, value: userId },
-    })) as UserEntity;
+    user = (await collections.users.findOne(userFilter)) as UserEntity;
   } catch (error) {
     const msg = 'An error ocurred tryingn to find your user account';
     console.error(msg, error);
