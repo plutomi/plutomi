@@ -1,7 +1,10 @@
 import { Request, Response } from 'express';
 import Joi from 'joi';
+import { Filter } from 'mongodb';
+import { IndexableProperties } from '../../@types/indexableProperties';
 import { JOI_SETTINGS } from '../../Config';
-// import { Opening } from '../../entities';
+import { OpeningEntity } from '../../models/Opening';
+import { collections } from '../../utils/connectToDatabase';
 import * as CreateError from '../../utils/createError';
 import { findInTargetArray } from '../../utils/findInTargetArray';
 
@@ -19,30 +22,28 @@ export const getOpening = async (req: Request, res: Response) => {
     return res.status(status).json(body);
   }
 
-  return res.status(200).json({ message: 'Endpoint temp disabled' });
+  const { user } = req;
+  const { openingId } = req.params;
+  const orgId = findInTargetArray(IndexableProperties.Org, user);
+  let opening: OpeningEntity | undefined;
 
-  // const { user } = req;
-  // const { openingId } = req.params;
-  // const orgId = findInTargetArray({ entity: IdxTypes.Org, targetArray: user.target });
-  // let opening: Opening;
+  const openingFilter: Filter<OpeningEntity> = {
+    $and: [
+      { target: { property: IndexableProperties.Org, value: orgId } },
+      { target: { property: IndexableProperties.Id, value: openingId } },
+    ],
+  };
+  try {
+    opening = (await collections.openings.findOne(openingFilter)) as OpeningEntity;
+  } catch (error) {
+    const message = 'Error ocurred retrieving opening info';
+    console.error(message, error);
+    return res.status(500).json({ message });
+  }
 
-  // try {
-  //   opening = await entityManager.findOne(Opening, {
-  //     id: openingId,
-  //     target: {
-  //       id: orgId,
-  //       type: IdxTypes.Org,
-  //     },
-  //   });
-  // } catch (error) {
-  //   const message = 'Error ocurred retrieving opening info';
-  //   console.error(message, error);
-  //   return res.status(500).json({ message, error });
-  // }
+  if (!opening) {
+    return res.status(404).json({ message: 'Opening not found' });
+  }
 
-  // if (!opening) {
-  //   return res.status(404).json({ message: 'Opening not found' });
-  // }
-
-  // return res.status(200).json(opening);
+  return res.status(200).json(opening);
 };

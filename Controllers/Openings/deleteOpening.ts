@@ -1,39 +1,81 @@
 import { Request, Response } from 'express';
-// import { Opening } from '../../entities';
+import Joi from 'joi';
+import { JOI_SETTINGS, LIMITS, OpeningState } from '../../Config';
+import * as CreateError from '../../utils/createError';
+import { Filter, UpdateFilter } from 'mongodb';
 import { findInTargetArray } from '../../utils/findInTargetArray';
+import { OpeningEntity } from '../../models/Opening';
+import { OrgEntity } from '../../models';
+import { IndexableProperties } from '../../@types/indexableProperties';
+import { collections, mongoClient } from '../../utils/connectToDatabase';
+import { nanoid } from 'nanoid';
 
+export type APICreateOpeningOptions = Required<Pick<OpeningEntity, 'name'>>;
+
+const schema = Joi.object({
+  body: {
+    openingName: Joi.string().max(LIMITS.MAX_OPENING_NAME_LENGTH),
+  },
+}).options(JOI_SETTINGS);
+
+// TODOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO
 export const deleteOpening = async (req: Request, res: Response) => {
-  const { openingId } = req.params;
   const { user } = req;
+  try {
+    await schema.validateAsync(req);
+  } catch (error) {
+    const { status, body } = CreateError.JOI(error);
+    return res.status(status).json(body);
+  }
 
-  return res.status(200).json({ message: 'Endpoint temp disabled' });
-  // let openingToDelete: Opening;
-  // const orgId = findInTargetArray({ entity: IdxTypes.Org, targetArray: user.target });
-  // try {
-  //   openingToDelete = await entityManager.findOne(Opening, {
-  //     id: openingId,
-  //     target: {
-  //       // Should be redundant
-  //       id: orgId,
-  //       type: IdxTypes.Org,
-  //     },
-  //   });
+  const { name }: APICreateOpeningOptions = req.body;
+  const orgId = findInTargetArray(IndexableProperties.Org, user);
 
-  //   if (!openingToDelete) {
-  //     return res.status(404).json({ message: 'Opening not found!' });
-  //   }
-  // } catch (error) {
-  //   const message = `An error ocurred retrieving opening info`;
-  //   console.error(message, error);
-  //   return res.status(500).json({ message, error });
-  // }
+  let org: OrgEntity | undefined;
 
-  // try {
-  //   await entityManager.removeAndFlush(Opening);
-  // } catch (error) {
-  //   const message = `An error ocurred deleting that opening`;
-  //   console.error(message, error);
-  //   return res.status(500).json({ message, error });
-  // }
-  // return res.status(200).json({ message: 'Opening deleted!' });
+  const orgFilter: Filter<OrgEntity> = {
+    target: { property: IndexableProperties.Id, value: orgId },
+  };
+
+  let transactionResults;
+
+  const now = new Date();
+  const openingId = nanoid(50);
+  const newOpening: OpeningEntity = {
+    name,
+    totalApplicants: 0,
+    totalStages: 0,
+    createdAt: now,
+    updatedAt: now,
+    target: [
+      { property: IndexableProperties.Org, value: orgId },
+      {
+        property: IndexableProperties.Id,
+        value: openingId,
+      },
+      // TODO allow creating public openings
+      { property: IndexableProperties.OpeningState, value: OpeningState.Private },
+    ],
+  };
+
+  const session = mongoClient.startSession();
+
+  const orgUpdateFilter: UpdateFilter<OrgEntity> = {
+    $inc: { totalOpenings: 1 },
+  };
+
+  try {
+    transactionResults = await session.withTransaction(async () => {
+      await collections.openings.insertOne(newOpening, { session });
+      await collections.orgs.updateOne(orgFilter, orgUpdateFilter, { session });
+    });
+  } catch (error) {
+    const message = 'An error ocurred creating that opening';
+    console.error(message, error);
+    return res.status(500).json({ message });
+  } finally {
+    await session.endSession();
+  }
+
+  return res.status(201).json({ message: 'Opening created!', opening: newOpening });
 };

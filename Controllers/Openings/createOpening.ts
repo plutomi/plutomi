@@ -35,17 +35,6 @@ export const createOpening = async (req: Request, res: Response) => {
   const orgFilter: Filter<OrgEntity> = {
     target: { property: IndexableProperties.Id, value: orgId },
   };
-  try {
-    org = (await collections.orgs.findOne(orgFilter)) as OrgEntity;
-  } catch (error) {
-    const message = `An error ocurred finding that org`;
-    console.error(message, error);
-    return res.status(500).json({ message });
-  }
-
-  if (!org) {
-    return res.status(404).json({ message: 'Org not found' });
-  }
 
   let transactionResults;
 
