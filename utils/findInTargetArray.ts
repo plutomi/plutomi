@@ -1,18 +1,10 @@
-import type { IndexedTargetArray, IdxTypes, IndexIdTypes } from '../types/main';
-interface FindInTargetArrayProps {
-  entity: IdxTypes;
-  targetArray: IndexedTargetArray;
-}
+import { AllEntities } from '../types/allEntities';
+import { IndexableProperties, IndexedTargetArray } from '../types/indexableProperties';
 
 /**
- * Finds a value (id) in a {@link IndexedTargetArray}
- *
- * @returns string - ID of the entity
+ * Finds a value in a {@link IndexedTargetArray}
  */
-export const findInTargetArray = ({
-  entity,
-  targetArray,
-}: FindInTargetArrayProps): IndexIdTypes => {
-  // targetArray.find((item) => item.type === entity)?.id;
-  return 'a';
-};
+export const findInTargetArray = (
+  entity: AllEntities,
+  property: IndexableProperties,
+): string | undefined => entity.target.find((item) => item.property === property)?.value;

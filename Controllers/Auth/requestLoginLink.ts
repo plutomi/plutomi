@@ -120,18 +120,16 @@ export const requestLoginLink = async (req: Request, res: Response) => {
     }
   }
 
-  return res.status(200).json(user);
+  const userEmail = findInTargetArray(user, IndexableProperties.Email);
+  console.log(`User created, finding in target array`, userEmail);
+  // TODO add a test for this @jest
+  if (!user.canReceiveEmails) {
+    return res.status(403).json({
+      message: `'${email}' is unable to receive emails, please reach out to support@plutomi.com to opt back in!`,
+    });
+  }
 
-  // const userEmail = findInTargetArray({ entity: IdxTypes.Email, targetArray: user.target });
-  // console.log(`User created, finding in target array`, userEmail);
-  // // TODO add a test for this @jest
-  // if (!user.canReceiveEmails) {
-  //   return res.status(403).json({
-  //     message: `'${email}' is unable to receive emails, please reach out to support@plutomi.com to opt back in!`,
-  //   });
-  // }
-
-  // let latestLoginLink: UserLoginLink;
+  let latestLoginLink: UserLoginLink;
 
   // console.log(`Getting latest lgin link`);
   // try {

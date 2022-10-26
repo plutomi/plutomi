@@ -2,9 +2,11 @@ import { IndexableProperties, IndexedTargetArrayItem } from '../types/indexableP
 import { BaseEntity } from './Base';
 import { Extends } from '../types/extends';
 
-export interface UserTargetArray extends Omit<IndexedTargetArrayItem, 'property'> {
-  property: Extends<keyof typeof IndexableProperties, 'Org' | 'Email' | 'Id'>;
-}
+export type UserTargetArray = Array<
+  Omit<IndexedTargetArrayItem, 'property'> & {
+    property: Extends<keyof typeof IndexableProperties, 'Org' | 'Email' | 'Id'>;
+  }
+>;
 
 export interface UserEntity extends BaseEntity {
   firstName: string;
@@ -13,5 +15,5 @@ export interface UserEntity extends BaseEntity {
   canReceiveEmails: boolean;
   totalInvites: number;
   orgJoinDate?: Date;
-  target: Array<UserTargetArray>;
+  target: UserTargetArray;
 }

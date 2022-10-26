@@ -1,3 +1,5 @@
+import { UserTargetArray } from '../models';
+
 export enum IndexableProperties {
   User = 'User',
   Org = 'Org',
@@ -18,3 +20,5 @@ export enum IndexableProperties {
 export type IndexIdTypes = string | null;
 export type IndexedTargetArrayItem = { property: IndexableProperties; value: IndexIdTypes };
 export type IndexedTargetArray = Array<IndexedTargetArrayItem>;
+
+export type AllIndexedTargetArrays = UserTargetArray;
