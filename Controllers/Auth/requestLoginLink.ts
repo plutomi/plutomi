@@ -100,10 +100,10 @@ export const requestLoginLink = async (req: Request, res: Response) => {
         firstName: Defaults.FirstName,
         lastName: Defaults.LastName,
         emailVerified: false,
-        canReceiveEmails: false,
+        canReceiveEmails: true,
         target: [
-          { property: IndexableProperties.Org, value: email },
-          { property: IndexableProperties.Email, value: null },
+          { property: IndexableProperties.Org, value: undefined },
+          { property: IndexableProperties.Email, value: email },
           { property: IndexableProperties.Id, value: customId },
         ],
       };
