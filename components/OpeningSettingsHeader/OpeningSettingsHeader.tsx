@@ -5,13 +5,14 @@ import useStore from '../../utils/store';
 import { useOpeningInfo } from '../../SWR/useOpeningInfo';
 import { DeleteOpening, GetOpeningsInOrgURL } from '../../adapters/Openings';
 import * as Time from '../../utils/time';
-import { CustomQuery, IdxTypes } from '../../@types/express';
 import { OpeningState, WEBSITE_URL } from '../../Config';
 import { Loader } from '../Loader';
 import { OpeningSettingsBreadcrumbs } from '../OpeningSettingsBreadcrumbs';
 import { CrumbProps } from '../types';
 import { findInTargetArray } from '../../utils/findInTargetArray';
 import { useAllStagesInOpening } from '../../SWR/useAllStagesInOpening';
+import { CustomQuery } from '../../@types/customQuery';
+import { IndexableProperties } from '../../@types/indexableProperties';
 
 export const OpeningSettingsHeader = () => {
   const router = useRouter();
@@ -74,10 +75,7 @@ export const OpeningSettingsHeader = () => {
     mutate(GetOpeningsInOrgURL());
   };
 
-  const openingState = findInTargetArray({
-    entity: IdxTypes.OpeningState,
-    targetArray: opening.target,
-  });
+  const openingState = findInTargetArray(IndexableProperties.OpeningState, opening);
 
   return (
     <div className="md:flex md:items-center md:justify-between ">

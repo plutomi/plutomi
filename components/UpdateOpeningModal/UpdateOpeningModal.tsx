@@ -7,10 +7,11 @@ import useStore from '../../utils/store';
 import { OpeningState } from '../../Config';
 import { findInTargetArray } from '../../utils/findInTargetArray';
 import { IndexableProperties } from '../../@types/indexableProperties';
+import { OpeningEntity } from '../../models/Opening';
 
 // TODO types
 // @ts-ignore
-export const UpdateOpeningModal = ({ opening }: { opening: Opening }) => {
+export const UpdateOpeningModal = ({ opening }: { opening: OpeningEntity }) => {
   const [openingName, setOpeningName] = useState(opening?.name);
   const openingState = findInTargetArray(IndexableProperties.OpeningState, opening);
 
@@ -25,6 +26,7 @@ export const UpdateOpeningModal = ({ opening }: { opening: Opening }) => {
 
   const closeUpdateOpeningModal = useStore((state) => state.closeUpdateOpeningModal);
 
+  const openingId = findInTargetArray(IndexableProperties.Id, opening);
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
 
@@ -35,10 +37,10 @@ export const UpdateOpeningModal = ({ opening }: { opening: Opening }) => {
       };
 
       const { data } = await UpdateOpening({
-        openingId: opening.id,
+        openingId,
         newValues,
       });
-      mutate(GetOpeningInfoURL(opening?.id));
+      mutate(GetOpeningInfoURL(openingId));
       alert(data.message);
       closeUpdateOpeningModal();
     } catch (error) {
