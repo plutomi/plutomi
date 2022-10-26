@@ -5,16 +5,15 @@ import { mutate } from 'swr';
 import { GetOpeningInfoURL, UpdateOpening } from '../../adapters/Openings';
 import useStore from '../../utils/store';
 import { OpeningState } from '../../Config';
-import { Opening } from '../../entities';
 import { findInTargetArray } from '../../utils/findInTargetArray';
-import { IdxTypes } from '../../types/main';
+import { IndexableProperties } from '../../types/indexableProperties';
 
+// TODO types
+// @ts-ignore
 export const UpdateOpeningModal = ({ opening }: { opening: Opening }) => {
   const [openingName, setOpeningName] = useState(opening?.name);
-  const openingState = findInTargetArray({
-    entity: IdxTypes.OpeningState,
-    targetArray: opening.target,
-  });
+  const openingState = findInTargetArray(IndexableProperties.OpeningState, opening);
+
   const [GSI1SK, setGSI1SK] = useState('');
 
   useEffect(() => {

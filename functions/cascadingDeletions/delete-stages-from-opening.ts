@@ -1,8 +1,6 @@
 import { EventBridgeEvent } from 'aws-lambda';
 import axios from 'axios';
-import { Entities } from '../../Config';
 // import { Opening, Stage } from '../../entities';
-import { IdxTypes } from '../../types/main';
 import { findInTargetArray } from '../../utils/findInTargetArray';
 import { CustomEventBridgeEvent } from '../stream-processor';
 

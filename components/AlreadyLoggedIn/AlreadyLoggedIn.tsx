@@ -5,7 +5,7 @@ import { useSelf } from '../../SWR/useSelf';
 import { Logout } from '../../adapters/Auth';
 import { GetSelfInfoURL } from '../../adapters/Users';
 import { findInTargetArray } from '../../utils/findInTargetArray';
-import { IdxTypes } from '../../types/main';
+import { IndexableProperties } from '../../types/indexableProperties';
 
 const handleLogout = async (isHomepage: boolean) => {
   try {
@@ -35,10 +35,7 @@ export const AlreadyLoggedIn = () => {
   if (isUserError) {
     return <h1>An error ocurred loading your user info</h1>;
   }
-  const userEmail = findInTargetArray({
-    entity: IdxTypes.Email,
-    targetArray: user.target,
-  });
+  const userEmail = findInTargetArray(IndexableProperties.Email, user);
   return (
     <section id="login" className="flex  justify-center mx-auto ">
       <div className="mx-auto  flex-col md:flex-wrap text-center space-y-2 md:space-y-0  justify-center space-x-2  items-center text-lg text-blue-gray-600 ">

@@ -4,7 +4,6 @@ import { JOI_SETTINGS, LIMITS } from '../../Config';
 import * as CreateError from '../../utils/createError';
 // import { DynamoStage } from '../../types/dynamo';
 import { findInTargetArray } from '../../utils/findInTargetArray';
-import { IdxTypes } from '../../types/main';
 
 // export interface APICreateStageOptions extends Required<Pick<DynamoStage, 'openingId' | 'GSI1SK'>> {
 //   /**

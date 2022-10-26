@@ -6,7 +6,6 @@ import * as Time from '../../utils/time';
 import { ClickToCopy } from '../ClickToCopy';
 import { Opening } from '../../entities';
 import { findInTargetArray } from '../../utils/findInTargetArray';
-import { IdxTypes } from '../../types/main';
 import { useAllStagesInOpening } from '../../SWR/useAllStagesInOpening';
 import { Loader } from '../Loader';
 

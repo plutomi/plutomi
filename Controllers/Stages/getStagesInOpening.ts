@@ -1,5 +1,4 @@
 import { Request, Response } from 'express';
-import { IdxTypes } from '../../types/main';
 import { findInTargetArray } from '../../utils/findInTargetArray';
 import { sortStages } from '../../utils/sortStages';
 

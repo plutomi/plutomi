@@ -1,6 +1,5 @@
 import { Request, Response } from 'express';
 import { pick } from 'lodash';
-import { IdxTypes } from '../../types/main';
 import * as CreateError from '../../utils/createError';
 import { findInTargetArray } from '../../utils/findInTargetArray';
 

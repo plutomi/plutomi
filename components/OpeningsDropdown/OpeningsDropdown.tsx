@@ -6,7 +6,6 @@ import { OpeningState, WEBSITE_URL } from '../../Config';
 import combineClassNames from '../../utils/combineClassNames';
 import { Opening } from '../../entities';
 import { findInTargetArray } from '../../utils/findInTargetArray';
-import { IdxTypes } from '../../types/main';
 
 interface OpeningsDropdownProps {
   openings: Opening[];

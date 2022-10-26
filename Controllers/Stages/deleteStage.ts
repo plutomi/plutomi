@@ -1,6 +1,5 @@
 import { Request, Response } from 'express';
 // import { Opening, Stage } from '../../entities';
-import { IdxTypes } from '../../types/main';
 import { findInTargetArray } from '../../utils/findInTargetArray';
 
 export const deleteStage = async (req: Request, res: Response) => {

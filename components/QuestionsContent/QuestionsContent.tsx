@@ -10,11 +10,11 @@ import { CreateQuestionModal } from '../CreateQuestionModal';
 import { UpdateQuestionModal } from '../UpdateQuestionModal';
 import { QuestionItem } from '../QuestionItem';
 import { findInTargetArray } from '../../utils/findInTargetArray';
-import { IdxTypes } from '../../types/main';
+import { IndexableProperties } from '../../types/indexableProperties';
 
 export const QuestionsContent = () => {
   const { user, isUserLoading, isUserError } = useSelf();
-  const orgId = findInTargetArray({ entity: IdxTypes.Org, targetArray: user.target });
+  const orgId = findInTargetArray(IndexableProperties.Org, user);
   const { org, isOrgLoading, isOrgError } = useOrgInfo({
     orgId,
   });

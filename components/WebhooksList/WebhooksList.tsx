@@ -1,6 +1,5 @@
 import { PlusIcon } from '@heroicons/react/outline';
 import { useSelf } from '../../SWR/useSelf';
-import { DynamoWebhook } from '../../types/dynamo';
 import { useWebhooksInOrg } from '../../SWR/useWebhooksInOrg';
 import useStore from '../../utils/store';
 import { useOrgInfo } from '../../SWR/useOrgInfo';
@@ -10,11 +9,11 @@ import { EmptyWebhooksContent } from '../EmptyWebhooksContent';
 import { Loader } from '../Loader/Loader';
 import { UpdateWebhookModal } from '../UpdateWebhookModal';
 import { findInTargetArray } from '../../utils/findInTargetArray';
-import { IdxTypes } from '../../types/main';
+import { IndexableProperties } from '../../types/indexableProperties';
 
 export const WebhooksList = () => {
   const { user, isUserLoading, isUserError } = useSelf();
-  const orgId = findInTargetArray({ entity: IdxTypes.Org, targetArray: user.target });
+  const orgId = findInTargetArray(IndexableProperties.Org, user);
   const { org, isOrgLoading, isOrgError } = useOrgInfo({
     orgId,
   });
@@ -48,9 +47,13 @@ export const WebhooksList = () => {
       </div>
       <div>
         <ul className="divide-y divide-gray-200 mx-auto max-w-xl flex-col space-y-4   ">
-          {webhooks?.map((webhook: DynamoWebhook) => (
-            <WebhookListItem key={webhook?.webhookId} webhook={webhook} />
-          ))}
+          {webhooks?.map(
+            (
+              webhook: any, // TODO!
+            ) => (
+              <WebhookListItem key={webhook?.webhookId} webhook={webhook} />
+            ),
+          )}
         </ul>
       </div>
     </>

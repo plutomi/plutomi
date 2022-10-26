@@ -1,5 +1,4 @@
-import { Stage } from '../entities';
-import { IdxTypes } from '../types/main';
+import { IndexableProperties } from '../types/indexableProperties';
 import { findInTargetArray } from './findInTargetArray';
 
 interface GetAdjacentStagesBasedOnPositionProps {
@@ -25,10 +24,7 @@ export const sortStages = (unsortedStagesInOpening: Stage[]): Stage[] => {
   let firstStageIndex: number;
 
   unsortedStagesInOpening.find((stage, idx) => {
-    const previousStage = findInTargetArray({
-      entity: IdxTypes.PreviousStage,
-      targetArray: stage.target,
-    });
+    const previousStage = findInTargetArray(IndexableProperties.PreviousStage, stage);
 
     if (!previousStage) {
       firstStage = stage;
@@ -52,10 +48,7 @@ export const sortStages = (unsortedStagesInOpening: Stage[]): Stage[] => {
   let startingStage = firstStage;
 
   while (!reachedTheEnd) {
-    const newNextStageId = findInTargetArray({
-      entity: IdxTypes.NextStage,
-      targetArray: startingStage.target,
-    });
+    const newNextStageId = findInTargetArray(IndexableProperties.NextStage, startingStage);
 
     let nextStage: Stage | undefined;
 

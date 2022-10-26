@@ -1,3 +1,5 @@
+import { UserEntity } from '../models';
+
 /**
  * All possible parameters in the URL
  */ // TODO use url path params
@@ -27,7 +29,7 @@ export interface APIErrorResponse {
 declare global {
   namespace Express {
     export interface Request {
-      user: {}; // TODO types
+      user: UserEntity;
     }
   }
 }

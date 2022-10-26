@@ -1,6 +1,5 @@
 import { Request, Response } from 'express';
 // import { Org } from '../../entities';
-import { IdxTypes } from '../../types/main';
 import { findInTargetArray } from '../../utils/findInTargetArray';
 
 export const getOrg = async (req: Request, res: Response) => {

@@ -5,8 +5,8 @@ import { NewPageHeader } from '../PageHeader';
 import { Login } from '../Login';
 import { SignedInNav } from '../SignedInNavbar';
 import { findInTargetArray } from '../../utils/findInTargetArray';
-import { IdxTypes } from '../../types/main';
 import { Loader } from '../Loader';
+import { IndexableProperties } from '../../types/indexableProperties';
 
 interface NewPageProps {
   headerText: string;
@@ -34,7 +34,7 @@ export const NewPageLayout = ({
 
   const currentNavItem = NAVBAR_NAVIGATION.find((navItem) => navItem.name === currentNavbarItem);
 
-  const orgId = findInTargetArray({ entity: IdxTypes.Org, targetArray: user.target });
+  const orgId = findInTargetArray(IndexableProperties.Org, user);
   // Redirect on no org
   // TODO i believe this is triggering twice...
   if (currentNavItem.hiddenIfNoOrg && !orgId) {

@@ -11,11 +11,11 @@ import { CreateInviteModal } from '../CreateInviteModal';
 import { UserCard } from '../UserCard';
 import { nameIsDefault } from '../../utils/compareStrings/nameIsDefault';
 import { findInTargetArray } from '../../utils/findInTargetArray';
-import { IdxTypes } from '../../types/main';
+import { IndexableProperties } from '../../types/indexableProperties';
 
 export const TeamPageContent = () => {
   const { user, isUserLoading, isUserError } = useSelf();
-  const orgId = findInTargetArray({ entity: IdxTypes.Org, targetArray: user.target });
+  const orgId = findInTargetArray(IndexableProperties.Org, user);
   const { orgUsers, isOrgUsersLoading, isOrgUsersError } = useOrgUsers({
     orgId,
   });

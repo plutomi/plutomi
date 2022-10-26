@@ -4,7 +4,6 @@ import * as CreateError from '../../utils/createError';
 import { JOI_SETTINGS, OpeningState, LIMITS } from '../../Config';
 // import { Opening } from '../../entities';
 import { findInTargetArray } from '../../utils/findInTargetArray';
-import { IdxTypes } from '../../types/main';
 
 const schema = Joi.object({
   stageOrder: Joi.array().items(Joi.string()),

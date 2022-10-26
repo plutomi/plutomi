@@ -1,6 +1,5 @@
 import { Request, Response, NextFunction } from 'express';
 import { Defaults, ERRORS } from '../Config';
-import { IdxTypes } from '../types/main';
 import { findInTargetArray } from '../utils/findInTargetArray';
 import TagGenerator from '../utils/tagGenerator';
 // Blocks the request if a user is not in an org

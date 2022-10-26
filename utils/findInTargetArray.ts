@@ -1,10 +1,21 @@
-import { AllEntities } from '../types/allEntities';
-import { IndexableProperties, IndexedTargetArray } from '../types/indexableProperties';
+import {
+  UserEntity,
+  UserLoginLinkEntity,
+  UserLoginLinkTargetArray,
+  UserTargetArray,
+} from '../models';
+import {
+  IndexableProperties,
+  IndexedTargetArray,
+  IndexedTargetArrayItem,
+} from '../types/indexableProperties';
 
 /**
  * Finds a value in a {@link IndexedTargetArray}
  */
 export const findInTargetArray = (
-  entity: AllEntities,
   property: IndexableProperties,
-): string | undefined => entity.target.find((item) => item.property === property)?.value;
+  entity: UserEntity | UserLoginLinkEntity,
+): string | undefined =>
+  // @ts-ignore TODO!!!!!!
+  entity.target.find((item: IndexedTargetArrayItem) => item.property === property)?.value;

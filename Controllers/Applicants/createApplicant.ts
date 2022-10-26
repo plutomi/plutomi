@@ -4,7 +4,6 @@ import emailValidator from 'deep-email-validator';
 import { Defaults, ERRORS, JoiOrgId, JOI_SETTINGS, LIMITS, OpeningState } from '../../Config';
 import * as CreateError from '../../utils/createError';
 // import { DynamoApplicant } from '../../types/dynamo';
-import { IdxTypes } from '../../types/main';
 import { findInTargetArray } from '../../utils/findInTargetArray';
 
 // export type APICreateApplicantOptions = Required<

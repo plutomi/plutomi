@@ -5,7 +5,6 @@ import * as CreateError from '../../utils/createError';
 // import { DynamoOpening } from '../../types/dynamo';
 // import { Opening, Org } from '../../entities';
 import { findInTargetArray } from '../../utils/findInTargetArray';
-import { IdxTypes } from '../../types/main';
 
 // export type APICreateOpeningOptions = Required<Pick<DynamoOpening, 'openingName'>>;
 

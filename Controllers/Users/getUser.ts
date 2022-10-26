@@ -1,7 +1,6 @@
 import { Request, Response } from 'express';
 import Joi from 'joi';
 import { JOI_SETTINGS } from '../../Config';
-import { IdxTypes } from '../../types/main';
 import * as CreateError from '../../utils/createError';
 import { findInTargetArray } from '../../utils/findInTargetArray';
 

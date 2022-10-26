@@ -120,7 +120,7 @@ export const requestLoginLink = async (req: Request, res: Response) => {
     }
   }
 
-  const userEmail = findInTargetArray(user, IndexableProperties.Email);
+  const userEmail = findInTargetArray(IndexableProperties.Email, user);
   console.log(`User created, finding in target array`, userEmail);
   // TODO add a test for this @jest
   if (!user.canReceiveEmails) {
@@ -138,7 +138,7 @@ export const requestLoginLink = async (req: Request, res: Response) => {
       {
         target: {
           property: IndexableProperties.User,
-          value: findInTargetArray(user, IndexableProperties.Id),
+          value: findInTargetArray(IndexableProperties.Id, user),
         },
       },
 
@@ -182,7 +182,7 @@ export const requestLoginLink = async (req: Request, res: Response) => {
 
   let loginLinkUrl: string;
   let loginLink: UserLoginLinkEntity | undefined;
-  const userId = findInTargetArray(user, IndexableProperties.Id);
+  const userId = findInTargetArray(IndexableProperties.Id, user);
 
   try {
     const newLoginLink: UserLoginLinkEntity = {

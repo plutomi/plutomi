@@ -4,15 +4,15 @@ import * as Time from '../../utils/time';
 import * as Users from '../../adapters/Users';
 import { useSelf } from '../../SWR/useSelf';
 import { useOrgInfo } from '../../SWR/useOrgInfo';
-import { IdxTypes } from '../../types/main';
 import { findInTargetArray } from '../../utils/findInTargetArray';
 import { User, UserConstructorValues } from '../../entities';
+import { IndexableProperties } from '../../types/indexableProperties';
 
 interface UserCardProps {
   user: User;
 }
 export const UserCard = ({ user }: UserCardProps) => {
-  const orgId = findInTargetArray({ entity: IdxTypes.Org, targetArray: user.target });
+  const orgId = findInTargetArray(IndexableProperties.Org, user);
   const { org, isOrgLoading, isOrgError } = useOrgInfo({
     orgId,
   });
@@ -20,10 +20,7 @@ export const UserCard = ({ user }: UserCardProps) => {
   // TODO error & loading handling
   const me = useSelf().user;
   const handleRemove = async (user: User) => {
-    const userEmail = findInTargetArray({
-      entity: IdxTypes.Email,
-      targetArray: user.target,
-    });
+    const userEmail = findInTargetArray(IndexableProperties.Email, user);
 
     if (
       !confirm(`Are you sure you want to remove ${user.firstName} ${user.lastName} - ${userEmail}?`)

@@ -1,6 +1,5 @@
 import { Request, Response } from 'express';
 // import { Stage } from '../../entities';
-import { IdxTypes } from '../../types/main';
 import { findInTargetArray } from '../../utils/findInTargetArray';
 
 export const getStage = async (req: Request, res: Response) => {

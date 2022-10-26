@@ -3,7 +3,6 @@ import Joi from 'joi';
 import { JOI_SETTINGS, JoiOrgId } from '../../Config';
 import * as CreateError from '../../utils/createError';
 // import { Org } from '../../entities';
-import { IdxTypes } from '../../types/main';
 
 interface aa {
   orgId: string;
