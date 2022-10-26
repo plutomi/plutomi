@@ -5,6 +5,7 @@ import { findInTargetArray } from '../../utils/findInTargetArray';
 
 export const getOpeningsInOrg = async (req: Request, res: Response) => {
   const { user } = req;
+
   return res.status(200).json({ message: 'Endpoint temp disabled' });
 
   // const orgId = findInTargetArray({ entity: IdxTypes.Org, targetArray: user.target });

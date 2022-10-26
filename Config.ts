@@ -60,7 +60,7 @@ export enum Collections {
   Users = 'Users',
   Webhooks = 'Webhooks',
   LoginLinks = 'LoginLinks',
-  Openings = 'Opening',
+  Openings = 'Openings',
 }
 
 export const ERRORS = {

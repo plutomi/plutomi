@@ -35,7 +35,6 @@ export async function connectToDatabase() {
   const applicantsCollection: mongoDB.Collection = db.collection(Collections.Applicants);
 
   const indexKey: mongoDB.IndexSpecification = { target: 1 };
-  const indexOptions: mongoDB.CreateIndexesOptions = { unique: true };
 
   collections.users = usersCollection;
   collections.loginLinks = loginLinksCollection;
@@ -46,9 +45,8 @@ export async function connectToDatabase() {
   collections.webhooks = webhooksCollection;
   collections.applicants = applicantsCollection;
 
-  // TODO create index on shardKey
   console.log(`Creating necessary indexes`);
-  const allCollections = Object.values(collections).map(async (collection) => {
+  Object.values(collections).map(async (collection) => {
     try {
       console.log(`Creating target index on ${collection.collectionName}`);
       await collection.createIndex(indexKey);
