@@ -1,5 +1,3 @@
-import { UserTargetArray } from '../models';
-
 export enum IndexableProperties {
   /**
    * Self referential ID of the entity, can also be a custom ID that is not Mongo's _id
@@ -25,5 +23,3 @@ export enum IndexableProperties {
 export type IndexIdTypes = string | null;
 export type IndexedTargetArrayItem = { property: IndexableProperties; value: IndexIdTypes };
 export type IndexedTargetArray = Array<IndexedTargetArrayItem>;
-
-export type AllIndexedTargetArrays = UserTargetArray;
