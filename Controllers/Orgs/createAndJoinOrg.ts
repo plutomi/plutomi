@@ -98,16 +98,15 @@ export const createAndJoinOrg = async (req: Request, res: Response) => {
       },
     ],
   };
+  const userUpdateFilter: UpdateFilter<UserEntity> = {
+    $set: { 'target.$.value': orgId, orgJoinDate: new Date() },
+  };
 
   const session = mongoClient.startSession();
 
   let transactionResults;
   try {
     transactionResults = await session.withTransaction(async () => {
-      const userUpdateFilter: UpdateFilter<UserEntity> = {
-        $set: { 'target.$.value': orgId, orgJoinDate: new Date() },
-      };
-
       const updatedUser = await collections.users.updateOne(userFilter, userUpdateFilter, {
         session,
       });

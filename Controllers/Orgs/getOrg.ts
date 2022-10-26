@@ -12,10 +12,6 @@ export const getOrg = async (req: Request, res: Response) => {
 
   const orgId = findInTargetArray(IndexableProperties.Org, user);
 
-  if (!orgId || !user.orgJoinDate) {
-    return res.status(400).json({ message: "You don't appear to be in an org!" });
-  }
-
   const orgFilter: Filter<OrgEntity> = {
     target: { property: IndexableProperties.Id, value: orgId },
   };

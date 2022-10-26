@@ -1,4 +1,5 @@
 import { Request, Response, NextFunction } from 'express';
+import { IndexableProperties } from '../@types/indexableProperties';
 import { ERRORS } from '../Config';
 import { findInTargetArray } from '../utils/findInTargetArray';
 
@@ -8,12 +9,12 @@ import { findInTargetArray } from '../utils/findInTargetArray';
 export default async function withSameOrg(req: Request, res: Response, next: NextFunction) {
   const { user } = req;
 
-  // const orgId = findInTargetArray({ entity: IdxTypes.Org, targetArray: user.target });
+  const orgId = findInTargetArray(IndexableProperties.Org, user);
 
-  // if (orgId !== req.params.orgId) {
-  //   return res.status(403).json({
-  //     message: ERRORS.NOT_SAME_ORG,
-  //   });
-  // }
+  if (orgId !== req.params.orgId || !orgId) {
+    return res.status(403).json({
+      message: ERRORS.NOT_SAME_ORG,
+    });
+  }
   next();
 }

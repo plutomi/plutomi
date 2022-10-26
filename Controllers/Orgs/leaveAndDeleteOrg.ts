@@ -1,46 +1,77 @@
 import { Request, Response } from 'express';
-// import { Org } from '../../entities';
+import { Filter, UpdateFilter } from 'mongodb';
+import { IndexableProperties } from '../../@types/indexableProperties';
+import { OrgEntity, UserEntity } from '../../models';
+import { collections, mongoClient } from '../../utils/connectToDatabase';
 import { findInTargetArray } from '../../utils/findInTargetArray';
 
 export const leaveAndDeleteOrg = async (req: Request, res: Response) => {
   const { user } = req;
 
-  return res.status(200).json({ message: 'Endpoint temp disabled' });
+  const orgId = findInTargetArray(IndexableProperties.Org, user);
 
-  // const orgId = findInTargetArray({ entity: IdxTypes.Org, targetArray: user.target });
+  let org: OrgEntity | undefined;
 
-  // let org: Org;
+  const orgFilter: Filter<OrgEntity> = {
+    target: { property: IndexableProperties.Id, value: orgId },
+  };
+  try {
+    org = (await collections.orgs.findOne(orgFilter)) as OrgEntity;
+  } catch (error) {
+    const message = `Error retrieving org info`;
+    console.error(message, error);
+    return res.status(500).json({ message, error });
+  }
 
-  // try {
-  //   org = await req.entityManager.findOne(Org, {
-  //     orgId,
-  //   });
-  // } catch (error) {
-  //   console.error(`Error retrieving org info`, error);
-  //   return res.status(500).json({ message: 'An error ocurred retrieving your org info', error });
-  // }
+  if (!org) {
+    return res.status(404).json({ message: 'Org not found' });
+  }
 
-  // if (!org) {
-  //   return res.status(404).json({ message: 'Org not found' });
-  // }
-  // if (org.totalUsers > 1) {
-  //   return res.status(403).json({
-  //     message: 'You cannot delete this org as there are other users in it',
-  //   });
-  // }
+  if (org.totalUsers > 1) {
+    return res.status(403).json({
+      message: 'You cannot delete this org as there are other users in it',
+    });
+  }
 
-  // user.orgJoinDate = undefined;
-  // const indexOfOrg = user.target.findIndex((item) => item.type === IdxTypes.Org);
-  // user.target.splice(indexOfOrg, 1); // Removing the org from the user
-  // user.orgJoinDate = undefined;
-  // entityManager.remove(org); // TODO cascading deletions!
+  let transactionResults;
 
-  // try {
-  //   await entityManager.flush();
-  // } catch (error) {
-  //   console.error(`An error ocurred deleting your org`, error);
-  //   return res.status(500).json({ message: 'An error ocurred deleting your org', error });
-  // }
+  const userFilter: Filter<UserEntity> = {
+    $and: [
+      {
+        target: {
+          property: IndexableProperties.Id,
+          value: findInTargetArray(IndexableProperties.Id, user),
+        },
+      },
+      {
+        target: {
+          property: IndexableProperties.Org,
+          value: orgId,
+        },
+      },
+    ],
+  };
+  const userUpdateFilter: UpdateFilter<UserEntity> = {
+    $set: { 'target.$.value': undefined, orgJoinDate: undefined },
+  };
 
-  // return res.status(200).json({ message: 'Org deleted!' });
+  const session = mongoClient.startSession();
+  try {
+    transactionResults = await session.withTransaction(async () => {
+      await collections.users.updateOne(userFilter, userUpdateFilter, {
+        session,
+      });
+
+      await collections.orgs.deleteOne(orgFilter, { session });
+      await session.commitTransaction();
+    });
+  } catch (error) {
+    const msg = 'Error ocurred deleting org';
+    console.error(msg, error);
+    return res.status(500).json({ message: msg });
+  } finally {
+    await session.endSession();
+  }
+
+  return res.status(200).json({ message: 'Org deleted!' });
 };
