@@ -1,5 +1,6 @@
 import { IndexableProperties, IndexedTargetArrayItem } from '../types/indexableProperties';
 import { BaseEntity } from './Base';
+import { Extends } from '../types/extends';
 
 export interface UserTargetArray extends Omit<IndexedTargetArrayItem, 'property'> {
   property: Extends<keyof typeof IndexableProperties, 'Org' | 'Email' | 'Id'>;
