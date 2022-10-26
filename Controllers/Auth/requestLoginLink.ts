@@ -2,6 +2,7 @@ import { Request, Response } from 'express';
 import emailValidator from 'deep-email-validator';
 import * as crypto from 'crypto';
 import Joi from 'joi';
+import { Filter } from 'mongodb';
 import { nanoid } from 'nanoid';
 import {
   Defaults,
@@ -21,7 +22,6 @@ import { findInTargetArray } from '../../utils/findInTargetArray';
 import { collections } from '../../utils/connectToDatabase';
 import { UserEntity } from '../../models';
 import { UserLoginLinkEntity } from '../../models';
-import { Filter } from 'mongodb';
 import { IndexableProperties } from '../../@types/indexableProperties';
 import { sendEmail } from '../../utils/sendEmail';
 
@@ -133,23 +133,25 @@ export const requestLoginLink = async (req: Request, res: Response) => {
 
   console.log(`Getting latest login link`);
 
+  const loginLinkFilter: Filter<UserLoginLinkEntity> = {
+    target: {
+      property: IndexableProperties.User,
+      value: findInTargetArray(IndexableProperties.Id, user),
+    },
+  };
+  console.log('Filter', loginLinkFilter);
   try {
-    latestLoginLink = (await collections.loginLinks.findOne(
-      {
-        target: {
-          property: IndexableProperties.User,
-          value: findInTargetArray(IndexableProperties.Id, user),
-        },
-      },
-
-      {
+    const latestLinkArray = await collections.loginLinks
+      .find(loginLinkFilter, {
         sort: {
-          'target.property.CreatedAt': -1,
+          createdAt: -1,
         },
-      },
-    )) as UserLoginLinkEntity;
+        limit: 1,
+      })
+      .toArray();
 
-    console.log(`got latest login link it`);
+    latestLoginLink = latestLinkArray[0] as UserLoginLinkEntity;
+    console.log(`got latest login link it`, latestLoginLink);
   } catch (error) {
     console.error(`An error ocurred finding your info (login links error)`);
     return res

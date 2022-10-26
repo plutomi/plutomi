@@ -1,6 +1,7 @@
 import * as mongoDB from 'mongodb';
 import { Collections } from '../Config';
 import { env } from '../env';
+import { UserEntity } from '../models';
 
 export const collections: {
   users?: mongoDB.Collection;
