@@ -20,11 +20,12 @@ import { env } from '../../env';
 import dayjs from 'dayjs';
 import { findInTargetArray } from '../../utils/findInTargetArray';
 import { collections } from '../../utils/connectToDatabase';
-import { UserEntity, UserShardKey } from '../../models';
-import { Filter, ObjectId } from 'mongodb';
-import { IdxTypes } from '../../types/main';
+import { UserEntity } from '../../models';
+import { Filter } from 'mongodb';
 import { IndexableProperties } from '../../types/indexableProperties';
 
+// TODO add types
+// https://www.npmjs.com/package/@types/jsonwebtoken
 const jwt = require('jsonwebtoken');
 
 interface APIRequestLoginLinkBody {
@@ -92,9 +93,7 @@ export const requestLoginLink = async (req: Request, res: Response) => {
 
       const now = new Date();
       const customId = nanoid(50);
-      const shardKey: UserShardKey = `USER#${customId}`;
       const newUser: UserEntity = {
-        shardKey,
         createdAt: now,
         updatedAt: now,
         totalInvites: 0,
