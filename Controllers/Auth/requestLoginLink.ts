@@ -196,6 +196,10 @@ export const requestLoginLink = async (req: Request, res: Response) => {
           property: IndexableProperties.User,
           value: userId,
         },
+        {
+          property: IndexableProperties.Id,
+          value: nanoid(100),
+        },
       ],
     };
     await collections.loginLinks.insertOne(newLoginLink);
@@ -205,7 +209,7 @@ export const requestLoginLink = async (req: Request, res: Response) => {
     // TODO types
     const tokenData = {
       userId: userId,
-      loginLinkId: newLoginLink._id,
+      loginLinkId: findInTargetArray(IndexableProperties.Id, newLoginLink),
     };
 
     console.log(`TOKEN DATA WHEN CREATING THE LOGIN LINKIT`, tokenData);

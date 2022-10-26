@@ -3,7 +3,10 @@ import Joi from 'joi';
 import { JOI_SETTINGS, WEBSITE_URL, COOKIE_NAME, COOKIE_SETTINGS, Emails } from '../../Config';
 import * as CreateError from '../../utils/createError';
 import { env } from '../../env';
-// import { User, UserLoginLink } from '../../entities';
+import { UserEntity, UserLoginLinkEntity } from '../../models';
+import { Filter, Sort } from 'mongodb';
+import { collections } from '../../utils/connectToDatabase';
+import { IndexableProperties } from '../../@types/indexableProperties';
 
 const jwt = require('jsonwebtoken');
 
@@ -26,52 +29,55 @@ export const login = async (req: Request, res: Response) => {
     return res.status(status).json(body);
   }
 
-  return res.status(200).json({ message: 'Endpoint temp disabled' });
+  const { callbackUrl, token }: APILoginQuery = req.query;
 
-  // const { callbackUrl, token }: APILoginQuery = req.query;
+  let userId: string;
+  let loginLinkId: string;
 
-  // let userId: string;
-  // let loginLinkId: string;
+  try {
+    // TODO add types for this
+    const data = await jwt.verify(token, env.loginLinksPassword);
 
-  // try {
-  //   // TODO add types for this
-  //   const data = await jwt.verify(token, env.loginLinksPassword);
+    console.log(`Token data`, data);
 
-  //   console.log(`Token data`, data);
+    userId = data.userId;
+    loginLinkId = data.loginLinkId;
+  } catch (error) {
+    if (error.name === 'TokenExpiredError') {
+      return res.status(401).json({ message: 'Login link expired :(' });
+    }
+    return res.status(401).json({ message: 'Invalid login link' });
+  }
 
-  //   userId = data.userId;
-  //   loginLinkId = data.loginLinkId;
-  // } catch (error) {
-  //   if (error.name === 'TokenExpiredError') {
-  //     return res.status(401).json({ message: 'Login link expired :(' });
-  //   }
-  //   return res.status(401).json({ message: 'Invalid login link' });
-  // }
-  // console.log(`Trying to find user with ID of `, userId);
+  let loginLink: UserLoginLinkEntity | undefined;
+  let user: UserEntity | undefined;
 
-  // let loginLink: UserLoginLink;
+  console.log('Trying to find login link with id of', loginLinkId);
+  const loginLinkFilter: Filter<UserLoginLinkEntity> = {
+    target: { property: IndexableProperties.Id, value: loginLinkId },
+  };
+  try {
+    loginLink = (await collections.loginLinks.findOne(loginLinkFilter)) as UserLoginLinkEntity;
 
-  // let user: User;
+    console.log(loginLink);
+  } catch (error) {
+    console.error(`ERROR retrieving login link`, error);
+    return res.status(500).json({ message: 'An error ocurred retrieving login link data', error });
+  }
 
-  // try {
-  //   loginLink = await entityManager.findOne(UserLoginLink, {
-  //     id: loginLinkId,
-  //   });
-  //   console.log(loginLink);
+  if (!loginLink) {
+    return res.status(401).json({ message: 'Invalid login link' });
+  }
 
-  //   user = Reference.unwrapReference(loginLink.user);
-  // } catch (error) {
-  //   console.error(`ERROR retrieving login link`, error);
-  //   return res.status(500).json({ message: 'An error ocurred retrieving login link data', error });
-  // }
-
-  // if (!loginLink) {
-  //   return res.status(401).json({ message: 'Invalid login link' });
-  // }
-
-  // // TODO delete login link
-  // entityManager.remove(loginLink);
-  // await entityManager.flush();
+  try {
+    console.log('Deleting login link');
+    await collections.loginLinks.deleteOne(loginLinkFilter);
+    console.log('Login link deleted!');
+  } catch (error) {
+    const msg = 'Error ocurred deleting login link';
+    console.error(msg, error);
+    return res.status(500).json({ message: 'An error ocurred logging you in' });
+  }
 
   // TODO Create login event
 
@@ -90,18 +96,34 @@ export const login = async (req: Request, res: Response) => {
   //   return res.status(status).json(body);
   // }
 
-  // res.cookie(COOKIE_NAME, user.id, COOKIE_SETTINGS);
-  // res.header('Location', callbackUrl);
+  console.log(`Trying to find user with ID of `, userId);
+
+  try {
+    user = (await collections.users.findOne({
+      target: { property: IndexableProperties.Id, value: userId },
+    })) as UserEntity;
+  } catch (error) {
+    const msg = 'An error ocurred tryingn to find your user account';
+    console.error(msg, error);
+    return res.status(500).json({ message: msg, error });
+  }
+
+  if (!user) {
+    return res.status(404).json({ message: 'User not found!' });
+  }
+
+  res.cookie(COOKIE_NAME, userId, COOKIE_SETTINGS);
+  res.header('Location', callbackUrl);
 
   /**
    * If a user has invites, redirect them to the invites page
    * on login regardless of the callback url
    */
-  // if (user.totalInvites > 0) {
-  //   res.header('Location', `${WEBSITE_URL}/invites`);
-  // }
+  if (user.totalInvites > 0) {
+    res.header('Location', `${WEBSITE_URL}/invites`);
+  }
 
-  // res.status(307).json({ message: 'Login success!' });
+  res.status(307).json({ message: 'Login success!' });
 
   // TODO - POST MONGO
   // TODO send emails!
