@@ -1,9 +1,11 @@
-import { IdxTypes } from '../types/main';
+import { IndexableProperties, IndexedTargetArrayItem } from '../types/indexableProperties';
 import { BaseEntity } from './Base';
 
 type Extends<T, U extends T> = U;
 
-export type UserShardKey = `USER#${string}`;
+export interface UserTargetArray extends Omit<IndexedTargetArrayItem, 'property'> {
+  property: Extends<keyof typeof IndexableProperties, 'Org' | 'Email' | 'Id'>;
+}
 
 export interface UserEntity extends BaseEntity {
   firstName: string;
@@ -12,8 +14,5 @@ export interface UserEntity extends BaseEntity {
   canReceiveEmails: boolean;
   totalInvites: number;
   orgJoinDate?: Date;
-  target: Array<{
-    type: Extends<keyof typeof IdxTypes, 'Org' | 'Email' | 'Id'>;
-    value: string | null;
-  }>;
+  target: Array<UserTargetArray>;
 }

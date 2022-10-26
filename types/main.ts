@@ -31,35 +31,3 @@ declare global {
     }
   }
 }
-
-export enum Collections {
-  Orgs = 'Orgs',
-  Applicants = 'Applicants',
-  Questions = 'Questions',
-  Stages = 'Stages',
-  Users = 'Users',
-  Webhooks = 'Webhooks',
-  LoginLinks = 'LoginLinks',
-  Openings = 'Opening',
-}
-
-export enum IdxTypes {
-  User = 'User',
-  Org = 'Org',
-  OrgInvite = 'OrgInvite',
-  Opening = 'Opening',
-  OpeningState = 'OpeningState',
-  Stage = 'Stage',
-  UserLoginLink = 'UserLoginLink',
-  Question = 'Question',
-  Webhook = 'Webhook',
-  Email = 'Email',
-  CreatedBy = 'CreatedBy',
-  PreviousStage = 'PreviousStage',
-  NextStage = 'NextStage',
-  Id = 'Id',
-}
-
-export type IndexIdTypes = string | null;
-export type IndexedTargetArrayItem = { type: IdxTypes; value: IndexIdTypes };
-export type IndexedTargetArray = Array<IndexedTargetArrayItem>;

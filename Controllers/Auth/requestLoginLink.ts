@@ -23,6 +23,7 @@ import { collections } from '../../utils/connectToDatabase';
 import { UserEntity, UserShardKey } from '../../models';
 import { Filter, ObjectId } from 'mongodb';
 import { IdxTypes } from '../../types/main';
+import { IndexableProperties } from '../../types/indexableProperties';
 
 const jwt = require('jsonwebtoken');
 
@@ -102,9 +103,9 @@ export const requestLoginLink = async (req: Request, res: Response) => {
         emailVerified: false,
         canReceiveEmails: false,
         target: [
-          { type: IdxTypes.Org, value: email },
-          { type: IdxTypes.Email, value: null },
-          { type: IdxTypes.Id, value: customId },
+          { property: IndexableProperties.Org, value: email },
+          { property: IndexableProperties.Email, value: null },
+          { property: IndexableProperties.Id, value: customId },
         ],
       };
 
