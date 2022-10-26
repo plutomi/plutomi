@@ -185,7 +185,6 @@ export const requestLoginLink = async (req: Request, res: Response) => {
   // TODO types
 
   let loginLinkUrl: string;
-  let loginLink: UserLoginLinkEntity | undefined;
   const userId = findInTargetArray(IndexableProperties.Id, user);
 
   try {
@@ -202,7 +201,6 @@ export const requestLoginLink = async (req: Request, res: Response) => {
     await collections.loginLinks.insertOne(newLoginLink);
 
     console.log(`NEWLY CREATED LOGIN LINK`, newLoginLink);
-    loginLink = newLoginLink;
 
     // TODO types
     const tokenData = {
@@ -210,7 +208,7 @@ export const requestLoginLink = async (req: Request, res: Response) => {
       loginLinkId: newLoginLink._id,
     };
 
-    console.log(`TOKIEN DATA WHEN CREATING IT`, tokenData);
+    console.log(`TOKEN DATA WHEN CREATING THE LOGIN LINKIT`, tokenData);
     token = await jwt.sign(tokenData, env.loginLinksPassword, { expiresIn: ttlExpiry - nowAsUnix });
 
     // TODO enums
