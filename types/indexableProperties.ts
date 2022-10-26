@@ -15,6 +15,9 @@ export enum IndexableProperties {
   PreviousStage = 'PreviousStage',
   NextStage = 'NextStage',
   Id = 'Id',
+  CreatedAt = 'CreatedAt',
+  UpdatedAt = 'UpdatedAt',
+  ExpiresAt = 'ExpiresAt',
 }
 
 export type IndexIdTypes = string | null;

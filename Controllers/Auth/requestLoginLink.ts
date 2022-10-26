@@ -21,6 +21,7 @@ import dayjs from 'dayjs';
 import { findInTargetArray } from '../../utils/findInTargetArray';
 import { collections } from '../../utils/connectToDatabase';
 import { UserEntity } from '../../models';
+import { UserLoginLinkEntity } from '../../models';
 import { Filter } from 'mongodb';
 import { IndexableProperties } from '../../types/indexableProperties';
 
@@ -75,7 +76,7 @@ export const requestLoginLink = async (req: Request, res: Response) => {
 
   try {
     user = (await collections.users.findOne({
-      target: { type: 'Email', value: email },
+      target: { property: IndexableProperties.Email, value: email },
     } as Filter<UserEntity>)) as UserEntity;
   } catch (error) {
     const msg = `Error retrieving user info`;
@@ -129,37 +130,41 @@ export const requestLoginLink = async (req: Request, res: Response) => {
     });
   }
 
-  let latestLoginLink: UserLoginLink;
+  let latestLoginLink: UserLoginLinkEntity;
 
-  // console.log(`Getting latest lgin link`);
-  // try {
-  //   latestLoginLink = await req.entityManager.findOne(
-  //     // TODO idnex lookup
-  //     UserLoginLink,
-  //     {
-  //       user,
-  //     },
-  //     {
-  //       orderBy: {
-  //         ttlExpiry: QueryOrder.DESC,
-  //       },
-  //     },
-  //   );
-  //   console.log(`got it`);
-  // } catch (error) {
-  //   console.error(`An error ocurred finding your info (login links error)`);
-  //   return res
-  //     .status(500)
-  //     .json({ message: 'An error ocurred finding your info (login links error)' });
-  // }
+  console.log(`Getting latest login link`);
 
-  // if (
-  //   latestLoginLink &&
-  //   latestLoginLink.createdAt >= dayjs().subtract(10, 'minutes').toDate() &&
-  //   !userEmail.endsWith(DOMAIN_NAME) // Allow admins to send multiple login links in a short timespan
-  // ) {
-  //   return res.status(403).json({ message: "You're doing that too much, please try again later" });
-  // }
+  try {
+    latestLoginLink = (await collections.loginLinks.findOne(
+      {
+        target: {
+          property: IndexableProperties.User,
+          value: findInTargetArray(user, IndexableProperties.Id),
+        },
+      },
+
+      {
+        sort: {
+          'target.property.CreatedAt': -1,
+        },
+      },
+    )) as UserLoginLinkEntity;
+
+    console.log(`got latest login link it`);
+  } catch (error) {
+    console.error(`An error ocurred finding your info (login links error)`);
+    return res
+      .status(500)
+      .json({ message: 'An error ocurred finding your info (login links error)' });
+  }
+
+  if (
+    latestLoginLink &&
+    latestLoginLink.createdAt >= dayjs().subtract(10, 'minutes').toDate() &&
+    !userEmail.endsWith(DOMAIN_NAME) // Allow admins to send multiple login links in a short timespan
+  ) {
+    return res.status(403).json({ message: "You're doing that too much, please try again later" });
+  }
 
   // const validFor: Time.ChangingTimeProps = {
   //   amount: 15,
