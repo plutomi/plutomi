@@ -3,7 +3,7 @@ import { NewPageLayout } from '../../../components/NewPageLayout';
 import { OpeningSettingsContent } from '../../../components/OpeningSettingsContent';
 import { OpeningSettingsHeader } from '../../../components/OpeningSettingsHeader';
 import { useOpeningInfo } from '../../../SWR/useOpeningInfo';
-import { CustomQuery } from '../../../types/main';
+import { CustomQuery } from '../../../@types/express';
 
 export default function OpeningSettings() {
   const router = useRouter();

@@ -4,7 +4,7 @@ import { useRouter } from 'next/router';
 import { AcceptInvite, GetUserInvitesURL, RejectInvite } from '../../adapters/Invites';
 import { GetSelfInfoURL } from '../../adapters/Users';
 import * as Time from '../../utils/time';
-import { DynamoOrgInvite } from '../../types/dynamo';
+import { DynamoOrgInvite } from '../../@types/dynamo';
 
 interface InviteProps {
   invite: DynamoOrgInvite;

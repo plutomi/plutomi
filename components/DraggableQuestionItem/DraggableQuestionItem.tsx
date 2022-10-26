@@ -1,8 +1,8 @@
 import { useRouter } from 'next/router';
 import { mutate } from 'swr';
 import { Draggable } from 'react-beautiful-dnd';
-import { CustomQuery } from '../../types/main';
-import { DynamoQuestion } from '../../types/dynamo';
+import { CustomQuery } from '../../@types/express';
+import { DynamoQuestion } from '../../@types/dynamo';
 import * as Questions from '../../adapters/Questions';
 import * as Stages from '../../adapters/Stages';
 

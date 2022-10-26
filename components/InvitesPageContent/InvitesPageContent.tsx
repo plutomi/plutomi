@@ -1,6 +1,6 @@
 import { useSelf } from '../../SWR/useSelf';
 import { useUserInvites } from '../../SWR/useUserInvites';
-import { DynamoOrgInvite } from '../../types/dynamo';
+import { DynamoOrgInvite } from '../../@types/dynamo';
 import { Invite } from '../Invite/Invite';
 import { Loader } from '../Loader/Loader';
 

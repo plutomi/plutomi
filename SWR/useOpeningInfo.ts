@@ -2,7 +2,7 @@ import useSWR from 'swr';
 import { GetOpeningInfoURL } from '../adapters/Openings';
 import { SWRFetcher } from '../Config';
 import { Opening } from '../entities';
-import { APIErrorResponse } from '../types/main';
+import { APIErrorResponse } from '../@types/express';
 
 interface UseOpeningInfoProps {
   openingId?: string;

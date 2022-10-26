@@ -3,7 +3,7 @@ import ItemsCarousel from 'react-items-carousel';
 import { ArrowLeftIcon, ArrowRightIcon } from '@heroicons/react/outline';
 import { useRouter } from 'next/router';
 import { useAllStagesInOpening } from '../../SWR/useAllStagesInOpening';
-import { CustomQuery } from '../../types/main';
+import { CustomQuery } from '../../@types/express';
 import { StageCard } from '../StageCard';
 import { Loader } from '../Loader';
 

@@ -12,7 +12,7 @@ import combineClassNames from '../../utils/combineClassNames';
 import { Banner } from '../Banner';
 import { NavbarSearch } from '../NavbarSearch';
 import { findInTargetArray } from '../../utils/findInTargetArray';
-import { IndexableProperties } from '../../types/indexableProperties';
+import { IndexableProperties } from '../../@types/indexableProperties';
 
 interface SignedInNavProps {
   current: string;

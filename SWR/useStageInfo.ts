@@ -1,7 +1,7 @@
 import useSWR from 'swr';
 import { SWRFetcher } from '../Config';
 import { GetStageInfoURL } from '../adapters/Stages';
-import { APIErrorResponse } from '../types/main';
+import { APIErrorResponse } from '../@types/express';
 import { Stage } from '../entities';
 
 interface UseStageInfoProps {

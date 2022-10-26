@@ -1,12 +1,12 @@
 import { mutate } from 'swr';
-import { DynamoUser } from '../../types/dynamo';
+import { DynamoUser } from '../../@types/dynamo';
 import * as Time from '../../utils/time';
 import * as Users from '../../adapters/Users';
 import { useSelf } from '../../SWR/useSelf';
 import { useOrgInfo } from '../../SWR/useOrgInfo';
 import { findInTargetArray } from '../../utils/findInTargetArray';
 import { User, UserConstructorValues } from '../../entities';
-import { IndexableProperties } from '../../types/indexableProperties';
+import { IndexableProperties } from '../../@types/indexableProperties';
 
 interface UserCardProps {
   user: User;

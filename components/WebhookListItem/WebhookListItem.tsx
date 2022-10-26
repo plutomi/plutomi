@@ -3,7 +3,7 @@ import { PencilAltIcon, TrashIcon } from '@heroicons/react/outline';
 import { mutate } from 'swr';
 import { DeleteWebhookFromOrg, GetWebhooksInOrgURL } from '../../adapters/Webhooks';
 import useStore from '../../utils/store';
-import { DynamoWebhook } from '../../types/dynamo';
+import { DynamoWebhook } from '../../@types/dynamo';
 import { UpdateWebhookModal } from '../UpdateWebhookModal';
 
 interface WebhookListItemProps {

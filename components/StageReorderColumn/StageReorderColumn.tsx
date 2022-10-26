@@ -8,7 +8,7 @@ import useStore from '../../utils/store';
 import { useOpeningInfo } from '../../SWR/useOpeningInfo';
 import { useAllStagesInOpening } from '../../SWR/useAllStagesInOpening';
 import { GetOpeningInfoURL } from '../../adapters/Openings';
-import { CustomQuery } from '../../types/main';
+import { CustomQuery } from '../../@types/express';
 import { CreateStageModal } from '../CreateStageModal';
 import { StageCard } from '../StageCard';
 import { getAdjacentStagesBasedOnPosition, sortStages } from '../../utils/sortStages';

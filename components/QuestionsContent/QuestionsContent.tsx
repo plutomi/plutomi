@@ -1,6 +1,6 @@
 import { PlusIcon } from '@heroicons/react/solid';
 import { useQuestionsInOrg } from '../../SWR/useQuestionsInOrg';
-import { DynamoQuestion } from '../../types/dynamo';
+import { DynamoQuestion } from '../../@types/dynamo';
 import useStore from '../../utils/store';
 import { useOrgInfo } from '../../SWR/useOrgInfo';
 import { useSelf } from '../../SWR/useSelf';
@@ -10,7 +10,7 @@ import { CreateQuestionModal } from '../CreateQuestionModal';
 import { UpdateQuestionModal } from '../UpdateQuestionModal';
 import { QuestionItem } from '../QuestionItem';
 import { findInTargetArray } from '../../utils/findInTargetArray';
-import { IndexableProperties } from '../../types/indexableProperties';
+import { IndexableProperties } from '../../@types/indexableProperties';
 
 export const QuestionsContent = () => {
   const { user, isUserLoading, isUserError } = useSelf();

@@ -1,7 +1,7 @@
 import useSWR from 'swr';
 import { SWRFetcher } from '../Config';
 import { GetSelfInfoURL } from '../adapters/Users';
-import { APIErrorResponse } from '../types/main';
+import { APIErrorResponse } from '../@types/express';
 import { User } from '../entities';
 
 export const useSelf = () => {

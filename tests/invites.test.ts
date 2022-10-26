@@ -3,7 +3,7 @@ import { Emails, ERRORS, AXIOS_INSTANCE as axios } from '../Config';
 import * as Invites from '../adapters/Invites';
 import * as Orgs from '../adapters/Orgs';
 import * as Users from '../adapters/Users';
-import { DynamoOrgInvite } from '../types/dynamo';
+import { DynamoOrgInvite } from '../@types/dynamo';
 import TagGenerator from '../utils/tagGenerator';
 
 describe('Openings', () => {

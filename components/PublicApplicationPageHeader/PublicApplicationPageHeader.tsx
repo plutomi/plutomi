@@ -1,7 +1,7 @@
 import { useRouter } from 'next/router';
 import { useApplicantById } from '../../SWR/useApplicantById';
 import { useStageInfo } from '../../SWR/useStageInfo';
-import { CustomQuery } from '../../types/main';
+import { CustomQuery } from '../../@types/express';
 import { Loader } from '../Loader';
 
 export const PublicApplicationPageHeader = () => {

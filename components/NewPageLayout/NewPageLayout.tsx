@@ -6,7 +6,7 @@ import { Login } from '../Login';
 import { SignedInNav } from '../SignedInNavbar';
 import { findInTargetArray } from '../../utils/findInTargetArray';
 import { Loader } from '../Loader';
-import { IndexableProperties } from '../../types/indexableProperties';
+import { IndexableProperties } from '../../@types/indexableProperties';
 
 interface NewPageProps {
   headerText: string;

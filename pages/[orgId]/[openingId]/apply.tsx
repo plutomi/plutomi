@@ -1,7 +1,7 @@
 import { useRouter } from 'next/router';
 import { usePublicOrgById } from '../../../SWR/usePublicOrgById';
 import { usePublicOpening } from '../../../SWR/usePublicOpening';
-import { CustomQuery } from '../../../types/main';
+import { CustomQuery } from '../../../@types/express';
 import { WEBSITE_URL } from '../../../Config';
 import { Loader } from '../../../components/Loader';
 import { PublicOpeningPageHeader } from '../../../components/PublicOpeningPageHeader';

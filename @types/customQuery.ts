@@ -1,13 +1,3 @@
-import { UserEntity } from '../models';
-
-declare global {
-  namespace Express {
-    export interface Request {
-      user: UserEntity;
-    }
-  }
-}
-
 /**
  * All possible parameters in the URL
  */ // TODO use url path params
@@ -25,8 +15,4 @@ export interface CustomQuery {
   callbackUrl: string;
   questionId: string;
   inviteId: string;
-}
-
-export interface APIErrorResponse {
-  message: string;
 }

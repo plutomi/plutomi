@@ -22,7 +22,7 @@ import { collections } from '../../utils/connectToDatabase';
 import { UserEntity } from '../../models';
 import { UserLoginLinkEntity } from '../../models';
 import { Filter } from 'mongodb';
-import { IndexableProperties } from '../../types/indexableProperties';
+import { IndexableProperties } from '../../@types/indexableProperties';
 import { sendEmail } from '../../utils/sendEmail';
 
 // TODO add types

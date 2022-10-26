@@ -5,7 +5,7 @@ import { useSelf } from '../../SWR/useSelf';
 import { Logout } from '../../adapters/Auth';
 import { GetSelfInfoURL } from '../../adapters/Users';
 import { findInTargetArray } from '../../utils/findInTargetArray';
-import { IndexableProperties } from '../../types/indexableProperties';
+import { IndexableProperties } from '../../@types/indexableProperties';
 
 const handleLogout = async (isHomepage: boolean) => {
   try {

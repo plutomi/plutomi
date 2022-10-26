@@ -2,7 +2,7 @@ import { useRouter } from 'next/router';
 import { useState } from 'react';
 import { useQuestionsInOrg } from '../../SWR/useQuestionsInOrg';
 import { AnswerQuestions } from '../../adapters/Applicants';
-import { CustomQuery } from '../../types/main';
+import { CustomQuery } from '../../@types/express';
 import { Loader } from '../Loader/Loader';
 
 export const PublicApplicationPageContent = () => {

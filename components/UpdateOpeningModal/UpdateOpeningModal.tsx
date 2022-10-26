@@ -6,7 +6,7 @@ import { GetOpeningInfoURL, UpdateOpening } from '../../adapters/Openings';
 import useStore from '../../utils/store';
 import { OpeningState } from '../../Config';
 import { findInTargetArray } from '../../utils/findInTargetArray';
-import { IndexableProperties } from '../../types/indexableProperties';
+import { IndexableProperties } from '../../@types/indexableProperties';
 
 // TODO types
 // @ts-ignore

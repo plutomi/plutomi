@@ -4,7 +4,7 @@ import { useRouter } from 'next/router';
 import { useSelf } from '../../SWR/useSelf';
 import { useOpeningInfo } from '../../SWR/useOpeningInfo';
 import { useOpeningsInOrg } from '../../SWR/useOpeningsInOrg';
-import { CustomQuery, IdxTypes } from '../../types/main';
+import { CustomQuery, IdxTypes } from '../../@types/express';
 import { OpeningState, WEBSITE_URL } from '../../Config';
 import { OpeningsDropdown } from '../OpeningsDropdown';
 import { ClickToCopy } from '../ClickToCopy';

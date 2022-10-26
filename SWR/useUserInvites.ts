@@ -1,8 +1,8 @@
 import useSWR from 'swr';
 import { GetUserInvitesURL } from '../adapters/Invites';
 import { SWRFetcher } from '../Config';
-import { DynamoOrgInvite, DynamoUser } from '../types/dynamo';
-import { APIErrorResponse } from '../types/main';
+import { DynamoOrgInvite, DynamoUser } from '../@types/dynamo';
+import { APIErrorResponse } from '../@types/express';
 
 interface UseUserInvitesProps {
   userId?: string;

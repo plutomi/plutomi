@@ -1,10 +1,10 @@
 import { mutate } from 'swr';
-import { DynamoOrgInvite } from '../../types/dynamo';
+import { DynamoOrgInvite } from '../../@types/dynamo';
 import * as Time from '../../utils/time';
 import * as Invites from '../../adapters/Invites';
 import { useSelf } from '../../SWR/useSelf';
 import { findInTargetArray } from '../../utils/findInTargetArray';
-import { IndexableProperties } from '../../types/indexableProperties';
+import { IndexableProperties } from '../../@types/indexableProperties';
 
 interface PendingInviteCardProps {
   invite: DynamoOrgInvite;

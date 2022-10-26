@@ -1,8 +1,8 @@
 import useSWR from 'swr';
 import { GetWebhookInfoURL } from '../adapters/Webhooks';
 import { SWRFetcher } from '../Config';
-import { DynamoWebhook } from '../types/dynamo';
-import { APIErrorResponse } from '../types/main';
+import { DynamoWebhook } from '../@types/dynamo';
+import { APIErrorResponse } from '../@types/express';
 
 interface UseWebhookInfoProps {
   webhookId?: string;

@@ -1,8 +1,8 @@
 import _ from 'lodash';
 import { useRouter } from 'next/router';
 import { useAllApplicantsInStage } from '../../SWR/useAllApplicantsInStage';
-import { CustomQuery } from '../../types/main';
-import { DynamoApplicant } from '../../types/dynamo';
+import { CustomQuery } from '../../@types/express';
+import { DynamoApplicant } from '../../@types/dynamo';
 import { ApplicantListItem } from '../ApplicantListItem';
 import { Loader } from '../Loader/Loader';
 

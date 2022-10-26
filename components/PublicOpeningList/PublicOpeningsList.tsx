@@ -1,9 +1,9 @@
 import _ from 'lodash';
 import { useRouter } from 'next/router';
 import { useAllPublicOpenings } from '../../SWR/useAllPublicOpenings';
-import { CustomQuery } from '../../types/main';
+import { CustomQuery } from '../../@types/express';
 import { PublicOpeningListItem } from '../PublicOpeningListItem/PublicOpeningListItem';
-import { DynamoOpening } from '../../types/dynamo';
+import { DynamoOpening } from '../../@types/dynamo';
 
 export const PublicOpeningList = () => {
   const router = useRouter();

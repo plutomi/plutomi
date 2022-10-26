@@ -4,7 +4,7 @@ import * as Openings from '../adapters/Openings';
 import * as Stages from '../adapters/Stages';
 import * as Questions from '../adapters/Questions';
 import * as Orgs from '../adapters/Orgs';
-import { DynamoQuestion, DynamoStage } from '../types/dynamo';
+import { DynamoQuestion, DynamoStage } from '../@types/dynamo';
 import TagGenerator from '../utils/tagGenerator';
 
 describe('Questions', () => {

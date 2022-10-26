@@ -8,7 +8,7 @@ import {
   IndexableProperties,
   IndexedTargetArray,
   IndexedTargetArrayItem,
-} from '../types/indexableProperties';
+} from '../@types/indexableProperties';
 
 /**
  * Finds a value in a {@link IndexedTargetArray}

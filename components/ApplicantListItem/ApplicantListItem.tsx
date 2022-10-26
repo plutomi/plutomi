@@ -3,8 +3,8 @@ import { useRouter } from 'next/router';
 import Link from 'next/link';
 import * as Time from '../../utils/time';
 import useStore from '../../utils/store';
-import { CustomQuery } from '../../types/main';
-import { DynamoApplicant } from '../../types/dynamo';
+import { CustomQuery } from '../../@types/express';
+import { DynamoApplicant } from '../../@types/dynamo';
 import { ClickToCopy } from '../ClickToCopy';
 
 interface ApplicantListItemProps {

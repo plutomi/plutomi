@@ -1,6 +1,6 @@
 import { useRouter } from 'next/router';
 import { usePublicOpening } from '../../SWR/usePublicOpening';
-import { CustomQuery } from '../../types/main';
+import { CustomQuery } from '../../@types/express';
 import { Loader } from '../Loader';
 import { PublicApplicantInfoForm } from '../PublicApplicantInfoForm';
 

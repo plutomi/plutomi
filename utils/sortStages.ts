@@ -1,4 +1,4 @@
-import { IndexableProperties } from '../types/indexableProperties';
+import { IndexableProperties } from '../@types/indexableProperties';
 import { findInTargetArray } from './findInTargetArray';
 
 interface GetAdjacentStagesBasedOnPositionProps {

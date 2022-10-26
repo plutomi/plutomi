@@ -4,7 +4,7 @@ import * as PublicInfo from '../adapters/PublicInfo';
 import * as Orgs from '../adapters/Orgs';
 import * as Openings from '../adapters/Openings';
 import * as Stages from '../adapters/Stages';
-import { DynamoOpening } from '../types/dynamo';
+import { DynamoOpening } from '../@types/dynamo';
 import TagGenerator from '../utils/tagGenerator';
 
 describe('Public', () => {

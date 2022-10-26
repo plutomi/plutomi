@@ -1,8 +1,8 @@
 import useSWR from 'swr';
 import { GetApplicantByIdURL } from '../adapters/Applicants';
 import { SWRFetcher } from '../Config';
-import { DynamoApplicant } from '../types/dynamo';
-import { APIErrorResponse } from '../types/main';
+import { DynamoApplicant } from '../@types/dynamo';
+import { APIErrorResponse } from '../@types/express';
 
 interface UseApplicantByIdProps {
   applicantId?: string;

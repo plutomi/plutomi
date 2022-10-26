@@ -7,7 +7,7 @@ import { mutate } from 'swr';
 import useStore from '../../utils/store';
 import { useApplicantById } from '../../SWR/useApplicantById';
 import { GetApplicantByIdURL, UpdateApplicant } from '../../adapters/Applicants';
-import { CustomQuery } from '../../types/main';
+import { CustomQuery } from '../../@types/express';
 import { WEBSITE_URL } from '../../Config';
 import combineClassNames from '../../utils/combineClassNames';
 import { ClickToCopy } from '../ClickToCopy';

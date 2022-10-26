@@ -1,6 +1,6 @@
 import { useRouter } from 'next/router';
 import { useOpeningInfo } from '../../SWR/useOpeningInfo';
-import { CustomQuery } from '../../types/main';
+import { CustomQuery } from '../../@types/express';
 import { Loader } from '../Loader';
 import { StageReorderColumn } from '../StageReorderColumn';
 import { UpdateOpeningModal } from '../UpdateOpeningModal';

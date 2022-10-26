@@ -1,6 +1,6 @@
 import { useRouter } from 'next/router';
 import { useAllPublicOpenings } from '../../SWR/useAllPublicOpenings';
-import { CustomQuery } from '../../types/main';
+import { CustomQuery } from '../../@types/express';
 import { Loader } from '../Loader';
 import { PublicOpeningList } from '../PublicOpeningList';
 

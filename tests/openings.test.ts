@@ -3,7 +3,7 @@ import { AXIOS_INSTANCE as axios, ERRORS, OpeningState } from '../Config';
 import * as Openings from '../adapters/Openings';
 import * as Orgs from '../adapters/Orgs';
 import * as Stages from '../adapters/Stages';
-import { DynamoOpening } from '../types/dynamo';
+import { DynamoOpening } from '../@types/dynamo';
 
 describe('Openings', () => {
   /**

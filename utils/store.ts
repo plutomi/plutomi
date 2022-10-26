@@ -1,7 +1,7 @@
 // @ts-nocheck // TODO remove
 
 import create from 'zustand';
-import { DynamoQuestion, DynamoWebhook } from '../types/dynamo';
+import { DynamoQuestion, DynamoWebhook } from '../@types/dynamo';
 
 const useStore = create((set) => ({
   /**

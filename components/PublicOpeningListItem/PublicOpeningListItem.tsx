@@ -1,6 +1,6 @@
 import { CalendarIcon, LocationMarkerIcon } from '@heroicons/react/outline';
 import Link from 'next/dist/client/link';
-import { DynamoOpening } from '../../types/dynamo';
+import { DynamoOpening } from '../../@types/dynamo';
 import * as Time from '../../utils/time';
 
 interface PublicOpeningListItemProps {
@@ -8,7 +8,6 @@ interface PublicOpeningListItemProps {
 }
 
 export const PublicOpeningListItem = ({ opening }: PublicOpeningListItemProps) => (
-  
   <li key={opening.openingId}>
     {/* Take applicant to opening info page */}
     <Link href={`/${opening?.orgId}/${opening?.openingId}/apply`}>

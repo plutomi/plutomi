@@ -1,8 +1,8 @@
 import useSWR from 'swr';
 import { GetPublicOpeningsURL } from '../adapters/PublicInfo';
 import { SWRFetcher } from '../Config';
-import { DynamoOpening } from '../types/dynamo';
-import { APIErrorResponse } from '../types/main';
+import { DynamoOpening } from '../@types/dynamo';
+import { APIErrorResponse } from '../@types/express';
 
 interface UseAllPublicOpeningsProps {
   orgId?: string;

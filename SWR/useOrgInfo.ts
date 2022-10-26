@@ -1,7 +1,7 @@
 import useSWR from 'swr';
 import { SWRFetcher } from '../Config';
 import { GetOrgInfoURL } from '../adapters/Orgs';
-import { APIErrorResponse } from '../types/main';
+import { APIErrorResponse } from '../@types/express';
 import { Org } from '../entities';
 
 interface UseOrgInfoProps {

@@ -5,7 +5,7 @@ import { mutate } from 'swr';
 import { UpdateWebhook, GetWebhooksInOrgURL } from '../../adapters/Webhooks';
 import useStore from '../../utils/store';
 import { LIMITS } from '../../Config';
-import { DynamoWebhook } from '../../types/dynamo';
+import { DynamoWebhook } from '../../@types/dynamo';
 import { CustomLink } from '../CustomLink';
 
 export const UpdateWebhookModal = () => {

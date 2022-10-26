@@ -4,7 +4,7 @@ import * as Orgs from '../adapters/Orgs';
 import * as Openings from '../adapters/Openings';
 import * as Stages from '../adapters/Stages';
 import * as Applicants from '../adapters/Applicants';
-import { DynamoOpening } from '../types/dynamo';
+import { DynamoOpening } from '../@types/dynamo';
 import TagGenerator from '../utils/tagGenerator';
 
 describe('Openings', () => {

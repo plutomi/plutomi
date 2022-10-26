@@ -5,7 +5,7 @@ import errorFormatter from '../utils/errorFormatter';
 import EBClient from '../awsClients/eventBridgeClient';
 import { DynamoStreamTypes, Entities } from '../Config';
 import { env } from '../env';
-import { AllEntities } from '../types/dynamo';
+import { AllEntities } from '../@types/dynamo';
 
 const processor = require('dynamodb-streams-processor');
 

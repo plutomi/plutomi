@@ -7,7 +7,7 @@ import { Choice } from 'aws-cdk-lib/aws-stepfunctions';
 import { NodejsFunction } from 'aws-cdk-lib/aws-lambda-nodejs';
 import * as iam from 'aws-cdk-lib/aws-iam';
 import { DYNAMO_TABLE_NAME, Entities } from '../Config';
-import { DynamoIAM } from '../types/dynamo';
+import { DynamoIAM } from '../@types/dynamo';
 import { ENVIRONMENT } from './AppStack';
 import { env } from '../env';
 import { getLambdaConfig } from '../utils/getLambdaConfig';

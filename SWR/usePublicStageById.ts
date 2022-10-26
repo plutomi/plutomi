@@ -2,8 +2,8 @@
 import useSWR from 'swr';
 import { SWRFetcher } from '../Config';
 import { GetPublicStageInfoURL } from '../adapters/PublicInfo';
-import { DynamoStage } from '../types/dynamo';
-import { APIErrorResponse } from '../types/main';
+import { DynamoStage } from '../@types/dynamo';
+import { APIErrorResponse } from '../@types/express';
 
 interface usePublicStageByIdProps {
   orgId?: string;

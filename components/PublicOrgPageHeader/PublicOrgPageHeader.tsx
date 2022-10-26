@@ -1,6 +1,6 @@
 import { useRouter } from 'next/router';
 import { usePublicOrgById } from '../../SWR/usePublicOrgById';
-import { CustomQuery } from '../../types/main';
+import { CustomQuery } from '../../@types/express';
 
 export const PublicOrgPageHeader = () => {
   const router = useRouter();

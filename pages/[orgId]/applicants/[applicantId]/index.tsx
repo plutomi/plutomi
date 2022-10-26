@@ -3,7 +3,7 @@ import { Loader } from '../../../../components/Loader';
 import { PublicApplicationPageContent } from '../../../../components/PublicApplicationPageContent';
 import { PublicApplicationPageHeader } from '../../../../components/PublicApplicationPageHeader';
 import { useApplicantById } from '../../../../SWR/useApplicantById';
-import { CustomQuery } from '../../../../types/main';
+import { CustomQuery } from '../../../../@types/express';
 
 export default function Application() {
   const router = useRouter();

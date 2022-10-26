@@ -2,7 +2,7 @@ import useSWR from 'swr';
 import { GetStagesInOpeningURL } from '../adapters/Stages';
 import { SWRFetcher } from '../Config';
 import { Stage } from '../entities';
-import { APIErrorResponse } from '../types/main';
+import { APIErrorResponse } from '../@types/express';
 
 interface UseAllStagesInOpeningProps {
   openingId?: string;

@@ -1,8 +1,8 @@
 import useSWR from 'swr';
 import { GetOrgInvitesURL } from '../adapters/Invites';
 import { SWRFetcher } from '../Config';
-import { DynamoOrgInvite } from '../types/dynamo';
-import { APIErrorResponse } from '../types/main';
+import { DynamoOrgInvite } from '../@types/dynamo';
+import { APIErrorResponse } from '../@types/express';
 
 interface UseOrgInviteProps {
   orgId?: string;

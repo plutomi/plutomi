@@ -2,7 +2,7 @@ import { useRouter } from 'next/router';
 import { useState } from 'react';
 import { useAllStagesInOpening } from '../../SWR/useAllStagesInOpening';
 import { useOpeningInfo } from '../../SWR/useOpeningInfo';
-import { CustomQuery } from '../../types/main';
+import { CustomQuery } from '../../@types/express';
 import { Loader } from '../Loader';
 import { StageReorderColumn } from '../StageReorderColumn';
 import { StageSettingsContentTabs } from '../StageSettingsContentTabs';

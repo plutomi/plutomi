@@ -1,6 +1,6 @@
-import { IndexableProperties, IndexedTargetArrayItem } from '../types/indexableProperties';
+import { IndexableProperties, IndexedTargetArrayItem } from '../@types/indexableProperties';
 import { BaseEntity } from './Base';
-import { Extends } from '../types/extends';
+import { Extends } from '../@types/extends';
 
 export type UserTargetArray = Array<
   Omit<IndexedTargetArrayItem, 'property'> & {

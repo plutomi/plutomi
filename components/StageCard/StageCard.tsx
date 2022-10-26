@@ -3,7 +3,7 @@ import Link from 'next/dist/client/link';
 import { UserGroupIcon } from '@heroicons/react/outline';
 import NumberFormat from 'react-number-format';
 import router from 'next/router';
-import { CustomQuery } from '../../types/main';
+import { CustomQuery } from '../../@types/express';
 
 interface StageCardProps {
   name: string;

@@ -2,7 +2,7 @@ import { mutate } from 'swr';
 import { useRouter } from 'next/router';
 import { useOpeningInfo } from '../../../../../SWR/useOpeningInfo';
 import { useStageInfo } from '../../../../../SWR/useStageInfo';
-import { CustomQuery } from '../../../../../types/main';
+import { CustomQuery } from '../../../../../@types/express';
 import { GetOpeningInfoURL } from '../../../../../adapters/Openings';
 import { GetStagesInOpeningURL, DeleteStage } from '../../../../../adapters/Stages';
 import { WEBSITE_URL } from '../../../../../Config';

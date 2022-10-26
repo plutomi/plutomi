@@ -1,8 +1,8 @@
 import useSWR from 'swr';
 import { GetQuestionsInStageURL } from '../adapters/Questions';
 import { SWRFetcher } from '../Config';
-import { DynamoQuestion } from '../types/dynamo';
-import { APIErrorResponse } from '../types/main';
+import { DynamoQuestion } from '../@types/dynamo';
+import { APIErrorResponse } from '../@types/express';
 
 interface UseQuestionsInStageProps {
   openingId?: string;

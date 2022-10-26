@@ -1,8 +1,8 @@
 import useSWR from 'swr';
 import { SWRFetcher } from '../Config';
 import { GetPublicOrgInfoURL } from '../adapters/PublicInfo';
-import { DynamoOrg } from '../types/dynamo';
-import { APIErrorResponse } from '../types/main';
+import { DynamoOrg } from '../@types/dynamo';
+import { APIErrorResponse } from '../@types/express';
 
 interface UsePublicOrgByIdProps {
   orgId?: string;

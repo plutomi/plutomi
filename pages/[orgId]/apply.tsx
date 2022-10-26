@@ -3,7 +3,7 @@ import { Loader } from '../../components/Loader';
 import { PublicOrgPageContent } from '../../components/PublicOrgPageContent';
 import { PublicOrgPageHeader } from '../../components/PublicOrgPageHeader';
 import { usePublicOrgById } from '../../SWR/usePublicOrgById';
-import { CustomQuery } from '../../types/main';
+import { CustomQuery } from '../../@types/express';
 
 export default function Apply() {
   const router = useRouter();

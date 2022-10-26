@@ -5,7 +5,7 @@ import * as Orgs from '../adapters/Orgs';
 import * as GenerateID from '../utils/generateIds';
 
 import { APIUpdateWebhookOptions } from '../controllers/webhooks/updateWebhook';
-import { DynamoWebhook } from '../types/dynamo';
+import { DynamoWebhook } from '../@types/dynamo';
 
 describe('Webhooks', () => {
   /**

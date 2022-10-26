@@ -1,6 +1,6 @@
 import NumberFormat from 'react-number-format';
 import router from 'next/router';
-import { CustomQuery } from '../../types/main';
+import { CustomQuery } from '../../@types/express';
 import { Stage } from '../../entities';
 import { Draggable } from 'react-beautiful-dnd';
 import Link from 'next/link';

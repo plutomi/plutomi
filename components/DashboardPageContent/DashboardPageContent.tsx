@@ -12,7 +12,7 @@ import { Loader } from '../Loader/Loader';
 import { UpdateUserProfileModal } from '../UpdateUserInfoModal';
 import { nameIsDefault } from '../../utils/compareStrings/nameIsDefault';
 import { findInTargetArray } from '../../utils/findInTargetArray';
-import { IndexableProperties } from '../../types/indexableProperties';
+import { IndexableProperties } from '../../@types/indexableProperties';
 
 export const DashboardPageContent = () => {
   const { user, isUserLoading, isUserError } = useSelf();

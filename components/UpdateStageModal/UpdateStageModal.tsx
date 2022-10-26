@@ -6,7 +6,7 @@ import { useRouter } from 'next/router';
 import useStore from '../../utils/store';
 import { GetOpeningInfoURL } from '../../adapters/Openings';
 import { GetStagesInOpeningURL, UpdateStage } from '../../adapters/Stages';
-import { CustomQuery } from '../../types/main';
+import { CustomQuery } from '../../@types/express';
 import { Stage } from '../../entities';
 
 interface UpdateStageModalProps {

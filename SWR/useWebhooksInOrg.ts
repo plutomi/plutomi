@@ -1,8 +1,8 @@
 import useSWR from 'swr';
 import { SWRFetcher } from '../Config';
 import { GetWebhooksInOrgURL } from '../adapters/Webhooks';
-import { DynamoWebhook } from '../types/dynamo';
-import { APIErrorResponse } from '../types/main';
+import { DynamoWebhook } from '../@types/dynamo';
+import { APIErrorResponse } from '../@types/express';
 
 interface UseWebhooksInOrgProps {
   orgId?: string;

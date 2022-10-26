@@ -2,7 +2,7 @@ import { useRouter } from 'next/router';
 import { useEffect } from 'react';
 import { useAllStagesInOpening } from '../../../SWR/useAllStagesInOpening';
 import { useOpeningInfo } from '../../../SWR/useOpeningInfo';
-import { CustomQuery } from '../../../types/main';
+import { CustomQuery } from '../../../@types/express';
 import { DOMAIN_NAME } from '../../../Config';
 import { Loader } from '../../../components/Loader';
 

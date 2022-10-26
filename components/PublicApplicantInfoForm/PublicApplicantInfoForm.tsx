@@ -4,7 +4,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { CreateApplicant } from '../../adapters/Applicants';
 import combineClassNames from '../../utils/combineClassNames';
-import { CustomQuery } from '../../types/main';
+import { CustomQuery } from '../../@types/express';
 
 export const PublicApplicantInfoForm = () => {
   const router = useRouter();

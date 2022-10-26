@@ -3,7 +3,7 @@ import { PencilAltIcon, TrashIcon } from '@heroicons/react/outline';
 import { mutate } from 'swr';
 import { DeleteQuestionFromOrg, GetQuestionsInOrgURL } from '../../adapters/Questions';
 import useStore from '../../utils/store';
-import { DynamoQuestion } from '../../types/dynamo';
+import { DynamoQuestion } from '../../@types/dynamo';
 
 interface QuestionItemProps {
   question: DynamoQuestion;

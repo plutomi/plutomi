@@ -2,7 +2,7 @@ import useSWR from 'swr';
 import { GetUsersInOrgURL } from '../adapters/Users';
 import { SWRFetcher } from '../Config';
 import { User } from '../entities';
-import { APIErrorResponse } from '../types/main';
+import { APIErrorResponse } from '../@types/express';
 
 interface UseOrgUsersProps {
   orgId?: string;
