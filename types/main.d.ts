@@ -1,5 +1,13 @@
 import { UserEntity } from '../models';
 
+declare global {
+  namespace Express {
+    export interface Request {
+      user: UserEntity;
+    }
+  }
+}
+
 /**
  * All possible parameters in the URL
  */ // TODO use url path params
@@ -19,17 +27,6 @@ export interface CustomQuery {
   inviteId: string;
 }
 
-// TODO types for files, etc.
-
-// TODO fix this type and add it to the response
 export interface APIErrorResponse {
   message: string;
-}
-
-declare global {
-  namespace Express {
-    export interface Request {
-      user: UserEntity;
-    }
-  }
 }
