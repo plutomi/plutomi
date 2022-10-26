@@ -4,13 +4,14 @@ import Link from 'next/dist/client/link';
 import { OpeningState, WEBSITE_URL } from '../../Config';
 import * as Time from '../../utils/time';
 import { ClickToCopy } from '../ClickToCopy';
-import { Opening } from '../../entities';
 import { findInTargetArray } from '../../utils/findInTargetArray';
 import { useAllStagesInOpening } from '../../SWR/useAllStagesInOpening';
 import { Loader } from '../Loader';
+import { OpeningEntity } from '../../models/Opening';
+import { IndexableProperties } from '../../@types/indexableProperties';
 
 interface OpeningsListItemProps {
-  opening: Opening;
+  opening: OpeningEntity;
 }
 
 export const OpeningsListItem = ({ opening }: OpeningsListItemProps) => {
@@ -19,8 +20,9 @@ export const OpeningsListItem = ({ opening }: OpeningsListItemProps) => {
    * Otherwise, go to the settings page for the opening to create one
    */
 
+  const openingId = findInTargetArray(IndexableProperties.Id, opening);
   const { stages, isStagesError, isStagesLoading } = useAllStagesInOpening({
-    openingId: opening.id,
+    openingId,
   });
 
   if (isStagesLoading) {
@@ -34,18 +36,12 @@ export const OpeningsListItem = ({ opening }: OpeningsListItemProps) => {
       ? `stages/${stages[0].id}/applicants` // TODO should this end with applicants?
       : `settings`;
 
-  const openingState = findInTargetArray({
-    entity: IdxTypes.OpeningState,
-    targetArray: opening.target,
-  });
+  const openingState = findInTargetArray(IndexableProperties.OpeningState, opening);
 
-  const orgId = findInTargetArray({
-    entity: IdxTypes.Org,
-    targetArray: opening.target,
-  });
+  const orgId = findInTargetArray(IndexableProperties.Org, opening);
   return (
-    <li key={opening.id}>
-      <Link href={`/openings/${opening.id}/${endingUrl}`}>
+    <li key={openingId}>
+      <Link href={`/openings/${openingId}/${endingUrl}`}>
         {/* eslint-disable-next-line jsx-a11y/anchor-is-valid */}
         <a className="block hover:bg-gray-50">
           <div className="px-4 py-4 sm:px-6">
@@ -83,7 +79,7 @@ export const OpeningsListItem = ({ opening }: OpeningsListItemProps) => {
                   <p className="mt-2 flex items-center text-lg text-normal sm:mt-0 sm:ml-6">
                     <ClickToCopy
                       showText="Application Link"
-                      copyText={`${WEBSITE_URL}/${orgId}/${opening.id}/apply`}
+                      copyText={`${WEBSITE_URL}/${orgId}/${openingId}/apply`}
                     />
                   </p>
                 )}

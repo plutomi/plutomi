@@ -14,7 +14,7 @@ export type APICreateOpeningOptions = Required<Pick<OpeningEntity, 'name'>>;
 
 const schema = Joi.object({
   body: {
-    openingName: Joi.string().max(LIMITS.MAX_OPENING_NAME_LENGTH),
+    name: Joi.string().max(LIMITS.MAX_OPENING_NAME_LENGTH),
   },
 }).options(JOI_SETTINGS);
 
@@ -29,8 +29,6 @@ export const createOpening = async (req: Request, res: Response) => {
 
   const { name }: APICreateOpeningOptions = req.body;
   const orgId = findInTargetArray(IndexableProperties.Org, user);
-
-  let org: OrgEntity | undefined;
 
   const orgFilter: Filter<OrgEntity> = {
     target: { property: IndexableProperties.Id, value: orgId },

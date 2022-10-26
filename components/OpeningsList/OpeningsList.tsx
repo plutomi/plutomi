@@ -1,6 +1,5 @@
-import { Opening } from '../../entities';
+import { OpeningEntity } from '../../models/Opening';
 import { useOpeningsInOrg } from '../../SWR/useOpeningsInOrg';
-import { useSelf } from '../../SWR/useSelf';
 import useStore from '../../utils/store';
 import { Loader } from '../Loader/Loader';
 import { OpeningsListItem } from '../OpeningsListItem';
@@ -10,7 +9,7 @@ export const OpeningsList = () => {
 
   const search = useStore((state) => state.openingsSearchInput);
 
-  const filteredOpenings = openingsInOrg?.filter((opening: Opening) =>
+  const filteredOpenings = openingsInOrg?.filter((opening: OpeningEntity) =>
     opening.name.toLowerCase().trim().includes(search.toLowerCase().trim()),
   );
 
