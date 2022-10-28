@@ -4,12 +4,13 @@ import { useRouter } from 'next/router';
 import { useSelf } from '../../SWR/useSelf';
 import { useOpeningInfo } from '../../SWR/useOpeningInfo';
 import { useOpeningsInOrg } from '../../SWR/useOpeningsInOrg';
-import { CustomQuery, IdxTypes } from '../../@types/express';
 import { OpeningState, WEBSITE_URL } from '../../Config';
 import { OpeningsDropdown } from '../OpeningsDropdown';
 import { ClickToCopy } from '../ClickToCopy';
 import { Loader } from '../Loader';
 import { findInTargetArray } from '../../utils/findInTargetArray';
+import { IndexableProperties } from '../../@types/indexableProperties';
+import { CustomQuery } from '../../@types/customQuery';
 
 export const ApplicantsPageHeader = () => {
   const router = useRouter();
@@ -24,11 +25,8 @@ export const ApplicantsPageHeader = () => {
   if (isOpeningLoading || isOpeningsInOrgLoading)
     return <Loader text="Loading opening(s) info..."></Loader>;
 
-  const orgId = findInTargetArray({ entity: IdxTypes.Org, targetArray: opening.target });
-  const openingState = findInTargetArray({
-    entity: IdxTypes.OpeningState,
-    targetArray: opening.target,
-  });
+  const orgId = findInTargetArray(IndexableProperties.Org, opening);
+  const openingState = findInTargetArray(IndexableProperties.OpeningState, opening);
 
   return (
     <div className="md:flex md:items-center md:justify-between  ">
@@ -43,7 +41,7 @@ export const ApplicantsPageHeader = () => {
         <p className="mt-2 text-md text-normal sm:mt-0 ">
           <ClickToCopy
             showText="Application Link"
-            copyText={`${WEBSITE_URL}/${orgId}/${opening?.id}/apply`}
+            copyText={`${WEBSITE_URL}/${orgId}/${openingId}/apply`}
           />
         </p>
       )}

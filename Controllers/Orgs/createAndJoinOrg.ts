@@ -130,8 +130,7 @@ export const createAndJoinOrg = async (req: Request, res: Response) => {
         displayName,
       };
       const createdOrg = await collections.orgs.insertOne(newOrg, { session });
-      console.log(`CREATED ORG`, createdOrg);
-      console.log(`NEW USER`, updatedUser);
+
       await session.commitTransaction();
     });
   } catch (error) {

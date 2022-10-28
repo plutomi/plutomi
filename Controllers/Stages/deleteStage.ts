@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
 import { Filter, UpdateFilter } from 'mongodb';
 import { IndexableProperties } from '../../@types/indexableProperties';
-import { StageEntity, StageTargetArray } from '../../models';
+import { OrgEntity, StageEntity, StageTargetArray } from '../../models';
 import { OpeningEntity } from '../../models/Opening';
 import { collections, mongoClient } from '../../utils/connectToDatabase';
 // import { Opening, Stage } from '../../entities';
@@ -160,10 +160,21 @@ export const deleteStage = async (req: Request, res: Response) => {
           { session },
         );
 
-        // TODO decrement org total stage count
+        // Decrement the totalStages count on the org
 
-        // TODO decrement opening stage count
+        const orgFilter: Filter<OrgEntity> = {
+          $and: [{ target: { property: IndexableProperties.Id, value: orgId } }],
+        };
+        const orgUpdateFilter: UpdateFilter<OrgEntity> = {
+          $inc: { totalStages: -1 },
+        };
+        await collections.orgs.updateOne(orgFilter, orgUpdateFilter, { session });
 
+        // Decrement the totalStages count on the opening
+        const openingUpdateFilter: UpdateFilter<OrgEntity> = {
+          $inc: { totalStages: -1 },
+        };
+        await collections.openings.updateOne(openingFilter, openingUpdateFilter, { session });
         await session.commitTransaction();
       }
     });
@@ -175,15 +186,5 @@ export const deleteStage = async (req: Request, res: Response) => {
     await session.endSession();
   }
 
-  // entityManager.remove(ourStage);
-  // opening.totalStages - +opening.totalStages - 1;
-
-  // try {
-  //   await entityManager.flush();
-  //   return res.status(200).json({ message: 'Stage deleted!' });
-  // } catch (error) {
-  //   const message = 'Error ocurred deleting stage';
-  //   console.error(message, error);
-  //   return res.status(500).json({ message, error });
-  // }
+  return res.status(200).json({ message: 'Stage deleted!' });
 };
