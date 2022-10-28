@@ -74,7 +74,7 @@ export const createStage = async (req: Request, res: Response) => {
         target: { property: IndexableProperties.Org, value: orgId },
       },
       { target: { property: IndexableProperties.Opening, value: openingId } },
-      { target: { property: IndexableProperties.NextStage, value: false } },
+      { target: { property: IndexableProperties.NextStage, value: null } },
     ],
   };
   try {
@@ -101,9 +101,9 @@ export const createStage = async (req: Request, res: Response) => {
         property: IndexableProperties.PreviousStage,
         value: currentLastStage
           ? findInTargetArray(IndexableProperties.Id, currentLastStage)
-          : false,
+          : undefined,
       }, // Add to the end by default, TODO allow position property
-      { property: IndexableProperties.NextStage, value: false },
+      { property: IndexableProperties.NextStage, value: null },
     ],
   };
 

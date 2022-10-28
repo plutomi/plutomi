@@ -102,7 +102,7 @@ export const requestLoginLink = async (req: Request, res: Response) => {
         emailVerified: false,
         canReceiveEmails: true,
         target: [
-          { property: IndexableProperties.Org, value: undefined },
+          { property: IndexableProperties.Org, value: null },
           { property: IndexableProperties.Email, value: email },
           { property: IndexableProperties.Id, value: customId },
         ],

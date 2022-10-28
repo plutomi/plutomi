@@ -93,7 +93,7 @@ export const createAndJoinOrg = async (req: Request, res: Response) => {
       {
         target: {
           property: IndexableProperties.Org,
-          value: undefined,
+          value: null,
         },
       },
     ],
