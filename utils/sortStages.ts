@@ -66,6 +66,7 @@ export const sortStages = (unsortedStagesInOpening: StageEntity[]): StageEntity[
   }
 
   return sortedStages;
+  console.log(`SORTED STAGES`, sortedStages);
 };
 
 export const getAdjacentStagesBasedOnPosition = ({
@@ -76,20 +77,23 @@ export const getAdjacentStagesBasedOnPosition = ({
   if (!position && position !== 0) {
     // Position not provided, add it to the end
     const stage = otherSortedStages[otherSortedStages.length - 1];
-    const stageId = stage ? findInTargetArray(IndexableProperties.Id, stage) : undefined;
+    const stageId = stage ? findInTargetArray(IndexableProperties.Id, stage) : null;
 
+    console.log('First case');
     return {
-      newNextStageId: undefined,
+      newNextStageId: null,
       newPreviousStageId: stageId,
     };
   }
 
   if (position === 0) {
+    console.log('Second case');
+
     // Stage wants to be first
     const stage = otherSortedStages[0];
-    const stageId = stage ? findInTargetArray(IndexableProperties.Id, stage) : undefined;
+    const stageId = stage ? findInTargetArray(IndexableProperties.Id, stage) : null;
     return {
-      newPreviousStageId: undefined,
+      newPreviousStageId: null,
       newNextStageId: stageId,
     };
   }
@@ -100,9 +104,14 @@ export const getAdjacentStagesBasedOnPosition = ({
    */
   const currentIndex = otherSortedStages.findIndex((stage) => {
     const stageId = findInTargetArray(IndexableProperties.Id, stage);
-    stageId === stageIdBeingMoved;
+    if (stageId === stageIdBeingMoved) {
+      return stage;
+    }
   });
 
+
+  console.log(`STAGE ID BEING MOVED`, stageIdBeingMoved);
+  console.log(`CURRENT INDEX`, currentIndex);
   /**
    * We have to check if we are moving the stage:
    *
@@ -119,16 +128,19 @@ export const getAdjacentStagesBasedOnPosition = ({
    */
 
   if (position > currentIndex) {
+    console.log('Moving DOWN');
+
     const newPreviousStage = otherSortedStages[position];
     const newNextStage = otherSortedStages[position + 1];
 
+    console.log(`NEW PREVIOUS STAGE`, newPreviousStage);
     const newPreviousStageId = newPreviousStage
       ? findInTargetArray(IndexableProperties.Id, newPreviousStage)
-      : undefined;
+      : null;
 
     const newNextStageId = newNextStage
       ? findInTargetArray(IndexableProperties.Id, newNextStage)
-      : undefined;
+      : null;
 
     return {
       newPreviousStageId,
@@ -146,16 +158,18 @@ export const getAdjacentStagesBasedOnPosition = ({
    * Stage 3 --- Stage 1
    */
   if (position < currentIndex) {
+    console.log('Moving UP');
+
     const newPreviousStage = otherSortedStages[position - 1];
     const newNextStage = otherSortedStages[position];
 
     const newPreviousStageId = newPreviousStage
       ? findInTargetArray(IndexableProperties.Id, newPreviousStage)
-      : undefined;
+      : null;
 
     const newNextStageId = newNextStage
       ? findInTargetArray(IndexableProperties.Id, newNextStage)
-      : undefined;
+      : null;
 
     return {
       newPreviousStageId,
