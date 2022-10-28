@@ -1,7 +1,6 @@
 import * as mongoDB from 'mongodb';
 import { Collections } from '../Config';
 import { env } from '../env';
-import { UserEntity } from '../models';
 
 export const collections: {
   users?: mongoDB.Collection;
@@ -17,9 +16,11 @@ export const collections: {
 let mongoClient: mongoDB.MongoClient | undefined;
 
 export async function connectToDatabase() {
-  const client = new mongoDB.MongoClient(env.mongoConnection);
+  const client = new mongoDB.MongoClient(
+    'mongodb+srv://jose-valerio-development:5OCdo6Kb736d2nE1HiH7gysq47ZApv5BoK4V7diupUaDp1fnG7@development.nooegwl.mongodb.net/development?retryWrites=true&w=majority',
+  );
 
-  mongoClient = client;
+  mongoClient = client; // TODO export this and pass it to the .req
   try {
     console.log('Attempting to connect to MongoDB.');
     await client.connect();
@@ -27,7 +28,7 @@ export async function connectToDatabase() {
     console.error(`Error connecting to MongoDB!`, error);
   }
 
-  const db: mongoDB.Db = client.db(env.deploymentEnvironment);
+  const db: mongoDB.Db = client.db('development');
 
   const usersCollection: mongoDB.Collection = db.collection(Collections.Users);
   const loginLinksCollection: mongoDB.Collection = db.collection(Collections.LoginLinks);
