@@ -10,7 +10,7 @@ export const OpeningsList = () => {
   const search = useStore((state) => state.openingsSearchInput);
 
   const filteredOpenings = openingsInOrg?.filter((opening: OpeningEntity) =>
-    opening.name.toLowerCase().trim().includes(search.toLowerCase().trim()),
+    opening?.name?.toLowerCase().trim().includes(search.toLowerCase().trim()),
   );
 
   if (isOpeningsInOrgError) return <h1>An error ocurred returning openings in the org</h1>;

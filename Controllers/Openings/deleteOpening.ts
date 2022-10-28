@@ -18,7 +18,6 @@ const schema = Joi.object({
   },
 }).options(JOI_SETTINGS);
 
-// TODOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO
 export const deleteOpening = async (req: Request, res: Response) => {
   const { user } = req;
   try {
@@ -28,45 +27,44 @@ export const deleteOpening = async (req: Request, res: Response) => {
     return res.status(status).json(body);
   }
 
-  const { name }: APICreateOpeningOptions = req.body;
+  const { openingId } = req.params;
   const orgId = findInTargetArray(IndexableProperties.Org, user);
 
-  let org: OrgEntity | undefined;
+  const openingFilter: Filter<OpeningEntity> = {
+    $and: [
+      { target: { property: IndexableProperties.Id, value: openingId } },
+      { target: { property: IndexableProperties.Org, value: orgId } },
+    ],
+  };
 
+  let openingToBeDeleted: OpeningEntity | undefined;
+
+  try {
+    openingToBeDeleted = (await collections.openings.findOne(openingFilter)) as OpeningEntity;
+  } catch (error) {
+    const message = `Unable to find opening info`;
+    console.error(message, error);
+    return res.status(500).json(message);
+  }
+
+  if (!openingToBeDeleted) {
+    return res.status(404).json({ message: 'Opening not found' });
+  }
   const orgFilter: Filter<OrgEntity> = {
     target: { property: IndexableProperties.Id, value: orgId },
   };
 
   let transactionResults;
 
-  const now = new Date();
-  const openingId = nanoid(50);
-  const newOpening: OpeningEntity = {
-    name,
-    totalApplicants: 0,
-    totalStages: 0,
-    createdAt: now,
-    updatedAt: now,
-    target: [
-      { property: IndexableProperties.Org, value: orgId },
-      {
-        property: IndexableProperties.Id,
-        value: openingId,
-      },
-      // TODO allow creating public openings
-      { property: IndexableProperties.OpeningState, value: OpeningState.Private },
-    ],
-  };
-
   const session = mongoClient.startSession();
 
   const orgUpdateFilter: UpdateFilter<OrgEntity> = {
-    $inc: { totalOpenings: 1 },
+    $inc: { totalOpenings: -1 },
   };
 
   try {
     transactionResults = await session.withTransaction(async () => {
-      await collections.openings.insertOne(newOpening, { session });
+      await collections.openings.deleteOne(openingFilter, { session });
       await collections.orgs.updateOne(orgFilter, orgUpdateFilter, { session });
       await session.commitTransaction();
     });
@@ -78,5 +76,5 @@ export const deleteOpening = async (req: Request, res: Response) => {
     await session.endSession();
   }
 
-  return res.status(201).json({ message: 'Opening created!', opening: newOpening });
+  return res.status(201).json({ message: 'Opening deleted!' });
 };

@@ -3,11 +3,11 @@ import { useRouter } from 'next/router';
 import useStore from '../../utils/store';
 import { useStageInfo } from '../../SWR/useStageInfo';
 import * as Time from '../../utils/time';
-import { CustomQuery } from '../../@types/express';
 import { CreateQuestionModal } from '../CreateQuestionModal';
 import { UpdateStageModal } from '../UpdateStageModal';
 import { CrumbProps } from '../types';
 import { OpeningSettingsBreadcrumbs } from '../OpeningSettingsBreadcrumbs';
+import { CustomQuery } from '../../@types/customQuery';
 
 interface StageSettingsHeaderProps {
   deleteStage: () => void;

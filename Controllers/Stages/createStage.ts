@@ -123,7 +123,6 @@ export const createStage = async (req: Request, res: Response) => {
       await collections.openings.updateOne(openingFilter, openingUpdateFilter, { session });
 
       // 3. Increment the org's total stage count
-
       const orgFilter: Filter<OrgEntity> = {
         $and: [{ target: { property: IndexableProperties.Id, value: orgId } }],
       };

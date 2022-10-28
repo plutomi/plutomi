@@ -12,6 +12,7 @@ export const deleteStage = async (req: Request, res: Response) => {
   const { openingId, stageId } = req.params;
   const orgId = findInTargetArray(IndexableProperties.Org, user);
 
+  console.log(`Incoming opening ID`, openingId);
   let opening: OpeningEntity;
 
   const openingFilter: Filter<OpeningEntity> = {
@@ -57,23 +58,29 @@ export const deleteStage = async (req: Request, res: Response) => {
     });
   }
 
-  const oldPreviousStageId = findInTargetArray(IndexableProperties.Id, ourStage);
+  console.log('Getting old previous stage');
+  const oldPreviousStageId = findInTargetArray(IndexableProperties.PreviousStage, ourStage);
+
+  console.log('Getting old next stage');
+
   const oldNextStageId = findInTargetArray(IndexableProperties.NextStage, ourStage);
 
+  console.log('Got both');
   let oldPreviousStage: StageEntity;
   let oldNextStage: StageEntity;
 
+  console.log('Starting transaction');
   const session = mongoClient.startSession();
 
   let transactionResults;
 
-  // TODO start transaction
-
+  console.log('Removing the stage!');
+  console.log(stageFilter);
   try {
     // TODO these can be done in parallel
 
     transactionResults = await session.withTransaction(async () => {
-      // PART 1
+      // Update the old previous stage, if it existed
       if (oldPreviousStageId) {
         const oldPreviousStageFilter: Filter<StageEntity> = {
           $and: [
@@ -107,6 +114,7 @@ export const deleteStage = async (req: Request, res: Response) => {
           };
         }
 
+        console.log('Attempting to update old previous stage');
         await collections.stages.updateOne(
           oldPreviousStageFilter,
           {
@@ -116,10 +124,10 @@ export const deleteStage = async (req: Request, res: Response) => {
           },
           { session },
         );
+        console.log('Updated old previous stage');
       }
 
-      // PART 2
-
+      // Update the old next stage, if it existed
       if (oldNextStageId) {
         const oldNextStageFilter: Filter<StageEntity> = {
           $and: [
@@ -149,6 +157,7 @@ export const deleteStage = async (req: Request, res: Response) => {
             property: IndexableProperties.PreviousStage,
           };
         }
+        console.log('Attempting to update old NEXT stage');
 
         await collections.stages.updateOne(
           oldNextStageFilter,
@@ -159,24 +168,32 @@ export const deleteStage = async (req: Request, res: Response) => {
           },
           { session },
         );
-
-        // Decrement the totalStages count on the org
-
-        const orgFilter: Filter<OrgEntity> = {
-          $and: [{ target: { property: IndexableProperties.Id, value: orgId } }],
-        };
-        const orgUpdateFilter: UpdateFilter<OrgEntity> = {
-          $inc: { totalStages: -1 },
-        };
-        await collections.orgs.updateOne(orgFilter, orgUpdateFilter, { session });
-
-        // Decrement the totalStages count on the opening
-        const openingUpdateFilter: UpdateFilter<OrgEntity> = {
-          $inc: { totalStages: -1 },
-        };
-        await collections.openings.updateOne(openingFilter, openingUpdateFilter, { session });
-        await session.commitTransaction();
+        console.log('Updated old next stage');
       }
+
+      // Decrement the totalStages count on the org
+      const orgFilter: Filter<OrgEntity> = {
+        target: { property: IndexableProperties.Id, value: orgId },
+      };
+      const orgUpdateFilter: UpdateFilter<OrgEntity> = {
+        $inc: { totalStages: -1 },
+      };
+      console.log('Updating org!');
+      await collections.orgs.updateOne(orgFilter, orgUpdateFilter, { session });
+      console.log('ORG UPDATED');
+
+      // Decrement the totalStages count on the opening
+      const openingUpdateFilter: UpdateFilter<OrgEntity> = {
+        $inc: { totalStages: -1 },
+      };
+      console.log('Updating opening');
+      await collections.openings.updateOne(openingFilter, openingUpdateFilter, { session });
+      console.log('Opening Updated');
+
+      // Remove the stage
+      await collections.stages.deleteOne(stageFilter, { session });
+
+      await session.commitTransaction();
     });
   } catch (error) {
     const msg = 'Error ocurred deleting that stage';

@@ -6,8 +6,6 @@ import { DragDropContext, Droppable } from 'react-beautiful-dnd';
 import { useQuestionsInOrg } from '../../SWR/useQuestionsInOrg';
 import { useStageInfo } from '../../SWR/useStageInfo';
 import { useQuestionsInStage } from '../../SWR/useQuestionsInStage';
-import { CustomQuery } from '../../@types/express';
-import { DynamoQuestion } from '../../@types/dynamo';
 import * as Questions from '../../adapters/Questions';
 import combineClassNames from '../../utils/combineClassNames';
 import * as Stages from '../../adapters/Stages';
