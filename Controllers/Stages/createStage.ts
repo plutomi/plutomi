@@ -1,11 +1,12 @@
 import { Request, Response } from 'express';
 import Joi from 'joi';
-import { Filter } from 'mongodb';
+import { Filter, UpdateFilter } from 'mongodb';
+import { nanoid } from 'nanoid';
 import { IndexableProperties } from '../../@types/indexableProperties';
 import { JOI_SETTINGS, LIMITS } from '../../Config';
-import { StageEntity } from '../../models';
+import { OrgEntity, StageEntity } from '../../models';
 import { OpeningEntity } from '../../models/Opening';
-import { collections } from '../../utils/connectToDatabase';
+import { collections, mongoClient } from '../../utils/connectToDatabase';
 import * as CreateError from '../../utils/createError';
 // import { DynamoStage } from '../../types/dynamo';
 import { findInTargetArray } from '../../utils/findInTargetArray';
@@ -81,9 +82,72 @@ export const createStage = async (req: Request, res: Response) => {
   } catch (error) {
     const message = 'An error ocurred retrieving the last stage in the opening';
     console.error(message, error);
-    return res.status(500).json({ message });
+    return res.status(500).json(message);
   }
 
+  const newStageId = nanoid(50);
+  const now = new Date();
+  const newStage: StageEntity = {
+    createdAt: now,
+    updatedAt: now,
+    totalQuestions: 0,
+    totalApplicants: 0,
+    name: GSI1SK, // TODO update this
+    target: [
+      { property: IndexableProperties.Id, value: newStageId },
+      { property: IndexableProperties.Org, value: orgId },
+      { property: IndexableProperties.Opening, value: openingId },
+      {
+        property: IndexableProperties.PreviousStage,
+        value: currentLastStage // Add to the end by default, TODO allow position property
+          ? findInTargetArray(IndexableProperties.Id, currentLastStage)
+          : undefined,
+      },
+      { property: IndexableProperties.NextStage, value: openingId },
+    ],
+  };
+
+  const session = mongoClient.startSession();
+
+  let transactionResults;
+
+  try {
+    transactionResults = await session.withTransaction(async () => {
+      // 1. Create the new stage
+      await collections.stages.insertOne(newStage, { session });
+
+      // 2. Increment the opening's totalStage count
+      const openingUpdateFilter: UpdateFilter<OpeningEntity> = {
+        $inc: { totalStages: 1 },
+      };
+      await collections.openings.updateOne(openingFilter, openingUpdateFilter, { session });
+
+      // 3. Increment the org's total stage count
+
+      const orgFilter: Filter<OrgEntity> = {
+        $and: [{ target: { property: IndexableProperties.Id, value: orgId } }],
+      };
+
+      const orgUpdateFilter: UpdateFilter<OrgEntity> = {
+        $inc: { totalStages: 1 },
+      };
+
+      await collections.orgs.updateOne(orgFilter, orgUpdateFilter, { session });
+      // 4. Update the current last stage, if it exists, to have the ID of our new stage
+
+      if (currentLastStage) {
+        const lastStageUpdateFilter: UpdateFilter<StageEntity> = {
+          $set: { }
+        }
+      }
+    });
+  } catch (error) {
+    const message = 'An error ocurred creating that stage';
+    console.error(message, error);
+    return res.status(500).json(message);
+  } finally {
+    await session.endSession();
+  }
   // TODO move this inside a transaction
 
   opening.totalStages = opening.totalStages += 1;

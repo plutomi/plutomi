@@ -1,5 +1,6 @@
 import {
   OrgEntity,
+  StageEntity,
   UserEntity,
   UserLoginLinkEntity,
   UserLoginLinkTargetArray,
@@ -17,7 +18,7 @@ import { OpeningEntity } from '../models/Opening';
  */
 export const findInTargetArray = (
   property: IndexableProperties,
-  entity: UserEntity | UserLoginLinkEntity | OrgEntity | OpeningEntity,
+  entity: UserEntity | UserLoginLinkEntity | OrgEntity | OpeningEntity | StageEntity,
 ): string | undefined =>
   // @ts-ignore TODO!!!!!!
   entity.target.find((item: IndexedTargetArrayItem) => item.property === property)?.value;
