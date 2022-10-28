@@ -150,7 +150,6 @@ export const deleteStage = async (req: Request, res: Response) => {
           },
           { session },
         );
-        console.log('Updated old next stage');
       }
 
       // Decrement the totalStages count on the org
@@ -160,17 +159,13 @@ export const deleteStage = async (req: Request, res: Response) => {
       const orgUpdateFilter: UpdateFilter<OrgEntity> = {
         $inc: { totalStages: -1 },
       };
-      console.log('Updating org!');
       await collections.orgs.updateOne(orgFilter, orgUpdateFilter, { session });
-      console.log('ORG UPDATED');
 
       // Decrement the totalStages count on the opening
       const openingUpdateFilter: UpdateFilter<OrgEntity> = {
         $inc: { totalStages: -1 },
       };
-      console.log('Updating opening');
       await collections.openings.updateOne(openingFilter, openingUpdateFilter, { session });
-      console.log('Opening Updated');
 
       // Remove the stage
       await collections.stages.deleteOne(stageFilter, { session });

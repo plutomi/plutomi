@@ -17,7 +17,6 @@ export const CreateOpeningModal = () => {
       const { data } = await CreateOpening({
         name: openingName,
       });
-      alert(data.message);
       setOpeningName('');
       closeCreateOpeningModal();
     } catch (error) {
