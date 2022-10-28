@@ -137,8 +137,12 @@ export const createStage = async (req: Request, res: Response) => {
 
       if (currentLastStage) {
         const lastStageUpdateFilter: UpdateFilter<StageEntity> = {
-          $set: { }
-        }
+          $set: { 'target.$.value': newStageId },
+        };
+
+        await collections.stages.updateOne(currentLastStageFilter, lastStageUpdateFilter, {
+          session,
+        });
       }
     });
   } catch (error) {
@@ -148,67 +152,6 @@ export const createStage = async (req: Request, res: Response) => {
   } finally {
     await session.endSession();
   }
-  // TODO move this inside a transaction
 
-  opening.totalStages = opening.totalStages += 1;
-
-  entityManager.persist(opening);
-
-  let newStage = new Stage({
-    name: GSI1SK,
-    target: [
-      { id: opening.id, type: IdxTypes.Opening },
-      { id: orgId, type: IdxTypes.Org },
-      { id: undefined, type: IdxTypes.PreviousStage },
-      { id: undefined, type: IdxTypes.NextStage },
-    ],
-  });
-
-  try {
-    console.log(`Creating new stage`, newStage);
-
-    await entityManager.persistAndFlush(newStage); // TODO check if we can remove and do this all at once
-    console.log('New stage created!');
-  } catch (error) {
-    const message = 'An error ocurred creating that stage';
-    console.error(message, error);
-    return res.status(500).json({ message, error });
-  }
-
-  console.log(`New stage that was created`, newStage);
-  if (currentLastStage) {
-    // Set the last stage's nextStage to be our newly created stage
-    const indexOfNextStage = currentLastStage.target.findIndex(
-      (item) => item.type === IdxTypes.NextStage,
-    );
-    // Cannot use .id as it returns undefined after creating a new entity
-    currentLastStage.target[indexOfNextStage] = {
-      id: newStage._id.toString(),
-      type: IdxTypes.NextStage,
-    };
-
-    const indexOfPreviousStage = newStage.target.findIndex(
-      (item) => item.type === IdxTypes.PreviousStage,
-    );
-
-    // Set our new stage's previousStage to be the last stage
-    newStage.target[indexOfPreviousStage] = {
-      id: currentLastStage.id,
-      type: IdxTypes.PreviousStage,
-    };
-
-    entityManager.persist(currentLastStage);
-  }
-
-  entityManager.persist(newStage);
-
-  // TODO wrap all of this in a transaction
-  try {
-    await entityManager.flush();
-  } catch (error) {
-    const message = 'An error ocurred updating opening stages';
-    console.error(message, error);
-    return res.status(500).json({ message, error });
-  }
-  return res.status(201).json({ message: 'Stage created!' });
+  return res.status(201).json({ message: 'Stage created!', stage: newStage });
 };
