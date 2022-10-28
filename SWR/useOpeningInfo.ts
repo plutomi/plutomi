@@ -1,15 +1,15 @@
 import useSWR from 'swr';
+import { APIErrorResponse } from '../@types/apiErrorResponse';
 import { GetOpeningInfoURL } from '../adapters/Openings';
 import { SWRFetcher } from '../Config';
-import { Opening } from '../entities';
-import { APIErrorResponse } from '../@types/express';
+import { OpeningEntity } from '../models/Opening';
 
 interface UseOpeningInfoProps {
   openingId?: string;
 }
 
 export const useOpeningInfo = ({ openingId }: UseOpeningInfoProps) => {
-  const { data, error } = useSWR<Opening, APIErrorResponse>(
+  const { data, error } = useSWR<OpeningEntity, APIErrorResponse>(
     openingId && GetOpeningInfoURL(openingId),
     SWRFetcher,
   );

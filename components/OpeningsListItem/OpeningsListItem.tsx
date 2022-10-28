@@ -31,7 +31,7 @@ export const OpeningsListItem = ({ opening }: OpeningsListItemProps) => {
 
   if (isStagesError) return <h1>An error ocurred retrieving info for this opening</h1>;
 
-  const firstStageId = findInTargetArray(IndexableProperties.Id, stages[0]);
+  const firstStageId = stages[0] ? findInTargetArray(IndexableProperties.Id, stages[0]) : undefined;
   const endingUrl =
     opening?.totalStages > 0
       ? `stages/${firstStageId}/applicants` // TODO should this end with applicants?

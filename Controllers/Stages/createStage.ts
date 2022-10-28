@@ -99,11 +99,11 @@ export const createStage = async (req: Request, res: Response) => {
       { property: IndexableProperties.Opening, value: openingId },
       {
         property: IndexableProperties.PreviousStage,
-        value: currentLastStage // Add to the end by default, TODO allow position property
+        value: currentLastStage
           ? findInTargetArray(IndexableProperties.Id, currentLastStage)
           : undefined,
-      },
-      { property: IndexableProperties.NextStage, value: openingId },
+      }, // Add to the end by default, TODO allow position property
+      { property: IndexableProperties.NextStage, value: undefined },
     ],
   };
 

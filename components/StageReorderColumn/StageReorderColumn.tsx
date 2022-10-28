@@ -24,7 +24,7 @@ export const StageReorderColumn = () => {
   const { openingId, stageId } = router.query as Pick<CustomQuery, 'openingId' | 'stageId'>;
   const { opening, isOpeningLoading, isOpeningError } = useOpeningInfo({ openingId });
   const { stages, isStagesLoading, isStagesError } = useAllStagesInOpening({
-    openingId: opening.id,
+    openingId: findInTargetArray(IndexableProperties.Id, opening),
   });
   const [newStages, setNewStages] = useState(stages);
 

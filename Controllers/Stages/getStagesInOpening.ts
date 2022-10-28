@@ -45,8 +45,9 @@ export const getStagesInOpening = async (req: Request, res: Response) => {
   try {
     allStages = (await collections.stages.find(allStagesFilter).toArray()) as StageEntity[];
 
+    console.log('Attempting to sort');
     const allSortedStages = sortStages(allStages);
-
+    console.log('Sorted!');
     return res.status(200).json(allSortedStages);
   } catch (error) {
     const message = 'An error ocurred retrieving all the current stages';
