@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import { Filter } from 'mongodb';
+import { Filter, UpdateFilter } from 'mongodb';
 import { IndexableProperties } from '../../@types/indexableProperties';
 import { StageEntity, StageTargetArray } from '../../models';
 import { OpeningEntity } from '../../models/Opening';
@@ -71,6 +71,8 @@ export const deleteStage = async (req: Request, res: Response) => {
 
   try {
     // TODO these can be done in parallel
+
+    // PART 1
     if (oldPreviousStageId) {
       const oldPreviousStageFilter: Filter<StageEntity> = {
         $and: [
@@ -79,39 +81,99 @@ export const deleteStage = async (req: Request, res: Response) => {
           { target: { property: IndexableProperties.Id, value: oldPreviousStageId } },
         ],
       };
-      try {
-        oldPreviousStage = (await collections.stages.findOne(
-          oldPreviousStageFilter,
-        )) as StageEntity;
 
-        const oldPreviousStageNextStageIndex = oldPreviousStage.target.findIndex(
-          (item) => item.property === IndexableProperties.NextStage,
+      oldPreviousStage = (await collections.stages.findOne(oldPreviousStageFilter)) as StageEntity;
+
+      const oldPreviousStageNextStageIndex = oldPreviousStage.target.findIndex(
+        (item) => item.property === IndexableProperties.NextStage,
+      );
+
+      let oldNextStageUpdateFilter: UpdateFilter<StageEntity> = {};
+      // TODO can these be more efficient? Just updating the specific item in the array
+
+      if (oldNextStageId) {
+        // Set the previous stage's next stage Id to be the stage that is being deleted's next stage Id
+        oldPreviousStage.target[oldPreviousStageNextStageIndex] = {
+          property: IndexableProperties.NextStage,
+          value: oldNextStageId,
+        };
+
+        const setPropertyKey = `target.${oldPreviousStageNextStageIndex}.property`;
+        const setValueKey = `target.${oldPreviousStageNextStageIndex}.value`;
+
+        oldNextStageUpdateFilter = {
+          $set: {
+            setPropertyKey: IndexableProperties.NextStage,
+            setValueKey: oldNextStageId,
+          },
+        };
+      } else {
+        // Set the old previous stage's next stage Id to be undefined
+        oldPreviousStage.target[oldPreviousStageNextStageIndex] = {
+          value: undefined,
+          property: IndexableProperties.NextStage,
+        };
+      }
+
+      await collections.stages.updateOne(oldPreviousStageFilter, oldNextStageUpdateFilter, {
+        session,
+      });
+
+      // if (oldNextStageId) {
+      //   // Set the previous stage's next stage Id to be the stage that is being deleted's next stage Id
+      //   oldPreviousStage.target[oldPreviousStageNextStageIndex] = {
+      //     value: oldNextStageId,
+      //     property: IndexableProperties.NextStage,
+      //   };
+      // } else {
+      //   // Set the old previous stage's next stage Id to be undefined
+      //   oldPreviousStage.target[oldPreviousStageNextStageIndex] = {
+      //     value: undefined,
+      //     property: IndexableProperties.NextStage,
+      //   };
+      // }
+
+      // await collections.stages.updateOne(
+      //   oldPreviousStageFilter,
+      //   {
+      //     $set: {
+      //       target: oldPreviousStage.target,
+      //     },
+      //   },
+      //   { session },
+      // );
+    }
+
+    // PART 2
+
+    if (oldNextStageId) {
+      try {
+        oldNextStage = await entityManager.findOne(Stage, {
+          id: oldNextStageId,
+          $and: [
+            { target: { id: orgId, type: IdxTypes.Org } },
+            { target: { id: openingId, type: IdxTypes.Opening } },
+          ],
+        });
+
+        const oldNextStagePreviousStageIndex = oldNextStage.target.findIndex(
+          (item) => item.type === IdxTypes.PreviousStage,
         );
 
-        let newTargetArray: StageTargetArray = oldPreviousStage.target;
-
-        if (oldNextStageId) {
-          // Set the previous stage's next stage Id to be the stage that is being deleted's next stage Id
-          oldPreviousStage.target[oldPreviousStageNextStageIndex] = {
-            value: oldNextStageId,
-            property: IndexableProperties.NextStage,
+        if (oldPreviousStage) {
+          // Set the next stage's previous stage Id to be the stage that is being deleted's previous stage Id
+          oldNextStage.target[oldNextStagePreviousStageIndex] = {
+            id: oldPreviousStageId,
+            type: IdxTypes.PreviousStage,
           };
         } else {
-          oldPreviousStage.target[oldPreviousStageNextStageIndex] = {
-            value: undefined,
-            property: IndexableProperties.NextStage,
+          oldNextStage.target[oldNextStagePreviousStageIndex] = {
+            id: undefined,
+            type: IdxTypes.PreviousStage,
           };
         }
 
-        await collections.stages.updateOne(
-          oldPreviousStageFilter,
-          {
-            $set: {
-              target: oldPreviousStage.target,
-            },
-          },
-          { session },
-        );
+        entityManager.persist(oldNextStage);
       } catch (error) {
         const message = 'An error ocurred finding the previous stage info';
         console.error(message, error);
@@ -126,41 +188,6 @@ export const deleteStage = async (req: Request, res: Response) => {
     return res.status(500).json({ message: msg });
   } finally {
     await session.endSession();
-  }
-
-  if (oldNextStageId) {
-    try {
-      oldNextStage = await entityManager.findOne(Stage, {
-        id: oldNextStageId,
-        $and: [
-          { target: { id: orgId, type: IdxTypes.Org } },
-          { target: { id: openingId, type: IdxTypes.Opening } },
-        ],
-      });
-
-      const oldNextStagePreviousStageIndex = oldNextStage.target.findIndex(
-        (item) => item.type === IdxTypes.PreviousStage,
-      );
-
-      if (oldPreviousStage) {
-        // Set the next stage's previous stage Id to be the stage that is being deleted's previous stage Id
-        oldNextStage.target[oldNextStagePreviousStageIndex] = {
-          id: oldPreviousStageId,
-          type: IdxTypes.PreviousStage,
-        };
-      } else {
-        oldNextStage.target[oldNextStagePreviousStageIndex] = {
-          id: undefined,
-          type: IdxTypes.PreviousStage,
-        };
-      }
-
-      entityManager.persist(oldNextStage);
-    } catch (error) {
-      const message = 'An error ocurred finding the previous stage info';
-      console.error(message, error);
-      return res.status(500).json({ message, error });
-    }
   }
 
   entityManager.remove(ourStage);
