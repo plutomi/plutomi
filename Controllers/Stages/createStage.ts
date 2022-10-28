@@ -1,6 +1,11 @@
 import { Request, Response } from 'express';
 import Joi from 'joi';
+import { Filter } from 'mongodb';
+import { IndexableProperties } from '../../@types/indexableProperties';
 import { JOI_SETTINGS, LIMITS } from '../../Config';
+import { StageEntity } from '../../models';
+import { OpeningEntity } from '../../models/Opening';
+import { collections } from '../../utils/connectToDatabase';
 import * as CreateError from '../../utils/createError';
 // import { DynamoStage } from '../../types/dynamo';
 import { findInTargetArray } from '../../utils/findInTargetArray';
@@ -34,110 +39,112 @@ export const createStage = async (req: Request, res: Response) => {
     const { status, body } = CreateError.JOI(error);
     return res.status(status).json(body);
   }
-  return res.status(200).json({ message: 'Endpoint temp disabled' });
 
-  // const { GSI1SK, openingId, position } = req.body;
+  const { GSI1SK, openingId, position } = req.body;
 
-  // const orgId = findInTargetArray({ entity: IdxTypes.Org, targetArray: user.target });
-  // console.log(`CREATING STAGE BODY`, req.body);
-  // let opening: Opening;
+  const orgId = findInTargetArray(IndexableProperties.Org, user);
+  console.log(`CREATING STAGE BODY`, req.body);
+  let opening: OpeningEntity;
 
-  // try {
-  //   opening = await entityManager.findOne(Opening, {
-  //     id: openingId,
-  //     target: [{ id: orgId, type: IdxTypes.Org }],
-  //   });
-  // } catch (error) {
-  //   const message = 'An error ocurred retrieving opening info';
-  //   console.error(message, error);
-  //   return res.status(500).json({ message, error });
-  // }
+  const openingFilter: Filter<OpeningEntity> = {
+    $and: [
+      { target: { property: IndexableProperties.Org, value: orgId } },
+      { target: { property: IndexableProperties.Id, value: openingId } },
+    ],
+  };
+  try {
+    opening = (await collections.openings.findOne(openingFilter)) as OpeningEntity;
+  } catch (error) {
+    const message = 'An error ocurred retrieving opening info';
+    console.error(message, error);
+    return res.status(500).json({ message });
+  }
 
-  // if (!opening) {
-  //   return res.status(404).json({ message: 'Opening does not exist' });
-  // }
+  if (!opening) {
+    return res.status(404).json({ message: 'Opening does not exist' });
+  }
 
-  // // Get current last stage
-  // let lastStage: Stage;
+  // Get current last stage
+  let currentLastStage: StageEntity;
 
-  // try {
-  //   lastStage = await entityManager.findOne(Stage, {
-  //     $and: [
-  //       {
-  //         target: [{ id: orgId, type: IdxTypes.Org }],
-  //       },
-  //       { target: [{ id: openingId, type: IdxTypes.Opening }] },
-  //       // Get the last stage
-  //       { target: [{ id: undefined, type: IdxTypes.NextStage }] },
-  //     ],
-  //   });
-  // } catch (error) {
-  //   const message = 'An error ocurred retrieving the last stage in the opening';
-  //   console.error(message, error);
-  //   return res.status(500).json({ message, error });
-  // }
+  const currentLastStageFilter: Filter<StageEntity> = {
+    $and: [
+      {
+        target: { property: IndexableProperties.Org, value: orgId },
+      },
+      { target: { property: IndexableProperties.Opening, value: openingId } },
+      { target: { property: IndexableProperties.NextStage, value: undefined } },
+    ],
+  };
+  try {
+    currentLastStage = (await collections.stages.findOne(currentLastStageFilter)) as StageEntity;
+  } catch (error) {
+    const message = 'An error ocurred retrieving the last stage in the opening';
+    console.error(message, error);
+    return res.status(500).json({ message });
+  }
 
-  // // TODO move this inside a transaction
+  // TODO move this inside a transaction
 
-  // opening.totalStages = opening.totalStages += 1;
+  opening.totalStages = opening.totalStages += 1;
 
-  // entityManager.persist(opening);
+  entityManager.persist(opening);
 
-  // let newStage = new Stage({
-  //   name: GSI1SK,
-  //   target: [
-  //     { id: opening.id, type: IdxTypes.Opening },
-  //     { id: orgId, type: IdxTypes.Org },
-  //     { id: undefined, type: IdxTypes.PreviousStage },
-  //     { id: undefined, type: IdxTypes.NextStage },
-  //   ],
-  // });
+  let newStage = new Stage({
+    name: GSI1SK,
+    target: [
+      { id: opening.id, type: IdxTypes.Opening },
+      { id: orgId, type: IdxTypes.Org },
+      { id: undefined, type: IdxTypes.PreviousStage },
+      { id: undefined, type: IdxTypes.NextStage },
+    ],
+  });
 
-  // try {
-  //   console.log(`Creating new stage`, newStage);
+  try {
+    console.log(`Creating new stage`, newStage);
 
-  //   await entityManager.persistAndFlush(newStage); // TODO check if we can remove and do this all at once
-  //   console.log('New stage created!');
-  // } catch (error) {
-  //   const message = 'An error ocurred creating that stage';
-  //   console.error(message, error);
-  //   return res.status(500).json({ message, error });
-  // }
+    await entityManager.persistAndFlush(newStage); // TODO check if we can remove and do this all at once
+    console.log('New stage created!');
+  } catch (error) {
+    const message = 'An error ocurred creating that stage';
+    console.error(message, error);
+    return res.status(500).json({ message, error });
+  }
 
-  // console.log(`New stage that was created`, newStage);
-  // if (lastStage) {
-  //   // Set the last stage's nextStage to be our newly created stage
-  //   const indexOfNextStage = lastStage.target.findIndex(
-  //     (item) => item.type === IdxTypes.NextStage,
-  //   );
-  //   // Cannot use .id as it returns undefined after creating a new entity
-  //   lastStage.target[indexOfNextStage] = {
-  //     id: newStage._id.toString(),
-  //     type: IdxTypes.NextStage,
-  //   };
+  console.log(`New stage that was created`, newStage);
+  if (currentLastStage) {
+    // Set the last stage's nextStage to be our newly created stage
+    const indexOfNextStage = currentLastStage.target.findIndex(
+      (item) => item.type === IdxTypes.NextStage,
+    );
+    // Cannot use .id as it returns undefined after creating a new entity
+    currentLastStage.target[indexOfNextStage] = {
+      id: newStage._id.toString(),
+      type: IdxTypes.NextStage,
+    };
 
-  //   const indexOfPreviousStage = newStage.target.findIndex(
-  //     (item) => item.type === IdxTypes.PreviousStage,
-  //   );
+    const indexOfPreviousStage = newStage.target.findIndex(
+      (item) => item.type === IdxTypes.PreviousStage,
+    );
 
-  //   // Set our new stage's previousStage to be the last stage
-  //   newStage.target[indexOfPreviousStage] = {
-  //     id: lastStage.id,
-  //     type: IdxTypes.PreviousStage,
-  //   };
+    // Set our new stage's previousStage to be the last stage
+    newStage.target[indexOfPreviousStage] = {
+      id: currentLastStage.id,
+      type: IdxTypes.PreviousStage,
+    };
 
-  //   entityManager.persist(lastStage);
-  // }
+    entityManager.persist(currentLastStage);
+  }
 
-  // entityManager.persist(newStage);
+  entityManager.persist(newStage);
 
-  // // TODO wrap all of this in a transaction
-  // try {
-  //   await entityManager.flush();
-  // } catch (error) {
-  //   const message = 'An error ocurred updating opening stages';
-  //   console.error(message, error);
-  //   return res.status(500).json({ message, error });
-  // }
-  // return res.status(201).json({ message: 'Stage created!' });
+  // TODO wrap all of this in a transaction
+  try {
+    await entityManager.flush();
+  } catch (error) {
+    const message = 'An error ocurred updating opening stages';
+    console.error(message, error);
+    return res.status(500).json({ message, error });
+  }
+  return res.status(201).json({ message: 'Stage created!' });
 };
