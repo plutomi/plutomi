@@ -102,7 +102,7 @@ export const deleteStage = async (req: Request, res: Response) => {
 
         oldPreviousStage.target[oldPreviousStageNextStageIndex] = {
           property: IndexableProperties.NextStage,
-          value: oldNextStageId ? oldNextStageId : undefined,
+          value: oldNextStageId ? oldNextStageId : null,
         };
 
         console.log('Attempting to update old previous stage');
