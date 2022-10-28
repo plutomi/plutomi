@@ -8,12 +8,14 @@ import useStore from '../../utils/store';
 import { useOpeningInfo } from '../../SWR/useOpeningInfo';
 import { useAllStagesInOpening } from '../../SWR/useAllStagesInOpening';
 import { GetOpeningInfoURL } from '../../adapters/Openings';
-import { CustomQuery } from '../../@types/express';
 import { CreateStageModal } from '../CreateStageModal';
 import { StageCard } from '../StageCard';
 import { getAdjacentStagesBasedOnPosition, sortStages } from '../../utils/sortStages';
 import { Loader } from '../Loader';
 import { DraggableStageCard } from '../DraggableStageCard';
+import { CustomQuery } from '../../@types/customQuery';
+import { findInTargetArray } from '../../utils/findInTargetArray';
+import { IndexableProperties } from '../../@types/indexableProperties';
 
 export const StageReorderColumn = () => {
   const openCreateStageModal = useStore((state) => state.openCreateStageModal);
@@ -50,15 +52,23 @@ export const StageReorderColumn = () => {
     // Remove our stage it from the old location
     newStageOrder.splice(source.index, 1); // TODO this isn't splicing!
 
-    const ourStage = newStages.find((stage) => stage.id === draggableId);
+    const ourStage = newStages.find((stage) => {
+      const stageId = findInTargetArray(IndexableProperties.Id, stage);
+
+      if (stageId === draggableId) {
+        return stage;
+      }
+    });
     // Add it to the new location
     newStageOrder.splice(destination.index, 0, ourStage);
     setNewStages(newStageOrder);
 
     try {
+      const ourStageId = findInTargetArray(IndexableProperties.Id, ourStage);
+
       await UpdateStage({
         openingId,
-        stageId: ourStage.id,
+        stageId: ourStageId,
         newValues: {
           position: destination.index,
         },
@@ -73,7 +83,7 @@ export const StageReorderColumn = () => {
   };
 
   if (isStagesLoading) {
-    return <Loader text=">Loading stages..."></Loader>;
+    return <Loader text="Loading stages..."></Loader>;
   }
 
   if (isStagesError) {
@@ -103,14 +113,18 @@ export const StageReorderColumn = () => {
               <Droppable droppableId={openingId}>
                 {(provided) => (
                   <div {...provided.droppableProps} ref={provided.innerRef} className={'my-4'}>
-                    {newStages?.map((stage, index) => (
-                      <DraggableStageCard
-                        key={stage.id}
-                        stage={stage}
-                        index={index}
-                        linkHref={`/openings/${openingId}/stages/${stage.id}/settings`}
-                      />
-                    ))}
+                    {newStages?.map((stage, index) => {
+                      const stageId = findInTargetArray(IndexableProperties.Id, stage);
+
+                      return (
+                        <DraggableStageCard
+                          key={stageId}
+                          stage={stage}
+                          index={index}
+                          linkHref={`/openings/${openingId}/stages/${stageId}/settings`}
+                        />
+                      );
+                    })}
                     {provided.placeholder}
                   </div>
                 )}

@@ -31,9 +31,10 @@ export const OpeningsListItem = ({ opening }: OpeningsListItemProps) => {
 
   if (isStagesError) return <h1>An error ocurred retrieving info for this opening</h1>;
 
+  const firstStageId = findInTargetArray(IndexableProperties.Id, stages[0]);
   const endingUrl =
     opening?.totalStages > 0
-      ? `stages/${stages[0].id}/applicants` // TODO should this end with applicants?
+      ? `stages/${firstStageId}/applicants` // TODO should this end with applicants?
       : `settings`;
 
   const openingState = findInTargetArray(IndexableProperties.OpeningState, opening);

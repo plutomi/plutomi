@@ -3,9 +3,11 @@ import ItemsCarousel from 'react-items-carousel';
 import { ArrowLeftIcon, ArrowRightIcon } from '@heroicons/react/outline';
 import { useRouter } from 'next/router';
 import { useAllStagesInOpening } from '../../SWR/useAllStagesInOpening';
-import { CustomQuery } from '../../@types/express';
 import { StageCard } from '../StageCard';
 import { Loader } from '../Loader';
+import { CustomQuery } from '../../@types/customQuery';
+import { findInTargetArray } from '../../utils/findInTargetArray';
+import { IndexableProperties } from '../../@types/indexableProperties';
 
 export const StageCarousel = () => {
   const router = useRouter();
@@ -51,16 +53,20 @@ export const StageCarousel = () => {
         outsideChevron
         firstAndLastGutter
       >
-        {stages?.map((stage) => (
-          <StageCard
-            key={stage.id}
-            name={stage.name}
-            stageId={stage.id}
-            totalApplicants={stage.totalApplicants}
-            draggable={false}
-            linkHref={`/openings/${openingId}/stages/${stage.id}/applicants`}
-          />
-        ))}
+        {stages?.map((stage) => {
+          const stageId = findInTargetArray(IndexableProperties.Id, stage);
+
+          return (
+            <StageCard
+              key={stageId}
+              name={stage.name}
+              stageId={stageId}
+              totalApplicants={stage.totalApplicants}
+              draggable={false}
+              linkHref={`/openings/${openingId}/stages/${stageId}/applicants`}
+            />
+          );
+        })}
       </ItemsCarousel>
     </div>
   );
