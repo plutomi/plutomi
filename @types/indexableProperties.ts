@@ -20,6 +20,6 @@ export enum IndexableProperties {
   ExpiresAt = 'ExpiresAt',
 }
 
-export type IndexIdTypes = string | null;
+export type IndexIdTypes = string | boolean;
 export type IndexedTargetArrayItem = { property: IndexableProperties; value: IndexIdTypes };
 export type IndexedTargetArray = Array<IndexedTargetArrayItem>;

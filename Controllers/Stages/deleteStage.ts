@@ -100,19 +100,10 @@ export const deleteStage = async (req: Request, res: Response) => {
 
         // TODO can these be more efficient? Just updating the specific item in the array
 
-        if (oldNextStageId) {
-          // Set the previous stage's next stage Id to be the stage that is being deleted's next stage Id
-          oldPreviousStage.target[oldPreviousStageNextStageIndex] = {
-            value: oldNextStageId,
-            property: IndexableProperties.NextStage,
-          };
-        } else {
-          // Set the old previous stage's next stage Id to be undefined
-          oldPreviousStage.target[oldPreviousStageNextStageIndex] = {
-            value: undefined,
-            property: IndexableProperties.NextStage,
-          };
-        }
+        oldPreviousStage.target[oldPreviousStageNextStageIndex] = {
+          property: IndexableProperties.NextStage,
+          value: oldNextStageId ? oldNextStageId : undefined,
+        };
 
         console.log('Attempting to update old previous stage');
         await collections.stages.updateOne(
@@ -145,19 +136,10 @@ export const deleteStage = async (req: Request, res: Response) => {
           (item) => item.property === IndexableProperties.PreviousStage,
         );
 
-        if (oldPreviousStage) {
-          // Set the next stage's previous stage Id to be the stage that is being deleted's previous stage Id
-          oldNextStage.target[oldNextStagePreviousStageIndex] = {
-            value: oldPreviousStageId,
-            property: IndexableProperties.PreviousStage,
-          };
-        } else {
-          oldNextStage.target[oldNextStagePreviousStageIndex] = {
-            value: undefined,
-            property: IndexableProperties.PreviousStage,
-          };
-        }
-        console.log('Attempting to update old NEXT stage');
+        oldNextStage.target[oldNextStagePreviousStageIndex] = {
+          property: IndexableProperties.PreviousStage,
+          value: oldPreviousStage ? oldPreviousStageId : undefined,
+        };
 
         await collections.stages.updateOne(
           oldNextStageFilter,
