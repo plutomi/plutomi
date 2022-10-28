@@ -1,36 +1,42 @@
 import { Request, Response } from 'express';
-// import { Stage } from '../../entities';
+import { Filter } from 'mongodb';
+import { IndexableProperties } from '../../@types/indexableProperties';
+import { StageEntity } from '../../models';
+import { collections } from '../../utils/connectToDatabase';
 import { findInTargetArray } from '../../utils/findInTargetArray';
 
 export const getStage = async (req: Request, res: Response) => {
   const { user } = req;
   const { openingId, stageId } = req.params;
-  // const orgId = findInTargetArray({ entity: IdxTypes.Org, targetArray: user.target });
 
-  return res.status(200).json({ message: 'Endpoint temp disabled' });
-  // let stage: Stage;
+  const orgId = findInTargetArray(IndexableProperties.Org, user);
 
-  // try {
-  //   stage = await entityManager.findOne(Stage, {
-  //     id: stageId,
-  //     $and: [
-  //       {
-  //         target: { id: orgId, type: IdxTypes.Org },
-  //       },
-  //       {
-  //         target: { id: openingId, type: IdxTypes.Opening },
-  //       },
-  //     ],
-  //   });
-  // } catch (error) {
-  //   const message = 'An error ocurred retrieving stage info';
-  //   console.error(message, error);
-  //   return res.status(500).json({ message, error });
-  // }
+  let stage: StageEntity;
 
-  // if (!stage) {
-  //   return res.status(404).json({ message: 'Stage not found' });
-  // }
+  const stageFilter: Filter<StageEntity> = {
+    $and: [
+      {
+        target: { property: IndexableProperties.Org, value: orgId },
+      },
+      {
+        target: { property: IndexableProperties.Id, value: stageId },
+      },
+      {
+        target: { property: IndexableProperties.Opening, value: openingId },
+      },
+    ],
+  };
+  try {
+    stage = (await collections.stages.findOne(stageFilter)) as StageEntity;
+  } catch (error) {
+    const message = 'An error ocurred retrieving stage info';
+    console.error(message, error);
+    return res.status(500).json(message);
+  }
 
-  // return res.status(200).json(stage);
+  if (!stage) {
+    return res.status(404).json({ message: 'Stage not found' });
+  }
+
+  return res.status(200).json(stage);
 };
