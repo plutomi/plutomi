@@ -1,9 +1,9 @@
 import { Request, Response } from 'express';
 import { Filter } from 'mongodb';
 import { IndexableProperties } from '../../@types/indexableProperties';
-import { StageEntity } from '../../models';
+import { StageEntity, StageTargetArray } from '../../models';
 import { OpeningEntity } from '../../models/Opening';
-import { collections } from '../../utils/connectToDatabase';
+import { collections, mongoClient } from '../../utils/connectToDatabase';
 // import { Opening, Stage } from '../../entities';
 import { findInTargetArray } from '../../utils/findInTargetArray';
 
@@ -58,46 +58,74 @@ export const deleteStage = async (req: Request, res: Response) => {
   }
 
   const oldPreviousStageId = findInTargetArray(IndexableProperties.Id, ourStage);
-
   const oldNextStageId = findInTargetArray(IndexableProperties.NextStage, ourStage);
 
   let oldPreviousStage: StageEntity;
   let oldNextStage: StageEntity;
 
-  // TODO these can be done in parallel
-  if (oldPreviousStageId) {
-    try {
-      oldPreviousStage = await entityManager.findOne(Stage, {
-        id: oldPreviousStageId,
+  let oldPreviousStageNextStageIndex: number;
+
+  const session = mongoClient.startSession();
+
+  let transactionResults;
+
+  try {
+    // TODO these can be done in parallel
+    if (oldPreviousStageId) {
+      const oldPreviousStageFilter: Filter<StageEntity> = {
         $and: [
-          { target: { id: orgId, type: IdxTypes.Org } },
-          { target: { id: openingId, type: IdxTypes.Opening } },
+          { target: { property: IndexableProperties.Opening, value: openingId } },
+          { target: { property: IndexableProperties.Org, value: orgId } },
+          { target: { property: IndexableProperties.Id, value: oldPreviousStageId } },
         ],
-      });
+      };
+      try {
+        oldPreviousStage = (await collections.stages.findOne(
+          oldPreviousStageFilter,
+        )) as StageEntity;
 
-      const oldPreviousStageNextStageIndex = oldPreviousStage.target.findIndex(
-        (item) => item.type === IdxTypes.NextStage,
-      );
+        const oldPreviousStageNextStageIndex = oldPreviousStage.target.findIndex(
+          (item) => item.property === IndexableProperties.NextStage,
+        );
 
-      if (oldNextStageId) {
-        // Set the previous stage's next stage Id to be the stage that is being deleted's next stage Id
-        oldPreviousStage.target[oldPreviousStageNextStageIndex] = {
-          id: oldNextStageId,
-          type: IdxTypes.NextStage,
-        };
-      } else {
-        oldPreviousStage.target[oldPreviousStageNextStageIndex] = {
-          id: undefined,
-          type: IdxTypes.NextStage,
-        };
+        let newTargetArray: StageTargetArray = oldPreviousStage.target;
+
+        if (oldNextStageId) {
+          // Set the previous stage's next stage Id to be the stage that is being deleted's next stage Id
+          oldPreviousStage.target[oldPreviousStageNextStageIndex] = {
+            value: oldNextStageId,
+            property: IndexableProperties.NextStage,
+          };
+        } else {
+          oldPreviousStage.target[oldPreviousStageNextStageIndex] = {
+            value: undefined,
+            property: IndexableProperties.NextStage,
+          };
+        }
+
+        await collections.stages.updateOne(
+          oldPreviousStageFilter,
+          {
+            $set: {
+              target: oldPreviousStage.target,
+            },
+          },
+          { session },
+        );
+      } catch (error) {
+        const message = 'An error ocurred finding the previous stage info';
+        console.error(message, error);
+        return res.status(500).json({ message, error });
       }
-
-      entityManager.persist(oldPreviousStage);
-    } catch (error) {
-      const message = 'An error ocurred finding the previous stage info';
-      console.error(message, error);
-      return res.status(500).json({ message, error });
     }
+
+    await session.commitTransaction();
+  } catch (error) {
+    const msg = 'Error ocurred deleting that stage';
+    console.error(msg, error);
+    return res.status(500).json({ message: msg });
+  } finally {
+    await session.endSession();
   }
 
   if (oldNextStageId) {

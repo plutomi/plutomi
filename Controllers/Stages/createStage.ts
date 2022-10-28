@@ -144,6 +144,8 @@ export const createStage = async (req: Request, res: Response) => {
           session,
         });
       }
+
+      await session.commitTransaction();
     });
   } catch (error) {
     const message = 'An error ocurred creating that stage';

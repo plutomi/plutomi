@@ -65,6 +65,7 @@ export const createOpening = async (req: Request, res: Response) => {
     transactionResults = await session.withTransaction(async () => {
       await collections.openings.insertOne(newOpening, { session });
       await collections.orgs.updateOne(orgFilter, orgUpdateFilter, { session });
+      await session.commitTransaction();
     });
   } catch (error) {
     const message = 'An error ocurred creating that opening';
