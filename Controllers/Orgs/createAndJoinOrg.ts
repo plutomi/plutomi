@@ -107,7 +107,7 @@ export const createAndJoinOrg = async (req: Request, res: Response) => {
   let transactionResults;
   try {
     transactionResults = await session.withTransaction(async () => {
-      const updatedUser = await collections.users.updateOne(userFilter, userUpdateFilter, {
+      await collections.users.updateOne(userFilter, userUpdateFilter, {
         session,
       });
 
@@ -129,7 +129,7 @@ export const createAndJoinOrg = async (req: Request, res: Response) => {
         ],
         displayName,
       };
-      const createdOrg = await collections.orgs.insertOne(newOrg, { session });
+      await collections.orgs.insertOne(newOrg, { session });
 
       await session.commitTransaction();
     });

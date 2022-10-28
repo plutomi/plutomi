@@ -24,7 +24,6 @@ export const sortStages = (unsortedStagesInOpening: StageEntity[]): StageEntity[
   let firstStage: StageEntity;
   let firstStageIndex: number;
 
-  console.log(unsortedStagesInOpening);
   unsortedStagesInOpening.find((stage, idx) => {
     const previousStage = findInTargetArray(IndexableProperties.PreviousStage, stage);
 
@@ -51,7 +50,6 @@ export const sortStages = (unsortedStagesInOpening: StageEntity[]): StageEntity[
   let startingStage = firstStage;
 
   while (!reachedTheEnd) {
-    console.log('IN while loop');
     const newNextStageId = findInTargetArray(IndexableProperties.NextStage, startingStage);
 
     let nextStage: StageEntity | undefined;
