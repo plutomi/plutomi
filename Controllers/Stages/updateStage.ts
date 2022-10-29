@@ -89,10 +89,10 @@ export const updateStage = async (req: Request, res: Response) => {
     transactionResults = await session.withTransaction(async () => {
       const newCurrentStageProperties: Partial<StageEntity> = {};
       // When moving, if these exist, we want to update them with new values
-      const oldPreviousStageUpdate: Partial<StageEntity> = {};
-      const oldNextStageUpdate: Partial<StageEntity> = {};
-      const newPreviousStageUpdate: Partial<StageEntity> = {};
-      const newNextStageUpdate: Partial<StageEntity> = {};
+      const oldPreviousStageProperties: Partial<StageEntity> = {};
+      const oldNextStageProperties: Partial<StageEntity> = {};
+      const newPreviousStageProperties: Partial<StageEntity> = {};
+      const newNextStageProperties: Partial<StageEntity> = {};
 
       if (req.body.GSI1SK) {
         newCurrentStageProperties.name = req.body.GSI1SK; // TODO update this type
@@ -158,7 +158,7 @@ export const updateStage = async (req: Request, res: Response) => {
           );
 
           // ! We have to set the target array otherwise the update below will fail
-          oldPreviousStageUpdate.target = oldPreviousStage.target;
+          oldPreviousStageProperties.target = oldPreviousStage.target;
           /**
            * Set the old previous stage's nextStage to be the old next stage of the stage we are currently moving
            *
@@ -167,7 +167,7 @@ export const updateStage = async (req: Request, res: Response) => {
            * Stage 2 --- Stage 3
            * Stage 3 --- Stage 2 <-- Moved
            */
-          oldPreviousStageUpdate.target[oldPreviousStagesNextStageIndex] = stage.target.find(
+          oldPreviousStageProperties.target[oldPreviousStagesNextStageIndex] = stage.target.find(
             (item) => item.property === IndexableProperties.NextStage,
           );
         } else {
@@ -200,7 +200,7 @@ export const updateStage = async (req: Request, res: Response) => {
             (item) => item.property === IndexableProperties.PreviousStage,
           );
           // ! We have to set the target array otherwise the update below will fail
-          oldNextStageUpdate.target = oldNextStage.target;
+          oldNextStageProperties.target = oldNextStage.target;
           /**
            * We need to set Stage 2's previous stage to our stage's old previous stage
            *
@@ -210,7 +210,7 @@ export const updateStage = async (req: Request, res: Response) => {
            * Stage 3 --- Stage 1 <--- Moved
            *
            */
-          oldNextStageUpdate.target[oldNextStagesPreviousStageIndex] = stage.target.find(
+          oldNextStageProperties.target[oldNextStagesPreviousStageIndex] = stage.target.find(
             (item) => item.property === IndexableProperties.PreviousStage,
           );
         } else {
@@ -234,7 +234,7 @@ export const updateStage = async (req: Request, res: Response) => {
         // Update the relevant stages if needed (the two else checks above)
         if (oldPreviousStage && updateOldPreviousStage) {
           console.log('Updating OLD previous stage');
-          oldPreviousStageUpdate.target[oldPreviousStagesNextStageIndex] = {
+          oldPreviousStageProperties.target[oldPreviousStagesNextStageIndex] = {
             property: IndexableProperties.NextStage,
             value: null,
           };
@@ -243,7 +243,7 @@ export const updateStage = async (req: Request, res: Response) => {
         if (oldNextStage && updateOldNextStage) {
           console.log('Updating OLD next stage');
 
-          oldNextStageUpdate.target[oldNextStagesPreviousStageIndex] = {
+          oldNextStageProperties.target[oldNextStagesPreviousStageIndex] = {
             property: IndexableProperties.PreviousStage,
             value: null,
           };
@@ -262,7 +262,7 @@ export const updateStage = async (req: Request, res: Response) => {
         await collections.stages.updateOne(
           updateOldNextStageFilter,
           {
-            $set: oldNextStageUpdate,
+            $set: oldNextStageProperties,
           },
           {
             session,
@@ -279,7 +279,7 @@ export const updateStage = async (req: Request, res: Response) => {
 
         await collections.stages.updateOne(
           updateOldPreviousStageFilter,
-          { $set: oldPreviousStageUpdate },
+          { $set: oldPreviousStageProperties },
           {
             session,
           },
@@ -333,8 +333,8 @@ export const updateStage = async (req: Request, res: Response) => {
           );
 
           // ! We have to set the target array otherwise the update below will fail
-          newNextStageUpdate.target = newNextStage.target;
-          newNextStageUpdate.target[nextStagePreviousStageIndex] = {
+          newNextStageProperties.target = newNextStage.target;
+          newNextStageProperties.target[nextStagePreviousStageIndex] = {
             property: IndexableProperties.PreviousStage,
             value: stageId,
           };
@@ -356,7 +356,7 @@ export const updateStage = async (req: Request, res: Response) => {
           };
           await collections.stages.updateOne(
             updateNewNextcurrentStageFilter,
-            { $set: newNextStageUpdate },
+            { $set: newNextStageProperties },
             {
               session,
             },
@@ -405,9 +405,9 @@ export const updateStage = async (req: Request, res: Response) => {
           );
 
           // ! We have to set the target array otherwise the update below will fail
-          newPreviousStageUpdate.target = newPreviousStage.target;
+          newPreviousStageProperties.target = newPreviousStage.target;
 
-          newPreviousStageUpdate.target[previousStageNextStageIndex] = {
+          newPreviousStageProperties.target[previousStageNextStageIndex] = {
             property: IndexableProperties.NextStage,
             value: stageId,
           };
@@ -422,7 +422,7 @@ export const updateStage = async (req: Request, res: Response) => {
           // TODO update many
           await collections.stages.updateOne(
             updateNewPreviousStageFilter,
-            { $set: newPreviousStageUpdate },
+            { $set: newPreviousStageProperties },
             {
               session,
             },
@@ -441,7 +441,7 @@ export const updateStage = async (req: Request, res: Response) => {
 
           await collections.stages.updateOne(
             currentStageFilter,
-            { $set: newNextStageUpdate },
+            { $set: newNextStageProperties },
             { session },
           );
         }
