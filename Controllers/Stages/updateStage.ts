@@ -88,6 +88,11 @@ export const updateStage = async (req: Request, res: Response) => {
   try {
     transactionResults = await session.withTransaction(async () => {
       const updatedStageProperties: Partial<StageEntity> = {};
+      // When moving, if these exist, we want to update them with new values
+      const oldPreviousStageUpdate: Partial<StageEntity> = {};
+      const oldNextStageUpdate: Partial<StageEntity> = {};
+      const newPreviousStageUpdate: Partial<StageEntity> = {};
+      const newNextStageUpdate: Partial<StageEntity> = {};
 
       if (req.body.GSI1SK) {
         updatedStageProperties.name = req.body.GSI1SK; // TODO update this type
@@ -152,7 +157,7 @@ export const updateStage = async (req: Request, res: Response) => {
            * Stage 2 --- Stage 3
            * Stage 3 --- Stage 2 <-- Moved
            */
-          oldPreviousStage.target[oldPreviousStagesNextStageIndex] = stage.target.find(
+          oldPreviousStageUpdate.target[oldPreviousStagesNextStageIndex] = stage.target.find(
             (item) => item.property === IndexableProperties.NextStage,
           );
         } else {
@@ -189,7 +194,7 @@ export const updateStage = async (req: Request, res: Response) => {
            * Stage 3 --- Stage 1 <--- Moved
            *
            */
-          oldNextStage.target[oldNextStagesPreviousStageIndex] = stage.target.find(
+          oldNextStageUpdate.target[oldNextStagesPreviousStageIndex] = stage.target.find(
             (item) => item.property === IndexableProperties.PreviousStage,
           );
         } else {
@@ -207,6 +212,22 @@ export const updateStage = async (req: Request, res: Response) => {
            */
           updateOldPreviousStage = true;
         }
+
+        // Update the relevant stages if needed (the two else checks above)
+        if (oldPreviousStage && updateOldPreviousStage) {
+          oldPreviousStageUpdate.target[oldPreviousStagesNextStageIndex] = {
+            property: IndexableProperties.NextStage,
+            value: null,
+          };
+        }
+        if (oldNextStage && updateOldNextStage) {
+          oldNextStageUpdate.target[oldNextStagesPreviousStageIndex] = {
+            property: IndexableProperties.PreviousStage,
+            value: null,
+          };
+        }
+
+        // TODO save the old stages!
       } // End stage move
     });
   } catch (error) {
@@ -220,19 +241,6 @@ export const updateStage = async (req: Request, res: Response) => {
   return res.status(200).json({ message: 'Stage updated' });
 };
 
-//     // Update the relevant stages if needed (the two else checks above)
-//     if (oldPreviousStage && updateOldPreviousStage) {
-//       oldPreviousStage.target[oldPreviousStagesNextStageIndex] = {
-//         id: undefined,
-//         type: IndexedEntities.NextStage,
-//       };
-//     }
-//     if (oldNextStage && updateOldNextStage) {
-//       oldNextStage.target[oldNextStagesPreviousStageIndex] = {
-//         id: undefined,
-//         type: IndexedEntities.PreviousStage,
-//       };
-//     }
 //     // Queue them up to be saved into the DB
 //     entityManager.persist(oldPreviousStage);
 //     entityManager.persist(oldNextStage);
