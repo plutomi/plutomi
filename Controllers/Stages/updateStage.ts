@@ -58,7 +58,7 @@ export const updateStage = async (req: Request, res: Response) => {
   if (!stage) {
     return res.status(404).json({ message: 'Stage not found' });
   }
-  // /**
+  // /** // TODO: Doubly Linked List!!!!!
   //  * If a user is attempting to update the order of the questions
   //  * but the length differs // TODO doubly linked list
   //  */
@@ -81,9 +81,12 @@ export const updateStage = async (req: Request, res: Response) => {
   //   }
   //   stage.questionOrder = req.body.questionOrder;
   // }
-  // if (req.body.GSI1SK) {
-  //   stage.name = req.body.GSI1SK;
-  // }
+
+  const stageBeingUpdated: Partial<StageEntity> = {};
+
+  if (req.body.GSI1SK) {
+    stageBeingUpdated.name = req.body.GSI1SK; // TODO update this type
+  }
   // if (req.body.position >= 0) {
   //   let allStagesInOpening: Stage[];
   //   try {
