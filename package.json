@@ -22,7 +22,7 @@
     "@aws-sdk/client-sqs": "^3.112.0",
     "@aws-sdk/lib-dynamodb": "^3.95.0",
     "@aws-sdk/types": "^3.78.0",
-    "@faker-js/faker": "^6.0.0-alpha.3",
+    "@faker-js/faker": "^6.3.1",
     "@hapi/iron": "^6.0.0",
     "@hapi/joi": "^17.1.1",
     "@headlessui/react": "^1.4.1",

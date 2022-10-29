@@ -1,90 +1,8 @@
 import { collections, connectToDatabase } from './utils/connectToDatabase';
 import { mongoClient } from './utils/connectToDatabase';
 import { randomNumberInclusive } from './utils/randomNumberInclusive';
-const app = {
-  isActive: false,
-  balance: '$3,171.95',
-  picture: 'http://placehold.it/32x32',
-  age: 40,
-  eyeColor: 'blue',
-  name: 'Robyn Malone',
-  gender: 'female',
-  company: 'ENAUT',
-  email: 'robynmalone@enaut.com',
-  phone: '+1 (859) 401-3406',
-  address: '600 Remsen Street, Como, Idaho, 6450',
-  about:
-    'Dolore aliqua fugiat ut excepteur ipsum ut reprehenderit consectetur id aute minim quis adipisicing. Lorem adipisicing anim officia ipsum id fugiat exercitation aliquip sunt. Dolor anim veniam ea exercitation nulla dolor magna ea commodo magna. Ad eiusmod eu reprehenderit consectetur. Ipsum id adipisicing duis Lorem velit nulla aliqua deserunt Lorem est ea nostrud nisi pariatur.\r\nSit tempor enim proident magna nisi reprehenderit eiusmod minim aliquip sit exercitation dolore nisi labore. Lorem reprehenderit et fugiat eiusmod consectetur aute aliqua in anim. Sint Lorem magna cupidatat culpa dolor cupidatat aliqua. Eu duis aliquip amet laborum pariatur laborum culpa labore ad velit magna. Velit qui veniam qui officia ullamco amet.\r\nQuis irure labore commodo sunt. Ea commodo voluptate consequat proident consequat cillum ut commodo deserunt dolore Lorem. Deserunt ad laborum duis dolor consequat occaecat exercitation enim consequat laborum duis consectetur adipisicing. Dolor excepteur id et velit tempor aute esse cillum nulla aliqua ea voluptate. Pariatur elit ipsum id tempor eiusmod mollit ut qui ad sunt dolore adipisicing. Incididunt exercitation incididunt duis officia commodo amet esse aliqua cillum reprehenderit eiusmod quis. Ullamco laborum amet irure commodo nisi duis amet commodo velit aliquip.\r\nIrure non qui sint laborum sint elit sint mollit voluptate nostrud non. Nisi laborum ea irure ut nulla qui. Exercitation Lorem cupidatat eu non deserunt elit dolor officia occaecat tempor amet. Incididunt est reprehenderit mollit cupidatat exercitation incididunt irure voluptate eiusmod. Labore ipsum eiusmod non ullamco mollit. Adipisicing pariatur veniam velit nostrud consequat nulla consectetur consectetur proident.\r\nVoluptate Lorem cillum anim duis nulla. Quis ipsum fugiat proident esse do officia minim. Ipsum sint fugiat consequat et ipsum exercitation ea in labore tempor occaecat et. Labore commodo do sint dolor occaecat anim fugiat est laborum est excepteur cupidatat ipsum. Veniam velit consequat duis velit est culpa qui adipisicing dolore aliquip. Do minim Lorem incididunt aute cupidatat. Aliquip labore aliqua magna nisi non ad cillum officia elit dolore mollit nulla exercitation mollit.\r\n',
-  registered: '2022-01-05T07:55:52 +05:00',
-  latitude: -30.363957,
-  longitude: 143.167492,
-  tags: [
-    'sunt mollit laborum irure fugiat enim qui tempor',
-    'ea commodo nostrud ex velit tempor nulla tempor',
-    'occaecat officia anim velit proident magna sunt ipsum',
-    'labore labore culpa labore aute commodo aliqua proident',
-    'do enim minim ullamco quis enim id ex',
-    'dolore elit non irure ad sunt dolore non',
-    'excepteur enim irure veniam consequat id esse laborum',
-    'commodo qui deserunt eu nisi consectetur incididunt consectetur',
-    'eiusmod dolore nulla mollit occaecat anim fugiat aliqua',
-    'magna duis non qui id adipisicing voluptate magna',
-    'labore Lorem excepteur Lorem cillum proident quis dolore',
-    'laboris sit do culpa culpa ullamco dolor quis',
-    'dolor occaecat duis qui qui labore dolor tempor',
-    'ex mollit id irure non sunt sint esse',
-    'aliqua nostrud culpa minim ut pariatur irure laborum',
-    'culpa aliquip quis dolor magna aliqua est aute',
-    'laboris qui occaecat laborum cillum cupidatat elit duis',
-    'aute dolor ipsum esse exercitation ad officia aliqua',
-    'qui nulla excepteur ullamco aliqua aliquip irure velit',
-    'fugiat quis occaecat laborum aute qui est officia',
-  ],
-  friends: [
-    {
-      id: 0,
-      name: 'Shawna Warner',
-    },
-    {
-      id: 1,
-      name: 'Maxwell Benjamin',
-    },
-    {
-      id: 2,
-      name: 'Watson Slater',
-    },
-    {
-      id: 3,
-      name: 'Marianne Wood',
-    },
-    {
-      id: 4,
-      name: 'Denise Lawrence',
-    },
-    {
-      id: 5,
-      name: 'Delaney Patrick',
-    },
-    {
-      id: 6,
-      name: 'Fuentes Aguirre',
-    },
-    {
-      id: 7,
-      name: 'Wendi Whitehead',
-    },
-    {
-      id: 8,
-      name: 'Holt Ward',
-    },
-    {
-      id: 9,
-      name: 'Fox Hubbard',
-    },
-  ],
-  greeting: 'Hello, Robyn Malone! You have 6 unread messages.',
-  favoriteFruit: 'strawberry',
-};
+import { faker } from '@faker-js/faker';
+
 const main = async () => {
   try {
     await connectToDatabase();
@@ -92,12 +10,64 @@ const main = async () => {
   } catch (error) {
     console.error(`error `, error);
   }
+  const orgs = [
+    {
+      name: 'GrubHub',
+      weight: 0.18,
+    },
+    {
+      name: 'GoPuff',
+      weight: 0.32,
+    },
+    {
+      name: 'JustEat',
+      weight: 0.44,
+    },
+    {
+      name: 'Deliveroo',
+      weight: 0.54,
+    },
+    {
+      name: 'Chipotle',
+      weight: 0.62,
+    },
 
-  const orgs = [1, 2, 3];
+    {
+      name: 'Fetch',
+      weight: 0.71,
+    },
+
+    {
+      name: 'WeWork',
+      weight: 0.78,
+    },
+
+    {
+      name: 'Chick Fil A',
+      weight: 0.84,
+    },
+    {
+      name: 'Gorillas',
+      weight: 0.89,
+    },
+
+    {
+      name: 'Laundry Heap',
+      weight: 0.93,
+    },
+    {
+      name: 'SweetGreen',
+      weight: 0.97,
+    },
+    {
+      name: 'MasterCard',
+      weight: 1,
+    },
+  ];
 
   let applicantsToCreate: any = [];
-  const numberOfBatches = 100;
-  const applicantsPerBatch = 10000;
+  const numberOfBatches = 1;
+  const applicantsPerBatch = 10;
   let processedApplicants = 0;
   const sendToMongo = async () => {
     for await (const batch of applicantsToCreate) {
@@ -119,6 +89,100 @@ const main = async () => {
     const localBatch: any = [];
 
     for (let i = 0; i < applicantsPerBatch; i++) {
+      const getOrg = () => {
+        const num = Math.random();
+
+        for (const org of orgs) {
+          if (num < org.weight) {
+            return org.name;
+          }
+        }
+      };
+      const app = {
+        guid: faker.database.mongodbObjectId(),
+        isActive: Math.random() > 0.5,
+        balance: faker.commerce.price(10, 5000),
+        picture: 'http://placehold.it/32x32',
+        age: randomNumberInclusive(10, 99),
+        eyeColor: faker.commerce.color(),
+        name: faker.name.findName(),
+        gender: Math.random() > 0.5 ? 'male' : 'female',
+        company: getOrg(),
+        email: faker.internet.email(),
+        phone: faker.phone.phoneNumber(),
+        address: faker.address.streetAddress(),
+        about: faker.lorem.sentences(randomNumberInclusive(3, 100)),
+        latitude: randomNumberInclusive(-100, 100),
+        longitude: randomNumberInclusive(-100, 100),
+        desc: faker.commerce.productDescription(),
+        tags: [
+          'consectetur in esse consequat sunt labore amet consectetur',
+          'adipisicing dolor fugiat do sint do proident ullamco',
+          'nostrud aliquip cillum pariatur nisi exercitation velit dolor',
+          'qui laborum cillum mollit ut duis non esse',
+          'anim eu tempor enim excepteur laboris occaecat enim',
+          'voluptate et esse do incididunt est irure velit',
+          'anim deserunt dolor non veniam nulla labore veniam',
+          'magna enim qui ut excepteur commodo veniam ex',
+          'minim occaecat eiusmod quis eiusmod non sint consequat',
+          'non reprehenderit dolore pariatur aliqua qui esse mollit',
+          'tempor in quis pariatur laborum nulla fugiat voluptate',
+          'incididunt nulla dolore nulla cillum fugiat sint aliqua',
+          'est ad sint irure sit mollit aliqua anim',
+          'amet ad ad dolor aliqua sunt aliqua ut',
+          'irure sit do non et proident id in',
+          'ea occaecat sunt qui aute commodo elit irure',
+          'cupidatat ullamco sit sit elit do ex laborum',
+          'minim magna consequat Lorem aliquip voluptate dolore adipisicing',
+          'ut eiusmod ipsum id dolor minim laboris elit',
+          'occaecat aute ipsum eiusmod magna tempor elit ut',
+        ],
+        friends: [
+          {
+            id: 0,
+            name: 'Riddle Stephenson',
+          },
+          {
+            id: 1,
+            name: 'Howard Morales',
+          },
+          {
+            id: 2,
+            name: 'Dorthy Lowery',
+          },
+          {
+            id: 3,
+            name: 'Best Barber',
+          },
+          {
+            id: 4,
+            name: 'Buchanan Montoya',
+          },
+          {
+            id: 5,
+            name: 'Gilliam Sharp',
+          },
+          {
+            id: 6,
+            name: 'Colon Humphrey',
+          },
+          {
+            id: 7,
+            name: 'Laverne Hardin',
+          },
+          {
+            id: 8,
+            name: 'Woodard Lowe',
+          },
+          {
+            id: 9,
+            name: 'Fleming Sims',
+          },
+        ],
+        greeting: 'Hello, Nadia Santos! You have 10 unread messages.',
+        favoriteDbType: faker.database.type(),
+      };
+
       const randomOrg = orgs[randomNumberInclusive(0, orgs.length - 1)];
       const newApplicant = {
         ...app,
