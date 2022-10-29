@@ -139,6 +139,8 @@ export const updateStage = async (req: Request, res: Response) => {
         let updateOldNextStage = false;
         let updateOldPreviousStage = false;
 
+        // ! - First we need to update the old previous stage and old next stage if they exists
+
         // If there was a previous stage before we moved, we want to update that stage
         if (oldPreviousStageId) {
           oldPreviousStage = allStagesInOpening.find((stage) => {
@@ -251,6 +253,8 @@ export const updateStage = async (req: Request, res: Response) => {
         await collections.stages.updateOne(updateOldPreviousStageFilter, oldPreviousStageUpdate, {
           session,
         });
+
+        // ! - Now we need to update the new previous stage and new next stage
         /**
          * Now we move on to update the new stages after moving our stage to its desired spot. Note that these stages can be a combination of the "old" stages.. Example:
          *
@@ -265,7 +269,7 @@ export const updateStage = async (req: Request, res: Response) => {
         const { newNextStageId, newPreviousStageId } = getAdjacentStagesBasedOnPosition({
           position: req.body.position,
           otherSortedStages: allStagesInOpening,
-          stageIdBeingMoved: stage.id,
+          stageIdBeingMoved: stageId,
         });
       } // End stage move
     });
