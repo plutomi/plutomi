@@ -126,6 +126,49 @@ export const updateStage = async (req: Request, res: Response) => {
          */
         const oldPreviousStageId = findInTargetArray(IndexableProperties.PreviousStage, stage);
         const oldNextStageId = findInTargetArray(IndexableProperties.NextStage, stage);
+
+        let oldPreviousStage: StageEntity | undefined;
+        let oldPreviousStagesNextStageIndex: number | null;
+        let oldNextStage: StageEntity | undefined;
+        let oldNextStagesPreviousStageIndex: number | null;
+        let updateOldNextStage = false;
+        let updateOldPreviousStage = false;
+
+        // If there was a previous stage before we moved, we want to update that stage
+        if (oldPreviousStageId) {
+          oldPreviousStage = allStagesInOpening.find((stage) => {
+            const stageId = findInTargetArray(IndexableProperties.Id, stage);
+            if (stageId === oldPreviousStageId) return stage;
+          });
+
+          oldPreviousStagesNextStageIndex = oldPreviousStage.target.findIndex(
+            (item) => item.property === IndexableProperties.NextStage,
+          );
+          /**
+           * Set the old previous stage's nextStage to be the old next stage of the stage we are currently moving
+           *
+           *     OLD --- NEW
+           * Stage 1 --- Stage 1 <-- Its next stage property gets updated to Stage 3, which was Stage 2's old next stage
+           * Stage 2 --- Stage 3
+           * Stage 3 --- Stage 2 <-- Moved
+           */
+          oldPreviousStage.target[oldPreviousStagesNextStageIndex] = stage.target.find(
+            (item) => item.property === IndexableProperties.NextStage,
+          );
+        } else {
+          /**
+           * Set our old next stage's previous stage to be undefined.
+           *
+           *     OLD --- NEW
+           * Stage 1 --- Stage 2 <-- Previous stage is now undefined
+           * Stage 2 --- Stage 1 <-- Moved
+           *
+           *
+           * We can't do the update here because we don't know if that next stage exists yet - we are doing that down below so...
+           * to prevent duplicate checks for that next stage, we are setting a reminder for us to update that stage later once we verified that it exists
+           */
+          updateOldNextStage = true;
+        }
       } // End stage move
     });
   } catch (error) {
@@ -139,43 +182,6 @@ export const updateStage = async (req: Request, res: Response) => {
   return res.status(200).json({ message: 'Stage updated' });
 };
 
-//     let oldPreviousStage: Stage | undefined;
-//     let oldPreviousStagesNextStageIndex: number | undefined;
-//     let oldNextStage: Stage | undefined;
-//     let oldNextStagesPreviousStageIndex: number | undefined;
-//     let updateOldNextStage = false;
-//     let updateOldPreviousStage = false;
-//     // If there was a previous stage before we moved, we want to update that stage
-//     if (oldPreviousStageId) {
-//       oldPreviousStage = allStagesInOpening.find((stage) => stage.id === oldPreviousStageId);
-//       oldPreviousStagesNextStageIndex = oldPreviousStage.target.findIndex(
-//         (item) => item.type === IndexedEntities.NextStage,
-//       );
-//       /**
-//        * Set the old previous stage's nextStage to be the old next stage of the stage we are currently moving
-//        *
-//        *     OLD --- NEW
-//        * Stage 1 --- Stage 1 <-- Its next stage property gets updated to Stage 3, which was Stage 2's old next stage
-//        * Stage 2 --- Stage 3
-//        * Stage 3 --- Stage 2 <-- Moved
-//        */
-//       oldPreviousStage.target[oldPreviousStagesNextStageIndex] = stage.target.find(
-//         (item) => item.type === IndexedEntities.NextStage,
-//       );
-//     } else {
-//       /**
-//        * Set our old next stage's previous stage to be undefined.
-//        *
-//        *     OLD --- NEW
-//        * Stage 1 --- Stage 2 <-- Previous stage is now undefined
-//        * Stage 2 --- Stage 1 <-- Moved
-//        *
-//        *
-//        * We can't do the update here because we don't know if that next stage exists yet - we are doing that down below so...
-//        * to prevent duplicate checks for that next stage, we are setting a reminder for us to update that stage later once we verified that it exists
-//        */
-//       updateOldNextStage = true;
-//     }
 //     // If there was a next stage before we moved, we need to update that stage's previous stage
 //     if (oldNextStageId) {
 //       oldNextStage = allStagesInOpening.find((stage) => stage.id === oldNextStageId);
