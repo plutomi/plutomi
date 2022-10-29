@@ -82,15 +82,52 @@ export const updateStage = async (req: Request, res: Response) => {
   //   stage.questionOrder = req.body.questionOrder;
   // }
 
-  const stageBeingUpdated: Partial<StageEntity> = {};
-
-  if (req.body.GSI1SK) {
-    stageBeingUpdated.name = req.body.GSI1SK; // TODO update this type
-  }
-
   const session = mongoClient.startSession();
 
+  let transactionResults;
   try {
+    transactionResults = await session.withTransaction(async () => {
+      const updatedStageProperties: Partial<StageEntity> = {};
+
+      if (req.body.GSI1SK) {
+        updatedStageProperties.name = req.body.GSI1SK; // TODO update this type
+      }
+
+      if (req.body.position >= 0) {
+        let unsortedStages: StageEntity[];
+        const allStagesInOpeningFilter: Filter<StageEntity> = {
+          $and: [
+            { target: { property: IndexableProperties.Org, value: orgId } },
+            { target: { property: IndexableProperties.Opening, value: openingId } },
+          ],
+        };
+
+        unsortedStages = (await collections.stages
+          .find(allStagesInOpeningFilter)
+          .toArray()) as StageEntity[];
+
+        // We must sort them first to be able to get the proper previous and next stage IDs
+        const allStagesInOpening = sortStages(unsortedStages);
+
+        /**
+         * Whenever you see  findInTargetArray & findIndex checks, this is retrieving the pointer(s) for
+         * the doubly linked list in that stage's `target` array
+         *
+         * Example:
+         * target: [
+         * { id: "nd19723jd298", type: "NextStage"},
+         * { id: "nd19780247g", type: "PreviousStage"}
+         *
+         *
+         * Along with other indexed properties such as the org and opening they are in
+         * { id: "New York City", type: "Opening"}
+         * { id: "Org", type: "Food Delivery App LLC"}
+         * ]
+         */
+        const oldPreviousStageId = findInTargetArray(IndexableProperties.PreviousStage, stage);
+        const oldNextStageId = findInTargetArray(IndexableProperties.NextStage, stage);
+      } // End stage move
+    });
   } catch (error) {
     const msg = 'Error ocurred updating stage';
     console.error(msg, error);
@@ -101,42 +138,7 @@ export const updateStage = async (req: Request, res: Response) => {
 
   return res.status(200).json({ message: 'Stage updated' });
 };
-//
-// if (req.body.position >= 0) {
-//   let allStagesInOpening: Stage[];
-//   try {
-//     allStagesInOpening = await entityManager.find(Stage, {
-//       $and: [
-//         { target: { id: orgId, type: IndexedEntities.Org } },
-//         { target: { id: openingId, type: IndexedEntities.Opening } },
-//       ],
-//     });
-//     // We must sort it first to be able to get the proper previous and next stage IDs
-//     allStagesInOpening = sortStages(allStagesInOpening);
-//     /**
-//      * Whenever you see  findInTargetArray & findIndex checks, this is retrieving the pointer(s) for
-//      * the doubly linked list in that stage's `target` array
-//      *
-//      * Example:
-//      *
-//      * target: [
-//      * { id: "nd19723jd298", type: "NextStage"},
-//      * { id: "nd19780247g", type: "PreviousStage"}
-//      *
-//      * Along with other indexed properties such as the org and opening they are in
-//      *
-//      * { id: "New York City", type: "Opening"}
-//      * { id: "Org", type: "Food Delivery App LLC"}
-//      * ]
-//      */
-//     const oldPreviousStageId = findInTargetArray({
-//       entity: IndexedEntities.PreviousStage,
-//       targetArray: stage.target,
-//     });
-//     const oldNextStageId = findInTargetArray({
-//       entity: IndexedEntities.NextStage,
-//       targetArray: stage.target,
-//     });
+
 //     let oldPreviousStage: Stage | undefined;
 //     let oldPreviousStagesNextStageIndex: number | undefined;
 //     let oldNextStage: Stage | undefined;
