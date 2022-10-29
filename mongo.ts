@@ -66,8 +66,8 @@ const main = async () => {
   ];
 
   let applicantsToCreate: any = [];
-  const numberOfBatches = 1;
-  const applicantsPerBatch = 10;
+  const numberOfBatches = 100;
+  const applicantsPerBatch = 5000;
   let processedApplicants = 0;
   const sendToMongo = async () => {
     for await (const batch of applicantsToCreate) {
@@ -85,6 +85,11 @@ const main = async () => {
     console.log('Inserted all batches!');
   };
 
+  //   for (let i = 0; i < numberOfBatches; i++) {
+  //     console.log('Starting');
+  //     await collections.applicants?.deleteMany({});
+  //     console.log('End');
+  //   }
   for (let i = 0; i < numberOfBatches; i++) {
     const localBatch: any = [];
 
@@ -98,6 +103,7 @@ const main = async () => {
           }
         }
       };
+      const orgForApplicant = getOrg();
       const app = {
         guid: faker.database.mongodbObjectId(),
         isActive: Math.random() > 0.5,
@@ -107,7 +113,7 @@ const main = async () => {
         eyeColor: faker.commerce.color(),
         name: faker.name.findName(),
         gender: Math.random() > 0.5 ? 'male' : 'female',
-        company: getOrg(),
+        company: orgForApplicant,
         email: faker.internet.email(),
         phone: faker.phone.phoneNumber(),
         address: faker.address.streetAddress(),
@@ -183,12 +189,11 @@ const main = async () => {
         favoriteDbType: faker.database.type(),
       };
 
-      const randomOrg = orgs[randomNumberInclusive(0, orgs.length - 1)];
       const newApplicant = {
         ...app,
         idx: i,
-        org: randomOrg,
-        target: [{ property: 'Org', value: randomOrg }],
+        org: orgForApplicant,
+        target: [{ property: 'Org', value: orgForApplicant }],
       };
       localBatch.push(newApplicant);
     }
