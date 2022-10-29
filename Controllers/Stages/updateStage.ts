@@ -35,7 +35,7 @@ export const updateStage = async (req: Request, res: Response) => {
   const orgId = findInTargetArray(IndexableProperties.Org, user);
 
   let stage: StageEntity | undefined;
-  const stageFilter: Filter<StageEntity> = {
+  const currentStageFilter: Filter<StageEntity> = {
     $and: [
       {
         target: { property: IndexableProperties.Org, value: orgId },
@@ -49,7 +49,7 @@ export const updateStage = async (req: Request, res: Response) => {
     ],
   };
   try {
-    stage = (await collections.stages.findOne(stageFilter)) as StageEntity;
+    stage = (await collections.stages.findOne(currentStageFilter)) as StageEntity;
   } catch (error) {
     const message = 'An error ocurred retrieving stage info';
     console.error(message, error);
@@ -87,7 +87,7 @@ export const updateStage = async (req: Request, res: Response) => {
   let transactionResults;
   try {
     transactionResults = await session.withTransaction(async () => {
-      const updatedStageProperties: Partial<StageEntity> = {};
+      const newCurrentStageProperties: Partial<StageEntity> = {};
       // When moving, if these exist, we want to update them with new values
       const oldPreviousStageUpdate: Partial<StageEntity> = {};
       const oldNextStageUpdate: Partial<StageEntity> = {};
@@ -95,10 +95,13 @@ export const updateStage = async (req: Request, res: Response) => {
       const newNextStageUpdate: Partial<StageEntity> = {};
 
       if (req.body.GSI1SK) {
-        updatedStageProperties.name = req.body.GSI1SK; // TODO update this type
+        newCurrentStageProperties.name = req.body.GSI1SK; // TODO update this type
       }
 
       if (req.body.position >= 0) {
+        // This will be overwritten down below so we need to set a default value or else it will fail
+        newCurrentStageProperties.target = stage.target;
+
         let unsortedStages: StageEntity[];
         const allStagesInOpeningFilter: Filter<StageEntity> = {
           $and: [
@@ -111,9 +114,10 @@ export const updateStage = async (req: Request, res: Response) => {
           .find(allStagesInOpeningFilter)
           .toArray()) as StageEntity[];
 
+        console.log('Stages unsorted');
         // We must sort them first to be able to get the proper previous and next stage IDs
         const allStagesInOpening = sortStages(unsortedStages);
-
+        console.log('All stages in opening sorted');
         /**
          * Whenever you see  findInTargetArray & findIndex checks, this is retrieving the pointer(s) for
          * the doubly linked list in that stage's `target` array
@@ -143,6 +147,7 @@ export const updateStage = async (req: Request, res: Response) => {
 
         // If there was a previous stage before we moved, we want to update that stage
         if (oldPreviousStageId) {
+          console.log('There was an old previous stage');
           oldPreviousStage = allStagesInOpening.find((stage) => {
             const stageId = findInTargetArray(IndexableProperties.Id, stage);
             if (stageId === oldPreviousStageId) return stage;
@@ -151,6 +156,9 @@ export const updateStage = async (req: Request, res: Response) => {
           oldPreviousStagesNextStageIndex = oldPreviousStage.target.findIndex(
             (item) => item.property === IndexableProperties.NextStage,
           );
+
+          // ! We have to set the target array otherwise the update below will fail
+          oldPreviousStageUpdate.target = oldPreviousStage.target;
           /**
            * Set the old previous stage's nextStage to be the old next stage of the stage we are currently moving
            *
@@ -163,6 +171,8 @@ export const updateStage = async (req: Request, res: Response) => {
             (item) => item.property === IndexableProperties.NextStage,
           );
         } else {
+          console.log('There was NOT old previous stage');
+
           /**
            * Set our old next stage's previous stage to be undefined.
            *
@@ -179,6 +189,8 @@ export const updateStage = async (req: Request, res: Response) => {
 
         // If there was a next stage before we moved, we need to update that stage's previous stage
         if (oldNextStageId) {
+          console.log('There was an old next stage');
+
           oldNextStage = allStagesInOpening.find((stage) => {
             const stageId = findInTargetArray(IndexableProperties.Id, stage);
             if (stageId === oldNextStageId) return stage;
@@ -187,6 +199,8 @@ export const updateStage = async (req: Request, res: Response) => {
           oldNextStagesPreviousStageIndex = oldNextStage.target.findIndex(
             (item) => item.property === IndexableProperties.PreviousStage,
           );
+          // ! We have to set the target array otherwise the update below will fail
+          oldNextStageUpdate.target = oldNextStage.target;
           /**
            * We need to set Stage 2's previous stage to our stage's old previous stage
            *
@@ -200,6 +214,8 @@ export const updateStage = async (req: Request, res: Response) => {
             (item) => item.property === IndexableProperties.PreviousStage,
           );
         } else {
+          console.log('There was NOT old next stage');
+
           /**
            *  If there is no old next stage, we need to update our old previous stage's next stage ID to be undefined.
            *
@@ -217,16 +233,21 @@ export const updateStage = async (req: Request, res: Response) => {
 
         // Update the relevant stages if needed (the two else checks above)
         if (oldPreviousStage && updateOldPreviousStage) {
+          console.log('Updating OLD previous stage');
           oldPreviousStageUpdate.target[oldPreviousStagesNextStageIndex] = {
             property: IndexableProperties.NextStage,
             value: null,
           };
+          console.log('Set object previous stage');
         }
         if (oldNextStage && updateOldNextStage) {
+          console.log('Updating OLD next stage');
+
           oldNextStageUpdate.target[oldNextStagesPreviousStageIndex] = {
             property: IndexableProperties.PreviousStage,
             value: null,
           };
+          console.log('Set object next stage');
         }
 
         // Update the old stages
@@ -238,11 +259,17 @@ export const updateStage = async (req: Request, res: Response) => {
             { target: { property: IndexableProperties.Id, value: oldNextStageId } },
           ],
         };
-        await collections.stages.updateOne(updateOldNextStageFilter, oldNextStageUpdate, {
-          session,
-        });
+        await collections.stages.updateOne(
+          updateOldNextStageFilter,
+          {
+            $set: oldNextStageUpdate,
+          },
+          {
+            session,
+          },
+        );
 
-        const updateOldPreviousStageFilter: Filter<StageEntity> = {
+        const updateOldPreviouscurrentStageFilter: Filter<StageEntity> = {
           $and: [
             { target: { property: IndexableProperties.Org, value: orgId } },
             { target: { property: IndexableProperties.Opening, value: openingId } },
@@ -250,9 +277,13 @@ export const updateStage = async (req: Request, res: Response) => {
           ],
         };
 
-        await collections.stages.updateOne(updateOldPreviousStageFilter, oldPreviousStageUpdate, {
-          session,
-        });
+        await collections.stages.updateOne(
+          updateOldPreviouscurrentStageFilter,
+          { $set: oldPreviousStageUpdate },
+          {
+            session,
+          },
+        );
 
         // ! - Now we need to update the new previous stage and new next stage
         /**
@@ -288,7 +319,7 @@ export const updateStage = async (req: Request, res: Response) => {
           (item) => item.property === IndexableProperties.NextStage,
         );
         if (newNextStageId) {
-          updatedStageProperties.target[indexOfNextStage] = {
+          newCurrentStageProperties.target[indexOfNextStage] = {
             property: IndexableProperties.NextStage,
             value: newNextStageId,
           };
@@ -300,6 +331,9 @@ export const updateStage = async (req: Request, res: Response) => {
           const nextStagePreviousStageIndex = newNextStage.target.findIndex(
             (item) => item.property === IndexableProperties.PreviousStage,
           );
+
+          // ! We have to set the target array otherwise the update below will fail
+          newNextStageUpdate.target = newNextStage.target;
           newNextStageUpdate.target[nextStagePreviousStageIndex] = {
             property: IndexableProperties.PreviousStage,
             value: stageId,
@@ -307,25 +341,37 @@ export const updateStage = async (req: Request, res: Response) => {
 
           // TODO update many
           // Save our stage and the new next stage
-          await collections.stages.updateOne(stageFilter, updatedStageProperties, { session });
+          await collections.stages.updateOne(
+            currentStageFilter,
+            { $set: newCurrentStageProperties },
+            { session },
+          );
 
-          const updateNewNextStageFilter: Filter<StageEntity> = {
+          const updateNewNextcurrentStageFilter: Filter<StageEntity> = {
             $and: [
               { target: { property: IndexableProperties.Org, value: orgId } },
               { target: { property: IndexableProperties.Opening, value: openingId } },
               { target: { property: IndexableProperties.Id, value: newNextStageId } },
             ],
           };
-          await collections.stages.updateOne(updateNewNextStageFilter, newNextStageUpdate, {
-            session,
-          });
+          await collections.stages.updateOne(
+            updateNewNextcurrentStageFilter,
+            { $set: newNextStageUpdate },
+            {
+              session,
+            },
+          );
         } else {
           // If there is no new next stage, our stage is being placed at the end. Next stage is therefore undefined!
-          updatedStageProperties.target[indexOfNextStage] = {
+          newCurrentStageProperties.target[indexOfNextStage] = {
             property: IndexableProperties.NextStage,
             value: null,
           };
-          await collections.stages.updateOne(stageFilter, updatedStageProperties, { session });
+          await collections.stages.updateOne(
+            currentStageFilter,
+            { $set: newCurrentStageProperties },
+            { session },
+          );
         }
 
         /**
@@ -345,7 +391,7 @@ export const updateStage = async (req: Request, res: Response) => {
           (item) => item.property === IndexableProperties.PreviousStage,
         );
         if (newPreviousStageId) {
-          updatedStageProperties.target[indexOfPreviousStage] = {
+          newCurrentStageProperties.target[indexOfPreviousStage] = {
             property: IndexableProperties.PreviousStage,
             value: newPreviousStageId,
           };
@@ -357,6 +403,9 @@ export const updateStage = async (req: Request, res: Response) => {
           const previousStageNextStageIndex = newPreviousStage.target.findIndex(
             (item) => item.property === IndexableProperties.NextStage,
           );
+
+          // ! We have to set the target array otherwise the update below will fail
+          newPreviousStageUpdate.target = newPreviousStage.target;
 
           newPreviousStageUpdate.target[previousStageNextStageIndex] = {
             property: IndexableProperties.NextStage,
@@ -371,18 +420,30 @@ export const updateStage = async (req: Request, res: Response) => {
             ],
           };
           // TODO update many
-          await collections.stages.updateOne(updateNewPreviousStageFilter, newPreviousStageUpdate, {
-            session,
-          });
-          await collections.stages.updateOne(stageFilter, updatedStageProperties, { session });
+          await collections.stages.updateOne(
+            updateNewPreviousStageFilter,
+            { $set: newPreviousStageUpdate },
+            {
+              session,
+            },
+          );
+          await collections.stages.updateOne(
+            currentStageFilter,
+            { $set: newCurrentStageProperties },
+            { session },
+          );
         } else {
           // If there is no new previous stage, our stage is therefore at the beginning and previous stage is undefined!
-          updatedStageProperties.target[indexOfPreviousStage] = {
+          newCurrentStageProperties.target[indexOfPreviousStage] = {
             property: IndexableProperties.PreviousStage,
             value: null,
           };
 
-          await collections.stages.updateOne(stageFilter, updatedStageProperties, { session });
+          await collections.stages.updateOne(
+            currentStageFilter,
+            { $set: newNextStageUpdate },
+            { session },
+          );
         }
         // End stage move
         await session.commitTransaction();
