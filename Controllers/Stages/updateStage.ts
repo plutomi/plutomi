@@ -169,6 +169,44 @@ export const updateStage = async (req: Request, res: Response) => {
            */
           updateOldNextStage = true;
         }
+
+        // If there was a next stage before we moved, we need to update that stage's previous stage
+        if (oldNextStageId) {
+          oldNextStage = allStagesInOpening.find((stage) => {
+            const stageId = findInTargetArray(IndexableProperties.Id, stage);
+            if (stageId === oldNextStageId) return stage;
+          });
+
+          oldNextStagesPreviousStageIndex = oldNextStage.target.findIndex(
+            (item) => item.property === IndexableProperties.PreviousStage,
+          );
+          /**
+           * We need to set Stage 2's previous stage to our stage's old previous stage
+           *
+           *     OLD --- NEW
+           * Stage 1 --- Stage 2 <-- Previous stage gets updated to undefined
+           * Stage 2 --- Stage 3
+           * Stage 3 --- Stage 1 <--- Moved
+           *
+           */
+          oldNextStage.target[oldNextStagesPreviousStageIndex] = stage.target.find(
+            (item) => item.property === IndexableProperties.PreviousStage,
+          );
+        } else {
+          /**
+           *  If there is no old next stage, we need to update our old previous stage's next stage ID to be undefined.
+           *
+           * OLD --- NEW
+           *
+           * Stage 1 --- Stage 2 <-- Moved
+           * Stage 2 --- Stage 1 <-- Needs their next stage to be undefined
+           *
+           *
+           * Same case as above, we don't really know if we had a previous check, this logic statement is not responsible for that.
+           * We are setting a reminder for us to check it a little bit below to prevent duplicate logic
+           */
+          updateOldPreviousStage = true;
+        }
       } // End stage move
     });
   } catch (error) {
@@ -182,39 +220,6 @@ export const updateStage = async (req: Request, res: Response) => {
   return res.status(200).json({ message: 'Stage updated' });
 };
 
-//     // If there was a next stage before we moved, we need to update that stage's previous stage
-//     if (oldNextStageId) {
-//       oldNextStage = allStagesInOpening.find((stage) => stage.id === oldNextStageId);
-//       oldNextStagesPreviousStageIndex = oldNextStage.target.findIndex(
-//         (item) => item.type === IndexedEntities.PreviousStage,
-//       );
-//       /**
-//        * We need to set Stage 2's previous stage to our stage's old previous stage
-//        *
-//        *     OLD --- NEW
-//        * Stage 1 --- Stage 2 <-- Previous stage gets updated to undefined
-//        * Stage 2 --- Stage 3
-//        * Stage 3 --- Stage 1 <--- Moved
-//        *
-//        */
-//       oldNextStage.target[oldNextStagesPreviousStageIndex] = stage.target.find(
-//         (item) => item.type === IndexedEntities.PreviousStage,
-//       );
-//     } else {
-//       /**
-//        *  If there is no old next stage, we need to update our old previous stage's next stage ID to be undefined.
-//        *
-//        * OLD --- NEW
-//        *
-//        * Stage 1 --- Stage 2 <-- Moved
-//        * Stage 2 --- Stage 1 <-- Needs their next stage to be undefined
-//        *
-//        *
-//        * Same case as above, we don't really know if we had a previous check, this logic statement is not responsible for that.
-//        * We are setting a reminder for us to check it a little bit below to prevent duplicate logic
-//        */
-//       updateOldPreviousStage = true;
-//     }
 //     // Update the relevant stages if needed (the two else checks above)
 //     if (oldPreviousStage && updateOldPreviousStage) {
 //       oldPreviousStage.target[oldPreviousStagesNextStageIndex] = {
