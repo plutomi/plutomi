@@ -269,7 +269,7 @@ export const updateStage = async (req: Request, res: Response) => {
           },
         );
 
-        const updateOldPreviouscurrentStageFilter: Filter<StageEntity> = {
+        const updateOldPreviousStageFilter: Filter<StageEntity> = {
           $and: [
             { target: { property: IndexableProperties.Org, value: orgId } },
             { target: { property: IndexableProperties.Opening, value: openingId } },
@@ -278,7 +278,7 @@ export const updateStage = async (req: Request, res: Response) => {
         };
 
         await collections.stages.updateOne(
-          updateOldPreviouscurrentStageFilter,
+          updateOldPreviousStageFilter,
           { $set: oldPreviousStageUpdate },
           {
             session,
