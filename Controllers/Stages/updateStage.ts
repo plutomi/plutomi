@@ -271,6 +271,61 @@ export const updateStage = async (req: Request, res: Response) => {
           otherSortedStages: allStagesInOpening,
           stageIdBeingMoved: stageId,
         });
+
+        /**
+         * If there is a new next stage, we want to:
+         *
+         * 1. Update our stage's next stage to be that stage's id
+         * 2. Update that new next stage's previous stage to be our stage
+         *
+         * OLD --- NEW
+         *
+         * Stage 1 --- Stage 2
+         * Stage 2 --- Stage 1 <-- Moved, needs it's next stage updated
+         * Stage 3 --- Stage 3 <-- Previous stage needs updating to be our stage
+         */
+        const indexOfNextStage = stage.target.findIndex(
+          (item) => item.property === IndexableProperties.NextStage,
+        );
+        if (newNextStageId) {
+          updatedStageProperties.target[indexOfNextStage] = {
+            property: IndexableProperties.NextStage,
+            value: newNextStageId,
+          };
+
+          const newNextStage = allStagesInOpening.find((stage) => {
+            const stageId = findInTargetArray(IndexableProperties.Id, stage);
+            if (stageId === newNextStageId) return stage;
+          });
+          const nextStagePreviousStageIndex = newNextStage.target.findIndex(
+            (item) => item.property === IndexableProperties.PreviousStage,
+          );
+          newNextStageUpdate.target[nextStagePreviousStageIndex] = {
+            property: IndexableProperties.PreviousStage,
+            value: stageId,
+          };
+
+          // Save our stage and the new next stage
+          await collections.stages.updateOne(stageFilter, updatedStageProperties, { session });
+
+          const updateNewNextStageFilter: Filter<StageEntity> = {
+            $and: [
+              { target: { property: IndexableProperties.Org, value: orgId } },
+              { target: { property: IndexableProperties.Opening, value: openingId } },
+              { target: { property: IndexableProperties.Id, value: newNextStageId } },
+            ],
+          };
+          await collections.stages.updateOne(updateNewNextStageFilter, newNextStageUpdate, {
+            session,
+          });
+        } else {
+          // If there is no new next stage, our stage is being placed at the end. Next stage is therefore undefined!
+          updatedStageProperties.target[indexOfNextStage] = {
+            property: IndexableProperties.NextStage,
+            value: null,
+          };
+          await collections.stages.updateOne(stageFilter, updatedStageProperties, { session });
+        }
       } // End stage move
     });
   } catch (error) {
@@ -284,38 +339,6 @@ export const updateStage = async (req: Request, res: Response) => {
   return res.status(200).json({ message: 'Stage updated' });
 };
 
-//     /**
-//      * If there is a new next stage, we want to:
-//      *
-//      * 1. Update our stage's next stage to be that stage's id
-//      * 2. Update that new next stage's previous stage to be our stage
-//      *
-//      * OLD --- NEW
-//      *
-//      * Stage 1 --- Stage 2
-//      * Stage 2 --- Stage 1 <-- Moved, needs it's next stage updated
-//      * Stage 3 --- Stage 3 <-- Previous stage needs updating to be our stage
-//      */
-//     const indexOfNextStage = stage.target.findIndex(
-//       (item) => item.type === IndexedEntities.NextStage,
-//     );
-//     if (newNextStageId) {
-//       stage.target[indexOfNextStage] = { id: newNextStageId, type: IndexedEntities.NextStage };
-//       const newNextStage = allStagesInOpening.find((stage) => stage.id === newNextStageId);
-//       const nextStagePreviousStageIndex = newNextStage.target.findIndex(
-//         (item) => item.type === IndexedEntities.PreviousStage,
-//       );
-//       newNextStage.target[nextStagePreviousStageIndex] = {
-//         id: stage.id,
-//         type: IndexedEntities.PreviousStage,
-//       };
-//       entityManager.persist(stage);
-//       entityManager.persist(newNextStage);
-//     } else {
-//       // If there is no new next stage, our stage is being placed at the end. Next stage is therefore undefined!
-//       stage.target[indexOfNextStage] = { id: undefined, type: IndexedEntities.NextStage };
-//       entityManager.persist(stage);
-//     }
 //     /**
 //      * If there is a new previous stage, we want to:
 //      *
