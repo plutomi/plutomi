@@ -227,7 +227,46 @@ export const updateStage = async (req: Request, res: Response) => {
           };
         }
 
-        // TODO save the old stages!
+        // Update the old stages
+
+        const updateOldNextStageFilter: Filter<StageEntity> = {
+          $and: [
+            { target: { property: IndexableProperties.Org, value: orgId } },
+            { target: { property: IndexableProperties.Opening, value: openingId } },
+            { target: { property: IndexableProperties.Id, value: oldNextStageId } },
+          ],
+        };
+        await collections.stages.updateOne(updateOldNextStageFilter, oldNextStageUpdate, {
+          session,
+        });
+
+        const updateOldPreviousStageFilter: Filter<StageEntity> = {
+          $and: [
+            { target: { property: IndexableProperties.Org, value: orgId } },
+            { target: { property: IndexableProperties.Opening, value: openingId } },
+            { target: { property: IndexableProperties.Id, value: oldPreviousStageId } },
+          ],
+        };
+
+        await collections.stages.updateOne(updateOldPreviousStageFilter, oldPreviousStageUpdate, {
+          session,
+        });
+        /**
+         * Now we move on to update the new stages after moving our stage to its desired spot. Note that these stages can be a combination of the "old" stages.. Example:
+         *
+         * OLD --- NEW
+         *
+         * Stage 1 --- Stage 2 <-- Its old previous stage is now its new next stage, and its previous stage is now undefined!
+         * Stage 2 --- Stage 1 <-- Moved, its old next stage is now its new previous stage!
+         * Stage 3 --- Stage 3
+         *
+         * The function below retrieves the IDs of the new stages from the current state of the stages
+         */
+        const { newNextStageId, newPreviousStageId } = getAdjacentStagesBasedOnPosition({
+          position: req.body.position,
+          otherSortedStages: allStagesInOpening,
+          stageIdBeingMoved: stage.id,
+        });
       } // End stage move
     });
   } catch (error) {
@@ -241,25 +280,6 @@ export const updateStage = async (req: Request, res: Response) => {
   return res.status(200).json({ message: 'Stage updated' });
 };
 
-//     // Queue them up to be saved into the DB
-//     entityManager.persist(oldPreviousStage);
-//     entityManager.persist(oldNextStage);
-//     /**
-//      * Now we move on to update the new stages after moving our stage to its desired spot. Note that these stages can be a combination of the "old" stages.. Example:
-//      *
-//      * OLD --- NEW
-//      *
-//      * Stage 1 --- Stage 2 <-- Its old previous stage is now its new next stage, and its previous stage is now undefined!
-//      * Stage 2 --- Stage 1 <-- Moved, its old next stage is now its new previous stage!
-//      * Stage 3 --- Stage 3
-//      *
-//      * The function below retrieves the IDs of the new stages from the current state of the stages
-//      */
-//     const { newNextStageId, newPreviousStageId } = getAdjacentStagesBasedOnPosition({
-//       position: req.body.position,
-//       otherSortedStages: allStagesInOpening,
-//       stageIdBeingMoved: stage.id,
-//     });
 //     /**
 //      * If there is a new next stage, we want to:
 //      *
