@@ -16,9 +16,7 @@ export const collections: {
 let mongoClient: mongoDB.MongoClient | undefined;
 
 export async function connectToDatabase() {
-  const client = new mongoDB.MongoClient(
-    'mongodb+srv://jose-valerio-development:5OCdo6Kb736d2nE1HiH7gysq47ZApv5BoK4V7diupUaDp1fnG7@development.nooegwl.mongodb.net/development?retryWrites=true&w=majority',
-  );
+  const client = new mongoDB.MongoClient(process.env.MONGO_CONNECTION);
 
   mongoClient = client; // TODO export this and pass it to the .req
   try {
