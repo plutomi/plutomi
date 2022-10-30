@@ -1,3 +1,6 @@
+import * as dotenv from 'dotenv'; // see https://github.com/motdotla/dotenv#how-do-i-use-dotenv-with-import
+dotenv.config();
+
 import * as mongoDB from 'mongodb';
 import { Collections } from '../Config';
 import { env } from '../env';
@@ -16,7 +19,7 @@ export const collections: {
 let mongoClient: mongoDB.MongoClient | undefined;
 
 export async function connectToDatabase() {
-  const client = new mongoDB.MongoClient(process.env.MONGO_CONNECTION);
+  const client = new mongoDB.MongoClient(env.mongoConnection);
 
   mongoClient = client; // TODO export this and pass it to the .req
   try {

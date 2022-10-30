@@ -1,11 +1,11 @@
 import { collections, connectToDatabase } from './utils/connectToDatabase';
-import { mongoClient } from './utils/connectToDatabase';
 import { randomNumberInclusive } from './utils/randomNumberInclusive';
 import { faker } from '@faker-js/faker';
 
 const main = async () => {
   try {
     await connectToDatabase();
+
     console.log('Connected!');
   } catch (error) {
     console.error(`error `, error);
