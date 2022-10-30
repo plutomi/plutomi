@@ -68,19 +68,27 @@ const main = async () => {
   const openings = [
     {
       name: 'NYC',
-      weight: 0.37,
-    },
-    {
-      name: 'Miami',
-      weight: 0.18,
-    },
-    {
-      name: 'Chicago',
       weight: 0.24,
     },
     {
+      name: 'Miami',
+      weight: 0.42,
+    },
+    {
+      name: 'Chicago',
+      weight: 0.69,
+    },
+    {
       name: 'Los Angeles',
-      weight: 0.21,
+      weight: 0.84,
+    },
+    {
+      name: 'Toronto',
+      weight: 0.92,
+    },
+    {
+      name: 'Seattle',
+      weight: 1,
     },
   ];
 
@@ -91,15 +99,15 @@ const main = async () => {
     },
     {
       name: 'Interviewing',
-      weight: 0.25,
+      weight: 0.42,
     },
     {
       name: 'Rejected',
-      weight: 0.49,
+      weight: 0.95,
     },
     {
       name: 'Hired',
-      weight: 0.09,
+      weight: 1,
     },
   ];
 
@@ -123,11 +131,11 @@ const main = async () => {
     console.log('Inserted all batches!');
   };
 
-  //   for (let i = 0; i < numberOfBatches; i++) {
-  //     console.log('Starting');
-  //     await collections.applicants?.deleteMany({});
-  //     console.log('End');
-  //   }
+  // for (let i = 0; i < numberOfBatches; i++) {
+  //   console.log('Starting');
+  //   await collections.applicants?.deleteMany({});
+  //   console.log('End');
+  // }
   for (let i = 0; i < numberOfBatches; i++) {
     const localBatch: any = [];
 

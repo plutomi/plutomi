@@ -41,7 +41,7 @@ export async function connectToDatabase() {
   const applicantsCollection: mongoDB.Collection = db.collection(Collections.Applicants);
 
   const indexKey: mongoDB.IndexSpecification = { target: 1 };
-
+  // { $and: [ { target: { $elemMatch: {  property: "Org", value: "GrubHub" }} } ] }
   collections.users = usersCollection;
   collections.loginLinks = loginLinksCollection;
   collections.orgs = orgsCollection;
