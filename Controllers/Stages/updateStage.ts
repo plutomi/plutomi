@@ -442,7 +442,7 @@ export const updateStage = async (req: Request, res: Response) => {
 
           await collections.stages.updateOne(
             currentStageFilter,
-            { $set: newNextStageProperties },
+            { $set: newCurrentStageProperties },
             { session },
           );
         }
