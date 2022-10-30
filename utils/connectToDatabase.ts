@@ -55,7 +55,7 @@ export async function connectToDatabase() {
   Object.values(collections).map(async (collection) => {
     try {
       console.log(`Creating target index on ${collection.collectionName}`);
-      await collection.dropIndex('target');
+      //  await collection.dropIndex('target');
       // await collection.dropIndex('target.property_1_target.value_1');
 
       await collection.createIndex(indexKey, { name: 'target' });

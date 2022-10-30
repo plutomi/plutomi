@@ -132,11 +132,12 @@ const main = async () => {
     console.log('Inserted all batches!');
   };
 
-  // for (let i = 0; i < numberOfBatches; i++) {
-  //   console.log('Starting');
-  //   await collections.applicants?.deleteMany({});
-  //   console.log('End');
-  // }
+  for (let i = 0; i < numberOfBatches; i++) {
+    console.log('Starting');
+    await collections.applicants?.deleteMany({});
+    console.log('End');
+  }
+
   for (let i = 0; i < numberOfBatches; i++) {
     const localBatch: any = [];
 
@@ -178,7 +179,7 @@ const main = async () => {
       const app = {
         guid: faker.database.mongodbObjectId(),
         isActive: Math.random() > 0.5,
-        balance: Number(faker.commerce.price(10, 5000)),
+        balance: Math.random() * randomNumberInclusive(1, 10000),
         picture: 'http://placehold.it/32x32',
         age: randomNumberInclusive(10, 99),
         eyeColor: faker.commerce.color(),
