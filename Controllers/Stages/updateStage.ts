@@ -347,7 +347,7 @@ export const updateStage = async (req: Request, res: Response) => {
             { session },
           );
 
-          const updateNewNextcurrentStageFilter: Filter<StageEntity> = {
+          const updateNewNextStageFilter: Filter<StageEntity> = {
             $and: [
               { target: { property: IndexableProperties.Org, value: orgId } },
               { target: { property: IndexableProperties.Opening, value: openingId } },
@@ -355,7 +355,7 @@ export const updateStage = async (req: Request, res: Response) => {
             ],
           };
           await collections.stages.updateOne(
-            updateNewNextcurrentStageFilter,
+            updateNewNextStageFilter,
             { $set: newNextStageProperties },
             {
               session,
@@ -391,10 +391,6 @@ export const updateStage = async (req: Request, res: Response) => {
           (item) => item.property === IndexableProperties.PreviousStage,
         );
         if (newPreviousStageId) {
-          newCurrentStageProperties.target[indexOfPreviousStage] = {
-            property: IndexableProperties.PreviousStage,
-            value: newPreviousStageId,
-          };
           const newPreviousStage = allStagesInOpening.find((stage) => {
             const stageId = findInTargetArray(IndexableProperties.Id, stage);
             if (stageId === newPreviousStageId) return stage;
@@ -427,6 +423,11 @@ export const updateStage = async (req: Request, res: Response) => {
               session,
             },
           );
+
+          newCurrentStageProperties.target[indexOfPreviousStage] = {
+            property: IndexableProperties.PreviousStage,
+            value: newPreviousStageId,
+          };
           await collections.stages.updateOne(
             currentStageFilter,
             { $set: newCurrentStageProperties },
