@@ -112,8 +112,8 @@ const main = async () => {
   ];
 
   let applicantsToCreate: any = [];
-  const numberOfBatches = 100;
-  const applicantsPerBatch = 5000;
+  const numberOfBatches = 1;
+  const applicantsPerBatch = 5;
   let processedApplicants = 0;
   const sendToMongo = async () => {
     for await (const batch of applicantsToCreate) {
@@ -131,149 +131,151 @@ const main = async () => {
     console.log('Inserted all batches!');
   };
 
-  // for (let i = 0; i < numberOfBatches; i++) {
-  //   console.log('Starting');
-  //   await collections.applicants?.deleteMany({});
-  //   console.log('End');
-  // }
   for (let i = 0; i < numberOfBatches; i++) {
-    const localBatch: any = [];
-
-    for (let i = 0; i < applicantsPerBatch; i++) {
-      const getOrg = () => {
-        const num = Math.random();
-
-        for (const org of orgs) {
-          if (num < org.weight) {
-            return org.name;
-          }
-        }
-      };
-
-      const getOpening = () => {
-        const num = Math.random();
-
-        for (const opening of openings) {
-          if (num < opening.weight) {
-            return opening.name;
-          }
-        }
-      };
-
-      const getStage = () => {
-        const num = Math.random();
-
-        for (const stage of stages) {
-          if (num < stage.weight) {
-            return stage.name;
-          }
-        }
-      };
-      const orgForApplicant = getOrg();
-      const openingForApplicant = getOpening();
-      const stageForApplicant = getStage();
-
-      const app = {
-        guid: faker.database.mongodbObjectId(),
-        isActive: Math.random() > 0.5,
-        balance: faker.commerce.price(10, 5000),
-        picture: 'http://placehold.it/32x32',
-        age: randomNumberInclusive(10, 99),
-        eyeColor: faker.commerce.color(),
-        name: faker.name.findName(),
-        gender: Math.random() > 0.5 ? 'male' : 'female',
-        company: orgForApplicant,
-        email: faker.internet.email(),
-        phone: faker.phone.phoneNumber(),
-        address: faker.address.streetAddress(),
-        about: faker.lorem.sentences(randomNumberInclusive(3, 100)),
-        latitude: randomNumberInclusive(-100, 100),
-        longitude: randomNumberInclusive(-100, 100),
-        desc: faker.commerce.productDescription(),
-        tags: [
-          'consectetur in esse consequat sunt labore amet consectetur',
-          'adipisicing dolor fugiat do sint do proident ullamco',
-          'nostrud aliquip cillum pariatur nisi exercitation velit dolor',
-          'qui laborum cillum mollit ut duis non esse',
-          'anim eu tempor enim excepteur laboris occaecat enim',
-          'voluptate et esse do incididunt est irure velit',
-          'anim deserunt dolor non veniam nulla labore veniam',
-          'magna enim qui ut excepteur commodo veniam ex',
-          'minim occaecat eiusmod quis eiusmod non sint consequat',
-          'non reprehenderit dolore pariatur aliqua qui esse mollit',
-          'tempor in quis pariatur laborum nulla fugiat voluptate',
-          'incididunt nulla dolore nulla cillum fugiat sint aliqua',
-          'est ad sint irure sit mollit aliqua anim',
-          'amet ad ad dolor aliqua sunt aliqua ut',
-          'irure sit do non et proident id in',
-          'ea occaecat sunt qui aute commodo elit irure',
-          'cupidatat ullamco sit sit elit do ex laborum',
-          'minim magna consequat Lorem aliquip voluptate dolore adipisicing',
-          'ut eiusmod ipsum id dolor minim laboris elit',
-          'occaecat aute ipsum eiusmod magna tempor elit ut',
-        ],
-        friends: [
-          {
-            id: 0,
-            name: 'Riddle Stephenson',
-          },
-          {
-            id: 1,
-            name: 'Howard Morales',
-          },
-          {
-            id: 2,
-            name: 'Dorthy Lowery',
-          },
-          {
-            id: 3,
-            name: 'Best Barber',
-          },
-          {
-            id: 4,
-            name: 'Buchanan Montoya',
-          },
-          {
-            id: 5,
-            name: 'Gilliam Sharp',
-          },
-          {
-            id: 6,
-            name: 'Colon Humphrey',
-          },
-          {
-            id: 7,
-            name: 'Laverne Hardin',
-          },
-          {
-            id: 8,
-            name: 'Woodard Lowe',
-          },
-          {
-            id: 9,
-            name: 'Fleming Sims',
-          },
-        ],
-        greeting: 'Hello, Nadia Santos! You have 10 unread messages.',
-        favoriteDbType: faker.database.type(),
-      };
-
-      const newApplicant = {
-        ...app,
-        idx: i,
-        org: orgForApplicant,
-        target: [
-          { property: 'Org', value: orgForApplicant },
-          { property: 'Opening', value: openingForApplicant },
-          { property: 'Stage', value: stageForApplicant },
-        ],
-      };
-      localBatch.push(newApplicant);
-    }
-    applicantsToCreate.push(localBatch);
+    console.log('Starting');
+    await collections.applicants?.deleteMany({});
+    console.log('End');
   }
-  console.log('Sending to mongo');
-  await sendToMongo();
+  // for (let i = 0; i < numberOfBatches; i++) {
+  //   const localBatch: any = [];
+
+  //   for (let i = 0; i < applicantsPerBatch; i++) {
+  //     const getOrg = () => {
+  //       const num = Math.random();
+
+  //       for (const org of orgs) {
+  //         if (num < org.weight) {
+  //           return org.name;
+  //         }
+  //       }
+  //     };
+
+  //     const orgForApplicant = getOrg();
+
+  //     const getOpening = () => {
+  //       const num = Math.random();
+
+  //       for (const opening of openings) {
+  //         if (num < opening.weight) {
+  //           return `${opening.name}-${orgForApplicant}`;
+  //         }
+  //       }
+  //     };
+  //     const openingForApplicant = getOpening();
+
+  //     const getStage = () => {
+  //       const num = Math.random();
+
+  //       for (const stage of stages) {
+  //         if (num < stage.weight) {
+  //           return `${stage.name}-${openingForApplicant}-${orgForApplicant}`;
+  //         }
+  //       }
+  //     };
+  //     const stageForApplicant = getStage();
+  //     const applicantId = nanoid(100)
+  //     const app = {
+  //       guid: faker.database.mongodbObjectId(),
+  //       isActive: Math.random() > 0.5,
+  //       balance: faker.commerce.price(10, 5000),
+  //       picture: 'http://placehold.it/32x32',
+  //       age: randomNumberInclusive(10, 99),
+  //       eyeColor: faker.commerce.color(),
+  //       name: faker.name.findName(),
+  //       gender: Math.random() > 0.5 ? 'male' : 'female',
+  //       company: orgForApplicant,
+  //       email: faker.internet.email(),
+  //       phone: faker.phone.phoneNumber(),
+  //       address: faker.address.streetAddress(),
+  //       about: faker.lorem.sentences(randomNumberInclusive(3, 100)),
+  //       latitude: randomNumberInclusive(-100, 100),
+  //       longitude: randomNumberInclusive(-100, 100),
+  //       desc: faker.commerce.productDescription(),
+  //       tags: [
+  //         'consectetur in esse consequat sunt labore amet consectetur',
+  //         'adipisicing dolor fugiat do sint do proident ullamco',
+  //         'nostrud aliquip cillum pariatur nisi exercitation velit dolor',
+  //         'qui laborum cillum mollit ut duis non esse',
+  //         'anim eu tempor enim excepteur laboris occaecat enim',
+  //         'voluptate et esse do incididunt est irure velit',
+  //         'anim deserunt dolor non veniam nulla labore veniam',
+  //         'magna enim qui ut excepteur commodo veniam ex',
+  //         'minim occaecat eiusmod quis eiusmod non sint consequat',
+  //         'non reprehenderit dolore pariatur aliqua qui esse mollit',
+  //         'tempor in quis pariatur laborum nulla fugiat voluptate',
+  //         'incididunt nulla dolore nulla cillum fugiat sint aliqua',
+  //         'est ad sint irure sit mollit aliqua anim',
+  //         'amet ad ad dolor aliqua sunt aliqua ut',
+  //         'irure sit do non et proident id in',
+  //         'ea occaecat sunt qui aute commodo elit irure',
+  //         'cupidatat ullamco sit sit elit do ex laborum',
+  //         'minim magna consequat Lorem aliquip voluptate dolore adipisicing',
+  //         'ut eiusmod ipsum id dolor minim laboris elit',
+  //         'occaecat aute ipsum eiusmod magna tempor elit ut',
+  //       ],
+  //       friends: [
+  //         {
+  //           id: 0,
+  //           name: 'Riddle Stephenson',
+  //         },
+  //         {
+  //           id: 1,
+  //           name: 'Howard Morales',
+  //         },
+  //         {
+  //           id: 2,
+  //           name: 'Dorthy Lowery',
+  //         },
+  //         {
+  //           id: 3,
+  //           name: 'Best Barber',
+  //         },
+  //         {
+  //           id: 4,
+  //           name: 'Buchanan Montoya',
+  //         },
+  //         {
+  //           id: 5,
+  //           name: 'Gilliam Sharp',
+  //         },
+  //         {
+  //           id: 6,
+  //           name: 'Colon Humphrey',
+  //         },
+  //         {
+  //           id: 7,
+  //           name: 'Laverne Hardin',
+  //         },
+  //         {
+  //           id: 8,
+  //           name: 'Woodard Lowe',
+  //         },
+  //         {
+  //           id: 9,
+  //           name: 'Fleming Sims',
+  //         },
+  //       ],
+  //       greeting: 'Hello, Nadia Santos! You have 10 unread messages.',
+  //       favoriteDbType: faker.database.type(),
+  //     };
+
+  //     const newApplicant = {
+  //       ...app,
+  //       idx: i,
+  //       org: orgForApplicant,
+  //       target: [
+  //         { property: 'Org', value: orgForApplicant },
+  //         { property: 'Opening', value: openingForApplicant },
+  //         { property: 'Stage', value: stageForApplicant },
+  //         { property: 'Id', value: applicantId },
+  //       ],
+  //     };
+  //     localBatch.push(newApplicant);
+  //   }
+  //   applicantsToCreate.push(localBatch);
+  // }
+  // console.log('Sending to mongo');
+  // await sendToMongo();
 };
 
 main();

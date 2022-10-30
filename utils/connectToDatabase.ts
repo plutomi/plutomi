@@ -55,7 +55,10 @@ export async function connectToDatabase() {
   Object.values(collections).map(async (collection) => {
     try {
       console.log(`Creating target index on ${collection.collectionName}`);
-      await collection.createIndex(indexKey);
+      // await collection.dropIndex('target_1');
+      // await collection.dropIndex('target.property_1_target.value_1');
+
+      // await collection.createIndex(indexKey, { unique: true, name: 'target' });
     } catch (error) {
       console.error(`Error creating index!`, error);
     }
