@@ -132,11 +132,11 @@ const main = async () => {
     console.log('Inserted all batches!');
   };
 
-  for (let i = 0; i < numberOfBatches; i++) {
-    console.log('Starting');
-    await collections.applicants?.deleteMany({});
-    console.log('End');
-  }
+  // for (let i = 0; i < numberOfBatches; i++) {
+  //   console.log('Starting');
+  //   await collections.applicants?.deleteMany({});
+  //   console.log('End');
+  // }
 
   for (let i = 0; i < numberOfBatches; i++) {
     const localBatch: any = [];
