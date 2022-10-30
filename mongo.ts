@@ -65,6 +65,44 @@ const main = async () => {
     },
   ];
 
+  const openings = [
+    {
+      name: 'NYC',
+      weight: 0.37,
+    },
+    {
+      name: 'Miami',
+      weight: 0.18,
+    },
+    {
+      name: 'Chicago',
+      weight: 0.24,
+    },
+    {
+      name: 'Los Angeles',
+      weight: 0.21,
+    },
+  ];
+
+  const stages = [
+    {
+      name: 'Questionnaire',
+      weight: 0.17,
+    },
+    {
+      name: 'Interviewing',
+      weight: 0.25,
+    },
+    {
+      name: 'Rejected',
+      weight: 0.49,
+    },
+    {
+      name: 'Hired',
+      weight: 0.09,
+    },
+  ];
+
   let applicantsToCreate: any = [];
   const numberOfBatches = 100;
   const applicantsPerBatch = 5000;
@@ -103,7 +141,30 @@ const main = async () => {
           }
         }
       };
+
+      const getOpening = () => {
+        const num = Math.random();
+
+        for (const opening of openings) {
+          if (num < opening.weight) {
+            return opening.name;
+          }
+        }
+      };
+
+      const getStage = () => {
+        const num = Math.random();
+
+        for (const stage of stages) {
+          if (num < stage.weight) {
+            return stage.name;
+          }
+        }
+      };
       const orgForApplicant = getOrg();
+      const openingForApplicant = getOpening();
+      const stageForApplicant = getStage();
+
       const app = {
         guid: faker.database.mongodbObjectId(),
         isActive: Math.random() > 0.5,
@@ -193,7 +254,11 @@ const main = async () => {
         ...app,
         idx: i,
         org: orgForApplicant,
-        target: [{ property: 'Org', value: orgForApplicant }],
+        target: [
+          { property: 'Org', value: orgForApplicant },
+          { property: 'Opening', value: openingForApplicant },
+          { property: 'Stage', value: stageForApplicant },
+        ],
       };
       localBatch.push(newApplicant);
     }
