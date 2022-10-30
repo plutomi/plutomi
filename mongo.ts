@@ -113,8 +113,8 @@ const main = async () => {
   ];
 
   let applicantsToCreate: any = [];
-  const numberOfBatches = 1;
-  const applicantsPerBatch = 5;
+  const numberOfBatches = 100;
+  const applicantsPerBatch = 5000;
   let processedApplicants = 0;
   const sendToMongo = async () => {
     for await (const batch of applicantsToCreate) {
@@ -178,7 +178,7 @@ const main = async () => {
       const app = {
         guid: faker.database.mongodbObjectId(),
         isActive: Math.random() > 0.5,
-        balance: faker.commerce.price(10, 5000),
+        balance: Number(faker.commerce.price(10, 5000)),
         picture: 'http://placehold.it/32x32',
         age: randomNumberInclusive(10, 99),
         eyeColor: faker.commerce.color(),
