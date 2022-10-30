@@ -109,7 +109,6 @@ export const getAdjacentStagesBasedOnPosition = ({
     }
   });
 
-
   console.log(`STAGE ID BEING MOVED`, stageIdBeingMoved);
   console.log(`CURRENT INDEX`, currentIndex);
   /**
@@ -134,6 +133,8 @@ export const getAdjacentStagesBasedOnPosition = ({
     const newNextStage = otherSortedStages[position + 1];
 
     console.log(`NEW PREVIOUS STAGE`, newPreviousStage);
+    console.log(`NEW NEXT STAGE`, newPreviousStage);
+
     const newPreviousStageId = newPreviousStage
       ? findInTargetArray(IndexableProperties.Id, newPreviousStage)
       : null;
@@ -162,6 +163,9 @@ export const getAdjacentStagesBasedOnPosition = ({
 
     const newPreviousStage = otherSortedStages[position - 1];
     const newNextStage = otherSortedStages[position];
+
+    console.log(`NEW PREVIOUS STAGE`, newPreviousStage);
+    console.log(`NEW NEXT STAGE`, newPreviousStage);
 
     const newPreviousStageId = newPreviousStage
       ? findInTargetArray(IndexableProperties.Id, newPreviousStage)
