@@ -1,13 +1,12 @@
 import { CalendarIcon, LocationMarkerIcon } from '@heroicons/react/outline';
 import Link from 'next/dist/client/link';
-import { DynamoOpening } from '../../@types/dynamo';
-import * as Time from '../../utils/time';
+import { Time } from '../../utils';
 
-interface PublicOpeningListItemProps {
-  opening: DynamoOpening;
-}
+// interface PublicOpeningListItemProps {
+//   opening: DynamoOpening;
+// } // TODO types
 
-export const PublicOpeningListItem = ({ opening }: PublicOpeningListItemProps) => (
+export const PublicOpeningListItem = ({ opening }) => (
   <li key={opening.openingId}>
     {/* Take applicant to opening info page */}
     <Link href={`/${opening?.orgId}/${opening?.openingId}/apply`}>
@@ -33,7 +32,7 @@ export const PublicOpeningListItem = ({ opening }: PublicOpeningListItemProps) =
                 aria-hidden="true"
               />
               <p>
-                Posted <time dateTime={opening.createdAt}>{Time.relative(opening.createdAt)}</time>
+                Posted <time dateTime={opening.createdAt}>{Time().to(opening.createdAt)}</time>
               </p>
             </div>
           </div>

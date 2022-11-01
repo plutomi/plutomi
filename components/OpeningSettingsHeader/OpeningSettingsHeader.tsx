@@ -4,7 +4,7 @@ import { useRouter } from 'next/router';
 import useStore from '../../utils/store';
 import { useOpeningInfo } from '../../SWR/useOpeningInfo';
 import { DeleteOpening, GetOpeningsInOrgURL } from '../../adapters/Openings';
-import * as Time from '../../utils/time';
+import { Time } from '../../utils';
 import { OpeningState, WEBSITE_URL } from '../../Config';
 import { Loader } from '../Loader';
 import { OpeningSettingsBreadcrumbs } from '../OpeningSettingsBreadcrumbs';
@@ -100,9 +100,7 @@ export const OpeningSettingsHeader = () => {
           </svg>
           {openingState === OpeningState.Public ? 'Public' : 'Private'}
         </span>
-        <p className="text-md text-light text-center">
-          Created {Time.relative(opening?.createdAt)}
-        </p>
+        <p className="text-md text-light text-center">Created {Time().to(opening?.createdAt)}</p>
       </div>
       <div className="space-x-4 flex items-center">
         <button

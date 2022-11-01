@@ -1,20 +1,19 @@
 import { mutate } from 'swr';
-import { DynamoOrgInvite } from '../../@types/dynamo';
-import * as Time from '../../utils/time';
 import * as Invites from '../../adapters/Invites';
 import { useSelf } from '../../SWR/useSelf';
 import { findInTargetArray } from '../../utils/findInTargetArray';
 import { IndexableProperties } from '../../@types/indexableProperties';
+import { Time } from '../../utils';
 
-interface PendingInviteCardProps {
-  invite: DynamoOrgInvite;
-}
+// interface PendingInviteCardProps {
+//   invite: DynamoOrgInvite; // TODO types
+// }
 
-export const PendingInviteCard = ({ invite }: PendingInviteCardProps) => {
+export const PendingInviteCard = ({ invite }) => {
   const { user, isUserLoading, isUserError } = useSelf();
   const orgId = findInTargetArray(IndexableProperties.Org, user);
 
-  const cancelInvite = async (invite: DynamoOrgInvite) => {
+  const cancelInvite = async (invite) => {
     try {
       const data = await Invites.CancelInvite({
         inviteId: invite.inviteId,
@@ -35,7 +34,7 @@ export const PendingInviteCard = ({ invite }: PendingInviteCardProps) => {
       <div className=" w-5/6  ">
         <div className="bg-blue-500 py-1 rounded-tl-lg">
           <h1 className="text-center text-md text-white font-semibold">
-            Sent {Time.relative(invite.createdAt)}
+            Sent {Time().to(invite.createdAt)}
           </h1>
         </div>
 
@@ -50,7 +49,7 @@ export const PendingInviteCard = ({ invite }: PendingInviteCardProps) => {
             <p className="text-sm text-blue-gray-400">
               Created by {invite.createdBy.firstName} {invite.createdBy.lastName}
             </p>
-            <p className="text-sm text-blue-gray-400">Expires {Time.relative(invite.expiresAt)}</p>
+            <p className="text-sm text-blue-gray-400">Expires {Time().to(invite.expiresAt)}</p>
           </div>
         </div>
       </div>

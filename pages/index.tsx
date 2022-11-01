@@ -8,7 +8,7 @@ import { Hero } from '../components/Hero';
 import { LoginHomepage } from '../components/LoginHomepage';
 import { AlreadyLoggedIn } from '../components/AlreadyLoggedIn';
 import { UseCaseList } from '../components/UseCaseList';
-import * as Time from '../utils/time';
+import { Time } from '../utils';
 import { env } from '../env';
 
 interface Commit {
@@ -70,7 +70,7 @@ export default function Main({ commits }: HomepageProps) {
                       <div className="">
                         <div>
                           <p className="text-lg text-gray-900">
-                            Committed {Time.relative(commit.date)}
+                            Committed {Time().to(commit.date)}
                           </p>
                           <p className="mt-2 flex items-center text-lg text-gray-500">
                             {commit.message}

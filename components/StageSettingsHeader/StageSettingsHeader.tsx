@@ -2,7 +2,7 @@ import { TrashIcon, PencilAltIcon } from '@heroicons/react/outline';
 import { useRouter } from 'next/router';
 import useStore from '../../utils/store';
 import { useStageInfo } from '../../SWR/useStageInfo';
-import * as Time from '../../utils/time';
+import { Time } from '../../utils';
 import { CreateQuestionModal } from '../CreateQuestionModal';
 import { UpdateStageModal } from '../UpdateStageModal';
 import { CrumbProps } from '../types';
@@ -50,7 +50,7 @@ export const StageSettingsHeader = ({ deleteStage }: StageSettingsHeaderProps) =
         <OpeningSettingsBreadcrumbs crumbs={crumbs} />
       </div>
 
-      <p className="text-md text-light text-center">Created {Time.relative(stage?.createdAt)}</p>
+      <p className="text-md text-light text-center">Created {Time().to(stage?.createdAt)}</p>
 
       <div className="space-x-4 flex items-center">
         <button

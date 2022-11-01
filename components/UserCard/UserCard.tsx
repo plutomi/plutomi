@@ -1,15 +1,14 @@
 import { mutate } from 'swr';
-import { DynamoUser } from '../../@types/dynamo';
-import * as Time from '../../utils/time';
+import { Time } from '../../utils';
 import * as Users from '../../adapters/Users';
 import { useSelf } from '../../SWR/useSelf';
 import { useOrgInfo } from '../../SWR/useOrgInfo';
 import { findInTargetArray } from '../../utils/findInTargetArray';
-import { User, UserConstructorValues } from '../../entities';
 import { IndexableProperties } from '../../@types/indexableProperties';
+import { UserEntity } from '../../models';
 
 interface UserCardProps {
-  user: User;
+  user: UserEntity;
 }
 export const UserCard = ({ user }: UserCardProps) => {
   const orgId = findInTargetArray(IndexableProperties.Org, user);
@@ -19,7 +18,9 @@ export const UserCard = ({ user }: UserCardProps) => {
 
   // TODO error & loading handling
   const me = useSelf().user;
-  const handleRemove = async (user: User) => {
+  const myEmail = findInTargetArray(IndexableProperties.Email, user);
+
+  const handleRemove = async (user: UserEntity) => {
     const userEmail = findInTargetArray(IndexableProperties.Email, user);
 
     if (
@@ -41,12 +42,9 @@ export const UserCard = ({ user }: UserCardProps) => {
     // Refresh users
     mutate(Users.GetUsersInOrgURL());
   };
+  const userEmail = findInTargetArray(IndexableProperties.Email, user);
+  const createdById = findInTargetArray(IndexableProperties.User, org);
 
-  const userEmail = findInTargetArray({ entity: IdxTypes.Email, targetArray: user.target });
-  const createdBy = findInTargetArray({
-    entity: IdxTypes.CreatedBy,
-    targetArray: user.target,
-  });
   return (
     <div className="border rounded-lg shadow-sm  max-w-lg mx-auto my-4 flex">
       <div className="flex flex-col text-left space-y-1 w-5/6 p-4">
@@ -54,10 +52,10 @@ export const UserCard = ({ user }: UserCardProps) => {
           {user?.firstName} {user?.lastName} {user.id === me.id && '- (YOU)'}
         </h1>
         <p className="text-md">{userEmail}</p>
-        <p className="text-sm text-blue-gray-400">Joined {Time.relative(user?.orgJoinDate)}</p>
+        <p className="text-sm text-blue-gray-400">Joined {Time().to(user?.orgJoinDate)}</p>
       </div>
       {/* User is admin // TODO clean up */}
-      {me?.id === createdBy && user?.id !== me?.id && (
+      {me?.id === createdById && user?.id !== me?.id && (
         <button
           type="submit"
           className="w-1/6 border  rounded-lg rounded-l-none bg-white border-red-500  hover:bg-red-500  text-red-500 hover:text-white  transition ease-in duration-100 "

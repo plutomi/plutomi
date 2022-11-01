@@ -3,14 +3,13 @@ import { mutate } from 'swr';
 import { useRouter } from 'next/router';
 import { AcceptInvite, GetUserInvitesURL, RejectInvite } from '../../adapters/Invites';
 import { GetSelfInfoURL } from '../../adapters/Users';
-import * as Time from '../../utils/time';
-import { DynamoOrgInvite } from '../../@types/dynamo';
+import { Time } from '../../utils';
 
-interface InviteProps {
-  invite: DynamoOrgInvite;
-}
-
-export const Invite = ({ invite }: InviteProps) => {
+// interface InviteProps {
+//   invite: DynamoOrgInvite;
+// }
+// TODO types
+export const Invite = ({ invite }) => {
   const router = useRouter();
   const acceptInvite = async (inviteId: string) => {
     try {
@@ -49,7 +48,7 @@ export const Invite = ({ invite }: InviteProps) => {
           <div className="flex items-center space-x-3 justify-between">
             <h3 className="text-dark text-lg font-semibold truncate">{invite.orgName}</h3>
             <span className="flex-shrink-0 inline-block px-2 py-0.5 text-blue-gray-800 text-xs font-medium bg-blue-gray-100 rounded-full">
-              Expires {Time.relative(invite.expiresAt)}
+              Expires {Time().from(invite.expiresAt)}
             </span>
           </div>
           <p className="mt-2 text-normal text-sm truncate">
