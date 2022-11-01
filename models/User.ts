@@ -4,7 +4,7 @@ import { Extends } from '../@types/extends';
 
 export type UserTargetArray = Array<
   Omit<IndexedTargetArrayItem, 'property'> & {
-    property: Extends<keyof typeof IndexableProperties, 'Org' | 'Email' | 'Id'>;
+    property: Extends<keyof typeof IndexableProperties, 'Org' | 'Email'>;
   }
 >;
 

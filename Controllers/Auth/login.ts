@@ -1,7 +1,6 @@
 import { Request, Response } from 'express';
 import Joi from 'joi';
 import { JOI_SETTINGS, WEBSITE_URL, COOKIE_NAME, COOKIE_SETTINGS, Emails } from '../../Config';
-import * as CreateError from '../../utils/createError';
 import { env } from '../../env';
 import { UserEntity, UserLoginLinkEntity } from '../../models';
 import { Filter, Sort } from 'mongodb';
@@ -25,8 +24,7 @@ export const login = async (req: Request, res: Response) => {
   try {
     await schema.validateAsync(req);
   } catch (error) {
-    const { status, body } = CreateError.JOI(error);
-    return res.status(status).json(body);
+    return res.status(400).json({ message: 'An error ocurred', error });
   }
 
   const { callbackUrl, token }: APILoginQuery = req.query;
@@ -54,7 +52,7 @@ export const login = async (req: Request, res: Response) => {
 
   console.log('Trying to find login link with id of', loginLinkId);
   const loginLinkFilter: Filter<UserLoginLinkEntity> = {
-    target: { property: IndexableProperties.Id, value: loginLinkId },
+    id: loginLinkId,
   };
   try {
     loginLink = (await collections.loginLinks.findOne(loginLinkFilter)) as UserLoginLinkEntity;
@@ -99,7 +97,7 @@ export const login = async (req: Request, res: Response) => {
   console.log(`Trying to find user with ID of `, userId);
 
   const userFilter: Filter<UserEntity> = {
-    target: { property: IndexableProperties.Id, value: userId },
+    id: userId,
   };
   try {
     user = (await collections.users.findOne(userFilter)) as UserEntity;

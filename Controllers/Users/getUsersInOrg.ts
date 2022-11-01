@@ -1,6 +1,5 @@
 import { Request, Response } from 'express';
 import { pick } from 'lodash';
-import * as CreateError from '../../utils/createError';
 import { findInTargetArray } from '../../utils/findInTargetArray';
 
 export const getUsersInOrg = async (req: Request, res: Response) => {

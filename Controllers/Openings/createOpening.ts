@@ -1,7 +1,6 @@
 import { Request, Response } from 'express';
 import Joi from 'joi';
 import { JOI_SETTINGS, LIMITS, OpeningState } from '../../Config';
-import * as CreateError from '../../utils/createError';
 import { Filter, UpdateFilter } from 'mongodb';
 import { findInTargetArray } from '../../utils/findInTargetArray';
 import { OpeningEntity } from '../../models/Opening';
@@ -9,6 +8,7 @@ import { OrgEntity } from '../../models';
 import { IndexableProperties } from '../../@types/indexableProperties';
 import { collections, mongoClient } from '../../utils/connectToDatabase';
 import { nanoid } from 'nanoid';
+import { generateId } from '../../utils';
 
 export type APICreateOpeningOptions = Required<Pick<OpeningEntity, 'name'>>;
 
@@ -23,22 +23,21 @@ export const createOpening = async (req: Request, res: Response) => {
   try {
     await schema.validateAsync(req);
   } catch (error) {
-    const { status, body } = CreateError.JOI(error);
-    return res.status(status).json(body);
+    return res.status(400).json({ message: 'An error ocurred creating that opening', error });
   }
 
   const { name }: APICreateOpeningOptions = req.body;
   const orgId = findInTargetArray(IndexableProperties.Org, user);
 
   const orgFilter: Filter<OrgEntity> = {
-    target: { property: IndexableProperties.Id, value: orgId },
+    id: orgId,
   };
 
   let transactionResults;
 
   const now = new Date();
-  const openingId = nanoid(50);
   const newOpening: OpeningEntity = {
+    id: generateId({}),
     name,
     totalApplicants: 0,
     totalStages: 0,
@@ -46,10 +45,6 @@ export const createOpening = async (req: Request, res: Response) => {
     updatedAt: now,
     target: [
       { property: IndexableProperties.Org, value: orgId },
-      {
-        property: IndexableProperties.Id,
-        value: openingId,
-      },
       // TODO allow creating public openings
       { property: IndexableProperties.OpeningState, value: OpeningState.Private },
     ],

@@ -1,8 +1,6 @@
 import { Request, Response } from 'express';
 import Joi from 'joi';
 import { JOI_SETTINGS, JoiOrgId } from '../../Config';
-import * as CreateError from '../../utils/createError';
-// import { Org } from '../../entities';
 import { Filter, FindOptions, UpdateFilter } from 'mongodb';
 import { OrgEntity, UserEntity } from '../../models';
 import { collections } from '../../utils/connectToDatabase';
@@ -29,9 +27,7 @@ export const createAndJoinOrg = async (req: Request, res: Response) => {
   try {
     await schema.validateAsync(req);
   } catch (error) {
-    const { status, body } = CreateError.JOI(error);
-
-    return res.status(status).json(body);
+    return res.status(400).json({ message: 'An error ocurred', error });
   }
 
   const currentUserOrg = findInTargetArray(IndexableProperties.Org, user);
@@ -63,10 +59,10 @@ export const createAndJoinOrg = async (req: Request, res: Response) => {
 
   const { displayName, orgId }: APICreateOrgOptions = req.body;
 
-  let org: OrgEntity | undefined;
+  let org: OrgEntity | null;
 
   const orgFilter: Filter<OrgEntity> = {
-    target: { property: IndexableProperties.Id, value: orgId },
+    id: orgId,
   };
   try {
     org = (await collections.orgs.findOne(orgFilter)) as OrgEntity;
@@ -85,10 +81,7 @@ export const createAndJoinOrg = async (req: Request, res: Response) => {
   const userFilter: Filter<UserEntity> = {
     $and: [
       {
-        target: {
-          property: IndexableProperties.Id,
-          value: findInTargetArray(IndexableProperties.Id, req.user),
-        },
+        id: user.id,
       },
       {
         target: {
@@ -113,7 +106,7 @@ export const createAndJoinOrg = async (req: Request, res: Response) => {
 
       const now = new Date();
       const newOrg: OrgEntity = {
-        id: orgId,
+        id: orgId.trim().toLowerCase(),
         createdAt: now,
         updatedAt: now,
         totalStages: 0,

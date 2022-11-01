@@ -13,7 +13,7 @@ export const leaveAndDeleteOrg = async (req: Request, res: Response) => {
   let org: OrgEntity | undefined;
 
   const orgFilter: Filter<OrgEntity> = {
-    target: { property: IndexableProperties.Id, value: orgId },
+    id: orgId,
   };
   try {
     org = (await collections.orgs.findOne(orgFilter)) as OrgEntity;
@@ -37,12 +37,7 @@ export const leaveAndDeleteOrg = async (req: Request, res: Response) => {
 
   const userFilter: Filter<UserEntity> = {
     $and: [
-      {
-        target: {
-          property: IndexableProperties.Id,
-          value: findInTargetArray(IndexableProperties.Id, user),
-        },
-      },
+      { id: user.id },
       {
         target: {
           property: IndexableProperties.Org,
@@ -52,7 +47,7 @@ export const leaveAndDeleteOrg = async (req: Request, res: Response) => {
     ],
   };
   const userUpdateFilter: UpdateFilter<UserEntity> = {
-    $set: { 'target.$.value': undefined, orgJoinDate: undefined },
+    $set: { 'target.$.value': null, orgJoinDate: null },
   };
 
   const session = mongoClient.startSession();

@@ -90,9 +90,8 @@ export const requestLoginLink = async (req: Request, res: Response) => {
       console.log(`Creating new user`);
 
       const now = new Date();
-      const customId = generateId({});
       const newUser: UserEntity = {
-        id: customId,
+        id: generateId({}),
         createdAt: now,
         updatedAt: now,
         totalInvites: 0,
@@ -192,10 +191,6 @@ export const requestLoginLink = async (req: Request, res: Response) => {
         {
           property: IndexableProperties.User,
           value: userId,
-        },
-        {
-          property: IndexableProperties.Id,
-          value: nanoid(100),
         },
       ],
     };
