@@ -1,5 +1,4 @@
 import { Request, Response } from 'express';
-import * as CreateError from '../../utils/createError';
 
 export const getInvitesForOrg = async (req: Request, res: Response) => {
   const { orgId } = req.params;

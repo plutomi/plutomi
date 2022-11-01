@@ -42,8 +42,7 @@ export const sortStages = (unsortedStagesInOpening: StageEntity[]): StageEntity[
   // Push all but the first stage into an object so we can get *almost* O(1) queries
   const mapWithStages: Record<string, StageEntity> = {};
   unsortedStagesInOpening.map((stage) => {
-    const stageId = findInTargetArray(IndexableProperties.Id, stage);
-    mapWithStages[stageId] = stage;
+    mapWithStages[stage.id] = stage;
   });
 
   let reachedTheEnd = false;
@@ -77,9 +76,8 @@ export const getAdjacentStagesBasedOnPosition = ({
   if (!position && position !== 0) {
     // Position not provided, add it to the end
     const stage = otherSortedStages[otherSortedStages.length - 1];
-    const stageId = stage ? findInTargetArray(IndexableProperties.Id, stage) : null;
+    const stageId = stage ? stage.id : null;
 
-    console.log('First case');
     return {
       newNextStageId: null,
       newPreviousStageId: stageId,
@@ -87,11 +85,9 @@ export const getAdjacentStagesBasedOnPosition = ({
   }
 
   if (position === 0) {
-    console.log('Second case');
-
     // Stage wants to be first
     const stage = otherSortedStages[0];
-    const stageId = stage ? findInTargetArray(IndexableProperties.Id, stage) : null;
+    const stageId = stage ? stage.id : null;
     return {
       newPreviousStageId: null,
       newNextStageId: stageId,
@@ -102,12 +98,7 @@ export const getAdjacentStagesBasedOnPosition = ({
    * ! Note: We are not allowing stage updates if the stage is dropped in the same position as it's redundant.
    * if (currentIndex === position)
    */
-  const currentIndex = otherSortedStages.findIndex((stage) => {
-    const stageId = findInTargetArray(IndexableProperties.Id, stage);
-    if (stageId === stageIdBeingMoved) {
-      return stage;
-    }
-  });
+  const currentIndex = otherSortedStages.findIndex((stage) => stage.id === stageIdBeingMoved);
 
   console.log(`STAGE ID BEING MOVED`, stageIdBeingMoved);
   console.log(`CURRENT INDEX`, currentIndex);
@@ -135,13 +126,8 @@ export const getAdjacentStagesBasedOnPosition = ({
     console.log(`NEW PREVIOUS STAGE`, newPreviousStage);
     console.log(`NEW NEXT STAGE`, newPreviousStage);
 
-    const newPreviousStageId = newPreviousStage
-      ? findInTargetArray(IndexableProperties.Id, newPreviousStage)
-      : null;
-
-    const newNextStageId = newNextStage
-      ? findInTargetArray(IndexableProperties.Id, newNextStage)
-      : null;
+    const newPreviousStageId = newPreviousStage ? newPreviousStage.id : null;
+    const newNextStageId = newNextStage ? newNextStage.id : null;
 
     return {
       newPreviousStageId,
@@ -167,13 +153,8 @@ export const getAdjacentStagesBasedOnPosition = ({
     console.log(`NEW PREVIOUS STAGE`, newPreviousStage);
     console.log(`NEW NEXT STAGE`, newPreviousStage);
 
-    const newPreviousStageId = newPreviousStage
-      ? findInTargetArray(IndexableProperties.Id, newPreviousStage)
-      : null;
-
-    const newNextStageId = newNextStage
-      ? findInTargetArray(IndexableProperties.Id, newNextStage)
-      : null;
+    const newPreviousStageId = newPreviousStage ? newPreviousStage.id : null;
+    const newNextStageId = newNextStage ? newNextStage.id : null;
 
     return {
       newPreviousStageId,

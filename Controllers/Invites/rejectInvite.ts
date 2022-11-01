@@ -1,5 +1,4 @@
 import { Request, Response } from 'express';
-import * as CreateError from '../../utils/createError';
 
 export const rejectInvite = async (req: Request, res: Response) => {
   const { inviteId } = req.params;

@@ -1,6 +1,5 @@
 import { Request, Response } from 'express';
 import { pick } from 'lodash';
-import * as CreateError from '../../utils/createError';
 
 export const getPublicOrg = async (req: Request, res: Response) => {
   // const { orgId } = req.params;

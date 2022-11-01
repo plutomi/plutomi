@@ -2,7 +2,6 @@ import { Request, Response } from 'express';
 import Joi from 'joi';
 import emailValidator from 'deep-email-validator';
 import { Defaults, ERRORS, JoiOrgId, JOI_SETTINGS, LIMITS, OpeningState } from '../../Config';
-import * as CreateError from '../../utils/createError';
 // import { DynamoApplicant } from '../../types/dynamo';
 import { findInTargetArray } from '../../utils/findInTargetArray';
 
@@ -26,8 +25,7 @@ export const createApplicant = async (req: Request, res: Response) => {
   try {
     await schema.validateAsync(req);
   } catch (error) {
-    const { status, body } = CreateError.JOI(error);
-    return res.status(status).json(body);
+    return res.status(400).json({ message: 'An error ocurred', error });
   }
   return res.status(200).json({ message: 'Endpoint temp disabled' });
 

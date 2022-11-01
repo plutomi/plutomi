@@ -1,5 +1,4 @@
 import { Request, Response } from 'express';
-import * as CreateError from '../../utils/createError';
 import { findInTargetArray } from '../../utils/findInTargetArray';
 
 export const deleteQuestionFromOrg = async (req: Request, res: Response) => {

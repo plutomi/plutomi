@@ -11,11 +11,11 @@ import {
   TIME_UNITS,
   WEBSITE_URL,
 } from '../../Config';
-import * as CreateError from '../../utils/createError';
-import * as Time from '../../utils/time';
+// import * as CreateError from '../../utils/createError';
+// import * as Time from '../../utils/time';
 
-import { nameIsDefault } from '../../utils/compareStrings/nameIsDefault';
-import { twoStringsMatch } from '../../utils/compareStrings';
+// import { nameIsDefault } from '../../utils/compareStrings/nameIsDefault';
+// import { twoStringsMatch } from '../../utils/compareStrings';
 
 const schema = Joi.object({
   body: {
@@ -28,8 +28,7 @@ export const createInvite = async (req: Request, res: Response) => {
   try {
     await schema.validateAsync(req);
   } catch (error) {
-    const { status, body } = CreateError.JOI(error);
-    return res.status(status).json(body);
+    return res.status(400).json({ message: 'An error ocurred', error });
   }
 
   const { user } = req;
@@ -48,7 +47,7 @@ export const createInvite = async (req: Request, res: Response) => {
   // }
 
   // if (
-  //   twoStringsMatch({
+  //   twoStringsMatch({ // TODO??? first name??
   //     string1: user.firstName,
   //     string2: recipientEmail,
   //   })

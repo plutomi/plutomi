@@ -1,6 +1,5 @@
 import { Request, Response } from 'express';
 import { pick } from 'lodash';
-import * as CreateError from '../../utils/createError';
 import { OpeningState } from '../../Config';
 
 export const getPublicOpeningsInOrg = async (req: Request, res: Response) => {

@@ -1,7 +1,5 @@
 import { Request, Response } from 'express';
 
-import * as CreateError from '../../utils/createError';
-
 export const deleteQuestionFromStage = async (req: Request, res: Response) => {
   const { user } = req;
   const { openingId, stageId, questionId } = req.params;

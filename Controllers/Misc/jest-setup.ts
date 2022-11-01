@@ -1,6 +1,5 @@
 import { Request, Response } from 'express';
 import { nanoid } from 'nanoid';
-import * as CreateError from '../../utils/createError';
 import { COOKIE_NAME, COOKIE_SETTINGS, Emails } from '../../Config';
 import { env } from '../../env';
 

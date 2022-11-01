@@ -1,7 +1,5 @@
 import { Request, Response } from 'express';
 import { Defaults } from '../../Config';
-import * as CreateError from '../../utils/createError';
-import * as Time from '../../utils/time';
 
 export const acceptInvite = async (req: Request, res: Response) => {
   const { inviteId } = req.params;

@@ -1,6 +1,5 @@
 import { Request, Response } from 'express';
 import Joi from 'joi';
-import * as CreateError from '../../utils/createError';
 import { JOI_SETTINGS, LIMITS } from '../../Config';
 
 // export interface APIUpdateQuestionOptions
@@ -15,8 +14,7 @@ export const updateQuestion = async (req: Request, res: Response) => {
   try {
     await schema.validateAsync(req.body);
   } catch (error) {
-    const { status, body } = CreateError.JOI(error);
-    return res.status(status).json(body);
+    return res.status(400).json({ message: 'An error ocurred', error });
   }
   return res.status(200).json({ message: 'TODO Endpoint temporarily disabled!' });
 

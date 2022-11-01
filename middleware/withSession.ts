@@ -15,7 +15,7 @@ export default async function withSession(req: Request, res: Response, next: Nex
   let error: any;
   try {
     user = (await collections.users.findOne({
-      target: { property: IndexableProperties.Id, value: userId },
+      id: userId,
     })) as UserEntity;
   } catch (err) {
     console.error(`User not found due to error`, error);
