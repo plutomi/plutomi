@@ -15,12 +15,8 @@ export const getStagesInOpening = async (req: Request, res: Response) => {
   let opening: OpeningEntity;
 
   const openingFilter: Filter<OpeningEntity> = {
-    $and: [
-      { target: { property: IndexableProperties.Org, value: orgId } },
-      {
-        target: { property: IndexableProperties.Id, value: openingId },
-      },
-    ],
+    id: openingId,
+    target: { property: IndexableProperties.Org, value: orgId },
   };
   try {
     opening = (await collections.openings.findOne(openingFilter)) as OpeningEntity;

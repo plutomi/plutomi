@@ -7,6 +7,7 @@ export interface BaseEntity {
    */
   id: string;
   /**
+   *
    * @deprecated - Should not be used, only for compatibility with mongo driver. Use `id` instead
    */
   _id?: ObjectId;

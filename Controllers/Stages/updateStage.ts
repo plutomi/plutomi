@@ -24,24 +24,21 @@ const schema = Joi.object({
 }).options(JOI_SETTINGS);
 
 export const updateStage = async (req: Request, res: Response) => {
-  // try {
-  //   await schema.validateAsync(req.body);
-  // } catch (error) {
-  //   const { status, body } = CreateError.JOI(error);
-  //   return res.status(status).json(body);
-  // }
+  try {
+    await schema.validateAsync(req.body);
+  } catch (error) {
+    return res.status(400).json({ message: 'An error ocurred', error });
+  }
   const { user } = req;
   const { openingId, stageId } = req.params;
   const orgId = findInTargetArray(IndexableProperties.Org, user);
 
   let stage: StageEntity | undefined;
   const currentStageFilter: Filter<StageEntity> = {
+    id: stageId,
     $and: [
       {
         target: { property: IndexableProperties.Org, value: orgId },
-      },
-      {
-        target: { property: IndexableProperties.Id, value: stageId },
       },
       {
         target: { property: IndexableProperties.Opening, value: openingId },

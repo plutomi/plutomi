@@ -14,12 +14,10 @@ export const getStage = async (req: Request, res: Response) => {
   let stage: StageEntity;
 
   const stageFilter: Filter<StageEntity> = {
+    id: stageId,
     $and: [
       {
         target: { property: IndexableProperties.Org, value: orgId },
-      },
-      {
-        target: { property: IndexableProperties.Id, value: stageId },
       },
       {
         target: { property: IndexableProperties.Opening, value: openingId },
