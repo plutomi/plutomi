@@ -6,8 +6,6 @@ import { useAllStagesInOpening } from '../../SWR/useAllStagesInOpening';
 import { StageCard } from '../StageCard';
 import { Loader } from '../Loader';
 import { CustomQuery } from '../../@types/customQuery';
-import { findInTargetArray } from '../../utils/findInTargetArray';
-import { IndexableProperties } from '../../@types/indexableProperties';
 
 export const StageCarousel = () => {
   const router = useRouter();
@@ -54,16 +52,14 @@ export const StageCarousel = () => {
         firstAndLastGutter
       >
         {stages?.map((stage) => {
-          const stageId = findInTargetArray(IndexableProperties.Id, stage);
-
           return (
             <StageCard
-              key={stageId}
+              key={stage.id}
               name={stage.name}
-              stageId={stageId}
+              stageId={stage.id}
               totalApplicants={stage.totalApplicants}
               draggable={false}
-              linkHref={`/openings/${openingId}/stages/${stageId}/applicants`}
+              linkHref={`/openings/${openingId}/stages/${stage.id}/applicants`}
             />
           );
         })}

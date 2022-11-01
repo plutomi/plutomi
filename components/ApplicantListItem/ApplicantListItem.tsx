@@ -1,17 +1,16 @@
 import { CalendarIcon } from '@heroicons/react/outline';
 import { useRouter } from 'next/router';
 import Link from 'next/link';
-import * as Time from '../../utils/time';
-import useStore from '../../utils/store';
-import { CustomQuery } from '../../@types/express';
-import { DynamoApplicant } from '../../@types/dynamo';
 import { ClickToCopy } from '../ClickToCopy';
+import { CustomQuery } from '../../@types/customQuery';
+import { Time } from '../../utils';
+import useStore from '../../utils/store';
 
-interface ApplicantListItemProps {
-  applicant: DynamoApplicant;
-}
+// interface ApplicantListItemProps {
+//   applicant: DynamoApplicant; // TODO types
+// }
 
-export const ApplicantListItem = ({ applicant }: ApplicantListItemProps) => {
+export const ApplicantListItem = ({ applicant }) => {
   const router = useRouter();
   const openApplicantProfileModal = useStore((state) => state.openApplicantProfileModal);
   const { openingId, stageId } = router.query as Pick<CustomQuery, 'openingId' | 'stageId'>;
@@ -64,7 +63,7 @@ export const ApplicantListItem = ({ applicant }: ApplicantListItemProps) => {
                 />
                 <p>
                   Applied{' '}
-                  <time dateTime={applicant.createdAt}>{Time.relative(applicant.createdAt)}</time>
+                  <time dateTime={applicant.createdAt}>{Time().to(applicant.createdAt)}</time>
                 </p>
               </div>
             </div>

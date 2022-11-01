@@ -16,7 +16,7 @@ interface StageCardProps {
 
 export const DraggableStageCard = ({ linkHref, stage, index }: StageCardProps) => {
   const urlParams = router.query as Pick<CustomQuery, 'stageId'>;
-  const stageId = findInTargetArray(IndexableProperties.Id, stage);
+  const stageId = stage.id;
   // Note: If using a transition: transition ease-in-out duration-300 for like the background
   // https://stackoverflow.com/questions/59130533/items-jumping-when-dropping-on-react-beautiful-dnd
   const content = (

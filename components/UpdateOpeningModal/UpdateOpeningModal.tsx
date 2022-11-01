@@ -9,8 +9,6 @@ import { findInTargetArray } from '../../utils/findInTargetArray';
 import { IndexableProperties } from '../../@types/indexableProperties';
 import { OpeningEntity } from '../../models/Opening';
 
-// TODO types
-// @ts-ignore
 export const UpdateOpeningModal = ({ opening }: { opening: OpeningEntity }) => {
   const [openingName, setOpeningName] = useState(opening?.name);
   const openingState = findInTargetArray(IndexableProperties.OpeningState, opening);
@@ -26,7 +24,6 @@ export const UpdateOpeningModal = ({ opening }: { opening: OpeningEntity }) => {
 
   const closeUpdateOpeningModal = useStore((state) => state.closeUpdateOpeningModal);
 
-  const openingId = findInTargetArray(IndexableProperties.Id, opening);
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
 
@@ -37,10 +34,10 @@ export const UpdateOpeningModal = ({ opening }: { opening: OpeningEntity }) => {
       };
 
       const { data } = await UpdateOpening({
-        openingId,
+        openingId: opening.id,
         newValues,
       });
-      mutate(GetOpeningInfoURL(openingId));
+      mutate(GetOpeningInfoURL(opening.id));
       alert(data.message);
       closeUpdateOpeningModal();
     } catch (error) {

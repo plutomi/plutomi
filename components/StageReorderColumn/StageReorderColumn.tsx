@@ -24,7 +24,7 @@ export const StageReorderColumn = () => {
   const { openingId, stageId } = router.query as Pick<CustomQuery, 'openingId' | 'stageId'>;
   const { opening, isOpeningLoading, isOpeningError } = useOpeningInfo({ openingId });
   const { stages, isStagesLoading, isStagesError } = useAllStagesInOpening({
-    openingId: findInTargetArray(IndexableProperties.Id, opening),
+    openingId: opening.id,
   });
   const [newStages, setNewStages] = useState(stages);
 
@@ -52,23 +52,16 @@ export const StageReorderColumn = () => {
     // Remove our stage it from the old location
     newStageOrder.splice(source.index, 1); // TODO this isn't splicing!
 
-    const ourStage = newStages.find((stage) => {
-      const stageId = findInTargetArray(IndexableProperties.Id, stage);
+    const ourStage = newStages.find((stage) => stage.id === draggableId);
 
-      if (stageId === draggableId) {
-        return stage;
-      }
-    });
     // Add it to the new location
     newStageOrder.splice(destination.index, 0, ourStage);
     setNewStages(newStageOrder);
 
     try {
-      const ourStageId = findInTargetArray(IndexableProperties.Id, ourStage);
-
       await UpdateStage({
         openingId,
-        stageId: ourStageId,
+        stageId: ourStage.id,
         newValues: {
           position: destination.index,
         },
@@ -114,14 +107,12 @@ export const StageReorderColumn = () => {
                 {(provided) => (
                   <div {...provided.droppableProps} ref={provided.innerRef} className={'my-4'}>
                     {newStages?.map((stage, index) => {
-                      const stageId = findInTargetArray(IndexableProperties.Id, stage);
-
                       return (
                         <DraggableStageCard
-                          key={stageId}
+                          key={stage.id}
                           stage={stage}
                           index={index}
-                          linkHref={`/openings/${openingId}/stages/${stageId}/settings`}
+                          linkHref={`/openings/${openingId}/stages/${stage.id}/settings`}
                         />
                       );
                     })}

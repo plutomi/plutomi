@@ -3,8 +3,7 @@ import { Listbox, Transition } from '@headlessui/react';
 import { CheckIcon, SelectorIcon } from '@heroicons/react/solid';
 import { useRouter } from 'next/router';
 import { OpeningState, WEBSITE_URL } from '../../Config';
-import combineClassNames from '../../utils/combineClassNames';
-import { findInTargetArray } from '../../utils/findInTargetArray';
+import { combineClassNames, findInTargetArray } from '../../utils';
 import { OpeningEntity } from '../../models/Opening';
 import { IndexableProperties } from '../../@types/indexableProperties';
 
@@ -33,8 +32,7 @@ export const OpeningsDropdown = ({ openings, index }: OpeningsDropdownProps) => 
     // }
     // router.push(`${WEBSITE_URL}/openings/${newValue.openingId}/settings`);
 
-    const newOpeningId = findInTargetArray(IndexableProperties.Id, newValue);
-    router.push(`${WEBSITE_URL}/openings/${newOpeningId}/settings`);
+    router.push(`${WEBSITE_URL}/openings/${newValue.id}/settings`);
   };
 
   let openingState: OpeningState | undefined;
@@ -73,11 +71,9 @@ export const OpeningsDropdown = ({ openings, index }: OpeningsDropdownProps) => 
         >
           <Listbox.Options className="absolute z-10 mt-1 w-full bg-white shadow-lg max-h-60 rounded-md py-1 text-md ring-1 ring-black ring-opacity-5 overflow-auto focus:outline-none sm:text-lg">
             {openings.map((opening) => {
-              const openingId = findInTargetArray(IndexableProperties.Id, opening);
-
               return (
                 <Listbox.Option
-                  key={openingId}
+                  key={opening.id}
                   className={({ active }) =>
                     combineClassNames(
                       active ? 'text-white bg-blue-600' : 'text-dark',
