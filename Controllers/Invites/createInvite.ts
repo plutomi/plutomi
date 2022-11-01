@@ -14,8 +14,9 @@ import {
 // import * as CreateError from '../../utils/createError';
 // import * as Time from '../../utils/time';
 
-// import { nameIsDefault } from '../../utils/compareStrings/nameIsDefault';
 // import { twoStringsMatch } from '../../utils/compareStrings';
+
+// const userMissingName = !user.firstName || !user.lastName;
 
 const schema = Joi.object({
   body: {

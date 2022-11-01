@@ -15,7 +15,7 @@ export const UserProfilePageHeader = () => {
   const greeting = (
     <h2 className="text-2xl font-bold leading-7 text-dark sm:text-3xl sm:truncate">
       Welcome to your profile
-      {user?.firstName === Defaults.FirstName ? '!' : `, ${user?.firstName}!`}
+      {!user?.firstName ? '!' : `, ${user?.firstName}!`}
     </h2>
   );
   return (

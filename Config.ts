@@ -81,9 +81,6 @@ export const ID_LENGTHS = {
 };
 
 export enum Defaults {
-  FirstName = 'NO_FIRST_NAME',
-  LastName = 'NO_LAST_NAME',
-  Org = `NO_ORG_ASSIGNED`,
   /**
    * When no callbackUrl is provided on login, what page should users be redirected to
    */
@@ -209,10 +206,6 @@ export const DROPDOWN_NAVIGATION = [
 // Schema to validate orgIds against in joi
 export const JoiOrgId = Joi.string()
   .invalid(
-    Defaults.Org,
-    TagGenerator({
-      value: Defaults.Org,
-    }),
     'plutomi',
     'plutomi-',
     'plutomi-inc',

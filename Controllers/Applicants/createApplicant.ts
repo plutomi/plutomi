@@ -14,8 +14,8 @@ const schema = Joi.object({
     orgId: JoiOrgId,
     openingId: Joi.string(),
     email: Joi.string().email(),
-    firstName: Joi.string().invalid(Defaults.FirstName).max(LIMITS.MAX_APPLICANT_FIRSTNAME_LENGTH),
-    lastName: Joi.string().invalid(Defaults.LastName).max(LIMITS.MAX_APPLICANT_LASTNAME_LENGTH),
+    firstName: Joi.string().max(LIMITS.MAX_APPLICANT_FIRSTNAME_LENGTH),
+    lastName: Joi.string().max(LIMITS.MAX_APPLICANT_LASTNAME_LENGTH),
   },
 }).options(JOI_SETTINGS);
 

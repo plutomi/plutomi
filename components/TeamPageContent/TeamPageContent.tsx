@@ -9,7 +9,6 @@ import { EmptyTeamContent } from '../EmptyTeamContent';
 import { PendingInviteCard } from '../PendingInviteCard';
 import { CreateInviteModal } from '../CreateInviteModal';
 import { UserCard } from '../UserCard';
-import { nameIsDefault } from '../../utils/compareStrings/nameIsDefault';
 import { findInTargetArray } from '../../utils/findInTargetArray';
 import { IndexableProperties } from '../../@types/indexableProperties';
 

@@ -5,8 +5,8 @@ import { Defaults, JOI_SETTINGS } from '../../Config';
 // export interface APIUpdateUserOptions extends Partial<Pick<DynamoUser, 'firstName' | 'lastName'>> {}
 
 const schema = Joi.object({
-  firstName: Joi.string().invalid(Defaults.FirstName), // TODO set max length
-  lastName: Joi.string().invalid(Defaults.LastName), // TODO set max length
+  firstName: Joi.string().min(1), // TODO set max length
+  lastName: Joi.string().min(1), // TODO set max length
 }).options(JOI_SETTINGS);
 
 export const updateUser = async (req: Request, res: Response) => {

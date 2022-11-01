@@ -10,7 +10,6 @@ import { ClickToCopy } from '../ClickToCopy';
 import { CreateOrgModal } from '../CreateOrgModal';
 import { Loader } from '../Loader/Loader';
 import { UpdateUserProfileModal } from '../UpdateUserInfoModal';
-import { nameIsDefault } from '../../utils/compareStrings/nameIsDefault';
 import { findInTargetArray } from '../../utils/findInTargetArray';
 import { IndexableProperties } from '../../@types/indexableProperties';
 
@@ -59,6 +58,7 @@ export const DashboardPageContent = () => {
     mutate(GetSelfInfoURL()); // Refresh user state
   };
 
+  const userMissingName = !user.firstName || !user.lastName;
   const UserNotInOrg = (
     <div className="text-center w-full h-full flex flex-col justify-center items-center">
       <OfficeBuildingIcon className="mx-auto h-12 w-12 text-light" />
@@ -98,10 +98,7 @@ export const DashboardPageContent = () => {
       </div>
       <div className="flex justify-center mx-auto">
         <UpdateUserProfileModal user={user} />
-        {nameIsDefault({
-          firstName: user.firstName,
-          lastName: user.lastName,
-        }) && (
+        {userMissingName ? (
           <div>
             <h4>We don&apos;t seem to know your name!</h4>
 
@@ -113,7 +110,7 @@ export const DashboardPageContent = () => {
               Click here to edit it!
             </button>
           </div>
-        )}
+        ) : null}
       </div>
       <div className="py-24">
         <button

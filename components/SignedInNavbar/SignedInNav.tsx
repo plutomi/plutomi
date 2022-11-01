@@ -8,7 +8,7 @@ import { useSelf } from '../../SWR/useSelf';
 import { Logout } from '../../adapters/Auth';
 import { NAVBAR_NAVIGATION, DROPDOWN_NAVIGATION, Defaults } from '../../Config';
 import { GetSelfInfoURL } from '../../adapters/Users';
-import combineClassNames from '../../utils/combineClassNames';
+import { combineClassNames } from '../../utils';
 import { Banner } from '../Banner';
 import { NavbarSearch } from '../NavbarSearch';
 import { findInTargetArray } from '../../utils/findInTargetArray';
@@ -74,8 +74,8 @@ export const SignedInNav = ({ current }: SignedInNavProps) => {
                     {NAVBAR_NAVIGATION.map((item) => {
                       if (
                         // TODO what is happening here??? lol
-                        (orgId === Defaults.Org && item.hiddenIfNoOrg) ||
-                        (orgId !== Defaults.Org && item.hiddenIfOrg)
+                        (!orgId && item.hiddenIfNoOrg) ||
+                        (orgId && item.hiddenIfOrg)
                       ) {
                         return null;
                       }

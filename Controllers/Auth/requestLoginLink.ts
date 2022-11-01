@@ -95,8 +95,8 @@ export const requestLoginLink = async (req: Request, res: Response) => {
         createdAt: now,
         updatedAt: now,
         totalInvites: 0,
-        firstName: Defaults.FirstName,
-        lastName: Defaults.LastName,
+        firstName: null,
+        lastName: null,
         emailVerified: false,
         canReceiveEmails: true,
         target: [
