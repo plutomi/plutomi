@@ -5,7 +5,6 @@ import { IndexableProperties } from '../../@types/indexableProperties';
 import { JOI_SETTINGS } from '../../Config';
 import { OpeningEntity } from '../../models/Opening';
 import { collections } from '../../utils/connectToDatabase';
-import * as CreateError from '../../utils/createError';
 import { findInTargetArray } from '../../utils/findInTargetArray';
 
 const schema = Joi.object({
@@ -18,8 +17,7 @@ export const getOpening = async (req: Request, res: Response) => {
   try {
     await schema.validateAsync(req);
   } catch (error) {
-    const { status, body } = CreateError.JOI(error);
-    return res.status(status).json(body);
+    return res.status(400).json({ message: 'An error ocurred', error });
   }
 
   const { user } = req;
@@ -28,10 +26,8 @@ export const getOpening = async (req: Request, res: Response) => {
   let opening: OpeningEntity | undefined;
 
   const openingFilter: Filter<OpeningEntity> = {
-    $and: [
-      { target: { property: IndexableProperties.Org, value: orgId } },
-      { target: { property: IndexableProperties.Id, value: openingId } },
-    ],
+    id: openingId,
+    target: { property: IndexableProperties.Org, value: orgId },
   };
   try {
     opening = (await collections.openings.findOne(openingFilter)) as OpeningEntity;

@@ -1,8 +1,6 @@
 import { Request, Response } from 'express';
 import Joi from 'joi';
-import * as CreateError from '../../utils/createError';
 import { JOI_SETTINGS, OpeningState, LIMITS } from '../../Config';
-// import { Opening } from '../../entities';
 import { findInTargetArray } from '../../utils/findInTargetArray';
 import { OpeningEntity } from '../../models/Opening';
 import { IndexableProperties } from '../../@types/indexableProperties';
@@ -20,8 +18,7 @@ export const updateOpening = async (req: Request, res: Response) => {
   try {
     await schema.validateAsync(req.body);
   } catch (error) {
-    const { status, body } = CreateError.JOI(error);
-    return res.status(status).json(body);
+    return res.status(400).json({ message: 'An error ocurred', error });
   }
   const { user } = req;
   const { openingId } = req.params;
@@ -31,13 +28,10 @@ export const updateOpening = async (req: Request, res: Response) => {
   const orgId = findInTargetArray(IndexableProperties.Org, user);
 
   const openingFilter: Filter<OpeningEntity> = {
-    $and: [
-      { target: { property: IndexableProperties.Id, value: openingId } },
-      { target: { property: IndexableProperties.Org, value: orgId } },
-    ],
+    id: openingId,
+    target: { property: IndexableProperties.Org, value: orgId },
   };
 
-  console.log(`Opening filter!`, JSON.stringify(openingFilter));
   try {
     opening = (await collections.openings.findOne(openingFilter)) as OpeningEntity;
   } catch (error) {

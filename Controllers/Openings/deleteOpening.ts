@@ -1,7 +1,6 @@
 import { Request, Response } from 'express';
 import Joi from 'joi';
 import { JOI_SETTINGS, LIMITS, OpeningState } from '../../Config';
-import * as CreateError from '../../utils/createError';
 import { Filter, UpdateFilter } from 'mongodb';
 import { findInTargetArray } from '../../utils/findInTargetArray';
 import { OpeningEntity } from '../../models/Opening';
@@ -23,18 +22,15 @@ export const deleteOpening = async (req: Request, res: Response) => {
   try {
     await schema.validateAsync(req);
   } catch (error) {
-    const { status, body } = CreateError.JOI(error);
-    return res.status(status).json(body);
+    return res.status(400).json({ message: 'An error ocurred', error });
   }
 
   const { openingId } = req.params;
   const orgId = findInTargetArray(IndexableProperties.Org, user);
 
   const openingFilter: Filter<OpeningEntity> = {
-    $and: [
-      { target: { property: IndexableProperties.Id, value: openingId } },
-      { target: { property: IndexableProperties.Org, value: orgId } },
-    ],
+    id: openingId,
+    target: { property: IndexableProperties.Org, value: orgId },
   };
 
   let openingToBeDeleted: OpeningEntity | undefined;
@@ -51,7 +47,7 @@ export const deleteOpening = async (req: Request, res: Response) => {
     return res.status(404).json({ message: 'Opening not found' });
   }
   const orgFilter: Filter<OrgEntity> = {
-    target: { property: IndexableProperties.Id, value: orgId },
+    id: orgId,
   };
 
   let transactionResults;

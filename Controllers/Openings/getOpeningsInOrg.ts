@@ -5,7 +5,6 @@ import { IndexableProperties } from '../../@types/indexableProperties';
 import { JOI_SETTINGS } from '../../Config';
 import { OpeningEntity } from '../../models/Opening';
 import { collections } from '../../utils/connectToDatabase';
-import * as CreateError from '../../utils/createError';
 import { findInTargetArray } from '../../utils/findInTargetArray';
 
 const schema = Joi.object({
@@ -18,8 +17,7 @@ export const getOpeningsInOrg = async (req: Request, res: Response) => {
   try {
     await schema.validateAsync(req);
   } catch (error) {
-    const { status, body } = CreateError.JOI(error);
-    return res.status(status).json(body);
+    return res.status(400).json({ message: 'An error ocurred', error });
   }
 
   const { user } = req;
@@ -31,11 +29,10 @@ export const getOpeningsInOrg = async (req: Request, res: Response) => {
   };
   try {
     openings = (await collections.openings.find(openingsFilter).toArray()) as OpeningEntity[];
+    return res.status(200).json(openings);
   } catch (error) {
     const message = 'Error ocurred retrieving openings';
     console.error(message, error);
     return res.status(500).json({ message });
   }
-
-  return res.status(200).json(openings);
 };
