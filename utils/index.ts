@@ -8,3 +8,4 @@ export * from './sendEmail';
 export * from './sortStages';
 export * from './store';
 export * from './dayjs';
+export * from './tagGenerator';
