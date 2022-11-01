@@ -1,7 +1,6 @@
 export * from './combineClassNames';
 export * from './findInTargetArray';
 export * from './generateId';
-export * from './getLambdaConfig';
 export * from './getObjectDifference';
 export * from './randomNumberInclusive';
 export * from './sendEmail';

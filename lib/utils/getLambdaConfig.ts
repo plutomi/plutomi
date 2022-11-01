@@ -3,7 +3,7 @@ import * as path from 'path';
 import { Architecture, Runtime } from 'aws-cdk-lib/aws-lambda';
 import { RetentionDays } from 'aws-cdk-lib/aws-logs';
 import { Duration } from 'aws-cdk-lib';
-import { env } from '../env';
+import { env } from '../../env';
 
 interface GetFunctionConfigProps {
   fileName: `${string}.ts`;
@@ -36,7 +36,7 @@ export const getLambdaConfig = ({
     runtime: Runtime.NODEJS_16_X,
     architecture: Architecture.X86_64, // TODO: Test out ARM
     bundling: {
-      minify: true,
+      minify: false,
       externalModules: ['aws-sdk'],
     },
     handler: 'main',

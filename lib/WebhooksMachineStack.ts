@@ -8,7 +8,7 @@ import { NodejsFunction } from 'aws-cdk-lib/aws-lambda-nodejs';
 import { DYNAMO_TABLE_NAME } from '../Config';
 import { ENVIRONMENT } from './AppStack';
 import { env } from '../env';
-import { getLambdaConfig } from '../utils/getLambdaConfig';
+import { getLambdaConfig } from './utils';
 
 interface WebhooksMachineProps extends cdk.StackProps {
   table: Table;
