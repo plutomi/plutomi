@@ -4,7 +4,6 @@ import { IndexableProperties } from '../../@types/indexableProperties';
 import { OrgEntity, StageEntity, StageTargetArray } from '../../models';
 import { OpeningEntity } from '../../models/Opening';
 import { collections, mongoClient } from '../../utils/connectToDatabase';
-// import { Opening, Stage } from '../../entities';
 import { findInTargetArray } from '../../utils/findInTargetArray';
 
 export const deleteStage = async (req: Request, res: Response) => {
@@ -16,10 +15,8 @@ export const deleteStage = async (req: Request, res: Response) => {
   let opening: OpeningEntity;
 
   const openingFilter: Filter<OpeningEntity> = {
-    $and: [
-      { target: { property: IndexableProperties.Id, value: openingId } },
-      { target: { property: IndexableProperties.Org, value: orgId } },
-    ],
+    id: openingId,
+    target: { property: IndexableProperties.Org, value: orgId },
   };
   try {
     opening = (await collections.openings.findOne(openingFilter)) as OpeningEntity;
@@ -38,10 +35,10 @@ export const deleteStage = async (req: Request, res: Response) => {
   let ourStage: StageEntity;
 
   const stageFilter: Filter<StageEntity> = {
+    id: stageId,
     $and: [
       { target: { property: IndexableProperties.Opening, value: openingId } },
       { target: { property: IndexableProperties.Org, value: orgId } },
-      { target: { property: IndexableProperties.Id, value: stageId } },
     ],
   };
   try {
@@ -83,10 +80,10 @@ export const deleteStage = async (req: Request, res: Response) => {
       // Update the old previous stage, if it existed
       if (oldPreviousStageId) {
         const oldPreviousStageFilter: Filter<StageEntity> = {
+          id: oldPreviousStageId,
           $and: [
             { target: { property: IndexableProperties.Opening, value: openingId } },
             { target: { property: IndexableProperties.Org, value: orgId } },
-            { target: { property: IndexableProperties.Id, value: oldPreviousStageId } },
           ],
         };
 
@@ -121,10 +118,10 @@ export const deleteStage = async (req: Request, res: Response) => {
       // Update the old next stage, if it existed
       if (oldNextStageId) {
         const oldNextStageFilter: Filter<StageEntity> = {
+          id: oldNextStageId,
           $and: [
             { target: { property: IndexableProperties.Opening, value: openingId } },
             { target: { property: IndexableProperties.Org, value: orgId } },
-            { target: { property: IndexableProperties.Id, value: oldNextStageId } },
           ],
         };
 
@@ -154,7 +151,7 @@ export const deleteStage = async (req: Request, res: Response) => {
 
       // Decrement the totalStages count on the org
       const orgFilter: Filter<OrgEntity> = {
-        target: { property: IndexableProperties.Id, value: orgId },
+        id: orgId,
       };
       const orgUpdateFilter: UpdateFilter<OrgEntity> = {
         $inc: { totalStages: -1 },

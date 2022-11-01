@@ -2,7 +2,6 @@ export enum IndexableProperties {
   /**
    * Self referential ID of the entity, can also be a custom ID that is not Mongo's _id
    */
-  Id = 'Id',
   User = 'User',
   UserLoginLink = 'UserLoginLink',
   Org = 'Org',

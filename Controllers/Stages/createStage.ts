@@ -6,9 +6,8 @@ import { IndexableProperties } from '../../@types/indexableProperties';
 import { JOI_SETTINGS, LIMITS } from '../../Config';
 import { OrgEntity, StageEntity } from '../../models';
 import { OpeningEntity } from '../../models/Opening';
+import { generateId } from '../../utils';
 import { collections, mongoClient } from '../../utils/connectToDatabase';
-import * as CreateError from '../../utils/createError';
-// import { DynamoStage } from '../../types/dynamo';
 import { findInTargetArray } from '../../utils/findInTargetArray';
 
 // export interface APICreateStageOptions extends Required<Pick<DynamoStage, 'openingId' | 'GSI1SK'>> {
@@ -37,8 +36,7 @@ export const createStage = async (req: Request, res: Response) => {
   try {
     await schema.validateAsync(req);
   } catch (error) {
-    const { status, body } = CreateError.JOI(error);
-    return res.status(status).json(body);
+    return res.status(400).json({ message: 'An error ocurred', error });
   }
 
   const { GSI1SK, openingId, position } = req.body;
@@ -48,10 +46,8 @@ export const createStage = async (req: Request, res: Response) => {
   let opening: OpeningEntity;
 
   const openingFilter: Filter<OpeningEntity> = {
-    $and: [
-      { target: { property: IndexableProperties.Org, value: orgId } },
-      { target: { property: IndexableProperties.Id, value: openingId } },
-    ],
+    id: openingId,
+    target: { property: IndexableProperties.Org, value: orgId },
   };
   try {
     opening = (await collections.openings.findOne(openingFilter)) as OpeningEntity;
@@ -85,23 +81,21 @@ export const createStage = async (req: Request, res: Response) => {
     return res.status(500).json(message);
   }
 
-  const newStageId = nanoid(50);
+  const newStageId = generateId({});
   const now = new Date();
   const newStage: StageEntity = {
+    id: newStageId,
     createdAt: now,
     updatedAt: now,
     totalQuestions: 0,
     totalApplicants: 0,
     name: GSI1SK, // TODO update this
     target: [
-      { property: IndexableProperties.Id, value: newStageId },
       { property: IndexableProperties.Org, value: orgId },
       { property: IndexableProperties.Opening, value: openingId },
       {
         property: IndexableProperties.PreviousStage,
-        value: currentLastStage
-          ? findInTargetArray(IndexableProperties.Id, currentLastStage)
-          : undefined,
+        value: currentLastStage ? currentLastStage.id : null,
       }, // Add to the end by default, TODO allow position property
       { property: IndexableProperties.NextStage, value: null },
     ],
@@ -124,7 +118,7 @@ export const createStage = async (req: Request, res: Response) => {
 
       // 3. Increment the org's total stage count
       const orgFilter: Filter<OrgEntity> = {
-        $and: [{ target: { property: IndexableProperties.Id, value: orgId } }],
+        id: orgId,
       };
 
       const orgUpdateFilter: UpdateFilter<OrgEntity> = {

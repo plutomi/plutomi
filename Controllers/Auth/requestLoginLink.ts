@@ -133,7 +133,7 @@ export const requestLoginLink = async (req: Request, res: Response) => {
   const loginLinkFilter: Filter<UserLoginLinkEntity> = {
     target: {
       property: IndexableProperties.User,
-      value: findInTargetArray(IndexableProperties.Id, user),
+      value: user.id,
     },
   };
 
@@ -180,7 +180,7 @@ export const requestLoginLink = async (req: Request, res: Response) => {
   // TODO types
 
   let loginLinkUrl: string;
-  const userId = findInTargetArray(IndexableProperties.Id, user);
+  const userId = user.id;
 
   try {
     const newLoginLink: UserLoginLinkEntity = {
@@ -200,8 +200,8 @@ export const requestLoginLink = async (req: Request, res: Response) => {
 
     // TODO types
     const tokenData = {
-      userId: userId,
-      loginLinkId: findInTargetArray(IndexableProperties.Id, newLoginLink),
+      userId,
+      loginLinkId: newLoginLink.id,
     };
 
     console.log(`TOKEN DATA WHEN CREATING THE LOGIN LINKIT`, tokenData);
