@@ -7,3 +7,4 @@ export * from './randomNumberInclusive';
 export * from './sendEmail';
 export * from './sortStages';
 export * from './store';
+export * from './dayjs';

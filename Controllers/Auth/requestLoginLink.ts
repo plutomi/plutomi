@@ -14,16 +14,15 @@ import {
   DOMAIN_NAME,
   Emails,
 } from '../../Config';
-import * as Time from '../../utils/time';
-import * as CreateError from '../../utils/createError';
 import { env } from '../../env';
-import dayjs from 'dayjs';
 import { findInTargetArray } from '../../utils/findInTargetArray';
 import { collections } from '../../utils/connectToDatabase';
 import { UserEntity } from '../../models';
 import { UserLoginLinkEntity } from '../../models';
 import { IndexableProperties } from '../../@types/indexableProperties';
 import { sendEmail } from '../../utils/sendEmail';
+import { generateId } from '../../utils';
+import { Time } from '../../utils';
 
 // TODO add types
 // https://www.npmjs.com/package/@types/jsonwebtoken
@@ -48,8 +47,7 @@ export const requestLoginLink = async (req: Request, res: Response) => {
   try {
     await schema.validateAsync(req);
   } catch (error) {
-    const { status, body } = CreateError.JOI(error);
-    return res.status(status).json(body);
+    return res.status(400).json({ message: 'An error ocurred', error });
   }
 
   const { email } = req.body;
@@ -92,8 +90,9 @@ export const requestLoginLink = async (req: Request, res: Response) => {
       console.log(`Creating new user`);
 
       const now = new Date();
-      const customId = nanoid(50);
+      const customId = generateId({});
       const newUser: UserEntity = {
+        id: customId,
         createdAt: now,
         updatedAt: now,
         totalInvites: 0,
@@ -104,7 +103,6 @@ export const requestLoginLink = async (req: Request, res: Response) => {
         target: [
           { property: IndexableProperties.Org, value: null },
           { property: IndexableProperties.Email, value: email },
-          { property: IndexableProperties.Id, value: customId },
         ],
       };
 
@@ -161,24 +159,22 @@ export const requestLoginLink = async (req: Request, res: Response) => {
       .json({ message: 'An error ocurred finding your info (login links error)' });
   }
 
+  const now = new Date();
+
   if (
     latestLoginLink &&
-    latestLoginLink.createdAt >= dayjs().subtract(10, 'minutes').toDate() &&
+    latestLoginLink.createdAt >= Time(now).subtract(10, 'minutes').toDate() &&
     !userEmail.endsWith(DOMAIN_NAME) // Allow admins to send multiple login links in a short timespan
   ) {
     return res.status(403).json({ message: "You're doing that too much, please try again later" });
   }
 
-  const validFor: Time.ChangingTimeProps = {
-    amount: 10,
-    unit: TIME_UNITS.MINUTES,
-  };
-  const now = new Date();
+  const linkExpiry = Time(now).add(10, 'minutes');
 
-  const nowAsUnix = Time.currentUNIX();
-  // TODO should match what is on the entity
-  const ttlExpiry = Time.futureUNIX(validFor); // when the link expires and is deleted from Dynamo
-  const relativeExpiry = Time.relative(Time.futureISO(validFor));
+  /**
+   * Text like 18 minutes from now
+   */
+  const relativeExpiry = Time(now).from(linkExpiry);
 
   console.log(`Creating a login link with THIS user`, user);
   let token: string;
@@ -191,6 +187,7 @@ export const requestLoginLink = async (req: Request, res: Response) => {
     const newLoginLink: UserLoginLinkEntity = {
       createdAt: now,
       updatedAt: now,
+      id: generateId({ length: 100, fullAlphabet: true }),
       target: [
         {
           property: IndexableProperties.User,
@@ -213,7 +210,9 @@ export const requestLoginLink = async (req: Request, res: Response) => {
     };
 
     console.log(`TOKEN DATA WHEN CREATING THE LOGIN LINKIT`, tokenData);
-    token = await jwt.sign(tokenData, env.loginLinksPassword, { expiresIn: ttlExpiry - nowAsUnix });
+    token = await jwt.sign(tokenData, env.loginLinksPassword, {
+      expiresIn: Time().add(10, 'minutes').unix() - Time().unix(),
+    });
 
     // TODO enums
     loginLinkUrl = `${API_URL}/auth/login?token=${token}&callbackUrl=${
