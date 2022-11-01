@@ -9,7 +9,7 @@ import { collections } from '../../utils/connectToDatabase';
 import { IndexableProperties } from '../../@types/indexableProperties';
 import { mongoClient } from '../../utils/connectToDatabase';
 import { findInTargetArray } from '../../utils/findInTargetArray';
-
+import { ObjectId } from 'mongodb';
 interface aa {
   orgId: string;
   displayName: string;
@@ -113,6 +113,7 @@ export const createAndJoinOrg = async (req: Request, res: Response) => {
 
       const now = new Date();
       const newOrg: OrgEntity = {
+        _id: new ObjectId(orgId),
         createdAt: now,
         updatedAt: now,
         totalStages: 0,
@@ -121,12 +122,7 @@ export const createAndJoinOrg = async (req: Request, res: Response) => {
         totalQuestions: 0,
         totalUsers: 1,
         totalWebhooks: 0,
-        target: [
-          {
-            property: IndexableProperties.Id,
-            value: orgId,
-          },
-        ],
+        target: [],
         displayName,
       };
       await collections.orgs.insertOne(newOrg, { session });

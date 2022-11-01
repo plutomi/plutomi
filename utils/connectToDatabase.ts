@@ -58,6 +58,7 @@ export async function connectToDatabase() {
       //  await collection.dropIndex('target');
       // await collection.dropIndex('target.property_1_target.value_1');
 
+      // TODO add index on `id` field if we cant easily override `_id`, remove Id from target array. make that one unique
       await collection.createIndex(indexKey, { name: 'target' });
     } catch (error) {
       console.error(`Error creating index!`, error);
