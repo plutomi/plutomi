@@ -113,7 +113,7 @@ export const createAndJoinOrg = async (req: Request, res: Response) => {
 
       const now = new Date();
       const newOrg: OrgEntity = {
-        _id: new ObjectId(orgId),
+        id: orgId,
         createdAt: now,
         updatedAt: now,
         totalStages: 0,

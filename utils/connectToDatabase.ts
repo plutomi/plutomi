@@ -18,7 +18,7 @@ export const collections: {
 
 let mongoClient: mongoDB.MongoClient | undefined;
 
-export async function connectToDatabase() {
+export const connectToDatabase = async () => {
   const client = new mongoDB.MongoClient(env.mongoConnection);
 
   mongoClient = client; // TODO export this and pass it to the .req
@@ -60,6 +60,8 @@ export async function connectToDatabase() {
 
       // TODO add index on `id` field if we cant easily override `_id`, remove Id from target array. make that one unique
       await collection.createIndex(indexKey, { name: 'target' });
+      // Our own generated custom ID
+      await collection.createIndex('id', { name: 'custom_id', unique: true });
     } catch (error) {
       console.error(`Error creating index!`, error);
     }
@@ -68,6 +70,6 @@ export async function connectToDatabase() {
   console.log(`Created!`);
 
   console.log(`Successfully connected to database: ${db.databaseName}.`);
-}
+};
 
 export { mongoClient };

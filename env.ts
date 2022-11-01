@@ -1,4 +1,3 @@
-require('dotenv-flow').config({ debug: true });
 import setEnv from '@americanairlines/simple-env';
 
 export const env = setEnv({

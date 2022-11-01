@@ -36,31 +36,8 @@ export const getLambdaConfig = ({
     runtime: Runtime.NODEJS_16_X,
     architecture: Architecture.X86_64, // TODO: Test out ARM
     bundling: {
-      minify: false, // ! True breaks MikroORM! DO NOT ENABLE!
-      externalModules: [
-        /**
-         * We need to tell esbuild to ignore these. aws-sdk also comes with the Lambda runtime.
-         * https://github.com/mikro-orm/mikro-orm/discussions/2219#discussioncomment-1983334
-         */
-        'aws-sdk',
-        '@mikro-orm/seeder',
-        '@mikro-orm/migrations-mongodb',
-        '@mikro-orm/mysql',
-        '@mikro-orm/mariadb',
-        '@mikro-orm/sqlite',
-        'pg-native',
-        '@mikro-orm/mongo-highlighter',
-        '@mikro-orm/entity-generator',
-        '@mikro-orm/better-sqlite',
-        'mysql2',
-        'better-sqlite3',
-        'mysql',
-        '@mikro-orm/postgresql',
-        'sqlite3',
-        'tedious',
-        'pg-query-stream',
-        'oracledb',
-      ],
+      minify: true,
+      externalModules: ['aws-sdk'],
     },
     handler: 'main',
     description: functionDescription,
