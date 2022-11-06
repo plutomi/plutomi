@@ -61,7 +61,7 @@ export const TeamPageContent = () => {
               {dividerWithText('Pending invites')}
               <ul className="divide-y divide-gray-200">
                 {pendingOrgInvites.map((invite) => (
-                  <PendingInviteCard key={invite.inviteId} invite={invite} />
+                  <PendingInviteCard key={invite.id} invite={invite} />
                 ))}
               </ul>
               {dividerWithText('Team')}
@@ -94,7 +94,7 @@ export const TeamPageContent = () => {
             {' '}
             {pendingOrgInvites.length > 0
               ? pendingOrgInvites?.map((invite) => (
-                  <PendingInviteCard key={invite.inviteId} invite={invite} />
+                  <PendingInviteCard key={invite.id} invite={invite} />
                 ))
               : null}
           </ul>

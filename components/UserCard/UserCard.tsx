@@ -19,7 +19,6 @@ export const UserCard = ({ user }: UserCardProps) => {
 
   // TODO error & loading handling
   const me = useSelf().user;
-  const myEmail = findInTargetArray(IndexableProperties.Email, user);
 
   const handleRemove = async (user: UserEntity) => {
     const userEmail = findInTargetArray(IndexableProperties.Email, user);
@@ -45,8 +44,9 @@ export const UserCard = ({ user }: UserCardProps) => {
   };
   const userEmail = findInTargetArray(IndexableProperties.Email, user);
   const isSelf = user.id === me.id;
-  //  const createdById = findInTargetArray(IndexableProperties., org);
+  const createdById = findInTargetArray(IndexableProperties.CreatedBy, org);
 
+  const isAdmin = createdById === me.id;
   const fullNameExists = user.firstName && user.lastName;
   return (
     <div className="border rounded-lg shadow-sm  max-w-lg mx-auto my-4 flex">
@@ -58,16 +58,16 @@ export const UserCard = ({ user }: UserCardProps) => {
         {fullNameExists ? <p className="text-md">{userEmail}</p> : null}
         <p className="text-sm text-blue-gray-400">Joined {Time().to(user?.orgJoinDate)}</p>
       </div>
-      {/* User is admin // TODO clean up */}
-      {/* {me?.id === createdById && user?.id !== me?.id && (
+
+      {isAdmin && user.id !== me.id ? (
         <button
           type="submit"
           className="w-1/6 border  rounded-lg rounded-l-none bg-white border-red-500  hover:bg-red-500  text-red-500 hover:text-white  transition ease-in duration-100 "
           onClick={() => handleRemove(user)}
         >
-          Remove (TODO the check here is broken)
+          Remove
         </button>
-      )} */}
+      ) : null}
     </div>
   );
 };
