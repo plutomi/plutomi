@@ -1,14 +1,14 @@
 import useSWR from 'swr';
+import { APIErrorResponse } from '../@types/apiErrorResponse';
 import { GetOrgInvitesURL } from '../adapters/Invites';
 import { SWRFetcher } from '../Config';
-import { DynamoOrgInvite } from '../@types/dynamo';
-import { APIErrorResponse } from '../@types/express';
+import { InviteEntity } from '../models';
 
 interface UseOrgInviteProps {
   orgId?: string;
 }
 export const usePendingOrgInvites = ({ orgId }: UseOrgInviteProps) => {
-  const { data, error } = useSWR<DynamoOrgInvite[], APIErrorResponse>(
+  const { data, error } = useSWR<InviteEntity[], APIErrorResponse>(
     orgId && GetOrgInvitesURL(orgId),
     SWRFetcher,
   );

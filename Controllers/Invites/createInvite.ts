@@ -45,7 +45,6 @@ export const createInvite = async (req: Request, res: Response) => {
   if (recipientEmail === findInTargetArray(IndexableProperties.Email, user)) {
     return res.status(403).json({ message: 'You cannot invite yourself :)' });
   }
-  console.log('User org id', userOrgId);
   const orgFilter: Filter<OrgEntity> = {
     id: userOrgId,
   };
@@ -53,7 +52,6 @@ export const createInvite = async (req: Request, res: Response) => {
   let orgInfo: OrgEntity | undefined;
   try {
     orgInfo = (await collections.orgs.findOne(orgFilter)) as OrgEntity;
-    console.log(`ORG INFO`, orgInfo);
   } catch (error) {
     const msg = 'An error ocurred finding info for that org';
     console.error(msg, error);

@@ -2,13 +2,21 @@ import { FormEvent, Fragment, useState } from 'react';
 import { Dialog, Transition } from '@headlessui/react';
 import { XIcon } from '@heroicons/react/outline';
 import useStore from '../../utils/store';
-import { CreateInvite } from '../../adapters/Invites';
+import { CreateInvite, GetOrgInvitesURL } from '../../adapters/Invites';
 import { ORG_INVITE_EXPIRY_DAYS } from '../../Config';
+import { mutate } from 'swr';
+import { useSelf } from '../../SWR/useSelf';
+import { findInTargetArray } from '../../utils';
+import { IndexableProperties } from '../../@types/indexableProperties';
 
 export const CreateInviteModal = () => {
   const [recipientEmail, setRecipientEmail] = useState('');
   const [expiresInDays, setExpiresInDays] = useState(ORG_INVITE_EXPIRY_DAYS);
+  const { user, isUserLoading, isUserError } = useSelf();
+  const orgId = findInTargetArray(IndexableProperties.Org, user);
+
   const visibility = useStore((state) => state.showInviteModal);
+
   const closeInviteModal = useStore((state) => state.closeInviteModal);
 
   const handleSubmit = async (e: FormEvent) => {
@@ -33,6 +41,8 @@ export const CreateInviteModal = () => {
       console.error(error);
       alert(error.response.data.message);
     }
+
+    //  mutate(GetOrgInvitesURL(orgId));
   };
   return (
     <Transition.Root show={visibility} as={Fragment}>

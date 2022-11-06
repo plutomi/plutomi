@@ -28,9 +28,9 @@ export const Invite = ({ invite }: InviteProps) => {
     mutate(GetUserInvitesURL());
   };
 
-  const rejectInvite = async (invite) => {
+  const rejectInvite = async (inviteId: string) => {
     try {
-      const { data } = await RejectInvite(invite.inviteId);
+      const { data } = await RejectInvite(inviteId);
 
       alert(data.message);
     } catch (error) {
@@ -75,7 +75,7 @@ export const Invite = ({ invite }: InviteProps) => {
           <div className="-ml-px w-0 flex-1 flex">
             <button
               type="submit"
-              onClick={() => rejectInvite(invite)}
+              onClick={() => rejectInvite(invite.id)}
               className="relative -mr-px w-0 flex-1 inline-flex items-center justify-center py-4 text-md text-red-600 font-semibold  hover:text-white border-red-200 hover:bg-red-500 transition ease-in-out duration-200 border border-transparent rounded-br-lg "
             >
               <XCircleIcon className="w-5 h-5 " aria-hidden="true" />
