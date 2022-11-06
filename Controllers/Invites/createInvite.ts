@@ -14,7 +14,7 @@ import {
 import { findInTargetArray, generateId, sendEmail } from '../../utils';
 import { IndexableProperties } from '../../@types/indexableProperties';
 import { OrgEntity, UserEntity } from '../../models';
-import { collections } from '../../utils/connectToDatabase';
+import { collections, mongoClient } from '../../utils/connectToDatabase';
 import { Filter, UpdateFilter } from 'mongodb';
 import dayjs from 'dayjs';
 import { InviteEntity } from '../../models/Invites';
@@ -107,7 +107,7 @@ export const createInvite = async (req: Request, res: Response) => {
   }
 
   // Now let's create an invite
-  const invite: InviteEntity = {
+  const newInvite: InviteEntity = {
     orgName: orgInfo.displayName,
     createdAt: now,
     updatedAt: now,
@@ -141,33 +141,40 @@ export const createInvite = async (req: Request, res: Response) => {
     });
   }
 
+  // Create invite and increment the user's total invites
+  const session = mongoClient.startSession();
+  let transactionResults;
 
-
-// Create invite and increment the user's total invites
-
-    try {
+  try {
+    transactionResults = await session.withTransaction(async () => {
       const recipientUpdateFilter: UpdateFilter<UserEntity> = {
         $inc: { totalInvites: 1 },
       };
       await collections.users.updateOne(recipientFilter, recipientUpdateFilter);
-      res.status(201).json({ message: 'Invite sent! They can log in to claim it.' });
-    } catch (error) {
-      const msg = 'An error ocurred sending the invite to the user';
-      console.error(msg, error);
-      return res.status(500).json({ message: msg });
-    }
+      await collections.invites.insertOne(newInvite);
+      await session.commitTransaction();
+    });
+  } catch (error) {
+    const msg = 'An error ocurred creating that invite';
+    console.error(msg, error);
+    return res.status(500).json({ message: msg });
+  } finally {
+    await session.endSession();
   }
-  res.status(201).json({ message: `Invite sent to '${recipientEmail}'` });
+
+  res
+    .status(201)
+    .json({ message: `Invite sent to '${recipientEmail}'! They can log in to claim it.` });
 
   const subject = senderHasBothNames
-    ? `You've been invited to join ${orgInfo.displayName} on Plutomi!`
-    : `${user.firstName} ${user.lastName} has invited you to join them on ${orgInfo.displayName}`;
+    ? `${user.firstName} ${user.lastName} has invited you to join them on ${orgInfo.displayName}`
+    : `You've been invited to join ${orgInfo.displayName} on Plutomi!`;
 
   try {
     await sendEmail({
       from: {
         header: `Plutomi`,
-        email: Emails.JOIN,
+        email: Emails.Join,
       },
       to: recipientEmail,
       subject,

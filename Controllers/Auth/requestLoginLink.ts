@@ -212,7 +212,7 @@ export const requestLoginLink = async (req: Request, res: Response) => {
       to: userEmail,
       from: {
         header: 'Plutomi',
-        email: Emails.LOGIN,
+        email: Emails.Login,
       },
       subject: `Your magic login link is here!`,
       body: `<h1>Click <a href="${loginLinkUrl}" noreferrer target="_blank" >this link</a> to log in!</h1><p>It will expire ${relativeExpiry} so you better hurry.</p><p>If you did not request this link you can safely ignore it.</p>`,
