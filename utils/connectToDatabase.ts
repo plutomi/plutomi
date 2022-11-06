@@ -42,8 +42,6 @@ export const connectToDatabase = async () => {
   const applicantsCollection: mongoDB.Collection = db.collection(Collections.Applicants);
   const invitesCollection: mongoDB.Collection = db.collection(Collections.Invites);
 
-  const indexKey: mongoDB.IndexSpecification = { target: 1 };
-  // { $and: [ { target: { $elemMatch: {  property: "Org", value: "GrubHub" }} } ] }
   collections.users = usersCollection;
   collections.loginLinks = loginLinksCollection;
   collections.orgs = orgsCollection;
@@ -54,17 +52,28 @@ export const connectToDatabase = async () => {
   collections.applicants = applicantsCollection;
   collections.invites = invitesCollection;
 
-  console.log(`Creating necessary indexes`);
-  Object.values(collections).map(async (collection) => {
-    try {
-      //  await collection.dropIndex('target');
-      // await collection.dropIndex('target.property_1_target.value_1');
+  console.log(`Creating necessary collections and indexes`);
 
+  const collectionData = await db.listCollections({}, { nameOnly: true }).toArray();
+  const collectionNames = collectionData.map((item) => item.name);
+  Object.values(collections).map(async (collection) => {
+    if (!collectionNames.includes(collection.collectionName)) {
+      try {
+        console.log('Creating collection', collection.collectionName);
+        await db.createCollection(collection.collectionName);
+        console.log('Collection created!');
+      } catch (error) {
+        console.error(`Error creating collection`, collection.collectionName);
+      }
+    }
+
+    try {
       const targetArrayIndexName = 'target';
       const targetIndexExists = await collection.indexExists(targetArrayIndexName);
 
       if (!targetIndexExists) {
         console.info(`Creating target array index...`);
+        const indexKey: mongoDB.IndexSpecification = { target: 1 };
         await collection.createIndex(indexKey, { name: targetArrayIndexName });
         console.info(`Index created!`);
       }
@@ -76,10 +85,6 @@ export const connectToDatabase = async () => {
         console.info(`Creating Custom ID index...`);
         await collection.createIndex('id', { name: customIdIndexName, unique: true });
         console.info(`Index created!`);
-      }
-
-      if (targetIndexExists && customIdIndexExists) {
-        console.log('No indexes to create!');
       }
     } catch (error) {
       console.error(`Error creating index!`, error);
