@@ -1,5 +1,5 @@
 import { AXIOS_INSTANCE as axios } from '../Config';
-import { APIUpdateUserOptions } from '../controllers/users/updateUser';
+// TODO
 
 export const GetSelfInfoURL = () => `/users/me`;
 
@@ -17,7 +17,7 @@ export const GetUserInfo = async (userId: string) => {
 
 interface UpdateUserInput {
   userId: string;
-  newValues: APIUpdateUserOptions;
+  newValues: any; // TODO! Types
 }
 export const UpdateUser = async (options: UpdateUserInput) => {
   const data = await axios.put(GetUserInfoUrl(options.userId), {

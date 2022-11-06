@@ -6,12 +6,12 @@ import { useOrgInfo } from '../../SWR/useOrgInfo';
 import { findInTargetArray } from '../../utils/findInTargetArray';
 import { IndexableProperties } from '../../@types/indexableProperties';
 import { UserEntity } from '../../models';
+import { Loader } from '../Loader';
 
 interface UserCardProps {
   user: UserEntity;
 }
 export const UserCard = ({ user }: UserCardProps) => {
-  console.log(`USER`, user);
   const orgId = findInTargetArray(IndexableProperties.Org, user);
   const { org, isOrgLoading, isOrgError } = useOrgInfo({
     orgId,
@@ -19,19 +19,21 @@ export const UserCard = ({ user }: UserCardProps) => {
 
   // TODO error & loading handling
   const me = useSelf().user;
+  const fullNameExists = user.firstName && user.lastName;
 
-  const handleRemove = async (user: UserEntity) => {
-    const userEmail = findInTargetArray(IndexableProperties.Email, user);
+  const handleRemove = async (userBeingDeleted: UserEntity) => {
+    const userEmail = findInTargetArray(IndexableProperties.Email, userBeingDeleted);
+    const userText = fullNameExists
+      ? `${userBeingDeleted.firstName} ${userBeingDeleted.lastName}`
+      : userEmail;
 
-    if (
-      !confirm(`Are you sure you want to remove ${user.firstName} ${user.lastName} - ${userEmail}?`)
-    ) {
+    if (!confirm(`Are you sure you want to remove ${userText}?`)) {
       return;
     }
     try {
       const { data } = await Users.RemoveUserFromOrg({
         orgId,
-        userId: user.id,
+        userId: userBeingDeleted.id,
       });
       console.log(data);
       alert(data.message);
@@ -42,12 +44,17 @@ export const UserCard = ({ user }: UserCardProps) => {
     // Refresh users
     mutate(Users.GetUsersInOrgURL());
   };
+
+  if (isOrgError) return <h1>An error ocurred loading org info</h1>;
+  if (isOrgLoading) return <Loader text="Loading org info..." />;
+
+  console.log(`ORG user card`, org);
   const userEmail = findInTargetArray(IndexableProperties.Email, user);
-  const isSelf = user.id === me.id;
   const createdById = findInTargetArray(IndexableProperties.CreatedBy, org);
 
+  const isSelf = user.id === me.id;
+
   const isAdmin = createdById === me.id;
-  const fullNameExists = user.firstName && user.lastName;
   return (
     <div className="border rounded-lg shadow-sm  max-w-lg mx-auto my-4 flex">
       <div className="flex flex-col text-left space-y-1 w-5/6 p-4">

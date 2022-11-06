@@ -1,55 +1,80 @@
 import { Request, Response } from 'express';
+import { Filter, UpdateFilter } from 'mongodb';
+import { IndexableProperties } from '../../@types/indexableProperties';
+import { OrgEntity, UserEntity } from '../../models';
+import { findInTargetArray } from '../../utils';
+import { collections, mongoClient } from '../../utils/connectToDatabase';
 
 export const removeUserFromOrg = async (req: Request, res: Response) => {
   const { user } = req;
   const { orgId, userId } = req.params;
-  return res.status(200).json({ message: 'Endpoint temp disabled' });
 
-  // if (userId === user.id) {
-  //   return res.status(403).json({
-  //     message:
-  //       "You cannot remove yourself from an org. If you're the only user, delete the org instead",
-  //   });
-  // }
-  // const [org, orgError] = await DB.Orgs.getOrg({
-  //   orgId,
-  // });
+  if (userId === user.id) {
+    return res.status(403).json({
+      message:
+        "You cannot remove yourself from an org. If you're the only user, delete the org instead",
+    });
+  }
 
-  // if (orgError) {
-  //   const { status, body } = CreateError.SDK(
-  //     orgError,
-  //     'An error ocurred retrieving the info for this org',
-  //   );
+  let org: OrgEntity | undefined;
 
-  //   return res.status(status).json(body);
-  // }
+  try {
+    const orgFilter: Filter<OrgEntity> = {
+      id: orgId,
+    };
+    org = (await collections.orgs.findOne(orgFilter)) as OrgEntity;
+  } catch (error) {
+    const msg = 'An error ocurred retrieving org info';
+    console.error(msg, error);
+    return res.status(500).json({ message: msg });
+  }
 
-  // if (!org) {
-  //   return res.status(404).json({ message: `No org found with id of '${orgId}` });
-  // }
+  if (!org) {
+    return res.status(404).json({ message: `Org not found!` });
+  }
 
-  // const [removed, removeError] = await DB.Users.removeUserFromOrg({
-  //   // if this doesn't match the createdBy ID on the org,
-  //   // Dynamo will error
-  //   createdById: user.id,
-  //   orgId: org.orgId,
-  //   userId,
-  // });
+  const session = mongoClient.startSession();
 
-  // if (removeError) {
-  //   // TODO there are two conditional checks, we should narrow this down
-  //   if (removeError.name === 'TransactionCanceledException') {
-  //     return res.status(403).json({
-  //       message: 'You must be the creator of the org to remove users',
-  //     });
-  //   }
+  let transactionResults;
 
-  //   const { status, body } = CreateError.SDK(
-  //     removeError,
-  //     'An error ocurred removing this user form your org',
-  //   );
-  //   return res.status(status).json(body);
-  // }
+  try {
+    transactionResults = await session.withTransaction(async () => {
+      const userFilter: Filter<UserEntity> = {
+        $and: [
+          {
+            id: userId,
+          },
+          {
+            target: {
+              property: IndexableProperties.Org,
+              value: orgId,
+            },
+          },
+        ],
+      };
+      const userUpdateFilter: UpdateFilter<UserEntity> = {
+        $set: { 'target.$.value': undefined, orgJoinDate: undefined },
+      };
 
-  // return res.status(200).json({ message: 'User removed!' });
+      await collections.users.updateOne(userFilter, userUpdateFilter, { session });
+
+      const orgFilter: Filter<OrgEntity> = {
+        id: orgId,
+      };
+      const orgUpdateFilter: UpdateFilter<OrgEntity> = {
+        $inc: { totalUsers: -1 },
+      };
+
+      await collections.orgs.updateOne(orgFilter, orgUpdateFilter, { session });
+      await session.commitTransaction();
+    });
+  } catch (error) {
+    const msg = 'Error ocurred removing user org';
+    console.error(msg, error);
+    return res.status(500).json({ message: msg });
+  } finally {
+    await session.endSession();
+  }
+
+  return res.status(200).json({ message: 'User removed' });
 };
