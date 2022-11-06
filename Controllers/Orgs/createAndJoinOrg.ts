@@ -114,7 +114,7 @@ export const createAndJoinOrg = async (req: Request, res: Response) => {
         totalQuestions: 0,
         totalUsers: 1,
         totalWebhooks: 0,
-        target: [],
+        target: [{ property: IndexableProperties.CreatedBy, value: user.id }],
         displayName,
       };
       await collections.orgs.insertOne(newOrg, { session });
