@@ -58,16 +58,27 @@ export const connectToDatabase = async () => {
       //  await collection.dropIndex('target');
       // await collection.dropIndex('target.property_1_target.value_1');
 
-      // TODO add index on `id` field if we cant easily override `_id`, remove Id from target array. make that one unique
-      await collection.createIndex(indexKey, { name: 'target' });
-      // Our own generated custom ID
-      await collection.createIndex('id', { name: 'custom_id', unique: true });
+      const targetArrayIndexName = 'target';
+      const targetIndexExists = await collection.indexExists(targetArrayIndexName);
+
+      if (!targetIndexExists) {
+        console.info(`Creating target array index...`);
+        await collection.createIndex(indexKey, { name: targetArrayIndexName });
+        console.info(`Index created!`);
+      }
+
+      const customIdIndexName = 'custom_id';
+      const customIdIndexExists = await collection.indexExists(customIdIndexName);
+
+      if (customIdIndexExists) {
+        console.info(`Creating Custom ID index...`);
+        await collection.createIndex('id', { name: customIdIndexName, unique: true });
+        console.info(`Index created!`);
+      }
     } catch (error) {
       console.error(`Error creating index!`, error);
     }
   });
-
-  console.log(`Created!`);
 
   console.log(`Successfully connected to database: ${db.databaseName}.`);
 };

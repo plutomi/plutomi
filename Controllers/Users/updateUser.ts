@@ -1,7 +1,6 @@
 import { Request, Response } from 'express';
 import Joi from 'joi';
 import { Defaults, JOI_SETTINGS } from '../../Config';
-
 // export interface APIUpdateUserOptions extends Partial<Pick<DynamoUser, 'firstName' | 'lastName'>> {}
 
 const schema = Joi.object({
