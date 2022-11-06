@@ -40,13 +40,6 @@ export const TeamPageContent = () => {
     );
   };
 
-  const pendingInvites = (
-    <ul className="divide-y divide-gray-200">
-      {pendingOrgInvites.map((invite) => (
-        <PendingInviteCard key={invite.inviteId} invite={invite} />
-      ))}
-    </ul>
-  );
   return (
     <>
       <CreateInviteModal />
@@ -66,7 +59,11 @@ export const TeamPageContent = () => {
           {pendingOrgInvites?.length > 0 && (
             <>
               {dividerWithText('Pending invites')}
-              {pendingInvites}
+              <ul className="divide-y divide-gray-200">
+                {pendingOrgInvites.map((invite) => (
+                  <PendingInviteCard key={invite.inviteId} invite={invite} />
+                ))}
+              </ul>
               {dividerWithText('Team')}
             </>
           )}
@@ -93,7 +90,14 @@ export const TeamPageContent = () => {
               </div>
             </div>
           )}
-          {pendingInvites}
+          <ul className="divide-y divide-gray-200">
+            {' '}
+            {pendingOrgInvites.length > 0
+              ? pendingOrgInvites?.map((invite) => (
+                  <PendingInviteCard key={invite.inviteId} invite={invite} />
+                ))
+              : null}
+          </ul>
         </div>
       )}
     </>
