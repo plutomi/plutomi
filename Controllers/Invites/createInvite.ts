@@ -37,11 +37,15 @@ export const createInvite = async (req: Request, res: Response) => {
   const senderHasBothNames = user.firstName && user.lastName;
   const { recipientEmail, expiresInDays } = req.body;
 
-  const userOrgId = findInTargetArray(IndexableProperties.Org, req.user);
+  const userOrgId = findInTargetArray(IndexableProperties.Org, user);
   if (!userOrgId) {
     return res.status(404).json({ message: 'You must belong to an org to invite other users' });
   }
 
+  if (recipientEmail === findInTargetArray(IndexableProperties.Email, user)) {
+    return res.status(403).json({ message: 'You cannot invite yourself :)' });
+  }
+  console.log('User org id', userOrgId);
   const orgFilter: Filter<OrgEntity> = {
     id: userOrgId,
   };
@@ -49,6 +53,7 @@ export const createInvite = async (req: Request, res: Response) => {
   let orgInfo: OrgEntity | undefined;
   try {
     orgInfo = (await collections.orgs.findOne(orgFilter)) as OrgEntity;
+    console.log(`ORG INFO`, orgInfo);
   } catch (error) {
     const msg = 'An error ocurred finding info for that org';
     console.error(msg, error);
@@ -56,7 +61,7 @@ export const createInvite = async (req: Request, res: Response) => {
   }
 
   // Not sure how this would happen
-  if (orgInfo) {
+  if (!orgInfo) {
     return res.status(404).json({ message: 'Org not found!' });
   }
 
@@ -178,7 +183,7 @@ export const createInvite = async (req: Request, res: Response) => {
       },
       to: recipientEmail,
       subject,
-      body: `<h4>You can log in at <a href="${WEBSITE_URL}" target="_blank" rel=noreferrer>${WEBSITE_URL}</a> to accept their invite!</h4><p>If you believe this email was received in error, you can safely ignore it.</p>`,
+      body: `<h4>You can log in at <a href="${WEBSITE_URL}" target="_blank" rel=noreferrer>${WEBSITE_URL}</a> to accept the invite!</h4><p>If you believe this email was received in error, you can safely ignore it.</p>`,
     });
     return;
   } catch (error) {
