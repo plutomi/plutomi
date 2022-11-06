@@ -65,7 +65,7 @@ export const Invite = ({ invite }: InviteProps) => {
           <div className="w-0 flex-1 flex">
             <button
               type="submit"
-              onClick={() => acceptInvite(invite.inviteId)}
+              onClick={() => acceptInvite(invite.id)}
               className="relative -mr-px w-0 flex-1 inline-flex items-center justify-center py-4 text-md text-emerald-600 font-semibold  hover:text-white border-emerald-200 hover:bg-emerald-500 transition ease-in-out duration-200 border  rounded-bl-lg "
             >
               <CheckIcon className="w-5 h-5 " aria-hidden="true" />

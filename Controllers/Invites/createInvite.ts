@@ -86,6 +86,7 @@ export const createInvite = async (req: Request, res: Response) => {
    */
 
   if (!recipient) {
+    console.log('Recipient not found');
     // Invite is for a user that doesn't exist
     const newUser: UserEntity = {
       id: generateId({}),
@@ -103,12 +104,18 @@ export const createInvite = async (req: Request, res: Response) => {
     };
 
     try {
+      await collections.users.insertOne(newUser);
       recipient = newUser;
     } catch (error) {
-      const msg = `An error ocurred inviting that user`;
+      const msg = `An error ocurred creating that user's account`;
       console.error(msg, error);
       return res.status(500).json({ message: msg });
     }
+  }
+
+  const recipientOrgId = findInTargetArray(IndexableProperties.Org, recipient);
+  if (recipientOrgId === userOrgId) {
+    return res.status(403).json({ message: 'User is already in your org!' });
   }
 
   const recipientHasBothNames = recipient.firstName && recipient.lastName;
@@ -130,14 +137,8 @@ export const createInvite = async (req: Request, res: Response) => {
     ],
   };
 
-  const recipientOrgId = findInTargetArray(IndexableProperties.Org, recipient);
-  if (recipientOrgId === userOrgId) {
-    return res.status(403).json({ message: 'User is already in your org!' });
-  }
-
   // Check if the user already has a pending invite for the org they are being invited to
 
-  // TODO update total invites on the user to 1!!!!!
   const invitesFilter: Filter<InviteEntity> = {
     $and: [
       { target: { property: IndexableProperties.Org, value: userOrgId } },
