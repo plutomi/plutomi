@@ -61,6 +61,7 @@ export enum Collections {
   Webhooks = 'Webhooks',
   LoginLinks = 'LoginLinks',
   Openings = 'Openings',
+  Invites = 'Invites',
 }
 
 export const ERRORS = {

@@ -14,6 +14,7 @@ export const collections: {
   questions?: mongoDB.Collection;
   webhooks?: mongoDB.Collection;
   applicants?: mongoDB.Collection;
+  invites?: mongoDB.Collection;
 } = {};
 
 let mongoClient: mongoDB.MongoClient | undefined;
@@ -39,6 +40,7 @@ export const connectToDatabase = async () => {
   const questionsCollection: mongoDB.Collection = db.collection(Collections.Questions);
   const webhooksCollection: mongoDB.Collection = db.collection(Collections.Webhooks);
   const applicantsCollection: mongoDB.Collection = db.collection(Collections.Applicants);
+  const invitesCollection: mongoDB.Collection = db.collection(Collections.Invites);
 
   const indexKey: mongoDB.IndexSpecification = { target: 1 };
   // { $and: [ { target: { $elemMatch: {  property: "Org", value: "GrubHub" }} } ] }
@@ -50,6 +52,7 @@ export const connectToDatabase = async () => {
   collections.questions = questionsCollection;
   collections.webhooks = webhooksCollection;
   collections.applicants = applicantsCollection;
+  collections.invites = invitesCollection;
 
   console.log(`Creating necessary indexes`);
   Object.values(collections).map(async (collection) => {

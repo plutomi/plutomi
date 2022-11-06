@@ -34,11 +34,30 @@ export const createInvite = async (req: Request, res: Response) => {
   }
 
   const { user } = req;
+  const senderHasBothNames = user.firstName && user.lastName;
   const { recipientEmail, expiresInDays } = req.body;
 
   const userOrgId = findInTargetArray(IndexableProperties.Org, req.user);
   if (!userOrgId) {
-    return res.status(404).json({ message: 'Org does not exist' });
+    return res.status(404).json({ message: 'You must belong to an org to invite other users' });
+  }
+
+  const orgFilter: Filter<OrgEntity> = {
+    id: userOrgId,
+  };
+
+  let orgInfo: OrgEntity | undefined;
+  try {
+    orgInfo = (await collections.orgs.findOne(orgFilter)) as OrgEntity;
+  } catch (error) {
+    const msg = 'An error ocurred finding info for that org';
+    console.error(msg, error);
+    return res.status(500).json({ message: 'An error ocurred returning org info' });
+  }
+
+  // Not sure how this would happen
+  if (orgInfo) {
+    return res.status(404).json({ message: 'Org not found!' });
   }
 
   let recipient: UserEntity | undefined;
@@ -55,71 +74,13 @@ export const createInvite = async (req: Request, res: Response) => {
     return res.status(500).json({ message: msg });
   }
 
-  let invite: InviteEntity;
-
-  const orgFilter: Filter<OrgEntity> = {
-    id: userOrgId,
-  };
-
-  let orgInfo: OrgEntity | undefined;
-
-  try {
-    orgInfo = (await collections.orgs.findOne(orgFilter)) as OrgEntity;
-  } catch (error) {
-    const msg = 'An error ocurred finding info for that org';
-    console.error(msg, error);
-    return res.status(500).json({ message: 'An error ocurred returning org info' });
-  }
-
-  // Not sure how this would happen
-
-  if (orgInfo) {
-    return res.status(404).json({ message: 'Org not found!' });
-  }
-
   const now = new Date();
 
-  const senderHasBothNames = user.firstName && user.lastName;
-  invite = {
-    orgId: orgInfo.id,
-    orgName: orgInfo.displayName,
-    createdAt: now,
-    updatedAt: now,
-    id: generateId({ fullAlphabet: true }),
-    invitedByName: senderHasBothNames ? `${user.firstName} ${user.lastName}` : null,
-    expiresAt: dayjs(now).add(expiresInDays, 'days').toDate(),
-  };
+  /**
+   * If there is no recipient, let's create one
+   */
 
-  if (recipient) {
-    const recipientOrgId = findInTargetArray(IndexableProperties.Org, recipient);
-
-    if (recipientOrgId === userOrgId) {
-      return res.status(403).json({ message: 'User is already in your org!' });
-    }
-
-    const userAlreadyHasInvitesForOrg = recipient.invites.some(
-      (invite) => invite.orgId === userOrgId,
-    );
-    if (userAlreadyHasInvitesForOrg) {
-      return res.status(403).json({
-        message: 'This user already has a pending invite for your org, they can log in to claim it',
-      });
-    }
-
-    // TODO push invites here
-
-    try {
-      const recipientUpdateFilter: UpdateFilter<UserEntity> = {
-        $push: { invites: invite },
-      };
-      await collections.users.updateOne(recipientFilter, recipientUpdateFilter);
-      res.status(201).json({ message: 'Invite sent! They can log in to claim it.' });
-    } catch (error) {
-      const msg = 'An error ocurred sending the invite to the user';
-      console.error(msg, error);
-      return res.status(500).json({ message: msg });
-    }
-  } else {
+  if (!recipient) {
     // Invite is for a user that doesn't exist
     const newUser: UserEntity = {
       id: generateId({}),
@@ -134,13 +95,10 @@ export const createInvite = async (req: Request, res: Response) => {
         { property: IndexableProperties.Org, value: null },
         { property: IndexableProperties.Email, value: recipientEmail },
       ],
-      invites: [invite],
     };
 
     try {
-      await collections.users.insertOne(newUser);
       recipient = newUser;
-      res.status(201).json({ message: 'Invite sent! They can log in to claim it.' });
     } catch (error) {
       const msg = `An error ocurred inviting that user`;
       console.error(msg, error);
@@ -148,6 +106,57 @@ export const createInvite = async (req: Request, res: Response) => {
     }
   }
 
+  // Now let's create an invite
+  const invite: InviteEntity = {
+    orgName: orgInfo.displayName,
+    createdAt: now,
+    updatedAt: now,
+    id: generateId({ fullAlphabet: true }),
+    invitedByName: senderHasBothNames ? `${user.firstName} ${user.lastName}` : null,
+    expiresAt: dayjs(now).add(expiresInDays, 'days').toDate(),
+    target: [
+      { property: IndexableProperties.Org, value: orgInfo.id },
+      { property: IndexableProperties.Email, value: recipientEmail },
+    ],
+  };
+
+  const recipientOrgId = findInTargetArray(IndexableProperties.Org, recipient);
+  if (recipientOrgId === userOrgId) {
+    return res.status(403).json({ message: 'User is already in your org!' });
+  }
+
+  // Check if the user already has a pending invite for the org they are being invited to
+
+  // TODO update total invites on the user to 1!!!!!
+  const invitesFilter: Filter<InviteEntity> = {
+    $and: [
+      { target: { property: IndexableProperties.Org, value: userOrgId } },
+      { target: { property: IndexableProperties.Email, value: recipientEmail } },
+    ],
+  };
+  const currentInvites = await collections.invites.findOne(invitesFilter);
+  if (currentInvites) {
+    return res.status(403).json({
+      message: 'This user already has a pending invite for your org, they can log in to claim it',
+    });
+  }
+
+
+
+// Create invite and increment the user's total invites
+
+    try {
+      const recipientUpdateFilter: UpdateFilter<UserEntity> = {
+        $inc: { totalInvites: 1 },
+      };
+      await collections.users.updateOne(recipientFilter, recipientUpdateFilter);
+      res.status(201).json({ message: 'Invite sent! They can log in to claim it.' });
+    } catch (error) {
+      const msg = 'An error ocurred sending the invite to the user';
+      console.error(msg, error);
+      return res.status(500).json({ message: msg });
+    }
+  }
   res.status(201).json({ message: `Invite sent to '${recipientEmail}'` });
 
   const subject = senderHasBothNames
