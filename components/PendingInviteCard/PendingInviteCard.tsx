@@ -4,12 +4,13 @@ import { useSelf } from '../../SWR/useSelf';
 import { findInTargetArray } from '../../utils/findInTargetArray';
 import { IndexableProperties } from '../../@types/indexableProperties';
 import { Time } from '../../utils';
+import { InviteEntity } from '../../models';
 
-// interface PendingInviteCardProps {
-//   invite: DynamoOrgInvite; // TODO types
-// }
+interface PendingInviteCardProps {
+  invite: InviteEntity; // TODO types
+}
 
-export const PendingInviteCard = ({ invite }) => {
+export const PendingInviteCard = ({ invite }: PendingInviteCardProps) => {
   const { user, isUserLoading, isUserError } = useSelf();
   const orgId = findInTargetArray(IndexableProperties.Org, user);
 
@@ -28,7 +29,9 @@ export const PendingInviteCard = ({ invite }) => {
     // Refresh the pending invites
     mutate(Invites.GetOrgInvitesURL(orgId));
   };
-  const { firstName, lastName, email } = invite.recipient;
+
+  const { recipientName, createdBy } = invite;
+  const recipientEmail = findInTargetArray(IndexableProperties.Email, invite);
   return (
     <div className="flex border rounded-lg shadow-sm  max-w-lg mx-auto my-4 ">
       <div className=" w-5/6  ">
@@ -39,15 +42,13 @@ export const PendingInviteCard = ({ invite }) => {
         </div>
 
         <div className="flex flex-col text-left space-y-1 p-4">
-          <h1 className="font-semibold text-md">
-            {firstName} {lastName}
-          </h1>
+          <h1 className="font-semibold text-md">{recipientName}</h1>
 
-          <p className="text-md">{email}</p>
+          <p className="text-md">{recipientEmail}</p>
           <div className=" flex justify-between  items-center">
             {' '}
             <p className="text-sm text-blue-gray-400">
-              Created by {invite.createdBy.firstName} {invite.createdBy.lastName}
+              Sent by {createdBy.name ? createdBy.name : createdBy.email}
             </p>
             <p className="text-sm text-blue-gray-400">Expires {Time().to(invite.expiresAt)}</p>
           </div>

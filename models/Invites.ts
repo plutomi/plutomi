@@ -11,10 +11,12 @@ export type InvitesTargetArray = Array<
  * There is no collection for this, it's just a type
  */
 export interface InviteEntity extends BaseEntity {
-  /**
-   * Name of person who invited, if not, it's the email
-   */
-  invitedByName: string | null;
+  createdBy: {
+    name: string | null;
+    email: string;
+  };
+
+  recipientName: string | null;
   /**
    * Display name for the org
    */

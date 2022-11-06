@@ -36,7 +36,7 @@ export const createInvite = async (req: Request, res: Response) => {
   const { user } = req;
   const senderHasBothNames = user.firstName && user.lastName;
   const { recipientEmail, expiresInDays } = req.body;
-
+  const userEmail = findInTargetArray(IndexableProperties.Email, user);
   const userOrgId = findInTargetArray(IndexableProperties.Org, user);
   if (!userOrgId) {
     return res.status(404).json({ message: 'You must belong to an org to invite other users' });
@@ -111,13 +111,18 @@ export const createInvite = async (req: Request, res: Response) => {
     }
   }
 
+  const recipientHasBothNames = recipient.firstName && recipient.lastName;
   // Now let's create an invite
   const newInvite: InviteEntity = {
     orgName: orgInfo.displayName,
     createdAt: now,
     updatedAt: now,
     id: generateId({ fullAlphabet: true }),
-    invitedByName: senderHasBothNames ? `${user.firstName} ${user.lastName}` : null,
+    recipientName: recipientHasBothNames ? `${recipient.firstName} ${recipient.lastName}` : null,
+    createdBy: {
+      name: senderHasBothNames ? `${user.firstName} ${user.lastName}` : null,
+      email: userEmail,
+    },
     expiresAt: dayjs(now).add(expiresInDays, 'days').toDate(),
     target: [
       { property: IndexableProperties.Org, value: orgInfo.id },
