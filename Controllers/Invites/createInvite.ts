@@ -11,12 +11,13 @@ import {
   TIME_UNITS,
   WEBSITE_URL,
 } from '../../Config';
-// import * as CreateError from '../../utils/createError';
-// import * as Time from '../../utils/time';
-
-// import { twoStringsMatch } from '../../utils/compareStrings';
-
-// const userMissingName = !user.firstName || !user.lastName;
+import { findInTargetArray, generateId, sendEmail } from '../../utils';
+import { IndexableProperties } from '../../@types/indexableProperties';
+import { OrgEntity, UserEntity } from '../../models';
+import { collections } from '../../utils/connectToDatabase';
+import { Filter, UpdateFilter } from 'mongodb';
+import dayjs from 'dayjs';
+import { InviteEntity } from '../../models/Invites';
 
 const schema = Joi.object({
   body: {
@@ -35,140 +36,136 @@ export const createInvite = async (req: Request, res: Response) => {
   const { user } = req;
   const { recipientEmail, expiresInDays } = req.body;
 
-  return res.status(200).json({ message: 'TODO Endpoint temporarily disabled!' });
+  const userOrgId = findInTargetArray(IndexableProperties.Org, req.user);
+  if (!userOrgId) {
+    return res.status(404).json({ message: 'Org does not exist' });
+  }
 
-  // const validation = await emailValidator({
-  //   email: recipientEmail,
-  //   validateSMTP: false, // BUG, this isnt working
-  // });
-  // if (!validation.valid) {
-  //   return res.status(400).json({
-  //     message: ERRORS.EMAIL_VALIDATION,
-  //   });
-  // }
+  let recipient: UserEntity | undefined;
 
-  // if (
-  //   twoStringsMatch({ // TODO??? first name??
-  //     string1: user.firstName,
-  //     string2: recipientEmail,
-  //   })
-  // ) {
-  //   return res.status(403).json({ message: `You can't invite yourself` });
-  // }
+  const recipientFilter: Filter<UserEntity> = {
+    target: { property: IndexableProperties.Email, value: recipientEmail },
+  };
 
-  // const userUsingDefaultName = nameIsDefault({
-  //   firstName: user.firstName,
-  //   lastName: user.lastName,
-  // });
+  try {
+    recipient = (await collections.users.findOne(recipientFilter)) as UserEntity;
+  } catch (error) {
+    const msg = 'An error ocurred sending that invite';
+    console.error(msg, error);
+    return res.status(500).json({ message: msg });
+  }
 
-  // // if (userUsingDefaultName) {
-  // //   return res.status(403).json({
-  // //     message: `Please update your first and last name before sending invites to team members. You can do this at ${WEBSITE_URL}/profile`,
-  // //   });
-  // // }
-  // const [org, error] = await getOrg({ orgId: user.orgId });
+  let invite: InviteEntity;
 
-  // if (error) {
-  //   const { status, body } = CreateError.SDK(
-  //     error,
-  //     'An error ocurred retrieving your org information',
-  //   );
-  //   return res.status(status).json(body);
-  // }
+  const orgFilter: Filter<OrgEntity> = {
+    id: userOrgId,
+  };
 
-  // if (!org) {
-  //   return res.status(404).json({ message: 'Org does not exist' });
-  // }
+  let orgInfo: OrgEntity | undefined;
 
-  // // eslint-disable-next-line prefer-const
-  // let [recipient, recipientError] = await DB.Users.getUserByEmail({
-  //   email: recipientEmail,
-  // });
+  try {
+    orgInfo = (await collections.orgs.findOne(orgFilter)) as OrgEntity;
+  } catch (error) {
+    const msg = 'An error ocurred finding info for that org';
+    console.error(msg, error);
+    return res.status(500).json({ message: 'An error ocurred returning org info' });
+  }
 
-  // if (recipientError) {
-  //   const { status, body } = CreateError.SDK(
-  //     error,
-  //     "An error ocurred getting your invitee's information",
-  //   );
-  //   return res.status(status).json(body);
-  // }
+  // Not sure how this would happen
 
-  // // Invite is for a user that doesn't exist
-  // if (!recipient) {
-  //   const [createdUser, createUserError] = await DB.Users.createUser({
-  //     email: recipientEmail,
-  //   });
+  if (orgInfo) {
+    return res.status(404).json({ message: 'Org not found!' });
+  }
 
-  //   if (createUserError) {
-  //     const { status, body } = CreateError.SDK(
-  //       createUserError,
-  //       'An error ocurred creating an account for your invitee',
-  //     );
+  const now = new Date();
 
-  //     return res.status(status).json(body);
-  //   }
-  //   recipient = createdUser;
-  // }
+  const senderHasBothNames = user.firstName && user.lastName;
+  invite = {
+    orgId: orgInfo.id,
+    orgName: orgInfo.displayName,
+    createdAt: now,
+    updatedAt: now,
+    id: generateId({ fullAlphabet: true }),
+    invitedByName: senderHasBothNames ? `${user.firstName} ${user.lastName}` : null,
+    expiresAt: dayjs(now).add(expiresInDays, 'days').toDate(),
+  };
 
-  // if (recipient.orgId === user.orgId) {
-  //   return res.status(403).json({ message: 'User is already in your org!' });
-  // }
+  if (recipient) {
+    const recipientOrgId = findInTargetArray(IndexableProperties.Org, recipient);
 
-  // // Check if the user we are inviting already has pending invites for the current org
-  // const [recipientInvites, recipientInvitesError] = await DB.Invites.getInvitesForUser({
-  //   userId: recipient.userId,
-  // });
+    if (recipientOrgId === userOrgId) {
+      return res.status(403).json({ message: 'User is already in your org!' });
+    }
 
-  // if (recipientInvitesError) {
-  //   const { status, body } = CreateError.SDK(
-  //     recipientInvitesError,
-  //     'An error ocurred while checking to see if your invitee has pending invites',
-  //   );
-  //   return res.status(status).json(body);
-  // }
+    const userAlreadyHasInvitesForOrg = recipient.invites.some(
+      (invite) => invite.orgId === userOrgId,
+    );
+    if (userAlreadyHasInvitesForOrg) {
+      return res.status(403).json({
+        message: 'This user already has a pending invite for your org, they can log in to claim it',
+      });
+    }
 
-  // const pendingInvites = recipientInvites.some((invite) => invite.orgId === user.orgId);
+    // TODO push invites here
 
-  // if (pendingInvites) {
-  //   return res.status(403).json({
-  //     message: 'This user already has a pending invite to your org! They can log in to claim it.',
-  //   });
-  // }
+    try {
+      const recipientUpdateFilter: UpdateFilter<UserEntity> = {
+        $push: { invites: invite },
+      };
+      await collections.users.updateOne(recipientFilter, recipientUpdateFilter);
+      res.status(201).json({ message: 'Invite sent! They can log in to claim it.' });
+    } catch (error) {
+      const msg = 'An error ocurred sending the invite to the user';
+      console.error(msg, error);
+      return res.status(500).json({ message: msg });
+    }
+  } else {
+    // Invite is for a user that doesn't exist
+    const newUser: UserEntity = {
+      id: generateId({}),
+      createdAt: now,
+      updatedAt: now,
+      totalInvites: 1,
+      firstName: null,
+      lastName: null,
+      emailVerified: false,
+      canReceiveEmails: true,
+      target: [
+        { property: IndexableProperties.Org, value: null },
+        { property: IndexableProperties.Email, value: recipientEmail },
+      ],
+      invites: [invite],
+    };
 
-  // // TODO this can get reworked with the new syncrhonous emails
-  // const [inviteCreated, inviteError] = await DB.Invites.createInvite({
-  //   recipient: pick(recipient, ['userId', 'email', 'firstName', 'lastName', 'unsubscribeKey']),
-  //   orgName: org.displayName,
-  //   expiresAt: Time.futureISO({
-  //     amount: expiresInDays || ORG_INVITE_EXPIRY_DAYS,
-  //     unit: TIME_UNITS.DAYS,
-  //   }),
-  //   createdBy: pick(user, ['userId', 'firstName', 'lastName', 'orgId', 'email']),
-  // });
+    try {
+      await collections.users.insertOne(newUser);
+      recipient = newUser;
+      res.status(201).json({ message: 'Invite sent! They can log in to claim it.' });
+    } catch (error) {
+      const msg = `An error ocurred inviting that user`;
+      console.error(msg, error);
+      return res.status(500).json({ message: msg });
+    }
+  }
 
-  // if (inviteError) {
-  //   const { status, body } = CreateError.SDK(inviteError, 'An error ocurred creating your invite');
+  res.status(201).json({ message: `Invite sent to '${recipientEmail}'` });
 
-  //   return res.status(status).json(body);
-  // }
+  const subject = senderHasBothNames
+    ? `You've been invited to join ${orgInfo.displayName} on Plutomi!`
+    : `${user.firstName} ${user.lastName} has invited you to join them on ${orgInfo.displayName}`;
 
-  // res.status(201).json({ message: `Invite sent to '${recipientEmail}'` });
-
-  // const subject = userUsingDefaultName
-  //   ? `You've been invited to join ${org.displayName} on Plutomi!`
-  //   : `${user.firstName} ${user.lastName} has invited you to join them on ${org.displayName}`;
-  // try {
-  //   await sendEmail({
-  //     from: {
-  //       header: `Plutomi`,
-  //       email: Emails.JOIN,
-  //     },
-  //     to: recipient.email,
-  //     subject,
-  //     body: `<h4>You can log in at <a href="${WEBSITE_URL}" target="_blank" rel=noreferrer>${WEBSITE_URL}</a> to accept their invite!</h4><p>If you believe this email was received in error, you can safely ignore it.</p>`,
-  //   });
-  //   return;
-  // } catch (error) {
-  //   console.error('Error ocurred inviting a user to an org', error);
-  // }
+  try {
+    await sendEmail({
+      from: {
+        header: `Plutomi`,
+        email: Emails.JOIN,
+      },
+      to: recipientEmail,
+      subject,
+      body: `<h4>You can log in at <a href="${WEBSITE_URL}" target="_blank" rel=noreferrer>${WEBSITE_URL}</a> to accept their invite!</h4><p>If you believe this email was received in error, you can safely ignore it.</p>`,
+    });
+    return;
+  } catch (error) {
+    console.error('Error ocurred inviting a user to an org', error);
+  }
 };
