@@ -15,4 +15,4 @@ orgs.get('', API.Orgs.getOrg);
 orgs.delete('', API.Orgs.leaveAndDeleteOrg);
 orgs.get('/:orgId/invites', withSameOrg, API.Invites.getInvitesForOrg);
 orgs.delete('/:orgId/users/:userId', withSameOrg, API.Users.removeUserFromOrg); // TODO put instead?
-orgs.post('/:orgId/invites/cancel', withSameOrg, API.Invites.cancelInvite);
+orgs.delete('/:orgId/invites/:inviteId', withSameOrg, API.Invites.cancelInvite);

@@ -19,7 +19,6 @@ export const PendingInviteCard = ({ invite }: PendingInviteCardProps) => {
       const data = await Invites.CancelInvite({
         inviteId: invite.inviteId,
         orgId,
-        userId: invite.recipient.userId,
       });
       alert(data.data.message);
     } catch (error) {

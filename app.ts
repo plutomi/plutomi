@@ -20,9 +20,9 @@ import { invites } from './routes/invites';
 import { publicInfo } from './routes/public';
 import { auth } from './routes/auth';
 import { applicants } from './routes/applicants';
-import API from './controllers';
 import { env } from './env';
 import { connectToDatabase } from './utils/connectToDatabase';
+import API from './controllers';
 
 const morgan = require('morgan');
 const cookieParser = require('cookie-parser');

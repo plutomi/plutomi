@@ -23,16 +23,12 @@ export const RejectInvite = async (inviteId: string) => {
 
 interface CancelInviteInput {
   inviteId: string;
-  userId: string;
   orgId: string;
 }
 // As an org user, cancel a pending invite - // TODO i don't like this route
 export const CancelInvite = async (options: CancelInviteInput) => {
-  const { inviteId, userId, orgId } = options;
-  const data = await axios.post(`/orgs/${orgId}/invites/cancel`, {
-    inviteId,
-    userId,
-  });
+  const { inviteId, orgId } = options;
+  const data = await axios.delete(`/orgs/${orgId}/invites/${inviteId}`);
   return data;
 };
 

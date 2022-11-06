@@ -92,7 +92,7 @@ export const createInvite = async (req: Request, res: Response) => {
       id: generateId({}),
       createdAt: now,
       updatedAt: now,
-      totalInvites: 1,
+      totalInvites: 0, // Will be incremented in a transaction below
       firstName: null,
       lastName: null,
       emailVerified: false,
@@ -134,6 +134,7 @@ export const createInvite = async (req: Request, res: Response) => {
     target: [
       { property: IndexableProperties.Org, value: orgInfo.id },
       { property: IndexableProperties.Email, value: recipientEmail },
+      { property: IndexableProperties.User, value: recipient.id },
     ],
   };
 
@@ -161,8 +162,8 @@ export const createInvite = async (req: Request, res: Response) => {
       const recipientUpdateFilter: UpdateFilter<UserEntity> = {
         $inc: { totalInvites: 1 },
       };
-      await collections.users.updateOne(recipientFilter, recipientUpdateFilter);
-      await collections.invites.insertOne(newInvite);
+      await collections.users.updateOne(recipientFilter, recipientUpdateFilter, { session });
+      await collections.invites.insertOne(newInvite, { session });
       await session.commitTransaction();
     });
   } catch (error) {
