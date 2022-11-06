@@ -14,12 +14,13 @@ export const PendingInviteCard = ({ invite }: PendingInviteCardProps) => {
   const { user, isUserLoading, isUserError } = useSelf();
   const orgId = findInTargetArray(IndexableProperties.Org, user);
 
-  const cancelInvite = async (invite) => {
+  const cancelInvite = async (invite: InviteEntity) => {
     try {
       const data = await Invites.CancelInvite({
-        inviteId: invite.inviteId,
+        inviteId: invite.id,
         orgId,
       });
+      console.log(`DATA`, data);
       alert(data.data.message);
     } catch (error) {
       alert(error.response.message);

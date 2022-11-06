@@ -57,7 +57,8 @@ export const cancelInvite = async (req: Request, res: Response) => {
       // TODO add session to other with transaction
 
       const userFilter: Filter<UserEntity> = {
-        id: findInTargetArray(IndexableProperties.User, invite),
+        // This should be redundant but its a
+        $or: [{ id: findInTargetArray(IndexableProperties.User, invite) }],
       };
       const userUpdate: UpdateFilter<UserEntity> = {
         $inc: { totalInvites: -1 },
@@ -73,15 +74,5 @@ export const cancelInvite = async (req: Request, res: Response) => {
   } finally {
     await session.endSession();
   }
-  // const [deleted, error] = await DB.Invites.deleteInvite({
-  //   inviteId,
-  //   userId,
-  // });
-
-  // if (error) {
-  //   const { status, body } = CreateError.SDK(error, 'We were unable to cancel that invite');
-  //   return res.status(status).json(body);
-  // }
-
-  // return res.status(200).json({ message: 'Invite cancelled!' });
+  return res.status(200).json({ message: 'Invite cancelled!' });
 };
