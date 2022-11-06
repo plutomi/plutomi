@@ -1,6 +1,6 @@
+import { InviteEntity } from '../../models';
 import { useSelf } from '../../SWR/useSelf';
 import { useUserInvites } from '../../SWR/useUserInvites';
-import { DynamoOrgInvite } from '../../@types/dynamo';
 import { Invite } from '../Invite/Invite';
 import { Loader } from '../Loader/Loader';
 
@@ -21,8 +21,8 @@ export const InvitesPageContent = () => {
   return (
     <div className="">
       <ul className="divide-y divide-gray-200 mx-auto max-w-xl flex-col space-y-4 p-20  ">
-        {invites?.map((invite: DynamoOrgInvite) => (
-          <Invite invite={invite} key={invite.inviteId} />
+        {invites?.map((invite: InviteEntity) => (
+          <Invite invite={invite} key={invite.id} />
         ))}
       </ul>
     </div>

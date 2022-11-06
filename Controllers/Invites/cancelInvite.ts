@@ -9,6 +9,8 @@ const schema = Joi.object({
   },
 }).options(JOI_SETTINGS);
 export const cancelInvite = async (req: Request, res: Response) => {
+
+  // TODO only allow org admin 
   try {
     await schema.validateAsync(req);
   } catch (error) {
@@ -16,7 +18,6 @@ export const cancelInvite = async (req: Request, res: Response) => {
   }
   const { inviteId, userId } = req.body;
 
-  return res.status(200).json({ message: 'TODO Endpoint temporarily disabled!' });
 
   // const [deleted, error] = await DB.Invites.deleteInvite({
   //   inviteId,
