@@ -1,55 +1,118 @@
 import { Request, Response } from 'express';
+import { Filter, UpdateFilter } from 'mongodb';
+import { IndexableProperties } from '../../@types/indexableProperties';
 import { Defaults } from '../../Config';
+import { InviteEntity, OrgEntity, UserEntity } from '../../models';
+import { findInTargetArray } from '../../utils';
+import { collections, mongoClient } from '../../utils/connectToDatabase';
 
 export const acceptInvite = async (req: Request, res: Response) => {
   const { inviteId } = req.params;
   const { user } = req;
-  return res.status(200).json({ message: 'Endpoint temporarily disabled!' });
 
-  // if (user.orgId !== Defaults.Org) {
-  //   return res.status(403).json({
-  //     message: `You already belong to an org: ${user.orgId} - delete it before joining another one!`,
-  //   });
-  // }
+  const userOrg = findInTargetArray(IndexableProperties.Org, user);
 
-  // const [invite, error] = await DB.Invites.getInvite({
-  //   inviteId,
-  //   userId: user.userId,
-  // });
+  if (userOrg) {
+    return res.status(403).json({
+      message: `You already belong to an org: ${userOrg} - delete it before joining another one!`,
+    });
+  }
 
-  // if (error) {
-  //   const { status, body } = CreateError.SDK(
-  //     error,
-  //     'An error ocurred getting the info for your invite',
-  //   );
+  let invite: InviteEntity | undefined;
 
-  //   return res.status(status).json(body);
-  // }
+  const inviteFilter: Filter<InviteEntity> = {
+    id: inviteId,
+    $and: [
+      { target: { property: IndexableProperties.User, value: user.id } },
+      {
+        // This is redundant but :)
+        target: {
+          property: IndexableProperties.Email,
+          value: findInTargetArray(IndexableProperties.Email, user),
+        },
+      },
+    ],
+  };
+  try {
+    invite = (await collections.invites.findOne(inviteFilter)) as InviteEntity;
+  } catch (error) {
+    const msg = 'An error ocurred finding invite info';
+    console.error(msg, error);
+  }
 
-  // if (!invite) {
-  //   return res.status(404).json({ message: 'Invite no longer exists' });
-  // }
-  // // Not sure how this would happen as we do a check before the invite
-  // // is sent to prevent this...
-  // if (invite.orgId === user.orgId) {
-  //   return res.status(400).json({ message: "It appears that you're already in this org!" });
-  // }
+  if (!invite) {
+    return res.status(404).json({ message: 'Invite not found!' });
+  }
 
-  // if (invite.expiresAt <= Time.currentISO()) {
-  //   return res.status(403).json({
-  //     message: 'It looks like that invite has expired, ask the org admin to send you another one!',
-  //   });
-  // }
+  const inviteOrgId = findInTargetArray(IndexableProperties.Org, invite);
 
-  // const [joined, joinError] = await DB.Invites.acceptInvite({
-  //   userId: user.userId,
-  //   invite,
-  // });
+  let deleteInvite = false;
+  /**
+   * Not sure how this would happen as we do a check before the invite is sent to prevent this...
+   */
+  if (inviteOrgId === userOrg) {
+    deleteInvite = true;
+    res.status(400).json({ message: "It appears that you're already in this org!" });
+  }
 
-  // if (joinError) {
-  //   const { status, body } = CreateError.SDK(joinError, 'We were unable to accept that invite');
-  //   return res.status(status).json(body);
-  // }
+  const now = new Date();
+  if (invite.expiresAt <= now && !deleteInvite) {
+    // We need the delete invite check so we don't have two res.sends just in case
+    deleteInvite = true;
+    res.status(403).json({
+      message: 'It looks like that invite has expired, ask the org admin to send you another one!',
+    });
+  }
 
-  // return res.status(200).json({ message: `You've joined the ${invite.orgName}!` });
+  const session = mongoClient.startSession();
+
+  let transactionResults;
+
+  try {
+    const orgId = findInTargetArray(IndexableProperties.Org, invite);
+    transactionResults = await session.withTransaction(async () => {
+      await collections.invites.deleteOne(inviteFilter, { session });
+
+      const userFilter: Filter<UserEntity> = {
+        $and: [
+          {
+            id: user.id,
+          },
+          {
+            target: {
+              property: IndexableProperties.Org,
+              value: null,
+            },
+          },
+        ],
+      };
+      const userUpdate: UpdateFilter<UserEntity> = {
+        $inc: { totalInvites: -1 },
+        $set: {
+          'target.$.value': orgId,
+          orgJoinDate: now,
+        },
+      };
+
+      await collections.users.updateOne(userFilter, userUpdate, { session });
+
+      const orgFilter: Filter<OrgEntity> = {
+        id: orgId,
+      };
+
+      const orgUpdate: UpdateFilter<OrgEntity> = {
+        $inc: { totalUsers: 1 },
+      };
+
+      await collections.orgs.updateOne(orgFilter, orgUpdate, { session });
+      await session.commitTransaction();
+    });
+  } catch (error) {
+    const msg = 'An error ocurred accepting that invite';
+    console.error(msg, error);
+    return res.status(500).json({ message: msg });
+  } finally {
+    await session.endSession();
+  }
+  return res.status(200).json({ message: 'Invite accepted!' });
 };
