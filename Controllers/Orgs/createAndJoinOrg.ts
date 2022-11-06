@@ -1,13 +1,12 @@
 import { Request, Response } from 'express';
 import Joi from 'joi';
 import { JOI_SETTINGS, JoiOrgId } from '../../Config';
-import { Filter, FindOptions, UpdateFilter } from 'mongodb';
+import { Filter, UpdateFilter } from 'mongodb';
 import { OrgEntity, UserEntity } from '../../models';
 import { collections } from '../../utils/connectToDatabase';
 import { IndexableProperties } from '../../@types/indexableProperties';
 import { mongoClient } from '../../utils/connectToDatabase';
 import { findInTargetArray } from '../../utils/findInTargetArray';
-import { ObjectId } from 'mongodb';
 interface aa {
   orgId: string;
   displayName: string;

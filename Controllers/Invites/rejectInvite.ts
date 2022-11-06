@@ -1,19 +1,54 @@
 import { Request, Response } from 'express';
+import { InviteEntity, UserEntity } from '../../models';
+import { Filter, UpdateFilter } from 'mongodb';
+import { collections, mongoClient } from '../../utils/connectToDatabase';
+import { IndexableProperties } from '../../@types/indexableProperties';
 
 export const rejectInvite = async (req: Request, res: Response) => {
   const { inviteId } = req.params;
   const { user } = req;
-  return res.status(200).json({ message: 'TODO Endpoint temporarily disabled!' });
 
-  // const [deleted, error] = await DB.Invites.deleteInvite({
-  //   inviteId,
-  //   userId: user.userId,
-  // });
+  let invite: InviteEntity | undefined;
+  const inviteFilter: Filter<InviteEntity> = {
+    id: inviteId,
+    target: { property: IndexableProperties.User, value: user.id },
+  };
+  try {
+    invite = (await collections.invites.findOne(inviteFilter)) as InviteEntity;
+  } catch (error) {
+    const msg = 'An error ocurred finding that invite';
+    console.error(msg, error);
+    return res.status(500).json({ message: msg });
+  }
 
-  // if (error) {
-  //   const { status, body } = CreateError.SDK(error, 'We were unable to reject that invite');
-  //   return res.status(status).json(body);
-  // }
+  if (!invite) {
+    return res.status(404).json({ message: 'Invite not found! It may have already been deleted' });
+  }
 
-  // return res.status(200).json({ message: 'Invite rejected!' });
+  const session = mongoClient.startSession();
+
+  let transactionResults;
+
+  try {
+    transactionResults = await session.withTransaction(async () => {
+      await collections.invites.deleteOne(inviteFilter, { session });
+
+      const userFilter: Filter<UserEntity> = {
+        id: user.id,
+      };
+      const userUpdate: UpdateFilter<UserEntity> = {
+        $inc: { totalInvites: -1 },
+      };
+      await collections.users.updateOne(userFilter, userUpdate, { session });
+      await session.commitTransaction();
+    });
+  } catch (error) {
+    const msg = 'An error ocurred rejecting that invite';
+    console.error(msg, error);
+    return res.status(500).json({ message: msg });
+  } finally {
+    await session.endSession();
+  }
+
+  return res.status(200).json({ message: 'Invite rejected!' });
 };
