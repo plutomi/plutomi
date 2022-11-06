@@ -4,12 +4,12 @@ import { useRouter } from 'next/router';
 import { AcceptInvite, GetUserInvitesURL, RejectInvite } from '../../adapters/Invites';
 import { GetSelfInfoURL } from '../../adapters/Users';
 import { Time } from '../../utils';
+import { InviteEntity } from '../../models';
 
-// interface InviteProps {
-//   invite: DynamoOrgInvite;
-// }
-// TODO types
-export const Invite = ({ invite }) => {
+interface InviteProps {
+  invite: InviteEntity;
+}
+export const Invite = ({ invite }: InviteProps) => {
   const router = useRouter();
   const acceptInvite = async (inviteId: string) => {
     try {
@@ -42,20 +42,20 @@ export const Invite = ({ invite }) => {
   };
 
   return (
-    <li key={invite.PK} className="col-span-1 bg-white rounded-lg shadow divide-y divide-gray-200">
+    <li key={invite.id} className="col-span-1 bg-white rounded-lg shadow divide-y divide-gray-200">
       <div className="w-full flex items-center justify-between px-6 py-3 space-x-6">
         <div className="flex-1 truncate">
           <div className="flex items-center space-x-3 justify-between">
             <h3 className="text-dark text-lg font-semibold truncate">{invite.orgName}</h3>
             <span className="flex-shrink-0 inline-block px-2 py-0.5 text-blue-gray-800 text-xs font-medium bg-blue-gray-100 rounded-full">
-              Expires {Time().from(invite.expiresAt)}
+              Expires {Time().to(invite.expiresAt)}
             </span>
           </div>
           <p className="mt-2 text-normal text-sm truncate">
             {' '}
             Invited by{' '}
             <span className=" text-darkfont-semibold">
-              {invite.createdBy.firstName} {invite.createdBy.lastName}
+              {invite.createdBy.name ? invite.createdBy.name : invite.createdBy.email}
             </span>
           </p>
         </div>
