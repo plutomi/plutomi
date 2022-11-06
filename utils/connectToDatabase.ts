@@ -54,7 +54,6 @@ export const connectToDatabase = async () => {
   console.log(`Creating necessary indexes`);
   Object.values(collections).map(async (collection) => {
     try {
-      console.log(`Creating target index on ${collection.collectionName}`);
       //  await collection.dropIndex('target');
       // await collection.dropIndex('target.property_1_target.value_1');
 
@@ -70,10 +69,14 @@ export const connectToDatabase = async () => {
       const customIdIndexName = 'custom_id';
       const customIdIndexExists = await collection.indexExists(customIdIndexName);
 
-      if (customIdIndexExists) {
+      if (!customIdIndexExists) {
         console.info(`Creating Custom ID index...`);
         await collection.createIndex('id', { name: customIdIndexName, unique: true });
         console.info(`Index created!`);
+      }
+
+      if (targetIndexExists && customIdIndexExists) {
+        console.log('No indexes to create!');
       }
     } catch (error) {
       console.error(`Error creating index!`, error);

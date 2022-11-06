@@ -17,6 +17,6 @@ export const generateId = ({ length, fullAlphabet }: GenerateIdProps) => {
     alphabet += 'ABCDEFGHIJKLMNOPQRSTUVWXYZ-_';
   }
 
-  const nanoid = customAlphabet(alphabet, length ?? 24);
+  const nanoid = customAlphabet(alphabet, length ?? 24); // TODO this isn't working
   return nanoid();
 };

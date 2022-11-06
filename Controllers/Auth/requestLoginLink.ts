@@ -52,7 +52,6 @@ export const requestLoginLink = async (req: Request, res: Response) => {
 
   const { email } = req.body;
 
-  console.log(`Incoming email`, email);
   const { callbackUrl }: APIRequestLoginLinkQuery = req.query;
 
   // const emailValidation = await emailValidator({
@@ -68,8 +67,6 @@ export const requestLoginLink = async (req: Request, res: Response) => {
 
   // If a user is signing in for the first time, create an account for them
   let user: UserEntity | undefined;
-
-  console.log(`Attempting to find user with email`, email);
 
   try {
     user = (await collections.users.findOne({
@@ -118,7 +115,6 @@ export const requestLoginLink = async (req: Request, res: Response) => {
   }
 
   const userEmail = findInTargetArray(IndexableProperties.Email, user);
-  console.log(`User created, finding in target array`, userEmail);
   // TODO add a test for this @jest
   if (!user.canReceiveEmails) {
     return res.status(403).json({
@@ -127,8 +123,6 @@ export const requestLoginLink = async (req: Request, res: Response) => {
   }
 
   let latestLoginLink: UserLoginLinkEntity;
-
-  console.log(`Getting latest login link`);
 
   const loginLinkFilter: Filter<UserLoginLinkEntity> = {
     target: {
@@ -150,7 +144,6 @@ export const requestLoginLink = async (req: Request, res: Response) => {
       .toArray();
 
     latestLoginLink = latestLinkArray[0] as UserLoginLinkEntity;
-    console.log(`got latest login link it`, latestLoginLink);
   } catch (error) {
     console.error(`An error ocurred finding your info (login links error)`);
     return res
@@ -175,7 +168,6 @@ export const requestLoginLink = async (req: Request, res: Response) => {
    */
   const relativeExpiry = Time(now).from(linkExpiry);
 
-  console.log(`Creating a login link with THIS user`, user);
   let token: string;
   // TODO types
 
@@ -196,15 +188,12 @@ export const requestLoginLink = async (req: Request, res: Response) => {
     };
     await collections.loginLinks.insertOne(newLoginLink);
 
-    console.log(`NEWLY CREATED LOGIN LINK`, newLoginLink);
-
     // TODO types
     const tokenData = {
       userId,
       loginLinkId: newLoginLink.id,
     };
 
-    console.log(`TOKEN DATA WHEN CREATING THE LOGIN LINKIT`, tokenData);
     token = await jwt.sign(tokenData, env.loginLinksPassword, {
       expiresIn: Time().add(10, 'minutes').unix() - Time().unix(),
     });

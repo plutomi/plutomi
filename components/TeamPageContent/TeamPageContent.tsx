@@ -3,7 +3,6 @@ import { useSelf } from '../../SWR/useSelf';
 import { useOrgUsers } from '../../SWR/useOrgUsers';
 import useStore from '../../utils/store';
 import { usePendingOrgInvites } from '../../SWR/usePendingOrgInvites';
-import { DynamoOrgInvite } from '../../@types/dynamo';
 import { Loader } from '../Loader';
 import { EmptyTeamContent } from '../EmptyTeamContent';
 import { PendingInviteCard } from '../PendingInviteCard';
@@ -43,7 +42,7 @@ export const TeamPageContent = () => {
 
   const pendingInvites = (
     <ul className="divide-y divide-gray-200">
-      {pendingOrgInvites.map((invite: DynamoOrgInvite) => (
+      {pendingOrgInvites.map((invite) => (
         <PendingInviteCard key={invite.inviteId} invite={invite} />
       ))}
     </ul>
