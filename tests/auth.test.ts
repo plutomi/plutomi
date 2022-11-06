@@ -42,7 +42,7 @@ describe('Request login link', () => {
   it('can pass in an undefined callback url', async () => {
     expect.assertions(2);
     const data = await Auth.RequestLoginLink({
-      email: Emails.TESTING,
+      email: Emails.Testing,
       callbackUrl: undefined,
     });
 
@@ -54,7 +54,7 @@ describe('Request login link', () => {
     expect.assertions(3);
     try {
       await Auth.RequestLoginLink({
-        email: Emails.TESTING,
+        email: Emails.Testing,
         callbackUrl: 'http:mongo.',
       });
     } catch (error) {
@@ -85,13 +85,13 @@ describe('Request login link', () => {
     expect.assertions(4);
 
     const data = await Auth.RequestLoginLink({
-      email: Emails.TESTING,
+      email: Emails.Testing,
     });
     expect(data.status).toBe(201);
     expect(data.data.message).toBe("We've sent a magic login link to your email!");
     // Try it again
     const data2 = await Auth.RequestLoginLink({
-      email: Emails.TESTING,
+      email: Emails.Testing,
     });
 
     expect(data2.status).toBe(201);

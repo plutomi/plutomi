@@ -16,7 +16,7 @@ export const jestSetup = async (req: Request, res: Response) => {
 
   // TODO this is creating two users under TESTING2 because theres no check to see if email exists
   // like in the regular createUser flow
-  const userEmail = req.body.email || `${nanoid(15)}+${Emails.TESTING}`;
+  const userEmail = req.body.email || `${nanoid(15)}+${Emails.Testing}`;
 
   return res.status(200).json({ message: 'Endpoint temp disabled' });
 

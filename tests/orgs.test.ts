@@ -107,7 +107,7 @@ describe('Orgs', () => {
   it('blocks you from deleting an org if there are other users', async () => {
     expect.assertions(3);
     // Create a new user
-    const firstUserEmail = `${nanoid(20)}+${Emails.TESTING}`;
+    const firstUserEmail = `${nanoid(20)}+${Emails.Testing}`;
     const data = await axios.post(`/jest-setup`, {
       email: firstUserEmail,
     });
@@ -121,7 +121,7 @@ describe('Orgs', () => {
     // Join org
     await Orgs.CreateOrg({ orgId, displayName: nanoid(20) });
 
-    const otherUserEmail = `${nanoid(20)}+${Emails.TESTING3}`;
+    const otherUserEmail = `${nanoid(20)}+${Emails.Testing3}`;
     // Create an invite for another user
 
     await Invites.CreateInvite({
@@ -162,7 +162,7 @@ describe('Orgs', () => {
   it("deletes an org if you're the only user in it", async () => {
     expect.assertions(2);
     // Create a new user
-    const firstUserEmail = `${nanoid(20)}+${Emails.TESTING}`;
+    const firstUserEmail = `${nanoid(20)}+${Emails.Testing}`;
     const data = await axios.post(`/jest-setup`, {
       email: firstUserEmail,
     });
@@ -184,7 +184,7 @@ describe('Orgs', () => {
   it('allows removing users from an org', async () => {
     expect.assertions(5);
     // Create a new user
-    const firstUserEmail = `${nanoid(20)}+${Emails.TESTING}`;
+    const firstUserEmail = `${nanoid(20)}+${Emails.Testing}`;
     const data = await axios.post(`/jest-setup`, {
       email: firstUserEmail,
     });
@@ -198,7 +198,7 @@ describe('Orgs', () => {
     // Join org
     await Orgs.CreateOrg({ orgId, displayName: nanoid(20) });
     const originalUser = await Users.GetSelfInfo();
-    const otherUserEmail = `${nanoid(20)}+${Emails.TESTING3}`;
+    const otherUserEmail = `${nanoid(20)}+${Emails.Testing3}`;
     // Create an invite for another user
 
     await Invites.CreateInvite({
@@ -254,7 +254,7 @@ describe('Orgs', () => {
   it('Blocks removing a user from org if person making the request is not the org admin, can be faked by trying to remove onself', async () => {
     expect.assertions(2);
     // Create a new user
-    const firstUserEmail = `${nanoid(20)}+${Emails.TESTING}`;
+    const firstUserEmail = `${nanoid(20)}+${Emails.Testing}`;
     const data = await axios.post(`/jest-setup`, {
       email: firstUserEmail,
     });
@@ -268,7 +268,7 @@ describe('Orgs', () => {
     // Join org
     await Orgs.CreateOrg({ orgId, displayName: nanoid(20) });
     const originalUser = await Users.GetSelfInfo();
-    const otherUserEmail = `${nanoid(20)}+${Emails.TESTING3}`;
+    const otherUserEmail = `${nanoid(20)}+${Emails.Testing3}`;
     // Create an invite for another user
 
     await Invites.CreateInvite({
@@ -305,7 +305,7 @@ describe('Orgs', () => {
   it('blocks removing yourself from org', async () => {
     expect.assertions(2);
     // Create a new user
-    const firstUserEmail = `${nanoid(20)}+${Emails.TESTING}`;
+    const firstUserEmail = `${nanoid(20)}+${Emails.Testing}`;
     const data = await axios.post(`/jest-setup`, {
       email: firstUserEmail,
     });
