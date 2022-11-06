@@ -1,29 +1,41 @@
 import { Request, Response } from 'express';
 import { pick } from 'lodash';
+import { Filter } from 'mongodb';
+import { IndexableProperties } from '../../@types/indexableProperties';
+import { UserEntity } from '../../models';
+import { collections } from '../../utils/connectToDatabase';
 import { findInTargetArray } from '../../utils/findInTargetArray';
 
 export const getUsersInOrg = async (req: Request, res: Response) => {
   const { user } = req;
-  return res.status(200).json({ message: 'Endpoint temp disabled' });
+  const orgId = findInTargetArray(IndexableProperties.Org, user);
 
-  // const orgId = findInTargetArray({ entity: IdxTypes.Org, targetArray: user.target });
+  if (!orgId) {
+    return res.status(200).json([]);
+  }
 
-  // const [users, error] = await DB.Users.getUsersInOrg({
-  //   orgId,
-  // });
+  let usersInOrg: UserEntity[] | undefined;
 
-  // if (error) {
-  //   const { status, body } = CreateError.SDK(
-  //     error,
-  //     'An error ocurred getting the users in your org',
-  //   );
-
-  //   return res.status(status).json(body);
-  // }
-
-  // const cleanUsers = users.map((user) =>
-  //   pick(user, ['userId', 'orgId', 'firstName', 'lastName', 'email', 'orgJoinDate']),
-  // );
-
-  // return res.status(200).json(cleanUsers);
+  try {
+    const usersFilter: Filter<UserEntity> = {
+      target: { property: IndexableProperties.Org, value: orgId },
+    };
+    usersInOrg = (await collections.users.find(usersFilter).toArray()) as UserEntity[];
+    const cleanUsers: Partial<UserEntity>[] = usersInOrg.map((user) => {
+      return {
+        id: user.id,
+        firstName: user.firstName,
+        lastName: user.lastName,
+        createdAt: user.createdAt,
+        email: findInTargetArray(IndexableProperties.Email, user),
+        target: user.target,
+        orgJoinDate: user.orgJoinDate,
+      };
+    });
+    return res.status(200).json(cleanUsers);
+  } catch (error) {
+    const msg = 'An error ocurred retrieving users in your org';
+    console.error(msg, error);
+    return res.status(500).json({ message: msg });
+  }
 };

@@ -11,6 +11,7 @@ interface UserCardProps {
   user: UserEntity;
 }
 export const UserCard = ({ user }: UserCardProps) => {
+  console.log(`USER`, user);
   const orgId = findInTargetArray(IndexableProperties.Org, user);
   const { org, isOrgLoading, isOrgError } = useOrgInfo({
     orgId,
@@ -43,19 +44,22 @@ export const UserCard = ({ user }: UserCardProps) => {
     mutate(Users.GetUsersInOrgURL());
   };
   const userEmail = findInTargetArray(IndexableProperties.Email, user);
-  const createdById = findInTargetArray(IndexableProperties.User, org);
+  const isSelf = user.id === me.id;
+  //  const createdById = findInTargetArray(IndexableProperties., org);
 
+  const fullNameExists = user.firstName && user.lastName;
   return (
     <div className="border rounded-lg shadow-sm  max-w-lg mx-auto my-4 flex">
       <div className="flex flex-col text-left space-y-1 w-5/6 p-4">
         <h1 className="font-semibold text-md">
-          {user?.firstName} {user?.lastName} {user.id === me.id && '- (YOU)'}
+          {fullNameExists ? `${user.firstName} ${user.lastName}` : userEmail}
+          {user?.firstName} {user?.lastName} {isSelf && ' - (YOU)'}
         </h1>
-        <p className="text-md">{userEmail}</p>
+        {fullNameExists ? <p className="text-md">{userEmail}</p> : null}
         <p className="text-sm text-blue-gray-400">Joined {Time().to(user?.orgJoinDate)}</p>
       </div>
       {/* User is admin // TODO clean up */}
-      {me?.id === createdById && user?.id !== me?.id && (
+      {/* {me?.id === createdById && user?.id !== me?.id && (
         <button
           type="submit"
           className="w-1/6 border  rounded-lg rounded-l-none bg-white border-red-500  hover:bg-red-500  text-red-500 hover:text-white  transition ease-in duration-100 "
@@ -63,7 +67,7 @@ export const UserCard = ({ user }: UserCardProps) => {
         >
           Remove (TODO the check here is broken)
         </button>
-      )}
+      )} */}
     </div>
   );
 };
