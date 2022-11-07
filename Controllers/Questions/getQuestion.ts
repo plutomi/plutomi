@@ -1,22 +1,27 @@
 import { Request, Response } from 'express';
+import { Filter } from 'mongodb';
+import { IndexableProperties } from '../../@types/indexableProperties';
+import { QuestionEntity } from '../../models';
+import { findInTargetArray } from '../../utils';
+import { collections } from '../../utils/connectToDatabase';
 
 export const getQuestion = async (req: Request, res: Response) => {
   const { user } = req;
   const { questionId } = req.params;
 
-  return res.status(200).json({ message: 'TODO Endpoint temporarily disabled!' });
+  const orgId = findInTargetArray(IndexableProperties.Org, user);
+  let question: QuestionEntity | undefined;
+  try {
+    const questionFilter: Filter<QuestionEntity> = {
+      id: questionId,
+      target: { property: IndexableProperties.Org, value: orgId },
+    };
 
-  // const [question, questionError] = await DB.Questions.getQuestion({
-  //   orgId: user.orgId,
-  //   questionId,
-  // });
-
-  // if (questionError) {
-  //   const { status, body } = CreateError.SDK(
-  //     questionError,
-  //     'An error ocurred retrieving that question',
-  //   );
-  //   return res.status(status).json(body);
-  // }
-  // return res.status(200).json(question);
+    question = (await collections.questions.findOne(questionFilter)) as QuestionEntity;
+    return res.status(200).json(question);
+  } catch (error) {
+    const msg = 'An error ocurred retrieving question info';
+    console.error(msg, error);
+    return res.status(500).json({ message: msg });
+  }
 };

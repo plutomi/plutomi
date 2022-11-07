@@ -62,6 +62,7 @@ export enum Collections {
   LoginLinks = 'LoginLinks',
   Openings = 'Openings',
   Invites = 'Invites',
+  StageQuestionItem = 'StageQuestionItem',
 }
 
 export const ERRORS = {

@@ -15,6 +15,7 @@ export const collections: {
   webhooks?: mongoDB.Collection;
   applicants?: mongoDB.Collection;
   invites?: mongoDB.Collection;
+  stageQuestionItem?: mongoDB.Collection;
 } = {};
 
 let mongoClient: mongoDB.MongoClient | undefined;
@@ -38,6 +39,9 @@ export const connectToDatabase = async () => {
   const openingsCollection: mongoDB.Collection = db.collection(Collections.Openings);
   const stagesCollection: mongoDB.Collection = db.collection(Collections.Stages);
   const questionsCollection: mongoDB.Collection = db.collection(Collections.Questions);
+  const stageQuestionItemCollection: mongoDB.Collection = db.collection(
+    Collections.StageQuestionItem,
+  );
   const webhooksCollection: mongoDB.Collection = db.collection(Collections.Webhooks);
   const applicantsCollection: mongoDB.Collection = db.collection(Collections.Applicants);
   const invitesCollection: mongoDB.Collection = db.collection(Collections.Invites);
@@ -51,6 +55,7 @@ export const connectToDatabase = async () => {
   collections.webhooks = webhooksCollection;
   collections.applicants = applicantsCollection;
   collections.invites = invitesCollection;
+  collections.stageQuestionItem = stageQuestionItemCollection;
 
   console.log(`Creating necessary collections and indexes`);
 
