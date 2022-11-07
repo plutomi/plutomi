@@ -3,7 +3,7 @@ import Joi from 'joi';
 import { Filter } from 'mongodb';
 import { IndexableProperties } from '../../@types/indexableProperties';
 import { JOI_SETTINGS, LIMITS } from '../../Config';
-import { StageEntity, StageQuestionItemEntity } from '../../models';
+import { QuestionEntity, StageEntity, StageQuestionItemEntity } from '../../models';
 import { findInTargetArray } from '../../utils';
 import { collections } from '../../utils/connectToDatabase';
 
@@ -56,10 +56,27 @@ export const addQuestionToStage = async (req: Request, res: Response) => {
     return res.status(404).json({ message: 'Stage not found!' });
   }
 
+  const questionFilter: Filter<QuestionEntity> = {
+    id: questionId,
+    target: [{ property: IndexableProperties.Org, value: orgId }],
+  };
+
+  let question: QuestionEntity | undefined;
+  try {
+    question = (await collections.questions.findOne(questionFilter)) as QuestionEntity;
+  } catch (error) {
+    const msg = 'An error ocurred finding that question in this org';
+    console.error(msg, error);
+    return res.status(500).json({ message: msg });
+  }
+
+  if (!question) {
+    return res.status(404).json({ message: 'Question not found!' });
+  }
+
   // Get the current last question
 
   let currentLastStageQuestionItem: StageQuestionItemEntity;
-
   const currentLastStageQuestionItemFilter: Filter<StageQuestionItemEntity> = {
     $and: [
       {
@@ -80,40 +97,8 @@ export const addQuestionToStage = async (req: Request, res: Response) => {
     return res.status(500).json(message);
   }
 
-  // const [question, getQuestionError] = await DB.Questions.getQuestion({
-  //   orgId: user.orgId,
-  //   questionId,
-  // });
 
-  // if (getQuestionError) {
-  //   const { status, body } = CreateError.SDK(
-  //     getQuestionError,
-  //     'An error ocurred retrieving info for that question',
-  //   );
-  //   return res.status(status).json(body);
-  // }
 
-  // if (!question) {
-  //   return res.status(404).json({
-  //     message: `A question with the ID of '${questionId}' does not exist in this org`,
-  //   });
-  // }
-
-  // const [stage, stageError] = await DB.Stages.getStage({
-  //   openingId,
-  //   stageId,
-  //   orgId: user.orgId,
-  // });
-
-  // if (stageError) {
-  //   const { status, body } = CreateError.SDK(stageError, 'Unable to retrieve stage info');
-
-  //   return res.status(status).json(body);
-  // }
-
-  // if (!stage) {
-  //   return res.status(404).json({ message: 'Stage does not exist' });
-  // }
 
   // // Block questions from being added to a stage if it already exists in the stage
   // if (stage.questionOrder.includes(questionId)) {
