@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 import Joi from 'joi';
-import { Filter } from 'mongodb';
+import { Filter, UpdateFilter } from 'mongodb';
 import { IndexableProperties } from '../../@types/indexableProperties';
 import { JOI_SETTINGS, LIMITS } from '../../Config';
 import { QuestionEntity, StageEntity, StageQuestionItemEntity } from '../../models';
@@ -128,11 +128,21 @@ export const addQuestionToStage = async (req: Request, res: Response) => {
     transactionResults = await session.withTransaction(async () => {
       // 1. TODO Create the stage question item
 
+      await collections.stageQuestionItem.insertOne(newStageQuestionItem, { session });
       // 2. TODO Increment the totalQuestions on the stage
 
+      const updateStageOptions: UpdateFilter<StageEntity> = {
+        $inc: { totalQuestions: 1 },
+      };
+
+      await collections.stages.updateOne(stageFilter, updateStageOptions, { session });
       // 3. TODO Increment the totalStages on the question
 
-      
+      const updateQuestionOptions: UpdateFilter<QuestionEntity> = {
+        $inc: { totalStages: 1 },
+      };
+
+      await collections.questions.updateOne(questionFilter, updateQuestionOptions, { session });
       await session.commitTransaction();
     });
   } catch (error) {
@@ -143,28 +153,5 @@ export const addQuestionToStage = async (req: Request, res: Response) => {
     await session.endSession();
   }
 
-  // // Block questions from being added to a stage if it already exists in the stage
-  // if (stage.questionOrder.includes(questionId)) {
-  //   return res.status(409).json({
-  //     message: `A question with the ID of '${questionId}' already exists in this stage. Please use a different question ID or delete the old one.`,
-  //   });
-  // }
-
-  // // Update the stage with the new questionOrder
-  // const questionOrder = getNewChildItemOrder(questionId, stage.questionOrder, position);
-
-  // const [stageUpdated, stageUpdatedError] = await DB.Questions.addQuestionToStage({
-  //   openingId,
-  //   stageId,
-  //   orgId: user.orgId,
-  //   questionId,
-  //   questionOrder,
-  // });
-
-  // if (stageUpdatedError) {
-  //   const { status, body } = CreateError.SDK(stageError, 'An error ocurred updating your stage');
-  //   return res.status(status).json(body);
-  // }
-
-  // return res.status(201).json({ message: 'Question added to stage!' });
+  return res.status(201).json({ message: 'Question added to stage!' });
 };
