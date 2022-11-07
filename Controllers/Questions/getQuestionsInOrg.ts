@@ -1,19 +1,24 @@
 import { Request, Response } from 'express';
+import { Filter } from 'mongodb';
+import { IndexableProperties } from '../../@types/indexableProperties';
+import { QuestionEntity } from '../../models';
+import { findInTargetArray } from '../../utils';
+import { collections } from '../../utils/connectToDatabase';
 
 export const getQuestionsInOrg = async (req: Request, res: Response) => {
   const { user } = req;
-  return res.status(200).json({ message: 'TODO Endpoint temporarily disabled!' });
+  const org = findInTargetArray(IndexableProperties.Org, user);
 
-  // const [questions, questionsError] = await DB.Questions.getQuestionsInOrg({
-  //   orgId: user.orgId,
-  // });
-
-  // if (questionsError) {
-  //   const { status, body } = CreateError.SDK(
-  //     questionsError,
-  //     'An error ocurred retrieving your questions',
-  //   );
-  //   return res.status(status).json(body);
-  // }
-  // return res.status(200).json(questions);
+  let questions: QuestionEntity[] | undefined;
+  try {
+    const questionsFilter: Filter<QuestionEntity> = {
+      target: { property: IndexableProperties.Org, value: org },
+    };
+    questions = (await collections.questions.find(questionsFilter).toArray()) as QuestionEntity[];
+    return res.status(200).json(questions);
+  } catch (error) {
+    const msg = 'An error ocurred retrieving questions in this org';
+    console.error(msg, error);
+    return res.status(500).json({ message: msg });
+  }
 };
