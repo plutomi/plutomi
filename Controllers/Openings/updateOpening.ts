@@ -35,7 +35,7 @@ export const updateOpening = async (req: Request, res: Response) => {
   try {
     opening = (await collections.openings.findOne(openingFilter)) as OpeningEntity;
   } catch (error) {
-    const message = 'Error ocurred retrieving opening info';
+    const message = 'An error ocurred retrieving opening info';
     console.error(message, error);
     return res.status(500).json({ message });
   }
