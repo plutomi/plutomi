@@ -10,14 +10,11 @@ export type StageQuestionItemTargetArray = Array<
   Omit<IndexedTargetArrayItem, 'property'> & {
     property: Extends<
       keyof typeof IndexableProperties,
-      'Org' | 'PreviousQuestion' | 'NextQuestion' | 'Stage'
+      'Org' | 'PreviousQuestion' | 'NextQuestion' | 'Stage' | 'Question'
     >;
   }
 >;
 
 export interface StageQuestionItemEntity extends BaseEntity {
-  title: string;
-  description: string;
-  totalStages: number;
   target: StageQuestionItemTargetArray;
 }

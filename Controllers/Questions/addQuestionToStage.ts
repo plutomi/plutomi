@@ -4,8 +4,8 @@ import { Filter } from 'mongodb';
 import { IndexableProperties } from '../../@types/indexableProperties';
 import { JOI_SETTINGS, LIMITS } from '../../Config';
 import { QuestionEntity, StageEntity, StageQuestionItemEntity } from '../../models';
-import { findInTargetArray } from '../../utils';
-import { collections } from '../../utils/connectToDatabase';
+import { findInTargetArray, generateId } from '../../utils';
+import { collections, mongoClient } from '../../utils/connectToDatabase';
 
 const schema = Joi.object({
   body: {
@@ -97,8 +97,51 @@ export const addQuestionToStage = async (req: Request, res: Response) => {
     return res.status(500).json(message);
   }
 
+  const newStageQuestionItemId = generateId({});
+  const now = new Date();
+  const newStageQuestionItem: StageQuestionItemEntity = {
+    createdAt: now,
+    updatedAt: now,
+    id: newStageQuestionItemId,
+    target: [
+      { property: IndexableProperties.Org, value: orgId },
+      {
+        property: IndexableProperties.PreviousQuestion,
+        value: currentLastStageQuestionItem
+          ? findInTargetArray(IndexableProperties.Question, currentLastStageQuestionItem)
+          : null,
+      },
+      {
+        // Add it to the end by default
+        // TODO allow position
+        property: IndexableProperties.NextQuestion,
+        value: null,
+      },
+    ],
+  };
 
+  const session = mongoClient.startSession();
 
+  let transactionResults;
+
+  try {
+    transactionResults = await session.withTransaction(async () => {
+      // 1. TODO Create the stage question item
+
+      // 2. TODO Increment the totalQuestions on the stage
+
+      // 3. TODO Increment the totalStages on the question
+
+      
+      await session.commitTransaction();
+    });
+  } catch (error) {
+    const message = 'An error ocurred creating that stage';
+    console.error(message, error);
+    return res.status(500).json(message);
+  } finally {
+    await session.endSession();
+  }
 
   // // Block questions from being added to a stage if it already exists in the stage
   // if (stage.questionOrder.includes(questionId)) {
