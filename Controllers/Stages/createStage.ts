@@ -39,10 +39,10 @@ export const createStage = async (req: Request, res: Response) => {
     return res.status(400).json({ message: 'An error ocurred', error });
   }
 
+  // TODO allow position
   const { GSI1SK, openingId, position } = req.body;
 
   const orgId = findInTargetArray(IndexableProperties.Org, user);
-  console.log(`CREATING STAGE BODY`, req.body);
   let opening: OpeningEntity;
 
   const openingFilter: Filter<OpeningEntity> = {

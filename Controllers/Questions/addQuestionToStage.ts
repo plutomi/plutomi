@@ -1,6 +1,11 @@
 import { Request, Response } from 'express';
 import Joi from 'joi';
+import { Filter } from 'mongodb';
+import { IndexableProperties } from '../../@types/indexableProperties';
 import { JOI_SETTINGS, LIMITS } from '../../Config';
+import { StageEntity, StageQuestionItemEntity } from '../../models';
+import { findInTargetArray } from '../../utils';
+import { collections } from '../../utils/connectToDatabase';
 
 const schema = Joi.object({
   body: {
@@ -22,11 +27,58 @@ export const addQuestionToStage = async (req: Request, res: Response) => {
   } catch (error) {
     return res.status(400).json({ message: 'An error ocurred', error });
   }
-  return res.status(200).json({ message: 'TODO Endpoint temporarily disabled!' });
 
-  // // TODO types
-  // const { questionId, position }: { questionId: string; position?: number } = req.body;
-  // const { openingId, stageId } = req.params;
+  // TODO types, and allow position
+  const { questionId, position }: { questionId: string; position?: number } = req.body;
+  const { stageId } = req.params; // TODO update route to not include openingId
+
+  const orgId = findInTargetArray(IndexableProperties.Org, user);
+  const stageFilter: Filter<StageEntity> = {
+    id: stageId,
+    target: [
+      {
+        property: IndexableProperties.Org,
+        value: orgId,
+      },
+    ],
+  };
+
+  let stage: StageEntity | undefined;
+  try {
+    stage = (await collections.stages.findOne(stageFilter)) as StageEntity;
+  } catch (error) {
+    const msg = 'An error ocurred finding the info for that stage';
+    console.error(msg, error);
+    return res.status(500).json({ message: msg });
+  }
+
+  if (!stage) {
+    return res.status(404).json({ message: 'Stage not found!' });
+  }
+
+  // Get the current last question
+
+  let currentLastStageQuestionItem: StageQuestionItemEntity;
+
+  const currentLastStageQuestionItemFilter: Filter<StageQuestionItemEntity> = {
+    $and: [
+      {
+        target: { property: IndexableProperties.Org, value: orgId },
+      },
+      { target: { property: IndexableProperties.Stage, value: stageId } },
+      { target: { property: IndexableProperties.NextQuestion, value: null } },
+    ],
+  };
+
+  try {
+    currentLastStageQuestionItem = (await collections.stageQuestionItem.findOne(
+      currentLastStageQuestionItemFilter,
+    )) as StageQuestionItemEntity;
+  } catch (error) {
+    const message = 'An error ocurred retrieving the last question in the stage';
+    console.error(message, error);
+    return res.status(500).json(message);
+  }
 
   // const [question, getQuestionError] = await DB.Questions.getQuestion({
   //   orgId: user.orgId,
