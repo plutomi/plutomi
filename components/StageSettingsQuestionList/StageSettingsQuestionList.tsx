@@ -7,9 +7,11 @@ import { useQuestionsInOrg } from '../../SWR/useQuestionsInOrg';
 import { useStageInfo } from '../../SWR/useStageInfo';
 import { useQuestionsInStage } from '../../SWR/useQuestionsInStage';
 import * as Questions from '../../adapters/Questions';
-import combineClassNames from '../../utils/combineClassNames';
+import { combineClassNames } from '../../utils/combineClassNames';
 import * as Stages from '../../adapters/Stages';
 import { DraggableQuestionItem } from '../DraggableQuestionItem';
+import { CustomQuery } from '../../@types/customQuery';
+import { QuestionEntity } from '../../models';
 
 export const StageSettingsQuestionList = () => {
   const router = useRouter();
@@ -31,15 +33,16 @@ export const StageSettingsQuestionList = () => {
     setLocalSearch(value);
   };
 
-  const handleAdd = async (question: DynamoQuestion) => {
+  const handleAdd = async (question: QuestionEntity) => {
     // TODO check if already exists in stage in FE, we check for this in the backend
 
     // If doesnt exist, add it.
     try {
       const { data } = await Questions.AddQuestionToStage({
+        // TODO remove openingID requirement
         openingId,
         stageId,
-        questionId: question.questionId,
+        questionId: question.id,
       });
 
       alert(data.message);
