@@ -44,10 +44,6 @@ export const updateOpening = async (req: Request, res: Response) => {
     return res.status(404).json({ message: 'Opening not found' });
   }
 
-  const openingUpdateObject: UpdateFilter<OpeningEntity> = {
-    $set: {},
-  };
-
   const updateObject: Partial<OpeningEntity> = {};
   // Public or private
   if (req.body.GSI1SK) {
@@ -69,10 +65,10 @@ export const updateOpening = async (req: Request, res: Response) => {
     updateObject.name = req.body.openingName;
   }
 
-  openingUpdateObject.$set = updateObject;
-
   try {
-    await collections.openings.updateOne(openingFilter, openingUpdateObject);
+    await collections.openings.updateOne(openingFilter, {
+      $set: updateObject,
+    });
   } catch (error) {
     const message = 'Error updating opening';
     console.error(message, error);

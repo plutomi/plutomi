@@ -3,10 +3,10 @@ import { PencilAltIcon, TrashIcon } from '@heroicons/react/outline';
 import { mutate } from 'swr';
 import { DeleteQuestionFromOrg, GetQuestionsInOrgURL } from '../../adapters/Questions';
 import useStore from '../../utils/store';
-import { DynamoQuestion } from '../../@types/dynamo';
+import { QuestionEntity } from '../../models';
 
 interface QuestionItemProps {
-  question: DynamoQuestion;
+  question: QuestionEntity;
 }
 
 export const QuestionItem = ({ question }: QuestionItemProps) => {
@@ -20,7 +20,7 @@ export const QuestionItem = ({ question }: QuestionItemProps) => {
 
   const [isHovering, setIsHovering] = useState(false);
 
-  const handleDelete = async (question: DynamoQuestion) => {
+  const handleDelete = async (question: QuestionEntity) => {
     let deleteMessage = `Are you sure you want to delete this question?`;
 
     if (question.totalStages > 0) {
@@ -33,7 +33,7 @@ export const QuestionItem = ({ question }: QuestionItemProps) => {
     }
 
     try {
-      const data = await DeleteQuestionFromOrg(question.questionId);
+      const data = await DeleteQuestionFromOrg(question.id);
       alert(data.data.message);
     } catch (error) {
       alert(error.response.data.message);
@@ -51,14 +51,14 @@ export const QuestionItem = ({ question }: QuestionItemProps) => {
       <div className=" py-2  h-full relative focus-within:ring-2 focus-within:ring-blue-500">
         <h3 className="text-lg font-semibold text-dark">
           <span className="absolute inset-0" aria-hidden="true" />
-          {question?.GSI1SK}
+          {question?.title}
         </h3>
         {question?.description && (
           <p className="text-md text-light line-clamp-2 mt-1">{question?.description}</p>
         )}
 
         <p className="text-md text-red-300 line-clamp-2 mt-1">
-          ID: {question?.questionId}
+          ID: {question?.id}
           <span className="text-light">
             {' '}
             - used in <strong> {question?.totalStages} </strong>

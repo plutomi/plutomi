@@ -3,13 +3,13 @@ import { Dialog, Transition } from '@headlessui/react';
 import { XIcon } from '@heroicons/react/outline';
 import useStore from '../../utils/store';
 import { GetQuestionsInOrgURL, UpdateQuestion } from '../../adapters/Questions';
-import { DynamoQuestion } from '../../@types/dynamo';
 import { mutate } from 'swr';
+import { QuestionEntity } from '../../models';
 
 const descriptionMaxLength = 300; // TODO set this serverside
 
 interface UpdateQuestionModalProps {
-  question: DynamoQuestion;
+  question: QuestionEntity;
 }
 
 export const UpdateQuestionModal = ({ question }: UpdateQuestionModalProps) => {
@@ -17,9 +17,9 @@ export const UpdateQuestionModal = ({ question }: UpdateQuestionModalProps) => {
   const [description, setDescription] = useState('');
 
   useEffect(() => {
-    setGSI1SK(question?.GSI1SK);
+    setGSI1SK(question?.title);
     setDescription(question?.description);
-  }, [question?.GSI1SK, question?.description]);
+  }, [question?.title, question?.description]);
 
   const visibility = useStore((state) => state.showUpdateQuestionModal);
   const closeUpdateQuestionModal = useStore((state) => state.closeUpdateQuestionModal);
@@ -28,7 +28,7 @@ export const UpdateQuestionModal = ({ question }: UpdateQuestionModalProps) => {
     e.preventDefault();
     try {
       const { data } = await UpdateQuestion({
-        questionId: question?.questionId,
+        questionId: question?.id,
         // TODO if the values are the same, we should remove them
         newValues: {
           GSI1SK,
