@@ -18,6 +18,8 @@ export enum IndexableProperties {
   UpdatedAt = 'UpdatedAt',
   ExpiresAt = 'ExpiresAt',
   CreatedBy = 'CreatedBy',
+  PreviousQuestion = 'PreviousQuestion',
+  NextQuestion = 'NextQuestion',
 }
 
 export type IndexIdTypes = string | null;
