@@ -1,4 +1,4 @@
-import combineClassNames from '../../utils/combineClassNames';
+import { combineClassNames } from '../../utils/combineClassNames';
 
 interface StageSettingsContentTabsProps {
   currentTab: string;
