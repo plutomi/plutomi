@@ -1,9 +1,14 @@
 import { Request, Response } from 'express';
 import Joi from 'joi';
+import { Filter, UpdateFilter } from 'mongodb';
+import { IndexableProperties } from '../../@types/indexableProperties';
 import { JOI_SETTINGS, LIMITS } from '../../Config';
+import { OrgEntity, QuestionEntity, QuestionType } from '../../models';
+import { findInTargetArray } from '../../utils';
+import { collections, mongoClient } from '../../utils/connectToDatabase';
 
 // export type APICreateQuestionOptions = Pick<
-//   DynamoQuestion,
+//   QuestionEntity,
 //   'questionId' | 'GSI1SK' | 'description'
 // >;
 const schema = Joi.object({
@@ -16,30 +21,54 @@ const schema = Joi.object({
 
 export const createQuestion = async (req: Request, res: Response) => {
   const { user } = req;
-  return res.status(200).json({ message: 'TODO Endpoint temporarily disabled!' });
-
+  const org = findInTargetArray(IndexableProperties.Org, user);
   // try {
   //   await schema.validateAsync(req);
   // } catch (error) {
   //   const { status, body } = CreateError.JOI(error);
   //   return res.status(status).json(body);
   // }
-  // const { questionId, description, GSI1SK }: APICreateQuestionOptions = req.body;
+  // TODO change these
+  const { questionId, description, GSI1SK } = req.body;
 
-  // const [created, error] = await DB.Questions.createQuestion({
-  //   questionId,
-  //   orgId: user.orgId,
-  //   GSI1SK,
-  //   description,
-  // });
+  // TODO transaction
 
-  // if (error) {
-  //   if (error.name === 'TransactionCanceledException') {
-  //     return res.status(409).json({ message: 'A question already exists with this ID' });
-  //   }
+  // Increment totalQuestions count on org
+  // Create question entity
 
-  //   const { status, body } = CreateError.SDK(error, 'An error ocurred creating your question');
-  //   return res.status(status).json(body);
-  // }
-  // return res.status(201).json({ message: 'Question created!', question: created });
+  const session = mongoClient.startSession();
+  const now = new Date();
+  const newQuestion: QuestionEntity = {
+    createdAt: now,
+    updatedAt: now,
+    id: questionId,
+    description,
+    totalStages: 0,
+    type: QuestionType.Text,
+    title: GSI1SK,
+    target: [{ property: IndexableProperties.Org, value: org }],
+  };
+  let transactionResults;
+  try {
+    transactionResults = await session.withTransaction(async () => {
+      const orgFilter: Filter<OrgEntity> = {
+        id: org,
+      };
+      const orgUpdate: UpdateFilter<OrgEntity> = {
+        $inc: { totalQuestions: 1 },
+      };
+
+      await collections.orgs.updateOne(orgFilter, orgUpdate, { session });
+
+      await collections.questions.insertOne(newQuestion, { session });
+      await session.commitTransaction();
+    });
+  } catch (error) {
+    const msg = 'An error ocurred creating that question';
+    console.error(msg, error);
+    return res.status(500).json({ message: msg });
+  } finally {
+    await session.endSession();
+  }
+  return res.status(201).json({ message: 'Question created!', question: newQuestion });
 };
