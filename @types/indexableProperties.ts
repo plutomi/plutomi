@@ -2,6 +2,7 @@ export enum IndexableProperties {
   /**
    * Self referential ID of the entity, can also be a custom ID that is not Mongo's _id
    */
+  CustomId = 'CustomId',
   User = 'User',
   UserLoginLink = 'UserLoginLink',
   Org = 'Org',
@@ -24,4 +25,4 @@ export enum IndexableProperties {
 
 export type IndexIdTypes = string | null;
 export type IndexedTargetArrayItem = { property: IndexableProperties; value: IndexIdTypes };
-export type IndexedTargetArray = Array<IndexedTargetArrayItem>;
+export type IndexedTargetArray = Array<IndexedTargetArrayItem | { customId: string }>;

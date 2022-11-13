@@ -52,7 +52,7 @@ export const login = async (req: Request, res: Response) => {
 
   console.log('Trying to find login link with id of', loginLinkId);
   const loginLinkFilter: Filter<UserLoginLinkEntity> = {
-    id: loginLinkId,
+    target: [{ property: IndexableProperties.CustomId, value: loginLinkId }],
   };
   try {
     loginLink = (await collections.loginLinks.findOne(loginLinkFilter)) as UserLoginLinkEntity;

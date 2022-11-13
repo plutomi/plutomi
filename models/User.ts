@@ -4,13 +4,14 @@ import { Extends } from '../@types/extends';
 
 export type UserTargetArray = Array<
   Omit<IndexedTargetArrayItem, 'property'> & {
-    property: Extends<keyof typeof IndexableProperties, 'Org' | 'Email'>;
+    property: Extends<keyof typeof IndexableProperties, 'Org' | 'Email' | 'CustomId'>;
   }
 >;
 
 export interface UserEntity extends BaseEntity {
   firstName: string;
   lastName: string;
+  orgId: string | null;
   emailVerified: boolean;
   canReceiveEmails: boolean;
   totalInvites: number;

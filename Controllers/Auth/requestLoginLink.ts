@@ -87,8 +87,10 @@ export const requestLoginLink = async (req: Request, res: Response) => {
       console.log(`Creating new user`);
 
       const now = new Date();
+      const newUserId = generateId({});
       const newUser: UserEntity = {
-        id: generateId({}),
+        id: newUserId,
+        orgId: null,
         createdAt: now,
         updatedAt: now,
         totalInvites: 0,
@@ -97,6 +99,7 @@ export const requestLoginLink = async (req: Request, res: Response) => {
         emailVerified: false,
         canReceiveEmails: true,
         target: [
+          { property: IndexableProperties.CustomId, value: newUserId },
           { property: IndexableProperties.Org, value: null },
           { property: IndexableProperties.Email, value: email },
         ],
