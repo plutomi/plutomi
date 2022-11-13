@@ -1,16 +1,15 @@
-import { IndexableProperties, IndexedTargetArrayItem } from '../@types/indexableProperties';
+import { IndexableProperties } from '../@types/indexableProperties';
 import { BaseEntity } from './Base';
-import { Extends } from '../@types/extends';
 
-export type InvitesTargetArray = Array<
-  Omit<IndexedTargetArrayItem, 'property'> & {
-    property: Extends<keyof typeof IndexableProperties, 'Email' | 'User' | 'Org'>;
-  }
->;
-/**
- * There is no collection for this, it's just a type
- */
+export type InvitesTargetArray = [
+  {
+    property: IndexableProperties.Email;
+    value: string;
+  },
+];
 export interface InviteEntity extends BaseEntity {
+  userId: string; // Compound index with ID
+  orgId: string; // Compound index with ID
   createdBy: {
     name: string | null;
     email: string;

@@ -6,13 +6,10 @@ export enum QuestionType {
   Text = 'Text',
   // TODO: More question types
 }
-export type QuestionTargetArray = Array<
-  Omit<IndexedTargetArrayItem, 'property'> & {
-    property: Extends<keyof typeof IndexableProperties, 'Org'>;
-  }
->;
 
+export type QuestionTargetArray = [];
 export interface QuestionEntity extends BaseEntity {
+  orgId: string; // Compound index with ID
   title: string;
   description: string;
   type: QuestionType;

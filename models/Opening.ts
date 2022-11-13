@@ -8,6 +8,7 @@ export type OpeningTargetArray = [
 
 export interface OpeningEntity extends BaseEntity {
   name: string;
+  orgId: string; // Compound index with Id
   totalApplicants: number;
   totalStages: number;
   target: OpeningTargetArray;
