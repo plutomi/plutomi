@@ -1,6 +1,6 @@
 export enum IndexableProperties {
   /**
-   * Self referential ID of the entity, can also be a custom ID that is not Mongo's _id
+   *  Only used for users as they don't have a compound index with an orgId or a userId
    */
   CustomId = 'CustomId',
   User = 'User',

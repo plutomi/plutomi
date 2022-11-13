@@ -10,7 +10,7 @@ export type StageQuestionItemTargetArray = Array<
   Omit<IndexedTargetArrayItem, 'property'> & {
     property: Extends<
       keyof typeof IndexableProperties,
-      'Org' | 'PreviousQuestion' | 'NextQuestion' | 'Stage' | 'Question'
+      'PreviousQuestion' | 'NextQuestion' | 'Stage' | 'Question'
     >;
   }
 >;

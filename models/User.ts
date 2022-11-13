@@ -1,17 +1,15 @@
-import { IndexableProperties, IndexedTargetArrayItem } from '../@types/indexableProperties';
+import { IndexableProperties } from '../@types/indexableProperties';
 import { BaseEntity } from './Base';
-import { Extends } from '../@types/extends';
 
-export type UserTargetArray = Array<
-  Omit<IndexedTargetArrayItem, 'property'> & {
-    property: Extends<keyof typeof IndexableProperties, 'Org' | 'Email' | 'CustomId'>;
-  }
->;
+export type UserTargetArray = [
+  { property: IndexableProperties.CustomId; value: string },
+  { property: IndexableProperties.Email; value: string },
+  { property: IndexableProperties.Org; value: string | null },
+];
 
 export interface UserEntity extends BaseEntity {
   firstName: string;
   lastName: string;
-  orgId: string | null;
   emailVerified: boolean;
   canReceiveEmails: boolean;
   totalInvites: number;

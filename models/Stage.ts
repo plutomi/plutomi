@@ -4,10 +4,7 @@ import { Extends } from '../@types/extends';
 
 export type StageTargetArray = Array<
   Omit<IndexedTargetArrayItem, 'property'> & {
-    property: Extends<
-      keyof typeof IndexableProperties,
-      'Org' | 'NextStage' | 'PreviousStage' | 'Opening'
-    >;
+    property: Extends<keyof typeof IndexableProperties, 'NextStage' | 'PreviousStage' | 'Opening'>;
   }
 >;
 

@@ -33,12 +33,9 @@ export const connectToDatabase = async () => {
 
   const db: mongoDB.Db = client.db('development');
 
-  // Needs index on id field
   const usersCollection: mongoDB.Collection = db.collection(Collections.Users);
   const loginLinksCollection: mongoDB.Collection = db.collection(Collections.LoginLinks);
   const orgsCollection: mongoDB.Collection = db.collection(Collections.Orgs);
-
-  // Needs compound index on orgId and id fields
   const openingsCollection: mongoDB.Collection = db.collection(Collections.Openings);
   const stagesCollection: mongoDB.Collection = db.collection(Collections.Stages);
   const questionsCollection: mongoDB.Collection = db.collection(Collections.Questions);
@@ -60,8 +57,20 @@ export const connectToDatabase = async () => {
   collections.invites = invitesCollection;
   collections.stageQuestionItem = stageQuestionItemCollection;
 
-  console.log(`Creating necessary collections and indexes`);
+  const collectionsThatNeedOrgIdAndCustomId = [
+    openingsCollection,
+    stagesCollection,
+    applicantsCollection,
+    questionsCollection,
+    webhooksCollection,
+    applicantsCollection,
+    stageQuestionItemCollection,
+    invitesCollection,
+  ];
 
+  const collectionsThatNeedUserIdAndCustomId = [loginLinksCollection];
+
+  console.log(`Creating necessary collections and indexes`);
   const collectionData = await db.listCollections({}, { nameOnly: true }).toArray();
   const collectionNames = collectionData.map((item) => item.name);
   Object.values(collections).map(async (collection) => {
@@ -78,17 +87,44 @@ export const connectToDatabase = async () => {
 
     try {
       // Create target array index on all entities
-      const targetArrayIndexName = 'target_and_custom_id';
-      const targetIndexExists = await collection.indexExists(targetArrayIndexName);
+      if (collection) {
+        const indexName = 'target';
+        const indexExists = await collection.indexExists(indexName);
+        if (!indexExists) {
+          console.info(`Creating target array index...`);
+          const indexKey: mongoDB.IndexSpecification = { target: 1 };
+          await collection.createIndex(indexKey, { name: indexName });
+          console.info(`Index created!`);
+        }
+      }
 
-      if (!targetIndexExists) {
-        console.info(`Creating target array index...`);
-        const indexKey: mongoDB.IndexSpecification = { target: 1, 'target.customId': 1 };
-        await collection.createIndex(indexKey, { name: targetArrayIndexName });
-        console.info(`Index created!`);
+      // Create compound index of `orgId` and `id` on these entities
+      if (collectionsThatNeedOrgIdAndCustomId.includes(collection)) {
+        const indexName = 'orgId_custom_id';
+        const indexExists = await collection.indexExists(indexName);
+
+        if (!indexExists) {
+          console.info(`Creating target array index...`);
+          const indexKey: mongoDB.IndexSpecification = { orgId: 1, id: 1 };
+          await collection.createIndex(indexKey, { name: indexName, unique: true });
+          console.info(`Index created!`);
+        }
+      }
+
+      // Create a compound index of `userId` and `id` on these entities
+      if (collectionsThatNeedUserIdAndCustomId.includes(collection)) {
+        const indexName = 'userId_custom_id';
+        const indexExists = await collection.indexExists(indexName);
+
+        if (!indexExists) {
+          console.info(`Creating target array index...`);
+          const indexKey: mongoDB.IndexSpecification = { userId: 1, id: 1 };
+          await collection.createIndex(indexKey, { name: indexName, unique: true });
+          console.info(`Index created!`);
+        }
       }
     } catch (error) {
-      console.error(`Error creating index!`, error);
+      console.error(`Error creating target array index!`, error);
     }
   });
 

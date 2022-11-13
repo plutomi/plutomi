@@ -100,8 +100,8 @@ export const requestLoginLink = async (req: Request, res: Response) => {
         canReceiveEmails: true,
         target: [
           { property: IndexableProperties.CustomId, value: newUserId },
-          { property: IndexableProperties.Org, value: null },
           { property: IndexableProperties.Email, value: email },
+          { property: IndexableProperties.Org, value: null },
         ],
       };
 
@@ -182,12 +182,8 @@ export const requestLoginLink = async (req: Request, res: Response) => {
       createdAt: now,
       updatedAt: now,
       id: generateId({ length: 100, fullAlphabet: true }),
-      target: [
-        {
-          property: IndexableProperties.User,
-          value: userId,
-        },
-      ],
+      userId,
+      target: [],
     };
     await collections.loginLinks.insertOne(newLoginLink);
 

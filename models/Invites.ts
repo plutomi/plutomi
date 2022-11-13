@@ -4,7 +4,7 @@ import { Extends } from '../@types/extends';
 
 export type InvitesTargetArray = Array<
   Omit<IndexedTargetArrayItem, 'property'> & {
-    property: Extends<keyof typeof IndexableProperties, 'Org' | 'Email' | 'User'>;
+    property: Extends<keyof typeof IndexableProperties, 'Email' | 'User'>;
   }
 >;
 /**
@@ -15,7 +15,6 @@ export interface InviteEntity extends BaseEntity {
     name: string | null;
     email: string;
   };
-
   recipientName: string | null;
   /**
    * Display name for the org

@@ -87,8 +87,9 @@ export const createInvite = async (req: Request, res: Response) => {
   if (!recipient) {
     console.log('Recipient not found');
     // Invite is for a user that doesn't exist
+    const userId = generateId({});
     const newUser: UserEntity = {
-      id: generateId({}),
+      id: userId,
       createdAt: now,
       updatedAt: now,
       orgId: null,
@@ -98,8 +99,9 @@ export const createInvite = async (req: Request, res: Response) => {
       emailVerified: false,
       canReceiveEmails: true,
       target: [
-        { property: IndexableProperties.Org, value: null },
+        { property: IndexableProperties.CustomId, value: userId },
         { property: IndexableProperties.Email, value: recipientEmail },
+        { property: IndexableProperties.Org, value: null },
       ],
     };
 

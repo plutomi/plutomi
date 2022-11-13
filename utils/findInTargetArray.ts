@@ -5,8 +5,6 @@ import {
   StageQuestionItemEntity,
   UserEntity,
   UserLoginLinkEntity,
-  UserLoginLinkTargetArray,
-  UserTargetArray,
 } from '../models';
 import {
   IndexableProperties,
