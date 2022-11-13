@@ -14,5 +14,5 @@ orgs.use(withHasOrg);
 orgs.get('', API.Orgs.getOrg);
 orgs.delete('', API.Orgs.leaveAndDeleteOrg);
 orgs.get('/:orgId/invites', withSameOrg, API.Invites.getInvitesForOrg);
-orgs.delete('/:orgId/users/:userId', withSameOrg, API.Users.removeUserFromOrg); // TODO put instead?
+orgs.delete('/:orgId/users/:userId', withSameOrg, API.Users.removeUserFromOrg); 
 orgs.delete('/:orgId/invites/:inviteId', withSameOrg, API.Invites.cancelInvite);
