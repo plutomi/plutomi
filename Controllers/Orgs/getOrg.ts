@@ -1,8 +1,6 @@
 import { Request, Response } from 'express';
 import { OrgEntity } from '../../models';
 import { Filter } from 'mongodb';
-import { findInTargetArray } from '../../utils/findInTargetArray';
-import { IndexableProperties } from '../../@types/indexableProperties';
 import { collections } from '../../utils/connectToDatabase';
 
 export const getOrg = async (req: Request, res: Response) => {
@@ -11,7 +9,8 @@ export const getOrg = async (req: Request, res: Response) => {
   let org: OrgEntity;
 
   const { orgId } = user;
-  
+  if (!orgId) return res.status(404).json({ message: 'Org not found' });
+
   const orgFilter: Filter<OrgEntity> = {
     id: orgId,
   };

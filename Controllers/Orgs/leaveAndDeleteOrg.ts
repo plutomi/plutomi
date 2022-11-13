@@ -3,17 +3,20 @@ import { Filter, UpdateFilter } from 'mongodb';
 import { IndexableProperties } from '../../@types/indexableProperties';
 import { OrgEntity, UserEntity } from '../../models';
 import { collections, mongoClient } from '../../utils/connectToDatabase';
-import { findInTargetArray } from '../../utils/findInTargetArray';
 
 export const leaveAndDeleteOrg = async (req: Request, res: Response) => {
   const { user } = req;
-
   const { orgId } = user;
+
+  if (!orgId) {
+    return res.status(404).json({ message: 'Org not found!' });
+  }
   let org: OrgEntity | undefined;
 
   const orgFilter: Filter<OrgEntity> = {
     id: orgId,
   };
+
   try {
     org = (await collections.orgs.findOne(orgFilter)) as OrgEntity;
   } catch (error) {
@@ -23,7 +26,7 @@ export const leaveAndDeleteOrg = async (req: Request, res: Response) => {
   }
 
   if (!org) {
-    return res.status(404).json({ message: 'Org not found' });
+    return res.status(404).json({ message: 'Org not found!' });
   }
 
   if (org.totalUsers > 1) {
@@ -35,18 +38,11 @@ export const leaveAndDeleteOrg = async (req: Request, res: Response) => {
   let transactionResults;
 
   const userFilter: Filter<UserEntity> = {
-    $and: [
-      { id: user.id },
-      {
-        target: {
-          property: IndexableProperties.Org,
-          value: orgId,
-        },
-      },
-    ],
+    id: user.id,
+    orgId,
   };
   const userUpdateFilter: UpdateFilter<UserEntity> = {
-    $set: { 'target.$.value': null, orgJoinDate: null },
+    $set: { orgId: null, orgJoinDate: null },
   };
 
   const session = mongoClient.startSession();

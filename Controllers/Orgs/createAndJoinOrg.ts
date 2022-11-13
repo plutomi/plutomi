@@ -77,20 +77,10 @@ export const createAndJoinOrg = async (req: Request, res: Response) => {
   }
 
   const userFilter: Filter<UserEntity> = {
-    $and: [
-      {
-        id: user.id,
-      },
-      {
-        target: {
-          property: IndexableProperties.Org,
-          value: null,
-        },
-      },
-    ],
+    id: user.id,
   };
   const userUpdateFilter: UpdateFilter<UserEntity> = {
-    $set: { 'target.$.value': orgId, orgJoinDate: new Date() },
+    $set: { orgId, orgJoinDate: new Date() },
   };
 
   const session = mongoClient.startSession();
@@ -113,7 +103,8 @@ export const createAndJoinOrg = async (req: Request, res: Response) => {
         totalQuestions: 0,
         totalUsers: 1,
         totalWebhooks: 0,
-        target: [{ property: IndexableProperties.CreatedBy, value: user.id }],
+        createdBy: user.id,
+        target: [],
         displayName,
       };
       await collections.orgs.insertOne(newOrg, { session });

@@ -98,10 +98,7 @@ export const requestLoginLink = async (req: Request, res: Response) => {
         lastName: null,
         emailVerified: false,
         canReceiveEmails: true,
-        target: [
-          { property: IndexableProperties.CustomId, value: newUserId },
-          { property: IndexableProperties.Email, value: email },
-        ],
+        target: [{ property: IndexableProperties.Email, value: email }],
       };
 
       console.log(`Creating new user`, newUser);

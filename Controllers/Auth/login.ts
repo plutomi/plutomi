@@ -1,11 +1,10 @@
 import { Request, Response } from 'express';
 import Joi from 'joi';
-import { JOI_SETTINGS, WEBSITE_URL, COOKIE_NAME, COOKIE_SETTINGS, Emails } from '../../Config';
+import { JOI_SETTINGS, WEBSITE_URL, COOKIE_NAME, COOKIE_SETTINGS } from '../../Config';
 import { env } from '../../env';
 import { UserEntity, UserLoginLinkEntity } from '../../models';
-import { Filter, Sort } from 'mongodb';
+import { Filter } from 'mongodb';
 import { collections } from '../../utils/connectToDatabase';
-import { IndexableProperties } from '../../@types/indexableProperties';
 
 const jwt = require('jsonwebtoken');
 
@@ -99,7 +98,6 @@ export const login = async (req: Request, res: Response) => {
 
   const userFilter: Filter<UserEntity> = {
     id: userId,
-    $or: [ { orgId: null}]
   };
   try {
     user = (await collections.users.findOne(userFilter)) as UserEntity;

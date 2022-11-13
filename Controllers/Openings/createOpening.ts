@@ -2,7 +2,6 @@ import { Request, Response } from 'express';
 import Joi from 'joi';
 import { JOI_SETTINGS, LIMITS, OpeningState } from '../../Config';
 import { Filter, UpdateFilter } from 'mongodb';
-import { findInTargetArray } from '../../utils/findInTargetArray';
 import { OpeningEntity } from '../../models/Opening';
 import { OrgEntity } from '../../models';
 import { IndexableProperties } from '../../@types/indexableProperties';
@@ -38,7 +37,7 @@ export const createOpening = async (req: Request, res: Response) => {
   const now = new Date();
   const newOpening: OpeningEntity = {
     id: generateId({}),
-    orgId: orgId,
+    orgId,
     name,
     totalApplicants: 0,
     totalStages: 0,

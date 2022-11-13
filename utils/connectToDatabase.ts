@@ -66,6 +66,7 @@ export const connectToDatabase = async () => {
     applicantsCollection,
     stageQuestionItemCollection,
     invitesCollection,
+    usersCollection,
   ];
 
   const collectionsThatNeedUserIdAndCustomId = [loginLinksCollection, invitesCollection];

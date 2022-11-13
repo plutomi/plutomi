@@ -25,7 +25,7 @@ export const getOpeningsInOrg = async (req: Request, res: Response) => {
   let openings: OpeningEntity[] | undefined;
 
   const openingsFilter: Filter<OpeningEntity> = {
-    target: { property: IndexableProperties.Org, value: orgId },
+    orgId,
   };
   try {
     openings = (await collections.openings.find(openingsFilter).toArray()) as OpeningEntity[];
