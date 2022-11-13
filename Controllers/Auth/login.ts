@@ -99,6 +99,7 @@ export const login = async (req: Request, res: Response) => {
 
   const userFilter: Filter<UserEntity> = {
     id: userId,
+    $or: [ { orgId: null}]
   };
   try {
     user = (await collections.users.findOne(userFilter)) as UserEntity;

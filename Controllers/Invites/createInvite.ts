@@ -101,7 +101,6 @@ export const createInvite = async (req: Request, res: Response) => {
       target: [
         { property: IndexableProperties.CustomId, value: userId },
         { property: IndexableProperties.Email, value: recipientEmail },
-        { property: IndexableProperties.Org, value: null },
       ],
     };
 
@@ -141,15 +140,12 @@ export const createInvite = async (req: Request, res: Response) => {
   };
 
   // Check if the user already has a pending invite for the org they are being invited to
-
   const invitesFilter: Filter<InviteEntity> = {
-    $and: [
-      { target: { property: IndexableProperties.Org, value: userOrgId } },
-      { target: { property: IndexableProperties.Email, value: recipientEmail } },
-    ],
+    orgId: userOrgId,
+    target: { property: IndexableProperties.Email, value: recipientEmail },
   };
-  const currentInvites = await collections.invites.findOne(invitesFilter);
-  if (currentInvites) {
+  const currentInvite = await collections.invites.findOne(invitesFilter);
+  if (currentInvite) {
     return res.status(403).json({
       message: 'This user already has a pending invite for your org, they can log in to claim it',
     });

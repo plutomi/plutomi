@@ -101,7 +101,6 @@ export const requestLoginLink = async (req: Request, res: Response) => {
         target: [
           { property: IndexableProperties.CustomId, value: newUserId },
           { property: IndexableProperties.Email, value: email },
-          { property: IndexableProperties.Org, value: null },
         ],
       };
 

@@ -68,7 +68,7 @@ export const connectToDatabase = async () => {
     invitesCollection,
   ];
 
-  const collectionsThatNeedUserIdAndCustomId = [loginLinksCollection];
+  const collectionsThatNeedUserIdAndCustomId = [loginLinksCollection, invitesCollection];
 
   console.log(`Creating necessary collections and indexes`);
   const collectionData = await db.listCollections({}, { nameOnly: true }).toArray();
@@ -86,7 +86,7 @@ export const connectToDatabase = async () => {
     }
 
     try {
-      // Create target array index on all entities
+      // Create target array index on ALL entities
       if (collection) {
         const indexName = 'target';
         const indexExists = await collection.indexExists(indexName);
@@ -98,33 +98,55 @@ export const connectToDatabase = async () => {
         }
       }
 
-      // Create compound index of `orgId` and `id` on these entities
+      /**
+       * Create compound index of `orgId` and `id` on these entities
+       * Note: This is for entities that an org directly owns, it does not apply to users
+       * as that would allow a duplicate userId for people in an org and not in an org
+       */
       if (collectionsThatNeedOrgIdAndCustomId.includes(collection)) {
         const indexName = 'orgId_custom_id';
         const indexExists = await collection.indexExists(indexName);
 
         if (!indexExists) {
-          console.info(`Creating target array index...`);
+          console.info(`Creating orgId and customId index...`);
           const indexKey: mongoDB.IndexSpecification = { orgId: 1, id: 1 };
           await collection.createIndex(indexKey, { name: indexName, unique: true });
           console.info(`Index created!`);
         }
       }
 
-      // Create a compound index of `userId` and `id` on these entities
+      /**
+       * Create a compound index of `userId` and `id` on these entities.
+       * This is for things like login links and org invites
+       */
       if (collectionsThatNeedUserIdAndCustomId.includes(collection)) {
         const indexName = 'userId_custom_id';
         const indexExists = await collection.indexExists(indexName);
 
         if (!indexExists) {
-          console.info(`Creating target array index...`);
+          console.info(`Creating userId and customId array index...`);
           const indexKey: mongoDB.IndexSpecification = { userId: 1, id: 1 };
           await collection.createIndex(indexKey, { name: indexName, unique: true });
           console.info(`Index created!`);
         }
       }
+
+      /**
+       * Create a global index on the `id` field of a user
+       */
+      if (collection === usersCollection) {
+        const indexName = 'custom_id';
+        const indexExists = await collection.indexExists(indexName);
+
+        if (!indexExists) {
+          console.info(`Creating unique global id index...`);
+          const indexKey: mongoDB.IndexSpecification = { id: 1 };
+          await collection.createIndex(indexKey, { name: indexName, unique: true });
+          console.info(`Index created!`);
+        }
+      }
     } catch (error) {
-      console.error(`Error creating target array index!`, error);
+      console.error(`Error creating indexes!`, error);
     }
   });
 

@@ -4,7 +4,7 @@ import { Extends } from '../@types/extends';
 
 export type InvitesTargetArray = Array<
   Omit<IndexedTargetArrayItem, 'property'> & {
-    property: Extends<keyof typeof IndexableProperties, 'Email' | 'User'>;
+    property: Extends<keyof typeof IndexableProperties, 'Email' | 'User' | 'Org'>;
   }
 >;
 /**

@@ -12,9 +12,4 @@ export interface BaseEntity {
    * Custom ID, created with {@link generateId}. Unique across
    */
   id: string;
-
-  /**
-   * Most entities will have an orgId
-   */
-  orgId: string | null;
 }

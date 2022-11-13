@@ -1,12 +1,10 @@
-import { IndexableProperties, IndexedTargetArrayItem } from '../@types/indexableProperties';
+import { IndexableProperties } from '../@types/indexableProperties';
 import { BaseEntity } from './Base';
-import { Extends } from '../@types/extends';
+import { OpeningState } from '../Config';
 
-export type OpeningTargetArray = Array<
-  Omit<IndexedTargetArrayItem, 'property'> & {
-    property: Extends<keyof typeof IndexableProperties, 'OpeningState'>;
-  }
->;
+export type OpeningTargetArray = [
+  { property: IndexableProperties.OpeningState; value: OpeningState },
+];
 
 export interface OpeningEntity extends BaseEntity {
   name: string;

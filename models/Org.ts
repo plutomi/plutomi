@@ -2,13 +2,9 @@ import { Extends } from '../@types/extends';
 import { IndexableProperties, IndexedTargetArrayItem } from '../@types/indexableProperties';
 import { BaseEntity } from './Base';
 
-export type OrgTargetArray = Array<
-  Omit<IndexedTargetArrayItem, 'property'> & {
-    property: Extends<keyof typeof IndexableProperties, 'CreatedBy'>;
-  }
->;
+export type OrgTargetArray = [{ property: IndexableProperties.CreatedBy; value: string }];
 
-export interface OrgEntity extends Omit<BaseEntity, 'orgId'> {
+export interface OrgEntity extends BaseEntity {
   displayName: string;
   totalApplicants: number;
   totalUsers: number;
