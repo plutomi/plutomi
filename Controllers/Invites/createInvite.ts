@@ -98,10 +98,7 @@ export const createInvite = async (req: Request, res: Response) => {
       lastName: null,
       emailVerified: false,
       canReceiveEmails: true,
-      target: [
-        { property: IndexableProperties.CustomId, value: userId },
-        { property: IndexableProperties.Email, value: recipientEmail },
-      ],
+      target: [{ property: IndexableProperties.Email, value: recipientEmail }],
     };
 
     try {
@@ -122,21 +119,19 @@ export const createInvite = async (req: Request, res: Response) => {
   const recipientHasBothNames = recipient.firstName && recipient.lastName;
   // Now let's create an invite
   const newInvite: InviteEntity = {
+    id: generateId({ fullAlphabet: true }),
+    orgId: orgInfo.id,
+    userId: recipient.id,
     orgName: orgInfo.displayName,
     createdAt: now,
     updatedAt: now,
-    id: generateId({ fullAlphabet: true }),
-    orgId: orgInfo.id,
     recipientName: recipientHasBothNames ? `${recipient.firstName} ${recipient.lastName}` : null,
     createdBy: {
       name: senderHasBothNames ? `${user.firstName} ${user.lastName}` : null,
       email: userEmail,
     },
     expiresAt: dayjs(now).add(expiresInDays, 'days').toDate(),
-    target: [
-      { property: IndexableProperties.Email, value: recipientEmail },
-      { property: IndexableProperties.User, value: recipient.id },
-    ],
+    target: [{ property: IndexableProperties.Email, value: recipientEmail }],
   };
 
   // Check if the user already has a pending invite for the org they are being invited to

@@ -1,6 +1,11 @@
+import { IndexableProperties, IndexedTargetArrayItem } from '../@types/indexableProperties';
 import { BaseEntity } from './Base';
 
-export type OrgTargetArray = [];
+export type OrgTargetArray = Array<
+  Omit<IndexedTargetArrayItem, 'property'> & {
+    property: keyof typeof IndexableProperties;
+  }
+>;
 
 export interface OrgEntity extends BaseEntity {
   displayName: string;

@@ -6,24 +6,15 @@ import { Extends } from '../@types/extends';
  * Many to Many between stages and question item
  */
 
-export type StageQuestionItemTargetArray = [
-  {
-    property: IndexableProperties.PreviousQuestion;
-    value: string;
-  },
-  {
-    property: IndexableProperties.NextQuestion;
-    value: string;
-  },
-  {
-    property: IndexableProperties.Stage;
-    value: string;
-  },
-  {
-    property: IndexableProperties.Question;
-    value: string;
-  },
-];
+export type StageQuestionItemTargetArray = Array<
+  Omit<IndexedTargetArrayItem, 'property'> & {
+    property: Extends<
+      keyof typeof IndexableProperties,
+      'PreviousQuestion' | 'NextQuestion' | 'Stage' | 'Question'
+    >;
+  }
+>;
+
 export interface StageQuestionItemEntity extends BaseEntity {
   orgId: string; // Compound index with ID
   target: StageQuestionItemTargetArray;

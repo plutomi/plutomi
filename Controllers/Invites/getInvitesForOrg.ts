@@ -2,7 +2,6 @@ import { Request, Response } from 'express';
 import { Filter } from 'mongodb';
 import { IndexableProperties } from '../../@types/indexableProperties';
 import { InviteEntity } from '../../models';
-import { findInTargetArray } from '../../utils';
 import { collections } from '../../utils/connectToDatabase';
 
 export const getInvitesForOrg = async (req: Request, res: Response) => {

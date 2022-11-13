@@ -32,7 +32,7 @@ export const cancelInvite = async (req: Request, res: Response) => {
   let invite: InviteEntity | undefined;
   const inviteFilter: Filter<InviteEntity> = {
     id: inviteId,
-    target: { property: IndexableProperties.Org, value: userOrgId },
+    orgId: userOrgId,
   };
 
   try {
@@ -54,11 +54,8 @@ export const cancelInvite = async (req: Request, res: Response) => {
     transactionResults = await session.withTransaction(async () => {
       await collections.invites.deleteOne(inviteFilter, { session });
 
-      // TODO add session to other with transaction
-
       const userFilter: Filter<UserEntity> = {
-        // This should be redundant but its a
-        $or: [{ id: findInTargetArray(IndexableProperties.User, invite) }],
+        id: invite.userId,
       };
       const userUpdate: UpdateFilter<UserEntity> = {
         $inc: { totalInvites: -1 },
