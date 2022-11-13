@@ -33,9 +33,12 @@ export const connectToDatabase = async () => {
 
   const db: mongoDB.Db = client.db('development');
 
+  // Needs index on id field
   const usersCollection: mongoDB.Collection = db.collection(Collections.Users);
   const loginLinksCollection: mongoDB.Collection = db.collection(Collections.LoginLinks);
   const orgsCollection: mongoDB.Collection = db.collection(Collections.Orgs);
+
+  // Needs compound index on orgId and id fields
   const openingsCollection: mongoDB.Collection = db.collection(Collections.Openings);
   const stagesCollection: mongoDB.Collection = db.collection(Collections.Stages);
   const questionsCollection: mongoDB.Collection = db.collection(Collections.Questions);
@@ -62,6 +65,7 @@ export const connectToDatabase = async () => {
   const collectionData = await db.listCollections({}, { nameOnly: true }).toArray();
   const collectionNames = collectionData.map((item) => item.name);
   Object.values(collections).map(async (collection) => {
+    // Create collection if it odes not exist
     if (!collectionNames.includes(collection.collectionName)) {
       try {
         console.log('Creating collection', collection.collectionName);
@@ -73,6 +77,7 @@ export const connectToDatabase = async () => {
     }
 
     try {
+      // 1. Create target array index on all entities
       const targetArrayIndexName = 'target';
       const targetIndexExists = await collection.indexExists(targetArrayIndexName);
 
@@ -83,13 +88,29 @@ export const connectToDatabase = async () => {
         console.info(`Index created!`);
       }
 
+      // Don't create a compound index on orgId and id for these collections
       const customIdIndexName = 'custom_id';
       const customIdIndexExists = await collection.indexExists(customIdIndexName);
 
-      if (!customIdIndexExists) {
-        console.info(`Creating Custom ID index...`);
-        await collection.createIndex('id', { name: customIdIndexName, unique: true });
-        console.info(`Index created!`);
+      const orgAndCustomIdIndexName = 'org_and_custom_id';
+      const orgAndCustomIdIndexExists = await collection.indexExists(orgAndCustomIdIndexName);
+
+      if (!customIdIndexExists || !orgAndCustomIdIndexExists) {
+        const skipCompoundOrgAndIdIndex = [usersCollection, orgsCollection, loginLinksCollection];
+
+        if (skipCompoundOrgAndIdIndex.includes(collection)) {
+          console.info(`Creating Custom ID index...`);
+          await collection.createIndex('id', { name: customIdIndexName, unique: true });
+          console.info(`Index created!`);
+        } else {
+          // Create a compound index on the orgId and the id field
+          console.info(`Creating Custom ID index...`);
+          await collection.createIndex(
+            { orgId: 1, id: 1 },
+            { name: orgAndCustomIdIndexName, unique: true },
+          );
+          console.info(`Index created!`);
+        }
       }
     } catch (error) {
       console.error(`Error creating index!`, error);

@@ -32,7 +32,7 @@ export const addQuestionToStage = async (req: Request, res: Response) => {
   const { questionId, position }: { questionId: string; position?: number } = req.body;
   const { stageId } = req.params; // TODO update route to not include openingId
 
-  const orgId = findInTargetArray(IndexableProperties.Org, user);
+  const { orgId } = user;
   const stageFilter: Filter<StageEntity> = {
     id: stageId,
     target: [
@@ -103,8 +103,9 @@ export const addQuestionToStage = async (req: Request, res: Response) => {
     createdAt: now,
     updatedAt: now,
     id: newStageQuestionItemId,
+    orgId,
     target: [
-      { property: IndexableProperties.Org, value: orgId },
+      { property: IndexableProperties.Question, value: questionId },
       {
         property: IndexableProperties.PreviousQuestion,
         value: currentLastStageQuestionItem

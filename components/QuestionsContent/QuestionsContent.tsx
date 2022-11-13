@@ -1,6 +1,5 @@
 import { PlusIcon } from '@heroicons/react/solid';
 import { useQuestionsInOrg } from '../../SWR/useQuestionsInOrg';
-import { DynamoQuestion } from '../../@types/dynamo';
 import useStore from '../../utils/store';
 import { useOrgInfo } from '../../SWR/useOrgInfo';
 import { useSelf } from '../../SWR/useSelf';
@@ -11,10 +10,11 @@ import { UpdateQuestionModal } from '../UpdateQuestionModal';
 import { QuestionItem } from '../QuestionItem';
 import { findInTargetArray } from '../../utils/findInTargetArray';
 import { IndexableProperties } from '../../@types/indexableProperties';
+import { QuestionEntity } from '../../models';
 
 export const QuestionsContent = () => {
   const { user, isUserLoading, isUserError } = useSelf();
-  const orgId = findInTargetArray(IndexableProperties.Org, user);
+  const { orgId } = user;
   const { org, isOrgLoading, isOrgError } = useOrgInfo({
     orgId,
   });
@@ -50,8 +50,8 @@ export const QuestionsContent = () => {
           </div>
           <div>
             <ul className="divide-y divide-gray-200 mx-auto max-w-xl flex-col space-y-4   ">
-              {orgQuestions?.map((question: DynamoQuestion) => (
-                <QuestionItem key={question?.questionId} question={question} />
+              {orgQuestions?.map((question: QuestionEntity) => (
+                <QuestionItem key={question.id} question={question} />
               ))}
             </ul>
           </div>

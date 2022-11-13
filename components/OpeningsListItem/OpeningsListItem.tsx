@@ -36,7 +36,6 @@ export const OpeningsListItem = ({ opening }: OpeningsListItemProps) => {
       : `settings`;
 
   const openingState = findInTargetArray(IndexableProperties.OpeningState, opening);
-  const orgId = findInTargetArray(IndexableProperties.Org, opening);
   return (
     <li key={opening.id}>
       <Link href={`/openings/${opening.id}/${endingUrl}`}>
@@ -77,7 +76,7 @@ export const OpeningsListItem = ({ opening }: OpeningsListItemProps) => {
                   <p className="mt-2 flex items-center text-lg text-normal sm:mt-0 sm:ml-6">
                     <ClickToCopy
                       showText="Application Link"
-                      copyText={`${WEBSITE_URL}/${orgId}/${opening.id}/apply`}
+                      copyText={`${WEBSITE_URL}/${opening.orgId}/${opening.id}/apply`}
                     />
                   </p>
                 )}

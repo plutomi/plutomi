@@ -10,11 +10,11 @@ export const acceptInvite = async (req: Request, res: Response) => {
   const { inviteId } = req.params;
   const { user } = req;
 
-  const userOrg = findInTargetArray(IndexableProperties.Org, user);
+  const { orgId } = user;
 
-  if (userOrg) {
+  if (orgId) {
     return res.status(403).json({
-      message: `You already belong to an org: ${userOrg} - delete it before joining another one!`,
+      message: `You already belong to an org: ${orgId} - delete it before joining another one!`,
     });
   }
 
@@ -44,13 +44,13 @@ export const acceptInvite = async (req: Request, res: Response) => {
     return res.status(404).json({ message: 'Invite not found!' });
   }
 
-  const inviteOrgId = findInTargetArray(IndexableProperties.Org, invite);
+  const { orgId: inviteOrgId } = invite;
 
   let deleteInvite = false;
   /**
    * Not sure how this would happen as we do a check before the invite is sent to prevent this...
    */
-  if (inviteOrgId === userOrg) {
+  if (inviteOrgId === orgId) {
     deleteInvite = true;
     res.status(400).json({ message: "It appears that you're already in this org!" });
   }
@@ -69,7 +69,7 @@ export const acceptInvite = async (req: Request, res: Response) => {
   let transactionResults;
 
   try {
-    const orgId = findInTargetArray(IndexableProperties.Org, invite);
+    const { orgId } = invite;
     transactionResults = await session.withTransaction(async () => {
       await collections.invites.deleteOne(inviteFilter, { session });
 
@@ -81,7 +81,7 @@ export const acceptInvite = async (req: Request, res: Response) => {
           {
             target: {
               property: IndexableProperties.Org,
-              value: null,
+              value: null, // TODO update this
             },
           },
         ],

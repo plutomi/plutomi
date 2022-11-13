@@ -7,8 +7,7 @@ import { findInTargetArray } from '../utils/findInTargetArray';
 // Blocks the request if a user is not in the same org as the orgId parameter
 export default async function withSameOrg(req: Request, res: Response, next: NextFunction) {
   const { user } = req;
-
-  const orgId = findInTargetArray(IndexableProperties.Org, user);
+  const { orgId } = user;
 
   if (orgId !== req.params.orgId || !orgId) {
     return res.status(403).json({

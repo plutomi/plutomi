@@ -12,7 +12,7 @@ interface PendingInviteCardProps {
 
 export const PendingInviteCard = ({ invite }: PendingInviteCardProps) => {
   const { user, isUserLoading, isUserError } = useSelf();
-  const orgId = findInTargetArray(IndexableProperties.Org, user);
+  const { orgId } = user;
 
   const cancelInvite = async (invite: InviteEntity) => {
     try {

@@ -13,7 +13,7 @@ import { IndexableProperties } from '../../@types/indexableProperties';
 
 export const TeamPageContent = () => {
   const { user, isUserLoading, isUserError } = useSelf();
-  const orgId = findInTargetArray(IndexableProperties.Org, user);
+  const { orgId } = user;
   const { orgUsers, isOrgUsersLoading, isOrgUsersError } = useOrgUsers({
     orgId,
   });

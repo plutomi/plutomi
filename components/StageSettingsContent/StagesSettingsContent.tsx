@@ -53,9 +53,9 @@ export const StageSettingsContent = () => {
               {/* Start main area */}
               <StageSettingsContentTabs currentTab={currentTab} setCurrentTab={setNewTab} />
               <div className="relative h-full" style={{ minHeight: '36rem' }}>
-                {/* <div className=" inset-0  border-gray-200 rounded-lg">
+                <div className=" inset-0  border-gray-200 rounded-lg">
                   {currentTab === 'Questions' && <StageSettingsQuestionList />}
-                </div> */}
+                </div>
               </div>
               {/* End main area */}
             </div>

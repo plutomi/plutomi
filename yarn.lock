@@ -152,7 +152,7 @@
     "@aws-sdk/util-utf8-node" "3.188.0"
     "tslib" "^2.3.1"
 
-"@aws-sdk/client-dynamodb@^3.0.0", "@aws-sdk/client-dynamodb@^3.44.0":
+"@aws-sdk/client-dynamodb@^3.44.0":
   "integrity" "sha512-SOZWrw0SostQXT7sQS3orTzsWPTptk29X/jEiU5EL8BLW9jRGIM62G06/bZnjB2+MqtXlkp2v1Gd5jumH3c7Ig=="
   "resolved" "https://registry.npmjs.org/@aws-sdk/client-dynamodb/-/client-dynamodb-3.44.0.tgz"
   "version" "3.44.0"
@@ -1043,14 +1043,6 @@
   dependencies:
     "tslib" "^2.3.1"
 
-"@aws-sdk/lib-dynamodb@^3.95.0":
-  "integrity" "sha512-Vn7T7rABP+qF7c0hQzaY/syIQxkhbo/Iav6q4dOcZSa15R+NgcTFR5+X8r0D621B0gX8tT91HZRKnI4wcvKHUw=="
-  "resolved" "https://registry.npmjs.org/@aws-sdk/lib-dynamodb/-/lib-dynamodb-3.95.0.tgz"
-  "version" "3.95.0"
-  dependencies:
-    "@aws-sdk/util-dynamodb" "3.95.0"
-    "tslib" "^2.3.1"
-
 "@aws-sdk/md5-js@3.110.0":
   "integrity" "sha512-66gV6CH8O7ymTZMIbGjdUI71K7ErDfudhtN/ULb97kD2TYX4NlFtxNZxx3+iZH1G0H636lWm9hJcU5ELG9B+bw=="
   "resolved" "https://registry.npmjs.org/@aws-sdk/md5-js/-/md5-js-3.110.0.tgz"
@@ -1602,15 +1594,6 @@
     "@aws-sdk/util-uri-escape" "3.37.0"
     "tslib" "^2.3.0"
 
-"@aws-sdk/smithy-client@^3.0.0", "@aws-sdk/smithy-client@3.41.0":
-  "integrity" "sha512-ldhS0Pf3v6yHCd//kk5DvKcdyeUkKEwxNDRanAp+ekTW68J3XcYgKaPC9sNDhVTDH1zrywTvtEz5zWHEvXjQow=="
-  "resolved" "https://registry.npmjs.org/@aws-sdk/smithy-client/-/smithy-client-3.41.0.tgz"
-  "version" "3.41.0"
-  dependencies:
-    "@aws-sdk/middleware-stack" "3.40.0"
-    "@aws-sdk/types" "3.40.0"
-    "tslib" "^2.3.0"
-
 "@aws-sdk/smithy-client@3.110.0":
   "integrity" "sha512-gNLYrmdAe/1hVF2Nv2LF4OkL1A0a1o708pEMZHzql9xP164omRDaLrGDhz9tH7tsJEgLz+Bf4E8nTuISeDwvGg=="
   "resolved" "https://registry.npmjs.org/@aws-sdk/smithy-client/-/smithy-client-3.110.0.tgz"
@@ -1629,7 +1612,16 @@
     "@aws-sdk/types" "3.193.0"
     "tslib" "^2.3.1"
 
-"@aws-sdk/types@^3.0.0", "@aws-sdk/types@^3.1.0", "@aws-sdk/types@^3.78.0", "@aws-sdk/types@3.110.0":
+"@aws-sdk/smithy-client@3.41.0":
+  "integrity" "sha512-ldhS0Pf3v6yHCd//kk5DvKcdyeUkKEwxNDRanAp+ekTW68J3XcYgKaPC9sNDhVTDH1zrywTvtEz5zWHEvXjQow=="
+  "resolved" "https://registry.npmjs.org/@aws-sdk/smithy-client/-/smithy-client-3.41.0.tgz"
+  "version" "3.41.0"
+  dependencies:
+    "@aws-sdk/middleware-stack" "3.40.0"
+    "@aws-sdk/types" "3.40.0"
+    "tslib" "^2.3.0"
+
+"@aws-sdk/types@^3.1.0", "@aws-sdk/types@^3.78.0", "@aws-sdk/types@3.110.0":
   "integrity" "sha512-dLVoqODU3laaqNFPyN1QLtlQnwX4gNPMXptEBIt/iJpuZf66IYJe6WCzVZGt4Zfa1CnUmrlA428AzdcA/KCr2A=="
   "resolved" "https://registry.npmjs.org/@aws-sdk/types/-/types-3.110.0.tgz"
   "version" "3.110.0"
@@ -1855,7 +1847,7 @@
     "@aws-sdk/types" "3.193.0"
     "tslib" "^2.3.1"
 
-"@aws-sdk/util-dynamodb@^3.44.0", "@aws-sdk/util-dynamodb@3.95.0":
+"@aws-sdk/util-dynamodb@^3.44.0":
   "integrity" "sha512-JJt7naMlkHIHJjcBLH6pcohR0PkcuaFWbjevBoX+iMQr4yRL5iLUR2lREwURI6AuVjBwtwZBK3azZqyX5fGl9g=="
   "resolved" "https://registry.npmjs.org/@aws-sdk/util-dynamodb/-/util-dynamodb-3.95.0.tgz"
   "version" "3.95.0"
@@ -2982,11 +2974,6 @@
   "integrity" "sha512-NztRgUxSYD+ImaKN94Tg66VVVqXj4SmlDGzZoz48H9riJ+Awha56sfXH2fegw819NWo7KI3oeS1Es0lNQqwr0w=="
   "resolved" "https://registry.npmjs.org/@mdi/react/-/react-1.5.0.tgz"
   "version" "1.5.0"
-
-"@middy/core@^2.5.3":
-  "integrity" "sha512-WQFUFhCG0P2rmNDBX8x5RiREfSUnMhq77QyrwIZg2/gLUhuOZa8TPFFKzIFBz+blvw9Ep41LRrWdV/gzYwMuww=="
-  "resolved" "https://registry.npmjs.org/@middy/core/-/core-2.5.4.tgz"
-  "version" "2.5.4"
 
 "@next/env@12.1.0":
   "integrity" "sha512-nrIgY6t17FQ9xxwH3jj0a6EOiQ/WDHUos35Hghtr+SWN/ntHIQ7UpuvSi0vaLzZVHQWaDupKI+liO5vANcDeTQ=="
@@ -4305,7 +4292,7 @@
     "semver" "^7.3.7"
     "yaml" "1.10.2"
 
-"aws-sdk@^2.1142.0", "aws-sdk@^2.973.0":
+"aws-sdk@^2.1142.0":
   "integrity" "sha512-ii+4Q8jqN31CiXpn9i/4vGCjqo02TGihmre5b44OUsTiKNXSjqr/aRrcirMsfuBFWRdrdcU12ez7Mg+N9GDNjw=="
   "resolved" "https://registry.npmjs.org/aws-sdk/-/aws-sdk-2.1142.0.tgz"
   "version" "2.1142.0"
@@ -5540,11 +5527,6 @@
   "resolved" "https://registry.npmjs.org/deep-is/-/deep-is-0.1.4.tgz"
   "version" "0.1.4"
 
-"deep-object-diff@^1.1.0":
-  "integrity" "sha512-b+QLs5vHgS+IoSNcUE4n9HP2NwcHj7aqnJWsjPtuG75Rh5TOaGt0OjAYInh77d5T16V5cRDC+Pw/6ZZZiETBGw=="
-  "resolved" "https://registry.npmjs.org/deep-object-diff/-/deep-object-diff-1.1.0.tgz"
-  "version" "1.1.0"
-
 "deepmerge@^4.2.2":
   "integrity" "sha512-FJ3UgI4gIl+PHZm53knsuSFpE+nESMr7M4v9QcgB7S63Kj/6WqMiFQJpBBYz1Pt+66bZpP3Q7Lye0Oo9MPKEdg=="
   "resolved" "https://registry.npmjs.org/deepmerge/-/deepmerge-4.2.2.tgz"
@@ -5796,14 +5778,6 @@
   "version" "0.3.0"
   dependencies:
     "xtend" "^4.0.0"
-
-"dynamodb-streams-processor@^1.0.1":
-  "integrity" "sha512-U1HalDTexJyTAmYJrhnDGOdnoBiOOWylilbw4O2dafFkeRpYm0JXynYvNREd2nWz0Z6QjRS6RwpPq7NX/ISq8A=="
-  "resolved" "https://registry.npmjs.org/dynamodb-streams-processor/-/dynamodb-streams-processor-1.0.1.tgz"
-  "version" "1.0.1"
-  dependencies:
-    "aws-sdk" "^2.973.0"
-    "deep-object-diff" "^1.1.0"
 
 "ecdsa-sig-formatter@1.0.11":
   "integrity" "sha512-nagl3RYrbNv6kQkeJIpt6NJZy8twLB/2vtz6yN9Z4vRKHN4/QZJIEbqohALSgwKdnksuY3k5Addp5lg8sVoVcQ=="
@@ -8609,11 +8583,6 @@
   dependencies:
     "braces" "^3.0.1"
     "picomatch" "^2.2.3"
-
-"middy-console-logger@^1.0.0":
-  "integrity" "sha512-Bl9cvcwxDRvGH5tZyNjQEtC2tZgvP3z4XAsBQC8VxYIqbBr2P9P0jux4F66EdHCnVLOz7870VjecjvlY9IBR7w=="
-  "resolved" "https://registry.npmjs.org/middy-console-logger/-/middy-console-logger-1.0.0.tgz"
-  "version" "1.0.0"
 
 "mime-db@1.51.0":
   "integrity" "sha512-5y8A56jg7XVQx2mbv1lu49NR4dokRnhZYTtL+KGfaa27uq4pSTXkwQkFJl4pkRMyNFz/EtYDSkiiEHx3F7UN6g=="

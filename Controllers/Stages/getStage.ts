@@ -8,21 +8,15 @@ import { findInTargetArray } from '../../utils/findInTargetArray';
 export const getStage = async (req: Request, res: Response) => {
   const { user } = req;
   const { openingId, stageId } = req.params;
-
-  const orgId = findInTargetArray(IndexableProperties.Org, user);
+  const { orgId } = user;
 
   let stage: StageEntity;
 
   const stageFilter: Filter<StageEntity> = {
     id: stageId,
-    $and: [
-      {
-        target: { property: IndexableProperties.Org, value: orgId },
-      },
-      {
-        target: { property: IndexableProperties.Opening, value: openingId },
-      },
-    ],
+    orgId,
+    // TODO make this so only stage ID is required!
+    target: { property: IndexableProperties.Opening, value: openingId },
   };
   try {
     stage = (await collections.stages.findOne(stageFilter)) as StageEntity;

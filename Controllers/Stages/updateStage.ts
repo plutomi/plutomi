@@ -31,19 +31,14 @@ export const updateStage = async (req: Request, res: Response) => {
   }
   const { user } = req;
   const { openingId, stageId } = req.params;
-  const orgId = findInTargetArray(IndexableProperties.Org, user);
 
+  const { orgId } = user;
   let stage: StageEntity | undefined;
   const currentStageFilter: Filter<StageEntity> = {
     id: stageId,
-    $and: [
-      {
-        target: { property: IndexableProperties.Org, value: orgId },
-      },
-      {
-        target: { property: IndexableProperties.Opening, value: openingId },
-      },
-    ],
+    orgId,
+    // TODO this should be redundant and should be removed
+    target: { property: IndexableProperties.Opening, value: openingId },
   };
   try {
     stage = (await collections.stages.findOne(currentStageFilter)) as StageEntity;

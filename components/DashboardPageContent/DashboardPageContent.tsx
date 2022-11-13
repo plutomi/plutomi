@@ -10,21 +10,18 @@ import { ClickToCopy } from '../ClickToCopy';
 import { CreateOrgModal } from '../CreateOrgModal';
 import { Loader } from '../Loader/Loader';
 import { UpdateUserProfileModal } from '../UpdateUserInfoModal';
-import { findInTargetArray } from '../../utils/findInTargetArray';
-import { IndexableProperties } from '../../@types/indexableProperties';
 
 export const DashboardPageContent = () => {
   const { user, isUserLoading, isUserError } = useSelf();
 
   if (isUserError) return <h1>An error ocurred returning your info</h1>;
-
   if (isUserLoading) return <Loader text="Loading user..." />;
 
-  const orgId = findInTargetArray(IndexableProperties.Org, user);
+  const { orgId } = user;
   const { org, isOrgLoading, isOrgError } = useOrgInfo({
     orgId,
   });
-  const customApplyLink = `${WEBSITE_URL}/${org?.orgId}/apply`;
+  const customApplyLink = `${WEBSITE_URL}/${user.orgId}/apply`;
 
   const openCreateOrgModal = useStore((state) => state.openCreateOrgModal);
   const openUserProfileModal = useStore((state) => state.openUserProfileModal);

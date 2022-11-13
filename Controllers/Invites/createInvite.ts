@@ -36,8 +36,9 @@ export const createInvite = async (req: Request, res: Response) => {
   const { user } = req;
   const senderHasBothNames = user.firstName && user.lastName;
   const { recipientEmail, expiresInDays } = req.body;
-  const userEmail = findInTargetArray(IndexableProperties.Email, user);
-  const userOrgId = findInTargetArray(IndexableProperties.Org, user);
+  const userEmail = findInTargetArray(IndexableProperties.Email, user); // TODO update this
+  const { orgId: userOrgId } = user;
+
   if (!userOrgId) {
     return res.status(404).json({ message: 'You must belong to an org to invite other users' });
   }
@@ -90,6 +91,7 @@ export const createInvite = async (req: Request, res: Response) => {
       id: generateId({}),
       createdAt: now,
       updatedAt: now,
+      orgId: null,
       totalInvites: 0, // Will be incremented in a transaction below
       firstName: null,
       lastName: null,
@@ -111,7 +113,7 @@ export const createInvite = async (req: Request, res: Response) => {
     }
   }
 
-  const recipientOrgId = findInTargetArray(IndexableProperties.Org, recipient);
+  const { orgId: recipientOrgId } = recipient;
   if (recipientOrgId === userOrgId) {
     return res.status(403).json({ message: 'User is already in your org!' });
   }
@@ -123,6 +125,7 @@ export const createInvite = async (req: Request, res: Response) => {
     createdAt: now,
     updatedAt: now,
     id: generateId({ fullAlphabet: true }),
+    orgId: orgInfo.id,
     recipientName: recipientHasBothNames ? `${recipient.firstName} ${recipient.lastName}` : null,
     createdBy: {
       name: senderHasBothNames ? `${user.firstName} ${user.lastName}` : null,
@@ -130,7 +133,6 @@ export const createInvite = async (req: Request, res: Response) => {
     },
     expiresAt: dayjs(now).add(expiresInDays, 'days').toDate(),
     target: [
-      { property: IndexableProperties.Org, value: orgInfo.id },
       { property: IndexableProperties.Email, value: recipientEmail },
       { property: IndexableProperties.User, value: recipient.id },
     ],

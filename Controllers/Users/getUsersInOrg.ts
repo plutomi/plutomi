@@ -8,8 +8,8 @@ import { findInTargetArray } from '../../utils/findInTargetArray';
 
 export const getUsersInOrg = async (req: Request, res: Response) => {
   const { user } = req;
-  const orgId = findInTargetArray(IndexableProperties.Org, user);
 
+  const { orgId } = user;
   if (!orgId) {
     return res.status(200).json([]);
   }

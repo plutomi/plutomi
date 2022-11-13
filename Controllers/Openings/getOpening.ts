@@ -22,12 +22,12 @@ export const getOpening = async (req: Request, res: Response) => {
 
   const { user } = req;
   const { openingId } = req.params;
-  const orgId = findInTargetArray(IndexableProperties.Org, user);
+  const { orgId } = user;
   let opening: OpeningEntity | undefined;
 
   const openingFilter: Filter<OpeningEntity> = {
     id: openingId,
-    target: { property: IndexableProperties.Org, value: orgId },
+    orgId,
   };
   try {
     opening = (await collections.openings.findOne(openingFilter)) as OpeningEntity;

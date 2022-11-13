@@ -9,8 +9,7 @@ export const getInvitesForOrg = async (req: Request, res: Response) => {
   const { orgId } = req.params;
   const { user } = req;
 
-  const userOrgId = findInTargetArray(IndexableProperties.Org, user);
-
+  const { orgId: userOrgId } = user;
   if (orgId !== userOrgId) {
     return res.status(401).json({ message: 'You cannot view invites for this org' });
   }

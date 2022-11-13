@@ -21,7 +21,7 @@ export const getOpeningsInOrg = async (req: Request, res: Response) => {
   }
 
   const { user } = req;
-  const orgId = findInTargetArray(IndexableProperties.Org, user);
+  const { orgId } = user;
   let openings: OpeningEntity[] | undefined;
 
   const openingsFilter: Filter<OpeningEntity> = {

@@ -9,12 +9,12 @@ export const getQuestion = async (req: Request, res: Response) => {
   const { user } = req;
   const { questionId } = req.params;
 
-  const orgId = findInTargetArray(IndexableProperties.Org, user);
+  const { orgId } = user;
   let question: QuestionEntity | undefined;
   try {
     const questionFilter: Filter<QuestionEntity> = {
       id: questionId,
-      target: { property: IndexableProperties.Org, value: orgId },
+      orgId,
     };
 
     question = (await collections.questions.findOne(questionFilter)) as QuestionEntity;

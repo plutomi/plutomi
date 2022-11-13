@@ -24,11 +24,11 @@ export const updateQuestion = async (req: Request, res: Response) => {
 
   const { user } = req;
   const { questionId } = req.params;
-  const org = findInTargetArray(IndexableProperties.Org, user);
+  const { orgId } = user;
 
   const questionFilter: Filter<QuestionEntity> = {
     id: questionId,
-    target: { property: IndexableProperties.Org, value: org },
+    orgId,
   };
 
   let question: QuestionEntity | undefined;

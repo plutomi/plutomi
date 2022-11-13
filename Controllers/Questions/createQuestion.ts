@@ -21,7 +21,7 @@ const schema = Joi.object({
 
 export const createQuestion = async (req: Request, res: Response) => {
   const { user } = req;
-  const org = findInTargetArray(IndexableProperties.Org, user);
+  const { orgId } = user;
   // try {
   //   await schema.validateAsync(req);
   // } catch (error) {
@@ -42,17 +42,18 @@ export const createQuestion = async (req: Request, res: Response) => {
     createdAt: now,
     updatedAt: now,
     id: questionId,
+    orgId,
     description,
     totalStages: 0,
     type: QuestionType.Text,
     title: GSI1SK,
-    target: [{ property: IndexableProperties.Org, value: org }],
+    target: [],
   };
   let transactionResults;
   try {
     transactionResults = await session.withTransaction(async () => {
       const orgFilter: Filter<OrgEntity> = {
-        id: org,
+        id: orgId,
       };
       const orgUpdate: UpdateFilter<OrgEntity> = {
         $inc: { totalQuestions: 1 },

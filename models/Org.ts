@@ -8,7 +8,7 @@ export type OrgTargetArray = Array<
   }
 >;
 
-export interface OrgEntity extends BaseEntity {
+export interface OrgEntity extends Omit<BaseEntity, 'orgId'> {
   displayName: string;
   totalApplicants: number;
   totalUsers: number;

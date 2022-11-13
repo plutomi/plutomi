@@ -42,12 +42,12 @@ export const createStage = async (req: Request, res: Response) => {
   // TODO allow position
   const { GSI1SK, openingId, position } = req.body;
 
-  const orgId = findInTargetArray(IndexableProperties.Org, user);
+  const { orgId } = user;
   let opening: OpeningEntity;
 
   const openingFilter: Filter<OpeningEntity> = {
     id: openingId,
-    target: { property: IndexableProperties.Org, value: orgId },
+    orgId,
   };
   try {
     opening = (await collections.openings.findOne(openingFilter)) as OpeningEntity;
@@ -85,13 +85,13 @@ export const createStage = async (req: Request, res: Response) => {
   const now = new Date();
   const newStage: StageEntity = {
     id: newStageId,
+    orgId,
     createdAt: now,
     updatedAt: now,
     totalQuestions: 0,
     totalApplicants: 0,
     name: GSI1SK, // TODO update this
     target: [
-      { property: IndexableProperties.Org, value: orgId },
       { property: IndexableProperties.Opening, value: openingId },
       {
         property: IndexableProperties.PreviousStage,

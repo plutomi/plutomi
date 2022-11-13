@@ -25,7 +25,6 @@ export const ApplicantsPageHeader = () => {
   if (isOpeningLoading || isOpeningsInOrgLoading)
     return <Loader text="Loading opening(s) info..."></Loader>;
 
-  const orgId = findInTargetArray(IndexableProperties.Org, opening);
   const openingState = findInTargetArray(IndexableProperties.OpeningState, opening);
 
   return (
@@ -41,7 +40,7 @@ export const ApplicantsPageHeader = () => {
         <p className="mt-2 text-md text-normal sm:mt-0 ">
           <ClickToCopy
             showText="Application Link"
-            copyText={`${WEBSITE_URL}/${orgId}/${openingId}/apply`}
+            copyText={`${WEBSITE_URL}/${opening.orgId}/${openingId}/apply`}
           />
         </p>
       )}

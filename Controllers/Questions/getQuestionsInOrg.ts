@@ -7,12 +7,13 @@ import { collections } from '../../utils/connectToDatabase';
 
 export const getQuestionsInOrg = async (req: Request, res: Response) => {
   const { user } = req;
-  const org = findInTargetArray(IndexableProperties.Org, user);
+  const { orgId } = user;
 
   let questions: QuestionEntity[] | undefined;
+
   try {
     const questionsFilter: Filter<QuestionEntity> = {
-      target: { property: IndexableProperties.Org, value: org },
+      orgId,
     };
     questions = (await collections.questions.find(questionsFilter).toArray()) as QuestionEntity[];
     return res.status(200).json(questions);

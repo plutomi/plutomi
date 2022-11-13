@@ -12,7 +12,7 @@ interface UserCardProps {
   user: UserEntity;
 }
 export const UserCard = ({ user }: UserCardProps) => {
-  const orgId = findInTargetArray(IndexableProperties.Org, user);
+  const { orgId } = user;
   const { org, isOrgLoading, isOrgError } = useOrgInfo({
     orgId,
   });

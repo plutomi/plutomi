@@ -7,6 +7,10 @@ export interface BaseEntity {
    */
   id: string;
   /**
+   * Org this entity belongs to. Omitted on some entitie
+   */
+  orgId: string;
+  /**
    *
    * @deprecated - Should not be used, only for compatibility with mongo driver. Use `id` instead
    */

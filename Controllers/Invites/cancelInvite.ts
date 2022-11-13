@@ -23,7 +23,7 @@ export const cancelInvite = async (req: Request, res: Response) => {
   const { inviteId, orgId } = req.params;
   const { user } = req;
 
-  const userOrgId = findInTargetArray(IndexableProperties.Org, user);
+  const { orgId: userOrgId } = user;
 
   if (userOrgId !== orgId) {
     return res.status(403).json({ message: 'You cannot delete that invite' });

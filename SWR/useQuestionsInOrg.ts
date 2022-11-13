@@ -1,11 +1,11 @@
 import useSWR from 'swr';
+import { APIErrorResponse } from '../@types/apiErrorResponse';
 import { GetQuestionsInOrgURL } from '../adapters/Questions';
 import { SWRFetcher } from '../Config';
-import { DynamoQuestion } from '../@types/dynamo';
-import { APIErrorResponse } from '../@types/express';
+import { QuestionEntity } from '../models';
 
 export const useQuestionsInOrg = () => {
-  const { data, error } = useSWR<DynamoQuestion[], APIErrorResponse>(
+  const { data, error } = useSWR<QuestionEntity[], APIErrorResponse>(
     GetQuestionsInOrgURL(),
     SWRFetcher,
   );

@@ -13,7 +13,7 @@ import { IndexableProperties } from '../../@types/indexableProperties';
 
 export const WebhooksList = () => {
   const { user, isUserLoading, isUserError } = useSelf();
-  const orgId = findInTargetArray(IndexableProperties.Org, user);
+  const { orgId } = user;
   const { org, isOrgLoading, isOrgError } = useOrgInfo({
     orgId,
   });

@@ -27,7 +27,7 @@ export const createOpening = async (req: Request, res: Response) => {
   }
 
   const { name }: APICreateOpeningOptions = req.body;
-  const orgId = findInTargetArray(IndexableProperties.Org, user);
+  const { orgId } = user;
 
   const orgFilter: Filter<OrgEntity> = {
     id: orgId,
@@ -38,13 +38,13 @@ export const createOpening = async (req: Request, res: Response) => {
   const now = new Date();
   const newOpening: OpeningEntity = {
     id: generateId({}),
+    orgId: orgId,
     name,
     totalApplicants: 0,
     totalStages: 0,
     createdAt: now,
     updatedAt: now,
     target: [
-      { property: IndexableProperties.Org, value: orgId },
       // TODO allow creating public openings
       { property: IndexableProperties.OpeningState, value: OpeningState.Private },
     ],

@@ -1,11 +1,11 @@
 import useSWR from 'swr';
 import { SWRFetcher } from '../Config';
 import { GetSelfInfoURL } from '../adapters/Users';
-import { APIErrorResponse } from '../@types/express';
-import { User } from '../entities';
+import { UserEntity } from '../models';
+import { APIErrorResponse } from '../@types/apiErrorResponse';
 
 export const useSelf = () => {
-  const { data, error } = useSWR<User, APIErrorResponse>(GetSelfInfoURL(), SWRFetcher, {
+  const { data, error } = useSWR<UserEntity, APIErrorResponse>(GetSelfInfoURL(), SWRFetcher, {
     shouldRetryOnError: false,
   });
   return {

@@ -9,14 +9,14 @@ import { findInTargetArray } from '../../utils/findInTargetArray';
 export const deleteStage = async (req: Request, res: Response) => {
   const { user } = req;
   const { openingId, stageId } = req.params;
-  const orgId = findInTargetArray(IndexableProperties.Org, user);
+  const { orgId } = user;
 
   console.log(`Incoming opening ID`, openingId);
   let opening: OpeningEntity;
 
   const openingFilter: Filter<OpeningEntity> = {
     id: openingId,
-    target: { property: IndexableProperties.Org, value: orgId },
+    orgId,
   };
   try {
     opening = (await collections.openings.findOne(openingFilter)) as OpeningEntity;

@@ -29,8 +29,7 @@ export const createAndJoinOrg = async (req: Request, res: Response) => {
     return res.status(400).json({ message: 'An error ocurred', error });
   }
 
-  const currentUserOrg = findInTargetArray(IndexableProperties.Org, user);
-
+  const { orgId: currentUserOrg } = user;
   if (user.orgJoinDate || currentUserOrg) {
     return res.status(403).json({ message: 'You already belong to an org!' });
   }

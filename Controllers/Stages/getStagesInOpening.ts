@@ -9,14 +9,15 @@ import { sortStages } from '../../utils/sortStages';
 
 export const getStagesInOpening = async (req: Request, res: Response) => {
   const { user } = req;
-  const orgId = findInTargetArray(IndexableProperties.Org, user);
+
+  const { orgId } = user;
   const { openingId } = req.params;
 
   let opening: OpeningEntity;
 
   const openingFilter: Filter<OpeningEntity> = {
     id: openingId,
-    target: { property: IndexableProperties.Org, value: orgId },
+    orgId,
   };
   try {
     opening = (await collections.openings.findOne(openingFilter)) as OpeningEntity;

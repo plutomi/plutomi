@@ -8,8 +8,7 @@ import { findInTargetArray } from '../../utils/findInTargetArray';
 export const leaveAndDeleteOrg = async (req: Request, res: Response) => {
   const { user } = req;
 
-  const orgId = findInTargetArray(IndexableProperties.Org, user);
-
+  const { orgId } = user;
   let org: OrgEntity | undefined;
 
   const orgFilter: Filter<OrgEntity> = {

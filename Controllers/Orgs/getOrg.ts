@@ -10,8 +10,8 @@ export const getOrg = async (req: Request, res: Response) => {
 
   let org: OrgEntity;
 
-  const orgId = findInTargetArray(IndexableProperties.Org, user);
-
+  const { orgId } = user;
+  
   const orgFilter: Filter<OrgEntity> = {
     id: orgId,
   };

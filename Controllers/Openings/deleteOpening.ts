@@ -26,10 +26,10 @@ export const deleteOpening = async (req: Request, res: Response) => {
   }
 
   const { openingId } = req.params;
-  const orgId = findInTargetArray(IndexableProperties.Org, user);
-
+  const { orgId } = user;
   const openingFilter: Filter<OpeningEntity> = {
     id: openingId,
+    // TODO add org id
     target: { property: IndexableProperties.Org, value: orgId },
   };
 

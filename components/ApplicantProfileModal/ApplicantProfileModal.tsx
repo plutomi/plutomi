@@ -7,12 +7,12 @@ import { mutate } from 'swr';
 import useStore from '../../utils/store';
 import { useApplicantById } from '../../SWR/useApplicantById';
 import { GetApplicantByIdURL, UpdateApplicant } from '../../adapters/Applicants';
-import { CustomQuery } from '../../@types/express';
 import { WEBSITE_URL } from '../../Config';
-import combineClassNames from '../../utils/combineClassNames';
+import {combineClassNames} from '../../utils/combineClassNames';
 import { ClickToCopy } from '../ClickToCopy';
 import { ClickToEditSave } from '../ClickToEditSave';
 import { ClickToEditInput } from '../ClickToEditInput';
+import { CustomQuery } from '../../@types/customQuery';
 
 const tabs = [
   { id: 1, name: 'Details' },

@@ -25,11 +25,11 @@ export const updateOpening = async (req: Request, res: Response) => {
 
   let opening: OpeningEntity | undefined;
 
-  const orgId = findInTargetArray(IndexableProperties.Org, user);
+  const { orgId } = user;
 
   const openingFilter: Filter<OpeningEntity> = {
     id: openingId,
-    target: { property: IndexableProperties.Org, value: orgId },
+    orgId,
   };
 
   try {

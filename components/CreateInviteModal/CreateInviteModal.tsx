@@ -13,7 +13,6 @@ export const CreateInviteModal = () => {
   const [recipientEmail, setRecipientEmail] = useState('');
   const [expiresInDays, setExpiresInDays] = useState(ORG_INVITE_EXPIRY_DAYS);
   const { user, isUserLoading, isUserError } = useSelf();
-  const orgId = findInTargetArray(IndexableProperties.Org, user);
 
   const visibility = useStore((state) => state.showInviteModal);
 
@@ -42,7 +41,7 @@ export const CreateInviteModal = () => {
       alert(error.response.data.message);
     }
 
-    //  mutate(GetOrgInvitesURL(orgId));
+    mutate(GetOrgInvitesURL(user.orgId));
   };
   return (
     <Transition.Root show={visibility} as={Fragment}>

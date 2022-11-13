@@ -7,7 +7,7 @@ import { findInTargetArray } from '../utils/findInTargetArray';
 export default async function withHasOrg(req: Request, res: Response, next: NextFunction) {
   const { user } = req;
 
-  const orgId = findInTargetArray(IndexableProperties.Org, user);
+  const { orgId } = user;
   if (!orgId) {
     return res.status(403).json({
       message: ERRORS.NEEDS_ORG, // TODO casing

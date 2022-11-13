@@ -7,7 +7,6 @@ import { useQuestionsInOrg } from '../../SWR/useQuestionsInOrg';
 import { useStageInfo } from '../../SWR/useStageInfo';
 import { useQuestionsInStage } from '../../SWR/useQuestionsInStage';
 import * as Questions from '../../adapters/Questions';
-import { combineClassNames } from '../../utils/combineClassNames';
 import * as Stages from '../../adapters/Stages';
 import { DraggableQuestionItem } from '../DraggableQuestionItem';
 import { CustomQuery } from '../../@types/customQuery';
@@ -17,6 +16,7 @@ export const StageSettingsQuestionList = () => {
   const router = useRouter();
   const [localSearch, setLocalSearch] = useState('');
   const { orgQuestions, isOrgQuestionsLoading, isOrgQuestionsError } = useQuestionsInOrg();
+  console.log(`oR GQUESTIONS`, orgQuestions);
   const { openingId, stageId } = router.query as Pick<CustomQuery, 'openingId' | 'stageId'>;
 
   const { stageQuestions, isStageQuestionsLoading, isStageQuestionsError } = useQuestionsInStage({
@@ -70,7 +70,7 @@ export const StageSettingsQuestionList = () => {
   useEffect(() => {
     setFilteredOrgQuestions(
       orgQuestions?.filter((question) =>
-        question.GSI1SK.toLowerCase().trim().includes(localSearch.toLowerCase().trim()),
+        question.title.toLowerCase().trim().includes(localSearch.toLowerCase().trim()),
       ),
     );
   }, [localSearch, orgQuestions]);
@@ -81,70 +81,64 @@ export const StageSettingsQuestionList = () => {
   }, [stageQuestions]);
 
   const handleDragEnd = async (result) => {
-    const { destination, source, draggableId } = result;
-    // No change
-    if (!destination) {
-      console.log('Not moved');
-      return;
-    }
-    // If dropped in the same place
-    if (destination.droppableId === source.droppableId && destination.index === source.index) {
-      console.log('Dropped in same place');
+    alert('Question reordering has been disabled!');
+    //   const { destination, source, draggableId } = result;
+    //   // No change
+    //   if (!destination) {
+    //     console.log('Not moved');
+    //     return;
+    //   }
+    //   // If dropped in the same place
+    //   if (destination.droppableId === source.droppableId && destination.index === source.index) {
+    //     console.log('Dropped in same place');
 
-      return;
-    }
+    //     return;
+    //   }
 
-    const newQuestionOrder: string[] = Array.from(stage?.questionOrder);
-    newQuestionOrder.splice(source.index, 1);
-    newQuestionOrder.splice(destination.index, 0, draggableId);
-    const newOrder = newQuestionOrder.map((i) => stageQuestions.find((j) => j.questionId === i));
+    //   const newQuestionOrder: string[] = Array.from(stage?.questionOrder);
+    //   newQuestionOrder.splice(source.index, 1);
+    //   newQuestionOrder.splice(destination.index, 0, draggableId);
+    //   const newOrder = newQuestionOrder.map((i) => stageQuestions.find((j) => j.questionId === i));
 
-    setNewQuestionOrder(newOrder);
+    //   setNewQuestionOrder(newOrder);
 
-    try {
-      await Stages.UpdateStage({
-        openingId,
-        stageId,
-        newValues: {
-          questionOrder: newQuestionOrder,
-        },
-      });
-    } catch (error) {
-      console.error(error.response.data.message);
-      alert(error.response.data.message);
-    }
+    //   try {
+    //     await Stages.UpdateStage({
+    //       openingId,
+    //       stageId,
+    //       newValues: {
+    //         questionOrder: newQuestionOrder,
+    //       },
+    //     });
+    //   } catch (error) {
+    //     console.error(error.response.data.message);
+    //     alert(error.response.data.message);
+    //   }
 
-    // Refresh stage info (stage order)
-    mutate(
-      Stages.GetStageInfoURL({
-        openingId,
-        stageId,
-      }),
-    );
+    //   // Refresh stage info (stage order)
+    //   mutate(
+    //     Stages.GetStageInfoURL({
+    //       openingId,
+    //       stageId,
+    //     }),
+    //   );
 
-    // Refresh the questions
-    mutate(
-      Questions.GetQuestionsInStageURL({
-        openingId,
-        stageId,
-      }),
-    );
+    //   // Refresh the questions
+    //   mutate(
+    //     Questions.GetQuestionsInStageURL({
+    //       openingId,
+    //       stageId,
+    //     }),
+    //   );
+    // };
   };
-
   const handleShow = () => {
-    setFilteredOrgQuestions(
-      orgQuestions?.filter((question) =>
-        question.GSI1SK.toLowerCase().trim().includes(localSearch.toLowerCase().trim()),
-      ),
-    );
+    setFilteredOrgQuestions(orgQuestions);
+
     setShow(true);
   };
   const handleOnBlur = () => {
-    setFilteredOrgQuestions(
-      orgQuestions?.filter((question) =>
-        question.GSI1SK.toLowerCase().trim().includes(localSearch.toLowerCase().trim()),
-      ),
-    );
+    setFilteredOrgQuestions(orgQuestions);
     setShow(false);
   };
 
@@ -167,30 +161,15 @@ export const StageSettingsQuestionList = () => {
 
     filteredOrgQuestions?.map((question) => (
       <Listbox.Option
-        key={question.questionId}
-        disabled={stage?.questionOrder.includes(question.questionId)}
-        className={combineClassNames(
-          stage?.questionOrder.includes(question.questionId)
-            ? 'disabled text-disabled'
-            : 'hover:bg-blue-500 hover:text-white hover:cursor-pointer',
-          'cursor-default select-none relative py-2 pl-3 pr-9 group',
-        )}
+        key={question.id}
+        className={
+          'hover:bg-blue-500 hover:text-white hover:cursor-pointer cursor-default select-none relative py-2 pl-3 pr-9 group'
+        }
         value={question}
       >
         <div className="flex items-center justify-between ">
-          <p>
-            {question.GSI1SK}
-            {stage?.questionOrder.includes(question.questionId) && ' - Already added'}
-          </p>
-          <p
-            className={combineClassNames(
-              stage?.questionOrder.includes(question.questionId)
-                ? 'disabled text-disabled'
-                : 'text-normal group-hover:text-white',
-            )}
-          >
-            {question.questionId}
-          </p>
+          <p>{question.title}</p>
+          <p className={'text-normal group-hover:text-white'}>{question.id}</p>
         </div>
       </Listbox.Option>
     ));
@@ -230,7 +209,7 @@ export const StageSettingsQuestionList = () => {
           <h4 className="text-red-500">An error ocurred loading questions for this stage</h4>
         )}
 
-        {stage?.questionOrder.length > 0 ? (
+        {stage.totalQuestions ? (
           <DragDropContext onDragEnd={handleDragEnd} onDragStart={() => console.log('Start')}>
             <Droppable droppableId={stage?.id}>
               {(provided) => (
