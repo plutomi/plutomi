@@ -70,6 +70,7 @@ export const connectToDatabase = async () => {
   ];
 
   const collectionsThatNeedUserIdAndCustomId = [loginLinksCollection, invitesCollection];
+  const collectionsThatNeedCustomIdIndex = [usersCollection, orgsCollection];
 
   console.log(`Creating necessary collections and indexes`);
   const collectionData = await db.listCollections({}, { nameOnly: true }).toArray();
@@ -118,7 +119,7 @@ export const connectToDatabase = async () => {
 
       /**
        * Create a compound index of `userId` and `id` on these entities.
-       * This is for things like login links and org invites
+       * This is for things like login links and org invites that belong to a user. (Org invites also belong to an org!)
        */
       if (collectionsThatNeedUserIdAndCustomId.includes(collection)) {
         const indexName = 'userId_custom_id';
@@ -133,9 +134,9 @@ export const connectToDatabase = async () => {
       }
 
       /**
-       * Create a global index on the `id` field of a user
+       * Create a global index on the `id` field of a user and org as these are top level entities.
        */
-      if (collection === usersCollection) {
+      if (collectionsThatNeedCustomIdIndex.includes(collection)) {
         const indexName = 'custom_id';
         const indexExists = await collection.indexExists(indexName);
 

@@ -70,7 +70,7 @@ export const requestLoginLink = async (req: Request, res: Response) => {
 
   try {
     user = (await collections.users.findOne({
-      target: { property: 'Email', value: email },
+      target: { property: IndexableProperties.Email, value: email },
     } as Filter<UserEntity>)) as UserEntity;
   } catch (error) {
     const msg = `Error retrieving user info`;

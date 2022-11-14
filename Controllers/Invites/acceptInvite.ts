@@ -74,22 +74,13 @@ export const acceptInvite = async (req: Request, res: Response) => {
       await collections.invites.deleteOne(inviteFilter, { session });
 
       const userFilter: Filter<UserEntity> = {
-        $and: [
-          {
-            id: user.id,
-          },
-          {
-            target: {
-              property: IndexableProperties.Org,
-              value: null, // TODO update this
-            },
-          },
-        ],
+        id: user.id,
+        orgId: null,
       };
       const userUpdate: UpdateFilter<UserEntity> = {
         $inc: { totalInvites: -1 },
         $set: {
-          'target.$.value': orgId,
+          orgId,
           orgJoinDate: now,
         },
       };

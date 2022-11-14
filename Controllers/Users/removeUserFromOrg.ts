@@ -40,20 +40,11 @@ export const removeUserFromOrg = async (req: Request, res: Response) => {
   try {
     transactionResults = await session.withTransaction(async () => {
       const userFilter: Filter<UserEntity> = {
-        $and: [
-          {
-            id: userId,
-          },
-          {
-            target: {
-              property: IndexableProperties.Org,
-              value: orgId,
-            },
-          },
-        ],
+        id: userId,
+        orgId,
       };
       const userUpdateFilter: UpdateFilter<UserEntity> = {
-        $set: { 'target.$.value': undefined, orgJoinDate: undefined },
+        $set: { orgId: null, orgJoinDate: null },
       };
 
       await collections.users.updateOne(userFilter, userUpdateFilter, { session });

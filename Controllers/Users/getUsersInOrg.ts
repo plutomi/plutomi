@@ -18,7 +18,7 @@ export const getUsersInOrg = async (req: Request, res: Response) => {
 
   try {
     const usersFilter: Filter<UserEntity> = {
-      target: { property: IndexableProperties.Org, value: orgId },
+      orgId,
     };
     usersInOrg = (await collections.users.find(usersFilter).toArray()) as UserEntity[];
     const cleanUsers: Partial<UserEntity>[] = usersInOrg.map((user) => {
