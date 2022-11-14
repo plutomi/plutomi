@@ -4,7 +4,6 @@ import { IndexableProperties } from '../../@types/indexableProperties';
 import { StageEntity } from '../../models';
 import { OpeningEntity } from '../../models/Opening';
 import { collections } from '../../utils/connectToDatabase';
-import { findInTargetArray } from '../../utils/findInTargetArray';
 import { sortStages } from '../../utils/sortStages';
 
 export const getStagesInOpening = async (req: Request, res: Response) => {
@@ -34,10 +33,9 @@ export const getStagesInOpening = async (req: Request, res: Response) => {
   let allStages: StageEntity[];
 
   const allStagesFilter: Filter<StageEntity> = {
-    $and: [
-      { target: { property: IndexableProperties.Org, value: orgId } },
-      { target: { property: IndexableProperties.Opening, value: openingId } },
-    ],
+    orgId,
+    target: [{ property: IndexableProperties.CreatedAt, value: openingId }],
+    // !BUT IT IS ALLOWING ORG!!!! WHAT THE FUCK!?????????????????
   };
   try {
     allStages = (await collections.stages.find(allStagesFilter).toArray()) as StageEntity[];

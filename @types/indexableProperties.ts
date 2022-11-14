@@ -24,5 +24,8 @@ export enum IndexableProperties {
 }
 
 export type IndexIdTypes = string | null;
-export type IndexedTargetArrayItem = { property: IndexableProperties; value: IndexIdTypes };
-export type IndexedTargetArray = Array<IndexedTargetArrayItem | { customId: string }>;
+export interface IndexedTargetArrayItem {
+  property: IndexableProperties;
+  value: IndexIdTypes;
+}
+export type IndexedTargetArray = Array<IndexedTargetArrayItem>;

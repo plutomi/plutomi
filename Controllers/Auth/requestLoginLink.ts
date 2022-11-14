@@ -70,7 +70,7 @@ export const requestLoginLink = async (req: Request, res: Response) => {
 
   try {
     user = (await collections.users.findOne({
-      target: { property: IndexableProperties.Email, value: email },
+      target: { property: 'Email', value: email },
     } as Filter<UserEntity>)) as UserEntity;
   } catch (error) {
     const msg = `Error retrieving user info`;
@@ -124,10 +124,7 @@ export const requestLoginLink = async (req: Request, res: Response) => {
   let latestLoginLink: UserLoginLinkEntity;
 
   const loginLinkFilter: Filter<UserLoginLinkEntity> = {
-    target: {
-      property: IndexableProperties.User,
-      value: user.id,
-    },
+    userId: user.id,
   };
 
   const loginLinkFindOptions: FindOptions<UserLoginLinkEntity> = {

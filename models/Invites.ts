@@ -7,7 +7,6 @@ export type InvitesTargetArray = Array<
     property: Extends<keyof typeof IndexableProperties, 'Email'>;
   }
 >;
-
 export interface InviteEntity extends BaseEntity {
   userId: string; // Compound index with ID
   orgId: string; // Compound index with ID

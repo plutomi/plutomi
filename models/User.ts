@@ -4,7 +4,7 @@ import { BaseEntity } from './Base';
 
 export type UserTargetArray = Array<
   Omit<IndexedTargetArrayItem, 'property'> & {
-    property: Extends<keyof typeof IndexableProperties, 'Email'>;
+    property: Extends<keyof typeof IndexableProperties, IndexableProperties.Email>;
   }
 >;
 
