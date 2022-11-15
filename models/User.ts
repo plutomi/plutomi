@@ -9,7 +9,7 @@ export type UserTargetArray = Array<
 >;
 
 export interface UserEntity extends BaseEntity {
-  orgId: string | null;
+  orgId: string | null; 
   firstName: string;
   lastName: string;
   emailVerified: boolean;
