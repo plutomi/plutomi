@@ -120,222 +120,168 @@ const main = async () => {
   ];
 
   let applicantsToCreate: any = [];
-  const numberOfBatches = 1;
+  const numberOfBatches = 50;
   const applicantsPerBatch = 5000;
   let processedApplicants = 0;
+
   const sendToMongo = async () => {
-    const t = await collections.orgs
-      .aggregate([
-        {
-          $match: {
-            target: {
-              property: 'Org',
-              value: '1',
-            },
-          },
-        },
-        {
-          $unwind: {
-            path: '$target',
-          },
-        },
-        {
-          $match: {
-            'target.property': 'User',
-          },
-        },
-        {
-          $group: {
-            _id: '$target.value',
-          },
-        },
-        {
-          $lookup: {
-            from: 'Users',
-            localField: '_id',
-            foreignField: 'id',
-            as: 'user',
-          },
-        },
-        {
-          $addFields: {
-            user: {
-              $arrayElemAt: ['$user', 0],
-            },
-          },
-        },
-        {
-          $replaceRoot: {
-            newRoot: '$user',
-          },
-        },
-        {
-          $unset: '_id',
-        },
-      ])
-      .toArray();
-
-    console.log(`RES`);
-    console.log(t);
-    // for await (const batch of applicantsToCreate) {
-    //   const bidx = applicantsToCreate.indexOf(batch) + 1;
-    //   await collections.questions?.insertMany(batch);
-    //   processedApplicants += batch.length;
-    //   console.log(
-    //     `Done processing batch`,
-    //     bidx,
-    //     ` - ${batch.length} applicants - Total: ${processedApplicants} / ${
-    //       numberOfBatches * applicantsPerBatch
-    //     }`,
-    //   );
-    // }
+    for await (const batch of applicantsToCreate) {
+      const bidx = applicantsToCreate.indexOf(batch) + 1;
+      await collections.applicants?.insertMany(batch);
+      // await collections.applicants.deleteMany({});
+      processedApplicants += batch.length;
+      console.log(
+        `Done processing batch`,
+        bidx,
+        ` - ${batch.length} applicants - Total: ${processedApplicants} / ${
+          numberOfBatches * applicantsPerBatch
+        }`,
+      );
+    }
+    console.log('Done!');
   };
+  for (let i = 0; i < numberOfBatches; i++) {
+    const localBatch: any = [];
 
-  // for (let i = 0; i < numberOfBatches; i++) {
-  //   console.log('Starting');
-  //   await collections.applicants?.deleteMany({});
-  //   console.log('End');
-  // }
+    for (let i = 0; i < applicantsPerBatch; i++) {
+      const getOrg = () => {
+        const num = Math.random();
 
-  // for (let i = 0; i < numberOfBatches; i++) {
-  //   const localBatch: any = [];
+        for (const org of orgs) {
+          if (num < org.weight) {
+            return org.name;
+          }
+        }
+      };
 
-  //   for (let i = 0; i < applicantsPerBatch; i++) {
-  //     const getOrg = () => {
-  //       const num = Math.random();
+      const orgForApplicant = getOrg();
 
-  //       for (const org of orgs) {
-  //         if (num < org.weight) {
-  //           return org.name;
-  //         }
-  //       }
-  //     };
+      const getOpening = () => {
+        const num = Math.random();
 
-  //     const orgForApplicant = getOrg();
+        for (const opening of openings) {
+          if (num < opening.weight) {
+            return `${opening.name}-${orgForApplicant}`;
+          }
+        }
+      };
+      const openingForApplicant = getOpening();
 
-  //     const getOpening = () => {
-  //       const num = Math.random();
+      const getStage = () => {
+        const num = Math.random();
 
-  //       for (const opening of openings) {
-  //         if (num < opening.weight) {
-  //           return `${opening.name}-${orgForApplicant}`;
-  //         }
-  //       }
-  //     };
-  //     const openingForApplicant = getOpening();
+        for (const stage of stages) {
+          if (num < stage.weight) {
+            return `${stage.name}-${openingForApplicant}-${orgForApplicant}`;
+          }
+        }
+      };
+      const stageForApplicant = getStage();
+      const applicantId = nanoid(100);
+      const app = {
+        isActive: Math.random() > 0.5,
+        balance: Math.random() * randomNumberInclusive(1, 10000),
+        picture: 'http://placehold.it/32x32',
+        age: randomNumberInclusive(10, 99),
+        eyeColor: faker.commerce.color(),
+        name: faker.name.findName(),
+        gender: Math.random() > 0.5 ? 'male' : 'female',
+        company: orgForApplicant,
+        email: faker.internet.email(),
+        phone: faker.phone.phoneNumber(),
+        address: faker.address.streetAddress(),
+        about: faker.lorem.sentences(randomNumberInclusive(3, 100)),
+        latitude: randomNumberInclusive(-100, 100),
+        longitude: randomNumberInclusive(-100, 100),
+        desc: faker.commerce.productDescription(),
+        id: nanoid(100),
+        tags: [
+          'consectetur in esse consequat sunt labore amet consectetur',
+          'adipisicing dolor fugiat do sint do proident ullamco',
+          'nostrud aliquip cillum pariatur nisi exercitation velit dolor',
+          'qui laborum cillum mollit ut duis non esse',
+          'anim eu tempor enim excepteur laboris occaecat enim',
+          'voluptate et esse do incididunt est irure velit',
+          'anim deserunt dolor non veniam nulla labore veniam',
+          'magna enim qui ut excepteur commodo veniam ex',
+          'minim occaecat eiusmod quis eiusmod non sint consequat',
+          'non reprehenderit dolore pariatur aliqua qui esse mollit',
+          'tempor in quis pariatur laborum nulla fugiat voluptate',
+          'incididunt nulla dolore nulla cillum fugiat sint aliqua',
+          'est ad sint irure sit mollit aliqua anim',
+          'amet ad ad dolor aliqua sunt aliqua ut',
+          'irure sit do non et proident id in',
+          'ea occaecat sunt qui aute commodo elit irure',
+          'cupidatat ullamco sit sit elit do ex laborum',
+          'minim magna consequat Lorem aliquip voluptate dolore adipisicing',
+          'ut eiusmod ipsum id dolor minim laboris elit',
+          'occaecat aute ipsum eiusmod magna tempor elit ut',
+        ],
+        target: [
+          {
+            k: faker.music.genre(),
+            v: faker.name.findName(),
+          },
+          {
+            k: faker.music.genre(),
+            v: faker.name.findName(),
+          },
+          {
+            k: faker.music.genre(),
+            v: faker.name.findName(),
+          },
+          {
+            k: faker.music.genre(),
+            v: faker.name.findName(),
+          },
+          {
+            k: faker.music.genre(),
+            v: faker.name.findName(),
+          },
+          {
+            k: faker.music.genre(),
+            v: faker.name.findName(),
+          },
+          {
+            k: faker.music.genre(),
+            v: faker.name.findName(),
+          },
+          {
+            k: faker.music.genre(),
+            v: faker.name.findName(),
+          },
+          {
+            k: faker.music.genre(),
+            v: faker.name.findName(),
+          },
+          {
+            k: faker.music.genre(),
+            v: faker.name.findName(),
+          },
+        ],
+        greeting: 'Hello, Nadia Santos! You have 10 unread messages.',
+        favoriteDbType: faker.database.type(),
+      };
 
-  //     const getStage = () => {
-  //       const num = Math.random();
+      const newApplicant = {
+        ...app,
+        idx: i,
+        orgId: orgForApplicant,
+        target: [
+          { property: IndexableProperties.CustomId, value: nanoid(50) },
+          {
+            property: IndexableProperties.Org,
+            value: orgForApplicant,
+          },
+          { property: IndexableProperties.Opening, value: openingForApplicant },
+          { property: IndexableProperties.Stage, value: stageForApplicant },
+        ],
+      };
+      localBatch.push(newApplicant);
+    }
+    applicantsToCreate.push(localBatch);
+  }
 
-  //       for (const stage of stages) {
-  //         if (num < stage.weight) {
-  //           return `${stage.name}-${openingForApplicant}-${orgForApplicant}`;
-  //         }
-  //       }
-  //     };
-  //     const stageForApplicant = getStage();
-  //     const applicantId = nanoid(100);
-  //     const app = {
-  //       guid: faker.database.mongodbObjectId(),
-  //       isActive: Math.random() > 0.5,
-  //       balance: Math.random() * randomNumberInclusive(1, 10000),
-  //       picture: 'http://placehold.it/32x32',
-  //       age: randomNumberInclusive(10, 99),
-  //       eyeColor: faker.commerce.color(),
-  //       name: faker.name.findName(),
-  //       gender: Math.random() > 0.5 ? 'male' : 'female',
-  //       company: orgForApplicant,
-  //       email: faker.internet.email(),
-  //       phone: faker.phone.phoneNumber(),
-  //       address: faker.address.streetAddress(),
-  //       about: faker.lorem.sentences(randomNumberInclusive(3, 100)),
-  //       latitude: randomNumberInclusive(-100, 100),
-  //       longitude: randomNumberInclusive(-100, 100),
-  //       desc: faker.commerce.productDescription(),
-  //       id: nanoid(100),
-  //       tags: [
-  //         'consectetur in esse consequat sunt labore amet consectetur',
-  //         'adipisicing dolor fugiat do sint do proident ullamco',
-  //         'nostrud aliquip cillum pariatur nisi exercitation velit dolor',
-  //         'qui laborum cillum mollit ut duis non esse',
-  //         'anim eu tempor enim excepteur laboris occaecat enim',
-  //         'voluptate et esse do incididunt est irure velit',
-  //         'anim deserunt dolor non veniam nulla labore veniam',
-  //         'magna enim qui ut excepteur commodo veniam ex',
-  //         'minim occaecat eiusmod quis eiusmod non sint consequat',
-  //         'non reprehenderit dolore pariatur aliqua qui esse mollit',
-  //         'tempor in quis pariatur laborum nulla fugiat voluptate',
-  //         'incididunt nulla dolore nulla cillum fugiat sint aliqua',
-  //         'est ad sint irure sit mollit aliqua anim',
-  //         'amet ad ad dolor aliqua sunt aliqua ut',
-  //         'irure sit do non et proident id in',
-  //         'ea occaecat sunt qui aute commodo elit irure',
-  //         'cupidatat ullamco sit sit elit do ex laborum',
-  //         'minim magna consequat Lorem aliquip voluptate dolore adipisicing',
-  //         'ut eiusmod ipsum id dolor minim laboris elit',
-  //         'occaecat aute ipsum eiusmod magna tempor elit ut',
-  //       ],
-  //       friends: [
-  //         {
-  //           id: 0,
-  //           name: 'Riddle Stephenson',
-  //         },
-  //         {
-  //           id: 1,
-  //           name: 'Howard Morales',
-  //         },
-  //         {
-  //           id: 2,
-  //           name: 'Dorthy Lowery',
-  //         },
-  //         {
-  //           id: 3,
-  //           name: 'Best Barber',
-  //         },
-  //         {
-  //           id: 4,
-  //           name: 'Buchanan Montoya',
-  //         },
-  //         {
-  //           id: 5,
-  //           name: 'Gilliam Sharp',
-  //         },
-  //         {
-  //           id: 6,
-  //           name: 'Colon Humphrey',
-  //         },
-  //         {
-  //           id: 7,
-  //           name: 'Laverne Hardin',
-  //         },
-  //         {
-  //           id: 8,
-  //           name: 'Woodard Lowe',
-  //         },
-  //         {
-  //           id: 9,
-  //           name: 'Fleming Sims',
-  //         },
-  //       ],
-  //       greeting: 'Hello, Nadia Santos! You have 10 unread messages.',
-  //       favoriteDbType: faker.database.type(),
-  //     };
-
-  //     const newApplicant = {
-  //       ...app,
-  //       idx: i,
-  //       org: orgForApplicant,
-  //       target: {
-  //         Org: orgForApplicant,
-  //         Opening: openingForApplicant,
-  //         Stage: stageForApplicant,
-  //         Id: applicantId,
-  //       },
-  //     };
-  //     localBatch.push(newApplicant);
-  //   }
-  //   applicantsToCreate.push(localBatch);
-  // }
   console.log('Sending to mongo');
   await sendToMongo();
 };

@@ -33,6 +33,7 @@ export const connectToDatabase = async () => {
 
   const db: mongoDB.Db = client.db('development');
 
+  
   const usersCollection: mongoDB.Collection = db.collection(Collections.Users);
   const loginLinksCollection: mongoDB.Collection = db.collection(Collections.LoginLinks);
   const orgsCollection: mongoDB.Collection = db.collection(Collections.Orgs);
