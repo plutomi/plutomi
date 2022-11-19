@@ -5,14 +5,17 @@ import * as mongoDB from 'mongodb';
 import { Collections } from '../Config';
 import { env } from '../env';
 
-let mongoClient: mongoDB.MongoClient | undefined;
-
 interface ConnectToDatabaseProps {
   databaseName: string;
 }
+
+interface ConnectToDatabaseResponse {
+  db: mongoDB.Collection; // Our sole collection for data
+  client: mongoDB.MongoClient; // Client, for any transactions etc.
+}
 export const connectToDatabase = async ({
   databaseName,
-}: ConnectToDatabaseProps): Promise<mongoDB.MongoClient> => {
+}: ConnectToDatabaseProps): Promise<ConnectToDatabaseResponse> => {
   const client = new mongoDB.MongoClient(env.mongoConnection);
 
   try {
@@ -22,22 +25,24 @@ export const connectToDatabase = async ({
     console.error(`Error connecting to MongoDB!`, error);
   }
 
-  const db: mongoDB.Db = client.db(databaseName);
-  console.log(`Successfully connected to database: ${db.databaseName}.`);
-
+  const database: mongoDB.Db = client.db(databaseName);
+  console.log(`Successfully connected to database: ${database.databaseName}.`);
   console.log(`Creating necessary collections and indexes`);
 
-  const collection = db.collection('data');
+  const db = database.collection('data');
   const indexName = 'target';
-  const indexExists = await collection.indexExists(indexName);
+  const indexExists = await db.indexExists(indexName);
 
   if (!indexExists) {
     console.info(`Creating ${indexName} index...`);
     const indexKey: mongoDB.IndexSpecification = { target: 1 };
-    await collection.createIndex(indexKey, { name: indexName });
+    await db.createIndex(indexKey, { name: indexName });
     console.info(`Index created!`);
   }
-
   console.log('Ready.\n');
-  return client;
+
+  return {
+    client,
+    db,
+  };
 };
