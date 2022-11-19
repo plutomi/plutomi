@@ -4,7 +4,12 @@ import { faker } from '@faker-js/faker';
 import { nanoid } from 'nanoid';
 import { Collection } from 'mongodb';
 import { randomItemFromArray } from './utils/randomItemFromArray';
-import { IndexedTargetArrayItem } from './@types/indexableProperties';
+import {
+  AllEntities,
+  IndexableProperties,
+  IndexedTargetArray,
+  IndexedTargetArrayItem,
+} from './@types/indexableProperties';
 
 const main = async () => {
   try {
@@ -241,20 +246,21 @@ const main = async () => {
         };
 
         const newApplicant: {
-          target: IndexedTargetArrayItem[];
+          target: IndexedTargetArray;
           [x: string | number | symbol]: unknown;
         } = {
           ...app,
           idx: i,
           orgId: orgForApplicant,
           target: [
-            { id: applicantId, type: 'self' },
+            { id: AllEntities.Applicant, type: 'entityType' },
+            { id: applicantId, type: 'id' },
             {
               id: orgForApplicant,
-              type: 'org',
+              type: AllEntities.Org,
             },
-            { id: openingForApplicant, type: 'opening' },
-            { id: stageForApplicant, type: 'stage' },
+            { id: openingForApplicant, type: AllEntities.Opening },
+            { id: stageForApplicant, type: AllEntities.Stage },
           ],
         };
         localBatch.push(newApplicant);
@@ -280,19 +286,20 @@ const main = async () => {
           for (let i = 0; i < questionsPerApplicant; i++) {
             const questionId = nanoid(50);
             const questionAnswer: {
-              target: IndexedTargetArrayItem[];
+              target: IndexedTargetArray;
               [x: string | number | symbol]: unknown;
             } = {
               id: questionId,
               type: 'Question',
               orgId: randomApplicant.orgId,
               target: [
-                { id: questionId, type: 'self' },
+                { id: AllEntities.Question, type: 'entityType' },
+                { id: questionId, type: 'id' },
                 {
                   id: randomApplicant.orgId,
-                  type: 'org',
+                  type: AllEntities.Org,
                 },
-                { id: randomApplicant.id, type: 'applicant' }, // Index lookup TODO!
+                { id: randomApplicant.id, type: AllEntities.Applicant }, // Index lookup TODO!
               ],
             };
 
