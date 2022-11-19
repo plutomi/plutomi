@@ -155,6 +155,7 @@ const main = async () => {
         const stageForApplicant = getStage();
         const applicantId = nanoid(50);
         const app = {
+          type: 'Applicant',
           isActive: Math.random() > 0.5,
           balance: Math.random() * randomNumberInclusive(1, 10000),
           picture: 'http://placehold.it/32x32',
@@ -244,13 +245,14 @@ const main = async () => {
           idx: i,
           orgId: orgForApplicant,
           target: [
-            { property: IndexableProperties.CustomId, value: applicantId },
+            { id: IndexableProperties.Id, value: applicantId },
+            { id: IndexableProperties.t, value: applicantId },
             {
-              property: IndexableProperties.Org,
+              id: IndexableProperties.Org,
               value: orgForApplicant,
             },
-            { property: IndexableProperties.Opening, value: openingForApplicant },
-            { property: IndexableProperties.Stage, value: stageForApplicant },
+            { id: IndexableProperties.Opening, value: openingForApplicant },
+            { id: IndexableProperties.Stage, value: stageForApplicant },
           ],
         };
         localBatch.push(newApplicant);
@@ -259,6 +261,9 @@ const main = async () => {
     }
 
     const sendToMongo = async ({ db }: { db: Collection }) => {
+      await db.deleteMany({});
+
+      console.log(`Creating`, applicantsToCreate.length, `applicants!`);
       for await (const batch of applicantsToCreate) {
         const bidx = applicantsToCreate.indexOf(batch) + 1;
 
@@ -274,14 +279,15 @@ const main = async () => {
             const questionId = nanoid(50);
             const questionAnswer = {
               id: questionId,
+              type: 'Question',
               orgId: randomApplicant.orgId,
               target: [
-                { property: IndexableProperties.CustomId, value: questionId },
+                { id: IndexableProperties.CustomId, value: questionId },
                 {
-                  property: IndexableProperties.Org,
+                  id: IndexableProperties.Org,
                   value: randomApplicant.orgId,
                 },
-                { property: 'Applicant', value: randomApplicant.id }, // Index lookup TODO!
+                { id: 'Applicant', value: randomApplicant.id }, // Index lookup TODO!
               ],
             };
 
@@ -292,10 +298,16 @@ const main = async () => {
         };
 
         const allQuestions = generateQuestions();
-        await db.insertMany(allQuestions);
+        //  console.log(allQuestions);
+        try {
+          await db.insertMany(allQuestions);
+        } catch (error) {
+          console.error(`Error creating questions`, error);
+        }
         console.log(
           `Inserted ${allQuestions.length} questions for applicant ${randomApplicant.id}`,
         );
+        console.log(`sample`, allQuestions[0].target);
         processedApplicants += batch.length;
         console.log(
           `Done processing batch`,
