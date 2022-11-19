@@ -30,8 +30,17 @@ export const connectToDatabase = async ({
 
   const collectionName = 'data';
   const indexName = 'target';
-  
-  const db = await database.createCollection(collectionName);
+
+  const collectionNames = await database.listCollections({}, { nameOnly: true }).toArray();
+
+  let db: mongoDB.Collection;
+  const collectionExists = collectionNames.find((item) => item.name === collectionName);
+  if (collectionExists) {
+    db = database.collection(collectionName);
+  } else {
+    db = await database.createCollection(collectionName);
+  }
+
   const indexExists = await db.indexExists(indexName);
 
   if (!indexExists) {

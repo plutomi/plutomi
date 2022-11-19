@@ -284,7 +284,8 @@ const main = async () => {
                 { property: 'Applicant', value: randomApplicant.id }, // Index lookup TODO!
               ],
             };
-            console.log(`QUESTION!`, questionAnswer);
+
+            allQuestions.push(questionAnswer);
           }
 
           return allQuestions;
