@@ -1,5 +1,5 @@
 export type IndexTypes =
-  | 'id' // Self referential ID
+  | 'self' // Self referential ID
   | 'user'
   | 'userLoginLink'
   | 'email'
@@ -16,8 +16,8 @@ export type IndexTypes =
   | 'nextQuestion'
   | 'applicant'
   | 'webhook'
-  | 'applicant'
-  | null;
+  | 'applicant';
+
 export interface IndexedTargetArrayItem {
   id: string | null;
   type: IndexTypes;
