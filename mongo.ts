@@ -3,8 +3,8 @@ import { randomNumberInclusive } from './utils/randomNumberInclusive';
 import { faker } from '@faker-js/faker';
 import { nanoid } from 'nanoid';
 import { Collection } from 'mongodb';
-import { IndexableProperties } from './@types/indexableProperties';
 import { randomItemFromArray } from './utils/randomItemFromArray';
+import { IndexedTargetArrayItem } from './@types/indexableProperties';
 
 const main = async () => {
   try {
@@ -240,19 +240,21 @@ const main = async () => {
           favoriteDbType: faker.database.type(),
         };
 
-        const newApplicant = {
+        const newApplicant: {
+          target: IndexedTargetArrayItem[];
+          [x: string | number | symbol]: unknown;
+        } = {
           ...app,
           idx: i,
           orgId: orgForApplicant,
           target: [
-            { id: IndexableProperties.Id, value: applicantId },
-            { id: IndexableProperties.t, value: applicantId },
+            { id: applicantId, type: 'self' },
             {
-              id: IndexableProperties.Org,
-              value: orgForApplicant,
+              id: orgForApplicant,
+              type: 'org',
             },
-            { id: IndexableProperties.Opening, value: openingForApplicant },
-            { id: IndexableProperties.Stage, value: stageForApplicant },
+            { id: openingForApplicant, type: 'opening' },
+            { id: stageForApplicant, type: 'stage' },
           ],
         };
         localBatch.push(newApplicant);
@@ -277,17 +279,20 @@ const main = async () => {
 
           for (let i = 0; i < questionsPerApplicant; i++) {
             const questionId = nanoid(50);
-            const questionAnswer = {
+            const questionAnswer: {
+              target: IndexedTargetArrayItem[];
+              [x: string | number | symbol]: unknown;
+            } = {
               id: questionId,
               type: 'Question',
               orgId: randomApplicant.orgId,
               target: [
-                { id: IndexableProperties.CustomId, value: questionId },
+                { id: questionId, type: 'self' },
                 {
-                  id: IndexableProperties.Org,
-                  value: randomApplicant.orgId,
+                  id: randomApplicant.orgId,
+                  type: 'org',
                 },
-                { id: 'Applicant', value: randomApplicant.id }, // Index lookup TODO!
+                { id: randomApplicant.id, type: 'applicant' }, // Index lookup TODO!
               ],
             };
 
