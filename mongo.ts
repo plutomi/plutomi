@@ -4,6 +4,7 @@ import { faker } from '@faker-js/faker';
 import { nanoid } from 'nanoid';
 import { Collection } from 'mongodb';
 import { IndexableProperties } from './@types/indexableProperties';
+import { randomItemFromArray } from './utils/randomItemFromArray';
 
 const main = async () => {
   try {
@@ -152,7 +153,7 @@ const main = async () => {
           }
         };
         const stageForApplicant = getStage();
-        const applicantId = nanoid(100);
+        const applicantId = nanoid(50);
         const app = {
           isActive: Math.random() > 0.5,
           balance: Math.random() * randomNumberInclusive(1, 10000),
@@ -169,7 +170,7 @@ const main = async () => {
           latitude: randomNumberInclusive(-100, 100),
           longitude: randomNumberInclusive(-100, 100),
           desc: faker.commerce.productDescription(),
-          id: nanoid(100),
+          id: applicantId,
           tags: [
             'consectetur in esse consequat sunt labore amet consectetur',
             'adipisicing dolor fugiat do sint do proident ullamco',
@@ -243,7 +244,7 @@ const main = async () => {
           idx: i,
           orgId: orgForApplicant,
           target: [
-            { property: IndexableProperties.CustomId, value: nanoid(50) },
+            { property: IndexableProperties.CustomId, value: applicantId },
             {
               property: IndexableProperties.Org,
               value: orgForApplicant,
@@ -260,8 +261,40 @@ const main = async () => {
     const sendToMongo = async ({ db }: { db: Collection }) => {
       for await (const batch of applicantsToCreate) {
         const bidx = applicantsToCreate.indexOf(batch) + 1;
+
         await db.insertMany(batch);
-        // await collections.applicants.deleteMany({});
+
+        const randomApplicant: any = randomItemFromArray(batch);
+
+        const questionsPerApplicant = randomNumberInclusive(5, 30);
+        const generateQuestions = (): any[] => {
+          const allQuestions = [];
+
+          for (let i = 0; i < questionsPerApplicant; i++) {
+            const questionId = nanoid(50);
+            const questionAnswer = {
+              id: questionId,
+              orgId: randomApplicant.orgId,
+              target: [
+                { property: IndexableProperties.CustomId, value: questionId },
+                {
+                  property: IndexableProperties.Org,
+                  value: randomApplicant.orgId,
+                },
+                { property: 'Applicant', value: randomApplicant.id }, // Index lookup TODO!
+              ],
+            };
+            console.log(`QUESTION!`, questionAnswer);
+          }
+
+          return allQuestions;
+        };
+
+        const allQuestions = generateQuestions();
+        await db.insertMany(allQuestions);
+        console.log(
+          `Inserted ${allQuestions.length} questions for applicant ${randomApplicant.id}`,
+        );
         processedApplicants += batch.length;
         console.log(
           `Done processing batch`,
