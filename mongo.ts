@@ -3,13 +3,7 @@ import { randomNumberInclusive } from './utils/randomNumberInclusive';
 import { faker } from '@faker-js/faker';
 import { nanoid } from 'nanoid';
 import { Collection } from 'mongodb';
-import { OrgEntity, StageEntity, UserEntity } from './models';
 import { IndexableProperties } from './@types/indexableProperties';
-import dayjs from 'dayjs';
-import { UpdateFilter } from 'mongodb';
-import { OpeningEntity } from './models/Opening';
-const increment = [];
-const decrement = [];
 
 const main = async () => {
   try {
