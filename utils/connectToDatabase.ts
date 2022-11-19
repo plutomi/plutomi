@@ -2,7 +2,6 @@ import * as dotenv from 'dotenv'; // see https://github.com/motdotla/dotenv#how-
 dotenv.config();
 
 import * as mongoDB from 'mongodb';
-import { Collections } from '../Config';
 import { env } from '../env';
 
 interface ConnectToDatabaseProps {
@@ -29,8 +28,10 @@ export const connectToDatabase = async ({
   console.log(`Successfully connected to database: ${database.databaseName}.`);
   console.log(`Creating necessary collections and indexes`);
 
-  const db = database.collection('data');
+  const collectionName = 'data';
   const indexName = 'target';
+  
+  const db = await database.createCollection(collectionName);
   const indexExists = await db.indexExists(indexName);
 
   if (!indexExists) {

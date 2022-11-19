@@ -112,8 +112,8 @@ const main = async () => {
     ];
 
     let applicantsToCreate: any = [];
-    const numberOfBatches = 50;
-    const applicantsPerBatch = 5000;
+    const numberOfBatches = 5;
+    const applicantsPerBatch = 10;
 
     for (let i = 0; i < numberOfBatches; i++) {
       const localBatch: any = [];
