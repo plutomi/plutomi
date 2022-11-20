@@ -31,8 +31,7 @@ export const connectToDatabase = async ({
 
   const collectionName = 'data';
   const uniqueIdIndexName = 'id'; // Allows creating custom IDs tailored to the application
-  const targetArray1IndexName = 'target1'; // Object[] - Multi Key Array https://www.youtube.com/watch?v=Hw87CVWuecI&t=1234s
-  const targetArray2IndexName = 'target2'; // Object[] - Multi Key Array https://www.youtube.com/watch?v=Hw87CVWuecI&t=1234s
+  const targetArrayIndexName = 'target'; // Object[] - Multi Key Array https://www.youtube.com/watch?v=Hw87CVWuecI&t=1234s
 
   const collectionNames = await database.listCollections({}, { nameOnly: true }).toArray();
 
@@ -53,29 +52,17 @@ export const connectToDatabase = async ({
     console.info(`Index created!`);
   }
 
-  // target.id index
-  const targetArrayIndex1Exists = await db.indexExists(targetArray1IndexName);
-  if (!targetArrayIndex1Exists) {
-    console.info(`Creating ${targetArray1IndexName} index...`);
+  const targetArrayIndexExists = await db.indexExists(targetArrayIndexName);
+  if (!targetArrayIndexExists) {
+    console.info(`Creating ${targetArrayIndexName} index...`);
     /**
      * Must match the {@link IndexedTargetArrayItem} keys
      */
-    const targetArray1IndexKey: mongoDB.IndexSpecification = { 'target.id': 1 };
-    await db.createIndex(targetArray1IndexKey, { name: targetArray1IndexName });
+    const targetArrayIndexKey: mongoDB.IndexSpecification = { 'target.id': 1, 'target.type': 2 };
+    await db.createIndex(targetArrayIndexKey, { name: targetArrayIndexName });
     console.info(`Index created!`);
   }
 
-  // target.type index
-  const targetArrayIndex2Exists = await db.indexExists(targetArray2IndexName);
-  if (!targetArrayIndex2Exists) {
-    console.info(`Creating ${targetArray2IndexName} index...`);
-    /**
-     * Must match the {@link IndexedTargetArrayItem} keys
-     */
-    const targetArray2IndexKey: mongoDB.IndexSpecification = { 'target.type': 1 };
-    await db.createIndex(targetArray2IndexKey, { name: targetArray2IndexName });
-    console.info(`Index created!`);
-  }
   console.log('Ready.\n');
 
   return {
