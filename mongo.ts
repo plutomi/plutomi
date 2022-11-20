@@ -277,50 +277,60 @@ const main = async () => {
 
         await db.insertMany(batch);
 
-        const randomApplicant: any = randomItemFromArray(batch);
-
-        const questionsPerApplicant = randomNumberInclusive(questionsPerAppMin, questionsPerAppMax);
-        const generateQuestions = (): any[] => {
-          const allQuestions = [];
-
-          for (let i = 0; i < questionsPerApplicant; i++) {
-            const questionId = nanoid(50);
-            const questionAnswer: {
-              target: IndexedTargetArray;
-              [x: string | number | symbol]: unknown;
-            } = {
-              id: questionId,
-              answer: nanoid(50),
-              type: 'Question',
-              orgId: randomApplicant.orgId,
-              target: [
-                { id: AllEntities.Question, type: 'entityType' },
-                { id: questionId, type: 'id' },
-                {
-                  id: randomApplicant.orgId,
-                  type: AllEntities.Org,
-                },
-                { id: randomApplicant.id, type: AllEntities.Applicant }, // Index lookup TODO!
-              ],
-            };
-
-            allQuestions.push(questionAnswer);
-          }
-
-          return allQuestions;
-        };
-
-        const allQuestions = generateQuestions();
-        //  console.log(allQuestions);
-        try {
-          await db.insertMany(allQuestions);
-        } catch (error) {
-          console.error(`Error creating questions`, error);
-        }
-        console.log(
-          `Inserted ${allQuestions.length} questions for applicant ${randomApplicant.id}`,
+        const numOfApplicantsToGetQuestions = Math.floor(applicantsPerBatch / 10);
+        const randomApplicants: any = new Array(numOfApplicantsToGetQuestions).fill(
+          randomItemFromArray(batch),
+          0,
+          numOfApplicantsToGetQuestions - 1,
         );
-        console.log(`sample`, allQuestions[0].target);
+        for await (const randomApplicant of randomApplicants) {
+          const questionsPerApplicant = randomNumberInclusive(
+            questionsPerAppMin,
+            questionsPerAppMax,
+          );
+          const generateQuestions = (): any[] => {
+            const allQuestions = [];
+
+            for (let i = 0; i < questionsPerApplicant; i++) {
+              const questionId = nanoid(50);
+              const questionAnswer: {
+                target: IndexedTargetArray;
+                [x: string | number | symbol]: unknown;
+              } = {
+                id: questionId,
+                answer: nanoid(50),
+                type: 'Question',
+                orgId: randomApplicant.orgId,
+                target: [
+                  { id: AllEntities.Question, type: 'entityType' },
+                  { id: questionId, type: 'id' },
+                  {
+                    id: randomApplicant.orgId,
+                    type: AllEntities.Org,
+                  },
+                  { id: randomApplicant.id, type: AllEntities.Applicant }, // Index lookup TODO!
+                ],
+              };
+
+              allQuestions.push(questionAnswer);
+            }
+
+            return allQuestions;
+          };
+
+          const allQuestions = generateQuestions();
+          console.log(allQuestions);
+          try {
+            await db.insertMany(allQuestions);
+          } catch (error) {
+            console.error(`Error creating questions`, error);
+          }
+          console.log(
+            `Inserted ${allQuestions.length} questions for applicant ${randomApplicant.id}`,
+          );
+          console.log(`sample`, allQuestions[0].target);
+        }
+
         processedApplicants += batch.length;
         console.log(
           `Done processing batch`,
