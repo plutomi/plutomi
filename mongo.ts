@@ -11,6 +11,10 @@ import {
   IndexedTargetArrayItem,
 } from './@types/indexableProperties';
 
+const numberOfBatches = 5000;
+const applicantsPerBatch = 1;
+const questionsPerAppMin = 50;
+const questionsPerAppMax = 200;
 const main = async () => {
   try {
     const { client, db } = await connectToDatabase({ databaseName: 'development' });
@@ -118,8 +122,6 @@ const main = async () => {
     ];
 
     let applicantsToCreate: any = [];
-    const numberOfBatches = 5;
-    const applicantsPerBatch = 10;
 
     for (let i = 0; i < numberOfBatches; i++) {
       const localBatch: any = [];
@@ -269,8 +271,6 @@ const main = async () => {
     }
 
     const sendToMongo = async ({ db }: { db: Collection }) => {
-      await db.deleteMany({});
-
       console.log(`Creating`, applicantsToCreate.length, `applicants!`);
       for await (const batch of applicantsToCreate) {
         const bidx = applicantsToCreate.indexOf(batch) + 1;
@@ -279,7 +279,7 @@ const main = async () => {
 
         const randomApplicant: any = randomItemFromArray(batch);
 
-        const questionsPerApplicant = randomNumberInclusive(5, 30);
+        const questionsPerApplicant = randomNumberInclusive(questionsPerAppMin, questionsPerAppMax);
         const generateQuestions = (): any[] => {
           const allQuestions = [];
 
@@ -290,6 +290,7 @@ const main = async () => {
               [x: string | number | symbol]: unknown;
             } = {
               id: questionId,
+              answer: nanoid(50),
               type: 'Question',
               orgId: randomApplicant.orgId,
               target: [
