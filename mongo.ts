@@ -11,10 +11,10 @@ import {
   IndexedTargetArrayItem,
 } from './@types/indexableProperties';
 
-const numberOfBatches = 5000;
-const applicantsPerBatch = 1;
-const questionsPerAppMin = 50;
-const questionsPerAppMax = 200;
+const numberOfBatches = 100;
+const applicantsPerBatch = 4000;
+const questionsPerAppMin = 3;
+const questionsPerAppMax = 50;
 const main = async () => {
   try {
     const { client, db } = await connectToDatabase({ databaseName: 'development' });
