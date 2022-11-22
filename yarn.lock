@@ -8741,6 +8741,13 @@
   "resolved" "https://registry.npmjs.org/moment/-/moment-2.29.4.tgz"
   "version" "2.29.4"
 
+"mongo@^0.1.0":
+  "integrity" "sha512-2MPq+GCNKhah0V/g/HIQI/S1h6Ycd87KPuXAITkeXWT6wncvABFxOaXdzCKlRvLSQRUkDimllrRrhoHUTD8usg=="
+  "resolved" "https://registry.npmjs.org/mongo/-/mongo-0.1.0.tgz"
+  "version" "0.1.0"
+  dependencies:
+    "mongodb" "*"
+
 "mongodb-connection-string-url@^2.5.4":
   "integrity" "sha512-SeAxuWs0ez3iI3vvmLk/j2y+zHwigTDKQhtdxTgt5ZCOQQS5+HW4g45/Xw5vzzbn7oQXCNQ24Z40AkJsizEy7w=="
   "resolved" "https://registry.npmjs.org/mongodb-connection-string-url/-/mongodb-connection-string-url-2.5.4.tgz"

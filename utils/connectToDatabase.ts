@@ -8,11 +8,28 @@ import { env } from '../env';
 interface ConnectToDatabaseProps {
   databaseName: string;
 }
-
-interface ConnectToDatabaseResponse {
-  db: mongoDB.Collection; // Our sole collection for data
-  client: mongoDB.MongoClient; // Client, for any transactions etc.
+export enum CollectionNames {
+  Orgs = 'Orgs',
+  Applicants = 'Applicants',
 }
+
+export type AllCollectionsResponse = {
+  [key in CollectionNames]: mongoDB.Collection; // Client, for any transactions etc.
+};
+
+export type ConnectToDatabaseResponse = {
+  collections: AllCollectionsResponse;
+  client: mongoDB.MongoClient;
+};
+
+export const collections: {
+  Orgs: mongoDB.Collection;
+  Applicants: mongoDB.Collection;
+} = {
+  Orgs: null,
+  Applicants: null,
+};
+
 export const connectToDatabase = async ({
   databaseName,
 }: ConnectToDatabaseProps): Promise<ConnectToDatabaseResponse> => {
@@ -27,46 +44,35 @@ export const connectToDatabase = async ({
 
   const database: mongoDB.Db = client.db(databaseName);
   console.log(`Successfully connected to database: ${database.databaseName}.`);
-  console.log(`Creating necessary collections and indexes`);
 
-  const collectionName = 'data';
-  const uniqueIdIndexName = 'id'; // Allows creating custom IDs tailored to the application
-  const targetArrayIndexName = 'target'; // Object[] - Multi Key Array https://www.youtube.com/watch?v=Hw87CVWuecI&t=1234s
+  const orgs: mongoDB.Collection = database.collection(CollectionNames.Orgs);
+  collections.Orgs = orgs;
+
+  const applicants: mongoDB.Collection = database.collection(CollectionNames.Applicants);
+  collections.Applicants = applicants;
+
+  console.log(`Creating necessary collections and indexes`);
 
   const collectionNames = await database.listCollections({}, { nameOnly: true }).toArray();
 
-  let db: mongoDB.Collection;
-  const collectionExists = collectionNames.find((item) => item.name === collectionName);
-  if (collectionExists) {
-    db = database.collection(collectionName);
-  } else {
-    db = await database.createCollection(collectionName);
-  }
+  Object.values(collections).map(async (collection) => {
+    const { collectionName } = collection;
+    const collectionExists = collectionNames.find((item) => item.name === collectionName);
 
-  const uniqueIdIndexExists = await db.indexExists(uniqueIdIndexName);
-
-  if (!uniqueIdIndexExists) {
-    console.info(`Creating ${uniqueIdIndexName} index...`);
-    const indexKey: mongoDB.IndexSpecification = { id: 1 };
-    await db.createIndex(indexKey, { name: uniqueIdIndexName, unique: true });
-    console.info(`Index created!`);
-  }
-
-  const targetArrayIndexExists = await db.indexExists(targetArrayIndexName);
-  if (!targetArrayIndexExists) {
-    console.info(`Creating ${targetArrayIndexName} index...`);
-    /**
-     * Must match the {@link IndexedTargetArrayItem} keys
-     */
-    const targetArrayIndexKey: mongoDB.IndexSpecification = { 'target.id': 1, 'target.type': 2 };
-    await db.createIndex(targetArrayIndexKey, { name: targetArrayIndexName });
-    console.info(`Index created!`);
-  }
+    if (!collectionExists) {
+      try {
+        console.log('Creating collection', collectionName);
+        await database.createCollection(collectionName);
+      } catch (error) {
+        console.error(`An error ocurred creating collection ${collectionName}`, error);
+      }
+    }
+  });
 
   console.log('Ready.\n');
 
   return {
     client,
-    db,
+    collections,
   };
 };

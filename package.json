@@ -59,6 +59,7 @@
     "joi": "^17.4.2",
     "jsonwebtoken": "^8.5.1",
     "loadtest": "^5.1.2",
+    "mongo": "^0.1.0",
     "mongodb": "^4.11.0",
     "morgan": "^1.10.0",
     "nanoid": "^3.1.31",
