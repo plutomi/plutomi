@@ -1,21 +1,27 @@
-import { AllCollectionsResponse, connectToDatabase } from '../utils/connectToDatabase';
-import { randomNumberInclusive } from '../utils/randomNumberInclusive';
+import { AllCollectionsResponse, connectToDatabase } from './utils/connectToDatabase';
+import { randomNumberInclusive } from './utils/randomNumberInclusive';
 import { faker } from '@faker-js/faker';
 import { nanoid } from 'nanoid';
+import AxiosDigest from 'axios-digest';
+import AxiosDigestAuth from '@mhoc/axios-digest-auth';
+
 import { Collection } from 'mongodb';
-import { randomItemFromArray } from '../utils/randomItemFromArray';
+import { randomItemFromArray } from './utils/randomItemFromArray';
 import {
   AllEntities,
   IndexableProperties,
   IndexedTargetArray,
   IndexedTargetArrayItem,
-} from '../@types/indexableProperties';
+} from './@types/indexableProperties';
 import dayjs from 'dayjs';
 import axios from 'axios';
 
 const numberOfBatches = 100;
-const applicantsPerBatch = 4000;
-const orgsToCreate = 100;
+const applicantsPerBatch = 100;
+const orgsToCreate = 3;
+const publicKey = 'rzlsbipz'; // TODO delete lol
+const privateKey = '612c8dfe-b160-4c68-958d-d5116fc02aea'; // TODO delete lol
+const dbName = 'development';
 
 // https://dev.to/trekhleb/weighted-random-algorithm-in-javascript-1pdc
 const weightedRandom = (items: string[], weights: number[]) => {
@@ -47,39 +53,86 @@ const weightedRandom = (items: string[], weights: number[]) => {
 
 const main = async () => {
   try {
-    const { client, collections } = await connectToDatabase({ databaseName: 'development' });
+    const { client, collections } = await connectToDatabase({ databaseName: dbName });
 
-    await collections.Applicants.createIndex({});
     let processedApplicants = 0;
 
-    const orgs = [];
+    await collections.Applicants.deleteMany({});
+    await collections.Applicants.deleteMany({});
+    await collections.Applicants.deleteMany({});
+    await collections.Applicants.deleteMany({});
+    await collections.Applicants.deleteMany({});
+    await collections.Applicants.deleteMany({});
+    await collections.Applicants.deleteMany({});
+    await collections.Applicants.deleteMany({});
+    await collections.Applicants.deleteMany({});
+    await collections.Applicants.deleteMany({});
+    await collections.Applicants.deleteMany({});
+
+    const allOrgs = [];
     const orgWeights = [];
     Array.from({ length: orgsToCreate }).forEach(() => {
-      orgs.push(faker.company.companyName());
+      allOrgs.push(
+        faker.company
+          .companyName()
+          .toLowerCase()
+          .replaceAll(/[^a-z]/gi, ''),
+      );
+    });
+    // Unique only
+    let orgs = [...new Set(allOrgs)];
+
+    console.log(
+      `Creating ${orgs.length} ${
+        orgs.length !== allOrgs.length
+      } because there were some duplicates with faker`,
+    );
+    orgs.forEach((org) => {
       orgWeights.push(randomNumberInclusive(1, 100));
     });
     console.log(`ORGS`, orgs);
     console.log(`Weights`, orgWeights);
 
-    const groupId = ``;
-    const clusterName = ``;
+    const groupId = `62e72d3d7be6ee26f42c0ec7`;
+    const clusterName = `Cluster0`;
+    const url = `https://cloud.mongodb.com/api/atlas/v1.0/groups/${groupId}/clusters/${clusterName}/fts/indexes`;
+
+    const digestAuth = new AxiosDigestAuth({
+      username: publicKey,
+      password: privateKey,
+    });
     for await (const org of orgs) {
-      await axios.post(
-        `https://cloud.mongodb.com/api/atlas/v1.0/groups/${groupId}/clusters/${clusterName}/fts/indexes`,
-        {
-          mappings: {
-            dynamic: false,
-            fields: {
-              orgnameData: {
-                dynamic: true,
-                type: 'document',
-              },
+      const data = {
+        name: `${org}Index`,
+        collectionName: collections.Applicants.collectionName,
+        database: dbName,
+        mappings: {
+          dynamic: false,
+          fields: {
+            [`${org}Data`]: {
+              dynamic: true,
+              type: 'document',
             },
           },
         },
-      );
+      };
+
+      console.log(`Creating search index for org ${org}`);
+      try {
+        await digestAuth.request({
+          url,
+          data,
+          method: 'POST',
+          headers: { Accept: 'application/json' },
+        });
+        console.log('Created!');
+      } catch (error) {
+        console.error(`Error creating search index`, error);
+        if (error.response.data.detail === 'Duplicate Index.') {
+          console.log('Duplicate index for ', org);
+        }
+      }
     }
-    // TODO Body
 
     const openings = [
       {
@@ -129,12 +182,20 @@ const main = async () => {
 
     let applicantsToCreate: any = [];
 
+    const orgDistribution = {};
     for (let i = 0; i < numberOfBatches; i++) {
       const localBatch: any = [];
 
       for (let i = 0; i < applicantsPerBatch; i++) {
         const orgForApplicant = weightedRandom(orgs, orgWeights);
 
+        if (orgForApplicant in orgDistribution) {
+          orgDistribution[orgForApplicant].value = orgDistribution[orgForApplicant].value++;
+        } else {
+          orgDistribution[orgForApplicant] = {
+            value: 1,
+          };
+        }
         const getOpening = () => {
           const num = Math.random();
 
@@ -189,8 +250,8 @@ const main = async () => {
           createdAt: faker.date.between(dayjs().subtract(5, 'years').toDate(), dayjs().toDate()),
           updatedAt: faker.date.between(dayjs().subtract(5, 'years').toDate(), dayjs().toDate()),
           birthDate: faker.date.between(
-            dayjs().subtract(17, 'years').toDate(),
             dayjs().subtract(80, 'years').toDate(),
+            dayjs().subtract(17, 'years').toDate(),
           ),
           tags: [
             'consectetur in esse consequat sunt labore amet consectetur',
@@ -223,6 +284,9 @@ const main = async () => {
 
         const newApplicant = {
           idx: i,
+          orgId: orgForApplicant,
+          openingId: openingForApplicant,
+          stageId: stageForApplicant,
           // TODO Unique search index will be created per org
           [`${orgForApplicant}Data`]: app,
         };
@@ -231,6 +295,7 @@ const main = async () => {
       applicantsToCreate.push(localBatch);
     }
 
+    console.log(`Org distribution\n\n`, orgDistribution);
     const sendToMongo = async (collections: AllCollectionsResponse) => {
       console.log(`Creating`, applicantsToCreate.length, `applicants!`);
       for await (const batch of applicantsToCreate) {
