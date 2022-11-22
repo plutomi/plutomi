@@ -17,8 +17,8 @@ import dayjs from 'dayjs';
 import axios from 'axios';
 
 const numberOfBatches = 100;
-const applicantsPerBatch = 100;
-const orgsToCreate = 3;
+const applicantsPerBatch = 3000;
+const orgsToCreate = 5;
 const publicKey = 'rzlsbipz'; // TODO delete lol
 const privateKey = '612c8dfe-b160-4c68-958d-d5116fc02aea'; // TODO delete lol
 const dbName = 'development';
@@ -56,18 +56,6 @@ const main = async () => {
     const { client, collections } = await connectToDatabase({ databaseName: dbName });
 
     let processedApplicants = 0;
-
-    await collections.Applicants.deleteMany({});
-    await collections.Applicants.deleteMany({});
-    await collections.Applicants.deleteMany({});
-    await collections.Applicants.deleteMany({});
-    await collections.Applicants.deleteMany({});
-    await collections.Applicants.deleteMany({});
-    await collections.Applicants.deleteMany({});
-    await collections.Applicants.deleteMany({});
-    await collections.Applicants.deleteMany({});
-    await collections.Applicants.deleteMany({});
-    await collections.Applicants.deleteMany({});
 
     const allOrgs = [];
     const orgWeights = [];
@@ -127,9 +115,10 @@ const main = async () => {
         });
         console.log('Created!');
       } catch (error) {
-        console.error(`Error creating search index`, error);
         if (error.response.data.detail === 'Duplicate Index.') {
           console.log('Duplicate index for ', org);
+        } else {
+          console.error(`Error creating search index`, error);
         }
       }
     }
@@ -297,7 +286,6 @@ const main = async () => {
 
     console.log(`Org distribution\n\n`, orgDistribution);
     const sendToMongo = async (collections: AllCollectionsResponse) => {
-      console.log(`Creating`, applicantsToCreate.length, `applicants!`);
       for await (const batch of applicantsToCreate) {
         const bidx = applicantsToCreate.indexOf(batch) + 1;
 
