@@ -122,6 +122,16 @@ const main = async () => {
       'lockmangroupIndex',
       'murazikwalterIndex',
       'wymanoharaandwittingIndex',
+      'metzbraunandtorpIndex',
+      'mcdermottandsonsIndex',
+      'sawaynreichelandschinnerIndex',
+      'coletorpIndex',
+      'kleinbergstromIndex',
+      'keelingcronaIndex',
+      'robelllcIndex',
+      'heaneygroupIndex',
+      'kovacekkiehnandmrazIndex',
+      'schadenwillmsIndex',
     ];
     // Unique only
     // let orgs = [...new Set(allOrgs)];
@@ -165,7 +175,6 @@ const main = async () => {
       'strackelittelIndex',
       'bashiriangroupIndex',
       'auerhermistonIndex',
-      'robelllcIndex',
       'herzogschmelerIndex',
       'krisincIndex',
       'adamsferryIndex',
@@ -177,9 +186,7 @@ const main = async () => {
       'morarrunteIndex',
       'beahankossIndex',
       'caspermayerIndex',
-      'kleinbergstromIndex',
       'bergstromhagenesandhartmannIndex',
-      'keelingcronaIndex',
       'carrollandsonsIndex',
       'littlewillIndex',
       'olsoncristIndex',
@@ -200,8 +207,6 @@ const main = async () => {
       'mannwolffandkautzerIndex',
       'lehnerwardandgislasonIndex',
       'robellednerandwardIndex',
-      'schadenwillmsIndex',
-      'coletorpIndex',
       'breitenberggroupIndex',
       'romagueraandsonsIndex',
       'schinnerandsonsIndex',
@@ -219,7 +224,6 @@ const main = async () => {
       'wisozkllcIndex',
       'tremblayvonruedenIndex',
       'mcglynnincIndex',
-      'mcdermottandsonsIndex',
       'jakubowskinolanIndex',
       'oharamedhurstIndex',
       'beerbalistreriandmuellerIndex',
@@ -244,7 +248,6 @@ const main = async () => {
       'starkandsonsIndex',
       'kuhlmanincIndex',
       'zboncakabbottandstrosinIndex',
-      'metzbraunandtorpIndex',
       'bednarswiftIndex',
       'dooleyllcIndex',
       'cartwrightratkeIndex',
@@ -258,10 +261,7 @@ const main = async () => {
       'bayerrempelIndex',
       'walterkrisandkonopelskiIndex',
       'yundttreutelIndex',
-      'sawaynreichelandschinnerIndex',
       'bergstromwatersIndex',
-      'kovacekkiehnandmrazIndex',
-      'heaneygroupIndex',
       'weimanndubuqueandveumIndex',
       'wymanincIndex',
       'feeneyaufderharandstreichIndex',
@@ -607,10 +607,13 @@ const main = async () => {
     orgs.forEach((org, idx) => {
       // TODO: Temporary for keeping distribution accurate
       // Power rule, top 30 users drive most of the traffic
-      if (idx < 50) {
-        orgWeights.push(randomNumberInclusive(100, 200));
+      if (idx < 10) {
+        orgWeights.push(randomNumberInclusive(150, 200));
+      } else if (idx < 25) {
+        orgWeights.push(randomNumberInclusive(50, 120));
+      } else {
+        orgWeights.push(randomNumberInclusive(1, 75));
       }
-      orgWeights.push(randomNumberInclusive(1, 100));
     });
     console.log(`ORGS`, orgs);
     console.log(`Weights`, orgWeights);
