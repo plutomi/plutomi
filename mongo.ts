@@ -17,8 +17,8 @@ import dayjs from 'dayjs';
 import axios from 'axios';
 
 const numberOfBatches = 100;
-const applicantsPerBatch = 3000;
-const orgsToCreate = 5;
+const applicantsPerBatch = 500;
+const orgsToCreate = 4;
 const publicKey = 'rzlsbipz'; // TODO delete lol
 const privateKey = '612c8dfe-b160-4c68-958d-d5116fc02aea'; // TODO delete lol
 const dbName = 'development';
@@ -171,7 +171,7 @@ const main = async () => {
 
     let applicantsToCreate: any = [];
 
-    const orgDistribution = {};
+    const orgDistribution = {}; // TODO this is broken
     for (let i = 0; i < numberOfBatches; i++) {
       const localBatch: any = [];
 
@@ -210,39 +210,45 @@ const main = async () => {
         const stageForApplicant = getStage();
         const applicantId = nanoid(50);
         const app = {
-          type: 'Applicant',
-          music: faker.music.genre(),
-          isActive: Math.random() > 0.5,
-          balance: Math.random() * randomNumberInclusive(1, 10000),
-          picture: 'http://placehold.it/32x32',
-          age: randomNumberInclusive(10, 99),
-          eyeColor: faker.commerce.color(),
-          name: faker.name.findName(),
-          gender: faker.name.gender(true),
-          company: orgForApplicant,
-          email: faker.internet.email(),
-          phone: faker.phone.phoneNumber(),
-          address: faker.address.streetAddress(),
-          about: faker.lorem.sentences(randomNumberInclusive(3, 100)),
-          desc: faker.commerce.productDescription(),
-          id: applicantId,
-          description: faker.commerce.productDescription(),
-          adjective: faker.commerce.productAdjective(),
-          material: faker.commerce.productMaterial(),
-          noun: faker.hacker.noun(),
-          account: faker.finance.accountName(),
-          direction: faker.address.direction(),
-          city: faker.address.city(),
-          country: faker.address.country(),
-          latitude: faker.address.latitude(),
-          longitude: faker.address.longitude(),
-          createdAt: faker.date.between(dayjs().subtract(5, 'years').toDate(), dayjs().toDate()),
-          updatedAt: faker.date.between(dayjs().subtract(5, 'years').toDate(), dayjs().toDate()),
-          birthDate: faker.date.between(
+          [`${orgForApplicant}type`]: 'Applicant',
+          [`${orgForApplicant}music`]: faker.music.genre(),
+          [`${orgForApplicant}isActive`]: Math.random() > 0.5,
+          [`${orgForApplicant}balance`]: Math.random() * randomNumberInclusive(1, 10000),
+          [`${orgForApplicant}picture`]: 'http://placehold.it/32x32',
+          [`${orgForApplicant}age`]: randomNumberInclusive(10, 99),
+          [`${orgForApplicant}eyeColor`]: faker.commerce.color(),
+          [`${orgForApplicant}name`]: faker.name.findName(),
+          [`${orgForApplicant}gender`]: faker.name.gender(true),
+          [`${orgForApplicant}company`]: orgForApplicant,
+          [`${orgForApplicant}email`]: faker.internet.email(),
+          [`${orgForApplicant}phone`]: faker.phone.phoneNumber(),
+          [`${orgForApplicant}address`]: faker.address.streetAddress(),
+          [`${orgForApplicant}about`]: faker.lorem.sentences(randomNumberInclusive(3, 100)),
+          [`${orgForApplicant}desc`]: faker.commerce.productDescription(),
+          [`${orgForApplicant}id`]: applicantId,
+          [`${orgForApplicant}description`]: faker.commerce.productDescription(),
+          [`${orgForApplicant}adjective`]: faker.commerce.productAdjective(),
+          [`${orgForApplicant}material`]: faker.commerce.productMaterial(),
+          [`${orgForApplicant}noun`]: faker.hacker.noun(),
+          [`${orgForApplicant}account`]: faker.finance.accountName(),
+          [`${orgForApplicant}direction`]: faker.address.direction(),
+          [`${orgForApplicant}city`]: faker.address.city(),
+          [`${orgForApplicant}country`]: faker.address.country(),
+          [`${orgForApplicant}latitude`]: faker.address.latitude(),
+          [`${orgForApplicant}longitude`]: faker.address.longitude(),
+          [`${orgForApplicant}createdAt`]: faker.date.between(
+            dayjs().subtract(5, 'years').toDate(),
+            dayjs().toDate(),
+          ),
+          [`${orgForApplicant}updatedAt`]: faker.date.between(
+            dayjs().subtract(5, 'years').toDate(),
+            dayjs().toDate(),
+          ),
+          [`${orgForApplicant}birthDate`]: faker.date.between(
             dayjs().subtract(80, 'years').toDate(),
             dayjs().subtract(17, 'years').toDate(),
           ),
-          tags: [
+          [`${orgForApplicant}tags`]: [
             'consectetur in esse consequat sunt labore amet consectetur',
             'adipisicing dolor fugiat do sint do proident ullamco',
             'nostrud aliquip cillum pariatur nisi exercitation velit dolor',
@@ -264,11 +270,11 @@ const main = async () => {
             'ut eiusmod ipsum id dolor minim laboris elit',
             'occaecat aute ipsum eiusmod magna tempor elit ut',
           ],
-          greeting: 'Hello, Nadia Santos! You have 10 unread messages.',
-          favoriteDbType: faker.database.type(),
-          orgId: orgForApplicant,
-          openingId: openingForApplicant,
-          stageId: stageForApplicant,
+          [`${orgForApplicant}greeting`]: 'Hello, Nadia Santos! You have 10 unread messages.',
+          [`${orgForApplicant}favoriteDbType`]: faker.database.type(),
+          [`${orgForApplicant}orgId`]: orgForApplicant,
+          [`${orgForApplicant}openingId`]: openingForApplicant,
+          [`${orgForApplicant}stageId`]: stageForApplicant,
         };
 
         const newApplicant = {
