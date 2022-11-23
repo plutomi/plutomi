@@ -68,6 +68,7 @@ const weightedRandom = (items: string[], weights: number[]) => {
 };
 
 const main = async () => {
+  const startTime = dayjs();
   try {
     const { client, collections } = await connectToDatabase({ databaseName: dbName });
 
@@ -834,7 +835,6 @@ const main = async () => {
       applicantsToCreate.push(localBatch);
     }
 
-    console.log(`Org distribution\n\n`, orgDistribution);
     const sendToMongo = async (collections: AllCollectionsResponse) => {
       for await (const batch of applicantsToCreate) {
         const bidx = applicantsToCreate.indexOf(batch) + 1;
@@ -851,6 +851,10 @@ const main = async () => {
         );
       }
       console.log('Done!');
+      const endTime = dayjs();
+
+      const diff = endTime.diff(startTime, 'seconds');
+      console.log(`Duration: ${diff} seconds, ${diff / 60} mins`);
     };
 
     console.log('Sending to mongo');
