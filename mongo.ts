@@ -17,11 +17,27 @@ import dayjs from 'dayjs';
 import axios from 'axios';
 
 const numberOfBatches = 100;
-const applicantsPerBatch = 500;
-const orgsToCreate = 4;
+const applicantsPerBatch = randomNumberInclusive(10, 3000);
+const orgsToCreate = randomNumberInclusive(33, 33);
 const publicKey = 'rzlsbipz'; // TODO delete lol
 const privateKey = '612c8dfe-b160-4c68-958d-d5116fc02aea'; // TODO delete lol
 const dbName = 'development';
+
+// Fidning them in the UI
+// var findElements = function(tag, text) {
+//   var elements = document.getElementsByTagName(tag);
+//   var found = [];
+//   for (var i = 0; i < elements.length; i++) {
+//     if (elements[i].innerHTML.includes(text) ) {
+//       found.push(elements[i]);
+//     }
+//   }
+
+//   return found;
+// }
+// let elements = findElements('a', 'Index')
+
+// orgsInDB = elements.map((item) => item.outerText)
 
 // https://dev.to/trekhleb/weighted-random-algorithm-in-javascript-1pdc
 const weightedRandom = (items: string[], weights: number[]) => {
