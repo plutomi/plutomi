@@ -4,6 +4,7 @@ import { faker } from '@faker-js/faker';
 import { nanoid } from 'nanoid';
 import AxiosDigest from 'axios-digest';
 import AxiosDigestAuth from '@mhoc/axios-digest-auth';
+import { v4 as uuidv4 } from 'uuid';
 
 import { Collection } from 'mongodb';
 import { randomItemFromArray } from './utils/randomItemFromArray';
@@ -72,6 +73,9 @@ const main = async () => {
 
     let processedApplicants = 0;
 
+    console.log(`Updating applicants with id`);
+
+    console.log('Updating IDS Set!');
     const allOrgs = [];
     const orgWeights = [];
     Array.from({ length: orgsToCreate }).forEach(() => {
@@ -136,6 +140,7 @@ const main = async () => {
     // Unique only
     // let orgs = [...new Set(allOrgs)];
     let orgs = [
+      ...topOrgs,
       'muellermullerandrunteIndex',
       'considineboehmIndex',
       'damorestammanddachIndex',
@@ -599,11 +604,11 @@ const main = async () => {
       'pfefferhintzIndex',
       'auerincIndex',
     ];
-    console.log(
-      `Creating ${orgs.length} ${
-        orgs.length !== allOrgs.length
-      } because there were some duplicates with faker`,
-    );
+    // console.log(
+    //   `Creating ${orgs.length} ${
+    //     orgs.length !== allOrgs.length
+    //   } because there were some duplicates with faker`,
+    // );
     orgs.forEach((org, idx) => {
       // TODO: Temporary for keeping distribution accurate
       // Power rule, top 30 users drive most of the traffic
@@ -622,43 +627,44 @@ const main = async () => {
     const clusterName = `Cluster0`;
     const url = `https://cloud.mongodb.com/api/atlas/v1.0/groups/${groupId}/clusters/${clusterName}/fts/indexes`;
 
-    const digestAuth = new AxiosDigestAuth({
-      username: publicKey,
-      password: privateKey,
-    });
-    for await (const org of orgs) {
-      const data = {
-        name: `${org}Index`,
-        collectionName: collections.Applicants.collectionName,
-        database: dbName,
-        mappings: {
-          dynamic: false,
-          fields: {
-            [`${org}Data`]: {
-              dynamic: true,
-              type: 'document',
-            },
-          },
-        },
-      };
+    // !Note disabled ofr now
+    // const digestAuth = new AxiosDigestAuth({
+    //   username: publicKey,
+    //   password: privateKey,
+    // });
+    // for await (const org of orgs) {
+    //   const data = {
+    //     name: `${org}Index`,
+    //     collectionName: collections.Applicants.collectionName,
+    //     database: dbName,
+    //     mappings: {
+    //       dynamic: false,
+    //       fields: {
+    //         [`${org}Data`]: {
+    //           dynamic: true,
+    //           type: 'document',
+    //         },
+    //       },
+    //     },
+    //   };
 
-      console.log(`Creating search index for org ${org}`);
-      try {
-        await digestAuth.request({
-          url,
-          data,
-          method: 'POST',
-          headers: { Accept: 'application/json' },
-        });
-        console.log('Created!');
-      } catch (error) {
-        if (error.response.data.detail === 'Duplicate Index.') {
-          console.log('Duplicate index for ', org);
-        } else {
-          console.error(`Error creating search index`, error);
-        }
-      }
-    }
+    //   console.log(`Creating search index for org ${org}`);
+    //   try {
+    //     await digestAuth.request({
+    //       url,
+    //       data,
+    //       method: 'POST',
+    //       headers: { Accept: 'application/json' },
+    //     });
+    //     console.log('Created!');
+    //   } catch (error) {
+    //     if (error.response.data.detail === 'Duplicate Index.') {
+    //       console.log('Duplicate index for ', org);
+    //     } else {
+    //       console.error(`Error creating search index`, error);
+    //     }
+    //   }
+    // }
 
     const openings = [
       {
@@ -816,6 +822,7 @@ const main = async () => {
 
         const newApplicant = {
           idx: i,
+          id: uuidv4(),
           orgId: orgForApplicant,
           openingId: openingForApplicant,
           stageId: stageForApplicant,

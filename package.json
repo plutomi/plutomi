@@ -82,6 +82,7 @@
     "url-safe-string": "^1.1.0",
     "url-slug": "^3.0.2",
     "urllib": "^3.5.1",
+    "uuid": "^9.0.0",
     "zustand": "^3.6.2"
   },
   "devDependencies": {
