@@ -71,7 +71,7 @@ import axios from 'axios';
 // ];
 const numberOfBatches = randomNumberInclusive(100, 100);
 const applicantsPerBatch = randomNumberInclusive(4000, 4000);
-const orgsToCreate = randomNumberInclusive(5, 5);
+const orgsToCreate = randomNumberInclusive(9, 9);
 const dbName = 'development';
 
 // Fidning them in the UI
@@ -197,9 +197,9 @@ const main = async () => {
       if (idx < 10) {
         orgWeights.push(randomNumberInclusive(175, 200));
       } else if (idx < 25) {
-        orgWeights.push(randomNumberInclusive(75, 100));
+        orgWeights.push(randomNumberInclusive(25, 75));
       } else {
-        orgWeights.push(randomNumberInclusive(1, 50));
+        orgWeights.push(randomNumberInclusive(1, 25));
       }
 
       // Skipping power rule
