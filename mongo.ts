@@ -296,7 +296,7 @@ const main = async () => {
           for (const opening of openings) {
             if (num < opening.weight) {
               // To make it unique
-              return `${opening.name}-`;
+              return `${opening.name}-${orgForApplicant}`;
             }
           }
         };
@@ -308,7 +308,7 @@ const main = async () => {
           for (const stage of stages) {
             if (num < stage.weight) {
               // To make it unique
-              return `${stage.name}-${openingForApplicant}-`;
+              return `${stage.name}-${openingForApplicant}-${orgForApplicant}`;
             }
           }
         };
@@ -386,7 +386,7 @@ const main = async () => {
           openingId: openingForApplicant,
           stageId: stageForApplicant,
           // TODO Unique search index will be created per org
-          Data: app,
+          data: app,
         };
         localBatch.push(newApplicant);
       }
@@ -403,70 +403,30 @@ const main = async () => {
 
         for await (const applicant of batch) {
           const textResponses = [
-            {
-              key: 'firstName',
-              value: applicant.firstName,
-            },
-            {
-              key: 'lastName',
-              value: applicant.lastName,
-            },
-            {
-              key: 'country',
-              value: applicant.country,
-            },
-            {
-              key: 'email',
-              value: applicant.email,
-            },
-            {
-              key: 'description',
-              value: applicant.description,
-            },
-            {
-              key: 'gender',
-              value: applicant.gender,
-            },
+            'firstName',
+            'lastName',
+            'country',
+            'email',
+            'description',
+            'gender',
           ];
 
-          const booleanResponses = [
-            { key: 'isActive', value: applicant.isActive },
-            { key: 'readterms', value: applicant.readterms },
-            { key: 'willingToRelocate', value: applicant.willingToRelocate },
-          ];
+          const booleanResponses = ['isActive', 'readterms', 'willingToRelocate'];
 
           const numericResponses = [
-            {
-              key: 'latitude',
-              value: applicant.latitude,
-            },
-            {
-              key: 'longitude',
-              value: applicant.longitude,
-            },
-            {
-              key: 'createdAt',
-              value: applicant.createdAt,
-            },
-            {
-              key: 'updatedAt',
-              value: applicant.updatedAt,
-            },
-            {
-              key: 'birthdate',
-              value: applicant.birthdate,
-            },
-            {
-              key: 'greeting',
-              value: applicant.greeting,
-            },
+            'latitude',
+            'longitude',
+            'createdAt',
+            'updatedAt',
+            'birthDate',
+            'greeting',
           ];
 
           const createResponses = () => {
             textResponses.forEach((item) => {
               responses.push({
-                key: item.key,
-                value: item.value,
+                key: item,
+                value: applicant.data[item],
                 orgId: applicant.orgId,
                 openingId: applicant.openingId,
                 stageId: applicant.stageId,
@@ -476,8 +436,8 @@ const main = async () => {
 
             booleanResponses.forEach((item) => {
               responses.push({
-                key: item.key,
-                value: item.value,
+                key: item,
+                value: applicant.data[item],
                 orgId: applicant.orgId,
                 openingId: applicant.openingId,
                 stageId: applicant.stageId,
@@ -487,8 +447,8 @@ const main = async () => {
 
             numericResponses.forEach((item) => {
               responses.push({
-                key: item.key,
-                value: item.value,
+                key: item,
+                value: applicant.data[item],
                 orgId: applicant.orgId,
                 openingId: applicant.openingId,
                 stageId: applicant.stageId,
@@ -499,6 +459,11 @@ const main = async () => {
 
           createResponses();
           // console.log(`RESPONSES`, responses);
+
+          // if (batch.indexOf(applicant) === 0) {
+          //   console.log(`Creating responses for`, applicant);
+          //   console.log(responses);
+          // }
         }
         processedApplicants += batch.length;
         console.log(
