@@ -69,9 +69,9 @@ import axios from 'axios';
 //     },
 //   },
 // ];
-const numberOfBatches = randomNumberInclusive(5, 100);
+const numberOfBatches = randomNumberInclusive(100, 100);
 const applicantsPerBatch = randomNumberInclusive(3000, 4000);
-const orgsToCreate = randomNumberInclusive(1, 20);
+const orgsToCreate = randomNumberInclusive(10, 20);
 const publicKey = 'rzlsbipz'; // TODO delete lol
 const privateKey = '612c8dfe-b160-4c68-958d-d5116fc02aea'; // TODO delete lol
 const dbName = 'development';
