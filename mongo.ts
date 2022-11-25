@@ -70,7 +70,7 @@ import axios from 'axios';
 //   },
 // ];
 const numberOfBatches = randomNumberInclusive(100, 100);
-const applicantsPerBatch = randomNumberInclusive(3000, 4000);
+const applicantsPerBatch = randomNumberInclusive(2000, 3000);
 const orgsToCreate = randomNumberInclusive(10, 20);
 const publicKey = 'rzlsbipz'; // TODO delete lol
 const privateKey = '612c8dfe-b160-4c68-958d-d5116fc02aea'; // TODO delete lol
@@ -124,35 +124,60 @@ const main = async () => {
   try {
     const { client, collections } = await connectToDatabase({ databaseName: dbName });
 
-    // console.log('Deleeting orgs');
-    // await collections.Orgs.deleteMany({});
-    // await collections.Orgs.deleteMany({});
-    // await collections.Orgs.deleteMany({});
-    // console.log('Deleeting apps');
-
-    // console.log('Deleeting responses');
-
-    // await collections.Responses.deleteMany({});
-    // await collections.Responses.deleteMany({});
-    // await collections.Responses.deleteMany({});
-    // await collections.Responses.deleteMany({});
-
-    // await collections.Applicants.deleteMany({});
-    // await collections.Applicants.deleteMany({});
-    // await collections.Applicants.deleteMany({});
-    // await collections.Applicants.deleteMany({});
-
-    // console.log('Populating apps');
-
-    // !!!!!!!!!!!!!!!!!!!!!!!!!!!!
-    // !!!!!!!!!!!!!!!!!!!!!!!!!!!!
-    // !!!!!!!!!!!!!!!!!!!!!!!!!!!!
-    // !!!!!!!!!!!!!!!!!!!!!!!!!!!!
-    // !!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
     let processedApplicants = 0;
 
-    const orgs = [];
+    // Power law distribution
+    const topOrgs = [
+      'fisherfritschandkohler',
+      'hauckgroup',
+      'daughertybartoletti',
+      'sipesgroup',
+      'gleichnerward',
+      'andersonlehner',
+      'zboncakshanahanandcruickshank',
+      'jerdegroup',
+      'oreillygerhold',
+      'daughertygroup',
+      'walkerfarrell',
+      'lemkelittle',
+      'walshlubowitz',
+      'lakinoharaandcronin',
+      'hahngroup',
+      'botsfordabshire',
+      'manngroup',
+      'greenholtkohler',
+      'erdmanllc',
+      'huelsdamore',
+      'hauckandsons',
+      'satterfieldinc',
+      'boscogutmann',
+      'wuckertwisoky',
+      'ritchieandsons',
+      'littelpfeffer',
+      'greenholtflatleyandmoore',
+      'macgyverandsons',
+      'bergellc',
+      'barrowswilderman',
+      'carterjacobi',
+      'koeppflatley',
+      'connsmith',
+      'goodwinlockmananddamore',
+      'marksgroup',
+      'quigleykemmerandstiedemann',
+      'rathorn',
+      'kuvalisferry',
+      'torpgroup',
+      'reingerpourosandwisozk',
+      'boganheidenreich',
+      'lebsackblockandquitzon',
+      'wunschtrompandgraham',
+      'kirlinschadenandpfannerstill',
+      'hellerandsons',
+      'baumbachoreillyandwilkinson',
+      'gerholdsmitham',
+      'rohanhahn',
+    ];
+    const orgs = [...topOrgs];
     const orgWeights = [];
     Array.from({ length: orgsToCreate }).forEach(() => {
       orgs.push(
@@ -170,17 +195,17 @@ const main = async () => {
     // );
     orgs.forEach((org, idx) => {
       // TODO: Temporary for keeping distribution accurate
-      // Power rule, top 30 users drive most of the traffic
-      // if (idx < 10) {
-      //   orgWeights.push(randomNumberInclusive(150, 200));
-      // } else if (idx < 25) {
-      //   orgWeights.push(randomNumberInclusive(50, 120));
-      // } else {
-      //   orgWeights.push(randomNumberInclusive(1, 75));
-      // }
+      //  Power rule, top 30 users drive most of the traffic
+      if (idx < 10) {
+        orgWeights.push(randomNumberInclusive(150, 200));
+      } else if (idx < 25) {
+        orgWeights.push(randomNumberInclusive(50, 120));
+      } else {
+        orgWeights.push(randomNumberInclusive(1, 75));
+      }
 
       // Skipping power rule
-      orgWeights.push(randomNumberInclusive(1, 100));
+      // orgWeights.push(randomNumberInclusive(1, 100));
     });
     console.log(`ORGS`, orgs);
     console.log(`Weights`, orgWeights);
