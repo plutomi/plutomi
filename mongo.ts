@@ -69,9 +69,9 @@ import axios from 'axios';
 //     },
 //   },
 // ];
-const numberOfBatches = 1;
-const applicantsPerBatch = randomNumberInclusive(100, 100);
-const orgsToCreate = randomNumberInclusive(10, 10);
+const numberOfBatches = randomNumberInclusive(10, 100);
+const applicantsPerBatch = randomNumberInclusive(500, 2000);
+const orgsToCreate = randomNumberInclusive(1, 10);
 const publicKey = 'rzlsbipz'; // TODO delete lol
 const privateKey = '612c8dfe-b160-4c68-958d-d5116fc02aea'; // TODO delete lol
 const dbName = 'development';
@@ -124,122 +124,34 @@ const main = async () => {
   try {
     const { client, collections } = await connectToDatabase({ databaseName: dbName });
 
-    const allApplicants = await collections.Applicants.aggregate([
-      {
-        $project: {
-          id: 1,
-          orgId: 1,
-          openingId: 1,
-          stageId: 1,
-        },
-      },
-    ]).toArray();
-    for await (const applicant of allApplicants) {
-      const textResponses = [
-        {
-          key: 'firstname',
-          value: faker.name.firstName(),
-        },
-        {
-          key: 'lastname',
-          value: faker.name.lastName(),
-        },
-        {
-          key: 'country',
-          value: faker.address.county(),
-        },
-        {
-          key: 'email',
-          value: faker.internet.email(),
-        },
-        {
-          key: 'description',
-          value: faker.commerce.productDescription(),
-        },
-        {
-          key: 'gender',
-          value: faker.name.gender(true),
-        },
-      ];
+    // console.log('Deleeting orgs');
+    // await collections.Orgs.deleteMany({});
+    // await collections.Orgs.deleteMany({});
+    // await collections.Orgs.deleteMany({});
+    // console.log('Deleeting apps');
 
-      const booleanResponses = [
-        { key: 'over18', value: faker.datatype.boolean() },
-        { key: 'readterms', value: faker.datatype.boolean() },
-        { key: 'willingtorelocate', value: faker.datatype.boolean() },
-      ];
+    // console.log('Deleeting responses');
 
-      const numericResponses = [
-        {
-          key: 'latitude',
-          value: faker.address.latitude(),
-        },
-        {
-          key: 'longitude',
-          value: faker.address.longitude(),
-        },
-        {
-          key: 'createdat',
-          value: faker.date.between(dayjs().subtract(5, 'years').toDate(), dayjs().toDate()),
-        },
-        {
-          key: 'updatedAt',
-          value: faker.date.between(dayjs().subtract(5, 'years').toDate(), dayjs().toDate()),
-        },
-        {
-          key: 'birthdate',
-          value: faker.date.between(
-            dayjs().subtract(80, 'years').toDate(),
-            dayjs().subtract(17, 'years').toDate(),
-          ),
-        },
-      ];
-      const responses = [];
+    // await collections.Responses.deleteMany({});
+    // await collections.Responses.deleteMany({});
+    // await collections.Responses.deleteMany({});
+    // await collections.Responses.deleteMany({});
 
-      const createResponses = () => {
-        textResponses.forEach((item) => {
-          responses.push({
-            key: item.key,
-            value: item.value,
-            orgId: applicant.orgId,
-            openingId: applicant.openingId,
-            stageId: applicant.stageId,
-            applicantId: applicant.id,
-          });
-        });
+    // await collections.Applicants.deleteMany({});
+    // await collections.Applicants.deleteMany({});
+    // await collections.Applicants.deleteMany({});
+    // await collections.Applicants.deleteMany({});
 
-        booleanResponses.forEach((item) => {
-          responses.push({
-            key: item.key,
-            value: item.value,
-            orgId: applicant.orgId,
-            openingId: applicant.openingId,
-            stageId: applicant.stageId,
-            applicantId: applicant.id,
-          });
-        });
+    // console.log('Populating apps');
 
-        numericResponses.forEach((item) => {
-          responses.push({
-            key: item.key,
-            value: item.value,
-            orgId: applicant.orgId,
-            openingId: applicant.openingId,
-            stageId: applicant.stageId,
-            applicantId: applicant.id,
-          });
-        });
-      };
+    // !!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    // !!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    // !!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    // !!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    // !!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-      createResponses();
-      // console.log(`RESPONSES`, responses);
-      await collections.Responses.insertMany(responses);
-    }
-    throw new Error('done');
     let processedApplicants = 0;
 
-    console.log(`Updating applicants with id`);
-
-    console.log('Updating IDS Set!');
     const orgs = [];
     const orgWeights = [];
     Array.from({ length: orgsToCreate }).forEach(() => {
@@ -259,13 +171,16 @@ const main = async () => {
     orgs.forEach((org, idx) => {
       // TODO: Temporary for keeping distribution accurate
       // Power rule, top 30 users drive most of the traffic
-      if (idx < 10) {
-        orgWeights.push(randomNumberInclusive(150, 200));
-      } else if (idx < 25) {
-        orgWeights.push(randomNumberInclusive(50, 120));
-      } else {
-        orgWeights.push(randomNumberInclusive(1, 75));
-      }
+      // if (idx < 10) {
+      //   orgWeights.push(randomNumberInclusive(150, 200));
+      // } else if (idx < 25) {
+      //   orgWeights.push(randomNumberInclusive(50, 120));
+      // } else {
+      //   orgWeights.push(randomNumberInclusive(1, 75));
+      // }
+
+      // Skipping power rule
+      orgWeights.push(randomNumberInclusive(1, 100));
     });
     console.log(`ORGS`, orgs);
     console.log(`Weights`, orgWeights);
@@ -287,7 +202,7 @@ const main = async () => {
     //     mappings: {
     //       dynamic: false,
     //       fields: {
-    //         [`${org}Data`]: {
+    //         ${org}Data: {
     //           dynamic: true,
     //           type: 'document',
     //         },
@@ -381,7 +296,7 @@ const main = async () => {
           for (const opening of openings) {
             if (num < opening.weight) {
               // To make it unique
-              return `${opening.name}-${orgForApplicant}`;
+              return `${opening.name}-`;
             }
           }
         };
@@ -393,52 +308,49 @@ const main = async () => {
           for (const stage of stages) {
             if (num < stage.weight) {
               // To make it unique
-              return `${stage.name}-${openingForApplicant}-${orgForApplicant}`;
+              return `${stage.name}-${openingForApplicant}-`;
             }
           }
         };
         const stageForApplicant = getStage();
         const applicantId = nanoid(50);
         const app = {
-          [`${orgForApplicant}type`]: 'Applicant',
-          [`${orgForApplicant}music`]: faker.music.genre(),
-          [`${orgForApplicant}isActive`]: Math.random() > 0.5,
-          [`${orgForApplicant}balance`]: Math.random() * randomNumberInclusive(1, 10000),
-          [`${orgForApplicant}picture`]: 'http://placehold.it/32x32',
-          [`${orgForApplicant}age`]: randomNumberInclusive(10, 99),
-          [`${orgForApplicant}eyeColor`]: faker.commerce.color(),
-          [`${orgForApplicant}name`]: faker.name.findName(),
-          [`${orgForApplicant}gender`]: faker.name.gender(true),
-          [`${orgForApplicant}company`]: orgForApplicant,
-          [`${orgForApplicant}email`]: faker.internet.email(),
-          [`${orgForApplicant}phone`]: faker.phone.phoneNumber(),
-          [`${orgForApplicant}address`]: faker.address.streetAddress(),
-          [`${orgForApplicant}about`]: faker.lorem.sentences(randomNumberInclusive(3, 100)),
-          [`${orgForApplicant}desc`]: faker.commerce.productDescription(),
-          [`${orgForApplicant}id`]: applicantId,
-          [`${orgForApplicant}description`]: faker.commerce.productDescription(),
-          [`${orgForApplicant}adjective`]: faker.commerce.productAdjective(),
-          [`${orgForApplicant}material`]: faker.commerce.productMaterial(),
-          [`${orgForApplicant}noun`]: faker.hacker.noun(),
-          [`${orgForApplicant}account`]: faker.finance.accountName(),
-          [`${orgForApplicant}direction`]: faker.address.direction(),
-          [`${orgForApplicant}city`]: faker.address.city(),
-          [`${orgForApplicant}country`]: faker.address.country(),
-          [`${orgForApplicant}latitude`]: faker.address.latitude(),
-          [`${orgForApplicant}longitude`]: faker.address.longitude(),
-          [`${orgForApplicant}createdAt`]: faker.date.between(
-            dayjs().subtract(5, 'years').toDate(),
-            dayjs().toDate(),
-          ),
-          [`${orgForApplicant}updatedAt`]: faker.date.between(
-            dayjs().subtract(5, 'years').toDate(),
-            dayjs().toDate(),
-          ),
-          [`${orgForApplicant}birthDate`]: faker.date.between(
+          type: 'Applicant',
+          music: faker.music.genre(),
+          isActive: Math.random() > 0.5,
+          balance: Math.random() * randomNumberInclusive(1, 10000),
+          picture: 'http://placehold.it/32x32',
+          age: randomNumberInclusive(10, 99),
+          eyeColor: faker.commerce.color(),
+          firstName: faker.name.firstName(),
+          lastName: faker.name.lastName(),
+          gender: faker.name.gender(true),
+          company: orgForApplicant,
+          email: faker.internet.email(),
+          phone: faker.phone.phoneNumber(),
+          address: faker.address.streetAddress(),
+          about: faker.lorem.sentences(randomNumberInclusive(3, 100)),
+          desc: faker.commerce.productDescription(),
+          id: applicantId,
+          description: faker.commerce.productDescription(),
+          adjective: faker.commerce.productAdjective(),
+          material: faker.commerce.productMaterial(),
+          noun: faker.hacker.noun(),
+          account: faker.finance.accountName(),
+          direction: faker.address.direction(),
+          city: faker.address.city(),
+          country: faker.address.country(),
+          latitude: faker.address.latitude(),
+          longitude: faker.address.longitude(),
+          readterms: Math.random() > 0.5,
+          willingToRelocate: Math.random() > 0.5,
+          createdAt: faker.date.between(dayjs().subtract(5, 'years').toDate(), dayjs().toDate()),
+          updatedAt: faker.date.between(dayjs().subtract(5, 'years').toDate(), dayjs().toDate()),
+          birthDate: faker.date.between(
             dayjs().subtract(80, 'years').toDate(),
             dayjs().subtract(17, 'years').toDate(),
           ),
-          [`${orgForApplicant}tags`]: [
+          tags: [
             'consectetur in esse consequat sunt labore amet consectetur',
             'adipisicing dolor fugiat do sint do proident ullamco',
             'nostrud aliquip cillum pariatur nisi exercitation velit dolor',
@@ -460,11 +372,11 @@ const main = async () => {
             'ut eiusmod ipsum id dolor minim laboris elit',
             'occaecat aute ipsum eiusmod magna tempor elit ut',
           ],
-          [`${orgForApplicant}greeting`]: 'Hello, Nadia Santos! You have 10 unread messages.',
-          [`${orgForApplicant}favoriteDbType`]: faker.database.type(),
-          [`${orgForApplicant}orgId`]: orgForApplicant,
-          [`${orgForApplicant}openingId`]: openingForApplicant,
-          [`${orgForApplicant}stageId`]: stageForApplicant,
+          greeting: 'Hello, Nadia Santos! You have 10 unread messages.',
+          favoriteDbType: faker.database.type(),
+          orgId: orgForApplicant,
+          openingId: openingForApplicant,
+          stageId: stageForApplicant,
         };
 
         const newApplicant = {
@@ -474,7 +386,7 @@ const main = async () => {
           openingId: openingForApplicant,
           stageId: stageForApplicant,
           // TODO Unique search index will be created per org
-          [`${orgForApplicant}Data`]: app,
+          Data: app,
         };
         localBatch.push(newApplicant);
       }
@@ -487,6 +399,107 @@ const main = async () => {
 
         await collections.Applicants.insertMany(batch);
 
+        const responses = [];
+
+        for await (const applicant of batch) {
+          const textResponses = [
+            {
+              key: 'firstName',
+              value: applicant.firstName,
+            },
+            {
+              key: 'lastName',
+              value: applicant.lastName,
+            },
+            {
+              key: 'country',
+              value: applicant.country,
+            },
+            {
+              key: 'email',
+              value: applicant.email,
+            },
+            {
+              key: 'description',
+              value: applicant.description,
+            },
+            {
+              key: 'gender',
+              value: applicant.gender,
+            },
+          ];
+
+          const booleanResponses = [
+            { key: 'isActive', value: applicant.isActive },
+            { key: 'readterms', value: applicant.readterms },
+            { key: 'willingToRelocate', value: applicant.willingToRelocate },
+          ];
+
+          const numericResponses = [
+            {
+              key: 'latitude',
+              value: applicant.latitude,
+            },
+            {
+              key: 'longitude',
+              value: applicant.longitude,
+            },
+            {
+              key: 'createdAt',
+              value: applicant.createdAt,
+            },
+            {
+              key: 'updatedAt',
+              value: applicant.updatedAt,
+            },
+            {
+              key: 'birthdate',
+              value: applicant.birthdate,
+            },
+            {
+              key: 'greeting',
+              value: applicant.greeting,
+            },
+          ];
+
+          const createResponses = () => {
+            textResponses.forEach((item) => {
+              responses.push({
+                key: item.key,
+                value: item.value,
+                orgId: applicant.orgId,
+                openingId: applicant.openingId,
+                stageId: applicant.stageId,
+                applicantId: applicant.id,
+              });
+            });
+
+            booleanResponses.forEach((item) => {
+              responses.push({
+                key: item.key,
+                value: item.value,
+                orgId: applicant.orgId,
+                openingId: applicant.openingId,
+                stageId: applicant.stageId,
+                applicantId: applicant.id,
+              });
+            });
+
+            numericResponses.forEach((item) => {
+              responses.push({
+                key: item.key,
+                value: item.value,
+                orgId: applicant.orgId,
+                openingId: applicant.openingId,
+                stageId: applicant.stageId,
+                applicantId: applicant.id,
+              });
+            });
+          };
+
+          createResponses();
+          // console.log(`RESPONSES`, responses);
+        }
         processedApplicants += batch.length;
         console.log(
           `Done processing batch`,
@@ -495,6 +508,10 @@ const main = async () => {
             numberOfBatches * applicantsPerBatch
           }`,
         );
+
+        console.log(`Creating ${responses.length} responses for ${batch.length} applicants`);
+        await collections.Responses.insertMany(responses);
+        console.log(`Done!`);
       }
       console.log('Done!');
       const endTime = dayjs();
