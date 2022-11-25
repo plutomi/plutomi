@@ -70,10 +70,8 @@ import axios from 'axios';
 //   },
 // ];
 const numberOfBatches = randomNumberInclusive(100, 100);
-const applicantsPerBatch = randomNumberInclusive(2000, 3000);
-const orgsToCreate = randomNumberInclusive(10, 20);
-const publicKey = 'rzlsbipz'; // TODO delete lol
-const privateKey = '612c8dfe-b160-4c68-958d-d5116fc02aea'; // TODO delete lol
+const applicantsPerBatch = randomNumberInclusive(3000, 4000);
+const orgsToCreate = randomNumberInclusive(5, 5);
 const dbName = 'development';
 
 // Fidning them in the UI
@@ -197,11 +195,11 @@ const main = async () => {
       // TODO: Temporary for keeping distribution accurate
       //  Power rule, top 30 users drive most of the traffic
       if (idx < 10) {
-        orgWeights.push(randomNumberInclusive(150, 200));
+        orgWeights.push(randomNumberInclusive(175, 200));
       } else if (idx < 25) {
-        orgWeights.push(randomNumberInclusive(50, 120));
+        orgWeights.push(randomNumberInclusive(75, 100));
       } else {
-        orgWeights.push(randomNumberInclusive(1, 75));
+        orgWeights.push(randomNumberInclusive(1, 50));
       }
 
       // Skipping power rule
