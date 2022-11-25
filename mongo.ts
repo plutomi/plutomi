@@ -17,6 +17,58 @@ import {
 import dayjs from 'dayjs';
 import axios from 'axios';
 
+// const exampleAggregation = [
+//   {
+//     $search: {
+//       index: 'default',
+//       compound: {
+//         filter: [
+//           {
+//             text: {
+//               query: 'satterfieldgroup',
+//               path: 'orgId',
+//             },
+//           },
+//         ],
+//         must: [
+//           {
+//             text: {
+//               query: 'jose',
+//               path: 'value',
+//               fuzzy: {},
+//             },
+//           },
+//         ],
+//       },
+//     },
+//   },
+//   {
+//     $group: {
+//       _id: None,
+//       matchingApplicantIds: {
+//         $addToSet: '$applicantId',
+//       },
+//     },
+//   },
+//   {
+//     $unwind: {
+//       path: '$matchingApplicantIds',
+//     },
+//   },
+//   {
+//     $lookup: {
+//       from: 'Applicants',
+//       localField: 'matchingApplicantIds',
+//       foreignField: 'id',
+//       as: 'applicantData',
+//     },
+//   },
+//   {
+//     $unwind: {
+//       path: '$applicantData',
+//     },
+//   },
+// ];
 const numberOfBatches = 1;
 const applicantsPerBatch = randomNumberInclusive(100, 100);
 const orgsToCreate = randomNumberInclusive(10, 10);
@@ -81,8 +133,7 @@ const main = async () => {
           stageId: 1,
         },
       },
-    ]);
-    console.log('All applicant ids', allApplicants);
+    ]).toArray();
     for await (const applicant of allApplicants) {
       const textResponses = [
         {
@@ -152,6 +203,7 @@ const main = async () => {
             orgId: applicant.orgId,
             openingId: applicant.openingId,
             stageId: applicant.stageId,
+            applicantId: applicant.id,
           });
         });
 
@@ -162,6 +214,7 @@ const main = async () => {
             orgId: applicant.orgId,
             openingId: applicant.openingId,
             stageId: applicant.stageId,
+            applicantId: applicant.id,
           });
         });
 
@@ -172,11 +225,13 @@ const main = async () => {
             orgId: applicant.orgId,
             openingId: applicant.openingId,
             stageId: applicant.stageId,
+            applicantId: applicant.id,
           });
         });
       };
 
       createResponses();
+      // console.log(`RESPONSES`, responses);
       await collections.Responses.insertMany(responses);
     }
     throw new Error('done');
