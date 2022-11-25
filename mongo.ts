@@ -72,17 +72,113 @@ const main = async () => {
   try {
     const { client, collections } = await connectToDatabase({ databaseName: dbName });
 
-    const allOrgs = await collections.Applicants.aggregate([
+    const allApplicants = await collections.Applicants.aggregate([
       {
-        $group: {
-          _id: '$orgId',
+        $project: {
+          id: 1,
+          orgId: 1,
+          openingId: 1,
+          stageId: 1,
         },
       },
-    ]).toArray();
-
-    console.log('Got all orgs!', allOrgs);
-    const allApplicants = await collections.Applicants.distinct('id');
+    ]);
     console.log('All applicant ids', allApplicants);
+    for await (const applicant of allApplicants) {
+      const textFields = [
+        {
+          field: 'firstname',
+          value: faker.name.firstName(),
+        },
+        {
+          field: 'lastname',
+          value: faker.name.lastName(),
+        },
+        {
+          field: 'country',
+          value: faker.address.county(),
+        },
+        {
+          field: 'email',
+          value: faker.internet.email(),
+        },
+        {
+          field: 'description',
+          value: faker.commerce.productDescription(),
+        },
+        {
+          field: 'gender',
+          value: faker.name.gender(true),
+        },
+      ];
+
+      const booleanFields = [
+        { field: 'over18', value: faker.datatype.boolean() },
+        { field: 'readterms', value: faker.datatype.boolean() },
+        { field: 'willingtorelocate', value: faker.datatype.boolean() },
+      ];
+
+      const numberFields = [
+        {
+          field: 'latitude',
+          value: faker.address.latitude(),
+        },
+        {
+          field: 'longitude',
+          value: faker.address.longitude(),
+        },
+        {
+          field: 'createdat',
+          value: faker.date.between(dayjs().subtract(5, 'years').toDate(), dayjs().toDate()),
+        },
+        {
+          field: 'updatedAt',
+          value: faker.date.between(dayjs().subtract(5, 'years').toDate(), dayjs().toDate()),
+        },
+        {
+          field: 'birthdate',
+          value: faker.date.between(
+            dayjs().subtract(80, 'years').toDate(),
+            dayjs().subtract(17, 'years').toDate(),
+          ),
+        },
+      ];
+      const questions = [];
+
+      const createQuestions = () => {
+        textFields.forEach((field) => {
+          questions.push({
+            textkey: field.field,
+            value: field.value,
+            orgId: applicant.orgId,
+            openingId: applicant.openingId,
+            stageId: applicant.stageId,
+          });
+        });
+
+        booleanFields.forEach((field) => {
+          questions.push({
+            booleankey: field.field,
+            value: field.value,
+            orgId: applicant.orgId,
+            openingId: applicant.openingId,
+            stageId: applicant.stageId,
+          });
+        });
+
+        numberFields.forEach((field) => {
+          questions.push({
+            numberkey: field.field,
+            value: field.value,
+            orgId: applicant.orgId,
+            openingId: applicant.openingId,
+            stageId: applicant.stageId,
+          });
+        });
+      };
+
+      createQuestions();
+      await collections.Responses.insertMany;
+    }
     throw new Error('done');
     let processedApplicants = 0;
 
