@@ -8,4 +8,5 @@ export enum Collections {
   Webhooks = 'Webhooks',
   LoginLinks = 'LoginLinks',
   Openings = 'Opening',
+  Responses = 'Responses',
 }

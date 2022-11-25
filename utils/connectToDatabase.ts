@@ -11,6 +11,7 @@ interface ConnectToDatabaseProps {
 export enum CollectionNames {
   Orgs = 'Orgs',
   Applicants = 'Applicants',
+  Responses = 'Responses',
 }
 
 export type AllCollectionsResponse = {
@@ -25,9 +26,11 @@ export type ConnectToDatabaseResponse = {
 export const collections: {
   Orgs: mongoDB.Collection;
   Applicants: mongoDB.Collection;
+  Responses: mongoDB.Collection;
 } = {
   Orgs: null,
   Applicants: null,
+  Responses: null,
 };
 
 export const connectToDatabase = async ({
@@ -50,6 +53,9 @@ export const connectToDatabase = async ({
 
   const applicants: mongoDB.Collection = database.collection(CollectionNames.Applicants);
   collections.Applicants = applicants;
+
+  const responses: mongoDB.Collection = database.collection(CollectionNames.Responses);
+  collections.Responses = responses;
 
   console.log(`Creating necessary collections and indexes`);
 
