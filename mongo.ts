@@ -142,11 +142,11 @@ const main = async () => {
           ),
         },
       ];
-      const questions = [];
+      const responses = [];
 
-      const createQuestions = () => {
+      const createResponses = () => {
         textFields.forEach((field) => {
-          questions.push({
+          responses.push({
             textkey: field.field,
             value: field.value,
             orgId: applicant.orgId,
@@ -156,7 +156,7 @@ const main = async () => {
         });
 
         booleanFields.forEach((field) => {
-          questions.push({
+          responses.push({
             booleankey: field.field,
             value: field.value,
             orgId: applicant.orgId,
@@ -166,7 +166,7 @@ const main = async () => {
         });
 
         numberFields.forEach((field) => {
-          questions.push({
+          responses.push({
             numberkey: field.field,
             value: field.value,
             orgId: applicant.orgId,
@@ -176,8 +176,8 @@ const main = async () => {
         });
       };
 
-      createQuestions();
-      await collections.Responses.insertMany;
+      createResponses();
+      await collections.Responses.insertMany(responses);
     }
     throw new Error('done');
     let processedApplicants = 0;
