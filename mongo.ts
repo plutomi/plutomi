@@ -57,10 +57,10 @@ import axios from 'axios';
 //   },
 //   {
 //     $lookup: {
-//       from: 'Applicants',
-//       localField: 'matchingApplicantIds',
-//       foreignField: 'id',
-//       as: 'applicantData',
+// from: 'Applicants',
+// localField: 'matchingApplicantIds',
+// foreignField: 'id',
+// as: 'applicantData',
 //     },
 //   },
 //   {
@@ -69,9 +69,9 @@ import axios from 'axios';
 //     },
 //   },
 // ];
-const numberOfBatches = randomNumberInclusive(10, 100);
-const applicantsPerBatch = randomNumberInclusive(500, 2000);
-const orgsToCreate = randomNumberInclusive(1, 10);
+const numberOfBatches = randomNumberInclusive(5, 100);
+const applicantsPerBatch = randomNumberInclusive(3000, 4000);
+const orgsToCreate = randomNumberInclusive(1, 20);
 const publicKey = 'rzlsbipz'; // TODO delete lol
 const privateKey = '612c8dfe-b160-4c68-958d-d5116fc02aea'; // TODO delete lol
 const dbName = 'development';
@@ -312,6 +312,35 @@ const main = async () => {
             }
           }
         };
+
+        // TODO saving
+
+        // {
+        //   index: 'default',
+        //   compound: {
+
+        //     must: {
+        //         text: {
+        //     query: 'jose',
+        //     path: 'value'
+        //     }
+
+        //   }
+
+        //   },
+
+        //     compound: {
+        //       must: {
+        //         text: {
+        //         query: 'jose',
+        //         path: 'value'
+        //       }
+
+        //   }
+
+        //   }
+
+        // }
         const stageForApplicant = getStage();
         const applicantId = nanoid(50);
         const app = {
