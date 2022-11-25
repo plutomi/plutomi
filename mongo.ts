@@ -84,58 +84,58 @@ const main = async () => {
     ]);
     console.log('All applicant ids', allApplicants);
     for await (const applicant of allApplicants) {
-      const textFields = [
+      const textResponses = [
         {
-          field: 'firstname',
+          key: 'firstname',
           value: faker.name.firstName(),
         },
         {
-          field: 'lastname',
+          key: 'lastname',
           value: faker.name.lastName(),
         },
         {
-          field: 'country',
+          key: 'country',
           value: faker.address.county(),
         },
         {
-          field: 'email',
+          key: 'email',
           value: faker.internet.email(),
         },
         {
-          field: 'description',
+          key: 'description',
           value: faker.commerce.productDescription(),
         },
         {
-          field: 'gender',
+          key: 'gender',
           value: faker.name.gender(true),
         },
       ];
 
-      const booleanFields = [
-        { field: 'over18', value: faker.datatype.boolean() },
-        { field: 'readterms', value: faker.datatype.boolean() },
-        { field: 'willingtorelocate', value: faker.datatype.boolean() },
+      const booleanResponses = [
+        { key: 'over18', value: faker.datatype.boolean() },
+        { key: 'readterms', value: faker.datatype.boolean() },
+        { key: 'willingtorelocate', value: faker.datatype.boolean() },
       ];
 
-      const numberFields = [
+      const numericResponses = [
         {
-          field: 'latitude',
+          key: 'latitude',
           value: faker.address.latitude(),
         },
         {
-          field: 'longitude',
+          key: 'longitude',
           value: faker.address.longitude(),
         },
         {
-          field: 'createdat',
+          key: 'createdat',
           value: faker.date.between(dayjs().subtract(5, 'years').toDate(), dayjs().toDate()),
         },
         {
-          field: 'updatedAt',
+          key: 'updatedAt',
           value: faker.date.between(dayjs().subtract(5, 'years').toDate(), dayjs().toDate()),
         },
         {
-          field: 'birthdate',
+          key: 'birthdate',
           value: faker.date.between(
             dayjs().subtract(80, 'years').toDate(),
             dayjs().subtract(17, 'years').toDate(),
@@ -145,30 +145,30 @@ const main = async () => {
       const responses = [];
 
       const createResponses = () => {
-        textFields.forEach((field) => {
+        textResponses.forEach((item) => {
           responses.push({
-            textkey: field.field,
-            value: field.value,
+            key: item.key,
+            value: item.value,
             orgId: applicant.orgId,
             openingId: applicant.openingId,
             stageId: applicant.stageId,
           });
         });
 
-        booleanFields.forEach((field) => {
+        booleanResponses.forEach((item) => {
           responses.push({
-            booleankey: field.field,
-            value: field.value,
+            key: item.key,
+            value: item.value,
             orgId: applicant.orgId,
             openingId: applicant.openingId,
             stageId: applicant.stageId,
           });
         });
 
-        numberFields.forEach((field) => {
+        numericResponses.forEach((item) => {
           responses.push({
-            numberkey: field.field,
-            value: field.value,
+            key: item.key,
+            value: item.value,
             orgId: applicant.orgId,
             openingId: applicant.openingId,
             stageId: applicant.stageId,
