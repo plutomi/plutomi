@@ -70,7 +70,7 @@ import axios from 'axios';
 //   },
 // ];
 const numberOfBatches = randomNumberInclusive(100, 100);
-const applicantsPerBatch = randomNumberInclusive(3000, 4000);
+const applicantsPerBatch = randomNumberInclusive(4000, 4000);
 const orgsToCreate = randomNumberInclusive(5, 5);
 const dbName = 'development';
 
