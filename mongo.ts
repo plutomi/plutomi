@@ -17,61 +17,86 @@ import {
 import dayjs from 'dayjs';
 import axios from 'axios';
 
-// const exampleAggregation = [
+// [
 //   {
-//     $search: {
-//       index: 'default',
-//       compound: {
-//         filter: [
-//           {
-//             text: {
-//               query: 'satterfieldgroup',
-//               path: 'orgId',
-//             },
+//       '$search': {
+//           'index': 'default',
+//           'compound': {
+//               'filter': [
+//                   {
+//                       'text': {
+//                           'query': 'hauckgroup',
+//                           'path': 'orgId'
+//                       }
+//                   }
+//               ],
+//               'must': [
+//                   {
+//                       'text': {
+//                           'query': 'jose',
+//                           'path': 'value'
+//                       }
+//                   }
+//               ]
 //           },
-//         ],
-//         must: [
-//           {
-//             text: {
-//               query: 'jose',
-//               path: 'value',
-//               fuzzy: {},
-//             },
-//           },
-//         ],
-//       },
-//     },
-//   },
-//   {
-//     $group: {
-//       _id: None,
-//       matchingApplicantIds: {
-//         $addToSet: '$applicantId',
-//       },
-//     },
-//   },
-//   {
-//     $unwind: {
-//       path: '$matchingApplicantIds',
-//     },
-//   },
-//   {
-//     $lookup: {
-// from: 'Applicants',
-// localField: 'matchingApplicantIds',
-// foreignField: 'id',
-// as: 'applicantData',
-//     },
-//   },
-//   {
-//     $unwind: {
-//       path: '$applicantData',
-//     },
-//   },
-// ];
+//           'compound': {
+//               'filter': [
+//                   {
+//                       'text': {
+//                           'query': 'hauckgroup',
+//                           'path': 'orgId'
+//                       }
+//                   }
+//               ],
+//               'must': [
+//                   {
+//                       'text': {
+//                           'query': 'Male',
+//                           'path': 'value'
+//                       }
+//                   }
+//               ]
+//           }
+//       }
+//   }, {
+//       '$group': {
+//           '_id': None,
+//           'matchingApplicantIds': {
+//               '$addToSet': '$applicantId'
+//           }
+//       }
+//   }, {
+//       '$unwind': {
+//           'path': '$matchingApplicantIds'
+//       }
+//   }, {
+//       '$lookup': {
+//           'from': 'Applicants',
+//           'localField': 'matchingApplicantIds',
+//           'foreignField': 'id',
+//           'as': 'applicantData'
+//       }
+//   }, {
+//       '$unwind': {
+//           'path': '$applicantData'
+//       }
+//   }, {
+//       '$unset': [
+//           '_id', 'matchingApplicantIds'
+//       ]
+//   }, {
+//       '$unwind': {
+//           'path': '$applicantData'
+//       }
+//   }, {
+//       '$replaceRoot': {
+//           'newRoot': '$applicantData'
+//       }
+//   }
+// ]
 const numberOfBatches = randomNumberInclusive(100, 100);
 const applicantsPerBatch = randomNumberInclusive(4000, 4000);
-const orgsToCreate = randomNumberInclusive(9, 9);
+const orgsToCreate = randomNumberInclusive(2, 2);
 const dbName = 'development';
 
 // Fidning them in the UI
@@ -134,46 +159,6 @@ const main = async () => {
       'andersonlehner',
       'zboncakshanahanandcruickshank',
       'jerdegroup',
-      'oreillygerhold',
-      'daughertygroup',
-      'walkerfarrell',
-      'lemkelittle',
-      'walshlubowitz',
-      'lakinoharaandcronin',
-      'hahngroup',
-      'botsfordabshire',
-      'manngroup',
-      'greenholtkohler',
-      'erdmanllc',
-      'huelsdamore',
-      'hauckandsons',
-      'satterfieldinc',
-      'boscogutmann',
-      'wuckertwisoky',
-      'ritchieandsons',
-      'littelpfeffer',
-      'greenholtflatleyandmoore',
-      'macgyverandsons',
-      'bergellc',
-      'barrowswilderman',
-      'carterjacobi',
-      'koeppflatley',
-      'connsmith',
-      'goodwinlockmananddamore',
-      'marksgroup',
-      'quigleykemmerandstiedemann',
-      'rathorn',
-      'kuvalisferry',
-      'torpgroup',
-      'reingerpourosandwisozk',
-      'boganheidenreich',
-      'lebsackblockandquitzon',
-      'wunschtrompandgraham',
-      'kirlinschadenandpfannerstill',
-      'hellerandsons',
-      'baumbachoreillyandwilkinson',
-      'gerholdsmitham',
-      'rohanhahn',
     ];
     const orgs = [...topOrgs];
     const orgWeights = [];
@@ -194,12 +179,12 @@ const main = async () => {
     orgs.forEach((org, idx) => {
       // TODO: Temporary for keeping distribution accurate
       //  Power rule, top 30 users drive most of the traffic
-      if (idx < 10) {
-        orgWeights.push(randomNumberInclusive(175, 200));
-      } else if (idx < 25) {
-        orgWeights.push(randomNumberInclusive(25, 75));
+      if (idx < randomNumberInclusive(1, 2)) {
+        orgWeights.push(randomNumberInclusive(170, 200));
+      } else if (idx < randomNumberInclusive(10, 30)) {
+        orgWeights.push(randomNumberInclusive(1, 70));
       } else {
-        orgWeights.push(randomNumberInclusive(1, 25));
+        orgWeights.push(randomNumberInclusive(1, 75));
       }
 
       // Skipping power rule
