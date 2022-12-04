@@ -10,7 +10,7 @@ interface ConnectToDatabaseProps {
 }
 export enum CollectionNames {
   Orgs = 'Orgs',
-  Applicants = 'Applicants',
+  Applicants = 'applicants', // TODO change this back
   Responses = 'Responses',
 }
 
@@ -25,11 +25,11 @@ export type ConnectToDatabaseResponse = {
 
 export const collections: {
   Orgs: mongoDB.Collection;
-  Applicants: mongoDB.Collection;
+  applicants: mongoDB.Collection;
   Responses: mongoDB.Collection;
 } = {
   Orgs: null,
-  Applicants: null,
+  applicants: null,
   Responses: null,
 };
 
@@ -52,7 +52,7 @@ export const connectToDatabase = async ({
   collections.Orgs = orgs;
 
   const applicants: mongoDB.Collection = database.collection(CollectionNames.Applicants);
-  collections.Applicants = applicants;
+  collections.applicants = applicants;
 
   const responses: mongoDB.Collection = database.collection(CollectionNames.Responses);
   collections.Responses = responses;

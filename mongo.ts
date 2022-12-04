@@ -16,6 +16,8 @@ import {
 } from './@types/indexableProperties';
 import dayjs from 'dayjs';
 import axios from 'axios';
+// Direct target array!
+// Applicant info: { $or: [ { $and: [ { target: { id: "DI_46-2lfGbv3xeMlSLA1UsomjAa_tr3cHYWSLnIMsAtKI2gyb" }} ]}] }
 
 // [
 //   {
@@ -94,9 +96,9 @@ import axios from 'axios';
 //       }
 //   }
 // ]
-const numberOfBatches = randomNumberInclusive(100, 100);
-const applicantsPerBatch = randomNumberInclusive(4000, 4000);
-const orgsToCreate = randomNumberInclusive(2, 2);
+const numberOfBatches = randomNumberInclusive(10, 50);
+const applicantsPerBatch = randomNumberInclusive(2000, 2000);
+const orgsToCreate = randomNumberInclusive(1, 1);
 const dbName = 'development';
 
 // Fidning them in the UI
@@ -147,21 +149,31 @@ const main = async () => {
   try {
     const { client, collections } = await connectToDatabase({ databaseName: dbName });
 
+    await collections.applicants.deleteMany({});
+    await collections.applicants.deleteMany({});
+    await collections.applicants.deleteMany({});
+    await collections.applicants.deleteMany({});
+    await collections.applicants.deleteMany({});
+    await collections.applicants.deleteMany({});
+    await collections.applicants.deleteMany({});
+    await collections.applicants.deleteMany({});
+    // await collections.applicants.deleteMany({});
+    // await collections.applicants.deleteMany({});
+    // await collections.applicants.deleteMany({});
+    // await collections.applicants.deleteMany({});
+    // await collections.applicants.deleteMany({});
+    // await collections.applicants.deleteMany({});
+    // await collections.applicants.deleteMany({});
+    // await collections.applicants.deleteMany({});
+    // await collections.applicants.deleteMany({});
+    // await collections.applicants.deleteMany({});
+
     let processedApplicants = 0;
 
     // Power law distribution
-    const topOrgs = [
-      'fisherfritschandkohler',
-      'hauckgroup',
-      'daughertybartoletti',
-      'sipesgroup',
-      'gleichnerward',
-      'andersonlehner',
-      'zboncakshanahanandcruickshank',
-      'jerdegroup',
-    ];
+    const topOrgs = ['plutomi'];
     const orgs = [...topOrgs];
-    const orgWeights = [];
+    const orgWeights = []; // TODO remove
     Array.from({ length: orgsToCreate }).forEach(() => {
       orgs.push(
         faker.company
@@ -171,23 +183,18 @@ const main = async () => {
       );
     });
 
-    // console.log(
-    //   `Creating ${orgs.length} ${
-    //     orgs.length !== allOrgs.length
-    //   } because there were some duplicates with faker`,
-    // );
     orgs.forEach((org, idx) => {
       // TODO: Temporary for keeping distribution accurate
       //  Power rule, top 30 users drive most of the traffic
-      if (idx < randomNumberInclusive(1, 2)) {
-        orgWeights.push(randomNumberInclusive(170, 200));
+      if (idx < randomNumberInclusive(1, 5)) {
+        orgWeights.push(randomNumberInclusive(100, 200));
       } else if (idx < randomNumberInclusive(10, 30)) {
-        orgWeights.push(randomNumberInclusive(1, 70));
+        orgWeights.push(randomNumberInclusive(1, 100));
       } else {
         orgWeights.push(randomNumberInclusive(1, 75));
       }
 
-      // Skipping power rule
+      // // Skipping power rule
       // orgWeights.push(randomNumberInclusive(1, 100));
     });
     console.log(`ORGS`, orgs);
@@ -236,6 +243,7 @@ const main = async () => {
     //   }
     // }
 
+    // TODO update this with random weighted
     const openings = [
       {
         name: 'NYC',
@@ -303,8 +311,7 @@ const main = async () => {
 
           for (const opening of openings) {
             if (num < opening.weight) {
-              // To make it unique
-              return `${opening.name}-${orgForApplicant}`;
+              return opening.name;
             }
           }
         };
@@ -315,8 +322,7 @@ const main = async () => {
 
           for (const stage of stages) {
             if (num < stage.weight) {
-              // To make it unique
-              return `${stage.name}-${openingForApplicant}-${orgForApplicant}`;
+              return stage.name;
             }
           }
         };
@@ -350,9 +356,9 @@ const main = async () => {
 
         // }
         const stageForApplicant = getStage();
-        const applicantId = nanoid(50);
+        const applicantId = nanoid(10);
         const app = {
-          type: 'Applicant',
+          _id: `ORG#${orgForApplicant}#APPLICANT#${applicantId}`,
           music: faker.music.genre(),
           isActive: Math.random() > 0.5,
           balance: Math.random() * randomNumberInclusive(1, 10000),
@@ -416,14 +422,25 @@ const main = async () => {
           stageId: stageForApplicant,
         };
 
+        const orgIndex = `ORG#${orgForApplicant}#APPLICANTS`;
+        const openingIndex = `ORG#${orgForApplicant}#OPENING#${openingForApplicant}#APPLICANTS`;
+        const stageIndex = `ORG#${orgForApplicant}#OPENING#${openingForApplicant}#STAGE#${stageForApplicant}#APPLICANTS`;
+        // { $and: [ { _id: /^ORG#plutomi#APPLICANT/ },  { "target.id": "ORG#plutomi#OPENING#Miami#APPLICANTS"}] }
         const newApplicant = {
-          idx: i,
-          id: uuidv4(),
+          _id: `ORG#${orgForApplicant}#APPLICANT#${applicantId}`,
+          id: applicantId,
           orgId: orgForApplicant,
           openingId: openingForApplicant,
           stageId: stageForApplicant,
           // TODO Unique search index will be created per org
           data: app,
+          type: 'Applicant',
+          target: [
+            { id: 'Applicant', type: 'Entity' },
+            { id: Math.random() > 0.5 ? 'IDLE' : 'ACTIVE', type: 'Status' }, // ORG + ID
+            { id: openingIndex, type: 'Opening' },
+            { id: stageIndex, type: 'Stage' },
+          ],
         };
         localBatch.push(newApplicant);
       }
@@ -434,74 +451,74 @@ const main = async () => {
       for await (const batch of applicantsToCreate) {
         const bidx = applicantsToCreate.indexOf(batch) + 1;
 
-        await collections.Applicants.insertMany(batch);
+        await collections.applicants.insertMany(batch);
 
-        const responses = [];
+        // const responses = [];
 
-        for await (const applicant of batch) {
-          const textResponses = [
-            'firstName',
-            'lastName',
-            'country',
-            'email',
-            'description',
-            'gender',
-          ];
+        // for await (const applicant of batch) {
+        //   const textResponses = [
+        //     'firstName',
+        //     'lastName',
+        //     'country',
+        //     'email',
+        //     'description',
+        //     'gender',
+        //   ];
 
-          const booleanResponses = ['isActive', 'readterms', 'willingToRelocate'];
+        //   const booleanResponses = ['isActive', 'readterms', 'willingToRelocate'];
 
-          const numericResponses = [
-            'latitude',
-            'longitude',
-            'createdAt',
-            'updatedAt',
-            'birthDate',
-            'greeting',
-          ];
+        //   const numericResponses = [
+        //     'latitude',
+        //     'longitude',
+        //     'createdAt',
+        //     'updatedAt',
+        //     'birthDate',
+        //     'greeting',
+        //   ];
 
-          const createResponses = () => {
-            textResponses.forEach((item) => {
-              responses.push({
-                key: item,
-                value: applicant.data[item],
-                orgId: applicant.orgId,
-                openingId: applicant.openingId,
-                stageId: applicant.stageId,
-                applicantId: applicant.id,
-              });
-            });
+        //   const createResponses = () => {
+        //     textResponses.forEach((item) => {
+        //       responses.push({
+        //         key: item,
+        //         value: applicant.data[item],
+        //         orgId: applicant.orgId,
+        //         openingId: applicant.openingId,
+        //         stageId: applicant.stageId,
+        //         applicantId: applicant.id,
+        //       });
+        //     });
 
-            booleanResponses.forEach((item) => {
-              responses.push({
-                key: item,
-                value: applicant.data[item],
-                orgId: applicant.orgId,
-                openingId: applicant.openingId,
-                stageId: applicant.stageId,
-                applicantId: applicant.id,
-              });
-            });
+        //     booleanResponses.forEach((item) => {
+        //       responses.push({
+        //         key: item,
+        //         value: applicant.data[item],
+        //         orgId: applicant.orgId,
+        //         openingId: applicant.openingId,
+        //         stageId: applicant.stageId,
+        //         applicantId: applicant.id,
+        //       });
+        //     });
 
-            numericResponses.forEach((item) => {
-              responses.push({
-                key: item,
-                value: applicant.data[item],
-                orgId: applicant.orgId,
-                openingId: applicant.openingId,
-                stageId: applicant.stageId,
-                applicantId: applicant.id,
-              });
-            });
-          };
+        //     numericResponses.forEach((item) => {
+        //       responses.push({
+        //         key: item,
+        //         value: applicant.data[item],
+        //         orgId: applicant.orgId,
+        //         openingId: applicant.openingId,
+        //         stageId: applicant.stageId,
+        //         applicantId: applicant.id,
+        //       });
+        //     });
+        //   };
 
-          createResponses();
-          // console.log(`RESPONSES`, responses);
+        //   // createResponses();
+        //   // console.log(`RESPONSES`, responses);
 
-          // if (batch.indexOf(applicant) === 0) {
-          //   console.log(`Creating responses for`, applicant);
-          //   console.log(responses);
-          // }
-        }
+        //   // if (batch.indexOf(applicant) === 0) {
+        //   //   console.log(`Creating responses for`, applicant);
+        //   //   console.log(responses);
+        //   // }
+        // }
         processedApplicants += batch.length;
         console.log(
           `Done processing batch`,
@@ -511,15 +528,29 @@ const main = async () => {
           }`,
         );
 
-        console.log(`Creating ${responses.length} responses for ${batch.length} applicants`);
-        await collections.Responses.insertMany(responses);
-        console.log(`Done!`);
+        // console.log(`Creating ${responses.length} responses for ${batch.length} applicants`);
+        // await collections.Responses.insertMany(responses);
+        // console.log(`Done!`);
       }
       console.log('Done!');
       const endTime = dayjs();
 
       const diff = endTime.diff(startTime, 'seconds');
       console.log(`Duration: ${diff} seconds, ${diff / 60} mins`);
+
+      console.log('Updating all plutomi!');
+      const start2 = dayjs();
+
+      console.log('Start');
+      await collections.applicants.updateMany(
+        { 'target.id': /^ORG#plutomi#APPLICANTS/ },
+        { $set: { testData: 'BEANS' } },
+      );
+      console.log('End');
+
+      const endTime2 = dayjs();
+      const diff2 = endTime2.diff(start2, 'seconds');
+      console.log(`Duration: ${diff2} seconds, ${diff2 / 60} mins`);
     };
 
     console.log('Sending to mongo');

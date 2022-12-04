@@ -1,22 +1,14 @@
-import { customAlphabet } from 'nanoid';
+import { v4, parse } from 'uuid';
+const base62Alphabet = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
 
-interface GenerateIdProps {
-  length?: number;
-  fullAlphabet?: boolean;
-}
-/**
- * Generates a clean ID with 0-9 and all lower case a-z
- * @param length Length of ID - default 24
- * @param fullAlphabet Whether to include caps and '-' and '_' keys
- * @returns
- */
-export const generateId = ({ length, fullAlphabet }: GenerateIdProps) => {
-  let alphabet = '0123456789abcdefghijklmnopqrstuvwxyz';
+const base62 = require('base-x')(base62Alphabet);
 
-  if (fullAlphabet) {
-    alphabet += 'ABCDEFGHIJKLMNOPQRSTUVWXYZ-_';
-  }
-
-  const nanoid = customAlphabet(alphabet, length ?? 24); // TODO this isn't working
-  return nanoid();
+const main = () => {
+  const buffer = Buffer.alloc(16);
+  const id = v4(null, buffer);
+  console.log('ID', id);
+  const id3 = base62.encode(Buffer.from(id));
+  return id3;
 };
+
+console.log(main());
