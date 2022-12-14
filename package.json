@@ -62,7 +62,7 @@
     "dotenv-flow": "^3.2.0",
     "dynamodb-streams-processor": "^1.0.1",
     "env-var": "^7.1.1",
-    "express": "^4.17.1",
+    "express": "^4.17.3",
     "express-list-endpoints": "^6.0.0",
     "helmet": "^4.6.0",
     "install": "^0.13.0",
