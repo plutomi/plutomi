@@ -2,8 +2,6 @@ import { AllCollectionsResponse, connectToDatabase } from './utils/connectToData
 import { randomNumberInclusive } from './utils/randomNumberInclusive';
 import { faker } from '@faker-js/faker';
 import { nanoid } from 'nanoid';
-import AxiosDigest from 'axios-digest';
-import AxiosDigestAuth from '@mhoc/axios-digest-auth';
 import { v4 as uuidv4 } from 'uuid';
 
 import { Collection } from 'mongodb';
@@ -157,16 +155,16 @@ const main = async () => {
     await collections.applicants.deleteMany({});
     await collections.applicants.deleteMany({});
     await collections.applicants.deleteMany({});
-    // await collections.applicants.deleteMany({});
-    // await collections.applicants.deleteMany({});
-    // await collections.applicants.deleteMany({});
-    // await collections.applicants.deleteMany({});
-    // await collections.applicants.deleteMany({});
-    // await collections.applicants.deleteMany({});
-    // await collections.applicants.deleteMany({});
-    // await collections.applicants.deleteMany({});
-    // await collections.applicants.deleteMany({});
-    // await collections.applicants.deleteMany({});
+    await collections.applicants.deleteMany({});
+    await collections.applicants.deleteMany({});
+    await collections.applicants.deleteMany({});
+    await collections.applicants.deleteMany({});
+    await collections.applicants.deleteMany({});
+    await collections.applicants.deleteMany({});
+    await collections.applicants.deleteMany({});
+    await collections.applicants.deleteMany({});
+    await collections.applicants.deleteMany({});
+    await collections.applicants.deleteMany({});
 
     let processedApplicants = 0;
 
@@ -174,12 +172,19 @@ const main = async () => {
     const topOrgs = ['plutomi'];
     const orgs = [...topOrgs];
     const orgWeights = []; // TODO remove
-    Array.from({ length: orgsToCreate }).forEach(() => {
+    Array.from({ length: orgsToCreate }).forEach((org) => {
+      const companyName = faker.company.companyName();
+      console.log('Company', companyName);
+      console.log('Company 2', companyName.toLowerCase());
+      console.log('typeof', typeof companyName.toLowerCase());
+
+      console.log('Company 3', companyName.toLowerCase().replace(/[^a-z]/gi, ''));
+
       orgs.push(
-        faker.company
-          .companyName()
+        companyName
           .toLowerCase()
-          .replaceAll(/[^a-z]/gi, ''),
+          .toString()
+          .replace(/[^a-z]/gi, ''),
       );
     });
 
@@ -357,6 +362,19 @@ const main = async () => {
         // }
         const stageForApplicant = getStage();
         const applicantId = nanoid(10);
+        const createdAt = faker.date.between(
+          dayjs().subtract(5, 'years').toDate(),
+          dayjs().toDate(),
+        );
+        const updatedAt = faker.date.between(
+          dayjs().subtract(5, 'years').toDate(),
+          dayjs().toDate(),
+        );
+
+        const birthDate = faker.date.between(
+          dayjs().subtract(80, 'years').toDate(),
+          dayjs().subtract(17, 'years').toDate(),
+        );
         const app = {
           _id: `ORG#${orgForApplicant}#APPLICANT#${applicantId}`,
           music: faker.music.genre(),
@@ -387,12 +405,9 @@ const main = async () => {
           longitude: faker.address.longitude(),
           readterms: Math.random() > 0.5,
           willingToRelocate: Math.random() > 0.5,
-          createdAt: faker.date.between(dayjs().subtract(5, 'years').toDate(), dayjs().toDate()),
-          updatedAt: faker.date.between(dayjs().subtract(5, 'years').toDate(), dayjs().toDate()),
-          birthDate: faker.date.between(
-            dayjs().subtract(80, 'years').toDate(),
-            dayjs().subtract(17, 'years').toDate(),
-          ),
+          createdAt,
+          updatedAt,
+          birthDate,
           tags: [
             'consectetur in esse consequat sunt labore amet consectetur',
             'adipisicing dolor fugiat do sint do proident ullamco',
@@ -440,6 +455,10 @@ const main = async () => {
             { id: Math.random() > 0.5 ? 'IDLE' : 'ACTIVE', type: 'Status' }, // ORG + ID
             { id: openingIndex, type: 'Opening' },
             { id: stageIndex, type: 'Stage' },
+            { id: createdAt, type: 'CreatedAt' },
+            //{ $and: [{ "target": { $elemMatch: { id:  "ORG#plutomi#OPENING#Chicago#APPLICANTS" } } }, { "target": { $elemMatch: { id:  "ACTIVE" } } } ] }
+            { id: updatedAt, type: 'UpdatedAt' },
+            { id: birthDate, type: 'BirthDate' },
           ],
         };
         localBatch.push(newApplicant);
@@ -541,16 +560,16 @@ const main = async () => {
       console.log('Updating all plutomi!');
       const start2 = dayjs();
 
-      console.log('Start');
-      await collections.applicants.updateMany(
-        { 'target.id': /^ORG#plutomi#APPLICANTS/ },
-        { $set: { testData: 'BEANS' } },
-      );
-      console.log('End');
+      // console.log('Start');
+      // await collections.applicants.updateMany(
+      //   { 'target.id': /^ORG#plutomi#APPLICANTS/ },
+      //   { $set: { testData: 'BEANS' } },
+      // );
+      // console.log('End');
 
-      const endTime2 = dayjs();
-      const diff2 = endTime2.diff(start2, 'seconds');
-      console.log(`Duration: ${diff2} seconds, ${diff2 / 60} mins`);
+      // const endTime2 = dayjs();
+      // const diff2 = endTime2.diff(start2, 'seconds');
+      // console.log(`Duration: ${diff2} seconds, ${diff2 / 60} mins`);
     };
 
     console.log('Sending to mongo');
