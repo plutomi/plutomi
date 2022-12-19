@@ -8,29 +8,18 @@ import { env } from '../env';
 interface ConnectToDatabaseProps {
   databaseName: string;
 }
-export enum CollectionNames {
-  Orgs = 'Orgs',
-  Applicants = 'applicants', // TODO change this back
-  Responses = 'Responses',
+
+export enum CollectionName {
+  db = 'db',
 }
 
-export type AllCollectionsResponse = {
-  [key in CollectionNames]: mongoDB.Collection; // Client, for any transactions etc.
-};
-
 export type ConnectToDatabaseResponse = {
-  collections: AllCollectionsResponse;
-  client: mongoDB.MongoClient;
-};
-
-export const collections: {
   /**
    * https://youtu.be/eEENrNKxCdw?t=2721
    * #singlecollectiondesign - https://mobile.twitter.com/houlihan_rick/status/1482144529008533504
    */
   db: mongoDB.Collection;
-} = {
-  db: null,
+  client: mongoDB.MongoClient;
 };
 
 export const connectToDatabase = async ({
@@ -39,46 +28,38 @@ export const connectToDatabase = async ({
   const client = new mongoDB.MongoClient(env.mongoConnection);
 
   try {
-    console.log('Attempting to connect to MongoDB.');
+    console.log('Attempting to connect to MongoDB');
     await client.connect();
   } catch (error) {
-    console.error(`Error connecting to MongoDB!`, error);
+    const errorMessage = `Error connecting to MongoDB!`;
+    console.error(errorMessage, error);
+    throw new Error(errorMessage);
   }
 
   const database: mongoDB.Db = client.db(databaseName);
   console.log(`Successfully connected to database: ${database.databaseName}.`);
+  const collectionName = CollectionName.db;
 
-  const orgs: mongoDB.Collection = database.collection(CollectionNames.Orgs);
-  collections.Orgs = orgs;
-
-  const applicants: mongoDB.Collection = database.collection(CollectionNames.Applicants);
-  collections.applicants = applicants;
-
-  const responses: mongoDB.Collection = database.collection(CollectionNames.Responses);
-  collections.Responses = responses;
+  const db: mongoDB.Collection = database.collection(collectionName);
 
   console.log(`Creating necessary collections and indexes`);
 
-  const collectionNames = await database.listCollections({}, { nameOnly: true }).toArray();
+  const allCollectionNames = await database.listCollections({}, { nameOnly: true }).toArray();
+  const collectionExists = allCollectionNames.find((item) => item.name === collectionName);
 
-  Object.values(collections).map(async (collection) => {
-    const { collectionName } = collection;
-    const collectionExists = collectionNames.find((item) => item.name === collectionName);
-
-    if (!collectionExists) {
-      try {
-        console.log('Creating collection', collectionName);
-        await database.createCollection(collectionName);
-      } catch (error) {
-        console.error(`An error ocurred creating collection ${collectionName}`, error);
-      }
+  if (!collectionExists) {
+    try {
+      console.log('Creating collection', collectionName);
+      await database.createCollection(collectionName);
+    } catch (error) {
+      console.error(`An error ocurred creating collection ${collectionName}`, error);
     }
-  });
+  }
 
   console.log('Ready.\n');
 
   return {
     client,
-    collections,
+    db,
   };
 };
