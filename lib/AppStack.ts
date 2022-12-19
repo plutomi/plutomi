@@ -88,6 +88,7 @@ export default class AppStack extends cdk.Stack {
       protocol: ecs.Protocol.TCP,
     });
 
+    // TODO 
     const vpc = new ec2.Vpc(this, 'plutomi-api-fargate-vpc', {
       maxAzs: Servers.vpc.az,
       natGateways: Servers.vpc.natGateways, // Very pricy! https://www.lastweekinaws.com/blog/the-aws-managed-nat-gateway-is-unpleasant-and-not-recommended/
@@ -163,6 +164,7 @@ export default class AppStack extends cdk.Stack {
     });
 
     // Create the WAF & its rules
+    // TODO move this out
     const API_WAF = new waf.CfnWebACL(this, `${env.deploymentEnvironment}-API-WAF`, {
       name: `${env.deploymentEnvironment}-API-WAF`,
       description: 'Blocks IPs that make too many requests',

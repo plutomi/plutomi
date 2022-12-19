@@ -24,13 +24,13 @@ export type ConnectToDatabaseResponse = {
 };
 
 export const collections: {
-  Orgs: mongoDB.Collection;
-  applicants: mongoDB.Collection;
-  Responses: mongoDB.Collection;
+  /**
+   * https://youtu.be/eEENrNKxCdw?t=2721
+   * #singlecollectiondesign - https://mobile.twitter.com/houlihan_rick/status/1482144529008533504
+   */
+  db: mongoDB.Collection;
 } = {
-  Orgs: null,
-  applicants: null,
-  Responses: null,
+  db: null,
 };
 
 export const connectToDatabase = async ({

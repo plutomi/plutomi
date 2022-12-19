@@ -1,14 +1,12 @@
-import { v4, parse } from 'uuid';
-const base62Alphabet = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+import ksuid from 'ksuid';
 
-const base62 = require('base-x')(base62Alphabet);
+// TODO add interface here, generate entity prefix
 
-const main = () => {
-  const buffer = Buffer.alloc(16);
-  const id = v4(null, buffer);
-  console.log('ID', id);
-  const id3 = base62.encode(Buffer.from(id));
-  return id3;
+const main = async () => {
+
+  const ksuidFromAsync = await ksuid.random();
+
+  return ksuidFromAsync;
 };
 
 console.log(main());
