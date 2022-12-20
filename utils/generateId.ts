@@ -1,7 +1,12 @@
 import ksuid from 'ksuid';
 
 // TODO add interface here, generate entity prefix
-
+// org for org
+// appl for application
+// stage for stage
+// apcnt for applicant
+//
+// TODO
 const main = async () => {
   const ksuidFromAsync = await ksuid.random();
 
