@@ -4789,6 +4789,11 @@
   "resolved" "https://registry.npmjs.org/case/-/case-1.6.3.tgz"
   "version" "1.6.3"
 
+"cdk-fck-nat@^1.0.80":
+  "integrity" "sha512-4Fm6OwjE/hPV1M5YA3vqpGwyzNhhxqY3qAmJ7NbvXmC0NeNVZZJTT2RKEcAVlZ95fVlfgjRsGtU+qnwfuJiYqQ=="
+  "resolved" "https://registry.npmjs.org/cdk-fck-nat/-/cdk-fck-nat-1.0.80.tgz"
+  "version" "1.0.80"
+
 "chalk@^2.0.0", "chalk@^2.4.2":
   "integrity" "sha512-Mti+f9lpJNcwF4tWV8/OrTTtF1gZi+f8FqlyAdouralcFWFQWF2+NgCHShjkCb+IFBLq9buZwE1xckQU4peSuQ=="
   "resolved" "https://registry.npmjs.org/chalk/-/chalk-2.4.2.tgz"
@@ -5162,7 +5167,7 @@
   "resolved" "https://registry.npmjs.org/console-control-strings/-/console-control-strings-1.1.0.tgz"
   "version" "1.1.0"
 
-"constructs@^10.0.0", "constructs@^10.1.55":
+"constructs@^10.0.0", "constructs@^10.0.5", "constructs@^10.1.55":
   "integrity" "sha512-i02jQ4nKWarCWc8OdUFQzeIY1NFv1OCX5KiG0qo4GEpLfelFImKIDTxxECikNaRcXAytkfHe+r6AQNAwKamFPQ=="
   "resolved" "https://registry.npmjs.org/constructs/-/constructs-10.1.55.tgz"
   "version" "10.1.55"

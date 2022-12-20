@@ -45,6 +45,7 @@
     "axios": "^0.21.4",
     "axios-digest": "^0.3.0",
     "base62": "^2.0.1",
+    "cdk-fck-nat": "^1.0.80",
     "connect-timeout": "^1.9.0",
     "constructs": "^10.1.55",
     "cookie-parser": "^1.4.6",

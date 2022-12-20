@@ -2,7 +2,7 @@ import * as cf from 'aws-cdk-lib/aws-cloudfront';
 import * as ecsPatterns from 'aws-cdk-lib/aws-ecs-patterns';
 import * as cdk from 'aws-cdk-lib';
 import * as ecs from 'aws-cdk-lib/aws-ecs';
-import * as protocol from 'aws-cdk-lib/aws-elasticloadbalancingv2';
+import { FckNatInstanceProvider } from 'cdk-fck-nat';
 import * as ec2 from 'aws-cdk-lib/aws-ec2';
 import * as iam from 'aws-cdk-lib/aws-iam';
 import * as route53 from 'aws-cdk-lib/aws-route53';
@@ -14,6 +14,7 @@ import { Policy } from 'aws-cdk-lib/aws-iam';
 import { DOMAIN_NAME, EXPRESS_PORT, NOT_SET, Policies, Servers } from '../Config';
 import * as waf from 'aws-cdk-lib/aws-wafv2';
 import { env } from '../env';
+import { InstanceClass, InstanceSize, InstanceType } from 'aws-cdk-lib/aws-ec2';
 
 interface AppStackServiceProps extends cdk.StackProps {}
 const baseEnv = {
@@ -79,7 +80,7 @@ export default class AppStack extends cdk.Stack {
 
       logging: new ecs.AwsLogDriver({
         streamPrefix: 'plutomi-api-fargate',
-      }), //
+      }),
       environment: { ...ENVIRONMENT },
     });
 
@@ -88,10 +89,14 @@ export default class AppStack extends cdk.Stack {
       protocol: ecs.Protocol.TCP,
     });
 
-    // TODO 
+    // TODO  add fck nat
     const vpc = new ec2.Vpc(this, 'plutomi-api-fargate-vpc', {
       maxAzs: Servers.vpc.az,
       natGateways: Servers.vpc.natGateways, // Very pricy! https://www.lastweekinaws.com/blog/the-aws-managed-nat-gateway-is-unpleasant-and-not-recommended/
+      // https://fck-nat.dev/
+      natGatewayProvider: new FckNatInstanceProvider({
+        instanceType: InstanceType.of(InstanceClass.T4G, InstanceSize.NANO),
+      }),
     });
 
     const cluster = new ecs.Cluster(this, 'plutomi-api-fargate-cluster', {
@@ -112,7 +117,12 @@ export default class AppStack extends cdk.Stack {
       `arn:aws:acm:${this.region}:${this.account}:certificate/${env.acmCertificateId}`,
     );
 
-    // Create a load-balanced Fargate service and make it public with HTTPS traffic only
+    /**
+     * Creates a load balanced fargate service.
+     * The load balancer will be in a public subnet, while the tasks will be in a private subnet and unaccessible from the internet.
+     *
+     * The fck-nat allows internet access to the tasks.
+     */
     const loadBalancedFargateService = new ecsPatterns.ApplicationLoadBalancedFargateService(
       this,
       'PlutomiApi',
@@ -122,9 +132,7 @@ export default class AppStack extends cdk.Stack {
         taskDefinition,
         desiredCount: Servers.count.min,
         listenerPort: 443,
-        protocol: protocol.ApplicationProtocol.HTTPS,
         redirectHTTP: true,
-        assignPublicIp: true,
       },
     );
 
