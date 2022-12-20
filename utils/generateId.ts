@@ -1,5 +1,7 @@
 import ksuid from 'ksuid';
 
+// TODO nanoid alphabet '23456789abcdefghjklmnpqrstuvwxyz'
+
 // TODO add interface here, generate entity prefix
 // org for org
 // appl for application
