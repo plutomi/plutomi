@@ -12,6 +12,7 @@ export enum EntityPrefix {
   StageRule = 'stgrl_',
   QuestionRule = 'quesrl_',
   Event = 'evt_',
+  Session = 'sesh_',
 }
 
 interface GenerateIdProps {
