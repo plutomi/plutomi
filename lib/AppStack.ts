@@ -86,17 +86,18 @@ export default class AppStack extends cdk.Stack {
 
     container.addPortMappings({
       containerPort: EXPRESS_PORT || 3000,
-      protocol: ecs.Protocol.TCP,
+    });
+
+    // https://fck-nat.dev/
+    const natGatewayProvider = new FckNatInstanceProvider({
+      instanceType: InstanceType.of(InstanceClass.T4G, InstanceSize.NANO),
     });
 
     // TODO  add fck nat
     const vpc = new ec2.Vpc(this, 'plutomi-api-fargate-vpc', {
       maxAzs: Servers.vpc.az,
       natGateways: Servers.vpc.natGateways, // Very pricy! https://www.lastweekinaws.com/blog/the-aws-managed-nat-gateway-is-unpleasant-and-not-recommended/
-      // https://fck-nat.dev/
-      natGatewayProvider: new FckNatInstanceProvider({
-        instanceType: InstanceType.of(InstanceClass.T4G, InstanceSize.NANO),
-      }),
+      natGatewayProvider,
     });
 
     const cluster = new ecs.Cluster(this, 'plutomi-api-fargate-cluster', {
